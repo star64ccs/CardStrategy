@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
-const User = require('../models/User');
+const getUserModel = require('../models/User');
 const { protect } = require('../middleware/auth');
 const logger = require('../utils/logger');
 
@@ -55,10 +55,24 @@ router.post('/register', [
     }
 
     const { username, email, password, displayName } = req.body;
+    const User = getUserModel();
+
+    if (!User) {
+      return res.status(500).json({
+        success: false,
+        message: '數據庫連接失敗',
+        code: 'DATABASE_ERROR'
+      });
+    }
 
     // 檢查用戶是否已存在
     const existingUser = await User.findOne({
-      $or: [{ email }, { username }]
+      where: {
+        [User.sequelize.Op.or]: [
+          { email },
+          { username }
+        ]
+      }
     });
 
     if (existingUser) {
@@ -78,8 +92,8 @@ router.post('/register', [
     });
 
     // 生成令牌
-    const token = generateToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+    const token = generateToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
 
     // 更新最後登錄時間
     await user.updateLastLogin();
@@ -91,7 +105,7 @@ router.post('/register', [
       message: '註冊成功',
       data: {
         user: {
-          id: user._id,
+          id: user.id,
           username: user.username,
           email: user.email,
           displayName: user.displayName,
@@ -137,14 +151,25 @@ router.post('/login', [
     }
 
     const { identifier, password } = req.body;
+    const User = getUserModel();
+
+    if (!User) {
+      return res.status(500).json({
+        success: false,
+        message: '數據庫連接失敗',
+        code: 'DATABASE_ERROR'
+      });
+    }
 
     // 查找用戶（支持用戶名或郵箱登錄）
     const user = await User.findOne({
-      $or: [
-        { username: identifier },
-        { email: identifier }
-      ]
-    }).select('+password');
+      where: {
+        [User.sequelize.Op.or]: [
+          { username: identifier },
+          { email: identifier }
+        ]
+      }
+    });
 
     if (!user) {
       return res.status(401).json({
@@ -174,8 +199,8 @@ router.post('/login', [
     }
 
     // 生成令牌
-    const token = generateToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+    const token = generateToken(user.id);
+    const refreshToken = generateRefreshToken(user.id);
 
     // 更新最後登錄時間
     await user.updateLastLogin();
@@ -187,7 +212,7 @@ router.post('/login', [
       message: '登錄成功',
       data: {
         user: {
-          id: user._id,
+          id: user.id,
           username: user.username,
           email: user.email,
           displayName: user.displayName,
@@ -231,12 +256,21 @@ router.post('/refresh', [
     }
 
     const { refreshToken } = req.body;
+    const User = getUserModel();
+
+    if (!User) {
+      return res.status(500).json({
+        success: false,
+        message: '數據庫連接失敗',
+        code: 'DATABASE_ERROR'
+      });
+    }
 
     // 驗證刷新令牌
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     
     // 查找用戶
-    const user = await User.findById(decoded.id);
+    const user = await User.findByPk(decoded.id);
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -246,8 +280,8 @@ router.post('/refresh', [
     }
 
     // 生成新的訪問令牌
-    const newToken = generateToken(user._id);
-    const newRefreshToken = generateRefreshToken(user._id);
+    const newToken = generateToken(user.id);
+    const newRefreshToken = generateRefreshToken(user.id);
 
     logger.info(`令牌刷新: ${user.username}`);
 
@@ -274,13 +308,23 @@ router.post('/refresh', [
 // @access  Private
 router.get('/me', protect, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const User = getUserModel();
+    
+    if (!User) {
+      return res.status(500).json({
+        success: false,
+        message: '數據庫連接失敗',
+        code: 'DATABASE_ERROR'
+      });
+    }
+
+    const user = await User.findByPk(req.user.id);
     
     res.json({
       success: true,
       data: {
         user: {
-          id: user._id,
+          id: user.id,
           username: user.username,
           email: user.email,
           displayName: user.displayName,
@@ -334,34 +378,45 @@ router.put('/profile', protect, [
     }
 
     const { displayName, preferences } = req.body;
+    const User = getUserModel();
+
+    if (!User) {
+      return res.status(500).json({
+        success: false,
+        message: '數據庫連接失敗',
+        code: 'DATABASE_ERROR'
+      });
+    }
+
     const updateData = {};
 
     if (displayName) updateData.displayName = displayName;
     if (preferences) updateData.preferences = { ...req.user.preferences, ...preferences };
 
-    const user = await User.findByIdAndUpdate(
-      req.user.id,
-      updateData,
-      { new: true, runValidators: true }
-    );
+    const user = await User.update(updateData, {
+      where: { id: req.user.id },
+      returning: true
+    });
 
-    logger.info(`用戶資料更新: ${user.username}`);
+    const updatedUser = await User.findByPk(req.user.id);
+
+    logger.info(`用戶資料更新: ${updatedUser.username}`);
 
     res.json({
       success: true,
       message: '資料更新成功',
       data: {
         user: {
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          displayName: user.displayName,
-          avatar: user.avatar,
-          role: user.role,
-          isVerified: user.isVerified,
-          preferences: user.preferences,
-          membership: user.membership,
-          statistics: user.statistics
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          displayName: updatedUser.displayName,
+          avatar: updatedUser.avatar,
+          role: updatedUser.role,
+          isVerified: updatedUser.isVerified,
+          preferences: updatedUser.preferences,
+          membership: updatedUser.membership,
+          statistics: updatedUser.statistics
         }
       }
     });
