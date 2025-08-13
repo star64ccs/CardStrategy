@@ -26,10 +26,6 @@ const connectDB = async () => {
     await sequelize.authenticate();
     logger.info('PostgreSQL連接成功');
 
-    // 同步所有模型到數據庫
-    await sequelize.sync({ alter: true });
-    logger.info('數據庫表同步完成');
-
   } catch (error) {
     logger.error('PostgreSQL連接失敗:', error.message);
     // 不要立即退出，讓服務繼續運行
@@ -37,6 +33,21 @@ const connectDB = async () => {
   }
 };
 
+const syncDatabase = async () => {
+  if (!sequelize) {
+    logger.error('無法同步數據庫：sequelize實例不存在');
+    return;
+  }
+
+  try {
+    // 同步所有模型到數據庫
+    await sequelize.sync({ alter: true });
+    logger.info('數據庫表同步完成');
+  } catch (error) {
+    logger.error('數據庫表同步失敗:', error.message);
+  }
+};
+
 const getSequelize = () => sequelize;
 
-module.exports = { connectDB, getSequelize };
+module.exports = { connectDB, syncDatabase, getSequelize };

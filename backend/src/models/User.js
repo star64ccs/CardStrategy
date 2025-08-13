@@ -150,7 +150,7 @@ const createUserModel = (sequelize) => {
 const getUserModel = () => {
   if (!User) {
     try {
-      const { getSequelize } = require('../config/database');
+      const { getSequelize, syncDatabase } = require('../config/database');
       const sequelize = getSequelize();
       
       if (!sequelize) {
@@ -160,6 +160,14 @@ const getUserModel = () => {
       
       User = createUserModel(sequelize);
       console.log('User model created successfully');
+      
+      // 同步數據庫表
+      syncDatabase().then(() => {
+        console.log('Database tables synchronized after User model creation');
+      }).catch(err => {
+        console.error('Failed to sync database tables:', err);
+      });
+      
     } catch (error) {
       console.error('Error creating User model:', error);
       return null;
