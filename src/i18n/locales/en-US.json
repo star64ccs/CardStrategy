@@ -1,0 +1,117 @@
+{
+  "app": {
+    "name": "CardStrategy",
+    "slogan": "Smart Card Selection, Strategic Victory"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "refresh": "Refresh",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "retry": "Retry",
+    "ok": "OK"
+  },
+  "navigation": {
+    "home": "Home",
+    "cards": "Cards",
+    "collection": "Collection",
+    "market": "Market",
+    "investments": "Investments",
+    "ai": "AI Assistant",
+    "settings": "Settings",
+    "profile": "Profile"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "forgotPassword": "Forgot Password?",
+    "loginSuccess": "Login successful",
+    "registerSuccess": "Registration successful",
+    "logoutSuccess": "Logout successful"
+  },
+  "cards": {
+    "title": "Cards",
+    "search": "Search cards...",
+    "filter": "Filter",
+    "sort": "Sort",
+    "recognize": "Recognize Card",
+    "details": "Card Details",
+    "price": "Price",
+    "condition": "Condition",
+    "authenticity": "Authenticity",
+    "marketData": "Market Data"
+  },
+  "collection": {
+    "title": "My Collection",
+    "addCard": "Add Card",
+    "removeCard": "Remove Card",
+    "totalCards": "Total Cards",
+    "totalValue": "Total Value",
+    "createCollection": "Create Collection",
+    "editCollection": "Edit Collection",
+    "deleteCollection": "Delete Collection"
+  },
+  "market": {
+    "title": "Market",
+    "trends": "Market Trends",
+    "analysis": "Market Analysis",
+    "priceHistory": "Price History",
+    "volume": "Volume",
+    "change": "Change",
+    "high": "High",
+    "low": "Low"
+  },
+  "investments": {
+    "title": "Investments",
+    "portfolio": "Portfolio",
+    "addInvestment": "Add Investment",
+    "editInvestment": "Edit Investment",
+    "removeInvestment": "Remove Investment",
+    "totalValue": "Total Value",
+    "profitLoss": "Profit/Loss",
+    "return": "Return"
+  },
+  "ai": {
+    "title": "AI Assistant",
+    "chat": "Chat",
+    "analysis": "Analysis",
+    "prediction": "Prediction",
+    "advice": "Investment Advice",
+    "askQuestion": "Ask a question...",
+    "send": "Send"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "security": "Security",
+    "about": "About",
+    "version": "Version"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "priceAlert": "Price Alert",
+    "marketUpdate": "Market Update",
+    "investmentAdvice": "Investment Advice",
+    "systemMessage": "System Message"
+  }
+}
