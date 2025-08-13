@@ -149,10 +149,20 @@ const createUserModel = (sequelize) => {
 
 const getUserModel = () => {
   if (!User) {
-    const { getSequelize } = require('../config/database');
-    const sequelize = getSequelize();
-    if (sequelize) {
+    try {
+      const { getSequelize } = require('../config/database');
+      const sequelize = getSequelize();
+      
+      if (!sequelize) {
+        console.error('Sequelize instance is null - database connection may not be established');
+        return null;
+      }
+      
       User = createUserModel(sequelize);
+      console.log('User model created successfully');
+    } catch (error) {
+      console.error('Error creating User model:', error);
+      return null;
     }
   }
   return User;
