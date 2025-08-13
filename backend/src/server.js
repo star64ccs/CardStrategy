@@ -8,8 +8,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
-// 暫時註釋掉數據庫連接
-// const { connectDB } = require('./config/database');
+const { connectDB } = require('./config/database');
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
@@ -24,11 +23,12 @@ const settingsRoutes = require('./routes/settings');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 暫時註釋掉數據庫連接
-// connectDB().catch(err => {
-//   logger.error('數據庫連接失敗:', err);
-//   process.exit(1);
-// });
+// 連接數據庫
+connectDB().catch(err => {
+  logger.error('數據庫連接失敗:', err);
+  // 不要立即退出，讓服務繼續運行
+  logger.warn('服務將在沒有數據庫連接的情況下運行');
+});
 
 // 安全中間件
 app.use(helmet({
