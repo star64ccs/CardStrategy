@@ -14,13 +14,7 @@ const connectDB = async () => {
 
     sequelize = new Sequelize(databaseUrl, {
       dialect: 'postgres',
-      logging: false, // 關閉SQL日誌
-      pool: {
-        max: 5,
-        min: 0,
-        acquire: 30000,
-        idle: 10000
-      },
+      logging: false,
       dialectOptions: {
         ssl: {
           require: true,
@@ -31,15 +25,11 @@ const connectDB = async () => {
 
     await sequelize.authenticate();
     logger.info('PostgreSQL連接成功');
-    
-    // 監聽連接事件
-    sequelize.addHook('afterConnect', () => {
-      logger.info('PostgreSQL連接建立');
-    });
 
   } catch (error) {
     logger.error('PostgreSQL連接失敗:', error.message);
-    process.exit(1);
+    // 不要立即退出，讓服務繼續運行
+    logger.warn('服務將在沒有數據庫連接的情況下運行');
   }
 };
 

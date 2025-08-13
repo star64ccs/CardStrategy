@@ -24,7 +24,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 連接數據庫
-connectDB();
+connectDB().catch(err => {
+  logger.error('數據庫連接失敗:', err);
+  process.exit(1);
+});
 
 // 安全中間件
 app.use(helmet({
