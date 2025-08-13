@@ -1,6 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
+const { Op } = require('sequelize');
 const getUserModel = require('../models/User');
 const { protect } = require('../middleware/auth');
 const logger = require('../utils/logger');
@@ -68,7 +69,7 @@ router.post('/register', [
     // 檢查用戶是否已存在
     const existingUser = await User.findOne({
       where: {
-        [User.sequelize.Op.or]: [
+        [Op.or]: [
           { email },
           { username }
         ]
@@ -164,7 +165,7 @@ router.post('/login', [
     // 查找用戶（支持用戶名或郵箱登錄）
     const user = await User.findOne({
       where: {
-        [User.sequelize.Op.or]: [
+        [Op.or]: [
           { username: identifier },
           { email: identifier }
         ]
