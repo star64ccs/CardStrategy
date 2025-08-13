@@ -69,5 +69,5 @@ services:
 databases:
   - name: cardstrategy-mongodb
     databaseName: cardstrategy
-    plan: starter
+    plan: free
     ipAllowList: []
