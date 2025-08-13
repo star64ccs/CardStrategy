@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const getUserModel = require('../models/User');
 const logger = require('../utils/logger');
 
 const protect = async (req, res, next) => {
@@ -14,9 +14,12 @@ const protect = async (req, res, next) => {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
       // 獲取用戶信息（Sequelize方式）
-      req.user = await User.findByPk(decoded.id, {
-        attributes: { exclude: ['password'] }
-      });
+      const User = getUserModel();
+      if (User) {
+        req.user = await User.findByPk(decoded.id, {
+          attributes: { exclude: ['password'] }
+        });
+      }
 
       if (!req.user) {
         return res.status(401).json({
@@ -54,9 +57,12 @@ const optionalAuth = async (req, res, next) => {
     try {
       token = req.headers.authorization.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      req.user = await User.findByPk(decoded.id, {
-        attributes: { exclude: ['password'] }
-      });
+      const User = getUserModel();
+      if (User) {
+        req.user = await User.findByPk(decoded.id, {
+          attributes: { exclude: ['password'] }
+        });
+      }
     } catch (error) {
       logger.warn('可選認證失敗:', error);
       // 不拋出錯誤，繼續執行
