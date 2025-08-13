@@ -1,41 +1,48 @@
-const mongoose = require('mongoose');
+const { Sequelize } = require('sequelize');
 const logger = require('../utils/logger');
+
+let sequelize;
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/cardstrategy';
+    const databaseUrl = process.env.DATABASE_URL;
     
-    const options = {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
-      bufferCommands: false,
-      bufferMaxEntries: 0
-    };
+    if (!databaseUrl) {
+      logger.error('DATABASE_URL environment variable is not set');
+      process.exit(1);
+    }
 
-    await mongoose.connect(mongoURI, options);
-    
-    logger.info('MongoDB連接成功');
+    sequelize = new Sequelize(databaseUrl, {
+      dialect: 'postgres',
+      logging: false, // 關閉SQL日誌
+      pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+      },
+      dialectOptions: {
+        ssl: {
+          require: true,
+          rejectUnauthorized: false
+        }
+      }
+    });
+
+    await sequelize.authenticate();
+    logger.info('PostgreSQL連接成功');
     
     // 監聽連接事件
-    mongoose.connection.on('error', (err) => {
-      logger.error('MongoDB連接錯誤:', err);
-    });
-
-    mongoose.connection.on('disconnected', () => {
-      logger.warn('MongoDB連接斷開');
-    });
-
-    mongoose.connection.on('reconnected', () => {
-      logger.info('MongoDB重新連接成功');
+    sequelize.addHook('afterConnect', () => {
+      logger.info('PostgreSQL連接建立');
     });
 
   } catch (error) {
-    logger.error('MongoDB連接失敗:', error);
+    logger.error('PostgreSQL連接失敗:', error.message);
     process.exit(1);
   }
 };
 
-module.exports = connectDB;
+const getSequelize = () => sequelize;
+
+module.exports = { connectDB, getSequelize };

@@ -8,7 +8,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 
-const connectDB = require('./config/database');
+const { connectDB } = require('./config/database');
 const logger = require('./utils/logger');
 const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth');
