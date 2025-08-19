@@ -3,10 +3,89 @@ import { environment } from './environment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '../utils/logger';
 
+// 統一的 API 基礎 URL 配置
+const getApiBaseUrl = () => {
+  // 優先使用環境變數
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  // 根據環境選擇
+  const env = process.env.NODE_ENV || 'development';
+  
+  switch (env) {
+    case 'production':
+    case 'staging':
+      return 'https://cardstrategy-api.onrender.com/api';
+    case 'development':
+    default:
+      return 'http://localhost:3000/api';
+  }
+};
+
+// 創建 axios 實例
+const api: AxiosInstance = axios.create({
+  baseURL: getApiBaseUrl(),
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+  }
+});
+
+// 請求攔截器
+api.interceptors.request.use(
+  async (config) => {
+    // 添加認證 token
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch (error) {
+      logger.warn('無法獲取認證 token:', error);
+    }
+    
+    logger.info(`🌐 API 請求: ${config.method?.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => {
+    logger.error('API 請求錯誤:', error);
+    return Promise.reject(error);
+  }
+);
+
+// 響應攔截器
+api.interceptors.response.use(
+  (response: AxiosResponse) => {
+    logger.info(`✅ API 響應: ${response.status} ${response.config.url}`);
+    return response;
+  },
+  async (error) => {
+    logger.error('API 響應錯誤:', {
+      status: error.response?.status,
+      url: error.config?.url,
+      message: error.message
+    });
+    
+    // 處理 401 未授權錯誤
+    if (error.response?.status === 401) {
+      try {
+        await AsyncStorage.removeItem('authToken');
+        // 可以觸發重新登錄邏輯
+      } catch (storageError) {
+        logger.error('清除認證 token 失敗:', storageError);
+      }
+    }
+    
+    return Promise.reject(error);
+  }
+);
+
 // API 端點配置
 export const API_ENDPOINTS = {
   // 基礎端點
-  BASE_URL: process.env.REACT_APP_API_URL || 'https://cardstrategy-api.onrender.com',
+  BASE_URL: getApiBaseUrl(),
 
   // 認證相關
   AUTH: {
@@ -59,10 +138,10 @@ export const API_ENDPOINTS = {
 
   // 市場相關
   MARKET: {
-    DATA: '/market/data',
-    TRENDS: '/market/trends',
-    ANALYSIS: '/market/analysis',
-    PREDICTIONS: '/market/predictions'
+    DATA: '/market-data',
+    TRENDS: '/market-data/trends',
+    ANALYSIS: '/market-data/analysis',
+    PREDICTIONS: '/market-data/predictions'
   },
 
   // 投資相關
@@ -201,9 +280,11 @@ export const API_ENDPOINTS = {
 
   // 模擬鑑定相關
   SIMULATED_GRADING: {
-    GET: '/api/simulated-grading',
-    USER_REPORTS: '/api/simulated-grading/user',
-    SEARCH: '/api/simulated-grading/search',
-    SHARE: '/api/simulated-grading/share'
+    GET: '/grading',
+    USER_REPORTS: '/grading/user',
+    SEARCH: '/grading/search',
+    SHARE: '/grading/share'
   }
 };
+
+export { api };

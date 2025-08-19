@@ -1,5 +1,5 @@
 // API 相關常數
-export const API_BASE_URL = (process.env as any)['API_BASE_URL'] || 'https://api.cardstrategy.com';
+export const API_BASE_URL = (process.env as any)['API_BASE_URL'] || 'https://cardstrategy-api.onrender.com/api';
 export const API_TIMEOUT = 30000; // 30 秒
 export const API_RETRY_ATTEMPTS = 3;
 export const API_RETRY_DELAY = 1000; // 1 秒

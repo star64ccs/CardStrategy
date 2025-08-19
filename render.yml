@@ -1,0 +1,94 @@
+services:
+  # 後端 API 服務
+  - type: web
+    name: cardstrategy-api
+    env: node
+    plan: free
+    buildCommand: |
+      cd backend
+      npm install
+      npm run build
+    startCommand: |
+      cd backend
+      npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DB_HOST
+        fromDatabase:
+          name: cardstrategy-postgres
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: cardstrategy-postgres
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: cardstrategy-postgres
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: cardstrategy-postgres
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: cardstrategy-postgres
+          property: password
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: cardstrategy-redis
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: cardstrategy-redis
+          property: port
+      - key: REDIS_PASSWORD
+        fromService:
+          type: redis
+          name: cardstrategy-redis
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRE
+        value: 24h
+      - key: CORS_ORIGIN
+        value: https://cardstrategy.com
+      - key: UPLOAD_PATH
+        value: /app/uploads
+      - key: LOG_PATH
+        value: /app/logs
+      - key: MODEL_PATH
+        value: /app/models
+      - key: EXPORT_PATH
+        value: /app/exports
+    healthCheckPath: /api/health
+    autoDeploy: true
+
+  # 前端靜態網站
+  - type: web
+    name: cardstrategy-frontend
+    env: static
+    plan: free
+    buildCommand: |
+      npm install
+      npm run build:web
+    staticPublishPath: ./dist
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://cardstrategy-api.onrender.com/api
+    autoDeploy: true
+
+databases:
+  # PostgreSQL 數據庫
+  - name: cardstrategy-postgres
+    databaseName: cardstrategy
+    user: cardstrategy_user
+    plan: free
+
+  # Redis 緩存
+  - name: cardstrategy-redis
+    plan: free

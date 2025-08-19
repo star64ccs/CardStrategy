@@ -28,9 +28,31 @@ const services = {
   }
 };
 
+// 檢查是否跳過本地服務檢查
+function shouldSkipLocalServices() {
+  return process.env.SKIP_LOCAL_SERVICES === 'true' || process.env.NODE_ENV === 'production';
+}
+
+// 檢查是否有本地環境配置
+function hasLocalConfig() {
+  return !!(process.env.DB_HOST || process.env.REDIS_HOST);
+}
+
 // 檢查 PostgreSQL 連接
 async function checkPostgreSQL() {
   console.log('🔍 檢查 PostgreSQL 連接...');
+  
+  // 如果設置了跳過本地服務，則跳過檢查
+  if (shouldSkipLocalServices()) {
+    console.log('⚠️  跳過 PostgreSQL 檢查 - 設置了 SKIP_LOCAL_SERVICES');
+    return { status: 'skipped', message: '設置了 SKIP_LOCAL_SERVICES' };
+  }
+  
+  // 如果沒有配置，跳過檢查
+  if (!services.postgres.host || !services.postgres.user || !services.postgres.password) {
+    console.log('⚠️  跳過 PostgreSQL 檢查 - 未配置本地環境變數');
+    return { status: 'skipped', message: '未配置本地環境變數' };
+  }
   
   const client = new Client(services.postgres);
   
@@ -74,7 +96,25 @@ async function checkPostgreSQL() {
 async function checkRedis() {
   console.log('🔍 檢查 Redis 連接...');
   
-  const redis = new Redis(services.redis);
+  // 如果設置了跳過本地服務，則跳過檢查
+  if (shouldSkipLocalServices()) {
+    console.log('⚠️  跳過 Redis 檢查 - 設置了 SKIP_LOCAL_SERVICES');
+    return { status: 'skipped', message: '設置了 SKIP_LOCAL_SERVICES' };
+  }
+  
+  // 如果沒有配置，跳過檢查
+  if (!services.redis.host) {
+    console.log('⚠️  跳過 Redis 檢查 - 未配置本地環境變數');
+    return { status: 'skipped', message: '未配置本地環境變數' };
+  }
+  
+  const redis = new Redis({
+    ...services.redis,
+    maxRetriesPerRequest: 1, // 減少重試次數
+    retryDelayOnFailover: 100,
+    enableReadyCheck: false,
+    lazyConnect: true
+  });
   
   try {
     await redis.ping();

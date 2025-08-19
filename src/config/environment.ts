@@ -13,7 +13,7 @@ export interface Environment {
 
 // 開發環境配置
 const development: Environment = {
-  apiBaseUrl: 'http://localhost:3000/api',
+  apiBaseUrl: 'https://cardstrategy-api.onrender.com/api', // 使用 Render API 進行開發
   apiTimeout: 10000,
   enableLogging: true,
   enableAnalytics: false,
