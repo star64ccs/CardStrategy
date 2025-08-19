@@ -17,6 +17,15 @@ import { LoginScreen } from '@/screens/LoginScreen';
 import { RegisterScreen } from '@/screens/RegisterScreen';
 import { theme } from '@/config/theme';
 import { RootState } from '@/store';
+import { CardRecognitionHistoryScreen } from '@/screens/CardRecognitionHistoryScreen';
+import { NotificationsScreen } from '@/screens/NotificationsScreen';
+import { NotificationBadge } from '@/components/common/NotificationBadge';
+import { PerformanceMonitorScreen } from '@/screens/PerformanceMonitorScreen';
+import DataCollectionStatsScreen from '@/screens/DataCollectionStatsScreen';
+import AnnotationAssignmentScreen from '@/screens/AnnotationAssignmentScreen';
+import DataQualityDashboardScreen from '@/screens/DataQualityDashboardScreen';
+import FeedbackManagementScreen from '@/screens/FeedbackManagementScreen';
+import DataQualityAssessmentScreen from '@/screens/DataQualityAssessmentScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -42,7 +51,19 @@ const MainTabs = () => {
             iconName = 'help-outline';
           }
 
-          return <Ionicons name={iconName} size={size} color={color} />;
+          const icon = <Ionicons name={iconName} size={size} color={color} />;
+
+          // 為個人頁面添加通知徽章
+          if (route.name === 'Profile') {
+            return (
+              <View style={{ position: 'relative' }}>
+                {icon}
+                <NotificationBadge size="small" />
+              </View>
+            );
+          }
+
+          return icon;
         },
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.textSecondary,
@@ -139,6 +160,11 @@ const AppStack = () => {
         options={{ title: '掃描卡牌' }}
       />
       <Stack.Screen
+        name="CardRecognitionHistory"
+        component={CardRecognitionHistoryScreen}
+        options={{ title: '識別歷史' }}
+      />
+      <Stack.Screen
         name="AIChat"
         component={AIChatScreen}
         options={{ title: 'AI 助手' }}
@@ -147,6 +173,41 @@ const AppStack = () => {
         name="MarketAnalysis"
         component={MarketAnalysisScreen}
         options={{ title: '市場分析' }}
+      />
+      <Stack.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{ title: '通知' }}
+      />
+      <Stack.Screen
+        name="PerformanceMonitor"
+        component={PerformanceMonitorScreen}
+        options={{ title: '性能監控' }}
+      />
+      <Stack.Screen
+        name="DataCollectionStats"
+        component={DataCollectionStatsScreen}
+        options={{ title: '數據收集統計' }}
+      />
+      <Stack.Screen
+        name="AnnotationAssignment"
+        component={AnnotationAssignmentScreen}
+        options={{ title: '智能標註分配' }}
+      />
+      <Stack.Screen
+        name="DataQualityDashboard"
+        component={DataQualityDashboardScreen}
+        options={{ title: '數據質量監控儀表板' }}
+      />
+      <Stack.Screen
+        name="FeedbackManagement"
+        component={FeedbackManagementScreen}
+        options={{ title: '反饋管理' }}
+      />
+      <Stack.Screen
+        name="DataQualityAssessment"
+        component={DataQualityAssessmentScreen}
+        options={{ title: '定期數據質量評估' }}
       />
     </Stack.Navigator>
   );

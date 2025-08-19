@@ -1,0 +1,235 @@
+# ==================== 生產環境 Prometheus 配置 ====================
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    environment: production
+    application: cardstrategy
+
+rule_files:
+  - "rules/*.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+scrape_configs:
+  # Prometheus 自身監控
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # 後端 API 服務監控
+  - job_name: 'cardstrategy-backend'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    honor_labels: true
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        regex: '([^:]+)(?::\d+)?'
+        replacement: '${1}'
+
+  # Nginx 監控
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # PostgreSQL 監控
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Redis 監控
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # Node Exporter (系統監控)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+    scrape_interval: 30s
+    metrics_path: /metrics
+
+  # 應用程序健康檢查
+  - job_name: 'app-health'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /health
+    scrape_interval: 30s
+    honor_labels: true
+
+  # 自定義業務指標
+  - job_name: 'business-metrics'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/business
+    scrape_interval: 60s
+    honor_labels: true
+
+  # 性能指標
+  - job_name: 'performance-metrics'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/performance
+    scrape_interval: 30s
+    honor_labels: true
+
+  # 錯誤率監控
+  - job_name: 'error-metrics'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/errors
+    scrape_interval: 15s
+    honor_labels: true
+
+  # 用戶活動監控
+  - job_name: 'user-activity'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/users
+    scrape_interval: 60s
+    honor_labels: true
+
+  # 數據庫性能監控
+  - job_name: 'database-performance'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/database
+    scrape_interval: 30s
+    honor_labels: true
+
+  # 緩存性能監控
+  - job_name: 'cache-performance'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/cache
+    scrape_interval: 30s
+    honor_labels: true
+
+  # API 響應時間監控
+  - job_name: 'api-response-time'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/api
+    scrape_interval: 15s
+    honor_labels: true
+
+  # 文件上傳監控
+  - job_name: 'file-upload'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/upload
+    scrape_interval: 60s
+    honor_labels: true
+
+  # 支付處理監控
+  - job_name: 'payment-processing'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/payment
+    scrape_interval: 30s
+    honor_labels: true
+
+  # AI 服務監控
+  - job_name: 'ai-services'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/ai
+    scrape_interval: 60s
+    honor_labels: true
+
+  # 通知服務監控
+  - job_name: 'notification-services'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/notifications
+    scrape_interval: 30s
+    honor_labels: true
+
+  # 備份服務監控
+  - job_name: 'backup-services'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/backup
+    scrape_interval: 300s
+    honor_labels: true
+
+  # 安全監控
+  - job_name: 'security-metrics'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/security
+    scrape_interval: 30s
+    honor_labels: true
+
+  # 資源使用監控
+  - job_name: 'resource-usage'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/resources
+    scrape_interval: 30s
+    honor_labels: true
+
+  # 業務邏輯監控
+  - job_name: 'business-logic'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/business-logic
+    scrape_interval: 60s
+    honor_labels: true
+
+  # 第三方服務監控
+  - job_name: 'third-party-services'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/third-party
+    scrape_interval: 60s
+    honor_labels: true
+
+  # 數據同步監控
+  - job_name: 'data-sync'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/sync
+    scrape_interval: 30s
+    honor_labels: true
+
+  # 用戶體驗監控
+  - job_name: 'user-experience'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/ux
+    scrape_interval: 60s
+    honor_labels: true
+
+  # 合規性監控
+  - job_name: 'compliance'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/compliance
+    scrape_interval: 300s
+    honor_labels: true
+
+  # 成本監控
+  - job_name: 'cost-metrics'
+    static_configs:
+      - targets: ['backend:3000']
+    metrics_path: /metrics/cost
+    scrape_interval: 3600s
+    honor_labels: true

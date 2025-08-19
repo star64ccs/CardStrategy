@@ -1,343 +1,486 @@
 const express = require('express');
 const { body, query, validationResult } = require('express-validator');
-const { protect, optionalAuth } = require('../middleware/auth');
+const { Op } = require('sequelize');
+const { protect, authorize } = require('../middleware/auth');
+const getCardModel = require('../models/Card');
 const logger = require('../utils/logger');
+const getUserModel = require('../models/User');
+const databaseOptimizer = require('../services/databaseOptimizer');
+const {
+  createPostHandler,
+  createGetHandler,
+  createPutHandler,
+  createDeleteHandler,
+  createPaginatedHandler,
+  createSearchHandler,
+  createBatchHandler,
+  createCustomError
+} = require('../middleware/routeHandler');
 
 const router = express.Router();
 
-// 模擬卡牌數據（實際項目中應該使用數據庫模型）
-const mockCards = [
-  {
-    id: '1',
-    name: '青眼白龍',
-    nameEn: 'Blue-Eyes White Dragon',
-    set: 'LEGEND OF BLUE EYES WHITE DRAGON',
-    rarity: 'Ultra Rare',
-    type: 'Monster',
-    attribute: 'LIGHT',
-    level: 8,
-    attack: 3000,
-    defense: 2500,
-    description: '這隻傳說中的龍擁有強大的攻擊力。',
-    imageUrl: 'https://example.com/blue-eyes.jpg',
-    price: 1500,
-    marketPrice: 1600,
-    priceHistory: [
-      { date: '2024-01-01', price: 1400 },
-      { date: '2024-01-15', price: 1500 },
-      { date: '2024-02-01', price: 1600 }
-    ],
-    condition: 'Near Mint',
-    language: 'Chinese',
-    isFoil: true,
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-02-01T00:00:00Z'
-  },
-  {
-    id: '2',
-    name: '黑魔導',
-    nameEn: 'Dark Magician',
-    set: 'LEGEND OF BLUE EYES WHITE DRAGON',
-    rarity: 'Ultra Rare',
-    type: 'Monster',
-    attribute: 'DARK',
-    level: 7,
-    attack: 2500,
-    defense: 2100,
-    description: '最強的魔法師。',
-    imageUrl: 'https://example.com/dark-magician.jpg',
-    price: 800,
-    marketPrice: 850,
-    priceHistory: [
-      { date: '2024-01-01', price: 750 },
-      { date: '2024-01-15', price: 800 },
-      { date: '2024-02-01', price: 850 }
-    ],
-    condition: 'Near Mint',
-    language: 'Chinese',
-    isFoil: true,
-    createdAt: '2024-01-01T00:00:00Z',
-    updatedAt: '2024-02-01T00:00:00Z'
-  }
+// 驗證中間件
+const validateCardCreation = [
+  body('name')
+    .isLength({ min: 1, max: 100 })
+    .withMessage('卡片名稱必須在1-100個字符之間'),
+  body('setName')
+    .isLength({ min: 1, max: 100 })
+    .withMessage('系列名稱必須在1-100個字符之間'),
+  body('cardNumber')
+    .isLength({ min: 1, max: 20 })
+    .withMessage('卡片編號必須在1-20個字符之間'),
+  body('rarity')
+    .isIn(['common', 'uncommon', 'rare', 'mythic', 'special'])
+    .withMessage('無效的稀有度'),
+  body('cardType')
+    .isLength({ min: 1, max: 50 })
+    .withMessage('卡片類型必須在1-50個字符之間'),
+  body('currentPrice')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('當前價格必須為正數'),
+  body('marketPrice')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('市場價格必須為正數'),
+  body('imageUrl')
+    .optional()
+    .isURL()
+    .withMessage('請提供有效的圖片URL'),
+  body('description')
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage('描述不能超過1000個字符')
 ];
 
-// @route   GET /api/cards
-// @desc    獲取卡牌列表
-// @access  Public
-router.get('/', [
+const validateCardUpdate = [
+  body('name')
+    .optional()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('卡片名稱必須在1-100個字符之間'),
+  body('setName')
+    .optional()
+    .isLength({ min: 1, max: 100 })
+    .withMessage('系列名稱必須在1-100個字符之間'),
+  body('cardNumber')
+    .optional()
+    .isLength({ min: 1, max: 20 })
+    .withMessage('卡片編號必須在1-20個字符之間'),
+  body('rarity')
+    .optional()
+    .isIn(['common', 'uncommon', 'rare', 'mythic', 'special'])
+    .withMessage('無效的稀有度'),
+  body('cardType')
+    .optional()
+    .isLength({ min: 1, max: 50 })
+    .withMessage('卡片類型必須在1-50個字符之間'),
+  body('currentPrice')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('當前價格必須為正數'),
+  body('marketPrice')
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage('市場價格必須為正數'),
+  body('imageUrl')
+    .optional()
+    .isURL()
+    .withMessage('請提供有效的圖片URL'),
+  body('description')
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage('描述不能超過1000個字符')
+];
+
+const validateCardFilters = [
   query('search').optional().isString(),
-  query('set').optional().isString(),
-  query('rarity').optional().isString(),
-  query('type').optional().isString(),
-  query('minPrice').optional().isNumeric(),
-  query('maxPrice').optional().isNumeric(),
-  query('sortBy').optional().isIn(['name', 'price', 'rarity', 'set', 'dateAdded']),
+  query('setName').optional().isString(),
+  query('rarity').optional().isIn(['common', 'uncommon', 'rare', 'mythic', 'special']),
+  query('cardType').optional().isString(),
+  query('minPrice').optional().isFloat({ min: 0 }),
+  query('maxPrice').optional().isFloat({ min: 0 }),
+  query('sortBy').optional().isIn(['name', 'currentPrice', 'marketPrice', 'rarity', 'setName', 'createdAt']),
   query('sortOrder').optional().isIn(['asc', 'desc']),
   query('page').optional().isInt({ min: 1 }),
-  query('limit').optional().isInt({ min: 1, max: 100 })
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: '查詢參數驗證失敗',
-        code: 'VALIDATION_ERROR',
-        errors: errors.array()
-      });
+  query('limit').optional().isInt({ min: 1, max: 100 }),
+  query('isActive').optional().isBoolean()
+];
+
+// @route   POST /api/cards
+// @desc    創建新卡片
+// @access  Private (Admin only)
+router.post('/', createPostHandler(
+  async (req, res) => {
+    const Card = getCardModel();
+    if (!Card) {
+      throw createCustomError('數據庫連接失敗', 500, 'DATABASE_ERROR');
+    }
+
+    const {
+      name,
+      setName,
+      cardNumber,
+      rarity,
+      cardType,
+      currentPrice = 0,
+      marketPrice = 0,
+      imageUrl,
+      description,
+      metadata = {}
+    } = req.body;
+
+    // 檢查卡片是否已存在
+    const existingCard = await Card.findOne({
+      where: {
+        setName,
+        cardNumber
+      }
+    });
+
+    if (existingCard) {
+      throw createCustomError('該卡片已存在', 400, 'CARD_EXISTS');
+    }
+
+    // 創建新卡片
+    const card = await Card.create({
+      name,
+      setName,
+      cardNumber,
+      rarity,
+      cardType,
+      currentPrice,
+      marketPrice,
+      imageUrl,
+      description,
+      metadata,
+      createdBy: req.user.id,
+      isActive: true
+    });
+
+    logger.info(`卡片創建成功: ${req.user.username} 創建了卡片 ${card.name}`);
+
+    return {
+      success: true,
+      message: '卡片創建成功',
+      data: { card }
+    };
+  },
+  {
+    auth: true,
+    validation: validateCardCreation,
+    permissions: ['admin']
+  }
+));
+
+// @route   GET /api/cards
+// @desc    獲取卡片列表（支持搜索、過濾、排序、分頁）
+// @access  Public
+router.get('/', createPaginatedHandler(
+  async (filters, pagination, req, res) => {
+    const Card = getCardModel();
+    if (!Card) {
+      throw createCustomError('數據庫連接失敗', 500, 'DATABASE_ERROR');
     }
 
     const {
       search,
-      set,
+      setName,
       rarity,
-      type,
+      cardType,
       minPrice,
       maxPrice,
-      sortBy = 'name',
-      sortOrder = 'asc',
-      page = 1,
-      limit = 20
-    } = req.query;
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+      isActive = true
+    } = filters;
 
-    // 過濾卡牌
-    let filteredCards = [...mockCards];
+    const { page = 1, limit = 20 } = pagination;
+    const offset = (page - 1) * limit;
+
+    // 構建查詢條件
+    const whereClause = {
+      isActive: isActive !== undefined ? isActive : true
+    };
 
     if (search) {
-      filteredCards = filteredCards.filter(card =>
-        card.name.toLowerCase().includes(search.toLowerCase()) ||
-        card.nameEn.toLowerCase().includes(search.toLowerCase()) ||
-        card.description.toLowerCase().includes(search.toLowerCase())
-      );
+      whereClause[Op.or] = [
+        { name: { [Op.iLike]: `%${search}%` } },
+        { setName: { [Op.iLike]: `%${search}%` } },
+        { cardNumber: { [Op.iLike]: `%${search}%` } }
+      ];
     }
 
-    if (set) {
-      filteredCards = filteredCards.filter(card =>
-        card.set.toLowerCase().includes(set.toLowerCase())
-      );
+    if (setName) {
+      whereClause.setName = { [Op.iLike]: `%${setName}%` };
     }
 
     if (rarity) {
-      filteredCards = filteredCards.filter(card =>
-        card.rarity.toLowerCase() === rarity.toLowerCase()
-      );
+      whereClause.rarity = rarity;
     }
 
-    if (type) {
-      filteredCards = filteredCards.filter(card =>
-        card.type.toLowerCase() === type.toLowerCase()
-      );
+    if (cardType) {
+      whereClause.cardType = { [Op.iLike]: `%${cardType}%` };
     }
 
-    if (minPrice) {
-      filteredCards = filteredCards.filter(card => card.price >= parseFloat(minPrice));
-    }
-
-    if (maxPrice) {
-      filteredCards = filteredCards.filter(card => card.price <= parseFloat(maxPrice));
-    }
-
-    // 排序
-    filteredCards.sort((a, b) => {
-      let aValue, bValue;
-      
-      switch (sortBy) {
-        case 'price':
-          aValue = a.price;
-          bValue = b.price;
-          break;
-        case 'rarity':
-          aValue = a.rarity;
-          bValue = b.rarity;
-          break;
-        case 'set':
-          aValue = a.set;
-          bValue = b.set;
-          break;
-        case 'dateAdded':
-          aValue = new Date(a.createdAt);
-          bValue = new Date(b.createdAt);
-          break;
-        default:
-          aValue = a.name;
-          bValue = b.name;
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      whereClause.currentPrice = {};
+      if (minPrice !== undefined) {
+        whereClause.currentPrice[Op.gte] = minPrice;
       }
-
-      if (sortOrder === 'desc') {
-        [aValue, bValue] = [bValue, aValue];
+      if (maxPrice !== undefined) {
+        whereClause.currentPrice[Op.lte] = maxPrice;
       }
+    }
 
-      if (typeof aValue === 'string') {
-        return aValue.localeCompare(bValue);
-      }
-      return aValue - bValue;
+    // 使用 databaseOptimizer 優化查詢
+    const optimizedQuery = databaseOptimizer.optimizeQuery({
+      where: whereClause,
+      order: [[sortBy, sortOrder.toUpperCase()]],
+      limit: parseInt(limit),
+      offset: parseInt(offset)
     });
 
-    // 分頁
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + parseInt(limit);
-    const paginatedCards = filteredCards.slice(startIndex, endIndex);
+    // 執行查詢
+    const { count, rows: cards } = await Card.findAndCountAll(optimizedQuery);
 
-    // 計算統計信息
-    const totalCards = filteredCards.length;
-    const totalPages = Math.ceil(totalCards / limit);
-    const averagePrice = totalCards > 0 
-      ? filteredCards.reduce((sum, card) => sum + card.price, 0) / totalCards 
-      : 0;
+    const totalPages = Math.ceil(count / limit);
 
-    logger.info(`卡牌查詢: ${totalCards} 張卡牌，第 ${page} 頁`);
-
-    res.json({
+    return {
       success: true,
+      message: '卡片列表獲取成功',
       data: {
-        cards: paginatedCards,
+        cards,
         pagination: {
-          currentPage: parseInt(page),
-          totalPages,
-          totalCards,
-          hasNextPage: page < totalPages,
-          hasPrevPage: page > 1
-        },
-        statistics: {
-          totalCards,
-          averagePrice: Math.round(averagePrice * 100) / 100,
-          priceRange: {
-            min: totalCards > 0 ? Math.min(...filteredCards.map(c => c.price)) : 0,
-            max: totalCards > 0 ? Math.max(...filteredCards.map(c => c.price)) : 0
-          }
+          page: parseInt(page),
+          limit: parseInt(limit),
+          total: count,
+          totalPages
         }
       }
-    });
-  } catch (error) {
-    logger.error('獲取卡牌列表錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '獲取卡牌列表失敗',
-      code: 'GET_CARDS_FAILED'
-    });
-  }
-});
+    };
+  },
+  { validation: validateCardFilters }
+));
 
 // @route   GET /api/cards/:id
-// @desc    獲取單張卡牌詳情
+// @desc    獲取單張卡片詳情
 // @access  Public
-router.get('/:id', async (req, res) => {
-  try {
+router.get('/:id', createGetHandler(
+  async (req, res) => {
+    const Card = getCardModel();
+    if (!Card) {
+      throw createCustomError('數據庫連接失敗', 500, 'DATABASE_ERROR');
+    }
+
     const { id } = req.params;
-    
-    const card = mockCards.find(c => c.id === id);
-    
+
+    const card = await Card.findByPk(id);
     if (!card) {
-      return res.status(404).json({
-        success: false,
-        message: '卡牌不存在',
-        code: 'CARD_NOT_FOUND'
-      });
+      throw createCustomError('卡片不存在', 404, 'CARD_NOT_FOUND');
     }
 
-    logger.info(`獲取卡牌詳情: ${card.name}`);
-
-    res.json({
+    return {
       success: true,
+      message: '卡片詳情獲取成功',
       data: { card }
-    });
-  } catch (error) {
-    logger.error('獲取卡牌詳情錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '獲取卡牌詳情失敗',
-      code: 'GET_CARD_FAILED'
-    });
+    };
   }
-});
+));
 
-// @route   POST /api/cards/recognize
-// @desc    識別卡牌（AI功能）
-// @access  Private
-router.post('/recognize', protect, [
-  body('imageUrl').isURL().withMessage('請提供有效的圖片URL'),
-  body('confidence').optional().isFloat({ min: 0, max: 1 })
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: '輸入驗證失敗',
-        code: 'VALIDATION_ERROR',
-        errors: errors.array()
-      });
+// @route   PUT /api/cards/:id
+// @desc    更新卡片信息
+// @access  Private (Admin only)
+router.put('/:id', createPutHandler(
+  async (req, res) => {
+    const Card = getCardModel();
+    if (!Card) {
+      throw createCustomError('數據庫連接失敗', 500, 'DATABASE_ERROR');
     }
 
-    const { imageUrl, confidence = 0.8 } = req.body;
+    const { id } = req.params;
+    const updateData = req.body;
 
-    // 模擬AI識別結果
-    const recognizedCard = {
-      id: 'recognized-1',
-      name: '識別出的卡牌',
-      nameEn: 'Recognized Card',
-      confidence: 0.95,
-      imageUrl,
-      possibleMatches: mockCards.slice(0, 3)
+    const card = await Card.findByPk(id);
+    if (!card) {
+      throw createCustomError('卡片不存在', 404, 'CARD_NOT_FOUND');
+    }
+
+    // 更新卡片
+    await card.update({
+      ...updateData,
+      updatedBy: req.user.id,
+      updatedAt: new Date()
+    });
+
+    logger.info(`卡片更新成功: ${req.user.username} 更新了卡片 ${card.name}`);
+
+    return {
+      success: true,
+      message: '卡片更新成功',
+      data: { card }
     };
-
-    logger.info(`卡牌識別: ${req.user.username} 識別了圖片`);
-
-    res.json({
-      success: true,
-      message: '卡牌識別成功',
-      data: { card: recognizedCard }
-    });
-  } catch (error) {
-    logger.error('卡牌識別錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '卡牌識別失敗',
-      code: 'RECOGNIZE_CARD_FAILED'
-    });
+  },
+  {
+    auth: true,
+    validation: validateCardUpdate,
+    permissions: ['admin']
   }
-});
+));
 
-// @route   GET /api/cards/sets
-// @desc    獲取卡牌系列列表
+// @route   DELETE /api/cards/:id
+// @desc    刪除卡片（軟刪除）
+// @access  Private (Admin only)
+router.delete('/:id', createDeleteHandler(
+  async (req, res) => {
+    const Card = getCardModel();
+    if (!Card) {
+      throw createCustomError('數據庫連接失敗', 500, 'DATABASE_ERROR');
+    }
+
+    const { id } = req.params;
+
+    const card = await Card.findByPk(id);
+    if (!card) {
+      throw createCustomError('卡片不存在', 404, 'CARD_NOT_FOUND');
+    }
+
+    // 軟刪除
+    await card.update({
+      isActive: false,
+      deletedBy: req.user.id,
+      deletedAt: new Date()
+    });
+
+    logger.info(`卡片刪除成功: ${req.user.username} 刪除了卡片 ${card.name}`);
+
+    return {
+      success: true,
+      message: '卡片刪除成功'
+    };
+  },
+  { auth: true, permissions: ['admin'] }
+));
+
+// @route   POST /api/cards/batch
+// @desc    批量創建卡片
+// @access  Private (Admin only)
+router.post('/batch', createBatchHandler(
+  async (req, res) => {
+    const Card = getCardModel();
+    if (!Card) {
+      throw createCustomError('數據庫連接失敗', 500, 'DATABASE_ERROR');
+    }
+
+    const { cards } = req.body;
+
+    if (!Array.isArray(cards) || cards.length === 0) {
+      throw createCustomError('卡片數據不能為空', 400, 'INVALID_INPUT');
+    }
+
+    const results = [];
+    const errors = [];
+
+    for (let i = 0; i < cards.length; i++) {
+      try {
+        const cardData = cards[i];
+
+        // 檢查卡片是否已存在
+        const existingCard = await Card.findOne({
+          where: {
+            setName: cardData.setName,
+            cardNumber: cardData.cardNumber
+          }
+        });
+
+        if (existingCard) {
+          errors.push({
+            index: i,
+            error: '該卡片已存在',
+            data: cardData
+          });
+          continue;
+        }
+
+        // 創建卡片
+        const card = await Card.create({
+          ...cardData,
+          createdBy: req.user.id,
+          isActive: true
+        });
+
+        results.push(card);
+      } catch (error) {
+        errors.push({
+          index: i,
+          error: error.message,
+          data: cards[i]
+        });
+      }
+    }
+
+    logger.info(`批量創建卡片: ${req.user.username} 創建了 ${results.length} 張卡片，失敗 ${errors.length} 張`);
+
+    return {
+      success: true,
+      message: `批量創建完成: ${results.length} 成功，${errors.length} 失敗`,
+      data: {
+        created: results,
+        errors
+      }
+    };
+  },
+  {
+    auth: true,
+    permissions: ['admin'],
+    validation: [
+      body('cards').isArray({ min: 1 }).withMessage('卡片數據必須是數組且不能為空'),
+      body('cards.*.name').isLength({ min: 1, max: 100 }).withMessage('卡片名稱必須在1-100個字符之間'),
+      body('cards.*.setName').isLength({ min: 1, max: 100 }).withMessage('系列名稱必須在1-100個字符之間'),
+      body('cards.*.cardNumber').isLength({ min: 1, max: 20 }).withMessage('卡片編號必須在1-20個字符之間'),
+      body('cards.*.rarity').isIn(['common', 'uncommon', 'rare', 'mythic', 'special']).withMessage('無效的稀有度'),
+      body('cards.*.cardType').isLength({ min: 1, max: 50 }).withMessage('卡片類型必須在1-50個字符之間')
+    ]
+  }
+));
+
+// @route   GET /api/cards/search
+// @desc    搜索卡片
 // @access  Public
-router.get('/sets', async (req, res) => {
-  try {
-    const sets = [...new Set(mockCards.map(card => card.set))];
-    
-    res.json({
-      success: true,
-      data: { sets }
-    });
-  } catch (error) {
-    logger.error('獲取卡牌系列錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '獲取卡牌系列失敗',
-      code: 'GET_SETS_FAILED'
-    });
-  }
-});
+router.get('/search', createSearchHandler(
+  async (req, res) => {
+    const Card = getCardModel();
+    if (!Card) {
+      throw createCustomError('數據庫連接失敗', 500, 'DATABASE_ERROR');
+    }
 
-// @route   GET /api/cards/rarities
-// @desc    獲取稀有度列表
-// @access  Public
-router.get('/rarities', async (req, res) => {
-  try {
-    const rarities = [...new Set(mockCards.map(card => card.rarity))];
-    
-    res.json({
+    const { q: query, limit = 10 } = req.query;
+
+    if (!query || query.trim().length === 0) {
+      throw createCustomError('搜索查詢不能為空', 400, 'INVALID_INPUT');
+    }
+
+    const cards = await Card.findAll({
+      where: {
+        [Op.or]: [
+          { name: { [Op.iLike]: `%${query}%` } },
+          { setName: { [Op.iLike]: `%${query}%` } },
+          { cardNumber: { [Op.iLike]: `%${query}%` } },
+          { description: { [Op.iLike]: `%${query}%` } }
+        ],
+        isActive: true
+      },
+      limit: parseInt(limit),
+      order: [['name', 'ASC']]
+    });
+
+    return {
       success: true,
-      data: { rarities }
-    });
-  } catch (error) {
-    logger.error('獲取稀有度列表錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '獲取稀有度列表失敗',
-      code: 'GET_RARITIES_FAILED'
-    });
-  }
-});
+      message: '搜索完成',
+      data: { cards }
+    };
+  },
+  { validation: [query('q').notEmpty().withMessage('搜索查詢不能為空')] }
+));
 
 module.exports = router;

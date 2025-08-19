@@ -1,0 +1,11 @@
+{
+  "testEnvironment": "node",
+  "testRunner": "jest-circus/runner",
+  "testTimeout": 120000,
+  "reporters": ["detox/runners/jest/streamlineReporter"],
+  "verbose": true,
+  "bail": false,
+  "maxWorkers": 1,
+  "testMatch": ["**/e2e/**/*.test.js"],
+  "setupFilesAfterEnv": ["./e2e/init.js"]
+}

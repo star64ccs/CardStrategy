@@ -269,7 +269,7 @@ router.post('/refresh', [
 
     // 驗證刷新令牌
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-    
+
     // 查找用戶
     const user = await User.findByPk(decoded.id);
     if (!user) {
@@ -310,7 +310,7 @@ router.post('/refresh', [
 router.get('/me', protect, async (req, res) => {
   try {
     const User = getUserModel();
-    
+
     if (!User) {
       return res.status(500).json({
         success: false,
@@ -320,7 +320,7 @@ router.get('/me', protect, async (req, res) => {
     }
 
     const user = await User.findByPk(req.user.id);
-    
+
     res.json({
       success: true,
       data: {
@@ -437,7 +437,7 @@ router.put('/profile', protect, [
 router.post('/logout', protect, async (req, res) => {
   try {
     logger.info(`用戶登出: ${req.user.username}`);
-    
+
     res.json({
       success: true,
       message: '登出成功'

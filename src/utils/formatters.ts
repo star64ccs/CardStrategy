@@ -1,7 +1,10 @@
 import { CardCondition, CardRarity, CardType } from '../types';
 
 // 日期格式化
-export const formatDate = (date: Date | string, format: 'short' | 'long' | 'relative' = 'short'): string => {
+export const formatDate = (
+  date: Date | string,
+  format: 'short' | 'long' | 'relative' = 'short'
+): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
 
   if (format === 'relative') {

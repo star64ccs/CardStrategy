@@ -7,7 +7,7 @@ const levels = {
   warn: 1,
   info: 2,
   http: 3,
-  debug: 4,
+  debug: 4
 };
 
 // 根據環境選擇日誌級別
@@ -23,7 +23,7 @@ const colors = {
   warn: 'yellow',
   info: 'green',
   http: 'magenta',
-  debug: 'white',
+  debug: 'white'
 };
 
 winston.addColors(colors);
@@ -33,25 +33,25 @@ const format = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
   winston.format.colorize({ all: true }),
   winston.format.printf(
-    (info) => `${info.timestamp} ${info.level}: ${info.message}`,
-  ),
+    (info) => `${info.timestamp} ${info.level}: ${info.message}`
+  )
 );
 
 // 定義傳輸器
 const transports = [
   // 控制台輸出
   new winston.transports.Console(),
-  
+
   // 錯誤日誌文件
   new winston.transports.File({
     filename: path.join('logs', 'error.log'),
-    level: 'error',
+    level: 'error'
   }),
-  
+
   // 所有日誌文件
   new winston.transports.File({
-    filename: path.join('logs', 'all.log'),
-  }),
+    filename: path.join('logs', 'all.log')
+  })
 ];
 
 // 創建logger實例
@@ -59,7 +59,7 @@ const logger = winston.createLogger({
   level: level(),
   levels,
   format,
-  transports,
+  transports
 });
 
 module.exports = logger;

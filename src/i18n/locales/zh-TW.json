@@ -175,5 +175,488 @@
     "investmentAdvice": "投資建議",
     "system": "系統",
     "social": "社交"
+  },
+  "feedback": {
+    "title": "用戶反饋",
+    "loading": "載入中...",
+    "error": {
+      "title": "反饋錯誤"
+    },
+    "empty": {
+      "title": "暫無反饋",
+      "message": "您還沒有提交任何反饋。點擊下方按鈕開始提交您的建議或報告問題。"
+    },
+    "list": {
+      "title": "反饋列表"
+    },
+    "sort": {
+      "title": "排序選項",
+      "message": "選擇排序方式",
+      "button": "排序"
+    },
+    "templates": {
+      "title": "反饋模板"
+    },
+    "create": {
+      "title": "提交反饋",
+      "button": "提交反饋",
+      "submit": "提交",
+      "template": {
+        "selected": "已選擇模板"
+      },
+      "type": {
+        "title": "反饋類型"
+      },
+      "category": {
+        "title": "分類"
+      },
+      "priority": {
+        "title": "優先級"
+      },
+      "title": {
+        "label": "標題",
+        "placeholder": "請簡潔描述您的反饋"
+      },
+      "description": {
+        "label": "詳細描述",
+        "placeholder": "請詳細描述您的問題、建議或想法..."
+      },
+      "tags": {
+        "title": "標籤"
+      },
+      "advanced": {
+        "title": "高級選項"
+      },
+      "anonymous": {
+        "label": "匿名提交"
+      },
+      "validation": {
+        "title": "標題驗證",
+        "title_required": "請輸入標題",
+        "description": "描述驗證",
+        "description_required": "請輸入詳細描述"
+      },
+      "success": {
+        "title": "提交成功",
+        "message": "您的反饋已成功提交，我們會盡快處理。"
+      },
+      "cancel": {
+        "title": "取消提交",
+        "message": "確定要取消提交反饋嗎？未保存的內容將會丟失。"
+      }
+    },
+    "type": {
+      "bug_report": "錯誤報告",
+      "feature_request": "功能請求",
+      "improvement": "改進建議",
+      "general": "一般反饋",
+      "compliment": "讚美",
+      "complaint": "投訴"
+    },
+    "category": {
+      "ui_ux": "用戶界面/體驗",
+      "performance": "性能問題",
+      "functionality": "功能問題",
+      "ai_features": "AI 功能",
+      "scanning": "掃描功能",
+      "pricing": "價格相關",
+      "notifications": "通知系統",
+      "data_accuracy": "數據準確性",
+      "security": "安全問題",
+      "other": "其他"
+    },
+    "priority": {
+      "low": "低",
+      "medium": "中",
+      "high": "高",
+      "critical": "緊急"
+    },
+    "status": {
+      "pending": "待處理",
+      "in_review": "審核中",
+      "in_progress": "處理中",
+      "resolved": "已解決",
+      "closed": "已關閉",
+      "rejected": "已拒絕"
+    },
+    "has_response": "已有回應"
+  },
+  "common": {
+    "cancel": "取消",
+    "confirm": "確認",
+    "yes": "是",
+    "no": "否"
+  },
+  "translation": {
+    "system": "系統",
+    "social": "社交",
+    "feedback": {
+      "title": "用戶反饋",
+      "loading": "載入中...",
+      "error": {
+        "title": "反饋錯誤"
+      },
+      "empty": {
+        "title": "暫無反饋",
+        "message": "您還沒有提交任何反饋。點擊下方按鈕開始提交您的建議或報告問題。"
+      },
+      "list": {
+        "title": "反饋列表"
+      },
+      "sort": {
+        "title": "排序選項",
+        "message": "選擇排序方式",
+        "button": "排序"
+      },
+      "templates": {
+        "title": "反饋模板"
+      },
+      "create": {
+        "title": "提交反饋",
+        "button": "提交反饋",
+        "submit": "提交",
+        "template": {
+          "selected": "已選擇模板"
+        },
+        "type": {
+          "title": "反饋類型"
+        },
+        "category": {
+          "title": "分類"
+        },
+        "priority": {
+          "title": "優先級"
+        },
+        "title": {
+          "label": "標題",
+          "placeholder": "請簡潔描述您的反饋"
+        },
+        "description": {
+          "label": "詳細描述",
+          "placeholder": "請詳細描述您的問題、建議或想法..."
+        },
+        "tags": {
+          "title": "標籤"
+        },
+        "advanced": {
+          "title": "高級選項"
+        },
+        "anonymous": {
+          "label": "匿名提交"
+        },
+        "validation": {
+          "title": "標題驗證",
+          "title_required": "請輸入標題",
+          "description": "描述驗證",
+          "description_required": "請輸入詳細描述"
+        },
+        "success": {
+          "title": "提交成功",
+          "message": "您的反饋已成功提交，我們會盡快處理。"
+        },
+        "cancel": {
+          "title": "取消提交",
+          "message": "確定要取消提交反饋嗎？未保存的內容將會丟失。"
+        }
+      },
+      "type": {
+        "bug_report": "錯誤報告",
+        "feature_request": "功能請求",
+        "improvement": "改進建議",
+        "general": "一般反饋",
+        "compliment": "讚美",
+        "complaint": "投訴"
+      },
+      "category": {
+        "ui_ux": "用戶界面/體驗",
+        "performance": "性能問題",
+        "functionality": "功能問題",
+        "ai_features": "AI 功能",
+        "scanning": "掃描功能",
+        "pricing": "價格相關",
+        "notifications": "通知系統",
+        "data_accuracy": "數據準確性",
+        "security": "安全問題",
+        "other": "其他"
+      },
+      "priority": {
+        "low": "低",
+        "medium": "中",
+        "high": "高",
+        "critical": "緊急"
+      },
+      "status": {
+        "pending": "待處理",
+        "in_review": "審核中",
+        "in_progress": "處理中",
+        "resolved": "已解決",
+        "closed": "已關閉",
+        "rejected": "已拒絕"
+      },
+      "has_response": "已有回應"
+    },
+    "privacy": {
+      "title": "隱私設置",
+      "subtitle": "管理您的數據隱私和同意設置",
+      "loading": "載入隱私設置中...",
+      "tabs": {
+        "overview": "概覽",
+        "consent": "同意管理",
+        "rights": "數據權利",
+        "settings": "設置"
+      },
+      "dashboard": {
+        "title": "隱私儀表板",
+        "consent_summary": "同意摘要",
+        "data_rights_summary": "數據權利摘要",
+        "compliance_score": "合規評分",
+        "last_updated": "最後更新",
+        "total_consents": "總同意數",
+        "active_consents": "活躍同意",
+        "expired_consents": "過期同意",
+        "withdrawn_consents": "撤回同意",
+        "pending_requests": "待處理請求",
+        "completed_requests": "已完成請求",
+        "rejected_requests": "已拒絕請求"
+      },
+      "compliance": {
+        "title": "合規性檢查",
+        "description": "檢查您的隱私設置是否符合當前地區的法律要求",
+        "check_button": "檢查合規性",
+        "score": "合規評分",
+        "compliant": "合規",
+        "non_compliant": "不合規",
+        "issues": "問題",
+        "recommendations": "建議"
+      },
+      "quick_actions": {
+        "title": "快速操作",
+        "preferences": "偏好設置",
+        "history": "同意歷史",
+        "rights": "數據權利"
+      },
+      "consent": {
+        "title": "同意管理",
+        "description": "管理您對數據處理的同意設置",
+        "types": {
+          "account_management": "賬戶管理",
+          "service_provision": "服務提供",
+          "payment_processing": "支付處理",
+          "marketing": "營銷",
+          "analytics": "分析",
+          "security": "安全",
+          "legal_compliance": "法律合規",
+          "customer_support": "客戶支持",
+          "research": "研究",
+          "third_party_integration": "第三方集成"
+        },
+        "status": {
+          "active": "活躍",
+          "expired": "過期",
+          "withdrawn": "已撤回"
+        },
+        "history": {
+          "title": "同意歷史",
+          "granted": "授予時間",
+          "withdrawn": "撤回時間",
+          "method": "同意方式",
+          "version": "版本"
+        },
+        "marketing": {
+          "title": "營銷同意",
+          "email": "電子郵件",
+          "sms": "短信",
+          "push": "推送通知",
+          "third_party": "第三方營銷",
+          "personalized": "個性化廣告"
+        },
+        "data_sharing": {
+          "title": "數據共享同意",
+          "analytics": "分析數據",
+          "third_party": "第三方共享",
+          "cross_border": "跨境傳輸"
+        }
+      },
+      "data_rights": {
+        "title": "數據權利",
+        "description": "行使您的數據權利",
+        "types": {
+          "access": "訪問權",
+          "rectification": "更正權",
+          "erasure": "刪除權",
+          "portability": "可攜權",
+          "restriction": "限制權",
+          "objection": "反對權"
+        },
+        "status": {
+          "pending": "待處理",
+          "processing": "處理中",
+          "completed": "已完成",
+          "rejected": "已拒絕"
+        },
+        "priority": {
+          "low": "低",
+          "medium": "中",
+          "high": "高",
+          "urgent": "緊急"
+        },
+        "request": {
+          "title": "提交權利請求",
+          "description": "請描述您的權利請求",
+          "submit": "提交請求",
+          "success": "請求已提交",
+          "error": "提交失敗"
+        }
+      },
+      "settings": {
+        "title": "隱私設置",
+        "region": "地區",
+        "notifications": "通知設置",
+        "notifications_description": "管理隱私相關通知",
+        "data_retention": "數據保留",
+        "data_retention_description": "設置數據保留期限",
+        "third_party": "第三方共享",
+        "third_party_description": "管理第三方數據共享",
+        "advanced": {
+          "title": "高級設置",
+          "export_data": "導出數據",
+          "delete_data": "刪除數據",
+          "delete_confirm_title": "確認刪除",
+          "delete_confirm_message": "此操作將永久刪除您的所有數據，無法撤銷。確定要繼續嗎？"
+        }
+      },
+      "children_protection": {
+        "title": "兒童數據保護",
+        "age_verification": "年齡驗證",
+        "parental_consent": "父母同意",
+        "restricted_features": "受限功能",
+        "request_parental_consent": "請求父母同意",
+        "parent_email": "父母郵箱",
+        "verification_status": "驗證狀態"
+      },
+      "legal_basis": {
+        "consent": "同意",
+        "contract": "合同",
+        "legal_obligation": "法律義務",
+        "vital_interests": "重要利益",
+        "public_task": "公共任務",
+        "legitimate_interests": "合法利益"
+      },
+      "regions": {
+        "CN": "中國",
+        "HK": "香港",
+        "MO": "澳門",
+        "TW": "台灣",
+        "JP": "日本",
+        "KR": "南韓",
+        "US": "美國",
+        "EU": "歐盟"
+      },
+      "laws": {
+        "PIPL": "中國個人信息保護法",
+        "PDPO": "香港個人資料(私隱)條例",
+        "PDPA": "澳門個人資料保護法",
+        "PDPA_TW": "台灣個人資料保護法",
+        "APPI": "日本個人信息保護法",
+        "PIPA": "南韓個人信息保護法",
+        "CCPA": "美國加州消費者隱私法案",
+        "CPRA": "美國加州隱私權法案",
+        "GDPR": "歐盟通用數據保護條例"
+      },
+      "data_categories": {
+        "personal_info": "個人信息",
+        "contact_info": "聯繫信息",
+        "financial_info": "財務信息",
+        "location_info": "位置信息",
+        "device_info": "設備信息",
+        "usage_data": "使用數據",
+        "biometric_data": "生物識別數據",
+        "sensitive_data": "敏感數據",
+        "children_data": "兒童數據"
+      },
+      "processing_purposes": {
+        "account_management": "賬戶管理",
+        "service_provision": "服務提供",
+        "payment_processing": "支付處理",
+        "marketing": "營銷",
+        "analytics": "分析",
+        "security": "安全",
+        "legal_compliance": "法律合規",
+        "customer_support": "客戶支持",
+        "research": "研究",
+        "third_party_integration": "第三方集成"
+      },
+      "consent_methods": {
+        "web": "網頁",
+        "mobile": "移動應用",
+        "email": "電子郵件",
+        "phone": "電話",
+        "in_person": "面對面"
+      },
+      "error": {
+        "title": "隱私錯誤",
+        "load_failed": "載入失敗",
+        "save_failed": "保存失敗",
+        "consent_failed": "同意操作失敗",
+        "rights_request_failed": "權利請求失敗",
+        "compliance_check_failed": "合規檢查失敗",
+        "age_verification_failed": "年齡驗證失敗",
+        "parental_consent_failed": "父母同意請求失敗",
+        "export_failed": "數據導出失敗",
+        "delete_failed": "數據刪除失敗"
+      },
+      "success": {
+        "preferences_saved": "偏好設置已保存",
+        "consent_recorded": "同意已記錄",
+        "consent_withdrawn": "同意已撤回",
+        "rights_request_submitted": "權利請求已提交",
+        "compliance_check_completed": "合規檢查已完成",
+        "age_verified": "年齡已驗證",
+        "parental_consent_requested": "父母同意已請求",
+        "data_exported": "數據已導出",
+        "data_deleted": "數據已刪除"
+      },
+      "notifications": {
+        "privacy_updates": "隱私更新",
+        "data_breach": "數據洩露",
+        "consent_changes": "同意變更",
+        "legal_updates": "法律更新"
+      },
+      "modals": {
+        "preferences": {
+          "title": "隱私偏好設置",
+          "save": "保存",
+          "cancel": "取消"
+        },
+        "consent_history": {
+          "title": "同意歷史",
+          "close": "關閉"
+        },
+        "data_rights": {
+          "title": "數據權利請求",
+          "close": "關閉"
+        },
+        "compliance_report": {
+          "title": "合規性報告",
+          "close": "關閉"
+        }
+      }
+    },
+    "common": {
+      "cancel": "取消",
+      "confirm": "確認",
+      "yes": "是",
+      "no": "否",
+      "save": "保存",
+      "close": "關閉",
+      "edit": "編輯",
+      "delete": "刪除",
+      "submit": "提交",
+      "loading": "載入中...",
+      "error": "錯誤",
+      "success": "成功",
+      "warning": "警告",
+      "info": "信息"
+    }
   }
 }

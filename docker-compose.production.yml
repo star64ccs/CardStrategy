@@ -1,0 +1,339 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 數據庫 (生產)
+  postgres:
+    image: postgres:15-alpine
+    container_name: cardstrategy_postgres_prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cardstrategy_prod}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./backups:/backups
+    ports:
+      - "5432:5432"
+    networks:
+      - cardstrategy_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # Redis 緩存 (生產)
+  redis:
+    image: redis:7-alpine
+    container_name: cardstrategy_redis_prod
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - cardstrategy_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # 後端 API 服務 (生產)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.production
+      target: production
+    container_name: cardstrategy_backend_prod
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-cardstrategy_prod}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRE: ${JWT_EXPIRE:-24h}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRE: ${JWT_REFRESH_EXPIRE:-7d}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID}
+      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN}
+      TWILIO_PHONE_NUMBER: ${TWILIO_PHONE_NUMBER}
+      LOG_LEVEL: ${LOG_LEVEL:-warn}
+      BCRYPT_ROUNDS: ${BCRYPT_ROUNDS:-12}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-1000}
+      MAX_FILE_SIZE: ${MAX_FILE_SIZE:-10485760}
+      ENABLE_PERFORMANCE_MONITORING: ${ENABLE_PERFORMANCE_MONITORING:-true}
+      ENABLE_ERROR_TRACKING: ${ENABLE_ERROR_TRACKING:-true}
+      ENABLE_USER_ANALYTICS: ${ENABLE_USER_ANALYTICS:-true}
+      BACKUP_ENABLED: ${BACKUP_ENABLED:-true}
+      SSL_ENABLED: ${SSL_ENABLED:-true}
+    volumes:
+      - backend_uploads:/app/uploads
+      - backend_logs:/app/logs
+      - backend_models:/app/models
+      - backend_exports:/app/exports
+      - backend_backups:/app/backups
+    ports:
+      - "3000:3000"
+    networks:
+      - cardstrategy_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  # Nginx 反向代理 (生產)
+  nginx:
+    image: nginx:alpine
+    container_name: cardstrategy_nginx_prod
+    volumes:
+      - ./nginx/nginx.production.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - backend_logs:/var/log/nginx
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - cardstrategy_network
+    depends_on:
+      - backend
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+  # 監控服務 (Prometheus - 生產)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: cardstrategy_prometheus_prod
+    volumes:
+      - ./monitoring/prometheus.production.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - cardstrategy_network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
+  # 監控服務 (Grafana - 生產)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: cardstrategy_grafana_prod
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_SERVER_ROOT_URL: https://grafana.cardstrategy.com
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    ports:
+      - "3001:3000"
+    networks:
+      - cardstrategy_network
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # 日誌聚合 (ELK Stack - Elasticsearch)
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: cardstrategy_elasticsearch_prod
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - cardstrategy_network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
+
+  # 日誌聚合 (ELK Stack - Logstash)
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: cardstrategy_logstash_prod
+    volumes:
+      - ./monitoring/logstash/pipeline:/usr/share/logstash/pipeline
+      - backend_logs:/var/log/app
+    ports:
+      - "5044:5044"
+    networks:
+      - cardstrategy_network
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # 日誌聚合 (ELK Stack - Kibana)
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.0
+    container_name: cardstrategy_kibana_prod
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    networks:
+      - cardstrategy_network
+    depends_on:
+      - elasticsearch
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # 備份服務 (生產)
+  backup:
+    image: postgres:15-alpine
+    container_name: cardstrategy_backup_prod
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./backups:/backups
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cardstrategy_network
+    command: >
+      sh -c "
+        while true; do
+          echo 'Starting production backup...'
+          pg_dump -h postgres -U ${POSTGRES_USER} -d ${POSTGRES_DB:-cardstrategy_prod} > /backups/backup_$$(date +%Y%m%d_%H%M%S).sql
+          echo 'Production backup completed'
+          sleep 86400
+        done
+      "
+    depends_on:
+      - postgres
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 128M
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  backend_uploads:
+    driver: local
+  backend_logs:
+    driver: local
+  backend_models:
+    driver: local
+  backend_exports:
+    driver: local
+  backend_backups:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+
+networks:
+  cardstrategy_network:
+    driver: bridge

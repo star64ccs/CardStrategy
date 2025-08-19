@@ -152,23 +152,21 @@ const getUserModel = () => {
     try {
       const { getSequelize, syncDatabase } = require('../config/database');
       const sequelize = getSequelize();
-      
+
       if (!sequelize) {
+        // eslint-disable-next-line no-console
         console.error('Sequelize instance is null - database connection may not be established');
         return null;
       }
-      
+
       User = createUserModel(sequelize);
+      // eslint-disable-next-line no-console
       console.log('User model created successfully');
-      
-      // 同步數據庫表
-      syncDatabase().then(() => {
-        console.log('Database tables synchronized after User model creation');
-      }).catch(err => {
-        console.error('Failed to sync database tables:', err);
-      });
-      
+
+      // 移除自動同步，讓遷移腳本處理
+
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error creating User model:', error);
       return null;
     }

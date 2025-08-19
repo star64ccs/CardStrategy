@@ -1,462 +1,465 @@
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   StyleSheet,
-  RefreshControl,
+  ScrollView,
   TouchableOpacity,
-  Alert
+  RefreshControl,
+  Dimensions
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
-import { useDispatch, useSelector } from 'react-redux';
-import { Card } from '@/components/common/Card';
-import { Button } from '@/components/common/Button';
-import { CardItem } from '@/components/cards/CardItem';
-import { theme } from '@/config/theme';
-import { RootState } from '@/store';
-import { fetchCard } from '@/store/slices/cardSlice';
-import { fetchCollections } from '@/store/slices/collectionSlice';
-import { fetchInvestments } from '@/store/slices/investmentSlice';
-import { fetchMarketData } from '@/store/slices/marketSlice';
-import { logger } from '@/utils/logger';
-import { formatCurrency, formatPercentage } from '@/utils/formatters';
-import { getGreeting } from '@/utils/helpers';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../store/slices/authSlice';
+import { cardService, Card } from '../services/cardService';
+import { portfolioService, PortfolioItem } from '../services/portfolioService';
+import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
+import { logger } from '../utils/logger';
+import { errorHandlerService } from '../services/errorHandlerService';
+import {
+  FadeInView,
+  SlideUpView,
+  AnimatedButton,
+  SkeletonText,
+  SkeletonTitle
+} from '../components/common';
 
-export const HomeScreen: React.FC = () => {
-  const navigation = useNavigation();
-  const dispatch = useDispatch();
-  const { cards, isLoading } = useSelector((state: RootState) => state.cards);
-  const { collections } = useSelector((state: RootState) => state.collection);
-  const { investments, portfolioValue, totalProfitLoss, profitLossPercentage } = useSelector((state: RootState) => state.investments);
-  const { marketData, isLoading: marketLoading } = useSelector((state: RootState) => state.market);
-  const { user } = useSelector((state: RootState) => state.auth);
-  
+const { width } = Dimensions.get('window');
+
+interface HomeScreenProps {
+  onCardPress: (card: Card) => void;
+  onNavigateToPortfolio: () => void;
+  onNavigateToMarket: () => void;
+  onNavigateToAI: () => void;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({
+  onCardPress,
+  onNavigateToPortfolio,
+  onNavigateToMarket,
+  onNavigateToAI
+}) => {
+  const user = useSelector(selectUser);
+  const [cards, setCards] = useState<Card[]>([]);
+  const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
+  const [portfolioStats, setPortfolioStats] = useState({
+    totalValue: 0,
+    totalProfit: 0,
+    profitPercentage: 0
+  });
   const [refreshing, setRefreshing] = useState(false);
-  const [greeting, setGreeting] = useState('');
-
-  // 初始化問候語
-  useEffect(() => {
-    setGreeting(getGreeting());
-  }, []);
-
-  const loadData = useCallback(async () => {
-    try {
-      await Promise.all([
-        dispatch(fetchCard('sample-id') as any),
-        dispatch(fetchCollections() as any),
-        dispatch(fetchInvestments() as any),
-        dispatch(fetchMarketData() as any)
-      ]);
-    } catch (error) {
-      logger.error('Failed to load home data:', { error });
-      Alert.alert('錯誤', '載入數據失敗，請稍後再試');
-    }
-  }, [dispatch]);
 
   useEffect(() => {
     loadData();
-  }, [loadData]);
+  }, []);
 
-  const handleRefresh = async () => {
+  const loadData = async () => {
+    try {
+      // 使用真實 API 獲取卡片數據
+      const cardsResponse = await cardService.getCards({
+        page: 1,
+        limit: 10,
+        sortBy: 'date',
+        sortOrder: 'desc'
+      });
+
+      if (cardsResponse.success) {
+        setCards(cardsResponse.data.cards);
+      } else {
+        // 如果 API 失敗，使用模擬數據作為備用
+        logger.warn('API 獲取卡片失敗，使用模擬數據', { error: cardsResponse.message });
+        const mockCards = cardService.getMockCards();
+        setCards(mockCards);
+      }
+
+      // 獲取投資組合數據
+      const portfolioData = await portfolioService.getPortfolio();
+      setPortfolio(portfolioData);
+
+      // 獲取投資組合統計
+      const stats = portfolioService.getPortfolioStats();
+      setPortfolioStats({
+        totalValue: stats.totalValue,
+        totalProfit: stats.totalProfit,
+        profitPercentage: stats.profitPercentage
+      });
+    } catch (error) {
+      // 使用統一的錯誤處理
+      await errorHandlerService.handleError(error as Error, 'HomeScreen.loadData', 'medium', 'api');
+
+      // 錯誤時使用模擬數據
+      const mockCards = cardService.getMockCards();
+      setCards(mockCards);
+    }
+  };
+
+  const onRefresh = async () => {
     setRefreshing(true);
     await loadData();
     setRefreshing(false);
   };
 
-  // 計算投資組合統計
-  const getPortfolioStats = () => {
-    const totalCards = cards.length;
-    const totalCollections = collections.length;
-    const totalInvestments = investments.length;
-    const avgCardValue = totalCards > 0 ? portfolioValue / totalCards : 0;
-
-    return {
-      totalCards,
-      totalCollections,
-      totalInvestments,
-      avgCardValue
-    };
+  const formatCurrency = (amount: number) => {
+    return `$${amount.toLocaleString()}`;
   };
 
-  // 獲取市場趨勢摘要
-  const getMarketTrends = () => {
-    if (!marketData || marketData.length === 0) {
-      return {
-        trend: 'stable',
-        change: 0,
-        message: '市場數據載入中...'
-      };
-    }
-
-    const recentData = marketData.slice(-7); // 最近7天
-    const firstPrice = recentData[0]?.price || 0;
-    const lastPrice = recentData[recentData.length - 1]?.price || 0;
-    const change = ((lastPrice - firstPrice) / firstPrice) * 100;
-
-    return {
-      trend: change > 0 ? 'up' : change < 0 ? 'down' : 'stable',
-      change: Math.abs(change),
-      message: change > 0 
-        ? `市場上漲 ${change.toFixed(2)}%`
-        : change < 0 
-        ? `市場下跌 ${change.toFixed(2)}%`
-        : '市場穩定'
-    };
+  const formatPercentage = (percentage: number) => {
+    const sign = percentage >= 0 ? '+' : '';
+    return `${sign}${percentage.toFixed(2)}%`;
   };
-
-  // 獲取推薦卡牌
-  const getRecommendedCards = () => {
-    // 基於用戶收藏和投資歷史的簡單推薦邏輯
-    const userCollections = collections.filter((c: any) => c.userId === user?.id);
-    const userInvestments = investments.filter((i: any) => i.userId === user?.id);
-    
-    // 如果用戶有收藏，推薦相似卡牌
-    if (userCollections.length > 0) {
-      return cards.slice(0, 6);
-    }
-    
-    // 如果用戶有投資，推薦熱門卡牌
-    if (userInvestments.length > 0) {
-      return cards.slice(0, 6);
-    }
-    
-    // 默認推薦熱門卡牌
-    return cards.slice(0, 6);
-  };
-
-  const quickActions = [
-    {
-      title: '掃描卡牌',
-      icon: 'camera',
-      color: theme.colors.primary[500],
-      onPress: () => navigation.navigate('CardScanner' as never)
-    },
-    {
-      title: '我的收藏',
-      icon: 'albums',
-      color: theme.colors.secondary[500],
-      onPress: () => navigation.navigate('Collections' as never)
-    },
-    {
-      title: '投資分析',
-      icon: 'trending-up',
-      color: theme.colors.success,
-      onPress: () => navigation.navigate('Investments' as never)
-    },
-    {
-      title: 'AI 助手',
-      icon: 'chatbubble',
-      color: theme.colors.warning,
-      onPress: () => navigation.navigate('AIChat' as never)
-    }
-  ];
-
-  const portfolioStats = getPortfolioStats();
-  const marketTrends = getMarketTrends();
-  const recommendedCards = getRecommendedCards();
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView
-        style={styles.scrollView}
-        refreshControl={
-          <RefreshControl 
-            refreshing={refreshing || isLoading} 
-            onRefresh={handleRefresh}
-            colors={[theme.colors.primary[500] || '#007AFF']}
-          />
-        }
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <View>
-            <Text style={styles.greeting}>
-              {greeting}，{user?.displayName || '用戶'}！
-            </Text>
-            <Text style={styles.subtitle}>探索你的卡牌世界</Text>
+    <ScrollView
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      showsVerticalScrollIndicator={false}
+    >
+      {/* 歡迎區域 */}
+      <FadeInView animation="fadeIn" duration={800} delay={200}>
+        <View style={styles.welcomeSection}>
+          <Text style={styles.welcomeText}>
+            歡迎回來，{user?.username || '用戶'}！
+          </Text>
+          <Text style={styles.welcomeSubtext}>
+            今天想要探索什麼卡牌呢？
+          </Text>
+        </View>
+      </FadeInView>
+
+      {/* 投資組合概覽 */}
+      <SlideUpView animation="slideUp" duration={600} delay={400}>
+        <View style={styles.portfolioSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>💎 投資組合</Text>
+            <AnimatedButton onPress={onNavigateToPortfolio} scaleOnPress={true}>
+              <Text style={styles.seeAllText}>查看全部</Text>
+            </AnimatedButton>
           </View>
-          <TouchableOpacity
-            style={styles.profileButton}
-            onPress={() => navigation.navigate('Profile' as never)}
-          >
-            <Ionicons name="person-circle" size={40} color={theme.colors.primary[500]} />
+
+          <View style={styles.portfolioCard}>
+            <View style={styles.portfolioStats}>
+              <View style={styles.statItem}>
+                <Text style={styles.statLabel}>總價值</Text>
+                <Text style={styles.statValue}>
+                  {formatCurrency(portfolioStats.totalValue)}
+                </Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statLabel}>總收益</Text>
+                <Text style={[
+                  styles.statValue,
+                  { color: portfolioStats.totalProfit >= 0 ? colors.success : colors.error }
+                ]}>
+                  {formatCurrency(portfolioStats.totalProfit)}
+                </Text>
+              </View>
+              <View style={styles.statItem}>
+                <Text style={styles.statLabel}>收益率</Text>
+                <Text style={[
+                  styles.statValue,
+                  { color: portfolioStats.profitPercentage >= 0 ? colors.success : colors.error }
+                ]}>
+                  {formatPercentage(portfolioStats.profitPercentage)}
+                </Text>
+              </View>
+            </View>
+
+            <TouchableOpacity style={styles.portfolioButton} onPress={onNavigateToPortfolio}>
+              <Text style={styles.portfolioButtonText}>管理投資組合</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SlideUpView>
+
+      {/* 快速操作 */}
+      <View style={styles.quickActionsSection}>
+        <Text style={styles.sectionTitle}>🚀 快速操作</Text>
+        <View style={styles.quickActionsGrid}>
+          <TouchableOpacity style={styles.quickActionCard} onPress={onNavigateToMarket}>
+            <Text style={styles.quickActionIcon}>📊</Text>
+            <Text style={styles.quickActionTitle}>市場分析</Text>
+            <Text style={styles.quickActionSubtitle}>查看市場趨勢</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.quickActionCard} onPress={onNavigateToAI}>
+            <Text style={styles.quickActionIcon}>🤖</Text>
+            <Text style={styles.quickActionTitle}>AI 助手</Text>
+            <Text style={styles.quickActionSubtitle}>智能投資建議</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.quickActionCard}>
+            <Text style={styles.quickActionIcon}>🔍</Text>
+            <Text style={styles.quickActionTitle}>掃描卡片</Text>
+            <Text style={styles.quickActionSubtitle}>快速識別卡片</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.quickActionCard}>
+            <Text style={styles.quickActionIcon}>📈</Text>
+            <Text style={styles.quickActionTitle}>價格追蹤</Text>
+            <Text style={styles.quickActionSubtitle}>監控價格變化</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* 熱門卡片 */}
+      <View style={styles.hotCardsSection}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>🔥 熱門卡片</Text>
+          <TouchableOpacity>
+            <Text style={styles.seeAllText}>查看全部</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Quick Actions */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>快速功能</Text>
-          <View style={styles.quickActionsGrid}>
-            {quickActions.map((action, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.quickAction}
-                onPress={action.onPress}
-                activeOpacity={0.8}
-              >
-                <View style={[styles.actionIcon, { backgroundColor: action.color }]}>
-                  <Ionicons name={action.icon as any} size={24} color={theme.colors.white} />
-                </View>
-                <Text style={styles.actionTitle}>{action.title}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        {/* Portfolio Overview */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>投資組合概覽</Text>
-          <View style={styles.statsGrid}>
-            <Card variant="filled" padding="medium" style={styles.statCard}>
-              <Text style={styles.statNumber}>{portfolioStats.totalCollections}</Text>
-              <Text style={styles.statLabel}>收藏集</Text>
-            </Card>
-            <Card variant="filled" padding="medium" style={styles.statCard}>
-              <Text style={styles.statNumber}>{portfolioStats.totalCards}</Text>
-              <Text style={styles.statLabel}>卡牌</Text>
-            </Card>
-            <Card variant="filled" padding="medium" style={styles.statCard}>
-              <Text style={styles.statNumber}>{portfolioStats.totalInvestments}</Text>
-              <Text style={styles.statLabel}>投資</Text>
-            </Card>
-          </View>
-          
-          {/* Portfolio Value */}
-          <Card variant="elevated" padding="medium" style={styles.portfolioCard}>
-            <View style={styles.portfolioRow}>
-              <View>
-                <Text style={styles.portfolioLabel}>總價值</Text>
-                <Text style={styles.portfolioValue}>
-                  {formatCurrency(portfolioValue || 0)}
-                </Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.hotCardsContainer}
+        >
+          {cards.slice(0, 5).map((card) => (
+            <TouchableOpacity
+              key={card.id}
+              style={styles.hotCard}
+              onPress={() => onCardPress(card)}
+            >
+              <View style={styles.cardImageContainer}>
+                <Text style={styles.cardImagePlaceholder}>🎴</Text>
               </View>
-              <View style={styles.portfolioChange}>
-                <Text style={[
-                  styles.portfolioChangeText,
-                  { color: totalProfitLoss >= 0 ? theme.colors.success : theme.colors.error }
-                ]}>
-                  {totalProfitLoss >= 0 ? '+' : ''}{formatCurrency(totalProfitLoss || 0)}
+              <View style={styles.cardInfo}>
+                <Text style={styles.cardName} numberOfLines={1}>
+                  {card.name}
+                </Text>
+                <Text style={styles.cardSeries} numberOfLines={1}>
+                  {card.setName}
+                </Text>
+                <Text style={styles.cardPrice}>
+                  {formatCurrency(card.price.current)}
                 </Text>
                 <Text style={[
-                  styles.portfolioChangePercent,
-                  { color: profitLossPercentage >= 0 ? theme.colors.success : theme.colors.error }
+                  styles.cardChange,
+                  { color: card.price.change24h >= 0 ? colors.success : colors.error }
                 ]}>
-                  {profitLossPercentage >= 0 ? '+' : ''}{formatPercentage(profitLossPercentage || 0)}
+                  {formatPercentage(card.price.change24h)}
                 </Text>
               </View>
-            </View>
-          </Card>
-        </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
 
-        {/* Recommended Cards */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>推薦卡牌</Text>
-            <Button
-              title="查看全部"
-              variant="ghost"
-              size="small"
-              onPress={() => navigation.navigate('Cards' as never)}
-            />
+      {/* 市場概覽 */}
+      <View style={styles.marketSection}>
+        <Text style={styles.sectionTitle}>📈 市場概覽</Text>
+        <View style={styles.marketCard}>
+          <View style={styles.marketStat}>
+            <Text style={styles.marketStatLabel}>今日漲幅最大</Text>
+            <Text style={styles.marketStatValue}>青眼白龍 +15.2%</Text>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <View style={styles.cardsRow}>
-              {recommendedCards.map((card: any) => (
-                <CardItem
-                  key={card.id}
-                  card={card}
-                  variant="compact"
-                  onPress={() => (navigation as any).navigate('CardDetail', { cardId: card.id })}
-                />
-              ))}
-            </View>
-          </ScrollView>
+          <View style={styles.marketStat}>
+            <Text style={styles.marketStatLabel}>今日跌幅最大</Text>
+            <Text style={styles.marketStatValue}>黑魔導 -8.7%</Text>
+          </View>
+          <View style={styles.marketStat}>
+            <Text style={styles.marketStatLabel}>交易量最高</Text>
+            <Text style={styles.marketStatValue}>藍眼白龍 2.3M</Text>
+          </View>
         </View>
+      </View>
 
-        {/* Market Trends */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>市場趨勢</Text>
-          <Card variant="elevated" padding="medium">
-            <View style={styles.marketTrendRow}>
-              <View style={styles.marketTrendInfo}>
-                <Text style={styles.trendText}>{marketTrends.message}</Text>
-                {marketTrends.trend !== 'stable' && (
-                  <View style={styles.trendIndicator}>
-                    <Ionicons 
-                      name={marketTrends.trend === 'up' ? 'trending-up' : 'trending-down'} 
-                      size={16} 
-                      color={marketTrends.trend === 'up' ? theme.colors.success : theme.colors.error} 
-                    />
-                    <Text style={[
-                      styles.trendChange,
-                      { color: marketTrends.trend === 'up' ? theme.colors.success : theme.colors.error }
-                    ]}>
-                      {marketTrends.change.toFixed(2)}%
-                    </Text>
-                  </View>
-                )}
-              </View>
-              <Button
-                title="查看詳細分析"
-                variant="outline"
-                size="small"
-                onPress={() => navigation.navigate('MarketAnalysis' as never)}
-              />
-            </View>
-          </Card>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+      {/* 底部間距 */}
+      <View style={styles.bottomSpacing} />
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundLight
+    backgroundColor: colors.background
   },
-  scrollView: {
-    flex: 1
+  welcomeSection: {
+    paddingHorizontal: spacing.large,
+    paddingTop: spacing.large,
+    paddingBottom: spacing.medium
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: theme.spacing.large,
-    paddingVertical: theme.spacing.medium
+  welcomeText: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: '700' as const,
+    color: colors.textPrimary,
+    marginBottom: spacing.small
   },
-  greeting: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.colors.textPrimary
+  welcomeSubtext: {
+    fontSize: typography.fontSize.base,
+    color: colors.textSecondary
   },
-  subtitle: {
-    fontSize: 16,
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.xsmall
-  },
-  profileButton: {
-    padding: theme.spacing.xsmall
-  },
-  section: {
-    paddingHorizontal: theme.spacing.large,
-    marginBottom: theme.spacing.large
+  portfolioSection: {
+    paddingHorizontal: spacing.large,
+    marginBottom: spacing.xlarge
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.medium
+    marginBottom: spacing.medium
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.medium
+    fontSize: typography.fontSize.lg,
+    fontWeight: '600' as const,
+    color: colors.textPrimary
+  },
+  seeAllText: {
+    fontSize: typography.fontSize.sm,
+    color: colors.accent,
+    fontWeight: '500' as const
+  },
+  portfolioCard: {
+    backgroundColor: colors.backgroundPaper,
+    borderRadius: borderRadius.large,
+    padding: spacing.large,
+    ...shadows.base
+  },
+  portfolioStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: spacing.large
+  },
+  statItem: {
+    alignItems: 'center',
+    flex: 1
+  },
+  statLabel: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary,
+    marginBottom: spacing.xsmall
+  },
+  statValue: {
+    fontSize: typography.fontSize.base,
+    fontWeight: '600' as const,
+    color: colors.textPrimary
+  },
+  portfolioButton: {
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.medium,
+    paddingVertical: spacing.medium,
+    alignItems: 'center'
+  },
+  portfolioButtonText: {
+    color: colors.white,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semiBold
+  },
+  quickActionsSection: {
+    paddingHorizontal: spacing.large,
+    marginBottom: spacing.xlarge
   },
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between'
   },
-  quickAction: {
-    width: '48%',
+  quickActionCard: {
+    backgroundColor: colors.backgroundPaper,
+    borderRadius: borderRadius.medium,
+    padding: spacing.medium,
+    width: (width - spacing.large * 2 - spacing.medium) / 2,
+    marginBottom: spacing.medium,
     alignItems: 'center',
-    padding: theme.spacing.medium,
-    backgroundColor: theme.colors.backgroundSecondary,
-    borderRadius: theme.borderRadius.medium,
-    marginBottom: theme.spacing.small
+    ...shadows.sm
   },
-  actionIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: theme.spacing.small
+  quickActionIcon: {
+    fontSize: 32,
+    marginBottom: spacing.small
   },
-  actionTitle: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: theme.colors.textPrimary,
+  quickActionTitle: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semiBold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xsmall
+  },
+  quickActionSubtitle: {
+    fontSize: typography.fontSize.xs,
+    color: colors.textSecondary,
     textAlign: 'center'
   },
-  statsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+  hotCardsSection: {
+    paddingHorizontal: spacing.large,
+    marginBottom: spacing.xlarge
   },
-  statCard: {
-    flex: 1,
-    marginHorizontal: theme.spacing.xsmall,
-    alignItems: 'center'
+  hotCardsContainer: {
+    paddingRight: spacing.large
   },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.colors.primary[500]
+  hotCard: {
+    backgroundColor: colors.backgroundPaper,
+    borderRadius: borderRadius.medium,
+    padding: spacing.medium,
+    marginRight: spacing.medium,
+    width: 160,
+    ...shadows.sm
   },
-  statLabel: {
-    fontSize: 12,
-    color: theme.colors.textSecondary,
-    marginTop: theme.spacing.xsmall
-  },
-  portfolioCard: {
-    marginTop: theme.spacing.medium,
-    padding: theme.spacing.medium
-  },
-  portfolioRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  portfolioLabel: {
-    fontSize: 14,
-    color: theme.colors.textSecondary
-  },
-  portfolioValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: theme.colors.textPrimary
-  },
-  portfolioChange: {
-    alignItems: 'flex-end'
-  },
-  portfolioChangeText: {
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  portfolioChangePercent: {
-    fontSize: 14,
-    marginTop: theme.spacing.xsmall
-  },
-  cardsRow: {
-    flexDirection: 'row',
-    paddingRight: theme.spacing.large
-  },
-  trendText: {
-    fontSize: 14,
-    color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.medium
-  },
-  marketTrendRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
-  },
-  marketTrendInfo: {
-    flex: 1,
-    marginRight: theme.spacing.medium
-  },
-  trendIndicator: {
-    flexDirection: 'row',
+  cardImageContainer: {
+    width: '100%',
+    height: 100,
+    backgroundColor: colors.background,
+    borderRadius: borderRadius.small,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: theme.spacing.xsmall
+    marginBottom: spacing.small
   },
-  trendChange: {
-    fontSize: 14,
-    marginLeft: theme.spacing.xsmall
+  cardImagePlaceholder: {
+    fontSize: 40
+  },
+  cardInfo: {
+    flex: 1
+  },
+  cardName: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.semiBold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xsmall
+  },
+  cardSeries: {
+    fontSize: typography.fontSize.xs,
+    color: colors.textSecondary,
+    marginBottom: spacing.xsmall
+  },
+  cardPrice: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.xsmall
+  },
+  cardChange: {
+    fontSize: typography.fontSize.xs,
+    fontWeight: typography.fontWeight.medium
+  },
+  marketSection: {
+    paddingHorizontal: spacing.large,
+    marginBottom: spacing.xlarge
+  },
+  marketCard: {
+    backgroundColor: colors.backgroundPaper,
+    borderRadius: borderRadius.large,
+    padding: spacing.large,
+    ...shadows.base
+  },
+  marketStat: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.medium
+  },
+  marketStatLabel: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary
+  },
+  marketStatValue: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.textPrimary
+  },
+  bottomSpacing: {
+    height: spacing.xlarge
   }
 });
+
+export default HomeScreen;

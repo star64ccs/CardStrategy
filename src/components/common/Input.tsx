@@ -4,86 +4,123 @@ import {
   TextInput,
   Text,
   StyleSheet,
-  TouchableOpacity,
   ViewStyle,
   TextStyle,
-  TextInputProps
+  TouchableOpacity
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/config/theme';
+import { theme } from '../../theme/designSystem';
 
-export interface InputProps extends Omit<TextInputProps, 'style'> {
+interface InputProps {
   label?: string;
-  error?: string | undefined;
-  helper?: string;
+  placeholder?: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  secureTextEntry?: boolean;
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  autoCorrect?: boolean;
+  multiline?: boolean;
+  numberOfLines?: number;
+  maxLength?: number;
+  error?: string;
+  disabled?: boolean;
   leftIcon?: keyof typeof Ionicons.glyphMap;
   rightIcon?: keyof typeof Ionicons.glyphMap;
   onRightIconPress?: () => void;
-  containerStyle?: ViewStyle;
+  style?: ViewStyle;
   inputStyle?: TextStyle;
-  labelStyle?: TextStyle;
-  errorStyle?: TextStyle;
-  helperStyle?: TextStyle;
-  variant?: 'outlined' | 'filled';
-  size?: 'small' | 'medium' | 'large';
 }
 
 export const Input: React.FC<InputProps> = ({
   label,
+  placeholder,
+  value,
+  onChangeText,
+  secureTextEntry = false,
+  keyboardType = 'default',
+  autoCapitalize = 'none',
+  autoCorrect = false,
+  multiline = false,
+  numberOfLines = 1,
+  maxLength,
   error,
-  helper,
+  disabled = false,
   leftIcon,
   rightIcon,
   onRightIconPress,
-  containerStyle,
-  inputStyle,
-  labelStyle,
-  errorStyle,
-  helperStyle,
-  variant = 'outlined',
-  size = 'medium',
-  secureTextEntry,
-  ...props
+  style,
+  inputStyle
 }) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const containerStyleCombined = [
-    styles.container,
-    styles[variant],
-    styles[size],
-    isFocused && styles.focused,
-    error && styles.error,
-    containerStyle
-  ];
+  const getContainerStyle = (): ViewStyle => {
+    const baseStyle: ViewStyle = {
+      backgroundColor: theme.colors.background.secondary,
+      borderWidth: 1,
+      borderRadius: theme.borderRadius.md,
+      flexDirection: 'row',
+      alignItems: multiline ? 'flex-start' : 'center',
+      paddingHorizontal: theme.spacing.md,
+      minHeight: 48
+    };
 
-  const inputStyleCombined = [
-    styles.input,
-    styles[`${variant}Input`],
-    styles[`${size}Input`],
-    inputStyle
-  ];
+    if (error) {
+      return {
+        ...baseStyle,
+        borderColor: theme.colors.status.error
+      };
+    }
 
-  const labelStyleCombined = [
-    styles.label,
-    styles[`${size}Label`],
-    isFocused && styles.focusedLabel,
-    error && styles.errorLabel,
-    labelStyle
-  ];
+    if (isFocused) {
+      return {
+        ...baseStyle,
+        borderColor: theme.colors.gold.primary,
+        shadowColor: theme.colors.gold.primary,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 2
+      };
+    }
 
-  const handlePasswordToggle = () => {
-    setIsPasswordVisible(!isPasswordVisible);
+    return {
+      ...baseStyle,
+      borderColor: theme.colors.border.primary
+    };
+  };
+
+  const getInputStyle = (): TextStyle => {
+    return {
+      flex: 1,
+      fontSize: theme.typography.sizes.base,
+      color: disabled ? theme.colors.text.disabled : theme.colors.text.primary,
+      paddingVertical: theme.spacing.sm,
+      textAlignVertical: multiline ? 'top' : 'center'
+    };
+  };
+
+  const handleFocus = () => setIsFocused(true);
+  const handleBlur = () => setIsFocused(false);
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const getSecureTextEntry = () => {
+    if (!secureTextEntry) return false;
+    return !showPassword;
   };
 
   const getRightIcon = () => {
     if (secureTextEntry) {
       return (
-        <TouchableOpacity onPress={handlePasswordToggle} style={styles.iconButton}>
+        <TouchableOpacity onPress={togglePasswordVisibility} style={styles.iconContainer}>
           <Ionicons
-            name={isPasswordVisible ? 'eye-off' : 'eye'}
+            name={showPassword ? 'eye-off' : 'eye'}
             size={20}
-            color={theme.colors.textSecondary}
+            color={theme.colors.text.tertiary}
           />
         </TouchableOpacity>
       );
@@ -91,8 +128,12 @@ export const Input: React.FC<InputProps> = ({
 
     if (rightIcon) {
       return (
-        <TouchableOpacity onPress={onRightIconPress} style={styles.iconButton}>
-          <Ionicons name={rightIcon} size={20} color={theme.colors.textSecondary} />
+        <TouchableOpacity onPress={onRightIconPress} style={styles.iconContainer}>
+          <Ionicons
+            name={rightIcon}
+            size={20}
+            color={theme.colors.text.tertiary}
+          />
         </TouchableOpacity>
       );
     }
@@ -101,141 +142,67 @@ export const Input: React.FC<InputProps> = ({
   };
 
   return (
-    <View style={containerStyleCombined}>
-      {label && <Text style={labelStyleCombined}>{label}</Text>}
-      <View style={styles.inputContainer}>
+    <View style={[styles.wrapper, style]}>
+      {label && (
+        <Text style={styles.label}>{label}</Text>
+      )}
+
+      <View style={getContainerStyle()}>
         {leftIcon && (
-          <Ionicons
-            name={leftIcon}
-            size={20}
-            color={theme.colors.textSecondary}
-            style={styles.leftIcon}
-          />
+          <View style={styles.iconContainer}>
+            <Ionicons
+              name={leftIcon}
+              size={20}
+              color={theme.colors.text.tertiary}
+            />
+          </View>
         )}
+
         <TextInput
-          style={inputStyleCombined}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          secureTextEntry={secureTextEntry && !isPasswordVisible}
-          placeholderTextColor={theme.colors.textSecondary}
-          {...props}
+          style={[getInputStyle(), inputStyle]}
+          placeholder={placeholder}
+          placeholderTextColor={theme.colors.text.tertiary}
+          value={value}
+          onChangeText={onChangeText}
+          secureTextEntry={getSecureTextEntry()}
+          keyboardType={keyboardType}
+          autoCapitalize={autoCapitalize}
+          autoCorrect={autoCorrect}
+          multiline={multiline}
+          numberOfLines={numberOfLines}
+          maxLength={maxLength}
+          editable={!disabled}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         />
+
         {getRightIcon()}
       </View>
-      {error && <Text style={[styles.errorText, errorStyle]}>{error}</Text>}
-      {helper && !error && <Text style={[styles.helperText, helperStyle]}>{helper}</Text>}
+
+      {error && (
+        <Text style={styles.errorText}>{error}</Text>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: theme.spacing.medium
+  wrapper: {
+    marginBottom: theme.spacing.md
   },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative'
-  },
-  leftIcon: {
-    marginRight: theme.spacing.small
-  },
-  iconButton: {
-    padding: theme.spacing.xsmall
-  },
-
-  // Variants
-  outlined: {
-    borderWidth: 1,
-    borderColor: theme.colors.borderLight,
-    borderRadius: theme.borderRadius.medium,
-    padding: theme.spacing.small
-  },
-  outlinedInput: {
-    flex: 1,
-    color: theme.colors.textPrimary
-  },
-
-  filled: {
-    backgroundColor: theme.colors.backgroundSecondary,
-    borderRadius: theme.borderRadius.medium,
-    padding: theme.spacing.small
-  },
-  filledInput: {
-    flex: 1,
-    color: theme.colors.textPrimary
-  },
-
-  // Sizes
-  small: {
-    padding: theme.spacing.xsmall
-  },
-  smallInput: {
-    fontSize: 12,
-    minHeight: 32
-  },
-  smallLabel: {
-    fontSize: 12
-  },
-
-  medium: {
-    padding: theme.spacing.small
-  },
-  mediumInput: {
-    fontSize: 14,
-    minHeight: 44
-  },
-  mediumLabel: {
-    fontSize: 14
-  },
-
-  large: {
-    padding: theme.spacing.medium
-  },
-  largeInput: {
-    fontSize: 16,
-    minHeight: 56
-  },
-  largeLabel: {
-    fontSize: 16
-  },
-
-  // States
-  focused: {
-    borderColor: theme.colors.primary[500]
-  },
-  error: {
-    borderColor: theme.colors.error
-  },
-
-  // Labels
   label: {
-    marginBottom: theme.spacing.xsmall,
-    color: theme.colors.textPrimary,
-    fontWeight: '500'
+    fontSize: theme.typography.sizes.sm,
+    fontWeight: theme.typography.weights.medium,
+    color: theme.colors.text.secondary,
+    marginBottom: theme.spacing.xs
   },
-  focusedLabel: {
-    color: theme.colors.primary[500]
+  iconContainer: {
+    marginRight: theme.spacing.sm,
+    justifyContent: 'center'
   },
-  errorLabel: {
-    color: theme.colors.error
-  },
-
-  // Input
-  input: {
-    padding: 0,
-    margin: 0
-  },
-
-  // Messages
   errorText: {
-    color: theme.colors.error,
-    fontSize: 12,
-    marginTop: theme.spacing.xsmall
-  },
-  helperText: {
-    color: theme.colors.textSecondary,
-    fontSize: 12,
-    marginTop: theme.spacing.xsmall
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.status.error,
+    marginTop: theme.spacing.xs
   }
 });

@@ -1,0 +1,630 @@
+/* 卡片管理模組樣式 */
+
+/* 基礎樣式 */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+/* 應用容器 */
+.card-management-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.app-main {
+  flex: 1;
+  padding: 2rem;
+}
+
+/* 按鈕樣式 */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #007bff;
+  border: 1px solid #007bff;
+}
+
+.btn-outline:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* 卡片列表樣式 */
+.card-list {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.card-list-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.card-count {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.card-item {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card-image {
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-info {
+  padding: 0.75rem;
+}
+
+.card-name {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-set, .card-rarity, .card-price {
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.card-price {
+  font-weight: 600;
+  color: #28a745;
+}
+
+/* 卡片詳情樣式 */
+.card-detail {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.card-detail-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.close-button:hover {
+  color: #333;
+}
+
+.card-detail-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+}
+
+.card-detail-image img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.info-item label {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.info-item span {
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.card-detail-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+/* 卡片掃描樣式 */
+.card-scanner {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.scanner-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.scanner-header h2 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.scanner-header p {
+  margin: 0;
+  color: #666;
+}
+
+.scanner-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.scanner-option {
+  text-align: center;
+  padding: 1.5rem;
+  border: 2px dashed #e0e0e0;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.scanner-option:hover {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.scanner-option h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.scanning-indicator {
+  text-align: center;
+  padding: 2rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 收藏樣式 */
+.card-collection {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.collection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.collection-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.collections-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.collection-item {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.collection-item:hover {
+  border-color: #007bff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.collection-item.selected {
+  border-color: #007bff;
+  background-color: #f8f9fa;
+}
+
+.collection-info h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.collection-info p {
+  margin: 0 0 0.5rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.card-count, .visibility {
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+}
+
+.visibility.public {
+  color: #28a745;
+}
+
+.visibility.private {
+  color: #dc3545;
+}
+
+.collection-preview {
+  display: flex;
+  margin-top: 1rem;
+  gap: 0.25rem;
+}
+
+.preview-card {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.more-cards {
+  width: 40px;
+  height: 40px;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* 搜索樣式 */
+.card-search {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.search-form {
+  margin-bottom: 1.5rem;
+}
+
+.search-input-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.search-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+}
+
+.filters-section h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.price-range {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.price-input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* 篩選樣式 */
+.card-filters {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.filters-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.clear-filters-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.clear-filters-btn:hover {
+  text-decoration: underline;
+}
+
+.filters-content {
+  margin-bottom: 1.5rem;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filter-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-item label {
+  font-weight: 600;
+  color: #666;
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.filter-item select,
+.filter-item input {
+  padding: 0.5rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.price-separator {
+  color: #666;
+}
+
+.active-filters {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 1rem;
+}
+
+.active-filters h4 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 0.9rem;
+}
+
+.active-filter-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-tag {
+  background-color: #e9ecef;
+  color: #495057;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.filter-tag button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.filter-tag button:hover {
+  color: #dc3545;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .app-main {
+    padding: 1rem;
+  }
+  
+  .card-detail-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .filter-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .search-input-group {
+    flex-direction: column;
+  }
+  
+  .card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}

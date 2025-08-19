@@ -1,54 +1,52 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
-
-// Import slices
+import { persistStore, persistReducer } from 'redux-persist';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import authReducer from './slices/authSlice';
 import cardReducer from './slices/cardSlice';
 import collectionReducer from './slices/collectionSlice';
-import marketReducer from './slices/marketSlice';
 import investmentReducer from './slices/investmentSlice';
+import marketReducer from './slices/marketSlice';
 import aiReducer from './slices/aiSlice';
 import membershipReducer from './slices/membershipSlice';
 import settingsReducer from './slices/settingsSlice';
+import scanHistoryReducer from './slices/scanHistorySlice';
+import priceDataReducer from './slices/priceDataSlice';
 
-// Custom hooks
-import { useDispatch } from 'react-redux';
-
-// Persist configuration (currently not used, but kept for future use)
-// const persistConfig = {
-//   key: 'root',
-//   storage: AsyncStorage,
-//   whitelist: ['auth', 'settings', 'membership'], // Only persist these slices
-// };
-
-// Root reducer
-const rootReducer = {
-  auth: authReducer,
-  cards: cardReducer,
-  collection: collectionReducer,
-  market: marketReducer,
-  investments: investmentReducer,
-  ai: aiReducer,
-  membership: membershipReducer,
-  settings: settingsReducer
+// 持久化配置
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  whitelist: ['auth', 'settings'] // 只持久化認證和設置狀態
 };
 
-// Create store
+// 根 reducer
+const rootReducer = {
+  auth: authReducer,
+  card: cardReducer,
+  collection: collectionReducer,
+  investment: investmentReducer,
+  market: marketReducer,
+  ai: aiReducer,
+  membership: membershipReducer,
+  settings: settingsReducer,
+  scanHistory: scanHistoryReducer,
+  priceData: priceDataReducer
+};
+
+// 創建 store
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
       }
-    }),
-  devTools: __DEV__
+    })
 });
 
-// Create persistor
+// 創建持久化 store
 export const persistor = persistStore(store);
 
-// Export types
+// 導出類型
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-export const useAppDispatch = () => useDispatch<AppDispatch>();

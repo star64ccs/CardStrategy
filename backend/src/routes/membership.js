@@ -186,7 +186,7 @@ router.post('/subscribe', protect, [
     const { planId, paymentMethod, autoRenew = true } = req.body;
 
     const selectedPlan = membershipPlans.find(p => p.id === planId);
-    
+
     if (!selectedPlan) {
       return res.status(400).json({
         success: false,
@@ -295,7 +295,7 @@ router.put('/upgrade', protect, [
     const { newPlanId, paymentMethod } = req.body;
 
     const newPlan = membershipPlans.find(p => p.id === newPlanId);
-    
+
     if (!newPlan) {
       return res.status(400).json({
         success: false,

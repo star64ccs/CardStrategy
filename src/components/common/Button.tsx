@@ -1,15 +1,21 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle } from 'react-native';
-import { useTheme } from '@/config/ThemeProvider';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  ActivityIndicator
+} from 'react-native';
+import { theme } from '../../theme/designSystem';
 
-export interface ButtonProps {
+interface ButtonProps {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+  variant?: 'primary' | 'secondary' | 'ghost';
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   loading?: boolean;
-  fullWidth?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
   icon?: React.ReactNode;
@@ -22,33 +28,101 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'medium',
   disabled = false,
   loading = false,
-  fullWidth = false,
   style,
   textStyle,
   icon
 }) => {
-  const { theme } = useTheme();
+  const getButtonStyle = (): ViewStyle => {
+    const baseStyle: ViewStyle = {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: theme.borderRadius.lg,
+      borderWidth: variant === 'secondary' ? 1 : 0,
+      shadowColor: variant === 'primary' ? theme.colors.gold.primary : 'transparent',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: variant === 'primary' ? 0.3 : 0,
+      shadowRadius: 4,
+      elevation: variant === 'primary' ? 4 : 0
+    };
 
-  const buttonStyle = [
-    styles.base,
-    styles[variant],
-    styles[size],
-    fullWidth && styles.fullWidth,
-    disabled && styles.disabled,
-    style
-  ];
+    // 尺寸樣式
+    const sizeStyles = {
+      small: {
+        paddingHorizontal: theme.spacing.md,
+        paddingVertical: theme.spacing.sm,
+        minHeight: 36
+      },
+      medium: {
+        paddingHorizontal: theme.spacing.lg,
+        paddingVertical: theme.spacing.md,
+        minHeight: 48
+      },
+      large: {
+        paddingHorizontal: theme.spacing.xl,
+        paddingVertical: theme.spacing.lg,
+        minHeight: 56
+      }
+    };
 
-  const textStyleCombined = [
-    styles.text,
-    styles[`${variant}Text`],
-    styles[`${size}Text`],
-    disabled && styles.disabledText,
-    textStyle
-  ];
+    // 變體樣式
+    const variantStyles = {
+      primary: {
+        backgroundColor: disabled ? theme.colors.text.disabled : theme.colors.gold.primary,
+        borderColor: disabled ? theme.colors.text.disabled : theme.colors.gold.primary
+      },
+      secondary: {
+        backgroundColor: 'transparent',
+        borderColor: disabled ? theme.colors.text.disabled : theme.colors.gold.primary
+      },
+      ghost: {
+        backgroundColor: 'transparent',
+        borderColor: 'transparent'
+      }
+    };
+
+    return {
+      ...baseStyle,
+      ...sizeStyles[size],
+      ...variantStyles[variant]
+    };
+  };
+
+  const getTextStyle = (): TextStyle => {
+    const baseStyle: TextStyle = {
+      fontSize: theme.typography.sizes.base,
+      fontWeight: theme.typography.weights.semibold,
+      textAlign: 'center'
+    };
+
+    const sizeStyles = {
+      small: { fontSize: theme.typography.sizes.sm },
+      medium: { fontSize: theme.typography.sizes.base },
+      large: { fontSize: theme.typography.sizes.lg }
+    };
+
+    const variantStyles = {
+      primary: {
+        color: theme.colors.background.primary
+      },
+      secondary: {
+        color: disabled ? theme.colors.text.disabled : theme.colors.gold.primary
+      },
+      ghost: {
+        color: disabled ? theme.colors.text.disabled : theme.colors.text.primary
+      }
+    };
+
+    return {
+      ...baseStyle,
+      ...sizeStyles[size],
+      ...variantStyles[variant]
+    };
+  };
 
   return (
     <TouchableOpacity
-      style={buttonStyle}
+      style={[getButtonStyle(), style]}
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.8}
@@ -56,127 +130,22 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === 'primary' ? theme.colors.white : theme.colors.primary}
+          color={variant === 'primary' ? theme.colors.background.primary : theme.colors.gold.primary}
         />
       ) : (
         <>
-          {icon}
-          <Text
-            style={[textStyleCombined, { color: getTextColor(variant, disabled) }]}
-          >
-            {title}
-          </Text>
+          {icon && <>{icon}</>}
+          <Text style={[getTextStyle(), textStyle]}>{title}</Text>
         </>
       )}
     </TouchableOpacity>
   );
 };
 
-// 獲取文字顏色的輔助函數
-const getTextColor = (variant: string, disabled: boolean) => {
-  if (disabled) return '#9CA3AF';
-
-  switch (variant) {
-    case 'primary':
-    case 'secondary':
-    case 'danger':
-      return '#FFFFFF';
-    case 'outline':
-    case 'ghost':
-      return '#1C2B3A';
-    default:
-      return '#1C2B3A';
-  }
-};
-
 const styles = StyleSheet.create({
-  base: {
+  container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    minHeight: 44
-  },
-  fullWidth: {
-    width: '100%'
-  },
-  disabled: {
-    opacity: 0.6
-  },
-  text: {
-    fontWeight: '600',
-    textAlign: 'center'
-  },
-
-  // Variants
-  primary: {
-    backgroundColor: '#1C2B3A'
-  },
-  primaryText: {
-    color: '#FFFFFF'
-  },
-
-  secondary: {
-    backgroundColor: '#CBA135'
-  },
-  secondaryText: {
-    color: '#FFFFFF'
-  },
-
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#1C2B3A'
-  },
-  outlineText: {
-    color: '#1C2B3A'
-  },
-
-  ghost: {
-    backgroundColor: 'transparent'
-  },
-  ghostText: {
-    color: '#1C2B3A'
-  },
-
-  danger: {
-    backgroundColor: '#F44336'
-  },
-  dangerText: {
-    color: '#FFFFFF'
-  },
-
-  disabledText: {
-    color: '#6B7280'
-  },
-
-  // Sizes
-  small: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    minHeight: 32
-  },
-  smallText: {
-    fontSize: 12
-  },
-
-  medium: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    minHeight: 44
-  },
-  mediumText: {
-    fontSize: 14
-  },
-
-  large: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    minHeight: 56
-  },
-  largeText: {
-    fontSize: 16
+    justifyContent: 'center'
   }
 });

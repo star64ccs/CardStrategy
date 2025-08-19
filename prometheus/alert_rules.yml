@@ -1,0 +1,393 @@
+groups:
+  - name: cardstrategy_alerts
+    rules:
+      # 服務可用性警報
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "服務 {{ $labels.job }} 已停止運行"
+          description: "服務 {{ $labels.job }} 在 {{ $labels.instance }} 上已停止運行超過 1 分鐘"
+
+      - alert: ServiceHighLatency
+        expr: http_request_duration_seconds > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: "{{ $labels.job }}"
+        annotations:
+          summary: "服務 {{ $labels.job }} 響應時間過高"
+          description: "服務 {{ $labels.job }} 在 {{ $labels.instance }} 上的響應時間超過 2 秒"
+
+      # 系統資源警報
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "CPU 使用率過高"
+          description: "CPU 使用率在 {{ $labels.instance }} 上超過 80%"
+
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "記憶體使用率過高"
+          description: "記憶體使用率在 {{ $labels.instance }} 上超過 85%"
+
+      - alert: HighDiskUsage
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+          service: system
+        annotations:
+          summary: "磁碟使用率過高"
+          description: "磁碟使用率在 {{ $labels.instance }} 上超過 90%"
+
+      # 數據庫警報
+      - alert: DatabaseHighConnections
+        expr: pg_stat_database_numbackends > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "數據庫連接數過高"
+          description: "PostgreSQL 數據庫連接數超過 80"
+
+      - alert: DatabaseSlowQueries
+        expr: rate(pg_stat_activity_max_tx_duration[5m]) > 30
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "數據庫查詢緩慢"
+          description: "PostgreSQL 數據庫存在長時間運行的查詢"
+
+      # Redis 警報
+      - alert: RedisHighMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: redis
+        annotations:
+          summary: "Redis 記憶體使用率過高"
+          description: "Redis 記憶體使用率超過 80%"
+
+      - alert: RedisConnectionErrors
+        expr: rate(redis_commands_processed_total[5m]) == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: redis
+        annotations:
+          summary: "Redis 連接錯誤"
+          description: "Redis 服務無法處理命令"
+
+      # 應用程序警報
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: application
+        annotations:
+          summary: "錯誤率過高"
+          description: "HTTP 5xx 錯誤率超過 5%"
+
+      - alert: HighRequestRate
+        expr: rate(http_requests_total[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: application
+        annotations:
+          summary: "請求率過高"
+          description: "HTTP 請求率超過 1000 req/s"
+
+      # 容器警報
+      - alert: ContainerHighCPUUsage
+        expr: (rate(container_cpu_usage_seconds_total{name!=""}[5m]) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: container
+        annotations:
+          summary: "容器 CPU 使用率過高"
+          description: "容器 {{ $labels.name }} 的 CPU 使用率超過 80%"
+
+      - alert: ContainerHighMemoryUsage
+        expr: (container_memory_usage_bytes{name!=""} / container_spec_memory_limit_bytes{name!=""} * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: container
+        annotations:
+          summary: "容器記憶體使用率過高"
+          description: "容器 {{ $labels.name }} 的記憶體使用率超過 85%"
+
+      - alert: ContainerRestarting
+        expr: increase(container_start_time_seconds{name!=""}[15m]) > 2
+        for: 15m
+        labels:
+          severity: warning
+          service: container
+        annotations:
+          summary: "容器頻繁重啟"
+          description: "容器 {{ $labels.name }} 在 15 分鐘內重啟超過 2 次"
+
+      # 網絡警報
+      - alert: HighNetworkErrors
+        expr: rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: network
+        annotations:
+          summary: "網絡錯誤率過高"
+          description: "網絡錯誤率超過 10 errors/s"
+
+      # 自定義應用程序指標警報
+      - alert: CardStrategyHighResponseTime
+        expr: cardstrategy_http_request_duration_seconds > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: cardstrategy
+        annotations:
+          summary: "CardStrategy API 響應時間過高"
+          description: "CardStrategy API 響應時間超過 2 秒"
+
+      - alert: CardStrategyHighErrorRate
+        expr: rate(cardstrategy_http_requests_total{status=~"5.."}[5m]) / rate(cardstrategy_http_requests_total[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: cardstrategy
+        annotations:
+          summary: "CardStrategy 錯誤率過高"
+          description: "CardStrategy API 錯誤率超過 5%"
+
+      - alert: CardStrategyDatabaseSlowQueries
+        expr: cardstrategy_database_query_duration_seconds > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: cardstrategy
+        annotations:
+          summary: "CardStrategy 數據庫查詢緩慢"
+          description: "CardStrategy 數據庫查詢時間超過 1 秒"
+
+      - alert: CardStrategyHighMemoryUsage
+        expr: cardstrategy_memory_usage_bytes / cardstrategy_memory_limit_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: cardstrategy
+        annotations:
+          summary: "CardStrategy 記憶體使用率過高"
+          description: "CardStrategy 應用程序記憶體使用率超過 85%"
+
+      # 備份警報
+      - alert: BackupFailed
+        expr: cardstrategy_backup_status == 0
+        for: 1h
+        labels:
+          severity: critical
+          service: backup
+        annotations:
+          summary: "備份失敗"
+          description: "CardStrategy 備份在過去 1 小時內失敗"
+
+      - alert: BackupTooOld
+        expr: time() - cardstrategy_last_backup_timestamp > 86400
+        for: 1h
+        labels:
+          severity: warning
+          service: backup
+        annotations:
+          summary: "備份過舊"
+          description: "CardStrategy 最後一次備份超過 24 小時"
+
+      # 監控告警
+      - alert: MonitoringServiceDown
+        expr: up{job="prometheus"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: monitoring
+        annotations:
+          summary: "監控服務停止"
+          description: "Prometheus 監控服務已停止運行"
+
+      - alert: GrafanaServiceDown
+        expr: up{job="grafana"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: monitoring
+        annotations:
+          summary: "Grafana 服務停止"
+          description: "Grafana 儀表板服務已停止運行"
+
+      # 日誌警報
+      - alert: HighLogErrorRate
+        expr: rate(log_entries_total{level="error"}[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: logging
+        annotations:
+          summary: "錯誤日誌率過高"
+          description: "錯誤日誌產生率超過 10 logs/s"
+
+      # 安全警報
+      - alert: HighFailedLoginAttempts
+        expr: rate(cardstrategy_failed_login_attempts_total[5m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "登錄失敗嘗試過多"
+          description: "登錄失敗嘗試率超過 5 attempts/s"
+
+      - alert: HighAPIKeyUsage
+        expr: rate(cardstrategy_api_key_usage_total[5m]) > 100
+        for: 5m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "API 密鑰使用率過高"
+          description: "API 密鑰使用率超過 100 requests/s"
+
+      # 業務指標警報
+      - alert: LowUserActivity
+        expr: rate(cardstrategy_active_users_total[1h]) < 10
+        for: 1h
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "用戶活躍度低"
+          description: "過去 1 小時內活躍用戶數少於 10"
+
+      - alert: HighCardScanFailures
+        expr: rate(cardstrategy_card_scan_failures_total[5m]) / rate(cardstrategy_card_scans_total[5m]) * 100 > 20
+        for: 5m
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "卡牌掃描失敗率過高"
+          description: "卡牌掃描失敗率超過 20%"
+
+      # 外部服務警報
+      - alert: ExternalAPIDown
+        expr: up{job="external-api"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: external
+        annotations:
+          summary: "外部 API 服務不可用"
+          description: "外部 API 服務已停止響應"
+
+      - alert: ExternalAPIHighLatency
+        expr: http_request_duration_seconds{job="external-api"} > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: external
+        annotations:
+          summary: "外部 API 響應時間過高"
+          description: "外部 API 響應時間超過 5 秒"
+
+  - name: cardstrategy_recording_rules
+    rules:
+      # 記錄規則 - 計算衍生指標
+      - record: job:http_requests:rate5m
+        expr: rate(http_requests_total[5m])
+
+      - record: job:http_requests:rate1h
+        expr: rate(http_requests_total[1h])
+
+      - record: job:http_requests:rate1d
+        expr: rate(http_requests_total[1d])
+
+      - record: job:http_request_duration_seconds:p95
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))
+
+      - record: job:http_request_duration_seconds:p99
+        expr: histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))
+
+      - record: job:http_requests_total:errors:rate5m
+        expr: rate(http_requests_total{status=~"5.."}[5m])
+
+      - record: job:http_requests_total:success:rate5m
+        expr: rate(http_requests_total{status=~"2.."}[5m])
+
+      - record: job:error_rate
+        expr: job:http_requests_total:errors:rate5m / job:http_requests:rate5m * 100
+
+      - record: job:success_rate
+        expr: job:http_requests_total:success:rate5m / job:http_requests:rate5m * 100
+
+      # 系統資源記錄規則
+      - record: node:memory_usage_percent
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100
+
+      - record: node:cpu_usage_percent
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+
+      - record: node:disk_usage_percent
+        expr: (node_filesystem_size_bytes - node_filesystem_free_bytes) / node_filesystem_size_bytes * 100
+
+      # 容器記錄規則
+      - record: container:cpu_usage_percent
+        expr: (rate(container_cpu_usage_seconds_total{name!=""}[5m]) * 100)
+
+      - record: container:memory_usage_percent
+        expr: (container_memory_usage_bytes{name!=""} / container_spec_memory_limit_bytes{name!=""} * 100)
+
+      # 數據庫記錄規則
+      - record: postgres:connections_usage_percent
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100
+
+      - record: postgres:slow_queries_rate
+        expr: rate(pg_stat_activity_max_tx_duration[5m])
+
+      # Redis 記錄規則
+      - record: redis:memory_usage_percent
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100
+
+      - record: redis:commands_rate
+        expr: rate(redis_commands_processed_total[5m])
+
+      # 應用程序記錄規則
+      - record: cardstrategy:active_users:rate1h
+        expr: rate(cardstrategy_active_users_total[1h])
+
+      - record: cardstrategy:card_scans:rate5m
+        expr: rate(cardstrategy_card_scans_total[5m])
+
+      - record: cardstrategy:card_scan_success_rate
+        expr: rate(cardstrategy_card_scans_success_total[5m]) / rate(cardstrategy_card_scans_total[5m]) * 100
+
+      - record: cardstrategy:ai_predictions:rate5m
+        expr: rate(cardstrategy_ai_predictions_total[5m])
+
+      - record: cardstrategy:ai_prediction_accuracy
+        expr: rate(cardstrategy_ai_predictions_accurate_total[5m]) / rate(cardstrategy_ai_predictions_total[5m]) * 100

@@ -27,7 +27,7 @@ export const MarketAnalysisScreen: React.FC = () => {
     (state: RootState) => state.market
   );
   const { user } = useSelector((state: RootState) => state.auth);
-  
+
   const [refreshing, setRefreshing] = useState(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState<'24h' | '7d' | '30d'>('24h');
   const [selectedTab, setSelectedTab] = useState<'overview' | 'trends' | 'insights'>('overview');
@@ -77,10 +77,15 @@ export const MarketAnalysisScreen: React.FC = () => {
     }
 
     const totalVolume = marketData.reduce((sum: number, data: any) => sum + (data.volume || 0), 0);
-    const averagePrice = marketData.reduce((sum: number, data: any) => sum + (data.price || 0), 0) / marketData.length;
-    
+    const averagePrice = marketData.reduce(
+      (sum: number, data: any) => sum + (data.price || 0),
+      0
+    ) / marketData.length;
+
     // 計算價格變化
-    const sortedData = [...marketData].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    const sortedData = [...marketData].sort(
+      (a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
     const firstPrice = sortedData[0]?.price || 0;
     const lastPrice = sortedData[sortedData.length - 1]?.price || 0;
     const priceChange = firstPrice > 0 ? ((lastPrice - firstPrice) / firstPrice) * 100 : 0;
@@ -145,7 +150,7 @@ export const MarketAnalysisScreen: React.FC = () => {
       };
     }
 
-    const latestInsight = marketInsights[0];
+    const [latestInsight] = marketInsights;
     return {
       sentiment: latestInsight.sentiment || 'neutral',
       recommendation: latestInsight.recommendation || '觀望',
@@ -279,8 +284,8 @@ export const MarketAnalysisScreen: React.FC = () => {
               市場情緒:
             </Text>
             <Text style={[styles.insightValue, { color: theme.colors.textPrimary }]}>
-              {marketInsight.sentiment === 'positive' ? '樂觀' : 
-               marketInsight.sentiment === 'negative' ? '悲觀' : '中性'}
+              {marketInsight.sentiment === 'positive' ? '樂觀' :
+                marketInsight.sentiment === 'negative' ? '悲觀' : '中性'}
             </Text>
           </View>
           <View style={styles.insightRow}>
@@ -297,12 +302,12 @@ export const MarketAnalysisScreen: React.FC = () => {
             </Text>
             <Text style={[
               styles.insightValue,
-              { color: marketInsight.riskLevel === 'high' ? theme.colors.error : 
-                       marketInsight.riskLevel === 'low' ? theme.colors.success : 
-                       theme.colors.warning }
+              { color: marketInsight.riskLevel === 'high' ? theme.colors.error :
+                marketInsight.riskLevel === 'low' ? theme.colors.success :
+                  theme.colors.warning }
             ]}>
-              {marketInsight.riskLevel === 'high' ? '高' : 
-               marketInsight.riskLevel === 'low' ? '低' : '中'}
+              {marketInsight.riskLevel === 'high' ? '高' :
+                marketInsight.riskLevel === 'low' ? '低' : '中'}
             </Text>
           </View>
         </View>
@@ -320,8 +325,8 @@ export const MarketAnalysisScreen: React.FC = () => {
             style={[
               styles.timeframeButton,
               {
-                backgroundColor: selectedTimeframe === timeframe 
-                  ? theme.colors.primary[500] 
+                backgroundColor: selectedTimeframe === timeframe
+                  ? theme.colors.primary[500]
                   : theme.colors.background,
                 borderColor: theme.colors.borderLight
               }
@@ -330,7 +335,11 @@ export const MarketAnalysisScreen: React.FC = () => {
           >
             <Text style={[
               styles.timeframeButtonText,
-              { color: selectedTimeframe === timeframe ? theme.colors.white : theme.colors.textSecondary }
+              {
+                color: selectedTimeframe === timeframe
+                  ? theme.colors.white
+                  : theme.colors.textSecondary
+              }
             ]}>
               {getTimeframeLabel(timeframe)}
             </Text>
@@ -445,7 +454,11 @@ export const MarketAnalysisScreen: React.FC = () => {
         <TouchableOpacity
           style={[
             styles.tabButton,
-            { backgroundColor: selectedTab === 'overview' ? theme.colors.primary[500] : 'transparent' }
+            {
+              backgroundColor: selectedTab === 'overview'
+                ? theme.colors.primary[500]
+                : 'transparent'
+            }
           ]}
           onPress={() => setSelectedTab('overview')}
         >
@@ -459,7 +472,11 @@ export const MarketAnalysisScreen: React.FC = () => {
         <TouchableOpacity
           style={[
             styles.tabButton,
-            { backgroundColor: selectedTab === 'trends' ? theme.colors.primary[500] : 'transparent' }
+            {
+              backgroundColor: selectedTab === 'trends'
+                ? theme.colors.primary[500]
+                : 'transparent'
+            }
           ]}
           onPress={() => setSelectedTab('trends')}
         >
@@ -473,7 +490,11 @@ export const MarketAnalysisScreen: React.FC = () => {
         <TouchableOpacity
           style={[
             styles.tabButton,
-            { backgroundColor: selectedTab === 'insights' ? theme.colors.primary[500] : 'transparent' }
+            {
+              backgroundColor: selectedTab === 'insights'
+                ? theme.colors.primary[500]
+                : 'transparent'
+            }
           ]}
           onPress={() => setSelectedTab('insights')}
         >
@@ -490,8 +511,8 @@ export const MarketAnalysisScreen: React.FC = () => {
       <ScrollView
         style={styles.content}
         refreshControl={
-          <RefreshControl 
-            refreshing={refreshing || isLoading} 
+          <RefreshControl
+            refreshing={refreshing || isLoading}
             onRefresh={handleRefresh}
             colors={[theme.colors.primary[500] || '#007AFF']}
           />
@@ -634,7 +655,7 @@ const styles = StyleSheet.create({
   trendList: {
     maxHeight: 200 // Limit height for scrollable list
   },
-  trendItem: {
+  trendListItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

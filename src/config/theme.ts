@@ -199,7 +199,7 @@ export const borderRadius = {
   full: 9999
 };
 
-// 陰影系統
+// 陰影系統 (React Native 版本)
 export const shadows = {
   sm: {
     shadowColor: colors.shadowLight,
@@ -262,7 +262,7 @@ export const animation = {
   }
 };
 
-// 尺寸系統
+// 尺寸系統 (React Native 版本)
 export const dimensions = {
   screen: {
     width,
@@ -313,25 +313,22 @@ export const darkTheme = {
   ...theme,
   colors: {
     ...colors,
-    background: {
-      light: '#121212',
-      dark: '#000000',
-      paper: '#1E1E1E',
-      paperDark: '#2D2D2D'
-    },
-    text: {
-      primary: '#FFFFFF',
-      secondary: '#B0B0B0',
-      disabled: '#666666',
-      inverse: '#1C2B3A',
-      link: '#00BFFF'
-    },
-    border: {
-      light: '#374151',
-      dark: '#6B7280',
-      focus: '#00BFFF',
-      error: '#F44336'
-    }
+    background: '#121212',
+    backgroundLight: '#1E1E1E',
+    backgroundDark: '#000000',
+    backgroundPaper: '#1E1E1E',
+    backgroundPaperDark: '#2D2D2D',
+    text: '#FFFFFF',
+    textPrimary: '#FFFFFF',
+    textSecondary: '#B0B0B0',
+    textDisabled: '#666666',
+    textInverse: '#1C2B3A',
+    textLink: '#00BFFF',
+    border: '#374151',
+    borderLight: '#374151',
+    borderDark: '#6B7280',
+    borderFocus: '#00BFFF',
+    borderError: '#F44336'
   }
 };
 

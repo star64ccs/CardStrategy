@@ -84,11 +84,16 @@ const initialState: CardState = {
   },
   isRecognizing: false,
   recognizedCard: null,
+  recognitionResult: null,
+  recognitionAlternatives: [],
+  recognitionFeatures: null,
   isAnalyzing: false,
   conditionAnalysis: null,
   authenticityCheck: null,
   isVerifying: false,
-  searchResults: []
+  searchResults: [],
+  recognitionHistory: [],
+  recognitionStats: null
 };
 
 // Card slice
@@ -140,7 +145,26 @@ const cardSlice = createSlice({
       })
       .addCase(recognizeCard.fulfilled, (state, action) => {
         state.isRecognizing = false;
-        state.recognizedCard = action.payload;
+        state.recognizedCard = action.payload.data.recognizedCard;
+        state.recognitionResult = action.payload.data;
+        state.recognitionAlternatives = action.payload.data.alternatives || [];
+        state.recognitionFeatures = action.payload.data.imageFeatures;
+
+        // 添加到識別歷史
+        if (action.payload.data.recognizedCard) {
+          state.recognitionHistory.unshift({
+            card: action.payload.data.recognizedCard,
+            confidence: action.payload.data.confidence,
+            timestamp: new Date().toISOString(),
+            processingTime: action.payload.data.processingTime
+          });
+
+          // 限制歷史記錄數量
+          if (state.recognitionHistory.length > 50) {
+            state.recognitionHistory = state.recognitionHistory.slice(0, 50);
+          }
+        }
+
         state.error = null;
       })
       .addCase(recognizeCard.rejected, (state, action) => {
@@ -212,7 +236,9 @@ const cardSlice = createSlice({
             category: 'condition',
             score: action.payload.overall,
             confidence: action.payload.confidence,
-            details: `條件: ${action.payload.condition}, 置中: ${action.payload.centering}, 邊角: ${action.payload.corners}, 邊緣: ${action.payload.edges}, 表面: ${action.payload.surface}`,
+            details: `條件: ${action.payload.condition}, 置中: ${action.payload.centering}, ` +
+              `邊角: ${action.payload.corners}, 邊緣: ${action.payload.edges}, ` +
+              `表面: ${action.payload.surface}`,
             evidence: [`整體評分: ${action.payload.overall}/10`]
           }];
         }
@@ -237,7 +263,8 @@ const cardSlice = createSlice({
             category: 'authenticity',
             score: action.payload.isAuthentic ? 10 : 0,
             confidence: action.payload.confidence,
-            details: `真偽判斷: ${action.payload.isAuthentic ? '真品' : '仿品'}, 信心度: ${action.payload.confidence}%`,
+            details: `真偽判斷: ${action.payload.isAuthentic ? '真品' : '仿品'}, ` +
+              `信心度: ${action.payload.confidence}%`,
             evidence: action.payload.evidence
           }];
         }
@@ -262,5 +289,12 @@ export const {
   updateCard,
   removeCard
 } = cardSlice.actions;
+
+// 選擇器
+export const selectIsRecognizing = (state: { cards: CardState }) => state.cards.isRecognizing;
+export const selectRecognizedCard = (state: { cards: CardState }) => state.cards.recognizedCard;
+export const selectRecognitionResult = (state: { cards: CardState }) => state.cards.recognitionResult;
+export const selectRecognitionAlternatives = (state: { cards: CardState }) => state.cards.recognitionAlternatives;
+export const selectRecognitionFeatures = (state: { cards: CardState }) => state.cards.recognitionFeatures;
 
 export default cardSlice.reducer;

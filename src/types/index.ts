@@ -87,7 +87,15 @@ export interface Card extends BaseEntity {
 }
 
 export type CardRarity = 'common' | 'uncommon' | 'rare' | 'mythic' | 'special' | 'promo';
-export type CardType = 'creature' | 'spell' | 'artifact' | 'land' | 'enchantment' | 'instant' | 'sorcery' | 'planeswalker';
+export type CardType =
+  | 'creature'
+  | 'spell'
+  | 'artifact'
+  | 'land'
+  | 'enchantment'
+  | 'instant'
+  | 'sorcery'
+  | 'planeswalker';
 
 export interface CardAttributes {
   manaCost?: string;
@@ -136,7 +144,14 @@ export interface CardMetadata {
   gradeCompany?: string;
 }
 
-export type CardCondition = 'mint' | 'near-mint' | 'excellent' | 'good' | 'light-played' | 'played' | 'poor';
+export type CardCondition =
+  | 'mint'
+  | 'near-mint'
+  | 'excellent'
+  | 'good'
+  | 'light-played'
+  | 'played'
+  | 'poor';
 
 // 收藏相關類型
 export interface Collection extends BaseEntity {
@@ -330,7 +345,12 @@ export interface Notification extends BaseEntity {
   expiresAt?: Date;
 }
 
-export type NotificationType = 'price_alert' | 'market_update' | 'investment_advice' | 'system' | 'social';
+export type NotificationType =
+  | 'price_alert'
+  | 'market_update'
+  | 'investment_advice'
+  | 'system'
+  | 'social';
 
 // 設置類型
 export interface AppSettings {
@@ -489,11 +509,31 @@ export interface CardState {
   pagination: Pagination;
   isRecognizing: boolean;
   recognizedCard: Card | null;
+  recognitionResult: any | null;
+  recognitionAlternatives: any[];
+  recognitionFeatures: any | null;
   isAnalyzing: boolean;
   conditionAnalysis: AnalysisResult[] | null;
   authenticityCheck: AnalysisResult[] | null;
   isVerifying: boolean;
   searchResults: Card[];
+  recognitionHistory: {
+    card: Card;
+    confidence: number;
+    timestamp: string;
+    processingTime: number;
+  }[];
+  recognitionStats: {
+    totalRecognitions: number;
+    averageConfidence: number;
+    successRate: number;
+    popularCards: { cardId: string; count: number }[];
+    processingTimes: {
+      average: number;
+      min: number;
+      max: number;
+    };
+  } | null;
 }
 
 export interface CollectionState {
@@ -540,7 +580,12 @@ export interface AIState {
   isChatting: boolean;
   isGeneratingReport: boolean;
   currentAnalysis: AIAnalysis | null;
-  pricePrediction: { predictedPrice: number; confidence: number; factors: string[]; trend: 'stable' | 'up' | 'down' } | null;
+  pricePrediction: {
+    predictedPrice: number;
+    confidence: number;
+    factors: string[];
+    trend: 'stable' | 'up' | 'down';
+  } | null;
   investmentReport: any | null;
   confidence: number;
   processingTime: number;
@@ -771,8 +816,99 @@ export interface CollectionItem {
 }
 
 // 常量類型
-export const CARD_RARITIES: CardRarity[] = ['common', 'uncommon', 'rare', 'mythic', 'special', 'promo'];
-export const CARD_TYPES: CardType[] = ['creature', 'spell', 'artifact', 'land', 'enchantment', 'instant', 'sorcery', 'planeswalker'];
-export const CARD_CONDITIONS: CardCondition[] = ['mint', 'near-mint', 'excellent', 'good', 'light-played', 'played', 'poor'];
+export const CARD_RARITIES: CardRarity[] = [
+  'common',
+  'uncommon',
+  'rare',
+  'mythic',
+  'special',
+  'promo'
+];
+export const CARD_TYPES: CardType[] = [
+  'creature',
+  'spell',
+  'artifact',
+  'land',
+  'enchantment',
+  'instant',
+  'sorcery',
+  'planeswalker'
+];
+export const CARD_CONDITIONS: CardCondition[] = [
+  'mint',
+  'near-mint',
+  'excellent',
+  'good',
+  'light-played',
+  'played',
+  'poor'
+];
 export const SUPPORTED_LANGUAGES = ['zh-TW', 'en-US', 'ja-JP'] as const;
 export const THEME_MODES = ['light', 'dark', 'auto'] as const;
+
+// 分享驗證相關類型
+export interface ShareVerification extends BaseEntity {
+  verificationCode: string;
+  userId: string;
+  cardId: string;
+  analysisType: 'centering' | 'authenticity' | 'comprehensive';
+  analysisResult: {
+    centering?: {
+      score: number;
+      grade: string;
+      details: string[];
+      confidence: number;
+    };
+    authenticity?: {
+      isAuthentic: boolean;
+      confidence: number;
+      riskFactors: string[];
+      verificationDetails: string[];
+    };
+    overallGrade?: string;
+    overallScore?: number;
+    processingTime: number;
+    metadata: {
+      analysisMethod: string;
+      modelVersion: string;
+      imageQuality: string;
+      lightingConditions: string;
+    };
+  };
+  shareUrl: string;
+  expiresAt: string;
+  isActive: boolean;
+  viewCount: number;
+  lastViewedAt?: string;
+}
+
+export interface ShareVerificationCreateRequest {
+  cardId: string;
+  analysisType: 'centering' | 'authenticity' | 'comprehensive';
+  analysisResult: ShareVerification['analysisResult'];
+  expiresInDays?: number;
+}
+
+export interface ShareVerificationResponse {
+  verificationCode: string;
+  shareUrl: string;
+  qrCodeUrl: string;
+  socialShareLinks: {
+    whatsapp: string;
+    instagram: string;
+    facebook: string;
+    twitter: string;
+    telegram: string;
+  };
+}
+
+export interface VerificationLookupResponse {
+  verification: ShareVerification;
+  card: Card;
+  user: {
+    username: string;
+    avatar?: string;
+  };
+  isExpired: boolean;
+  isValid: boolean;
+}

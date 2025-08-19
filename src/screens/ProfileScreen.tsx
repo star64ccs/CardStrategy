@@ -86,7 +86,10 @@ export const ProfileScreen: React.FC = () => {
         </Text>
         <View style={styles.userStats}>
           <Text style={[styles.userStat, { color: theme.colors.textSecondary }]}>
-            加入時間: {user?.statistics?.joinDate ? new Date(user.statistics.joinDate).toLocaleDateString() : '未知'}
+            加入時間:{' '}
+            {user?.statistics?.joinDate
+              ? new Date(user.statistics.joinDate).toLocaleDateString()
+              : '未知'}
           </Text>
         </View>
       </View>

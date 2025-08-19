@@ -2,247 +2,283 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
+  TextInput,
   TouchableOpacity,
+  StyleSheet,
   Alert,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ScrollView,
+  Image
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { Input } from '@/components/common/Input';
-import { Button } from '@/components/common/Button';
-import { Card } from '@/components/common/Card';
-import { theme } from '@/config/theme';
-import { login } from '@/store/slices/authSlice';
+import { login } from '../store/slices/authSlice';
+import { authService } from '../services/authService';
+import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
 
-export const LoginScreen: React.FC = () => {
-  const navigation = useNavigation();
+interface LoginScreenProps {
+  onNavigate: (screen: 'Login' | 'Register' | 'Dashboard') => void;
+}
+
+const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-
-  const validateForm = () => {
-    const newErrors: { email?: string; password?: string } = {};
-
-    if (!email) {
-      newErrors.email = '請輸入電子郵件';
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = '請輸入有效的電子郵件';
-    }
-
-    if (!password) {
-      newErrors.password = '請輸入密碼';
-    } else if (password.length < 6) {
-      newErrors.password = '密碼至少需要 6 個字符';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
 
   const handleLogin = async () => {
-    if (!validateForm()) return;
+    if (!email || !password) {
+      Alert.alert('錯誤', '請填寫所有必填欄位');
+      return;
+    }
 
     setIsLoading(true);
     try {
-      await dispatch(login({ email, password }) as any);
+      const response = await authService.login({ email, password });
+
+      if (response.success) {
+        dispatch(login(response.data));
+        onNavigate('Dashboard');
+      } else {
+        Alert.alert('登錄失敗', response.message || '請檢查您的帳號密碼');
+      }
     } catch (error: any) {
-      Alert.alert('登入失敗', error.message || '請檢查您的帳號密碼');
+      Alert.alert('錯誤', error.message || '登錄時發生錯誤');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRegister = () => {
-    navigation.navigate('Register' as never);
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
-          {/* Logo and Title */}
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Text style={styles.logo}>🎮</Text>
-            </View>
-            <Text style={styles.title}>卡策</Text>
-            <Text style={styles.subtitle}>智選卡牌，策略致勝</Text>
+        {/* Logo 和標題 */}
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Text style={styles.logo}>🎴</Text>
           </View>
+          <Text style={styles.title}>卡策</Text>
+          <Text style={styles.subtitle}>智選卡牌，策略致勝</Text>
+        </View>
 
-          {/* Login Form */}
-          <Card variant="elevated" padding="large" style={styles.formCard}>
-            <Text style={styles.formTitle}>登入帳號</Text>
+        {/* 登錄表單 */}
+        <View style={styles.formContainer}>
+          <Text style={styles.formTitle}>歡迎回來</Text>
 
-            <Input
-              label="電子郵件"
-              placeholder="請輸入您的電子郵件"
+          {/* 電子郵件輸入 */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>電子郵件</Text>
+            <TextInput
+              style={styles.input}
               value={email}
               onChangeText={setEmail}
+              placeholder="請輸入您的電子郵件"
+              placeholderTextColor={colors.textSecondary}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
-              leftIcon="mail"
-              error={errors.email}
             />
+          </View>
 
-            <Input
-              label="密碼"
-              placeholder="請輸入您的密碼"
+          {/* 密碼輸入 */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>密碼</Text>
+            <TextInput
+              style={styles.input}
               value={password}
               onChangeText={setPassword}
+              placeholder="請輸入您的密碼"
+              placeholderTextColor={colors.textSecondary}
               secureTextEntry
-              leftIcon="lock-closed"
-              error={errors.password}
+              autoCapitalize="none"
             />
-
-            <Button
-              title="登入"
-              onPress={handleLogin}
-              loading={isLoading}
-              fullWidth
-              style={styles.loginButton}
-            />
-
-            <TouchableOpacity
-              style={styles.forgotPassword}
-              onPress={() => Alert.alert('功能開發中', '密碼重置功能即將推出')}
-            >
-              <Text style={styles.forgotPasswordText}>忘記密碼？</Text>
-            </TouchableOpacity>
-          </Card>
-
-          {/* Register Link */}
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>還沒有帳號？</Text>
-            <TouchableOpacity onPress={handleRegister}>
-              <Text style={styles.registerLink}>立即註冊</Text>
-            </TouchableOpacity>
           </View>
 
-          {/* Social Login */}
-          <View style={styles.socialContainer}>
-            <Text style={styles.socialText}>或使用以下方式登入</Text>
-            <View style={styles.socialButtons}>
-              <Button
-                title="Google"
-                variant="outline"
-                onPress={() => Alert.alert('功能開發中', 'Google 登入功能即將推出')}
-                style={styles.socialButton}
-              />
-              <Button
-                title="Apple"
-                variant="outline"
-                onPress={() => Alert.alert('功能開發中', 'Apple 登入功能即將推出')}
-                style={styles.socialButton}
-              />
-            </View>
+          {/* 登錄按鈕 */}
+          <TouchableOpacity
+            style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+            onPress={handleLogin}
+            disabled={isLoading}
+          >
+            <Text style={styles.loginButtonText}>
+              {isLoading ? '登錄中...' : '登錄'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* 忘記密碼 */}
+          <TouchableOpacity style={styles.forgotPassword}>
+            <Text style={styles.forgotPasswordText}>忘記密碼？</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 註冊連結 */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>還沒有帳號？</Text>
+          <TouchableOpacity onPress={() => onNavigate('Register')}>
+            <Text style={styles.registerLink}>立即註冊</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 快速登錄選項 */}
+        <View style={styles.quickLoginContainer}>
+          <Text style={styles.quickLoginTitle}>快速登錄</Text>
+          <View style={styles.quickLoginButtons}>
+            <TouchableOpacity
+              style={styles.quickLoginButton}
+              onPress={() => {
+                setEmail('demo@cardstrategy.com');
+                setPassword('demo123');
+              }}
+            >
+              <Text style={styles.quickLoginButtonText}>試用帳號</Text>
+            </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundLight
+    backgroundColor: colors.background
   },
-  keyboardAvoidingView: {
-    flex: 1
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: theme.spacing.large,
-    justifyContent: 'center'
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: spacing.large,
+    paddingTop: spacing.xlarge * 2,
+    paddingBottom: spacing.xlarge
   },
   header: {
     alignItems: 'center',
-    marginBottom: theme.spacing.xlarge
+    marginBottom: spacing.xlarge * 2
   },
   logoContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: theme.colors.primary[500],
-    alignItems: 'center',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
-    marginBottom: theme.spacing.medium
+    alignItems: 'center',
+    marginBottom: spacing.medium,
+    ...shadows.lg
   },
   logo: {
     fontSize: 40
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.xsmall
+    fontSize: typography.fontSize['3xl'],
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.small
   },
   subtitle: {
-    fontSize: 16,
-    color: theme.colors.textSecondary,
+    fontSize: typography.fontSize.base,
+    color: colors.textSecondary,
     textAlign: 'center'
   },
-  formCard: {
-    marginBottom: theme.spacing.large
+  formContainer: {
+    backgroundColor: colors.backgroundPaper,
+    borderRadius: borderRadius.large,
+    padding: spacing.large,
+    marginBottom: spacing.xlarge,
+    ...shadows.base
   },
   formTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.large,
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.semiBold,
+    color: colors.textPrimary,
+    marginBottom: spacing.large,
     textAlign: 'center'
   },
+  inputContainer: {
+    marginBottom: spacing.large
+  },
+  inputLabel: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.textPrimary,
+    marginBottom: spacing.small
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.medium,
+    paddingHorizontal: spacing.medium,
+    paddingVertical: spacing.medium,
+    fontSize: typography.fontSize.base,
+    color: colors.textPrimary,
+    backgroundColor: colors.background
+  },
   loginButton: {
-    marginTop: theme.spacing.medium
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.medium,
+    paddingVertical: spacing.medium,
+    alignItems: 'center',
+    marginBottom: spacing.medium,
+    ...shadows.sm
+  },
+  loginButtonDisabled: {
+    backgroundColor: colors.textDisabled
+  },
+  loginButtonText: {
+    color: colors.white,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semiBold
   },
   forgotPassword: {
-    alignItems: 'center',
-    marginTop: theme.spacing.medium
+    alignItems: 'center'
   },
   forgotPasswordText: {
-    color: theme.colors.primary[500],
-    fontSize: 14
+    color: colors.accent,
+    fontSize: typography.fontSize.sm
   },
-  registerContainer: {
+  footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.large
+    marginBottom: spacing.xlarge
   },
-  registerText: {
-    color: theme.colors.textSecondary,
-    fontSize: 14
+  footerText: {
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.base
   },
   registerLink: {
-    color: theme.colors.primary[500],
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: theme.spacing.xsmall
+    color: colors.accent,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
+    marginLeft: spacing.small
   },
-  socialContainer: {
+  quickLoginContainer: {
     alignItems: 'center'
   },
-  socialText: {
-    color: theme.colors.textSecondary,
-    fontSize: 14,
-    marginBottom: theme.spacing.medium
+  quickLoginTitle: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary,
+    marginBottom: spacing.medium
   },
-  socialButtons: {
+  quickLoginButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%'
+    gap: spacing.medium
   },
-  socialButton: {
-    flex: 1,
-    marginHorizontal: theme.spacing.xsmall
+  quickLoginButton: {
+    backgroundColor: colors.secondary,
+    borderRadius: borderRadius.medium,
+    paddingHorizontal: spacing.large,
+    paddingVertical: spacing.small
+  },
+  quickLoginButtonText: {
+    color: colors.white,
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium
   }
 });
+
+export default LoginScreen;

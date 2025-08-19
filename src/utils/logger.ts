@@ -25,7 +25,7 @@ class Logger {
       message,
       timestamp: new Date(),
       context,
-      userId: undefined // TODO: 從 Redux store 獲取用戶 ID
+      userId: this.getCurrentUserId()
     };
 
     // 保存到歷史記錄
@@ -59,16 +59,44 @@ class Logger {
       }
     }
 
-    // TODO: 在生產環境中發送到日誌服務
+    // 在生產環境中發送到日誌服務
     if (!this.isDevelopment && level === LogLevel.ERROR) {
       // 發送錯誤到日誌服務
       this.sendToLogService(entry);
     }
   }
 
-  private sendToLogService(entry: LogEntry) {
-    // TODO: 實現日誌服務發送邏輯
-    // 例如：發送到 Sentry、LogRocket 等
+  private getCurrentUserId(): string | undefined {
+    try {
+      // 從 Redux store 獲取用戶 ID
+      const { store } = require('@/store');
+      const state = store.getState();
+      return state.auth.user?.id;
+    } catch (error) {
+      // 如果無法獲取 Redux store，嘗試從 AsyncStorage 獲取
+      try {
+        const AsyncStorage = require('@react-native-async-storage/async-storage');
+        const userData = AsyncStorage.getItem('user_data');
+        if (userData) {
+          const parsed = JSON.parse(userData);
+          return parsed.id;
+        }
+      } catch {
+        // 如果都失敗了，返回 undefined
+      }
+      return undefined;
+    }
+  }
+
+  private async sendToLogService(entry: LogEntry): Promise<void> {
+    try {
+      // 使用新的日誌服務
+      const { logService } = require('@/services/logService');
+      await logService.sendLog(entry.level, entry.message, entry.context);
+    } catch (error) {
+      // 如果日誌服務失敗，至少記錄到控制台
+      console.error('日誌服務發送失敗:', error);
+    }
   }
 
   debug(message: string, context?: Record<string, unknown>) {

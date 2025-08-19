@@ -1,735 +1,472 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Alert,
-  ScrollView,
+  FlatList,
+  TouchableOpacity,
   RefreshControl,
-  TouchableOpacity
+  Alert,
+  Dimensions
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
-import { Ionicons } from '@expo/vector-icons';
-import { useAppDispatch, RootState } from '@/store';
-import { useTheme } from '@/config/ThemeProvider';
-import { Button } from '@/components/common/Button';
-import { Loading } from '@/components/common/Loading';
-import { Card } from '@/components/common/Card';
-import { Modal } from '@/components/common/Modal';
-import { fetchInvestments, getPortfolio, addInvestment, updateInvestment } from '@/store/slices/investmentSlice';
-import { Investment, InvestmentType } from '@/types';
-import { formatCurrency, formatPercentage, formatDate } from '@/utils/formatters';
-import { logger } from '@/utils/logger';
+import { portfolioService, PortfolioItem } from '../services/portfolioService';
+import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
+import { logger } from '../utils/logger';
 
-export const InvestmentsScreen: React.FC = () => {
-  const { theme } = useTheme();
-  const dispatch = useAppDispatch();
-  const {
-    investments,
-    portfolio,
-    isLoading,
-    error,
-    portfolioValue,
-    totalProfitLoss,
-    profitLossPercentage
-  } = useSelector((state: RootState) => state.investments);
-  const { user } = useSelector((state: RootState) => state.auth);
-  
+const { width } = Dimensions.get('window');
+
+interface InvestmentsScreenProps {
+  onCardPress: (card: any) => void;
+}
+
+const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) => {
+  const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
+  const [stats, setStats] = useState({
+    totalValue: 0,
+    totalCost: 0,
+    totalProfit: 0,
+    profitPercentage: 0,
+    totalItems: 0
+  });
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'investments'>('overview');
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [selectedInvestment, setSelectedInvestment] = useState<Investment | null>(null);
-  const [filterType, setFilterType] = useState<InvestmentType | 'all'>('all');
-  const [sortBy, setSortBy] = useState<'date' | 'profit' | 'value'>('date');
+  const [isLoading, setIsLoading] = useState(true);
 
-  // 加載投資數據
   useEffect(() => {
-    loadInvestmentData();
+    loadPortfolio();
   }, []);
 
-  const loadInvestmentData = useCallback(async () => {
+  const loadPortfolio = async () => {
     try {
-      await Promise.all([
-        dispatch(fetchInvestments()),
-        dispatch(getPortfolio())
-      ]);
+      setIsLoading(true);
+      const portfolioData = await portfolioService.getPortfolio();
+      setPortfolio(portfolioData);
+
+      const portfolioStats = portfolioService.getPortfolioStats();
+      setStats({
+        totalValue: portfolioStats.totalValue,
+        totalCost: portfolioStats.totalCost,
+        totalProfit: portfolioStats.totalProfit,
+        profitPercentage: portfolioStats.profitPercentage,
+        totalItems: portfolioStats.totalItems
+      });
     } catch (error) {
-      logger.error('Failed to load investment data:', { error });
-      Alert.alert('錯誤', '載入投資數據失敗，請稍後再試');
+      logger.error('載入投資組合失敗:', { error });
+    } finally {
+      setIsLoading(false);
     }
-  }, [dispatch]);
+  };
 
-  // 處理錯誤
-  useEffect(() => {
-    if (error) {
-      Alert.alert('錯誤', error);
-    }
-  }, [error]);
-
-  // 處理刷新
-  const handleRefresh = useCallback(async () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    await loadInvestmentData();
+    await loadPortfolio();
     setRefreshing(false);
-  }, [loadInvestmentData]);
-
-  // 計算投資統計
-  const investmentStats = useMemo(() => {
-    const totalInvestments = investments.length;
-    const profitableInvestments = investments.filter((inv: any) => inv.profitLoss >= 0).length;
-    const avgReturn = totalInvestments > 0 
-      ? investments.reduce((sum: number, inv: any) => sum + inv.profitLossPercentage, 0) / totalInvestments 
-      : 0;
-    const bestInvestment = investments.reduce((best: any, inv: any) => 
-      inv.profitLossPercentage > best.profitLossPercentage ? inv : best
-    , investments[0] || null);
-    const worstInvestment = investments.reduce((worst: any, inv: any) => 
-      inv.profitLossPercentage < worst.profitLossPercentage ? inv : worst
-    , investments[0] || null);
-
-    return {
-      totalInvestments,
-      profitableInvestments,
-      avgReturn,
-      bestInvestment,
-      worstInvestment
-    };
-  }, [investments]);
-
-  // 過濾和排序投資
-  const filteredAndSortedInvestments = useMemo(() => {
-    let filtered = investments;
-    
-    // 應用類型過濾
-    if (filterType !== 'all') {
-      filtered = filtered.filter(inv => inv.type === filterType);
-    }
-
-    // 應用排序
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'date':
-          return new Date(b.date).getTime() - new Date(a.date).getTime();
-        case 'profit':
-          return b.profitLossPercentage - a.profitLossPercentage;
-        case 'value':
-          return b.currentValue - a.currentValue;
-        default:
-          return 0;
-      }
-    });
-
-    return filtered;
-  }, [investments, filterType, sortBy]);
-
-  // 風險評估
-  const riskAssessment = useMemo(() => {
-    const highRiskInvestments = investments.filter(inv => inv.riskLevel === 'high').length;
-    const mediumRiskInvestments = investments.filter(inv => inv.riskLevel === 'medium').length;
-    const lowRiskInvestments = investments.filter(inv => inv.riskLevel === 'low').length;
-    
-    const totalRisk = highRiskInvestments * 3 + mediumRiskInvestments * 2 + lowRiskInvestments;
-    const avgRisk = investments.length > 0 ? totalRisk / investments.length : 0;
-    
-    let riskLevel: RiskLevel = 'low';
-    if (avgRisk > 2.5) riskLevel = 'high';
-    else if (avgRisk > 1.5) riskLevel = 'medium';
-
-    return {
-      riskLevel,
-      highRisk: highRiskInvestments,
-      mediumRisk: mediumRiskInvestments,
-      lowRisk: lowRiskInvestments,
-      avgRisk
-    };
-  }, [investments]);
-
-  // 添加新投資
-  const handleAddInvestment = useCallback(() => {
-    setShowAddModal(true);
-  }, []);
-
-  // 處理投資點擊
-  const handleInvestmentPress = useCallback((investment: Investment) => {
-    setSelectedInvestment(investment);
-  }, []);
-
-  // 獲取投資類型標籤
-  const getInvestmentTypeLabel = (type: InvestmentType): string => {
-    const labels: Record<InvestmentType, string> = {
-      'purchase': '購買',
-      'sale': '出售',
-      'trade': '交易',
-      'gift': '贈送',
-      'auction': '拍賣'
-    };
-    return labels[type] || type;
   };
 
-  // 獲取風險等級顏色
-  const getRiskColor = (risk: RiskLevel): string => {
-    const colors: Record<RiskLevel, string> = {
-      'low': theme.colors.success,
-      'medium': theme.colors.warning,
-      'high': theme.colors.error
-    };
-    return colors[risk] || theme.colors.textSecondary;
+  const handleRemoveItem = (itemId: string) => {
+    Alert.alert(
+      '確認移除',
+      '確定要從投資組合中移除這張卡片嗎？',
+      [
+        { text: '取消', style: 'cancel' },
+        {
+          text: '移除',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await portfolioService.removeFromPortfolio(itemId);
+              await loadPortfolio();
+              Alert.alert('成功', '已從投資組合中移除');
+            } catch (error) {
+              Alert.alert('錯誤', '移除失敗，請稍後再試');
+            }
+          }
+        }
+      ]
+    );
   };
 
-  const renderPortfolioOverview = () => (
-    <View style={[styles.overviewContainer, { backgroundColor: theme.colors.backgroundPaper }]}>
-      <Text style={[styles.overviewTitle, { color: theme.colors.textPrimary }]}>
-        投資組合概覽
-      </Text>
+  const formatCurrency = (amount: number) => {
+    return `$${amount.toLocaleString()}`;
+  };
 
-      <View style={styles.portfolioStats}>
-        <View style={styles.statItem}>
-          <Text style={[styles.statValue, { color: theme.colors.primary }]}>
-            {formatCurrency(portfolioValue || 0)}
-          </Text>
-          <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-            總價值
-          </Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text
-            style={[
-              styles.statValue,
-              { color: totalProfitLoss >= 0 ? theme.colors.success : theme.colors.error }
-            ]}
-          >
-            {totalProfitLoss >= 0 ? '+' : ''}{formatCurrency(totalProfitLoss || 0)}
-          </Text>
-          <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-            總盈虧
-          </Text>
-        </View>
-        <View style={styles.statItem}>
-          <Text
-            style={[
-              styles.statValue,
-              { color: profitLossPercentage >= 0 ? theme.colors.success : theme.colors.error }
-            ]}
-          >
-            {profitLossPercentage >= 0 ? '+' : ''}{formatPercentage(profitLossPercentage || 0)}
-          </Text>
-          <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
-            收益率
-          </Text>
-        </View>
-      </View>
+  const formatPercentage = (percentage: number) => {
+    const sign = percentage >= 0 ? '+' : '';
+    return `${sign}${percentage.toFixed(2)}%`;
+  };
 
-      {/* 投資統計 */}
-      <View style={styles.investmentStats}>
-        <Card variant="elevated" padding="medium" style={styles.statCard}>
-          <Text style={[styles.statNumber, { color: theme.colors.primary }]}>
-            {investmentStats.totalInvestments}
-          </Text>
-          <Text style={[styles.statText, { color: theme.colors.textSecondary }]}>
-            總投資數
-          </Text>
-        </Card>
-        <Card variant="elevated" padding="medium" style={styles.statCard}>
-          <Text style={[styles.statNumber, { color: theme.colors.success }]}>
-            {investmentStats.profitableInvestments}
-          </Text>
-          <Text style={[styles.statText, { color: theme.colors.textSecondary }]}>
-            盈利投資
-          </Text>
-        </Card>
-        <Card variant="elevated" padding="medium" style={styles.statCard}>
-          <Text style={[styles.statNumber, { color: getRiskColor(riskAssessment.riskLevel) }]}>
-            {formatPercentage(investmentStats.avgReturn)}
-          </Text>
-          <Text style={[styles.statText, { color: theme.colors.textSecondary }]}>
-            平均收益
-          </Text>
-        </Card>
-      </View>
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('zh-TW');
+  };
 
-      {/* 風險評估 */}
-      <Card variant="elevated" padding="medium" style={styles.riskCard}>
-        <Text style={[styles.riskTitle, { color: theme.colors.textPrimary }]}>
-          風險評估
-        </Text>
-        <View style={styles.riskBreakdown}>
-          <View style={styles.riskItem}>
-            <View style={[styles.riskIndicator, { backgroundColor: theme.colors.success }]} />
-            <Text style={[styles.riskText, { color: theme.colors.textSecondary }]}>
-              低風險: {riskAssessment.lowRisk}
+  const renderPortfolioItem = ({ item }: { item: PortfolioItem }) => {
+    const currentValue = item.card.price.current * item.quantity;
+    const totalCost = item.purchasePrice * item.quantity;
+    const profit = currentValue - totalCost;
+    const profitPercentage = totalCost > 0 ? (profit / totalCost) * 100 : 0;
+
+    return (
+      <TouchableOpacity
+        style={styles.portfolioItem}
+        onPress={() => onCardPress(item.card)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.cardImageContainer}>
+          <Text style={styles.cardImagePlaceholder}>🎴</Text>
+        </View>
+
+        <View style={styles.itemInfo}>
+          <Text style={styles.cardName} numberOfLines={1}>
+            {item.card.name}
+          </Text>
+          <Text style={styles.cardSetName} numberOfLines={1}>
+            {item.card.setName}
+          </Text>
+
+          <View style={styles.itemMeta}>
+            <Text style={styles.quantityText}>
+              數量: {item.quantity}
+            </Text>
+            <Text style={styles.dateText}>
+              購買: {formatDate(item.purchaseDate)}
             </Text>
           </View>
-          <View style={styles.riskItem}>
-            <View style={[styles.riskIndicator, { backgroundColor: theme.colors.warning }]} />
-            <Text style={[styles.riskText, { color: theme.colors.textSecondary }]}>
-              中風險: {riskAssessment.mediumRisk}
-            </Text>
-          </View>
-          <View style={styles.riskItem}>
-            <View style={[styles.riskIndicator, { backgroundColor: theme.colors.error }]} />
-            <Text style={[styles.riskText, { color: theme.colors.textSecondary }]}>
-              高風險: {riskAssessment.highRisk}
-            </Text>
-          </View>
-        </View>
-        <Text style={[styles.overallRisk, { color: getRiskColor(riskAssessment.riskLevel) }]}>
-          整體風險等級: {riskAssessment.riskLevel === 'high' ? '高' : riskAssessment.riskLevel === 'medium' ? '中' : '低'}
-        </Text>
-      </Card>
-    </View>
-  );
 
-  const renderInvestmentsList = () => (
-    <View style={styles.investmentsContainer}>
-      {/* 過濾和排序控制 */}
-      <View style={styles.controlsContainer}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {['all', 'purchase', 'sale', 'trade', 'gift', 'auction'].map((type) => (
-            <TouchableOpacity
-              key={type}
-              style={[
-                styles.filterButton,
-                {
-                  backgroundColor: filterType === type 
-                    ? theme.colors.primary[100] 
-                    : theme.colors.background,
-                  borderColor: theme.colors.borderLight
-                }
-              ]}
-              onPress={() => setFilterType(type as InvestmentType | 'all')}
-            >
+          <View style={styles.priceInfo}>
+            <View style={styles.priceRow}>
+              <Text style={styles.priceLabel}>購買價格:</Text>
+              <Text style={styles.priceValue}>
+                {formatCurrency(item.purchasePrice)}
+              </Text>
+            </View>
+            <View style={styles.priceRow}>
+              <Text style={styles.priceLabel}>當前價格:</Text>
+              <Text style={styles.priceValue}>
+                {formatCurrency(item.card.price.current)}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.profitInfo}>
+            <View style={styles.profitRow}>
+              <Text style={styles.profitLabel}>總收益:</Text>
               <Text style={[
-                styles.filterButtonText,
-                { color: filterType === type ? theme.colors.primary[500] : theme.colors.textSecondary }
+                styles.profitValue,
+                { color: profit >= 0 ? colors.success : colors.error }
               ]}>
-                {type === 'all' ? '全部' : getInvestmentTypeLabel(type as InvestmentType)}
+                {formatCurrency(profit)}
               </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+            </View>
+            <View style={styles.profitRow}>
+              <Text style={styles.profitLabel}>收益率:</Text>
+              <Text style={[
+                styles.profitValue,
+                { color: profitPercentage >= 0 ? colors.success : colors.error }
+              ]}>
+                {formatPercentage(profitPercentage)}
+              </Text>
+            </View>
+          </View>
 
-        <View style={styles.sortContainer}>
-          <TouchableOpacity
-            style={[
-              styles.sortButton,
-              { backgroundColor: sortBy === 'date' ? theme.colors.primary[100] : theme.colors.background }
-            ]}
-            onPress={() => setSortBy('date')}
-          >
-            <Text style={[styles.sortButtonText, { color: sortBy === 'date' ? theme.colors.primary[500] : theme.colors.textSecondary }]}>
-              日期
+          {item.notes && (
+            <Text style={styles.notesText} numberOfLines={2}>
+              備註: {item.notes}
             </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.sortButton,
-              { backgroundColor: sortBy === 'profit' ? theme.colors.primary[100] : theme.colors.background }
-            ]}
-            onPress={() => setSortBy('profit')}
-          >
-            <Text style={[styles.sortButtonText, { color: sortBy === 'profit' ? theme.colors.primary[500] : theme.colors.textSecondary }]}>
-              收益
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[
-              styles.sortButton,
-              { backgroundColor: sortBy === 'value' ? theme.colors.primary[100] : theme.colors.background }
-            ]}
-            onPress={() => setSortBy('value')}
-          >
-            <Text style={[styles.sortButtonText, { color: sortBy === 'value' ? theme.colors.primary[500] : theme.colors.textSecondary }]}>
-              價值
-            </Text>
-          </TouchableOpacity>
+          )}
+        </View>
+
+        <TouchableOpacity
+          style={styles.removeButton}
+          onPress={() => handleRemoveItem(item.id)}
+        >
+          <Text style={styles.removeButtonText}>移除</Text>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderStatsCard = () => (
+    <View style={styles.statsCard}>
+      <Text style={styles.statsTitle}>📊 投資組合統計</Text>
+
+      <View style={styles.statsGrid}>
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>總價值</Text>
+          <Text style={styles.statValue}>
+            {formatCurrency(stats.totalValue)}
+          </Text>
+        </View>
+
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>總成本</Text>
+          <Text style={styles.statValue}>
+            {formatCurrency(stats.totalCost)}
+          </Text>
+        </View>
+
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>總收益</Text>
+          <Text style={[
+            styles.statValue,
+            { color: stats.totalProfit >= 0 ? colors.success : colors.error }
+          ]}>
+            {formatCurrency(stats.totalProfit)}
+          </Text>
+        </View>
+
+        <View style={styles.statItem}>
+          <Text style={styles.statLabel}>收益率</Text>
+          <Text style={[
+            styles.statValue,
+            { color: stats.profitPercentage >= 0 ? colors.success : colors.error }
+          ]}>
+            {formatPercentage(stats.profitPercentage)}
+          </Text>
         </View>
       </View>
 
-      {/* 投資列表 */}
-      <ScrollView style={styles.investmentsList}>
-        {filteredAndSortedInvestments.map((investment) => (
-          <TouchableOpacity
-            key={investment.id}
-            style={[styles.investmentItem, { backgroundColor: theme.colors.backgroundPaper }]}
-            onPress={() => handleInvestmentPress(investment)}
-          >
-            <View style={styles.investmentHeader}>
-              <Text style={[styles.investmentName, { color: theme.colors.textPrimary }]}>
-                {investment.cardName}
-              </Text>
-              <View style={[styles.investmentType, { backgroundColor: theme.colors.primary[100] }]}>
-                <Text style={[styles.investmentTypeText, { color: theme.colors.primary[500] }]}>
-                  {getInvestmentTypeLabel(investment.type)}
-                </Text>
-              </View>
-            </View>
-            
-            <View style={styles.investmentDetails}>
-              <View style={styles.investmentRow}>
-                <Text style={[styles.investmentLabel, { color: theme.colors.textSecondary }]}>
-                  投資金額:
-                </Text>
-                <Text style={[styles.investmentValue, { color: theme.colors.textPrimary }]}>
-                  {formatCurrency(investment.investmentAmount)}
-                </Text>
-              </View>
-              <View style={styles.investmentRow}>
-                <Text style={[styles.investmentLabel, { color: theme.colors.textSecondary }]}>
-                  當前價值:
-                </Text>
-                <Text style={[styles.investmentValue, { color: theme.colors.textPrimary }]}>
-                  {formatCurrency(investment.currentValue)}
-                </Text>
-              </View>
-              <View style={styles.investmentRow}>
-                <Text style={[styles.investmentLabel, { color: theme.colors.textSecondary }]}>
-                  盈虧:
-                </Text>
-                <Text style={[
-                  styles.investmentValue,
-                  { color: investment.profitLoss >= 0 ? theme.colors.success : theme.colors.error }
-                ]}>
-                  {investment.profitLoss >= 0 ? '+' : ''}{formatCurrency(investment.profitLoss)}
-                  {' '}({investment.profitLoss >= 0 ? '+' : ''}{formatPercentage(investment.profitLossPercentage)})
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.investmentFooter}>
-              <Text style={[styles.investmentDate, { color: theme.colors.textSecondary }]}>
-                {formatDate(investment.date)}
-              </Text>
-              <View style={[styles.riskBadge, { backgroundColor: getRiskColor(investment.riskLevel) + '20' }]}>
-                <Text style={[styles.riskBadgeText, { color: getRiskColor(investment.riskLevel) }]}>
-                  {investment.riskLevel === 'high' ? '高風險' : investment.riskLevel === 'medium' ? '中風險' : '低風險'}
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+      <View style={styles.summaryRow}>
+        <Text style={styles.summaryLabel}>總卡片數:</Text>
+        <Text style={styles.summaryValue}>{stats.totalItems}</Text>
+      </View>
     </View>
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.backgroundPaper }]}>
-        <Text style={[styles.headerTitle, { color: theme.colors.textPrimary }]}>
-          投資管理
-        </Text>
-        <Button
-          title="添加投資"
-          variant="primary"
-          size="small"
-          onPress={handleAddInvestment}
+    <View style={styles.container}>
+      {/* 統計卡片 */}
+      {renderStatsCard()}
+
+      {/* 投資組合列表 */}
+      <View style={styles.listContainer}>
+        <View style={styles.listHeader}>
+          <Text style={styles.listTitle}>💎 我的投資</Text>
+          <Text style={styles.listSubtitle}>
+            {portfolio.length} 張卡片
+          </Text>
+        </View>
+
+        <FlatList
+          data={portfolio}
+          renderItem={renderPortfolioItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.portfolioList}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>
+                {isLoading ? '載入中...' : '您的投資組合還是空的'}
+              </Text>
+              <Text style={styles.emptySubtext}>
+                開始添加卡片到您的投資組合吧！
+              </Text>
+            </View>
+          }
         />
       </View>
-
-      {/* Tab Navigation */}
-      <View style={[styles.tabContainer, { backgroundColor: theme.colors.backgroundPaper }]}>
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            { backgroundColor: selectedTab === 'overview' ? theme.colors.primary[500] : 'transparent' }
-          ]}
-          onPress={() => setSelectedTab('overview')}
-        >
-          <Text style={[
-            styles.tabButtonText,
-            { color: selectedTab === 'overview' ? theme.colors.white : theme.colors.textSecondary }
-          ]}>
-            概覽
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            { backgroundColor: selectedTab === 'investments' ? theme.colors.primary[500] : 'transparent' }
-          ]}
-          onPress={() => setSelectedTab('investments')}
-        >
-          <Text style={[
-            styles.tabButtonText,
-            { color: selectedTab === 'investments' ? theme.colors.white : theme.colors.textSecondary }
-          ]}>
-            投資記錄
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Content */}
-      <ScrollView
-        style={styles.content}
-        refreshControl={
-          <RefreshControl 
-            refreshing={refreshing || isLoading} 
-            onRefresh={handleRefresh}
-            colors={[theme.colors.primary[500] || '#007AFF']}
-          />
-        }
-      >
-        {selectedTab === 'overview' ? renderPortfolioOverview() : renderInvestmentsList()}
-      </ScrollView>
-
-      {/* Add Investment Modal */}
-      <Modal
-        visible={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        title="添加投資"
-      >
-        <View style={styles.modalContent}>
-          <Text style={[styles.modalText, { color: theme.colors.textSecondary }]}>
-            此功能即將推出
-          </Text>
-          <Button
-            title="關閉"
-            onPress={() => setShowAddModal(false)}
-            fullWidth
-          />
-        </View>
-      </Modal>
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: colors.background
   },
-  header: {
+  statsCard: {
+    backgroundColor: colors.backgroundPaper,
+    borderRadius: borderRadius.large,
+    padding: spacing.large,
+    margin: spacing.large,
+    ...shadows.base
+  },
+  statsTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: '600' as const,
+    color: colors.textPrimary,
+    marginBottom: spacing.large,
+    textAlign: 'center'
+  },
+  statsGrid: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB'
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold'
-  },
-  content: {
-    flex: 1,
-    padding: 16
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB'
-  },
-  tabButton: {
-    flex: 1,
-    paddingVertical: 16,
-    alignItems: 'center',
-    borderBottomWidth: 2,
-    borderBottomColor: 'transparent'
-  },
-  tabButtonText: {
-    fontSize: 16,
-    fontWeight: '500'
-  },
-  overviewContainer: {
-    margin: 8,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  overviewTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16
-  },
-  portfolioStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 16
+    marginBottom: spacing.large
   },
   statItem: {
-    alignItems: 'center'
-  },
-  statValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 4
+    width: '48%',
+    alignItems: 'center',
+    marginBottom: spacing.medium
   },
   statLabel: {
-    fontSize: 12
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary,
+    marginBottom: spacing.xsmall
   },
-  investmentStats: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 16
+  statValue: {
+    fontSize: typography.fontSize.base,
+    fontWeight: '600' as const,
+    color: colors.textPrimary
   },
-  statCard: {
-    alignItems: 'center'
-  },
-  statNumber: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 4
-  },
-  statText: {
-    fontSize: 12
-  },
-  riskCard: {
-    marginTop: 16,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  riskTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 12
-  },
-  riskBreakdown: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 12
-  },
-  riskItem: {
-    alignItems: 'center'
-  },
-  riskIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    marginBottom: 4
-  },
-  riskText: {
-    fontSize: 12
-  },
-  overallRisk: {
-    fontSize: 16,
-    fontWeight: 'bold'
-  },
-  investmentsContainer: {
-    margin: 8,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  controlsContainer: {
+  summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16
+    paddingTop: spacing.medium,
+    borderTopWidth: 1,
+    borderTopColor: colors.border
   },
-  filterButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    marginRight: 8
+  summaryLabel: {
+    fontSize: typography.fontSize.base,
+    color: colors.textSecondary
   },
-  filterButtonText: {
-    fontSize: 14,
-    fontWeight: '500'
+  summaryValue: {
+    fontSize: typography.fontSize.base,
+    fontWeight: '600' as const,
+    color: colors.textPrimary
   },
-  sortContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 16
-  },
-  sortButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    marginRight: 8
-  },
-  sortButtonText: {
-    fontSize: 14,
-    fontWeight: '500'
-  },
-  investmentsList: {
+  listContainer: {
     flex: 1
   },
-  investmentItem: {
-    margin: 8,
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
+  listHeader: {
+    paddingHorizontal: spacing.large,
+    paddingVertical: spacing.medium,
+    backgroundColor: colors.backgroundPaper,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border
   },
-  investmentHeader: {
+  listTitle: {
+    fontSize: typography.fontSize.lg,
+    fontWeight: '600' as const,
+    color: colors.textPrimary,
+    marginBottom: spacing.xsmall
+  },
+  listSubtitle: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary
+  },
+  portfolioList: {
+    paddingHorizontal: spacing.large,
+    paddingBottom: spacing.xlarge
+  },
+  portfolioItem: {
+    backgroundColor: colors.backgroundPaper,
+    borderRadius: borderRadius.large,
+    padding: spacing.large,
+    marginBottom: spacing.medium,
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    ...shadows.base
+  },
+  cardImageContainer: {
+    width: 80,
+    height: 120,
+    backgroundColor: colors.background,
+    borderRadius: borderRadius.medium,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12
+    marginRight: spacing.medium
   },
-  investmentName: {
-    fontSize: 16,
-    fontWeight: '600'
+  cardImagePlaceholder: {
+    fontSize: 30
   },
-  investmentType: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8
+  itemInfo: {
+    flex: 1
   },
-  investmentTypeText: {
-    fontSize: 12,
-    fontWeight: '500'
+  cardName: {
+    fontSize: typography.fontSize.base,
+    fontWeight: '600' as const,
+    color: colors.textPrimary,
+    marginBottom: spacing.xsmall
   },
-  investmentDetails: {
-    marginBottom: 12
+  cardSetName: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary,
+    marginBottom: spacing.small
   },
-  investmentRow: {
+  itemMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 4
+    marginBottom: spacing.small
   },
-  investmentLabel: {
-    fontSize: 12
+  quantityText: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary
   },
-  investmentValue: {
-    fontSize: 14,
-    fontWeight: '500'
+  dateText: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary
   },
-  investmentFooter: {
+  priceInfo: {
+    marginBottom: spacing.small
+  },
+  priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: spacing.xsmall
+  },
+  priceLabel: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary
+  },
+  priceValue: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: '500' as const,
+    color: colors.textPrimary
+  },
+  profitInfo: {
+    marginBottom: spacing.small
+  },
+  profitRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: spacing.xsmall
+  },
+  profitLabel: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary
+  },
+  profitValue: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: '600' as const
+  },
+  notesText: {
+    fontSize: typography.fontSize.xs,
+    color: colors.textSecondary,
+    fontStyle: 'italic'
+  },
+  removeButton: {
+    backgroundColor: colors.error,
+    borderRadius: borderRadius.small,
+    paddingHorizontal: spacing.medium,
+    paddingVertical: spacing.small,
+    justifyContent: 'center',
+    marginLeft: spacing.small
+  },
+  removeButtonText: {
+    color: colors.white,
+    fontSize: typography.fontSize.sm,
+    fontWeight: '500' as const
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 12
+    paddingVertical: spacing.xlarge * 2
   },
-  investmentDate: {
-    fontSize: 12
+  emptyText: {
+    fontSize: typography.fontSize.base,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginBottom: spacing.small
   },
-  riskBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12
-  },
-  riskBadgeText: {
-    fontSize: 12,
-    fontWeight: '500'
-  },
-  modalContent: {
-    padding: 20,
-    alignItems: 'center'
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 20,
+  emptySubtext: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary,
     textAlign: 'center'
   }
 });
+
+export default InvestmentsScreen;

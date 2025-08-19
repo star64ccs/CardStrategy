@@ -2,60 +2,64 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
-  StyleSheet,
+  TextInput,
   TouchableOpacity,
+  StyleSheet,
   Alert,
   KeyboardAvoidingView,
-  Platform
+  Platform,
+  ScrollView
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 import { useDispatch } from 'react-redux';
-import { Input } from '@/components/common/Input';
-import { Button } from '@/components/common/Button';
-import { Card } from '@/components/common/Card';
-import { theme } from '@/config/theme';
-import { register } from '@/store/slices/authSlice';
+import { login } from '../store/slices/authSlice';
+import { authService } from '../services/authService';
+import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
 
-export const RegisterScreen: React.FC = () => {
-  const navigation = useNavigation();
+interface RegisterScreenProps {
+  onNavigate: (screen: 'Login' | 'Register' | 'Dashboard') => void;
+}
+
+const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
+    username: '',
     password: '',
     confirmPassword: ''
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+
+  const updateFormData = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
 
   const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!formData.name) {
-      newErrors['name'] = '請輸入姓名';
+    if (!formData.email || !formData.username || !formData.password || !formData.confirmPassword) {
+      Alert.alert('錯誤', '請填寫所有必填欄位');
+      return false;
     }
 
-    if (!formData.email) {
-      newErrors['email'] = '請輸入電子郵件';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors['email'] = '請輸入有效的電子郵件';
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      Alert.alert('錯誤', '請輸入有效的電子郵件地址');
+      return false;
     }
 
-    if (!formData.password) {
-      newErrors['password'] = '請輸入密碼';
-    } else if (formData.password.length < 6) {
-      newErrors['password'] = '密碼至少需要 6 個字符';
+    if (formData.username.length < 3) {
+      Alert.alert('錯誤', '用戶名至少需要 3 個字符');
+      return false;
     }
 
-    if (!formData.confirmPassword) {
-      newErrors['confirmPassword'] = '請確認密碼';
-    } else if (formData.password !== formData.confirmPassword) {
-      newErrors['confirmPassword'] = '密碼不一致';
+    if (formData.password.length < 6) {
+      Alert.alert('錯誤', '密碼至少需要 6 個字符');
+      return false;
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    if (formData.password !== formData.confirmPassword) {
+      Alert.alert('錯誤', '密碼確認不匹配');
+      return false;
+    }
+
+    return true;
   };
 
   const handleRegister = async () => {
@@ -63,174 +67,301 @@ export const RegisterScreen: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // 轉換為註冊所需的格式
-      const registerData = {
-        username: formData.name,
+      const response = await authService.register({
         email: formData.email,
-        password: formData.password,
-        acceptTerms: true
-      };
-      await dispatch(register({ ...registerData, confirmPassword: registerData.password }) as any);
+        username: formData.username,
+        password: formData.password
+      });
+
+      if (response.success) {
+        dispatch(login(response.data));
+        Alert.alert('註冊成功', '歡迎加入卡策！', [
+          { text: '確定', onPress: () => onNavigate('Dashboard') }
+        ]);
+      } else {
+        Alert.alert('註冊失敗', response.message || '註冊時發生錯誤');
+      }
     } catch (error: any) {
-      Alert.alert('註冊失敗', error.message || '請檢查您的輸入');
+      Alert.alert('錯誤', error.message || '註冊時發生錯誤');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleLogin = () => {
-    navigation.navigate('Login' as never);
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={styles.keyboardAvoidingView}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
       >
-        <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Text style={styles.logo}>🎮</Text>
-            </View>
-            <Text style={styles.title}>卡策</Text>
-            <Text style={styles.subtitle}>智選卡牌，策略致勝</Text>
+        {/* Logo 和標題 */}
+        <View style={styles.header}>
+          <View style={styles.logoContainer}>
+            <Text style={styles.logo}>🎴</Text>
+          </View>
+          <Text style={styles.title}>加入卡策</Text>
+          <Text style={styles.subtitle}>開始您的卡牌投資之旅</Text>
+        </View>
+
+        {/* 註冊表單 */}
+        <View style={styles.formContainer}>
+          <Text style={styles.formTitle}>創建帳號</Text>
+
+          {/* 用戶名輸入 */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>用戶名</Text>
+            <TextInput
+              style={styles.input}
+              value={formData.username}
+              onChangeText={(value) => updateFormData('username', value)}
+              placeholder="請輸入您的用戶名"
+              placeholderTextColor={colors.textSecondary}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
           </View>
 
-          {/* Register Form */}
-          <Card variant="elevated" padding="large" style={styles.formCard}>
-            <Text style={styles.formTitle}>註冊帳號</Text>
-
-            <Input
-              label="姓名"
-              placeholder="請輸入您的姓名"
-              value={formData.name}
-              onChangeText={(text) => setFormData({ ...formData, name: text })}
-              leftIcon="person"
-              error={errors['name']}
-            />
-
-            <Input
-              label="電子郵件"
-              placeholder="請輸入您的電子郵件"
+          {/* 電子郵件輸入 */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>電子郵件</Text>
+            <TextInput
+              style={styles.input}
               value={formData.email}
-              onChangeText={(text) => setFormData({ ...formData, email: text })}
+              onChangeText={(value) => updateFormData('email', value)}
+              placeholder="請輸入您的電子郵件"
+              placeholderTextColor={colors.textSecondary}
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
-              leftIcon="mail"
-              error={errors['email']}
             />
+          </View>
 
-            <Input
-              label="密碼"
-              placeholder="請輸入您的密碼"
+          {/* 密碼輸入 */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>密碼</Text>
+            <TextInput
+              style={styles.input}
               value={formData.password}
-              onChangeText={(text) => setFormData({ ...formData, password: text })}
+              onChangeText={(value) => updateFormData('password', value)}
+              placeholder="請輸入您的密碼"
+              placeholderTextColor={colors.textSecondary}
               secureTextEntry
-              leftIcon="lock-closed"
-              error={errors['password']}
+              autoCapitalize="none"
             />
+          </View>
 
-            <Input
-              label="確認密碼"
-              placeholder="請再次輸入密碼"
+          {/* 確認密碼輸入 */}
+          <View style={styles.inputContainer}>
+            <Text style={styles.inputLabel}>確認密碼</Text>
+            <TextInput
+              style={styles.input}
               value={formData.confirmPassword}
-              onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
+              onChangeText={(value) => updateFormData('confirmPassword', value)}
+              placeholder="請再次輸入您的密碼"
+              placeholderTextColor={colors.textSecondary}
               secureTextEntry
-              leftIcon="lock-closed"
-              error={errors['confirmPassword']}
+              autoCapitalize="none"
             />
+          </View>
 
-            <Button
-              title="註冊"
-              onPress={handleRegister}
-              loading={isLoading}
-              fullWidth
-              style={styles.registerButton}
-            />
-          </Card>
+          {/* 註冊按鈕 */}
+          <TouchableOpacity
+            style={[styles.registerButton, isLoading && styles.registerButtonDisabled]}
+            onPress={handleRegister}
+            disabled={isLoading}
+          >
+            <Text style={styles.registerButtonText}>
+              {isLoading ? '註冊中...' : '註冊'}
+            </Text>
+          </TouchableOpacity>
+        </View>
 
-          {/* Login Link */}
-          <View style={styles.loginContainer}>
-            <Text style={styles.loginText}>已有帳號？</Text>
-            <TouchableOpacity onPress={handleLogin}>
-              <Text style={styles.loginLink}>立即登入</Text>
+        {/* 登錄連結 */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>已有帳號？</Text>
+          <TouchableOpacity onPress={() => onNavigate('Login')}>
+            <Text style={styles.loginLink}>立即登錄</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* 快速註冊選項 */}
+        <View style={styles.quickRegisterContainer}>
+          <Text style={styles.quickRegisterTitle}>快速註冊</Text>
+          <View style={styles.quickRegisterButtons}>
+            <TouchableOpacity
+              style={styles.quickRegisterButton}
+              onPress={() => {
+                setFormData({
+                  email: 'demo@cardstrategy.com',
+                  username: 'demo_user',
+                  password: 'demo123',
+                  confirmPassword: 'demo123'
+                });
+              }}
+            >
+              <Text style={styles.quickRegisterButtonText}>試用帳號</Text>
             </TouchableOpacity>
           </View>
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+
+        {/* 條款和隱私政策 */}
+        <View style={styles.termsContainer}>
+          <Text style={styles.termsText}>
+            註冊即表示您同意我們的{' '}
+            <Text style={styles.termsLink}>服務條款</Text>
+            {' '}和{' '}
+            <Text style={styles.termsLink}>隱私政策</Text>
+          </Text>
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundLight
+    backgroundColor: colors.background
   },
-  keyboardAvoidingView: {
-    flex: 1
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: theme.spacing.large,
-    justifyContent: 'center'
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: spacing.large,
+    paddingTop: spacing.xlarge * 2,
+    paddingBottom: spacing.xlarge
   },
   header: {
     alignItems: 'center',
-    marginBottom: theme.spacing.xlarge
+    marginBottom: spacing.xlarge * 2
   },
   logoContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: theme.colors.primary[500],
-    alignItems: 'center',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
-    marginBottom: theme.spacing.medium
+    alignItems: 'center',
+    marginBottom: spacing.medium,
+    ...shadows.lg
   },
   logo: {
     fontSize: 40
   },
   title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.xsmall
+    fontSize: typography.fontSize['3xl'],
+    fontWeight: typography.fontWeight.bold,
+    color: colors.textPrimary,
+    marginBottom: spacing.small
   },
   subtitle: {
-    fontSize: 16,
-    color: theme.colors.textSecondary,
+    fontSize: typography.fontSize.base,
+    color: colors.textSecondary,
     textAlign: 'center'
   },
-  formCard: {
-    marginBottom: theme.spacing.large
+  formContainer: {
+    backgroundColor: colors.backgroundPaper,
+    borderRadius: borderRadius.large,
+    padding: spacing.large,
+    marginBottom: spacing.xlarge,
+    ...shadows.base
   },
   formTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.large,
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.semiBold,
+    color: colors.textPrimary,
+    marginBottom: spacing.large,
     textAlign: 'center'
   },
-  registerButton: {
-    marginTop: theme.spacing.medium
+  inputContainer: {
+    marginBottom: spacing.large
   },
-  loginContainer: {
+  inputLabel: {
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium,
+    color: colors.textPrimary,
+    marginBottom: spacing.small
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.medium,
+    paddingHorizontal: spacing.medium,
+    paddingVertical: spacing.medium,
+    fontSize: typography.fontSize.base,
+    color: colors.textPrimary,
+    backgroundColor: colors.background
+  },
+  registerButton: {
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.medium,
+    paddingVertical: spacing.medium,
+    alignItems: 'center',
+    marginBottom: spacing.medium,
+    ...shadows.sm
+  },
+  registerButtonDisabled: {
+    backgroundColor: colors.textDisabled
+  },
+  registerButtonText: {
+    color: colors.white,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.semiBold
+  },
+  footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: spacing.xlarge
   },
-  loginText: {
-    color: theme.colors.textSecondary,
-    fontSize: 14
+  footerText: {
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.base
   },
   loginLink: {
-    color: theme.colors.primary[500],
-    fontSize: 14,
-    fontWeight: '600',
-    marginLeft: theme.spacing.xsmall
+    color: colors.accent,
+    fontSize: typography.fontSize.base,
+    fontWeight: typography.fontWeight.medium,
+    marginLeft: spacing.small
+  },
+  quickRegisterContainer: {
+    alignItems: 'center',
+    marginBottom: spacing.large
+  },
+  quickRegisterTitle: {
+    fontSize: typography.fontSize.sm,
+    color: colors.textSecondary,
+    marginBottom: spacing.medium
+  },
+  quickRegisterButtons: {
+    flexDirection: 'row',
+    gap: spacing.medium
+  },
+  quickRegisterButton: {
+    backgroundColor: colors.secondary,
+    borderRadius: borderRadius.medium,
+    paddingHorizontal: spacing.large,
+    paddingVertical: spacing.small
+  },
+  quickRegisterButtonText: {
+    color: colors.white,
+    fontSize: typography.fontSize.sm,
+    fontWeight: typography.fontWeight.medium
+  },
+  termsContainer: {
+    alignItems: 'center'
+  },
+  termsText: {
+    fontSize: typography.fontSize.xs,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    lineHeight: 18
+  },
+  termsLink: {
+    color: colors.accent,
+    textDecorationLine: 'underline'
   }
 });
+
+export default RegisterScreen;

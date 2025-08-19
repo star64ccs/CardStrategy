@@ -13,7 +13,14 @@ export const fetchInvestments = createAsyncThunk(
 
 export const addInvestment = createAsyncThunk(
   'investment/addInvestment',
-  async (investmentData: { cardId: string; type: 'buy' | 'sell' | 'hold'; amount: number; quantity: number; entryPrice: number; notes?: string }) => {
+  async (investmentData: {
+    cardId: string;
+    type: 'buy' | 'sell' | 'hold';
+    amount: number;
+    quantity: number;
+    entryPrice: number;
+    notes?: string;
+  }) => {
     const response = await investmentService.addInvestment(investmentData);
     return response;
   }

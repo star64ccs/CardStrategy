@@ -8,7 +8,7 @@ const protect = async (req, res, next) => {
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       // 獲取token
-      token = req.headers.authorization.split(' ')[1];
+      [, token] = req.headers.authorization.split(' ');
 
       // 驗證token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -38,9 +38,7 @@ const protect = async (req, res, next) => {
         code: 'INVALID_TOKEN'
       });
     }
-  }
-
-  if (!token) {
+  } else {
     return res.status(401).json({
       success: false,
       message: '未提供認證令牌',
@@ -55,7 +53,7 @@ const optionalAuth = async (req, res, next) => {
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
-      token = req.headers.authorization.split(' ')[1];
+      [, token] = req.headers.authorization.split(' ');
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const User = getUserModel();
       if (User) {
@@ -95,8 +93,12 @@ const authorize = (...roles) => {
   };
 };
 
+// 別名：authenticateToken 等同於 protect
+const authenticateToken = protect;
+
 module.exports = {
   protect,
+  authenticateToken,
   optionalAuth,
   authorize
 };

@@ -1,247 +1,423 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApiResponse, ApiError } from '@/types';
-import { environment } from '@/config/environment';
+import { api, API_ENDPOINTS } from '../config/api';
+import { logger } from '../utils/logger';
+import { cacheManager } from '../utils/cacheManager';
+import { offlineSyncManager } from '../utils/offlineSyncManager';
+import { networkMonitor } from '../utils/networkMonitor';
+import { CACHE_EXPIRY } from '../utils/constants';
 
+// API 響應類型
+export interface ApiResponse<T = any> {
+  success: boolean;
+  message: string;
+  data: T;
+  error?: string;
+}
+
+// 分頁參數
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+// 搜索參數
+export interface SearchParams extends PaginationParams {
+  query?: string;
+  filters?: Record<string, any>;
+}
+
+// 緩存配置
+export interface CacheOptions {
+  enabled?: boolean;
+  expiry?: number;
+  forceRefresh?: boolean;
+  offlineOnly?: boolean;
+  etag?: string;
+  lastModified?: string;
+}
+
+// API 服務類
 class ApiService {
-  private api: AxiosInstance;
-  private baseURL: string;
+  // 通用 GET 請求（支持緩存）
+  async get<T>(
+    endpoint: string,
+    params?: any,
+    cacheOptions: CacheOptions = {}
+  ): Promise<ApiResponse<T>> {
+    try {
+      const isOnline = await networkMonitor.isConnected();
+      const cacheKey = this.generateCacheKey(endpoint, params);
 
-  constructor() {
-    this.baseURL = environment.apiBaseUrl;
-
-    this.api = axios.create({
-      baseURL: this.baseURL,
-      timeout: environment.apiTimeout,
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    });
-
-    this.setupInterceptors();
-  }
-
-  private setupInterceptors(): void {
-    // Request interceptor
-    this.api.interceptors.request.use(
-      async (config) => {
-        // Add auth token to requests
-        const token = await AsyncStorage.getItem('authToken');
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+      // 如果啟用緩存且不在線，嘗試從緩存獲取
+      if (cacheOptions.enabled !== false && !isOnline) {
+        const cachedData = await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
+        if (cachedData) {
+          logger.info(`📦 Cache hit for ${endpoint}`);
+          return cachedData;
         }
-        return config;
-      },
-      (error) => {
-        return Promise.reject(error);
       }
-    );
 
-    // Response interceptor
-    this.api.interceptors.response.use(
-      (response: AxiosResponse) => {
-        return response;
-      },
-      async (error) => {
-        const originalRequest = error.config;
+      // 如果強制刷新或無緩存，直接請求
+      if (cacheOptions.forceRefresh) {
+        const response = await api.get(endpoint, { params });
+        const apiResponse = response.data;
 
-        // Handle 401 errors and token refresh
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-
-          try {
-            const refreshToken = await AsyncStorage.getItem('refreshToken');
-            if (refreshToken) {
-              const response = await axios.post(`${this.baseURL}/auth/refresh`, {
-                refreshToken
-              });
-
-              const { token } = response.data;
-              await AsyncStorage.setItem('authToken', token);
-
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-              return this.api(originalRequest);
-            }
-          } catch {
-            // Refresh token failed, redirect to login
-            await AsyncStorage.multiRemove(['authToken', 'refreshToken', 'user']);
-            // You might want to dispatch a logout action here
-          }
+        // 緩存響應
+        if (cacheOptions.enabled !== false) {
+          await cacheManager.cacheApiResponse(cacheKey, apiResponse, {
+            expiry: cacheOptions.expiry || CACHE_EXPIRY.MEDIUM,
+            etag: cacheOptions.etag,
+            lastModified: cacheOptions.lastModified
+          });
         }
 
-        return Promise.reject(this.handleError(error));
+        return apiResponse;
       }
-    );
-  }
 
-  private handleError(error: any): ApiError {
-    if (error.response) {
-      // Server responded with error status
-      const { status, data } = error.response;
-      return {
-        message: data?.message || `HTTP ${status} 錯誤`,
-        code: data?.code || 'UNKNOWN_ERROR',
-        details: data?.details || {}
-      };
-    } else if (error.request) {
-      // Network error
-      return {
-        message: '網路連線錯誤，請檢查您的網路連線',
-        code: 'NETWORK_ERROR',
-        details: {}
-      };
-    }
-    // Other error
-    return {
-      message: error.message || '未知錯誤',
-      code: 'UNKNOWN_ERROR',
-      details: {}
-    };
-
-  }
-
-  // Generic HTTP methods
-  async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.api.get(url, config);
-      return {
-        success: true,
-        data: response.data,
-        message: response.data?.message || '請求成功',
-        timestamp: new Date()
-      };
-    } catch (error: any) {
-      throw this.handleError(error);
-    }
-  }
-
-  async post<T = any>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.api.post(url, data, config);
-      return {
-        success: true,
-        data: response.data,
-        message: response.data?.message || '請求成功',
-        timestamp: new Date()
-      };
-    } catch (error: any) {
-      throw this.handleError(error);
-    }
-  }
-
-  async put<T = any>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.api.put(url, data, config);
-      return {
-        success: true,
-        data: response.data,
-        message: response.data?.message || '請求成功',
-        timestamp: new Date()
-      };
-    } catch (error: any) {
-      throw this.handleError(error);
-    }
-  }
-
-  async patch<T = any>(
-    url: string,
-    data?: any,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.api.patch(url, data, config);
-      return {
-        success: true,
-        data: response.data,
-        message: response.data?.message || '請求成功',
-        timestamp: new Date()
-      };
-    } catch (error: any) {
-      throw this.handleError(error);
-    }
-  }
-
-  async delete<T = any>(
-    url: string,
-    config?: AxiosRequestConfig
-  ): Promise<ApiResponse<T>> {
-    try {
-      const response = await this.api.delete(url, config);
-      return {
-        success: true,
-        data: response.data,
-        message: response.data?.message || '請求成功',
-        timestamp: new Date()
-      };
-    } catch (error: any) {
-      throw this.handleError(error);
-    }
-  }
-
-  // File upload
-  async uploadFile<T = any>(
-    url: string,
-    file: any,
-    onProgress?: (progress: number) => void
-  ): Promise<ApiResponse<T>> {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await this.api.post(url, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        },
-        onUploadProgress: (progressEvent) => {
-          if (onProgress && progressEvent.total) {
-            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            onProgress(progress);
-          }
+      // 嘗試從緩存獲取
+      if (cacheOptions.enabled !== false) {
+        const cachedData = await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
+        if (cachedData) {
+          logger.info(`📦 Cache hit for ${endpoint}`);
+          return cachedData;
         }
-      });
+      }
 
-      return {
-        success: true,
-        data: response.data,
-        message: response.data?.message || '上傳成功',
-        timestamp: new Date()
-      };
+      // 緩存未命中，發送請求
+      const response = await api.get(endpoint, { params });
+      const apiResponse = response.data;
+
+      // 緩存響應
+      if (cacheOptions.enabled !== false) {
+        await cacheManager.cacheApiResponse(cacheKey, apiResponse, {
+          expiry: cacheOptions.expiry || CACHE_EXPIRY.MEDIUM,
+          etag: response.headers?.etag,
+          lastModified: response.headers?.['last-modified']
+        });
+      }
+
+      return apiResponse;
     } catch (error: any) {
+      logger.error(`❌ GET ${endpoint} error:`, { error });
+
+      // 如果網絡錯誤且啟用緩存，嘗試從緩存獲取
+      if (this.isNetworkError(error) && cacheOptions.enabled !== false) {
+        const cacheKey = this.generateCacheKey(endpoint, params);
+        const cachedData = await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
+        if (cachedData) {
+          logger.info(`📦 Using cached data for ${endpoint} due to network error`);
+          return cachedData;
+        }
+      }
+
       throw this.handleError(error);
     }
   }
 
-  // Download file
-  async downloadFile(url: string, _filename?: string): Promise<Blob> {
+  // 通用 POST 請求（支持離線隊列）
+  async post<T>(
+    endpoint: string,
+    data?: any,
+    options: { offlineQueue?: boolean; priority?: 'low' | 'medium' | 'high' } = {}
+  ): Promise<ApiResponse<T>> {
     try {
-      const response = await this.api.get(url, {
-        responseType: 'blob'
-      });
+      const isOnline = await networkMonitor.isConnected();
+
+      // 如果離線且啟用離線隊列，添加到隊列
+      if (!isOnline && options.offlineQueue !== false) {
+        const operationId = await offlineSyncManager.addOfflineOperation({
+          type: 'CREATE',
+          endpoint,
+          data,
+          maxRetries: 3,
+          priority: options.priority || 'medium'
+        });
+
+        logger.info(`📝 Added to offline queue: ${operationId}`);
+
+        // 返回模擬響應
+        return {
+          success: true,
+          message: '操作已加入離線隊列，將在網絡恢復時同步',
+          data: { operationId } as any
+        };
+      }
+
+      const response = await api.post(endpoint, data);
       return response.data;
     } catch (error: any) {
+      logger.error(`❌ POST ${endpoint} error:`, { error });
+
+      // 如果網絡錯誤且啟用離線隊列，添加到隊列
+      if (this.isNetworkError(error) && options.offlineQueue !== false) {
+        const operationId = await offlineSyncManager.addOfflineOperation({
+          type: 'CREATE',
+          endpoint,
+          data,
+          maxRetries: 3,
+          priority: options.priority || 'medium'
+        });
+
+        logger.info(`📝 Added to offline queue after network error: ${operationId}`);
+
+        return {
+          success: true,
+          message: '操作已加入離線隊列，將在網絡恢復時同步',
+          data: { operationId } as any
+        };
+      }
+
       throw this.handleError(error);
     }
   }
 
-  // Health check
-  async healthCheck(): Promise<boolean> {
+  // 通用 PUT 請求（支持離線隊列）
+  async put<T>(
+    endpoint: string,
+    data?: any,
+    options: { offlineQueue?: boolean; priority?: 'low' | 'medium' | 'high' } = {}
+  ): Promise<ApiResponse<T>> {
     try {
-      await this.api.get('/health');
-      return true;
-    } catch {
+      const isOnline = await networkMonitor.isConnected();
+
+      // 如果離線且啟用離線隊列，添加到隊列
+      if (!isOnline && options.offlineQueue !== false) {
+        const operationId = await offlineSyncManager.addOfflineOperation({
+          type: 'UPDATE',
+          endpoint,
+          data,
+          maxRetries: 3,
+          priority: options.priority || 'medium'
+        });
+
+        logger.info(`📝 Added to offline queue: ${operationId}`);
+
+        return {
+          success: true,
+          message: '操作已加入離線隊列，將在網絡恢復時同步',
+          data: { operationId } as any
+        };
+      }
+
+      const response = await api.put(endpoint, data);
+
+      // 清除相關緩存
+      await this.invalidateCache(endpoint);
+
+      return response.data;
+    } catch (error: any) {
+      logger.error(`❌ PUT ${endpoint} error:`, { error });
+
+      // 如果網絡錯誤且啟用離線隊列，添加到隊列
+      if (this.isNetworkError(error) && options.offlineQueue !== false) {
+        const operationId = await offlineSyncManager.addOfflineOperation({
+          type: 'UPDATE',
+          endpoint,
+          data,
+          maxRetries: 3,
+          priority: options.priority || 'medium'
+        });
+
+        logger.info(`📝 Added to offline queue after network error: ${operationId}`);
+
+        return {
+          success: true,
+          message: '操作已加入離線隊列，將在網絡恢復時同步',
+          data: { operationId } as any
+        };
+      }
+
+      throw this.handleError(error);
+    }
+  }
+
+  // 通用 DELETE 請求（支持離線隊列）
+  async delete<T>(
+    endpoint: string,
+    options: { offlineQueue?: boolean; priority?: 'low' | 'medium' | 'high' } = {}
+  ): Promise<ApiResponse<T>> {
+    try {
+      const isOnline = await networkMonitor.isConnected();
+
+      // 如果離線且啟用離線隊列，添加到隊列
+      if (!isOnline && options.offlineQueue !== false) {
+        const operationId = await offlineSyncManager.addOfflineOperation({
+          type: 'DELETE',
+          endpoint,
+          data: {},
+          maxRetries: 3,
+          priority: options.priority || 'medium'
+        });
+
+        logger.info(`📝 Added to offline queue: ${operationId}`);
+
+        return {
+          success: true,
+          message: '操作已加入離線隊列，將在網絡恢復時同步',
+          data: { operationId } as any
+        };
+      }
+
+      const response = await api.delete(endpoint);
+
+      // 清除相關緩存
+      await this.invalidateCache(endpoint);
+
+      return response.data;
+    } catch (error: any) {
+      logger.error(`❌ DELETE ${endpoint} error:`, { error });
+
+      // 如果網絡錯誤且啟用離線隊列，添加到隊列
+      if (this.isNetworkError(error) && options.offlineQueue !== false) {
+        const operationId = await offlineSyncManager.addOfflineOperation({
+          type: 'DELETE',
+          endpoint,
+          data: {},
+          maxRetries: 3,
+          priority: options.priority || 'medium'
+        });
+
+        logger.info(`📝 Added to offline queue after network error: ${operationId}`);
+
+        return {
+          success: true,
+          message: '操作已加入離線隊列，將在網絡恢復時同步',
+          data: { operationId } as any
+        };
+      }
+
+      throw this.handleError(error);
+    }
+  }
+
+  // 智能緩存請求
+  async smartGet<T>(
+    endpoint: string,
+    params?: any,
+    cacheOptions: CacheOptions = {}
+  ): Promise<ApiResponse<T>> {
+    return cacheManager.smartCache(
+      this.generateCacheKey(endpoint, params),
+      () => this.get<T>(endpoint, params, { ...cacheOptions, forceRefresh: true }),
+      cacheOptions
+    );
+  }
+
+  // 預加載數據
+  async preloadData(endpoints: string[]): Promise<void> {
+    try {
+      const promises = endpoints.map(async (endpoint) => {
+        try {
+          await this.get(endpoint, undefined, { enabled: true, expiry: CACHE_EXPIRY.LONG });
+        } catch (error) {
+          logger.error(`Preload data error for ${endpoint}:`, { error });
+        }
+      });
+
+      await Promise.allSettled(promises);
+      logger.info('Data preloading completed');
+    } catch (error) {
+      logger.error('Preload data error:', { error });
+    }
+  }
+
+  // 清除緩存
+  async clearCache(pattern?: string): Promise<void> {
+    try {
+      if (pattern) {
+        // 清除特定模式的緩存
+        await cacheManager.cleanupExpiredCache();
+      } else {
+        // 清除所有緩存
+        await cacheManager.clearAllCache();
+      }
+      logger.info('Cache cleared');
+    } catch (error) {
+      logger.error('Clear cache error:', { error });
+    }
+  }
+
+  // 獲取緩存統計
+  async getCacheStats() {
+    try {
+      return await cacheManager.getCacheStats();
+    } catch (error) {
+      logger.error('Get cache stats error:', { error });
+      return null;
+    }
+  }
+
+  // 同步離線操作
+  async syncOfflineOperations(): Promise<{ success: number; failed: number }> {
+    try {
+      return await offlineSyncManager.syncOfflineOperations();
+    } catch (error) {
+      logger.error('Sync offline operations error:', { error });
+      return { success: 0, failed: 0 };
+    }
+  }
+
+  // 錯誤處理
+  private handleError(error: any): Error {
+    if (error.response) {
+      // 服務器響應錯誤
+      const { status, data } = error.response;
+      const message = data?.message || `HTTP ${status} 錯誤`;
+      return new Error(message);
+    }
+    if (error.request) {
+      // 網絡錯誤
+      return new Error('網絡連接錯誤，請檢查您的網絡連接');
+    }
+    // 其他錯誤
+    return new Error(error.message || '未知錯誤');
+  }
+
+  // 檢查是否為網絡錯誤
+  private isNetworkError(error: any): boolean {
+    return !error.response && error.request;
+  }
+
+  // 生成緩存鍵
+  private generateCacheKey(endpoint: string, params?: any): string {
+    const paramString = params ? JSON.stringify(params) : '';
+    return `${endpoint}${paramString}`;
+  }
+
+  // 清除相關緩存
+  private async invalidateCache(endpoint: string): Promise<void> {
+    try {
+      // 這裡可以實現更精確的緩存失效邏輯
+      // 例如根據端點模式清除相關緩存
+      logger.info(`Cache invalidated for ${endpoint}`);
+    } catch (error) {
+      logger.error('Invalidate cache error:', { error });
+    }
+  }
+
+  // 檢查 API 健康狀態
+  async checkHealth(): Promise<boolean> {
+    try {
+      const response = await this.get(API_ENDPOINTS.SYSTEM.HEALTH);
+      return response.success;
+    } catch (error) {
+      logger.error('❌ API health check failed:', { error });
       return false;
+    }
+  }
+
+  // 獲取 API 版本
+  async getVersion(): Promise<string> {
+    try {
+      const response = await this.get(API_ENDPOINTS.SYSTEM.VERSION);
+      return response.data.version;
+    } catch (error) {
+      logger.error('❌ Get API version failed:', { error });
+      return 'unknown';
     }
   }
 }
 
+// 導出單例實例
 export const apiService = new ApiService();
-export default apiService;

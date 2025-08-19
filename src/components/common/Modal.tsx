@@ -1,70 +1,140 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
+  Text,
+  StyleSheet,
   Modal as RNModal,
   TouchableOpacity,
-  StyleSheet,
-  ViewStyle,
-  Text
+  TouchableWithoutFeedback,
+  Dimensions,
+  Animated,
+  ViewStyle
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { theme } from '@/config/theme';
+import { theme } from '../../theme/designSystem';
 
-export interface ModalProps {
+interface ModalProps {
   visible: boolean;
   onClose: () => void;
   title?: string;
   children: React.ReactNode;
-  containerStyle?: ViewStyle;
+  size?: 'small' | 'medium' | 'large' | 'full';
   showCloseButton?: boolean;
   closeOnBackdropPress?: boolean;
+  style?: ViewStyle;
+  animationType?: 'fade' | 'slide' | 'none';
 }
+
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 export const Modal: React.FC<ModalProps> = ({
   visible,
   onClose,
   title,
   children,
-  containerStyle,
+  size = 'medium',
   showCloseButton = true,
-  closeOnBackdropPress = true
+  closeOnBackdropPress = true,
+  style,
+  animationType = 'fade'
 }) => {
+  const fadeAnim = new Animated.Value(0);
+  const slideAnim = new Animated.Value(50);
+
+  useEffect(() => {
+    if (visible) {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: theme.animations.duration.normal,
+          useNativeDriver: true
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: theme.animations.duration.normal,
+          useNativeDriver: true
+        })
+      ]).start();
+    } else {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: theme.animations.duration.fast,
+          useNativeDriver: true
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 50,
+          duration: theme.animations.duration.fast,
+          useNativeDriver: true
+        })
+      ]).start();
+    }
+  }, [visible]);
+
+  const getModalSize = () => {
+    const sizeMap = {
+      small: { width: screenWidth * 0.8, maxHeight: screenHeight * 0.4 },
+      medium: { width: screenWidth * 0.9, maxHeight: screenHeight * 0.6 },
+      large: { width: screenWidth * 0.95, maxHeight: screenHeight * 0.8 },
+      full: { width: screenWidth, height: screenHeight }
+    };
+    return sizeMap[size];
+  };
+
   const handleBackdropPress = () => {
     if (closeOnBackdropPress) {
       onClose();
     }
   };
 
+  const renderContent = () => (
+    <Animated.View
+      style={[
+        styles.modalContent,
+        getModalSize(),
+        {
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }]
+        },
+        style
+      ]}
+    >
+      {title && (
+        <View style={styles.header}>
+          <Text style={styles.title}>{title}</Text>
+          {showCloseButton && (
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={onClose}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name="close"
+                size={24}
+                color={theme.colors.text.tertiary}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+      <View style={styles.body}>{children}</View>
+    </Animated.View>
+  );
+
   return (
     <RNModal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType={animationType}
       onRequestClose={onClose}
     >
-      <TouchableOpacity
-        style={styles.backdrop}
-        activeOpacity={1}
-        onPress={handleBackdropPress}
-      >
-        <TouchableOpacity
-          style={[styles.container, containerStyle]}
-          activeOpacity={1}
-          onPress={() => {}}
-        >
-          {title && (
-            <View style={styles.header}>
-              <Text style={styles.title}>{title}</Text>
-              {showCloseButton && (
-                <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                  <Ionicons name="close" size={24} color={theme.colors.textSecondary} />
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-          <View style={styles.content}>{children}</View>
-        </TouchableOpacity>
-      </TouchableOpacity>
+      <TouchableWithoutFeedback onPress={handleBackdropPress}>
+        <View style={styles.backdrop}>
+          <TouchableWithoutFeedback>
+            {renderContent()}
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
     </RNModal>
   );
 };
@@ -72,44 +142,42 @@ export const Modal: React.FC<ModalProps> = ({
 const styles = StyleSheet.create({
   backdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: theme.colors.background.overlay,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing.large
+    padding: theme.spacing.lg
   },
-  container: {
-    backgroundColor: theme.colors.white,
-    borderRadius: theme.borderRadius.large,
-    maxWidth: '90%',
-    maxHeight: '80%',
-    minWidth: 300,
-    shadowColor: theme.colors.shadow,
-    shadowOffset: {
-      width: 0,
-      height: 4
-    },
+  modalContent: {
+    backgroundColor: theme.colors.background.tertiary,
+    borderRadius: theme.borderRadius.xl,
+    borderWidth: 1,
+    borderColor: theme.colors.border.primary,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8
+    shadowRadius: 20,
+    elevation: 10
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing.large,
+    paddingHorizontal: theme.spacing.lg,
+    paddingVertical: theme.spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border.primary
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.colors.text,
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.semibold,
+    color: theme.colors.text.primary,
     flex: 1
   },
   closeButton: {
-    padding: theme.spacing.small
+    padding: theme.spacing.xs,
+    borderRadius: theme.borderRadius.sm
   },
-  content: {
-    padding: theme.spacing.large
+  body: {
+    padding: theme.spacing.lg
   }
 });
