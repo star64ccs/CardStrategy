@@ -43,6 +43,9 @@ const monitoringService = require('./services/monitoringService');
 // 導入數據庫配置
 const { sequelize, testConnection, syncDatabase } = require('./config/database');
 
+// 導入 Redis 配置
+const { connectRedis, healthCheck: redisHealthCheck } = require('./config/redis');
+
 const app = express();
 
 // 應用安全中間件
@@ -167,7 +170,7 @@ app.get('/api/health', async (req, res) => {
         environment: process.env.NODE_ENV || 'development',
         services: {
           database: dbStatus ? 'connected' : 'disconnected',
-          redis: 'connected', // 假設 Redis 連接正常
+          redis: await redisHealthCheck() ? 'connected' : 'disconnected',
           memory: {
             used: Math.round(memoryUsage.heapUsed / 1024 / 1024),
             total: Math.round(memoryUsage.heapTotal / 1024 / 1024),
@@ -352,6 +355,15 @@ const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
+    // 初始化 Redis 連接
+    try {
+      await connectRedis();
+      logger.info('Redis 連接初始化成功');
+    } catch (error) {
+      logger.error('Redis 連接失敗:', error);
+      // 不阻止服務器啟動，但記錄錯誤
+    }
+
     // 測試數據庫連接
     const dbConnected = await testConnection();
     if (!dbConnected) {
