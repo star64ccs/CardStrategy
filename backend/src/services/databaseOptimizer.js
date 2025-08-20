@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const { logger } = require('../utils/logger');
-const redis = require('../config/redis');
+const redisConfig = require('../../config/redis');
 
 /**
  * 數據庫查詢優化服務
@@ -164,7 +164,8 @@ class DatabaseOptimizer {
 
     try {
       // 嘗試從緩存獲取
-      const cached = await redis.get(cacheKey);
+      const redisClient = redisConfig.getClient();
+      const cached = await redisClient.get(cacheKey);
       if (cached) {
         logger.info(`緩存命中: ${cacheKey}`);
         return JSON.parse(cached);
@@ -174,7 +175,7 @@ class DatabaseOptimizer {
       const results = await model.findAll(queryOptions);
 
       // 緩存結果
-      await redis.setex(cacheKey, ttl, JSON.stringify(results));
+      await redisClient.setEx(cacheKey, ttl, JSON.stringify(results));
       logger.info(`查詢結果已緩存: ${cacheKey}`);
 
       return results;

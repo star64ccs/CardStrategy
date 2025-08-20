@@ -3,17 +3,18 @@ const router = express.Router();
 const { logger } = require('../utils/logger');
 const databaseOptimizer = require('../services/databaseOptimizer');
 const performanceOptimizer = require('../services/performanceOptimizer');
-const redis = require('../config/redis');
+const redisConfig = require('../../config/redis');
 
 /**
  * 獲取系統性能統計
  */
 router.get('/stats', async (req, res) => {
   try {
+    const redisClient = redisConfig.getClient();
     const [dbStats, perfStats, redisInfo] = await Promise.all([
       databaseOptimizer.getQueryStats(),
       performanceOptimizer.getMetrics(),
-      redis.info()
+      redisClient.info()
     ]);
 
     const systemStats = {
@@ -29,7 +30,7 @@ router.get('/stats', async (req, res) => {
         avgResponseTime: perfStats.avgResponseTime || 0
       },
       redis: {
-        connected: redis.status === 'ready',
+        connected: redisClient.status === 'ready',
         memory: redisInfo.match(/used_memory_human:([^\r\n]+)/)?.[1] || 'N/A',
         keyspace: redisInfo.match(/db0:keys=(\d+)/)?.[1] || '0'
       },
@@ -77,7 +78,8 @@ router.get('/health', async (req, res) => {
 
     // 檢查Redis連接
     try {
-      await redis.ping();
+      const redisClient = redisConfig.getClient();
+      await redisClient.ping();
       health.checks.redis = 'healthy';
     } catch (error) {
       health.checks.redis = 'unhealthy';

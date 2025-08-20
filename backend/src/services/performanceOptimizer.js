@@ -1,7 +1,10 @@
 const { logger } = require('../utils/logger');
-const redis = require('../config/redis');
+const redisConfig = require('../../config/redis');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+
+// 獲取 Redis 客戶端
+const getRedisClient = () => redisConfig.getClient();
 
 /**
  * 性能優化服務
@@ -96,7 +99,8 @@ class PerformanceOptimizer {
 
       try {
         // 嘗試從緩存獲取
-        const cached = await redis.get(cacheKey);
+        const redisClient = getRedisClient();
+        const cached = await redisClient.get(cacheKey);
         if (cached) {
           this.metrics.cacheHits++;
           const data = JSON.parse(cached);
@@ -110,7 +114,8 @@ class PerformanceOptimizer {
         const originalJson = res.json;
         res.json = function(data) {
           // 緩存響應
-          redis.setex(cacheKey, ttl, JSON.stringify(data))
+          const redisClient = getRedisClient();
+          redisClient.setEx(cacheKey, ttl, JSON.stringify(data))
             .catch(err => logger.error('緩存設置失敗:', err));
 
           // 調用原始方法
@@ -165,13 +170,14 @@ class PerformanceOptimizer {
       }
 
       // 嘗試獲取緩存
-      const cached = await redis.get(key);
+      const redisClient = getRedisClient();
+      const cached = await redisClient.get(key);
       if (cached) {
         const data = JSON.parse(cached);
         this.metrics.cacheHits++;
 
         // 檢查是否需要後台刷新
-        const ttlRemaining = await redis.ttl(key);
+        const ttlRemaining = await redisClient.ttl(key);
         if (ttlRemaining < staleWhileRevalidate) {
           // 後台刷新緩存
           this.backgroundRefresh(key, fetchFunction, ttl);
@@ -215,7 +221,8 @@ class PerformanceOptimizer {
       const value = this.cacheConfig.compression ?
         this.compressData(data) : JSON.stringify(data);
 
-      await redis.setex(key, ttl, value);
+      const redisClient = getRedisClient();
+      await redisClient.setEx(key, ttl, value);
       logger.debug(`緩存設置成功: ${key}, TTL: ${ttl}s`);
     } catch (error) {
       logger.error('設置緩存失敗:', error);
@@ -245,7 +252,8 @@ class PerformanceOptimizer {
    * 批量緩存操作
    */
   async batchCache(operations) {
-    const pipeline = redis.pipeline();
+    const redisClient = getRedisClient();
+    const pipeline = redisClient.multi();
     const results = [];
 
     for (const operation of operations) {
@@ -318,9 +326,10 @@ class PerformanceOptimizer {
    */
   async clearCache(pattern = '*') {
     try {
-      const keys = await redis.keys(pattern);
+      const redisClient = getRedisClient();
+      const keys = await redisClient.keys(pattern);
       if (keys.length > 0) {
-        await redis.del(keys);
+        await redisClient.del(keys);
         logger.info(`緩存清理完成，刪除 ${keys.length} 個鍵`);
         return keys.length;
       }
@@ -423,7 +432,8 @@ class PerformanceOptimizer {
 
     try {
       // 檢查Redis連接
-      await redis.ping();
+      const redisClient = getRedisClient();
+      await redisClient.ping();
       health.checks.redis = 'healthy';
     } catch (error) {
       health.checks.redis = 'unhealthy';

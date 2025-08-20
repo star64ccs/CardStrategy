@@ -1,5 +1,5 @@
 const { logger } = require('../utils/logger');
-const redis = require('../config/redis');
+const redisConfig = require('../../config/redis');
 const { OpenAI } = require('openai');
 const { Configuration, OpenAIApi } = require('openai');
 
@@ -412,7 +412,8 @@ class AIService {
     if (!this.config.cache.enabled) return null;
 
     try {
-      const cached = await redis.get(this.config.cache.prefix + key);
+      const redisClient = redisConfig.getClient();
+      const cached = await redisClient.get(this.config.cache.prefix + key);
       if (cached) {
         this.metrics.cacheHits++;
         return JSON.parse(cached);
@@ -432,7 +433,8 @@ class AIService {
     if (!this.config.cache.enabled) return;
 
     try {
-      await redis.setex(
+      const redisClient = redisConfig.getClient();
+      await redisClient.setEx(
         this.config.cache.prefix + key,
         this.config.cache.ttl,
         JSON.stringify(data)
@@ -772,7 +774,8 @@ class AIService {
       }
 
       // 檢查Redis連接
-      await redis.ping();
+      const redisClient = redisConfig.getClient();
+      await redisClient.ping();
       health.checks.redis = 'healthy';
 
       // 檢查指標
