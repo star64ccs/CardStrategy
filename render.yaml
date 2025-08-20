@@ -36,21 +36,11 @@ services:
         fromDatabase:
           name: cardstrategy-postgres
           property: password
-      - key: REDIS_HOST
+      - key: REDIS_URL
         fromService:
           type: redis
           name: cardstrategy-redis
-          property: host
-      - key: REDIS_PORT
-        fromService:
-          type: redis
-          name: cardstrategy-redis
-          property: port
-      - key: REDIS_PASSWORD
-        fromService:
-          type: redis
-          name: cardstrategy-redis
-          property: password
+          property: connectionString
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGIN
@@ -81,4 +71,5 @@ databases:
 
   # Redis 緩存
   - name: cardstrategy-redis
+    type: redis
     plan: free
