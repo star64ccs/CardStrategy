@@ -10,7 +10,7 @@ services:
       npm run build
     startCommand: |
       cd backend
-      npm start
+      node src/server-simple.js
     envVars:
       - key: NODE_ENV
         value: production

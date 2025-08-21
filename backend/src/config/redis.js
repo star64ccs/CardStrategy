@@ -4,33 +4,9 @@ const logger = require('../utils/logger');
 // Redis 配置
 const redisConfig = {
   url: process.env.REDIS_URL || 'redis://localhost:6379',
-  retry_strategy: (options) => {
-    if (options.error && options.error.code === 'ECONNREFUSED') {
-      logger.error('Redis 服務器拒絕連接:', options.error);
-      return new Error('Redis 服務器拒絕連接');
-    }
-    if (options.total_retry_time > 1000 * 60 * 60) {
-      logger.error('Redis 重試時間超過限制');
-      return new Error('重試時間超過限制');
-    }
-    if (options.attempt > 10) {
-      logger.error('Redis 重試次數超過限制');
-      return undefined;
-    }
-    const delay = Math.min(options.attempt * 100, 3000);
-    logger.info(`Redis 重試連接，延遲: ${delay}ms`);
-    return delay;
-  },
   socket: {
     connectTimeout: 10000,
-    keepAlive: 30000,
-    reconnectStrategy: (retries) => {
-      if (retries > 10) {
-        logger.error('Redis 重連次數超過限制');
-        return false;
-      }
-      return Math.min(retries * 100, 3000);
-    }
+    keepAlive: 30000
   }
 };
 
