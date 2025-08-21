@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-console.log('🚀 開始配置 CardStrategy 執行環境...\n');
+// logger.info('🚀 開始配置 CardStrategy 執行環境...\n');
 
 // 檢查 Node.js 版本
 function checkNodeVersion() {
@@ -12,12 +12,12 @@ function checkNodeVersion() {
   const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0]);
 
   if (majorVersion < 18) {
-    console.error('❌ 錯誤：需要 Node.js 18.0.0 或更高版本');
-    console.error(`當前版本：${nodeVersion}`);
+    // logger.info('❌ 錯誤：需要 Node.js 18.0.0 或更高版本');
+    // logger.info(`當前版本：${nodeVersion}`);
     process.exit(1);
   }
 
-  console.log(`✅ Node.js 版本檢查通過：${nodeVersion}`);
+  // logger.info(`✅ Node.js 版本檢查通過：${nodeVersion}`);
 }
 
 // 檢查 Docker
@@ -25,10 +25,10 @@ function checkDocker() {
   try {
     execSync('docker --version', { stdio: 'pipe' });
     execSync('docker-compose --version', { stdio: 'pipe' });
-    console.log('✅ Docker 和 Docker Compose 已安裝');
+    // logger.info('✅ Docker 和 Docker Compose 已安裝');
   } catch (error) {
-    console.warn('⚠️  警告：Docker 未安裝或未在 PATH 中');
-    console.warn('請安裝 Docker Desktop 或 Docker Engine');
+    // logger.info('⚠️  警告：Docker 未安裝或未在 PATH 中');
+    // logger.info('請安裝 Docker Desktop 或 Docker Engine');
   }
 }
 
@@ -103,69 +103,69 @@ GRAFANA_PASSWORD=admin123
 
   if (!fs.existsSync(envPath)) {
     fs.writeFileSync(envPath, envContent);
-    console.log('✅ 已創建 .env 檔案');
+    // logger.info('✅ 已創建 .env 檔案');
   } else {
-    console.log('ℹ️  .env 檔案已存在');
+    // logger.info('ℹ️  .env 檔案已存在');
   }
 }
 
 // 安裝依賴
 function installDependencies() {
-  console.log('\n📦 安裝前端依賴...');
+  // logger.info('\n📦 安裝前端依賴...');
   try {
     execSync('npm install', { stdio: 'inherit' });
-    console.log('✅ 前端依賴安裝完成');
+    // logger.info('✅ 前端依賴安裝完成');
   } catch (error) {
-    console.error('❌ 前端依賴安裝失敗');
+    // logger.info('❌ 前端依賴安裝失敗');
     process.exit(1);
   }
 
-  console.log('\n📦 安裝後端依賴...');
+  // logger.info('\n📦 安裝後端依賴...');
   try {
     execSync('cd backend && npm install', { stdio: 'inherit' });
-    console.log('✅ 後端依賴安裝完成');
+    // logger.info('✅ 後端依賴安裝完成');
   } catch (error) {
-    console.error('❌ 後端依賴安裝失敗');
+    // logger.info('❌ 後端依賴安裝失敗');
     process.exit(1);
   }
 }
 
 // 啟動 Docker 服務
 function startDockerServices() {
-  console.log('\n🐳 啟動 Docker 服務...');
+  // logger.info('\n🐳 啟動 Docker 服務...');
   try {
     execSync('docker-compose up -d postgres redis', { stdio: 'inherit' });
-    console.log('✅ Docker 服務啟動完成');
+    // logger.info('✅ Docker 服務啟動完成');
   } catch (error) {
-    console.error('❌ Docker 服務啟動失敗');
-    console.error('請確保 Docker 正在運行');
+    // logger.info('❌ Docker 服務啟動失敗');
+    // logger.info('請確保 Docker 正在運行');
   }
 }
 
 // 初始化數據庫
 function initDatabase() {
-  console.log('\n🗄️  初始化數據庫...');
+  // logger.info('\n🗄️  初始化數據庫...');
   try {
     // 等待數據庫啟動
-    console.log('等待數據庫啟動...');
+    // logger.info('等待數據庫啟動...');
     execSync('sleep 10', { stdio: 'inherit' });
 
     // 運行數據庫遷移
     execSync('cd backend && npm run migrate', { stdio: 'inherit' });
-    console.log('✅ 數據庫遷移完成');
+    // logger.info('✅ 數據庫遷移完成');
 
     // 運行數據庫種子
     execSync('cd backend && npm run seed', { stdio: 'inherit' });
-    console.log('✅ 數據庫種子數據完成');
+    // logger.info('✅ 數據庫種子數據完成');
   } catch (error) {
-    console.error('❌ 數據庫初始化失敗');
-    console.error('請檢查數據庫連接');
+    // logger.info('❌ 數據庫初始化失敗');
+    // logger.info('請檢查數據庫連接');
   }
 }
 
 // 主函數
 function main() {
-  console.log('🔧 CardStrategy 環境配置工具\n');
+  // logger.info('🔧 CardStrategy 環境配置工具\n');
 
   checkNodeVersion();
   checkDocker();
@@ -174,13 +174,13 @@ function main() {
   startDockerServices();
   initDatabase();
 
-  console.log('\n🎉 環境配置完成！');
-  console.log('\n📋 下一步：');
-  console.log('1. 編輯 .env 檔案，配置您的 API 金鑰');
-  console.log('2. 運行 npm run start 啟動前端開發服務器');
-  console.log('3. 運行 cd backend && npm run dev 啟動後端服務器');
-  console.log('4. 訪問 http://localhost:3000 查看應用');
-  console.log('\n📚 更多資訊請查看 README.md 和文檔');
+  // logger.info('\n🎉 環境配置完成！');
+  // logger.info('\n📋 下一步：');
+  // logger.info('1. 編輯 .env 檔案，配置您的 API 金鑰');
+  // logger.info('2. 運行 npm run start 啟動前端開發服務器');
+  // logger.info('3. 運行 cd backend && npm run dev 啟動後端服務器');
+  // logger.info('4. 訪問 http://localhost:3000 查看應用');
+  // logger.info('\n📚 更多資訊請查看 README.md 和文檔');
 }
 
 main();

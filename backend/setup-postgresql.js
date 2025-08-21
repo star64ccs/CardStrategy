@@ -14,29 +14,29 @@ const dbConfig = {
 };
 
 async function setupPostgreSQL() {
-  console.log('🚀 開始設置 PostgreSQL 數據庫...');
-  console.log('📋 連接配置:');
-  console.log(`   主機: ${dbConfig.host}`);
-  console.log(`   端口: ${dbConfig.port}`);
-  console.log(`   數據庫: ${dbConfig.database}`);
-  console.log(`   用戶: ${dbConfig.user}`);
-  console.log('');
+  // logger.info('🚀 開始設置 PostgreSQL 數據庫...');
+  // logger.info('📋 連接配置:');
+  // logger.info(`   主機: ${dbConfig.host}`);
+  // logger.info(`   端口: ${dbConfig.port}`);
+  // logger.info(`   數據庫: ${dbConfig.database}`);
+  // logger.info(`   用戶: ${dbConfig.user}`);
+  // logger.info('');
 
   const client = new Client(dbConfig);
 
   try {
     // 1. 測試連接
-    console.log('🔄 測試數據庫連接...');
+    // logger.info('🔄 測試數據庫連接...');
     await client.connect();
-    console.log('✅ 數據庫連接成功！');
+    // logger.info('✅ 數據庫連接成功！');
 
     // 2. 檢查數據庫是否存在
-    console.log('🔄 檢查數據庫狀態...');
+    // logger.info('🔄 檢查數據庫狀態...');
     const dbResult = await client.query('SELECT current_database() as db_name');
-    console.log(`✅ 當前數據庫: ${dbResult.rows[0].db_name}`);
+    // logger.info(`✅ 當前數據庫: ${dbResult.rows[0].db_name}`);
 
     // 3. 檢查必要的擴展
-    console.log('🔄 檢查 PostgreSQL 擴展...');
+    // logger.info('🔄 檢查 PostgreSQL 擴展...');
     const extensions = [
       'uuid-ossp',
       'pg_trgm',
@@ -46,14 +46,14 @@ async function setupPostgreSQL() {
     for (const ext of extensions) {
       try {
         await client.query(`CREATE EXTENSION IF NOT EXISTS "${ext}"`);
-        console.log(`✅ 擴展 ${ext} 已安裝`);
+        // logger.info(`✅ 擴展 ${ext} 已安裝`);
       } catch (error) {
-        console.log(`⚠️  擴展 ${ext} 安裝失敗: ${error.message}`);
+        // logger.info(`⚠️  擴展 ${ext} 安裝失敗: ${error.message}`);
       }
     }
 
     // 4. 檢查表結構
-    console.log('🔄 檢查數據庫表...');
+    // logger.info('🔄 檢查數據庫表...');
     const tablesResult = await client.query(`
       SELECT table_name 
       FROM information_schema.tables 
@@ -62,27 +62,27 @@ async function setupPostgreSQL() {
     `);
 
     if (tablesResult.rows.length > 0) {
-      console.log('✅ 發現以下表:');
+      // logger.info('✅ 發現以下表:');
       tablesResult.rows.forEach(row => {
-        console.log(`   - ${row.table_name}`);
+        // logger.info(`   - ${row.table_name}`);
       });
     } else {
-      console.log('⚠️  數據庫中沒有表，需要運行遷移腳本');
+      // logger.info('⚠️  數據庫中沒有表，需要運行遷移腳本');
     }
 
     // 5. 檢查用戶權限
-    console.log('🔄 檢查用戶權限...');
+    // logger.info('🔄 檢查用戶權限...');
     const userResult = await client.query(`
       SELECT 
         current_user as username,
         session_user as session_user,
         current_database() as current_db
     `);
-    console.log(`✅ 當前用戶: ${userResult.rows[0].username}`);
-    console.log(`✅ 會話用戶: ${userResult.rows[0].session_user}`);
+    // logger.info(`✅ 當前用戶: ${userResult.rows[0].username}`);
+    // logger.info(`✅ 會話用戶: ${userResult.rows[0].session_user}`);
 
     // 6. 創建基本配置表（如果不存在）
-    console.log('🔄 創建基本配置...');
+    // logger.info('🔄 創建基本配置...');
     try {
       await client.query(`
         CREATE TABLE IF NOT EXISTS system_configs (
@@ -93,7 +93,7 @@ async function setupPostgreSQL() {
           updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
       `);
-      console.log('✅ 系統配置表已創建');
+      // logger.info('✅ 系統配置表已創建');
 
       // 插入基本配置
       await client.query(`
@@ -105,45 +105,45 @@ async function setupPostgreSQL() {
           ('maintenance_mode', 'false')
         ON CONFLICT (key) DO NOTHING
       `);
-      console.log('✅ 基本配置已插入');
+      // logger.info('✅ 基本配置已插入');
 
     } catch (error) {
-      console.log(`⚠️  創建配置表時出錯: ${error.message}`);
+      // logger.info(`⚠️  創建配置表時出錯: ${error.message}`);
     }
 
-    console.log('');
-    console.log('🎉 PostgreSQL 設置完成！');
-    console.log('');
-    console.log('📝 下一步操作:');
-    console.log('   1. 運行數據庫遷移: npm run migrate:production');
-    console.log('   2. 驗證遷移: npm run db:verify');
-    console.log('   3. 啟動應用程序: npm start');
+    // logger.info('');
+    // logger.info('🎉 PostgreSQL 設置完成！');
+    // logger.info('');
+    // logger.info('📝 下一步操作:');
+    // logger.info('   1. 運行數據庫遷移: npm run migrate:production');
+    // logger.info('   2. 驗證遷移: npm run db:verify');
+    // logger.info('   3. 啟動應用程序: npm start');
 
   } catch (error) {
-    console.error('❌ 設置失敗:');
-    console.error('   錯誤信息:', error.message);
-    console.error('   錯誤代碼:', error.code);
+    // logger.info('❌ 設置失敗:');
+    // logger.info('   錯誤信息:', error.message);
+    // logger.info('   錯誤代碼:', error.code);
 
-    console.log('');
-    console.log('🔧 故障排除建議:');
-    console.log('   1. 檢查 PostgreSQL 服務是否運行');
-    console.log('   2. 檢查密碼是否正確');
-    console.log('   3. 檢查用戶權限');
-    console.log('   4. 確保數據庫 cardstrategy 存在');
+    // logger.info('');
+    // logger.info('🔧 故障排除建議:');
+    // logger.info('   1. 檢查 PostgreSQL 服務是否運行');
+    // logger.info('   2. 檢查密碼是否正確');
+    // logger.info('   3. 檢查用戶權限');
+    // logger.info('   4. 確保數據庫 cardstrategy 存在');
 
   } finally {
     try {
       await client.end();
-      console.log('🔌 數據庫連接已關閉');
+      // logger.info('🔌 數據庫連接已關閉');
     } catch (error) {
-      console.error('⚠️  關閉連接時出錯:', error.message);
+      // logger.info('⚠️  關閉連接時出錯:', error.message);
     }
   }
 }
 
 // 檢查環境變數
 function checkEnvironment() {
-  console.log('🔍 檢查環境配置...');
+  // logger.info('🔍 檢查環境配置...');
 
   const requiredVars = [
     'POSTGRES_HOST',
@@ -161,23 +161,23 @@ function checkEnvironment() {
   }
 
   if (missing.length > 0) {
-    console.log('⚠️  缺少以下環境變數:');
-    missing.forEach(varName => console.log(`   - ${varName}`));
-    console.log('');
-    console.log('📝 請創建 .env 文件並設置這些變數');
-    console.log('   複製 env.template 到 .env 並填入實際值');
+    // logger.info('⚠️  缺少以下環境變數:');
+    missing.forEach(varName => // logger.info(`   - ${varName}`));
+    // logger.info('');
+    // logger.info('📝 請創建 .env 文件並設置這些變數');
+    // logger.info('   複製 env.template 到 .env 並填入實際值');
     return false;
   }
 
-  console.log('✅ 環境配置檢查通過');
+  // logger.info('✅ 環境配置檢查通過');
   return true;
 }
 
 // 主函數
 async function main() {
-  console.log('🗄️  CardStrategy PostgreSQL 設置工具');
-  console.log('=====================================');
-  console.log('');
+  // logger.info('🗄️  CardStrategy PostgreSQL 設置工具');
+  // logger.info('=====================================');
+  // logger.info('');
 
   if (!checkEnvironment()) {
     return;

@@ -118,14 +118,14 @@ const getMarketDataModel = () => {
       const sequelize = getSequelize();
 
       if (!sequelize) {
-        console.error('Sequelize instance is null - database connection may not be established');
+        // logger.info('Sequelize instance is null - database connection may not be established');
         return null;
       }
 
       MarketData = createMarketDataModel(sequelize);
-      console.log('MarketData model created successfully');
+      // logger.info('MarketData model created successfully');
     } catch (error) {
-      console.error('Error creating MarketData model:', error);
+      // logger.info('Error creating MarketData model:', error);
       return null;
     }
   }

@@ -37,7 +37,7 @@ const SECURITY_BENCHMARKS = {
  * 生成安全測試報告
  */
 function generateSecurityReport() {
-  console.log('🔒 開始生成安全測試報告...');
+  // logger.info('🔒 開始生成安全測試報告...');
 
   try {
     // 收集測試結果
@@ -52,10 +52,10 @@ function generateSecurityReport() {
     // 打印摘要
     printSecuritySummary(report);
 
-    console.log('✅ 安全測試報告生成完成！');
+    // logger.info('✅ 安全測試報告生成完成！');
 
   } catch (error) {
-    console.error('❌ 生成安全測試報告失敗:', error.message);
+    // logger.info('❌ 生成安全測試報告失敗:', error.message);
     process.exit(1);
   }
 }
@@ -79,9 +79,9 @@ function collectSecurityTestResults() {
   if (fs.existsSync(basicReportPath)) {
     try {
       results.basic = JSON.parse(fs.readFileSync(basicReportPath, 'utf8'));
-      console.log('📄 讀取基本安全測試結果');
+      // logger.info('📄 讀取基本安全測試結果');
     } catch (error) {
-      console.warn('⚠️ 無法讀取基本安全測試結果:', error.message);
+      // logger.info('⚠️ 無法讀取基本安全測試結果:', error.message);
     }
   }
 
@@ -90,9 +90,9 @@ function collectSecurityTestResults() {
   if (fs.existsSync(advancedReportPath)) {
     try {
       results.advanced = JSON.parse(fs.readFileSync(advancedReportPath, 'utf8'));
-      console.log('📄 讀取高級安全測試結果');
+      // logger.info('📄 讀取高級安全測試結果');
     } catch (error) {
-      console.warn('⚠️ 無法讀取高級安全測試結果:', error.message);
+      // logger.info('⚠️ 無法讀取高級安全測試結果:', error.message);
     }
   }
 
@@ -376,19 +376,19 @@ function saveSecurityReport(report, outputDir) {
   // 保存 JSON 報告
   const jsonPath = path.join(outputPath, 'security-report.json');
   fs.writeFileSync(jsonPath, JSON.stringify(report, null, 2));
-  console.log(`📄 JSON 報告已保存: ${jsonPath}`);
+  // logger.info(`📄 JSON 報告已保存: ${jsonPath}`);
 
   // 保存 HTML 報告
   const htmlPath = path.join(outputPath, 'security-report.html');
   const htmlContent = generateSecurityHtmlReport(report);
   fs.writeFileSync(htmlPath, htmlContent);
-  console.log(`📄 HTML 報告已保存: ${htmlPath}`);
+  // logger.info(`📄 HTML 報告已保存: ${htmlPath}`);
 
   // 保存 Markdown 報告
   const mdPath = path.join(outputPath, 'security-report.md');
   const mdContent = generateSecurityMarkdownReport(report);
   fs.writeFileSync(mdPath, mdContent);
-  console.log(`📄 Markdown 報告已保存: ${mdPath}`);
+  // logger.info(`📄 Markdown 報告已保存: ${mdPath}`);
 }
 
 /**
@@ -717,42 +717,42 @@ ${report.testResults.advanced ? `
  * 打印安全測試摘要
  */
 function printSecuritySummary(report) {
-  console.log('\n📊 安全測試報告摘要');
-  console.log('='.repeat(50));
-  console.log(`安全評分: ${report.summary.securityGrade.score}/100`);
-  console.log(`安全等級: ${report.summary.securityGrade.grade}`);
-  console.log(`等級說明: ${report.summary.securityGrade.description}`);
-  console.log(`總違規數: ${report.summary.totalViolations}`);
-  console.log(`測試覆蓋率: ${report.summary.testCoverage.percentage}%`);
+  // logger.info('\n📊 安全測試報告摘要');
+  // logger.info('='.repeat(50));
+  // logger.info(`安全評分: ${report.summary.securityGrade.score}/100`);
+  // logger.info(`安全等級: ${report.summary.securityGrade.grade}`);
+  // logger.info(`等級說明: ${report.summary.securityGrade.description}`);
+  // logger.info(`總違規數: ${report.summary.totalViolations}`);
+  // logger.info(`測試覆蓋率: ${report.summary.testCoverage.percentage}%`);
 
-  console.log('\n🚨 違規統計:');
+  // logger.info('\n🚨 違規統計:');
   for (const [severity, count] of Object.entries(report.violations.bySeverity)) {
-    console.log(`  ${severity.toUpperCase()}: ${count} 個`);
+    // logger.info(`  ${severity.toUpperCase()}: ${count} 個`);
   }
 
-  console.log('\n📋 違規類型:');
+  // logger.info('\n📋 違規類型:');
   for (const [type, count] of Object.entries(report.violations.byType)) {
-    console.log(`  ${type}: ${count} 個`);
+    // logger.info(`  ${type}: ${count} 個`);
   }
 
-  console.log('\n💡 主要建議:');
+  // logger.info('\n💡 主要建議:');
   const criticalRecs = report.recommendations.filter(r => r.priority === 'critical');
   const highRecs = report.recommendations.filter(r => r.priority === 'high');
 
   if (criticalRecs.length > 0) {
-    console.log('  緊急修復:');
-    criticalRecs.forEach(rec => console.log(`    - ${rec.title}`));
+    // logger.info('  緊急修復:');
+    criticalRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
   }
 
   if (highRecs.length > 0) {
-    console.log('  高優先級:');
-    highRecs.forEach(rec => console.log(`    - ${rec.title}`));
+    // logger.info('  高優先級:');
+    highRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
   }
 
-  console.log('\n📄 報告文件:');
-  console.log('  - test-results/security-report.json');
-  console.log('  - test-results/security-report.html');
-  console.log('  - test-results/security-report.md');
+  // logger.info('\n📄 報告文件:');
+  // logger.info('  - test-results/security-report.json');
+  // logger.info('  - test-results/security-report.html');
+  // logger.info('  - test-results/security-report.md');
 }
 
 // 如果直接運行此腳本

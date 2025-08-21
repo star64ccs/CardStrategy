@@ -104,14 +104,14 @@ const getAIAnalysisModel = () => {
       const sequelize = getSequelize();
 
       if (!sequelize) {
-        console.error('Sequelize instance is null - database connection may not be established');
+        // logger.info('Sequelize instance is null - database connection may not be established');
         return null;
       }
 
       AIAnalysis = createAIAnalysisModel(sequelize);
-      console.log('AIAnalysis model created successfully');
+      // logger.info('AIAnalysis model created successfully');
     } catch (error) {
-      console.error('Error creating AIAnalysis model:', error);
+      // logger.info('Error creating AIAnalysis model:', error);
       return null;
     }
   }

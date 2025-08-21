@@ -284,7 +284,7 @@ export const InteractiveCards = () => (
         title="懸停效果"
         subtitle="hoverEffect={true}"
         hoverEffect={true}
-        onPress={() => console.log('Card pressed')}
+        onPress={() => // logger.info('Card pressed')}
       >
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>懸停時會放大</Text>
@@ -294,7 +294,7 @@ export const InteractiveCards = () => (
         title="按壓效果"
         subtitle="pressEffect={true}"
         pressEffect={true}
-        onPress={() => console.log('Card pressed')}
+        onPress={() => // logger.info('Card pressed')}
       >
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>按壓時會縮小</Text>
@@ -304,7 +304,7 @@ export const InteractiveCards = () => (
         title="光暈效果"
         subtitle="glowEffect={true}"
         glowEffect={true}
-        onPress={() => console.log('Card pressed')}
+        onPress={() => // logger.info('Card pressed')}
       >
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>持續光暈效果</Text>
@@ -332,7 +332,7 @@ export const CompleteExample = () => (
         badgeColor="#ffd700"
         icon="star"
         iconColor="#ffd700"
-        onPress={() => console.log('Complete card pressed')}
+        onPress={() => // logger.info('Complete card pressed')}
       >
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc', marginBottom: 10 }}>

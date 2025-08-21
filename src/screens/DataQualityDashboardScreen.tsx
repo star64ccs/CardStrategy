@@ -124,7 +124,7 @@ const DataQualityDashboardScreen: React.FC = () => {
       });
       setDashboardData(response.data);
     } catch (error) {
-      console.error('Failed to fetch dashboard data:', error);
+      // logger.info('Failed to fetch dashboard data:', error);
       Toast.show('獲取儀表板數據失敗', 'error');
     } finally {
       setLoading(false);

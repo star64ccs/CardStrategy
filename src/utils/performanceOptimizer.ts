@@ -76,7 +76,7 @@ export class PerformanceOptimizer {
 
     // 如果執行時間過長，發出警告
     if (duration > 100) {
-      console.warn(`Performance warning: ${name} took ${duration.toFixed(2)}ms`);
+      // logger.info(`Performance warning: ${name} took ${duration.toFixed(2)}ms`);
     }
 
     return duration;
@@ -96,14 +96,14 @@ export class PerformanceOptimizer {
       this.metrics.get(name)!.push(duration);
 
       if (duration > 1000) {
-        console.warn(`Async performance warning: ${name} took ${duration.toFixed(2)}ms`);
+        // logger.info(`Async performance warning: ${name} took ${duration.toFixed(2)}ms`);
       }
 
       return result;
     } catch (error) {
       const end = performance.now();
       const duration = end - start;
-      console.error(`Performance error in ${name}: ${duration.toFixed(2)}ms`, error);
+      // logger.info(`Performance error in ${name}: ${duration.toFixed(2)}ms`, error);
       throw error;
     }
   }
@@ -160,7 +160,7 @@ export class PerformanceOptimizer {
         const entries = list.getEntries();
         entries.forEach((entry) => {
           if (entry.entryType === 'measure') {
-            console.log(`Render performance: ${entry.name} took ${entry.duration}ms`);
+            // logger.info(`Render performance: ${entry.name} took ${entry.duration}ms`);
           }
         });
       });

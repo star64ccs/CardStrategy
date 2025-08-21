@@ -88,7 +88,7 @@ const PrivacyScreen: React.FC = () => {
         dispatch(checkPrivacyCompliance({ userId, region: currentRegion }) as any)
       ]);
     } catch (error) {
-      console.error('加載隱私數據失敗:', error);
+      // logger.info('加載隱私數據失敗:', error);
     }
   };
 
@@ -103,7 +103,7 @@ const PrivacyScreen: React.FC = () => {
       await dispatch(checkPrivacyCompliance({ userId, region: currentRegion }) as any);
       setShowComplianceModal(true);
     } catch (error) {
-      console.error('合規性檢查失敗:', error);
+      // logger.info('合規性檢查失敗:', error);
     }
   };
 

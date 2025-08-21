@@ -62,13 +62,13 @@ export const BasicButtons: Story = () => (
   <View style={styles.section}>
     <View style={styles.sectionTitle}>基礎按鈕</View>
     <View style={styles.row}>
-      <Button onPress={() => console.log('Default pressed')}>
+      <Button onPress={() => // logger.info('Default pressed')}>
         默認按鈕
       </Button>
-      <Button onPress={() => console.log('Primary pressed')} variant="primary">
+      <Button onPress={() => // logger.info('Primary pressed')} variant="primary">
         主要按鈕
       </Button>
-      <Button onPress={() => console.log('Secondary pressed')} variant="secondary">
+      <Button onPress={() => // logger.info('Secondary pressed')} variant="secondary">
         次要按鈕
       </Button>
     </View>
@@ -81,19 +81,19 @@ export const AnimatedButtons: Story = () => (
     <View style={styles.sectionTitle}>動畫按鈕</View>
     <View style={styles.row}>
       <AnimatedButton
-        onPress={() => console.log('Animated pressed')}
+        onPress={() => // logger.info('Animated pressed')}
         glowEffect={true}
       >
         光暈按鈕
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('Pulse pressed')}
+        onPress={() => // logger.info('Pulse pressed')}
         pulseEffect={true}
       >
         脈衝按鈕
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('Ripple pressed')}
+        onPress={() => // logger.info('Ripple pressed')}
         rippleEffect={true}
       >
         漣漪按鈕
@@ -107,24 +107,24 @@ export const PredefinedButtons: Story = () => (
   <View style={styles.section}>
     <View style={styles.sectionTitle}>預定義按鈕</View>
     <View style={styles.row}>
-      <PrimaryButton onPress={() => console.log('Primary pressed')}>
+      <PrimaryButton onPress={() => // logger.info('Primary pressed')}>
         主要按鈕
       </PrimaryButton>
-      <SecondaryButton onPress={() => console.log('Secondary pressed')}>
+      <SecondaryButton onPress={() => // logger.info('Secondary pressed')}>
         次要按鈕
       </SecondaryButton>
-      <OutlineButton onPress={() => console.log('Outline pressed')}>
+      <OutlineButton onPress={() => // logger.info('Outline pressed')}>
         輪廓按鈕
       </OutlineButton>
     </View>
     <View style={styles.row}>
-      <GhostButton onPress={() => console.log('Ghost pressed')}>
+      <GhostButton onPress={() => // logger.info('Ghost pressed')}>
         幽靈按鈕
       </GhostButton>
-      <DangerButton onPress={() => console.log('Danger pressed')}>
+      <DangerButton onPress={() => // logger.info('Danger pressed')}>
         危險按鈕
       </DangerButton>
-      <SuccessButtonVariant onPress={() => console.log('Success pressed')}>
+      <SuccessButtonVariant onPress={() => // logger.info('Success pressed')}>
         成功按鈕
       </SuccessButtonVariant>
     </View>
@@ -137,20 +137,20 @@ export const SpecialAnimationButtons: Story = () => (
     <View style={styles.sectionTitle}>特殊動畫按鈕</View>
     <View style={styles.row}>
       <PulseButton
-        onPress={() => console.log('Pulse pressed')}
+        onPress={() => // logger.info('Pulse pressed')}
         pulseColor="#ff6b6b"
       >
         脈衝效果
       </PulseButton>
       <ShakeButton
-        onPress={() => console.log('Shake pressed')}
+        onPress={() => // logger.info('Shake pressed')}
         shakeOnPress={true}
       >
         搖擺效果
       </ShakeButton>
       <SuccessButton
-        onPress={() => console.log('Success pressed')}
-        onSuccess={() => console.log('Success!')}
+        onPress={() => // logger.info('Success pressed')}
+        onSuccess={() => // logger.info('Success!')}
       >
         成功動畫
       </SuccessButton>
@@ -163,13 +163,13 @@ export const SizeVariants: Story = () => (
   <View style={styles.section}>
     <View style={styles.sectionTitle}>尺寸變體</View>
     <View style={styles.row}>
-      <Button onPress={() => console.log('Small pressed')} size="small">
+      <Button onPress={() => // logger.info('Small pressed')} size="small">
         小按鈕
       </Button>
-      <Button onPress={() => console.log('Medium pressed')} size="medium">
+      <Button onPress={() => // logger.info('Medium pressed')} size="medium">
         中按鈕
       </Button>
-      <Button onPress={() => console.log('Large pressed')} size="large">
+      <Button onPress={() => // logger.info('Large pressed')} size="large">
         大按鈕
       </Button>
     </View>
@@ -182,19 +182,19 @@ export const StateVariants: Story = () => (
     <View style={styles.sectionTitle}>狀態變體</View>
     <View style={styles.row}>
       <AnimatedButton
-        onPress={() => console.log('Loading pressed')}
+        onPress={() => // logger.info('Loading pressed')}
         loading={true}
       >
         加載中
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('Disabled pressed')}
+        onPress={() => // logger.info('Disabled pressed')}
         disabled={true}
       >
         禁用按鈕
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('With icon pressed')}
+        onPress={() => // logger.info('With icon pressed')}
         icon="star"
         iconPosition="left"
       >
@@ -210,21 +210,21 @@ export const BadgeButtons: Story = () => (
     <View style={styles.sectionTitle}>徽章按鈕</View>
     <View style={styles.row}>
       <AnimatedButton
-        onPress={() => console.log('With badge pressed')}
+        onPress={() => // logger.info('With badge pressed')}
         badge="3"
         badgeColor="#ff6b6b"
       >
         通知
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('With badge pressed')}
+        onPress={() => // logger.info('With badge pressed')}
         badge="NEW"
         badgeColor="#4ecdc4"
       >
         新功能
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('With badge pressed')}
+        onPress={() => // logger.info('With badge pressed')}
         badge="99+"
         badgeColor="#45b7d1"
       >
@@ -240,21 +240,21 @@ export const IconButtons: Story = () => (
     <View style={styles.sectionTitle}>圖標按鈕</View>
     <View style={styles.row}>
       <AnimatedButton
-        onPress={() => console.log('Left icon pressed')}
+        onPress={() => // logger.info('Left icon pressed')}
         icon="heart"
         iconPosition="left"
       >
         收藏
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('Right icon pressed')}
+        onPress={() => // logger.info('Right icon pressed')}
         icon="arrow-forward"
         iconPosition="right"
       >
         下一步
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('Icon only pressed')}
+        onPress={() => // logger.info('Icon only pressed')}
         icon="settings"
         iconSize={24}
       >
@@ -271,7 +271,7 @@ export const ErrorSuccessAnimations: Story = () => (
     <View style={styles.row}>
       <AnimatedButton
         onPress={() => {
-          console.log('Error animation');
+          // logger.info('Error animation');
           throw new Error('Test error');
         }}
         errorAnimation={true}
@@ -280,7 +280,7 @@ export const ErrorSuccessAnimations: Story = () => (
         錯誤動畫
       </AnimatedButton>
       <AnimatedButton
-        onPress={() => console.log('Success animation')}
+        onPress={() => // logger.info('Success animation')}
         successAnimation={true}
       >
         成功動畫
@@ -295,7 +295,7 @@ export const CompleteExample: Story = () => (
     <View style={styles.sectionTitle}>完整示例</View>
     <View style={styles.row}>
       <PrimaryButton
-        onPress={() => console.log('Complete example pressed')}
+        onPress={() => // logger.info('Complete example pressed')}
         size="large"
         icon="star"
         iconPosition="left"
@@ -340,12 +340,12 @@ export const ButtonDocumentation: Story = () => (
           <Text>import { Button, AnimatedButton } from '@components/common';</Text>
           <Text></Text>
           <Text>// 基礎按鈕</Text>
-          <Text>{'<Button onPress={() => console.log("Pressed!")}>'}</Text>
+          <Text>{'<Button onPress={() => // logger.info("Pressed!")}>'}</Text>
           <Text>  點擊我</Text>
           <Text>{'</Button>'}</Text>
           <Text></Text>
           <Text>// 動畫按鈕</Text>
-          <Text>{'<AnimatedButton onPress={() => console.log("Animated!")} glowEffect={true}>'}</Text>
+          <Text>{'<AnimatedButton onPress={() => // logger.info("Animated!")} glowEffect={true}>'}</Text>
           <Text>  動畫按鈕</Text>
           <Text>{'</AnimatedButton>'}</Text>
           <Text>```</Text>

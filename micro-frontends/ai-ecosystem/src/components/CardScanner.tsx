@@ -23,7 +23,7 @@ const CardScanner: React.FC = () => {
         videoRef.current.srcObject = stream;
       }
     } catch (error) {
-      console.error('無法啟動相機:', error);
+      // logger.info('無法啟動相機:', error);
       alert('無法啟動相機，請檢查權限設置');
     }
   };

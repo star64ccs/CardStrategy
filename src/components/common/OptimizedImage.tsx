@@ -125,7 +125,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         const optimizedUri = getOptimizedUri(uri);
         setImageUri(optimizedUri);
       } catch (error) {
-        console.error('圖片優化失敗:', error);
+        // logger.info('圖片優化失敗:', error);
         setImageUri(uri); // 使用原始 URL
       }
     };

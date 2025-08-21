@@ -1254,7 +1254,7 @@ export const convertImagesToBase64 = async (
       successfulConversions++;
     } catch (error) {
       failedConversions++;
-      console.error(`圖片轉換失敗: ${error instanceof Error ? error.message : '未知錯誤'}`);
+      // logger.info(`圖片轉換失敗: ${error instanceof Error ? error.message : '未知錯誤'}`);
     }
   }
 

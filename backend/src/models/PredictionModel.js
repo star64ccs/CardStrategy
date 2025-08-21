@@ -145,14 +145,14 @@ const getPredictionModel = () => {
       const sequelize = getSequelize();
 
       if (!sequelize) {
-        console.error('Sequelize instance is null - database connection may not be established');
+        // logger.info('Sequelize instance is null - database connection may not be established');
         return null;
       }
 
       PredictionModel = createPredictionModel(sequelize);
-      console.log('PredictionModel created successfully');
+      // logger.info('PredictionModel created successfully');
     } catch (error) {
-      console.error('Error creating PredictionModel:', error);
+      // logger.info('Error creating PredictionModel:', error);
       return null;
     }
   }

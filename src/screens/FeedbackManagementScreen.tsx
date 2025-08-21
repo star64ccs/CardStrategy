@@ -138,7 +138,7 @@ const FeedbackManagementScreen: React.FC = () => {
 
       setPagination(data.pagination);
     } catch (error) {
-      console.error('載入反饋列表失敗:', error);
+      // logger.info('載入反饋列表失敗:', error);
       Toast.show('載入反饋列表失敗', 'error');
     } finally {
       setLoading(false);
@@ -150,7 +150,7 @@ const FeedbackManagementScreen: React.FC = () => {
       const response = await api.get('/data-quality/feedback/stats');
       setStats(response.data);
     } catch (error) {
-      console.error('載入反饋統計失敗:', error);
+      // logger.info('載入反饋統計失敗:', error);
     }
   }, []);
 
@@ -159,7 +159,7 @@ const FeedbackManagementScreen: React.FC = () => {
       const response = await api.get('/data-quality/feedback/suggestions');
       setSuggestions(response.data);
     } catch (error) {
-      console.error('載入改進建議失敗:', error);
+      // logger.info('載入改進建議失敗:', error);
     }
   }, []);
 
@@ -183,7 +183,7 @@ const FeedbackManagementScreen: React.FC = () => {
       Toast.show('狀態已更新', 'success');
       onRefresh();
     } catch (error) {
-      console.error('更新狀態失敗:', error);
+      // logger.info('更新狀態失敗:', error);
       Toast.show('更新狀態失敗', 'error');
     }
   };
@@ -197,7 +197,7 @@ const FeedbackManagementScreen: React.FC = () => {
       Toast.show('反饋已分配', 'success');
       onRefresh();
     } catch (error) {
-      console.error('分配反饋失敗:', error);
+      // logger.info('分配反饋失敗:', error);
       Toast.show('分配反饋失敗', 'error');
     }
   };
@@ -220,7 +220,7 @@ const FeedbackManagementScreen: React.FC = () => {
       setShowResponseModal(false);
       onRefresh();
     } catch (error) {
-      console.error('添加回應失敗:', error);
+      // logger.info('添加回應失敗:', error);
       Toast.show('添加回應失敗', 'error');
     }
   };

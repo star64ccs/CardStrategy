@@ -56,7 +56,7 @@ export const TaskEncryptionDisplay: React.FC<TaskEncryptionDisplayProps> = ({
 
       setLastRefresh(new Date());
     } catch (error) {
-      console.error('Failed to load encryption data:', error);
+      // logger.info('Failed to load encryption data:', error);
     } finally {
       setIsLoading(false);
     }

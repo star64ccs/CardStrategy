@@ -15,20 +15,20 @@ const productionConfig = {
 };
 
 async function setupProductionDatabase() {
-  console.log('🚀 開始設置生產環境 PostgreSQL 數據庫...');
+  // logger.info('🚀 開始設置生產環境 PostgreSQL 數據庫...');
   
   const client = new Client(productionConfig);
   
   try {
     await client.connect();
-    console.log('✅ 成功連接到生產環境 PostgreSQL');
+    // logger.info('✅ 成功連接到生產環境 PostgreSQL');
     
     // 讀取並執行初始化 SQL
     const initSqlPath = path.join(__dirname, '../backend/scripts/init-db.sql');
     const initSql = fs.readFileSync(initSqlPath, 'utf8');
     
     await client.query(initSql);
-    console.log('✅ 數據庫結構初始化完成');
+    // logger.info('✅ 數據庫結構初始化完成');
     
     // 檢查必要的表是否存在
     const tables = ['users', 'cards', 'collections', 'investments', 'market_data'];
@@ -42,16 +42,16 @@ async function setupProductionDatabase() {
       `, [table]);
       
       if (result.rows[0].exists) {
-        console.log(`✅ 表 ${table} 存在`);
+        // logger.info(`✅ 表 ${table} 存在`);
       } else {
-        console.log(`❌ 表 ${table} 不存在`);
+        // logger.info(`❌ 表 ${table} 不存在`);
       }
     }
     
-    console.log('🎉 生產環境數據庫設置完成！');
+    // logger.info('🎉 生產環境數據庫設置完成！');
     
   } catch (error) {
-    console.error('❌ 設置生產環境數據庫時發生錯誤:', error);
+    // logger.info('❌ 設置生產環境數據庫時發生錯誤:', error);
     throw error;
   } finally {
     await client.end();
@@ -62,11 +62,11 @@ async function setupProductionDatabase() {
 if (require.main === module) {
   setupProductionDatabase()
     .then(() => {
-      console.log('✅ 腳本執行完成');
+      // logger.info('✅ 腳本執行完成');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('❌ 腳本執行失敗:', error);
+      // logger.info('❌ 腳本執行失敗:', error);
       process.exit(1);
     });
 }

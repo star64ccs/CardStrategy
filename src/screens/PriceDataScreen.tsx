@@ -101,7 +101,7 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
         }) as any)
       ]);
     } catch (error) {
-      console.error('Failed to load price data:', error);
+      // logger.info('Failed to load price data:', error);
     }
   };
 
@@ -110,7 +110,7 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
     try {
       await dispatch(fetchRecommendedPlatforms() as any);
     } catch (error) {
-      console.error('Failed to load recommended platforms:', error);
+      // logger.info('Failed to load recommended platforms:', error);
     }
   };
 
@@ -119,7 +119,7 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
     try {
       await dispatch(checkPlatformStatus([...pricePlatforms, ...gradingAgencies]) as any);
     } catch (error) {
-      console.error('Failed to check platform status:', error);
+      // logger.info('Failed to check platform status:', error);
     }
   };
 

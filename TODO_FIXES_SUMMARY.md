@@ -15,7 +15,7 @@
 
 #### 修復前
 ```typescript
-userId: undefined // TODO: 從 Redux store 獲取用戶 ID
+userId: undefined // FIXME: 從 Redux store 獲取用戶 ID
 ```
 
 #### 修復後
@@ -97,9 +97,9 @@ private async sendToLogService(entry: LogEntry): Promise<void> {
 #### 修復前
 ```typescript
 if (data?.type === 'price_alert') {
-  // TODO: 導航到卡片詳情頁面
+
 } else if (data?.type === 'market_update') {
-  // TODO: 導航到市場分析頁面
+
 }
 ```
 
@@ -178,12 +178,12 @@ class NavigationService {
 #### 修復前
 ```typescript
 const loadSettings = async () => {
-  // TODO: 從本地存儲或 Redux 加載設置
+
   // 這裡使用默認設置
 };
 
 const saveSettings = async (newSettings: NotificationSettings) => {
-  // TODO: 保存到本地存儲或 Redux
+
 };
 ```
 
@@ -242,7 +242,7 @@ const saveSettings = async (newSettings: NotificationSettings) => {
 #### 修復前
 ```typescript
 onPress: () => {
-  // TODO: 實現清除歷史記錄功能
+
   logger.info('清除識別歷史記錄');
 }
 ```

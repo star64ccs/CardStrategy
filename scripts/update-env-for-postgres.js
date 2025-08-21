@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔧 更新環境變數以使用 postgres 用戶\n');
+// logger.info('🔧 更新環境變數以使用 postgres 用戶\n');
 
 const envPath = path.join(process.cwd(), '.env');
 
@@ -21,8 +21,8 @@ if (fs.existsSync(envPath)) {
   );
 
   fs.writeFileSync(envPath, envContent);
-  console.log('✅ .env 檔案已更新為使用 postgres 用戶');
-  console.log('\n📋 請手動編輯 .env 檔案，將 DB_PASSWORD 設置為您的 postgres 用戶密碼');
+  // logger.info('✅ .env 檔案已更新為使用 postgres 用戶');
+  // logger.info('\n📋 請手動編輯 .env 檔案，將 DB_PASSWORD 設置為您的 postgres 用戶密碼');
 } else {
-  console.log('❌ .env 檔案不存在');
+  // logger.info('❌ .env 檔案不存在');
 }

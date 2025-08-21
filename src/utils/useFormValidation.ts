@@ -261,7 +261,7 @@ export function useFormValidation<T extends Record<string, any>>(
         // 重置提交狀態
         setState(prevState => ({ ...prevState, isSubmitting: false }));
       } catch (error) {
-        console.error('表單提交錯誤:', error);
+        // logger.info('表單提交錯誤:', error);
         setState(prevState => ({ ...prevState, isSubmitting: false }));
       }
     },

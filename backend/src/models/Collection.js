@@ -83,14 +83,14 @@ const getCollectionModel = () => {
       const sequelize = getSequelize();
 
       if (!sequelize) {
-        console.error('Sequelize instance is null - database connection may not be established');
+        // logger.info('Sequelize instance is null - database connection may not be established');
         return null;
       }
 
       Collection = createCollectionModel(sequelize);
-      console.log('Collection model created successfully');
+      // logger.info('Collection model created successfully');
     } catch (error) {
-      console.error('Error creating Collection model:', error);
+      // logger.info('Error creating Collection model:', error);
       return null;
     }
   }

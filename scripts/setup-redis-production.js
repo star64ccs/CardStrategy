@@ -16,28 +16,28 @@ const productionRedisConfig = {
 };
 
 async function setupProductionRedis() {
-  console.log('🚀 開始設置生產環境 Redis...');
+  // logger.info('🚀 開始設置生產環境 Redis...');
   
   const redis = new Redis(productionRedisConfig);
   
   try {
     // 測試連接
     await redis.ping();
-    console.log('✅ 成功連接到生產環境 Redis');
+    // logger.info('✅ 成功連接到生產環境 Redis');
     
     // 設置基本配置
     await redis.config('SET', 'maxmemory', '256mb');
     await redis.config('SET', 'maxmemory-policy', 'allkeys-lru');
     await redis.config('SET', 'save', '900 1 300 10 60 10000');
     
-    console.log('✅ Redis 配置設置完成');
+    // logger.info('✅ Redis 配置設置完成');
     
     // 測試基本操作
     await redis.set('test:connection', 'success', 'EX', 60);
     const testResult = await redis.get('test:connection');
     
     if (testResult === 'success') {
-      console.log('✅ Redis 讀寫測試通過');
+      // logger.info('✅ Redis 讀寫測試通過');
     } else {
       throw new Error('Redis 讀寫測試失敗');
     }
@@ -45,10 +45,10 @@ async function setupProductionRedis() {
     // 清理測試數據
     await redis.del('test:connection');
     
-    console.log('🎉 生產環境 Redis 設置完成！');
+    // logger.info('🎉 生產環境 Redis 設置完成！');
     
   } catch (error) {
-    console.error('❌ 設置生產環境 Redis 時發生錯誤:', error);
+    // logger.info('❌ 設置生產環境 Redis 時發生錯誤:', error);
     throw error;
   } finally {
     await redis.disconnect();
@@ -59,11 +59,11 @@ async function setupProductionRedis() {
 if (require.main === module) {
   setupProductionRedis()
     .then(() => {
-      console.log('✅ 腳本執行完成');
+      // logger.info('✅ 腳本執行完成');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('❌ 腳本執行失敗:', error);
+      // logger.info('❌ 腳本執行失敗:', error);
       process.exit(1);
     });
 }

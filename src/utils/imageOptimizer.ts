@@ -196,7 +196,7 @@ export class ImageOptimizer {
         Image.clearMemoryCache();
       }
     } catch (error) {
-      console.warn('Failed to clear image cache:', error);
+      // logger.info('Failed to clear image cache:', error);
     }
   }
 }

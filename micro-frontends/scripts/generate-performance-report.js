@@ -35,7 +35,7 @@ const PERFORMANCE_BENCHMARKS = {
  * 生成性能報告
  */
 function generatePerformanceReport() {
-  console.log('📊 開始生成性能報告...');
+  // logger.info('📊 開始生成性能報告...');
 
   const reportDir = path.join(process.cwd(), 'test-results');
   const performanceDir = path.join(reportDir, 'performance');
@@ -77,7 +77,7 @@ function collectTestResults() {
       const playwrightResults = JSON.parse(fs.readFileSync(playwrightReportPath, 'utf8'));
       results.playwright = playwrightResults;
     } catch (error) {
-      console.warn('⚠️ 無法讀取 Playwright 測試結果:', error.message);
+      // logger.info('⚠️ 無法讀取 Playwright 測試結果:', error.message);
     }
   }
 
@@ -88,7 +88,7 @@ function collectTestResults() {
       const lighthouseResults = JSON.parse(fs.readFileSync(lighthouseReportPath, 'utf8'));
       results.lighthouse = lighthouseResults;
     } catch (error) {
-      console.warn('⚠️ 無法讀取 Lighthouse 報告:', error.message);
+      // logger.info('⚠️ 無法讀取 Lighthouse 報告:', error.message);
     }
   }
 
@@ -442,7 +442,7 @@ function saveReport(report, outputDir) {
   const markdownPath = path.join(outputDir, 'performance-report.md');
   fs.writeFileSync(markdownPath, markdownReport);
 
-  console.log(`📄 報告已保存到: ${outputDir}`);
+  // logger.info(`📄 報告已保存到: ${outputDir}`);
 }
 
 /**
@@ -561,17 +561,17 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
  * 輸出摘要
  */
 function printSummary(report) {
-  console.log('\n📊 性能報告摘要');
-  console.log('='.repeat(50));
-  console.log(`總分: ${report.summary.overallScore}/100`);
-  console.log(`通過測試: ${report.summary.passedTests}/${report.summary.totalTests}`);
-  console.log(`關鍵問題: ${report.summary.criticalIssues}`);
-  console.log(`警告: ${report.summary.warnings}`);
-  console.log('\n💡 主要建議:');
+  // logger.info('\n📊 性能報告摘要');
+  // logger.info('='.repeat(50));
+  // logger.info(`總分: ${report.summary.overallScore}/100`);
+  // logger.info(`通過測試: ${report.summary.passedTests}/${report.summary.totalTests}`);
+  // logger.info(`關鍵問題: ${report.summary.criticalIssues}`);
+  // logger.info(`警告: ${report.summary.warnings}`);
+  // logger.info('\n💡 主要建議:');
   report.recommendations.slice(0, 3).forEach((rec, index) => {
-    console.log(`  ${index + 1}. ${rec}`);
+    // logger.info(`  ${index + 1}. ${rec}`);
   });
-  console.log('='.repeat(50));
+  // logger.info('='.repeat(50));
 }
 
 // 執行報告生成

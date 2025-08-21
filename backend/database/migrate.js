@@ -40,9 +40,9 @@ const createPredictionModelsTable = async (sequelize) => {
       CREATE INDEX IF NOT EXISTS idx_prediction_models_card_model ON prediction_models(card_id, model_type);
     `);
 
-    console.log('✅ Prediction models table created successfully');
+    // logger.info('✅ Prediction models table created successfully');
   } catch (error) {
-    console.error('❌ Error creating prediction models table:', error);
+    // logger.info('❌ Error creating prediction models table:', error);
     throw error;
   }
 };
@@ -57,7 +57,7 @@ const runMigrations = async () => {
 
     // ... existing code ...
   } catch (error) {
-    console.error('❌ Migration failed:', error);
+    // logger.info('❌ Migration failed:', error);
     process.exit(1);
   }
 };

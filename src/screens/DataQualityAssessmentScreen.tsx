@@ -169,7 +169,7 @@ const DataQualityAssessmentScreen: React.FC = () => {
         loadAssessments()
       ]);
     } catch (error) {
-      console.error('加載數據失敗:', error);
+      // logger.info('加載數據失敗:', error);
       Toast.show('加載數據失敗', 'error');
     } finally {
       setLoading(false);
@@ -181,7 +181,7 @@ const DataQualityAssessmentScreen: React.FC = () => {
       const statsData = await dataQualityService.getAssessmentStats();
       setStats(statsData);
     } catch (error) {
-      console.error('加載統計數據失敗:', error);
+      // logger.info('加載統計數據失敗:', error);
     }
   };
 
@@ -190,7 +190,7 @@ const DataQualityAssessmentScreen: React.FC = () => {
       const schedulesData = await dataQualityService.getAssessmentSchedules({ limit: 10 });
       setSchedules(schedulesData.schedules);
     } catch (error) {
-      console.error('加載評估計劃失敗:', error);
+      // logger.info('加載評估計劃失敗:', error);
     }
   };
 
@@ -199,7 +199,7 @@ const DataQualityAssessmentScreen: React.FC = () => {
       const assessmentsData = await dataQualityService.getAssessments({ limit: 10 });
       setAssessments(assessmentsData.assessments);
     } catch (error) {
-      console.error('加載評估記錄失敗:', error);
+      // logger.info('加載評估記錄失敗:', error);
     }
   };
 
@@ -216,7 +216,7 @@ const DataQualityAssessmentScreen: React.FC = () => {
       Toast.show('評估執行成功', 'success');
       await loadData();
     } catch (error) {
-      console.error('執行評估失敗:', error);
+      // logger.info('執行評估失敗:', error);
       Toast.show('執行評估失敗', 'error');
     } finally {
       setExecutingAssessment(false);
@@ -229,7 +229,7 @@ const DataQualityAssessmentScreen: React.FC = () => {
       setSelectedAssessment(assessment);
       setShowAssessmentDetailModal(true);
     } catch (error) {
-      console.error('獲取評估詳情失敗:', error);
+      // logger.info('獲取評估詳情失敗:', error);
       Toast.show('獲取評估詳情失敗', 'error');
     }
   };
@@ -486,7 +486,7 @@ const DataQualityAssessmentScreen: React.FC = () => {
       Toast.show(`計劃${isActive ? '啟用' : '停用'}成功`, 'success');
       await loadSchedules();
     } catch (error) {
-      console.error('更新計劃狀態失敗:', error);
+      // logger.info('更新計劃狀態失敗:', error);
       Toast.show('更新計劃狀態失敗', 'error');
     }
   };

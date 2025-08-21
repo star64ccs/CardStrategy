@@ -168,7 +168,7 @@ export function measurePerformance<T>(
   const result = fn();
   const end = performance.now();
 
-  console.log(`${name} took ${end - start}ms`);
+  // logger.info(`${name} took ${end - start}ms`);
   return result;
 }
 
@@ -181,7 +181,7 @@ export async function measureAsyncPerformance<T>(
   const result = await fn();
   const end = performance.now();
 
-  console.log(`${name} took ${end - start}ms`);
+  // logger.info(`${name} took ${end - start}ms`);
   return result;
 }
 
@@ -211,7 +211,7 @@ export function cleanupMemory(): void {
   // 清理定時器
   // 清理快取
   if ('memory' in performance) {
-    console.log('Memory usage before cleanup:', (performance as any).memory.usedJSHeapSize);
+    // logger.info('Memory usage before cleanup:', (performance as any).memory.usedJSHeapSize);
   }
 
   // 強制垃圾回收（如果可用）
@@ -301,10 +301,10 @@ export class PerformanceMonitor {
   }
 
   public reportMetrics(): void {
-    console.log('Performance Metrics:', this.getMetrics());
-    console.log('Average LCP:', this.getAverageMetric('lcp'));
-    console.log('Average FID:', this.getAverageMetric('fid'));
-    console.log('Average CLS:', this.getAverageMetric('cls'));
+    // logger.info('Performance Metrics:', this.getMetrics());
+    // logger.info('Average LCP:', this.getAverageMetric('lcp'));
+    // logger.info('Average FID:', this.getAverageMetric('fid'));
+    // logger.info('Average CLS:', this.getAverageMetric('cls'));
   }
 
   public disconnect(): void {

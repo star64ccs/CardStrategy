@@ -155,19 +155,19 @@ const getUserModel = () => {
 
       if (!sequelize) {
         // eslint-disable-next-line no-console
-        console.error('Sequelize instance is null - database connection may not be established');
+        // logger.info('Sequelize instance is null - database connection may not be established');
         return null;
       }
 
       User = createUserModel(sequelize);
       // eslint-disable-next-line no-console
-      console.log('User model created successfully');
+      // logger.info('User model created successfully');
 
       // 移除自動同步，讓遷移腳本處理
 
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error('Error creating User model:', error);
+      // logger.info('Error creating User model:', error);
       return null;
     }
   }

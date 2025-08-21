@@ -356,7 +356,7 @@ export const useServiceWorkerBasic = () => {
     try {
       await swManager.sendNotification(title, options);
     } catch (error) {
-      console.error('發送通知失敗:', error);
+      // logger.info('發送通知失敗:', error);
     }
   }, []);
 

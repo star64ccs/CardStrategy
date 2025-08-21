@@ -8,7 +8,7 @@ const Tracing = require('@sentry/tracing');
 const initSentry = (app) => {
   // 檢查是否配置了 Sentry DSN
   if (!process.env.SENTRY_DSN) {
-    console.warn('Sentry DSN not configured, error monitoring disabled');
+    // logger.info('Sentry DSN not configured, error monitoring disabled');
     return;
   }
 
@@ -78,7 +78,7 @@ const initSentry = (app) => {
 
         // 開發環境下記錄所有錯誤
         if (process.env.NODE_ENV === 'development') {
-          console.log('Sentry event:', JSON.stringify(event, null, 2));
+          // logger.info('Sentry event:', JSON.stringify(event, null, 2));
         }
 
         return event;
@@ -108,10 +108,10 @@ const initSentry = (app) => {
       }
     });
 
-    console.log('Sentry initialized successfully');
+    // logger.info('Sentry initialized successfully');
 
   } catch (error) {
-    console.error('Failed to initialize Sentry:', error);
+    // logger.info('Failed to initialize Sentry:', error);
   }
 };
 
@@ -173,7 +173,7 @@ const setupSentryErrorHandlers = (app) => {
  */
 const captureException = (error, context = {}) => {
   if (!process.env.SENTRY_DSN) {
-    console.error('Error (Sentry not configured):', error);
+    // logger.info('Error (Sentry not configured):', error);
     return;
   }
 
@@ -194,7 +194,7 @@ const captureException = (error, context = {}) => {
  */
 const captureMessage = (message, level = 'info', context = {}) => {
   if (!process.env.SENTRY_DSN) {
-    console.log(`Message (Sentry not configured) [${level}]:`, message);
+    // logger.info(`Message (Sentry not configured) [${level}]:`, message);
     return;
   }
 

@@ -83,14 +83,14 @@ const getPriceAlertModel = () => {
       const sequelize = getSequelize();
 
       if (!sequelize) {
-        console.error('Sequelize instance is null - database connection may not be established');
+        // logger.info('Sequelize instance is null - database connection may not be established');
         return null;
       }
 
       PriceAlert = createPriceAlertModel(sequelize);
-      console.log('PriceAlert model created successfully');
+      // logger.info('PriceAlert model created successfully');
     } catch (error) {
-      console.error('Error creating PriceAlert model:', error);
+      // logger.info('Error creating PriceAlert model:', error);
       return null;
     }
   }

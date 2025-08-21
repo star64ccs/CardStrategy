@@ -60,7 +60,7 @@ const AnnotationAssignmentScreen: React.FC = () => {
       setConfig(configRes.data.config);
       setAnnotators(annotatorsRes.data.annotators);
     } catch (error) {
-      console.error('加載數據失敗:', error);
+      // logger.info('加載數據失敗:', error);
       Toast.show('加載數據失敗', 'error');
     } finally {
       setLoading(false);
@@ -93,7 +93,7 @@ const AnnotationAssignmentScreen: React.FC = () => {
       setShowAssignmentModal(false);
       Toast.show(`成功分配 ${result.totalAssigned} 個任務`, 'success');
     } catch (error) {
-      console.error('智能分配失敗:', error);
+      // logger.info('智能分配失敗:', error);
       Toast.show('智能分配失敗', 'error');
     } finally {
       setLoading(false);
@@ -107,7 +107,7 @@ const AnnotationAssignmentScreen: React.FC = () => {
       setShowConfigModal(false);
       Toast.show('配置更新成功', 'success');
     } catch (error) {
-      console.error('配置更新失敗:', error);
+      // logger.info('配置更新失敗:', error);
       Toast.show('配置更新失敗', 'error');
     }
   };

@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔧 更新 Sequelize 配置\n');
+// logger.info('🔧 更新 Sequelize 配置\n');
 
 const configPath = path.join(process.cwd(), 'backend', 'config', 'config.json');
 
@@ -17,8 +17,8 @@ if (fs.existsSync(configPath)) {
   );
 
   fs.writeFileSync(configPath, configContent);
-  console.log('✅ Sequelize 配置已更新');
-  console.log('\n📋 請手動編輯 backend/config/config.json 檔案，將 "your-actual-postgres-password" 替換為您的實際 postgres 密碼');
+  // logger.info('✅ Sequelize 配置已更新');
+  // logger.info('\n📋 請手動編輯 backend/config/config.json 檔案，將 "your-actual-postgres-password" 替換為您的實際 postgres 密碼');
 } else {
-  console.log('❌ Sequelize 配置文件不存在');
+  // logger.info('❌ Sequelize 配置文件不存在');
 }

@@ -40,7 +40,7 @@ const LOAD_TEST_BENCHMARKS = {
  * 生成負載測試報告
  */
 function generateLoadTestReport() {
-  console.log('📊 開始生成負載測試報告...');
+  // logger.info('📊 開始生成負載測試報告...');
 
   const reportDir = path.join(process.cwd(), 'test-results');
   const loadTestDir = path.join(reportDir, 'load-testing');
@@ -79,7 +79,7 @@ function collectLoadTestResults() {
     try {
       results.basic = JSON.parse(fs.readFileSync(basicReportPath, 'utf8'));
     } catch (error) {
-      console.warn('⚠️ 無法讀取基本負載測試結果:', error.message);
+      // logger.info('⚠️ 無法讀取基本負載測試結果:', error.message);
     }
   }
 
@@ -89,7 +89,7 @@ function collectLoadTestResults() {
     try {
       results.advanced = JSON.parse(fs.readFileSync(advancedReportPath, 'utf8'));
     } catch (error) {
-      console.warn('⚠️ 無法讀取高級負載測試結果:', error.message);
+      // logger.info('⚠️ 無法讀取高級負載測試結果:', error.message);
     }
   }
 
@@ -403,7 +403,7 @@ function saveLoadTestReport(report, outputDir) {
   const markdownPath = path.join(outputDir, 'load-test-report.md');
   fs.writeFileSync(markdownPath, markdownReport);
 
-  console.log(`📄 負載測試報告已保存到: ${outputDir}`);
+  // logger.info(`📄 負載測試報告已保存到: ${outputDir}`);
 }
 
 /**
@@ -571,20 +571,20 @@ function getThroughputGrade(throughput) {
  * 輸出負載測試摘要
  */
 function printLoadTestSummary(report) {
-  console.log('\n📊 負載測試報告摘要');
-  console.log('='.repeat(50));
-  console.log(`總分: ${report.summary.overallScore}/100`);
-  console.log(`總用戶數: ${report.summary.totalUsers}`);
-  console.log(`總請求數: ${report.summary.totalRequests}`);
-  console.log(`總錯誤數: ${report.summary.totalErrors}`);
-  console.log(`平均響應時間: ${report.summary.averageResponseTime.toFixed(2)}ms`);
-  console.log(`平均錯誤率: ${(report.summary.averageErrorRate * 100).toFixed(2)}%`);
-  console.log(`平均吞吐量: ${report.summary.averageThroughput.toFixed(2)} RPS`);
-  console.log('\n💡 主要建議:');
+  // logger.info('\n📊 負載測試報告摘要');
+  // logger.info('='.repeat(50));
+  // logger.info(`總分: ${report.summary.overallScore}/100`);
+  // logger.info(`總用戶數: ${report.summary.totalUsers}`);
+  // logger.info(`總請求數: ${report.summary.totalRequests}`);
+  // logger.info(`總錯誤數: ${report.summary.totalErrors}`);
+  // logger.info(`平均響應時間: ${report.summary.averageResponseTime.toFixed(2)}ms`);
+  // logger.info(`平均錯誤率: ${(report.summary.averageErrorRate * 100).toFixed(2)}%`);
+  // logger.info(`平均吞吐量: ${report.summary.averageThroughput.toFixed(2)} RPS`);
+  // logger.info('\n💡 主要建議:');
   report.recommendations.slice(0, 3).forEach((rec, index) => {
-    console.log(`  ${index + 1}. ${rec}`);
+    // logger.info(`  ${index + 1}. ${rec}`);
   });
-  console.log('='.repeat(50));
+  // logger.info('='.repeat(50));
 }
 
 // 執行報告生成

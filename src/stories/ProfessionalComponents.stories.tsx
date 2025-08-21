@@ -135,8 +135,8 @@ export const CardGradingDisplayStory = () => (
     <View style={styles.row}>
       <CardGradingDisplay
         result={mockGradingResult}
-        onShare={() => console.log('Share grading result')}
-        onViewDetails={() => console.log('View grading details')}
+        onShare={() => // logger.info('Share grading result')}
+        onViewDetails={() => // logger.info('View grading details')}
       />
     </View>
   </View>
@@ -151,8 +151,8 @@ export const CardPriceChartStory = () => (
         data={mockPriceData}
         cardName="Charizard GX"
         cardType="POKEMON"
-        onTimeRangeChange={(range) => console.log('Time range changed:', range)}
-        onPriceAlert={() => console.log('Set price alert')}
+        onTimeRangeChange={(range) => // logger.info('Time range changed:', range)}
+        onPriceAlert={() => // logger.info('Set price alert')}
       />
     </View>
   </View>
@@ -165,9 +165,9 @@ export const AIRecommendationCardStory = () => (
     <View style={styles.row}>
       <AIRecommendationCard
         recommendation={mockRecommendation}
-        onInvest={() => console.log('Invest in card')}
-        onViewDetails={() => console.log('View card details')}
-        onDismiss={() => console.log('Dismiss recommendation')}
+        onInvest={() => // logger.info('Invest in card')}
+        onViewDetails={() => // logger.info('View card details')}
+        onDismiss={() => // logger.info('Dismiss recommendation')}
       />
     </View>
   </View>
@@ -180,14 +180,14 @@ export const CardCollectionManagerStory = () => (
     <View style={styles.row}>
       <CardCollectionManager
         cards={mockCollectionCards}
-        onCardPress={(card) => console.log('Card pressed:', card)}
-        onAddCard={() => console.log('Add new card')}
-        onEditCard={(card) => console.log('Edit card:', card)}
-        onDeleteCard={(cardId) => console.log('Delete card:', cardId)}
-        onToggleSale={(cardId, isForSale) => console.log('Toggle sale:', cardId, isForSale)}
-        onToggleWishlist={(cardId, isWishlist) => console.log('Toggle wishlist:', cardId, isWishlist)}
-        onImport={() => console.log('Import cards')}
-        onExport={() => console.log('Export cards')}
+        onCardPress={(card) => // logger.info('Card pressed:', card)}
+        onAddCard={() => // logger.info('Add new card')}
+        onEditCard={(card) => // logger.info('Edit card:', card)}
+        onDeleteCard={(cardId) => // logger.info('Delete card:', cardId)}
+        onToggleSale={(cardId, isForSale) => // logger.info('Toggle sale:', cardId, isForSale)}
+        onToggleWishlist={(cardId, isWishlist) => // logger.info('Toggle wishlist:', cardId, isWishlist)}
+        onImport={() => // logger.info('Import cards')}
+        onExport={() => // logger.info('Export cards')}
       />
     </View>
   </View>
@@ -201,10 +201,10 @@ export const CardScannerOverlayStory = () => (
       <CardScannerOverlay
         isScanning={true}
         scanProgress={65}
-        onCapture={() => console.log('Capture image')}
-        onCancel={() => console.log('Cancel scanning')}
-        onToggleFlash={() => console.log('Toggle flash')}
-        onSwitchCamera={() => console.log('Switch camera')}
+        onCapture={() => // logger.info('Capture image')}
+        onCancel={() => // logger.info('Cancel scanning')}
+        onToggleFlash={() => // logger.info('Toggle flash')}
+        onSwitchCamera={() => // logger.info('Switch camera')}
         scanInstructions="將卡片放在框內，保持穩定"
         detectedCard="Charizard GX"
         confidence={85}

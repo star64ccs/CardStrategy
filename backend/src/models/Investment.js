@@ -132,14 +132,14 @@ const getInvestmentModel = () => {
       const sequelize = getSequelize();
 
       if (!sequelize) {
-        console.error('Sequelize instance is null - database connection may not be established');
+        // logger.info('Sequelize instance is null - database connection may not be established');
         return null;
       }
 
       Investment = createInvestmentModel(sequelize);
-      console.log('Investment model created successfully');
+      // logger.info('Investment model created successfully');
     } catch (error) {
-      console.error('Error creating Investment model:', error);
+      // logger.info('Error creating Investment model:', error);
       return null;
     }
   }

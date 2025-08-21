@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 async function analyzeDatabase() {
-  console.log('📊 開始簡化數據庫分析...');
+  // logger.info('📊 開始簡化數據庫分析...');
 
   try {
     // 直接創建 Sequelize 實例
@@ -25,7 +25,7 @@ async function analyzeDatabase() {
 
     // 測試連接
     await sequelize.authenticate();
-    console.log('✅ 數據庫連接成功');
+    // logger.info('✅ 數據庫連接成功');
 
     // 獲取所有表信息
     const tables = await sequelize.query(`
@@ -40,25 +40,25 @@ async function analyzeDatabase() {
       ORDER BY total_size DESC
     `, { type: Sequelize.QueryTypes.SELECT });
 
-    console.log('📋 數據庫表分析結果:');
-    console.log('=====================================');
+    // logger.info('📋 數據庫表分析結果:');
+    // logger.info('=====================================');
     
     let totalSize = 0;
     tables.forEach(table => {
       const sizeMB = (table.total_size / 1024 / 1024).toFixed(2);
       const rows = table.table_rows || 0;
-      console.log(`表名: ${table.table_name}`);
-      console.log(`  行數: ${rows.toLocaleString()}`);
-      console.log(`  大小: ${sizeMB} MB`);
-      console.log('---');
+      // logger.info(`表名: ${table.table_name}`);
+      // logger.info(`  行數: ${rows.toLocaleString()}`);
+      // logger.info(`  大小: ${sizeMB} MB`);
+      // logger.info('---');
       totalSize += parseInt(table.total_size);
     });
 
-    console.log(`總大小: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
+    // logger.info(`總大小: ${(totalSize / 1024 / 1024).toFixed(2)} MB`);
 
     // 分析索引
-    console.log('\n🔍 索引分析:');
-    console.log('=====================================');
+    // logger.info('\n🔍 索引分析:');
+    // logger.info('=====================================');
     
     for (const table of tables) {
       const indexes = await sequelize.query(`
@@ -71,17 +71,17 @@ async function analyzeDatabase() {
       `, { type: Sequelize.QueryTypes.SELECT });
 
       if (indexes.length > 0) {
-        console.log(`表 ${table.table_name} 的索引:`);
+        // logger.info(`表 ${table.table_name} 的索引:`);
         indexes.forEach(index => {
-          console.log(`  - ${index.indexname}`);
+          // logger.info(`  - ${index.indexname}`);
         });
-        console.log('---');
+        // logger.info('---');
       }
     }
 
     // 分析表統計信息
-    console.log('\n📈 表統計信息:');
-    console.log('=====================================');
+    // logger.info('\n📈 表統計信息:');
+    // logger.info('=====================================');
     
     for (const table of tables) {
       const stats = await sequelize.query(`
@@ -98,17 +98,17 @@ async function analyzeDatabase() {
       `, { type: Sequelize.QueryTypes.SELECT });
 
       if (stats.length > 0) {
-        console.log(`表 ${table.table_name} 的統計信息:`);
+        // logger.info(`表 ${table.table_name} 的統計信息:`);
         stats.forEach(stat => {
-          console.log(`  - ${stat.attname}: 不同值數量=${stat.n_distinct}, 相關性=${stat.correlation?.toFixed(3) || 'N/A'}`);
+          // logger.info(`  - ${stat.attname}: 不同值數量=${stat.n_distinct}, 相關性=${stat.correlation?.toFixed(3) || 'N/A'}`);
         });
-        console.log('---');
+        // logger.info('---');
       }
     }
 
     // 生成優化建議
-    console.log('\n💡 優化建議:');
-    console.log('=====================================');
+    // logger.info('\n💡 優化建議:');
+    // logger.info('=====================================');
     
     const recommendations = [];
 
@@ -142,7 +142,7 @@ async function analyzeDatabase() {
     recommendations.push('- 建議定期分析表統計信息');
     recommendations.push('- 建議對頻繁查詢的列添加索引');
 
-    recommendations.forEach(rec => console.log(rec));
+    recommendations.forEach(rec => // logger.info(rec));
 
     // 生成報告文件
     const report = {
@@ -154,14 +154,14 @@ async function analyzeDatabase() {
 
     const reportPath = path.join(__dirname, '../reports/database-analysis.json');
     fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-    console.log(`\n📄 分析報告已保存到: ${reportPath}`);
+    // logger.info(`\n📄 分析報告已保存到: ${reportPath}`);
 
     await sequelize.close();
-    console.log('✅ 數據庫分析完成');
+    // logger.info('✅ 數據庫分析完成');
 
   } catch (error) {
-    console.error('❌ 數據庫分析失敗:', error.message);
-    console.log('💡 提示：請確保 PostgreSQL 數據庫正在運行且配置正確');
+    // logger.info('❌ 數據庫分析失敗:', error.message);
+    // logger.info('💡 提示：請確保 PostgreSQL 數據庫正在運行且配置正確');
   }
 }
 

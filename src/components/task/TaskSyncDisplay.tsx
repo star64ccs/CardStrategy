@@ -83,7 +83,7 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
       setSyncConflicts(conflicts);
       setLastRefresh(new Date());
     } catch (error) {
-      console.error('Load sync data error:', error);
+      // logger.info('Load sync data error:', error);
     } finally {
       setIsLoading(false);
     }

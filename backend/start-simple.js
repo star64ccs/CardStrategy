@@ -101,7 +101,7 @@ app.use('*', (req, res) => {
 
 // 錯誤處理中間件
 app.use((error, req, res, next) => {
-  console.error('服務器錯誤:', error);
+  // logger.info('服務器錯誤:', error);
   res.status(500).json({
     success: false,
     message: '內部服務器錯誤',
@@ -111,17 +111,17 @@ app.use((error, req, res, next) => {
 
 // 啟動服務器
 app.listen(PORT, () => {
-  console.log('🚀 CardStrategy API 服務已啟動');
-  console.log(`📡 服務器運行在端口: ${PORT}`);
-  console.log(`🌐 本地訪問: http://localhost:${PORT}`);
-  console.log(`🔍 健康檢查: http://localhost:${PORT}/health`);
-  console.log(`📊 API 狀態: http://localhost:${PORT}/api/status`);
-  console.log(`🗄️  數據庫測試: http://localhost:${PORT}/api/db/test`);
-  console.log('');
-  console.log('✅ PostgreSQL 數據庫已配置');
-  console.log('✅ 安全中間件已啟用');
-  console.log('✅ CORS 已配置');
-  console.log('✅ 壓縮已啟用');
-  console.log('');
-  console.log('�� 應用程序已準備就緒！');
+  // logger.info('🚀 CardStrategy API 服務已啟動');
+  // logger.info(`📡 服務器運行在端口: ${PORT}`);
+  // logger.info(`🌐 本地訪問: http://localhost:${PORT}`);
+  // logger.info(`🔍 健康檢查: http://localhost:${PORT}/health`);
+  // logger.info(`📊 API 狀態: http://localhost:${PORT}/api/status`);
+  // logger.info(`🗄️  數據庫測試: http://localhost:${PORT}/api/db/test`);
+  // logger.info('');
+  // logger.info('✅ PostgreSQL 數據庫已配置');
+  // logger.info('✅ 安全中間件已啟用');
+  // logger.info('✅ CORS 已配置');
+  // logger.info('✅ 壓縮已啟用');
+  // logger.info('');
+  // logger.info('�� 應用程序已準備就緒！');
 });

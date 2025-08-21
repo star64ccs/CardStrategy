@@ -238,7 +238,7 @@ app.get('/', (req, res) => {
 
 // 錯誤處理中間件
 app.use((err, req, res, next) => {
-  console.error('服務器錯誤:', err);
+  // logger.info('服務器錯誤:', err);
   res.status(500).json({
     success: false,
     message: '內部服務器錯誤',
@@ -266,22 +266,22 @@ app.use('*', (req, res) => {
 
 // 啟動服務器
 app.listen(PORT, () => {
-  console.log('🚀 CardStrategy Backend 服務器已啟動');
-  console.log(`📍 端口: ${PORT}`);
-  console.log(`🌐 地址: http://localhost:${PORT}`);
-  console.log(`🔗 健康檢查: http://localhost:${PORT}/api/health`);
-  console.log(`📅 啟動時間: ${new Date().toISOString()}`);
-  console.log('✨ 功能: 卡片管理、市場分析、投資組合追蹤');
-  console.log('🔧 模式: 簡化版本（無 AI 依賴）');
+  // logger.info('🚀 CardStrategy Backend 服務器已啟動');
+  // logger.info(`📍 端口: ${PORT}`);
+  // logger.info(`🌐 地址: http://localhost:${PORT}`);
+  // logger.info(`🔗 健康檢查: http://localhost:${PORT}/api/health`);
+  // logger.info(`📅 啟動時間: ${new Date().toISOString()}`);
+  // logger.info('✨ 功能: 卡片管理、市場分析、投資組合追蹤');
+  // logger.info('🔧 模式: 簡化版本（無 AI 依賴）');
 });
 
 // 優雅關閉
 process.on('SIGINT', () => {
-  console.log('\n🛑 正在關閉服務器...');
+  // logger.info('\n🛑 正在關閉服務器...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n🛑 正在關閉服務器...');
+  // logger.info('\n🛑 正在關閉服務器...');
   process.exit(0);
 });

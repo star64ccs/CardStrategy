@@ -4,7 +4,7 @@
   "description": "CardStrategy Backend API with Performance Optimization",
   "main": "src/server.js",
   "scripts": {
-    "start": "node src/server-enhanced.js",
+    "start": "node src/server-unified.js",
     "dev": "nodemon src/server.js",
     "dev:simple": "nodemon test-server-simple.js",
     "start:simple": "node test-server-simple.js",

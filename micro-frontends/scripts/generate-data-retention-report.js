@@ -44,7 +44,7 @@ const DATA_RETENTION_BENCHMARKS = {
  * 生成數據保留管理報告
  */
 function generateDataRetentionReport() {
-  console.log('🗂️ 開始生成數據保留管理報告...');
+  // logger.info('🗂️ 開始生成數據保留管理報告...');
 
   try {
     // 收集測試結果
@@ -59,10 +59,10 @@ function generateDataRetentionReport() {
     // 打印摘要
     printDataRetentionSummary(report);
 
-    console.log('✅ 數據保留管理報告生成完成！');
+    // logger.info('✅ 數據保留管理報告生成完成！');
 
   } catch (error) {
-    console.error('❌ 生成數據保留管理報告失敗:', error.message);
+    // logger.info('❌ 生成數據保留管理報告失敗:', error.message);
     process.exit(1);
   }
 }
@@ -87,9 +87,9 @@ function collectDataRetentionTestResults() {
   if (fs.existsSync(basicReportPath)) {
     try {
       results.basic = JSON.parse(fs.readFileSync(basicReportPath, 'utf8'));
-      console.log('📄 讀取基本數據保留測試結果');
+      // logger.info('📄 讀取基本數據保留測試結果');
     } catch (error) {
-      console.warn('⚠️ 無法讀取基本數據保留測試結果:', error.message);
+      // logger.info('⚠️ 無法讀取基本數據保留測試結果:', error.message);
     }
   }
 
@@ -98,9 +98,9 @@ function collectDataRetentionTestResults() {
   if (fs.existsSync(advancedReportPath)) {
     try {
       results.advanced = JSON.parse(fs.readFileSync(advancedReportPath, 'utf8'));
-      console.log('📄 讀取高級數據保留測試結果');
+      // logger.info('📄 讀取高級數據保留測試結果');
     } catch (error) {
-      console.warn('⚠️ 無法讀取高級數據保留測試結果:', error.message);
+      // logger.info('⚠️ 無法讀取高級數據保留測試結果:', error.message);
     }
   }
 
@@ -432,19 +432,19 @@ function saveDataRetentionReport(report, outputDir) {
   // 保存 JSON 報告
   const jsonPath = path.join(outputPath, 'data-retention-report.json');
   fs.writeFileSync(jsonPath, JSON.stringify(report, null, 2));
-  console.log(`📄 JSON 報告已保存: ${jsonPath}`);
+  // logger.info(`📄 JSON 報告已保存: ${jsonPath}`);
 
   // 保存 HTML 報告
   const htmlPath = path.join(outputPath, 'data-retention-report.html');
   const htmlContent = generateDataRetentionHtmlReport(report);
   fs.writeFileSync(htmlPath, htmlContent);
-  console.log(`📄 HTML 報告已保存: ${htmlPath}`);
+  // logger.info(`📄 HTML 報告已保存: ${htmlPath}`);
 
   // 保存 Markdown 報告
   const mdPath = path.join(outputPath, 'data-retention-report.md');
   const mdContent = generateDataRetentionMarkdownReport(report);
   fs.writeFileSync(mdPath, mdContent);
-  console.log(`📄 Markdown 報告已保存: ${mdPath}`);
+  // logger.info(`📄 Markdown 報告已保存: ${mdPath}`);
 }
 
 /**
@@ -838,41 +838,41 @@ ${Object.entries(report.summary.policyEffectiveness).map(([policy, effectiveness
  * 打印數據保留管理摘要
  */
 function printDataRetentionSummary(report) {
-  console.log('\n📊 數據保留管理報告摘要');
-  console.log('='.repeat(50));
-  console.log(`數據保留評分: ${report.summary.retentionGrade.score}/100`);
-  console.log(`數據保留等級: ${report.summary.retentionGrade.grade}`);
-  console.log(`等級說明: ${report.summary.retentionGrade.description}`);
-  console.log(`總違規數: ${report.summary.totalViolations}`);
+  // logger.info('\n📊 數據保留管理報告摘要');
+  // logger.info('='.repeat(50));
+  // logger.info(`數據保留評分: ${report.summary.retentionGrade.score}/100`);
+  // logger.info(`數據保留等級: ${report.summary.retentionGrade.grade}`);
+  // logger.info(`等級說明: ${report.summary.retentionGrade.description}`);
+  // logger.info(`總違規數: ${report.summary.totalViolations}`);
 
-  console.log('\n🔒 合規狀態:');
+  // logger.info('\n🔒 合規狀態:');
   for (const [framework, status] of Object.entries(report.summary.complianceStatus)) {
-    console.log(`  ${framework.toUpperCase()}: ${status.compliant ? '✅ 合規' : '❌ 不合規'} (${status.score}/100)`);
+    // logger.info(`  ${framework.toUpperCase()}: ${status.compliant ? '✅ 合規' : '❌ 不合規'} (${status.score}/100)`);
   }
 
-  console.log('\n🚨 違規統計:');
+  // logger.info('\n🚨 違規統計:');
   for (const [type, count] of Object.entries(report.violations.byType)) {
-    console.log(`  ${type.replace(/_/g, ' ').toUpperCase()}: ${count} 個`);
+    // logger.info(`  ${type.replace(/_/g, ' ').toUpperCase()}: ${count} 個`);
   }
 
-  console.log('\n💡 主要建議:');
+  // logger.info('\n💡 主要建議:');
   const criticalRecs = report.recommendations.filter(r => r.priority === 'critical');
   const highRecs = report.recommendations.filter(r => r.priority === 'high');
 
   if (criticalRecs.length > 0) {
-    console.log('  緊急修復:');
-    criticalRecs.forEach(rec => console.log(`    - ${rec.title}`));
+    // logger.info('  緊急修復:');
+    criticalRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
   }
 
   if (highRecs.length > 0) {
-    console.log('  高優先級:');
-    highRecs.forEach(rec => console.log(`    - ${rec.title}`));
+    // logger.info('  高優先級:');
+    highRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
   }
 
-  console.log('\n📄 報告文件:');
-  console.log('  - test-results/data-retention-report.json');
-  console.log('  - test-results/data-retention-report.html');
-  console.log('  - test-results/data-retention-report.md');
+  // logger.info('\n📄 報告文件:');
+  // logger.info('  - test-results/data-retention-report.json');
+  // logger.info('  - test-results/data-retention-report.html');
+  // logger.info('  - test-results/data-retention-report.md');
 }
 
 // 如果直接運行此腳本

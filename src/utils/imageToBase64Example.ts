@@ -39,7 +39,7 @@ export class ImageToBase64Example {
 
         try {
           const result = await convertImageToBase64(file, options);
-          console.log('轉換結果:', result);
+          // logger.info('轉換結果:', result);
 
           // 顯示轉換後的圖片
           const img = document.createElement('img');
@@ -48,13 +48,13 @@ export class ImageToBase64Example {
           document.body.appendChild(img);
 
         } catch (error) {
-          console.error('圖片轉換失敗:', error);
+          // logger.info('圖片轉換失敗:', error);
         }
       };
 
       fileInput.click();
     } catch (error) {
-      console.error('示例執行失敗:', error);
+      // logger.info('示例執行失敗:', error);
     }
   }
 
@@ -82,22 +82,22 @@ export class ImageToBase64Example {
 
         try {
           const result = await convertImagesToBase64(files, options);
-          console.log('批量轉換結果:', result);
+          // logger.info('批量轉換結果:', result);
 
           // 顯示轉換統計
-          console.log(`總共處理 ${result.totalImages} 張圖片`);
-          console.log(`成功轉換 ${result.successfulConversions} 張`);
-          console.log(`失敗 ${result.failedConversions} 張`);
-          console.log(`平均處理時間: ${result.averageProcessingTime.toFixed(2)}ms`);
+          // logger.info(`總共處理 ${result.totalImages} 張圖片`);
+          // logger.info(`成功轉換 ${result.successfulConversions} 張`);
+          // logger.info(`失敗 ${result.failedConversions} 張`);
+          // logger.info(`平均處理時間: ${result.averageProcessingTime.toFixed(2)}ms`);
 
         } catch (error) {
-          console.error('批量轉換失敗:', error);
+          // logger.info('批量轉換失敗:', error);
         }
       };
 
       fileInput.click();
     } catch (error) {
-      console.error('示例執行失敗:', error);
+      // logger.info('示例執行失敗:', error);
     }
   }
 
@@ -117,10 +117,10 @@ export class ImageToBase64Example {
       };
 
       const result = await convertImageUrlToBase64(imageUrl, options);
-      console.log('URL轉換結果:', result);
+      // logger.info('URL轉換結果:', result);
 
     } catch (error) {
-      console.error('URL轉換失敗:', error);
+      // logger.info('URL轉換失敗:', error);
     }
   }
 
@@ -148,28 +148,28 @@ export class ImageToBase64Example {
         try {
           // 使用服務類方法
           const result = await dataQualityService.convertImageToBase64(file, options);
-          console.log('服務類轉換結果:', result);
+          // logger.info('服務類轉換結果:', result);
 
           // 驗證base64格式
           const isValid = dataQualityService.isValidImageBase64(result.base64);
-          console.log('base64格式有效:', isValid);
+          // logger.info('base64格式有效:', isValid);
 
           // 獲取圖片尺寸
           const dimensions = await dataQualityService.getBase64ImageDimensions(result.base64);
-          console.log('圖片尺寸:', dimensions);
+          // logger.info('圖片尺寸:', dimensions);
 
           // 轉換回Blob
           const blob = dataQualityService.base64ToBlob(result.base64, result.mimeType);
-          console.log('轉換回Blob:', blob);
+          // logger.info('轉換回Blob:', blob);
 
         } catch (error) {
-          console.error('服務類轉換失敗:', error);
+          // logger.info('服務類轉換失敗:', error);
         }
       };
 
       fileInput.click();
     } catch (error) {
-      console.error('示例執行失敗:', error);
+      // logger.info('示例執行失敗:', error);
     }
   }
 
@@ -189,7 +189,7 @@ export class ImageToBase64Example {
         try {
           // 先轉換為base64
           const originalResult = await convertImageToBase64(file, { compression: false });
-          console.log('原始圖片大小:', originalResult.originalSize, 'bytes');
+          // logger.info('原始圖片大小:', originalResult.originalSize, 'bytes');
 
           // 壓縮圖片
           const compressedResult = await compressBase64Image(originalResult.base64, {
@@ -199,17 +199,17 @@ export class ImageToBase64Example {
             format: 'jpeg'
           });
 
-          console.log('壓縮後大小:', compressedResult.compressedSize, 'bytes');
-          console.log('壓縮比例:', `${(compressedResult.compressionRatio * 100).toFixed(2)  }%`);
+          // logger.info('壓縮後大小:', compressedResult.compressedSize, 'bytes');
+          // logger.info('壓縮比例:', `${(compressedResult.compressionRatio * 100).toFixed(2)  }%`);
 
         } catch (error) {
-          console.error('圖片壓縮失敗:', error);
+          // logger.info('圖片壓縮失敗:', error);
         }
       };
 
       fileInput.click();
     } catch (error) {
-      console.error('示例執行失敗:', error);
+      // logger.info('示例執行失敗:', error);
     }
   }
 
@@ -221,18 +221,18 @@ export class ImageToBase64Example {
       // 測試無效的base64字符串
       const invalidBase64 = 'invalid-base64-string';
       const isValid = isValidImageBase64(invalidBase64);
-      console.log('無效base64驗證:', isValid);
+      // logger.info('無效base64驗證:', isValid);
 
       // 測試base64ToBlob錯誤處理
       try {
         const blob = base64ToBlob(invalidBase64);
-        console.log('Blob轉換成功:', blob);
+        // logger.info('Blob轉換成功:', blob);
       } catch (error) {
-        console.log('Blob轉換錯誤:', error instanceof Error ? error.message : '未知錯誤');
+        // logger.info('Blob轉換錯誤:', error instanceof Error ? error.message : '未知錯誤');
       }
 
     } catch (error) {
-      console.error('錯誤處理示例失敗:', error);
+      // logger.info('錯誤處理示例失敗:', error);
     }
   }
 
@@ -240,30 +240,30 @@ export class ImageToBase64Example {
    * 運行所有示例
    */
   static async runAllExamples() {
-    console.log('開始運行圖片轉base64功能示例...');
+    // logger.info('開始運行圖片轉base64功能示例...');
 
     // 注意：這些示例需要在瀏覽器環境中運行
     // 因為它們依賴於DOM API和文件輸入
 
-    console.log('示例1: 單個圖片轉換');
+    // logger.info('示例1: 單個圖片轉換');
     // await this.exampleSingleImageConversion();
 
-    console.log('示例2: 批量圖片轉換');
+    // logger.info('示例2: 批量圖片轉換');
     // await this.exampleBatchConversion();
 
-    console.log('示例3: URL圖片轉換');
+    // logger.info('示例3: URL圖片轉換');
     // await this.exampleUrlConversion();
 
-    console.log('示例4: 使用服務類');
+    // logger.info('示例4: 使用服務類');
     // await this.exampleUsingService();
 
-    console.log('示例5: 圖片壓縮');
+    // logger.info('示例5: 圖片壓縮');
     // await this.exampleImageCompression();
 
-    console.log('示例6: 錯誤處理');
+    // logger.info('示例6: 錯誤處理');
     await this.exampleErrorHandling();
 
-    console.log('所有示例完成！');
+    // logger.info('所有示例完成！');
   }
 }
 

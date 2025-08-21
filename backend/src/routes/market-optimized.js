@@ -12,7 +12,7 @@ router.get('/trends', async (req, res) => {
     let trends = await advancedCacheService.get(cacheKey, 'marketData');
     
     if (!trends) {
-      console.log(`📈 從數據庫獲取市場趨勢: ${days} 天`);
+      // logger.info(`📈 從數據庫獲取市場趨勢: ${days} 天`);
       
       // 優化查詢 - 使用索引和時間範圍
       const query = `
@@ -71,7 +71,7 @@ router.get('/trends', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ 獲取市場趨勢失敗:', error);
+    // logger.info('❌ 獲取市場趨勢失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取市場趨勢失敗'
@@ -90,7 +90,7 @@ router.get('/price-history/:cardId', async (req, res) => {
     let history = await advancedCacheService.get(cacheKey, 'marketData');
     
     if (!history) {
-      console.log(`📊 從數據庫獲取價格歷史: 卡片 ${cardId}, 期間 ${period}`);
+      // logger.info(`📊 從數據庫獲取價格歷史: 卡片 ${cardId}, 期間 ${period}`);
       
       // 優化查詢 - 使用索引和時間範圍
       const daysMap = { '7d': 7, '30d': 30, '90d': 90, '1y': 365 };
@@ -152,7 +152,7 @@ router.get('/price-history/:cardId', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ 獲取價格歷史失敗:', error);
+    // logger.info('❌ 獲取價格歷史失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取價格歷史失敗'
@@ -180,7 +180,7 @@ router.post('/batch-prices', async (req, res) => {
     let prices = await advancedCacheService.get(cacheKey, 'marketData');
     
     if (!prices) {
-      console.log(`📊 批量獲取市場價格: ${limitedIds.length} 個卡片`);
+      // logger.info(`📊 批量獲取市場價格: ${limitedIds.length} 個卡片`);
       
       // 優化批量查詢
       const placeholders = limitedIds.map((_, index) => `$${index + 1}`).join(',');
@@ -227,7 +227,7 @@ router.post('/batch-prices', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ 批量獲取市場價格失敗:', error);
+    // logger.info('❌ 批量獲取市場價格失敗:', error);
     res.status(500).json({
       success: false,
       error: '批量獲取市場價格失敗'
@@ -244,7 +244,7 @@ router.get('/statistics', async (req, res) => {
     let statistics = await advancedCacheService.get(cacheKey, 'marketData');
     
     if (!statistics) {
-      console.log('📊 從數據庫獲取市場統計');
+      // logger.info('📊 從數據庫獲取市場統計');
       
       // 優化統計查詢
       const query = `
@@ -290,7 +290,7 @@ router.get('/statistics', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ 獲取市場統計失敗:', error);
+    // logger.info('❌ 獲取市場統計失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取市場統計失敗'

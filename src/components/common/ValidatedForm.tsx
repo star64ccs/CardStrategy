@@ -26,14 +26,14 @@ export const ValidatedLoginForm: React.FC = () => {
     onSubmit: async (validatedData) => {
       try {
         // 這裡會調用實際的登錄 API
-        console.log('提交驗證後的數據:', validatedData);
+        // logger.info('提交驗證後的數據:', validatedData);
         Alert.alert('成功', '登錄數據驗證通過！');
       } catch (error) {
         Alert.alert('錯誤', '登錄失敗');
       }
     },
     onValidationError: (errors) => {
-      console.log('驗證錯誤:', errors);
+      // logger.info('驗證錯誤:', errors);
       Alert.alert('驗證錯誤', '請檢查輸入的數據');
     }
   });
@@ -150,14 +150,14 @@ export const ValidatedRegisterForm: React.FC = () => {
     },
     onSubmit: async (validatedData) => {
       try {
-        console.log('提交驗證後的數據:', validatedData);
+        // logger.info('提交驗證後的數據:', validatedData);
         Alert.alert('成功', '註冊數據驗證通過！');
       } catch (error) {
         Alert.alert('錯誤', '註冊失敗');
       }
     },
     onValidationError: (errors) => {
-      console.log('驗證錯誤:', errors);
+      // logger.info('驗證錯誤:', errors);
       Alert.alert('驗證錯誤', '請檢查輸入的數據');
     }
   });

@@ -423,7 +423,7 @@ export const PerformanceOptimizers = () => {
           style={{ color: '#ffd700', marginRight: 10 }}
           onPress={() => {
             performanceOptimizers.clearAnimationCache();
-            console.log('動畫緩存已清理');
+            // logger.info('動畫緩存已清理');
           }}
         >
           清理緩存
@@ -432,7 +432,7 @@ export const PerformanceOptimizers = () => {
           style={{ color: '#ff6b6b' }}
           onPress={() => {
             animationMonitor.stopAllAnimations();
-            console.log('所有動畫已停止');
+            // logger.info('所有動畫已停止');
           }}
         >
           停止所有動畫

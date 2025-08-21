@@ -102,7 +102,7 @@ module.exports = {
         middleware(req, res, () => {
           const duration = Date.now() - start;
           if (duration > 1000) {
-            console.warn(`Slow request: ${req.url} took ${duration}ms`);
+            // logger.info(`Slow request: ${req.url} took ${duration}ms`);
           }
           next();
         });

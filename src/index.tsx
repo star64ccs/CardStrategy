@@ -10,15 +10,15 @@ import './i18n';
 const initializeServiceWorker = async () => {
   try {
     await swManager.init();
-    console.log('Service Worker 初始化成功');
+    // logger.info('Service Worker 初始化成功');
   } catch (error) {
-    console.error('Service Worker 初始化失敗:', error);
+    // logger.info('Service Worker 初始化失敗:', error);
   }
 };
 
 // 在開發環境中禁用 Service Worker
 if (process.env.NODE_ENV === 'development') {
-  console.log('開發環境 - Service Worker 已禁用');
+  // logger.info('開發環境 - Service Worker 已禁用');
 } else {
   // 生產環境中初始化 Service Worker
   initializeServiceWorker();

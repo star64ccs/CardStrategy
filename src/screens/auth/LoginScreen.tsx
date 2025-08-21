@@ -51,7 +51,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     setLoading(true);
     try {
       // 這裡會調用實際的登入 API
-      console.log('登入:', { email, password });
+      // logger.info('登入:', { email, password });
 
       // 模擬 API 調用
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -151,14 +151,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             <View style={styles.socialButtons}>
               <Button
                 title="Google"
-                onPress={() => console.log('Google 登入')}
+                onPress={() => // logger.info('Google 登入')}
                 variant="secondary"
                 style={styles.socialButton}
                 icon={<Ionicons name="logo-google" size={20} color={theme.colors.gold.primary} />}
               />
               <Button
                 title="Apple"
-                onPress={() => console.log('Apple 登入')}
+                onPress={() => // logger.info('Apple 登入')}
                 variant="secondary"
                 style={styles.socialButton}
                 icon={<Ionicons name="logo-apple" size={20} color={theme.colors.gold.primary} />}

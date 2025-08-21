@@ -46,7 +46,7 @@ router.get('/list', async (req, res) => {
     let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
     
     if (!cards) {
-      console.log('📊 從數據庫獲取卡片列表...');
+      // logger.info('📊 從數據庫獲取卡片列表...');
       
       // 構建查詢條件
       let whereClause = 'WHERE 1=1';
@@ -108,7 +108,7 @@ router.get('/list', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ 獲取卡片列表失敗:', error);
+    // logger.info('❌ 獲取卡片列表失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取卡片列表失敗'
@@ -126,7 +126,7 @@ router.get('/:id', async (req, res) => {
     let card = await advancedCacheService.get(cacheKey, 'apiResponse');
     
     if (!card) {
-      console.log(`📊 從數據庫獲取卡片詳情: ${id}`);
+      // logger.info(`📊 從數據庫獲取卡片詳情: ${id}`);
       
       // 優化查詢 - 使用索引
       const query = `
@@ -167,7 +167,7 @@ router.get('/:id', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ 獲取卡片詳情失敗:', error);
+    // logger.info('❌ 獲取卡片詳情失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取卡片詳情失敗'
@@ -197,7 +197,7 @@ router.post('/batch', async (req, res) => {
     let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
     
     if (!cards) {
-      console.log(`📊 批量從數據庫獲取卡片: ${limitedIds.length} 個`);
+      // logger.info(`📊 批量從數據庫獲取卡片: ${limitedIds.length} 個`);
       
       // 優化批量查詢
       const placeholders = limitedIds.map((_, index) => `$${index + 1}`).join(',');
@@ -233,7 +233,7 @@ router.post('/batch', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ 批量獲取卡片失敗:', error);
+    // logger.info('❌ 批量獲取卡片失敗:', error);
     res.status(500).json({
       success: false,
       error: '批量獲取卡片失敗'
@@ -253,7 +253,7 @@ router.get('/search/:query', async (req, res) => {
     let results = await advancedCacheService.get(cacheKey, 'apiResponse');
     
     if (!results) {
-      console.log(`🔍 搜索卡片: ${query}`);
+      // logger.info(`🔍 搜索卡片: ${query}`);
       
       // 優化搜索查詢 - 使用全文搜索索引
       const searchQuery = `
@@ -294,7 +294,7 @@ router.get('/search/:query', async (req, res) => {
     });
     
   } catch (error) {
-    console.error('❌ 搜索卡片失敗:', error);
+    // logger.info('❌ 搜索卡片失敗:', error);
     res.status(500).json({
       success: false,
       error: '搜索卡片失敗'

@@ -12,7 +12,7 @@ const cloudflareConfig = {
 
 // 檢查配置
 function checkConfiguration() {
-  console.log('🔍 檢查 Cloudflare 配置...');
+  // logger.info('🔍 檢查 Cloudflare 配置...');
   
   if (!cloudflareConfig.apiToken) {
     throw new Error('❌ 未設置 API Token');
@@ -26,16 +26,16 @@ function checkConfiguration() {
     throw new Error('❌ 未設置 Droplet IP');
   }
   
-  console.log('✅ 配置檢查通過');
-  console.log(`🌐 域名: ${cloudflareConfig.domain}`);
-  console.log(`🏷️  Zone ID: ${cloudflareConfig.zoneId}`);
-  console.log(`🔑 API Token: ${cloudflareConfig.apiToken.substring(0, 8)}...`);
-  console.log(`🌍 Droplet IP: ${cloudflareConfig.dropletIp}`);
+  // logger.info('✅ 配置檢查通過');
+  // logger.info(`🌐 域名: ${cloudflareConfig.domain}`);
+  // logger.info(`🏷️  Zone ID: ${cloudflareConfig.zoneId}`);
+  // logger.info(`🔑 API Token: ${cloudflareConfig.apiToken.substring(0, 8)}...`);
+  // logger.info(`🌍 Droplet IP: ${cloudflareConfig.dropletIp}`);
 }
 
 // 獲取 Zone ID (如果沒有設置)
 async function getZoneId() {
-  console.log('🔍 獲取域名 Zone ID...');
+  // logger.info('🔍 獲取域名 Zone ID...');
   
   try {
     const response = await axios.get(`${cloudflareConfig.apiUrl}/zones?name=${cloudflareConfig.domain}`, {
@@ -47,20 +47,20 @@ async function getZoneId() {
     
     if (response.data.success && response.data.result.length > 0) {
       const zoneId = response.data.result[0].id;
-      console.log(`✅ 找到 Zone ID: ${zoneId}`);
+      // logger.info(`✅ 找到 Zone ID: ${zoneId}`);
       return zoneId;
     } else {
       throw new Error('找不到域名對應的 Zone ID');
     }
   } catch (error) {
-    console.error('❌ 獲取 Zone ID 失敗:', error.message);
+    // logger.info('❌ 獲取 Zone ID 失敗:', error.message);
     throw error;
   }
 }
 
 // 配置 DNS 記錄
 async function setupDNSRecords() {
-  console.log('🔧 配置 DNS 記錄...');
+  // logger.info('🔧 配置 DNS 記錄...');
   
   const dnsRecords = [
     {
@@ -99,15 +99,15 @@ async function setupDNSRecords() {
       });
       
       if (response.data.success) {
-        console.log(`✅ 成功創建 DNS 記錄: ${record.name}.${cloudflareConfig.domain}`);
+        // logger.info(`✅ 成功創建 DNS 記錄: ${record.name}.${cloudflareConfig.domain}`);
       } else {
-        console.log(`⚠️  DNS 記錄可能已存在: ${record.name}.${cloudflareConfig.domain}`);
+        // logger.info(`⚠️  DNS 記錄可能已存在: ${record.name}.${cloudflareConfig.domain}`);
       }
     } catch (error) {
       if (error.response?.data?.errors?.[0]?.code === 81057) {
-        console.log(`ℹ️  DNS 記錄已存在: ${record.name}.${cloudflareConfig.domain}`);
+        // logger.info(`ℹ️  DNS 記錄已存在: ${record.name}.${cloudflareConfig.domain}`);
       } else {
-        console.error(`❌ 創建 DNS 記錄失敗: ${record.name}.${cloudflareConfig.domain}`, error.message);
+        // logger.info(`❌ 創建 DNS 記錄失敗: ${record.name}.${cloudflareConfig.domain}`, error.message);
       }
     }
   }
@@ -115,7 +115,7 @@ async function setupDNSRecords() {
 
 // 配置 SSL/TLS 設置
 async function setupSSL() {
-  console.log('🔒 配置 SSL/TLS 設置...');
+  // logger.info('🔒 配置 SSL/TLS 設置...');
   
   try {
     // 設置加密模式為 Full (strict)
@@ -129,7 +129,7 @@ async function setupSSL() {
     });
     
     if (sslResponse.data.success) {
-      console.log('✅ SSL 加密模式設置為 Full (strict)');
+      // logger.info('✅ SSL 加密模式設置為 Full (strict)');
     }
     
     // 啟用 Always Use HTTPS
@@ -143,7 +143,7 @@ async function setupSSL() {
     });
     
     if (httpsResponse.data.success) {
-      console.log('✅ 啟用 Always Use HTTPS');
+      // logger.info('✅ 啟用 Always Use HTTPS');
     }
     
     // 設置最低 TLS 版本
@@ -157,17 +157,17 @@ async function setupSSL() {
     });
     
     if (tlsResponse.data.success) {
-      console.log('✅ 設置最低 TLS 版本為 1.2');
+      // logger.info('✅ 設置最低 TLS 版本為 1.2');
     }
     
   } catch (error) {
-    console.error('❌ SSL/TLS 配置失敗:', error.message);
+    // logger.info('❌ SSL/TLS 配置失敗:', error.message);
   }
 }
 
 // 配置頁面規則
 async function setupPageRules() {
-  console.log('📋 配置頁面規則...');
+  // logger.info('📋 配置頁面規則...');
   
   const pageRules = [
     {
@@ -238,17 +238,17 @@ async function setupPageRules() {
       });
       
       if (response.data.success) {
-        console.log(`✅ 成功創建頁面規則: ${rule.targets[0].constraint.value}`);
+        // logger.info(`✅ 成功創建頁面規則: ${rule.targets[0].constraint.value}`);
       }
     } catch (error) {
-      console.error(`❌ 創建頁面規則失敗: ${rule.targets[0].constraint.value}`, error.message);
+      // logger.info(`❌ 創建頁面規則失敗: ${rule.targets[0].constraint.value}`, error.message);
     }
   }
 }
 
 // 配置安全設置
 async function setupSecurity() {
-  console.log('🛡️ 配置安全設置...');
+  // logger.info('🛡️ 配置安全設置...');
   
   try {
     // 設置安全級別
@@ -262,7 +262,7 @@ async function setupSecurity() {
     });
     
     if (securityResponse.data.success) {
-      console.log('✅ 設置安全級別為 Medium');
+      // logger.info('✅ 設置安全級別為 Medium');
     }
     
     // 啟用 HSTS
@@ -283,17 +283,17 @@ async function setupSecurity() {
     });
     
     if (hstsResponse.data.success) {
-      console.log('✅ 啟用 HSTS');
+      // logger.info('✅ 啟用 HSTS');
     }
     
   } catch (error) {
-    console.error('❌ 安全設置配置失敗:', error.message);
+    // logger.info('❌ 安全設置配置失敗:', error.message);
   }
 }
 
 // 配置性能優化
 async function setupPerformance() {
-  console.log('⚡ 配置性能優化...');
+  // logger.info('⚡ 配置性能優化...');
   
   const performanceSettings = [
     { setting: 'minify', value: { css: 'on', html: 'on', js: 'on' } },
@@ -318,17 +318,17 @@ async function setupPerformance() {
       });
       
       if (response.data.success) {
-        console.log(`✅ 啟用 ${setting} 優化`);
+        // logger.info(`✅ 啟用 ${setting} 優化`);
       }
     } catch (error) {
-      console.log(`⚠️  ${setting} 設置可能已存在或不需要配置`);
+      // logger.info(`⚠️  ${setting} 設置可能已存在或不需要配置`);
     }
   }
 }
 
 // 主配置函數
 async function setupCloudflare() {
-  console.log('🚀 開始配置 Cloudflare...\n');
+  // logger.info('🚀 開始配置 Cloudflare...\n');
   
   try {
     // 檢查配置
@@ -341,23 +341,23 @@ async function setupCloudflare() {
     await setupSecurity();
     await setupPerformance();
     
-    console.log('\n🎉 Cloudflare 配置完成！');
-    console.log('\n📋 配置摘要:');
-    console.log('='.repeat(50));
-    console.log(`🌐 域名: ${cloudflareConfig.domain}`);
-    console.log(`🔒 SSL: Full (strict) + Always HTTPS`);
-    console.log(`🛡️ 安全: Medium 級別 + HSTS`);
-    console.log(`⚡ 性能: 所有優化已啟用`);
-    console.log(`📋 頁面規則: API 不緩存，靜態資源緩存`);
-    console.log('='.repeat(50));
+    // logger.info('\n🎉 Cloudflare 配置完成！');
+    // logger.info('\n📋 配置摘要:');
+    // logger.info('='.repeat(50));
+    // logger.info(`🌐 域名: ${cloudflareConfig.domain}`);
+    // logger.info(`🔒 SSL: Full (strict) + Always HTTPS`);
+    // logger.info(`🛡️ 安全: Medium 級別 + HSTS`);
+    // logger.info(`⚡ 性能: 所有優化已啟用`);
+    // logger.info(`📋 頁面規則: API 不緩存，靜態資源緩存`);
+    // logger.info('='.repeat(50));
     
-    console.log('\n🔗 您的域名現在可以通過以下地址訪問:');
-    console.log(`   🌐 主網站: https://${cloudflareConfig.domain}`);
-    console.log(`   🔧 API: https://api.${cloudflareConfig.domain}`);
-    console.log(`   📦 CDN: https://cdn.${cloudflareConfig.domain}`);
+    // logger.info('\n🔗 您的域名現在可以通過以下地址訪問:');
+    // logger.info(`   🌐 主網站: https://${cloudflareConfig.domain}`);
+    // logger.info(`   🔧 API: https://api.${cloudflareConfig.domain}`);
+    // logger.info(`   📦 CDN: https://cdn.${cloudflareConfig.domain}`);
     
   } catch (error) {
-    console.error('❌ Cloudflare 配置失敗:', error.message);
+    // logger.info('❌ Cloudflare 配置失敗:', error.message);
     process.exit(1);
   }
 }
@@ -366,11 +366,11 @@ async function setupCloudflare() {
 if (require.main === module) {
   setupCloudflare()
     .then(() => {
-      console.log('\n✅ 腳本執行完成');
+      // logger.info('\n✅ 腳本執行完成');
       process.exit(0);
     })
     .catch((error) => {
-      console.error('❌ 腳本執行失敗:', error);
+      // logger.info('❌ 腳本執行失敗:', error);
       process.exit(1);
     });
 }

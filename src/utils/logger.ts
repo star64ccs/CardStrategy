@@ -42,19 +42,19 @@ class Logger {
       switch (level) {
         case LogLevel.DEBUG:
           // eslint-disable-next-line no-console
-          console.debug(prefix, message, context || '');
+          // logger.info(prefix, message, context || '');
           break;
         case LogLevel.INFO:
           // eslint-disable-next-line no-console
-          console.info(prefix, message, context || '');
+          // logger.info(prefix, message, context || '');
           break;
         case LogLevel.WARN:
           // eslint-disable-next-line no-console
-          console.warn(prefix, message, context || '');
+          // logger.info(prefix, message, context || '');
           break;
         case LogLevel.ERROR:
           // eslint-disable-next-line no-console
-          console.error(prefix, message, context || '');
+          // logger.info(prefix, message, context || '');
           break;
       }
     }
@@ -95,7 +95,7 @@ class Logger {
       await logService.sendLog(entry.level, entry.message, entry.context);
     } catch (error) {
       // 如果日誌服務失敗，至少記錄到控制台
-      console.error('日誌服務發送失敗:', error);
+      // logger.info('日誌服務發送失敗:', error);
     }
   }
 

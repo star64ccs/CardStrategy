@@ -131,7 +131,7 @@ const DataCollectionStatsScreen: React.FC = () => {
       const response = await dataQualityService.getCollectionStats(options);
       setStats(response.data);
     } catch (error) {
-      console.error('加載統計數據失敗:', error);
+      // logger.info('加載統計數據失敗:', error);
       Alert.alert('錯誤', '加載統計數據失敗');
     } finally {
       setLoading(false);

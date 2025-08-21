@@ -14,12 +14,12 @@ const modules = [
 
 // 啟動所有模組
 function startAllModules() {
-  console.log('🚀 啟動 CardStrategy 微前端架構...\n');
+  // logger.info('🚀 啟動 CardStrategy 微前端架構...\n');
 
   const processes = [];
 
   modules.forEach(module => {
-    console.log(`📦 啟動 ${module.name} 模組 (端口: ${module.port})`);
+    // logger.info(`📦 啟動 ${module.name} 模組 (端口: ${module.port})`);
 
     const child = spawn('npm', ['start'], {
       cwd: path.join(__dirname, module.cwd),
@@ -28,15 +28,15 @@ function startAllModules() {
     });
 
     child.stdout.on('data', (data) => {
-      console.log(`[${module.name}] ${data.toString().trim()}`);
+      // logger.info(`[${module.name}] ${data.toString().trim()}`);
     });
 
     child.stderr.on('data', (data) => {
-      console.error(`[${module.name}] ERROR: ${data.toString().trim()}`);
+      // logger.info(`[${module.name}] ERROR: ${data.toString().trim()}`);
     });
 
     child.on('close', (code) => {
-      console.log(`[${module.name}] 進程結束，退出碼: ${code}`);
+      // logger.info(`[${module.name}] 進程結束，退出碼: ${code}`);
     });
 
     processes.push(child);
@@ -44,27 +44,27 @@ function startAllModules() {
 
   // 優雅關閉
   process.on('SIGINT', () => {
-    console.log('\n🛑 正在關閉所有模組...');
+    // logger.info('\n🛑 正在關閉所有模組...');
     processes.forEach(child => {
       child.kill('SIGINT');
     });
     process.exit(0);
   });
 
-  console.log('\n✅ 所有模組已啟動！');
-  console.log('📱 主應用: http://localhost:3000');
-  console.log('🎴 卡片管理: http://localhost:3001');
-  console.log('📊 市場分析: http://localhost:3002');
-  console.log('🤖 AI 生態: http://localhost:3003');
-  console.log('👤 用戶管理: http://localhost:3004');
-  console.log('💼 投資組合: http://localhost:3005');
-  console.log('👥 社交功能: http://localhost:3006');
-  console.log('\n按 Ctrl+C 停止所有模組');
+  // logger.info('\n✅ 所有模組已啟動！');
+  // logger.info('📱 主應用: http://localhost:3000');
+  // logger.info('🎴 卡片管理: http://localhost:3001');
+  // logger.info('📊 市場分析: http://localhost:3002');
+  // logger.info('🤖 AI 生態: http://localhost:3003');
+  // logger.info('👤 用戶管理: http://localhost:3004');
+  // logger.info('💼 投資組合: http://localhost:3005');
+  // logger.info('👥 社交功能: http://localhost:3006');
+  // logger.info('\n按 Ctrl+C 停止所有模組');
 }
 
 // 檢查依賴並啟動
 function checkAndStart() {
-  console.log('🔍 檢查模組依賴...\n');
+  // logger.info('🔍 檢查模組依賴...\n');
 
   const fs = require('fs');
   const missingModules = [];
@@ -77,9 +77,9 @@ function checkAndStart() {
   });
 
   if (missingModules.length > 0) {
-    console.log('❌ 以下模組缺少 package.json 文件:');
-    missingModules.forEach(name => console.log(`   - ${name}`));
-    console.log('\n請先創建這些模組的配置文件。');
+    // logger.info('❌ 以下模組缺少 package.json 文件:');
+    missingModules.forEach(name => // logger.info(`   - ${name}`));
+    // logger.info('\n請先創建這些模組的配置文件。');
     return;
   }
 

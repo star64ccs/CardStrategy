@@ -22,13 +22,13 @@ const colors = {
 };
 
 function log(message, color = 'reset') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+  // logger.info(`${colors[color]}${message}${colors.reset}`);
 }
 
 function logSection(title) {
-  console.log('\n' + '='.repeat(60));
+  // logger.info('\n' + '='.repeat(60));
   log(`🎉 ${title}`, 'magenta');
-  console.log('='.repeat(60));
+  // logger.info('='.repeat(60));
 }
 
 function logStep(step, status = 'info') {

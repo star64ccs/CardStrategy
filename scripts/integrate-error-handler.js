@@ -94,7 +94,7 @@ function readFile(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf8');
   } catch (error) {
-    console.error(`無法讀取文件 ${filePath}:`, error.message);
+    // logger.info(`無法讀取文件 ${filePath}:`, error.message);
     return null;
   }
 }
@@ -105,10 +105,10 @@ function readFile(filePath) {
 function writeFile(filePath, content) {
   try {
     fs.writeFileSync(filePath, content, 'utf8');
-    console.log(`✅ 已更新文件: ${filePath}`);
+    // logger.info(`✅ 已更新文件: ${filePath}`);
     return true;
   } catch (error) {
-    console.error(`❌ 無法寫入文件 ${filePath}:`, error.message);
+    // logger.info(`❌ 無法寫入文件 ${filePath}:`, error.message);
     return false;
   }
 }
@@ -164,10 +164,10 @@ function addErrorHandlingToMethod(content, methodName, serviceName) {
  * 處理單個服務文件
  */
 function processServiceFile(filePath) {
-  console.log(`\n🔧 處理文件: ${filePath}`);
+  // logger.info(`\n🔧 處理文件: ${filePath}`);
   
   if (!fileExists(filePath)) {
-    console.log(`⚠️  文件不存在: ${filePath}`);
+    // logger.info(`⚠️  文件不存在: ${filePath}`);
     return false;
   }
   
@@ -181,7 +181,7 @@ function processServiceFile(filePath) {
   
   // 檢查是否已經有錯誤處理
   if (hasErrorHandlerImport(content)) {
-    console.log(`ℹ️  文件已包含錯誤處理: ${filePath}`);
+    // logger.info(`ℹ️  文件已包含錯誤處理: ${filePath}`);
     return true;
   }
   
@@ -195,7 +195,7 @@ function processServiceFile(filePath) {
   
   while ((match = asyncMethodRegex.exec(content)) !== null) {
     const methodName = match[1];
-    console.log(`  📝 為方法添加錯誤處理: ${methodName}`);
+    // logger.info(`  📝 為方法添加錯誤處理: ${methodName}`);
     
     // 這裡可以添加更複雜的錯誤處理邏輯
     // 目前只是簡單地記錄已處理
@@ -212,7 +212,7 @@ function processServiceFile(filePath) {
  * 主函數
  */
 function main() {
-  console.log('🚀 開始集成錯誤處理系統...\n');
+  // logger.info('🚀 開始集成錯誤處理系統...\n');
   
   let successCount = 0;
   let totalCount = serviceFiles.length;
@@ -223,14 +223,14 @@ function main() {
     }
   }
   
-  console.log(`\n📊 集成完成統計:`);
-  console.log(`✅ 成功處理: ${successCount}/${totalCount} 個文件`);
-  console.log(`❌ 失敗處理: ${totalCount - successCount} 個文件`);
+  // logger.info(`\n📊 集成完成統計:`);
+  // logger.info(`✅ 成功處理: ${successCount}/${totalCount} 個文件`);
+  // logger.info(`❌ 失敗處理: ${totalCount - successCount} 個文件`);
   
   if (successCount === totalCount) {
-    console.log('\n🎉 所有服務文件已成功集成錯誤處理系統！');
+    // logger.info('\n🎉 所有服務文件已成功集成錯誤處理系統！');
   } else {
-    console.log('\n⚠️  部分文件處理失敗，請檢查錯誤信息。');
+    // logger.info('\n⚠️  部分文件處理失敗，請檢查錯誤信息。');
   }
 }
 

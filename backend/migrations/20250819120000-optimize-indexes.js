@@ -2,11 +2,11 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    console.log('🔧 開始創建索引優化...');
+    // logger.info('🔧 開始創建索引優化...');
 
     try {
       // 1. 為 cards 表添加索引
-      console.log('📋 為 cards 表添加索引...');
+      // logger.info('📋 為 cards 表添加索引...');
       
       // 卡片名稱索引（用於搜索）
       await queryInterface.addIndex('cards', ['name'], {
@@ -39,7 +39,7 @@ module.exports = {
       });
 
       // 2. 為 market_data 表添加索引
-      console.log('📈 為 market_data 表添加索引...');
+      // logger.info('📈 為 market_data 表添加索引...');
       
       // 卡片ID索引
       await queryInterface.addIndex('market_data', ['card_id'], {
@@ -66,7 +66,7 @@ module.exports = {
       });
 
       // 3. 為 investments 表添加索引
-      console.log('💰 為 investments 表添加索引...');
+      // logger.info('💰 為 investments 表添加索引...');
       
       // 用戶ID索引
       await queryInterface.addIndex('investments', ['user_id'], {
@@ -93,7 +93,7 @@ module.exports = {
       });
 
       // 4. 為 users 表添加索引
-      console.log('👤 為 users 表添加索引...');
+      // logger.info('👤 為 users 表添加索引...');
       
       // 用戶名索引
       await queryInterface.addIndex('users', ['username'], {
@@ -116,7 +116,7 @@ module.exports = {
       });
 
       // 5. 為 collections 表添加索引
-      console.log('📚 為 collections 表添加索引...');
+      // logger.info('📚 為 collections 表添加索引...');
       
       // 用戶ID索引
       await queryInterface.addIndex('collections', ['user_id'], {
@@ -137,7 +137,7 @@ module.exports = {
       });
 
       // 6. 為 collection_cards 表添加索引
-      console.log('🃏 為 collection_cards 表添加索引...');
+      // logger.info('🃏 為 collection_cards 表添加索引...');
       
       // 集合ID索引
       await queryInterface.addIndex('collection_cards', ['collection_id'], {
@@ -158,16 +158,16 @@ module.exports = {
         unique: true
       });
 
-      console.log('✅ 所有索引創建完成！');
+      // logger.info('✅ 所有索引創建完成！');
 
     } catch (error) {
-      console.error('❌ 索引創建失敗:', error.message);
+      // logger.info('❌ 索引創建失敗:', error.message);
       throw error;
     }
   },
 
   down: async (queryInterface, Sequelize) => {
-    console.log('🗑️ 開始移除索引...');
+    // logger.info('🗑️ 開始移除索引...');
 
     try {
       // 移除所有創建的索引
@@ -204,10 +204,10 @@ module.exports = {
         }
       }
 
-      console.log('✅ 所有索引移除完成！');
+      // logger.info('✅ 所有索引移除完成！');
 
     } catch (error) {
-      console.error('❌ 索引移除失敗:', error.message);
+      // logger.info('❌ 索引移除失敗:', error.message);
       throw error;
     }
   }
