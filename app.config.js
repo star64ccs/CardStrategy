@@ -68,8 +68,7 @@ module.exports = {
             'minSdkVersion': 25
           }
         }
-      ],
-      '@logrocket/react-native'
+      ]
     ],
     extra: {
       eas: {
