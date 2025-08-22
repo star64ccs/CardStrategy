@@ -48,5 +48,11 @@
     "jest.config.js",
     "dist",
     "build",
+    "backend/**/*",
+    "scripts/**/*",
+    "**/*.test.js",
+    "**/*.spec.js",
+    "src/__tests__/**/*",
+    "**/__tests__/**/*"
   ],
 }

@@ -4,10 +4,10 @@ module.exports = {
     slug: 'cardstrategy',
     version: '1.0.0',
     orientation: 'portrait',
-    icon: './assets/icon.png',
+    // icon: './assets/icon.png',
     userInterfaceStyle: 'automatic',
     splash: {
-      image: './assets/splash.png',
+      // image: './assets/splash.png',
       resizeMode: 'contain',
       backgroundColor: '#1C2B3A',
     },
@@ -29,7 +29,7 @@ module.exports = {
     },
     android: {
       adaptiveIcon: {
-        foregroundImage: './assets/adaptive-icon.png',
+        // foregroundImage: './assets/adaptive-icon.png',
         backgroundColor: '#1C2B3A',
       },
       package: 'com.cardstrategy.app',
@@ -51,7 +51,7 @@ module.exports = {
       ],
     },
     web: {
-      favicon: './assets/favicon.png',
+      // favicon: './assets/favicon.png',
       bundler: 'metro',
     },
     plugins: [
