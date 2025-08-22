@@ -1,0 +1,549 @@
+{
+  "projectName": "CardStrategy",
+  "planDate": "2025-08-21T23:58:33.435Z",
+  "coreFeaturesPlan": {
+    "projectName": "CardStrategy",
+    "planDate": "2025-08-21T23:58:33.435Z",
+    "overview": {
+      "totalFeatures": 5,
+      "estimatedDuration": "6-8 個月",
+      "priority": "High",
+      "budget": "開發時間密集型"
+    },
+    "cardRecognition": {
+      "name": "卡牌辨識系統",
+      "priority": "P0 - 最高優先級",
+      "status": "planned",
+      "estimatedTime": "4-6 週",
+      "description": "通過圖像識別技術自動識別卡牌類型和基本信息",
+      "features": [
+        {
+          "name": "圖像上傳",
+          "description": "支持多種格式的卡牌圖片上傳",
+          "tech": [
+            "React Native Image Picker",
+            "Cloudinary"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "OCR 文字提取",
+          "description": "提取卡牌上的文字信息",
+          "tech": [
+            "Google Cloud Vision API",
+            "Tesseract.js"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "卡牌類型檢測",
+          "description": "識別卡牌系列、版本、稀有度",
+          "tech": [
+            "TensorFlow.js",
+            "Custom ML Model"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "元數據提取",
+          "description": "提取卡牌編號、發行年份等",
+          "tech": [
+            "Regex Patterns",
+            "Database Matching"
+          ],
+          "status": "planned"
+        }
+      ],
+      "technicalRequirements": {
+        "frontend": [
+          "React Native Camera",
+          "Image Processing",
+          "UI Components"
+        ],
+        "backend": [
+          "Image Upload API",
+          "OCR Service",
+          "Card Database"
+        ],
+        "ai": [
+          "Computer Vision Model",
+          "Text Recognition",
+          "Classification"
+        ],
+        "database": [
+          "Card Metadata",
+          "Image Storage",
+          "User Uploads"
+        ]
+      },
+      "dependencies": [
+        "Google Cloud Vision",
+        "Cloudinary",
+        "Card Database API"
+      ],
+      "risks": [
+        "圖像質量影響識別準確率",
+        "新卡牌類型需要模型更新"
+      ],
+      "successMetrics": [
+        "識別準確率 > 90%",
+        "處理時間 < 5秒",
+        "支持 1000+ 卡牌類型"
+      ]
+    },
+    "counterfeitDetection": {
+      "name": "防偽判斷系統",
+      "priority": "P0 - 最高優先級",
+      "status": "planned",
+      "estimatedTime": "6-8 週",
+      "description": "通過圖像分析技術檢測卡牌真偽",
+      "features": [
+        {
+          "name": "圖像分析",
+          "description": "分析卡牌印刷質量、顏色、紋理",
+          "tech": [
+            "OpenCV",
+            "Image Processing Algorithms"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "模式匹配",
+          "description": "與正版卡牌模板進行比對",
+          "tech": [
+            "Template Matching",
+            "Feature Detection"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "質量評估",
+          "description": "評估印刷質量、邊緣清晰度",
+          "tech": [
+            "Edge Detection",
+            "Quality Metrics"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "真偽評分",
+          "description": "提供真偽可能性評分",
+          "tech": [
+            "Machine Learning",
+            "Confidence Scoring"
+          ],
+          "status": "planned"
+        }
+      ],
+      "technicalRequirements": {
+        "frontend": [
+          "Image Analysis UI",
+          "Results Display",
+          "Confidence Indicators"
+        ],
+        "backend": [
+          "Image Processing API",
+          "Template Database",
+          "Analysis Engine"
+        ],
+        "ai": [
+          "Computer Vision",
+          "Pattern Recognition",
+          "Anomaly Detection"
+        ],
+        "database": [
+          "Authentic Card Templates",
+          "Analysis Results",
+          "User Reports"
+        ]
+      },
+      "dependencies": [
+        "OpenCV",
+        "Template Database",
+        "ML Models"
+      ],
+      "risks": [
+        "高品質仿冒品難以檢測",
+        "需要大量正版樣本訓練"
+      ],
+      "successMetrics": [
+        "真偽檢測準確率 > 85%",
+        "假陽性率 < 5%",
+        "處理時間 < 10秒"
+      ]
+    },
+    "gradingSimulation": {
+      "name": "模擬鑑定系統",
+      "priority": "P1 - 高優先級",
+      "status": "planned",
+      "estimatedTime": "5-7 週",
+      "description": "模擬專業鑑定機構的評級過程",
+      "features": [
+        {
+          "name": "狀況分析",
+          "description": "分析卡牌磨損、折痕、污漬等",
+          "tech": [
+            "Image Analysis",
+            "Damage Detection"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "評級標準",
+          "description": "應用 PSA/BGS 等評級標準",
+          "tech": [
+            "Grading Algorithms",
+            "Condition Assessment"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "模擬引擎",
+          "description": "模擬鑑定過程和結果",
+          "tech": [
+            "Simulation Engine",
+            "Random Factors"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "評級預測",
+          "description": "預測可能的評級結果",
+          "tech": [
+            "ML Prediction",
+            "Confidence Intervals"
+          ],
+          "status": "planned"
+        }
+      ],
+      "technicalRequirements": {
+        "frontend": [
+          "Grading Interface",
+          "Condition Markers",
+          "Results Visualization"
+        ],
+        "backend": [
+          "Grading API",
+          "Condition Analysis",
+          "Simulation Engine"
+        ],
+        "ai": [
+          "Damage Detection",
+          "Condition Assessment",
+          "Grade Prediction"
+        ],
+        "database": [
+          "Grading Standards",
+          "Condition Data",
+          "Simulation Results"
+        ]
+      },
+      "dependencies": [
+        "PSA/BGS Standards",
+        "Damage Detection Models",
+        "Grading Database"
+      ],
+      "risks": [
+        "評級標準可能變化",
+        "主觀因素影響準確性"
+      ],
+      "successMetrics": [
+        "評級預測準確率 > 80%",
+        "與實際評級差異 < 1級",
+        "用戶滿意度 > 85%"
+      ]
+    },
+    "aiPricePrediction": {
+      "name": "AI預測價格系統",
+      "priority": "P1 - 高優先級",
+      "status": "configured",
+      "estimatedTime": "4-6 週",
+      "description": "使用 AI 技術預測卡牌市場價格",
+      "features": [
+        {
+          "name": "市場數據分析",
+          "description": "收集和分析歷史價格數據",
+          "tech": [
+            "Data Scraping",
+            "Market APIs",
+            "Data Processing"
+          ],
+          "status": "in_progress"
+        },
+        {
+          "name": "趨勢預測",
+          "description": "預測價格趨勢和變化",
+          "tech": [
+            "Time Series Analysis",
+            "ML Models",
+            "Trend Detection"
+          ],
+          "status": "configured"
+        },
+        {
+          "name": "價格建模",
+          "description": "建立價格預測模型",
+          "tech": [
+            "Regression Models",
+            "Neural Networks",
+            "Ensemble Methods"
+          ],
+          "status": "configured"
+        },
+        {
+          "name": "信心評分",
+          "description": "提供預測的信心度",
+          "tech": [
+            "Confidence Intervals",
+            "Uncertainty Quantification"
+          ],
+          "status": "planned"
+        }
+      ],
+      "technicalRequirements": {
+        "frontend": [
+          "Price Charts",
+          "Prediction Display",
+          "Confidence Indicators"
+        ],
+        "backend": [
+          "Price API",
+          "Data Collection",
+          "ML Pipeline"
+        ],
+        "ai": [
+          "Price Prediction Models",
+          "Market Analysis",
+          "Trend Detection"
+        ],
+        "database": [
+          "Historical Prices",
+          "Market Data",
+          "Prediction Results"
+        ]
+      },
+      "dependencies": [
+        "Market Data APIs",
+        "ML Models",
+        "Historical Data"
+      ],
+      "risks": [
+        "市場波動影響預測準確性",
+        "新卡牌缺乏歷史數據"
+      ],
+      "successMetrics": [
+        "預測準確率 > 75%",
+        "預測誤差 < 15%",
+        "更新頻率 > 每日"
+      ]
+    },
+    "centeringEvaluation": {
+      "name": "置中評估系統",
+      "priority": "P2 - 中優先級",
+      "status": "planned",
+      "estimatedTime": "3-4 週",
+      "description": "評估卡牌圖像的置中程度",
+      "features": [
+        {
+          "name": "圖像對齊",
+          "description": "自動對齊卡牌圖像",
+          "tech": [
+            "Image Alignment",
+            "Perspective Correction"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "邊框分析",
+          "description": "分析卡牌邊框寬度",
+          "tech": [
+            "Edge Detection",
+            "Border Measurement"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "置中計算",
+          "description": "計算置中程度和偏差",
+          "tech": [
+            "Centering Algorithm",
+            "Deviation Calculation"
+          ],
+          "status": "planned"
+        },
+        {
+          "name": "視覺化",
+          "description": "顯示置中分析結果",
+          "tech": [
+            "Visual Overlays",
+            "Measurement Display"
+          ],
+          "status": "planned"
+        }
+      ],
+      "technicalRequirements": {
+        "frontend": [
+          "Centering UI",
+          "Visual Overlays",
+          "Measurement Display"
+        ],
+        "backend": [
+          "Centering API",
+          "Image Processing",
+          "Calculation Engine"
+        ],
+        "ai": [
+          "Image Alignment",
+          "Edge Detection",
+          "Measurement Algorithms"
+        ],
+        "database": [
+          "Centering Data",
+          "Analysis Results",
+          "User Preferences"
+        ]
+      },
+      "dependencies": [
+        "Image Processing Library",
+        "Measurement Algorithms",
+        "Visualization Tools"
+      ],
+      "risks": [
+        "圖像角度影響測量準確性",
+        "邊框磨損影響判斷"
+      ],
+      "successMetrics": [
+        "測量準確率 > 90%",
+        "處理時間 < 3秒",
+        "視覺化清晰度 > 95%"
+      ]
+    },
+    "timeline": {
+      "phase1": {
+        "name": "基礎架構 (2-3 個月)",
+        "features": [
+          "卡牌辨識系統",
+          "防偽判斷系統"
+        ],
+        "milestones": [
+          "完成圖像上傳和處理",
+          "實現基本 OCR 功能",
+          "建立防偽檢測算法",
+          "完成用戶界面設計"
+        ]
+      },
+      "phase2": {
+        "name": "AI 功能 (2-3 個月)",
+        "features": [
+          "AI預測價格系統",
+          "模擬鑑定系統"
+        ],
+        "milestones": [
+          "完善價格預測模型",
+          "實現鑑定模擬功能",
+          "優化 AI 算法準確率",
+          "整合市場數據源"
+        ]
+      },
+      "phase3": {
+        "name": "優化和完善 (1-2 個月)",
+        "features": [
+          "置中評估系統",
+          "系統優化"
+        ],
+        "milestones": [
+          "完成置中評估功能",
+          "性能優化和測試",
+          "用戶體驗改進",
+          "準備正式發布"
+        ]
+      }
+    },
+    "techStack": {
+      "frontend": {
+        "framework": "React Native + Expo",
+        "ui": "React Native Elements",
+        "charts": "Victory Native",
+        "image": "React Native Image Picker"
+      },
+      "backend": {
+        "runtime": "Node.js",
+        "framework": "Express.js",
+        "database": "PostgreSQL + Firebase",
+        "cache": "Redis"
+      },
+      "ai": {
+        "vision": "Google Cloud Vision API",
+        "ml": "TensorFlow.js",
+        "processing": "OpenCV.js",
+        "prediction": "Custom ML Models"
+      },
+      "cloud": {
+        "storage": "AWS S3 + Cloudinary",
+        "compute": "AWS Lambda",
+        "database": "PostgreSQL (RDS)",
+        "monitoring": "CloudWatch"
+      }
+    },
+    "resources": {
+      "development": {
+        "frontend": "1-2 開發者",
+        "backend": "1-2 開發者",
+        "ai": "1 AI/ML 專家",
+        "qa": "1 測試工程師"
+      },
+      "infrastructure": {
+        "servers": "AWS EC2",
+        "storage": "S3 + Cloudinary",
+        "database": "PostgreSQL RDS",
+        "monitoring": "CloudWatch + LogRocket"
+      },
+      "thirdParty": {
+        "apis": [
+          "Google Cloud Vision",
+          "Market Data APIs",
+          "Card Database APIs"
+        ],
+        "services": [
+          "Cloudinary",
+          "SendGrid",
+          "Mixpanel"
+        ]
+      }
+    },
+    "risks": {
+      "technical": [
+        "AI 模型準確率不達標",
+        "圖像處理性能問題",
+        "第三方 API 限制",
+        "數據質量問題"
+      ],
+      "business": [
+        "市場需求變化",
+        "競爭對手功能",
+        "用戶接受度",
+        "成本控制"
+      ],
+      "mitigation": [
+        "建立備用方案",
+        "性能監控和優化",
+        "用戶反饋收集",
+        "敏捷開發方法"
+      ]
+    },
+    "successMetrics": {
+      "technical": {
+        "accuracy": "核心功能準確率 > 85%",
+        "performance": "響應時間 < 5秒",
+        "reliability": "系統可用性 > 99%",
+        "scalability": "支持 10,000+ 用戶"
+      },
+      "business": {
+        "adoption": "月活用戶 > 1,000",
+        "retention": "用戶留存率 > 60%",
+        "satisfaction": "用戶滿意度 > 4.5/5",
+        "growth": "月增長率 > 20%"
+      }
+    }
+  }
+}

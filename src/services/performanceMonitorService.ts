@@ -35,7 +35,14 @@ export interface PerformanceMetrics {
 export interface PerformanceEvent {
   id: string;
   type: 'metric' | 'error' | 'warning' | 'optimization';
-  category: 'navigation' | 'resource' | 'paint' | 'layout' | 'api' | 'memory' | 'component';
+  category:
+    | 'navigation'
+    | 'resource'
+    | 'paint'
+    | 'layout'
+    | 'api'
+    | 'memory'
+    | 'component';
   name: string;
   value: number;
   unit: string;
@@ -47,7 +54,12 @@ export interface PerformanceEvent {
 // 性能警告接口
 export interface PerformanceWarning {
   id: string;
-  type: 'threshold_exceeded' | 'memory_leak' | 'slow_api' | 'large_bundle' | 'unoptimized_image';
+  type:
+    | 'threshold_exceeded'
+    | 'memory_leak'
+    | 'slow_api'
+    | 'large_bundle'
+    | 'unoptimized_image';
   message: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   timestamp: number;
@@ -114,15 +126,15 @@ class PerformanceMonitorService {
         fid: 100,
         cls: 0.1,
         memoryUsage: 50 * 1024 * 1024, // 50MB
-        apiResponseTime: 3000
+        apiResponseTime: 3000,
       },
       reporting: {
         enabled: true,
         endpoint: '/api/performance',
         batchSize: 50,
-        flushInterval: 30000 // 30秒
+        flushInterval: 30000, // 30秒
       },
-      ...config
+      ...config,
     };
   }
 
@@ -251,7 +263,14 @@ class PerformanceMonitorService {
     window.addEventListener('load', () => {
       const loadTime = performance.now();
       this.recordMetric('appLoadTime', loadTime);
-      this.addEvent('metric', 'navigation', 'app_load_time', loadTime, 'ms', 'medium');
+      this.addEvent(
+        'metric',
+        'navigation',
+        'app_load_time',
+        loadTime,
+        'ms',
+        'medium'
+      );
     });
 
     // 監控組件渲染時間
@@ -275,7 +294,7 @@ class PerformanceMonitorService {
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   }
 
@@ -292,8 +311,10 @@ class PerformanceMonitorService {
       lastInteractionTime = currentTime;
     };
 
-    ['click', 'touchstart', 'keydown'].forEach(eventType => {
-      document.addEventListener(eventType, handleInteraction, { passive: true });
+    ['click', 'touchstart', 'keydown'].forEach((eventType) => {
+      document.addEventListener(eventType, handleInteraction, {
+        passive: true,
+      });
     });
   }
 
@@ -322,8 +343,13 @@ class PerformanceMonitorService {
           }
 
           // 檢查大文件警告
-          if (entry.transferSize > 1024 * 1024) { // 1MB
-            this.addWarning('large_bundle', `大文件警告: ${entry.name} (${Math.round(entry.transferSize / 1024)}KB)`, 'medium');
+          if (entry.transferSize > 1024 * 1024) {
+            // 1MB
+            this.addWarning(
+              'large_bundle',
+              `大文件警告: ${entry.name} (${Math.round(entry.transferSize / 1024)}KB)`,
+              'medium'
+            );
           }
         });
       });
@@ -339,7 +365,7 @@ class PerformanceMonitorService {
     if (!('memory' in performance)) return;
 
     const checkMemory = () => {
-      const {memory} = (performance as any);
+      const { memory } = performance as any;
       const usedMemory = memory.usedJSHeapSize;
 
       this.recordMetric('memoryUsage', usedMemory);
@@ -350,9 +376,11 @@ class PerformanceMonitorService {
         const memoryHistory = this.metrics.get('memoryUsage')!;
         if (memoryHistory.length > 10) {
           const recentMemory = memoryHistory.slice(-10);
-          const memoryGrowth = recentMemory[recentMemory.length - 1] - recentMemory[0];
+          const memoryGrowth =
+            recentMemory[recentMemory.length - 1] - recentMemory[0];
 
-          if (memoryGrowth > 10 * 1024 * 1024) { // 10MB 增長
+          if (memoryGrowth > 10 * 1024 * 1024) {
+            // 10MB 增長
             this.addWarning('memory_leak', '檢測到可能的內存洩漏', 'high');
           }
         }
@@ -381,7 +409,11 @@ class PerformanceMonitorService {
 
         // 檢查慢 API 調用
         if (responseTime > this.config.thresholds.apiResponseTime) {
-          this.addWarning('slow_api', `慢 API 調用: ${args[0]} (${Math.round(responseTime)}ms)`, 'medium');
+          this.addWarning(
+            'slow_api',
+            `慢 API 調用: ${args[0]} (${Math.round(responseTime)}ms)`,
+            'medium'
+          );
         }
 
         return response;
@@ -391,7 +423,7 @@ class PerformanceMonitorService {
 
         this.addEvent('error', 'api', 'api_error', responseTime, 'ms', 'high', {
           url: args[0],
-          error: error.message
+          error: error.message,
         });
 
         throw error;
@@ -416,9 +448,14 @@ class PerformanceMonitorService {
 
   // 檢查閾值
   private checkThreshold(metricName: string, value: number): void {
-    const threshold = this.config.thresholds[metricName as keyof typeof this.config.thresholds];
+    const threshold =
+      this.config.thresholds[metricName as keyof typeof this.config.thresholds];
     if (threshold && value > threshold) {
-      this.addWarning('threshold_exceeded', `${metricName} 超出閾值: ${value} > ${threshold}`, 'medium');
+      this.addWarning(
+        'threshold_exceeded',
+        `${metricName} 超出閾值: ${value} > ${threshold}`,
+        'medium'
+      );
     }
   }
 
@@ -441,7 +478,7 @@ class PerformanceMonitorService {
       unit,
       timestamp: Date.now(),
       severity,
-      metadata
+      metadata,
     };
 
     this.events.push(event);
@@ -454,19 +491,23 @@ class PerformanceMonitorService {
     // 記錄到日誌服務
     logService.sendLog('info', `性能事件: ${name}`, {
       event,
-      metrics: this.getCurrentMetrics()
+      metrics: this.getCurrentMetrics(),
     });
   }
 
   // 添加性能警告
-  private addWarning(type: PerformanceWarning['type'], message: string, severity: PerformanceWarning['severity']): void {
+  private addWarning(
+    type: PerformanceWarning['type'],
+    message: string,
+    severity: PerformanceWarning['severity']
+  ): void {
     const warning: PerformanceWarning = {
       id: `${Date.now()}-${Math.random()}`,
       type,
       message,
       severity,
       timestamp: Date.now(),
-      suggestions: this.getSuggestionsForWarning(type)
+      suggestions: this.getSuggestionsForWarning(type),
     };
 
     this.warnings.push(warning);
@@ -479,7 +520,7 @@ class PerformanceMonitorService {
     // 記錄到日誌服務
     logService.sendLog('warn', `性能警告: ${message}`, {
       warning,
-      metrics: this.getCurrentMetrics()
+      metrics: this.getCurrentMetrics(),
     });
   }
 
@@ -489,28 +530,20 @@ class PerformanceMonitorService {
       threshold_exceeded: [
         '檢查資源加載優化',
         '考慮使用懶加載',
-        '優化圖片格式和大小'
+        '優化圖片格式和大小',
       ],
       memory_leak: [
         '檢查事件監聽器清理',
         '避免閉包導致的內存洩漏',
-        '定期清理未使用的對象'
+        '定期清理未使用的對象',
       ],
-      slow_api: [
-        '檢查 API 響應時間',
-        '考慮使用緩存',
-        '優化數據庫查詢'
-      ],
+      slow_api: ['檢查 API 響應時間', '考慮使用緩存', '優化數據庫查詢'],
       large_bundle: [
         '代碼分割和懶加載',
         '移除未使用的依賴',
-        '使用 Tree Shaking'
+        '使用 Tree Shaking',
       ],
-      unoptimized_image: [
-        '使用 WebP 格式',
-        '實現響應式圖片',
-        '使用圖片壓縮'
-      ]
+      unoptimized_image: ['使用 WebP 格式', '實現響應式圖片', '使用圖片壓縮'],
     };
 
     return suggestions[type] || [];
@@ -555,16 +588,16 @@ class PerformanceMonitorService {
         warnings: this.warnings.slice(-this.config.reporting.batchSize),
         suggestions: this.suggestions,
         timestamp: Date.now(),
-        sessionId: this.getSessionId()
+        sessionId: this.getSessionId(),
       };
 
       // 發送到後端
       const response = await fetch(this.config.reporting.endpoint, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(reportData)
+        body: JSON.stringify(reportData),
       });
 
       if (response.ok) {
@@ -583,7 +616,8 @@ class PerformanceMonitorService {
 
     this.metrics.forEach((values, key) => {
       if (values.length > 0) {
-        const average = values.reduce((sum, value) => sum + value, 0) / values.length;
+        const average =
+          values.reduce((sum, value) => sum + value, 0) / values.length;
         (metrics as any)[key] = average;
       }
     });
@@ -623,7 +657,7 @@ class PerformanceMonitorService {
         effort: 'medium',
         priority: 1,
         implementation: '優化關鍵資源加載，使用 CDN，實現圖片懶加載',
-        expectedImprovement: 'LCP 時間減少 30-50%'
+        expectedImprovement: 'LCP 時間減少 30-50%',
       });
     }
 
@@ -638,12 +672,15 @@ class PerformanceMonitorService {
         effort: 'high',
         priority: 2,
         implementation: '減少主線程阻塞，優化 JavaScript 執行',
-        expectedImprovement: 'FID 時間減少 40-60%'
+        expectedImprovement: 'FID 時間減少 40-60%',
       });
     }
 
     // 基於內存使用的建議
-    if (metrics.memoryUsage && metrics.memoryUsage > this.config.thresholds.memoryUsage) {
+    if (
+      metrics.memoryUsage &&
+      metrics.memoryUsage > this.config.thresholds.memoryUsage
+    ) {
       this.suggestions.push({
         id: 'memory-optimization',
         category: 'memory',
@@ -653,7 +690,7 @@ class PerformanceMonitorService {
         effort: 'medium',
         priority: 3,
         implementation: '檢查內存洩漏，優化數據結構，及時清理資源',
-        expectedImprovement: '內存使用減少 20-30%'
+        expectedImprovement: '內存使用減少 20-30%',
       });
     }
   }
@@ -682,7 +719,10 @@ class PerformanceMonitorService {
   }
 
   // 異步性能測量
-  public async measureAsyncPerformance<T>(name: string, fn: () => Promise<T>): Promise<T> {
+  public async measureAsyncPerformance<T>(
+    name: string,
+    fn: () => Promise<T>
+  ): Promise<T> {
     const startTime = performance.now();
     const result = await fn();
     const endTime = performance.now();
@@ -721,16 +761,17 @@ class PerformanceMonitorService {
     warnings: PerformanceWarning[];
     suggestions: PerformanceSuggestion[];
     uptime: number;
-    } {
+  } {
     return {
       metrics: this.getCurrentMetrics(),
       events: this.getEvents(),
       warnings: this.getWarnings(),
       suggestions: this.getSuggestions(),
-      uptime: Date.now() - this.startTime
+      uptime: Date.now() - this.startTime,
     };
   }
 }
 
 // 導出單例實例
+export { PerformanceMonitorService };
 export const performanceMonitorService = new PerformanceMonitorService();

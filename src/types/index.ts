@@ -86,7 +86,13 @@ export interface Card extends BaseEntity {
   description?: string;
 }
 
-export type CardRarity = 'common' | 'uncommon' | 'rare' | 'mythic' | 'special' | 'promo';
+export type CardRarity =
+  | 'common'
+  | 'uncommon'
+  | 'rare'
+  | 'mythic'
+  | 'special'
+  | 'promo';
 export type CardType =
   | 'creature'
   | 'spell'
@@ -217,7 +223,12 @@ export interface AIAnalysis extends BaseEntity {
   processingTime: number; // 添加處理時間
 }
 
-export type AnalysisType = 'authenticity' | 'condition' | 'pricing' | 'investment' | 'market';
+export type AnalysisType =
+  | 'authenticity'
+  | 'condition'
+  | 'pricing'
+  | 'investment'
+  | 'market';
 
 export interface AnalysisResult {
   category: string;
@@ -270,9 +281,23 @@ export interface Transaction extends BaseEntity {
   metadata: TransactionMetadata;
 }
 
-export type TransactionType = 'purchase' | 'sale' | 'trade' | 'gift' | 'auction';
-export type TransactionStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
-export type PaymentMethod = 'credit_card' | 'paypal' | 'bank_transfer' | 'crypto' | 'cash';
+export type TransactionType =
+  | 'purchase'
+  | 'sale'
+  | 'trade'
+  | 'gift'
+  | 'auction';
+export type TransactionStatus =
+  | 'pending'
+  | 'completed'
+  | 'cancelled'
+  | 'refunded';
+export type PaymentMethod =
+  | 'credit_card'
+  | 'paypal'
+  | 'bank_transfer'
+  | 'crypto'
+  | 'cash';
 
 export interface TransactionMetadata {
   platform: string;
@@ -822,7 +847,7 @@ export const CARD_RARITIES: CardRarity[] = [
   'rare',
   'mythic',
   'special',
-  'promo'
+  'promo',
 ];
 export const CARD_TYPES: CardType[] = [
   'creature',
@@ -832,7 +857,7 @@ export const CARD_TYPES: CardType[] = [
   'enchantment',
   'instant',
   'sorcery',
-  'planeswalker'
+  'planeswalker',
 ];
 export const CARD_CONDITIONS: CardCondition[] = [
   'mint',
@@ -841,7 +866,7 @@ export const CARD_CONDITIONS: CardCondition[] = [
   'good',
   'light-played',
   'played',
-  'poor'
+  'poor',
 ];
 export const SUPPORTED_LANGUAGES = ['zh-TW', 'en-US', 'ja-JP'] as const;
 export const THEME_MODES = ['light', 'dark', 'auto'] as const;

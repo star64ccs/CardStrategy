@@ -24,7 +24,10 @@ export class MemoryManager {
   private totalAccessTime = 0;
   private accessCount = 0;
 
-  constructor(maxCacheSize: number = 100, maxMemoryUsage: number = 50 * 1024 * 1024) {
+  constructor(
+    maxCacheSize: number = 100,
+    maxMemoryUsage: number = 50 * 1024 * 1024
+  ) {
     this.maxCacheSize = maxCacheSize;
     this.maxMemoryUsage = maxMemoryUsage;
   }
@@ -55,7 +58,7 @@ export class MemoryManager {
       timestamp: Date.now(),
       ttl,
       accessCount: 0,
-      lastAccessed: Date.now()
+      lastAccessed: Date.now(),
     });
   }
 
@@ -125,7 +128,7 @@ export class MemoryManager {
       }
     }
 
-    keysToDelete.forEach(key => this.cache.delete(key));
+    keysToDelete.forEach((key) => this.cache.delete(key));
   }
 
   /**
@@ -136,8 +139,10 @@ export class MemoryManager {
 
     // 按訪問次數和最後訪問時間排序
     items.sort((a, b) => {
-      const aScore = a[1].accessCount * 0.7 + (a[1].lastAccessed / 1000000) * 0.3;
-      const bScore = b[1].accessCount * 0.7 + (b[1].lastAccessed / 1000000) * 0.3;
+      const aScore =
+        a[1].accessCount * 0.7 + (a[1].lastAccessed / 1000000) * 0.3;
+      const bScore =
+        b[1].accessCount * 0.7 + (b[1].lastAccessed / 1000000) * 0.3;
       return aScore - bScore;
     });
 
@@ -165,14 +170,15 @@ export class MemoryManager {
     const totalRequests = this.hitCount + this.missCount;
     const hitRate = totalRequests > 0 ? this.hitCount / totalRequests : 0;
     const missRate = totalRequests > 0 ? this.missCount / totalRequests : 0;
-    const averageAccessTime = this.accessCount > 0 ? this.totalAccessTime / this.accessCount : 0;
+    const averageAccessTime =
+      this.accessCount > 0 ? this.totalAccessTime / this.accessCount : 0;
 
     return {
       totalItems,
       totalSize,
       hitRate,
       missRate,
-      averageAccessTime
+      averageAccessTime,
     };
   }
 
@@ -229,7 +235,7 @@ export class MemoryManager {
    * 獲取所有緩存值
    */
   values<T>(): T[] {
-    return Array.from(this.cache.values()).map(item => item.value);
+    return Array.from(this.cache.values()).map((item) => item.value);
   }
 
   /**
@@ -269,17 +275,12 @@ export const memoryManager = MemoryManager.getInstance();
 export const setCache = <T>(key: string, value: T, ttl?: number) =>
   memoryManager.set(key, value, ttl);
 
-export const getCache = <T>(key: string): T | null =>
-  memoryManager.get<T>(key);
+export const getCache = <T>(key: string): T | null => memoryManager.get<T>(key);
 
-export const hasCache = (key: string): boolean =>
-  memoryManager.has(key);
+export const hasCache = (key: string): boolean => memoryManager.has(key);
 
-export const deleteCache = (key: string): boolean =>
-  memoryManager.delete(key);
+export const deleteCache = (key: string): boolean => memoryManager.delete(key);
 
-export const clearCache = () =>
-  memoryManager.clear();
+export const clearCache = () => memoryManager.clear();
 
-export const getCacheStats = () =>
-  memoryManager.getStats();
+export const getCacheStats = () => memoryManager.getStats();

@@ -15,20 +15,24 @@ const PORT = process.env.PORT || 3000;
 
 // 安全中間件
 app.use(helmet());
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',')
+      : ['http://localhost:3000'],
+    credentials: true,
+  })
+);
 
 // 速率限制
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15分鐘
   max: 100, // 限制每個IP 15分鐘內最多100個請求
   message: {
-    error: '請求過於頻繁，請稍後再試'
+    error: '請求過於頻繁，請稍後再試',
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
 app.use('/api/', limiter);
@@ -37,11 +41,13 @@ app.use('/api/', limiter);
 app.use(compression());
 
 // 日誌中間件
-app.use(morgan('combined', {
-  stream: {
-    write: (message) => logger.info(message.trim())
-  }
-}));
+app.use(
+  morgan('combined', {
+    stream: {
+      write: (message) => logger.info(message.trim()),
+    },
+  })
+);
 
 // 解析JSON和URL編碼的請求體
 app.use(express.json({ limit: '10mb' }));
@@ -65,9 +71,9 @@ app.get('/', (req, res) => {
       collections: '/api/collections',
       investments: '/api/investments',
       market: '/api/market',
-      ai: '/api/ai'
+      ai: '/api/ai',
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -78,7 +84,7 @@ app.get('/health', (req, res) => {
     message: 'CardStrategy API 服務運行正常',
     timestamp: new Date().toISOString(),
     version: '3.1.0',
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -93,9 +99,9 @@ app.get('/api/status', (req, res) => {
       security: 'Helmet - 已啟用',
       compression: '已啟用',
       cors: '已配置',
-      rateLimit: '已啟用'
+      rateLimit: '已啟用',
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -109,11 +115,13 @@ app.get('/api/db/test', async (req, res) => {
       port: process.env.POSTGRES_PORT || 5432,
       database: process.env.POSTGRES_DB || 'cardstrategy',
       user: process.env.POSTGRES_USER || 'postgres',
-      password: process.env.POSTGRES_PASSWORD || 'sweetcorn831'
+      password: process.env.POSTGRES_PASSWORD || 'sweetcorn831',
     });
 
     await client.connect();
-    const result = await client.query('SELECT version() as version, current_database() as database');
+    const result = await client.query(
+      'SELECT version() as version, current_database() as database'
+    );
     await client.end();
 
     res.json({
@@ -122,15 +130,15 @@ app.get('/api/db/test', async (req, res) => {
       data: {
         version: result.rows[0].version,
         database: result.rows[0].database,
-        timestamp: new Date().toISOString()
-      }
+        timestamp: new Date().toISOString(),
+      },
     });
   } catch (error) {
     logger.error('數據庫連接測試失敗:', error);
     res.status(500).json({
       success: false,
       message: '數據庫連接失敗',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -141,7 +149,7 @@ app.get('/api/auth/status', (req, res) => {
     success: true,
     message: '認證服務正常',
     features: ['JWT', '密碼加密', '用戶管理'],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -151,7 +159,7 @@ app.get('/api/cards/status', (req, res) => {
     success: true,
     message: '卡片服務正常',
     features: ['卡片管理', '條件分析', '價格追蹤'],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -161,7 +169,7 @@ app.get('/api/collections/status', (req, res) => {
     success: true,
     message: '集合服務正常',
     features: ['集合管理', '卡片分類', '統計分析'],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -171,7 +179,7 @@ app.get('/api/investments/status', (req, res) => {
     success: true,
     message: '投資服務正常',
     features: ['投資追蹤', '收益分析', '風險評估'],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -181,7 +189,7 @@ app.get('/api/market/status', (req, res) => {
     success: true,
     message: '市場服務正常',
     features: ['市場數據', '價格分析', '趨勢預測'],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -191,7 +199,7 @@ app.get('/api/ai/status', (req, res) => {
     success: true,
     message: 'AI 服務正常',
     features: ['卡片識別', '條件評估', '價格預測', '市場分析'],
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -212,8 +220,8 @@ app.use('*', (req, res) => {
       'GET /api/collections/status',
       'GET /api/investments/status',
       'GET /api/market/status',
-      'GET /api/ai/status'
-    ]
+      'GET /api/ai/status',
+    ],
   });
 });
 
@@ -223,7 +231,8 @@ app.use((error, req, res, next) => {
   res.status(500).json({
     success: false,
     message: '內部服務器錯誤',
-    error: process.env.NODE_ENV === 'development' ? error.message : '請稍後再試'
+    error:
+      process.env.NODE_ENV === 'development' ? error.message : '請稍後再試',
   });
 });
 

@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from 'react-native';
 import { useFormValidation } from '../../utils/useFormValidation';
 import { LoginRequestSchema } from '../../utils/validationSchemas';
 import { theme } from '../../config/theme';
@@ -16,12 +23,12 @@ export const ValidatedLoginForm: React.FC = () => {
     handleBlur,
     submit,
     getFieldError,
-    shouldShowFieldError
+    shouldShowFieldError,
   } = useFormValidation(LoginRequestSchema, {
     initialValues: {
       email: '',
       password: '',
-      rememberMe: false
+      rememberMe: false,
     },
     onSubmit: async (validatedData) => {
       try {
@@ -35,7 +42,7 @@ export const ValidatedLoginForm: React.FC = () => {
     onValidationError: (errors) => {
       // logger.info('驗證錯誤:', errors);
       Alert.alert('驗證錯誤', '請檢查輸入的數據');
-    }
+    },
   });
 
   return (
@@ -48,7 +55,7 @@ export const ValidatedLoginForm: React.FC = () => {
         <TextInput
           style={[
             styles.input,
-            shouldShowFieldError('email') && styles.inputError
+            shouldShowFieldError('email') && styles.inputError,
           ]}
           value={values.email}
           onChangeText={handleChange('email')}
@@ -68,7 +75,7 @@ export const ValidatedLoginForm: React.FC = () => {
         <TextInput
           style={[
             styles.input,
-            shouldShowFieldError('password') && styles.inputError
+            shouldShowFieldError('password') && styles.inputError,
           ]}
           value={values.password}
           onChangeText={handleChange('password')}
@@ -84,10 +91,7 @@ export const ValidatedLoginForm: React.FC = () => {
       {/* 記住我選項 */}
       <View style={styles.checkboxContainer}>
         <TouchableOpacity
-          style={[
-            styles.checkbox,
-            values.rememberMe && styles.checkboxChecked
-          ]}
+          style={[styles.checkbox, values.rememberMe && styles.checkboxChecked]}
           onPress={() => handleChange('rememberMe')(!values.rememberMe)}
         >
           {values.rememberMe && <Text style={styles.checkmark}>✓</Text>}
@@ -99,7 +103,7 @@ export const ValidatedLoginForm: React.FC = () => {
       <TouchableOpacity
         style={[
           styles.submitButton,
-          (!isValid || isSubmitting) && styles.submitButtonDisabled
+          (!isValid || isSubmitting) && styles.submitButtonDisabled,
         ]}
         onPress={submit}
         disabled={!isValid || isSubmitting}
@@ -111,9 +115,7 @@ export const ValidatedLoginForm: React.FC = () => {
 
       {/* 表單狀態顯示 */}
       <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>
-          表單有效: {isValid ? '是' : '否'}
-        </Text>
+        <Text style={styles.statusText}>表單有效: {isValid ? '是' : '否'}</Text>
         <Text style={styles.statusText}>
           已觸摸字段: {Object.keys(touched).length}
         </Text>
@@ -137,7 +139,7 @@ export const ValidatedRegisterForm: React.FC = () => {
     handleBlur,
     submit,
     getFieldError,
-    shouldShowFieldError
+    shouldShowFieldError,
   } = useFormValidation(LoginRequestSchema, {
     initialValues: {
       email: '',
@@ -146,7 +148,7 @@ export const ValidatedRegisterForm: React.FC = () => {
       username: '',
       firstName: '',
       lastName: '',
-      acceptTerms: false
+      acceptTerms: false,
     },
     onSubmit: async (validatedData) => {
       try {
@@ -159,7 +161,7 @@ export const ValidatedRegisterForm: React.FC = () => {
     onValidationError: (errors) => {
       // logger.info('驗證錯誤:', errors);
       Alert.alert('驗證錯誤', '請檢查輸入的數據');
-    }
+    },
   });
 
   return (
@@ -172,7 +174,7 @@ export const ValidatedRegisterForm: React.FC = () => {
         <TextInput
           style={[
             styles.input,
-            shouldShowFieldError('username') && styles.inputError
+            shouldShowFieldError('username') && styles.inputError,
           ]}
           value={values.username}
           onChangeText={handleChange('username')}
@@ -191,7 +193,7 @@ export const ValidatedRegisterForm: React.FC = () => {
         <TextInput
           style={[
             styles.input,
-            shouldShowFieldError('email') && styles.inputError
+            shouldShowFieldError('email') && styles.inputError,
           ]}
           value={values.email}
           onChangeText={handleChange('email')}
@@ -211,7 +213,7 @@ export const ValidatedRegisterForm: React.FC = () => {
         <TextInput
           style={[
             styles.input,
-            shouldShowFieldError('password') && styles.inputError
+            shouldShowFieldError('password') && styles.inputError,
           ]}
           value={values.password}
           onChangeText={handleChange('password')}
@@ -230,7 +232,7 @@ export const ValidatedRegisterForm: React.FC = () => {
         <TextInput
           style={[
             styles.input,
-            shouldShowFieldError('confirmPassword') && styles.inputError
+            shouldShowFieldError('confirmPassword') && styles.inputError,
           ]}
           value={values.confirmPassword}
           onChangeText={handleChange('confirmPassword')}
@@ -239,7 +241,9 @@ export const ValidatedRegisterForm: React.FC = () => {
           secureTextEntry
         />
         {shouldShowFieldError('confirmPassword') && (
-          <Text style={styles.errorText}>{getFieldError('confirmPassword')}</Text>
+          <Text style={styles.errorText}>
+            {getFieldError('confirmPassword')}
+          </Text>
         )}
       </View>
 
@@ -248,7 +252,7 @@ export const ValidatedRegisterForm: React.FC = () => {
         <TouchableOpacity
           style={[
             styles.checkbox,
-            values.acceptTerms && styles.checkboxChecked
+            values.acceptTerms && styles.checkboxChecked,
           ]}
           onPress={() => handleChange('acceptTerms')(!values.acceptTerms)}
         >
@@ -261,7 +265,7 @@ export const ValidatedRegisterForm: React.FC = () => {
       <TouchableOpacity
         style={[
           styles.submitButton,
-          (!isValid || isSubmitting) && styles.submitButtonDisabled
+          (!isValid || isSubmitting) && styles.submitButtonDisabled,
         ]}
         onPress={submit}
         disabled={!isValid || isSubmitting}
@@ -273,9 +277,7 @@ export const ValidatedRegisterForm: React.FC = () => {
 
       {/* 表單狀態顯示 */}
       <View style={styles.statusContainer}>
-        <Text style={styles.statusText}>
-          表單有效: {isValid ? '是' : '否'}
-        </Text>
+        <Text style={styles.statusText}>表單有效: {isValid ? '是' : '否'}</Text>
         <Text style={styles.statusText}>
           錯誤數量: {Object.keys(errors).length}
         </Text>
@@ -287,23 +289,23 @@ export const ValidatedRegisterForm: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   inputContainer: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 5,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   input: {
     borderWidth: 1,
@@ -312,20 +314,20 @@ const styles = StyleSheet.create({
     padding: 12,
     fontSize: 16,
     backgroundColor: theme.colors.surface,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   inputError: {
-    borderColor: theme.colors.error
+    borderColor: theme.colors.error,
   },
   errorText: {
     color: theme.colors.error,
     fontSize: 14,
-    marginTop: 5
+    marginTop: 5,
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
   checkbox: {
     width: 20,
@@ -335,45 +337,45 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginRight: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   checkboxChecked: {
-    backgroundColor: theme.colors.primary
+    backgroundColor: theme.colors.primary,
   },
   checkmark: {
     color: theme.colors.white,
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   checkboxLabel: {
     fontSize: 16,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   submitButton: {
     backgroundColor: theme.colors.primary,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
-    marginBottom: 20
+    marginBottom: 20,
   },
   submitButtonDisabled: {
-    backgroundColor: theme.colors.disabled
+    backgroundColor: theme.colors.disabled,
   },
   submitButtonText: {
     color: theme.colors.white,
     fontSize: 18,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   statusContainer: {
     backgroundColor: theme.colors.surface,
     padding: 15,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   statusText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    marginBottom: 5
-  }
+    marginBottom: 5,
+  },
 });

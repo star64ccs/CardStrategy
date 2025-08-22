@@ -6,7 +6,7 @@ import {
   Alert,
   TouchableOpacity,
   ScrollView,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -25,7 +25,8 @@ export const CollectionsScreen: React.FC = () => {
   const { collections, isLoading, error, statistics } = useSelector(
     (state: RootState) => state.collection
   );
-  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null);
+  const [selectedCollection, setSelectedCollection] =
+    useState<Collection | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   // 加載收藏數據
@@ -63,7 +64,12 @@ export const CollectionsScreen: React.FC = () => {
   }, []);
 
   const renderCollectionStats = () => (
-    <View style={[styles.statsContainer, { backgroundColor: theme.colors.backgroundPaper }]}>
+    <View
+      style={[
+        styles.statsContainer,
+        { backgroundColor: theme.colors.backgroundPaper },
+      ]}
+    >
       <View style={styles.statItem}>
         <Text style={[styles.statValue, { color: theme.colors.primary }]}>
           {statistics.totalCards}
@@ -101,28 +107,57 @@ export const CollectionsScreen: React.FC = () => {
       {collections.map((collection) => (
         <TouchableOpacity
           key={collection.id}
-          style={[styles.collectionItem, { backgroundColor: theme.colors.backgroundPaper }]}
+          style={[
+            styles.collectionItem,
+            { backgroundColor: theme.colors.backgroundPaper },
+          ]}
           onPress={() => handleCollectionPress(collection)}
         >
           <View style={styles.collectionHeader}>
-            <Text style={[styles.collectionName, { color: theme.colors.textPrimary }]}>
+            <Text
+              style={[
+                styles.collectionName,
+                { color: theme.colors.textPrimary },
+              ]}
+            >
               {collection.name}
             </Text>
-            <Text style={[styles.collectionCount, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.collectionCount,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
               {collection.items?.length || 0} 張卡片
             </Text>
           </View>
           {collection.description && (
-            <Text style={[styles.collectionDescription, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.collectionDescription,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
               {collection.description}
             </Text>
           )}
           <View style={styles.collectionStats}>
-            <Text style={[styles.collectionValue, { color: theme.colors.secondary }]}>
+            <Text
+              style={[
+                styles.collectionValue,
+                { color: theme.colors.secondary },
+              ]}
+            >
               價值: ${collection.statistics?.totalValue?.toFixed(2) || '0.00'}
             </Text>
-            <Text style={[styles.collectionCondition, { color: theme.colors.textSecondary }]}>
-              平均狀況: {collection.statistics?.averageCondition?.toFixed(1) || 'N/A'}
+            <Text
+              style={[
+                styles.collectionCondition,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
+              平均狀況:{' '}
+              {collection.statistics?.averageCondition?.toFixed(1) || 'N/A'}
             </Text>
           </View>
         </TouchableOpacity>
@@ -140,52 +175,61 @@ export const CollectionsScreen: React.FC = () => {
             style={styles.backButton}
             onPress={() => setSelectedCollection(null)}
           >
-            <Text style={[styles.backButtonText, { color: theme.colors.primary }]}>
+            <Text
+              style={[styles.backButtonText, { color: theme.colors.primary }]}
+            >
               ← 返回
             </Text>
           </TouchableOpacity>
-          <Text style={[styles.selectedCollectionTitle, { color: theme.colors.textPrimary }]}>
+          <Text
+            style={[
+              styles.selectedCollectionTitle,
+              { color: theme.colors.textPrimary },
+            ]}
+          >
             {selectedCollection.name}
           </Text>
         </View>
         <CardList
-          cards={selectedCollection.items?.map(item => ({
-            id: item.cardId,
-            name: `Card ${item.cardId}`,
-            setName: 'Unknown Set',
-            cardNumber: '001',
-            rarity: 'common' as const,
-            type: 'creature' as const,
-            attributes: {},
-            marketData: {
+          cards={
+            selectedCollection.items?.map((item) => ({
+              id: item.cardId,
+              name: `Card ${item.cardId}`,
+              setName: 'Unknown Set',
+              cardNumber: '001',
+              rarity: 'common' as const,
+              type: 'creature' as const,
+              attributes: {},
+              marketData: {
+                currentPrice: item.currentValue,
+                priceHistory: [],
+                marketTrend: 'stable',
+                volatility: 0,
+                demand: 'medium',
+                supply: 'medium',
+                lastUpdated: new Date(),
+              },
+              images: {
+                front: 'https://via.placeholder.com/300x420',
+                thumbnail: 'https://via.placeholder.com/300x420',
+              },
+              metadata: {
+                game: 'Unknown',
+                set: 'Unknown Set',
+                language: 'zh-TW',
+                condition: item.condition,
+                isFoil: false,
+                isSigned: false,
+                isGraded: false,
+              },
               currentPrice: item.currentValue,
-              priceHistory: [],
-              marketTrend: 'stable',
-              volatility: 0,
-              demand: 'medium',
-              supply: 'medium',
-              lastUpdated: new Date()
-            },
-            images: {
-              front: 'https://via.placeholder.com/300x420',
-              thumbnail: 'https://via.placeholder.com/300x420'
-            },
-            metadata: {
-              game: 'Unknown',
-              set: 'Unknown Set',
-              language: 'zh-TW',
               condition: item.condition,
-              isFoil: false,
-              isSigned: false,
-              isGraded: false
-            },
-            currentPrice: item.currentValue,
-            condition: item.condition,
-            imageUrl: 'https://via.placeholder.com/300x420',
-            set: 'Unknown Set',
-            createdAt: new Date(),
-            updatedAt: new Date()
-          })) || []}
+              imageUrl: 'https://via.placeholder.com/300x420',
+              set: 'Unknown Set',
+              createdAt: new Date(),
+              updatedAt: new Date(),
+            })) || []
+          }
           onCardPress={handleCardPress}
           showPrice={true}
           showCondition={true}
@@ -199,19 +243,28 @@ export const CollectionsScreen: React.FC = () => {
 
   if (isLoading && collections.length === 0) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <SafeAreaView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <Loading />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       {selectedCollection ? (
         renderSelectedCollection()
       ) : (
         <>
-          <View style={[styles.header, { backgroundColor: theme.colors.backgroundPaper }]}>
+          <View
+            style={[
+              styles.header,
+              { backgroundColor: theme.colors.backgroundPaper },
+            ]}
+          >
             <Text style={[styles.title, { color: theme.colors.textPrimary }]}>
               我的收藏
             </Text>
@@ -232,7 +285,7 @@ export const CollectionsScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -240,11 +293,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB'
+    borderBottomColor: '#E5E7EB',
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -256,22 +309,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   statItem: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statValue: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 4
+    marginBottom: 4,
   },
   statLabel: {
-    fontSize: 12
+    fontSize: 12,
   },
   collectionsList: {
     flex: 1,
-    padding: 8
+    padding: 8,
   },
   collectionItem: {
     margin: 8,
@@ -281,55 +334,55 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   collectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   collectionName: {
     fontSize: 18,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   collectionCount: {
-    fontSize: 14
+    fontSize: 14,
   },
   collectionDescription: {
     fontSize: 14,
-    marginBottom: 8
+    marginBottom: 8,
   },
   collectionStats: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   collectionValue: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   collectionCondition: {
-    fontSize: 14
+    fontSize: 14,
   },
   selectedCollection: {
-    flex: 1
+    flex: 1,
   },
   selectedCollectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB'
+    borderBottomColor: '#E5E7EB',
   },
   backButton: {
-    marginRight: 16
+    marginRight: 16,
   },
   backButtonText: {
     fontSize: 16,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   selectedCollectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });

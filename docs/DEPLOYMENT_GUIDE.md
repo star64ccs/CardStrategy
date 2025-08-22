@@ -1,12 +1,12 @@
 # 🚀 CardStrategy 部署指南
 
 ## 📋 目錄
+
 1. [快速開始](#快速開始)
 2. [環境設置](#環境設置)
 3. [本地部署](#本地部署)
 4. [雲端部署](#雲端部署)
 5. [監控和維護](#監控和維護)
-
 
 ## DEPLOYMENT_GUIDE
 
@@ -271,14 +271,14 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -484,9 +484,9 @@ psql -h localhost -U cardstrategy_user -d cardstrategy
 SELECT count(*) FROM pg_stat_activity;
 
 # 查看慢查詢
-SELECT query, mean_time, calls 
-FROM pg_stat_statements 
-ORDER BY mean_time DESC 
+SELECT query, mean_time, calls
+FROM pg_stat_statements
+ORDER BY mean_time DESC
 LIMIT 10;
 ```
 
@@ -513,6 +513,7 @@ find $BACKUP_DIR -name "backup_*.sql" -mtime +30 -delete
 ### 1. 常見問題
 
 #### 數據庫連接失敗
+
 ```bash
 # 檢查 PostgreSQL 狀態
 sudo systemctl status postgresql
@@ -525,6 +526,7 @@ sudo ufw status
 ```
 
 #### Redis 連接失敗
+
 ```bash
 # 檢查 Redis 狀態
 sudo systemctl status redis-server
@@ -537,6 +539,7 @@ cat /etc/redis/redis.conf | grep bind
 ```
 
 #### 應用啟動失敗
+
 ```bash
 # 檢查端口佔用
 lsof -i :3000
@@ -552,6 +555,7 @@ echo $DB_HOST
 ### 2. 性能問題
 
 #### 高 CPU 使用率
+
 ```bash
 # 查看進程
 top -p $(pgrep -f node)
@@ -561,6 +565,7 @@ node --inspect=0.0.0.0:9229 app.js
 ```
 
 #### 高記憶體使用率
+
 ```bash
 # 查看記憶體使用
 free -h
@@ -570,20 +575,22 @@ node -e "console.log(process.memoryUsage())"
 ```
 
 #### 慢查詢
+
 ```sql
 -- 啟用查詢日誌
 ALTER SYSTEM SET log_statement = 'all';
 SELECT pg_reload_conf();
 
 -- 查看慢查詢
-SELECT query, mean_time, calls 
-FROM pg_stat_statements 
+SELECT query, mean_time, calls
+FROM pg_stat_statements
 WHERE mean_time > 1000;
 ```
 
 ### 3. 安全問題
 
 #### 檢查安全漏洞
+
 ```bash
 # 運行安全掃描
 npm audit
@@ -596,6 +603,7 @@ nmap localhost
 ```
 
 #### 防火牆配置
+
 ```bash
 # 配置 UFW
 sudo ufw allow ssh
@@ -640,15 +648,17 @@ SELECT pg_reload_conf();
 ```javascript
 // 安全中間件配置
 app.use(helmet());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
 // 速率限制
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 分鐘
-  max: 100 // 限制每個 IP 100 個請求
+  max: 100, // 限制每個 IP 100 個請求
 });
 app.use('/api/', limiter);
 ```
@@ -680,7 +690,7 @@ const client = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
   password: process.env.REDIS_PASSWORD,
-  retry_strategy: function(options) {
+  retry_strategy: function (options) {
     if (options.error && options.error.code === 'ECONNREFUSED') {
       return new Error('The server refused the connection');
     }
@@ -691,7 +701,7 @@ const client = redis.createClient({
       return undefined;
     }
     return Math.min(options.attempt * 100, 3000);
-  }
+  },
 });
 ```
 
@@ -714,10 +724,12 @@ if (cluster.isMaster) {
 app.use(compression());
 
 // 靜態文件緩存
-app.use(express.static('public', {
-  maxAge: '1d',
-  etag: true
-}));
+app.use(
+  express.static('public', {
+    maxAge: '1d',
+    etag: true,
+  })
+);
 ```
 
 ### 4. 監控優化
@@ -738,14 +750,14 @@ while true; do
     echo "服務不可用，發送告警"
     # 發送告警邏輯
   fi
-  
+
   # 檢查磁碟空間
   DISK_USAGE=$(df / | awk 'NR==2 {print $5}' | sed 's/%//')
   if [ $DISK_USAGE -gt 80 ]; then
     echo "磁碟空間不足，發送告警"
     # 發送告警邏輯
   fi
-  
+
   sleep 60
 done
 ```
@@ -761,11 +773,13 @@ done
 ## 📋 服務連結清單
 
 ### ✅ 必需服務
+
 1. **GitHub** - 代碼版本控制
 2. **PostgreSQL** - 主要數據庫
 3. **Redis** - 緩存和會話管理
 
 ### 🔧 推薦服務
+
 4. **Render** - 開發/測試環境部署
 5. **DigitalOcean** - 生產環境部署
 6. **Cloudflare** - CDN、DNS 和安全
@@ -775,6 +789,7 @@ done
 ### 第一步：GitHub 設置
 
 #### 1.1 創建 Personal Access Token
+
 ```bash
 # 訪問 GitHub Settings > Developer settings > Personal access tokens
 # 創建新的 token，包含以下權限：
@@ -785,6 +800,7 @@ done
 ```
 
 #### 1.2 設置 GitHub Secrets
+
 在您的 GitHub 倉庫中設置以下 Secrets：
 
 ```bash
@@ -800,6 +816,7 @@ DROPLET_IP=your-droplet-ip
 ### 第二步：PostgreSQL 設置
 
 #### 2.1 創建數據庫實例
+
 ```bash
 # 在您的 PostgreSQL 提供商中創建新的數據庫實例
 # 記錄以下信息：
@@ -811,6 +828,7 @@ DROPLET_IP=your-droplet-ip
 ```
 
 #### 2.2 運行數據庫初始化腳本
+
 ```bash
 # 設置環境變數
 export PRODUCTION_DB_HOST=your-postgres-host
@@ -826,6 +844,7 @@ node scripts/setup-postgresql-production.js
 ### 第三步：Redis 設置
 
 #### 3.1 創建 Redis 實例
+
 ```bash
 # 在您的 Redis 提供商中創建新的實例
 # 記錄以下信息：
@@ -836,6 +855,7 @@ node scripts/setup-postgresql-production.js
 ```
 
 #### 3.2 運行 Redis 初始化腳本
+
 ```bash
 # 設置環境變數
 export PRODUCTION_REDIS_HOST=your-redis-host
@@ -850,6 +870,7 @@ node scripts/setup-redis-production.js
 ### 第四步：Render 設置
 
 #### 4.1 創建 Render 賬號
+
 ```bash
 # 訪問 https://render.com
 # 使用 GitHub 賬號登錄
@@ -857,6 +878,7 @@ node scripts/setup-redis-production.js
 ```
 
 #### 4.2 部署到 Render
+
 ```bash
 # 1. 連接 GitHub 倉庫
 # 2. 選擇分支 (develop 用於測試)
@@ -870,6 +892,7 @@ cd backend && npm start
 ```
 
 #### 4.3 設置環境變數
+
 在 Render 控制台中添加以下環境變數：
 
 ```bash
@@ -890,6 +913,7 @@ CORS_ORIGIN=https://cardstrategy.com
 ### 第五步：DigitalOcean 設置
 
 #### 5.1 創建 Droplet
+
 ```bash
 # 1. 登錄 DigitalOcean
 # 2. 創建新的 Droplet
@@ -900,6 +924,7 @@ CORS_ORIGIN=https://cardstrategy.com
 ```
 
 #### 5.2 設置服務器
+
 ```bash
 # 連接到您的 Droplet
 ssh root@your-droplet-ip
@@ -925,6 +950,7 @@ sudo npm install -g pm2
 ```
 
 #### 5.3 配置 Nginx
+
 ```bash
 # 創建 Nginx 配置
 sudo nano /etc/nginx/sites-available/cardstrategy
@@ -933,7 +959,7 @@ sudo nano /etc/nginx/sites-available/cardstrategy
 server {
     listen 80;
     server_name cardstrategy.com www.cardstrategy.com;
-    
+
     location / {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -954,6 +980,7 @@ sudo systemctl restart nginx
 ```
 
 #### 5.4 創建 PM2 配置
+
 ```bash
 # 創建 PM2 配置文件
 nano ecosystem.config.js
@@ -982,6 +1009,7 @@ pm2 startup
 ### 第六步：Cloudflare 設置
 
 #### 6.1 添加域名
+
 ```bash
 # 1. 登錄 Cloudflare
 # 2. 添加您的域名 (cardstrategy.com)
@@ -989,6 +1017,7 @@ pm2 startup
 ```
 
 #### 6.2 配置 DNS 記錄
+
 ```bash
 # 在 Cloudflare DNS 中添加以下記錄：
 
@@ -998,6 +1027,7 @@ CNAME api    cardstrategy.com    Auto
 ```
 
 #### 6.3 設置 SSL/TLS
+
 ```bash
 # 1. 進入 SSL/TLS 設置
 # 2. 加密模式設置為 "Full (strict)"
@@ -1006,6 +1036,7 @@ CNAME api    cardstrategy.com    Auto
 ```
 
 #### 6.4 配置緩存規則
+
 ```bash
 # 創建頁面規則：
 
@@ -1027,6 +1058,7 @@ URL: cardstrategy.com/*
 ## 🔧 自動化部署
 
 ### 使用 GitHub Actions
+
 ```bash
 # 推送代碼到 develop 分支會自動部署到 Render
 # 推送代碼到 main 分支會自動部署到 DigitalOcean
@@ -1036,6 +1068,7 @@ git push origin main     # 部署到生產環境
 ```
 
 ### 手動部署
+
 ```bash
 # 部署到 DigitalOcean
 chmod +x scripts/deploy-digitalocean.sh
@@ -1045,6 +1078,7 @@ chmod +x scripts/deploy-digitalocean.sh
 ## 🧪 測試檢查清單
 
 ### 基礎功能測試
+
 - [ ] GitHub 倉庫可訪問
 - [ ] PostgreSQL 連接正常
 - [ ] Redis 連接正常
@@ -1052,6 +1086,7 @@ chmod +x scripts/deploy-digitalocean.sh
 - [ ] 前端頁面加載正常
 
 ### 部署測試
+
 - [ ] Render 測試環境正常
 - [ ] DigitalOcean 生產環境正常
 - [ ] Cloudflare CDN 正常
@@ -1059,12 +1094,14 @@ chmod +x scripts/deploy-digitalocean.sh
 - [ ] 域名解析正常
 
 ### 性能測試
+
 - [ ] 頁面加載速度 < 3 秒
 - [ ] API 響應時間 < 500ms
 - [ ] 數據庫查詢優化
 - [ ] 緩存策略生效
 
 ### 安全測試
+
 - [ ] HTTPS 強制重定向
 - [ ] CORS 設置正確
 - [ ] 速率限制生效
@@ -1075,6 +1112,7 @@ chmod +x scripts/deploy-digitalocean.sh
 ### 常見問題
 
 #### 1. 數據庫連接失敗
+
 ```bash
 # 檢查環境變數
 echo $DB_HOST
@@ -1085,12 +1123,14 @@ psql -h $DB_HOST -U $DB_USER -d $DB_NAME
 ```
 
 #### 2. Redis 連接失敗
+
 ```bash
 # 測試 Redis 連接
 redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASSWORD ping
 ```
 
 #### 3. 部署失敗
+
 ```bash
 # 檢查日誌
 pm2 logs cardstrategy-api
@@ -1098,6 +1138,7 @@ sudo journalctl -u nginx -f
 ```
 
 #### 4. SSL 證書問題
+
 ```bash
 # 檢查 Cloudflare SSL 設置
 # 確保設置為 "Full (strict)"
@@ -1106,6 +1147,7 @@ sudo journalctl -u nginx -f
 ## 📞 支持聯繫
 
 如果遇到問題，請檢查：
+
 1. 環境變數設置
 2. 服務狀態
 3. 網絡連接
@@ -1115,6 +1157,7 @@ sudo journalctl -u nginx -f
 ## 🎉 完成！
 
 恭喜！您已成功設置所有必要的服務。您的應用現在應該可以：
+
 - 自動部署到測試和生產環境
 - 使用 CDN 加速
 - 具備完整的監控和安全保護
@@ -1342,26 +1385,28 @@ nano ecosystem.config.js
 
 ```javascript
 module.exports = {
-  apps: [{
-    name: 'cardstrategy',
-    script: 'backend/src/server.js',
-    instances: 'max',
-    exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
+  apps: [
+    {
+      name: 'cardstrategy',
+      script: 'backend/src/server.js',
+      instances: 'max',
+      exec_mode: 'cluster',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      error_file: './logs/err.log',
+      out_file: './logs/out.log',
+      log_file: './logs/combined.log',
+      time: true,
+      max_memory_restart: '1G',
+      node_args: '--max-old-space-size=2048',
     },
-    env_production: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    },
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
-    time: true,
-    max_memory_restart: '1G',
-    node_args: '--max-old-space-size=2048'
-  }]
+  ],
 };
 ```
 
@@ -1537,6 +1582,7 @@ sudo tail -f /var/log/nginx/error.log
 ### 常見問題
 
 #### 1. 端口被佔用
+
 ```bash
 # 檢查端口使用情況
 sudo netstat -tlnp | grep :3000
@@ -1546,6 +1592,7 @@ sudo kill -9 <PID>
 ```
 
 #### 2. 內存不足
+
 ```bash
 # 檢查內存使用
 free -h
@@ -1555,6 +1602,7 @@ export NODE_OPTIONS="--max-old-space-size=2048"
 ```
 
 #### 3. 數據庫連接失敗
+
 ```bash
 # 檢查 PostgreSQL 狀態
 sudo systemctl status postgresql
@@ -1650,11 +1698,13 @@ chmod +x /var/www/cardstrategy/deploy.sh
 恭喜！您的 CardStrategy 高級預測系統已成功部署到 DigitalOcean。
 
 **訪問地址**：
+
 - **主網站**: https://cardstrategyapp.com
 - **API 服務**: https://cardstrategyapp.com/api
 - **健康檢查**: https://cardstrategyapp.com/health
 
 **管理命令**：
+
 - 重啟應用: `pm2 restart cardstrategy`
 - 查看日誌: `pm2 logs cardstrategy`
 - 更新部署: `./deploy.sh`
@@ -1666,6 +1716,7 @@ chmod +x /var/www/cardstrategy/deploy.sh
 ## 📋 **概述**
 
 Render 作為您的**測試/開發環境**，用於：
+
 - 🧪 **功能測試** - 新功能開發和測試
 - 🔍 **集成測試** - 數據庫和服務集成測試
 - 👥 **團隊協作** - 開發團隊共享測試環境
@@ -1674,6 +1725,7 @@ Render 作為您的**測試/開發環境**，用於：
 ## 🏗️ **環境架構**
 
 ### **Render 服務配置**
+
 ```
 cardstrategy-api (後端 API)
 ├── 環境: Node.js
@@ -1700,6 +1752,7 @@ cardstrategy-redis (緩存)
 ## 🔄 **部署流程**
 
 ### **1. 開發分支部署 (develop)**
+
 ```bash
 # 推送到 develop 分支
 git push origin develop
@@ -1711,6 +1764,7 @@ git push origin develop
 ```
 
 ### **2. 生產分支部署 (main)**
+
 ```bash
 # 合併到 main 分支
 git merge develop
@@ -1725,6 +1779,7 @@ git push origin main
 ## 🛠️ **環境變數配置**
 
 ### **Render 控制台設置**
+
 在 Render 控制台中設置以下環境變數：
 
 ```bash
@@ -1761,11 +1816,13 @@ EXPORT_PATH=/app/exports
 ## 📊 **測試環境 URL**
 
 ### **服務端點**
+
 - 🌐 **前端**: https://cardstrategy-frontend.onrender.com
 - 🔧 **API**: https://cardstrategy-api.onrender.com
 - 📊 **健康檢查**: https://cardstrategy-api.onrender.com/api/health
 
 ### **API 端點**
+
 ```
 GET  /api/health          # 健康檢查
 GET  /api/status          # 服務狀態
@@ -1781,6 +1838,7 @@ POST /api/ai/analyze      # AI 分析
 ## 🔍 **測試和驗證**
 
 ### **1. 自動化測試**
+
 ```bash
 # 運行測試套件
 npm run test:ci
@@ -1792,6 +1850,7 @@ npm run test:e2e
 ```
 
 ### **2. 手動測試**
+
 ```bash
 # 健康檢查
 curl https://cardstrategy-api.onrender.com/api/health
@@ -1804,6 +1863,7 @@ curl https://cardstrategy-api.onrender.com/api/status
 ```
 
 ### **3. 性能測試**
+
 ```bash
 # 使用 Apache Bench 測試
 ab -n 100 -c 10 https://cardstrategy-api.onrender.com/api/health
@@ -1815,12 +1875,14 @@ wrk -t12 -c400 -d30s https://cardstrategy-api.onrender.com/api/health
 ## 🚨 **監控和警報**
 
 ### **健康檢查**
+
 - **端點**: `/api/health`
 - **頻率**: 每 30 秒
 - **超時**: 10 秒
 - **重試**: 3 次
 
 ### **日誌監控**
+
 ```bash
 # 查看應用日誌
 # 在 Render 控制台 -> Services -> cardstrategy-api -> Logs
@@ -1833,6 +1895,7 @@ DEBUG - 調試信息
 ```
 
 ### **性能指標**
+
 - **響應時間**: < 500ms
 - **可用性**: > 99.9%
 - **錯誤率**: < 0.1%
@@ -1842,6 +1905,7 @@ DEBUG - 調試信息
 ### **常見問題**
 
 #### **1. 部署失敗**
+
 ```bash
 # 檢查構建日誌
 # Render 控制台 -> Services -> Build Logs
@@ -1853,6 +1917,7 @@ DEBUG - 調試信息
 ```
 
 #### **2. 數據庫連接問題**
+
 ```bash
 # 檢查數據庫狀態
 # Render 控制台 -> Databases -> cardstrategy-postgres
@@ -1862,6 +1927,7 @@ curl https://cardstrategy-api.onrender.com/api/db/test
 ```
 
 #### **3. Redis 連接問題**
+
 ```bash
 # 檢查 Redis 狀態
 # Render 控制台 -> Redis -> cardstrategy-redis
@@ -1871,6 +1937,7 @@ curl https://cardstrategy-api.onrender.com/api/redis/test
 ```
 
 ### **調試步驟**
+
 1. **檢查日誌** - 查看應用和服務日誌
 2. **驗證配置** - 檢查環境變數和服務配置
 3. **測試端點** - 手動測試 API 端點
@@ -1879,6 +1946,7 @@ curl https://cardstrategy-api.onrender.com/api/redis/test
 ## 📈 **最佳實踐**
 
 ### **1. 開發流程**
+
 ```bash
 # 1. 創建功能分支
 git checkout -b feature/new-feature
@@ -1896,11 +1964,13 @@ git push origin develop
 ```
 
 ### **2. 數據管理**
+
 - **測試數據**: 使用專門的測試數據集
 - **數據備份**: 定期備份測試數據庫
 - **數據清理**: 定期清理測試數據
 
 ### **3. 安全考慮**
+
 - **環境隔離**: 測試環境與生產環境完全隔離
 - **敏感數據**: 不要在測試環境使用生產敏感數據
 - **訪問控制**: 限制測試環境的訪問權限
@@ -1910,16 +1980,19 @@ git push origin develop
 ### **立即需要完成的配置**
 
 1. **設置 GitHub Secrets**
+
    ```bash
    RENDER_TOKEN=<您的 Render API Token>
    RENDER_STAGING_SERVICE_ID=<您的 Render 服務 ID>
    ```
 
 2. **配置環境變數**
+
    - 在 Render 控制台設置所有必要的環境變數
    - 確保服務間的正確連接
 
 3. **測試部署流程**
+
    ```bash
    # 推送到 develop 分支測試
    git push origin develop
@@ -1933,11 +2006,13 @@ git push origin develop
 ### **可選優化**
 
 1. **監控設置**
+
    - 設置 Uptime Robot 監控
    - 配置錯誤追蹤 (Sentry)
    - 設置性能監控
 
 2. **自動化測試**
+
    - 設置端到端測試
    - 配置性能測試
    - 設置安全掃描

@@ -2,18 +2,19 @@
 
 ## **📊 整體狀態**
 
-| 組件 | 狀態 | 說明 |
-|------|------|------|
-| **Render API** | ✅ 運行中 | 測試環境，版本 1.0.0 |
-| **DigitalOcean API** | ✅ 運行中 | 生產環境，版本 3.1.0 |
-| **SSH 連接** | ✅ 已配置 | 無密碼登錄 |
-| **域名解析** | ✅ 正常 | Cloudflare DNS |
-| **防火牆** | ✅ 已配置 | 端口 80, 443, 3000 開放 |
-| **自動部署** | ⚠️ 待設置 | 需要 GitHub Secrets |
+| 組件                 | 狀態      | 說明                    |
+| -------------------- | --------- | ----------------------- |
+| **Render API**       | ✅ 運行中 | 測試環境，版本 1.0.0    |
+| **DigitalOcean API** | ✅ 運行中 | 生產環境，版本 3.1.0    |
+| **SSH 連接**         | ✅ 已配置 | 無密碼登錄              |
+| **域名解析**         | ✅ 正常   | Cloudflare DNS          |
+| **防火牆**           | ✅ 已配置 | 端口 80, 443, 3000 開放 |
+| **自動部署**         | ⚠️ 待設置 | 需要 GitHub Secrets     |
 
 ## **🔧 已完成的配置**
 
 ### **1. 服務器配置**
+
 - ✅ **DigitalOcean Droplet**: `159.223.84.189`
 - ✅ **SSH 密鑰**: 已生成並配置
 - ✅ **系統更新**: Ubuntu 24.04.3 LTS
@@ -22,12 +23,14 @@
 - ✅ **防火牆**: UFW 已配置
 
 ### **2. 應用部署**
+
 - ✅ **應用運行**: `cardstrategy` 服務正在運行
 - ✅ **端口監聽**: 3000 端口正常
 - ✅ **內存使用**: 60.2MB
 - ✅ **運行時間**: 穩定運行
 
 ### **3. 域名和 DNS**
+
 - ✅ **主域名**: `cardstrategyapp.com`
 - ✅ **API 域名**: `api.cardstrategyapp.com`
 - ✅ **DNS 解析**: Cloudflare 已配置
@@ -36,6 +39,7 @@
 ### **4. API 端點測試**
 
 #### **Render API (測試環境)**
+
 ```
 URL: https://cardstrategy-api.onrender.com/api/health
 狀態: ✅ 正常
@@ -48,6 +52,7 @@ URL: https://cardstrategy-api.onrender.com/api/health
 ```
 
 #### **DigitalOcean API (生產環境)**
+
 ```
 URL: https://api.cardstrategyapp.com/health
 狀態: ✅ 正常
@@ -63,17 +68,18 @@ URL: https://api.cardstrategyapp.com/health
 
 ### **需要設置的 Secrets**
 
-| Secret 名稱 | 狀態 | 說明 |
-|-------------|------|------|
-| `RENDER_TOKEN` | ❌ 待設置 | Render API Token |
-| `RENDER_STAGING_SERVICE_ID` | ❌ 待設置 | Render 服務 ID |
+| Secret 名稱                 | 狀態      | 說明                   |
+| --------------------------- | --------- | ---------------------- |
+| `RENDER_TOKEN`              | ❌ 待設置 | Render API Token       |
+| `RENDER_STAGING_SERVICE_ID` | ❌ 待設置 | Render 服務 ID         |
 | `DIGITALOCEAN_ACCESS_TOKEN` | ❌ 待設置 | DigitalOcean API Token |
-| `DROPLET_ID` | ❌ 待設置 | Droplet ID |
-| `PRODUCTION_SSH_KEY` | ✅ 已準備 | SSH 私鑰 (見下方) |
-| `PRODUCTION_USER` | ✅ 已準備 | `root` |
-| `PRODUCTION_HOST` | ✅ 已準備 | `159.223.84.189` |
+| `DROPLET_ID`                | ❌ 待設置 | Droplet ID             |
+| `PRODUCTION_SSH_KEY`        | ✅ 已準備 | SSH 私鑰 (見下方)      |
+| `PRODUCTION_USER`           | ✅ 已準備 | `root`                 |
+| `PRODUCTION_HOST`           | ✅ 已準備 | `159.223.84.189`       |
 
 ### **SSH 私鑰 (PRODUCTION_SSH_KEY)**
+
 ```
 -----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
@@ -129,11 +135,13 @@ gTsuPQlp56rRAAAAHWNhcmRzdHJhdGVneUBkaWdpdGFsb2NlYW4uY29tAQIDBAU=
 ## **📋 設置步驟**
 
 ### **1. 前往 GitHub 倉庫**
+
 1. 打開瀏覽器，前往: https://github.com/star64ccs/CardStrategy
 2. 點擊 **Settings** 標籤
 3. 在左側菜單中點擊 **Secrets and variables** → **Actions**
 
 ### **2. 添加 Secrets**
+
 按照以下順序添加：
 
 1. **RENDER_TOKEN** - 從 Render 控制台獲取
@@ -149,10 +157,12 @@ gTsuPQlp56rRAAAAHWNhcmRzdHJhdGVneUBkaWdpdGFsb2NlYW4uY29tAQIDBAU=
 設置 GitHub Secrets 後，您的專案將具備：
 
 ### **自動部署流程**
+
 - **develop 分支推送** → 自動部署到 Render (測試環境)
 - **main 分支推送** → 自動部署到 DigitalOcean (生產環境)
 
 ### **CI/CD 功能**
+
 - ✅ 自動測試
 - ✅ 自動構建
 - ✅ 自動部署
@@ -161,15 +171,15 @@ gTsuPQlp56rRAAAAHWNhcmRzdHJhdGVneUBkaWdpdGFsb2NlYW4uY29tAQIDBAU=
 
 ## **📊 當前狀態總結**
 
-| 項目 | 狀態 | 完成度 |
-|------|------|--------|
-| **服務器配置** | ✅ 完成 | 100% |
-| **應用部署** | ✅ 完成 | 100% |
-| **域名配置** | ✅ 完成 | 100% |
-| **SSL 證書** | ✅ 完成 | 100% |
-| **API 測試** | ✅ 完成 | 100% |
-| **GitHub Secrets** | ⚠️ 待設置 | 0% |
-| **自動部署** | ⚠️ 待測試 | 0% |
+| 項目               | 狀態      | 完成度 |
+| ------------------ | --------- | ------ |
+| **服務器配置**     | ✅ 完成   | 100%   |
+| **應用部署**       | ✅ 完成   | 100%   |
+| **域名配置**       | ✅ 完成   | 100%   |
+| **SSL 證書**       | ✅ 完成   | 100%   |
+| **API 測試**       | ✅ 完成   | 100%   |
+| **GitHub Secrets** | ⚠️ 待設置 | 0%     |
+| **自動部署**       | ⚠️ 待測試 | 0%     |
 
 **🎉 整體完成度: 85%**
 

@@ -62,7 +62,7 @@ class LogService {
       flushInterval: 30000, // 30秒
       maxRetries: 3,
       retryDelay: 1000,
-      ...config
+      ...config,
     };
 
     this.sessionId = this.generateSessionId();
@@ -87,7 +87,7 @@ class LogService {
         deviceId: await getUniqueId(),
         screenWidth: screen.width,
         screenHeight: screen.height,
-        screenDensity: screen.scale
+        screenDensity: screen.scale,
       };
     } catch (error) {
       logger.error('初始化設備信息失敗:', { error });
@@ -100,7 +100,11 @@ class LogService {
   }
 
   // 發送日誌
-  async sendLog(level: string, message: string, context?: Record<string, unknown>): Promise<void> {
+  async sendLog(
+    level: string,
+    message: string,
+    context?: Record<string, unknown>
+  ): Promise<void> {
     try {
       const logEntry: LogEntry = {
         level,
@@ -113,7 +117,7 @@ class LogService {
         appVersion: this.getAppVersion(),
         buildNumber: this.getBuildNumber(),
         platform: 'react-native',
-        tags: this.generateTags(level, context)
+        tags: this.generateTags(level, context),
       };
 
       // 添加到隊列
@@ -163,20 +167,25 @@ class LogService {
   private getBuildNumber(): string {
     try {
       const Constants = require('expo-constants').default;
-      return Constants.expoConfig?.ios?.buildNumber ||
-             Constants.expoConfig?.android?.versionCode?.toString() ||
-             'unknown';
+      return (
+        Constants.expoConfig?.ios?.buildNumber ||
+        Constants.expoConfig?.android?.versionCode?.toString() ||
+        'unknown'
+      );
     } catch {
       return 'unknown';
     }
   }
 
   // 生成標籤
-  private generateTags(level: string, context?: Record<string, unknown>): Record<string, string> {
+  private generateTags(
+    level: string,
+    context?: Record<string, unknown>
+  ): Record<string, string> {
     const tags: Record<string, string> = {
       level,
       platform: 'react-native',
-      environment: __DEV__ ? 'development' : 'production'
+      environment: __DEV__ ? 'development' : 'production',
     };
 
     // 從上下文中提取標籤
@@ -215,7 +224,7 @@ class LogService {
       const batch: LogBatch = {
         logs,
         timestamp: new Date(),
-        retryCount: 0
+        retryCount: 0,
       };
 
       await this.sendBatch(batch);
@@ -246,9 +255,11 @@ class LogService {
 
       // 發送到後端 API
       await this.sendToBackendAPI(batch.logs);
-
     } catch (error) {
-      logger.error('發送日誌批次失敗:', { error, batchSize: batch.logs.length });
+      logger.error('發送日誌批次失敗:', {
+        error,
+        batchSize: batch.logs.length,
+      });
 
       // 重試機制
       if (batch.retryCount < this.config.maxRetries) {
@@ -270,7 +281,7 @@ class LogService {
     try {
       const Sentry = require('@sentry/react-native');
 
-      logs.forEach(log => {
+      logs.forEach((log) => {
         if (log.level === 'error') {
           Sentry.captureException(new Error(log.message), {
             extra: log.context,
@@ -280,16 +291,16 @@ class LogService {
               device: log.deviceInfo,
               app: {
                 version: log.appVersion,
-                build: log.buildNumber
-              }
-            }
+                build: log.buildNumber,
+              },
+            },
           });
         } else {
           Sentry.captureMessage(log.message, {
             level: log.level as any,
             extra: log.context,
             user: { id: log.userId },
-            tags: log.tags
+            tags: log.tags,
           });
         }
       });
@@ -303,15 +314,15 @@ class LogService {
     try {
       const LogRocket = require('logrocket');
 
-      logs.forEach(log => {
+      logs.forEach((log) => {
         LogRocket.captureException(new Error(log.message), {
           extra: {
             ...log.context,
             level: log.level,
             timestamp: log.timestamp,
             sessionId: log.sessionId,
-            deviceInfo: log.deviceInfo
-          }
+            deviceInfo: log.deviceInfo,
+          },
         });
       });
     } catch (error) {
@@ -324,16 +335,20 @@ class LogService {
     try {
       const { api } = require('@/config/api');
 
-      await api.post(this.config.customLogEndpoint!, {
-        logs,
-        timestamp: new Date().toISOString(),
-        sessionId: this.sessionId
-      }, {
-        timeout: 10000,
-        headers: {
-          'Content-Type': 'application/json'
+      await api.post(
+        this.config.customLogEndpoint!,
+        {
+          logs,
+          timestamp: new Date().toISOString(),
+          sessionId: this.sessionId,
+        },
+        {
+          timeout: 10000,
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
     } catch (error) {
       logger.error('發送到自定義端點失敗:', { error });
       throw error;
@@ -345,16 +360,20 @@ class LogService {
     try {
       const { api } = require('@/config/api');
 
-      await api.post('/logs/batch', {
-        logs,
-        timestamp: new Date().toISOString(),
-        sessionId: this.sessionId
-      }, {
-        timeout: 10000,
-        headers: {
-          'Content-Type': 'application/json'
+      await api.post(
+        '/logs/batch',
+        {
+          logs,
+          timestamp: new Date().toISOString(),
+          sessionId: this.sessionId,
+        },
+        {
+          timeout: 10000,
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
     } catch (error) {
       logger.error('發送到後端 API 失敗:', { error });
       throw error;
@@ -392,7 +411,9 @@ class LogService {
     try {
       const AsyncStorage = require('@react-native-async-storage/async-storage');
       const keys = await AsyncStorage.getAllKeys();
-      const failedLogKeys = keys.filter(key => key.startsWith('failed_logs_'));
+      const failedLogKeys = keys.filter((key) =>
+        key.startsWith('failed_logs_')
+      );
 
       if (failedLogKeys.length > 10) {
         // 按時間戳排序，保留最新的 10 個
@@ -411,7 +432,7 @@ class LogService {
       const Sentry = require('@sentry/react-native');
       Sentry.setUser({
         id: userId,
-        ...userInfo
+        ...userInfo,
       });
     } catch (error) {
       logger.error('設置 Sentry 用戶信息失敗:', { error });
@@ -458,12 +479,13 @@ class LogService {
   getQueueStatus(): { queueLength: number; batchQueueLength: number } {
     return {
       queueLength: this.logQueue.length,
-      batchQueueLength: this.batchQueue.length
+      batchQueueLength: this.batchQueue.length,
     };
   }
 }
 
 // 創建日誌服務實例
+export { LogService };
 export const logService = new LogService({
   sentryDsn: process.env.SENTRY_DSN,
   logRocketAppId: process.env.LOGROCKET_APP_ID,
@@ -471,5 +493,5 @@ export const logService = new LogService({
   batchSize: 50,
   flushInterval: 30000,
   maxRetries: 3,
-  retryDelay: 1000
+  retryDelay: 1000,
 });

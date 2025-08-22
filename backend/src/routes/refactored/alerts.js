@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const alertService = require('../../services/alertService');
+// eslint-disable-next-line no-unused-vars
 const auth = require('../../middleware/auth');
-const { validateAlertCreation, validateAlertUpdate } = require('../../middleware/validation');
+const {
+  validateAlertCreation,
+  validateAlertUpdate,
+} = require('../../middleware/validation');
 const {
   createGetHandler,
   createPostHandler,
@@ -13,7 +17,7 @@ const {
   createSearchHandler,
   createCustomError,
   createValidationError,
-  createPermissionError
+  createPermissionError,
 } = require('../../middleware/routeHandler');
 
 /**
@@ -51,33 +55,36 @@ const {
  *       401:
  *         description: 未授權
  */
-router.get('/', createPaginatedHandler(
-  async (filters, pagination, req, res) => {
-    const { type, severity, startDate, endDate } = filters;
+router.get(
+  '/',
+  createPaginatedHandler(
+    async (filters, pagination, req, res) => {
+      const { type, severity, startDate, endDate } = filters;
 
-    // 構建查詢條件
-    const query = {};
-    if (type) query.type = type;
-    if (severity) query.severity = severity;
-    if (startDate || endDate) {
-      query.timestamp = {};
-      if (startDate) query.timestamp.$gte = new Date(startDate);
-      if (endDate) query.timestamp.$lte = new Date(endDate);
+      // 構建查詢條件
+      const query = {};
+      if (type) query.type = type;
+      if (severity) query.severity = severity;
+      if (startDate || endDate) {
+        query.timestamp = {};
+        if (startDate) query.timestamp.$gte = new Date(startDate);
+        if (endDate) query.timestamp.$lte = new Date(endDate);
+      }
+
+      // 獲取警報數據
+      const alerts = await alertService.getAlerts(query, pagination);
+
+      return {
+        data: alerts.data,
+        total: alerts.total,
+      };
+    },
+    {
+      auth: true,
+      permissions: ['user', 'admin'],
     }
-
-    // 獲取警報數據
-    const alerts = await alertService.getAlerts(query, pagination);
-
-    return {
-      data: alerts.data,
-      total: alerts.total
-    };
-  },
-  {
-    auth: true,
-    permissions: ['user', 'admin']
-  }
-));
+  )
+);
 
 /**
  * @swagger
@@ -123,31 +130,34 @@ router.get('/', createPaginatedHandler(
  *       403:
  *         description: 權限不足
  */
-router.post('/', createPostHandler(
-  async (req, res) => {
-    // 檢查權限
-    if (req.user.role !== 'admin') {
-      throw createPermissionError('只有管理員可以創建警報');
+router.post(
+  '/',
+  createPostHandler(
+    async (req, res) => {
+      // 檢查權限
+      if (req.user.role !== 'admin') {
+        throw createPermissionError('只有管理員可以創建警報');
+      }
+
+      // 構建警報數據
+      const alertData = {
+        ...req.body,
+        createdBy: req.user.id,
+        timestamp: new Date(),
+      };
+
+      // 創建警報
+      const alert = await alertService.createAlert(alertData);
+
+      return alert;
+    },
+    {
+      auth: true,
+      validation: validateAlertCreation,
+      permissions: ['admin'],
     }
-
-    // 構建警報數據
-    const alertData = {
-      ...req.body,
-      createdBy: req.user.id,
-      timestamp: new Date()
-    };
-
-    // 創建警報
-    const alert = await alertService.createAlert(alertData);
-
-    return alert;
-  },
-  {
-    auth: true,
-    validation: validateAlertCreation,
-    permissions: ['admin']
-  }
-));
+  )
+);
 
 /**
  * @swagger
@@ -172,22 +182,25 @@ router.post('/', createPostHandler(
  *       401:
  *         description: 未授權
  */
-router.get('/:id', createGetHandler(
-  async (req, res) => {
-    const { id } = req.params;
+router.get(
+  '/:id',
+  createGetHandler(
+    async (req, res) => {
+      const { id } = req.params;
 
-    const alert = await alertService.getAlertById(id);
-    if (!alert) {
-      throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
+      const alert = await alertService.getAlertById(id);
+      if (!alert) {
+        throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
+      }
+
+      return alert;
+    },
+    {
+      auth: true,
+      permissions: ['user', 'admin'],
     }
-
-    return alert;
-  },
-  {
-    auth: true,
-    permissions: ['user', 'admin']
-  }
-));
+  )
+);
 
 /**
  * @swagger
@@ -228,37 +241,40 @@ router.get('/:id', createGetHandler(
  *       403:
  *         description: 權限不足
  */
-router.put('/:id', createPutHandler(
-  async (req, res) => {
-    const { id } = req.params;
-    const updateData = req.body;
+router.put(
+  '/:id',
+  createPutHandler(
+    async (req, res) => {
+      const { id } = req.params;
+      const updateData = req.body;
 
-    // 檢查權限
-    if (req.user.role !== 'admin') {
-      throw createPermissionError('只有管理員可以更新警報');
+      // 檢查權限
+      if (req.user.role !== 'admin') {
+        throw createPermissionError('只有管理員可以更新警報');
+      }
+
+      // 檢查警報是否存在
+      const existingAlert = await alertService.getAlertById(id);
+      if (!existingAlert) {
+        throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
+      }
+
+      // 更新警報
+      const updatedAlert = await alertService.updateAlert(id, {
+        ...updateData,
+        updatedBy: req.user.id,
+        updatedAt: new Date(),
+      });
+
+      return updatedAlert;
+    },
+    {
+      auth: true,
+      validation: validateAlertUpdate,
+      permissions: ['admin'],
     }
-
-    // 檢查警報是否存在
-    const existingAlert = await alertService.getAlertById(id);
-    if (!existingAlert) {
-      throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
-    }
-
-    // 更新警報
-    const updatedAlert = await alertService.updateAlert(id, {
-      ...updateData,
-      updatedBy: req.user.id,
-      updatedAt: new Date()
-    });
-
-    return updatedAlert;
-  },
-  {
-    auth: true,
-    validation: validateAlertUpdate,
-    permissions: ['admin']
-  }
-));
+  )
+);
 
 /**
  * @swagger
@@ -285,31 +301,34 @@ router.put('/:id', createPutHandler(
  *       403:
  *         description: 權限不足
  */
-router.delete('/:id', createDeleteHandler(
-  async (req, res) => {
-    const { id } = req.params;
+router.delete(
+  '/:id',
+  createDeleteHandler(
+    async (req, res) => {
+      const { id } = req.params;
 
-    // 檢查權限
-    if (req.user.role !== 'admin') {
-      throw createPermissionError('只有管理員可以刪除警報');
+      // 檢查權限
+      if (req.user.role !== 'admin') {
+        throw createPermissionError('只有管理員可以刪除警報');
+      }
+
+      // 檢查警報是否存在
+      const existingAlert = await alertService.getAlertById(id);
+      if (!existingAlert) {
+        throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
+      }
+
+      // 刪除警報
+      await alertService.deleteAlert(id);
+
+      return { message: '警報刪除成功' };
+    },
+    {
+      auth: true,
+      permissions: ['admin'],
     }
-
-    // 檢查警報是否存在
-    const existingAlert = await alertService.getAlertById(id);
-    if (!existingAlert) {
-      throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
-    }
-
-    // 刪除警報
-    await alertService.deleteAlert(id);
-
-    return { message: '警報刪除成功' };
-  },
-  {
-    auth: true,
-    permissions: ['admin']
-  }
-));
+  )
+);
 
 /**
  * @swagger
@@ -347,40 +366,46 @@ router.delete('/:id', createDeleteHandler(
  *       403:
  *         description: 權限不足
  */
-router.post('/batch', createBatchHandler(
-  async (alertId, params, req, res) => {
-    const { action } = params;
+router.post(
+  '/batch',
+  createBatchHandler(
+    async (alertId, params, req, res) => {
+      const { action } = params;
 
-    // 檢查權限
-    if (req.user.role !== 'admin') {
-      throw createPermissionError('只有管理員可以批量操作警報');
-    }
+      // 檢查權限
+      if (req.user.role !== 'admin') {
+        throw createPermissionError('只有管理員可以批量操作警報');
+      }
 
-    // 檢查警報是否存在
-    const existingAlert = await alertService.getAlertById(alertId);
-    if (!existingAlert) {
-      throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
-    }
+      // 檢查警報是否存在
+      const existingAlert = await alertService.getAlertById(alertId);
+      if (!existingAlert) {
+        throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
+      }
 
-    // 執行批量操作
-    switch (action) {
-      case 'resolve':
-        return await alertService.resolveAlert(alertId, req.user.id);
-      case 'dismiss':
-        return await alertService.dismissAlert(alertId, req.user.id);
-      case 'delete':
-        return await alertService.deleteAlert(alertId);
-      default:
-        throw createValidationError('無效的操作類型', [
-          { field: 'action', message: '操作類型必須是 resolve、dismiss 或 delete' }
-        ]);
+      // 執行批量操作
+      switch (action) {
+        case 'resolve':
+          return await alertService.resolveAlert(alertId, req.user.id);
+        case 'dismiss':
+          return await alertService.dismissAlert(alertId, req.user.id);
+        case 'delete':
+          return await alertService.deleteAlert(alertId);
+        default:
+          throw createValidationError('無效的操作類型', [
+            {
+              field: 'action',
+              message: '操作類型必須是 resolve、dismiss 或 delete',
+            },
+          ]);
+      }
+    },
+    {
+      auth: true,
+      permissions: ['admin'],
     }
-  },
-  {
-    auth: true,
-    permissions: ['admin']
-  }
-));
+  )
+);
 
 /**
  * @swagger
@@ -409,32 +434,36 @@ router.post('/batch', createBatchHandler(
  *       401:
  *         description: 未授權
  */
-router.get('/search', createSearchHandler(
-  async (searchParams, req, res) => {
-    const { query, filters, category } = searchParams;
+router.get(
+  '/search',
+  createSearchHandler(
+    async (searchParams, req, res) => {
+      const { query, filters, category } = searchParams;
 
-    // 構建搜索條件
-    const searchCriteria = {
-      query: query || '',
-      filters: filters || {},
-      category: category || 'all'
-    };
+      // 構建搜索條件
+      const searchCriteria = {
+        query: query || '',
+        filters: filters || {},
+        category: category || 'all',
+      };
 
-    // 執行搜索
-    const results = await alertService.searchAlerts(searchCriteria);
+      // 執行搜索
+// eslint-disable-next-line no-unused-vars
+      const results = await alertService.searchAlerts(searchCriteria);
 
-    return {
-      query: searchCriteria.query,
-      results: results.data,
-      total: results.total,
-      filters: searchCriteria.filters
-    };
-  },
-  {
-    auth: true,
-    permissions: ['user', 'admin']
-  }
-));
+      return {
+        query: searchCriteria.query,
+        results: results.data,
+        total: results.total,
+        filters: searchCriteria.filters,
+      };
+    },
+    {
+      auth: true,
+      permissions: ['user', 'admin'],
+    }
+  )
+);
 
 /**
  * @swagger
@@ -450,24 +479,27 @@ router.get('/search', createSearchHandler(
  *       401:
  *         description: 未授權
  */
-router.get('/stats', createGetHandler(
-  async (req, res) => {
-    const stats = await alertService.getAlertStats();
+router.get(
+  '/stats',
+  createGetHandler(
+    async (req, res) => {
+      const stats = await alertService.getAlertStats();
 
-    return {
-      total: stats.total,
-      byType: stats.byType,
-      bySeverity: stats.bySeverity,
-      byStatus: stats.byStatus,
-      recentAlerts: stats.recentAlerts,
-      trends: stats.trends
-    };
-  },
-  {
-    auth: true,
-    permissions: ['user', 'admin']
-  }
-));
+      return {
+        total: stats.total,
+        byType: stats.byType,
+        bySeverity: stats.bySeverity,
+        byStatus: stats.byStatus,
+        recentAlerts: stats.recentAlerts,
+        trends: stats.trends,
+      };
+    },
+    {
+      auth: true,
+      permissions: ['user', 'admin'],
+    }
+  )
+);
 
 /**
  * @swagger
@@ -504,32 +536,36 @@ router.get('/stats', createGetHandler(
  *       401:
  *         description: 未授權
  */
-router.get('/history', createPaginatedHandler(
-  async (filters, pagination, req, res) => {
-    const { startDate, endDate, type, severity } = filters;
+router.get(
+  '/history',
+  createPaginatedHandler(
+    async (filters, pagination, req, res) => {
+      const { startDate, endDate, type, severity } = filters;
 
-    // 構建查詢條件
-    const query = {};
-    if (type) query.type = type;
-    if (severity) query.severity = severity;
-    if (startDate || endDate) {
-      query.timestamp = {};
-      if (startDate) query.timestamp.$gte = new Date(startDate);
-      if (endDate) query.timestamp.$lte = new Date(endDate);
+      // 構建查詢條件
+      const query = {};
+      if (type) query.type = type;
+      if (severity) query.severity = severity;
+      if (startDate || endDate) {
+        query.timestamp = {};
+        if (startDate) query.timestamp.$gte = new Date(startDate);
+        if (endDate) query.timestamp.$lte = new Date(endDate);
+      }
+
+      // 獲取歷史記錄
+// eslint-disable-next-line no-unused-vars
+      const history = await alertService.getAlertHistory(query, pagination);
+
+      return {
+        data: history.data,
+        total: history.total,
+      };
+    },
+    {
+      auth: true,
+      permissions: ['user', 'admin'],
     }
-
-    // 獲取歷史記錄
-    const history = await alertService.getAlertHistory(query, pagination);
-
-    return {
-      data: history.data,
-      total: history.total
-    };
-  },
-  {
-    auth: true,
-    permissions: ['user', 'admin']
-  }
-));
+  )
+);
 
 module.exports = router;

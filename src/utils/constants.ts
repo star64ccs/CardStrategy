@@ -1,5 +1,7 @@
 // API 相關常數
-export const API_BASE_URL = (process.env as any)['API_BASE_URL'] || 'https://cardstrategy-api.onrender.com/api';
+export const API_BASE_URL =
+  (process.env as any)['API_BASE_URL'] ||
+  'https://cardstrategy-api.onrender.com/api';
 export const API_TIMEOUT = 30000; // 30 秒
 export const API_RETRY_ATTEMPTS = 3;
 export const API_RETRY_DELAY = 1000; // 1 秒
@@ -14,12 +16,17 @@ export const CACHE_EXPIRY = {
   SHORT: 5 * 60 * 1000, // 5 分鐘
   MEDIUM: 30 * 60 * 1000, // 30 分鐘
   LONG: 24 * 60 * 60 * 1000, // 24 小時
-  VERY_LONG: 7 * 24 * 60 * 60 * 1000 // 7 天
+  VERY_LONG: 7 * 24 * 60 * 60 * 1000, // 7 天
 };
 
 // 檔案上傳常數
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
-export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+export const ALLOWED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+];
 export const MAX_IMAGE_DIMENSION = 2048; // 2048px
 export const IMAGE_QUALITY = 0.8; // 80%
 
@@ -54,14 +61,14 @@ export const FREE_TIER_LIMITS = {
   CONDITION_ANALYSIS: 5,
   AUTHENTICITY_CHECK: 3,
   PRICE_PREDICTION: 5,
-  AI_CHAT: 20
+  AI_CHAT: 20,
 };
 export const VIP_TIER_LIMITS = {
   CARD_RECOGNITION: 1000,
   CONDITION_ANALYSIS: 500,
   AUTHENTICITY_CHECK: 300,
   PRICE_PREDICTION: 500,
-  AI_CHAT: 1000
+  AI_CHAT: 1000,
 };
 
 // 通知常數
@@ -106,7 +113,7 @@ export const ERROR_CODES = {
   TIMEOUT_ERROR: 'TIMEOUT_ERROR',
   RATE_LIMIT_ERROR: 'RATE_LIMIT_ERROR',
   INSUFFICIENT_PERMISSIONS: 'INSUFFICIENT_PERMISSIONS',
-  FEATURE_LIMIT_REACHED: 'FEATURE_LIMIT_REACHED'
+  FEATURE_LIMIT_REACHED: 'FEATURE_LIMIT_REACHED',
 } as const;
 
 // 狀態常數
@@ -114,13 +121,13 @@ export const STATUS = {
   IDLE: 'idle',
   LOADING: 'loading',
   SUCCESS: 'success',
-  ERROR: 'error'
+  ERROR: 'error',
 } as const;
 
 // 排序常數
 export const SORT_ORDERS = {
   ASC: 'asc',
-  DESC: 'desc'
+  DESC: 'desc',
 } as const;
 
 // 過濾常數
@@ -139,7 +146,7 @@ export const FILTER_OPERATORS = {
   NOT_IN: 'not_in',
   BETWEEN: 'between',
   IS_NULL: 'is_null',
-  IS_NOT_NULL: 'is_not_null'
+  IS_NOT_NULL: 'is_not_null',
 } as const;
 
 // 權限常數
@@ -156,7 +163,7 @@ export const PERMISSIONS = {
   USE_AI_FEATURES: 'use_ai_features',
   ACCESS_PREMIUM_FEATURES: 'access_premium_features',
   MANAGE_USERS: 'manage_users',
-  VIEW_ANALYTICS: 'view_analytics'
+  VIEW_ANALYTICS: 'view_analytics',
 } as const;
 
 // 角色常數
@@ -164,7 +171,7 @@ export const ROLES = {
   USER: 'user',
   MODERATOR: 'moderator',
   ADMIN: 'admin',
-  SUPER_ADMIN: 'super_admin'
+  SUPER_ADMIN: 'super_admin',
 } as const;
 
 // 事件常數
@@ -185,14 +192,14 @@ export const EVENTS = {
   AI_ANALYSIS_COMPLETED: 'ai_analysis_completed',
   PRICE_ALERT_TRIGGERED: 'price_alert_triggered',
   MEMBERSHIP_UPGRADED: 'membership_upgraded',
-  MEMBERSHIP_DOWNGRADED: 'membership_downgraded'
+  MEMBERSHIP_DOWNGRADED: 'membership_downgraded',
 } as const;
 
 // 平台常數
 export const PLATFORMS = {
   IOS: 'ios',
   ANDROID: 'android',
-  WEB: 'web'
+  WEB: 'web',
 } as const;
 
 // 版本常數
@@ -222,7 +229,7 @@ export const STORAGE_KEYS = {
   LANGUAGE: 'language',
   ONBOARDING_COMPLETED: 'onboarding_completed',
   LAST_SYNC: 'last_sync',
-  CACHE_DATA: 'cache_data'
+  CACHE_DATA: 'cache_data',
 } as const;
 
 // 路由常數
@@ -243,5 +250,5 @@ export const ROUTES = {
   AI_CHAT: 'AIChat',
   MARKET_ANALYSIS: 'MarketAnalysis',
   NOTIFICATIONS: 'Notifications',
-  HELP: 'Help'
+  HELP: 'Help',
 } as const;

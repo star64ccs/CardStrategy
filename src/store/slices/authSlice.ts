@@ -4,7 +4,7 @@ import {
   User,
   RegisterRequest,
   LoginRequest,
-  AuthResponse
+  AuthResponse,
 } from '../../services/authService';
 
 // 認證狀態接口
@@ -22,7 +22,7 @@ const initialState: AuthState = {
   token: null,
   isAuthenticated: false,
   isLoading: false,
-  error: null
+  error: null,
 };
 
 // 異步Action：用戶註冊
@@ -33,7 +33,8 @@ export const registerUser = createAsyncThunk(
       const response = await authService.register(userData);
       return response;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || '註冊失敗';
+      const errorMessage =
+        error.response?.data?.message || error.message || '註冊失敗';
       return rejectWithValue(errorMessage);
     }
   }
@@ -47,7 +48,8 @@ export const loginUser = createAsyncThunk(
       const response = await authService.login(credentials);
       return response;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || '登錄失敗';
+      const errorMessage =
+        error.response?.data?.message || error.message || '登錄失敗';
       return rejectWithValue(errorMessage);
     }
   }
@@ -61,7 +63,8 @@ export const logoutUser = createAsyncThunk(
       await authService.logout();
       return null;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || '登出失敗';
+      const errorMessage =
+        error.response?.data?.message || error.message || '登出失敗';
       return rejectWithValue(errorMessage);
     }
   }
@@ -75,7 +78,8 @@ export const getCurrentUser = createAsyncThunk(
       const user = await authService.getCurrentUser();
       return user;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || '獲取用戶信息失敗';
+      const errorMessage =
+        error.response?.data?.message || error.message || '獲取用戶信息失敗';
       return rejectWithValue(errorMessage);
     }
   }
@@ -94,7 +98,8 @@ export const checkAuthStatus = createAsyncThunk(
       }
       return { user: null, token: null };
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || '檢查認證狀態失敗';
+      const errorMessage =
+        error.response?.data?.message || error.message || '檢查認證狀態失敗';
       return rejectWithValue(errorMessage);
     }
   }
@@ -108,7 +113,8 @@ export const updateUserProfile = createAsyncThunk(
       const user = await authService.updateProfile(profileData);
       return user;
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message || '更新資料失敗';
+      const errorMessage =
+        error.response?.data?.message || error.message || '更新資料失敗';
       return rejectWithValue(errorMessage);
     }
   }
@@ -141,7 +147,7 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       state.error = null;
-    }
+    },
   },
   extraReducers: (builder) => {
     // 註冊用戶
@@ -150,13 +156,16 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(registerUser.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
-        state.isLoading = false;
-        state.user = action.payload.data.user;
-        state.token = action.payload.data.token;
-        state.isAuthenticated = true;
-        state.error = null;
-      })
+      .addCase(
+        registerUser.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.isLoading = false;
+          state.user = action.payload.data.user;
+          state.token = action.payload.data.token;
+          state.isAuthenticated = true;
+          state.error = null;
+        }
+      )
       .addCase(registerUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
@@ -168,13 +177,16 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(loginUser.fulfilled, (state, action: PayloadAction<AuthResponse>) => {
-        state.isLoading = false;
-        state.user = action.payload.data.user;
-        state.token = action.payload.data.token;
-        state.isAuthenticated = true;
-        state.error = null;
-      })
+      .addCase(
+        loginUser.fulfilled,
+        (state, action: PayloadAction<AuthResponse>) => {
+          state.isLoading = false;
+          state.user = action.payload.data.user;
+          state.token = action.payload.data.token;
+          state.isAuthenticated = true;
+          state.error = null;
+        }
+      )
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
@@ -203,17 +215,20 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(getCurrentUser.fulfilled, (state, action: PayloadAction<User | null>) => {
-        state.isLoading = false;
-        if (action.payload) {
-          state.user = action.payload;
-          state.isAuthenticated = true;
-        } else {
-          state.user = null;
-          state.isAuthenticated = false;
+      .addCase(
+        getCurrentUser.fulfilled,
+        (state, action: PayloadAction<User | null>) => {
+          state.isLoading = false;
+          if (action.payload) {
+            state.user = action.payload;
+            state.isAuthenticated = true;
+          } else {
+            state.user = null;
+            state.isAuthenticated = false;
+          }
+          state.error = null;
         }
-        state.error = null;
-      })
+      )
       .addCase(getCurrentUser.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
@@ -227,13 +242,17 @@ const authSlice = createSlice({
       })
       .addCase(
         checkAuthStatus.fulfilled,
-        (state, action: PayloadAction<{ user: User | null; token: string | null }>) => {
+        (
+          state,
+          action: PayloadAction<{ user: User | null; token: string | null }>
+        ) => {
           state.isLoading = false;
           state.user = action.payload.user;
           state.token = action.payload.token;
           state.isAuthenticated = !!action.payload.user;
           state.error = null;
-        })
+        }
+      )
       .addCase(checkAuthStatus.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
@@ -245,16 +264,19 @@ const authSlice = createSlice({
         state.isLoading = true;
         state.error = null;
       })
-      .addCase(updateUserProfile.fulfilled, (state, action: PayloadAction<User>) => {
-        state.isLoading = false;
-        state.user = action.payload;
-        state.error = null;
-      })
+      .addCase(
+        updateUserProfile.fulfilled,
+        (state, action: PayloadAction<User>) => {
+          state.isLoading = false;
+          state.user = action.payload;
+          state.error = null;
+        }
+      )
       .addCase(updateUserProfile.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  }
+  },
 });
 
 // 導出actions
@@ -264,8 +286,10 @@ export const { clearError, setUser, setToken, resetAuth } = authSlice.actions;
 export const selectAuth = (state: { auth: AuthState }) => state.auth;
 export const selectUser = (state: { auth: AuthState }) => state.auth.user;
 export const selectToken = (state: { auth: AuthState }) => state.auth.token;
-export const selectIsAuthenticated = (state: { auth: AuthState }) => state.auth.isAuthenticated;
-export const selectIsLoading = (state: { auth: AuthState }) => state.auth.isLoading;
+export const selectIsAuthenticated = (state: { auth: AuthState }) =>
+  state.auth.isAuthenticated;
+export const selectIsLoading = (state: { auth: AuthState }) =>
+  state.auth.isLoading;
 export const selectError = (state: { auth: AuthState }) => state.auth.error;
 
 // 導出reducer

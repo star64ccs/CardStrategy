@@ -1,5 +1,8 @@
 import { test, expect, Page } from '@playwright/test';
-import { setupTestEnvironment, cleanupTestEnvironment } from '../setup/e2e-setup';
+import {
+  setupTestEnvironment,
+  cleanupTestEnvironment,
+} from '../setup/e2e-setup';
 import { PerformanceMonitor } from './performance-monitor';
 
 // 性能優化測試配置
@@ -8,32 +11,32 @@ const OPTIMIZATION_CONFIG = {
   codeSplitting: {
     expectedBundleSize: 2 * 1024 * 1024, // 2MB
     expectedLoadTime: 3000, // 3秒
-    expectedChunkCount: 5
+    expectedChunkCount: 5,
   },
   // 圖片優化測試
   imageOptimization: {
     expectedImageSize: 500 * 1024, // 500KB
     expectedLoadTime: 1000, // 1秒
-    expectedFormat: 'webp'
+    expectedFormat: 'webp',
   },
   // 緩存策略測試
   caching: {
     expectedCacheHitRate: 0.8, // 80%
     expectedLoadTime: 500, // 500ms
-    expectedStorageUsage: 50 * 1024 * 1024 // 50MB
+    expectedStorageUsage: 50 * 1024 * 1024, // 50MB
   },
   // 懶加載測試
   lazyLoading: {
     expectedInitialLoadTime: 2000, // 2秒
     expectedScrollLoadTime: 1000, // 1秒
-    expectedVisibleImages: 10
+    expectedVisibleImages: 10,
   },
   // 壓縮測試
   compression: {
     expectedCompressionRatio: 0.7, // 70%壓縮率
     expectedTransferSize: 1 * 1024 * 1024, // 1MB
-    expectedGzipEnabled: true
-  }
+    expectedGzipEnabled: true,
+  },
 };
 
 describe('CardStrategy 性能優化測試', () => {
@@ -51,7 +54,7 @@ describe('CardStrategy 性能優化測試', () => {
     performanceMonitor = new PerformanceMonitor(page, {
       enableRealTimeMonitoring: true,
       collectInterval: 2000,
-      maxDataPoints: 50
+      maxDataPoints: 50,
     });
 
     await performanceMonitor.startMonitoring();
@@ -73,29 +76,49 @@ describe('CardStrategy 性能優化測試', () => {
     // 監控 JavaScript 包大小
     const bundleMetrics = await page.evaluate(() => {
       const resources = performance.getEntriesByType('resource');
-      const jsResources = resources.filter(resource =>
-        resource.name.includes('.js') && resource.initiatorType === 'script'
+      const jsResources = resources.filter(
+        (resource) =>
+          resource.name.includes('.js') && resource.initiatorType === 'script'
       );
 
       return {
-        totalSize: jsResources.reduce((sum, resource) => sum + (resource.transferSize || 0), 0),
+        totalSize: jsResources.reduce(
+          (sum, resource) => sum + (resource.transferSize || 0),
+          0
+        ),
         chunkCount: jsResources.length,
-        averageSize: jsResources.reduce((sum, resource) => sum + (resource.transferSize || 0), 0) / jsResources.length,
-        largestChunk: Math.max(...jsResources.map(resource => resource.transferSize || 0)),
-        loadTimes: jsResources.map(resource => resource.duration)
+        averageSize:
+          jsResources.reduce(
+            (sum, resource) => sum + (resource.transferSize || 0),
+            0
+          ) / jsResources.length,
+        largestChunk: Math.max(
+          ...jsResources.map((resource) => resource.transferSize || 0)
+        ),
+        loadTimes: jsResources.map((resource) => resource.duration),
       };
     });
 
     // 驗證代碼分割效果
-    expect(bundleMetrics.totalSize).toBeLessThan(OPTIMIZATION_CONFIG.codeSplitting.expectedBundleSize);
-    expect(bundleMetrics.chunkCount).toBeGreaterThan(OPTIMIZATION_CONFIG.codeSplitting.expectedChunkCount);
+    expect(bundleMetrics.totalSize).toBeLessThan(
+      OPTIMIZATION_CONFIG.codeSplitting.expectedBundleSize
+    );
+    expect(bundleMetrics.chunkCount).toBeGreaterThan(
+      OPTIMIZATION_CONFIG.codeSplitting.expectedChunkCount
+    );
     expect(bundleMetrics.averageSize).toBeLessThan(500 * 1024); // 每個chunk小於500KB
 
     console.log('📊 代碼分割測試結果:');
-    console.log(`   總包大小: ${(bundleMetrics.totalSize / 1024 / 1024).toFixed(2)}MB`);
+    console.log(
+      `   總包大小: ${(bundleMetrics.totalSize / 1024 / 1024).toFixed(2)}MB`
+    );
     console.log(`   Chunk 數量: ${bundleMetrics.chunkCount}`);
-    console.log(`   平均 Chunk 大小: ${(bundleMetrics.averageSize / 1024).toFixed(2)}KB`);
-    console.log(`   最大 Chunk 大小: ${(bundleMetrics.largestChunk / 1024).toFixed(2)}KB`);
+    console.log(
+      `   平均 Chunk 大小: ${(bundleMetrics.averageSize / 1024).toFixed(2)}KB`
+    );
+    console.log(
+      `   最大 Chunk 大小: ${(bundleMetrics.largestChunk / 1024).toFixed(2)}KB`
+    );
 
     // 測試動態加載
     const dynamicLoadTimes: number[] = [];
@@ -107,7 +130,9 @@ describe('CardStrategy 性能優化測試', () => {
       const startTime = performance.now();
       try {
         await page.click(`[data-testid="${module}-nav"]`);
-        await page.waitForSelector(`[data-testid="${module}-module"]`, { timeout: 10000 });
+        await page.waitForSelector(`[data-testid="${module}-module"]`, {
+          timeout: 10000,
+        });
         const endTime = performance.now();
         dynamicLoadTimes.push(endTime - startTime);
       } catch (error) {
@@ -116,8 +141,11 @@ describe('CardStrategy 性能優化測試', () => {
     }
 
     // 驗證動態加載性能
-    const averageLoadTime = dynamicLoadTimes.reduce((a, b) => a + b, 0) / dynamicLoadTimes.length;
-    expect(averageLoadTime).toBeLessThan(OPTIMIZATION_CONFIG.codeSplitting.expectedLoadTime);
+    const averageLoadTime =
+      dynamicLoadTimes.reduce((a, b) => a + b, 0) / dynamicLoadTimes.length;
+    expect(averageLoadTime).toBeLessThan(
+      OPTIMIZATION_CONFIG.codeSplitting.expectedLoadTime
+    );
 
     console.log(`   平均動態加載時間: ${averageLoadTime.toFixed(2)}ms`);
   });
@@ -128,38 +156,53 @@ describe('CardStrategy 性能優化測試', () => {
     // 監控圖片加載
     const imageMetrics = await page.evaluate(() => {
       const images = document.querySelectorAll('img');
-      const imageResources = performance.getEntriesByType('resource').filter(resource =>
-        resource.initiatorType === 'img'
-      );
+      const imageResources = performance
+        .getEntriesByType('resource')
+        .filter((resource) => resource.initiatorType === 'img');
 
       return {
         totalImages: images.length,
-        totalSize: imageResources.reduce((sum, resource) => sum + (resource.transferSize || 0), 0),
-        averageSize: imageResources.reduce((sum, resource) => sum + (resource.transferSize || 0), 0) / imageResources.length,
-        loadTimes: imageResources.map(resource => resource.duration),
-        formats: Array.from(images).map(img => {
-          const {src} = (img as HTMLImageElement);
+        totalSize: imageResources.reduce(
+          (sum, resource) => sum + (resource.transferSize || 0),
+          0
+        ),
+        averageSize:
+          imageResources.reduce(
+            (sum, resource) => sum + (resource.transferSize || 0),
+            0
+          ) / imageResources.length,
+        loadTimes: imageResources.map((resource) => resource.duration),
+        formats: Array.from(images).map((img) => {
+          const { src } = img as HTMLImageElement;
           return src.split('.').pop()?.toLowerCase();
         }),
-        lazyLoaded: Array.from(images).filter(img => (img as HTMLImageElement).loading === 'lazy').length
+        lazyLoaded: Array.from(images).filter(
+          (img) => (img as HTMLImageElement).loading === 'lazy'
+        ).length,
       };
     });
 
     // 驗證圖片優化
-    expect(imageMetrics.totalSize).toBeLessThan(OPTIMIZATION_CONFIG.imageOptimization.expectedImageSize);
+    expect(imageMetrics.totalSize).toBeLessThan(
+      OPTIMIZATION_CONFIG.imageOptimization.expectedImageSize
+    );
     expect(imageMetrics.averageSize).toBeLessThan(100 * 1024); // 平均圖片小於100KB
     expect(imageMetrics.lazyLoaded).toBeGreaterThan(0);
 
     console.log('📊 圖片優化測試結果:');
     console.log(`   總圖片數量: ${imageMetrics.totalImages}`);
-    console.log(`   總圖片大小: ${(imageMetrics.totalSize / 1024).toFixed(2)}KB`);
-    console.log(`   平均圖片大小: ${(imageMetrics.averageSize / 1024).toFixed(2)}KB`);
+    console.log(
+      `   總圖片大小: ${(imageMetrics.totalSize / 1024).toFixed(2)}KB`
+    );
+    console.log(
+      `   平均圖片大小: ${(imageMetrics.averageSize / 1024).toFixed(2)}KB`
+    );
     console.log(`   懶加載圖片數量: ${imageMetrics.lazyLoaded}`);
 
     // 測試懶加載功能
     const initialVisibleImages = await page.evaluate(() => {
       const images = document.querySelectorAll('img');
-      return Array.from(images).filter(img => {
+      return Array.from(images).filter((img) => {
         const rect = (img as HTMLImageElement).getBoundingClientRect();
         return rect.top < window.innerHeight && rect.bottom > 0;
       }).length;
@@ -171,7 +214,7 @@ describe('CardStrategy 性能優化測試', () => {
 
     const finalVisibleImages = await page.evaluate(() => {
       const images = document.querySelectorAll('img');
-      return Array.from(images).filter(img => {
+      return Array.from(images).filter((img) => {
         const rect = (img as HTMLImageElement).getBoundingClientRect();
         return rect.top < window.innerHeight && rect.bottom > 0;
       }).length;
@@ -182,7 +225,9 @@ describe('CardStrategy 性能優化測試', () => {
     console.log(`   滾動後可見圖片: ${finalVisibleImages}`);
 
     // 檢查圖片格式
-    const webpImages = imageMetrics.formats.filter(format => format === 'webp').length;
+    const webpImages = imageMetrics.formats.filter(
+      (format) => format === 'webp'
+    ).length;
     const webpRatio = webpImages / imageMetrics.formats.length;
     expect(webpRatio).toBeGreaterThan(0.5); // 至少50%的圖片使用WebP格式
 
@@ -197,7 +242,7 @@ describe('CardStrategy 性能優化測試', () => {
       return {
         hasServiceWorker: 'serviceWorker' in navigator,
         isRegistered: false,
-        cacheAvailable: 'caches' in window
+        cacheAvailable: 'caches' in window,
       };
     });
 
@@ -207,44 +252,72 @@ describe('CardStrategy 性能優化測試', () => {
     // 測試緩存命中率
     const cacheMetrics = await page.evaluate(() => {
       const resources = performance.getEntriesByType('resource');
-      const cachedResources = resources.filter(resource =>
-        resource.transferSize === 0 || resource.transferSize < resource.encodedBodySize
+      const cachedResources = resources.filter(
+        (resource) =>
+          resource.transferSize === 0 ||
+          resource.transferSize < resource.encodedBodySize
       );
 
       return {
         totalResources: resources.length,
         cachedResources: cachedResources.length,
         cacheHitRate: cachedResources.length / resources.length,
-        averageCachedSize: cachedResources.reduce((sum, resource) => sum + (resource.transferSize || 0), 0) / cachedResources.length,
-        averageUncachedSize: resources.filter(resource =>
-          resource.transferSize > 0 && resource.transferSize >= resource.encodedBodySize
-        ).reduce((sum, resource) => sum + (resource.transferSize || 0), 0) / resources.filter(resource =>
-          resource.transferSize > 0 && resource.transferSize >= resource.encodedBodySize
-        ).length
+        averageCachedSize:
+          cachedResources.reduce(
+            (sum, resource) => sum + (resource.transferSize || 0),
+            0
+          ) / cachedResources.length,
+        averageUncachedSize:
+          resources
+            .filter(
+              (resource) =>
+                resource.transferSize > 0 &&
+                resource.transferSize >= resource.encodedBodySize
+            )
+            .reduce((sum, resource) => sum + (resource.transferSize || 0), 0) /
+          resources.filter(
+            (resource) =>
+              resource.transferSize > 0 &&
+              resource.transferSize >= resource.encodedBodySize
+          ).length,
       };
     });
 
     // 驗證緩存效果
-    expect(cacheMetrics.cacheHitRate).toBeGreaterThan(OPTIMIZATION_CONFIG.caching.expectedCacheHitRate);
-    expect(cacheMetrics.averageCachedSize).toBeLessThan(cacheMetrics.averageUncachedSize);
+    expect(cacheMetrics.cacheHitRate).toBeGreaterThan(
+      OPTIMIZATION_CONFIG.caching.expectedCacheHitRate
+    );
+    expect(cacheMetrics.averageCachedSize).toBeLessThan(
+      cacheMetrics.averageUncachedSize
+    );
 
     console.log('📊 緩存策略測試結果:');
     console.log(`   總資源數量: ${cacheMetrics.totalResources}`);
     console.log(`   緩存資源數量: ${cacheMetrics.cachedResources}`);
-    console.log(`   緩存命中率: ${(cacheMetrics.cacheHitRate * 100).toFixed(2)}%`);
-    console.log(`   平均緩存大小: ${(cacheMetrics.averageCachedSize / 1024).toFixed(2)}KB`);
-    console.log(`   平均未緩存大小: ${(cacheMetrics.averageUncachedSize / 1024).toFixed(2)}KB`);
+    console.log(
+      `   緩存命中率: ${(cacheMetrics.cacheHitRate * 100).toFixed(2)}%`
+    );
+    console.log(
+      `   平均緩存大小: ${(cacheMetrics.averageCachedSize / 1024).toFixed(2)}KB`
+    );
+    console.log(
+      `   平均未緩存大小: ${(cacheMetrics.averageUncachedSize / 1024).toFixed(2)}KB`
+    );
 
     // 測試離線功能
-    await page.route('**/*', route => route.abort());
+    await page.route('**/*', (route) => route.abort());
 
     try {
       await page.reload();
       const offlineContent = await page.evaluate(() => {
         return {
-          hasOfflineIndicator: !!document.querySelector('[data-testid="offline-indicator"]'),
-          hasCachedContent: !!document.querySelector('[data-testid="cached-content"]'),
-          pageTitle: document.title
+          hasOfflineIndicator: !!document.querySelector(
+            '[data-testid="offline-indicator"]'
+          ),
+          hasCachedContent: !!document.querySelector(
+            '[data-testid="cached-content"]'
+          ),
+          pageTitle: document.title,
         };
       });
 
@@ -267,38 +340,61 @@ describe('CardStrategy 性能優化測試', () => {
 
       return {
         totalResources: resources.length,
-        totalTransferSize: resources.reduce((sum, resource) => sum + (resource.transferSize || 0), 0),
-        totalEncodedSize: resources.reduce((sum, resource) => sum + (resource.encodedBodySize || 0), 0),
+        totalTransferSize: resources.reduce(
+          (sum, resource) => sum + (resource.transferSize || 0),
+          0
+        ),
+        totalEncodedSize: resources.reduce(
+          (sum, resource) => sum + (resource.encodedBodySize || 0),
+          0
+        ),
         compressionRatio: 0,
         gzipEnabled: false,
-        resourceTypes: resources.reduce((acc, resource) => {
-          const type = resource.initiatorType;
-          acc[type] = (acc[type] || 0) + 1;
-          return acc;
-        }, {} as { [key: string]: number })
+        resourceTypes: resources.reduce(
+          (acc, resource) => {
+            const type = resource.initiatorType;
+            acc[type] = (acc[type] || 0) + 1;
+            return acc;
+          },
+          {} as { [key: string]: number }
+        ),
       };
     });
 
     // 計算壓縮率
     compressionMetrics.compressionRatio =
-      (compressionMetrics.totalEncodedSize - compressionMetrics.totalTransferSize) / compressionMetrics.totalEncodedSize;
+      (compressionMetrics.totalEncodedSize -
+        compressionMetrics.totalTransferSize) /
+      compressionMetrics.totalEncodedSize;
 
     // 驗證壓縮效果
-    expect(compressionMetrics.compressionRatio).toBeGreaterThan(OPTIMIZATION_CONFIG.compression.expectedCompressionRatio);
-    expect(compressionMetrics.totalTransferSize).toBeLessThan(OPTIMIZATION_CONFIG.compression.expectedTransferSize);
+    expect(compressionMetrics.compressionRatio).toBeGreaterThan(
+      OPTIMIZATION_CONFIG.compression.expectedCompressionRatio
+    );
+    expect(compressionMetrics.totalTransferSize).toBeLessThan(
+      OPTIMIZATION_CONFIG.compression.expectedTransferSize
+    );
 
     console.log('📊 壓縮優化測試結果:');
     console.log(`   總資源數量: ${compressionMetrics.totalResources}`);
-    console.log(`   總傳輸大小: ${(compressionMetrics.totalTransferSize / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   總編碼大小: ${(compressionMetrics.totalEncodedSize / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   壓縮率: ${(compressionMetrics.compressionRatio * 100).toFixed(2)}%`);
+    console.log(
+      `   總傳輸大小: ${(compressionMetrics.totalTransferSize / 1024 / 1024).toFixed(2)}MB`
+    );
+    console.log(
+      `   總編碼大小: ${(compressionMetrics.totalEncodedSize / 1024 / 1024).toFixed(2)}MB`
+    );
+    console.log(
+      `   壓縮率: ${(compressionMetrics.compressionRatio * 100).toFixed(2)}%`
+    );
 
     // 檢查 HTTP/2 和 HTTPS
     const protocolMetrics = await page.evaluate(() => {
       return {
         protocol: window.location.protocol,
         isSecure: window.location.protocol === 'https:',
-        hasHttp2: 'connection' in navigator && (navigator as any).connection?.effectiveType === '4g'
+        hasHttp2:
+          'connection' in navigator &&
+          (navigator as any).connection?.effectiveType === '4g',
       };
     });
 
@@ -309,9 +405,11 @@ describe('CardStrategy 性能優化測試', () => {
 
     // 檢查資源類型分布
     console.log('   資源類型分布:');
-    Object.entries(compressionMetrics.resourceTypes).forEach(([type, count]) => {
-      console.log(`     ${type}: ${count} 個`);
-    });
+    Object.entries(compressionMetrics.resourceTypes).forEach(
+      ([type, count]) => {
+        console.log(`     ${type}: ${count} 個`);
+      }
+    );
   });
 
   test('內存優化和垃圾回收測試', async () => {
@@ -323,7 +421,7 @@ describe('CardStrategy 性能優化測試', () => {
         return {
           usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
           totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
-          jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit
+          jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
         };
       }
       return null;
@@ -335,9 +433,15 @@ describe('CardStrategy 性能優化測試', () => {
     }
 
     console.log('📊 初始內存狀態:');
-    console.log(`   已使用堆內存: ${(initialMemory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   總堆內存: ${(initialMemory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`);
-    console.log(`   堆內存限制: ${(initialMemory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)}MB`);
+    console.log(
+      `   已使用堆內存: ${(initialMemory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`
+    );
+    console.log(
+      `   總堆內存: ${(initialMemory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`
+    );
+    console.log(
+      `   堆內存限制: ${(initialMemory.jsHeapSizeLimit / 1024 / 1024).toFixed(2)}MB`
+    );
 
     // 執行內存密集型操作
     const memoryIntensiveOperations = async () => {
@@ -366,23 +470,28 @@ describe('CardStrategy 性能優化測試', () => {
         return {
           usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
           totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
-          jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit
+          jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
         };
       }
       return null;
     });
 
     if (finalMemory) {
-      const memoryGrowth = finalMemory.usedJSHeapSize - initialMemory.usedJSHeapSize;
+      const memoryGrowth =
+        finalMemory.usedJSHeapSize - initialMemory.usedJSHeapSize;
       const memoryGrowthMB = memoryGrowth / 1024 / 1024;
 
       console.log('📊 最終內存狀態:');
-      console.log(`   已使用堆內存: ${(finalMemory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`);
+      console.log(
+        `   已使用堆內存: ${(finalMemory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`
+      );
       console.log(`   內存增長: ${memoryGrowthMB.toFixed(2)}MB`);
 
       // 驗證內存優化
       expect(memoryGrowthMB).toBeLessThan(100); // 內存增長應該小於100MB
-      expect(finalMemory.usedJSHeapSize).toBeLessThan(finalMemory.jsHeapSizeLimit * 0.8); // 使用率應該小於80%
+      expect(finalMemory.usedJSHeapSize).toBeLessThan(
+        finalMemory.jsHeapSizeLimit * 0.8
+      ); // 使用率應該小於80%
 
       if (memoryGrowthMB < 50) {
         console.log('✅ 內存優化效果良好');
@@ -416,12 +525,12 @@ describe('CardStrategy 性能優化測試', () => {
           const currentTime = performance.now();
 
           if (currentTime - lastTime >= 1000) {
-            const fps = frameCount * 1000 / (currentTime - lastTime);
+            const fps = (frameCount * 1000) / (currentTime - lastTime);
             frameRates.push(fps);
 
             // 檢測丟幀
             if (fps < 30) {
-              droppedFrames += (30 - fps);
+              droppedFrames += 30 - fps;
             }
 
             frameCount = 0;
@@ -432,11 +541,12 @@ describe('CardStrategy 性能優化測試', () => {
             requestAnimationFrame(measureFrameRate);
           } else {
             resolve({
-              averageFPS: frameRates.reduce((a, b) => a + b, 0) / frameRates.length,
+              averageFPS:
+                frameRates.reduce((a, b) => a + b, 0) / frameRates.length,
               minFPS: Math.min(...frameRates),
               maxFPS: Math.max(...frameRates),
               droppedFrames,
-              frameRates
+              frameRates,
             });
           }
         };
@@ -463,12 +573,14 @@ describe('CardStrategy 性能優化測試', () => {
         smoothAnimations: number;
         smoothnessRatio: number;
       }>((resolve) => {
-        const animations = document.querySelectorAll('*[style*="animation"], *[style*="transition"]');
+        const animations = document.querySelectorAll(
+          '*[style*="animation"], *[style*="transition"]'
+        );
         const animationCount = animations.length;
         let smoothAnimations = 0;
 
         // 簡單的動畫流暢度檢測
-        animations.forEach(element => {
+        animations.forEach((element) => {
           const style = window.getComputedStyle(element);
           const hasTransform = style.transform !== 'none';
           const hasTransition = style.transition !== 'all 0s ease 0s';
@@ -482,7 +594,7 @@ describe('CardStrategy 性能優化測試', () => {
         resolve({
           animationCount,
           smoothAnimations,
-          smoothnessRatio: smoothAnimations / animationCount
+          smoothnessRatio: smoothAnimations / animationCount,
         });
       });
     });
@@ -490,7 +602,9 @@ describe('CardStrategy 性能優化測試', () => {
     console.log('📊 動畫優化測試結果:');
     console.log(`   動畫元素數量: ${animationMetrics.animationCount}`);
     console.log(`   流暢動畫數量: ${animationMetrics.smoothAnimations}`);
-    console.log(`   流暢度比例: ${(animationMetrics.smoothnessRatio * 100).toFixed(2)}%`);
+    console.log(
+      `   流暢度比例: ${(animationMetrics.smoothnessRatio * 100).toFixed(2)}%`
+    );
 
     expect(animationMetrics.smoothnessRatio).toBeGreaterThan(0.8); // 至少80%的動畫應該是流暢的
   });
@@ -504,23 +618,35 @@ describe('CardStrategy 性能優化測試', () => {
     console.log('📊 綜合性能報告:');
     console.log(`   監控數據點: ${performanceReport.summary.totalDataPoints}`);
     console.log(`   性能警報: ${performanceReport.summary.totalAlerts}`);
-    console.log(`   監控時長: ${(performanceReport.summary.monitoringDuration / 1000).toFixed(2)}秒`);
+    console.log(
+      `   監控時長: ${(performanceReport.summary.monitoringDuration / 1000).toFixed(2)}秒`
+    );
 
     // 驗證綜合性能指標
     if (performanceReport.summary.averageMetrics.pageLoad) {
-      const {pageLoad} = performanceReport.summary.averageMetrics;
+      const { pageLoad } = performanceReport.summary.averageMetrics;
       console.log('   頁面加載性能:');
-      console.log(`     DOM 內容加載: ${pageLoad.domContentLoaded?.toFixed(2)}ms`);
+      console.log(
+        `     DOM 內容加載: ${pageLoad.domContentLoaded?.toFixed(2)}ms`
+      );
       console.log(`     頁面完全加載: ${pageLoad.loadComplete?.toFixed(2)}ms`);
-      console.log(`     首次內容繪製: ${pageLoad.firstContentfulPaint?.toFixed(2)}ms`);
-      console.log(`     最大內容繪製: ${pageLoad.largestContentfulPaint?.toFixed(2)}ms`);
+      console.log(
+        `     首次內容繪製: ${pageLoad.firstContentfulPaint?.toFixed(2)}ms`
+      );
+      console.log(
+        `     最大內容繪製: ${pageLoad.largestContentfulPaint?.toFixed(2)}ms`
+      );
     }
 
     if (performanceReport.summary.averageMetrics.apiPerformance) {
-      const {apiPerformance} = performanceReport.summary.averageMetrics;
+      const { apiPerformance } = performanceReport.summary.averageMetrics;
       console.log('   API 性能:');
-      console.log(`     平均響應時間: ${apiPerformance.averageResponseTime?.toFixed(2)}ms`);
-      console.log(`     錯誤率: ${(apiPerformance.errorRate * 100)?.toFixed(2)}%`);
+      console.log(
+        `     平均響應時間: ${apiPerformance.averageResponseTime?.toFixed(2)}ms`
+      );
+      console.log(
+        `     錯誤率: ${(apiPerformance.errorRate * 100)?.toFixed(2)}%`
+      );
     }
 
     // 輸出優化建議
@@ -533,13 +659,22 @@ describe('CardStrategy 性能優化測試', () => {
     expect(performanceReport.summary.totalAlerts).toBeLessThan(10); // 警報數量應該少於10個
 
     if (performanceReport.summary.averageMetrics.pageLoad) {
-      expect(performanceReport.summary.averageMetrics.pageLoad.domContentLoaded).toBeLessThan(2000);
-      expect(performanceReport.summary.averageMetrics.pageLoad.largestContentfulPaint).toBeLessThan(3000);
+      expect(
+        performanceReport.summary.averageMetrics.pageLoad.domContentLoaded
+      ).toBeLessThan(2000);
+      expect(
+        performanceReport.summary.averageMetrics.pageLoad.largestContentfulPaint
+      ).toBeLessThan(3000);
     }
 
     if (performanceReport.summary.averageMetrics.apiPerformance) {
-      expect(performanceReport.summary.averageMetrics.apiPerformance.averageResponseTime).toBeLessThan(1500);
-      expect(performanceReport.summary.averageMetrics.apiPerformance.errorRate).toBeLessThan(0.1);
+      expect(
+        performanceReport.summary.averageMetrics.apiPerformance
+          .averageResponseTime
+      ).toBeLessThan(1500);
+      expect(
+        performanceReport.summary.averageMetrics.apiPerformance.errorRate
+      ).toBeLessThan(0.1);
     }
 
     console.log('✅ 綜合性能優化測試完成');

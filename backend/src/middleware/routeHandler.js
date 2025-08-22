@@ -25,7 +25,7 @@ const createRouteHandler = (handler, options = {}) => {
     logOperation = true,
     logRequest = false,
     logResponse = false,
-    timeout = 30000
+    timeout = 30000,
   } = options;
 
   return asyncHandler(async (req, res, next) => {
@@ -41,12 +41,16 @@ const createRouteHandler = (handler, options = {}) => {
           userAgent: req.get('User-Agent'),
           body: sanitizeRequestBody(req.body),
           query: req.query,
-          params: req.params
+          params: req.params,
         });
       }
 
       // 權限檢查
-      if (auth && (!req.user || (permissions.length > 0 && !permissions.includes(req.user.role)))) {
+      if (
+        auth &&
+        (!req.user ||
+          (permissions.length > 0 && !permissions.includes(req.user.role)))
+      ) {
         const error = new Error('權限不足');
         error.status = 403;
         error.code = 'INSUFFICIENT_PERMISSIONS';
@@ -70,7 +74,7 @@ const createRouteHandler = (handler, options = {}) => {
         logger.info(`🔄 ${operation} 開始執行`, {
           userId: req.user?.id,
           ip: req.ip,
-          userAgent: req.get('User-Agent')
+          userAgent: req.get('User-Agent'),
         });
       }
 
@@ -84,7 +88,7 @@ const createRouteHandler = (handler, options = {}) => {
       // 執行處理器
       const result = await Promise.race([
         handler(req, res, next),
-        timeoutPromise
+        timeoutPromise,
       ]);
 
       // 記錄響應信息
@@ -93,7 +97,7 @@ const createRouteHandler = (handler, options = {}) => {
         logger.info(`📤 ${operation} 響應完成`, {
           duration: `${duration}ms`,
           status: res.statusCode,
-          result: sanitizeResponseBody(result)
+          result: sanitizeResponseBody(result),
         });
       }
 
@@ -104,13 +108,13 @@ const createRouteHandler = (handler, options = {}) => {
         // 記錄成功日誌
         logger.info(`✅ ${operation} 成功`, {
           duration: `${duration}ms`,
-          status: res.statusCode || 200
+          status: res.statusCode || 200,
         });
 
         res.json({
           success: true,
           data: result,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
     } catch (error) {
@@ -124,7 +128,7 @@ const createRouteHandler = (handler, options = {}) => {
         duration: `${duration}ms`,
         stack: error.stack,
         userId: req.user?.id,
-        ip: req.ip
+        ip: req.ip,
       });
 
       // 設置錯誤狀態碼
@@ -137,9 +141,9 @@ const createRouteHandler = (handler, options = {}) => {
         error: {
           message: error.message || '內部服務器錯誤',
           code: error.code || 'INTERNAL_ERROR',
-          status: statusCode
+          status: statusCode,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // 添加詳細錯誤信息（僅在開發環境）
@@ -163,7 +167,7 @@ const createGetHandler = (handler, options = {}) => {
   return createRouteHandler(handler, {
     ...options,
     logRequest: true,
-    logResponse: true
+    logResponse: true,
   });
 };
 
@@ -177,7 +181,7 @@ const createPostHandler = (handler, options = {}) => {
   return createRouteHandler(handler, {
     ...options,
     logRequest: true,
-    logResponse: true
+    logResponse: true,
   });
 };
 
@@ -191,7 +195,7 @@ const createPutHandler = (handler, options = {}) => {
   return createRouteHandler(handler, {
     ...options,
     logRequest: true,
-    logResponse: true
+    logResponse: true,
   });
 };
 
@@ -205,7 +209,7 @@ const createDeleteHandler = (handler, options = {}) => {
   return createRouteHandler(handler, {
     ...options,
     logRequest: true,
-    logResponse: true
+    logResponse: true,
   });
 };
 
@@ -228,14 +232,19 @@ const createBatchHandler = (handler, options = {}) => {
 
     for (let i = 0; i < items.length; i++) {
       try {
-        const result = await handler(items[i], { ...otherParams, index: i }, req, res);
+        const result = await handler(
+          items[i],
+          { ...otherParams, index: i },
+          req,
+          res
+        );
         results.push({ index: i, success: true, data: result });
       } catch (error) {
         errors.push({
           index: i,
           success: false,
           error: error.message,
-          code: error.code
+          code: error.code,
         });
       }
     }
@@ -245,7 +254,7 @@ const createBatchHandler = (handler, options = {}) => {
       successful: results.length,
       failed: errors.length,
       results,
-      errors: errors.length > 0 ? errors : undefined
+      errors: errors.length > 0 ? errors : undefined,
     };
   }, options);
 };
@@ -258,13 +267,19 @@ const createBatchHandler = (handler, options = {}) => {
  */
 const createPaginatedHandler = (handler, options = {}) => {
   return createRouteHandler(async (req, res, next) => {
-    const { page = 1, limit = 20, sortBy, sortOrder = 'desc', ...filters } = req.query;
+    const {
+      page = 1,
+      limit = 20,
+      sortBy,
+      sortOrder = 'desc',
+      ...filters
+    } = req.query;
 
     const pagination = {
       page: parseInt(page),
       limit: Math.min(parseInt(limit), 100), // 限制最大每頁數量
       sortBy,
-      sortOrder
+      sortOrder,
     };
 
     const result = await handler(filters, pagination, req, res);
@@ -276,9 +291,10 @@ const createPaginatedHandler = (handler, options = {}) => {
         limit: pagination.limit,
         total: result.total || 0,
         totalPages: Math.ceil((result.total || 0) / pagination.limit),
-        hasNext: pagination.page < Math.ceil((result.total || 0) / pagination.limit),
-        hasPrev: pagination.page > 1
-      }
+        hasNext:
+          pagination.page < Math.ceil((result.total || 0) / pagination.limit),
+        hasPrev: pagination.page > 1,
+      },
     };
   }, options);
 };
@@ -298,7 +314,7 @@ const createSearchHandler = (handler, options = {}) => {
       filters: filters ? JSON.parse(filters) : {},
       category,
       tags: tags ? tags.split(',') : [],
-      ...otherParams
+      ...otherParams,
     };
 
     return await handler(searchParams, req, res);
@@ -312,30 +328,34 @@ const createSearchHandler = (handler, options = {}) => {
  * @returns {Function} 文件上傳處理器
  */
 const createFileUploadHandler = (handler, options = {}) => {
-  return createRouteHandler(async (req, res, next) => {
-    if (!req.file && !req.files) {
-      throw new Error('沒有上傳文件');
-    }
-
-    const files = req.files || [req.file];
-
-    // 驗證文件
-    for (const file of files) {
-      if (!file.mimetype.startsWith('image/')) {
-        throw new Error('只支持圖片文件上傳');
+  return createRouteHandler(
+    async (req, res, next) => {
+      if (!req.file && !req.files) {
+        throw new Error('沒有上傳文件');
       }
 
-      if (file.size > 10 * 1024 * 1024) { // 10MB
-        throw new Error('文件大小不能超過10MB');
-      }
-    }
+      const files = req.files || [req.file];
 
-    return await handler(files, req.body, req, res);
-  }, {
-    ...options,
-    logRequest: true,
-    logResponse: true
-  });
+      // 驗證文件
+      for (const file of files) {
+        if (!file.mimetype.startsWith('image/')) {
+          throw new Error('只支持圖片文件上傳');
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          // 10MB
+          throw new Error('文件大小不能超過10MB');
+        }
+      }
+
+      return await handler(files, req.body, req, res);
+    },
+    {
+      ...options,
+      logRequest: true,
+      logResponse: true,
+    }
+  );
 };
 
 /**
@@ -346,10 +366,16 @@ const createFileUploadHandler = (handler, options = {}) => {
 const sanitizeRequestBody = (body) => {
   if (!body) return body;
 
-  const sensitiveFields = ['password', 'token', 'secret', 'key', 'authorization'];
+  const sensitiveFields = [
+    'password',
+    'token',
+    'secret',
+    'key',
+    'authorization',
+  ];
   const sanitized = { ...body };
 
-  sensitiveFields.forEach(field => {
+  sensitiveFields.forEach((field) => {
     if (sanitized[field]) {
       sanitized[field] = '[REDACTED]';
     }
@@ -484,5 +510,5 @@ module.exports = {
   createPermissionError,
   createNotFoundError,
   createDatabaseError,
-  createNetworkError
+  createNetworkError,
 };

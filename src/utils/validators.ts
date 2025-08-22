@@ -5,7 +5,9 @@ export const isValidEmail = (email: string): boolean => {
 };
 
 // 密碼驗證
-export const validatePassword = (password: string): {
+export const validatePassword = (
+  password: string
+): {
   isValid: boolean;
   errors: string[];
 } => {
@@ -33,12 +35,14 @@ export const validatePassword = (password: string): {
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
 // 用戶名驗證
-export const validateUsername = (username: string): {
+export const validateUsername = (
+  username: string
+): {
   isValid: boolean;
   errors: string[];
 } => {
@@ -58,7 +62,7 @@ export const validateUsername = (username: string): {
 
   return {
     isValid: errors.length === 0,
-    errors
+    errors,
   };
 };
 
@@ -130,7 +134,11 @@ export const isInRange = (value: number, min: number, max: number): boolean => {
 };
 
 // 長度驗證
-export const isValidLength = (value: string, min: number, max: number): boolean => {
+export const isValidLength = (
+  value: string,
+  min: number,
+  max: number
+): boolean => {
   return value.length >= min && value.length <= max;
 };
 
@@ -193,7 +201,10 @@ export const isValidCreditCard = (cardNumber: string): boolean => {
 };
 
 // 表單驗證工具
-export const validateForm = (data: Record<string, any>, rules: Record<string, any[]>): {
+export const validateForm = (
+  data: Record<string, any>,
+  rules: Record<string, any[]>
+): {
   isValid: boolean;
   errors: Record<string, string[]>;
 } => {

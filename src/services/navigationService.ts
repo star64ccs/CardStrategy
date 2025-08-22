@@ -91,7 +91,7 @@ class NavigationService {
   // 設置通知徽章數量
   setNotificationBadge(count: number) {
     this.notificationBadgeCount = count;
-    this.badgeUpdateCallbacks.forEach(callback => callback(count));
+    this.badgeUpdateCallbacks.forEach((callback) => callback(count));
     logger.info('通知徽章數量已更新:', { count });
   }
 
@@ -172,7 +172,7 @@ class NavigationService {
       if (this.navigationRef && this.navigationRef.current) {
         this.navigationRef.current.reset({
           index: 0,
-          routes: [{ name: 'MainTabs' }]
+          routes: [{ name: 'MainTabs' }],
         });
       }
     } catch (error) {
@@ -182,4 +182,5 @@ class NavigationService {
 }
 
 // 導出單例實例
+export { NavigationService };
 export const navigationService = new NavigationService();

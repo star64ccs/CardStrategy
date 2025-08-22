@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  FlatList
+  FlatList,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -53,15 +53,25 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
   onToggleForSale,
   onToggleWishlist,
   onExportCollection,
-  onImportCollection
+  onImportCollection,
 }) => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [filterRarity, setFilterRarity] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<'name' | 'value' | 'condition' | 'date'>('name');
+  const [sortBy, setSortBy] = useState<'name' | 'value' | 'condition' | 'date'>(
+    'name'
+  );
   const [showForSaleOnly, setShowForSaleOnly] = useState(false);
   const [showWishlistOnly, setShowWishlistOnly] = useState(false);
 
-  const rarities = ['all', 'common', 'uncommon', 'rare', 'mythic', 'special', 'promo'];
+  const rarities = [
+    'all',
+    'common',
+    'uncommon',
+    'rare',
+    'mythic',
+    'special',
+    'promo',
+  ];
 
   const formatValue = (value: number) => {
     if (value >= 1000000) {
@@ -84,12 +94,15 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
       rare: theme.colors.rarity.rare,
       mythic: theme.colors.rarity.mythic,
       special: theme.colors.rarity.special,
-      promo: theme.colors.rarity.promo
+      promo: theme.colors.rarity.promo,
     };
-    return rarityColors[rarity as keyof typeof rarityColors] || theme.colors.text.tertiary;
+    return (
+      rarityColors[rarity as keyof typeof rarityColors] ||
+      theme.colors.text.tertiary
+    );
   };
 
-  const filteredCards = cards.filter(card => {
+  const filteredCards = cards.filter((card) => {
     if (filterRarity !== 'all' && card.rarity !== filterRarity) return false;
     if (showForSaleOnly && !card.isForSale) return false;
     if (showWishlistOnly && !card.isWishlist) return false;
@@ -105,7 +118,9 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
       case 'condition':
         return b.condition - a.condition;
       case 'date':
-        return new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime();
+        return (
+          new Date(b.lastUpdated).getTime() - new Date(a.lastUpdated).getTime()
+        );
       default:
         return 0;
     }
@@ -117,11 +132,7 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
       onPress={() => onCardPress(item)}
     >
       <View style={styles.cardHeader}>
-        <Avatar
-          source={item.imageUrl}
-          size="medium"
-          variant="rounded"
-        />
+        <Avatar source={item.imageUrl} size="medium" variant="rounded" />
         <View style={styles.cardInfo}>
           <Text style={styles.cardName} numberOfLines={2}>
             {item.name}
@@ -138,13 +149,21 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
             style={styles.actionButton}
             onPress={() => onEditCard(item)}
           >
-            <Ionicons name="pencil" size={16} color={theme.colors.gold.primary} />
+            <Ionicons
+              name="pencil"
+              size={16}
+              color={theme.colors.gold.primary}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => onDeleteCard(item.id)}
           >
-            <Ionicons name="trash" size={16} color={theme.colors.status.error} />
+            <Ionicons
+              name="trash"
+              size={16}
+              color={theme.colors.status.error}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -160,7 +179,9 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
         </View>
         <View style={styles.detailRow}>
           <Text style={styles.detailLabel}>價值:</Text>
-          <Text style={styles.detailValue}>{formatValue(item.estimatedValue)}</Text>
+          <Text style={styles.detailValue}>
+            {formatValue(item.estimatedValue)}
+          </Text>
         </View>
       </View>
 
@@ -194,11 +215,25 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
         <View style={styles.statsHeader}>
           <Text style={styles.statsTitle}>收藏統計</Text>
           <View style={styles.statsActions}>
-            <TouchableOpacity style={styles.statsAction} onPress={onExportCollection}>
-              <Ionicons name="download" size={20} color={theme.colors.gold.primary} />
+            <TouchableOpacity
+              style={styles.statsAction}
+              onPress={onExportCollection}
+            >
+              <Ionicons
+                name="download"
+                size={20}
+                color={theme.colors.gold.primary}
+              />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.statsAction} onPress={onImportCollection}>
-              <Ionicons name="upload" size={20} color={theme.colors.gold.primary} />
+            <TouchableOpacity
+              style={styles.statsAction}
+              onPress={onImportCollection}
+            >
+              <Ionicons
+                name="upload"
+                size={20}
+                color={theme.colors.gold.primary}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -213,13 +248,13 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>
-              {cards.filter(card => card.isForSale).length}
+              {cards.filter((card) => card.isForSale).length}
             </Text>
             <Text style={styles.statLabel}>出售中</Text>
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>
-              {cards.filter(card => card.isWishlist).length}
+              {cards.filter((card) => card.isWishlist).length}
             </Text>
             <Text style={styles.statLabel}>願望清單</Text>
           </View>
@@ -231,23 +266,37 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
         <View style={styles.controlsRow}>
           <View style={styles.viewModeContainer}>
             <TouchableOpacity
-              style={[styles.viewModeButton, viewMode === 'grid' && styles.activeViewModeButton]}
+              style={[
+                styles.viewModeButton,
+                viewMode === 'grid' && styles.activeViewModeButton,
+              ]}
               onPress={() => setViewMode('grid')}
             >
               <Ionicons
                 name="grid"
                 size={20}
-                color={viewMode === 'grid' ? theme.colors.background.primary : theme.colors.text.secondary}
+                color={
+                  viewMode === 'grid'
+                    ? theme.colors.background.primary
+                    : theme.colors.text.secondary
+                }
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.viewModeButton, viewMode === 'list' && styles.activeViewModeButton]}
+              style={[
+                styles.viewModeButton,
+                viewMode === 'list' && styles.activeViewModeButton,
+              ]}
               onPress={() => setViewMode('list')}
             >
               <Ionicons
                 name="list"
                 size={20}
-                color={viewMode === 'list' ? theme.colors.background.primary : theme.colors.text.secondary}
+                color={
+                  viewMode === 'list'
+                    ? theme.colors.background.primary
+                    : theme.colors.text.secondary
+                }
               />
             </TouchableOpacity>
           </View>
@@ -260,22 +309,42 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
           />
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersContainer}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.filtersContainer}
+        >
           <TouchableOpacity
-            style={[styles.filterButton, filterRarity === 'all' && styles.activeFilterButton]}
+            style={[
+              styles.filterButton,
+              filterRarity === 'all' && styles.activeFilterButton,
+            ]}
             onPress={() => setFilterRarity('all')}
           >
-            <Text style={[styles.filterText, filterRarity === 'all' && styles.activeFilterText]}>
+            <Text
+              style={[
+                styles.filterText,
+                filterRarity === 'all' && styles.activeFilterText,
+              ]}
+            >
               全部
             </Text>
           </TouchableOpacity>
           {rarities.slice(1).map((rarity) => (
             <TouchableOpacity
               key={rarity}
-              style={[styles.filterButton, filterRarity === rarity && styles.activeFilterButton]}
+              style={[
+                styles.filterButton,
+                filterRarity === rarity && styles.activeFilterButton,
+              ]}
               onPress={() => setFilterRarity(rarity)}
             >
-              <Text style={[styles.filterText, filterRarity === rarity && styles.activeFilterText]}>
+              <Text
+                style={[
+                  styles.filterText,
+                  filterRarity === rarity && styles.activeFilterText,
+                ]}
+              >
                 {rarity}
               </Text>
             </TouchableOpacity>
@@ -289,14 +358,22 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
               { key: 'name', label: '名稱' },
               { key: 'value', label: '價值' },
               { key: 'condition', label: '狀況' },
-              { key: 'date', label: '日期' }
+              { key: 'date', label: '日期' },
             ].map((sort) => (
               <TouchableOpacity
                 key={sort.key}
-                style={[styles.sortButton, sortBy === sort.key && styles.activeSortButton]}
+                style={[
+                  styles.sortButton,
+                  sortBy === sort.key && styles.activeSortButton,
+                ]}
                 onPress={() => setSortBy(sort.key as any)}
               >
-                <Text style={[styles.sortText, sortBy === sort.key && styles.activeSortText]}>
+                <Text
+                  style={[
+                    styles.sortText,
+                    sortBy === sort.key && styles.activeSortText,
+                  ]}
+                >
                   {sort.label}
                 </Text>
               </TouchableOpacity>
@@ -340,135 +417,135 @@ export const CardCollectionManager: React.FC<CardCollectionManagerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   statsCard: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   statsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   statsTitle: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   statsActions: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   statsAction: {
     padding: theme.spacing.xs,
     marginLeft: theme.spacing.xs,
     borderRadius: theme.borderRadius.sm,
-    backgroundColor: theme.colors.background.secondary
+    backgroundColor: theme.colors.background.secondary,
   },
   statsContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statItem: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   statValue: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.gold.primary
+    color: theme.colors.gold.primary,
   },
   statLabel: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.tertiary,
-    marginTop: theme.spacing.xs
+    marginTop: theme.spacing.xs,
   },
   controlsCard: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   controlsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   viewModeContainer: {
     flexDirection: 'row',
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.xs
+    padding: theme.spacing.xs,
   },
   viewModeButton: {
     padding: theme.spacing.xs,
-    borderRadius: theme.borderRadius.sm
+    borderRadius: theme.borderRadius.sm,
   },
   activeViewModeButton: {
-    backgroundColor: theme.colors.gold.primary
+    backgroundColor: theme.colors.gold.primary,
   },
   filtersContainer: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   filterButton: {
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     marginRight: theme.spacing.sm,
     borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.background.secondary
+    backgroundColor: theme.colors.background.secondary,
   },
   activeFilterButton: {
-    backgroundColor: theme.colors.gold.primary
+    backgroundColor: theme.colors.gold.primary,
   },
   filterText: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   activeFilterText: {
     color: theme.colors.background.primary,
-    fontWeight: theme.typography.weights.bold
+    fontWeight: theme.typography.weights.bold,
   },
   sortContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   sortLabel: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
-    marginRight: theme.spacing.sm
+    marginRight: theme.spacing.sm,
   },
   sortButton: {
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     marginRight: theme.spacing.sm,
     borderRadius: theme.borderRadius.md,
-    backgroundColor: theme.colors.background.secondary
+    backgroundColor: theme.colors.background.secondary,
   },
   activeSortButton: {
-    backgroundColor: theme.colors.gold.primary
+    backgroundColor: theme.colors.gold.primary,
   },
   sortText: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   activeSortText: {
     color: theme.colors.background.primary,
-    fontWeight: theme.typography.weights.bold
+    fontWeight: theme.typography.weights.bold,
   },
   toggleContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   toggleItem: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   toggleLabel: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
-    marginRight: theme.spacing.sm
+    marginRight: theme.spacing.sm,
   },
   cardsList: {
-    paddingBottom: theme.spacing.lg
+    paddingBottom: theme.spacing.lg,
   },
   cardItem: {
     backgroundColor: theme.colors.background.secondary,
@@ -476,59 +553,59 @@ const styles = StyleSheet.create({
     padding: theme.spacing.md,
     marginBottom: theme.spacing.sm,
     marginHorizontal: theme.spacing.xs,
-    flex: 1
+    flex: 1,
   },
   cardItemGrid: {
-    maxWidth: '48%'
+    maxWidth: '48%',
   },
   cardHeader: {
     flexDirection: 'row',
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   cardInfo: {
     flex: 1,
-    marginLeft: theme.spacing.sm
+    marginLeft: theme.spacing.sm,
   },
   cardName: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   cardActions: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   actionButton: {
     padding: theme.spacing.xs,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   cardDetails: {
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   detailLabel: {
     fontSize: theme.typography.sizes.xs,
-    color: theme.colors.text.tertiary
+    color: theme.colors.text.tertiary,
   },
   detailValue: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.primary,
-    fontWeight: theme.typography.weights.medium
+    fontWeight: theme.typography.weights.medium,
   },
   cardFooter: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   switchContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   switchLabel: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.tertiary,
-    marginBottom: theme.spacing.xs
-  }
+    marginBottom: theme.spacing.xs,
+  },
 });

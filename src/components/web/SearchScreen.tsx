@@ -22,7 +22,7 @@ const SearchScreen: React.FC = () => {
     minPrice: 0,
     maxPrice: 10000,
     sortBy: 'name',
-    sortOrder: 'asc'
+    sortOrder: 'asc',
   });
   const [searchResults, setSearchResults] = useState<Card[]>([]);
   const [isSearching, setIsSearching] = useState(false);
@@ -36,14 +36,19 @@ const SearchScreen: React.FC = () => {
       setName: '遊戲王 初代',
       rarity: 'UR',
       type: '怪獸卡',
-      imageUrl: 'https://via.placeholder.com/300x400/3498db/ffffff?text=青眼白龍',
+      imageUrl:
+        'https://via.placeholder.com/300x400/3498db/ffffff?text=青眼白龍',
       price: { current: 1500, change24h: 50, change7d: 200, change30d: -100 },
-      marketData: { volume24h: 50000, totalSupply: 1000, circulatingSupply: 800 },
+      marketData: {
+        volume24h: 50000,
+        totalSupply: 1000,
+        circulatingSupply: 800,
+      },
       stats: { attack: 3000, defense: 2500 },
       description: '傳說中的最強龍族怪獸，擁有毀滅性的力量。',
       tags: ['龍族', '傳說', '攻擊型'],
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z'
+      updatedAt: '2024-01-01T00:00:00Z',
     },
     {
       id: '2',
@@ -53,12 +58,16 @@ const SearchScreen: React.FC = () => {
       type: '怪獸卡',
       imageUrl: 'https://via.placeholder.com/300x400/9b59b6/ffffff?text=黑魔導',
       price: { current: 800, change24h: 20, change7d: 80, change30d: 150 },
-      marketData: { volume24h: 30000, totalSupply: 2000, circulatingSupply: 1800 },
+      marketData: {
+        volume24h: 30000,
+        totalSupply: 2000,
+        circulatingSupply: 1800,
+      },
       stats: { attack: 2500, defense: 2100 },
       description: '強大的魔法師，掌握著神秘的魔法力量。',
       tags: ['魔法師', '經典', '平衡型'],
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z'
+      updatedAt: '2024-01-01T00:00:00Z',
     },
     {
       id: '3',
@@ -66,14 +75,19 @@ const SearchScreen: React.FC = () => {
       setName: '遊戲王 初代',
       rarity: 'UR',
       type: '怪獸卡',
-      imageUrl: 'https://via.placeholder.com/300x400/e74c3c/ffffff?text=真紅眼黑龍',
+      imageUrl:
+        'https://via.placeholder.com/300x400/e74c3c/ffffff?text=真紅眼黑龍',
       price: { current: 1200, change24h: -30, change7d: 100, change30d: 300 },
-      marketData: { volume24h: 40000, totalSupply: 1500, circulatingSupply: 1200 },
+      marketData: {
+        volume24h: 40000,
+        totalSupply: 1500,
+        circulatingSupply: 1200,
+      },
       stats: { attack: 2400, defense: 2000 },
       description: '擁有真紅之眼的強大龍族，象徵著力量與榮耀。',
       tags: ['龍族', '稀有', '攻擊型'],
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z'
+      updatedAt: '2024-01-01T00:00:00Z',
     },
     {
       id: '4',
@@ -81,14 +95,19 @@ const SearchScreen: React.FC = () => {
       setName: '遊戲王 初代',
       rarity: 'UR',
       type: '怪獸卡',
-      imageUrl: 'https://via.placeholder.com/300x400/f39c12/ffffff?text=混沌戰士',
+      imageUrl:
+        'https://via.placeholder.com/300x400/f39c12/ffffff?text=混沌戰士',
       price: { current: 2000, change24h: 100, change7d: 400, change30d: 800 },
-      marketData: { volume24h: 60000, totalSupply: 500, circulatingSupply: 400 },
+      marketData: {
+        volume24h: 60000,
+        totalSupply: 500,
+        circulatingSupply: 400,
+      },
       stats: { attack: 3000, defense: 2500 },
       description: '混沌與秩序的化身，擁有無與倫比的戰鬥力。',
       tags: ['戰士', '傳說', '混沌'],
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z'
+      updatedAt: '2024-01-01T00:00:00Z',
     },
     {
       id: '5',
@@ -98,13 +117,17 @@ const SearchScreen: React.FC = () => {
       type: '融合怪獸',
       imageUrl: 'https://via.placeholder.com/300x400/2ecc71/ffffff?text=新宇俠',
       price: { current: 600, change24h: 15, change7d: 60, change30d: 120 },
-      marketData: { volume24h: 25000, totalSupply: 3000, circulatingSupply: 2800 },
+      marketData: {
+        volume24h: 25000,
+        totalSupply: 3000,
+        circulatingSupply: 2800,
+      },
       stats: { attack: 2500, defense: 2000 },
       description: '元素英雄系列的代表，融合了多種元素的力量。',
       tags: ['英雄', '融合', '元素'],
       createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z'
-    }
+      updatedAt: '2024-01-01T00:00:00Z',
+    },
   ];
 
   // 搜索邏輯
@@ -113,9 +136,12 @@ const SearchScreen: React.FC = () => {
 
     // 模擬API延遲
     setTimeout(() => {
-      const results = allCards.filter(card => {
+      const results = allCards.filter((card) => {
         // 名稱搜索
-        if (searchQuery && !card.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+        if (
+          searchQuery &&
+          !card.name.toLowerCase().includes(searchQuery.toLowerCase())
+        ) {
           return false;
         }
 
@@ -135,7 +161,10 @@ const SearchScreen: React.FC = () => {
         }
 
         // 價格範圍篩選
-        if (card.price.current < filters.minPrice || card.price.current > filters.maxPrice) {
+        if (
+          card.price.current < filters.minPrice ||
+          card.price.current > filters.maxPrice
+        ) {
           return false;
         }
 
@@ -172,7 +201,6 @@ const SearchScreen: React.FC = () => {
           return aValue > bValue ? 1 : -1;
         }
         return aValue < bValue ? 1 : -1;
-
       });
 
       setSearchResults(results);
@@ -201,7 +229,7 @@ const SearchScreen: React.FC = () => {
       minPrice: 0,
       maxPrice: 10000,
       sortBy: 'name',
-      sortOrder: 'asc'
+      sortOrder: 'asc',
     });
     setSearchQuery('');
   };
@@ -250,12 +278,14 @@ const SearchScreen: React.FC = () => {
               <select
                 style={styles.filterSelect}
                 value={filters.setName}
-                onChange={(e) => setFilters({...filters, setName: e.target.value})}
+                onChange={(e) =>
+                  setFilters({ ...filters, setName: e.target.value })
+                }
               >
                 <option value="">全部系列</option>
                 <option value="遊戲王 初代">遊戲王 初代</option>
                 <option value="遊戲王 GX">遊戲王 GX</option>
-                <option value="遊戲王 5D&apos;s">遊戲王 5D&apos;s</option>
+                <option value="遊戲王 5D's">遊戲王 5D&apos;s</option>
               </select>
             </div>
 
@@ -264,7 +294,9 @@ const SearchScreen: React.FC = () => {
               <select
                 style={styles.filterSelect}
                 value={filters.rarity}
-                onChange={(e) => setFilters({...filters, rarity: e.target.value})}
+                onChange={(e) =>
+                  setFilters({ ...filters, rarity: e.target.value })
+                }
               >
                 <option value="">全部稀有度</option>
                 <option value="UR">UR</option>
@@ -279,7 +311,9 @@ const SearchScreen: React.FC = () => {
               <select
                 style={styles.filterSelect}
                 value={filters.type}
-                onChange={(e) => setFilters({...filters, type: e.target.value})}
+                onChange={(e) =>
+                  setFilters({ ...filters, type: e.target.value })
+                }
               >
                 <option value="">全部類型</option>
                 <option value="怪獸卡">怪獸卡</option>
@@ -297,7 +331,9 @@ const SearchScreen: React.FC = () => {
                   type="number"
                   placeholder="最低"
                   value={filters.minPrice}
-                  onChange={(e) => setFilters({...filters, minPrice: Number(e.target.value)})}
+                  onChange={(e) =>
+                    setFilters({ ...filters, minPrice: Number(e.target.value) })
+                  }
                 />
                 <span style={styles.priceSeparator}>-</span>
                 <input
@@ -305,7 +341,9 @@ const SearchScreen: React.FC = () => {
                   type="number"
                   placeholder="最高"
                   value={filters.maxPrice}
-                  onChange={(e) => setFilters({...filters, maxPrice: Number(e.target.value)})}
+                  onChange={(e) =>
+                    setFilters({ ...filters, maxPrice: Number(e.target.value) })
+                  }
                 />
               </div>
             </div>
@@ -316,7 +354,9 @@ const SearchScreen: React.FC = () => {
                 <select
                   style={styles.sortSelect}
                   value={filters.sortBy}
-                  onChange={(e) => setFilters({...filters, sortBy: e.target.value as any})}
+                  onChange={(e) =>
+                    setFilters({ ...filters, sortBy: e.target.value as any })
+                  }
                 >
                   <option value="name">名稱</option>
                   <option value="price">價格</option>
@@ -325,10 +365,12 @@ const SearchScreen: React.FC = () => {
                 </select>
                 <button
                   style={styles.sortButton}
-                  onClick={() => setFilters({
-                    ...filters,
-                    sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc'
-                  })}
+                  onClick={() =>
+                    setFilters({
+                      ...filters,
+                      sortOrder: filters.sortOrder === 'asc' ? 'desc' : 'asc',
+                    })
+                  }
                 >
                   {filters.sortOrder === 'asc' ? '↑' : '↓'}
                 </button>
@@ -355,7 +397,9 @@ const SearchScreen: React.FC = () => {
           <>
             <div style={styles.resultsHeader}>
               <h3 style={styles.resultsTitle}>搜索結果</h3>
-              <span style={styles.resultsCount}>找到 {searchResults.length} 張卡片</span>
+              <span style={styles.resultsCount}>
+                找到 {searchResults.length} 張卡片
+              </span>
             </div>
             <CardGrid cards={searchResults} onCardClick={handleCardClick} />
           </>
@@ -379,22 +423,22 @@ const SearchScreen: React.FC = () => {
 
 const styles = {
   container: {
-    padding: '24px'
+    padding: '24px',
   },
   header: {
     textAlign: 'center' as const,
-    marginBottom: '32px'
+    marginBottom: '32px',
   },
   title: {
     fontSize: '28px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 8px 0'
+    margin: '0 0 8px 0',
   },
   subtitle: {
     fontSize: '16px',
     color: '#7f8c8d',
-    margin: '0'
+    margin: '0',
   },
   searchSection: {
     backgroundColor: '#ffffff',
@@ -404,12 +448,12 @@ const styles = {
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
     display: 'flex',
     gap: '16px',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   searchBar: {
     flex: 1,
     display: 'flex',
-    gap: '8px'
+    gap: '8px',
   },
   searchInput: {
     flex: 1,
@@ -417,7 +461,7 @@ const styles = {
     border: '1px solid #e1e8ed',
     borderRadius: '8px',
     fontSize: '16px',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   searchButton: {
     padding: '12px 16px',
@@ -426,7 +470,7 @@ const styles = {
     border: 'none',
     borderRadius: '8px',
     cursor: 'pointer',
-    fontSize: '16px'
+    fontSize: '16px',
   },
   filterToggle: {
     padding: '12px 16px',
@@ -435,56 +479,56 @@ const styles = {
     border: '1px solid #e1e8ed',
     borderRadius: '8px',
     cursor: 'pointer',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   filtersSection: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
     marginBottom: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   filtersGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gap: '16px',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   filterGroup: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '8px'
+    gap: '8px',
   },
   filterLabel: {
     fontSize: '14px',
     fontWeight: '600',
-    color: '#2c3e50'
+    color: '#2c3e50',
   },
   filterSelect: {
     padding: '8px 12px',
     border: '1px solid #e1e8ed',
     borderRadius: '6px',
     backgroundColor: '#ffffff',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   priceRange: {
     display: 'flex',
     alignItems: 'center',
-    gap: '8px'
+    gap: '8px',
   },
   priceInput: {
     flex: 1,
     padding: '8px 12px',
     border: '1px solid #e1e8ed',
     borderRadius: '6px',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   priceSeparator: {
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   sortControls: {
     display: 'flex',
-    gap: '8px'
+    gap: '8px',
   },
   sortSelect: {
     flex: 1,
@@ -492,7 +536,7 @@ const styles = {
     border: '1px solid #e1e8ed',
     borderRadius: '6px',
     backgroundColor: '#ffffff',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   sortButton: {
     padding: '8px 12px',
@@ -500,11 +544,11 @@ const styles = {
     border: '1px solid #e1e8ed',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   filterActions: {
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   clearButton: {
     padding: '8px 16px',
@@ -513,35 +557,35 @@ const styles = {
     border: 'none',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   resultsSection: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   resultsHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '24px'
+    marginBottom: '24px',
   },
   resultsTitle: {
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0'
+    margin: '0',
   },
   resultsCount: {
     fontSize: '14px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   loadingContainer: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
-    padding: '60px 20px'
+    padding: '60px 20px',
   },
   loadingSpinner: {
     width: '40px',
@@ -550,52 +594,52 @@ const styles = {
     borderTop: '3px solid #3498db',
     borderRadius: '50%',
     animation: 'spin 1s linear infinite',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   loadingText: {
     fontSize: '16px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   noResults: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
-    padding: '60px 20px'
+    padding: '60px 20px',
   },
   noResultsIcon: {
     fontSize: '48px',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   noResultsText: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '8px'
+    marginBottom: '8px',
   },
   noResultsSubtext: {
     fontSize: '14px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   initialState: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
-    padding: '60px 20px'
+    padding: '60px 20px',
   },
   initialIcon: {
     fontSize: '48px',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   initialText: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '8px'
+    marginBottom: '8px',
   },
   initialSubtext: {
     fontSize: '14px',
-    color: '#7f8c8d'
-  }
+    color: '#7f8c8d',
+  },
 };
 
 export default SearchScreen;

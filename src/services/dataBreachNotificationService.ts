@@ -6,16 +6,16 @@ import { errorHandler, withErrorHandling } from '@/utils/errorHandler';
 
 // 數據洩露事件類型
 export type DataBreachType =
-  | 'unauthorized_access'      // 未授權訪問
-  | 'data_exfiltration'        // 數據外洩
-  | 'system_compromise'        // 系統被攻破
-  | 'insider_threat'           // 內部威脅
-  | 'third_party_breach'       // 第三方洩露
-  | 'physical_breach'          // 物理安全洩露
-  | 'accidental_disclosure'    // 意外披露
-  | 'malware_attack'           // 惡意軟件攻擊
-  | 'phishing_attack'          // 釣魚攻擊
-  | 'unknown';                 // 未知類型
+  | 'unauthorized_access' // 未授權訪問
+  | 'data_exfiltration' // 數據外洩
+  | 'system_compromise' // 系統被攻破
+  | 'insider_threat' // 內部威脅
+  | 'third_party_breach' // 第三方洩露
+  | 'physical_breach' // 物理安全洩露
+  | 'accidental_disclosure' // 意外披露
+  | 'malware_attack' // 惡意軟件攻擊
+  | 'phishing_attack' // 釣魚攻擊
+  | 'unknown'; // 未知類型
 
 // 風險等級
 export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
@@ -103,7 +103,7 @@ class DataBreachNotificationService {
       userNotificationTemplate: 'default',
       regulatoryNotificationTemplate: 'regulatory',
       notificationChannels: ['email', 'push'],
-      escalationContacts: []
+      escalationContacts: [],
     };
 
     this.detectionRules = this.getDefaultDetectionRules();
@@ -173,10 +173,10 @@ class DataBreachNotificationService {
           eventType: 'data_access',
           threshold: 10,
           timeWindow: 60,
-          severity: 'high'
+          severity: 'high',
         },
         enabled: true,
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'data_exfiltration_detection',
@@ -186,10 +186,10 @@ class DataBreachNotificationService {
           eventType: 'data_transfer',
           threshold: 1000,
           timeWindow: 30,
-          severity: 'critical'
+          severity: 'critical',
         },
         enabled: true,
-        createdAt: new Date()
+        createdAt: new Date(),
       },
       {
         id: 'failed_login_detection',
@@ -199,11 +199,11 @@ class DataBreachNotificationService {
           eventType: 'login_failure',
           threshold: 5,
           timeWindow: 15,
-          severity: 'medium'
+          severity: 'medium',
         },
         enabled: true,
-        createdAt: new Date()
-      }
+        createdAt: new Date(),
+      },
     ];
   }
 
@@ -220,9 +220,12 @@ class DataBreachNotificationService {
       this.isMonitoring = true;
 
       // 每5分鐘檢查一次
-      this.monitoringInterval = setInterval(() => {
-        this.performSecurityScan();
-      }, 5 * 60 * 1000);
+      this.monitoringInterval = setInterval(
+        () => {
+          this.performSecurityScan();
+        },
+        5 * 60 * 1000
+      );
 
       logger.info('數據洩露監控已啟動');
     } catch (error) {
@@ -271,7 +274,6 @@ class DataBreachNotificationService {
 
       // 檢查第三方風險
       await this.checkThirdPartyRisks();
-
     } catch (error) {
       logger.error('安全掃描失敗:', error);
     }
@@ -297,9 +299,9 @@ class DataBreachNotificationService {
               dataCategories: activity.dataCategories,
               affectedUsers: activity.affectedUsers,
               dataSensitivity: activity.dataSensitivity,
-              estimatedRecords: activity.estimatedRecords
+              estimatedRecords: activity.estimatedRecords,
             },
-            affectedRegions: activity.affectedRegions
+            affectedRegions: activity.affectedRegions,
           });
         }
       }
@@ -327,9 +329,9 @@ class DataBreachNotificationService {
               dataCategories: transfer.dataCategories,
               affectedUsers: transfer.affectedUsers,
               dataSensitivity: transfer.dataSensitivity,
-              estimatedRecords: transfer.size
+              estimatedRecords: transfer.size,
             },
-            affectedRegions: transfer.affectedRegions
+            affectedRegions: transfer.affectedRegions,
           });
         }
       }
@@ -357,9 +359,9 @@ class DataBreachNotificationService {
               dataCategories: ['system_data'],
               affectedUsers: 0,
               dataSensitivity: 'high',
-              estimatedRecords: 1
+              estimatedRecords: 1,
             },
-            affectedRegions: ['all']
+            affectedRegions: ['all'],
           });
         }
       }
@@ -387,9 +389,9 @@ class DataBreachNotificationService {
               dataCategories: risk.dataCategories,
               affectedUsers: risk.affectedUsers,
               dataSensitivity: risk.dataSensitivity,
-              estimatedRecords: risk.estimatedRecords
+              estimatedRecords: risk.estimatedRecords,
             },
-            affectedRegions: risk.affectedRegions
+            affectedRegions: risk.affectedRegions,
           });
         }
       }
@@ -401,7 +403,9 @@ class DataBreachNotificationService {
   /**
    * 創建數據洩露事件
    */
-  async createBreachEvent(eventData: Partial<DataBreachEvent>): Promise<DataBreachEvent> {
+  async createBreachEvent(
+    eventData: Partial<DataBreachEvent>
+  ): Promise<DataBreachEvent> {
     try {
       const event: DataBreachEvent = {
         id: this.generateEventId(),
@@ -413,16 +417,18 @@ class DataBreachNotificationService {
           dataCategories: [],
           affectedUsers: 0,
           dataSensitivity: 'low',
-          estimatedRecords: 0
+          estimatedRecords: 0,
         },
         discoveryDate: new Date(),
         status: 'discovered',
         regulatoryNotification: false,
         userNotification: false,
         affectedRegions: eventData.affectedRegions || ['all'],
-        complianceDeadline: new Date(Date.now() + this.config.regulatoryDeadline * 60 * 60 * 1000),
+        complianceDeadline: new Date(
+          Date.now() + this.config.regulatoryDeadline * 60 * 60 * 1000
+        ),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 保存事件
@@ -450,8 +456,8 @@ class DataBreachNotificationService {
       }
 
       // 檢查是否需要立即通知
-      const shouldNotifyImmediately = event.riskLevel === 'critical' ||
-                                    event.riskLevel === 'high';
+      const shouldNotifyImmediately =
+        event.riskLevel === 'critical' || event.riskLevel === 'high';
 
       if (shouldNotifyImmediately) {
         // 立即通知監管機構
@@ -461,15 +467,17 @@ class DataBreachNotificationService {
         await this.notifyAffectedUsers(event);
       } else {
         // 延遲通知
-        setTimeout(async () => {
-          await this.notifyRegulatoryAuthorities(event);
-          await this.notifyAffectedUsers(event);
-        }, this.config.notificationDelay * 60 * 60 * 1000);
+        setTimeout(
+          async () => {
+            await this.notifyRegulatoryAuthorities(event);
+            await this.notifyAffectedUsers(event);
+          },
+          this.config.notificationDelay * 60 * 60 * 1000
+        );
       }
 
       // 通知內部團隊
       await this.notifyInternalTeam(event);
-
     } catch (error) {
       logger.error('觸發通知失敗:', error);
     }
@@ -478,7 +486,9 @@ class DataBreachNotificationService {
   /**
    * 通知監管機構
    */
-  private async notifyRegulatoryAuthorities(event: DataBreachEvent): Promise<void> {
+  private async notifyRegulatoryAuthorities(
+    event: DataBreachEvent
+  ): Promise<void> {
     try {
       const notification = {
         type: 'regulatory_breach_notification',
@@ -490,8 +500,8 @@ class DataBreachNotificationService {
           eventId: event.id,
           breachType: event.breachType,
           riskLevel: event.riskLevel,
-          affectedUsers: event.affectedData.affectedUsers
-        }
+          affectedUsers: event.affectedData.affectedUsers,
+        },
       };
 
       await notificationService.sendNotification(notification);
@@ -527,8 +537,8 @@ class DataBreachNotificationService {
           eventId: event.id,
           breachType: event.breachType,
           riskLevel: event.riskLevel,
-          dataCategories: event.affectedData.dataCategories
-        }
+          dataCategories: event.affectedData.dataCategories,
+        },
       };
 
       await notificationService.sendNotification(notification);
@@ -558,8 +568,8 @@ class DataBreachNotificationService {
           eventId: event.id,
           breachType: event.breachType,
           riskLevel: event.riskLevel,
-          complianceDeadline: event.complianceDeadline
-        }
+          complianceDeadline: event.complianceDeadline,
+        },
       };
 
       await notificationService.sendNotification(notification);
@@ -665,14 +675,16 @@ class DataBreachNotificationService {
    * 檢查是否應該觸發警報
    */
   private shouldTriggerBreachAlert(activity: any): boolean {
-    const rule = this.detectionRules.find(r =>
-      r.conditions.eventType === activity.type && r.enabled
+    const rule = this.detectionRules.find(
+      (r) => r.conditions.eventType === activity.type && r.enabled
     );
 
     if (!rule) return false;
 
-    return activity.count >= rule.conditions.threshold &&
-           activity.severity === rule.conditions.severity;
+    return (
+      activity.count >= rule.conditions.threshold &&
+      activity.severity === rule.conditions.severity
+    );
   }
 
   /**
@@ -702,7 +714,7 @@ class DataBreachNotificationService {
   private async updateBreachEvent(event: DataBreachEvent): Promise<void> {
     try {
       const events = await this.getBreachEvents();
-      const index = events.findIndex(e => e.id === event.id);
+      const index = events.findIndex((e) => e.id === event.id);
 
       if (index !== -1) {
         events[index] = { ...event, updatedAt: new Date() };
@@ -762,17 +774,22 @@ class DataBreachNotificationService {
   /**
    * 手動創建洩露事件
    */
-  async createManualBreachEvent(eventData: Partial<DataBreachEvent>): Promise<DataBreachEvent> {
+  async createManualBreachEvent(
+    eventData: Partial<DataBreachEvent>
+  ): Promise<DataBreachEvent> {
     return this.createBreachEvent(eventData);
   }
 
   /**
    * 更新事件狀態
    */
-  async updateEventStatus(eventId: string, status: DataBreachEvent['status']): Promise<void> {
+  async updateEventStatus(
+    eventId: string,
+    status: DataBreachEvent['status']
+  ): Promise<void> {
     try {
       const events = await this.getBreachEvents();
-      const event = events.find(e => e.id === eventId);
+      const event = events.find((e) => e.id === eventId);
 
       if (event) {
         event.status = status;
@@ -802,16 +819,18 @@ class DataBreachNotificationService {
       const now = new Date();
       const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-      const recentEvents = events.filter(e => e.createdAt >= thirtyDaysAgo);
+      const recentEvents = events.filter((e) => e.createdAt >= thirtyDaysAgo);
 
       return {
         totalEvents: events.length,
         recentEvents: recentEvents.length,
-        criticalEvents: events.filter(e => e.riskLevel === 'critical').length,
-        highRiskEvents: events.filter(e => e.riskLevel === 'high').length,
-        pendingNotifications: events.filter(e => !e.regulatoryNotification || !e.userNotification).length,
+        criticalEvents: events.filter((e) => e.riskLevel === 'critical').length,
+        highRiskEvents: events.filter((e) => e.riskLevel === 'high').length,
+        pendingNotifications: events.filter(
+          (e) => !e.regulatoryNotification || !e.userNotification
+        ).length,
         averageResponseTime: this.calculateAverageResponseTime(events),
-        complianceRate: this.calculateComplianceRate(events)
+        complianceRate: this.calculateComplianceRate(events),
       };
     } catch (error) {
       logger.error('獲取統計信息失敗:', error);
@@ -823,12 +842,14 @@ class DataBreachNotificationService {
    * 計算平均響應時間
    */
   private calculateAverageResponseTime(events: DataBreachEvent[]): number {
-    const resolvedEvents = events.filter(e => e.resolutionDate);
+    const resolvedEvents = events.filter((e) => e.resolutionDate);
 
     if (resolvedEvents.length === 0) return 0;
 
     const totalTime = resolvedEvents.reduce((sum, event) => {
-      return sum + (event.resolutionDate!.getTime() - event.discoveryDate.getTime());
+      return (
+        sum + (event.resolutionDate!.getTime() - event.discoveryDate.getTime())
+      );
     }, 0);
 
     return totalTime / resolvedEvents.length / (1000 * 60 * 60); // 小時
@@ -840,13 +861,15 @@ class DataBreachNotificationService {
   private calculateComplianceRate(events: DataBreachEvent[]): number {
     if (events.length === 0) return 100;
 
-    const compliantEvents = events.filter(e =>
-      e.regulatoryNotification && e.userNotification
+    const compliantEvents = events.filter(
+      (e) => e.regulatoryNotification && e.userNotification
     );
 
     return (compliantEvents.length / events.length) * 100;
   }
 }
 
-// 創建單例實例
-export const dataBreachNotificationService = new DataBreachNotificationService();
+// 導出服務類和實例
+export { DataBreachNotificationService };
+export const dataBreachNotificationService =
+  new DataBreachNotificationService();

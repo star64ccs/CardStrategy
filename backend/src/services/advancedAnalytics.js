@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 const { Card, Transaction, User, Portfolio, MarketData } = require('../models');
 const { redis } = require('../config/database');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
 // 分析配置
@@ -8,7 +9,7 @@ const ANALYTICS_CONFIG = {
   cacheTTL: 3600, // 1小時緩存
   maxDataPoints: 1000,
   defaultTimeframe: '30d',
-  batchSize: 100
+  batchSize: 100,
 };
 
 // 分析類型
@@ -18,7 +19,7 @@ const ANALYSIS_TYPES = {
   PREDICTION: 'prediction',
   SEGMENTATION: 'segmentation',
   ANOMALY: 'anomaly',
-  FORECAST: 'forecast'
+  FORECAST: 'forecast',
 };
 
 // 報告類型
@@ -28,7 +29,7 @@ const REPORT_TYPES = {
   MONTHLY: 'monthly',
   QUARTERLY: 'quarterly',
   YEARLY: 'yearly',
-  CUSTOM: 'custom'
+  CUSTOM: 'custom',
 };
 
 class AdvancedAnalyticsService {
@@ -43,7 +44,7 @@ class AdvancedAnalyticsService {
       timeframe = '30d',
       categories = [],
       limit = 50,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `market_trends:${timeframe}:${categories.join(',')}:${limit}`;
@@ -61,8 +62,8 @@ class AdvancedAnalyticsService {
 
       const whereClause = {
         createdAt: {
-          [Op.between]: [startDate, endDate]
-        }
+          [Op.between]: [startDate, endDate],
+        },
       };
 
       if (categories.length > 0) {
@@ -74,26 +75,31 @@ class AdvancedAnalyticsService {
         include: [
           { model: Card, as: 'card' },
           { model: User, as: 'buyer' },
-          { model: User, as: 'seller' }
+          { model: User, as: 'seller' },
         ],
         order: [['createdAt', 'ASC']],
-        limit: this.config.maxDataPoints
+        limit: this.config.maxDataPoints,
       });
 
       const trends = this.analyzeTrends(transactions, timeframe);
       const insights = this.generateInsights(trends);
 
+// eslint-disable-next-line no-unused-vars
       const result = {
         timeframe,
         categories,
         trends,
         insights,
         summary: this.generateSummary(trends),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       if (useCache) {
-        await this.cache.setex(cacheKey, this.config.cacheTTL, JSON.stringify(result));
+        await this.cache.setex(
+          cacheKey,
+          this.config.cacheTTL,
+          JSON.stringify(result)
+        );
       }
 
       return result;
@@ -109,7 +115,7 @@ class AdvancedAnalyticsService {
       timeframe = '30d',
       includeTransactions = true,
       includePerformance = true,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `portfolio_analysis:${userId}:${timeframe}`;
@@ -126,8 +132,8 @@ class AdvancedAnalyticsService {
         where: { userId },
         include: [
           { model: Card, as: 'cards' },
-          { model: Transaction, as: 'transactions' }
-        ]
+          { model: Transaction, as: 'transactions' },
+        ],
       });
 
       if (!portfolio) {
@@ -141,16 +147,24 @@ class AdvancedAnalyticsService {
           totalValue: 0,
           totalCards: portfolio.cards.length,
           diversification: this.calculateDiversification(portfolio.cards),
-          riskMetrics: this.calculateRiskMetrics(portfolio.cards)
+          riskMetrics: this.calculateRiskMetrics(portfolio.cards),
         },
-        performance: includePerformance ? await this.calculatePerformance(userId, timeframe) : null,
-        transactions: includeTransactions ? await this.getTransactionHistory(userId, timeframe) : null,
+        performance: includePerformance
+          ? await this.calculatePerformance(userId, timeframe)
+          : null,
+        transactions: includeTransactions
+          ? await this.getTransactionHistory(userId, timeframe)
+          : null,
         recommendations: await this.generatePortfolioRecommendations(portfolio),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       if (useCache) {
-        await this.cache.setex(cacheKey, this.config.cacheTTL, JSON.stringify(analysis));
+        await this.cache.setex(
+          cacheKey,
+          this.config.cacheTTL,
+          JSON.stringify(analysis)
+        );
       }
 
       return analysis;
@@ -166,7 +180,7 @@ class AdvancedAnalyticsService {
       timeframe = '30d',
       includePatterns = true,
       includePredictions = true,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `user_behavior:${userId}:${timeframe}`;
@@ -179,12 +193,13 @@ class AdvancedAnalyticsService {
     }
 
     try {
+// eslint-disable-next-line no-unused-vars
       const user = await User.findByPk(userId, {
         include: [
           { model: Transaction, as: 'buyerTransactions' },
           { model: Transaction, as: 'sellerTransactions' },
-          { model: Portfolio, as: 'portfolios' }
-        ]
+          { model: Portfolio, as: 'portfolios' },
+        ],
       });
 
       if (!user) {
@@ -196,16 +211,23 @@ class AdvancedAnalyticsService {
           id: user.id,
           username: user.username,
           joinDate: user.createdAt,
-          totalTransactions: user.buyerTransactions.length + user.sellerTransactions.length
+          totalTransactions:
+            user.buyerTransactions.length + user.sellerTransactions.length,
         },
         patterns: includePatterns ? this.analyzeUserPatterns(user) : null,
-        predictions: includePredictions ? await this.predictUserBehavior(userId) : null,
+        predictions: includePredictions
+          ? await this.predictUserBehavior(userId)
+          : null,
         insights: this.generateUserInsights(user),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       if (useCache) {
-        await this.cache.setex(cacheKey, this.config.cacheTTL, JSON.stringify(behavior));
+        await this.cache.setex(
+          cacheKey,
+          this.config.cacheTTL,
+          JSON.stringify(behavior)
+        );
       }
 
       return behavior;
@@ -223,7 +245,7 @@ class AdvancedAnalyticsService {
       endDate,
       includeCharts = true,
       includeRecommendations = true,
-      format = 'json'
+      format = 'json',
     } = options;
 
     try {
@@ -234,7 +256,7 @@ class AdvancedAnalyticsService {
           reportType,
           dateRange,
           generatedAt: new Date(),
-          version: '1.0'
+          version: '1.0',
         },
         executive: await this.generateExecutiveSummary(dateRange),
         market: await this.generateMarketReport(dateRange),
@@ -242,7 +264,9 @@ class AdvancedAnalyticsService {
         financial: await this.generateFinancialReport(dateRange),
         technical: await this.generateTechnicalReport(dateRange),
         charts: includeCharts ? await this.generateCharts(dateRange) : null,
-        recommendations: includeRecommendations ? await this.generateRecommendations(dateRange) : null
+        recommendations: includeRecommendations
+          ? await this.generateRecommendations(dateRange)
+          : null,
       };
 
       return format === 'json' ? report : this.formatReport(report, format);
@@ -258,7 +282,7 @@ class AdvancedAnalyticsService {
       target = 'price',
       timeframe = '7d',
       confidence = 0.8,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `predictive:${target}:${timeframe}:${confidence}`;
@@ -271,8 +295,14 @@ class AdvancedAnalyticsService {
     }
 
     try {
-      const predictions = await this.generatePredictions(target, timeframe, confidence);
+// eslint-disable-next-line no-unused-vars
+      const predictions = await this.generatePredictions(
+        target,
+        timeframe,
+        confidence
+      );
 
+// eslint-disable-next-line no-unused-vars
       const result = {
         target,
         timeframe,
@@ -280,11 +310,15 @@ class AdvancedAnalyticsService {
         predictions,
         accuracy: await this.calculatePredictionAccuracy(target),
         factors: this.identifyKeyFactors(target),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       if (useCache) {
-        await this.cache.setex(cacheKey, this.config.cacheTTL, JSON.stringify(result));
+        await this.cache.setex(
+          cacheKey,
+          this.config.cacheTTL,
+          JSON.stringify(result)
+        );
       }
 
       return result;
@@ -300,7 +334,7 @@ class AdvancedAnalyticsService {
       type = 'price',
       sensitivity = 'medium',
       timeframe = '24h',
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `anomaly:${type}:${sensitivity}:${timeframe}`;
@@ -313,8 +347,13 @@ class AdvancedAnalyticsService {
     }
 
     try {
-      const anomalies = await this.detectAnomalies(type, sensitivity, timeframe);
+      const anomalies = await this.detectAnomalies(
+        type,
+        sensitivity,
+        timeframe
+      );
 
+// eslint-disable-next-line no-unused-vars
       const result = {
         type,
         sensitivity,
@@ -322,11 +361,15 @@ class AdvancedAnalyticsService {
         anomalies,
         totalDetected: anomalies.length,
         severity: this.calculateAnomalySeverity(anomalies),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       if (useCache) {
-        await this.cache.setex(cacheKey, this.config.cacheTTL, JSON.stringify(result));
+        await this.cache.setex(
+          cacheKey,
+          this.config.cacheTTL,
+          JSON.stringify(result)
+        );
       }
 
       return result;
@@ -342,7 +385,7 @@ class AdvancedAnalyticsService {
       variables = ['price', 'volume', 'demand'],
       timeframe = '30d',
       method = 'pearson',
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `correlation:${variables.join(',')}:${timeframe}:${method}`;
@@ -355,8 +398,13 @@ class AdvancedAnalyticsService {
     }
 
     try {
-      const correlations = await this.calculateCorrelations(variables, timeframe, method);
+      const correlations = await this.calculateCorrelations(
+        variables,
+        timeframe,
+        method
+      );
 
+// eslint-disable-next-line no-unused-vars
       const result = {
         variables,
         timeframe,
@@ -364,11 +412,15 @@ class AdvancedAnalyticsService {
         correlations,
         significant: this.identifySignificantCorrelations(correlations),
         insights: this.generateCorrelationInsights(correlations),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       if (useCache) {
-        await this.cache.setex(cacheKey, this.config.cacheTTL, JSON.stringify(result));
+        await this.cache.setex(
+          cacheKey,
+          this.config.cacheTTL,
+          JSON.stringify(result)
+        );
       }
 
       return result;
@@ -384,7 +436,7 @@ class AdvancedAnalyticsService {
       dimension = 'user',
       criteria = ['activity', 'value', 'preference'],
       segments = 5,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `segmentation:${dimension}:${criteria.join(',')}:${segments}`;
@@ -397,19 +449,28 @@ class AdvancedAnalyticsService {
     }
 
     try {
-      const segments = await this.performSegmentation(dimension, criteria, segments);
+      const segments = await this.performSegmentation(
+        dimension,
+        criteria,
+        segments
+      );
 
+// eslint-disable-next-line no-unused-vars
       const result = {
         dimension,
         criteria,
         segments,
         characteristics: this.analyzeSegmentCharacteristics(segments),
         recommendations: this.generateSegmentRecommendations(segments),
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       if (useCache) {
-        await this.cache.setex(cacheKey, this.config.cacheTTL, JSON.stringify(result));
+        await this.cache.setex(
+          cacheKey,
+          this.config.cacheTTL,
+          JSON.stringify(result)
+        );
       }
 
       return result;
@@ -424,7 +485,7 @@ class AdvancedAnalyticsService {
     const {
       timeframe = '24h',
       includeTrends = true,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `analytics_metrics:${timeframe}`;
@@ -443,11 +504,15 @@ class AdvancedAnalyticsService {
         user: await this.getUserMetrics(timeframe),
         market: await this.getMarketMetrics(timeframe),
         trends: includeTrends ? await this.getTrendMetrics(timeframe) : null,
-        generatedAt: new Date()
+        generatedAt: new Date(),
       };
 
       if (useCache) {
-        await this.cache.setex(cacheKey, this.config.cacheTTL, JSON.stringify(metrics));
+        await this.cache.setex(
+          cacheKey,
+          this.config.cacheTTL,
+          JSON.stringify(metrics)
+        );
       }
 
       return metrics;
@@ -460,6 +525,7 @@ class AdvancedAnalyticsService {
   // 清理分析緩存
   async clearAnalyticsCache(pattern = '*') {
     try {
+// eslint-disable-next-line no-unused-vars
       const keys = await this.cache.keys(`analytics:${pattern}`);
       if (keys.length > 0) {
         await this.cache.del(...keys);
@@ -475,26 +541,29 @@ class AdvancedAnalyticsService {
   // 健康檢查
   async healthCheck() {
     try {
+// eslint-disable-next-line no-unused-vars
       const checks = {
         database: await this.checkDatabaseConnection(),
         cache: await this.checkCacheConnection(),
         models: await this.checkModelAvailability(),
-        performance: await this.checkPerformance()
+        performance: await this.checkPerformance(),
       };
 
-      const isHealthy = Object.values(checks).every(check => check.status === 'healthy');
+      const isHealthy = Object.values(checks).every(
+        (check) => check.status === 'healthy'
+      );
 
       return {
         status: isHealthy ? 'healthy' : 'unhealthy',
         checks,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       logger.error('分析服務健康檢查失敗:', error);
       return {
         status: 'unhealthy',
         error: error.message,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -503,14 +572,21 @@ class AdvancedAnalyticsService {
 
   // 獲取開始日期
   getStartDate(timeframe) {
+// eslint-disable-next-line no-unused-vars
     const now = new Date();
     switch (timeframe) {
-      case '1d': return new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      case '7d': return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      case '30d': return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      case '90d': return new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
-      case '1y': return new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
-      default: return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      case '1d':
+        return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+      case '7d':
+        return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      case '30d':
+        return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      case '90d':
+        return new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+      case '1y':
+        return new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+      default:
+        return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
   }
 
@@ -520,7 +596,7 @@ class AdvancedAnalyticsService {
     const trends = {
       price: this.analyzePriceTrends(transactions),
       volume: this.analyzeVolumeTrends(transactions),
-      demand: this.analyzeDemandTrends(transactions)
+      demand: this.analyzeDemandTrends(transactions),
     };
 
     return trends;
@@ -536,7 +612,7 @@ class AdvancedAnalyticsService {
         type: 'price_surge',
         message: '價格顯著上漲，建議關注市場動態',
         severity: 'high',
-        confidence: 0.85
+        confidence: 0.85,
       });
     }
 
@@ -546,7 +622,7 @@ class AdvancedAnalyticsService {
         type: 'volume_spike',
         message: '交易量激增，可能存在市場機會',
         severity: 'medium',
-        confidence: 0.75
+        confidence: 0.75,
       });
     }
 
@@ -558,7 +634,6 @@ class AdvancedAnalyticsService {
     return {
       overallDirection: this.calculateOverallDirection(trends),
       keyMetrics: this.extractKeyMetrics(trends),
-      recommendations: this.generateRecommendations(trends)
     };
   }
 
@@ -575,13 +650,14 @@ class AdvancedAnalyticsService {
     return {
       score: diversity,
       categories: Object.keys(categories),
-      distribution: categories
+      distribution: categories,
     };
   }
 
   // 計算風險指標
   calculateRiskMetrics(cards) {
-    const prices = cards.map(card => card.currentPrice || 0);
+// eslint-disable-next-line no-unused-vars
+    const prices = cards.map((card) => card.currentPrice || 0);
     const volatility = this.calculateVolatility(prices);
     const maxDrawdown = this.calculateMaxDrawdown(prices);
 
@@ -589,7 +665,7 @@ class AdvancedAnalyticsService {
       volatility,
       maxDrawdown,
       riskScore: (volatility + maxDrawdown) / 2,
-      riskLevel: this.getRiskLevel(volatility + maxDrawdown)
+      riskLevel: this.getRiskLevel(volatility + maxDrawdown),
     };
   }
 
@@ -600,7 +676,7 @@ class AdvancedAnalyticsService {
       totalReturn: 0.15,
       annualizedReturn: 0.18,
       sharpeRatio: 1.2,
-      maxDrawdown: -0.08
+      maxDrawdown: -0.08,
     };
   }
 
@@ -610,21 +686,19 @@ class AdvancedAnalyticsService {
 
     return await Transaction.findAll({
       where: {
-        [Op.or]: [
-          { buyerId: userId },
-          { sellerId: userId }
-        ],
+        [Op.or]: [{ buyerId: userId }, { sellerId: userId }],
         createdAt: {
-          [Op.gte]: startDate
-        }
+          [Op.gte]: startDate,
+        },
       },
       order: [['createdAt', 'DESC']],
-      limit: 100
+      limit: 100,
     });
   }
 
   // 生成投資組合建議
   async generatePortfolioRecommendations(portfolio) {
+// eslint-disable-next-line no-unused-vars
     const recommendations = [];
 
     // 多樣化建議
@@ -633,18 +707,20 @@ class AdvancedAnalyticsService {
         type: 'diversification',
         message: '建議增加卡片數量以提高多樣化',
         priority: 'high',
-        action: 'add_cards'
+        action: 'add_cards',
       });
     }
 
     // 風險管理建議
-    const highValueCards = portfolio.cards.filter(card => card.currentPrice > 1000);
+    const highValueCards = portfolio.cards.filter(
+      (card) => card.currentPrice > 1000
+    );
     if (highValueCards.length > portfolio.cards.length * 0.3) {
       recommendations.push({
         type: 'risk_management',
         message: '高價值卡片佔比過高，建議分散風險',
         priority: 'medium',
-        action: 'rebalance'
+        action: 'rebalance',
       });
     }
 
@@ -653,11 +729,12 @@ class AdvancedAnalyticsService {
 
   // 分析用戶模式
   analyzeUserPatterns(user) {
+// eslint-disable-next-line no-unused-vars
     const patterns = {
       tradingFrequency: this.calculateTradingFrequency(user),
       preferredCategories: this.identifyPreferredCategories(user),
       tradingTimes: this.analyzeTradingTimes(user),
-      priceRange: this.analyzePriceRange(user)
+      priceRange: this.analyzePriceRange(user),
     };
 
     return patterns;
@@ -670,12 +747,12 @@ class AdvancedAnalyticsService {
       nextPurchase: {
         probability: 0.75,
         timeframe: '7d',
-        estimatedAmount: 500
+        estimatedAmount: 500,
       },
       churnRisk: {
         probability: 0.15,
-        factors: ['inactivity', 'low_engagement']
-      }
+        factors: ['inactivity', 'low_engagement'],
+      },
     };
   }
 
@@ -683,14 +760,20 @@ class AdvancedAnalyticsService {
   generateUserInsights(user) {
     const insights = [];
 
-    const totalSpent = user.buyerTransactions.reduce((sum, t) => sum + t.amount, 0);
-    const totalEarned = user.sellerTransactions.reduce((sum, t) => sum + t.amount, 0);
+    const totalSpent = user.buyerTransactions.reduce(
+      (sum, t) => sum + t.amount,
+      0
+    );
+    const totalEarned = user.sellerTransactions.reduce(
+      (sum, t) => sum + t.amount,
+      0
+    );
 
     if (totalSpent > 10000) {
       insights.push({
         type: 'high_value_user',
         message: '高價值用戶，建議提供VIP服務',
-        priority: 'high'
+        priority: 'high',
       });
     }
 
@@ -704,7 +787,7 @@ class AdvancedAnalyticsService {
       totalVolume: await this.getTotalVolume(dateRange),
       activeUsers: await this.getActiveUsers(dateRange),
       topPerformers: await this.getTopPerformers(dateRange),
-      keyInsights: await this.getKeyInsights(dateRange)
+      keyInsights: await this.getKeyInsights(dateRange),
     };
   }
 
@@ -714,7 +797,7 @@ class AdvancedAnalyticsService {
       trends: await this.getMarketTrends({ timeframe: '30d' }),
       topCards: await this.getTopCards(dateRange),
       marketSentiment: await this.getMarketSentiment(dateRange),
-      volatility: await this.getMarketVolatility(dateRange)
+      volatility: await this.getMarketVolatility(dateRange),
     };
   }
 
@@ -724,7 +807,7 @@ class AdvancedAnalyticsService {
       userGrowth: await this.getUserGrowth(dateRange),
       userEngagement: await this.getUserEngagement(dateRange),
       userSegments: await this.getUserSegments(dateRange),
-      retention: await this.getUserRetention(dateRange)
+      retention: await this.getUserRetention(dateRange),
     };
   }
 
@@ -734,7 +817,7 @@ class AdvancedAnalyticsService {
       revenue: await this.getRevenue(dateRange),
       costs: await this.getCosts(dateRange),
       profit: await this.getProfit(dateRange),
-      margins: await this.getMargins(dateRange)
+      margins: await this.getMargins(dateRange),
     };
   }
 
@@ -744,7 +827,7 @@ class AdvancedAnalyticsService {
       performance: await this.getSystemPerformance(dateRange),
       errors: await this.getSystemErrors(dateRange),
       uptime: await this.getSystemUptime(dateRange),
-      scalability: await this.getScalabilityMetrics(dateRange)
+      scalability: await this.getScalabilityMetrics(dateRange),
     };
   }
 
@@ -754,17 +837,16 @@ class AdvancedAnalyticsService {
       priceChart: await this.getPriceChartData(dateRange),
       volumeChart: await this.getVolumeChartData(dateRange),
       userChart: await this.getUserChartData(dateRange),
-      performanceChart: await this.getPerformanceChartData(dateRange)
+      performanceChart: await this.getPerformanceChartData(dateRange),
     };
   }
 
   // 生成建議
-  async generateRecommendations(dateRange) {
     return {
       market: await this.getMarketRecommendations(dateRange),
       user: await this.getUserRecommendations(dateRange),
       technical: await this.getTechnicalRecommendations(dateRange),
-      strategic: await this.getStrategicRecommendations(dateRange)
+      strategic: await this.getStrategicRecommendations(dateRange),
     };
   }
 
@@ -774,10 +856,14 @@ class AdvancedAnalyticsService {
     return {
       predictions: [
         { date: new Date(), value: 100, confidence: 0.85 },
-        { date: new Date(Date.now() + 24 * 60 * 60 * 1000), value: 105, confidence: 0.80 }
+        {
+          date: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          value: 105,
+          confidence: 0.8,
+        },
       ],
       model: 'time_series',
-      accuracy: 0.82
+      accuracy: 0.82,
     };
   }
 
@@ -792,8 +878,8 @@ class AdvancedAnalyticsService {
         value: 1500,
         expected: 1000,
         severity: 'high',
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     ];
   }
 
@@ -802,8 +888,8 @@ class AdvancedAnalyticsService {
     // 實現相關性計算邏輯
     return {
       'price-volume': 0.75,
-      'price-demand': 0.60,
-      'volume-demand': 0.45
+      'price-demand': 0.6,
+      'volume-demand': 0.45,
     };
   }
 
@@ -815,8 +901,8 @@ class AdvancedAnalyticsService {
         id: 1,
         name: '高價值用戶',
         size: 100,
-        characteristics: { avgSpend: 5000, frequency: 'high' }
-      }
+        characteristics: { avgSpend: 5000, frequency: 'high' },
+      },
     ];
   }
 
@@ -826,7 +912,11 @@ class AdvancedAnalyticsService {
       await Card.findOne();
       return { status: 'healthy', message: '數據庫連接正常' };
     } catch (error) {
-      return { status: 'unhealthy', message: '數據庫連接失敗', error: error.message };
+      return {
+        status: 'unhealthy',
+        message: '數據庫連接失敗',
+        error: error.message,
+      };
     }
   }
 
@@ -836,20 +926,30 @@ class AdvancedAnalyticsService {
       await this.cache.ping();
       return { status: 'healthy', message: '緩存連接正常' };
     } catch (error) {
-      return { status: 'unhealthy', message: '緩存連接失敗', error: error.message };
+      return {
+        status: 'unhealthy',
+        message: '緩存連接失敗',
+        error: error.message,
+      };
     }
   }
 
   // 檢查模型可用性
   async checkModelAvailability() {
     try {
+// eslint-disable-next-line no-unused-vars
       const models = [Card, Transaction, User, Portfolio];
+// eslint-disable-next-line no-unused-vars
       for (const model of models) {
         await model.findOne();
       }
       return { status: 'healthy', message: '所有模型可用' };
     } catch (error) {
-      return { status: 'unhealthy', message: '模型檢查失敗', error: error.message };
+      return {
+        status: 'unhealthy',
+        message: '模型檢查失敗',
+        error: error.message,
+      };
     }
   }
 
@@ -858,15 +958,20 @@ class AdvancedAnalyticsService {
     try {
       const startTime = Date.now();
       await Card.findOne();
+// eslint-disable-next-line no-unused-vars
       const responseTime = Date.now() - startTime;
 
       return {
         status: responseTime < 1000 ? 'healthy' : 'warning',
         message: `響應時間: ${responseTime}ms`,
-        responseTime
+        responseTime,
       };
     } catch (error) {
-      return { status: 'unhealthy', message: '性能檢查失敗', error: error.message };
+      return {
+        status: 'unhealthy',
+        message: '性能檢查失敗',
+        error: error.message,
+      };
     }
   }
 
@@ -876,11 +981,13 @@ class AdvancedAnalyticsService {
 
     const returns = [];
     for (let i = 1; i < prices.length; i++) {
-      returns.push((prices[i] - prices[i-1]) / prices[i-1]);
+      returns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
     }
 
     const mean = returns.reduce((sum, r) => sum + r, 0) / returns.length;
-    const variance = returns.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) / returns.length;
+    const variance =
+      returns.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) /
+      returns.length;
 
     return Math.sqrt(variance);
   }
@@ -908,71 +1015,79 @@ class AdvancedAnalyticsService {
     return 'high';
   }
 
-  calculateOverallDirection(trends) {
-    const directions = Object.values(trends).map(t => t.direction);
-    const upCount = directions.filter(d => d === 'up').length;
-    const downCount = directions.filter(d => d === 'down').length;
+    const directions = Object.values(trends).map((t) => t.direction);
+    const upCount = directions.filter((d) => d === 'up').length;
+    const downCount = directions.filter((d) => d === 'down').length;
 
     if (upCount > downCount) return 'up';
     if (downCount > upCount) return 'down';
     return 'stable';
   }
 
-  extractKeyMetrics(trends) {
     return {
       avgPriceChange: trends.price?.change || 0,
       avgVolumeChange: trends.volume?.change || 0,
-      totalTransactions: trends.volume?.total || 0
+      totalTransactions: trends.volume?.total || 0,
     };
   }
 
   calculateTradingFrequency(user) {
-    const totalTransactions = user.buyerTransactions.length + user.sellerTransactions.length;
-    const daysSinceJoin = (Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24);
+    const totalTransactions =
+      user.buyerTransactions.length + user.sellerTransactions.length;
+    const daysSinceJoin =
+      (Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24);
 
     return totalTransactions / daysSinceJoin;
   }
 
   identifyPreferredCategories(user) {
     const categories = {};
-    const allTransactions = [...user.buyerTransactions, ...user.sellerTransactions];
+    const allTransactions = [
+      ...user.buyerTransactions,
+      ...user.sellerTransactions,
+    ];
 
     for (const transaction of allTransactions) {
       if (transaction.card && transaction.card.category) {
-        categories[transaction.card.category] = (categories[transaction.card.category] || 0) + 1;
+        categories[transaction.card.category] =
+          (categories[transaction.card.category] || 0) + 1;
       }
     }
 
     return Object.entries(categories)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([category]) => category);
   }
 
   analyzeTradingTimes(user) {
-    const tradingHours = user.buyerTransactions.map(t => t.createdAt.getHours());
+    const tradingHours = user.buyerTransactions.map((t) =>
+      t.createdAt.getHours()
+    );
     const hourCounts = tradingHours.reduce((acc, hour) => {
       acc[hour] = (acc[hour] || 0) + 1;
       return acc;
     }, {});
 
-    const peakHour = Object.entries(hourCounts)
-      .sort(([,a], [,b]) => b - a)[0];
+    const peakHour = Object.entries(hourCounts).sort(
+      ([, a], [, b]) => b - a
+    )[0];
 
     return {
       peakHour: parseInt(peakHour[0]),
       peakCount: peakHour[1],
-      distribution: hourCounts
+      distribution: hourCounts,
     };
   }
 
   analyzePriceRange(user) {
-    const prices = user.buyerTransactions.map(t => t.amount);
+// eslint-disable-next-line no-unused-vars
+    const prices = user.buyerTransactions.map((t) => t.amount);
     return {
       min: Math.min(...prices),
       max: Math.max(...prices),
       avg: prices.reduce((sum, p) => sum + p, 0) / prices.length,
-      median: this.calculateMedian(prices)
+      median: this.calculateMedian(prices),
     };
   }
 
@@ -1000,17 +1115,14 @@ class AdvancedAnalyticsService {
     return { direction: 'stable', change: 2.1, total: transactions.length };
   }
 
-  calculateOverallDirection(trends) {
     // 實現整體方向計算
     return 'up';
   }
 
-  extractKeyMetrics(trends) {
     // 實現關鍵指標提取
     return { avgChange: 6.6, totalTransactions: 1000 };
   }
 
-  generateRecommendations(trends) {
     // 實現建議生成
     return ['關注價格上漲趨勢', '增加交易量監控'];
   }
@@ -1020,33 +1132,36 @@ class AdvancedAnalyticsService {
     return await Transaction.count({
       where: {
         createdAt: {
-          [Op.between]: [dateRange.start, dateRange.end]
-        }
-      }
+          [Op.between]: [dateRange.start, dateRange.end],
+        },
+      },
     });
   }
 
   async getTotalVolume(dateRange) {
+// eslint-disable-next-line no-unused-vars
     const result = await Transaction.sum('amount', {
       where: {
         createdAt: {
-          [Op.between]: [dateRange.start, dateRange.end]
-        }
-      }
+          [Op.between]: [dateRange.start, dateRange.end],
+        },
+      },
     });
     return result || 0;
   }
 
   async getActiveUsers(dateRange) {
     return await User.count({
-      include: [{
-        model: Transaction,
-        where: {
-          createdAt: {
-            [Op.between]: [dateRange.start, dateRange.end]
-          }
-        }
-      }]
+      include: [
+        {
+          model: Transaction,
+          where: {
+            createdAt: {
+              [Op.between]: [dateRange.start, dateRange.end],
+            },
+          },
+        },
+      ],
     });
   }
 
@@ -1061,58 +1176,147 @@ class AdvancedAnalyticsService {
   }
 
   // 其他報告方法...
-  async getTopCards(dateRange) { return []; }
-  async getMarketSentiment(dateRange) { return 'positive'; }
-  async getMarketVolatility(dateRange) { return 0.15; }
-  async getUserGrowth(dateRange) { return 0.25; }
-  async getUserEngagement(dateRange) { return 0.75; }
-  async getUserSegments(dateRange) { return []; }
-  async getUserRetention(dateRange) { return 0.85; }
-  async getRevenue(dateRange) { return 50000; }
-  async getCosts(dateRange) { return 30000; }
-  async getProfit(dateRange) { return 20000; }
-  async getMargins(dateRange) { return 0.4; }
-  async getSystemPerformance(dateRange) { return { uptime: 0.99, responseTime: 150 }; }
-  async getSystemErrors(dateRange) { return []; }
-  async getSystemUptime(dateRange) { return 0.99; }
-  async getScalabilityMetrics(dateRange) { return { load: 0.6, capacity: 0.8 }; }
-  async getPriceChartData(dateRange) { return []; }
-  async getVolumeChartData(dateRange) { return []; }
-  async getUserChartData(dateRange) { return []; }
-  async getPerformanceChartData(dateRange) { return []; }
-  async getMarketRecommendations(dateRange) { return []; }
-  async getUserRecommendations(dateRange) { return []; }
-  async getTechnicalRecommendations(dateRange) { return []; }
-  async getStrategicRecommendations(dateRange) { return []; }
-  async calculatePredictionAccuracy(target) { return 0.82; }
-  identifyKeyFactors(target) { return ['price', 'volume', 'demand']; }
-  calculateAnomalySeverity(anomalies) { return 'medium'; }
-  identifySignificantCorrelations(correlations) { return []; }
-  generateCorrelationInsights(correlations) { return []; }
-  analyzeSegmentCharacteristics(segments) { return {}; }
-  generateSegmentRecommendations(segments) { return []; }
-  getOverviewMetrics(timeframe) { return {}; }
-  getPerformanceMetrics(timeframe) { return {}; }
-  getUserMetrics(timeframe) { return {}; }
-  getMarketMetrics(timeframe) { return {}; }
-  getTrendMetrics(timeframe) { return {}; }
+  async getTopCards(dateRange) {
+    return [];
+  }
+  async getMarketSentiment(dateRange) {
+    return 'positive';
+  }
+  async getMarketVolatility(dateRange) {
+    return 0.15;
+  }
+  async getUserGrowth(dateRange) {
+    return 0.25;
+  }
+  async getUserEngagement(dateRange) {
+    return 0.75;
+  }
+  async getUserSegments(dateRange) {
+    return [];
+  }
+  async getUserRetention(dateRange) {
+    return 0.85;
+  }
+  async getRevenue(dateRange) {
+    return 50000;
+  }
+  async getCosts(dateRange) {
+    return 30000;
+  }
+  async getProfit(dateRange) {
+    return 20000;
+  }
+  async getMargins(dateRange) {
+    return 0.4;
+  }
+  async getSystemPerformance(dateRange) {
+    return { uptime: 0.99, responseTime: 150 };
+  }
+  async getSystemErrors(dateRange) {
+    return [];
+  }
+  async getSystemUptime(dateRange) {
+    return 0.99;
+  }
+  async getScalabilityMetrics(dateRange) {
+    return { load: 0.6, capacity: 0.8 };
+  }
+  async getPriceChartData(dateRange) {
+    return [];
+  }
+  async getVolumeChartData(dateRange) {
+    return [];
+  }
+  async getUserChartData(dateRange) {
+    return [];
+  }
+  async getPerformanceChartData(dateRange) {
+    return [];
+  }
+  async getMarketRecommendations(dateRange) {
+    return [];
+  }
+  async getUserRecommendations(dateRange) {
+    return [];
+  }
+  async getTechnicalRecommendations(dateRange) {
+    return [];
+  }
+  async getStrategicRecommendations(dateRange) {
+    return [];
+  }
+  async calculatePredictionAccuracy(target) {
+    return 0.82;
+  }
+  identifyKeyFactors(target) {
+    return ['price', 'volume', 'demand'];
+  }
+  calculateAnomalySeverity(anomalies) {
+    return 'medium';
+  }
+  identifySignificantCorrelations(correlations) {
+    return [];
+  }
+  generateCorrelationInsights(correlations) {
+    return [];
+  }
+  analyzeSegmentCharacteristics(segments) {
+    return {};
+  }
+  generateSegmentRecommendations(segments) {
+    return [];
+  }
+  getOverviewMetrics(timeframe) {
+    return {};
+  }
+  getPerformanceMetrics(timeframe) {
+    return {};
+  }
+  getUserMetrics(timeframe) {
+    return {};
+  }
+  getMarketMetrics(timeframe) {
+    return {};
+  }
+  getTrendMetrics(timeframe) {
+    return {};
+  }
   getDateRange(reportType, startDate, endDate) {
+// eslint-disable-next-line no-unused-vars
     const now = new Date();
     switch (reportType) {
       case REPORT_TYPES.DAILY:
-        return { start: new Date(now.getTime() - 24 * 60 * 60 * 1000), end: now };
+        return {
+          start: new Date(now.getTime() - 24 * 60 * 60 * 1000),
+          end: now,
+        };
       case REPORT_TYPES.WEEKLY:
-        return { start: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000), end: now };
+        return {
+          start: new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000),
+          end: now,
+        };
       case REPORT_TYPES.MONTHLY:
-        return { start: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000), end: now };
+        return {
+          start: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+          end: now,
+        };
       case REPORT_TYPES.QUARTERLY:
-        return { start: new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000), end: now };
+        return {
+          start: new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000),
+          end: now,
+        };
       case REPORT_TYPES.YEARLY:
-        return { start: new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000), end: now };
+        return {
+          start: new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000),
+          end: now,
+        };
       case REPORT_TYPES.CUSTOM:
         return { start: startDate || now, end: endDate || now };
       default:
-        return { start: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000), end: now };
+        return {
+          start: new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000),
+          end: now,
+        };
     }
   }
   formatReport(report, format) {

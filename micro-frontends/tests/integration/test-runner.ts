@@ -82,7 +82,6 @@ class IntegrationTestRunner {
       this.printSummary(report);
 
       return report;
-
     } catch (error) {
       console.error('❌ 集成測試失敗:', error);
       throw error;
@@ -95,7 +94,9 @@ class IntegrationTestRunner {
   private async runTestsInParallel(): Promise<void> {
     console.log('🔄 並行運行測試套件...');
 
-    const testPromises = this.config.testSuites.map(suite => this.runTestSuite(suite));
+    const testPromises = this.config.testSuites.map((suite) =>
+      this.runTestSuite(suite)
+    );
     await Promise.all(testPromises);
   }
 
@@ -141,7 +142,6 @@ class IntegrationTestRunner {
       if (stderr) {
         console.warn(`⚠️  ${suiteName} 測試警告:`, stderr);
       }
-
     } catch (error) {
       console.error(`❌ ${suiteName} 測試失敗:`, error);
 
@@ -152,7 +152,7 @@ class IntegrationTestRunner {
         status: 'failed',
         duration: 0,
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   }
@@ -160,7 +160,11 @@ class IntegrationTestRunner {
   /**
    * 處理 Jest 測試結果
    */
-  private processJestResults(suiteName: string, jestResults: any, duration: number): void {
+  private processJestResults(
+    suiteName: string,
+    jestResults: any,
+    duration: number
+  ): void {
     if (jestResults.testResults && jestResults.testResults.length > 0) {
       const testResult = jestResults.testResults[0];
 
@@ -168,11 +172,17 @@ class IntegrationTestRunner {
         this.results.push({
           suite: suiteName,
           test: test.fullName,
-          status: test.status === 'passed' ? 'passed' :
-            test.status === 'skipped' ? 'skipped' : 'failed',
+          status:
+            test.status === 'passed'
+              ? 'passed'
+              : test.status === 'skipped'
+                ? 'skipped'
+                : 'failed',
           duration: test.duration || 0,
-          error: test.failureMessages ? test.failureMessages.join('\n') : undefined,
-          timestamp: new Date().toISOString()
+          error: test.failureMessages
+            ? test.failureMessages.join('\n')
+            : undefined,
+          timestamp: new Date().toISOString(),
         });
       });
     }
@@ -192,7 +202,6 @@ class IntegrationTestRunner {
 
       const coverageResults = JSON.parse(stdout);
       return coverageResults.coverageMap || {};
-
     } catch (error) {
       console.warn('⚠️  覆蓋率報告生成失敗:', error);
       return undefined;
@@ -204,9 +213,9 @@ class IntegrationTestRunner {
    */
   private generateReport(startTime: number, coverage?: any): TestReport {
     const total = this.results.length;
-    const passed = this.results.filter(r => r.status === 'passed').length;
-    const failed = this.results.filter(r => r.status === 'failed').length;
-    const skipped = this.results.filter(r => r.status === 'skipped').length;
+    const passed = this.results.filter((r) => r.status === 'passed').length;
+    const failed = this.results.filter((r) => r.status === 'failed').length;
+    const skipped = this.results.filter((r) => r.status === 'skipped').length;
     const duration = Date.now() - startTime;
 
     return {
@@ -215,11 +224,11 @@ class IntegrationTestRunner {
         passed,
         failed,
         skipped,
-        duration
+        duration,
       },
       results: this.results,
       timestamp: new Date().toISOString(),
-      coverage
+      coverage,
     };
   }
 
@@ -227,13 +236,19 @@ class IntegrationTestRunner {
    * 保存測試報告
    */
   private async saveReport(report: TestReport): Promise<void> {
-    const reportPath = path.join(this.config.outputDir, `integration-test-report-${Date.now()}.json`);
+    const reportPath = path.join(
+      this.config.outputDir,
+      `integration-test-report-${Date.now()}.json`
+    );
 
     await fs.promises.writeFile(reportPath, JSON.stringify(report, null, 2));
 
     // 生成 HTML 報告
     if (this.config.reportFormat === 'html') {
-      await this.generateHtmlReport(report, reportPath.replace('.json', '.html'));
+      await this.generateHtmlReport(
+        report,
+        reportPath.replace('.json', '.html')
+      );
     }
 
     console.log(`📄 測試報告已保存: ${reportPath}`);
@@ -242,7 +257,10 @@ class IntegrationTestRunner {
   /**
    * 生成 HTML 報告
    */
-  private async generateHtmlReport(report: TestReport, outputPath: string): Promise<void> {
+  private async generateHtmlReport(
+    report: TestReport,
+    outputPath: string
+  ): Promise<void> {
     const html = `
 <!DOCTYPE html>
 <html lang="zh-TW">
@@ -290,14 +308,18 @@ class IntegrationTestRunner {
     
     <div class="results">
         <h2>詳細結果</h2>
-        ${report.results.map(result => `
+        ${report.results
+          .map(
+            (result) => `
             <div class="test-item ${result.status}">
                 <strong>${result.suite} - ${result.test}</strong>
                 <br>
                 狀態: ${result.status} | 耗時: ${result.duration}ms
                 ${result.error ? `<br><div class="error">錯誤: ${result.error}</div>` : ''}
             </div>
-        `).join('')}
+        `
+          )
+          .join('')}
     </div>
 </body>
 </html>
@@ -330,8 +352,8 @@ class IntegrationTestRunner {
     if (report.summary.failed > 0) {
       console.log('\n❌ 失敗的測試:');
       report.results
-        .filter(r => r.status === 'failed')
-        .forEach(r => {
+        .filter((r) => r.status === 'failed')
+        .forEach((r) => {
           console.log(`  - ${r.suite}: ${r.test}`);
           if (r.error) {
             console.log(`    錯誤: ${r.error}`);
@@ -357,7 +379,6 @@ class IntegrationTestRunner {
       }
 
       console.log('✅ 環境清理完成');
-
     } catch (error) {
       console.warn('⚠️  環境清理警告:', error);
     }
@@ -370,13 +391,13 @@ const defaultConfig: TestConfig = {
     'module-communication',
     'shared-state',
     'module-federation',
-    'end-to-end-workflow'
+    'end-to-end-workflow',
   ],
   timeout: 30000, // 30 秒
   parallel: true,
   coverage: true,
   reportFormat: 'html',
-  outputDir: './test-reports'
+  outputDir: './test-reports',
 };
 
 // 導出測試運行器
@@ -386,9 +407,10 @@ export { IntegrationTestRunner, TestConfig, TestReport, defaultConfig };
 if (require.main === module) {
   const runner = new IntegrationTestRunner(defaultConfig);
 
-  runner.runAllTests()
+  runner
+    .runAllTests()
     .then(() => runner.cleanup())
-    .catch(error => {
+    .catch((error) => {
       console.error('測試運行失敗:', error);
       process.exit(1);
     });

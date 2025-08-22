@@ -37,21 +37,16 @@
       "@/config/*": ["src/config/*"],
       "@/i18n/*": ["src/i18n/*"],
       "@/types/*": ["src/types/*"],
-      "@/assets/*": ["assets/*"]
-    }
+      "@/assets/*": ["assets/*"],
+    },
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "**/*.js",
-    "**/*.jsx"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
   "exclude": [
     "node_modules",
     "babel.config.js",
     "metro.config.js",
     "jest.config.js",
     "dist",
-    "build"
-  ]
+    "build",
+  ],
 }

@@ -1,71 +1,92 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { Op } = require('sequelize');
-const { protect, authorize } = require('../middleware/auth');
+const { authenticateToken: protect, authorize } = require('../middleware/auth');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
-// 導入模型
+// 導入模�?
 const getCollectionModel = require('../models/Collection');
 const getCollectionCardModel = require('../models/CollectionCard');
+// eslint-disable-next-line no-unused-vars
 const getCardModel = require('../models/Card');
 const getUserModel = require('../models/User');
 
-// 設置模型關聯
+// 設置模�??�聯
 const setupAssociations = () => {
   const Collection = getCollectionModel();
   const CollectionCard = getCollectionCardModel();
+// eslint-disable-next-line no-unused-vars
   const Card = getCardModel();
   const User = getUserModel();
 
   if (Collection && CollectionCard && Card && User) {
-    // Collection 關聯
-    Collection.hasMany(CollectionCard, { foreignKey: 'collectionId', as: 'collectionCards' });
+    // Collection ?�聯
+    Collection.hasMany(CollectionCard, {
+      foreignKey: 'collectionId',
+      as: 'collectionCards',
+    });
     Collection.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-    // CollectionCard 關聯
-    CollectionCard.belongsTo(Collection, { foreignKey: 'collectionId', as: 'collection' });
+    // CollectionCard ?�聯
+    CollectionCard.belongsTo(Collection, {
+      foreignKey: 'collectionId',
+      as: 'collection',
+    });
     CollectionCard.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
-    // Card 關聯
-    Card.hasMany(CollectionCard, { foreignKey: 'cardId', as: 'collectionCards' });
+    // Card ?�聯
+    Card.hasMany(CollectionCard, {
+      foreignKey: 'cardId',
+      as: 'collectionCards',
+    });
   }
 };
 
 const router = express.Router();
 
 // @route   GET /api/collections
-// @desc    獲取用戶的收藏列表
-// @access  Private
+// @desc    ?��??�戶?�收?��?�?// @access  Private
 router.get('/', protect, async (req, res) => {
   try {
     const Collection = getCollectionModel();
     const CollectionCard = getCollectionCardModel();
+// eslint-disable-next-line no-unused-vars
     const Card = getCardModel();
     const User = getUserModel();
 
     if (!Collection || !CollectionCard || !Card || !User) {
-      throw new Error('無法獲取模型');
+      throw new Error('?��??��?模�?');
     }
 
-    // 設置關聯
-    Collection.hasMany(CollectionCard, { foreignKey: 'collectionId', as: 'collectionCards' });
+    // 設置?�聯
+    Collection.hasMany(CollectionCard, {
+      foreignKey: 'collectionId',
+      as: 'collectionCards',
+    });
     Collection.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-    CollectionCard.belongsTo(Collection, { foreignKey: 'collectionId', as: 'collection' });
+    CollectionCard.belongsTo(Collection, {
+      foreignKey: 'collectionId',
+      as: 'collection',
+    });
     CollectionCard.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
-    Card.hasMany(CollectionCard, { foreignKey: 'cardId', as: 'collectionCards' });
+    Card.hasMany(CollectionCard, {
+      foreignKey: 'cardId',
+      as: 'collectionCards',
+    });
 
     const { page = 1, limit = 10, search, isPublic } = req.query;
     const offset = (page - 1) * limit;
 
-    // 構建查詢條件
+    // 構建?�詢條件
     const whereClause = {
       userId: req.user.id,
-      isActive: true
+      isActive: true,
     };
 
     if (search) {
       whereClause.name = {
-        [Op.iLike]: `%${search}%`
+        [Op.iLike]: `%${search}%`,
       };
     }
 
@@ -86,18 +107,21 @@ router.get('/', protect, async (req, res) => {
             {
               model: getCardModel(),
               as: 'card',
-              attributes: ['id', 'name', 'imageUrl', 'currentPrice', 'rarity']
-            }
-          ]
-        }
-      ]
+              attributes: ['id', 'name', 'imageUrl', 'currentPrice', 'rarity'],
+            },
+          ],
+        },
+      ],
     });
 
-    // 計算統計信息
-    const collectionsWithStats = collections.map(collection => {
-      const totalCards = collection.collectionCards.reduce((sum, cc) => sum + cc.quantity, 0);
+    // 計�?統�?信息
+    const collectionsWithStats = collections.map((collection) => {
+      const totalCards = collection.collectionCards.reduce(
+        (sum, cc) => sum + cc.quantity,
+        0
+      );
       const totalValue = collection.collectionCards.reduce((sum, cc) => {
-        return sum + (cc.quantity * (cc.card?.currentPrice || 0));
+        return sum + cc.quantity * (cc.card?.currentPrice || 0);
       }, 0);
       const averagePrice = totalCards > 0 ? totalValue / totalCards : 0;
 
@@ -107,22 +131,34 @@ router.get('/', protect, async (req, res) => {
           totalCards,
           totalValue,
           averagePrice,
-          mostExpensiveCard: collection.collectionCards.length > 0 ?
-            collection.collectionCards.reduce((max, cc) =>
-              ((cc.card?.currentPrice || 0) > (max.card?.currentPrice || 0) ? cc : max)
-            ).card : null,
-          rarestCard: collection.collectionCards.length > 0 ?
-            collection.collectionCards.reduce((rarest, cc) => {
-              const rarityOrder = { 'common': 1, 'uncommon': 2, 'rare': 3, 'mythic': 4, 'special': 5 };
-              const currentRarity = rarityOrder[cc.card?.rarity] || 0;
-              const rarestRarity = rarityOrder[rarest.card?.rarity] || 0;
-              return currentRarity > rarestRarity ? cc : rarest;
-            }).card : null
-        }
+          mostExpensiveCard:
+            collection.collectionCards.length > 0
+              ? collection.collectionCards.reduce((max, cc) =>
+                  (cc.card?.currentPrice || 0) > (max.card?.currentPrice || 0)
+                    ? cc
+                    : max
+                ).card
+              : null,
+          rarestCard:
+            collection.collectionCards.length > 0
+              ? collection.collectionCards.reduce((rarest, cc) => {
+                  const rarityOrder = {
+                    common: 1,
+                    uncommon: 2,
+                    rare: 3,
+                    mythic: 4,
+                    special: 5,
+                  };
+                  const currentRarity = rarityOrder[cc.card?.rarity] || 0;
+                  const rarestRarity = rarityOrder[rarest.card?.rarity] || 0;
+                  return currentRarity > rarestRarity ? cc : rarest;
+                }).card
+              : null,
+        },
       };
     });
 
-    logger.info(`獲取收藏列表: ${req.user.username} - 共 ${count} 個收藏`);
+    logger.info(`?��??��??�表: ${req.user.username} - ??${count} ?�收?�`);
 
     res.json({
       success: true,
@@ -132,131 +168,160 @@ router.get('/', protect, async (req, res) => {
           page: parseInt(page),
           limit: parseInt(limit),
           total: count,
-          pages: Math.ceil(count / limit)
-        }
-      }
+          pages: Math.ceil(count / limit),
+        },
+      },
     });
   } catch (error) {
-    logger.error('獲取收藏列表錯誤:', error);
+    logger.error('?��??��??�表?�誤:', error);
     res.status(500).json({
       success: false,
-      message: '獲取收藏列表失敗',
-      code: 'GET_COLLECTIONS_FAILED'
+      message: '?��??��??�表失�?',
+      code: 'GET_COLLECTIONS_FAILED',
     });
   }
 });
 
 // @route   POST /api/collections
-// @desc    創建新收藏
-// @access  Private
-router.post('/', protect, [
-  body('name').isLength({ min: 1, max: 100 }).withMessage('收藏名稱必須在1-100個字符之間'),
-  body('description').optional().isLength({ max: 500 }).withMessage('描述最多500個字符'),
-  body('isPublic').optional().isBoolean(),
-  body('coverImage').optional().isURL().withMessage('封面圖片必須是有效的URL'),
-  body('tags').optional().isArray().withMessage('標籤必須是數組格式')
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: '輸入驗證失敗',
-        code: 'VALIDATION_ERROR',
-        errors: errors.array()
+// @desc    ?�建?�收??// @access  Private
+router.post(
+  '/',
+  protect,
+  [
+    body('name')
+      .isLength({ min: 1, max: 100 })
+      .withMessage('?��??�稱必�???-100?��?符�???),
+    body('description')
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage('?�述?��?00?��?�?),
+    body('isPublic').optional().isBoolean(),
+    body('coverImage')
+      .optional()
+      .isURL()
+      .withMessage('封面?��?必�??��??��?URL'),
+    body('tags').optional().isArray().withMessage('標籤必�??�數組格�?),
+  ],
+  async (req, res) => {
+    try {
+// eslint-disable-next-line no-unused-vars
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: '輸入驗�?失�?',
+          code: 'VALIDATION_ERROR',
+          errors: errors.array(),
+        });
+      }
+
+      const Collection = getCollectionModel();
+      if (!Collection) {
+        throw new Error('?��??��??��?模�?');
+      }
+
+      const {
+        name,
+        description,
+        isPublic = false,
+        coverImage,
+        tags = [],
+      } = req.body;
+
+      // 檢查?��??�稱?�否已�???      const existingCollection = await Collection.findOne({
+        where: {
+          userId: req.user.id,
+          name,
+          isActive: true,
+        },
       });
-    }
 
-    const Collection = getCollectionModel();
-    if (!Collection) {
-      throw new Error('無法獲取收藏模型');
-    }
+      if (existingCollection) {
+        return res.status(400).json({
+          success: false,
+          message: '?��??�稱已�???,
+          code: 'COLLECTION_NAME_EXISTS',
+        });
+      }
 
-    const { name, description, isPublic = false, coverImage, tags = [] } = req.body;
-
-    // 檢查收藏名稱是否已存在
-    const existingCollection = await Collection.findOne({
-      where: {
+// eslint-disable-next-line no-unused-vars
+      const newCollection = await Collection.create({
         userId: req.user.id,
         name,
-        isActive: true
-      }
-    });
+        description: description || '',
+        isPublic,
+        coverImage,
+        tags,
+        statistics: {
+          totalCards: 0,
+          totalValue: 0,
+          averagePrice: 0,
+          mostExpensiveCard: null,
+          rarestCard: null,
+        },
+      });
 
-    if (existingCollection) {
-      return res.status(400).json({
+      logger.info(`?�建?��?: ${req.user.username} ?�建�?"${name}"`);
+
+      res.status(201).json({
+        success: true,
+        message: '?��??�建?��?',
+        data: { collection: newCollection },
+      });
+    } catch (error) {
+      logger.error('?�建?��??�誤:', error);
+      res.status(500).json({
         success: false,
-        message: '收藏名稱已存在',
-        code: 'COLLECTION_NAME_EXISTS'
+        message: '?�建?��?失�?',
+        code: 'CREATE_COLLECTION_FAILED',
       });
     }
-
-    const newCollection = await Collection.create({
-      userId: req.user.id,
-      name,
-      description: description || '',
-      isPublic,
-      coverImage,
-      tags,
-      statistics: {
-        totalCards: 0,
-        totalValue: 0,
-        averagePrice: 0,
-        mostExpensiveCard: null,
-        rarestCard: null
-      }
-    });
-
-    logger.info(`創建收藏: ${req.user.username} 創建了 "${name}"`);
-
-    res.status(201).json({
-      success: true,
-      message: '收藏創建成功',
-      data: { collection: newCollection }
-    });
-  } catch (error) {
-    logger.error('創建收藏錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '創建收藏失敗',
-      code: 'CREATE_COLLECTION_FAILED'
-    });
   }
-});
+);
 
 // @route   GET /api/collections/public/list
-// @desc    獲取公開收藏列表
+// @desc    ?��??��??��??�表
 // @access  Public
 router.get('/public/list', async (req, res) => {
   try {
     const Collection = getCollectionModel();
     const CollectionCard = getCollectionCardModel();
+// eslint-disable-next-line no-unused-vars
     const Card = getCardModel();
     const User = getUserModel();
 
     if (!Collection || !CollectionCard || !Card || !User) {
-      throw new Error('無法獲取模型');
+      throw new Error('?��??��?模�?');
     }
 
-    // 設置關聯
-    Collection.hasMany(CollectionCard, { foreignKey: 'collectionId', as: 'collectionCards' });
+    // 設置?�聯
+    Collection.hasMany(CollectionCard, {
+      foreignKey: 'collectionId',
+      as: 'collectionCards',
+    });
     Collection.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-    CollectionCard.belongsTo(Collection, { foreignKey: 'collectionId', as: 'collection' });
+    CollectionCard.belongsTo(Collection, {
+      foreignKey: 'collectionId',
+      as: 'collection',
+    });
     CollectionCard.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
-    Card.hasMany(CollectionCard, { foreignKey: 'cardId', as: 'collectionCards' });
+    Card.hasMany(CollectionCard, {
+      foreignKey: 'cardId',
+      as: 'collectionCards',
+    });
 
     const { page = 1, limit = 10, search } = req.query;
     const offset = (page - 1) * limit;
 
-    // 構建查詢條件
+    // 構建?�詢條件
     const whereClause = {
       isPublic: true,
-      isActive: true
+      isActive: true,
     };
 
     if (search) {
       whereClause.name = {
-        [Op.iLike]: `%${search}%`
+        [Op.iLike]: `%${search}%`,
       };
     }
 
@@ -269,7 +334,7 @@ router.get('/public/list', async (req, res) => {
         {
           model: getUserModel(),
           as: 'user',
-          attributes: ['id', 'username', 'displayName']
+          attributes: ['id', 'username', 'displayName'],
         },
         {
           model: getCollectionCardModel(),
@@ -278,18 +343,21 @@ router.get('/public/list', async (req, res) => {
             {
               model: getCardModel(),
               as: 'card',
-              attributes: ['id', 'name', 'imageUrl', 'currentPrice', 'rarity']
-            }
-          ]
-        }
-      ]
+              attributes: ['id', 'name', 'imageUrl', 'currentPrice', 'rarity'],
+            },
+          ],
+        },
+      ],
     });
 
-    // 計算統計信息
-    const collectionsWithStats = collections.map(collection => {
-      const totalCards = collection.collectionCards.reduce((sum, cc) => sum + cc.quantity, 0);
+    // 計�?統�?信息
+    const collectionsWithStats = collections.map((collection) => {
+      const totalCards = collection.collectionCards.reduce(
+        (sum, cc) => sum + cc.quantity,
+        0
+      );
       const totalValue = collection.collectionCards.reduce((sum, cc) => {
-        return sum + (cc.quantity * (cc.card?.currentPrice || 0));
+        return sum + cc.quantity * (cc.card?.currentPrice || 0);
       }, 0);
       const averagePrice = totalCards > 0 ? totalValue / totalCards : 0;
 
@@ -298,12 +366,12 @@ router.get('/public/list', async (req, res) => {
         statistics: {
           totalCards,
           totalValue,
-          averagePrice
-        }
+          averagePrice,
+        },
       };
     });
 
-    logger.info(`獲取公開收藏列表: 共 ${count} 個收藏`);
+    logger.info(`?��??��??��??�表: ??${count} ?�收?�`);
 
     res.json({
       success: true,
@@ -313,28 +381,28 @@ router.get('/public/list', async (req, res) => {
           page: parseInt(page),
           limit: parseInt(limit),
           total: count,
-          pages: Math.ceil(count / limit)
-        }
-      }
+          pages: Math.ceil(count / limit),
+        },
+      },
     });
   } catch (error) {
-    logger.error('獲取公開收藏列表錯誤:', error);
+    logger.error('?��??��??��??�表?�誤:', error);
     res.status(500).json({
       success: false,
-      message: '獲取公開收藏列表失敗',
-      code: 'GET_PUBLIC_COLLECTIONS_FAILED'
+      message: '?��??��??��??�表失�?',
+      code: 'GET_PUBLIC_COLLECTIONS_FAILED',
     });
   }
 });
 
 // @route   GET /api/collections/:id
-// @desc    獲取收藏詳情
+// @desc    ?��??��?詳�?
 // @access  Private
 router.get('/:id', protect, async (req, res) => {
   try {
     const Collection = getCollectionModel();
     if (!Collection) {
-      throw new Error('無法獲取收藏模型');
+      throw new Error('?��??��??��?模�?');
     }
 
     const { id } = req.params;
@@ -343,7 +411,7 @@ router.get('/:id', protect, async (req, res) => {
       where: {
         id,
         userId: req.user.id,
-        isActive: true
+        isActive: true,
       },
       include: [
         {
@@ -353,25 +421,36 @@ router.get('/:id', protect, async (req, res) => {
             {
               model: getCardModel(),
               as: 'card',
-              attributes: ['id', 'name', 'imageUrl', 'currentPrice', 'rarity', 'cardType', 'setName']
-            }
-          ]
-        }
-      ]
+              attributes: [
+                'id',
+                'name',
+                'imageUrl',
+                'currentPrice',
+                'rarity',
+                'cardType',
+                'setName',
+              ],
+            },
+          ],
+        },
+      ],
     });
 
     if (!collection) {
       return res.status(404).json({
         success: false,
-        message: '收藏不存在',
-        code: 'COLLECTION_NOT_FOUND'
+        message: '?��?不�???,
+        code: 'COLLECTION_NOT_FOUND',
       });
     }
 
-    // 計算統計信息
-    const totalCards = collection.collectionCards.reduce((sum, cc) => sum + cc.quantity, 0);
+    // 計�?統�?信息
+    const totalCards = collection.collectionCards.reduce(
+      (sum, cc) => sum + cc.quantity,
+      0
+    );
     const totalValue = collection.collectionCards.reduce((sum, cc) => {
-      return sum + (cc.quantity * (cc.card?.currentPrice || 0));
+      return sum + cc.quantity * (cc.card?.currentPrice || 0);
     }, 0);
     const averagePrice = totalCards > 0 ? totalValue / totalCards : 0;
 
@@ -381,136 +460,162 @@ router.get('/:id', protect, async (req, res) => {
         totalCards,
         totalValue,
         averagePrice,
-        mostExpensiveCard: collection.collectionCards.length > 0 ?
-          collection.collectionCards.reduce((max, cc) =>
-            ((cc.card?.currentPrice || 0) > (max.card?.currentPrice || 0) ? cc : max)
-          ).card : null,
-        rarestCard: collection.collectionCards.length > 0 ?
-          collection.collectionCards.reduce((rarest, cc) => {
-            const rarityOrder = { 'common': 1, 'uncommon': 2, 'rare': 3, 'mythic': 4, 'special': 5 };
-            const currentRarity = rarityOrder[cc.card?.rarity] || 0;
-            const rarestRarity = rarityOrder[rarest.card?.rarity] || 0;
-            return currentRarity > rarestRarity ? cc : rarest;
-          }).card : null
-      }
+        mostExpensiveCard:
+          collection.collectionCards.length > 0
+            ? collection.collectionCards.reduce((max, cc) =>
+                (cc.card?.currentPrice || 0) > (max.card?.currentPrice || 0)
+                  ? cc
+                  : max
+              ).card
+            : null,
+        rarestCard:
+          collection.collectionCards.length > 0
+            ? collection.collectionCards.reduce((rarest, cc) => {
+                const rarityOrder = {
+                  common: 1,
+                  uncommon: 2,
+                  rare: 3,
+                  mythic: 4,
+                  special: 5,
+                };
+                const currentRarity = rarityOrder[cc.card?.rarity] || 0;
+                const rarestRarity = rarityOrder[rarest.card?.rarity] || 0;
+                return currentRarity > rarestRarity ? cc : rarest;
+              }).card
+            : null,
+      },
     };
 
-    logger.info(`獲取收藏詳情: ${req.user.username} 查看 "${collection.name}"`);
+    logger.info(`?��??��?詳�?: ${req.user.username} ?��? "${collection.name}"`);
 
     res.json({
       success: true,
-      data: { collection: collectionData }
+      data: { collection: collectionData },
     });
   } catch (error) {
-    logger.error('獲取收藏詳情錯誤:', error);
+    logger.error('?��??��?詳�??�誤:', error);
     res.status(500).json({
       success: false,
-      message: '獲取收藏詳情失敗',
-      code: 'GET_COLLECTION_FAILED'
+      message: '?��??��?詳�?失�?',
+      code: 'GET_COLLECTION_FAILED',
     });
   }
 });
 
 // @route   PUT /api/collections/:id
-// @desc    更新收藏
+// @desc    ?�新?��?
 // @access  Private
-router.put('/:id', protect, [
-  body('name').optional().isLength({ min: 1, max: 100 }).withMessage('收藏名稱必須在1-100個字符之間'),
-  body('description').optional().isLength({ max: 500 }).withMessage('描述最多500個字符'),
-  body('isPublic').optional().isBoolean(),
-  body('coverImage').optional().isURL().withMessage('封面圖片必須是有效的URL'),
-  body('tags').optional().isArray().withMessage('標籤必須是數組格式')
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: '輸入驗證失敗',
-        code: 'VALIDATION_ERROR',
-        errors: errors.array()
-      });
-    }
-
-    const Collection = getCollectionModel();
-    if (!Collection) {
-      throw new Error('無法獲取收藏模型');
-    }
-
-    const { id } = req.params;
-    const { name, description, isPublic, coverImage, tags } = req.body;
-
-    const collection = await Collection.findOne({
-      where: {
-        id,
-        userId: req.user.id,
-        isActive: true
-      }
-    });
-
-    if (!collection) {
-      return res.status(404).json({
-        success: false,
-        message: '收藏不存在',
-        code: 'COLLECTION_NOT_FOUND'
-      });
-    }
-
-    // 如果更新名稱，檢查是否與其他收藏重複
-    if (name && name !== collection.name) {
-      const existingCollection = await Collection.findOne({
-        where: {
-          userId: req.user.id,
-          name,
-          isActive: true,
-          id: { [Op.ne]: id }
-        }
-      });
-
-      if (existingCollection) {
+router.put(
+  '/:id',
+  protect,
+  [
+    body('name')
+      .optional()
+      .isLength({ min: 1, max: 100 })
+      .withMessage('?��??�稱必�???-100?��?符�???),
+    body('description')
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage('?�述?��?00?��?�?),
+    body('isPublic').optional().isBoolean(),
+    body('coverImage')
+      .optional()
+      .isURL()
+      .withMessage('封面?��?必�??��??��?URL'),
+    body('tags').optional().isArray().withMessage('標籤必�??�數組格�?),
+  ],
+  async (req, res) => {
+    try {
+// eslint-disable-next-line no-unused-vars
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '收藏名稱已存在',
-          code: 'COLLECTION_NAME_EXISTS'
+          message: '輸入驗�?失�?',
+          code: 'VALIDATION_ERROR',
+          errors: errors.array(),
         });
       }
+
+      const Collection = getCollectionModel();
+      if (!Collection) {
+        throw new Error('?��??��??��?模�?');
+      }
+
+      const { id } = req.params;
+      const { name, description, isPublic, coverImage, tags } = req.body;
+
+      const collection = await Collection.findOne({
+        where: {
+          id,
+          userId: req.user.id,
+          isActive: true,
+        },
+      });
+
+      if (!collection) {
+        return res.status(404).json({
+          success: false,
+          message: '?��?不�???,
+          code: 'COLLECTION_NOT_FOUND',
+        });
+      }
+
+      // 如�??�新?�稱，檢?�是?��??��??��??��?
+      if (name && name !== collection.name) {
+        const existingCollection = await Collection.findOne({
+          where: {
+            userId: req.user.id,
+            name,
+            isActive: true,
+            id: { [Op.ne]: id },
+          },
+        });
+
+        if (existingCollection) {
+          return res.status(400).json({
+            success: false,
+            message: '?��??�稱已�???,
+            code: 'COLLECTION_NAME_EXISTS',
+          });
+        }
+      }
+
+      // ?�新?��?
+      const updateData = {};
+      if (name !== undefined) updateData.name = name;
+      if (description !== undefined) updateData.description = description;
+      if (isPublic !== undefined) updateData.isPublic = isPublic;
+      if (coverImage !== undefined) updateData.coverImage = coverImage;
+      if (tags !== undefined) updateData.tags = tags;
+
+      await collection.update(updateData);
+
+      logger.info(`?�新?��?: ${req.user.username} ?�新�?"${collection.name}"`);
+
+      res.json({
+        success: true,
+        message: '?��??�新?��?',
+        data: { collection },
+      });
+    } catch (error) {
+      logger.error('?�新?��??�誤:', error);
+      res.status(500).json({
+        success: false,
+        message: '?�新?��?失�?',
+        code: 'UPDATE_COLLECTION_FAILED',
+      });
     }
-
-    // 更新收藏
-    const updateData = {};
-    if (name !== undefined) updateData.name = name;
-    if (description !== undefined) updateData.description = description;
-    if (isPublic !== undefined) updateData.isPublic = isPublic;
-    if (coverImage !== undefined) updateData.coverImage = coverImage;
-    if (tags !== undefined) updateData.tags = tags;
-
-    await collection.update(updateData);
-
-    logger.info(`更新收藏: ${req.user.username} 更新了 "${collection.name}"`);
-
-    res.json({
-      success: true,
-      message: '收藏更新成功',
-      data: { collection }
-    });
-  } catch (error) {
-    logger.error('更新收藏錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '更新收藏失敗',
-      code: 'UPDATE_COLLECTION_FAILED'
-    });
   }
-});
+);
 
 // @route   DELETE /api/collections/:id
-// @desc    刪除收藏（軟刪除）
-// @access  Private
+// @desc    ?�除?��?（�??�除�?// @access  Private
 router.delete('/:id', protect, async (req, res) => {
   try {
     const Collection = getCollectionModel();
     if (!Collection) {
-      throw new Error('無法獲取收藏模型');
+      throw new Error('?��??��??��?模�?');
     }
 
     const { id } = req.params;
@@ -519,364 +624,415 @@ router.delete('/:id', protect, async (req, res) => {
       where: {
         id,
         userId: req.user.id,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     if (!collection) {
       return res.status(404).json({
         success: false,
-        message: '收藏不存在',
-        code: 'COLLECTION_NOT_FOUND'
+        message: '?��?不�???,
+        code: 'COLLECTION_NOT_FOUND',
       });
     }
 
-    // 軟刪除收藏
-    await collection.update({ isActive: false });
+    // 軟刪?�收??    await collection.update({ isActive: false });
 
-    logger.info(`刪除收藏: ${req.user.username} 刪除了 "${collection.name}"`);
+    logger.info(`?�除?��?: ${req.user.username} ?�除�?"${collection.name}"`);
 
     res.json({
       success: true,
-      message: '收藏刪除成功'
+      message: '?��??�除?��?',
     });
   } catch (error) {
-    logger.error('刪除收藏錯誤:', error);
+    logger.error('?�除?��??�誤:', error);
     res.status(500).json({
       success: false,
-      message: '刪除收藏失敗',
-      code: 'DELETE_COLLECTION_FAILED'
+      message: '?�除?��?失�?',
+      code: 'DELETE_COLLECTION_FAILED',
     });
   }
 });
 
 // @route   POST /api/collections/:id/cards
-// @desc    添加卡牌到收藏
-// @access  Private
-router.post('/:id/cards', protect, [
-  body('cardId').isInt().withMessage('卡牌ID必須是整數'),
-  body('quantity').isInt({ min: 1 }).withMessage('數量必須大於0'),
-  body('condition').optional().isIn(['mint', 'near-mint', 'excellent', 'good', 'light-played', 'played', 'poor']),
-  body('notes').optional().isLength({ max: 200 }).withMessage('備註最多200個字符'),
-  body('isFoil').optional().isBoolean(),
-  body('isSigned').optional().isBoolean(),
-  body('isGraded').optional().isBoolean(),
-  body('grade').optional().isLength({ max: 10 }).withMessage('評級最多10個字符')
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: '輸入驗證失敗',
-        code: 'VALIDATION_ERROR',
-        errors: errors.array()
-      });
-    }
-
-    const Collection = getCollectionModel();
-    const CollectionCard = getCollectionCardModel();
-    const Card = getCardModel();
-
-    if (!Collection || !CollectionCard || !Card) {
-      throw new Error('無法獲取模型');
-    }
-
-    const { id } = req.params;
-    const {
-      cardId,
-      quantity,
-      condition = 'near-mint',
-      notes = '',
-      isFoil = false,
-      isSigned = false,
-      isGraded = false,
-      grade = null
-    } = req.body;
-
-    // 檢查收藏是否存在
-    const collection = await Collection.findOne({
-      where: {
-        id,
-        userId: req.user.id,
-        isActive: true
+// @desc    添�??��??�收??// @access  Private
+router.post(
+  '/:id/cards',
+  protect,
+  [
+    body('cardId').isInt().withMessage('?��?ID必�??�整??),
+    body('quantity').isInt({ min: 1 }).withMessage('?��?必�?大於0'),
+    body('condition')
+      .optional()
+      .isIn([
+        'mint',
+        'near-mint',
+        'excellent',
+        'good',
+        'light-played',
+        'played',
+        'poor',
+      ]),
+    body('notes')
+      .optional()
+      .isLength({ max: 200 })
+      .withMessage('?�註?��?00?��?�?),
+    body('isFoil').optional().isBoolean(),
+    body('isSigned').optional().isBoolean(),
+    body('isGraded').optional().isBoolean(),
+    body('grade')
+      .optional()
+      .isLength({ max: 10 })
+      .withMessage('評�??��?0?��?�?),
+  ],
+  async (req, res) => {
+    try {
+// eslint-disable-next-line no-unused-vars
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: '輸入驗�?失�?',
+          code: 'VALIDATION_ERROR',
+          errors: errors.array(),
+        });
       }
-    });
 
-    if (!collection) {
-      return res.status(404).json({
-        success: false,
-        message: '收藏不存在',
-        code: 'COLLECTION_NOT_FOUND'
-      });
-    }
+      const Collection = getCollectionModel();
+      const CollectionCard = getCollectionCardModel();
+// eslint-disable-next-line no-unused-vars
+      const Card = getCardModel();
 
-    // 檢查卡牌是否存在
-    const card = await Card.findByPk(cardId);
-    if (!card) {
-      return res.status(404).json({
-        success: false,
-        message: '卡牌不存在',
-        code: 'CARD_NOT_FOUND'
-      });
-    }
-
-    // 檢查卡牌是否已存在於收藏中
-    const existingCollectionCard = await CollectionCard.findOne({
-      where: {
-        collectionId: id,
-        cardId
+      if (!Collection || !CollectionCard || !Card) {
+        throw new Error('?��??��?模�?');
       }
-    });
 
-    if (existingCollectionCard) {
-      // 更新現有卡牌
-      await existingCollectionCard.update({
-        quantity: existingCollectionCard.quantity + quantity,
-        notes: notes || existingCollectionCard.notes,
-        condition: condition || existingCollectionCard.condition,
-        isFoil: isFoil !== undefined ? isFoil : existingCollectionCard.isFoil,
-        isSigned: isSigned !== undefined ? isSigned : existingCollectionCard.isSigned,
-        isGraded: isGraded !== undefined ? isGraded : existingCollectionCard.isGraded,
-        grade: grade || existingCollectionCard.grade
-      });
-
-      logger.info(`更新收藏卡牌: ${req.user.username} 在 "${collection.name}" 中更新了卡牌 ${card.name}`);
-    } else {
-      // 添加新卡牌
-      await CollectionCard.create({
-        collectionId: id,
+      const { id } = req.params;
+      const {
         cardId,
         quantity,
-        condition,
-        notes,
-        isFoil,
-        isSigned,
-        isGraded,
-        grade,
-        estimatedValue: card.currentPrice * quantity
+        condition = 'near-mint',
+        notes = '',
+        isFoil = false,
+        isSigned = false,
+        isGraded = false,
+        grade = null,
+      } = req.body;
+
+      // 檢查?��??�否存在
+      const collection = await Collection.findOne({
+        where: {
+          id,
+          userId: req.user.id,
+          isActive: true,
+        },
       });
 
-      logger.info(`添加卡牌到收藏: ${req.user.username} 在 "${collection.name}" 中添加了卡牌 ${card.name}`);
+      if (!collection) {
+        return res.status(404).json({
+          success: false,
+          message: '?��?不�???,
+          code: 'COLLECTION_NOT_FOUND',
+        });
+      }
+
+      // 檢查?��??�否存在
+      const card = await Card.findByPk(cardId);
+      if (!card) {
+        return res.status(404).json({
+          success: false,
+          message: '?��?不�???,
+          code: 'CARD_NOT_FOUND',
+        });
+      }
+
+      // 檢查?��??�否已�??�於?��?�?      const existingCollectionCard = await CollectionCard.findOne({
+        where: {
+          collectionId: id,
+          cardId,
+        },
+      });
+
+      if (existingCollectionCard) {
+        // ?�新?��??��?
+        await existingCollectionCard.update({
+          quantity: existingCollectionCard.quantity + quantity,
+          notes: notes || existingCollectionCard.notes,
+          condition: condition || existingCollectionCard.condition,
+          isFoil: isFoil !== undefined ? isFoil : existingCollectionCard.isFoil,
+          isSigned:
+            isSigned !== undefined ? isSigned : existingCollectionCard.isSigned,
+          isGraded:
+            isGraded !== undefined ? isGraded : existingCollectionCard.isGraded,
+          grade: grade || existingCollectionCard.grade,
+        });
+
+        logger.info(
+          `?�新?��??��?: ${req.user.username} ??"${collection.name}" 中更?��??��? ${card.name}`
+        );
+      } else {
+        // 添�??�卡??        await CollectionCard.create({
+          collectionId: id,
+          cardId,
+          quantity,
+          condition,
+          notes,
+          isFoil,
+          isSigned,
+          isGraded,
+          grade,
+          estimatedValue: card.currentPrice * quantity,
+        });
+
+        logger.info(
+          `添�??��??�收?? ${req.user.username} ??"${collection.name}" 中添?��??��? ${card.name}`
+        );
+      }
+
+      // ?��??�新後�??��?詳�?
+      const updatedCollection = await Collection.findOne({
+        where: { id },
+        include: [
+          {
+            model: CollectionCard,
+            as: 'collectionCards',
+            include: [
+              {
+                model: Card,
+                as: 'card',
+                attributes: [
+                  'id',
+                  'name',
+                  'imageUrl',
+                  'currentPrice',
+                  'rarity',
+                ],
+              },
+            ],
+          },
+        ],
+      });
+
+      res.json({
+        success: true,
+        message: '?��?添�??��?',
+        data: { collection: updatedCollection },
+      });
+    } catch (error) {
+      logger.error('添�??��??�收?�錯�?', error);
+      res.status(500).json({
+        success: false,
+        message: '添�??��?失�?',
+        code: 'ADD_CARD_FAILED',
+      });
     }
-
-    // 獲取更新後的收藏詳情
-    const updatedCollection = await Collection.findOne({
-      where: { id },
-      include: [
-        {
-          model: CollectionCard,
-          as: 'collectionCards',
-          include: [
-            {
-              model: Card,
-              as: 'card',
-              attributes: ['id', 'name', 'imageUrl', 'currentPrice', 'rarity']
-            }
-          ]
-        }
-      ]
-    });
-
-    res.json({
-      success: true,
-      message: '卡牌添加成功',
-      data: { collection: updatedCollection }
-    });
-  } catch (error) {
-    logger.error('添加卡牌到收藏錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '添加卡牌失敗',
-      code: 'ADD_CARD_FAILED'
-    });
   }
-});
+);
 
 // @route   PUT /api/collections/:id/cards/:cardId
-// @desc    更新收藏中的卡牌
+// @desc    ?�新?��?中�??��?
 // @access  Private
-router.put('/:id/cards/:cardId', protect, [
-  body('quantity').optional().isInt({ min: 1 }).withMessage('數量必須大於0'),
-  body('condition').optional().isIn(['mint', 'near-mint', 'excellent', 'good', 'light-played', 'played', 'poor']),
-  body('notes').optional().isLength({ max: 200 }).withMessage('備註最多200個字符'),
-  body('isFoil').optional().isBoolean(),
-  body('isSigned').optional().isBoolean(),
-  body('isGraded').optional().isBoolean(),
-  body('grade').optional().isLength({ max: 10 }).withMessage('評級最多10個字符')
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({
-        success: false,
-        message: '輸入驗證失敗',
-        code: 'VALIDATION_ERROR',
-        errors: errors.array()
-      });
-    }
-
-    const Collection = getCollectionModel();
-    const CollectionCard = getCollectionCardModel();
-    const Card = getCardModel();
-
-    if (!Collection || !CollectionCard || !Card) {
-      throw new Error('無法獲取模型');
-    }
-
-    const { id, cardId } = req.params;
-    const {
-      quantity,
-      condition,
-      notes,
-      isFoil,
-      isSigned,
-      isGraded,
-      grade
-    } = req.body;
-
-    // 檢查收藏是否存在
-    const collection = await Collection.findOne({
-      where: {
-        id,
-        userId: req.user.id,
-        isActive: true
+router.put(
+  '/:id/cards/:cardId',
+  protect,
+  [
+    body('quantity').optional().isInt({ min: 1 }).withMessage('?��?必�?大於0'),
+    body('condition')
+      .optional()
+      .isIn([
+        'mint',
+        'near-mint',
+        'excellent',
+        'good',
+        'light-played',
+        'played',
+        'poor',
+      ]),
+    body('notes')
+      .optional()
+      .isLength({ max: 200 })
+      .withMessage('?�註?��?00?��?�?),
+    body('isFoil').optional().isBoolean(),
+    body('isSigned').optional().isBoolean(),
+    body('isGraded').optional().isBoolean(),
+    body('grade')
+      .optional()
+      .isLength({ max: 10 })
+      .withMessage('評�??��?0?��?�?),
+  ],
+  async (req, res) => {
+    try {
+// eslint-disable-next-line no-unused-vars
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: '輸入驗�?失�?',
+          code: 'VALIDATION_ERROR',
+          errors: errors.array(),
+        });
       }
-    });
 
-    if (!collection) {
-      return res.status(404).json({
+      const Collection = getCollectionModel();
+      const CollectionCard = getCollectionCardModel();
+// eslint-disable-next-line no-unused-vars
+      const Card = getCardModel();
+
+      if (!Collection || !CollectionCard || !Card) {
+        throw new Error('?��??��?模�?');
+      }
+
+      const { id, cardId } = req.params;
+      const { quantity, condition, notes, isFoil, isSigned, isGraded, grade } =
+        req.body;
+
+      // 檢查?��??�否存在
+      const collection = await Collection.findOne({
+        where: {
+          id,
+          userId: req.user.id,
+          isActive: true,
+        },
+      });
+
+      if (!collection) {
+        return res.status(404).json({
+          success: false,
+          message: '?��?不�???,
+          code: 'COLLECTION_NOT_FOUND',
+        });
+      }
+
+      // 檢查?��??�否?�收?�中
+      const collectionCard = await CollectionCard.findOne({
+        where: {
+          collectionId: id,
+          cardId,
+        },
+        include: [
+          {
+            model: Card,
+            as: 'card',
+          },
+        ],
+      });
+
+      if (!collectionCard) {
+        return res.status(404).json({
+          success: false,
+          message: '?��?不�??�於此收?�中',
+          code: 'CARD_NOT_IN_COLLECTION',
+        });
+      }
+
+      // ?�新?��?信息
+      const updateData = {};
+      if (quantity !== undefined) updateData.quantity = quantity;
+      if (condition !== undefined) updateData.condition = condition;
+      if (notes !== undefined) updateData.notes = notes;
+      if (isFoil !== undefined) updateData.isFoil = isFoil;
+      if (isSigned !== undefined) updateData.isSigned = isSigned;
+      if (isGraded !== undefined) updateData.isGraded = isGraded;
+      if (grade !== undefined) updateData.grade = grade;
+
+      // 如�??��??��?，更?�估算價??      if (quantity !== undefined) {
+        updateData.estimatedValue = collectionCard.card.currentPrice * quantity;
+      }
+
+      await collectionCard.update(updateData);
+
+      logger.info(
+        `?�新?��??��?: ${req.user.username} ??"${collection.name}" 中更?��??��? ${collectionCard.card.name}`
+      );
+
+      res.json({
+        success: true,
+        message: '?��??�新?��?',
+        data: { collectionCard },
+      });
+    } catch (error) {
+      logger.error('?�新?��??��??�誤:', error);
+      res.status(500).json({
         success: false,
-        message: '收藏不存在',
-        code: 'COLLECTION_NOT_FOUND'
+        message: '?�新?��?失�?',
+        code: 'UPDATE_CARD_FAILED',
       });
     }
-
-    // 檢查卡牌是否在收藏中
-    const collectionCard = await CollectionCard.findOne({
-      where: {
-        collectionId: id,
-        cardId
-      },
-      include: [
-        {
-          model: Card,
-          as: 'card'
-        }
-      ]
-    });
-
-    if (!collectionCard) {
-      return res.status(404).json({
-        success: false,
-        message: '卡牌不存在於此收藏中',
-        code: 'CARD_NOT_IN_COLLECTION'
-      });
-    }
-
-    // 更新卡牌信息
-    const updateData = {};
-    if (quantity !== undefined) updateData.quantity = quantity;
-    if (condition !== undefined) updateData.condition = condition;
-    if (notes !== undefined) updateData.notes = notes;
-    if (isFoil !== undefined) updateData.isFoil = isFoil;
-    if (isSigned !== undefined) updateData.isSigned = isSigned;
-    if (isGraded !== undefined) updateData.isGraded = isGraded;
-    if (grade !== undefined) updateData.grade = grade;
-
-    // 如果數量改變，更新估算價值
-    if (quantity !== undefined) {
-      updateData.estimatedValue = collectionCard.card.currentPrice * quantity;
-    }
-
-    await collectionCard.update(updateData);
-
-    logger.info(`更新收藏卡牌: ${req.user.username} 在 "${collection.name}" 中更新了卡牌 ${collectionCard.card.name}`);
-
-    res.json({
-      success: true,
-      message: '卡牌更新成功',
-      data: { collectionCard }
-    });
-  } catch (error) {
-    logger.error('更新收藏卡牌錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '更新卡牌失敗',
-      code: 'UPDATE_CARD_FAILED'
-    });
   }
-});
+);
 
 // @route   DELETE /api/collections/:id/cards/:cardId
-// @desc    從收藏中移除卡牌
+// @desc    從收?�中移除?��?
 // @access  Private
 router.delete('/:id/cards/:cardId', protect, async (req, res) => {
   try {
     const Collection = getCollectionModel();
     const CollectionCard = getCollectionCardModel();
+// eslint-disable-next-line no-unused-vars
     const Card = getCardModel();
 
     if (!Collection || !CollectionCard || !Card) {
-      throw new Error('無法獲取模型');
+      throw new Error('?��??��?模�?');
     }
 
     const { id, cardId } = req.params;
 
-    // 檢查收藏是否存在
+    // 檢查?��??�否存在
     const collection = await Collection.findOne({
       where: {
         id,
         userId: req.user.id,
-        isActive: true
-      }
+        isActive: true,
+      },
     });
 
     if (!collection) {
       return res.status(404).json({
         success: false,
-        message: '收藏不存在',
-        code: 'COLLECTION_NOT_FOUND'
+        message: '?��?不�???,
+        code: 'COLLECTION_NOT_FOUND',
       });
     }
 
-    // 檢查卡牌是否在收藏中
+    // 檢查?��??�否?�收?�中
     const collectionCard = await CollectionCard.findOne({
       where: {
         collectionId: id,
-        cardId
+        cardId,
       },
       include: [
         {
           model: Card,
-          as: 'card'
-        }
-      ]
+          as: 'card',
+        },
+      ],
     });
 
     if (!collectionCard) {
       return res.status(404).json({
         success: false,
-        message: '卡牌不存在於此收藏中',
-        code: 'CARD_NOT_IN_COLLECTION'
+        message: '?��?不�??�於此收?�中',
+        code: 'CARD_NOT_IN_COLLECTION',
       });
     }
 
-    // 刪除卡牌
+    // ?�除?��?
     await collectionCard.destroy();
 
-    logger.info(`從收藏移除卡牌: ${req.user.username} 從 "${collection.name}" 中移除了卡牌 ${collectionCard.card.name}`);
+    logger.info(
+      `從收?�移?�卡?? ${req.user.username} �?"${collection.name}" 中移?��??��? ${collectionCard.card.name}`
+    );
 
     res.json({
       success: true,
-      message: '卡牌移除成功'
+      message: '?��?移除?��?',
     });
   } catch (error) {
-    logger.error('從收藏移除卡牌錯誤:', error);
+    logger.error('從收?�移?�卡?�錯�?', error);
     res.status(500).json({
       success: false,
-      message: '移除卡牌失敗',
-      code: 'REMOVE_CARD_FAILED'
+      message: '移除?��?失�?',
+      code: 'REMOVE_CARD_FAILED',
     });
   }
 });

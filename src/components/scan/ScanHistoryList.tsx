@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Alert,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,7 +26,7 @@ import {
   toggleRecordSelection,
   selectAllRecords,
   clearSelection,
-  setFilters
+  setFilters,
 } from '@/store/slices/scanHistorySlice';
 import { formatDate, formatTime } from '@/utils/formatters';
 import { logger } from '@/utils/logger';
@@ -40,7 +40,7 @@ interface ScanHistoryListProps {
 
 export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
   onRecordPress,
-  onRefresh
+  onRefresh,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -51,7 +51,7 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
     filters,
     pagination,
     selectedRecords,
-    isSelectionMode
+    isSelectionMode,
   } = useSelector((state: RootState) => state.scanHistory);
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,18 +85,14 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
   };
 
   const handleDeleteRecord = (recordId: string) => {
-    Alert.alert(
-      '確認刪除',
-      '確定要刪除這條掃描記錄嗎？此操作無法撤銷。',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '刪除',
-          style: 'destructive',
-          onPress: () => dispatch(deleteScanRecord(recordId))
-        }
-      ]
-    );
+    Alert.alert('確認刪除', '確定要刪除這條掃描記錄嗎？此操作無法撤銷。', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '刪除',
+        style: 'destructive',
+        onPress: () => dispatch(deleteScanRecord(recordId)),
+      },
+    ]);
   };
 
   const handleDeleteSelected = () => {
@@ -110,8 +106,8 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
         {
           text: '刪除',
           style: 'destructive',
-          onPress: () => dispatch(deleteMultipleRecords(selectedRecords))
-        }
+          onPress: () => dispatch(deleteMultipleRecords(selectedRecords)),
+        },
       ]
     );
   };
@@ -133,7 +129,7 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
       recognition: 'eye',
       condition: 'analytics',
       authenticity: 'shield-checkmark',
-      batch: 'layers'
+      batch: 'layers',
     };
     return icons[scanType as keyof typeof icons] || 'scan';
   };
@@ -143,9 +139,11 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
       recognition: theme.colors.primary,
       condition: theme.colors.warning,
       authenticity: theme.colors.success,
-      batch: theme.colors.info
+      batch: theme.colors.info,
     };
-    return colors[scanType as keyof typeof colors] || theme.colors.textSecondary;
+    return (
+      colors[scanType as keyof typeof colors] || theme.colors.textSecondary
+    );
   };
 
   const getScanTypeLabel = (scanType: string) => {
@@ -153,7 +151,7 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
       recognition: '識別',
       condition: '條件分析',
       authenticity: '真偽驗證',
-      batch: '批量掃描'
+      batch: '批量掃描',
     };
     return labels[scanType as keyof typeof labels] || scanType;
   };
@@ -163,10 +161,7 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
 
     return (
       <TouchableOpacity
-        style={[
-          styles.historyItem,
-          isSelected && styles.selectedItem
-        ]}
+        style={[styles.historyItem, isSelected && styles.selectedItem]}
         onPress={() => handleRecordPress(item)}
         onLongPress={() => handleLongPress(item)}
         activeOpacity={0.7}
@@ -176,7 +171,9 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
             <Ionicons
               name={isSelected ? 'checkmark-circle' : 'ellipse-outline'}
               size={24}
-              color={isSelected ? theme.colors.primary : theme.colors.textSecondary}
+              color={
+                isSelected ? theme.colors.primary : theme.colors.textSecondary
+              }
             />
           </View>
         )}
@@ -194,7 +191,11 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
                   />
                 ) : (
                   <View style={styles.cardPlaceholder}>
-                    <Ionicons name="card" size={24} color={theme.colors.textSecondary} />
+                    <Ionicons
+                      name="card"
+                      size={24}
+                      color={theme.colors.textSecondary}
+                    />
                   </View>
                 )}
               </View>
@@ -214,14 +215,22 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
                   size={16}
                   color={getScanTypeColor(item.scanType)}
                 />
-                <Text style={[styles.scanType, { color: getScanTypeColor(item.scanType) }]}>
+                <Text
+                  style={[
+                    styles.scanType,
+                    { color: getScanTypeColor(item.scanType) },
+                  ]}
+                >
                   {getScanTypeLabel(item.scanType)}
                 </Text>
               </View>
               <View style={styles.confidenceContainer}>
                 <Text style={styles.confidenceLabel}>信心度</Text>
                 <Text style={styles.confidenceValue}>
-                  {item.scanResult.confidence ? Math.round(item.scanResult.confidence * 100) : 0}%
+                  {item.scanResult.confidence
+                    ? Math.round(item.scanResult.confidence * 100)
+                    : 0}
+                  %
                 </Text>
               </View>
             </View>
@@ -233,10 +242,16 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
                 處理時間: {item.processingTime.toFixed(1)}s
               </Text>
               <View style={styles.statusContainer}>
-                <View style={[
-                  styles.statusIndicator,
-                  { backgroundColor: item.scanResult.success ? theme.colors.success : theme.colors.error }
-                ]} />
+                <View
+                  style={[
+                    styles.statusIndicator,
+                    {
+                      backgroundColor: item.scanResult.success
+                        ? theme.colors.success
+                        : theme.colors.error,
+                    },
+                  ]}
+                />
                 <Text style={styles.statusText}>
                   {item.scanResult.success ? '成功' : '失敗'}
                 </Text>
@@ -250,7 +265,11 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
                 <Ionicons
                   name={item.isFavorite ? 'heart' : 'heart-outline'}
                   size={20}
-                  color={item.isFavorite ? theme.colors.error : theme.colors.textSecondary}
+                  color={
+                    item.isFavorite
+                      ? theme.colors.error
+                      : theme.colors.textSecondary
+                  }
                 />
               </TouchableOpacity>
               {!isSelectionMode && (
@@ -258,7 +277,11 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
                   style={styles.actionButton}
                   onPress={() => handleDeleteRecord(item.id)}
                 >
-                  <Ionicons name="trash-outline" size={20} color={theme.colors.error} />
+                  <Ionicons
+                    name="trash-outline"
+                    size={20}
+                    color={theme.colors.error}
+                  />
                 </TouchableOpacity>
               )}
             </View>
@@ -386,164 +409,164 @@ export const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   selectionHeader: {
     backgroundColor: theme.colors.backgroundPaper,
     padding: theme.spacing.medium,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   selectionInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   selectionText: {
     fontSize: 16,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   selectAllText: {
     fontSize: 14,
-    color: theme.colors.primary
+    color: theme.colors.primary,
   },
   selectionActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   listContainer: {
-    padding: theme.spacing.medium
+    padding: theme.spacing.medium,
   },
   historyItem: {
     backgroundColor: theme.colors.backgroundPaper,
     borderRadius: theme.borderRadius.medium,
     padding: theme.spacing.medium,
     marginBottom: theme.spacing.medium,
-    ...theme.shadows.small
+    ...theme.shadows.small,
   },
   selectedItem: {
     borderWidth: 2,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   selectionIndicator: {
     position: 'absolute',
     top: theme.spacing.small,
     right: theme.spacing.small,
-    zIndex: 1
+    zIndex: 1,
   },
   itemContent: {
-    flex: 1
+    flex: 1,
   },
   itemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   cardInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   cardImageContainer: {
     width: 60,
     height: 80,
     borderRadius: theme.borderRadius.small,
     overflow: 'hidden',
-    marginRight: theme.spacing.medium
+    marginRight: theme.spacing.medium,
   },
   cardImage: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   cardPlaceholder: {
     width: '100%',
     height: '100%',
     backgroundColor: theme.colors.backgroundSecondary,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   cardDetails: {
-    flex: 1
+    flex: 1,
   },
   cardName: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.text,
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   scanDate: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   scanInfo: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   scanTypeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   scanType: {
     fontSize: 12,
     fontWeight: '600',
-    marginLeft: 4
+    marginLeft: 4,
   },
   confidenceContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   confidenceLabel: {
     fontSize: 10,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   confidenceValue: {
     fontSize: 14,
     fontWeight: '700',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   itemFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   processingInfo: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   processingTime: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginRight: theme.spacing.medium
+    marginRight: theme.spacing.medium,
   },
   statusContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 4
+    marginRight: 4,
   },
   statusText: {
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   actions: {
     flexDirection: 'row',
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   actionButton: {
-    padding: theme.spacing.small
+    padding: theme.spacing.small,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   tag: {
     backgroundColor: theme.colors.backgroundSecondary,
@@ -551,81 +574,81 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: theme.borderRadius.small,
     marginRight: theme.spacing.small,
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   tagText: {
     fontSize: 10,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   moreTags: {
     fontSize: 10,
     color: theme.colors.textSecondary,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   notesContainer: {
     backgroundColor: theme.colors.backgroundSecondary,
     padding: theme.spacing.small,
-    borderRadius: theme.borderRadius.small
+    borderRadius: theme.borderRadius.small,
   },
   notesText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   separator: {
     height: 1,
     backgroundColor: theme.colors.border,
-    marginVertical: theme.spacing.small
+    marginVertical: theme.spacing.small,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: theme.spacing.xlarge
+    paddingVertical: theme.spacing.xlarge,
   },
   emptyTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.text,
     marginTop: theme.spacing.medium,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   emptySubtext: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    paddingHorizontal: theme.spacing.large
+    paddingHorizontal: theme.spacing.large,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: theme.spacing.xlarge
+    paddingVertical: theme.spacing.xlarge,
   },
   errorTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.error,
     marginTop: theme.spacing.medium,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   errorText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   loadingFooter: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing.medium
+    padding: theme.spacing.medium,
   },
   loadingText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.small
-  }
+    marginLeft: theme.spacing.small,
+  },
 });
 
 export default ScanHistoryList;

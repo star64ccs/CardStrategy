@@ -10,9 +10,9 @@ const mockUsers = [
     profile: {
       avatar: 'https://example.com/avatar.jpg',
       displayName: 'Test User',
-      bio: 'Test bio'
-    }
-  }
+      bio: 'Test bio',
+    },
+  },
 ];
 
 // 模擬卡片數據
@@ -24,7 +24,7 @@ const mockCards = [
     rarity: 'Rare',
     image: 'https://example.com/card1.jpg',
     price: 100,
-    condition: 'Mint'
+    condition: 'Mint',
   },
   {
     id: '2',
@@ -33,8 +33,8 @@ const mockCards = [
     rarity: 'Common',
     image: 'https://example.com/card2.jpg',
     price: 50,
-    condition: 'Near Mint'
-  }
+    condition: 'Near Mint',
+  },
 ];
 
 // 模擬掃描歷史數據
@@ -49,7 +49,7 @@ const mockScanHistory = [
     scanResult: {
       success: true,
       confidence: 0.95,
-      recognizedCard: mockCards[0]
+      recognizedCard: mockCards[0],
     },
     imageUri: 'https://example.com/scan1.jpg',
     scanDate: new Date().toISOString(),
@@ -58,14 +58,14 @@ const mockScanHistory = [
       deviceInfo: 'iPhone 14',
       appVersion: '1.0.0',
       scanMethod: 'camera',
-      imageQuality: 'high'
+      imageQuality: 'high',
     },
     tags: ['test', 'recognition'],
     notes: 'Test scan',
     isFavorite: false,
     createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
+    updatedAt: new Date().toISOString(),
+  },
 ];
 
 // 模擬條件分析結果
@@ -78,25 +78,25 @@ const mockConditionAnalysis = {
     edges: { score: 9.0, details: 'Clean edges' },
     surface: { score: 8.5, details: 'Good surface condition' },
     centering: { score: 8.0, details: 'Slightly off-center' },
-    printQuality: { score: 9.0, details: 'Excellent print quality' }
+    printQuality: { score: 9.0, details: 'Excellent print quality' },
   },
   damageAssessment: {
     scratches: [],
     dents: [],
     creases: [],
     stains: [],
-    fading: 'None'
+    fading: 'None',
   },
   marketImpact: {
     estimatedValue: 120,
     valueRange: { min: 100, max: 140 },
-    marketTrend: 'stable'
+    marketTrend: 'stable',
   },
   preservationTips: [
     'Store in protective sleeve',
     'Keep away from direct sunlight',
-    'Maintain stable humidity'
-  ]
+    'Maintain stable humidity',
+  ],
 };
 
 // API 處理器
@@ -111,8 +111,8 @@ export const handlers = [
         data: {
           user: mockUsers[0],
           token: 'mock-jwt-token',
-          refreshToken: 'mock-refresh-token'
-        }
+          refreshToken: 'mock-refresh-token',
+        },
       })
     );
   }),
@@ -125,8 +125,8 @@ export const handlers = [
         message: '註冊成功',
         data: {
           user: mockUsers[0],
-          token: 'mock-jwt-token'
-        }
+          token: 'mock-jwt-token',
+        },
       })
     );
   }),
@@ -147,23 +147,23 @@ export const handlers = [
             page: parseInt(page),
             limit: parseInt(limit),
             total: mockCards.length,
-            totalPages: Math.ceil(mockCards.length / parseInt(limit))
-          }
-        }
+            totalPages: Math.ceil(mockCards.length / parseInt(limit)),
+          },
+        },
       })
     );
   }),
 
   rest.get(`${API_BASE_URL}/cards/:id`, (req, res, ctx) => {
     const { id } = req.params;
-    const card = mockCards.find(c => c.id === id);
+    const card = mockCards.find((c) => c.id === id);
 
     if (!card) {
       return res(
         ctx.status(404),
         ctx.json({
           success: false,
-          message: '卡片不存在'
+          message: '卡片不存在',
         })
       );
     }
@@ -173,7 +173,7 @@ export const handlers = [
       ctx.json({
         success: true,
         message: '獲取卡片詳情成功',
-        data: card
+        data: card,
       })
     );
   }),
@@ -184,7 +184,7 @@ export const handlers = [
       ctx.json({
         success: true,
         message: '條件分析完成',
-        data: mockConditionAnalysis
+        data: mockConditionAnalysis,
       })
     );
   }),
@@ -204,22 +204,22 @@ export const handlers = [
           total: mockScanHistory.length,
           page: parseInt(page),
           limit: parseInt(limit),
-          totalPages: Math.ceil(mockScanHistory.length / parseInt(limit))
-        }
+          totalPages: Math.ceil(mockScanHistory.length / parseInt(limit)),
+        },
       })
     );
   }),
 
   rest.get(`${API_BASE_URL}/scan-history/:id`, (req, res, ctx) => {
     const { id } = req.params;
-    const record = mockScanHistory.find(r => r.id === id);
+    const record = mockScanHistory.find((r) => r.id === id);
 
     if (!record) {
       return res(
         ctx.status(404),
         ctx.json({
           success: false,
-          message: '掃描記錄不存在'
+          message: '掃描記錄不存在',
         })
       );
     }
@@ -229,7 +229,7 @@ export const handlers = [
       ctx.json({
         success: true,
         message: '獲取掃描記錄成功',
-        data: record
+        data: record,
       })
     );
   }),
@@ -239,7 +239,7 @@ export const handlers = [
       ...req.body,
       id: Date.now().toString(),
       createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return res(
@@ -247,21 +247,21 @@ export const handlers = [
       ctx.json({
         success: true,
         message: '創建掃描記錄成功',
-        data: newRecord
+        data: newRecord,
       })
     );
   }),
 
   rest.put(`${API_BASE_URL}/scan-history/:id`, (req, res, ctx) => {
     const { id } = req.params;
-    const record = mockScanHistory.find(r => r.id === id);
+    const record = mockScanHistory.find((r) => r.id === id);
 
     if (!record) {
       return res(
         ctx.status(404),
         ctx.json({
           success: false,
-          message: '掃描記錄不存在'
+          message: '掃描記錄不存在',
         })
       );
     }
@@ -269,7 +269,7 @@ export const handlers = [
     const updatedRecord = {
       ...record,
       ...req.body,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     return res(
@@ -277,7 +277,7 @@ export const handlers = [
       ctx.json({
         success: true,
         message: '更新掃描記錄成功',
-        data: updatedRecord
+        data: updatedRecord,
       })
     );
   }),
@@ -287,7 +287,7 @@ export const handlers = [
       ctx.status(200),
       ctx.json({
         success: true,
-        message: '刪除掃描記錄成功'
+        message: '刪除掃描記錄成功',
       })
     );
   }),
@@ -309,31 +309,30 @@ export const handlers = [
             recognition: 60,
             condition: 25,
             authenticity: 10,
-            batch: 5
+            batch: 5,
           },
           scansByDate: {
             today: 10,
             thisWeek: 50,
-            thisMonth: 200
+            thisMonth: 200,
           },
           mostScannedCards: [
             { cardId: '1', cardName: 'Test Card 1', scanCount: 15 },
-            { cardId: '2', cardName: 'Test Card 2', scanCount: 10 }
-          ]
-        }
+            { cardId: '2', cardName: 'Test Card 2', scanCount: 10 },
+          ],
+        },
       })
     );
   }),
 
   // 默認處理器 - 捕獲未匹配的請求
   rest.all('*', (req, res, ctx) => {
-    console.warn(`未處理的 API 請求: ${req.method} ${req.url}`);
     return res(
       ctx.status(404),
       ctx.json({
         success: false,
-        message: 'API 端點不存在'
+        message: 'API 端點不存在',
       })
     );
-  })
+  }),
 ];

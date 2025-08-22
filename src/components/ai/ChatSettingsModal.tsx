@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Switch,
-  Slider
+  Slider,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
@@ -42,24 +42,24 @@ const DEFAULT_SETTINGS: ChatSettings = {
   aiPersonality: 'friendly',
   autoScroll: true,
   soundEnabled: true,
-  vibrationEnabled: true
+  vibrationEnabled: true,
 };
 
 export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({
   visible,
   settings,
   onClose,
-  onUpdate
+  onUpdate,
 }) => {
   const [currentSettings, setCurrentSettings] = useState<ChatSettings>({
     ...DEFAULT_SETTINGS,
-    ...settings
+    ...settings,
   });
 
   const handleToggle = (key: keyof ChatSettings) => {
     const newSettings = {
       ...currentSettings,
-      [key]: !currentSettings[key]
+      [key]: !currentSettings[key],
     };
     setCurrentSettings(newSettings);
   };
@@ -87,13 +87,16 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({
           <Switch
             value={currentSettings[key] as boolean}
             onValueChange={() => handleToggle(key)}
-            trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+            trackColor={{
+              false: theme.colors.border,
+              true: theme.colors.primary,
+            }}
             thumbColor={currentSettings[key] ? '#fff' : '#f4f3f4'}
           />
         )}
       </View>
       <Text style={styles.settingDescription}>{description}</Text>
-      
+
       {type === 'select' && options && (
         <View style={styles.optionsContainer}>
           {options.map((option) => (
@@ -101,17 +104,23 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({
               key={option.value}
               style={[
                 styles.optionButton,
-                currentSettings[key] === option.value && styles.optionButtonSelected
+                currentSettings[key] === option.value &&
+                  styles.optionButtonSelected,
               ]}
-              onPress={() => setCurrentSettings({
-                ...currentSettings,
-                [key]: option.value
-              })}
+              onPress={() =>
+                setCurrentSettings({
+                  ...currentSettings,
+                  [key]: option.value,
+                })
+              }
             >
-              <Text style={[
-                styles.optionText,
-                currentSettings[key] === option.value && styles.optionTextSelected
-              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  currentSettings[key] === option.value &&
+                    styles.optionTextSelected,
+                ]}
+              >
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -132,15 +141,26 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({
         <View style={styles.modalContent}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
-              <MaterialIcons name="settings" size={24} color={theme.colors.primary} />
+              <MaterialIcons
+                name="settings"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text style={styles.headerTitle}>聊天設置</Text>
             </View>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
+              <MaterialIcons
+                name="close"
+                size={24}
+                color={theme.colors.textSecondary}
+              />
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+          >
             {/* 輸入功能 */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>輸入功能</Text>
@@ -187,7 +207,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({
                 [
                   { label: '簡短', value: 'short' },
                   { label: '中等', value: 'medium' },
-                  { label: '詳細', value: 'long' }
+                  { label: '詳細', value: 'long' },
                 ]
               )}
               {renderSettingItem(
@@ -198,7 +218,7 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({
                 [
                   { label: '專業', value: 'professional' },
                   { label: '友好', value: 'friendly' },
-                  { label: '隨意', value: 'casual' }
+                  { label: '隨意', value: 'casual' },
                 ]
               )}
             </View>
@@ -226,7 +246,11 @@ export const ChatSettingsModal: React.FC<ChatSettingsModalProps> = ({
 
           <View style={styles.footer}>
             <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-              <MaterialIcons name="refresh" size={16} color={theme.colors.textSecondary} />
+              <MaterialIcons
+                name="refresh"
+                size={16}
+                color={theme.colors.textSecondary}
+              />
               <Text style={styles.resetButtonText}>重置</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -244,14 +268,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   modalContent: {
     width: '90%',
     maxHeight: '80%',
     backgroundColor: theme.colors.background,
     borderRadius: 16,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',
@@ -259,56 +283,56 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   headerLeft: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginLeft: 8
+    marginLeft: 8,
   },
   closeButton: {
-    padding: 4
+    padding: 4,
   },
   content: {
-    padding: 16
+    padding: 16,
   },
   section: {
-    marginBottom: 24
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: 12
+    marginBottom: 12,
   },
   settingItem: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   settingHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   settingTitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   settingDescription: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    lineHeight: 16
+    lineHeight: 16,
   },
   optionsContainer: {
     flexDirection: 'row',
     marginTop: 8,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   optionButton: {
     paddingHorizontal: 12,
@@ -318,18 +342,18 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: theme.colors.backgroundLight,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   optionButtonSelected: {
     backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   optionText: {
     fontSize: 12,
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   optionTextSelected: {
-    color: '#fff'
+    color: '#fff',
   },
   footer: {
     flexDirection: 'row',
@@ -337,27 +361,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border
+    borderTopColor: theme.colors.border,
   },
   resetButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8
+    padding: 8,
   },
   resetButtonText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    marginLeft: 4
+    marginLeft: 4,
   },
   saveButton: {
     backgroundColor: theme.colors.primary,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 8
+    borderRadius: 8,
   },
   saveButtonText: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#fff'
-  }
+    color: '#fff',
+  },
 });

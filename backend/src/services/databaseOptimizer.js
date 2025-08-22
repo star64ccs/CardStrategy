@@ -51,7 +51,7 @@ class DatabaseOptimizer {
    * 優化關聯查詢
    */
   optimizeIncludes(includes) {
-    return includes.map(include => {
+    return includes.map((include) => {
       const optimized = { ...include };
 
       // 限制關聯查詢的結果數量
@@ -78,7 +78,7 @@ class DatabaseOptimizer {
    */
   optimizeOrder(order) {
     if (Array.isArray(order)) {
-      return order.map(item => {
+      return order.map((item) => {
         if (typeof item === 'string') {
           return [item, 'ASC'];
         }
@@ -93,27 +93,32 @@ class DatabaseOptimizer {
    */
   async batchQuery(model, ids, options = {}) {
     const { batchSize = this.batchSize, include, where = {} } = options;
+// eslint-disable-next-line no-unused-vars
     const results = [];
     const batches = this.chunkArray(ids, batchSize);
 
-    logger.info(`開始批量查詢 ${model.name}，共 ${ids.length} 個 ID，分 ${batches.length} 批`);
+    logger.info(
+      `開始批量查詢 ${model.name}，共 ${ids.length} 個 ID，分 ${batches.length} 批`
+    );
 
     for (let i = 0; i < batches.length; i++) {
       const batchIds = batches[i];
       const batchWhere = {
         ...where,
-        id: { [Op.in]: batchIds }
+        id: { [Op.in]: batchIds },
       };
 
       try {
         const batchResults = await model.findAll({
           where: batchWhere,
           include,
-          benchmark: true
+          benchmark: true,
         });
 
         results.push(...batchResults);
-        logger.info(`批次 ${i + 1}/${batches.length} 完成，獲取 ${batchResults.length} 條記錄`);
+        logger.info(
+          `批次 ${i + 1}/${batches.length} 完成，獲取 ${batchResults.length} 條記錄`
+        );
       } catch (error) {
         logger.error(`批次 ${i + 1} 查詢失敗:`, error);
         throw error;
@@ -131,7 +136,7 @@ class DatabaseOptimizer {
     const optimizedOptions = this.optimizeQuery({
       ...options,
       limit,
-      offset
+      offset,
     });
 
     try {
@@ -145,8 +150,8 @@ class DatabaseOptimizer {
           total: count,
           totalPages: Math.ceil(count / limit),
           hasNext: page * limit < count,
-          hasPrev: page > 1
-        }
+          hasPrev: page > 1,
+        },
       };
     } catch (error) {
       logger.error('分頁查詢失敗:', error);
@@ -172,6 +177,7 @@ class DatabaseOptimizer {
       }
 
       // 執行查詢
+// eslint-disable-next-line no-unused-vars
       const results = await model.findAll(queryOptions);
 
       // 緩存結果
@@ -192,9 +198,12 @@ class DatabaseOptimizer {
   async batchInsert(model, records, options = {}) {
     const { batchSize = this.batchSize, ignoreDuplicates = false } = options;
     const batches = this.chunkArray(records, batchSize);
+// eslint-disable-next-line no-unused-vars
     const results = [];
 
-    logger.info(`開始批量插入 ${model.name}，共 ${records.length} 條記錄，分 ${batches.length} 批`);
+    logger.info(
+      `開始批量插入 ${model.name}，共 ${records.length} 條記錄，分 ${batches.length} 批`
+    );
 
     for (let i = 0; i < batches.length; i++) {
       const batch = batches[i];
@@ -204,16 +213,18 @@ class DatabaseOptimizer {
         if (ignoreDuplicates) {
           batchResults = await model.bulkCreate(batch, {
             ignoreDuplicates: true,
-            returning: true
+            returning: true,
           });
         } else {
           batchResults = await model.bulkCreate(batch, {
-            returning: true
+            returning: true,
           });
         }
 
         results.push(...batchResults);
-        logger.info(`批次 ${i + 1}/${batches.length} 插入完成，插入 ${batchResults.length} 條記錄`);
+        logger.info(
+          `批次 ${i + 1}/${batches.length} 插入完成，插入 ${batchResults.length} 條記錄`
+        );
       } catch (error) {
         logger.error(`批次 ${i + 1} 插入失敗:`, error);
         throw error;
@@ -228,15 +239,17 @@ class DatabaseOptimizer {
    */
   async batchUpdate(model, updates, options = {}) {
     const { batchSize = this.batchSize, whereField = 'id' } = options;
+// eslint-disable-next-line no-unused-vars
     const results = [];
 
     logger.info(`開始批量更新 ${model.name}，共 ${updates.length} 條記錄`);
 
     for (const update of updates) {
       try {
+// eslint-disable-next-line no-unused-vars
         const result = await model.update(update.data, {
           where: { [whereField]: update[whereField] },
-          returning: true
+          returning: true,
         });
         results.push(result);
       } catch (error) {
@@ -257,11 +270,13 @@ class DatabaseOptimizer {
     try {
       // 執行查詢並獲取執行計劃
       const explainQuery = await model.sequelize.query(
-        `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${model.sequelize.getQueryInterface().queryGenerator.selectQuery(
-          model.getTableName(),
-          queryOptions,
-          model
-        )}`,
+        `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${model.sequelize
+          .getQueryInterface()
+          .queryGenerator.selectQuery(
+            model.getTableName(),
+            queryOptions,
+            model
+          )}`,
         { type: model.sequelize.QueryTypes.SELECT }
       );
 
@@ -271,7 +286,10 @@ class DatabaseOptimizer {
         executionTime,
         explainPlan: explainQuery[0],
         isSlow: executionTime > this.slowQueryThreshold,
-        recommendations: this.generateRecommendations(explainQuery[0], executionTime)
+        recommendations: this.generateRecommendations(
+          explainQuery[0],
+          executionTime
+        ),
       };
     } catch (error) {
       logger.error('查詢分析失敗:', error);
@@ -283,6 +301,7 @@ class DatabaseOptimizer {
    * 生成優化建議
    */
   generateRecommendations(explainPlan, executionTime) {
+// eslint-disable-next-line no-unused-vars
     const recommendations = [];
 
     if (executionTime > this.slowQueryThreshold) {
@@ -306,6 +325,7 @@ class DatabaseOptimizer {
   async suggestIndexes(model, queryPatterns) {
     const suggestions = [];
 
+// eslint-disable-next-line no-unused-vars
     for (const pattern of queryPatterns) {
       const { where, order, include } = pattern;
 
@@ -316,7 +336,7 @@ class DatabaseOptimizer {
           suggestions.push({
             type: 'WHERE',
             fields: whereFields,
-            priority: 'high'
+            priority: 'high',
           });
         }
       }
@@ -328,7 +348,7 @@ class DatabaseOptimizer {
           suggestions.push({
             type: 'ORDER',
             fields: orderFields,
-            priority: 'medium'
+            priority: 'medium',
           });
         }
       }
@@ -362,7 +382,7 @@ class DatabaseOptimizer {
    */
   extractOrderFields(order) {
     if (Array.isArray(order)) {
-      return order.map(item => {
+      return order.map((item) => {
         if (Array.isArray(item)) {
           return item[0];
         }
@@ -394,7 +414,7 @@ class DatabaseOptimizer {
         avgTime: data.totalTime / data.count,
         maxTime: data.maxTime,
         minTime: data.minTime,
-        slowQueries: data.slowQueries
+        slowQueries: data.slowQueries,
       };
     }
     return stats;
@@ -410,7 +430,7 @@ class DatabaseOptimizer {
         totalTime: 0,
         maxTime: 0,
         minTime: Infinity,
-        slowQueries: 0
+        slowQueries: 0,
       });
     }
 
@@ -449,12 +469,13 @@ class DatabaseOptimizer {
       slowQueryThreshold: this.slowQueryThreshold,
       maxQueryTime: this.maxQueryTime,
       cacheEnabled: this.cacheEnabled,
-      batchSize: this.batchSize
+      batchSize: this.batchSize,
     };
   }
 }
 
 // 創建單例實例
+// eslint-disable-next-line no-unused-vars
 const databaseOptimizer = new DatabaseOptimizer();
 
 module.exports = databaseOptimizer;

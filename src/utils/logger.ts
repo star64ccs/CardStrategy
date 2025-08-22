@@ -3,7 +3,7 @@ export enum LogLevel {
   DEBUG = 'debug',
   INFO = 'info',
   WARN = 'warn',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 interface LogEntry {
@@ -19,13 +19,17 @@ class Logger {
   private logHistory: LogEntry[] = [];
   private maxHistorySize = 1000;
 
-  private log(level: LogLevel, message: string, context?: Record<string, unknown>) {
+  private log(
+    level: LogLevel,
+    message: string,
+    context?: Record<string, unknown>
+  ) {
     const entry: LogEntry = {
       level,
       message,
       timestamp: new Date(),
       context,
-      userId: this.getCurrentUserId()
+      userId: this.getCurrentUserId(),
     };
 
     // 保存到歷史記錄

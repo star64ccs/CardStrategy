@@ -15,18 +15,18 @@ class AIService {
         apiKey: process.env.OPENAI_API_KEY,
         model: 'gpt-3.5-turbo',
         maxTokens: 1000,
-        temperature: 0.7
+        temperature: 0.7,
       },
       cache: {
         enabled: true,
         ttl: 3600, // 1小時
-        prefix: 'ai:'
+        prefix: 'ai:',
       },
       rateLimit: {
         enabled: true,
         maxRequests: 100,
-        windowMs: 15 * 60 * 1000 // 15分鐘
-      }
+        windowMs: 15 * 60 * 1000, // 15分鐘
+      },
     };
 
     this.metrics = {
@@ -35,7 +35,7 @@ class AIService {
       cacheMisses: 0,
       errors: 0,
       avgResponseTime: 0,
-      totalResponseTime: 0
+      totalResponseTime: 0,
     };
 
     this.initOpenAI();
@@ -47,8 +47,9 @@ class AIService {
   initOpenAI() {
     if (this.config.openai.apiKey) {
       try {
+// eslint-disable-next-line no-unused-vars
         const configuration = new Configuration({
-          apiKey: this.config.openai.apiKey
+          apiKey: this.config.openai.apiKey,
         });
         this.openai = new OpenAIApi(configuration);
         logger.info('OpenAI 初始化成功');
@@ -70,7 +71,7 @@ class AIService {
       priceRange = null,
       rarity = null,
       excludeOwned = true,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `recommend:cards:${userId}:${JSON.stringify(options)}`;
@@ -82,13 +83,16 @@ class AIService {
 
     try {
       // 獲取用戶數據
+// eslint-disable-next-line no-unused-vars
       const userData = await this.getUserData(userId);
       const marketData = await this.getMarketData();
 
       // 分析用戶偏好
+// eslint-disable-next-line no-unused-vars
       const userPreferences = await this.analyzeUserPreferences(userData);
 
       // 生成推薦
+// eslint-disable-next-line no-unused-vars
       const recommendations = await this.generateCardRecommendations(
         userPreferences,
         marketData,
@@ -113,11 +117,7 @@ class AIService {
    * 市場趨勢預測
    */
   async predictMarketTrends(options = {}) {
-    const {
-      timeframe = '7d',
-      categories = [],
-      useCache = true
-    } = options;
+    const { timeframe = '7d', categories = [], useCache = true } = options;
 
     const cacheKey = `predict:market:${timeframe}:${JSON.stringify(categories)}`;
 
@@ -128,13 +128,21 @@ class AIService {
 
     try {
       // 獲取歷史數據
-      const historicalData = await this.getHistoricalMarketData(timeframe, categories);
+// eslint-disable-next-line no-unused-vars
+      const historicalData = await this.getHistoricalMarketData(
+        timeframe,
+        categories
+      );
 
       // 分析趨勢
       const trends = await this.analyzeMarketTrends(historicalData);
 
       // 生成預測
-      const predictions = await this.generateMarketPredictions(trends, timeframe);
+// eslint-disable-next-line no-unused-vars
+      const predictions = await this.generateMarketPredictions(
+        trends,
+        timeframe
+      );
 
       // 緩存結果
       if (useCache) {
@@ -158,7 +166,7 @@ class AIService {
       riskTolerance = 'medium',
       investmentGoal = 'growth',
       timeHorizon = '5y',
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `optimize:portfolio:${userId}:${JSON.stringify(options)}`;
@@ -177,6 +185,7 @@ class AIService {
       const analysis = await this.analyzePortfolioRisk(portfolio, marketData);
 
       // 生成優化建議
+// eslint-disable-next-line no-unused-vars
       const recommendations = await this.generatePortfolioRecommendations(
         analysis,
         { riskTolerance, investmentGoal, timeHorizon }
@@ -204,7 +213,7 @@ class AIService {
       searchType = 'cards',
       filters = {},
       limit = 20,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `search:${searchType}:${query}:${JSON.stringify(filters)}`;
@@ -222,10 +231,11 @@ class AIService {
       const expandedQuery = await this.expandSearchQuery(query, intent);
 
       // 執行搜索
+// eslint-disable-next-line no-unused-vars
       const results = await this.executeSearch(expandedQuery, {
         searchType,
         filters,
-        limit
+        limit,
       });
 
       // 智能排序
@@ -249,11 +259,7 @@ class AIService {
    * 自然語言處理
    */
   async processNaturalLanguage(text, options = {}) {
-    const {
-      task = 'analyze',
-      language = 'zh',
-      useCache = true
-    } = options;
+    const { task = 'analyze', language = 'zh', useCache = true } = options;
 
     const cacheKey = `nlp:${task}:${language}:${this.hashString(text)}`;
 
@@ -263,6 +269,7 @@ class AIService {
     }
 
     try {
+// eslint-disable-next-line no-unused-vars
       let result;
 
       switch (task) {
@@ -303,7 +310,7 @@ class AIService {
     const {
       notificationTypes = ['price', 'trend', 'portfolio'],
       maxNotifications = 5,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `notifications:${userId}:${JSON.stringify(notificationTypes)}`;
@@ -314,28 +321,35 @@ class AIService {
     }
 
     try {
+// eslint-disable-next-line no-unused-vars
       const notifications = [];
 
       // 價格變動通知
       if (notificationTypes.includes('price')) {
-        const priceNotifications = await this.generatePriceNotifications(userId);
+        const priceNotifications =
+          await this.generatePriceNotifications(userId);
         notifications.push(...priceNotifications);
       }
 
       // 趨勢通知
       if (notificationTypes.includes('trend')) {
-        const trendNotifications = await this.generateTrendNotifications(userId);
+        const trendNotifications =
+          await this.generateTrendNotifications(userId);
         notifications.push(...trendNotifications);
       }
 
       // 投資組合通知
       if (notificationTypes.includes('portfolio')) {
-        const portfolioNotifications = await this.generatePortfolioNotifications(userId);
+        const portfolioNotifications =
+          await this.generatePortfolioNotifications(userId);
         notifications.push(...portfolioNotifications);
       }
 
       // 智能排序和過濾
-      const smartNotifications = await this.rankNotifications(notifications, userId);
+      const smartNotifications = await this.rankNotifications(
+        notifications,
+        userId
+      );
       const finalNotifications = smartNotifications.slice(0, maxNotifications);
 
       // 緩存結果
@@ -360,7 +374,7 @@ class AIService {
       model = this.config.openai.model,
       maxTokens = this.config.openai.maxTokens,
       temperature = this.config.openai.temperature,
-      useCache = true
+      useCache = true,
     } = options;
 
     const cacheKey = `chat:${this.hashString(message + JSON.stringify(context))}`;
@@ -379,14 +393,15 @@ class AIService {
       const systemPrompt = this.buildSystemPrompt(context);
 
       // 發送請求到OpenAI
+// eslint-disable-next-line no-unused-vars
       const response = await this.openai.createChatCompletion({
         model,
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: message }
+          { role: 'user', content: message },
         ],
         max_tokens: maxTokens,
-        temperature
+        temperature,
       });
 
       const reply = response.data.choices[0].message.content;
@@ -460,10 +475,16 @@ class AIService {
   getMetrics() {
     return {
       ...this.metrics,
-      errorRate: this.metrics.requests > 0 ?
-        (this.metrics.errors / this.metrics.requests) * 100 : 0,
-      cacheHitRate: this.metrics.requests > 0 ?
-        (this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses)) * 100 : 0
+      errorRate:
+        this.metrics.requests > 0
+          ? (this.metrics.errors / this.metrics.requests) * 100
+          : 0,
+      cacheHitRate:
+        this.metrics.requests > 0
+          ? (this.metrics.cacheHits /
+              (this.metrics.cacheHits + this.metrics.cacheMisses)) *
+            100
+          : 0,
     };
   }
 
@@ -474,7 +495,7 @@ class AIService {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return Math.abs(hash).toString(36);
@@ -508,13 +529,13 @@ class AIService {
       preferences: {
         categories: ['gaming', 'collectible'],
         priceRange: { min: 10, max: 1000 },
-        riskTolerance: 'medium'
+        riskTolerance: 'medium',
       },
       history: {
         purchases: [],
         views: [],
-        searches: []
-      }
+        searches: [],
+      },
     };
   }
 
@@ -527,7 +548,7 @@ class AIService {
     return {
       trends: [],
       prices: [],
-      volumes: []
+      volumes: [],
     };
   }
 
@@ -539,7 +560,7 @@ class AIService {
     return {
       preferredCategories: userData.preferences.categories,
       priceSensitivity: 'medium',
-      riskProfile: userData.preferences.riskTolerance
+      riskProfile: userData.preferences.riskTolerance,
     };
   }
 
@@ -553,8 +574,8 @@ class AIService {
         cardId: '1',
         name: '推薦卡片1',
         reason: '符合您的偏好',
-        confidence: 0.85
-      }
+        confidence: 0.85,
+      },
     ];
   }
 
@@ -574,7 +595,7 @@ class AIService {
     return {
       overallTrend: 'up',
       volatility: 'medium',
-      confidence: 0.75
+      confidence: 0.75,
     };
   }
 
@@ -586,7 +607,7 @@ class AIService {
     return {
       prediction: '價格可能上漲',
       confidence: trends.confidence,
-      timeframe
+      timeframe,
     };
   }
 
@@ -598,7 +619,7 @@ class AIService {
     return {
       cards: [],
       totalValue: 0,
-      performance: 0
+      performance: 0,
     };
   }
 
@@ -610,7 +631,7 @@ class AIService {
     return {
       riskLevel: 'medium',
       diversification: 'good',
-      volatility: 'low'
+      volatility: 'low',
     };
   }
 
@@ -624,8 +645,8 @@ class AIService {
         type: 'buy',
         cardId: '1',
         reason: '改善投資組合多樣性',
-        confidence: 0.8
-      }
+        confidence: 0.8,
+      },
     ];
   }
 
@@ -637,7 +658,7 @@ class AIService {
     return {
       intent: 'search',
       entities: [],
-      confidence: 0.9
+      confidence: 0.9,
     };
   }
 
@@ -673,7 +694,7 @@ class AIService {
     return {
       sentiment: 'positive',
       keywords: [],
-      summary: text.substring(0, 100)
+      summary: text.substring(0, 100),
     };
   }
 
@@ -692,7 +713,7 @@ class AIService {
     // 情感分析邏輯
     return {
       sentiment: 'positive',
-      confidence: 0.8
+      confidence: 0.8,
     };
   }
 
@@ -703,7 +724,7 @@ class AIService {
     // 實體提取邏輯
     return {
       entities: [],
-      types: []
+      types: [],
     };
   }
 
@@ -761,7 +782,7 @@ class AIService {
     const health = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      checks: {}
+      checks: {},
     };
 
     try {

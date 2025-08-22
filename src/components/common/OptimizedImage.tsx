@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Dimensions,
-  Platform
+  Platform,
 } from 'react-native';
 import { ImageOptimizer, SmartCache } from '@/utils/performanceOptimizer';
 
@@ -55,30 +55,37 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // 優化圖片 URL
-  const getOptimizedUri = useCallback((originalUri: string): string => {
-    if (!originalUri) return '';
+  const getOptimizedUri = useCallback(
+    (originalUri: string): string => {
+      if (!originalUri) return '';
 
-    // 檢查緩存
-    if (cache) {
-      const cachedUri = SmartCache.getInstance().get(`image_${originalUri}`);
-      if (cachedUri) return cachedUri;
-    }
+      // 檢查緩存
+      if (cache) {
+        const cachedUri = SmartCache.getInstance().get(`image_${originalUri}`);
+        if (cachedUri) return cachedUri;
+      }
 
-    // 優化圖片 URL
-    const optimizedUri = ImageOptimizer.optimizeUrl(
-      originalUri,
-      width,
-      height,
-      quality
-    );
+      // 優化圖片 URL
+      const optimizedUri = ImageOptimizer.optimizeUrl(
+        originalUri,
+        width,
+        height,
+        quality
+      );
 
-    // 緩存優化後的 URL
-    if (cache) {
-      SmartCache.getInstance().set(`image_${originalUri}`, optimizedUri, 24 * 60 * 60 * 1000); // 24小時
-    }
+      // 緩存優化後的 URL
+      if (cache) {
+        SmartCache.getInstance().set(
+          `image_${originalUri}`,
+          optimizedUri,
+          24 * 60 * 60 * 1000
+        ); // 24小時
+      }
 
-    return optimizedUri;
-  }, [uri, width, height, quality, cache]);
+      return optimizedUri;
+    },
+    [uri, width, height, quality, cache]
+  );
 
   // 懶加載觀察器
   useEffect(() => {
@@ -95,7 +102,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
       },
       {
         rootMargin: '50px',
-        threshold: 0.1
+        threshold: 0.1,
       }
     );
 
@@ -140,16 +147,19 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   }, [onLoadEnd]);
 
   // 處理載入錯誤
-  const handleError = useCallback((error: any) => {
-    setIsLoading(false);
-    setHasError(true);
-    onError?.(error);
+  const handleError = useCallback(
+    (error: any) => {
+      setIsLoading(false);
+      setHasError(true);
+      onError?.(error);
 
-    // 嘗試使用備用圖片
-    if (fallback && imageUri !== fallback) {
-      setImageUri(fallback);
-    }
-  }, [fallback, imageUri, onError]);
+      // 嘗試使用備用圖片
+      if (fallback && imageUri !== fallback) {
+        setImageUri(fallback);
+      }
+    },
+    [fallback, imageUri, onError]
+  );
 
   // 渲染載入指示器
   const renderLoadingIndicator = () => {
@@ -230,21 +240,21 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   placeholder: {
     position: 'absolute',
     top: 0,
-    left: 0
+    left: 0,
   },
   errorImage: {
     position: 'absolute',
     top: 0,
-    left: 0
+    left: 0,
   },
   loadingContainer: {
     position: 'absolute',
@@ -252,8 +262,8 @@ const styles = StyleSheet.create({
     left: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.1)'
-  }
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  },
 });
 
 // 預加載圖片工具
@@ -287,16 +297,19 @@ export const clearImageCache = (): void => {
 };
 
 // 獲取圖片尺寸
-export const getImageDimensions = (uri: string): Promise<{ width: number; height: number }> => {
+export const getImageDimensions = (
+  uri: string
+): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.onload = () => {
       resolve({
         width: image.naturalWidth,
-        height: image.naturalHeight
+        height: image.naturalHeight,
       });
     };
-    image.onerror = () => reject(new Error(`Failed to get dimensions for: ${uri}`));
+    image.onerror = () =>
+      reject(new Error(`Failed to get dimensions for: ${uri}`));
     image.src = uri;
   });
 };

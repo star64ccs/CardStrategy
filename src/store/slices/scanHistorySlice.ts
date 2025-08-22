@@ -1,5 +1,10 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { scanHistoryService, ScanHistoryItem, ScanHistoryFilters, ScanStatistics } from '@/services/scanHistoryService';
+import {
+  scanHistoryService,
+  ScanHistoryItem,
+  ScanHistoryFilters,
+  ScanStatistics,
+} from '@/services/scanHistoryService';
 
 // 掃描歷史記錄狀態類型
 export interface ScanHistoryState {
@@ -49,7 +54,13 @@ export const fetchScanRecord = createAsyncThunk(
 
 export const createScanRecord = createAsyncThunk(
   'scanHistory/createScanRecord',
-  async (scanData: Omit<ScanHistoryItem, 'id' | 'userId' | 'createdAt' | 'updatedAt'>, { rejectWithValue }) => {
+  async (
+    scanData: Omit<
+      ScanHistoryItem,
+      'id' | 'userId' | 'createdAt' | 'updatedAt'
+    >,
+    { rejectWithValue }
+  ) => {
     try {
       const response = await scanHistoryService.createScanRecord(scanData);
       return response;
@@ -61,9 +72,18 @@ export const createScanRecord = createAsyncThunk(
 
 export const updateScanRecord = createAsyncThunk(
   'scanHistory/updateScanRecord',
-  async ({ recordId, updates }: { recordId: string; updates: Partial<ScanHistoryItem> }, { rejectWithValue }) => {
+  async (
+    {
+      recordId,
+      updates,
+    }: { recordId: string; updates: Partial<ScanHistoryItem> },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await scanHistoryService.updateScanRecord(recordId, updates);
+      const response = await scanHistoryService.updateScanRecord(
+        recordId,
+        updates
+      );
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message || '更新掃描記錄失敗');
@@ -109,7 +129,10 @@ export const toggleFavorite = createAsyncThunk(
 
 export const addNote = createAsyncThunk(
   'scanHistory/addNote',
-  async ({ recordId, note }: { recordId: string; note: string }, { rejectWithValue }) => {
+  async (
+    { recordId, note }: { recordId: string; note: string },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await scanHistoryService.addNote(recordId, note);
       return response;
@@ -121,7 +144,10 @@ export const addNote = createAsyncThunk(
 
 export const addTags = createAsyncThunk(
   'scanHistory/addTags',
-  async ({ recordId, tags }: { recordId: string; tags: string[] }, { rejectWithValue }) => {
+  async (
+    { recordId, tags }: { recordId: string; tags: string[] },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await scanHistoryService.addTags(recordId, tags);
       return response;
@@ -145,9 +171,15 @@ export const fetchScanStatistics = createAsyncThunk(
 
 export const searchScanHistory = createAsyncThunk(
   'scanHistory/searchScanHistory',
-  async ({ query, filters }: { query: string; filters?: ScanHistoryFilters }, { rejectWithValue }) => {
+  async (
+    { query, filters }: { query: string; filters?: ScanHistoryFilters },
+    { rejectWithValue }
+  ) => {
     try {
-      const response = await scanHistoryService.searchScanHistory(query, filters);
+      const response = await scanHistoryService.searchScanHistory(
+        query,
+        filters
+      );
       return response;
     } catch (error: any) {
       return rejectWithValue(error.message || '搜索掃描歷史失敗');
@@ -167,7 +199,7 @@ const initialState: ScanHistoryState = {
     page: 1,
     limit: 20,
     sortBy: 'date',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
   },
   pagination: {
     page: 1,
@@ -175,10 +207,10 @@ const initialState: ScanHistoryState = {
     total: 0,
     totalPages: 0,
     hasNext: false,
-    hasPrev: false
+    hasPrev: false,
   },
   selectedRecords: [],
-  isSelectionMode: false
+  isSelectionMode: false,
 };
 
 // Scan History slice
@@ -200,7 +232,7 @@ const scanHistorySlice = createSlice({
         page: 1,
         limit: 20,
         sortBy: 'date',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
       };
     },
     toggleSelectionMode: (state) => {
@@ -219,14 +251,14 @@ const scanHistorySlice = createSlice({
       }
     },
     selectAllRecords: (state) => {
-      state.selectedRecords = state.history.map(record => record.id);
+      state.selectedRecords = state.history.map((record) => record.id);
     },
     clearSelection: (state) => {
       state.selectedRecords = [];
     },
     setPage: (state, action: PayloadAction<number>) => {
       state.filters.page = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     // Fetch Scan History
@@ -244,7 +276,7 @@ const scanHistorySlice = createSlice({
           total: action.payload.data.total,
           totalPages: action.payload.data.totalPages,
           hasNext: action.payload.data.page < action.payload.data.totalPages,
-          hasPrev: action.payload.data.page > 1
+          hasPrev: action.payload.data.page > 1,
         };
         state.error = null;
       })
@@ -270,78 +302,83 @@ const scanHistorySlice = createSlice({
       });
 
     // Create Scan Record
-    builder
-      .addCase(createScanRecord.fulfilled, (state, action) => {
-        state.history.unshift(action.payload);
-        state.pagination.total += 1;
-      });
+    builder.addCase(createScanRecord.fulfilled, (state, action) => {
+      state.history.unshift(action.payload);
+      state.pagination.total += 1;
+    });
 
     // Update Scan Record
-    builder
-      .addCase(updateScanRecord.fulfilled, (state, action) => {
-        const index = state.history.findIndex(record => record.id === action.payload.id);
-        if (index !== -1) {
-          state.history[index] = action.payload;
-        }
-        if (state.selectedRecord?.id === action.payload.id) {
-          state.selectedRecord = action.payload;
-        }
-      });
+    builder.addCase(updateScanRecord.fulfilled, (state, action) => {
+      const index = state.history.findIndex(
+        (record) => record.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.history[index] = action.payload;
+      }
+      if (state.selectedRecord?.id === action.payload.id) {
+        state.selectedRecord = action.payload;
+      }
+    });
 
     // Delete Scan Record
-    builder
-      .addCase(deleteScanRecord.fulfilled, (state, action) => {
-        state.history = state.history.filter(record => record.id !== action.payload);
-        state.pagination.total -= 1;
-        if (state.selectedRecord?.id === action.payload) {
-          state.selectedRecord = null;
-        }
-      });
+    builder.addCase(deleteScanRecord.fulfilled, (state, action) => {
+      state.history = state.history.filter(
+        (record) => record.id !== action.payload
+      );
+      state.pagination.total -= 1;
+      if (state.selectedRecord?.id === action.payload) {
+        state.selectedRecord = null;
+      }
+    });
 
     // Delete Multiple Records
-    builder
-      .addCase(deleteMultipleRecords.fulfilled, (state, action) => {
-        state.history = state.history.filter(record => !action.payload.includes(record.id));
-        state.pagination.total -= action.payload.length;
-        state.selectedRecords = [];
-        state.isSelectionMode = false;
-      });
+    builder.addCase(deleteMultipleRecords.fulfilled, (state, action) => {
+      state.history = state.history.filter(
+        (record) => !action.payload.includes(record.id)
+      );
+      state.pagination.total -= action.payload.length;
+      state.selectedRecords = [];
+      state.isSelectionMode = false;
+    });
 
     // Toggle Favorite
-    builder
-      .addCase(toggleFavorite.fulfilled, (state, action) => {
-        const index = state.history.findIndex(record => record.id === action.payload.id);
-        if (index !== -1) {
-          state.history[index] = action.payload;
-        }
-        if (state.selectedRecord?.id === action.payload.id) {
-          state.selectedRecord = action.payload;
-        }
-      });
+    builder.addCase(toggleFavorite.fulfilled, (state, action) => {
+      const index = state.history.findIndex(
+        (record) => record.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.history[index] = action.payload;
+      }
+      if (state.selectedRecord?.id === action.payload.id) {
+        state.selectedRecord = action.payload;
+      }
+    });
 
     // Add Note
-    builder
-      .addCase(addNote.fulfilled, (state, action) => {
-        const index = state.history.findIndex(record => record.id === action.payload.id);
-        if (index !== -1) {
-          state.history[index] = action.payload;
-        }
-        if (state.selectedRecord?.id === action.payload.id) {
-          state.selectedRecord = action.payload;
-        }
-      });
+    builder.addCase(addNote.fulfilled, (state, action) => {
+      const index = state.history.findIndex(
+        (record) => record.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.history[index] = action.payload;
+      }
+      if (state.selectedRecord?.id === action.payload.id) {
+        state.selectedRecord = action.payload;
+      }
+    });
 
     // Add Tags
-    builder
-      .addCase(addTags.fulfilled, (state, action) => {
-        const index = state.history.findIndex(record => record.id === action.payload.id);
-        if (index !== -1) {
-          state.history[index] = action.payload;
-        }
-        if (state.selectedRecord?.id === action.payload.id) {
-          state.selectedRecord = action.payload;
-        }
-      });
+    builder.addCase(addTags.fulfilled, (state, action) => {
+      const index = state.history.findIndex(
+        (record) => record.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.history[index] = action.payload;
+      }
+      if (state.selectedRecord?.id === action.payload.id) {
+        state.selectedRecord = action.payload;
+      }
+    });
 
     // Fetch Scan Statistics
     builder
@@ -374,7 +411,7 @@ const scanHistorySlice = createSlice({
           total: action.payload.data.total,
           totalPages: action.payload.data.totalPages,
           hasNext: action.payload.data.page < action.payload.data.totalPages,
-          hasPrev: action.payload.data.page > 1
+          hasPrev: action.payload.data.page > 1,
         };
         state.error = null;
       })
@@ -382,7 +419,7 @@ const scanHistorySlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  }
+  },
 });
 
 // 導出 actions
@@ -395,7 +432,7 @@ export const {
   toggleRecordSelection,
   selectAllRecords,
   clearSelection,
-  setPage
+  setPage,
 } = scanHistorySlice.actions;
 
 // 導出 reducer

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
-  TextInput
+  TextInput,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,7 +23,7 @@ import {
   AuditLogQuery,
   AuditLogStatistics,
   AuditLogReport,
-  AuditLogAlert
+  AuditLogAlert,
 } from '../../types/audit';
 import { logger } from '../../utils/logger';
 
@@ -38,7 +38,7 @@ interface AuditLogDashboardProps {
 export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
   onEventPress,
   onAlertPress,
-  onReportPress
+  onReportPress,
 }) => {
   const { t } = useTranslation();
   const [events, setEvents] = useState<AuditEvent[]>([]);
@@ -48,13 +48,15 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentTab, setCurrentTab] = useState<'overview' | 'events' | 'alerts' | 'reports'>('overview');
+  const [currentTab, setCurrentTab] = useState<
+    'overview' | 'events' | 'alerts' | 'reports'
+  >('overview');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<Partial<AuditLogQuery>>({
     page: 1,
     limit: 20,
     sortBy: 'timestamp',
-    sortOrder: 'desc'
+    sortOrder: 'desc',
   });
 
   useEffect(() => {
@@ -74,7 +76,6 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
 
       // 加載數據
       await refreshData();
-
     } catch (error) {
       logger.error('加載審計日誌儀表板失敗:', error);
       Alert.alert('錯誤', '加載數據失敗');
@@ -87,7 +88,7 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
     try {
       const [statsData, eventsData] = await Promise.all([
         auditLogService.getStatistics(),
-        auditLogService.queryEvents(filters as AuditLogQuery)
+        auditLogService.queryEvents(filters as AuditLogQuery),
       ]);
 
       setStatistics(statsData);
@@ -108,12 +109,14 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
       const newFilters = {
         ...filters,
         searchText: searchQuery.trim(),
-        page: 1
+        page: 1,
       };
       setFilters(newFilters);
 
       try {
-        const searchResult = await auditLogService.queryEvents(newFilters as AuditLogQuery);
+        const searchResult = await auditLogService.queryEvents(
+          newFilters as AuditLogQuery
+        );
         setEvents(searchResult.events);
       } catch (error) {
         logger.error('搜索失敗:', error);
@@ -156,13 +159,13 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
                 requestId: 'request-123',
                 traceId: 'trace-123',
                 complianceTags: ['gdpr', 'ccpa'],
-                regulatoryRequirements: ['data_protection']
+                regulatoryRequirements: ['data_protection'],
               });
 
               await refreshData();
               Alert.alert('成功', '測試事件已創建');
-            }
-          }
+            },
+          },
         ]
       );
     } catch (error) {
@@ -180,10 +183,10 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
         type: 'summary',
         startDate,
         endDate,
-        format: 'json'
+        format: 'json',
       });
 
-      setReports(prev => [report, ...prev]);
+      setReports((prev) => [report, ...prev]);
       Alert.alert('成功', '審計報告已生成');
     } catch (error) {
       logger.error('生成報告失敗:', error);
@@ -193,16 +196,12 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
 
   const handleExportLogs = async () => {
     try {
-      Alert.alert(
-        '導出審計日誌',
-        '選擇導出格式',
-        [
-          { text: '取消', style: 'cancel' },
-          { text: 'JSON', onPress: () => exportLogs('json') },
-          { text: 'CSV', onPress: () => exportLogs('csv') },
-          { text: 'XML', onPress: () => exportLogs('xml') }
-        ]
-      );
+      Alert.alert('導出審計日誌', '選擇導出格式', [
+        { text: '取消', style: 'cancel' },
+        { text: 'JSON', onPress: () => exportLogs('json') },
+        { text: 'CSV', onPress: () => exportLogs('csv') },
+        { text: 'XML', onPress: () => exportLogs('xml') },
+      ]);
     } catch (error) {
       logger.error('導出日誌失敗:', error);
     }
@@ -219,7 +218,7 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
         includeStackTrace: false,
         filters: filters as AuditLogQuery,
         batchSize: 1000,
-        maxRecords: 10000
+        maxRecords: 10000,
       });
 
       Alert.alert('成功', `日誌已導出為 ${fileName}`);
@@ -231,31 +230,46 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
 
   const getSeverityColor = (severity: AuditSeverity): string => {
     switch (severity) {
-      case 'critical': return theme.colors.error;
-      case 'high': return theme.colors.warning;
-      case 'medium': return theme.colors.info;
-      case 'low': return theme.colors.success;
-      default: return theme.colors.text;
+      case 'critical':
+        return theme.colors.error;
+      case 'high':
+        return theme.colors.warning;
+      case 'medium':
+        return theme.colors.info;
+      case 'low':
+        return theme.colors.success;
+      default:
+        return theme.colors.text;
     }
   };
 
   const getSeverityIcon = (severity: AuditSeverity): string => {
     switch (severity) {
-      case 'critical': return 'alert-circle';
-      case 'high': return 'warning';
-      case 'medium': return 'information-circle';
-      case 'low': return 'checkmark-circle';
-      default: return 'help-circle';
+      case 'critical':
+        return 'alert-circle';
+      case 'high':
+        return 'warning';
+      case 'medium':
+        return 'information-circle';
+      case 'low':
+        return 'checkmark-circle';
+      default:
+        return 'help-circle';
     }
   };
 
   const getStatusColor = (status: AuditEventStatus): string => {
     switch (status) {
-      case 'success': return theme.colors.success;
-      case 'failure': return theme.colors.error;
-      case 'pending': return theme.colors.warning;
-      case 'cancelled': return theme.colors.textSecondary;
-      default: return theme.colors.text;
+      case 'success':
+        return theme.colors.success;
+      case 'failure':
+        return theme.colors.error;
+      case 'pending':
+        return theme.colors.warning;
+      case 'cancelled':
+        return theme.colors.textSecondary;
+      default:
+        return theme.colors.text;
     }
   };
 
@@ -265,7 +279,7 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -283,7 +297,11 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
           style={styles.headerButton}
           onPress={handleGenerateReport}
         >
-          <Ionicons name="document-text" size={24} color={theme.colors.primary} />
+          <Ionicons
+            name="document-text"
+            size={24}
+            color={theme.colors.primary}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.headerButton}
@@ -317,25 +335,28 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
         { key: 'overview', label: '概覽', icon: 'stats-chart' },
         { key: 'events', label: '事件', icon: 'list' },
         { key: 'alerts', label: '警報', icon: 'warning' },
-        { key: 'reports', label: '報告', icon: 'document-text' }
-      ].map(tab => (
+        { key: 'reports', label: '報告', icon: 'document-text' },
+      ].map((tab) => (
         <TouchableOpacity
           key={tab.key}
-          style={[
-            styles.tab,
-            currentTab === tab.key && styles.activeTab
-          ]}
+          style={[styles.tab, currentTab === tab.key && styles.activeTab]}
           onPress={() => setCurrentTab(tab.key as any)}
         >
           <Ionicons
             name={tab.icon as any}
             size={20}
-            color={currentTab === tab.key ? theme.colors.primary : theme.colors.textSecondary}
+            color={
+              currentTab === tab.key
+                ? theme.colors.primary
+                : theme.colors.textSecondary
+            }
           />
-          <Text style={[
-            styles.tabText,
-            currentTab === tab.key && styles.activeTabText
-          ]}>
+          <Text
+            style={[
+              styles.tabText,
+              currentTab === tab.key && styles.activeTabText,
+            ]}
+          >
             {tab.label}
           </Text>
         </TouchableOpacity>
@@ -368,16 +389,28 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
 
           <Card style={styles.statCard}>
             <View style={styles.statContent}>
-              <Ionicons name="alert-circle" size={24} color={theme.colors.error} />
-              <Text style={styles.statNumber}>{statistics.failedLoginAttempts}</Text>
+              <Ionicons
+                name="alert-circle"
+                size={24}
+                color={theme.colors.error}
+              />
+              <Text style={styles.statNumber}>
+                {statistics.failedLoginAttempts}
+              </Text>
               <Text style={styles.statLabel}>登錄失敗</Text>
             </View>
           </Card>
 
           <Card style={styles.statCard}>
             <View style={styles.statContent}>
-              <Ionicons name="checkmark-circle" size={24} color={theme.colors.success} />
-              <Text style={styles.statNumber}>{statistics.complianceEvents}</Text>
+              <Ionicons
+                name="checkmark-circle"
+                size={24}
+                color={theme.colors.success}
+              />
+              <Text style={styles.statNumber}>
+                {statistics.complianceEvents}
+              </Text>
               <Text style={styles.statLabel}>合規事件</Text>
             </View>
           </Card>
@@ -387,23 +420,29 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
         <Card style={styles.chartCard}>
           <Text style={styles.chartTitle}>事件嚴重性分佈</Text>
           <View style={styles.severityChart}>
-            {Object.entries(statistics.eventsBySeverity).map(([severity, count]) => (
-              <View key={severity} style={styles.severityBar}>
-                <View style={styles.severityBarContainer}>
-                  <View
-                    style={[
-                      styles.severityBarFill,
-                      {
-                        backgroundColor: getSeverityColor(severity as AuditSeverity),
-                        width: `${(count / statistics.totalEvents) * 100}%`
-                      }
-                    ]}
-                  />
+            {Object.entries(statistics.eventsBySeverity).map(
+              ([severity, count]) => (
+                <View key={severity} style={styles.severityBar}>
+                  <View style={styles.severityBarContainer}>
+                    <View
+                      style={[
+                        styles.severityBarFill,
+                        {
+                          backgroundColor: getSeverityColor(
+                            severity as AuditSeverity
+                          ),
+                          width: `${(count / statistics.totalEvents) * 100}%`,
+                        },
+                      ]}
+                    />
+                  </View>
+                  <Text style={styles.severityLabel}>
+                    {severity.toUpperCase()}
+                  </Text>
+                  <Text style={styles.severityCount}>{count}</Text>
                 </View>
-                <Text style={styles.severityLabel}>{severity.toUpperCase()}</Text>
-                <Text style={styles.severityCount}>{count}</Text>
-              </View>
-            ))}
+              )
+            )}
           </View>
         </Card>
 
@@ -430,7 +469,12 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
                 <Text style={styles.eventTitle} numberOfLines={1}>
                   {event.title}
                 </Text>
-                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(event.status) }]}>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    { backgroundColor: getStatusColor(event.status) },
+                  ]}
+                >
                   <Text style={styles.statusBadgeText}>{event.status}</Text>
                 </View>
               </View>
@@ -452,9 +496,15 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
       {events.length === 0 ? (
         <Card style={styles.emptyCard}>
           <View style={styles.emptyContent}>
-            <Ionicons name="list" size={48} color={theme.colors.textSecondary} />
+            <Ionicons
+              name="list"
+              size={48}
+              color={theme.colors.textSecondary}
+            />
             <Text style={styles.emptyTitle}>沒有審計事件</Text>
-            <Text style={styles.emptySubtitle}>系統運行正常，未記錄審計事件</Text>
+            <Text style={styles.emptySubtitle}>
+              系統運行正常，未記錄審計事件
+            </Text>
           </View>
         </Card>
       ) : (
@@ -476,10 +526,22 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
                 </Text>
               </View>
               <View style={styles.eventBadges}>
-                <View style={[styles.severityBadge, { backgroundColor: getSeverityColor(event.severity) }]}>
-                  <Text style={styles.severityBadgeText}>{event.severity.toUpperCase()}</Text>
+                <View
+                  style={[
+                    styles.severityBadge,
+                    { backgroundColor: getSeverityColor(event.severity) },
+                  ]}
+                >
+                  <Text style={styles.severityBadgeText}>
+                    {event.severity.toUpperCase()}
+                  </Text>
                 </View>
-                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(event.status) }]}>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    { backgroundColor: getStatusColor(event.status) },
+                  ]}
+                >
                   <Text style={styles.statusBadgeText}>{event.status}</Text>
                 </View>
               </View>
@@ -492,18 +554,30 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
             <View style={styles.eventDetails}>
               {event.userEmail && (
                 <View style={styles.eventDetail}>
-                  <Ionicons name="person" size={16} color={theme.colors.textSecondary} />
+                  <Ionicons
+                    name="person"
+                    size={16}
+                    color={theme.colors.textSecondary}
+                  />
                   <Text style={styles.eventDetailText}>{event.userEmail}</Text>
                 </View>
               )}
               {event.ipAddress && (
                 <View style={styles.eventDetail}>
-                  <Ionicons name="globe" size={16} color={theme.colors.textSecondary} />
+                  <Ionicons
+                    name="globe"
+                    size={16}
+                    color={theme.colors.textSecondary}
+                  />
                   <Text style={styles.eventDetailText}>{event.ipAddress}</Text>
                 </View>
               )}
               <View style={styles.eventDetail}>
-                <Ionicons name="time" size={16} color={theme.colors.textSecondary} />
+                <Ionicons
+                  name="time"
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
                 <Text style={styles.eventDetailText}>
                   {formatDate(event.timestamp)}
                 </Text>
@@ -512,7 +586,11 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
 
             <View style={styles.eventFooter}>
               <Text style={styles.eventType}>{event.eventType}</Text>
-              <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} />
+              <Ionicons
+                name="chevron-forward"
+                size={16}
+                color={theme.colors.textSecondary}
+              />
             </View>
           </TouchableOpacity>
         ))
@@ -526,7 +604,9 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
         <View style={styles.emptyContent}>
           <Ionicons name="warning" size={48} color={theme.colors.success} />
           <Text style={styles.emptyTitle}>沒有警報</Text>
-          <Text style={styles.emptySubtitle}>系統運行正常，未檢測到需要警報的事件</Text>
+          <Text style={styles.emptySubtitle}>
+            系統運行正常，未檢測到需要警報的事件
+          </Text>
         </View>
       </Card>
     </ScrollView>
@@ -536,7 +616,11 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
     <ScrollView style={styles.content}>
       <Card style={styles.emptyCard}>
         <View style={styles.emptyContent}>
-          <Ionicons name="document-text" size={48} color={theme.colors.textSecondary} />
+          <Ionicons
+            name="document-text"
+            size={48}
+            color={theme.colors.textSecondary}
+          />
           <Text style={styles.emptyTitle}>沒有報告</Text>
           <Text style={styles.emptySubtitle}>點擊右上角按鈕生成審計報告</Text>
         </View>
@@ -579,7 +663,7 @@ export const AuditLogDashboard: React.FC<AuditLogDashboardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -587,24 +671,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   headerActions: {
     flexDirection: 'row',
-    gap: 12
+    gap: 12,
   },
   headerButton: {
-    padding: 8
+    padding: 8,
   },
   searchContainer: {
     flexDirection: 'row',
     padding: 16,
-    gap: 12
+    gap: 12,
   },
   searchInput: {
     flex: 1,
@@ -614,7 +698,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
     backgroundColor: theme.colors.surface,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   searchButton: {
     width: 40,
@@ -622,13 +706,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: theme.colors.primary,
-    borderRadius: 8
+    borderRadius: 8,
   },
   tabContainer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   tab: {
     flex: 1,
@@ -636,163 +720,163 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    gap: 8
+    gap: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.primary
+    borderBottomColor: theme.colors.primary,
   },
   tabText: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   activeTabText: {
     color: theme.colors.primary,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   mainContent: {
-    flex: 1
+    flex: 1,
   },
   content: {
-    padding: 16
+    padding: 16,
   },
   statsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 12,
-    marginBottom: 16
+    marginBottom: 16,
   },
   statCard: {
     flex: 1,
     minWidth: (width - 48) / 2,
-    maxWidth: (width - 48) / 2
+    maxWidth: (width - 48) / 2,
   },
   statContent: {
     alignItems: 'center',
-    padding: 16
+    padding: 16,
   },
   statNumber: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginTop: 8
+    marginTop: 8,
   },
   statLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginTop: 4
+    marginTop: 4,
   },
   chartCard: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   chartTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.text,
-    marginBottom: 16
+    marginBottom: 16,
   },
   severityChart: {
-    gap: 12
+    gap: 12,
   },
   severityBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12
+    gap: 12,
   },
   severityBarContainer: {
     flex: 1,
     height: 8,
     backgroundColor: theme.colors.border,
     borderRadius: 4,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   severityBarFill: {
     height: '100%',
-    borderRadius: 4
+    borderRadius: 4,
   },
   severityLabel: {
     fontSize: 12,
     fontWeight: '600',
     color: theme.colors.text,
-    minWidth: 60
+    minWidth: 60,
   },
   severityCount: {
     fontSize: 12,
     color: theme.colors.textSecondary,
     minWidth: 30,
-    textAlign: 'right'
+    textAlign: 'right',
   },
   recentEventsCard: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   cardTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   viewAllText: {
     fontSize: 14,
-    color: theme.colors.primary
+    color: theme.colors.primary,
   },
   eventItem: {
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   eventHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 4
+    marginBottom: 4,
   },
   eventTitle: {
     flex: 1,
     fontSize: 14,
     fontWeight: '500',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   statusBadge: {
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 4
+    borderRadius: 4,
   },
   statusBadgeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: theme.colors.onPrimary
+    color: theme.colors.onPrimary,
   },
   eventDescription: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: 4
+    marginBottom: 4,
   },
   eventTime: {
     fontSize: 10,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   emptyCard: {
-    padding: 32
+    padding: 32,
   },
   emptyContent: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   emptyTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.text,
-    marginTop: 16
+    marginTop: 16,
   },
   emptySubtitle: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginTop: 8,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   eventCard: {
     backgroundColor: theme.colors.surface,
@@ -800,56 +884,56 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   eventTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: 8
+    marginRight: 8,
   },
   eventBadges: {
     flexDirection: 'row',
-    gap: 4
+    gap: 4,
   },
   severityBadge: {
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 4
+    borderRadius: 4,
   },
   severityBadgeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: theme.colors.onPrimary
+    color: theme.colors.onPrimary,
   },
   eventDescription: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginBottom: 12,
-    lineHeight: 20
+    lineHeight: 20,
   },
   eventDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12
+    marginBottom: 12,
   },
   eventDetail: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   eventDetailText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginLeft: 4
+    marginLeft: 4,
   },
   eventFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   eventType: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    fontStyle: 'italic'
-  }
+    fontStyle: 'italic',
+  },
 });

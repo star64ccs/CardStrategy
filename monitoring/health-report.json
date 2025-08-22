@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-08-21T23:33:15.318Z",
+  "services": {
+    "mixpanel": {
+      "status": "active",
+      "healthy": true
+    },
+    "sendgrid": {
+      "status": "active",
+      "healthy": true
+    },
+    "logrocket": {
+      "status": "active",
+      "healthy": true
+    },
+    "smtp": {
+      "status": "active",
+      "healthy": true
+    }
+  },
+  "overall": "healthy"
+}

@@ -17,14 +17,23 @@ const CardManagementApp: React.FC = () => {
         <header className="app-header">
           <h1>卡片管理系統</h1>
         </header>
-        
+
         <main className="app-main">
           <Routes>
             <Route path="/" element={<CardList />} />
             <Route path="/scanner" element={<CardScanner />} />
             <Route path="/collections" element={<CardCollection />} />
             <Route path="/search" element={<CardSearch />} />
-            <Route path="/filters" element={<CardFilters filters={{}} onFiltersChange={() => {}} onClearFilters={() => {}} />} />
+            <Route
+              path="/filters"
+              element={
+                <CardFilters
+                  filters={{}}
+                  onFiltersChange={() => {}}
+                  onClearFilters={() => {}}
+                />
+              }
+            />
           </Routes>
         </main>
       </div>
@@ -40,4 +49,11 @@ if (container) {
 }
 
 // 導出組件供其他微前端使用
-export { CardList, CardDetail, CardScanner, CardCollection, CardSearch, CardFilters };
+export {
+  CardList,
+  CardDetail,
+  CardScanner,
+  CardCollection,
+  CardSearch,
+  CardFilters,
+};

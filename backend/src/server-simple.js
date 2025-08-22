@@ -15,7 +15,7 @@ app.get('/api/health', (req, res) => {
     success: true,
     message: 'CardStrategy API 服務正常運行',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
   res.json({
     success: true,
     message: 'CardStrategy API 服務器運行中',
-    version: '1.0.0'
+    version: '1.0.0',
   });
 });
 

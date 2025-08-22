@@ -10,7 +10,7 @@ interface CardSearchProps {
 const CardSearch: React.FC<CardSearchProps> = ({
   onSearch,
   onFiltersChange,
-  filters = {}
+  filters = {},
 }) => {
   const [searchQuery, setSearchQuery] = useState(filters.search || '');
   const [localFilters, setLocalFilters] = useState<CardFilters>(filters);
@@ -66,7 +66,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
             <label>遊戲</label>
             <select
               value={localFilters.game || ''}
-              onChange={(e) => handleFilterChange('game', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('game', e.target.value || undefined)
+              }
             >
               <option value="">全部遊戲</option>
               <option value="Pokemon TCG">Pokemon TCG</option>
@@ -80,7 +82,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
             <label>稀有度</label>
             <select
               value={localFilters.rarity || ''}
-              onChange={(e) => handleFilterChange('rarity', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('rarity', e.target.value || undefined)
+              }
             >
               <option value="">全部稀有度</option>
               <option value="普通">普通</option>
@@ -95,7 +99,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
             <label>類型</label>
             <select
               value={localFilters.type || ''}
-              onChange={(e) => handleFilterChange('type', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('type', e.target.value || undefined)
+              }
             >
               <option value="">全部類型</option>
               <option value="基本">基本</option>
@@ -109,7 +115,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
             <label>狀態</label>
             <select
               value={localFilters.condition || ''}
-              onChange={(e) => handleFilterChange('condition', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('condition', e.target.value || undefined)
+              }
             >
               <option value="">全部狀態</option>
               <option value="全新">全新</option>
@@ -124,7 +132,9 @@ const CardSearch: React.FC<CardSearchProps> = ({
             <label>語言</label>
             <select
               value={localFilters.language || ''}
-              onChange={(e) => handleFilterChange('language', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('language', e.target.value || undefined)
+              }
             >
               <option value="">全部語言</option>
               <option value="繁體中文">繁體中文</option>
@@ -140,7 +150,12 @@ const CardSearch: React.FC<CardSearchProps> = ({
                 type="number"
                 placeholder="最低價"
                 value={localFilters.priceMin || ''}
-                onChange={(e) => handleFilterChange('priceMin', e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) =>
+                  handleFilterChange(
+                    'priceMin',
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
                 className="price-input"
               />
               <span>-</span>
@@ -148,7 +163,12 @@ const CardSearch: React.FC<CardSearchProps> = ({
                 type="number"
                 placeholder="最高價"
                 value={localFilters.priceMax || ''}
-                onChange={(e) => handleFilterChange('priceMax', e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) =>
+                  handleFilterChange(
+                    'priceMax',
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
                 className="price-input"
               />
             </div>

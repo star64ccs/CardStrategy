@@ -1,4 +1,5 @@
 const axios = require('axios');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
 class LocalAIService {
@@ -7,7 +8,7 @@ class LocalAIService {
       ollama: {
         baseUrl: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
         models: ['llama2', 'mistral', 'codellama', 'llama2-uncensored'],
-        isAvailable: false
+        isAvailable: false,
       },
       huggingface: {
         baseUrl: 'https://api-inference.huggingface.co',
@@ -16,15 +17,15 @@ class LocalAIService {
           'microsoft/DialoGPT-medium',
           'gpt2',
           'distilgpt2',
-          'EleutherAI/gpt-neo-125M'
+          'EleutherAI/gpt-neo-125M',
         ],
-        isAvailable: false
+        isAvailable: false,
       },
       openaiCompatible: {
         baseUrl: process.env.OPENAI_COMPATIBLE_URL || 'http://localhost:8080',
         models: ['llama2', 'mistral'],
-        isAvailable: false
-      }
+        isAvailable: false,
+      },
     };
 
     this.initializeProviders();
@@ -33,9 +34,13 @@ class LocalAIService {
   async initializeProviders() {
     // 檢查Ollama可用性
     try {
-      const response = await axios.get(`${this.providers.ollama.baseUrl}/api/tags`, {
-        timeout: 5000
-      });
+// eslint-disable-next-line no-unused-vars
+      const response = await axios.get(
+        `${this.providers.ollama.baseUrl}/api/tags`,
+        {
+          timeout: 5000,
+        }
+      );
       this.providers.ollama.isAvailable = true;
       logger.info('Ollama服務可用');
     } catch (error) {
@@ -50,9 +55,13 @@ class LocalAIService {
 
     // 檢查OpenAI兼容服務可用性
     try {
-      const response = await axios.get(`${this.providers.openaiCompatible.baseUrl}/v1/models`, {
-        timeout: 5000
-      });
+// eslint-disable-next-line no-unused-vars
+      const response = await axios.get(
+        `${this.providers.openaiCompatible.baseUrl}/v1/models`,
+        {
+          timeout: 5000,
+        }
+      );
       this.providers.openaiCompatible.isAvailable = true;
       logger.info('OpenAI兼容服務可用');
     } catch (error) {
@@ -78,11 +87,13 @@ class LocalAIService {
     // 根據任務類型選擇最佳提供商
     switch (taskType) {
       case 'image_recognition':
-        return available.find(p => p.name === 'huggingface') || available[0];
+        return available.find((p) => p.name === 'huggingface') || available[0];
       case 'text_generation':
-        return available.find(p => p.name === 'ollama') || available[0];
+        return available.find((p) => p.name === 'ollama') || available[0];
       case 'analysis':
-        return available.find(p => p.name === 'openaiCompatible') || available[0];
+        return (
+          available.find((p) => p.name === 'openaiCompatible') || available[0]
+        );
       default:
         return available[0];
     }
@@ -91,17 +102,21 @@ class LocalAIService {
   // 使用Ollama進行文本生成
   async generateWithOllama(prompt, model = 'llama2', options = {}) {
     try {
-      const response = await axios.post(`${this.providers.ollama.baseUrl}/api/generate`, {
-        model,
-        prompt,
-        stream: false,
-        options: {
-          temperature: options.temperature || 0.7,
-          top_p: options.top_p || 0.9,
-          max_tokens: options.maxTokens || 1000,
-          ...options
+// eslint-disable-next-line no-unused-vars
+      const response = await axios.post(
+        `${this.providers.ollama.baseUrl}/api/generate`,
+        {
+          model,
+          prompt,
+          stream: false,
+          options: {
+            temperature: options.temperature || 0.7,
+            top_p: options.top_p || 0.9,
+            max_tokens: options.maxTokens || 1000,
+            ...options,
+          },
         }
-      });
+      );
 
       return {
         success: true,
@@ -111,8 +126,8 @@ class LocalAIService {
         usage: {
           prompt_tokens: prompt.length,
           completion_tokens: response.data.response.length,
-          total_tokens: prompt.length + response.data.response.length
-        }
+          total_tokens: prompt.length + response.data.response.length,
+        },
       };
     } catch (error) {
       logger.error('Ollama生成錯誤:', error);
@@ -121,8 +136,13 @@ class LocalAIService {
   }
 
   // 使用Hugging Face進行文本生成
-  async generateWithHuggingFace(prompt, model = 'microsoft/DialoGPT-medium', options = {}) {
+  async generateWithHuggingFace(
+    prompt,
+    model = 'microsoft/DialoGPT-medium',
+    options = {}
+  ) {
     try {
+// eslint-disable-next-line no-unused-vars
       const response = await axios.post(
         `${this.providers.huggingface.baseUrl}/models/${model}`,
         {
@@ -131,14 +151,14 @@ class LocalAIService {
             max_length: options.maxTokens || 100,
             temperature: options.temperature || 0.7,
             do_sample: true,
-            ...options
-          }
+            ...options,
+          },
         },
         {
           headers: {
-            'Authorization': `Bearer ${this.providers.huggingface.apiKey}`,
-            'Content-Type': 'application/json'
-          }
+            Authorization: `Bearer ${this.providers.huggingface.apiKey}`,
+            'Content-Type': 'application/json',
+          },
         }
       );
 
@@ -149,8 +169,8 @@ class LocalAIService {
         provider: 'huggingface',
         usage: {
           prompt_tokens: prompt.length,
-          completion_tokens: response.data[0]?.generated_text?.length || 0
-        }
+          completion_tokens: response.data[0]?.generated_text?.length || 0,
+        },
       };
     } catch (error) {
       logger.error('Hugging Face生成錯誤:', error);
@@ -161,26 +181,29 @@ class LocalAIService {
   // 使用OpenAI兼容服務
   async generateWithOpenAICompatible(prompt, model = 'llama2', options = {}) {
     try {
-      const response = await axios.post(`${this.providers.openaiCompatible.baseUrl}/v1/chat/completions`, {
-        model,
-        messages: [
-          { role: 'user', content: prompt }
-        ],
-        max_tokens: options.maxTokens || 1000,
-        temperature: options.temperature || 0.7,
-        ...options
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
+// eslint-disable-next-line no-unused-vars
+      const response = await axios.post(
+        `${this.providers.openaiCompatible.baseUrl}/v1/chat/completions`,
+        {
+          model,
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: options.maxTokens || 1000,
+          temperature: options.temperature || 0.7,
+          ...options,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
-      });
+      );
 
       return {
         success: true,
         data: response.data.choices[0]?.message?.content || '',
         model,
         provider: 'openaiCompatible',
-        usage: response.data.usage
+        usage: response.data.usage,
       };
     } catch (error) {
       logger.error('OpenAI兼容服務錯誤:', error);
@@ -195,27 +218,53 @@ class LocalAIService {
     try {
       switch (provider.name) {
         case 'ollama':
-          return await this.generateWithOllama(prompt, provider.models[0], options);
+          return await this.generateWithOllama(
+            prompt,
+            provider.models[0],
+            options
+          );
         case 'huggingface':
-          return await this.generateWithHuggingFace(prompt, provider.models[0], options);
+          return await this.generateWithHuggingFace(
+            prompt,
+            provider.models[0],
+            options
+          );
         case 'openaiCompatible':
-          return await this.generateWithOpenAICompatible(prompt, provider.models[0], options);
+          return await this.generateWithOpenAICompatible(
+            prompt,
+            provider.models[0],
+            options
+          );
         default:
           throw new Error(`不支持的提供商: ${provider.name}`);
       }
     } catch (error) {
       // 如果首選提供商失敗，嘗試其他提供商
-      const available = this.getAvailableProviders().filter(p => p.name !== provider.name);
+      const available = this.getAvailableProviders().filter(
+        (p) => p.name !== provider.name
+      );
 
       for (const altProvider of available) {
         try {
           switch (altProvider.name) {
             case 'ollama':
-              return await this.generateWithOllama(prompt, altProvider.models[0], options);
+              return await this.generateWithOllama(
+                prompt,
+                altProvider.models[0],
+                options
+              );
             case 'huggingface':
-              return await this.generateWithHuggingFace(prompt, altProvider.models[0], options);
+              return await this.generateWithHuggingFace(
+                prompt,
+                altProvider.models[0],
+                options
+              );
             case 'openaiCompatible':
-              return await this.generateWithOpenAICompatible(prompt, altProvider.models[0], options);
+              return await this.generateWithOpenAICompatible(
+                prompt,
+                altProvider.models[0],
+                options
+              );
           }
         } catch (altError) {
           logger.warn(`${altProvider.name}備用服務也失敗:`, altError.message);
@@ -233,7 +282,7 @@ class LocalAIService {
 
     return await this.generateText(prompt, 'analysis', {
       temperature: 0.3,
-      maxTokens: 500
+      maxTokens: 500,
     });
   }
 
@@ -243,7 +292,7 @@ class LocalAIService {
 
     return await this.generateText(prompt, 'prediction', {
       temperature: 0.2,
-      maxTokens: 300
+      maxTokens: 300,
     });
   }
 
@@ -253,7 +302,7 @@ class LocalAIService {
 
     return await this.generateText(prompt, 'analysis', {
       temperature: 0.4,
-      maxTokens: 600
+      maxTokens: 600,
     });
   }
 
@@ -307,19 +356,21 @@ class LocalAIService {
 
   // 健康檢查
   async healthCheck() {
+// eslint-disable-next-line no-unused-vars
     const status = {
       ollama: this.providers.ollama.isAvailable,
       huggingface: this.providers.huggingface.isAvailable,
       openaiCompatible: this.providers.openaiCompatible.isAvailable,
-      availableProviders: this.getAvailableProviders().length
+      availableProviders: this.getAvailableProviders().length,
     };
 
     return {
       success: status.availableProviders > 0,
       status,
-      message: status.availableProviders > 0 ?
-        `有 ${status.availableProviders} 個AI服務可用` :
-        '沒有可用的AI服務'
+      message:
+        status.availableProviders > 0
+          ? `有 ${status.availableProviders} 個AI服務可用`
+          : '沒有可用的AI服務',
     };
   }
 }

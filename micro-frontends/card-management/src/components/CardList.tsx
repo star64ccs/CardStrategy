@@ -14,7 +14,7 @@ const CardList: React.FC<CardListProps> = ({
   filters = {},
   onCardSelect,
   onFiltersChange,
-  loading = false
+  loading = false,
 }) => {
   const [filteredCards, setFilteredCards] = useState<Card[]>(cards);
 
@@ -23,28 +23,29 @@ const CardList: React.FC<CardListProps> = ({
 
     // Apply search filter
     if (filters.search) {
-      result = result.filter(card =>
-        card.name.toLowerCase().includes(filters.search!.toLowerCase()) ||
-        card.setName.toLowerCase().includes(filters.search!.toLowerCase())
+      result = result.filter(
+        (card) =>
+          card.name.toLowerCase().includes(filters.search!.toLowerCase()) ||
+          card.setName.toLowerCase().includes(filters.search!.toLowerCase())
       );
     }
 
     // Apply game filter
     if (filters.game) {
-      result = result.filter(card => card.game === filters.game);
+      result = result.filter((card) => card.game === filters.game);
     }
 
     // Apply rarity filter
     if (filters.rarity) {
-      result = result.filter(card => card.rarity === filters.rarity);
+      result = result.filter((card) => card.rarity === filters.rarity);
     }
 
     // Apply price filters
     if (filters.priceMin !== undefined) {
-      result = result.filter(card => card.price >= filters.priceMin!);
+      result = result.filter((card) => card.price >= filters.priceMin!);
     }
     if (filters.priceMax !== undefined) {
-      result = result.filter(card => card.price <= filters.priceMax!);
+      result = result.filter((card) => card.price <= filters.priceMax!);
     }
 
     setFilteredCards(result);

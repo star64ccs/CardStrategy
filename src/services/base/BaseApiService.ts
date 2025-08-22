@@ -28,7 +28,9 @@ export abstract class BaseApiService {
       if (inputSchema && inputData) {
         const validationResult = validateInput(inputSchema, inputData);
         if (!validationResult.isValid) {
-          throw new Error(validationResult.errorMessage || `${operation} 參數驗證失敗`);
+          throw new Error(
+            validationResult.errorMessage || `${operation} 參數驗證失敗`
+          );
         }
       }
 
@@ -37,21 +39,26 @@ export abstract class BaseApiService {
 
       // 響應驗證
       if (responseSchema && response.data) {
-        const responseValidation = validateApiResponse(responseSchema, response.data);
+        const responseValidation = validateApiResponse(
+          responseSchema,
+          response.data
+        );
         if (!responseValidation.isValid) {
-          throw new Error(responseValidation.errorMessage || `${operation} 響應數據驗證失敗`);
+          throw new Error(
+            responseValidation.errorMessage || `${operation} 響應數據驗證失敗`
+          );
         }
 
         const result = {
           ...response,
-          data: responseValidation.data!
+          data: responseValidation.data!,
         };
 
         // 記錄成功日誌
         const duration = Date.now() - startTime;
         logger.info(`✅ ${operation} 成功`, {
           duration: `${duration}ms`,
-          status: response.status
+          status: response.status,
         });
 
         return result;
@@ -61,7 +68,7 @@ export abstract class BaseApiService {
       const duration = Date.now() - startTime;
       logger.info(`✅ ${operation} 成功`, {
         duration: `${duration}ms`,
-        status: response.status
+        status: response.status,
       });
 
       return response;
@@ -71,7 +78,7 @@ export abstract class BaseApiService {
       logger.error(`❌ ${operation} 失敗`, {
         error: error.message,
         duration: `${duration}ms`,
-        stack: error.stack
+        stack: error.stack,
       });
       throw error;
     }
@@ -109,7 +116,13 @@ export abstract class BaseApiService {
         }
       };
 
-      return this.executeApiCall(operation, apiCall, inputSchema, responseSchema, data);
+      return this.executeApiCall(
+        operation,
+        apiCall,
+        inputSchema,
+        responseSchema,
+        data
+      );
     };
   }
 
@@ -138,7 +151,12 @@ export abstract class BaseApiService {
     inputSchema?: ZodSchema<P>,
     responseSchema?: ZodSchema<T>
   ) {
-    return this.createApiCall<T, P>(endpoint, 'POST', inputSchema, responseSchema);
+    return this.createApiCall<T, P>(
+      endpoint,
+      'POST',
+      inputSchema,
+      responseSchema
+    );
   }
 
   /**
@@ -153,7 +171,12 @@ export abstract class BaseApiService {
     inputSchema?: ZodSchema<P>,
     responseSchema?: ZodSchema<T>
   ) {
-    return this.createApiCall<T, P>(endpoint, 'PUT', inputSchema, responseSchema);
+    return this.createApiCall<T, P>(
+      endpoint,
+      'PUT',
+      inputSchema,
+      responseSchema
+    );
   }
 
   /**
@@ -181,12 +204,12 @@ export abstract class BaseApiService {
     const operation = `批量執行 ${calls.length} 個操作`;
 
     try {
-      const results = await Promise.all(calls.map(call => call()));
+      const results = await Promise.all(calls.map((call) => call()));
 
       const duration = Date.now() - startTime;
       logger.info(`✅ ${operation} 成功`, {
         count: calls.length,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
 
       return results;
@@ -195,7 +218,7 @@ export abstract class BaseApiService {
       logger.error(`❌ ${operation} 失敗`, {
         error: error.message,
         count: calls.length,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
       throw error;
     }
@@ -225,16 +248,21 @@ export abstract class BaseApiService {
 
         if (attempt === maxRetries) {
           logger.error(`❌ ${operation} 重試失敗 (${attempt}/${maxRetries})`, {
-            error: error.message
+            error: error.message,
           });
           throw error;
         }
 
-        logger.warn(`⚠️ ${operation} 失敗，${retryDelay}ms 後重試 (${attempt}/${maxRetries})`, {
-          error: error.message
-        });
+        logger.warn(
+          `⚠️ ${operation} 失敗，${retryDelay}ms 後重試 (${attempt}/${maxRetries})`,
+          {
+            error: error.message,
+          }
+        );
 
-        await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryDelay * attempt)
+        );
       }
     }
 
@@ -251,19 +279,21 @@ export abstract class BaseApiService {
     endpoint: string,
     responseSchema?: ZodSchema<T>
   ) {
-    return async (params: {
-      page?: number;
-      limit?: number;
-      sortBy?: string;
-      sortOrder?: 'asc' | 'desc';
-      filters?: Record<string, any>;
-    } = {}): Promise<ApiResponse<T>> => {
+    return async (
+      params: {
+        page?: number;
+        limit?: number;
+        sortBy?: string;
+        sortOrder?: 'asc' | 'desc';
+        filters?: Record<string, any>;
+      } = {}
+    ): Promise<ApiResponse<T>> => {
       const queryParams = {
         page: params.page || 1,
         limit: params.limit || 20,
         sortBy: params.sortBy,
         sortOrder: params.sortOrder || 'desc',
-        ...params.filters
+        ...params.filters,
       };
 
       return this.createGetCall<T>(endpoint, responseSchema)(queryParams);

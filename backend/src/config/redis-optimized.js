@@ -8,22 +8,22 @@ const redisConfig = {
   password: config.redis.password,
   db: config.redis.db,
   keyPrefix: config.redis.keyPrefix,
-  
+
   // 連接配置
   retryDelayOnFailover: config.redis.retryDelayOnFailover,
   maxRetriesPerRequest: config.redis.maxRetriesPerRequest,
-  
+
   // 超時配置
   connectTimeout: 10000,
   commandTimeout: 5000,
-  
+
   // 重連配置
   lazyConnect: true,
   keepAlive: 30000,
-  
+
   // 集群配置（如果使用）
   enableReadyCheck: true,
-  maxLoadingTimeout: 10000
+  maxLoadingTimeout: 10000,
 };
 
 // 創建 Redis 客戶端
@@ -32,24 +32,18 @@ let redisClient = null;
 const createRedisClient = () => {
   if (!redisClient) {
     redisClient = new Redis(redisConfig);
-    
-    redisClient.on('connect', () => {
-      console.log('Redis 連接成功');
-    });
-    
+
+    redisClient.on('connect', () => {});
+
     redisClient.on('error', (error) => {
       console.error('Redis 連接錯誤:', error);
     });
-    
-    redisClient.on('close', () => {
-      console.log('Redis 連接關閉');
-    });
-    
-    redisClient.on('reconnecting', () => {
-      console.log('Redis 重新連接中...');
-    });
+
+    redisClient.on('close', () => {});
+
+    redisClient.on('reconnecting', () => {});
   }
-  
+
   return redisClient;
 };
 
@@ -90,7 +84,7 @@ const cacheUtils = {
       return false;
     }
   },
-  
+
   // 獲取緩存
   async get(key) {
     try {
@@ -102,7 +96,7 @@ const cacheUtils = {
       return null;
     }
   },
-  
+
   // 刪除緩存
   async del(key) {
     try {
@@ -114,7 +108,7 @@ const cacheUtils = {
       return false;
     }
   },
-  
+
   // 清空所有緩存
   async flush() {
     try {
@@ -125,12 +119,12 @@ const cacheUtils = {
       console.error('清空緩存失敗:', error);
       return false;
     }
-  }
+  },
 };
 
 module.exports = {
   createRedisClient,
   connectRedis,
   healthCheck,
-  cacheUtils
+  cacheUtils,
 };

@@ -32,9 +32,9 @@ const createTestStore = (preloadedState = {}) => {
       settings: settingsReducer,
       scanHistory: scanHistoryReducer,
       feedback: feedbackReducer,
-      privacy: privacyReducer
+      privacy: privacyReducer,
     },
-    preloadedState
+    preloadedState,
   });
 };
 
@@ -45,10 +45,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   withNavigation?: boolean;
 }
 
-const customRender = (
-  ui: ReactElement,
-  options: CustomRenderOptions = {}
-) => {
+const customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
   const {
     preloadedState = {},
     store = createTestStore(preloadedState),
@@ -57,18 +54,10 @@ const customRender = (
   } = options;
 
   const Wrapper = ({ children }: { children: ReactNode }) => {
-    const content = (
-      <Provider store={store}>
-        {children}
-      </Provider>
-    );
+    const content = <Provider store={store}>{children}</Provider>;
 
     if (withNavigation) {
-      return (
-        <NavigationContainer>
-          {content}
-        </NavigationContainer>
-      );
+      return <NavigationContainer>{content}</NavigationContainer>;
     }
 
     return content;
@@ -76,7 +65,7 @@ const customRender = (
 
   return {
     store,
-    ...render(ui, { wrapper: Wrapper, ...renderOptions })
+    ...render(ui, { wrapper: Wrapper, ...renderOptions }),
   };
 };
 
@@ -88,9 +77,9 @@ export const createMockUser = (overrides = {}) => ({
   profile: {
     avatar: 'https://example.com/avatar.jpg',
     displayName: 'Test User',
-    bio: 'Test bio'
+    bio: 'Test bio',
   },
-  ...overrides
+  ...overrides,
 });
 
 export const createMockCard = (overrides = {}) => ({
@@ -101,7 +90,7 @@ export const createMockCard = (overrides = {}) => ({
   image: 'https://example.com/card.jpg',
   price: 100,
   condition: 'Mint',
-  ...overrides
+  ...overrides,
 });
 
 export const createMockScanHistory = (overrides = {}) => ({
@@ -114,7 +103,7 @@ export const createMockScanHistory = (overrides = {}) => ({
   scanResult: {
     success: true,
     confidence: 0.95,
-    recognizedCard: createMockCard()
+    recognizedCard: createMockCard(),
   },
   imageUri: 'https://example.com/scan.jpg',
   scanDate: new Date().toISOString(),
@@ -123,14 +112,14 @@ export const createMockScanHistory = (overrides = {}) => ({
     deviceInfo: 'iPhone 14',
     appVersion: '1.0.0',
     scanMethod: 'camera',
-    imageQuality: 'high'
+    imageQuality: 'high',
   },
   tags: ['test'],
   notes: 'Test scan',
   isFavorite: false,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  ...overrides
+  ...overrides,
 });
 
 export const createMockConditionAnalysis = (overrides = {}) => ({
@@ -142,26 +131,26 @@ export const createMockConditionAnalysis = (overrides = {}) => ({
     edges: { score: 9.0, details: 'Clean edges' },
     surface: { score: 8.5, details: 'Good surface condition' },
     centering: { score: 8.0, details: 'Slightly off-center' },
-    printQuality: { score: 9.0, details: 'Excellent print quality' }
+    printQuality: { score: 9.0, details: 'Excellent print quality' },
   },
   damageAssessment: {
     scratches: [],
     dents: [],
     creases: [],
     stains: [],
-    fading: 'None'
+    fading: 'None',
   },
   marketImpact: {
     estimatedValue: 120,
     valueRange: { min: 100, max: 140 },
-    marketTrend: 'stable'
+    marketTrend: 'stable',
   },
   preservationTips: [
     'Store in protective sleeve',
     'Keep away from direct sunlight',
-    'Maintain stable humidity'
+    'Maintain stable humidity',
   ],
-  ...overrides
+  ...overrides,
 });
 
 export const createMockFeedback = (overrides = {}) => ({
@@ -178,7 +167,7 @@ export const createMockFeedback = (overrides = {}) => ({
   hasResponse: false,
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  ...overrides
+  ...overrides,
 });
 
 export const createMockPrivacyPreferences = (overrides = {}) => ({
@@ -195,12 +184,12 @@ export const createMockPrivacyPreferences = (overrides = {}) => ({
     sms: false,
     push: true,
     thirdParty: false,
-    personalized: true
+    personalized: true,
   },
   dataSharingConsent: {
     analytics: true,
     thirdParty: false,
-    crossBorder: false
+    crossBorder: false,
   },
   dataProcessingConsent: {
     accountManagement: true,
@@ -212,38 +201,43 @@ export const createMockPrivacyPreferences = (overrides = {}) => ({
     legalCompliance: true,
     customerSupport: true,
     research: false,
-    thirdPartyIntegration: false
+    thirdPartyIntegration: false,
   },
   notificationPreferences: {
     privacyUpdates: true,
     dataBreach: true,
     consentChanges: true,
-    legalUpdates: true
+    legalUpdates: true,
   },
   dataRetentionSettings: {
     accountData: '7_years',
     transactionData: '7_years',
     usageData: '2_years',
-    marketingData: '2_years'
+    marketingData: '2_years',
   },
   createdAt: new Date().toISOString(),
   updatedAt: new Date().toISOString(),
-  ...overrides
+  ...overrides,
 });
 
 // Utility functions
-export const waitFor = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+export const waitFor = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
-export const mockApiResponse = (data: any, success = true, message = 'Success') => ({
+export const mockApiResponse = (
+  data: any,
+  success = true,
+  message = 'Success'
+) => ({
   success,
   message,
-  data
+  data,
 });
 
 export const mockApiError = (message = 'Error', status = 400) => ({
   success: false,
   message,
-  status
+  status,
 });
 
 // Custom matchers
@@ -261,10 +255,7 @@ export const expectToHaveStyle = (element: any, style: any) => {
 };
 
 // Export custom render and store
-export {
-  customRender as render,
-  createTestStore
-};
+export { customRender as render, createTestStore };
 
 // Re-export testing-library utilities
 export * from '@testing-library/react-native';

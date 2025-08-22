@@ -99,7 +99,9 @@ export interface ScanHistoryFilters {
 // 掃描歷史記錄服務類
 class ScanHistoryService {
   // 獲取掃描歷史記錄
-  async getScanHistory(filters: ScanHistoryFilters = {}): Promise<ScanHistoryResponse> {
+  async getScanHistory(
+    filters: ScanHistoryFilters = {}
+  ): Promise<ScanHistoryResponse> {
     try {
       const response = await apiService.get<ScanHistoryResponse['data']>(
         API_ENDPOINTS.SCAN_HISTORY.LIST,
@@ -109,7 +111,7 @@ class ScanHistoryService {
       return {
         success: response.success,
         message: response.message,
-        data: response.data
+        data: response.data,
       };
     } catch (error: any) {
       logger.error('❌ Get scan history error:', { error: error.message });
@@ -136,7 +138,9 @@ class ScanHistoryService {
   }
 
   // 創建掃描記錄
-  async createScanRecord(scanData: Omit<ScanHistoryItem, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<ScanHistoryItem> {
+  async createScanRecord(
+    scanData: Omit<ScanHistoryItem, 'id' | 'userId' | 'createdAt' | 'updatedAt'>
+  ): Promise<ScanHistoryItem> {
     try {
       const response = await apiService.post<ScanHistoryItem>(
         API_ENDPOINTS.SCAN_HISTORY.CREATE,
@@ -152,7 +156,10 @@ class ScanHistoryService {
   }
 
   // 更新掃描記錄
-  async updateScanRecord(recordId: string, updates: Partial<ScanHistoryItem>): Promise<ScanHistoryItem> {
+  async updateScanRecord(
+    recordId: string,
+    updates: Partial<ScanHistoryItem>
+  ): Promise<ScanHistoryItem> {
     try {
       if (!recordId || typeof recordId !== 'string') {
         throw new Error('無效的記錄 ID');
@@ -194,12 +201,16 @@ class ScanHistoryService {
       }
 
       await apiService.post(API_ENDPOINTS.SCAN_HISTORY.BATCH_DELETE, {
-        recordIds
+        recordIds,
       });
 
-      logger.info('✅ Multiple scan records deleted:', { count: recordIds.length });
+      logger.info('✅ Multiple scan records deleted:', {
+        count: recordIds.length,
+      });
     } catch (error: any) {
-      logger.error('❌ Delete multiple scan records error:', { error: error.message });
+      logger.error('❌ Delete multiple scan records error:', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -286,7 +297,10 @@ class ScanHistoryService {
   }
 
   // 導出掃描歷史
-  async exportScanHistory(format: 'csv' | 'json' | 'pdf', filters?: ScanHistoryFilters): Promise<string> {
+  async exportScanHistory(
+    format: 'csv' | 'json' | 'pdf',
+    filters?: ScanHistoryFilters
+  ): Promise<string> {
     try {
       const response = await apiService.post<{ downloadUrl: string }>(
         API_ENDPOINTS.SCAN_HISTORY.EXPORT,
@@ -302,7 +316,10 @@ class ScanHistoryService {
   }
 
   // 搜索掃描記錄
-  async searchScanHistory(query: string, filters?: ScanHistoryFilters): Promise<ScanHistoryResponse> {
+  async searchScanHistory(
+    query: string,
+    filters?: ScanHistoryFilters
+  ): Promise<ScanHistoryResponse> {
     try {
       if (!query || typeof query !== 'string') {
         throw new Error('無效的搜索查詢');
@@ -316,7 +333,7 @@ class ScanHistoryService {
       return {
         success: response.success,
         message: response.message,
-        data: response.data
+        data: response.data,
       };
     } catch (error: any) {
       logger.error('❌ Search scan history error:', { error: error.message });
@@ -339,21 +356,28 @@ class ScanHistoryService {
   }
 
   // 清理過期記錄
-  async cleanupExpiredRecords(daysToKeep: number = 30): Promise<{ deletedCount: number }> {
+  async cleanupExpiredRecords(
+    daysToKeep: number = 30
+  ): Promise<{ deletedCount: number }> {
     try {
       const response = await apiService.post<{ deletedCount: number }>(
         API_ENDPOINTS.SCAN_HISTORY.CLEANUP,
         { daysToKeep }
       );
 
-      logger.info('✅ Expired scan records cleaned up:', { deletedCount: response.data.deletedCount });
+      logger.info('✅ Expired scan records cleaned up:', {
+        deletedCount: response.data.deletedCount,
+      });
       return response.data;
     } catch (error: any) {
-      logger.error('❌ Cleanup expired records error:', { error: error.message });
+      logger.error('❌ Cleanup expired records error:', {
+        error: error.message,
+      });
       throw error;
     }
   }
 }
 
 // 導出掃描歷史記錄服務實例
+export { ScanHistoryService };
 export const scanHistoryService = new ScanHistoryService();

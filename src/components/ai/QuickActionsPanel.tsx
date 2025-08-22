@@ -6,7 +6,7 @@ import {
   Modal,
   ScrollView,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
@@ -40,7 +40,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'camera-alt',
     color: '#2196F3',
     action: '請幫我掃描並分析這張卡片',
-    category: 'analysis'
+    category: 'analysis',
   },
   {
     id: 'card-value',
@@ -49,7 +49,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'attach-money',
     color: '#4CAF50',
     action: '請評估這張卡片的市場價值',
-    category: 'analysis'
+    category: 'analysis',
   },
   {
     id: 'condition-check',
@@ -58,7 +58,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'visibility',
     color: '#FF9800',
     action: '請檢查這張卡片的保存狀況',
-    category: 'analysis'
+    category: 'analysis',
   },
   {
     id: 'authenticity',
@@ -67,7 +67,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'verified',
     color: '#9C27B0',
     action: '請鑑定這張卡片的真偽',
-    category: 'analysis'
+    category: 'analysis',
   },
 
   // 投資建議
@@ -78,7 +78,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'trending-up',
     color: '#4CAF50',
     action: '請給我一些投資建議',
-    category: 'investment'
+    category: 'investment',
   },
   {
     id: 'risk-assessment',
@@ -87,7 +87,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'warning',
     color: '#F44336',
     action: '請評估這項投資的風險',
-    category: 'investment'
+    category: 'investment',
   },
   {
     id: 'timing',
@@ -96,7 +96,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'schedule',
     color: '#607D8B',
     action: '請分析最佳投資時機',
-    category: 'investment'
+    category: 'investment',
   },
   {
     id: 'portfolio',
@@ -105,7 +105,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'dashboard',
     color: '#795548',
     action: '請給我投資組合建議',
-    category: 'investment'
+    category: 'investment',
   },
 
   // 市場分析
@@ -116,7 +116,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'show-chart',
     color: '#2196F3',
     action: '請分析最近的市場趨勢',
-    category: 'market'
+    category: 'market',
   },
   {
     id: 'price-prediction',
@@ -125,7 +125,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'timeline',
     color: '#FF9800',
     action: '請預測這張卡片的價格走勢',
-    category: 'market'
+    category: 'market',
   },
   {
     id: 'competition',
@@ -134,7 +134,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'compare',
     color: '#9C27B0',
     action: '請分析競爭對手',
-    category: 'market'
+    category: 'market',
   },
   {
     id: 'demand',
@@ -143,7 +143,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'people',
     color: '#4CAF50',
     action: '請分析市場需求',
-    category: 'market'
+    category: 'market',
   },
 
   // 一般功能
@@ -154,7 +154,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'security',
     color: '#607D8B',
     action: '請給我卡片保存建議',
-    category: 'general'
+    category: 'general',
   },
   {
     id: 'trading-platform',
@@ -163,7 +163,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'store',
     color: '#795548',
     action: '請推薦一些交易平台',
-    category: 'general'
+    category: 'general',
   },
   {
     id: 'collection',
@@ -172,7 +172,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'collections',
     color: '#9C27B0',
     action: '請給我收藏策略建議',
-    category: 'general'
+    category: 'general',
   },
   {
     id: 'education',
@@ -181,15 +181,15 @@ const QUICK_ACTIONS: QuickAction[] = [
     icon: 'school',
     color: '#2196F3',
     action: '請推薦一些學習資源',
-    category: 'general'
-  }
+    category: 'general',
+  },
 ];
 
 const CATEGORIES = [
   { id: 'analysis', title: '卡片分析', icon: 'analytics' },
   { id: 'investment', title: '投資建議', icon: 'trending-up' },
   { id: 'market', title: '市場分析', icon: 'show-chart' },
-  { id: 'general', title: '一般功能', icon: 'help' }
+  { id: 'general', title: '一般功能', icon: 'help' },
 ];
 
 export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
@@ -197,9 +197,10 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
   onClose,
   onAction,
   currentAnalysis,
-  pricePrediction
+  pricePrediction,
 }) => {
-  const [selectedCategory, setSelectedCategory] = React.useState<string>('analysis');
+  const [selectedCategory, setSelectedCategory] =
+    React.useState<string>('analysis');
 
   const handleActionPress = (action: string) => {
     onAction(action);
@@ -207,7 +208,9 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
   };
 
   const getFilteredActions = () => {
-    return QUICK_ACTIONS.filter(action => action.category === selectedCategory);
+    return QUICK_ACTIONS.filter(
+      (action) => action.category === selectedCategory
+    );
   };
 
   const renderActionItem = (action: QuickAction) => (
@@ -217,36 +220,54 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
       onPress={() => handleActionPress(action.action)}
       activeOpacity={0.7}
     >
-      <View style={[styles.actionIcon, { backgroundColor: action.color + '20' }]}>
-        <MaterialIcons name={action.icon as any} size={24} color={action.color} />
+      <View
+        style={[styles.actionIcon, { backgroundColor: action.color + '20' }]}
+      >
+        <MaterialIcons
+          name={action.icon as any}
+          size={24}
+          color={action.color}
+        />
       </View>
       <View style={styles.actionContent}>
         <Text style={styles.actionTitle}>{action.title}</Text>
         <Text style={styles.actionDescription}>{action.description}</Text>
       </View>
-      <MaterialIcons name="arrow-forward-ios" size={16} color={theme.colors.textSecondary} />
+      <MaterialIcons
+        name="arrow-forward-ios"
+        size={16}
+        color={theme.colors.textSecondary}
+      />
     </TouchableOpacity>
   );
 
-  const renderCategoryTab = (category: { id: string; title: string; icon: string }) => (
+  const renderCategoryTab = (category: {
+    id: string;
+    title: string;
+    icon: string;
+  }) => (
     <TouchableOpacity
       key={category.id}
       style={[
         styles.categoryTab,
-        selectedCategory === category.id && styles.categoryTabSelected
+        selectedCategory === category.id && styles.categoryTabSelected,
       ]}
       onPress={() => setSelectedCategory(category.id)}
       activeOpacity={0.7}
     >
-      <MaterialIcons 
-        name={category.icon as any} 
-        size={20} 
-        color={selectedCategory === category.id ? '#fff' : theme.colors.textSecondary} 
+      <MaterialIcons
+        name={category.icon as any}
+        size={20}
+        color={
+          selectedCategory === category.id ? '#fff' : theme.colors.textSecondary
+        }
       />
-      <Text style={[
-        styles.categoryTabText,
-        selectedCategory === category.id && styles.categoryTabTextSelected
-      ]}>
+      <Text
+        style={[
+          styles.categoryTabText,
+          selectedCategory === category.id && styles.categoryTabTextSelected,
+        ]}
+      >
         {category.title}
       </Text>
     </TouchableOpacity>
@@ -263,11 +284,19 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
         <View style={styles.modalContent}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
-              <MaterialIcons name="flash-on" size={24} color={theme.colors.primary} />
+              <MaterialIcons
+                name="flash-on"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text style={styles.headerTitle}>快速操作</Text>
             </View>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
+              <MaterialIcons
+                name="close"
+                size={24}
+                color={theme.colors.textSecondary}
+              />
             </TouchableOpacity>
           </View>
 
@@ -277,13 +306,21 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
               <Text style={styles.statusTitle}>當前狀態</Text>
               {currentAnalysis && (
                 <View style={styles.statusItem}>
-                  <MaterialIcons name="analytics" size={16} color={theme.colors.primary} />
+                  <MaterialIcons
+                    name="analytics"
+                    size={16}
+                    color={theme.colors.primary}
+                  />
                   <Text style={styles.statusText}>已分析卡片</Text>
                 </View>
               )}
               {pricePrediction && (
                 <View style={styles.statusItem}>
-                  <MaterialIcons name="timeline" size={16} color={theme.colors.primary} />
+                  <MaterialIcons
+                    name="timeline"
+                    size={16}
+                    color={theme.colors.primary}
+                  />
                   <Text style={styles.statusText}>價格預測可用</Text>
                 </View>
               )}
@@ -291,8 +328,8 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
           )}
 
           {/* 分類標籤 */}
-          <ScrollView 
-            horizontal 
+          <ScrollView
+            horizontal
             showsHorizontalScrollIndicator={false}
             style={styles.categoriesContainer}
             contentContainerStyle={styles.categoriesContent}
@@ -301,7 +338,10 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
           </ScrollView>
 
           {/* 操作列表 */}
-          <ScrollView style={styles.actionsContainer} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.actionsContainer}
+            showsVerticalScrollIndicator={false}
+          >
             {getFilteredActions().map(renderActionItem)}
           </ScrollView>
 
@@ -313,21 +353,33 @@ export const QuickActionsPanel: React.FC<QuickActionsPanelProps> = ({
                 style={styles.recentAction}
                 onPress={() => handleActionPress('分析這張卡片的投資價值')}
               >
-                <MaterialIcons name="analytics" size={16} color={theme.colors.primary} />
+                <MaterialIcons
+                  name="analytics"
+                  size={16}
+                  color={theme.colors.primary}
+                />
                 <Text style={styles.recentActionText}>卡片分析</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.recentAction}
                 onPress={() => handleActionPress('請給我投資建議')}
               >
-                <MaterialIcons name="trending-up" size={16} color={theme.colors.primary} />
+                <MaterialIcons
+                  name="trending-up"
+                  size={16}
+                  color={theme.colors.primary}
+                />
                 <Text style={styles.recentActionText}>投資建議</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.recentAction}
                 onPress={() => handleActionPress('請分析最近的市場趨勢')}
               >
-                <MaterialIcons name="show-chart" size={16} color={theme.colors.primary} />
+                <MaterialIcons
+                  name="show-chart"
+                  size={16}
+                  color={theme.colors.primary}
+                />
                 <Text style={styles.recentActionText}>市場趨勢</Text>
               </TouchableOpacity>
             </View>
@@ -343,14 +395,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   modalContent: {
     width: '90%',
     maxHeight: '80%',
     backgroundColor: theme.colors.background,
     borderRadius: 16,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',
@@ -358,49 +410,49 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   headerLeft: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginLeft: 8
+    marginLeft: 8,
   },
   closeButton: {
-    padding: 4
+    padding: 4,
   },
   statusContainer: {
     padding: 16,
     backgroundColor: theme.colors.backgroundLight,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   statusTitle: {
     fontSize: 14,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: 8
+    marginBottom: 8,
   },
   statusItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   statusText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginLeft: 8
+    marginLeft: 8,
   },
   categoriesContainer: {
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   categoriesContent: {
-    padding: 16
+    padding: 16,
   },
   categoryTab: {
     flexDirection: 'row',
@@ -411,23 +463,23 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: theme.colors.backgroundLight,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   categoryTabSelected: {
     backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   categoryTabText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginLeft: 6
+    marginLeft: 6,
   },
   categoryTabTextSelected: {
-    color: '#fff'
+    color: '#fff',
   },
   actionsContainer: {
     flex: 1,
-    padding: 16
+    padding: 16,
   },
   actionItem: {
     flexDirection: 'row',
@@ -437,7 +489,7 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.backgroundLight,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   actionIcon: {
     width: 48,
@@ -445,44 +497,44 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 16
+    marginRight: 16,
   },
   actionContent: {
-    flex: 1
+    flex: 1,
   },
   actionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: 4
+    marginBottom: 4,
   },
   actionDescription: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    lineHeight: 16
+    lineHeight: 16,
   },
   recentContainer: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border
+    borderTopColor: theme.colors.border,
   },
   recentTitle: {
     fontSize: 14,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: 12
+    marginBottom: 12,
   },
   recentActions: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   recentAction: {
     alignItems: 'center',
-    padding: 12
+    padding: 12,
   },
   recentActionText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginTop: 4
-  }
+    marginTop: 4,
+  },
 });

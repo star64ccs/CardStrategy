@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { theme } from '@/config/theme';
@@ -57,7 +57,7 @@ export const LogMonitoringDashboard: React.FC = () => {
         queueLength: queueStatus.queueLength,
         batchQueueLength: queueStatus.batchQueueLength,
         lastFlushTime: new Date().toISOString(),
-        failedLogsCount
+        failedLogsCount,
       };
 
       setStats(mockStats);
@@ -82,7 +82,9 @@ export const LogMonitoringDashboard: React.FC = () => {
     try {
       const AsyncStorage = require('@react-native-async-storage/async-storage');
       const keys = await AsyncStorage.getAllKeys();
-      const failedLogKeys = keys.filter((key: string) => key.startsWith('failed_logs_'));
+      const failedLogKeys = keys.filter((key: string) =>
+        key.startsWith('failed_logs_')
+      );
       return failedLogKeys.length;
     } catch {
       return 0;
@@ -97,21 +99,17 @@ export const LogMonitoringDashboard: React.FC = () => {
 
   const handleForceFlush = async () => {
     try {
-      Alert.alert(
-        '強制刷新日誌',
-        '確定要強制刷新所有待發送的日誌嗎？',
-        [
-          { text: '取消', style: 'cancel' },
-          {
-            text: '確定',
-            onPress: async () => {
-              await logService.forceFlush();
-              Alert.alert('成功', '日誌已強制刷新');
-              loadLogStats();
-            }
-          }
-        ]
-      );
+      Alert.alert('強制刷新日誌', '確定要強制刷新所有待發送的日誌嗎？', [
+        { text: '取消', style: 'cancel' },
+        {
+          text: '確定',
+          onPress: async () => {
+            await logService.forceFlush();
+            Alert.alert('成功', '日誌已強制刷新');
+            loadLogStats();
+          },
+        },
+      ]);
     } catch (error) {
       logger.error('強制刷新日誌失敗:', { error });
       Alert.alert('錯誤', '強制刷新失敗');
@@ -119,29 +117,27 @@ export const LogMonitoringDashboard: React.FC = () => {
   };
 
   const handleClearHistory = () => {
-    Alert.alert(
-      '清除日誌歷史',
-      '確定要清除本地日誌歷史嗎？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '確定',
-          style: 'destructive',
-          onPress: () => {
-            logger.clearHistory();
-            setLogHistory([]);
-            Alert.alert('成功', '日誌歷史已清除');
-          }
-        }
-      ]
-    );
+    Alert.alert('清除日誌歷史', '確定要清除本地日誌歷史嗎？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '確定',
+        style: 'destructive',
+        onPress: () => {
+          logger.clearHistory();
+          setLogHistory([]);
+          Alert.alert('成功', '日誌歷史已清除');
+        },
+      },
+    ]);
   };
 
   const handleRetryFailedLogs = async () => {
     try {
       const AsyncStorage = require('@react-native-async-storage/async-storage');
       const keys = await AsyncStorage.getAllKeys();
-      const failedLogKeys = keys.filter((key: string) => key.startsWith('failed_logs_'));
+      const failedLogKeys = keys.filter((key: string) =>
+        key.startsWith('failed_logs_')
+      );
 
       if (failedLogKeys.length === 0) {
         Alert.alert('提示', '沒有失敗的日誌需要重試');
@@ -159,8 +155,8 @@ export const LogMonitoringDashboard: React.FC = () => {
               // 這裡應該實現重試邏輯
               Alert.alert('成功', '失敗日誌重試已啟動');
               loadLogStats();
-            }
-          }
+            },
+          },
         ]
       );
     } catch (error) {
@@ -169,7 +165,12 @@ export const LogMonitoringDashboard: React.FC = () => {
     }
   };
 
-  const renderStatCard = (title: string, value: string | number, color: string, subtitle?: string) => (
+  const renderStatCard = (
+    title: string,
+    value: string | number,
+    color: string,
+    subtitle?: string
+  ) => (
     <View style={[styles.statCard, { borderLeftColor: color }]}>
       <Text style={styles.statValue}>{value}</Text>
       <Text style={styles.statTitle}>{title}</Text>
@@ -198,11 +199,16 @@ export const LogMonitoringDashboard: React.FC = () => {
 
   const getLogLevelColor = (level: string): string => {
     switch (level) {
-      case 'error': return theme.colors.error;
-      case 'warn': return theme.colors.warning;
-      case 'info': return theme.colors.primary;
-      case 'debug': return theme.colors.textSecondary;
-      default: return theme.colors.textSecondary;
+      case 'error':
+        return theme.colors.error;
+      case 'warn':
+        return theme.colors.warning;
+      case 'info':
+        return theme.colors.primary;
+      case 'debug':
+        return theme.colors.textSecondary;
+      default:
+        return theme.colors.textSecondary;
     }
   };
 
@@ -240,14 +246,38 @@ export const LogMonitoringDashboard: React.FC = () => {
           <View style={styles.statsContainer}>
             <Text style={styles.sectionTitle}>日誌統計</Text>
             <View style={styles.statsGrid}>
-              {renderStatCard('總日誌數', stats.totalLogs, theme.colors.primary)}
+              {renderStatCard(
+                '總日誌數',
+                stats.totalLogs,
+                theme.colors.primary
+              )}
               {renderStatCard('錯誤數', stats.errorCount, theme.colors.error)}
-              {renderStatCard('警告數', stats.warningCount, theme.colors.warning)}
+              {renderStatCard(
+                '警告數',
+                stats.warningCount,
+                theme.colors.warning
+              )}
               {renderStatCard('信息數', stats.infoCount, theme.colors.info)}
-              {renderStatCard('調試數', stats.debugCount, theme.colors.textSecondary)}
-              {renderStatCard('隊列長度', stats.queueLength, theme.colors.primary)}
-              {renderStatCard('批次隊列', stats.batchQueueLength, theme.colors.warning)}
-              {renderStatCard('失敗日誌', stats.failedLogsCount, theme.colors.error)}
+              {renderStatCard(
+                '調試數',
+                stats.debugCount,
+                theme.colors.textSecondary
+              )}
+              {renderStatCard(
+                '隊列長度',
+                stats.queueLength,
+                theme.colors.primary
+              )}
+              {renderStatCard(
+                '批次隊列',
+                stats.batchQueueLength,
+                theme.colors.warning
+              )}
+              {renderStatCard(
+                '失敗日誌',
+                stats.failedLogsCount,
+                theme.colors.error
+              )}
             </View>
           </View>
         )}
@@ -256,13 +286,22 @@ export const LogMonitoringDashboard: React.FC = () => {
         <View style={styles.actionsContainer}>
           <Text style={styles.sectionTitle}>操作</Text>
           <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.actionButton} onPress={handleForceFlush}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleForceFlush}
+            >
               <Text style={styles.actionButtonText}>強制刷新日誌</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} onPress={handleRetryFailedLogs}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleRetryFailedLogs}
+            >
               <Text style={styles.actionButtonText}>重試失敗日誌</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.actionButton} onPress={handleClearHistory}>
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={handleClearHistory}
+            >
               <Text style={styles.actionButtonText}>清除歷史</Text>
             </TouchableOpacity>
           </View>
@@ -287,48 +326,48 @@ export const LogMonitoringDashboard: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundLight
+    backgroundColor: theme.colors.backgroundLight,
   },
   content: {
     flex: 1,
-    padding: theme.spacing.large
+    padding: theme.spacing.large,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: theme.spacing.medium,
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   header: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   subtitle: {
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   statsContainer: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statCard: {
     width: '48%',
@@ -336,84 +375,84 @@ const styles = StyleSheet.create({
     padding: theme.spacing.medium,
     borderRadius: theme.borderRadius.medium,
     marginBottom: theme.spacing.small,
-    borderLeftWidth: 4
+    borderLeftWidth: 4,
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   statTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   statSubtitle: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginTop: theme.spacing.small
+    marginTop: theme.spacing.small,
   },
   actionsContainer: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   actionButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   actionButton: {
     backgroundColor: theme.colors.primary,
     paddingHorizontal: theme.spacing.medium,
     paddingVertical: theme.spacing.small,
     borderRadius: theme.borderRadius.small,
-    minWidth: 120
+    minWidth: 120,
   },
   actionButtonText: {
     color: theme.colors.white,
     fontSize: 14,
     fontWeight: '600',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   logsContainer: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   logItem: {
     backgroundColor: theme.colors.backgroundPaper,
     padding: theme.spacing.medium,
     borderRadius: theme.borderRadius.medium,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   logHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   logLevel: {
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   logTimestamp: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   logMessage: {
     fontSize: 14,
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   logContext: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    fontFamily: 'monospace'
+    fontFamily: 'monospace',
   },
   emptyContainer: {
     padding: theme.spacing.large,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   emptyText: {
     fontSize: 16,
-    color: theme.colors.textSecondary
-  }
+    color: theme.colors.textSecondary,
+  },
 });

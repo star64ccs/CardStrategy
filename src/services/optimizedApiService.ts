@@ -1,6 +1,10 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { API_ENDPOINTS } from '@/config/api';
-import { ApiOptimizer, SmartCache, performanceOptimizer } from '@/utils/performanceOptimizer';
+import {
+  ApiOptimizer,
+  SmartCache,
+  performanceOptimizer,
+} from '@/utils/performanceOptimizer';
 import { logger } from '@/utils/logger';
 import { errorHandler, withErrorHandling } from '@/utils/errorHandler';
 
@@ -38,8 +42,12 @@ export interface ApiError {
 
 // 請求攔截器配置
 interface RequestInterceptor {
-  onRequest?: (config: AxiosRequestConfig) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
-  onResponse?: (response: AxiosResponse) => AxiosResponse | Promise<AxiosResponse>;
+  onRequest?: (
+    config: AxiosRequestConfig
+  ) => AxiosRequestConfig | Promise<AxiosRequestConfig>;
+  onResponse?: (
+    response: AxiosResponse
+  ) => AxiosResponse | Promise<AxiosResponse>;
   onError?: (error: any) => any;
 }
 
@@ -57,7 +65,7 @@ export class OptimizedApiService {
   private performanceConfig: PerformanceConfig = {
     enableMetrics: true,
     logSlowRequests: true,
-    slowRequestThreshold: 1000 // 1秒
+    slowRequestThreshold: 1000, // 1秒
   };
 
   private constructor() {
@@ -65,8 +73,8 @@ export class OptimizedApiService {
       baseURL: API_ENDPOINTS.BASE_URL,
       timeout: 10000,
       headers: {
-        'Content-Type': 'application/json'
-      }
+        'Content-Type': 'application/json',
+      },
     });
 
     this.setupInterceptors();
@@ -103,7 +111,7 @@ export class OptimizedApiService {
         logger.debug('API 請求開始', {
           method: config.method?.toUpperCase(),
           url: config.url,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
         return config;
@@ -118,7 +126,7 @@ export class OptimizedApiService {
     this.axiosInstance.interceptors.response.use(
       (response) => {
         const endTime = Date.now();
-        const {startTime} = (response.config as any);
+        const { startTime } = response.config as any;
         const duration = endTime - startTime;
 
         // 記錄性能指標
@@ -130,12 +138,15 @@ export class OptimizedApiService {
         }
 
         // 記錄慢請求
-        if (this.performanceConfig.logSlowRequests && duration > this.performanceConfig.slowRequestThreshold) {
+        if (
+          this.performanceConfig.logSlowRequests &&
+          duration > this.performanceConfig.slowRequestThreshold
+        ) {
           logger.warn('慢 API 請求', {
             method: response.config.method?.toUpperCase(),
             url: response.config.url,
             duration: `${duration}ms`,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         }
 
@@ -144,7 +155,7 @@ export class OptimizedApiService {
           url: response.config.url,
           status: response.status,
           duration: `${duration}ms`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
         return response;
@@ -160,7 +171,7 @@ export class OptimizedApiService {
           status: error.response?.status,
           message: error.message,
           duration: `${duration}ms`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
 
         return Promise.reject(this.formatError(error));
@@ -175,14 +186,17 @@ export class OptimizedApiService {
       code: error.response?.data?.code || error.code || 'UNKNOWN_ERROR',
       status: error.response?.status || 0,
       timestamp: new Date().toISOString(),
-      details: error.response?.data
+      details: error.response?.data,
     };
   }
 
   // 獲取認證令牌
   private getAuthToken(): string | null {
     try {
-      return localStorage.getItem('auth_token') || sessionStorage.getItem('auth_token');
+      return (
+        localStorage.getItem('auth_token') ||
+        sessionStorage.getItem('auth_token')
+      );
     } catch {
       return null;
     }
@@ -218,9 +232,7 @@ export class OptimizedApiService {
   }
 
   // 通用請求方法
-  async request<T = any>(
-    config: ApiRequestConfig
-  ): Promise<ApiResponse<T>> {
+  async request<T = any>(config: ApiRequestConfig): Promise<ApiResponse<T>> {
     const {
       cache = true,
       ttl = 5 * 60 * 1000, // 5分鐘
@@ -238,20 +250,20 @@ export class OptimizedApiService {
       async () => {
         const response = await this.axiosInstance.request({
           ...axiosConfig,
-          timeout: axiosConfig.timeout || 10000
+          timeout: axiosConfig.timeout || 10000,
         });
 
         return {
           success: true,
           data: response.data,
           message: response.data?.message,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         };
       },
       {
         cache,
         ttl,
-        retry
+        retry,
       }
     );
   }
@@ -264,7 +276,7 @@ export class OptimizedApiService {
     return this.request<T>({
       method: 'GET',
       url,
-      ...config
+      ...config,
     });
   }
 
@@ -278,7 +290,7 @@ export class OptimizedApiService {
       method: 'POST',
       url,
       data,
-      ...config
+      ...config,
     });
   }
 
@@ -292,7 +304,7 @@ export class OptimizedApiService {
       method: 'PUT',
       url,
       data,
-      ...config
+      ...config,
     });
   }
 
@@ -304,7 +316,7 @@ export class OptimizedApiService {
     return this.request<T>({
       method: 'DELETE',
       url,
-      ...config
+      ...config,
     });
   }
 
@@ -318,17 +330,22 @@ export class OptimizedApiService {
       method: 'PATCH',
       url,
       data,
-      ...config
+      ...config,
     });
   }
 
   // 批量請求
   async batchRequests<T = any>(
-    requests: { method: string; url: string; data?: any; config?: ApiRequestConfig }[]
+    requests: {
+      method: string;
+      url: string;
+      data?: any;
+      config?: ApiRequestConfig;
+    }[]
   ): Promise<ApiResponse<T>[]> {
     const requestConfigs = requests.map((req, index) => ({
       key: `batch_${index}_${req.method}_${req.url}`,
-      requestFn: () => this.request<T>(req)
+      requestFn: () => this.request<T>(req),
     }));
 
     return ApiOptimizer.batchRequests(requestConfigs);
@@ -346,7 +363,7 @@ export class OptimizedApiService {
     if (pattern) {
       // 清理特定模式的緩存
       const keys = Array.from(SmartCache.getInstance()['cache'].keys());
-      keys.forEach(key => {
+      keys.forEach((key) => {
         if (key.includes(pattern)) {
           SmartCache.getInstance().delete(key);
         }
@@ -358,14 +375,20 @@ export class OptimizedApiService {
   }
 
   // 獲取性能指標
-  getPerformanceMetrics(): Record<string, { avg: number; min: number; max: number; count: number }> {
+  getPerformanceMetrics(): Record<
+    string,
+    { avg: number; min: number; max: number; count: number }
+  > {
     return performanceOptimizer.PerformanceMonitor.getMetrics();
   }
 
   // 健康檢查
   async healthCheck(): Promise<boolean> {
     try {
-      const response = await this.get('/health', { cache: false, retry: false });
+      const response = await this.get('/health', {
+        cache: false,
+        retry: false,
+      });
       return response.success;
     } catch {
       return false;
@@ -387,15 +410,17 @@ export class OptimizedApiService {
       url,
       data: formData,
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
       },
       onUploadProgress: (progressEvent) => {
         if (onProgress && progressEvent.total) {
-          const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
           onProgress(progress);
         }
       },
-      ...config
+      ...config,
     });
   }
 
@@ -409,7 +434,7 @@ export class OptimizedApiService {
       method: 'GET',
       url,
       responseType: 'blob',
-      ...config
+      ...config,
     });
 
     const blob = new Blob([response.data]);
@@ -424,7 +449,8 @@ export class OptimizedApiService {
   }
 }
 
-// 創建單例實例
+// 導出服務類和實例
+export { OptimizedApiService };
 export const apiService = OptimizedApiService.getInstance();
 
 // 導出便捷方法
@@ -441,5 +467,5 @@ export const api = {
   healthCheck: apiService.healthCheck.bind(apiService),
   getMetrics: apiService.getPerformanceMetrics.bind(apiService),
   setAuthToken: apiService.setAuthToken.bind(apiService),
-  clearAuthToken: apiService.clearAuthToken.bind(apiService)
+  clearAuthToken: apiService.clearAuthToken.bind(apiService),
 };

@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -40,7 +40,7 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
   onSwitchCamera,
   onClose,
   flashEnabled,
-  cameraType
+  cameraType,
 }) => {
   const [scanAnimation] = useState(new Animated.Value(0));
   const [pulseAnimation] = useState(new Animated.Value(1));
@@ -53,13 +53,13 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
           Animated.timing(scanAnimation, {
             toValue: 1,
             duration: 2000,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(scanAnimation, {
             toValue: 0,
             duration: 2000,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ])
       ).start();
 
@@ -69,13 +69,13 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
           Animated.timing(pulseAnimation, {
             toValue: 1.1,
             duration: 1000,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(pulseAnimation, {
             toValue: 1,
             duration: 1000,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ])
       ).start();
     } else {
@@ -101,14 +101,17 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
       rare: theme.colors.rarity.rare,
       mythic: theme.colors.rarity.mythic,
       special: theme.colors.rarity.special,
-      promo: theme.colors.rarity.promo
+      promo: theme.colors.rarity.promo,
     };
-    return rarityColors[rarity as keyof typeof rarityColors] || theme.colors.text.tertiary;
+    return (
+      rarityColors[rarity as keyof typeof rarityColors] ||
+      theme.colors.text.tertiary
+    );
   };
 
   const scanLineTranslateY = scanAnimation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, screenHeight * 0.6]
+    outputRange: [0, screenHeight * 0.6],
   });
 
   return (
@@ -119,15 +122,29 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
           <Ionicons name="close" size={24} color={theme.colors.text.primary} />
         </TouchableOpacity>
         <View style={styles.topControls}>
-          <TouchableOpacity style={styles.controlButton} onPress={onToggleFlash}>
+          <TouchableOpacity
+            style={styles.controlButton}
+            onPress={onToggleFlash}
+          >
             <Ionicons
               name={flashEnabled ? 'flash' : 'flash-off'}
               size={24}
-              color={flashEnabled ? theme.colors.gold.primary : theme.colors.text.primary}
+              color={
+                flashEnabled
+                  ? theme.colors.gold.primary
+                  : theme.colors.text.primary
+              }
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.controlButton} onPress={onSwitchCamera}>
-            <Ionicons name="camera-reverse" size={24} color={theme.colors.text.primary} />
+          <TouchableOpacity
+            style={styles.controlButton}
+            onPress={onSwitchCamera}
+          >
+            <Ionicons
+              name="camera-reverse"
+              size={24}
+              color={theme.colors.text.primary}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -145,8 +162,8 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
             style={[
               styles.scanLine,
               {
-                transform: [{ translateY: scanLineTranslateY }]
-              }
+                transform: [{ translateY: scanLineTranslateY }],
+              },
             ]}
           />
         )}
@@ -203,7 +220,10 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
       <View style={styles.bottomBar}>
         <View style={styles.cameraControls}>
           <TouchableOpacity
-            style={[styles.captureButton, isProcessing && styles.captureButtonDisabled]}
+            style={[
+              styles.captureButton,
+              isProcessing && styles.captureButtonDisabled,
+            ]}
             onPress={onCapture}
             disabled={isProcessing}
           >
@@ -211,8 +231,8 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
               style={[
                 styles.captureButtonInner,
                 {
-                  transform: [{ scale: pulseAnimation }]
-                }
+                  transform: [{ scale: pulseAnimation }],
+                },
               ]}
             />
           </TouchableOpacity>
@@ -227,8 +247,8 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
               styles.statusPulse,
               {
                 transform: [{ scale: pulseAnimation }],
-                opacity: isScanning ? 0.5 : 0
-              }
+                opacity: isScanning ? 0.5 : 0,
+              },
             ]}
           />
         </View>
@@ -241,15 +261,27 @@ export const CardScannerOverlay: React.FC<CardScannerOverlayProps> = ({
       <View style={styles.tipsContainer}>
         <Text style={styles.tipsTitle}>掃描提示</Text>
         <View style={styles.tipItem}>
-          <Ionicons name="checkmark-circle" size={16} color={theme.colors.status.success} />
+          <Ionicons
+            name="checkmark-circle"
+            size={16}
+            color={theme.colors.status.success}
+          />
           <Text style={styles.tipText}>確保卡片完整顯示在框內</Text>
         </View>
         <View style={styles.tipItem}>
-          <Ionicons name="checkmark-circle" size={16} color={theme.colors.status.success} />
+          <Ionicons
+            name="checkmark-circle"
+            size={16}
+            color={theme.colors.status.success}
+          />
           <Text style={styles.tipText}>保持手機穩定，避免晃動</Text>
         </View>
         <View style={styles.tipItem}>
-          <Ionicons name="checkmark-circle" size={16} color={theme.colors.status.success} />
+          <Ionicons
+            name="checkmark-circle"
+            size={16}
+            color={theme.colors.status.success}
+          />
           <Text style={styles.tipText}>確保光線充足，避免反光</Text>
         </View>
       </View>
@@ -264,7 +296,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   topBar: {
     flexDirection: 'row',
@@ -272,21 +304,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: theme.spacing.lg,
     paddingTop: theme.spacing.xl,
-    paddingBottom: theme.spacing.md
+    paddingBottom: theme.spacing.md,
   },
   closeButton: {
     padding: theme.spacing.sm,
     borderRadius: theme.borderRadius.full,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   topControls: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   controlButton: {
     padding: theme.spacing.sm,
     marginLeft: theme.spacing.sm,
     borderRadius: theme.borderRadius.full,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   scanArea: {
     position: 'absolute',
@@ -295,7 +327,7 @@ const styles = StyleSheet.create({
     right: '10%',
     height: screenHeight * 0.4,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cornerTopLeft: {
     position: 'absolute',
@@ -305,7 +337,7 @@ const styles = StyleSheet.create({
     height: 30,
     borderTopWidth: 3,
     borderLeftWidth: 3,
-    borderColor: theme.colors.gold.primary
+    borderColor: theme.colors.gold.primary,
   },
   cornerTopRight: {
     position: 'absolute',
@@ -315,7 +347,7 @@ const styles = StyleSheet.create({
     height: 30,
     borderTopWidth: 3,
     borderRightWidth: 3,
-    borderColor: theme.colors.gold.primary
+    borderColor: theme.colors.gold.primary,
   },
   cornerBottomLeft: {
     position: 'absolute',
@@ -325,7 +357,7 @@ const styles = StyleSheet.create({
     height: 30,
     borderBottomWidth: 3,
     borderLeftWidth: 3,
-    borderColor: theme.colors.gold.primary
+    borderColor: theme.colors.gold.primary,
   },
   cornerBottomRight: {
     position: 'absolute',
@@ -335,7 +367,7 @@ const styles = StyleSheet.create({
     height: 30,
     borderBottomWidth: 3,
     borderRightWidth: 3,
-    borderColor: theme.colors.gold.primary
+    borderColor: theme.colors.gold.primary,
   },
   scanLine: {
     position: 'absolute',
@@ -346,12 +378,12 @@ const styles = StyleSheet.create({
     shadowColor: theme.colors.gold.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   scanHint: {
     position: 'absolute',
     bottom: -60,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   scanHintText: {
     fontSize: theme.typography.sizes.sm,
@@ -360,7 +392,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     paddingHorizontal: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
-    borderRadius: theme.borderRadius.md
+    borderRadius: theme.borderRadius.md,
   },
   processingOverlay: {
     position: 'absolute',
@@ -370,14 +402,14 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   resultOverlay: {
     position: 'absolute',
     top: '20%',
     left: '10%',
     right: '10%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   resultCard: {
     backgroundColor: theme.colors.background.tertiary,
@@ -389,34 +421,34 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 8
+    elevation: 8,
   },
   resultHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   resultTitle: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   cardName: {
     fontSize: theme.typography.sizes.base,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.md,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   resultDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   estimatedPrice: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.gold.primary,
-    fontWeight: theme.typography.weights.semibold
+    fontWeight: theme.typography.weights.semibold,
   },
   bottomBar: {
     position: 'absolute',
@@ -425,11 +457,11 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: theme.spacing.lg,
     paddingVertical: theme.spacing.xl,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cameraControls: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   captureButton: {
     width: 80,
@@ -439,22 +471,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: theme.colors.gold.primary
+    borderColor: theme.colors.gold.primary,
   },
   captureButtonDisabled: {
-    opacity: 0.5
+    opacity: 0.5,
   },
   captureButtonInner: {
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: theme.colors.gold.primary
+    backgroundColor: theme.colors.gold.primary,
   },
   statusIndicator: {
     position: 'absolute',
     top: '15%',
     right: theme.spacing.lg,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusDot: {
     width: 12,
@@ -463,13 +495,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.gold.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   statusPulse: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: theme.colors.gold.primary
+    backgroundColor: theme.colors.gold.primary,
   },
   statusText: {
     fontSize: theme.typography.sizes.xs,
@@ -477,7 +509,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.sm
+    borderRadius: theme.borderRadius.sm,
   },
   tipsContainer: {
     position: 'absolute',
@@ -486,22 +518,22 @@ const styles = StyleSheet.create({
     right: theme.spacing.lg,
     backgroundColor: 'rgba(0, 0, 0, 0.7)',
     borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   tipsTitle: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   tipItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   tipText: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.secondary,
-    marginLeft: theme.spacing.xs
-  }
+    marginLeft: theme.spacing.xs,
+  },
 });

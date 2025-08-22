@@ -1,4 +1,11 @@
-import { ImageOptimizer, optimizeImage, getThumbnailUrl, getMediumUrl, getHighQualityUrl } from '@/utils/imageOptimizer';
+/* global jest, describe, it, expect, beforeEach, afterEach */
+import {
+  ImageOptimizer,
+  optimizeImage,
+  getThumbnailUrl,
+  getMediumUrl,
+  getHighQualityUrl,
+} from '@/utils/imageOptimizer';
 
 describe('ImageOptimizer', () => {
   let imageOptimizer: ImageOptimizer;
@@ -23,7 +30,7 @@ describe('ImageOptimizer', () => {
         quality: 80,
         width: 300,
         height: 200,
-        format: 'webp'
+        format: 'webp',
       });
 
       expect(optimizedUrl).toContain('quality=80');
@@ -50,7 +57,10 @@ describe('ImageOptimizer', () => {
   describe('generateThumbnailUrl', () => {
     it('應該生成縮略圖URL', () => {
       const originalUrl = 'https://example.com/image.jpg';
-      const thumbnailUrl = imageOptimizer.generateThumbnailUrl(originalUrl, 150);
+      const thumbnailUrl = imageOptimizer.generateThumbnailUrl(
+        originalUrl,
+        150
+      );
 
       expect(thumbnailUrl).toContain('width=150');
       expect(thumbnailUrl).toContain('height=150');
@@ -71,7 +81,10 @@ describe('ImageOptimizer', () => {
   describe('generateHighQualityUrl', () => {
     it('應該生成高質量URL', () => {
       const originalUrl = 'https://example.com/image.jpg';
-      const highQualityUrl = imageOptimizer.generateHighQualityUrl(originalUrl, 1200);
+      const highQualityUrl = imageOptimizer.generateHighQualityUrl(
+        originalUrl,
+        1200
+      );
 
       expect(highQualityUrl).toContain('width=1200');
       expect(highQualityUrl).toContain('quality=95');
@@ -107,7 +120,7 @@ describe('ImageOptimizer', () => {
     it('應該預加載多張圖片', async () => {
       const uris = [
         'https://example.com/image1.jpg',
-        'https://example.com/image2.jpg'
+        'https://example.com/image2.jpg',
       ];
 
       const result = await imageOptimizer.preloadImages(uris);

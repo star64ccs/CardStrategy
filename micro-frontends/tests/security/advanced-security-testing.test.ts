@@ -1,5 +1,8 @@
 import { test, expect, Page, Browser, BrowserContext } from '@playwright/test';
-import { setupTestEnvironment, cleanupTestEnvironment } from '../setup/e2e-setup';
+import {
+  setupTestEnvironment,
+  cleanupTestEnvironment,
+} from '../setup/e2e-setup';
 
 // 高級安全測試配置
 const ADVANCED_SECURITY_CONFIG = {
@@ -11,9 +14,9 @@ const ADVANCED_SECURITY_CONFIG = {
       'command_injection',
       'xml_external_entity',
       'server_side_request_forgery',
-      'business_logic_flaws'
+      'business_logic_flaws',
     ],
-    expectedBehavior: 'secure'
+    expectedBehavior: 'secure',
   },
   // 加密測試配置
   encryption: {
@@ -22,9 +25,9 @@ const ADVANCED_SECURITY_CONFIG = {
       'data_in_transit',
       'key_management',
       'hash_verification',
-      'certificate_validation'
+      'certificate_validation',
     ],
-    expectedBehavior: 'encrypted'
+    expectedBehavior: 'encrypted',
   },
   // 安全標頭測試配置
   securityHeaders: {
@@ -35,9 +38,9 @@ const ADVANCED_SECURITY_CONFIG = {
       'x-content-type-options',
       'x-xss-protection',
       'referrer-policy',
-      'permissions-policy'
+      'permissions-policy',
     ],
-    expectedBehavior: 'present'
+    expectedBehavior: 'present',
   },
   // API 安全測試配置
   apiSecurity: {
@@ -46,11 +49,11 @@ const ADVANCED_SECURITY_CONFIG = {
       '/api/users',
       '/api/portfolio',
       '/api/payments',
-      '/api/admin'
+      '/api/admin',
     ],
     testMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-    expectedBehavior: 'protected'
-  }
+    expectedBehavior: 'protected',
+  },
 };
 
 // 高級安全測試工具類
@@ -79,27 +82,37 @@ class AdvancedSecurityTestUtils {
       '..\\..\\..\\windows\\system32\\config\\sam',
       '....//....//....//etc/passwd',
       '%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd',
-      '..%252f..%252f..%252fetc%252fpasswd'
+      '..%252f..%252f..%252fetc%252fpasswd',
     ];
 
     for (const payload of traversalPayloads) {
       try {
         // 測試文件下載端點
-        const response = await this.page.request.get(`/api/files/download?path=${payload}`);
+        const response = await this.page.request.get(
+          `/api/files/download?path=${payload}`
+        );
 
         if (response.status() === 200) {
           const content = await response.text();
 
           // 檢查是否返回了系統文件內容
-          if (content.includes('root:') || content.includes('Administrator') || content.includes('SAM')) {
-            this.addSecurityViolation('Directory Traversal', `成功訪問系統文件: ${payload}`, 'critical', {
-              payload,
-              content: content.substring(0, 100)
-            });
+          if (
+            content.includes('root:') ||
+            content.includes('Administrator') ||
+            content.includes('SAM')
+          ) {
+            this.addSecurityViolation(
+              'Directory Traversal',
+              `成功訪問系統文件: ${payload}`,
+              'critical',
+              {
+                payload,
+                content: content.substring(0, 100),
+              }
+            );
             return true;
           }
         }
-
       } catch (error) {
         console.warn(`目錄遍歷測試失敗: ${error.message}`);
       }
@@ -118,23 +131,23 @@ class AdvancedSecurityTestUtils {
       {
         name: 'test.php',
         content: '<?php echo "Hello World"; ?>',
-        mimeType: 'application/x-php'
+        mimeType: 'application/x-php',
       },
       {
         name: 'test.jsp',
         content: '<% out.println("Hello World"); %>',
-        mimeType: 'application/x-jsp'
+        mimeType: 'application/x-jsp',
       },
       {
         name: 'test.asp',
         content: '<% Response.Write("Hello World") %>',
-        mimeType: 'application/x-asp'
+        mimeType: 'application/x-asp',
       },
       {
         name: 'test.exe',
         content: 'MZ\x90\x00\x03\x00\x00\x00\x04\x00\x00\x00',
-        mimeType: 'application/x-executable'
-      }
+        mimeType: 'application/x-executable',
+      },
     ];
 
     for (const file of maliciousFiles) {
@@ -147,8 +160,8 @@ class AdvancedSecurityTestUtils {
         const response = await this.page.request.post('/api/files/upload', {
           data: formData,
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+          },
         });
 
         if (response.status() === 200) {
@@ -156,14 +169,18 @@ class AdvancedSecurityTestUtils {
 
           // 檢查是否成功上傳了惡意文件
           if (result.success && result.filename) {
-            this.addSecurityViolation('File Upload', `成功上傳惡意文件: ${file.name}`, 'high', {
-              filename: file.name,
-              mimeType: file.mimeType
-            });
+            this.addSecurityViolation(
+              'File Upload',
+              `成功上傳惡意文件: ${file.name}`,
+              'high',
+              {
+                filename: file.name,
+                mimeType: file.mimeType,
+              }
+            );
             return true;
           }
         }
-
       } catch (error) {
         console.warn(`文件上傳測試失敗: ${error.message}`);
       }
@@ -184,7 +201,7 @@ class AdvancedSecurityTestUtils {
       '&& whoami',
       '; dir',
       '| type C:\\Windows\\System32\\drivers\\etc\\hosts',
-      '&& net user'
+      '&& net user',
     ];
 
     for (const payload of commandPayloads) {
@@ -192,27 +209,35 @@ class AdvancedSecurityTestUtils {
         // 測試系統命令端點
         const response = await this.page.request.post('/api/system/command', {
           data: {
-            command: payload
+            command: payload,
           },
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
         if (response.status() === 200) {
           const result = await response.text();
 
           // 檢查是否執行了系統命令
-          if (result.includes('root') || result.includes('Administrator') ||
-              result.includes('drivers') || result.includes('hosts')) {
-            this.addSecurityViolation('Command Injection', `成功執行系統命令: ${payload}`, 'critical', {
-              payload,
-              result: result.substring(0, 100)
-            });
+          if (
+            result.includes('root') ||
+            result.includes('Administrator') ||
+            result.includes('drivers') ||
+            result.includes('hosts')
+          ) {
+            this.addSecurityViolation(
+              'Command Injection',
+              `成功執行系統命令: ${payload}`,
+              'critical',
+              {
+                payload,
+                result: result.substring(0, 100),
+              }
+            );
             return true;
           }
         }
-
       } catch (error) {
         console.warn(`命令注入測試失敗: ${error.message}`);
       }
@@ -238,7 +263,7 @@ class AdvancedSecurityTestUtils {
        <!DOCTYPE data [
          <!ENTITY file SYSTEM "file:///c:/windows/win.ini">
        ]>
-       <data>&file;</data>`
+       <data>&file;</data>`,
     ];
 
     for (const payload of xxePayloads) {
@@ -246,23 +271,31 @@ class AdvancedSecurityTestUtils {
         const response = await this.page.request.post('/api/xml/parse', {
           data: payload,
           headers: {
-            'Content-Type': 'application/xml'
-          }
+            'Content-Type': 'application/xml',
+          },
         });
 
         if (response.status() === 200) {
           const result = await response.text();
 
           // 檢查是否讀取了系統文件
-          if (result.includes('root:') || result.includes('[fonts]') || result.includes('Windows')) {
-            this.addSecurityViolation('XXE', `成功讀取系統文件: ${payload.substring(0, 50)}...`, 'critical', {
-              payload: payload.substring(0, 100),
-              result: result.substring(0, 100)
-            });
+          if (
+            result.includes('root:') ||
+            result.includes('[fonts]') ||
+            result.includes('Windows')
+          ) {
+            this.addSecurityViolation(
+              'XXE',
+              `成功讀取系統文件: ${payload.substring(0, 50)}...`,
+              'critical',
+              {
+                payload: payload.substring(0, 100),
+                result: result.substring(0, 100),
+              }
+            );
             return true;
           }
         }
-
       } catch (error) {
         console.warn(`XXE 測試失敗: ${error.message}`);
       }
@@ -282,34 +315,42 @@ class AdvancedSecurityTestUtils {
       'http://127.0.0.1:3306',
       'http://169.254.169.254/latest/meta-data/',
       'http://10.0.0.1',
-      'file:///etc/passwd'
+      'file:///etc/passwd',
     ];
 
     for (const payload of ssrfPayloads) {
       try {
         const response = await this.page.request.post('/api/proxy/fetch', {
           data: {
-            url: payload
+            url: payload,
           },
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
         if (response.status() === 200) {
           const result = await response.text();
 
           // 檢查是否訪問了內部服務
-          if (result.includes('SSH') || result.includes('MySQL') ||
-              result.includes('ami-id') || result.includes('root:')) {
-            this.addSecurityViolation('SSRF', `成功訪問內部服務: ${payload}`, 'high', {
-              payload,
-              result: result.substring(0, 100)
-            });
+          if (
+            result.includes('SSH') ||
+            result.includes('MySQL') ||
+            result.includes('ami-id') ||
+            result.includes('root:')
+          ) {
+            this.addSecurityViolation(
+              'SSRF',
+              `成功訪問內部服務: ${payload}`,
+              'high',
+              {
+                payload,
+                result: result.substring(0, 100),
+              }
+            );
             return true;
           }
         }
-
       } catch (error) {
         console.warn(`SSRF 測試失敗: ${error.message}`);
       }
@@ -330,24 +371,28 @@ class AdvancedSecurityTestUtils {
         data: {
           amount: -100,
           currency: 'USD',
-          itemId: 'card_123'
+          itemId: 'card_123',
         },
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       if (response.status() === 200) {
         const result = await response.json();
         if (result.success) {
-          this.addSecurityViolation('Business Logic', '允許負數金額支付', 'high', {
-            amount: -100,
-            result
-          });
+          this.addSecurityViolation(
+            'Business Logic',
+            '允許負數金額支付',
+            'high',
+            {
+              amount: -100,
+              result,
+            }
+          );
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`價格操縱測試失敗: ${error.message}`);
     }
@@ -357,24 +402,28 @@ class AdvancedSecurityTestUtils {
       const response = await this.page.request.post('/api/cards/add', {
         data: {
           cardId: 'card_123',
-          quantity: 999999
+          quantity: 999999,
         },
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       });
 
       if (response.status() === 200) {
         const result = await response.json();
         if (result.success && result.quantity > 1000) {
-          this.addSecurityViolation('Business Logic', '允許超量添加卡片', 'medium', {
-            quantity: 999999,
-            result
-          });
+          this.addSecurityViolation(
+            'Business Logic',
+            '允許超量添加卡片',
+            'medium',
+            {
+              quantity: 999999,
+              result,
+            }
+          );
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`數量限制測試失敗: ${error.message}`);
     }
@@ -397,21 +446,30 @@ class AdvancedSecurityTestUtils {
 
         // 檢查密碼是否明文存儲
         if (result.password && result.password.length < 60) {
-          this.addSecurityViolation('Encryption', '密碼未加密存儲', 'critical', {
-            password: result.password
-          });
+          this.addSecurityViolation(
+            'Encryption',
+            '密碼未加密存儲',
+            'critical',
+            {
+              password: result.password,
+            }
+          );
           return true;
         }
 
         // 檢查信用卡號是否加密
         if (result.creditCard && result.creditCard.length === 16) {
-          this.addSecurityViolation('Encryption', '信用卡號未加密', 'critical', {
-            creditCard: result.creditCard
-          });
+          this.addSecurityViolation(
+            'Encryption',
+            '信用卡號未加密',
+            'critical',
+            {
+              creditCard: result.creditCard,
+            }
+          );
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`數據加密測試失敗: ${error.message}`);
     }
@@ -429,27 +487,41 @@ class AdvancedSecurityTestUtils {
       const response = await this.page.request.get(this.page.url());
       const headers = response.headers();
 
-      for (const requiredHeader of ADVANCED_SECURITY_CONFIG.securityHeaders.requiredHeaders) {
+      for (const requiredHeader of ADVANCED_SECURITY_CONFIG.securityHeaders
+        .requiredHeaders) {
         if (!headers[requiredHeader]) {
-          this.addSecurityViolation('Security Headers', `缺少安全標頭: ${requiredHeader}`, 'medium', {
-            missingHeader: requiredHeader,
-            availableHeaders: Object.keys(headers)
-          });
+          this.addSecurityViolation(
+            'Security Headers',
+            `缺少安全標頭: ${requiredHeader}`,
+            'medium',
+            {
+              missingHeader: requiredHeader,
+              availableHeaders: Object.keys(headers),
+            }
+          );
           return true;
         }
       }
 
       // 檢查 CSP 標頭是否足夠嚴格
       const csp = headers['content-security-policy'];
-      if (csp && !csp.includes("'unsafe-inline'") && !csp.includes("'unsafe-eval'")) {
+      if (
+        csp &&
+        !csp.includes("'unsafe-inline'") &&
+        !csp.includes("'unsafe-eval'")
+      ) {
         // CSP 配置良好
       } else {
-        this.addSecurityViolation('Security Headers', 'CSP 配置不夠嚴格', 'medium', {
-          csp
-        });
+        this.addSecurityViolation(
+          'Security Headers',
+          'CSP 配置不夠嚴格',
+          'medium',
+          {
+            csp,
+          }
+        );
         return true;
       }
-
     } catch (error) {
       console.warn(`安全標頭測試失敗: ${error.message}`);
     }
@@ -474,12 +546,12 @@ class AdvancedSecurityTestUtils {
               break;
             case 'POST':
               response = await this.page.request.post(endpoint, {
-                data: { test: 'data' }
+                data: { test: 'data' },
               });
               break;
             case 'PUT':
               response = await this.page.request.put(endpoint, {
-                data: { test: 'data' }
+                data: { test: 'data' },
               });
               break;
             case 'DELETE':
@@ -487,18 +559,23 @@ class AdvancedSecurityTestUtils {
               break;
             case 'PATCH':
               response = await this.page.request.patch(endpoint, {
-                data: { test: 'data' }
+                data: { test: 'data' },
               });
               break;
           }
 
           // 檢查是否需要認證
           if (response.status() === 200 && endpoint.includes('/admin')) {
-            this.addSecurityViolation('API Security', `管理端點 ${endpoint} 缺少認證`, 'critical', {
-              endpoint,
-              method,
-              status: response.status()
-            });
+            this.addSecurityViolation(
+              'API Security',
+              `管理端點 ${endpoint} 缺少認證`,
+              'critical',
+              {
+                endpoint,
+                method,
+                status: response.status(),
+              }
+            );
             return true;
           }
 
@@ -507,22 +584,28 @@ class AdvancedSecurityTestUtils {
             // 有速率限制，這是好的
           } else {
             // 快速發送多個請求測試速率限制
-            const promises = Array(100).fill(null).map(() =>
-              this.page.request.get(endpoint)
-            );
+            const promises = Array(100)
+              .fill(null)
+              .map(() => this.page.request.get(endpoint));
 
             const responses = await Promise.all(promises);
-            const successCount = responses.filter(r => r.status() === 200).length;
+            const successCount = responses.filter(
+              (r) => r.status() === 200
+            ).length;
 
             if (successCount > 50) {
-              this.addSecurityViolation('API Security', `端點 ${endpoint} 缺少速率限制`, 'medium', {
-                endpoint,
-                successCount
-              });
+              this.addSecurityViolation(
+                'API Security',
+                `端點 ${endpoint} 缺少速率限制`,
+                'medium',
+                {
+                  endpoint,
+                  successCount,
+                }
+              );
               return true;
             }
           }
-
         } catch (error) {
           console.warn(`API 安全測試失敗: ${error.message}`);
         }
@@ -541,10 +624,11 @@ class AdvancedSecurityTestUtils {
     try {
       // 獲取當前的 JWT token
       const cookies = await this.page.context().cookies();
-      const tokenCookie = cookies.find(cookie =>
-        cookie.name.includes('token') ||
-        cookie.name.includes('jwt') ||
-        cookie.name.includes('auth')
+      const tokenCookie = cookies.find(
+        (cookie) =>
+          cookie.name.includes('token') ||
+          cookie.name.includes('jwt') ||
+          cookie.name.includes('auth')
       );
 
       if (tokenCookie) {
@@ -556,30 +640,39 @@ class AdvancedSecurityTestUtils {
           const header = JSON.parse(Buffer.from(parts[0], 'base64').toString());
 
           if (header.alg === 'none' || header.alg === 'HS256') {
-            this.addSecurityViolation('JWT Security', `使用弱算法: ${header.alg}`, 'medium', {
-              algorithm: header.alg
-            });
+            this.addSecurityViolation(
+              'JWT Security',
+              `使用弱算法: ${header.alg}`,
+              'medium',
+              {
+                algorithm: header.alg,
+              }
+            );
             return true;
           }
         }
 
         // 測試 token 篡改
-        const tamperedToken = `${token  }tampered`;
+        const tamperedToken = `${token}tampered`;
         const response = await this.page.request.get('/api/user/profile', {
           headers: {
-            'Authorization': `Bearer ${tamperedToken}`
-          }
+            Authorization: `Bearer ${tamperedToken}`,
+          },
         });
 
         if (response.status() === 200) {
-          this.addSecurityViolation('JWT Security', '篡改的 token 仍能通過驗證', 'critical', {
-            originalToken: `${token.substring(0, 20)  }...`,
-            tamperedToken: `${tamperedToken.substring(0, 20)  }...`
-          });
+          this.addSecurityViolation(
+            'JWT Security',
+            '篡改的 token 仍能通過驗證',
+            'critical',
+            {
+              originalToken: `${token.substring(0, 20)}...`,
+              tamperedToken: `${tamperedToken.substring(0, 20)}...`,
+            }
+          );
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`JWT 安全測試失敗: ${error.message}`);
     }
@@ -590,13 +683,18 @@ class AdvancedSecurityTestUtils {
   /**
    * 添加安全違規記錄
    */
-  private addSecurityViolation(type: string, description: string, severity: 'low' | 'medium' | 'high' | 'critical', details: any) {
+  private addSecurityViolation(
+    type: string,
+    description: string,
+    severity: 'low' | 'medium' | 'high' | 'critical',
+    details: any
+  ) {
     this.securityViolations.push({
       type,
       description,
       severity,
       timestamp: Date.now(),
-      details
+      details,
     });
 
     console.warn(`🚨 高級安全違規 [${severity.toUpperCase()}]: ${description}`);
@@ -609,16 +707,23 @@ class AdvancedSecurityTestUtils {
     return {
       totalViolations: this.securityViolations.length,
       violationsBySeverity: {
-        critical: this.securityViolations.filter(v => v.severity === 'critical').length,
-        high: this.securityViolations.filter(v => v.severity === 'high').length,
-        medium: this.securityViolations.filter(v => v.severity === 'medium').length,
-        low: this.securityViolations.filter(v => v.severity === 'low').length
+        critical: this.securityViolations.filter(
+          (v) => v.severity === 'critical'
+        ).length,
+        high: this.securityViolations.filter((v) => v.severity === 'high')
+          .length,
+        medium: this.securityViolations.filter((v) => v.severity === 'medium')
+          .length,
+        low: this.securityViolations.filter((v) => v.severity === 'low').length,
       },
-      violationsByType: this.securityViolations.reduce((acc, violation) => {
-        acc[violation.type] = (acc[violation.type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      violations: this.securityViolations
+      violationsByType: this.securityViolations.reduce(
+        (acc, violation) => {
+          acc[violation.type] = (acc[violation.type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      violations: this.securityViolations,
     };
   }
 }
@@ -656,7 +761,8 @@ describe('CardStrategy 高級安全測試', () => {
   test('滲透測試 - 文件上傳漏洞', async () => {
     console.log('🚀 開始文件上傳漏洞測試...');
 
-    const hasFileUploadVulnerability = await securityUtils.testFileUploadVulnerability();
+    const hasFileUploadVulnerability =
+      await securityUtils.testFileUploadVulnerability();
 
     expect(hasFileUploadVulnerability).toBe(false);
   });
@@ -739,11 +845,11 @@ describe('CardStrategy 高級安全測試', () => {
       securityUtils.testDataEncryption(),
       securityUtils.testSecurityHeaders(),
       securityUtils.testAPISecurity(),
-      securityUtils.testJWTSecurity()
+      securityUtils.testJWTSecurity(),
     ];
 
     const results = await Promise.all(tests);
-    const hasAnyVulnerability = results.some(result => result === true);
+    const hasAnyVulnerability = results.some((result) => result === true);
 
     // 生成安全報告
     const securityReport = securityUtils.getSecurityReport();
@@ -756,7 +862,9 @@ describe('CardStrategy 高級安全測試', () => {
     if (securityReport.violations.length > 0) {
       console.log('🚨 發現的高級安全問題:');
       securityReport.violations.forEach((violation, index) => {
-        console.log(`${index + 1}. [${violation.severity.toUpperCase()}] ${violation.type}: ${violation.description}`);
+        console.log(
+          `${index + 1}. [${violation.severity.toUpperCase()}] ${violation.type}: ${violation.description}`
+        );
       });
     }
 

@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  ViewStyle
+  ViewStyle,
 } from 'react-native';
 import { theme } from '../../theme/designSystem';
 
@@ -23,7 +23,7 @@ export const Switch: React.FC<SwitchProps> = ({
   disabled = false,
   size = 'medium',
   variant = 'default',
-  style
+  style,
 }) => {
   const translateX = useRef(new Animated.Value(value ? 1 : 0)).current;
   const scale = useRef(new Animated.Value(1)).current;
@@ -32,7 +32,7 @@ export const Switch: React.FC<SwitchProps> = ({
     Animated.timing(translateX, {
       toValue: value ? 1 : 0,
       duration: 200,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
   }, [value]);
 
@@ -40,7 +40,7 @@ export const Switch: React.FC<SwitchProps> = ({
     const sizeMap = {
       small: { width: 32, height: 18, thumbSize: 14 },
       medium: { width: 44, height: 24, thumbSize: 20 },
-      large: { width: 56, height: 30, thumbSize: 26 }
+      large: { width: 56, height: 30, thumbSize: 26 },
     };
     return sizeMap[size];
   };
@@ -51,7 +51,7 @@ export const Switch: React.FC<SwitchProps> = ({
       success: theme.colors.status.success,
       warning: theme.colors.status.warning,
       error: theme.colors.status.error,
-      gold: theme.colors.gold.primary
+      gold: theme.colors.gold.primary,
     };
     return colorMap[variant];
   };
@@ -64,13 +64,13 @@ export const Switch: React.FC<SwitchProps> = ({
       Animated.timing(scale, {
         toValue: 0.95,
         duration: 100,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(scale, {
         toValue: 1,
         duration: 100,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]).start();
 
     onValueChange(!value);
@@ -78,10 +78,10 @@ export const Switch: React.FC<SwitchProps> = ({
 
   const trackWidth = getSize().width;
   const trackHeight = getSize().height;
-  const {thumbSize} = getSize();
+  const { thumbSize } = getSize();
   const thumbTranslateX = translateX.interpolate({
     inputRange: [0, 1],
-    outputRange: [2, trackWidth - thumbSize - 2]
+    outputRange: [2, trackWidth - thumbSize - 2],
   });
 
   return (
@@ -97,11 +97,15 @@ export const Switch: React.FC<SwitchProps> = ({
           {
             width: trackWidth,
             height: trackHeight,
-            backgroundColor: value ? getVariantColor() : theme.colors.background.secondary,
-            borderColor: value ? getVariantColor() : theme.colors.border.primary,
+            backgroundColor: value
+              ? getVariantColor()
+              : theme.colors.background.secondary,
+            borderColor: value
+              ? getVariantColor()
+              : theme.colors.border.primary,
             opacity: disabled ? 0.5 : 1,
-            transform: [{ scale }]
-          }
+            transform: [{ scale }],
+          },
         ]}
       >
         <Animated.View
@@ -111,8 +115,10 @@ export const Switch: React.FC<SwitchProps> = ({
               width: thumbSize,
               height: thumbSize,
               transform: [{ translateX: thumbTranslateX }],
-              backgroundColor: value ? theme.colors.text.primary : theme.colors.text.tertiary
-            }
+              backgroundColor: value
+                ? theme.colors.text.primary
+                : theme.colors.text.tertiary,
+            },
           ]}
         />
       </Animated.View>
@@ -123,12 +129,12 @@ export const Switch: React.FC<SwitchProps> = ({
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   track: {
     borderRadius: theme.borderRadius.full,
     borderWidth: 1,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   thumb: {
     borderRadius: theme.borderRadius.full,
@@ -136,6 +142,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 2
-  }
+    elevation: 2,
+  },
 });

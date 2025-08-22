@@ -25,7 +25,10 @@ class NotificationManager {
   private unreadCount: number = 0;
   private stats: NotificationStats | null = null;
   private badgeUpdateTimer: NodeJS.Timeout | null = null;
-  private listeners: ((notifications: Notification[], stats: NotificationStats) => void)[] = [];
+  private listeners: ((
+    notifications: Notification[],
+    stats: NotificationStats
+  ) => void)[] = [];
 
   constructor(config: Partial<NotificationManagerConfig> = {}) {
     this.config = {
@@ -33,7 +36,7 @@ class NotificationManager {
       enableSmartNavigation: true,
       badgeUpdateInterval: 30000, // 30秒
       maxBadgeCount: 99,
-      ...config
+      ...config,
     };
 
     this.initialize();
@@ -52,7 +55,9 @@ class NotificationManager {
   addNotification(notification: Notification): void {
     try {
       // 檢查是否已存在
-      const existingIndex = this.notifications.findIndex(n => n.id === notification.id);
+      const existingIndex = this.notifications.findIndex(
+        (n) => n.id === notification.id
+      );
 
       if (existingIndex >= 0) {
         // 更新現有通知
@@ -65,7 +70,10 @@ class NotificationManager {
       this.updateStats();
       this.notifyListeners();
 
-      logger.info('通知已添加', { notificationId: notification.id, type: notification.type });
+      logger.info('通知已添加', {
+        notificationId: notification.id,
+        type: notification.type,
+      });
     } catch (error) {
       logger.error('添加通知失敗:', { error, notification });
     }
@@ -74,8 +82,10 @@ class NotificationManager {
   // 批量添加通知
   addNotifications(notifications: Notification[]): void {
     try {
-      notifications.forEach(notification => {
-        const existingIndex = this.notifications.findIndex(n => n.id === notification.id);
+      notifications.forEach((notification) => {
+        const existingIndex = this.notifications.findIndex(
+          (n) => n.id === notification.id
+        );
 
         if (existingIndex >= 0) {
           this.notifications[existingIndex] = notification;
@@ -96,7 +106,9 @@ class NotificationManager {
   // 標記通知為已讀
   markAsRead(notificationId: string): void {
     try {
-      const notification = this.notifications.find(n => n.id === notificationId);
+      const notification = this.notifications.find(
+        (n) => n.id === notificationId
+      );
       if (notification && !notification.isRead) {
         notification.isRead = true;
         notification.updatedAt = new Date();
@@ -116,7 +128,7 @@ class NotificationManager {
     try {
       let hasChanges = false;
 
-      this.notifications.forEach(notification => {
+      this.notifications.forEach((notification) => {
         if (!notification.isRead) {
           notification.isRead = true;
           notification.updatedAt = new Date();
@@ -138,7 +150,9 @@ class NotificationManager {
   // 刪除通知
   deleteNotification(notificationId: string): void {
     try {
-      const index = this.notifications.findIndex(n => n.id === notificationId);
+      const index = this.notifications.findIndex(
+        (n) => n.id === notificationId
+      );
       if (index >= 0) {
         this.notifications.splice(index, 1);
         this.updateStats();
@@ -175,15 +189,15 @@ class NotificationManager {
       let filtered = [...this.notifications];
 
       if (filter?.type) {
-        filtered = filtered.filter(n => n.type === filter.type);
+        filtered = filtered.filter((n) => n.type === filter.type);
       }
 
       if (filter?.isRead !== undefined) {
-        filtered = filtered.filter(n => n.isRead === filter.isRead);
+        filtered = filtered.filter((n) => n.isRead === filter.isRead);
       }
 
       if (filter?.priority) {
-        filtered = filtered.filter(n => n.priority === filter.priority);
+        filtered = filtered.filter((n) => n.priority === filter.priority);
       }
 
       if (filter?.limit) {
@@ -222,7 +236,7 @@ class NotificationManager {
 
       logger.info('通知點擊處理完成', {
         notificationId: notification.id,
-        type: notification.type
+        type: notification.type,
       });
     } catch (error) {
       logger.error('處理通知點擊失敗:', { error, notification });
@@ -233,7 +247,7 @@ class NotificationManager {
   private updateStats(): void {
     try {
       const totalCount = this.notifications.length;
-      const unreadCount = this.notifications.filter(n => !n.isRead).length;
+      const unreadCount = this.notifications.filter((n) => !n.isRead).length;
       const readCount = totalCount - unreadCount;
 
       // 按類型統計
@@ -241,17 +255,17 @@ class NotificationManager {
         price_alert: 0,
         market_update: 0,
         investment_advice: 0,
-        system: 0
+        system: 0,
       };
 
       // 按優先級統計
       const byPriority: Record<string, number> = {
         low: 0,
         medium: 0,
-        high: 0
+        high: 0,
       };
 
-      this.notifications.forEach(notification => {
+      this.notifications.forEach((notification) => {
         byType[notification.type]++;
         byPriority[notification.priority]++;
       });
@@ -261,7 +275,7 @@ class NotificationManager {
         unreadCount,
         readCount,
         byType,
-        byPriority
+        byPriority,
       };
 
       this.unreadCount = unreadCount;
@@ -305,12 +319,16 @@ class NotificationManager {
   }
 
   // 添加監聽器
-  addListener(callback: (notifications: Notification[], stats: NotificationStats) => void): void {
+  addListener(
+    callback: (notifications: Notification[], stats: NotificationStats) => void
+  ): void {
     this.listeners.push(callback);
   }
 
   // 移除監聽器
-  removeListener(callback: (notifications: Notification[], stats: NotificationStats) => void): void {
+  removeListener(
+    callback: (notifications: Notification[], stats: NotificationStats) => void
+  ): void {
     const index = this.listeners.indexOf(callback);
     if (index > -1) {
       this.listeners.splice(index, 1);
@@ -320,7 +338,7 @@ class NotificationManager {
   // 通知監聽器
   private notifyListeners(): void {
     if (this.stats) {
-      this.listeners.forEach(callback => {
+      this.listeners.forEach((callback) => {
         try {
           callback(this.notifications, this.stats);
         } catch (error) {

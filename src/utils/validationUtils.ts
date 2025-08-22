@@ -17,7 +17,8 @@ export class ValidationUtils {
     phone: z.string().regex(/^\+?[\d\s\-\(\)]+$/, '無效的電話號碼'),
 
     // 密碼驗證
-    password: z.string()
+    password: z
+      .string()
       .min(8, '密碼至少8個字元')
       .max(128, '密碼不能超過128個字元')
       .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, '密碼必須包含大小寫字母和數字'),
@@ -32,55 +33,84 @@ export class ValidationUtils {
     positiveNumber: z.number().positive('必須是正數'),
     nonNegativeNumber: z.number().min(0, '不能為負數'),
     percentage: z.number().min(0).max(100, '百分比必須在0-100之間'),
-    price: z.number().min(0, '價格不能為負數').max(999999, '價格不能超過999999'),
+    price: z
+      .number()
+      .min(0, '價格不能為負數')
+      .max(999999, '價格不能超過999999'),
     quantity: z.number().int().min(1, '數量必須是正整數'),
 
     // 日期驗證
     date: z.string().datetime('無效的日期格式'),
-    futureDate: z.string().datetime().refine(
-      date => new Date(date) > new Date(),
-      '日期必須是未來時間'
-    ),
-    pastDate: z.string().datetime().refine(
-      date => new Date(date) < new Date(),
-      '日期必須是過去時間'
-    ),
+    futureDate: z
+      .string()
+      .datetime()
+      .refine((date) => new Date(date) > new Date(), '日期必須是未來時間'),
+    pastDate: z
+      .string()
+      .datetime()
+      .refine((date) => new Date(date) < new Date(), '日期必須是過去時間'),
 
     // 日期範圍驗證
-    dateRange: z.object({
-      startDate: z.string().datetime('無效的開始日期'),
-      endDate: z.string().datetime('無效的結束日期')
-    }).refine(
-      data => new Date(data.startDate) <= new Date(data.endDate),
-      { message: '開始日期不能晚於結束日期' }
-    ),
+    dateRange: z
+      .object({
+        startDate: z.string().datetime('無效的開始日期'),
+        endDate: z.string().datetime('無效的結束日期'),
+      })
+      .refine((data) => new Date(data.startDate) <= new Date(data.endDate), {
+        message: '開始日期不能晚於結束日期',
+      }),
 
     // 分頁參數驗證
     pagination: z.object({
       page: z.number().int().min(1, '頁碼必須是正整數').optional(),
-      limit: z.number().int().min(1, '每頁數量必須是正整數').max(100, '每頁數量不能超過100').optional(),
+      limit: z
+        .number()
+        .int()
+        .min(1, '每頁數量必須是正整數')
+        .max(100, '每頁數量不能超過100')
+        .optional(),
       sortBy: z.string().optional(),
-      sortOrder: z.enum(['asc', 'desc']).optional()
+      sortOrder: z.enum(['asc', 'desc']).optional(),
     }),
 
     // 搜索參數驗證
     searchParams: z.object({
-      query: z.string().min(1, '搜索關鍵字不能為空').max(100, '搜索關鍵字不能超過100個字元').optional(),
+      query: z
+        .string()
+        .min(1, '搜索關鍵字不能為空')
+        .max(100, '搜索關鍵字不能超過100個字元')
+        .optional(),
       filters: z.record(z.any()).optional(),
       category: z.string().optional(),
-      tags: z.array(z.string()).optional()
+      tags: z.array(z.string()).optional(),
     }),
 
     // 文件驗證
     imageFile: z.object({
       type: z.string().regex(/^image\//, '必須是圖片文件'),
-      size: z.number().max(10 * 1024 * 1024, '文件大小不能超過10MB')
+      size: z.number().max(10 * 1024 * 1024, '文件大小不能超過10MB'),
     }),
 
     // 卡片相關驗證
-    cardCondition: z.enum(['mint', 'near_mint', 'excellent', 'good', 'light_played', 'played', 'poor']),
+    cardCondition: z.enum([
+      'mint',
+      'near_mint',
+      'excellent',
+      'good',
+      'light_played',
+      'played',
+      'poor',
+    ]),
     cardRarity: z.enum(['common', 'uncommon', 'rare', 'mythic', 'special']),
-    cardType: z.enum(['creature', 'instant', 'sorcery', 'enchantment', 'artifact', 'planeswalker', 'land']),
+    cardType: z.enum([
+      'creature',
+      'instant',
+      'sorcery',
+      'enchantment',
+      'artifact',
+      'planeswalker',
+      'land',
+    ]),
 
     // 投資相關驗證
     investmentType: z.enum(['buy', 'sell', 'hold']),
@@ -88,8 +118,13 @@ export class ValidationUtils {
     timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
 
     // 通知相關驗證
-    notificationType: z.enum(['price_alert', 'market_update', 'system_alert', 'investment_reminder']),
-    notificationPriority: z.enum(['low', 'medium', 'high', 'urgent'])
+    notificationType: z.enum([
+      'price_alert',
+      'market_update',
+      'system_alert',
+      'investment_reminder',
+    ]),
+    notificationPriority: z.enum(['low', 'medium', 'high', 'urgent']),
   };
 
   /**
@@ -208,7 +243,10 @@ export class ValidationUtils {
    * @throws Error 如果驗證失敗
    */
   static validateDateRange(startDate: string, endDate: string): void {
-    const result = validateInput(this.schemas.dateRange, { startDate, endDate });
+    const result = validateInput(this.schemas.dateRange, {
+      startDate,
+      endDate,
+    });
     if (!result.isValid) {
       throw new Error(`日期範圍驗證失敗: ${result.errorMessage}`);
     }
@@ -234,7 +272,7 @@ export class ValidationUtils {
       page: result.data!.page || 1,
       limit: result.data!.limit || 20,
       sortBy: result.data!.sortBy,
-      sortOrder: result.data!.sortOrder || 'desc'
+      sortOrder: result.data!.sortOrder || 'desc',
     };
   }
 
@@ -265,7 +303,7 @@ export class ValidationUtils {
   static validateFile(file: File): void {
     const result = validateInput(this.schemas.imageFile, {
       type: file.type,
-      size: file.size
+      size: file.size,
     });
     if (!result.isValid) {
       throw new Error(`文件驗證失敗: ${result.errorMessage}`);
@@ -319,7 +357,9 @@ export class ValidationUtils {
       try {
         this.validateUUID(ids[i], `${fieldName}[${i}]`);
       } catch (error) {
-        throw new Error(`${fieldName} 驗證失敗: ${error instanceof Error ? error.message : String(error)}`);
+        throw new Error(
+          `${fieldName} 驗證失敗: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
   }
@@ -331,7 +371,7 @@ export class ValidationUtils {
    * @throws Error 如果有任何必需字段缺失
    */
   static validateRequiredFields(obj: any, requiredFields: string[]): void {
-    const missingFields = requiredFields.filter(field => !obj[field]);
+    const missingFields = requiredFields.filter((field) => !obj[field]);
     if (missingFields.length > 0) {
       throw new Error(`缺少必需字段: ${missingFields.join(', ')}`);
     }
@@ -343,12 +383,17 @@ export class ValidationUtils {
    * @param fieldTypes 字段類型映射
    * @throws Error 如果有任何字段類型不匹配
    */
-  static validateFieldTypes(obj: any, fieldTypes: Record<string, string>): void {
+  static validateFieldTypes(
+    obj: any,
+    fieldTypes: Record<string, string>
+  ): void {
     for (const [field, expectedType] of Object.entries(fieldTypes)) {
       if (obj[field] !== undefined) {
         const actualType = typeof obj[field];
         if (actualType !== expectedType) {
-          throw new Error(`字段 ${field} 類型錯誤: 期望 ${expectedType}，實際 ${actualType}`);
+          throw new Error(
+            `字段 ${field} 類型錯誤: 期望 ${expectedType}，實際 ${actualType}`
+          );
         }
       }
     }
@@ -368,14 +413,17 @@ export class ValidationUtils {
       (value) => {
         for (const rule of customRules) {
           const result = rule(value);
-          if (result === false || (typeof result === 'object' && !result.success)) {
+          if (
+            result === false ||
+            (typeof result === 'object' && !result.success)
+          ) {
             return false;
           }
         }
         return true;
       },
       {
-        message: '自定義驗證失敗'
+        message: '自定義驗證失敗',
       }
     );
   }

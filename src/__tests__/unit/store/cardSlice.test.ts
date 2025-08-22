@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import cardSlice, {
   setCards,
   addCard,
@@ -11,7 +12,7 @@ import cardSlice, {
   updateCardPrice,
   setCardCondition,
   addCardToCollection,
-  removeCardFromCollection
+  removeCardFromCollection,
 } from '../../../store/slices/cardSlice';
 
 describe('CardSlice', () => {
@@ -21,7 +22,7 @@ describe('CardSlice', () => {
     loading: false,
     error: null,
     favorites: [],
-    collections: {}
+    collections: {},
   };
 
   const mockCard = {
@@ -30,7 +31,7 @@ describe('CardSlice', () => {
     image: 'test.jpg',
     rarity: 'Rare',
     price: 1000,
-    condition: 'Near Mint'
+    condition: 'Near Mint',
   };
 
   beforeEach(() => {
@@ -78,7 +79,11 @@ describe('CardSlice', () => {
   describe('updateCard', () => {
     it('應該正確更新卡片', () => {
       const stateWithCard = { ...initialState, cards: [mockCard] };
-      const updatedCard = { ...mockCard, price: 1500, condition: 'Light Played' };
+      const updatedCard = {
+        ...mockCard,
+        price: 1500,
+        condition: 'Light Played',
+      };
       const action = updateCard(updatedCard);
       const state = cardSlice(stateWithCard, action);
 
@@ -98,7 +103,7 @@ describe('CardSlice', () => {
     it('應該正確刪除卡片', () => {
       const stateWithCards = {
         ...initialState,
-        cards: [mockCard, { ...mockCard, id: 'card2' }]
+        cards: [mockCard, { ...mockCard, id: 'card2' }],
       };
       const action = deleteCard('card1');
       const state = cardSlice(stateWithCards, action);
@@ -179,7 +184,10 @@ describe('CardSlice', () => {
     });
 
     it('應該正確從收藏移除卡片', () => {
-      const stateWithFavorites = { ...initialState, favorites: ['card1', 'card2'] };
+      const stateWithFavorites = {
+        ...initialState,
+        favorites: ['card1', 'card2'],
+      };
       const action = toggleFavorite('card1');
       const state = cardSlice(stateWithFavorites, action);
 
@@ -210,7 +218,10 @@ describe('CardSlice', () => {
     it('應該正確設置卡片條件', () => {
       const stateWithCard = { ...initialState, cards: [mockCard] };
       const newCondition = 'Light Played';
-      const action = setCardCondition({ cardId: 'card1', condition: newCondition });
+      const action = setCardCondition({
+        cardId: 'card1',
+        condition: newCondition,
+      });
       const state = cardSlice(stateWithCard, action);
 
       expect(state.cards[0].condition).toBe(newCondition);
@@ -230,7 +241,7 @@ describe('CardSlice', () => {
       const collectionId = 'collection1';
       const stateWithCollection = {
         ...initialState,
-        collections: { [collectionId]: ['card1'] }
+        collections: { [collectionId]: ['card1'] },
       };
       const action = addCardToCollection({ cardId: 'card1', collectionId });
       const state = cardSlice(stateWithCollection, action);
@@ -244,9 +255,12 @@ describe('CardSlice', () => {
       const collectionId = 'collection1';
       const stateWithCollection = {
         ...initialState,
-        collections: { [collectionId]: ['card1', 'card2'] }
+        collections: { [collectionId]: ['card1', 'card2'] },
       };
-      const action = removeCardFromCollection({ cardId: 'card1', collectionId });
+      const action = removeCardFromCollection({
+        cardId: 'card1',
+        collectionId,
+      });
       const state = cardSlice(stateWithCollection, action);
 
       expect(state.collections[collectionId]).not.toContain('card1');
@@ -259,10 +273,10 @@ describe('CardSlice', () => {
       const stateWithFavorites = {
         ...initialState,
         cards: [mockCard, { ...mockCard, id: 'card2' }],
-        favorites: ['card1']
+        favorites: ['card1'],
       };
 
-      const favoriteCards = stateWithFavorites.cards.filter(card =>
+      const favoriteCards = stateWithFavorites.cards.filter((card) =>
         stateWithFavorites.favorites.includes(card.id)
       );
 
@@ -275,10 +289,10 @@ describe('CardSlice', () => {
       const stateWithCollection = {
         ...initialState,
         cards: [mockCard, { ...mockCard, id: 'card2' }],
-        collections: { [collectionId]: ['card1'] }
+        collections: { [collectionId]: ['card1'] },
       };
 
-      const collectionCards = stateWithCollection.cards.filter(card =>
+      const collectionCards = stateWithCollection.cards.filter((card) =>
         stateWithCollection.collections[collectionId].includes(card.id)
       );
 
@@ -294,7 +308,7 @@ describe('CardSlice', () => {
         cards: [mockCard],
         selectedCard: mockCard,
         favorites: ['card1'],
-        collections: { 'collection1': ['card1'] }
+        collections: { collection1: ['card1'] },
       };
 
       // 模擬重置操作

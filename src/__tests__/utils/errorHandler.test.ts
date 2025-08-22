@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import {
   ErrorHandler,
   AppError,
@@ -5,7 +6,7 @@ import {
   ErrorSeverity,
   errorHandler,
   withErrorHandling,
-  handleErrors
+  handleErrors,
 } from '@/utils/errorHandler';
 
 describe('ErrorHandler', () => {
@@ -262,7 +263,9 @@ describe('ErrorHandler', () => {
         throw new Error('異步錯誤');
       };
 
-      const wrappedFunction = withErrorHandling(asyncFunction, { context: 'test' });
+      const wrappedFunction = withErrorHandling(asyncFunction, {
+        context: 'test',
+      });
 
       try {
         await wrappedFunction();
@@ -346,7 +349,7 @@ describe('ErrorHandler', () => {
       const context = {
         component: 'TestComponent',
         function: 'testFunction',
-        userId: 'user123'
+        userId: 'user123',
       };
 
       const errorInfo = handler.handleError(error, context);

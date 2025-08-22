@@ -9,6 +9,7 @@ CardStrategy 擴展組件庫提供了豐富的 UI 組件，基於深色主題配
 ### **1. 基礎組件 (Core Components)**
 
 #### **Button 按鈕組件**
+
 ```typescript
 import { Button } from '../components/common';
 
@@ -38,12 +39,14 @@ import { Button } from '../components/common';
 ```
 
 **特性：**
+
 - 三種變體：`primary`、`secondary`、`ghost`
 - 三種尺寸：`small`、`medium`、`large`
 - 支持載入狀態和禁用狀態
 - 支持圖標和自定義樣式
 
 #### **Card 卡片組件**
+
 ```typescript
 import { Card } from '../components/common';
 
@@ -64,11 +67,13 @@ import { Card } from '../components/common';
 ```
 
 **特性：**
+
 - 三種變體：`default`、`elevated`、`outlined`
 - 四種內邊距：`none`、`small`、`medium`、`large`
 - 支持點擊事件和自定義樣式
 
 #### **Input 輸入框組件**
+
 ```typescript
 import { Input } from '../components/common';
 
@@ -85,6 +90,7 @@ import { Input } from '../components/common';
 ```
 
 **特性：**
+
 - 支持左側和右側圖標
 - 密碼可見性切換
 - 錯誤狀態顯示
@@ -94,6 +100,7 @@ import { Input } from '../components/common';
 ### **2. 顯示組件 (Display Components)**
 
 #### **Badge 徽章組件**
+
 ```typescript
 import { Badge } from '../components/common';
 
@@ -111,12 +118,14 @@ import { Badge } from '../components/common';
 ```
 
 **特性：**
+
 - 六種變體：`default`、`success`、`warning`、`error`、`info`、`gold`
 - 三種尺寸：`small`、`medium`、`large`
 - 支持點狀指示器
 - 圓角設計
 
 #### **Avatar 頭像組件**
+
 ```typescript
 import { Avatar } from '../components/common';
 
@@ -145,6 +154,7 @@ import { Avatar } from '../components/common';
 ```
 
 **特性：**
+
 - 支持圖片、縮寫和默認圖標
 - 四種尺寸：`small`、`medium`、`large`、`xlarge`
 - 三種形狀：`circle`、`rounded`、`square`
@@ -152,6 +162,7 @@ import { Avatar } from '../components/common';
 - 邊框支持
 
 #### **LoadingSpinner 載入指示器**
+
 ```typescript
 import { LoadingSpinner } from '../components/common';
 
@@ -178,12 +189,14 @@ import { LoadingSpinner } from '../components/common';
 ```
 
 **特性：**
+
 - 三種動畫：`spinner`、`pulse`、`dots`
 - 三種尺寸：`small`、`medium`、`large`
 - 自定義顏色和文字
 - 流暢的動畫效果
 
 #### **ProgressBar 進度條**
+
 ```typescript
 import { ProgressBar } from '../components/common';
 
@@ -212,6 +225,7 @@ import { ProgressBar } from '../components/common';
 ```
 
 **特性：**
+
 - 五種變體：`default`、`success`、`warning`、`error`、`gold`
 - 三種尺寸：`small`、`medium`、`large`
 - 動畫支持
@@ -220,6 +234,7 @@ import { ProgressBar } from '../components/common';
 ### **3. 交互組件 (Interactive Components)**
 
 #### **Modal 模態框**
+
 ```typescript
 import { Modal } from '../components/common';
 
@@ -236,12 +251,14 @@ import { Modal } from '../components/common';
 ```
 
 **特性：**
+
 - 四種尺寸：`small`、`medium`、`large`、`full`
 - 自定義標題和關閉按鈕
 - 背景點擊關閉
 - 流暢的動畫效果
 
 #### **Switch 開關**
+
 ```typescript
 import { Switch } from '../components/common';
 
@@ -255,12 +272,14 @@ import { Switch } from '../components/common';
 ```
 
 **特性：**
+
 - 五種變體：`default`、`success`、`warning`、`error`、`gold`
 - 三種尺寸：`small`、`medium`、`large`
 - 禁用狀態支持
 - 流暢的切換動畫
 
 #### **Tooltip 工具提示**
+
 ```typescript
 import { Tooltip } from '../components/common';
 
@@ -275,6 +294,7 @@ import { Tooltip } from '../components/common';
 ```
 
 **特性：**
+
 - 四種位置：`top`、`bottom`、`left`、`right`
 - 三種觸發方式：`press`、`longPress`、`hover`
 - 自定義最大寬度
@@ -283,6 +303,7 @@ import { Tooltip } from '../components/common';
 ### **4. 導航組件 (Navigation Components)**
 
 #### **BottomTabBar 底部導航欄**
+
 ```typescript
 import { BottomTabBar } from '../components/navigation';
 
@@ -301,6 +322,7 @@ const tabs = [
 ```
 
 **特性：**
+
 - 動態標籤配置
 - 活動狀態指示器
 - 圖標和文字支持
@@ -309,6 +331,7 @@ const tabs = [
 ### **5. 專用組件 (Specialized Components)**
 
 #### **CardGradingDisplay 卡片鑑定顯示**
+
 ```typescript
 import { CardGradingDisplay } from '../components/cards';
 
@@ -338,6 +361,7 @@ const gradingResults = [
 ```
 
 **特性：**
+
 - 多機構鑑定結果顯示
 - 子評分詳情
 - 信心度進度條
@@ -345,6 +369,7 @@ const gradingResults = [
 - 分享和詳情操作
 
 #### **CardPriceChart 卡片價格圖表**
+
 ```typescript
 import { CardPriceChart } from '../components/cards';
 
@@ -367,6 +392,7 @@ const priceData = [
 ```
 
 **特性：**
+
 - 互動式價格圖表
 - 多時間範圍選擇
 - 價格變化指示器
@@ -374,6 +400,7 @@ const priceData = [
 - 點擊數據點查看詳情
 
 #### **CardCollectionManager 卡片收藏管理**
+
 ```typescript
 import { CardCollectionManager } from '../components/cards';
 
@@ -393,6 +420,7 @@ import { CardCollectionManager } from '../components/cards';
 ```
 
 **特性：**
+
 - 網格和列表視圖切換
 - 多種篩選和排序選項
 - 批量操作支持
@@ -400,6 +428,7 @@ import { CardCollectionManager } from '../components/cards';
 - 導入/導出功能
 
 #### **AIRecommendationCard AI 推薦卡片**
+
 ```typescript
 import { AIRecommendationCard } from '../components/ai';
 
@@ -415,6 +444,7 @@ import { AIRecommendationCard } from '../components/ai';
 ```
 
 **特性：**
+
 - AI 智能推薦顯示
 - 風險等級評估
 - 投資時長建議
@@ -423,6 +453,7 @@ import { AIRecommendationCard } from '../components/ai';
 - 預算匹配檢查
 
 #### **CardScannerOverlay 卡片掃描覆蓋層**
+
 ```typescript
 import { CardScannerOverlay } from '../components/scan';
 
@@ -440,6 +471,7 @@ import { CardScannerOverlay } from '../components/scan';
 ```
 
 **特性：**
+
 - 掃描區域指示器
 - 動畫掃描線效果
 - 實時處理狀態
@@ -450,6 +482,7 @@ import { CardScannerOverlay } from '../components/scan';
 ## 🎯 **使用最佳實踐**
 
 ### **組件組合**
+
 ```typescript
 // 卡片列表項目
 <Card variant="elevated" padding="medium">
@@ -472,7 +505,7 @@ import { CardScannerOverlay } from '../components/scan';
       />
     </Tooltip>
   </View>
-  
+
   <ProgressBar
     progress={card.condition}
     variant="success"
@@ -483,6 +516,7 @@ import { CardScannerOverlay } from '../components/scan';
 ```
 
 ### **載入狀態處理**
+
 ```typescript
 // 載入狀態
 {isLoading ? (
@@ -497,6 +531,7 @@ import { CardScannerOverlay } from '../components/scan';
 ```
 
 ### **錯誤狀態處理**
+
 ```typescript
 // 錯誤狀態
 {error ? (
@@ -524,6 +559,7 @@ import { CardScannerOverlay } from '../components/scan';
 ## 🔧 **自定義主題**
 
 ### **擴展設計令牌**
+
 ```typescript
 // 自定義組件樣式
 const customStyles = {
@@ -544,11 +580,16 @@ const customStyles = {
 ```
 
 ### **組件變體擴展**
+
 ```typescript
 // 自定義按鈕變體
 const CustomButton = styled(Button)`
   &.premium {
-    background: linear-gradient(135deg, ${theme.colors.gold.primary}, ${theme.colors.gold.secondary});
+    background: linear-gradient(
+      135deg,
+      ${theme.colors.gold.primary},
+      ${theme.colors.gold.secondary}
+    );
     border: none;
     shadow: 0 8px 32px rgba(255, 215, 0, 0.3);
   }
@@ -558,6 +599,7 @@ const CustomButton = styled(Button)`
 ## 📱 **響應式設計**
 
 ### **適配不同屏幕**
+
 ```typescript
 import { Dimensions } from 'react-native';
 
@@ -577,6 +619,7 @@ const getResponsiveSize = () => {
 ```
 
 ### **動態佈局**
+
 ```typescript
 const isTablet = width >= 768;
 
@@ -590,6 +633,7 @@ const isTablet = width >= 768;
 ## 🚀 **性能優化**
 
 ### **組件懶加載**
+
 ```typescript
 import { lazy, Suspense } from 'react';
 
@@ -601,6 +645,7 @@ const CardGradingDisplay = lazy(() => import('./CardGradingDisplay'));
 ```
 
 ### **記憶化組件**
+
 ```typescript
 import React, { memo } from 'react';
 
@@ -614,18 +659,21 @@ const CardItem = memo(({ card, onPress }) => (
 ## 📋 **組件檢查清單**
 
 ### **開發前檢查**
+
 - [ ] 組件是否遵循設計系統規範
 - [ ] 是否支持所有必要的變體和尺寸
 - [ ] 是否包含適當的 TypeScript 類型定義
 - [ ] 是否支持自定義樣式覆蓋
 
 ### **測試檢查**
+
 - [ ] 組件在不同尺寸下的顯示效果
 - [ ] 交互狀態的視覺反饋
 - [ ] 無障礙功能的支持
 - [ ] 性能表現
 
 ### **文檔檢查**
+
 - [ ] 組件 API 文檔是否完整
 - [ ] 使用示例是否清晰
 - [ ] 最佳實踐是否明確
@@ -633,4 +681,4 @@ const CardItem = memo(({ card, onPress }) => (
 
 ---
 
-*本擴展組件庫將持續更新和完善，為 CardStrategy 應用提供最佳的用戶體驗和開發體驗。*
+_本擴展組件庫將持續更新和完善，為 CardStrategy 應用提供最佳的用戶體驗和開發體驗。_

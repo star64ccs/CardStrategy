@@ -1,17 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { AIModel, CardScanResult, MarketPrediction, AIRecommendation } from '../types';
+import {
+  AIModel,
+  CardScanResult,
+  MarketPrediction,
+  AIRecommendation,
+} from '../types';
 
 const AIDashboard: React.FC = () => {
   const [models, setModels] = useState<AIModel[]>([]);
   const [scanResults, setScanResults] = useState<CardScanResult[]>([]);
   const [predictions, setPredictions] = useState<MarketPrediction[]>([]);
-  const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
+  const [recommendations, setRecommendations] = useState<AIRecommendation[]>(
+    []
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockModels: AIModel[] = [
         {
@@ -26,8 +33,8 @@ const AIDashboard: React.FC = () => {
           performance: {
             precision: 0.958,
             recall: 0.945,
-            f1Score: 0.951
-          }
+            f1Score: 0.951,
+          },
         },
         {
           id: '2',
@@ -41,9 +48,9 @@ const AIDashboard: React.FC = () => {
           performance: {
             precision: 0.873,
             recall: 0.861,
-            f1Score: 0.867
-          }
-        }
+            f1Score: 0.867,
+          },
+        },
       ];
 
       const mockScanResults: CardScanResult[] = [
@@ -55,8 +62,8 @@ const AIDashboard: React.FC = () => {
           detectedFeatures: ['龍族', '光屬性', '8星', '攻擊力3000'],
           processingTime: 0.8,
           timestamp: new Date().toISOString(),
-          modelVersion: '2.1.0'
-        }
+          modelVersion: '2.1.0',
+        },
       ];
 
       const mockPredictions: MarketPrediction[] = [
@@ -69,8 +76,8 @@ const AIDashboard: React.FC = () => {
           timeframe: '7d',
           factors: ['交易量增加', '市場需求上升', '供應減少'],
           timestamp: new Date().toISOString(),
-          modelVersion: '1.5.2'
-        }
+          modelVersion: '1.5.2',
+        },
       ];
 
       const mockRecommendations: AIRecommendation[] = [
@@ -85,8 +92,8 @@ const AIDashboard: React.FC = () => {
           targetCards: ['card1'],
           expectedReturn: 15.5,
           risk: 'medium',
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       ];
 
       setModels(mockModels);
@@ -101,21 +108,31 @@ const AIDashboard: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'success';
-      case 'training': return 'warning';
-      case 'inactive': return 'secondary';
-      case 'error': return 'danger';
-      default: return 'secondary';
+      case 'active':
+        return 'success';
+      case 'training':
+        return 'warning';
+      case 'inactive':
+        return 'secondary';
+      case 'error':
+        return 'danger';
+      default:
+        return 'secondary';
     }
   };
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'card_recognition': return '卡片識別';
-      case 'price_prediction': return '價格預測';
-      case 'market_analysis': return '市場分析';
-      case 'recommendation': return '推薦系統';
-      default: return type;
+      case 'card_recognition':
+        return '卡片識別';
+      case 'price_prediction':
+        return '價格預測';
+      case 'market_analysis':
+        return '市場分析';
+      case 'recommendation':
+        return '推薦系統';
+      default:
+        return type;
     }
   };
 
@@ -130,12 +147,17 @@ const AIDashboard: React.FC = () => {
         <div className="dashboard-stats">
           <div className="stat">
             <span className="stat-label">活躍模型</span>
-            <span className="stat-value">{models.filter(m => m.status === 'active').length}</span>
+            <span className="stat-value">
+              {models.filter((m) => m.status === 'active').length}
+            </span>
           </div>
           <div className="stat">
             <span className="stat-label">平均準確率</span>
             <span className="stat-value">
-              {(models.reduce((sum, m) => sum + m.accuracy, 0) / models.length).toFixed(1)}%
+              {(
+                models.reduce((sum, m) => sum + m.accuracy, 0) / models.length
+              ).toFixed(1)}
+              %
             </span>
           </div>
           <div className="stat">
@@ -153,20 +175,28 @@ const AIDashboard: React.FC = () => {
         <div className="ai-models">
           <h3>AI 模型狀態</h3>
           <div className="models-grid">
-            {models.map(model => (
+            {models.map((model) => (
               <div key={model.id} className="model-card">
                 <div className="model-header">
                   <h4>{model.name}</h4>
-                  <span className={`status-badge ${getStatusColor(model.status)}`}>
-                    {model.status === 'active' ? '運行中' :
-                      model.status === 'training' ? '訓練中' :
-                        model.status === 'inactive' ? '停用' : '錯誤'}
+                  <span
+                    className={`status-badge ${getStatusColor(model.status)}`}
+                  >
+                    {model.status === 'active'
+                      ? '運行中'
+                      : model.status === 'training'
+                        ? '訓練中'
+                        : model.status === 'inactive'
+                          ? '停用'
+                          : '錯誤'}
                   </span>
                 </div>
                 <div className="model-info">
                   <div className="info-row">
                     <span className="info-label">類型:</span>
-                    <span className="info-value">{getTypeLabel(model.type)}</span>
+                    <span className="info-value">
+                      {getTypeLabel(model.type)}
+                    </span>
                   </div>
                   <div className="info-row">
                     <span className="info-label">版本:</span>
@@ -178,7 +208,9 @@ const AIDashboard: React.FC = () => {
                   </div>
                   <div className="info-row">
                     <span className="info-label">訓練數據:</span>
-                    <span className="info-value">{model.trainingData.toLocaleString()}</span>
+                    <span className="info-value">
+                      {model.trainingData.toLocaleString()}
+                    </span>
                   </div>
                 </div>
                 <div className="model-performance">
@@ -186,15 +218,21 @@ const AIDashboard: React.FC = () => {
                   <div className="performance-metrics">
                     <div className="metric">
                       <span className="metric-label">精確度</span>
-                      <span className="metric-value">{(model.performance.precision * 100).toFixed(1)}%</span>
+                      <span className="metric-value">
+                        {(model.performance.precision * 100).toFixed(1)}%
+                      </span>
                     </div>
                     <div className="metric">
                       <span className="metric-label">召回率</span>
-                      <span className="metric-value">{(model.performance.recall * 100).toFixed(1)}%</span>
+                      <span className="metric-value">
+                        {(model.performance.recall * 100).toFixed(1)}%
+                      </span>
                     </div>
                     <div className="metric">
                       <span className="metric-label">F1分數</span>
-                      <span className="metric-value">{(model.performance.f1Score * 100).toFixed(1)}%</span>
+                      <span className="metric-value">
+                        {(model.performance.f1Score * 100).toFixed(1)}%
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -217,16 +255,21 @@ const AIDashboard: React.FC = () => {
 
           <div className="activity-content">
             <div className="scan-results">
-              {scanResults.map(result => (
+              {scanResults.map((result) => (
                 <div key={result.id} className="activity-item">
                   <div className="activity-icon">📷</div>
                   <div className="activity-content">
                     <h4>卡片識別: {result.cardName}</h4>
-                    <p>置信度: {result.confidence}% | 處理時間: {result.processingTime}s</p>
+                    <p>
+                      置信度: {result.confidence}% | 處理時間:{' '}
+                      {result.processingTime}s
+                    </p>
                     <div className="detected-features">
                       <span className="features-label">檢測特徵:</span>
                       {result.detectedFeatures.map((feature, index) => (
-                        <span key={index} className="feature-tag">{feature}</span>
+                        <span key={index} className="feature-tag">
+                          {feature}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -242,14 +285,21 @@ const AIDashboard: React.FC = () => {
         <div className="ai-recommendations">
           <h3>AI 推薦</h3>
           <div className="recommendations-list">
-            {recommendations.map(rec => (
-              <div key={rec.id} className={`recommendation-card ${rec.priority}`}>
+            {recommendations.map((rec) => (
+              <div
+                key={rec.id}
+                className={`recommendation-card ${rec.priority}`}
+              >
                 <div className="recommendation-header">
                   <h4>{rec.title}</h4>
                   <span className={`priority-badge ${rec.priority}`}>
-                    {rec.priority === 'critical' ? '緊急' :
-                      rec.priority === 'high' ? '高' :
-                        rec.priority === 'medium' ? '中' : '低'}
+                    {rec.priority === 'critical'
+                      ? '緊急'
+                      : rec.priority === 'high'
+                        ? '高'
+                        : rec.priority === 'medium'
+                          ? '中'
+                          : '低'}
                   </span>
                 </div>
                 <p>{rec.description}</p>
@@ -265,7 +315,11 @@ const AIDashboard: React.FC = () => {
                   <div className="metric">
                     <span className="metric-label">風險等級</span>
                     <span className={`risk-badge ${rec.risk}`}>
-                      {rec.risk === 'high' ? '高' : rec.risk === 'medium' ? '中' : '低'}
+                      {rec.risk === 'high'
+                        ? '高'
+                        : rec.risk === 'medium'
+                          ? '中'
+                          : '低'}
                     </span>
                   </div>
                 </div>

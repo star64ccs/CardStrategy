@@ -9,10 +9,10 @@ const getApiBaseUrl = () => {
   if (process.env.REACT_APP_API_URL) {
     return process.env.REACT_APP_API_URL;
   }
-  
+
   // 根據環境選擇
   const env = process.env.NODE_ENV || 'development';
-  
+
   switch (env) {
     case 'production':
     case 'staging':
@@ -29,8 +29,8 @@ const api: AxiosInstance = axios.create({
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
-    'Accept': 'application/json'
-  }
+    Accept: 'application/json',
+  },
 });
 
 // 請求攔截器
@@ -45,7 +45,7 @@ api.interceptors.request.use(
     } catch (error) {
       logger.warn('無法獲取認證 token:', error);
     }
-    
+
     logger.info(`🌐 API 請求: ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
@@ -65,9 +65,9 @@ api.interceptors.response.use(
     logger.error('API 響應錯誤:', {
       status: error.response?.status,
       url: error.config?.url,
-      message: error.message
+      message: error.message,
     });
-    
+
     // 處理 401 未授權錯誤
     if (error.response?.status === 401) {
       try {
@@ -77,7 +77,7 @@ api.interceptors.response.use(
         logger.error('清除認證 token 失敗:', storageError);
       }
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -96,7 +96,7 @@ export const API_ENDPOINTS = {
     VERIFY: '/auth/verify',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
-    CHANGE_PASSWORD: '/auth/change-password'
+    CHANGE_PASSWORD: '/auth/change-password',
   },
 
   // 用戶相關
@@ -105,7 +105,7 @@ export const API_ENDPOINTS = {
     UPDATE: '/users/profile',
     AVATAR: '/users/avatar',
     PREFERENCES: '/users/preferences',
-    STATISTICS: '/users/statistics'
+    STATISTICS: '/users/statistics',
   },
 
   // 卡牌相關
@@ -116,13 +116,15 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/cards/${id}`,
     DELETE: (id: string) => `/cards/${id}`,
     SEARCH: '/cards/search',
+    RECOMMENDATIONS: '/cards/recommendations',
     BATCH_CREATE: '/cards/batch',
     BATCH_UPDATE: '/cards/batch',
     BATCH_DELETE: '/cards/batch',
     UPLOAD_IMAGE: (id: string) => `/cards/${id}/image`,
     ANALYZE: (id: string) => `/cards/${id}/analyze`,
     VERIFY: (id: string) => `/cards/${id}/verify`,
-    ANALYZE_CONDITION: (id: string) => `/cards/${id}/analyze-condition`
+    ANALYZE_CONDITION: (id: string) => `/cards/${id}/analyze-condition`,
+    RECOGNIZE: '/cards/recognize',
   },
 
   // 收藏相關
@@ -132,8 +134,10 @@ export const API_ENDPOINTS = {
     DETAIL: (id: string) => `/collections/${id}`,
     UPDATE: (id: string) => `/collections/${id}`,
     DELETE: (id: string) => `/collections/${id}`,
-    ADD_CARD: (id: string, cardId: string) => `/collections/${id}/cards/${cardId}`,
-    REMOVE_CARD: (id: string, cardId: string) => `/collections/${id}/cards/${cardId}`
+    ADD_CARD: (id: string, cardId: string) =>
+      `/collections/${id}/cards/${cardId}`,
+    REMOVE_CARD: (id: string, cardId: string) =>
+      `/collections/${id}/cards/${cardId}`,
   },
 
   // 市場相關
@@ -141,7 +145,7 @@ export const API_ENDPOINTS = {
     DATA: '/market-data',
     TRENDS: '/market-data/trends',
     ANALYSIS: '/market-data/analysis',
-    PREDICTIONS: '/market-data/predictions'
+    PREDICTIONS: '/market-data/predictions',
   },
 
   // 投資相關
@@ -152,7 +156,7 @@ export const API_ENDPOINTS = {
     UPDATE: (id: string) => `/investments/${id}`,
     DELETE: (id: string) => `/investments/${id}`,
     PORTFOLIO: '/investments/portfolio',
-    ANALYTICS: '/investments/analytics'
+    ANALYTICS: '/investments/analytics',
   },
 
   // AI相關
@@ -174,7 +178,7 @@ export const API_ENDPOINTS = {
     ENHANCED_PRICE_PREDICTION: '/ai/enhanced-price-prediction',
     ENHANCED_STATS: '/ai/enhanced-stats',
     UPDATE_MODEL: '/ai/update-model',
-    COMPREHENSIVE_ANALYSIS: '/ai/comprehensive-analysis'
+    COMPREHENSIVE_ANALYSIS: '/ai/comprehensive-analysis',
   },
 
   // 防偽判斷相關
@@ -187,7 +191,7 @@ export const API_ENDPOINTS = {
     HOLOGRAM: '/anti-counterfeit/hologram',
     DATABASE: '/anti-counterfeit/database',
     ALERT: '/anti-counterfeit/alert',
-    REPORT: '/anti-counterfeit/report'
+    REPORT: '/anti-counterfeit/report',
   },
 
   // 模擬鑑定相關
@@ -199,7 +203,7 @@ export const API_ENDPOINTS = {
     SURFACE: '/grading/surface',
     VALUE: '/grading/value',
     REPORT: '/grading/report',
-    SHARE: '/grading/share'
+    SHARE: '/grading/share',
   },
 
   // 會員相關
@@ -209,7 +213,7 @@ export const API_ENDPOINTS = {
     CANCEL: '/membership/cancel',
     UPGRADE: '/membership/upgrade',
     USAGE: '/membership/usage',
-    BILLING: '/membership/billing'
+    BILLING: '/membership/billing',
   },
 
   // 設置相關
@@ -219,7 +223,7 @@ export const API_ENDPOINTS = {
     NOTIFICATIONS: '/settings/notifications',
     SECURITY: '/settings/security',
     EXPORT: '/settings/export',
-    DELETE_ACCOUNT: '/settings/delete-account'
+    DELETE_ACCOUNT: '/settings/delete-account',
   },
 
   // 掃描歷史相關
@@ -236,7 +240,7 @@ export const API_ENDPOINTS = {
     EXPORT: '/scan-history/export',
     SEARCH: '/scan-history/search',
     RECOMMENDED_TAGS: '/scan-history/recommended-tags',
-    CLEANUP: '/scan-history/cleanup'
+    CLEANUP: '/scan-history/cleanup',
   },
 
   // 價格數據相關
@@ -247,7 +251,7 @@ export const API_ENDPOINTS = {
     SCRAPE_PRICES: '/price-data/scrape-prices',
     SCRAPE_GRADING: '/price-data/scrape-grading',
     UPDATE_CACHE: '/price-data/update-cache',
-    ANALYTICS: '/price-data/analytics'
+    ANALYTICS: '/price-data/analytics',
   },
 
   // 分享驗證相關
@@ -255,7 +259,7 @@ export const API_ENDPOINTS = {
     LOOKUP: '/share-verification/lookup',
     VALIDATE: '/share-verification/validate',
     STATS: '/share-verification/stats',
-    DELETE: '/share-verification/delete'
+    DELETE: '/share-verification/delete',
   },
 
   // 預測相關
@@ -265,7 +269,7 @@ export const API_ENDPOINTS = {
     BATCH: '/predictions/batch',
     MODELS: '/predictions/models',
     STATISTICS: '/predictions/statistics',
-    DELETE: '/predictions'
+    DELETE: '/predictions',
   },
 
   // 增強預測相關
@@ -275,7 +279,7 @@ export const API_ENDPOINTS = {
     TECHNICAL_ANALYSIS: '/enhanced-predictions/technical-analysis',
     ACCURACY_ASSESSMENT: '/enhanced-predictions/accuracy-assessment',
     PERFORMANCE_STATS: '/enhanced-predictions/performance-stats',
-    ENHANCED_MODELS: '/enhanced-predictions/enhanced-models'
+    ENHANCED_MODELS: '/enhanced-predictions/enhanced-models',
   },
 
   // 模擬鑑定相關
@@ -283,8 +287,40 @@ export const API_ENDPOINTS = {
     GET: '/grading',
     USER_REPORTS: '/grading/user',
     SEARCH: '/grading/search',
-    SHARE: '/grading/share'
-  }
+    SHARE: '/grading/share',
+  },
+
+  // 假卡回報相關
+  FAKE_CARD: {
+    SUBMIT: '/fake-card/submit',
+    USER_SUBMISSIONS: '/fake-card/user-submissions',
+    DATABASE: '/fake-card/database',
+    REWARDS: '/fake-card/rewards',
+    REVIEW: (id: string) => `/fake-card/${id}/review`,
+    STATS: '/fake-card/stats',
+  },
+
+  // 社區合作相關
+  COMMUNITY: {
+    APPLY_PARTNERSHIP: '/community/apply',
+    PARTNERS: '/community/partners',
+    CREATE_PROJECT: '/community/projects',
+    PROJECTS: '/community/projects',
+    UPDATE_PROJECT_PROGRESS: (id: string) => `/community/projects/${id}/progress`,
+    COLLABORATION_STATS: '/community/stats',
+  },
+
+  // 公開數據集相關
+  DATASET: {
+    LIST: '/dataset/list',
+    INTEGRATE: (id: string) => `/dataset/integrate/${id}`,
+    SYNC: (id: string) => `/dataset/sync/${id}`,
+    STATS: '/dataset/stats',
+    VALIDATE: (id: string) => `/dataset/validate/${id}`,
+  },
 };
+
+// 為了向後兼容，同時導出 API_CONFIG
+export const API_CONFIG = API_ENDPOINTS;
 
 export { api };

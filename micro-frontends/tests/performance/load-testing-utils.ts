@@ -103,7 +103,9 @@ export class LoadTestingUtils {
    * 執行負載測試
    */
   async runLoadTest(): Promise<LoadTestResult> {
-    console.log(`🚀 開始負載測試: ${this.config.concurrentUsers} 個並發用戶，持續 ${this.config.duration / 1000} 秒`);
+    console.log(
+      `🚀 開始負載測試: ${this.config.concurrentUsers} 個並發用戶，持續 ${this.config.duration / 1000} 秒`
+    );
 
     // 創建用戶
     const users = await this.createUsers(this.config.concurrentUsers);
@@ -124,14 +126,18 @@ export class LoadTestingUtils {
   /**
    * 執行漸進式負載測試
    */
-  async runProgressiveLoadTest(stages: { users: number; duration: number }[]): Promise<LoadTestResult> {
+  async runProgressiveLoadTest(
+    stages: { users: number; duration: number }[]
+  ): Promise<LoadTestResult> {
     console.log(`🚀 開始漸進式負載測試: ${stages.length} 個階段`);
 
     const allStages: LoadTestStage[] = [];
 
     for (let i = 0; i < stages.length; i++) {
       const stage = stages[i];
-      console.log(`📊 階段 ${i + 1}: ${stage.users} 個用戶，持續 ${stage.duration / 1000} 秒`);
+      console.log(
+        `📊 階段 ${i + 1}: ${stage.users} 個用戶，持續 ${stage.duration / 1000} 秒`
+      );
 
       // 創建階段用戶
       const users = await this.createUsers(stage.users);
@@ -150,8 +156,8 @@ export class LoadTestingUtils {
           requests: stageResult.totalRequests,
           errors: stageResult.errors,
           averageResponseTime: stageResult.averageResponseTime,
-          errorRate: stageResult.errorRate
-        }
+          errorRate: stageResult.errorRate,
+        },
       });
 
       // 清理用戶
@@ -159,7 +165,7 @@ export class LoadTestingUtils {
 
       // 階段間休息
       if (i < stages.length - 1) {
-        await new Promise(resolve => setTimeout(resolve, 5000));
+        await new Promise((resolve) => setTimeout(resolve, 5000));
       }
     }
 
@@ -167,15 +173,22 @@ export class LoadTestingUtils {
       summary: this.calculateSummary(allStages),
       stages: allStages,
       alerts: this.alerts,
-      recommendations: this.generateRecommendations(allStages)
+      recommendations: this.generateRecommendations(allStages),
     };
   }
 
   /**
    * 執行尖峰負載測試
    */
-  async runSpikeLoadTest(baseUsers: number, spikeUsers: number, spikeDuration: number, recoveryDuration: number): Promise<LoadTestResult> {
-    console.log(`🚀 開始尖峰負載測試: 基礎 ${baseUsers} 用戶，尖峰 ${spikeUsers} 用戶`);
+  async runSpikeLoadTest(
+    baseUsers: number,
+    spikeUsers: number,
+    spikeDuration: number,
+    recoveryDuration: number
+  ): Promise<LoadTestResult> {
+    console.log(
+      `🚀 開始尖峰負載測試: 基礎 ${baseUsers} 用戶，尖峰 ${spikeUsers} 用戶`
+    );
 
     // 基礎負載階段
     console.log('📊 基礎負載階段...');
@@ -183,7 +196,7 @@ export class LoadTestingUtils {
     const basePromise = this.executeLoadTest(baseUserPages);
 
     // 等待基礎負載穩定
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise((resolve) => setTimeout(resolve, 10000));
 
     // 尖峰負載階段
     console.log('📊 尖峰負載階段...');
@@ -234,7 +247,11 @@ export class LoadTestingUtils {
   /**
    * 執行階段測試
    */
-  private async executeStageTest(users: Page[], duration: number, metrics: LoadTestMetrics): Promise<void> {
+  private async executeStageTest(
+    users: Page[],
+    duration: number,
+    metrics: LoadTestMetrics
+  ): Promise<void> {
     const userPromises = users.map(async (page, index) => {
       const userId = `user-${index}`;
       return this.simulateUserWorkload(page, userId, duration, metrics);
@@ -247,7 +264,12 @@ export class LoadTestingUtils {
   /**
    * 模擬用戶工作負載
    */
-  private async simulateUserWorkload(page: Page, userId: string, duration?: number, customMetrics?: LoadTestMetrics): Promise<void> {
+  private async simulateUserWorkload(
+    page: Page,
+    userId: string,
+    duration?: number,
+    customMetrics?: LoadTestMetrics
+  ): Promise<void> {
     const testDuration = duration || this.config.duration;
     const metrics = customMetrics || this.metrics;
     const startTime = Date.now();
@@ -267,8 +289,7 @@ export class LoadTestingUtils {
 
         // 思考時間
         const thinkTime = this.getRandomThinkTime();
-        await new Promise(resolve => setTimeout(resolve, thinkTime));
-
+        await new Promise((resolve) => setTimeout(resolve, thinkTime));
       } catch (error) {
         metrics.addError();
         console.warn(`用戶 ${userId} 操作失敗:`, error.message);
@@ -282,20 +303,22 @@ export class LoadTestingUtils {
    * 執行隨機用戶操作
    */
   private async executeRandomUserAction(page: Page): Promise<void> {
-    const actions = this.config.userBehavior?.actions || this.getDefaultActions();
+    const actions =
+      this.config.userBehavior?.actions || this.getDefaultActions();
     const action = this.selectRandomAction(actions);
 
     try {
       await page.click(action.selector, { timeout: action.timeout || 5000 });
 
       if (action.validation) {
-        await page.waitForSelector(action.validation, { timeout: action.timeout || 5000 });
+        await page.waitForSelector(action.validation, {
+          timeout: action.timeout || 5000,
+        });
       }
 
       // 操作持續時間
       const duration = this.getRandomDuration(action.duration);
-      await new Promise(resolve => setTimeout(resolve, duration));
-
+      await new Promise((resolve) => setTimeout(resolve, duration));
     } catch (error) {
       throw new Error(`操作 ${action.name} 失敗: ${error.message}`);
     }
@@ -343,34 +366,34 @@ export class LoadTestingUtils {
         weight: 0.3,
         duration: [1000, 3000],
         selector: '[data-testid="card-management-nav"]',
-        validation: '[data-testid="card-list"]'
+        validation: '[data-testid="card-list"]',
       },
       {
         name: '查看市場數據',
         weight: 0.25,
         duration: [1500, 4000],
         selector: '[data-testid="market-analysis-nav"]',
-        validation: '[data-testid="market-dashboard"]'
+        validation: '[data-testid="market-dashboard"]',
       },
       {
         name: 'AI 掃描',
         weight: 0.2,
         duration: [3000, 8000],
         selector: '[data-testid="ai-ecosystem-nav"]',
-        validation: '[data-testid="ai-dashboard"]'
+        validation: '[data-testid="ai-dashboard"]',
       },
       {
         name: '搜索卡片',
         weight: 0.15,
         duration: [500, 1500],
-        selector: '[data-testid="search-input"]'
+        selector: '[data-testid="search-input"]',
       },
       {
         name: '查看圖表',
         weight: 0.1,
         duration: [2000, 5000],
-        selector: '[data-testid="price-chart"]'
-      }
+        selector: '[data-testid="price-chart"]',
+      },
     ];
   }
 
@@ -423,7 +446,7 @@ export class LoadTestingUtils {
         value: results.averageResponseTime,
         threshold: thresholds.responseTime,
         timestamp: Date.now(),
-        message: `平均響應時間 ${results.averageResponseTime.toFixed(2)}ms 超過閾值 ${thresholds.responseTime}ms`
+        message: `平均響應時間 ${results.averageResponseTime.toFixed(2)}ms 超過閾值 ${thresholds.responseTime}ms`,
       });
     }
 
@@ -435,7 +458,7 @@ export class LoadTestingUtils {
         value: results.errorRate,
         threshold: thresholds.errorRate,
         timestamp: Date.now(),
-        message: `錯誤率 ${(results.errorRate * 100).toFixed(2)}% 超過閾值 ${(thresholds.errorRate * 100).toFixed(2)}%`
+        message: `錯誤率 ${(results.errorRate * 100).toFixed(2)}% 超過閾值 ${(thresholds.errorRate * 100).toFixed(2)}%`,
       });
     }
   }
@@ -457,11 +480,11 @@ export class LoadTestingUtils {
         p95ResponseTime: results.p95ResponseTime,
         p99ResponseTime: results.p99ResponseTime,
         errorRate: results.errorRate,
-        requestsPerSecond: results.requestsPerSecond
+        requestsPerSecond: results.requestsPerSecond,
       },
       stages: [],
       alerts: this.alerts,
-      recommendations: this.generateRecommendations([])
+      recommendations: this.generateRecommendations([]),
     };
   }
 
@@ -469,21 +492,34 @@ export class LoadTestingUtils {
    * 計算摘要
    */
   private calculateSummary(stages: LoadTestStage[]): LoadTestResult['summary'] {
-    const totalRequests = stages.reduce((sum, stage) => sum + stage.metrics.requests, 0);
-    const totalErrors = stages.reduce((sum, stage) => sum + stage.metrics.errors, 0);
-    const totalDuration = stages.reduce((sum, stage) => sum + stage.duration, 0);
+    const totalRequests = stages.reduce(
+      (sum, stage) => sum + stage.metrics.requests,
+      0
+    );
+    const totalErrors = stages.reduce(
+      (sum, stage) => sum + stage.metrics.errors,
+      0
+    );
+    const totalDuration = stages.reduce(
+      (sum, stage) => sum + stage.duration,
+      0
+    );
 
     return {
-      totalUsers: Math.max(...stages.map(s => s.users)),
+      totalUsers: Math.max(...stages.map((s) => s.users)),
       totalRequests,
       totalErrors,
       duration: totalDuration,
-      averageResponseTime: stages.reduce((sum, stage) => sum + stage.metrics.averageResponseTime, 0) / stages.length,
+      averageResponseTime:
+        stages.reduce(
+          (sum, stage) => sum + stage.metrics.averageResponseTime,
+          0
+        ) / stages.length,
       medianResponseTime: 0, // 需要從原始數據計算
       p95ResponseTime: 0, // 需要從原始數據計算
       p99ResponseTime: 0, // 需要從原始數據計算
       errorRate: totalRequests > 0 ? totalErrors / totalRequests : 0,
-      requestsPerSecond: totalRequests / (totalDuration / 1000)
+      requestsPerSecond: totalRequests / (totalDuration / 1000),
     };
   }
 
@@ -503,7 +539,9 @@ export class LoadTestingUtils {
     }
 
     if (results.requestsPerSecond < 1) {
-      recommendations.push('提高吞吐量：優化服務器配置、使用負載均衡或增加服務器資源');
+      recommendations.push(
+        '提高吞吐量：優化服務器配置、使用負載均衡或增加服務器資源'
+      );
     }
 
     if (this.alerts.length > 0) {
@@ -545,11 +583,14 @@ export class LoadTestingUtils {
   /**
    * 獲取網絡使用
    */
-  private async getNetworkUsage(): Promise<{ bytesIn: number; bytesOut: number }> {
+  private async getNetworkUsage(): Promise<{
+    bytesIn: number;
+    bytesOut: number;
+  }> {
     // 這裡可以實現實際的網絡監控
     return {
       bytesIn: Math.random() * 10 * 1024 * 1024, // 0-10MB
-      bytesOut: Math.random() * 5 * 1024 * 1024   // 0-5MB
+      bytesOut: Math.random() * 5 * 1024 * 1024, // 0-5MB
     };
   }
 }
@@ -566,8 +607,17 @@ class LoadTestMetrics {
     endTime?: number;
     memorySnapshots: { timestamp: number; memory: number }[];
     cpuSnapshots: { timestamp: number; cpu: number }[];
-    networkSnapshots: { timestamp: number; bytesIn: number; bytesOut: number }[];
-    userSessions: { userId: string; startTime: number; endTime?: number; actions: number }[];
+    networkSnapshots: {
+      timestamp: number;
+      bytesIn: number;
+      bytesOut: number;
+    }[];
+    userSessions: {
+      userId: string;
+      startTime: number;
+      endTime?: number;
+      actions: number;
+    }[];
   };
 
   constructor() {
@@ -579,7 +629,7 @@ class LoadTestMetrics {
       memorySnapshots: [],
       cpuSnapshots: [],
       networkSnapshots: [],
-      userSessions: []
+      userSessions: [],
     };
   }
 
@@ -596,14 +646,14 @@ class LoadTestMetrics {
   addMemorySnapshot(memory: number) {
     this.metrics.memorySnapshots.push({
       timestamp: Date.now(),
-      memory
+      memory,
     });
   }
 
   addCpuSnapshot(cpu: number) {
     this.metrics.cpuSnapshots.push({
       timestamp: Date.now(),
-      cpu
+      cpu,
     });
   }
 
@@ -611,7 +661,7 @@ class LoadTestMetrics {
     this.metrics.networkSnapshots.push({
       timestamp: Date.now(),
       bytesIn,
-      bytesOut
+      bytesOut,
     });
   }
 
@@ -619,19 +669,19 @@ class LoadTestMetrics {
     this.metrics.userSessions.push({
       userId,
       startTime: Date.now(),
-      actions: 0
+      actions: 0,
     });
   }
 
   endUserSession(userId: string) {
-    const session = this.metrics.userSessions.find(s => s.userId === userId);
+    const session = this.metrics.userSessions.find((s) => s.userId === userId);
     if (session) {
       session.endTime = Date.now();
     }
   }
 
   incrementUserActions(userId: string) {
-    const session = this.metrics.userSessions.find(s => s.userId === userId);
+    const session = this.metrics.userSessions.find((s) => s.userId === userId);
     if (session) {
       session.actions++;
     }
@@ -642,7 +692,8 @@ class LoadTestMetrics {
   }
 
   getResults() {
-    const { responseTimes, errors, totalRequests, startTime, endTime } = this.metrics;
+    const { responseTimes, errors, totalRequests, startTime, endTime } =
+      this.metrics;
     const duration = endTime ? endTime - startTime : 0;
 
     if (responseTimes.length === 0) {
@@ -655,7 +706,7 @@ class LoadTestMetrics {
         requestsPerSecond: duration > 0 ? totalRequests / (duration / 1000) : 0,
         totalRequests,
         errors,
-        duration
+        duration,
       };
     }
 
@@ -664,7 +715,8 @@ class LoadTestMetrics {
     const p99Index = Math.floor(sortedTimes.length * 0.99);
 
     return {
-      averageResponseTime: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+      averageResponseTime:
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
       medianResponseTime: sortedTimes[Math.floor(sortedTimes.length / 2)],
       p95ResponseTime: sortedTimes[p95Index],
       p99ResponseTime: sortedTimes[p99Index],
@@ -672,7 +724,7 @@ class LoadTestMetrics {
       requestsPerSecond: totalRequests / (duration / 1000),
       totalRequests,
       errors,
-      duration
+      duration,
     };
   }
 }

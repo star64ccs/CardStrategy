@@ -7,6 +7,7 @@
 ## 功能特性
 
 ### 1. 整體質量指標
+
 - **完整性 (Completeness)**: 數據完整程度評估
 - **準確性 (Accuracy)**: 數據準確性評估
 - **一致性 (Consistency)**: 數據格式和標準一致性
@@ -14,35 +15,41 @@
 - **整體評分**: 綜合質量分數
 
 ### 2. 質量分佈分析
+
 - 優秀 (≥90%): 高質量數據
 - 良好 (70-89%): 良好質量數據
 - 一般 (50-69%): 一般質量數據
 - 較差 (<50%): 低質量數據
 
 ### 3. 趨勢分析
+
 - 時間序列圖表顯示質量變化趨勢
 - 支持多種數據類型趨勢對比
 - 可自定義時間範圍
 
 ### 4. 數據來源分佈
+
 - 用戶上傳數據統計
 - 官方API數據統計
 - 第三方平台數據統計
 - 用戶糾正數據統計
 
 ### 5. 標註者績效分析
+
 - 標註者工作量統計
 - 準確率分析
 - 處理時間分析
 - 審核通過率
 
 ### 6. 問題監控
+
 - 實時問題檢測
 - 問題嚴重程度分類
 - 問題歷史記錄
 - 自動警報機制
 
 ### 7. 改進建議
+
 - 基於數據分析的自動建議
 - 優先級分類
 - 具體改進行動建議
@@ -50,16 +57,19 @@
 ## API 端點
 
 ### 主要儀表板數據
+
 ```http
 GET /api/data-quality/dashboard
 ```
 
 **查詢參數:**
+
 - `startDate`: 開始日期 (YYYY-MM-DD)
 - `endDate`: 結束日期 (YYYY-MM-DD)
 - `dataTypes`: 數據類型篩選 (逗號分隔)
 
 **響應格式:**
+
 ```json
 {
   "success": true,
@@ -78,27 +88,27 @@ GET /api/data-quality/dashboard
         "training": {
           "completeness": [0.85, 0.87, 0.89],
           "accuracy": [0.92, 0.93, 0.94],
-          "consistency": [0.78, 0.80, 0.82],
-          "timeliness": [0.88, 0.89, 0.90],
+          "consistency": [0.78, 0.8, 0.82],
+          "timeliness": [0.88, 0.89, 0.9],
           "overallScore": [0.86, 0.87, 0.89]
         }
       }
     },
     "sourceBreakdown": {
       "sourceBreakdown": [
-        {"source": "user_upload", "count": 45, "percentage": 30},
-        {"source": "official_api", "count": 60, "percentage": 40},
-        {"source": "third_party", "count": 30, "percentage": 20},
-        {"source": "user_correction", "count": 15, "percentage": 10}
+        { "source": "user_upload", "count": 45, "percentage": 30 },
+        { "source": "official_api", "count": 60, "percentage": 40 },
+        { "source": "third_party", "count": 30, "percentage": 20 },
+        { "source": "user_correction", "count": 15, "percentage": 10 }
       ],
       "totalRecords": 150
     },
     "qualityDistribution": {
       "overallDistribution": {
-        "excellent": {"count": 60, "percentage": 40},
-        "good": {"count": 45, "percentage": 30},
-        "fair": {"count": 30, "percentage": 20},
-        "poor": {"count": 15, "percentage": 10}
+        "excellent": { "count": 60, "percentage": 40 },
+        "good": { "count": 45, "percentage": 30 },
+        "fair": { "count": 30, "percentage": 20 },
+        "poor": { "count": 15, "percentage": 10 }
       },
       "totalAssessments": 150
     },
@@ -144,11 +154,13 @@ GET /api/data-quality/dashboard
 ```
 
 ### 實時警報
+
 ```http
 GET /api/data-quality/alerts
 ```
 
 **響應格式:**
+
 ```json
 {
   "success": true,
@@ -164,36 +176,43 @@ GET /api/data-quality/alerts
 ```
 
 ### 整體指標
+
 ```http
 GET /api/data-quality/overall-metrics
 ```
 
 ### 趨勢數據
+
 ```http
 GET /api/data-quality/trends
 ```
 
 ### 來源分佈
+
 ```http
 GET /api/data-quality/source-breakdown
 ```
 
 ### 質量分佈
+
 ```http
 GET /api/data-quality/quality-distribution
 ```
 
 ### 標註者績效
+
 ```http
 GET /api/data-quality/annotator-performance
 ```
 
 ### 最近問題
+
 ```http
 GET /api/data-quality/recent-issues
 ```
 
 ### 改進建議
+
 ```http
 GET /api/data-quality/improvement-suggestions
 ```
@@ -201,6 +220,7 @@ GET /api/data-quality/improvement-suggestions
 ## 前端使用
 
 ### 基本用法
+
 ```typescript
 import { dataQualityService } from '@/services/dataQualityService';
 
@@ -210,9 +230,9 @@ const fetchDashboardData = async () => {
     const response = await dataQualityService.getDashboardData({
       startDate: '2024-12-15',
       endDate: '2024-12-17',
-      dataTypes: ['training', 'annotation', 'validation']
+      dataTypes: ['training', 'annotation', 'validation'],
     });
-    
+
     const dashboardData = response.data;
     // 處理數據...
   } catch (error) {
@@ -233,6 +253,7 @@ const fetchAlerts = async () => {
 ```
 
 ### 圖表配置
+
 ```typescript
 const chartConfig = {
   backgroundColor: theme.colors.background,
@@ -255,6 +276,7 @@ const chartConfig = {
 ## 數據可視化
 
 ### 1. 餅圖 - 質量分佈
+
 ```typescript
 <PieChart
   data={[
@@ -282,6 +304,7 @@ const chartConfig = {
 ```
 
 ### 2. 折線圖 - 趨勢分析
+
 ```typescript
 <LineChart
   data={{
@@ -303,6 +326,7 @@ const chartConfig = {
 ```
 
 ### 3. 柱狀圖 - 來源分佈
+
 ```typescript
 <BarChart
   data={{
@@ -323,16 +347,19 @@ const chartConfig = {
 ## 性能優化
 
 ### 1. 數據緩存
+
 - 實現儀表板數據緩存機制
 - 設置合理的緩存過期時間
 - 支持強制刷新功能
 
 ### 2. 分頁加載
+
 - 大量數據分頁顯示
 - 虛擬滾動優化
 - 懶加載圖表組件
 
 ### 3. 實時更新
+
 - WebSocket 連接實時數據更新
 - 定期輪詢機制
 - 增量數據更新
@@ -340,18 +367,21 @@ const chartConfig = {
 ## 監控指標
 
 ### 1. 性能指標
+
 - API 響應時間
 - 數據處理時間
 - 前端渲染時間
 - 內存使用情況
 
 ### 2. 業務指標
+
 - 數據質量分數趨勢
 - 問題發現率
 - 改進建議採納率
 - 用戶使用頻率
 
 ### 3. 系統指標
+
 - 服務器負載
 - 數據庫查詢性能
 - 緩存命中率
@@ -360,6 +390,7 @@ const chartConfig = {
 ## 錯誤處理
 
 ### 1. API 錯誤
+
 ```typescript
 try {
   const response = await dataQualityService.getDashboardData();
@@ -379,16 +410,20 @@ try {
 ```
 
 ### 2. 數據驗證
+
 ```typescript
 const validateDashboardData = (data: DashboardData) => {
   if (!data.overallMetrics || !data.trendData) {
     throw new Error('Invalid dashboard data structure');
   }
-  
-  if (data.overallMetrics.overallScore < 0 || data.overallMetrics.overallScore > 1) {
+
+  if (
+    data.overallMetrics.overallScore < 0 ||
+    data.overallMetrics.overallScore > 1
+  ) {
     throw new Error('Invalid overall score range');
   }
-  
+
   return true;
 };
 ```
@@ -396,6 +431,7 @@ const validateDashboardData = (data: DashboardData) => {
 ## 測試
 
 ### 1. 單元測試
+
 ```javascript
 describe('Data Quality Dashboard', () => {
   it('should return comprehensive dashboard data', async () => {
@@ -412,12 +448,14 @@ describe('Data Quality Dashboard', () => {
 ```
 
 ### 2. 集成測試
+
 - API 端點測試
 - 數據庫查詢測試
 - 認證授權測試
 - 錯誤處理測試
 
 ### 3. 端到端測試
+
 - 用戶界面測試
 - 數據流測試
 - 性能測試
@@ -426,6 +464,7 @@ describe('Data Quality Dashboard', () => {
 ## 部署
 
 ### 1. 環境配置
+
 ```bash
 # 生產環境變量
 DATA_QUALITY_DASHBOARD_ENABLED=true
@@ -435,6 +474,7 @@ DASHBOARD_ALERT_THRESHOLD=0.6
 ```
 
 ### 2. 數據庫遷移
+
 ```bash
 # 運行數據庫遷移
 npm run migrate
@@ -444,6 +484,7 @@ npm run seed
 ```
 
 ### 3. 服務啟動
+
 ```bash
 # 啟動後端服務
 npm start
@@ -455,17 +496,20 @@ npm run dev
 ## 維護
 
 ### 1. 日誌監控
+
 - API 訪問日誌
 - 錯誤日誌
 - 性能日誌
 - 用戶行為日誌
 
 ### 2. 數據備份
+
 - 定期備份數據庫
 - 配置文件備份
 - 日誌文件備份
 
 ### 3. 版本更新
+
 - 功能更新
 - 性能優化
 - 安全修補
@@ -474,18 +518,21 @@ npm run dev
 ## 未來改進
 
 ### 1. 功能擴展
+
 - 自定義儀表板
 - 高級篩選器
 - 數據導出功能
 - 報表生成
 
 ### 2. 智能分析
+
 - 機器學習預測
 - 異常檢測
 - 自動建議優化
 - 智能警報
 
 ### 3. 用戶體驗
+
 - 響應式設計
 - 深色模式
 - 多語言支持
@@ -494,12 +541,14 @@ npm run dev
 ## 版本歷史
 
 ### v1.0.0 (2024-12-19)
+
 - 初始版本發布
 - 基本儀表板功能
 - 核心 API 端點
 - 基礎數據可視化
 
 ### 計劃功能
+
 - 自定義儀表板配置
 - 高級分析工具
 - 移動端優化

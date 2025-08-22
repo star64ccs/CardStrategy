@@ -1,12 +1,15 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { incrementalSyncManager, SyncItem } from '@/utils/incrementalSyncManager';
+import {
+  incrementalSyncManager,
+  SyncItem,
+} from '@/utils/incrementalSyncManager';
 import {
   setSyncStatus,
   setLastSyncTime,
   setPendingChangesCount,
   setSyncError,
-  setOnlineStatus
+  setOnlineStatus,
 } from '@/store/slices/syncSlice';
 import { RootState } from '@/store';
 
@@ -23,16 +26,22 @@ export const useIncrementalSync = () => {
   }, [dispatch]);
 
   // 添加變更到同步隊列
-  const addChange = useCallback((item: Omit<SyncItem, 'timestamp' | 'version'>) => {
-    incrementalSyncManager.addChange(item);
-    updateStoreState();
-  }, [updateStoreState]);
+  const addChange = useCallback(
+    (item: Omit<SyncItem, 'timestamp' | 'version'>) => {
+      incrementalSyncManager.addChange(item);
+      updateStoreState();
+    },
+    [updateStoreState]
+  );
 
   // 批量添加變更
-  const addBatchChanges = useCallback((items: Omit<SyncItem, 'timestamp' | 'version'>[]) => {
-    incrementalSyncManager.addBatchChanges(items);
-    updateStoreState();
-  }, [updateStoreState]);
+  const addBatchChanges = useCallback(
+    (items: Omit<SyncItem, 'timestamp' | 'version'>[]) => {
+      incrementalSyncManager.addBatchChanges(items);
+      updateStoreState();
+    },
+    [updateStoreState]
+  );
 
   // 強制同步
   const forceSync = useCallback(async () => {
@@ -41,7 +50,9 @@ export const useIncrementalSync = () => {
       await incrementalSyncManager.forceSync();
       updateStoreState();
     } catch (error) {
-      dispatch(setSyncError(error instanceof Error ? error.message : '同步失敗'));
+      dispatch(
+        setSyncError(error instanceof Error ? error.message : '同步失敗')
+      );
     }
   }, [dispatch, updateStoreState]);
 
@@ -115,6 +126,6 @@ export const useIncrementalSync = () => {
     isSyncing: syncState.status === 'syncing',
     hasError: syncState.status === 'error',
     isOffline: syncState.status === 'offline',
-    hasPendingChanges: syncState.pendingChangesCount > 0
+    hasPendingChanges: syncState.pendingChangesCount > 0,
   };
 };

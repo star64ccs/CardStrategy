@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 describe('Simple Test', () => {
   it('應該通過基本測試', () => {
     expect(1 + 1).toBe(2);

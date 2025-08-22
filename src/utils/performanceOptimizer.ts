@@ -27,7 +27,7 @@ export class PerformanceOptimizer {
     for (let i = 0; i < tasks.length; i += batchSize) {
       const batch = tasks.slice(i, i + batchSize);
       setTimeout(() => {
-        batch.forEach(task => task());
+        batch.forEach((task) => task());
       }, i * 10); // 每批間隔 10ms
     }
   }
@@ -83,7 +83,10 @@ export class PerformanceOptimizer {
   }
 
   // 異步效能測量
-  async measureAsyncPerformance<T>(name: string, fn: () => Promise<T>): Promise<T> {
+  async measureAsyncPerformance<T>(
+    name: string,
+    fn: () => Promise<T>
+  ): Promise<T> {
     const start = performance.now();
     try {
       const result = await fn();
@@ -172,7 +175,7 @@ export class PerformanceOptimizer {
 
   // 停止監控
   stopMonitoring(): void {
-    this.observers.forEach(observer => {
+    this.observers.forEach((observer) => {
       observer.disconnect();
     });
     this.observers.clear();
@@ -196,16 +199,21 @@ export class PerformanceOptimizer {
 
         // 生成建議
         if (stats.avg > 100) {
-          recommendations.push(`考慮優化 ${name} 的執行時間 (平均 ${stats.avg.toFixed(2)}ms)`);
+          recommendations.push(
+            `考慮優化 ${name} 的執行時間 (平均 ${stats.avg.toFixed(2)}ms)`
+          );
         }
         if (stats.p95 > 500) {
-          recommendations.push(`${name} 的 95% 執行時間過長 (${stats.p95.toFixed(2)}ms)`);
+          recommendations.push(
+            `${name} 的 95% 執行時間過長 (${stats.p95.toFixed(2)}ms)`
+          );
         }
       }
     }
 
     // 記憶體建議
-    if (memory.used > 100 * 1024 * 1024) { // 100MB
+    if (memory.used > 100 * 1024 * 1024) {
+      // 100MB
       recommendations.push('記憶體使用量較高，考慮清理不必要的緩存');
     }
 
@@ -231,13 +239,19 @@ export const usePerformanceOptimization = () => {
 
 // 效能優化裝飾器
 export function measurePerformance(name?: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const method = descriptor.value;
     const methodName = name || `${target.constructor.name}.${propertyName}`;
 
     descriptor.value = function (...args: any[]) {
       const optimizer = PerformanceOptimizer.getInstance();
-      return optimizer.measureAsyncPerformance(methodName, () => method.apply(this, args));
+      return optimizer.measureAsyncPerformance(methodName, () =>
+        method.apply(this, args)
+      );
     };
   };
 }

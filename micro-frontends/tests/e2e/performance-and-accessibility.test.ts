@@ -1,5 +1,8 @@
 import { test, expect, Page } from '@playwright/test';
-import { setupTestEnvironment, cleanupTestEnvironment } from '../setup/e2e-setup';
+import {
+  setupTestEnvironment,
+  cleanupTestEnvironment,
+} from '../setup/e2e-setup';
 
 describe('性能和無障礙性端到端測試', () => {
   let page: Page;
@@ -24,13 +27,22 @@ describe('性能和無障礙性端到端測試', () => {
   test('頁面加載性能測試', async () => {
     // 1. 測量初始頁面加載時間
     const loadMetrics = await page.evaluate(() => {
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       return {
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+        domContentLoaded:
+          navigation.domContentLoadedEventEnd -
+          navigation.domContentLoadedEventStart,
         loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
-        firstContentfulPaint: performance.getEntriesByName('first-contentful-paint')[0]?.startTime || 0,
-        largestContentfulPaint: performance.getEntriesByName('largest-contentful-paint')[0]?.startTime || 0,
-        firstInputDelay: performance.getEntriesByName('first-input-delay')[0]?.startTime || 0
+        firstContentfulPaint:
+          performance.getEntriesByName('first-contentful-paint')[0]
+            ?.startTime || 0,
+        largestContentfulPaint:
+          performance.getEntriesByName('largest-contentful-paint')[0]
+            ?.startTime || 0,
+        firstInputDelay:
+          performance.getEntriesByName('first-input-delay')[0]?.startTime || 0,
       };
     });
 
@@ -70,7 +82,7 @@ describe('性能和無障礙性端到端測試', () => {
     }
 
     // 3. 驗證模組加載性能
-    Object.values(moduleLoadTimes).forEach(loadTime => {
+    Object.values(moduleLoadTimes).forEach((loadTime) => {
       expect(loadTime).toBeLessThan(2000);
     });
   });
@@ -110,7 +122,7 @@ describe('性能和無障礙性端到端測試', () => {
     const metrics = await page.evaluate(() => (window as any).apiMetrics || {});
 
     // 4. 驗證 API 響應時間
-    Object.values(metrics).forEach(responseTime => {
+    Object.values(metrics).forEach((responseTime) => {
       expect(responseTime).toBeLessThan(1000);
     });
   });
@@ -148,19 +160,19 @@ describe('性能和無障礙性端到端測試', () => {
     // 1. 檢查圖片是否使用 WebP 格式
     const imageFormats = await page.evaluate(() => {
       const images = document.querySelectorAll('img');
-      return Array.from(images).map(img => {
-        const {src} = (img as HTMLImageElement);
+      return Array.from(images).map((img) => {
+        const { src } = img as HTMLImageElement;
         return {
           src,
           format: src.split('.').pop(),
-          hasLazyLoading: (img as HTMLImageElement).loading === 'lazy'
+          hasLazyLoading: (img as HTMLImageElement).loading === 'lazy',
         };
       });
     });
 
     // 2. 驗證圖片優化
-    const webpImages = imageFormats.filter(img => img.format === 'webp');
-    const lazyLoadedImages = imageFormats.filter(img => img.hasLazyLoading);
+    const webpImages = imageFormats.filter((img) => img.format === 'webp');
+    const lazyLoadedImages = imageFormats.filter((img) => img.hasLazyLoading);
 
     expect(webpImages.length).toBeGreaterThan(0);
     expect(lazyLoadedImages.length).toBeGreaterThan(0);
@@ -171,10 +183,12 @@ describe('性能和無障礙性端到端測試', () => {
 
     const loadedImages = await page.evaluate(() => {
       const images = document.querySelectorAll('img[loading="lazy"]');
-      return Array.from(images).map(img => (img as HTMLImageElement).complete);
+      return Array.from(images).map(
+        (img) => (img as HTMLImageElement).complete
+      );
     });
 
-    expect(loadedImages.every(loaded => loaded)).toBe(true);
+    expect(loadedImages.every((loaded) => loaded)).toBe(true);
   });
 
   test('鍵盤導航無障礙性測試', async () => {
@@ -184,11 +198,13 @@ describe('性能和無障礙性端到端測試', () => {
 
     // 2. 測試所有可聚焦元素
     const focusableElements = await page.evaluate(() => {
-      const elements = document.querySelectorAll('button, input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
-      return Array.from(elements).map(el => ({
+      const elements = document.querySelectorAll(
+        'button, input, select, textarea, a[href], [tabindex]:not([tabindex="-1"])'
+      );
+      return Array.from(elements).map((el) => ({
         tagName: el.tagName,
         textContent: el.textContent?.trim(),
-        hasFocus: document.activeElement === el
+        hasFocus: document.activeElement === el,
       }));
     });
 
@@ -202,12 +218,14 @@ describe('性能和無障礙性端到端測試', () => {
   test('屏幕閱讀器無障礙性測試', async () => {
     // 1. 檢查 ARIA 標籤
     const ariaLabels = await page.evaluate(() => {
-      const elements = document.querySelectorAll('[aria-label], [aria-labelledby], [aria-describedby]');
-      return Array.from(elements).map(el => ({
+      const elements = document.querySelectorAll(
+        '[aria-label], [aria-labelledby], [aria-describedby]'
+      );
+      return Array.from(elements).map((el) => ({
         tagName: el.tagName,
         ariaLabel: el.getAttribute('aria-label'),
         ariaLabelledBy: el.getAttribute('aria-labelledby'),
-        ariaDescribedBy: el.getAttribute('aria-describedby')
+        ariaDescribedBy: el.getAttribute('aria-describedby'),
       }));
     });
 
@@ -215,8 +233,10 @@ describe('性能和無障礙性端到端測試', () => {
 
     // 2. 檢查語義化 HTML
     const semanticElements = await page.evaluate(() => {
-      const elements = document.querySelectorAll('nav, main, section, article, aside, header, footer');
-      return Array.from(elements).map(el => el.tagName);
+      const elements = document.querySelectorAll(
+        'nav, main, section, article, aside, header, footer'
+      );
+      return Array.from(elements).map((el) => el.tagName);
     });
 
     expect(semanticElements).toContain('nav');
@@ -224,11 +244,13 @@ describe('性能和無障礙性端到端測試', () => {
 
     // 3. 檢查顏色對比度
     const colorContrast = await page.evaluate(() => {
-      const textElements = document.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span, div');
-      return Array.from(textElements).some(el => {
+      const textElements = document.querySelectorAll(
+        'p, h1, h2, h3, h4, h5, h6, span, div'
+      );
+      return Array.from(textElements).some((el) => {
         const style = window.getComputedStyle(el);
-        const {backgroundColor} = style;
-        const {color} = style;
+        const { backgroundColor } = style;
+        const { color } = style;
         // 簡單的顏色對比度檢查
         return backgroundColor !== 'transparent' && color !== 'transparent';
       });
@@ -282,11 +304,13 @@ describe('性能和無障礙性端到端測試', () => {
 
   test('離線功能測試', async () => {
     // 1. 模擬離線狀態
-    await page.route('**/*', route => route.abort());
+    await page.route('**/*', (route) => route.abort());
 
     // 2. 測試離線功能
     await page.click('[data-testid="card-management-nav"]');
-    await expect(page.locator('[data-testid="offline-indicator"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="offline-indicator"]')
+    ).toBeVisible();
 
     // 3. 驗證緩存內容仍然可用
     await expect(page.locator('[data-testid="cached-content"]')).toBeVisible();
@@ -296,7 +320,9 @@ describe('性能和無障礙性端到端測試', () => {
 
     // 5. 驗證在線功能恢復
     await page.reload();
-    await expect(page.locator('[data-testid="online-indicator"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="online-indicator"]')
+    ).toBeVisible();
   });
 
   test('國際化和本地化測試', async () => {
@@ -305,7 +331,9 @@ describe('性能和無障礙性端到端測試', () => {
     await page.click('[data-testid="language-zh-TW"]');
 
     // 2. 驗證界面語言已更改
-    await expect(page.locator('[data-testid="app-title"]')).toContainText('CardStrategy');
+    await expect(page.locator('[data-testid="app-title"]')).toContainText(
+      'CardStrategy'
+    );
 
     // 3. 測試日期格式本地化
     const dateFormat = await page.evaluate(() => {
@@ -328,7 +356,10 @@ describe('性能和無障礙性端到端測試', () => {
     const securityHeaders = await page.evaluate(() => {
       return {
         protocol: window.location.protocol,
-        hasCSP: document.querySelector('meta[http-equiv="Content-Security-Policy"]') !== null
+        hasCSP:
+          document.querySelector(
+            'meta[http-equiv="Content-Security-Policy"]'
+          ) !== null,
       };
     });
 
@@ -346,6 +377,8 @@ describe('性能和無障礙性端到端測試', () => {
 
     // 3. 測試敏感數據保護
     await page.click('[data-testid="user-profile"]');
-    await expect(page.locator('[data-testid="password-field"]')).toHaveAttribute('type', 'password');
+    await expect(
+      page.locator('[data-testid="password-field"]')
+    ).toHaveAttribute('type', 'password');
   });
 });

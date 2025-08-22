@@ -129,7 +129,7 @@ export const colors = {
   // 簡化的顏色屬性 - 用於組件
   white: '#FFFFFF',
   black: '#000000',
-  backgroundSecondary: '#F3F4F6'
+  backgroundSecondary: '#F3F4F6',
 };
 
 // 字體系統
@@ -140,7 +140,7 @@ export const typography = {
     semiBold: 'Inter-SemiBold',
     bold: 'Inter-Bold',
     light: 'Inter-Light',
-    thin: 'Inter-Thin'
+    thin: 'Inter-Thin',
   },
 
   fontSize: {
@@ -153,13 +153,13 @@ export const typography = {
     '3xl': 30,
     '4xl': 36,
     '5xl': 48,
-    '6xl': 60
+    '6xl': 60,
   },
 
   lineHeight: {
     tight: 1.25,
     normal: 1.5,
-    relaxed: 1.75
+    relaxed: 1.75,
   },
 
   fontWeight: {
@@ -170,8 +170,8 @@ export const typography = {
     semiBold: '600',
     bold: '700',
     extraBold: '800',
-    black: '900'
-  }
+    black: '900',
+  },
 };
 
 // 間距系統
@@ -184,7 +184,7 @@ export const spacing = {
   '2xl': 48,
   '3xl': 64,
   '4xl': 96,
-  '5xl': 128
+  '5xl': 128,
 };
 
 // 圓角系統
@@ -196,7 +196,7 @@ export const borderRadius = {
   xlarge: 16,
   '2xl': 24,
   '3xl': 32,
-  full: 9999
+  full: 9999,
 };
 
 // 陰影系統 (React Native 版本)
@@ -206,36 +206,36 @@ export const shadows = {
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    elevation: 1
+    elevation: 1,
   },
   base: {
     shadowColor: colors.shadowMedium,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   md: {
     shadowColor: colors.shadowMedium,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    elevation: 5
+    elevation: 5,
   },
   lg: {
     shadowColor: colors.shadowDark,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.2,
     shadowRadius: 16,
-    elevation: 8
+    elevation: 8,
   },
   xl: {
     shadowColor: colors.shadowDark,
     shadowOffset: { width: 0, height: 12 },
     shadowOpacity: 0.25,
     shadowRadius: 24,
-    elevation: 12
-  }
+    elevation: 12,
+  },
 };
 
 // 斷點系統
@@ -244,7 +244,7 @@ export const breakpoints = {
   md: 768,
   lg: 1024,
   xl: 1280,
-  '2xl': 1536
+  '2xl': 1536,
 };
 
 // 動畫系統
@@ -252,48 +252,48 @@ export const animation = {
   duration: {
     fast: 150,
     normal: 300,
-    slow: 500
+    slow: 500,
   },
   easing: {
     ease: 'ease',
     easeIn: 'ease-in',
     easeOut: 'ease-out',
-    easeInOut: 'ease-in-out'
-  }
+    easeInOut: 'ease-in-out',
+  },
 };
 
 // 尺寸系統 (React Native 版本)
 export const dimensions = {
   screen: {
     width,
-    height
+    height,
   },
   header: {
-    height: 56
+    height: 56,
   },
   tabBar: {
-    height: 60
+    height: 60,
   },
   button: {
     height: {
       sm: 32,
       md: 40,
-      lg: 48
+      lg: 48,
     },
     minWidth: {
       sm: 80,
       md: 100,
-      lg: 120
-    }
+      lg: 120,
+    },
   },
   input: {
     height: 48,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   card: {
     padding: 16,
-    margin: 8
-  }
+    margin: 8,
+  },
 };
 
 // 主題配置
@@ -305,7 +305,7 @@ export const theme = {
   shadows,
   breakpoints,
   animation,
-  dimensions
+  dimensions,
 };
 
 // 深色主題覆蓋
@@ -328,8 +328,8 @@ export const darkTheme = {
     borderLight: '#374151',
     borderDark: '#6B7280',
     borderFocus: '#00BFFF',
-    borderError: '#F44336'
-  }
+    borderError: '#F44336',
+  },
 };
 
 // 主題類型

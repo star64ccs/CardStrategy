@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { dataQualityService } from '../../../services/dataQualityService';
 import { api } from '../../../config/api';
 
@@ -7,8 +8,8 @@ jest.mock('../../../config/api', () => ({
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
-    delete: jest.fn()
-  }
+    delete: jest.fn(),
+  },
 }));
 
 const mockApi = api as jest.Mocked<typeof api>;
@@ -24,8 +25,8 @@ describe('DataQualityService', () => {
         data: {
           totalRecords: 1000,
           qualityScore: 85.5,
-          lastUpdated: '2024-01-01T00:00:00Z'
-        }
+          lastUpdated: '2024-01-01T00:00:00Z',
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -44,7 +45,9 @@ describe('DataQualityService', () => {
 
       await dataQualityService.getCollectionStats(options);
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/collect/stats?startDate=2024-01-01&endDate=2024-01-31');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/collect/stats?startDate=2024-01-01&endDate=2024-01-31'
+      );
     });
   });
 
@@ -54,8 +57,8 @@ describe('DataQualityService', () => {
         data: {
           status: 'started',
           collectionId: 'coll-123',
-          estimatedDuration: 300
-        }
+          estimatedDuration: 300,
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
@@ -74,17 +77,20 @@ describe('DataQualityService', () => {
         data: {
           tasks: [
             { id: 1, type: 'image_annotation', priority: 'high' },
-            { id: 2, type: 'text_validation', priority: 'medium' }
+            { id: 2, type: 'text_validation', priority: 'medium' },
           ],
-          totalAssigned: 2
-        }
+          totalAssigned: 2,
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.assignAnnotationTasks(options);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/assign', options);
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/assign',
+        options
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -94,21 +100,24 @@ describe('DataQualityService', () => {
       const request = {
         annotationId: 1,
         learningType: 'pattern_recognition',
-        parameters: { threshold: 0.8 }
+        parameters: { threshold: 0.8 },
       };
       const mockResponse = {
         data: {
           learningId: 'learn-123',
           status: 'completed',
-          improvements: ['accuracy', 'speed']
-        }
+          improvements: ['accuracy', 'speed'],
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.learnFromResults(request);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/learn', request);
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/learn',
+        request
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -120,12 +129,12 @@ describe('DataQualityService', () => {
           config: {
             maxTasksPerAnnotator: 50,
             priorityWeight: 0.7,
-            skillMatching: true
+            skillMatching: true,
           },
           algorithm: 'smart_assignment',
           version: '2.1.0',
-          features: ['skill_matching', 'load_balancing']
-        }
+          features: ['skill_matching', 'load_balancing'],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -143,15 +152,18 @@ describe('DataQualityService', () => {
       const mockResponse = {
         data: {
           config,
-          timestamp: '2024-01-01T00:00:00Z'
-        }
+          timestamp: '2024-01-01T00:00:00Z',
+        },
       };
 
       mockApi.put.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.updateAssignmentConfig(config);
 
-      expect(mockApi.put).toHaveBeenCalledWith('/data-quality/annotate/config', { config });
+      expect(mockApi.put).toHaveBeenCalledWith(
+        '/data-quality/annotate/config',
+        { config }
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -162,17 +174,24 @@ describe('DataQualityService', () => {
         data: {
           annotators: [
             { id: 1, name: 'Annotator 1', level: 'expert', accuracy: 0.95 },
-            { id: 2, name: 'Annotator 2', level: 'intermediate', accuracy: 0.85 }
+            {
+              id: 2,
+              name: 'Annotator 2',
+              level: 'intermediate',
+              accuracy: 0.85,
+            },
           ],
-          totalCount: 2
-        }
+          totalCount: 2,
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.getAnnotatorDetails();
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/annotate/annotators?');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/annotate/annotators?'
+      );
       expect(result).toEqual(mockResponse.data);
     });
 
@@ -181,16 +200,18 @@ describe('DataQualityService', () => {
         data: {
           annotators: [
             { id: 1, name: 'Active Annotator', isActive: true },
-            { id: 2, name: 'Inactive Annotator', isActive: false }
-          ]
-        }
+            { id: 2, name: 'Inactive Annotator', isActive: false },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
       await dataQualityService.getAnnotatorDetails(true);
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/annotate/annotators?includeInactive=true');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/annotate/annotators?includeInactive=true'
+      );
     });
   });
 
@@ -200,7 +221,7 @@ describe('DataQualityService', () => {
       const annotationResult = {
         label: 'card',
         confidence: 0.95,
-        boundingBox: { x: 10, y: 20, width: 100, height: 50 }
+        boundingBox: { x: 10, y: 20, width: 100, height: 50 },
       };
       const confidence = 0.95;
 
@@ -208,19 +229,26 @@ describe('DataQualityService', () => {
         data: {
           annotationId,
           status: 'submitted',
-          timestamp: '2024-01-01T00:00:00Z'
-        }
+          timestamp: '2024-01-01T00:00:00Z',
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.submitAnnotation(annotationId, annotationResult, confidence);
-
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/submit', {
+      const result = await dataQualityService.submitAnnotation(
         annotationId,
         annotationResult,
         confidence
-      });
+      );
+
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/submit',
+        {
+          annotationId,
+          annotationResult,
+          confidence,
+        }
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -237,19 +265,26 @@ describe('DataQualityService', () => {
           reviewStatus,
           reviewNotes,
           reviewedBy: 'reviewer-1',
-          reviewedAt: '2024-01-01T00:00:00Z'
-        }
+          reviewedAt: '2024-01-01T00:00:00Z',
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.reviewAnnotation(annotationId, reviewStatus, reviewNotes);
-
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/review', {
+      const result = await dataQualityService.reviewAnnotation(
         annotationId,
         reviewStatus,
         reviewNotes
-      });
+      );
+
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/review',
+        {
+          annotationId,
+          reviewStatus,
+          reviewNotes,
+        }
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -258,7 +293,11 @@ describe('DataQualityService', () => {
     it('應該成功批量審查註釋', async () => {
       const reviews = [
         { annotationId: 1, reviewStatus: 'approved', reviewNotes: 'Good' },
-        { annotationId: 2, reviewStatus: 'rejected', reviewNotes: 'Poor quality' }
+        {
+          annotationId: 2,
+          reviewStatus: 'rejected',
+          reviewNotes: 'Poor quality',
+        },
       ];
 
       const mockResponse = {
@@ -266,17 +305,20 @@ describe('DataQualityService', () => {
           processed: 2,
           approved: 1,
           rejected: 1,
-          errors: []
-        }
+          errors: [],
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.batchReviewAnnotations(reviews);
 
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/batch-review', {
-        reviews
-      });
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/batch-review',
+        {
+          reviews,
+        }
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -288,8 +330,8 @@ describe('DataQualityService', () => {
           totalAnnotators: 10,
           totalAnnotations: 1000,
           averageAccuracy: 0.92,
-          averageProcessingTime: 2.5
-        }
+          averageProcessingTime: 2.5,
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -309,8 +351,8 @@ describe('DataQualityService', () => {
           cleanedRecords: 150,
           removedDuplicates: 25,
           fixedFormatting: 50,
-          qualityImprovement: 0.15
-        }
+          qualityImprovement: 0.15,
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
@@ -330,22 +372,24 @@ describe('DataQualityService', () => {
             metric: 'completeness',
             value: 0.95,
             threshold: 0.9,
-            status: 'good'
+            status: 'good',
           },
           {
             metric: 'accuracy',
             value: 0.88,
             threshold: 0.85,
-            status: 'good'
-          }
-        ]
+            status: 'good',
+          },
+        ],
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.getQualityMetrics();
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/quality-metrics?limit=10');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/quality-metrics?limit=10'
+      );
       expect(result).toEqual(mockResponse.data);
     });
 
@@ -358,7 +402,9 @@ describe('DataQualityService', () => {
 
       await dataQualityService.getQualityMetrics(dataType, limit);
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/quality-metrics?dataType=image_annotation&limit=20');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/quality-metrics?dataType=image_annotation&limit=20'
+      );
     });
   });
 
@@ -373,16 +419,21 @@ describe('DataQualityService', () => {
           metrics: {
             completeness: 0.95,
             accuracy: 0.88,
-            consistency: 0.92
-          }
-        }
+            consistency: 0.92,
+          },
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getQualityReport(startDate, endDate);
+      const result = await dataQualityService.getQualityReport(
+        startDate,
+        endDate
+      );
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/quality-report?startDate=2024-01-01&endDate=2024-01-31');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/quality-report?startDate=2024-01-01&endDate=2024-01-31'
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -394,10 +445,10 @@ describe('DataQualityService', () => {
           status: 'completed',
           improvements: [
             { type: 'duplicate_removal', count: 25 },
-            { type: 'format_standardization', count: 50 }
+            { type: 'format_standardization', count: 50 },
           ],
-          qualityScore: 92.5
-        }
+          qualityScore: 92.5,
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
@@ -419,11 +470,11 @@ describe('DataQualityService', () => {
               type: 'algorithm_tuning',
               priority: 'high',
               description: 'Optimize annotation algorithm for better accuracy',
-              estimatedImpact: 8.5
-            }
+              estimatedImpact: 8.5,
+            },
           ],
-          totalRecommendations: 1
-        }
+          totalRecommendations: 1,
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -445,9 +496,12 @@ describe('DataQualityService', () => {
 
       const result = await dataQualityService.exportStatsReport(options);
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/collect/stats/export?', {
-        responseType: 'blob'
-      });
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/collect/stats/export?',
+        {
+          responseType: 'blob',
+        }
+      );
       expect(result).toEqual(mockBlob);
     });
   });
@@ -459,15 +513,17 @@ describe('DataQualityService', () => {
           currentProcessing: 15,
           queueLength: 25,
           systemStatus: 'normal',
-          lastUpdate: '2024-01-01T00:00:00Z'
-        }
+          lastUpdate: '2024-01-01T00:00:00Z',
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.getRealTimeStats();
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/collect/stats/realtime');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/collect/stats/realtime'
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -477,15 +533,15 @@ describe('DataQualityService', () => {
       const alerts = {
         qualityThreshold: 80,
         enableNotifications: true,
-        alertChannels: ['email', 'push']
+        alertChannels: ['email', 'push'],
       };
 
       const mockResponse = {
         data: {
           status: 'configured',
           alertId: 'alert-123',
-          settings: alerts
-        }
+          settings: alerts,
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
@@ -506,10 +562,10 @@ describe('DataQualityService', () => {
               id: 1,
               type: 'quality_threshold',
               threshold: 80,
-              isActive: true
-            }
-          ]
-        }
+              isActive: true,
+            },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -529,13 +585,13 @@ describe('DataQualityService', () => {
           overview: {
             qualityScore: 85.5,
             totalRecords: 10000,
-            activeAnnotators: 15
+            activeAnnotators: 15,
           },
           trends: [
             { date: '2024-01-01', score: 84.2 },
-            { date: '2024-01-02', score: 85.1 }
-          ]
-        }
+            { date: '2024-01-02', score: 85.1 },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -555,9 +611,9 @@ describe('DataQualityService', () => {
             id: 1,
             type: 'quality_threshold_exceeded',
             message: 'Quality score dropped below threshold',
-            timestamp: '2024-01-01T00:00:00Z'
-          }
-        ]
+            timestamp: '2024-01-01T00:00:00Z',
+          },
+        ],
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -578,15 +634,17 @@ describe('DataQualityService', () => {
           completeness: 0.95,
           accuracy: 0.88,
           consistency: 0.92,
-          timeliness: 0.85
-        }
+          timeliness: 0.85,
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.getOverallMetrics(options);
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/overall-metrics?');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/overall-metrics?'
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -600,9 +658,9 @@ describe('DataQualityService', () => {
           period: '7d',
           dataPoints: [
             { date: '2024-01-01', value: 84.2 },
-            { date: '2024-01-02', value: 85.1 }
-          ]
-        }
+            { date: '2024-01-02', value: 85.1 },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
@@ -623,16 +681,21 @@ describe('DataQualityService', () => {
           sources: [
             { source: 'manual_upload', count: 500, percentage: 50 },
             { source: 'api_import', count: 300, percentage: 30 },
-            { source: 'batch_processing', count: 200, percentage: 20 }
-          ]
-        }
+            { source: 'batch_processing', count: 200, percentage: 20 },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getSourceBreakdown(startDate, endDate);
+      const result = await dataQualityService.getSourceBreakdown(
+        startDate,
+        endDate
+      );
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/source-breakdown?startDate=2024-01-01&endDate=2024-01-31');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/source-breakdown?startDate=2024-01-01&endDate=2024-01-31'
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -647,16 +710,21 @@ describe('DataQualityService', () => {
             { quality: 'excellent', count: 400, percentage: 40 },
             { quality: 'good', count: 350, percentage: 35 },
             { quality: 'fair', count: 200, percentage: 20 },
-            { quality: 'poor', count: 50, percentage: 5 }
-          ]
-        }
+            { quality: 'poor', count: 50, percentage: 5 },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getQualityDistribution(startDate, endDate);
+      const result = await dataQualityService.getQualityDistribution(
+        startDate,
+        endDate
+      );
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/quality-distribution?startDate=2024-01-01&endDate=2024-01-31');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/quality-distribution?startDate=2024-01-01&endDate=2024-01-31'
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -673,24 +741,29 @@ describe('DataQualityService', () => {
               name: 'Annotator 1',
               accuracy: 0.95,
               speed: 2.5,
-              totalAnnotations: 150
+              totalAnnotations: 150,
             },
             {
               id: 2,
               name: 'Annotator 2',
               accuracy: 0.88,
               speed: 3.2,
-              totalAnnotations: 120
-            }
-          ]
-        }
+              totalAnnotations: 120,
+            },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getAnnotatorPerformance(startDate, endDate);
+      const result = await dataQualityService.getAnnotatorPerformance(
+        startDate,
+        endDate
+      );
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/annotator-performance?startDate=2024-01-01&endDate=2024-01-31');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/annotator-performance?startDate=2024-01-01&endDate=2024-01-31'
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -707,17 +780,22 @@ describe('DataQualityService', () => {
               type: 'quality_threshold',
               severity: 'medium',
               description: 'Quality score dropped below threshold',
-              timestamp: '2024-01-01T00:00:00Z'
-            }
-          ]
-        }
+              timestamp: '2024-01-01T00:00:00Z',
+            },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getRecentIssues(startDate, endDate);
+      const result = await dataQualityService.getRecentIssues(
+        startDate,
+        endDate
+      );
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/recent-issues?startDate=2024-01-01&endDate=2024-01-31');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/recent-issues?startDate=2024-01-01&endDate=2024-01-31'
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -731,19 +809,22 @@ describe('DataQualityService', () => {
               id: 1,
               category: 'process_optimization',
               title: 'Optimize annotation workflow',
-              description: 'Streamline the annotation process for better efficiency',
+              description:
+                'Streamline the annotation process for better efficiency',
               priority: 'high',
-              estimatedImpact: 15
-            }
-          ]
-        }
+              estimatedImpact: 15,
+            },
+          ],
+        },
       };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
       const result = await dataQualityService.getImprovementSuggestions();
 
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/improvement-suggestions');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/improvement-suggestions'
+      );
       expect(result).toEqual(mockResponse.data);
     });
   });
@@ -753,14 +834,18 @@ describe('DataQualityService', () => {
       const error = new Error('API Error');
       mockApi.get.mockRejectedValue(error);
 
-      await expect(dataQualityService.getCollectionStats()).rejects.toThrow('API Error');
+      await expect(dataQualityService.getCollectionStats()).rejects.toThrow(
+        'API Error'
+      );
     });
 
     it('應該處理網絡錯誤', async () => {
       const error = new Error('Network Error');
       mockApi.get.mockRejectedValue(error);
 
-      await expect(dataQualityService.getCollectionStats()).rejects.toThrow('Network Error');
+      await expect(dataQualityService.getCollectionStats()).rejects.toThrow(
+        'Network Error'
+      );
     });
   });
 
@@ -769,19 +854,22 @@ describe('DataQualityService', () => {
       const mockResponse = {
         data: {
           annotationId: 1,
-          status: 'submitted'
-        }
+          status: 'submitted',
+        },
       };
 
       mockApi.post.mockResolvedValue(mockResponse);
 
       // 測試空參數
       await dataQualityService.submitAnnotation(1, {}, 0.5);
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/submit', {
-        annotationId: 1,
-        annotationResult: {},
-        confidence: 0.5
-      });
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/submit',
+        {
+          annotationId: 1,
+          annotationResult: {},
+          confidence: 0.5,
+        }
+      );
     });
   });
 });

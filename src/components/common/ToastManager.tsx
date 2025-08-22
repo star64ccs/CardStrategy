@@ -12,18 +12,21 @@ interface ToastManagerProps {
 export const ToastManager: React.FC<ToastManagerProps> = ({ children }) => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  const showToast = useCallback((toastProps: Omit<ToastProps, 'visible' | 'onClose'>) => {
-    const id = Date.now().toString();
-    const newToast: ToastItem = {
-      ...toastProps,
-      id
-    };
+  const showToast = useCallback(
+    (toastProps: Omit<ToastProps, 'visible' | 'onClose'>) => {
+      const id = Date.now().toString();
+      const newToast: ToastItem = {
+        ...toastProps,
+        id,
+      };
 
-    setToasts(prev => [...prev, newToast]);
-  }, []);
+      setToasts((prev) => [...prev, newToast]);
+    },
+    []
+  );
 
   const hideToast = useCallback((id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
+    setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
 
   // 將 showToast 方法添加到全局對象中，以便在其他地方使用
@@ -37,7 +40,7 @@ export const ToastManager: React.FC<ToastManagerProps> = ({ children }) => {
   return (
     <>
       {children}
-      {toasts.map(toast => (
+      {toasts.map((toast) => (
         <Toast
           key={toast.id}
           visible={true}

@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -27,7 +27,7 @@ const { width } = Dimensions.get('window');
 export const BottomTabBar: React.FC<BottomTabBarProps> = ({
   tabs,
   activeTab,
-  onTabPress
+  onTabPress,
 }) => {
   const renderTab = (tab: TabItem) => {
     const isActive = activeTab === tab.key;
@@ -40,11 +40,15 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
         onPress={() => onTabPress(tab.key)}
         activeOpacity={0.7}
       >
-        <View style={[styles.iconContainer, isActive && styles.activeIconContainer]}>
+        <View
+          style={[styles.iconContainer, isActive && styles.activeIconContainer]}
+        >
           <Ionicons
             name={iconName}
             size={24}
-            color={isActive ? theme.colors.gold.primary : theme.colors.text.tertiary}
+            color={
+              isActive ? theme.colors.gold.primary : theme.colors.text.tertiary
+            }
           />
           {isActive && <View style={styles.activeIndicator} />}
         </View>
@@ -57,9 +61,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
 
   return (
     <View style={styles.container}>
-      <View style={styles.tabBar}>
-        {tabs.map(renderTab)}
-      </View>
+      <View style={styles.tabBar}>{tabs.map(renderTab)}</View>
     </View>
   );
 };
@@ -68,18 +70,18 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: theme.colors.background.secondary,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border.primary
+    borderTopColor: theme.colors.border.primary,
   },
   tabBar: {
     flexDirection: 'row',
     height: 60,
-    paddingHorizontal: theme.spacing.sm
+    paddingHorizontal: theme.spacing.sm,
   },
   tabItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: theme.spacing.sm
+    paddingVertical: theme.spacing.sm,
   },
   iconContainer: {
     position: 'relative',
@@ -88,10 +90,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: theme.borderRadius.md,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   activeIconContainer: {
-    backgroundColor: theme.colors.background.tertiary
+    backgroundColor: theme.colors.background.tertiary,
   },
   activeIndicator: {
     position: 'absolute',
@@ -99,15 +101,15 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: theme.colors.gold.primary
+    backgroundColor: theme.colors.gold.primary,
   },
   tabText: {
     fontSize: theme.typography.sizes.xs,
     fontWeight: theme.typography.weights.medium,
-    color: theme.colors.text.tertiary
+    color: theme.colors.text.tertiary,
   },
   activeTabText: {
     color: theme.colors.gold.primary,
-    fontWeight: theme.typography.weights.semibold
-  }
+    fontWeight: theme.typography.weights.semibold,
+  },
 });

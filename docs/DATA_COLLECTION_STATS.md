@@ -7,17 +7,20 @@
 ## 功能特性
 
 ### 1. 多維度統計分析
+
 - **來源分佈統計**: 分析數據來自不同來源的分佈情況
 - **質量分佈統計**: 統計高、中、低質量數據的比例
 - **狀態分佈統計**: 追蹤數據處理狀態的分佈
 - **時間序列分析**: 提供每日和每小時的收集趨勢
 
 ### 2. 性能指標監控
+
 - **處理時間統計**: 平均、最小、最大處理時間
 - **圖片大小統計**: 平均、最小、最大圖片大小
 - **格式分佈統計**: 不同圖片格式的使用情況
 
 ### 3. 質量評估指標
+
 - **完整性**: 數據字段完整程度
 - **準確性**: 數據準確程度
 - **一致性**: 數據格式一致性
@@ -25,6 +28,7 @@
 - **總體分數**: 綜合質量評分
 
 ### 4. 趨勢分析
+
 - **增長趨勢**: 數據收集的增長率分析
 - **效率指標**: 收集效率和成功率統計
 - **洞察建議**: 基於數據分析的自動化建議
@@ -39,17 +43,18 @@ GET /api/data-quality/collect/stats
 
 #### 查詢參數
 
-| 參數 | 類型 | 必填 | 描述 |
-|------|------|------|------|
-| startDate | string | 否 | 開始日期 (ISO 8601格式) |
-| endDate | string | 否 | 結束日期 (ISO 8601格式) |
-| source | string | 否 | 數據來源篩選 |
-| quality | string | 否 | 數據質量篩選 |
-| status | string | 否 | 數據狀態篩選 |
+| 參數      | 類型   | 必填 | 描述                    |
+| --------- | ------ | ---- | ----------------------- |
+| startDate | string | 否   | 開始日期 (ISO 8601格式) |
+| endDate   | string | 否   | 結束日期 (ISO 8601格式) |
+| source    | string | 否   | 數據來源篩選            |
+| quality   | string | 否   | 數據質量篩選            |
+| status    | string | 否   | 數據狀態篩選            |
 
 #### 支持的篩選值
 
 **數據來源 (source)**:
+
 - `user_upload`: 用戶上傳
 - `official_api`: 官方API
 - `third_party`: 第三方平台
@@ -57,11 +62,13 @@ GET /api/data-quality/collect/stats
 - `web_scraping`: 網頁爬蟲
 
 **數據質量 (quality)**:
+
 - `high`: 高質量
 - `medium`: 中等質量
 - `low`: 低質量
 
 **數據狀態 (status)**:
+
 - `pending`: 待處理
 - `processing`: 處理中
 - `annotated`: 已標註
@@ -139,9 +146,9 @@ GET /api/data-quality/collect/stats
     ],
     "qualityMetrics": {
       "completeness": 0.95,
-      "accuracy": 0.90,
+      "accuracy": 0.9,
       "consistency": 0.85,
-      "timeliness": 0.80,
+      "timeliness": 0.8,
       "overallScore": 0.875,
       "assessmentDate": "2024-12-19T10:00:00.000Z"
     },
@@ -154,8 +161,8 @@ GET /api/data-quality/collect/stats
     },
     "efficiency": {
       "averageDailyCollection": 78.95,
-      "highQualityRatio": 60.00,
-      "successRate": 80.00,
+      "highQualityRatio": 60.0,
+      "successRate": 80.0,
       "efficiencyScore": "70.00"
     },
     "insights": [
@@ -183,17 +190,17 @@ const stats = await dataQualityService.getCollectionStats();
 // 獲取指定時間範圍的統計
 const stats = await dataQualityService.getCollectionStats({
   startDate: '2024-12-01T00:00:00.000Z',
-  endDate: '2024-12-19T23:59:59.999Z'
+  endDate: '2024-12-19T23:59:59.999Z',
 });
 
 // 篩選特定來源的數據
 const stats = await dataQualityService.getCollectionStats({
-  source: 'user_upload'
+  source: 'user_upload',
 });
 
 // 篩選高質量數據
 const stats = await dataQualityService.getCollectionStats({
-  quality: 'high'
+  quality: 'high',
 });
 ```
 
@@ -340,7 +347,7 @@ await dataQualityService.setCollectionAlerts({
   minDailyCollection: 50,
   maxProcessingTime: 3000,
   minQualityScore: 0.8,
-  emailNotifications: true
+  emailNotifications: true,
 });
 ```
 

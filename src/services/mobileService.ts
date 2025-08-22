@@ -174,15 +174,20 @@ export interface MobileMetrics {
 
 // 移動端服務類
 class MobileService {
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cache = new Map<
+    string,
+    { data: any; timestamp: number; ttl: number }
+  >();
 
   // ==================== 離線同步 ====================
 
   // 獲取離線數據
-  async getOfflineData(options: {
-    lastSyncTime?: Date;
-    dataTypes?: string[];
-  } = {}): Promise<OfflineData> {
+  async getOfflineData(
+    options: {
+      lastSyncTime?: Date;
+      dataTypes?: string[];
+    } = {}
+  ): Promise<OfflineData> {
     const cacheKey = `offline_data:${JSON.stringify(options)}`;
 
     const cached = this.getCachedData(cacheKey);
@@ -190,8 +195,10 @@ class MobileService {
 
     try {
       const params = new URLSearchParams();
-      if (options.lastSyncTime) params.append('lastSyncTime', options.lastSyncTime.toISOString());
-      if (options.dataTypes?.length) params.append('dataTypes', options.dataTypes.join(','));
+      if (options.lastSyncTime)
+        params.append('lastSyncTime', options.lastSyncTime.toISOString());
+      if (options.dataTypes?.length)
+        params.append('dataTypes', options.dataTypes.join(','));
 
       const response = await apiService.get(`/mobile/offline/data?${params}`);
 
@@ -204,11 +211,14 @@ class MobileService {
   }
 
   // 提交離線變更
-  async submitOfflineChanges(changes: OfflineChange[], syncId: string): Promise<any> {
+  async submitOfflineChanges(
+    changes: OfflineChange[],
+    syncId: string
+  ): Promise<any> {
     try {
       const response = await apiService.post('/mobile/offline/changes', {
         changes,
-        syncId
+        syncId,
       });
       return response.data;
     } catch (error) {
@@ -231,12 +241,16 @@ class MobileService {
   // ==================== 推送通知 ====================
 
   // 註冊推送令牌
-  async registerPushToken(token: string, platform: string, deviceId: string): Promise<any> {
+  async registerPushToken(
+    token: string,
+    platform: string,
+    deviceId: string
+  ): Promise<any> {
     try {
       const response = await apiService.post('/mobile/push/register', {
         token,
         platform,
-        deviceId
+        deviceId,
       });
       return response.data;
     } catch (error) {
@@ -274,9 +288,13 @@ class MobileService {
   }
 
   // 更新通知設置
-  async updateNotificationSettings(settings: Partial<NotificationSettings>): Promise<any> {
+  async updateNotificationSettings(
+    settings: Partial<NotificationSettings>
+  ): Promise<any> {
     try {
-      const response = await apiService.put('/mobile/push/settings', { settings });
+      const response = await apiService.put('/mobile/push/settings', {
+        settings,
+      });
       return response.data;
     } catch (error) {
       logger.error('更新通知設置失敗:', error);
@@ -291,7 +309,7 @@ class MobileService {
     try {
       const response = await apiService.post('/mobile/device/register', {
         deviceInfo,
-        capabilities
+        capabilities,
       });
       return response.data;
     } catch (error) {
@@ -337,10 +355,12 @@ class MobileService {
   }
 
   // 獲取移動端分析報告
-  async getMobileAnalyticsReport(options: {
-    timeframe?: string;
-    metrics?: string[];
-  } = {}): Promise<MobileAnalyticsReport> {
+  async getMobileAnalyticsReport(
+    options: {
+      timeframe?: string;
+      metrics?: string[];
+    } = {}
+  ): Promise<MobileAnalyticsReport> {
     const cacheKey = `mobile_analytics:${JSON.stringify(options)}`;
 
     const cached = this.getCachedData(cacheKey);
@@ -349,9 +369,12 @@ class MobileService {
     try {
       const params = new URLSearchParams();
       if (options.timeframe) params.append('timeframe', options.timeframe);
-      if (options.metrics?.length) params.append('metrics', options.metrics.join(','));
+      if (options.metrics?.length)
+        params.append('metrics', options.metrics.join(','));
 
-      const response = await apiService.get(`/mobile/analytics/report?${params}`);
+      const response = await apiService.get(
+        `/mobile/analytics/report?${params}`
+      );
 
       this.setCachedData(cacheKey, response.data, 1800); // 30分鐘緩存
       return response.data;
@@ -385,16 +408,25 @@ class MobileService {
   }
 
   // 獲取優化建議
-  async getOptimizationSuggestions(options: {
-    deviceInfo?: any;
-    performanceData?: any;
-  } = {}): Promise<OptimizationSuggestion[]> {
+  async getOptimizationSuggestions(
+    options: {
+      deviceInfo?: any;
+      performanceData?: any;
+    } = {}
+  ): Promise<OptimizationSuggestion[]> {
     try {
       const params = new URLSearchParams();
-      if (options.deviceInfo) params.append('deviceInfo', JSON.stringify(options.deviceInfo));
-      if (options.performanceData) params.append('performanceData', JSON.stringify(options.performanceData));
+      if (options.deviceInfo)
+        params.append('deviceInfo', JSON.stringify(options.deviceInfo));
+      if (options.performanceData)
+        params.append(
+          'performanceData',
+          JSON.stringify(options.performanceData)
+        );
 
-      const response = await apiService.get(`/mobile/optimization/suggestions?${params}`);
+      const response = await apiService.get(
+        `/mobile/optimization/suggestions?${params}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取優化建議失敗:', error);
@@ -405,11 +437,14 @@ class MobileService {
   // ==================== 生物識別認證 ====================
 
   // 啟用生物識別認證
-  async enableBiometricAuth(biometricType: string, deviceId: string): Promise<any> {
+  async enableBiometricAuth(
+    biometricType: string,
+    deviceId: string
+  ): Promise<any> {
     try {
       const response = await apiService.post('/mobile/biometric/enable', {
         biometricType,
-        deviceId
+        deviceId,
       });
       return response.data;
     } catch (error) {
@@ -419,12 +454,16 @@ class MobileService {
   }
 
   // 驗證生物識別
-  async verifyBiometricAuth(biometricData: any, deviceId: string, userId: string): Promise<any> {
+  async verifyBiometricAuth(
+    biometricData: any,
+    deviceId: string,
+    userId: string
+  ): Promise<any> {
     try {
       const response = await apiService.post('/mobile/biometric/verify', {
         biometricData,
         deviceId,
-        userId
+        userId,
       });
       return response.data;
     } catch (error) {
@@ -453,7 +492,9 @@ class MobileService {
   // 獲取語音命令列表
   async getVoiceCommands(language: string = 'zh-TW'): Promise<VoiceCommand[]> {
     try {
-      const response = await apiService.get(`/mobile/voice/commands?language=${language}`);
+      const response = await apiService.get(
+        `/mobile/voice/commands?language=${language}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取語音命令列表失敗:', error);
@@ -464,9 +505,14 @@ class MobileService {
   // ==================== AR 功能 ====================
 
   // 獲取 AR 卡片數據
-  async getARCardData(cardId: string, arType: string = '3d-model'): Promise<ARCardData> {
+  async getARCardData(
+    cardId: string,
+    arType: string = '3d-model'
+  ): Promise<ARCardData> {
     try {
-      const response = await apiService.get(`/mobile/ar/card/${cardId}?arType=${arType}`);
+      const response = await apiService.get(
+        `/mobile/ar/card/${cardId}?arType=${arType}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取 AR 卡片數據失敗:', error);
@@ -508,7 +554,9 @@ class MobileService {
   // 獲取移動端指標
   async getMobileMetrics(timeframe: string = '24h'): Promise<MobileMetrics> {
     try {
-      const response = await apiService.get(`/mobile/metrics?timeframe=${timeframe}`);
+      const response = await apiService.get(
+        `/mobile/metrics?timeframe=${timeframe}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取移動端指標失敗:', error);
@@ -532,7 +580,7 @@ class MobileService {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
@@ -545,7 +593,7 @@ class MobileService {
   getCacheStats(): { size: number; keys: string[] } {
     return {
       size: this.cache.size,
-      keys: Array.from(this.cache.keys())
+      keys: Array.from(this.cache.keys()),
     };
   }
 
@@ -635,4 +683,5 @@ class MobileService {
 }
 
 // 創建單例實例
+export { MobileService };
 export const mobileService = new MobileService();

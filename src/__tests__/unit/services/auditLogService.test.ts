@@ -1,4 +1,11 @@
-import { auditLogService, AuditEvent, AuditSeverity, AuditEventStatus, OperationResult } from '../../../services/auditLogService';
+/* global jest, describe, it, expect, beforeEach, afterEach */
+import {
+  auditLogService,
+  AuditEvent,
+  AuditSeverity,
+  AuditEventStatus,
+  OperationResult,
+} from '../../../services/auditLogService';
 import { storage } from '../../../utils/storage';
 
 // Mock dependencies
@@ -25,7 +32,7 @@ describe('AuditLogService', () => {
       const mockConfig = {
         enabled: false,
         logLevel: 'high',
-        retentionDays: 180
+        retentionDays: 180,
       };
       mockStorage.get.mockResolvedValueOnce(mockConfig);
 
@@ -41,7 +48,7 @@ describe('AuditLogService', () => {
         title: 'Test Event',
         description: 'Test description',
         eventType: 'user_login' as const,
-        severity: 'medium' as AuditSeverity
+        severity: 'medium' as AuditSeverity,
       };
 
       const eventId = await auditLogService.logEvent(eventData);
@@ -58,7 +65,7 @@ describe('AuditLogService', () => {
 
       const eventId = await auditLogService.logEvent({
         title: 'Test Event',
-        eventType: 'user_login'
+        eventType: 'user_login',
       });
 
       expect(eventId).toBe('');
@@ -73,7 +80,7 @@ describe('AuditLogService', () => {
       const eventId = await auditLogService.logEvent({
         title: 'Test Event',
         eventType: 'user_login',
-        severity: 'low'
+        severity: 'low',
       });
 
       expect(eventId).toBe('');
@@ -103,7 +110,7 @@ describe('AuditLogService', () => {
         complianceTags: ['gdpr', 'ccpa'],
         regulatoryRequirements: ['data_protection'],
         auditTrail: ['step1', 'step2'],
-        relatedEvents: ['event-1', 'event-2']
+        relatedEvents: ['event-1', 'event-2'],
       };
 
       const eventId = await auditLogService.logEvent(eventData);
@@ -125,8 +132,8 @@ describe('AuditLogService', () => {
           description: 'Test login event',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -137,7 +144,7 @@ describe('AuditLogService', () => {
         eventTypes: ['user_login'],
         severities: ['medium'],
         sortBy: 'timestamp',
-        sortOrder: 'desc' as const
+        sortOrder: 'desc' as const,
       };
 
       const result = await auditLogService.queryEvents(query);
@@ -161,7 +168,7 @@ describe('AuditLogService', () => {
           description: 'Test login event',
           timestamp: new Date('2024-01-01'),
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           id: 'test-2',
@@ -173,8 +180,8 @@ describe('AuditLogService', () => {
           description: 'Test logout event',
           timestamp: new Date('2024-01-15'),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -183,7 +190,7 @@ describe('AuditLogService', () => {
         page: 1,
         limit: 10,
         startDate: new Date('2024-01-10'),
-        endDate: new Date('2024-01-20')
+        endDate: new Date('2024-01-20'),
       };
 
       const result = await auditLogService.queryEvents(query);
@@ -204,7 +211,7 @@ describe('AuditLogService', () => {
           description: 'User logged in successfully',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           id: 'test-2',
@@ -216,8 +223,8 @@ describe('AuditLogService', () => {
           description: 'Data exported to CSV',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -225,7 +232,7 @@ describe('AuditLogService', () => {
       const query = {
         page: 1,
         limit: 10,
-        searchText: 'login'
+        searchText: 'login',
       };
 
       const result = await auditLogService.queryEvents(query);
@@ -248,7 +255,7 @@ describe('AuditLogService', () => {
           description: 'User login',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           id: 'test-2',
@@ -260,7 +267,7 @@ describe('AuditLogService', () => {
           description: 'Failed login',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           id: 'test-3',
@@ -272,8 +279,8 @@ describe('AuditLogService', () => {
           description: 'Data export',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -317,8 +324,8 @@ describe('AuditLogService', () => {
           description: 'Test description',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -330,7 +337,7 @@ describe('AuditLogService', () => {
         type: 'summary',
         startDate,
         endDate,
-        format: 'json'
+        format: 'json',
       });
 
       expect(report.id).toBeDefined();
@@ -359,8 +366,8 @@ describe('AuditLogService', () => {
           description: 'Test description',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -374,10 +381,10 @@ describe('AuditLogService', () => {
         includeStackTrace: false,
         filters: {
           page: 1,
-          limit: 10
+          limit: 10,
         },
         batchSize: 1000,
-        maxRecords: 10000
+        maxRecords: 10000,
       });
 
       expect(fileName).toMatch(/audit_logs_\d{4}-\d{2}-\d{2}\.json$/);
@@ -396,8 +403,8 @@ describe('AuditLogService', () => {
           description: 'Test description',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -411,10 +418,10 @@ describe('AuditLogService', () => {
         includeStackTrace: false,
         filters: {
           page: 1,
-          limit: 10
+          limit: 10,
         },
         batchSize: 1000,
-        maxRecords: 10000
+        maxRecords: 10000,
       });
 
       expect(fileName).toMatch(/audit_logs_\d{4}-\d{2}-\d{2}\.csv$/);
@@ -432,8 +439,8 @@ describe('AuditLogService', () => {
           description: 'Test description',
           timestamp: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -447,30 +454,32 @@ describe('AuditLogService', () => {
         includeStackTrace: false,
         filters: {
           page: 1,
-          limit: 10
+          limit: 10,
         },
         batchSize: 1000,
-        maxRecords: 10000
+        maxRecords: 10000,
       });
 
       expect(fileName).toMatch(/audit_logs_\d{4}-\d{2}-\d{2}\.xml$/);
     });
 
     it('should throw error for unsupported format', async () => {
-      await expect(auditLogService.exportLogs({
-        format: 'pdf' as any,
-        compression: false,
-        encryption: false,
-        includeDetails: true,
-        includeMetadata: true,
-        includeStackTrace: false,
-        filters: {
-          page: 1,
-          limit: 10
-        },
-        batchSize: 1000,
-        maxRecords: 10000
-      })).rejects.toThrow('不支持的導出格式: pdf');
+      await expect(
+        auditLogService.exportLogs({
+          format: 'pdf' as any,
+          compression: false,
+          encryption: false,
+          includeDetails: true,
+          includeMetadata: true,
+          includeStackTrace: false,
+          filters: {
+            page: 1,
+            limit: 10,
+          },
+          batchSize: 1000,
+          maxRecords: 10000,
+        })
+      ).rejects.toThrow('不支持的導出格式: pdf');
     });
   });
 
@@ -490,7 +499,7 @@ describe('AuditLogService', () => {
           description: 'Old event to be deleted',
           timestamp: oldDate,
           createdAt: oldDate,
-          updatedAt: oldDate
+          updatedAt: oldDate,
         },
         {
           id: 'recent-1',
@@ -502,8 +511,8 @@ describe('AuditLogService', () => {
           description: 'Recent event to keep',
           timestamp: recentDate,
           createdAt: recentDate,
-          updatedAt: recentDate
-        }
+          updatedAt: recentDate,
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -513,7 +522,7 @@ describe('AuditLogService', () => {
         deleteEvents: ['user_login'],
         archiveEvents: [],
         compressArchives: false,
-        backupBeforeCleanup: false
+        backupBeforeCleanup: false,
       });
 
       expect(mockStorage.set).toHaveBeenCalled();
@@ -526,7 +535,7 @@ describe('AuditLogService', () => {
 
       const events = await auditLogService.queryEvents({
         page: 1,
-        limit: 10
+        limit: 10,
       });
 
       expect(events.events).toEqual([]);
@@ -538,7 +547,7 @@ describe('AuditLogService', () => {
 
       await expect(
         auditLogService.logEvent({
-          title: 'Error Test'
+          title: 'Error Test',
         })
       ).rejects.toThrow('Save error');
     });
@@ -546,7 +555,9 @@ describe('AuditLogService', () => {
     it('should handle statistics calculation errors', async () => {
       mockStorage.get.mockRejectedValueOnce(new Error('Storage error'));
 
-      await expect(auditLogService.getStatistics()).rejects.toThrow('Storage error');
+      await expect(auditLogService.getStatistics()).rejects.toThrow(
+        'Storage error'
+      );
     });
   });
 

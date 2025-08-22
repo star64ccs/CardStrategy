@@ -1,4 +1,8 @@
-const { DetoxCircusEnvironment, SpecReporter, WorkerAssignReporter } = require('detox/runners/jest');
+const {
+  DetoxCircusEnvironment,
+  SpecReporter,
+  WorkerAssignReporter,
+} = require('detox/runners/jest');
 
 class CustomDetoxEnvironment extends DetoxCircusEnvironment {
   constructor(config, context) {
@@ -11,7 +15,7 @@ class CustomDetoxEnvironment extends DetoxCircusEnvironment {
     // Enabling this will make the output more concise and focused on the test results.
     this.registerListeners({
       SpecReporter,
-      WorkerAssignReporter
+      WorkerAssignReporter,
     });
   }
 }

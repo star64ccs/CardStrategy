@@ -14,9 +14,11 @@ class AlertService {
       cpu: parseFloat(process.env.CPU_ALERT_THRESHOLD) || 80,
       memory: parseFloat(process.env.MEMORY_ALERT_THRESHOLD) || 85,
       disk: parseFloat(process.env.DISK_ALERT_THRESHOLD) || 90,
-      responseTime: parseFloat(process.env.RESPONSE_TIME_ALERT_THRESHOLD) || 2000,
+      responseTime:
+        parseFloat(process.env.RESPONSE_TIME_ALERT_THRESHOLD) || 2000,
       errorRate: parseFloat(process.env.ERROR_RATE_ALERT_THRESHOLD) || 5,
-      databaseConnections: parseFloat(process.env.DB_CONNECTION_ALERT_THRESHOLD) || 80
+      databaseConnections:
+        parseFloat(process.env.DB_CONNECTION_ALERT_THRESHOLD) || 80,
     };
   }
 
@@ -33,8 +35,8 @@ class AlertService {
           secure: process.env.SMTP_SECURE === 'true',
           auth: {
             user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PASS
-          }
+            pass: process.env.SMTP_PASS,
+          },
         });
       }
 
@@ -58,7 +60,7 @@ class AlertService {
         message: `CPU 使用率過高: ${metrics.cpu.usage.toFixed(2)}%`,
         value: metrics.cpu.usage,
         threshold: this.alertThresholds.cpu,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -66,11 +68,14 @@ class AlertService {
     if (metrics.memory && metrics.memory.usage > this.alertThresholds.memory) {
       alerts.push({
         type: 'memory_high',
-        severity: this.getSeverity(metrics.memory.usage, this.alertThresholds.memory),
+        severity: this.getSeverity(
+          metrics.memory.usage,
+          this.alertThresholds.memory
+        ),
         message: `記憶體使用率過高: ${metrics.memory.usage.toFixed(2)}%`,
         value: metrics.memory.usage,
         threshold: this.alertThresholds.memory,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -78,47 +83,69 @@ class AlertService {
     if (metrics.disk && metrics.disk.usage > this.alertThresholds.disk) {
       alerts.push({
         type: 'disk_high',
-        severity: this.getSeverity(metrics.disk.usage, this.alertThresholds.disk),
+        severity: this.getSeverity(
+          metrics.disk.usage,
+          this.alertThresholds.disk
+        ),
         message: `磁碟使用率過高: ${metrics.disk.usage.toFixed(2)}%`,
         value: metrics.disk.usage,
         threshold: this.alertThresholds.disk,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
     // 檢查響應時間
-    if (metrics.responseTime && metrics.responseTime.average > this.alertThresholds.responseTime) {
+    if (
+      metrics.responseTime &&
+      metrics.responseTime.average > this.alertThresholds.responseTime
+    ) {
       alerts.push({
         type: 'response_time_high',
-        severity: this.getSeverity(metrics.responseTime.average, this.alertThresholds.responseTime),
+        severity: this.getSeverity(
+          metrics.responseTime.average,
+          this.alertThresholds.responseTime
+        ),
         message: `API 響應時間過高: ${metrics.responseTime.average.toFixed(2)}ms`,
         value: metrics.responseTime.average,
         threshold: this.alertThresholds.responseTime,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
     // 檢查錯誤率
-    if (metrics.errorRate && metrics.errorRate.percentage > this.alertThresholds.errorRate) {
+    if (
+      metrics.errorRate &&
+      metrics.errorRate.percentage > this.alertThresholds.errorRate
+    ) {
       alerts.push({
         type: 'error_rate_high',
-        severity: this.getSeverity(metrics.errorRate.percentage, this.alertThresholds.errorRate),
+        severity: this.getSeverity(
+          metrics.errorRate.percentage,
+          this.alertThresholds.errorRate
+        ),
         message: `錯誤率過高: ${metrics.errorRate.percentage.toFixed(2)}%`,
         value: metrics.errorRate.percentage,
         threshold: this.alertThresholds.errorRate,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
     // 檢查數據庫連接
-    if (metrics.database && metrics.database.connectionUsage > this.alertThresholds.databaseConnections) {
+    if (
+      metrics.database &&
+      metrics.database.connectionUsage >
+        this.alertThresholds.databaseConnections
+    ) {
       alerts.push({
         type: 'database_connections_high',
-        severity: this.getSeverity(metrics.database.connectionUsage, this.alertThresholds.databaseConnections),
+        severity: this.getSeverity(
+          metrics.database.connectionUsage,
+          this.alertThresholds.databaseConnections
+        ),
         message: `數據庫連接使用率過高: ${metrics.database.connectionUsage.toFixed(2)}%`,
         value: metrics.database.connectionUsage,
         threshold: this.alertThresholds.databaseConnections,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -147,7 +174,7 @@ class AlertService {
       this.alertHistory.push({
         ...alert,
         processed: true,
-        processedAt: new Date().toISOString()
+        processedAt: new Date().toISOString(),
       });
 
       // 限制歷史記錄大小
@@ -163,7 +190,6 @@ class AlertService {
       }
 
       logger.warn(`警報觸發: ${alert.message}`, alert);
-
     } catch (error) {
       logger.error('處理警報失敗:', error);
     }
@@ -185,7 +211,6 @@ class AlertService {
 
       // 發送 SMS（如果配置了）
       await this.sendSMSAlert(alert, 'critical');
-
     } catch (error) {
       logger.error('發送嚴重警報失敗:', error);
     }
@@ -201,7 +226,6 @@ class AlertService {
 
       // 發送 Slack 通知
       await this.sendSlackAlert(alert, 'warning');
-
     } catch (error) {
       logger.error('發送警告警報失敗:', error);
     }
@@ -223,11 +247,10 @@ class AlertService {
         from: process.env.ALERT_EMAIL_FROM || 'alerts@cardstrategy.com',
         to: process.env.ALERT_EMAIL_TO,
         subject,
-        html
+        html,
       });
 
       logger.info(`郵件警報已發送: ${alert.message}`);
-
     } catch (error) {
       logger.error('發送郵件警報失敗:', error);
     }
@@ -244,49 +267,51 @@ class AlertService {
     try {
       const payload = {
         text: `🚨 *${severity.toUpperCase()} 警報*`,
-        attachments: [{
-          color: severity === 'critical' ? '#ff0000' : '#ffa500',
-          fields: [
-            {
-              title: '警報類型',
-              value: alert.type,
-              short: true
-            },
-            {
-              title: '嚴重程度',
-              value: severity,
-              short: true
-            },
-            {
-              title: '消息',
-              value: alert.message,
-              short: false
-            },
-            {
-              title: '當前值',
-              value: `${alert.value}`,
-              short: true
-            },
-            {
-              title: '閾值',
-              value: `${alert.threshold}`,
-              short: true
-            },
-            {
-              title: '時間',
-              value: new Date(alert.timestamp).toLocaleString(),
-              short: false
-            }
-          ]
-        }]
+        attachments: [
+          {
+            color: severity === 'critical' ? '#ff0000' : '#ffa500',
+            fields: [
+              {
+                title: '警報類型',
+                value: alert.type,
+                short: true,
+              },
+              {
+                title: '嚴重程度',
+                value: severity,
+                short: true,
+              },
+              {
+                title: '消息',
+                value: alert.message,
+                short: false,
+              },
+              {
+                title: '當前值',
+                value: `${alert.value}`,
+                short: true,
+              },
+              {
+                title: '閾值',
+                value: `${alert.threshold}`,
+                short: true,
+              },
+              {
+                title: '時間',
+                value: new Date(alert.timestamp).toLocaleString(),
+                short: false,
+              },
+            ],
+          },
+        ],
       };
 
       const response = await fetch(this.slackWebhook, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -294,7 +319,6 @@ class AlertService {
       } else {
         logger.error('Slack 警報發送失敗:', response.statusText);
       }
-
     } catch (error) {
       logger.error('發送 Slack 警報失敗:', error);
     }
@@ -313,15 +337,15 @@ class AlertService {
         alert,
         severity,
         timestamp: new Date().toISOString(),
-        service: 'cardstrategy'
+        service: 'cardstrategy',
       };
 
       const response = await fetch(this.webhookUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -329,7 +353,6 @@ class AlertService {
       } else {
         logger.error('Webhook 警報發送失敗:', response.statusText);
       }
-
     } catch (error) {
       logger.error('發送 Webhook 警報失敗:', error);
     }
@@ -406,16 +429,16 @@ class AlertService {
       return 'warning';
     }
     return 'info';
-
   }
 
   /**
    * 檢查是否為重複警報
    */
   isDuplicateAlert(alert) {
-    const recentAlerts = this.alerts.filter(a =>
-      a.type === alert.type &&
-      Date.now() - new Date(a.timestamp).getTime() < 5 * 60 * 1000 // 5 分鐘內
+    const recentAlerts = this.alerts.filter(
+      (a) =>
+        a.type === alert.type &&
+        Date.now() - new Date(a.timestamp).getTime() < 5 * 60 * 1000 // 5 分鐘內
     );
 
     return recentAlerts.length > 0;
@@ -440,8 +463,8 @@ class AlertService {
    */
   clearResolvedAlerts() {
     const now = Date.now();
-    this.alerts = this.alerts.filter(alert =>
-      now - new Date(alert.timestamp).getTime() < 24 * 60 * 60 * 1000 // 保留 24 小時
+    this.alerts = this.alerts.filter(
+      (alert) => now - new Date(alert.timestamp).getTime() < 24 * 60 * 60 * 1000 // 保留 24 小時
     );
   }
 
@@ -457,7 +480,7 @@ class AlertService {
       threshold: data.threshold || 0,
       timestamp: new Date().toISOString(),
       manual: true,
-      ...data
+      ...data,
     };
 
     await this.processAlert(alert);
@@ -470,7 +493,7 @@ class AlertService {
   updateThresholds(newThresholds) {
     this.alertThresholds = {
       ...this.alertThresholds,
-      ...newThresholds
+      ...newThresholds,
     };
 
     logger.info('警報閾值已更新:', this.alertThresholds);
@@ -481,12 +504,13 @@ class AlertService {
    */
   getAlertStats() {
     const now = Date.now();
-    const last24h = this.alertHistory.filter(alert =>
-      now - new Date(alert.timestamp).getTime() < 24 * 60 * 60 * 1000
+    const last24h = this.alertHistory.filter(
+      (alert) => now - new Date(alert.timestamp).getTime() < 24 * 60 * 60 * 1000
     );
 
-    const last7d = this.alertHistory.filter(alert =>
-      now - new Date(alert.timestamp).getTime() < 7 * 24 * 60 * 60 * 1000
+    const last7d = this.alertHistory.filter(
+      (alert) =>
+        now - new Date(alert.timestamp).getTime() < 7 * 24 * 60 * 60 * 1000
     );
 
     return {
@@ -495,7 +519,7 @@ class AlertService {
       totalAlerts7d: last7d.length,
       totalAlerts: this.alertHistory.length,
       alertsByType: this.groupAlertsByType(last24h),
-      alertsBySeverity: this.groupAlertsBySeverity(last24h)
+      alertsBySeverity: this.groupAlertsBySeverity(last24h),
     };
   }
 

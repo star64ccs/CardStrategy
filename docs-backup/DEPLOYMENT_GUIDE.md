@@ -259,14 +259,14 @@ name: Deploy to Production
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Deploy to server
         uses: appleboy/ssh-action@v0.1.5
         with:
@@ -472,9 +472,9 @@ psql -h localhost -U cardstrategy_user -d cardstrategy
 SELECT count(*) FROM pg_stat_activity;
 
 # 查看慢查詢
-SELECT query, mean_time, calls 
-FROM pg_stat_statements 
-ORDER BY mean_time DESC 
+SELECT query, mean_time, calls
+FROM pg_stat_statements
+ORDER BY mean_time DESC
 LIMIT 10;
 ```
 
@@ -501,6 +501,7 @@ find $BACKUP_DIR -name "backup_*.sql" -mtime +30 -delete
 ### 1. 常見問題
 
 #### 數據庫連接失敗
+
 ```bash
 # 檢查 PostgreSQL 狀態
 sudo systemctl status postgresql
@@ -513,6 +514,7 @@ sudo ufw status
 ```
 
 #### Redis 連接失敗
+
 ```bash
 # 檢查 Redis 狀態
 sudo systemctl status redis-server
@@ -525,6 +527,7 @@ cat /etc/redis/redis.conf | grep bind
 ```
 
 #### 應用啟動失敗
+
 ```bash
 # 檢查端口佔用
 lsof -i :3000
@@ -540,6 +543,7 @@ echo $DB_HOST
 ### 2. 性能問題
 
 #### 高 CPU 使用率
+
 ```bash
 # 查看進程
 top -p $(pgrep -f node)
@@ -549,6 +553,7 @@ node --inspect=0.0.0.0:9229 app.js
 ```
 
 #### 高記憶體使用率
+
 ```bash
 # 查看記憶體使用
 free -h
@@ -558,20 +563,22 @@ node -e "console.log(process.memoryUsage())"
 ```
 
 #### 慢查詢
+
 ```sql
 -- 啟用查詢日誌
 ALTER SYSTEM SET log_statement = 'all';
 SELECT pg_reload_conf();
 
 -- 查看慢查詢
-SELECT query, mean_time, calls 
-FROM pg_stat_statements 
+SELECT query, mean_time, calls
+FROM pg_stat_statements
 WHERE mean_time > 1000;
 ```
 
 ### 3. 安全問題
 
 #### 檢查安全漏洞
+
 ```bash
 # 運行安全掃描
 npm audit
@@ -584,6 +591,7 @@ nmap localhost
 ```
 
 #### 防火牆配置
+
 ```bash
 # 配置 UFW
 sudo ufw allow ssh
@@ -628,15 +636,17 @@ SELECT pg_reload_conf();
 ```javascript
 // 安全中間件配置
 app.use(helmet());
-app.use(cors({
-  origin: process.env.CORS_ORIGIN,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN,
+    credentials: true,
+  })
+);
 
 // 速率限制
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 分鐘
-  max: 100 // 限制每個 IP 100 個請求
+  max: 100, // 限制每個 IP 100 個請求
 });
 app.use('/api/', limiter);
 ```
@@ -668,7 +678,7 @@ const client = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
   password: process.env.REDIS_PASSWORD,
-  retry_strategy: function(options) {
+  retry_strategy: function (options) {
     if (options.error && options.error.code === 'ECONNREFUSED') {
       return new Error('The server refused the connection');
     }
@@ -679,7 +689,7 @@ const client = redis.createClient({
       return undefined;
     }
     return Math.min(options.attempt * 100, 3000);
-  }
+  },
 });
 ```
 
@@ -702,10 +712,12 @@ if (cluster.isMaster) {
 app.use(compression());
 
 // 靜態文件緩存
-app.use(express.static('public', {
-  maxAge: '1d',
-  etag: true
-}));
+app.use(
+  express.static('public', {
+    maxAge: '1d',
+    etag: true,
+  })
+);
 ```
 
 ### 4. 監控優化
@@ -726,14 +738,14 @@ while true; do
     echo "服務不可用，發送告警"
     # 發送告警邏輯
   fi
-  
+
   # 檢查磁碟空間
   DISK_USAGE=$(df / | awk 'NR==2 {print $5}' | sed 's/%//')
   if [ $DISK_USAGE -gt 80 ]; then
     echo "磁碟空間不足，發送告警"
     # 發送告警邏輯
   fi
-  
+
   sleep 60
 done
 ```

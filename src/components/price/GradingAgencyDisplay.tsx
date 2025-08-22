@@ -18,12 +18,12 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
   selectedAgencies = [],
   showPopulationChart = true,
   showPriceChart = true,
-  showPremiumChart = true
+  showPremiumChart = true,
 }) => {
   // 過濾選中的機構數據
   const filteredData = useMemo(() => {
     if (selectedAgencies.length === 0) return data;
-    return data.filter(item => selectedAgencies.includes(item.agency));
+    return data.filter((item) => selectedAgencies.includes(item.agency));
   }, [data, selectedAgencies]);
 
   // 獲取機構顏色
@@ -31,7 +31,7 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
     const colors = {
       PSA: theme.colors.primary,
       BGS: theme.colors.secondary,
-      CGC: theme.colors.success
+      CGC: theme.colors.success,
     };
     return colors[agency] || theme.colors.gray;
   };
@@ -40,22 +40,42 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
   const populationChartData = useMemo(() => {
     if (!filteredData.length) return null;
 
-    const grades = ['10', '9.5', '9', '8.5', '8', '7.5', '7', '6.5', '6', '5.5', '5', '4.5', '4', '3.5', '3', '2.5', '2', '1.5', '1'];
-    const datasets = filteredData.map(agencyData => {
-      const data = grades.map(grade =>
-        agencyData.distribution.gradeDistribution[grade] || 0
+    const grades = [
+      '10',
+      '9.5',
+      '9',
+      '8.5',
+      '8',
+      '7.5',
+      '7',
+      '6.5',
+      '6',
+      '5.5',
+      '5',
+      '4.5',
+      '4',
+      '3.5',
+      '3',
+      '2.5',
+      '2',
+      '1.5',
+      '1',
+    ];
+    const datasets = filteredData.map((agencyData) => {
+      const data = grades.map(
+        (grade) => agencyData.distribution.gradeDistribution[grade] || 0
       );
 
       return {
         data,
         color: () => getAgencyColor(agencyData.agency),
-        strokeWidth: 2
+        strokeWidth: 2,
       };
     });
 
     return {
       labels: grades,
-      datasets
+      datasets,
     };
   }, [filteredData]);
 
@@ -64,21 +84,21 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
     if (!filteredData.length) return null;
 
     const grades = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    const datasets = filteredData.map(agencyData => {
-      const data = grades.map(grade =>
-        agencyData.marketImpact.averagePriceByGrade[grade] || 0
+    const datasets = filteredData.map((agencyData) => {
+      const data = grades.map(
+        (grade) => agencyData.marketImpact.averagePriceByGrade[grade] || 0
       );
 
       return {
         data,
         color: () => getAgencyColor(agencyData.agency),
-        strokeWidth: 2
+        strokeWidth: 2,
       };
     });
 
     return {
       labels: grades,
-      datasets
+      datasets,
     };
   }, [filteredData]);
 
@@ -87,21 +107,21 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
     if (!filteredData.length) return null;
 
     const grades = ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'];
-    const datasets = filteredData.map(agencyData => {
-      const data = grades.map(grade =>
-        agencyData.marketImpact.premiumByGrade[grade] || 0
+    const datasets = filteredData.map((agencyData) => {
+      const data = grades.map(
+        (grade) => agencyData.marketImpact.premiumByGrade[grade] || 0
       );
 
       return {
         data,
         color: () => getAgencyColor(agencyData.agency),
-        strokeWidth: 2
+        strokeWidth: 2,
       };
     });
 
     return {
       labels: grades,
-      datasets
+      datasets,
     };
   }, [filteredData]);
 
@@ -119,13 +139,15 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
       <View style={styles.overviewContainer}>
         <Text style={styles.sectionTitle}>鑑定機構總覽</Text>
         <View style={styles.overviewGrid}>
-          {filteredData.map(agencyData => (
+          {filteredData.map((agencyData) => (
             <View key={agencyData.agency} style={styles.overviewCard}>
               <View style={styles.agencyHeader}>
-                <View style={[
-                  styles.agencyColor,
-                  { backgroundColor: getAgencyColor(agencyData.agency) }
-                ]} />
+                <View
+                  style={[
+                    styles.agencyColor,
+                    { backgroundColor: getAgencyColor(agencyData.agency) },
+                  ]}
+                />
                 <Text style={styles.agencyName}>{agencyData.agency}</Text>
               </View>
               <View style={styles.overviewStats}>
@@ -139,14 +161,20 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
                   <Text style={styles.statLabel}>最高等級</Text>
                   <Text style={styles.statValue}>
                     {Object.keys(agencyData.distribution.gradeDistribution)
-                      .filter(grade => agencyData.distribution.gradeDistribution[grade] > 0)
-                      .sort((a, b) => parseFloat(b) - parseFloat(a))[0] || 'N/A'}
+                      .filter(
+                        (grade) =>
+                          agencyData.distribution.gradeDistribution[grade] > 0
+                      )
+                      .sort((a, b) => parseFloat(b) - parseFloat(a))[0] ||
+                      'N/A'}
                   </Text>
                 </View>
                 <View style={styles.statRow}>
                   <Text style={styles.statLabel}>最近更新</Text>
                   <Text style={styles.statValue}>
-                    {new Date(agencyData.lastUpdated).toLocaleDateString('zh-TW')}
+                    {new Date(agencyData.lastUpdated).toLocaleDateString(
+                      'zh-TW'
+                    )}
                   </Text>
                 </View>
               </View>
@@ -171,8 +199,8 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               style: {
-                borderRadius: 16
-              }
+                borderRadius: 16,
+              },
             }}
             style={styles.chart}
             showValuesOnTopOfBars={false}
@@ -197,8 +225,8 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               style: {
-                borderRadius: 16
-              }
+                borderRadius: 16,
+              },
             }}
             style={styles.chart}
             showValuesOnTopOfBars={false}
@@ -223,8 +251,8 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
               color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               style: {
-                borderRadius: 16
-              }
+                borderRadius: 16,
+              },
             }}
             style={styles.chart}
             showValuesOnTopOfBars={false}
@@ -236,13 +264,15 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
       {/* 詳細數據表格 */}
       <View style={styles.detailsContainer}>
         <Text style={styles.sectionTitle}>詳細分佈數據</Text>
-        {filteredData.map(agencyData => (
+        {filteredData.map((agencyData) => (
           <View key={agencyData.agency} style={styles.agencyDetails}>
             <View style={styles.agencyHeader}>
-              <View style={[
-                styles.agencyColor,
-                { backgroundColor: getAgencyColor(agencyData.agency) }
-              ]} />
+              <View
+                style={[
+                  styles.agencyColor,
+                  { backgroundColor: getAgencyColor(agencyData.agency) },
+                ]}
+              />
               <Text style={styles.agencyName}>{agencyData.agency}</Text>
             </View>
 
@@ -260,16 +290,21 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
                 .map(([grade, report]) => (
                   <View key={grade} style={styles.tableRow}>
                     <Text style={styles.tableCell}>{grade}</Text>
-                    <Text style={styles.tableCell}>{formatNumber(report.count)}</Text>
-                    <Text style={styles.tableCell}>{report.percentage.toFixed(1)}%</Text>
                     <Text style={styles.tableCell}>
-                      {formatPrice(agencyData.marketImpact.averagePriceByGrade[grade] || 0)}
+                      {formatNumber(report.count)}
+                    </Text>
+                    <Text style={styles.tableCell}>
+                      {report.percentage.toFixed(1)}%
+                    </Text>
+                    <Text style={styles.tableCell}>
+                      {formatPrice(
+                        agencyData.marketImpact.averagePriceByGrade[grade] || 0
+                      )}
                     </Text>
                     <Text style={styles.tableCell}>
                       {agencyData.marketImpact.premiumByGrade[grade]
                         ? `${agencyData.marketImpact.premiumByGrade[grade].toFixed(1)}%`
-                        : 'N/A'
-                      }
+                        : 'N/A'}
                     </Text>
                   </View>
                 ))}
@@ -284,29 +319,29 @@ export const GradingAgencyDisplay: React.FC<GradingAgencyDisplayProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   noDataText: {
     textAlign: 'center',
     fontSize: theme.typography.sizes.md,
     color: theme.colors.text.secondary,
     fontStyle: 'italic',
-    padding: theme.spacing.xl
+    padding: theme.spacing.xl,
   },
   sectionTitle: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.md,
-    paddingHorizontal: theme.spacing.md
+    paddingHorizontal: theme.spacing.md,
   },
   overviewContainer: {
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   overviewGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   overviewCard: {
     backgroundColor: theme.colors.surface,
@@ -318,51 +353,51 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    elevation: 2
+    elevation: 2,
   },
   agencyHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   agencyColor: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   agencyName: {
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   overviewStats: {
-    gap: theme.spacing.xs
+    gap: theme.spacing.xs,
   },
   statRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statLabel: {
     fontSize: theme.typography.sizes.xs,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   statValue: {
     fontSize: theme.typography.sizes.xs,
     fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   chartContainer: {
     alignItems: 'center',
     marginVertical: theme.spacing.md,
-    paddingHorizontal: theme.spacing.md
+    paddingHorizontal: theme.spacing.md,
   },
   chart: {
-    borderRadius: theme.borderRadius.lg
+    borderRadius: theme.borderRadius.lg,
   },
   detailsContainer: {
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   agencyDetails: {
     backgroundColor: theme.colors.surface,
@@ -373,10 +408,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    elevation: 2
+    elevation: 2,
   },
   detailsTable: {
-    marginTop: theme.spacing.sm
+    marginTop: theme.spacing.sm,
   },
   tableHeader: {
     flexDirection: 'row',
@@ -384,26 +419,26 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xs,
     paddingHorizontal: theme.spacing.sm,
     borderRadius: theme.borderRadius.sm,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   tableHeaderText: {
     flex: 1,
     fontSize: theme.typography.sizes.xs,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   tableRow: {
     flexDirection: 'row',
     paddingVertical: theme.spacing.xs,
     paddingHorizontal: theme.spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   tableCell: {
     flex: 1,
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.secondary,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });

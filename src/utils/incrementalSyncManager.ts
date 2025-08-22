@@ -32,7 +32,7 @@ class IncrementalSyncManager {
     pendingChanges: [],
     syncInProgress: false,
     error: null,
-    version: 1
+    version: 1,
   };
 
   private syncQueue: SyncBatch[] = [];
@@ -75,7 +75,7 @@ class IncrementalSyncManager {
       const syncItem: SyncItem = {
         ...item,
         timestamp: Date.now(),
-        version: this.syncState.version++
+        version: this.syncState.version++,
       };
 
       this.syncState.pendingChanges.push(syncItem);
@@ -95,12 +95,14 @@ class IncrementalSyncManager {
   /**
    * 批量添加變更
    */
-  public addBatchChanges(items: Omit<SyncItem, 'timestamp' | 'version'>[]): void {
+  public addBatchChanges(
+    items: Omit<SyncItem, 'timestamp' | 'version'>[]
+  ): void {
     try {
-      const syncItems: SyncItem[] = items.map(item => ({
+      const syncItems: SyncItem[] = items.map((item) => ({
         ...item,
         timestamp: Date.now(),
-        version: this.syncState.version++
+        version: this.syncState.version++,
       }));
 
       this.syncState.pendingChanges.push(...syncItems);
@@ -141,7 +143,7 @@ class IncrementalSyncManager {
         id: `batch_${Date.now()}`,
         items: changes,
         timestamp: Date.now(),
-        version: this.syncState.version++
+        version: this.syncState.version++,
       };
 
       // 發送到服務器
@@ -150,7 +152,11 @@ class IncrementalSyncManager {
       if (response.success) {
         // 同步成功，清除已同步的變更
         this.syncState.pendingChanges = this.syncState.pendingChanges.filter(
-          item => !changes.find(change => change.id === item.id && change.version === item.version)
+          (item) =>
+            !changes.find(
+              (change) =>
+                change.id === item.id && change.version === item.version
+            )
         );
 
         this.syncState.lastSyncTime = Date.now();
@@ -163,7 +169,6 @@ class IncrementalSyncManager {
 
       this.saveSyncState();
       this.updateStoreSyncStatus('idle');
-
     } catch (error) {
       logger.error('同步失敗:', error);
       this.handleSyncError(error);
@@ -175,19 +180,21 @@ class IncrementalSyncManager {
   /**
    * 發送同步批次到服務器
    */
-  private async sendSyncBatch(batch: SyncBatch): Promise<{ success: boolean; error?: string }> {
+  private async sendSyncBatch(
+    batch: SyncBatch
+  ): Promise<{ success: boolean; error?: string }> {
     try {
       const response = await fetch('/api/sync/incremental', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.getAuthToken()}`
+          Authorization: `Bearer ${this.getAuthToken()}`,
         },
         body: JSON.stringify({
           batch,
           lastSyncTime: this.syncState.lastSyncTime,
-          clientVersion: this.syncState.version
-        })
+          clientVersion: this.syncState.version,
+        }),
       });
 
       if (!response.ok) {
@@ -196,9 +203,11 @@ class IncrementalSyncManager {
 
       const result = await response.json();
       return { success: true, ...result };
-
     } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : '未知錯誤' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '未知錯誤',
+      };
     }
   }
 
@@ -216,7 +225,9 @@ class IncrementalSyncManager {
         this.triggerSync();
       }, delay);
 
-      logger.warn(`同步失敗，${delay}ms 後重試 (${this.retryAttempts}/${this.maxRetryAttempts})`);
+      logger.warn(
+        `同步失敗，${delay}ms 後重試 (${this.retryAttempts}/${this.maxRetryAttempts})`
+      );
     } else {
       logger.error('同步失敗次數過多，停止重試');
       this.updateStoreSyncStatus('error');
@@ -228,11 +239,14 @@ class IncrementalSyncManager {
    */
   private startPeriodicSync(): void {
     // 每5分鐘同步一次
-    this.syncInterval = setInterval(() => {
-      if (navigator.onLine && this.syncState.pendingChanges.length > 0) {
-        this.triggerSync();
-      }
-    }, 5 * 60 * 1000);
+    this.syncInterval = setInterval(
+      () => {
+        if (navigator.onLine && this.syncState.pendingChanges.length > 0) {
+          this.triggerSync();
+        }
+      },
+      5 * 60 * 1000
+    );
   }
 
   /**
@@ -269,7 +283,9 @@ class IncrementalSyncManager {
   /**
    * 更新 Redux store 中的同步狀態
    */
-  private updateStoreSyncStatus(status: 'idle' | 'syncing' | 'error' | 'offline'): void {
+  private updateStoreSyncStatus(
+    status: 'idle' | 'syncing' | 'error' | 'offline'
+  ): void {
     store.dispatch(setSyncStatus(status));
     store.dispatch(setLastSyncTime(this.syncState.lastSyncTime));
   }

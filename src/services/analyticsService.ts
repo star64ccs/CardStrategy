@@ -77,13 +77,15 @@ export interface PortfolioAnalysis {
     sharpeRatio: number;
     maxDrawdown: number;
   } | null;
-  transactions: {
-    id: string;
-    type: 'buy' | 'sell';
-    amount: number;
-    cardId: string;
-    createdAt: Date;
-  }[] | null;
+  transactions:
+    | {
+        id: string;
+        type: 'buy' | 'sell';
+        amount: number;
+        cardId: string;
+        createdAt: Date;
+      }[]
+    | null;
   recommendations: {
     type: string;
     message: string;
@@ -270,15 +272,20 @@ export interface AnalyticsStats {
 
 // 高級分析服務類
 class AnalyticsService {
-  private cache = new Map<string, { data: any; timestamp: number; ttl: number }>();
+  private cache = new Map<
+    string,
+    { data: any; timestamp: number; ttl: number }
+  >();
 
   // 獲取市場趨勢分析
-  async getMarketTrends(options: {
-    timeframe?: string;
-    categories?: string[];
-    limit?: number;
-    useCache?: boolean;
-  } = {}): Promise<MarketTrends> {
+  async getMarketTrends(
+    options: {
+      timeframe?: string;
+      categories?: string[];
+      limit?: number;
+      useCache?: boolean;
+    } = {}
+  ): Promise<MarketTrends> {
     const cacheKey = `market_trends:${JSON.stringify(options)}`;
 
     if (options.useCache !== false) {
@@ -289,11 +296,14 @@ class AnalyticsService {
     try {
       const params = new URLSearchParams();
       if (options.timeframe) params.append('timeframe', options.timeframe);
-      if (options.categories?.length) params.append('categories', options.categories.join(','));
+      if (options.categories?.length)
+        params.append('categories', options.categories.join(','));
       if (options.limit) params.append('limit', options.limit.toString());
       if (options.useCache === false) params.append('useCache', 'false');
 
-      const response = await apiService.get(`/analytics/market/trends?${params}`);
+      const response = await apiService.get(
+        `/analytics/market/trends?${params}`
+      );
 
       if (options.useCache !== false) {
         this.setCachedData(cacheKey, response.data, 3600); // 1小時緩存
@@ -307,12 +317,15 @@ class AnalyticsService {
   }
 
   // 獲取投資組合分析
-  async getPortfolioAnalysis(userId: string, options: {
-    timeframe?: string;
-    includeTransactions?: boolean;
-    includePerformance?: boolean;
-    useCache?: boolean;
-  } = {}): Promise<PortfolioAnalysis> {
+  async getPortfolioAnalysis(
+    userId: string,
+    options: {
+      timeframe?: string;
+      includeTransactions?: boolean;
+      includePerformance?: boolean;
+      useCache?: boolean;
+    } = {}
+  ): Promise<PortfolioAnalysis> {
     const cacheKey = `portfolio_analysis:${userId}:${JSON.stringify(options)}`;
 
     if (options.useCache !== false) {
@@ -323,11 +336,21 @@ class AnalyticsService {
     try {
       const params = new URLSearchParams();
       if (options.timeframe) params.append('timeframe', options.timeframe);
-      if (options.includeTransactions !== undefined) params.append('includeTransactions', options.includeTransactions.toString());
-      if (options.includePerformance !== undefined) params.append('includePerformance', options.includePerformance.toString());
+      if (options.includeTransactions !== undefined)
+        params.append(
+          'includeTransactions',
+          options.includeTransactions.toString()
+        );
+      if (options.includePerformance !== undefined)
+        params.append(
+          'includePerformance',
+          options.includePerformance.toString()
+        );
       if (options.useCache === false) params.append('useCache', 'false');
 
-      const response = await apiService.get(`/analytics/portfolio/${userId}?${params}`);
+      const response = await apiService.get(
+        `/analytics/portfolio/${userId}?${params}`
+      );
 
       if (options.useCache !== false) {
         this.setCachedData(cacheKey, response.data, 1800); // 30分鐘緩存
@@ -341,12 +364,15 @@ class AnalyticsService {
   }
 
   // 獲取用戶行為分析
-  async getUserBehaviorAnalysis(userId: string, options: {
-    timeframe?: string;
-    includePatterns?: boolean;
-    includePredictions?: boolean;
-    useCache?: boolean;
-  } = {}): Promise<UserBehaviorAnalysis> {
+  async getUserBehaviorAnalysis(
+    userId: string,
+    options: {
+      timeframe?: string;
+      includePatterns?: boolean;
+      includePredictions?: boolean;
+      useCache?: boolean;
+    } = {}
+  ): Promise<UserBehaviorAnalysis> {
     const cacheKey = `user_behavior:${userId}:${JSON.stringify(options)}`;
 
     if (options.useCache !== false) {
@@ -357,11 +383,18 @@ class AnalyticsService {
     try {
       const params = new URLSearchParams();
       if (options.timeframe) params.append('timeframe', options.timeframe);
-      if (options.includePatterns !== undefined) params.append('includePatterns', options.includePatterns.toString());
-      if (options.includePredictions !== undefined) params.append('includePredictions', options.includePredictions.toString());
+      if (options.includePatterns !== undefined)
+        params.append('includePatterns', options.includePatterns.toString());
+      if (options.includePredictions !== undefined)
+        params.append(
+          'includePredictions',
+          options.includePredictions.toString()
+        );
       if (options.useCache === false) params.append('useCache', 'false');
 
-      const response = await apiService.get(`/analytics/user/${userId}/behavior?${params}`);
+      const response = await apiService.get(
+        `/analytics/user/${userId}/behavior?${params}`
+      );
 
       if (options.useCache !== false) {
         this.setCachedData(cacheKey, response.data, 1800); // 30分鐘緩存
@@ -375,23 +408,28 @@ class AnalyticsService {
   }
 
   // 生成綜合報告
-  async generateComprehensiveReport(options: {
-    reportType?: string;
-    startDate?: Date;
-    endDate?: Date;
-    includeCharts?: boolean;
-    includeRecommendations?: boolean;
-    format?: string;
-  } = {}): Promise<ComprehensiveReport> {
+  async generateComprehensiveReport(
+    options: {
+      reportType?: string;
+      startDate?: Date;
+      endDate?: Date;
+      includeCharts?: boolean;
+      includeRecommendations?: boolean;
+      format?: string;
+    } = {}
+  ): Promise<ComprehensiveReport> {
     try {
-      const response = await apiService.post('/analytics/reports/comprehensive', {
-        reportType: options.reportType || 'monthly',
-        startDate: options.startDate?.toISOString(),
-        endDate: options.endDate?.toISOString(),
-        includeCharts: options.includeCharts !== false,
-        includeRecommendations: options.includeRecommendations !== false,
-        format: options.format || 'json'
-      });
+      const response = await apiService.post(
+        '/analytics/reports/comprehensive',
+        {
+          reportType: options.reportType || 'monthly',
+          startDate: options.startDate?.toISOString(),
+          endDate: options.endDate?.toISOString(),
+          includeCharts: options.includeCharts !== false,
+          includeRecommendations: options.includeRecommendations !== false,
+          format: options.format || 'json',
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -401,12 +439,14 @@ class AnalyticsService {
   }
 
   // 獲取預測分析
-  async getPredictiveAnalysis(options: {
-    target?: string;
-    timeframe?: string;
-    confidence?: number;
-    useCache?: boolean;
-  } = {}): Promise<PredictiveAnalysis> {
+  async getPredictiveAnalysis(
+    options: {
+      target?: string;
+      timeframe?: string;
+      confidence?: number;
+      useCache?: boolean;
+    } = {}
+  ): Promise<PredictiveAnalysis> {
     const cacheKey = `predictive:${JSON.stringify(options)}`;
 
     if (options.useCache !== false) {
@@ -418,7 +458,8 @@ class AnalyticsService {
       const params = new URLSearchParams();
       if (options.target) params.append('target', options.target);
       if (options.timeframe) params.append('timeframe', options.timeframe);
-      if (options.confidence) params.append('confidence', options.confidence.toString());
+      if (options.confidence)
+        params.append('confidence', options.confidence.toString());
       if (options.useCache === false) params.append('useCache', 'false');
 
       const response = await apiService.get(`/analytics/predictive?${params}`);
@@ -435,12 +476,14 @@ class AnalyticsService {
   }
 
   // 獲取異常檢測
-  async getAnomalyDetection(options: {
-    type?: string;
-    sensitivity?: string;
-    timeframe?: string;
-    useCache?: boolean;
-  } = {}): Promise<AnomalyDetection> {
+  async getAnomalyDetection(
+    options: {
+      type?: string;
+      sensitivity?: string;
+      timeframe?: string;
+      useCache?: boolean;
+    } = {}
+  ): Promise<AnomalyDetection> {
     const cacheKey = `anomaly:${JSON.stringify(options)}`;
 
     if (options.useCache !== false) {
@@ -451,7 +494,8 @@ class AnalyticsService {
     try {
       const params = new URLSearchParams();
       if (options.type) params.append('type', options.type);
-      if (options.sensitivity) params.append('sensitivity', options.sensitivity);
+      if (options.sensitivity)
+        params.append('sensitivity', options.sensitivity);
       if (options.timeframe) params.append('timeframe', options.timeframe);
       if (options.useCache === false) params.append('useCache', 'false');
 
@@ -469,12 +513,14 @@ class AnalyticsService {
   }
 
   // 獲取相關性分析
-  async getCorrelationAnalysis(options: {
-    variables?: string[];
-    timeframe?: string;
-    method?: string;
-    useCache?: boolean;
-  } = {}): Promise<CorrelationAnalysis> {
+  async getCorrelationAnalysis(
+    options: {
+      variables?: string[];
+      timeframe?: string;
+      method?: string;
+      useCache?: boolean;
+    } = {}
+  ): Promise<CorrelationAnalysis> {
     const cacheKey = `correlation:${JSON.stringify(options)}`;
 
     if (options.useCache !== false) {
@@ -484,7 +530,8 @@ class AnalyticsService {
 
     try {
       const params = new URLSearchParams();
-      if (options.variables?.length) params.append('variables', options.variables.join(','));
+      if (options.variables?.length)
+        params.append('variables', options.variables.join(','));
       if (options.timeframe) params.append('timeframe', options.timeframe);
       if (options.method) params.append('method', options.method);
       if (options.useCache === false) params.append('useCache', 'false');
@@ -503,12 +550,14 @@ class AnalyticsService {
   }
 
   // 獲取分段分析
-  async getSegmentationAnalysis(options: {
-    dimension?: string;
-    criteria?: string[];
-    segments?: number;
-    useCache?: boolean;
-  } = {}): Promise<SegmentationAnalysis> {
+  async getSegmentationAnalysis(
+    options: {
+      dimension?: string;
+      criteria?: string[];
+      segments?: number;
+      useCache?: boolean;
+    } = {}
+  ): Promise<SegmentationAnalysis> {
     const cacheKey = `segmentation:${JSON.stringify(options)}`;
 
     if (options.useCache !== false) {
@@ -519,11 +568,15 @@ class AnalyticsService {
     try {
       const params = new URLSearchParams();
       if (options.dimension) params.append('dimension', options.dimension);
-      if (options.criteria?.length) params.append('criteria', options.criteria.join(','));
-      if (options.segments) params.append('segments', options.segments.toString());
+      if (options.criteria?.length)
+        params.append('criteria', options.criteria.join(','));
+      if (options.segments)
+        params.append('segments', options.segments.toString());
       if (options.useCache === false) params.append('useCache', 'false');
 
-      const response = await apiService.get(`/analytics/segmentation?${params}`);
+      const response = await apiService.get(
+        `/analytics/segmentation?${params}`
+      );
 
       if (options.useCache !== false) {
         this.setCachedData(cacheKey, response.data, 3600); // 1小時緩存
@@ -537,11 +590,13 @@ class AnalyticsService {
   }
 
   // 獲取分析指標
-  async getAnalyticsMetrics(options: {
-    timeframe?: string;
-    includeTrends?: boolean;
-    useCache?: boolean;
-  } = {}): Promise<AnalyticsMetrics> {
+  async getAnalyticsMetrics(
+    options: {
+      timeframe?: string;
+      includeTrends?: boolean;
+      useCache?: boolean;
+    } = {}
+  ): Promise<AnalyticsMetrics> {
     const cacheKey = `analytics_metrics:${JSON.stringify(options)}`;
 
     if (options.useCache !== false) {
@@ -552,7 +607,8 @@ class AnalyticsService {
     try {
       const params = new URLSearchParams();
       if (options.timeframe) params.append('timeframe', options.timeframe);
-      if (options.includeTrends !== undefined) params.append('includeTrends', options.includeTrends.toString());
+      if (options.includeTrends !== undefined)
+        params.append('includeTrends', options.includeTrends.toString());
       if (options.useCache === false) params.append('useCache', 'false');
 
       const response = await apiService.get(`/analytics/metrics?${params}`);
@@ -580,12 +636,16 @@ class AnalyticsService {
   }
 
   // 生成自定義報告
-  async generateCustomReport(templateId: string, parameters: Record<string, any>, format?: string): Promise<any> {
+  async generateCustomReport(
+    templateId: string,
+    parameters: Record<string, any>,
+    format?: string
+  ): Promise<any> {
     try {
       const response = await apiService.post('/analytics/reports/custom', {
         templateId,
         parameters,
-        format: format || 'json'
+        format: format || 'json',
       });
 
       return response.data;
@@ -607,7 +667,9 @@ class AnalyticsService {
   }
 
   // 更新分析配置
-  async updateAnalyticsConfig(config: Partial<AnalyticsConfig>): Promise<AnalyticsConfig> {
+  async updateAnalyticsConfig(
+    config: Partial<AnalyticsConfig>
+  ): Promise<AnalyticsConfig> {
     try {
       const response = await apiService.put('/analytics/config', config);
       return response.data;
@@ -618,12 +680,14 @@ class AnalyticsService {
   }
 
   // 獲取分析歷史
-  async getAnalysisHistory(options: {
-    userId?: string;
-    type?: string;
-    limit?: number;
-    offset?: number;
-  } = {}): Promise<AnalysisHistory[]> {
+  async getAnalysisHistory(
+    options: {
+      userId?: string;
+      type?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<AnalysisHistory[]> {
     try {
       const params = new URLSearchParams();
       if (options.userId) params.append('userId', options.userId);
@@ -640,12 +704,16 @@ class AnalyticsService {
   }
 
   // 導出分析數據
-  async exportAnalyticsData(type: string, parameters: Record<string, any>, format?: string): Promise<ExportData> {
+  async exportAnalyticsData(
+    type: string,
+    parameters: Record<string, any>,
+    format?: string
+  ): Promise<ExportData> {
     try {
       const response = await apiService.post('/analytics/export', {
         type,
         parameters,
-        format: format || 'csv'
+        format: format || 'csv',
       });
 
       return response.data;
@@ -723,7 +791,7 @@ class AnalyticsService {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
@@ -732,10 +800,10 @@ class AnalyticsService {
     if (!pattern || pattern === '*') {
       this.cache.clear();
     } else {
-      const keysToDelete = Array.from(this.cache.keys()).filter(key =>
+      const keysToDelete = Array.from(this.cache.keys()).filter((key) =>
         key.includes(pattern)
       );
-      keysToDelete.forEach(key => this.cache.delete(key));
+      keysToDelete.forEach((key) => this.cache.delete(key));
     }
   }
 
@@ -744,22 +812,24 @@ class AnalyticsService {
     size: number;
     keys: string[];
     memoryUsage: number;
-    } {
+  } {
     const keys = Array.from(this.cache.keys());
     const memoryUsage = JSON.stringify(Array.from(this.cache.entries())).length;
 
     return {
       size: this.cache.size,
       keys,
-      memoryUsage
+      memoryUsage,
     };
   }
 
   // 預熱緩存
-  async warmupCache(analyses: {
-    type: string;
-    parameters: Record<string, any>;
-  }[]): Promise<void> {
+  async warmupCache(
+    analyses: {
+      type: string;
+      parameters: Record<string, any>;
+    }[]
+  ): Promise<void> {
     const promises = analyses.map(async ({ type, parameters }) => {
       try {
         switch (type) {
@@ -803,4 +873,5 @@ class AnalyticsService {
 }
 
 // 創建單例實例
+export { AnalyticsService };
 export const analyticsService = new AnalyticsService();

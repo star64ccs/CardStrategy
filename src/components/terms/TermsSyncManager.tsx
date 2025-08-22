@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
-  Switch
+  Switch,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,7 +19,9 @@ interface TermsSyncManagerProps {
   onClose: () => void;
 }
 
-export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) => {
+export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({
+  onClose,
+}) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [syncing, setSyncing] = useState(false);
@@ -35,7 +37,7 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
     try {
       const [status, config] = await Promise.all([
         termsSyncService.getSyncStatus(),
-        termsSyncService.getSyncConfig()
+        termsSyncService.getSyncConfig(),
       ]);
       setSyncStatus(status);
       setSyncConfig(config);
@@ -68,7 +70,7 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
   const handleToggleAutoSync = async (value: boolean) => {
     try {
       await termsSyncService.updateSyncConfig({ autoSync: value });
-      setSyncConfig(prev => ({ ...prev, autoSync: value }));
+      setSyncConfig((prev) => ({ ...prev, autoSync: value }));
       Alert.alert('成功', `自動同步已${value ? '啟用' : '禁用'}`);
     } catch (error) {
       logger.error('更新自動同步設置失敗:', error);
@@ -79,7 +81,7 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
   const handleToggleNotifications = async (value: boolean) => {
     try {
       await termsSyncService.updateSyncConfig({ notifyOnUpdate: value });
-      setSyncConfig(prev => ({ ...prev, notifyOnUpdate: value }));
+      setSyncConfig((prev) => ({ ...prev, notifyOnUpdate: value }));
     } catch (error) {
       logger.error('更新通知設置失敗:', error);
       Alert.alert('錯誤', '無法更新通知設置');
@@ -104,8 +106,8 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
               logger.error('重置同步狀態失敗:', error);
               Alert.alert('錯誤', '無法重置同步狀態');
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -155,14 +157,20 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
               <View style={styles.statusItem}>
                 <Text style={styles.statusLabel}>同步狀態:</Text>
                 <View style={styles.statusValue}>
-                  <View style={[
-                    styles.statusDot,
-                    { backgroundColor: getStatusColor(syncStatus.hasUpdates) }
-                  ]} />
-                  <Text style={[
-                    styles.statusText,
-                    { color: getStatusColor(syncStatus.hasUpdates) }
-                  ]}>
+                  <View
+                    style={[
+                      styles.statusDot,
+                      {
+                        backgroundColor: getStatusColor(syncStatus.hasUpdates),
+                      },
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.statusText,
+                      { color: getStatusColor(syncStatus.hasUpdates) },
+                    ]}
+                  >
                     {getStatusText(syncStatus.hasUpdates)}
                   </Text>
                 </View>
@@ -222,7 +230,10 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
                 <Switch
                   value={syncConfig.autoSync}
                   onValueChange={handleToggleAutoSync}
-                  trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+                  trackColor={{
+                    false: theme.colors.border,
+                    true: theme.colors.primary,
+                  }}
                   thumbColor={theme.colors.white}
                 />
               </View>
@@ -237,7 +248,10 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
                 <Switch
                   value={syncConfig.notifyOnUpdate}
                   onValueChange={handleToggleNotifications}
-                  trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+                  trackColor={{
+                    false: theme.colors.border,
+                    true: theme.colors.primary,
+                  }}
                   thumbColor={theme.colors.white}
                 />
               </View>
@@ -246,7 +260,8 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
                 <View style={styles.configInfo}>
                   <Text style={styles.configLabel}>同步間隔</Text>
                   <Text style={styles.configDescription}>
-                    {Math.round(syncConfig.syncInterval / (1000 * 60 * 60))} 小時
+                    {Math.round(syncConfig.syncInterval / (1000 * 60 * 60))}{' '}
+                    小時
                   </Text>
                 </View>
               </View>
@@ -282,7 +297,11 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
         {/* 說明信息 */}
         <Card style={styles.card}>
           <View style={styles.cardHeader}>
-            <Ionicons name="information-circle" size={24} color={theme.colors.primary} />
+            <Ionicons
+              name="information-circle"
+              size={24}
+              color={theme.colors.primary}
+            />
             <Text style={styles.cardTitle}>說明</Text>
           </View>
 
@@ -290,15 +309,11 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
             <Text style={styles.infoText}>
               • 條款同步確保您始終使用最新版本的條款內容
             </Text>
-            <Text style={styles.infoText}>
-              • 自動同步會在後台定期檢查更新
-            </Text>
+            <Text style={styles.infoText}>• 自動同步會在後台定期檢查更新</Text>
             <Text style={styles.infoText}>
               • 如果服務器不可用，將使用本地條款作為備用
             </Text>
-            <Text style={styles.infoText}>
-              • 條款更新時會通知您重新同意
-            </Text>
+            <Text style={styles.infoText}>• 條款更新時會通知您重新同意</Text>
           </View>
         </Card>
       </ScrollView>
@@ -309,18 +324,18 @@ export const TermsSyncManager: React.FC<TermsSyncManagerProps> = ({ onClose }) =
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   header: {
     flexDirection: 'row',
@@ -328,108 +343,108 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
-    backgroundColor: theme.colors.surface
+    backgroundColor: theme.colors.surface,
   },
   closeButton: {
-    padding: 4
+    padding: 4,
   },
   headerTitle: {
     flex: 1,
     fontSize: 20,
     fontWeight: 'bold',
     color: theme.colors.text,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   headerSpacer: {
-    width: 32
+    width: 32,
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   card: {
     margin: 16,
-    marginTop: 8
+    marginTop: 8,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginLeft: 8
+    marginLeft: 8,
   },
   statusContent: {
-    gap: 12
+    gap: 12,
   },
   statusItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusLabel: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   statusValue: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 6
+    marginRight: 6,
   },
   statusText: {
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   errorText: {
-    color: theme.colors.error
+    color: theme.colors.error,
   },
   configContent: {
-    gap: 16
+    gap: 16,
   },
   configItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   configInfo: {
     flex: 1,
-    marginRight: 16
+    marginRight: 16,
   },
   configLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   configDescription: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    marginTop: 2
+    marginTop: 2,
   },
   actions: {
-    gap: 12
+    gap: 12,
   },
   actionButton: {
-    marginBottom: 8
+    marginBottom: 8,
   },
   resetButton: {
-    backgroundColor: theme.colors.error
+    backgroundColor: theme.colors.error,
   },
   resetButtonText: {
-    color: theme.colors.white
+    color: theme.colors.white,
   },
   infoContent: {
-    gap: 8
+    gap: 8,
   },
   infoText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    lineHeight: 20
-  }
+    lineHeight: 20,
+  },
 });

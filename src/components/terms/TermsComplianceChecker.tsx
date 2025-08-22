@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Alert,
-  BackHandler
-} from 'react-native';
+import { View, Text, StyleSheet, Alert, BackHandler } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Loading } from '../common';
 import { theme } from '../../config/theme';
@@ -25,11 +19,13 @@ export const TermsComplianceChecker: React.FC<TermsComplianceCheckerProps> = ({
   userId,
   onCompliancePass,
   onComplianceFail,
-  children
+  children,
 }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
-  const [compliance, setCompliance] = useState<TermsComplianceCheck | null>(null);
+  const [compliance, setCompliance] = useState<TermsComplianceCheck | null>(
+    null
+  );
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
 
@@ -37,17 +33,18 @@ export const TermsComplianceChecker: React.FC<TermsComplianceCheckerProps> = ({
     checkCompliance();
 
     // 防止用戶返回
-    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (!compliance?.canUseApp) {
-        Alert.alert(
-          '無法退出',
-          '您必須同意條款才能使用應用。',
-          [{ text: '確定' }]
-        );
-        return true;
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (!compliance?.canUseApp) {
+          Alert.alert('無法退出', '您必須同意條款才能使用應用。', [
+            { text: '確定' },
+          ]);
+          return true;
+        }
+        return false;
       }
-      return false;
-    });
+    );
 
     return () => backHandler.remove();
   }, []);
@@ -73,14 +70,10 @@ export const TermsComplianceChecker: React.FC<TermsComplianceCheckerProps> = ({
       }
     } catch (error) {
       logger.error('檢查條款合規性失敗:', error);
-      Alert.alert(
-        '檢查失敗',
-        '無法檢查條款同意狀態，請檢查網絡連接後重試。',
-        [
-          { text: '重試', onPress: checkCompliance },
-          { text: '退出', onPress: onComplianceFail, style: 'destructive' }
-        ]
-      );
+      Alert.alert('檢查失敗', '無法檢查條款同意狀態，請檢查網絡連接後重試。', [
+        { text: '重試', onPress: checkCompliance },
+        { text: '退出', onPress: onComplianceFail, style: 'destructive' },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -93,25 +86,19 @@ export const TermsComplianceChecker: React.FC<TermsComplianceCheckerProps> = ({
 
   const handleTermsDecline = () => {
     setShowTermsModal(false);
-    Alert.alert(
-      '無法使用應用',
-      '您必須同意所有必要條款才能使用卡策。',
-      [
-        { text: '重新考慮', onPress: () => setShowTermsModal(true) },
-        { text: '退出應用', onPress: onComplianceFail, style: 'destructive' }
-      ]
-    );
+    Alert.alert('無法使用應用', '您必須同意所有必要條款才能使用卡策。', [
+      { text: '重新考慮', onPress: () => setShowTermsModal(true) },
+      { text: '退出應用', onPress: onComplianceFail, style: 'destructive' },
+    ]);
   };
 
   const handleTermsClose = () => {
     if (compliance?.canUseApp) {
       setShowTermsModal(false);
     } else {
-      Alert.alert(
-        '無法關閉',
-        '您必須同意條款才能繼續使用應用。',
-        [{ text: '確定' }]
-      );
+      Alert.alert('無法關閉', '您必須同意條款才能繼續使用應用。', [
+        { text: '確定' },
+      ]);
     }
   };
 
@@ -129,9 +116,7 @@ export const TermsComplianceChecker: React.FC<TermsComplianceCheckerProps> = ({
       <View style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.title}>條款同意檢查</Text>
-          <Text style={styles.subtitle}>
-            您需要同意以下條款才能使用卡策：
-          </Text>
+          <Text style={styles.subtitle}>您需要同意以下條款才能使用卡策：</Text>
 
           {compliance?.pendingTerms && compliance.pendingTerms.length > 0 && (
             <View style={styles.pendingTerms}>
@@ -148,7 +133,10 @@ export const TermsComplianceChecker: React.FC<TermsComplianceCheckerProps> = ({
           </Text>
 
           <View style={styles.actions}>
-            <Text style={styles.actionButton} onPress={() => setShowTermsModal(true)}>
+            <Text
+              style={styles.actionButton}
+              onPress={() => setShowTermsModal(true)}
+            >
               查看並同意條款
             </Text>
             <Text style={styles.declineButton} onPress={onComplianceFail}>
@@ -179,7 +167,7 @@ const getTermsDisplayName = (termType: string): string => {
     disclaimer: '免責聲明',
     cookie_policy: 'Cookie 政策',
     terms_of_use: '使用條款',
-    ai_usage_policy: 'AI 使用政策'
+    ai_usage_policy: 'AI 使用政策',
   };
   return displayNames[termType] || termType;
 };
@@ -190,57 +178,57 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20
+    padding: 20,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   content: {
     maxWidth: 400,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.text,
     marginBottom: 16,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 16,
     color: theme.colors.text,
     marginBottom: 20,
     textAlign: 'center',
-    lineHeight: 24
+    lineHeight: 24,
   },
   pendingTerms: {
     marginBottom: 20,
-    alignSelf: 'stretch'
+    alignSelf: 'stretch',
   },
   pendingTerm: {
     fontSize: 14,
     color: theme.colors.text,
     marginBottom: 8,
-    paddingLeft: 16
+    paddingLeft: 16,
   },
   description: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginBottom: 30,
     textAlign: 'center',
-    lineHeight: 20
+    lineHeight: 20,
   },
   actions: {
     flexDirection: 'row',
-    gap: 16
+    gap: 16,
   },
   actionButton: {
     backgroundColor: theme.colors.primary,
@@ -250,7 +238,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 16,
     fontWeight: '600',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   declineButton: {
     backgroundColor: theme.colors.error,
@@ -260,6 +248,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 16,
     fontWeight: '600',
-    overflow: 'hidden'
-  }
+    overflow: 'hidden',
+  },
 });

@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { ErrorInfo } from '@/services/errorHandlerService';
 
 interface ErrorDisplayProps {
@@ -17,7 +23,7 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
   onDismiss,
   onReport,
   showDetails = false,
-  variant = 'inline'
+  variant = 'inline',
 }) => {
   const getSeverityColor = () => {
     switch (error.severity) {
@@ -74,7 +80,9 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
 
   if (variant === 'toast') {
     return (
-      <View style={[styles.toastContainer, { borderLeftColor: getSeverityColor() }]}>
+      <View
+        style={[styles.toastContainer, { borderLeftColor: getSeverityColor() }]}
+      >
         <Text style={styles.toastIcon}>{getSeverityIcon()}</Text>
         <View style={styles.toastContent}>
           <Text style={styles.toastMessage} numberOfLines={2}>
@@ -123,7 +131,9 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
               </View>
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>時間:</Text>
-                <Text style={styles.detailValue}>{formatTimestamp(error.timestamp)}</Text>
+                <Text style={styles.detailValue}>
+                  {formatTimestamp(error.timestamp)}
+                </Text>
               </View>
               {error.componentName && (
                 <View style={styles.detailRow}>
@@ -160,12 +170,18 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
 
           <View style={styles.modalActions}>
             {onRetry && (
-              <TouchableOpacity style={[styles.actionButton, styles.retryButton]} onPress={onRetry}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.retryButton]}
+                onPress={onRetry}
+              >
                 <Text style={styles.retryButtonText}>重試</Text>
               </TouchableOpacity>
             )}
             {onReport && (
-              <TouchableOpacity style={[styles.actionButton, styles.reportButton]} onPress={onReport}>
+              <TouchableOpacity
+                style={[styles.actionButton, styles.reportButton]}
+                onPress={onReport}
+              >
                 <Text style={styles.reportButtonText}>報告錯誤</Text>
               </TouchableOpacity>
             )}
@@ -177,7 +193,9 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
 
   // 默認 inline 樣式
   return (
-    <View style={[styles.inlineContainer, { borderLeftColor: getSeverityColor() }]}>
+    <View
+      style={[styles.inlineContainer, { borderLeftColor: getSeverityColor() }]}
+    >
       <View style={styles.inlineHeader}>
         <Text style={styles.inlineIcon}>{getSeverityIcon()}</Text>
         <View style={styles.inlineInfo}>
@@ -211,7 +229,10 @@ export const ErrorDisplay: React.FC<ErrorDisplayProps> = ({
           </TouchableOpacity>
         )}
         {onReport && (
-          <TouchableOpacity style={styles.inlineActionButton} onPress={onReport}>
+          <TouchableOpacity
+            style={styles.inlineActionButton}
+            onPress={onReport}
+          >
             <Text style={styles.inlineActionText}>報告</Text>
           </TouchableOpacity>
         )}
@@ -234,32 +255,32 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   toastIcon: {
     fontSize: 20,
-    marginRight: 8
+    marginRight: 8,
   },
   toastContent: {
-    flex: 1
+    flex: 1,
   },
   toastMessage: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#212529'
+    color: '#212529',
   },
   toastCategory: {
     fontSize: 12,
     color: '#6c757d',
-    marginTop: 2
+    marginTop: 2,
   },
   toastDismiss: {
-    padding: 4
+    padding: 4,
   },
   toastDismissText: {
     fontSize: 18,
     color: '#6c757d',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
 
   // Modal 樣式
@@ -272,7 +293,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000
+    zIndex: 1000,
   },
   modalContainer: {
     backgroundColor: '#ffffff',
@@ -284,63 +305,63 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
-    elevation: 5
+    elevation: 5,
   },
   modalHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e9ecef'
+    borderBottomColor: '#e9ecef',
   },
   modalIcon: {
     fontSize: 24,
-    marginRight: 12
+    marginRight: 12,
   },
   modalTitle: {
     flex: 1,
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#212529'
+    color: '#212529',
   },
   modalClose: {
-    padding: 4
+    padding: 4,
   },
   modalCloseText: {
     fontSize: 24,
     color: '#6c757d',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   modalContent: {
-    padding: 16
+    padding: 16,
   },
   errorSection: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#495057',
-    marginBottom: 8
+    marginBottom: 8,
   },
   errorMessage: {
     fontSize: 14,
     color: '#212529',
-    lineHeight: 20
+    lineHeight: 20,
   },
   detailRow: {
     flexDirection: 'row',
-    marginBottom: 4
+    marginBottom: 4,
   },
   detailLabel: {
     fontSize: 14,
     color: '#6c757d',
-    width: 80
+    width: 80,
   },
   detailValue: {
     fontSize: 14,
     color: '#212529',
-    flex: 1
+    flex: 1,
   },
   contextText: {
     fontSize: 12,
@@ -348,7 +369,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
     padding: 8,
     borderRadius: 4,
-    fontFamily: 'monospace'
+    fontFamily: 'monospace',
   },
   stackText: {
     fontSize: 12,
@@ -356,37 +377,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
     padding: 8,
     borderRadius: 4,
-    fontFamily: 'monospace'
+    fontFamily: 'monospace',
   },
   modalActions: {
     flexDirection: 'row',
     padding: 16,
     borderTopWidth: 1,
     borderTopColor: '#e9ecef',
-    gap: 12
+    gap: 12,
   },
   actionButton: {
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   retryButton: {
-    backgroundColor: '#007bff'
+    backgroundColor: '#007bff',
   },
   retryButtonText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   reportButton: {
-    backgroundColor: '#6c757d'
+    backgroundColor: '#6c757d',
   },
   reportButtonText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   // Inline 樣式
@@ -400,65 +421,65 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    elevation: 2
+    elevation: 2,
   },
   inlineHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   inlineIcon: {
     fontSize: 18,
     marginRight: 8,
-    marginTop: 2
+    marginTop: 2,
   },
   inlineInfo: {
-    flex: 1
+    flex: 1,
   },
   inlineMessage: {
     fontSize: 14,
     fontWeight: '500',
     color: '#212529',
-    lineHeight: 18
+    lineHeight: 18,
   },
   inlineCategory: {
     fontSize: 12,
     color: '#6c757d',
-    marginTop: 2
+    marginTop: 2,
   },
   inlineDismiss: {
     padding: 4,
-    marginLeft: 8
+    marginLeft: 8,
   },
   inlineDismissText: {
     fontSize: 16,
     color: '#6c757d',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   inlineDetails: {
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#e9ecef'
+    borderTopColor: '#e9ecef',
   },
   inlineDetailText: {
     fontSize: 12,
     color: '#6c757d',
-    marginBottom: 2
+    marginBottom: 2,
   },
   inlineActions: {
     flexDirection: 'row',
     marginTop: 8,
-    gap: 8
+    gap: 8,
   },
   inlineActionButton: {
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 4,
-    backgroundColor: '#f8f9fa'
+    backgroundColor: '#f8f9fa',
   },
   inlineActionText: {
     fontSize: 12,
     color: '#007bff',
-    fontWeight: '500'
-  }
+    fontWeight: '500',
+  },
 });

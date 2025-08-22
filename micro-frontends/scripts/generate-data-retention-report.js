@@ -10,14 +10,14 @@ const DATA_RETENTION_BENCHMARKS = {
     excellent: 90,
     good: 80,
     fair: 70,
-    poor: 60
+    poor: 60,
   },
   // 合規框架權重
   complianceFrameworkWeights: {
-    gdpr: 0.30,
+    gdpr: 0.3,
     ccpa: 0.25,
     sox: 0.25,
-    hipaa: 0.20
+    hipaa: 0.2,
   },
   // 數據保留等級標準
   retentionGrades: {
@@ -25,7 +25,7 @@ const DATA_RETENTION_BENCHMARKS = {
     B: { min: 80, description: '良好 - 數據保留管理良好' },
     C: { min: 70, description: '一般 - 數據保留管理中等' },
     D: { min: 60, description: '較差 - 存在數據保留問題' },
-    F: { min: 0, description: '危險 - 存在嚴重數據保留問題' }
+    F: { min: 0, description: '危險 - 存在嚴重數據保留問題' },
   },
   // 數據類型保留標準
   dataTypeRetentionStandards: {
@@ -36,8 +36,8 @@ const DATA_RETENTION_BENCHMARKS = {
     sessionData: { minDays: 1, maxDays: 7, recommended: 1 },
     analyticsData: { minDays: 30, maxDays: 730, recommended: 180 },
     backupData: { minDays: 30, maxDays: 2555, recommended: 730 },
-    testData: { minDays: 1, maxDays: 7, recommended: 1 }
-  }
+    testData: { minDays: 1, maxDays: 7, recommended: 1 },
+  },
 };
 
 /**
@@ -60,7 +60,6 @@ function generateDataRetentionReport() {
     printDataRetentionSummary(report);
 
     // logger.info('✅ 數據保留管理報告生成完成！');
-
   } catch (error) {
     // logger.info('❌ 生成數據保留管理報告失敗:', error.message);
     process.exit(1);
@@ -79,11 +78,14 @@ function collectDataRetentionTestResults() {
     violationsByType: {},
     violationsByCompliance: {},
     retentionPolicies: {},
-    complianceStatus: {}
+    complianceStatus: {},
   };
 
   // 讀取基本數據保留測試結果
-  const basicReportPath = path.join(resultsDir, 'data-retention-basic-report.json');
+  const basicReportPath = path.join(
+    resultsDir,
+    'data-retention-basic-report.json'
+  );
   if (fs.existsSync(basicReportPath)) {
     try {
       results.basic = JSON.parse(fs.readFileSync(basicReportPath, 'utf8'));
@@ -94,10 +96,15 @@ function collectDataRetentionTestResults() {
   }
 
   // 讀取高級數據保留測試結果
-  const advancedReportPath = path.join(resultsDir, 'data-retention-advanced-report.json');
+  const advancedReportPath = path.join(
+    resultsDir,
+    'data-retention-advanced-report.json'
+  );
   if (fs.existsSync(advancedReportPath)) {
     try {
-      results.advanced = JSON.parse(fs.readFileSync(advancedReportPath, 'utf8'));
+      results.advanced = JSON.parse(
+        fs.readFileSync(advancedReportPath, 'utf8')
+      );
       // logger.info('📄 讀取高級數據保留測試結果');
     } catch (error) {
       // logger.info('⚠️ 無法讀取高級數據保留測試結果:', error.message);
@@ -108,13 +115,22 @@ function collectDataRetentionTestResults() {
   if (results.basic) {
     results.totalViolations += results.basic.totalViolations || 0;
     mergeViolations(results.violationsByType, results.basic.violationsByType);
-    mergeViolations(results.violationsByCompliance, results.basic.violationsByCompliance);
+    mergeViolations(
+      results.violationsByCompliance,
+      results.basic.violationsByCompliance
+    );
   }
 
   if (results.advanced) {
     results.totalViolations += results.advanced.totalViolations || 0;
-    mergeViolations(results.violationsByType, results.advanced.violationsByType);
-    mergeViolations(results.violationsByCompliance, results.advanced.violationsByCompliance);
+    mergeViolations(
+      results.violationsByType,
+      results.advanced.violationsByType
+    );
+    mergeViolations(
+      results.violationsByCompliance,
+      results.advanced.violationsByCompliance
+    );
   }
 
   return results;
@@ -142,18 +158,18 @@ function generateDataRetentionReportData(testResults) {
       retentionScore: calculateRetentionScore(testResults),
       retentionGrade: calculateRetentionGrade(testResults),
       complianceStatus: calculateComplianceStatus(testResults),
-      policyEffectiveness: calculatePolicyEffectiveness(testResults)
+      policyEffectiveness: calculatePolicyEffectiveness(testResults),
     },
     violations: {
       byType: testResults.violationsByType,
       byCompliance: testResults.violationsByCompliance,
-      details: []
+      details: [],
     },
     recommendations: generateDataRetentionRecommendations(testResults),
     testResults: {
       basic: testResults.basic,
-      advanced: testResults.advanced
-    }
+      advanced: testResults.advanced,
+    },
   };
 
   // 添加詳細違規信息
@@ -175,14 +191,19 @@ function calculateRetentionScore(testResults) {
   let totalScore = 100;
 
   // 根據違規類型扣分
-  for (const [type, count] of Object.entries(testResults.violationsByType || {})) {
+  for (const [type, count] of Object.entries(
+    testResults.violationsByType || {}
+  )) {
     const weight = getViolationWeight(type);
     totalScore -= weight * count;
   }
 
   // 根據合規違規扣分
-  for (const [compliance, count] of Object.entries(testResults.violationsByCompliance || {})) {
-    const weight = DATA_RETENTION_BENCHMARKS.complianceFrameworkWeights[compliance] || 0.1;
+  for (const [compliance, count] of Object.entries(
+    testResults.violationsByCompliance || {}
+  )) {
+    const weight =
+      DATA_RETENTION_BENCHMARKS.complianceFrameworkWeights[compliance] || 0.1;
     totalScore -= weight * 10 * count;
   }
 
@@ -194,20 +215,20 @@ function calculateRetentionScore(testResults) {
  */
 function getViolationWeight(type) {
   const weights = {
-    'retention_policy': 5,
-    'data_cleanup': 4,
-    'compliance': 8,
-    'size_monitoring': 3,
-    'automated_scheduling': 4,
-    'data_recovery': 6,
-    'intelligent_cleanup': 3,
-    'selective_archiving': 4,
-    'incremental_backup': 5,
-    'data_classification': 4,
-    'lifecycle_management': 5,
-    'deduplication': 3,
-    'disaster_recovery': 7,
-    'governance_audit': 6
+    retention_policy: 5,
+    data_cleanup: 4,
+    compliance: 8,
+    size_monitoring: 3,
+    automated_scheduling: 4,
+    data_recovery: 6,
+    intelligent_cleanup: 3,
+    selective_archiving: 4,
+    incremental_backup: 5,
+    data_classification: 4,
+    lifecycle_management: 5,
+    deduplication: 3,
+    disaster_recovery: 7,
+    governance_audit: 6,
   };
 
   return weights[type] || 2;
@@ -219,12 +240,14 @@ function getViolationWeight(type) {
 function calculateRetentionGrade(testResults) {
   const score = calculateRetentionScore(testResults);
 
-  for (const [grade, criteria] of Object.entries(DATA_RETENTION_BENCHMARKS.retentionGrades)) {
+  for (const [grade, criteria] of Object.entries(
+    DATA_RETENTION_BENCHMARKS.retentionGrades
+  )) {
     if (score >= criteria.min) {
       return {
         grade,
         score,
-        description: criteria.description
+        description: criteria.description,
       };
     }
   }
@@ -232,7 +255,7 @@ function calculateRetentionGrade(testResults) {
   return {
     grade: 'F',
     score,
-    description: '危險 - 存在嚴重數據保留問題'
+    description: '危險 - 存在嚴重數據保留問題',
   };
 }
 
@@ -248,7 +271,7 @@ function calculateComplianceStatus(testResults) {
     status[framework] = {
       violations,
       compliant: violations === 0,
-      score: Math.max(0, 100 - violations * 10)
+      score: Math.max(0, 100 - violations * 10),
     };
   }
 
@@ -264,7 +287,7 @@ function calculatePolicyEffectiveness(testResults) {
     'data_cleanup',
     'size_monitoring',
     'automated_scheduling',
-    'data_recovery'
+    'data_recovery',
   ];
 
   const effectiveness = {};
@@ -274,7 +297,7 @@ function calculatePolicyEffectiveness(testResults) {
     effectiveness[policy] = {
       violations,
       effective: violations <= 2,
-      score: Math.max(0, 100 - violations * 15)
+      score: Math.max(0, 100 - violations * 15),
     };
   }
 
@@ -288,7 +311,9 @@ function generateDataRetentionRecommendations(testResults) {
   const recommendations = [];
 
   // 根據違規類型生成建議
-  for (const [type, count] of Object.entries(testResults.violationsByType || {})) {
+  for (const [type, count] of Object.entries(
+    testResults.violationsByType || {}
+  )) {
     if (count > 0) {
       switch (type) {
         case 'retention_policy':
@@ -301,8 +326,8 @@ function generateDataRetentionRecommendations(testResults) {
               '審查並更新數據保留策略',
               '確保策略符合合規要求',
               '實施自動化策略執行',
-              '定期審計策略有效性'
-            ]
+              '定期審計策略有效性',
+            ],
           });
           break;
 
@@ -316,8 +341,8 @@ function generateDataRetentionRecommendations(testResults) {
               '實施自動化數據清理',
               '建立清理日誌和審計',
               '確保清理過程的安全性',
-              '定期測試清理機制'
-            ]
+              '定期測試清理機制',
+            ],
           });
           break;
 
@@ -331,8 +356,8 @@ function generateDataRetentionRecommendations(testResults) {
               '立即審查合規要求',
               '實施必要的合規措施',
               '建立合規監控機制',
-              '進行合規培訓'
-            ]
+              '進行合規培訓',
+            ],
           });
           break;
 
@@ -346,8 +371,8 @@ function generateDataRetentionRecommendations(testResults) {
               '實施實時大小監控',
               '設置大小限制警報',
               '優化數據存儲策略',
-              '定期分析存儲趨勢'
-            ]
+              '定期分析存儲趨勢',
+            ],
           });
           break;
 
@@ -361,8 +386,8 @@ function generateDataRetentionRecommendations(testResults) {
               '優化清理調度頻率',
               '實施智能調度算法',
               '監控調度執行效果',
-              '建立調度備份機制'
-            ]
+              '建立調度備份機制',
+            ],
           });
           break;
 
@@ -376,8 +401,8 @@ function generateDataRetentionRecommendations(testResults) {
               '測試數據恢復流程',
               '優化恢復時間目標',
               '建立多站點備份',
-              '定期進行恢復演練'
-            ]
+              '定期進行恢復演練',
+            ],
           });
           break;
 
@@ -390,15 +415,17 @@ function generateDataRetentionRecommendations(testResults) {
             actions: [
               '進行詳細的數據保留審計',
               '實施相應的改進措施',
-              '定期進行數據保留測試'
-            ]
+              '定期進行數據保留測試',
+            ],
           });
       }
     }
   }
 
   // 根據合規違規添加建議
-  for (const [compliance, count] of Object.entries(testResults.violationsByCompliance || {})) {
+  for (const [compliance, count] of Object.entries(
+    testResults.violationsByCompliance || {}
+  )) {
     if (count > 0) {
       recommendations.push({
         priority: 'critical',
@@ -409,8 +436,8 @@ function generateDataRetentionRecommendations(testResults) {
           `審查 ${compliance.toUpperCase()} 合規要求`,
           '實施必要的合規措施',
           '建立合規監控和報告',
-          '進行合規培訓和意識提升'
-        ]
+          '進行合規培訓和意識提升',
+        ],
       });
     }
   }
@@ -636,13 +663,17 @@ function generateDataRetentionHtmlReport(report) {
             <div class="compliance-section">
                 <h3>合規狀態</h3>
                 <div class="compliance-grid">
-                    ${Object.entries(report.summary.complianceStatus).map(([framework, status]) => `
+                    ${Object.entries(report.summary.complianceStatus)
+                      .map(
+                        ([framework, status]) => `
                         <div class="compliance-card ${status.compliant ? '' : 'non-compliant'}">
                             <div style="font-size: 1.2em; font-weight: bold;">${framework.toUpperCase()}</div>
                             <div>${status.compliant ? '合規' : '不合規'}</div>
                             <div style="font-size: 0.9em; color: #666;">${status.score}/100</div>
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                 </div>
             </div>
             
@@ -656,7 +687,7 @@ function generateDataRetentionHtmlReport(report) {
                     <div class="stat-label">違規類型</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number">${Object.keys(report.summary.complianceStatus).filter(k => report.summary.complianceStatus[k].compliant).length}</div>
+                    <div class="stat-number">${Object.keys(report.summary.complianceStatus).filter((k) => report.summary.complianceStatus[k].compliant).length}</div>
                     <div class="stat-label">合規框架</div>
                 </div>
                 <div class="stat-card">
@@ -671,37 +702,49 @@ function generateDataRetentionHtmlReport(report) {
             
             <h3>按類型分類</h3>
             <div class="stats-grid">
-                ${Object.entries(report.violations.byType).map(([type, count]) => `
+                ${Object.entries(report.violations.byType)
+                  .map(
+                    ([type, count]) => `
                     <div class="stat-card">
                         <div class="stat-number">${count}</div>
                         <div class="stat-label">${type.replace(/_/g, ' ').toUpperCase()}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
             
             <h3>按合規框架分類</h3>
             <div class="stats-grid">
-                ${Object.entries(report.violations.byCompliance).map(([compliance, count]) => `
+                ${Object.entries(report.violations.byCompliance)
+                  .map(
+                    ([compliance, count]) => `
                     <div class="stat-card">
                         <div class="stat-number">${count}</div>
                         <div class="stat-label">${compliance.toUpperCase()}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
         </div>
         
         <div class="recommendations">
             <h2>數據保留建議</h2>
-            ${report.recommendations.map(rec => `
+            ${report.recommendations
+              .map(
+                (rec) => `
                 <div class="recommendation">
                     <span class="priority priority-${rec.priority}">${rec.priority.toUpperCase()}</span>
                     <h4>${rec.title}</h4>
                     <p>${rec.description}</p>
                     <ul>
-                        ${rec.actions.map(action => `<li>${action}</li>`).join('')}
+                        ${rec.actions.map((action) => `<li>${action}</li>`).join('')}
                     </ul>
                 </div>
-            `).join('')}
+            `
+              )
+              .join('')}
         </div>
     </div>
 </body>
@@ -729,25 +772,35 @@ function generateDataRetentionMarkdownReport(report) {
 **${report.summary.retentionGrade.description}**
 
 ### 合規狀態
-${Object.entries(report.summary.complianceStatus).map(([framework, status]) =>
-    `- **${framework.toUpperCase()}**: ${status.compliant ? '✅ 合規' : '❌ 不合規'} (${status.score}/100)`
-  ).join('\n')}
+${Object.entries(report.summary.complianceStatus)
+  .map(
+    ([framework, status]) =>
+      `- **${framework.toUpperCase()}**: ${status.compliant ? '✅ 合規' : '❌ 不合規'} (${status.score}/100)`
+  )
+  .join('\n')}
 
 ## 🚨 違規統計
 
 ### 按類型分類
-${Object.entries(report.violations.byType).map(([type, count]) =>
-    `- **${type.replace(/_/g, ' ').toUpperCase()}**: ${count} 個`
-  ).join('\n')}
+${Object.entries(report.violations.byType)
+  .map(
+    ([type, count]) =>
+      `- **${type.replace(/_/g, ' ').toUpperCase()}**: ${count} 個`
+  )
+  .join('\n')}
 
 ### 按合規框架分類
-${Object.entries(report.violations.byCompliance).map(([compliance, count]) =>
-    `- **${compliance.toUpperCase()}**: ${count} 個`
-  ).join('\n')}
+${Object.entries(report.violations.byCompliance)
+  .map(
+    ([compliance, count]) => `- **${compliance.toUpperCase()}**: ${count} 個`
+  )
+  .join('\n')}
 
 ## 📋 詳細違規
 
-${report.violations.details.map((violation, index) => `
+${report.violations.details
+  .map(
+    (violation, index) => `
 ### ${index + 1}. ${violation.type} - ${violation.severity.toUpperCase()}
 
 **描述:** ${violation.description}
@@ -761,11 +814,15 @@ ${violation.dataType ? `**數據類型:** ${violation.dataType}` : ''}
 **詳情:** \`\`\`json
 ${JSON.stringify(violation.details, null, 2)}
 \`\`\`
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## 💡 數據保留建議
 
-${report.recommendations.map((rec, index) => `
+${report.recommendations
+  .map(
+    (rec, index) => `
 ### ${index + 1}. ${rec.title} [${rec.priority.toUpperCase()}]
 
 **類別:** ${rec.category}
@@ -773,17 +830,23 @@ ${report.recommendations.map((rec, index) => `
 **描述:** ${rec.description}
 
 **建議行動:**
-${rec.actions.map(action => `- ${action}`).join('\n')}
-`).join('\n')}
+${rec.actions.map((action) => `- ${action}`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## 📈 策略有效性
 
-${Object.entries(report.summary.policyEffectiveness).map(([policy, effectiveness]) => `
+${Object.entries(report.summary.policyEffectiveness)
+  .map(
+    ([policy, effectiveness]) => `
 ### ${policy.replace(/_/g, ' ').toUpperCase()}
 - **違規數:** ${effectiveness.violations}
 - **有效性:** ${effectiveness.effective ? '✅ 有效' : '❌ 需要改進'}
 - **評分:** ${effectiveness.score}/100
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## 🔒 合規要求
 
@@ -846,7 +909,9 @@ function printDataRetentionSummary(report) {
   // logger.info(`總違規數: ${report.summary.totalViolations}`);
 
   // logger.info('\n🔒 合規狀態:');
-  for (const [framework, status] of Object.entries(report.summary.complianceStatus)) {
+  for (const [framework, status] of Object.entries(
+    report.summary.complianceStatus
+  )) {
     // logger.info(`  ${framework.toUpperCase()}: ${status.compliant ? '✅ 合規' : '❌ 不合規'} (${status.score}/100)`);
   }
 
@@ -856,17 +921,23 @@ function printDataRetentionSummary(report) {
   }
 
   // logger.info('\n💡 主要建議:');
-  const criticalRecs = report.recommendations.filter(r => r.priority === 'critical');
-  const highRecs = report.recommendations.filter(r => r.priority === 'high');
+  const criticalRecs = report.recommendations.filter(
+    (r) => r.priority === 'critical'
+  );
+  const highRecs = report.recommendations.filter((r) => r.priority === 'high');
 
   if (criticalRecs.length > 0) {
     // logger.info('  緊急修復:');
-    criticalRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
+    criticalRecs.forEach((rec) => {
+      /* logger.info(`    - ${rec.title}`) */
+    });
   }
 
   if (highRecs.length > 0) {
     // logger.info('  高優先級:');
-    highRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
+    highRecs.forEach((rec) => {
+      /* logger.info(`    - ${rec.title}`) */
+    });
   }
 
   // logger.info('\n📄 報告文件:');
@@ -883,5 +954,5 @@ if (require.main === module) {
 module.exports = {
   generateDataRetentionReport,
   generateDataRetentionReportData,
-  calculateRetentionScore
+  calculateRetentionScore,
 };

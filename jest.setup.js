@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 import 'react-native-gesture-handler/jestSetup';
 import 'jest-extended';
 // import { server } from './src/__tests__/setup/msw-server'; // 暫時註釋掉
@@ -54,11 +56,36 @@ jest.mock('react-redux');
 jest.mock('i18next', () => ({
   t: (key) => key,
   changeLanguage: jest.fn(),
-  language: 'zh-TW'
+  language: 'zh-TW',
 }));
 
-// Mock axios
-jest.mock('axios');
+// Mock axios with proper interceptors
+jest.mock('axios', () => ({
+  create: jest.fn(() => ({
+    interceptors: {
+      request: { use: jest.fn() },
+      response: { use: jest.fn() },
+    },
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+    patch: jest.fn(),
+  })),
+  default: {
+    create: jest.fn(() => ({
+      interceptors: {
+        request: { use: jest.fn() },
+        response: { use: jest.fn() },
+      },
+      get: jest.fn(),
+      post: jest.fn(),
+      put: jest.fn(),
+      delete: jest.fn(),
+      patch: jest.fn(),
+    })),
+  },
+}));
 
 // Global test utilities
 global.console = {
@@ -67,7 +94,7 @@ global.console = {
   debug: jest.fn(),
   info: jest.fn(),
   warn: jest.fn(),
-  error: jest.fn()
+  error: jest.fn(),
 };
 
 // Mock AsyncStorage
@@ -79,7 +106,7 @@ const mockAsyncStorage = {
   getAllKeys: jest.fn(),
   multiGet: jest.fn(),
   multiSet: jest.fn(),
-  multiRemove: jest.fn()
+  multiRemove: jest.fn(),
 };
 
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
@@ -89,7 +116,7 @@ const mockSecureStore = {
   getItemAsync: jest.fn(),
   setItemAsync: jest.fn(),
   deleteItemAsync: jest.fn(),
-  isAvailableAsync: jest.fn()
+  isAvailableAsync: jest.fn(),
 };
 
 jest.mock('expo-secure-store', () => mockSecureStore);
@@ -105,7 +132,7 @@ const mockFileSystem = {
   copyAsync: jest.fn(),
   makeDirectoryAsync: jest.fn(),
   readDirectoryAsync: jest.fn(),
-  getInfoAsync: jest.fn()
+  getInfoAsync: jest.fn(),
 };
 
 jest.mock('expo-file-system', () => mockFileSystem);
@@ -114,16 +141,16 @@ jest.mock('expo-file-system', () => mockFileSystem);
 const mockCamera = {
   CameraType: {
     front: 'front',
-    back: 'back'
+    back: 'back',
   },
   FlashMode: {
     on: 'on',
     off: 'off',
     auto: 'auto',
-    torch: 'torch'
+    torch: 'torch',
   },
   requestCameraPermissionsAsync: jest.fn(),
-  requestMicrophonePermissionsAsync: jest.fn()
+  requestMicrophonePermissionsAsync: jest.fn(),
 };
 
 jest.mock('expo-camera', () => mockCamera);
@@ -135,7 +162,7 @@ const mockImagePicker = {
   MediaTypeOptions: {
     All: 'All',
     Videos: 'Videos',
-    Images: 'Images'
+    Images: 'Images',
   },
   ImagePickerResult: {
     canceled: false,
@@ -144,10 +171,10 @@ const mockImagePicker = {
         uri: 'mock-image-uri',
         width: 100,
         height: 100,
-        type: 'image/jpeg'
-      }
-    ]
-  }
+        type: 'image/jpeg',
+      },
+    ],
+  },
 };
 
 jest.mock('expo-image-picker', () => mockImagePicker);
@@ -158,8 +185,8 @@ const mockDimensions = {
     width: 375,
     height: 812,
     scale: 3,
-    fontScale: 1
-  }))
+    fontScale: 1,
+  })),
 };
 
 jest.mock('react-native/Libraries/Utilities/Dimensions', () => mockDimensions);
@@ -170,7 +197,7 @@ const mockPlatform = {
   Version: 15,
   isPad: false,
   isTV: false,
-  select: jest.fn((obj) => obj.ios || obj.default)
+  select: jest.fn((obj) => obj.ios || obj.default),
 };
 
 jest.mock('react-native/Libraries/Utilities/Platform', () => mockPlatform);
@@ -178,20 +205,20 @@ jest.mock('react-native/Libraries/Utilities/Platform', () => mockPlatform);
 // Mock Alert
 const mockAlert = jest.fn();
 jest.mock('react-native/Libraries/Alert/Alert', () => ({
-  alert: mockAlert
+  alert: mockAlert,
 }));
 
 // Mock Share
 const mockShare = jest.fn();
 jest.mock('react-native/Libraries/Share/Share', () => ({
-  share: mockShare
+  share: mockShare,
 }));
 
 // Mock Linking
 const mockLinking = {
   openURL: jest.fn(),
   canOpenURL: jest.fn(),
-  getInitialURL: jest.fn()
+  getInitialURL: jest.fn(),
 };
 
 jest.mock('react-native/Libraries/Linking/Linking', () => mockLinking);
@@ -201,24 +228,29 @@ const mockPermissionsAndroid = {
   PERMISSIONS: {
     CAMERA: 'android.permission.CAMERA',
     WRITE_EXTERNAL_STORAGE: 'android.permission.WRITE_EXTERNAL_STORAGE',
-    READ_EXTERNAL_STORAGE: 'android.permission.READ_EXTERNAL_STORAGE'
+    READ_EXTERNAL_STORAGE: 'android.permission.READ_EXTERNAL_STORAGE',
   },
   RESULTS: {
     GRANTED: 'granted',
     DENIED: 'denied',
-    NEVER_ASK_AGAIN: 'never_ask_again'
+    NEVER_ASK_AGAIN: 'never_ask_again',
   },
   request: jest.fn(),
-  check: jest.fn()
+  check: jest.fn(),
 };
 
-jest.mock('react-native/Libraries/PermissionsAndroid/PermissionsAndroid', () => mockPermissionsAndroid);
+jest.mock(
+  'react-native/Libraries/PermissionsAndroid/PermissionsAndroid',
+  () => mockPermissionsAndroid
+);
 
 // Mock NetInfo
 const mockNetInfo = {
   addEventListener: jest.fn(),
-  fetch: jest.fn(() => Promise.resolve({ isConnected: true, isInternetReachable: true })),
-  useNetInfo: jest.fn(() => ({ isConnected: true, isInternetReachable: true }))
+  fetch: jest.fn(() =>
+    Promise.resolve({ isConnected: true, isInternetReachable: true })
+  ),
+  useNetInfo: jest.fn(() => ({ isConnected: true, isInternetReachable: true })),
 };
 
 // jest.mock('@react-native-community/netinfo', () => mockNetInfo); // 暫時註釋掉
@@ -238,8 +270,8 @@ jest.mock('react-native-gesture-handler', () => {
   const TouchableOpacity = require('react-native/Libraries/Components/Touchable/TouchableOpacity');
 
   return {
-    Swipeable: View,
-    DrawerLayout: View,
+    // Swipeable: removed duplicate,
+    // DrawerLayout: removed duplicate,
     State: {},
     ScrollView,
     Slider: View,
@@ -257,15 +289,14 @@ jest.mock('react-native-gesture-handler', () => {
     PanGestureHandler: View,
     PinchGestureHandler: View,
     RotationGestureHandler: View,
-    State: {},
     Directions: {},
     gestureHandlerRootHOC: jest.fn((component) => component),
-    Swipeable: View,
-    DrawerLayout: View,
+    // Swipeable: removed duplicate,
+    // DrawerLayout: removed duplicate,
     TouchableHighlight: TouchableOpacity,
     TouchableNativeFeedback: TouchableOpacity,
     TouchableOpacity,
-    TouchableWithoutFeedback: TouchableOpacity
+    TouchableWithoutFeedback: TouchableOpacity,
   };
 });
 
@@ -282,5 +313,5 @@ export {
   mockShare,
   mockLinking,
   mockPermissionsAndroid,
-  mockNetInfo
+  mockNetInfo,
 };

@@ -9,6 +9,7 @@
 ### 1. 環境配置文件
 
 #### 生產環境配置 (`backend/env.production`)
+
 - **數據庫配置**: PostgreSQL 生產數據庫設置
 - **緩存配置**: Redis 生產緩存設置
 - **JWT 配置**: 安全令牌配置
@@ -26,6 +27,7 @@
 - **SSL 配置**: HTTPS 證書路徑
 
 #### 測試環境配置 (`backend/env.staging`)
+
 - **測試數據庫**: 獨立的測試數據庫
 - **測試支付 API**: Stripe Test、PayPal Sandbox
 - **測試域名**: staging.cardstrategy.com
@@ -35,12 +37,14 @@
 ### 2. Docker 配置優化
 
 #### 生產 Dockerfile (`backend/Dockerfile.production`)
+
 - **多階段構建**: 優化鏡像大小
 - **安全配置**: 非 root 用戶運行
 - **健康檢查**: 自動健康監控
 - **資源優化**: 最小化依賴安裝
 
 #### 生產 Docker Compose (`docker-compose.production.yml`)
+
 - **服務編排**: 完整的生產服務堆疊
 - **資源限制**: CPU 和內存限制
 - **高可用性**: 後端服務副本
@@ -51,6 +55,7 @@
 ### 3. 部署腳本
 
 #### 生產部署腳本 (`scripts/deploy-production.sh`)
+
 - **環境檢查**: 驗證必要環境變數
 - **數據庫備份**: 部署前自動備份
 - **Docker 管理**: 構建和啟動服務
@@ -60,6 +65,7 @@
 - **狀態監控**: 部署後狀態檢查
 
 #### 測試部署腳本 (`scripts/deploy-staging.sh`)
+
 - **測試環境部署**: 專門的測試環境部署
 - **自動測試**: 部署後運行測試套件
 - **測試數據**: 使用測試 API 和數據庫
@@ -68,6 +74,7 @@
 ### 4. CI/CD 配置
 
 #### GitHub Actions (`/.github/workflows/ci-cd.yml`)
+
 - **代碼質量檢查**: Lint、Type Check、測試
 - **安全掃描**: npm audit、Snyk 安全檢查
 - **Docker 構建**: 自動構建和測試鏡像
@@ -79,6 +86,7 @@
 ### 5. Nginx 配置
 
 #### 生產 Nginx 配置 (`nginx/nginx.production.conf`)
+
 - **SSL 配置**: HTTPS 和 HTTP/2 支持
 - **安全頭部**: HSTS、CSP、XSS 防護
 - **速率限制**: API 和登錄限制
@@ -90,6 +98,7 @@
 ### 6. 監控配置
 
 #### Prometheus 配置 (`monitoring/prometheus.production.yml`)
+
 - **應用監控**: 後端服務指標收集
 - **系統監控**: 數據庫、Redis、Nginx 監控
 - **業務指標**: 用戶活動、支付處理、AI 服務
@@ -99,6 +108,7 @@
 ### 7. 環境設置腳本
 
 #### 自動化設置 (`scripts/setup-environment.sh`)
+
 - **操作系統檢測**: 支持 Linux、macOS、Windows
 - **工具檢查**: Git、Node.js、Docker 檢查
 - **環境配置**: 自動創建配置文件
@@ -113,6 +123,7 @@
 ## 技術改進
 
 ### 1. 安全性增強
+
 - **環境變數管理**: 敏感信息外部化
 - **SSL/TLS 配置**: 強加密協議
 - **安全頭部**: 全面的安全防護
@@ -120,6 +131,7 @@
 - **非 root 用戶**: Docker 容器安全
 
 ### 2. 性能優化
+
 - **多階段構建**: 減少鏡像大小
 - **緩存策略**: 靜態資源和 API 緩存
 - **Gzip 壓縮**: 減少傳輸大小
@@ -127,6 +139,7 @@
 - **資源限制**: 防止資源濫用
 
 ### 3. 可觀測性
+
 - **全面監控**: 應用、系統、業務指標
 - **日誌聚合**: ELK Stack 集成
 - **警報系統**: Prometheus 警報規則
@@ -134,6 +147,7 @@
 - **性能追蹤**: 響應時間和錯誤率
 
 ### 4. 自動化
+
 - **CI/CD 流水線**: 全自動化部署
 - **環境設置**: 一鍵環境配置
 - **數據庫管理**: 自動遷移和備份
@@ -143,6 +157,7 @@
 ## 部署架構
 
 ### 生產環境架構
+
 ```
 Internet
     ↓
@@ -154,6 +169,7 @@ PostgreSQL + Redis + Monitoring Stack
 ```
 
 ### 監控架構
+
 ```
 Prometheus (Metrics Collection)
     ↓
@@ -165,6 +181,7 @@ Slack/Email (Notifications)
 ```
 
 ### 備份架構
+
 ```
 PostgreSQL Database
     ↓
@@ -178,12 +195,14 @@ Local Storage + Cloud Storage
 ## 配置管理
 
 ### 環境變數管理
+
 - **開發環境**: `.env` 文件
 - **測試環境**: `backend/env.staging`
 - **生產環境**: `backend/env.production`
 - **Docker 環境**: 容器環境變數
 
 ### 密鑰管理
+
 - **JWT 密鑰**: 自動生成和輪換
 - **數據庫密碼**: 強密碼策略
 - **API 密鑰**: 環境特定配置
@@ -192,6 +211,7 @@ Local Storage + Cloud Storage
 ## 部署流程
 
 ### 測試環境部署
+
 1. 代碼推送到 `develop` 分支
 2. GitHub Actions 觸發 CI/CD
 3. 運行測試和代碼檢查
@@ -201,6 +221,7 @@ Local Storage + Cloud Storage
 7. 性能測試驗證
 
 ### 生產環境部署
+
 1. 代碼合併到 `main` 分支
 2. 自動觸發生產部署
 3. 數據庫備份
@@ -211,6 +232,7 @@ Local Storage + Cloud Storage
 ## 監控和警報
 
 ### 關鍵指標
+
 - **應用性能**: 響應時間、吞吐量
 - **系統健康**: CPU、內存、磁盤使用
 - **業務指標**: 用戶活動、交易量
@@ -218,6 +240,7 @@ Local Storage + Cloud Storage
 - **可用性**: 服務運行時間
 
 ### 警報規則
+
 - **高錯誤率**: 錯誤率超過 10%
 - **高響應時間**: 95% 響應時間超過 1 秒
 - **數據庫問題**: 連接失敗
@@ -227,18 +250,21 @@ Local Storage + Cloud Storage
 ## 安全措施
 
 ### 網絡安全
+
 - **HTTPS 強制**: 所有流量加密
 - **防火牆規則**: 端口限制
 - **DDoS 防護**: 速率限制
 - **IP 白名單**: 管理員訪問限制
 
 ### 應用安全
+
 - **輸入驗證**: 所有用戶輸入驗證
 - **SQL 注入防護**: 參數化查詢
 - **XSS 防護**: 輸出編碼
 - **CSRF 防護**: 令牌驗證
 
 ### 數據安全
+
 - **加密存儲**: 敏感數據加密
 - **備份加密**: 備份文件加密
 - **訪問控制**: 基於角色的權限
@@ -247,6 +273,7 @@ Local Storage + Cloud Storage
 ## 下一步計劃
 
 ### 短期目標 (1-2 週)
+
 1. **域名配置**: 設置生產域名和 DNS
 2. **SSL 證書**: 申請正式 SSL 證書
 3. **監控儀表板**: 創建 Grafana 儀表板
@@ -254,6 +281,7 @@ Local Storage + Cloud Storage
 5. **性能測試**: 負載測試和優化
 
 ### 中期目標 (1-2 月)
+
 1. **CDN 集成**: 靜態資源 CDN
 2. **數據庫優化**: 索引和查詢優化
 3. **緩存策略**: Redis 集群配置
@@ -261,6 +289,7 @@ Local Storage + Cloud Storage
 5. **災難恢復**: 故障轉移計劃
 
 ### 長期目標 (3-6 月)
+
 1. **微服務架構**: 服務拆分
 2. **容器編排**: Kubernetes 部署
 3. **服務網格**: Istio 集成

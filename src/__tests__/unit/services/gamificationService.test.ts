@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { gamificationService } from '../../../services/gamificationService';
 import { mockApiResponse } from '../../setup/test-utils';
 
@@ -7,8 +8,8 @@ jest.mock('../../../services/apiService', () => ({
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
-    delete: jest.fn()
-  }
+    delete: jest.fn(),
+  },
 }));
 
 describe('GamificationService', () => {
@@ -26,7 +27,7 @@ describe('GamificationService', () => {
         achievements: ['first_scan', 'collector_10'],
         badges: ['bronze_collector', 'silver_scanner'],
         rank: 'silver',
-        streak: 7
+        streak: 7,
       };
 
       mockApiResponse('get', mockProfile);
@@ -39,7 +40,9 @@ describe('GamificationService', () => {
     it('應該處理獲取用戶檔案失敗的情況', async () => {
       mockApiResponse('get', null, new Error('User not found'));
 
-      await expect(gamificationService.getUserProfile('invalid_user')).rejects.toThrow('User not found');
+      await expect(
+        gamificationService.getUserProfile('invalid_user')
+      ).rejects.toThrow('User not found');
     });
   });
 
@@ -49,7 +52,7 @@ describe('GamificationService', () => {
         userId: 'user123',
         amount: 100,
         source: 'card_scan',
-        description: '掃描卡片獲得經驗值'
+        description: '掃描卡片獲得經驗值',
       };
 
       const mockResponse = {
@@ -57,7 +60,7 @@ describe('GamificationService', () => {
         newExperience: 1350,
         newLevel: 6,
         levelUp: true,
-        rewards: ['new_badge']
+        rewards: ['new_badge'],
       };
 
       mockApiResponse('post', mockResponse);
@@ -72,12 +75,14 @@ describe('GamificationService', () => {
         userId: 'invalid_user',
         amount: 100,
         source: 'card_scan',
-        description: '掃描卡片獲得經驗值'
+        description: '掃描卡片獲得經驗值',
       };
 
       mockApiResponse('post', null, new Error('Invalid user'));
 
-      await expect(gamificationService.addExperience(experienceData)).rejects.toThrow('Invalid user');
+      await expect(
+        gamificationService.addExperience(experienceData)
+      ).rejects.toThrow('Invalid user');
     });
   });
 
@@ -91,7 +96,7 @@ describe('GamificationService', () => {
           icon: 'scan-icon',
           points: 50,
           isUnlocked: true,
-          unlockedAt: '2024-01-01T00:00:00Z'
+          unlockedAt: '2024-01-01T00:00:00Z',
         },
         {
           id: 'collector_10',
@@ -100,7 +105,7 @@ describe('GamificationService', () => {
           icon: 'collector-icon',
           points: 100,
           isUnlocked: true,
-          unlockedAt: '2024-01-02T00:00:00Z'
+          unlockedAt: '2024-01-02T00:00:00Z',
         },
         {
           id: 'streak_30',
@@ -108,8 +113,8 @@ describe('GamificationService', () => {
           description: '連續使用30天',
           icon: 'streak-icon',
           points: 200,
-          isUnlocked: false
-        }
+          isUnlocked: false,
+        },
       ];
 
       mockApiResponse('get', mockAchievements);
@@ -124,19 +129,20 @@ describe('GamificationService', () => {
     it('應該成功解鎖成就', async () => {
       const achievementData = {
         userId: 'user123',
-        achievementId: 'streak_30'
+        achievementId: 'streak_30',
       };
 
       const mockResponse = {
         achievementId: 'streak_30',
         unlocked: true,
         pointsEarned: 200,
-        newTotalPoints: 5200
+        newTotalPoints: 5200,
       };
 
       mockApiResponse('post', mockResponse);
 
-      const result = await gamificationService.unlockAchievement(achievementData);
+      const result =
+        await gamificationService.unlockAchievement(achievementData);
 
       expect(result).toEqual(mockResponse);
     });
@@ -151,7 +157,7 @@ describe('GamificationService', () => {
           username: 'TopPlayer',
           level: 10,
           totalPoints: 15000,
-          avatar: 'avatar1.jpg'
+          avatar: 'avatar1.jpg',
         },
         {
           rank: 2,
@@ -159,8 +165,8 @@ describe('GamificationService', () => {
           username: 'SecondPlayer',
           level: 9,
           totalPoints: 12000,
-          avatar: 'avatar2.jpg'
-        }
+          avatar: 'avatar2.jpg',
+        },
       ];
 
       mockApiResponse('get', mockLeaderboard);
@@ -177,10 +183,12 @@ describe('GamificationService', () => {
 
       await gamificationService.getLeaderboard(leaderboardType);
 
-      expect(require('../../../services/apiService').apiService.get).toHaveBeenCalledWith(
+      expect(
+        require('../../../services/apiService').apiService.get
+      ).toHaveBeenCalledWith(
         expect.stringContaining('leaderboard'),
         expect.objectContaining({
-          params: { type: leaderboardType }
+          params: { type: leaderboardType },
         })
       );
     });
@@ -198,7 +206,7 @@ describe('GamificationService', () => {
           current: 3,
           reward: 50,
           expiresAt: '2024-01-02T00:00:00Z',
-          isCompleted: false
+          isCompleted: false,
         },
         {
           id: 'weekly_collect',
@@ -209,8 +217,8 @@ describe('GamificationService', () => {
           current: 15,
           reward: 200,
           expiresAt: '2024-01-08T00:00:00Z',
-          isCompleted: false
-        }
+          isCompleted: false,
+        },
       ];
 
       mockApiResponse('get', mockChallenges);
@@ -226,19 +234,20 @@ describe('GamificationService', () => {
       const progressData = {
         userId: 'user123',
         challengeId: 'daily_scan',
-        progress: 1
+        progress: 1,
       };
 
       const mockResponse = {
         challengeId: 'daily_scan',
         currentProgress: 4,
         isCompleted: false,
-        rewardEarned: null
+        rewardEarned: null,
       };
 
       mockApiResponse('put', mockResponse);
 
-      const result = await gamificationService.updateChallengeProgress(progressData);
+      const result =
+        await gamificationService.updateChallengeProgress(progressData);
 
       expect(result).toEqual(mockResponse);
     });
@@ -247,7 +256,7 @@ describe('GamificationService', () => {
       const progressData = {
         userId: 'user123',
         challengeId: 'daily_scan',
-        progress: 2
+        progress: 2,
       };
 
       const mockResponse = {
@@ -255,12 +264,13 @@ describe('GamificationService', () => {
         currentProgress: 5,
         isCompleted: true,
         rewardEarned: 50,
-        newTotalPoints: 5250
+        newTotalPoints: 5250,
       };
 
       mockApiResponse('put', mockResponse);
 
-      const result = await gamificationService.updateChallengeProgress(progressData);
+      const result =
+        await gamificationService.updateChallengeProgress(progressData);
 
       expect(result).toEqual(mockResponse);
     });
@@ -276,7 +286,7 @@ describe('GamificationService', () => {
           type: 'badge',
           icon: 'bronze-badge.png',
           isClaimed: true,
-          claimedAt: '2024-01-01T00:00:00Z'
+          claimedAt: '2024-01-01T00:00:00Z',
         },
         {
           id: 'points_100',
@@ -284,8 +294,8 @@ describe('GamificationService', () => {
           description: '獲得100點數獎勵',
           type: 'points',
           amount: 100,
-          isClaimed: false
-        }
+          isClaimed: false,
+        },
       ];
 
       mockApiResponse('get', mockRewards);
@@ -300,14 +310,14 @@ describe('GamificationService', () => {
     it('應該成功領取獎勵', async () => {
       const rewardData = {
         userId: 'user123',
-        rewardId: 'points_100'
+        rewardId: 'points_100',
       };
 
       const mockResponse = {
         rewardId: 'points_100',
         claimed: true,
         claimedAt: '2024-01-01T00:00:00Z',
-        newTotalPoints: 5300
+        newTotalPoints: 5300,
       };
 
       mockApiResponse('post', mockResponse);
@@ -324,7 +334,7 @@ describe('GamificationService', () => {
         currentStreak: 7,
         longestStreak: 15,
         lastActivityDate: '2024-01-01T00:00:00Z',
-        streakRewards: [50, 100, 200]
+        streakRewards: [50, 100, 200],
       };
 
       mockApiResponse('get', mockStreak);
@@ -340,7 +350,7 @@ describe('GamificationService', () => {
       const mockResponse = {
         newStreak: 8,
         streakReward: 100,
-        newTotalPoints: 5400
+        newTotalPoints: 5400,
       };
 
       mockApiResponse('post', mockResponse);
@@ -359,7 +369,7 @@ describe('GamificationService', () => {
         level: 5,
         experienceInLevel: 250,
         experienceToNext: 750,
-        progressPercentage: 25
+        progressPercentage: 25,
       });
     });
 
@@ -370,7 +380,7 @@ describe('GamificationService', () => {
         level: 100,
         experienceInLevel: 0,
         experienceToNext: 0,
-        progressPercentage: 100
+        progressPercentage: 100,
       });
     });
   });
@@ -423,7 +433,7 @@ describe('GamificationService', () => {
       const achievement = {
         id: 'collector_100',
         target: 100,
-        current: 75
+        current: 75,
       };
 
       const progress = gamificationService.getAchievementProgress(achievement);
@@ -432,7 +442,7 @@ describe('GamificationService', () => {
         current: 75,
         target: 100,
         percentage: 75,
-        isCompleted: false
+        isCompleted: false,
       });
     });
 
@@ -440,7 +450,7 @@ describe('GamificationService', () => {
       const achievement = {
         id: 'collector_100',
         target: 100,
-        current: 100
+        current: 100,
       };
 
       const progress = gamificationService.getAchievementProgress(achievement);
@@ -449,7 +459,7 @@ describe('GamificationService', () => {
         current: 100,
         target: 100,
         percentage: 100,
-        isCompleted: true
+        isCompleted: true,
       });
     });
   });

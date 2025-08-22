@@ -32,9 +32,9 @@ describe('智能標註任務分配算法測試', () => {
             card_identification: 0.9,
             condition_assessment: 0.8,
             authenticity_verification: 0.95,
-            centering_analysis: 0.85
-          }
-        }
+            centering_analysis: 0.85,
+          },
+        },
       }),
       Annotator.create({
         userId: 2,
@@ -50,9 +50,9 @@ describe('智能標註任務分配算法測試', () => {
             card_identification: 0.85,
             condition_assessment: 0.9,
             authenticity_verification: 0.8,
-            centering_analysis: 0.88
-          }
-        }
+            centering_analysis: 0.88,
+          },
+        },
       }),
       Annotator.create({
         userId: 3,
@@ -68,10 +68,10 @@ describe('智能標註任務分配算法測試', () => {
             card_identification: 0.7,
             condition_assessment: 0.75,
             authenticity_verification: 0.65,
-            centering_analysis: 0.8
-          }
-        }
-      })
+            centering_analysis: 0.8,
+          },
+        },
+      }),
     ]);
 
     // 創建測試訓練數據
@@ -87,8 +87,8 @@ describe('智能標註任務分配算法測試', () => {
           imageQuality: 'high',
           confidence: 0.9,
           difficultyLevel: 'easy',
-          suggestedAnnotationType: 'card_identification'
-        }
+          suggestedAnnotationType: 'card_identification',
+        },
       }),
       TrainingData.create({
         cardId: 2,
@@ -101,8 +101,8 @@ describe('智能標註任務分配算法測試', () => {
           imageQuality: 'medium',
           confidence: 0.7,
           difficultyLevel: 'medium',
-          suggestedAnnotationType: 'authenticity_verification'
-        }
+          suggestedAnnotationType: 'authenticity_verification',
+        },
       }),
       TrainingData.create({
         cardId: 3,
@@ -115,24 +115,25 @@ describe('智能標註任務分配算法測試', () => {
           imageQuality: 'low',
           confidence: 0.5,
           difficultyLevel: 'hard',
-          suggestedAnnotationType: 'condition_assessment'
-        }
-      })
+          suggestedAnnotationType: 'condition_assessment',
+        },
+      }),
     ]);
   });
 
   afterAll(async () => {
     // 清理測試數據
     await Promise.all([
-      ...testAnnotators.map(annotator => annotator.destroy()),
-      ...testTrainingData.map(data => data.destroy())
+      ...testAnnotators.map((annotator) => annotator.destroy()),
+      ...testTrainingData.map((data) => data.destroy()),
     ]);
   });
 
   describe('智能分配算法核心功能', () => {
     test('應該正確計算標註者專業度', async () => {
       const annotator = testAnnotators[0];
-      const expertise = annotationService.calculateAnnotatorExpertise(annotator);
+      const expertise =
+        annotationService.calculateAnnotatorExpertise(annotator);
 
       expect(expertise).toHaveProperty('card_identification');
       expect(expertise).toHaveProperty('condition_assessment');
@@ -146,14 +147,16 @@ describe('智能標註任務分配算法測試', () => {
 
     test('應該正確計算標註者可用性', async () => {
       const annotator = testAnnotators[0];
-      const availability = annotationService.calculateAnnotatorAvailability(annotator);
+      const availability =
+        annotationService.calculateAnnotatorAvailability(annotator);
 
       expect(availability).toBeGreaterThan(0);
       expect(availability).toBeLessThanOrEqual(1);
     });
 
     test('應該正確計算工作負載', async () => {
-      const workloads = await annotationService.calculateAnnotatorWorkloads(testAnnotators);
+      const workloads =
+        await annotationService.calculateAnnotatorWorkloads(testAnnotators);
 
       expect(workloads).toHaveProperty(testAnnotators[0].id);
       expect(workloads[testAnnotators[0].id]).toHaveProperty('currentTasks');
@@ -172,20 +175,36 @@ describe('智能標註任務分配算法測試', () => {
 
     test('應該正確計算標註者評分', () => {
       const data = testTrainingData[0];
-      const annotators = testAnnotators.map(a => ({
+      const annotators = testAnnotators.map((a) => ({
         ...a.toJSON(),
         expertise: annotationService.calculateAnnotatorExpertise(a),
         availability: annotationService.calculateAnnotatorAvailability(a),
-        performanceHistory: annotationService.extractPerformanceHistory([])
+        performanceHistory: annotationService.extractPerformanceHistory([]),
       }));
 
       const workloads = {
-        [testAnnotators[0].id]: { currentTasks: 0, workloadScore: 0, capacity: 10 },
-        [testAnnotators[1].id]: { currentTasks: 0, workloadScore: 0, capacity: 10 },
-        [testAnnotators[2].id]: { currentTasks: 0, workloadScore: 0, capacity: 10 }
+        [testAnnotators[0].id]: {
+          currentTasks: 0,
+          workloadScore: 0,
+          capacity: 10,
+        },
+        [testAnnotators[1].id]: {
+          currentTasks: 0,
+          workloadScore: 0,
+          capacity: 10,
+        },
+        [testAnnotators[2].id]: {
+          currentTasks: 0,
+          workloadScore: 0,
+          capacity: 10,
+        },
       };
 
-      const scores = annotationService.calculateAnnotatorScores(data, annotators, workloads);
+      const scores = annotationService.calculateAnnotatorScores(
+        data,
+        annotators,
+        workloads
+      );
 
       expect(scores.length).toBeGreaterThan(0);
       expect(scores[0]).toHaveProperty('score');
@@ -201,7 +220,7 @@ describe('智能標註任務分配算法測試', () => {
         .send({
           batchSize: 10,
           priorityFilter: 'high',
-          forceReassignment: false
+          forceReassignment: false,
         })
         .expect(200);
 
@@ -218,7 +237,7 @@ describe('智能標註任務分配算法測試', () => {
         .send({
           batchSize: 5,
           difficultyFilter: 'easy',
-          annotationTypeFilter: 'card_identification'
+          annotationTypeFilter: 'card_identification',
         })
         .expect(200);
 
@@ -243,7 +262,7 @@ describe('智能標註任務分配算法測試', () => {
       const newConfig = {
         maxTasksPerAnnotator: 15,
         qualityThreshold: 0.9,
-        workloadWeight: 0.4
+        workloadWeight: 0.4,
       };
 
       const response = await request(app)
@@ -280,18 +299,22 @@ describe('智能標註任務分配算法測試', () => {
         confidence: 0.9,
         reviewStatus: 'pending',
         metadata: {
-          expectedQuality: 0.85
-        }
+          expectedQuality: 0.85,
+        },
       });
 
       const actualQuality = 0.92;
       const processingTime = 3000000; // 50分鐘
 
-      await annotationService.learnFromResults(annotation.id, actualQuality, processingTime);
+      await annotationService.learnFromResults(
+        annotation.id,
+        actualQuality,
+        processingTime
+      );
 
       // 驗證標註者專業度已更新
       const updatedAnnotator = await Annotator.findByPk(testAnnotators[0].id);
-      const {expertiseAreas} = updatedAnnotator.metadata;
+      const { expertiseAreas } = updatedAnnotator.metadata;
 
       expect(expertiseAreas.card_identification).toBeGreaterThan(0.9);
 
@@ -299,13 +322,16 @@ describe('智能標註任務分配算法測試', () => {
     });
 
     test('應該調整分配算法參數', async () => {
-      const originalQualityWeight = annotationService.assignmentConfig.qualityWeight;
+      const originalQualityWeight =
+        annotationService.assignmentConfig.qualityWeight;
 
       // 模擬高質量結果
       await annotationService.adjustAssignmentParameters(0.15, 1800000);
 
       // 驗證權重已調整
-      expect(annotationService.assignmentConfig.qualityWeight).toBeGreaterThan(originalQualityWeight);
+      expect(annotationService.assignmentConfig.qualityWeight).toBeGreaterThan(
+        originalQualityWeight
+      );
 
       // 恢復原始值
       annotationService.assignmentConfig.qualityWeight = originalQualityWeight;
@@ -322,11 +348,12 @@ describe('智能標註任務分配算法測試', () => {
           priority: 'high',
           difficulty: 'easy',
           expectedQuality: 0.9,
-          assignmentReason: '專業領域匹配'
-        }
+          assignmentReason: '專業領域匹配',
+        },
       ];
 
-      const stats = await annotationService.updateAssignmentStatistics(assignments);
+      const stats =
+        await annotationService.updateAssignmentStatistics(assignments);
 
       expect(stats.totalAssigned).toBe(1);
       expect(stats.averageExpectedQuality).toBe(0.9);
@@ -338,7 +365,9 @@ describe('智能標註任務分配算法測試', () => {
   describe('錯誤處理', () => {
     test('應該處理無可用標註者的情況', async () => {
       // 暫時停用所有標註者
-      await Promise.all(testAnnotators.map(a => a.update({ isActive: false })));
+      await Promise.all(
+        testAnnotators.map((a) => a.update({ isActive: false }))
+      );
 
       const response = await request(app)
         .post('/api/data-quality/annotate/assign')
@@ -348,12 +377,16 @@ describe('智能標註任務分配算法測試', () => {
       expect(response.body.data.totalAssigned).toBe(0);
 
       // 恢復標註者狀態
-      await Promise.all(testAnnotators.map(a => a.update({ isActive: true })));
+      await Promise.all(
+        testAnnotators.map((a) => a.update({ isActive: true }))
+      );
     });
 
     test('應該處理無待分配數據的情況', async () => {
       // 暫時將所有數據標記為已分配
-      await Promise.all(testTrainingData.map(d => d.update({ status: 'annotated' })));
+      await Promise.all(
+        testTrainingData.map((d) => d.update({ status: 'annotated' }))
+      );
 
       const response = await request(app)
         .post('/api/data-quality/annotate/assign')
@@ -363,7 +396,9 @@ describe('智能標註任務分配算法測試', () => {
       expect(response.body.data.totalAssigned).toBe(0);
 
       // 恢復數據狀態
-      await Promise.all(testTrainingData.map(d => d.update({ status: 'pending' })));
+      await Promise.all(
+        testTrainingData.map((d) => d.update({ status: 'pending' }))
+      );
     });
   });
 });

@@ -14,15 +14,18 @@
 ## **步驟 1: 添加 SSH 公鑰到 DigitalOcean**
 
 ### **1.1 登錄 DigitalOcean 控制台**
+
 1. 前往: https://cloud.digitalocean.com/
 2. 使用您的賬戶登錄
 
 ### **1.2 添加 SSH 密鑰**
+
 1. 點擊左側導航中的 **"Settings"** → **"Security"**
 2. 點擊 **"SSH Keys"** 標籤
 3. 點擊 **"Add SSH Key"**
 
 ### **1.3 輸入密鑰信息**
+
 - **Name**: `CardStrategy Production`
 - **SSH Key content**: 貼上以下公鑰內容：
 
@@ -35,17 +38,20 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCpFTwYuZee5txkOZB7dUH5/wMzUJIVa6f/kMkocXBO
 ## **步驟 2: 連接到 Droplet**
 
 ### **2.1 使用 SSH 連接**
+
 ```bash
 ssh -i "C:\Users\user\.ssh\cardstrategy_digitalocean" root@159.223.84.189
 ```
 
 ### **2.2 首次連接確認**
+
 - 系統會詢問是否信任主機，輸入 `yes`
 - 如果連接成功，您會看到 Droplet 的命令行界面
 
 ## **步驟 3: 系統更新和基礎配置**
 
 ### **3.1 更新系統**
+
 ```bash
 # 更新包列表
 apt update
@@ -58,6 +64,7 @@ apt install -y nginx certbot python3-certbot-nginx ufw git curl wget
 ```
 
 ### **3.2 配置防火牆**
+
 ```bash
 # 啟用 UFW
 ufw enable
@@ -78,6 +85,7 @@ ufw status
 ## **步驟 4: 配置 Nginx**
 
 ### **4.1 創建 Nginx 配置**
+
 ```bash
 # 備份默認配置
 cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
@@ -87,6 +95,7 @@ nano /etc/nginx/sites-available/cardstrategy
 ```
 
 ### **4.2 添加 Nginx 配置內容**
+
 ```nginx
 # HTTP 重定向到 HTTPS
 server {
@@ -120,7 +129,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-        
+
         # 超時設置
         proxy_connect_timeout 60s;
         proxy_send_timeout 60s;
@@ -173,6 +182,7 @@ server {
 ```
 
 ### **4.3 啟用配置**
+
 ```bash
 # 啟用新配置
 ln -s /etc/nginx/sites-available/cardstrategy /etc/nginx/sites-enabled/
@@ -191,6 +201,7 @@ systemctl enable nginx
 ## **步驟 5: 配置 SSL 證書**
 
 ### **5.1 獲取 Let's Encrypt 證書**
+
 ```bash
 # 為 API 域名獲取證書
 certbot --nginx -d api.cardstrategyapp.com
@@ -200,6 +211,7 @@ certbot --nginx -d cardstrategyapp.com -d www.cardstrategyapp.com
 ```
 
 ### **5.2 設置自動續期**
+
 ```bash
 # 測試自動續期
 certbot renew --dry-run
@@ -211,6 +223,7 @@ echo "0 12 * * * /usr/bin/certbot renew --quiet" | crontab -
 ## **步驟 6: 部署應用**
 
 ### **6.1 創建應用目錄**
+
 ```bash
 # 創建應用目錄
 mkdir -p /opt/cardstrategy
@@ -221,6 +234,7 @@ git clone https://github.com/star64ccs/CardStrategy.git .
 ```
 
 ### **6.2 安裝 Node.js**
+
 ```bash
 # 安裝 Node.js 18
 curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
@@ -232,6 +246,7 @@ npm --version
 ```
 
 ### **6.3 安裝應用依賴**
+
 ```bash
 # 安裝依賴
 npm install
@@ -241,12 +256,14 @@ npm run build
 ```
 
 ### **6.4 配置環境變數**
+
 ```bash
 # 創建環境文件
 nano /opt/cardstrategy/.env.production
 ```
 
 添加以下內容：
+
 ```bash
 NODE_ENV=production
 PORT=3000
@@ -262,6 +279,7 @@ JWT_SECRET=your-jwt-secret
 ```
 
 ### **6.5 配置 PM2**
+
 ```bash
 # 安裝 PM2
 npm install -g pm2
@@ -271,32 +289,36 @@ nano /opt/cardstrategy/ecosystem.config.js
 ```
 
 添加以下內容：
+
 ```javascript
 module.exports = {
-  apps: [{
-    name: 'cardstrategy-api',
-    script: 'backend/src/server.js',
-    instances: 'max',
-    exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
+  apps: [
+    {
+      name: 'cardstrategy-api',
+      script: 'backend/src/server.js',
+      instances: 'max',
+      exec_mode: 'cluster',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      env_file: '.env.production',
+      log_file: '/var/log/cardstrategy/combined.log',
+      out_file: '/var/log/cardstrategy/out.log',
+      error_file: '/var/log/cardstrategy/error.log',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      merge_logs: true,
+      max_memory_restart: '1G',
+      restart_delay: 4000,
+      max_restarts: 10,
+      min_uptime: '10s',
     },
-    env_file: '.env.production',
-    log_file: '/var/log/cardstrategy/combined.log',
-    out_file: '/var/log/cardstrategy/out.log',
-    error_file: '/var/log/cardstrategy/error.log',
-    log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
-    merge_logs: true,
-    max_memory_restart: '1G',
-    restart_delay: 4000,
-    max_restarts: 10,
-    min_uptime: '10s'
-  }]
+  ],
 };
 ```
 
 ### **6.6 啟動應用**
+
 ```bash
 # 創建日誌目錄
 mkdir -p /var/log/cardstrategy
@@ -314,6 +336,7 @@ pm2 startup
 ## **步驟 7: 測試配置**
 
 ### **7.1 測試 API 端點**
+
 ```bash
 # 測試健康檢查
 curl -I https://api.cardstrategyapp.com/api/health
@@ -323,6 +346,7 @@ curl -I https://cardstrategyapp.com
 ```
 
 ### **7.2 檢查服務狀態**
+
 ```bash
 # 檢查 Nginx 狀態
 systemctl status nginx
@@ -337,12 +361,14 @@ ufw status
 ## **步驟 8: 監控和維護**
 
 ### **8.1 設置日誌輪轉**
+
 ```bash
 # 創建日誌輪轉配置
 nano /etc/logrotate.d/cardstrategy
 ```
 
 添加以下內容：
+
 ```
 /var/log/cardstrategy/*.log {
     daily
@@ -359,6 +385,7 @@ nano /etc/logrotate.d/cardstrategy
 ```
 
 ### **8.2 設置監控**
+
 ```bash
 # 安裝監控工具
 apt install -y htop iotop
@@ -372,28 +399,31 @@ nano /etc/systemd/system/cardstrategy-monitor.service
 ### **常見問題**
 
 1. **SSL 證書問題**
+
    ```bash
    # 檢查證書狀態
    certbot certificates
-   
+
    # 重新獲取證書
    certbot --nginx -d api.cardstrategyapp.com --force-renewal
    ```
 
 2. **Nginx 配置問題**
+
    ```bash
    # 檢查配置語法
    nginx -t
-   
+
    # 重新加載配置
    systemctl reload nginx
    ```
 
 3. **應用啟動問題**
+
    ```bash
    # 查看應用日誌
    pm2 logs cardstrategy-api
-   
+
    # 重啟應用
    pm2 restart cardstrategy-api
    ```

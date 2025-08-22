@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
@@ -15,7 +24,9 @@ interface MicroserviceDashboardScreenProps {
   navigation: any;
 }
 
-const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = ({ navigation }) => {
+const MicroserviceDashboardScreen: React.FC<
+  MicroserviceDashboardScreenProps
+> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [services, setServices] = useState<any[]>([]);
@@ -34,12 +45,12 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
       await Promise.all([
         loadServices(),
         loadLoadBalancerStatus(),
-        loadMessageQueueStatus()
+        loadMessageQueueStatus(),
       ]);
     } catch (error) {
       errorHandler.handleError(error as Error, {
         service: 'MicroserviceDashboardScreen',
-        method: 'loadData'
+        method: 'loadData',
       });
       Alert.alert('錯誤', '載入數據失敗');
     } finally {
@@ -76,7 +87,10 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
 
   const loadServiceMetrics = async (serviceId: string) => {
     try {
-      const metrics = await microserviceOrchestrator.getServiceMetrics(serviceId, '24h');
+      const metrics = await microserviceOrchestrator.getServiceMetrics(
+        serviceId,
+        '24h'
+      );
       setServiceMetrics(metrics);
       setSelectedService(serviceId);
     } catch (error) {
@@ -98,18 +112,19 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
         endpoints: {
           health: 'http://localhost:3001/health',
           metrics: 'http://localhost:3001/metrics',
-          api: 'http://localhost:3001/api'
+          api: 'http://localhost:3001/api',
         },
         metadata: {
           instanceId: `instance_${Date.now()}`,
           host: 'localhost',
           port: 3001,
           region: 'us-east-1',
-          environment: 'development'
-        }
+          environment: 'development',
+        },
       };
 
-      const result = await microserviceOrchestrator.registerService(registration);
+      const result =
+        await microserviceOrchestrator.registerService(registration);
       if (result.success) {
         Alert.alert('成功', '服務註冊成功');
         await loadData();
@@ -117,7 +132,7 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
     } catch (error) {
       errorHandler.handleError(error as Error, {
         service: 'MicroserviceDashboardScreen',
-        method: 'handleRegisterService'
+        method: 'handleRegisterService',
       });
       Alert.alert('錯誤', '服務註冊失敗');
     }
@@ -129,10 +144,13 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
         id: `msg_${Date.now()}`,
         type: 'test',
         data: { test: 'data' },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
-      const result = await microserviceOrchestrator.sendMessage('test-queue', message);
+      const result = await microserviceOrchestrator.sendMessage(
+        'test-queue',
+        message
+      );
       if (result.success) {
         Alert.alert('成功', '消息發送成功');
         await loadMessageQueueStatus();
@@ -140,7 +158,7 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
     } catch (error) {
       errorHandler.handleError(error as Error, {
         service: 'MicroserviceDashboardScreen',
-        method: 'handleSendMessage'
+        method: 'handleSendMessage',
       });
       Alert.alert('錯誤', '消息發送失敗');
     }
@@ -155,16 +173,19 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
             key={service.serviceId}
             style={[
               styles.serviceItem,
-              selectedService === service.serviceId && styles.selectedServiceItem
+              selectedService === service.serviceId &&
+                styles.selectedServiceItem,
             ]}
             onPress={() => loadServiceMetrics(service.serviceId)}
           >
             <View style={styles.serviceHeader}>
               <Text style={styles.serviceName}>{service.serviceName}</Text>
-              <View style={[
-                styles.statusIndicator,
-                { backgroundColor: getStatusColor(service.status) }
-              ]} />
+              <View
+                style={[
+                  styles.statusIndicator,
+                  { backgroundColor: getStatusColor(service.status) },
+                ]}
+              />
             </View>
             <Text style={styles.serviceVersion}>版本: {service.version}</Text>
             <Text style={styles.serviceStatus}>狀態: {service.status}</Text>
@@ -186,7 +207,9 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
         <View style={styles.statusGrid}>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>總服務數</Text>
-            <Text style={styles.statusValue}>{loadBalancerStatus.totalServices}</Text>
+            <Text style={styles.statusValue}>
+              {loadBalancerStatus.totalServices}
+            </Text>
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>健康服務</Text>
@@ -202,7 +225,9 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>總請求數</Text>
-            <Text style={styles.statusValue}>{loadBalancerStatus.totalRequests}</Text>
+            <Text style={styles.statusValue}>
+              {loadBalancerStatus.totalRequests}
+            </Text>
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>平均響應時間</Text>
@@ -230,11 +255,15 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
         <View style={styles.statusGrid}>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>總隊列數</Text>
-            <Text style={styles.statusValue}>{messageQueueStatus.totalQueues}</Text>
+            <Text style={styles.statusValue}>
+              {messageQueueStatus.totalQueues}
+            </Text>
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>總消息數</Text>
-            <Text style={styles.statusValue}>{messageQueueStatus.totalMessages}</Text>
+            <Text style={styles.statusValue}>
+              {messageQueueStatus.totalMessages}
+            </Text>
           </View>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>已處理消息</Text>
@@ -262,24 +291,29 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
   const renderServiceMetrics = () => {
     if (!serviceMetrics || !selectedService) return null;
 
-    const service = services.find(s => s.serviceId === selectedService);
+    const service = services.find((s) => s.serviceId === selectedService);
     if (!service) return null;
 
     return (
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{service.serviceName} 指標</Text>
-        
+
         <View style={styles.metricsContainer}>
           <View style={styles.metricChart}>
             <Text style={styles.chartTitle}>CPU 使用率</Text>
             <LineChart
               data={{
-                labels: serviceMetrics.timestamps.map((t: string) => 
-                  new Date(t).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+                labels: serviceMetrics.timestamps.map((t: string) =>
+                  new Date(t).toLocaleTimeString('zh-TW', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
                 ),
-                datasets: [{
-                  data: serviceMetrics.cpuUsage
-                }]
+                datasets: [
+                  {
+                    data: serviceMetrics.cpuUsage,
+                  },
+                ],
               }}
               width={screenWidth - 40}
               height={150}
@@ -290,8 +324,8 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
                 decimalPlaces: 1,
                 color: (opacity = 1) => `rgba(76, 175, 80, ${opacity})`,
                 style: {
-                  borderRadius: 16
-                }
+                  borderRadius: 16,
+                },
               }}
               bezier
               style={styles.chart}
@@ -302,12 +336,17 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
             <Text style={styles.chartTitle}>記憶體使用率</Text>
             <LineChart
               data={{
-                labels: serviceMetrics.timestamps.map((t: string) => 
-                  new Date(t).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+                labels: serviceMetrics.timestamps.map((t: string) =>
+                  new Date(t).toLocaleTimeString('zh-TW', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
                 ),
-                datasets: [{
-                  data: serviceMetrics.memoryUsage
-                }]
+                datasets: [
+                  {
+                    data: serviceMetrics.memoryUsage,
+                  },
+                ],
               }}
               width={screenWidth - 40}
               height={150}
@@ -318,8 +357,8 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
                 decimalPlaces: 1,
                 color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
                 style: {
-                  borderRadius: 16
-                }
+                  borderRadius: 16,
+                },
               }}
               bezier
               style={styles.chart}
@@ -330,12 +369,17 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
             <Text style={styles.chartTitle}>請求率</Text>
             <LineChart
               data={{
-                labels: serviceMetrics.timestamps.map((t: string) => 
-                  new Date(t).toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit' })
+                labels: serviceMetrics.timestamps.map((t: string) =>
+                  new Date(t).toLocaleTimeString('zh-TW', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
                 ),
-                datasets: [{
-                  data: serviceMetrics.requestRate
-                }]
+                datasets: [
+                  {
+                    data: serviceMetrics.requestRate,
+                  },
+                ],
               }}
               width={screenWidth - 40}
               height={150}
@@ -346,8 +390,8 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
                 decimalPlaces: 0,
                 color: (opacity = 1) => `rgba(255, 152, 0, ${opacity})`,
                 style: {
-                  borderRadius: 16
-                }
+                  borderRadius: 16,
+                },
               }}
               bezier
               style={styles.chart}
@@ -362,10 +406,16 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>操作</Text>
       <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.actionButton} onPress={handleRegisterService}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={handleRegisterService}
+        >
           <Text style={styles.actionButtonText}>註冊測試服務</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton} onPress={handleSendMessage}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={handleSendMessage}
+        >
           <Text style={styles.actionButtonText}>發送測試消息</Text>
         </TouchableOpacity>
       </View>
@@ -400,8 +450,8 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
@@ -424,36 +474,36 @@ const MicroserviceDashboardScreen: React.FC<MicroserviceDashboardScreenProps> = 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   scrollView: {
-    flex: 1
+    flex: 1,
   },
   header: {
     padding: 20,
     backgroundColor: '#ffffff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0'
+    borderBottomColor: '#e0e0e0',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 5
+    marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#666666'
+    color: '#666666',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666666'
+    color: '#666666',
   },
   section: {
     margin: 15,
@@ -463,66 +513,66 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 15
+    marginBottom: 15,
   },
   serviceList: {
-    gap: 10
+    gap: 10,
   },
   serviceItem: {
     padding: 15,
     backgroundColor: '#f8f9fa',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#e9ecef'
+    borderColor: '#e9ecef',
   },
   selectedServiceItem: {
     borderColor: '#007AFF',
-    backgroundColor: '#e3f2fd'
+    backgroundColor: '#e3f2fd',
   },
   serviceHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5
+    marginBottom: 5,
   },
   serviceName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333333'
+    color: '#333333',
   },
   statusIndicator: {
     width: 12,
     height: 12,
-    borderRadius: 6
+    borderRadius: 6,
   },
   serviceVersion: {
     fontSize: 14,
     color: '#666666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   serviceStatus: {
     fontSize: 14,
     color: '#666666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   serviceHealth: {
     fontSize: 14,
-    color: '#666666'
+    color: '#666666',
   },
   statusGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10
+    gap: 10,
   },
   statusItem: {
     flex: 1,
@@ -530,50 +580,50 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#f8f9fa',
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusLabel: {
     fontSize: 12,
     color: '#666666',
-    marginBottom: 5
+    marginBottom: 5,
   },
   statusValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333333'
+    color: '#333333',
   },
   metricsContainer: {
-    gap: 20
+    gap: 20,
   },
   metricChart: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   chartTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333333',
-    marginBottom: 10
+    marginBottom: 10,
   },
   chart: {
     marginVertical: 8,
-    borderRadius: 16
+    borderRadius: 16,
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 10
+    gap: 10,
   },
   actionButton: {
     flex: 1,
     padding: 15,
     backgroundColor: '#007AFF',
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   actionButtonText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 
 export default MicroserviceDashboardScreen;

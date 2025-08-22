@@ -1,4 +1,3 @@
-
 // 創建預測模型表
 const createPredictionModelsTable = async (sequelize) => {
   try {
@@ -61,4 +60,3 @@ const runMigrations = async () => {
     process.exit(1);
   }
 };
-

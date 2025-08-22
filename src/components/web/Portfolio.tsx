@@ -20,7 +20,9 @@ interface PortfolioData {
 }
 
 const Portfolio: React.FC = () => {
-  const [selectedFilter, setSelectedFilter] = useState<'all' | 'profit' | 'loss'>('all');
+  const [selectedFilter, setSelectedFilter] = useState<
+    'all' | 'profit' | 'loss'
+  >('all');
 
   // 模擬投資組合數據
   const portfolioData: PortfolioData = {
@@ -37,7 +39,8 @@ const Portfolio: React.FC = () => {
         totalValue: 4500,
         profitLoss: 900,
         profitLossPercentage: 25.0,
-        imageUrl: 'https://via.placeholder.com/60x80/3498db/ffffff?text=青眼白龍'
+        imageUrl:
+          'https://via.placeholder.com/60x80/3498db/ffffff?text=青眼白龍',
       },
       {
         id: '2',
@@ -48,7 +51,7 @@ const Portfolio: React.FC = () => {
         totalValue: 4000,
         profitLoss: 500,
         profitLossPercentage: 14.3,
-        imageUrl: 'https://via.placeholder.com/60x80/9b59b6/ffffff?text=黑魔導'
+        imageUrl: 'https://via.placeholder.com/60x80/9b59b6/ffffff?text=黑魔導',
       },
       {
         id: '3',
@@ -59,7 +62,8 @@ const Portfolio: React.FC = () => {
         totalValue: 4000,
         profitLoss: 400,
         profitLossPercentage: 11.1,
-        imageUrl: 'https://via.placeholder.com/60x80/f39c12/ffffff?text=混沌戰士'
+        imageUrl:
+          'https://via.placeholder.com/60x80/f39c12/ffffff?text=混沌戰士',
       },
       {
         id: '4',
@@ -70,7 +74,8 @@ const Portfolio: React.FC = () => {
         totalValue: 4800,
         profitLoss: 400,
         profitLossPercentage: 9.1,
-        imageUrl: 'https://via.placeholder.com/60x80/e74c3c/ffffff?text=真紅眼黑龍'
+        imageUrl:
+          'https://via.placeholder.com/60x80/e74c3c/ffffff?text=真紅眼黑龍',
       },
       {
         id: '5',
@@ -81,16 +86,17 @@ const Portfolio: React.FC = () => {
         totalValue: 900,
         profitLoss: -300,
         profitLossPercentage: -25.0,
-        imageUrl: 'https://via.placeholder.com/60x80/34495e/ffffff?text=暗黑魔導師'
-      }
-    ]
+        imageUrl:
+          'https://via.placeholder.com/60x80/34495e/ffffff?text=暗黑魔導師',
+      },
+    ],
   };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('zh-TW', {
       style: 'currency',
       currency: 'TWD',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -102,7 +108,7 @@ const Portfolio: React.FC = () => {
     return value >= 0 ? '#27ae60' : '#e74c3c';
   };
 
-  const filteredItems = portfolioData.items.filter(item => {
+  const filteredItems = portfolioData.items.filter((item) => {
     if (selectedFilter === 'profit') return item.profitLoss > 0;
     if (selectedFilter === 'loss') return item.profitLoss < 0;
     return true;
@@ -118,7 +124,9 @@ const Portfolio: React.FC = () => {
           <div style={styles.statCard}>
             <div style={styles.statIcon}>💰</div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{formatCurrency(portfolioData.totalValue)}</div>
+              <div style={styles.statValue}>
+                {formatCurrency(portfolioData.totalValue)}
+              </div>
               <div style={styles.statLabel}>總資產價值</div>
             </div>
           </div>
@@ -126,10 +134,12 @@ const Portfolio: React.FC = () => {
           <div style={styles.statCard}>
             <div style={styles.statIcon}>📈</div>
             <div style={styles.statContent}>
-              <div style={{
-                ...styles.statValue,
-                color: getProfitLossColor(portfolioData.totalProfitLoss)
-              }}>
+              <div
+                style={{
+                  ...styles.statValue,
+                  color: getProfitLossColor(portfolioData.totalProfitLoss),
+                }}
+              >
                 {formatCurrency(portfolioData.totalProfitLoss)}
               </div>
               <div style={styles.statLabel}>總盈虧</div>
@@ -139,10 +149,14 @@ const Portfolio: React.FC = () => {
           <div style={styles.statCard}>
             <div style={styles.statIcon}>📊</div>
             <div style={styles.statContent}>
-              <div style={{
-                ...styles.statValue,
-                color: getProfitLossColor(portfolioData.totalProfitLossPercentage)
-              }}>
+              <div
+                style={{
+                  ...styles.statValue,
+                  color: getProfitLossColor(
+                    portfolioData.totalProfitLossPercentage
+                  ),
+                }}
+              >
                 {formatPercentage(portfolioData.totalProfitLossPercentage)}
               </div>
               <div style={styles.statLabel}>總收益率</div>
@@ -165,7 +179,7 @@ const Portfolio: React.FC = () => {
           <button
             style={{
               ...styles.filterButton,
-              ...(selectedFilter === 'all' && styles.activeFilter)
+              ...(selectedFilter === 'all' && styles.activeFilter),
             }}
             onClick={() => setSelectedFilter('all')}
           >
@@ -174,20 +188,22 @@ const Portfolio: React.FC = () => {
           <button
             style={{
               ...styles.filterButton,
-              ...(selectedFilter === 'profit' && styles.activeFilter)
+              ...(selectedFilter === 'profit' && styles.activeFilter),
             }}
             onClick={() => setSelectedFilter('profit')}
           >
-            盈利 ({portfolioData.items.filter(item => item.profitLoss > 0).length})
+            盈利 (
+            {portfolioData.items.filter((item) => item.profitLoss > 0).length})
           </button>
           <button
             style={{
               ...styles.filterButton,
-              ...(selectedFilter === 'loss' && styles.activeFilter)
+              ...(selectedFilter === 'loss' && styles.activeFilter),
             }}
             onClick={() => setSelectedFilter('loss')}
           >
-            虧損 ({portfolioData.items.filter(item => item.profitLoss < 0).length})
+            虧損 (
+            {portfolioData.items.filter((item) => item.profitLoss < 0).length})
           </button>
         </div>
       </div>
@@ -218,21 +234,27 @@ const Portfolio: React.FC = () => {
             </div>
 
             <div style={styles.itemValue}>
-              <div style={styles.totalValue}>{formatCurrency(item.totalValue)}</div>
+              <div style={styles.totalValue}>
+                {formatCurrency(item.totalValue)}
+              </div>
               <div style={styles.valueLabel}>總價值</div>
             </div>
 
             <div style={styles.itemProfitLoss}>
-              <div style={{
-                ...styles.profitLossValue,
-                color: getProfitLossColor(item.profitLoss)
-              }}>
+              <div
+                style={{
+                  ...styles.profitLossValue,
+                  color: getProfitLossColor(item.profitLoss),
+                }}
+              >
                 {formatCurrency(item.profitLoss)}
               </div>
-              <div style={{
-                ...styles.profitLossPercentage,
-                color: getProfitLossColor(item.profitLossPercentage)
-              }}>
+              <div
+                style={{
+                  ...styles.profitLossPercentage,
+                  color: getProfitLossColor(item.profitLossPercentage),
+                }}
+              >
                 {formatPercentage(item.profitLossPercentage)}
               </div>
             </div>
@@ -281,25 +303,25 @@ const Portfolio: React.FC = () => {
 
 const styles = {
   container: {
-    padding: '24px'
+    padding: '24px',
   },
   overview: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
     marginBottom: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   title: {
     fontSize: '24px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 20px 0'
+    margin: '0 0 20px 0',
   },
   statsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '16px'
+    gap: '16px',
   },
   statCard: {
     display: 'flex',
@@ -307,35 +329,35 @@ const styles = {
     padding: '16px',
     backgroundColor: '#f8f9fa',
     borderRadius: '8px',
-    border: '1px solid #e1e8ed'
+    border: '1px solid #e1e8ed',
   },
   statIcon: {
     fontSize: '24px',
-    marginRight: '12px'
+    marginRight: '12px',
   },
   statContent: {
-    flex: 1
+    flex: 1,
   },
   statValue: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '4px'
+    marginBottom: '4px',
   },
   statLabel: {
     fontSize: '12px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   filterSection: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '20px',
     marginBottom: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   filterButtons: {
     display: 'flex',
-    gap: '8px'
+    gap: '8px',
   },
   filterButton: {
     padding: '8px 16px',
@@ -344,19 +366,19 @@ const styles = {
     backgroundColor: '#ffffff',
     color: '#7f8c8d',
     cursor: 'pointer',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   activeFilter: {
     backgroundColor: '#3498db',
     color: '#ffffff',
-    borderColor: '#3498db'
+    borderColor: '#3498db',
   },
   portfolioList: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
     marginBottom: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   portfolioItem: {
     display: 'flex',
@@ -364,65 +386,65 @@ const styles = {
     padding: '16px',
     borderBottom: '1px solid #e1e8ed',
     ':last-child': {
-      borderBottom: 'none'
-    }
+      borderBottom: 'none',
+    },
   },
   itemImage: {
-    marginRight: '16px'
+    marginRight: '16px',
   },
   image: {
     width: '60px',
     height: '80px',
     borderRadius: '6px',
-    objectFit: 'cover'
+    objectFit: 'cover',
   },
   itemInfo: {
     flex: 1,
-    marginRight: '16px'
+    marginRight: '16px',
   },
   itemName: {
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '4px'
+    marginBottom: '4px',
   },
   itemDetails: {
     display: 'flex',
     gap: '16px',
     fontSize: '12px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   itemValue: {
     textAlign: 'center' as const,
     marginRight: '16px',
-    minWidth: '100px'
+    minWidth: '100px',
   },
   totalValue: {
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '2px'
+    marginBottom: '2px',
   },
   valueLabel: {
     fontSize: '10px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   itemProfitLoss: {
     textAlign: 'center' as const,
     marginRight: '16px',
-    minWidth: '100px'
+    minWidth: '100px',
   },
   profitLossValue: {
     fontSize: '16px',
     fontWeight: 'bold',
-    marginBottom: '2px'
+    marginBottom: '2px',
   },
   profitLossPercentage: {
-    fontSize: '12px'
+    fontSize: '12px',
   },
   itemActions: {
     display: 'flex',
-    gap: '4px'
+    gap: '4px',
   },
   actionButton: {
     width: '32px',
@@ -434,24 +456,24 @@ const styles = {
     fontSize: '14px',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   recommendations: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   recommendationsTitle: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 16px 0'
+    margin: '0 0 16px 0',
   },
   recommendationsContent: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '12px'
+    gap: '12px',
   },
   recommendationCard: {
     display: 'flex',
@@ -459,18 +481,18 @@ const styles = {
     padding: '16px',
     backgroundColor: '#f8f9fa',
     borderRadius: '8px',
-    border: '1px solid #e1e8ed'
+    border: '1px solid #e1e8ed',
   },
   recommendationIcon: {
     fontSize: '20px',
     marginRight: '12px',
-    marginTop: '2px'
+    marginTop: '2px',
   },
   recommendationText: {
     fontSize: '14px',
     color: '#2c3e50',
-    lineHeight: '1.5'
-  }
+    lineHeight: '1.5',
+  },
 };
 
 export default Portfolio;

@@ -1,5 +1,8 @@
 import { test, expect, Page } from '@playwright/test';
-import { setupTestEnvironment, cleanupTestEnvironment } from '../setup/e2e-setup';
+import {
+  setupTestEnvironment,
+  cleanupTestEnvironment,
+} from '../setup/e2e-setup';
 
 describe('微前端模組集成端到端測試', () => {
   let page: Page;
@@ -36,7 +39,7 @@ describe('微前端模組集成端到端測試', () => {
         aiEcosystem: window.aiEcosystem !== undefined,
         userManagement: window.userManagement !== undefined,
         investmentPortfolio: window.investmentPortfolio !== undefined,
-        socialFeatures: window.socialFeatures !== undefined
+        socialFeatures: window.socialFeatures !== undefined,
       };
     });
 
@@ -51,7 +54,9 @@ describe('微前端模組集成端到端測試', () => {
     await expect(page).toHaveURL(/.*card-management/);
 
     // 2. 等待模組加載
-    await expect(page.locator('[data-testid="card-management-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="card-management-module"]')
+    ).toBeVisible();
 
     // 3. 驗證模組組件已渲染
     await expect(page.locator('[data-testid="card-list"]')).toBeVisible();
@@ -70,10 +75,14 @@ describe('微前端模組集成端到端測試', () => {
     await expect(page).toHaveURL(/.*market-analysis/);
 
     // 2. 等待模組加載
-    await expect(page.locator('[data-testid="market-analysis-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="market-analysis-module"]')
+    ).toBeVisible();
 
     // 3. 驗證模組組件已渲染
-    await expect(page.locator('[data-testid="market-dashboard"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="market-dashboard"]')
+    ).toBeVisible();
     await expect(page.locator('[data-testid="price-chart"]')).toBeVisible();
     await expect(page.locator('[data-testid="market-trends"]')).toBeVisible();
 
@@ -83,7 +92,9 @@ describe('微前端模組集成端到端測試', () => {
 
     // 5. 驗證數據已傳遞到其他模組
     await page.click('[data-testid="card-management-nav"]');
-    await expect(page.locator('[data-testid="selected-card"]')).toContainText('Luffy');
+    await expect(page.locator('[data-testid="selected-card"]')).toContainText(
+      'Luffy'
+    );
   });
 
   test('AI 生態系統模組動態加載和 AI 功能', async () => {
@@ -92,23 +103,34 @@ describe('微前端模組集成端到端測試', () => {
     await expect(page).toHaveURL(/.*ai-ecosystem/);
 
     // 2. 等待模組加載
-    await expect(page.locator('[data-testid="ai-ecosystem-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="ai-ecosystem-module"]')
+    ).toBeVisible();
 
     // 3. 驗證模組組件已渲染
     await expect(page.locator('[data-testid="ai-dashboard"]')).toBeVisible();
     await expect(page.locator('[data-testid="card-scanner"]')).toBeVisible();
-    await expect(page.locator('[data-testid="market-predictor"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="market-predictor"]')
+    ).toBeVisible();
 
     // 4. 測試 AI 掃描功能
     const fileInput = page.locator('[data-testid="ai-scan-input"]');
     await fileInput.setInputFiles('tests/fixtures/test-card.jpg');
 
-    await expect(page.locator('[data-testid="scanning-status"]')).toContainText('AI 分析中');
-    await expect(page.locator('[data-testid="scanning-status"]')).toContainText('分析完成', { timeout: 10000 });
+    await expect(page.locator('[data-testid="scanning-status"]')).toContainText(
+      'AI 分析中'
+    );
+    await expect(page.locator('[data-testid="scanning-status"]')).toContainText(
+      '分析完成',
+      { timeout: 10000 }
+    );
 
     // 5. 驗證 AI 預測結果
     await expect(page.locator('[data-testid="ai-prediction"]')).toBeVisible();
-    await expect(page.locator('[data-testid="confidence-score"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="confidence-score"]')
+    ).toBeVisible();
   });
 
   test('模組間狀態同步和通信', async () => {
@@ -117,13 +139,17 @@ describe('微前端模組集成端到端測試', () => {
     await page.click('[data-testid="card-item-luffy"]');
 
     // 2. 驗證狀態已更新
-    await expect(page.locator('[data-testid="selected-card-name"]')).toContainText('Luffy');
+    await expect(
+      page.locator('[data-testid="selected-card-name"]')
+    ).toContainText('Luffy');
 
     // 3. 切換到市場分析模組
     await page.click('[data-testid="market-analysis-nav"]');
 
     // 4. 驗證狀態已同步
-    await expect(page.locator('[data-testid="current-card"]')).toContainText('Luffy');
+    await expect(page.locator('[data-testid="current-card"]')).toContainText(
+      'Luffy'
+    );
 
     // 5. 在市場分析中設置價格提醒
     await page.fill('[data-testid="price-alert-input"]', '100');
@@ -133,7 +159,9 @@ describe('微前端模組集成端到端測試', () => {
     await page.click('[data-testid="card-management-nav"]');
 
     // 7. 驗證提醒狀態已同步
-    await expect(page.locator('[data-testid="price-alert-status"]')).toContainText('已設置');
+    await expect(
+      page.locator('[data-testid="price-alert-status"]')
+    ).toContainText('已設置');
   });
 
   test('模組間事件通信', async () => {
@@ -191,7 +219,9 @@ describe('微前端模組集成端到端測試', () => {
     await page.waitForTimeout(1000);
 
     // 3. 獲取加載時間
-    const times = await page.evaluate(() => (window as any).moduleLoadTimes || {});
+    const times = await page.evaluate(
+      () => (window as any).moduleLoadTimes || {}
+    );
 
     // 4. 驗證性能指標
     expect(times.cardManagement).toBeLessThan(2000);
@@ -215,17 +245,23 @@ describe('微前端模組集成端到端測試', () => {
     await page.click('[data-testid="user-management-nav"]');
 
     // 3. 驗證錯誤處理
-    await expect(page.locator('[data-testid="module-error"]')).toContainText('模組加載失敗');
+    await expect(page.locator('[data-testid="module-error"]')).toContainText(
+      '模組加載失敗'
+    );
     await expect(page.locator('[data-testid="retry-button"]')).toBeVisible();
 
     // 4. 恢復正常加載
     await page.evaluate(() => {
-      (window as any).loadRemoteModule = (window as any).originalLoadRemoteModule;
+      (window as any).loadRemoteModule = (
+        window as any
+      ).originalLoadRemoteModule;
     });
 
     // 5. 重試加載
     await page.click('[data-testid="retry-button"]');
-    await expect(page.locator('[data-testid="user-management-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="user-management-module"]')
+    ).toBeVisible();
   });
 
   test('模組版本兼容性測試', async () => {
@@ -234,7 +270,7 @@ describe('微前端模組集成端到端測試', () => {
       return {
         cardManagement: (window as any).cardManagement?.version,
         marketAnalysis: (window as any).marketAnalysis?.version,
-        aiEcosystem: (window as any).aiEcosystem?.version
+        aiEcosystem: (window as any).aiEcosystem?.version,
       };
     });
 
@@ -249,11 +285,11 @@ describe('微前端模組集成端到端測試', () => {
       const moduleVersions = [
         (window as any).cardManagement?.version,
         (window as any).marketAnalysis?.version,
-        (window as any).aiEcosystem?.version
+        (window as any).aiEcosystem?.version,
       ];
 
       // 簡單的版本兼容性檢查
-      const isCompatible = moduleVersions.every(version => {
+      const isCompatible = moduleVersions.every((version) => {
         const major = parseInt(version.split('.')[0]);
         return major >= 1;
       });
@@ -261,30 +297,44 @@ describe('微前端模組集成端到端測試', () => {
       (window as any).compatibilityCheck = isCompatible;
     });
 
-    const isCompatible = await page.evaluate(() => (window as any).compatibilityCheck);
+    const isCompatible = await page.evaluate(
+      () => (window as any).compatibilityCheck
+    );
     expect(isCompatible).toBe(true);
   });
 
   test('模組間路由和導航', async () => {
     // 1. 測試直接 URL 訪問
     await page.goto('http://localhost:3000/card-management');
-    await expect(page.locator('[data-testid="card-management-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="card-management-module"]')
+    ).toBeVisible();
 
     await page.goto('http://localhost:3000/market-analysis');
-    await expect(page.locator('[data-testid="market-analysis-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="market-analysis-module"]')
+    ).toBeVisible();
 
     await page.goto('http://localhost:3000/ai-ecosystem');
-    await expect(page.locator('[data-testid="ai-ecosystem-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="ai-ecosystem-module"]')
+    ).toBeVisible();
 
     // 2. 測試瀏覽器後退/前進
     await page.goBack();
-    await expect(page.locator('[data-testid="market-analysis-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="market-analysis-module"]')
+    ).toBeVisible();
 
     await page.goBack();
-    await expect(page.locator('[data-testid="card-management-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="card-management-module"]')
+    ).toBeVisible();
 
     await page.goForward();
-    await expect(page.locator('[data-testid="market-analysis-module"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="market-analysis-module"]')
+    ).toBeVisible();
   });
 
   test('模組間數據持久化', async () => {
@@ -299,10 +349,14 @@ describe('微前端模組集成端到端測試', () => {
 
     // 3. 驗證設置已保存
     await page.click('[data-testid="card-management-nav"]');
-    await expect(page.locator('[data-testid="sort-order-select"]')).toHaveValue('price-desc');
+    await expect(page.locator('[data-testid="sort-order-select"]')).toHaveValue(
+      'price-desc'
+    );
 
     // 4. 在其他模組中驗證設置同步
     await page.click('[data-testid="market-analysis-nav"]');
-    await expect(page.locator('[data-testid="sort-order-indicator"]')).toContainText('價格降序');
+    await expect(
+      page.locator('[data-testid="sort-order-indicator"]')
+    ).toContainText('價格降序');
   });
 });

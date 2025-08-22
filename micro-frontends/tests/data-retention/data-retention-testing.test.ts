@@ -1,5 +1,8 @@
 import { test, expect, Page, Browser, BrowserContext } from '@playwright/test';
-import { setupTestEnvironment, cleanupTestEnvironment } from '../setup/e2e-setup';
+import {
+  setupTestEnvironment,
+  cleanupTestEnvironment,
+} from '../setup/e2e-setup';
 
 // 數據保留測試配置
 const DATA_RETENTION_CONFIG = {
@@ -12,7 +15,7 @@ const DATA_RETENTION_CONFIG = {
     sessionData: { days: 1, type: 'session' },
     analyticsData: { days: 180, type: 'analytics' },
     backupData: { days: 730, type: 'backup' },
-    testData: { days: 1, type: 'test' }
+    testData: { days: 1, type: 'test' },
   },
   // 清理頻率
   cleanupFrequency: {
@@ -20,7 +23,7 @@ const DATA_RETENTION_CONFIG = {
     weekly: ['cacheData', 'testData'],
     monthly: ['userLogs', 'analyticsData'],
     quarterly: ['auditTrails'],
-    yearly: ['backupData']
+    yearly: ['backupData'],
   },
   // 數據大小限制
   sizeLimits: {
@@ -31,7 +34,7 @@ const DATA_RETENTION_CONFIG = {
     sessionData: '50MB',
     analyticsData: '2GB',
     backupData: '10GB',
-    testData: '50MB'
+    testData: '50MB',
   },
   // 合規要求
   compliance: {
@@ -43,9 +46,9 @@ const DATA_RETENTION_CONFIG = {
       personalData: 90,
       financialData: 365,
       medicalData: 0, // 不存儲醫療數據
-      legalData: 2555 // 7年
-    }
-  }
+      legalData: 2555, // 7年
+    },
+  },
 };
 
 // 數據保留測試工具類
@@ -103,17 +106,41 @@ class DataRetentionTestUtils {
     await this.page.evaluate(() => {
       const expiredData = {
         userLogs: [
-          { id: 'log1', timestamp: Date.now() - (91 * 24 * 60 * 60 * 1000), data: 'old log data' },
-          { id: 'log2', timestamp: Date.now() - (92 * 24 * 60 * 60 * 1000), data: 'older log data' }
+          {
+            id: 'log1',
+            timestamp: Date.now() - 91 * 24 * 60 * 60 * 1000,
+            data: 'old log data',
+          },
+          {
+            id: 'log2',
+            timestamp: Date.now() - 92 * 24 * 60 * 60 * 1000,
+            data: 'older log data',
+          },
         ],
         tempFiles: [
-          { id: 'temp1', timestamp: Date.now() - (8 * 24 * 60 * 60 * 1000), data: 'old temp file' },
-          { id: 'temp2', timestamp: Date.now() - (9 * 24 * 60 * 60 * 1000), data: 'older temp file' }
+          {
+            id: 'temp1',
+            timestamp: Date.now() - 8 * 24 * 60 * 60 * 1000,
+            data: 'old temp file',
+          },
+          {
+            id: 'temp2',
+            timestamp: Date.now() - 9 * 24 * 60 * 60 * 1000,
+            data: 'older temp file',
+          },
         ],
         sessionData: [
-          { id: 'session1', timestamp: Date.now() - (2 * 24 * 60 * 60 * 1000), data: 'old session' },
-          { id: 'session2', timestamp: Date.now() - (3 * 24 * 60 * 60 * 1000), data: 'older session' }
-        ]
+          {
+            id: 'session1',
+            timestamp: Date.now() - 2 * 24 * 60 * 60 * 1000,
+            data: 'old session',
+          },
+          {
+            id: 'session2',
+            timestamp: Date.now() - 3 * 24 * 60 * 60 * 1000,
+            data: 'older session',
+          },
+        ],
       };
 
       localStorage.setItem('expiredData', JSON.stringify(expiredData));
@@ -129,8 +156,8 @@ class DataRetentionTestUtils {
       const event = new CustomEvent('dataCleanup', {
         detail: {
           type: 'scheduled',
-          timestamp: Date.now()
-        }
+          timestamp: Date.now(),
+        },
       });
       window.dispatchEvent(event);
     });
@@ -184,7 +211,8 @@ class DataRetentionTestUtils {
       const hasConsent = localStorage.getItem('userConsent') !== null;
 
       // 檢查是否有數據刪除機制
-      const hasDeletionMechanism = localStorage.getItem('dataDeletionPolicy') !== null;
+      const hasDeletionMechanism =
+        localStorage.getItem('dataDeletionPolicy') !== null;
 
       // 檢查是否有數據可攜性機制
       const hasPortability = localStorage.getItem('dataPortability') !== null;
@@ -193,7 +221,7 @@ class DataRetentionTestUtils {
         hasConsent,
         hasDeletionMechanism,
         hasPortability,
-        compliant: hasConsent && hasDeletionMechanism && hasPortability
+        compliant: hasConsent && hasDeletionMechanism && hasPortability,
       };
     });
 
@@ -218,7 +246,7 @@ class DataRetentionTestUtils {
         hasPrivacyPolicy,
         hasOptOut,
         hasDisclosure,
-        compliant: hasPrivacyPolicy && hasOptOut && hasDisclosure
+        compliant: hasPrivacyPolicy && hasOptOut && hasDisclosure,
       };
     });
 
@@ -243,7 +271,7 @@ class DataRetentionTestUtils {
         hasAuditLogs,
         hasDataIntegrity,
         hasAccessControl,
-        compliant: hasAuditLogs && hasDataIntegrity && hasAccessControl
+        compliant: hasAuditLogs && hasDataIntegrity && hasAccessControl,
       };
     });
 
@@ -266,7 +294,7 @@ class DataRetentionTestUtils {
         sessionData: Math.random() * 50, // MB
         analyticsData: Math.random() * 2000, // MB
         backupData: Math.random() * 10000, // MB
-        testData: Math.random() * 50 // MB
+        testData: Math.random() * 50, // MB
       };
 
       // 檢查是否超過限制
@@ -278,17 +306,22 @@ class DataRetentionTestUtils {
         sessionData: 50, // 50MB
         analyticsData: 2048, // 2GB
         backupData: 10240, // 10GB
-        testData: 50 // 50MB
+        testData: 50, // 50MB
       };
 
-      const violations = Object.keys(dataSizes).filter(key =>
-        dataSizes[key as keyof typeof dataSizes] > limits[key as keyof typeof limits]
+      const violations = Object.keys(dataSizes).filter(
+        (key) =>
+          dataSizes[key as keyof typeof dataSizes] >
+          limits[key as keyof typeof limits]
       );
 
       return {
         sizes: dataSizes,
         violations,
-        totalSize: Object.values(dataSizes).reduce((sum, size) => sum + size, 0)
+        totalSize: Object.values(dataSizes).reduce(
+          (sum, size) => sum + size,
+          0
+        ),
       };
     });
 
@@ -311,13 +344,14 @@ class DataRetentionTestUtils {
         weekly: ['cacheData', 'testData'],
         monthly: ['userLogs', 'analyticsData'],
         quarterly: ['auditTrails'],
-        yearly: ['backupData']
+        yearly: ['backupData'],
       };
 
       // 檢查調度是否正確配置
-      const isValidSchedule = Object.keys(schedules).every(frequency =>
-        Array.isArray(schedules[frequency as keyof typeof schedules]) &&
-        schedules[frequency as keyof typeof schedules].length > 0
+      const isValidSchedule = Object.keys(schedules).every(
+        (frequency) =>
+          Array.isArray(schedules[frequency as keyof typeof schedules]) &&
+          schedules[frequency as keyof typeof schedules].length > 0
       );
 
       return {
@@ -326,8 +360,8 @@ class DataRetentionTestUtils {
         nextCleanup: {
           daily: new Date(Date.now() + 24 * 60 * 60 * 1000),
           weekly: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          monthly: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-        }
+          monthly: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
       };
     });
 
@@ -345,8 +379,12 @@ class DataRetentionTestUtils {
     const recoveryInfo = await this.page.evaluate(() => {
       // 模擬數據恢復測試
       const backupData = {
-        userLogs: [{ id: 'backup1', timestamp: Date.now(), data: 'backup data' }],
-        auditTrails: [{ id: 'backup2', timestamp: Date.now(), data: 'audit backup' }]
+        userLogs: [
+          { id: 'backup1', timestamp: Date.now(), data: 'backup data' },
+        ],
+        auditTrails: [
+          { id: 'backup2', timestamp: Date.now(), data: 'audit backup' },
+        ],
       };
 
       // 模擬恢復過程
@@ -354,15 +392,16 @@ class DataRetentionTestUtils {
         backupExists: true,
         recoveryPossible: true,
         dataIntegrity: true,
-        recoveryTime: Math.random() * 300 + 60 // 1-6分鐘
+        recoveryTime: Math.random() * 300 + 60, // 1-6分鐘
       };
 
       return {
         backupData,
         recoveryProcess,
-        success: recoveryProcess.backupExists &&
-                recoveryProcess.recoveryPossible &&
-                recoveryProcess.dataIntegrity
+        success:
+          recoveryProcess.backupExists &&
+          recoveryProcess.recoveryPossible &&
+          recoveryProcess.dataIntegrity,
       };
     });
 

@@ -13,7 +13,7 @@ export const Loading: React.FC<LoadingProps> = ({
   size = 'large',
   color = theme.colors.primary,
   text,
-  fullScreen = false
+  fullScreen = false,
 }) => {
   const containerStyle = fullScreen ? styles.fullScreen : styles.container;
 
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing.large
+    padding: theme.spacing.large,
   },
   fullScreen: {
     position: 'absolute',
@@ -41,12 +41,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000
+    zIndex: 1000,
   },
   text: {
     marginTop: theme.spacing.medium,
     fontSize: 16,
     color: theme.colors.textSecondary,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });

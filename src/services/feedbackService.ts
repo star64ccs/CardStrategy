@@ -12,7 +12,7 @@ import {
   FeedbackAnalysisReport,
   FeedbackTemplate,
   FeedbackTag,
-  FeedbackNotificationSettings
+  FeedbackNotificationSettings,
 } from '../types/feedback';
 
 /**
@@ -37,7 +37,7 @@ class FeedbackService {
         ...data,
         deviceInfo,
         appInfo,
-        location: await this.getCurrentLocation()
+        location: await this.getCurrentLocation(),
       };
 
       const response = await apiService.post(`${this.baseUrl}`, requestData);
@@ -66,7 +66,7 @@ class FeedbackService {
 
       logger.info('反饋列表獲取成功', {
         count: response.data.feedbacks.length,
-        total: response.data.total
+        total: response.data.total,
       });
 
       return response.data;
@@ -96,7 +96,10 @@ class FeedbackService {
   /**
    * 更新反饋
    */
-  async updateFeedback(id: string, data: UpdateFeedbackRequest): Promise<UserFeedback> {
+  async updateFeedback(
+    id: string,
+    data: UpdateFeedbackRequest
+  ): Promise<UserFeedback> {
     try {
       logger.info('更新反饋', { feedbackId: id, data });
 
@@ -149,7 +152,10 @@ class FeedbackService {
     try {
       logger.info('創建反饋回應', { feedbackId: data.feedbackId });
 
-      await apiService.post(`${this.baseUrl}/${data.feedbackId}/responses`, data);
+      await apiService.post(
+        `${this.baseUrl}/${data.feedbackId}/responses`,
+        data
+      );
 
       logger.info('反饋回應創建成功', { feedbackId: data.feedbackId });
     } catch (error) {
@@ -178,12 +184,17 @@ class FeedbackService {
   /**
    * 獲取反饋分析報告
    */
-  async getFeedbackAnalysis(period?: { start: string; end: string }): Promise<FeedbackAnalysisReport> {
+  async getFeedbackAnalysis(period?: {
+    start: string;
+    end: string;
+  }): Promise<FeedbackAnalysisReport> {
     try {
       logger.info('獲取反饋分析報告', { period });
 
       const params = period ? { period } : {};
-      const response = await apiService.get(`${this.baseUrl}/analysis`, { params });
+      const response = await apiService.get(`${this.baseUrl}/analysis`, {
+        params,
+      });
 
       logger.info('反饋分析報告獲取成功');
       return response.data;
@@ -234,7 +245,9 @@ class FeedbackService {
     try {
       logger.info('獲取反饋通知設置');
 
-      const response = await apiService.get(`${this.baseUrl}/notifications/settings`);
+      const response = await apiService.get(
+        `${this.baseUrl}/notifications/settings`
+      );
 
       logger.info('反饋通知設置獲取成功');
       return response.data;
@@ -247,7 +260,9 @@ class FeedbackService {
   /**
    * 更新反饋通知設置
    */
-  async updateNotificationSettings(settings: Partial<FeedbackNotificationSettings>): Promise<void> {
+  async updateNotificationSettings(
+    settings: Partial<FeedbackNotificationSettings>
+  ): Promise<void> {
     try {
       logger.info('更新反饋通知設置', { settings });
 
@@ -275,15 +290,22 @@ class FeedbackService {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+          },
         }
       );
 
-      logger.info('反饋附件上傳成功', { feedbackId, fileUrl: response.data.url });
+      logger.info('反饋附件上傳成功', {
+        feedbackId,
+        fileUrl: response.data.url,
+      });
       return response.data.url;
     } catch (error) {
-      logger.error('上傳反饋附件失敗', { error, feedbackId, fileName: file.name });
+      logger.error('上傳反饋附件失敗', {
+        error,
+        feedbackId,
+        fileName: file.name,
+      });
       throw error;
     }
   }
@@ -291,7 +313,10 @@ class FeedbackService {
   /**
    * 搜索反饋
    */
-  async searchFeedbacks(query: string, params?: FeedbackQueryParams): Promise<{
+  async searchFeedbacks(
+    query: string,
+    params?: FeedbackQueryParams
+  ): Promise<{
     feedbacks: UserFeedback[];
     total: number;
     page: number;
@@ -301,12 +326,14 @@ class FeedbackService {
       logger.info('搜索反饋', { query, params });
 
       const searchParams = { ...params, q: query };
-      const response = await apiService.get(`${this.baseUrl}/search`, { params: searchParams });
+      const response = await apiService.get(`${this.baseUrl}/search`, {
+        params: searchParams,
+      });
 
       logger.info('反饋搜索成功', {
         query,
         count: response.data.feedbacks.length,
-        total: response.data.total
+        total: response.data.total,
       });
 
       return response.data;
@@ -360,7 +387,7 @@ class FeedbackService {
       platform: Platform.OS as 'ios' | 'android' | 'web',
       version: Platform.Version?.toString() || 'unknown',
       model: Device.modelName || undefined,
-      osVersion: Device.osVersion || undefined
+      osVersion: Device.osVersion || undefined,
     };
   }
 
@@ -372,8 +399,10 @@ class FeedbackService {
 
     return {
       version: Constants.expoConfig?.version || '1.0.0',
-      buildNumber: Constants.expoConfig?.ios?.buildNumber ||
-                   Constants.expoConfig?.android?.versionCode?.toString() || '1'
+      buildNumber:
+        Constants.expoConfig?.ios?.buildNumber ||
+        Constants.expoConfig?.android?.versionCode?.toString() ||
+        '1',
     };
   }
 
@@ -385,7 +414,7 @@ class FeedbackService {
       // 這裡可以從導航狀態或其他地方獲取當前屏幕信息
       return {
         screen: 'unknown',
-        action: 'unknown'
+        action: 'unknown',
       };
     } catch (error) {
       logger.warn('無法獲取當前位置信息', { error });
@@ -433,7 +462,7 @@ class FeedbackService {
   async clearExpiredCache(): Promise<void> {
     try {
       const keys = await storage.getAllKeys();
-      const feedbackKeys = keys.filter(key => key.startsWith('feedback_'));
+      const feedbackKeys = keys.filter((key) => key.startsWith('feedback_'));
 
       // 這裡可以實現更複雜的過期邏輯
       // 目前簡單地清理所有反饋緩存
@@ -448,4 +477,5 @@ class FeedbackService {
   }
 }
 
+export { FeedbackService };
 export const feedbackService = new FeedbackService();

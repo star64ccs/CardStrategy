@@ -1,5 +1,10 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react-native';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,23 +16,23 @@ import { createMockPrivacyPreferences } from '@/__tests__/setup/test-utils';
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: jest.fn(),
-  useSelector: jest.fn()
+  useSelector: jest.fn(),
 }));
 
 // Mock i18next
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key,
-    i18n: { language: 'zh-TW' }
-  })
+    i18n: { language: 'zh-TW' },
+  }),
 }));
 
 // Mock navigation
 jest.mock('@react-navigation/native', () => ({
   useNavigation: () => ({
     navigate: jest.fn(),
-    goBack: jest.fn()
-  })
+    goBack: jest.fn(),
+  }),
 }));
 
 const mockDispatch = jest.fn();
@@ -40,8 +45,8 @@ describe('PrivacyScreen', () => {
   beforeEach(() => {
     store = configureStore({
       reducer: {
-        privacy: privacyReducer
-      }
+        privacy: privacyReducer,
+      },
     });
 
     mockUseDispatch.mockReturnValue(mockDispatch);
@@ -69,8 +74,8 @@ describe('PrivacyScreen', () => {
           privacy: {
             ...state.privacy,
             preferencesLoading: true,
-            preferences: null
-          }
+            preferences: null,
+          },
         });
       });
 
@@ -88,8 +93,8 @@ describe('PrivacyScreen', () => {
           privacy: {
             ...state.privacy,
             preferencesLoading: false,
-            preferences: mockPreferences
-          }
+            preferences: mockPreferences,
+          },
         });
       });
 
@@ -110,13 +115,13 @@ describe('PrivacyScreen', () => {
         consentSummary: {
           total: 10,
           active: 8,
-          expired: 2
+          expired: 2,
         },
         dataRightsSummary: {
           pending: 1,
-          completed: 5
+          completed: 5,
         },
-        complianceScore: 95
+        complianceScore: 95,
       };
 
       mockUseSelector.mockImplementation((selector) => {
@@ -127,8 +132,8 @@ describe('PrivacyScreen', () => {
             ...state.privacy,
             preferencesLoading: false,
             preferences: mockPreferences,
-            dashboard: mockDashboard
-          }
+            dashboard: mockDashboard,
+          },
         });
       });
     });
@@ -137,22 +142,32 @@ describe('PrivacyScreen', () => {
       renderPrivacyScreen();
 
       expect(screen.getByText('privacy.dashboard.title')).toBeTruthy();
-      expect(screen.getByText('privacy.dashboard.consent_summary')).toBeTruthy();
-      expect(screen.getByText('privacy.dashboard.data_rights_summary')).toBeTruthy();
-      expect(screen.getByText('privacy.dashboard.compliance_score')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.dashboard.consent_summary')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.dashboard.data_rights_summary')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.dashboard.compliance_score')
+      ).toBeTruthy();
     });
 
     it('should display compliance check button', () => {
       renderPrivacyScreen();
 
-      const complianceButton = screen.getByText('privacy.compliance.check_button');
+      const complianceButton = screen.getByText(
+        'privacy.compliance.check_button'
+      );
       expect(complianceButton).toBeTruthy();
     });
 
     it('should trigger compliance check when button is pressed', async () => {
       renderPrivacyScreen();
 
-      const complianceButton = screen.getByText('privacy.compliance.check_button');
+      const complianceButton = screen.getByText(
+        'privacy.compliance.check_button'
+      );
       fireEvent.press(complianceButton);
 
       await waitFor(() => {
@@ -164,7 +179,9 @@ describe('PrivacyScreen', () => {
       renderPrivacyScreen();
 
       expect(screen.getByText('privacy.quick_actions.title')).toBeTruthy();
-      expect(screen.getByText('privacy.quick_actions.preferences')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.quick_actions.preferences')
+      ).toBeTruthy();
       expect(screen.getByText('privacy.quick_actions.history')).toBeTruthy();
       expect(screen.getByText('privacy.quick_actions.rights')).toBeTruthy();
     });
@@ -180,8 +197,8 @@ describe('PrivacyScreen', () => {
           purpose: 'email_marketing',
           legalBasis: 'consent',
           granted: true,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       ];
 
       mockUseSelector.mockImplementation((selector) => {
@@ -192,8 +209,8 @@ describe('PrivacyScreen', () => {
             ...state.privacy,
             preferencesLoading: false,
             preferences: mockPreferences,
-            consentHistory: mockConsentHistory
-          }
+            consentHistory: mockConsentHistory,
+          },
         });
       });
     });
@@ -239,9 +256,15 @@ describe('PrivacyScreen', () => {
       const consentTab = screen.getByText('privacy.tabs.consent');
       fireEvent.press(consentTab);
 
-      expect(screen.getByText('privacy.consent.data_sharing.title')).toBeTruthy();
-      expect(screen.getByText('privacy.consent.data_sharing.analytics')).toBeTruthy();
-      expect(screen.getByText('privacy.consent.data_sharing.third_party')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.consent.data_sharing.title')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.consent.data_sharing.analytics')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.consent.data_sharing.third_party')
+      ).toBeTruthy();
     });
   });
 
@@ -255,8 +278,8 @@ describe('PrivacyScreen', () => {
           description: 'Request access to my data',
           priority: 'medium',
           status: 'pending',
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ];
 
       mockUseSelector.mockImplementation((selector) => {
@@ -267,8 +290,8 @@ describe('PrivacyScreen', () => {
             ...state.privacy,
             preferencesLoading: false,
             preferences: mockPreferences,
-            dataRightsRequests: mockDataRightsRequests
-          }
+            dataRightsRequests: mockDataRightsRequests,
+          },
         });
       });
     });
@@ -292,9 +315,15 @@ describe('PrivacyScreen', () => {
       fireEvent.press(rightsTab);
 
       expect(screen.getByText('privacy.data_rights.types.access')).toBeTruthy();
-      expect(screen.getByText('privacy.data_rights.types.rectification')).toBeTruthy();
-      expect(screen.getByText('privacy.data_rights.types.erasure')).toBeTruthy();
-      expect(screen.getByText('privacy.data_rights.types.portability')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.data_rights.types.rectification')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.data_rights.types.erasure')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.data_rights.types.portability')
+      ).toBeTruthy();
     });
 
     it('should display data rights request button', () => {
@@ -304,7 +333,9 @@ describe('PrivacyScreen', () => {
       const rightsTab = screen.getByText('privacy.tabs.rights');
       fireEvent.press(rightsTab);
 
-      expect(screen.getByText('privacy.data_rights.request.submit')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.data_rights.request.submit')
+      ).toBeTruthy();
     });
   });
 
@@ -319,8 +350,8 @@ describe('PrivacyScreen', () => {
           privacy: {
             ...state.privacy,
             preferencesLoading: false,
-            preferences: mockPreferences
-          }
+            preferences: mockPreferences,
+          },
         });
       });
     });
@@ -344,7 +375,9 @@ describe('PrivacyScreen', () => {
       const settingsTab = screen.getByText('privacy.tabs.settings');
       fireEvent.press(settingsTab);
 
-      expect(screen.getByText('privacy.settings.notifications_description')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.settings.notifications_description')
+      ).toBeTruthy();
     });
 
     it('should display data retention settings', () => {
@@ -355,7 +388,9 @@ describe('PrivacyScreen', () => {
       fireEvent.press(settingsTab);
 
       expect(screen.getByText('privacy.settings.data_retention')).toBeTruthy();
-      expect(screen.getByText('privacy.settings.data_retention_description')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.settings.data_retention_description')
+      ).toBeTruthy();
     });
 
     it('should display advanced settings', () => {
@@ -366,8 +401,12 @@ describe('PrivacyScreen', () => {
       fireEvent.press(settingsTab);
 
       expect(screen.getByText('privacy.settings.advanced.title')).toBeTruthy();
-      expect(screen.getByText('privacy.settings.advanced.export_data')).toBeTruthy();
-      expect(screen.getByText('privacy.settings.advanced.delete_data')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.settings.advanced.export_data')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.settings.advanced.delete_data')
+      ).toBeTruthy();
     });
   });
 
@@ -382,8 +421,8 @@ describe('PrivacyScreen', () => {
           privacy: {
             ...state.privacy,
             preferencesLoading: false,
-            preferences: mockPreferences
-          }
+            preferences: mockPreferences,
+          },
         });
       });
     });
@@ -391,9 +430,15 @@ describe('PrivacyScreen', () => {
     it('should display children protection section', () => {
       renderPrivacyScreen();
 
-      expect(screen.getByText('privacy.children_protection.title')).toBeTruthy();
-      expect(screen.getByText('privacy.children_protection.age_verification')).toBeTruthy();
-      expect(screen.getByText('privacy.children_protection.parental_consent')).toBeTruthy();
+      expect(
+        screen.getByText('privacy.children_protection.title')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.children_protection.age_verification')
+      ).toBeTruthy();
+      expect(
+        screen.getByText('privacy.children_protection.parental_consent')
+      ).toBeTruthy();
     });
   });
 
@@ -406,8 +451,8 @@ describe('PrivacyScreen', () => {
           privacy: {
             ...state.privacy,
             preferencesLoading: false,
-            preferencesError: 'Failed to load preferences'
-          }
+            preferencesError: 'Failed to load preferences',
+          },
         });
       });
 
@@ -428,8 +473,8 @@ describe('PrivacyScreen', () => {
           privacy: {
             ...state.privacy,
             preferencesLoading: false,
-            preferences: mockPreferences
-          }
+            preferences: mockPreferences,
+          },
         });
       });
 
@@ -456,8 +501,8 @@ describe('PrivacyScreen', () => {
           privacy: {
             ...state.privacy,
             preferencesLoading: false,
-            preferences: mockPreferences
-          }
+            preferences: mockPreferences,
+          },
         });
       });
 

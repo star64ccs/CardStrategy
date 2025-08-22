@@ -1,5 +1,10 @@
 import { ApiResponse, ApiError } from '../types';
-import { API_BASE_URL, API_TIMEOUT, API_RETRY_ATTEMPTS, API_RETRY_DELAY } from './constants';
+import {
+  API_BASE_URL,
+  API_TIMEOUT,
+  API_RETRY_ATTEMPTS,
+  API_RETRY_DELAY,
+} from './constants';
 import { AuthStorage } from './storage';
 import { retry, safeExecute } from './helpers';
 
@@ -49,7 +54,7 @@ export class ApiClient {
       timeout = this.defaultTimeout,
       retryAttempts = this.defaultRetryAttempts,
       retryDelay = this.defaultRetryDelay,
-      withAuth = true
+      withAuth = true,
     } = config;
 
     // 構建完整 URL
@@ -63,7 +68,14 @@ export class ApiClient {
 
     // 發送請求（帶重試機制）
     return retry(
-      () => this.sendRequest<T>(fullURL, method, requestHeaders, requestBody, timeout),
+      () =>
+        this.sendRequest<T>(
+          fullURL,
+          method,
+          requestHeaders,
+          requestBody,
+          timeout
+        ),
       retryAttempts,
       retryDelay
     );
@@ -94,8 +106,8 @@ export class ApiClient {
   ): Promise<Record<string, string>> {
     const defaultHeaders: Record<string, string> = {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      ...headers
+      Accept: 'application/json',
+      ...headers,
     };
 
     if (withAuth) {
@@ -137,7 +149,7 @@ export class ApiClient {
         method,
         headers,
         body,
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -151,7 +163,7 @@ export class ApiClient {
       return {
         success: true,
         data: responseData,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
       clearTimeout(timeoutId);
@@ -180,7 +192,7 @@ export class ApiClient {
     return {
       code: response.status.toString(),
       message: data?.message || response.statusText || 'Unknown error',
-      details: data?.details || data
+      details: data?.details || data,
     };
   }
 
@@ -189,20 +201,20 @@ export class ApiClient {
     if (error.name === 'AbortError') {
       return {
         code: 'TIMEOUT',
-        message: '請求超時'
+        message: '請求超時',
       };
     }
 
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
       return {
         code: 'NETWORK_ERROR',
-        message: '網路連接錯誤'
+        message: '網路連接錯誤',
       };
     }
 
     return {
       code: 'UNKNOWN_ERROR',
-      message: error.message || '未知錯誤'
+      message: error.message || '未知錯誤',
     };
   }
 
@@ -216,36 +228,47 @@ export class ApiClient {
       method: 'GET',
       url,
       params: params || {},
-      ...config
+      ...config,
     });
   }
 
   // POST 請求
-  async post<T>(url: string, data?: any, config?: Partial<RequestConfig>): Promise<ApiResponse<T>> {
+  async post<T>(
+    url: string,
+    data?: any,
+    config?: Partial<RequestConfig>
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'POST',
       url,
       data,
-      ...config
+      ...config,
     });
   }
 
   // PUT 請求
-  async put<T>(url: string, data?: any, config?: Partial<RequestConfig>): Promise<ApiResponse<T>> {
+  async put<T>(
+    url: string,
+    data?: any,
+    config?: Partial<RequestConfig>
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'PUT',
       url,
       data,
-      ...config
+      ...config,
     });
   }
 
   // DELETE 請求
-  async delete<T>(url: string, config?: Partial<RequestConfig>): Promise<ApiResponse<T>> {
+  async delete<T>(
+    url: string,
+    config?: Partial<RequestConfig>
+  ): Promise<ApiResponse<T>> {
     return this.request<T>({
       method: 'DELETE',
       url,
-      ...config
+      ...config,
     });
   }
 
@@ -259,7 +282,7 @@ export class ApiClient {
       method: 'PATCH',
       url,
       data,
-      ...config
+      ...config,
     });
   }
 }
@@ -269,8 +292,11 @@ export const apiClient = new ApiClient();
 
 // 便捷的 API 函數
 export const api = {
-  get: <T>(url: string, params?: Record<string, any>, config?: Partial<RequestConfig>) =>
-    apiClient.get<T>(url, params, config),
+  get: <T>(
+    url: string,
+    params?: Record<string, any>,
+    config?: Partial<RequestConfig>
+  ) => apiClient.get<T>(url, params, config),
 
   post: <T>(url: string, data?: any, config?: Partial<RequestConfig>) =>
     apiClient.post<T>(url, data, config),
@@ -282,7 +308,7 @@ export const api = {
     apiClient.delete<T>(url, config),
 
   patch: <T>(url: string, data?: any, config?: Partial<RequestConfig>) =>
-    apiClient.patch<T>(url, data, config)
+    apiClient.patch<T>(url, data, config),
 };
 
 // 錯誤處理工具
@@ -326,10 +352,10 @@ export const batchApiCalls = async <T>(
   apiCalls: (() => Promise<ApiResponse<T>>)[]
 ): Promise<(T | null)[]> => {
   const results = await Promise.allSettled(
-    apiCalls.map(call => safeApiCall(call))
+    apiCalls.map((call) => safeApiCall(call))
   );
 
-  return results.map(result => {
+  return results.map((result) => {
     if (result.status === 'fulfilled') {
       return result.value;
     }
@@ -339,7 +365,10 @@ export const batchApiCalls = async <T>(
 
 // 分頁 API 調用
 export const paginatedApiCall = async <T>(
-  apiCall: (page: number, limit: number) => Promise<ApiResponse<{ data: T[]; pagination: any }>>,
+  apiCall: (
+    page: number,
+    limit: number
+  ) => Promise<ApiResponse<{ data: T[]; pagination: any }>>,
   pageSize: number = 20
 ): Promise<T[]> => {
   const allData: T[] = [];

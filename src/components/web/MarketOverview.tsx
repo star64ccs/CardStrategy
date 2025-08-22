@@ -32,7 +32,7 @@ const MarketOverview: React.FC<MarketOverviewProps> = ({ onCardClick }) => {
     return new Intl.NumberFormat('zh-TW', {
       style: 'currency',
       currency: 'TWD',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
@@ -83,23 +83,32 @@ const MarketOverview: React.FC<MarketOverviewProps> = ({ onCardClick }) => {
       {/* 市場統計 */}
       <div style={styles.statsGrid}>
         <div style={styles.statCard}>
-          <div style={styles.statValue}>{formatVolume(marketData.totalVolume)}</div>
+          <div style={styles.statValue}>
+            {formatVolume(marketData.totalVolume)}
+          </div>
           <div style={styles.statLabel}>24小時交易量</div>
         </div>
         <div style={styles.statCard}>
-          <div style={styles.statValue}>{marketData.totalTransactions.toLocaleString()}</div>
+          <div style={styles.statValue}>
+            {marketData.totalTransactions.toLocaleString()}
+          </div>
           <div style={styles.statLabel}>總交易筆數</div>
         </div>
         <div style={styles.statCard}>
-          <div style={styles.statValue}>{formatPrice(marketData.averagePrice)}</div>
+          <div style={styles.statValue}>
+            {formatPrice(marketData.averagePrice)}
+          </div>
           <div style={styles.statLabel}>平均價格</div>
         </div>
         <div style={styles.statCard}>
-          <div style={{
-            ...styles.statValue,
-            color: getPriceChangeColor(marketData.priceChange24h)
-          }}>
-            {getPriceChangeIcon(marketData.priceChange24h)} {marketData.priceChange24h.toFixed(2)}%
+          <div
+            style={{
+              ...styles.statValue,
+              color: getPriceChangeColor(marketData.priceChange24h),
+            }}
+          >
+            {getPriceChangeIcon(marketData.priceChange24h)}{' '}
+            {marketData.priceChange24h.toFixed(2)}%
           </div>
           <div style={styles.statLabel}>24小時漲跌</div>
         </div>
@@ -119,11 +128,14 @@ const MarketOverview: React.FC<MarketOverviewProps> = ({ onCardClick }) => {
                 <div style={styles.cardName}>{card.name}</div>
                 <div style={styles.cardPrice}>{formatPrice(card.price)}</div>
               </div>
-              <div style={{
-                ...styles.priceChange,
-                color: getPriceChangeColor(card.priceChange)
-              }}>
-                {getPriceChangeIcon(card.priceChange)} {card.priceChange.toFixed(2)}%
+              <div
+                style={{
+                  ...styles.priceChange,
+                  color: getPriceChangeColor(card.priceChange),
+                }}
+              >
+                {getPriceChangeIcon(card.priceChange)}{' '}
+                {card.priceChange.toFixed(2)}%
               </div>
             </div>
           ))}
@@ -144,11 +156,14 @@ const MarketOverview: React.FC<MarketOverviewProps> = ({ onCardClick }) => {
                 <div style={styles.cardName}>{card.name}</div>
                 <div style={styles.cardPrice}>{formatPrice(card.price)}</div>
               </div>
-              <div style={{
-                ...styles.priceChange,
-                color: getPriceChangeColor(card.priceChange)
-              }}>
-                {getPriceChangeIcon(card.priceChange)} {card.priceChange.toFixed(2)}%
+              <div
+                style={{
+                  ...styles.priceChange,
+                  color: getPriceChangeColor(card.priceChange),
+                }}
+              >
+                {getPriceChangeIcon(card.priceChange)}{' '}
+                {card.priceChange.toFixed(2)}%
               </div>
             </div>
           ))}
@@ -182,36 +197,36 @@ const MarketOverview: React.FC<MarketOverviewProps> = ({ onCardClick }) => {
 
 const styles = {
   container: {
-    padding: '20px'
+    padding: '20px',
   },
   loadingContainer: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '40px 20px'
+    padding: '40px 20px',
   },
   loadingSpinner: {
     fontSize: '32px',
     animation: 'spin 1s linear infinite',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   loadingText: {
     fontSize: '16px',
     color: '#7f8c8d',
-    margin: 0
+    margin: 0,
   },
   errorContainer: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '40px 20px'
+    padding: '40px 20px',
   },
   errorText: {
     fontSize: '16px',
     color: '#e74c3c',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   retryButton: {
     backgroundColor: '#3498db',
@@ -220,13 +235,13 @@ const styles = {
     padding: '8px 16px',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   statsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
     gap: '16px',
-    marginBottom: '32px'
+    marginBottom: '32px',
   },
   statCard: {
     backgroundColor: '#ffffff',
@@ -234,31 +249,31 @@ const styles = {
     padding: '20px',
     textAlign: 'center' as const,
     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-    border: '1px solid #ecf0f1'
+    border: '1px solid #ecf0f1',
   },
   statValue: {
     fontSize: '24px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '8px'
+    marginBottom: '8px',
   },
   statLabel: {
     fontSize: '14px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   section: {
-    marginBottom: '32px'
+    marginBottom: '32px',
   },
   sectionTitle: {
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 16px 0'
+    margin: '0 0 16px 0',
   },
   cardList: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '12px'
+    gap: '12px',
   },
   cardItem: {
     display: 'flex',
@@ -270,29 +285,29 @@ const styles = {
     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
     border: '1px solid #ecf0f1',
     cursor: 'pointer',
-    transition: 'transform 0.2s, box-shadow 0.2s'
+    transition: 'transform 0.2s, box-shadow 0.2s',
   },
   cardInfo: {
-    flex: 1
+    flex: 1,
   },
   cardName: {
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '4px'
+    marginBottom: '4px',
   },
   cardPrice: {
     fontSize: '14px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   priceChange: {
     fontSize: '16px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   cardVolume: {
     fontSize: '14px',
-    color: '#7f8c8d'
-  }
+    color: '#7f8c8d',
+  },
 };
 
 export default MarketOverview;

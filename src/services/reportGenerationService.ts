@@ -124,7 +124,14 @@ export interface ReportGenerationResult {
 }
 
 export interface AnalyticsReportParams {
-  reportType: 'trend' | 'statistical' | 'correlation' | 'anomaly' | 'market' | 'investment' | 'comprehensive';
+  reportType:
+    | 'trend'
+    | 'statistical'
+    | 'correlation'
+    | 'anomaly'
+    | 'market'
+    | 'investment'
+    | 'comprehensive';
   dataSource: string;
   timeRange: string;
   metrics: string[];
@@ -166,7 +173,13 @@ export interface FinancialReportParams {
 
 export interface ReportInsight {
   id: string;
-  type: 'trend' | 'anomaly' | 'correlation' | 'opportunity' | 'risk' | 'recommendation';
+  type:
+    | 'trend'
+    | 'anomaly'
+    | 'correlation'
+    | 'opportunity'
+    | 'risk'
+    | 'recommendation';
   title: string;
   description: string;
   confidence: number;
@@ -194,30 +207,44 @@ export interface ReportRecommendation {
 const ReportGenerationParamsSchema = z.object({
   templateId: z.string(),
   dataParams: z.record(z.any()).optional(),
-  customizations: z.object({
-    sections: z.array(z.object({
-      id: z.string(),
-      isVisible: z.boolean().optional(),
-      content: z.any().optional()
-    })).optional(),
-    styling: z.any().optional(),
-    filters: z.record(z.any()).optional()
-  }).optional(),
+  customizations: z
+    .object({
+      sections: z
+        .array(
+          z.object({
+            id: z.string(),
+            isVisible: z.boolean().optional(),
+            content: z.any().optional(),
+          })
+        )
+        .optional(),
+      styling: z.any().optional(),
+      filters: z.record(z.any()).optional(),
+    })
+    .optional(),
   format: z.enum(['pdf', 'excel', 'html', 'json', 'csv']),
   includeCharts: z.boolean(),
   includeInsights: z.boolean(),
-  includeRecommendations: z.boolean()
+  includeRecommendations: z.boolean(),
 });
 
 const AnalyticsReportParamsSchema = z.object({
-  reportType: z.enum(['trend', 'statistical', 'correlation', 'anomaly', 'market', 'investment', 'comprehensive']),
+  reportType: z.enum([
+    'trend',
+    'statistical',
+    'correlation',
+    'anomaly',
+    'market',
+    'investment',
+    'comprehensive',
+  ]),
   dataSource: z.string(),
   timeRange: z.string(),
   metrics: z.array(z.string()),
   filters: z.record(z.any()).optional(),
   includeVisualizations: z.boolean(),
   includeInsights: z.boolean(),
-  includeRecommendations: z.boolean()
+  includeRecommendations: z.boolean(),
 });
 
 // ==================== 報告生成服務 ====================
@@ -239,7 +266,7 @@ class ReportGenerationService {
       enableAIInsights: true,
       enableCollaboration: true,
       enableVersionControl: true,
-      ...config
+      ...config,
     };
   }
 
@@ -314,7 +341,7 @@ class ReportGenerationService {
           content: { text: '報告執行摘要將在這裡生成...' },
           position: 1,
           isVisible: true,
-          isCollapsible: false
+          isCollapsible: false,
         },
         {
           id: 'trend-analysis',
@@ -326,11 +353,11 @@ class ReportGenerationService {
             type: 'line',
             options: { responsive: true },
             dataMapping: { x: 'date', y: 'value' },
-            styling: {}
+            styling: {},
           },
           position: 2,
           isVisible: true,
-          isCollapsible: true
+          isCollapsible: true,
         },
         {
           id: 'key-metrics',
@@ -339,7 +366,7 @@ class ReportGenerationService {
           content: {},
           position: 3,
           isVisible: true,
-          isCollapsible: false
+          isCollapsible: false,
         },
         {
           id: 'insights',
@@ -348,7 +375,7 @@ class ReportGenerationService {
           content: {},
           position: 4,
           isVisible: true,
-          isCollapsible: true
+          isCollapsible: true,
         },
         {
           id: 'recommendations',
@@ -357,8 +384,8 @@ class ReportGenerationService {
           content: {},
           position: 5,
           isVisible: true,
-          isCollapsible: true
-        }
+          isCollapsible: true,
+        },
       ],
       styling: {
         theme: 'light',
@@ -367,20 +394,20 @@ class ReportGenerationService {
           secondary: '#6c757d',
           accent: '#28a745',
           background: '#ffffff',
-          text: '#212529'
+          text: '#212529',
         },
         fonts: {
           heading: 'Arial, sans-serif',
           body: 'Arial, sans-serif',
-          data: 'Courier New, monospace'
+          data: 'Courier New, monospace',
         },
         layout: 'portrait',
-        margins: { top: 20, right: 20, bottom: 20, left: 20 }
+        margins: { top: 20, right: 20, bottom: 20, left: 20 },
       },
       dataSources: ['cards', 'market', 'investments'],
       permissions: ['read', 'write'],
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.templates.set(analyticsTemplate.id, analyticsTemplate);
@@ -399,7 +426,7 @@ class ReportGenerationService {
           content: { text: '性能概覽將在這裡生成...' },
           position: 1,
           isVisible: true,
-          isCollapsible: false
+          isCollapsible: false,
         },
         {
           id: 'performance-metrics',
@@ -408,7 +435,7 @@ class ReportGenerationService {
           content: {},
           position: 2,
           isVisible: true,
-          isCollapsible: false
+          isCollapsible: false,
         },
         {
           id: 'performance-trends',
@@ -419,12 +446,12 @@ class ReportGenerationService {
             type: 'line',
             options: { responsive: true },
             dataMapping: { x: 'time', y: 'performance' },
-            styling: {}
+            styling: {},
           },
           position: 3,
           isVisible: true,
-          isCollapsible: true
-        }
+          isCollapsible: true,
+        },
       ],
       styling: {
         theme: 'light',
@@ -433,20 +460,20 @@ class ReportGenerationService {
           secondary: '#6c757d',
           accent: '#ffc107',
           background: '#ffffff',
-          text: '#212529'
+          text: '#212529',
         },
         fonts: {
           heading: 'Arial, sans-serif',
           body: 'Arial, sans-serif',
-          data: 'Courier New, monospace'
+          data: 'Courier New, monospace',
         },
         layout: 'portrait',
-        margins: { top: 20, right: 20, bottom: 20, left: 20 }
+        margins: { top: 20, right: 20, bottom: 20, left: 20 },
       },
       dataSources: ['system', 'user', 'business'],
       permissions: ['read', 'write'],
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.templates.set(performanceTemplate.id, performanceTemplate);
@@ -463,7 +490,9 @@ class ReportGenerationService {
   /**
    * 生成報告
    */
-  async generateReport(params: ReportGenerationParams): Promise<ReportGenerationResult> {
+  async generateReport(
+    params: ReportGenerationParams
+  ): Promise<ReportGenerationResult> {
     try {
       // 驗證參數
       const validatedParams = ReportGenerationParamsSchema.parse(params);
@@ -491,8 +520,8 @@ class ReportGenerationService {
           dataSources: template.dataSources,
           dataQuality: 0,
           insightsCount: 0,
-          recommendationsCount: 0
-        }
+          recommendationsCount: 0,
+        },
       };
 
       // 異步生成報告內容
@@ -509,7 +538,9 @@ class ReportGenerationService {
   /**
    * 生成分析報告
    */
-  async generateAnalyticsReport(params: AnalyticsReportParams): Promise<ReportGenerationResult> {
+  async generateAnalyticsReport(
+    params: AnalyticsReportParams
+  ): Promise<ReportGenerationResult> {
     try {
       // 驗證參數
       const validatedParams = AnalyticsReportParamsSchema.parse(params);
@@ -517,7 +548,9 @@ class ReportGenerationService {
       logger.info('開始生成分析報告:', validatedParams);
 
       // 根據報告類型選擇模板
-      const templateId = this.selectAnalyticsTemplate(validatedParams.reportType);
+      const templateId = this.selectAnalyticsTemplate(
+        validatedParams.reportType
+      );
 
       // 準備報告生成參數
       const reportParams: ReportGenerationParams = {
@@ -527,12 +560,12 @@ class ReportGenerationService {
           dataSource: validatedParams.dataSource,
           timeRange: validatedParams.timeRange,
           metrics: validatedParams.metrics,
-          filters: validatedParams.filters
+          filters: validatedParams.filters,
         },
         format: 'pdf',
         includeCharts: validatedParams.includeVisualizations,
         includeInsights: validatedParams.includeInsights,
-        includeRecommendations: validatedParams.includeRecommendations
+        includeRecommendations: validatedParams.includeRecommendations,
       };
 
       // 生成報告
@@ -546,7 +579,9 @@ class ReportGenerationService {
   /**
    * 生成性能報告
    */
-  async generatePerformanceReport(params: PerformanceReportParams): Promise<ReportGenerationResult> {
+  async generatePerformanceReport(
+    params: PerformanceReportParams
+  ): Promise<ReportGenerationResult> {
     try {
       logger.info('開始生成性能報告:', params);
 
@@ -563,12 +598,12 @@ class ReportGenerationService {
           benchmarks: params.benchmarks,
           includeTrends: params.includeTrends,
           includeComparisons: params.includeComparisons,
-          includeForecasts: params.includeForecasts
+          includeForecasts: params.includeForecasts,
         },
         format: 'pdf',
         includeCharts: true,
         includeInsights: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
       // 生成報告
@@ -582,7 +617,9 @@ class ReportGenerationService {
   /**
    * 生成質量報告
    */
-  async generateQualityReport(params: QualityReportParams): Promise<ReportGenerationResult> {
+  async generateQualityReport(
+    params: QualityReportParams
+  ): Promise<ReportGenerationResult> {
     try {
       logger.info('開始生成質量報告:', params);
 
@@ -600,12 +637,12 @@ class ReportGenerationService {
           thresholds: params.thresholds,
           includeTrends: params.includeTrends,
           includeImprovements: params.includeImprovements,
-          includeRecommendations: params.includeRecommendations
+          includeRecommendations: params.includeRecommendations,
         },
         format: 'pdf',
         includeCharts: true,
         includeInsights: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
       // 生成報告
@@ -619,7 +656,9 @@ class ReportGenerationService {
   /**
    * 生成財務報告
    */
-  async generateFinancialReport(params: FinancialReportParams): Promise<ReportGenerationResult> {
+  async generateFinancialReport(
+    params: FinancialReportParams
+  ): Promise<ReportGenerationResult> {
     try {
       logger.info('開始生成財務報告:', params);
 
@@ -635,12 +674,12 @@ class ReportGenerationService {
           currency: params.currency,
           includeCharts: params.includeCharts,
           includeProjections: params.includeProjections,
-          includeComparisons: params.includeComparisons
+          includeComparisons: params.includeComparisons,
         },
         format: 'pdf',
         includeCharts: params.includeCharts,
         includeInsights: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
       // 生成報告
@@ -654,7 +693,9 @@ class ReportGenerationService {
   /**
    * 創建自定義報告模板
    */
-  async createCustomTemplate(template: Omit<ReportTemplate, 'id' | 'createdAt' | 'updatedAt'>): Promise<ReportTemplate> {
+  async createCustomTemplate(
+    template: Omit<ReportTemplate, 'id' | 'createdAt' | 'updatedAt'>
+  ): Promise<ReportTemplate> {
     try {
       logger.info('創建自定義報告模板:', template.name);
 
@@ -662,7 +703,7 @@ class ReportGenerationService {
         ...template,
         id: this.generateTemplateId(),
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       this.templates.set(newTemplate.id, newTemplate);
@@ -678,7 +719,10 @@ class ReportGenerationService {
   /**
    * 更新報告模板
    */
-  async updateTemplate(templateId: string, updates: Partial<ReportTemplate>): Promise<ReportTemplate> {
+  async updateTemplate(
+    templateId: string,
+    updates: Partial<ReportTemplate>
+  ): Promise<ReportTemplate> {
     try {
       logger.info('更新報告模板:', templateId);
 
@@ -690,7 +734,7 @@ class ReportGenerationService {
       const updatedTemplate: ReportTemplate = {
         ...template,
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       this.templates.set(templateId, updatedTemplate);
@@ -740,7 +784,9 @@ class ReportGenerationService {
   /**
    * 獲取報告狀態
    */
-  async getReportStatus(reportId: string): Promise<ReportGenerationResult | null> {
+  async getReportStatus(
+    reportId: string
+  ): Promise<ReportGenerationResult | null> {
     // 這裡應該從數據庫或緩存中獲取報告狀態
     // 暫時返回null
     return null;
@@ -783,7 +829,11 @@ class ReportGenerationService {
   /**
    * 生成報告內容
    */
-  private async generateReportContent(result: ReportGenerationResult, template: ReportTemplate, params: ReportGenerationParams): Promise<void> {
+  private async generateReportContent(
+    result: ReportGenerationResult,
+    template: ReportTemplate,
+    params: ReportGenerationParams
+  ): Promise<void> {
     try {
       // 更新進度
       result.progress = 10;
@@ -793,7 +843,11 @@ class ReportGenerationService {
       result.progress = 30;
 
       // 生成章節內容
-      const sections = await this.generateSections(template.sections, data, params);
+      const sections = await this.generateSections(
+        template.sections,
+        data,
+        params
+      );
       result.sections = sections;
       result.progress = 60;
 
@@ -806,7 +860,10 @@ class ReportGenerationService {
 
       // 生成建議
       if (params.includeRecommendations) {
-        const recommendations = await this.generateRecommendations(data, template);
+        const recommendations = await this.generateRecommendations(
+          data,
+          template
+        );
         result.metadata.recommendationsCount = recommendations.length;
       }
       result.progress = 90;
@@ -833,7 +890,10 @@ class ReportGenerationService {
   /**
    * 獲取報告數據
    */
-  private async getReportData(template: ReportTemplate, dataParams?: Record<string, any>): Promise<any[]> {
+  private async getReportData(
+    template: ReportTemplate,
+    dataParams?: Record<string, any>
+  ): Promise<any[]> {
     // 這裡應該根據模板和參數從數據庫獲取數據
     // 暫時返回模擬數據
     return [];
@@ -842,18 +902,28 @@ class ReportGenerationService {
   /**
    * 生成章節內容
    */
-  private async generateSections(sections: ReportSection[], data: any[], params: ReportGenerationParams): Promise<ReportSection[]> {
+  private async generateSections(
+    sections: ReportSection[],
+    data: any[],
+    params: ReportGenerationParams
+  ): Promise<ReportSection[]> {
     const generatedSections: ReportSection[] = [];
 
     for (const section of sections) {
       // 檢查是否應該包含此章節
-      const customization = params.customizations?.sections?.find(s => s.id === section.id);
+      const customization = params.customizations?.sections?.find(
+        (s) => s.id === section.id
+      );
       if (customization && customization.isVisible === false) {
         continue;
       }
 
       // 生成章節內容
-      const generatedSection = await this.generateSectionContent(section, data, params);
+      const generatedSection = await this.generateSectionContent(
+        section,
+        data,
+        params
+      );
       generatedSections.push(generatedSection);
     }
 
@@ -863,32 +933,54 @@ class ReportGenerationService {
   /**
    * 生成章節內容
    */
-  private async generateSectionContent(section: ReportSection, data: any[], params: ReportGenerationParams): Promise<ReportSection> {
+  private async generateSectionContent(
+    section: ReportSection,
+    data: any[],
+    params: ReportGenerationParams
+  ): Promise<ReportSection> {
     const generatedSection = { ...section };
 
     switch (section.type) {
       case 'text':
-        generatedSection.content = await this.generateTextContent(section, data);
+        generatedSection.content = await this.generateTextContent(
+          section,
+          data
+        );
         break;
       case 'chart':
         if (params.includeCharts) {
-          generatedSection.content = await this.generateChartContent(section, data);
+          generatedSection.content = await this.generateChartContent(
+            section,
+            data
+          );
         }
         break;
       case 'table':
-        generatedSection.content = await this.generateTableContent(section, data);
+        generatedSection.content = await this.generateTableContent(
+          section,
+          data
+        );
         break;
       case 'metric':
-        generatedSection.content = await this.generateMetricContent(section, data);
+        generatedSection.content = await this.generateMetricContent(
+          section,
+          data
+        );
         break;
       case 'insight':
         if (params.includeInsights) {
-          generatedSection.content = await this.generateInsightContent(section, data);
+          generatedSection.content = await this.generateInsightContent(
+            section,
+            data
+          );
         }
         break;
       case 'recommendation':
         if (params.includeRecommendations) {
-          generatedSection.content = await this.generateRecommendationContent(section, data);
+          generatedSection.content = await this.generateRecommendationContent(
+            section,
+            data
+          );
         }
         break;
     }
@@ -899,7 +991,10 @@ class ReportGenerationService {
   /**
    * 生成文本內容
    */
-  private async generateTextContent(section: ReportSection, data: any[]): Promise<any> {
+  private async generateTextContent(
+    section: ReportSection,
+    data: any[]
+  ): Promise<any> {
     // 實現文本內容生成邏輯
     return { text: '生成的文本內容...' };
   }
@@ -907,7 +1002,10 @@ class ReportGenerationService {
   /**
    * 生成圖表內容
    */
-  private async generateChartContent(section: ReportSection, data: any[]): Promise<any> {
+  private async generateChartContent(
+    section: ReportSection,
+    data: any[]
+  ): Promise<any> {
     // 實現圖表內容生成邏輯
     return { chartData: [], options: {} };
   }
@@ -915,7 +1013,10 @@ class ReportGenerationService {
   /**
    * 生成表格內容
    */
-  private async generateTableContent(section: ReportSection, data: any[]): Promise<any> {
+  private async generateTableContent(
+    section: ReportSection,
+    data: any[]
+  ): Promise<any> {
     // 實現表格內容生成邏輯
     return { headers: [], rows: [] };
   }
@@ -923,7 +1024,10 @@ class ReportGenerationService {
   /**
    * 生成指標內容
    */
-  private async generateMetricContent(section: ReportSection, data: any[]): Promise<any> {
+  private async generateMetricContent(
+    section: ReportSection,
+    data: any[]
+  ): Promise<any> {
     // 實現指標內容生成邏輯
     return { value: 0, unit: '', trend: 'stable' };
   }
@@ -931,7 +1035,10 @@ class ReportGenerationService {
   /**
    * 生成洞察內容
    */
-  private async generateInsightContent(section: ReportSection, data: any[]): Promise<any> {
+  private async generateInsightContent(
+    section: ReportSection,
+    data: any[]
+  ): Promise<any> {
     // 實現洞察內容生成邏輯
     return { insights: [] };
   }
@@ -939,7 +1046,10 @@ class ReportGenerationService {
   /**
    * 生成建議內容
    */
-  private async generateRecommendationContent(section: ReportSection, data: any[]): Promise<any> {
+  private async generateRecommendationContent(
+    section: ReportSection,
+    data: any[]
+  ): Promise<any> {
     // 實現建議內容生成邏輯
     return { recommendations: [] };
   }
@@ -947,7 +1057,10 @@ class ReportGenerationService {
   /**
    * 生成洞察
    */
-  private async generateInsights(data: any[], template: ReportTemplate): Promise<ReportInsight[]> {
+  private async generateInsights(
+    data: any[],
+    template: ReportTemplate
+  ): Promise<ReportInsight[]> {
     // 實現洞察生成邏輯
     return [];
   }
@@ -955,7 +1068,10 @@ class ReportGenerationService {
   /**
    * 生成建議
    */
-  private async generateRecommendations(data: any[], template: ReportTemplate): Promise<ReportRecommendation[]> {
+  private async generateRecommendations(
+    data: any[],
+    template: ReportTemplate
+  ): Promise<ReportRecommendation[]> {
     // 實現建議生成邏輯
     return [];
   }
@@ -963,7 +1079,15 @@ class ReportGenerationService {
   /**
    * 生成文件
    */
-  private async generateFile(result: ReportGenerationResult, template: ReportTemplate, params: ReportGenerationParams): Promise<{ downloadUrl: string; fileSize: number; generationTime: number }> {
+  private async generateFile(
+    result: ReportGenerationResult,
+    template: ReportTemplate,
+    params: ReportGenerationParams
+  ): Promise<{
+    downloadUrl: string;
+    fileSize: number;
+    generationTime: number;
+  }> {
     const startTime = Date.now();
 
     // 這裡應該根據格式生成實際的文件
@@ -1085,5 +1209,6 @@ class ReportGenerationService {
 
 // ==================== 導出 ====================
 
+export { ReportGenerationService };
 export const reportGenerationService = new ReportGenerationService();
 export default reportGenerationService;

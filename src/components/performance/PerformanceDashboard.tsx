@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -69,7 +69,9 @@ const PerformanceDashboard: React.FC = () => {
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [selectedTab, setSelectedTab] = useState<'overview' | 'database' | 'cache' | 'system'>('overview');
+  const [selectedTab, setSelectedTab] = useState<
+    'overview' | 'database' | 'cache' | 'system'
+  >('overview');
 
   const screenWidth = Dimensions.get('window').width;
 
@@ -84,8 +86,10 @@ const PerformanceDashboard: React.FC = () => {
       setLoading(true);
       const [metricsData, suggestionsData, healthData] = await Promise.all([
         apiService.get<PerformanceMetrics>('/api/performance/stats'),
-        apiService.get<{ data: { suggestions: OptimizationSuggestion[] } }>('/api/performance/optimization/suggestions'),
-        apiService.get<HealthStatus>('/api/performance/health')
+        apiService.get<{ data: { suggestions: OptimizationSuggestion[] } }>(
+          '/api/performance/optimization/suggestions'
+        ),
+        apiService.get<HealthStatus>('/api/performance/health'),
       ]);
 
       setMetrics(metricsData.data);
@@ -129,19 +133,27 @@ const PerformanceDashboard: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'healthy': return '#4CAF50';
-      case 'degraded': return '#FF9800';
-      case 'unhealthy': return '#F44336';
-      default: return '#9E9E9E';
+      case 'healthy':
+        return '#4CAF50';
+      case 'degraded':
+        return '#FF9800';
+      case 'unhealthy':
+        return '#F44336';
+      default:
+        return '#9E9E9E';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return '#F44336';
-      case 'medium': return '#FF9800';
-      case 'low': return '#4CAF50';
-      default: return '#9E9E9E';
+      case 'high':
+        return '#F44336';
+      case 'medium':
+        return '#FF9800';
+      case 'low':
+        return '#4CAF50';
+      default:
+        return '#9E9E9E';
     }
   };
 
@@ -150,14 +162,25 @@ const PerformanceDashboard: React.FC = () => {
       {/* 健康狀態卡片 */}
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <MaterialCommunityIcons name="heart-pulse" size={24} color="#4CAF50" />
+          <MaterialCommunityIcons
+            name="heart-pulse"
+            size={24}
+            color="#4CAF50"
+          />
           <Text style={styles.cardTitle}>系統健康狀態</Text>
         </View>
         {health && (
           <View style={styles.healthStatus}>
-            <View style={[styles.statusIndicator, { backgroundColor: getStatusColor(health.status) }]} />
+            <View
+              style={[
+                styles.statusIndicator,
+                { backgroundColor: getStatusColor(health.status) },
+              ]}
+            />
             <Text style={styles.statusText}>{health.status.toUpperCase()}</Text>
-            <Text style={styles.timestamp}>{new Date(health.timestamp).toLocaleString()}</Text>
+            <Text style={styles.timestamp}>
+              {new Date(health.timestamp).toLocaleString()}
+            </Text>
           </View>
         )}
       </View>
@@ -172,19 +195,27 @@ const PerformanceDashboard: React.FC = () => {
           <View style={styles.metricsGrid}>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>平均響應時間</Text>
-              <Text style={styles.metricValue}>{metrics.performance.avgResponseTime.toFixed(2)}ms</Text>
+              <Text style={styles.metricValue}>
+                {metrics.performance.avgResponseTime.toFixed(2)}ms
+              </Text>
             </View>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>緩存命中率</Text>
-              <Text style={styles.metricValue}>{metrics.performance.cacheHitRate.toFixed(1)}%</Text>
+              <Text style={styles.metricValue}>
+                {metrics.performance.cacheHitRate.toFixed(1)}%
+              </Text>
             </View>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>錯誤率</Text>
-              <Text style={styles.metricValue}>{metrics.performance.errorRate.toFixed(2)}%</Text>
+              <Text style={styles.metricValue}>
+                {metrics.performance.errorRate.toFixed(2)}%
+              </Text>
             </View>
             <View style={styles.metricItem}>
               <Text style={styles.metricLabel}>總請求數</Text>
-              <Text style={styles.metricValue}>{metrics.performance.requests}</Text>
+              <Text style={styles.metricValue}>
+                {metrics.performance.requests}
+              </Text>
             </View>
           </View>
         )}
@@ -202,13 +233,15 @@ const PerformanceDashboard: React.FC = () => {
             <BarChart
               data={{
                 labels: ['總查詢', '慢查詢', '緩存命中'],
-                datasets: [{
-                  data: [
-                    metrics.database.totalQueries,
-                    metrics.database.slowQueries,
-                    metrics.performance.cacheHits
-                  ]
-                }]
+                datasets: [
+                  {
+                    data: [
+                      metrics.database.totalQueries,
+                      metrics.database.slowQueries,
+                      metrics.performance.cacheHits,
+                    ],
+                  },
+                ],
               }}
               width={screenWidth - 60}
               height={220}
@@ -219,8 +252,8 @@ const PerformanceDashboard: React.FC = () => {
                 decimalPlaces: 0,
                 color: (opacity = 1) => `rgba(33, 150, 243, ${opacity})`,
                 style: {
-                  borderRadius: 16
-                }
+                  borderRadius: 16,
+                },
               }}
               style={styles.chart}
             />
@@ -239,18 +272,29 @@ const PerformanceDashboard: React.FC = () => {
             <View style={styles.resourceItem}>
               <Text style={styles.resourceLabel}>內存使用</Text>
               <Text style={styles.resourceValue}>
-                {((metrics.system.memory.heapUsed / metrics.system.memory.heapTotal) * 100).toFixed(1)}%
+                {(
+                  (metrics.system.memory.heapUsed /
+                    metrics.system.memory.heapTotal) *
+                  100
+                ).toFixed(1)}
+                %
               </Text>
             </View>
             <View style={styles.resourceItem}>
               <Text style={styles.resourceLabel}>運行時間</Text>
               <Text style={styles.resourceValue}>
-                {Math.floor(metrics.system.uptime / 3600)}h {Math.floor((metrics.system.uptime % 3600) / 60)}m
+                {Math.floor(metrics.system.uptime / 3600)}h{' '}
+                {Math.floor((metrics.system.uptime % 3600) / 60)}m
               </Text>
             </View>
             <View style={styles.resourceItem}>
               <Text style={styles.resourceLabel}>Redis狀態</Text>
-              <Text style={[styles.resourceValue, { color: metrics.redis.connected ? '#4CAF50' : '#F44336' }]}>
+              <Text
+                style={[
+                  styles.resourceValue,
+                  { color: metrics.redis.connected ? '#4CAF50' : '#F44336' },
+                ]}
+              >
                 {metrics.redis.connected ? '連接正常' : '連接異常'}
               </Text>
             </View>
@@ -270,16 +314,24 @@ const PerformanceDashboard: React.FC = () => {
         </View>
         {metrics && (
           <View>
-            {Object.entries(metrics.database.queryStats).map(([query, stats]) => (
-              <View key={query} style={styles.queryStatsItem}>
-                <Text style={styles.queryName}>{query}</Text>
-                <View style={styles.queryStatsGrid}>
-                  <Text style={styles.queryStat}>查詢次數: {stats.count}</Text>
-                  <Text style={styles.queryStat}>平均時間: {stats.avgTime?.toFixed(2) || 0}ms</Text>
-                  <Text style={styles.queryStat}>慢查詢: {stats.slowQueries}</Text>
+            {Object.entries(metrics.database.queryStats).map(
+              ([query, stats]) => (
+                <View key={query} style={styles.queryStatsItem}>
+                  <Text style={styles.queryName}>{query}</Text>
+                  <View style={styles.queryStatsGrid}>
+                    <Text style={styles.queryStat}>
+                      查詢次數: {stats.count}
+                    </Text>
+                    <Text style={styles.queryStat}>
+                      平均時間: {stats.avgTime?.toFixed(2) || 0}ms
+                    </Text>
+                    <Text style={styles.queryStat}>
+                      慢查詢: {stats.slowQueries}
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            ))}
+              )
+            )}
           </View>
         )}
       </View>
@@ -303,20 +355,20 @@ const PerformanceDashboard: React.FC = () => {
                   population: metrics.performance.cacheHits,
                   color: '#4CAF50',
                   legendFontColor: '#7F7F7F',
-                  legendFontSize: 12
+                  legendFontSize: 12,
                 },
                 {
                   name: '緩存未命中',
                   population: metrics.performance.cacheMisses,
                   color: '#F44336',
                   legendFontColor: '#7F7F7F',
-                  legendFontSize: 12
-                }
+                  legendFontSize: 12,
+                },
               ]}
               width={screenWidth - 60}
               height={220}
               chartConfig={{
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               }}
               accessor="population"
               backgroundColor="transparent"
@@ -358,10 +410,17 @@ const PerformanceDashboard: React.FC = () => {
         {suggestions.map((suggestion, index) => (
           <View key={index} style={styles.suggestionItem}>
             <View style={styles.suggestionHeader}>
-              <View style={[styles.priorityIndicator, { backgroundColor: getPriorityColor(suggestion.priority) }]} />
+              <View
+                style={[
+                  styles.priorityIndicator,
+                  { backgroundColor: getPriorityColor(suggestion.priority) },
+                ]}
+              />
               <Text style={styles.suggestionTitle}>{suggestion.title}</Text>
             </View>
-            <Text style={styles.suggestionDescription}>{suggestion.description}</Text>
+            <Text style={styles.suggestionDescription}>
+              {suggestion.description}
+            </Text>
             <Text style={styles.suggestionType}>類型: {suggestion.type}</Text>
           </View>
         ))}
@@ -385,8 +444,8 @@ const PerformanceDashboard: React.FC = () => {
           { key: 'overview', label: '概覽', icon: 'dashboard' },
           { key: 'database', label: '數據庫', icon: 'storage' },
           { key: 'cache', label: '緩存', icon: 'cached' },
-          { key: 'system', label: '系統', icon: 'settings' }
-        ].map(tab => (
+          { key: 'system', label: '系統', icon: 'settings' },
+        ].map((tab) => (
           <TouchableOpacity
             key={tab.key}
             style={[styles.tab, selectedTab === tab.key && styles.activeTab]}
@@ -397,7 +456,12 @@ const PerformanceDashboard: React.FC = () => {
               size={20}
               color={selectedTab === tab.key ? '#2196F3' : '#666'}
             />
-            <Text style={[styles.tabText, selectedTab === tab.key && styles.activeTabText]}>
+            <Text
+              style={[
+                styles.tabText,
+                selectedTab === tab.key && styles.activeTabText,
+              ]}
+            >
               {tab.label}
             </Text>
           </TouchableOpacity>
@@ -423,7 +487,7 @@ const PerformanceDashboard: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
@@ -432,21 +496,21 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0'
+    borderBottomColor: '#e0e0e0',
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   refreshButton: {
-    padding: 8
+    padding: 8,
   },
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0'
+    borderBottomColor: '#e0e0e0',
   },
   tab: {
     flex: 1,
@@ -454,23 +518,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#2196F3'
+    borderBottomColor: '#2196F3',
   },
   tabText: {
     marginLeft: 4,
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   activeTabText: {
     color: '#2196F3',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   card: {
     backgroundColor: '#fff',
@@ -481,107 +545,107 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginLeft: 8,
-    color: '#333'
+    color: '#333',
   },
   healthStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statusIndicator: {
     width: 12,
     height: 12,
-    borderRadius: 6
+    borderRadius: 6,
   },
   statusText: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginLeft: 8
+    marginLeft: 8,
   },
   timestamp: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   metricItem: {
     width: '48%',
-    marginBottom: 16
+    marginBottom: 16,
   },
   metricLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   metricValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   chartTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: '#333'
+    color: '#333',
   },
   chart: {
     marginVertical: 8,
-    borderRadius: 16
+    borderRadius: 16,
   },
   resourceGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   resourceItem: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   resourceLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   resourceValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   queryStatsItem: {
     marginBottom: 16,
     padding: 12,
     backgroundColor: '#f9f9f9',
-    borderRadius: 4
+    borderRadius: 4,
   },
   queryName: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   queryStatsGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   queryStat: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   actionButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   actionButton: {
     flexDirection: 'row',
@@ -589,44 +653,44 @@ const styles = StyleSheet.create({
     backgroundColor: '#2196F3',
     paddingHorizontal: 16,
     paddingVertical: 8,
-    borderRadius: 4
+    borderRadius: 4,
   },
   actionButtonText: {
     color: '#fff',
     marginLeft: 4,
-    fontSize: 14
+    fontSize: 14,
   },
   suggestionItem: {
     marginBottom: 16,
     padding: 12,
     backgroundColor: '#f9f9f9',
-    borderRadius: 4
+    borderRadius: 4,
   },
   suggestionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   priorityIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 8
+    marginRight: 8,
   },
   suggestionTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   suggestionDescription: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   suggestionType: {
     fontSize: 10,
-    color: '#999'
-  }
+    color: '#999',
+  },
 });
 
 export default PerformanceDashboard;

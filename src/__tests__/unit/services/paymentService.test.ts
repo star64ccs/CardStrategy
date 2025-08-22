@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { paymentService } from '../../../services/paymentService';
 import { mockApiResponse } from '../../setup/test-utils';
 
@@ -7,8 +8,8 @@ jest.mock('../../../services/apiService', () => ({
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
-    delete: jest.fn()
-  }
+    delete: jest.fn(),
+  },
 }));
 
 describe('PaymentService', () => {
@@ -24,15 +25,15 @@ describe('PaymentService', () => {
           type: 'credit_card',
           last4: '1234',
           brand: 'visa',
-          isDefault: true
+          isDefault: true,
         },
         {
           id: '2',
           type: 'bank_account',
           last4: '5678',
           bankName: 'Test Bank',
-          isDefault: false
-        }
+          isDefault: false,
+        },
       ];
 
       mockApiResponse('get', mockPaymentMethods);
@@ -45,7 +46,9 @@ describe('PaymentService', () => {
     it('應該處理獲取支付方式失敗的情況', async () => {
       mockApiResponse('get', null, new Error('Network error'));
 
-      await expect(paymentService.getPaymentMethods()).rejects.toThrow('Network error');
+      await expect(paymentService.getPaymentMethods()).rejects.toThrow(
+        'Network error'
+      );
     });
   });
 
@@ -57,7 +60,7 @@ describe('PaymentService', () => {
         expiryMonth: '12',
         expiryYear: '2025',
         cvv: '123',
-        cardholderName: 'Test User'
+        cardholderName: 'Test User',
       };
 
       const mockResponse = {
@@ -65,7 +68,7 @@ describe('PaymentService', () => {
         type: 'credit_card',
         last4: '1111',
         brand: 'visa',
-        isDefault: false
+        isDefault: false,
       };
 
       mockApiResponse('post', mockResponse);
@@ -80,7 +83,7 @@ describe('PaymentService', () => {
         type: 'bank_account',
         accountNumber: '1234567890',
         routingNumber: '021000021',
-        accountHolderName: 'Test User'
+        accountHolderName: 'Test User',
       };
 
       const mockResponse = {
@@ -88,7 +91,7 @@ describe('PaymentService', () => {
         type: 'bank_account',
         last4: '7890',
         bankName: 'Test Bank',
-        isDefault: false
+        isDefault: false,
       };
 
       mockApiResponse('post', mockResponse);
@@ -105,12 +108,14 @@ describe('PaymentService', () => {
         expiryMonth: '12',
         expiryYear: '2025',
         cvv: '123',
-        cardholderName: 'Test User'
+        cardholderName: 'Test User',
       };
 
       mockApiResponse('post', null, new Error('Invalid card number'));
 
-      await expect(paymentService.addPaymentMethod(paymentData)).rejects.toThrow('Invalid card number');
+      await expect(
+        paymentService.addPaymentMethod(paymentData)
+      ).rejects.toThrow('Invalid card number');
     });
   });
 
@@ -119,7 +124,7 @@ describe('PaymentService', () => {
       const paymentMethodId = 'payment_method_id';
       const updateData = {
         isDefault: true,
-        cardholderName: 'Updated Name'
+        cardholderName: 'Updated Name',
       };
 
       const mockResponse = {
@@ -128,12 +133,15 @@ describe('PaymentService', () => {
         last4: '1111',
         brand: 'visa',
         isDefault: true,
-        cardholderName: 'Updated Name'
+        cardholderName: 'Updated Name',
       };
 
       mockApiResponse('put', mockResponse);
 
-      const result = await paymentService.updatePaymentMethod(paymentMethodId, updateData);
+      const result = await paymentService.updatePaymentMethod(
+        paymentMethodId,
+        updateData
+      );
 
       expect(result).toEqual(mockResponse);
     });
@@ -144,7 +152,9 @@ describe('PaymentService', () => {
 
       mockApiResponse('put', null, new Error('Payment method not found'));
 
-      await expect(paymentService.updatePaymentMethod(paymentMethodId, updateData)).rejects.toThrow('Payment method not found');
+      await expect(
+        paymentService.updatePaymentMethod(paymentMethodId, updateData)
+      ).rejects.toThrow('Payment method not found');
     });
   });
 
@@ -162,9 +172,15 @@ describe('PaymentService', () => {
     it('應該處理刪除支付方式失敗的情況', async () => {
       const paymentMethodId = 'invalid_id';
 
-      mockApiResponse('delete', null, new Error('Cannot delete default payment method'));
+      mockApiResponse(
+        'delete',
+        null,
+        new Error('Cannot delete default payment method')
+      );
 
-      await expect(paymentService.deletePaymentMethod(paymentMethodId)).rejects.toThrow('Cannot delete default payment method');
+      await expect(
+        paymentService.deletePaymentMethod(paymentMethodId)
+      ).rejects.toThrow('Cannot delete default payment method');
     });
   });
 
@@ -174,7 +190,7 @@ describe('PaymentService', () => {
         amount: 1000,
         currency: 'TWD',
         paymentMethodId: 'payment_method_id',
-        description: 'Test payment'
+        description: 'Test payment',
       };
 
       const mockResponse = {
@@ -182,7 +198,7 @@ describe('PaymentService', () => {
         status: 'succeeded',
         amount: 1000,
         currency: 'TWD',
-        createdAt: '2024-01-01T00:00:00Z'
+        createdAt: '2024-01-01T00:00:00Z',
       };
 
       mockApiResponse('post', mockResponse);
@@ -197,12 +213,14 @@ describe('PaymentService', () => {
         amount: 1000,
         currency: 'TWD',
         paymentMethodId: 'invalid_method',
-        description: 'Test payment'
+        description: 'Test payment',
       };
 
       mockApiResponse('post', null, new Error('Insufficient funds'));
 
-      await expect(paymentService.processPayment(paymentData)).rejects.toThrow('Insufficient funds');
+      await expect(paymentService.processPayment(paymentData)).rejects.toThrow(
+        'Insufficient funds'
+      );
     });
   });
 
@@ -215,7 +233,7 @@ describe('PaymentService', () => {
           currency: 'TWD',
           status: 'succeeded',
           description: 'Premium subscription',
-          createdAt: '2024-01-01T00:00:00Z'
+          createdAt: '2024-01-01T00:00:00Z',
         },
         {
           id: '2',
@@ -223,8 +241,8 @@ describe('PaymentService', () => {
           currency: 'TWD',
           status: 'failed',
           description: 'Failed payment',
-          createdAt: '2024-01-02T00:00:00Z'
-        }
+          createdAt: '2024-01-02T00:00:00Z',
+        },
       ];
 
       mockApiResponse('get', mockHistory);
@@ -243,10 +261,12 @@ describe('PaymentService', () => {
       await paymentService.getPaymentHistory(page, limit);
 
       // 驗證API調用包含分頁參數
-      expect(require('../../../services/apiService').apiService.get).toHaveBeenCalledWith(
+      expect(
+        require('../../../services/apiService').apiService.get
+      ).toHaveBeenCalledWith(
         expect.stringContaining('payments'),
         expect.objectContaining({
-          params: { page, limit }
+          params: { page, limit },
         })
       );
     });
@@ -261,7 +281,7 @@ describe('PaymentService', () => {
           price: 299,
           currency: 'TWD',
           interval: 'month',
-          features: ['Basic features', 'Email support']
+          features: ['Basic features', 'Email support'],
         },
         {
           id: 'premium',
@@ -269,8 +289,8 @@ describe('PaymentService', () => {
           price: 599,
           currency: 'TWD',
           interval: 'month',
-          features: ['All features', 'Priority support', 'Advanced analytics']
-        }
+          features: ['All features', 'Priority support', 'Advanced analytics'],
+        },
       ];
 
       mockApiResponse('get', mockPlans);
@@ -286,7 +306,7 @@ describe('PaymentService', () => {
       const subscriptionData = {
         planId: 'premium',
         paymentMethodId: 'payment_method_id',
-        startDate: '2024-01-01'
+        startDate: '2024-01-01',
       };
 
       const mockResponse = {
@@ -294,7 +314,7 @@ describe('PaymentService', () => {
         planId: 'premium',
         status: 'active',
         currentPeriodStart: '2024-01-01T00:00:00Z',
-        currentPeriodEnd: '2024-02-01T00:00:00Z'
+        currentPeriodEnd: '2024-02-01T00:00:00Z',
       };
 
       mockApiResponse('post', mockResponse);
@@ -326,8 +346,8 @@ describe('PaymentService', () => {
           currency: 'TWD',
           status: 'paid',
           dueDate: '2024-01-01T00:00:00Z',
-          paidAt: '2024-01-01T00:00:00Z'
-        }
+          paidAt: '2024-01-01T00:00:00Z',
+        },
       ];
 
       mockApiResponse('get', mockInvoices);
@@ -343,10 +363,10 @@ describe('PaymentService', () => {
       const validCardNumbers = [
         '4111111111111111', // Visa
         '5555555555554444', // Mastercard
-        '378282246310005'  // American Express
+        '378282246310005', // American Express
       ];
 
-      validCardNumbers.forEach(cardNumber => {
+      validCardNumbers.forEach((cardNumber) => {
         expect(paymentService.validateCardNumber(cardNumber)).toBe(true);
       });
     });
@@ -356,10 +376,10 @@ describe('PaymentService', () => {
         '4111111111111112',
         '1234567890123456',
         '0000000000000000',
-        'invalid'
+        'invalid',
       ];
 
-      invalidCardNumbers.forEach(cardNumber => {
+      invalidCardNumbers.forEach((cardNumber) => {
         expect(paymentService.validateCardNumber(cardNumber)).toBe(false);
       });
     });
@@ -367,9 +387,15 @@ describe('PaymentService', () => {
 
   describe('formatCardNumber', () => {
     it('應該正確格式化信用卡號', () => {
-      expect(paymentService.formatCardNumber('4111111111111111')).toBe('4111 1111 1111 1111');
-      expect(paymentService.formatCardNumber('5555555555554444')).toBe('5555 5555 5555 4444');
-      expect(paymentService.formatCardNumber('378282246310005')).toBe('3782 822463 10005');
+      expect(paymentService.formatCardNumber('4111111111111111')).toBe(
+        '4111 1111 1111 1111'
+      );
+      expect(paymentService.formatCardNumber('5555555555554444')).toBe(
+        '5555 5555 5555 4444'
+      );
+      expect(paymentService.formatCardNumber('378282246310005')).toBe(
+        '3782 822463 10005'
+      );
     });
   });
 

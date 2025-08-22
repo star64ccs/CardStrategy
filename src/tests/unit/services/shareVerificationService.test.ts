@@ -2,7 +2,10 @@ import { shareVerificationService } from '../../../services/shareVerificationSer
 import { apiService } from '../../../services/apiService';
 import { API_ENDPOINTS } from '../../../config/api';
 import { logger } from '../../../utils/logger';
-import { validateInput, validateApiResponse } from '../../../utils/validationService';
+import {
+  validateInput,
+  validateApiResponse,
+} from '../../../utils/validationService';
 import * as Linking from 'expo-linking';
 import * as Sharing from 'expo-sharing';
 
@@ -17,8 +20,12 @@ jest.mock('expo-sharing');
 const mockApiService = apiService as jest.Mocked<typeof apiService>;
 const mockApiEndpoints = API_ENDPOINTS as jest.Mocked<typeof API_ENDPOINTS>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
-const mockValidateInput = validateInput as jest.MockedFunction<typeof validateInput>;
-const mockValidateApiResponse = validateApiResponse as jest.MockedFunction<typeof validateApiResponse>;
+const mockValidateInput = validateInput as jest.MockedFunction<
+  typeof validateInput
+>;
+const mockValidateApiResponse = validateApiResponse as jest.MockedFunction<
+  typeof validateApiResponse
+>;
 const mockLinking = Linking as jest.Mocked<typeof Linking>;
 const mockSharing = Sharing as jest.Mocked<typeof Sharing>;
 
@@ -29,7 +36,7 @@ describe('ShareVerificationService', () => {
     // 設置默認的 API 端點
     mockApiEndpoints.SHARE_VERIFICATION = {
       CREATE: '/share-verification/create',
-      LOOKUP: '/share-verification/lookup'
+      LOOKUP: '/share-verification/lookup',
     };
   });
 
@@ -43,13 +50,13 @@ describe('ShareVerificationService', () => {
             score: 85,
             grade: 'A',
             details: ['邊框對稱性良好'],
-            confidence: 0.9
+            confidence: 0.9,
           },
           authenticity: {
             isAuthentic: true,
             confidence: 0.95,
             riskFactors: [],
-            verificationDetails: ['印刷質量符合標準']
+            verificationDetails: ['印刷質量符合標準'],
           },
           overallGrade: 'A',
           overallScore: 90,
@@ -58,48 +65,58 @@ describe('ShareVerificationService', () => {
             analysisMethod: 'AI',
             modelVersion: '1.0.0',
             imageQuality: 'high',
-            lightingConditions: 'good'
-          }
+            lightingConditions: 'good',
+          },
         },
-        expiresInDays: 30
+        expiresInDays: 30,
       };
 
       const mockResponse = {
         data: {
           verificationCode: 'ABC123DEF456',
           shareUrl: 'https://cardstrategy.com/share/ABC123DEF456',
-          qrCodeUrl: 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://cardstrategy.com/share/ABC123DEF456&format=png',
+          qrCodeUrl:
+            'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https://cardstrategy.com/share/ABC123DEF456&format=png',
           socialShareLinks: {
-            whatsapp: 'https://wa.me/?text=查看我的卡牌評估結果！%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456',
+            whatsapp:
+              'https://wa.me/?text=查看我的卡牌評估結果！%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456',
             instagram: 'https://instagram.com/share/ABC123DEF456',
             facebook: 'https://facebook.com/share/ABC123DEF456',
             twitter: 'https://twitter.com/share/ABC123DEF456',
-            telegram: 'https://t.me/share/url?url=https://cardstrategy.com/share/ABC123DEF456&text=查看我的卡牌評估結果！'
-          }
-        }
+            telegram:
+              'https://t.me/share/url?url=https://cardstrategy.com/share/ABC123DEF456&text=查看我的卡牌評估結果！',
+          },
+        },
       };
 
       mockValidateInput.mockReturnValue({
         isValid: true,
-        data: request
+        data: request,
       });
 
       mockValidateApiResponse.mockReturnValue({
         isValid: true,
-        data: mockResponse.data
+        data: mockResponse.data,
       });
 
       mockApiService.post.mockResolvedValue(mockResponse);
 
-      const result = await shareVerificationService.createShareVerification(request);
+      const result =
+        await shareVerificationService.createShareVerification(request);
 
       expect(result.data).toEqual(mockResponse.data);
       expect(mockValidateInput).toHaveBeenCalled();
-      expect(mockApiService.post).toHaveBeenCalledWith('/share-verification/create', request);
+      expect(mockApiService.post).toHaveBeenCalledWith(
+        '/share-verification/create',
+        request
+      );
       expect(mockValidateApiResponse).toHaveBeenCalled();
-      expect(mockLogger.info).toHaveBeenCalledWith('✅ Share verification created', {
-        verificationCode: 'ABC123DEF456'
-      });
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '✅ Share verification created',
+        {
+          verificationCode: 'ABC123DEF456',
+        }
+      );
     });
 
     it('應該處理無效的請求數據', async () => {
@@ -112,18 +129,23 @@ describe('ShareVerificationService', () => {
             analysisMethod: 'AI',
             modelVersion: '1.0.0',
             imageQuality: 'high',
-            lightingConditions: 'good'
-          }
-        }
+            lightingConditions: 'good',
+          },
+        },
       };
 
       mockValidateInput.mockReturnValue({
         isValid: false,
-        errorMessage: '無效的卡牌 ID'
+        errorMessage: '無效的卡牌 ID',
       });
 
-      await expect(shareVerificationService.createShareVerification(invalidRequest)).rejects.toThrow('無效的卡牌 ID');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Create share verification error:', { error: '無效的卡牌 ID' });
+      await expect(
+        shareVerificationService.createShareVerification(invalidRequest)
+      ).rejects.toThrow('無效的卡牌 ID');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '❌ Create share verification error:',
+        { error: '無效的卡牌 ID' }
+      );
     });
 
     it('應該處理 API 響應驗證失敗', async () => {
@@ -136,32 +158,37 @@ describe('ShareVerificationService', () => {
             analysisMethod: 'AI',
             modelVersion: '1.0.0',
             imageQuality: 'high',
-            lightingConditions: 'good'
-          }
-        }
+            lightingConditions: 'good',
+          },
+        },
       };
 
       const mockResponse = {
         data: {
-          verificationCode: 'ABC123DEF456'
+          verificationCode: 'ABC123DEF456',
           // 缺少必要的字段
-        }
+        },
       };
 
       mockValidateInput.mockReturnValue({
         isValid: true,
-        data: request
+        data: request,
       });
 
       mockValidateApiResponse.mockReturnValue({
         isValid: false,
-        errorMessage: '分享驗證響應驗證失敗'
+        errorMessage: '分享驗證響應驗證失敗',
       });
 
       mockApiService.post.mockResolvedValue(mockResponse);
 
-      await expect(shareVerificationService.createShareVerification(request)).rejects.toThrow('分享驗證響應驗證失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Create share verification error:', { error: '分享驗證響應驗證失敗' });
+      await expect(
+        shareVerificationService.createShareVerification(request)
+      ).rejects.toThrow('分享驗證響應驗證失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '❌ Create share verification error:',
+        { error: '分享驗證響應驗證失敗' }
+      );
     });
   });
 
@@ -181,13 +208,13 @@ describe('ShareVerificationService', () => {
                 score: 85,
                 grade: 'A',
                 details: ['邊框對稱性良好'],
-                confidence: 0.9
+                confidence: 0.9,
               },
               authenticity: {
                 isAuthentic: true,
                 confidence: 0.95,
                 riskFactors: [],
-                verificationDetails: ['印刷質量符合標準']
+                verificationDetails: ['印刷質量符合標準'],
               },
               overallGrade: 'A',
               overallScore: 90,
@@ -196,8 +223,8 @@ describe('ShareVerificationService', () => {
                 analysisMethod: 'AI',
                 modelVersion: '1.0.0',
                 imageQuality: 'high',
-                lightingConditions: 'good'
-              }
+                lightingConditions: 'good',
+              },
             },
             shareUrl: 'https://cardstrategy.com/share/ABC123DEF456',
             expiresAt: '2024-12-31T23:59:59Z',
@@ -205,7 +232,7 @@ describe('ShareVerificationService', () => {
             viewCount: 5,
             lastViewedAt: '2024-01-15T10:30:00Z',
             createdAt: '2024-01-01T00:00:00Z',
-            updatedAt: '2024-01-15T10:30:00Z'
+            updatedAt: '2024-01-15T10:30:00Z',
           },
           card: {
             id: 'card-1',
@@ -213,36 +240,42 @@ describe('ShareVerificationService', () => {
             setName: '基礎系列',
             rarity: '稀有',
             imageUrl: 'https://example.com/pikachu.jpg',
-            price: 1000
+            price: 1000,
           },
           user: {
             username: 'cardcollector',
-            avatar: 'https://example.com/avatar.jpg'
+            avatar: 'https://example.com/avatar.jpg',
           },
           isExpired: false,
-          isValid: true
-        }
+          isValid: true,
+        },
       };
 
       mockValidateInput.mockReturnValue({
         isValid: true,
-        data: { verificationCode }
+        data: { verificationCode },
       });
 
       mockValidateApiResponse.mockReturnValue({
         isValid: true,
-        data: mockResponse.data
+        data: mockResponse.data,
       });
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await shareVerificationService.lookupVerification(verificationCode);
+      const result =
+        await shareVerificationService.lookupVerification(verificationCode);
 
       expect(result.data).toEqual(mockResponse.data);
       expect(mockValidateInput).toHaveBeenCalled();
-      expect(mockApiService.get).toHaveBeenCalledWith('/share-verification/lookup/ABC123DEF456');
+      expect(mockApiService.get).toHaveBeenCalledWith(
+        '/share-verification/lookup/ABC123DEF456'
+      );
       expect(mockValidateApiResponse).toHaveBeenCalled();
-      expect(mockLogger.info).toHaveBeenCalledWith('✅ Share verification lookup successful', { verificationCode });
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '✅ Share verification lookup successful',
+        { verificationCode }
+      );
     });
 
     it('應該處理無效的驗證碼', async () => {
@@ -250,11 +283,16 @@ describe('ShareVerificationService', () => {
 
       mockValidateInput.mockReturnValue({
         isValid: false,
-        errorMessage: '驗證碼格式無效'
+        errorMessage: '驗證碼格式無效',
       });
 
-      await expect(shareVerificationService.lookupVerification(invalidCode)).rejects.toThrow('驗證碼格式無效');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Lookup verification error:', { error: '驗證碼格式無效' });
+      await expect(
+        shareVerificationService.lookupVerification(invalidCode)
+      ).rejects.toThrow('驗證碼格式無效');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '❌ Lookup verification error:',
+        { error: '驗證碼格式無效' }
+      );
     });
   });
 
@@ -268,8 +306,12 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToWhatsApp(shareUrl, message);
 
-      expect(mockLinking.canOpenURL).toHaveBeenCalledWith('whatsapp://send?text=自定義消息%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456');
-      expect(mockLinking.openURL).toHaveBeenCalledWith('whatsapp://send?text=自定義消息%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456');
+      expect(mockLinking.canOpenURL).toHaveBeenCalledWith(
+        'whatsapp://send?text=自定義消息%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456'
+      );
+      expect(mockLinking.openURL).toHaveBeenCalledWith(
+        'whatsapp://send?text=自定義消息%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456'
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('✅ Shared to WhatsApp');
     });
 
@@ -281,7 +323,9 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToWhatsApp(shareUrl);
 
-      expect(mockLinking.canOpenURL).toHaveBeenCalledWith('whatsapp://send?text=查看我的卡牌評估結果！%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456');
+      expect(mockLinking.canOpenURL).toHaveBeenCalledWith(
+        'whatsapp://send?text=查看我的卡牌評估結果！%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456'
+      );
     });
 
     it('應該處理無法打開 WhatsApp', async () => {
@@ -289,8 +333,13 @@ describe('ShareVerificationService', () => {
 
       mockLinking.canOpenURL.mockResolvedValue(false);
 
-      await expect(shareVerificationService.shareToWhatsApp(shareUrl)).rejects.toThrow('無法打開 WhatsApp');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Share to WhatsApp error:', { error: '無法打開 WhatsApp' });
+      await expect(
+        shareVerificationService.shareToWhatsApp(shareUrl)
+      ).rejects.toThrow('無法打開 WhatsApp');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '❌ Share to WhatsApp error:',
+        { error: '無法打開 WhatsApp' }
+      );
     });
   });
 
@@ -304,8 +353,12 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToInstagram(shareUrl, imageUrl);
 
-      expect(mockLinking.canOpenURL).toHaveBeenCalledWith(expect.stringContaining('instagram://library'));
-      expect(mockLinking.openURL).toHaveBeenCalledWith(expect.stringContaining('instagram://library'));
+      expect(mockLinking.canOpenURL).toHaveBeenCalledWith(
+        expect.stringContaining('instagram://library')
+      );
+      expect(mockLinking.openURL).toHaveBeenCalledWith(
+        expect.stringContaining('instagram://library')
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('✅ Shared to Instagram');
     });
 
@@ -317,7 +370,9 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToInstagram(shareUrl);
 
-      expect(mockLinking.canOpenURL).toHaveBeenCalledWith(expect.stringContaining('https://cardstrategy.com/share-image.png'));
+      expect(mockLinking.canOpenURL).toHaveBeenCalledWith(
+        expect.stringContaining('https://cardstrategy.com/share-image.png')
+      );
     });
 
     it('應該處理無法打開 Instagram', async () => {
@@ -325,8 +380,13 @@ describe('ShareVerificationService', () => {
 
       mockLinking.canOpenURL.mockResolvedValue(false);
 
-      await expect(shareVerificationService.shareToInstagram(shareUrl)).rejects.toThrow('無法打開 Instagram，已複製鏈接到剪貼板');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Share to Instagram error:', { error: '無法打開 Instagram，已複製鏈接到剪貼板' });
+      await expect(
+        shareVerificationService.shareToInstagram(shareUrl)
+      ).rejects.toThrow('無法打開 Instagram，已複製鏈接到剪貼板');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '❌ Share to Instagram error:',
+        { error: '無法打開 Instagram，已複製鏈接到剪貼板' }
+      );
     });
   });
 
@@ -339,7 +399,9 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToFacebook(shareUrl, message);
 
-      expect(mockLinking.openURL).toHaveBeenCalledWith(expect.stringContaining('facebook.com/sharer/sharer.php'));
+      expect(mockLinking.openURL).toHaveBeenCalledWith(
+        expect.stringContaining('facebook.com/sharer/sharer.php')
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('✅ Shared to Facebook');
     });
 
@@ -350,7 +412,9 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToFacebook(shareUrl);
 
-      expect(mockLinking.openURL).toHaveBeenCalledWith(expect.stringContaining('facebook.com/sharer/sharer.php'));
+      expect(mockLinking.openURL).toHaveBeenCalledWith(
+        expect.stringContaining('facebook.com/sharer/sharer.php')
+      );
     });
 
     it('應該處理分享失敗', async () => {
@@ -358,8 +422,13 @@ describe('ShareVerificationService', () => {
 
       mockLinking.openURL.mockRejectedValue(new Error('分享失敗'));
 
-      await expect(shareVerificationService.shareToFacebook(shareUrl)).rejects.toThrow('分享失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Share to Facebook error:', { error: '分享失敗' });
+      await expect(
+        shareVerificationService.shareToFacebook(shareUrl)
+      ).rejects.toThrow('分享失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '❌ Share to Facebook error:',
+        { error: '分享失敗' }
+      );
     });
   });
 
@@ -372,7 +441,9 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToTwitter(shareUrl, message);
 
-      expect(mockLinking.openURL).toHaveBeenCalledWith(expect.stringContaining('twitter.com/intent/tweet'));
+      expect(mockLinking.openURL).toHaveBeenCalledWith(
+        expect.stringContaining('twitter.com/intent/tweet')
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('✅ Shared to Twitter');
     });
 
@@ -383,7 +454,9 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToTwitter(shareUrl);
 
-      expect(mockLinking.openURL).toHaveBeenCalledWith(expect.stringContaining('twitter.com/intent/tweet'));
+      expect(mockLinking.openURL).toHaveBeenCalledWith(
+        expect.stringContaining('twitter.com/intent/tweet')
+      );
     });
 
     it('應該處理分享失敗', async () => {
@@ -391,8 +464,13 @@ describe('ShareVerificationService', () => {
 
       mockLinking.openURL.mockRejectedValue(new Error('分享失敗'));
 
-      await expect(shareVerificationService.shareToTwitter(shareUrl)).rejects.toThrow('分享失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Share to Twitter error:', { error: '分享失敗' });
+      await expect(
+        shareVerificationService.shareToTwitter(shareUrl)
+      ).rejects.toThrow('分享失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '❌ Share to Twitter error:',
+        { error: '分享失敗' }
+      );
     });
   });
 
@@ -405,7 +483,9 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToTelegram(shareUrl, message);
 
-      expect(mockLinking.openURL).toHaveBeenCalledWith(expect.stringContaining('t.me/share/url'));
+      expect(mockLinking.openURL).toHaveBeenCalledWith(
+        expect.stringContaining('t.me/share/url')
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('✅ Shared to Telegram');
     });
 
@@ -416,7 +496,9 @@ describe('ShareVerificationService', () => {
 
       await shareVerificationService.shareToTelegram(shareUrl);
 
-      expect(mockLinking.openURL).toHaveBeenCalledWith(expect.stringContaining('t.me/share/url'));
+      expect(mockLinking.openURL).toHaveBeenCalledWith(
+        expect.stringContaining('t.me/share/url')
+      );
     });
 
     it('應該處理分享失敗', async () => {
@@ -424,8 +506,13 @@ describe('ShareVerificationService', () => {
 
       mockLinking.openURL.mockRejectedValue(new Error('分享失敗'));
 
-      await expect(shareVerificationService.shareToTelegram(shareUrl)).rejects.toThrow('分享失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Share to Telegram error:', { error: '分享失敗' });
+      await expect(
+        shareVerificationService.shareToTelegram(shareUrl)
+      ).rejects.toThrow('分享失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '❌ Share to Telegram error:',
+        { error: '分享失敗' }
+      );
     });
   });
 
@@ -443,9 +530,11 @@ describe('ShareVerificationService', () => {
       expect(mockSharing.isAvailableAsync).toHaveBeenCalled();
       expect(mockSharing.shareAsync).toHaveBeenCalledWith(shareUrl, {
         dialogTitle: '自定義標題',
-        mimeType: 'text/plain'
+        mimeType: 'text/plain',
       });
-      expect(mockLogger.info).toHaveBeenCalledWith('✅ Generic share successful');
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '✅ Generic share successful'
+      );
     });
 
     it('應該使用默認標題和消息', async () => {
@@ -458,7 +547,7 @@ describe('ShareVerificationService', () => {
 
       expect(mockSharing.shareAsync).toHaveBeenCalledWith(shareUrl, {
         dialogTitle: '卡牌評估結果',
-        mimeType: 'text/plain'
+        mimeType: 'text/plain',
       });
     });
 
@@ -467,8 +556,12 @@ describe('ShareVerificationService', () => {
 
       mockSharing.isAvailableAsync.mockResolvedValue(false);
 
-      await expect(shareVerificationService.shareGeneric(shareUrl)).rejects.toThrow('不支援原生分享，已複製鏈接到剪貼板');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Generic share error:', { error: '不支援原生分享，已複製鏈接到剪貼板' });
+      await expect(
+        shareVerificationService.shareGeneric(shareUrl)
+      ).rejects.toThrow('不支援原生分享，已複製鏈接到剪貼板');
+      expect(mockLogger.error).toHaveBeenCalledWith('❌ Generic share error:', {
+        error: '不支援原生分享，已複製鏈接到剪貼板',
+      });
     });
 
     it('應該處理分享失敗', async () => {
@@ -477,8 +570,12 @@ describe('ShareVerificationService', () => {
       mockSharing.isAvailableAsync.mockResolvedValue(true);
       mockSharing.shareAsync.mockRejectedValue(new Error('分享失敗'));
 
-      await expect(shareVerificationService.shareGeneric(shareUrl)).rejects.toThrow('分享失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('❌ Generic share error:', { error: '分享失敗' });
+      await expect(
+        shareVerificationService.shareGeneric(shareUrl)
+      ).rejects.toThrow('分享失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith('❌ Generic share error:', {
+        error: '分享失敗',
+      });
     });
   });
 
@@ -494,7 +591,8 @@ describe('ShareVerificationService', () => {
     });
 
     it('應該處理包含特殊字符的 URL', () => {
-      const shareUrl = 'https://cardstrategy.com/share/ABC123DEF456?param=value&other=test';
+      const shareUrl =
+        'https://cardstrategy.com/share/ABC123DEF456?param=value&other=test';
       const result = shareVerificationService.generateQRCodeUrl(shareUrl);
 
       expect(result).toContain(`data=${encodeURIComponent(shareUrl)}`);
@@ -504,7 +602,7 @@ describe('ShareVerificationService', () => {
   describe('validateShareUrl', () => {
     it('應該成功驗證有效的分享鏈接', async () => {
       global.fetch = jest.fn().mockResolvedValue({
-        ok: true
+        ok: true,
       });
 
       const shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
@@ -516,7 +614,7 @@ describe('ShareVerificationService', () => {
 
     it('應該驗證無效的分享鏈接', async () => {
       global.fetch = jest.fn().mockResolvedValue({
-        ok: false
+        ok: false,
       });
 
       const shareUrl = 'https://cardstrategy.com/share/invalid';

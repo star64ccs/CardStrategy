@@ -52,11 +52,14 @@ export interface NotificationAnalytics {
   totalClicked: number;
   averageResponseTime: number;
   userEngagement: number; // 0-1
-  categoryPerformance: Record<string, {
-    sent: number;
-    read: number;
-    clicked: number;
-  }>;
+  categoryPerformance: Record<
+    string,
+    {
+      sent: number;
+      read: number;
+      clicked: number;
+    }
+  >;
 }
 
 class SmartNotificationService {
@@ -68,7 +71,7 @@ class SmartNotificationService {
     totalClicked: 0,
     averageResponseTime: 0,
     userEngagement: 0,
-    categoryPerformance: {}
+    categoryPerformance: {},
   };
 
   // 初始化智能通知服務
@@ -99,7 +102,7 @@ class SmartNotificationService {
       behaviors.forEach((behavior: UserBehavior) => {
         this.userBehaviors.set(behavior.userId, {
           ...behavior,
-          lastLoginTime: new Date(behavior.lastLoginTime)
+          lastLoginTime: new Date(behavior.lastLoginTime),
         });
       });
 
@@ -112,14 +115,20 @@ class SmartNotificationService {
   // 開始定期分析
   private startPeriodicAnalysis(): void {
     // 每小時進行一次市場分析
-    setInterval(() => {
-      this.analyzeMarketInsights();
-    }, 60 * 60 * 1000);
+    setInterval(
+      () => {
+        this.analyzeMarketInsights();
+      },
+      60 * 60 * 1000
+    );
 
     // 每天進行一次用戶行為分析
-    setInterval(() => {
-      this.analyzeUserBehaviors();
-    }, 24 * 60 * 60 * 1000);
+    setInterval(
+      () => {
+        this.analyzeUserBehaviors();
+      },
+      24 * 60 * 60 * 1000
+    );
 
     logger.info('定期分析已開始');
   }
@@ -142,7 +151,10 @@ class SmartNotificationService {
           confidence: marketAnalysis.data.confidence,
           priority: 'medium',
           actionRequired: false,
-          data: { sentiment: 'bullish', confidence: marketAnalysis.data.confidence }
+          data: {
+            sentiment: 'bullish',
+            confidence: marketAnalysis.data.confidence,
+          },
         });
       } else if (marketAnalysis.data.sentiment === 'bearish') {
         insights.push({
@@ -152,7 +164,10 @@ class SmartNotificationService {
           confidence: marketAnalysis.data.confidence,
           priority: 'high',
           actionRequired: true,
-          data: { sentiment: 'bearish', confidence: marketAnalysis.data.confidence }
+          data: {
+            sentiment: 'bearish',
+            confidence: marketAnalysis.data.confidence,
+          },
         });
       }
 
@@ -165,7 +180,7 @@ class SmartNotificationService {
           confidence: marketAnalysis.data.confidence,
           priority: 'medium',
           actionRequired: false,
-          data: { recommendations: marketAnalysis.data.recommendations }
+          data: { recommendations: marketAnalysis.data.recommendations },
         });
       }
 
@@ -203,10 +218,14 @@ class SmartNotificationService {
   }
 
   // 發送參與度提醒
-  private async sendEngagementReminder(userId: string, behavior: UserBehavior): Promise<void> {
+  private async sendEngagementReminder(
+    userId: string,
+    behavior: UserBehavior
+  ): Promise<void> {
     try {
       const title = '歡迎回來！';
-      const message = '您有一段時間沒有查看您的投資組合了。市場上有一些有趣的變化，建議您查看一下。';
+      const message =
+        '您有一段時間沒有查看您的投資組合了。市場上有一些有趣的變化，建議您查看一下。';
 
       await this.sendSmartNotification(userId, {
         type: 'reminder',
@@ -214,7 +233,7 @@ class SmartNotificationService {
         message,
         priority: 'low',
         category: 'system',
-        data: { type: 'engagement_reminder' }
+        data: { type: 'engagement_reminder' },
       });
 
       logger.info('參與度提醒已發送', { userId });
@@ -224,11 +243,14 @@ class SmartNotificationService {
   }
 
   // 分析投資組合洞察
-  private async analyzePortfolioInsights(userId: string, behavior: UserBehavior): Promise<void> {
+  private async analyzePortfolioInsights(
+    userId: string,
+    behavior: UserBehavior
+  ): Promise<void> {
     try {
       const portfolio = await investmentService.getPortfolio();
       const portfolioValue = portfolio.data.totalValue;
-      const {totalProfitLoss} = portfolio.data;
+      const { totalProfitLoss } = portfolio.data;
 
       // 檢查投資組合表現
       if (totalProfitLoss > 0 && totalProfitLoss / portfolioValue > 0.1) {
@@ -238,21 +260,30 @@ class SmartNotificationService {
           message: `恭喜！您的投資組合獲利 ${totalProfitLoss.toFixed(2)} TWD，收益率 ${((totalProfitLoss / portfolioValue) * 100).toFixed(2)}%`,
           priority: 'medium',
           category: 'portfolio',
-          data: { profitLoss: totalProfitLoss, returnRate: (totalProfitLoss / portfolioValue) * 100 }
+          data: {
+            profitLoss: totalProfitLoss,
+            returnRate: (totalProfitLoss / portfolioValue) * 100,
+          },
         });
-      } else if (totalProfitLoss < 0 && Math.abs(totalProfitLoss) / portfolioValue > 0.05) {
+      } else if (
+        totalProfitLoss < 0 &&
+        Math.abs(totalProfitLoss) / portfolioValue > 0.05
+      ) {
         await this.sendSmartNotification(userId, {
           type: 'risk',
           title: '投資組合需要關注',
           message: `您的投資組合目前虧損 ${Math.abs(totalProfitLoss).toFixed(2)} TWD，建議重新評估投資策略`,
           priority: 'high',
           category: 'portfolio',
-          data: { profitLoss: totalProfitLoss, returnRate: (totalProfitLoss / portfolioValue) * 100 }
+          data: {
+            profitLoss: totalProfitLoss,
+            returnRate: (totalProfitLoss / portfolioValue) * 100,
+          },
         });
       }
 
       // 檢查投資多樣性
-      const {investments} = portfolio.data;
+      const { investments } = portfolio.data;
       if (investments.length < 3) {
         await this.sendSmartNotification(userId, {
           type: 'insight',
@@ -260,7 +291,7 @@ class SmartNotificationService {
           message: '您的投資組合較為集中，建議考慮增加更多卡片以分散風險',
           priority: 'medium',
           category: 'portfolio',
-          data: { investmentCount: investments.length }
+          data: { investmentCount: investments.length },
         });
       }
     } catch (error) {
@@ -269,14 +300,17 @@ class SmartNotificationService {
   }
 
   // 分析收藏卡片
-  private async analyzeFavoriteCards(userId: string, behavior: UserBehavior): Promise<void> {
+  private async analyzeFavoriteCards(
+    userId: string,
+    behavior: UserBehavior
+  ): Promise<void> {
     try {
       for (const cardId of behavior.favoriteCards.slice(0, 5)) {
         const marketData = await marketService.getMarketData(cardId);
         const cardName = await this.getCardName(cardId);
 
         // 檢查價格變化
-        const {change24h} = marketData.data;
+        const { change24h } = marketData.data;
         if (Math.abs(change24h) > 10) {
           const direction = change24h > 0 ? '上漲' : '下跌';
           await this.sendSmartNotification(userId, {
@@ -285,12 +319,12 @@ class SmartNotificationService {
             message: `您關注的 ${cardName} 在24小時內${direction}了 ${Math.abs(change24h).toFixed(2)}%`,
             priority: 'medium',
             category: 'market',
-            data: { cardId, cardName, change24h }
+            data: { cardId, cardName, change24h },
           });
         }
 
         // 檢查交易量異常
-        const {volume} = marketData.data;
+        const { volume } = marketData.data;
         if (volume > 10000) {
           await this.sendSmartNotification(userId, {
             type: 'insight',
@@ -298,7 +332,7 @@ class SmartNotificationService {
             message: `${cardName} 交易量異常增加，可能預示價格變動`,
             priority: 'medium',
             category: 'market',
-            data: { cardId, cardName, volume }
+            data: { cardId, cardName, volume },
           });
         }
       }
@@ -320,7 +354,7 @@ class SmartNotificationService {
 
       await cacheManager.cacheCardData(cardId, {
         name: cardName,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return cardName;
@@ -331,7 +365,10 @@ class SmartNotificationService {
   }
 
   // 發送智能通知
-  async sendSmartNotification(userId: string, notification: Omit<SmartNotification, 'id' | 'isRead' | 'createdAt'>): Promise<string> {
+  async sendSmartNotification(
+    userId: string,
+    notification: Omit<SmartNotification, 'id' | 'isRead' | 'createdAt'>
+  ): Promise<string> {
     try {
       const userBehavior = this.userBehaviors.get(userId);
       if (!userBehavior) {
@@ -340,12 +377,17 @@ class SmartNotificationService {
 
       // 檢查用戶通知偏好
       if (!this.shouldSendNotification(userBehavior, notification)) {
-        logger.debug('跳過通知發送（用戶偏好）', { userId, notificationType: notification.type });
+        logger.debug('跳過通知發送（用戶偏好）', {
+          userId,
+          notificationType: notification.type,
+        });
         return '';
       }
 
       // 檢查通知時間
-      if (!this.isOptimalNotificationTime(userBehavior, notification.priority)) {
+      if (
+        !this.isOptimalNotificationTime(userBehavior, notification.priority)
+      ) {
         // 延遲發送
         const scheduledTime = this.calculateOptimalTime(userBehavior);
         notification.scheduledTime = scheduledTime;
@@ -356,7 +398,7 @@ class SmartNotificationService {
         id: this.generateNotificationId(),
         ...notification,
         isRead: false,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // 發送通知
@@ -371,9 +413,9 @@ class SmartNotificationService {
               type: 'smart_notification',
               notificationId: smartNotification.id,
               category: notification.category,
-              ...notification.data
+              ...notification.data,
             },
-            priority: notification.priority === 'high' ? 'high' : 'default'
+            priority: notification.priority === 'high' ? 'high' : 'default',
           },
           { date: notification.scheduledTime }
         );
@@ -386,9 +428,9 @@ class SmartNotificationService {
             type: 'smart_notification',
             notificationId: smartNotification.id,
             category: notification.category,
-            ...notification.data
+            ...notification.data,
           },
-          priority: notification.priority === 'high' ? 'high' : 'default'
+          priority: notification.priority === 'high' ? 'high' : 'default',
         });
       }
 
@@ -399,7 +441,7 @@ class SmartNotificationService {
         userId,
         notificationId: smartNotification.id,
         type: notification.type,
-        category: notification.category
+        category: notification.category,
       });
 
       return smartNotification.id;
@@ -410,7 +452,10 @@ class SmartNotificationService {
   }
 
   // 判斷是否應該發送通知
-  private shouldSendNotification(behavior: UserBehavior, notification: SmartNotification): boolean {
+  private shouldSendNotification(
+    behavior: UserBehavior,
+    notification: SmartNotification
+  ): boolean {
     const preferences = behavior.notificationPreferences;
 
     switch (notification.category) {
@@ -428,10 +473,15 @@ class SmartNotificationService {
   }
 
   // 判斷是否是最佳通知時間
-  private isOptimalNotificationTime(behavior: UserBehavior, priority: 'low' | 'medium' | 'high'): boolean {
+  private isOptimalNotificationTime(
+    behavior: UserBehavior,
+    priority: 'low' | 'medium' | 'high'
+  ): boolean {
     const now = new Date();
     const currentHour = now.getHours();
-    const preferredHour = parseInt(behavior.preferredNotificationTime.split(':')[0]);
+    const preferredHour = parseInt(
+      behavior.preferredNotificationTime.split(':')[0]
+    );
 
     // 高優先級通知立即發送
     if (priority === 'high') {
@@ -446,7 +496,9 @@ class SmartNotificationService {
   // 計算最佳通知時間
   private calculateOptimalTime(behavior: UserBehavior): Date {
     const now = new Date();
-    const [preferredHour, preferredMinute] = behavior.preferredNotificationTime.split(':').map(Number);
+    const [preferredHour, preferredMinute] = behavior.preferredNotificationTime
+      .split(':')
+      .map(Number);
 
     const optimalTime = new Date(now);
     optimalTime.setHours(preferredHour, preferredMinute, 0, 0);
@@ -465,17 +517,27 @@ class SmartNotificationService {
   }
 
   // 更新統計
-  private updateAnalytics(category: string, action: 'sent' | 'read' | 'clicked'): void {
+  private updateAnalytics(
+    category: string,
+    action: 'sent' | 'read' | 'clicked'
+  ): void {
     if (!this.analytics.categoryPerformance[category]) {
-      this.analytics.categoryPerformance[category] = { sent: 0, read: 0, clicked: 0 };
+      this.analytics.categoryPerformance[category] = {
+        sent: 0,
+        read: 0,
+        clicked: 0,
+      };
     }
 
     this.analytics.categoryPerformance[category][action]++;
-    this.analytics[`total${action.charAt(0).toUpperCase() + action.slice(1)}`]++;
+    this.analytics[
+      `total${action.charAt(0).toUpperCase() + action.slice(1)}`
+    ]++;
 
     // 計算用戶參與度
     if (this.analytics.totalSent > 0) {
-      this.analytics.userEngagement = this.analytics.totalRead / this.analytics.totalSent;
+      this.analytics.userEngagement =
+        this.analytics.totalRead / this.analytics.totalSent;
     }
   }
 
@@ -520,7 +582,10 @@ class SmartNotificationService {
   }
 
   // 更新用戶行為
-  async updateUserBehavior(userId: string, updates: Partial<UserBehavior>): Promise<void> {
+  async updateUserBehavior(
+    userId: string,
+    updates: Partial<UserBehavior>
+  ): Promise<void> {
     try {
       const currentBehavior = this.userBehaviors.get(userId);
       if (currentBehavior) {
@@ -546,4 +611,5 @@ class SmartNotificationService {
   }
 }
 
+export { SmartNotificationService };
 export const smartNotificationService = new SmartNotificationService();

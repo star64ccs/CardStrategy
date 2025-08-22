@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import { apiService } from '@/services/apiService';
@@ -17,13 +18,13 @@ const server = setupServer(
           user: {
             id: '1',
             email: 'test@example.com',
-            name: 'Test User'
+            name: 'Test User',
           },
           tokens: {
             accessToken: 'mock-access-token',
-            refreshToken: 'mock-refresh-token'
-          }
-        }
+            refreshToken: 'mock-refresh-token',
+          },
+        },
       })
     );
   }),
@@ -37,13 +38,13 @@ const server = setupServer(
           user: {
             id: '2',
             email: 'new@example.com',
-            name: 'New User'
+            name: 'New User',
           },
           tokens: {
             accessToken: 'mock-access-token',
-            refreshToken: 'mock-refresh-token'
-          }
-        }
+            refreshToken: 'mock-refresh-token',
+          },
+        },
       })
     );
   }),
@@ -64,25 +65,25 @@ const server = setupServer(
               name: 'Blue-Eyes White Dragon',
               type: 'Monster',
               rarity: 'Ultra Rare',
-              price: 100.00,
-              image: 'blue-eyes.jpg'
+              price: 100.0,
+              image: 'blue-eyes.jpg',
             },
             {
               id: '2',
               name: 'Dark Magician',
               type: 'Monster',
               rarity: 'Ultra Rare',
-              price: 50.00,
-              image: 'dark-magician.jpg'
-            }
+              price: 50.0,
+              image: 'dark-magician.jpg',
+            },
           ],
           pagination: {
             page: parseInt(page),
             limit: parseInt(limit),
             total: 2,
-            totalPages: 1
-          }
-        }
+            totalPages: 1,
+          },
+        },
       })
     );
   }),
@@ -99,15 +100,16 @@ const server = setupServer(
           name: 'Blue-Eyes White Dragon',
           type: 'Monster',
           rarity: 'Ultra Rare',
-          price: 100.00,
+          price: 100.0,
           image: 'blue-eyes.jpg',
-          description: 'This legendary dragon is a powerful engine of destruction.',
+          description:
+            'This legendary dragon is a powerful engine of destruction.',
           attributes: {
             level: 8,
             attack: 3000,
-            defense: 2500
-          }
-        }
+            defense: 2500,
+          },
+        },
       })
     );
   }),
@@ -124,14 +126,14 @@ const server = setupServer(
           averagePrice: 50,
           trendingCards: [
             { id: '1', name: '熱門卡片1', priceChange: 15.5 },
-            { id: '2', name: '熱門卡片2', priceChange: -8.2 }
+            { id: '2', name: '熱門卡片2', priceChange: -8.2 },
           ],
           marketTrend: {
             daily: [{ date: '2024-01-01', value: 50000 }],
             weekly: [{ week: '2024-W01', value: 350000 }],
-            monthly: [{ month: '2024-01', value: 1500000 }]
-          }
-        }
+            monthly: [{ month: '2024-01', value: 1500000 }],
+          },
+        },
       })
     );
   }),
@@ -149,12 +151,12 @@ const server = setupServer(
           prices: [
             { date: '2024-01-01', price: 100, platform: 'ebay' },
             { date: '2024-01-02', price: 105, platform: 'ebay' },
-            { date: '2024-01-03', price: 98, platform: 'ebay' }
+            { date: '2024-01-03', price: 98, platform: 'ebay' },
           ],
           averagePrice: 101,
           priceChange: 5.0,
-          volatility: 3.2
-        }
+          volatility: 3.2,
+        },
       })
     );
   }),
@@ -166,7 +168,7 @@ const server = setupServer(
       ctx.json({
         success: false,
         error: 'Internal Server Error',
-        message: '測試錯誤'
+        message: '測試錯誤',
       })
     );
   }),
@@ -177,7 +179,7 @@ const server = setupServer(
       ctx.json({
         success: false,
         error: 'Not Found',
-        message: '資源不存在'
+        message: '資源不存在',
       })
     );
   })
@@ -197,7 +199,7 @@ describe('API Integration Tests', () => {
     it('應該成功登錄用戶', async () => {
       const loginData = {
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
       };
 
       const result = await authService.login(loginData);
@@ -213,7 +215,7 @@ describe('API Integration Tests', () => {
       const registerData = {
         email: 'new@example.com',
         password: 'password123',
-        name: 'New User'
+        name: 'New User',
       };
 
       const result = await authService.register(registerData);
@@ -233,7 +235,7 @@ describe('API Integration Tests', () => {
             ctx.json({
               success: false,
               error: 'Unauthorized',
-              message: '登錄失敗'
+              message: '登錄失敗',
             })
           );
         })
@@ -241,7 +243,7 @@ describe('API Integration Tests', () => {
 
       const loginData = {
         email: 'wrong@example.com',
-        password: 'wrongpassword'
+        password: 'wrongpassword',
       };
 
       await expect(authService.login(loginData)).rejects.toThrow('登錄失敗');
@@ -266,7 +268,7 @@ describe('API Integration Tests', () => {
       expect(result.success).toBe(true);
       expect(result.data.id).toBe('1');
       expect(result.data.name).toBe('Blue-Eyes White Dragon');
-      expect(result.data.price).toBe(100.00);
+      expect(result.data.price).toBe(100.0);
     });
 
     it('應該處理卡片不存在錯誤', async () => {
@@ -278,13 +280,15 @@ describe('API Integration Tests', () => {
             ctx.json({
               success: false,
               error: 'Not Found',
-              message: '卡片不存在'
+              message: '卡片不存在',
             })
           );
         })
       );
 
-      await expect(cardService.getCardById('999')).rejects.toThrow('卡片不存在');
+      await expect(cardService.getCardById('999')).rejects.toThrow(
+        '卡片不存在'
+      );
     });
   });
 
@@ -318,13 +322,15 @@ describe('API Integration Tests', () => {
             ctx.json({
               success: false,
               error: 'Internal Server Error',
-              message: '獲取市場數據失敗'
+              message: '獲取市場數據失敗',
             })
           );
         })
       );
 
-      await expect(marketService.getMarketData()).rejects.toThrow('獲取市場數據失敗');
+      await expect(marketService.getMarketData()).rejects.toThrow(
+        '獲取市場數據失敗'
+      );
     });
   });
 
@@ -339,7 +345,7 @@ describe('API Integration Tests', () => {
     it('應該正確處理 POST 請求', async () => {
       const result = await apiService.post('/auth/login', {
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
       });
 
       expect(result.success).toBe(true);
@@ -354,7 +360,7 @@ describe('API Integration Tests', () => {
             ctx.status(200),
             ctx.json({
               success: true,
-              data: { message: '更新成功' }
+              data: { message: '更新成功' },
             })
           );
         })
@@ -374,7 +380,7 @@ describe('API Integration Tests', () => {
             ctx.status(200),
             ctx.json({
               success: true,
-              data: { message: '刪除成功' }
+              data: { message: '刪除成功' },
             })
           );
         })
@@ -438,13 +444,15 @@ describe('API Integration Tests', () => {
             ctx.json({
               success: false,
               error: 'Bad Request',
-              message: '請求參數錯誤'
+              message: '請求參數錯誤',
             })
           );
         })
       );
 
-      await expect(apiService.get('/bad-request')).rejects.toThrow('請求參數錯誤');
+      await expect(apiService.get('/bad-request')).rejects.toThrow(
+        '請求參數錯誤'
+      );
     });
 
     it('應該處理 401 錯誤', async () => {
@@ -455,13 +463,15 @@ describe('API Integration Tests', () => {
             ctx.json({
               success: false,
               error: 'Unauthorized',
-              message: '未授權訪問'
+              message: '未授權訪問',
             })
           );
         })
       );
 
-      await expect(apiService.get('/unauthorized')).rejects.toThrow('未授權訪問');
+      await expect(apiService.get('/unauthorized')).rejects.toThrow(
+        '未授權訪問'
+      );
     });
 
     it('應該處理 403 錯誤', async () => {
@@ -472,7 +482,7 @@ describe('API Integration Tests', () => {
             ctx.json({
               success: false,
               error: 'Forbidden',
-              message: '禁止訪問'
+              message: '禁止訪問',
             })
           );
         })
@@ -496,8 +506,8 @@ describe('API Integration Tests', () => {
               success: true,
               data: {
                 contentType,
-                authorization
-              }
+                authorization,
+              },
             })
           );
         })
@@ -531,7 +541,7 @@ describe('API Integration Tests', () => {
               ctx.json({
                 success: false,
                 error: 'Internal Server Error',
-                message: '重試測試'
+                message: '重試測試',
               })
             );
           }
@@ -539,7 +549,7 @@ describe('API Integration Tests', () => {
             ctx.status(200),
             ctx.json({
               success: true,
-              data: { message: '重試成功' }
+              data: { message: '重試成功' },
             })
           );
         })

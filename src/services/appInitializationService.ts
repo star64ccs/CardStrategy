@@ -23,7 +23,7 @@ class AppInitializationService {
     smartNotifications: false,
     networkMonitoring: false,
     caching: false,
-    offlineSync: false
+    offlineSync: false,
   };
 
   private isInitialized = false;
@@ -45,7 +45,7 @@ class AppInitializationService {
         this.initializeSmartNotifications(),
         this.initializeNetworkMonitoring(),
         this.initializeCaching(),
-        this.initializeOfflineSync()
+        this.initializeOfflineSync(),
       ];
 
       await Promise.allSettled(initPromises);
@@ -136,7 +136,9 @@ class AppInitializationService {
   }
 
   // 重新初始化特定服務
-  async reinitializeService(serviceName: keyof InitializationStatus): Promise<void> {
+  async reinitializeService(
+    serviceName: keyof InitializationStatus
+  ): Promise<void> {
     try {
       logger.info(`重新初始化服務: ${serviceName}`);
 
@@ -186,7 +188,7 @@ class AppInitializationService {
         smartNotifications: false,
         networkMonitoring: false,
         caching: false,
-        offlineSync: false
+        offlineSync: false,
       };
 
       this.isInitialized = false;
@@ -202,14 +204,18 @@ class AppInitializationService {
     status: 'healthy' | 'degraded' | 'unhealthy';
     services: Record<string, { status: 'up' | 'down'; message?: string }>;
   }> {
-    const services: Record<string, { status: 'up' | 'down'; message?: string }> = {};
+    const services: Record<
+      string,
+      { status: 'up' | 'down'; message?: string }
+    > = {};
 
     // 檢查通知服務
     try {
-      const notificationStatus = await notificationService.getPermissionStatus();
+      const notificationStatus =
+        await notificationService.getPermissionStatus();
       services.notifications = {
         status: notificationStatus.granted ? 'up' : 'down',
-        message: notificationStatus.granted ? undefined : '通知權限未授予'
+        message: notificationStatus.granted ? undefined : '通知權限未授予',
       };
     } catch (error) {
       services.notifications = { status: 'down', message: '通知服務檢查失敗' };
@@ -220,16 +226,19 @@ class AppInitializationService {
       const priceMonitorStats = priceMonitorService.getStatistics();
       services.priceMonitoring = {
         status: priceMonitorStats.activeAlerts >= 0 ? 'up' : 'down',
-        message: `活躍提醒: ${priceMonitorStats.activeAlerts}`
+        message: `活躍提醒: ${priceMonitorStats.activeAlerts}`,
       };
     } catch (error) {
-      services.priceMonitoring = { status: 'down', message: '價格監控服務檢查失敗' };
+      services.priceMonitoring = {
+        status: 'down',
+        message: '價格監控服務檢查失敗',
+      };
     }
 
     // 檢查網絡狀態
     services.network = {
       status: networkMonitor.isOnline() ? 'up' : 'down',
-      message: networkMonitor.isOnline() ? '網絡連接正常' : '網絡離線'
+      message: networkMonitor.isOnline() ? '網絡連接正常' : '網絡離線',
     };
 
     // 檢查緩存狀態
@@ -237,7 +246,7 @@ class AppInitializationService {
       const cacheStats = await cacheManager.getCacheStats();
       services.caching = {
         status: 'up',
-        message: `緩存項目: ${cacheStats.totalItems}`
+        message: `緩存項目: ${cacheStats.totalItems}`,
       };
     } catch (error) {
       services.caching = { status: 'down', message: '緩存服務檢查失敗' };
@@ -248,14 +257,19 @@ class AppInitializationService {
       const syncStatus = await offlineSyncManager.getSyncStatus();
       services.offlineSync = {
         status: syncStatus.isOnline ? 'up' : 'down',
-        message: `待同步操作: ${syncStatus.pendingOperations}`
+        message: `待同步操作: ${syncStatus.pendingOperations}`,
       };
     } catch (error) {
-      services.offlineSync = { status: 'down', message: '離線同步服務檢查失敗' };
+      services.offlineSync = {
+        status: 'down',
+        message: '離線同步服務檢查失敗',
+      };
     }
 
     // 計算整體健康狀態
-    const upServices = Object.values(services).filter(s => s.status === 'up').length;
+    const upServices = Object.values(services).filter(
+      (s) => s.status === 'up'
+    ).length;
     const totalServices = Object.keys(services).length;
     const healthPercentage = upServices / totalServices;
 
@@ -272,4 +286,5 @@ class AppInitializationService {
   }
 }
 
+export { AppInitializationService };
 export const appInitializationService = new AppInitializationService();

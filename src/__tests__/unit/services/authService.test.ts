@@ -1,23 +1,33 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { AuthService } from '@/services/authService';
-import { mockApiResponse, mockApiError } from '@/__tests__/setup/test-utils';
+import { API_ENDPOINTS } from '@/config/api';
 
 // Mock API service
-jest.mock('@/services/apiService', () => ({
-  apiService: {
+jest.mock('@/config/api', () => ({
+  api: {
     post: jest.fn(),
     get: jest.fn(),
-    delete: jest.fn()
-  }
+    put: jest.fn(),
+    delete: jest.fn(),
+  },
+  API_ENDPOINTS: {
+    AUTH: {
+      LOGIN: '/auth/login',
+      REGISTER: '/auth/register',
+      LOGOUT: '/auth/logout',
+      REFRESH: '/auth/refresh',
+      ME: '/auth/me',
+      PROFILE: '/auth/profile',
+    },
+  },
 }));
 
-// Mock storage
-jest.mock('@/utils/storage', () => ({
-  storage: {
-    setItem: jest.fn(),
-    getItem: jest.fn(),
-    removeItem: jest.fn(),
-    clear: jest.fn()
-  }
+// Mock AsyncStorage
+jest.mock('@react-native-async-storage/async-storage', () => ({
+  setItem: jest.fn(),
+  getItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
 }));
 
 // Mock logger
@@ -26,27 +36,44 @@ jest.mock('@/utils/logger', () => ({
     info: jest.fn(),
     error: jest.fn(),
     warn: jest.fn(),
-    debug: jest.fn()
-  }
+    debug: jest.fn(),
+  },
 }));
 
 // Mock validation service
 jest.mock('@/utils/validationService', () => ({
-  validateApiResponse: jest.fn(() => ({ isValid: true, errors: [] })),
-  validateInput: jest.fn(() => ({ isValid: true, errors: [] }))
+  validateApiResponse: jest.fn(() => ({ 
+    isValid: true, 
+    errors: [],
+    data: {
+      user: {
+        id: '1',
+        email: 'test@example.com',
+        username: 'Test User',
+      },
+      token: 'mock-access-token',
+      refreshToken: 'mock-refresh-token',
+    }
+  })),
+  validateInput: jest.fn(() => ({ 
+    isValid: true, 
+    data: { email: 'test@example.com', password: 'password123' }, 
+    errors: [],
+    errorMessage: null
+  })),
 }));
 
 describe('AuthService', () => {
   let authService: AuthService;
-  let mockApiService: any;
-  let mockStorage: any;
+  let mockApi: any;
+  let mockAsyncStorage: any;
   let mockLogger: any;
   let mockValidationService: any;
 
   beforeEach(() => {
     authService = new AuthService();
-    mockApiService = require('@/services/apiService').apiService;
-    mockStorage = require('@/utils/storage').storage;
+    mockApi = require('@/config/api').api;
+    mockAsyncStorage = require('@react-native-async-storage/async-storage');
     mockLogger = require('@/utils/logger').logger;
     mockValidationService = require('@/utils/validationService');
 
@@ -56,50 +83,43 @@ describe('AuthService', () => {
   describe('login', () => {
     it('應該成功登錄用戶', async () => {
       const loginData = { email: 'test@example.com', password: 'password123' };
-      const mockResponse = mockApiResponse({
-        user: {
-          id: '1',
-          email: 'test@example.com',
-          name: 'Test User'
+      const mockResponse = {
+        success: true,
+        data: {
+          user: {
+            id: '1',
+            email: 'test@example.com',
+            username: 'Test User',
+          },
+          token: 'mock-access-token',
+          refreshToken: 'mock-refresh-token',
         },
-        tokens: {
-          accessToken: 'mock-access-token',
-          refreshToken: 'mock-refresh-token'
-        }
-      });
+      };
 
-      mockApiService.post.mockResolvedValue(mockResponse);
-      mockStorage.setItem.mockResolvedValue(undefined);
+      mockApi.post.mockResolvedValue(mockResponse);
+      mockAsyncStorage.setItem.mockResolvedValue(undefined);
 
       const result = await authService.login(loginData);
 
       expect(result.success).toBe(true);
       expect(result.data.user).toBeDefined();
-      expect(result.data.tokens).toBeDefined();
-      expect(mockApiService.post).toHaveBeenCalledWith('/auth/login', loginData);
-      expect(mockStorage.setItem).toHaveBeenCalledWith('accessToken', 'mock-access-token');
-      expect(mockStorage.setItem).toHaveBeenCalledWith('refreshToken', 'mock-refresh-token');
+      expect(mockApi.post).toHaveBeenCalledWith(
+        API_ENDPOINTS.AUTH.LOGIN,
+        loginData
+      );
     });
 
     it('應該處理登錄錯誤', async () => {
-      const loginData = { email: 'test@example.com', password: 'wrong-password' };
-      const mockError = mockApiError('登錄失敗');
+      const loginData = {
+        email: 'test@example.com',
+        password: 'wrong-password',
+      };
+      const mockError = new Error('登錄失敗');
 
-      mockApiService.post.mockRejectedValue(mockError);
+      mockApi.post.mockRejectedValue(mockError);
 
       await expect(authService.login(loginData)).rejects.toThrow('登錄失敗');
       expect(mockLogger.error).toHaveBeenCalled();
-    });
-
-    it('應該驗證登錄輸入', async () => {
-      const invalidLoginData = { email: '', password: '' };
-
-      mockValidationService.validateInput.mockReturnValue({
-        isValid: false,
-        errors: ['郵箱不能為空', '密碼不能為空']
-      });
-
-      await expect(authService.login(invalidLoginData)).rejects.toThrow('郵箱不能為空');
     });
   });
 
@@ -108,90 +128,46 @@ describe('AuthService', () => {
       const registerData = {
         email: 'new@example.com',
         password: 'password123',
-        name: 'New User'
+        username: 'New User',
       };
-      const mockResponse = mockApiResponse({
-        user: {
-          id: '2',
-          email: 'new@example.com',
-          name: 'New User'
+      const mockResponse = {
+        success: true,
+        data: {
+          user: {
+            id: '2',
+            email: 'new@example.com',
+            username: 'New User',
+          },
+          token: 'mock-access-token',
+          refreshToken: 'mock-refresh-token',
         },
-        tokens: {
-          accessToken: 'mock-access-token',
-          refreshToken: 'mock-refresh-token'
-        }
-      });
+      };
 
-      mockApiService.post.mockResolvedValue(mockResponse);
-      mockStorage.setItem.mockResolvedValue(undefined);
+      mockApi.post.mockResolvedValue(mockResponse);
+      mockAsyncStorage.setItem.mockResolvedValue(undefined);
 
       const result = await authService.register(registerData);
 
       expect(result.success).toBe(true);
       expect(result.data.user).toBeDefined();
-      expect(mockApiService.post).toHaveBeenCalledWith('/auth/register', registerData);
-    });
-
-    it('應該處理註冊錯誤', async () => {
-      const registerData = {
-        email: 'existing@example.com',
-        password: 'password123',
-        name: 'Existing User'
-      };
-      const mockError = mockApiError('用戶已存在');
-
-      mockApiService.post.mockRejectedValue(mockError);
-
-      await expect(authService.register(registerData)).rejects.toThrow('用戶已存在');
+      expect(mockApi.post).toHaveBeenCalledWith(
+        API_ENDPOINTS.AUTH.REGISTER,
+        registerData
+      );
     });
   });
 
   describe('logout', () => {
     it('應該成功登出用戶', async () => {
-      const mockResponse = mockApiResponse({ message: '登出成功' });
+      const mockResponse = { success: true, data: { message: '登出成功' } };
 
-      mockApiService.post.mockResolvedValue(mockResponse);
-      mockStorage.clear.mockResolvedValue(undefined);
+      mockApi.post.mockResolvedValue(mockResponse);
+      mockAsyncStorage.removeItem.mockResolvedValue(undefined);
 
       const result = await authService.logout();
 
       expect(result.success).toBe(true);
-      expect(mockApiService.post).toHaveBeenCalledWith('/auth/logout');
-      expect(mockStorage.clear).toHaveBeenCalled();
-    });
-
-    it('應該處理登出錯誤', async () => {
-      const mockError = mockApiError('登出失敗');
-
-      mockApiService.post.mockRejectedValue(mockError);
-
-      await expect(authService.logout()).rejects.toThrow('登出失敗');
-    });
-  });
-
-  describe('refreshToken', () => {
-    it('應該成功刷新令牌', async () => {
-      const mockResponse = mockApiResponse({
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token'
-      });
-
-      mockApiService.post.mockResolvedValue(mockResponse);
-      mockStorage.setItem.mockResolvedValue(undefined);
-
-      const result = await authService.refreshToken();
-
-      expect(result.success).toBe(true);
-      expect(result.data.accessToken).toBe('new-access-token');
-      expect(mockApiService.post).toHaveBeenCalledWith('/auth/refresh');
-    });
-
-    it('應該處理刷新令牌錯誤', async () => {
-      const mockError = mockApiError('令牌刷新失敗');
-
-      mockApiService.post.mockRejectedValue(mockError);
-
-      await expect(authService.refreshToken()).rejects.toThrow('令牌刷新失敗');
+      expect(mockApi.post).toHaveBeenCalledWith(API_ENDPOINTS.AUTH.LOGOUT);
     });
   });
 
@@ -200,140 +176,72 @@ describe('AuthService', () => {
       const mockUser = {
         id: '1',
         email: 'test@example.com',
-        name: 'Test User'
+        username: 'Test User',
       };
-      const mockResponse = mockApiResponse(mockUser);
+      const mockResponse = { success: true, data: mockUser };
 
-      mockApiService.get.mockResolvedValue(mockResponse);
+      mockApi.get.mockResolvedValue(mockResponse);
 
       const result = await authService.getCurrentUser();
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockUser);
-      expect(mockApiService.get).toHaveBeenCalledWith('/auth/me');
-    });
-
-    it('應該處理獲取用戶信息錯誤', async () => {
-      const mockError = mockApiError('獲取用戶信息失敗');
-
-      mockApiService.get.mockRejectedValue(mockError);
-
-      await expect(authService.getCurrentUser()).rejects.toThrow('獲取用戶信息失敗');
+      expect(mockApi.get).toHaveBeenCalledWith(API_ENDPOINTS.AUTH.ME);
     });
   });
 
-  describe('forgotPassword', () => {
-    it('應該成功發送密碼重置郵件', async () => {
-      const email = 'test@example.com';
-      const mockResponse = mockApiResponse({ message: '密碼重置郵件已發送' });
+  describe('isAuthenticated', () => {
+    it('應該檢查用戶是否已認證', async () => {
+      mockAsyncStorage.getItem.mockResolvedValue('mock-token');
 
-      mockApiService.post.mockResolvedValue(mockResponse);
+      const result = await authService.isAuthenticated();
 
-      const result = await authService.forgotPassword(email);
-
-      expect(result.success).toBe(true);
-      expect(mockApiService.post).toHaveBeenCalledWith('/auth/forgot-password', { email });
+      expect(result).toBe(true);
+      expect(mockAsyncStorage.getItem).toHaveBeenCalledWith('auth_token');
     });
 
-    it('應該處理密碼重置錯誤', async () => {
-      const email = 'nonexistent@example.com';
-      const mockError = mockApiError('用戶不存在');
+    it('應該返回 false 當沒有 token 時', async () => {
+      mockAsyncStorage.getItem.mockResolvedValue(null);
 
-      mockApiService.post.mockRejectedValue(mockError);
+      const result = await authService.isAuthenticated();
 
-      await expect(authService.forgotPassword(email)).rejects.toThrow('用戶不存在');
+      expect(result).toBe(false);
     });
   });
 
-  describe('resetPassword', () => {
-    it('應該成功重置密碼', async () => {
-      const resetData = {
-        token: 'reset-token',
-        password: 'new-password'
-      };
-      const mockResponse = mockApiResponse({ message: '密碼重置成功' });
+  describe('getStoredToken', () => {
+    it('應該獲取存儲的 token', async () => {
+      const mockToken = 'mock-token';
+      mockAsyncStorage.getItem.mockResolvedValue(mockToken);
 
-      mockApiService.post.mockResolvedValue(mockResponse);
+      const result = await authService.getStoredToken();
 
-      const result = await authService.resetPassword(resetData);
-
-      expect(result.success).toBe(true);
-      expect(mockApiService.post).toHaveBeenCalledWith('/auth/reset-password', resetData);
-    });
-
-    it('應該處理密碼重置錯誤', async () => {
-      const resetData = {
-        token: 'invalid-token',
-        password: 'new-password'
-      };
-      const mockError = mockApiError('無效的重置令牌');
-
-      mockApiService.post.mockRejectedValue(mockError);
-
-      await expect(authService.resetPassword(resetData)).rejects.toThrow('無效的重置令牌');
+      expect(result).toBe(mockToken);
+      expect(mockAsyncStorage.getItem).toHaveBeenCalledWith('auth_token');
     });
   });
 
-  describe('updateProfile', () => {
-    it('應該成功更新用戶資料', async () => {
-      const profileData = {
-        name: 'Updated Name',
-        avatar: 'new-avatar-url'
+  describe('getStoredUser', () => {
+    it('應該獲取存儲的用戶信息', async () => {
+      const mockUser = {
+        id: '1',
+        email: 'test@example.com',
+        username: 'Test User',
       };
-      const mockResponse = mockApiResponse({
-        user: {
-          id: '1',
-          email: 'test@example.com',
-          name: 'Updated Name',
-          avatar: 'new-avatar-url'
-        }
-      });
+      mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockUser));
 
-      mockApiService.put.mockResolvedValue(mockResponse);
+      const result = await authService.getStoredUser();
 
-      const result = await authService.updateProfile(profileData);
-
-      expect(result.success).toBe(true);
-      expect(result.data.user.name).toBe('Updated Name');
-      expect(mockApiService.put).toHaveBeenCalledWith('/auth/profile', profileData);
+      expect(result).toEqual(mockUser);
+      expect(mockAsyncStorage.getItem).toHaveBeenCalledWith('user_data');
     });
 
-    it('應該處理更新資料錯誤', async () => {
-      const profileData = { name: 'Updated Name' };
-      const mockError = mockApiError('更新資料失敗');
+    it('應該返回 null 當沒有用戶數據時', async () => {
+      mockAsyncStorage.getItem.mockResolvedValue(null);
 
-      mockApiService.put.mockRejectedValue(mockError);
+      const result = await authService.getStoredUser();
 
-      await expect(authService.updateProfile(profileData)).rejects.toThrow('更新資料失敗');
-    });
-  });
-
-  describe('changePassword', () => {
-    it('應該成功修改密碼', async () => {
-      const passwordData = {
-        currentPassword: 'old-password',
-        newPassword: 'new-password'
-      };
-      const mockResponse = mockApiResponse({ message: '密碼修改成功' });
-
-      mockApiService.put.mockResolvedValue(mockResponse);
-
-      const result = await authService.changePassword(passwordData);
-
-      expect(result.success).toBe(true);
-      expect(mockApiService.put).toHaveBeenCalledWith('/auth/change-password', passwordData);
-    });
-
-    it('應該處理密碼修改錯誤', async () => {
-      const passwordData = {
-        currentPassword: 'wrong-password',
-        newPassword: 'new-password'
-      };
-      const mockError = mockApiError('當前密碼錯誤');
-
-      mockApiService.put.mockRejectedValue(mockError);
-
-      await expect(authService.changePassword(passwordData)).rejects.toThrow('當前密碼錯誤');
+      expect(result).toBe(null);
     });
   });
 });

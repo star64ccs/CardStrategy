@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Share,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch } from 'react-redux';
@@ -22,7 +22,7 @@ import {
   deleteScanRecord,
   toggleFavorite,
   addNote,
-  addTags
+  addTags,
 } from '@/store/slices/scanHistorySlice';
 import { formatDate, formatTime, formatCurrency } from '@/utils/formatters';
 import { logger } from '@/utils/logger';
@@ -38,7 +38,7 @@ interface ScanHistoryDetailProps {
 export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
   record,
   onClose,
-  onEdit
+  onEdit,
 }) => {
   const dispatch = useDispatch();
   const [isEditing, setIsEditing] = useState(false);
@@ -46,21 +46,17 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
   const [newTag, setNewTag] = useState('');
 
   const handleDelete = () => {
-    Alert.alert(
-      '確認刪除',
-      '確定要刪除這條掃描記錄嗎？此操作無法撤銷。',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '刪除',
-          style: 'destructive',
-          onPress: () => {
-            dispatch(deleteScanRecord(record.id));
-            onClose?.();
-          }
-        }
-      ]
-    );
+    Alert.alert('確認刪除', '確定要刪除這條掃描記錄嗎？此操作無法撤銷。', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '刪除',
+        style: 'destructive',
+        onPress: () => {
+          dispatch(deleteScanRecord(record.id));
+          onClose?.();
+        },
+      },
+    ]);
   };
 
   const handleShare = async () => {
@@ -68,7 +64,7 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
       const shareContent = {
         title: `掃描記錄 - ${record.cardName || '未知卡片'}`,
         message: `掃描類型: ${getScanTypeLabel(record.scanType)}\n掃描時間: ${formatDate(record.scanDate)}\n信心度: ${Math.round((record.scanResult.confidence || 0) * 100)}%\n處理時間: ${record.processingTime.toFixed(1)}秒`,
-        url: record.imageUri
+        url: record.imageUri,
       };
 
       await Share.share(shareContent);
@@ -90,13 +86,15 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
 
   const handleAddTag = () => {
     if (newTag.trim() && !record.tags.includes(newTag.trim())) {
-      dispatch(addTags({ recordId: record.id, tags: [...record.tags, newTag.trim()] }));
+      dispatch(
+        addTags({ recordId: record.id, tags: [...record.tags, newTag.trim()] })
+      );
       setNewTag('');
     }
   };
 
   const handleRemoveTag = (tagToRemove: string) => {
-    const updatedTags = record.tags.filter(tag => tag !== tagToRemove);
+    const updatedTags = record.tags.filter((tag) => tag !== tagToRemove);
     dispatch(addTags({ recordId: record.id, tags: updatedTags }));
   };
 
@@ -105,7 +103,7 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
       recognition: 'eye',
       condition: 'analytics',
       authenticity: 'shield-checkmark',
-      batch: 'layers'
+      batch: 'layers',
     };
     return icons[scanType as keyof typeof icons] || 'scan';
   };
@@ -115,9 +113,11 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
       recognition: theme.colors.primary,
       condition: theme.colors.warning,
       authenticity: theme.colors.success,
-      batch: theme.colors.info
+      batch: theme.colors.info,
     };
-    return colors[scanType as keyof typeof colors] || theme.colors.textSecondary;
+    return (
+      colors[scanType as keyof typeof colors] || theme.colors.textSecondary
+    );
   };
 
   const getScanTypeLabel = (scanType: string) => {
@@ -125,7 +125,7 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
       recognition: '卡片識別',
       condition: '條件分析',
       authenticity: '真偽驗證',
-      batch: '批量掃描'
+      batch: '批量掃描',
     };
     return labels[scanType as keyof typeof labels] || scanType;
   };
@@ -148,22 +148,37 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
         {record.scanResult.recognizedCard && (
           <View style={styles.resultItem}>
             <Text style={styles.resultLabel}>識別卡片:</Text>
-            <Text style={styles.resultValue}>{record.scanResult.recognizedCard.name}</Text>
+            <Text style={styles.resultValue}>
+              {record.scanResult.recognizedCard.name}
+            </Text>
           </View>
         )}
 
         {record.scanResult.conditionAnalysis && (
           <View style={styles.resultItem}>
             <Text style={styles.resultLabel}>條件評級:</Text>
-            <Text style={styles.resultValue}>{record.scanResult.conditionAnalysis.overallGrade}</Text>
+            <Text style={styles.resultValue}>
+              {record.scanResult.conditionAnalysis.overallGrade}
+            </Text>
           </View>
         )}
 
         {record.scanResult.authenticityCheck && (
           <View style={styles.resultItem}>
             <Text style={styles.resultLabel}>真偽驗證:</Text>
-            <Text style={[styles.resultValue, { color: record.scanResult.authenticityCheck.isAuthentic ? theme.colors.success : theme.colors.error }]}>
-              {record.scanResult.authenticityCheck.isAuthentic ? '真品' : '疑似假貨'}
+            <Text
+              style={[
+                styles.resultValue,
+                {
+                  color: record.scanResult.authenticityCheck.isAuthentic
+                    ? theme.colors.success
+                    : theme.colors.error,
+                },
+              ]}
+            >
+              {record.scanResult.authenticityCheck.isAuthentic
+                ? '真品'
+                : '疑似假貨'}
             </Text>
           </View>
         )}
@@ -193,7 +208,9 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
 
         <View style={styles.metadataItem}>
           <Text style={styles.metadataLabel}>圖片質量</Text>
-          <Text style={styles.metadataValue}>{record.metadata.imageQuality}</Text>
+          <Text style={styles.metadataValue}>
+            {record.metadata.imageQuality}
+          </Text>
         </View>
       </View>
 
@@ -226,7 +243,12 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
                 size={24}
                 color={getScanTypeColor(record.scanType)}
               />
-              <Text style={[styles.scanType, { color: getScanTypeColor(record.scanType) }]}>
+              <Text
+                style={[
+                  styles.scanType,
+                  { color: getScanTypeColor(record.scanType) },
+                ]}
+              >
                 {getScanTypeLabel(record.scanType)}
               </Text>
             </View>
@@ -242,20 +264,29 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
               <Ionicons
                 name={record.isFavorite ? 'heart' : 'heart-outline'}
                 size={24}
-                color={record.isFavorite ? theme.colors.error : theme.colors.textSecondary}
+                color={
+                  record.isFavorite
+                    ? theme.colors.error
+                    : theme.colors.textSecondary
+                }
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.actionButton}
-              onPress={handleShare}
-            >
-              <Ionicons name="share-outline" size={24} color={theme.colors.textSecondary} />
+            <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
+              <Ionicons
+                name="share-outline"
+                size={24}
+                color={theme.colors.textSecondary}
+              />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.actionButton}
               onPress={handleDelete}
             >
-              <Ionicons name="trash-outline" size={24} color={theme.colors.error} />
+              <Ionicons
+                name="trash-outline"
+                size={24}
+                color={theme.colors.error}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -277,7 +308,9 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
           <View style={styles.infoGrid}>
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>卡片名稱</Text>
-              <Text style={styles.infoValue}>{record.cardName || '未知卡片'}</Text>
+              <Text style={styles.infoValue}>
+                {record.cardName || '未知卡片'}
+              </Text>
             </View>
 
             <View style={styles.infoItem}>
@@ -289,16 +322,24 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
 
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>處理時間</Text>
-              <Text style={styles.infoValue}>{record.processingTime.toFixed(1)}秒</Text>
+              <Text style={styles.infoValue}>
+                {record.processingTime.toFixed(1)}秒
+              </Text>
             </View>
 
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>掃描狀態</Text>
               <View style={styles.statusContainer}>
-                <View style={[
-                  styles.statusIndicator,
-                  { backgroundColor: record.scanResult.success ? theme.colors.success : theme.colors.error }
-                ]} />
+                <View
+                  style={[
+                    styles.statusIndicator,
+                    {
+                      backgroundColor: record.scanResult.success
+                        ? theme.colors.success
+                        : theme.colors.error,
+                    },
+                  ]}
+                />
                 <Text style={styles.statusText}>
                   {record.scanResult.success ? '成功' : '失敗'}
                 </Text>
@@ -322,7 +363,11 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
                   style={styles.removeTagButton}
                   onPress={() => handleRemoveTag(tag)}
                 >
-                  <Ionicons name="close" size={12} color={theme.colors.textSecondary} />
+                  <Ionicons
+                    name="close"
+                    size={12}
+                    color={theme.colors.textSecondary}
+                  />
                 </TouchableOpacity>
               </View>
             ))}
@@ -371,11 +416,7 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
                 style={styles.notesInput}
               />
               <View style={styles.editActions}>
-                <Button
-                  title="保存"
-                  onPress={handleSaveNote}
-                  size="small"
-                />
+                <Button title="保存" onPress={handleSaveNote} size="small" />
                 <Button
                   title="取消"
                   onPress={() => {
@@ -389,9 +430,7 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
             </View>
           ) : (
             <View style={styles.notesContainer}>
-              <Text style={styles.notesText}>
-                {record.notes || '暫無筆記'}
-              </Text>
+              <Text style={styles.notesText}>{record.notes || '暫無筆記'}</Text>
             </View>
           )}
         </View>
@@ -406,95 +445,95 @@ export const ScanHistoryDetail: React.FC<ScanHistoryDetailProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   card: {
     margin: theme.spacing.medium,
-    padding: theme.spacing.medium
+    padding: theme.spacing.medium,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   headerLeft: {
-    flex: 1
+    flex: 1,
   },
   scanTypeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   scanType: {
     fontSize: 18,
     fontWeight: '700',
-    marginLeft: theme.spacing.small
+    marginLeft: theme.spacing.small,
   },
   scanDate: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   headerActions: {
     flexDirection: 'row',
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   actionButton: {
-    padding: theme.spacing.small
+    padding: theme.spacing.small,
   },
   imageSection: {
     alignItems: 'center',
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   cardImage: {
     width: width * 0.6,
-    height: (width * 0.6) * 1.4,
-    borderRadius: theme.borderRadius.medium
+    height: width * 0.6 * 1.4,
+    borderRadius: theme.borderRadius.medium,
   },
   basicInfoSection: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.text,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   infoGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   infoItem: {
     width: '48%',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   infoLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   infoValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   statusContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: theme.spacing.xsmall
+    marginRight: theme.spacing.xsmall,
   },
   statusText: {
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   resultSection: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   resultItem: {
     flexDirection: 'row',
@@ -502,43 +541,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: theme.spacing.small,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   resultLabel: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   resultValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   errorSection: {
     alignItems: 'center',
     padding: theme.spacing.large,
-    backgroundColor: `${theme.colors.error  }10`,
+    backgroundColor: `${theme.colors.error}10`,
     borderRadius: theme.borderRadius.medium,
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   errorText: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.error,
-    marginTop: theme.spacing.small
+    marginTop: theme.spacing.small,
   },
   errorDetails: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginTop: theme.spacing.small
+    marginTop: theme.spacing.small,
   },
   tagsSection: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   tag: {
     flexDirection: 'row',
@@ -548,97 +587,97 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.xsmall,
     borderRadius: theme.borderRadius.small,
     marginRight: theme.spacing.small,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   tagText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginRight: theme.spacing.xsmall
+    marginRight: theme.spacing.xsmall,
   },
   removeTagButton: {
-    padding: 2
+    padding: 2,
   },
   addTagContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   tagInput: {
-    flex: 1
+    flex: 1,
   },
   notesSection: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   notesHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   editButton: {
-    padding: theme.spacing.small
+    padding: theme.spacing.small,
   },
   notesContainer: {
     backgroundColor: theme.colors.backgroundSecondary,
     padding: theme.spacing.medium,
-    borderRadius: theme.borderRadius.medium
+    borderRadius: theme.borderRadius.medium,
   },
   notesText: {
     fontSize: 14,
     color: theme.colors.text,
-    lineHeight: 20
+    lineHeight: 20,
   },
   editNotesContainer: {
     backgroundColor: theme.colors.backgroundSecondary,
     padding: theme.spacing.medium,
-    borderRadius: theme.borderRadius.medium
+    borderRadius: theme.borderRadius.medium,
   },
   notesInput: {
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   editActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   metadataSection: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   metadataGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   metadataItem: {
     width: '48%',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   metadataLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   metadataValue: {
     fontSize: 14,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   locationSection: {
     backgroundColor: theme.colors.backgroundSecondary,
     padding: theme.spacing.medium,
-    borderRadius: theme.borderRadius.medium
+    borderRadius: theme.borderRadius.medium,
   },
   locationLabel: {
     fontSize: 14,
     fontWeight: '600',
     color: theme.colors.text,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   locationValue: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xsmall
-  }
+    marginBottom: theme.spacing.xsmall,
+  },
 });
 
 export default ScanHistoryDetail;

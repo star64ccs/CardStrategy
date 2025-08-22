@@ -6,7 +6,7 @@ import {
   ShareVerification,
   ShareVerificationCreateRequest,
   ShareVerificationResponse,
-  VerificationLookupResponse
+  VerificationLookupResponse,
 } from '../types';
 import { z } from 'zod';
 import * as Sharing from 'expo-sharing';
@@ -20,37 +20,46 @@ class ShareVerificationService {
     request: ShareVerificationCreateRequest
   ): Promise<ApiResponse<ShareVerificationResponse>> {
     try {
-      const validationResult = validateInput(z.object({
-        cardId: z.string().uuid('無效的卡牌 ID'),
-        analysisType: z.enum(['centering', 'authenticity', 'comprehensive']),
-        analysisResult: z.object({
-          centering: z.object({
-            score: z.number().min(0).max(100),
-            grade: z.string(),
-            details: z.array(z.string()),
-            confidence: z.number().min(0).max(1)
-          }).optional(),
-          authenticity: z.object({
-            isAuthentic: z.boolean(),
-            confidence: z.number().min(0).max(1),
-            riskFactors: z.array(z.string()),
-            verificationDetails: z.array(z.string())
-          }).optional(),
-          overallGrade: z.string().optional(),
-          overallScore: z.number().min(0).max(100).optional(),
-          processingTime: z.number(),
-          metadata: z.object({
-            analysisMethod: z.string(),
-            modelVersion: z.string(),
-            imageQuality: z.string(),
-            lightingConditions: z.string()
-          })
+      const validationResult = validateInput(
+        z.object({
+          cardId: z.string().uuid('無效的卡牌 ID'),
+          analysisType: z.enum(['centering', 'authenticity', 'comprehensive']),
+          analysisResult: z.object({
+            centering: z
+              .object({
+                score: z.number().min(0).max(100),
+                grade: z.string(),
+                details: z.array(z.string()),
+                confidence: z.number().min(0).max(1),
+              })
+              .optional(),
+            authenticity: z
+              .object({
+                isAuthentic: z.boolean(),
+                confidence: z.number().min(0).max(1),
+                riskFactors: z.array(z.string()),
+                verificationDetails: z.array(z.string()),
+              })
+              .optional(),
+            overallGrade: z.string().optional(),
+            overallScore: z.number().min(0).max(100).optional(),
+            processingTime: z.number(),
+            metadata: z.object({
+              analysisMethod: z.string(),
+              modelVersion: z.string(),
+              imageQuality: z.string(),
+              lightingConditions: z.string(),
+            }),
+          }),
+          expiresInDays: z.number().min(1).max(365).optional(),
         }),
-        expiresInDays: z.number().min(1).max(365).optional()
-      }), request);
+        request
+      );
 
       if (!validationResult.isValid) {
-        throw new Error(validationResult.errorMessage || '分享驗證請求驗證失敗');
+        throw new Error(
+          validationResult.errorMessage || '分享驗證請求驗證失敗'
+        );
       }
 
       const response = await apiService.post<ShareVerificationResponse>(
@@ -58,33 +67,40 @@ class ShareVerificationService {
         validationResult.data!
       );
 
-      const responseValidation = validateApiResponse(z.object({
-        verificationCode: z.string(),
-        shareUrl: z.string().url(),
-        qrCodeUrl: z.string().url(),
-        socialShareLinks: z.object({
-          whatsapp: z.string().url(),
-          instagram: z.string().url(),
-          facebook: z.string().url(),
-          twitter: z.string().url(),
-          telegram: z.string().url()
-        })
-      }), response.data);
+      const responseValidation = validateApiResponse(
+        z.object({
+          verificationCode: z.string(),
+          shareUrl: z.string().url(),
+          qrCodeUrl: z.string().url(),
+          socialShareLinks: z.object({
+            whatsapp: z.string().url(),
+            instagram: z.string().url(),
+            facebook: z.string().url(),
+            twitter: z.string().url(),
+            telegram: z.string().url(),
+          }),
+        }),
+        response.data
+      );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '分享驗證響應驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '分享驗證響應驗證失敗'
+        );
       }
 
       logger.info('✅ Share verification created', {
-        verificationCode: responseValidation.data!.verificationCode
+        verificationCode: responseValidation.data!.verificationCode,
       });
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
-      logger.error('❌ Create share verification error:', { error: error.message });
+      logger.error('❌ Create share verification error:', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -107,69 +123,84 @@ class ShareVerificationService {
         `${API_ENDPOINTS.SHARE_VERIFICATION.LOOKUP}/${validationResult.data!.verificationCode}`
       );
 
-      const responseValidation = validateApiResponse(z.object({
-        verification: z.object({
-          id: z.string(),
-          verificationCode: z.string(),
-          userId: z.string(),
-          cardId: z.string(),
-          analysisType: z.enum(['centering', 'authenticity', 'comprehensive']),
-          analysisResult: z.object({
-            centering: z.object({
-              score: z.number(),
-              grade: z.string(),
-              details: z.array(z.string()),
-              confidence: z.number()
-            }).optional(),
-            authenticity: z.object({
-              isAuthentic: z.boolean(),
-              confidence: z.number(),
-              riskFactors: z.array(z.string()),
-              verificationDetails: z.array(z.string())
-            }).optional(),
-            overallGrade: z.string().optional(),
-            overallScore: z.number().optional(),
-            processingTime: z.number(),
-            metadata: z.object({
-              analysisMethod: z.string(),
-              modelVersion: z.string(),
-              imageQuality: z.string(),
-              lightingConditions: z.string()
-            })
+      const responseValidation = validateApiResponse(
+        z.object({
+          verification: z.object({
+            id: z.string(),
+            verificationCode: z.string(),
+            userId: z.string(),
+            cardId: z.string(),
+            analysisType: z.enum([
+              'centering',
+              'authenticity',
+              'comprehensive',
+            ]),
+            analysisResult: z.object({
+              centering: z
+                .object({
+                  score: z.number(),
+                  grade: z.string(),
+                  details: z.array(z.string()),
+                  confidence: z.number(),
+                })
+                .optional(),
+              authenticity: z
+                .object({
+                  isAuthentic: z.boolean(),
+                  confidence: z.number(),
+                  riskFactors: z.array(z.string()),
+                  verificationDetails: z.array(z.string()),
+                })
+                .optional(),
+              overallGrade: z.string().optional(),
+              overallScore: z.number().optional(),
+              processingTime: z.number(),
+              metadata: z.object({
+                analysisMethod: z.string(),
+                modelVersion: z.string(),
+                imageQuality: z.string(),
+                lightingConditions: z.string(),
+              }),
+            }),
+            shareUrl: z.string(),
+            expiresAt: z.string(),
+            isActive: z.boolean(),
+            viewCount: z.number(),
+            lastViewedAt: z.string().optional(),
+            createdAt: z.string(),
+            updatedAt: z.string(),
           }),
-          shareUrl: z.string(),
-          expiresAt: z.string(),
-          isActive: z.boolean(),
-          viewCount: z.number(),
-          lastViewedAt: z.string().optional(),
-          createdAt: z.string(),
-          updatedAt: z.string()
+          card: z.object({
+            id: z.string(),
+            name: z.string(),
+            setName: z.string(),
+            rarity: z.string(),
+            imageUrl: z.string().optional(),
+            price: z.number().optional(),
+          }),
+          user: z.object({
+            username: z.string(),
+            avatar: z.string().optional(),
+          }),
+          isExpired: z.boolean(),
+          isValid: z.boolean(),
         }),
-        card: z.object({
-          id: z.string(),
-          name: z.string(),
-          setName: z.string(),
-          rarity: z.string(),
-          imageUrl: z.string().optional(),
-          price: z.number().optional()
-        }),
-        user: z.object({
-          username: z.string(),
-          avatar: z.string().optional()
-        }),
-        isExpired: z.boolean(),
-        isValid: z.boolean()
-      }), response.data);
+        response.data
+      );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '驗證查詢響應驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '驗證查詢響應驗證失敗'
+        );
       }
 
-      logger.info('✅ Share verification lookup successful', { verificationCode });
+      logger.info('✅ Share verification lookup successful', {
+        verificationCode,
+      });
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
       logger.error('❌ Lookup verification error:', { error: error.message });
@@ -201,7 +232,8 @@ class ShareVerificationService {
   async shareToInstagram(shareUrl: string, imageUrl?: string): Promise<void> {
     try {
       // Instagram 分享需要圖片，如果沒有提供則使用默認圖片
-      const imageToShare = imageUrl || 'https://cardstrategy.com/share-image.png';
+      const imageToShare =
+        imageUrl || 'https://cardstrategy.com/share-image.png';
       const instagramUrl = `instagram://library?AssetPath=${encodeURIComponent(imageToShare)}&InstagramCaption=${encodeURIComponent(`查看我的卡牌評估結果！\n\n${shareUrl}`)}`;
 
       const canOpen = await Linking.canOpenURL(instagramUrl);
@@ -265,7 +297,11 @@ class ShareVerificationService {
   }
 
   // 通用分享
-  async shareGeneric(shareUrl: string, title?: string, message?: string): Promise<void> {
+  async shareGeneric(
+    shareUrl: string,
+    title?: string,
+    message?: string
+  ): Promise<void> {
     try {
       const shareTitle = title || '卡牌評估結果';
       const shareMessage = message || '查看我的卡牌評估結果！';
@@ -273,7 +309,7 @@ class ShareVerificationService {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(shareUrl, {
           dialogTitle: shareTitle,
-          mimeType: 'text/plain'
+          mimeType: 'text/plain',
         });
         logger.info('✅ Generic share successful');
       } else {
@@ -305,7 +341,7 @@ class ShareVerificationService {
     const params = new URLSearchParams({
       size: '300x300',
       data: shareUrl,
-      format: 'png'
+      format: 'png',
     });
     return `${qrApiUrl}?${params.toString()}`;
   }
@@ -322,4 +358,5 @@ class ShareVerificationService {
 }
 
 // 導出分享驗證服務實例
+export { ShareVerificationService };
 export const shareVerificationService = new ShareVerificationService();

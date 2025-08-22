@@ -1,7 +1,11 @@
 export interface AIModel {
   id: string;
   name: string;
-  type: 'card_recognition' | 'price_prediction' | 'market_analysis' | 'recommendation';
+  type:
+    | 'card_recognition'
+    | 'price_prediction'
+    | 'market_analysis'
+    | 'recommendation';
   version: string;
   accuracy: number;
   status: 'training' | 'active' | 'inactive' | 'error';

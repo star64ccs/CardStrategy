@@ -6,7 +6,13 @@ import { z } from 'zod';
 import { errorHandler, withErrorHandling } from '@/utils/errorHandler';
 
 // 預測模型類型
-export type ModelType = 'linear' | 'polynomial' | 'exponential' | 'arima' | 'lstm' | 'ensemble';
+export type ModelType =
+  | 'linear'
+  | 'polynomial'
+  | 'exponential'
+  | 'arima'
+  | 'lstm'
+  | 'ensemble';
 
 // 時間框架類型
 export type Timeframe = '1d' | '7d' | '30d' | '90d' | '180d' | '365d';
@@ -110,49 +116,76 @@ class PredictionService {
     modelType: ModelType = 'ensemble'
   ): Promise<ApiResponse<Prediction>> {
     try {
-      const validationResult = validateInput(z.object({
-        cardId: z.number().int().positive('卡牌ID必須是正整數'),
-        timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
-        modelType: z.enum(['linear', 'polynomial', 'exponential', 'arima', 'lstm', 'ensemble'])
-      }), { cardId, timeframe, modelType });
+      const validationResult = validateInput(
+        z.object({
+          cardId: z.number().int().positive('卡牌ID必須是正整數'),
+          timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
+          modelType: z.enum([
+            'linear',
+            'polynomial',
+            'exponential',
+            'arima',
+            'lstm',
+            'ensemble',
+          ]),
+        }),
+        { cardId, timeframe, modelType }
+      );
 
       if (!validationResult.isValid) {
         throw new Error(validationResult.errorMessage || '預測參數驗證失敗');
       }
 
-      const response = await apiService.post<Prediction>('/predictions/predict', {
-        cardId: validationResult.data!.cardId,
-        timeframe: validationResult.data!.timeframe,
-        modelType: validationResult.data!.modelType
-      });
+      const response = await apiService.post<Prediction>(
+        '/predictions/predict',
+        {
+          cardId: validationResult.data!.cardId,
+          timeframe: validationResult.data!.timeframe,
+          modelType: validationResult.data!.modelType,
+        }
+      );
 
-      const responseValidation = validateApiResponse(z.object({
-        id: z.number(),
-        cardId: z.number(),
-        modelType: z.enum(['linear', 'polynomial', 'exponential', 'arima', 'lstm', 'ensemble']),
-        timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
-        predictedPrice: z.number().positive(),
-        confidence: z.number().min(0).max(1),
-        accuracy: z.number().min(0).max(1).nullable(),
-        trend: z.enum(['up', 'down', 'stable']),
-        volatility: z.number().min(0),
-        factors: z.object({
+      const responseValidation = validateApiResponse(
+        z.object({
+          id: z.number(),
+          cardId: z.number(),
+          modelType: z.enum([
+            'linear',
+            'polynomial',
+            'exponential',
+            'arima',
+            'lstm',
+            'ensemble',
+          ]),
+          timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
+          predictedPrice: z.number().positive(),
+          confidence: z.number().min(0).max(1),
+          accuracy: z.number().min(0).max(1).nullable(),
           trend: z.enum(['up', 'down', 'stable']),
-          volatility: z.number().min(0)
-        }).passthrough(),
-        riskLevel: z.enum(['low', 'medium', 'high']),
-        predictionDate: z.string(),
-        targetDate: z.string(),
-        modelParameters: z.any()
-      }), response.data);
+          volatility: z.number().min(0),
+          factors: z
+            .object({
+              trend: z.enum(['up', 'down', 'stable']),
+              volatility: z.number().min(0),
+            })
+            .passthrough(),
+          riskLevel: z.enum(['low', 'medium', 'high']),
+          predictionDate: z.string(),
+          targetDate: z.string(),
+          modelParameters: z.any(),
+        }),
+        response.data
+      );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '預測結果數據驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '預測結果數據驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
       logger.error('❌ Predict card price error:', { error: error.message });
@@ -166,10 +199,13 @@ class PredictionService {
     limit: number = 50
   ): Promise<ApiResponse<PredictionHistory>> {
     try {
-      const validationResult = validateInput(z.object({
-        cardId: z.number().int().positive('卡牌ID必須是正整數'),
-        limit: z.number().int().min(1).max(100)
-      }), { cardId, limit });
+      const validationResult = validateInput(
+        z.object({
+          cardId: z.number().int().positive('卡牌ID必須是正整數'),
+          limit: z.number().int().min(1).max(100),
+        }),
+        { cardId, limit }
+      );
 
       if (!validationResult.isValid) {
         throw new Error(validationResult.errorMessage || '參數驗證失敗');
@@ -179,50 +215,73 @@ class PredictionService {
         `/predictions/history/${validationResult.data!.cardId}?limit=${validationResult.data!.limit}`
       );
 
-      const responseValidation = validateApiResponse(z.object({
-        predictions: z.array(z.object({
-          id: z.number(),
+      const responseValidation = validateApiResponse(
+        z.object({
+          predictions: z.array(
+            z.object({
+              id: z.number(),
+              cardId: z.number(),
+              modelType: z.enum([
+                'linear',
+                'polynomial',
+                'exponential',
+                'arima',
+                'lstm',
+                'ensemble',
+              ]),
+              timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
+              predictedPrice: z.number().positive(),
+              confidence: z.number().min(0).max(1),
+              accuracy: z.number().min(0).max(1).nullable(),
+              trend: z.enum(['up', 'down', 'stable']),
+              volatility: z.number().min(0),
+              factors: z
+                .object({
+                  trend: z.enum(['up', 'down', 'stable']),
+                  volatility: z.number().min(0),
+                })
+                .passthrough(),
+              riskLevel: z.enum(['low', 'medium', 'high']),
+              predictionDate: z.string(),
+              targetDate: z.string(),
+              modelParameters: z.any(),
+            })
+          ),
+          total: z.number(),
           cardId: z.number(),
-          modelType: z.enum(['linear', 'polynomial', 'exponential', 'arima', 'lstm', 'ensemble']),
-          timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
-          predictedPrice: z.number().positive(),
-          confidence: z.number().min(0).max(1),
-          accuracy: z.number().min(0).max(1).nullable(),
-          trend: z.enum(['up', 'down', 'stable']),
-          volatility: z.number().min(0),
-          factors: z.object({
-            trend: z.enum(['up', 'down', 'stable']),
-            volatility: z.number().min(0)
-          }).passthrough(),
-          riskLevel: z.enum(['low', 'medium', 'high']),
-          predictionDate: z.string(),
-          targetDate: z.string(),
-          modelParameters: z.any()
-        })),
-        total: z.number(),
-        cardId: z.number()
-      }), response.data);
+        }),
+        response.data
+      );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '預測歷史數據驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '預測歷史數據驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
-      logger.error('❌ Get prediction history error:', { error: error.message });
+      logger.error('❌ Get prediction history error:', {
+        error: error.message,
+      });
       throw error;
     }
   }
 
   // 計算預測準確性
-  async calculatePredictionAccuracy(predictionId: number): Promise<ApiResponse<AccuracyResult | null>> {
+  async calculatePredictionAccuracy(
+    predictionId: number
+  ): Promise<ApiResponse<AccuracyResult | null>> {
     try {
-      const validationResult = validateInput(z.object({
-        predictionId: z.number().int().positive('預測ID必須是正整數')
-      }), { predictionId });
+      const validationResult = validateInput(
+        z.object({
+          predictionId: z.number().int().positive('預測ID必須是正整數'),
+        }),
+        { predictionId }
+      );
 
       if (!validationResult.isValid) {
         throw new Error(validationResult.errorMessage || '預測ID驗證失敗');
@@ -235,28 +294,35 @@ class PredictionService {
       if (response.data === null) {
         return {
           ...response,
-          data: null
+          data: null,
         };
       }
 
-      const responseValidation = validateApiResponse(z.object({
-        predictionId: z.number(),
-        actualPrice: z.number().positive(),
-        predictedPrice: z.number().positive(),
-        accuracy: z.number().min(0).max(1),
-        error: z.number().min(0)
-      }), response.data);
+      const responseValidation = validateApiResponse(
+        z.object({
+          predictionId: z.number(),
+          actualPrice: z.number().positive(),
+          predictedPrice: z.number().positive(),
+          accuracy: z.number().min(0).max(1),
+          error: z.number().min(0),
+        }),
+        response.data
+      );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '準確性計算結果驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '準確性計算結果驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
-      logger.error('❌ Calculate prediction accuracy error:', { error: error.message });
+      logger.error('❌ Calculate prediction accuracy error:', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -268,60 +334,93 @@ class PredictionService {
     modelType: ModelType = 'ensemble'
   ): Promise<ApiResponse<BatchPredictionResult>> {
     try {
-      const validationResult = validateInput(z.object({
-        cardIds: z.array(z.number().int().positive()).min(1).max(10),
-        timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
-        modelType: z.enum(['linear', 'polynomial', 'exponential', 'arima', 'lstm', 'ensemble'])
-      }), { cardIds, timeframe, modelType });
+      const validationResult = validateInput(
+        z.object({
+          cardIds: z.array(z.number().int().positive()).min(1).max(10),
+          timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
+          modelType: z.enum([
+            'linear',
+            'polynomial',
+            'exponential',
+            'arima',
+            'lstm',
+            'ensemble',
+          ]),
+        }),
+        { cardIds, timeframe, modelType }
+      );
 
       if (!validationResult.isValid) {
-        throw new Error(validationResult.errorMessage || '批量預測參數驗證失敗');
+        throw new Error(
+          validationResult.errorMessage || '批量預測參數驗證失敗'
+        );
       }
 
-      const response = await apiService.post<BatchPredictionResult>('/predictions/batch', {
-        cardIds: validationResult.data!.cardIds,
-        timeframe: validationResult.data!.timeframe,
-        modelType: validationResult.data!.modelType
-      });
+      const response = await apiService.post<BatchPredictionResult>(
+        '/predictions/batch',
+        {
+          cardIds: validationResult.data!.cardIds,
+          timeframe: validationResult.data!.timeframe,
+          modelType: validationResult.data!.modelType,
+        }
+      );
 
-      const responseValidation = validateApiResponse(z.object({
-        predictions: z.array(z.object({
-          id: z.number(),
-          cardId: z.number(),
-          modelType: z.enum(['linear', 'polynomial', 'exponential', 'arima', 'lstm', 'ensemble']),
-          timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
-          predictedPrice: z.number().positive(),
-          confidence: z.number().min(0).max(1),
-          accuracy: z.number().min(0).max(1).nullable(),
-          trend: z.enum(['up', 'down', 'stable']),
-          volatility: z.number().min(0),
-          factors: z.object({
-            trend: z.enum(['up', 'down', 'stable']),
-            volatility: z.number().min(0)
-          }).passthrough(),
-          riskLevel: z.enum(['low', 'medium', 'high']),
-          predictionDate: z.string(),
-          targetDate: z.string(),
-          modelParameters: z.any()
-        })),
-        errors: z.array(z.object({
-          cardId: z.number(),
-          error: z.string()
-        })),
-        summary: z.object({
-          total: z.number(),
-          successful: z.number(),
-          failed: z.number()
-        })
-      }), response.data);
+      const responseValidation = validateApiResponse(
+        z.object({
+          predictions: z.array(
+            z.object({
+              id: z.number(),
+              cardId: z.number(),
+              modelType: z.enum([
+                'linear',
+                'polynomial',
+                'exponential',
+                'arima',
+                'lstm',
+                'ensemble',
+              ]),
+              timeframe: z.enum(['1d', '7d', '30d', '90d', '180d', '365d']),
+              predictedPrice: z.number().positive(),
+              confidence: z.number().min(0).max(1),
+              accuracy: z.number().min(0).max(1).nullable(),
+              trend: z.enum(['up', 'down', 'stable']),
+              volatility: z.number().min(0),
+              factors: z
+                .object({
+                  trend: z.enum(['up', 'down', 'stable']),
+                  volatility: z.number().min(0),
+                })
+                .passthrough(),
+              riskLevel: z.enum(['low', 'medium', 'high']),
+              predictionDate: z.string(),
+              targetDate: z.string(),
+              modelParameters: z.any(),
+            })
+          ),
+          errors: z.array(
+            z.object({
+              cardId: z.number(),
+              error: z.string(),
+            })
+          ),
+          summary: z.object({
+            total: z.number(),
+            successful: z.number(),
+            failed: z.number(),
+          }),
+        }),
+        response.data
+      );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '批量預測結果驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '批量預測結果驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
       logger.error('❌ Batch predict error:', { error: error.message });
@@ -334,23 +433,37 @@ class PredictionService {
     try {
       const response = await apiService.get<ModelInfo[]>('/predictions/models');
 
-      const responseValidation = validateApiResponse(z.array(z.object({
-        id: z.enum(['linear', 'polynomial', 'exponential', 'arima', 'lstm', 'ensemble']),
-        name: z.string(),
-        description: z.string(),
-        minDataPoints: z.number().int().min(1),
-        accuracy: z.string(),
-        speed: z.string(),
-        complexity: z.string()
-      })), response.data);
+      const responseValidation = validateApiResponse(
+        z.array(
+          z.object({
+            id: z.enum([
+              'linear',
+              'polynomial',
+              'exponential',
+              'arima',
+              'lstm',
+              'ensemble',
+            ]),
+            name: z.string(),
+            description: z.string(),
+            minDataPoints: z.number().int().min(1),
+            accuracy: z.string(),
+            speed: z.string(),
+            complexity: z.string(),
+          })
+        ),
+        response.data
+      );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '模型列表數據驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '模型列表數據驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
       logger.error('❌ Get available models error:', { error: error.message });
@@ -361,33 +474,51 @@ class PredictionService {
   // 獲取預測統計信息
   async getPredictionStatistics(): Promise<ApiResponse<PredictionStatistics>> {
     try {
-      const response = await apiService.get<PredictionStatistics>('/predictions/statistics');
+      const response = await apiService.get<PredictionStatistics>(
+        '/predictions/statistics'
+      );
 
-      const responseValidation = validateApiResponse(z.object({
-        totalPredictions: z.number().int().min(0),
-        recentPredictions: z.number().int().min(0),
-        modelStats: z.array(z.object({
-          modelType: z.enum(['linear', 'polynomial', 'exponential', 'arima', 'lstm', 'ensemble']),
-          count: z.number().int().min(0),
-          avgConfidence: z.number().min(0).max(1),
-          avgAccuracy: z.number().min(0).max(1)
-        })),
-        accuracyStats: z.object({
-          overallAccuracy: z.number().min(0).max(1),
-          accuracyCount: z.number().int().min(0)
-        })
-      }), response.data);
+      const responseValidation = validateApiResponse(
+        z.object({
+          totalPredictions: z.number().int().min(0),
+          recentPredictions: z.number().int().min(0),
+          modelStats: z.array(
+            z.object({
+              modelType: z.enum([
+                'linear',
+                'polynomial',
+                'exponential',
+                'arima',
+                'lstm',
+                'ensemble',
+              ]),
+              count: z.number().int().min(0),
+              avgConfidence: z.number().min(0).max(1),
+              avgAccuracy: z.number().min(0).max(1),
+            })
+          ),
+          accuracyStats: z.object({
+            overallAccuracy: z.number().min(0).max(1),
+            accuracyCount: z.number().int().min(0),
+          }),
+        }),
+        response.data
+      );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '統計信息數據驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '統計信息數據驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
-      logger.error('❌ Get prediction statistics error:', { error: error.message });
+      logger.error('❌ Get prediction statistics error:', {
+        error: error.message,
+      });
       throw error;
     }
   }
@@ -395,15 +526,20 @@ class PredictionService {
   // 刪除預測記錄
   async deletePrediction(predictionId: number): Promise<ApiResponse<void>> {
     try {
-      const validationResult = validateInput(z.object({
-        predictionId: z.number().int().positive('預測ID必須是正整數')
-      }), { predictionId });
+      const validationResult = validateInput(
+        z.object({
+          predictionId: z.number().int().positive('預測ID必須是正整數'),
+        }),
+        { predictionId }
+      );
 
       if (!validationResult.isValid) {
         throw new Error(validationResult.errorMessage || '預測ID驗證失敗');
       }
 
-      const response = await apiService.delete<void>(`/predictions/${validationResult.data!.predictionId}`);
+      const response = await apiService.delete<void>(
+        `/predictions/${validationResult.data!.predictionId}`
+      );
 
       return response;
     } catch (error: any) {
@@ -418,12 +554,16 @@ class PredictionService {
       ...prediction,
       predictedPriceFormatted: `$${prediction.predictedPrice.toFixed(2)}`,
       confidenceFormatted: `${(prediction.confidence * 100).toFixed(1)}%`,
-      accuracyFormatted: prediction.accuracy ? `${(prediction.accuracy * 100).toFixed(1)}%` : 'N/A',
+      accuracyFormatted: prediction.accuracy
+        ? `${(prediction.accuracy * 100).toFixed(1)}%`
+        : 'N/A',
       volatilityFormatted: `${(prediction.volatility * 100).toFixed(1)}%`,
-      predictionDateFormatted: new Date(prediction.predictionDate).toLocaleDateString(),
+      predictionDateFormatted: new Date(
+        prediction.predictionDate
+      ).toLocaleDateString(),
       targetDateFormatted: new Date(prediction.targetDate).toLocaleDateString(),
       trendIcon: this.getTrendIcon(prediction.trend),
-      riskLevelColor: this.getRiskLevelColor(prediction.riskLevel)
+      riskLevelColor: this.getRiskLevelColor(prediction.riskLevel),
     };
   }
 
@@ -463,7 +603,7 @@ class PredictionService {
       exponential: '指數平滑',
       arima: 'ARIMA模型',
       lstm: 'LSTM神經網絡',
-      ensemble: '集成模型'
+      ensemble: '集成模型',
     };
     return modelNames[modelType] || modelType;
   }
@@ -476,11 +616,12 @@ class PredictionService {
       '30d': '30天',
       '90d': '90天',
       '180d': '180天',
-      '365d': '365天'
+      '365d': '365天',
     };
     return timeframeNames[timeframe] || timeframe;
   }
 }
 
 // 導出預測服務實例
+export { PredictionService };
 export const predictionService = new PredictionService();

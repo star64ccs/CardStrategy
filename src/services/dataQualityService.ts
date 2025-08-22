@@ -322,7 +322,12 @@ export interface QualityIssue {
 
 export interface ImprovementSuggestion {
   priority: 'high' | 'medium' | 'low';
-  category: 'data_collection' | 'annotation' | 'data_cleaning' | 'processing' | 'specific_type';
+  category:
+    | 'data_collection'
+    | 'annotation'
+    | 'data_cleaning'
+    | 'processing'
+    | 'specific_type';
   title: string;
   description: string;
   action: string;
@@ -343,7 +348,9 @@ export interface DashboardOptions {
 
 class DataQualityService {
   // 獲取數據收集統計
-  async getCollectionStats(options: CollectionStatsOptions = {}): Promise<{ data: CollectionStats }> {
+  async getCollectionStats(
+    options: CollectionStatsOptions = {}
+  ): Promise<{ data: CollectionStats }> {
     const params = new URLSearchParams();
 
     if (options.startDate) params.append('startDate', options.startDate);
@@ -352,7 +359,9 @@ class DataQualityService {
     if (options.quality) params.append('quality', options.quality);
     if (options.status) params.append('status', options.status);
 
-    const response = await api.get(`/data-quality/collect/stats?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/collect/stats?${params.toString()}`
+    );
     return response.data;
   }
 
@@ -363,7 +372,9 @@ class DataQualityService {
   }
 
   // 智能分配標註任務
-  async assignAnnotationTasks(options: AssignmentOptions = {}): Promise<{ data: AssignmentResponse }> {
+  async assignAnnotationTasks(
+    options: AssignmentOptions = {}
+  ): Promise<{ data: AssignmentResponse }> {
     const response = await api.post('/data-quality/annotate/assign', options);
     return response.data;
   }
@@ -375,54 +386,81 @@ class DataQualityService {
   }
 
   // 獲取分配算法配置
-  async getAssignmentConfig(): Promise<{ data: { config: AssignmentConfig; algorithm: string; version: string; features: string[] } }> {
+  async getAssignmentConfig(): Promise<{
+    data: {
+      config: AssignmentConfig;
+      algorithm: string;
+      version: string;
+      features: string[];
+    };
+  }> {
     const response = await api.get('/data-quality/annotate/config');
     return response.data;
   }
 
   // 更新分配算法配置
-  async updateAssignmentConfig(config: Partial<AssignmentConfig>): Promise<{ data: { config: AssignmentConfig; timestamp: string } }> {
+  async updateAssignmentConfig(
+    config: Partial<AssignmentConfig>
+  ): Promise<{ data: { config: AssignmentConfig; timestamp: string } }> {
     const response = await api.put('/data-quality/annotate/config', { config });
     return response.data;
   }
 
   // 獲取標註者詳細信息
-  async getAnnotatorDetails(includeInactive: boolean = false): Promise<{ data: { annotators: AnnotatorDetails[]; totalCount: number; activeCount: number } }> {
+  async getAnnotatorDetails(includeInactive: boolean = false): Promise<{
+    data: {
+      annotators: AnnotatorDetails[];
+      totalCount: number;
+      activeCount: number;
+    };
+  }> {
     const params = new URLSearchParams();
     if (includeInactive) params.append('includeInactive', 'true');
 
-    const response = await api.get(`/data-quality/annotate/annotators?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/annotate/annotators?${params.toString()}`
+    );
     return response.data;
   }
 
   // 提交標註結果
-  async submitAnnotation(annotationId: number, annotationResult: any, confidence: number): Promise<{ data: any }> {
+  async submitAnnotation(
+    annotationId: number,
+    annotationResult: any,
+    confidence: number
+  ): Promise<{ data: any }> {
     const response = await api.post('/data-quality/annotate/submit', {
       annotationId,
       annotationResult,
-      confidence
+      confidence,
     });
     return response.data;
   }
 
   // 審核標註結果
-  async reviewAnnotation(annotationId: number, reviewStatus: string, reviewNotes?: string): Promise<{ data: any }> {
+  async reviewAnnotation(
+    annotationId: number,
+    reviewStatus: string,
+    reviewNotes?: string
+  ): Promise<{ data: any }> {
     const response = await api.post('/data-quality/annotate/review', {
       annotationId,
       reviewStatus,
-      reviewNotes
+      reviewNotes,
     });
     return response.data;
   }
 
   // 批量審核標註結果
-  async batchReviewAnnotations(reviews: {
-    annotationId: number;
-    reviewStatus: string;
-    reviewNotes?: string;
-  }[]): Promise<{ data: any }> {
+  async batchReviewAnnotations(
+    reviews: {
+      annotationId: number;
+      reviewStatus: string;
+      reviewNotes?: string;
+    }[]
+  ): Promise<{ data: any }> {
     const response = await api.post('/data-quality/annotate/batch-review', {
-      reviews
+      reviews,
     });
     return response.data;
   }
@@ -440,22 +478,32 @@ class DataQualityService {
   }
 
   // 獲取數據質量指標
-  async getQualityMetrics(dataType?: string, limit: number = 10): Promise<{ data: DataQualityMetrics[] }> {
+  async getQualityMetrics(
+    dataType?: string,
+    limit: number = 10
+  ): Promise<{ data: DataQualityMetrics[] }> {
     const params = new URLSearchParams();
     if (dataType) params.append('dataType', dataType);
     params.append('limit', limit.toString());
 
-    const response = await api.get(`/data-quality/quality-metrics?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/quality-metrics?${params.toString()}`
+    );
     return response.data;
   }
 
   // 獲取數據質量報告
-  async getQualityReport(startDate?: string, endDate?: string): Promise<{ data: QualityReport }> {
+  async getQualityReport(
+    startDate?: string,
+    endDate?: string
+  ): Promise<{ data: QualityReport }> {
     const params = new URLSearchParams();
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
 
-    const response = await api.get(`/data-quality/quality-report?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/quality-report?${params.toString()}`
+    );
     return response.data;
   }
 
@@ -481,9 +529,12 @@ class DataQualityService {
     if (options.quality) params.append('quality', options.quality);
     if (options.status) params.append('status', options.status);
 
-    const response = await api.get(`/data-quality/collect/stats/export?${params.toString()}`, {
-      responseType: 'blob'
-    });
+    const response = await api.get(
+      `/data-quality/collect/stats/export?${params.toString()}`,
+      {
+        responseType: 'blob',
+      }
+    );
     return response.data;
   }
 
@@ -513,13 +564,18 @@ class DataQualityService {
   /**
    * Get comprehensive dashboard data
    */
-  async getDashboardData(options: DashboardOptions = {}): Promise<{ data: DashboardData }> {
+  async getDashboardData(
+    options: DashboardOptions = {}
+  ): Promise<{ data: DashboardData }> {
     const params = new URLSearchParams();
     if (options.startDate) params.append('startDate', options.startDate);
     if (options.endDate) params.append('endDate', options.endDate);
-    if (options.dataTypes) params.append('dataTypes', options.dataTypes.join(','));
+    if (options.dataTypes)
+      params.append('dataTypes', options.dataTypes.join(','));
 
-    const response = await api.get(`/data-quality/dashboard?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/dashboard?${params.toString()}`
+    );
     return response.data;
   }
 
@@ -534,24 +590,32 @@ class DataQualityService {
   /**
    * Get overall metrics
    */
-  async getOverallMetrics(options: DashboardOptions = {}): Promise<{ data: OverallMetrics }> {
+  async getOverallMetrics(
+    options: DashboardOptions = {}
+  ): Promise<{ data: OverallMetrics }> {
     const params = new URLSearchParams();
     if (options.startDate) params.append('startDate', options.startDate);
     if (options.endDate) params.append('endDate', options.endDate);
-    if (options.dataTypes) params.append('dataTypes', options.dataTypes.join(','));
+    if (options.dataTypes)
+      params.append('dataTypes', options.dataTypes.join(','));
 
-    const response = await api.get(`/data-quality/overall-metrics?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/overall-metrics?${params.toString()}`
+    );
     return response.data;
   }
 
   /**
    * Get trend data
    */
-  async getTrendData(options: DashboardOptions = {}): Promise<{ data: TrendData }> {
+  async getTrendData(
+    options: DashboardOptions = {}
+  ): Promise<{ data: TrendData }> {
     const params = new URLSearchParams();
     if (options.startDate) params.append('startDate', options.startDate);
     if (options.endDate) params.append('endDate', options.endDate);
-    if (options.dataTypes) params.append('dataTypes', options.dataTypes.join(','));
+    if (options.dataTypes)
+      params.append('dataTypes', options.dataTypes.join(','));
 
     const response = await api.get(`/data-quality/trends?${params.toString()}`);
     return response.data;
@@ -560,55 +624,77 @@ class DataQualityService {
   /**
    * Get source breakdown
    */
-  async getSourceBreakdown(startDate?: string, endDate?: string): Promise<{ data: SourceBreakdown }> {
+  async getSourceBreakdown(
+    startDate?: string,
+    endDate?: string
+  ): Promise<{ data: SourceBreakdown }> {
     const params = new URLSearchParams();
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
 
-    const response = await api.get(`/data-quality/source-breakdown?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/source-breakdown?${params.toString()}`
+    );
     return response.data;
   }
 
   /**
    * Get quality distribution
    */
-  async getQualityDistribution(startDate?: string, endDate?: string): Promise<{ data: QualityDistribution }> {
+  async getQualityDistribution(
+    startDate?: string,
+    endDate?: string
+  ): Promise<{ data: QualityDistribution }> {
     const params = new URLSearchParams();
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
 
-    const response = await api.get(`/data-quality/quality-distribution?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/quality-distribution?${params.toString()}`
+    );
     return response.data;
   }
 
   /**
    * Get annotator performance
    */
-  async getAnnotatorPerformance(startDate?: string, endDate?: string): Promise<{ data: AnnotatorPerformance }> {
+  async getAnnotatorPerformance(
+    startDate?: string,
+    endDate?: string
+  ): Promise<{ data: AnnotatorPerformance }> {
     const params = new URLSearchParams();
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
 
-    const response = await api.get(`/data-quality/annotator-performance?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/annotator-performance?${params.toString()}`
+    );
     return response.data;
   }
 
   /**
    * Get recent issues
    */
-  async getRecentIssues(startDate?: string, endDate?: string): Promise<{ data: QualityIssue[] }> {
+  async getRecentIssues(
+    startDate?: string,
+    endDate?: string
+  ): Promise<{ data: QualityIssue[] }> {
     const params = new URLSearchParams();
     if (startDate) params.append('startDate', startDate);
     if (endDate) params.append('endDate', endDate);
 
-    const response = await api.get(`/data-quality/recent-issues?${params.toString()}`);
+    const response = await api.get(
+      `/data-quality/recent-issues?${params.toString()}`
+    );
     return response.data;
   }
 
   /**
    * Get improvement suggestions
    */
-  async getImprovementSuggestions(): Promise<{ data: ImprovementSuggestion[] }> {
+  async getImprovementSuggestions(): Promise<{
+    data: ImprovementSuggestion[];
+  }> {
     const response = await api.get('/data-quality/improvement-suggestions');
     return response.data;
   }
@@ -618,21 +704,30 @@ class DataQualityService {
   /**
    * 將圖片文件轉換為base64格式
    */
-  async convertImageToBase64(file: File | Blob, options: ImageToBase64Options = {}): Promise<ImageToBase64Result> {
+  async convertImageToBase64(
+    file: File | Blob,
+    options: ImageToBase64Options = {}
+  ): Promise<ImageToBase64Result> {
     return convertImageToBase64(file, options);
   }
 
   /**
    * 批量轉換圖片為base64格式
    */
-  async convertImagesToBase64(files: (File | Blob)[], options: ImageToBase64Options = {}): Promise<BatchImageToBase64Result> {
+  async convertImagesToBase64(
+    files: (File | Blob)[],
+    options: ImageToBase64Options = {}
+  ): Promise<BatchImageToBase64Result> {
     return convertImagesToBase64(files, options);
   }
 
   /**
    * 從URL獲取圖片並轉換為base64
    */
-  async convertImageUrlToBase64(imageUrl: string, options: ImageToBase64Options = {}): Promise<ImageToBase64Result> {
+  async convertImageUrlToBase64(
+    imageUrl: string,
+    options: ImageToBase64Options = {}
+  ): Promise<ImageToBase64Result> {
     return convertImageUrlToBase64(imageUrl, options);
   }
 
@@ -653,18 +748,24 @@ class DataQualityService {
   /**
    * 獲取base64圖片的尺寸信息
    */
-  async getBase64ImageDimensions(base64: string): Promise<{width: number, height: number}> {
+  async getBase64ImageDimensions(
+    base64: string
+  ): Promise<{ width: number; height: number }> {
     return getBase64ImageDimensions(base64);
   }
 
   /**
    * 壓縮base64圖片
    */
-  async compressBase64Image(base64: string, options: ImageToBase64Options = {}): Promise<ImageToBase64Result> {
+  async compressBase64Image(
+    base64: string,
+    options: ImageToBase64Options = {}
+  ): Promise<ImageToBase64Result> {
     return compressBase64Image(base64, options);
   }
 }
 
+export { DataQualityService };
 export const dataQualityService = new DataQualityService();
 
 // ==================== 反饋管理相關接口 ====================
@@ -951,13 +1052,17 @@ export interface FeedbackStatsOptions {
 }
 
 // 提交反饋
-export const submitFeedback = async (feedbackData: FeedbackData): Promise<{ data: Feedback }> => {
+export const submitFeedback = async (
+  feedbackData: FeedbackData
+): Promise<{ data: Feedback }> => {
   const response = await api.post('/data-quality/feedback', feedbackData);
   return response.data;
 };
 
 // 獲取反饋列表
-export const getFeedbacks = async (filters: FeedbackFilters = {}): Promise<{ data: { feedbacks: Feedback[]; pagination: any } }> => {
+export const getFeedbacks = async (
+  filters: FeedbackFilters = {}
+): Promise<{ data: { feedbacks: Feedback[]; pagination: any } }> => {
   const params = new URLSearchParams();
   Object.entries(filters).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -969,20 +1074,35 @@ export const getFeedbacks = async (filters: FeedbackFilters = {}): Promise<{ dat
 };
 
 // 獲取單個反饋詳情
-export const getFeedbackById = async (feedbackId: number): Promise<{ data: Feedback }> => {
+export const getFeedbackById = async (
+  feedbackId: number
+): Promise<{ data: Feedback }> => {
   const response = await api.get(`/data-quality/feedback/${feedbackId}`);
   return response.data;
 };
 
 // 更新反饋狀態
-export const updateFeedbackStatus = async (feedbackId: number, status: string, resolution?: string): Promise<{ data: Feedback }> => {
-  const response = await api.put(`/data-quality/feedback/${feedbackId}/status`, { status, resolution });
+export const updateFeedbackStatus = async (
+  feedbackId: number,
+  status: string,
+  resolution?: string
+): Promise<{ data: Feedback }> => {
+  const response = await api.put(
+    `/data-quality/feedback/${feedbackId}/status`,
+    { status, resolution }
+  );
   return response.data;
 };
 
 // 分配反饋
-export const assignFeedback = async (feedbackId: number, assignedTo: number): Promise<{ data: Feedback }> => {
-  const response = await api.put(`/data-quality/feedback/${feedbackId}/assign`, { assignedTo });
+export const assignFeedback = async (
+  feedbackId: number,
+  assignedTo: number
+): Promise<{ data: Feedback }> => {
+  const response = await api.put(
+    `/data-quality/feedback/${feedbackId}/assign`,
+    { assignedTo }
+  );
   return response.data;
 };
 
@@ -993,16 +1113,21 @@ export const addFeedbackResponse = async (
   responseType: string = 'comment',
   isInternal: boolean = false
 ): Promise<{ data: any }> => {
-  const response = await api.post(`/data-quality/feedback/${feedbackId}/response`, {
-    content,
-    responseType,
-    isInternal
-  });
+  const response = await api.post(
+    `/data-quality/feedback/${feedbackId}/response`,
+    {
+      content,
+      responseType,
+      isInternal,
+    }
+  );
   return response.data;
 };
 
 // 獲取反饋統計
-export const getFeedbackStats = async (options: FeedbackStatsOptions = {}): Promise<{ data: FeedbackStats }> => {
+export const getFeedbackStats = async (
+  options: FeedbackStatsOptions = {}
+): Promise<{ data: FeedbackStats }> => {
   const params = new URLSearchParams();
   Object.entries(options).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
@@ -1014,18 +1139,27 @@ export const getFeedbackStats = async (options: FeedbackStatsOptions = {}): Prom
 };
 
 // 獲取反饋改進建議
-export const getFeedbackSuggestions = async (): Promise<{ data: FeedbackSuggestion[] }> => {
+export const getFeedbackSuggestions = async (): Promise<{
+  data: FeedbackSuggestion[];
+}> => {
   const response = await api.get('/data-quality/feedback/suggestions');
   return response.data;
 };
 
 // 定期數據質量評估相關函數
-export const createAssessmentSchedule = async (scheduleData: CreateScheduleRequest): Promise<AssessmentSchedule> => {
-  const response = await api.post('/data-quality/assessment/schedule', scheduleData);
+export const createAssessmentSchedule = async (
+  scheduleData: CreateScheduleRequest
+): Promise<AssessmentSchedule> => {
+  const response = await api.post(
+    '/data-quality/assessment/schedule',
+    scheduleData
+  );
   return response.data;
 };
 
-export const getAssessmentSchedules = async (options: { page?: number; limit?: number } & ScheduleFilters = {}): Promise<{
+export const getAssessmentSchedules = async (
+  options: { page?: number; limit?: number } & ScheduleFilters = {}
+): Promise<{
   schedules: AssessmentSchedule[];
   total: number;
   page: number;
@@ -1035,33 +1169,56 @@ export const getAssessmentSchedules = async (options: { page?: number; limit?: n
   const params = new URLSearchParams();
   if (options.page) params.append('page', options.page.toString());
   if (options.limit) params.append('limit', options.limit.toString());
-  if (options.isActive !== undefined) params.append('isActive', options.isActive.toString());
-  if (options.assessmentType) params.append('assessmentType', options.assessmentType);
+  if (options.isActive !== undefined)
+    params.append('isActive', options.isActive.toString());
+  if (options.assessmentType)
+    params.append('assessmentType', options.assessmentType);
 
-  const response = await api.get(`/data-quality/assessment/schedules?${params.toString()}`);
+  const response = await api.get(
+    `/data-quality/assessment/schedules?${params.toString()}`
+  );
   return response.data;
 };
 
-export const updateScheduleStatus = async (scheduleId: number, isActive: boolean): Promise<AssessmentSchedule> => {
-  const response = await api.put(`/data-quality/assessment/schedule/${scheduleId}/status`, { isActive });
+export const updateScheduleStatus = async (
+  scheduleId: number,
+  isActive: boolean
+): Promise<AssessmentSchedule> => {
+  const response = await api.put(
+    `/data-quality/assessment/schedule/${scheduleId}/status`,
+    { isActive }
+  );
   return response.data;
 };
 
-export const deleteAssessmentSchedule = async (scheduleId: number): Promise<void> => {
+export const deleteAssessmentSchedule = async (
+  scheduleId: number
+): Promise<void> => {
   await api.delete(`/data-quality/assessment/schedule/${scheduleId}`);
 };
 
-export const executeManualAssessment = async (assessmentData: ManualAssessmentRequest): Promise<DataQualityAssessment> => {
-  const response = await api.post('/data-quality/assessment/execute', assessmentData);
+export const executeManualAssessment = async (
+  assessmentData: ManualAssessmentRequest
+): Promise<DataQualityAssessment> => {
+  const response = await api.post(
+    '/data-quality/assessment/execute',
+    assessmentData
+  );
   return response.data;
 };
 
-export const executeScheduledAssessment = async (scheduleId: number): Promise<DataQualityAssessment> => {
-  const response = await api.post(`/data-quality/assessment/schedule/${scheduleId}/execute`);
+export const executeScheduledAssessment = async (
+  scheduleId: number
+): Promise<DataQualityAssessment> => {
+  const response = await api.post(
+    `/data-quality/assessment/schedule/${scheduleId}/execute`
+  );
   return response.data;
 };
 
-export const getAssessments = async (options: { page?: number; limit?: number } & AssessmentFilters = {}): Promise<{
+export const getAssessments = async (
+  options: { page?: number; limit?: number } & AssessmentFilters = {}
+): Promise<{
   assessments: DataQualityAssessment[];
   total: number;
   page: number;
@@ -1072,27 +1229,41 @@ export const getAssessments = async (options: { page?: number; limit?: number } 
   if (options.page) params.append('page', options.page.toString());
   if (options.limit) params.append('limit', options.limit.toString());
   if (options.status) params.append('status', options.status);
-  if (options.assessmentType) params.append('assessmentType', options.assessmentType);
+  if (options.assessmentType)
+    params.append('assessmentType', options.assessmentType);
   if (options.startDate) params.append('startDate', options.startDate);
   if (options.endDate) params.append('endDate', options.endDate);
   if (options.triggeredBy) params.append('triggeredBy', options.triggeredBy);
 
-  const response = await api.get(`/data-quality/assessment/list?${params.toString()}`);
+  const response = await api.get(
+    `/data-quality/assessment/list?${params.toString()}`
+  );
   return response.data;
 };
 
-export const getAssessmentById = async (assessmentId: number): Promise<DataQualityAssessment> => {
+export const getAssessmentById = async (
+  assessmentId: number
+): Promise<DataQualityAssessment> => {
   const response = await api.get(`/data-quality/assessment/${assessmentId}`);
   return response.data;
 };
 
-export const getAssessmentStats = async (options: { startDate?: string; endDate?: string; assessmentType?: string } = {}): Promise<AssessmentStats> => {
+export const getAssessmentStats = async (
+  options: {
+    startDate?: string;
+    endDate?: string;
+    assessmentType?: string;
+  } = {}
+): Promise<AssessmentStats> => {
   const params = new URLSearchParams();
   if (options.startDate) params.append('startDate', options.startDate);
   if (options.endDate) params.append('endDate', options.endDate);
-  if (options.assessmentType) params.append('assessmentType', options.assessmentType);
+  if (options.assessmentType)
+    params.append('assessmentType', options.assessmentType);
 
-  const response = await api.get(`/data-quality/assessment/stats?${params.toString()}`);
+  const response = await api.get(
+    `/data-quality/assessment/stats?${params.toString()}`
+  );
   return response.data;
 };
 
@@ -1165,7 +1336,7 @@ export const convertImageToBase64 = async (
               maxWidth,
               maxHeight,
               format = 'jpeg',
-              compression = true
+              compression = true,
             } = options;
 
             // 計算新的尺寸
@@ -1188,7 +1359,10 @@ export const convertImageToBase64 = async (
 
             // 轉換為base64
             const mimeType = `image/${format}`;
-            const base64 = canvas.toDataURL(mimeType, compression ? quality : 1);
+            const base64 = canvas.toDataURL(
+              mimeType,
+              compression ? quality : 1
+            );
 
             const endTime = performance.now();
             const processingTime = endTime - startTime;
@@ -1196,7 +1370,8 @@ export const convertImageToBase64 = async (
             // 計算大小
             const originalSize = file.size;
             const compressedSize = Math.round((base64.length * 3) / 4); // base64轉字節的近似值
-            const compressionRatio = originalSize > 0 ? (1 - compressedSize / originalSize) : 0;
+            const compressionRatio =
+              originalSize > 0 ? 1 - compressedSize / originalSize : 0;
 
             resolve({
               base64,
@@ -1207,10 +1382,14 @@ export const convertImageToBase64 = async (
               format,
               mimeType,
               compressionRatio,
-              processingTime
+              processingTime,
             });
           } catch (error) {
-            reject(new Error(`圖片處理失敗: ${error instanceof Error ? error.message : '未知錯誤'}`));
+            reject(
+              new Error(
+                `圖片處理失敗: ${error instanceof Error ? error.message : '未知錯誤'}`
+              )
+            );
           }
         };
 
@@ -1220,7 +1399,11 @@ export const convertImageToBase64 = async (
 
         img.src = event.target?.result as string;
       } catch (error) {
-        reject(new Error(`文件讀取失敗: ${error instanceof Error ? error.message : '未知錯誤'}`));
+        reject(
+          new Error(
+            `文件讀取失敗: ${error instanceof Error ? error.message : '未知錯誤'}`
+          )
+        );
       }
     };
 
@@ -1267,7 +1450,10 @@ export const convertImagesToBase64 = async (
     successfulConversions,
     failedConversions,
     totalProcessingTime,
-    averageProcessingTime: successfulConversions > 0 ? totalProcessingTime / successfulConversions : 0
+    averageProcessingTime:
+      successfulConversions > 0
+        ? totalProcessingTime / successfulConversions
+        : 0,
   };
 };
 
@@ -1302,7 +1488,7 @@ export const convertImageUrlToBase64 = async (
           maxWidth,
           maxHeight,
           format = 'jpeg',
-          compression = true
+          compression = true,
         } = options;
 
         // 計算新的尺寸
@@ -1343,10 +1529,14 @@ export const convertImageUrlToBase64 = async (
           format,
           mimeType,
           compressionRatio: 0,
-          processingTime
+          processingTime,
         });
       } catch (error) {
-        reject(new Error(`圖片處理失敗: ${error instanceof Error ? error.message : '未知錯誤'}`));
+        reject(
+          new Error(
+            `圖片處理失敗: ${error instanceof Error ? error.message : '未知錯誤'}`
+          )
+        );
       }
     };
 
@@ -1364,7 +1554,10 @@ export const convertImageUrlToBase64 = async (
  * @param mimeType MIME類型
  * @returns Blob
  */
-export const base64ToBlob = (base64: string, mimeType: string = 'image/jpeg'): Blob => {
+export const base64ToBlob = (
+  base64: string,
+  mimeType: string = 'image/jpeg'
+): Blob => {
   const dataPart = base64.split(',')[1];
   if (!dataPart) {
     throw new Error('無效的base64格式');
@@ -1412,14 +1605,16 @@ export const isValidImageBase64 = (base64: string): boolean => {
  * @param base64 base64字符串
  * @returns Promise<{width: number, height: number}>
  */
-export const getBase64ImageDimensions = (base64: string): Promise<{width: number, height: number}> => {
+export const getBase64ImageDimensions = (
+  base64: string
+): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
 
     img.onload = () => {
       resolve({
         width: img.width,
-        height: img.height
+        height: img.height,
       });
     };
 
@@ -1455,12 +1650,7 @@ export const compressBase64Image = async (
 
     img.onload = () => {
       try {
-        const {
-          quality = 0.8,
-          maxWidth,
-          maxHeight,
-          format = 'jpeg'
-        } = options;
+        const { quality = 0.8, maxWidth, maxHeight, format = 'jpeg' } = options;
 
         // 計算新的尺寸
         let { width, height } = img;
@@ -1490,7 +1680,8 @@ export const compressBase64Image = async (
         // 計算大小
         const originalSize = Math.round((base64.length * 3) / 4);
         const compressedSize = Math.round((compressedBase64.length * 3) / 4);
-        const compressionRatio = originalSize > 0 ? (1 - compressedSize / originalSize) : 0;
+        const compressionRatio =
+          originalSize > 0 ? 1 - compressedSize / originalSize : 0;
 
         resolve({
           base64: compressedBase64,
@@ -1501,10 +1692,14 @@ export const compressBase64Image = async (
           format,
           mimeType,
           compressionRatio,
-          processingTime
+          processingTime,
         });
       } catch (error) {
-        reject(new Error(`圖片壓縮失敗: ${error instanceof Error ? error.message : '未知錯誤'}`));
+        reject(
+          new Error(
+            `圖片壓縮失敗: ${error instanceof Error ? error.message : '未知錯誤'}`
+          )
+        );
       }
     };
 
@@ -1515,5 +1710,3 @@ export const compressBase64Image = async (
     img.src = base64;
   });
 };
-
-

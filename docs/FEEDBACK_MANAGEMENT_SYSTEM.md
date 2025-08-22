@@ -7,6 +7,7 @@
 ## 功能特性
 
 ### 核心功能
+
 - **反饋提交**: 支持多種類型的反饋提交（數據質量、標註質量、系統建議、錯誤報告、功能請求）
 - **智能優先級計算**: 基於嚴重程度和類別自動計算優先級
 - **自動回應生成**: 根據反饋類型和類別生成個性化自動回應
@@ -15,12 +16,14 @@
 - **回應系統**: 支持添加回應、狀態更新、分配通知等
 
 ### 分析功能
+
 - **統計分析**: 反饋提交量、解決率、平均解決時間等關鍵指標
 - **分佈分析**: 反饋類型、類別、優先級、狀態、嚴重程度分佈
 - **趨勢分析**: 每日反饋提交和解決趨勢
 - **改進建議**: 基於統計數據自動生成改進建議
 
 ### 管理功能
+
 - **篩選和搜索**: 多維度反饋篩選和搜索
 - **批量操作**: 支持批量狀態更新和分配
 - **權限控制**: 基於角色的訪問控制
@@ -31,6 +34,7 @@
 ### 數據庫模型
 
 #### Feedback 模型
+
 ```javascript
 {
   id: INTEGER (主鍵),
@@ -55,6 +59,7 @@
 ```
 
 #### FeedbackResponse 模型
+
 ```javascript
 {
   id: INTEGER (主鍵),
@@ -70,6 +75,7 @@
 ```
 
 #### FeedbackAnalytics 模型
+
 ```javascript
 {
   id: INTEGER (主鍵),
@@ -94,30 +100,36 @@
 #### 反饋管理端點
 
 **POST /api/data-quality/feedback**
+
 - 提交新反饋
 - 請求體: `FeedbackData`
 - 響應: `{ success: boolean, message: string, data: Feedback }`
 
 **GET /api/data-quality/feedback**
+
 - 獲取反饋列表
 - 查詢參數: `page`, `limit`, `status`, `priority`, `feedbackType`, `category`, `severity`, `assignedTo`, `startDate`, `endDate`, `userId`
 - 響應: `{ success: boolean, data: { feedbacks: Feedback[], pagination: PaginationInfo } }`
 
 **GET /api/data-quality/feedback/:id**
+
 - 獲取單個反饋詳情
 - 響應: `{ success: boolean, data: Feedback }`
 
 **PUT /api/data-quality/feedback/:id/status**
+
 - 更新反饋狀態
 - 請求體: `{ status: string, resolution?: string }`
 - 響應: `{ success: boolean, message: string, data: Feedback }`
 
 **PUT /api/data-quality/feedback/:id/assign**
+
 - 分配反饋
 - 請求體: `{ assignedTo: number }`
 - 響應: `{ success: boolean, message: string, data: Feedback }`
 
 **POST /api/data-quality/feedback/:id/response**
+
 - 添加反饋回應
 - 請求體: `{ content: string, responseType?: string, isInternal?: boolean }`
 - 響應: `{ success: boolean, message: string, data: FeedbackResponse }`
@@ -125,11 +137,13 @@
 #### 統計分析端點
 
 **GET /api/data-quality/feedback/stats**
+
 - 獲取反饋統計數據
 - 查詢參數: `startDate`, `endDate`, `feedbackType`, `category`
 - 響應: `{ success: boolean, data: FeedbackStats }`
 
 **GET /api/data-quality/feedback/suggestions**
+
 - 獲取改進建議
 - 響應: `{ success: boolean, data: FeedbackSuggestion[] }`
 
@@ -205,18 +219,21 @@ class FeedbackService {
 ### FeedbackManagementScreen 功能
 
 #### 主要組件
+
 - **統計概覽**: 總提交數、已解決數、平均解決時間
 - **圖表展示**: 反饋類型分佈、狀態分佈
 - **改進建議**: 基於數據的改進建議列表
 - **反饋列表**: 分頁顯示反饋列表，支持篩選
 
 #### 交互功能
+
 - **反饋詳情**: 查看完整反饋信息和回應歷史
 - **狀態更新**: 更新反饋狀態和添加解決方案
 - **任務分配**: 將反饋分配給特定用戶
 - **回應管理**: 添加回應，支持內部回應標記
 
 #### 篩選和搜索
+
 - **狀態篩選**: 按反饋狀態篩選
 - **類型篩選**: 按反饋類型和類別篩選
 - **優先級篩選**: 按優先級和嚴重程度篩選
@@ -225,12 +242,15 @@ class FeedbackService {
 ### 數據可視化
 
 #### 圖表類型
+
 - **餅圖**: 反饋類型分佈、狀態分佈
 - **柱狀圖**: 優先級分佈、嚴重程度分佈
 - **折線圖**: 每日趨勢分析
 
 #### 顏色編碼
-- **狀態顏色**: 
+
+- **狀態顏色**:
+
   - 待處理: 橙色 (#FFA500)
   - 審核中: 藍色 (#007AFF)
   - 處理中: 橙紅色 (#FF6B35)
@@ -249,6 +269,7 @@ class FeedbackService {
 ### 提交反饋
 
 1. **選擇反饋類型**:
+
    - `data_quality`: 數據質量相關
    - `annotation_quality`: 標註質量相關
    - `system_suggestion`: 系統建議
@@ -256,6 +277,7 @@ class FeedbackService {
    - `feature_request`: 功能請求
 
 2. **選擇類別**:
+
    - `card_recognition`: 卡牌辨識
    - `centering_evaluation`: 置中評估
    - `authenticity_verification`: 防偽判斷
@@ -273,10 +295,12 @@ class FeedbackService {
 ### 管理反饋
 
 1. **查看反饋列表**:
+
    - 使用篩選器快速定位特定反饋
    - 查看反饋摘要信息
 
 2. **處理反饋**:
+
    - 更新狀態（待處理 → 審核中 → 處理中 → 已解決）
    - 分配給適當的處理人員
    - 添加回應和解決方案
@@ -289,11 +313,13 @@ class FeedbackService {
 ### 最佳實踐
 
 1. **反饋分類**:
+
    - 準確選擇反饋類型和類別
    - 合理評估嚴重程度
    - 添加相關標籤
 
 2. **回應質量**:
+
    - 提供清晰、具體的回應
    - 及時更新狀態
    - 記錄解決方案
@@ -309,20 +335,20 @@ class FeedbackService {
 
 ```javascript
 const severityWeight = {
-  'critical': 4,
-  'high': 3,
-  'medium': 2,
-  'low': 1
+  critical: 4,
+  high: 3,
+  medium: 2,
+  low: 1,
 };
 
 const categoryWeight = {
-  'card_recognition': 3,
-  'centering_evaluation': 2,
-  'authenticity_verification': 3,
-  'price_prediction': 2,
-  'data_collection': 1,
-  'annotation_process': 1,
-  'general': 1
+  card_recognition: 3,
+  centering_evaluation: 2,
+  authenticity_verification: 3,
+  price_prediction: 2,
+  data_collection: 1,
+  annotation_process: 1,
+  general: 1,
 };
 ```
 
@@ -330,12 +356,14 @@ const categoryWeight = {
 
 ```javascript
 const responses = {
-  'data_quality': {
-    'card_recognition': '感謝您的反饋！我們會仔細分析卡牌辨識的準確性問題，並持續改進AI模型。',
-    'centering_evaluation': '感謝您對置中評估功能的關注！我們會優化評估算法以提高準確性。',
+  data_quality: {
+    card_recognition:
+      '感謝您的反饋！我們會仔細分析卡牌辨識的準確性問題，並持續改進AI模型。',
+    centering_evaluation:
+      '感謝您對置中評估功能的關注！我們會優化評估算法以提高準確性。',
     // ... 其他類別
   },
-  'annotation_quality': '感謝您對標註質量的關注！我們會加強質量控制流程。',
+  annotation_quality: '感謝您對標註質量的關注！我們會加強質量控制流程。',
   // ... 其他類型
 };
 ```
@@ -343,17 +371,20 @@ const responses = {
 ## 測試覆蓋
 
 ### 單元測試
+
 - 反饋提交和驗證
 - 優先級計算邏輯
 - 自動回應生成
 - 統計數據計算
 
 ### 集成測試
+
 - API 端點測試
 - 數據庫操作測試
 - 認證和授權測試
 
 ### 端到端測試
+
 - 完整反饋流程測試
 - 用戶界面交互測試
 - 性能測試
@@ -361,16 +392,19 @@ const responses = {
 ## 監控和維護
 
 ### 性能監控
+
 - API 響應時間
 - 數據庫查詢性能
 - 並發處理能力
 
 ### 錯誤監控
+
 - 異常錯誤追蹤
 - 用戶操作日誌
 - 系統健康檢查
 
 ### 數據維護
+
 - 定期數據清理
 - 備份和恢復
 - 數據一致性檢查
@@ -378,6 +412,7 @@ const responses = {
 ## 版本歷史
 
 ### v1.0.0 (2024-12-19)
+
 - 初始版本發布
 - 基本反饋管理功能
 - 統計分析和可視化
@@ -387,16 +422,19 @@ const responses = {
 ## 未來計劃
 
 ### 短期目標
+
 - 增加更多圖表類型
 - 優化搜索和篩選功能
 - 添加批量操作功能
 
 ### 中期目標
+
 - 集成機器學習建議
 - 增加工作流程自動化
 - 支持多語言界面
 
 ### 長期目標
+
 - 智能反饋分類
 - 預測性分析
 - 與其他系統深度集成
@@ -406,11 +444,13 @@ const responses = {
 ### 常見問題
 
 1. **反饋提交失敗**
+
    - 檢查必填字段
    - 驗證數據格式
    - 確認用戶權限
 
 2. **統計數據不準確**
+
    - 檢查數據庫連接
    - 驗證分析邏輯
    - 確認時間範圍設置

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   RefreshControl,
-  Alert
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -29,7 +29,9 @@ export const CardRecognitionHistoryScreen: React.FC = () => {
   const [recognitionStats, setRecognitionStats] = useState<any>(null);
 
   // 從 Redux store 獲取識別歷史
-  const recognitionHistory = useSelector((state: any) => state.cards.recognitionHistory || []);
+  const recognitionHistory = useSelector(
+    (state: any) => state.cards.recognitionHistory || []
+  );
 
   useEffect(() => {
     loadRecognitionStats();
@@ -88,8 +90,8 @@ export const CardRecognitionHistoryScreen: React.FC = () => {
               logger.error('清除歷史記錄失敗:', { error });
               Alert.alert('錯誤', '清除失敗，請重試');
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -102,7 +104,9 @@ export const CardRecognitionHistoryScreen: React.FC = () => {
         <Text style={styles.statsTitle}>識別統計</Text>
         <View style={styles.statsGrid}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{recognitionStats.totalRecognitions}</Text>
+            <Text style={styles.statValue}>
+              {recognitionStats.totalRecognitions}
+            </Text>
             <Text style={styles.statLabel}>總識別次數</Text>
           </View>
           <View style={styles.statItem}>
@@ -162,18 +166,24 @@ export const CardRecognitionHistoryScreen: React.FC = () => {
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
       <Text style={styles.emptyTitle}>尚無識別記錄</Text>
-      <Text style={styles.emptyText}>
-        開始掃描卡片來建立您的識別歷史記錄
-      </Text>
+      <Text style={styles.emptyText}>開始掃描卡片來建立您的識別歷史記錄</Text>
     </View>
   );
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.backgroundLight }]}>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.backgroundLight },
+      ]}
+    >
       <View style={styles.header}>
         <Text style={styles.title}>識別歷史</Text>
         {recognitionHistory.length > 0 && (
-          <TouchableOpacity style={styles.clearButton} onPress={handleClearHistory}>
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={handleClearHistory}
+          >
             <Text style={styles.clearButtonText}>清除</Text>
           </TouchableOpacity>
         )}
@@ -208,7 +218,7 @@ export const CardRecognitionHistoryScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -217,59 +227,59 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.large,
     paddingVertical: theme.spacing.medium,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   clearButton: {
     backgroundColor: theme.colors.error,
     paddingHorizontal: theme.spacing.medium,
     paddingVertical: theme.spacing.small,
-    borderRadius: theme.borderRadius.small
+    borderRadius: theme.borderRadius.small,
   },
   clearButtonText: {
     color: theme.colors.white,
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   statsContainer: {
     padding: theme.spacing.large,
     backgroundColor: theme.colors.backgroundPaper,
     margin: theme.spacing.large,
-    borderRadius: theme.borderRadius.medium
+    borderRadius: theme.borderRadius.medium,
   },
   statsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statItem: {
     width: '48%',
     alignItems: 'center',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.primary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   statLabel: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   listContainer: {
-    padding: theme.spacing.large
+    padding: theme.spacing.large,
   },
   historyItem: {
     backgroundColor: theme.colors.backgroundPaper,
@@ -277,77 +287,77 @@ const styles = StyleSheet.create({
     padding: theme.spacing.large,
     marginBottom: theme.spacing.medium,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   cardInfo: {
-    flex: 1
+    flex: 1,
   },
   cardName: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   cardSet: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   cardRarity: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   recognitionInfo: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   confidenceContainer: {
     alignItems: 'center',
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   confidenceLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: 2
+    marginBottom: 2,
   },
   confidenceValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: theme.colors.primary
+    color: theme.colors.primary,
   },
   timeContainer: {
     alignItems: 'center',
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   timeLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: 2
+    marginBottom: 2,
   },
   timeValue: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   timestamp: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: theme.spacing.extraLarge
+    paddingVertical: theme.spacing.extraLarge,
   },
   emptyTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   emptyText: {
     fontSize: 16,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    paddingHorizontal: theme.spacing.large
+    paddingHorizontal: theme.spacing.large,
   },
   loadingOverlay: {
     position: 'absolute',
@@ -357,8 +367,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
 
 export default CardRecognitionHistoryScreen;

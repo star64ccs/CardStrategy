@@ -7,12 +7,18 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
-  Image
+  Image,
 } from 'react-native';
 import { cardService, Card } from '../services/cardService';
 import { portfolioService } from '../services/portfolioService';
 import { aiService } from '../services/aiService';
-import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+  shadows,
+} from '../config/theme';
 import { logger } from '../utils/logger';
 
 const { width } = Dimensions.get('window');
@@ -26,7 +32,7 @@ interface CardDetailScreenProps {
 const CardDetailScreen: React.FC<CardDetailScreenProps> = ({
   cardId,
   onClose,
-  onAddToPortfolio
+  onAddToPortfolio,
 }) => {
   const [card, setCard] = useState<Card | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -92,12 +98,17 @@ const CardDetailScreen: React.FC<CardDetailScreenProps> = ({
                 return;
               }
 
-              portfolioService.addToPortfolio(card, qty, prc, '從卡片詳情頁面添加');
+              portfolioService.addToPortfolio(
+                card,
+                qty,
+                prc,
+                '從卡片詳情頁面添加'
+              );
               onAddToPortfolio(card);
               Alert.alert('成功', '已加入投資組合！');
             }
-          }
-        }
+          },
+        },
       ],
       'plain-text'
     );
@@ -181,28 +192,49 @@ const CardDetailScreen: React.FC<CardDetailScreenProps> = ({
             <View style={styles.priceChanges}>
               <View style={styles.priceChange}>
                 <Text style={styles.changeLabel}>24小時</Text>
-                <Text style={[
-                  styles.changeValue,
-                  { color: card.price.change24h >= 0 ? colors.success : colors.error }
-                ]}>
+                <Text
+                  style={[
+                    styles.changeValue,
+                    {
+                      color:
+                        card.price.change24h >= 0
+                          ? colors.success
+                          : colors.error,
+                    },
+                  ]}
+                >
                   {formatPercentage(card.price.change24h)}
                 </Text>
               </View>
               <View style={styles.priceChange}>
                 <Text style={styles.changeLabel}>7天</Text>
-                <Text style={[
-                  styles.changeValue,
-                  { color: card.price.change7d >= 0 ? colors.success : colors.error }
-                ]}>
+                <Text
+                  style={[
+                    styles.changeValue,
+                    {
+                      color:
+                        card.price.change7d >= 0
+                          ? colors.success
+                          : colors.error,
+                    },
+                  ]}
+                >
                   {formatPercentage(card.price.change7d)}
                 </Text>
               </View>
               <View style={styles.priceChange}>
                 <Text style={styles.changeLabel}>30天</Text>
-                <Text style={[
-                  styles.changeValue,
-                  { color: card.price.change30d >= 0 ? colors.success : colors.error }
-                ]}>
+                <Text
+                  style={[
+                    styles.changeValue,
+                    {
+                      color:
+                        card.price.change30d >= 0
+                          ? colors.success
+                          : colors.error,
+                    },
+                  ]}
+                >
                   {formatPercentage(card.price.change30d)}
                 </Text>
               </View>
@@ -310,7 +342,10 @@ const CardDetailScreen: React.FC<CardDetailScreenProps> = ({
 
       {/* 底部操作按鈕 */}
       <View style={styles.bottomActions}>
-        <TouchableOpacity style={styles.addToPortfolioButton} onPress={handleAddToPortfolio}>
+        <TouchableOpacity
+          style={styles.addToPortfolioButton}
+          onPress={handleAddToPortfolio}
+        >
           <Text style={styles.addToPortfolioButtonText}>💎 加入投資組合</Text>
         </TouchableOpacity>
       </View>
@@ -321,39 +356,39 @@ const CardDetailScreen: React.FC<CardDetailScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   loadingText: {
     fontSize: typography.fontSize.base,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   errorText: {
     fontSize: typography.fontSize.base,
     color: colors.error,
-    marginBottom: spacing.large
+    marginBottom: spacing.large,
   },
   closeButton: {
     backgroundColor: colors.primary,
     paddingHorizontal: spacing.large,
     paddingVertical: spacing.medium,
-    borderRadius: borderRadius.medium
+    borderRadius: borderRadius.medium,
   },
   closeButtonText: {
     color: colors.white,
     fontSize: typography.fontSize.base,
-    fontWeight: '600' as const
+    fontWeight: '600' as const,
   },
   header: {
     flexDirection: 'row',
@@ -363,35 +398,35 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.medium,
     backgroundColor: colors.backgroundPaper,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border
+    borderBottomColor: colors.border,
   },
   backButton: {
-    padding: spacing.small
+    padding: spacing.small,
   },
   backButtonText: {
     color: colors.accent,
     fontSize: typography.fontSize.base,
-    fontWeight: '500' as const
+    fontWeight: '500' as const,
   },
   headerTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: '600' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   shareButton: {
-    padding: spacing.small
+    padding: spacing.small,
   },
   shareButtonText: {
     color: colors.accent,
     fontSize: typography.fontSize.base,
-    fontWeight: '500' as const
+    fontWeight: '500' as const,
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   cardImageContainer: {
     alignItems: 'center',
-    paddingVertical: spacing.large
+    paddingVertical: spacing.large,
   },
   cardImage: {
     width: width * 0.8,
@@ -400,221 +435,221 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.large,
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.lg
+    ...shadows.lg,
   },
   cardImagePlaceholder: {
-    fontSize: 80
+    fontSize: 80,
   },
   cardInfo: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   cardName: {
     fontSize: typography.fontSize['2xl'],
     fontWeight: '700' as const,
     color: colors.textPrimary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   cardSetName: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   cardMeta: {
     flexDirection: 'row',
-    gap: spacing.large
+    gap: spacing.large,
   },
   metaItem: {
-    flex: 1
+    flex: 1,
   },
   metaLabel: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   metaValue: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   priceSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   sectionTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: '600' as const,
     color: colors.textPrimary,
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   priceCard: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
-    ...shadows.base
+    ...shadows.base,
   },
   currentPrice: {
     alignItems: 'center',
-    marginBottom: spacing.large
+    marginBottom: spacing.large,
   },
   priceLabel: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   priceValue: {
     fontSize: typography.fontSize['2xl'],
     fontWeight: '700' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   priceChanges: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   priceChange: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   changeLabel: {
     fontSize: typography.fontSize.xs,
     color: colors.textSecondary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   changeValue: {
     fontSize: typography.fontSize.base,
-    fontWeight: '600' as const
+    fontWeight: '600' as const,
   },
   marketSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   marketCard: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
-    ...shadows.base
+    ...shadows.base,
   },
   marketItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   marketLabel: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   marketValue: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   statsSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   statsCard: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
-    ...shadows.base
+    ...shadows.base,
   },
   statItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   statLabel: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   statValue: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   descriptionSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   descriptionCard: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
-    ...shadows.base
+    ...shadows.base,
   },
   descriptionText: {
     fontSize: typography.fontSize.base,
     color: colors.textPrimary,
-    lineHeight: 24
+    lineHeight: 24,
   },
   tagsSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.small
+    gap: spacing.small,
   },
   tag: {
-    backgroundColor: `${colors.accent  }20`,
+    backgroundColor: `${colors.accent}20`,
     paddingHorizontal: spacing.medium,
     paddingVertical: spacing.small,
-    borderRadius: borderRadius.medium
+    borderRadius: borderRadius.medium,
   },
   tagText: {
     fontSize: typography.fontSize.sm,
     color: colors.accent,
-    fontWeight: '500' as const
+    fontWeight: '500' as const,
   },
   aiSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   aiCard: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
-    ...shadows.base
+    ...shadows.base,
   },
   analyzingText: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   aiAnalysisText: {
     fontSize: typography.fontSize.base,
     color: colors.textPrimary,
-    lineHeight: 24
+    lineHeight: 24,
   },
   noAnalysisText: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   bottomSpacing: {
-    height: spacing.xlarge
+    height: spacing.xlarge,
   },
   bottomActions: {
     paddingHorizontal: spacing.large,
     paddingVertical: spacing.medium,
     backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: colors.border
+    borderTopColor: colors.border,
   },
   addToPortfolioButton: {
     backgroundColor: colors.primary,
     borderRadius: borderRadius.medium,
     paddingVertical: spacing.medium,
     alignItems: 'center',
-    ...shadows.sm
+    ...shadows.sm,
   },
   addToPortfolioButtonText: {
     color: colors.white,
     fontSize: typography.fontSize.base,
-    fontWeight: '600' as const
-  }
+    fontWeight: '600' as const,
+  },
 });
 
 export default CardDetailScreen;

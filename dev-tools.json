@@ -1,0 +1,54 @@
+{
+  "name": "CardStrategy 開發工具配置",
+  "tools": {
+    "expo": {
+      "enabled": true,
+      "devtools": true,
+      "debuggerHost": "localhost:19000"
+    },
+    "reactNativeDebugger": {
+      "enabled": true,
+      "port": 19001
+    },
+    "flipper": {
+      "enabled": true,
+      "plugins": [
+        "LogRocket",
+        "Redux",
+        "Network",
+        "Firebase"
+      ]
+    },
+    "analytics": {
+      "mixpanel": {
+        "enabled": true,
+        "debugMode": true
+      },
+      "segment": {
+        "enabled": true,
+        "debugMode": true
+      }
+    },
+    "monitoring": {
+      "logRocket": {
+        "enabled": true,
+        "captureConsole": true,
+        "captureNetwork": true
+      }
+    }
+  },
+  "scripts": {
+    "start": "expo start",
+    "startTunnel": "expo start --tunnel",
+    "startLan": "expo start --lan",
+    "debugAndroid": "expo start --android",
+    "debugIos": "expo start --ios",
+    "resetCache": "expo start --clear"
+  },
+  "debugging": {
+    "enableRemoteDebugger": true,
+    "enableReduxLogger": true,
+    "enableNetworkLogger": true,
+    "enableErrorBoundary": true
+  }
+}

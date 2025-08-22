@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { simulatedGradingService } from '../../../services/simulatedGradingService';
 import { apiService } from '../../../services/apiService';
 import { logger } from '../../../utils/logger';
@@ -31,32 +32,32 @@ describe('SimulatedGradingService', () => {
               score: 88,
               grade: 'Near Mint',
               details: ['邊角輕微磨損', '無明顯損傷'],
-              images: ['corner1.jpg', 'corner2.jpg']
+              images: ['corner1.jpg', 'corner2.jpg'],
             },
             edges: {
               score: 85,
               grade: 'Near Mint',
               details: ['邊緣輕微磨損', '無明顯白邊'],
-              images: ['edge1.jpg', 'edge2.jpg']
+              images: ['edge1.jpg', 'edge2.jpg'],
             },
             surface: {
               score: 90,
               grade: 'Near Mint',
               details: ['表面清潔', '無明顯刮痕'],
-              images: ['surface1.jpg', 'surface2.jpg']
+              images: ['surface1.jpg', 'surface2.jpg'],
             },
             centering: {
               score: 82,
               grade: 'Near Mint',
               details: ['居中度良好', '輕微偏移'],
-              images: ['centering1.jpg', 'centering2.jpg']
+              images: ['centering1.jpg', 'centering2.jpg'],
             },
             printQuality: {
               score: 87,
               grade: 'Near Mint',
               details: ['印刷清晰', '顏色飽滿'],
-              images: ['print1.jpg', 'print2.jpg']
-            }
+              images: ['print1.jpg', 'print2.jpg'],
+            },
           },
           damageAssessment: {
             scratches: 2,
@@ -64,27 +65,23 @@ describe('SimulatedGradingService', () => {
             creases: 0,
             stains: 0,
             fading: 0,
-            totalDamage: 2
+            totalDamage: 2,
           },
           marketImpact: {
             valueMultiplier: 0.95,
             estimatedValue: 950,
             valueRange: {
               min: 900,
-              max: 1000
+              max: 1000,
             },
-            recommendations: ['建議保持現狀', '避免進一步磨損']
+            recommendations: ['建議保持現狀', '避免進一步磨損'],
           },
-          preservationTips: [
-            '使用專業保護套',
-            '避免陽光直射',
-            '保持乾燥環境'
-          ],
+          preservationTips: ['使用專業保護套', '避免陽光直射', '保持乾燥環境'],
           restorationSuggestions: [
             '輕微清潔表面',
             '使用專業清潔劑',
-            '避免使用化學清潔劑'
-          ]
+            '避免使用化學清潔劑',
+          ],
         },
         processingTime: 3.2,
         metadata: {
@@ -92,36 +89,43 @@ describe('SimulatedGradingService', () => {
           modelVersion: 'v2.1.0',
           imageQuality: '高質量',
           lightingConditions: '良好',
-          gradingStandard: 'PSA'
-        }
-      }
+          gradingStandard: 'PSA',
+        },
+      },
     };
 
     it('應該正確評分卡片條件', async () => {
       mockApiService.post.mockResolvedValue(mockGradingResult);
 
-      const result = await simulatedGradingService.analyzeCondition(mockCardId, mockImageData);
+      const result = await simulatedGradingService.analyzeCondition(
+        mockCardId,
+        mockImageData
+      );
 
       expect(result.success).toBe(true);
       expect(result.data.grading.overallGrade).toBe('Near Mint');
       expect(result.data.grading.overallScore).toBeGreaterThan(80);
       expect(result.data.grading.confidence).toBeGreaterThan(0.8);
-      expect(mockApiService.post).toHaveBeenCalledWith(
-        expect.any(String),
-        { cardId: mockCardId, imageData: mockImageData }
-      );
+      expect(mockApiService.post).toHaveBeenCalledWith(expect.any(String), {
+        cardId: mockCardId,
+        imageData: mockImageData,
+      });
     });
 
     it('應該處理無效的卡牌 ID', async () => {
       const invalidCardId = 'invalid-id';
 
-      await expect(simulatedGradingService.analyzeCondition(invalidCardId, mockImageData)).rejects.toThrow();
+      await expect(
+        simulatedGradingService.analyzeCondition(invalidCardId, mockImageData)
+      ).rejects.toThrow();
     });
 
     it('應該處理 API 錯誤', async () => {
       mockApiService.post.mockRejectedValue(new Error('API 錯誤'));
 
-      await expect(simulatedGradingService.analyzeCondition(mockCardId, mockImageData)).rejects.toThrow('API 錯誤');
+      await expect(
+        simulatedGradingService.analyzeCondition(mockCardId, mockImageData)
+      ).rejects.toThrow('API 錯誤');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -139,38 +143,31 @@ describe('SimulatedGradingService', () => {
           gradingDetails: {
             overallGrade: 'Near Mint',
             overallScore: 85,
-            confidence: 0.92
+            confidence: 0.92,
           },
           detailedAnalysis: {
             corners: { score: 88, grade: 'Near Mint' },
             edges: { score: 85, grade: 'Near Mint' },
             surface: { score: 90, grade: 'Near Mint' },
             centering: { score: 82, grade: 'Near Mint' },
-            printQuality: { score: 87, grade: 'Near Mint' }
+            printQuality: { score: 87, grade: 'Near Mint' },
           },
           marketValue: {
             estimated: 950,
             range: { min: 900, max: 1000 },
-            confidence: 0.88
+            confidence: 0.88,
           },
-          recommendations: [
-            '建議保持現狀',
-            '避免進一步磨損',
-            '定期檢查條件'
-          ],
-          preservationTips: [
-            '使用專業保護套',
-            '避免陽光直射',
-            '保持乾燥環境'
-          ],
+          recommendations: ['建議保持現狀', '避免進一步磨損', '定期檢查條件'],
+          preservationTips: ['使用專業保護套', '避免陽光直射', '保持乾燥環境'],
           reportDate: '2024-01-01T00:00:00Z',
-          validUntil: '2024-12-31T23:59:59Z'
-        }
+          validUntil: '2024-12-31T23:59:59Z',
+        },
       };
 
       mockApiService.post.mockResolvedValue(mockReportResult);
 
-      const result = await simulatedGradingService.generateGradingReport(mockCardId);
+      const result =
+        await simulatedGradingService.generateGradingReport(mockCardId);
 
       expect(result.success).toBe(true);
       expect(result.data.reportId).toBe('report-123');
@@ -190,23 +187,15 @@ describe('SimulatedGradingService', () => {
           predictedGrade: 'Near Mint',
           confidence: 0.85,
           probabilityDistribution: {
-            'Mint': 0.05,
+            Mint: 0.05,
             'Near Mint': 0.75,
-            'Excellent': 0.15,
-            'Good': 0.03,
-            'Light Played': 0.02
+            Excellent: 0.15,
+            Good: 0.03,
+            'Light Played': 0.02,
           },
-          factors: [
-            '邊角輕微磨損',
-            '表面清潔',
-            '印刷清晰',
-            '居中度良好'
-          ],
-          recommendations: [
-            '建議專業鑑定',
-            '保持現有條件'
-          ]
-        }
+          factors: ['邊角輕微磨損', '表面清潔', '印刷清晰', '居中度良好'],
+          recommendations: ['建議專業鑑定', '保持現有條件'],
+        },
       };
 
       mockApiService.get.mockResolvedValue(mockPredictionResult);
@@ -234,33 +223,27 @@ describe('SimulatedGradingService', () => {
             estimated: 950,
             range: {
               min: 900,
-              max: 1000
+              max: 1000,
             },
             confidence: 0.88,
-            factors: [
-              '當前市場需求',
-              '供應量',
-              '歷史價格趨勢',
-              '條件評分'
-            ]
+            factors: ['當前市場需求', '供應量', '歷史價格趨勢', '條件評分'],
           },
           priceHistory: [
             { date: '2024-01-01', price: 950 },
             { date: '2023-12-01', price: 920 },
-            { date: '2023-11-01', price: 900 }
+            { date: '2023-11-01', price: 900 },
           ],
           marketTrend: 'stable',
-          recommendations: [
-            '建議持有',
-            '關注市場動態',
-            '考慮適時出售'
-          ]
-        }
+          recommendations: ['建議持有', '關注市場動態', '考慮適時出售'],
+        },
       };
 
       mockApiService.post.mockResolvedValue(mockValueResult);
 
-      const result = await simulatedGradingService.assessMarketValue(mockCardId, mockGrade);
+      const result = await simulatedGradingService.assessMarketValue(
+        mockCardId,
+        mockGrade
+      );
 
       expect(result.success).toBe(true);
       expect(result.data.marketValue.estimated).toBe(950);
@@ -283,32 +266,33 @@ describe('SimulatedGradingService', () => {
             '避免陽光直射',
             '保持乾燥環境',
             '定期檢查條件',
-            '避免頻繁觸摸'
+            '避免頻繁觸摸',
           ],
           storageRecommendations: [
             '使用無酸保護套',
             '存放在乾燥環境',
             '避免高溫潮濕',
-            '定期通風'
+            '定期通風',
           ],
           handlingGuidelines: [
             '戴手套處理',
             '避免彎折',
             '輕拿輕放',
-            '避免接觸化學品'
+            '避免接觸化學品',
           ],
           restorationOptions: [
             '輕微清潔表面',
             '使用專業清潔劑',
             '避免使用化學清潔劑',
-            '尋求專業修復'
-          ]
-        }
+            '尋求專業修復',
+          ],
+        },
       };
 
       mockApiService.get.mockResolvedValue(mockTipsResult);
 
-      const result = await simulatedGradingService.getPreservationTips(mockCardId);
+      const result =
+        await simulatedGradingService.getPreservationTips(mockCardId);
 
       expect(result.success).toBe(true);
       expect(result.data.preservationTips).toHaveLength(5);
@@ -334,8 +318,8 @@ describe('SimulatedGradingService', () => {
                 corners: { score: 88, requirement: 'Excellent' },
                 edges: { score: 85, requirement: 'Excellent' },
                 surface: { score: 90, requirement: 'Excellent' },
-                centering: { score: 82, requirement: 'Good' }
-              }
+                centering: { score: 82, requirement: 'Good' },
+              },
             },
             BGS: {
               grade: 'Near Mint',
@@ -345,8 +329,8 @@ describe('SimulatedGradingService', () => {
                 corners: { score: 88, requirement: 'Excellent' },
                 edges: { score: 85, requirement: 'Excellent' },
                 surface: { score: 90, requirement: 'Excellent' },
-                centering: { score: 82, requirement: 'Good' }
-              }
+                centering: { score: 82, requirement: 'Good' },
+              },
             },
             CGC: {
               grade: 'Near Mint',
@@ -356,21 +340,22 @@ describe('SimulatedGradingService', () => {
                 corners: { score: 88, requirement: 'Excellent' },
                 edges: { score: 85, requirement: 'Excellent' },
                 surface: { score: 90, requirement: 'Excellent' },
-                centering: { score: 82, requirement: 'Good' }
-              }
-            }
+                centering: { score: 82, requirement: 'Good' },
+              },
+            },
           },
           recommendations: [
             'PSA 鑑定可能獲得較高評分',
             'BGS 鑑定適合收藏',
-            'CGC 鑑定性價比較高'
-          ]
-        }
+            'CGC 鑑定性價比較高',
+          ],
+        },
       };
 
       mockApiService.get.mockResolvedValue(mockComparisonResult);
 
-      const result = await simulatedGradingService.compareWithGradingStandards(mockCardId);
+      const result =
+        await simulatedGradingService.compareWithGradingStandards(mockCardId);
 
       expect(result.success).toBe(true);
       expect(result.data.standards.PSA.grade).toBe('Near Mint');

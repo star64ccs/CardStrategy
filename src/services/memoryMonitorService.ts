@@ -60,12 +60,12 @@ export class MemoryMonitorService {
       return;
     }
 
-    const {memory} = (performance as any);
+    const { memory } = performance as any;
     const metrics: MemoryMetrics = {
       usedJSHeapSize: memory.usedJSHeapSize,
       totalJSHeapSize: memory.totalJSHeapSize,
       jsHeapSizeLimit: memory.jsHeapSizeLimit,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     this.memoryHistory.push(metrics);
@@ -82,7 +82,7 @@ export class MemoryMonitorService {
     logger.debug('內存使用情況', {
       used: `${Math.round(metrics.usedJSHeapSize / 1024 / 1024)}MB`,
       total: `${Math.round(metrics.totalJSHeapSize / 1024 / 1024)}MB`,
-      limit: `${Math.round(metrics.jsHeapSizeLimit / 1024 / 1024)}MB`
+      limit: `${Math.round(metrics.jsHeapSizeLimit / 1024 / 1024)}MB`,
     });
   }
 
@@ -100,7 +100,7 @@ export class MemoryMonitorService {
         growth: memoryGrowth,
         duration,
         threshold: this.leakThreshold,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
 
       this.reportMemoryLeak(report);
@@ -111,11 +111,11 @@ export class MemoryMonitorService {
     logger.warn('檢測到可能的內存洩漏', {
       growth: `${Math.round(report.growth / 1024 / 1024)}MB`,
       duration: `${Math.round(report.duration / 1000)}秒`,
-      threshold: `${Math.round(report.threshold / 1024 / 1024)}MB`
+      threshold: `${Math.round(report.threshold / 1024 / 1024)}MB`,
     });
 
     // 通知所有監聽器
-    this.leakCallbacks.forEach(callback => {
+    this.leakCallbacks.forEach((callback) => {
       try {
         callback(report);
       } catch (error) {
@@ -138,12 +138,12 @@ export class MemoryMonitorService {
   getCurrentMemoryUsage(): MemoryMetrics | null {
     if (!('memory' in performance)) return null;
 
-    const {memory} = (performance as any);
+    const { memory } = performance as any;
     return {
       usedJSHeapSize: memory.usedJSHeapSize,
       totalJSHeapSize: memory.totalJSHeapSize,
       jsHeapSizeLimit: memory.jsHeapSizeLimit,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -156,13 +156,14 @@ export class MemoryMonitorService {
     peak: number;
     current: number;
     growth: number;
-    } {
+  } {
     if (this.memoryHistory.length === 0) {
       return { average: 0, peak: 0, current: 0, growth: 0 };
     }
 
-    const usedMemory = this.memoryHistory.map(m => m.usedJSHeapSize);
-    const average = usedMemory.reduce((sum, val) => sum + val, 0) / usedMemory.length;
+    const usedMemory = this.memoryHistory.map((m) => m.usedJSHeapSize);
+    const average =
+      usedMemory.reduce((sum, val) => sum + val, 0) / usedMemory.length;
     const peak = Math.max(...usedMemory);
     const current = usedMemory[usedMemory.length - 1];
     const growth = usedMemory[usedMemory.length - 1] - usedMemory[0];
@@ -171,13 +172,15 @@ export class MemoryMonitorService {
       average: Math.round(average / 1024 / 1024),
       peak: Math.round(peak / 1024 / 1024),
       current: Math.round(current / 1024 / 1024),
-      growth: Math.round(growth / 1024 / 1024)
+      growth: Math.round(growth / 1024 / 1024),
     };
   }
 
   setLeakThreshold(threshold: number): void {
     this.leakThreshold = threshold;
-    logger.info('內存洩漏閾值已更新', { threshold: `${Math.round(threshold / 1024 / 1024)}MB` });
+    logger.info('內存洩漏閾值已更新', {
+      threshold: `${Math.round(threshold / 1024 / 1024)}MB`,
+    });
   }
 
   cleanup(): void {
@@ -188,5 +191,6 @@ export class MemoryMonitorService {
   }
 }
 
-// 導出單例實例
+// 導出服務類和實例
+export { MemoryMonitorService };
 export const memoryMonitorService = MemoryMonitorService.getInstance();

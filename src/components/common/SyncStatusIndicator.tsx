@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+} from 'react-native';
 import { useIncrementalSync } from '@/hooks/useIncrementalSync';
 import { formatDistanceToNow } from '@/utils/dateUtils';
 
@@ -10,7 +16,7 @@ interface SyncStatusIndicatorProps {
 
 export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
   showDetails = false,
-  onSyncPress
+  onSyncPress,
 }) => {
   const {
     syncStatus,
@@ -23,7 +29,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     isSyncing,
     hasError,
     isOffline,
-    hasPendingChanges
+    hasPendingChanges,
   } = useIncrementalSync();
 
   const pulseAnim = React.useRef(new Animated.Value(1)).current;
@@ -36,13 +42,13 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
           Animated.timing(pulseAnim, {
             toValue: 0.5,
             duration: 1000,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(pulseAnim, {
             toValue: 1,
             duration: 1000,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ])
       ).start();
     } else {
@@ -97,8 +103,8 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
             styles.statusIndicator,
             {
               backgroundColor: getStatusColor(),
-              opacity: pulseAnim
-            }
+              opacity: pulseAnim,
+            },
           ]}
         />
         <Text style={styles.statusIcon}>{getStatusIcon()}</Text>
@@ -138,7 +144,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusButton: {
     flexDirection: 'row',
@@ -151,25 +157,25 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   statusIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 6
+    marginRight: 6,
   },
   statusIcon: {
     fontSize: 16,
-    marginRight: 6
+    marginRight: 6,
   },
   statusText: {
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   detailsContainer: {
     marginTop: 8,
@@ -177,15 +183,15 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 8,
-    minWidth: 200
+    minWidth: 200,
   },
   detailText: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   errorText: {
     color: '#ff4444',
-    fontWeight: '500'
-  }
+    fontWeight: '500',
+  },
 });

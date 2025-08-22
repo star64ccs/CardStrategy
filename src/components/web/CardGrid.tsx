@@ -11,7 +11,7 @@ const CardGrid: React.FC<CardGridProps> = ({ cards, onCardClick }) => {
     return new Intl.NumberFormat('zh-TW', {
       style: 'currency',
       currency: 'TWD',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
@@ -45,9 +45,7 @@ const CardGrid: React.FC<CardGridProps> = ({ cards, onCardClick }) => {
                   'https://via.placeholder.com/300x400/ecf0f1/2c3e50?text=No+Image';
               }}
             />
-            <div style={styles.rarityBadge}>
-              {card.rarity}
-            </div>
+            <div style={styles.rarityBadge}>{card.rarity}</div>
           </div>
 
           <div style={styles.content}>
@@ -60,17 +58,21 @@ const CardGrid: React.FC<CardGridProps> = ({ cards, onCardClick }) => {
                 {formatPrice(card.price.current)}
               </div>
               <div style={styles.priceChanges}>
-                <div style={{
-                  ...styles.priceChange,
-                  color: getPriceChangeColor(card.price.change24h)
-                }}>
+                <div
+                  style={{
+                    ...styles.priceChange,
+                    color: getPriceChangeColor(card.price.change24h),
+                  }}
+                >
                   {getPriceChangeIcon(card.price.change24h)}{' '}
                   {formatPrice(Math.abs(card.price.change24h))}
                 </div>
-                <div style={{
-                  ...styles.priceChange,
-                  color: getPriceChangeColor(card.price.change7d)
-                }}>
+                <div
+                  style={{
+                    ...styles.priceChange,
+                    color: getPriceChangeColor(card.price.change7d),
+                  }}
+                >
                   7d: {getPriceChangeIcon(card.price.change7d)}{' '}
                   {formatPrice(Math.abs(card.price.change7d))}
                 </div>
@@ -113,7 +115,7 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
     gap: '24px',
-    padding: '20px'
+    padding: '20px',
   },
   card: {
     backgroundColor: '#ffffff',
@@ -124,18 +126,18 @@ const styles = {
     cursor: 'pointer',
     ':hover': {
       transform: 'translateY(-4px)',
-      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)'
-    }
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.15)',
+    },
   },
   imageContainer: {
     position: 'relative' as const,
     height: '200px',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: '100%',
-    objectFit: 'cover'
+    objectFit: 'cover',
   },
   rarityBadge: {
     position: 'absolute' as const,
@@ -146,70 +148,70 @@ const styles = {
     padding: '4px 8px',
     borderRadius: '4px',
     fontSize: '12px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   content: {
-    padding: '16px'
+    padding: '16px',
   },
   name: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
     margin: '0 0 8px 0',
-    lineHeight: '1.2'
+    lineHeight: '1.2',
   },
   setName: {
     fontSize: '14px',
     color: '#7f8c8d',
-    margin: '0 0 4px 0'
+    margin: '0 0 4px 0',
   },
   type: {
     fontSize: '14px',
     color: '#3498db',
     margin: '0 0 12px 0',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   priceSection: {
-    marginBottom: '12px'
+    marginBottom: '12px',
   },
   currentPrice: {
     fontSize: '20px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '4px'
+    marginBottom: '4px',
   },
   priceChanges: {
     display: 'flex',
-    gap: '12px'
+    gap: '12px',
   },
   priceChange: {
     fontSize: '12px',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   stats: {
     display: 'flex',
     gap: '16px',
-    marginBottom: '12px'
+    marginBottom: '12px',
   },
   stat: {
     display: 'flex',
     flexDirection: 'column' as const,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statLabel: {
     fontSize: '10px',
     color: '#7f8c8d',
-    textTransform: 'uppercase' as const
+    textTransform: 'uppercase' as const,
   },
   statValue: {
     fontSize: '14px',
     fontWeight: 'bold',
-    color: '#2c3e50'
+    color: '#2c3e50',
   },
   tags: {
     display: 'flex',
     flexWrap: 'wrap' as const,
-    gap: '4px'
+    gap: '4px',
   },
   tag: {
     backgroundColor: '#ecf0f1',
@@ -217,8 +219,8 @@ const styles = {
     padding: '2px 6px',
     borderRadius: '4px',
     fontSize: '10px',
-    fontWeight: '500'
-  }
+    fontWeight: '500',
+  },
 };
 
 export default CardGrid;

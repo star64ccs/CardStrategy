@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardStrategy - Segment 集成模板</title>
+    
+    <!-- Segment Analytics 代碼片段 -->
+    <script>
+      !function(){var i="analytics",analytics=window[i]=window[i]||[];if(!analytics.initialize)if(analytics.invoked)window.console&&console.error&&console.error("Segment snippet included twice.");else{analytics.invoked=!0;analytics.methods=["trackSubmit","trackClick","trackLink","trackForm","pageview","identify","reset","group","track","ready","alias","debug","page","screen","once","off","on","addSourceMiddleware","addIntegrationMiddleware","setAnonymousId","addDestinationMiddleware","register"];analytics.factory=function(e){return function(){if(window[i].initialized)return window[i][e].apply(window[i],arguments);var n=Array.prototype.slice.call(arguments);if(["track","screen","alias","group","page","identify"].indexOf(e)>-1){var c=document.querySelector("link[rel='canonical']");n.push({__t:"bpc",c:c&&c.getAttribute("href")||void 0,p:location.pathname,u:location.href,s:location.search,t:document.title,r:document.referrer})}n.unshift(e);analytics.push(n);return analytics}};for(var n=0;n<analytics.methods.length;n++){var key=analytics.methods[n];analytics[key]=analytics.factory(key)}analytics.load=function(key,n){var t=document.createElement("script");t.type="text/javascript";t.async=!0;t.setAttribute("data-global-segment-analytics-key",i);t.src="https://cdn.segment.com/analytics.js/v1/" + key + "/analytics.min.js";var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(t,r);analytics._loadOptions=n};analytics._writeKey="mdGZ0xW3RFNPGXgMP6tbxIB25HPR7wLC";;analytics.SNIPPET_VERSION="5.2.0";
+      analytics.load("mdGZ0xW3RFNPGXgMP6tbxIB25HPR7wLC");
+      analytics.page();
+      }}();
+    </script>
+</head>
+<body>
+    <h1>CardStrategy - Segment 集成測試</h1>
+    
+    <!-- 測試按鈕 -->
+    <div id="test-buttons">
+        <h2>事件追蹤測試</h2>
+        
+        <button onclick="testUserIdentification()">測試用戶識別</button>
+        <button onclick="testCardViewed()">測試卡片查看</button>
+        <button onclick="testCardPurchased()">測試卡片購買</button>
+        <button onclick="testSearch()">測試搜索</button>
+        <button onclick="testWishlist()">測試願望清單</button>
+        <button onclick="testPageView()">測試頁面瀏覽</button>
+        <button onclick="testSignUp()">測試用戶註冊</button>
+    </div>
+
+    <div id="results">
+        <h3>測試結果</h3>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        // 測試函數
+        function log(message) {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            logDiv.innerHTML += `<p>[${timestamp}] ${message}</p>`;
+        }
+
+        function testUserIdentification() {
+            analytics.identify('user123', {
+                name: '測試用戶',
+                email: 'test@cardstrategy.com',
+                plan: 'free'
+            });
+            log('✅ 用戶識別事件已發送');
+        }
+
+        function testCardViewed() {
+            analytics.track('Card Viewed', {
+                card_id: 'card_123',
+                card_name: 'Black Lotus',
+                card_category: 'Magic',
+                card_rarity: 'Rare',
+                card_price: 299.99,
+                view_source: 'search',
+                user_id: 'user123'
+            });
+            log('✅ 卡片查看事件已發送');
+        }
+
+        function testCardPurchased() {
+            analytics.track('Card Purchased', {
+                card_id: 'card_123',
+                card_name: 'Black Lotus',
+                card_price: 299.99,
+                payment_method: 'credit_card',
+                purchase_source: 'wishlist',
+                user_id: 'user123'
+            });
+            log('✅ 卡片購買事件已發送');
+        }
+
+        function testSearch() {
+            analytics.track('Search Performed', {
+                search_query: 'Black Lotus',
+                search_category: 'Magic',
+                search_results_count: 5,
+                search_filters: 'rarity:rare',
+                search_source: 'header',
+                user_id: 'user123'
+            });
+            log('✅ 搜索事件已發送');
+        }
+
+        function testWishlist() {
+            analytics.track('Wishlist Added', {
+                card_id: 'card_123',
+                card_name: 'Black Lotus',
+                card_price: 299.99,
+                wishlist_source: 'card_page',
+                wishlist_position: 1,
+                user_id: 'user123'
+            });
+            log('✅ 願望清單事件已發送');
+        }
+
+        function testPageView() {
+            analytics.track('Page View', {
+                page_name: 'Card Details',
+                page_url: '/cards/black-lotus',
+                page_category: 'product',
+                user_id: 'user123'
+            });
+            log('✅ 頁面瀏覽事件已發送');
+        }
+
+        function testSignUp() {
+            analytics.track('Sign Up', {
+                signup_method: 'email',
+                signup_source: 'landing_page',
+                user_id: 'user123'
+            });
+            log('✅ 用戶註冊事件已發送');
+        }
+
+        // 頁面加載完成後記錄
+        window.addEventListener('load', function() {
+            log('🚀 Segment 集成測試頁面已加載');
+            log('📊 請點擊上方按鈕測試各種事件追蹤');
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        #test-buttons {
+            margin: 20px 0;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        #log {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        #log p {
+            margin: 5px 0;
+            font-family: monospace;
+        }
+    </style>
+</body>
+</html>

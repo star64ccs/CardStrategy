@@ -170,7 +170,7 @@ export interface EnhancedConditionAnalysisResult {
         fading: number;
         totalDamage: number;
         damageMap: {
-          locations: {x: number, y: number, type: string, severity: number}[];
+          locations: { x: number; y: number; type: string; severity: number }[];
           heatmap: string; // 損傷熱力圖
         };
       };
@@ -354,7 +354,7 @@ class EnhancedAIService {
       includeAuthenticity: true,
       modelVersion: 'v2.1',
       useMultiModel: true,
-      imagePreprocessing: true
+      imagePreprocessing: true,
     },
     conditionAnalysis: {
       includeDetailedFactors: true,
@@ -364,7 +364,7 @@ class EnhancedAIService {
       confidenceThreshold: 0.9,
       useAdvancedMetrics: true,
       includeUVInspection: true,
-      includeMicroscopicAnalysis: true
+      includeMicroscopicAnalysis: true,
     },
     authenticityVerification: {
       includeCondition: true,
@@ -373,7 +373,7 @@ class EnhancedAIService {
       useBlockchainVerification: true,
       includeHologramAnalysis: true,
       includePrintingAnalysis: true,
-      includeMaterialAnalysis: true
+      includeMaterialAnalysis: true,
     },
     pricePrediction: {
       useMachineLearning: true,
@@ -383,8 +383,8 @@ class EnhancedAIService {
       includeEventImpact: true,
       confidenceThreshold: 0.8,
       predictionHorizon: 365,
-      useEnsembleModels: true
-    }
+      useEnsembleModels: true,
+    },
   };
 
   // 獲取當前配置
@@ -421,8 +421,8 @@ class EnhancedAIService {
           includeAuthenticity: config.includeAuthenticity,
           modelVersion: config.modelVersion,
           useMultiModel: config.useMultiModel,
-          imagePreprocessing: config.imagePreprocessing
-        }
+          imagePreprocessing: config.imagePreprocessing,
+        },
       };
 
       const response = await apiService.post<EnhancedRecognitionResult['data']>(
@@ -432,7 +432,9 @@ class EnhancedAIService {
 
       // 驗證響應
       if (response.success && response.data) {
-        const validationResult = this.validateEnhancedRecognitionResponse(response.data);
+        const validationResult = this.validateEnhancedRecognitionResponse(
+          response.data
+        );
         if (!validationResult.isValid) {
           logger.error('增強版AI識別響應驗證失敗:', validationResult.errors);
           throw new Error('服務器響應數據格式錯誤');
@@ -442,7 +444,7 @@ class EnhancedAIService {
       return {
         success: response.success,
         message: response.message,
-        data: response.data
+        data: response.data,
       };
     } catch (error: any) {
       logger.error('❌ 增強版AI卡片識別失敗:', { error: error.message });
@@ -474,8 +476,8 @@ class EnhancedAIService {
           confidenceThreshold: config.confidenceThreshold,
           useAdvancedMetrics: config.useAdvancedMetrics,
           includeUVInspection: config.includeUVInspection,
-          includeMicroscopicAnalysis: config.includeMicroscopicAnalysis
-        }
+          includeMicroscopicAnalysis: config.includeMicroscopicAnalysis,
+        },
       };
 
       // 如果提供了圖片，則包含圖片數據
@@ -483,15 +485,18 @@ class EnhancedAIService {
         requestData.imageData = imageData;
       }
 
-      const response = await apiService.post<EnhancedConditionAnalysisResult['data']>(
-        API_ENDPOINTS.AI.ENHANCED_CONDITION_ANALYSIS || '/ai/enhanced-condition-analysis',
+      const response = await apiService.post<
+        EnhancedConditionAnalysisResult['data']
+      >(
+        API_ENDPOINTS.AI.ENHANCED_CONDITION_ANALYSIS ||
+          '/ai/enhanced-condition-analysis',
         requestData
       );
 
       return {
         success: response.success,
         message: response.message,
-        data: response.data
+        data: response.data,
       };
     } catch (error: any) {
       logger.error('❌ 增強版條件分析失敗:', { error: error.message });
@@ -522,23 +527,22 @@ class EnhancedAIService {
           useBlockchainVerification: config.useBlockchainVerification,
           includeHologramAnalysis: config.includeHologramAnalysis,
           includePrintingAnalysis: config.includePrintingAnalysis,
-          includeMaterialAnalysis: config.includeMaterialAnalysis
-        }
+          includeMaterialAnalysis: config.includeMaterialAnalysis,
+        },
       };
 
       if (imageData) {
         requestData.imageData = imageData;
       }
 
-      const response = await apiService.post<EnhancedAuthenticityResult['data']>(
-        API_ENDPOINTS.AI.ENHANCED_VERIFY || '/ai/enhanced-verify',
-        requestData
-      );
+      const response = await apiService.post<
+        EnhancedAuthenticityResult['data']
+      >(API_ENDPOINTS.AI.ENHANCED_VERIFY || '/ai/enhanced-verify', requestData);
 
       return {
         success: response.success,
         message: response.message,
-        data: response.data
+        data: response.data,
       };
     } catch (error: any) {
       logger.error('❌ 增強版真偽驗證失敗:', { error: error.message });
@@ -549,7 +553,11 @@ class EnhancedAIService {
   // 增強版價格預測
   async enhancedPricePrediction(
     cardId: string,
-    timeframes: ('1d' | '7d' | '30d' | '90d' | '180d' | '365d')[] = ['7d', '30d', '90d'],
+    timeframes: ('1d' | '7d' | '30d' | '90d' | '180d' | '365d')[] = [
+      '7d',
+      '30d',
+      '90d',
+    ],
     options?: Partial<EnhancedAIConfig['pricePrediction']>
   ): Promise<EnhancedPricePredictionResult> {
     try {
@@ -571,19 +579,22 @@ class EnhancedAIService {
           includeEventImpact: config.includeEventImpact,
           confidenceThreshold: config.confidenceThreshold,
           predictionHorizon: config.predictionHorizon,
-          useEnsembleModels: config.useEnsembleModels
-        }
+          useEnsembleModels: config.useEnsembleModels,
+        },
       };
 
-      const response = await apiService.post<EnhancedPricePredictionResult['data']>(
-        API_ENDPOINTS.AI.ENHANCED_PRICE_PREDICTION || '/ai/enhanced-price-prediction',
+      const response = await apiService.post<
+        EnhancedPricePredictionResult['data']
+      >(
+        API_ENDPOINTS.AI.ENHANCED_PRICE_PREDICTION ||
+          '/ai/enhanced-price-prediction',
         requestData
       );
 
       return {
         success: response.success,
         message: response.message,
-        data: response.data
+        data: response.data,
       };
     } catch (error: any) {
       logger.error('❌ 增強版價格預測失敗:', { error: error.message });
@@ -597,7 +608,9 @@ class EnhancedAIService {
     options?: {
       recognition?: Partial<EnhancedAIConfig['recognition']>;
       conditionAnalysis?: Partial<EnhancedAIConfig['conditionAnalysis']>;
-      authenticityVerification?: Partial<EnhancedAIConfig['authenticityVerification']>;
+      authenticityVerification?: Partial<
+        EnhancedAIConfig['authenticityVerification']
+      >;
       pricePrediction?: Partial<EnhancedAIConfig['pricePrediction']>;
     }
   ): Promise<{
@@ -608,7 +621,10 @@ class EnhancedAIService {
   }> {
     try {
       // 首先進行識別
-      const recognition = await this.enhancedRecognizeCard(imageData, options?.recognition);
+      const recognition = await this.enhancedRecognizeCard(
+        imageData,
+        options?.recognition
+      );
 
       if (!recognition.success || !recognition.data.recognizedCard) {
         throw new Error('卡片識別失敗，無法進行後續分析');
@@ -617,17 +633,30 @@ class EnhancedAIService {
       const cardId = recognition.data.recognizedCard.id;
 
       // 並行執行其他分析
-      const [conditionAnalysis, authenticityVerification, pricePrediction] = await Promise.all([
-        this.enhancedAnalyzeCondition(cardId, imageData, options?.conditionAnalysis),
-        this.enhancedVerifyAuthenticity(cardId, imageData, options?.authenticityVerification),
-        this.enhancedPricePrediction(cardId, ['7d', '30d', '90d'], options?.pricePrediction)
-      ]);
+      const [conditionAnalysis, authenticityVerification, pricePrediction] =
+        await Promise.all([
+          this.enhancedAnalyzeCondition(
+            cardId,
+            imageData,
+            options?.conditionAnalysis
+          ),
+          this.enhancedVerifyAuthenticity(
+            cardId,
+            imageData,
+            options?.authenticityVerification
+          ),
+          this.enhancedPricePrediction(
+            cardId,
+            ['7d', '30d', '90d'],
+            options?.pricePrediction
+          ),
+        ]);
 
       return {
         recognition,
         conditionAnalysis,
         authenticityVerification,
-        pricePrediction
+        pricePrediction,
       };
     } catch (error: any) {
       logger.error('❌ 綜合分析失敗:', { error: error.message });
@@ -636,24 +665,29 @@ class EnhancedAIService {
   }
 
   // 驗證增強版識別響應
-  private validateEnhancedRecognitionResponse(data: any): { isValid: boolean; errors?: string[] } {
+  private validateEnhancedRecognitionResponse(data: any): {
+    isValid: boolean;
+    errors?: string[];
+  } {
     try {
       const schema = z.object({
         recognizedCard: z.object({
           id: z.string(),
-          name: z.string()
+          name: z.string(),
           // 其他卡片屬性...
         }),
         confidence: z.number().min(0).max(1),
-        alternatives: z.array(z.object({
-          card: z.object({
-            id: z.string(),
-            name: z.string()
-          }),
-          confidence: z.number().min(0).max(1),
-          reason: z.string(),
-          similarityScore: z.number().min(0).max(1)
-        })),
+        alternatives: z.array(
+          z.object({
+            card: z.object({
+              id: z.string(),
+              name: z.string(),
+            }),
+            confidence: z.number().min(0).max(1),
+            reason: z.string(),
+            similarityScore: z.number().min(0).max(1),
+          })
+        ),
         imageFeatures: z.object({
           dominantColors: z.array(z.string()),
           cardType: z.string(),
@@ -664,12 +698,12 @@ class EnhancedAIService {
           lightingAnalysis: z.object({
             brightness: z.number(),
             contrast: z.number(),
-            noise: z.number()
+            noise: z.number(),
           }),
           focusAnalysis: z.object({
             sharpness: z.number(),
-            blur: z.number()
-          })
+            blur: z.number(),
+          }),
         }),
         processingTime: z.number(),
         metadata: z.object({
@@ -678,8 +712,8 @@ class EnhancedAIService {
           modelVersion: z.string(),
           aiProvider: z.string(),
           preprocessingApplied: z.boolean(),
-          multiModelFusion: z.boolean()
-        })
+          multiModelFusion: z.boolean(),
+        }),
       });
 
       schema.parse(data);
@@ -708,7 +742,9 @@ class EnhancedAIService {
   }
 
   // 更新模型
-  async updateModel(modelType: 'recognition' | 'condition' | 'authenticity' | 'prediction'): Promise<void> {
+  async updateModel(
+    modelType: 'recognition' | 'condition' | 'authenticity' | 'prediction'
+  ): Promise<void> {
     try {
       await apiService.post('/ai/update-model', { modelType });
       logger.info(`模型更新成功: ${modelType}`);
@@ -720,4 +756,5 @@ class EnhancedAIService {
 }
 
 // 導出增強版AI服務實例
+export { EnhancedAIService };
 export const enhancedAIService = new EnhancedAIService();

@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Animated,
   ViewStyle,
-  TextStyle
+  TextStyle,
 } from 'react-native';
 import { theme } from '../../theme/designSystem';
 
@@ -24,14 +24,14 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   text,
   style,
   textStyle,
-  variant = 'spinner'
+  variant = 'spinner',
 }) => {
   const spinValue = useRef(new Animated.Value(0)).current;
   const pulseValue = useRef(new Animated.Value(1)).current;
   const dotValues = useRef([
     new Animated.Value(0),
     new Animated.Value(0),
-    new Animated.Value(0)
+    new Animated.Value(0),
   ]).current;
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         Animated.timing(spinValue, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true
+          useNativeDriver: true,
         })
       );
       spinAnimation.start();
@@ -51,13 +51,13 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           Animated.timing(pulseValue, {
             toValue: 1.2,
             duration: 600,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(pulseValue, {
             toValue: 1,
             duration: 600,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ])
       );
       pulseAnimation.start();
@@ -70,18 +70,18 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
               toValue: 1,
               duration: 400,
               delay: index * 200,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(dotValue, {
               toValue: 0,
               duration: 400,
-              useNativeDriver: true
-            })
+              useNativeDriver: true,
+            }),
           ])
         )
       );
-      dotAnimations.forEach(animation => animation.start());
-      return () => dotAnimations.forEach(animation => animation.stop());
+      dotAnimations.forEach((animation) => animation.start());
+      return () => dotAnimations.forEach((animation) => animation.stop());
     }
   }, [variant]);
 
@@ -89,14 +89,14 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     const sizeMap = {
       small: 20,
       medium: 32,
-      large: 48
+      large: 48,
     };
     return sizeMap[size];
   };
 
   const spin = spinValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg']
+    outputRange: ['0deg', '360deg'],
   });
 
   const renderSpinner = () => (
@@ -108,8 +108,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           height: getSize(),
           borderColor: color,
           borderTopColor: 'transparent',
-          transform: [{ rotate: spin }]
-        }
+          transform: [{ rotate: spin }],
+        },
       ]}
     />
   );
@@ -122,8 +122,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
           width: getSize(),
           height: getSize(),
           backgroundColor: color,
-          transform: [{ scale: pulseValue }]
-        }
+          transform: [{ scale: pulseValue }],
+        },
       ]}
     />
   );
@@ -139,8 +139,8 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
               width: getSize() / 4,
               height: getSize() / 4,
               backgroundColor: color,
-              opacity: dotValue
-            }
+              opacity: dotValue,
+            },
           ]}
         />
       ))}
@@ -163,9 +163,7 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   return (
     <View style={[styles.container, style]}>
       {renderContent()}
-      {text && (
-        <Text style={[styles.text, textStyle]}>{text}</Text>
-      )}
+      {text && <Text style={[styles.text, textStyle]}>{text}</Text>}
     </View>
   );
 };
@@ -174,28 +172,28 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   spinner: {
     borderWidth: 2,
-    borderRadius: theme.borderRadius.full
+    borderRadius: theme.borderRadius.full,
   },
   pulse: {
-    borderRadius: theme.borderRadius.full
+    borderRadius: theme.borderRadius.full,
   },
   dotsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   dot: {
     borderRadius: theme.borderRadius.full,
-    marginHorizontal: theme.spacing.xs
+    marginHorizontal: theme.spacing.xs,
   },
   text: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
     marginTop: theme.spacing.sm,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });

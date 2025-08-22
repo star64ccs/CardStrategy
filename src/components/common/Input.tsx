@@ -6,7 +6,7 @@ import {
   StyleSheet,
   ViewStyle,
   TextStyle,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -50,7 +50,7 @@ export const Input: React.FC<InputProps> = ({
   rightIcon,
   onRightIconPress,
   style,
-  inputStyle
+  inputStyle,
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -63,13 +63,13 @@ export const Input: React.FC<InputProps> = ({
       flexDirection: 'row',
       alignItems: multiline ? 'flex-start' : 'center',
       paddingHorizontal: theme.spacing.md,
-      minHeight: 48
+      minHeight: 48,
     };
 
     if (error) {
       return {
         ...baseStyle,
-        borderColor: theme.colors.status.error
+        borderColor: theme.colors.status.error,
       };
     }
 
@@ -81,13 +81,13 @@ export const Input: React.FC<InputProps> = ({
         shadowOffset: { width: 0, height: 0 },
         shadowOpacity: 0.3,
         shadowRadius: 4,
-        elevation: 2
+        elevation: 2,
       };
     }
 
     return {
       ...baseStyle,
-      borderColor: theme.colors.border.primary
+      borderColor: theme.colors.border.primary,
     };
   };
 
@@ -97,7 +97,7 @@ export const Input: React.FC<InputProps> = ({
       fontSize: theme.typography.sizes.base,
       color: disabled ? theme.colors.text.disabled : theme.colors.text.primary,
       paddingVertical: theme.spacing.sm,
-      textAlignVertical: multiline ? 'top' : 'center'
+      textAlignVertical: multiline ? 'top' : 'center',
     };
   };
 
@@ -116,7 +116,10 @@ export const Input: React.FC<InputProps> = ({
   const getRightIcon = () => {
     if (secureTextEntry) {
       return (
-        <TouchableOpacity onPress={togglePasswordVisibility} style={styles.iconContainer}>
+        <TouchableOpacity
+          onPress={togglePasswordVisibility}
+          style={styles.iconContainer}
+        >
           <Ionicons
             name={showPassword ? 'eye-off' : 'eye'}
             size={20}
@@ -128,7 +131,10 @@ export const Input: React.FC<InputProps> = ({
 
     if (rightIcon) {
       return (
-        <TouchableOpacity onPress={onRightIconPress} style={styles.iconContainer}>
+        <TouchableOpacity
+          onPress={onRightIconPress}
+          style={styles.iconContainer}
+        >
           <Ionicons
             name={rightIcon}
             size={20}
@@ -143,9 +149,7 @@ export const Input: React.FC<InputProps> = ({
 
   return (
     <View style={[styles.wrapper, style]}>
-      {label && (
-        <Text style={styles.label}>{label}</Text>
-      )}
+      {label && <Text style={styles.label}>{label}</Text>}
 
       <View style={getContainerStyle()}>
         {leftIcon && (
@@ -179,30 +183,28 @@ export const Input: React.FC<InputProps> = ({
         {getRightIcon()}
       </View>
 
-      {error && (
-        <Text style={styles.errorText}>{error}</Text>
-      )}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   label: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.medium,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   iconContainer: {
     marginRight: theme.spacing.sm,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   errorText: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.status.error,
-    marginTop: theme.spacing.xs
-  }
+    marginTop: theme.spacing.xs,
+  },
 });

@@ -7,7 +7,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,9 +20,12 @@ import {
   TermsVersion,
   UserConsent,
   TermsComplianceCheck,
-  TermsStatistics
+  TermsStatistics,
 } from '../types/terms';
-import { TERMS_TYPE_DISPLAY_NAMES, TERMS_IMPORTANCE_LEVELS } from '../data/termsContent';
+import {
+  TERMS_TYPE_DISPLAY_NAMES,
+  TERMS_IMPORTANCE_LEVELS,
+} from '../data/termsContent';
 import { logger } from '../utils/logger';
 
 const { width } = Dimensions.get('window');
@@ -31,15 +34,21 @@ interface TermsManagementScreenProps {
   navigation: any;
 }
 
-const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({ navigation }) => {
+const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({
+  navigation,
+}) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [compliance, setCompliance] = useState<TermsComplianceCheck | null>(null);
+  const [compliance, setCompliance] = useState<TermsComplianceCheck | null>(
+    null
+  );
   const [consentHistory, setConsentHistory] = useState<UserConsent[]>([]);
   const [statistics, setStatistics] = useState<TermsStatistics | null>(null);
   const [showTermsModal, setShowTermsModal] = useState(false);
-  const [selectedTermType, setSelectedTermType] = useState<TermsType | null>(null);
+  const [selectedTermType, setSelectedTermType] = useState<TermsType | null>(
+    null
+  );
 
   // 模擬用戶 ID (實際應用中應從認證狀態獲取)
   const userId = 'user-123';
@@ -54,7 +63,7 @@ const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({ navigatio
       const [complianceData, historyData, statsData] = await Promise.all([
         termsService.checkUserConsent(userId),
         termsService.getUserConsentHistory(userId),
-        termsService.getTermsStatistics()
+        termsService.getTermsStatistics(),
       ]);
 
       setCompliance(complianceData);
@@ -111,16 +120,20 @@ const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({ navigatio
               logger.error('撤回同意失敗:', error);
               Alert.alert('錯誤', '撤回同意失敗，請稍後再試');
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
 
   const getConsentStatus = (termType: TermsType) => {
-    const consent = consentHistory.find(c => c.termsType === termType);
+    const consent = consentHistory.find((c) => c.termsType === termType);
     if (!consent) return 'pending';
-    if (consent.status === 'accepted' && consent.expiresAt && new Date() > consent.expiresAt) {
+    if (
+      consent.status === 'accepted' &&
+      consent.expiresAt &&
+      new Date() > consent.expiresAt
+    ) {
       return 'expired';
     }
     return consent.status;
@@ -128,39 +141,57 @@ const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({ navigatio
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'accepted': return theme.colors.success;
-      case 'declined': return theme.colors.error;
-      case 'expired': return theme.colors.warning;
-      case 'pending': return theme.colors.textSecondary;
-      default: return theme.colors.textSecondary;
+      case 'accepted':
+        return theme.colors.success;
+      case 'declined':
+        return theme.colors.error;
+      case 'expired':
+        return theme.colors.warning;
+      case 'pending':
+        return theme.colors.textSecondary;
+      default:
+        return theme.colors.textSecondary;
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'accepted': return '已同意';
-      case 'declined': return '已拒絕';
-      case 'expired': return '已過期';
-      case 'pending': return '待同意';
-      default: return '未知';
+      case 'accepted':
+        return '已同意';
+      case 'declined':
+        return '已拒絕';
+      case 'expired':
+        return '已過期';
+      case 'pending':
+        return '待同意';
+      default:
+        return '未知';
     }
   };
 
   const getImportanceIcon = (importance: string) => {
     switch (importance) {
-      case 'critical': return 'warning';
-      case 'important': return 'information-circle';
-      case 'standard': return 'checkmark-circle';
-      default: return 'help-circle';
+      case 'critical':
+        return 'warning';
+      case 'important':
+        return 'information-circle';
+      case 'standard':
+        return 'checkmark-circle';
+      default:
+        return 'help-circle';
     }
   };
 
   const getImportanceColor = (importance: string) => {
     switch (importance) {
-      case 'critical': return theme.colors.error;
-      case 'important': return theme.colors.warning;
-      case 'standard': return theme.colors.success;
-      default: return theme.colors.textSecondary;
+      case 'critical':
+        return theme.colors.error;
+      case 'important':
+        return theme.colors.warning;
+      case 'standard':
+        return theme.colors.success;
+      default:
+        return theme.colors.textSecondary;
     }
   };
 
@@ -180,16 +211,26 @@ const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({ navigatio
   const renderComplianceStatus = () => (
     <Card style={styles.card}>
       <View style={styles.cardHeader}>
-        <Ionicons name="shield-checkmark" size={24} color={theme.colors.primary} />
+        <Ionicons
+          name="shield-checkmark"
+          size={24}
+          color={theme.colors.primary}
+        />
         <Text style={styles.cardTitle}>合規狀態</Text>
       </View>
 
       <View style={styles.complianceStatus}>
         <View style={styles.statusItem}>
-          <View style={[
-            styles.statusDot,
-            { backgroundColor: compliance?.compliant ? theme.colors.success : theme.colors.error }
-          ]} />
+          <View
+            style={[
+              styles.statusDot,
+              {
+                backgroundColor: compliance?.compliant
+                  ? theme.colors.success
+                  : theme.colors.error,
+              },
+            ]}
+          />
           <Text style={styles.statusText}>
             {compliance?.compliant ? '合規' : '不合規'}
           </Text>
@@ -237,14 +278,18 @@ const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({ navigatio
                 </View>
 
                 <View style={styles.termStatus}>
-                  <View style={[
-                    styles.statusIndicator,
-                    { backgroundColor: getStatusColor(status) }
-                  ]} />
-                  <Text style={[
-                    styles.statusText,
-                    { color: getStatusColor(status) }
-                  ]}>
+                  <View
+                    style={[
+                      styles.statusIndicator,
+                      { backgroundColor: getStatusColor(status) },
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.statusText,
+                      { color: getStatusColor(status) },
+                    ]}
+                  >
                     {getStatusText(status)}
                   </Text>
                 </View>
@@ -321,10 +366,12 @@ const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({ navigatio
                   {new Date(consent.createdAt).toLocaleDateString()}
                 </Text>
               </View>
-              <Text style={[
-                styles.historyStatus,
-                { color: getStatusColor(consent.status) }
-              ]}>
+              <Text
+                style={[
+                  styles.historyStatus,
+                  { color: getStatusColor(consent.status) },
+                ]}
+              >
                 {getStatusText(consent.status)}
               </Text>
             </View>
@@ -375,21 +422,21 @@ const TermsManagementScreen: React.FC<TermsManagementScreenProps> = ({ navigatio
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   scrollView: {
-    flex: 1
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
@@ -397,64 +444,64 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
-    backgroundColor: theme.colors.surface
+    backgroundColor: theme.colors.surface,
   },
   backButton: {
-    padding: 4
+    padding: 4,
   },
   headerTitle: {
     flex: 1,
     fontSize: 20,
     fontWeight: 'bold',
     color: theme.colors.text,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   headerSpacer: {
-    width: 32
+    width: 32,
   },
   card: {
     margin: 16,
-    marginTop: 8
+    marginTop: 8,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginLeft: 8
+    marginLeft: 8,
   },
   complianceStatus: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statusDot: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    marginRight: 8
+    marginRight: 8,
   },
   statusText: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   complianceDetails: {
-    alignSelf: 'stretch'
+    alignSelf: 'stretch',
   },
   detailText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    marginBottom: 4
+    marginBottom: 4,
   },
   termsList: {
-    gap: 12
+    gap: 12,
   },
   termItem: {
     flexDirection: 'row',
@@ -462,74 +509,74 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   termInfo: {
-    flex: 1
+    flex: 1,
   },
   termHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   termTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.text,
-    marginLeft: 8
+    marginLeft: 8,
   },
   termStatus: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusIndicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 6
+    marginRight: 6,
   },
   termActions: {
     flexDirection: 'row',
-    gap: 8
+    gap: 8,
   },
   actionButton: {
     backgroundColor: theme.colors.primary,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6
+    borderRadius: 6,
   },
   actionButtonText: {
     color: theme.colors.white,
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   withdrawButton: {
-    backgroundColor: theme.colors.error
+    backgroundColor: theme.colors.error,
   },
   withdrawButtonText: {
     color: theme.colors.white,
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   statistics: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   statItem: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statValue: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: theme.colors.primary
+    color: theme.colors.primary,
   },
   statLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginTop: 4
+    marginTop: 4,
   },
   historyList: {
-    gap: 8
+    gap: 8,
   },
   historyItem: {
     flexDirection: 'row',
@@ -537,31 +584,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   historyInfo: {
-    flex: 1
+    flex: 1,
   },
   historyTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   historyDate: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginTop: 2
+    marginTop: 2,
   },
   historyStatus: {
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   noDataText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    fontStyle: 'italic'
-  }
+    fontStyle: 'italic',
+  },
 });
 
 export default TermsManagementScreen;

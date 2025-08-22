@@ -100,20 +100,20 @@ export class PerformanceMonitor {
       firstContentfulPaint: 1000,
       largestContentfulPaint: 2000,
       firstInputDelay: 100,
-      timeToInteractive: 3000
+      timeToInteractive: 3000,
     },
     memoryUsage: {
       maxMemoryGrowth: 100, // MB
-      maxMemoryUsage: 512   // MB
+      maxMemoryUsage: 512, // MB
     },
     apiPerformance: {
       maxResponseTime: 2000, // ms
-      maxErrorRate: 0.05     // 5%
+      maxErrorRate: 0.05, // 5%
     },
     rendering: {
-      minFrameRate: 30,      // FPS
-      maxDroppedFrames: 10   // 幀數
-    }
+      minFrameRate: 30, // FPS
+      maxDroppedFrames: 10, // 幀數
+    },
   };
 
   constructor(page: Page, config: Partial<PerformanceMonitorConfig> = {}) {
@@ -127,9 +127,9 @@ export class PerformanceMonitor {
         responseTime: 2000,
         memoryUsage: 512,
         errorRate: 0.05,
-        frameRate: 30
+        frameRate: 30,
       },
-      ...config
+      ...config,
     };
   }
 
@@ -187,18 +187,24 @@ export class PerformanceMonitor {
         interactionTimes: [],
         apiRequests: [],
         frameRates: [],
-        memorySnapshots: []
+        memorySnapshots: [],
       };
 
       // 監控 Web Vitals
       if ('PerformanceObserver' in window) {
         const observer = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
-            (window as any).performanceMonitor.metrics[entry.name] = entry.startTime;
+            (window as any).performanceMonitor.metrics[entry.name] =
+              entry.startTime;
           }
         });
         observer.observe({
-          entryTypes: ['paint', 'largest-contentful-paint', 'first-input', 'layout-shift']
+          entryTypes: [
+            'paint',
+            'largest-contentful-paint',
+            'first-input',
+            'layout-shift',
+          ],
         });
       }
 
@@ -215,7 +221,7 @@ export class PerformanceMonitor {
             url,
             duration,
             status: response.status,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
 
           return response;
@@ -228,7 +234,7 @@ export class PerformanceMonitor {
             duration,
             status: 'error',
             error: error.message,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
 
           throw error;
@@ -247,7 +253,7 @@ export class PerformanceMonitor {
             type: 'click',
             target: (event.target as HTMLElement).tagName,
             duration,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }, 0);
       });
@@ -261,10 +267,10 @@ export class PerformanceMonitor {
         const currentTime = performance.now();
 
         if (currentTime - lastTime >= 1000) {
-          const fps = frameCount * 1000 / (currentTime - lastTime);
+          const fps = (frameCount * 1000) / (currentTime - lastTime);
           (window as any).performanceMonitor.frameRates.push({
             fps,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
           frameCount = 0;
           lastTime = currentTime;
@@ -282,7 +288,7 @@ export class PerformanceMonitor {
             usedJSHeapSize: (performance as any).memory.usedJSHeapSize,
             totalJSHeapSize: (performance as any).memory.totalJSHeapSize,
             jsHeapSizeLimit: (performance as any).memory.jsHeapSizeLimit,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
       }, 10000); // 每10秒收集一次
@@ -300,7 +306,7 @@ export class PerformanceMonitor {
       const dataPoint: PerformanceDataPoint = {
         timestamp: Date.now(),
         metrics,
-        alerts
+        alerts,
       };
 
       this.dataPoints.push(dataPoint);
@@ -313,11 +319,12 @@ export class PerformanceMonitor {
 
       // 輸出警報
       if (alerts.length > 0) {
-        alerts.forEach(alert => {
-          console.warn(`⚠️ 性能警報 [${alert.type.toUpperCase()}]: ${alert.message}`);
+        alerts.forEach((alert) => {
+          console.warn(
+            `⚠️ 性能警報 [${alert.type.toUpperCase()}]: ${alert.message}`
+          );
         });
       }
-
     } catch (error) {
       console.error('收集性能數據失敗:', error);
     }
@@ -329,37 +336,67 @@ export class PerformanceMonitor {
   private async getCurrentMetrics(): Promise<PerformanceMetrics> {
     return await this.page.evaluate(() => {
       const monitor = (window as any).performanceMonitor;
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
       const paintEntries = performance.getEntriesByType('paint');
-      const lcpEntries = performance.getEntriesByType('largest-contentful-paint');
+      const lcpEntries = performance.getEntriesByType(
+        'largest-contentful-paint'
+      );
       const fidEntries = performance.getEntriesByType('first-input');
       const resources = performance.getEntriesByType('resource');
 
       // 計算資源加載指標
-      const totalSize = resources.reduce((sum: number, resource: any) => sum + (resource.transferSize || 0), 0);
-      const averageLoadTime = resources.reduce((sum: number, resource: any) => sum + resource.duration, 0) / resources.length;
-      const slowestResource = resources.reduce((slowest: any, resource: any) =>
-        (resource.duration > slowest.duration ? resource : slowest), resources[0]);
+      const totalSize = resources.reduce(
+        (sum: number, resource: any) => sum + (resource.transferSize || 0),
+        0
+      );
+      const averageLoadTime =
+        resources.reduce(
+          (sum: number, resource: any) => sum + resource.duration,
+          0
+        ) / resources.length;
+      const slowestResource = resources.reduce(
+        (slowest: any, resource: any) =>
+          resource.duration > slowest.duration ? resource : slowest,
+        resources[0]
+      );
 
       // 計算 API 性能指標
       const apiRequests = monitor.apiRequests || [];
       const totalRequests = apiRequests.length;
-      const averageResponseTime = apiRequests.reduce((sum: number, req: any) => sum + req.duration, 0) / totalRequests;
-      const slowestEndpoint = apiRequests.reduce((slowest: any, req: any) =>
-        (req.duration > slowest.duration ? req : slowest), apiRequests[0]);
-      const errorRate = apiRequests.filter((req: any) => req.status >= 400).length / totalRequests;
+      const averageResponseTime =
+        apiRequests.reduce((sum: number, req: any) => sum + req.duration, 0) /
+        totalRequests;
+      const slowestEndpoint = apiRequests.reduce(
+        (slowest: any, req: any) =>
+          req.duration > slowest.duration ? req : slowest,
+        apiRequests[0]
+      );
+      const errorRate =
+        apiRequests.filter((req: any) => req.status >= 400).length /
+        totalRequests;
 
       // 計算渲染性能指標
       const frameRates = monitor.frameRates || [];
       const recentFrameRates = frameRates.slice(-10); // 最近10個數據點
-      const averageFrameRate = recentFrameRates.reduce((sum: number, fr: any) => sum + fr.fps, 0) / recentFrameRates.length;
+      const averageFrameRate =
+        recentFrameRates.reduce((sum: number, fr: any) => sum + fr.fps, 0) /
+        recentFrameRates.length;
 
       // 計算用戶交互指標
       const interactionTimes = monitor.interactionTimes || [];
       const totalInteractions = interactionTimes.length;
-      const averageInteractionTime = interactionTimes.reduce((sum: number, interaction: any) => sum + interaction.duration, 0) / totalInteractions;
-      const slowestInteraction = interactionTimes.reduce((slowest: any, interaction: any) =>
-        (interaction.duration > slowest.duration ? interaction : slowest), interactionTimes[0]);
+      const averageInteractionTime =
+        interactionTimes.reduce(
+          (sum: number, interaction: any) => sum + interaction.duration,
+          0
+        ) / totalInteractions;
+      const slowestInteraction = interactionTimes.reduce(
+        (slowest: any, interaction: any) =>
+          interaction.duration > slowest.duration ? interaction : slowest,
+        interactionTimes[0]
+      );
 
       // 獲取內存使用情況
       const memorySnapshots = monitor.memorySnapshots || [];
@@ -367,44 +404,55 @@ export class PerformanceMonitor {
 
       return {
         pageLoad: {
-          domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+          domContentLoaded:
+            navigation.domContentLoadedEventEnd -
+            navigation.domContentLoadedEventStart,
           loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
-          firstContentfulPaint: paintEntries.find(entry => entry.name === 'first-contentful-paint')?.startTime || 0,
-          largestContentfulPaint: lcpEntries.length > 0 ? lcpEntries[lcpEntries.length - 1].startTime : 0,
-          firstInputDelay: fidEntries.length > 0 ? fidEntries[0].processingStart - fidEntries[0].startTime : 0,
-          timeToInteractive: 0 // 需要額外計算
+          firstContentfulPaint:
+            paintEntries.find(
+              (entry) => entry.name === 'first-contentful-paint'
+            )?.startTime || 0,
+          largestContentfulPaint:
+            lcpEntries.length > 0
+              ? lcpEntries[lcpEntries.length - 1].startTime
+              : 0,
+          firstInputDelay:
+            fidEntries.length > 0
+              ? fidEntries[0].processingStart - fidEntries[0].startTime
+              : 0,
+          timeToInteractive: 0, // 需要額外計算
         },
         resourceLoad: {
           totalResources: resources.length,
           totalSize,
           averageLoadTime,
           slowestResource: slowestResource?.name || '',
-          slowestLoadTime: slowestResource?.duration || 0
+          slowestLoadTime: slowestResource?.duration || 0,
         },
         memoryUsage: {
           usedJSHeapSize: latestMemory.usedJSHeapSize || 0,
           totalJSHeapSize: latestMemory.totalJSHeapSize || 0,
           jsHeapSizeLimit: latestMemory.jsHeapSizeLimit || 0,
-          memoryGrowth: 0 // 需要計算
+          memoryGrowth: 0, // 需要計算
         },
         apiPerformance: {
           totalRequests,
           averageResponseTime,
           slowestEndpoint: slowestEndpoint?.url || '',
           slowestResponseTime: slowestEndpoint?.duration || 0,
-          errorRate
+          errorRate,
         },
         rendering: {
           frameRate: averageFrameRate,
           droppedFrames: 0, // 需要額外計算
-          animationSmoothness: 0.95 // 默認值
+          animationSmoothness: 0.95, // 默認值
         },
         userInteraction: {
           totalInteractions,
           averageInteractionTime,
           slowestInteraction: slowestInteraction?.type || '',
-          slowestInteractionTime: slowestInteraction?.duration || 0
-        }
+          slowestInteractionTime: slowestInteraction?.duration || 0,
+        },
       };
     });
   }
@@ -412,78 +460,97 @@ export class PerformanceMonitor {
   /**
    * 檢查性能警報
    */
-  private checkPerformanceAlerts(metrics: PerformanceMetrics): PerformanceAlert[] {
+  private checkPerformanceAlerts(
+    metrics: PerformanceMetrics
+  ): PerformanceAlert[] {
     const alerts: PerformanceAlert[] = [];
     const timestamp = Date.now();
 
     // 檢查頁面加載性能
-    if (metrics.pageLoad.domContentLoaded > this.PERFORMANCE_BENCHMARKS.pageLoad.domContentLoaded) {
+    if (
+      metrics.pageLoad.domContentLoaded >
+      this.PERFORMANCE_BENCHMARKS.pageLoad.domContentLoaded
+    ) {
       alerts.push({
         type: 'warning',
         metric: 'domContentLoaded',
         value: metrics.pageLoad.domContentLoaded,
         threshold: this.PERFORMANCE_BENCHMARKS.pageLoad.domContentLoaded,
         timestamp,
-        message: `DOM 內容加載時間過長: ${metrics.pageLoad.domContentLoaded}ms`
+        message: `DOM 內容加載時間過長: ${metrics.pageLoad.domContentLoaded}ms`,
       });
     }
 
-    if (metrics.pageLoad.largestContentfulPaint > this.PERFORMANCE_BENCHMARKS.pageLoad.largestContentfulPaint) {
+    if (
+      metrics.pageLoad.largestContentfulPaint >
+      this.PERFORMANCE_BENCHMARKS.pageLoad.largestContentfulPaint
+    ) {
       alerts.push({
         type: 'error',
         metric: 'largestContentfulPaint',
         value: metrics.pageLoad.largestContentfulPaint,
         threshold: this.PERFORMANCE_BENCHMARKS.pageLoad.largestContentfulPaint,
         timestamp,
-        message: `最大內容繪製時間過長: ${metrics.pageLoad.largestContentfulPaint}ms`
+        message: `最大內容繪製時間過長: ${metrics.pageLoad.largestContentfulPaint}ms`,
       });
     }
 
     // 檢查內存使用
     const memoryUsageMB = metrics.memoryUsage.usedJSHeapSize / (1024 * 1024);
-    if (memoryUsageMB > this.PERFORMANCE_BENCHMARKS.memoryUsage.maxMemoryUsage) {
+    if (
+      memoryUsageMB > this.PERFORMANCE_BENCHMARKS.memoryUsage.maxMemoryUsage
+    ) {
       alerts.push({
         type: 'critical',
         metric: 'memoryUsage',
         value: memoryUsageMB,
         threshold: this.PERFORMANCE_BENCHMARKS.memoryUsage.maxMemoryUsage,
         timestamp,
-        message: `內存使用過高: ${memoryUsageMB.toFixed(2)}MB`
+        message: `內存使用過高: ${memoryUsageMB.toFixed(2)}MB`,
       });
     }
 
     // 檢查 API 性能
-    if (metrics.apiPerformance.averageResponseTime > this.PERFORMANCE_BENCHMARKS.apiPerformance.maxResponseTime) {
+    if (
+      metrics.apiPerformance.averageResponseTime >
+      this.PERFORMANCE_BENCHMARKS.apiPerformance.maxResponseTime
+    ) {
       alerts.push({
         type: 'warning',
         metric: 'apiResponseTime',
         value: metrics.apiPerformance.averageResponseTime,
         threshold: this.PERFORMANCE_BENCHMARKS.apiPerformance.maxResponseTime,
         timestamp,
-        message: `API 平均響應時間過長: ${metrics.apiPerformance.averageResponseTime.toFixed(2)}ms`
+        message: `API 平均響應時間過長: ${metrics.apiPerformance.averageResponseTime.toFixed(2)}ms`,
       });
     }
 
-    if (metrics.apiPerformance.errorRate > this.PERFORMANCE_BENCHMARKS.apiPerformance.maxErrorRate) {
+    if (
+      metrics.apiPerformance.errorRate >
+      this.PERFORMANCE_BENCHMARKS.apiPerformance.maxErrorRate
+    ) {
       alerts.push({
         type: 'error',
         metric: 'apiErrorRate',
         value: metrics.apiPerformance.errorRate,
         threshold: this.PERFORMANCE_BENCHMARKS.apiPerformance.maxErrorRate,
         timestamp,
-        message: `API 錯誤率過高: ${(metrics.apiPerformance.errorRate * 100).toFixed(2)}%`
+        message: `API 錯誤率過高: ${(metrics.apiPerformance.errorRate * 100).toFixed(2)}%`,
       });
     }
 
     // 檢查渲染性能
-    if (metrics.rendering.frameRate < this.PERFORMANCE_BENCHMARKS.rendering.minFrameRate) {
+    if (
+      metrics.rendering.frameRate <
+      this.PERFORMANCE_BENCHMARKS.rendering.minFrameRate
+    ) {
       alerts.push({
         type: 'warning',
         metric: 'frameRate',
         value: metrics.rendering.frameRate,
         threshold: this.PERFORMANCE_BENCHMARKS.rendering.minFrameRate,
         timestamp,
-        message: `幀率過低: ${metrics.rendering.frameRate.toFixed(2)} FPS`
+        message: `幀率過低: ${metrics.rendering.frameRate.toFixed(2)} FPS`,
       });
     }
 
@@ -503,11 +570,14 @@ export class PerformanceMonitor {
     dataPoints: PerformanceDataPoint[];
     alerts: PerformanceAlert[];
     recommendations: string[];
-    } {
+  } {
     const totalDataPoints = this.dataPoints.length;
     const totalAlerts = this.alerts.length;
-    const monitoringDuration = totalDataPoints > 0 ?
-      this.dataPoints[totalDataPoints - 1].timestamp - this.dataPoints[0].timestamp : 0;
+    const monitoringDuration =
+      totalDataPoints > 0
+        ? this.dataPoints[totalDataPoints - 1].timestamp -
+          this.dataPoints[0].timestamp
+        : 0;
 
     // 計算平均指標
     const averageMetrics: Partial<PerformanceMetrics> = {};
@@ -515,34 +585,58 @@ export class PerformanceMonitor {
       const sumMetrics = this.dataPoints.reduce((sum, point) => {
         return {
           pageLoad: {
-            domContentLoaded: sum.pageLoad?.domContentLoaded || 0 + point.metrics.pageLoad.domContentLoaded,
-            loadComplete: sum.pageLoad?.loadComplete || 0 + point.metrics.pageLoad.loadComplete,
-            firstContentfulPaint: sum.pageLoad?.firstContentfulPaint || 0 + point.metrics.pageLoad.firstContentfulPaint,
-            largestContentfulPaint: sum.pageLoad?.largestContentfulPaint || 0 + point.metrics.pageLoad.largestContentfulPaint,
-            firstInputDelay: sum.pageLoad?.firstInputDelay || 0 + point.metrics.pageLoad.firstInputDelay,
-            timeToInteractive: sum.pageLoad?.timeToInteractive || 0 + point.metrics.pageLoad.timeToInteractive
+            domContentLoaded:
+              sum.pageLoad?.domContentLoaded ||
+              0 + point.metrics.pageLoad.domContentLoaded,
+            loadComplete:
+              sum.pageLoad?.loadComplete ||
+              0 + point.metrics.pageLoad.loadComplete,
+            firstContentfulPaint:
+              sum.pageLoad?.firstContentfulPaint ||
+              0 + point.metrics.pageLoad.firstContentfulPaint,
+            largestContentfulPaint:
+              sum.pageLoad?.largestContentfulPaint ||
+              0 + point.metrics.pageLoad.largestContentfulPaint,
+            firstInputDelay:
+              sum.pageLoad?.firstInputDelay ||
+              0 + point.metrics.pageLoad.firstInputDelay,
+            timeToInteractive:
+              sum.pageLoad?.timeToInteractive ||
+              0 + point.metrics.pageLoad.timeToInteractive,
           },
           apiPerformance: {
-            totalRequests: sum.apiPerformance?.totalRequests || 0 + point.metrics.apiPerformance.totalRequests,
-            averageResponseTime: sum.apiPerformance?.averageResponseTime || 0 + point.metrics.apiPerformance.averageResponseTime,
-            errorRate: sum.apiPerformance?.errorRate || 0 + point.metrics.apiPerformance.errorRate
-          }
+            totalRequests:
+              sum.apiPerformance?.totalRequests ||
+              0 + point.metrics.apiPerformance.totalRequests,
+            averageResponseTime:
+              sum.apiPerformance?.averageResponseTime ||
+              0 + point.metrics.apiPerformance.averageResponseTime,
+            errorRate:
+              sum.apiPerformance?.errorRate ||
+              0 + point.metrics.apiPerformance.errorRate,
+          },
         };
       }, {} as any);
 
       averageMetrics.pageLoad = {
-        domContentLoaded: sumMetrics.pageLoad.domContentLoaded / totalDataPoints,
+        domContentLoaded:
+          sumMetrics.pageLoad.domContentLoaded / totalDataPoints,
         loadComplete: sumMetrics.pageLoad.loadComplete / totalDataPoints,
-        firstContentfulPaint: sumMetrics.pageLoad.firstContentfulPaint / totalDataPoints,
-        largestContentfulPaint: sumMetrics.pageLoad.largestContentfulPaint / totalDataPoints,
+        firstContentfulPaint:
+          sumMetrics.pageLoad.firstContentfulPaint / totalDataPoints,
+        largestContentfulPaint:
+          sumMetrics.pageLoad.largestContentfulPaint / totalDataPoints,
         firstInputDelay: sumMetrics.pageLoad.firstInputDelay / totalDataPoints,
-        timeToInteractive: sumMetrics.pageLoad.timeToInteractive / totalDataPoints
+        timeToInteractive:
+          sumMetrics.pageLoad.timeToInteractive / totalDataPoints,
       };
 
       averageMetrics.apiPerformance = {
-        totalRequests: sumMetrics.apiPerformance.totalRequests / totalDataPoints,
-        averageResponseTime: sumMetrics.apiPerformance.averageResponseTime / totalDataPoints,
-        errorRate: sumMetrics.apiPerformance.errorRate / totalDataPoints
+        totalRequests:
+          sumMetrics.apiPerformance.totalRequests / totalDataPoints,
+        averageResponseTime:
+          sumMetrics.apiPerformance.averageResponseTime / totalDataPoints,
+        errorRate: sumMetrics.apiPerformance.errorRate / totalDataPoints,
       } as any;
     }
 
@@ -554,11 +648,11 @@ export class PerformanceMonitor {
         totalDataPoints,
         totalAlerts,
         monitoringDuration,
-        averageMetrics
+        averageMetrics,
       },
       dataPoints: [...this.dataPoints],
       alerts: [...this.alerts],
-      recommendations
+      recommendations,
     };
   }
 
@@ -578,7 +672,9 @@ export class PerformanceMonitor {
       recommendations.push('優化最大內容繪製：優化圖片加載和關鍵資源');
     }
 
-    if (report.summary.averageMetrics.apiPerformance?.averageResponseTime > 1000) {
+    if (
+      report.summary.averageMetrics.apiPerformance?.averageResponseTime > 1000
+    ) {
       recommendations.push('優化 API 響應時間：考慮使用緩存和數據庫優化');
     }
 
@@ -587,9 +683,13 @@ export class PerformanceMonitor {
     }
 
     if (report.alerts.length > 0) {
-      const criticalAlerts = report.alerts.filter(alert => alert.type === 'critical');
+      const criticalAlerts = report.alerts.filter(
+        (alert) => alert.type === 'critical'
+      );
       if (criticalAlerts.length > 0) {
-        recommendations.push('處理關鍵性能問題：優先解決內存洩漏和嚴重性能問題');
+        recommendations.push(
+          '處理關鍵性能問題：優先解決內存洩漏和嚴重性能問題'
+        );
       }
     }
 

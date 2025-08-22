@@ -22,12 +22,15 @@ export class ImageOptimizer {
   /**
    * 優化圖片 URL
    */
-  static optimizeImage(url: string, options: Partial<ImageOptimizationOptions> = {}): string {
+  static optimizeImage(
+    url: string,
+    options: Partial<ImageOptimizationOptions> = {}
+  ): string {
     const {
       width,
       height,
       quality = this.DEFAULT_QUALITY,
-      format = this.DEFAULT_FORMAT
+      format = this.DEFAULT_FORMAT,
     } = options;
 
     if (!url) return url;
@@ -55,7 +58,10 @@ export class ImageOptimizer {
       params.append('q', quality.toString());
     }
 
-    if (format !== this.DEFAULT_FORMAT && this.SUPPORTED_FORMATS.includes(format)) {
+    if (
+      format !== this.DEFAULT_FORMAT &&
+      this.SUPPORTED_FORMATS.includes(format)
+    ) {
       params.append('fmt', format);
     }
 
@@ -84,7 +90,7 @@ export class ImageOptimizer {
     return this.optimizeImage(url, {
       width: targetWidth,
       quality: this.DEFAULT_QUALITY,
-      format: this.DEFAULT_FORMAT
+      format: this.DEFAULT_FORMAT,
     });
   }
 
@@ -95,7 +101,7 @@ export class ImageOptimizer {
     const { Image } = await import('react-native');
 
     return Promise.all(
-      urls.map(url => {
+      urls.map((url) => {
         return new Promise<void>((resolve, reject) => {
           Image.prefetch(url)
             .then(() => resolve())
@@ -122,7 +128,7 @@ export class ImageOptimizer {
       webp: false,
       avif: false,
       jpg: true,
-      png: true
+      png: true,
     };
 
     // 在 React Native 中，我們假設支持常見格式
@@ -130,8 +136,10 @@ export class ImageOptimizer {
     if (Platform.OS === 'web') {
       // Web 平台的格式檢測
       const canvas = document.createElement('canvas');
-      support.webp = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
-      support.avif = canvas.toDataURL('image/avif').indexOf('data:image/avif') === 0;
+      support.webp =
+        canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+      support.avif =
+        canvas.toDataURL('image/avif').indexOf('data:image/avif') === 0;
     } else {
       // React Native 平台通常支持 WebP
       support.webp = true;
@@ -170,7 +178,7 @@ export class ImageOptimizer {
 
     return {
       width: Math.round(width),
-      height: Math.round(height)
+      height: Math.round(height),
     };
   }
 
@@ -182,7 +190,7 @@ export class ImageOptimizer {
       width: size,
       height: size,
       quality: 0.6,
-      format: 'webp'
+      format: 'webp',
     });
   }
 
@@ -202,8 +210,10 @@ export class ImageOptimizer {
 }
 
 // 導出便捷函數
-export const optimizeImage = (url: string, options?: Partial<ImageOptimizationOptions>) =>
-  ImageOptimizer.optimizeImage(url, options);
+export const optimizeImage = (
+  url: string,
+  options?: Partial<ImageOptimizationOptions>
+) => ImageOptimizer.optimizeImage(url, options);
 
 export const getResponsiveImage = (url: string, sizes: ResponsiveImageSizes) =>
   ImageOptimizer.getResponsiveImage(url, sizes);

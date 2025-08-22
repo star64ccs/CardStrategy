@@ -10,7 +10,7 @@ export const ADVANCED_ANIMATION_CONFIG = {
     normal: 300,
     slow: 500,
     verySlow: 800,
-    extraSlow: 1200
+    extraSlow: 1200,
   },
   easing: {
     // 基礎緩動
@@ -39,26 +39,26 @@ export const ADVANCED_ANIMATION_CONFIG = {
     // 指數緩動
     exponential: Easing.exponential,
     exponentialIn: Easing.in(Easing.exponential),
-    exponentialOut: Easing.out(Easing.exponential)
+    exponentialOut: Easing.out(Easing.exponential),
   },
   spring: {
     default: {
       tension: 100,
-      friction: 8
+      friction: 8,
     },
     gentle: {
       tension: 50,
-      friction: 7
+      friction: 7,
     },
     bouncy: {
       tension: 200,
-      friction: 5
+      friction: 5,
     },
     stiff: {
       tension: 300,
-      friction: 10
-    }
-  }
+      friction: 10,
+    },
+  },
 };
 
 // 動畫值管理器
@@ -95,7 +95,7 @@ export class AnimationValueManager {
   }
 
   stopAllAnimations(): void {
-    this.animations.forEach(animation => animation.stop());
+    this.animations.forEach((animation) => animation.stop());
     this.animations.clear();
   }
 
@@ -120,20 +120,20 @@ export const advancedAnimations = {
         toValue: 1,
         duration,
         easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(rotateY, {
         toValue: 1,
         duration,
         easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(rotateZ, {
         toValue: 1,
         duration,
         easing,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]);
   },
 
@@ -149,7 +149,7 @@ export const advancedAnimations = {
         toValue: 1,
         duration,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       })
     );
   },
@@ -166,14 +166,14 @@ export const advancedAnimations = {
           toValue: 1,
           duration,
           easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(ringOpacity, {
           toValue: 0,
           duration,
           easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ])
     );
   },
@@ -189,7 +189,7 @@ export const advancedAnimations = {
       duration,
       delay,
       easing: ADVANCED_ANIMATION_CONFIG.easing.linear,
-      useNativeDriver: false
+      useNativeDriver: false,
     });
   },
 
@@ -212,8 +212,8 @@ export const advancedAnimations = {
           duration,
           delay: index * 50,
           easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ]);
     });
 
@@ -231,16 +231,16 @@ export const advancedAnimations = {
         toValue: 1,
         duration,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-        useNativeDriver: false
+        useNativeDriver: false,
       }),
       Animated.loop(
         Animated.timing(waveValue, {
           toValue: 1,
           duration: 1000,
           easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-          useNativeDriver: false
+          useNativeDriver: false,
         })
-      )
+      ),
     ]);
   },
 
@@ -253,7 +253,7 @@ export const advancedAnimations = {
     return Animated.spring(pullValue, {
       toValue: targetPosition,
       ...ADVANCED_ANIMATION_CONFIG.spring.bouncy,
-      useNativeDriver: true
+      useNativeDriver: true,
     });
   },
 
@@ -269,17 +269,17 @@ export const advancedAnimations = {
           toValue: intensity,
           duration: duration / 2,
           easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-          useNativeDriver: false
+          useNativeDriver: false,
         }),
         Animated.timing(glowValue, {
           toValue: 0.3,
           duration: duration / 2,
           easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-          useNativeDriver: false
-        })
+          useNativeDriver: false,
+        }),
       ])
     );
-  }
+  },
 };
 
 // 動畫組合器
@@ -295,20 +295,20 @@ export const animationComposers = {
         toValue: 0.8,
         duration: duration / 2,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(flipValue, {
         toValue: 1,
         duration: duration / 2,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(scaleValue, {
         toValue: 1,
         duration: duration / 2,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]);
   },
 
@@ -325,27 +325,27 @@ export const animationComposers = {
           toValue: 1.2,
           duration: duration * 0.3,
           easing: ADVANCED_ANIMATION_CONFIG.easing.bounce,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(scaleValue, {
           toValue: 1,
           duration: duration * 0.7,
           easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ]),
       Animated.timing(rotateValue, {
         toValue: 1,
         duration,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(colorValue, {
         toValue: 1,
         duration,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-        useNativeDriver: false
-      })
+        useNativeDriver: false,
+      }),
     ]);
   },
 
@@ -359,32 +359,32 @@ export const animationComposers = {
         toValue: 10,
         duration: duration * 0.1,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(shakeValue, {
         toValue: -10,
         duration: duration * 0.1,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(shakeValue, {
         toValue: 10,
         duration: duration * 0.1,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(shakeValue, {
         toValue: -10,
         duration: duration * 0.1,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(shakeValue, {
         toValue: 0,
         duration: duration * 0.6,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]);
   },
 
@@ -400,20 +400,20 @@ export const animationComposers = {
         toValue: 1,
         duration,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(translateYValue, {
         toValue: 0,
         duration,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(scaleValue, {
         toValue: 1,
         duration,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]);
   },
 
@@ -429,30 +429,30 @@ export const animationComposers = {
         toValue: 1,
         duration: duration * 0.6,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: false
+        useNativeDriver: false,
       }),
       Animated.parallel([
         Animated.timing(checkmarkValue, {
           toValue: 1,
           duration: duration * 0.4,
           easing: ADVANCED_ANIMATION_CONFIG.easing.bounce,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(scaleValue, {
           toValue: 1.1,
           duration: duration * 0.2,
           easing: ADVANCED_ANIMATION_CONFIG.easing.bounce,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ]),
       Animated.timing(scaleValue, {
         toValue: 1,
         duration: duration * 0.2,
         easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]);
-  }
+  },
 };
 
 // 動畫預設
@@ -464,25 +464,25 @@ export const ANIMATION_PRESETS = {
       translateY: 50,
       scale: 0.9,
       duration: 400,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
     },
     exit: {
       opacity: 0,
       translateY: -50,
       scale: 0.9,
       duration: 300,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn,
     },
     hover: {
       scale: 1.05,
       duration: 200,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
     },
     press: {
       scale: 0.95,
       duration: 100,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn
-    }
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn,
+    },
   },
 
   // 按鈕動畫
@@ -490,18 +490,18 @@ export const ANIMATION_PRESETS = {
     press: {
       scale: 0.95,
       duration: 150,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn,
     },
     release: {
       scale: 1,
       duration: 150,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
     },
     success: {
       scale: 1.1,
       duration: 200,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.bounce
-    }
+      easing: ADVANCED_ANIMATION_CONFIG.easing.bounce,
+    },
   },
 
   // 模態框動畫
@@ -510,14 +510,14 @@ export const ANIMATION_PRESETS = {
       opacity: 0,
       scale: 0.8,
       duration: 300,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
     },
     exit: {
       opacity: 0,
       scale: 0.8,
       duration: 200,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn
-    }
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothIn,
+    },
   },
 
   // 列表項目動畫
@@ -526,29 +526,29 @@ export const ANIMATION_PRESETS = {
       opacity: 0,
       translateX: -50,
       duration: 300,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothOut,
     },
     stagger: {
       delay: 50,
-      duration: 300
-    }
+      duration: 300,
+    },
   },
 
   // 加載動畫
   loading: {
     spinner: {
       duration: 1000,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.linear
+      easing: ADVANCED_ANIMATION_CONFIG.easing.linear,
     },
     pulse: {
       duration: 1200,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
     },
     dots: {
       duration: 800,
-      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut
-    }
-  }
+      easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
+    },
+  },
 };
 
 // 動畫工具函數
@@ -556,13 +556,16 @@ export const animationUtils = {
   // 創建交錯動畫
   createStaggeredAnimation: (
     animatedValues: Animated.Value[],
-    animationCreator: (value: Animated.Value, index: number) => Animated.CompositeAnimation,
+    animationCreator: (
+      value: Animated.Value,
+      index: number
+    ) => Animated.CompositeAnimation,
     staggerDelay: number = 100
   ): Animated.CompositeAnimation => {
     const animations = animatedValues.map((value, index) =>
       Animated.sequence([
         Animated.delay(index * staggerDelay),
-        animationCreator(value, index)
+        animationCreator(value, index),
       ])
     );
 
@@ -600,7 +603,7 @@ export const animationUtils = {
     return animatedValue.interpolate({
       inputRange,
       outputRange,
-      extrapolate: 'clamp'
+      extrapolate: 'clamp',
     });
   },
 
@@ -615,9 +618,12 @@ export const animationUtils = {
   },
 
   // 動畫重置
-  resetAnimation: (animatedValue: Animated.Value, toValue: number = 0): void => {
+  resetAnimation: (
+    animatedValue: Animated.Value,
+    toValue: number = 0
+  ): void => {
     animatedValue.setValue(toValue);
-  }
+  },
 };
 
 // 性能優化工具
@@ -626,12 +632,17 @@ export const performanceOptimizers = {
   animationCache: new Map<string, Animated.CompositeAnimation>(),
 
   // 獲取緩存的動畫
-  getCachedAnimation: (key: string): Animated.CompositeAnimation | undefined => {
+  getCachedAnimation: (
+    key: string
+  ): Animated.CompositeAnimation | undefined => {
     return performanceOptimizers.animationCache.get(key);
   },
 
   // 緩存動畫
-  cacheAnimation: (key: string, animation: Animated.CompositeAnimation): void => {
+  cacheAnimation: (
+    key: string,
+    animation: Animated.CompositeAnimation
+  ): void => {
     performanceOptimizers.animationCache.set(key, animation);
   },
 
@@ -641,7 +652,9 @@ export const performanceOptimizers = {
   },
 
   // 批量動畫優化
-  batchAnimations: (animations: Animated.CompositeAnimation[]): Animated.CompositeAnimation => {
+  batchAnimations: (
+    animations: Animated.CompositeAnimation[]
+  ): Animated.CompositeAnimation => {
     return Animated.parallel(animations);
   },
 
@@ -659,9 +672,9 @@ export const performanceOptimizers = {
           lastRun = now;
           animation.start(callback);
         }
-      }
+      },
     } as Animated.CompositeAnimation;
-  }
+  },
 };
 
 // 動畫監控工具
@@ -685,9 +698,9 @@ export const animationMonitor = {
 
   // 停止所有動畫
   stopAllAnimations: (): void => {
-    animationMonitor.activeAnimations.forEach(animation => animation.stop());
+    animationMonitor.activeAnimations.forEach((animation) => animation.stop());
     animationMonitor.activeAnimations.clear();
-  }
+  },
 };
 
 export default {
@@ -698,5 +711,5 @@ export default {
   ANIMATION_PRESETS,
   animationUtils,
   performanceOptimizers,
-  animationMonitor
+  animationMonitor,
 };

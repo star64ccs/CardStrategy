@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { notificationService } from '../../../services/notificationService';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
@@ -22,10 +23,18 @@ describe('NotificationService', () => {
     // 設置默認 mock 值
     mockDevice.isDevice = true;
     mockPlatform.OS = 'ios';
-    mockNotifications.getPermissionsAsync.mockResolvedValue({ status: 'granted' });
-    mockNotifications.requestPermissionsAsync.mockResolvedValue({ status: 'granted' });
-    mockNotifications.getExpoPushTokenAsync.mockResolvedValue({ data: 'test-token' });
-    mockNotifications.scheduleNotificationAsync.mockResolvedValue('test-notification-id');
+    mockNotifications.getPermissionsAsync.mockResolvedValue({
+      status: 'granted',
+    });
+    mockNotifications.requestPermissionsAsync.mockResolvedValue({
+      status: 'granted',
+    });
+    mockNotifications.getExpoPushTokenAsync.mockResolvedValue({
+      data: 'test-token',
+    });
+    mockNotifications.scheduleNotificationAsync.mockResolvedValue(
+      'test-notification-id'
+    );
     mockNotifications.getAllScheduledNotificationsAsync.mockResolvedValue([]);
     mockNotifications.cancelScheduledNotificationAsync.mockResolvedValue();
     mockNotifications.cancelAllScheduledNotificationsAsync.mockResolvedValue();
@@ -41,8 +50,12 @@ describe('NotificationService', () => {
     });
 
     it('應該處理權限未授予的情況', async () => {
-      mockNotifications.getPermissionsAsync.mockResolvedValue({ status: 'denied' });
-      mockNotifications.requestPermissionsAsync.mockResolvedValue({ status: 'denied' });
+      mockNotifications.getPermissionsAsync.mockResolvedValue({
+        status: 'denied',
+      });
+      mockNotifications.requestPermissionsAsync.mockResolvedValue({
+        status: 'denied',
+      });
 
       await notificationService.initialize();
 
@@ -62,22 +75,25 @@ describe('NotificationService', () => {
 
       await notificationService.initialize();
 
-      expect(mockNotifications.setNotificationChannelAsync).toHaveBeenCalledWith(
-        'price-alerts',
-        expect.any(Object)
-      );
-      expect(mockNotifications.setNotificationChannelAsync).toHaveBeenCalledWith(
-        'market-updates',
-        expect.any(Object)
-      );
+      expect(
+        mockNotifications.setNotificationChannelAsync
+      ).toHaveBeenCalledWith('price-alerts', expect.any(Object));
+      expect(
+        mockNotifications.setNotificationChannelAsync
+      ).toHaveBeenCalledWith('market-updates', expect.any(Object));
     });
 
     it('應該處理初始化錯誤', async () => {
-      mockNotifications.getPermissionsAsync.mockRejectedValue(new Error('權限錯誤'));
+      mockNotifications.getPermissionsAsync.mockRejectedValue(
+        new Error('權限錯誤')
+      );
 
       await notificationService.initialize();
 
-      expect(mockLogger.error).toHaveBeenCalledWith('通知服務初始化失敗:', expect.any(Object));
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '通知服務初始化失敗:',
+        expect.any(Object)
+      );
     });
   });
 
@@ -87,11 +103,12 @@ describe('NotificationService', () => {
       body: '這是一個測試通知',
       data: { type: 'test' },
       sound: true,
-      priority: 'high' as const
+      priority: 'high' as const,
     };
 
     it('應該成功發送本地通知', async () => {
-      const result = await notificationService.sendLocalNotification(mockNotification);
+      const result =
+        await notificationService.sendLocalNotification(mockNotification);
 
       expect(result).toBe('test-notification-id');
       expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledWith({
@@ -100,18 +117,28 @@ describe('NotificationService', () => {
           body: mockNotification.body,
           data: mockNotification.data,
           sound: 'default',
-          priority: mockNotification.priority
+          priority: mockNotification.priority,
         },
-        trigger: null
+        trigger: null,
       });
-      expect(mockLogger.info).toHaveBeenCalledWith('本地通知發送成功', expect.any(Object));
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '本地通知發送成功',
+        expect.any(Object)
+      );
     });
 
     it('應該處理發送失敗', async () => {
-      mockNotifications.scheduleNotificationAsync.mockRejectedValue(new Error('發送失敗'));
+      mockNotifications.scheduleNotificationAsync.mockRejectedValue(
+        new Error('發送失敗')
+      );
 
-      await expect(notificationService.sendLocalNotification(mockNotification)).rejects.toThrow('發送失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('本地通知發送失敗:', expect.any(Object));
+      await expect(
+        notificationService.sendLocalNotification(mockNotification)
+      ).rejects.toThrow('發送失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '本地通知發送失敗:',
+        expect.any(Object)
+      );
     });
   });
 
@@ -121,7 +148,7 @@ describe('NotificationService', () => {
       cardName: '測試卡片',
       targetPrice: 100,
       currentPrice: 120,
-      type: 'above' as const
+      type: 'above' as const,
     };
 
     it('應該成功發送價格提醒通知', async () => {
@@ -137,26 +164,30 @@ describe('NotificationService', () => {
             cardId: mockPriceAlert.cardId,
             cardName: mockPriceAlert.cardName,
             currentPrice: mockPriceAlert.currentPrice,
-            targetPrice: mockPriceAlert.targetPrice
+            targetPrice: mockPriceAlert.targetPrice,
           },
           channelId: 'price-alerts',
           sound: 'default',
-          priority: 'high'
+          priority: 'high',
         },
-        trigger: null
+        trigger: null,
       });
     });
 
     it('應該處理下跌價格提醒', async () => {
-      const alert = { ...mockPriceAlert, type: 'below' as const, currentPrice: 80 };
+      const alert = {
+        ...mockPriceAlert,
+        type: 'below' as const,
+        currentPrice: 80,
+      };
 
       await notificationService.sendPriceAlert(alert);
 
       expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           content: expect.objectContaining({
-            body: '測試卡片 的價格已下跌到 80 TWD'
-          })
+            body: '測試卡片 的價格已下跌到 80 TWD',
+          }),
         })
       );
     });
@@ -177,13 +208,13 @@ describe('NotificationService', () => {
           body: '市場出現新動態',
           data: {
             type: 'market_update',
-            marketId: 'market-123'
+            marketId: 'market-123',
           },
           channelId: 'market-updates',
           sound: undefined,
-          priority: 'default'
+          priority: 'default',
         },
-        trigger: null
+        trigger: null,
       });
     });
   });
@@ -203,13 +234,13 @@ describe('NotificationService', () => {
           body: '建議買入這張卡片',
           data: {
             type: 'investment_advice',
-            cardId: 'card-123'
+            cardId: 'card-123',
           },
           channelId: 'investment-advice',
           sound: 'default',
-          priority: 'high'
+          priority: 'high',
         },
-        trigger: null
+        trigger: null,
       });
     });
   });
@@ -229,13 +260,13 @@ describe('NotificationService', () => {
           body: '系統維護通知',
           data: {
             type: 'system',
-            maintenance: true
+            maintenance: true,
           },
           channelId: 'system',
           sound: undefined,
-          priority: 'low'
+          priority: 'low',
         },
-        trigger: null
+        trigger: null,
       });
     });
   });
@@ -246,15 +277,18 @@ describe('NotificationService', () => {
       body: '這是一個延遲通知',
       data: { type: 'delayed' },
       sound: false,
-      priority: 'normal' as const
+      priority: 'normal' as const,
     };
 
     const mockTrigger = {
-      seconds: 60
+      seconds: 60,
     };
 
     it('應該成功安排延遲通知', async () => {
-      const result = await notificationService.scheduleNotification(mockNotification, mockTrigger);
+      const result = await notificationService.scheduleNotification(
+        mockNotification,
+        mockTrigger
+      );
 
       expect(result).toBe('test-notification-id');
       expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledWith({
@@ -263,18 +297,28 @@ describe('NotificationService', () => {
           body: mockNotification.body,
           data: mockNotification.data,
           sound: undefined,
-          priority: mockNotification.priority
+          priority: mockNotification.priority,
         },
-        trigger: mockTrigger
+        trigger: mockTrigger,
       });
-      expect(mockLogger.info).toHaveBeenCalledWith('延遲通知安排成功', expect.any(Object));
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '延遲通知安排成功',
+        expect.any(Object)
+      );
     });
 
     it('應該處理安排失敗', async () => {
-      mockNotifications.scheduleNotificationAsync.mockRejectedValue(new Error('安排失敗'));
+      mockNotifications.scheduleNotificationAsync.mockRejectedValue(
+        new Error('安排失敗')
+      );
 
-      await expect(notificationService.scheduleNotification(mockNotification, mockTrigger)).rejects.toThrow('安排失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('延遲通知安排失敗:', expect.any(Object));
+      await expect(
+        notificationService.scheduleNotification(mockNotification, mockTrigger)
+      ).rejects.toThrow('安排失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '延遲通知安排失敗:',
+        expect.any(Object)
+      );
     });
   });
 
@@ -282,15 +326,26 @@ describe('NotificationService', () => {
     it('應該成功取消通知', async () => {
       await notificationService.cancelNotification('test-id');
 
-      expect(mockNotifications.cancelScheduledNotificationAsync).toHaveBeenCalledWith('test-id');
-      expect(mockLogger.info).toHaveBeenCalledWith('通知取消成功', { id: 'test-id' });
+      expect(
+        mockNotifications.cancelScheduledNotificationAsync
+      ).toHaveBeenCalledWith('test-id');
+      expect(mockLogger.info).toHaveBeenCalledWith('通知取消成功', {
+        id: 'test-id',
+      });
     });
 
     it('應該處理取消失敗', async () => {
-      mockNotifications.cancelScheduledNotificationAsync.mockRejectedValue(new Error('取消失敗'));
+      mockNotifications.cancelScheduledNotificationAsync.mockRejectedValue(
+        new Error('取消失敗')
+      );
 
-      await expect(notificationService.cancelNotification('test-id')).rejects.toThrow('取消失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('通知取消失敗:', expect.any(Object));
+      await expect(
+        notificationService.cancelNotification('test-id')
+      ).rejects.toThrow('取消失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '通知取消失敗:',
+        expect.any(Object)
+      );
     });
   });
 
@@ -298,15 +353,24 @@ describe('NotificationService', () => {
     it('應該成功取消所有通知', async () => {
       await notificationService.cancelAllNotifications();
 
-      expect(mockNotifications.cancelAllScheduledNotificationsAsync).toHaveBeenCalled();
+      expect(
+        mockNotifications.cancelAllScheduledNotificationsAsync
+      ).toHaveBeenCalled();
       expect(mockLogger.info).toHaveBeenCalledWith('所有通知取消成功');
     });
 
     it('應該處理取消所有通知失敗', async () => {
-      mockNotifications.cancelAllScheduledNotificationsAsync.mockRejectedValue(new Error('取消失敗'));
+      mockNotifications.cancelAllScheduledNotificationsAsync.mockRejectedValue(
+        new Error('取消失敗')
+      );
 
-      await expect(notificationService.cancelAllNotifications()).rejects.toThrow('取消失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('取消所有通知失敗:', expect.any(Object));
+      await expect(
+        notificationService.cancelAllNotifications()
+      ).rejects.toThrow('取消失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '取消所有通知失敗:',
+        expect.any(Object)
+      );
     });
   });
 
@@ -316,26 +380,37 @@ describe('NotificationService', () => {
         identifier: 'notification-1',
         content: {
           title: '測試通知 1',
-          body: '內容 1'
+          body: '內容 1',
         },
-        trigger: null
-      }
+        trigger: null,
+      },
     ];
 
     it('應該成功獲取待發送通知', async () => {
-      mockNotifications.getAllScheduledNotificationsAsync.mockResolvedValue(mockScheduledNotifications);
+      mockNotifications.getAllScheduledNotificationsAsync.mockResolvedValue(
+        mockScheduledNotifications
+      );
 
       const result = await notificationService.getScheduledNotifications();
 
       expect(result).toEqual(mockScheduledNotifications);
-      expect(mockLogger.info).toHaveBeenCalledWith('獲取待發送通知成功', { count: 1 });
+      expect(mockLogger.info).toHaveBeenCalledWith('獲取待發送通知成功', {
+        count: 1,
+      });
     });
 
     it('應該處理獲取失敗', async () => {
-      mockNotifications.getAllScheduledNotificationsAsync.mockRejectedValue(new Error('獲取失敗'));
+      mockNotifications.getAllScheduledNotificationsAsync.mockRejectedValue(
+        new Error('獲取失敗')
+      );
 
-      await expect(notificationService.getScheduledNotifications()).rejects.toThrow('獲取失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('獲取待發送通知失敗:', expect.any(Object));
+      await expect(
+        notificationService.getScheduledNotifications()
+      ).rejects.toThrow('獲取失敗');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '獲取待發送通知失敗:',
+        expect.any(Object)
+      );
     });
   });
 
@@ -347,14 +422,23 @@ describe('NotificationService', () => {
       const result = await notificationService.getPermissionStatus();
 
       expect(result).toEqual(mockStatus);
-      expect(mockLogger.info).toHaveBeenCalledWith('獲取通知權限狀態成功', { status: mockStatus });
+      expect(mockLogger.info).toHaveBeenCalledWith('獲取通知權限狀態成功', {
+        status: mockStatus,
+      });
     });
 
     it('應該處理獲取權限狀態失敗', async () => {
-      mockNotifications.getPermissionsAsync.mockRejectedValue(new Error('權限檢查失敗'));
+      mockNotifications.getPermissionsAsync.mockRejectedValue(
+        new Error('權限檢查失敗')
+      );
 
-      await expect(notificationService.getPermissionStatus()).rejects.toThrow('權限檢查失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('獲取通知權限狀態失敗:', expect.any(Object));
+      await expect(notificationService.getPermissionStatus()).rejects.toThrow(
+        '權限檢查失敗'
+      );
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '獲取通知權限狀態失敗:',
+        expect.any(Object)
+      );
     });
   });
 
@@ -384,9 +468,9 @@ describe('NotificationService', () => {
           body: '這是一個測試通知，用於驗證通知功能是否正常工作。',
           data: { type: 'test' },
           sound: 'default',
-          priority: 'default'
+          priority: 'default',
         },
-        trigger: null
+        trigger: null,
       });
     });
   });

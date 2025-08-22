@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, selectIsLoading, selectError } from '../../store/slices/authSlice';
+import {
+  loginUser,
+  selectIsLoading,
+  selectError,
+} from '../../store/slices/authSlice';
 import { logger } from '../../utils/logger';
 
 interface WebLoginScreenProps {
@@ -129,43 +133,43 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '20px'
+    padding: '20px',
   },
   content: {
     width: '100%',
-    maxWidth: '400px'
+    maxWidth: '400px',
   },
   header: {
     textAlign: 'center' as const,
-    marginBottom: '40px'
+    marginBottom: '40px',
   },
   title: {
     fontSize: '28px',
     fontWeight: 'bold',
     color: '#2c3e50',
     marginBottom: '8px',
-    margin: '0 0 8px 0'
+    margin: '0 0 8px 0',
   },
   subtitle: {
     fontSize: '16px',
     color: '#7f8c8d',
-    margin: '0'
+    margin: '0',
   },
   form: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   inputContainer: {
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   label: {
     fontSize: '14px',
     fontWeight: '600',
     color: '#2c3e50',
     marginBottom: '8px',
-    display: 'block'
+    display: 'block',
   },
   input: {
     width: '100%',
@@ -174,10 +178,10 @@ const styles = {
     padding: '12px',
     fontSize: '16px',
     backgroundColor: '#ffffff',
-    boxSizing: 'border-box' as const
+    boxSizing: 'border-box' as const,
   },
   passwordContainer: {
-    position: 'relative' as const
+    position: 'relative' as const,
   },
   passwordInput: {
     width: '100%',
@@ -186,7 +190,7 @@ const styles = {
     padding: '12px 50px 12px 12px',
     fontSize: '16px',
     backgroundColor: '#ffffff',
-    boxSizing: 'border-box' as const
+    boxSizing: 'border-box' as const,
   },
   eyeButton: {
     position: 'absolute' as const,
@@ -196,7 +200,7 @@ const styles = {
     border: 'none',
     fontSize: '20px',
     cursor: 'pointer',
-    padding: '4px'
+    padding: '4px',
   },
   forgotPassword: {
     background: 'none',
@@ -207,7 +211,7 @@ const styles = {
     alignSelf: 'flex-end' as const,
     marginBottom: '24px',
     display: 'block',
-    marginLeft: 'auto'
+    marginLeft: 'auto',
   },
   loginButton: {
     width: '100%',
@@ -219,38 +223,38 @@ const styles = {
     fontSize: '16px',
     fontWeight: '600',
     cursor: 'pointer',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   disabledButton: {
     backgroundColor: '#bdc3c7',
-    cursor: 'not-allowed'
+    cursor: 'not-allowed',
   },
   errorContainer: {
     backgroundColor: '#ffebee',
     borderRadius: '8px',
     padding: '12px',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   errorText: {
     color: '#c62828',
     fontSize: '14px',
     textAlign: 'center' as const,
-    margin: '0'
+    margin: '0',
   },
   divider: {
     display: 'flex',
     alignItems: 'center',
-    margin: '20px 0'
+    margin: '20px 0',
   },
   dividerLine: {
     flex: 1,
     height: '1px',
-    backgroundColor: '#e1e8ed'
+    backgroundColor: '#e1e8ed',
   },
   dividerText: {
     margin: '0 16px',
     color: '#7f8c8d',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   registerButton: {
     width: '100%',
@@ -261,8 +265,8 @@ const styles = {
     color: '#3498db',
     fontSize: '16px',
     fontWeight: '600',
-    cursor: 'pointer'
-  }
+    cursor: 'pointer',
+  },
 };
 
 export default WebLoginScreen;

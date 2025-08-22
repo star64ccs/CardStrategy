@@ -8,7 +8,9 @@ import { logger } from '@/utils/logger';
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // 主題提供者組件
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const systemColorScheme = useColorScheme();
   const [mode, setMode] = useState<ThemeMode>('auto');
   const [isDark, setIsDark] = useState(false);
@@ -66,7 +68,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     isDark,
     mode,
     toggleTheme,
-    setThemeMode
+    setThemeMode,
   };
 
   return (

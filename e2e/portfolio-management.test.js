@@ -1,4 +1,6 @@
-const { by, device, element, expect } = require('detox');
+/* eslint-env jest, detox */
+
+const { by, device, element } = require('detox');
 
 describe('Portfolio Management Flow', () => {
   beforeAll(async () => {

@@ -6,23 +6,23 @@ module.exports = {
   devServer: {
     port: 3003,
     historyApiFallback: true,
-    hot: true
+    hot: true,
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
-      }
-    ]
+        use: ['style-loader', 'css-loader'],
+      },
+    ],
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js']
+    extensions: ['.tsx', '.ts', '.js'],
   },
   plugins: [
     new ModuleFederationPlugin({
@@ -34,18 +34,18 @@ module.exports = {
         './MarketPredictor': './src/components/MarketPredictor',
         './RecommendationEngine': './src/components/RecommendationEngine',
         './DataAnalyzer': './src/components/DataAnalyzer',
-        './AITraining': './src/components/AITraining'
+        './AITraining': './src/components/AITraining',
       },
       shared: {
         react: { singleton: true },
         'react-dom': { singleton: true },
         'react-router-dom': { singleton: true },
         '@reduxjs/toolkit': { singleton: true },
-        'react-redux': { singleton: true }
-      }
+        'react-redux': { singleton: true },
+      },
     }),
     new HtmlWebpackPlugin({
-      template: './public/index.html'
-    })
-  ]
+      template: './public/index.html',
+    }),
+  ],
 };

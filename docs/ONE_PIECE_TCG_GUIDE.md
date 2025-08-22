@@ -7,6 +7,7 @@
 ## 🎯 功能特性
 
 ### 核心功能
+
 - ✅ **牌組構建**: 創建和管理 ONE PIECE 牌組
 - ✅ **卡片管理**: 瀏覽和搜索 ONE PIECE 卡片
 - ✅ **錦標賽系統**: 參與 ONE PIECE 錦標賽
@@ -15,6 +16,7 @@
 - ✅ **社交分享**: 在社交媒體上分享 ONE PIECE 內容
 
 ### 遊戲特色
+
 - **領導者系統**: 以草帽海賊團成員為領導者
 - **顏色系統**: 紅、藍、綠、紫、黑五種顏色
 - **卡片類型**: 領導者、角色、事件、場地
@@ -51,10 +53,15 @@ const luffyDeck = await cardGameSupportService.createDeck('user123', {
   gameId: 'onepiece',
   name: '路飛領導者牌組',
   description: '以蒙奇·D·路飛為領導者的草帽海賊團主題牌組',
-  cards: ['luffy-leader', 'zoro-character', 'nami-character', 'usopp-character'],
+  cards: [
+    'luffy-leader',
+    'zoro-character',
+    'nami-character',
+    'usopp-character',
+  ],
   format: 'Standard',
   isPublic: true,
-  isCompetitive: true
+  isCompetitive: true,
 });
 ```
 
@@ -71,7 +78,7 @@ const zoroDeck = await cardGameSupportService.createDeck('user123', {
   cards: ['zoro-leader', 'mihawk-character', 'brook-character', 'sword-event'],
   format: 'Standard',
   isPublic: true,
-  isCompetitive: true
+  isCompetitive: true,
 });
 ```
 
@@ -79,9 +86,12 @@ const zoroDeck = await cardGameSupportService.createDeck('user123', {
 
 ```typescript
 // 獲取用戶的所有 ONE PIECE 牌組
-const userDecks = await cardGameSupportService.getUserDecks('user123', 'onepiece');
+const userDecks = await cardGameSupportService.getUserDecks(
+  'user123',
+  'onepiece'
+);
 
-userDecks.forEach(deck => {
+userDecks.forEach((deck) => {
   console.log(`牌組: ${deck.name}`);
   console.log(`描述: ${deck.description}`);
   console.log(`卡片數量: ${deck.stats.totalCards}`);
@@ -96,7 +106,7 @@ userDecks.forEach(deck => {
 const updatedDeck = await cardGameSupportService.updateDeck('deck-id', {
   name: '更新的路飛牌組',
   description: '經過優化的路飛領導者牌組',
-  cards: ['luffy-leader-v2', 'zoro-character-v2', 'nami-character-v2']
+  cards: ['luffy-leader-v2', 'zoro-character-v2', 'nami-character-v2'],
 });
 ```
 
@@ -122,7 +132,7 @@ const tournament = await cardGameSupportService.createTournament({
   endDate: new Date('2024-05-02'),
   entryFee: 100,
   prizePool: 5000,
-  maxParticipants: 64
+  maxParticipants: 64,
 });
 ```
 
@@ -141,10 +151,14 @@ const participant = await cardGameSupportService.joinTournament(
 
 ```typescript
 // 獲取錦標賽詳細信息
-const tournamentInfo = await cardGameSupportService.getTournament('tournament-id');
+const tournamentInfo =
+  await cardGameSupportService.getTournament('tournament-id');
 
 // 獲取即將舉行的錦標賽
-const upcomingTournaments = await cardGameSupportService.getGameTournaments('onepiece', 'upcoming');
+const upcomingTournaments = await cardGameSupportService.getGameTournaments(
+  'onepiece',
+  'upcoming'
+);
 ```
 
 ## 📊 排行榜和分析
@@ -153,10 +167,13 @@ const upcomingTournaments = await cardGameSupportService.getGameTournaments('one
 
 ```typescript
 // 獲取 ONE PIECE 排行榜
-const rankings = await cardGameSupportService.getGameRankings('onepiece', '2024-Spring');
+const rankings = await cardGameSupportService.getGameRankings(
+  'onepiece',
+  '2024-Spring'
+);
 
 // 顯示前10名
-rankings.slice(0, 10).forEach(rank => {
+rankings.slice(0, 10).forEach((rank) => {
   console.log(`${rank.rank}. ${rank.playerName} - ${rank.points}分`);
 });
 ```
@@ -165,7 +182,11 @@ rankings.slice(0, 10).forEach(rank => {
 
 ```typescript
 // 獲取用戶在 ONE PIECE 中的排名
-const userRanking = await cardGameSupportService.getUserRanking('user123', 'onepiece', '2024-Spring');
+const userRanking = await cardGameSupportService.getUserRanking(
+  'user123',
+  'onepiece',
+  '2024-Spring'
+);
 
 if (userRanking) {
   console.log(`排名: ${userRanking.rank}`);
@@ -179,7 +200,11 @@ if (userRanking) {
 
 ```typescript
 // 獲取 ONE PIECE 遊戲分析
-const analytics = await cardGameSupportService.getGameAnalytics('user123', 'onepiece', 'month');
+const analytics = await cardGameSupportService.getGameAnalytics(
+  'user123',
+  'onepiece',
+  'month'
+);
 
 console.log('總遊戲場數:', analytics.stats.totalGames);
 console.log('勝率:', analytics.stats.winRate);
@@ -199,8 +224,8 @@ const post = await socialMediaIntegrationService.publishPost('user123', {
   platformId: 'twitter',
   content: {
     text: '剛剛創建了我的路飛領導者牌組！🏴‍☠️ #ONEPIECETCG #海賊王 #路飛',
-    hashtags: ['ONEPIECETCG', '海賊王', '路飛', '草帽海賊團']
-  }
+    hashtags: ['ONEPIECETCG', '海賊王', '路飛', '草帽海賊團'],
+  },
 });
 ```
 
@@ -208,26 +233,32 @@ const post = await socialMediaIntegrationService.publishPost('user123', {
 
 ```typescript
 // 在Facebook上分享錦標賽信息
-const tournamentPost = await socialMediaIntegrationService.publishPost('user123', {
-  platformId: 'facebook',
-  content: {
-    text: 'ONE PIECE TCG 海賊王錦標賽即將開始！獎金池高達5000元！🏆',
-    hashtags: ['ONEPIECETCG', '海賊王錦標賽', 'TCG比賽']
+const tournamentPost = await socialMediaIntegrationService.publishPost(
+  'user123',
+  {
+    platformId: 'facebook',
+    content: {
+      text: 'ONE PIECE TCG 海賊王錦標賽即將開始！獎金池高達5000元！🏆',
+      hashtags: ['ONEPIECETCG', '海賊王錦標賽', 'TCG比賽'],
+    },
   }
-});
+);
 ```
 
 ### 分享卡片收藏
 
 ```typescript
 // 在Instagram上分享卡片收藏
-const instagramPost = await socialMediaIntegrationService.publishPost('user123', {
-  platformId: 'instagram',
-  content: {
-    text: '我的ONE PIECE卡片收藏展示 📸 #ONEPIECETCG #卡片收藏',
-    hashtags: ['ONEPIECETCG', '卡片收藏', '海賊王']
+const instagramPost = await socialMediaIntegrationService.publishPost(
+  'user123',
+  {
+    platformId: 'instagram',
+    content: {
+      text: '我的ONE PIECE卡片收藏展示 📸 #ONEPIECETCG #卡片收藏',
+      hashtags: ['ONEPIECETCG', '卡片收藏', '海賊王'],
+    },
   }
-});
+);
 ```
 
 ## 🎯 領導者系統
@@ -255,7 +286,7 @@ const luffyDeck = {
   leader: 'luffy-leader',
   characters: ['zoro-character', 'nami-character', 'usopp-character'],
   events: ['gomu-gomu-pistol', 'gear-second'],
-  stages: ['thousand-sunny']
+  stages: ['thousand-sunny'],
 };
 
 // 索隆領導者牌組
@@ -263,7 +294,7 @@ const zoroDeck = {
   leader: 'zoro-leader',
   characters: ['mihawk-character', 'brook-character', 'law-character'],
   events: ['three-sword-style', 'ashura'],
-  stages: ['baratie']
+  stages: ['baratie'],
 };
 ```
 
@@ -286,14 +317,14 @@ ONE PIECE TCG 使用五種顏色系統：
 const redDeck = {
   color: 'Red',
   strategy: 'Aggressive',
-  focus: 'Direct damage and power'
+  focus: 'Direct damage and power',
 };
 
 // 雙色牌組
 const redBlueDeck = {
   colors: ['Red', 'Blue'],
   strategy: 'Control-Aggro',
-  focus: 'Balance between power and control'
+  focus: 'Balance between power and control',
 };
 ```
 
@@ -302,16 +333,19 @@ const redBlueDeck = {
 ### 主要卡片類型
 
 1. **領導者 (Leader)**
+
    - 牌組的核心卡片
    - 決定牌組的顏色和策略
    - 擁有特殊能力
 
 2. **角色 (Character)**
+
    - 主要的戰鬥單位
    - 擁有攻擊力和生命值
    - 具有特殊效果
 
 3. **事件 (Event)**
+
    - 一次性效果卡片
    - 提供戰術優勢
    - 影響遊戲節奏
@@ -345,7 +379,7 @@ const onePieceConfig = {
   enableAnalytics: true,
   maxDeckSize: 50,
   tournamentEntryFee: 100,
-  prizePoolMultiplier: 50
+  prizePoolMultiplier: 50,
 };
 ```
 
@@ -354,11 +388,13 @@ const onePieceConfig = {
 ### 牌組構建建議
 
 1. **選擇合適的領導者**
+
    - 根據個人喜好和策略選擇
    - 考慮領導者的特殊能力
    - 確保與牌組主題一致
 
 2. **平衡卡片類型**
+
    - 角色卡片：40-60%
    - 事件卡片：20-30%
    - 場地卡片：10-20%
@@ -371,11 +407,13 @@ const onePieceConfig = {
 ### 錦標賽策略
 
 1. **賽前準備**
+
    - 熟悉牌組構成
    - 練習關鍵組合
    - 了解對手常用牌組
 
 2. **比賽技巧**
+
    - 保持冷靜和專注
    - 合理使用資源
    - 適應對手策略
@@ -390,11 +428,13 @@ const onePieceConfig = {
 ### 常見問題
 
 1. **牌組創建失敗**
+
    - 檢查卡片ID是否正確
    - 確認卡片數量符合限制
    - 驗證顏色搭配是否正確
 
 2. **錦標賽報名失敗**
+
    - 確認錦標賽狀態
    - 檢查參賽費用
    - 驗證牌組格式
@@ -422,6 +462,7 @@ const onePieceConfig = {
 ## 🔄 更新日誌
 
 ### v1.0.0 (2024-12-19)
+
 - ✅ 初始 ONE PIECE TCG 支持
 - ✅ 基礎牌組管理功能
 - ✅ 錦標賽系統

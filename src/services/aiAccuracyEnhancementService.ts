@@ -128,29 +128,29 @@ class AIAccuracyEnhancementService {
       targetAccuracy: 0.95,
       dataAugmentation: true,
       qualityThreshold: 0.8,
-      autoCollection: true
+      autoCollection: true,
     },
     modelOptimization: {
       useEnsemble: true,
       adaptiveLearning: true,
       crossValidation: true,
       hyperparameterTuning: true,
-      modelVersioning: true
+      modelVersioning: true,
     },
     realTimeFeedback: {
       userCorrectionCollection: true,
       confidenceThreshold: 0.7,
       autoRetraining: true,
       feedbackValidation: true,
-      correctionReward: true
+      correctionReward: true,
     },
     performanceMonitoring: {
       accuracyTracking: true,
       driftDetection: true,
       alertThreshold: 0.05,
       performanceDashboard: true,
-      automatedReports: true
-    }
+      automatedReports: true,
+    },
   };
 
   // 獲取當前配置
@@ -177,21 +177,30 @@ class AIAccuracyEnhancementService {
     qualityScore: number;
     distribution: Record<string, number>;
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 開始收集訓練數據', { options });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 開始收集訓練數據', { options });
 
-      const response = await apiService.post('/ai/accuracy/training-data/collect', {
-        config: this.config.trainingData,
-        options
-      });
+        const response = await apiService.post(
+          '/ai/accuracy/training-data/collect',
+          {
+            config: this.config.trainingData,
+            options,
+          }
+        );
 
-      logger.info('✅ 訓練數據收集完成', { result: response.data });
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+        logger.info('✅ 訓練數據收集完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 數據增強
-  async augmentTrainingData(dataId: string, augmentationMethods: string[]): Promise<{
+  async augmentTrainingData(
+    dataId: string,
+    augmentationMethods: string[]
+  ): Promise<{
     success: boolean;
     augmentedDataCount: number;
     qualityMetrics: {
@@ -200,17 +209,23 @@ class AIAccuracyEnhancementService {
       improvement: number;
     };
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 開始數據增強', { dataId, augmentationMethods });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 開始數據增強', { dataId, augmentationMethods });
 
-      const response = await apiService.post(`/ai/accuracy/training-data/${dataId}/augment`, {
-        methods: augmentationMethods,
-        config: this.config.trainingData
-      });
+        const response = await apiService.post(
+          `/ai/accuracy/training-data/${dataId}/augment`,
+          {
+            methods: augmentationMethods,
+            config: this.config.trainingData,
+          }
+        );
 
-      logger.info('✅ 數據增強完成', { result: response.data });
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+        logger.info('✅ 數據增強完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 模型優化
@@ -229,37 +244,48 @@ class AIAccuracyEnhancementService {
       performance: Record<string, number>;
     };
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 開始模型優化', { options });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 開始模型優化', { options });
 
-      const response = await apiService.post('/ai/accuracy/model/optimize', {
-        config: this.config.modelOptimization,
-        options
-      });
+        const response = await apiService.post('/ai/accuracy/model/optimize', {
+          config: this.config.modelOptimization,
+          options,
+        });
 
-      logger.info('✅ 模型優化完成', { result: response.data });
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+        logger.info('✅ 模型優化完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 收集用戶反饋
-  async collectUserFeedback(feedback: Omit<UserFeedbackData, 'feedbackId' | 'timestamp' | 'status'>): Promise<{
+  async collectUserFeedback(
+    feedback: Omit<UserFeedbackData, 'feedbackId' | 'timestamp' | 'status'>
+  ): Promise<{
     success: boolean;
     feedbackId: string;
     qualityScore: number;
     reward?: number;
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 收集用戶反饋', { feedback });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 收集用戶反饋', { feedback });
 
-      const response = await apiService.post('/ai/accuracy/feedback/collect', {
-        feedback,
-        config: this.config.realTimeFeedback
-      });
+        const response = await apiService.post(
+          '/ai/accuracy/feedback/collect',
+          {
+            feedback,
+            config: this.config.realTimeFeedback,
+          }
+        );
 
-      logger.info('✅ 用戶反饋收集完成', { result: response.data });
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+        logger.info('✅ 用戶反饋收集完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 驗證反饋質量
@@ -273,63 +299,96 @@ class AIAccuracyEnhancementService {
       completeness: number;
     };
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 驗證反饋質量', { feedbackId });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 驗證反饋質量', { feedbackId });
 
-      const response = await apiService.post(`/ai/accuracy/feedback/${feedbackId}/validate`, {
-        config: this.config.realTimeFeedback
-      });
+        const response = await apiService.post(
+          `/ai/accuracy/feedback/${feedbackId}/validate`,
+          {
+            config: this.config.realTimeFeedback,
+          }
+        );
 
-      logger.info('✅ 反饋驗證完成', { result: response.data });
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+        logger.info('✅ 反饋驗證完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 自動重新訓練
-  async autoRetrain(trigger: 'accuracy_drop' | 'data_increase' | 'feedback_threshold' | 'scheduled'): Promise<{
+  async autoRetrain(
+    trigger:
+      | 'accuracy_drop'
+      | 'data_increase'
+      | 'feedback_threshold'
+      | 'scheduled'
+  ): Promise<{
     success: boolean;
     retrainingId: string;
     estimatedTime: string;
     expectedImprovement: number;
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 開始自動重新訓練', { trigger });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 開始自動重新訓練', { trigger });
 
-      const response = await apiService.post('/ai/accuracy/model/auto-retrain', {
-        trigger,
-        config: {
-          ...this.config.modelOptimization,
-          ...this.config.realTimeFeedback
-        }
-      });
+        const response = await apiService.post(
+          '/ai/accuracy/model/auto-retrain',
+          {
+            trigger,
+            config: {
+              ...this.config.modelOptimization,
+              ...this.config.realTimeFeedback,
+            },
+          }
+        );
 
-      logger.info('✅ 自動重新訓練已啟動', { result: response.data });
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+        logger.info('✅ 自動重新訓練已啟動', { result: response.data });
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 獲取訓練數據統計
   async getTrainingDataStats(): Promise<TrainingDataStats> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get('/ai/accuracy/training-data/stats');
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          '/ai/accuracy/training-data/stats'
+        );
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 獲取模型性能指標
   async getModelPerformanceMetrics(): Promise<ModelPerformanceMetrics> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get('/ai/accuracy/model/performance');
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get('/ai/accuracy/model/performance');
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 獲取準確率提升建議
-  async getAccuracyImprovementSuggestions(): Promise<AccuracyImprovementSuggestion[]> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get('/ai/accuracy/improvement-suggestions');
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+  async getAccuracyImprovementSuggestions(): Promise<
+    AccuracyImprovementSuggestion[]
+  > {
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          '/ai/accuracy/improvement-suggestions'
+        );
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 監控準確率變化
@@ -345,10 +404,15 @@ class AIAccuracyEnhancementService {
       timestamp: string;
     }[];
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get(`/ai/accuracy/monitor?timeRange=${timeRange}`);
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          `/ai/accuracy/monitor?timeRange=${timeRange}`
+        );
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 生成準確率報告
@@ -370,17 +434,23 @@ class AIAccuracyEnhancementService {
       nextActions: string[];
     };
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai/accuracy/report/generate', {
-        config: this.config.performanceMonitoring,
-        options
-      });
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post('/ai/accuracy/report/generate', {
+          config: this.config.performanceMonitoring,
+          options,
+        });
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 設置準確率目標
-  async setAccuracyTarget(target: number, deadline: string): Promise<{
+  async setAccuracyTarget(
+    target: number,
+    deadline: string
+  ): Promise<{
     success: boolean;
     currentAccuracy: number;
     targetAccuracy: number;
@@ -392,14 +462,17 @@ class AIAccuracyEnhancementService {
       description: string;
     }[];
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai/accuracy/target/set', {
-        target,
-        deadline,
-        config: this.config
-      });
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post('/ai/accuracy/target/set', {
+          target,
+          deadline,
+          config: this.config,
+        });
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 
   // 獲取準確率提升進度
@@ -415,12 +488,16 @@ class AIAccuracyEnhancementService {
       method: string;
     }[];
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get('/ai/accuracy/progress');
-      return response.data;
-    }, { service: 'AIAccuracyEnhancement' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get('/ai/accuracy/progress');
+        return response.data;
+      },
+      { service: 'AIAccuracyEnhancement' }
+    )();
   }
 }
 
 // 創建單例實例
+export { AIAccuracyEnhancementService };
 export const aiAccuracyEnhancementService = new AIAccuracyEnhancementService();

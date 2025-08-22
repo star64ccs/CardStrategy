@@ -30,6 +30,7 @@
 4. 配置服務設置：
 
 #### 基本配置
+
 - **Name**: `cardstrategy-api`
 - **Environment**: `Node`
 - **Region**: 選擇離您最近的區域
@@ -38,6 +39,7 @@
 - **Start Command**: `cd backend && npm start`
 
 #### 環境變量
+
 在RENDER控制台中設置以下環境變量：
 
 ```bash
@@ -126,6 +128,7 @@ const production: Environment = {
 ### 2. 構建和部署
 
 #### 使用Expo
+
 ```bash
 # 構建生產版本
 expo build --platform all --release-channel production
@@ -135,6 +138,7 @@ eas build --platform all --profile production
 ```
 
 #### 使用RENDER部署前端（可選）
+
 如果您想將前端也部署到RENDER：
 
 1. 創建新的Web Service
@@ -172,6 +176,7 @@ databases:
 ### 1. 健康檢查
 
 API服務包含健康檢查端點：
+
 ```
 GET https://your-api-service.onrender.com/health
 ```
@@ -179,6 +184,7 @@ GET https://your-api-service.onrender.com/health
 ### 2. 日誌監控
 
 在RENDER控制台中查看：
+
 - 實時日誌
 - 錯誤報告
 - 性能指標
@@ -192,17 +198,21 @@ GET https://your-api-service.onrender.com/health
 ## 安全考慮
 
 ### 1. 環境變量
+
 - 不要在代碼中硬編碼敏感信息
 - 使用RENDER的環境變量功能
 - 定期輪換密鑰
 
 ### 2. CORS配置
+
 確保`ALLOWED_ORIGINS`包含正確的前端域名
 
 ### 3. 速率限制
+
 API已配置速率限制，防止濫用
 
 ### 4. 數據驗證
+
 所有API端點都包含輸入驗證
 
 ## 故障排除
@@ -210,11 +220,13 @@ API已配置速率限制，防止濫用
 ### 常見問題
 
 1. **部署失敗**
+
    - 檢查構建日誌
    - 確認所有依賴都已安裝
    - 驗證環境變量
 
 2. **數據庫連接失敗**
+
    - 檢查MongoDB URI
    - 確認網絡連接
    - 驗證數據庫憑證
@@ -233,16 +245,19 @@ API已配置速率限制，防止濫用
 ## 擴展和優化
 
 ### 1. 性能優化
+
 - 啟用數據庫索引
 - 實現緩存策略
 - 優化查詢
 
 ### 2. 擴展
+
 - 升級RENDER計劃
 - 添加更多服務實例
 - 實現負載均衡
 
 ### 3. 監控
+
 - 設置告警
 - 監控關鍵指標
 - 定期備份數據
@@ -250,6 +265,7 @@ API已配置速率限制，防止濫用
 ## 聯繫支持
 
 如果遇到問題：
+
 1. 查看RENDER文檔
 2. 檢查應用程序日誌
 3. 聯繫技術支持

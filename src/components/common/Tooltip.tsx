@@ -7,7 +7,7 @@ import {
   Modal,
   Dimensions,
   ViewStyle,
-  TextStyle
+  TextStyle,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -31,7 +31,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   maxWidth = 200,
   style,
   contentStyle,
-  trigger = 'press'
+  trigger = 'press',
 }) => {
   const [visible, setVisible] = useState(false);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -75,8 +75,14 @@ export const Tooltip: React.FC<TooltipProps> = ({
       }
 
       // 確保工具提示不會超出屏幕
-      tooltipX = Math.max(20, Math.min(tooltipX, screenWidth - tooltipWidth - 20));
-      tooltipY = Math.max(20, Math.min(tooltipY, screenHeight - tooltipHeight - 20));
+      tooltipX = Math.max(
+        20,
+        Math.min(tooltipX, screenWidth - tooltipWidth - 20)
+      );
+      tooltipY = Math.max(
+        20,
+        Math.min(tooltipY, screenHeight - tooltipHeight - 20)
+      );
 
       setTooltipPosition({ x: tooltipX, y: tooltipY });
       setVisible(true);
@@ -93,7 +99,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
       position: 'absolute' as const,
       width: 0,
       height: 0,
-      borderStyle: 'solid' as const
+      borderStyle: 'solid' as const,
     };
 
     switch (position) {
@@ -108,7 +114,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           borderTopWidth: arrowSize,
           borderLeftColor: 'transparent',
           borderRightColor: 'transparent',
-          borderTopColor: theme.colors.background.tertiary
+          borderTopColor: theme.colors.background.tertiary,
         };
       case 'bottom':
         return {
@@ -121,7 +127,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           borderBottomWidth: arrowSize,
           borderLeftColor: 'transparent',
           borderRightColor: 'transparent',
-          borderBottomColor: theme.colors.background.tertiary
+          borderBottomColor: theme.colors.background.tertiary,
         };
       case 'left':
         return {
@@ -134,7 +140,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           borderLeftWidth: arrowSize,
           borderTopColor: 'transparent',
           borderBottomColor: 'transparent',
-          borderLeftColor: theme.colors.background.tertiary
+          borderLeftColor: theme.colors.background.tertiary,
         };
       case 'right':
         return {
@@ -147,7 +153,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
           borderRightWidth: arrowSize,
           borderTopColor: 'transparent',
           borderBottomColor: 'transparent',
-          borderRightColor: theme.colors.background.tertiary
+          borderRightColor: theme.colors.background.tertiary,
         };
       default:
         return {};
@@ -183,8 +189,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
               {
                 left: tooltipPosition.x,
                 top: tooltipPosition.y,
-                maxWidth
-              }
+                maxWidth,
+              },
             ]}
           >
             <View style={getArrowStyle()} />
@@ -199,7 +205,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   tooltip: {
     position: 'absolute',
@@ -213,12 +219,12 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   tooltipText: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.primary,
     textAlign: 'center',
-    lineHeight: theme.typography.lineHeights.normal
-  }
+    lineHeight: theme.typography.lineHeights.normal,
+  },
 });

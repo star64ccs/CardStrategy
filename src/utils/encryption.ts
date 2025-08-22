@@ -3,7 +3,10 @@ import { logger } from './logger';
 import { StorageManager } from './storage';
 
 // 加密算法類型
-export type EncryptionAlgorithm = 'AES-256-GCM' | 'AES-256-CBC' | 'ChaCha20-Poly1305';
+export type EncryptionAlgorithm =
+  | 'AES-256-GCM'
+  | 'AES-256-CBC'
+  | 'ChaCha20-Poly1305';
 
 // 加密配置
 export interface EncryptionConfig {
@@ -58,7 +61,7 @@ const DEFAULT_ENCRYPTION_CONFIG: EncryptionConfig = {
   saltSize: 32,
   iterations: 100000,
   enableCompression: true,
-  enableChecksum: true
+  enableChecksum: true,
 };
 
 // 加密工具類
@@ -74,7 +77,7 @@ export class EncryptionManager {
     averageEncryptionTime: 0,
     averageDecryptionTime: 0,
     lastEncryptionTime: 0,
-    lastDecryptionTime: 0
+    lastDecryptionTime: 0,
   };
 
   constructor(config: Partial<EncryptionConfig> = {}) {
@@ -111,11 +114,16 @@ export class EncryptionManager {
   // 生成主密鑰
   private async generateMasterKey(): Promise<string> {
     const keyBytes = this.generateRandomBytes(this.config.keySize);
-    return Array.from(keyBytes, byte => byte.toString(16).padStart(2, '0')).join('');
+    return Array.from(keyBytes, (byte) =>
+      byte.toString(16).padStart(2, '0')
+    ).join('');
   }
 
   // 從密碼派生密鑰
-  private async deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
+  private async deriveKey(
+    password: string,
+    salt: Uint8Array
+  ): Promise<CryptoKey> {
     if (Platform.OS === 'web') {
       const encoder = new TextEncoder();
       const keyMaterial = await crypto.subtle.importKey(
@@ -131,7 +139,7 @@ export class EncryptionManager {
           name: 'PBKDF2',
           salt,
           iterations: this.config.iterations,
-          hash: 'SHA-256'
+          hash: 'SHA-256',
         },
         keyMaterial,
         { name: 'AES-GCM', length: this.config.keySize * 8 },
@@ -141,13 +149,14 @@ export class EncryptionManager {
     }
     // React Native 環境 - 簡化實現
     throw new Error('Key derivation not supported in React Native environment');
-
   }
 
   // 加載主密鑰
   private async loadMasterKey(): Promise<void> {
     try {
-      this.masterKey = await StorageManager.get<string>('encryption_master_key');
+      this.masterKey = await StorageManager.get<string>(
+        'encryption_master_key'
+      );
       if (!this.masterKey) {
         this.masterKey = await this.generateMasterKey();
         await StorageManager.set('encryption_master_key', this.masterKey);
@@ -162,7 +171,8 @@ export class EncryptionManager {
   // 加載統計數據
   private async loadStats(): Promise<void> {
     try {
-      const savedStats = await StorageManager.get<EncryptionStats>('encryption_stats');
+      const savedStats =
+        await StorageManager.get<EncryptionStats>('encryption_stats');
       if (savedStats) {
         this.stats = savedStats;
       }
@@ -181,14 +191,20 @@ export class EncryptionManager {
   }
 
   // 更新統計數據
-  private updateStats(operation: 'encrypt' | 'decrypt', success: boolean, duration: number): void {
+  private updateStats(
+    operation: 'encrypt' | 'decrypt',
+    success: boolean,
+    duration: number
+  ): void {
     if (operation === 'encrypt') {
       this.stats.totalEncryptions++;
       if (!success) {
         this.stats.failedEncryptions++;
       } else {
         this.stats.averageEncryptionTime =
-          (this.stats.averageEncryptionTime * (this.stats.totalEncryptions - 1) + duration) /
+          (this.stats.averageEncryptionTime *
+            (this.stats.totalEncryptions - 1) +
+            duration) /
           this.stats.totalEncryptions;
         this.stats.lastEncryptionTime = Date.now();
       }
@@ -198,7 +214,9 @@ export class EncryptionManager {
         this.stats.failedDecryptions++;
       } else {
         this.stats.averageDecryptionTime =
-          (this.stats.averageDecryptionTime * (this.stats.totalDecryptions - 1) + duration) /
+          (this.stats.averageDecryptionTime *
+            (this.stats.totalDecryptions - 1) +
+            duration) /
           this.stats.totalDecryptions;
         this.stats.lastDecryptionTime = Date.now();
       }
@@ -211,7 +229,7 @@ export class EncryptionManager {
     let hash = 0;
     for (let i = 0; i < data.length; i++) {
       const char = data.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // 轉換為 32 位整數
     }
     return hash.toString(16);
@@ -294,7 +312,7 @@ export class EncryptionManager {
         const encryptedBuffer = await crypto.subtle.encrypt(
           {
             name: 'AES-GCM',
-            iv
+            iv,
           },
           key,
           encodedData
@@ -302,12 +320,18 @@ export class EncryptionManager {
 
         const encryptedData: EncryptedData = {
           algorithm: this.config.algorithm,
-          iv: Array.from(iv, byte => byte.toString(16).padStart(2, '0')).join(''),
-          salt: Array.from(salt, byte => byte.toString(16).padStart(2, '0')).join(''),
-          data: Array.from(new Uint8Array(encryptedBuffer), byte => byte.toString(16).padStart(2, '0')).join(''),
+          iv: Array.from(iv, (byte) => byte.toString(16).padStart(2, '0')).join(
+            ''
+          ),
+          salt: Array.from(salt, (byte) =>
+            byte.toString(16).padStart(2, '0')
+          ).join(''),
+          data: Array.from(new Uint8Array(encryptedBuffer), (byte) =>
+            byte.toString(16).padStart(2, '0')
+          ).join(''),
           checksum,
           timestamp: Date.now(),
-          version: '1.0'
+          version: '1.0',
         };
 
         success = true;
@@ -317,18 +341,21 @@ export class EncryptionManager {
       // React Native 環境 - 簡化加密
       const encryptedData: EncryptedData = {
         algorithm: this.config.algorithm,
-        iv: Array.from(iv, byte => byte.toString(16).padStart(2, '0')).join(''),
-        salt: Array.from(salt, byte => byte.toString(16).padStart(2, '0')).join(''),
+        iv: Array.from(iv, (byte) => byte.toString(16).padStart(2, '0')).join(
+          ''
+        ),
+        salt: Array.from(salt, (byte) =>
+          byte.toString(16).padStart(2, '0')
+        ).join(''),
         data: btoa(processedData), // Base64 編碼作為簡化加密
         checksum,
         timestamp: Date.now(),
-        version: '1.0'
+        version: '1.0',
       };
 
       success = true;
       this.updateStats('encrypt', true, Date.now() - startTime);
       return encryptedData;
-
     } catch (error) {
       logger.error('Encryption failed', { error, keyId });
       this.updateStats('encrypt', false, Date.now() - startTime);
@@ -342,9 +369,15 @@ export class EncryptionManager {
     let success = false;
 
     try {
-      const iv = new Uint8Array(encryptedData.iv.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
-      const salt = new Uint8Array(encryptedData.salt.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
-      const encryptedBytes = new Uint8Array(encryptedData.data.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+      const iv = new Uint8Array(
+        encryptedData.iv.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+      );
+      const salt = new Uint8Array(
+        encryptedData.salt.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+      );
+      const encryptedBytes = new Uint8Array(
+        encryptedData.data.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+      );
 
       let decryptedData: string;
 
@@ -354,7 +387,7 @@ export class EncryptionManager {
         const decryptedBuffer = await crypto.subtle.decrypt(
           {
             name: 'AES-GCM',
-            iv
+            iv,
           },
           key,
           encryptedBytes
@@ -392,7 +425,10 @@ export class EncryptionManager {
   }
 
   // 生成新密鑰
-  async generateKey(name: string, algorithm?: EncryptionAlgorithm): Promise<KeyInfo> {
+  async generateKey(
+    name: string,
+    algorithm?: EncryptionAlgorithm
+  ): Promise<KeyInfo> {
     const keyInfo: KeyInfo = {
       id: `key_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       name,
@@ -400,7 +436,7 @@ export class EncryptionManager {
       createdAt: Date.now(),
       lastUsed: Date.now(),
       isActive: true,
-      keySize: this.config.keySize
+      keySize: this.config.keySize,
     };
 
     try {
@@ -418,7 +454,7 @@ export class EncryptionManager {
   // 獲取所有密鑰
   async getKeys(): Promise<KeyInfo[]> {
     try {
-      return await StorageManager.get<KeyInfo[]>('encryption_keys') || [];
+      return (await StorageManager.get<KeyInfo[]>('encryption_keys')) || [];
     } catch (error) {
       logger.error('Failed to get keys', { error });
       return [];
@@ -429,7 +465,7 @@ export class EncryptionManager {
   async deleteKey(keyId: string): Promise<boolean> {
     try {
       const keys = await this.getKeys();
-      const filteredKeys = keys.filter(key => key.id !== keyId);
+      const filteredKeys = keys.filter((key) => key.id !== keyId);
       await StorageManager.set('encryption_keys', filteredKeys);
       logger.info('Deleted encryption key', { keyId });
       return true;
@@ -454,7 +490,7 @@ export class EncryptionManager {
       averageEncryptionTime: 0,
       averageDecryptionTime: 0,
       lastEncryptionTime: 0,
-      lastDecryptionTime: 0
+      lastDecryptionTime: 0,
     };
     await this.saveStats();
   }
@@ -472,15 +508,21 @@ export class EncryptionManager {
 
   // 檢查加密支持
   isEncryptionSupported(): boolean {
-    return Platform.OS === 'web' || Platform.OS === 'ios' || Platform.OS === 'android';
+    return (
+      Platform.OS === 'web' ||
+      Platform.OS === 'ios' ||
+      Platform.OS === 'android'
+    );
   }
 
   // 清理過期密鑰
-  async cleanupExpiredKeys(maxAge: number = 30 * 24 * 60 * 60 * 1000): Promise<number> {
+  async cleanupExpiredKeys(
+    maxAge: number = 30 * 24 * 60 * 60 * 1000
+  ): Promise<number> {
     try {
       const keys = await this.getKeys();
       const now = Date.now();
-      const validKeys = keys.filter(key => now - key.lastUsed < maxAge);
+      const validKeys = keys.filter((key) => now - key.lastUsed < maxAge);
       const removedCount = keys.length - validKeys.length;
 
       if (removedCount > 0) {
@@ -500,9 +542,12 @@ export class EncryptionManager {
 export const encryptionManager = new EncryptionManager();
 
 // 導出便捷函數
-export const encryptData = (data: any, keyId?: string) => encryptionManager.encrypt(data, keyId);
-export const decryptData = (encryptedData: EncryptedData, keyId?: string) => encryptionManager.decrypt(encryptedData, keyId);
-export const generateKey = (name: string, algorithm?: EncryptionAlgorithm) => encryptionManager.generateKey(name, algorithm);
+export const encryptData = (data: any, keyId?: string) =>
+  encryptionManager.encrypt(data, keyId);
+export const decryptData = (encryptedData: EncryptedData, keyId?: string) =>
+  encryptionManager.decrypt(encryptedData, keyId);
+export const generateKey = (name: string, algorithm?: EncryptionAlgorithm) =>
+  encryptionManager.generateKey(name, algorithm);
 export const getEncryptionStats = () => encryptionManager.getStats();
 
 export default encryptionManager;

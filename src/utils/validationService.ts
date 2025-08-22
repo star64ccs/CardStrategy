@@ -31,7 +31,7 @@ const defaultConfig: ValidationConfig = {
   strict: false,
   transform: true,
   stripUnknown: true,
-  abortEarly: false
+  abortEarly: false,
 };
 
 // 數據驗證服務類
@@ -58,29 +58,32 @@ class ValidationService {
       const validatedData = schema.parse(data);
       return {
         isValid: true,
-        data: validatedData
+        data: validatedData,
       };
     } catch (error) {
       if (error instanceof ZodError) {
         const validationErrors = this.formatZodErrors(error);
-        const errorMessage = this.generateErrorMessage(validationErrors, context);
+        const errorMessage = this.generateErrorMessage(
+          validationErrors,
+          context
+        );
 
         logger.warn(`輸入驗證失敗${context ? ` (${context})` : ''}:`, {
           errors: validationErrors,
-          data: this.sanitizeDataForLogging(data)
+          data: this.sanitizeDataForLogging(data),
         });
 
         return {
           isValid: false,
           errors: validationErrors,
-          errorMessage
+          errorMessage,
         };
       }
 
       logger.error('驗證過程中發生未知錯誤:', error);
       return {
         isValid: false,
-        errorMessage: '驗證過程中發生未知錯誤'
+        errorMessage: '驗證過程中發生未知錯誤',
       };
     }
   }
@@ -101,29 +104,32 @@ class ValidationService {
       const validatedData = schema.parse(response);
       return {
         isValid: true,
-        data: validatedData
+        data: validatedData,
       };
     } catch (error) {
       if (error instanceof ZodError) {
         const validationErrors = this.formatZodErrors(error);
-        const errorMessage = this.generateErrorMessage(validationErrors, `API 響應${endpoint ? ` (${endpoint})` : ''}`);
+        const errorMessage = this.generateErrorMessage(
+          validationErrors,
+          `API 響應${endpoint ? ` (${endpoint})` : ''}`
+        );
 
         logger.error(`API 響應驗證失敗${endpoint ? ` (${endpoint})` : ''}:`, {
           errors: validationErrors,
-          response: this.sanitizeDataForLogging(response)
+          response: this.sanitizeDataForLogging(response),
         });
 
         return {
           isValid: false,
           errors: validationErrors,
-          errorMessage
+          errorMessage,
         };
       }
 
       logger.error('API 響應驗證過程中發生未知錯誤:', error);
       return {
         isValid: false,
-        errorMessage: 'API 響應驗證過程中發生未知錯誤'
+        errorMessage: 'API 響應驗證過程中發生未知錯誤',
       };
     }
   }
@@ -134,25 +140,21 @@ class ValidationService {
    * @param data 要驗證的數據
    * @returns 驗證結果
    */
-  safeValidate<T>(
-    schema: ZodSchema<T>,
-    data: unknown
-  ): ValidationResult<T> {
+  safeValidate<T>(schema: ZodSchema<T>, data: unknown): ValidationResult<T> {
     const result = schema.safeParse(data);
 
     if (result.success) {
       return {
         isValid: true,
-        data: result.data
+        data: result.data,
       };
     }
     const validationErrors = this.formatZodErrors(result.error);
     return {
       isValid: false,
       errors: validationErrors,
-      errorMessage: this.generateErrorMessage(validationErrors)
+      errorMessage: this.generateErrorMessage(validationErrors),
     };
-
   }
 
   /**
@@ -172,7 +174,7 @@ class ValidationService {
       const validatedData = partialSchema.parse(data);
       return {
         isValid: true,
-        data: validatedData
+        data: validatedData,
       };
     } catch (error) {
       if (error instanceof ZodError) {
@@ -180,13 +182,13 @@ class ValidationService {
         return {
           isValid: false,
           errors: validationErrors,
-          errorMessage: this.generateErrorMessage(validationErrors, '部分驗證')
+          errorMessage: this.generateErrorMessage(validationErrors, '部分驗證'),
         };
       }
 
       return {
         isValid: false,
-        errorMessage: '部分驗證過程中發生未知錯誤'
+        errorMessage: '部分驗證過程中發生未知錯誤',
       };
     }
   }
@@ -211,25 +213,26 @@ class ValidationService {
       if (result.isValid && result.data !== undefined) {
         validatedData[field] = result.data;
       } else if (result.errors) {
-        errors.push(...result.errors.map(error => ({
-          ...error,
-          field
-        })));
+        errors.push(
+          ...result.errors.map((error) => ({
+            ...error,
+            field,
+          }))
+        );
       }
     }
 
     if (errors.length === 0) {
       return {
         isValid: true,
-        data: validatedData
+        data: validatedData,
       };
     }
     return {
       isValid: false,
       errors,
-      errorMessage: this.generateErrorMessage(errors, '表單驗證')
+      errorMessage: this.generateErrorMessage(errors, '表單驗證'),
     };
-
   }
 
   /**
@@ -253,7 +256,7 @@ class ValidationService {
       errors.push({
         field: 'file',
         message: `文件大小不能超過 ${this.formatFileSize(options.maxSize)}`,
-        code: 'FILE_TOO_LARGE'
+        code: 'FILE_TOO_LARGE',
       });
     }
 
@@ -262,7 +265,7 @@ class ValidationService {
       errors.push({
         field: 'file',
         message: `不支持的文件類型: ${file.type}`,
-        code: 'INVALID_FILE_TYPE'
+        code: 'INVALID_FILE_TYPE',
       });
     }
 
@@ -273,7 +276,7 @@ class ValidationService {
         errors.push({
           field: 'file',
           message: `不支持的文件擴展名: ${extension}`,
-          code: 'INVALID_FILE_EXTENSION'
+          code: 'INVALID_FILE_EXTENSION',
         });
       }
     }
@@ -281,15 +284,14 @@ class ValidationService {
     if (errors.length === 0) {
       return {
         isValid: true,
-        data: file
+        data: file,
       };
     }
     return {
       isValid: false,
       errors,
-      errorMessage: this.generateErrorMessage(errors, '文件驗證')
+      errorMessage: this.generateErrorMessage(errors, '文件驗證'),
     };
-
   }
 
   /**
@@ -298,11 +300,11 @@ class ValidationService {
    * @returns 格式化的驗證錯誤數組
    */
   private formatZodErrors(error: ZodError): ValidationError[] {
-    return error.errors.map(zodError => ({
+    return error.errors.map((zodError) => ({
       field: zodError.path.join('.'),
       message: zodError.message,
       code: zodError.code,
-      path: zodError.path
+      path: zodError.path,
     }));
   }
 
@@ -312,13 +314,16 @@ class ValidationService {
    * @param context 錯誤上下文
    * @returns 格式化的錯誤消息
    */
-  private generateErrorMessage(errors: ValidationError[], context?: string): string {
+  private generateErrorMessage(
+    errors: ValidationError[],
+    context?: string
+  ): string {
     if (errors.length === 0) {
       return '驗證失敗';
     }
 
-    const errorMessages = errors.map(error =>
-      `${error.field}: ${error.message}`
+    const errorMessages = errors.map(
+      (error) => `${error.field}: ${error.message}`
     );
 
     const prefix = context ? `${context}失敗` : '驗證失敗';
@@ -332,11 +337,17 @@ class ValidationService {
    */
   private sanitizeDataForLogging(data: unknown): unknown {
     if (typeof data === 'object' && data !== null) {
-      const sanitized = { ...data as Record<string, any> };
+      const sanitized = { ...(data as Record<string, any>) };
 
       // 移除敏感字段
-      const sensitiveFields = ['password', 'token', 'refreshToken', 'secret', 'key'];
-      sensitiveFields.forEach(field => {
+      const sensitiveFields = [
+        'password',
+        'token',
+        'refreshToken',
+        'secret',
+        'key',
+      ];
+      sensitiveFields.forEach((field) => {
         if (field in sanitized) {
           sanitized[field] = '[REDACTED]';
         }
@@ -391,13 +402,15 @@ export const validateInput = <T>(
   schema: ZodSchema<T>,
   data: unknown,
   context?: string
-): ValidationResult<T> => validationService.validateInput(schema, data, context);
+): ValidationResult<T> =>
+  validationService.validateInput(schema, data, context);
 
 export const validateApiResponse = <T>(
   schema: ZodSchema<T>,
   response: unknown,
   endpoint?: string
-): ValidationResult<T> => validationService.validateApiResponse(schema, response, endpoint);
+): ValidationResult<T> =>
+  validationService.validateApiResponse(schema, response, endpoint);
 
 export const safeValidate = <T>(
   schema: ZodSchema<T>,
@@ -407,7 +420,8 @@ export const safeValidate = <T>(
 export const validateForm = (
   formData: Record<string, any>,
   fieldValidations: Record<string, ZodSchema<any>>
-): ValidationResult<Record<string, any>> => validationService.validateForm(formData, fieldValidations);
+): ValidationResult<Record<string, any>> =>
+  validationService.validateForm(formData, fieldValidations);
 
 export const validateFile = (
   file: File,

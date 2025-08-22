@@ -7,7 +7,7 @@ import {
   Animated,
   ViewStyle,
   TextStyle,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -15,7 +15,7 @@ import {
   ADVANCED_ANIMATION_CONFIG,
   animationComposers,
   ANIMATION_PRESETS,
-  animationUtils
+  animationUtils,
 } from '../../utils/advancedAnimations';
 
 const { width: screenWidth } = Dimensions.get('window');
@@ -31,7 +31,13 @@ interface AnimatedCardProps {
   subtitleStyle?: TextStyle;
   variant?: 'default' | 'elevated' | 'outlined' | 'glass';
   size?: 'small' | 'medium' | 'large';
-  animationType?: 'fadeIn' | 'slideUp' | 'slideLeft' | 'scale' | 'bounce' | 'flip';
+  animationType?:
+    | 'fadeIn'
+    | 'slideUp'
+    | 'slideLeft'
+    | 'scale'
+    | 'bounce'
+    | 'flip';
   hoverEffect?: boolean;
   pressEffect?: boolean;
   glowEffect?: boolean;
@@ -71,7 +77,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
   badgeColor,
   icon,
   iconColor,
-  iconSize = 24
+  iconSize = 24,
 }) => {
   // 動畫值
   const opacityValue = useRef(new Animated.Value(0)).current;
@@ -100,7 +106,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
             toValue: 1,
             duration: preset.duration,
             easing: preset.easing,
-            useNativeDriver: true
+            useNativeDriver: true,
           })
         );
         break;
@@ -112,14 +118,14 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
               toValue: 1,
               duration: preset.duration,
               easing: preset.easing,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(translateYValue, {
               toValue: 0,
               duration: preset.duration,
               easing: preset.easing,
-              useNativeDriver: true
-            })
+              useNativeDriver: true,
+            }),
           ])
         );
         break;
@@ -131,14 +137,14 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
               toValue: 1,
               duration: preset.duration,
               easing: preset.easing,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(translateXValue, {
               toValue: 0,
               duration: preset.duration,
               easing: preset.easing,
-              useNativeDriver: true
-            })
+              useNativeDriver: true,
+            }),
           ])
         );
         break;
@@ -150,14 +156,14 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
               toValue: 1,
               duration: preset.duration,
               easing: preset.easing,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(scaleValue, {
               toValue: 1,
               duration: preset.duration,
               easing: preset.easing,
-              useNativeDriver: true
-            })
+              useNativeDriver: true,
+            }),
           ])
         );
         break;
@@ -175,11 +181,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
 
       case 'flip':
         animations.push(
-          animationComposers.cardFlip(
-            rotateValue,
-            scaleValue,
-            preset.duration
-          )
+          animationComposers.cardFlip(rotateValue, scaleValue, preset.duration)
         );
         break;
     }
@@ -198,14 +200,14 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
             toValue: 1,
             duration: 2000,
             easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-            useNativeDriver: false
+            useNativeDriver: false,
           }),
           Animated.timing(glowValue, {
             toValue: 0.3,
             duration: 2000,
             easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-            useNativeDriver: false
-          })
+            useNativeDriver: false,
+          }),
         ])
       );
       glowAnimation.start();
@@ -222,14 +224,14 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
             toValue: 1.05,
             duration: 1000,
             easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(pulseValue, {
             toValue: 1,
             duration: 1000,
             easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ])
       );
       pulseAnimation.start();
@@ -265,7 +267,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
         toValue: 0.95,
         duration: ANIMATION_PRESETS.button.press.duration,
         easing: ANIMATION_PRESETS.button.press.easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
   };
@@ -277,7 +279,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
         toValue: isHovered ? 1.05 : 1,
         duration: ANIMATION_PRESETS.button.release.duration,
         easing: ANIMATION_PRESETS.button.release.easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
   };
@@ -290,7 +292,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
         toValue: 1.05,
         duration: ANIMATION_PRESETS.card.hover.duration,
         easing: ANIMATION_PRESETS.card.hover.easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
   };
@@ -302,7 +304,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
         toValue: isPressed ? 0.95 : 1,
         duration: ANIMATION_PRESETS.card.hover.duration,
         easing: ANIMATION_PRESETS.card.hover.easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
   };
@@ -313,7 +315,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
       backgroundColor: theme.colors.background.tertiary,
       borderRadius: theme.borderRadius.lg,
       borderWidth: 1,
-      borderColor: theme.colors.border.primary
+      borderColor: theme.colors.border.primary,
     };
 
     switch (variant) {
@@ -324,21 +326,21 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
           shadowOffset: { width: 0, height: 8 },
           shadowOpacity: 0.2,
           shadowRadius: 16,
-          elevation: 8
+          elevation: 8,
         };
       case 'outlined':
         return {
           ...baseStyle,
           backgroundColor: 'transparent',
           borderWidth: 2,
-          borderColor: theme.colors.gold.primary
+          borderColor: theme.colors.gold.primary,
         };
       case 'glass':
         return {
           ...baseStyle,
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
           borderColor: 'rgba(255, 255, 255, 0.2)',
-          backdropFilter: 'blur(10px)'
+          backdropFilter: 'blur(10px)',
         };
       default:
         return baseStyle;
@@ -350,7 +352,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
     const sizeMap = {
       small: { padding: theme.spacing.md, minHeight: 80 },
       medium: { padding: theme.spacing.lg, minHeight: 120 },
-      large: { padding: theme.spacing.xl, minHeight: 160 }
+      large: { padding: theme.spacing.xl, minHeight: 160 },
     };
     return sizeMap[size];
   };
@@ -360,25 +362,25 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
     if (loading) {
       return {
         borderColor: theme.colors.status.info,
-        backgroundColor: theme.colors.background.secondary
+        backgroundColor: theme.colors.background.secondary,
       };
     }
     if (error) {
       return {
         borderColor: theme.colors.status.error,
-        backgroundColor: theme.colors.background.error
+        backgroundColor: theme.colors.background.error,
       };
     }
     if (success) {
       return {
         borderColor: theme.colors.status.success,
-        backgroundColor: theme.colors.background.success
+        backgroundColor: theme.colors.background.success,
       };
     }
     if (disabled) {
       return {
         opacity: 0.5,
-        backgroundColor: theme.colors.background.disabled
+        backgroundColor: theme.colors.background.disabled,
       };
     }
     return {};
@@ -387,19 +389,19 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
   // 光暈插值
   const glowOpacity = glowValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 0.3]
+    outputRange: [0, 0.3],
   });
 
   // 旋轉插值
   const rotate = rotateValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg']
+    outputRange: ['0deg', '360deg'],
   });
 
   // 震動插值
   const shakeTranslateX = shakeValue.interpolate({
     inputRange: [-10, 0, 10],
-    outputRange: [-10, 0, 10]
+    outputRange: [-10, 0, 10],
   });
 
   const cardContent = (
@@ -416,10 +418,10 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
             { translateX: translateXValue },
             { scale: scaleValue },
             { rotate },
-            { translateX: shakeTranslateX }
-          ]
+            { translateX: shakeTranslateX },
+          ],
         },
-        style
+        style,
       ]}
     >
       {/* 光暈效果 */}
@@ -429,15 +431,20 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
             styles.glowEffect,
             {
               opacity: glowOpacity,
-              backgroundColor: theme.colors.gold.primary
-            }
+              backgroundColor: theme.colors.gold.primary,
+            },
           ]}
         />
       )}
 
       {/* 徽章 */}
       {badge && (
-        <View style={[styles.badge, { backgroundColor: badgeColor || theme.colors.gold.primary }]}>
+        <View
+          style={[
+            styles.badge,
+            { backgroundColor: badgeColor || theme.colors.gold.primary },
+          ]}
+        >
           <Text style={styles.badgeText}>{badge}</Text>
         </View>
       )}
@@ -454,9 +461,7 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
       )}
 
       {/* 標題 */}
-      {title && (
-        <Text style={[styles.title, titleStyle]}>{title}</Text>
-      )}
+      {title && <Text style={[styles.title, titleStyle]}>{title}</Text>}
 
       {/* 副標題 */}
       {subtitle && (
@@ -474,8 +479,8 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
               styles.loadingSpinner,
               {
                 borderColor: theme.colors.gold.primary,
-                transform: [{ rotate }]
-              }
+                transform: [{ rotate }],
+              },
             ]}
           />
         </View>
@@ -527,11 +532,11 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
 
 const styles = StyleSheet.create({
   touchable: {
-    width: '100%'
+    width: '100%',
   },
   container: {
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   glowEffect: {
     position: 'absolute',
@@ -540,7 +545,7 @@ const styles = StyleSheet.create({
     right: -20,
     bottom: -20,
     borderRadius: theme.borderRadius.xl,
-    zIndex: -1
+    zIndex: -1,
   },
   badge: {
     position: 'absolute',
@@ -549,74 +554,74 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.xs,
     borderRadius: theme.borderRadius.full,
-    zIndex: 1
+    zIndex: 1,
   },
   badgeText: {
     fontSize: theme.typography.sizes.xs,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text.inverse
+    color: theme.colors.text.inverse,
   },
   iconContainer: {
     position: 'absolute',
     top: theme.spacing.sm,
     left: theme.spacing.sm,
-    zIndex: 1
+    zIndex: 1,
   },
   title: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   subtitle: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   loadingContainer: {
     position: 'absolute',
     top: '50%',
     right: theme.spacing.md,
-    transform: [{ translateY: -10 }]
+    transform: [{ translateY: -10 }],
   },
   loadingSpinner: {
     width: 20,
     height: 20,
     borderWidth: 2,
     borderTopColor: 'transparent',
-    borderRadius: theme.borderRadius.full
+    borderRadius: theme.borderRadius.full,
   },
   statusIcon: {
     position: 'absolute',
     top: theme.spacing.sm,
-    right: theme.spacing.sm
-  }
+    right: theme.spacing.sm,
+  },
 });
 
 // 預定義的動畫卡片組件
-export const FadeInCard: React.FC<Omit<AnimatedCardProps, 'animationType'>> = (props) => (
-  <AnimatedCard {...props} animationType="fadeIn" />
-);
+export const FadeInCard: React.FC<Omit<AnimatedCardProps, 'animationType'>> = (
+  props
+) => <AnimatedCard {...props} animationType="fadeIn" />;
 
-export const SlideUpCard: React.FC<Omit<AnimatedCardProps, 'animationType'>> = (props) => (
-  <AnimatedCard {...props} animationType="slideUp" />
-);
+export const SlideUpCard: React.FC<Omit<AnimatedCardProps, 'animationType'>> = (
+  props
+) => <AnimatedCard {...props} animationType="slideUp" />;
 
-export const BounceCard: React.FC<Omit<AnimatedCardProps, 'animationType'>> = (props) => (
-  <AnimatedCard {...props} animationType="bounce" />
-);
+export const BounceCard: React.FC<Omit<AnimatedCardProps, 'animationType'>> = (
+  props
+) => <AnimatedCard {...props} animationType="bounce" />;
 
-export const FlipCard: React.FC<Omit<AnimatedCardProps, 'animationType'>> = (props) => (
-  <AnimatedCard {...props} animationType="flip" />
-);
+export const FlipCard: React.FC<Omit<AnimatedCardProps, 'animationType'>> = (
+  props
+) => <AnimatedCard {...props} animationType="flip" />;
 
-export const GlowCard: React.FC<Omit<AnimatedCardProps, 'glowEffect'>> = (props) => (
-  <AnimatedCard {...props} glowEffect={true} />
-);
+export const GlowCard: React.FC<Omit<AnimatedCardProps, 'glowEffect'>> = (
+  props
+) => <AnimatedCard {...props} glowEffect={true} />;
 
-export const PulseCard: React.FC<Omit<AnimatedCardProps, 'pulseEffect'>> = (props) => (
-  <AnimatedCard {...props} pulseEffect={true} />
-);
+export const PulseCard: React.FC<Omit<AnimatedCardProps, 'pulseEffect'>> = (
+  props
+) => <AnimatedCard {...props} pulseEffect={true} />;

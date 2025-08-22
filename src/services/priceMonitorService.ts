@@ -63,7 +63,7 @@ class PriceMonitorService {
     triggeredAlerts: 0,
     activeAlerts: 0,
     averageResponseTime: 0,
-    successRate: 0
+    successRate: 0,
   };
 
   private config: MonitoringConfig = {
@@ -73,7 +73,7 @@ class PriceMonitorService {
     maxAlertsPerHour: 10,
     enableSmartAlerts: true,
     enableMarketTrendAlerts: true,
-    enableVolumeAlerts: true
+    enableVolumeAlerts: true,
   };
 
   // 初始化價格監控服務
@@ -102,11 +102,13 @@ class PriceMonitorService {
       const alerts = await investmentService.getPriceAlerts();
       this.activeAlerts.clear();
 
-      alerts.data.forEach(alert => {
+      alerts.data.forEach((alert) => {
         this.activeAlerts.set(alert.id, {
           ...alert,
           createdAt: new Date(alert.createdAt),
-          lastTriggered: alert.lastTriggered ? new Date(alert.lastTriggered) : undefined
+          lastTriggered: alert.lastTriggered
+            ? new Date(alert.lastTriggered)
+            : undefined,
         });
       });
 
@@ -168,9 +170,9 @@ class PriceMonitorService {
       logger.debug('開始檢查價格變化', { alertCount: alertsToCheck.length });
 
       // 批量獲取價格數據
-      const cardIds = [...new Set(alertsToCheck.map(alert => alert.cardId))];
-      const pricePromises = cardIds.map(cardId =>
-        this.getCurrentPrice(cardId).catch(error => {
+      const cardIds = [...new Set(alertsToCheck.map((alert) => alert.cardId))];
+      const pricePromises = cardIds.map((cardId) =>
+        this.getCurrentPrice(cardId).catch((error) => {
           logger.error('獲取價格失敗:', { cardId, error });
           return null;
         })
@@ -216,7 +218,7 @@ class PriceMonitorService {
 
       logger.debug('價格檢查完成', {
         duration: endTime - startTime,
-        triggeredCount: triggeredAlerts.length
+        triggeredCount: triggeredAlerts.length,
       });
     } catch (error) {
       logger.error('價格檢查失敗:', { error });
@@ -234,14 +236,14 @@ class PriceMonitorService {
 
       // 從API獲取最新價格
       const marketData = await marketService.getMarketData(cardId);
-      const {currentPrice} = marketData.data;
+      const { currentPrice } = marketData.data;
 
       // 緩存價格數據
       await cacheManager.cacheMarketData(cardId, {
         currentPrice,
         timestamp: Date.now(),
         volume: marketData.data.volume,
-        change24h: marketData.data.change24h
+        change24h: marketData.data.change24h,
       });
 
       return currentPrice;
@@ -303,7 +305,7 @@ class PriceMonitorService {
           cardName: alert.cardName,
           targetPrice: alert.targetPrice,
           currentPrice: alert.currentPrice,
-          type: alert.type
+          type: alert.type,
         });
 
         // 更新提醒狀態
@@ -318,7 +320,7 @@ class PriceMonitorService {
           alertId: alert.id,
           cardName: alert.cardName,
           targetPrice: alert.targetPrice,
-          currentPrice: alert.currentPrice
+          currentPrice: alert.currentPrice,
         });
 
         // 如果達到最大觸發次數，停用提醒
@@ -341,14 +343,17 @@ class PriceMonitorService {
         if (!history || history.length < 5) continue;
 
         const recentPrices = history.slice(-5);
-        const averagePrice = recentPrices.reduce((sum, price) => sum + price, 0) / recentPrices.length;
-        const changePercentage = Math.abs((currentPrice - averagePrice) / averagePrice) * 100;
+        const averagePrice =
+          recentPrices.reduce((sum, price) => sum + price, 0) /
+          recentPrices.length;
+        const changePercentage =
+          Math.abs((currentPrice - averagePrice) / averagePrice) * 100;
 
         if (changePercentage > this.config.priceChangeThreshold) {
           await this.sendSmartAlert(cardId, 'price_spike', {
             currentPrice,
             averagePrice,
-            changePercentage
+            changePercentage,
           });
         }
       }
@@ -399,7 +404,7 @@ class PriceMonitorService {
         alertType,
         cardId,
         cardName,
-        ...data
+        ...data,
       });
 
       logger.info('智能提醒已發送', { cardId, alertType, data });
@@ -412,7 +417,7 @@ class PriceMonitorService {
   private async checkMarketTrendAlerts(): Promise<void> {
     try {
       const marketAnalysis = await marketService.getMarketAnalysis();
-      const {sentiment} = marketAnalysis.data;
+      const { sentiment } = marketAnalysis.data;
 
       // 如果市場情緒發生重大變化，發送提醒
       if (sentiment === 'bullish' || sentiment === 'bearish') {
@@ -439,44 +444,46 @@ class PriceMonitorService {
       }
 
       // 批量獲取卡片的最新市場數據
-      const cardIds = alertsToCheck.map(alert => alert.cardId);
+      const cardIds = alertsToCheck.map((alert) => alert.cardId);
       const marketDataPromises = cardIds.map(async (cardId) => {
         try {
           const response = await apiService.get(`/market/volume/${cardId}`);
           return {
             cardId,
             data: response.data,
-            success: true
+            success: true,
           };
         } catch (error) {
           logger.warn('獲取卡片交易量數據失敗:', { cardId, error });
           return {
             cardId,
             data: null,
-            success: false
+            success: false,
           };
         }
       });
 
       const marketDataResults = await Promise.all(marketDataPromises);
-      const successfulResults = marketDataResults.filter(result => result.success);
+      const successfulResults = marketDataResults.filter(
+        (result) => result.success
+      );
 
       // 分析交易量異常
       for (const result of successfulResults) {
         const { cardId, data } = result;
-        const alert = alertsToCheck.find(a => a.cardId === cardId);
+        const alert = alertsToCheck.find((a) => a.cardId === cardId);
 
         if (!alert || !data) continue;
 
-        const {volumeData} = data;
+        const { volumeData } = data;
         const currentVolume = volumeData.current24h;
         const averageVolume = volumeData.average7d;
         const volumeChange = volumeData.change24h;
 
         // 檢測異常交易量
         const volumeThreshold = 2.0; // 交易量超過平均值的2倍視為異常
-        const isVolumeSpike = currentVolume > (averageVolume * volumeThreshold);
-        const isVolumeDrop = currentVolume < (averageVolume * 0.3); // 交易量低於平均值的30%
+        const isVolumeSpike = currentVolume > averageVolume * volumeThreshold;
+        const isVolumeDrop = currentVolume < averageVolume * 0.3; // 交易量低於平均值的30%
 
         if (isVolumeSpike || isVolumeDrop) {
           const cardName = await this.getCardName(cardId);
@@ -486,12 +493,19 @@ class PriceMonitorService {
             : `${cardName} 交易量異常減少 ${Math.abs(volumeChange).toFixed(2)}%`;
 
           // 發送交易量異常通知
-          await this.sendVolumeAlert(alert.id, cardId, cardName, alertType, message, {
-            currentVolume,
-            averageVolume,
-            volumeChange,
-            threshold: volumeThreshold
-          });
+          await this.sendVolumeAlert(
+            alert.id,
+            cardId,
+            cardName,
+            alertType,
+            message,
+            {
+              currentVolume,
+              averageVolume,
+              volumeChange,
+              threshold: volumeThreshold,
+            }
+          );
 
           logger.info('交易量異常檢測觸發', {
             cardId,
@@ -499,14 +513,14 @@ class PriceMonitorService {
             alertType,
             currentVolume,
             averageVolume,
-            volumeChange
+            volumeChange,
           });
         }
       }
 
       logger.debug('交易量異常檢測完成', {
         totalCards: cardIds.length,
-        successfulChecks: successfulResults.length
+        successfulChecks: successfulResults.length,
       });
     } catch (error) {
       logger.error('檢查交易量提醒失敗:', { error });
@@ -538,10 +552,10 @@ class PriceMonitorService {
           cardName,
           alertType,
           volumeData,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         priority: 'high',
-        category: 'market_alert'
+        category: 'market_alert',
       };
 
       // 發送通知
@@ -572,7 +586,7 @@ class PriceMonitorService {
       // 緩存卡片數據
       await cacheManager.cacheCardData(cardId, {
         name: cardName,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       return cardName;
@@ -596,12 +610,16 @@ class PriceMonitorService {
     const totalChecks = this.alertStatistics.totalAlerts;
     if (totalChecks > 0) {
       this.alertStatistics.averageResponseTime =
-        (this.alertStatistics.averageResponseTime * (totalChecks - 1) + responseTime) / totalChecks;
+        (this.alertStatistics.averageResponseTime * (totalChecks - 1) +
+          responseTime) /
+        totalChecks;
     }
 
     if (triggeredCount > 0) {
       this.alertStatistics.successRate =
-        (this.alertStatistics.triggeredAlerts / this.alertStatistics.totalAlerts) * 100;
+        (this.alertStatistics.triggeredAlerts /
+          this.alertStatistics.totalAlerts) *
+        100;
     }
   }
 
@@ -626,19 +644,28 @@ class PriceMonitorService {
     maxTriggers?: number
   ): Promise<PriceAlert> {
     try {
-      const response = await investmentService.setPriceAlert(cardId, targetPrice, type);
+      const response = await investmentService.setPriceAlert(
+        cardId,
+        targetPrice,
+        type
+      );
       const alert = response.data;
 
       this.activeAlerts.set(alert.id, {
         ...alert,
         createdAt: new Date(alert.createdAt),
-        maxTriggers
+        maxTriggers,
       });
 
       this.alertStatistics.activeAlerts++;
       this.alertStatistics.totalAlerts++;
 
-      logger.info('價格提醒已添加', { alertId: alert.id, cardId, targetPrice, type });
+      logger.info('價格提醒已添加', {
+        alertId: alert.id,
+        cardId,
+        targetPrice,
+        type,
+      });
       return alert;
     } catch (error) {
       logger.error('添加價格提醒失敗:', { cardId, targetPrice, type, error });
@@ -685,4 +712,5 @@ class PriceMonitorService {
   }
 }
 
+export { PriceMonitorService };
 export const priceMonitorService = new PriceMonitorService();

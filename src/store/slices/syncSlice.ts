@@ -13,14 +13,17 @@ const initialState: SyncState = {
   lastSyncTime: 0,
   pendingChangesCount: 0,
   error: null,
-  isOnline: navigator.onLine
+  isOnline: navigator.onLine,
 };
 
 const syncSlice = createSlice({
   name: 'sync',
   initialState,
   reducers: {
-    setSyncStatus: (state, action: PayloadAction<'idle' | 'syncing' | 'error' | 'offline'>) => {
+    setSyncStatus: (
+      state,
+      action: PayloadAction<'idle' | 'syncing' | 'error' | 'offline'>
+    ) => {
       state.status = action.payload;
     },
     setLastSyncTime: (state, action: PayloadAction<number>) => {
@@ -37,8 +40,8 @@ const syncSlice = createSlice({
     },
     clearSyncError: (state) => {
       state.error = null;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -47,7 +50,7 @@ export const {
   setPendingChangesCount,
   setSyncError,
   setOnlineStatus,
-  clearSyncError
+  clearSyncError,
 } = syncSlice.actions;
 
 export default syncSlice.reducer;

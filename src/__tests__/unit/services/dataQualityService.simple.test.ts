@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 // 首先設置 mock，然後再導入
 // 導入被測試的模組
 import { dataQualityService } from '../../../services/dataQualityService';
@@ -8,8 +9,8 @@ jest.mock('../../../config/api', () => ({
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
-    delete: jest.fn()
-  }
+    delete: jest.fn(),
+  },
 }));
 
 describe('DataQualityService 修復驗證測試', () => {
@@ -22,8 +23,8 @@ describe('DataQualityService 修復驗證測試', () => {
     const mockResponse = {
       data: {
         status: 'success',
-        message: 'API call successful'
-      }
+        message: 'API call successful',
+      },
     };
 
     // 設置 mock 返回值
@@ -41,15 +42,17 @@ describe('DataQualityService 修復驗證測試', () => {
     const error = new Error('API Error');
     (api.get as jest.Mock).mockRejectedValue(error);
 
-    await expect(dataQualityService.getCollectionStats()).rejects.toThrow('API Error');
+    await expect(dataQualityService.getCollectionStats()).rejects.toThrow(
+      'API Error'
+    );
   });
 
   it('應該正確調用 POST 方法', async () => {
     const mockResponse = {
       data: {
         status: 'started',
-        collectionId: 'test-123'
-      }
+        collectionId: 'test-123',
+      },
     };
 
     (api.post as jest.Mock).mockResolvedValue(mockResponse);
@@ -65,15 +68,17 @@ describe('DataQualityService 修復驗證測試', () => {
     const mockResponse = {
       data: {
         config,
-        timestamp: '2024-01-01T00:00:00Z'
-      }
+        timestamp: '2024-01-01T00:00:00Z',
+      },
     };
 
     (api.put as jest.Mock).mockResolvedValue(mockResponse);
 
     const result = await dataQualityService.updateAssignmentConfig(config);
 
-    expect(api.put).toHaveBeenCalledWith('/data-quality/annotate/config', { config });
+    expect(api.put).toHaveBeenCalledWith('/data-quality/annotate/config', {
+      config,
+    });
     expect(result).toEqual(mockResponse.data);
   });
 });

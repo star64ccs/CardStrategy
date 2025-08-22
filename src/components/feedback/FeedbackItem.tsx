@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -29,7 +29,7 @@ export const FeedbackItem: React.FC<FeedbackItemProps> = ({
   onPress,
   onVote,
   showVotes = true,
-  compact = false
+  compact = false,
 }) => {
   const { t } = useTranslation();
 
@@ -118,7 +118,11 @@ export const FeedbackItem: React.FC<FeedbackItemProps> = ({
         </Text>
         {showVotes && (
           <View style={styles.compactVotes}>
-            <Ionicons name="thumbs-up" size={12} color={theme.colors.textSecondary} />
+            <Ionicons
+              name="thumbs-up"
+              size={12}
+              color={theme.colors.textSecondary}
+            />
             <Text style={styles.compactVoteCount}>{feedback.votes}</Text>
           </View>
         )}
@@ -169,13 +173,21 @@ export const FeedbackItem: React.FC<FeedbackItemProps> = ({
         <View style={styles.metadata}>
           <View style={styles.metadataRow}>
             <View style={styles.metadataItem}>
-              <Ionicons name="calendar-outline" size={14} color={theme.colors.textSecondary} />
+              <Ionicons
+                name="calendar-outline"
+                size={14}
+                color={theme.colors.textSecondary}
+              />
               <Text style={styles.metadataText}>
                 {formatDate(feedback.createdAt, 'yyyy/MM/dd HH:mm')}
               </Text>
             </View>
             <View style={styles.metadataItem}>
-              <Ionicons name="folder-outline" size={14} color={theme.colors.textSecondary} />
+              <Ionicons
+                name="folder-outline"
+                size={14}
+                color={theme.colors.textSecondary}
+              />
               <Text style={styles.metadataText}>
                 {t(`feedback.category.${feedback.category}`)}
               </Text>
@@ -207,21 +219,35 @@ export const FeedbackItem: React.FC<FeedbackItemProps> = ({
                 style={styles.voteButton}
                 onPress={() => handleVote(1)}
               >
-                <Ionicons name="thumbs-up-outline" size={16} color={theme.colors.textSecondary} />
+                <Ionicons
+                  name="thumbs-up-outline"
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
                 <Text style={styles.voteCount}>{feedback.votes}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.voteButton}
                 onPress={() => handleVote(-1)}
               >
-                <Ionicons name="thumbs-down-outline" size={16} color={theme.colors.textSecondary} />
+                <Ionicons
+                  name="thumbs-down-outline"
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
 
             {feedback.response && (
               <View style={styles.responseIndicator}>
-                <Ionicons name="chatbubble" size={14} color={theme.colors.success} />
-                <Text style={styles.responseText}>{t('feedback.has_response')}</Text>
+                <Ionicons
+                  name="chatbubble"
+                  size={14}
+                  color={theme.colors.success}
+                />
+                <Text style={styles.responseText}>
+                  {t('feedback.has_response')}
+                </Text>
               </View>
             )}
           </View>
@@ -239,77 +265,77 @@ export const FeedbackItem: React.FC<FeedbackItemProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   container: {
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   header: {
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   icon: {
     marginRight: theme.spacing.sm,
-    marginTop: 2
+    marginTop: 2,
   },
   title: {
     flex: 1,
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semiBold,
     color: theme.colors.text,
-    lineHeight: 20
+    lineHeight: 20,
   },
   badges: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.xs
+    gap: theme.spacing.xs,
   },
   typeBadge: {
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   priorityBadge: {
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   description: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.textSecondary,
     lineHeight: 18,
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   metadata: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   metadataRow: {
     flexDirection: 'row',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   metadataItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: theme.spacing.lg
+    marginRight: theme.spacing.lg,
   },
   metadataText: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   tag: {
     marginRight: theme.spacing.xs,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   moreTags: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   footer: {
     flexDirection: 'row',
@@ -317,31 +343,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: theme.spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border
+    borderTopColor: theme.colors.border,
   },
   voteContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   voteButton: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: theme.spacing.xs,
-    marginRight: theme.spacing.sm
+    marginRight: theme.spacing.sm,
   },
   voteCount: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   responseIndicator: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   responseText: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.success,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   // 緊湊模式樣式
   compactContainer: {
@@ -350,45 +376,45 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.sm,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   compactHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   compactTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: theme.spacing.sm
+    marginRight: theme.spacing.sm,
   },
   compactIcon: {
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   compactTitle: {
     flex: 1,
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.medium,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   compactFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   compactDate: {
     fontSize: theme.typography.sizes.xs,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   compactVotes: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   compactVoteCount: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.xs
-  }
+    marginLeft: theme.spacing.xs,
+  },
 });

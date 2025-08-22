@@ -8,7 +8,7 @@ import {
   Alert,
   Dimensions,
   Modal,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,7 +19,7 @@ import {
   TermsType,
   TermsVersion,
   UserConsent,
-  TermsComplianceCheck
+  TermsComplianceCheck,
 } from '../../types/terms';
 import { logger } from '../../utils/logger';
 
@@ -40,14 +40,16 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
   onAgree,
   onDecline,
   onClose,
-  forceAgreement = true
+  forceAgreement = true,
 }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [terms, setTerms] = useState<TermsVersion[]>([]);
   const [currentTermIndex, setCurrentTermIndex] = useState(0);
   const [agreedTerms, setAgreedTerms] = useState<Set<TermsType>>(new Set());
-  const [compliance, setCompliance] = useState<TermsComplianceCheck | null>(null);
+  const [compliance, setCompliance] = useState<TermsComplianceCheck | null>(
+    null
+  );
   const [showAllTerms, setShowAllTerms] = useState(false);
 
   useEffect(() => {
@@ -103,7 +105,7 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
       `您必須同意 ${currentTerm.title} 才能使用本應用。\n\n如果您不同意，將無法使用本應用。`,
       [
         { text: '重新考慮', style: 'cancel' },
-        { text: '退出應用', style: 'destructive', onPress: onDecline }
+        { text: '退出應用', style: 'destructive', onPress: onDecline },
       ]
     );
   };
@@ -115,7 +117,7 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
 
       if (response.success) {
         Alert.alert('成功', '您已成功同意所有條款！', [
-          { text: '確定', onPress: onAgree }
+          { text: '確定', onPress: onAgree },
         ]);
       } else {
         Alert.alert('錯誤', response.message || '同意條款時發生錯誤');
@@ -136,7 +138,7 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
         userId,
         termsType: currentTerm.type,
         action: 'accept',
-        version: currentTerm.version
+        version: currentTerm.version,
       });
 
       if (response.success) {
@@ -145,7 +147,7 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
         } else {
           // 所有條款都已同意
           Alert.alert('成功', '您已成功同意所有條款！', [
-            { text: '確定', onPress: onAgree }
+            { text: '確定', onPress: onAgree },
           ]);
         }
       } else {
@@ -174,7 +176,10 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
           <Text style={styles.termVersion}>版本 {currentTerm.version}</Text>
         </View>
 
-        <ScrollView style={styles.termContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.termContent}
+          showsVerticalScrollIndicator={false}
+        >
           <Text style={styles.termText}>{currentTerm.content}</Text>
         </ScrollView>
 
@@ -206,14 +211,20 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
           </Text>
         </View>
 
-        <ScrollView style={styles.allTermsContent} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.allTermsContent}
+          showsVerticalScrollIndicator={false}
+        >
           {terms.map((term, index) => (
             <Card key={term.id} style={styles.termCard}>
               <View style={styles.termCardHeader}>
                 <Text style={styles.termCardTitle}>{term.title}</Text>
                 <Text style={styles.termCardVersion}>版本 {term.version}</Text>
               </View>
-              <ScrollView style={styles.termCardContent} showsVerticalScrollIndicator={false}>
+              <ScrollView
+                style={styles.termCardContent}
+                showsVerticalScrollIndicator={false}
+              >
                 <Text style={styles.termCardText}>{term.content}</Text>
               </ScrollView>
             </Card>
@@ -280,7 +291,11 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
   }
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
+    <Modal
+      visible={visible}
+      animationType="slide"
+      presentationStyle="pageSheet"
+    >
       <View style={styles.container}>
         {renderHeader()}
 
@@ -308,18 +323,18 @@ export const TermsAgreementModal: React.FC<TermsAgreementModalProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   header: {
     flexDirection: 'row',
@@ -328,140 +343,140 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
-    backgroundColor: theme.colors.surface
+    backgroundColor: theme.colors.surface,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   closeButton: {
-    padding: 4
+    padding: 4,
   },
   progressContainer: {
     padding: 16,
-    backgroundColor: theme.colors.surface
+    backgroundColor: theme.colors.surface,
   },
   progressBar: {
     height: 4,
     backgroundColor: theme.colors.border,
     borderRadius: 2,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: theme.colors.primary
+    backgroundColor: theme.colors.primary,
   },
   progressText: {
     marginTop: 8,
     fontSize: 14,
     color: theme.colors.textSecondary,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   content: {
     flex: 1,
-    padding: 16
+    padding: 16,
   },
   termContainer: {
-    flex: 1
+    flex: 1,
   },
   termHeader: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   termTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginBottom: 4
+    marginBottom: 4,
   },
   termVersion: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   termContent: {
     flex: 1,
-    marginBottom: 16
+    marginBottom: 16,
   },
   termText: {
     fontSize: 16,
     lineHeight: 24,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   termActions: {
     flexDirection: 'row',
-    gap: 12
+    gap: 12,
   },
   actionButton: {
-    flex: 1
+    flex: 1,
   },
   declineButton: {
-    backgroundColor: theme.colors.error
+    backgroundColor: theme.colors.error,
   },
   declineButtonText: {
-    color: theme.colors.white
+    color: theme.colors.white,
   },
   agreeButton: {
-    backgroundColor: theme.colors.primary
+    backgroundColor: theme.colors.primary,
   },
   allTermsContainer: {
-    flex: 1
+    flex: 1,
   },
   allTermsHeader: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   allTermsTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginBottom: 4
+    marginBottom: 4,
   },
   allTermsSubtitle: {
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   allTermsContent: {
     flex: 1,
-    marginBottom: 16
+    marginBottom: 16,
   },
   termCard: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   termCardHeader: {
-    marginBottom: 12
+    marginBottom: 12,
   },
   termCardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginBottom: 4
+    marginBottom: 4,
   },
   termCardVersion: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   termCardContent: {
-    maxHeight: 200
+    maxHeight: 200,
   },
   termCardText: {
     fontSize: 14,
     lineHeight: 20,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   allTermsActions: {
     flexDirection: 'row',
-    gap: 12
+    gap: 12,
   },
   viewAllButton: {
     padding: 16,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border
+    borderTopColor: theme.colors.border,
   },
   viewAllButtonStyle: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   viewAllButtonText: {
-    color: theme.colors.primary
-  }
+    color: theme.colors.primary,
+  },
 });

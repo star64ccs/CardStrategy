@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
 import { Card } from '../common/Card';
@@ -37,7 +32,7 @@ export const CardGradingDisplay: React.FC<CardGradingDisplayProps> = ({
   cardImage,
   gradingResults,
   onViewDetails,
-  onShare
+  onShare,
 }) => {
   const getGradeColor = (grade: number) => {
     if (grade >= 9.5) return theme.colors.status.success;
@@ -70,7 +65,7 @@ export const CardGradingDisplay: React.FC<CardGradingDisplayProps> = ({
   };
 
   const bestResult = gradingResults.reduce((best, current) =>
-    (current.overallGrade > best.overallGrade ? current : best)
+    current.overallGrade > best.overallGrade ? current : best
   );
 
   return (
@@ -82,11 +77,22 @@ export const CardGradingDisplay: React.FC<CardGradingDisplayProps> = ({
             {cardName}
           </Text>
           <View style={styles.actions}>
-            <TouchableOpacity style={styles.actionButton} onPress={onViewDetails}>
-              <Ionicons name="eye-outline" size={20} color={theme.colors.gold.primary} />
+            <TouchableOpacity
+              style={styles.actionButton}
+              onPress={onViewDetails}
+            >
+              <Ionicons
+                name="eye-outline"
+                size={20}
+                color={theme.colors.gold.primary}
+              />
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton} onPress={onShare}>
-              <Ionicons name="share-outline" size={20} color={theme.colors.gold.primary} />
+              <Ionicons
+                name="share-outline"
+                size={20}
+                color={theme.colors.gold.primary}
+              />
             </TouchableOpacity>
           </View>
         </View>
@@ -96,18 +102,12 @@ export const CardGradingDisplay: React.FC<CardGradingDisplayProps> = ({
       <View style={styles.bestResult}>
         <View style={styles.bestResultHeader}>
           <Text style={styles.bestResultTitle}>最佳鑑定結果</Text>
-          <Badge
-            text={bestResult.agency}
-            variant="gold"
-            size="small"
-          />
+          <Badge text={bestResult.agency} variant="gold" size="small" />
         </View>
 
         <View style={styles.gradeDisplay}>
           <View style={styles.overallGrade}>
-            <Text style={styles.gradeNumber}>
-              {bestResult.overallGrade}
-            </Text>
+            <Text style={styles.gradeNumber}>{bestResult.overallGrade}</Text>
             <Text style={styles.gradeLabel}>
               {getGradeLabel(bestResult.overallGrade)}
             </Text>
@@ -116,25 +116,45 @@ export const CardGradingDisplay: React.FC<CardGradingDisplayProps> = ({
           <View style={styles.subGrades}>
             <View style={styles.subGradeItem}>
               <Text style={styles.subGradeLabel}>居中</Text>
-              <Text style={[styles.subGradeValue, { color: getGradeColor(bestResult.subGrades.centering) }]}>
+              <Text
+                style={[
+                  styles.subGradeValue,
+                  { color: getGradeColor(bestResult.subGrades.centering) },
+                ]}
+              >
                 {bestResult.subGrades.centering}
               </Text>
             </View>
             <View style={styles.subGradeItem}>
               <Text style={styles.subGradeLabel}>邊角</Text>
-              <Text style={[styles.subGradeValue, { color: getGradeColor(bestResult.subGrades.corners) }]}>
+              <Text
+                style={[
+                  styles.subGradeValue,
+                  { color: getGradeColor(bestResult.subGrades.corners) },
+                ]}
+              >
                 {bestResult.subGrades.corners}
               </Text>
             </View>
             <View style={styles.subGradeItem}>
               <Text style={styles.subGradeLabel}>邊緣</Text>
-              <Text style={[styles.subGradeValue, { color: getGradeColor(bestResult.subGrades.edges) }]}>
+              <Text
+                style={[
+                  styles.subGradeValue,
+                  { color: getGradeColor(bestResult.subGrades.edges) },
+                ]}
+              >
                 {bestResult.subGrades.edges}
               </Text>
             </View>
             <View style={styles.subGradeItem}>
               <Text style={styles.subGradeLabel}>表面</Text>
-              <Text style={[styles.subGradeValue, { color: getGradeColor(bestResult.subGrades.surface) }]}>
+              <Text
+                style={[
+                  styles.subGradeValue,
+                  { color: getGradeColor(bestResult.subGrades.surface) },
+                ]}
+              >
                 {bestResult.subGrades.surface}
               </Text>
             </View>
@@ -167,10 +187,17 @@ export const CardGradingDisplay: React.FC<CardGradingDisplayProps> = ({
             <View style={styles.resultHeader}>
               <Badge
                 text={result.agency}
-                variant={result.agency === bestResult.agency ? 'gold' : 'default'}
+                variant={
+                  result.agency === bestResult.agency ? 'gold' : 'default'
+                }
                 size="small"
               />
-              <Text style={[styles.resultGrade, { color: getGradeColor(result.overallGrade) }]}>
+              <Text
+                style={[
+                  styles.resultGrade,
+                  { color: getGradeColor(result.overallGrade) },
+                ]}
+              >
                 {result.overallGrade}
               </Text>
             </View>
@@ -188,125 +215,125 @@ export const CardGradingDisplay: React.FC<CardGradingDisplayProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   header: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   cardInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   cardName: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
     flex: 1,
-    marginRight: theme.spacing.md
+    marginRight: theme.spacing.md,
   },
   actions: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   actionButton: {
     padding: theme.spacing.xs,
     marginLeft: theme.spacing.xs,
     borderRadius: theme.borderRadius.sm,
-    backgroundColor: theme.colors.background.secondary
+    backgroundColor: theme.colors.background.secondary,
   },
   bestResult: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   bestResultHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   bestResultTitle: {
     fontSize: theme.typography.sizes.base,
     fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   gradeDisplay: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   overallGrade: {
     alignItems: 'center',
-    marginRight: theme.spacing.lg
+    marginRight: theme.spacing.lg,
   },
   gradeNumber: {
     fontSize: theme.typography.sizes['3xl'],
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.gold.primary
+    color: theme.colors.gold.primary,
   },
   gradeLabel: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
-    marginTop: theme.spacing.xs
+    marginTop: theme.spacing.xs,
   },
   subGrades: {
-    flex: 1
+    flex: 1,
   },
   subGradeItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   subGradeLabel: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   subGradeValue: {
     fontSize: theme.typography.sizes.sm,
-    fontWeight: theme.typography.weights.semibold
+    fontWeight: theme.typography.weights.semibold,
   },
   confidenceSection: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   confidenceLabel: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   valueSection: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   valueLabel: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   valueAmount: {
     fontSize: theme.typography.sizes.xl,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.gold.primary
+    color: theme.colors.gold.primary,
   },
   allResults: {
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.primary,
-    paddingTop: theme.spacing.md
+    paddingTop: theme.spacing.md,
   },
   allResultsTitle: {
     fontSize: theme.typography.sizes.base,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   resultItem: {
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   resultHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   resultGrade: {
     fontSize: theme.typography.sizes.base,
-    fontWeight: theme.typography.weights.bold
-  }
+    fontWeight: theme.typography.weights.bold,
+  },
 });

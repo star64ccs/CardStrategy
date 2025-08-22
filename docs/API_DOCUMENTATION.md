@@ -1,6 +1,7 @@
 # 🔌 CardStrategy API 文檔
 
 ## 📋 目錄
+
 1. [認證 API](#認證-api)
 2. [卡片管理 API](#卡片管理-api)
 3. [收藏管理 API](#收藏管理-api)
@@ -28,7 +29,6 @@ Authorization: Bearer <your-jwt-token>
   "timestamp": "2024-01-01T00:00:00.000Z"
 }
 ```
-
 
 ## API_DOCUMENTATION.md
 
@@ -81,11 +81,13 @@ Authorization: Bearer <your-jwt-token>
 ### 認證 (Authentication)
 
 #### 用戶註冊
+
 ```
 POST /auth/register
 ```
 
 **請求體**:
+
 ```json
 {
   "username": "string",
@@ -96,6 +98,7 @@ POST /auth/register
 ```
 
 **響應**:
+
 ```json
 {
   "success": true,
@@ -118,11 +121,13 @@ POST /auth/register
 ```
 
 #### 用戶登錄
+
 ```
 POST /auth/login
 ```
 
 **請求體**:
+
 ```json
 {
   "identifier": "string", // 用戶名或郵箱
@@ -131,11 +136,13 @@ POST /auth/login
 ```
 
 #### 刷新令牌
+
 ```
 POST /auth/refresh
 ```
 
 **請求體**:
+
 ```json
 {
   "refreshToken": "string"
@@ -143,6 +150,7 @@ POST /auth/refresh
 ```
 
 #### 獲取當前用戶信息
+
 ```
 GET /auth/me
 ```
@@ -150,6 +158,7 @@ GET /auth/me
 **需要認證**: 是
 
 #### 更新用戶資料
+
 ```
 PUT /auth/profile
 ```
@@ -157,6 +166,7 @@ PUT /auth/profile
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "displayName": "string",
@@ -168,6 +178,7 @@ PUT /auth/profile
 ```
 
 #### 用戶登出
+
 ```
 POST /auth/logout
 ```
@@ -177,11 +188,13 @@ POST /auth/logout
 ### 卡牌管理 (Cards)
 
 #### 獲取卡牌列表
+
 ```
 GET /cards
 ```
 
 **查詢參數**:
+
 - `search`: 搜索關鍵詞
 - `set`: 卡牌系列
 - `rarity`: 稀有度
@@ -194,6 +207,7 @@ GET /cards
 - `limit`: 每頁數量
 
 **響應**:
+
 ```json
 {
   "success": true,
@@ -242,11 +256,13 @@ GET /cards
 ```
 
 #### 獲取單張卡牌詳情
+
 ```
 GET /cards/:id
 ```
 
 #### 卡牌識別（AI功能）
+
 ```
 POST /cards/recognize
 ```
@@ -254,6 +270,7 @@ POST /cards/recognize
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "imageUrl": "string",
@@ -262,11 +279,13 @@ POST /cards/recognize
 ```
 
 #### 獲取卡牌系列列表
+
 ```
 GET /cards/sets
 ```
 
 #### 獲取稀有度列表
+
 ```
 GET /cards/rarities
 ```
@@ -274,6 +293,7 @@ GET /cards/rarities
 ### 收藏管理 (Collections)
 
 #### 獲取用戶收藏列表
+
 ```
 GET /collections
 ```
@@ -281,6 +301,7 @@ GET /collections
 **需要認證**: 是
 
 #### 創建新收藏
+
 ```
 POST /collections
 ```
@@ -288,6 +309,7 @@ POST /collections
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "name": "string",
@@ -297,6 +319,7 @@ POST /collections
 ```
 
 #### 獲取收藏詳情
+
 ```
 GET /collections/:id
 ```
@@ -304,6 +327,7 @@ GET /collections/:id
 **需要認證**: 是
 
 #### 更新收藏
+
 ```
 PUT /collections/:id
 ```
@@ -311,6 +335,7 @@ PUT /collections/:id
 **需要認證**: 是
 
 #### 刪除收藏
+
 ```
 DELETE /collections/:id
 ```
@@ -318,6 +343,7 @@ DELETE /collections/:id
 **需要認證**: 是
 
 #### 添加卡牌到收藏
+
 ```
 POST /collections/:id/cards
 ```
@@ -325,6 +351,7 @@ POST /collections/:id/cards
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "cardId": "string",
@@ -335,6 +362,7 @@ POST /collections/:id/cards
 ```
 
 #### 從收藏中移除卡牌
+
 ```
 DELETE /collections/:id/cards/:cardId
 ```
@@ -344,33 +372,40 @@ DELETE /collections/:id/cards/:cardId
 ### 市場分析 (Market)
 
 #### 獲取市場數據
+
 ```
 GET /market/data
 ```
 
 **查詢參數**:
+
 - `cardId`: 特定卡牌ID
 - `period`: 時間期間 (1d|7d|30d|90d|1y)
 - `sortBy`: 排序字段 (price|volume|change|marketCap)
 - `sortOrder`: 排序方向 (asc|desc)
 
 #### 獲取價格歷史
+
 ```
 GET /market/price-history/:cardId
 ```
 
 **查詢參數**:
+
 - `period`: 時間期間 (7d|30d|90d|1y|all)
 
 #### 獲取市場趨勢
+
 ```
 GET /market/trends
 ```
 
 **查詢參數**:
+
 - `timeframe`: 時間框架 (1d|7d|30d|90d)
 
 #### 獲取市場洞察
+
 ```
 GET /market/insights
 ```
@@ -378,6 +413,7 @@ GET /market/insights
 **需要認證**: 是
 
 #### 獲取市場分析數據
+
 ```
 GET /market/analytics
 ```
@@ -385,6 +421,7 @@ GET /market/analytics
 ### 投資管理 (Investments)
 
 #### 獲取用戶投資列表
+
 ```
 GET /investments
 ```
@@ -392,6 +429,7 @@ GET /investments
 **需要認證**: 是
 
 #### 添加新投資
+
 ```
 POST /investments
 ```
@@ -399,6 +437,7 @@ POST /investments
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "cardId": "string",
@@ -413,6 +452,7 @@ POST /investments
 ```
 
 #### 獲取投資詳情
+
 ```
 GET /investments/:id
 ```
@@ -420,6 +460,7 @@ GET /investments/:id
 **需要認證**: 是
 
 #### 更新投資
+
 ```
 PUT /investments/:id
 ```
@@ -427,6 +468,7 @@ PUT /investments/:id
 **需要認證**: 是
 
 #### 刪除投資
+
 ```
 DELETE /investments/:id
 ```
@@ -434,6 +476,7 @@ DELETE /investments/:id
 **需要認證**: 是
 
 #### 獲取投資組合概覽
+
 ```
 GET /investments/portfolio
 ```
@@ -441,6 +484,7 @@ GET /investments/portfolio
 **需要認證**: 是
 
 #### 獲取投資分析
+
 ```
 GET /investments/analytics
 ```
@@ -450,6 +494,7 @@ GET /investments/analytics
 ### AI 分析 (AI)
 
 #### AI分析卡牌
+
 ```
 POST /ai/analyze-card
 ```
@@ -457,6 +502,7 @@ POST /ai/analyze-card
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "cardId": "string",
@@ -465,6 +511,7 @@ POST /ai/analyze-card
 ```
 
 #### AI分析投資組合
+
 ```
 POST /ai/portfolio-analysis
 ```
@@ -472,6 +519,7 @@ POST /ai/portfolio-analysis
 **需要認證**: 是
 
 #### AI市場預測
+
 ```
 POST /ai/market-prediction
 ```
@@ -479,6 +527,7 @@ POST /ai/market-prediction
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "timeframe": "1w|1m|3m|6m|1y",
@@ -487,6 +536,7 @@ POST /ai/market-prediction
 ```
 
 #### AI智能推薦
+
 ```
 POST /ai/smart-recommendations
 ```
@@ -494,6 +544,7 @@ POST /ai/smart-recommendations
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "preferences": "object",
@@ -503,6 +554,7 @@ POST /ai/smart-recommendations
 ```
 
 #### AI聊天助手
+
 ```
 POST /ai/chat
 ```
@@ -510,6 +562,7 @@ POST /ai/chat
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "message": "string",
@@ -520,11 +573,13 @@ POST /ai/chat
 ### 會員服務 (Membership)
 
 #### 獲取會員計劃列表
+
 ```
 GET /membership/plans
 ```
 
 #### 獲取當前用戶會員狀態
+
 ```
 GET /membership/current
 ```
@@ -532,6 +587,7 @@ GET /membership/current
 **需要認證**: 是
 
 #### 訂閱會員計劃
+
 ```
 POST /membership/subscribe
 ```
@@ -539,6 +595,7 @@ POST /membership/subscribe
 **需要認證**: 是
 
 **請求體**:
+
 ```json
 {
   "planId": "basic|premium|pro",
@@ -548,6 +605,7 @@ POST /membership/subscribe
 ```
 
 #### 取消會員訂閱
+
 ```
 POST /membership/cancel
 ```
@@ -555,6 +613,7 @@ POST /membership/cancel
 **需要認證**: 是
 
 #### 升級會員計劃
+
 ```
 PUT /membership/upgrade
 ```
@@ -562,6 +621,7 @@ PUT /membership/upgrade
 **需要認證**: 是
 
 #### 獲取會員使用情況
+
 ```
 GET /membership/usage
 ```
@@ -569,6 +629,7 @@ GET /membership/usage
 **需要認證**: 是
 
 #### 獲取賬單歷史
+
 ```
 GET /membership/billing
 ```
@@ -576,6 +637,7 @@ GET /membership/billing
 **需要認證**: 是
 
 #### 更新支付方式
+
 ```
 POST /membership/payment-method
 ```
@@ -585,6 +647,7 @@ POST /membership/payment-method
 ### 設置 (Settings)
 
 #### 獲取用戶設置
+
 ```
 GET /settings
 ```
@@ -592,6 +655,7 @@ GET /settings
 **需要認證**: 是
 
 #### 更新用戶設置
+
 ```
 PUT /settings
 ```
@@ -599,6 +663,7 @@ PUT /settings
 **需要認證**: 是
 
 #### 更新通知設置
+
 ```
 POST /settings/notifications
 ```
@@ -606,6 +671,7 @@ POST /settings/notifications
 **需要認證**: 是
 
 #### 啟用/禁用雙因素認證
+
 ```
 POST /settings/security/two-factor
 ```
@@ -613,6 +679,7 @@ POST /settings/security/two-factor
 **需要認證**: 是
 
 #### 驗證雙因素認證
+
 ```
 POST /settings/security/verify-two-factor
 ```
@@ -620,6 +687,7 @@ POST /settings/security/verify-two-factor
 **需要認證**: 是
 
 #### 導出用戶數據
+
 ```
 POST /settings/export-data
 ```
@@ -627,6 +695,7 @@ POST /settings/export-data
 **需要認證**: 是
 
 #### 刪除用戶賬戶
+
 ```
 DELETE /settings/delete-account
 ```
@@ -634,6 +703,7 @@ DELETE /settings/delete-account
 **需要認證**: 是
 
 #### 取消賬戶刪除
+
 ```
 POST /settings/cancel-deletion
 ```
@@ -642,24 +712,25 @@ POST /settings/cancel-deletion
 
 ## 錯誤代碼
 
-| 代碼 | 描述 |
-|------|------|
-| `VALIDATION_ERROR` | 輸入驗證失敗 |
-| `USER_EXISTS` | 用戶已存在 |
-| `INVALID_CREDENTIALS` | 無效的憑證 |
-| `INVALID_TOKEN` | 無效的令牌 |
-| `NO_TOKEN` | 未提供令牌 |
-| `USER_NOT_FOUND` | 用戶不存在 |
-| `CARD_NOT_FOUND` | 卡牌不存在 |
-| `COLLECTION_NOT_FOUND` | 收藏不存在 |
-| `INVESTMENT_NOT_FOUND` | 投資不存在 |
-| `INVALID_PLAN` | 無效的會員計劃 |
-| `RATE_LIMIT_EXCEEDED` | 請求過於頻繁 |
+| 代碼                    | 描述           |
+| ----------------------- | -------------- |
+| `VALIDATION_ERROR`      | 輸入驗證失敗   |
+| `USER_EXISTS`           | 用戶已存在     |
+| `INVALID_CREDENTIALS`   | 無效的憑證     |
+| `INVALID_TOKEN`         | 無效的令牌     |
+| `NO_TOKEN`              | 未提供令牌     |
+| `USER_NOT_FOUND`        | 用戶不存在     |
+| `CARD_NOT_FOUND`        | 卡牌不存在     |
+| `COLLECTION_NOT_FOUND`  | 收藏不存在     |
+| `INVESTMENT_NOT_FOUND`  | 投資不存在     |
+| `INVALID_PLAN`          | 無效的會員計劃 |
+| `RATE_LIMIT_EXCEEDED`   | 請求過於頻繁   |
 | `INTERNAL_SERVER_ERROR` | 服務器內部錯誤 |
 
 ## 速率限制
 
 API實施速率限制以防止濫用：
+
 - 每個IP每15分鐘最多100個請求
 - 超過限制將返回429狀態碼
 
@@ -670,6 +741,7 @@ GET /health
 ```
 
 **響應**:
+
 ```json
 {
   "status": "OK",
@@ -721,26 +793,32 @@ curl -X POST https://cardstrategy-api.onrender.com/api/collections \
 
 ```javascript
 // 登錄
-const loginResponse = await fetch('https://cardstrategy-api.onrender.com/api/auth/login', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    identifier: 'testuser',
-    password: 'Password123'
-  })
-});
+const loginResponse = await fetch(
+  'https://cardstrategy-api.onrender.com/api/auth/login',
+  {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      identifier: 'testuser',
+      password: 'Password123',
+    }),
+  }
+);
 
 const loginData = await loginResponse.json();
 const token = loginData.data.token;
 
 // 獲取卡牌列表
-const cardsResponse = await fetch('https://cardstrategy-api.onrender.com/api/cards', {
-  headers: {
-    'Authorization': `Bearer ${token}`
+const cardsResponse = await fetch(
+  'https://cardstrategy-api.onrender.com/api/cards',
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   }
-});
+);
 
 const cardsData = await cardsResponse.json();
 console.log(cardsData.data.cards);
@@ -749,6 +827,7 @@ console.log(cardsData.data.cards);
 ## 支持
 
 如需技術支持，請聯繫：
+
 - 郵箱: support@cardstrategy.com
 - 文檔: https://docs.cardstrategy.com
 - GitHub: https://github.com/cardstrategy/api

@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ViewStyle,
   TextStyle,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { theme } from '../../theme/designSystem';
 
@@ -30,7 +30,7 @@ export const Button: React.FC<ButtonProps> = ({
   loading = false,
   style,
   textStyle,
-  icon
+  icon,
 }) => {
   const getButtonStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
@@ -39,11 +39,12 @@ export const Button: React.FC<ButtonProps> = ({
       justifyContent: 'center',
       borderRadius: theme.borderRadius.lg,
       borderWidth: variant === 'secondary' ? 1 : 0,
-      shadowColor: variant === 'primary' ? theme.colors.gold.primary : 'transparent',
+      shadowColor:
+        variant === 'primary' ? theme.colors.gold.primary : 'transparent',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: variant === 'primary' ? 0.3 : 0,
       shadowRadius: 4,
-      elevation: variant === 'primary' ? 4 : 0
+      elevation: variant === 'primary' ? 4 : 0,
     };
 
     // 尺寸樣式
@@ -51,40 +52,46 @@ export const Button: React.FC<ButtonProps> = ({
       small: {
         paddingHorizontal: theme.spacing.md,
         paddingVertical: theme.spacing.sm,
-        minHeight: 36
+        minHeight: 36,
       },
       medium: {
         paddingHorizontal: theme.spacing.lg,
         paddingVertical: theme.spacing.md,
-        minHeight: 48
+        minHeight: 48,
       },
       large: {
         paddingHorizontal: theme.spacing.xl,
         paddingVertical: theme.spacing.lg,
-        minHeight: 56
-      }
+        minHeight: 56,
+      },
     };
 
     // 變體樣式
     const variantStyles = {
       primary: {
-        backgroundColor: disabled ? theme.colors.text.disabled : theme.colors.gold.primary,
-        borderColor: disabled ? theme.colors.text.disabled : theme.colors.gold.primary
+        backgroundColor: disabled
+          ? theme.colors.text.disabled
+          : theme.colors.gold.primary,
+        borderColor: disabled
+          ? theme.colors.text.disabled
+          : theme.colors.gold.primary,
       },
       secondary: {
         backgroundColor: 'transparent',
-        borderColor: disabled ? theme.colors.text.disabled : theme.colors.gold.primary
+        borderColor: disabled
+          ? theme.colors.text.disabled
+          : theme.colors.gold.primary,
       },
       ghost: {
         backgroundColor: 'transparent',
-        borderColor: 'transparent'
-      }
+        borderColor: 'transparent',
+      },
     };
 
     return {
       ...baseStyle,
       ...sizeStyles[size],
-      ...variantStyles[variant]
+      ...variantStyles[variant],
     };
   };
 
@@ -92,31 +99,35 @@ export const Button: React.FC<ButtonProps> = ({
     const baseStyle: TextStyle = {
       fontSize: theme.typography.sizes.base,
       fontWeight: theme.typography.weights.semibold,
-      textAlign: 'center'
+      textAlign: 'center',
     };
 
     const sizeStyles = {
       small: { fontSize: theme.typography.sizes.sm },
       medium: { fontSize: theme.typography.sizes.base },
-      large: { fontSize: theme.typography.sizes.lg }
+      large: { fontSize: theme.typography.sizes.lg },
     };
 
     const variantStyles = {
       primary: {
-        color: theme.colors.background.primary
+        color: theme.colors.background.primary,
       },
       secondary: {
-        color: disabled ? theme.colors.text.disabled : theme.colors.gold.primary
+        color: disabled
+          ? theme.colors.text.disabled
+          : theme.colors.gold.primary,
       },
       ghost: {
-        color: disabled ? theme.colors.text.disabled : theme.colors.text.primary
-      }
+        color: disabled
+          ? theme.colors.text.disabled
+          : theme.colors.text.primary,
+      },
     };
 
     return {
       ...baseStyle,
       ...sizeStyles[size],
-      ...variantStyles[variant]
+      ...variantStyles[variant],
     };
   };
 
@@ -130,7 +141,11 @@ export const Button: React.FC<ButtonProps> = ({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === 'primary' ? theme.colors.background.primary : theme.colors.gold.primary}
+          color={
+            variant === 'primary'
+              ? theme.colors.background.primary
+              : theme.colors.gold.primary
+          }
         />
       ) : (
         <>
@@ -146,6 +161,6 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });

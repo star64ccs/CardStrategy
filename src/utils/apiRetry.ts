@@ -20,18 +20,19 @@ const defaultRetryConfig: RetryConfig = {
     'SERVICE_UNAVAILABLE',
     'DATABASE_CONNECTION_ERROR',
     'TIMEOUT_ERROR',
-    'RATE_LIMIT_EXCEEDED'
-  ]
+    'RATE_LIMIT_EXCEEDED',
+  ],
 };
 
 // 延遲函數
 const delay = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 // 計算重試延遲
 const calculateDelay = (attempt: number, config: RetryConfig): number => {
-  const delay = config.baseDelay * Math.pow(config.backoffMultiplier, attempt - 1);
+  const delay =
+    config.baseDelay * Math.pow(config.backoffMultiplier, attempt - 1);
   return Math.min(delay, config.maxDelay);
 };
 
@@ -49,11 +50,12 @@ const shouldRetry = (error: any, config: RetryConfig): boolean => {
   }
 
   // 檢查網絡錯誤
-  if (error.message && (
-    error.message.includes('Network Error') ||
-    error.message.includes('timeout') ||
-    error.message.includes('connection')
-  )) {
+  if (
+    error.message &&
+    (error.message.includes('Network Error') ||
+      error.message.includes('timeout') ||
+      error.message.includes('connection'))
+  ) {
     return true;
   }
 
@@ -75,23 +77,32 @@ export const withRetry = async <T>(
       lastError = error;
 
       // 檢查是否應該重試
-      if (attempt === retryConfig.maxRetries || !shouldRetry(error, retryConfig)) {
-        logger.error(`API 調用失敗 (嘗試 ${attempt}/${retryConfig.maxRetries}):`, {
-          error: error.message,
-          code: error.code,
-          status: error.status
-        });
+      if (
+        attempt === retryConfig.maxRetries ||
+        !shouldRetry(error, retryConfig)
+      ) {
+        logger.error(
+          `API 調用失敗 (嘗試 ${attempt}/${retryConfig.maxRetries}):`,
+          {
+            error: error.message,
+            code: error.code,
+            status: error.status,
+          }
+        );
         throw error;
       }
 
       // 計算延遲時間
       const delayTime = calculateDelay(attempt, retryConfig);
 
-      logger.warn(`API 調用失敗，${delayTime}ms 後重試 (${attempt}/${retryConfig.maxRetries}):`, {
-        error: error.message,
-        code: error.code,
-        status: error.status
-      });
+      logger.warn(
+        `API 調用失敗，${delayTime}ms 後重試 (${attempt}/${retryConfig.maxRetries}):`,
+        {
+          error: error.message,
+          code: error.code,
+          status: error.status,
+        }
+      );
 
       // 等待後重試
       await delay(delayTime);
@@ -102,7 +113,9 @@ export const withRetry = async <T>(
 };
 
 // 創建重試配置
-export const createRetryConfig = (config: Partial<RetryConfig>): RetryConfig => {
+export const createRetryConfig = (
+  config: Partial<RetryConfig>
+): RetryConfig => {
   return { ...defaultRetryConfig, ...config };
 };
 
@@ -111,26 +124,30 @@ export const apiRetryConfigs = {
   auth: createRetryConfig({
     maxRetries: 2,
     baseDelay: 500,
-    retryableErrors: ['NETWORK_ERROR', 'SERVICE_UNAVAILABLE']
+    retryableErrors: ['NETWORK_ERROR', 'SERVICE_UNAVAILABLE'],
   }),
 
   cards: createRetryConfig({
     maxRetries: 3,
     baseDelay: 1000,
-    retryableErrors: ['NETWORK_ERROR', 'SERVICE_UNAVAILABLE', 'RATE_LIMIT_EXCEEDED']
+    retryableErrors: [
+      'NETWORK_ERROR',
+      'SERVICE_UNAVAILABLE',
+      'RATE_LIMIT_EXCEEDED',
+    ],
   }),
 
   market: createRetryConfig({
     maxRetries: 2,
     baseDelay: 2000,
-    retryableErrors: ['NETWORK_ERROR', 'SERVICE_UNAVAILABLE']
+    retryableErrors: ['NETWORK_ERROR', 'SERVICE_UNAVAILABLE'],
   }),
 
   ai: createRetryConfig({
     maxRetries: 1,
     baseDelay: 3000,
-    retryableErrors: ['SERVICE_UNAVAILABLE', 'TIMEOUT_ERROR']
-  })
+    retryableErrors: ['SERVICE_UNAVAILABLE', 'TIMEOUT_ERROR'],
+  }),
 };
 
 // 帶有重試的 API 調用包裝器

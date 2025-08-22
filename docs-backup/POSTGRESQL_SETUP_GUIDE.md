@@ -11,6 +11,7 @@
 ### 1.1 如果您使用雲端 PostgreSQL 服務
 
 #### **AWS RDS PostgreSQL**
+
 ```bash
 # 配置參數
 引擎: PostgreSQL 15
@@ -29,6 +30,7 @@
 ```
 
 #### **Google Cloud SQL PostgreSQL**
+
 ```bash
 # 配置參數
 版本: PostgreSQL 15
@@ -46,6 +48,7 @@
 ```
 
 #### **DigitalOcean Managed Databases**
+
 ```bash
 # 配置參數
 版本: PostgreSQL 15
@@ -65,6 +68,7 @@
 ### 1.2 如果您自建 PostgreSQL 服務器
 
 #### **Ubuntu 服務器安裝**
+
 ```bash
 # 更新系統
 sudo apt update && sudo apt upgrade -y
@@ -112,6 +116,7 @@ CREATE EXTENSION IF NOT EXISTS "btree_gin";
 ### 2.2 配置 PostgreSQL 連接
 
 #### **編輯 PostgreSQL 配置**
+
 ```bash
 # 編輯 postgresql.conf
 sudo nano /etc/postgresql/15/main/postgresql.conf
@@ -129,6 +134,7 @@ default_statistics_target = 100
 ```
 
 #### **配置客戶端認證**
+
 ```bash
 # 編輯 pg_hba.conf
 sudo nano /etc/postgresql/15/main/pg_hba.conf
@@ -249,12 +255,12 @@ npm run db:verify
 psql -h your-host -U cardstrategy_user -d cardstrategy
 
 -- 創建初始管理員用戶
-INSERT INTO users (email, password, role, is_active, created_at) 
+INSERT INTO users (email, password, role, is_active, created_at)
 VALUES ('admin@cardstrategy.com', '$2b$12$your-hashed-password', 'admin', true, NOW());
 
 -- 創建初始配置
-INSERT INTO system_configs (key, value, created_at) 
-VALUES 
+INSERT INTO system_configs (key, value, created_at)
+VALUES
 ('app_name', 'CardStrategy', NOW()),
 ('app_version', '3.1.0', NOW()),
 ('maintenance_mode', 'false', NOW());
@@ -304,11 +310,11 @@ sudo crontab -e
 SELECT pg_size_pretty(pg_database_size('cardstrategy'));
 
 -- 查看表大小
-SELECT 
+SELECT
     schemaname,
     tablename,
     pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
-FROM pg_tables 
+FROM pg_tables
 WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
@@ -316,9 +322,9 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 SELECT count(*) FROM pg_stat_activity;
 
 -- 查看慢查詢
-SELECT query, mean_time, calls 
-FROM pg_stat_statements 
-ORDER BY mean_time DESC 
+SELECT query, mean_time, calls
+FROM pg_stat_statements
+ORDER BY mean_time DESC
 LIMIT 10;
 ```
 
@@ -362,10 +368,10 @@ async function testConnection() {
   try {
     await client.connect();
     console.log('✅ 數據庫連接成功');
-    
+
     const result = await client.query('SELECT version()');
     console.log('PostgreSQL 版本:', result.rows[0].version);
-    
+
     await client.end();
   } catch (error) {
     console.error('❌ 數據庫連接失敗:', error.message);
@@ -385,6 +391,7 @@ node test-db-connection.js
 ### 8.1 常見問題
 
 #### **連接被拒絕**
+
 ```bash
 # 檢查 PostgreSQL 是否運行
 sudo systemctl status postgresql
@@ -397,6 +404,7 @@ sudo ufw status
 ```
 
 #### **認證失敗**
+
 ```bash
 # 檢查 pg_hba.conf 配置
 sudo cat /etc/postgresql/15/main/pg_hba.conf
@@ -406,6 +414,7 @@ sudo systemctl reload postgresql
 ```
 
 #### **內存不足**
+
 ```bash
 # 檢查系統內存
 free -h

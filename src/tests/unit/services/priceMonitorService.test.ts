@@ -16,9 +16,13 @@ jest.mock('../../../utils/logger');
 jest.mock('../../../utils/cacheManager');
 jest.mock('../../../utils/networkMonitor');
 
-const mockNotificationService = notificationService as jest.Mocked<typeof notificationService>;
+const mockNotificationService = notificationService as jest.Mocked<
+  typeof notificationService
+>;
 const mockMarketService = marketService as jest.Mocked<typeof marketService>;
-const mockInvestmentService = investmentService as jest.Mocked<typeof investmentService>;
+const mockInvestmentService = investmentService as jest.Mocked<
+  typeof investmentService
+>;
 const mockApiService = apiService as jest.Mocked<typeof apiService>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 const mockCacheManager = cacheManager as jest.Mocked<typeof cacheManager>;
@@ -54,9 +58,9 @@ describe('PriceMonitorService', () => {
             userId: 'user-1',
             isActive: true,
             createdAt: '2024-01-01T00:00:00Z',
-            triggerCount: 0
-          }
-        ]
+            triggerCount: 0,
+          },
+        ],
       };
 
       mockInvestmentService.getPriceAlerts.mockResolvedValue(mockAlerts);
@@ -75,7 +79,9 @@ describe('PriceMonitorService', () => {
 
       await priceMonitorService.initialize();
 
-      expect(mockLogger.error).toHaveBeenCalledWith('價格監控服務初始化失敗:', { error });
+      expect(mockLogger.error).toHaveBeenCalledWith('價格監控服務初始化失敗:', {
+        error,
+      });
     });
   });
 
@@ -83,7 +89,9 @@ describe('PriceMonitorService', () => {
     it('應該成功開始監控', () => {
       priceMonitorService.startMonitoring();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('價格監控已開始', { interval: 5 * 60 * 1000 });
+      expect(mockLogger.info).toHaveBeenCalledWith('價格監控已開始', {
+        interval: 5 * 60 * 1000,
+      });
     });
 
     it('應該避免重複開始監控', () => {
@@ -121,20 +129,31 @@ describe('PriceMonitorService', () => {
         userId: 'user-1',
         isActive: true,
         createdAt: '2024-01-01T00:00:00Z',
-        triggerCount: 0
+        triggerCount: 0,
       };
 
-      mockInvestmentService.setPriceAlert.mockResolvedValue({ data: mockAlert });
+      mockInvestmentService.setPriceAlert.mockResolvedValue({
+        data: mockAlert,
+      });
 
-      const result = await priceMonitorService.addPriceAlert('card-1', 100, 'above', 5);
+      const result = await priceMonitorService.addPriceAlert(
+        'card-1',
+        100,
+        'above',
+        5
+      );
 
       expect(result).toEqual(mockAlert);
-      expect(mockInvestmentService.setPriceAlert).toHaveBeenCalledWith('card-1', 100, 'above');
+      expect(mockInvestmentService.setPriceAlert).toHaveBeenCalledWith(
+        'card-1',
+        100,
+        'above'
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('價格提醒已添加', {
         alertId: mockAlert.id,
         cardId: 'card-1',
         targetPrice: 100,
-        type: 'above'
+        type: 'above',
       });
     });
 
@@ -142,12 +161,14 @@ describe('PriceMonitorService', () => {
       const error = new Error('添加失敗');
       mockInvestmentService.setPriceAlert.mockRejectedValue(error);
 
-      await expect(priceMonitorService.addPriceAlert('card-1', 100, 'above')).rejects.toThrow('添加失敗');
+      await expect(
+        priceMonitorService.addPriceAlert('card-1', 100, 'above')
+      ).rejects.toThrow('添加失敗');
       expect(mockLogger.error).toHaveBeenCalledWith('添加價格提醒失敗:', {
         cardId: 'card-1',
         targetPrice: 100,
         type: 'above',
-        error
+        error,
       });
     });
   });
@@ -161,7 +182,7 @@ describe('PriceMonitorService', () => {
         triggeredAlerts: 0,
         activeAlerts: 0,
         averageResponseTime: 0,
-        successRate: 0
+        successRate: 0,
       });
     });
   });
@@ -177,7 +198,7 @@ describe('PriceMonitorService', () => {
         maxAlertsPerHour: 10,
         enableSmartAlerts: true,
         enableMarketTrendAlerts: true,
-        enableVolumeAlerts: true
+        enableVolumeAlerts: true,
       });
     });
   });
@@ -186,7 +207,7 @@ describe('PriceMonitorService', () => {
     it('應該成功更新配置', () => {
       const newConfig = {
         checkInterval: 10 * 60 * 1000,
-        priceChangeThreshold: 10
+        priceChangeThreshold: 10,
       };
 
       priceMonitorService.updateConfig(newConfig);
@@ -194,7 +215,9 @@ describe('PriceMonitorService', () => {
       const updatedConfig = priceMonitorService.getConfig();
       expect(updatedConfig.checkInterval).toBe(10 * 60 * 1000);
       expect(updatedConfig.priceChangeThreshold).toBe(10);
-      expect(mockLogger.info).toHaveBeenCalledWith('監控配置已更新', { config: updatedConfig });
+      expect(mockLogger.info).toHaveBeenCalledWith('監控配置已更新', {
+        config: updatedConfig,
+      });
     });
 
     it('應該在監控間隔改變時重啟監控', () => {
@@ -202,7 +225,9 @@ describe('PriceMonitorService', () => {
       priceMonitorService.updateConfig({ checkInterval: 10 * 60 * 1000 });
 
       expect(mockLogger.info).toHaveBeenCalledWith('價格監控已停止');
-      expect(mockLogger.info).toHaveBeenCalledWith('價格監控已開始', { interval: 10 * 60 * 1000 });
+      expect(mockLogger.info).toHaveBeenCalledWith('價格監控已開始', {
+        interval: 10 * 60 * 1000,
+      });
     });
   });
 
@@ -220,9 +245,9 @@ describe('PriceMonitorService', () => {
             userId: 'user-1',
             isActive: true,
             createdAt: '2024-01-01T00:00:00Z',
-            triggerCount: 0
-          }
-        ]
+            triggerCount: 0,
+          },
+        ],
       };
 
       mockInvestmentService.getPriceAlerts.mockResolvedValue(mockAlerts);
@@ -259,9 +284,9 @@ describe('PriceMonitorService', () => {
             userId: 'user-1',
             isActive: true,
             createdAt: '2024-01-01T00:00:00Z',
-            triggerCount: 0
-          }
-        ]
+            triggerCount: 0,
+          },
+        ],
       };
 
       mockInvestmentService.getPriceAlerts.mockResolvedValue(mockAlerts);
@@ -292,21 +317,23 @@ describe('PriceMonitorService', () => {
 
     it('應該處理價格獲取失敗', async () => {
       mockCacheManager.getCachedMarketData.mockResolvedValue(null);
-      mockMarketService.getMarketData.mockRejectedValue(new Error('價格獲取失敗'));
+      mockMarketService.getMarketData.mockRejectedValue(
+        new Error('價格獲取失敗')
+      );
 
       // 觸發價格檢查
       jest.advanceTimersByTime(5 * 60 * 1000);
 
       expect(mockLogger.error).toHaveBeenCalledWith('獲取價格失敗:', {
         cardId: 'card-1',
-        error: new Error('價格獲取失敗')
+        error: new Error('價格獲取失敗'),
       });
     });
 
     it('應該從緩存獲取價格數據', async () => {
       const mockCachedData = {
         data: { currentPrice: 95 },
-        timestamp: Date.now() - 2 * 60 * 1000 // 2分鐘前
+        timestamp: Date.now() - 2 * 60 * 1000, // 2分鐘前
       };
 
       mockCacheManager.getCachedMarketData.mockResolvedValue(mockCachedData);
@@ -314,22 +341,24 @@ describe('PriceMonitorService', () => {
       // 觸發價格檢查
       jest.advanceTimersByTime(5 * 60 * 1000);
 
-      expect(mockCacheManager.getCachedMarketData).toHaveBeenCalledWith('card-1');
+      expect(mockCacheManager.getCachedMarketData).toHaveBeenCalledWith(
+        'card-1'
+      );
       expect(mockMarketService.getMarketData).not.toHaveBeenCalled();
     });
 
     it('應該在緩存過期時從API獲取價格', async () => {
       const mockCachedData = {
         data: { currentPrice: 95 },
-        timestamp: Date.now() - 10 * 60 * 1000 // 10分鐘前，已過期
+        timestamp: Date.now() - 10 * 60 * 1000, // 10分鐘前，已過期
       };
 
       const mockMarketData = {
         data: {
           currentPrice: 105,
           volume: 1000,
-          change24h: 5
-        }
+          change24h: 5,
+        },
       };
 
       mockCacheManager.getCachedMarketData.mockResolvedValue(mockCachedData);
@@ -343,7 +372,7 @@ describe('PriceMonitorService', () => {
         currentPrice: 105,
         timestamp: expect.any(Number),
         volume: 1000,
-        change24h: 5
+        change24h: 5,
       });
     });
   });
@@ -362,9 +391,9 @@ describe('PriceMonitorService', () => {
             userId: 'user-1',
             isActive: true,
             createdAt: '2024-01-01T00:00:00Z',
-            triggerCount: 0
-          }
-        ]
+            triggerCount: 0,
+          },
+        ],
       };
 
       mockInvestmentService.getPriceAlerts.mockResolvedValue(mockAlerts);
@@ -378,8 +407,8 @@ describe('PriceMonitorService', () => {
           confidence: 0.8,
           factors: { technical: 0.8, fundamental: 0.7, social: 0.6 },
           recommendations: ['建議買入'],
-          riskLevel: 'medium' as const
-        }
+          riskLevel: 'medium' as const,
+        },
       };
 
       mockMarketService.getMarketAnalysis.mockResolvedValue(mockMarketAnalysis);
@@ -396,29 +425,37 @@ describe('PriceMonitorService', () => {
     });
 
     it('應該處理市場分析失敗', async () => {
-      mockMarketService.getMarketAnalysis.mockRejectedValue(new Error('分析失敗'));
+      mockMarketService.getMarketAnalysis.mockRejectedValue(
+        new Error('分析失敗')
+      );
 
       // 觸發價格檢查
       jest.advanceTimersByTime(5 * 60 * 1000);
 
-      expect(mockLogger.error).toHaveBeenCalledWith('檢查市場趨勢提醒失敗:', { error: new Error('分析失敗') });
+      expect(mockLogger.error).toHaveBeenCalledWith('檢查市場趨勢提醒失敗:', {
+        error: new Error('分析失敗'),
+      });
     });
   });
 
   describe('網絡狀態處理', () => {
     it('應該在網絡恢復時重新開始監控', () => {
       // 模擬網絡變化
-      const networkChangeHandler = mockNetworkMonitor.addListener.mock.calls[0][0];
+      const networkChangeHandler =
+        mockNetworkMonitor.addListener.mock.calls[0][0];
       networkChangeHandler(true);
 
-      expect(mockLogger.info).toHaveBeenCalledWith('價格監控已開始', { interval: 5 * 60 * 1000 });
+      expect(mockLogger.info).toHaveBeenCalledWith('價格監控已開始', {
+        interval: 5 * 60 * 1000,
+      });
     });
 
     it('應該在網絡斷開時停止監控', () => {
       priceMonitorService.startMonitoring();
 
       // 模擬網絡變化
-      const networkChangeHandler = mockNetworkMonitor.addListener.mock.calls[0][0];
+      const networkChangeHandler =
+        mockNetworkMonitor.addListener.mock.calls[0][0];
       networkChangeHandler(false);
 
       expect(mockLogger.info).toHaveBeenCalledWith('價格監控已停止');

@@ -3,12 +3,14 @@
 ## 📋 **當前狀態**
 
 ### ✅ **已完成的配置**
+
 - **Cloudflare 域名**: `cardstrategyapp.com` 已配置
 - **Cloudflare API Token**: 已設置
 - **Zone ID**: `ceadb25b709450bbd450ad7cbd03bb68`
 - **Droplet IP**: `159.223.84.189`
 
 ### ❌ **需要完成的配置**
+
 - **DNS 記錄**: 需要配置 `api.cardstrategy.com` 指向 DigitalOcean Droplet
 - **SSL 證書**: 需要配置 SSL/TLS 證書
 - **域名驗證**: 需要測試域名解析
@@ -18,23 +20,25 @@
 ### **步驟 1: 配置 Cloudflare DNS 記錄**
 
 #### **方法 A: 使用自動化腳本**
+
 ```bash
 # 運行 Cloudflare 配置腳本
 npm run setup:cloudflare
 ```
 
 #### **方法 B: 手動配置**
+
 1. 登錄 Cloudflare 控制台: https://dash.cloudflare.com/
 2. 選擇域名: `cardstrategyapp.com`
 3. 點擊 **DNS** 標籤
 4. 添加以下 DNS 記錄:
 
-| 類型 | 名稱 | 內容 | 代理狀態 |
-|------|------|------|----------|
-| A | api | 159.223.84.189 | ✅ 已代理 |
-| A | www | 159.223.84.189 | ✅ 已代理 |
-| A | @ | 159.223.84.189 | ✅ 已代理 |
-| CNAME | cdn | api.cardstrategyapp.com | ✅ 已代理 |
+| 類型  | 名稱 | 內容                    | 代理狀態  |
+| ----- | ---- | ----------------------- | --------- |
+| A     | api  | 159.223.84.189          | ✅ 已代理 |
+| A     | www  | 159.223.84.189          | ✅ 已代理 |
+| A     | @    | 159.223.84.189          | ✅ 已代理 |
+| CNAME | cdn  | api.cardstrategyapp.com | ✅ 已代理 |
 
 ### **步驟 2: 配置 SSL/TLS 設置**
 
@@ -49,6 +53,7 @@ npm run setup:cloudflare
 ### **步驟 3: 配置頁面規則**
 
 #### **API 路由規則**
+
 1. 點擊 **頁面規則** 標籤
 2. 創建新規則:
    - **URL**: `api.cardstrategyapp.com/*`
@@ -58,6 +63,7 @@ npm run setup:cloudflare
      - ✅ **安全級別**: 高
 
 #### **前端路由規則**
+
 1. 創建新規則:
    - **URL**: `cardstrategyapp.com/*`
    - **設置**:
@@ -68,6 +74,7 @@ npm run setup:cloudflare
 ### **步驟 4: 配置安全設置**
 
 #### **WAF (Web Application Firewall)**
+
 1. 點擊 **安全** → **WAF**
 2. 啟用 **托管規則集**
 3. 配置自定義規則:
@@ -76,6 +83,7 @@ npm run setup:cloudflare
    - 保護敏感端點
 
 #### **速率限制**
+
 1. 點擊 **安全** → **速率限制**
 2. 創建規則:
    - **表達式**: `(http.request.uri.path contains "/api/")`
@@ -86,6 +94,7 @@ npm run setup:cloudflare
 ## 🔍 **驗證配置**
 
 ### **測試域名解析**
+
 ```bash
 # 測試 API 域名解析
 nslookup api.cardstrategyapp.com
@@ -98,12 +107,14 @@ curl -I https://api.cardstrategyapp.com/api/health
 ```
 
 ### **測試 API 連接**
+
 ```bash
 # 運行 API 連接測試
 node scripts/test-api-connection.js
 ```
 
 ### **檢查 SSL 證書**
+
 ```bash
 # 檢查 SSL 證書
 openssl s_client -connect api.cardstrategyapp.com:443 -servername api.cardstrategyapp.com
@@ -112,6 +123,7 @@ openssl s_client -connect api.cardstrategyapp.com:443 -servername api.cardstrate
 ## 📊 **預期結果**
 
 ### **成功配置後**
+
 - ✅ `api.cardstrategyapp.com` 解析到 `159.223.84.189`
 - ✅ HTTPS 連接正常
 - ✅ SSL 證書有效
@@ -119,6 +131,7 @@ openssl s_client -connect api.cardstrategyapp.com:443 -servername api.cardstrate
 - ✅ 安全設置生效
 
 ### **測試端點**
+
 - **健康檢查**: https://api.cardstrategyapp.com/api/health
 - **版本信息**: https://api.cardstrategyapp.com/api/version
 - **前端應用**: https://cardstrategyapp.com
@@ -128,24 +141,28 @@ openssl s_client -connect api.cardstrategyapp.com:443 -servername api.cardstrate
 ### **常見問題**
 
 **Q: 域名無法解析**
-A: 
+A:
+
 1. 檢查 DNS 記錄是否正確
 2. 等待 DNS 傳播 (最多 24 小時)
 3. 清除本地 DNS 緩存
 
 **Q: HTTPS 連接失敗**
 A:
+
 1. 檢查 SSL/TLS 設置
 2. 確保使用 Full (strict) 模式
 3. 檢查 DigitalOcean Droplet 配置
 
 **Q: API 端點無法訪問**
 A:
+
 1. 檢查 DigitalOcean Droplet 是否運行
 2. 檢查防火牆設置
 3. 檢查 Nginx 配置
 
 ### **調試命令**
+
 ```bash
 # 檢查 DNS 解析
 dig api.cardstrategyapp.com
@@ -160,12 +177,14 @@ curl -v https://api.cardstrategyapp.com/api/health
 ## 🔧 **DigitalOcean Droplet 配置**
 
 ### **確保 Droplet 正確配置**
+
 1. **Nginx 配置**: 確保正確代理 API 請求
 2. **防火牆設置**: 開放 80, 443, 3000 端口
 3. **SSL 證書**: 配置 Let's Encrypt 證書
 4. **域名配置**: 設置 server_name
 
 ### **Nginx 配置示例**
+
 ```nginx
 server {
     listen 80;
@@ -176,10 +195,10 @@ server {
 server {
     listen 443 ssl http2;
     server_name api.cardstrategyapp.com;
-    
+
     ssl_certificate /etc/letsencrypt/live/api.cardstrategyapp.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/api.cardstrategyapp.com/privkey.pem;
-    
+
     location / {
         proxy_pass http://localhost:3000;
         proxy_set_header Host $host;
@@ -204,6 +223,7 @@ server {
 ## 🎉 **完成後的效果**
 
 配置完成後，您將擁有：
+
 - ✅ 完整的域名系統
 - ✅ 安全的 HTTPS 連接
 - ✅ 高性能的 CDN

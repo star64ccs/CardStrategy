@@ -6,7 +6,7 @@ export const ANIMATION_CONFIG = {
     fast: 150,
     normal: 300,
     slow: 500,
-    verySlow: 800
+    verySlow: 800,
   },
   easing: {
     ease: Easing.ease,
@@ -14,8 +14,8 @@ export const ANIMATION_CONFIG = {
     easeOut: Easing.out(Easing.ease),
     easeInOut: Easing.inOut(Easing.ease),
     bounce: Easing.bounce,
-    elastic: Easing.elastic(1)
-  }
+    elastic: Easing.elastic(1),
+  },
 };
 
 // 淡入動畫
@@ -29,7 +29,7 @@ export const fadeIn = (
     duration,
     delay,
     easing: ANIMATION_CONFIG.easing.easeOut,
-    useNativeDriver: true
+    useNativeDriver: true,
   });
 };
 
@@ -44,7 +44,7 @@ export const fadeOut = (
     duration,
     delay,
     easing: ANIMATION_CONFIG.easing.easeIn,
-    useNativeDriver: true
+    useNativeDriver: true,
   });
 };
 
@@ -56,14 +56,15 @@ export const slideIn = (
   duration: number = ANIMATION_CONFIG.duration.normal,
   delay: number = 0
 ): Animated.CompositeAnimation => {
-  const toValue = direction === 'up' || direction === 'left' ? -distance : distance;
+  const toValue =
+    direction === 'up' || direction === 'left' ? -distance : distance;
 
   return Animated.timing(animatedValue, {
     toValue: 0,
     duration,
     delay,
     easing: ANIMATION_CONFIG.easing.easeOut,
-    useNativeDriver: true
+    useNativeDriver: true,
   });
 };
 
@@ -79,7 +80,7 @@ export const scale = (
     duration,
     delay,
     easing: ANIMATION_CONFIG.easing.easeOut,
-    useNativeDriver: true
+    useNativeDriver: true,
   });
 };
 
@@ -95,14 +96,14 @@ export const bounce = (
       duration: duration * 0.6,
       delay,
       easing: ANIMATION_CONFIG.easing.easeOut,
-      useNativeDriver: true
+      useNativeDriver: true,
     }),
     Animated.timing(animatedValue, {
       toValue: 1,
       duration: duration * 0.4,
       easing: ANIMATION_CONFIG.easing.bounce,
-      useNativeDriver: true
-    })
+      useNativeDriver: true,
+    }),
   ]);
 };
 
@@ -116,23 +117,23 @@ export const shake = (
     Animated.timing(animatedValue, {
       toValue: intensity,
       duration: duration / 4,
-      useNativeDriver: true
+      useNativeDriver: true,
     }),
     Animated.timing(animatedValue, {
       toValue: -intensity,
       duration: duration / 4,
-      useNativeDriver: true
+      useNativeDriver: true,
     }),
     Animated.timing(animatedValue, {
       toValue: intensity,
       duration: duration / 4,
-      useNativeDriver: true
+      useNativeDriver: true,
     }),
     Animated.timing(animatedValue, {
       toValue: 0,
       duration: duration / 4,
-      useNativeDriver: true
-    })
+      useNativeDriver: true,
+    }),
   ]);
 };
 
@@ -147,14 +148,14 @@ export const pulse = (
         toValue: 1,
         duration: duration / 2,
         easing: ANIMATION_CONFIG.easing.easeInOut,
-        useNativeDriver: false
+        useNativeDriver: false,
       }),
       Animated.timing(animatedValue, {
         toValue: 0.3,
         duration: duration / 2,
         easing: ANIMATION_CONFIG.easing.easeInOut,
-        useNativeDriver: false
-      })
+        useNativeDriver: false,
+      }),
     ])
   );
 };
@@ -169,7 +170,7 @@ export const rotate = (
       toValue: 1,
       duration,
       easing: ANIMATION_CONFIG.easing.linear,
-      useNativeDriver: true
+      useNativeDriver: true,
     })
   );
 };
@@ -189,22 +190,23 @@ export const sequence = (
 };
 
 // 延遲動畫
-export const delay = (
-  duration: number
-): Animated.CompositeAnimation => {
+export const delay = (duration: number): Animated.CompositeAnimation => {
   return Animated.delay(duration);
 };
 
 // 動畫工具函數
 export const createStaggeredAnimation = (
   animatedValues: Animated.Value[],
-  animationCreator: (value: Animated.Value, index: number) => Animated.CompositeAnimation,
+  animationCreator: (
+    value: Animated.Value,
+    index: number
+  ) => Animated.CompositeAnimation,
   staggerDelay: number = 100
 ): Animated.CompositeAnimation => {
   const animations = animatedValues.map((value, index) =>
     Animated.sequence([
       Animated.delay(index * staggerDelay),
-      animationCreator(value, index)
+      animationCreator(value, index),
     ])
   );
 
@@ -213,46 +215,47 @@ export const createStaggeredAnimation = (
 
 // 動畫組合器
 export const combineAnimations = {
-  fadeInSlideUp: (opacity: Animated.Value, translateY: Animated.Value, duration = 300) =>
+  fadeInSlideUp: (
+    opacity: Animated.Value,
+    translateY: Animated.Value,
+    duration = 300
+  ) =>
     parallel([
       fadeIn(opacity, duration),
-      slideIn(translateY, 'up', 50, duration)
+      slideIn(translateY, 'up', 50, duration),
     ]),
 
-  fadeInScale: (opacity: Animated.Value, scale: Animated.Value, duration = 300) =>
-    parallel([
-      fadeIn(opacity, duration),
-      scale(scale, 1, duration)
-    ]),
+  fadeInScale: (
+    opacity: Animated.Value,
+    scale: Animated.Value,
+    duration = 300
+  ) => parallel([fadeIn(opacity, duration), scale(scale, 1, duration)]),
 
   bounceIn: (opacity: Animated.Value, scale: Animated.Value, duration = 500) =>
-    parallel([
-      fadeIn(opacity, duration),
-      bounce(scale, duration)
-    ])
+    parallel([fadeIn(opacity, duration), bounce(scale, duration)]),
 };
 
 // 動畫預設
 export const ANIMATION_PRESETS = {
-  cardEnter: (opacity: Animated.Value, translateY: Animated.Value, index: number) =>
+  cardEnter: (
+    opacity: Animated.Value,
+    translateY: Animated.Value,
+    index: number
+  ) =>
     sequence([
       delay(index * 100),
-      combineAnimations.fadeInSlideUp(opacity, translateY, 400)
+      combineAnimations.fadeInSlideUp(opacity, translateY, 400),
     ]),
 
   buttonPress: (scale: Animated.Value) =>
-    sequence([
-      scale(scale, 0.95, 100),
-      scale(scale, 1, 100)
-    ]),
+    sequence([scale(scale, 0.95, 100), scale(scale, 1, 100)]),
 
-  loadingSpinner: (rotation: Animated.Value) =>
-    rotate(rotation, 1000),
+  loadingSpinner: (rotation: Animated.Value) => rotate(rotation, 1000),
 
   successCheck: (scale: Animated.Value) =>
     sequence([
       scale(scale, 0, 0),
       scale(scale, 1.2, 200),
-      scale(scale, 1, 100)
-    ])
+      scale(scale, 1, 100),
+    ]),
 };

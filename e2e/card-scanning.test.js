@@ -1,4 +1,6 @@
-const { by, device, element, expect } = require('detox');
+/* eslint-env jest, detox */
+
+const { by, device, element } = require('detox');
 
 describe('Card Scanning Flow', () => {
   beforeAll(async () => {
@@ -281,12 +283,16 @@ describe('Card Scanning Flow', () => {
 
     it('should successfully save manual input', async () => {
       // 輸入卡片信息
-      await element(by.id('card-name-input')).typeText('Blue-Eyes White Dragon');
+      await element(by.id('card-name-input')).typeText(
+        'Blue-Eyes White Dragon'
+      );
       await element(by.id('card-type-input')).tap();
       await element(by.text('Monster')).tap();
       await element(by.id('card-rarity-input')).tap();
       await element(by.text('Ultra Rare')).tap();
-      await element(by.id('card-set-input')).typeText('Legend of Blue Eyes White Dragon');
+      await element(by.id('card-set-input')).typeText(
+        'Legend of Blue Eyes White Dragon'
+      );
 
       // 點擊保存
       await element(by.text('保存')).tap();

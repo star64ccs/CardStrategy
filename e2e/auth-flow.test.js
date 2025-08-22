@@ -1,4 +1,6 @@
-const { by, device, element, expect } = require('detox');
+/* eslint-env jest, detox */
+
+const { by, device, element } = require('detox');
 
 describe('Authentication Flow', () => {
   beforeAll(async () => {
@@ -127,7 +129,9 @@ describe('Authentication Flow', () => {
       await element(by.id('register-button')).tap();
 
       // 檢查是否顯示用戶名格式錯誤
-      await expect(element(by.text('用戶名只能包含字母、數字、下劃線和連字符'))).toBeVisible();
+      await expect(
+        element(by.text('用戶名只能包含字母、數字、下劃線和連字符'))
+      ).toBeVisible();
     });
 
     it('should show validation error for password mismatch', async () => {
@@ -138,7 +142,9 @@ describe('Authentication Flow', () => {
       await element(by.id('username-input')).typeText('testuser');
       await element(by.id('email-input')).typeText('test@example.com');
       await element(by.id('password-input')).typeText('Password123!');
-      await element(by.id('confirm-password-input')).typeText('DifferentPassword123!');
+      await element(by.id('confirm-password-input')).typeText(
+        'DifferentPassword123!'
+      );
       await element(by.id('register-button')).tap();
 
       // 檢查是否顯示密碼不匹配錯誤

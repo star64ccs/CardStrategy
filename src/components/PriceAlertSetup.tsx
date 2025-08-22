@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { theme } from '@/config/theme';
 import { priceMonitorService } from '@/services/priceMonitorService';
@@ -28,7 +28,7 @@ export const PriceAlertSetup: React.FC<PriceAlertSetupProps> = ({
   currentPrice,
   isVisible,
   onClose,
-  onSuccess
+  onSuccess,
 }) => {
   const [targetPrice, setTargetPrice] = useState('');
   const [alertType, setAlertType] = useState<'above' | 'below'>('above');
@@ -67,12 +67,16 @@ export const PriceAlertSetup: React.FC<PriceAlertSetupProps> = ({
             onPress: () => {
               onClose();
               onSuccess?.();
-            }
-          }
+            },
+          },
         ]
       );
 
-      logger.info('價格提醒設置成功', { cardId, targetPrice: price, type: alertType });
+      logger.info('價格提醒設置成功', {
+        cardId,
+        targetPrice: price,
+        type: alertType,
+      });
     } catch (error) {
       logger.error('設置價格提醒失敗:', { error });
       Alert.alert('錯誤', '設置價格提醒失敗，請重試');
@@ -119,14 +123,16 @@ export const PriceAlertSetup: React.FC<PriceAlertSetupProps> = ({
                 <TouchableOpacity
                   style={[
                     styles.typeButton,
-                    alertType === 'above' && styles.typeButtonActive
+                    alertType === 'above' && styles.typeButtonActive,
                   ]}
                   onPress={() => setAlertType('above')}
                 >
-                  <Text style={[
-                    styles.typeButtonText,
-                    alertType === 'above' && styles.typeButtonTextActive
-                  ]}>
+                  <Text
+                    style={[
+                      styles.typeButtonText,
+                      alertType === 'above' && styles.typeButtonTextActive,
+                    ]}
+                  >
                     📈 上漲提醒
                   </Text>
                   <Text style={styles.typeDescription}>
@@ -137,14 +143,16 @@ export const PriceAlertSetup: React.FC<PriceAlertSetupProps> = ({
                 <TouchableOpacity
                   style={[
                     styles.typeButton,
-                    alertType === 'below' && styles.typeButtonActive
+                    alertType === 'below' && styles.typeButtonActive,
                   ]}
                   onPress={() => setAlertType('below')}
                 >
-                  <Text style={[
-                    styles.typeButtonText,
-                    alertType === 'below' && styles.typeButtonTextActive
-                  ]}>
+                  <Text
+                    style={[
+                      styles.typeButtonText,
+                      alertType === 'below' && styles.typeButtonTextActive,
+                    ]}
+                  >
                     📉 下跌提醒
                   </Text>
                   <Text style={styles.typeDescription}>
@@ -174,8 +182,15 @@ export const PriceAlertSetup: React.FC<PriceAlertSetupProps> = ({
                 <View style={styles.priceInfo}>
                   <Text style={styles.priceInfoText}>
                     {alertType === 'above' ? '上漲' : '下跌'}幅度:
-                    {Math.abs(Number(targetPrice) - currentPrice).toFixed(2)} TWD
-                    ({Math.abs((Number(targetPrice) - currentPrice) / currentPrice * 100).toFixed(2)}%)
+                    {Math.abs(Number(targetPrice) - currentPrice).toFixed(
+                      2
+                    )}{' '}
+                    TWD (
+                    {Math.abs(
+                      ((Number(targetPrice) - currentPrice) / currentPrice) *
+                        100
+                    ).toFixed(2)}
+                    %)
                   </Text>
                 </View>
               )}
@@ -185,10 +200,10 @@ export const PriceAlertSetup: React.FC<PriceAlertSetupProps> = ({
             <View style={styles.infoContainer}>
               <Text style={styles.infoTitle}>💡 使用說明</Text>
               <Text style={styles.infoText}>
-                • 設置價格提醒後，當卡牌價格達到目標時會自動發送通知{'\n'}
-                • 您可以設置多個不同價格的提醒{'\n'}
-                • 提醒會在價格達到目標時立即發送{'\n'}
-                • 可以在通知設置中管理所有提醒
+                • 設置價格提醒後，當卡牌價格達到目標時會自動發送通知{'\n'}•
+                您可以設置多個不同價格的提醒{'\n'}•
+                提醒會在價格達到目標時立即發送{'\n'}•
+                可以在通知設置中管理所有提醒
               </Text>
             </View>
           </ScrollView>
@@ -206,7 +221,7 @@ export const PriceAlertSetup: React.FC<PriceAlertSetupProps> = ({
             <TouchableOpacity
               style={[
                 styles.createButton,
-                (!targetPrice || isLoading) && styles.createButtonDisabled
+                (!targetPrice || isLoading) && styles.createButtonDisabled,
               ]}
               onPress={handleCreateAlert}
               disabled={!targetPrice || isLoading}
@@ -226,13 +241,13 @@ const styles = StyleSheet.create({
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   modalContent: {
     backgroundColor: theme.colors.backgroundLight,
     borderTopLeftRadius: theme.borderRadius.large,
     borderTopRightRadius: theme.borderRadius.large,
-    maxHeight: '80%'
+    maxHeight: '80%',
   },
   header: {
     flexDirection: 'row',
@@ -240,12 +255,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: theme.spacing.large,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.borderLight
+    borderBottomColor: theme.colors.borderLight,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   closeButton: {
     width: 32,
@@ -253,44 +268,44 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: theme.colors.backgroundPaper,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   closeButtonText: {
     fontSize: 18,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   content: {
-    padding: theme.spacing.large
+    padding: theme.spacing.large,
   },
   cardInfo: {
     backgroundColor: theme.colors.backgroundPaper,
     padding: theme.spacing.large,
     borderRadius: theme.borderRadius.medium,
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   cardName: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   currentPrice: {
     fontSize: 16,
     color: theme.colors.primary,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   section: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   sectionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   typeContainer: {
     flexDirection: 'row',
-    gap: theme.spacing.medium
+    gap: theme.spacing.medium,
   },
   typeButton: {
     flex: 1,
@@ -298,26 +313,26 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.medium,
     borderWidth: 2,
     borderColor: theme.colors.borderLight,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   typeButtonActive: {
     borderColor: theme.colors.primary,
-    backgroundColor: `${theme.colors.primary  }20`
+    backgroundColor: `${theme.colors.primary}20`,
   },
   typeButtonText: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   typeButtonTextActive: {
-    color: theme.colors.primary
+    color: theme.colors.primary,
   },
   typeDescription: {
     fontSize: 12,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 16
+    lineHeight: 16,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -325,51 +340,51 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.borderLight,
     borderRadius: theme.borderRadius.medium,
-    paddingHorizontal: theme.spacing.medium
+    paddingHorizontal: theme.spacing.medium,
   },
   input: {
     flex: 1,
     paddingVertical: theme.spacing.medium,
     fontSize: 16,
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   currency: {
     fontSize: 16,
     color: theme.colors.textSecondary,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   priceInfo: {
     marginTop: theme.spacing.small,
     padding: theme.spacing.small,
     backgroundColor: theme.colors.backgroundPaper,
-    borderRadius: theme.borderRadius.small
+    borderRadius: theme.borderRadius.small,
   },
   priceInfoText: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   infoContainer: {
     backgroundColor: theme.colors.backgroundPaper,
     padding: theme.spacing.large,
-    borderRadius: theme.borderRadius.medium
+    borderRadius: theme.borderRadius.medium,
   },
   infoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   infoText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    lineHeight: 20
+    lineHeight: 20,
   },
   footer: {
     flexDirection: 'row',
     padding: theme.spacing.large,
     borderTopWidth: 1,
     borderTopColor: theme.colors.borderLight,
-    gap: theme.spacing.medium
+    gap: theme.spacing.medium,
   },
   cancelButton: {
     flex: 1,
@@ -377,26 +392,26 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.medium,
     borderWidth: 1,
     borderColor: theme.colors.borderLight,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cancelButtonText: {
     fontSize: 16,
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   createButton: {
     flex: 1,
     paddingVertical: theme.spacing.medium,
     borderRadius: theme.borderRadius.medium,
     backgroundColor: theme.colors.primary,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   createButtonDisabled: {
     backgroundColor: theme.colors.gray,
-    opacity: 0.6
+    opacity: 0.6,
   },
   createButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: theme.colors.white
-  }
+    color: theme.colors.white,
+  },
 });

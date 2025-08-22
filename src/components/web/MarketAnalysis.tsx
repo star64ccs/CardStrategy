@@ -18,7 +18,9 @@ interface MarketData {
 }
 
 const MarketAnalysis: React.FC = () => {
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'24h' | '7d' | '30d'>('24h');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<
+    '24h' | '7d' | '30d'
+  >('24h');
 
   // 模擬市場數據
   const marketData: MarketData = {
@@ -30,23 +32,23 @@ const MarketAnalysis: React.FC = () => {
       { name: '青眼白龍', change: 18.2, price: 1500 },
       { name: '黑魔導', change: 12.8, price: 800 },
       { name: '真紅眼黑龍', change: 9.5, price: 1200 },
-      { name: '元素英雄 新宇俠', change: 7.2, price: 600 }
+      { name: '元素英雄 新宇俠', change: 7.2, price: 600 },
     ],
     topLosers: [
       { name: '暗黑魔導師', change: -15.3, price: 450 },
       { name: '藍眼白龍', change: -12.1, price: 1200 },
       { name: '紅眼黑龍', change: -8.7, price: 800 },
       { name: '綠眼白龍', change: -6.4, price: 900 },
-      { name: '黃眼白龍', change: -4.2, price: 750 }
+      { name: '黃眼白龍', change: -4.2, price: 750 },
     ],
-    marketTrend: 'bull'
+    marketTrend: 'bull',
   };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('zh-TW', {
       style: 'currency',
       currency: 'TWD',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(amount);
   };
 
@@ -56,17 +58,23 @@ const MarketAnalysis: React.FC = () => {
 
   const getTrendColor = (trend: 'bull' | 'bear' | 'neutral') => {
     switch (trend) {
-      case 'bull': return '#27ae60';
-      case 'bear': return '#e74c3c';
-      default: return '#7f8c8d';
+      case 'bull':
+        return '#27ae60';
+      case 'bear':
+        return '#e74c3c';
+      default:
+        return '#7f8c8d';
     }
   };
 
   const getTrendIcon = (trend: 'bull' | 'bear' | 'neutral') => {
     switch (trend) {
-      case 'bull': return '📈';
-      case 'bear': return '📉';
-      default: return '➡️';
+      case 'bull':
+        return '📈';
+      case 'bear':
+        return '📉';
+      default:
+        return '➡️';
     }
   };
 
@@ -80,7 +88,7 @@ const MarketAnalysis: React.FC = () => {
           <button
             style={{
               ...styles.timeframeButton,
-              ...(selectedTimeframe === '24h' && styles.activeTimeframe)
+              ...(selectedTimeframe === '24h' && styles.activeTimeframe),
             }}
             onClick={() => setSelectedTimeframe('24h')}
           >
@@ -89,7 +97,7 @@ const MarketAnalysis: React.FC = () => {
           <button
             style={{
               ...styles.timeframeButton,
-              ...(selectedTimeframe === '7d' && styles.activeTimeframe)
+              ...(selectedTimeframe === '7d' && styles.activeTimeframe),
             }}
             onClick={() => setSelectedTimeframe('7d')}
           >
@@ -98,7 +106,7 @@ const MarketAnalysis: React.FC = () => {
           <button
             style={{
               ...styles.timeframeButton,
-              ...(selectedTimeframe === '30d' && styles.activeTimeframe)
+              ...(selectedTimeframe === '30d' && styles.activeTimeframe),
             }}
             onClick={() => setSelectedTimeframe('30d')}
           >
@@ -110,7 +118,9 @@ const MarketAnalysis: React.FC = () => {
           <div style={styles.statCard}>
             <div style={styles.statIcon}>💰</div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{formatCurrency(marketData.totalVolume)}</div>
+              <div style={styles.statValue}>
+                {formatCurrency(marketData.totalVolume)}
+              </div>
               <div style={styles.statLabel}>總交易量</div>
             </div>
           </div>
@@ -118,7 +128,9 @@ const MarketAnalysis: React.FC = () => {
           <div style={styles.statCard}>
             <div style={styles.statIcon}>🎴</div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{marketData.totalCards.toLocaleString()}</div>
+              <div style={styles.statValue}>
+                {marketData.totalCards.toLocaleString()}
+              </div>
               <div style={styles.statLabel}>活躍卡片</div>
             </div>
           </div>
@@ -126,18 +138,24 @@ const MarketAnalysis: React.FC = () => {
           <div style={styles.statCard}>
             <div style={styles.statIcon}>📊</div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{formatCurrency(marketData.averagePrice)}</div>
+              <div style={styles.statValue}>
+                {formatCurrency(marketData.averagePrice)}
+              </div>
               <div style={styles.statLabel}>平均價格</div>
             </div>
           </div>
 
           <div style={styles.statCard}>
-            <div style={styles.statIcon}>{getTrendIcon(marketData.marketTrend)}</div>
+            <div style={styles.statIcon}>
+              {getTrendIcon(marketData.marketTrend)}
+            </div>
             <div style={styles.statContent}>
-              <div style={{
-                ...styles.statValue,
-                color: getTrendColor(marketData.marketTrend)
-              }}>
+              <div
+                style={{
+                  ...styles.statValue,
+                  color: getTrendColor(marketData.marketTrend),
+                }}
+              >
                 {marketData.marketTrend === 'bull'
                   ? '牛市'
                   : marketData.marketTrend === 'bear'
@@ -160,12 +178,16 @@ const MarketAnalysis: React.FC = () => {
                 <div style={styles.rankingNumber}>{index + 1}</div>
                 <div style={styles.rankingInfo}>
                   <div style={styles.rankingName}>{item.name}</div>
-                  <div style={styles.rankingPrice}>{formatCurrency(item.price)}</div>
+                  <div style={styles.rankingPrice}>
+                    {formatCurrency(item.price)}
+                  </div>
                 </div>
-                <div style={{
-                  ...styles.rankingChange,
-                  color: '#27ae60'
-                }}>
+                <div
+                  style={{
+                    ...styles.rankingChange,
+                    color: '#27ae60',
+                  }}
+                >
                   {formatPercentage(item.change)}
                 </div>
               </div>
@@ -181,12 +203,16 @@ const MarketAnalysis: React.FC = () => {
                 <div style={styles.rankingNumber}>{index + 1}</div>
                 <div style={styles.rankingInfo}>
                   <div style={styles.rankingName}>{item.name}</div>
-                  <div style={styles.rankingPrice}>{formatCurrency(item.price)}</div>
+                  <div style={styles.rankingPrice}>
+                    {formatCurrency(item.price)}
+                  </div>
                 </div>
-                <div style={{
-                  ...styles.rankingChange,
-                  color: '#e74c3c'
-                }}>
+                <div
+                  style={{
+                    ...styles.rankingChange,
+                    color: '#e74c3c',
+                  }}
+                >
                   {formatPercentage(item.change)}
                 </div>
               </div>
@@ -230,25 +256,25 @@ const MarketAnalysis: React.FC = () => {
 
 const styles = {
   container: {
-    padding: '24px'
+    padding: '24px',
   },
   overview: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
     marginBottom: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   title: {
     fontSize: '24px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 20px 0'
+    margin: '0 0 20px 0',
   },
   timeframeSelector: {
     display: 'flex',
     gap: '8px',
-    marginBottom: '24px'
+    marginBottom: '24px',
   },
   timeframeButton: {
     padding: '8px 16px',
@@ -257,17 +283,17 @@ const styles = {
     backgroundColor: '#ffffff',
     color: '#7f8c8d',
     cursor: 'pointer',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   activeTimeframe: {
     backgroundColor: '#3498db',
     color: '#ffffff',
-    borderColor: '#3498db'
+    borderColor: '#3498db',
   },
   statsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '16px'
+    gap: '16px',
   },
   statCard: {
     display: 'flex',
@@ -275,54 +301,54 @@ const styles = {
     padding: '16px',
     backgroundColor: '#f8f9fa',
     borderRadius: '8px',
-    border: '1px solid #e1e8ed'
+    border: '1px solid #e1e8ed',
   },
   statIcon: {
     fontSize: '24px',
-    marginRight: '12px'
+    marginRight: '12px',
   },
   statContent: {
-    flex: 1
+    flex: 1,
   },
   statValue: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '4px'
+    marginBottom: '4px',
   },
   statLabel: {
     fontSize: '12px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   rankings: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: '24px',
-    marginBottom: '24px'
+    marginBottom: '24px',
   },
   rankingSection: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   rankingTitle: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 16px 0'
+    margin: '0 0 16px 0',
   },
   rankingList: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '8px'
+    gap: '8px',
   },
   rankingItem: {
     display: 'flex',
     alignItems: 'center',
     padding: '12px',
     backgroundColor: '#f8f9fa',
-    borderRadius: '6px'
+    borderRadius: '6px',
   },
   rankingNumber: {
     width: '24px',
@@ -335,41 +361,41 @@ const styles = {
     justifyContent: 'center',
     fontSize: '12px',
     fontWeight: 'bold',
-    marginRight: '12px'
+    marginRight: '12px',
   },
   rankingInfo: {
-    flex: 1
+    flex: 1,
   },
   rankingName: {
     fontSize: '14px',
     fontWeight: '600',
     color: '#2c3e50',
-    marginBottom: '2px'
+    marginBottom: '2px',
   },
   rankingPrice: {
     fontSize: '12px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   rankingChange: {
     fontSize: '14px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   insights: {
     backgroundColor: '#ffffff',
     borderRadius: '12px',
     padding: '24px',
-    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
   },
   insightsTitle: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 16px 0'
+    margin: '0 0 16px 0',
   },
   insightsContent: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '12px'
+    gap: '12px',
   },
   insightCard: {
     display: 'flex',
@@ -377,18 +403,18 @@ const styles = {
     padding: '16px',
     backgroundColor: '#f8f9fa',
     borderRadius: '8px',
-    border: '1px solid #e1e8ed'
+    border: '1px solid #e1e8ed',
   },
   insightIcon: {
     fontSize: '20px',
     marginRight: '12px',
-    marginTop: '2px'
+    marginTop: '2px',
   },
   insightText: {
     fontSize: '14px',
     color: '#2c3e50',
-    lineHeight: '1.5'
-  }
+    lineHeight: '1.5',
+  },
 };
 
 export default MarketAnalysis;

@@ -1,5 +1,7 @@
+/* eslint-env jest */
+
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 const { sequelize } = require('../../src/config/database');
 const User = require('../../src/models/User');
 const Card = require('../../src/models/Card');
@@ -38,7 +40,7 @@ describe('服務層單元測試', () => {
         username: 'testuser',
         email: 'test@example.com',
         password: hashedPassword,
-        role: 'user'
+        role: 'user',
       });
 
       // 創建測試卡片
@@ -51,7 +53,7 @@ describe('服務層單元測試', () => {
         marketCap: 1000000,
         totalSupply: 1000,
         imageUrl: 'https://example.com/card.jpg',
-        description: 'Test card description'
+        description: 'Test card description',
       });
     });
 
@@ -115,7 +117,9 @@ describe('服務層單元測試', () => {
 
     describe('智能推薦', () => {
       it('應該能夠提供智能推薦', async () => {
-        const recommendations = await aiService.getSmartRecommendations(testUser.id);
+        const recommendations = await aiService.getSmartRecommendations(
+          testUser.id
+        );
 
         expect(recommendations).toBeDefined();
         expect(recommendations.success).toBe(true);
@@ -127,7 +131,10 @@ describe('服務層單元測試', () => {
 
     describe('AI 聊天', () => {
       it('應該能夠處理聊天消息', async () => {
-        const response = await aiService.chat(testUser.id, '你好，我想了解卡片投資');
+        const response = await aiService.chat(
+          testUser.id,
+          '你好，我想了解卡片投資'
+        );
 
         expect(response).toBeDefined();
         expect(response.success).toBe(true);
@@ -170,7 +177,7 @@ describe('服務層單元測試', () => {
         marketCap: 1000000,
         totalSupply: 1000,
         imageUrl: 'https://example.com/card.jpg',
-        description: 'Test card description'
+        description: 'Test card description',
       });
     });
 
@@ -178,7 +185,7 @@ describe('服務層單元測試', () => {
       it('應該能夠訓練 LSTM 模型', async () => {
         const result = await deepLearningService.trainModel('lstm', {
           epochs: 10,
-          batchSize: 32
+          batchSize: 32,
         });
 
         expect(result).toBeDefined();
@@ -191,7 +198,7 @@ describe('服務層單元測試', () => {
       it('應該能夠訓練 GRU 模型', async () => {
         const result = await deepLearningService.trainModel('gru', {
           epochs: 10,
-          batchSize: 32
+          batchSize: 32,
         });
 
         expect(result.success).toBe(true);
@@ -201,7 +208,7 @@ describe('服務層單元測試', () => {
       it('應該能夠訓練 Transformer 模型', async () => {
         const result = await deepLearningService.trainModel('transformer', {
           epochs: 10,
-          batchSize: 32
+          batchSize: 32,
         });
 
         expect(result.success).toBe(true);
@@ -218,7 +225,11 @@ describe('服務層單元測試', () => {
 
     describe('價格預測', () => {
       it('應該能夠使用 LSTM 模型預測價格', async () => {
-        const prediction = await deepLearningService.predictPrice(testCard.id, 'lstm', '7d');
+        const prediction = await deepLearningService.predictPrice(
+          testCard.id,
+          'lstm',
+          '7d'
+        );
 
         expect(prediction).toBeDefined();
         expect(prediction.success).toBe(true);
@@ -228,14 +239,22 @@ describe('服務層單元測試', () => {
       });
 
       it('應該能夠使用 GRU 模型預測價格', async () => {
-        const prediction = await deepLearningService.predictPrice(testCard.id, 'gru', '7d');
+        const prediction = await deepLearningService.predictPrice(
+          testCard.id,
+          'gru',
+          '7d'
+        );
 
         expect(prediction.success).toBe(true);
         expect(prediction.data.modelType).toBe('gru');
       });
 
       it('應該處理無效的卡片 ID', async () => {
-        const prediction = await deepLearningService.predictPrice(999999, 'lstm', '7d');
+        const prediction = await deepLearningService.predictPrice(
+          999999,
+          'lstm',
+          '7d'
+        );
 
         expect(prediction.success).toBe(false);
         expect(prediction.message).toContain('卡片不存在');
@@ -244,7 +263,10 @@ describe('服務層單元測試', () => {
 
     describe('模型比較', () => {
       it('應該能夠比較不同模型的性能', async () => {
-        const comparison = await deepLearningService.compareModels(testCard.id, '7d');
+        const comparison = await deepLearningService.compareModels(
+          testCard.id,
+          '7d'
+        );
 
         expect(comparison).toBeDefined();
         expect(comparison.success).toBe(true);
@@ -256,7 +278,11 @@ describe('服務層單元測試', () => {
 
     describe('批量預測', () => {
       it('應該能夠進行批量預測', async () => {
-        const batchPrediction = await deepLearningService.batchPredict([testCard.id], 'lstm', '7d');
+        const batchPrediction = await deepLearningService.batchPredict(
+          [testCard.id],
+          'lstm',
+          '7d'
+        );
 
         expect(batchPrediction).toBeDefined();
         expect(batchPrediction.success).toBe(true);
@@ -272,7 +298,7 @@ describe('服務層單元測試', () => {
       it('應該能夠優化查詢選項', () => {
         const queryOptions = {
           where: { name: 'Test' },
-          include: [{ model: User, as: 'owner' }]
+          include: [{ model: User, as: 'owner' }],
         };
 
         const optimized = databaseOptimizer.optimizeQuery(queryOptions);
@@ -285,7 +311,7 @@ describe('服務層單元測試', () => {
 
       it('應該限制最大查詢數量', () => {
         const queryOptions = {
-          limit: 200 // 超過最大限制
+          limit: 200, // 超過最大限制
         };
 
         const optimized = databaseOptimizer.optimizeQuery(queryOptions);
@@ -318,7 +344,7 @@ describe('服務層單元測試', () => {
         // 模擬一個慢查詢
         const slowQuery = {
           sql: 'SELECT * FROM cards WHERE name LIKE "%test%"',
-          time: 5000 // 5秒
+          time: 5000, // 5秒
         };
 
         databaseOptimizer.recordQuery(slowQuery);
@@ -339,7 +365,9 @@ describe('服務層單元測試', () => {
 
     describe('查詢計劃分析', () => {
       it('應該能夠分析查詢計劃', async () => {
-        const analysis = await databaseOptimizer.analyzeQueryPlan('SELECT * FROM cards');
+        const analysis = await databaseOptimizer.analyzeQueryPlan(
+          'SELECT * FROM cards'
+        );
 
         expect(analysis).toBeDefined();
         expect(analysis.success).toBe(true);
@@ -452,7 +480,7 @@ describe('服務層單元測試', () => {
           cpu: 80,
           memory: 85,
           responseTime: 2000,
-          errorRate: 5
+          errorRate: 5,
         };
 
         monitoringService.setAlertThresholds(thresholds);
@@ -471,7 +499,7 @@ describe('服務層單元測試', () => {
         const validUserData = {
           username: 'testuser',
           email: 'test@example.com',
-          password: 'TestPassword123!'
+          password: 'TestPassword123!',
         };
 
         // 這裡應該調用實際的驗證函數
@@ -484,7 +512,7 @@ describe('服務層單元測試', () => {
         const invalidUserData = {
           username: '',
           email: 'invalid-email',
-          password: '123'
+          password: '123',
         };
 
         expect(invalidUserData.username).toBe('');
@@ -499,7 +527,7 @@ describe('服務層單元測試', () => {
           name: 'Test Card',
           currentPrice: 100,
           marketCap: 1000000,
-          totalSupply: 1000
+          totalSupply: 1000,
         };
 
         expect(validCardData.name).toBeDefined();
@@ -513,7 +541,7 @@ describe('服務層單元測試', () => {
           name: '',
           currentPrice: -100,
           marketCap: 0,
-          totalSupply: -1000
+          totalSupply: -1000,
         };
 
         expect(invalidCardData.name).toBe('');
@@ -529,7 +557,9 @@ describe('服務層單元測試', () => {
       it('應該處理 AI 服務錯誤', async () => {
         // 模擬 AI 服務錯誤
         const mockAiService = {
-          predictPrice: jest.fn().mockRejectedValue(new Error('AI service error'))
+          predictPrice: jest
+            .fn()
+            .mockRejectedValue(new Error('AI service error')),
         };
 
         try {
@@ -544,7 +574,9 @@ describe('服務層單元測試', () => {
       it('應該處理數據庫連接錯誤', async () => {
         // 模擬數據庫錯誤
         const mockDatabase = {
-          query: jest.fn().mockRejectedValue(new Error('Database connection error'))
+          query: jest
+            .fn()
+            .mockRejectedValue(new Error('Database connection error')),
         };
 
         try {
@@ -559,7 +591,9 @@ describe('服務層單元測試', () => {
       it('應該處理監控服務錯誤', async () => {
         // 模擬監控服務錯誤
         const mockMonitoringService = {
-          collectSystemMetrics: jest.fn().mockRejectedValue(new Error('Monitoring service error'))
+          collectSystemMetrics: jest
+            .fn()
+            .mockRejectedValue(new Error('Monitoring service error')),
         };
 
         try {

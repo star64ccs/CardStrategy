@@ -74,7 +74,10 @@ const sharedStateSlice = createSlice({
     setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
       state.user.preferences.theme = action.payload;
     },
-    setLanguage: (state, action: PayloadAction<'zh-TW' | 'en-US' | 'ja-JP'>) => {
+    setLanguage: (
+      state,
+      action: PayloadAction<'zh-TW' | 'en-US' | 'ja-JP'>
+    ) => {
       state.user.preferences.language = action.payload;
     },
     setSelectedCard: (state, action: PayloadAction<any>) => {
@@ -88,14 +91,19 @@ const sharedStateSlice = createSlice({
     },
     toggleFavorite: (state, action: PayloadAction<any>) => {
       const cardId = action.payload.id;
-      const existingIndex = state.cards.favorites.findIndex(card => card.id === cardId);
+      const existingIndex = state.cards.favorites.findIndex(
+        (card) => card.id === cardId
+      );
       if (existingIndex >= 0) {
         state.cards.favorites.splice(existingIndex, 1);
       } else {
         state.cards.favorites.push(action.payload);
       }
     },
-    setMarketTimeframe: (state, action: PayloadAction<'1d' | '1w' | '1m' | '3m' | '1y'>) => {
+    setMarketTimeframe: (
+      state,
+      action: PayloadAction<'1d' | '1w' | '1m' | '3m' | '1y'>
+    ) => {
       state.market.selectedTimeframe = action.payload;
     },
     setMarketData: (state, action: PayloadAction<any[]>) => {
@@ -104,7 +112,10 @@ const sharedStateSlice = createSlice({
     addMarketAlert: (state, action: PayloadAction<any>) => {
       state.market.alerts.push(action.payload);
     },
-    setAIModelStatus: (state, action: PayloadAction<'idle' | 'loading' | 'ready' | 'error'>) => {
+    setAIModelStatus: (
+      state,
+      action: PayloadAction<'idle' | 'loading' | 'ready' | 'error'>
+    ) => {
       state.ai.modelStatus = action.payload;
     },
     addScanResult: (state, action: PayloadAction<any>) => {
@@ -124,25 +135,34 @@ const sharedStateSlice = createSlice({
       state.notifications.unreadCount += 1;
     },
     markNotificationAsRead: (state, action: PayloadAction<string>) => {
-      const message = state.notifications.messages.find(m => m.id === action.payload);
+      const message = state.notifications.messages.find(
+        (m) => m.id === action.payload
+      );
       if (message && !message.read) {
         message.read = true;
-        state.notifications.unreadCount = Math.max(0, state.notifications.unreadCount - 1);
+        state.notifications.unreadCount = Math.max(
+          0,
+          state.notifications.unreadCount - 1
+        );
       }
     },
   },
 });
 
 // 模擬微前端模組組件
-const MockCardManagement = ({ onCardSelect }: { onCardSelect: (card: any) => void }) => (
+const MockCardManagement = ({
+  onCardSelect,
+}: {
+  onCardSelect: (card: any) => void;
+}) => (
   <div data-testid="card-management">
-    <button 
+    <button
       data-testid="select-card-btn"
       onClick={() => onCardSelect({ id: 1, name: '測試卡片', price: 100 })}
     >
       選擇卡片
     </button>
-    <button 
+    <button
       data-testid="scan-card-btn"
       onClick={() => onCardSelect({ id: 2, name: '掃描卡片', price: 150 })}
     >
@@ -151,9 +171,13 @@ const MockCardManagement = ({ onCardSelect }: { onCardSelect: (card: any) => voi
   </div>
 );
 
-const MockMarketAnalysis = ({ onTimeframeChange }: { onTimeframeChange: (timeframe: string) => void }) => (
+const MockMarketAnalysis = ({
+  onTimeframeChange,
+}: {
+  onTimeframeChange: (timeframe: string) => void;
+}) => (
   <div data-testid="market-analysis">
-    <select 
+    <select
       data-testid="timeframe-select"
       onChange={(e) => onTimeframeChange(e.target.value)}
     >
@@ -165,7 +189,13 @@ const MockMarketAnalysis = ({ onTimeframeChange }: { onTimeframeChange: (timefra
   </div>
 );
 
-const MockAIEcosystem = ({ onScan, onPredict }: { onScan: () => void; onPredict: () => void }) => (
+const MockAIEcosystem = ({
+  onScan,
+  onPredict,
+}: {
+  onScan: () => void;
+  onPredict: () => void;
+}) => (
   <div data-testid="ai-ecosystem">
     <button data-testid="ai-scan-btn" onClick={onScan}>
       AI 掃描
@@ -177,9 +207,13 @@ const MockAIEcosystem = ({ onScan, onPredict }: { onScan: () => void; onPredict:
   </div>
 );
 
-const MockNotificationCenter = ({ onMarkRead }: { onMarkRead: (id: string) => void }) => (
+const MockNotificationCenter = ({
+  onMarkRead,
+}: {
+  onMarkRead: (id: string) => void;
+}) => (
   <div data-testid="notification-center">
-    <button 
+    <button
       data-testid="mark-read-btn"
       onClick={() => onMarkRead('test-notification-1')}
     >
@@ -260,10 +294,10 @@ describe('微前端共享狀態集成測試', () => {
       const TestComponent = () => (
         <Provider store={store}>
           <div>
-            <MockCardManagement 
+            <MockCardManagement
               onCardSelect={(card) => {
                 store.dispatch(sharedStateSlice.actions.setSelectedCard(card));
-              }} 
+              }}
             />
             <MockMarketAnalysis onTimeframeChange={() => {}} />
             <MockAIEcosystem onScan={() => {}} onPredict={() => {}} />
@@ -290,10 +324,10 @@ describe('微前端共享狀態集成測試', () => {
       const TestComponent = () => (
         <Provider store={store}>
           <div>
-            <MockCardManagement 
+            <MockCardManagement
               onCardSelect={(card) => {
                 store.dispatch(sharedStateSlice.actions.addRecentScan(card));
-              }} 
+              }}
             />
             <MockAIEcosystem onScan={() => {}} onPredict={() => {}} />
           </div>
@@ -354,10 +388,12 @@ describe('微前端共享狀態集成測試', () => {
       const TestComponent = () => (
         <Provider store={store}>
           <div>
-            <MockMarketAnalysis 
+            <MockMarketAnalysis
               onTimeframeChange={(timeframe) => {
-                store.dispatch(sharedStateSlice.actions.setMarketTimeframe(timeframe as any));
-              }} 
+                store.dispatch(
+                  sharedStateSlice.actions.setMarketTimeframe(timeframe as any)
+                );
+              }}
             />
             <MockCardManagement onCardSelect={() => {}} />
           </div>
@@ -467,7 +503,7 @@ describe('微前端共享狀態集成測試', () => {
       const TestComponent = () => (
         <Provider store={store}>
           <div>
-            <MockAIEcosystem 
+            <MockAIEcosystem
               onScan={() => {
                 const scanResult = {
                   id: 'scan-1',
@@ -475,9 +511,11 @@ describe('微前端共享狀態集成測試', () => {
                   confidence: 0.95,
                   timestamp: new Date().toISOString(),
                 };
-                store.dispatch(sharedStateSlice.actions.addScanResult(scanResult));
-              }} 
-              onPredict={() => {}} 
+                store.dispatch(
+                  sharedStateSlice.actions.addScanResult(scanResult)
+                );
+              }}
+              onPredict={() => {}}
             />
             <MockCardManagement onCardSelect={() => {}} />
           </div>
@@ -500,8 +538,8 @@ describe('微前端共享狀態集成測試', () => {
       const TestComponent = () => (
         <Provider store={store}>
           <div>
-            <MockAIEcosystem 
-              onScan={() => {}} 
+            <MockAIEcosystem
+              onScan={() => {}}
               onPredict={() => {
                 const prediction = {
                   id: 'pred-1',
@@ -510,8 +548,10 @@ describe('微前端共享狀態集成測試', () => {
                   confidence: 0.85,
                   timestamp: new Date().toISOString(),
                 };
-                store.dispatch(sharedStateSlice.actions.addPrediction(prediction));
-              }} 
+                store.dispatch(
+                  sharedStateSlice.actions.addPrediction(prediction)
+                );
+              }}
             />
             <MockMarketAnalysis onTimeframeChange={() => {}} />
           </div>
@@ -536,10 +576,12 @@ describe('微前端共享狀態集成測試', () => {
       const TestComponent = () => (
         <Provider store={store}>
           <div>
-            <MockNotificationCenter 
+            <MockNotificationCenter
               onMarkRead={(id) => {
-                store.dispatch(sharedStateSlice.actions.markNotificationAsRead(id));
-              }} 
+                store.dispatch(
+                  sharedStateSlice.actions.markNotificationAsRead(id)
+                );
+              }}
             />
             <MockCardManagement onCardSelect={() => {}} />
           </div>
@@ -591,18 +633,25 @@ describe('微前端共享狀態集成測試', () => {
       render(<TestComponent />);
 
       // 設置一些重要狀態
-      store.dispatch(sharedStateSlice.actions.setUser({ id: 'user-1', name: '測試用戶' }));
+      store.dispatch(
+        sharedStateSlice.actions.setUser({ id: 'user-1', name: '測試用戶' })
+      );
       store.dispatch(sharedStateSlice.actions.setTheme('dark'));
-      store.dispatch(sharedStateSlice.actions.setSelectedCard({ id: 1, name: '重要卡片' }));
+      store.dispatch(
+        sharedStateSlice.actions.setSelectedCard({ id: 1, name: '重要卡片' })
+      );
 
       // 模擬 localStorage 持久化
       const stateToPersist = store.getState();
-      localStorage.setItem('cardstrategy-state', JSON.stringify(stateToPersist));
+      localStorage.setItem(
+        'cardstrategy-state',
+        JSON.stringify(stateToPersist)
+      );
 
       // 模擬頁面刷新 - 重新創建 store
       const newStore = createTestStore();
       const persistedState = localStorage.getItem('cardstrategy-state');
-      
+
       if (persistedState) {
         const parsedState = JSON.parse(persistedState);
         // 在實際應用中，這裡會將持久化的狀態應用到 store

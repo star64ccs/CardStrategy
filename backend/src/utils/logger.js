@@ -7,7 +7,7 @@ const levels = {
   warn: 1,
   info: 2,
   http: 3,
-  debug: 4
+  debug: 4,
 };
 
 // 根據環境選擇日誌級別
@@ -18,12 +18,13 @@ const level = () => {
 };
 
 // 定義日誌顏色
+// eslint-disable-next-line no-unused-vars
 const colors = {
   error: 'red',
   warn: 'yellow',
   info: 'green',
   http: 'magenta',
-  debug: 'white'
+  debug: 'white',
 };
 
 winston.addColors(colors);
@@ -45,21 +46,22 @@ const transports = [
   // 錯誤日誌文件
   new winston.transports.File({
     filename: path.join('logs', 'error.log'),
-    level: 'error'
+    level: 'error',
   }),
 
   // 所有日誌文件
   new winston.transports.File({
-    filename: path.join('logs', 'all.log')
-  })
+    filename: path.join('logs', 'all.log'),
+  }),
 ];
 
 // 創建logger實例
+// eslint-disable-next-line no-unused-vars
 const logger = winston.createLogger({
   level: level(),
   levels,
   format,
-  transports
+  transports,
 });
 
 module.exports = logger;

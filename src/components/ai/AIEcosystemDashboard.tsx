@@ -7,14 +7,17 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { Loading } from '../common/Loading';
 import { Toast } from '../common/Toast';
 import { aiEcosystem } from '../../services/aiEcosystem';
-import { aiEcosystemMonitor, AIEcosystemDashboard as DashboardData } from '../../services/aiEcosystemMonitor';
+import {
+  aiEcosystemMonitor,
+  AIEcosystemDashboard as DashboardData,
+} from '../../services/aiEcosystemMonitor';
 import { logger } from '../../utils/logger';
 
 const { width } = Dimensions.get('window');
@@ -34,7 +37,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   unit = '',
   trend,
   color = '#007AFF',
-  onPress
+  onPress,
 }) => (
   <TouchableOpacity onPress={onPress} disabled={!onPress}>
     <Card style={[styles.metricCard, { borderLeftColor: color }]}>
@@ -47,10 +50,19 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </View>
       {trend && (
         <View style={styles.trendContainer}>
-          <Text style={[
-            styles.trendIcon,
-            { color: trend === 'up' ? '#34C759' : trend === 'down' ? '#FF3B30' : '#8E8E93' }
-          ]}>
+          <Text
+            style={[
+              styles.trendIcon,
+              {
+                color:
+                  trend === 'up'
+                    ? '#34C759'
+                    : trend === 'down'
+                      ? '#FF3B30'
+                      : '#8E8E93',
+              },
+            ]}
+          >
             {trend === 'up' ? '↗' : trend === 'down' ? '↘' : '→'}
           </Text>
         </View>
@@ -67,26 +79,41 @@ interface AlertCardProps {
 const AlertCard: React.FC<AlertCardProps> = ({ alert, onAcknowledge }) => {
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return '#FF3B30';
-      case 'high': return '#FF9500';
-      case 'medium': return '#FFCC00';
-      case 'low': return '#34C759';
-      default: return '#8E8E93';
+      case 'critical':
+        return '#FF3B30';
+      case 'high':
+        return '#FF9500';
+      case 'medium':
+        return '#FFCC00';
+      case 'low':
+        return '#34C759';
+      default:
+        return '#8E8E93';
     }
   };
 
   const getSeverityIcon = (severity: string) => {
     switch (severity) {
-      case 'critical': return '🚨';
-      case 'high': return '⚠️';
-      case 'medium': return '⚡';
-      case 'low': return 'ℹ️';
-      default: return '📝';
+      case 'critical':
+        return '🚨';
+      case 'high':
+        return '⚠️';
+      case 'medium':
+        return '⚡';
+      case 'low':
+        return 'ℹ️';
+      default:
+        return '📝';
     }
   };
 
   return (
-    <Card style={[styles.alertCard, { borderLeftColor: getSeverityColor(alert.severity) }]}>
+    <Card
+      style={[
+        styles.alertCard,
+        { borderLeftColor: getSeverityColor(alert.severity) },
+      ]}
+    >
       <View style={styles.alertHeader}>
         <Text style={styles.alertIcon}>{getSeverityIcon(alert.severity)}</Text>
         <View style={styles.alertInfo}>
@@ -116,21 +143,31 @@ interface TaskCardProps {
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return '#34C759';
-      case 'processing': return '#007AFF';
-      case 'failed': return '#FF3B30';
-      case 'pending': return '#FF9500';
-      default: return '#8E8E93';
+      case 'completed':
+        return '#34C759';
+      case 'processing':
+        return '#007AFF';
+      case 'failed':
+        return '#FF3B30';
+      case 'pending':
+        return '#FF9500';
+      default:
+        return '#8E8E93';
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'completed': return '已完成';
-      case 'processing': return '處理中';
-      case 'failed': return '失敗';
-      case 'pending': return '等待中';
-      default: return '未知';
+      case 'completed':
+        return '已完成';
+      case 'processing':
+        return '處理中';
+      case 'failed':
+        return '失敗';
+      case 'pending':
+        return '等待中';
+      default:
+        return '未知';
     }
   };
 
@@ -138,7 +175,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     <Card style={styles.taskCard}>
       <View style={styles.taskHeader}>
         <Text style={styles.taskType}>{task.type}</Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusColor(task.status) }]}>
+        <View
+          style={[
+            styles.statusBadge,
+            { backgroundColor: getStatusColor(task.status) },
+          ]}
+        >
           <Text style={styles.statusText}>{getStatusText(task.status)}</Text>
         </View>
       </View>
@@ -158,7 +200,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 };
 
 export const AIEcosystemDashboard: React.FC = () => {
-  const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
+  const [dashboardData, setDashboardData] = useState<DashboardData | null>(
+    null
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isMonitoring, setIsMonitoring] = useState(false);
@@ -187,13 +231,12 @@ export const AIEcosystemDashboard: React.FC = () => {
         Toast.show({
           type: alert.type === 'error' ? 'error' : 'info',
           title: alert.title,
-          message: alert.message
+          message: alert.message,
         });
       });
 
       // 獲取初始數據
       await refreshDashboard();
-
     } catch (error) {
       logger.error('初始化儀表板失敗:', error);
       Alert.alert('錯誤', '初始化AI生態系統失敗');
@@ -209,7 +252,6 @@ export const AIEcosystemDashboard: React.FC = () => {
       // 獲取儀表板數據
       const data = aiEcosystemMonitor.getDashboard();
       setDashboardData(data);
-
     } catch (error) {
       logger.error('刷新儀表板失敗:', error);
       Alert.alert('錯誤', '刷新數據失敗');
@@ -225,7 +267,7 @@ export const AIEcosystemDashboard: React.FC = () => {
       Toast.show({
         type: 'success',
         title: '成功',
-        message: '警報已確認'
+        message: '警報已確認',
       });
     } catch (error) {
       logger.error('確認警報失敗:', error);
@@ -241,7 +283,7 @@ export const AIEcosystemDashboard: React.FC = () => {
         Toast.show({
           type: 'info',
           title: '監控已停止',
-          message: 'AI生態系統監控已停止'
+          message: 'AI生態系統監控已停止',
         });
       } else {
         await aiEcosystemMonitor.startMonitoring();
@@ -249,7 +291,7 @@ export const AIEcosystemDashboard: React.FC = () => {
         Toast.show({
           type: 'success',
           title: '監控已啟動',
-          message: 'AI生態系統監控已啟動'
+          message: 'AI生態系統監控已啟動',
         });
       }
     } catch (error) {
@@ -260,16 +302,12 @@ export const AIEcosystemDashboard: React.FC = () => {
 
   const handleGenerateReport = async () => {
     try {
-      Alert.alert(
-        '生成報告',
-        '選擇報告類型',
-        [
-          { text: '日報', onPress: () => generateReport('daily') },
-          { text: '週報', onPress: () => generateReport('weekly') },
-          { text: '月報', onPress: () => generateReport('monthly') },
-          { text: '取消', style: 'cancel' }
-        ]
-      );
+      Alert.alert('生成報告', '選擇報告類型', [
+        { text: '日報', onPress: () => generateReport('daily') },
+        { text: '週報', onPress: () => generateReport('weekly') },
+        { text: '月報', onPress: () => generateReport('monthly') },
+        { text: '取消', style: 'cancel' },
+      ]);
     } catch (error) {
       logger.error('生成報告失敗:', error);
       Alert.alert('錯誤', '生成報告失敗');
@@ -289,9 +327,9 @@ export const AIEcosystemDashboard: React.FC = () => {
             onPress: () => {
               const recommendations = report.recommendations.join('\n• ');
               Alert.alert('優化建議', `• ${recommendations}`);
-            }
+            },
           },
-          { text: '確定', style: 'default' }
+          { text: '確定', style: 'default' },
         ]
       );
     } catch (error) {
@@ -335,7 +373,13 @@ export const AIEcosystemDashboard: React.FC = () => {
     );
   }
 
-  const { realTimeMetrics, recentAlerts, activeTasks, systemHealth, performanceTrends } = dashboardData;
+  const {
+    realTimeMetrics,
+    recentAlerts,
+    activeTasks,
+    systemHealth,
+    performanceTrends,
+  } = dashboardData;
 
   return (
     <ScrollView
@@ -352,7 +396,10 @@ export const AIEcosystemDashboard: React.FC = () => {
         <Text style={styles.title}>AI生態系統儀表板</Text>
         <View style={styles.headerControls}>
           <TouchableOpacity
-            style={[styles.monitorButton, { backgroundColor: isMonitoring ? '#34C759' : '#FF3B30' }]}
+            style={[
+              styles.monitorButton,
+              { backgroundColor: isMonitoring ? '#34C759' : '#FF3B30' },
+            ]}
             onPress={handleToggleMonitoring}
           >
             <Text style={styles.monitorButtonText}>
@@ -409,16 +456,29 @@ export const AIEcosystemDashboard: React.FC = () => {
         <Card style={styles.healthCard}>
           <View style={styles.healthHeader}>
             <Text style={styles.healthTitle}>整體健康度</Text>
-            <View style={[
-              styles.healthBadge,
-              { backgroundColor: systemHealth.overallHealth === 'excellent' ? '#34C759' :
-                systemHealth.overallHealth === 'good' ? '#007AFF' :
-                  systemHealth.overallHealth === 'fair' ? '#FF9500' : '#FF3B30' }
-            ]}>
+            <View
+              style={[
+                styles.healthBadge,
+                {
+                  backgroundColor:
+                    systemHealth.overallHealth === 'excellent'
+                      ? '#34C759'
+                      : systemHealth.overallHealth === 'good'
+                        ? '#007AFF'
+                        : systemHealth.overallHealth === 'fair'
+                          ? '#FF9500'
+                          : '#FF3B30',
+                },
+              ]}
+            >
               <Text style={styles.healthBadgeText}>
-                {systemHealth.overallHealth === 'excellent' ? '優秀' :
-                  systemHealth.overallHealth === 'good' ? '良好' :
-                    systemHealth.overallHealth === 'fair' ? '一般' : '較差'}
+                {systemHealth.overallHealth === 'excellent'
+                  ? '優秀'
+                  : systemHealth.overallHealth === 'good'
+                    ? '良好'
+                    : systemHealth.overallHealth === 'fair'
+                      ? '一般'
+                      : '較差'}
               </Text>
             </View>
           </View>
@@ -468,9 +528,7 @@ export const AIEcosystemDashboard: React.FC = () => {
           </TouchableOpacity>
         </View>
         {activeTasks.length > 0 ? (
-          activeTasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
-          ))
+          activeTasks.map((task) => <TaskCard key={task.id} task={task} />)
         ) : (
           <Card style={styles.emptyCard}>
             <Text style={styles.emptyText}>暫無活躍任務</Text>
@@ -488,21 +546,17 @@ export const AIEcosystemDashboard: React.FC = () => {
         <Button
           title="清除歷史"
           onPress={() => {
-            Alert.alert(
-              '確認清除',
-              '確定要清除所有歷史數據嗎？',
-              [
-                { text: '取消', style: 'cancel' },
-                {
-                  text: '確定',
-                  style: 'destructive',
-                  onPress: () => {
-                    aiEcosystemMonitor.clearHistory();
-                    refreshDashboard();
-                  }
-                }
-              ]
-            );
+            Alert.alert('確認清除', '確定要清除所有歷史數據嗎？', [
+              { text: '取消', style: 'cancel' },
+              {
+                text: '確定',
+                style: 'destructive',
+                onPress: () => {
+                  aiEcosystemMonitor.clearHistory();
+                  refreshDashboard();
+                },
+              },
+            ]);
           }}
           style={[styles.actionButton, { backgroundColor: '#FF3B30' }]}
         />
@@ -514,29 +568,29 @@ export const AIEcosystemDashboard: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F2F2F7'
+    backgroundColor: '#F2F2F7',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F2F2F7'
+    backgroundColor: '#F2F2F7',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#8E8E93'
+    color: '#8E8E93',
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F2F2F7'
+    backgroundColor: '#F2F2F7',
   },
   errorText: {
     fontSize: 16,
     color: '#FF3B30',
-    marginBottom: 16
+    marginBottom: 16,
   },
   header: {
     flexDirection: 'row',
@@ -545,206 +599,206 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA'
+    borderBottomColor: '#E5E5EA',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#000000'
+    color: '#000000',
   },
   headerControls: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   monitorButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6
+    borderRadius: 6,
   },
   monitorButtonText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   section: {
-    margin: 16
+    margin: 16,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#000000'
+    color: '#000000',
   },
   actionButton: {
     fontSize: 14,
     color: '#007AFF',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   metricCard: {
     width: (width - 48) / 2,
     marginBottom: 12,
     padding: 16,
-    borderLeftWidth: 4
+    borderLeftWidth: 4,
   },
   metricTitle: {
     fontSize: 12,
     color: '#8E8E93',
-    marginBottom: 8
+    marginBottom: 8,
   },
   metricValueContainer: {
     flexDirection: 'row',
-    alignItems: 'baseline'
+    alignItems: 'baseline',
   },
   metricValue: {
     fontSize: 24,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   metricUnit: {
     fontSize: 14,
     color: '#8E8E93',
-    marginLeft: 4
+    marginLeft: 4,
   },
   trendContainer: {
-    marginTop: 8
+    marginTop: 8,
   },
   trendIcon: {
-    fontSize: 16
+    fontSize: 16,
   },
   healthCard: {
-    padding: 16
+    padding: 16,
   },
   healthHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   healthTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#000000'
+    color: '#000000',
   },
   healthBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4
+    borderRadius: 4,
   },
   healthBadgeText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   healthMetrics: {
-    gap: 8
+    gap: 8,
   },
   healthMetric: {
     fontSize: 14,
-    color: '#000000'
+    color: '#000000',
   },
   alertCard: {
     marginBottom: 12,
     padding: 16,
-    borderLeftWidth: 4
+    borderLeftWidth: 4,
   },
   alertHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   alertIcon: {
     fontSize: 20,
-    marginRight: 8
+    marginRight: 8,
   },
   alertInfo: {
-    flex: 1
+    flex: 1,
   },
   alertTitle: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000000'
+    color: '#000000',
   },
   alertTimestamp: {
     fontSize: 12,
     color: '#8E8E93',
-    marginTop: 2
+    marginTop: 2,
   },
   acknowledgeButton: {
     backgroundColor: '#007AFF',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 4
+    borderRadius: 4,
   },
   acknowledgeText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   alertMessage: {
     fontSize: 14,
     color: '#000000',
-    lineHeight: 20
+    lineHeight: 20,
   },
   taskCard: {
     marginBottom: 12,
-    padding: 16
+    padding: 16,
   },
   taskHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   taskType: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#000000'
+    color: '#000000',
   },
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4
+    borderRadius: 4,
   },
   statusText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   taskPrompt: {
     fontSize: 14,
     color: '#000000',
     marginBottom: 8,
-    lineHeight: 20
+    lineHeight: 20,
   },
   taskMeta: {
-    gap: 4
+    gap: 4,
   },
   taskMetaText: {
     fontSize: 12,
-    color: '#8E8E93'
+    color: '#8E8E93',
   },
   emptyCard: {
     padding: 32,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   emptyText: {
     fontSize: 16,
-    color: '#8E8E93'
+    color: '#8E8E93',
   },
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     padding: 16,
-    gap: 12
-  }
+    gap: 12,
+  },
 });
 
 export default AIEcosystemDashboard;

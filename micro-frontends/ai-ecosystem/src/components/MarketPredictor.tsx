@@ -4,13 +4,15 @@ import { MarketPrediction } from '../types';
 const MarketPredictor: React.FC = () => {
   const [predictions, setPredictions] = useState<MarketPrediction[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'1d' | '7d' | '30d' | '90d'>('7d');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<
+    '1d' | '7d' | '30d' | '90d'
+  >('7d');
   const [selectedCard, setSelectedCard] = useState<string>('');
 
   useEffect(() => {
     const loadPredictions = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockPredictions: MarketPrediction[] = [
         {
@@ -22,7 +24,7 @@ const MarketPredictor: React.FC = () => {
           timeframe: '7d',
           factors: ['交易量增加', '市場需求上升', '供應減少'],
           timestamp: new Date().toISOString(),
-          modelVersion: '1.5.2'
+          modelVersion: '1.5.2',
         },
         {
           id: '2',
@@ -33,8 +35,8 @@ const MarketPredictor: React.FC = () => {
           timeframe: '7d',
           factors: ['供應過剩', '需求下降'],
           timestamp: new Date().toISOString(),
-          modelVersion: '1.5.2'
-        }
+          modelVersion: '1.5.2',
+        },
       ];
 
       setPredictions(mockPredictions);
@@ -51,7 +53,7 @@ const MarketPredictor: React.FC = () => {
     }
 
     setLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const newPrediction: MarketPrediction = {
       id: Date.now().toString(),
@@ -60,14 +62,9 @@ const MarketPredictor: React.FC = () => {
       predictedPrice: 1400 + Math.random() * 400,
       confidence: 70 + Math.random() * 25,
       timeframe: selectedTimeframe,
-      factors: [
-        '歷史價格趨勢',
-        '市場供需關係',
-        '季節性因素',
-        '競品價格變化'
-      ],
+      factors: ['歷史價格趨勢', '市場供需關係', '季節性因素', '競品價格變化'],
       timestamp: new Date().toISOString(),
-      modelVersion: '1.5.2'
+      modelVersion: '1.5.2',
     };
 
     setPredictions([newPrediction, ...predictions]);
@@ -82,11 +79,16 @@ const MarketPredictor: React.FC = () => {
 
   const getTimeframeLabel = (timeframe: string) => {
     switch (timeframe) {
-      case '1d': return '1天';
-      case '7d': return '7天';
-      case '30d': return '30天';
-      case '90d': return '90天';
-      default: return timeframe;
+      case '1d':
+        return '1天';
+      case '7d':
+        return '7天';
+      case '30d':
+        return '30天';
+      case '90d':
+        return '90天';
+      default:
+        return timeframe;
     }
   };
 
@@ -130,13 +132,17 @@ const MarketPredictor: React.FC = () => {
       </div>
 
       <div className="predictions-list">
-        {predictions.map(prediction => (
+        {predictions.map((prediction) => (
           <div key={prediction.id} className="prediction-card">
             <div className="prediction-header">
               <h4>{prediction.cardName}</h4>
               <div className="prediction-meta">
-                <span className="timeframe">{getTimeframeLabel(prediction.timeframe)}</span>
-                <span className={`confidence-badge ${getConfidenceColor(prediction.confidence)}`}>
+                <span className="timeframe">
+                  {getTimeframeLabel(prediction.timeframe)}
+                </span>
+                <span
+                  className={`confidence-badge ${getConfidenceColor(prediction.confidence)}`}
+                >
                   {prediction.confidence.toFixed(1)}% 置信度
                 </span>
               </div>
@@ -144,7 +150,9 @@ const MarketPredictor: React.FC = () => {
 
             <div className="prediction-content">
               <div className="price-prediction">
-                <span className="predicted-price">NT$ {prediction.predictedPrice.toLocaleString()}</span>
+                <span className="predicted-price">
+                  NT$ {prediction.predictedPrice.toLocaleString()}
+                </span>
                 <span className="prediction-label">預測價格</span>
               </div>
 
@@ -166,7 +174,7 @@ const MarketPredictor: React.FC = () => {
                         className="chart-point"
                         style={{
                           left: `${(i / 9) * 100}%`,
-                          bottom: `${20 + Math.random() * 60}%`
+                          bottom: `${20 + Math.random() * 60}%`,
                         }}
                       />
                     ))}
@@ -176,7 +184,9 @@ const MarketPredictor: React.FC = () => {
             </div>
 
             <div className="prediction-footer">
-              <span className="model-version">模型版本: {prediction.modelVersion}</span>
+              <span className="model-version">
+                模型版本: {prediction.modelVersion}
+              </span>
               <span className="prediction-time">
                 {new Date(prediction.timestamp).toLocaleString()}
               </span>

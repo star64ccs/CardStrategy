@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   RefreshControl,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { useTheme } from '@/config/ThemeProvider';
 import { cacheManager, CacheStats } from '@/utils/cacheManager';
@@ -47,7 +47,7 @@ export const CacheManagementScreen: React.FC = () => {
       const [stats, status, queue] = await Promise.all([
         cacheManager.getCacheStats(),
         offlineSyncManager.getSyncStatus(),
-        offlineSyncManager.getOfflineQueue()
+        offlineSyncManager.getOfflineQueue(),
       ]);
 
       setCacheStats(stats);
@@ -87,8 +87,8 @@ export const CacheManagementScreen: React.FC = () => {
             } finally {
               setIsLoading(false);
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -145,8 +145,8 @@ export const CacheManagementScreen: React.FC = () => {
             } finally {
               setIsLoading(false);
             }
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -156,7 +156,7 @@ export const CacheManagementScreen: React.FC = () => {
     const k = 1024;
     const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   };
 
   const formatDate = (timestamp: number): string => {
@@ -181,7 +181,9 @@ export const CacheManagementScreen: React.FC = () => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <ActivityIndicator size="large" color={theme.colors.primary} />
         <Text style={[styles.loadingText, { color: theme.colors.text }]}>
           載入中...
@@ -206,7 +208,12 @@ export const CacheManagementScreen: React.FC = () => {
         {cacheStats ? (
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.statLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 總項目數
               </Text>
               <Text style={[styles.statValue, { color: theme.colors.text }]}>
@@ -215,7 +222,12 @@ export const CacheManagementScreen: React.FC = () => {
             </View>
 
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.statLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 總大小
               </Text>
               <Text style={[styles.statValue, { color: theme.colors.text }]}>
@@ -224,7 +236,12 @@ export const CacheManagementScreen: React.FC = () => {
             </View>
 
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.statLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 過期項目
               </Text>
               <Text style={[styles.statValue, { color: theme.colors.error }]}>
@@ -233,16 +250,25 @@ export const CacheManagementScreen: React.FC = () => {
             </View>
 
             <View style={styles.statItem}>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.statLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 最舊項目
               </Text>
               <Text style={[styles.statValue, { color: theme.colors.text }]}>
-                {cacheStats.oldestItem ? formatDate(cacheStats.oldestItem) : '無'}
+                {cacheStats.oldestItem
+                  ? formatDate(cacheStats.oldestItem)
+                  : '無'}
               </Text>
             </View>
           </View>
         ) : (
-          <Text style={[styles.noDataText, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.noDataText, { color: theme.colors.textSecondary }]}
+          >
             無緩存數據
           </Text>
         )}
@@ -257,31 +283,58 @@ export const CacheManagementScreen: React.FC = () => {
         {syncStatus ? (
           <View style={styles.syncStatusContainer}>
             <View style={styles.statusItem}>
-              <Text style={[styles.statusLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.statusLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 網絡狀態
               </Text>
-              <Text style={[
-                styles.statusValue,
-                { color: syncStatus.isOnline ? theme.colors.success : theme.colors.error }
-              ]}>
+              <Text
+                style={[
+                  styles.statusValue,
+                  {
+                    color: syncStatus.isOnline
+                      ? theme.colors.success
+                      : theme.colors.error,
+                  },
+                ]}
+              >
                 {syncStatus.isOnline ? '在線' : '離線'}
               </Text>
             </View>
 
             <View style={styles.statusItem}>
-              <Text style={[styles.statusLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.statusLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 同步狀態
               </Text>
-              <Text style={[
-                styles.statusValue,
-                { color: syncStatus.isSyncing ? theme.colors.primary : theme.colors.text }
-              ]}>
+              <Text
+                style={[
+                  styles.statusValue,
+                  {
+                    color: syncStatus.isSyncing
+                      ? theme.colors.primary
+                      : theme.colors.text,
+                  },
+                ]}
+              >
                 {syncStatus.isSyncing ? '同步中' : '閒置'}
               </Text>
             </View>
 
             <View style={styles.statusItem}>
-              <Text style={[styles.statusLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.statusLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 待同步操作
               </Text>
               <Text style={[styles.statusValue, { color: theme.colors.text }]}>
@@ -290,7 +343,12 @@ export const CacheManagementScreen: React.FC = () => {
             </View>
 
             <View style={styles.statusItem}>
-              <Text style={[styles.statusLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.statusLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 失敗操作
               </Text>
               <Text style={[styles.statusValue, { color: theme.colors.error }]}>
@@ -300,17 +358,26 @@ export const CacheManagementScreen: React.FC = () => {
 
             {syncStatus.lastSyncTime && (
               <View style={styles.statusItem}>
-                <Text style={[styles.statusLabel, { color: theme.colors.textSecondary }]}>
+                <Text
+                  style={[
+                    styles.statusLabel,
+                    { color: theme.colors.textSecondary },
+                  ]}
+                >
                   最後同步
                 </Text>
-                <Text style={[styles.statusValue, { color: theme.colors.text }]}>
+                <Text
+                  style={[styles.statusValue, { color: theme.colors.text }]}
+                >
                   {formatDate(syncStatus.lastSyncTime)}
                 </Text>
               </View>
             )}
           </View>
         ) : (
-          <Text style={[styles.noDataText, { color: theme.colors.textSecondary }]}>
+          <Text
+            style={[styles.noDataText, { color: theme.colors.textSecondary }]}
+          >
             無法獲取同步狀態
           </Text>
         )}
@@ -318,7 +385,9 @@ export const CacheManagementScreen: React.FC = () => {
 
       {/* 離線操作隊列 */}
       {offlineQueue.length > 0 && (
-        <View style={[styles.section, { backgroundColor: theme.colors.surface }]}>
+        <View
+          style={[styles.section, { backgroundColor: theme.colors.surface }]}
+        >
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
             離線操作隊列 ({offlineQueue.length})
           </Text>
@@ -326,17 +395,28 @@ export const CacheManagementScreen: React.FC = () => {
           <ScrollView style={styles.queueContainer} nestedScrollEnabled>
             {offlineQueue.map((operation, index) => (
               <View key={operation.id} style={styles.queueItem}>
-                <Text style={[styles.queueType, { color: theme.colors.primary }]}>
+                <Text
+                  style={[styles.queueType, { color: theme.colors.primary }]}
+                >
                   {operation.type}
                 </Text>
-                <Text style={[styles.queueEndpoint, { color: theme.colors.text }]}>
+                <Text
+                  style={[styles.queueEndpoint, { color: theme.colors.text }]}
+                >
                   {operation.endpoint}
                 </Text>
-                <Text style={[styles.queueTime, { color: theme.colors.textSecondary }]}>
+                <Text
+                  style={[
+                    styles.queueTime,
+                    { color: theme.colors.textSecondary },
+                  ]}
+                >
                   {formatDate(operation.timestamp)}
                 </Text>
                 {operation.retryCount > 0 && (
-                  <Text style={[styles.queueRetry, { color: theme.colors.warning }]}>
+                  <Text
+                    style={[styles.queueRetry, { color: theme.colors.warning }]}
+                  >
                     重試: {operation.retryCount}/{operation.maxRetries}
                   </Text>
                 )}
@@ -392,7 +472,7 @@ export const CacheManagementScreen: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   section: {
     margin: 16,
@@ -401,97 +481,97 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    marginBottom: 16
+    marginBottom: 16,
   },
   statsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statLabel: {
     fontSize: 12,
-    marginBottom: 4
+    marginBottom: 4,
   },
   statValue: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   syncStatusContainer: {
-    gap: 12
+    gap: 12,
   },
   statusItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statusLabel: {
-    fontSize: 14
+    fontSize: 14,
   },
   statusValue: {
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   queueContainer: {
-    maxHeight: 200
+    maxHeight: 200,
   },
   queueItem: {
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0'
+    borderBottomColor: '#E0E0E0',
   },
   queueType: {
     fontSize: 12,
     fontWeight: '600',
-    marginBottom: 4
+    marginBottom: 4,
   },
   queueEndpoint: {
     fontSize: 14,
-    marginBottom: 2
+    marginBottom: 2,
   },
   queueTime: {
-    fontSize: 12
+    fontSize: 12,
   },
   queueRetry: {
     fontSize: 12,
-    marginTop: 4
+    marginTop: 4,
   },
   buttonContainer: {
-    gap: 12
+    gap: 12,
   },
   button: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   noDataText: {
     fontSize: 14,
     textAlign: 'center',
-    fontStyle: 'italic'
-  }
+    fontStyle: 'italic',
+  },
 });
 
 export default CacheManagementScreen;

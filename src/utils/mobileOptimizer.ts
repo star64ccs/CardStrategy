@@ -101,7 +101,7 @@ export class MobileOptimizer {
       enableBiometricAuth: true,
       enableVoiceCommands: true,
       enableARFeatures: true,
-      ...config
+      ...config,
     };
 
     this.gestureConfig = {
@@ -112,7 +112,7 @@ export class MobileOptimizer {
       enablePullToRefresh: true,
       enableSwipeToDelete: true,
       enableSwipeToArchive: true,
-      enableSwipeToShare: true
+      enableSwipeToShare: true,
     };
 
     this.responsiveConfig = {
@@ -121,22 +121,22 @@ export class MobileOptimizer {
         sm: 576,
         md: 768,
         lg: 992,
-        xl: 1200
+        xl: 1200,
       },
       fontScales: {
         xs: 0.8,
         sm: 0.9,
         md: 1.0,
         lg: 1.1,
-        xl: 1.2
+        xl: 1.2,
       },
       spacingScales: {
         xs: 0.8,
         sm: 0.9,
         md: 1.0,
         lg: 1.1,
-        xl: 1.2
-      }
+        xl: 1.2,
+      },
     };
 
     this.performanceMetrics = {
@@ -147,7 +147,7 @@ export class MobileOptimizer {
       batteryImpact: 0,
       networkEfficiency: 0,
       offlineCapability: 0,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     };
 
     this.init();
@@ -176,9 +176,15 @@ export class MobileOptimizer {
     const startTime = Date.now();
 
     // 設置觸摸事件監聽器
-    document.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
-    document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: true });
-    document.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: true });
+    document.addEventListener('touchstart', this.handleTouchStart.bind(this), {
+      passive: true,
+    });
+    document.addEventListener('touchend', this.handleTouchEnd.bind(this), {
+      passive: true,
+    });
+    document.addEventListener('touchmove', this.handleTouchMove.bind(this), {
+      passive: true,
+    });
 
     this.performanceMetrics.touchResponseTime = Date.now() - startTime;
   }
@@ -226,12 +232,15 @@ export class MobileOptimizer {
     if (!this.isLongPressActive) {
       const distance = Math.sqrt(
         Math.pow(endPosition.x - this.touchStartPosition.x, 2) +
-        Math.pow(endPosition.y - this.touchStartPosition.y, 2)
+          Math.pow(endPosition.y - this.touchStartPosition.y, 2)
       );
 
       if (distance > 50) {
         // 滑動手勢
-        const direction = this.getSwipeDirection(this.touchStartPosition, endPosition);
+        const direction = this.getSwipeDirection(
+          this.touchStartPosition,
+          endPosition
+        );
         this.triggerGesture('swipe', { direction, distance, duration });
       } else if (duration < 300) {
         // 點擊手勢
@@ -259,7 +268,10 @@ export class MobileOptimizer {
   }
 
   // 獲取滑動方向
-  private getSwipeDirection(start: { x: number; y: number }, end: { x: number; y: number }): 'left' | 'right' | 'up' | 'down' {
+  private getSwipeDirection(
+    start: { x: number; y: number },
+    end: { x: number; y: number }
+  ): 'left' | 'right' | 'up' | 'down' {
     const deltaX = end.x - start.x;
     const deltaY = end.y - start.y;
     const absDeltaX = Math.abs(deltaX);
@@ -269,7 +281,6 @@ export class MobileOptimizer {
       return deltaX > 0 ? 'right' : 'left';
     }
     return deltaY > 0 ? 'down' : 'up';
-
   }
 
   // 觸發手勢事件
@@ -329,20 +340,37 @@ export class MobileOptimizer {
   }
 
   // 響應式設計工具
-  getResponsiveValue(values: { xs?: any; sm?: any; md?: any; lg?: any; xl?: any }): any {
+  getResponsiveValue(values: {
+    xs?: any;
+    sm?: any;
+    md?: any;
+    lg?: any;
+    xl?: any;
+  }): any {
     const { width } = Dimensions.get('window');
 
-    if (width >= this.responsiveConfig.breakpoints.xl && values.xl !== undefined) {
+    if (
+      width >= this.responsiveConfig.breakpoints.xl &&
+      values.xl !== undefined
+    ) {
       return values.xl;
-    } else if (width >= this.responsiveConfig.breakpoints.lg && values.lg !== undefined) {
+    } else if (
+      width >= this.responsiveConfig.breakpoints.lg &&
+      values.lg !== undefined
+    ) {
       return values.lg;
-    } else if (width >= this.responsiveConfig.breakpoints.md && values.md !== undefined) {
+    } else if (
+      width >= this.responsiveConfig.breakpoints.md &&
+      values.md !== undefined
+    ) {
       return values.md;
-    } else if (width >= this.responsiveConfig.breakpoints.sm && values.sm !== undefined) {
+    } else if (
+      width >= this.responsiveConfig.breakpoints.sm &&
+      values.sm !== undefined
+    ) {
       return values.sm;
     }
     return values.xs || values.sm || values.md || values.lg || values.xl;
-
   }
 
   // 獲取響應式字體大小
@@ -383,7 +411,7 @@ export class MobileOptimizer {
       isSmallScreen: this.isSmallScreen(),
       dimensions: Dimensions.get('window'),
       pixelRatio: PixelRatio.get(),
-      statusBarHeight: StatusBar.currentHeight || 0
+      statusBarHeight: StatusBar.currentHeight || 0,
     };
   }
 
@@ -448,12 +476,15 @@ export class MobileOptimizer {
   }
 
   // 優化圖片加載
-  optimizeImageLoading(imageUrl: string, options: {
-    width?: number;
-    height?: number;
-    quality?: number;
-    format?: 'webp' | 'jpeg' | 'png';
-  } = {}): string {
+  optimizeImageLoading(
+    imageUrl: string,
+    options: {
+      width?: number;
+      height?: number;
+      quality?: number;
+      format?: 'webp' | 'jpeg' | 'png';
+    } = {}
+  ): string {
     const { width, height, quality = 80, format = 'webp' } = options;
 
     // 根據設備像素比調整尺寸
@@ -473,7 +504,7 @@ export class MobileOptimizer {
   // 預加載資源
   preloadResources(resources: string[]): Promise<void> {
     return new Promise((resolve) => {
-      const promises = resources.map(url => {
+      const promises = resources.map((url) => {
         return new Promise<void>((resolveResource) => {
           const img = new Image();
           img.onload = () => resolveResource();
@@ -493,7 +524,10 @@ export class MobileOptimizer {
     }
 
     // 移除事件監聽器
-    document.removeEventListener('touchstart', this.handleTouchStart.bind(this));
+    document.removeEventListener(
+      'touchstart',
+      this.handleTouchStart.bind(this)
+    );
     document.removeEventListener('touchend', this.handleTouchEnd.bind(this));
     document.removeEventListener('touchmove', this.handleTouchMove.bind(this));
   }
@@ -503,12 +537,17 @@ export class MobileOptimizer {
 export const mobileOptimizer = new MobileOptimizer();
 
 // 導出工具函數
-export const getResponsiveValue = (values: any) => mobileOptimizer.getResponsiveValue(values);
-export const getResponsiveFontSize = (size: number) => mobileOptimizer.getResponsiveFontSize(size);
-export const getResponsiveSpacing = (spacing: number) => mobileOptimizer.getResponsiveSpacing(spacing);
+export const getResponsiveValue = (values: any) =>
+  mobileOptimizer.getResponsiveValue(values);
+export const getResponsiveFontSize = (size: number) =>
+  mobileOptimizer.getResponsiveFontSize(size);
+export const getResponsiveSpacing = (spacing: number) =>
+  mobileOptimizer.getResponsiveSpacing(spacing);
 export const isMobile = () => mobileOptimizer.isMobile();
 export const isTablet = () => mobileOptimizer.isTablet();
 export const isSmallScreen = () => mobileOptimizer.isSmallScreen();
 export const getDeviceInfo = () => mobileOptimizer.getDeviceInfo();
-export const optimizeImageLoading = (url: string, options?: any) => mobileOptimizer.optimizeImageLoading(url, options);
-export const preloadResources = (resources: string[]) => mobileOptimizer.preloadResources(resources);
+export const optimizeImageLoading = (url: string, options?: any) =>
+  mobileOptimizer.optimizeImageLoading(url, options);
+export const preloadResources = (resources: string[]) =>
+  mobileOptimizer.preloadResources(resources);

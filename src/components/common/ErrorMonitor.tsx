@@ -1,7 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
-import { colors, typography, spacing, borderRadius, shadows } from '@/config/theme';
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+  shadows,
+} from '@/config/theme';
 
 interface ErrorMonitorProps {
   showDetails?: boolean;
@@ -12,14 +25,10 @@ interface ErrorMonitorProps {
 export const ErrorMonitor: React.FC<ErrorMonitorProps> = ({
   showDetails = false,
   onErrorClick,
-  maxDisplayErrors = 10
+  maxDisplayErrors = 10,
 }) => {
-  const {
-    getErrorStats,
-    getAllErrors,
-    getUnhandledErrors,
-    cleanupOldErrors
-  } = useErrorHandler();
+  const { getErrorStats, getAllErrors, getUnhandledErrors, cleanupOldErrors } =
+    useErrorHandler();
 
   const [errorStats, setErrorStats] = useState(getErrorStats());
   const [allErrors, setAllErrors] = useState(getAllErrors());
@@ -42,45 +51,52 @@ export const ErrorMonitor: React.FC<ErrorMonitorProps> = ({
 
   // 清理舊錯誤
   const handleCleanup = () => {
-    Alert.alert(
-      '清理錯誤記錄',
-      '確定要清理24小時前的錯誤記錄嗎？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '確定',
-          style: 'destructive',
-          onPress: () => {
-            cleanupOldErrors(24 * 60 * 60 * 1000); // 24小時
-            setErrorStats(getErrorStats());
-            setAllErrors(getAllErrors());
-            setUnhandledErrors(getUnhandledErrors());
-          }
-        }
-      ]
-    );
+    Alert.alert('清理錯誤記錄', '確定要清理24小時前的錯誤記錄嗎？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '確定',
+        style: 'destructive',
+        onPress: () => {
+          cleanupOldErrors(24 * 60 * 60 * 1000); // 24小時
+          setErrorStats(getErrorStats());
+          setAllErrors(getAllErrors());
+          setUnhandledErrors(getUnhandledErrors());
+        },
+      },
+    ]);
   };
 
   // 獲取錯誤嚴重程度顏色
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'critical': return colors.error;
-      case 'high': return colors.warning;
-      case 'medium': return colors.info;
-      case 'low': return colors.success;
-      default: return colors.text;
+      case 'critical':
+        return colors.error;
+      case 'high':
+        return colors.warning;
+      case 'medium':
+        return colors.info;
+      case 'low':
+        return colors.success;
+      default:
+        return colors.text;
     }
   };
 
   // 獲取錯誤類型圖標
   const getErrorTypeIcon = (type: string) => {
     switch (type) {
-      case 'api': return '🌐';
-      case 'network': return '📡';
-      case 'validation': return '✅';
-      case 'auth': return '🔐';
-      case 'system': return '⚙️';
-      default: return '❓';
+      case 'api':
+        return '🌐';
+      case 'network':
+        return '📡';
+      case 'validation':
+        return '✅';
+      case 'auth':
+        return '🔐';
+      case 'system':
+        return '⚙️';
+      default:
+        return '❓';
     }
   };
 
@@ -143,7 +159,12 @@ export const ErrorMonitor: React.FC<ErrorMonitorProps> = ({
       <Text style={styles.sectionTitle}>嚴重程度統計</Text>
       {Object.entries(errorStats.bySeverity).map(([severity, count]) => (
         <View key={severity} style={styles.severityStatRow}>
-          <View style={[styles.severityIndicator, { backgroundColor: getSeverityColor(severity) }]} />
+          <View
+            style={[
+              styles.severityIndicator,
+              { backgroundColor: getSeverityColor(severity) },
+            ]}
+          />
           <Text style={styles.severityName}>{severity}</Text>
           <Text style={styles.severityCount}>{count}</Text>
         </View>
@@ -153,7 +174,9 @@ export const ErrorMonitor: React.FC<ErrorMonitorProps> = ({
 
   // 錯誤列表
   const ErrorList = () => {
-    const displayErrors = isExpanded ? allErrors : allErrors.slice(0, maxDisplayErrors);
+    const displayErrors = isExpanded
+      ? allErrors
+      : allErrors.slice(0, maxDisplayErrors);
 
     return (
       <View style={styles.errorListContainer}>
@@ -176,7 +199,10 @@ export const ErrorMonitor: React.FC<ErrorMonitorProps> = ({
             <Text style={styles.emptyStateText}>🎉 沒有錯誤記錄</Text>
           </View>
         ) : (
-          <ScrollView style={styles.errorList} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.errorList}
+            showsVerticalScrollIndicator={false}
+          >
             {displayErrors.map((error) => (
               <TouchableOpacity
                 key={error.id}
@@ -184,18 +210,29 @@ export const ErrorMonitor: React.FC<ErrorMonitorProps> = ({
                 onPress={() => onErrorClick?.(error.id)}
               >
                 <View style={styles.errorHeader}>
-                  <Text style={styles.errorTypeIcon}>{getErrorTypeIcon(error.type)}</Text>
+                  <Text style={styles.errorTypeIcon}>
+                    {getErrorTypeIcon(error.type)}
+                  </Text>
                   <Text style={styles.errorMessage} numberOfLines={2}>
                     {error.message}
                   </Text>
-                  <View style={[styles.severityBadge, { backgroundColor: getSeverityColor(error.severity) }]}>
-                    <Text style={styles.severityBadgeText}>{error.severity}</Text>
+                  <View
+                    style={[
+                      styles.severityBadge,
+                      { backgroundColor: getSeverityColor(error.severity) },
+                    ]}
+                  >
+                    <Text style={styles.severityBadgeText}>
+                      {error.severity}
+                    </Text>
                   </View>
                 </View>
 
                 <View style={styles.errorDetails}>
                   <Text style={styles.errorContext}>{error.context}</Text>
-                  <Text style={styles.errorTime}>{formatTime(error.timestamp)}</Text>
+                  <Text style={styles.errorTime}>
+                    {formatTime(error.timestamp)}
+                  </Text>
                 </View>
 
                 {error.retryable && (
@@ -241,127 +278,127 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     borderRadius: borderRadius.lg,
     padding: spacing.md,
-    ...shadows.medium
+    ...shadows.medium,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.md
+    marginBottom: spacing.md,
   },
   title: {
     ...typography.h3,
-    color: colors.text
+    color: colors.text,
   },
   cleanupButton: {
     backgroundColor: colors.error,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm
+    borderRadius: borderRadius.sm,
   },
   cleanupButtonText: {
     ...typography.caption,
-    color: colors.white
+    color: colors.white,
   },
   summaryContainer: {
-    marginBottom: spacing.md
+    marginBottom: spacing.md,
   },
   summaryRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   summaryItem: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   summaryLabel: {
     ...typography.caption,
     color: colors.textSecondary,
-    marginBottom: spacing.xs
+    marginBottom: spacing.xs,
   },
   summaryValue: {
     ...typography.h2,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   typeStatsContainer: {
-    marginBottom: spacing.md
+    marginBottom: spacing.md,
   },
   severityStatsContainer: {
-    marginBottom: spacing.md
+    marginBottom: spacing.md,
   },
   sectionTitle: {
     ...typography.subtitle1,
     color: colors.text,
-    marginBottom: spacing.sm
+    marginBottom: spacing.sm,
   },
   typeStatRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.xs
+    paddingVertical: spacing.xs,
   },
   typeIcon: {
     fontSize: 16,
-    marginRight: spacing.sm
+    marginRight: spacing.sm,
   },
   typeName: {
     ...typography.body2,
     color: colors.text,
-    flex: 1
+    flex: 1,
   },
   typeCount: {
     ...typography.body2,
     color: colors.textSecondary,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   severityStatRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.xs
+    paddingVertical: spacing.xs,
   },
   severityIndicator: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    marginRight: spacing.sm
+    marginRight: spacing.sm,
   },
   severityName: {
     ...typography.body2,
     color: colors.text,
-    flex: 1
+    flex: 1,
   },
   severityCount: {
     ...typography.body2,
     color: colors.textSecondary,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   errorListContainer: {
-    flex: 1
+    flex: 1,
   },
   listHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.sm
+    marginBottom: spacing.sm,
   },
   expandButton: {
     backgroundColor: colors.primary,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm
+    borderRadius: borderRadius.sm,
   },
   expandButtonText: {
     ...typography.caption,
-    color: colors.white
+    color: colors.white,
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: spacing.lg
+    paddingVertical: spacing.lg,
   },
   emptyStateText: {
     ...typography.body1,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   errorList: {
-    maxHeight: 300
+    maxHeight: 300,
   },
   errorItem: {
     backgroundColor: colors.surface,
@@ -369,55 +406,55 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
     marginBottom: spacing.xs,
     borderLeftWidth: 4,
-    borderLeftColor: colors.primary
+    borderLeftColor: colors.primary,
   },
   errorHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: spacing.xs
+    marginBottom: spacing.xs,
   },
   errorTypeIcon: {
     fontSize: 16,
     marginRight: spacing.sm,
-    marginTop: 2
+    marginTop: 2,
   },
   errorMessage: {
     ...typography.body2,
     color: colors.text,
-    flex: 1
+    flex: 1,
   },
   severityBadge: {
     paddingHorizontal: spacing.xs,
     paddingVertical: 2,
     borderRadius: borderRadius.xs,
-    marginLeft: spacing.sm
+    marginLeft: spacing.sm,
   },
   severityBadgeText: {
     ...typography.caption,
     color: colors.white,
-    fontSize: 10
+    fontSize: 10,
   },
   errorDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   errorContext: {
     ...typography.caption,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   errorTime: {
     ...typography.caption,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   retryInfo: {
     marginTop: spacing.xs,
     paddingTop: spacing.xs,
     borderTopWidth: 1,
-    borderTopColor: colors.border
+    borderTopColor: colors.border,
   },
   retryText: {
     ...typography.caption,
-    color: colors.info
-  }
+    color: colors.info,
+  },
 });

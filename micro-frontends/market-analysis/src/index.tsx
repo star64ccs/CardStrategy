@@ -26,7 +26,7 @@ const MarketAnalysisApp: React.FC = () => {
             <a href="/volume">交易量分析</a>
           </nav>
         </header>
-        
+
         <main className="app-main">
           <Routes>
             <Route path="/" element={<MarketDashboard />} />
@@ -50,11 +50,11 @@ if (container) {
 }
 
 // 導出組件供 Module Federation 使用
-export { 
-  MarketDashboard, 
-  PriceChart, 
-  MarketTrends, 
-  PriceAlerts, 
-  MarketInsights, 
-  TradingVolumeComponent 
+export {
+  MarketDashboard,
+  PriceChart,
+  MarketTrends,
+  PriceAlerts,
+  MarketInsights,
+  TradingVolumeComponent,
 };

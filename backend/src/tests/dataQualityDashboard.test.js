@@ -1,6 +1,12 @@
 const request = require('supertest');
 const app = require('../server');
-const { DataQualityMetrics, TrainingData, AnnotationData, Annotator, User } = require('../models');
+const {
+  DataQualityMetrics,
+  TrainingData,
+  AnnotationData,
+  Annotator,
+  User,
+} = require('../models');
 const dataQualityMonitoringService = require('../services/dataQualityMonitoringService');
 
 describe('Data Quality Dashboard API Tests', () => {
@@ -12,15 +18,13 @@ describe('Data Quality Dashboard API Tests', () => {
     testUser = await User.create({
       username: 'dashboard_test_user',
       email: 'dashboard@test.com',
-      password: 'testpassword123'
+      password: 'testpassword123',
     });
 
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'dashboard@test.com',
-        password: 'testpassword123'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'dashboard@test.com',
+      password: 'testpassword123',
+    });
 
     testToken = loginResponse.body.token;
   });
@@ -47,11 +51,11 @@ describe('Data Quality Dashboard API Tests', () => {
         assessmentDate: new Date('2024-12-15'),
         dataSource: 'user_upload',
         sampleSize: 100,
-        metadata: { test: true }
+        metadata: { test: true },
       },
       {
         dataType: 'annotation',
-        completeness: 0.90,
+        completeness: 0.9,
         accuracy: 0.95,
         consistency: 0.88,
         timeliness: 0.92,
@@ -59,20 +63,20 @@ describe('Data Quality Dashboard API Tests', () => {
         assessmentDate: new Date('2024-12-16'),
         dataSource: 'human_annotation',
         sampleSize: 50,
-        metadata: { test: true }
+        metadata: { test: true },
       },
       {
         dataType: 'validation',
         completeness: 0.82,
         accuracy: 0.89,
         consistency: 0.85,
-        timeliness: 0.90,
+        timeliness: 0.9,
         overallScore: 0.87,
         assessmentDate: new Date('2024-12-17'),
         dataSource: 'automated_validation',
         sampleSize: 75,
-        metadata: { test: true }
-      }
+        metadata: { test: true },
+      },
     ];
 
     await DataQualityMetrics.bulkCreate(testMetrics);
@@ -85,7 +89,7 @@ describe('Data Quality Dashboard API Tests', () => {
         source: 'user_upload',
         quality: 'high',
         status: 'annotated',
-        metadata: { test: true }
+        metadata: { test: true },
       },
       {
         cardId: 2,
@@ -93,7 +97,7 @@ describe('Data Quality Dashboard API Tests', () => {
         source: 'official_api',
         quality: 'medium',
         status: 'pending',
-        metadata: { test: true }
+        metadata: { test: true },
       },
       {
         cardId: 3,
@@ -101,8 +105,8 @@ describe('Data Quality Dashboard API Tests', () => {
         source: 'third_party',
         quality: 'low',
         status: 'rejected',
-        metadata: { test: true }
-      }
+        metadata: { test: true },
+      },
     ];
 
     await TrainingData.bulkCreate(testTrainingData);
@@ -116,7 +120,7 @@ describe('Data Quality Dashboard API Tests', () => {
       completedAnnotations: 95,
       averageProcessingTime: 120,
       lastActiveDate: new Date(),
-      metadata: { test: true }
+      metadata: { test: true },
     });
 
     // Create test annotations
@@ -129,7 +133,7 @@ describe('Data Quality Dashboard API Tests', () => {
         confidence: 0.95,
         reviewStatus: 'approved',
         processingTime: 120,
-        metadata: { test: true }
+        metadata: { test: true },
       },
       {
         trainingDataId: 2,
@@ -140,8 +144,8 @@ describe('Data Quality Dashboard API Tests', () => {
         reviewStatus: 'rejected',
         reviewNotes: 'Incorrect assessment',
         processingTime: 150,
-        metadata: { test: true }
-      }
+        metadata: { test: true },
+      },
     ];
 
     await AnnotationData.bulkCreate(testAnnotations);
@@ -179,20 +183,24 @@ describe('Data Quality Dashboard API Tests', () => {
         .get('/api/data-quality/dashboard')
         .query({
           startDate: '2024-12-15',
-          endDate: '2024-12-17'
+          endDate: '2024-12-17',
         })
         .set('Authorization', `Bearer ${testToken}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.data.dateRange.startDate).toBe('2024-12-15T00:00:00.000Z');
-      expect(response.body.data.dateRange.endDate).toBe('2024-12-17T00:00:00.000Z');
+      expect(response.body.data.dateRange.startDate).toBe(
+        '2024-12-15T00:00:00.000Z'
+      );
+      expect(response.body.data.dateRange.endDate).toBe(
+        '2024-12-17T00:00:00.000Z'
+      );
     });
 
     it('should filter data by data types', async () => {
       const response = await request(app)
         .get('/api/data-quality/dashboard')
         .query({
-          dataTypes: 'training,annotation'
+          dataTypes: 'training,annotation',
         })
         .set('Authorization', `Bearer ${testToken}`);
 
@@ -269,7 +277,9 @@ describe('Data Quality Dashboard API Tests', () => {
       expect(response.body.success).toBe(true);
       expect(response.body.data).toHaveProperty('overallDistribution');
       expect(response.body.data).toHaveProperty('totalAssessments');
-      expect(response.body.data.overallDistribution).toHaveProperty('excellent');
+      expect(response.body.data.overallDistribution).toHaveProperty(
+        'excellent'
+      );
       expect(response.body.data.overallDistribution).toHaveProperty('good');
       expect(response.body.data.overallDistribution).toHaveProperty('fair');
       expect(response.body.data.overallDistribution).toHaveProperty('poor');
@@ -381,10 +391,11 @@ describe('Data Quality Dashboard API Tests', () => {
         const startDate = new Date('2024-12-15');
         const endDate = new Date('2024-12-17');
 
-        const distribution = await dataQualityMonitoringService.getQualityDistribution(
-          startDate,
-          endDate
-        );
+        const distribution =
+          await dataQualityMonitoringService.getQualityDistribution(
+            startDate,
+            endDate
+          );
 
         expect(distribution).toHaveProperty('overallDistribution');
         expect(distribution).toHaveProperty('totalAssessments');
@@ -400,10 +411,11 @@ describe('Data Quality Dashboard API Tests', () => {
         const startDate = new Date('2024-12-15');
         const endDate = new Date('2024-12-17');
 
-        const performance = await dataQualityMonitoringService.getAnnotatorPerformance(
-          startDate,
-          endDate
-        );
+        const performance =
+          await dataQualityMonitoringService.getAnnotatorPerformance(
+            startDate,
+            endDate
+          );
 
         expect(performance).toHaveProperty('annotatorStats');
         expect(performance).toHaveProperty('totalAnnotations');
@@ -435,7 +447,8 @@ describe('Data Quality Dashboard API Tests', () => {
 
     describe('getImprovementSuggestions', () => {
       it('should return improvement suggestions with correct structure', async () => {
-        const suggestions = await dataQualityMonitoringService.getImprovementSuggestions();
+        const suggestions =
+          await dataQualityMonitoringService.getImprovementSuggestions();
 
         expect(Array.isArray(suggestions)).toBe(true);
         if (suggestions.length > 0) {
@@ -469,7 +482,7 @@ describe('Data Quality Dashboard API Tests', () => {
         .get('/api/data-quality/dashboard')
         .query({
           startDate: 'invalid-date',
-          endDate: 'invalid-date'
+          endDate: 'invalid-date',
         })
         .set('Authorization', `Bearer ${testToken}`);
 
@@ -477,8 +490,7 @@ describe('Data Quality Dashboard API Tests', () => {
     });
 
     it('should handle missing authentication token', async () => {
-      const response = await request(app)
-        .get('/api/data-quality/dashboard');
+      const response = await request(app).get('/api/data-quality/dashboard');
 
       expect(response.status).toBe(401);
     });

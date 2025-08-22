@@ -14,7 +14,7 @@ export const formatDate = (
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: format === 'long' ? 'long' : 'short',
-    day: 'numeric'
+    day: 'numeric',
   };
 
   return dateObj.toLocaleDateString('zh-TW', options);
@@ -40,36 +40,47 @@ export const formatRelativeDate = (date: Date): string => {
   }
   const years = Math.floor(diffInDays / 365);
   return `${years} 年前`;
-
 };
 
 // 價格格式化
-export const formatPrice = (price: number, currency: string = 'TWD'): string => {
+export const formatPrice = (
+  price: number,
+  currency: string = 'TWD'
+): string => {
   return new Intl.NumberFormat('zh-TW', {
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(price);
 };
 
 // 貨幣格式化（簡化版本）
-export const formatCurrency = (amount: number, currency: string = 'TWD'): string => {
+export const formatCurrency = (
+  amount: number,
+  currency: string = 'TWD'
+): string => {
   return new Intl.NumberFormat('zh-TW', {
     style: 'currency',
     currency,
     minimumFractionDigits: 0,
-    maximumFractionDigits: 2
+    maximumFractionDigits: 2,
   }).format(amount);
 };
 
-export const formatPriceChange = (change: number, currency: string = 'TWD'): string => {
+export const formatPriceChange = (
+  change: number,
+  currency: string = 'TWD'
+): string => {
   const sign = change >= 0 ? '+' : '';
   const formattedChange = formatPrice(Math.abs(change), currency);
   return `${sign}${formattedChange}`;
 };
 
-export const formatPercentage = (value: number, decimals: number = 2): string => {
+export const formatPercentage = (
+  value: number,
+  decimals: number = 2
+): string => {
   return `${value >= 0 ? '+' : ''}${value.toFixed(decimals)}%`;
 };
 
@@ -77,7 +88,7 @@ export const formatPercentage = (value: number, decimals: number = 2): string =>
 export const formatNumber = (num: number, decimals: number = 0): string => {
   return new Intl.NumberFormat('zh-TW', {
     minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals
+    maximumFractionDigits: decimals,
   }).format(num);
 };
 
@@ -93,39 +104,39 @@ export const formatCompactNumber = (num: number): string => {
 // 卡牌相關格式化
 export const formatCardCondition = (condition: CardCondition): string => {
   const conditionMap: Record<CardCondition, string> = {
-    'mint': '全新',
+    mint: '全新',
     'near-mint': '近全新',
-    'excellent': '極佳',
-    'good': '良好',
+    excellent: '極佳',
+    good: '良好',
     'light-played': '輕度使用',
-    'played': '使用過',
-    'poor': '破損'
+    played: '使用過',
+    poor: '破損',
   };
   return conditionMap[condition] || condition;
 };
 
 export const formatCardRarity = (rarity: CardRarity): string => {
   const rarityMap: Record<CardRarity, string> = {
-    'common': '普通',
-    'uncommon': '非普通',
-    'rare': '稀有',
-    'mythic': '神話',
-    'special': '特殊',
-    'promo': '促銷'
+    common: '普通',
+    uncommon: '非普通',
+    rare: '稀有',
+    mythic: '神話',
+    special: '特殊',
+    promo: '促銷',
   };
   return rarityMap[rarity] || rarity;
 };
 
 export const formatCardType = (type: CardType): string => {
   const typeMap: Record<CardType, string> = {
-    'creature': '生物',
-    'spell': '法術',
-    'artifact': '神器',
-    'land': '地',
-    'enchantment': '結界',
-    'instant': '瞬間',
-    'sorcery': '巫術',
-    'planeswalker': '鵬洛客'
+    creature: '生物',
+    spell: '法術',
+    artifact: '神器',
+    land: '地',
+    enchantment: '結界',
+    instant: '瞬間',
+    sorcery: '巫術',
+    planeswalker: '鵬洛客',
   };
   return typeMap[type] || type;
 };
@@ -135,7 +146,7 @@ export const formatTime = (date: Date | string): string => {
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   return dateObj.toLocaleTimeString('zh-TW', {
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
   });
 };
 
@@ -152,7 +163,7 @@ export const formatFileSize = (bytes: number): string => {
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`;
+  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
 };
 
 // 持續時間格式化
@@ -166,5 +177,4 @@ export const formatDuration = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
   return `${hours}小時${minutes}分鐘`;
-
 };

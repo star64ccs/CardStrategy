@@ -7,13 +7,17 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { Card, Button, Loading, Skeleton } from '../common';
 import { theme } from '../../config/theme';
-import { dataBreachNotificationService, DataBreachEvent, RiskLevel } from '../../services/dataBreachNotificationService';
+import {
+  dataBreachNotificationService,
+  DataBreachEvent,
+  RiskLevel,
+} from '../../services/dataBreachNotificationService';
 import { logger } from '../../utils/logger';
 
 const { width } = Dimensions.get('window');
@@ -25,7 +29,7 @@ interface DataBreachDashboardProps {
 
 export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
   onEventPress,
-  onCreateEvent
+  onCreateEvent,
 }) => {
   const { t } = useTranslation();
   const [events, setEvents] = useState<DataBreachEvent[]>([]);
@@ -52,7 +56,6 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
 
       // 加載數據
       await refreshData();
-
     } catch (error) {
       logger.error('加載數據洩露儀表板失敗:', error);
       Alert.alert('錯誤', '加載數據失敗');
@@ -65,7 +68,7 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
     try {
       const [eventsData, statsData] = await Promise.all([
         dataBreachNotificationService.getBreachEvents(),
-        dataBreachNotificationService.getStatistics()
+        dataBreachNotificationService.getStatistics(),
       ]);
 
       setEvents(eventsData);
@@ -100,15 +103,15 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
                   dataCategories: ['personal_info', 'contact_info'],
                   affectedUsers: 10,
                   dataSensitivity: 'medium',
-                  estimatedRecords: 50
+                  estimatedRecords: 50,
                 },
-                affectedRegions: ['TW', 'US']
+                affectedRegions: ['TW', 'US'],
               });
 
               await refreshData();
               Alert.alert('成功', '測試事件已創建');
-            }
-          }
+            },
+          },
         ]
       );
     } catch (error) {
@@ -125,31 +128,46 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
 
   const getRiskLevelColor = (riskLevel: RiskLevel): string => {
     switch (riskLevel) {
-      case 'critical': return theme.colors.error;
-      case 'high': return theme.colors.warning;
-      case 'medium': return theme.colors.info;
-      case 'low': return theme.colors.success;
-      default: return theme.colors.text;
+      case 'critical':
+        return theme.colors.error;
+      case 'high':
+        return theme.colors.warning;
+      case 'medium':
+        return theme.colors.info;
+      case 'low':
+        return theme.colors.success;
+      default:
+        return theme.colors.text;
     }
   };
 
   const getRiskLevelIcon = (riskLevel: RiskLevel): string => {
     switch (riskLevel) {
-      case 'critical': return 'alert-circle';
-      case 'high': return 'warning';
-      case 'medium': return 'information-circle';
-      case 'low': return 'checkmark-circle';
-      default: return 'help-circle';
+      case 'critical':
+        return 'alert-circle';
+      case 'high':
+        return 'warning';
+      case 'medium':
+        return 'information-circle';
+      case 'low':
+        return 'checkmark-circle';
+      default:
+        return 'help-circle';
     }
   };
 
   const getStatusColor = (status: string): string => {
     switch (status) {
-      case 'discovered': return theme.colors.error;
-      case 'investigating': return theme.colors.warning;
-      case 'contained': return theme.colors.info;
-      case 'resolved': return theme.colors.success;
-      default: return theme.colors.text;
+      case 'discovered':
+        return theme.colors.error;
+      case 'investigating':
+        return theme.colors.warning;
+      case 'contained':
+        return theme.colors.info;
+      case 'resolved':
+        return theme.colors.success;
+      default:
+        return theme.colors.text;
     }
   };
 
@@ -159,7 +177,7 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
       month: '2-digit',
       day: '2-digit',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -184,8 +202,14 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
       <View style={styles.statsContainer}>
         <Card style={styles.statCard}>
           <View style={styles.statContent}>
-            <Ionicons name="alert-circle" size={24} color={theme.colors.error} />
-            <Text style={styles.statNumber}>{statistics?.totalEvents || 0}</Text>
+            <Ionicons
+              name="alert-circle"
+              size={24}
+              color={theme.colors.error}
+            />
+            <Text style={styles.statNumber}>
+              {statistics?.totalEvents || 0}
+            </Text>
             <Text style={styles.statLabel}>總事件數</Text>
           </View>
         </Card>
@@ -193,7 +217,9 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
         <Card style={styles.statCard}>
           <View style={styles.statContent}>
             <Ionicons name="warning" size={24} color={theme.colors.warning} />
-            <Text style={styles.statNumber}>{statistics?.criticalEvents || 0}</Text>
+            <Text style={styles.statNumber}>
+              {statistics?.criticalEvents || 0}
+            </Text>
             <Text style={styles.statLabel}>嚴重事件</Text>
           </View>
         </Card>
@@ -201,15 +227,23 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
         <Card style={styles.statCard}>
           <View style={styles.statContent}>
             <Ionicons name="time" size={24} color={theme.colors.info} />
-            <Text style={styles.statNumber}>{statistics?.pendingNotifications || 0}</Text>
+            <Text style={styles.statNumber}>
+              {statistics?.pendingNotifications || 0}
+            </Text>
             <Text style={styles.statLabel}>待通知</Text>
           </View>
         </Card>
 
         <Card style={styles.statCard}>
           <View style={styles.statContent}>
-            <Ionicons name="checkmark-circle" size={24} color={theme.colors.success} />
-            <Text style={styles.statNumber}>{Math.round(statistics?.complianceRate || 100)}%</Text>
+            <Ionicons
+              name="checkmark-circle"
+              size={24}
+              color={theme.colors.success}
+            />
+            <Text style={styles.statNumber}>
+              {Math.round(statistics?.complianceRate || 100)}%
+            </Text>
             <Text style={styles.statLabel}>合規率</Text>
           </View>
         </Card>
@@ -219,14 +253,21 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
       <Card style={styles.monitoringCard}>
         <View style={styles.monitoringHeader}>
           <View style={styles.monitoringStatus}>
-            <View style={[styles.statusDot, { backgroundColor: isMonitoring ? theme.colors.success : theme.colors.error }]} />
+            <View
+              style={[
+                styles.statusDot,
+                {
+                  backgroundColor: isMonitoring
+                    ? theme.colors.success
+                    : theme.colors.error,
+                },
+              ]}
+            />
             <Text style={styles.monitoringText}>
               {isMonitoring ? '監控運行中' : '監控已停止'}
             </Text>
           </View>
-          <Text style={styles.monitoringSubtext}>
-            每5分鐘自動掃描安全事件
-          </Text>
+          <Text style={styles.monitoringSubtext}>每5分鐘自動掃描安全事件</Text>
         </View>
       </Card>
 
@@ -258,9 +299,15 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
         {events.length === 0 ? (
           <Card style={styles.emptyCard}>
             <View style={styles.emptyContent}>
-              <Ionicons name="shield-checkmark" size={48} color={theme.colors.success} />
+              <Ionicons
+                name="shield-checkmark"
+                size={48}
+                color={theme.colors.success}
+              />
               <Text style={styles.emptyTitle}>沒有數據洩露事件</Text>
-              <Text style={styles.emptySubtitle}>系統運行正常，未檢測到安全威脅</Text>
+              <Text style={styles.emptySubtitle}>
+                系統運行正常，未檢測到安全威脅
+              </Text>
             </View>
           </Card>
         ) : (
@@ -282,10 +329,22 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
                   </Text>
                 </View>
                 <View style={styles.eventBadges}>
-                  <View style={[styles.riskBadge, { backgroundColor: getRiskLevelColor(event.riskLevel) }]}>
-                    <Text style={styles.riskBadgeText}>{event.riskLevel.toUpperCase()}</Text>
+                  <View
+                    style={[
+                      styles.riskBadge,
+                      { backgroundColor: getRiskLevelColor(event.riskLevel) },
+                    ]}
+                  >
+                    <Text style={styles.riskBadgeText}>
+                      {event.riskLevel.toUpperCase()}
+                    </Text>
                   </View>
-                  <View style={[styles.statusBadge, { backgroundColor: getStatusColor(event.status) }]}>
+                  <View
+                    style={[
+                      styles.statusBadge,
+                      { backgroundColor: getStatusColor(event.status) },
+                    ]}
+                  >
                     <Text style={styles.statusBadgeText}>{event.status}</Text>
                   </View>
                 </View>
@@ -297,13 +356,21 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
 
               <View style={styles.eventDetails}>
                 <View style={styles.eventDetail}>
-                  <Ionicons name="people" size={16} color={theme.colors.textSecondary} />
+                  <Ionicons
+                    name="people"
+                    size={16}
+                    color={theme.colors.textSecondary}
+                  />
                   <Text style={styles.eventDetailText}>
                     {event.affectedData.affectedUsers} 用戶受影響
                   </Text>
                 </View>
                 <View style={styles.eventDetail}>
-                  <Ionicons name="calendar" size={16} color={theme.colors.textSecondary} />
+                  <Ionicons
+                    name="calendar"
+                    size={16}
+                    color={theme.colors.textSecondary}
+                  />
                   <Text style={styles.eventDetailText}>
                     {formatDate(event.discoveryDate)}
                   </Text>
@@ -314,18 +381,30 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
                 <View style={styles.notificationStatus}>
                   {event.regulatoryNotification && (
                     <View style={styles.notificationBadge}>
-                      <Ionicons name="checkmark" size={12} color={theme.colors.success} />
+                      <Ionicons
+                        name="checkmark"
+                        size={12}
+                        color={theme.colors.success}
+                      />
                       <Text style={styles.notificationText}>監管通知</Text>
                     </View>
                   )}
                   {event.userNotification && (
                     <View style={styles.notificationBadge}>
-                      <Ionicons name="checkmark" size={12} color={theme.colors.success} />
+                      <Ionicons
+                        name="checkmark"
+                        size={12}
+                        color={theme.colors.success}
+                      />
                       <Text style={styles.notificationText}>用戶通知</Text>
                     </View>
                   )}
                 </View>
-                <Ionicons name="chevron-forward" size={16} color={theme.colors.textSecondary} />
+                <Ionicons
+                  name="chevron-forward"
+                  size={16}
+                  color={theme.colors.textSecondary}
+                />
               </View>
             </TouchableOpacity>
           ))
@@ -338,118 +417,118 @@ export const DataBreachDashboard: React.FC<DataBreachDashboardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   statsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     padding: 16,
-    gap: 12
+    gap: 12,
   },
   statCard: {
     flex: 1,
     minWidth: (width - 48) / 2,
-    maxWidth: (width - 48) / 2
+    maxWidth: (width - 48) / 2,
   },
   statContent: {
     alignItems: 'center',
-    padding: 16
+    padding: 16,
   },
   statNumber: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginTop: 8
+    marginTop: 8,
   },
   statLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginTop: 4
+    marginTop: 4,
   },
   monitoringCard: {
     margin: 16,
-    marginTop: 0
+    marginTop: 0,
   },
   monitoringHeader: {
-    padding: 16
+    padding: 16,
   },
   monitoringStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   statusDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    marginRight: 8
+    marginRight: 8,
   },
   monitoringText: {
     fontSize: 16,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   monitoringSubtext: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   actionsContainer: {
     flexDirection: 'row',
     padding: 16,
-    gap: 12
+    gap: 12,
   },
   actionButton: {
     flex: 1,
     backgroundColor: theme.colors.surface,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   actionButtonText: {
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   primaryButton: {
     backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   primaryButtonText: {
-    color: theme.colors.onPrimary
+    color: theme.colors.onPrimary,
   },
   eventsContainer: {
     padding: 16,
-    paddingTop: 0
+    paddingTop: 0,
   },
   eventsHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   eventsTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   eventsCount: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   emptyCard: {
-    padding: 32
+    padding: 32,
   },
   emptyContent: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   emptyTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.text,
-    marginTop: 16
+    marginTop: 16,
   },
   emptySubtitle: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginTop: 8,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   eventCard: {
     backgroundColor: theme.colors.surface,
@@ -457,91 +536,91 @@ const styles = StyleSheet.create({
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   eventHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 8
+    marginBottom: 8,
   },
   eventTitleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
-    marginRight: 8
+    marginRight: 8,
   },
   eventTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.text,
     marginLeft: 8,
-    flex: 1
+    flex: 1,
   },
   eventBadges: {
     flexDirection: 'row',
-    gap: 4
+    gap: 4,
   },
   riskBadge: {
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 4
+    borderRadius: 4,
   },
   riskBadgeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: theme.colors.onPrimary
+    color: theme.colors.onPrimary,
   },
   statusBadge: {
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 4
+    borderRadius: 4,
   },
   statusBadgeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: theme.colors.onPrimary
+    color: theme.colors.onPrimary,
   },
   eventDescription: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginBottom: 12,
-    lineHeight: 20
+    lineHeight: 20,
   },
   eventDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12
+    marginBottom: 12,
   },
   eventDetail: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   eventDetailText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginLeft: 4
+    marginLeft: 4,
   },
   eventFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   notificationStatus: {
     flexDirection: 'row',
-    gap: 8
+    gap: 8,
   },
   notificationBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: `${theme.colors.success  }20`,
+    backgroundColor: `${theme.colors.success}20`,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 4
+    borderRadius: 4,
   },
   notificationText: {
     fontSize: 10,
     color: theme.colors.success,
-    marginLeft: 2
-  }
+    marginLeft: 2,
+  },
 });

@@ -8,29 +8,29 @@ import {
   ANIMATION_PRESETS,
   animationUtils,
   performanceOptimizers,
-  animationMonitor
+  animationMonitor,
 } from '../utils/advancedAnimations';
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#1a1a1a',
-    flex: 1
+    flex: 1,
   },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   section: {
-    marginBottom: 30
+    marginBottom: 30,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 10
+    marginBottom: 10,
   },
   animationBox: {
     width: 100,
@@ -38,12 +38,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffd700',
     borderRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   animationText: {
     color: '#1a1a1a',
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 
 export default {
@@ -51,17 +51,17 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: '高級動畫系統提供豐富的動畫效果和性能優化工具。'
-      }
-    }
+        component: '高級動畫系統提供豐富的動畫效果和性能優化工具。',
+      },
+    },
   },
   decorators: [
     (Story) => (
       <View style={styles.container}>
         <Story />
       </View>
-    )
-  ]
+    ),
+  ],
 };
 
 // 動畫配置展示
@@ -92,13 +92,13 @@ export const BasicAnimations = () => {
         Animated.timing(scaleValue, {
           toValue: 1.2,
           duration: 1000,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(scaleValue, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ])
     );
     animation.start();
@@ -113,8 +113,8 @@ export const BasicAnimations = () => {
           style={[
             styles.animationBox,
             {
-              transform: [{ scale: scaleValue }]
-            }
+              transform: [{ scale: scaleValue }],
+            },
           ]}
         >
           <Text style={styles.animationText}>縮放</Text>
@@ -145,13 +145,13 @@ export const AdvancedAnimations = () => {
         Animated.timing(pulseValue, {
           toValue: 1.1,
           duration: 1000,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(pulseValue, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ])
     );
     pulseAnimation.start();
@@ -165,12 +165,12 @@ export const AdvancedAnimations = () => {
 
   const waveTranslateY = waveValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, -20]
+    outputRange: [0, -20],
   });
 
   const glowOpacity = glowValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 0.5]
+    outputRange: [0, 0.5],
   });
 
   return (
@@ -181,8 +181,8 @@ export const AdvancedAnimations = () => {
           style={[
             styles.animationBox,
             {
-              transform: [{ translateY: waveTranslateY }]
-            }
+              transform: [{ translateY: waveTranslateY }],
+            },
           ]}
         >
           <Text style={styles.animationText}>波浪</Text>
@@ -191,8 +191,8 @@ export const AdvancedAnimations = () => {
           style={[
             styles.animationBox,
             {
-              transform: [{ scale: pulseValue }]
-            }
+              transform: [{ scale: pulseValue }],
+            },
           ]}
         >
           <Text style={styles.animationText}>脈衝</Text>
@@ -205,8 +205,8 @@ export const AdvancedAnimations = () => {
               shadowOffset: { width: 0, height: 0 },
               shadowOpacity: glowOpacity,
               shadowRadius: 20,
-              elevation: 10
-            }
+              elevation: 10,
+            },
           ]}
         >
           <Text style={styles.animationText}>光暈</Text>
@@ -239,12 +239,12 @@ export const AnimationComposers = () => {
 
   const rotate = rotateValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg']
+    outputRange: ['0deg', '360deg'],
   });
 
   const shakeTranslateX = shakeValue.interpolate({
     inputRange: [-10, 0, 10],
-    outputRange: [-10, 0, 10]
+    outputRange: [-10, 0, 10],
   });
 
   return (
@@ -255,11 +255,8 @@ export const AnimationComposers = () => {
           style={[
             styles.animationBox,
             {
-              transform: [
-                { scale: scaleValue },
-                { rotate }
-              ]
-            }
+              transform: [{ scale: scaleValue }, { rotate }],
+            },
           ]}
         >
           <Text style={styles.animationText}>成功</Text>
@@ -268,8 +265,8 @@ export const AnimationComposers = () => {
           style={[
             styles.animationBox,
             {
-              transform: [{ translateX: shakeTranslateX }]
-            }
+              transform: [{ translateX: shakeTranslateX }],
+            },
           ]}
         >
           <Text style={styles.animationText}>錯誤</Text>
@@ -282,10 +279,7 @@ export const AnimationComposers = () => {
         >
           觸發成功動畫
         </Text>
-        <Text
-          style={{ color: '#ff6b6b' }}
-          onPress={handleErrorAnimation}
-        >
+        <Text style={{ color: '#ff6b6b' }} onPress={handleErrorAnimation}>
           觸發錯誤動畫
         </Text>
       </View>
@@ -306,20 +300,20 @@ export const AnimationPresets = () => {
         toValue: 1,
         duration: preset.duration,
         easing: preset.easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(cardTranslateY, {
         toValue: 0,
         duration: preset.duration,
         easing: preset.easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(cardScale, {
         toValue: 1,
         duration: preset.duration,
         easing: preset.easing,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]).start();
   }, []);
 
@@ -332,11 +326,8 @@ export const AnimationPresets = () => {
             styles.animationBox,
             {
               opacity: cardOpacity,
-              transform: [
-                { translateY: cardTranslateY },
-                { scale: cardScale }
-              ]
-            }
+              transform: [{ translateY: cardTranslateY }, { scale: cardScale }],
+            },
           ]}
         >
           <Text style={styles.animationText}>卡片入場</Text>
@@ -351,7 +342,7 @@ export const AnimationUtils = () => {
   const values = [
     new Animated.Value(0),
     new Animated.Value(0),
-    new Animated.Value(0)
+    new Animated.Value(0),
   ];
 
   React.useEffect(() => {
@@ -362,7 +353,7 @@ export const AnimationUtils = () => {
           toValue: 1,
           duration: 500,
           delay: index * 200,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
       200
     );
@@ -384,11 +375,11 @@ export const AnimationUtils = () => {
                   {
                     scale: value.interpolate({
                       inputRange: [0, 1],
-                      outputRange: [0.5, 1]
-                    })
-                  }
-                ]
-              }
+                      outputRange: [0.5, 1],
+                    }),
+                  },
+                ],
+              },
             ]}
           >
             <Text style={styles.animationText}>{index + 1}</Text>
@@ -501,14 +492,24 @@ export const AnimationSystemDocumentation = () => (
         <Text style={styles.sectionTitle}>使用示例</Text>
         <View style={{ color: '#ffffff' }}>
           <Text>```tsx</Text>
-          <Text>import { advancedAnimations, animationComposers } from '@utils/advancedAnimations';</Text>
+          <Text>
+            import {(advancedAnimations, animationComposers)} from
+            '@utils/advancedAnimations';
+          </Text>
           <Text></Text>
           <Text>// 使用高級動畫</Text>
-          <Text>const waveAnimation = advancedAnimations.wave(waveValue, 20, 2, 2000);</Text>
+          <Text>
+            const waveAnimation = advancedAnimations.wave(waveValue, 20, 2,
+            2000);
+          </Text>
           <Text>waveAnimation.start();</Text>
           <Text></Text>
           <Text>// 使用動畫組合器</Text>
-          <Text>const successAnimation = animationComposers.successCelebration(scaleValue, rotateValue, colorValue);</Text>
+          <Text>
+            const successAnimation =
+            animationComposers.successCelebration(scaleValue, rotateValue,
+            colorValue);
+          </Text>
           <Text>successAnimation.start();</Text>
           <Text>```</Text>
         </View>

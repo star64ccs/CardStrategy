@@ -23,7 +23,7 @@ export interface NetworkMonitorConfig {
 const defaultConfig: NetworkMonitorConfig = {
   checkInterval: 5000, // 5秒
   timeout: 10000, // 10秒
-  retryAttempts: 3
+  retryAttempts: 3,
 };
 
 // 網絡監控類
@@ -83,7 +83,7 @@ class NetworkMonitor {
         isWifi: state.type === 'wifi',
         isCellular: state.type === 'cellular',
         isEthernet: state.type === 'ethernet',
-        isUnknown: state.type === 'unknown'
+        isUnknown: state.type === 'unknown',
       };
 
       // 檢查狀態是否發生變化
@@ -110,14 +110,15 @@ class NetworkMonitor {
 
     return (
       this.lastKnownState.isConnected !== newState.isConnected ||
-      this.lastKnownState.isInternetReachable !== newState.isInternetReachable ||
+      this.lastKnownState.isInternetReachable !==
+        newState.isInternetReachable ||
       this.lastKnownState.type !== newState.type
     );
   }
 
   // 通知監聽器
   private notifyListeners(state: NetworkState): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(state);
       } catch (error) {
@@ -146,7 +147,7 @@ class NetworkMonitor {
       isWifi: state.type === 'wifi',
       isCellular: state.type === 'cellular',
       isEthernet: state.type === 'ethernet',
-      isUnknown: state.type === 'unknown'
+      isUnknown: state.type === 'unknown',
     };
   }
 
@@ -157,28 +158,35 @@ class NetworkMonitor {
   }
 
   // 等待網絡連接
-  async waitForConnection(timeout: number = this.config.timeout): Promise<boolean> {
+  async waitForConnection(
+    timeout: number = this.config.timeout
+  ): Promise<boolean> {
     const startTime = Date.now();
 
     while (Date.now() - startTime < timeout) {
       if (await this.isNetworkAvailable()) {
         return true;
       }
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
     return false;
   }
 
   // 測試網絡連接
-  async testConnection(url: string = 'https://www.google.com'): Promise<boolean> {
+  async testConnection(
+    url: string = 'https://www.google.com'
+  ): Promise<boolean> {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
+      const timeoutId = setTimeout(
+        () => controller.abort(),
+        this.config.timeout
+      );
 
       const response = await fetch(url, {
         method: 'HEAD',
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -219,8 +227,10 @@ export const networkMonitor = new NetworkMonitor();
 // 導出工具函數
 export const getNetworkState = () => networkMonitor.getCurrentState();
 export const isNetworkAvailable = () => networkMonitor.isNetworkAvailable();
-export const waitForConnection = (timeout?: number) => networkMonitor.waitForConnection(timeout);
-export const testConnection = (url?: string) => networkMonitor.testConnection(url);
+export const waitForConnection = (timeout?: number) =>
+  networkMonitor.waitForConnection(timeout);
+export const testConnection = (url?: string) =>
+  networkMonitor.testConnection(url);
 export const getNetworkQuality = () => networkMonitor.getNetworkQuality();
 
 // 自動啟動網絡監控

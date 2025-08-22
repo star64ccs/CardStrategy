@@ -1,6 +1,12 @@
-const { getSimulatedGradingModel, generateGradingNumber } = require('../models/SimulatedGrading');
+const {
+  getSimulatedGradingModel,
+  generateGradingNumber,
+} = require('../models/SimulatedGrading');
+const sequelize = require('../config/database');
+const { Op } = require('sequelize');
 const { getCardModel } = require('../models/Card');
 const { getUserModel } = require('../models/User');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
 class SimulatedGradingService {
@@ -36,7 +42,7 @@ class SimulatedGradingService {
       }
 
       // 從鑑定結果中獲取機構信息
-      const {agency} = gradingResult;
+      const { agency } = gradingResult;
 
       // 生成鑑定編號
       const gradingNumber = generateGradingNumber(agency);
@@ -47,7 +53,7 @@ class SimulatedGradingService {
         setName: card.setName,
         cardNumber: card.cardNumber,
         rarity: card.rarity,
-        imageUrl: card.imageUrl || ''
+        imageUrl: card.imageUrl || '',
       };
 
       // 創建鑑定記錄
@@ -60,15 +66,15 @@ class SimulatedGradingService {
         gradingResult,
         metadata: {
           imageData: imageData ? 'provided' : 'not_provided',
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       });
 
       logger.info('模擬鑑定報告創建成功', {
         userId,
         cardId,
         agency,
-        gradingNumber: grading.gradingNumber
+        gradingNumber: grading.gradingNumber,
       });
 
       return {
@@ -84,7 +90,7 @@ class SimulatedGradingService {
         expiresAt: grading.expiresAt,
         viewCount: grading.viewCount,
         createdAt: grading.createdAt,
-        updatedAt: grading.updatedAt
+        updatedAt: grading.updatedAt,
       };
     } catch (error) {
       logger.error('創建模擬鑑定報告失敗:', error);
@@ -103,20 +109,27 @@ class SimulatedGradingService {
       const grading = await this.SimulatedGrading.findOne({
         where: {
           gradingNumber,
-          isActive: true
+          isActive: true,
         },
         include: [
           {
             model: this.Card,
             as: 'card',
-            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl', 'currentPrice']
+            attributes: [
+              'id',
+              'name',
+              'setName',
+              'rarity',
+              'imageUrl',
+              'currentPrice',
+            ],
           },
           {
             model: this.User,
             as: 'user',
-            attributes: ['id', 'username', 'avatar']
-          }
-        ]
+            attributes: ['id', 'username', 'avatar'],
+          },
+        ],
       });
 
       if (!grading) {
@@ -130,14 +143,14 @@ class SimulatedGradingService {
       // 更新查看次數和最後查看時間
       await grading.update({
         viewCount: grading.viewCount + 1,
-        lastViewedAt: new Date()
+        lastViewedAt: new Date(),
       });
 
       logger.info('鑑定報告查詢成功', {
         gradingNumber,
         viewCount: grading.viewCount + 1,
         isExpired,
-        isValid
+        isValid,
       });
 
       return {
@@ -158,7 +171,7 @@ class SimulatedGradingService {
         card: grading.card,
         user: grading.user,
         isExpired,
-        isValid
+        isValid,
       };
     } catch (error) {
       logger.error('查詢鑑定報告失敗:', error);
@@ -173,11 +186,17 @@ class SimulatedGradingService {
     try {
       await this.initializeModels();
 
-      const { page = 1, limit = 20, agency, sortBy = 'createdAt', sortOrder = 'DESC' } = options;
+      const {
+        page = 1,
+        limit = 20,
+        agency,
+        sortBy = 'createdAt',
+        sortOrder = 'DESC',
+      } = options;
 
       const where = {
         userId,
-        isActive: true
+        isActive: true,
       };
 
       if (agency) {
@@ -190,15 +209,22 @@ class SimulatedGradingService {
           {
             model: this.Card,
             as: 'card',
-            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl', 'currentPrice']
-          }
+            attributes: [
+              'id',
+              'name',
+              'setName',
+              'rarity',
+              'imageUrl',
+              'currentPrice',
+            ],
+          },
         ],
         order: [[sortBy, sortOrder]],
         limit: parseInt(limit),
-        offset: (parseInt(page) - 1) * parseInt(limit)
+        offset: (parseInt(page) - 1) * parseInt(limit),
       });
 
-      const reports = rows.map(grading => ({
+      const reports = rows.map((grading) => ({
         id: grading.id,
         cardId: grading.cardId,
         userId: grading.userId,
@@ -214,7 +240,7 @@ class SimulatedGradingService {
         createdAt: grading.createdAt,
         updatedAt: grading.updatedAt,
         card: grading.card,
-        isExpired: new Date() > grading.expiresAt
+        isExpired: new Date() > grading.expiresAt,
       }));
 
       return {
@@ -223,8 +249,8 @@ class SimulatedGradingService {
           page: parseInt(page),
           limit: parseInt(limit),
           total: count,
-          totalPages: Math.ceil(count / parseInt(limit))
-        }
+          totalPages: Math.ceil(count / parseInt(limit)),
+        },
       };
     } catch (error) {
       logger.error('獲取用戶鑑定報告失敗:', error);
@@ -239,10 +265,16 @@ class SimulatedGradingService {
     try {
       await this.initializeModels();
 
-      const { page = 1, limit = 20, agency, sortBy = 'createdAt', sortOrder = 'DESC' } = options;
+      const {
+        page = 1,
+        limit = 20,
+        agency,
+        sortBy = 'createdAt',
+        sortOrder = 'DESC',
+      } = options;
 
       const where = {
-        isActive: true
+        isActive: true,
       };
 
       if (agency) {
@@ -254,7 +286,7 @@ class SimulatedGradingService {
         where[Op.or] = [
           { gradingNumber: { [Op.like]: `%${query}%` } },
           { '$cardInfo.name$': { [Op.like]: `%${query}%` } },
-          { '$cardInfo.setName$': { [Op.like]: `%${query}%` } }
+          { '$cardInfo.setName$': { [Op.like]: `%${query}%` } },
         ];
       }
 
@@ -264,20 +296,27 @@ class SimulatedGradingService {
           {
             model: this.Card,
             as: 'card',
-            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl', 'currentPrice']
+            attributes: [
+              'id',
+              'name',
+              'setName',
+              'rarity',
+              'imageUrl',
+              'currentPrice',
+            ],
           },
           {
             model: this.User,
             as: 'user',
-            attributes: ['id', 'username', 'avatar']
-          }
+            attributes: ['id', 'username', 'avatar'],
+          },
         ],
         order: [[sortBy, sortOrder]],
         limit: parseInt(limit),
-        offset: (parseInt(page) - 1) * parseInt(limit)
+        offset: (parseInt(page) - 1) * parseInt(limit),
       });
 
-      const reports = rows.map(grading => ({
+      const reports = rows.map((grading) => ({
         id: grading.id,
         cardId: grading.cardId,
         userId: grading.userId,
@@ -294,7 +333,7 @@ class SimulatedGradingService {
         updatedAt: grading.updatedAt,
         card: grading.card,
         user: grading.user,
-        isExpired: new Date() > grading.expiresAt
+        isExpired: new Date() > grading.expiresAt,
       }));
 
       return {
@@ -303,8 +342,8 @@ class SimulatedGradingService {
           page: parseInt(page),
           limit: parseInt(limit),
           total: count,
-          totalPages: Math.ceil(count / parseInt(limit))
-        }
+          totalPages: Math.ceil(count / parseInt(limit)),
+        },
       };
     } catch (error) {
       logger.error('搜索鑑定報告失敗:', error);
@@ -329,29 +368,36 @@ class SimulatedGradingService {
         attributes: [
           'agency',
           [sequelize.fn('COUNT', sequelize.col('id')), 'totalCount'],
-          [sequelize.fn('AVG', sequelize.literal('JSON_EXTRACT(gradingResult, "$.confidence")')), 'avgConfidence'],
+          [
+            sequelize.fn(
+              'AVG',
+              sequelize.literal('JSON_EXTRACT(gradingResult, "$.confidence")')
+            ),
+            'avgConfidence',
+          ],
           [sequelize.fn('MAX', sequelize.col('viewCount')), 'maxViews'],
-          [sequelize.fn('SUM', sequelize.col('viewCount')), 'totalViews']
+          [sequelize.fn('SUM', sequelize.col('viewCount')), 'totalViews'],
         ],
         group: ['agency'],
-        raw: true
+        raw: true,
       });
 
       const totalReports = await this.SimulatedGrading.count({ where });
+// eslint-disable-next-line no-unused-vars
       const recentReports = await this.SimulatedGrading.count({
         where: {
           ...where,
           createdAt: {
-            [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 最近30天
-          }
-        }
+            [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 最近30天
+          },
+        },
       });
 
       return {
         agencyStats: stats,
         totalReports,
         recentReports,
-        topViewedReports: await this.getTopViewedReports(userId)
+        topViewedReports: await this.getTopViewedReports(userId),
       };
     } catch (error) {
       logger.error('獲取鑑定統計失敗:', error);
@@ -377,14 +423,14 @@ class SimulatedGradingService {
           {
             model: this.Card,
             as: 'card',
-            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl']
-          }
+            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl'],
+          },
         ],
         order: [['viewCount', 'DESC']],
-        limit
+        limit,
       });
 
-      return reports.map(grading => ({
+      return reports.map((grading) => ({
         id: grading.id,
         gradingNumber: grading.gradingNumber,
         agency: grading.agency,
@@ -392,7 +438,7 @@ class SimulatedGradingService {
         gradingResult: grading.gradingResult,
         viewCount: grading.viewCount,
         createdAt: grading.createdAt,
-        card: grading.card
+        card: grading.card,
       }));
     } catch (error) {
       logger.error('獲取最受歡迎鑑定報告失敗:', error);

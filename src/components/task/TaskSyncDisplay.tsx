@@ -1,6 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
-import { TaskDependencyManager, SyncStatus, SyncConflict } from '@/utils/taskDependencyManager';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
+import {
+  TaskDependencyManager,
+  SyncStatus,
+  SyncConflict,
+} from '@/utils/taskDependencyManager';
 
 interface TaskSyncDisplayProps {
   taskManager: TaskDependencyManager;
@@ -21,14 +33,16 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
   taskManager,
   showDetails = true,
   autoRefresh = true,
-  refreshInterval = 5000
+  refreshInterval = 5000,
 }) => {
   const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null);
   const [syncConflicts, setSyncConflicts] = useState<SyncConflict[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
-  const manager = taskManager || require('@/utils/taskDependencyManager').taskDependencyManager;
+  const manager =
+    taskManager ||
+    require('@/utils/taskDependencyManager').taskDependencyManager;
 
   useEffect(() => {
     loadSyncData();
@@ -47,7 +61,7 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
 
     // 監聽同步衝突
     const handleSyncConflict = (conflict: SyncConflict) => {
-      setSyncConflicts(prev => [...prev, conflict]);
+      setSyncConflicts((prev) => [...prev, conflict]);
     };
 
     // 監聽手動衝突解決
@@ -57,7 +71,10 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
         `檢測到任務 "${conflict.taskId}" 的同步衝突，需要手動解決。`,
         [
           { text: '取消', style: 'cancel' },
-          { text: '解決', onPress: () => showConflictResolutionDialog(conflict) }
+          {
+            text: '解決',
+            onPress: () => showConflictResolutionDialog(conflict),
+          },
         ]
       );
     };
@@ -113,21 +130,24 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
         { text: '取消', style: 'cancel' },
         {
           text: '使用本地版本',
-          onPress: () => resolveConflict(conflict.taskId, 'LOCAL_WINS')
+          onPress: () => resolveConflict(conflict.taskId, 'LOCAL_WINS'),
         },
         {
           text: '使用遠程版本',
-          onPress: () => resolveConflict(conflict.taskId, 'REMOTE_WINS')
+          onPress: () => resolveConflict(conflict.taskId, 'REMOTE_WINS'),
         },
         {
           text: '合併版本',
-          onPress: () => resolveConflict(conflict.taskId, 'MERGE')
-        }
+          onPress: () => resolveConflict(conflict.taskId, 'MERGE'),
+        },
       ]
     );
   };
 
-  const resolveConflict = async (taskId: string, resolution: SyncConflict['resolution']) => {
+  const resolveConflict = async (
+    taskId: string,
+    resolution: SyncConflict['resolution']
+  ) => {
     try {
       await manager.resolveSyncConflict(taskId, resolution);
       await loadSyncData();
@@ -164,7 +184,6 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
       return `${minutes}分鐘${seconds % 60}秒`;
     }
     return `${seconds}秒`;
-
   };
 
   const renderSyncStatus = () => {
@@ -177,7 +196,12 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
         <View style={styles.statusGrid}>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>網絡狀態</Text>
-            <View style={[styles.statusIndicator, syncStatus.isOnline ? styles.online : styles.offline]}>
+            <View
+              style={[
+                styles.statusIndicator,
+                syncStatus.isOnline ? styles.online : styles.offline,
+              ]}
+            >
               <Text style={styles.statusText}>
                 {syncStatus.isOnline ? '在線' : '離線'}
               </Text>
@@ -186,7 +210,12 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
 
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>同步狀態</Text>
-            <View style={[styles.statusIndicator, syncStatus.isSyncing ? styles.syncing : styles.idle]}>
+            <View
+              style={[
+                styles.statusIndicator,
+                syncStatus.isSyncing ? styles.syncing : styles.idle,
+              ]}
+            >
               <Text style={styles.statusText}>
                 {syncStatus.isSyncing ? '同步中' : '閒置'}
               </Text>
@@ -228,8 +257,15 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
         {syncStatus.connectedDevices.map((device, index) => (
           <View key={device.deviceId} style={styles.deviceItem}>
             <View style={styles.deviceHeader}>
-              <Text style={styles.deviceName}>{device.deviceName || device.deviceId}</Text>
-              <View style={[styles.deviceStatus, device.isOnline ? styles.online : styles.offline]}>
+              <Text style={styles.deviceName}>
+                {device.deviceName || device.deviceId}
+              </Text>
+              <View
+                style={[
+                  styles.deviceStatus,
+                  device.isOnline ? styles.online : styles.offline,
+                ]}
+              >
                 <Text style={styles.deviceStatusText}>
                   {device.isOnline ? '在線' : '離線'}
                 </Text>
@@ -254,7 +290,9 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
 
     return (
       <View style={styles.conflictsContainer}>
-        <Text style={styles.sectionTitle}>同步衝突 ({syncConflicts.length})</Text>
+        <Text style={styles.sectionTitle}>
+          同步衝突 ({syncConflicts.length})
+        </Text>
 
         {syncConflicts.map((conflict, index) => (
           <View key={`${conflict.taskId}_${index}`} style={styles.conflictItem}>
@@ -265,10 +303,12 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
 
             <View style={styles.conflictDetails}>
               <Text style={styles.conflictDetail}>
-                本地版本: v{conflict.localVersion.version} ({formatTime(conflict.localVersion.timestamp)})
+                本地版本: v{conflict.localVersion.version} (
+                {formatTime(conflict.localVersion.timestamp)})
               </Text>
               <Text style={styles.conflictDetail}>
-                遠程版本: v{conflict.remoteVersion.version} ({formatTime(conflict.remoteVersion.timestamp)})
+                遠程版本: v{conflict.remoteVersion.version} (
+                {formatTime(conflict.remoteVersion.timestamp)})
               </Text>
             </View>
 
@@ -358,7 +398,7 @@ export const TaskSyncDisplay: React.FC<TaskSyncDisplayProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   statusContainer: {
     backgroundColor: '#fff',
@@ -369,65 +409,65 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statusGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statusItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statusLabel: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   statusValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   statusIndicator: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 4,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
   },
   online: {
-    backgroundColor: '#e8f5e8'
+    backgroundColor: '#e8f5e8',
   },
   offline: {
-    backgroundColor: '#ffe8e8'
+    backgroundColor: '#ffe8e8',
   },
   syncing: {
-    backgroundColor: '#e8f0ff'
+    backgroundColor: '#e8f0ff',
   },
   idle: {
-    backgroundColor: '#f0f0f0'
+    backgroundColor: '#f0f0f0',
   },
   statusText: {
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   syncInfo: {
     marginTop: 12,
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#eee'
+    borderTopColor: '#eee',
   },
   syncInfoText: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   devicesContainer: {
     backgroundColor: '#fff',
@@ -438,40 +478,40 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   deviceItem: {
     marginBottom: 16,
     padding: 12,
     backgroundColor: '#f9f9f9',
-    borderRadius: 6
+    borderRadius: 6,
   },
   deviceHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   deviceName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   deviceStatus: {
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 3
+    borderRadius: 3,
   },
   deviceStatusText: {
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   deviceDetails: {
-    gap: 4
+    gap: 4,
   },
   deviceDetail: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   conflictsContainer: {
     backgroundColor: '#fff',
@@ -482,7 +522,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   conflictItem: {
     marginBottom: 16,
@@ -490,18 +530,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff3cd',
     borderWidth: 1,
     borderColor: '#ffeaa7',
-    borderRadius: 6
+    borderRadius: 6,
   },
   conflictHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   conflictTaskId: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#856404'
+    color: '#856404',
   },
   conflictType: {
     fontSize: 12,
@@ -509,40 +549,40 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff3cd',
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: 3
+    borderRadius: 3,
   },
   conflictDetails: {
-    marginBottom: 12
+    marginBottom: 12,
   },
   conflictDetail: {
     fontSize: 14,
     color: '#856404',
-    marginBottom: 2
+    marginBottom: 2,
   },
   conflictActions: {
     flexDirection: 'row',
-    gap: 8
+    gap: 8,
   },
   conflictButton: {
     flex: 1,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 4,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   localButton: {
-    backgroundColor: '#007bff'
+    backgroundColor: '#007bff',
   },
   remoteButton: {
-    backgroundColor: '#28a745'
+    backgroundColor: '#28a745',
   },
   mergeButton: {
-    backgroundColor: '#ffc107'
+    backgroundColor: '#ffc107',
   },
   conflictButtonText: {
     color: '#fff',
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   actionsContainer: {
     backgroundColor: '#fff',
@@ -553,48 +593,48 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   actionButtons: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 12
+    marginBottom: 12,
   },
   actionButton: {
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 6,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   syncButton: {
-    backgroundColor: '#007bff'
+    backgroundColor: '#007bff',
   },
   refreshButton: {
-    backgroundColor: '#6c757d'
+    backgroundColor: '#6c757d',
   },
   cleanupButton: {
-    backgroundColor: '#dc3545'
+    backgroundColor: '#dc3545',
   },
   actionButtonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   lastRefreshText: {
     fontSize: 12,
     color: '#666',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 32
+    padding: 32,
   },
   emptyStateText: {
     fontSize: 16,
     color: '#666',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });

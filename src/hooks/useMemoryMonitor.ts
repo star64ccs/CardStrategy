@@ -1,5 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { memoryMonitorService, MemoryLeakReport } from '@/services/memoryMonitorService';
+import {
+  memoryMonitorService,
+  MemoryLeakReport,
+} from '@/services/memoryMonitorService';
 import { logger } from '@/utils/logger';
 
 interface UseMemoryMonitorOptions {
@@ -14,12 +17,14 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
     componentName,
     enableLeakDetection = true,
     memoryThreshold = 1, // 1MB
-    onMemoryLeak
+    onMemoryLeak,
   } = options;
 
   const mountTime = useRef(Date.now());
   const memoryStart = useRef<number>(0);
-  const memoryLeakCallback = useRef<((report: MemoryLeakReport) => void) | null>(null);
+  const memoryLeakCallback = useRef<
+    ((report: MemoryLeakReport) => void) | null
+  >(null);
 
   // 記錄組件掛載時的內存使用
   useEffect(() => {
@@ -27,7 +32,7 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
     if (currentMemory) {
       memoryStart.current = currentMemory.usedJSHeapSize;
       logger.debug(`${componentName} 組件掛載`, {
-        memory: `${Math.round(memoryStart.current / 1024 / 1024)}MB`
+        memory: `${Math.round(memoryStart.current / 1024 / 1024)}MB`,
       });
     }
 
@@ -36,7 +41,7 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
       memoryLeakCallback.current = (report: MemoryLeakReport) => {
         logger.warn(`${componentName} 檢測到內存洩漏`, {
           growth: `${Math.round(report.growth / 1024 / 1024)}MB`,
-          duration: `${Math.round(report.duration / 1000)}秒`
+          duration: `${Math.round(report.duration / 1000)}秒`,
         });
         onMemoryLeak(report);
       };
@@ -56,7 +61,7 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
           memoryDiff: `${Math.round(memoryDiffMB)}MB`,
           duration: `${Math.round(duration / 1000)}秒`,
           memoryStart: `${Math.round(memoryStart.current / 1024 / 1024)}MB`,
-          memoryEnd: `${Math.round(memoryEnd / 1024 / 1024)}MB`
+          memoryEnd: `${Math.round(memoryEnd / 1024 / 1024)}MB`,
         });
 
         // 檢查是否超過閾值
@@ -64,14 +69,16 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
           logger.warn(`${componentName} 可能存在內存洩漏`, {
             growth: `${Math.round(memoryDiffMB)}MB`,
             threshold: `${memoryThreshold}MB`,
-            lifecycle: `${Math.round(duration / 1000)}秒`
+            lifecycle: `${Math.round(duration / 1000)}秒`,
           });
         }
       }
 
       // 清理內存洩漏回調
       if (memoryLeakCallback.current) {
-        memoryMonitorService.removeMemoryLeakCallback(memoryLeakCallback.current);
+        memoryMonitorService.removeMemoryLeakCallback(
+          memoryLeakCallback.current
+        );
         memoryLeakCallback.current = null;
       }
     };
@@ -97,7 +104,7 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
       if (memoryDiffMB > memoryThreshold) {
         logger.warn(`${componentName} 手動檢查發現內存洩漏`, {
           growth: `${Math.round(memoryDiffMB)}MB`,
-          threshold: `${memoryThreshold}MB`
+          threshold: `${memoryThreshold}MB`,
         });
         return true;
       }
@@ -108,6 +115,6 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
   return {
     getCurrentMemory,
     getMemoryStats,
-    checkMemoryLeak
+    checkMemoryLeak,
   };
 };

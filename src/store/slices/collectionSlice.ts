@@ -13,7 +13,11 @@ export const fetchCollections = createAsyncThunk(
 
 export const createCollection = createAsyncThunk(
   'collection/createCollection',
-  async (collectionData: { name: string; description?: string; isPublic: boolean }) => {
+  async (collectionData: {
+    name: string;
+    description?: string;
+    isPublic: boolean;
+  }) => {
     const response = await collectionService.createCollection(collectionData);
     return response;
   }
@@ -21,8 +25,17 @@ export const createCollection = createAsyncThunk(
 
 export const updateCollection = createAsyncThunk(
   'collection/updateCollection',
-  async ({ collectionId, data }: { collectionId: string; data: Partial<Collection> }) => {
-    const response = await collectionService.updateCollection(collectionId, data);
+  async ({
+    collectionId,
+    data,
+  }: {
+    collectionId: string;
+    data: Partial<Collection>;
+  }) => {
+    const response = await collectionService.updateCollection(
+      collectionId,
+      data
+    );
     return response;
   }
 );
@@ -39,7 +52,7 @@ export const addCardToCollection = createAsyncThunk(
   'collection/addCardToCollection',
   async ({
     collectionId,
-    cardData
+    cardData,
   }: {
     collectionId: string;
     cardData: {
@@ -48,17 +61,26 @@ export const addCardToCollection = createAsyncThunk(
       condition: string;
       isFoil: boolean;
       purchasePrice?: number;
-      notes?: string
-    }
+      notes?: string;
+    };
   }) => {
-    const response = await collectionService.addCardToCollection(collectionId, cardData);
+    const response = await collectionService.addCardToCollection(
+      collectionId,
+      cardData
+    );
     return { ...response, collectionId };
   }
 );
 
 export const removeCardFromCollection = createAsyncThunk(
   'collection/removeCardFromCollection',
-  async ({ collectionId, cardId }: { collectionId: string; cardId: string }) => {
+  async ({
+    collectionId,
+    cardId,
+  }: {
+    collectionId: string;
+    cardId: string;
+  }) => {
     await collectionService.removeCardFromCollection(collectionId, cardId);
     return { collectionId, cardId };
   }
@@ -69,13 +91,17 @@ export const updateCardInCollection = createAsyncThunk(
   async ({
     collectionId,
     cardId,
-    data
+    data,
   }: {
     collectionId: string;
     cardId: string;
-    data: Partial<CollectionItem>
+    data: Partial<CollectionItem>;
   }) => {
-    const response = await collectionService.updateCardInCollection(collectionId, cardId, data);
+    const response = await collectionService.updateCardInCollection(
+      collectionId,
+      cardId,
+      data
+    );
     return { ...response, collectionId, cardId };
   }
 );
@@ -83,7 +109,8 @@ export const updateCardInCollection = createAsyncThunk(
 export const getCollectionStatistics = createAsyncThunk(
   'collection/getCollectionStatistics',
   async (collectionId: string) => {
-    const response = await collectionService.getCollectionStatistics(collectionId);
+    const response =
+      await collectionService.getCollectionStatistics(collectionId);
     return response;
   }
 );
@@ -103,8 +130,8 @@ const initialState: CollectionState = {
     averageCondition: 0,
     mostValuableCard: '',
     recentAdditions: 0,
-    completionRate: 0
-  }
+    completionRate: 0,
+  },
 };
 
 // Collection slice
@@ -115,7 +142,10 @@ const collectionSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-    setSelectedCollection: (state, action: PayloadAction<Collection | null>) => {
+    setSelectedCollection: (
+      state,
+      action: PayloadAction<Collection | null>
+    ) => {
       state.selectedCollection = action.payload;
     },
     updateCollectionItem: (
@@ -123,7 +153,9 @@ const collectionSlice = createSlice({
       action: PayloadAction<{ collectionId: string; item: CollectionItem }>
     ) => {
       const { collectionId, item } = action.payload;
-      const collection = state.collections.find((c: any) => c.id === collectionId);
+      const collection = state.collections.find(
+        (c: any) => c.id === collectionId
+      );
       if (collection) {
         const itemIndex = collection.items.findIndex(
           (i: any) => i.cardId === item.cardId
@@ -134,37 +166,46 @@ const collectionSlice = createSlice({
       }
     },
     calculateStatistics: (state) => {
-      const allCards = state.collections.flatMap(c => c.items);
+      const allCards = state.collections.flatMap((c) => c.items);
       const totalCards = allCards.reduce((sum, item) => sum + item.quantity, 0);
       const totalValue = allCards.reduce(
-        (sum, item) => sum + (item.currentValue * item.quantity),
+        (sum, item) => sum + item.currentValue * item.quantity,
         0
       );
 
       state.statistics = {
         totalCards,
         totalValue,
-        averageCondition: allCards.length > 0
-          ? allCards.reduce((sum, item) => {
-            const conditionScore = item.condition === 'mint' ? 10
-              : item.condition === 'near-mint' ? 9
-                : item.condition === 'excellent' ? 8
-                  : item.condition === 'good' ? 7
-                    : item.condition === 'light-played' ? 6
-                      : item.condition === 'played' ? 5
-                        : 4;
-            return sum + conditionScore;
-          }, 0) / allCards.length
-          : 0,
-        mostValuableCard: allCards.length > 0
-          ? allCards.reduce(
-            (max, item) => (item.currentValue > max.currentValue ? item : max)
-          ).cardId
-          : '',
+        averageCondition:
+          allCards.length > 0
+            ? allCards.reduce((sum, item) => {
+                const conditionScore =
+                  item.condition === 'mint'
+                    ? 10
+                    : item.condition === 'near-mint'
+                      ? 9
+                      : item.condition === 'excellent'
+                        ? 8
+                        : item.condition === 'good'
+                          ? 7
+                          : item.condition === 'light-played'
+                            ? 6
+                            : item.condition === 'played'
+                              ? 5
+                              : 4;
+                return sum + conditionScore;
+              }, 0) / allCards.length
+            : 0,
+        mostValuableCard:
+          allCards.length > 0
+            ? allCards.reduce((max, item) =>
+                item.currentValue > max.currentValue ? item : max
+              ).cardId
+            : '',
         recentAdditions: allCards.length,
-        completionRate: 0 // 需要根據實際邏輯計算
+        completionRate: 0, // 需要根據實際邏輯計算
       };
-    }
+    },
   },
   extraReducers: (builder) => {
     // Fetch User Collections
@@ -207,11 +248,16 @@ const collectionSlice = createSlice({
       })
       .addCase(updateCollection.fulfilled, (state, action) => {
         state.isUpdating = false;
-        const index = state.collections.findIndex(c => c.id === action.payload.id);
+        const index = state.collections.findIndex(
+          (c) => c.id === action.payload.id
+        );
         if (index !== -1) {
           state.collections[index] = action.payload;
         }
-        if (state.selectedCollection && state.selectedCollection.id === action.payload.id) {
+        if (
+          state.selectedCollection &&
+          state.selectedCollection.id === action.payload.id
+        ) {
           state.selectedCollection = action.payload;
         }
         state.error = null;
@@ -229,8 +275,13 @@ const collectionSlice = createSlice({
       })
       .addCase(deleteCollection.fulfilled, (state, action) => {
         state.isDeleting = false;
-        state.collections = state.collections.filter(c => c.id !== action.payload);
-        if (state.selectedCollection && state.selectedCollection.id === action.payload) {
+        state.collections = state.collections.filter(
+          (c) => c.id !== action.payload
+        );
+        if (
+          state.selectedCollection &&
+          state.selectedCollection.id === action.payload
+        ) {
           state.selectedCollection = null;
         }
         state.error = null;
@@ -249,7 +300,9 @@ const collectionSlice = createSlice({
       .addCase(addCardToCollection.fulfilled, (state, action) => {
         state.isLoading = false;
         // 更新對應的收藏
-        const collection = state.collections.find(c => c.id === action.payload.collectionId);
+        const collection = state.collections.find(
+          (c) => c.id === action.payload.collectionId
+        );
         if (collection) {
           // 將新的卡牌項目添加到 items 數組
           const newItem = {
@@ -262,7 +315,7 @@ const collectionSlice = createSlice({
             location: '',
             isForSale: false,
             currentValue: 0,
-            addedAt: new Date()
+            addedAt: new Date(),
           } as CollectionItem;
           collection.items.push(newItem);
         }
@@ -281,7 +334,7 @@ const collectionSlice = createSlice({
             location: '',
             isForSale: false,
             currentValue: 0,
-            addedAt: new Date()
+            addedAt: new Date(),
           } as CollectionItem;
           state.selectedCollection.items.push(newItem);
         }
@@ -301,14 +354,20 @@ const collectionSlice = createSlice({
       .addCase(removeCardFromCollection.fulfilled, (state, action) => {
         state.isLoading = false;
         const { collectionId, cardId } = action.payload;
-        const collection = state.collections.find(c => c.id === collectionId);
+        const collection = state.collections.find((c) => c.id === collectionId);
         if (collection) {
-          collection.items = collection.items.filter(item => item.cardId !== cardId);
-        }
-        if (state.selectedCollection && state.selectedCollection.id === collectionId) {
-          state.selectedCollection.items = state.selectedCollection.items.filter(
-            item => item.cardId !== cardId
+          collection.items = collection.items.filter(
+            (item) => item.cardId !== cardId
           );
+        }
+        if (
+          state.selectedCollection &&
+          state.selectedCollection.id === collectionId
+        ) {
+          state.selectedCollection.items =
+            state.selectedCollection.items.filter(
+              (item) => item.cardId !== cardId
+            );
         }
         state.error = null;
       })
@@ -327,21 +386,22 @@ const collectionSlice = createSlice({
         state.isLoading = false;
         // 更新對應的收藏
         const collection = state.collections.find(
-          c => c.id === action.payload.collectionId
+          (c) => c.id === action.payload.collectionId
         );
         if (collection) {
           // 更新 items 數組中的對應項目
           const itemIndex = collection.items.findIndex(
-            item => item.cardId === action.payload.cardId
+            (item) => item.cardId === action.payload.cardId
           );
           if (itemIndex !== -1 && collection.items[itemIndex]) {
             const updatedItem = {
               ...collection.items[itemIndex],
-              ...action.payload
+              ...action.payload,
             };
             // 確保 currentValue 有值
             if (updatedItem.currentValue === undefined) {
-              updatedItem.currentValue = collection.items[itemIndex]!.currentValue;
+              updatedItem.currentValue =
+                collection.items[itemIndex]!.currentValue;
             }
             collection.items[itemIndex] = updatedItem as CollectionItem;
           }
@@ -352,15 +412,20 @@ const collectionSlice = createSlice({
         ) {
           // 同樣更新選中的收藏
           const itemIndex = state.selectedCollection.items.findIndex(
-            item => item.cardId === action.payload.cardId
+            (item) => item.cardId === action.payload.cardId
           );
           if (itemIndex !== -1 && state.selectedCollection.items[itemIndex]) {
-            const updatedItem = { ...state.selectedCollection.items[itemIndex], ...action.payload };
+            const updatedItem = {
+              ...state.selectedCollection.items[itemIndex],
+              ...action.payload,
+            };
             // 確保 currentValue 有值
             if (updatedItem.currentValue === undefined) {
-              updatedItem.currentValue = state.selectedCollection.items[itemIndex]!.currentValue;
+              updatedItem.currentValue =
+                state.selectedCollection.items[itemIndex]!.currentValue;
             }
-            state.selectedCollection.items[itemIndex] = updatedItem as CollectionItem;
+            state.selectedCollection.items[itemIndex] =
+              updatedItem as CollectionItem;
           }
         }
         state.error = null;
@@ -380,7 +445,7 @@ const collectionSlice = createSlice({
         state.isLoading = false;
         state.statistics = {
           ...action.payload,
-          completionRate: (action.payload as any).completionRate || 0
+          completionRate: (action.payload as any).completionRate || 0,
         };
         state.error = null;
       })
@@ -388,14 +453,14 @@ const collectionSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  }
+  },
 });
 
 export const {
   clearError,
   setSelectedCollection,
   updateCollectionItem,
-  calculateStatistics
+  calculateStatistics,
 } = collectionSlice.actions;
 
 export default collectionSlice.reducer;

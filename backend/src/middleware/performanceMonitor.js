@@ -5,7 +5,7 @@ try {
   // New Relic 未安裝，使用空對象
   newrelic = {
     addCustomAttribute: () => {},
-    noticeError: () => {}
+    noticeError: () => {},
   };
 }
 const logger = require('../utils/logger');
@@ -25,7 +25,7 @@ const performanceMonitor = (req, res, next) => {
     path: req.path,
     userAgent: req.get('User-Agent'),
     ip: req.ip,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   // 添加請求 ID 到響應頭
@@ -43,7 +43,7 @@ const performanceMonitor = (req, res, next) => {
   // 監控響應時間
   res.on('finish', () => {
     const duration = Date.now() - start;
-    const {statusCode} = res;
+    const { statusCode } = res;
 
     // 記錄響應完成
     logger.info('Request completed', {
@@ -52,14 +52,17 @@ const performanceMonitor = (req, res, next) => {
       path: req.path,
       statusCode,
       duration: `${duration}ms`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // 記錄到 New Relic
     if (newrelic) {
       newrelic.addCustomAttribute('response_time', duration);
       newrelic.addCustomAttribute('status_code', statusCode);
-      newrelic.addCustomAttribute('response_size', res.get('Content-Length') || 0);
+      newrelic.addCustomAttribute(
+        'response_size',
+        res.get('Content-Length') || 0
+      );
     }
 
     // 記錄慢查詢
@@ -69,11 +72,15 @@ const performanceMonitor = (req, res, next) => {
         method: req.method,
         path: req.path,
         duration: `${duration}ms`,
-        statusCode
+        statusCode,
       });
 
       if (newrelic) {
-        newrelic.noticeError(new Error(`Slow request: ${req.method} ${req.path} took ${duration}ms`));
+        newrelic.noticeError(
+          new Error(
+            `Slow request: ${req.method} ${req.path} took ${duration}ms`
+          )
+        );
       }
     }
 
@@ -84,7 +91,7 @@ const performanceMonitor = (req, res, next) => {
         method: req.method,
         path: req.path,
         statusCode,
-        duration: `${duration}ms`
+        duration: `${duration}ms`,
       });
     }
   });
@@ -99,7 +106,7 @@ const performanceMonitor = (req, res, next) => {
       path: req.path,
       error: error.message,
       stack: error.stack,
-      duration: `${duration}ms`
+      duration: `${duration}ms`,
     });
 
     if (newrelic) {
@@ -128,7 +135,7 @@ const queryMonitor = (query, params = []) => {
     queryId,
     query: query.substring(0, 100) + (query.length > 100 ? '...' : ''),
     params: params.length,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   return {
@@ -137,7 +144,7 @@ const queryMonitor = (query, params = []) => {
     params,
     start,
     end: null,
-    duration: null
+    duration: null,
   };
 };
 
@@ -151,16 +158,18 @@ const endQueryMonitor = (queryInfo) => {
   logger.debug('Database query completed', {
     queryId: queryInfo.queryId,
     duration: `${queryInfo.duration}ms`,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   // 記錄慢查詢
   if (queryInfo.duration > 100) {
     logger.warn('Slow query detected', {
       queryId: queryInfo.queryId,
-      query: queryInfo.query.substring(0, 200) + (queryInfo.query.length > 200 ? '...' : ''),
+      query:
+        queryInfo.query.substring(0, 200) +
+        (queryInfo.query.length > 200 ? '...' : ''),
       params: queryInfo.params,
-      duration: `${queryInfo.duration}ms`
+      duration: `${queryInfo.duration}ms`,
     });
 
     if (newrelic) {
@@ -190,15 +199,16 @@ const memoryMonitor = () => {
     heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`,
     heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
     external: `${Math.round(memUsage.external / 1024 / 1024)}MB`,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 
   // 檢查內存使用是否過高
   const heapUsedMB = memUsage.heapUsed / 1024 / 1024;
-  if (heapUsedMB > 500) { // 500MB 閾值
+  if (heapUsedMB > 500) {
+    // 500MB 閾值
     logger.warn('High memory usage detected', {
       heapUsed: `${Math.round(heapUsedMB)}MB`,
-      threshold: '500MB'
+      threshold: '500MB',
     });
 
     if (newrelic) {
@@ -224,19 +234,23 @@ const cpuMonitor = () => {
       user: `${Math.round(endUsage.user / 1000)}ms`,
       system: `${Math.round(endUsage.system / 1000)}ms`,
       total: `${Math.round(cpuPercent * 100) / 100}s`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // 檢查 CPU 使用是否過高
-    if (cpuPercent > 1) { // 1秒閾值
+    if (cpuPercent > 1) {
+      // 1秒閾值
       logger.warn('High CPU usage detected', {
         cpuTime: `${Math.round(cpuPercent * 100) / 100}s`,
-        threshold: '1s'
+        threshold: '1s',
       });
 
       if (newrelic) {
         newrelic.addCustomAttribute('high_cpu_usage', true);
-        newrelic.addCustomAttribute('cpu_time_seconds', Math.round(cpuPercent * 100) / 100);
+        newrelic.addCustomAttribute(
+          'cpu_time_seconds',
+          Math.round(cpuPercent * 100) / 100
+        );
       }
     }
   }, 1000);
@@ -247,5 +261,5 @@ module.exports = {
   queryMonitor,
   endQueryMonitor,
   memoryMonitor,
-  cpuMonitor
+  cpuMonitor,
 };

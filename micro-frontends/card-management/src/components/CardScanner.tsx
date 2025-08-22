@@ -8,7 +8,7 @@ interface CardScannerProps {
 
 const CardScanner: React.FC<CardScannerProps> = ({
   onScanComplete,
-  onManualInput
+  onManualInput,
 }) => {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<CardScannerResult | null>(null);
@@ -16,7 +16,9 @@ const CardScanner: React.FC<CardScannerProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -25,7 +27,7 @@ const CardScanner: React.FC<CardScannerProps> = ({
 
     try {
       // 模擬AI識別過程
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // 這裡應該調用實際的AI識別API
       const mockResult: CardScannerResult = {
@@ -43,9 +45,9 @@ const CardScanner: React.FC<CardScannerProps> = ({
           language: '繁體中文',
           game: 'Pokemon TCG',
           createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
+          updatedAt: new Date().toISOString(),
         },
-        confidence: 0.95
+        confidence: 0.95,
       };
 
       setScanResult(mockResult);
@@ -54,7 +56,7 @@ const CardScanner: React.FC<CardScannerProps> = ({
       setError('掃描失敗，請重試');
       setScanResult({
         success: false,
-        error: '掃描失敗'
+        error: '掃描失敗',
       });
     } finally {
       setIsScanning(false);
@@ -121,10 +123,7 @@ const CardScanner: React.FC<CardScannerProps> = ({
 
         <div className="scanner-option">
           <h3>手動輸入</h3>
-          <button
-            className="btn btn-outline"
-            onClick={handleManualInput}
-          >
+          <button className="btn btn-outline" onClick={handleManualInput}>
             手動輸入卡片資訊
           </button>
         </div>

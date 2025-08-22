@@ -6,16 +6,16 @@ import {
   TermsType,
   TermsVersion,
   TermsConfig,
-  TermsUpdateNotification
+  TermsUpdateNotification,
 } from '../types/terms';
 import { TERMS_CONTENT } from '../data/termsContent';
 
 interface TermsSyncConfig {
-  autoSync: boolean;           // 是否自動同步
-  syncInterval: number;        // 同步間隔（毫秒）
-  checkOnAppStart: boolean;    // 應用啟動時檢查
-  notifyOnUpdate: boolean;     // 條款更新時通知
-  fallbackToLocal: boolean;    // 服務器不可用時使用本地條款
+  autoSync: boolean; // 是否自動同步
+  syncInterval: number; // 同步間隔（毫秒）
+  checkOnAppStart: boolean; // 應用啟動時檢查
+  notifyOnUpdate: boolean; // 條款更新時通知
+  fallbackToLocal: boolean; // 服務器不可用時使用本地條款
 }
 
 interface TermsSyncStatus {
@@ -45,7 +45,7 @@ class TermsSyncService {
       syncInterval: 24 * 60 * 60 * 1000, // 24小時
       checkOnAppStart: true,
       notifyOnUpdate: true,
-      fallbackToLocal: true
+      fallbackToLocal: true,
     };
   }
 
@@ -56,7 +56,7 @@ class TermsSyncService {
       lastUpdateTime: null,
       hasUpdates: false,
       syncError: null,
-      pendingTerms: []
+      pendingTerms: [],
     };
   }
 
@@ -162,7 +162,8 @@ class TermsSyncService {
     } catch (error) {
       logger.error('同步條款失敗:', error);
 
-      this.syncStatus.syncError = error instanceof Error ? error.message : '未知錯誤';
+      this.syncStatus.syncError =
+        error instanceof Error ? error.message : '未知錯誤';
       await this.saveSyncStatus();
 
       if (this.config.fallbackToLocal) {
@@ -178,7 +179,7 @@ class TermsSyncService {
   private async fetchServerTerms(): Promise<TermsVersion[]> {
     try {
       const response = await apiService.get(`${this.baseUrl}/content`, {
-        timeout: 10000 // 10秒超時
+        timeout: 10000, // 10秒超時
       });
       return response.data || [];
     } catch (error) {
@@ -194,7 +195,7 @@ class TermsSyncService {
       const localTerms = Object.values(TERMS_CONTENT);
 
       for (const serverTerm of serverTerms) {
-        const localTerm = localTerms.find(lt => lt.type === serverTerm.type);
+        const localTerm = localTerms.find((lt) => lt.type === serverTerm.type);
 
         if (!localTerm) {
           // 服務器有新的條款類型
@@ -204,11 +205,16 @@ class TermsSyncService {
 
         if (localTerm.version !== serverTerm.version) {
           // 版本不匹配
-          logger.info(`條款 ${serverTerm.type} 版本更新: ${localTerm.version} -> ${serverTerm.version}`);
+          logger.info(
+            `條款 ${serverTerm.type} 版本更新: ${localTerm.version} -> ${serverTerm.version}`
+          );
           return true;
         }
 
-        if (localTerm.effectiveDate.getTime() !== new Date(serverTerm.effectiveDate).getTime()) {
+        if (
+          localTerm.effectiveDate.getTime() !==
+          new Date(serverTerm.effectiveDate).getTime()
+        ) {
           // 生效日期不同
           logger.info(`條款 ${serverTerm.type} 生效日期更新`);
           return true;
@@ -236,7 +242,7 @@ class TermsSyncService {
           content: serverTerm.content,
           language: serverTerm.language,
           status: serverTerm.status,
-          effectiveDate: new Date(serverTerm.effectiveDate)
+          effectiveDate: new Date(serverTerm.effectiveDate),
         };
       }
 
@@ -261,7 +267,7 @@ class TermsSyncService {
         title: '條款已更新',
         message: '應用條款已更新，請查看最新內容',
         timestamp: new Date(),
-        requiresAction: true
+        requiresAction: true,
       };
 
       await notificationService.sendNotification(notification);
@@ -352,4 +358,5 @@ class TermsSyncService {
   }
 }
 
+export { TermsSyncService };
 export const termsSyncService = new TermsSyncService();

@@ -15,20 +15,20 @@ const PERFORMANCE_BENCHMARKS = {
     loadComplete: 2500,
     firstContentfulPaint: 1000,
     largestContentfulPaint: 2000,
-    firstInputDelay: 100
+    firstInputDelay: 100,
   },
   apiPerformance: {
     averageResponseTime: 1000,
-    errorRate: 0.05
+    errorRate: 0.05,
   },
   memoryUsage: {
     maxMemoryGrowth: 100,
-    maxMemoryUsage: 512
+    maxMemoryUsage: 512,
   },
   rendering: {
     minFrameRate: 30,
-    maxDroppedFrames: 10
-  }
+    maxDroppedFrames: 10,
+  },
 };
 
 /**
@@ -67,14 +67,20 @@ function collectTestResults() {
     load: null,
     optimization: null,
     lighthouse: null,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   // 讀取 Playwright 測試結果
-  const playwrightReportPath = path.join(process.cwd(), 'test-results', 'test-results.json');
+  const playwrightReportPath = path.join(
+    process.cwd(),
+    'test-results',
+    'test-results.json'
+  );
   if (fs.existsSync(playwrightReportPath)) {
     try {
-      const playwrightResults = JSON.parse(fs.readFileSync(playwrightReportPath, 'utf8'));
+      const playwrightResults = JSON.parse(
+        fs.readFileSync(playwrightReportPath, 'utf8')
+      );
       results.playwright = playwrightResults;
     } catch (error) {
       // logger.info('⚠️ 無法讀取 Playwright 測試結果:', error.message);
@@ -82,10 +88,16 @@ function collectTestResults() {
   }
 
   // 讀取 Lighthouse 報告
-  const lighthouseReportPath = path.join(process.cwd(), 'test-results', 'lighthouse-report.json');
+  const lighthouseReportPath = path.join(
+    process.cwd(),
+    'test-results',
+    'lighthouse-report.json'
+  );
   if (fs.existsSync(lighthouseReportPath)) {
     try {
-      const lighthouseResults = JSON.parse(fs.readFileSync(lighthouseReportPath, 'utf8'));
+      const lighthouseResults = JSON.parse(
+        fs.readFileSync(lighthouseReportPath, 'utf8')
+      );
       results.lighthouse = lighthouseResults;
     } catch (error) {
       // logger.info('⚠️ 無法讀取 Lighthouse 報告:', error.message);
@@ -104,7 +116,7 @@ function generateReport(testResults) {
       timestamp: testResults.timestamp,
       version: '1.0.0',
       project: 'CardStrategy',
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
     },
     summary: {
       overallScore: 0,
@@ -112,22 +124,22 @@ function generateReport(testResults) {
       totalTests: 0,
       criticalIssues: 0,
       warnings: 0,
-      recommendations: []
+      recommendations: [],
     },
     metrics: {
       pageLoad: {},
       apiPerformance: {},
       memoryUsage: {},
       rendering: {},
-      optimization: {}
+      optimization: {},
     },
     details: {
       benchmark: {},
       load: {},
       optimization: {},
-      lighthouse: {}
+      lighthouse: {},
     },
-    recommendations: []
+    recommendations: [],
   };
 
   // 分析 Playwright 測試結果
@@ -160,18 +172,22 @@ function analyzePlaywrightResults(playwrightResults, report) {
   let criticalIssues = 0;
   let warnings = 0;
 
-  playwrightResults.suites.forEach(suite => {
+  playwrightResults.suites.forEach((suite) => {
     if (suite.specs) {
-      suite.specs.forEach(spec => {
+      suite.specs.forEach((spec) => {
         if (spec.tests) {
-          spec.tests.forEach(test => {
+          spec.tests.forEach((test) => {
             totalTests++;
 
             if (test.outcome === 'passed') {
               passedTests++;
             } else if (test.outcome === 'failed') {
               // 檢查是否為關鍵問題
-              if (test.title.includes('critical') || test.title.includes('memory') || test.title.includes('error')) {
+              if (
+                test.title.includes('critical') ||
+                test.title.includes('memory') ||
+                test.title.includes('error')
+              ) {
                 criticalIssues++;
               } else {
                 warnings++;
@@ -198,43 +214,53 @@ function analyzePlaywrightResults(playwrightResults, report) {
 function analyzeLighthouseResults(lighthouseResults, report) {
   if (!lighthouseResults.audits) return;
 
-  const {audits} = lighthouseResults;
+  const { audits } = lighthouseResults;
 
   // 提取核心指標
   if (audits['first-contentful-paint']) {
-    report.metrics.pageLoad.firstContentfulPaint = audits['first-contentful-paint'].numericValue;
+    report.metrics.pageLoad.firstContentfulPaint =
+      audits['first-contentful-paint'].numericValue;
   }
 
   if (audits['largest-contentful-paint']) {
-    report.metrics.pageLoad.largestContentfulPaint = audits['largest-contentful-paint'].numericValue;
+    report.metrics.pageLoad.largestContentfulPaint =
+      audits['largest-contentful-paint'].numericValue;
   }
 
   if (audits['first-input-delay']) {
-    report.metrics.pageLoad.firstInputDelay = audits['first-input-delay'].numericValue;
+    report.metrics.pageLoad.firstInputDelay =
+      audits['first-input-delay'].numericValue;
   }
 
   if (audits['cumulative-layout-shift']) {
-    report.metrics.pageLoad.cumulativeLayoutShift = audits['cumulative-layout-shift'].numericValue;
+    report.metrics.pageLoad.cumulativeLayoutShift =
+      audits['cumulative-layout-shift'].numericValue;
   }
 
   // 提取性能分數
-  if (lighthouseResults.categories && lighthouseResults.categories.performance) {
-    report.details.lighthouse.performanceScore = lighthouseResults.categories.performance.score * 100;
+  if (
+    lighthouseResults.categories &&
+    lighthouseResults.categories.performance
+  ) {
+    report.details.lighthouse.performanceScore =
+      lighthouseResults.categories.performance.score * 100;
   }
 
   // 提取優化建議
   if (lighthouseResults.audits) {
-    const opportunities = Object.values(lighthouseResults.audits).filter(audit =>
-      audit.details && audit.details.type === 'opportunity'
+    const opportunities = Object.values(lighthouseResults.audits).filter(
+      (audit) => audit.details && audit.details.type === 'opportunity'
     );
 
-    report.details.lighthouse.opportunities = opportunities.map(opportunity => ({
-      title: opportunity.title,
-      description: opportunity.description,
-      score: opportunity.score,
-      numericValue: opportunity.numericValue,
-      displayValue: opportunity.displayValue
-    }));
+    report.details.lighthouse.opportunities = opportunities.map(
+      (opportunity) => ({
+        title: opportunity.title,
+        description: opportunity.description,
+        score: opportunity.score,
+        numericValue: opportunity.numericValue,
+        displayValue: opportunity.displayValue,
+      })
+    );
   }
 }
 
@@ -250,25 +276,25 @@ function extractPerformanceMetrics(playwrightResults, report) {
     loadComplete: 0,
     firstContentfulPaint: 0,
     largestContentfulPaint: 0,
-    firstInputDelay: 0
+    firstInputDelay: 0,
   };
 
   report.metrics.apiPerformance = {
     averageResponseTime: 0,
     errorRate: 0,
-    totalRequests: 0
+    totalRequests: 0,
   };
 
   report.metrics.memoryUsage = {
     initialMemory: 0,
     finalMemory: 0,
-    memoryGrowth: 0
+    memoryGrowth: 0,
   };
 
   report.metrics.rendering = {
     frameRate: 0,
     droppedFrames: 0,
-    animationSmoothness: 0
+    animationSmoothness: 0,
   };
 }
 
@@ -300,8 +326,10 @@ function calculateOverallScore(report) {
   totalWeight += 0.15;
 
   // 測試通過率 (10%)
-  const testScore = report.summary.totalTests > 0 ?
-    (report.summary.passedTests / report.summary.totalTests) * 100 : 0;
+  const testScore =
+    report.summary.totalTests > 0
+      ? (report.summary.passedTests / report.summary.totalTests) * 100
+      : 0;
   score += testScore * 0.1;
   totalWeight += 0.1;
 
@@ -314,15 +342,22 @@ function calculateOverallScore(report) {
 function calculatePageLoadScore(metrics) {
   let score = 100;
 
-  if (metrics.domContentLoaded > PERFORMANCE_BENCHMARKS.pageLoad.domContentLoaded) {
+  if (
+    metrics.domContentLoaded > PERFORMANCE_BENCHMARKS.pageLoad.domContentLoaded
+  ) {
     score -= 20;
   }
 
-  if (metrics.largestContentfulPaint > PERFORMANCE_BENCHMARKS.pageLoad.largestContentfulPaint) {
+  if (
+    metrics.largestContentfulPaint >
+    PERFORMANCE_BENCHMARKS.pageLoad.largestContentfulPaint
+  ) {
     score -= 30;
   }
 
-  if (metrics.firstInputDelay > PERFORMANCE_BENCHMARKS.pageLoad.firstInputDelay) {
+  if (
+    metrics.firstInputDelay > PERFORMANCE_BENCHMARKS.pageLoad.firstInputDelay
+  ) {
     score -= 25;
   }
 
@@ -335,7 +370,10 @@ function calculatePageLoadScore(metrics) {
 function calculateApiScore(metrics) {
   let score = 100;
 
-  if (metrics.averageResponseTime > PERFORMANCE_BENCHMARKS.apiPerformance.averageResponseTime) {
+  if (
+    metrics.averageResponseTime >
+    PERFORMANCE_BENCHMARKS.apiPerformance.averageResponseTime
+  ) {
     score -= 30;
   }
 
@@ -376,7 +414,9 @@ function calculateRenderingScore(metrics) {
     score -= 40;
   }
 
-  if (metrics.droppedFrames > PERFORMANCE_BENCHMARKS.rendering.maxDroppedFrames) {
+  if (
+    metrics.droppedFrames > PERFORMANCE_BENCHMARKS.rendering.maxDroppedFrames
+  ) {
     score -= 30;
   }
 
@@ -401,20 +441,31 @@ function generateRecommendations(report) {
   }
 
   // 基於具體指標生成建議
-  if (report.metrics.pageLoad.largestContentfulPaint > PERFORMANCE_BENCHMARKS.pageLoad.largestContentfulPaint) {
+  if (
+    report.metrics.pageLoad.largestContentfulPaint >
+    PERFORMANCE_BENCHMARKS.pageLoad.largestContentfulPaint
+  ) {
     recommendations.push('優化最大內容繪製時間：考慮圖片優化和關鍵資源預加載');
   }
 
-  if (report.metrics.apiPerformance.averageResponseTime > PERFORMANCE_BENCHMARKS.apiPerformance.averageResponseTime) {
+  if (
+    report.metrics.apiPerformance.averageResponseTime >
+    PERFORMANCE_BENCHMARKS.apiPerformance.averageResponseTime
+  ) {
     recommendations.push('優化 API 響應時間：考慮使用緩存和數據庫優化');
   }
 
-  if (report.metrics.apiPerformance.errorRate > PERFORMANCE_BENCHMARKS.apiPerformance.errorRate) {
+  if (
+    report.metrics.apiPerformance.errorRate >
+    PERFORMANCE_BENCHMARKS.apiPerformance.errorRate
+  ) {
     recommendations.push('降低 API 錯誤率：檢查服務器穩定性和錯誤處理');
   }
 
   if (report.summary.criticalIssues > 0) {
-    recommendations.push(`解決 ${report.summary.criticalIssues} 個關鍵性能問題`);
+    recommendations.push(
+      `解決 ${report.summary.criticalIssues} 個關鍵性能問題`
+    );
   }
 
   if (report.summary.warnings > 0) {
@@ -501,7 +552,7 @@ function generateHtmlReport(report) {
     
     <h2>優化建議</h2>
     <div class="recommendations">
-        ${report.recommendations.map(rec => `<p>• ${rec}</p>`).join('')}
+        ${report.recommendations.map((rec) => `<p>• ${rec}</p>`).join('')}
     </div>
 </body>
 </html>
@@ -550,7 +601,7 @@ ${JSON.stringify(report.metrics.rendering, null, 2)}
 \`\`\`
 
 ## 優化建議
-${report.recommendations.map(rec => `- ${rec}`).join('\n')}
+${report.recommendations.map((rec) => `- ${rec}`).join('\n')}
 
 ## 詳細報告
 完整的 JSON 報告請查看 \`performance-report.json\` 文件。
@@ -582,5 +633,5 @@ if (require.main === module) {
 module.exports = {
   generatePerformanceReport,
   generateReport,
-  calculateOverallScore
+  calculateOverallScore,
 };

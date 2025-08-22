@@ -3,11 +3,13 @@
 ## 📋 服務連結清單
 
 ### ✅ 必需服務
+
 1. **GitHub** - 代碼版本控制
 2. **PostgreSQL** - 主要數據庫
 3. **Redis** - 緩存和會話管理
 
 ### 🔧 推薦服務
+
 4. **Render** - 開發/測試環境部署
 5. **DigitalOcean** - 生產環境部署
 6. **Cloudflare** - CDN、DNS 和安全
@@ -17,6 +19,7 @@
 ### 第一步：GitHub 設置
 
 #### 1.1 創建 Personal Access Token
+
 ```bash
 # 訪問 GitHub Settings > Developer settings > Personal access tokens
 # 創建新的 token，包含以下權限：
@@ -27,6 +30,7 @@
 ```
 
 #### 1.2 設置 GitHub Secrets
+
 在您的 GitHub 倉庫中設置以下 Secrets：
 
 ```bash
@@ -42,6 +46,7 @@ DROPLET_IP=your-droplet-ip
 ### 第二步：PostgreSQL 設置
 
 #### 2.1 創建數據庫實例
+
 ```bash
 # 在您的 PostgreSQL 提供商中創建新的數據庫實例
 # 記錄以下信息：
@@ -53,6 +58,7 @@ DROPLET_IP=your-droplet-ip
 ```
 
 #### 2.2 運行數據庫初始化腳本
+
 ```bash
 # 設置環境變數
 export PRODUCTION_DB_HOST=your-postgres-host
@@ -68,6 +74,7 @@ node scripts/setup-postgresql-production.js
 ### 第三步：Redis 設置
 
 #### 3.1 創建 Redis 實例
+
 ```bash
 # 在您的 Redis 提供商中創建新的實例
 # 記錄以下信息：
@@ -78,6 +85,7 @@ node scripts/setup-postgresql-production.js
 ```
 
 #### 3.2 運行 Redis 初始化腳本
+
 ```bash
 # 設置環境變數
 export PRODUCTION_REDIS_HOST=your-redis-host
@@ -92,6 +100,7 @@ node scripts/setup-redis-production.js
 ### 第四步：Render 設置
 
 #### 4.1 創建 Render 賬號
+
 ```bash
 # 訪問 https://render.com
 # 使用 GitHub 賬號登錄
@@ -99,6 +108,7 @@ node scripts/setup-redis-production.js
 ```
 
 #### 4.2 部署到 Render
+
 ```bash
 # 1. 連接 GitHub 倉庫
 # 2. 選擇分支 (develop 用於測試)
@@ -112,6 +122,7 @@ cd backend && npm start
 ```
 
 #### 4.3 設置環境變數
+
 在 Render 控制台中添加以下環境變數：
 
 ```bash
@@ -132,6 +143,7 @@ CORS_ORIGIN=https://cardstrategy.com
 ### 第五步：DigitalOcean 設置
 
 #### 5.1 創建 Droplet
+
 ```bash
 # 1. 登錄 DigitalOcean
 # 2. 創建新的 Droplet
@@ -142,6 +154,7 @@ CORS_ORIGIN=https://cardstrategy.com
 ```
 
 #### 5.2 設置服務器
+
 ```bash
 # 連接到您的 Droplet
 ssh root@your-droplet-ip
@@ -167,6 +180,7 @@ sudo npm install -g pm2
 ```
 
 #### 5.3 配置 Nginx
+
 ```bash
 # 創建 Nginx 配置
 sudo nano /etc/nginx/sites-available/cardstrategy
@@ -175,7 +189,7 @@ sudo nano /etc/nginx/sites-available/cardstrategy
 server {
     listen 80;
     server_name cardstrategy.com www.cardstrategy.com;
-    
+
     location / {
         proxy_pass http://localhost:3000;
         proxy_http_version 1.1;
@@ -196,6 +210,7 @@ sudo systemctl restart nginx
 ```
 
 #### 5.4 創建 PM2 配置
+
 ```bash
 # 創建 PM2 配置文件
 nano ecosystem.config.js
@@ -224,6 +239,7 @@ pm2 startup
 ### 第六步：Cloudflare 設置
 
 #### 6.1 添加域名
+
 ```bash
 # 1. 登錄 Cloudflare
 # 2. 添加您的域名 (cardstrategy.com)
@@ -231,6 +247,7 @@ pm2 startup
 ```
 
 #### 6.2 配置 DNS 記錄
+
 ```bash
 # 在 Cloudflare DNS 中添加以下記錄：
 
@@ -240,6 +257,7 @@ CNAME api    cardstrategy.com    Auto
 ```
 
 #### 6.3 設置 SSL/TLS
+
 ```bash
 # 1. 進入 SSL/TLS 設置
 # 2. 加密模式設置為 "Full (strict)"
@@ -248,6 +266,7 @@ CNAME api    cardstrategy.com    Auto
 ```
 
 #### 6.4 配置緩存規則
+
 ```bash
 # 創建頁面規則：
 
@@ -269,6 +288,7 @@ URL: cardstrategy.com/*
 ## 🔧 自動化部署
 
 ### 使用 GitHub Actions
+
 ```bash
 # 推送代碼到 develop 分支會自動部署到 Render
 # 推送代碼到 main 分支會自動部署到 DigitalOcean
@@ -278,6 +298,7 @@ git push origin main     # 部署到生產環境
 ```
 
 ### 手動部署
+
 ```bash
 # 部署到 DigitalOcean
 chmod +x scripts/deploy-digitalocean.sh
@@ -287,6 +308,7 @@ chmod +x scripts/deploy-digitalocean.sh
 ## 🧪 測試檢查清單
 
 ### 基礎功能測試
+
 - [ ] GitHub 倉庫可訪問
 - [ ] PostgreSQL 連接正常
 - [ ] Redis 連接正常
@@ -294,6 +316,7 @@ chmod +x scripts/deploy-digitalocean.sh
 - [ ] 前端頁面加載正常
 
 ### 部署測試
+
 - [ ] Render 測試環境正常
 - [ ] DigitalOcean 生產環境正常
 - [ ] Cloudflare CDN 正常
@@ -301,12 +324,14 @@ chmod +x scripts/deploy-digitalocean.sh
 - [ ] 域名解析正常
 
 ### 性能測試
+
 - [ ] 頁面加載速度 < 3 秒
 - [ ] API 響應時間 < 500ms
 - [ ] 數據庫查詢優化
 - [ ] 緩存策略生效
 
 ### 安全測試
+
 - [ ] HTTPS 強制重定向
 - [ ] CORS 設置正確
 - [ ] 速率限制生效
@@ -317,6 +342,7 @@ chmod +x scripts/deploy-digitalocean.sh
 ### 常見問題
 
 #### 1. 數據庫連接失敗
+
 ```bash
 # 檢查環境變數
 echo $DB_HOST
@@ -327,12 +353,14 @@ psql -h $DB_HOST -U $DB_USER -d $DB_NAME
 ```
 
 #### 2. Redis 連接失敗
+
 ```bash
 # 測試 Redis 連接
 redis-cli -h $REDIS_HOST -p $REDIS_PORT -a $REDIS_PASSWORD ping
 ```
 
 #### 3. 部署失敗
+
 ```bash
 # 檢查日誌
 pm2 logs cardstrategy-api
@@ -340,6 +368,7 @@ sudo journalctl -u nginx -f
 ```
 
 #### 4. SSL 證書問題
+
 ```bash
 # 檢查 Cloudflare SSL 設置
 # 確保設置為 "Full (strict)"
@@ -348,6 +377,7 @@ sudo journalctl -u nginx -f
 ## 📞 支持聯繫
 
 如果遇到問題，請檢查：
+
 1. 環境變數設置
 2. 服務狀態
 3. 網絡連接
@@ -357,6 +387,7 @@ sudo journalctl -u nginx -f
 ## 🎉 完成！
 
 恭喜！您已成功設置所有必要的服務。您的應用現在應該可以：
+
 - 自動部署到測試和生產環境
 - 使用 CDN 加速
 - 具備完整的監控和安全保護

@@ -1,4 +1,10 @@
-import { multiAIService, AIProvider, AIModelType, AITaskType, AIRequestConfig } from '../services/multiAIService';
+import {
+  multiAIService,
+  AIProvider,
+  AIModelType,
+  AITaskType,
+  AIRequestConfig,
+} from '../services/multiAIService';
 import { aiModelManager, AIModelCapability } from '../services/aiModelManager';
 import { logger } from '../utils/logger';
 
@@ -13,7 +19,7 @@ export class MultiAIExample {
       const config: AIRequestConfig = {
         task: 'analysis',
         temperature: 0.3,
-        maxTokens: 1000
+        maxTokens: 1000,
       };
 
       const response = await multiAIService.executeRequest(prompt, config);
@@ -23,7 +29,7 @@ export class MultiAIExample {
         model: response.metadata.model,
         processingTime: response.metadata.processingTime,
         cost: response.metadata.cost,
-        success: response.success
+        success: response.success,
       });
 
       return response;
@@ -45,7 +51,7 @@ export class MultiAIExample {
         model: 'gpt-4',
         task: 'analysis',
         temperature: 0.2,
-        maxTokens: 1500
+        maxTokens: 1500,
       };
 
       const response = await multiAIService.executeRequest(prompt, config);
@@ -54,7 +60,7 @@ export class MultiAIExample {
         provider: response.metadata.provider,
         model: response.metadata.model,
         processingTime: response.metadata.processingTime,
-        cost: response.metadata.cost
+        cost: response.metadata.cost,
       });
 
       return response;
@@ -74,19 +80,23 @@ export class MultiAIExample {
 
       const prompt = '請識別這張卡片的名稱、系列、稀有度等基本信息';
 
-      const response = await aiModelManager.executeCardTask('card_recognition', prompt, {
-        imageData,
-        preferences: {
-          prioritizeAccuracy: true,
-          requireVision: true
+      const response = await aiModelManager.executeCardTask(
+        'card_recognition',
+        prompt,
+        {
+          imageData,
+          preferences: {
+            prioritizeAccuracy: true,
+            requireVision: true,
+          },
         }
-      });
+      );
 
       logger.info('✅ 卡片識別任務完成:', {
         model: response.metadata.model,
         provider: response.metadata.provider,
         processingTime: response.metadata.processingTime,
-        confidence: response.metadata.confidence
+        confidence: response.metadata.confidence,
       });
 
       return response;
@@ -103,20 +113,25 @@ export class MultiAIExample {
 
       const imageData = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...';
 
-      const prompt = '請詳細分析這張卡片的狀況，包括磨損程度、邊緣狀況、表面質量等，並給出評級建議';
+      const prompt =
+        '請詳細分析這張卡片的狀況，包括磨損程度、邊緣狀況、表面質量等，並給出評級建議';
 
-      const response = await aiModelManager.executeCardTask('condition_analysis', prompt, {
-        imageData,
-        preferences: {
-          prioritizeAccuracy: true,
-          requireVision: true
+      const response = await aiModelManager.executeCardTask(
+        'condition_analysis',
+        prompt,
+        {
+          imageData,
+          preferences: {
+            prioritizeAccuracy: true,
+            requireVision: true,
+          },
         }
-      });
+      );
 
       logger.info('✅ 條件分析任務完成:', {
         model: response.metadata.model,
         provider: response.metadata.provider,
-        processingTime: response.metadata.processingTime
+        processingTime: response.metadata.processingTime,
       });
 
       return response;
@@ -138,17 +153,21 @@ export class MultiAIExample {
       - 市場需求趨勢: 上升
       - 供應量: 稀缺`;
 
-      const response = await aiModelManager.executeCardTask('price_prediction', prompt, {
-        preferences: {
-          prioritizeAccuracy: true,
-          maxCost: 'medium'
+      const response = await aiModelManager.executeCardTask(
+        'price_prediction',
+        prompt,
+        {
+          preferences: {
+            prioritizeAccuracy: true,
+            maxCost: 'medium',
+          },
         }
-      });
+      );
 
       logger.info('✅ 價格預測任務完成:', {
         model: response.metadata.model,
         provider: response.metadata.provider,
-        processingTime: response.metadata.processingTime
+        processingTime: response.metadata.processingTime,
       });
 
       return response;
@@ -166,16 +185,16 @@ export class MultiAIExample {
       const requests = [
         {
           prompt: '分析這張卡片的投資價值',
-          config: { task: 'analysis' as AITaskType, temperature: 0.3 }
+          config: { task: 'analysis' as AITaskType, temperature: 0.3 },
         },
         {
           prompt: '預測這張卡片未來3個月的價格趨勢',
-          config: { task: 'prediction' as AITaskType, temperature: 0.2 }
+          config: { task: 'prediction' as AITaskType, temperature: 0.2 },
         },
         {
           prompt: '生成這張卡片的收藏建議',
-          config: { task: 'generation' as AITaskType, temperature: 0.7 }
-        }
+          config: { task: 'generation' as AITaskType, temperature: 0.7 },
+        },
       ];
 
       const response = await multiAIService.executeBatchRequests(requests);
@@ -186,7 +205,7 @@ export class MultiAIExample {
         failedRequests: response.summary.failedRequests,
         totalProcessingTime: response.summary.totalProcessingTime,
         totalCost: response.summary.totalCost,
-        averageConfidence: response.summary.averageConfidence
+        averageConfidence: response.summary.averageConfidence,
       });
 
       return response;
@@ -201,7 +220,12 @@ export class MultiAIExample {
     try {
       logger.info('🚀 開始模型比較示例...');
 
-      const models: AIModelType[] = ['gpt-4', 'claude-3', 'gemini-pro', 'gpt-3.5-turbo'];
+      const models: AIModelType[] = [
+        'gpt-4',
+        'claude-3',
+        'gemini-pro',
+        'gpt-3.5-turbo',
+      ];
 
       const comparison = aiModelManager.compareModels(models);
 
@@ -211,7 +235,7 @@ export class MultiAIExample {
           provider: item.capability.provider,
           capabilities: item.capability.capabilities,
           performance: item.capability.performance,
-          specializations: item.capability.specializations
+          specializations: item.capability.specializations,
         });
       });
 
@@ -234,12 +258,12 @@ export class MultiAIExample {
         'investment-advice',
         'cost-effective',
         'high-accuracy',
-        'fast-processing'
+        'fast-processing',
       ];
 
       const recommendations: Record<string, AIModelType[]> = {};
 
-      useCases.forEach(useCase => {
+      useCases.forEach((useCase) => {
         recommendations[useCase] = aiModelManager.getRecommendedModels(useCase);
       });
 
@@ -260,12 +284,12 @@ export class MultiAIExample {
       const status = multiAIService.getProviderStatus();
 
       logger.info('✅ 提供商狀態檢查完成:');
-      status.forEach(provider => {
+      status.forEach((provider) => {
         logger.info(`${provider.provider}:`, {
           isActive: provider.isActive,
           capabilities: provider.capabilities,
           rateLimit: provider.rateLimit,
-          priority: provider.priority
+          priority: provider.priority,
         });
       });
 
@@ -286,9 +310,12 @@ export class MultiAIExample {
 
       for (const provider of providers) {
         try {
-          const isConnected = await multiAIService.testProviderConnection(provider);
+          const isConnected =
+            await multiAIService.testProviderConnection(provider);
           results[provider] = isConnected;
-          logger.info(`${provider} 連接測試: ${isConnected ? '✅ 成功' : '❌ 失敗'}`);
+          logger.info(
+            `${provider} 連接測試: ${isConnected ? '✅ 成功' : '❌ 失敗'}`
+          );
         } catch (error) {
           results[provider] = false;
           logger.error(`${provider} 連接測試失敗:`, error);
@@ -315,7 +342,7 @@ export class MultiAIExample {
         totalRequests: stats.totalRequests,
         totalCost: stats.totalCost,
         averageProcessingTime: stats.averageProcessingTime,
-        providerBreakdown: stats.providerBreakdown
+        providerBreakdown: stats.providerBreakdown,
       });
 
       return stats;
@@ -338,14 +365,14 @@ export class MultiAIExample {
         rateLimit: {
           requestsPerMinute: 20,
           requestsPerHour: 1000,
-          tokensPerMinute: 30000
+          tokensPerMinute: 30000,
         },
         cost: {
           inputTokensPerDollar: 50000,
-          outputTokensPerDollar: 100000
+          outputTokensPerDollar: 100000,
         },
         priority: 6,
-        isActive: true
+        isActive: true,
       };
 
       multiAIService.addProvider(customProvider);
@@ -376,14 +403,18 @@ export class MultiAIExample {
           analysis: true,
           multilingual: true,
           contextLength: 16384,
-          maxTokens: 8192
+          maxTokens: 8192,
         },
         performance: {
           speed: 'fast',
           accuracy: 'high',
-          cost: 'low'
+          cost: 'low',
         },
-        specializations: ['custom-analysis', 'specialized-tasks', 'domain-specific']
+        specializations: [
+          'custom-analysis',
+          'specialized-tasks',
+          'domain-specific',
+        ],
       };
 
       aiModelManager.addCustomModel(customModel);
@@ -415,7 +446,7 @@ export class MultiAIExample {
         providerConnections: await this.testProviderConnections(),
         usageStats: await this.getUsageStats(),
         customProvider: await this.addCustomProvider(),
-        customModel: await this.addCustomModel()
+        customModel: await this.addCustomModel(),
       };
 
       logger.info('✅ 所有多AI模型示例運行完成!');

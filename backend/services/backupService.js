@@ -8,7 +8,8 @@ const { current: config } = require('../config/environments');
 
 class BackupService {
   constructor() {
-    this.backupDir = process.env.BACKUP_DIR || path.join(__dirname, '..', 'backups');
+    this.backupDir =
+      process.env.BACKUP_DIR || path.join(__dirname, '..', 'backups');
     this.retentionDays = parseInt(process.env.BACKUP_RETENTION_DAYS) || 30;
     this.maxBackups = parseInt(process.env.MAX_BACKUPS) || 100;
     this.compressionEnabled = process.env.BACKUP_COMPRESSION !== 'false';
@@ -41,7 +42,7 @@ class BackupService {
       // 構建 pg_dump 命令
       const env = {
         ...process.env,
-        PGPASSWORD: password
+        PGPASSWORD: password,
       };
 
       const command = `pg_dump -h ${host} -p ${port} -U ${user} -d ${name} -f ${filepath}`;
@@ -68,10 +69,11 @@ class BackupService {
       return {
         success: true,
         filename: this.compressionEnabled ? `${filename}.gz` : filename,
-        size: await this.getFileSize(filepath + (this.compressionEnabled ? '.gz' : '')),
-        timestamp: new Date().toISOString()
+        size: await this.getFileSize(
+          filepath + (this.compressionEnabled ? '.gz' : '')
+        ),
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       logger.error('數據庫備份失敗:', error);
       throw error;
@@ -89,7 +91,8 @@ class BackupService {
     try {
       const uploadsDir = config.upload.path;
       const modelsDir = config.ai.modelPath;
-      const exportsDir = process.env.EXPORT_PATH || path.join(__dirname, '..', 'exports');
+      const exportsDir =
+        process.env.EXPORT_PATH || path.join(__dirname, '..', 'exports');
 
       // 檢查目錄是否存在
       const dirsToBackup = [];
@@ -109,7 +112,7 @@ class BackupService {
           filename: null,
           size: 0,
           timestamp: new Date().toISOString(),
-          message: '沒有可備份的文件'
+          message: '沒有可備份的文件',
         };
       }
 
@@ -132,9 +135,8 @@ class BackupService {
         success: true,
         filename,
         size: await this.getFileSize(filepath),
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       logger.error('文件備份失敗:', error);
       throw error;
@@ -156,12 +158,11 @@ class BackupService {
         timestamp: new Date().toISOString(),
         database: dbBackup,
         files: fileBackup,
-        totalSize: (dbBackup.size || 0) + (fileBackup.size || 0)
+        totalSize: (dbBackup.size || 0) + (fileBackup.size || 0),
       };
 
       logger.info('完整備份完成', result);
       return result;
-
     } catch (error) {
       logger.error('完整備份失敗:', error);
       throw error;
@@ -183,7 +184,7 @@ class BackupService {
       // 構建 psql 命令
       const env = {
         ...process.env,
-        PGPASSWORD: password
+        PGPASSWORD: password,
       };
 
       let command;
@@ -207,9 +208,8 @@ class BackupService {
       return {
         success: true,
         filename: backupFile,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       logger.error('數據庫恢復失敗:', error);
       throw error;
@@ -243,7 +243,8 @@ class BackupService {
       // 移動文件到正確位置
       const uploadsDir = config.upload.path;
       const modelsDir = config.ai.modelPath;
-      const exportsDir = process.env.EXPORT_PATH || path.join(__dirname, '..', 'exports');
+      const exportsDir =
+        process.env.EXPORT_PATH || path.join(__dirname, '..', 'exports');
 
       // 這裡可以添加具體的文件移動邏輯
       logger.info(`文件恢復完成: ${backupFile}`);
@@ -254,9 +255,8 @@ class BackupService {
       return {
         success: true,
         filename: backupFile,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       logger.error('文件恢復失敗:', error);
       throw error;
@@ -280,7 +280,7 @@ class BackupService {
           size: stats.size,
           created: stats.birthtime,
           modified: stats.mtime,
-          type: this.getBackupType(file)
+          type: this.getBackupType(file),
         });
       }
 
@@ -288,7 +288,6 @@ class BackupService {
       backups.sort((a, b) => b.created - a.created);
 
       return backups;
-
     } catch (error) {
       logger.error('獲取備份列表失敗:', error);
       throw error;
@@ -302,7 +301,9 @@ class BackupService {
     try {
       const backups = await this.getBackupList();
       const now = new Date();
-      const cutoffDate = new Date(now.getTime() - (this.retentionDays * 24 * 60 * 60 * 1000));
+      const cutoffDate = new Date(
+        now.getTime() - this.retentionDays * 24 * 60 * 60 * 1000
+      );
 
       let deletedCount = 0;
 
@@ -334,7 +335,6 @@ class BackupService {
       }
 
       return { deletedCount };
-
     } catch (error) {
       logger.error('清理舊備份失敗:', error);
       throw error;
@@ -352,19 +352,18 @@ class BackupService {
       const stats = {
         totalBackups: backups.length,
         totalSize,
-        totalSizeMB: Math.round(totalSize / (1024 * 1024) * 100) / 100,
+        totalSizeMB: Math.round((totalSize / (1024 * 1024)) * 100) / 100,
         retentionDays: this.retentionDays,
         maxBackups: this.maxBackups,
         compressionEnabled: this.compressionEnabled,
         backupTypes: {
-          database: backups.filter(b => b.type === 'database').length,
-          files: backups.filter(b => b.type === 'files').length,
-          full: backups.filter(b => b.type === 'full').length
-        }
+          database: backups.filter((b) => b.type === 'database').length,
+          files: backups.filter((b) => b.type === 'files').length,
+          full: backups.filter((b) => b.type === 'full').length,
+        },
       };
 
       return stats;
-
     } catch (error) {
       logger.error('獲取備份統計失敗:', error);
       throw error;
@@ -433,7 +432,6 @@ class BackupService {
       }
 
       return { valid: true, size: stats.size, type: backupType };
-
     } catch (error) {
       return { valid: false, error: error.message };
     }

@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -24,7 +24,9 @@ interface AIAccuracyEnhancementScreenProps {
   navigation: any;
 }
 
-const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = ({ navigation }) => {
+const AIAccuracyEnhancementScreen: React.FC<
+  AIAccuracyEnhancementScreenProps
+> = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [trainingDataStats, setTrainingDataStats] = useState<any>(null);
@@ -45,12 +47,12 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
         loadModelPerformance(),
         loadAccuracyProgress(),
         loadSuggestions(),
-        loadMonitoringData()
+        loadMonitoringData(),
       ]);
     } catch (error) {
       errorHandler.handleError(error as Error, {
         screen: 'AIAccuracyEnhancementScreen',
-        method: 'loadData'
+        method: 'loadData',
       });
       Alert.alert('錯誤', '載入數據失敗，請稍後重試');
     } finally {
@@ -69,7 +71,8 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
 
   const loadModelPerformance = async () => {
     try {
-      const performance = await aiAccuracyEnhancementService.getModelPerformanceMetrics();
+      const performance =
+        await aiAccuracyEnhancementService.getModelPerformanceMetrics();
       setModelPerformance(performance);
     } catch (error) {
       logger.error('載入模型性能失敗:', error);
@@ -78,7 +81,8 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
 
   const loadAccuracyProgress = async () => {
     try {
-      const progress = await aiAccuracyEnhancementService.getAccuracyImprovementProgress();
+      const progress =
+        await aiAccuracyEnhancementService.getAccuracyImprovementProgress();
       setAccuracyProgress(progress);
     } catch (error) {
       logger.error('載入準確率進度失敗:', error);
@@ -87,7 +91,8 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
 
   const loadSuggestions = async () => {
     try {
-      const suggestionsData = await aiAccuracyEnhancementService.getAccuracyImprovementSuggestions();
+      const suggestionsData =
+        await aiAccuracyEnhancementService.getAccuracyImprovementSuggestions();
       setSuggestions(suggestionsData);
     } catch (error) {
       logger.error('載入建議失敗:', error);
@@ -96,7 +101,8 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
 
   const loadMonitoringData = async () => {
     try {
-      const monitoring = await aiAccuracyEnhancementService.monitorAccuracyChange('30d');
+      const monitoring =
+        await aiAccuracyEnhancementService.monitorAccuracyChange('30d');
       setMonitoringData(monitoring);
     } catch (error) {
       logger.error('載入監控數據失敗:', error);
@@ -121,54 +127,57 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
             onPress: async () => {
               setLoading(true);
               try {
-                const result = await aiAccuracyEnhancementService.collectTrainingData();
-                Alert.alert('成功', `收集了 ${result.dataCollected} 條訓練數據`);
+                const result =
+                  await aiAccuracyEnhancementService.collectTrainingData();
+                Alert.alert(
+                  '成功',
+                  `收集了 ${result.dataCollected} 條訓練數據`
+                );
                 await loadTrainingDataStats();
               } catch (error) {
                 Alert.alert('錯誤', '收集訓練數據失敗');
               } finally {
                 setLoading(false);
               }
-            }
-          }
+            },
+          },
         ]
       );
     } catch (error) {
       errorHandler.handleError(error as Error, {
         screen: 'AIAccuracyEnhancementScreen',
-        method: 'handleCollectTrainingData'
+        method: 'handleCollectTrainingData',
       });
     }
   };
 
   const handleOptimizeModel = async () => {
     try {
-      Alert.alert(
-        '模型優化',
-        '確定要開始模型優化嗎？這可能需要較長時間。',
-        [
-          { text: '取消', style: 'cancel' },
-          {
-            text: '確定',
-            onPress: async () => {
-              setLoading(true);
-              try {
-                const result = await aiAccuracyEnhancementService.optimizeModel();
-                Alert.alert('成功', `模型優化完成，準確率提升 ${(result.improvement * 100).toFixed(2)}%`);
-                await loadModelPerformance();
-              } catch (error) {
-                Alert.alert('錯誤', '模型優化失敗');
-              } finally {
-                setLoading(false);
-              }
+      Alert.alert('模型優化', '確定要開始模型優化嗎？這可能需要較長時間。', [
+        { text: '取消', style: 'cancel' },
+        {
+          text: '確定',
+          onPress: async () => {
+            setLoading(true);
+            try {
+              const result = await aiAccuracyEnhancementService.optimizeModel();
+              Alert.alert(
+                '成功',
+                `模型優化完成，準確率提升 ${(result.improvement * 100).toFixed(2)}%`
+              );
+              await loadModelPerformance();
+            } catch (error) {
+              Alert.alert('錯誤', '模型優化失敗');
+            } finally {
+              setLoading(false);
             }
-          }
-        ]
-      );
+          },
+        },
+      ]);
     } catch (error) {
       errorHandler.handleError(error as Error, {
         screen: 'AIAccuracyEnhancementScreen',
-        method: 'handleOptimizeModel'
+        method: 'handleOptimizeModel',
       });
     }
   };
@@ -181,7 +190,7 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
         includeModelPerformance: true,
         includeUserFeedback: true,
         includeSuggestions: true,
-        format: 'pdf'
+        format: 'pdf',
       });
       Alert.alert('成功', '準確率報告已生成');
     } catch (error) {
@@ -203,11 +212,8 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
         <Text style={styles.cardTitle}>準確率提升進度</Text>
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
-            <View 
-              style={[
-                styles.progressFill, 
-                { width: `${progressPercentage}%` }
-              ]} 
+            <View
+              style={[styles.progressFill, { width: `${progressPercentage}%` }]}
             />
           </View>
           <Text style={styles.progressText}>
@@ -218,12 +224,11 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
           <Text style={styles.accuracyText}>
             當前準確率: {currentAccuracy}%
           </Text>
-          <Text style={styles.accuracyText}>
-            目標準確率: {targetAccuracy}%
-          </Text>
+          <Text style={styles.accuracyText}>目標準確率: {targetAccuracy}%</Text>
         </View>
         <Text style={styles.estimatedCompletion}>
-          預計完成時間: {new Date(accuracyProgress.estimatedCompletion).toLocaleDateString()}
+          預計完成時間:{' '}
+          {new Date(accuracyProgress.estimatedCompletion).toLocaleDateString()}
         </Text>
       </View>
     );
@@ -233,14 +238,19 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
     if (!modelPerformance) return null;
 
     const chartData = {
-      labels: modelPerformance.performanceHistory.slice(-7).map((item: any) => 
-        new Date(item.date).toLocaleDateString('zh-TW', { month: 'short', day: 'numeric' })
+      labels: modelPerformance.performanceHistory.slice(-7).map((item: any) =>
+        new Date(item.date).toLocaleDateString('zh-TW', {
+          month: 'short',
+          day: 'numeric',
+        })
       ),
-      datasets: [{
-        data: modelPerformance.performanceHistory.slice(-7).map((item: any) => 
-          parseFloat((item.accuracy * 100).toFixed(1))
-        )
-      }]
+      datasets: [
+        {
+          data: modelPerformance.performanceHistory
+            .slice(-7)
+            .map((item: any) => parseFloat((item.accuracy * 100).toFixed(1))),
+        },
+      ],
     };
 
     return (
@@ -257,8 +267,8 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
             decimalPlaces: 1,
             color: (opacity = 1) => `rgba(0, 122, 255, ${opacity})`,
             style: {
-              borderRadius: 16
-            }
+              borderRadius: 16,
+            },
           }}
           bezier
           style={styles.chart}
@@ -281,12 +291,14 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
   const renderTrainingDataStats = () => {
     if (!trainingDataStats) return null;
 
-    const pieData = Object.entries(trainingDataStats.dataDistribution.cardTypes).map(([key, value]) => ({
+    const pieData = Object.entries(
+      trainingDataStats.dataDistribution.cardTypes
+    ).map(([key, value]) => ({
       name: key,
       population: value as number,
       color: getRandomColor(),
       legendFontColor: '#7F7F7F',
-      legendFontSize: 12
+      legendFontSize: 12,
     }));
 
     return (
@@ -312,7 +324,11 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
             高質量數據: {trainingDataStats.highQualityData.toLocaleString()}
           </Text>
           <Text style={styles.statText}>
-            數據質量分數: {(trainingDataStats.dataQualityMetrics.overallScore * 100).toFixed(1)}%
+            數據質量分數:{' '}
+            {(trainingDataStats.dataQualityMetrics.overallScore * 100).toFixed(
+              1
+            )}
+            %
           </Text>
         </View>
       </View>
@@ -329,14 +345,18 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
           <View key={index} style={styles.suggestionItem}>
             <View style={styles.suggestionHeader}>
               <Text style={styles.suggestionTitle}>{suggestion.title}</Text>
-              <View style={[
-                styles.priorityBadge,
-                { backgroundColor: getPriorityColor(suggestion.priority) }
-              ]}>
+              <View
+                style={[
+                  styles.priorityBadge,
+                  { backgroundColor: getPriorityColor(suggestion.priority) },
+                ]}
+              >
                 <Text style={styles.priorityText}>{suggestion.priority}</Text>
               </View>
             </View>
-            <Text style={styles.suggestionDescription}>{suggestion.description}</Text>
+            <Text style={styles.suggestionDescription}>
+              {suggestion.description}
+            </Text>
             <Text style={styles.suggestionImpact}>
               預期提升: {(suggestion.expectedImpact * 100).toFixed(1)}%
             </Text>
@@ -349,24 +369,24 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
   const renderActionButtons = () => {
     return (
       <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={styles.actionButton} 
+        <TouchableOpacity
+          style={styles.actionButton}
           onPress={handleCollectTrainingData}
           disabled={loading}
         >
           <Text style={styles.actionButtonText}>收集訓練數據</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.actionButton} 
+
+        <TouchableOpacity
+          style={styles.actionButton}
           onPress={handleOptimizeModel}
           disabled={loading}
         >
           <Text style={styles.actionButtonText}>優化模型</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.actionButton} 
+
+        <TouchableOpacity
+          style={styles.actionButton}
           onPress={handleGenerateReport}
           disabled={loading}
         >
@@ -383,11 +403,16 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'critical': return '#FF4444';
-      case 'high': return '#FF8800';
-      case 'medium': return '#FFBB33';
-      case 'low': return '#00C851';
-      default: return '#33B5E5';
+      case 'critical':
+        return '#FF4444';
+      case 'high':
+        return '#FF8800';
+      case 'medium':
+        return '#FFBB33';
+      case 'low':
+        return '#00C851';
+      default:
+        return '#33B5E5';
     }
   };
 
@@ -428,34 +453,34 @@ const AIAccuracyEnhancementScreen: React.FC<AIAccuracyEnhancementScreenProps> = 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5'
+    backgroundColor: '#F5F5F5',
   },
   scrollView: {
-    flex: 1
+    flex: 1,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: '#666'
+    color: '#666',
   },
   header: {
     padding: 20,
-    backgroundColor: '#007AFF'
+    backgroundColor: '#007AFF',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 5
+    marginBottom: 5,
   },
   subtitle: {
     fontSize: 16,
-    color: '#E3F2FD'
+    color: '#E3F2FD',
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -465,103 +490,103 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#333'
+    color: '#333',
   },
   progressContainer: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   progressBar: {
     height: 8,
     backgroundColor: '#E0E0E0',
     borderRadius: 4,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#4CAF50'
+    backgroundColor: '#4CAF50',
   },
   progressText: {
     textAlign: 'center',
     marginTop: 5,
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   accuracyInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10
+    marginBottom: 10,
   },
   accuracyText: {
     fontSize: 14,
-    color: '#333'
+    color: '#333',
   },
   estimatedCompletion: {
     fontSize: 12,
     color: '#666',
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   chart: {
     marginVertical: 8,
-    borderRadius: 16
+    borderRadius: 16,
   },
   performanceStats: {
-    marginTop: 10
+    marginTop: 10,
   },
   statText: {
     fontSize: 14,
     color: '#333',
-    marginBottom: 5
+    marginBottom: 5,
   },
   dataStats: {
-    marginTop: 10
+    marginTop: 10,
   },
   suggestionItem: {
     marginBottom: 15,
     padding: 10,
     backgroundColor: '#F8F9FA',
-    borderRadius: 8
+    borderRadius: 8,
   },
   suggestionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5
+    marginBottom: 5,
   },
   suggestionTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
-    flex: 1
+    flex: 1,
   },
   priorityBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   priorityText: {
     fontSize: 12,
     color: '#FFFFFF',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   suggestionDescription: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 5
+    marginBottom: 5,
   },
   suggestionImpact: {
     fontSize: 12,
     color: '#007AFF',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   actionButtons: {
     flexDirection: 'row',
@@ -573,24 +598,24 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.1,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   actionButton: {
     backgroundColor: '#007AFF',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    borderRadius: 8
+    borderRadius: 8,
   },
   actionButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 export default AIAccuracyEnhancementScreen;

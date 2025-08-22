@@ -1,9 +1,11 @@
+/* eslint-env jest */
+
 const request = require('supertest');
 const app = require('../../src/server');
 const { sequelize } = require('../../src/config/database');
 const User = require('../../src/models/User');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+// const jwt = require('jsonwebtoken');
 
 describe('認證 API 測試', () => {
   let testUser;
@@ -19,7 +21,7 @@ describe('認證 API 測試', () => {
       username: 'testuser',
       email: 'test@example.com',
       password: hashedPassword,
-      role: 'user'
+      role: 'user',
     });
   });
 
@@ -37,7 +39,7 @@ describe('認證 API 測試', () => {
       const userData = {
         username: 'newuser',
         email: 'newuser@example.com',
-        password: 'newpassword123'
+        password: 'newpassword123',
       };
 
       const response = await request(app)
@@ -57,7 +59,7 @@ describe('認證 API 測試', () => {
       const userData = {
         username: 'testuser', // 已存在的用戶名
         email: 'another@example.com',
-        password: 'password123'
+        password: 'password123',
       };
 
       const response = await request(app)
@@ -73,7 +75,7 @@ describe('認證 API 測試', () => {
       const userData = {
         username: 'anotheruser',
         email: 'test@example.com', // 已存在的電子郵件
-        password: 'password123'
+        password: 'password123',
       };
 
       const response = await request(app)
@@ -89,7 +91,7 @@ describe('認證 API 測試', () => {
       const userData = {
         username: 'shortpass',
         email: 'short@example.com',
-        password: '123' // 太短的密碼
+        password: '123', // 太短的密碼
       };
 
       const response = await request(app)
@@ -105,7 +107,7 @@ describe('認證 API 測試', () => {
       const userData = {
         username: 'invalidemail',
         email: 'invalid-email',
-        password: 'password123'
+        password: 'password123',
       };
 
       const response = await request(app)
@@ -122,7 +124,7 @@ describe('認證 API 測試', () => {
     it('應該成功登錄有效用戶', async () => {
       const loginData = {
         email: 'test@example.com',
-        password: 'testpassword123'
+        password: 'testpassword123',
       };
 
       const response = await request(app)
@@ -143,7 +145,7 @@ describe('認證 API 測試', () => {
     it('應該拒絕無效的電子郵件', async () => {
       const loginData = {
         email: 'nonexistent@example.com',
-        password: 'testpassword123'
+        password: 'testpassword123',
       };
 
       const response = await request(app)
@@ -158,7 +160,7 @@ describe('認證 API 測試', () => {
     it('應該拒絕錯誤的密碼', async () => {
       const loginData = {
         email: 'test@example.com',
-        password: 'wrongpassword'
+        password: 'wrongpassword',
       };
 
       const response = await request(app)
@@ -184,14 +186,12 @@ describe('認證 API 測試', () => {
   describe('GET /api/auth/me', () => {
     it('應該返回當前用戶信息（有效 token）', async () => {
       // 先登錄獲取 token
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'testpassword123'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'testpassword123',
+      });
 
-      const {token} = loginResponse.body.data;
+      const { token } = loginResponse.body.data;
 
       const response = await request(app)
         .get('/api/auth/me')
@@ -215,9 +215,7 @@ describe('認證 API 測試', () => {
     });
 
     it('應該拒絕缺少 token 的請求', async () => {
-      const response = await request(app)
-        .get('/api/auth/me')
-        .expect(401);
+      const response = await request(app).get('/api/auth/me').expect(401);
 
       expect(response.body.success).toBe(false);
       expect(response.body.message).toContain('未提供 token');
@@ -229,19 +227,17 @@ describe('認證 API 測試', () => {
 
     beforeEach(async () => {
       // 登錄獲取 token
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'testpassword123'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'testpassword123',
+      });
       userToken = loginResponse.body.data.token;
     });
 
     it('應該成功更新用戶資料', async () => {
       const updateData = {
         username: 'updateduser',
-        email: 'updated@example.com'
+        email: 'updated@example.com',
       };
 
       const response = await request(app)
@@ -257,7 +253,7 @@ describe('認證 API 測試', () => {
 
     it('應該驗證電子郵件格式', async () => {
       const updateData = {
-        email: 'invalid-email-format'
+        email: 'invalid-email-format',
       };
 
       const response = await request(app)
@@ -276,11 +272,11 @@ describe('認證 API 測試', () => {
         username: 'anotheruser',
         email: 'another@example.com',
         password: await bcrypt.hash('password123', 10),
-        role: 'user'
+        role: 'user',
       });
 
       const updateData = {
-        email: 'another@example.com'
+        email: 'another@example.com',
       };
 
       const response = await request(app)
@@ -299,19 +295,17 @@ describe('認證 API 測試', () => {
 
     beforeEach(async () => {
       // 登錄獲取 token
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'testpassword123'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'testpassword123',
+      });
       userToken = loginResponse.body.data.token;
     });
 
     it('應該成功更改密碼', async () => {
       const passwordData = {
         currentPassword: 'testpassword123',
-        newPassword: 'newpassword123'
+        newPassword: 'newpassword123',
       };
 
       const response = await request(app)
@@ -327,7 +321,7 @@ describe('認證 API 測試', () => {
     it('應該拒絕錯誤的當前密碼', async () => {
       const passwordData = {
         currentPassword: 'wrongpassword',
-        newPassword: 'newpassword123'
+        newPassword: 'newpassword123',
       };
 
       const response = await request(app)
@@ -343,7 +337,7 @@ describe('認證 API 測試', () => {
     it('應該驗證新密碼長度', async () => {
       const passwordData = {
         currentPassword: 'testpassword123',
-        newPassword: '123' // 太短的密碼
+        newPassword: '123', // 太短的密碼
       };
 
       const response = await request(app)
@@ -362,12 +356,10 @@ describe('認證 API 測試', () => {
 
     beforeEach(async () => {
       // 登錄獲取 token
-      const loginResponse = await request(app)
-        .post('/api/auth/login')
-        .send({
-          email: 'test@example.com',
-          password: 'testpassword123'
-        });
+      const loginResponse = await request(app).post('/api/auth/login').send({
+        email: 'test@example.com',
+        password: 'testpassword123',
+      });
       userToken = loginResponse.body.data.token;
     });
 
@@ -396,7 +388,7 @@ describe('認證 API 測試', () => {
     it('應該限制登錄嘗試次數', async () => {
       const loginData = {
         email: 'test@example.com',
-        password: 'wrongpassword'
+        password: 'wrongpassword',
       };
 
       // 嘗試多次登錄

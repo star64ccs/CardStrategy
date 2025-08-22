@@ -11,22 +11,22 @@ const options = {
       contact: {
         name: 'CardStrategy Team',
         email: 'support@cardstrategy.com',
-        url: 'https://cardstrategy.com'
+        url: 'https://cardstrategy.com',
       },
       license: {
         name: 'MIT',
-        url: 'https://opensource.org/licenses/MIT'
-      }
+        url: 'https://opensource.org/licenses/MIT',
+      },
     },
     servers: [
       {
         url: 'http://localhost:3000',
-        description: '開發環境'
+        description: '開發環境',
       },
       {
         url: 'https://api.cardstrategy.com',
-        description: '生產環境'
-      }
+        description: '生產環境',
+      },
     ],
     components: {
       securitySchemes: {
@@ -34,14 +34,14 @@ const options = {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT',
-          description: 'JWT 認證令牌'
+          description: 'JWT 認證令牌',
         },
         apiKey: {
           type: 'apiKey',
           in: 'header',
           name: 'X-API-Key',
-          description: 'API 密鑰認證'
-        }
+          description: 'API 密鑰認證',
+        },
       },
       schemas: {
         User: {
@@ -49,12 +49,20 @@ const options = {
           properties: {
             id: { type: 'integer', example: 1 },
             username: { type: 'string', example: 'john_doe' },
-            email: { type: 'string', format: 'email', example: 'john@example.com' },
-            role: { type: 'string', enum: ['user', 'admin', 'moderator'], example: 'user' },
+            email: {
+              type: 'string',
+              format: 'email',
+              example: 'john@example.com',
+            },
+            role: {
+              type: 'string',
+              enum: ['user', 'admin', 'moderator'],
+              example: 'user',
+            },
             is_active: { type: 'boolean', example: true },
             created_at: { type: 'string', format: 'date-time' },
-            updated_at: { type: 'string', format: 'date-time' }
-          }
+            updated_at: { type: 'string', format: 'date-time' },
+          },
         },
         Card: {
           type: 'object',
@@ -65,13 +73,20 @@ const options = {
             card_number: { type: 'string', example: '4/102' },
             rarity: { type: 'string', example: 'Holo Rare' },
             condition_grade: { type: 'string', example: 'NM' },
-            estimated_value: { type: 'number', format: 'float', example: 1500.00 },
-            image_url: { type: 'string', example: 'https://example.com/card.jpg' },
+            estimated_value: {
+              type: 'number',
+              format: 'float',
+              example: 1500.0,
+            },
+            image_url: {
+              type: 'string',
+              example: 'https://example.com/card.jpg',
+            },
             description: { type: 'string', example: '經典的噴火龍卡片' },
             user_id: { type: 'integer', example: 1 },
             created_at: { type: 'string', format: 'date-time' },
-            updated_at: { type: 'string', format: 'date-time' }
-          }
+            updated_at: { type: 'string', format: 'date-time' },
+          },
         },
         Investment: {
           type: 'object',
@@ -79,53 +94,81 @@ const options = {
             id: { type: 'integer', example: 1 },
             card_id: { type: 'integer', example: 1 },
             user_id: { type: 'integer', example: 1 },
-            purchase_price: { type: 'number', format: 'float', example: 1200.00 },
-            purchase_date: { type: 'string', format: 'date', example: '2023-01-15' },
-            current_value: { type: 'number', format: 'float', example: 1500.00 },
-            profit_loss: { type: 'number', format: 'float', example: 300.00 },
+            purchase_price: {
+              type: 'number',
+              format: 'float',
+              example: 1200.0,
+            },
+            purchase_date: {
+              type: 'string',
+              format: 'date',
+              example: '2023-01-15',
+            },
+            current_value: { type: 'number', format: 'float', example: 1500.0 },
+            profit_loss: { type: 'number', format: 'float', example: 300.0 },
             notes: { type: 'string', example: '從收藏家手中購入' },
             created_at: { type: 'string', format: 'date-time' },
-            updated_at: { type: 'string', format: 'date-time' }
-          }
+            updated_at: { type: 'string', format: 'date-time' },
+          },
         },
         MarketData: {
           type: 'object',
           properties: {
             id: { type: 'integer', example: 1 },
             card_id: { type: 'integer', example: 1 },
-            price: { type: 'number', format: 'float', example: 1500.00 },
+            price: { type: 'number', format: 'float', example: 1500.0 },
             volume: { type: 'integer', example: 5 },
-            trend: { type: 'string', enum: ['up', 'down', 'stable'], example: 'up' },
+            trend: {
+              type: 'string',
+              enum: ['up', 'down', 'stable'],
+              example: 'up',
+            },
             source: { type: 'string', example: 'TCGPlayer' },
-            recorded_at: { type: 'string', format: 'date-time' }
-          }
+            recorded_at: { type: 'string', format: 'date-time' },
+          },
         },
         AIPrediction: {
           type: 'object',
           properties: {
             id: { type: 'integer', example: 1 },
             card_id: { type: 'integer', example: 1 },
-            predicted_price: { type: 'number', format: 'float', example: 1600.00 },
-            confidence_score: { type: 'number', format: 'float', example: 0.85 },
+            predicted_price: {
+              type: 'number',
+              format: 'float',
+              example: 1600.0,
+            },
+            confidence_score: {
+              type: 'number',
+              format: 'float',
+              example: 0.85,
+            },
             model_type: { type: 'string', example: 'LSTM' },
-            prediction_date: { type: 'string', format: 'date', example: '2023-12-01' },
-            actual_price: { type: 'number', format: 'float', example: 1550.00 },
+            prediction_date: {
+              type: 'string',
+              format: 'date',
+              example: '2023-12-01',
+            },
+            actual_price: { type: 'number', format: 'float', example: 1550.0 },
             accuracy: { type: 'number', format: 'float', example: 0.92 },
-            created_at: { type: 'string', format: 'date-time' }
-          }
+            created_at: { type: 'string', format: 'date-time' },
+          },
         },
         Alert: {
           type: 'object',
           properties: {
             id: { type: 'integer', example: 1 },
             type: { type: 'string', example: 'cpu_high' },
-            severity: { type: 'string', enum: ['info', 'warning', 'critical'], example: 'warning' },
+            severity: {
+              type: 'string',
+              enum: ['info', 'warning', 'critical'],
+              example: 'warning',
+            },
             message: { type: 'string', example: 'CPU 使用率過高: 85.5%' },
             value: { type: 'number', format: 'float', example: 85.5 },
             threshold: { type: 'number', format: 'float', example: 80.0 },
             processed: { type: 'boolean', example: false },
-            created_at: { type: 'string', format: 'date-time' }
-          }
+            created_at: { type: 'string', format: 'date-time' },
+          },
         },
         Error: {
           type: 'object',
@@ -139,32 +182,29 @@ const options = {
                 type: 'object',
                 properties: {
                   field: { type: 'string', example: 'email' },
-                  message: { type: 'string', example: '郵箱格式無效' }
-                }
-              }
-            }
-          }
+                  message: { type: 'string', example: '郵箱格式無效' },
+                },
+              },
+            },
+          },
         },
         Success: {
           type: 'object',
           properties: {
             success: { type: 'boolean', example: true },
             message: { type: 'string', example: '操作成功' },
-            data: { type: 'object' }
-          }
-        }
-      }
+            data: { type: 'object' },
+          },
+        },
+      },
     },
     security: [
       {
-        bearerAuth: []
-      }
-    ]
+        bearerAuth: [],
+      },
+    ],
   },
-  apis: [
-    './src/routes/*.js',
-    './src/models/*.js'
-  ]
+  apis: ['./src/routes/*.js', './src/models/*.js'],
 };
 
 const specs = swaggerJsdoc(options);
@@ -180,8 +220,8 @@ module.exports = {
       docExpansion: 'list',
       filter: true,
       showRequestHeaders: true,
-      tryItOutEnabled: true
-    }
+      tryItOutEnabled: true,
+    },
   }),
-  specs
+  specs,
 };

@@ -10,8 +10,12 @@ jest.mock('../../../services/dataQualityService');
 jest.mock('../../../services/aiEcosystem');
 jest.mock('../../../utils/logger');
 
-const mockAdvancedAnalyticsService = advancedAnalyticsService as jest.Mocked<typeof advancedAnalyticsService>;
-const mockDataQualityService = dataQualityService as jest.Mocked<typeof dataQualityService>;
+const mockAdvancedAnalyticsService = advancedAnalyticsService as jest.Mocked<
+  typeof advancedAnalyticsService
+>;
+const mockDataQualityService = dataQualityService as jest.Mocked<
+  typeof dataQualityService
+>;
 const mockAiEcosystem = aiEcosystem as jest.Mocked<typeof aiEcosystem>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 
@@ -35,7 +39,10 @@ describe('ReportGenerationService', () => {
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(reportGenerationService.initialize()).rejects.toThrow();
-      expect(mockLogger.error).toHaveBeenCalledWith('報告生成服務初始化失敗:', expect.any(Error));
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '報告生成服務初始化失敗:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -45,12 +52,12 @@ describe('ReportGenerationService', () => {
         templateId: 'analytics-default',
         dataParams: {
           timeRange: '30d',
-          metrics: ['revenue', 'users']
+          metrics: ['revenue', 'users'],
         },
         format: 'pdf' as const,
         includeCharts: true,
         includeInsights: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
       const result = await reportGenerationService.generateReport(params);
@@ -64,8 +71,8 @@ describe('ReportGenerationService', () => {
           dataSources: ['cards', 'market', 'investments'],
           dataQuality: 0,
           insightsCount: 0,
-          recommendationsCount: 0
-        }
+          recommendationsCount: 0,
+        },
       });
       expect(result.reportId).toBeDefined();
       expect(result.metadata.generatedAt).toBeInstanceOf(Date);
@@ -79,11 +86,16 @@ describe('ReportGenerationService', () => {
         format: 'invalid' as any, // 無效格式
         includeCharts: true,
         includeInsights: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
-      await expect(reportGenerationService.generateReport(invalidParams)).rejects.toThrow();
-      expect(mockLogger.error).toHaveBeenCalledWith('報告生成失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.generateReport(invalidParams)
+      ).rejects.toThrow();
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '報告生成失敗:',
+        expect.any(Error)
+      );
     });
 
     it('應該處理模板不存在的情況', async () => {
@@ -92,11 +104,16 @@ describe('ReportGenerationService', () => {
         format: 'pdf' as const,
         includeCharts: true,
         includeInsights: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
-      await expect(reportGenerationService.generateReport(params)).rejects.toThrow('報告模板不存在: nonexistent-template');
-      expect(mockLogger.error).toHaveBeenCalledWith('報告生成失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.generateReport(params)
+      ).rejects.toThrow('報告模板不存在: nonexistent-template');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '報告生成失敗:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -109,15 +126,16 @@ describe('ReportGenerationService', () => {
         metrics: ['revenue', 'users'],
         includeVisualizations: true,
         includeInsights: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
-      const result = await reportGenerationService.generateAnalyticsReport(params);
+      const result =
+        await reportGenerationService.generateAnalyticsReport(params);
 
       expect(result).toMatchObject({
         templateId: 'analytics-trend',
         status: 'generating',
-        progress: 0
+        progress: 0,
       });
       expect(result.reportId).toBeDefined();
       expect(mockLogger.info).toHaveBeenCalledWith('開始生成分析報告:', params);
@@ -131,15 +149,28 @@ describe('ReportGenerationService', () => {
         metrics: ['revenue'],
         includeVisualizations: true,
         includeInsights: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
-      await expect(reportGenerationService.generateAnalyticsReport(invalidParams)).rejects.toThrow();
-      expect(mockLogger.error).toHaveBeenCalledWith('分析報告生成失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.generateAnalyticsReport(invalidParams)
+      ).rejects.toThrow();
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '分析報告生成失敗:',
+        expect.any(Error)
+      );
     });
 
     it('應該處理不同類型的分析報告', async () => {
-      const reportTypes = ['trend', 'statistical', 'correlation', 'anomaly', 'market', 'investment', 'comprehensive'];
+      const reportTypes = [
+        'trend',
+        'statistical',
+        'correlation',
+        'anomaly',
+        'market',
+        'investment',
+        'comprehensive',
+      ];
 
       for (const reportType of reportTypes) {
         const params = {
@@ -149,10 +180,11 @@ describe('ReportGenerationService', () => {
           metrics: ['revenue'],
           includeVisualizations: true,
           includeInsights: true,
-          includeRecommendations: true
+          includeRecommendations: true,
         };
 
-        const result = await reportGenerationService.generateAnalyticsReport(params);
+        const result =
+          await reportGenerationService.generateAnalyticsReport(params);
         expect(result.templateId).toBeDefined();
       }
     });
@@ -166,15 +198,16 @@ describe('ReportGenerationService', () => {
         metrics: ['response_time', 'throughput'],
         includeTrends: true,
         includeComparisons: true,
-        includeForecasts: true
+        includeForecasts: true,
       };
 
-      const result = await reportGenerationService.generatePerformanceReport(params);
+      const result =
+        await reportGenerationService.generatePerformanceReport(params);
 
       expect(result).toMatchObject({
         templateId: 'performance-system',
         status: 'generating',
-        progress: 0
+        progress: 0,
       });
       expect(result.reportId).toBeDefined();
       expect(mockLogger.info).toHaveBeenCalledWith('開始生成性能報告:', params);
@@ -190,11 +223,16 @@ describe('ReportGenerationService', () => {
         metrics: ['response_time'],
         includeTrends: true,
         includeComparisons: true,
-        includeForecasts: true
+        includeForecasts: true,
       };
 
-      await expect(reportGenerationService.generatePerformanceReport(params)).rejects.toThrow();
-      expect(mockLogger.error).toHaveBeenCalledWith('性能報告生成失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.generatePerformanceReport(params)
+      ).rejects.toThrow();
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '性能報告生成失敗:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -207,15 +245,16 @@ describe('ReportGenerationService', () => {
         qualityMetrics: ['accuracy', 'completeness'],
         includeTrends: true,
         includeImprovements: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
-      const result = await reportGenerationService.generateQualityReport(params);
+      const result =
+        await reportGenerationService.generateQualityReport(params);
 
       expect(result).toMatchObject({
         templateId: 'quality-data',
         status: 'generating',
-        progress: 0
+        progress: 0,
       });
       expect(result.reportId).toBeDefined();
       expect(mockLogger.info).toHaveBeenCalledWith('開始生成質量報告:', params);
@@ -232,11 +271,16 @@ describe('ReportGenerationService', () => {
         qualityMetrics: ['accuracy'],
         includeTrends: true,
         includeImprovements: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       };
 
-      await expect(reportGenerationService.generateQualityReport(params)).rejects.toThrow();
-      expect(mockLogger.error).toHaveBeenCalledWith('質量報告生成失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.generateQualityReport(params)
+      ).rejects.toThrow();
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '質量報告生成失敗:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -248,15 +292,16 @@ describe('ReportGenerationService', () => {
         currency: 'USD',
         includeCharts: true,
         includeProjections: true,
-        includeComparisons: true
+        includeComparisons: true,
       };
 
-      const result = await reportGenerationService.generateFinancialReport(params);
+      const result =
+        await reportGenerationService.generateFinancialReport(params);
 
       expect(result).toMatchObject({
         templateId: 'financial-revenue',
         status: 'generating',
-        progress: 0
+        progress: 0,
       });
       expect(result.reportId).toBeDefined();
       expect(mockLogger.info).toHaveBeenCalledWith('開始生成財務報告:', params);
@@ -272,11 +317,16 @@ describe('ReportGenerationService', () => {
         currency: 'USD',
         includeCharts: true,
         includeProjections: true,
-        includeComparisons: true
+        includeComparisons: true,
       };
 
-      await expect(reportGenerationService.generateFinancialReport(params)).rejects.toThrow();
-      expect(mockLogger.error).toHaveBeenCalledWith('財務報告生成失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.generateFinancialReport(params)
+      ).rejects.toThrow();
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '財務報告生成失敗:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -294,8 +344,8 @@ describe('ReportGenerationService', () => {
             content: { text: '自定義內容' },
             position: 1,
             isVisible: true,
-            isCollapsible: false
-          }
+            isCollapsible: false,
+          },
         ],
         styling: {
           theme: 'light' as const,
@@ -304,21 +354,22 @@ describe('ReportGenerationService', () => {
             secondary: '#6c757d',
             accent: '#28a745',
             background: '#ffffff',
-            text: '#212529'
+            text: '#212529',
           },
           fonts: {
             heading: 'Arial, sans-serif',
             body: 'Arial, sans-serif',
-            data: 'Courier New, monospace'
+            data: 'Courier New, monospace',
           },
           layout: 'portrait' as const,
-          margins: { top: 20, right: 20, bottom: 20, left: 20 }
+          margins: { top: 20, right: 20, bottom: 20, left: 20 },
         },
         dataSources: ['custom'],
-        permissions: ['read', 'write']
+        permissions: ['read', 'write'],
       };
 
-      const result = await reportGenerationService.createCustomTemplate(template);
+      const result =
+        await reportGenerationService.createCustomTemplate(template);
 
       expect(result).toMatchObject({
         name: '自定義模板',
@@ -327,12 +378,15 @@ describe('ReportGenerationService', () => {
         sections: template.sections,
         styling: template.styling,
         dataSources: ['custom'],
-        permissions: ['read', 'write']
+        permissions: ['read', 'write'],
       });
       expect(result.id).toBeDefined();
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.updatedAt).toBeInstanceOf(Date);
-      expect(mockLogger.info).toHaveBeenCalledWith('創建自定義報告模板:', '自定義模板');
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '創建自定義報告模板:',
+        '自定義模板'
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('自定義報告模板創建成功');
     });
 
@@ -352,22 +406,27 @@ describe('ReportGenerationService', () => {
             secondary: '#6c757d',
             accent: '#28a745',
             background: '#ffffff',
-            text: '#212529'
+            text: '#212529',
           },
           fonts: {
             heading: 'Arial, sans-serif',
             body: 'Arial, sans-serif',
-            data: 'Courier New, monospace'
+            data: 'Courier New, monospace',
           },
           layout: 'portrait' as const,
-          margins: { top: 20, right: 20, bottom: 20, left: 20 }
+          margins: { top: 20, right: 20, bottom: 20, left: 20 },
         },
         dataSources: [],
-        permissions: []
+        permissions: [],
       };
 
-      await expect(reportGenerationService.createCustomTemplate(template)).rejects.toThrow();
-      expect(mockLogger.error).toHaveBeenCalledWith('創建自定義報告模板失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.createCustomTemplate(template)
+      ).rejects.toThrow();
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '創建自定義報告模板失敗:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -386,44 +445,56 @@ describe('ReportGenerationService', () => {
             secondary: '#6c757d',
             accent: '#28a745',
             background: '#ffffff',
-            text: '#212529'
+            text: '#212529',
           },
           fonts: {
             heading: 'Arial, sans-serif',
             body: 'Arial, sans-serif',
-            data: 'Courier New, monospace'
+            data: 'Courier New, monospace',
           },
           layout: 'portrait' as const,
-          margins: { top: 20, right: 20, bottom: 20, left: 20 }
+          margins: { top: 20, right: 20, bottom: 20, left: 20 },
         },
         dataSources: [],
-        permissions: []
+        permissions: [],
       };
 
-      const createdTemplate = await reportGenerationService.createCustomTemplate(template);
+      const createdTemplate =
+        await reportGenerationService.createCustomTemplate(template);
 
       // 更新模板
       const updates = {
         name: '更新後的模板',
-        description: '更新後的描述'
+        description: '更新後的描述',
       };
 
-      const result = await reportGenerationService.updateTemplate(createdTemplate.id, updates);
+      const result = await reportGenerationService.updateTemplate(
+        createdTemplate.id,
+        updates
+      );
 
       expect(result).toMatchObject({
         name: '更新後的模板',
-        description: '更新後的描述'
+        description: '更新後的描述',
       });
       expect(result.updatedAt).toBeInstanceOf(Date);
-      expect(mockLogger.info).toHaveBeenCalledWith('更新報告模板:', createdTemplate.id);
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '更新報告模板:',
+        createdTemplate.id
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('報告模板更新成功');
     });
 
     it('應該處理模板不存在的情況', async () => {
       const updates = { name: '新名稱' };
 
-      await expect(reportGenerationService.updateTemplate('nonexistent-template', updates)).rejects.toThrow('報告模板不存在: nonexistent-template');
-      expect(mockLogger.error).toHaveBeenCalledWith('更新報告模板失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.updateTemplate('nonexistent-template', updates)
+      ).rejects.toThrow('報告模板不存在: nonexistent-template');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '更新報告模板失敗:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -442,32 +513,41 @@ describe('ReportGenerationService', () => {
             secondary: '#6c757d',
             accent: '#28a745',
             background: '#ffffff',
-            text: '#212529'
+            text: '#212529',
           },
           fonts: {
             heading: 'Arial, sans-serif',
             body: 'Arial, sans-serif',
-            data: 'Courier New, monospace'
+            data: 'Courier New, monospace',
           },
           layout: 'portrait' as const,
-          margins: { top: 20, right: 20, bottom: 20, left: 20 }
+          margins: { top: 20, right: 20, bottom: 20, left: 20 },
         },
         dataSources: [],
-        permissions: []
+        permissions: [],
       };
 
-      const createdTemplate = await reportGenerationService.createCustomTemplate(template);
+      const createdTemplate =
+        await reportGenerationService.createCustomTemplate(template);
 
       // 刪除模板
       await reportGenerationService.deleteTemplate(createdTemplate.id);
 
-      expect(mockLogger.info).toHaveBeenCalledWith('刪除報告模板:', createdTemplate.id);
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '刪除報告模板:',
+        createdTemplate.id
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('報告模板刪除成功');
     });
 
     it('應該處理模板不存在的情況', async () => {
-      await expect(reportGenerationService.deleteTemplate('nonexistent-template')).rejects.toThrow('報告模板不存在: nonexistent-template');
-      expect(mockLogger.error).toHaveBeenCalledWith('刪除報告模板失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.deleteTemplate('nonexistent-template')
+      ).rejects.toThrow('報告模板不存在: nonexistent-template');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '刪除報告模板失敗:',
+        expect.any(Error)
+      );
     });
   });
 
@@ -476,25 +556,28 @@ describe('ReportGenerationService', () => {
       const result = await reportGenerationService.getAllTemplates();
 
       expect(result).toHaveLength(2); // 2個默認模板
-      expect(result.map(t => t.id)).toContain('analytics-default');
-      expect(result.map(t => t.id)).toContain('performance-default');
+      expect(result.map((t) => t.id)).toContain('analytics-default');
+      expect(result.map((t) => t.id)).toContain('performance-default');
     });
   });
 
   describe('getTemplate', () => {
     it('應該成功獲取報告模板', async () => {
-      const result = await reportGenerationService.getTemplate('analytics-default');
+      const result =
+        await reportGenerationService.getTemplate('analytics-default');
 
       expect(result).toMatchObject({
         id: 'analytics-default',
         name: '數據分析報告',
         description: '標準數據分析報告模板',
-        type: 'analytics'
+        type: 'analytics',
       });
     });
 
     it('應該在模板不存在時返回 null', async () => {
-      const result = await reportGenerationService.getTemplate('nonexistent-template');
+      const result = await reportGenerationService.getTemplate(
+        'nonexistent-template'
+      );
 
       expect(result).toBeNull();
     });
@@ -510,10 +593,17 @@ describe('ReportGenerationService', () => {
 
   describe('downloadReport', () => {
     it('應該成功下載報告', async () => {
-      const result = await reportGenerationService.downloadReport('report-1', 'pdf');
+      const result = await reportGenerationService.downloadReport(
+        'report-1',
+        'pdf'
+      );
 
       expect(result).toBe('/api/reports/report-1/download?format=pdf');
-      expect(mockLogger.info).toHaveBeenCalledWith('下載報告:', 'report-1', 'pdf');
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        '下載報告:',
+        'report-1',
+        'pdf'
+      );
       expect(mockLogger.info).toHaveBeenCalledWith('報告下載URL生成成功');
     });
 
@@ -521,15 +611,23 @@ describe('ReportGenerationService', () => {
       // 模擬錯誤情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
-      await expect(reportGenerationService.downloadReport('report-1', 'pdf')).rejects.toThrow();
-      expect(mockLogger.error).toHaveBeenCalledWith('下載報告失敗:', expect.any(Error));
+      await expect(
+        reportGenerationService.downloadReport('report-1', 'pdf')
+      ).rejects.toThrow();
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        '下載報告失敗:',
+        expect.any(Error)
+      );
     });
 
     it('應該支持不同格式的報告下載', async () => {
       const formats = ['pdf', 'excel', 'html', 'json', 'csv'];
 
       for (const format of formats) {
-        const result = await reportGenerationService.downloadReport('report-1', format);
+        const result = await reportGenerationService.downloadReport(
+          'report-1',
+          format
+        );
         expect(result).toContain(`format=${format}`);
       }
     });
@@ -549,14 +647,14 @@ describe('ReportGenerationService', () => {
         enableDataVisualization: true,
         enableAIInsights: true,
         enableCollaboration: true,
-        enableVersionControl: true
+        enableVersionControl: true,
       });
     });
 
     it('應該成功更新配置', () => {
       const newConfig = {
         enableAutoGeneration: false,
-        enableAIInsights: false
+        enableAIInsights: false,
       };
 
       reportGenerationService.updateConfig(newConfig);
@@ -581,12 +679,18 @@ describe('ReportGenerationService', () => {
     it('應該正確選擇分析報告模板', async () => {
       const testCases = [
         { reportType: 'trend', expectedTemplate: 'analytics-trend' },
-        { reportType: 'statistical', expectedTemplate: 'analytics-statistical' },
-        { reportType: 'correlation', expectedTemplate: 'analytics-correlation' },
+        {
+          reportType: 'statistical',
+          expectedTemplate: 'analytics-statistical',
+        },
+        {
+          reportType: 'correlation',
+          expectedTemplate: 'analytics-correlation',
+        },
         { reportType: 'anomaly', expectedTemplate: 'analytics-anomaly' },
         { reportType: 'market', expectedTemplate: 'analytics-market' },
         { reportType: 'investment', expectedTemplate: 'analytics-investment' },
-        { reportType: 'comprehensive', expectedTemplate: 'analytics-default' }
+        { reportType: 'comprehensive', expectedTemplate: 'analytics-default' },
       ];
 
       for (const testCase of testCases) {
@@ -597,10 +701,11 @@ describe('ReportGenerationService', () => {
           metrics: ['revenue'],
           includeVisualizations: true,
           includeInsights: true,
-          includeRecommendations: true
+          includeRecommendations: true,
         };
 
-        const result = await reportGenerationService.generateAnalyticsReport(params);
+        const result =
+          await reportGenerationService.generateAnalyticsReport(params);
         expect(result.templateId).toBe(testCase.expectedTemplate);
       }
     });
@@ -611,7 +716,10 @@ describe('ReportGenerationService', () => {
         { reportType: 'user', expectedTemplate: 'performance-user' },
         { reportType: 'business', expectedTemplate: 'performance-business' },
         { reportType: 'technical', expectedTemplate: 'performance-technical' },
-        { reportType: 'comprehensive', expectedTemplate: 'performance-default' }
+        {
+          reportType: 'comprehensive',
+          expectedTemplate: 'performance-default',
+        },
       ];
 
       for (const testCase of testCases) {
@@ -621,10 +729,11 @@ describe('ReportGenerationService', () => {
           metrics: ['response_time'],
           includeTrends: true,
           includeComparisons: true,
-          includeForecasts: true
+          includeForecasts: true,
         };
 
-        const result = await reportGenerationService.generatePerformanceReport(params);
+        const result =
+          await reportGenerationService.generatePerformanceReport(params);
         expect(result.templateId).toBe(testCase.expectedTemplate);
       }
     });
@@ -634,7 +743,7 @@ describe('ReportGenerationService', () => {
         { reportType: 'data', expectedTemplate: 'quality-data' },
         { reportType: 'process', expectedTemplate: 'quality-process' },
         { reportType: 'output', expectedTemplate: 'quality-output' },
-        { reportType: 'comprehensive', expectedTemplate: 'quality-default' }
+        { reportType: 'comprehensive', expectedTemplate: 'quality-default' },
       ];
 
       for (const testCase of testCases) {
@@ -645,10 +754,11 @@ describe('ReportGenerationService', () => {
           qualityMetrics: ['accuracy'],
           includeTrends: true,
           includeImprovements: true,
-          includeRecommendations: true
+          includeRecommendations: true,
         };
 
-        const result = await reportGenerationService.generateQualityReport(params);
+        const result =
+          await reportGenerationService.generateQualityReport(params);
         expect(result.templateId).toBe(testCase.expectedTemplate);
       }
     });
@@ -659,7 +769,7 @@ describe('ReportGenerationService', () => {
         { reportType: 'expense', expectedTemplate: 'financial-expense' },
         { reportType: 'profit', expectedTemplate: 'financial-profit' },
         { reportType: 'investment', expectedTemplate: 'financial-investment' },
-        { reportType: 'comprehensive', expectedTemplate: 'financial-default' }
+        { reportType: 'comprehensive', expectedTemplate: 'financial-default' },
       ];
 
       for (const testCase of testCases) {
@@ -669,10 +779,11 @@ describe('ReportGenerationService', () => {
           currency: 'USD',
           includeCharts: true,
           includeProjections: true,
-          includeComparisons: true
+          includeComparisons: true,
         };
 
-        const result = await reportGenerationService.generateFinancialReport(params);
+        const result =
+          await reportGenerationService.generateFinancialReport(params);
         expect(result.templateId).toBe(testCase.expectedTemplate);
       }
     });

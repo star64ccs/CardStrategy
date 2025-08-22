@@ -11,13 +11,13 @@ export const PERFORMANCE_CONFIG = {
       small: 480,
       medium: 768,
       large: 1024,
-      xlarge: 1440
+      xlarge: 1440,
     },
     // 懶加載配置
     lazyLoading: {
       threshold: 0.1,
-      rootMargin: '50px'
-    }
+      rootMargin: '50px',
+    },
   },
 
   // 快取配置
@@ -25,13 +25,13 @@ export const PERFORMANCE_CONFIG = {
     // 本地存儲配置
     localStorage: {
       maxSize: 10 * 1024 * 1024, // 10MB
-      expirationTime: 24 * 60 * 60 * 1000 // 24小時
+      expirationTime: 24 * 60 * 60 * 1000, // 24小時
     },
     // 記憶體快取配置
     memoryCache: {
       maxSize: 100, // 最大快取項目數
-      expirationTime: 5 * 60 * 1000 // 5分鐘
-    }
+      expirationTime: 5 * 60 * 1000, // 5分鐘
+    },
   },
 
   // API 配置
@@ -42,14 +42,14 @@ export const PERFORMANCE_CONFIG = {
     retry: {
       maxAttempts: 3,
       delay: 1000, // 1秒
-      backoffMultiplier: 2
+      backoffMultiplier: 2,
     },
     // 請求合併配置
     batch: {
       enabled: true,
       maxBatchSize: 10,
-      maxDelay: 100 // 100ms
-    }
+      maxDelay: 100, // 100ms
+    },
   },
 
   // 渲染優化配置
@@ -57,19 +57,19 @@ export const PERFORMANCE_CONFIG = {
     // 虛擬化配置
     virtualization: {
       itemHeight: 60,
-      overscan: 5
+      overscan: 5,
     },
     // 防抖配置
     debounce: {
       search: 300,
       resize: 150,
-      scroll: 100
+      scroll: 100,
     },
     // 節流配置
     throttle: {
       scroll: 16, // 60fps
-      resize: 100
-    }
+      resize: 100,
+    },
   },
 
   // 監控配置
@@ -79,13 +79,13 @@ export const PERFORMANCE_CONFIG = {
       fcp: 1500, // 首次內容繪製
       lcp: 2500, // 最大內容繪製
       fid: 100, // 首次輸入延遲
-      cls: 0.1 // 累積佈局偏移
+      cls: 0.1, // 累積佈局偏移
     },
     // 錯誤監控
     errorReporting: {
       enabled: true,
-      sampleRate: 1.0 // 100% 採樣率
-    }
+      sampleRate: 1.0, // 100% 採樣率
+    },
   },
 
   // 離線配置
@@ -93,29 +93,35 @@ export const PERFORMANCE_CONFIG = {
     // 離線存儲配置
     storage: {
       maxSize: 50 * 1024 * 1024, // 50MB
-      priority: ['critical', 'important', 'normal']
+      priority: ['critical', 'important', 'normal'],
     },
     // 同步配置
     sync: {
       enabled: true,
       interval: 5 * 60 * 1000, // 5分鐘
-      maxRetries: 3
-    }
-  }
+      maxRetries: 3,
+    },
+  },
 };
 
 // 效能優化工具函數
 export const PerformanceUtils = {
   // 圖片優化
-  optimizeImage: (url: string, width: number, quality: number = 0.8): string => {
+  optimizeImage: (
+    url: string,
+    width: number,
+    quality: number = 0.8
+  ): string => {
     // 根據設備像素比調整寬度
     const pixelRatio = window.devicePixelRatio || 1;
     const adjustedWidth = Math.round(width * pixelRatio);
 
     // 支援 WebP 格式
-    const supportsWebP = document.createElement('canvas')
-      .toDataURL('image/webp')
-      .indexOf('data:image/webp') === 0;
+    const supportsWebP =
+      document
+        .createElement('canvas')
+        .toDataURL('image/webp')
+        .indexOf('data:image/webp') === 0;
 
     const format = supportsWebP ? 'webp' : 'jpg';
 
@@ -198,7 +204,7 @@ export const PerformanceUtils = {
     if ('memory' in performance) {
       // logger.info('Memory usage before cleanup:', (performance as any).memory.usedJSHeapSize);
     }
-  }
+  },
 };
 
 // 效能監控類

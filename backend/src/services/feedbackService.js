@@ -2,6 +2,7 @@ const Feedback = require('../models/Feedback');
 const FeedbackResponse = require('../models/FeedbackResponse');
 const FeedbackAnalytics = require('../models/FeedbackAnalytics');
 const User = require('../models/User');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
 class FeedbackService {
@@ -17,10 +18,13 @@ class FeedbackService {
         severity: feedbackData.severity,
         title: feedbackData.title,
         description: feedbackData.description,
-        priority: this.calculatePriority(feedbackData.severity, feedbackData.category),
+        priority: this.calculatePriority(
+          feedbackData.severity,
+          feedbackData.category
+        ),
         tags: feedbackData.tags || [],
         attachments: feedbackData.attachments || [],
-        metadata: feedbackData.metadata || {}
+        metadata: feedbackData.metadata || {},
       });
 
       // 更新分析數據
@@ -29,7 +33,9 @@ class FeedbackService {
       // 生成自動回應
       await this.generateAutoResponse(feedback);
 
-      logger.info(`反饋已提交: ID ${feedback.id}, 類型: ${feedback.feedbackType}`);
+      logger.info(
+        `反饋已提交: ID ${feedback.id}, 類型: ${feedback.feedbackType}`
+      );
       return feedback;
     } catch (error) {
       logger.error('提交反饋時出錯:', error);
@@ -41,21 +47,22 @@ class FeedbackService {
    * 計算優先級
    */
   calculatePriority(severity, category) {
+// eslint-disable-next-line no-unused-vars
     const severityWeight = {
-      'critical': 4,
-      'high': 3,
-      'medium': 2,
-      'low': 1
+      critical: 4,
+      high: 3,
+      medium: 2,
+      low: 1,
     };
 
     const categoryWeight = {
-      'card_recognition': 3,
-      'centering_evaluation': 2,
-      'authenticity_verification': 3,
-      'price_prediction': 2,
-      'data_collection': 1,
-      'annotation_process': 1,
-      'general': 1
+      card_recognition: 3,
+      centering_evaluation: 2,
+      authenticity_verification: 3,
+      price_prediction: 2,
+      data_collection: 1,
+      annotation_process: 1,
+      general: 1,
     };
 
     const score = severityWeight[severity] * categoryWeight[category];
@@ -77,8 +84,8 @@ class FeedbackService {
         where: {
           date: today,
           feedbackType: feedback.feedbackType,
-          category: feedback.category
-        }
+          category: feedback.category,
+        },
       });
 
       if (!analytics) {
@@ -90,7 +97,7 @@ class FeedbackService {
           totalResolved: 0,
           priorityDistribution: {},
           statusDistribution: {},
-          severityDistribution: {}
+          severityDistribution: {},
         });
       }
 
@@ -99,19 +106,23 @@ class FeedbackService {
 
       // 更新分佈數據
       const priorityDist = analytics.priorityDistribution || {};
-      priorityDist[feedback.priority] = (priorityDist[feedback.priority] || 0) + 1;
+      priorityDist[feedback.priority] =
+        (priorityDist[feedback.priority] || 0) + 1;
 
+// eslint-disable-next-line no-unused-vars
       const statusDist = analytics.statusDistribution || {};
       statusDist[feedback.status] = (statusDist[feedback.status] || 0) + 1;
 
+// eslint-disable-next-line no-unused-vars
       const severityDist = analytics.severityDistribution || {};
-      severityDist[feedback.severity] = (severityDist[feedback.severity] || 0) + 1;
+      severityDist[feedback.severity] =
+        (severityDist[feedback.severity] || 0) + 1;
 
       await analytics.update({
         totalSubmitted: analytics.totalSubmitted,
         priorityDistribution: priorityDist,
         statusDistribution: statusDist,
-        severityDistribution: severityDist
+        severityDistribution: severityDist,
       });
 
       logger.info(`反饋分析數據已更新: ${today}`);
@@ -132,7 +143,7 @@ class FeedbackService {
         userId: 1, // 系統用戶ID
         responseType: 'comment',
         content: autoResponse,
-        isInternal: false
+        isInternal: false,
       });
 
       logger.info(`自動回應已生成: 反饋ID ${feedback.id}`);
@@ -145,20 +156,25 @@ class FeedbackService {
    * 生成自動回應內容
    */
   generateAutoResponseContent(feedback) {
+// eslint-disable-next-line no-unused-vars
     const responses = {
-      'data_quality': {
-        'card_recognition': '感謝您的反饋！我們會仔細分析卡牌辨識的準確性問題，並持續改進AI模型。',
-        'centering_evaluation': '感謝您對置中評估功能的關注！我們會優化評估算法以提高準確性。',
-        'authenticity_verification': '感謝您的反饋！防偽判斷是我們的重點功能，我們會持續改進。',
-        'price_prediction': '感謝您對價格預測功能的反饋！我們會分析並優化預測模型。',
-        'data_collection': '感謝您的建議！我們會改進數據收集流程以提高質量。',
-        'annotation_process': '感謝您的反饋！我們會優化標註流程以提高效率。',
-        'general': '感謝您的反饋！我們會認真考慮您的建議。'
+      data_quality: {
+        card_recognition:
+          '感謝您的反饋！我們會仔細分析卡牌辨識的準確性問題，並持續改進AI模型。',
+        centering_evaluation:
+          '感謝您對置中評估功能的關注！我們會優化評估算法以提高準確性。',
+        authenticity_verification:
+          '感謝您的反饋！防偽判斷是我們的重點功能，我們會持續改進。',
+        price_prediction:
+          '感謝您對價格預測功能的反饋！我們會分析並優化預測模型。',
+        data_collection: '感謝您的建議！我們會改進數據收集流程以提高質量。',
+        annotation_process: '感謝您的反饋！我們會優化標註流程以提高效率。',
+        general: '感謝您的反饋！我們會認真考慮您的建議。',
       },
-      'annotation_quality': '感謝您對標註質量的關注！我們會加強質量控制流程。',
-      'system_suggestion': '感謝您的建議！我們會評估並考慮實施您的想法。',
-      'bug_report': '感謝您的錯誤報告！我們會盡快修復這個問題。',
-      'feature_request': '感謝您的功能請求！我們會評估並考慮在未來版本中實現。'
+      annotation_quality: '感謝您對標註質量的關注！我們會加強質量控制流程。',
+      system_suggestion: '感謝您的建議！我們會評估並考慮實施您的想法。',
+      bug_report: '感謝您的錯誤報告！我們會盡快修復這個問題。',
+      feature_request: '感謝您的功能請求！我們會評估並考慮在未來版本中實現。',
     };
 
     const categoryResponse = responses[feedback.feedbackType];
@@ -166,7 +182,11 @@ class FeedbackService {
       return categoryResponse;
     }
 
-    return categoryResponse[feedback.category] || categoryResponse['general'] || '感謝您的反饋！';
+    return (
+      categoryResponse[feedback.category] ||
+      categoryResponse['general'] ||
+      '感謝您的反饋！'
+    );
   }
 
   /**
@@ -185,7 +205,7 @@ class FeedbackService {
         assignedTo,
         startDate,
         endDate,
-        userId
+        userId,
       } = options;
 
       const where = {};
@@ -199,7 +219,10 @@ class FeedbackService {
 
       if (startDate && endDate) {
         where.createdAt = {
-          [require('sequelize').Op.between]: [new Date(startDate), new Date(endDate)]
+          [require('sequelize').Op.between]: [
+            new Date(startDate),
+            new Date(endDate),
+          ],
         };
       }
 
@@ -211,12 +234,12 @@ class FeedbackService {
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'username', 'email']
+            attributes: ['id', 'username', 'email'],
           },
           {
             model: User,
             as: 'assignedUser',
-            attributes: ['id', 'username']
+            attributes: ['id', 'username'],
           },
           {
             model: FeedbackResponse,
@@ -225,15 +248,15 @@ class FeedbackService {
               {
                 model: User,
                 as: 'user',
-                attributes: ['id', 'username']
-              }
+                attributes: ['id', 'username'],
+              },
             ],
-            order: [['createdAt', 'ASC']]
-          }
+            order: [['createdAt', 'ASC']],
+          },
         ],
         order: [['createdAt', 'DESC']],
         limit,
-        offset
+        offset,
       });
 
       return {
@@ -242,8 +265,8 @@ class FeedbackService {
           page,
           limit,
           total: count,
-          totalPages: Math.ceil(count / limit)
-        }
+          totalPages: Math.ceil(count / limit),
+        },
       };
     } catch (error) {
       logger.error('獲取反饋列表時出錯:', error);
@@ -261,17 +284,17 @@ class FeedbackService {
           {
             model: User,
             as: 'user',
-            attributes: ['id', 'username', 'email']
+            attributes: ['id', 'username', 'email'],
           },
           {
             model: User,
             as: 'assignedUser',
-            attributes: ['id', 'username']
+            attributes: ['id', 'username'],
           },
           {
             model: User,
             as: 'resolvedByUser',
-            attributes: ['id', 'username']
+            attributes: ['id', 'username'],
           },
           {
             model: FeedbackResponse,
@@ -280,12 +303,12 @@ class FeedbackService {
               {
                 model: User,
                 as: 'user',
-                attributes: ['id', 'username']
-              }
+                attributes: ['id', 'username'],
+              },
             ],
-            order: [['createdAt', 'ASC']]
-          }
-        ]
+            order: [['createdAt', 'ASC']],
+          },
+        ],
       });
 
       if (!feedback) {
@@ -324,7 +347,7 @@ class FeedbackService {
         userId,
         responseType: 'status_update',
         content: `狀態已更新為: ${status}${resolution ? `\n\n解決方案: ${resolution}` : ''}`,
-        isInternal: false
+        isInternal: false,
       });
 
       // 更新分析數據
@@ -358,7 +381,7 @@ class FeedbackService {
         userId,
         responseType: 'assignment',
         content: `已分配給用戶 ID: ${assignedTo}`,
-        isInternal: true
+        isInternal: true,
       });
 
       logger.info(`反饋已分配: ID ${feedbackId}, 分配給: ${assignedTo}`);
@@ -372,19 +395,26 @@ class FeedbackService {
   /**
    * 添加回應
    */
-  async addResponse(feedbackId, userId, content, responseType = 'comment', isInternal = false) {
+  async addResponse(
+    feedbackId,
+    userId,
+    content,
+    responseType = 'comment',
+    isInternal = false
+  ) {
     try {
       const feedback = await Feedback.findByPk(feedbackId);
       if (!feedback) {
         throw new Error('反饋不存在');
       }
 
+// eslint-disable-next-line no-unused-vars
       const response = await FeedbackResponse.create({
         feedbackId,
         userId,
         responseType,
         content,
-        isInternal
+        isInternal,
       });
 
       logger.info(`回應已添加: 反饋ID ${feedbackId}, 類型: ${responseType}`);
@@ -406,19 +436,22 @@ class FeedbackService {
         where: {
           date: today,
           feedbackType: feedback.feedbackType,
-          category: feedback.category
-        }
+          category: feedback.category,
+        },
       });
 
       if (analytics) {
         analytics.totalResolved += 1;
 
         // 計算平均解決時間
-        const resolutionTime = (new Date() - new Date(feedback.createdAt)) / (1000 * 60 * 60 * 24); // 天
+// eslint-disable-next-line no-unused-vars
+        const resolutionTime =
+          (new Date() - new Date(feedback.createdAt)) / (1000 * 60 * 60 * 24); // 天
         const currentAvg = analytics.averageResolutionTime || 0;
-        const {totalResolved} = analytics;
+        const { totalResolved } = analytics;
 
-        analytics.averageResolutionTime = (currentAvg * (totalResolved - 1) + resolutionTime) / totalResolved;
+        analytics.averageResolutionTime =
+          (currentAvg * (totalResolved - 1) + resolutionTime) / totalResolved;
 
         await analytics.save();
       }
@@ -432,17 +465,12 @@ class FeedbackService {
    */
   async getFeedbackStats(options = {}) {
     try {
-      const {
-        startDate,
-        endDate,
-        feedbackType,
-        category
-      } = options;
+      const { startDate, endDate, feedbackType, category } = options;
 
       const where = {};
       if (startDate && endDate) {
         where.date = {
-          [require('sequelize').Op.between]: [startDate, endDate]
+          [require('sequelize').Op.between]: [startDate, endDate],
         };
       }
       if (feedbackType) where.feedbackType = feedbackType;
@@ -459,43 +487,55 @@ class FeedbackService {
         priorityDistribution: {},
         statusDistribution: {},
         severityDistribution: {},
-        dailyTrend: []
+        dailyTrend: [],
       };
 
-      analytics.forEach(record => {
+      analytics.forEach((record) => {
         stats.totalSubmitted += record.totalSubmitted;
         stats.totalResolved += record.totalResolved;
 
         // 累積平均解決時間
         if (record.averageResolutionTime) {
-          stats.averageResolutionTime = (stats.averageResolutionTime + record.averageResolutionTime) / 2;
+          stats.averageResolutionTime =
+            (stats.averageResolutionTime + record.averageResolutionTime) / 2;
         }
 
         // 分佈統計
         stats.feedbackTypeDistribution[record.feedbackType] =
-          (stats.feedbackTypeDistribution[record.feedbackType] || 0) + record.totalSubmitted;
+          (stats.feedbackTypeDistribution[record.feedbackType] || 0) +
+          record.totalSubmitted;
 
         stats.categoryDistribution[record.category] =
-          (stats.categoryDistribution[record.category] || 0) + record.totalSubmitted;
+          (stats.categoryDistribution[record.category] || 0) +
+          record.totalSubmitted;
 
         // 合併分佈數據
-        Object.entries(record.priorityDistribution || {}).forEach(([priority, count]) => {
-          stats.priorityDistribution[priority] = (stats.priorityDistribution[priority] || 0) + count;
-        });
+        Object.entries(record.priorityDistribution || {}).forEach(
+          ([priority, count]) => {
+            stats.priorityDistribution[priority] =
+              (stats.priorityDistribution[priority] || 0) + count;
+          }
+        );
 
-        Object.entries(record.statusDistribution || {}).forEach(([status, count]) => {
-          stats.statusDistribution[status] = (stats.statusDistribution[status] || 0) + count;
-        });
+        Object.entries(record.statusDistribution || {}).forEach(
+          ([status, count]) => {
+            stats.statusDistribution[status] =
+              (stats.statusDistribution[status] || 0) + count;
+          }
+        );
 
-        Object.entries(record.severityDistribution || {}).forEach(([severity, count]) => {
-          stats.severityDistribution[severity] = (stats.severityDistribution[severity] || 0) + count;
-        });
+        Object.entries(record.severityDistribution || {}).forEach(
+          ([severity, count]) => {
+            stats.severityDistribution[severity] =
+              (stats.severityDistribution[severity] || 0) + count;
+          }
+        );
 
         // 每日趨勢
         stats.dailyTrend.push({
           date: record.date,
           submitted: record.totalSubmitted,
-          resolved: record.totalResolved
+          resolved: record.totalResolved,
         });
       });
 
@@ -517,8 +557,11 @@ class FeedbackService {
       const suggestions = [];
 
       // 基於反饋類型的建議
+// eslint-disable-next-line no-unused-vars
       const typeStats = stats.feedbackTypeDistribution;
-      const mostCommonType = Object.keys(typeStats).reduce((a, b) => (typeStats[a] > typeStats[b] ? a : b));
+      const mostCommonType = Object.keys(typeStats).reduce((a, b) =>
+        typeStats[a] > typeStats[b] ? a : b
+      );
 
       if (mostCommonType === 'data_quality') {
         suggestions.push({
@@ -526,7 +569,7 @@ class FeedbackService {
           category: 'data_quality',
           title: '加強數據質量控制',
           description: '數據質量反饋較多，建議加強數據收集和驗證流程',
-          action: 'review_data_collection_process'
+          action: 'review_data_collection_process',
         });
       }
 
@@ -536,7 +579,7 @@ class FeedbackService {
           category: 'bug_fixes',
           title: '優先處理錯誤報告',
           description: '錯誤報告數量較多，建議優先處理和修復',
-          action: 'prioritize_bug_fixes'
+          action: 'prioritize_bug_fixes',
         });
       }
 
@@ -547,11 +590,12 @@ class FeedbackService {
           category: 'process_improvement',
           title: '優化反饋處理流程',
           description: '平均解決時間較長，建議優化處理流程',
-          action: 'optimize_feedback_process'
+          action: 'optimize_feedback_process',
         });
       }
 
       // 基於解決率的建議
+// eslint-disable-next-line no-unused-vars
       const resolutionRate = stats.totalResolved / stats.totalSubmitted;
       if (resolutionRate < 0.8) {
         suggestions.push({
@@ -559,7 +603,7 @@ class FeedbackService {
           category: 'process_improvement',
           title: '提高反饋解決率',
           description: '反饋解決率較低，建議加強跟進機制',
-          action: 'improve_follow_up_process'
+          action: 'improve_follow_up_process',
         });
       }
 

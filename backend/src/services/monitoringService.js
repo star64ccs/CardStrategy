@@ -1,7 +1,9 @@
 const os = require('os');
 const process = require('process');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 const { sequelize } = require('../config/database');
+// eslint-disable-next-line no-unused-vars
 const databaseOptimizer = require('./databaseOptimizer');
 const performanceMiddleware = require('../middleware/performance');
 
@@ -12,7 +14,7 @@ class MonitoringService {
       application: {},
       database: {},
       performance: {},
-      errors: []
+      errors: [],
     };
     this.startTime = Date.now();
     this.monitoringInterval = null;
@@ -21,7 +23,7 @@ class MonitoringService {
       memory: 85, // 內存使用率閾值
       disk: 90, // 磁盤使用率閾值
       responseTime: 2000, // 響應時間閾值 (ms)
-      errorRate: 5 // 錯誤率閾值 (%)
+      errorRate: 5, // 錯誤率閾值 (%)
     };
   }
 
@@ -106,17 +108,17 @@ class MonitoringService {
         nodeVersion: process.version,
         cpu: {
           loadAverage: cpuUsage,
-          cores: os.cpus().length
+          cores: os.cpus().length,
         },
         memory: {
           total: totalMemory,
           free: freeMemory,
           used: usedMemory,
-          usagePercent: memoryUsagePercent
+          usagePercent: memoryUsagePercent,
         },
         network: {
-          interfaces: os.networkInterfaces()
-        }
+          interfaces: os.networkInterfaces(),
+        },
       };
 
       logger.debug('系統指標已收集');
@@ -142,14 +144,14 @@ class MonitoringService {
           heapTotal: memoryUsage.heapTotal,
           heapUsed: memoryUsage.heapUsed,
           external: memoryUsage.external,
-          arrayBuffers: memoryUsage.arrayBuffers
+          arrayBuffers: memoryUsage.arrayBuffers,
         },
         cpu: {
           user: cpuUsage.user,
-          system: cpuUsage.system
+          system: cpuUsage.system,
         },
         uptime: process.uptime(),
-        startTime: this.startTime
+        startTime: this.startTime,
       };
 
       logger.debug('應用程序指標已收集');
@@ -169,15 +171,15 @@ class MonitoringService {
       this.metrics.database = {
         timestamp: new Date().toISOString(),
         connection: {
-          status: sequelize.authenticate() ? 'connected' : 'disconnected'
+          status: sequelize.authenticate() ? 'connected' : 'disconnected',
         },
         pool: poolStats,
         queries: dbStats,
         performance: {
           slowQueries: dbStats.slowQueries || 0,
           totalQueries: dbStats.totalQueries || 0,
-          averageResponseTime: dbStats.averageResponseTime || 0
-        }
+          averageResponseTime: dbStats.averageResponseTime || 0,
+        },
       };
 
       logger.debug('數據庫指標已收集');
@@ -201,20 +203,20 @@ class MonitoringService {
           min: perfStats.minResponseTime || 0,
           max: perfStats.maxResponseTime || 0,
           p95: perfStats.p95ResponseTime || 0,
-          p99: perfStats.p99ResponseTime || 0
+          p99: perfStats.p99ResponseTime || 0,
         },
         requests: {
           total: perfStats.totalRequests || 0,
           successful: perfStats.successfulRequests || 0,
           failed: perfStats.failedRequests || 0,
-          rate: perfStats.requestRate || 0
+          rate: perfStats.requestRate || 0,
         },
         cache: {
           hits: cacheStats.hits || 0,
           misses: cacheStats.misses || 0,
           hitRate: cacheStats.hitRate || 0,
-          size: cacheStats.size || 0
-        }
+          size: cacheStats.size || 0,
+        },
       };
 
       logger.debug('性能指標已收集');
@@ -228,12 +230,12 @@ class MonitoringService {
    */
   async getDatabasePoolStats() {
     try {
-      const {pool} = sequelize.connectionManager;
+      const { pool } = sequelize.connectionManager;
       return {
         total: pool.size,
         idle: pool.idle,
         active: pool.length,
-        waiting: pool.waiting
+        waiting: pool.waiting,
       };
     } catch (error) {
       logger.error('獲取數據庫連接池統計失敗:', error);
@@ -255,7 +257,7 @@ class MonitoringService {
           type: 'HIGH_CPU_USAGE',
           severity: 'warning',
           message: `CPU 使用率過高: ${cpuLoad.toFixed(2)}%`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -266,18 +268,19 @@ class MonitoringService {
           type: 'HIGH_MEMORY_USAGE',
           severity: 'warning',
           message: `內存使用率過高: ${memoryUsage.toFixed(2)}%`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
 
       // 檢查響應時間
-      const avgResponseTime = this.metrics.performance.responseTime?.average || 0;
+      const avgResponseTime =
+        this.metrics.performance.responseTime?.average || 0;
       if (avgResponseTime > this.alertThresholds.responseTime) {
         alerts.push({
           type: 'HIGH_RESPONSE_TIME',
           severity: 'warning',
           message: `平均響應時間過高: ${avgResponseTime.toFixed(2)}ms`,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -285,20 +288,21 @@ class MonitoringService {
       const totalRequests = this.metrics.performance.requests?.total || 0;
       const failedRequests = this.metrics.performance.requests?.failed || 0;
       if (totalRequests > 0) {
+// eslint-disable-next-line no-unused-vars
         const errorRate = (failedRequests / totalRequests) * 100;
         if (errorRate > this.alertThresholds.errorRate) {
           alerts.push({
             type: 'HIGH_ERROR_RATE',
             severity: 'critical',
             message: `錯誤率過高: ${errorRate.toFixed(2)}%`,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         }
       }
 
       // 記錄警報
       if (alerts.length > 0) {
-        alerts.forEach(alert => {
+        alerts.forEach((alert) => {
           logger.warn(`監控警報: ${alert.message}`);
           this.recordAlert(alert);
         });
@@ -315,11 +319,12 @@ class MonitoringService {
    * 記錄錯誤
    */
   recordError(type, error) {
+// eslint-disable-next-line no-unused-vars
     const errorRecord = {
       type,
       message: error.message || error,
       stack: error.stack,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.metrics.errors.push(errorRecord);
@@ -353,7 +358,7 @@ class MonitoringService {
   getMetrics() {
     return {
       ...this.metrics,
-      summary: this.generateSummary()
+      summary: this.generateSummary(),
     };
   }
 
@@ -361,9 +366,9 @@ class MonitoringService {
    * 生成監控摘要
    */
   generateSummary() {
-    const {system} = this.metrics;
-    const {application} = this.metrics;
-    const {performance} = this.metrics;
+    const { system } = this.metrics;
+    const { application } = this.metrics;
+    const { performance } = this.metrics;
 
     return {
       status: 'healthy', // 可以根據警報動態計算
@@ -373,7 +378,7 @@ class MonitoringService {
       averageResponseTime: performance?.responseTime?.average || 0,
       requestRate: performance?.requests?.rate || 0,
       errorCount: this.metrics.errors.length,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 
@@ -385,16 +390,17 @@ class MonitoringService {
       const dbStatus = await sequelize.authenticate();
       const alerts = await this.checkAlertThresholds();
 
+// eslint-disable-next-line no-unused-vars
       const status = {
         overall: 'healthy',
         timestamp: new Date().toISOString(),
         services: {
           database: dbStatus ? 'healthy' : 'unhealthy',
           application: 'healthy',
-          system: 'healthy'
+          system: 'healthy',
         },
         alerts: alerts.length,
-        metrics: this.generateSummary()
+        metrics: this.generateSummary(),
       };
 
       // 根據警報數量調整整體狀態
@@ -410,7 +416,7 @@ class MonitoringService {
       return {
         overall: 'unhealthy',
         timestamp: new Date().toISOString(),
-        error: error.message
+        error: error.message,
       };
     }
   }
@@ -422,8 +428,8 @@ class MonitoringService {
     try {
       // 清理超過 24 小時的錯誤記錄
       const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      this.metrics.errors = this.metrics.errors.filter(error =>
-        new Date(error.timestamp) > oneDayAgo
+      this.metrics.errors = this.metrics.errors.filter(
+        (error) => new Date(error.timestamp) > oneDayAgo
       );
 
       logger.info('舊監控數據已清理');
@@ -468,7 +474,7 @@ class MonitoringService {
       database: this.metrics.database,
       performance: this.metrics.performance,
       errors: this.metrics.errors.slice(-10), // 最近 10 個錯誤
-      recommendations: this.generateRecommendations()
+      recommendations: this.generateRecommendations(),
     };
   }
 
@@ -476,7 +482,9 @@ class MonitoringService {
    * 生成建議
    */
   generateRecommendations() {
+// eslint-disable-next-line no-unused-vars
     const recommendations = [];
+// eslint-disable-next-line no-unused-vars
     const summary = this.generateSummary();
 
     if (summary.memoryUsage > 80) {

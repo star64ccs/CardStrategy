@@ -20,24 +20,28 @@ const deepLearningRoutes = require('./routes/deepLearning');
 const app = express();
 
 // 安全中間件
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      scriptSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:', 'https:']
-    }
-  }
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'"],
+        imgSrc: ["'self'", 'data:', 'https:'],
+      },
+    },
+  })
+);
 
 // CORS 配置
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 // 速率限制
 const limiter = rateLimit({
@@ -46,20 +50,22 @@ const limiter = rateLimit({
   message: {
     success: false,
     message: '請求過於頻繁，請稍後再試',
-    code: 'RATE_LIMIT_EXCEEDED'
+    code: 'RATE_LIMIT_EXCEEDED',
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
 app.use('/api/', limiter);
 
 // 日誌中間件
-app.use(morgan('combined', {
-  stream: {
-    write: (message) => logger.info(message.trim())
-  }
-}));
+app.use(
+  morgan('combined', {
+    stream: {
+      write: (message) => logger.info(message.trim()),
+    },
+  })
+);
 
 // 壓縮中間件
 app.use(compression());
@@ -75,7 +81,7 @@ app.get('/health', (req, res) => {
     message: 'CardStrategy API 服務正常運行',
     timestamp: new Date().toISOString(),
     version: process.env.npm_package_version || '1.0.0',
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -93,14 +99,14 @@ app.get('/api/version', (req, res) => {
         investmentTracking: true,
         marketData: true,
         aiAnalysis: true,
-        deepLearning: true
+        deepLearning: true,
       },
       deepLearning: {
         models: ['lstm', 'gru', 'transformer', 'ensemble'],
         tensorflowVersion: '2.x',
-        features: ['price_prediction', 'model_comparison', 'batch_prediction']
-      }
-    }
+        features: ['price_prediction', 'model_comparison', 'batch_prediction'],
+      },
+    },
   });
 });
 
@@ -119,7 +125,7 @@ app.use('*', (req, res) => {
     success: false,
     message: '請求的端點不存在',
     code: 'ENDPOINT_NOT_FOUND',
-    path: req.originalUrl
+    path: req.originalUrl,
   });
 });
 
@@ -133,7 +139,7 @@ app.use((error, req, res, next) => {
       success: false,
       message: '數據驗證失敗',
       code: 'VALIDATION_ERROR',
-      errors: error.errors
+      errors: error.errors,
     });
   }
 
@@ -142,7 +148,7 @@ app.use((error, req, res, next) => {
     return res.status(401).json({
       success: false,
       message: '無效的認證令牌',
-      code: 'INVALID_TOKEN'
+      code: 'INVALID_TOKEN',
     });
   }
 
@@ -151,7 +157,7 @@ app.use((error, req, res, next) => {
     return res.status(401).json({
       success: false,
       message: '認證令牌已過期',
-      code: 'TOKEN_EXPIRED'
+      code: 'TOKEN_EXPIRED',
     });
   }
 
@@ -161,10 +167,10 @@ app.use((error, req, res, next) => {
       success: false,
       message: '數據庫驗證失敗',
       code: 'DATABASE_VALIDATION_ERROR',
-      errors: error.errors.map(e => ({
+      errors: error.errors.map((e) => ({
         field: e.path,
-        message: e.message
-      }))
+        message: e.message,
+      })),
     });
   }
 
@@ -173,7 +179,7 @@ app.use((error, req, res, next) => {
       success: false,
       message: '數據已存在',
       code: 'DUPLICATE_ENTRY',
-      field: error.errors[0].path
+      field: error.errors[0].path,
     });
   }
 
@@ -182,7 +188,7 @@ app.use((error, req, res, next) => {
     return res.status(500).json({
       success: false,
       message: '深度學習服務暫時不可用',
-      code: 'DEEP_LEARNING_SERVICE_ERROR'
+      code: 'DEEP_LEARNING_SERVICE_ERROR',
     });
   }
 
@@ -191,7 +197,7 @@ app.use((error, req, res, next) => {
     return res.status(500).json({
       success: false,
       message: '系統資源不足',
-      code: 'INSUFFICIENT_MEMORY'
+      code: 'INSUFFICIENT_MEMORY',
     });
   }
 
@@ -203,7 +209,7 @@ app.use((error, req, res, next) => {
     success: false,
     message: process.env.NODE_ENV === 'production' ? '內部服務器錯誤' : message,
     code: error.code || 'INTERNAL_SERVER_ERROR',
-    ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
+    ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
   });
 });
 

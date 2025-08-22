@@ -7,7 +7,7 @@ import {
   ViewStyle,
   ActivityIndicator,
   Animated,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { theme } from '@/config/theme';
 import { CacheManager } from '@/utils/cacheManager';
@@ -50,9 +50,11 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   cachePolicy = 'both',
   priority = 'normal',
   retryCount = 3,
-  retryDelay = 1000
+  retryDelay = 1000,
 }) => {
-  const [imageState, setImageState] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const [imageState, setImageState] = useState<'loading' | 'loaded' | 'error'>(
+    'loading'
+  );
   const [retryAttempts, setRetryAttempts] = useState(0);
   const [cachedUri, setCachedUri] = useState<string | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -76,7 +78,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     const qualityParams = {
       low: 'w=300&q=60',
       medium: 'w=600&q=80',
-      high: 'w=1200&q=90'
+      high: 'w=1200&q=90',
     };
 
     const params = qualityParams[quality];
@@ -121,14 +123,14 @@ export const LazyImage: React.FC<LazyImageProps> = ({
           Animated.timing(fadeAnim, {
             toValue: 1,
             duration: 300,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.spring(scaleAnim, {
             toValue: 1,
             tension: 100,
             friction: 8,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ]).start();
       }
 
@@ -136,18 +138,20 @@ export const LazyImage: React.FC<LazyImageProps> = ({
       if (cachePolicy !== 'none' && !cachedUri) {
         CacheManager.cacheImage(optimizedUri, finalUri);
       }
-
     } catch (error) {
       logger.error('LazyImage load error:', { error, uri });
 
       if (isMounted.current) {
         if (retryAttempts < retryCount) {
-          setRetryAttempts(prev => prev + 1);
-          setTimeout(() => {
-            if (isMounted.current) {
-              loadImage();
-            }
-          }, retryDelay * (retryAttempts + 1));
+          setRetryAttempts((prev) => prev + 1);
+          setTimeout(
+            () => {
+              if (isMounted.current) {
+                loadImage();
+              }
+            },
+            retryDelay * (retryAttempts + 1)
+          );
         } else {
           setImageState('error');
           onError?.(error);
@@ -174,10 +178,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
 
     return (
       <View style={[styles.placeholder, containerStyle]}>
-        <ActivityIndicator
-          size="small"
-          color={theme.colors.primary}
-        />
+        <ActivityIndicator size="small" color={theme.colors.primary} />
       </View>
     );
   };
@@ -212,14 +213,14 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         containerStyle,
         {
           opacity: fadeAnim,
-          transform: [{ scale: scaleAnim }]
-        }
+          transform: [{ scale: scaleAnim }],
+        },
       ]}
     >
       <Image
         source={{
           uri: cachedUri || uri,
-          priority: priority === 'high' ? 'high' : 'normal'
+          priority: priority === 'high' ? 'high' : 'normal',
         }}
         style={[styles.image, style]}
         resizeMode={resizeMode}
@@ -238,37 +239,39 @@ export const LazyImage: React.FC<LazyImageProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   image: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   placeholder: {
     backgroundColor: theme.colors.backgroundSecondary,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 100
+    minHeight: 100,
   },
   fallback: {
     backgroundColor: theme.colors.backgroundSecondary,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 100
+    minHeight: 100,
   },
   fallbackIcon: {
     width: 40,
     height: 40,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   fallbackText: {
-    fontSize: 24
-  }
+    fontSize: 24,
+  },
 });
 
 // 導出便捷組件
-export const CardImage: React.FC<Omit<LazyImageProps, 'resizeMode' | 'quality'>> = (props) => (
+export const CardImage: React.FC<
+  Omit<LazyImageProps, 'resizeMode' | 'quality'>
+> = (props) => (
   <LazyImage
     {...props}
     resizeMode="cover"
@@ -277,16 +280,15 @@ export const CardImage: React.FC<Omit<LazyImageProps, 'resizeMode' | 'quality'>>
   />
 );
 
-export const ThumbnailImage: React.FC<Omit<LazyImageProps, 'resizeMode' | 'quality'>> = (props) => (
-  <LazyImage
-    {...props}
-    resizeMode="cover"
-    quality="low"
-    cachePolicy="both"
-  />
+export const ThumbnailImage: React.FC<
+  Omit<LazyImageProps, 'resizeMode' | 'quality'>
+> = (props) => (
+  <LazyImage {...props} resizeMode="cover" quality="low" cachePolicy="both" />
 );
 
-export const HighQualityImage: React.FC<Omit<LazyImageProps, 'resizeMode' | 'quality'>> = (props) => (
+export const HighQualityImage: React.FC<
+  Omit<LazyImageProps, 'resizeMode' | 'quality'>
+> = (props) => (
   <LazyImage
     {...props}
     resizeMode="contain"

@@ -8,27 +8,27 @@ module.exports = {
   devServer: {
     port: 3002,
     historyApiFallback: true,
-    hot: true
+    hot: true,
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx']
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
   },
   module: {
     rules: [
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader']
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource'
-      }
-    ]
+        type: 'asset/resource',
+      },
+    ],
   },
   plugins: [
     new ModuleFederationPlugin({
@@ -40,7 +40,7 @@ module.exports = {
         './MarketTrends': './src/components/MarketTrends',
         './PriceAlerts': './src/components/PriceAlerts',
         './MarketInsights': './src/components/MarketInsights',
-        './TradingVolume': './src/components/TradingVolume'
+        './TradingVolume': './src/components/TradingVolume',
       },
       shared: {
         react: { singleton: true, requiredVersion: '^18.2.0' },
@@ -49,17 +49,17 @@ module.exports = {
         '@reduxjs/toolkit': { singleton: true, requiredVersion: '^1.9.0' },
         'react-redux': { singleton: true, requiredVersion: '^8.0.0' },
         'chart.js': { singleton: true, requiredVersion: '^4.0.0' },
-        'react-chartjs-2': { singleton: true, requiredVersion: '^5.0.0' }
-      }
+        'react-chartjs-2': { singleton: true, requiredVersion: '^5.0.0' },
+      },
     }),
     new HtmlWebpackPlugin({
-      template: './public/index.html'
-    })
+      template: './public/index.html',
+    }),
   ],
   output: {
     publicPath: 'auto',
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[contenthash].js',
-    clean: true
-  }
+    clean: true,
+  },
 };

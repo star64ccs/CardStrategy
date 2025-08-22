@@ -10,18 +10,18 @@ const ACCESSIBILITY_BENCHMARKS = {
     critical: 10,
     high: 7,
     medium: 4,
-    low: 1
+    low: 1,
   },
   // 可訪問性測試類型權重
   testTypeWeights: {
-    'Page Title': 0.10,
+    'Page Title': 0.1,
     'Image Alt Text': 0.15,
     'Form Labels': 0.15,
     'Keyboard Navigation': 0.15,
-    'Color Contrast': 0.10,
-    'ARIA Attributes': 0.10,
-    'Heading Structure': 0.10,
-    'Language Attributes': 0.05
+    'Color Contrast': 0.1,
+    'ARIA Attributes': 0.1,
+    'Heading Structure': 0.1,
+    'Language Attributes': 0.05,
   },
   // 可訪問性等級標準
   accessibilityGrades: {
@@ -29,7 +29,7 @@ const ACCESSIBILITY_BENCHMARKS = {
     B: { min: 80, description: '良好 - 可訪問性高' },
     C: { min: 70, description: '一般 - 可訪問性中等' },
     D: { min: 60, description: '較差 - 存在可訪問性問題' },
-    F: { min: 0, description: '危險 - 存在嚴重可訪問性問題' }
+    F: { min: 0, description: '危險 - 存在嚴重可訪問性問題' },
   },
   // WCAG 2.1 AA 標準
   wcagGuidelines: {
@@ -46,8 +46,8 @@ const ACCESSIBILITY_BENCHMARKS = {
     '3.2.1': '焦點變化',
     '3.2.2': '輸入變化',
     '4.1.1': '解析',
-    '4.1.2': '名稱、角色、值'
-  }
+    '4.1.2': '名稱、角色、值',
+  },
 };
 
 /**
@@ -70,7 +70,6 @@ function generateAccessibilityReport() {
     printAccessibilitySummary(report);
 
     // logger.info('✅ 可訪問性測試報告生成完成！');
-
   } catch (error) {
     // logger.info('❌ 生成可訪問性測試報告失敗:', error.message);
     process.exit(1);
@@ -89,11 +88,14 @@ function collectAccessibilityTestResults() {
     violationsBySeverity: {},
     violationsByType: {},
     violationsByWCAG: {},
-    testCoverage: {}
+    testCoverage: {},
   };
 
   // 讀取基本可訪問性測試結果
-  const basicReportPath = path.join(resultsDir, 'accessibility-basic-report.json');
+  const basicReportPath = path.join(
+    resultsDir,
+    'accessibility-basic-report.json'
+  );
   if (fs.existsSync(basicReportPath)) {
     try {
       results.basic = JSON.parse(fs.readFileSync(basicReportPath, 'utf8'));
@@ -104,10 +106,15 @@ function collectAccessibilityTestResults() {
   }
 
   // 讀取高級可訪問性測試結果
-  const advancedReportPath = path.join(resultsDir, 'accessibility-advanced-report.json');
+  const advancedReportPath = path.join(
+    resultsDir,
+    'accessibility-advanced-report.json'
+  );
   if (fs.existsSync(advancedReportPath)) {
     try {
-      results.advanced = JSON.parse(fs.readFileSync(advancedReportPath, 'utf8'));
+      results.advanced = JSON.parse(
+        fs.readFileSync(advancedReportPath, 'utf8')
+      );
       // logger.info('📄 讀取高級可訪問性測試結果');
     } catch (error) {
       // logger.info('⚠️ 無法讀取高級可訪問性測試結果:', error.message);
@@ -117,16 +124,28 @@ function collectAccessibilityTestResults() {
   // 合併結果
   if (results.basic) {
     results.totalViolations += results.basic.totalViolations || 0;
-    mergeViolations(results.violationsBySeverity, results.basic.violationsBySeverity);
+    mergeViolations(
+      results.violationsBySeverity,
+      results.basic.violationsBySeverity
+    );
     mergeViolations(results.violationsByType, results.basic.violationsByType);
     mergeViolations(results.violationsByWCAG, results.basic.violationsByWCAG);
   }
 
   if (results.advanced) {
     results.totalViolations += results.advanced.totalViolations || 0;
-    mergeViolations(results.violationsBySeverity, results.advanced.violationsBySeverity);
-    mergeViolations(results.violationsByType, results.advanced.violationsByType);
-    mergeViolations(results.violationsByWCAG, results.advanced.violationsByWCAG);
+    mergeViolations(
+      results.violationsBySeverity,
+      results.advanced.violationsBySeverity
+    );
+    mergeViolations(
+      results.violationsByType,
+      results.advanced.violationsByType
+    );
+    mergeViolations(
+      results.violationsByWCAG,
+      results.advanced.violationsByWCAG
+    );
   }
 
   return results;
@@ -154,19 +173,19 @@ function generateAccessibilityReportData(testResults) {
       accessibilityScore: calculateAccessibilityScore(testResults),
       accessibilityGrade: calculateAccessibilityGrade(testResults),
       testCoverage: calculateTestCoverage(testResults),
-      wcagCompliance: calculateWCAGCompliance(testResults)
+      wcagCompliance: calculateWCAGCompliance(testResults),
     },
     violations: {
       bySeverity: testResults.violationsBySeverity,
       byType: testResults.violationsByType,
       byWCAG: testResults.violationsByWCAG,
-      details: []
+      details: [],
     },
     recommendations: generateAccessibilityRecommendations(testResults),
     testResults: {
       basic: testResults.basic,
-      advanced: testResults.advanced
-    }
+      advanced: testResults.advanced,
+    },
   };
 
   // 添加詳細違規信息
@@ -188,13 +207,17 @@ function calculateAccessibilityScore(testResults) {
   let totalScore = 100;
 
   // 根據違規嚴重程度扣分
-  for (const [severity, count] of Object.entries(testResults.violationsBySeverity || {})) {
+  for (const [severity, count] of Object.entries(
+    testResults.violationsBySeverity || {}
+  )) {
     const score = ACCESSIBILITY_BENCHMARKS.severityScores[severity] || 0;
     totalScore -= score * count;
   }
 
   // 根據違規類型扣分
-  for (const [type, count] of Object.entries(testResults.violationsByType || {})) {
+  for (const [type, count] of Object.entries(
+    testResults.violationsByType || {}
+  )) {
     const weight = ACCESSIBILITY_BENCHMARKS.testTypeWeights[type] || 0.05;
     totalScore -= weight * 10 * count;
   }
@@ -208,12 +231,14 @@ function calculateAccessibilityScore(testResults) {
 function calculateAccessibilityGrade(testResults) {
   const score = calculateAccessibilityScore(testResults);
 
-  for (const [grade, criteria] of Object.entries(ACCESSIBILITY_BENCHMARKS.accessibilityGrades)) {
+  for (const [grade, criteria] of Object.entries(
+    ACCESSIBILITY_BENCHMARKS.accessibilityGrades
+  )) {
     if (score >= criteria.min) {
       return {
         grade,
         score,
-        description: criteria.description
+        description: criteria.description,
       };
     }
   }
@@ -221,7 +246,7 @@ function calculateAccessibilityGrade(testResults) {
   return {
     grade: 'F',
     score,
-    description: '危險 - 存在嚴重可訪問性問題'
+    description: '危險 - 存在嚴重可訪問性問題',
   };
 }
 
@@ -240,7 +265,7 @@ function calculateTestCoverage(testResults) {
   return {
     total: totalTests + advancedTests,
     covered: coveredTests,
-    percentage: Math.round((coveredTests / (totalTests + advancedTests)) * 100)
+    percentage: Math.round((coveredTests / (totalTests + advancedTests)) * 100),
   };
 }
 
@@ -248,15 +273,26 @@ function calculateTestCoverage(testResults) {
  * 計算 WCAG 合規性
  */
 function calculateWCAGCompliance(testResults) {
-  const totalWCAGGuidelines = Object.keys(ACCESSIBILITY_BENCHMARKS.wcagGuidelines).length;
-  const violatedGuidelines = Object.keys(testResults.violationsByWCAG || {}).length;
-  const compliancePercentage = Math.round(((totalWCAGGuidelines - violatedGuidelines) / totalWCAGGuidelines) * 100);
+  const totalWCAGGuidelines = Object.keys(
+    ACCESSIBILITY_BENCHMARKS.wcagGuidelines
+  ).length;
+  const violatedGuidelines = Object.keys(
+    testResults.violationsByWCAG || {}
+  ).length;
+  const compliancePercentage = Math.round(
+    ((totalWCAGGuidelines - violatedGuidelines) / totalWCAGGuidelines) * 100
+  );
 
   return {
     totalGuidelines: totalWCAGGuidelines,
     violatedGuidelines,
     compliancePercentage,
-    level: compliancePercentage >= 95 ? 'AA' : compliancePercentage >= 80 ? 'A' : 'Non-Compliant'
+    level:
+      compliancePercentage >= 95
+        ? 'AA'
+        : compliancePercentage >= 80
+          ? 'A'
+          : 'Non-Compliant',
   };
 }
 
@@ -267,7 +303,9 @@ function generateAccessibilityRecommendations(testResults) {
   const recommendations = [];
 
   // 根據違規類型生成建議
-  for (const [type, count] of Object.entries(testResults.violationsByType || {})) {
+  for (const [type, count] of Object.entries(
+    testResults.violationsByType || {}
+  )) {
     if (count > 0) {
       switch (type) {
         case 'Page Title':
@@ -280,8 +318,8 @@ function generateAccessibilityRecommendations(testResults) {
               '為每個頁面添加描述性標題',
               '確保標題長度適中（3-60字符）',
               '避免使用通用詞彙如"首頁"、"頁面"',
-              '使用獨特且有意義的標題'
-            ]
+              '使用獨特且有意義的標題',
+            ],
           });
           break;
 
@@ -295,8 +333,8 @@ function generateAccessibilityRecommendations(testResults) {
               '為所有圖片添加 alt 屬性',
               '為裝飾性圖片設置 alt=""',
               '為功能性圖片提供描述性文本',
-              '避免使用"圖片"、"圖像"等通用詞彙'
-            ]
+              '避免使用"圖片"、"圖像"等通用詞彙',
+            ],
           });
           break;
 
@@ -310,8 +348,8 @@ function generateAccessibilityRecommendations(testResults) {
               '為所有表單控件添加標籤',
               '使用 label 元素或 aria-label 屬性',
               '確保標籤與控件正確關聯',
-              '為必填字段添加適當的指示'
-            ]
+              '為必填字段添加適當的指示',
+            ],
           });
           break;
 
@@ -325,8 +363,8 @@ function generateAccessibilityRecommendations(testResults) {
               '確保所有功能都可以通過鍵盤訪問',
               '添加可見的焦點指示器',
               '避免鍵盤陷阱',
-              '實現邏輯的 Tab 順序'
-            ]
+              '實現邏輯的 Tab 順序',
+            ],
           });
           break;
 
@@ -340,8 +378,8 @@ function generateAccessibilityRecommendations(testResults) {
               '確保文本與背景的對比度至少為 4.5:1',
               '大字體（18px+）的對比度至少為 3:1',
               '使用顏色對比度檢查工具',
-              '不要僅依賴顏色傳達信息'
-            ]
+              '不要僅依賴顏色傳達信息',
+            ],
           });
           break;
 
@@ -355,8 +393,8 @@ function generateAccessibilityRecommendations(testResults) {
               '正確使用 ARIA 標籤和描述',
               '確保 ARIA 角色有效',
               '驗證 ARIA 屬性的語法',
-              '測試 ARIA 實現的效果'
-            ]
+              '測試 ARIA 實現的效果',
+            ],
           });
           break;
 
@@ -369,8 +407,8 @@ function generateAccessibilityRecommendations(testResults) {
             actions: [
               '進行詳細的可訪問性審計',
               '實施相應的可訪問性改進',
-              '定期進行可訪問性測試'
-            ]
+              '定期進行可訪問性測試',
+            ],
           });
       }
     }
@@ -390,8 +428,8 @@ function generateAccessibilityRecommendations(testResults) {
         '立即修復所有嚴重可訪問性問題',
         '暫停相關功能直到修復完成',
         '通知相關團隊和用戶',
-        '進行全面的可訪問性審計'
-      ]
+        '進行全面的可訪問性審計',
+      ],
     });
   }
 
@@ -405,8 +443,8 @@ function generateAccessibilityRecommendations(testResults) {
         '優先修復高風險可訪問性問題',
         '加強可訪問性監控',
         '更新可訪問性策略',
-        '進行可訪問性培訓'
-      ]
+        '進行可訪問性培訓',
+      ],
     });
   }
 
@@ -659,47 +697,63 @@ function generateAccessibilityHtmlReport(report) {
             <h2>違規詳情</h2>
             
             <div class="severity-grid">
-                ${Object.entries(report.violations.bySeverity).map(([severity, count]) => `
+                ${Object.entries(report.violations.bySeverity)
+                  .map(
+                    ([severity, count]) => `
                     <div class="severity-card severity-${severity}">
                         <div style="font-size: 1.5em; font-weight: bold;">${count}</div>
                         <div>${severity.toUpperCase()}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
             
             <h3>違規類型分布</h3>
             <div class="stats-grid">
-                ${Object.entries(report.violations.byType).map(([type, count]) => `
+                ${Object.entries(report.violations.byType)
+                  .map(
+                    ([type, count]) => `
                     <div class="stat-card">
                         <div class="stat-number">${count}</div>
                         <div class="stat-label">${type}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
             
             <h3>WCAG 指南違規</h3>
             <div class="stats-grid">
-                ${Object.entries(report.violations.byWCAG).map(([guideline, count]) => `
+                ${Object.entries(report.violations.byWCAG)
+                  .map(
+                    ([guideline, count]) => `
                     <div class="stat-card">
                         <div class="stat-number">${count}</div>
                         <div class="stat-label">${guideline}: ${ACCESSIBILITY_BENCHMARKS.wcagGuidelines[guideline] || '未知'}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
         </div>
         
         <div class="recommendations">
             <h2>可訪問性建議</h2>
-            ${report.recommendations.map(rec => `
+            ${report.recommendations
+              .map(
+                (rec) => `
                 <div class="recommendation">
                     <span class="priority priority-${rec.priority}">${rec.priority.toUpperCase()}</span>
                     <h4>${rec.title}</h4>
                     <p>${rec.description}</p>
                     <ul>
-                        ${rec.actions.map(action => `<li>${action}</li>`).join('')}
+                        ${rec.actions.map((action) => `<li>${action}</li>`).join('')}
                     </ul>
                 </div>
-            `).join('')}
+            `
+              )
+              .join('')}
         </div>
     </div>
 </body>
@@ -735,23 +789,28 @@ function generateAccessibilityMarkdownReport(report) {
 ## 🚨 違規統計
 
 ### 按嚴重程度分類
-${Object.entries(report.violations.bySeverity).map(([severity, count]) =>
-    `- **${severity.toUpperCase()}**: ${count} 個`
-  ).join('\n')}
+${Object.entries(report.violations.bySeverity)
+  .map(([severity, count]) => `- **${severity.toUpperCase()}**: ${count} 個`)
+  .join('\n')}
 
 ### 按類型分類
-${Object.entries(report.violations.byType).map(([type, count]) =>
-    `- **${type}**: ${count} 個`
-  ).join('\n')}
+${Object.entries(report.violations.byType)
+  .map(([type, count]) => `- **${type}**: ${count} 個`)
+  .join('\n')}
 
 ### 按 WCAG 指南分類
-${Object.entries(report.violations.byWCAG).map(([guideline, count]) =>
-    `- **${guideline} (${ACCESSIBILITY_BENCHMARKS.wcagGuidelines[guideline] || '未知'})**: ${count} 個`
-  ).join('\n')}
+${Object.entries(report.violations.byWCAG)
+  .map(
+    ([guideline, count]) =>
+      `- **${guideline} (${ACCESSIBILITY_BENCHMARKS.wcagGuidelines[guideline] || '未知'})**: ${count} 個`
+  )
+  .join('\n')}
 
 ## 📋 詳細違規
 
-${report.violations.details.map((violation, index) => `
+${report.violations.details
+  .map(
+    (violation, index) => `
 ### ${index + 1}. ${violation.type} - ${violation.severity.toUpperCase()}
 
 **描述:** ${violation.description}
@@ -765,11 +824,15 @@ ${violation.element ? `**元素:** ${violation.element}` : ''}
 **詳情:** \`\`\`json
 ${JSON.stringify(violation.details, null, 2)}
 \`\`\`
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## 💡 可訪問性建議
 
-${report.recommendations.map((rec, index) => `
+${report.recommendations
+  .map(
+    (rec, index) => `
 ### ${index + 1}. ${rec.title} [${rec.priority.toUpperCase()}]
 
 **類別:** ${rec.category}
@@ -777,8 +840,10 @@ ${report.recommendations.map((rec, index) => `
 **描述:** ${rec.description}
 
 **建議行動:**
-${rec.actions.map(action => `- ${action}`).join('\n')}
-`).join('\n')}
+${rec.actions.map((action) => `- ${action}`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## 📈 測試覆蓋率
 
@@ -789,16 +854,24 @@ ${rec.actions.map(action => `- ${action}`).join('\n')}
 ## 🔍 測試結果詳情
 
 ### 基本可訪問性測試
-${report.testResults.basic ? `
+${
+  report.testResults.basic
+    ? `
 - **狀態:** 已完成
 - **違規數:** ${report.testResults.basic.totalViolations || 0}
-` : '- **狀態:** 未執行'}
+`
+    : '- **狀態:** 未執行'
+}
 
 ### 高級可訪問性測試
-${report.testResults.advanced ? `
+${
+  report.testResults.advanced
+    ? `
 - **狀態:** 已完成
 - **違規數:** ${report.testResults.advanced.totalViolations || 0}
-` : '- **狀態:** 未執行'}
+`
+    : '- **狀態:** 未執行'
+}
 
 ## ♿ WCAG 2.1 AA 指南
 
@@ -842,7 +915,9 @@ function printAccessibilitySummary(report) {
   // logger.info(`WCAG 合規性: ${report.summary.wcagCompliance.level} (${report.summary.wcagCompliance.compliancePercentage}%)`);
 
   // logger.info('\n🚨 違規統計:');
-  for (const [severity, count] of Object.entries(report.violations.bySeverity)) {
+  for (const [severity, count] of Object.entries(
+    report.violations.bySeverity
+  )) {
     // logger.info(`  ${severity.toUpperCase()}: ${count} 個`);
   }
 
@@ -853,22 +928,29 @@ function printAccessibilitySummary(report) {
 
   // logger.info('\n♿ WCAG 指南違規:');
   for (const [guideline, count] of Object.entries(report.violations.byWCAG)) {
-    const guidelineName = ACCESSIBILITY_BENCHMARKS.wcagGuidelines[guideline] || '未知';
+    const guidelineName =
+      ACCESSIBILITY_BENCHMARKS.wcagGuidelines[guideline] || '未知';
     // logger.info(`  ${guideline} (${guidelineName}): ${count} 個`);
   }
 
   // logger.info('\n💡 主要建議:');
-  const criticalRecs = report.recommendations.filter(r => r.priority === 'critical');
-  const highRecs = report.recommendations.filter(r => r.priority === 'high');
+  const criticalRecs = report.recommendations.filter(
+    (r) => r.priority === 'critical'
+  );
+  const highRecs = report.recommendations.filter((r) => r.priority === 'high');
 
   if (criticalRecs.length > 0) {
     // logger.info('  緊急修復:');
-    criticalRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
+    criticalRecs.forEach((rec) => {
+      /* logger.info(`    - ${rec.title}`) */
+    });
   }
 
   if (highRecs.length > 0) {
     // logger.info('  高優先級:');
-    highRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
+    highRecs.forEach((rec) => {
+      /* logger.info(`    - ${rec.title}`) */
+    });
   }
 
   // logger.info('\n📄 報告文件:');
@@ -885,5 +967,5 @@ if (require.main === module) {
 module.exports = {
   generateAccessibilityReport,
   generateAccessibilityReportData,
-  calculateAccessibilityScore
+  calculateAccessibilityScore,
 };

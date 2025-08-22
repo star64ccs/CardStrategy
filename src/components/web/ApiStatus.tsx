@@ -57,10 +57,12 @@ const ApiStatus: React.FC<ApiStatusProps> = ({ onStatusChange }) => {
     <div style={styles.container}>
       <div style={styles.statusIndicator}>
         <span style={styles.icon}>{getStatusIcon()}</span>
-        <span style={{
-          ...styles.statusText,
-          color: getStatusColor()
-        }}>
+        <span
+          style={{
+            ...styles.statusText,
+            color: getStatusColor(),
+          }}
+        >
           {getStatusText()}
         </span>
       </div>
@@ -74,9 +76,7 @@ const ApiStatus: React.FC<ApiStatusProps> = ({ onStatusChange }) => {
       {!isOnline && (
         <div style={styles.warning}>
           <span style={styles.warningIcon}>⚠️</span>
-          <span style={styles.warningText}>
-            使用模擬數據，部分功能可能受限
-          </span>
+          <span style={styles.warningText}>使用模擬數據，部分功能可能受限</span>
         </div>
       )}
     </div>
@@ -93,22 +93,22 @@ const styles = {
     backgroundColor: '#f8f9fa',
     borderRadius: '8px',
     border: '1px solid #ecf0f1',
-    fontSize: '12px'
+    fontSize: '12px',
   },
   statusIndicator: {
     display: 'flex',
     alignItems: 'center',
-    gap: '6px'
+    gap: '6px',
   },
   icon: {
-    fontSize: '14px'
+    fontSize: '14px',
   },
   statusText: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   lastCheck: {
     fontSize: '10px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   warning: {
     display: 'flex',
@@ -117,15 +117,15 @@ const styles = {
     padding: '4px 8px',
     backgroundColor: '#fff3cd',
     borderRadius: '4px',
-    border: '1px solid #ffeaa7'
+    border: '1px solid #ffeaa7',
   },
   warningIcon: {
-    fontSize: '12px'
+    fontSize: '12px',
   },
   warningText: {
     fontSize: '10px',
-    color: '#856404'
-  }
+    color: '#856404',
+  },
 };
 
 export default ApiStatus;

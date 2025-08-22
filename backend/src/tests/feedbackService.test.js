@@ -20,7 +20,7 @@ describe('Feedback Service Tests', () => {
     testUser = await User.create({
       username: 'testuser',
       email: 'test@example.com',
-      password: 'password123'
+      password: 'password123',
     });
 
     // 獲取認證令牌
@@ -28,7 +28,7 @@ describe('Feedback Service Tests', () => {
       .post('/api/auth/login')
       .send({
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
       });
 
     authToken = loginResponse.body.token;
@@ -55,7 +55,7 @@ describe('Feedback Service Tests', () => {
         title: 'Test Feedback',
         description: 'This is a test feedback',
         tags: ['test', 'bug'],
-        metadata: { test: true }
+        metadata: { test: true },
       };
 
       const feedback = await feedbackService.submitFeedback(feedbackData);
@@ -75,7 +75,7 @@ describe('Feedback Service Tests', () => {
         category: 'card_recognition',
         severity: 'critical',
         title: 'Critical Feedback',
-        description: 'Critical issue'
+        description: 'Critical issue',
       };
 
       const feedback = await feedbackService.submitFeedback(feedbackData);
@@ -89,14 +89,14 @@ describe('Feedback Service Tests', () => {
         category: 'card_recognition',
         severity: 'medium',
         title: 'Test Feedback',
-        description: 'Test description'
+        description: 'Test description',
       };
 
       const feedback = await feedbackService.submitFeedback(feedbackData);
 
       // 檢查是否生成了自動回應
       const responses = await FeedbackResponse.findAll({
-        where: { feedbackId: feedback.id }
+        where: { feedbackId: feedback.id },
       });
 
       expect(responses).toHaveLength(1);
@@ -116,14 +116,14 @@ describe('Feedback Service Tests', () => {
         title: 'Test Feedback',
         description: 'Test description',
         status: 'pending',
-        priority: 'high'
+        priority: 'high',
       });
     });
 
     it('should get feedbacks with pagination', async () => {
       const result = await feedbackService.getFeedbacks({
         page: 1,
-        limit: 10
+        limit: 10,
       });
 
       expect(result.feedbacks).toBeDefined();
@@ -134,7 +134,7 @@ describe('Feedback Service Tests', () => {
 
     it('should filter feedbacks by status', async () => {
       const result = await feedbackService.getFeedbacks({
-        status: 'pending'
+        status: 'pending',
       });
 
       expect(result.feedbacks).toHaveLength(1);
@@ -143,7 +143,7 @@ describe('Feedback Service Tests', () => {
 
     it('should filter feedbacks by feedback type', async () => {
       const result = await feedbackService.getFeedbacks({
-        feedbackType: 'data_quality'
+        feedbackType: 'data_quality',
       });
 
       expect(result.feedbacks).toHaveLength(1);
@@ -161,7 +161,7 @@ describe('Feedback Service Tests', () => {
         title: 'Test Feedback',
         description: 'Test description',
         status: 'pending',
-        priority: 'high'
+        priority: 'high',
       });
     });
 
@@ -174,7 +174,9 @@ describe('Feedback Service Tests', () => {
     });
 
     it('should throw error for non-existent feedback', async () => {
-      await expect(feedbackService.getFeedbackById(99999)).rejects.toThrow('反饋不存在');
+      await expect(feedbackService.getFeedbackById(99999)).rejects.toThrow(
+        '反饋不存在'
+      );
     });
   });
 
@@ -188,7 +190,7 @@ describe('Feedback Service Tests', () => {
         title: 'Test Feedback',
         description: 'Test description',
         status: 'pending',
-        priority: 'high'
+        priority: 'high',
       });
     });
 
@@ -211,11 +213,13 @@ describe('Feedback Service Tests', () => {
       );
 
       const responses = await FeedbackResponse.findAll({
-        where: { feedbackId: testFeedback.id }
+        where: { feedbackId: testFeedback.id },
       });
 
       expect(responses).toHaveLength(2); // 1 auto response + 1 status update
-      const statusResponse = responses.find(r => r.responseType === 'status_update');
+      const statusResponse = responses.find(
+        (r) => r.responseType === 'status_update'
+      );
       expect(statusResponse).toBeDefined();
       expect(statusResponse.content).toContain('resolved');
     });
@@ -231,7 +235,7 @@ describe('Feedback Service Tests', () => {
         title: 'Test Feedback',
         description: 'Test description',
         status: 'pending',
-        priority: 'high'
+        priority: 'high',
       });
     });
 
@@ -253,10 +257,12 @@ describe('Feedback Service Tests', () => {
       );
 
       const responses = await FeedbackResponse.findAll({
-        where: { feedbackId: testFeedback.id }
+        where: { feedbackId: testFeedback.id },
       });
 
-      const assignmentResponse = responses.find(r => r.responseType === 'assignment');
+      const assignmentResponse = responses.find(
+        (r) => r.responseType === 'assignment'
+      );
       expect(assignmentResponse).toBeDefined();
       expect(assignmentResponse.isInternal).toBe(true);
     });
@@ -272,7 +278,7 @@ describe('Feedback Service Tests', () => {
         title: 'Test Feedback',
         description: 'Test description',
         status: 'pending',
-        priority: 'high'
+        priority: 'high',
       });
     });
 
@@ -303,7 +309,7 @@ describe('Feedback Service Tests', () => {
         title: 'Test Feedback 1',
         description: 'Test description',
         status: 'resolved',
-        priority: 'high'
+        priority: 'high',
       });
 
       await Feedback.create({
@@ -314,7 +320,7 @@ describe('Feedback Service Tests', () => {
         title: 'Test Feedback 2',
         description: 'Test description',
         status: 'pending',
-        priority: 'normal'
+        priority: 'normal',
       });
 
       // 創建分析數據
@@ -328,7 +334,7 @@ describe('Feedback Service Tests', () => {
         averageResolutionTime: 2.5,
         priorityDistribution: { high: 1 },
         statusDistribution: { resolved: 1 },
-        severityDistribution: { high: 1 }
+        severityDistribution: { high: 1 },
       });
     });
 
@@ -346,7 +352,7 @@ describe('Feedback Service Tests', () => {
       const today = new Date().toISOString().split('T')[0];
       const stats = await feedbackService.getFeedbackStats({
         startDate: today,
-        endDate: today
+        endDate: today,
       });
 
       expect(stats.totalSubmitted).toBe(1);
@@ -366,12 +372,13 @@ describe('Feedback Service Tests', () => {
         averageResolutionTime: 10,
         priorityDistribution: { high: 5, normal: 3, low: 2 },
         statusDistribution: { resolved: 5, pending: 3, in_progress: 2 },
-        severityDistribution: { high: 6, medium: 3, low: 1 }
+        severityDistribution: { high: 6, medium: 3, low: 1 },
       });
     });
 
     it('should generate improvement suggestions', async () => {
-      const suggestions = await feedbackService.generateImprovementSuggestions();
+      const suggestions =
+        await feedbackService.generateImprovementSuggestions();
 
       expect(suggestions).toBeDefined();
       expect(Array.isArray(suggestions)).toBe(true);
@@ -379,9 +386,12 @@ describe('Feedback Service Tests', () => {
     });
 
     it('should suggest based on resolution time', async () => {
-      const suggestions = await feedbackService.generateImprovementSuggestions();
+      const suggestions =
+        await feedbackService.generateImprovementSuggestions();
 
-      const processSuggestion = suggestions.find(s => s.category === 'process_improvement');
+      const processSuggestion = suggestions.find(
+        (s) => s.category === 'process_improvement'
+      );
       expect(processSuggestion).toBeDefined();
     });
   });
@@ -397,14 +407,14 @@ describe('Feedback API Integration Tests', () => {
     testUser = await User.create({
       username: 'testuser',
       email: 'test@example.com',
-      password: 'password123'
+      password: 'password123',
     });
 
     const loginResponse = await request(require('../app'))
       .post('/api/auth/login')
       .send({
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
       });
 
     authToken = loginResponse.body.token;
@@ -427,7 +437,7 @@ describe('Feedback API Integration Tests', () => {
         category: 'card_recognition',
         severity: 'high',
         title: 'API Test Feedback',
-        description: 'This is a test feedback via API'
+        description: 'This is a test feedback via API',
       };
 
       const response = await request(require('../app'))
@@ -451,7 +461,7 @@ describe('Feedback API Integration Tests', () => {
         title: 'Test Feedback',
         description: 'Test description',
         status: 'pending',
-        priority: 'high'
+        priority: 'high',
       });
     });
 
@@ -487,7 +497,7 @@ describe('Feedback API Integration Tests', () => {
         averageResolutionTime: 2.5,
         priorityDistribution: { high: 2, normal: 2, low: 1 },
         statusDistribution: { resolved: 3, pending: 2 },
-        severityDistribution: { high: 3, medium: 1, low: 1 }
+        severityDistribution: { high: 3, medium: 1, low: 1 },
       });
     });
 

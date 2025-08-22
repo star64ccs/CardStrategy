@@ -6,7 +6,7 @@ import {
   Alert,
   ActivityIndicator,
   Animated,
-  Platform
+  Platform,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
@@ -25,7 +25,7 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
   onTranscript,
   isRecording,
   setIsRecording,
-  disabled = false
+  disabled = false,
 }) => {
   const [hasPermission, setHasPermission] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -45,16 +45,18 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
 
   const checkPermissions = async () => {
     try {
-      const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+      const { status } = await Permissions.askAsync(
+        Permissions.AUDIO_RECORDING
+      );
       setHasPermission(status === 'granted');
-      
+
       if (status !== 'granted') {
         Alert.alert(
           '需要麥克風權限',
           '請在設置中允許應用使用麥克風來進行語音輸入。',
           [
             { text: '取消', style: 'cancel' },
-            { text: '設置', onPress: () => Permissions.openSettings() }
+            { text: '設置', onPress: () => Permissions.openSettings() },
           ]
         );
       }
@@ -69,13 +71,13 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
         Animated.timing(pulseAnimation, {
           toValue: 1.2,
           duration: 1000,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(pulseAnimation, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ])
     ).start();
   };
@@ -107,7 +109,6 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
       // 模擬語音識別過程
       // 在實際應用中，這裡會使用真實的語音識別API
       await simulateVoiceRecognition();
-
     } catch (error) {
       logger.error('開始錄音失敗:', error);
       Alert.alert('錯誤', '無法開始錄音，請重試');
@@ -123,11 +124,10 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
 
       // 模擬語音識別結果
       const transcript = await simulateVoiceRecognitionResult();
-      
+
       if (transcript) {
         onTranscript(transcript);
       }
-
     } catch (error) {
       logger.error('停止錄音失敗:', error);
       Alert.alert('錯誤', '語音識別失敗，請重試');
@@ -154,13 +154,14 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
           '這張卡片的市場價格如何',
           '給我一些投資建議',
           '最近的市場趨勢怎麼樣',
-          '這張卡片值得投資嗎'
+          '這張卡片值得投資嗎',
         ];
-        
-        const randomTranscript = sampleTranscripts[
-          Math.floor(Math.random() * sampleTranscripts.length)
-        ];
-        
+
+        const randomTranscript =
+          sampleTranscripts[
+            Math.floor(Math.random() * sampleTranscripts.length)
+          ];
+
         resolve(randomTranscript);
       }, 1000);
     });
@@ -197,12 +198,14 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
   };
 
   return (
-    <Animated.View style={[
-      styles.container,
-      {
-        transform: [{ scale: pulseAnimation }]
-      }
-    ]}>
+    <Animated.View
+      style={[
+        styles.container,
+        {
+          transform: [{ scale: pulseAnimation }],
+        },
+      ]}
+    >
       <TouchableOpacity
         style={getButtonStyle()}
         onPress={handleVoiceInput}
@@ -212,14 +215,14 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
         {isProcessing ? (
           <ActivityIndicator size="small" color={getIconColor()} />
         ) : (
-          <MaterialIcons 
-            name={getIconName() as any} 
-            size={20} 
-            color={getIconColor()} 
+          <MaterialIcons
+            name={getIconName() as any}
+            size={20}
+            color={getIconColor()}
           />
         )}
       </TouchableOpacity>
-      
+
       {isRecording && (
         <View style={styles.recordingIndicator}>
           <View style={styles.recordingDot} />
@@ -231,7 +234,7 @@ export const VoiceInputButton: React.FC<VoiceInputButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative'
+    position: 'relative',
   },
   button: {
     width: 40,
@@ -239,23 +242,23 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginHorizontal: 4
+    marginHorizontal: 4,
   },
   normalButton: {
     backgroundColor: theme.colors.backgroundLight,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   recordingButton: {
     backgroundColor: theme.colors.error + '20',
     borderWidth: 2,
-    borderColor: theme.colors.error
+    borderColor: theme.colors.error,
   },
   disabledButton: {
     backgroundColor: theme.colors.backgroundLight,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    opacity: 0.5
+    opacity: 0.5,
   },
   recordingIndicator: {
     position: 'absolute',
@@ -266,12 +269,12 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: theme.colors.error,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   recordingDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#fff'
-  }
+    backgroundColor: '#fff',
+  },
 });

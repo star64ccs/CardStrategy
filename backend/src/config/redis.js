@@ -6,8 +6,8 @@ const redisConfig = {
   url: process.env.REDIS_URL || 'redis://localhost:6379',
   socket: {
     connectTimeout: 10000,
-    keepAlive: 30000
-  }
+    keepAlive: 30000,
+  },
 };
 
 // 創建 Redis 客戶端
@@ -59,5 +59,5 @@ const healthCheck = async () => {
 module.exports = {
   redisClient,
   connectRedis,
-  healthCheck
+  healthCheck,
 };

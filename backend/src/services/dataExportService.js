@@ -1,10 +1,13 @@
 const ExcelJS = require('exceljs');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const PDFDocument = require('pdfkit');
+// eslint-disable-next-line no-unused-vars
 const fs = require('fs');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+// eslint-disable-next-line no-unused-vars
 const moment = require('moment');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 const { Op } = require('sequelize');
 
@@ -28,6 +31,7 @@ class DataExportService {
    */
   async exportCardsData(format = 'excel', filters = {}, options = {}) {
     try {
+// eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
 
       // 構建查詢條件
@@ -48,17 +52,21 @@ class DataExportService {
         whereClause.currentPrice = { [Op.gte]: filters.minPrice };
       }
       if (filters.maxPrice) {
-        whereClause.currentPrice = { ...whereClause.currentPrice, [Op.lte]: filters.maxPrice };
+        whereClause.currentPrice = {
+          ...whereClause.currentPrice,
+          [Op.lte]: filters.maxPrice,
+        };
       }
 
       // 獲取數據
       const cards = await Card.findAll({
         where: whereClause,
         order: [['name', 'ASC']],
-        limit: options.limit || 10000
+        limit: options.limit || 10000,
       });
 
-      const data = cards.map(card => ({
+// eslint-disable-next-line no-unused-vars
+      const data = cards.map((card) => ({
         id: card.id,
         name: card.name,
         setName: card.setName,
@@ -70,7 +78,7 @@ class DataExportService {
         imageUrl: card.imageUrl,
         description: card.description,
         createdAt: card.createdAt,
-        updatedAt: card.updatedAt
+        updatedAt: card.updatedAt,
       }));
 
       // 根據格式導出
@@ -95,9 +103,15 @@ class DataExportService {
   /**
    * 導出投資數據
    */
-  async exportInvestmentsData(userId, format = 'excel', filters = {}, options = {}) {
+  async exportInvestmentsData(
+    userId,
+    format = 'excel',
+    filters = {},
+    options = {}
+  ) {
     try {
       const Investment = require('../models/Investment');
+// eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
 
       // 構建查詢條件
@@ -109,22 +123,34 @@ class DataExportService {
         whereClause.purchasePrice = { [Op.gte]: filters.minPurchasePrice };
       }
       if (filters.maxPurchasePrice) {
-        whereClause.purchasePrice = { ...whereClause.purchasePrice, [Op.lte]: filters.maxPurchasePrice };
+        whereClause.purchasePrice = {
+          ...whereClause.purchasePrice,
+          [Op.lte]: filters.maxPurchasePrice,
+        };
       }
 
       // 獲取數據
       const investments = await Investment.findAll({
         where: whereClause,
-        include: [{
-          model: Card,
-          as: 'card',
-          attributes: ['name', 'setName', 'rarity', 'currentPrice', 'imageUrl']
-        }],
+        include: [
+          {
+            model: Card,
+            as: 'card',
+            attributes: [
+              'name',
+              'setName',
+              'rarity',
+              'currentPrice',
+              'imageUrl',
+            ],
+          },
+        ],
         order: [['createdAt', 'DESC']],
-        limit: options.limit || 10000
+        limit: options.limit || 10000,
       });
 
-      const data = investments.map(investment => ({
+// eslint-disable-next-line no-unused-vars
+      const data = investments.map((investment) => ({
         id: investment.id,
         cardName: investment.card?.name || 'Unknown',
         setName: investment.card?.setName || 'Unknown',
@@ -133,13 +159,14 @@ class DataExportService {
         purchasePrice: investment.purchasePrice,
         currentPrice: investment.card?.currentPrice || 0,
         totalCost: investment.quantity * investment.purchasePrice,
-        currentValue: investment.quantity * (investment.card?.currentPrice || 0),
+        currentValue:
+          investment.quantity * (investment.card?.currentPrice || 0),
         returnAmount: investment.returnAmount || 0,
         returnPercentage: investment.returnPercentage || 0,
         purchaseDate: investment.purchaseDate,
         isActive: investment.isActive,
         createdAt: investment.createdAt,
-        updatedAt: investment.updatedAt
+        updatedAt: investment.updatedAt,
       }));
 
       // 根據格式導出
@@ -166,7 +193,9 @@ class DataExportService {
    */
   async exportMarketData(format = 'excel', filters = {}, options = {}) {
     try {
+// eslint-disable-next-line no-unused-vars
       const MarketData = require('../models/MarketData');
+// eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
 
       // 構建查詢條件
@@ -178,22 +207,28 @@ class DataExportService {
         whereClause.date = { [Op.gte]: new Date(filters.startDate) };
       }
       if (filters.endDate) {
-        whereClause.date = { ...whereClause.date, [Op.lte]: new Date(filters.endDate) };
+        whereClause.date = {
+          ...whereClause.date,
+          [Op.lte]: new Date(filters.endDate),
+        };
       }
 
       // 獲取數據
       const marketData = await MarketData.findAll({
         where: whereClause,
-        include: [{
-          model: Card,
-          as: 'card',
-          attributes: ['name', 'setName', 'rarity']
-        }],
+        include: [
+          {
+            model: Card,
+            as: 'card',
+            attributes: ['name', 'setName', 'rarity'],
+          },
+        ],
         order: [['date', 'DESC']],
-        limit: options.limit || 10000
+        limit: options.limit || 10000,
       });
 
-      const data = marketData.map(item => ({
+// eslint-disable-next-line no-unused-vars
+      const data = marketData.map((item) => ({
         id: item.id,
         cardName: item.card?.name || 'Unknown',
         setName: item.card?.setName || 'Unknown',
@@ -204,7 +239,7 @@ class DataExportService {
         marketCap: item.marketCap || 0,
         priceChange: item.priceChange || 0,
         priceChangePercent: item.priceChangePercent || 0,
-        createdAt: item.createdAt
+        createdAt: item.createdAt,
       }));
 
       // 根據格式導出
@@ -245,18 +280,23 @@ class DataExportService {
         whereClause.createdAt = { [Op.gte]: new Date(filters.startDate) };
       }
       if (filters.endDate) {
-        whereClause.createdAt = { ...whereClause.createdAt, [Op.lte]: new Date(filters.endDate) };
+        whereClause.createdAt = {
+          ...whereClause.createdAt,
+          [Op.lte]: new Date(filters.endDate),
+        };
       }
 
       // 獲取數據
+// eslint-disable-next-line no-unused-vars
       const users = await User.findAll({
         where: whereClause,
         attributes: { exclude: ['password'] },
         order: [['createdAt', 'DESC']],
-        limit: options.limit || 10000
+        limit: options.limit || 10000,
       });
 
-      const data = users.map(user => ({
+// eslint-disable-next-line no-unused-vars
+      const data = users.map((user) => ({
         id: user.id,
         username: user.username,
         email: user.email,
@@ -264,7 +304,7 @@ class DataExportService {
         isActive: user.isActive,
         lastLoginAt: user.lastLoginAt,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
+        updatedAt: user.updatedAt,
       }));
 
       // 根據格式導出
@@ -305,13 +345,13 @@ class DataExportService {
         headerRow.fill = {
           type: 'pattern',
           pattern: 'solid',
-          fgColor: { argb: 'FFE0E0E0' }
+          fgColor: { argb: 'FFE0E0E0' },
         };
       }
 
       // 添加數據行
-      data.forEach(row => {
-        const values = Object.values(row).map(value => {
+      data.forEach((row) => {
+        const values = Object.values(row).map((value) => {
           if (value instanceof Date) {
             return value.toISOString();
           }
@@ -321,9 +361,9 @@ class DataExportService {
       });
 
       // 自動調整列寬
-      worksheet.columns.forEach(column => {
+      worksheet.columns.forEach((column) => {
         let maxLength = 0;
-        column.eachCell({ includeEmpty: true }, cell => {
+        column.eachCell({ includeEmpty: true }, (cell) => {
           const columnLength = cell.value ? cell.value.toString().length : 10;
           if (columnLength > maxLength) {
             maxLength = columnLength;
@@ -346,7 +386,7 @@ class DataExportService {
         filepath,
         format: 'excel',
         recordCount: data.length,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('Excel 導出失敗:', error);
@@ -368,21 +408,21 @@ class DataExportService {
       const filepath = path.join(this.exportDirectory, csvFilename);
 
       // 準備 CSV 標題
-      const headers = Object.keys(data[0]).map(key => ({
+      const headers = Object.keys(data[0]).map((key) => ({
         id: key,
-        title: key
+        title: key,
       }));
 
       // 創建 CSV Writer
       const csvWriter = createCsvWriter({
         path: filepath,
-        header: headers
+        header: headers,
       });
 
       // 處理數據
-      const processedData = data.map(row => {
+      const processedData = data.map((row) => {
         const processedRow = {};
-        Object.keys(row).forEach(key => {
+        Object.keys(row).forEach((key) => {
           let value = row[key];
           if (value instanceof Date) {
             value = value.toISOString();
@@ -401,7 +441,7 @@ class DataExportService {
         filepath,
         format: 'csv',
         recordCount: data.length,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('CSV 導出失敗:', error);
@@ -421,7 +461,7 @@ class DataExportService {
       // 創建 PDF 文檔
       const doc = new PDFDocument({
         size: 'A4',
-        margin: 50
+        margin: 50,
       });
 
       // 創建寫入流
@@ -429,12 +469,14 @@ class DataExportService {
       doc.pipe(writeStream);
 
       // 添加標題
-      doc.fontSize(20)
+      doc
+        .fontSize(20)
         .font('Helvetica-Bold')
         .text(`${filename.toUpperCase()} REPORT`, { align: 'center' });
 
       doc.moveDown();
-      doc.fontSize(12)
+      doc
+        .fontSize(12)
         .font('Helvetica')
         .text(`Generated on: ${new Date().toLocaleString()}`);
       doc.text(`Total Records: ${data.length}`);
@@ -450,9 +492,9 @@ class DataExportService {
         // 繪製表格標題
         doc.fontSize(10).font('Helvetica-Bold');
         headers.forEach((header, index) => {
-          doc.text(header, 50 + (index * colWidth), doc.y, {
+          doc.text(header, 50 + index * colWidth, doc.y, {
             width: colWidth - 5,
-            align: 'left'
+            align: 'left',
           });
         });
 
@@ -466,9 +508,9 @@ class DataExportService {
             doc.addPage();
             doc.fontSize(10).font('Helvetica-Bold');
             headers.forEach((header, index) => {
-              doc.text(header, 50 + (index * colWidth), doc.y, {
+              doc.text(header, 50 + index * colWidth, doc.y, {
                 width: colWidth - 5,
-                align: 'left'
+                align: 'left',
               });
             });
             doc.moveDown();
@@ -487,9 +529,9 @@ class DataExportService {
               value = '';
             }
 
-            doc.text(String(value), 50 + (colIndex * colWidth), doc.y, {
+            doc.text(String(value), 50 + colIndex * colWidth, doc.y, {
               width: colWidth - 5,
-              align: 'left'
+              align: 'left',
             });
           });
 
@@ -508,7 +550,7 @@ class DataExportService {
             filepath,
             format: 'pdf',
             recordCount: data.length,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         });
 
@@ -539,9 +581,9 @@ class DataExportService {
           recordCount: data.length,
           exportDate: new Date().toISOString(),
           format: 'json',
-          version: '1.0'
+          version: '1.0',
         },
-        data
+        data,
       };
 
       // 寫入 JSON 文件
@@ -553,7 +595,7 @@ class DataExportService {
         filepath,
         format: 'json',
         recordCount: data.length,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('JSON 導出失敗:', error);
@@ -567,17 +609,26 @@ class DataExportService {
   async generatePortfolioReport(userId, format = 'pdf', options = {}) {
     try {
       const Investment = require('../models/Investment');
+// eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
 
       // 獲取用戶投資組合
       const investments = await Investment.findAll({
         where: { userId, isActive: true },
-        include: [{
-          model: Card,
-          as: 'card',
-          attributes: ['name', 'setName', 'rarity', 'currentPrice', 'imageUrl']
-        }],
-        order: [['createdAt', 'DESC']]
+        include: [
+          {
+            model: Card,
+            as: 'card',
+            attributes: [
+              'name',
+              'setName',
+              'rarity',
+              'currentPrice',
+              'imageUrl',
+            ],
+          },
+        ],
+        order: [['createdAt', 'DESC']],
       });
 
       // 計算投資組合統計
@@ -588,14 +639,16 @@ class DataExportService {
         totalReturn: 0,
         totalReturnPercentage: 0,
         topPerformers: [],
-        worstPerformers: []
+        worstPerformers: [],
       };
 
-      const investmentData = investments.map(investment => {
-        const currentValue = investment.quantity * (investment.card?.currentPrice || 0);
+      const investmentData = investments.map((investment) => {
+        const currentValue =
+          investment.quantity * (investment.card?.currentPrice || 0);
         const totalCost = investment.quantity * investment.purchasePrice;
         const returnAmount = currentValue - totalCost;
-        const returnPercentage = totalCost > 0 ? (returnAmount / totalCost) * 100 : 0;
+        const returnPercentage =
+          totalCost > 0 ? (returnAmount / totalCost) * 100 : 0;
 
         portfolioStats.totalCost += totalCost;
         portfolioStats.currentValue += currentValue;
@@ -612,24 +665,27 @@ class DataExportService {
           currentValue,
           returnAmount,
           returnPercentage,
-          purchaseDate: investment.purchaseDate
+          purchaseDate: investment.purchaseDate,
         };
       });
 
       // 計算總回報率
       if (portfolioStats.totalCost > 0) {
-        portfolioStats.totalReturnPercentage = (portfolioStats.totalReturn / portfolioStats.totalCost) * 100;
+        portfolioStats.totalReturnPercentage =
+          (portfolioStats.totalReturn / portfolioStats.totalCost) * 100;
       }
 
       // 排序找出最佳和最差表現
-      const sortedByReturn = [...investmentData].sort((a, b) => b.returnPercentage - a.returnPercentage);
+      const sortedByReturn = [...investmentData].sort(
+        (a, b) => b.returnPercentage - a.returnPercentage
+      );
       portfolioStats.topPerformers = sortedByReturn.slice(0, 5);
       portfolioStats.worstPerformers = sortedByReturn.slice(-5).reverse();
 
       // 合併數據
       const reportData = {
         portfolioStats,
-        investments: investmentData
+        investments: investmentData,
       };
 
       // 根據格式導出
@@ -639,7 +695,11 @@ class DataExportService {
         case 'excel':
           return await this.exportPortfolioToExcel(reportData, userId, options);
         case 'json':
-          return await this.exportToJSON(reportData, `portfolio_${userId}`, options);
+          return await this.exportToJSON(
+            reportData,
+            `portfolio_${userId}`,
+            options
+          );
         default:
           throw new Error(`不支持的報告格式: ${format}`);
       }
@@ -660,19 +720,21 @@ class DataExportService {
 
       const doc = new PDFDocument({
         size: 'A4',
-        margin: 50
+        margin: 50,
       });
 
       const writeStream = fs.createWriteStream(filepath);
       doc.pipe(writeStream);
 
       // 標題
-      doc.fontSize(24)
+      doc
+        .fontSize(24)
         .font('Helvetica-Bold')
         .text('INVESTMENT PORTFOLIO REPORT', { align: 'center' });
 
       doc.moveDown();
-      doc.fontSize(12)
+      doc
+        .fontSize(12)
         .font('Helvetica')
         .text(`User ID: ${userId}`)
         .text(`Generated: ${new Date().toLocaleString()}`);
@@ -684,7 +746,9 @@ class DataExportService {
       doc.moveDown();
 
       const stats = data.portfolioStats;
-      doc.fontSize(10).font('Helvetica')
+      doc
+        .fontSize(10)
+        .font('Helvetica')
         .text(`Total Investments: ${stats.totalInvestments}`)
         .text(`Total Cost: $${stats.totalCost.toFixed(2)}`)
         .text(`Current Value: $${stats.currentValue.toFixed(2)}`)
@@ -698,10 +762,14 @@ class DataExportService {
       doc.moveDown();
 
       stats.topPerformers.forEach((investment, index) => {
-        doc.fontSize(10).font('Helvetica')
+        doc
+          .fontSize(10)
+          .font('Helvetica')
           .text(`${index + 1}. ${investment.cardName} (${investment.setName})`)
           .fontSize(8)
-          .text(`   Return: ${investment.returnPercentage.toFixed(2)}% | Value: $${investment.currentValue.toFixed(2)}`);
+          .text(
+            `   Return: ${investment.returnPercentage.toFixed(2)}% | Value: $${investment.currentValue.toFixed(2)}`
+          );
       });
 
       doc.moveDown(2);
@@ -716,17 +784,22 @@ class DataExportService {
       // 表格標題
       doc.fontSize(8).font('Helvetica-Bold');
       headers.forEach((header, index) => {
-        doc.text(header, 50 + colWidths.slice(0, index).reduce((sum, width) => sum + width, 0), doc.y, {
-          width: colWidths[index],
-          align: 'left'
-        });
+        doc.text(
+          header,
+          50 + colWidths.slice(0, index).reduce((sum, width) => sum + width, 0),
+          doc.y,
+          {
+            width: colWidths[index],
+            align: 'left',
+          }
+        );
       });
 
       doc.moveDown();
 
       // 表格數據
       doc.fontSize(8).font('Helvetica');
-      data.investments.forEach(investment => {
+      data.investments.forEach((investment) => {
         if (doc.y > 700) {
           doc.addPage();
         }
@@ -737,14 +810,20 @@ class DataExportService {
           investment.quantity.toString(),
           `$${investment.totalCost.toFixed(2)}`,
           `$${investment.currentValue.toFixed(2)}`,
-          `${investment.returnPercentage.toFixed(2)}%`
+          `${investment.returnPercentage.toFixed(2)}%`,
         ];
 
         values.forEach((value, index) => {
-          doc.text(value, 50 + colWidths.slice(0, index).reduce((sum, width) => sum + width, 0), doc.y, {
-            width: colWidths[index],
-            align: 'left'
-          });
+          doc.text(
+            value,
+            50 +
+              colWidths.slice(0, index).reduce((sum, width) => sum + width, 0),
+            doc.y,
+            {
+              width: colWidths[index],
+              align: 'left',
+            }
+          );
         });
 
         doc.moveDown();
@@ -760,7 +839,7 @@ class DataExportService {
             filepath,
             format: 'pdf',
             recordCount: data.investments.length,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           });
         });
 
@@ -780,22 +859,41 @@ class DataExportService {
       const workbook = new ExcelJS.Workbook();
 
       // 投資組合摘要工作表
+// eslint-disable-next-line no-unused-vars
       const summarySheet = workbook.addWorksheet('Portfolio Summary');
       const stats = data.portfolioStats;
 
       summarySheet.addRow(['Portfolio Summary']);
       summarySheet.addRow(['Total Investments', stats.totalInvestments]);
       summarySheet.addRow(['Total Cost', `$${stats.totalCost.toFixed(2)}`]);
-      summarySheet.addRow(['Current Value', `$${stats.currentValue.toFixed(2)}`]);
+      summarySheet.addRow([
+        'Current Value',
+        `$${stats.currentValue.toFixed(2)}`,
+      ]);
       summarySheet.addRow(['Total Return', `$${stats.totalReturn.toFixed(2)}`]);
-      summarySheet.addRow(['Return Percentage', `${stats.totalReturnPercentage.toFixed(2)}%`]);
+      summarySheet.addRow([
+        'Return Percentage',
+        `${stats.totalReturnPercentage.toFixed(2)}%`,
+      ]);
 
       // 投資詳情工作表
       const detailsSheet = workbook.addWorksheet('Investment Details');
-      const headers = ['Card Name', 'Set Name', 'Rarity', 'Quantity', 'Purchase Price', 'Current Price', 'Total Cost', 'Current Value', 'Return Amount', 'Return %', 'Purchase Date'];
+      const headers = [
+        'Card Name',
+        'Set Name',
+        'Rarity',
+        'Quantity',
+        'Purchase Price',
+        'Current Price',
+        'Total Cost',
+        'Current Value',
+        'Return Amount',
+        'Return %',
+        'Purchase Date',
+      ];
 
       detailsSheet.addRow(headers);
-      data.investments.forEach(investment => {
+      data.investments.forEach((investment) => {
         detailsSheet.addRow([
           investment.cardName,
           investment.setName,
@@ -807,20 +905,26 @@ class DataExportService {
           investment.currentValue,
           investment.returnAmount,
           investment.returnPercentage,
-          investment.purchaseDate
+          investment.purchaseDate,
         ]);
       });
 
       // 最佳表現者工作表
       const topPerformersSheet = workbook.addWorksheet('Top Performers');
-      topPerformersSheet.addRow(['Rank', 'Card Name', 'Set Name', 'Return %', 'Current Value']);
+      topPerformersSheet.addRow([
+        'Rank',
+        'Card Name',
+        'Set Name',
+        'Return %',
+        'Current Value',
+      ]);
       stats.topPerformers.forEach((investment, index) => {
         topPerformersSheet.addRow([
           index + 1,
           investment.cardName,
           investment.setName,
           investment.returnPercentage,
-          investment.currentValue
+          investment.currentValue,
         ]);
       });
 
@@ -837,7 +941,7 @@ class DataExportService {
         filepath,
         format: 'excel',
         recordCount: data.investments.length,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('投資組合 Excel 導出失敗:', error);
@@ -854,7 +958,7 @@ class DataExportService {
       const files = fs.readdirSync(this.exportDirectory);
 
       let deletedCount = 0;
-      files.forEach(file => {
+      files.forEach((file) => {
         const filepath = path.join(this.exportDirectory, file);
         const stats = fs.statSync(filepath);
 
@@ -882,10 +986,10 @@ class DataExportService {
         totalFiles: files.length,
         totalSize: 0,
         formats: {},
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
-      files.forEach(file => {
+      files.forEach((file) => {
         const filepath = path.join(this.exportDirectory, file);
         const fileStats = fs.statSync(filepath);
         stats.totalSize += fileStats.size;

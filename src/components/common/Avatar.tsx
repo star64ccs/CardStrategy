@@ -6,7 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ViewStyle,
-  TextStyle
+  TextStyle,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -34,14 +34,14 @@ export const Avatar: React.FC<AvatarProps> = ({
   textStyle,
   showBorder = false,
   borderColor = theme.colors.gold.primary,
-  status
+  status,
 }) => {
   const getSize = () => {
     const sizeMap = {
       small: 32,
       medium: 48,
       large: 64,
-      xlarge: 96
+      xlarge: 96,
     };
     return sizeMap[size];
   };
@@ -73,7 +73,7 @@ export const Avatar: React.FC<AvatarProps> = ({
       online: theme.colors.status.success,
       offline: theme.colors.text.disabled,
       away: theme.colors.status.warning,
-      busy: theme.colors.status.error
+      busy: theme.colors.status.error,
     };
     return statusMap[status!];
   };
@@ -96,8 +96,8 @@ export const Avatar: React.FC<AvatarProps> = ({
             {
               width: getSize(),
               height: getSize(),
-              borderRadius: getBorderRadius()
-            }
+              borderRadius: getBorderRadius(),
+            },
           ]}
           resizeMode="cover"
         />
@@ -113,8 +113,8 @@ export const Avatar: React.FC<AvatarProps> = ({
               width: getSize(),
               height: getSize(),
               borderRadius: getBorderRadius(),
-              backgroundColor: theme.colors.gold.primary
-            }
+              backgroundColor: theme.colors.gold.primary,
+            },
           ]}
         >
           <Text
@@ -122,9 +122,9 @@ export const Avatar: React.FC<AvatarProps> = ({
               styles.initials,
               {
                 fontSize: getFontSize(),
-                color: theme.colors.background.primary
+                color: theme.colors.background.primary,
               },
-              textStyle
+              textStyle,
             ]}
           >
             {initials.toUpperCase()}
@@ -141,8 +141,8 @@ export const Avatar: React.FC<AvatarProps> = ({
             width: getSize(),
             height: getSize(),
             borderRadius: getBorderRadius(),
-            backgroundColor: theme.colors.background.secondary
-          }
+            backgroundColor: theme.colors.background.secondary,
+          },
         ]}
       >
         <Ionicons
@@ -162,9 +162,9 @@ export const Avatar: React.FC<AvatarProps> = ({
         styles.container,
         {
           width: getSize(),
-          height: getSize()
+          height: getSize(),
         },
-        style
+        style,
       ]}
       onPress={onPress}
       activeOpacity={onPress ? 0.8 : 1}
@@ -179,8 +179,8 @@ export const Avatar: React.FC<AvatarProps> = ({
               height: getSize(),
               borderRadius: getBorderRadius(),
               borderColor,
-              borderWidth: 2
-            }
+              borderWidth: 2,
+            },
           ]}
         />
       )}
@@ -196,8 +196,8 @@ export const Avatar: React.FC<AvatarProps> = ({
               borderColor: theme.colors.background.tertiary,
               borderWidth: 2,
               right: getSize() * 0.1,
-              bottom: getSize() * 0.1
-            }
+              bottom: getSize() * 0.1,
+            },
           ]}
         />
       )}
@@ -207,32 +207,32 @@ export const Avatar: React.FC<AvatarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative'
+    position: 'relative',
   },
   image: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   initialsContainer: {
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   initials: {
     fontWeight: theme.typography.weights.bold,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   placeholder: {
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: theme.colors.border.primary
+    borderColor: theme.colors.border.primary,
   },
   border: {
     position: 'absolute',
     top: 0,
-    left: 0
+    left: 0,
   },
   statusIndicator: {
-    position: 'absolute'
-  }
+    position: 'absolute',
+  },
 });

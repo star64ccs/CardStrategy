@@ -2,7 +2,11 @@ import { EventEmitter } from 'events';
 import { logger } from '@/utils/logger';
 import { StorageManager } from './storage';
 import { offlineSyncManager } from './offlineSyncManager';
-import { encryptionManager, EncryptedData, EncryptionConfig } from './encryption';
+import {
+  encryptionManager,
+  EncryptedData,
+  EncryptionConfig,
+} from './encryption';
 
 // 任務狀態枚舉
 export enum TaskStatus {
@@ -12,7 +16,7 @@ export enum TaskStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
   CANCELLED = 'cancelled',
-  BLOCKED = 'blocked'
+  BLOCKED = 'blocked',
 }
 
 // 任務優先級枚舉
@@ -20,15 +24,15 @@ export enum TaskPriority {
   LOW = 'low',
   NORMAL = 'normal',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 // 依賴類型枚舉
 export enum DependencyType {
-  REQUIRES = 'requires',        // 必須依賴
-  OPTIONAL = 'optional',        // 可選依賴
-  BLOCKS = 'blocks',           // 阻塞依賴
-  TRIGGERS = 'triggers'        // 觸發依賴
+  REQUIRES = 'requires', // 必須依賴
+  OPTIONAL = 'optional', // 可選依賴
+  BLOCKS = 'blocks', // 阻塞依賴
+  TRIGGERS = 'triggers', // 觸發依賴
 }
 
 // 進度更新接口
@@ -45,7 +49,9 @@ export interface ProgressUpdate {
 
 // 進度追蹤器接口
 export interface ProgressTracker {
-  updateProgress: (update: Omit<ProgressUpdate, 'taskId' | 'timestamp'>) => void;
+  updateProgress: (
+    update: Omit<ProgressUpdate, 'taskId' | 'timestamp'>
+  ) => void;
   complete: () => void;
   fail: (error: string) => void;
 }
@@ -138,7 +144,12 @@ export interface TaskSyncData {
   taskId: string;
   deviceId: string;
   timestamp: number;
-  operation: 'CREATE' | 'UPDATE' | 'DELETE' | 'STATUS_CHANGE' | 'PROGRESS_UPDATE';
+  operation:
+    | 'CREATE'
+    | 'UPDATE'
+    | 'DELETE'
+    | 'STATUS_CHANGE'
+    | 'PROGRESS_UPDATE';
   taskData: Partial<Task>;
   version: number;
   checksum: string;
@@ -223,7 +234,7 @@ export class TaskDependencyManager extends EventEmitter {
     encryptMetadata: true,
     algorithm: 'AES-256-GCM',
     keyRotationEnabled: false,
-    keyRotationInterval: 30 * 24 * 60 * 60 * 1000 // 30天
+    keyRotationInterval: 30 * 24 * 60 * 60 * 1000, // 30天
   };
   private encryptionStats: EncryptionStats = {
     encryptedTasks: 0,
@@ -231,7 +242,7 @@ export class TaskDependencyManager extends EventEmitter {
     encryptionErrors: 0,
     decryptionErrors: 0,
     lastEncryptionTime: 0,
-    lastDecryptionTime: 0
+    lastDecryptionTime: 0,
   };
   private keyRotationInterval: NodeJS.Timeout | null = null;
 
@@ -249,7 +260,7 @@ export class TaskDependencyManager extends EventEmitter {
       enableDeadlockDetection: true,
       enableCircularDependencyCheck: true,
       logLevel: 'info',
-      ...config
+      ...config,
     };
 
     // 初始化設備ID和同步
@@ -259,7 +270,7 @@ export class TaskDependencyManager extends EventEmitter {
     this.startProgressBroadcast();
 
     logger.info('TaskDependencyManager initialized', {
-      config: this.config
+      config: this.config,
     });
   }
 
@@ -276,7 +287,20 @@ export class TaskDependencyManager extends EventEmitter {
   /**
    * 添加任務
    */
-  async addTask(task: Omit<Task, 'id' | 'status' | 'dependents' | 'createdAt' | 'retryCount' | 'version' | 'deviceId' | 'lastSyncTime' | 'isDirty'>): Promise<string> {
+  async addTask(
+    task: Omit<
+      Task,
+      | 'id'
+      | 'status'
+      | 'dependents'
+      | 'createdAt'
+      | 'retryCount'
+      | 'version'
+      | 'deviceId'
+      | 'lastSyncTime'
+      | 'isDirty'
+    >
+  ): Promise<string> {
     const taskId = `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const newTask: Task = {
       ...task,
@@ -289,7 +313,7 @@ export class TaskDependencyManager extends EventEmitter {
       version: 1,
       deviceId: this.deviceId,
       lastSyncTime: Date.now(),
-      isDirty: true
+      isDirty: true,
     };
 
     // 驗證依賴關係
@@ -319,20 +343,24 @@ export class TaskDependencyManager extends EventEmitter {
 
     // 檢查是否有其他任務依賴此任務
     if (task.dependents.length > 0) {
-      logger.warn(`[Task Manager] 無法移除任務 ${taskId}，有 ${task.dependents.length} 個任務依賴它`);
+      logger.warn(
+        `[Task Manager] 無法移除任務 ${taskId}，有 ${task.dependents.length} 個任務依賴它`
+      );
       return false;
     }
 
     // 移除依賴關係
-    task.dependencies.forEach(dep => {
+    task.dependencies.forEach((dep) => {
       const dependentTask = this.tasks.get(dep.taskId);
       if (dependentTask) {
-        dependentTask.dependents = dependentTask.dependents.filter(id => id !== taskId);
+        dependentTask.dependents = dependentTask.dependents.filter(
+          (id) => id !== taskId
+        );
       }
     });
 
     this.tasks.delete(taskId);
-    this.taskQueue = this.taskQueue.filter(t => t.id !== taskId);
+    this.taskQueue = this.taskQueue.filter((t) => t.id !== taskId);
     this.runningTasks.delete(taskId);
 
     this.emit('taskRemoved', { taskId });
@@ -344,7 +372,10 @@ export class TaskDependencyManager extends EventEmitter {
   /**
    * 更新任務
    */
-  async updateTask(taskId: string, updates: Partial<Omit<Task, 'id' | 'createdAt' | 'version' | 'deviceId'>>): Promise<boolean> {
+  async updateTask(
+    taskId: string,
+    updates: Partial<Omit<Task, 'id' | 'createdAt' | 'version' | 'deviceId'>>
+  ): Promise<boolean> {
     const task = this.tasks.get(taskId);
     if (!task) {
       logger.warn(`[Task Manager] 任務不存在: ${taskId}`);
@@ -357,7 +388,7 @@ export class TaskDependencyManager extends EventEmitter {
       updatedAt: new Date(),
       version: task.version + 1,
       lastSyncTime: Date.now(),
-      isDirty: true
+      isDirty: true,
     };
 
     // 如果依賴關係有變更，重新驗證
@@ -402,7 +433,10 @@ export class TaskDependencyManager extends EventEmitter {
   /**
    * 添加依賴關係
    */
-  async addDependency(taskId: string, dependency: TaskDependency): Promise<boolean> {
+  async addDependency(
+    taskId: string,
+    dependency: TaskDependency
+  ): Promise<boolean> {
     const task = this.tasks.get(taskId);
     if (!task) {
       logger.warn(`[Task Manager] 任務不存在: ${taskId}`);
@@ -417,8 +451,13 @@ export class TaskDependencyManager extends EventEmitter {
     }
 
     // 檢查是否會形成循環依賴
-    if (this.config.enableCircularDependencyCheck && this.wouldCreateCycle(taskId, dependency.taskId)) {
-      logger.error(`[Task Manager] 檢測到循環依賴: ${taskId} -> ${dependency.taskId}`);
+    if (
+      this.config.enableCircularDependencyCheck &&
+      this.wouldCreateCycle(taskId, dependency.taskId)
+    ) {
+      logger.error(
+        `[Task Manager] 檢測到循環依賴: ${taskId} -> ${dependency.taskId}`
+      );
       return false;
     }
 
@@ -429,7 +468,9 @@ export class TaskDependencyManager extends EventEmitter {
     this.updateQueue();
 
     this.emit('dependencyAdded', { taskId, dependency });
-    logger.info(`[Task Manager] 依賴關係已添加: ${taskId} -> ${dependency.taskId}`);
+    logger.info(
+      `[Task Manager] 依賴關係已添加: ${taskId} -> ${dependency.taskId}`
+    );
 
     return true;
   }
@@ -437,7 +478,10 @@ export class TaskDependencyManager extends EventEmitter {
   /**
    * 移除依賴關係
    */
-  async removeDependency(taskId: string, dependentTaskId: string): Promise<boolean> {
+  async removeDependency(
+    taskId: string,
+    dependentTaskId: string
+  ): Promise<boolean> {
     const task = this.tasks.get(taskId);
     if (!task) {
       logger.warn(`[Task Manager] 任務不存在: ${taskId}`);
@@ -451,14 +495,20 @@ export class TaskDependencyManager extends EventEmitter {
     }
 
     // 移除依賴關係
-    task.dependencies = task.dependencies.filter(dep => dep.taskId !== dependentTaskId);
-    dependentTask.dependents = dependentTask.dependents.filter(id => id !== taskId);
+    task.dependencies = task.dependencies.filter(
+      (dep) => dep.taskId !== dependentTaskId
+    );
+    dependentTask.dependents = dependentTask.dependents.filter(
+      (id) => id !== taskId
+    );
 
     this.updateTaskStatus(task);
     this.updateQueue();
 
     this.emit('dependencyRemoved', { taskId, dependentTaskId });
-    logger.info(`[Task Manager] 依賴關係已移除: ${taskId} -> ${dependentTaskId}`);
+    logger.info(
+      `[Task Manager] 依賴關係已移除: ${taskId} -> ${dependentTaskId}`
+    );
 
     return true;
   }
@@ -483,11 +533,14 @@ export class TaskDependencyManager extends EventEmitter {
    * 檢查任務是否準備就緒
    */
   isTaskReady(task: Task): boolean {
-    if (task.status !== TaskStatus.PENDING && task.status !== TaskStatus.BLOCKED) {
+    if (
+      task.status !== TaskStatus.PENDING &&
+      task.status !== TaskStatus.BLOCKED
+    ) {
       return false;
     }
 
-    return task.dependencies.every(dep => {
+    return task.dependencies.every((dep) => {
       const dependentTask = this.tasks.get(dep.taskId);
       if (!dependentTask) {
         return false;
@@ -503,7 +556,10 @@ export class TaskDependencyManager extends EventEmitter {
         case DependencyType.REQUIRES:
           return dependentTask.status === TaskStatus.COMPLETED;
         case DependencyType.OPTIONAL:
-          return dependentTask.status === TaskStatus.COMPLETED || dependentTask.status === TaskStatus.FAILED;
+          return (
+            dependentTask.status === TaskStatus.COMPLETED ||
+            dependentTask.status === TaskStatus.FAILED
+          );
         case DependencyType.BLOCKS:
           return dependentTask.status !== TaskStatus.RUNNING;
         case DependencyType.TRIGGERS:
@@ -611,7 +667,7 @@ export class TaskDependencyManager extends EventEmitter {
     this.runningTasks.delete(taskId);
 
     // 取消依賴此任務的任務
-    task.dependents.forEach(dependentId => {
+    task.dependents.forEach((dependentId) => {
       const dependentTask = this.tasks.get(dependentId);
       if (dependentTask && dependentTask.status === TaskStatus.PENDING) {
         dependentTask.status = TaskStatus.CANCELLED;
@@ -652,25 +708,33 @@ export class TaskDependencyManager extends EventEmitter {
     failedTasks: number;
     overallProgress: number;
     averageProgress: number;
-    } {
+  } {
     const allTasks = Array.from(this.tasks.values());
     const totalTasks = allTasks.length;
-    const completedTasks = allTasks.filter(t => t.status === TaskStatus.COMPLETED).length;
-    const runningTasks = allTasks.filter(t => t.status === TaskStatus.RUNNING).length;
-    const pendingTasks = allTasks.filter(t => t.status === TaskStatus.PENDING || t.status === TaskStatus.READY).length;
-    const failedTasks = allTasks.filter(t => t.status === TaskStatus.FAILED).length;
+    const completedTasks = allTasks.filter(
+      (t) => t.status === TaskStatus.COMPLETED
+    ).length;
+    const runningTasks = allTasks.filter(
+      (t) => t.status === TaskStatus.RUNNING
+    ).length;
+    const pendingTasks = allTasks.filter(
+      (t) => t.status === TaskStatus.PENDING || t.status === TaskStatus.READY
+    ).length;
+    const failedTasks = allTasks.filter(
+      (t) => t.status === TaskStatus.FAILED
+    ).length;
 
     const progressValues = allTasks
-      .map(t => t.progress?.percentage || 0)
-      .filter(p => p > 0);
+      .map((t) => t.progress?.percentage || 0)
+      .filter((p) => p > 0);
 
-    const averageProgress = progressValues.length > 0
-      ? progressValues.reduce((sum, p) => sum + p, 0) / progressValues.length
-      : 0;
+    const averageProgress =
+      progressValues.length > 0
+        ? progressValues.reduce((sum, p) => sum + p, 0) / progressValues.length
+        : 0;
 
-    const overallProgress = totalTasks > 0
-      ? (completedTasks / totalTasks) * 100
-      : 0;
+    const overallProgress =
+      totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
 
     return {
       totalTasks,
@@ -679,7 +743,7 @@ export class TaskDependencyManager extends EventEmitter {
       pendingTasks,
       failedTasks,
       overallProgress,
-      averageProgress
+      averageProgress,
     };
   }
 
@@ -688,11 +752,13 @@ export class TaskDependencyManager extends EventEmitter {
    */
   private createProgressTracker(taskId: string): ProgressTracker {
     return {
-      updateProgress: (update: Omit<ProgressUpdate, 'taskId' | 'timestamp'>) => {
+      updateProgress: (
+        update: Omit<ProgressUpdate, 'taskId' | 'timestamp'>
+      ) => {
         const progressUpdate: ProgressUpdate = {
           ...update,
           taskId,
-          timestamp: new Date()
+          timestamp: new Date(),
         };
 
         // 更新任務進度
@@ -714,7 +780,9 @@ export class TaskDependencyManager extends EventEmitter {
         this.emit('progressUpdate', progressUpdate);
         this.emit('taskProgressUpdate', { taskId, progress: progressUpdate });
 
-        logger.debug(`[Task Manager] 任務 ${taskId} 進度更新: ${update.percentage}% - ${update.currentStep}`);
+        logger.debug(
+          `[Task Manager] 任務 ${taskId} 進度更新: ${update.percentage}% - ${update.currentStep}`
+        );
       },
       complete: () => {
         const task = this.tasks.get(taskId);
@@ -725,7 +793,7 @@ export class TaskDependencyManager extends EventEmitter {
             currentStep: '完成',
             totalSteps: task.totalSteps || 1,
             currentStepIndex: task.totalSteps || 1,
-            timestamp: new Date()
+            timestamp: new Date(),
           };
         }
         this.emit('taskProgressComplete', { taskId });
@@ -740,11 +808,11 @@ export class TaskDependencyManager extends EventEmitter {
             totalSteps: task.totalSteps || 1,
             currentStepIndex: 0,
             timestamp: new Date(),
-            data: { error }
+            data: { error },
           };
         }
         this.emit('taskProgressFailed', { taskId, error });
-      }
+      },
     };
   }
 
@@ -757,18 +825,19 @@ export class TaskDependencyManager extends EventEmitter {
     }
 
     this.progressUpdateInterval = setInterval(() => {
-      const runningTasks = Array.from(this.tasks.values())
-        .filter(t => t.status === TaskStatus.RUNNING && t.progress);
+      const runningTasks = Array.from(this.tasks.values()).filter(
+        (t) => t.status === TaskStatus.RUNNING && t.progress
+      );
 
       if (runningTasks.length > 0) {
         const progressSummary = this.getProgressSummary();
         this.emit('progressBroadcast', {
           summary: progressSummary,
-          runningTasks: runningTasks.map(t => ({
+          runningTasks: runningTasks.map((t) => ({
             id: t.id,
             name: t.name,
-            progress: t.progress
-          }))
+            progress: t.progress,
+          })),
         });
       }
     }, intervalMs);
@@ -819,7 +888,9 @@ export class TaskDependencyManager extends EventEmitter {
       await this.loadLocalTasks();
 
       // 設置同步監聽器
-      offlineSyncManager.addStatusListener(this.handleSyncStatusChange.bind(this));
+      offlineSyncManager.addStatusListener(
+        this.handleSyncStatusChange.bind(this)
+      );
 
       // 啟動自動同步
       this.startAutoSync();
@@ -839,7 +910,7 @@ export class TaskDependencyManager extends EventEmitter {
   private async loadLocalTasks(): Promise<void> {
     try {
       const taskKeys = await StorageManager.getAllKeys();
-      const taskDataKeys = taskKeys.filter(key => key.startsWith('task_'));
+      const taskDataKeys = taskKeys.filter((key) => key.startsWith('task_'));
 
       const taskData = await StorageManager.multiGet(taskDataKeys);
       for (const [key, task] of taskData) {
@@ -876,18 +947,24 @@ export class TaskDependencyManager extends EventEmitter {
       this.queueTaskSync(task, 'STATUS_CHANGE');
     });
 
-    this.on('taskProgressUpdate', (taskId: string, progress: ProgressUpdate) => {
-      const task = this.tasks.get(taskId);
-      if (task) {
-        this.queueTaskSync(task, 'PROGRESS_UPDATE');
+    this.on(
+      'taskProgressUpdate',
+      (taskId: string, progress: ProgressUpdate) => {
+        const task = this.tasks.get(taskId);
+        if (task) {
+          this.queueTaskSync(task, 'PROGRESS_UPDATE');
+        }
       }
-    });
+    );
   }
 
   /**
    * 隊列任務同步
    */
-  private async queueTaskSync(task: Partial<Task>, operation: TaskSyncData['operation']): Promise<void> {
+  private async queueTaskSync(
+    task: Partial<Task>,
+    operation: TaskSyncData['operation']
+  ): Promise<void> {
     try {
       const syncData: TaskSyncData = {
         taskId: task.id!,
@@ -896,13 +973,16 @@ export class TaskDependencyManager extends EventEmitter {
         operation,
         taskData: task,
         version: (task.version || 0) + 1,
-        checksum: this.calculateTaskChecksum(task)
+        checksum: this.calculateTaskChecksum(task),
       };
 
       this.pendingSyncs.push(syncData);
 
       // 保存到本地存儲
-      await StorageManager.set(`sync_${syncData.taskId}_${syncData.timestamp}`, syncData);
+      await StorageManager.set(
+        `sync_${syncData.taskId}_${syncData.timestamp}`,
+        syncData
+      );
 
       // 觸發同步
       this.triggerSync();
@@ -923,7 +1003,7 @@ export class TaskDependencyManager extends EventEmitter {
       status: task.status,
       priority: task.priority,
       dependencies: task.dependencies,
-      version: task.version
+      version: task.version,
     });
 
     // 簡單的校驗和算法
@@ -991,9 +1071,14 @@ export class TaskDependencyManager extends EventEmitter {
         await this.syncTaskOperation(syncData);
 
         // 移除已同步的操作
-        await StorageManager.remove(`sync_${syncData.taskId}_${syncData.timestamp}`);
+        await StorageManager.remove(
+          `sync_${syncData.taskId}_${syncData.timestamp}`
+        );
 
-        logger.info('Task operation synced', { taskId: syncData.taskId, operation: syncData.operation });
+        logger.info('Task operation synced', {
+          taskId: syncData.taskId,
+          operation: syncData.operation,
+        });
       } catch (error) {
         logger.error('Sync task operation error:', { error, syncData });
 
@@ -1009,7 +1094,7 @@ export class TaskDependencyManager extends EventEmitter {
   private async syncTaskOperation(syncData: TaskSyncData): Promise<void> {
     // 這裡應該發送到服務器
     // 簡化實現：模擬API調用
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // 處理衝突檢測
     await this.handleSyncConflict(syncData);
@@ -1035,25 +1120,33 @@ export class TaskDependencyManager extends EventEmitter {
           operation: 'UPDATE',
           taskData: localTask,
           version: localTask.version,
-          checksum: this.calculateTaskChecksum(localTask)
+          checksum: this.calculateTaskChecksum(localTask),
         },
         remoteVersion: syncData,
         conflictType: 'VERSION_MISMATCH',
-        resolution: 'REMOTE_WINS' // 默認策略
+        resolution: 'REMOTE_WINS', // 默認策略
       };
 
       this.syncConflicts.push(conflict);
       this.emit('syncConflict', conflict);
 
-      logger.warn('Sync conflict detected', { taskId: syncData.taskId, conflict });
+      logger.warn('Sync conflict detected', {
+        taskId: syncData.taskId,
+        conflict,
+      });
     }
   }
 
   /**
    * 解決同步衝突
    */
-  async resolveSyncConflict(conflictId: string, resolution: SyncConflict['resolution']): Promise<void> {
-    const conflictIndex = this.syncConflicts.findIndex(c => c.taskId === conflictId);
+  async resolveSyncConflict(
+    conflictId: string,
+    resolution: SyncConflict['resolution']
+  ): Promise<void> {
+    const conflictIndex = this.syncConflicts.findIndex(
+      (c) => c.taskId === conflictId
+    );
     if (conflictIndex === -1) {
       return;
     }
@@ -1127,7 +1220,8 @@ export class TaskDependencyManager extends EventEmitter {
       Object.assign(mergedTask, remoteTask);
     }
 
-    mergedTask.version = Math.max(localTask.version, conflict.remoteVersion.version) + 1;
+    mergedTask.version =
+      Math.max(localTask.version, conflict.remoteVersion.version) + 1;
     mergedTask.lastSyncTime = Date.now();
     mergedTask.isDirty = false;
 
@@ -1178,7 +1272,7 @@ export class TaskDependencyManager extends EventEmitter {
    */
   private async notifySyncListeners(): Promise<void> {
     const status = await this.getSyncStatus();
-    this.syncListeners.forEach(listener => {
+    this.syncListeners.forEach((listener) => {
       try {
         listener(status);
       } catch (error) {
@@ -1201,7 +1295,7 @@ export class TaskDependencyManager extends EventEmitter {
       pendingSyncs: this.pendingSyncs.length,
       failedSyncs: 0, // 可以從離線同步管理器獲取
       syncProgress: 0,
-      connectedDevices: Array.from(this.connectedDevices.values())
+      connectedDevices: Array.from(this.connectedDevices.values()),
     };
   }
 
@@ -1245,7 +1339,7 @@ export class TaskDependencyManager extends EventEmitter {
     logger.info('Manual sync completed', {
       success: successCount,
       failed: failedCount,
-      duration: Date.now() - startTime
+      duration: Date.now() - startTime,
     });
 
     return { success: successCount, failed: failedCount };
@@ -1257,9 +1351,9 @@ export class TaskDependencyManager extends EventEmitter {
   async cleanupSyncData(): Promise<void> {
     try {
       // 清理過期的同步操作
-      const cutoffTime = Date.now() - (7 * 24 * 60 * 60 * 1000); // 7天前
+      const cutoffTime = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7天前
       const keys = await StorageManager.getAllKeys();
-      const syncKeys = keys.filter(key => key.startsWith('sync_'));
+      const syncKeys = keys.filter((key) => key.startsWith('sync_'));
 
       for (const key of syncKeys) {
         const syncData = await StorageManager.get<TaskSyncData>(key);
@@ -1322,7 +1416,10 @@ export class TaskDependencyManager extends EventEmitter {
     const tempTask = this.tasks.get(taskId);
     if (!tempTask) return false;
 
-    tempTask.dependencies.push({ taskId: dependentTaskId, type: DependencyType.REQUIRES });
+    tempTask.dependencies.push({
+      taskId: dependentTaskId,
+      type: DependencyType.REQUIRES,
+    });
 
     try {
       this.validateDependencies(tempTask);
@@ -1340,15 +1437,17 @@ export class TaskDependencyManager extends EventEmitter {
    */
   private updateDependents(task: Task): void {
     // 清除舊的依賴關係
-    task.dependencies.forEach(dep => {
+    task.dependencies.forEach((dep) => {
       const dependentTask = this.tasks.get(dep.taskId);
       if (dependentTask) {
-        dependentTask.dependents = dependentTask.dependents.filter(id => id !== task.id);
+        dependentTask.dependents = dependentTask.dependents.filter(
+          (id) => id !== task.id
+        );
       }
     });
 
     // 建立新的依賴關係
-    task.dependencies.forEach(dep => {
+    task.dependencies.forEach((dep) => {
       const dependentTask = this.tasks.get(dep.taskId);
       if (dependentTask && !dependentTask.dependents.includes(task.id)) {
         dependentTask.dependents.push(task.id);
@@ -1360,7 +1459,10 @@ export class TaskDependencyManager extends EventEmitter {
    * 更新任務狀態
    */
   private updateTaskStatus(task: Task): void {
-    if (task.status === TaskStatus.PENDING || task.status === TaskStatus.BLOCKED) {
+    if (
+      task.status === TaskStatus.PENDING ||
+      task.status === TaskStatus.BLOCKED
+    ) {
       if (this.isTaskReady(task)) {
         task.status = TaskStatus.READY;
       } else {
@@ -1373,7 +1475,10 @@ export class TaskDependencyManager extends EventEmitter {
    * 添加到隊列
    */
   private addToQueue(task: Task): void {
-    if (task.status === TaskStatus.READY && !this.taskQueue.find(t => t.id === task.id)) {
+    if (
+      task.status === TaskStatus.READY &&
+      !this.taskQueue.find((t) => t.id === task.id)
+    ) {
       this.taskQueue.push(task);
       this.sortQueue();
     }
@@ -1383,7 +1488,7 @@ export class TaskDependencyManager extends EventEmitter {
    * 更新隊列
    */
   private updateQueue(): void {
-    this.taskQueue = this.taskQueue.filter(task => {
+    this.taskQueue = this.taskQueue.filter((task) => {
       this.updateTaskStatus(task);
       return task.status === TaskStatus.READY;
     });
@@ -1400,10 +1505,11 @@ export class TaskDependencyManager extends EventEmitter {
         [TaskPriority.CRITICAL]: 4,
         [TaskPriority.HIGH]: 3,
         [TaskPriority.NORMAL]: 2,
-        [TaskPriority.LOW]: 1
+        [TaskPriority.LOW]: 1,
       };
 
-      const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
+      const priorityDiff =
+        priorityOrder[b.priority] - priorityOrder[a.priority];
       if (priorityDiff !== 0) return priorityDiff;
 
       // 同優先級按創建時間排序
@@ -1415,11 +1521,13 @@ export class TaskDependencyManager extends EventEmitter {
    * 啟動準備就緒的任務
    */
   private async startReadyTasks(): Promise<void> {
-    const readyTasks = this.taskQueue.filter(task =>
-      this.isTaskReady(task) && this.runningTasks.size < this.config.maxConcurrentTasks
+    const readyTasks = this.taskQueue.filter(
+      (task) =>
+        this.isTaskReady(task) &&
+        this.runningTasks.size < this.config.maxConcurrentTasks
     );
 
-    const executionPromises = readyTasks.map(task => this.executeTask(task));
+    const executionPromises = readyTasks.map((task) => this.executeTask(task));
     await Promise.all(executionPromises);
   }
 
@@ -1435,7 +1543,7 @@ export class TaskDependencyManager extends EventEmitter {
     }
 
     // 從隊列中移除
-    this.taskQueue = this.taskQueue.filter(t => t.id !== task.id);
+    this.taskQueue = this.taskQueue.filter((t) => t.id !== task.id);
     this.runningTasks.add(task.id);
 
     task.status = TaskStatus.RUNNING;
@@ -1458,38 +1566,39 @@ export class TaskDependencyManager extends EventEmitter {
         executionPromise,
         timeoutPromise.then(() => {
           throw new Error('Task execution timeout');
-        })
+        }),
       ]);
 
       // 任務成功完成
       progressTracker.complete();
       task.status = TaskStatus.COMPLETED;
       task.completedAt = new Date();
-      task.actualDuration = task.completedAt.getTime() - task.startedAt.getTime();
+      task.actualDuration =
+        task.completedAt.getTime() - task.startedAt.getTime();
 
       const taskResult: TaskResult = {
         taskId: task.id,
         success: true,
         data: result,
         duration: task.actualDuration,
-        timestamp: task.completedAt
+        timestamp: task.completedAt,
       };
 
       this.completedTasks.set(task.id, taskResult);
       this.emit('taskCompleted', { taskId: task.id, result: taskResult });
 
       // 更新依賴此任務的任務狀態
-      task.dependents.forEach(dependentId => {
+      task.dependents.forEach((dependentId) => {
         const dependentTask = this.tasks.get(dependentId);
         if (dependentTask) {
           this.updateTaskStatus(dependentTask);
           this.addToQueue(dependentTask);
         }
       });
-
     } catch (error) {
       // 任務執行失敗
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
       progressTracker.fail(errorMessage);
       task.error = errorMessage;
       task.failedAt = new Date();
@@ -1499,7 +1608,9 @@ export class TaskDependencyManager extends EventEmitter {
         task.retryCount++;
         task.status = TaskStatus.PENDING;
         this.addToQueue(task);
-        logger.warn(`[Task Manager] 任務 ${task.id} 執行失敗，將重試 (${task.retryCount}/${task.maxRetries})`);
+        logger.warn(
+          `[Task Manager] 任務 ${task.id} 執行失敗，將重試 (${task.retryCount}/${task.maxRetries})`
+        );
       } else {
         // 任務最終失敗
         task.status = TaskStatus.FAILED;
@@ -1518,13 +1629,13 @@ export class TaskDependencyManager extends EventEmitter {
     const nodes = new Map<string, DependencyNode>();
 
     // 初始化節點
-    this.tasks.forEach(task => {
+    this.tasks.forEach((task) => {
       nodes.set(task.id, {
         task,
         inDegree: task.dependencies.length,
         outDegree: task.dependents.length,
         visited: false,
-        inStack: false
+        inStack: false,
       });
     });
 
@@ -1562,7 +1673,7 @@ export class TaskDependencyManager extends EventEmitter {
    * 延遲函數
    */
   private delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   // ==================== 事件系統 ====================
@@ -1593,7 +1704,7 @@ export class TaskDependencyManager extends EventEmitter {
   private emit(event: string, data: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach(listener => {
+      listeners.forEach((listener) => {
         try {
           listener(data);
         } catch (error) {
@@ -1618,25 +1729,42 @@ export class TaskDependencyManager extends EventEmitter {
     blockedTasks: number;
     averageExecutionTime: number;
     successRate: number;
-    } {
+  } {
     const tasks = Array.from(this.tasks.values());
     const completedResults = Array.from(this.completedTasks.values());
 
     const totalTasks = tasks.length;
-    const pendingTasks = tasks.filter(t => t.status === TaskStatus.PENDING).length;
-    const runningTasks = tasks.filter(t => t.status === TaskStatus.RUNNING).length;
-    const completedTasks = tasks.filter(t => t.status === TaskStatus.COMPLETED).length;
-    const failedTasks = tasks.filter(t => t.status === TaskStatus.FAILED).length;
-    const cancelledTasks = tasks.filter(t => t.status === TaskStatus.CANCELLED).length;
-    const blockedTasks = tasks.filter(t => t.status === TaskStatus.BLOCKED).length;
+    const pendingTasks = tasks.filter(
+      (t) => t.status === TaskStatus.PENDING
+    ).length;
+    const runningTasks = tasks.filter(
+      (t) => t.status === TaskStatus.RUNNING
+    ).length;
+    const completedTasks = tasks.filter(
+      (t) => t.status === TaskStatus.COMPLETED
+    ).length;
+    const failedTasks = tasks.filter(
+      (t) => t.status === TaskStatus.FAILED
+    ).length;
+    const cancelledTasks = tasks.filter(
+      (t) => t.status === TaskStatus.CANCELLED
+    ).length;
+    const blockedTasks = tasks.filter(
+      (t) => t.status === TaskStatus.BLOCKED
+    ).length;
 
-    const averageExecutionTime = completedResults.length > 0
-      ? completedResults.reduce((sum, result) => sum + result.duration, 0) / completedResults.length
-      : 0;
+    const averageExecutionTime =
+      completedResults.length > 0
+        ? completedResults.reduce((sum, result) => sum + result.duration, 0) /
+          completedResults.length
+        : 0;
 
-    const successRate = completedResults.length > 0
-      ? (completedResults.filter(r => r.success).length / completedResults.length) * 100
-      : 0;
+    const successRate =
+      completedResults.length > 0
+        ? (completedResults.filter((r) => r.success).length /
+            completedResults.length) *
+          100
+        : 0;
 
     return {
       totalTasks,
@@ -1647,7 +1775,7 @@ export class TaskDependencyManager extends EventEmitter {
       cancelledTasks,
       blockedTasks,
       averageExecutionTime,
-      successRate
+      successRate,
     };
   }
 
@@ -1655,23 +1783,28 @@ export class TaskDependencyManager extends EventEmitter {
    * 獲取依賴圖
    */
   getDependencyGraph(): {
-    nodes: { id: string; name: string; status: TaskStatus; priority: TaskPriority }[];
+    nodes: {
+      id: string;
+      name: string;
+      status: TaskStatus;
+      priority: TaskPriority;
+    }[];
     edges: { from: string; to: string; type: DependencyType }[];
-    } {
-    const nodes = Array.from(this.tasks.values()).map(task => ({
+  } {
+    const nodes = Array.from(this.tasks.values()).map((task) => ({
       id: task.id,
       name: task.name,
       status: task.status,
-      priority: task.priority
+      priority: task.priority,
     }));
 
     const edges: { from: string; to: string; type: DependencyType }[] = [];
-    this.tasks.forEach(task => {
-      task.dependencies.forEach(dep => {
+    this.tasks.forEach((task) => {
+      task.dependencies.forEach((dep) => {
         edges.push({
           from: dep.taskId,
           to: task.id,
-          type: dep.type
+          type: dep.type,
         });
       });
     });
@@ -1707,7 +1840,10 @@ export class TaskDependencyManager extends EventEmitter {
    * 加密任務數據
    */
   private async encryptTaskData(task: Task): Promise<EncryptedData | null> {
-    if (!this.encryptionConfig.enabled || !this.encryptionConfig.encryptTaskData) {
+    if (
+      !this.encryptionConfig.enabled ||
+      !this.encryptionConfig.encryptTaskData
+    ) {
       return null;
     }
 
@@ -1728,7 +1864,9 @@ export class TaskDependencyManager extends EventEmitter {
   /**
    * 解密任務數據
    */
-  private async decryptTaskData(encryptedData: EncryptedData): Promise<Task | null> {
+  private async decryptTaskData(
+    encryptedData: EncryptedData
+  ): Promise<Task | null> {
     if (!this.encryptionConfig.enabled) {
       return null;
     }
@@ -1749,8 +1887,13 @@ export class TaskDependencyManager extends EventEmitter {
   /**
    * 加密同步數據
    */
-  private async encryptSyncData(syncData: TaskSyncData): Promise<EncryptedData | null> {
-    if (!this.encryptionConfig.enabled || !this.encryptionConfig.encryptSyncData) {
+  private async encryptSyncData(
+    syncData: TaskSyncData
+  ): Promise<EncryptedData | null> {
+    if (
+      !this.encryptionConfig.enabled ||
+      !this.encryptionConfig.encryptSyncData
+    ) {
       return null;
     }
 
@@ -1771,7 +1914,9 @@ export class TaskDependencyManager extends EventEmitter {
   /**
    * 解密同步數據
    */
-  private async decryptSyncData(encryptedData: EncryptedData): Promise<TaskSyncData | null> {
+  private async decryptSyncData(
+    encryptedData: EncryptedData
+  ): Promise<TaskSyncData | null> {
     if (!this.encryptionConfig.enabled) {
       return null;
     }
@@ -1798,7 +1943,10 @@ export class TaskDependencyManager extends EventEmitter {
     // 如果啟用密鑰輪換，啟動定時器
     if (this.encryptionConfig.keyRotationEnabled && !this.keyRotationInterval) {
       this.startKeyRotation();
-    } else if (!this.encryptionConfig.keyRotationEnabled && this.keyRotationInterval) {
+    } else if (
+      !this.encryptionConfig.keyRotationEnabled &&
+      this.keyRotationInterval
+    ) {
       this.stopKeyRotation();
     }
 
@@ -1829,7 +1977,7 @@ export class TaskDependencyManager extends EventEmitter {
       encryptionErrors: 0,
       decryptionErrors: 0,
       lastEncryptionTime: 0,
-      lastDecryptionTime: 0
+      lastDecryptionTime: 0,
     };
     logger.info('Encryption stats reset');
   }
@@ -1850,7 +1998,9 @@ export class TaskDependencyManager extends EventEmitter {
       }
     }, this.encryptionConfig.keyRotationInterval);
 
-    logger.info('Key rotation started', { interval: this.encryptionConfig.keyRotationInterval });
+    logger.info('Key rotation started', {
+      interval: this.encryptionConfig.keyRotationInterval,
+    });
   }
 
   /**
@@ -1890,7 +2040,7 @@ export class TaskDependencyManager extends EventEmitter {
 
       logger.info('Key rotation completed', {
         newKeyId: newKey.id,
-        reencryptedCount
+        reencryptedCount,
       });
 
       // 發出密鑰輪換事件
@@ -1928,14 +2078,19 @@ export class TaskDependencyManager extends EventEmitter {
       return { success };
     } catch (error) {
       logger.error('Encryption test failed', { error });
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
   /**
    * 清理過期加密數據
    */
-  async cleanupEncryptedData(maxAge: number = 90 * 24 * 60 * 60 * 1000): Promise<number> {
+  async cleanupEncryptedData(
+    maxAge: number = 90 * 24 * 60 * 60 * 1000
+  ): Promise<number> {
     try {
       const cutoffTime = Date.now() - maxAge;
       let cleanedCount = 0;

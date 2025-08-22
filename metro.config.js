@@ -6,7 +6,7 @@ const config = getDefaultConfig(__dirname);
 // 優化配置
 module.exports = {
   ...config,
-  
+
   // 解析器配置
   resolver: {
     ...config.resolver,
@@ -66,8 +66,10 @@ module.exports = {
         return false;
       }
       // 排除開發工具
-      if (module.path.includes('react-native-debugger') || 
-          module.path.includes('flipper')) {
+      if (
+        module.path.includes('react-native-debugger') ||
+        module.path.includes('flipper')
+      ) {
         return false;
       }
       return true;

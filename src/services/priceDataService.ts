@@ -149,8 +149,8 @@ class PriceDataService {
           allowedPaths: ['/t/*', '/product/*'],
           disallowedPaths: ['/cart/*', '/checkout/*', '/account/*'],
           delayBetweenRequests: 2000,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
       },
       {
         name: 'MERCARI',
@@ -162,8 +162,8 @@ class PriceDataService {
           allowedPaths: ['/item/*', '/search/*'],
           disallowedPaths: ['/user/*', '/cart/*', '/checkout/*'],
           delayBetweenRequests: 3000,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
       },
       {
         name: 'EBAY',
@@ -176,8 +176,8 @@ class PriceDataService {
           allowedPaths: ['/itm/*', '/sch/*'],
           disallowedPaths: ['/usr/*', '/cart/*', '/checkout/*'],
           delayBetweenRequests: 1500,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
       },
       {
         name: 'TCGPLAYER',
@@ -190,8 +190,8 @@ class PriceDataService {
           allowedPaths: ['/product/*', '/search/*'],
           disallowedPaths: ['/cart/*', '/checkout/*', '/account/*'],
           delayBetweenRequests: 1000,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
       },
       {
         name: 'CARDMARKET',
@@ -204,8 +204,8 @@ class PriceDataService {
           allowedPaths: ['/en/*', '/de/*', '/fr/*'],
           disallowedPaths: ['/cart/*', '/checkout/*', '/account/*'],
           delayBetweenRequests: 1200,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
       },
       {
         name: 'PRICE_CHARTING',
@@ -217,8 +217,8 @@ class PriceDataService {
           allowedPaths: ['/game/*', '/product/*'],
           disallowedPaths: ['/cart/*', '/checkout/*', '/account/*'],
           delayBetweenRequests: 2500,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
       },
       {
         name: 'PSA',
@@ -230,8 +230,8 @@ class PriceDataService {
           allowedPaths: ['/pop/*', '/cert/*'],
           disallowedPaths: ['/account/*', '/cart/*', '/checkout/*'],
           delayBetweenRequests: 4000,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
       },
       {
         name: 'BGS',
@@ -243,8 +243,8 @@ class PriceDataService {
           allowedPaths: ['/grading/*', '/population/*'],
           disallowedPaths: ['/account/*', '/cart/*', '/checkout/*'],
           delayBetweenRequests: 4000,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
       },
       {
         name: 'CGC',
@@ -256,12 +256,12 @@ class PriceDataService {
           allowedPaths: ['/population/*', '/cert/*'],
           disallowedPaths: ['/account/*', '/cart/*', '/checkout/*'],
           delayBetweenRequests: 4000,
-          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)'
-        }
-      }
+          userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        },
+      },
     ];
 
-    configs.forEach(config => {
+    configs.forEach((config) => {
       this.platformConfigs.set(config.name, config);
     });
   }
@@ -269,21 +269,41 @@ class PriceDataService {
   // 獲取歷史價格數據
   async getHistoricalPrices(
     cardId: string,
-    platforms: PricePlatform[] = ['EBAY', 'TCGPLAYER', 'CARDMARKET', 'PRICE_CHARTING'],
+    platforms: PricePlatform[] = [
+      'EBAY',
+      'TCGPLAYER',
+      'CARDMARKET',
+      'PRICE_CHARTING',
+    ],
     timeRange: { start: string; end: string } = {
       start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(), // 30天前
-      end: new Date().toISOString()
+      end: new Date().toISOString(),
     }
   ): Promise<ApiResponse<HistoricalPriceData[]>> {
     try {
-      const validationResult = validateInput(z.object({
-        cardId: z.string().min(1, '卡牌ID不能為空'),
-        platforms: z.array(z.enum(['SNKR', 'MERCARI', 'EBAY', 'TCGPLAYER', 'CARDMARKET', 'PRICE_CHARTING', 'PSA', 'BGS', 'CGC'])),
-        timeRange: z.object({
-          start: z.string().datetime(),
-          end: z.string().datetime()
-        })
-      }), { cardId, platforms, timeRange });
+      const validationResult = validateInput(
+        z.object({
+          cardId: z.string().min(1, '卡牌ID不能為空'),
+          platforms: z.array(
+            z.enum([
+              'SNKR',
+              'MERCARI',
+              'EBAY',
+              'TCGPLAYER',
+              'CARDMARKET',
+              'PRICE_CHARTING',
+              'PSA',
+              'BGS',
+              'CGC',
+            ])
+          ),
+          timeRange: z.object({
+            start: z.string().datetime(),
+            end: z.string().datetime(),
+          }),
+        }),
+        { cardId, platforms, timeRange }
+      );
 
       if (!validationResult.isValid) {
         throw new Error(validationResult.errorMessage || '參數驗證失敗');
@@ -295,53 +315,81 @@ class PriceDataService {
       );
 
       const responseValidation = validateApiResponse(
-        z.array(z.object({
-          cardId: z.string(),
-          cardName: z.string(),
-          platform: z.enum(['SNKR', 'MERCARI', 'EBAY', 'TCGPLAYER', 'CARDMARKET', 'PRICE_CHARTING', 'PSA', 'BGS', 'CGC']),
-          priceHistory: z.array(z.object({
-            platform: z.enum(['SNKR', 'MERCARI', 'EBAY', 'TCGPLAYER', 'CARDMARKET', 'PRICE_CHARTING', 'PSA', 'BGS', 'CGC']),
-            price: z.number().positive(),
-            currency: z.string(),
-            date: z.string(),
-            condition: z.string().optional(),
-            grade: z.string().optional(),
-            source: z.enum(['api', 'scraper']),
-            confidence: z.number().min(0).max(1),
-            metadata: z.object({
-              listingId: z.string().optional(),
-              seller: z.string().optional(),
-              location: z.string().optional(),
-              shipping: z.number().optional(),
-              auction: z.boolean().optional(),
-              buyNow: z.boolean().optional()
-            }).optional()
-          })),
-          statistics: z.object({
-            averagePrice: z.number(),
-            medianPrice: z.number(),
-            minPrice: z.number(),
-            maxPrice: z.number(),
-            priceVolatility: z.number(),
-            totalListings: z.number(),
-            lastUpdated: z.string()
-          }),
-          trends: z.object({
-            direction: z.enum(['rising', 'falling', 'stable']),
-            changePercentage: z.number(),
-            changePeriod: z.string()
+        z.array(
+          z.object({
+            cardId: z.string(),
+            cardName: z.string(),
+            platform: z.enum([
+              'SNKR',
+              'MERCARI',
+              'EBAY',
+              'TCGPLAYER',
+              'CARDMARKET',
+              'PRICE_CHARTING',
+              'PSA',
+              'BGS',
+              'CGC',
+            ]),
+            priceHistory: z.array(
+              z.object({
+                platform: z.enum([
+                  'SNKR',
+                  'MERCARI',
+                  'EBAY',
+                  'TCGPLAYER',
+                  'CARDMARKET',
+                  'PRICE_CHARTING',
+                  'PSA',
+                  'BGS',
+                  'CGC',
+                ]),
+                price: z.number().positive(),
+                currency: z.string(),
+                date: z.string(),
+                condition: z.string().optional(),
+                grade: z.string().optional(),
+                source: z.enum(['api', 'scraper']),
+                confidence: z.number().min(0).max(1),
+                metadata: z
+                  .object({
+                    listingId: z.string().optional(),
+                    seller: z.string().optional(),
+                    location: z.string().optional(),
+                    shipping: z.number().optional(),
+                    auction: z.boolean().optional(),
+                    buyNow: z.boolean().optional(),
+                  })
+                  .optional(),
+              })
+            ),
+            statistics: z.object({
+              averagePrice: z.number(),
+              medianPrice: z.number(),
+              minPrice: z.number(),
+              maxPrice: z.number(),
+              priceVolatility: z.number(),
+              totalListings: z.number(),
+              lastUpdated: z.string(),
+            }),
+            trends: z.object({
+              direction: z.enum(['rising', 'falling', 'stable']),
+              changePercentage: z.number(),
+              changePeriod: z.string(),
+            }),
           })
-        })),
+        ),
         response.data
       );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '歷史價格數據驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '歷史價格數據驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
       logger.error('❌ Get historical prices error:', { error: error.message });
@@ -355,10 +403,13 @@ class PriceDataService {
     agencies: GradingAgency[] = ['PSA', 'BGS', 'CGC']
   ): Promise<ApiResponse<GradingAgencyData[]>> {
     try {
-      const validationResult = validateInput(z.object({
-        cardId: z.string().min(1, '卡牌ID不能為空'),
-        agencies: z.array(z.enum(['PSA', 'BGS', 'CGC']))
-      }), { cardId, agencies });
+      const validationResult = validateInput(
+        z.object({
+          cardId: z.string().min(1, '卡牌ID不能為空'),
+          agencies: z.array(z.enum(['PSA', 'BGS', 'CGC'])),
+        }),
+        { cardId, agencies }
+      );
 
       if (!validationResult.isValid) {
         throw new Error(validationResult.errorMessage || '參數驗證失敗');
@@ -370,118 +421,168 @@ class PriceDataService {
       );
 
       const responseValidation = validateApiResponse(
-        z.array(z.object({
-          agency: z.enum(['PSA', 'BGS', 'CGC']),
-          cardId: z.string(),
-          cardName: z.string(),
-          distribution: z.object({
-            totalGraded: z.number(),
-            gradeDistribution: z.record(z.string(), z.number()),
-            populationReport: z.record(z.string(), z.object({
-              count: z.number(),
-              percentage: z.number(),
-              lastUpdated: z.string()
-            })),
-            recentGrades: z.array(z.object({
-              date: z.string(),
-              grade: z.string(),
-              count: z.number()
-            }))
-          }),
-          marketImpact: z.object({
-            averagePriceByGrade: z.record(z.string(), z.number()),
-            premiumByGrade: z.record(z.string(), z.number())
-          }),
-          lastUpdated: z.string()
-        })),
+        z.array(
+          z.object({
+            agency: z.enum(['PSA', 'BGS', 'CGC']),
+            cardId: z.string(),
+            cardName: z.string(),
+            distribution: z.object({
+              totalGraded: z.number(),
+              gradeDistribution: z.record(z.string(), z.number()),
+              populationReport: z.record(
+                z.string(),
+                z.object({
+                  count: z.number(),
+                  percentage: z.number(),
+                  lastUpdated: z.string(),
+                })
+              ),
+              recentGrades: z.array(
+                z.object({
+                  date: z.string(),
+                  grade: z.string(),
+                  count: z.number(),
+                })
+              ),
+            }),
+            marketImpact: z.object({
+              averagePriceByGrade: z.record(z.string(), z.number()),
+              premiumByGrade: z.record(z.string(), z.number()),
+            }),
+            lastUpdated: z.string(),
+          })
+        ),
         response.data
       );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '鑑定機構數據驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '鑑定機構數據驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
-      logger.error('❌ Get grading agency data error:', { error: error.message });
+      logger.error('❌ Get grading agency data error:', {
+        error: error.message,
+      });
       throw error;
     }
   }
 
   // 獲取平台推薦
-  async getRecommendedPlatforms(): Promise<ApiResponse<{
-    pricePlatforms: {
-      platform: PricePlatform;
-      reliability: number; // 0-1
-      dataQuality: number; // 0-1
-      updateFrequency: string;
-      coverage: string;
-      description: string;
-    }[];
-    gradingAgencies: {
-      agency: GradingAgency;
-      reliability: number;
-      dataQuality: number;
-      updateFrequency: string;
-      coverage: string;
-      description: string;
-    }[];
-  }>> {
+  async getRecommendedPlatforms(): Promise<
+    ApiResponse<{
+      pricePlatforms: {
+        platform: PricePlatform;
+        reliability: number; // 0-1
+        dataQuality: number; // 0-1
+        updateFrequency: string;
+        coverage: string;
+        description: string;
+      }[];
+      gradingAgencies: {
+        agency: GradingAgency;
+        reliability: number;
+        dataQuality: number;
+        updateFrequency: string;
+        coverage: string;
+        description: string;
+      }[];
+    }>
+  > {
     try {
-      const response = await apiService.get(API_ENDPOINTS.PRICE_DATA.RECOMMENDED_PLATFORMS);
+      const response = await apiService.get(
+        API_ENDPOINTS.PRICE_DATA.RECOMMENDED_PLATFORMS
+      );
 
       const responseValidation = validateApiResponse(
         z.object({
-          pricePlatforms: z.array(z.object({
-            platform: z.enum(['SNKR', 'MERCARI', 'EBAY', 'TCGPLAYER', 'CARDMARKET', 'PRICE_CHARTING', 'PSA', 'BGS', 'CGC']),
-            reliability: z.number().min(0).max(1),
-            dataQuality: z.number().min(0).max(1),
-            updateFrequency: z.string(),
-            coverage: z.string(),
-            description: z.string()
-          })),
-          gradingAgencies: z.array(z.object({
-            agency: z.enum(['PSA', 'BGS', 'CGC']),
-            reliability: z.number().min(0).max(1),
-            dataQuality: z.number().min(0).max(1),
-            updateFrequency: z.string(),
-            coverage: z.string(),
-            description: z.string()
-          }))
+          pricePlatforms: z.array(
+            z.object({
+              platform: z.enum([
+                'SNKR',
+                'MERCARI',
+                'EBAY',
+                'TCGPLAYER',
+                'CARDMARKET',
+                'PRICE_CHARTING',
+                'PSA',
+                'BGS',
+                'CGC',
+              ]),
+              reliability: z.number().min(0).max(1),
+              dataQuality: z.number().min(0).max(1),
+              updateFrequency: z.string(),
+              coverage: z.string(),
+              description: z.string(),
+            })
+          ),
+          gradingAgencies: z.array(
+            z.object({
+              agency: z.enum(['PSA', 'BGS', 'CGC']),
+              reliability: z.number().min(0).max(1),
+              dataQuality: z.number().min(0).max(1),
+              updateFrequency: z.string(),
+              coverage: z.string(),
+              description: z.string(),
+            })
+          ),
         }),
         response.data
       );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '平台推薦數據驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '平台推薦數據驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
-      logger.error('❌ Get recommended platforms error:', { error: error.message });
+      logger.error('❌ Get recommended platforms error:', {
+        error: error.message,
+      });
       throw error;
     }
   }
 
   // 檢查平台狀態
-  async checkPlatformStatus(platforms: PricePlatform[]): Promise<ApiResponse<{
-    [platform: string]: {
-      status: 'online' | 'offline' | 'limited';
-      lastCheck: string;
-      responseTime: number;
-      error?: string;
-    };
-  }>> {
+  async checkPlatformStatus(platforms: PricePlatform[]): Promise<
+    ApiResponse<{
+      [platform: string]: {
+        status: 'online' | 'offline' | 'limited';
+        lastCheck: string;
+        responseTime: number;
+        error?: string;
+      };
+    }>
+  > {
     try {
-      const validationResult = validateInput(z.object({
-        platforms: z.array(z.enum(['SNKR', 'MERCARI', 'EBAY', 'TCGPLAYER', 'CARDMARKET', 'PRICE_CHARTING', 'PSA', 'BGS', 'CGC']))
-      }), { platforms });
+      const validationResult = validateInput(
+        z.object({
+          platforms: z.array(
+            z.enum([
+              'SNKR',
+              'MERCARI',
+              'EBAY',
+              'TCGPLAYER',
+              'CARDMARKET',
+              'PRICE_CHARTING',
+              'PSA',
+              'BGS',
+              'CGC',
+            ])
+          ),
+        }),
+        { platforms }
+      );
 
       if (!validationResult.isValid) {
         throw new Error(validationResult.errorMessage || '平台列表驗證失敗');
@@ -493,22 +594,27 @@ class PriceDataService {
       );
 
       const responseValidation = validateApiResponse(
-        z.record(z.string(), z.object({
-          status: z.enum(['online', 'offline', 'limited']),
-          lastCheck: z.string(),
-          responseTime: z.number(),
-          error: z.string().optional()
-        })),
+        z.record(
+          z.string(),
+          z.object({
+            status: z.enum(['online', 'offline', 'limited']),
+            lastCheck: z.string(),
+            responseTime: z.number(),
+            error: z.string().optional(),
+          })
+        ),
         response.data
       );
 
       if (!responseValidation.isValid) {
-        throw new Error(responseValidation.errorMessage || '平台狀態數據驗證失敗');
+        throw new Error(
+          responseValidation.errorMessage || '平台狀態數據驗證失敗'
+        );
       }
 
       return {
         ...response,
-        data: responseValidation.data!
+        data: responseValidation.data!,
       };
     } catch (error: any) {
       logger.error('❌ Check platform status error:', { error: error.message });
@@ -528,4 +634,5 @@ class PriceDataService {
 }
 
 // 導出價格數據服務實例
+export { PriceDataService };
 export const priceDataService = new PriceDataService();

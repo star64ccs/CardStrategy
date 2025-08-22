@@ -1,14 +1,19 @@
 const express = require('express');
+const logger = require('../utils/logger');
 const router = express.Router();
 const feedbackService = require('../services/feedbackService');
-const auth = require('../middleware/auth');
-const { validateFeedbackSubmission, validateFeedbackUpdate } = require('../middleware/validation');
+// eslint-disable-next-line no-unused-vars
+const { authenticateToken: protect } = require('../middleware/auth');
+const {
+  validateFeedbackSubmission,
+  validateFeedbackUpdate,
+} = require('../middleware/validation');
 
 /**
  * @swagger
  * /api/feedback:
  *   post:
- *     summary: 提交反饋
+ *     summary: ?�交?��?
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
@@ -50,32 +55,31 @@ const { validateFeedbackSubmission, validateFeedbackUpdate } = require('../middl
  *                   type: string
  *     responses:
  *       201:
- *         description: 反饋提交成功
+ *         description: ?��??�交?��?
  *       400:
- *         description: 請求參數錯誤
+ *         description: 請�??�數?�誤
  *       401:
- *         description: 未授權
- */
-router.post('/', auth, validateFeedbackSubmission, async (req, res) => {
+ *         description: ?��?�? */
+router.post('/', protect, validateFeedbackSubmission, async (req, res) => {
   try {
     const feedbackData = {
       ...req.body,
-      userId: req.user.id
+      userId: req.user.id,
     };
 
     const feedback = await feedbackService.submitFeedback(feedbackData);
 
     res.status(201).json({
       success: true,
-      message: '反饋提交成功',
-      data: feedback
+      message: '?��??�交?��?',
+      data: feedback,
     });
   } catch (error) {
-    logger.error('提交反饋失敗:', error);
+    logger.error('?�交?��?失�?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '提交反饋失敗',
-      code: 'FEEDBACK_SUBMISSION_ERROR'
+      message: error.message || '?�交?��?失�?',
+      code: 'FEEDBACK_SUBMISSION_ERROR',
     });
   }
 });
@@ -84,7 +88,7 @@ router.post('/', auth, validateFeedbackSubmission, async (req, res) => {
  * @swagger
  * /api/feedback:
  *   get:
- *     summary: 獲取反饋列表
+ *     summary: ?��??��??�表
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
@@ -119,12 +123,12 @@ router.post('/', auth, validateFeedbackSubmission, async (req, res) => {
  *           type: string
  *     responses:
  *       200:
- *         description: 成功獲取反饋列表
+ *         description: ?��??��??��??�表
  *       401:
- *         description: 未授權
- */
-router.get('/', auth, async (req, res) => {
+ *         description: ?��?�? */
+router.get('/', protect, async (req, res) => {
   try {
+// eslint-disable-next-line no-unused-vars
     const options = {
       page: parseInt(req.query.page) || 1,
       limit: parseInt(req.query.limit) || 20,
@@ -133,21 +137,22 @@ router.get('/', auth, async (req, res) => {
       feedbackType: req.query.feedbackType,
       category: req.query.category,
       severity: req.query.severity,
-      userId: req.user.role === 'admin' ? undefined : req.user.id
+      userId: req.user.role === 'admin' ? undefined : req.user.id,
     };
 
+// eslint-disable-next-line no-unused-vars
     const result = await feedbackService.getFeedbacks(options);
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('獲取反饋列表失敗:', error);
+    logger.error('?��??��??�表失�?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取反饋列表失敗',
-      code: 'FEEDBACK_LIST_ERROR'
+      message: error.message || '?��??��??�表失�?',
+      code: 'FEEDBACK_LIST_ERROR',
     });
   }
 });
@@ -156,7 +161,7 @@ router.get('/', auth, async (req, res) => {
  * @swagger
  * /api/feedback/{id}:
  *   get:
- *     summary: 獲取反饋詳情
+ *     summary: ?��??��?詳�?
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
@@ -168,34 +173,34 @@ router.get('/', auth, async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: 成功獲取反饋詳情
+ *         description: ?��??��??��?詳�?
  *       404:
- *         description: 反饋不存在
- *       401:
- *         description: 未授權
- */
-router.get('/:id', auth, async (req, res) => {
+ *         description: ?��?不�??? *       401:
+ *         description: ?��?�? */
+router.get('/:id', protect, async (req, res) => {
   try {
-    const feedback = await feedbackService.getFeedbackById(parseInt(req.params.id));
+    const feedback = await feedbackService.getFeedbackById(
+      parseInt(req.params.id)
+    );
 
-    // 檢查權限
+    // 檢查權�?
     if (req.user.role !== 'admin' && feedback.userId !== req.user.id) {
       return res.status(403).json({
         success: false,
-        message: '無權限查看此反饋'
+        message: '?��??�查?�此?��?',
       });
     }
 
     res.json({
       success: true,
-      data: feedback
+      data: feedback,
     });
   } catch (error) {
-    logger.error('獲取反饋詳情失敗:', error);
+    logger.error('?��??��?詳�?失�?:', error);
     res.status(404).json({
       success: false,
-      message: error.message || '反饋不存在',
-      code: 'FEEDBACK_NOT_FOUND'
+      message: error.message || '?��?不�???,
+      code: 'FEEDBACK_NOT_FOUND',
     });
   }
 });
@@ -204,8 +209,7 @@ router.get('/:id', auth, async (req, res) => {
  * @swagger
  * /api/feedback/{id}/status:
  *   put:
- *     summary: 更新反饋狀態
- *     tags: [Feedback]
+ *     summary: ?�新?��??�?? *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -230,13 +234,11 @@ router.get('/:id', auth, async (req, res) => {
  *                 type: string
  *     responses:
  *       200:
- *         description: 狀態更新成功
- *       400:
- *         description: 請求參數錯誤
+ *         description: ?�?�更?��??? *       400:
+ *         description: 請�??�數?�誤
  *       401:
- *         description: 未授權
- */
-router.put('/:id/status', auth, validateFeedbackUpdate, async (req, res) => {
+ *         description: ?��?�? */
+router.put('/:id/status', protect, validateFeedbackUpdate, async (req, res) => {
   try {
     const { status, resolution } = req.body;
     const feedbackId = parseInt(req.params.id);
@@ -250,15 +252,15 @@ router.put('/:id/status', auth, validateFeedbackUpdate, async (req, res) => {
 
     res.json({
       success: true,
-      message: '反饋狀態更新成功',
-      data: feedback
+      message: '?��??�?�更?��???,
+      data: feedback,
     });
   } catch (error) {
-    logger.error('更新反饋狀態失敗:', error);
+    logger.error('?�新?��??�?�失??', error);
     res.status(500).json({
       success: false,
-      message: error.message || '更新反饋狀態失敗',
-      code: 'FEEDBACK_STATUS_UPDATE_ERROR'
+      message: error.message || '?�新?��??�?�失??,
+      code: 'FEEDBACK_STATUS_UPDATE_ERROR',
     });
   }
 });
@@ -267,7 +269,7 @@ router.put('/:id/status', auth, validateFeedbackUpdate, async (req, res) => {
  * @swagger
  * /api/feedback/{id}/assign:
  *   put:
- *     summary: 分配反饋
+ *     summary: ?��??��?
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
@@ -290,18 +292,17 @@ router.put('/:id/status', auth, validateFeedbackUpdate, async (req, res) => {
  *                 type: integer
  *     responses:
  *       200:
- *         description: 反饋分配成功
+ *         description: ?��??��??��?
  *       400:
- *         description: 請求參數錯誤
+ *         description: 請�??�數?�誤
  *       401:
- *         description: 未授權
- */
-router.put('/:id/assign', auth, async (req, res) => {
+ *         description: ?��?�? */
+router.put('/:id/assign', protect, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以分配反饋'
+        message: '?��?管�??�可以�??��?�?,
       });
     }
 
@@ -316,15 +317,15 @@ router.put('/:id/assign', auth, async (req, res) => {
 
     res.json({
       success: true,
-      message: '反饋分配成功',
-      data: feedback
+      message: '?��??��??��?',
+      data: feedback,
     });
   } catch (error) {
-    logger.error('分配反饋失敗:', error);
+    logger.error('?��??��?失�?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '分配反饋失敗',
-      code: 'FEEDBACK_ASSIGNMENT_ERROR'
+      message: error.message || '?��??��?失�?',
+      code: 'FEEDBACK_ASSIGNMENT_ERROR',
     });
   }
 });
@@ -333,7 +334,7 @@ router.put('/:id/assign', auth, async (req, res) => {
  * @swagger
  * /api/feedback/{id}/responses:
  *   post:
- *     summary: 添加反饋回應
+ *     summary: 添�??��??��?
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
@@ -364,17 +365,17 @@ router.put('/:id/assign', auth, async (req, res) => {
  *                 default: false
  *     responses:
  *       201:
- *         description: 回應添加成功
+ *         description: ?��?添�??��?
  *       400:
- *         description: 請求參數錯誤
+ *         description: 請�??�數?�誤
  *       401:
- *         description: 未授權
- */
-router.post('/:id/responses', auth, async (req, res) => {
+ *         description: ?��?�? */
+router.post('/:id/responses', protect, async (req, res) => {
   try {
     const { content, responseType = 'comment', isInternal = false } = req.body;
     const feedbackId = parseInt(req.params.id);
 
+// eslint-disable-next-line no-unused-vars
     const response = await feedbackService.addResponse(
       feedbackId,
       req.user.id,
@@ -385,15 +386,15 @@ router.post('/:id/responses', auth, async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: '回應添加成功',
-      data: response
+      message: '?��?添�??��?',
+      data: response,
     });
   } catch (error) {
-    logger.error('添加反饋回應失敗:', error);
+    logger.error('添�??��??��?失�?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '添加反饋回應失敗',
-      code: 'FEEDBACK_RESPONSE_ERROR'
+      message: error.message || '添�??��??��?失�?',
+      code: 'FEEDBACK_RESPONSE_ERROR',
     });
   }
 });
@@ -402,7 +403,7 @@ router.post('/:id/responses', auth, async (req, res) => {
  * @swagger
  * /api/feedback/stats:
  *   get:
- *     summary: 獲取反饋統計
+ *     summary: ?��??��?統�?
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
@@ -427,38 +428,38 @@ router.post('/:id/responses', auth, async (req, res) => {
  *           type: string
  *     responses:
  *       200:
- *         description: 成功獲取統計數據
+ *         description: ?��??��?統�??��?
  *       401:
- *         description: 未授權
- */
-router.get('/stats', auth, async (req, res) => {
+ *         description: ?��?�? */
+router.get('/stats', protect, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以查看統計數據'
+        message: '?��?管�??�可以查?�統計數??,
       });
     }
 
+// eslint-disable-next-line no-unused-vars
     const options = {
       startDate: req.query.startDate,
       endDate: req.query.endDate,
       feedbackType: req.query.feedbackType,
-      category: req.query.category
+      category: req.query.category,
     };
 
     const stats = await feedbackService.getFeedbackStats(options);
 
     res.json({
       success: true,
-      data: stats
+      data: stats,
     });
   } catch (error) {
-    logger.error('獲取反饋統計失敗:', error);
+    logger.error('?��??��?統�?失�?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取反饋統計失敗',
-      code: 'FEEDBACK_STATS_ERROR'
+      message: error.message || '?��??��?統�?失�?',
+      code: 'FEEDBACK_STATS_ERROR',
     });
   }
 });
@@ -467,22 +468,19 @@ router.get('/stats', auth, async (req, res) => {
  * @swagger
  * /api/feedback/suggestions:
  *   get:
- *     summary: 獲取改進建議
- *     tags: [Feedback]
+ *     summary: ?��??�進建�? *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: 成功獲取改進建議
- *       401:
- *         description: 未授權
- */
-router.get('/suggestions', auth, async (req, res) => {
+ *         description: ?��??��??�進建�? *       401:
+ *         description: ?��?�? */
+router.get('/suggestions', protect, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以查看改進建議'
+        message: '?��?管�??�可以查?�改?�建�?,
       });
     }
 
@@ -490,14 +488,14 @@ router.get('/suggestions', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: suggestions
+      data: suggestions,
     });
   } catch (error) {
-    logger.error('獲取改進建議失敗:', error);
+    logger.error('?��??�進建議失??', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取改進建議失敗',
-      code: 'FEEDBACK_SUGGESTIONS_ERROR'
+      message: error.message || '?��??�進建議失??,
+      code: 'FEEDBACK_SUGGESTIONS_ERROR',
     });
   }
 });

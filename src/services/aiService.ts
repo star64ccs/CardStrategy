@@ -4,7 +4,14 @@ import { errorHandler, withErrorHandling } from '@/utils/errorHandler';
 
 // AI 服務配置
 export interface AIConfig {
-  provider: 'openai' | 'gemini' | 'huggingface' | 'cohere' | 'replicate' | 'ollama' | 'local';
+  provider:
+    | 'openai'
+    | 'gemini'
+    | 'huggingface'
+    | 'cohere'
+    | 'replicate'
+    | 'ollama'
+    | 'local';
   apiKey?: string;
   apiUrl?: string;
   model?: string;
@@ -50,7 +57,7 @@ class AIService {
         apiUrl: 'https://api-inference.huggingface.co/models/',
         model: 'microsoft/DialoGPT-medium',
         maxTokens: 1000,
-        temperature: 0.7
+        temperature: 0.7,
       },
 
       // 備用配置 - Cohere (免費額度)
@@ -60,7 +67,7 @@ class AIService {
         apiUrl: 'https://api.cohere.ai/v1/generate',
         model: 'command',
         maxTokens: 1000,
-        temperature: 0.7
+        temperature: 0.7,
       },
 
       // 備用配置 - Replicate (免費額度)
@@ -70,7 +77,7 @@ class AIService {
         apiUrl: 'https://api.replicate.com/v1/predictions',
         model: 'meta/llama-2-70b-chat',
         maxTokens: 1000,
-        temperature: 0.7
+        temperature: 0.7,
       },
 
       // 本地配置 - Ollama (完全免費)
@@ -79,8 +86,8 @@ class AIService {
         apiUrl: 'http://localhost:11434/api/generate',
         model: 'llama2',
         maxTokens: 1000,
-        temperature: 0.7
-      }
+        temperature: 0.7,
+      },
     ];
   }
 
@@ -114,7 +121,10 @@ class AIService {
   }
 
   // 智能搜索
-  async intelligentSearch(query: string, filters: any = {}): Promise<AIResponse> {
+  async intelligentSearch(
+    query: string,
+    filters: any = {}
+  ): Promise<AIResponse> {
     const prompt = `智能搜索卡片：
 搜索查詢: ${query}
 過濾條件: ${JSON.stringify(filters)}
@@ -124,7 +134,10 @@ class AIService {
   }
 
   // 自然語言處理
-  async processNaturalLanguage(text: string, task: string): Promise<AIResponse> {
+  async processNaturalLanguage(
+    text: string,
+    task: string
+  ): Promise<AIResponse> {
     const prompt = `自然語言處理任務：
 文本: ${text}
 任務類型: ${task}
@@ -134,7 +147,10 @@ class AIService {
   }
 
   // 智能通知生成
-  async generateSmartNotifications(userId: string, context: any): Promise<AIResponse> {
+  async generateSmartNotifications(
+    userId: string,
+    context: any
+  ): Promise<AIResponse> {
     const prompt = `生成智能通知：
 用戶ID: ${userId}
 上下文: ${JSON.stringify(context)}
@@ -144,7 +160,11 @@ class AIService {
   }
 
   // 聊天機器人
-  async chatBot(message: string, userId: string, context: any = {}): Promise<AIResponse> {
+  async chatBot(
+    message: string,
+    userId: string,
+    context: any = {}
+  ): Promise<AIResponse> {
     const prompt = `聊天機器人對話：
 用戶消息: ${message}
 用戶ID: ${userId}
@@ -162,7 +182,10 @@ class AIService {
       const provider = this.fallbackProviders[attempt];
 
       try {
-        logger.info(`嘗試使用 AI 提供商: ${provider.provider}`, { taskType, attempt });
+        logger.info(`嘗試使用 AI 提供商: ${provider.provider}`, {
+          taskType,
+          attempt,
+        });
 
         const response = await this.callProvider(provider, prompt, taskType);
 
@@ -171,7 +194,11 @@ class AIService {
           return response;
         }
       } catch (error) {
-        logger.warn(`AI 提供商 ${provider.provider} 調用失敗`, { error, taskType, attempt });
+        logger.warn(`AI 提供商 ${provider.provider} 調用失敗`, {
+          error,
+          taskType,
+          attempt,
+        });
 
         // 如果是最後一次嘗試，記錄錯誤
         if (attempt === maxRetries - 1) {
@@ -185,7 +212,11 @@ class AIService {
   }
 
   // 調用具體的 AI 提供商
-  private async callProvider(provider: AIConfig, prompt: string, taskType: string): Promise<AIResponse> {
+  private async callProvider(
+    provider: AIConfig,
+    prompt: string,
+    taskType: string
+  ): Promise<AIResponse> {
     switch (provider.provider) {
       case 'openai':
         return this.callOpenAI(provider, prompt, taskType);
@@ -205,7 +236,11 @@ class AIService {
   }
 
   // OpenAI 調用
-  private async callOpenAI(provider: AIConfig, prompt: string, taskType: string): Promise<AIResponse> {
+  private async callOpenAI(
+    provider: AIConfig,
+    prompt: string,
+    taskType: string
+  ): Promise<AIResponse> {
     if (!provider.apiKey) {
       throw new Error('OpenAI API 密鑰未配置');
     }
@@ -213,15 +248,15 @@ class AIService {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${provider.apiKey}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${provider.apiKey}`,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         model: provider.model || 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: prompt }],
         max_tokens: provider.maxTokens || 1000,
-        temperature: provider.temperature || 0.7
-      })
+        temperature: provider.temperature || 0.7,
+      }),
     });
 
     if (!response.ok) {
@@ -235,29 +270,36 @@ class AIService {
       data: data.choices[0].message.content,
       provider: 'openai',
       model: provider.model || 'gpt-3.5-turbo',
-      usage: data.usage
+      usage: data.usage,
     };
   }
 
   // Gemini 調用
-  private async callGemini(provider: AIConfig, prompt: string, taskType: string): Promise<AIResponse> {
+  private async callGemini(
+    provider: AIConfig,
+    prompt: string,
+    taskType: string
+  ): Promise<AIResponse> {
     if (!provider.apiKey) {
       throw new Error('Gemini API 密鑰未配置');
     }
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${provider.model || 'gemini-pro'}:generateContent?key=${provider.apiKey}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: {
-          maxOutputTokens: provider.maxTokens || 1000,
-          temperature: provider.temperature || 0.7
-        }
-      })
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${provider.model || 'gemini-pro'}:generateContent?key=${provider.apiKey}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            maxOutputTokens: provider.maxTokens || 1000,
+            temperature: provider.temperature || 0.7,
+          },
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Gemini API 錯誤: ${response.status}`);
@@ -269,27 +311,31 @@ class AIService {
       success: true,
       data: data.candidates[0].content.parts[0].text,
       provider: 'gemini',
-      model: provider.model || 'gemini-pro'
+      model: provider.model || 'gemini-pro',
     };
   }
 
   // Hugging Face 調用 (免費)
-  private async callHuggingFace(provider: AIConfig, prompt: string, taskType: string): Promise<AIResponse> {
+  private async callHuggingFace(
+    provider: AIConfig,
+    prompt: string,
+    taskType: string
+  ): Promise<AIResponse> {
     const apiUrl = `${provider.apiUrl}${provider.model || 'microsoft/DialoGPT-medium'}`;
 
     const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Authorization': provider.apiKey ? `Bearer ${provider.apiKey}` : '',
-        'Content-Type': 'application/json'
+        Authorization: provider.apiKey ? `Bearer ${provider.apiKey}` : '',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         inputs: prompt,
         parameters: {
           max_length: provider.maxTokens || 1000,
-          temperature: provider.temperature || 0.7
-        }
-      })
+          temperature: provider.temperature || 0.7,
+        },
+      }),
     });
 
     if (!response.ok) {
@@ -302,29 +348,36 @@ class AIService {
       success: true,
       data: Array.isArray(data) ? data[0].generated_text : data.generated_text,
       provider: 'huggingface',
-      model: provider.model || 'microsoft/DialoGPT-medium'
+      model: provider.model || 'microsoft/DialoGPT-medium',
     };
   }
 
   // Cohere 調用 (免費額度)
-  private async callCohere(provider: AIConfig, prompt: string, taskType: string): Promise<AIResponse> {
+  private async callCohere(
+    provider: AIConfig,
+    prompt: string,
+    taskType: string
+  ): Promise<AIResponse> {
     if (!provider.apiKey) {
       throw new Error('Cohere API 密鑰未配置');
     }
 
-    const response = await fetch(provider.apiUrl || 'https://api.cohere.ai/v1/generate', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${provider.apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: provider.model || 'command',
-        prompt,
-        max_tokens: provider.maxTokens || 1000,
-        temperature: provider.temperature || 0.7
-      })
-    });
+    const response = await fetch(
+      provider.apiUrl || 'https://api.cohere.ai/v1/generate',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${provider.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: provider.model || 'command',
+          prompt,
+          max_tokens: provider.maxTokens || 1000,
+          temperature: provider.temperature || 0.7,
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Cohere API 錯誤: ${response.status}`);
@@ -336,31 +389,38 @@ class AIService {
       success: true,
       data: data.generations[0].text,
       provider: 'cohere',
-      model: provider.model || 'command'
+      model: provider.model || 'command',
     };
   }
 
   // Replicate 調用 (免費額度)
-  private async callReplicate(provider: AIConfig, prompt: string, taskType: string): Promise<AIResponse> {
+  private async callReplicate(
+    provider: AIConfig,
+    prompt: string,
+    taskType: string
+  ): Promise<AIResponse> {
     if (!provider.apiKey) {
       throw new Error('Replicate API 密鑰未配置');
     }
 
-    const response = await fetch(provider.apiUrl || 'https://api.replicate.com/v1/predictions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Token ${provider.apiKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        version: provider.model || 'meta/llama-2-70b-chat',
-        input: {
-          prompt,
-          max_tokens: provider.maxTokens || 1000,
-          temperature: provider.temperature || 0.7
-        }
-      })
-    });
+    const response = await fetch(
+      provider.apiUrl || 'https://api.replicate.com/v1/predictions',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Token ${provider.apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          version: provider.model || 'meta/llama-2-70b-chat',
+          input: {
+            prompt,
+            max_tokens: provider.maxTokens || 1000,
+            temperature: provider.temperature || 0.7,
+          },
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Replicate API 錯誤: ${response.status}`);
@@ -375,23 +435,29 @@ class AIService {
       success: true,
       data: result,
       provider: 'replicate',
-      model: provider.model || 'meta/llama-2-70b-chat'
+      model: provider.model || 'meta/llama-2-70b-chat',
     };
   }
 
   // 輪詢 Replicate 結果
-  private async pollReplicateResult(predictionId: string, apiKey: string): Promise<string> {
+  private async pollReplicateResult(
+    predictionId: string,
+    apiKey: string
+  ): Promise<string> {
     const maxAttempts = 30;
     const delay = 2000; // 2秒
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
 
-      const response = await fetch(`https://api.replicate.com/v1/predictions/${predictionId}`, {
-        headers: {
-          'Authorization': `Token ${apiKey}`
+      const response = await fetch(
+        `https://api.replicate.com/v1/predictions/${predictionId}`,
+        {
+          headers: {
+            Authorization: `Token ${apiKey}`,
+          },
         }
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`Replicate 輪詢錯誤: ${response.status}`);
@@ -410,22 +476,29 @@ class AIService {
   }
 
   // Ollama 調用 (本地，完全免費)
-  private async callOllama(provider: AIConfig, prompt: string, taskType: string): Promise<AIResponse> {
-    const response = await fetch(provider.apiUrl || 'http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        model: provider.model || 'llama2',
-        prompt,
-        stream: false,
-        options: {
-          num_predict: provider.maxTokens || 1000,
-          temperature: provider.temperature || 0.7
-        }
-      })
-    });
+  private async callOllama(
+    provider: AIConfig,
+    prompt: string,
+    taskType: string
+  ): Promise<AIResponse> {
+    const response = await fetch(
+      provider.apiUrl || 'http://localhost:11434/api/generate',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: provider.model || 'llama2',
+          prompt,
+          stream: false,
+          options: {
+            num_predict: provider.maxTokens || 1000,
+            temperature: provider.temperature || 0.7,
+          },
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`Ollama API 錯誤: ${response.status}`);
@@ -437,7 +510,7 @@ class AIService {
       success: true,
       data: data.response,
       provider: 'ollama',
-      model: provider.model || 'llama2'
+      model: provider.model || 'llama2',
     };
   }
 
@@ -519,12 +592,15 @@ class AIService {
   }
 
   // 生成智能建議
-  async generateSuggestions(lastMessage: string, context: any = {}): Promise<{ suggestions: string[] }> {
+  async generateSuggestions(
+    lastMessage: string,
+    context: any = {}
+  ): Promise<{ suggestions: string[] }> {
     try {
       const prompt = `基於用戶的最後一條消息："${lastMessage}"，請生成3-5個相關的建議問題。這些問題應該與卡片投資、分析、市場趨勢等相關。請返回JSON格式的建議數組。`;
 
       const response = await this.callAI(prompt, 'suggestion_generation');
-      
+
       // 嘗試解析AI回應中的JSON
       let suggestions: string[] = [];
       try {
@@ -543,7 +619,7 @@ class AIService {
           '這張卡片的市場價格如何',
           '給我一些投資建議',
           '最近的市場趨勢怎麼樣',
-          '這張卡片值得投資嗎'
+          '這張卡片值得投資嗎',
         ];
       }
 
@@ -557,26 +633,28 @@ class AIService {
           '這張卡片的市場價格如何',
           '給我一些投資建議',
           '最近的市場趨勢怎麼樣',
-          '這張卡片值得投資嗎'
-        ]
+          '這張卡片值得投資嗎',
+        ],
       };
     }
   }
 
   // 情感分析
-  async analyzeEmotion(text: string): Promise<{ emotion: string; confidence: number }> {
+  async analyzeEmotion(
+    text: string
+  ): Promise<{ emotion: string; confidence: number }> {
     try {
       const prompt = `分析以下文本的情感傾向，返回JSON格式：{"emotion": "情感類型", "confidence": 0.0-1.0}。文本："${text}"`;
 
       const response = await this.callAI(prompt, 'emotion_analysis');
-      
+
       try {
         const jsonMatch = response.data.match(/\{.*\}/);
         if (jsonMatch) {
           const result = JSON.parse(jsonMatch[0]);
           return {
             emotion: result.emotion || 'neutral',
-            confidence: result.confidence || 0.5
+            confidence: result.confidence || 0.5,
           };
         }
       } catch (parseError) {
@@ -607,7 +685,7 @@ class AIService {
     try {
       const response = await apiService.post('/ai/analyze-image', {
         image: imageBase64,
-        prompt: prompt
+        prompt: prompt,
       });
       return response.data.analysis;
     } catch (error) {
@@ -624,8 +702,8 @@ const aiConfig: AIConfig = {
   apiUrl: 'https://api-inference.huggingface.co/models/',
   model: 'microsoft/DialoGPT-medium',
   maxTokens: 1000,
-  temperature: 0.7
+  temperature: 0.7,
 };
 
+export { AIService };
 export const aiService = new AIService(aiConfig);
-

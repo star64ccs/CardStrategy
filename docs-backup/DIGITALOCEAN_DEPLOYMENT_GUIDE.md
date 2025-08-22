@@ -218,26 +218,28 @@ nano ecosystem.config.js
 
 ```javascript
 module.exports = {
-  apps: [{
-    name: 'cardstrategy',
-    script: 'backend/src/server.js',
-    instances: 'max',
-    exec_mode: 'cluster',
-    env: {
-      NODE_ENV: 'production',
-      PORT: 3000
+  apps: [
+    {
+      name: 'cardstrategy',
+      script: 'backend/src/server.js',
+      instances: 'max',
+      exec_mode: 'cluster',
+      env: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      env_production: {
+        NODE_ENV: 'production',
+        PORT: 3000,
+      },
+      error_file: './logs/err.log',
+      out_file: './logs/out.log',
+      log_file: './logs/combined.log',
+      time: true,
+      max_memory_restart: '1G',
+      node_args: '--max-old-space-size=2048',
     },
-    env_production: {
-      NODE_ENV: 'production',
-      PORT: 3000
-    },
-    error_file: './logs/err.log',
-    out_file: './logs/out.log',
-    log_file: './logs/combined.log',
-    time: true,
-    max_memory_restart: '1G',
-    node_args: '--max-old-space-size=2048'
-  }]
+  ],
 };
 ```
 
@@ -413,6 +415,7 @@ sudo tail -f /var/log/nginx/error.log
 ### 常見問題
 
 #### 1. 端口被佔用
+
 ```bash
 # 檢查端口使用情況
 sudo netstat -tlnp | grep :3000
@@ -422,6 +425,7 @@ sudo kill -9 <PID>
 ```
 
 #### 2. 內存不足
+
 ```bash
 # 檢查內存使用
 free -h
@@ -431,6 +435,7 @@ export NODE_OPTIONS="--max-old-space-size=2048"
 ```
 
 #### 3. 數據庫連接失敗
+
 ```bash
 # 檢查 PostgreSQL 狀態
 sudo systemctl status postgresql
@@ -526,11 +531,13 @@ chmod +x /var/www/cardstrategy/deploy.sh
 恭喜！您的 CardStrategy 高級預測系統已成功部署到 DigitalOcean。
 
 **訪問地址**：
+
 - **主網站**: https://cardstrategyapp.com
 - **API 服務**: https://cardstrategyapp.com/api
 - **健康檢查**: https://cardstrategyapp.com/health
 
 **管理命令**：
+
 - 重啟應用: `pm2 restart cardstrategy`
 - 查看日誌: `pm2 logs cardstrategy`
 - 更新部署: `./deploy.sh`

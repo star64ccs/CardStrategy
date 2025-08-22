@@ -203,7 +203,13 @@ export interface DataProcessingRecord {
 export interface DataRightsRequest {
   id: string;
   userId: string;
-  requestType: 'access' | 'rectification' | 'erasure' | 'portability' | 'restriction' | 'objection';
+  requestType:
+    | 'access'
+    | 'rectification'
+    | 'erasure'
+    | 'portability'
+    | 'restriction'
+    | 'objection';
   description: string;
   status: 'pending' | 'processing' | 'completed' | 'rejected';
   priority: 'low' | 'medium' | 'high' | 'urgent';

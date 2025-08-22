@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,7 +25,9 @@ interface CardPriceChartProps {
   priceChange: number;
   priceChangePercent: number;
   timeRange: '1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL';
-  onTimeRangeChange: (range: '1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL') => void;
+  onTimeRangeChange: (
+    range: '1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL'
+  ) => void;
   onViewDetails?: () => void;
 }
 
@@ -39,7 +41,7 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
   priceChangePercent,
   timeRange,
   onTimeRangeChange,
-  onViewDetails
+  onViewDetails,
 }) => {
   const [selectedPoint, setSelectedPoint] = useState<PriceData | null>(null);
 
@@ -50,7 +52,7 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
     { key: '3M', label: '3月' },
     { key: '6M', label: '6月' },
     { key: '1Y', label: '1年' },
-    { key: 'ALL', label: '全部' }
+    { key: 'ALL', label: '全部' },
   ];
 
   const formatPrice = (price: number) => {
@@ -67,7 +69,7 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
     const dateObj = new Date(date);
     return dateObj.toLocaleDateString('zh-TW', {
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -84,14 +86,14 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
   };
 
   const chartData = {
-    labels: priceData.map(item => formatDate(item.date)),
+    labels: priceData.map((item) => formatDate(item.date)),
     datasets: [
       {
-        data: priceData.map(item => item.price),
+        data: priceData.map((item) => item.price),
         color: (opacity = 1) => `rgba(255, 215, 0, ${opacity})`,
-        strokeWidth: 2
-      }
-    ]
+        strokeWidth: 2,
+      },
+    ],
   };
 
   const chartConfig = {
@@ -102,13 +104,13 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
     color: (opacity = 1) => `rgba(255, 215, 0, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     style: {
-      borderRadius: 16
+      borderRadius: 16,
     },
     propsForDots: {
       r: '4',
       strokeWidth: '2',
-      stroke: theme.colors.gold.primary
-    }
+      stroke: theme.colors.gold.primary,
+    },
   };
 
   return (
@@ -120,23 +122,32 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
             {cardName}
           </Text>
           <View style={styles.priceInfo}>
-            <Text style={styles.currentPrice}>
-              {formatPrice(currentPrice)}
-            </Text>
+            <Text style={styles.currentPrice}>{formatPrice(currentPrice)}</Text>
             <View style={styles.priceChange}>
               <Ionicons
                 name={getPriceChangeIcon()}
                 size={16}
                 color={getPriceChangeColor()}
               />
-              <Text style={[styles.priceChangeText, { color: getPriceChangeColor() }]}>
-                {priceChange > 0 ? '+' : ''}{formatPrice(priceChange)} ({priceChangePercent > 0 ? '+' : ''}{priceChangePercent.toFixed(2)}%)
+              <Text
+                style={[
+                  styles.priceChangeText,
+                  { color: getPriceChangeColor() },
+                ]}
+              >
+                {priceChange > 0 ? '+' : ''}
+                {formatPrice(priceChange)} ({priceChangePercent > 0 ? '+' : ''}
+                {priceChangePercent.toFixed(2)}%)
               </Text>
             </View>
           </View>
         </View>
         <TouchableOpacity style={styles.detailsButton} onPress={onViewDetails}>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.gold.primary} />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.gold.primary}
+          />
         </TouchableOpacity>
       </View>
 
@@ -147,14 +158,14 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
             key={range.key}
             style={[
               styles.timeRangeButton,
-              timeRange === range.key && styles.activeTimeRangeButton
+              timeRange === range.key && styles.activeTimeRangeButton,
             ]}
             onPress={() => onTimeRangeChange(range.key as any)}
           >
             <Text
               style={[
                 styles.timeRangeText,
-                timeRange === range.key && styles.activeTimeRangeText
+                timeRange === range.key && styles.activeTimeRangeText,
               ]}
             >
               {range.label}
@@ -212,19 +223,22 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>最高價</Text>
           <Text style={styles.statValue}>
-            {formatPrice(Math.max(...priceData.map(item => item.price)))}
+            {formatPrice(Math.max(...priceData.map((item) => item.price)))}
           </Text>
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>最低價</Text>
           <Text style={styles.statValue}>
-            {formatPrice(Math.min(...priceData.map(item => item.price)))}
+            {formatPrice(Math.min(...priceData.map((item) => item.price)))}
           </Text>
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>平均價</Text>
           <Text style={styles.statValue}>
-            {formatPrice(priceData.reduce((sum, item) => sum + item.price, 0) / priceData.length)}
+            {formatPrice(
+              priceData.reduce((sum, item) => sum + item.price, 0) /
+                priceData.length
+            )}
           </Text>
         </View>
       </View>
@@ -234,120 +248,120 @@ export const CardPriceChart: React.FC<CardPriceChartProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   cardInfo: {
-    flex: 1
+    flex: 1,
   },
   cardName: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   priceInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   currentPrice: {
     fontSize: theme.typography.sizes.xl,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.gold.primary,
-    marginRight: theme.spacing.sm
+    marginRight: theme.spacing.sm,
   },
   priceChange: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   priceChangeText: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.medium,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   detailsButton: {
     padding: theme.spacing.xs,
     borderRadius: theme.borderRadius.sm,
-    backgroundColor: theme.colors.background.secondary
+    backgroundColor: theme.colors.background.secondary,
   },
   timeRangeContainer: {
     flexDirection: 'row',
     marginBottom: theme.spacing.md,
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.xs
+    padding: theme.spacing.xs,
   },
   timeRangeButton: {
     flex: 1,
     paddingVertical: theme.spacing.xs,
     paddingHorizontal: theme.spacing.sm,
     borderRadius: theme.borderRadius.sm,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   activeTimeRangeButton: {
-    backgroundColor: theme.colors.gold.primary
+    backgroundColor: theme.colors.gold.primary,
   },
   timeRangeText: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.secondary,
-    fontWeight: theme.typography.weights.medium
+    fontWeight: theme.typography.weights.medium,
   },
   activeTimeRangeText: {
     color: theme.colors.background.primary,
-    fontWeight: theme.typography.weights.bold
+    fontWeight: theme.typography.weights.bold,
   },
   chartContainer: {
     alignItems: 'center',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   chart: {
-    borderRadius: theme.borderRadius.lg
+    borderRadius: theme.borderRadius.lg,
   },
   selectedPointInfo: {
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.md,
     padding: theme.spacing.md,
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   selectedPointHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   selectedPointDate: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   volumeText: {
     fontSize: theme.typography.sizes.xs,
-    color: theme.colors.text.tertiary
+    color: theme.colors.text.tertiary,
   },
   statsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderTopWidth: 1,
     borderTopColor: theme.colors.border.primary,
-    paddingTop: theme.spacing.md
+    paddingTop: theme.spacing.md,
   },
   statItem: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   statLabel: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.tertiary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   statValue: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary
-  }
+    color: theme.colors.text.primary,
+  },
 });

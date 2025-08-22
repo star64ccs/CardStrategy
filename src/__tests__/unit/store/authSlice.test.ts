@@ -1,25 +1,13 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer, {
-  login,
-  loginSuccess,
-  loginFailure,
-  logout,
-  logoutSuccess,
-  logoutFailure,
-  register,
-  registerSuccess,
-  registerFailure,
+  loginUser,
+  registerUser,
+  logoutUser,
   refreshToken,
-  refreshTokenSuccess,
-  refreshTokenFailure,
   getCurrentUser,
-  getCurrentUserSuccess,
-  getCurrentUserFailure,
-  updateProfile,
-  updateProfileSuccess,
-  updateProfileFailure,
+  updateUserProfile,
   clearError,
-  initialState
 } from '@/store/slices/authSlice';
 
 // Mock auth service
@@ -30,8 +18,8 @@ jest.mock('@/services/authService', () => ({
     logout: jest.fn(),
     refreshToken: jest.fn(),
     getCurrentUser: jest.fn(),
-    updateProfile: jest.fn()
-  }))
+    updateProfile: jest.fn(),
+  })),
 }));
 
 describe('Auth Slice', () => {
@@ -40,25 +28,29 @@ describe('Auth Slice', () => {
   beforeEach(() => {
     store = configureStore({
       reducer: {
-        auth: authReducer
-      }
+        auth: authReducer,
+      },
     });
   });
 
   describe('Initial State', () => {
     it('應該返回初始狀態', () => {
       const state = store.getState().auth;
-      expect(state).toEqual(initialState);
+      expect(state.user).toBeNull();
+      expect(state.token).toBeNull();
+      expect(state.isAuthenticated).toBe(false);
+      expect(state.isLoading).toBe(false);
+      expect(state.error).toBeNull();
     });
   });
 
   describe('Login Actions', () => {
-    it('應該處理登錄開始', () => {
+    it('應該處理登錄 pending 狀態', () => {
       const loginData = { email: 'test@example.com', password: 'password123' };
-      store.dispatch(login(loginData));
+      store.dispatch(loginUser.pending('test-request-id', loginData));
 
       const state = store.getState().auth;
-      expect(state.loading).toBe(true);
+      expect(state.isLoading).toBe(true);
       expect(state.error).toBe(null);
     });
 
@@ -66,11 +58,11 @@ describe('Auth Slice', () => {
       const user = {
         id: '1',
         email: 'test@example.com',
-        name: 'Test User'
+        name: 'Test User',
       };
       const tokens = {
         accessToken: 'mock-access-token',
-        refreshToken: 'mock-refresh-token'
+        refreshToken: 'mock-refresh-token',
       };
 
       store.dispatch(loginSuccess({ user, tokens }));
@@ -102,7 +94,7 @@ describe('Auth Slice', () => {
       const registerData = {
         email: 'new@example.com',
         password: 'password123',
-        name: 'New User'
+        name: 'New User',
       };
       store.dispatch(register(registerData));
 
@@ -115,11 +107,11 @@ describe('Auth Slice', () => {
       const user = {
         id: '2',
         email: 'new@example.com',
-        name: 'New User'
+        name: 'New User',
       };
       const tokens = {
         accessToken: 'mock-access-token',
-        refreshToken: 'mock-refresh-token'
+        refreshToken: 'mock-refresh-token',
       };
 
       store.dispatch(registerSuccess({ user, tokens }));
@@ -156,10 +148,12 @@ describe('Auth Slice', () => {
 
     it('應該處理登出成功', () => {
       // 先設置登錄狀態
-      store.dispatch(loginSuccess({
-        user: { id: '1', email: 'test@example.com', name: 'Test User' },
-        tokens: { accessToken: 'token', refreshToken: 'refresh' }
-      }));
+      store.dispatch(
+        loginSuccess({
+          user: { id: '1', email: 'test@example.com', name: 'Test User' },
+          tokens: { accessToken: 'token', refreshToken: 'refresh' },
+        })
+      );
 
       // 然後登出
       store.dispatch(logoutSuccess());
@@ -195,7 +189,7 @@ describe('Auth Slice', () => {
     it('應該處理刷新令牌成功', () => {
       const tokens = {
         accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token'
+        refreshToken: 'new-refresh-token',
       };
 
       store.dispatch(refreshTokenSuccess(tokens));
@@ -234,7 +228,7 @@ describe('Auth Slice', () => {
         id: '1',
         email: 'test@example.com',
         name: 'Test User',
-        avatar: 'avatar-url'
+        avatar: 'avatar-url',
       };
 
       store.dispatch(getCurrentUserSuccess(user));
@@ -264,7 +258,7 @@ describe('Auth Slice', () => {
     it('應該處理更新資料開始', () => {
       const profileData = {
         name: 'Updated Name',
-        avatar: 'new-avatar-url'
+        avatar: 'new-avatar-url',
       };
       store.dispatch(updateProfile(profileData));
 
@@ -278,7 +272,7 @@ describe('Auth Slice', () => {
         id: '1',
         email: 'test@example.com',
         name: 'Updated Name',
-        avatar: 'new-avatar-url'
+        avatar: 'new-avatar-url',
       };
 
       store.dispatch(updateProfileSuccess(user));
@@ -316,7 +310,9 @@ describe('Auth Slice', () => {
   describe('State Transitions', () => {
     it('應該正確處理完整的登錄流程', () => {
       // 開始登錄
-      store.dispatch(login({ email: 'test@example.com', password: 'password123' }));
+      store.dispatch(
+        login({ email: 'test@example.com', password: 'password123' })
+      );
       expect(store.getState().auth.loading).toBe(true);
 
       // 登錄成功
@@ -350,10 +346,12 @@ describe('Auth Slice', () => {
 
     it('應該正確處理登出後的狀態重置', () => {
       // 先登錄
-      store.dispatch(loginSuccess({
-        user: { id: '1', email: 'test@example.com', name: 'Test User' },
-        tokens: { accessToken: 'token', refreshToken: 'refresh' }
-      }));
+      store.dispatch(
+        loginSuccess({
+          user: { id: '1', email: 'test@example.com', name: 'Test User' },
+          tokens: { accessToken: 'token', refreshToken: 'refresh' },
+        })
+      );
 
       // 然後登出
       store.dispatch(logoutSuccess());
@@ -370,10 +368,12 @@ describe('Auth Slice', () => {
   describe('Selectors', () => {
     it('應該正確選擇用戶狀態', () => {
       const user = { id: '1', email: 'test@example.com', name: 'Test User' };
-      store.dispatch(loginSuccess({
-        user,
-        tokens: { accessToken: 'token', refreshToken: 'refresh' }
-      }));
+      store.dispatch(
+        loginSuccess({
+          user,
+          tokens: { accessToken: 'token', refreshToken: 'refresh' },
+        })
+      );
 
       const state = store.getState().auth;
       expect(state.user).toEqual(user);
@@ -381,7 +381,9 @@ describe('Auth Slice', () => {
     });
 
     it('應該正確選擇加載狀態', () => {
-      store.dispatch(login({ email: 'test@example.com', password: 'password123' }));
+      store.dispatch(
+        login({ email: 'test@example.com', password: 'password123' })
+      );
       expect(store.getState().auth.loading).toBe(true);
     });
 

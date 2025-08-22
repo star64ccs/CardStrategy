@@ -6,92 +6,153 @@ import { configureStore } from '@reduxjs/toolkit';
 // 模擬 Module Federation 的動態加載
 const mockModuleFederation = {
   cardManagement: {
-    CardList: () => Promise.resolve({ default: () => <div data-testid="remote-card-list">遠程卡片列表</div> }),
-    CardDetail: () => Promise.resolve({ default: () => <div data-testid="remote-card-detail">遠程卡片詳情</div> }),
-    CardScanner: () => Promise.resolve({ default: () => <div data-testid="remote-card-scanner">遠程卡片掃描</div> }),
+    CardList: () =>
+      Promise.resolve({
+        default: () => <div data-testid="remote-card-list">遠程卡片列表</div>,
+      }),
+    CardDetail: () =>
+      Promise.resolve({
+        default: () => <div data-testid="remote-card-detail">遠程卡片詳情</div>,
+      }),
+    CardScanner: () =>
+      Promise.resolve({
+        default: () => (
+          <div data-testid="remote-card-scanner">遠程卡片掃描</div>
+        ),
+      }),
   },
   marketAnalysis: {
-    MarketDashboard: () => Promise.resolve({ default: () => <div data-testid="remote-market-dashboard">遠程市場儀表板</div> }),
-    PriceChart: () => Promise.resolve({ default: () => <div data-testid="remote-price-chart">遠程價格圖表</div> }),
-    MarketTrends: () => Promise.resolve({ default: () => <div data-testid="remote-market-trends">遠程市場趨勢</div> }),
+    MarketDashboard: () =>
+      Promise.resolve({
+        default: () => (
+          <div data-testid="remote-market-dashboard">遠程市場儀表板</div>
+        ),
+      }),
+    PriceChart: () =>
+      Promise.resolve({
+        default: () => <div data-testid="remote-price-chart">遠程價格圖表</div>,
+      }),
+    MarketTrends: () =>
+      Promise.resolve({
+        default: () => (
+          <div data-testid="remote-market-trends">遠程市場趨勢</div>
+        ),
+      }),
   },
   aiEcosystem: {
-    AIDashboard: () => Promise.resolve({ default: () => <div data-testid="remote-ai-dashboard">遠程 AI 儀表板</div> }),
-    CardScanner: () => Promise.resolve({ default: () => <div data-testid="remote-ai-scanner">遠程 AI 掃描</div> }),
-    MarketPredictor: () => Promise.resolve({ default: () => <div data-testid="remote-market-predictor">遠程市場預測</div> }),
+    AIDashboard: () =>
+      Promise.resolve({
+        default: () => (
+          <div data-testid="remote-ai-dashboard">遠程 AI 儀表板</div>
+        ),
+      }),
+    CardScanner: () =>
+      Promise.resolve({
+        default: () => <div data-testid="remote-ai-scanner">遠程 AI 掃描</div>,
+      }),
+    MarketPredictor: () =>
+      Promise.resolve({
+        default: () => (
+          <div data-testid="remote-market-predictor">遠程市場預測</div>
+        ),
+      }),
   },
 };
 
 // 模擬動態加載函數
 const loadRemoteModule = async (moduleName: string, componentName: string) => {
-  const module = mockModuleFederation[moduleName as keyof typeof mockModuleFederation];
+  const module =
+    mockModuleFederation[moduleName as keyof typeof mockModuleFederation];
   if (module && module[componentName as keyof typeof module]) {
     return await module[componentName as keyof typeof module]();
   }
-  throw new Error(`Module ${moduleName} or component ${componentName} not found`);
+  throw new Error(
+    `Module ${moduleName} or component ${componentName} not found`
+  );
 };
 
 // 模擬 Shell 應用組件
 const MockShellApp = () => {
-  const [loadedModules, setLoadedModules] = React.useState<Record<string, any>>({});
+  const [loadedModules, setLoadedModules] = React.useState<Record<string, any>>(
+    {}
+  );
   const [loading, setLoading] = React.useState<Record<string, boolean>>({});
   const [error, setError] = React.useState<Record<string, string>>({});
 
   const loadModule = async (moduleName: string, componentName: string) => {
-    setLoading(prev => ({ ...prev, [componentName]: true }));
-    setError(prev => ({ ...prev, [componentName]: '' }));
+    setLoading((prev) => ({ ...prev, [componentName]: true }));
+    setError((prev) => ({ ...prev, [componentName]: '' }));
 
     try {
       const module = await loadRemoteModule(moduleName, componentName);
-      setLoadedModules(prev => ({ ...prev, [componentName]: module.default }));
-      setLoading(prev => ({ ...prev, [componentName]: false }));
+      setLoadedModules((prev) => ({
+        ...prev,
+        [componentName]: module.default,
+      }));
+      setLoading((prev) => ({ ...prev, [componentName]: false }));
     } catch (err) {
-      setError(prev => ({ ...prev, [componentName]: err instanceof Error ? err.message : 'Unknown error' }));
-      setLoading(prev => ({ ...prev, [componentName]: false }));
+      setError((prev) => ({
+        ...prev,
+        [componentName]: err instanceof Error ? err.message : 'Unknown error',
+      }));
+      setLoading((prev) => ({ ...prev, [componentName]: false }));
     }
   };
 
   return (
     <div data-testid="shell-app">
       <nav>
-        <button 
+        <button
           data-testid="load-card-list"
           onClick={() => loadModule('cardManagement', 'CardList')}
         >
           加載卡片列表
         </button>
-        <button 
+        <button
           data-testid="load-market-dashboard"
           onClick={() => loadModule('marketAnalysis', 'MarketDashboard')}
         >
           加載市場儀表板
         </button>
-        <button 
+        <button
           data-testid="load-ai-dashboard"
           onClick={() => loadModule('aiEcosystem', 'AIDashboard')}
         >
           加載 AI 儀表板
         </button>
       </nav>
-      
+
       <div data-testid="module-container">
         {Object.entries(loadedModules).map(([componentName, Component]) => (
-          <div key={componentName} data-testid={`loaded-${componentName.toLowerCase()}`}>
+          <div
+            key={componentName}
+            data-testid={`loaded-${componentName.toLowerCase()}`}
+          >
             <Component />
           </div>
         ))}
       </div>
 
       <div data-testid="loading-status">
-        {Object.entries(loading).map(([componentName, isLoading]) => (
-          isLoading && <div key={componentName} data-testid={`loading-${componentName}`}>加載中...</div>
-        ))}
+        {Object.entries(loading).map(
+          ([componentName, isLoading]) =>
+            isLoading && (
+              <div key={componentName} data-testid={`loading-${componentName}`}>
+                加載中...
+              </div>
+            )
+        )}
       </div>
 
       <div data-testid="error-status">
-        {Object.entries(error).map(([componentName, errorMessage]) => (
-          errorMessage && <div key={componentName} data-testid={`error-${componentName}`}>{errorMessage}</div>
-        ))}
+        {Object.entries(error).map(
+          ([componentName, errorMessage]) =>
+            errorMessage && (
+              <div key={componentName} data-testid={`error-${componentName}`}>
+                {errorMessage}
+              </div>
+            )
+        )}
       </div>
     </div>
   );
@@ -101,7 +162,10 @@ const MockShellApp = () => {
 const createTestStore = () => {
   return configureStore({
     reducer: {
-      modules: (state = { loadedModules: [], loadingStates: {} }, action: any) => {
+      modules: (
+        state = { loadedModules: [], loadingStates: {} },
+        action: any
+      ) => {
         switch (action.type) {
           case 'modules/setLoadedModule':
             return {
@@ -172,7 +236,9 @@ describe('Module Federation 集成測試', () => {
 
       // 等待加載完成
       await waitFor(() => {
-        expect(screen.getByTestId('loaded-marketdashboard')).toBeInTheDocument();
+        expect(
+          screen.getByTestId('loaded-marketdashboard')
+        ).toBeInTheDocument();
       });
 
       // 驗證組件已正確加載
@@ -226,7 +292,9 @@ describe('Module Federation 集成測試', () => {
 
       // 等待加載完成
       await waitFor(() => {
-        expect(screen.queryByTestId('loading-CardList')).not.toBeInTheDocument();
+        expect(
+          screen.queryByTestId('loading-CardList')
+        ).not.toBeInTheDocument();
       });
     });
 
@@ -281,7 +349,9 @@ describe('Module Federation 集成測試', () => {
       // 等待所有模組加載完成
       await waitFor(() => {
         expect(screen.getByTestId('loaded-cardlist')).toBeInTheDocument();
-        expect(screen.getByTestId('loaded-marketdashboard')).toBeInTheDocument();
+        expect(
+          screen.getByTestId('loaded-marketdashboard')
+        ).toBeInTheDocument();
         expect(screen.getByTestId('loaded-aidashboard')).toBeInTheDocument();
       });
 
@@ -308,7 +378,9 @@ describe('Module Federation 集成測試', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('loaded-cardlist')).toBeInTheDocument();
-        expect(screen.getByTestId('loaded-marketdashboard')).toBeInTheDocument();
+        expect(
+          screen.getByTestId('loaded-marketdashboard')
+        ).toBeInTheDocument();
       });
 
       // 驗證 store 中有模組加載記錄
@@ -324,9 +396,12 @@ describe('Module Federation 集成測試', () => {
         ...mockModuleFederation,
         cardManagement: {
           ...mockModuleFederation.cardManagement,
-          CardList: () => Promise.resolve({ 
-            default: () => <div data-testid="remote-card-list-v2">遠程卡片列表 V2</div> 
-          }),
+          CardList: () =>
+            Promise.resolve({
+              default: () => (
+                <div data-testid="remote-card-list-v2">遠程卡片列表 V2</div>
+              ),
+            }),
         },
       };
 
@@ -373,9 +448,12 @@ describe('Module Federation 集成測試', () => {
 
       // 模擬模組更新
       const updatedModule = {
-        CardList: () => Promise.resolve({ 
-          default: () => <div data-testid="remote-card-list-updated">更新後的卡片列表</div> 
-        }),
+        CardList: () =>
+          Promise.resolve({
+            default: () => (
+              <div data-testid="remote-card-list-updated">更新後的卡片列表</div>
+            ),
+          }),
       };
 
       // 重新加載模組
@@ -391,9 +469,12 @@ describe('Module Federation 集成測試', () => {
     test('能正確處理模組間的依賴關係', async () => {
       // 模擬有依賴關係的模組
       const mockDependentModule = {
-        MarketAnalysis: () => Promise.resolve({ 
-          default: () => <div data-testid="dependent-market-analysis">依賴市場分析</div> 
-        }),
+        MarketAnalysis: () =>
+          Promise.resolve({
+            default: () => (
+              <div data-testid="dependent-market-analysis">依賴市場分析</div>
+            ),
+          }),
       };
 
       const TestComponent = () => (
@@ -410,7 +491,9 @@ describe('Module Federation 集成測試', () => {
       fireEvent.click(screen.getByTestId('load-market-dashboard'));
 
       await waitFor(() => {
-        expect(screen.getByTestId('loaded-marketdashboard')).toBeInTheDocument();
+        expect(
+          screen.getByTestId('loaded-marketdashboard')
+        ).toBeInTheDocument();
       });
 
       // 再加載依賴模組
@@ -467,7 +550,9 @@ describe('Module Federation 集成測試', () => {
 
       await waitFor(() => {
         expect(screen.getByTestId('loaded-cardlist')).toBeInTheDocument();
-        expect(screen.getByTestId('loaded-marketdashboard')).toBeInTheDocument();
+        expect(
+          screen.getByTestId('loaded-marketdashboard')
+        ).toBeInTheDocument();
         expect(screen.getByTestId('loaded-aidashboard')).toBeInTheDocument();
       });
 

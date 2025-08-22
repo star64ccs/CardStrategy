@@ -10,18 +10,18 @@ const SECURITY_BENCHMARKS = {
     critical: 10,
     high: 7,
     medium: 4,
-    low: 1
+    low: 1,
   },
   // 安全測試類型權重
   testTypeWeights: {
-    'XSS': 0.20,
-    'SQL Injection': 0.20,
-    'CSRF': 0.15,
-    'Authentication': 0.15,
-    'Authorization': 0.10,
-    'Input Validation': 0.10,
+    XSS: 0.2,
+    'SQL Injection': 0.2,
+    CSRF: 0.15,
+    Authentication: 0.15,
+    Authorization: 0.1,
+    'Input Validation': 0.1,
     'Session Management': 0.05,
-    'HTTPS/SSL': 0.05
+    'HTTPS/SSL': 0.05,
   },
   // 安全等級標準
   securityGrades: {
@@ -29,8 +29,8 @@ const SECURITY_BENCHMARKS = {
     B: { min: 80, description: '良好 - 安全性高' },
     C: { min: 70, description: '一般 - 安全性中等' },
     D: { min: 60, description: '較差 - 存在安全風險' },
-    F: { min: 0, description: '危險 - 存在嚴重安全漏洞' }
-  }
+    F: { min: 0, description: '危險 - 存在嚴重安全漏洞' },
+  },
 };
 
 /**
@@ -53,7 +53,6 @@ function generateSecurityReport() {
     printSecuritySummary(report);
 
     // logger.info('✅ 安全測試報告生成完成！');
-
   } catch (error) {
     // logger.info('❌ 生成安全測試報告失敗:', error.message);
     process.exit(1);
@@ -71,7 +70,7 @@ function collectSecurityTestResults() {
     totalViolations: 0,
     violationsBySeverity: {},
     violationsByType: {},
-    testCoverage: {}
+    testCoverage: {},
   };
 
   // 讀取基本安全測試結果
@@ -86,10 +85,15 @@ function collectSecurityTestResults() {
   }
 
   // 讀取高級安全測試結果
-  const advancedReportPath = path.join(resultsDir, 'security-advanced-report.json');
+  const advancedReportPath = path.join(
+    resultsDir,
+    'security-advanced-report.json'
+  );
   if (fs.existsSync(advancedReportPath)) {
     try {
-      results.advanced = JSON.parse(fs.readFileSync(advancedReportPath, 'utf8'));
+      results.advanced = JSON.parse(
+        fs.readFileSync(advancedReportPath, 'utf8')
+      );
       // logger.info('📄 讀取高級安全測試結果');
     } catch (error) {
       // logger.info('⚠️ 無法讀取高級安全測試結果:', error.message);
@@ -99,14 +103,23 @@ function collectSecurityTestResults() {
   // 合併結果
   if (results.basic) {
     results.totalViolations += results.basic.totalViolations || 0;
-    mergeViolations(results.violationsBySeverity, results.basic.violationsBySeverity);
+    mergeViolations(
+      results.violationsBySeverity,
+      results.basic.violationsBySeverity
+    );
     mergeViolations(results.violationsByType, results.basic.violationsByType);
   }
 
   if (results.advanced) {
     results.totalViolations += results.advanced.totalViolations || 0;
-    mergeViolations(results.violationsBySeverity, results.advanced.violationsBySeverity);
-    mergeViolations(results.violationsByType, results.advanced.violationsByType);
+    mergeViolations(
+      results.violationsBySeverity,
+      results.advanced.violationsBySeverity
+    );
+    mergeViolations(
+      results.violationsByType,
+      results.advanced.violationsByType
+    );
   }
 
   return results;
@@ -133,18 +146,18 @@ function generateSecurityReportData(testResults) {
       totalViolations: testResults.totalViolations,
       securityScore: calculateSecurityScore(testResults),
       securityGrade: calculateSecurityGrade(testResults),
-      testCoverage: calculateTestCoverage(testResults)
+      testCoverage: calculateTestCoverage(testResults),
     },
     violations: {
       bySeverity: testResults.violationsBySeverity,
       byType: testResults.violationsByType,
-      details: []
+      details: [],
     },
     recommendations: generateSecurityRecommendations(testResults),
     testResults: {
       basic: testResults.basic,
-      advanced: testResults.advanced
-    }
+      advanced: testResults.advanced,
+    },
   };
 
   // 添加詳細違規信息
@@ -167,14 +180,18 @@ function calculateSecurityScore(testResults) {
   let totalWeight = 0;
 
   // 根據違規嚴重程度扣分
-  for (const [severity, count] of Object.entries(testResults.violationsBySeverity || {})) {
+  for (const [severity, count] of Object.entries(
+    testResults.violationsBySeverity || {}
+  )) {
     const score = SECURITY_BENCHMARKS.severityScores[severity] || 0;
     totalScore -= score * count;
     totalWeight += count;
   }
 
   // 根據違規類型扣分
-  for (const [type, count] of Object.entries(testResults.violationsByType || {})) {
+  for (const [type, count] of Object.entries(
+    testResults.violationsByType || {}
+  )) {
     const weight = SECURITY_BENCHMARKS.testTypeWeights[type] || 0.05;
     totalScore -= weight * 10 * count;
   }
@@ -188,12 +205,14 @@ function calculateSecurityScore(testResults) {
 function calculateSecurityGrade(testResults) {
   const score = calculateSecurityScore(testResults);
 
-  for (const [grade, criteria] of Object.entries(SECURITY_BENCHMARKS.securityGrades)) {
+  for (const [grade, criteria] of Object.entries(
+    SECURITY_BENCHMARKS.securityGrades
+  )) {
     if (score >= criteria.min) {
       return {
         grade,
         score,
-        description: criteria.description
+        description: criteria.description,
       };
     }
   }
@@ -201,7 +220,7 @@ function calculateSecurityGrade(testResults) {
   return {
     grade: 'F',
     score,
-    description: '危險 - 存在嚴重安全漏洞'
+    description: '危險 - 存在嚴重安全漏洞',
   };
 }
 
@@ -220,7 +239,7 @@ function calculateTestCoverage(testResults) {
   return {
     total: totalTests + advancedTests,
     covered: coveredTests,
-    percentage: Math.round((coveredTests / (totalTests + advancedTests)) * 100)
+    percentage: Math.round((coveredTests / (totalTests + advancedTests)) * 100),
   };
 }
 
@@ -231,7 +250,9 @@ function generateSecurityRecommendations(testResults) {
   const recommendations = [];
 
   // 根據違規類型生成建議
-  for (const [type, count] of Object.entries(testResults.violationsByType || {})) {
+  for (const [type, count] of Object.entries(
+    testResults.violationsByType || {}
+  )) {
     if (count > 0) {
       switch (type) {
         case 'XSS':
@@ -244,8 +265,8 @@ function generateSecurityRecommendations(testResults) {
               '實施輸入驗證和輸出編碼',
               '使用 CSP (Content Security Policy)',
               '避免使用 innerHTML 和 eval()',
-              '對所有用戶輸入進行 HTML 實體編碼'
-            ]
+              '對所有用戶輸入進行 HTML 實體編碼',
+            ],
           });
           break;
 
@@ -259,8 +280,8 @@ function generateSecurityRecommendations(testResults) {
               '使用參數化查詢或預處理語句',
               '實施輸入驗證和過濾',
               '使用 ORM 框架',
-              '限制數據庫用戶權限'
-            ]
+              '限制數據庫用戶權限',
+            ],
           });
           break;
 
@@ -274,8 +295,8 @@ function generateSecurityRecommendations(testResults) {
               '實施 CSRF token',
               '使用 SameSite cookie 屬性',
               '驗證 Referer 標頭',
-              '實施雙重提交 cookie 模式'
-            ]
+              '實施雙重提交 cookie 模式',
+            ],
           });
           break;
 
@@ -289,8 +310,8 @@ function generateSecurityRecommendations(testResults) {
               '實施強密碼策略',
               '添加多因素認證',
               '實施帳戶鎖定機制',
-              '使用安全的會話管理'
-            ]
+              '使用安全的會話管理',
+            ],
           });
           break;
 
@@ -304,8 +325,8 @@ function generateSecurityRecommendations(testResults) {
               '實施基於角色的訪問控制 (RBAC)',
               '驗證所有 API 端點的權限',
               '實施最小權限原則',
-              '定期審計用戶權限'
-            ]
+              '定期審計用戶權限',
+            ],
           });
           break;
 
@@ -318,8 +339,8 @@ function generateSecurityRecommendations(testResults) {
             actions: [
               '進行詳細的安全審計',
               '實施相應的安全措施',
-              '定期進行安全測試'
-            ]
+              '定期進行安全測試',
+            ],
           });
       }
     }
@@ -339,8 +360,8 @@ function generateSecurityRecommendations(testResults) {
         '立即修復所有嚴重漏洞',
         '暫停相關功能直到修復完成',
         '通知相關團隊和用戶',
-        '進行全面的安全審計'
-      ]
+        '進行全面的安全審計',
+      ],
     });
   }
 
@@ -354,8 +375,8 @@ function generateSecurityRecommendations(testResults) {
         '優先修復高風險問題',
         '加強安全監控',
         '更新安全策略',
-        '進行安全培訓'
-      ]
+        '進行安全培訓',
+      ],
     });
   }
 
@@ -591,37 +612,49 @@ function generateSecurityHtmlReport(report) {
             <h2>違規詳情</h2>
             
             <div class="severity-grid">
-                ${Object.entries(report.violations.bySeverity).map(([severity, count]) => `
+                ${Object.entries(report.violations.bySeverity)
+                  .map(
+                    ([severity, count]) => `
                     <div class="severity-card severity-${severity}">
                         <div style="font-size: 1.5em; font-weight: bold;">${count}</div>
                         <div>${severity.toUpperCase()}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
             
             <h3>違規類型分布</h3>
             <div class="stats-grid">
-                ${Object.entries(report.violations.byType).map(([type, count]) => `
+                ${Object.entries(report.violations.byType)
+                  .map(
+                    ([type, count]) => `
                     <div class="stat-card">
                         <div class="stat-number">${count}</div>
                         <div class="stat-label">${type}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
         </div>
         
         <div class="recommendations">
             <h2>安全建議</h2>
-            ${report.recommendations.map(rec => `
+            ${report.recommendations
+              .map(
+                (rec) => `
                 <div class="recommendation">
                     <span class="priority priority-${rec.priority}">${rec.priority.toUpperCase()}</span>
                     <h4>${rec.title}</h4>
                     <p>${rec.description}</p>
                     <ul>
-                        ${rec.actions.map(action => `<li>${action}</li>`).join('')}
+                        ${rec.actions.map((action) => `<li>${action}</li>`).join('')}
                     </ul>
                 </div>
-            `).join('')}
+            `
+              )
+              .join('')}
         </div>
     </div>
 </body>
@@ -651,18 +684,20 @@ function generateSecurityMarkdownReport(report) {
 ## 🚨 違規統計
 
 ### 按嚴重程度分類
-${Object.entries(report.violations.bySeverity).map(([severity, count]) =>
-    `- **${severity.toUpperCase()}**: ${count} 個`
-  ).join('\n')}
+${Object.entries(report.violations.bySeverity)
+  .map(([severity, count]) => `- **${severity.toUpperCase()}**: ${count} 個`)
+  .join('\n')}
 
 ### 按類型分類
-${Object.entries(report.violations.byType).map(([type, count]) =>
-    `- **${type}**: ${count} 個`
-  ).join('\n')}
+${Object.entries(report.violations.byType)
+  .map(([type, count]) => `- **${type}**: ${count} 個`)
+  .join('\n')}
 
 ## 📋 詳細違規
 
-${report.violations.details.map((violation, index) => `
+${report.violations.details
+  .map(
+    (violation, index) => `
 ### ${index + 1}. ${violation.type} - ${violation.severity.toUpperCase()}
 
 **描述:** ${violation.description}
@@ -672,11 +707,15 @@ ${report.violations.details.map((violation, index) => `
 **詳情:** \`\`\`json
 ${JSON.stringify(violation.details, null, 2)}
 \`\`\`
-`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## 💡 安全建議
 
-${report.recommendations.map((rec, index) => `
+${report.recommendations
+  .map(
+    (rec, index) => `
 ### ${index + 1}. ${rec.title} [${rec.priority.toUpperCase()}]
 
 **類別:** ${rec.category}
@@ -684,8 +723,10 @@ ${report.recommendations.map((rec, index) => `
 **描述:** ${rec.description}
 
 **建議行動:**
-${rec.actions.map(action => `- ${action}`).join('\n')}
-`).join('\n')}
+${rec.actions.map((action) => `- ${action}`).join('\n')}
+`
+  )
+  .join('\n')}
 
 ## 📈 測試覆蓋率
 
@@ -696,16 +737,24 @@ ${rec.actions.map(action => `- ${action}`).join('\n')}
 ## 🔍 測試結果詳情
 
 ### 基本安全測試
-${report.testResults.basic ? `
+${
+  report.testResults.basic
+    ? `
 - **狀態:** 已完成
 - **違規數:** ${report.testResults.basic.totalViolations || 0}
-` : '- **狀態:** 未執行'}
+`
+    : '- **狀態:** 未執行'
+}
 
 ### 高級安全測試
-${report.testResults.advanced ? `
+${
+  report.testResults.advanced
+    ? `
 - **狀態:** 已完成
 - **違規數:** ${report.testResults.advanced.totalViolations || 0}
-` : '- **狀態:** 未執行'}
+`
+    : '- **狀態:** 未執行'
+}
 
 ---
 
@@ -726,7 +775,9 @@ function printSecuritySummary(report) {
   // logger.info(`測試覆蓋率: ${report.summary.testCoverage.percentage}%`);
 
   // logger.info('\n🚨 違規統計:');
-  for (const [severity, count] of Object.entries(report.violations.bySeverity)) {
+  for (const [severity, count] of Object.entries(
+    report.violations.bySeverity
+  )) {
     // logger.info(`  ${severity.toUpperCase()}: ${count} 個`);
   }
 
@@ -736,17 +787,23 @@ function printSecuritySummary(report) {
   }
 
   // logger.info('\n💡 主要建議:');
-  const criticalRecs = report.recommendations.filter(r => r.priority === 'critical');
-  const highRecs = report.recommendations.filter(r => r.priority === 'high');
+  const criticalRecs = report.recommendations.filter(
+    (r) => r.priority === 'critical'
+  );
+  const highRecs = report.recommendations.filter((r) => r.priority === 'high');
 
   if (criticalRecs.length > 0) {
     // logger.info('  緊急修復:');
-    criticalRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
+    criticalRecs.forEach((rec) => {
+      /* logger.info(`    - ${rec.title}`) */
+    });
   }
 
   if (highRecs.length > 0) {
     // logger.info('  高優先級:');
-    highRecs.forEach(rec => // logger.info(`    - ${rec.title}`));
+    highRecs.forEach((rec) => {
+      /* logger.info(`    - ${rec.title}`) */
+    });
   }
 
   // logger.info('\n📄 報告文件:');
@@ -763,5 +820,5 @@ if (require.main === module) {
 module.exports = {
   generateSecurityReport,
   generateSecurityReportData,
-  calculateSecurityScore
+  calculateSecurityScore,
 };

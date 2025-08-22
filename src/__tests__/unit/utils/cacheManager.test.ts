@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { cacheManager } from '../../../utils/cacheManager';
 
@@ -10,7 +11,7 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
   getAllKeys: jest.fn(),
   multiGet: jest.fn(),
   multiSet: jest.fn(),
-  multiRemove: jest.fn()
+  multiRemove: jest.fn(),
 }));
 
 describe('CacheManager', () => {
@@ -43,10 +44,12 @@ describe('CacheManager', () => {
       const cachedData = {
         data,
         timestamp,
-        ttl
+        ttl,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(cachedData));
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify(cachedData)
+      );
 
       const result = await cacheManager.get(key);
 
@@ -81,10 +84,12 @@ describe('CacheManager', () => {
       const cachedData = {
         data,
         timestamp,
-        ttl
+        ttl,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(cachedData));
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify(cachedData)
+      );
 
       const exists = await cacheManager.has(key);
 
@@ -112,10 +117,12 @@ describe('CacheManager', () => {
       const cachedData = {
         data,
         timestamp,
-        ttl
+        ttl,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(cachedData));
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify(cachedData)
+      );
 
       const result = await cacheManager.get(key);
 
@@ -132,10 +139,12 @@ describe('CacheManager', () => {
       const cachedData = {
         data,
         timestamp,
-        ttl
+        ttl,
       };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(cachedData));
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify(cachedData)
+      );
 
       const result = await cacheManager.get(key);
 
@@ -159,7 +168,7 @@ describe('CacheManager', () => {
     it('應該成功設置多個快取項目', async () => {
       const items = [
         { key: 'key1', data: { test1: 'data1' }, ttl: 3600 },
-        { key: 'key2', data: { test2: 'data2' }, ttl: 1800 }
+        { key: 'key2', data: { test2: 'data2' }, ttl: 1800 },
       ];
 
       await cacheManager.setMultiple(items);
@@ -167,7 +176,7 @@ describe('CacheManager', () => {
       expect(AsyncStorage.multiSet).toHaveBeenCalledWith(
         expect.arrayContaining([
           ['cache_key1', expect.stringContaining('test1')],
-          ['cache_key2', expect.stringContaining('test2')]
+          ['cache_key2', expect.stringContaining('test2')],
         ])
       );
     });
@@ -184,14 +193,14 @@ describe('CacheManager', () => {
 
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
         ['cache_key1', JSON.stringify(cachedData1)],
-        ['cache_key2', JSON.stringify(cachedData2)]
+        ['cache_key2', JSON.stringify(cachedData2)],
       ]);
 
       const result = await cacheManager.getMultiple(keys);
 
       expect(result).toEqual({
         key1: data1,
-        key2: data2
+        key2: data2,
       });
     });
 
@@ -206,7 +215,7 @@ describe('CacheManager', () => {
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
         ['cache_key1', JSON.stringify(cachedData1)],
         ['cache_key2', null],
-        ['cache_key3', null]
+        ['cache_key3', null],
       ]);
 
       const result = await cacheManager.getMultiple(keys);
@@ -214,7 +223,7 @@ describe('CacheManager', () => {
       expect(result).toEqual({
         key1: data1,
         key2: null,
-        key3: null
+        key3: null,
       });
     });
 
@@ -225,7 +234,7 @@ describe('CacheManager', () => {
 
       expect(AsyncStorage.multiRemove).toHaveBeenCalledWith([
         'cache_key1',
-        'cache_key2'
+        'cache_key2',
       ]);
     });
   });
@@ -249,12 +258,15 @@ describe('CacheManager', () => {
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
         ['cache_key1', JSON.stringify(expiredData)],
         ['cache_key2', JSON.stringify(validData)],
-        ['cache_key3', JSON.stringify(expiredData)]
+        ['cache_key3', JSON.stringify(expiredData)],
       ]);
 
       await cacheManager.clearExpired();
 
-      expect(AsyncStorage.multiRemove).toHaveBeenCalledWith(['cache_key1', 'cache_key3']);
+      expect(AsyncStorage.multiRemove).toHaveBeenCalledWith([
+        'cache_key1',
+        'cache_key3',
+      ]);
     });
 
     it('應該成功清理特定模式的快取項目', async () => {
@@ -264,7 +276,10 @@ describe('CacheManager', () => {
 
       await cacheManager.clearByPattern('user_*');
 
-      expect(AsyncStorage.multiRemove).toHaveBeenCalledWith(['cache_user_1', 'cache_user_2']);
+      expect(AsyncStorage.multiRemove).toHaveBeenCalledWith([
+        'cache_user_1',
+        'cache_user_2',
+      ]);
     });
   });
 
@@ -280,7 +295,7 @@ describe('CacheManager', () => {
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
         ['cache_key1', JSON.stringify(validData)],
         ['cache_key2', JSON.stringify(validData)],
-        ['cache_key3', null]
+        ['cache_key3', null],
       ]);
 
       const stats = await cacheManager.getStats();
@@ -289,7 +304,7 @@ describe('CacheManager', () => {
         totalItems: 2,
         totalSize: expect.any(Number),
         expiredItems: 0,
-        validItems: 2
+        validItems: 2,
       });
     });
 
@@ -303,7 +318,7 @@ describe('CacheManager', () => {
 
       (AsyncStorage.getAllKeys as jest.Mock).mockResolvedValue(keys);
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
-        ['cache_key1', JSON.stringify(cachedData)]
+        ['cache_key1', JSON.stringify(cachedData)],
       ]);
 
       const stats = await cacheManager.getStats();
@@ -325,7 +340,7 @@ describe('CacheManager', () => {
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
         ['cache_key1', JSON.stringify(cachedData)],
         ['cache_key2', JSON.stringify(cachedData)],
-        ['cache_key3', JSON.stringify(cachedData)]
+        ['cache_key3', JSON.stringify(cachedData)],
       ]);
 
       await cacheManager.applyLRUStrategy(maxItems);
@@ -345,7 +360,7 @@ describe('CacheManager', () => {
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
         ['cache_key1', JSON.stringify(cachedData)],
         ['cache_key2', JSON.stringify(cachedData)],
-        ['cache_key3', JSON.stringify(cachedData)]
+        ['cache_key3', JSON.stringify(cachedData)],
       ]);
 
       await cacheManager.applyFIFOStrategy(maxItems);
@@ -361,7 +376,9 @@ describe('CacheManager', () => {
 
       (AsyncStorage.setItem as jest.Mock).mockRejectedValue(error);
 
-      await expect(cacheManager.set(key, 'data')).rejects.toThrow('Storage error');
+      await expect(cacheManager.set(key, 'data')).rejects.toThrow(
+        'Storage error'
+      );
     });
 
     it('應該處理無效的JSON數據', async () => {
@@ -378,7 +395,9 @@ describe('CacheManager', () => {
       const key = 'test_key';
       const invalidData = { invalid: 'format' };
 
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify(invalidData));
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify(invalidData)
+      );
 
       const result = await cacheManager.get(key);
 
@@ -390,7 +409,7 @@ describe('CacheManager', () => {
     it('應該支持快取預熱', async () => {
       const items = [
         { key: 'key1', data: { test1: 'data1' } },
-        { key: 'key2', data: { test2: 'data2' } }
+        { key: 'key2', data: { test2: 'data2' } },
       ];
 
       await cacheManager.warmup(items);
@@ -410,7 +429,7 @@ describe('CacheManager', () => {
 
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
         ['cache_key1', JSON.stringify(cachedData1)],
-        ['cache_key2', JSON.stringify(cachedData2)]
+        ['cache_key2', JSON.stringify(cachedData2)],
       ]);
 
       const result = await cacheManager.prefetch(keys);
@@ -442,12 +461,15 @@ describe('CacheManager', () => {
       (AsyncStorage.multiGet as jest.Mock).mockResolvedValue([
         ['cache_user_1', JSON.stringify(userData)],
         ['cache_user_2', JSON.stringify(userData)],
-        ['cache_card_1', JSON.stringify(cardData)]
+        ['cache_card_1', JSON.stringify(cardData)],
       ]);
 
       await cacheManager.clearByTag('user');
 
-      expect(AsyncStorage.multiRemove).toHaveBeenCalledWith(['cache_user_1', 'cache_user_2']);
+      expect(AsyncStorage.multiRemove).toHaveBeenCalledWith([
+        'cache_user_1',
+        'cache_user_2',
+      ]);
     });
   });
 });

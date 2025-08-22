@@ -8,7 +8,7 @@ import {
   Platform,
   ScrollView,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -24,7 +24,9 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>(
+    {}
+  );
 
   const validateForm = () => {
     const newErrors: { email?: string; password?: string } = {};
@@ -54,7 +56,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       // logger.info('登入:', { email, password });
 
       // 模擬 API 調用
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // 登入成功後導航到主畫面
       navigation.replace('Main');
@@ -87,14 +89,16 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           <View style={styles.header}>
             <View style={styles.logoContainer}>
               <View style={styles.logoIcon}>
-                <Ionicons name="trending-up" size={32} color={theme.colors.gold.primary} />
+                <Ionicons
+                  name="trending-up"
+                  size={32}
+                  color={theme.colors.gold.primary}
+                />
               </View>
               <Text style={styles.logoText}>卡策</Text>
             </View>
             <Text style={styles.subtitle}>CardStrategy</Text>
-            <Text style={styles.description}>
-              智能卡牌投資與收藏管理平台
-            </Text>
+            <Text style={styles.description}>智能卡牌投資與收藏管理平台</Text>
           </View>
 
           {/* 登入表單 */}
@@ -151,17 +155,33 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             <View style={styles.socialButtons}>
               <Button
                 title="Google"
-                onPress={() => // logger.info('Google 登入')}
+                onPress={() => {
+                  /* logger.info('Google 登入') */
+                }}
                 variant="secondary"
                 style={styles.socialButton}
-                icon={<Ionicons name="logo-google" size={20} color={theme.colors.gold.primary} />}
+                icon={
+                  <Ionicons
+                    name="logo-google"
+                    size={20}
+                    color={theme.colors.gold.primary}
+                  />
+                }
               />
               <Button
                 title="Apple"
-                onPress={() => // logger.info('Apple 登入')}
+                onPress={() => {
+                  /* logger.info('Apple 登入') */
+                }}
                 variant="secondary"
                 style={styles.socialButton}
-                icon={<Ionicons name="logo-apple" size={20} color={theme.colors.gold.primary} />}
+                icon={
+                  <Ionicons
+                    name="logo-apple"
+                    size={20}
+                    color={theme.colors.gold.primary}
+                  />
+                }
               />
             </View>
           </Card>
@@ -174,24 +194,24 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background.primary
+    backgroundColor: theme.colors.background.primary,
   },
   keyboardAvoidingView: {
-    flex: 1
+    flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    padding: theme.spacing.lg
+    padding: theme.spacing.lg,
   },
   header: {
     alignItems: 'center',
     marginBottom: theme.spacing.xl,
-    marginTop: theme.spacing.xl
+    marginTop: theme.spacing.xl,
   },
   logoContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   logoIcon: {
     width: 48,
@@ -202,78 +222,78 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginRight: theme.spacing.sm,
     borderWidth: 2,
-    borderColor: theme.colors.gold.primary
+    borderColor: theme.colors.gold.primary,
   },
   logoText: {
     fontSize: theme.typography.sizes['3xl'],
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.gold.primary
+    color: theme.colors.gold.primary,
   },
   subtitle: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.medium,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   description: {
     fontSize: theme.typography.sizes.base,
     color: theme.colors.text.tertiary,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   formCard: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   formTitle: {
     fontSize: theme.typography.sizes.xl,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.lg,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   forgotPassword: {
     alignSelf: 'flex-end',
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   forgotPasswordText: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.gold.primary,
-    fontWeight: theme.typography.weights.medium
+    fontWeight: theme.typography.weights.medium,
   },
   loginButton: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   signUpContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: theme.spacing.xl
+    marginBottom: theme.spacing.xl,
   },
   signUpText: {
     fontSize: theme.typography.sizes.base,
     color: theme.colors.text.secondary,
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   signUpLink: {
     fontSize: theme.typography.sizes.base,
     color: theme.colors.gold.primary,
-    fontWeight: theme.typography.weights.semibold
+    fontWeight: theme.typography.weights.semibold,
   },
   quickLoginCard: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   quickLoginTitle: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
     marginBottom: theme.spacing.md,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   socialButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   socialButton: {
     flex: 1,
-    marginHorizontal: theme.spacing.xs
-  }
+    marginHorizontal: theme.spacing.xs,
+  },
 });

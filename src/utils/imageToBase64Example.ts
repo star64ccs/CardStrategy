@@ -7,14 +7,13 @@ import {
   getBase64ImageDimensions,
   compressBase64Image,
   dataQualityService,
-  ImageToBase64Options
+  ImageToBase64Options,
 } from '../services/dataQualityService';
 
 /**
  * 圖片轉base64功能使用示例
  */
 export class ImageToBase64Example {
-
   /**
    * 示例1: 將單個圖片文件轉換為base64
    */
@@ -34,7 +33,7 @@ export class ImageToBase64Example {
           maxWidth: 800,
           maxHeight: 600,
           format: 'jpeg',
-          compression: true
+          compression: true,
         };
 
         try {
@@ -46,7 +45,6 @@ export class ImageToBase64Example {
           img.src = result.base64;
           img.style.maxWidth = '300px';
           document.body.appendChild(img);
-
         } catch (error) {
           // logger.info('圖片轉換失敗:', error);
         }
@@ -69,7 +67,9 @@ export class ImageToBase64Example {
       fileInput.multiple = true;
 
       fileInput.onchange = async (event) => {
-        const files = Array.from((event.target as HTMLInputElement).files || []);
+        const files = Array.from(
+          (event.target as HTMLInputElement).files || []
+        );
         if (files.length === 0) return;
 
         const options: ImageToBase64Options = {
@@ -77,7 +77,7 @@ export class ImageToBase64Example {
           maxWidth: 1024,
           maxHeight: 768,
           format: 'webp',
-          compression: true
+          compression: true,
         };
 
         try {
@@ -89,7 +89,6 @@ export class ImageToBase64Example {
           // logger.info(`成功轉換 ${result.successfulConversions} 張`);
           // logger.info(`失敗 ${result.failedConversions} 張`);
           // logger.info(`平均處理時間: ${result.averageProcessingTime.toFixed(2)}ms`);
-
         } catch (error) {
           // logger.info('批量轉換失敗:', error);
         }
@@ -113,12 +112,11 @@ export class ImageToBase64Example {
         maxWidth: 1200,
         maxHeight: 800,
         format: 'png',
-        compression: false
+        compression: false,
       };
 
       const result = await convertImageUrlToBase64(imageUrl, options);
       // logger.info('URL轉換結果:', result);
-
     } catch (error) {
       // logger.info('URL轉換失敗:', error);
     }
@@ -142,12 +140,15 @@ export class ImageToBase64Example {
           maxWidth: 800,
           maxHeight: 600,
           format: 'jpeg',
-          compression: true
+          compression: true,
         };
 
         try {
           // 使用服務類方法
-          const result = await dataQualityService.convertImageToBase64(file, options);
+          const result = await dataQualityService.convertImageToBase64(
+            file,
+            options
+          );
           // logger.info('服務類轉換結果:', result);
 
           // 驗證base64格式
@@ -155,13 +156,17 @@ export class ImageToBase64Example {
           // logger.info('base64格式有效:', isValid);
 
           // 獲取圖片尺寸
-          const dimensions = await dataQualityService.getBase64ImageDimensions(result.base64);
+          const dimensions = await dataQualityService.getBase64ImageDimensions(
+            result.base64
+          );
           // logger.info('圖片尺寸:', dimensions);
 
           // 轉換回Blob
-          const blob = dataQualityService.base64ToBlob(result.base64, result.mimeType);
+          const blob = dataQualityService.base64ToBlob(
+            result.base64,
+            result.mimeType
+          );
           // logger.info('轉換回Blob:', blob);
-
         } catch (error) {
           // logger.info('服務類轉換失敗:', error);
         }
@@ -188,20 +193,24 @@ export class ImageToBase64Example {
 
         try {
           // 先轉換為base64
-          const originalResult = await convertImageToBase64(file, { compression: false });
+          const originalResult = await convertImageToBase64(file, {
+            compression: false,
+          });
           // logger.info('原始圖片大小:', originalResult.originalSize, 'bytes');
 
           // 壓縮圖片
-          const compressedResult = await compressBase64Image(originalResult.base64, {
-            quality: 0.5,
-            maxWidth: 800,
-            maxHeight: 600,
-            format: 'jpeg'
-          });
+          const compressedResult = await compressBase64Image(
+            originalResult.base64,
+            {
+              quality: 0.5,
+              maxWidth: 800,
+              maxHeight: 600,
+              format: 'jpeg',
+            }
+          );
 
           // logger.info('壓縮後大小:', compressedResult.compressedSize, 'bytes');
           // logger.info('壓縮比例:', `${(compressedResult.compressionRatio * 100).toFixed(2)  }%`);
-
         } catch (error) {
           // logger.info('圖片壓縮失敗:', error);
         }
@@ -230,7 +239,6 @@ export class ImageToBase64Example {
       } catch (error) {
         // logger.info('Blob轉換錯誤:', error instanceof Error ? error.message : '未知錯誤');
       }
-
     } catch (error) {
       // logger.info('錯誤處理示例失敗:', error);
     }

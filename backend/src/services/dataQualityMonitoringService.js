@@ -1,5 +1,13 @@
-const { DataQualityMetrics, TrainingData, AnnotationData, Annotator, Card, User } = require('../models');
+const {
+  DataQualityMetrics,
+  TrainingData,
+  AnnotationData,
+  Annotator,
+  Card,
+  User,
+} = require('../models');
 const { Op } = require('sequelize');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
 class DataQualityMonitoringService {
@@ -10,7 +18,13 @@ class DataQualityMonitoringService {
     const {
       startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
       endDate = new Date(),
-      dataTypes = ['training', 'annotation', 'validation', 'market', 'user_generated']
+      dataTypes = [
+        'training',
+        'annotation',
+        'validation',
+        'market',
+        'user_generated',
+      ],
     } = options;
 
     try {
@@ -21,7 +35,7 @@ class DataQualityMonitoringService {
         qualityDistribution,
         annotatorPerformance,
         recentIssues,
-        improvementSuggestions
+        improvementSuggestions,
       ] = await Promise.all([
         this.getOverallMetrics(startDate, endDate, dataTypes),
         this.getTrendData(startDate, endDate, dataTypes),
@@ -29,7 +43,7 @@ class DataQualityMonitoringService {
         this.getQualityDistribution(startDate, endDate),
         this.getAnnotatorPerformance(startDate, endDate),
         this.getRecentIssues(startDate, endDate),
-        this.getImprovementSuggestions()
+        this.getImprovementSuggestions(),
       ]);
 
       return {
@@ -41,7 +55,7 @@ class DataQualityMonitoringService {
         recentIssues,
         improvementSuggestions,
         lastUpdated: new Date(),
-        dateRange: { startDate, endDate }
+        dateRange: { startDate, endDate },
       };
     } catch (error) {
       logger.error('Error getting dashboard data:', error);
@@ -58,10 +72,10 @@ class DataQualityMonitoringService {
         where: {
           dataType: { [Op.in]: dataTypes },
           assessmentDate: {
-            [Op.between]: [startDate, endDate]
-          }
+            [Op.between]: [startDate, endDate],
+          },
         },
-        order: [['assessmentDate', 'DESC']]
+        order: [['assessmentDate', 'DESC']],
       });
 
       if (metrics.length === 0) {
@@ -71,28 +85,40 @@ class DataQualityMonitoringService {
           averageConsistency: 0,
           averageTimeliness: 0,
           overallScore: 0,
-          totalAssessments: 0
+          totalAssessments: 0,
         };
       }
 
-      const totals = metrics.reduce((acc, metric) => {
-        acc.completeness += metric.completeness;
-        acc.accuracy += metric.accuracy;
-        acc.consistency += metric.consistency;
-        acc.timeliness += metric.timeliness;
-        acc.overallScore += metric.overallScore;
-        return acc;
-      }, { completeness: 0, accuracy: 0, consistency: 0, timeliness: 0, overallScore: 0 });
+      const totals = metrics.reduce(
+        (acc, metric) => {
+          acc.completeness += metric.completeness;
+          acc.accuracy += metric.accuracy;
+          acc.consistency += metric.consistency;
+          acc.timeliness += metric.timeliness;
+          acc.overallScore += metric.overallScore;
+          return acc;
+        },
+        {
+          completeness: 0,
+          accuracy: 0,
+          consistency: 0,
+          timeliness: 0,
+          overallScore: 0,
+        }
+      );
 
+// eslint-disable-next-line no-unused-vars
       const count = metrics.length;
 
       return {
-        averageCompleteness: Math.round((totals.completeness / count) * 100) / 100,
+        averageCompleteness:
+          Math.round((totals.completeness / count) * 100) / 100,
         averageAccuracy: Math.round((totals.accuracy / count) * 100) / 100,
-        averageConsistency: Math.round((totals.consistency / count) * 100) / 100,
+        averageConsistency:
+          Math.round((totals.consistency / count) * 100) / 100,
         averageTimeliness: Math.round((totals.timeliness / count) * 100) / 100,
         overallScore: Math.round((totals.overallScore / count) * 100) / 100,
-        totalAssessments: count
+        totalAssessments: count,
       };
     } catch (error) {
       logger.error('Error getting overall metrics:', error);
@@ -109,8 +135,8 @@ class DataQualityMonitoringService {
         where: {
           dataType: { [Op.in]: dataTypes },
           assessmentDate: {
-            [Op.between]: [startDate, endDate]
-          }
+            [Op.between]: [startDate, endDate],
+          },
         },
         order: [['assessmentDate', 'ASC']],
         attributes: [
@@ -120,15 +146,15 @@ class DataQualityMonitoringService {
           'accuracy',
           'consistency',
           'timeliness',
-          'overallScore'
-        ]
+          'overallScore',
+        ],
       });
 
       // Group by date and data type
       const groupedData = {};
       const dateLabels = [];
 
-      metrics.forEach(metric => {
+      metrics.forEach((metric) => {
         const date = metric.assessmentDate.toISOString().split('T')[0];
         if (!dateLabels.includes(date)) {
           dateLabels.push(date);
@@ -144,45 +170,54 @@ class DataQualityMonitoringService {
             accuracy: [],
             consistency: [],
             timeliness: [],
-            overallScore: []
+            overallScore: [],
           };
         }
 
-        groupedData[metric.dataType][date].completeness.push(metric.completeness);
+        groupedData[metric.dataType][date].completeness.push(
+          metric.completeness
+        );
         groupedData[metric.dataType][date].accuracy.push(metric.accuracy);
         groupedData[metric.dataType][date].consistency.push(metric.consistency);
         groupedData[metric.dataType][date].timeliness.push(metric.timeliness);
-        groupedData[metric.dataType][date].overallScore.push(metric.overallScore);
+        groupedData[metric.dataType][date].overallScore.push(
+          metric.overallScore
+        );
       });
 
       // Calculate averages for each date and data type
       const trendData = {};
-      Object.keys(groupedData).forEach(dataType => {
+      Object.keys(groupedData).forEach((dataType) => {
         trendData[dataType] = {
           completeness: [],
           accuracy: [],
           consistency: [],
           timeliness: [],
-          overallScore: []
+          overallScore: [],
         };
 
-        dateLabels.forEach(date => {
+        dateLabels.forEach((date) => {
           if (groupedData[dataType][date]) {
+// eslint-disable-next-line no-unused-vars
             const data = groupedData[dataType][date];
             trendData[dataType].completeness.push(
-              data.completeness.reduce((a, b) => a + b, 0) / data.completeness.length
+              data.completeness.reduce((a, b) => a + b, 0) /
+                data.completeness.length
             );
             trendData[dataType].accuracy.push(
               data.accuracy.reduce((a, b) => a + b, 0) / data.accuracy.length
             );
             trendData[dataType].consistency.push(
-              data.consistency.reduce((a, b) => a + b, 0) / data.consistency.length
+              data.consistency.reduce((a, b) => a + b, 0) /
+                data.consistency.length
             );
             trendData[dataType].timeliness.push(
-              data.timeliness.reduce((a, b) => a + b, 0) / data.timeliness.length
+              data.timeliness.reduce((a, b) => a + b, 0) /
+                data.timeliness.length
             );
             trendData[dataType].overallScore.push(
-              data.overallScore.reduce((a, b) => a + b, 0) / data.overallScore.length
+              data.overallScore.reduce((a, b) => a + b, 0) /
+                data.overallScore.length
             );
           } else {
             trendData[dataType].completeness.push(0);
@@ -196,7 +231,7 @@ class DataQualityMonitoringService {
 
       return {
         dateLabels,
-        trendData
+        trendData,
       };
     } catch (error) {
       logger.error('Error getting trend data:', error);
@@ -212,17 +247,18 @@ class DataQualityMonitoringService {
       const trainingData = await TrainingData.findAll({
         where: {
           createdAt: {
-            [Op.between]: [startDate, endDate]
-          }
+            [Op.between]: [startDate, endDate],
+          },
         },
-        attributes: ['source', 'quality', 'status']
+        attributes: ['source', 'quality', 'status'],
       });
 
       const sourceStats = {};
       const qualityStats = {};
+// eslint-disable-next-line no-unused-vars
       const statusStats = {};
 
-      trainingData.forEach(data => {
+      trainingData.forEach((data) => {
         // Source breakdown
         if (!sourceStats[data.source]) {
           sourceStats[data.source] = 0;
@@ -246,19 +282,21 @@ class DataQualityMonitoringService {
         sourceBreakdown: Object.entries(sourceStats).map(([source, count]) => ({
           source,
           count,
-          percentage: Math.round((count / trainingData.length) * 100)
+          percentage: Math.round((count / trainingData.length) * 100),
         })),
-        qualityBreakdown: Object.entries(qualityStats).map(([quality, count]) => ({
-          quality,
-          count,
-          percentage: Math.round((count / trainingData.length) * 100)
-        })),
+        qualityBreakdown: Object.entries(qualityStats).map(
+          ([quality, count]) => ({
+            quality,
+            count,
+            percentage: Math.round((count / trainingData.length) * 100),
+          })
+        ),
         statusBreakdown: Object.entries(statusStats).map(([status, count]) => ({
           status,
           count,
-          percentage: Math.round((count / trainingData.length) * 100)
+          percentage: Math.round((count / trainingData.length) * 100),
         })),
-        totalRecords: trainingData.length
+        totalRecords: trainingData.length,
       };
     } catch (error) {
       logger.error('Error getting source breakdown:', error);
@@ -274,22 +312,23 @@ class DataQualityMonitoringService {
       const metrics = await DataQualityMetrics.findAll({
         where: {
           assessmentDate: {
-            [Op.between]: [startDate, endDate]
-          }
+            [Op.between]: [startDate, endDate],
+          },
         },
-        attributes: ['overallScore', 'dataType']
+        attributes: ['overallScore', 'dataType'],
       });
 
       const distribution = {
         excellent: { count: 0, percentage: 0 },
         good: { count: 0, percentage: 0 },
         fair: { count: 0, percentage: 0 },
-        poor: { count: 0, percentage: 0 }
+        poor: { count: 0, percentage: 0 },
       };
 
+// eslint-disable-next-line no-unused-vars
       const typeDistribution = {};
 
-      metrics.forEach(metric => {
+      metrics.forEach((metric) => {
         // Overall distribution
         if (metric.overallScore >= 0.9) {
           distribution.excellent.count++;
@@ -308,7 +347,7 @@ class DataQualityMonitoringService {
             good: 0,
             fair: 0,
             poor: 0,
-            total: 0
+            total: 0,
           };
         }
 
@@ -326,27 +365,44 @@ class DataQualityMonitoringService {
 
       const total = metrics.length;
       if (total > 0) {
-        distribution.excellent.percentage = Math.round((distribution.excellent.count / total) * 100);
-        distribution.good.percentage = Math.round((distribution.good.count / total) * 100);
-        distribution.fair.percentage = Math.round((distribution.fair.count / total) * 100);
-        distribution.poor.percentage = Math.round((distribution.poor.count / total) * 100);
+        distribution.excellent.percentage = Math.round(
+          (distribution.excellent.count / total) * 100
+        );
+        distribution.good.percentage = Math.round(
+          (distribution.good.count / total) * 100
+        );
+        distribution.fair.percentage = Math.round(
+          (distribution.fair.count / total) * 100
+        );
+        distribution.poor.percentage = Math.round(
+          (distribution.poor.count / total) * 100
+        );
       }
 
       // Calculate percentages for type distribution
-      Object.keys(typeDistribution).forEach(type => {
+      Object.keys(typeDistribution).forEach((type) => {
+// eslint-disable-next-line no-unused-vars
         const typeData = typeDistribution[type];
         if (typeData.total > 0) {
-          typeData.excellentPercentage = Math.round((typeData.excellent / typeData.total) * 100);
-          typeData.goodPercentage = Math.round((typeData.good / typeData.total) * 100);
-          typeData.fairPercentage = Math.round((typeData.fair / typeData.total) * 100);
-          typeData.poorPercentage = Math.round((typeData.poor / typeData.total) * 100);
+          typeData.excellentPercentage = Math.round(
+            (typeData.excellent / typeData.total) * 100
+          );
+          typeData.goodPercentage = Math.round(
+            (typeData.good / typeData.total) * 100
+          );
+          typeData.fairPercentage = Math.round(
+            (typeData.fair / typeData.total) * 100
+          );
+          typeData.poorPercentage = Math.round(
+            (typeData.poor / typeData.total) * 100
+          );
         }
       });
 
       return {
         overallDistribution: distribution,
         typeDistribution,
-        totalAssessments: total
+        totalAssessments: total,
       };
     } catch (error) {
       logger.error('Error getting quality distribution:', error);
@@ -362,14 +418,14 @@ class DataQualityMonitoringService {
       const annotations = await AnnotationData.findAll({
         where: {
           createdAt: {
-            [Op.between]: [startDate, endDate]
-          }
+            [Op.between]: [startDate, endDate],
+          },
         },
         include: [
           {
             model: Annotator,
-            include: [{ model: User, attributes: ['username'] }]
-          }
+            include: [{ model: User, attributes: ['username'] }],
+          },
         ],
         attributes: [
           'annotatorId',
@@ -377,34 +433,38 @@ class DataQualityMonitoringService {
           'confidence',
           'reviewStatus',
           'processingTime',
-          'createdAt'
-        ]
+          'createdAt',
+        ],
       });
 
       const annotatorStats = {};
+// eslint-disable-next-line no-unused-vars
       const typeStats = {};
 
-      annotations.forEach(annotation => {
-        const {annotatorId} = annotation;
-        const {annotationType} = annotation;
+      annotations.forEach((annotation) => {
+        const { annotatorId } = annotation;
+        const { annotationType } = annotation;
 
         // Annotator stats
         if (!annotatorStats[annotatorId]) {
           annotatorStats[annotatorId] = {
-            username: annotation.Annotator?.User?.username || `Annotator-${annotatorId}`,
+            username:
+              annotation.Annotator?.User?.username ||
+              `Annotator-${annotatorId}`,
             totalAnnotations: 0,
             approvedAnnotations: 0,
             rejectedAnnotations: 0,
             averageConfidence: 0,
             averageProcessingTime: 0,
             confidenceSum: 0,
-            processingTimeSum: 0
+            processingTimeSum: 0,
           };
         }
 
         annotatorStats[annotatorId].totalAnnotations++;
         annotatorStats[annotatorId].confidenceSum += annotation.confidence || 0;
-        annotatorStats[annotatorId].processingTimeSum += annotation.processingTime || 0;
+        annotatorStats[annotatorId].processingTimeSum +=
+          annotation.processingTime || 0;
 
         if (annotation.reviewStatus === 'approved') {
           annotatorStats[annotatorId].approvedAnnotations++;
@@ -421,13 +481,14 @@ class DataQualityMonitoringService {
             averageConfidence: 0,
             averageProcessingTime: 0,
             confidenceSum: 0,
-            processingTimeSum: 0
+            processingTimeSum: 0,
           };
         }
 
         typeStats[annotationType].totalAnnotations++;
         typeStats[annotationType].confidenceSum += annotation.confidence || 0;
-        typeStats[annotationType].processingTimeSum += annotation.processingTime || 0;
+        typeStats[annotationType].processingTimeSum +=
+          annotation.processingTime || 0;
 
         if (annotation.reviewStatus === 'approved') {
           typeStats[annotationType].approvedAnnotations++;
@@ -437,21 +498,33 @@ class DataQualityMonitoringService {
       });
 
       // Calculate averages
-      Object.keys(annotatorStats).forEach(annotatorId => {
+      Object.keys(annotatorStats).forEach((annotatorId) => {
         const stats = annotatorStats[annotatorId];
         if (stats.totalAnnotations > 0) {
-          stats.averageConfidence = Math.round((stats.confidenceSum / stats.totalAnnotations) * 100) / 100;
-          stats.averageProcessingTime = Math.round(stats.processingTimeSum / stats.totalAnnotations);
-          stats.approvalRate = Math.round((stats.approvedAnnotations / stats.totalAnnotations) * 100);
+          stats.averageConfidence =
+            Math.round((stats.confidenceSum / stats.totalAnnotations) * 100) /
+            100;
+          stats.averageProcessingTime = Math.round(
+            stats.processingTimeSum / stats.totalAnnotations
+          );
+          stats.approvalRate = Math.round(
+            (stats.approvedAnnotations / stats.totalAnnotations) * 100
+          );
         }
       });
 
-      Object.keys(typeStats).forEach(type => {
+      Object.keys(typeStats).forEach((type) => {
         const stats = typeStats[type];
         if (stats.totalAnnotations > 0) {
-          stats.averageConfidence = Math.round((stats.confidenceSum / stats.totalAnnotations) * 100) / 100;
-          stats.averageProcessingTime = Math.round(stats.processingTimeSum / stats.totalAnnotations);
-          stats.approvalRate = Math.round((stats.approvedAnnotations / stats.totalAnnotations) * 100);
+          stats.averageConfidence =
+            Math.round((stats.confidenceSum / stats.totalAnnotations) * 100) /
+            100;
+          stats.averageProcessingTime = Math.round(
+            stats.processingTimeSum / stats.totalAnnotations
+          );
+          stats.approvalRate = Math.round(
+            (stats.approvedAnnotations / stats.totalAnnotations) * 100
+          );
         }
       });
 
@@ -459,9 +532,9 @@ class DataQualityMonitoringService {
         annotatorStats: Object.values(annotatorStats),
         typeStats: Object.entries(typeStats).map(([type, stats]) => ({
           type,
-          ...stats
+          ...stats,
         })),
-        totalAnnotations: annotations.length
+        totalAnnotations: annotations.length,
       };
     } catch (error) {
       logger.error('Error getting annotator performance:', error);
@@ -481,14 +554,14 @@ class DataQualityMonitoringService {
         where: {
           overallScore: { [Op.lt]: 0.6 },
           assessmentDate: {
-            [Op.between]: [startDate, endDate]
-          }
+            [Op.between]: [startDate, endDate],
+          },
         },
         order: [['assessmentDate', 'DESC']],
-        limit: 10
+        limit: 10,
       });
 
-      lowQualityMetrics.forEach(metric => {
+      lowQualityMetrics.forEach((metric) => {
         issues.push({
           type: 'low_quality',
           severity: 'high',
@@ -496,7 +569,7 @@ class DataQualityMonitoringService {
           description: `Overall score: ${metric.overallScore}, Completeness: ${metric.completeness}, Accuracy: ${metric.accuracy}`,
           date: metric.assessmentDate,
           dataType: metric.dataType,
-          score: metric.overallScore
+          score: metric.overallScore,
         });
       });
 
@@ -505,20 +578,20 @@ class DataQualityMonitoringService {
         where: {
           reviewStatus: 'rejected',
           createdAt: {
-            [Op.between]: [startDate, endDate]
-          }
+            [Op.between]: [startDate, endDate],
+          },
         },
         include: [
           {
             model: Annotator,
-            include: [{ model: User, attributes: ['username'] }]
-          }
+            include: [{ model: User, attributes: ['username'] }],
+          },
         ],
         order: [['createdAt', 'DESC']],
-        limit: 10
+        limit: 10,
       });
 
-      rejectedAnnotations.forEach(annotation => {
+      rejectedAnnotations.forEach((annotation) => {
         issues.push({
           type: 'rejected_annotation',
           severity: 'medium',
@@ -526,7 +599,7 @@ class DataQualityMonitoringService {
           description: `Annotator: ${annotation.Annotator?.User?.username || 'Unknown'}, Review notes: ${annotation.reviewNotes || 'No notes'}`,
           date: annotation.createdAt,
           annotationType: annotation.annotationType,
-          annotatorId: annotation.annotatorId
+          annotatorId: annotation.annotatorId,
         });
       });
 
@@ -548,9 +621,10 @@ class DataQualityMonitoringService {
       const suggestions = [];
 
       // Get recent metrics
+// eslint-disable-next-line no-unused-vars
       const recentMetrics = await DataQualityMetrics.findAll({
         order: [['assessmentDate', 'DESC']],
-        limit: 100
+        limit: 100,
       });
 
       if (recentMetrics.length === 0) {
@@ -558,15 +632,25 @@ class DataQualityMonitoringService {
       }
 
       // Calculate averages
-      const averages = recentMetrics.reduce((acc, metric) => {
-        acc.completeness += metric.completeness;
-        acc.accuracy += metric.accuracy;
-        acc.consistency += metric.consistency;
-        acc.timeliness += metric.timeliness;
-        acc.overallScore += metric.overallScore;
-        return acc;
-      }, { completeness: 0, accuracy: 0, consistency: 0, timeliness: 0, overallScore: 0 });
+      const averages = recentMetrics.reduce(
+        (acc, metric) => {
+          acc.completeness += metric.completeness;
+          acc.accuracy += metric.accuracy;
+          acc.consistency += metric.consistency;
+          acc.timeliness += metric.timeliness;
+          acc.overallScore += metric.overallScore;
+          return acc;
+        },
+        {
+          completeness: 0,
+          accuracy: 0,
+          consistency: 0,
+          timeliness: 0,
+          overallScore: 0,
+        }
+      );
 
+// eslint-disable-next-line no-unused-vars
       const count = recentMetrics.length;
       averages.completeness /= count;
       averages.accuracy /= count;
@@ -581,7 +665,8 @@ class DataQualityMonitoringService {
           category: 'data_collection',
           title: 'Improve Data Completeness',
           description: `Current completeness score is ${Math.round(averages.completeness * 100)}%. Consider expanding data collection sources and improving data capture processes.`,
-          action: 'Review data collection processes and add missing data sources'
+          action:
+            'Review data collection processes and add missing data sources',
         });
       }
 
@@ -591,7 +676,8 @@ class DataQualityMonitoringService {
           category: 'annotation',
           title: 'Improve Annotation Accuracy',
           description: `Current accuracy score is ${Math.round(averages.accuracy * 100)}%. Consider improving annotator training and quality control processes.`,
-          action: 'Enhance annotator training and implement stricter quality controls'
+          action:
+            'Enhance annotator training and implement stricter quality controls',
         });
       }
 
@@ -601,7 +687,7 @@ class DataQualityMonitoringService {
           category: 'data_cleaning',
           title: 'Improve Data Consistency',
           description: `Current consistency score is ${Math.round(averages.consistency * 100)}%. Consider standardizing data formats and validation rules.`,
-          action: 'Implement data standardization and validation rules'
+          action: 'Implement data standardization and validation rules',
         });
       }
 
@@ -611,13 +697,14 @@ class DataQualityMonitoringService {
           category: 'processing',
           title: 'Improve Data Timeliness',
           description: `Current timeliness score is ${Math.round(averages.timeliness * 100)}%. Consider optimizing data processing pipelines.`,
-          action: 'Optimize data processing and update frequencies'
+          action: 'Optimize data processing and update frequencies',
         });
       }
 
       // Check for specific data type issues
+// eslint-disable-next-line no-unused-vars
       const typeAverages = {};
-      recentMetrics.forEach(metric => {
+      recentMetrics.forEach((metric) => {
         if (!typeAverages[metric.dataType]) {
           typeAverages[metric.dataType] = { count: 0, totalScore: 0 };
         }
@@ -633,7 +720,7 @@ class DataQualityMonitoringService {
             category: 'specific_type',
             title: `Improve ${dataType} Data Quality`,
             description: `${dataType} data has an average score of ${Math.round(averageScore * 100)}%.`,
-            action: `Focus improvement efforts on ${dataType} data collection and processing`
+            action: `Focus improvement efforts on ${dataType} data collection and processing`,
           });
         }
       });
@@ -656,13 +743,14 @@ class DataQualityMonitoringService {
       const alerts = [];
 
       // Check for recent low quality data
+// eslint-disable-next-line no-unused-vars
       const recentLowQuality = await DataQualityMetrics.findOne({
         where: {
           overallScore: { [Op.lt]: 0.5 },
           assessmentDate: {
-            [Op.gte]: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
-          }
-        }
+            [Op.gte]: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+          },
+        },
       });
 
       if (recentLowQuality) {
@@ -670,7 +758,7 @@ class DataQualityMonitoringService {
           type: 'critical',
           title: 'Critical: Low Quality Data Detected',
           message: `Data quality score dropped to ${Math.round(recentLowQuality.overallScore * 100)}%`,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       }
 
@@ -679,9 +767,9 @@ class DataQualityMonitoringService {
         where: {
           reviewStatus: 'pending',
           createdAt: {
-            [Op.lt]: new Date(Date.now() - 2 * 60 * 60 * 1000) // Older than 2 hours
-          }
-        }
+            [Op.lt]: new Date(Date.now() - 2 * 60 * 60 * 1000), // Older than 2 hours
+          },
+        },
       });
 
       if (pendingAnnotations > 50) {
@@ -689,7 +777,7 @@ class DataQualityMonitoringService {
           type: 'warning',
           title: 'Warning: Annotation Backlog',
           message: `${pendingAnnotations} annotations pending review for more than 2 hours`,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       }
 
@@ -697,9 +785,9 @@ class DataQualityMonitoringService {
       const inactiveAnnotators = await Annotator.count({
         where: {
           lastActiveDate: {
-            [Op.lt]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // Inactive for 7 days
-          }
-        }
+            [Op.lt]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Inactive for 7 days
+          },
+        },
       });
 
       if (inactiveAnnotators > 0) {
@@ -707,7 +795,7 @@ class DataQualityMonitoringService {
           type: 'info',
           title: 'Info: Inactive Annotators',
           message: `${inactiveAnnotators} annotators have been inactive for more than 7 days`,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
       }
 

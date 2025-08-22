@@ -16,7 +16,7 @@ import priceDataReducer from './slices/priceDataSlice';
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['auth', 'settings'] // 只持久化認證和設置狀態
+  whitelist: ['auth', 'settings'], // 只持久化認證和設置狀態
 };
 
 // 根 reducer
@@ -30,7 +30,7 @@ const rootReducer = {
   membership: membershipReducer,
   settings: settingsReducer,
   scanHistory: scanHistoryReducer,
-  priceData: priceDataReducer
+  priceData: priceDataReducer,
 };
 
 // 創建 store
@@ -39,9 +39,9 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE']
-      }
-    })
+        ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
+      },
+    }),
 });
 
 // 創建持久化 store

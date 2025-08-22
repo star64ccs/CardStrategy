@@ -1,4 +1,6 @@
-const { by, device, element, expect } = require('detox');
+/* eslint-env jest, detox */
+
+const { by, device, element } = require('detox');
 
 describe('Privacy Settings Flow', () => {
   beforeAll(async () => {
@@ -71,7 +73,9 @@ describe('Privacy Settings Flow', () => {
 
       // 檢查同意管理界面
       await expect(element(by.text('同意管理'))).toBeVisible();
-      await expect(element(by.text('管理您對數據處理的同意設置'))).toBeVisible();
+      await expect(
+        element(by.text('管理您對數據處理的同意設置'))
+      ).toBeVisible();
       await expect(element(by.text('營銷同意'))).toBeVisible();
       await expect(element(by.text('數據共享同意'))).toBeVisible();
     });
@@ -84,11 +88,15 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('email-marketing-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('email-marketing-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('email-marketing-toggle')).getAttribute('value')
+      ).toBe('true');
 
       // 再次切換
       await element(by.id('email-marketing-toggle')).tap();
-      await expect(element(by.id('email-marketing-toggle')).getAttribute('value')).toBe('false');
+      await expect(
+        element(by.id('email-marketing-toggle')).getAttribute('value')
+      ).toBe('false');
     });
 
     it('should toggle SMS marketing consent', async () => {
@@ -99,7 +107,9 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('sms-marketing-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('sms-marketing-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('sms-marketing-toggle')).getAttribute('value')
+      ).toBe('true');
     });
 
     it('should toggle push notification consent', async () => {
@@ -110,7 +120,9 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('push-notification-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('push-notification-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('push-notification-toggle')).getAttribute('value')
+      ).toBe('true');
     });
 
     it('should toggle third-party marketing consent', async () => {
@@ -121,7 +133,9 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('third-party-marketing-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('third-party-marketing-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('third-party-marketing-toggle')).getAttribute('value')
+      ).toBe('true');
     });
 
     it('should toggle personalized advertising consent', async () => {
@@ -132,7 +146,9 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('personalized-advertising-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('personalized-advertising-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('personalized-advertising-toggle')).getAttribute('value')
+      ).toBe('true');
     });
 
     it('should toggle analytics data sharing', async () => {
@@ -143,7 +159,9 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('analytics-data-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('analytics-data-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('analytics-data-toggle')).getAttribute('value')
+      ).toBe('true');
     });
 
     it('should toggle third-party data sharing', async () => {
@@ -154,7 +172,9 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('third-party-data-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('third-party-data-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('third-party-data-toggle')).getAttribute('value')
+      ).toBe('true');
     });
 
     it('should toggle cross-border data transfer', async () => {
@@ -165,7 +185,9 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('cross-border-data-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('cross-border-data-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('cross-border-data-toggle')).getAttribute('value')
+      ).toBe('true');
     });
 
     it('should save consent preferences', async () => {
@@ -228,14 +250,18 @@ describe('Privacy Settings Flow', () => {
       await element(by.text('訪問權')).tap();
 
       // 輸入請求描述
-      await element(by.id('access-description-input')).typeText('我需要訪問我的個人資料數據');
+      await element(by.id('access-description-input')).typeText(
+        '我需要訪問我的個人資料數據'
+      );
 
       // 提交請求
       await element(by.text('提交請求')).tap();
 
       // 檢查是否顯示成功消息
       await expect(element(by.text('請求已提交'))).toBeVisible();
-      await expect(element(by.text('我們將在30天內處理您的請求'))).toBeVisible();
+      await expect(
+        element(by.text('我們將在30天內處理您的請求'))
+      ).toBeVisible();
     });
 
     it('should request data rectification', async () => {
@@ -248,7 +274,9 @@ describe('Privacy Settings Flow', () => {
       // 檢查更正權請求界面
       await expect(element(by.text('數據更正請求'))).toBeVisible();
       await expect(element(by.text('請描述需要更正的數據'))).toBeVisible();
-      await expect(element(by.id('rectification-description-input'))).toBeVisible();
+      await expect(
+        element(by.id('rectification-description-input'))
+      ).toBeVisible();
     });
 
     it('should request data deletion', async () => {
@@ -355,7 +383,9 @@ describe('Privacy Settings Flow', () => {
       await element(by.id('privacy-updates-toggle')).tap();
 
       // 檢查狀態是否改變
-      await expect(element(by.id('privacy-updates-toggle')).getAttribute('value')).toBe('true');
+      await expect(
+        element(by.id('privacy-updates-toggle')).getAttribute('value')
+      ).toBe('true');
     });
 
     it('should configure data retention settings', async () => {
@@ -497,7 +527,9 @@ describe('Privacy Settings Flow', () => {
 
       // 檢查父母同意界面
       await expect(element(by.text('請求父母同意'))).toBeVisible();
-      await expect(element(by.text('請輸入父母或監護人的電子郵件'))).toBeVisible();
+      await expect(
+        element(by.text('請輸入父母或監護人的電子郵件'))
+      ).toBeVisible();
       await expect(element(by.id('parent-email-input'))).toBeVisible();
     });
 
@@ -607,7 +639,9 @@ describe('Privacy Settings Flow', () => {
 
       // 檢查最終確認對話框
       await expect(element(by.text('最終確認'))).toBeVisible();
-      await expect(element(by.text('您確定要永久刪除所有數據嗎？'))).toBeVisible();
+      await expect(
+        element(by.text('您確定要永久刪除所有數據嗎？'))
+      ).toBeVisible();
       await expect(element(by.text('是，永久刪除'))).toBeVisible();
       await expect(element(by.text('取消'))).toBeVisible();
     });

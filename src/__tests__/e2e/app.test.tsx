@@ -6,7 +6,7 @@ import { createMockScanHistory } from '@/__tests__/setup/test-utils';
 const mockNavigation = {
   navigate: jest.fn(),
   goBack: jest.fn(),
-  setOptions: jest.fn()
+  setOptions: jest.fn(),
 };
 
 // Mock Redux actions
@@ -16,24 +16,24 @@ jest.mock('@/store/slices/scanHistorySlice', () => ({
   searchScanHistory: jest.fn(),
   clearFilters: jest.fn(),
   setFilters: jest.fn(),
-  toggleSelectionMode: jest.fn()
+  toggleSelectionMode: jest.fn(),
 }));
 
 describe('End-to-End Tests', () => {
   const mockHistory = [
     createMockScanHistory(),
-    createMockScanHistory({ 
-      id: '2', 
+    createMockScanHistory({
+      id: '2',
       cardName: 'Test Card 2',
       scanType: 'condition',
-      isFavorite: true 
+      isFavorite: true,
     }),
-    createMockScanHistory({ 
-      id: '3', 
+    createMockScanHistory({
+      id: '3',
       cardName: 'Test Card 3',
       scanType: 'authenticity',
-      isFavorite: false 
-    })
+      isFavorite: false,
+    }),
   ];
 
   const mockStatistics = {
@@ -46,17 +46,17 @@ describe('End-to-End Tests', () => {
       recognition: 60,
       condition: 25,
       authenticity: 10,
-      batch: 5
+      batch: 5,
     },
     scansByDate: {
       today: 10,
       thisWeek: 50,
-      thisMonth: 200
+      thisMonth: 200,
     },
     mostScannedCards: [
       { cardId: '1', cardName: 'Test Card', scanCount: 15 },
-      { cardId: '2', cardName: 'Test Card 2', scanCount: 10 }
-    ]
+      { cardId: '2', cardName: 'Test Card 2', scanCount: 10 },
+    ],
   };
 
   const mockState = {
@@ -75,7 +75,7 @@ describe('End-to-End Tests', () => {
         sortBy: 'date',
         sortOrder: 'desc',
         page: 1,
-        limit: 10
+        limit: 10,
       },
       pagination: {
         page: 1,
@@ -83,12 +83,12 @@ describe('End-to-End Tests', () => {
         total: 3,
         totalPages: 1,
         hasNext: false,
-        hasPrev: false
+        hasPrev: false,
       },
       selectedRecords: [],
       isSelectionMode: false,
-      selectedRecord: null
-    }
+      selectedRecord: null,
+    },
   };
 
   beforeEach(() => {
@@ -139,9 +139,11 @@ describe('End-to-End Tests', () => {
       fireEvent.press(searchButton);
 
       await waitFor(() => {
-        expect(require('@/store/slices/scanHistorySlice').searchScanHistory).toHaveBeenCalledWith({
+        expect(
+          require('@/store/slices/scanHistorySlice').searchScanHistory
+        ).toHaveBeenCalledWith({
           query: 'Test Card 2',
-          filters: expect.any(Object)
+          filters: expect.any(Object),
         });
       });
     });
@@ -157,7 +159,9 @@ describe('End-to-End Tests', () => {
       fireEvent.press(clearButton);
 
       await waitFor(() => {
-        expect(require('@/store/slices/scanHistorySlice').fetchScanHistory).toHaveBeenCalled();
+        expect(
+          require('@/store/slices/scanHistorySlice').fetchScanHistory
+        ).toHaveBeenCalled();
       });
     });
 
@@ -184,8 +188,10 @@ describe('End-to-End Tests', () => {
       fireEvent.press(recognitionFilter);
 
       await waitFor(() => {
-        expect(require('@/store/slices/scanHistorySlice').setFilters).toHaveBeenCalledWith({
-          scanType: 'recognition'
+        expect(
+          require('@/store/slices/scanHistorySlice').setFilters
+        ).toHaveBeenCalledWith({
+          scanType: 'recognition',
         });
       });
     });
@@ -203,7 +209,9 @@ describe('End-to-End Tests', () => {
       fireEvent.press(clearFiltersButton);
 
       await waitFor(() => {
-        expect(require('@/store/slices/scanHistorySlice').clearFilters).toHaveBeenCalled();
+        expect(
+          require('@/store/slices/scanHistorySlice').clearFilters
+        ).toHaveBeenCalled();
       });
     });
 
@@ -278,7 +286,9 @@ describe('End-to-End Tests', () => {
       fireEvent(firstRecord, 'longPress');
 
       await waitFor(() => {
-        expect(require('@/store/slices/scanHistorySlice').toggleSelectionMode).toHaveBeenCalled();
+        expect(
+          require('@/store/slices/scanHistorySlice').toggleSelectionMode
+        ).toHaveBeenCalled();
       });
 
       // 檢查選擇模式UI
@@ -296,13 +306,17 @@ describe('End-to-End Tests', () => {
         nativeEvent: {
           contentOffset: { y: 0 },
           contentSize: { height: 500, width: 100 },
-          layoutMeasurement: { height: 100, width: 100 }
-        }
+          layoutMeasurement: { height: 100, width: 100 },
+        },
       });
 
       await waitFor(() => {
-        expect(require('@/store/slices/scanHistorySlice').fetchScanHistory).toHaveBeenCalled();
-        expect(require('@/store/slices/scanHistorySlice').fetchScanStatistics).toHaveBeenCalled();
+        expect(
+          require('@/store/slices/scanHistorySlice').fetchScanHistory
+        ).toHaveBeenCalled();
+        expect(
+          require('@/store/slices/scanHistorySlice').fetchScanStatistics
+        ).toHaveBeenCalled();
       });
     });
 
@@ -311,8 +325,8 @@ describe('End-to-End Tests', () => {
         ...mockState,
         scanHistory: {
           ...mockState.scanHistory,
-          error: '獲取掃描歷史失敗'
-        }
+          error: '獲取掃描歷史失敗',
+        },
       };
 
       const { getByText } = render(
@@ -329,8 +343,8 @@ describe('End-to-End Tests', () => {
         ...mockState,
         scanHistory: {
           ...mockState.scanHistory,
-          history: []
-        }
+          history: [],
+        },
       };
 
       const { getByText } = render(
@@ -347,8 +361,8 @@ describe('End-to-End Tests', () => {
         ...mockState,
         scanHistory: {
           ...mockState.scanHistory,
-          isLoading: true
-        }
+          isLoading: true,
+        },
       };
 
       const { getByTestId } = render(
@@ -435,12 +449,14 @@ describe('End-to-End Tests', () => {
         nativeEvent: {
           contentOffset: { y: 0 },
           contentSize: { height: 500, width: 100 },
-          layoutMeasurement: { height: 100, width: 100 }
-        }
+          layoutMeasurement: { height: 100, width: 100 },
+        },
       });
 
       await waitFor(() => {
-        expect(require('@/store/slices/scanHistorySlice').fetchScanHistory).toHaveBeenCalled();
+        expect(
+          require('@/store/slices/scanHistorySlice').fetchScanHistory
+        ).toHaveBeenCalled();
       });
     });
   });

@@ -1,4 +1,9 @@
-import { aiEcosystem, AIEcosystemStats, AIEcosystemHealth, AIEcosystemTask } from './aiEcosystem';
+import {
+  aiEcosystem,
+  AIEcosystemStats,
+  AIEcosystemHealth,
+  AIEcosystemTask,
+} from './aiEcosystem';
 import { multiAIService, AIProvider } from './multiAIService';
 import { aiModelManager, AIModelType } from './aiModelManager';
 import { logger } from '../utils/logger';
@@ -26,21 +31,27 @@ export interface AIEcosystemMetrics {
   memoryUsage: number;
 
   // 提供商指標
-  providerPerformance: Record<AIProvider, {
-    requests: number;
-    successRate: number;
-    averageResponseTime: number;
-    cost: number;
-    availability: number;
-  }>;
+  providerPerformance: Record<
+    AIProvider,
+    {
+      requests: number;
+      successRate: number;
+      averageResponseTime: number;
+      cost: number;
+      availability: number;
+    }
+  >;
 
   // 模型指標
-  modelPerformance: Record<AIModelType, {
-    requests: number;
-    successRate: number;
-    averageResponseTime: number;
-    cost: number;
-  }>;
+  modelPerformance: Record<
+    AIModelType,
+    {
+      requests: number;
+      successRate: number;
+      averageResponseTime: number;
+      cost: number;
+    }
+  >;
 }
 
 export interface AIEcosystemAlert {
@@ -156,22 +167,24 @@ class AIEcosystemMonitor {
 
       // 計算性能指標
       const requestsPerSecond = this.calculateRequestsPerSecond();
-      const {averageResponseTime} = stats;
-      const successRate = stats.totalRequests > 0 ?
-        stats.successfulRequests / stats.totalRequests : 0;
+      const { averageResponseTime } = stats;
+      const successRate =
+        stats.totalRequests > 0
+          ? stats.successfulRequests / stats.totalRequests
+          : 0;
       const errorRate = 1 - successRate;
 
       // 計算成本指標
-      const costPerRequest = stats.totalRequests > 0 ?
-        stats.totalCost / stats.totalRequests : 0;
-      const {monthlyCost} = stats;
+      const costPerRequest =
+        stats.totalRequests > 0 ? stats.totalCost / stats.totalRequests : 0;
+      const { monthlyCost } = stats;
       const costTrend = this.calculateCostTrend();
 
       // 計算資源使用指標
       const queueLength = queuedTasks.length;
       const activeTasksCount = activeTasks.length;
-      const {cpuUsage} = health.system;
-      const {memoryUsage} = health.system;
+      const { cpuUsage } = health.system;
+      const { memoryUsage } = health.system;
 
       // 計算提供商指標
       const providerPerformance = this.calculateProviderPerformance(stats);
@@ -193,20 +206,19 @@ class AIEcosystemMonitor {
         cpuUsage,
         memoryUsage,
         providerPerformance,
-        modelPerformance
+        modelPerformance,
       };
 
       // 保存歷史數據
       this.performanceHistory.push({
         timestamp: new Date(),
-        metrics: { ...this.metrics }
+        metrics: { ...this.metrics },
       });
 
       // 限制歷史數據大小
       if (this.performanceHistory.length > 1000) {
         this.performanceHistory = this.performanceHistory.slice(-1000);
       }
-
     } catch (error) {
       logger.error('收集指標失敗:', error);
     }
@@ -217,7 +229,7 @@ class AIEcosystemMonitor {
     const oneMinuteAgo = now - 60000;
 
     const recentRequests = this.performanceHistory.filter(
-      entry => entry.timestamp.getTime() > oneMinuteAgo
+      (entry) => entry.timestamp.getTime() > oneMinuteAgo
     );
 
     return recentRequests.length / 60; // 每分鐘的請求數除以60秒
@@ -229,13 +241,15 @@ class AIEcosystemMonitor {
     }
 
     const recent = this.performanceHistory.slice(-10);
-    const costs = recent.map(entry => entry.metrics.costPerRequest);
+    const costs = recent.map((entry) => entry.metrics.costPerRequest);
 
     const firstHalf = costs.slice(0, 5);
     const secondHalf = costs.slice(5);
 
-    const firstAvg = firstHalf.reduce((sum, cost) => sum + cost, 0) / firstHalf.length;
-    const secondAvg = secondHalf.reduce((sum, cost) => sum + cost, 0) / secondHalf.length;
+    const firstAvg =
+      firstHalf.reduce((sum, cost) => sum + cost, 0) / firstHalf.length;
+    const secondAvg =
+      secondHalf.reduce((sum, cost) => sum + cost, 0) / secondHalf.length;
 
     const change = (secondAvg - firstAvg) / firstAvg;
 
@@ -253,7 +267,7 @@ class AIEcosystemMonitor {
         successRate: data.successRate,
         averageResponseTime: data.averageResponseTime,
         cost: data.cost,
-        availability: 1.0 // 需要從健康狀態獲取
+        availability: 1.0, // 需要從健康狀態獲取
       };
     }
 
@@ -268,7 +282,7 @@ class AIEcosystemMonitor {
         requests: data.requests,
         successRate: data.successRate,
         averageResponseTime: 0, // 需要計算
-        cost: data.cost
+        cost: data.cost,
       };
     }
 
@@ -285,7 +299,7 @@ class AIEcosystemMonitor {
           type: 'warning',
           title: '成功率下降',
           message: `當前成功率為 ${(this.metrics.successRate * 100).toFixed(1)}%，低於90%`,
-          severity: this.metrics.successRate < 0.8 ? 'high' : 'medium'
+          severity: this.metrics.successRate < 0.8 ? 'high' : 'medium',
         });
       }
 
@@ -295,7 +309,8 @@ class AIEcosystemMonitor {
           type: 'warning',
           title: '響應時間過長',
           message: `平均響應時間為 ${this.metrics.averageResponseTime.toFixed(0)}ms，超過5秒`,
-          severity: this.metrics.averageResponseTime > 10000 ? 'high' : 'medium'
+          severity:
+            this.metrics.averageResponseTime > 10000 ? 'high' : 'medium',
         });
       }
 
@@ -307,7 +322,7 @@ class AIEcosystemMonitor {
           type: 'warning',
           title: '成本超標',
           message: `月度成本為 $${this.metrics.monthlyCost.toFixed(2)}，已達到預算的 ${(costRatio * 100).toFixed(1)}%`,
-          severity: costRatio > 0.95 ? 'critical' : 'high'
+          severity: costRatio > 0.95 ? 'critical' : 'high',
         });
       }
 
@@ -317,7 +332,7 @@ class AIEcosystemMonitor {
           type: 'warning',
           title: '任務隊列過長',
           message: `當前隊列中有 ${this.metrics.queueLength} 個待處理任務`,
-          severity: this.metrics.queueLength > 100 ? 'high' : 'medium'
+          severity: this.metrics.queueLength > 100 ? 'high' : 'medium',
         });
       }
 
@@ -327,7 +342,7 @@ class AIEcosystemMonitor {
           type: 'warning',
           title: 'CPU使用率過高',
           message: `CPU使用率為 ${this.metrics.cpuUsage.toFixed(1)}%`,
-          severity: this.metrics.cpuUsage > 90 ? 'high' : 'medium'
+          severity: this.metrics.cpuUsage > 90 ? 'high' : 'medium',
         });
       }
 
@@ -336,21 +351,22 @@ class AIEcosystemMonitor {
           type: 'warning',
           title: '內存使用率過高',
           message: `內存使用率為 ${this.metrics.memoryUsage.toFixed(1)}%`,
-          severity: this.metrics.memoryUsage > 90 ? 'high' : 'medium'
+          severity: this.metrics.memoryUsage > 90 ? 'high' : 'medium',
         });
       }
-
     } catch (error) {
       logger.error('檢查警報失敗:', error);
     }
   }
 
-  createAlert(alertData: Omit<AIEcosystemAlert, 'id' | 'timestamp' | 'acknowledged'>): void {
+  createAlert(
+    alertData: Omit<AIEcosystemAlert, 'id' | 'timestamp' | 'acknowledged'>
+  ): void {
     const alert: AIEcosystemAlert = {
       id: `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date(),
       acknowledged: false,
-      ...alertData
+      ...alertData,
     };
 
     this.alerts.unshift(alert);
@@ -361,7 +377,7 @@ class AIEcosystemMonitor {
     }
 
     // 觸發警報處理器
-    this.alertHandlers.forEach(handler => {
+    this.alertHandlers.forEach((handler) => {
       try {
         handler(alert);
       } catch (error) {
@@ -373,7 +389,7 @@ class AIEcosystemMonitor {
   }
 
   acknowledgeAlert(alertId: string, acknowledgedBy: string): boolean {
-    const alert = this.alerts.find(a => a.id === alertId);
+    const alert = this.alerts.find((a) => a.id === alertId);
     if (alert && !alert.acknowledged) {
       alert.acknowledged = true;
       alert.acknowledgedBy = acknowledgedBy;
@@ -422,7 +438,7 @@ class AIEcosystemMonitor {
 
     // 過濾指定時間範圍的數據
     const periodData = this.performanceHistory.filter(
-      entry => entry.timestamp >= start && entry.timestamp <= end
+      (entry) => entry.timestamp >= start && entry.timestamp <= end
     );
 
     // 計算平均指標
@@ -430,11 +446,14 @@ class AIEcosystemMonitor {
 
     // 獲取期間內的警報
     const periodAlerts = this.alerts.filter(
-      alert => alert.timestamp >= start && alert.timestamp <= end
+      (alert) => alert.timestamp >= start && alert.timestamp <= end
     );
 
     // 生成建議
-    const recommendations = this.generateRecommendations(avgMetrics, periodAlerts);
+    const recommendations = this.generateRecommendations(
+      avgMetrics,
+      periodAlerts
+    );
 
     const report: AIEcosystemReport = {
       id: `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -443,29 +462,36 @@ class AIEcosystemMonitor {
       metrics: avgMetrics,
       alerts: periodAlerts,
       recommendations,
-      generatedAt: now
+      generatedAt: now,
     };
 
     return report;
   }
 
-  private calculateAverageMetrics(data: { timestamp: Date; metrics: AIEcosystemMetrics }[]): AIEcosystemMetrics {
+  private calculateAverageMetrics(
+    data: { timestamp: Date; metrics: AIEcosystemMetrics }[]
+  ): AIEcosystemMetrics {
     if (data.length === 0) {
       return this.initializeMetrics();
     }
 
-    const sum = data.reduce((acc, entry) => ({
-      requestsPerSecond: acc.requestsPerSecond + entry.metrics.requestsPerSecond,
-      averageResponseTime: acc.averageResponseTime + entry.metrics.averageResponseTime,
-      successRate: acc.successRate + entry.metrics.successRate,
-      errorRate: acc.errorRate + entry.metrics.errorRate,
-      costPerRequest: acc.costPerRequest + entry.metrics.costPerRequest,
-      monthlyCost: acc.monthlyCost + entry.metrics.monthlyCost,
-      queueLength: acc.queueLength + entry.metrics.queueLength,
-      activeTasks: acc.activeTasks + entry.metrics.activeTasks,
-      cpuUsage: acc.cpuUsage + entry.metrics.cpuUsage,
-      memoryUsage: acc.memoryUsage + entry.metrics.memoryUsage
-    }), this.initializeMetrics());
+    const sum = data.reduce(
+      (acc, entry) => ({
+        requestsPerSecond:
+          acc.requestsPerSecond + entry.metrics.requestsPerSecond,
+        averageResponseTime:
+          acc.averageResponseTime + entry.metrics.averageResponseTime,
+        successRate: acc.successRate + entry.metrics.successRate,
+        errorRate: acc.errorRate + entry.metrics.errorRate,
+        costPerRequest: acc.costPerRequest + entry.metrics.costPerRequest,
+        monthlyCost: acc.monthlyCost + entry.metrics.monthlyCost,
+        queueLength: acc.queueLength + entry.metrics.queueLength,
+        activeTasks: acc.activeTasks + entry.metrics.activeTasks,
+        cpuUsage: acc.cpuUsage + entry.metrics.cpuUsage,
+        memoryUsage: acc.memoryUsage + entry.metrics.memoryUsage,
+      }),
+      this.initializeMetrics()
+    );
 
     const count = data.length;
     return {
@@ -481,11 +507,14 @@ class AIEcosystemMonitor {
       cpuUsage: sum.cpuUsage / count,
       memoryUsage: sum.memoryUsage / count,
       providerPerformance: {}, // 需要複雜計算
-      modelPerformance: {} // 需要複雜計算
+      modelPerformance: {}, // 需要複雜計算
     };
   }
 
-  private generateRecommendations(metrics: AIEcosystemMetrics, alerts: AIEcosystemAlert[]): string[] {
+  private generateRecommendations(
+    metrics: AIEcosystemMetrics,
+    alerts: AIEcosystemAlert[]
+  ): string[] {
     const recommendations: string[] = [];
 
     // 基於成功率的建議
@@ -518,7 +547,7 @@ class AIEcosystemMonitor {
     }
 
     // 基於警報的建議
-    const criticalAlerts = alerts.filter(a => a.severity === 'critical');
+    const criticalAlerts = alerts.filter((a) => a.severity === 'critical');
     if (criticalAlerts.length > 0) {
       recommendations.push('存在嚴重警報，建議立即處理');
     }
@@ -535,23 +564,23 @@ class AIEcosystemMonitor {
     // 獲取最近的性能趨勢
     const recentData = this.performanceHistory.slice(-20);
     const performanceTrends = {
-      responseTime: recentData.map(entry => ({
+      responseTime: recentData.map((entry) => ({
         timestamp: entry.timestamp,
-        value: entry.metrics.averageResponseTime
+        value: entry.metrics.averageResponseTime,
       })),
-      successRate: recentData.map(entry => ({
+      successRate: recentData.map((entry) => ({
         timestamp: entry.timestamp,
-        value: entry.metrics.successRate
+        value: entry.metrics.successRate,
       })),
-      cost: recentData.map(entry => ({
+      cost: recentData.map((entry) => ({
         timestamp: entry.timestamp,
-        value: entry.metrics.costPerRequest
-      }))
+        value: entry.metrics.costPerRequest,
+      })),
     };
 
     // 獲取最近的警報
     const recentAlerts = this.alerts
-      .filter(alert => !alert.acknowledged)
+      .filter((alert) => !alert.acknowledged)
       .slice(0, 10);
 
     return {
@@ -559,7 +588,7 @@ class AIEcosystemMonitor {
       recentAlerts,
       activeTasks,
       systemHealth: health,
-      performanceTrends
+      performanceTrends,
     };
   }
 
@@ -579,7 +608,7 @@ class AIEcosystemMonitor {
       cpuUsage: 0,
       memoryUsage: 0,
       providerPerformance: {} as any,
-      modelPerformance: {} as any
+      modelPerformance: {} as any,
     };
   }
 
@@ -602,9 +631,9 @@ class AIEcosystemMonitor {
   }
 
   async exportMetrics(format: 'json' | 'csv'): Promise<string> {
-    const data = this.performanceHistory.map(entry => ({
+    const data = this.performanceHistory.map((entry) => ({
       timestamp: entry.timestamp.toISOString(),
-      ...entry.metrics
+      ...entry.metrics,
     }));
 
     if (format === 'json') {
@@ -612,9 +641,8 @@ class AIEcosystemMonitor {
     }
     // CSV格式
     const headers = Object.keys(data[0] || {}).join(',');
-    const rows = data.map(row => Object.values(row).join(','));
+    const rows = data.map((row) => Object.values(row).join(','));
     return [headers, ...rows].join('\n');
-
   }
 
   clearHistory(): void {

@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { antiCounterfeitService } from '../../../services/antiCounterfeitService';
 import { apiService } from '../../../services/apiService';
 import { logger } from '../../../utils/logger';
@@ -31,28 +32,28 @@ describe('AntiCounterfeitService', () => {
             hologramAnalysis: {
               isAuthentic: true,
               confidence: 0.95,
-              details: ['全息圖清晰度正常', '反光效果符合標準']
+              details: ['全息圖清晰度正常', '反光效果符合標準'],
             },
             printingAnalysis: {
               isAuthentic: true,
-              confidence: 0.90,
-              details: ['印刷精度符合標準', '顏色匹配度正常']
+              confidence: 0.9,
+              details: ['印刷精度符合標準', '顏色匹配度正常'],
             },
             materialAnalysis: {
               isAuthentic: true,
               confidence: 0.88,
-              details: ['紙質符合標準', '厚度正常']
+              details: ['紙質符合標準', '厚度正常'],
             },
             blockchainVerification: {
               isVerified: true,
               confidence: 0.95,
-              details: ['區塊鏈記錄驗證通過']
-            }
-          }
+              details: ['區塊鏈記錄驗證通過'],
+            },
+          },
         },
         recommendations: ['建議持有', '定期檢查'],
-        riskFactors: []
-      }
+        riskFactors: [],
+      },
     };
 
     const mockCounterfeitResult = {
@@ -68,48 +69,54 @@ describe('AntiCounterfeitService', () => {
             hologramAnalysis: {
               isAuthentic: false,
               confidence: 0.85,
-              details: ['全息圖模糊', '反光效果異常']
+              details: ['全息圖模糊', '反光效果異常'],
             },
             printingAnalysis: {
               isAuthentic: false,
-              confidence: 0.80,
-              details: ['印刷精度不符合標準', '顏色偏差明顯']
+              confidence: 0.8,
+              details: ['印刷精度不符合標準', '顏色偏差明顯'],
             },
             materialAnalysis: {
               isAuthentic: false,
               confidence: 0.75,
-              details: ['紙質不符合標準', '厚度異常']
+              details: ['紙質不符合標準', '厚度異常'],
             },
             blockchainVerification: {
               isVerified: false,
-              confidence: 0.90,
-              details: ['區塊鏈記錄驗證失敗']
-            }
-          }
+              confidence: 0.9,
+              details: ['區塊鏈記錄驗證失敗'],
+            },
+          },
         },
         recommendations: ['建議謹慎處理', '尋求專業鑑定'],
-        riskFactors: ['高風險偽造品', '建議報警']
-      }
+        riskFactors: ['高風險偽造品', '建議報警'],
+      },
     };
 
     it('應該成功驗證真品卡片', async () => {
       mockApiService.post.mockResolvedValue(mockAuthenticResult);
 
-      const result = await antiCounterfeitService.verifyAuthenticity(mockCardId, mockImageData);
+      const result = await antiCounterfeitService.verifyAuthenticity(
+        mockCardId,
+        mockImageData
+      );
 
       expect(result.success).toBe(true);
       expect(result.data.authenticity.score).toBeGreaterThan(0.8);
       expect(result.data.authenticity.riskLevel).toBe('low');
-      expect(mockApiService.post).toHaveBeenCalledWith(
-        expect.any(String),
-        { cardId: mockCardId, imageData: mockImageData }
-      );
+      expect(mockApiService.post).toHaveBeenCalledWith(expect.any(String), {
+        cardId: mockCardId,
+        imageData: mockImageData,
+      });
     });
 
     it('應該檢測到偽造卡片', async () => {
       mockApiService.post.mockResolvedValue(mockCounterfeitResult);
 
-      const result = await antiCounterfeitService.verifyAuthenticity(mockCardId, mockImageData);
+      const result = await antiCounterfeitService.verifyAuthenticity(
+        mockCardId,
+        mockImageData
+      );
 
       expect(result.success).toBe(true);
       expect(result.data.authenticity.score).toBeLessThan(0.5);
@@ -120,13 +127,17 @@ describe('AntiCounterfeitService', () => {
     it('應該處理無效的卡牌 ID', async () => {
       const invalidCardId = 'invalid-id';
 
-      await expect(antiCounterfeitService.verifyAuthenticity(invalidCardId, mockImageData)).rejects.toThrow();
+      await expect(
+        antiCounterfeitService.verifyAuthenticity(invalidCardId, mockImageData)
+      ).rejects.toThrow();
     });
 
     it('應該處理 API 錯誤', async () => {
       mockApiService.post.mockRejectedValue(new Error('API 錯誤'));
 
-      await expect(antiCounterfeitService.verifyAuthenticity(mockCardId, mockImageData)).rejects.toThrow('API 錯誤');
+      await expect(
+        antiCounterfeitService.verifyAuthenticity(mockCardId, mockImageData)
+      ).rejects.toThrow('API 錯誤');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -143,15 +154,16 @@ describe('AntiCounterfeitService', () => {
           features: {
             clarity: 0.92,
             reflection: 0.88,
-            pattern: 0.90
+            pattern: 0.9,
           },
-          details: ['全息圖清晰度正常', '反光效果符合標準', '圖案完整性良好']
-        }
+          details: ['全息圖清晰度正常', '反光效果符合標準', '圖案完整性良好'],
+        },
       };
 
       mockApiService.post.mockResolvedValue(mockHologramResult);
 
-      const result = await antiCounterfeitService.analyzeHologram(mockImageData);
+      const result =
+        await antiCounterfeitService.analyzeHologram(mockImageData);
 
       expect(result.success).toBe(true);
       expect(result.data.isAuthentic).toBe(true);
@@ -167,19 +179,20 @@ describe('AntiCounterfeitService', () => {
         success: true,
         data: {
           isAuthentic: true,
-          confidence: 0.90,
+          confidence: 0.9,
           quality: {
             precision: 0.88,
             colorAccuracy: 0.92,
-            sharpness: 0.85
+            sharpness: 0.85,
           },
-          details: ['印刷精度符合標準', '顏色匹配度正常', '清晰度良好']
-        }
+          details: ['印刷精度符合標準', '顏色匹配度正常', '清晰度良好'],
+        },
       };
 
       mockApiService.post.mockResolvedValue(mockPrintingResult);
 
-      const result = await antiCounterfeitService.analyzePrinting(mockImageData);
+      const result =
+        await antiCounterfeitService.analyzePrinting(mockImageData);
 
       expect(result.success).toBe(true);
       expect(result.data.isAuthentic).toBe(true);
@@ -198,16 +211,17 @@ describe('AntiCounterfeitService', () => {
           confidence: 0.88,
           properties: {
             texture: 0.85,
-            thickness: 0.90,
-            color: 0.88
+            thickness: 0.9,
+            color: 0.88,
           },
-          details: ['紙質符合標準', '厚度正常', '顏色符合標準']
-        }
+          details: ['紙質符合標準', '厚度正常', '顏色符合標準'],
+        },
       };
 
       mockApiService.post.mockResolvedValue(mockMaterialResult);
 
-      const result = await antiCounterfeitService.analyzeMaterial(mockImageData);
+      const result =
+        await antiCounterfeitService.analyzeMaterial(mockImageData);
 
       expect(result.success).toBe(true);
       expect(result.data.isAuthentic).toBe(true);
@@ -227,8 +241,8 @@ describe('AntiCounterfeitService', () => {
           transactionHash: '0x1234567890abcdef',
           blockNumber: 12345678,
           timestamp: '2024-01-01T00:00:00Z',
-          details: ['區塊鏈記錄驗證通過', '交易記錄完整']
-        }
+          details: ['區塊鏈記錄驗證通過', '交易記錄完整'],
+        },
       };
 
       mockApiService.post.mockResolvedValue(mockBlockchainResult);
@@ -252,8 +266,8 @@ describe('AntiCounterfeitService', () => {
           riskScore: 0.15,
           factors: ['全息圖驗證通過', '印刷質量良好'],
           recommendations: ['建議持有', '定期檢查'],
-          confidence: 0.92
-        }
+          confidence: 0.92,
+        },
       };
 
       mockApiService.get.mockResolvedValue(mockRiskResult);

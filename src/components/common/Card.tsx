@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  View,
-  StyleSheet,
-  ViewStyle,
-  TouchableOpacity
-} from 'react-native';
+import { View, StyleSheet, ViewStyle, TouchableOpacity } from 'react-native';
 import { theme } from '../../theme/designSystem';
 
 interface CardProps {
@@ -20,14 +15,14 @@ export const Card: React.FC<CardProps> = ({
   style,
   onPress,
   variant = 'default',
-  padding = 'medium'
+  padding = 'medium',
 }) => {
   const getCardStyle = (): ViewStyle => {
     const baseStyle: ViewStyle = {
       backgroundColor: theme.colors.background.tertiary,
       borderRadius: theme.borderRadius.lg,
       borderWidth: 1,
-      borderColor: theme.colors.border.primary
+      borderColor: theme.colors.border.primary,
     };
 
     const variantStyles = {
@@ -36,14 +31,14 @@ export const Card: React.FC<CardProps> = ({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
-        elevation: 2
+        elevation: 2,
       },
       elevated: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.15,
         shadowRadius: 8,
-        elevation: 4
+        elevation: 4,
       },
       outlined: {
         shadowColor: 'transparent',
@@ -52,21 +47,21 @@ export const Card: React.FC<CardProps> = ({
         shadowRadius: 0,
         elevation: 0,
         borderColor: theme.colors.border.gold,
-        borderWidth: 2
-      }
+        borderWidth: 2,
+      },
     };
 
     const paddingStyles = {
       none: { padding: 0 },
       small: { padding: theme.spacing.sm },
       medium: { padding: theme.spacing.md },
-      large: { padding: theme.spacing.lg }
+      large: { padding: theme.spacing.lg },
     };
 
     return {
       ...baseStyle,
       ...variantStyles[variant],
-      ...paddingStyles[padding]
+      ...paddingStyles[padding],
     };
   };
 
@@ -82,11 +77,7 @@ export const Card: React.FC<CardProps> = ({
     );
   }
 
-  return (
-    <View style={[getCardStyle(), style]}>
-      {children}
-    </View>
-  );
+  return <View style={[getCardStyle(), style]}>{children}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -94,6 +85,6 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background.tertiary,
     borderRadius: theme.borderRadius.lg,
     borderWidth: 1,
-    borderColor: theme.colors.border.primary
-  }
+    borderColor: theme.colors.border.primary,
+  },
 });

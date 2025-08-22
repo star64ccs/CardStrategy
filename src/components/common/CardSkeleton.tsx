@@ -1,7 +1,12 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { theme } from '@/config/theme';
-import { Skeleton, SkeletonImage, SkeletonText, SkeletonTitle } from './Skeleton';
+import {
+  Skeleton,
+  SkeletonImage,
+  SkeletonText,
+  SkeletonTitle,
+} from './Skeleton';
 
 export interface CardSkeletonProps {
   variant?: 'compact' | 'detailed' | 'grid';
@@ -16,7 +21,7 @@ export const CardSkeleton: React.FC<CardSkeletonProps> = ({
   showImage = true,
   showPrice = true,
   showStats = true,
-  style
+  style,
 }) => {
   const renderCompactSkeleton = () => (
     <View style={[styles.card, styles.compactCard, style]}>
@@ -33,9 +38,7 @@ export const CardSkeleton: React.FC<CardSkeletonProps> = ({
 
   const renderDetailedSkeleton = () => (
     <View style={[styles.card, styles.detailedCard, style]}>
-      {showImage && (
-        <SkeletonImage height={200} style={styles.cardImage} />
-      )}
+      {showImage && <SkeletonImage height={200} style={styles.cardImage} />}
       <View style={styles.cardContent}>
         <SkeletonTitle width="70%" height={20} />
         <SkeletonText width="50%" height={14} />
@@ -103,7 +106,7 @@ export const CardListSkeleton: React.FC<{
   variant = 'detailed',
   showImage = true,
   showPrice = true,
-  showStats = true
+  showStats = true,
 }) => {
   return (
     <View style={styles.listContainer}>
@@ -123,64 +126,64 @@ export const CardListSkeleton: React.FC<{
 
 const styles = StyleSheet.create({
   listContainer: {
-    flex: 1
+    flex: 1,
   },
   card: {
     backgroundColor: theme.colors.backgroundPaper,
     borderRadius: theme.borderRadius.medium,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   cardMargin: {
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   // 緊湊卡片樣式
   compactCard: {
-    padding: theme.spacing.medium
+    padding: theme.spacing.medium,
   },
   compactContent: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   compactInfo: {
     flex: 1,
-    marginLeft: theme.spacing.medium
+    marginLeft: theme.spacing.medium,
   },
   // 詳細卡片樣式
   detailedCard: {
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   cardImage: {
     borderTopLeftRadius: theme.borderRadius.medium,
-    borderTopRightRadius: theme.borderRadius.medium
+    borderTopRightRadius: theme.borderRadius.medium,
   },
   cardContent: {
-    padding: theme.spacing.large
+    padding: theme.spacing.large,
   },
   priceSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: theme.spacing.medium
+    marginTop: theme.spacing.medium,
   },
   statsSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: theme.spacing.large
+    marginTop: theme.spacing.large,
   },
   statItem: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   // 網格卡片樣式
   gridCard: {
     flex: 1,
-    margin: theme.spacing.small
+    margin: theme.spacing.small,
   },
   gridImage: {
     borderTopLeftRadius: theme.borderRadius.medium,
-    borderTopRightRadius: theme.borderRadius.medium
+    borderTopRightRadius: theme.borderRadius.medium,
   },
   gridContent: {
-    padding: theme.spacing.medium
-  }
+    padding: theme.spacing.medium,
+  },
 });

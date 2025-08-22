@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { portfolioService } from '../../../services/portfolioService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '../../../utils/logger';
@@ -22,13 +23,13 @@ describe('PortfolioService', () => {
           id: 'card-1',
           name: '火球術',
           setName: '基礎系列',
-          price: { current: 100, historical: [90, 95, 100] }
+          price: { current: 100, historical: [90, 95, 100] },
         },
         quantity: 2,
         purchasePrice: 80,
         purchaseDate: '2024-01-01T00:00:00Z',
-        notes: '看好這張卡的前景'
-      }
+        notes: '看好這張卡的前景',
+      },
     ];
 
     it('應該成功獲取投資組合', async () => {
@@ -63,14 +64,19 @@ describe('PortfolioService', () => {
       id: 'card-1',
       name: '火球術',
       setName: '基礎系列',
-      price: { current: 100, historical: [90, 95, 100] }
+      price: { current: 100, historical: [90, 95, 100] },
     };
 
     it('應該成功添加新卡片到投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue('[]');
       mockAsyncStorage.setItem.mockResolvedValue();
 
-      await portfolioService.addToPortfolio(mockCard, 2, 80, '看好這張卡的前景');
+      await portfolioService.addToPortfolio(
+        mockCard,
+        2,
+        80,
+        '看好這張卡的前景'
+      );
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'user_portfolio',
@@ -86,11 +92,13 @@ describe('PortfolioService', () => {
           quantity: 1,
           purchasePrice: 80,
           purchaseDate: '2024-01-01T00:00:00Z',
-          notes: '原始筆記'
-        }
+          notes: '原始筆記',
+        },
       ];
 
-      mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(existingPortfolio));
+      mockAsyncStorage.getItem.mockResolvedValue(
+        JSON.stringify(existingPortfolio)
+      );
       mockAsyncStorage.setItem.mockResolvedValue();
 
       await portfolioService.addToPortfolio(mockCard, 1, 90, '更新筆記');
@@ -104,7 +112,9 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      await expect(portfolioService.addToPortfolio(mockCard, 1, 80)).rejects.toThrow('存儲錯誤');
+      await expect(
+        portfolioService.addToPortfolio(mockCard, 1, 80)
+      ).rejects.toThrow('存儲錯誤');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -113,18 +123,28 @@ describe('PortfolioService', () => {
     const mockPortfolio = [
       {
         id: 'item-1',
-        card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+        card: {
+          id: 'card-1',
+          name: '火球術',
+          setName: '基礎系列',
+          price: { current: 100, historical: [] },
+        },
         quantity: 2,
         purchasePrice: 80,
-        purchaseDate: '2024-01-01T00:00:00Z'
+        purchaseDate: '2024-01-01T00:00:00Z',
       },
       {
         id: 'item-2',
-        card: { id: 'card-2', name: '閃電箭', setName: '基礎系列', price: { current: 50, historical: [] } },
+        card: {
+          id: 'card-2',
+          name: '閃電箭',
+          setName: '基礎系列',
+          price: { current: 50, historical: [] },
+        },
         quantity: 1,
         purchasePrice: 40,
-        purchaseDate: '2024-01-02T00:00:00Z'
-      }
+        purchaseDate: '2024-01-02T00:00:00Z',
+      },
     ];
 
     it('應該成功從投資組合移除項目', async () => {
@@ -154,7 +174,9 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      await expect(portfolioService.removeFromPortfolio('item-1')).rejects.toThrow('存儲錯誤');
+      await expect(
+        portfolioService.removeFromPortfolio('item-1')
+      ).rejects.toThrow('存儲錯誤');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -163,12 +185,17 @@ describe('PortfolioService', () => {
     const mockPortfolio = [
       {
         id: 'item-1',
-        card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+        card: {
+          id: 'card-1',
+          name: '火球術',
+          setName: '基礎系列',
+          price: { current: 100, historical: [] },
+        },
         quantity: 2,
         purchasePrice: 80,
         purchaseDate: '2024-01-01T00:00:00Z',
-        notes: '原始筆記'
-      }
+        notes: '原始筆記',
+      },
     ];
 
     it('應該成功更新投資組合項目', async () => {
@@ -189,7 +216,9 @@ describe('PortfolioService', () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
       mockAsyncStorage.setItem.mockResolvedValue();
 
-      await portfolioService.updatePortfolioItem('non-existent', { quantity: 3 });
+      await portfolioService.updatePortfolioItem('non-existent', {
+        quantity: 3,
+      });
 
       expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
         'user_portfolio',
@@ -200,7 +229,9 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      await expect(portfolioService.updatePortfolioItem('item-1', { quantity: 3 })).rejects.toThrow('存儲錯誤');
+      await expect(
+        portfolioService.updatePortfolioItem('item-1', { quantity: 3 })
+      ).rejects.toThrow('存儲錯誤');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -209,18 +240,28 @@ describe('PortfolioService', () => {
     const mockPortfolio = [
       {
         id: 'item-1',
-        card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+        card: {
+          id: 'card-1',
+          name: '火球術',
+          setName: '基礎系列',
+          price: { current: 100, historical: [] },
+        },
         quantity: 2,
         purchasePrice: 80,
-        purchaseDate: '2024-01-01T00:00:00Z'
+        purchaseDate: '2024-01-01T00:00:00Z',
       },
       {
         id: 'item-2',
-        card: { id: 'card-2', name: '閃電箭', setName: '基礎系列', price: { current: 50, historical: [] } },
+        card: {
+          id: 'card-2',
+          name: '閃電箭',
+          setName: '基礎系列',
+          price: { current: 50, historical: [] },
+        },
         quantity: 1,
         purchasePrice: 40,
-        purchaseDate: '2024-01-02T00:00:00Z'
-      }
+        purchaseDate: '2024-01-02T00:00:00Z',
+      },
     ];
 
     it('應該成功計算投資組合統計', async () => {
@@ -231,10 +272,10 @@ describe('PortfolioService', () => {
       expect(result).toEqual({
         totalItems: 2,
         totalValue: 250, // 100*2 + 50*1
-        totalCost: 200,  // 80*2 + 40*1
+        totalCost: 200, // 80*2 + 40*1
         totalProfit: 50, // 250 - 200
         profitPercentage: 25, // (50/200) * 100
-        averageReturn: 25 // 50/2
+        averageReturn: 25, // 50/2
       });
     });
 
@@ -249,7 +290,7 @@ describe('PortfolioService', () => {
         totalCost: 0,
         totalProfit: 0,
         profitPercentage: 0,
-        averageReturn: 0
+        averageReturn: 0,
       });
     });
 
@@ -264,7 +305,7 @@ describe('PortfolioService', () => {
         totalCost: 0,
         totalProfit: 0,
         profitPercentage: 0,
-        averageReturn: 0
+        averageReturn: 0,
       });
       expect(mockLogger.error).toHaveBeenCalled();
     });
@@ -276,13 +317,17 @@ describe('PortfolioService', () => {
 
       await portfolioService.clearPortfolio();
 
-      expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith('user_portfolio');
+      expect(mockAsyncStorage.removeItem).toHaveBeenCalledWith(
+        'user_portfolio'
+      );
     });
 
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.removeItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      await expect(portfolioService.clearPortfolio()).rejects.toThrow('存儲錯誤');
+      await expect(portfolioService.clearPortfolio()).rejects.toThrow(
+        '存儲錯誤'
+      );
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -291,11 +336,16 @@ describe('PortfolioService', () => {
     const mockPortfolio = [
       {
         id: 'item-1',
-        card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+        card: {
+          id: 'card-1',
+          name: '火球術',
+          setName: '基礎系列',
+          price: { current: 100, historical: [] },
+        },
         quantity: 2,
         purchasePrice: 80,
-        purchaseDate: '2024-01-01T00:00:00Z'
-      }
+        purchaseDate: '2024-01-01T00:00:00Z',
+      },
     ];
 
     it('應該成功導出投資組合數據', async () => {
@@ -314,7 +364,9 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      await expect(portfolioService.exportPortfolio()).rejects.toThrow('存儲錯誤');
+      await expect(portfolioService.exportPortfolio()).rejects.toThrow(
+        '存儲錯誤'
+      );
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -324,15 +376,27 @@ describe('PortfolioService', () => {
       portfolio: [
         {
           id: 'item-1',
-          card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+          card: {
+            id: 'card-1',
+            name: '火球術',
+            setName: '基礎系列',
+            price: { current: 100, historical: [] },
+          },
           quantity: 2,
           purchasePrice: 80,
-          purchaseDate: '2024-01-01T00:00:00Z'
-        }
+          purchaseDate: '2024-01-01T00:00:00Z',
+        },
       ],
-      stats: { totalItems: 1, totalValue: 200, totalCost: 160, totalProfit: 40, profitPercentage: 25, averageReturn: 40 },
+      stats: {
+        totalItems: 1,
+        totalValue: 200,
+        totalCost: 160,
+        totalProfit: 40,
+        profitPercentage: 25,
+        averageReturn: 40,
+      },
       exportDate: '2024-01-31T00:00:00Z',
-      version: '1.0.0'
+      version: '1.0.0',
     };
 
     it('應該成功導入投資組合數據', async () => {
@@ -349,19 +413,25 @@ describe('PortfolioService', () => {
     it('應該處理無效的數據格式', async () => {
       const invalidData = { invalid: 'data' };
 
-      await expect(portfolioService.importPortfolio(JSON.stringify(invalidData))).rejects.toThrow('無效的投資組合數據格式');
+      await expect(
+        portfolioService.importPortfolio(JSON.stringify(invalidData))
+      ).rejects.toThrow('無效的投資組合數據格式');
       expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('應該處理 JSON 解析錯誤', async () => {
-      await expect(portfolioService.importPortfolio('invalid json')).rejects.toThrow();
+      await expect(
+        portfolioService.importPortfolio('invalid json')
+      ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalled();
     });
 
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.setItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      await expect(portfolioService.importPortfolio(JSON.stringify(mockImportData))).rejects.toThrow('存儲錯誤');
+      await expect(
+        portfolioService.importPortfolio(JSON.stringify(mockImportData))
+      ).rejects.toThrow('存儲錯誤');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -370,20 +440,30 @@ describe('PortfolioService', () => {
     const mockPortfolio = [
       {
         id: 'item-1',
-        card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+        card: {
+          id: 'card-1',
+          name: '火球術',
+          setName: '基礎系列',
+          price: { current: 100, historical: [] },
+        },
         quantity: 2,
         purchasePrice: 80,
         purchaseDate: '2024-01-01T00:00:00Z',
-        notes: '看好這張卡的前景'
+        notes: '看好這張卡的前景',
       },
       {
         id: 'item-2',
-        card: { id: 'card-2', name: '閃電箭', setName: '基礎系列', price: { current: 50, historical: [] } },
+        card: {
+          id: 'card-2',
+          name: '閃電箭',
+          setName: '基礎系列',
+          price: { current: 50, historical: [] },
+        },
         quantity: 1,
         purchasePrice: 40,
         purchaseDate: '2024-01-02T00:00:00Z',
-        notes: '快速法術'
-      }
+        notes: '快速法術',
+      },
     ];
 
     it('應該成功搜索卡片名稱', async () => {
@@ -434,25 +514,40 @@ describe('PortfolioService', () => {
     const mockPortfolio = [
       {
         id: 'item-1',
-        card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+        card: {
+          id: 'card-1',
+          name: '火球術',
+          setName: '基礎系列',
+          price: { current: 100, historical: [] },
+        },
         quantity: 2,
         purchasePrice: 80,
-        purchaseDate: '2024-01-01T00:00:00Z'
+        purchaseDate: '2024-01-01T00:00:00Z',
       },
       {
         id: 'item-2',
-        card: { id: 'card-2', name: '閃電箭', setName: '基礎系列', price: { current: 50, historical: [] } },
+        card: {
+          id: 'card-2',
+          name: '閃電箭',
+          setName: '基礎系列',
+          price: { current: 50, historical: [] },
+        },
         quantity: 1,
         purchasePrice: 40,
-        purchaseDate: '2024-01-02T00:00:00Z'
+        purchaseDate: '2024-01-02T00:00:00Z',
       },
       {
         id: 'item-3',
-        card: { id: 'card-3', name: '治療術', setName: '擴展系列', price: { current: 30, historical: [] } },
+        card: {
+          id: 'card-3',
+          name: '治療術',
+          setName: '擴展系列',
+          price: { current: 30, historical: [] },
+        },
         quantity: 1,
         purchasePrice: 25,
-        purchaseDate: '2024-01-03T00:00:00Z'
-      }
+        purchaseDate: '2024-01-03T00:00:00Z',
+      },
     ];
 
     it('應該成功按系列分組投資組合', async () => {
@@ -461,8 +556,8 @@ describe('PortfolioService', () => {
       const result = await portfolioService.getPortfolioBySeries();
 
       expect(result).toEqual({
-        '基礎系列': [mockPortfolio[0], mockPortfolio[1]],
-        '擴展系列': [mockPortfolio[2]]
+        基礎系列: [mockPortfolio[0], mockPortfolio[1]],
+        擴展系列: [mockPortfolio[2]],
       });
     });
 
@@ -488,18 +583,28 @@ describe('PortfolioService', () => {
     const mockPortfolio = [
       {
         id: 'item-1',
-        card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+        card: {
+          id: 'card-1',
+          name: '火球術',
+          setName: '基礎系列',
+          price: { current: 100, historical: [] },
+        },
         quantity: 2,
         purchasePrice: 80,
-        purchaseDate: '2024-01-01T00:00:00Z'
+        purchaseDate: '2024-01-01T00:00:00Z',
       },
       {
         id: 'item-2',
-        card: { id: 'card-2', name: '閃電箭', setName: '基礎系列', price: { current: 50, historical: [] } },
+        card: {
+          id: 'card-2',
+          name: '閃電箭',
+          setName: '基礎系列',
+          price: { current: 50, historical: [] },
+        },
         quantity: 1,
         purchasePrice: 40,
-        purchaseDate: '2024-01-02T00:00:00Z'
-      }
+        purchaseDate: '2024-01-02T00:00:00Z',
+      },
     ];
 
     it('應該成功獲取按日期排序的投資組合歷史', async () => {
@@ -526,25 +631,40 @@ describe('PortfolioService', () => {
     const mockPortfolio = [
       {
         id: 'item-1',
-        card: { id: 'card-1', name: '火球術', setName: '基礎系列', price: { current: 100, historical: [] } },
+        card: {
+          id: 'card-1',
+          name: '火球術',
+          setName: '基礎系列',
+          price: { current: 100, historical: [] },
+        },
         quantity: 2,
         purchasePrice: 80,
-        purchaseDate: '2024-01-01T00:00:00Z'
+        purchaseDate: '2024-01-01T00:00:00Z',
       },
       {
         id: 'item-2',
-        card: { id: 'card-2', name: '閃電箭', setName: '基礎系列', price: { current: 50, historical: [] } },
+        card: {
+          id: 'card-2',
+          name: '閃電箭',
+          setName: '基礎系列',
+          price: { current: 50, historical: [] },
+        },
         quantity: 1,
         purchasePrice: 40,
-        purchaseDate: '2024-01-02T00:00:00Z'
+        purchaseDate: '2024-01-02T00:00:00Z',
       },
       {
         id: 'item-3',
-        card: { id: 'card-3', name: '治療術', setName: '擴展系列', price: { current: 30, historical: [] } },
+        card: {
+          id: 'card-3',
+          name: '治療術',
+          setName: '擴展系列',
+          price: { current: 30, historical: [] },
+        },
         quantity: 1,
         purchasePrice: 25,
-        purchaseDate: '2024-01-03T00:00:00Z'
-      }
+        purchaseDate: '2024-01-03T00:00:00Z',
+      },
     ];
 
     it('應該成功獲取投資組合分析', async () => {
@@ -568,7 +688,7 @@ describe('PortfolioService', () => {
       expect(result).toEqual({
         topPerformers: [],
         worstPerformers: [],
-        recentAdditions: []
+        recentAdditions: [],
       });
     });
 
@@ -580,7 +700,7 @@ describe('PortfolioService', () => {
       expect(result).toEqual({
         topPerformers: [],
         worstPerformers: [],
-        recentAdditions: []
+        recentAdditions: [],
       });
       expect(mockLogger.error).toHaveBeenCalled();
     });

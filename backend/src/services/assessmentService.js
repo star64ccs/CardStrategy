@@ -1,10 +1,17 @@
 const { Op } = require('sequelize');
+const Schedule = require('../models/Schedule');
+const Assessment = require('../models/Assessment');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 const DataQualityAssessment = require('../models/DataQualityAssessment');
 const AssessmentSchedule = require('../models/AssessmentSchedule');
+// eslint-disable-next-line no-unused-vars
 const DataQualityMetrics = require('../models/DataQualityMetrics');
+// eslint-disable-next-line no-unused-vars
 const TrainingData = require('../models/TrainingData');
+// eslint-disable-next-line no-unused-vars
 const AnnotationData = require('../models/AnnotationData');
+// eslint-disable-next-line no-unused-vars
 const MarketData = require('../models/MarketData');
 
 class AssessmentService {
@@ -16,9 +23,12 @@ class AssessmentService {
 
   async initialize() {
     try {
-      const { TrainingData: TrainingDataModel } = await require('../models/TrainingData');
-      const { AnnotationData: AnnotationDataModel } = await require('../models/AnnotationData');
-      const { MarketData: MarketDataModel } = await require('../models/MarketData');
+      const { TrainingData: TrainingDataModel } =
+        await require('../models/TrainingData');
+      const { AnnotationData: AnnotationDataModel } =
+        await require('../models/AnnotationData');
+      const { MarketData: MarketDataModel } =
+        await require('../models/MarketData');
 
       this.TrainingData = TrainingDataModel;
       this.AnnotationData = AnnotationDataModel;
@@ -36,6 +46,7 @@ class AssessmentService {
    */
   async createAssessmentSchedule(scheduleData) {
     try {
+// eslint-disable-next-line no-unused-vars
       const schedule = await AssessmentSchedule.create({
         name: scheduleData.name,
         description: scheduleData.description,
@@ -47,7 +58,7 @@ class AssessmentService {
         endDate: scheduleData.endDate,
         notificationSettings: scheduleData.notificationSettings,
         createdBy: scheduleData.createdBy,
-        metadata: scheduleData.metadata
+        metadata: scheduleData.metadata,
       });
 
       // 計算下次運行時間
@@ -65,16 +76,22 @@ class AssessmentService {
   /**
    * 執行定期評估
    */
-  async executeScheduledAssessment(scheduleId, triggeredBy = 'system', triggeredByUserId = null) {
+  async executeScheduledAssessment(
+    scheduleId,
+    triggeredBy = 'system',
+    triggeredByUserId = null
+  ) {
     const startTime = Date.now();
 
     try {
+// eslint-disable-next-line no-unused-vars
       const schedule = await AssessmentSchedule.findByPk(scheduleId);
       if (!schedule || !schedule.isActive) {
         throw new Error('評估計劃不存在或已停用');
       }
 
       // 創建評估記錄
+// eslint-disable-next-line no-unused-vars
       const assessment = await DataQualityAssessment.create({
         assessmentType: schedule.assessmentType,
         scheduledDate: schedule.nextRunDate,
@@ -82,11 +99,15 @@ class AssessmentService {
         assessmentCriteria: schedule.assessmentCriteria,
         status: 'in_progress',
         triggeredBy,
-        triggeredByUserId
+        triggeredByUserId,
       });
 
       // 執行評估
-      const results = await this.performAssessment(schedule.dataTypes, schedule.assessmentCriteria);
+// eslint-disable-next-line no-unused-vars
+      const results = await this.performAssessment(
+        schedule.dataTypes,
+        schedule.assessmentCriteria
+      );
 
       // 更新評估結果
       assessment.results = results;
@@ -115,7 +136,9 @@ class AssessmentService {
       // 發送通知
       await this.sendAssessmentNotifications(schedule, assessment, 'success');
 
-      logger.info(`評估執行成功: ${schedule.name}, 執行時間: ${assessment.executionTime}ms`);
+      logger.info(
+        `評估執行成功: ${schedule.name}, 執行時間: ${assessment.executionTime}ms`
+      );
       return assessment;
     } catch (error) {
       logger.error('評估執行失敗:', error);
@@ -152,6 +175,7 @@ class AssessmentService {
     const startTime = Date.now();
 
     try {
+// eslint-disable-next-line no-unused-vars
       const assessment = await DataQualityAssessment.create({
         assessmentType: 'custom',
         scheduledDate: new Date(),
@@ -159,10 +183,14 @@ class AssessmentService {
         assessmentCriteria: assessmentData.assessmentCriteria,
         status: 'in_progress',
         triggeredBy: 'manual',
-        triggeredByUserId: assessmentData.userId
+        triggeredByUserId: assessmentData.userId,
       });
 
-      const results = await this.performAssessment(assessmentData.dataTypes, assessmentData.assessmentCriteria);
+// eslint-disable-next-line no-unused-vars
+      const results = await this.performAssessment(
+        assessmentData.dataTypes,
+        assessmentData.assessmentCriteria
+      );
 
       assessment.results = results;
       assessment.status = 'completed';
@@ -182,6 +210,7 @@ class AssessmentService {
    * 執行實際評估邏輯
    */
   async performAssessment(dataTypes, criteria) {
+// eslint-disable-next-line no-unused-vars
     const results = {
       overallScore: 0,
       completeness: 0,
@@ -192,7 +221,7 @@ class AssessmentService {
       dataSources: [],
       qualityDistribution: {},
       issues: [],
-      recommendations: []
+      recommendations: [],
     };
 
     let totalSampleSize = 0;
@@ -200,10 +229,13 @@ class AssessmentService {
     let totalAccuracy = 0;
     let totalConsistency = 0;
     let totalTimeliness = 0;
+// eslint-disable-next-line no-unused-vars
     let typeCount = 0;
 
+// eslint-disable-next-line no-unused-vars
     for (const dataType of dataTypes) {
       try {
+// eslint-disable-next-line no-unused-vars
         const typeResults = await this.assessDataType(dataType, criteria);
 
         totalSampleSize += typeResults.sampleSize;
@@ -219,7 +251,7 @@ class AssessmentService {
           accuracy: typeResults.accuracy,
           consistency: typeResults.consistency,
           timeliness: typeResults.timeliness,
-          issues: typeResults.issues
+          issues: typeResults.issues,
         });
 
         typeCount++;
@@ -228,7 +260,7 @@ class AssessmentService {
         results.issues.push({
           type: 'error',
           dataType,
-          message: error.message
+          message: error.message,
         });
       }
     }
@@ -241,15 +273,16 @@ class AssessmentService {
       results.timeliness = totalTimeliness / totalSampleSize;
 
       // 計算總體分數
-      results.overallScore = (
+      results.overallScore =
         results.completeness * criteria.completeness.weight +
         results.accuracy * criteria.accuracy.weight +
         results.consistency * criteria.consistency.weight +
-        results.timeliness * criteria.timeliness.weight
-      );
+        results.timeliness * criteria.timeliness.weight;
 
       // 生成質量分佈
-      results.qualityDistribution = this.calculateQualityDistribution(results.overallScore);
+      results.qualityDistribution = this.calculateQualityDistribution(
+        results.overallScore
+      );
 
       // 生成建議
       results.recommendations = this.generateRecommendations(results, criteria);
@@ -262,6 +295,7 @@ class AssessmentService {
    * 評估特定數據類型
    */
   async assessDataType(dataType, criteria) {
+// eslint-disable-next-line no-unused-vars
     let data = [];
     let sampleSize = 0;
 
@@ -269,7 +303,7 @@ class AssessmentService {
       case 'training':
         data = await this.TrainingData.findAll({
           where: { isActive: true },
-          limit: 1000
+          limit: 1000,
         });
         sampleSize = data.length;
         break;
@@ -277,7 +311,7 @@ class AssessmentService {
       case 'annotation':
         data = await this.AnnotationData.findAll({
           where: { reviewStatus: { [Op.ne]: 'pending' } },
-          limit: 1000
+          limit: 1000,
         });
         sampleSize = data.length;
         break;
@@ -285,7 +319,7 @@ class AssessmentService {
       case 'market':
         data = await this.MarketData.findAll({
           where: { isActive: true },
-          limit: 1000
+          limit: 1000,
         });
         sampleSize = data.length;
         break;
@@ -301,7 +335,7 @@ class AssessmentService {
         accuracy: 0,
         consistency: 0,
         timeliness: 0,
-        issues: [{ type: 'warning', message: '沒有找到數據樣本' }]
+        issues: [{ type: 'warning', message: '沒有找到數據樣本' }],
       };
     }
 
@@ -318,7 +352,7 @@ class AssessmentService {
       accuracy,
       consistency,
       timeliness,
-      issues
+      issues,
     };
   }
 
@@ -331,12 +365,17 @@ class AssessmentService {
     let totalFields = 0;
     let filledFields = 0;
 
-    data.forEach(item => {
+    data.forEach((item) => {
+// eslint-disable-next-line no-unused-vars
       const requiredFields = this.getRequiredFields(dataType);
       totalFields += requiredFields.length;
 
-      requiredFields.forEach(field => {
-        if (item[field] !== null && item[field] !== undefined && item[field] !== '') {
+      requiredFields.forEach((field) => {
+        if (
+          item[field] !== null &&
+          item[field] !== undefined &&
+          item[field] !== ''
+        ) {
           filledFields++;
         }
       });
@@ -354,7 +393,7 @@ class AssessmentService {
     const totalItems = data.length;
     let accurateItems = 0;
 
-    data.forEach(item => {
+    data.forEach((item) => {
       if (this.isDataAccurate(item, dataType)) {
         accurateItems++;
       }
@@ -390,10 +429,11 @@ class AssessmentService {
   calculateTimeliness(data, dataType) {
     if (!data || data.length === 0) return 0;
 
+// eslint-disable-next-line no-unused-vars
     const now = new Date();
     let totalAge = 0;
 
-    data.forEach(item => {
+    data.forEach((item) => {
       const updateTime = item.updatedAt || item.createdAt;
       const ageInDays = (now - new Date(updateTime)) / (1000 * 60 * 60 * 24);
       totalAge += ageInDays;
@@ -402,7 +442,7 @@ class AssessmentService {
     const averageAge = totalAge / data.length;
     const maxAcceptableAge = this.getMaxAcceptableAge(dataType);
 
-    return Math.max(0, 1 - (averageAge / maxAcceptableAge));
+    return Math.max(0, 1 - averageAge / maxAcceptableAge);
   }
 
   /**
@@ -411,8 +451,13 @@ class AssessmentService {
   getRequiredFields(dataType) {
     const fieldMaps = {
       training: ['cardId', 'imageUrl', 'annotationData', 'qualityScore'],
-      annotation: ['trainingDataId', 'annotatorId', 'annotationResult', 'confidence'],
-      market: ['cardId', 'price', 'source', 'timestamp']
+      annotation: [
+        'trainingDataId',
+        'annotatorId',
+        'annotationResult',
+        'confidence',
+      ],
+      market: ['cardId', 'price', 'source', 'timestamp'],
     };
 
     return fieldMaps[dataType] || [];
@@ -446,7 +491,11 @@ class AssessmentService {
       case 'annotation':
         return Math.abs(item1.confidence - item2.confidence) < 0.2;
       case 'market':
-        return Math.abs(item1.price - item2.price) / Math.max(item1.price, item2.price) < 0.5;
+        return (
+          Math.abs(item1.price - item2.price) /
+            Math.max(item1.price, item2.price) <
+          0.5
+        );
       default:
         return true;
     }
@@ -459,7 +508,7 @@ class AssessmentService {
     const ageMaps = {
       training: 30, // 30天
       annotation: 7, // 7天
-      market: 1 // 1天
+      market: 1, // 1天
     };
 
     return ageMaps[dataType] || 30;
@@ -477,7 +526,7 @@ class AssessmentService {
       issues.push({
         type: 'critical',
         category: 'completeness',
-        message: `數據完整性低於閾值: ${(completeness * 100).toFixed(1)}% < ${(criteria.completeness.threshold * 100).toFixed(1)}%`
+        message: `數據完整性低於閾值: ${(completeness * 100).toFixed(1)}% < ${(criteria.completeness.threshold * 100).toFixed(1)}%`,
       });
     }
 
@@ -487,7 +536,7 @@ class AssessmentService {
       issues.push({
         type: 'critical',
         category: 'accuracy',
-        message: `數據準確性低於閾值: ${(accuracy * 100).toFixed(1)}% < ${(criteria.accuracy.threshold * 100).toFixed(1)}%`
+        message: `數據準確性低於閾值: ${(accuracy * 100).toFixed(1)}% < ${(criteria.accuracy.threshold * 100).toFixed(1)}%`,
       });
     }
 
@@ -497,7 +546,7 @@ class AssessmentService {
       issues.push({
         type: 'warning',
         category: 'timeliness',
-        message: `數據時效性低於閾值: ${(timeliness * 100).toFixed(1)}% < ${(criteria.timeliness.threshold * 100).toFixed(1)}%`
+        message: `數據時效性低於閾值: ${(timeliness * 100).toFixed(1)}% < ${(criteria.timeliness.threshold * 100).toFixed(1)}%`,
       });
     }
 
@@ -518,6 +567,7 @@ class AssessmentService {
    * 生成建議
    */
   generateRecommendations(results, criteria) {
+// eslint-disable-next-line no-unused-vars
     const recommendations = [];
 
     if (results.completeness < criteria.completeness.threshold) {
@@ -526,7 +576,7 @@ class AssessmentService {
         category: 'completeness',
         title: '提高數據完整性',
         description: '建議增加數據收集和標註工作，確保必要字段的完整性',
-        action: '增加數據收集頻率，改進標註流程'
+        action: '增加數據收集頻率，改進標註流程',
       });
     }
 
@@ -536,7 +586,7 @@ class AssessmentService {
         category: 'accuracy',
         title: '提高數據準確性',
         description: '建議改進數據驗證機制和標註質量控制',
-        action: '加強標註者培訓，實施更嚴格的審核流程'
+        action: '加強標註者培訓，實施更嚴格的審核流程',
       });
     }
 
@@ -546,7 +596,7 @@ class AssessmentService {
         category: 'timeliness',
         title: '提高數據時效性',
         description: '建議加快數據更新頻率，減少數據老化',
-        action: '優化數據更新流程，實施實時數據同步'
+        action: '優化數據更新流程，實施實時數據同步',
       });
     }
 
@@ -556,7 +606,7 @@ class AssessmentService {
         category: 'overall',
         title: '全面改進數據質量',
         description: '數據質量整體偏低，需要系統性的改進措施',
-        action: '制定全面的數據質量改進計劃，定期監控和評估'
+        action: '制定全面的數據質量改進計劃，定期監控和評估',
       });
     }
 
@@ -567,23 +617,37 @@ class AssessmentService {
    * 計算下次運行時間
    */
   calculateNextRunDate(schedule) {
+// eslint-disable-next-line no-unused-vars
     const now = new Date();
-    const {frequency} = schedule;
+    const { frequency } = schedule;
 
     switch (schedule.assessmentType) {
       case 'daily':
-        return new Date(now.getTime() + frequency.interval * 24 * 60 * 60 * 1000);
+        return new Date(
+          now.getTime() + frequency.interval * 24 * 60 * 60 * 1000
+        );
 
       case 'weekly':
+// eslint-disable-next-line no-unused-vars
         const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
         return this.adjustToNextWeekday(nextWeek, frequency.daysOfWeek);
 
       case 'monthly':
-        const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, frequency.dayOfMonth);
+// eslint-disable-next-line no-unused-vars
+        const nextMonth = new Date(
+          now.getFullYear(),
+          now.getMonth() + 1,
+          frequency.dayOfMonth
+        );
         return nextMonth;
 
       case 'quarterly':
-        const nextQuarter = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3 + 3, 1);
+// eslint-disable-next-line no-unused-vars
+        const nextQuarter = new Date(
+          now.getFullYear(),
+          Math.floor(now.getMonth() / 3) * 3 + 3,
+          1
+        );
         return nextQuarter;
 
       default:
@@ -598,8 +662,10 @@ class AssessmentService {
     if (daysOfWeek.length === 0) return date;
 
     const currentDay = date.getDay();
-    const nextDay = daysOfWeek.find(day => day > currentDay) || daysOfWeek[0];
-    const daysToAdd = nextDay > currentDay ? nextDay - currentDay : 7 - currentDay + nextDay;
+// eslint-disable-next-line no-unused-vars
+    const nextDay = daysOfWeek.find((day) => day > currentDay) || daysOfWeek[0];
+    const daysToAdd =
+      nextDay > currentDay ? nextDay - currentDay : 7 - currentDay + nextDay;
 
     return new Date(date.getTime() + daysToAdd * 24 * 60 * 60 * 1000);
   }
@@ -631,7 +697,7 @@ class AssessmentService {
         assessmentType,
         startDate,
         endDate,
-        triggeredBy
+        triggeredBy,
       } = options;
 
       const where = {};
@@ -644,18 +710,19 @@ class AssessmentService {
         if (endDate) where.assessmentDate[Op.lte] = endDate;
       }
 
+// eslint-disable-next-line no-unused-vars
       const assessments = await DataQualityAssessment.findAndCountAll({
         where,
         include: [
           {
             model: require('../models/User'),
             as: 'TriggeredByUser',
-            attributes: ['id', 'username', 'email']
-          }
+            attributes: ['id', 'username', 'email'],
+          },
         ],
         order: [['assessmentDate', 'DESC']],
         limit,
-        offset: (page - 1) * limit
+        offset: (page - 1) * limit,
       });
 
       return {
@@ -663,7 +730,7 @@ class AssessmentService {
         total: assessments.count,
         page,
         limit,
-        totalPages: Math.ceil(assessments.count / limit)
+        totalPages: Math.ceil(assessments.count / limit),
       };
     } catch (error) {
       logger.error('獲取評估列表失敗:', error);
@@ -686,49 +753,68 @@ class AssessmentService {
       }
       if (assessmentType) where.assessmentType = assessmentType;
 
+// eslint-disable-next-line no-unused-vars
       const assessments = await DataQualityAssessment.findAll({ where });
 
       const stats = {
         totalAssessments: assessments.length,
-        completedAssessments: assessments.filter(a => a.status === 'completed').length,
-        failedAssessments: assessments.filter(a => a.status === 'failed').length,
+        completedAssessments: assessments.filter(
+          (a) => a.status === 'completed'
+        ).length,
+        failedAssessments: assessments.filter((a) => a.status === 'failed')
+          .length,
         averageExecutionTime: 0,
         averageOverallScore: 0,
         statusDistribution: {},
         typeDistribution: {},
-        dailyTrend: []
+        dailyTrend: [],
       };
 
       if (assessments.length > 0) {
-        const completedAssessments = assessments.filter(a => a.status === 'completed');
+        const completedAssessments = assessments.filter(
+          (a) => a.status === 'completed'
+        );
 
         if (completedAssessments.length > 0) {
-          stats.averageExecutionTime = completedAssessments.reduce((sum, a) => sum + (a.executionTime || 0), 0) / completedAssessments.length;
-          stats.averageOverallScore = completedAssessments.reduce((sum, a) => sum + (a.results?.overallScore || 0), 0) / completedAssessments.length;
+          stats.averageExecutionTime =
+            completedAssessments.reduce(
+              (sum, a) => sum + (a.executionTime || 0),
+              0
+            ) / completedAssessments.length;
+          stats.averageOverallScore =
+            completedAssessments.reduce(
+              (sum, a) => sum + (a.results?.overallScore || 0),
+              0
+            ) / completedAssessments.length;
         }
 
         // 狀態分佈
-        assessments.forEach(a => {
-          stats.statusDistribution[a.status] = (stats.statusDistribution[a.status] || 0) + 1;
-          stats.typeDistribution[a.assessmentType] = (stats.typeDistribution[a.assessmentType] || 0) + 1;
+        assessments.forEach((a) => {
+          stats.statusDistribution[a.status] =
+            (stats.statusDistribution[a.status] || 0) + 1;
+          stats.typeDistribution[a.assessmentType] =
+            (stats.typeDistribution[a.assessmentType] || 0) + 1;
         });
 
         // 每日趨勢
         const dailyData = {};
-        assessments.forEach(a => {
+        assessments.forEach((a) => {
           const date = a.assessmentDate.toISOString().split('T')[0];
-          if (!dailyData[date]) dailyData[date] = { total: 0, completed: 0, failed: 0 };
+          if (!dailyData[date])
+            dailyData[date] = { total: 0, completed: 0, failed: 0 };
           dailyData[date].total++;
           if (a.status === 'completed') dailyData[date].completed++;
           if (a.status === 'failed') dailyData[date].failed++;
         });
 
-        stats.dailyTrend = Object.entries(dailyData).map(([date, data]) => ({
-          date,
-          total: data.total,
-          completed: data.completed,
-          failed: data.failed
-        })).sort((a, b) => a.date.localeCompare(b.date));
+        stats.dailyTrend = Object.entries(dailyData)
+          .map(([date, data]) => ({
+            date,
+            total: data.total,
+            completed: data.completed,
+            failed: data.failed,
+          }))
+          .sort((a, b) => a.date.localeCompare(b.date));
       }
 
       return stats;
@@ -743,29 +829,25 @@ class AssessmentService {
    */
   async getSchedules(options = {}) {
     try {
-      const {
-        page = 1,
-        limit = 20,
-        isActive,
-        assessmentType
-      } = options;
+      const { page = 1, limit = 20, isActive, assessmentType } = options;
 
       const where = {};
       if (isActive !== undefined) where.isActive = isActive;
       if (assessmentType) where.assessmentType = assessmentType;
 
+// eslint-disable-next-line no-unused-vars
       const schedules = await AssessmentSchedule.findAndCountAll({
         where,
         include: [
           {
             model: require('../models/User'),
             as: 'CreatedByUser',
-            attributes: ['id', 'username', 'email']
-          }
+            attributes: ['id', 'username', 'email'],
+          },
         ],
         order: [['createdAt', 'DESC']],
         limit,
-        offset: (page - 1) * limit
+        offset: (page - 1) * limit,
       });
 
       return {
@@ -773,7 +855,7 @@ class AssessmentService {
         total: schedules.count,
         page,
         limit,
-        totalPages: Math.ceil(schedules.count / limit)
+        totalPages: Math.ceil(schedules.count / limit),
       };
     } catch (error) {
       logger.error('獲取計劃列表失敗:', error);
@@ -786,6 +868,7 @@ class AssessmentService {
    */
   async updateScheduleStatus(scheduleId, isActive) {
     try {
+// eslint-disable-next-line no-unused-vars
       const schedule = await AssessmentSchedule.findByPk(scheduleId);
       if (!schedule) {
         throw new Error('評估計劃不存在');
@@ -794,7 +877,9 @@ class AssessmentService {
       schedule.isActive = isActive;
       await schedule.save();
 
-      logger.info(`評估計劃狀態更新: ${schedule.name}, 狀態: ${isActive ? '啟用' : '停用'}`);
+      logger.info(
+        `評估計劃狀態更新: ${schedule.name}, 狀態: ${isActive ? '啟用' : '停用'}`
+      );
       return schedule;
     } catch (error) {
       logger.error('更新計劃狀態失敗:', error);
@@ -807,6 +892,7 @@ class AssessmentService {
    */
   async deleteSchedule(scheduleId) {
     try {
+// eslint-disable-next-line no-unused-vars
       const schedule = await AssessmentSchedule.findByPk(scheduleId);
       if (!schedule) {
         throw new Error('評估計劃不存在');

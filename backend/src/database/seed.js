@@ -1,4 +1,6 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '..', '..', '.env') });
+require('dotenv').config({
+  path: require('path').resolve(__dirname, '..', '..', '.env'),
+});
 
 const { connectDB, getSequelize } = require('../config/database');
 const logger = require('../utils/logger');
@@ -24,7 +26,16 @@ const setupAssociations = (sequelize) => {
   const MarketData = getMarketDataModel();
   const AIAnalysis = getAIAnalysisModel();
 
-  if (!User || !Card || !Collection || !Investment || !CollectionCard || !PriceAlert || !MarketData || !AIAnalysis) {
+  if (
+    !User ||
+    !Card ||
+    !Collection ||
+    !Investment ||
+    !CollectionCard ||
+    !PriceAlert ||
+    !MarketData ||
+    !AIAnalysis
+  ) {
     throw new Error('無法創建模型實例');
   }
 
@@ -49,7 +60,7 @@ const setupAssociations = (sequelize) => {
       through: CollectionCard,
       foreignKey: 'cardId',
       otherKey: 'collectionId',
-      as: 'collections'
+      as: 'collections',
     });
 
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
@@ -62,11 +73,14 @@ const setupAssociations = (sequelize) => {
       through: CollectionCard,
       foreignKey: 'collectionId',
       otherKey: 'cardId',
-      as: 'cards'
+      as: 'cards',
     });
 
     // CollectionCard 關聯
-    CollectionCard.belongsTo(Collection, { foreignKey: 'collectionId', as: 'collection' });
+    CollectionCard.belongsTo(Collection, {
+      foreignKey: 'collectionId',
+      as: 'collection',
+    });
     CollectionCard.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     logger.info('模型關聯設置完成');
@@ -126,22 +140,22 @@ const createSeedData = async () => {
           email: true,
           push: true,
           market: true,
-          investment: true
-        }
+          investment: true,
+        },
       },
       membership: {
         type: 'free',
         startDate: new Date(),
         endDate: null,
-        features: []
+        features: [],
       },
       statistics: {
         totalCards: 0,
         totalCollections: 0,
         totalInvestments: 0,
         portfolioValue: 0,
-        totalProfitLoss: 0
-      }
+        totalProfitLoss: 0,
+      },
     });
 
     // 創建測試卡片
@@ -155,19 +169,19 @@ const createSeedData = async () => {
         cardType: 'Monster',
         imageUrl: 'https://example.com/blue-eyes.jpg',
         description: '傳說中的最強龍族怪獸',
-        currentPrice: 150.00,
-        marketPrice: 145.00,
+        currentPrice: 150.0,
+        marketPrice: 145.0,
         priceHistory: [
-          { date: '2025-08-01', price: 140.00 },
-          { date: '2025-08-07', price: 145.00 },
-          { date: '2025-08-14', price: 150.00 }
+          { date: '2025-08-01', price: 140.0 },
+          { date: '2025-08-07', price: 145.0 },
+          { date: '2025-08-14', price: 150.0 },
         ],
         marketData: {
           lastUpdated: new Date(),
           priceChange24h: 3.45,
           priceChange7d: 7.14,
           volume24h: 25,
-          marketCap: 15000
+          marketCap: 15000,
         },
         isActive: true,
         metadata: {
@@ -175,8 +189,8 @@ const createSeedData = async () => {
           defense: 2500,
           level: 8,
           attribute: 'LIGHT',
-          type: 'Dragon'
-        }
+          type: 'Dragon',
+        },
       },
       {
         name: '黑魔導',
@@ -186,19 +200,19 @@ const createSeedData = async () => {
         cardType: 'Monster',
         imageUrl: 'https://example.com/dark-magician.jpg',
         description: '傳說中的魔法師',
-        currentPrice: 120.00,
-        marketPrice: 118.00,
+        currentPrice: 120.0,
+        marketPrice: 118.0,
         priceHistory: [
-          { date: '2025-08-01', price: 115.00 },
-          { date: '2025-08-07', price: 118.00 },
-          { date: '2025-08-14', price: 120.00 }
+          { date: '2025-08-01', price: 115.0 },
+          { date: '2025-08-07', price: 118.0 },
+          { date: '2025-08-14', price: 120.0 },
         ],
         marketData: {
           lastUpdated: new Date(),
           priceChange24h: 1.69,
           priceChange7d: 4.35,
           volume24h: 18,
-          marketCap: 12000
+          marketCap: 12000,
         },
         isActive: true,
         metadata: {
@@ -206,8 +220,8 @@ const createSeedData = async () => {
           defense: 2100,
           level: 7,
           attribute: 'DARK',
-          type: 'Spellcaster'
-        }
+          type: 'Spellcaster',
+        },
       },
       {
         name: '真紅眼黑龍',
@@ -217,19 +231,19 @@ const createSeedData = async () => {
         cardType: 'Monster',
         imageUrl: 'https://example.com/red-eyes.jpg',
         description: '真紅之眼的黑龍',
-        currentPrice: 95.00,
-        marketPrice: 92.00,
+        currentPrice: 95.0,
+        marketPrice: 92.0,
         priceHistory: [
-          { date: '2025-08-01', price: 90.00 },
-          { date: '2025-08-07', price: 92.00 },
-          { date: '2025-08-14', price: 95.00 }
+          { date: '2025-08-01', price: 90.0 },
+          { date: '2025-08-07', price: 92.0 },
+          { date: '2025-08-14', price: 95.0 },
         ],
         marketData: {
           lastUpdated: new Date(),
           priceChange24h: 3.26,
           priceChange7d: 5.56,
           volume24h: 12,
-          marketCap: 9500
+          marketCap: 9500,
         },
         isActive: true,
         metadata: {
@@ -237,9 +251,9 @@ const createSeedData = async () => {
           defense: 2000,
           level: 7,
           attribute: 'DARK',
-          type: 'Dragon'
-        }
-      }
+          type: 'Dragon',
+        },
+      },
     ]);
 
     // 創建測試收藏
@@ -255,10 +269,10 @@ const createSeedData = async () => {
         totalValue: 0,
         averagePrice: 0,
         mostExpensiveCard: null,
-        rarestCard: null
+        rarestCard: null,
       },
       isActive: true,
-      userId: testUser.id
+      userId: testUser.id,
     });
 
     // 創建收藏卡片關聯
@@ -273,8 +287,8 @@ const createSeedData = async () => {
         isFoil: false,
         isSigned: false,
         isGraded: false,
-        estimatedValue: 150.00,
-        addedDate: new Date()
+        estimatedValue: 150.0,
+        addedDate: new Date(),
       },
       {
         collectionId: testCollection.id,
@@ -285,9 +299,9 @@ const createSeedData = async () => {
         isFoil: true,
         isSigned: false,
         isGraded: false,
-        estimatedValue: 240.00,
-        addedDate: new Date()
-      }
+        estimatedValue: 240.0,
+        addedDate: new Date(),
+      },
     ]);
 
     // 創建測試投資
@@ -296,37 +310,37 @@ const createSeedData = async () => {
       {
         userId: testUser.id,
         cardId: testCards[0].id,
-        purchasePrice: 130.00,
+        purchasePrice: 130.0,
         purchaseDate: new Date('2025-07-01'),
         quantity: 1,
         condition: 'near-mint',
         notes: '投資購買',
-        currentValue: 150.00,
-        profitLoss: 20.00,
+        currentValue: 150.0,
+        profitLoss: 20.0,
         profitLossPercentage: 15.38,
         isActive: true,
         metadata: {
           purchaseSource: 'online',
-          shippingCost: 5.00
-        }
+          shippingCost: 5.0,
+        },
       },
       {
         userId: testUser.id,
         cardId: testCards[2].id,
-        purchasePrice: 85.00,
+        purchasePrice: 85.0,
         purchaseDate: new Date('2025-07-15'),
         quantity: 1,
         condition: 'excellent',
         notes: '拍賣購得',
-        currentValue: 95.00,
-        profitLoss: 10.00,
+        currentValue: 95.0,
+        profitLoss: 10.0,
         profitLossPercentage: 11.76,
         isActive: true,
         metadata: {
           purchaseSource: 'auction',
-          auctionFee: 3.00
-        }
-      }
+          auctionFee: 3.0,
+        },
+      },
     ]);
 
     // 創建測試價格提醒
@@ -336,7 +350,7 @@ const createSeedData = async () => {
         userId: testUser.id,
         cardId: testCards[0].id,
         alertType: 'above',
-        targetPrice: 160.00,
+        targetPrice: 160.0,
         percentageChange: null,
         isActive: true,
         lastTriggered: null,
@@ -344,15 +358,15 @@ const createSeedData = async () => {
         notificationChannels: {
           email: true,
           push: true,
-          sms: false
+          sms: false,
         },
-        notes: '當青眼白龍價格超過160時提醒'
+        notes: '當青眼白龍價格超過160時提醒',
       },
       {
         userId: testUser.id,
         cardId: testCards[1].id,
         alertType: 'below',
-        targetPrice: 110.00,
+        targetPrice: 110.0,
         percentageChange: null,
         isActive: true,
         lastTriggered: null,
@@ -360,10 +374,10 @@ const createSeedData = async () => {
         notificationChannels: {
           email: true,
           push: true,
-          sms: false
+          sms: false,
         },
-        notes: '當黑魔導價格低於110時提醒'
-      }
+        notes: '當黑魔導價格低於110時提醒',
+      },
     ]);
 
     // 創建測試市場數據
@@ -379,175 +393,177 @@ const createSeedData = async () => {
       {
         cardId: testCards[0].id,
         date: weekAgo.toISOString().split('T')[0],
-        openPrice: 140.00,
-        closePrice: 142.00,
-        highPrice: 145.00,
-        lowPrice: 138.00,
+        openPrice: 140.0,
+        closePrice: 142.0,
+        highPrice: 145.0,
+        lowPrice: 138.0,
         volume: 15,
         transactions: 8,
-        priceChange: 2.00,
+        priceChange: 2.0,
         priceChangePercent: 1.43,
-        marketCap: 14200.00,
+        marketCap: 14200.0,
         trend: 'up',
-        volatility: 2.50,
-        isActive: true
+        volatility: 2.5,
+        isActive: true,
       },
       {
         cardId: testCards[0].id,
         date: yesterday.toISOString().split('T')[0],
-        openPrice: 142.00,
-        closePrice: 147.00,
-        highPrice: 148.00,
-        lowPrice: 141.00,
+        openPrice: 142.0,
+        closePrice: 147.0,
+        highPrice: 148.0,
+        lowPrice: 141.0,
         volume: 22,
         transactions: 12,
-        priceChange: 5.00,
+        priceChange: 5.0,
         priceChangePercent: 3.52,
-        marketCap: 14700.00,
+        marketCap: 14700.0,
         trend: 'up',
         volatility: 2.47,
-        isActive: true
+        isActive: true,
       },
       {
         cardId: testCards[0].id,
         date: today.toISOString().split('T')[0],
-        openPrice: 147.00,
-        closePrice: 150.00,
-        highPrice: 152.00,
-        lowPrice: 146.00,
+        openPrice: 147.0,
+        closePrice: 150.0,
+        highPrice: 152.0,
+        lowPrice: 146.0,
         volume: 25,
         transactions: 15,
-        priceChange: 3.00,
+        priceChange: 3.0,
         priceChangePercent: 2.04,
-        marketCap: 15000.00,
+        marketCap: 15000.0,
         trend: 'up',
         volatility: 2.04,
-        isActive: true
+        isActive: true,
       },
       // 黑魔導的市場數據
       {
         cardId: testCards[1].id,
         date: weekAgo.toISOString().split('T')[0],
-        openPrice: 115.00,
-        closePrice: 116.00,
-        highPrice: 117.00,
-        lowPrice: 114.00,
+        openPrice: 115.0,
+        closePrice: 116.0,
+        highPrice: 117.0,
+        lowPrice: 114.0,
         volume: 12,
         transactions: 6,
-        priceChange: 1.00,
+        priceChange: 1.0,
         priceChangePercent: 0.87,
-        marketCap: 11600.00,
+        marketCap: 11600.0,
         trend: 'up',
-        volatility: 1.30,
-        isActive: true
+        volatility: 1.3,
+        isActive: true,
       },
       {
         cardId: testCards[1].id,
         date: yesterday.toISOString().split('T')[0],
-        openPrice: 116.00,
-        closePrice: 119.00,
-        highPrice: 120.00,
-        lowPrice: 115.00,
+        openPrice: 116.0,
+        closePrice: 119.0,
+        highPrice: 120.0,
+        lowPrice: 115.0,
         volume: 18,
         transactions: 10,
-        priceChange: 3.00,
+        priceChange: 3.0,
         priceChangePercent: 2.59,
-        marketCap: 11900.00,
+        marketCap: 11900.0,
         trend: 'up',
         volatility: 2.15,
-        isActive: true
+        isActive: true,
       },
       {
         cardId: testCards[1].id,
         date: today.toISOString().split('T')[0],
-        openPrice: 119.00,
-        closePrice: 120.00,
-        highPrice: 121.00,
-        lowPrice: 118.00,
+        openPrice: 119.0,
+        closePrice: 120.0,
+        highPrice: 121.0,
+        lowPrice: 118.0,
         volume: 18,
         transactions: 11,
-        priceChange: 1.00,
+        priceChange: 1.0,
         priceChangePercent: 0.84,
-        marketCap: 12000.00,
+        marketCap: 12000.0,
         trend: 'up',
         volatility: 1.26,
-        isActive: true
+        isActive: true,
       },
       // 真紅眼黑龍的市場數據
       {
         cardId: testCards[2].id,
         date: weekAgo.toISOString().split('T')[0],
-        openPrice: 90.00,
-        closePrice: 92.00,
-        highPrice: 93.00,
-        lowPrice: 89.00,
+        openPrice: 90.0,
+        closePrice: 92.0,
+        highPrice: 93.0,
+        lowPrice: 89.0,
         volume: 8,
         transactions: 4,
-        priceChange: 2.00,
+        priceChange: 2.0,
         priceChangePercent: 2.22,
-        marketCap: 9200.00,
+        marketCap: 9200.0,
         trend: 'up',
         volatility: 2.22,
-        isActive: true
+        isActive: true,
       },
       {
         cardId: testCards[2].id,
         date: yesterday.toISOString().split('T')[0],
-        openPrice: 92.00,
-        closePrice: 93.00,
-        highPrice: 94.00,
-        lowPrice: 91.00,
+        openPrice: 92.0,
+        closePrice: 93.0,
+        highPrice: 94.0,
+        lowPrice: 91.0,
         volume: 10,
         transactions: 6,
-        priceChange: 1.00,
+        priceChange: 1.0,
         priceChangePercent: 1.09,
-        marketCap: 9300.00,
+        marketCap: 9300.0,
         trend: 'up',
         volatility: 1.63,
-        isActive: true
+        isActive: true,
       },
       {
         cardId: testCards[2].id,
         date: today.toISOString().split('T')[0],
-        openPrice: 93.00,
-        closePrice: 95.00,
-        highPrice: 96.00,
-        lowPrice: 92.00,
+        openPrice: 93.0,
+        closePrice: 95.0,
+        highPrice: 96.0,
+        lowPrice: 92.0,
         volume: 12,
         transactions: 7,
-        priceChange: 2.00,
+        priceChange: 2.0,
         priceChangePercent: 2.15,
-        marketCap: 9500.00,
+        marketCap: 9500.0,
         trend: 'up',
         volatility: 2.15,
-        isActive: true
-      }
+        isActive: true,
+      },
     ]);
 
     // 更新用戶統計
     logger.info('更新用戶統計...');
     const totalCards = await getCollectionCardModel().count({
-      include: [{
-        model: getCollectionModel(),
-        as: 'collection',
-        where: { userId: testUser.id }
-      }]
+      include: [
+        {
+          model: getCollectionModel(),
+          as: 'collection',
+          where: { userId: testUser.id },
+        },
+      ],
     });
 
     const totalCollections = await getCollectionModel().count({
-      where: { userId: testUser.id }
+      where: { userId: testUser.id },
     });
 
     const totalInvestments = await getInvestmentModel().count({
-      where: { userId: testUser.id }
+      where: { userId: testUser.id },
     });
 
     const portfolioValue = await getInvestmentModel().sum('currentValue', {
-      where: { userId: testUser.id }
+      where: { userId: testUser.id },
     });
 
     const totalProfitLoss = await getInvestmentModel().sum('profitLoss', {
-      where: { userId: testUser.id }
+      where: { userId: testUser.id },
     });
 
     await testUser.update({
@@ -556,8 +572,8 @@ const createSeedData = async () => {
         totalCollections,
         totalInvestments,
         portfolioValue: portfolioValue || 0,
-        totalProfitLoss: totalProfitLoss || 0
-      }
+        totalProfitLoss: totalProfitLoss || 0,
+      },
     });
 
     logger.info('✅ 測試數據創建完成！');

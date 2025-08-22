@@ -1,18 +1,19 @@
 # ⚙️ CardStrategy 環境設置指南
 
 ## 📋 目錄
+
 1. [環境要求](#環境要求)
 2. [數據庫設置](#數據庫設置)
 3. [緩存設置](#緩存設置)
 4. [CDN 設置](#cdn-設置)
 5. [故障排除](#故障排除)
 
-
 ## ENVIRONMENT_SETUP_GUIDE
 
 # 🚀 CardStrategy 執行環境配置指南
 
 ## 📋 目錄
+
 - [系統需求](#系統需求)
 - [快速開始](#快速開始)
 - [詳細配置步驟](#詳細配置步驟)
@@ -23,6 +24,7 @@
 ## 🖥️ 系統需求
 
 ### 最低系統要求
+
 - **Node.js**: 18.0.0 或更高版本
 - **npm**: 8.0.0 或更高版本
 - **Docker**: 20.10 或更高版本
@@ -30,6 +32,7 @@
 - **Git**: 2.30 或更高版本
 
 ### 推薦系統配置
+
 - **RAM**: 8GB 或更多
 - **CPU**: 4核心 或更多
 - **磁碟空間**: 50GB 可用空間
@@ -40,12 +43,14 @@
 ### 方法一：使用自動化腳本（推薦）
 
 #### Windows 用戶
+
 ```powershell
 # 在 PowerShell 中執行
 .\scripts\quick-start.ps1
 ```
 
 #### Linux/macOS 用戶
+
 ```bash
 # 在終端中執行
 chmod +x scripts/quick-start.sh
@@ -53,6 +58,7 @@ chmod +x scripts/quick-start.sh
 ```
 
 ### 方法二：使用 Node.js 腳本
+
 ```bash
 node scripts/setup-environment.js
 ```
@@ -62,6 +68,7 @@ node scripts/setup-environment.js
 ### 1. 安裝必要軟體
 
 #### Node.js 安裝
+
 1. 訪問 [Node.js 官網](https://nodejs.org/)
 2. 下載並安裝 LTS 版本（18.x 或更高）
 3. 驗證安裝：
@@ -71,6 +78,7 @@ node scripts/setup-environment.js
    ```
 
 #### Docker 安裝
+
 1. **Windows/macOS**: 下載並安裝 [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2. **Linux**: 使用包管理器安裝 Docker Engine
 3. 驗證安裝：
@@ -80,6 +88,7 @@ node scripts/setup-environment.js
    ```
 
 ### 2. 克隆專案
+
 ```bash
 git clone https://github.com/your-username/CardStrategy.git
 cd CardStrategy
@@ -88,12 +97,14 @@ cd CardStrategy
 ### 3. 環境變數配置
 
 #### 創建環境變數檔案
+
 ```bash
 # 複製範例檔案
 cp env.example .env
 ```
 
 #### 編輯 .env 檔案
+
 ```env
 # 應用配置
 NODE_ENV=development
@@ -129,11 +140,13 @@ CORS_ORIGIN=http://localhost:3000
 ### 4. 安裝依賴
 
 #### 前端依賴
+
 ```bash
 npm install
 ```
 
 #### 後端依賴
+
 ```bash
 cd backend
 npm install
@@ -143,6 +156,7 @@ cd ..
 ### 5. 啟動服務
 
 #### 使用 Docker Compose（推薦）
+
 ```bash
 # 啟動數據庫和緩存服務
 docker-compose up -d postgres redis
@@ -158,6 +172,7 @@ cd ..
 ```
 
 #### 手動啟動服務
+
 ```bash
 # 啟動 PostgreSQL（如果已安裝）
 sudo systemctl start postgresql
@@ -169,12 +184,14 @@ sudo systemctl start redis
 ### 6. 啟動應用
 
 #### 啟動後端服務
+
 ```bash
 cd backend
 npm run dev
 ```
 
 #### 啟動前端服務
+
 ```bash
 # 在新的終端視窗中
 npm run start
@@ -183,12 +200,14 @@ npm run start
 ## 🛠️ 開發環境配置
 
 ### 開發工具推薦
+
 - **IDE**: Visual Studio Code
 - **資料庫管理**: pgAdmin 或 DBeaver
 - **API 測試**: Postman 或 Insomnia
 - **Git 客戶端**: GitKraken 或 SourceTree
 
 ### VS Code 擴展推薦
+
 ```json
 {
   "recommendations": [
@@ -203,6 +222,7 @@ npm run start
 ```
 
 ### 開發腳本
+
 ```bash
 # 運行測試
 npm run test
@@ -223,6 +243,7 @@ npm run type-check
 ## 🚀 生產環境配置
 
 ### 生產環境變數
+
 ```env
 NODE_ENV=production
 PORT=3000
@@ -246,6 +267,7 @@ CORS_ORIGIN=https://cardstrategy.com
 ```
 
 ### 部署腳本
+
 ```bash
 # 構建生產版本
 npm run build
@@ -259,6 +281,7 @@ npm run deploy:production
 ### 常見問題
 
 #### 1. Node.js 版本過低
+
 ```bash
 # 錯誤訊息：需要 Node.js 18.0.0 或更高版本
 # 解決方案：更新 Node.js
@@ -267,6 +290,7 @@ nvm use 18
 ```
 
 #### 2. Docker 服務啟動失敗
+
 ```bash
 # 檢查 Docker 狀態
 docker info
@@ -279,6 +303,7 @@ docker system prune -a
 ```
 
 #### 3. 數據庫連接失敗
+
 ```bash
 # 檢查 PostgreSQL 狀態
 sudo systemctl status postgresql
@@ -294,6 +319,7 @@ npm run seed
 ```
 
 #### 4. 端口被佔用
+
 ```bash
 # 檢查端口使用情況
 netstat -tulpn | grep :3000
@@ -303,6 +329,7 @@ sudo kill -9 <PID>
 ```
 
 #### 5. 依賴安裝失敗
+
 ```bash
 # 清理 npm 緩存
 npm cache clean --force
@@ -313,6 +340,7 @@ npm install
 ```
 
 ### 日誌查看
+
 ```bash
 # 查看應用日誌
 tail -f logs/app.log
@@ -325,6 +353,7 @@ docker-compose logs -f postgres
 ```
 
 ### 性能監控
+
 ```bash
 # 啟動監控服務
 docker-compose up -d prometheus grafana
@@ -369,6 +398,7 @@ docker-compose up -d prometheus grafana
 ### 1.1 如果您使用雲端 PostgreSQL 服務
 
 #### **AWS RDS PostgreSQL**
+
 ```bash
 # 配置參數
 引擎: PostgreSQL 15
@@ -387,6 +417,7 @@ docker-compose up -d prometheus grafana
 ```
 
 #### **Google Cloud SQL PostgreSQL**
+
 ```bash
 # 配置參數
 版本: PostgreSQL 15
@@ -404,6 +435,7 @@ docker-compose up -d prometheus grafana
 ```
 
 #### **DigitalOcean Managed Databases**
+
 ```bash
 # 配置參數
 版本: PostgreSQL 15
@@ -423,6 +455,7 @@ docker-compose up -d prometheus grafana
 ### 1.2 如果您自建 PostgreSQL 服務器
 
 #### **Ubuntu 服務器安裝**
+
 ```bash
 # 更新系統
 sudo apt update && sudo apt upgrade -y
@@ -470,6 +503,7 @@ CREATE EXTENSION IF NOT EXISTS "btree_gin";
 ### 2.2 配置 PostgreSQL 連接
 
 #### **編輯 PostgreSQL 配置**
+
 ```bash
 # 編輯 postgresql.conf
 sudo nano /etc/postgresql/15/main/postgresql.conf
@@ -487,6 +521,7 @@ default_statistics_target = 100
 ```
 
 #### **配置客戶端認證**
+
 ```bash
 # 編輯 pg_hba.conf
 sudo nano /etc/postgresql/15/main/pg_hba.conf
@@ -607,12 +642,12 @@ npm run db:verify
 psql -h your-host -U cardstrategy_user -d cardstrategy
 
 -- 創建初始管理員用戶
-INSERT INTO users (email, password, role, is_active, created_at) 
+INSERT INTO users (email, password, role, is_active, created_at)
 VALUES ('admin@cardstrategy.com', '$2b$12$your-hashed-password', 'admin', true, NOW());
 
 -- 創建初始配置
-INSERT INTO system_configs (key, value, created_at) 
-VALUES 
+INSERT INTO system_configs (key, value, created_at)
+VALUES
 ('app_name', 'CardStrategy', NOW()),
 ('app_version', '3.1.0', NOW()),
 ('maintenance_mode', 'false', NOW());
@@ -662,11 +697,11 @@ sudo crontab -e
 SELECT pg_size_pretty(pg_database_size('cardstrategy'));
 
 -- 查看表大小
-SELECT 
+SELECT
     schemaname,
     tablename,
     pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
-FROM pg_tables 
+FROM pg_tables
 WHERE schemaname = 'public'
 ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 
@@ -674,9 +709,9 @@ ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
 SELECT count(*) FROM pg_stat_activity;
 
 -- 查看慢查詢
-SELECT query, mean_time, calls 
-FROM pg_stat_statements 
-ORDER BY mean_time DESC 
+SELECT query, mean_time, calls
+FROM pg_stat_statements
+ORDER BY mean_time DESC
 LIMIT 10;
 ```
 
@@ -720,10 +755,10 @@ async function testConnection() {
   try {
     await client.connect();
     console.log('✅ 數據庫連接成功');
-    
+
     const result = await client.query('SELECT version()');
     console.log('PostgreSQL 版本:', result.rows[0].version);
-    
+
     await client.end();
   } catch (error) {
     console.error('❌ 數據庫連接失敗:', error.message);
@@ -743,6 +778,7 @@ node test-db-connection.js
 ### 8.1 常見問題
 
 #### **連接被拒絕**
+
 ```bash
 # 檢查 PostgreSQL 是否運行
 sudo systemctl status postgresql
@@ -755,6 +791,7 @@ sudo ufw status
 ```
 
 #### **認證失敗**
+
 ```bash
 # 檢查 pg_hba.conf 配置
 sudo cat /etc/postgresql/15/main/pg_hba.conf
@@ -764,6 +801,7 @@ sudo systemctl reload postgresql
 ```
 
 #### **內存不足**
+
 ```bash
 # 檢查系統內存
 free -h
@@ -842,6 +880,7 @@ npm run check:services
 ```
 
 或者在 `.env` 文件中添加：
+
 ```bash
 SKIP_LOCAL_SERVICES=true
 ```
@@ -849,11 +888,13 @@ SKIP_LOCAL_SERVICES=true
 ### **選項 2: 使用 Docker Desktop**
 
 1. **啟動 Docker Desktop**
+
    - 在 Windows 開始菜單中搜索 "Docker Desktop"
    - 啟動應用程序
    - 等待 Docker 引擎完全啟動
 
 2. **運行 Redis 容器**
+
    ```bash
    docker run -d --name redis-cardstrategy -p 6379:6379 redis:7-alpine
    ```
@@ -881,14 +922,17 @@ docker-compose ps
 ### **選項 4: 安裝 Windows 版本的 Redis**
 
 1. **下載 Redis for Windows**
+
    - 前往: https://github.com/microsoftarchive/redis/releases
    - 下載最新版本的 Redis-x64-xxx.msi
 
 2. **安裝 Redis**
+
    - 運行下載的 .msi 文件
    - 按照安裝嚮導完成安裝
 
 3. **啟動 Redis 服務**
+
    ```bash
    # 啟動 Redis 服務
    net start Redis
@@ -912,6 +956,7 @@ redis-cli ping
 ## 📊 **預期結果**
 
 ### **成功設置後**:
+
 ```
 🔍 檢查 Redis 連接...
 ✅ Redis 連接成功
@@ -920,6 +965,7 @@ redis-cli ping
 ```
 
 ### **跳過檢查後**:
+
 ```
 🔍 檢查 Redis 連接...
 ⚠️  跳過 Redis 檢查 - 設置了 SKIP_LOCAL_SERVICES
@@ -934,6 +980,7 @@ redis-cli ping
 ## 🚨 **故障排除**
 
 ### **Docker 連接問題**:
+
 ```bash
 # 檢查 Docker 是否運行
 docker --version
@@ -944,6 +991,7 @@ docker ps
 ```
 
 ### **端口衝突**:
+
 ```bash
 # 檢查端口是否被佔用
 netstat -an | findstr :6379
@@ -953,6 +1001,7 @@ docker run -d --name redis-cardstrategy -p 6380:6379 redis:7-alpine
 ```
 
 ### **權限問題**:
+
 ```bash
 # 以管理員身份運行 PowerShell
 # 然後執行 Docker 命令
@@ -965,12 +1014,14 @@ docker run -d --name redis-cardstrategy -p 6380:6379 redis:7-alpine
 ## 📊 當前狀態
 
 ✅ **已完成**:
+
 - 域名 `cardstrategyapp.com` 已添加到 Cloudflare
 - 狀態: `✓ Active`
 - 計劃: `Free`
 - 唯一訪客: 321
 
 ⚠️ **待完成**:
+
 - API Token 配置
 - DNS 記錄設置
 - SSL/TLS 配置
@@ -981,19 +1032,23 @@ docker run -d --name redis-cardstrategy -p 6380:6379 redis:7-alpine
 ### 第一步：獲取 Cloudflare API Token
 
 1. **登錄 Cloudflare 控制台**
+
    - 訪問 https://dash.cloudflare.com
    - 使用您的賬號登錄
 
 2. **創建 API Token**
+
    - 點擊右上角個人頭像 → "My Profile"
    - 左側菜單選擇 "API Tokens"
    - 點擊 "Create Token"
 
 3. **選擇 Token 模板**
+
    - 選擇 "Custom token"
    - 或者使用 "Edit zone DNS" 模板
 
 4. **設置權限**
+
    ```
    Permissions:
    - Zone:Zone:Read (所有區域)
@@ -1003,6 +1058,7 @@ docker run -d --name redis-cardstrategy -p 6380:6379 redis:7-alpine
    ```
 
 5. **設置 Zone Resources**
+
    ```
    Include: Specific zone
    Zone: cardstrategyapp.com
@@ -1051,12 +1107,12 @@ npm run setup:cloudflare
 
 在 Cloudflare DNS 設置中添加以下記錄：
 
-| 類型 | 名稱 | 內容 | 代理狀態 |
-|------|------|------|----------|
-| A | @ | YOUR_DROPLET_IP | ✅ 已代理 |
-| CNAME | www | cardstrategyapp.com | ✅ 已代理 |
-| CNAME | api | cardstrategyapp.com | ✅ 已代理 |
-| CNAME | cdn | cardstrategyapp.com | ✅ 已代理 |
+| 類型  | 名稱 | 內容                | 代理狀態  |
+| ----- | ---- | ------------------- | --------- |
+| A     | @    | YOUR_DROPLET_IP     | ✅ 已代理 |
+| CNAME | www  | cardstrategyapp.com | ✅ 已代理 |
+| CNAME | api  | cardstrategyapp.com | ✅ 已代理 |
+| CNAME | cdn  | cardstrategyapp.com | ✅ 已代理 |
 
 ### 2. SSL/TLS 設置
 
@@ -1067,6 +1123,7 @@ npm run setup:cloudflare
 ### 3. 頁面規則配置
 
 #### 規則 1: API 端點 (不緩存)
+
 ```
 URL: api.cardstrategyapp.com/*
 設置:
@@ -1076,6 +1133,7 @@ URL: api.cardstrategyapp.com/*
 ```
 
 #### 規則 2: 靜態資源 (緩存)
+
 ```
 URL: cardstrategyapp.com/*
 設置:
@@ -1095,6 +1153,7 @@ URL: cardstrategyapp.com/*
 ### 5. 性能優化
 
 啟用以下功能：
+
 - ✅ Auto Minify (JavaScript, CSS, HTML)
 - ✅ Brotli Compression
 - ✅ Early Hints
@@ -1106,6 +1165,7 @@ URL: cardstrategyapp.com/*
 ## 🔍 驗證配置
 
 ### 檢查 DNS 解析
+
 ```bash
 # 檢查主域名
 nslookup cardstrategyapp.com
@@ -1117,12 +1177,14 @@ nslookup cdn.cardstrategyapp.com
 ```
 
 ### 檢查 SSL 證書
+
 ```bash
 # 檢查 SSL 證書
 openssl s_client -connect cardstrategyapp.com:443 -servername cardstrategyapp.com
 ```
 
 ### 檢查性能
+
 ```bash
 # 使用 curl 測試響應時間
 curl -w "@curl-format.txt" -o /dev/null -s "https://cardstrategyapp.com"
@@ -1147,18 +1209,21 @@ curl -w "@curl-format.txt" -o /dev/null -s "https://cardstrategyapp.com"
 ### 常見問題
 
 1. **API Token 權限不足**
+
    ```
    錯誤: 403 Forbidden
    解決: 檢查 Token 權限，確保包含所有必要的權限
    ```
 
 2. **Zone ID 錯誤**
+
    ```
    錯誤: Zone not found
    解決: 確認 Zone ID 正確，域名在您的賬號下
    ```
 
 3. **DNS 記錄衝突**
+
    ```
    錯誤: Record already exists
    解決: 刪除現有記錄或使用不同的名稱
@@ -1186,11 +1251,13 @@ curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
 ## 📞 支持
 
 ### Cloudflare 支持
+
 - **文檔**: https://developers.cloudflare.com/
 - **社區**: https://community.cloudflare.com/
 - **支持**: https://support.cloudflare.com/
 
 ### 相關文檔
+
 - **API 文檔**: https://api.cloudflare.com/
 - **DNS 設置**: https://developers.cloudflare.com/dns/
 - **SSL/TLS**: https://developers.cloudflare.com/ssl/
@@ -1200,18 +1267,21 @@ curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
 配置完成後，您的域名將具備：
 
 ✅ **安全性**
+
 - 免費 SSL 證書
 - DDoS 防護
 - WAF 保護
 - HSTS 強制 HTTPS
 
 ✅ **性能**
+
 - 全球 CDN 加速
 - 圖片優化
 - 代碼壓縮
 - HTTP/2/3 支持
 
 ✅ **可用性**
+
 - 99.9% 可用性保證
 - 自動故障轉移
 - 負載均衡

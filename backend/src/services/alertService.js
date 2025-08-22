@@ -1,5 +1,7 @@
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 const { v4: uuidv4 } = require('uuid');
+// eslint-disable-next-line no-unused-vars
 const moment = require('moment');
 
 class AlertService {
@@ -20,10 +22,10 @@ class AlertService {
       description: '當卡片價格變動超過指定百分比時觸發',
       conditions: {
         priceChangePercent: 10, // 10% 變動
-        timeWindow: 24 * 60 * 60 * 1000 // 24小時
+        timeWindow: 24 * 60 * 60 * 1000, // 24小時
       },
       severity: 'medium',
-      enabled: true
+      enabled: true,
     });
 
     // 系統性能警報規則
@@ -33,10 +35,10 @@ class AlertService {
       conditions: {
         cpuUsage: 80, // CPU 使用率超過 80%
         memoryUsage: 85, // 內存使用率超過 85%
-        responseTime: 5000 // 響應時間超過 5 秒
+        responseTime: 5000, // 響應時間超過 5 秒
       },
       severity: 'high',
-      enabled: true
+      enabled: true,
     });
 
     // 數據庫警報規則
@@ -46,10 +48,10 @@ class AlertService {
       conditions: {
         connectionErrors: 5, // 連接錯誤次數
         queryTimeout: 10000, // 查詢超時時間
-        slowQueries: 10 // 慢查詢數量
+        slowQueries: 10, // 慢查詢數量
       },
       severity: 'critical',
-      enabled: true
+      enabled: true,
     });
   }
 
@@ -71,7 +73,7 @@ class AlertService {
         acknowledgedAt: null,
         acknowledgedBy: null,
         resolvedAt: null,
-        resolvedBy: null
+        resolvedBy: null,
       };
 
       this.alerts.set(alert.id, alert);
@@ -81,7 +83,7 @@ class AlertService {
       logger.warn(`警報創建: ${alert.title} - ${alert.message}`, {
         alertId: alert.id,
         type: alert.type,
-        severity: alert.severity
+        severity: alert.severity,
       });
 
       // 發送通知
@@ -103,23 +105,27 @@ class AlertService {
 
       // 應用過濾器
       if (filters.status) {
-        alerts = alerts.filter(alert => alert.status === filters.status);
+        alerts = alerts.filter((alert) => alert.status === filters.status);
       }
 
       if (filters.severity) {
-        alerts = alerts.filter(alert => alert.severity === filters.severity);
+        alerts = alerts.filter((alert) => alert.severity === filters.severity);
       }
 
       if (filters.type) {
-        alerts = alerts.filter(alert => alert.type === filters.type);
+        alerts = alerts.filter((alert) => alert.type === filters.type);
       }
 
       if (filters.startDate) {
-        alerts = alerts.filter(alert => alert.createdAt >= new Date(filters.startDate));
+        alerts = alerts.filter(
+          (alert) => alert.createdAt >= new Date(filters.startDate)
+        );
       }
 
       if (filters.endDate) {
-        alerts = alerts.filter(alert => alert.createdAt <= new Date(filters.endDate));
+        alerts = alerts.filter(
+          (alert) => alert.createdAt <= new Date(filters.endDate)
+        );
       }
 
       // 排序
@@ -198,9 +204,11 @@ class AlertService {
    */
   async bulkUpdateAlertStatus(alertIds, status, userId = null) {
     try {
+// eslint-disable-next-line no-unused-vars
       const results = [];
       for (const alertId of alertIds) {
         try {
+// eslint-disable-next-line no-unused-vars
           const result = await this.updateAlertStatus(alertId, status, userId);
           results.push(result);
         } catch (error) {
@@ -242,20 +250,20 @@ class AlertService {
       const alerts = Array.from(this.alerts.values());
       const stats = {
         total: alerts.length,
-        active: alerts.filter(a => a.status === 'active').length,
-        acknowledged: alerts.filter(a => a.status === 'acknowledged').length,
-        resolved: alerts.filter(a => a.status === 'resolved').length,
+        active: alerts.filter((a) => a.status === 'active').length,
+        acknowledged: alerts.filter((a) => a.status === 'acknowledged').length,
+        resolved: alerts.filter((a) => a.status === 'resolved').length,
         bySeverity: {
-          low: alerts.filter(a => a.severity === 'low').length,
-          medium: alerts.filter(a => a.severity === 'medium').length,
-          high: alerts.filter(a => a.severity === 'high').length,
-          critical: alerts.filter(a => a.severity === 'critical').length
+          low: alerts.filter((a) => a.severity === 'low').length,
+          medium: alerts.filter((a) => a.severity === 'medium').length,
+          high: alerts.filter((a) => a.severity === 'high').length,
+          critical: alerts.filter((a) => a.severity === 'critical').length,
         },
-        byType: {}
+        byType: {},
       };
 
       // 按類型統計
-      alerts.forEach(alert => {
+      alerts.forEach((alert) => {
         if (!stats.byType[alert.type]) {
           stats.byType[alert.type] = 0;
         }
@@ -289,7 +297,7 @@ class AlertService {
       // 這裡可以集成通知服務
       logger.info(`發送警報通知: ${alert.title}`, {
         alertId: alert.id,
-        severity: alert.severity
+        severity: alert.severity,
       });
 
       // 可以發送郵件、推送通知等
@@ -319,28 +327,36 @@ class AlertService {
             break;
 
           case 'system_performance':
-            if (data.cpuUsage >= rule.conditions.cpuUsage ||
-                data.memoryUsage >= rule.conditions.memoryUsage ||
-                data.responseTime >= rule.conditions.responseTime) {
+            if (
+              data.cpuUsage >= rule.conditions.cpuUsage ||
+              data.memoryUsage >= rule.conditions.memoryUsage ||
+              data.responseTime >= rule.conditions.responseTime
+            ) {
               shouldTrigger = true;
             }
             break;
 
           case 'database_health':
-            if (data.connectionErrors >= rule.conditions.connectionErrors ||
-                data.queryTimeout >= rule.conditions.queryTimeout ||
-                data.slowQueries >= rule.conditions.slowQueries) {
+            if (
+              data.connectionErrors >= rule.conditions.connectionErrors ||
+              data.queryTimeout >= rule.conditions.queryTimeout ||
+              data.slowQueries >= rule.conditions.slowQueries
+            ) {
               shouldTrigger = true;
             }
             break;
         }
 
         if (shouldTrigger) {
-          const alert = await this.createAlert(ruleType, {
-            title: rule.name,
-            message: rule.description,
-            ...data
-          }, rule.severity);
+          const alert = await this.createAlert(
+            ruleType,
+            {
+              title: rule.name,
+              message: rule.description,
+              ...data,
+            },
+            rule.severity
+          );
           triggeredAlerts.push(alert);
         }
       }

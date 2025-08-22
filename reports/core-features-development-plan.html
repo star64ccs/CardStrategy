@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardStrategy 核心功能開發計劃</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .overview {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .overview-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .overview-item h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .overview-item p {
+            color: #666;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        
+        .feature-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #eee;
+        }
+        
+        .feature-title {
+            font-size: 1.8em;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .priority-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .priority-p0 { background: #dc3545; }
+        .priority-p1 { background: #fd7e14; }
+        .priority-p2 { background: #ffc107; }
+        
+        .feature-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .feature-info h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .feature-info p {
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .features-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+        
+        .features-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .features-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .feature-name {
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .feature-tech {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .timeline {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        
+        .timeline h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .phase {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .phase h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .phase p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .milestones {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .milestones li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #555;
+        }
+        
+        .milestones li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        
+        .tech-stack {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        
+        .tech-category {
+            margin-bottom: 20px;
+        }
+        
+        .tech-category h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .tech-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tech-item {
+            padding: 8px 16px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 CardStrategy 核心功能開發計劃</h1>
+            <p>詳細規劃卡牌辨識、防偽判斷、模擬鑑定、AI預測價格、置中評估等核心功能</p>
+            <p style="margin-top: 20px; color: #666;">
+                計劃生成時間: 2025/8/22 上午7:58:33
+            </p>
+        </div>
+
+        <div class="overview">
+            <h3>📋 計劃概覽</h3>
+            <div class="overview-grid">
+                <div class="overview-item">
+                    <h3>核心功能</h3>
+                    <p>5 個</p>
+                </div>
+                <div class="overview-item">
+                    <h3>預計時長</h3>
+                    <p>6-8 個月</p>
+                </div>
+                <div class="overview-item">
+                    <h3>優先級</h3>
+                    <p>High</p>
+                </div>
+                <div class="overview-item">
+                    <h3>預算類型</h3>
+                    <p>開發時間密集型</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心功能詳情 -->
+        
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-title">卡牌辨識系統</div>
+                    <div class="priority-badge priority--">P0 - 最高優先級</div>
+                </div>
+                
+                <div class="feature-details">
+                    <div class="feature-info">
+                        <h4>📝 描述</h4>
+                        <p>通過圖像識別技術自動識別卡牌類型和基本信息</p>
+                    </div>
+                    <div class="feature-info">
+                        <h4>⏱️ 預計時間</h4>
+                        <p>4-6 週</p>
+                    </div>
+                </div>
+                
+                <h4>🔧 功能列表</h4>
+                <ul class="features-list">
+                    
+                        <li>
+                            <span class="feature-name">圖像上傳</span>
+                            <span class="feature-tech">React Native Image Picker, Cloudinary</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">OCR 文字提取</span>
+                            <span class="feature-tech">Google Cloud Vision API, Tesseract.js</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">卡牌類型檢測</span>
+                            <span class="feature-tech">TensorFlow.js, Custom ML Model</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">元數據提取</span>
+                            <span class="feature-tech">Regex Patterns, Database Matching</span>
+                        </li>
+                    
+                </ul>
+            </div>
+        
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-title">防偽判斷系統</div>
+                    <div class="priority-badge priority--">P0 - 最高優先級</div>
+                </div>
+                
+                <div class="feature-details">
+                    <div class="feature-info">
+                        <h4>📝 描述</h4>
+                        <p>通過圖像分析技術檢測卡牌真偽</p>
+                    </div>
+                    <div class="feature-info">
+                        <h4>⏱️ 預計時間</h4>
+                        <p>6-8 週</p>
+                    </div>
+                </div>
+                
+                <h4>🔧 功能列表</h4>
+                <ul class="features-list">
+                    
+                        <li>
+                            <span class="feature-name">圖像分析</span>
+                            <span class="feature-tech">OpenCV, Image Processing Algorithms</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">模式匹配</span>
+                            <span class="feature-tech">Template Matching, Feature Detection</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">質量評估</span>
+                            <span class="feature-tech">Edge Detection, Quality Metrics</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">真偽評分</span>
+                            <span class="feature-tech">Machine Learning, Confidence Scoring</span>
+                        </li>
+                    
+                </ul>
+            </div>
+        
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-title">模擬鑑定系統</div>
+                    <div class="priority-badge priority--">P1 - 高優先級</div>
+                </div>
+                
+                <div class="feature-details">
+                    <div class="feature-info">
+                        <h4>📝 描述</h4>
+                        <p>模擬專業鑑定機構的評級過程</p>
+                    </div>
+                    <div class="feature-info">
+                        <h4>⏱️ 預計時間</h4>
+                        <p>5-7 週</p>
+                    </div>
+                </div>
+                
+                <h4>🔧 功能列表</h4>
+                <ul class="features-list">
+                    
+                        <li>
+                            <span class="feature-name">狀況分析</span>
+                            <span class="feature-tech">Image Analysis, Damage Detection</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">評級標準</span>
+                            <span class="feature-tech">Grading Algorithms, Condition Assessment</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">模擬引擎</span>
+                            <span class="feature-tech">Simulation Engine, Random Factors</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">評級預測</span>
+                            <span class="feature-tech">ML Prediction, Confidence Intervals</span>
+                        </li>
+                    
+                </ul>
+            </div>
+        
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-title">AI預測價格系統</div>
+                    <div class="priority-badge priority--">P1 - 高優先級</div>
+                </div>
+                
+                <div class="feature-details">
+                    <div class="feature-info">
+                        <h4>📝 描述</h4>
+                        <p>使用 AI 技術預測卡牌市場價格</p>
+                    </div>
+                    <div class="feature-info">
+                        <h4>⏱️ 預計時間</h4>
+                        <p>4-6 週</p>
+                    </div>
+                </div>
+                
+                <h4>🔧 功能列表</h4>
+                <ul class="features-list">
+                    
+                        <li>
+                            <span class="feature-name">市場數據分析</span>
+                            <span class="feature-tech">Data Scraping, Market APIs, Data Processing</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">趨勢預測</span>
+                            <span class="feature-tech">Time Series Analysis, ML Models, Trend Detection</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">價格建模</span>
+                            <span class="feature-tech">Regression Models, Neural Networks, Ensemble Methods</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">信心評分</span>
+                            <span class="feature-tech">Confidence Intervals, Uncertainty Quantification</span>
+                        </li>
+                    
+                </ul>
+            </div>
+        
+            <div class="feature-card">
+                <div class="feature-header">
+                    <div class="feature-title">置中評估系統</div>
+                    <div class="priority-badge priority--">P2 - 中優先級</div>
+                </div>
+                
+                <div class="feature-details">
+                    <div class="feature-info">
+                        <h4>📝 描述</h4>
+                        <p>評估卡牌圖像的置中程度</p>
+                    </div>
+                    <div class="feature-info">
+                        <h4>⏱️ 預計時間</h4>
+                        <p>3-4 週</p>
+                    </div>
+                </div>
+                
+                <h4>🔧 功能列表</h4>
+                <ul class="features-list">
+                    
+                        <li>
+                            <span class="feature-name">圖像對齊</span>
+                            <span class="feature-tech">Image Alignment, Perspective Correction</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">邊框分析</span>
+                            <span class="feature-tech">Edge Detection, Border Measurement</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">置中計算</span>
+                            <span class="feature-tech">Centering Algorithm, Deviation Calculation</span>
+                        </li>
+                    
+                        <li>
+                            <span class="feature-name">視覺化</span>
+                            <span class="feature-tech">Visual Overlays, Measurement Display</span>
+                        </li>
+                    
+                </ul>
+            </div>
+        
+
+        <!-- 開發時間線 -->
+        <div class="timeline">
+            <h3>📅 開發時間線</h3>
+            
+                <div class="phase">
+                    <h4>基礎架構 (2-3 個月)</h4>
+                    <p><strong>功能:</strong> 卡牌辨識系統, 防偽判斷系統</p>
+                    <h5>里程碑:</h5>
+                    <ul class="milestones">
+                        <li>完成圖像上傳和處理</li><li>實現基本 OCR 功能</li><li>建立防偽檢測算法</li><li>完成用戶界面設計</li>
+                    </ul>
+                </div>
+            
+                <div class="phase">
+                    <h4>AI 功能 (2-3 個月)</h4>
+                    <p><strong>功能:</strong> AI預測價格系統, 模擬鑑定系統</p>
+                    <h5>里程碑:</h5>
+                    <ul class="milestones">
+                        <li>完善價格預測模型</li><li>實現鑑定模擬功能</li><li>優化 AI 算法準確率</li><li>整合市場數據源</li>
+                    </ul>
+                </div>
+            
+                <div class="phase">
+                    <h4>優化和完善 (1-2 個月)</h4>
+                    <p><strong>功能:</strong> 置中評估系統, 系統優化</p>
+                    <h5>里程碑:</h5>
+                    <ul class="milestones">
+                        <li>完成置中評估功能</li><li>性能優化和測試</li><li>用戶體驗改進</li><li>準備正式發布</li>
+                    </ul>
+                </div>
+            
+        </div>
+
+        <!-- 技術棧 -->
+        <div class="tech-stack">
+            <h3>🛠️ 技術棧</h3>
+            
+                <div class="tech-category">
+                    <h4>Frontend</h4>
+                    <div class="tech-list">
+                        
+                            <div class="tech-item">framework: React Native + Expo</div>
+                        
+                            <div class="tech-item">ui: React Native Elements</div>
+                        
+                            <div class="tech-item">charts: Victory Native</div>
+                        
+                            <div class="tech-item">image: React Native Image Picker</div>
+                        
+                    </div>
+                </div>
+            
+                <div class="tech-category">
+                    <h4>Backend</h4>
+                    <div class="tech-list">
+                        
+                            <div class="tech-item">runtime: Node.js</div>
+                        
+                            <div class="tech-item">framework: Express.js</div>
+                        
+                            <div class="tech-item">database: PostgreSQL + Firebase</div>
+                        
+                            <div class="tech-item">cache: Redis</div>
+                        
+                    </div>
+                </div>
+            
+                <div class="tech-category">
+                    <h4>Ai</h4>
+                    <div class="tech-list">
+                        
+                            <div class="tech-item">vision: Google Cloud Vision API</div>
+                        
+                            <div class="tech-item">ml: TensorFlow.js</div>
+                        
+                            <div class="tech-item">processing: OpenCV.js</div>
+                        
+                            <div class="tech-item">prediction: Custom ML Models</div>
+                        
+                    </div>
+                </div>
+            
+                <div class="tech-category">
+                    <h4>Cloud</h4>
+                    <div class="tech-list">
+                        
+                            <div class="tech-item">storage: AWS S3 + Cloudinary</div>
+                        
+                            <div class="tech-item">compute: AWS Lambda</div>
+                        
+                            <div class="tech-item">database: PostgreSQL (RDS)</div>
+                        
+                            <div class="tech-item">monitoring: CloudWatch</div>
+                        
+                    </div>
+                </div>
+            
+        </div>
+    </div>
+</body>
+</html>

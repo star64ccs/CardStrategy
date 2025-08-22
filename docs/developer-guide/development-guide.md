@@ -119,7 +119,7 @@ enum CardRarity {
   COMMON = 'common',
   UNCOMMON = 'uncommon',
   RARE = 'rare',
-  MYTHIC = 'mythic'
+  MYTHIC = 'mythic',
 }
 ```
 
@@ -192,7 +192,7 @@ describe('CardService', () => {
     const mockCards = [createMockCard()];
     mockApiService.get.mockResolvedValue({
       success: true,
-      data: mockCards
+      data: mockCards,
     });
 
     const result = await cardService.getCards();
@@ -228,9 +228,9 @@ describe('CardItem Component', () => {
 
 - **main**: 生產環境代碼
 - **develop**: 開發環境代碼
-- **feature/***: 功能開發分支
-- **bugfix/***: 錯誤修復分支
-- **hotfix/***: 緊急修復分支
+- **feature/\***: 功能開發分支
+- **bugfix/\***: 錯誤修復分支
+- **hotfix/\***: 緊急修復分支
 
 #### 提交規範
 
@@ -368,7 +368,7 @@ import { z } from 'zod';
 
 const loginSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8)
+  password: z.string().min(8),
 });
 
 // XSS 防護
@@ -383,7 +383,7 @@ const sanitizedHtml = DOMPurify.sanitize(userInput);
 // 身份驗證中間件
 const authenticateToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
-  
+
   if (!token) {
     return res.status(401).json({ error: '未提供令牌' });
   }
@@ -418,7 +418,7 @@ newrelic.recordMetric('Custom/CardScan/Success', successRate);
 // 錯誤追蹤
 newrelic.noticeError(new Error('掃描失敗'), {
   cardId: cardId,
-  scanType: scanType
+  scanType: scanType,
 });
 ```
 
@@ -433,8 +433,8 @@ logger.info('用戶操作', {
   timestamp: new Date().toISOString(),
   metadata: {
     scanDuration: duration,
-    scanQuality: quality
-  }
+    scanQuality: quality,
+  },
 });
 ```
 

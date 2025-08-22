@@ -1,4 +1,6 @@
-const { by, device, element, expect } = require('detox');
+/* eslint-env jest, detox */
+
+const { by, device, element } = require('detox');
 
 describe('AI Chat Flow', () => {
   beforeAll(async () => {
@@ -39,7 +41,9 @@ describe('AI Chat Flow', () => {
 
       // 檢查歡迎消息
       await expect(element(by.text('歡迎使用卡策AI助手'))).toBeVisible();
-      await expect(element(by.text('我可以幫助您分析卡片、提供投資建議、回答問題等'))).toBeVisible();
+      await expect(
+        element(by.text('我可以幫助您分析卡片、提供投資建議、回答問題等'))
+      ).toBeVisible();
     });
 
     it('should show quick action buttons', async () => {
@@ -177,7 +181,9 @@ describe('AI Chat Flow', () => {
 
       // 檢查投資建議界面
       await expect(element(by.text('投資建議'))).toBeVisible();
-      await expect(element(by.text('請描述您的投資目標和風險偏好'))).toBeVisible();
+      await expect(
+        element(by.text('請描述您的投資目標和風險偏好'))
+      ).toBeVisible();
     });
 
     it('should analyze portfolio', async () => {
@@ -194,7 +200,9 @@ describe('AI Chat Flow', () => {
 
     it('should provide market timing advice', async () => {
       // 發送時機建議請求
-      await element(by.id('chat-input')).typeText('現在是買入青眼白龍的好時機嗎？');
+      await element(by.id('chat-input')).typeText(
+        '現在是買入青眼白龍的好時機嗎？'
+      );
       await element(by.text('發送')).tap();
 
       // 檢查時機建議

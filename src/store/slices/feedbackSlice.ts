@@ -13,7 +13,7 @@ import {
   FeedbackNotificationSettings,
   FeedbackFilter,
   FeedbackSortBy,
-  FeedbackSortOrder
+  FeedbackSortOrder,
 } from '../../types/feedback';
 
 // 反饋狀態接口
@@ -80,7 +80,7 @@ const initialState: FeedbackState = {
     page: 1,
     limit: 20,
     total: 0,
-    hasMore: true
+    hasMore: true,
   },
   filter: {},
   sortBy: 'createdAt',
@@ -102,7 +102,7 @@ const initialState: FeedbackState = {
   isUploading: false,
   error: null,
   selectedFeedbackIds: [],
-  isBatchMode: false
+  isBatchMode: false,
 };
 
 // 異步 Thunk Actions
@@ -227,7 +227,13 @@ export const updateNotificationSettings = createAsyncThunk(
 // 搜索反饋
 export const searchFeedbacks = createAsyncThunk(
   'feedback/searchFeedbacks',
-  async ({ query, params }: { query: string; params?: FeedbackQueryParams }) => {
+  async ({
+    query,
+    params,
+  }: {
+    query: string;
+    params?: FeedbackQueryParams;
+  }) => {
     const response = await feedbackService.searchFeedbacks(query, params);
     return { query, ...response };
   }
@@ -288,7 +294,13 @@ const feedbackSlice = createSlice({
     },
 
     // 設置排序
-    setSort: (state, action: PayloadAction<{ sortBy: FeedbackSortBy; sortOrder: FeedbackSortOrder }>) => {
+    setSort: (
+      state,
+      action: PayloadAction<{
+        sortBy: FeedbackSortBy;
+        sortOrder: FeedbackSortOrder;
+      }>
+    ) => {
       state.sortBy = action.payload.sortBy;
       state.sortOrder = action.payload.sortOrder;
       state.pagination.page = 1;
@@ -322,7 +334,7 @@ const feedbackSlice = createSlice({
       if (state.selectedFeedbackIds.length === state.feedbacks.length) {
         state.selectedFeedbackIds = [];
       } else {
-        state.selectedFeedbackIds = state.feedbacks.map(f => f.id);
+        state.selectedFeedbackIds = state.feedbacks.map((f) => f.id);
       }
     },
 
@@ -340,9 +352,12 @@ const feedbackSlice = createSlice({
     },
 
     // 更新反饋投票數（本地更新）
-    updateFeedbackVotes: (state, action: PayloadAction<{ id: string; vote: 1 | -1 }>) => {
+    updateFeedbackVotes: (
+      state,
+      action: PayloadAction<{ id: string; vote: 1 | -1 }>
+    ) => {
       const { id, vote } = action.payload;
-      const feedback = state.feedbacks.find(f => f.id === id);
+      const feedback = state.feedbacks.find((f) => f.id === id);
       if (feedback) {
         feedback.votes += vote;
       }
@@ -360,7 +375,9 @@ const feedbackSlice = createSlice({
 
     // 更新列表中的反饋
     updateFeedbackInList: (state, action: PayloadAction<UserFeedback>) => {
-      const index = state.feedbacks.findIndex(f => f.id === action.payload.id);
+      const index = state.feedbacks.findIndex(
+        (f) => f.id === action.payload.id
+      );
       if (index > -1) {
         state.feedbacks[index] = action.payload;
       }
@@ -373,7 +390,7 @@ const feedbackSlice = createSlice({
     // 從列表中移除反饋
     removeFeedbackFromList: (state, action: PayloadAction<string>) => {
       const id = action.payload;
-      state.feedbacks = state.feedbacks.filter(f => f.id !== id);
+      state.feedbacks = state.feedbacks.filter((f) => f.id !== id);
       state.pagination.total = Math.max(0, state.pagination.total - 1);
 
       if (state.currentFeedback?.id === id) {
@@ -384,7 +401,7 @@ const feedbackSlice = createSlice({
     // 重置狀態
     resetFeedbackState: (state) => {
       return { ...initialState };
-    }
+    },
   },
   extraReducers: (builder) => {
     // fetchFeedbacks
@@ -400,7 +417,7 @@ const feedbackSlice = createSlice({
           page: action.payload.page,
           limit: action.payload.limit,
           total: action.payload.total,
-          hasMore: action.payload.feedbacks.length === action.payload.limit
+          hasMore: action.payload.feedbacks.length === action.payload.limit,
         };
       })
       .addCase(fetchFeedbacks.rejected, (state, action) => {
@@ -447,7 +464,9 @@ const feedbackSlice = createSlice({
       })
       .addCase(updateFeedback.fulfilled, (state, action) => {
         state.isUpdating = false;
-        const index = state.feedbacks.findIndex(f => f.id === action.payload.id);
+        const index = state.feedbacks.findIndex(
+          (f) => f.id === action.payload.id
+        );
         if (index > -1) {
           state.feedbacks[index] = action.payload;
         }
@@ -469,7 +488,7 @@ const feedbackSlice = createSlice({
       .addCase(deleteFeedback.fulfilled, (state, action) => {
         state.isDeleting = false;
         const id = action.payload;
-        state.feedbacks = state.feedbacks.filter(f => f.id !== id);
+        state.feedbacks = state.feedbacks.filter((f) => f.id !== id);
         state.pagination.total = Math.max(0, state.pagination.total - 1);
         if (state.currentFeedback?.id === id) {
           state.currentFeedback = null;
@@ -489,7 +508,7 @@ const feedbackSlice = createSlice({
       .addCase(voteFeedback.fulfilled, (state, action) => {
         state.isVoting = false;
         const { id, vote } = action.payload;
-        const feedback = state.feedbacks.find(f => f.id === id);
+        const feedback = state.feedbacks.find((f) => f.id === id);
         if (feedback) {
           feedback.votes += vote;
         }
@@ -503,34 +522,29 @@ const feedbackSlice = createSlice({
       });
 
     // fetchFeedbackStats
-    builder
-      .addCase(fetchFeedbackStats.fulfilled, (state, action) => {
-        state.stats = action.payload;
-      });
+    builder.addCase(fetchFeedbackStats.fulfilled, (state, action) => {
+      state.stats = action.payload;
+    });
 
     // fetchFeedbackAnalysis
-    builder
-      .addCase(fetchFeedbackAnalysis.fulfilled, (state, action) => {
-        state.analysis = action.payload;
-      });
+    builder.addCase(fetchFeedbackAnalysis.fulfilled, (state, action) => {
+      state.analysis = action.payload;
+    });
 
     // fetchFeedbackTemplates
-    builder
-      .addCase(fetchFeedbackTemplates.fulfilled, (state, action) => {
-        state.templates = action.payload;
-      });
+    builder.addCase(fetchFeedbackTemplates.fulfilled, (state, action) => {
+      state.templates = action.payload;
+    });
 
     // fetchFeedbackTags
-    builder
-      .addCase(fetchFeedbackTags.fulfilled, (state, action) => {
-        state.tags = action.payload;
-      });
+    builder.addCase(fetchFeedbackTags.fulfilled, (state, action) => {
+      state.tags = action.payload;
+    });
 
     // fetchNotificationSettings
-    builder
-      .addCase(fetchNotificationSettings.fulfilled, (state, action) => {
-        state.notificationSettings = action.payload;
-      });
+    builder.addCase(fetchNotificationSettings.fulfilled, (state, action) => {
+      state.notificationSettings = action.payload;
+    });
 
     // searchFeedbacks
     builder
@@ -549,10 +563,9 @@ const feedbackSlice = createSlice({
       });
 
     // fetchUserFeedbackHistory
-    builder
-      .addCase(fetchUserFeedbackHistory.fulfilled, (state, action) => {
-        state.userHistory = action.payload;
-      });
+    builder.addCase(fetchUserFeedbackHistory.fulfilled, (state, action) => {
+      state.userHistory = action.payload;
+    });
 
     // uploadAttachment
     builder
@@ -567,7 +580,7 @@ const feedbackSlice = createSlice({
         state.isUploading = false;
         state.error = action.error.message || '上傳附件失敗';
       });
-  }
+  },
 });
 
 // 導出 actions
@@ -587,41 +600,59 @@ export const {
   addFeedbackToList,
   updateFeedbackInList,
   removeFeedbackFromList,
-  resetFeedbackState
+  resetFeedbackState,
 } = feedbackSlice.actions;
 
 // 導出 reducer
 export default feedbackSlice.reducer;
 
 // 選擇器
-export const selectFeedbacks = (state: { feedback: FeedbackState }) => state.feedback.feedbacks;
-export const selectCurrentFeedback = (state: { feedback: FeedbackState }) => state.feedback.currentFeedback;
-export const selectFeedbackPagination = (state: { feedback: FeedbackState }) => state.feedback.pagination;
-export const selectFeedbackFilter = (state: { feedback: FeedbackState }) => state.feedback.filter;
+export const selectFeedbacks = (state: { feedback: FeedbackState }) =>
+  state.feedback.feedbacks;
+export const selectCurrentFeedback = (state: { feedback: FeedbackState }) =>
+  state.feedback.currentFeedback;
+export const selectFeedbackPagination = (state: { feedback: FeedbackState }) =>
+  state.feedback.pagination;
+export const selectFeedbackFilter = (state: { feedback: FeedbackState }) =>
+  state.feedback.filter;
 export const selectFeedbackSort = (state: { feedback: FeedbackState }) => ({
   sortBy: state.feedback.sortBy,
-  sortOrder: state.feedback.sortOrder
+  sortOrder: state.feedback.sortOrder,
 });
-export const selectFeedbackStats = (state: { feedback: FeedbackState }) => state.feedback.stats;
-export const selectFeedbackAnalysis = (state: { feedback: FeedbackState }) => state.feedback.analysis;
-export const selectFeedbackTemplates = (state: { feedback: FeedbackState }) => state.feedback.templates;
-export const selectFeedbackTags = (state: { feedback: FeedbackState }) => state.feedback.tags;
-export const selectNotificationSettings = (state: { feedback: FeedbackState }) => state.feedback.notificationSettings;
-export const selectUserFeedbackHistory = (state: { feedback: FeedbackState }) => state.feedback.userHistory;
-export const selectSearchQuery = (state: { feedback: FeedbackState }) => state.feedback.searchQuery;
-export const selectSearchResults = (state: { feedback: FeedbackState }) => state.feedback.searchResults;
-export const selectSelectedFeedbackIds = (state: { feedback: FeedbackState }) => state.feedback.selectedFeedbackIds;
-export const selectIsBatchMode = (state: { feedback: FeedbackState }) => state.feedback.isBatchMode;
+export const selectFeedbackStats = (state: { feedback: FeedbackState }) =>
+  state.feedback.stats;
+export const selectFeedbackAnalysis = (state: { feedback: FeedbackState }) =>
+  state.feedback.analysis;
+export const selectFeedbackTemplates = (state: { feedback: FeedbackState }) =>
+  state.feedback.templates;
+export const selectFeedbackTags = (state: { feedback: FeedbackState }) =>
+  state.feedback.tags;
+export const selectNotificationSettings = (state: {
+  feedback: FeedbackState;
+}) => state.feedback.notificationSettings;
+export const selectUserFeedbackHistory = (state: { feedback: FeedbackState }) =>
+  state.feedback.userHistory;
+export const selectSearchQuery = (state: { feedback: FeedbackState }) =>
+  state.feedback.searchQuery;
+export const selectSearchResults = (state: { feedback: FeedbackState }) =>
+  state.feedback.searchResults;
+export const selectSelectedFeedbackIds = (state: { feedback: FeedbackState }) =>
+  state.feedback.selectedFeedbackIds;
+export const selectIsBatchMode = (state: { feedback: FeedbackState }) =>
+  state.feedback.isBatchMode;
 
 // 加載狀態選擇器
-export const selectFeedbackLoadingStates = (state: { feedback: FeedbackState }) => ({
+export const selectFeedbackLoadingStates = (state: {
+  feedback: FeedbackState;
+}) => ({
   isLoading: state.feedback.isLoading,
   isCreating: state.feedback.isCreating,
   isUpdating: state.feedback.isUpdating,
   isDeleting: state.feedback.isDeleting,
   isVoting: state.feedback.isVoting,
   isSearching: state.feedback.isSearching,
-  isUploading: state.feedback.isUploading
+  isUploading: state.feedback.isUploading,
 });
 
-export const selectFeedbackError = (state: { feedback: FeedbackState }) => state.feedback.error;
+export const selectFeedbackError = (state: { feedback: FeedbackState }) =>
+  state.feedback.error;

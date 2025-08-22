@@ -11,7 +11,7 @@ const MarketDashboard: React.FC = () => {
     // 模擬數據加載
     const loadData = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockMarketData: MarketData[] = [
         {
@@ -23,7 +23,7 @@ const MarketDashboard: React.FC = () => {
           changePercent: 3.45,
           volume: 1250,
           marketCap: 1500000,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         {
           id: '2',
@@ -34,8 +34,8 @@ const MarketDashboard: React.FC = () => {
           changePercent: -2.44,
           volume: 890,
           marketCap: 800000,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       ];
 
       const mockInsights: MarketInsight[] = [
@@ -46,8 +46,8 @@ const MarketDashboard: React.FC = () => {
           type: 'price_spike',
           severity: 'high',
           affectedCards: ['card1'],
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ];
 
       const mockAlerts: PriceAlert[] = [
@@ -58,8 +58,8 @@ const MarketDashboard: React.FC = () => {
           targetPrice: 1600,
           condition: 'above',
           isActive: true,
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ];
 
       setMarketData(mockMarketData);
@@ -86,7 +86,9 @@ const MarketDashboard: React.FC = () => {
           </div>
           <div className="stat">
             <span className="stat-label">價格警報</span>
-            <span className="stat-value">{alerts.filter(a => a.isActive).length}</span>
+            <span className="stat-value">
+              {alerts.filter((a) => a.isActive).length}
+            </span>
           </div>
           <div className="stat">
             <span className="stat-label">市場洞察</span>
@@ -99,16 +101,23 @@ const MarketDashboard: React.FC = () => {
         <div className="market-overview">
           <h3>市場概覽</h3>
           <div className="market-cards">
-            {marketData.map(card => (
+            {marketData.map((card) => (
               <div key={card.id} className="market-card">
                 <div className="card-header">
                   <h4>{card.cardName}</h4>
-                  <span className={`price-change ${card.change >= 0 ? 'positive' : 'negative'}`}>
-                    {card.change >= 0 ? '+' : ''}{card.changePercent.toFixed(2)}%
+                  <span
+                    className={`price-change ${card.change >= 0 ? 'positive' : 'negative'}`}
+                  >
+                    {card.change >= 0 ? '+' : ''}
+                    {card.changePercent.toFixed(2)}%
                   </span>
                 </div>
-                <div className="card-price">NT$ {card.price.toLocaleString()}</div>
-                <div className="card-volume">成交量: {card.volume.toLocaleString()}</div>
+                <div className="card-price">
+                  NT$ {card.price.toLocaleString()}
+                </div>
+                <div className="card-volume">
+                  成交量: {card.volume.toLocaleString()}
+                </div>
               </div>
             ))}
           </div>
@@ -117,8 +126,11 @@ const MarketDashboard: React.FC = () => {
         <div className="market-insights">
           <h3>市場洞察</h3>
           <div className="insights-list">
-            {insights.map(insight => (
-              <div key={insight.id} className={`insight-card ${insight.severity}`}>
+            {insights.map((insight) => (
+              <div
+                key={insight.id}
+                className={`insight-card ${insight.severity}`}
+              >
                 <div className="insight-header">
                   <h4>{insight.title}</h4>
                   <span className={`severity-badge ${insight.severity}`}>
@@ -137,20 +149,23 @@ const MarketDashboard: React.FC = () => {
         <div className="price-alerts">
           <h3>價格警報</h3>
           <div className="alerts-list">
-            {alerts.filter(alert => alert.isActive).map(alert => (
-              <div key={alert.id} className="alert-card">
-                <div className="alert-header">
-                  <h4>{alert.cardName}</h4>
-                  <span className="alert-condition">
-                    {alert.condition === 'above' ? '高於' : '低於'} NT$ {alert.targetPrice.toLocaleString()}
-                  </span>
+            {alerts
+              .filter((alert) => alert.isActive)
+              .map((alert) => (
+                <div key={alert.id} className="alert-card">
+                  <div className="alert-header">
+                    <h4>{alert.cardName}</h4>
+                    <span className="alert-condition">
+                      {alert.condition === 'above' ? '高於' : '低於'} NT${' '}
+                      {alert.targetPrice.toLocaleString()}
+                    </span>
+                  </div>
+                  <div className="alert-actions">
+                    <button className="btn btn-primary">查看詳情</button>
+                    <button className="btn btn-secondary">停用警報</button>
+                  </div>
                 </div>
-                <div className="alert-actions">
-                  <button className="btn btn-primary">查看詳情</button>
-                  <button className="btn btn-secondary">停用警報</button>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         </div>
       </div>

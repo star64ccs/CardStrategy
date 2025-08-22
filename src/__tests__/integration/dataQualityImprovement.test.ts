@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { dataQualityService } from '../../services/dataQualityService';
 import { api } from '../../config/api';
 
@@ -7,8 +8,8 @@ jest.mock('../../config/api', () => ({
     get: jest.fn(),
     post: jest.fn(),
     put: jest.fn(),
-    delete: jest.fn()
-  }
+    delete: jest.fn(),
+  },
 }));
 
 const mockApi = api as jest.Mocked<typeof api>;
@@ -25,8 +26,8 @@ describe('數據質量改進集成測試', () => {
         data: {
           totalRecords: 1000,
           qualityScore: 75.0,
-          lastUpdated: '2024-01-01T00:00:00Z'
-        }
+          lastUpdated: '2024-01-01T00:00:00Z',
+        },
       };
       mockApi.get.mockResolvedValueOnce(initialStats);
 
@@ -37,15 +38,15 @@ describe('數據質量改進集成測試', () => {
             metric: 'accuracy',
             value: 0.785,
             threshold: 0.8,
-            status: 'warning'
+            status: 'warning',
           },
           {
             metric: 'completeness',
             value: 0.72,
             threshold: 0.75,
-            status: 'warning'
-          }
-        ]
+            status: 'warning',
+          },
+        ],
       };
       mockApi.get.mockResolvedValueOnce(qualityMetrics);
 
@@ -58,18 +59,18 @@ describe('數據質量改進集成測試', () => {
               type: 'algorithm_tuning',
               priority: 'high',
               description: 'Optimize annotation algorithm',
-              estimatedImpact: 8.5
+              estimatedImpact: 8.5,
             },
             {
               id: 2,
               type: 'data_validation',
               priority: 'medium',
               description: 'Improve data validation rules',
-              estimatedImpact: 5.2
-            }
+              estimatedImpact: 5.2,
+            },
           ],
-          totalRecommendations: 2
-        }
+          totalRecommendations: 2,
+        },
       };
       mockApi.get.mockResolvedValueOnce(recommendations);
 
@@ -80,8 +81,8 @@ describe('數據質量改進集成測試', () => {
           cleanedRecords: 150,
           removedDuplicates: 25,
           fixedFormatting: 75,
-          qualityImprovement: 0.15
-        }
+          qualityImprovement: 0.15,
+        },
       };
       mockApi.post.mockResolvedValueOnce(cleaningResult);
 
@@ -91,10 +92,10 @@ describe('數據質量改進集成測試', () => {
           status: 'completed',
           improvements: [
             { type: 'duplicate_removal', count: 25 },
-            { type: 'format_standardization', count: 50 }
+            { type: 'format_standardization', count: 50 },
           ],
-          qualityScore: 82.5
-        }
+          qualityScore: 82.5,
+        },
       };
       mockApi.post.mockResolvedValueOnce(improvementResult);
 
@@ -103,17 +104,19 @@ describe('數據質量改進集成測試', () => {
         data: {
           totalRecords: 1000,
           qualityScore: 82.5,
-          lastUpdated: '2024-01-01T00:00:00Z'
-        }
+          lastUpdated: '2024-01-01T00:00:00Z',
+        },
       };
       mockApi.get.mockResolvedValueOnce(finalStats);
 
       // 執行流程
       const statsResult = await dataQualityService.getCollectionStats();
       const metricsResult = await dataQualityService.getQualityMetrics();
-      const recommendationsResult = await dataQualityService.getRecommendations();
+      const recommendationsResult =
+        await dataQualityService.getRecommendations();
       const cleaningResult2 = await dataQualityService.performDataCleaning();
-      const improvementResult2 = await dataQualityService.performQualityImprovement();
+      const improvementResult2 =
+        await dataQualityService.performQualityImprovement();
       const finalResult = await dataQualityService.getCollectionStats();
 
       // 驗證結果
@@ -127,7 +130,9 @@ describe('數據質量改進集成測試', () => {
 
       // 驗證 API 調用
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/collect/stats?');
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/quality-metrics?limit=10');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/quality-metrics?limit=10'
+      );
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/recommendations');
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/clean');
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/improve');
@@ -141,9 +146,14 @@ describe('數據質量改進集成測試', () => {
         data: {
           annotators: [
             { id: 1, name: 'Annotator 1', level: 'expert', accuracy: 0.95 },
-            { id: 2, name: 'Annotator 2', level: 'intermediate', accuracy: 0.85 }
-          ]
-        }
+            {
+              id: 2,
+              name: 'Annotator 2',
+              level: 'intermediate',
+              accuracy: 0.85,
+            },
+          ],
+        },
       };
       mockApi.get.mockResolvedValueOnce(annotators);
 
@@ -152,10 +162,10 @@ describe('數據質量改進集成測試', () => {
         data: {
           tasks: [
             { id: 1, type: 'image_annotation', priority: 'high' },
-            { id: 2, type: 'text_validation', priority: 'medium' }
+            { id: 2, type: 'text_validation', priority: 'medium' },
           ],
-          totalAssigned: 2
-        }
+          totalAssigned: 2,
+        },
       };
       mockApi.post.mockResolvedValueOnce(assignmentResult);
 
@@ -164,8 +174,8 @@ describe('數據質量改進集成測試', () => {
         data: {
           annotationId: 1,
           status: 'submitted',
-          timestamp: '2024-01-01T00:00:00Z'
-        }
+          timestamp: '2024-01-01T00:00:00Z',
+        },
       };
       mockApi.post.mockResolvedValueOnce(submissionResult);
 
@@ -176,8 +186,8 @@ describe('數據質量改進集成測試', () => {
           reviewStatus: 'approved',
           reviewNotes: 'Good quality',
           reviewedBy: 'reviewer-1',
-          reviewedAt: '2024-01-01T00:00:00Z'
-        }
+          reviewedAt: '2024-01-01T00:00:00Z',
+        },
       };
       mockApi.post.mockResolvedValueOnce(reviewResult);
 
@@ -187,16 +197,27 @@ describe('數據質量改進集成測試', () => {
           totalAnnotators: 2,
           totalAnnotations: 1,
           averageAccuracy: 0.9,
-          averageProcessingTime: 2.5
-        }
+          averageProcessingTime: 2.5,
+        },
       };
       mockApi.get.mockResolvedValueOnce(statsResult);
 
       // 執行流程
       const annotatorsResult = await dataQualityService.getAnnotatorDetails();
-      const assignmentResult2 = await dataQualityService.assignAnnotationTasks({ annotatorId: 1, taskCount: 2 });
-      const submissionResult2 = await dataQualityService.submitAnnotation(1, { label: 'card', confidence: 0.95 }, 0.95);
-      const reviewResult2 = await dataQualityService.reviewAnnotation(1, 'approved', 'Good quality');
+      const assignmentResult2 = await dataQualityService.assignAnnotationTasks({
+        annotatorId: 1,
+        taskCount: 2,
+      });
+      const submissionResult2 = await dataQualityService.submitAnnotation(
+        1,
+        { label: 'card', confidence: 0.95 },
+        0.95
+      );
+      const reviewResult2 = await dataQualityService.reviewAnnotation(
+        1,
+        'approved',
+        'Good quality'
+      );
       const statsResult2 = await dataQualityService.getAnnotationStats();
 
       // 驗證結果
@@ -207,18 +228,29 @@ describe('數據質量改進集成測試', () => {
       expect(statsResult2.totalAnnotators).toBe(2);
 
       // 驗證 API 調用
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/annotate/annotators?');
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/assign', { annotatorId: 1, taskCount: 2 });
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/submit', {
-        annotationId: 1,
-        annotationResult: { label: 'card', confidence: 0.95 },
-        confidence: 0.95
-      });
-      expect(mockApi.post).toHaveBeenCalledWith('/data-quality/annotate/review', {
-        annotationId: 1,
-        reviewStatus: 'approved',
-        reviewNotes: 'Good quality'
-      });
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/annotate/annotators?'
+      );
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/assign',
+        { annotatorId: 1, taskCount: 2 }
+      );
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/submit',
+        {
+          annotationId: 1,
+          annotationResult: { label: 'card', confidence: 0.95 },
+          confidence: 0.95,
+        }
+      );
+      expect(mockApi.post).toHaveBeenCalledWith(
+        '/data-quality/annotate/review',
+        {
+          annotationId: 1,
+          reviewStatus: 'approved',
+          reviewNotes: 'Good quality',
+        }
+      );
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/annotate/stats');
     });
   });
@@ -233,9 +265,9 @@ describe('數據質量改進集成測試', () => {
           settings: {
             qualityThreshold: 80,
             enableNotifications: true,
-            alertChannels: ['email', 'push']
-          }
-        }
+            alertChannels: ['email', 'push'],
+          },
+        },
       };
       mockApi.post.mockResolvedValueOnce(alertConfig);
 
@@ -245,8 +277,8 @@ describe('數據質量改進集成測試', () => {
           currentProcessing: 15,
           queueLength: 25,
           systemStatus: 'normal',
-          lastUpdate: '2024-01-01T00:00:00Z'
-        }
+          lastUpdate: '2024-01-01T00:00:00Z',
+        },
       };
       mockApi.get.mockResolvedValueOnce(realTimeStats);
 
@@ -257,9 +289,9 @@ describe('數據質量改進集成測試', () => {
             id: 1,
             type: 'quality_threshold_exceeded',
             message: 'Quality score dropped below threshold',
-            timestamp: '2024-01-01T00:00:00Z'
-          }
-        ]
+            timestamp: '2024-01-01T00:00:00Z',
+          },
+        ],
       };
       mockApi.get.mockResolvedValueOnce(realTimeAlerts);
 
@@ -267,7 +299,7 @@ describe('數據質量改進集成測試', () => {
       const alertConfigResult = await dataQualityService.setCollectionAlerts({
         qualityThreshold: 80,
         enableNotifications: true,
-        alertChannels: ['email', 'push']
+        alertChannels: ['email', 'push'],
       });
       const realTimeStatsResult = await dataQualityService.getRealTimeStats();
       const realTimeAlertsResult = await dataQualityService.getRealTimeAlerts();
@@ -282,9 +314,11 @@ describe('數據質量改進集成測試', () => {
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/alerts', {
         qualityThreshold: 80,
         enableNotifications: true,
-        alertChannels: ['email', 'push']
+        alertChannels: ['email', 'push'],
       });
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/collect/stats/realtime');
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/collect/stats/realtime'
+      );
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/alerts');
     });
   });
@@ -299,9 +333,9 @@ describe('數據質量改進集成測試', () => {
           metrics: {
             completeness: 0.95,
             accuracy: 0.88,
-            consistency: 0.92
-          }
-        }
+            consistency: 0.92,
+          },
+        },
       };
       mockApi.get.mockResolvedValueOnce(qualityReport);
 
@@ -311,20 +345,30 @@ describe('數據質量改進集成測試', () => {
           sources: [
             { source: 'manual_upload', count: 500, percentage: 50 },
             { source: 'api_import', count: 300, percentage: 30 },
-            { source: 'batch_processing', count: 200, percentage: 20 }
-          ]
-        }
+            { source: 'batch_processing', count: 200, percentage: 20 },
+          ],
+        },
       };
       mockApi.get.mockResolvedValueOnce(sourceBreakdown);
 
       // 3. 導出報告
-      const exportResult = new Blob(['report data'], { type: 'application/pdf' });
+      const exportResult = new Blob(['report data'], {
+        type: 'application/pdf',
+      });
       mockApi.get.mockResolvedValueOnce({ data: exportResult });
 
       // 執行流程
-      const reportResult = await dataQualityService.getQualityReport('2024-01-01', '2024-01-31');
-      const breakdownResult = await dataQualityService.getSourceBreakdown('2024-01-01', '2024-01-31');
-      const exportResult2 = await dataQualityService.exportStatsReport({ format: 'pdf' });
+      const reportResult = await dataQualityService.getQualityReport(
+        '2024-01-01',
+        '2024-01-31'
+      );
+      const breakdownResult = await dataQualityService.getSourceBreakdown(
+        '2024-01-01',
+        '2024-01-31'
+      );
+      const exportResult2 = await dataQualityService.exportStatsReport({
+        format: 'pdf',
+      });
 
       // 驗證結果
       expect(reportResult.overallScore).toBe(82.5);
@@ -332,11 +376,18 @@ describe('數據質量改進集成測試', () => {
       expect(exportResult2).toBeInstanceOf(Blob);
 
       // 驗證 API 調用
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/quality-report?startDate=2024-01-01&endDate=2024-01-31');
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/source-breakdown?startDate=2024-01-01&endDate=2024-01-31');
-      expect(mockApi.get).toHaveBeenCalledWith('/data-quality/collect/stats/export?', {
-        responseType: 'blob'
-      });
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/quality-report?startDate=2024-01-01&endDate=2024-01-31'
+      );
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/source-breakdown?startDate=2024-01-01&endDate=2024-01-31'
+      );
+      expect(mockApi.get).toHaveBeenCalledWith(
+        '/data-quality/collect/stats/export?',
+        {
+          responseType: 'blob',
+        }
+      );
     });
   });
 
@@ -349,8 +400,8 @@ describe('數據質量改進集成測試', () => {
         data: {
           totalRecords: 100000,
           qualityScore: 85.5,
-          processingTime: 3.2
-        }
+          processingTime: 3.2,
+        },
       };
       mockApi.get.mockResolvedValue(largeDatasetResult);
 
@@ -366,8 +417,8 @@ describe('數據質量改進集成測試', () => {
       const mockResponse = {
         data: {
           status: 'success',
-          message: 'API call successful'
-        }
+          message: 'API call successful',
+        },
       };
       mockApi.get.mockResolvedValue(mockResponse);
       mockApi.post.mockResolvedValue(mockResponse);
@@ -377,13 +428,13 @@ describe('數據質量改進集成測試', () => {
         dataQualityService.getCollectionStats(),
         dataQualityService.getQualityMetrics(),
         dataQualityService.getRecommendations(),
-        dataQualityService.getRealTimeStats()
+        dataQualityService.getRealTimeStats(),
       ];
 
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(4);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result).toBeDefined();
       });
     });

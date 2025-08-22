@@ -149,3 +149,28 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# API Key 保護規則
+# 這些文件包含敏感的 API Key，不應該被提交到 Git
+src/config/ai-keys/
+backups/api-keys/
+*-config.json
+*-backup.json
+api-keys.env
+secrets.env
+cloudflare-config.env
+local-config.env
+
+# 清理腳本保護
+scripts/cleanup-obsolete-files.js
+
+# Firebase 保護
+firebase-config.env
+firebase-service-account.json
+
+# 免費服務配置保護
+mixpanel-config.env
+sendgrid-config.env
+logrocket-config.env
+slack-config.env
+smtp-config.env

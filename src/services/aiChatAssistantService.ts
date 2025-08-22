@@ -84,7 +84,11 @@ export interface KnowledgeItem {
 // 智能推薦
 export interface Recommendation {
   recommendationId: string;
-  type: 'card_suggestion' | 'investment_advice' | 'market_analysis' | 'trading_strategy';
+  type:
+    | 'card_suggestion'
+    | 'investment_advice'
+    | 'market_analysis'
+    | 'trading_strategy';
   title: string;
   description: string;
   confidence: number;
@@ -118,20 +122,20 @@ class AIChatAssistantService {
       enabled: true,
       language: 'zh-TW',
       confidenceThreshold: 0.7,
-      contextWindow: 10
+      contextWindow: 10,
     },
     knowledgeBase: {
       enabled: true,
       autoUpdate: true,
       sources: ['card_database', 'market_data', 'user_manual'],
-      updateInterval: 24
+      updateInterval: 24,
     },
     recommendation: {
       enabled: true,
       personalization: true,
       learningRate: 0.1,
-      maxRecommendations: 5
-    }
+      maxRecommendations: 5,
+    },
   };
 
   // 獲取當前配置
@@ -152,37 +156,57 @@ class AIChatAssistantService {
     userId: string;
     context?: Record<string, any>;
   }): Promise<ChatMessage> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai-chat/send-message', message);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post(
+          '/ai-chat/send-message',
+          message
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 創建新的聊天會話
-  async createSession(userId: string, initialContext?: Record<string, any>): Promise<ChatSession> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai-chat/sessions', {
-        userId,
-        initialContext
-      });
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+  async createSession(
+    userId: string,
+    initialContext?: Record<string, any>
+  ): Promise<ChatSession> {
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post('/ai-chat/sessions', {
+          userId,
+          initialContext,
+        });
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 獲取聊天會話
   async getSession(sessionId: string): Promise<ChatSession> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get(`/ai-chat/sessions/${sessionId}`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(`/ai-chat/sessions/${sessionId}`);
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 獲取用戶的所有會話
   async getUserSessions(userId: string): Promise<ChatSession[]> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get(`/ai-chat/sessions?userId=${userId}`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          `/ai-chat/sessions?userId=${userId}`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 結束聊天會話
@@ -195,57 +219,94 @@ class AIChatAssistantService {
       topics: string[];
     };
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.put(`/ai-chat/sessions/${sessionId}/end`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.put(
+          `/ai-chat/sessions/${sessionId}/end`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 意圖識別
-  async recognizeIntent(text: string, context?: Record<string, any>): Promise<IntentRecognition> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai-chat/recognize-intent', {
-        text,
-        context
-      });
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+  async recognizeIntent(
+    text: string,
+    context?: Record<string, any>
+  ): Promise<IntentRecognition> {
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post('/ai-chat/recognize-intent', {
+          text,
+          context,
+        });
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 搜索知識庫
-  async searchKnowledgeBase(query: string, category?: string, limit?: number): Promise<KnowledgeItem[]> {
-    return withErrorHandling(async () => {
-      const params = new URLSearchParams();
-      params.append('query', query);
-      if (category) params.append('category', category);
-      if (limit) params.append('limit', limit.toString());
-      
-      const response = await apiService.get(`/ai-chat/knowledge/search?${params}`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+  async searchKnowledgeBase(
+    query: string,
+    category?: string,
+    limit?: number
+  ): Promise<KnowledgeItem[]> {
+    return withErrorHandling(
+      async () => {
+        const params = new URLSearchParams();
+        params.append('query', query);
+        if (category) params.append('category', category);
+        if (limit) params.append('limit', limit.toString());
+
+        const response = await apiService.get(
+          `/ai-chat/knowledge/search?${params}`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 添加知識庫項目
-  async addKnowledgeItem(item: Omit<KnowledgeItem, 'itemId' | 'lastUpdated'>): Promise<{
+  async addKnowledgeItem(
+    item: Omit<KnowledgeItem, 'itemId' | 'lastUpdated'>
+  ): Promise<{
     success: boolean;
     itemId: string;
     message: string;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai-chat/knowledge/items', item);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post(
+          '/ai-chat/knowledge/items',
+          item
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 更新知識庫項目
-  async updateKnowledgeItem(itemId: string, updates: Partial<KnowledgeItem>): Promise<{
+  async updateKnowledgeItem(
+    itemId: string,
+    updates: Partial<KnowledgeItem>
+  ): Promise<{
     success: boolean;
     message: string;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.put(`/ai-chat/knowledge/items/${itemId}`, updates);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.put(
+          `/ai-chat/knowledge/items/${itemId}`,
+          updates
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 刪除知識庫項目
@@ -253,40 +314,62 @@ class AIChatAssistantService {
     success: boolean;
     message: string;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.delete(`/ai-chat/knowledge/items/${itemId}`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.delete(
+          `/ai-chat/knowledge/items/${itemId}`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 獲取智能推薦
-  async getRecommendations(userId: string, context?: Record<string, any>): Promise<Recommendation[]> {
-    return withErrorHandling(async () => {
-      const params = new URLSearchParams();
-      params.append('userId', userId);
-      if (context) {
-        params.append('context', JSON.stringify(context));
-      }
-      
-      const response = await apiService.get(`/ai-chat/recommendations?${params}`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+  async getRecommendations(
+    userId: string,
+    context?: Record<string, any>
+  ): Promise<Recommendation[]> {
+    return withErrorHandling(
+      async () => {
+        const params = new URLSearchParams();
+        params.append('userId', userId);
+        if (context) {
+          params.append('context', JSON.stringify(context));
+        }
+
+        const response = await apiService.get(
+          `/ai-chat/recommendations?${params}`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 提供推薦反饋
-  async provideRecommendationFeedback(recommendationId: string, feedback: {
-    rating: number; // 1-5
-    helpful: boolean;
-    comments?: string;
-    actionTaken?: string;
-  }): Promise<{
+  async provideRecommendationFeedback(
+    recommendationId: string,
+    feedback: {
+      rating: number; // 1-5
+      helpful: boolean;
+      comments?: string;
+      actionTaken?: string;
+    }
+  ): Promise<{
     success: boolean;
     message: string;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post(`/ai-chat/recommendations/${recommendationId}/feedback`, feedback);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post(
+          `/ai-chat/recommendations/${recommendationId}/feedback`,
+          feedback
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 訓練AI模型
@@ -303,10 +386,16 @@ class AIChatAssistantService {
     modelAccuracy: number;
     trainingTime: number;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai-chat/train-model', trainingData);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post(
+          '/ai-chat/train-model',
+          trainingData
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 獲取對話分析
@@ -331,14 +420,22 @@ class AIChatAssistantService {
       acceptanceRate: number;
     }[];
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get(`/ai-chat/analytics/sessions/${sessionId}`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          `/ai-chat/analytics/sessions/${sessionId}`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 獲取用戶分析
-  async getUserAnalytics(userId: string, timeRange: '7d' | '30d' | '90d'): Promise<{
+  async getUserAnalytics(
+    userId: string,
+    timeRange: '7d' | '30d' | '90d'
+  ): Promise<{
     userId: string;
     totalSessions: number;
     totalMessages: number;
@@ -355,34 +452,48 @@ class AIChatAssistantService {
       conversionRate: number;
     }[];
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get(`/ai-chat/analytics/users/${userId}?timeRange=${timeRange}`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          `/ai-chat/analytics/users/${userId}?timeRange=${timeRange}`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 設置用戶偏好
-  async setUserPreferences(userId: string, preferences: {
-    language?: string;
-    topics?: string[];
-    notificationSettings?: {
-      email: boolean;
-      push: boolean;
-      frequency: 'immediate' | 'daily' | 'weekly';
-    };
-    privacySettings?: {
-      dataCollection: boolean;
-      personalization: boolean;
-      analytics: boolean;
-    };
-  }): Promise<{
+  async setUserPreferences(
+    userId: string,
+    preferences: {
+      language?: string;
+      topics?: string[];
+      notificationSettings?: {
+        email: boolean;
+        push: boolean;
+        frequency: 'immediate' | 'daily' | 'weekly';
+      };
+      privacySettings?: {
+        dataCollection: boolean;
+        personalization: boolean;
+        analytics: boolean;
+      };
+    }
+  ): Promise<{
     success: boolean;
     message: string;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.put(`/ai-chat/users/${userId}/preferences`, preferences);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.put(
+          `/ai-chat/users/${userId}/preferences`,
+          preferences
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 獲取用戶偏好
@@ -400,38 +511,57 @@ class AIChatAssistantService {
       analytics: boolean;
     };
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get(`/ai-chat/users/${userId}/preferences`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          `/ai-chat/users/${userId}/preferences`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 導出對話記錄
-  async exportConversation(sessionId: string, format: 'json' | 'csv' | 'pdf'): Promise<{
+  async exportConversation(
+    sessionId: string,
+    format: 'json' | 'csv' | 'pdf'
+  ): Promise<{
     success: boolean;
     downloadUrl: string;
     message: string;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post(`/ai-chat/sessions/${sessionId}/export`, {
-        format
-      });
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post(
+          `/ai-chat/sessions/${sessionId}/export`,
+          {
+            format,
+          }
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 批量處理消息
-  async processBatchMessages(messages: Array<{
-    content: string;
-    sessionId: string;
-    userId: string;
-  }>): Promise<ChatMessage[]> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai-chat/batch-process', {
-        messages
-      });
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+  async processBatchMessages(
+    messages: Array<{
+      content: string;
+      sessionId: string;
+      userId: string;
+    }>
+  ): Promise<ChatMessage[]> {
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post('/ai-chat/batch-process', {
+          messages,
+        });
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 獲取系統狀態
@@ -453,10 +583,13 @@ class AIChatAssistantService {
     };
     overallHealth: 'excellent' | 'good' | 'fair' | 'poor';
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get('/ai-chat/system/status');
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get('/ai-chat/system/status');
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 重置用戶學習數據
@@ -464,26 +597,36 @@ class AIChatAssistantService {
     success: boolean;
     message: string;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post(`/ai-chat/users/${userId}/reset-learning`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post(
+          `/ai-chat/users/${userId}/reset-learning`
+        );
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 獲取熱門問題
-  async getFrequentlyAskedQuestions(limit?: number): Promise<Array<{
-    question: string;
-    answer: string;
-    frequency: number;
-    category: string;
-  }>> {
-    return withErrorHandling(async () => {
-      const params = new URLSearchParams();
-      if (limit) params.append('limit', limit.toString());
-      
-      const response = await apiService.get(`/ai-chat/faq?${params}`);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+  async getFrequentlyAskedQuestions(limit?: number): Promise<
+    Array<{
+      question: string;
+      answer: string;
+      frequency: number;
+      category: string;
+    }>
+  > {
+    return withErrorHandling(
+      async () => {
+        const params = new URLSearchParams();
+        if (limit) params.append('limit', limit.toString());
+
+        const response = await apiService.get(`/ai-chat/faq?${params}`);
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 
   // 添加FAQ
@@ -497,12 +640,16 @@ class AIChatAssistantService {
     faqId: string;
     message: string;
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai-chat/faq', faq);
-      return response.data;
-    }, { service: 'AIChatAssistantService' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post('/ai-chat/faq', faq);
+        return response.data;
+      },
+      { service: 'AIChatAssistantService' }
+    )();
   }
 }
 
 // 創建單例實例
+export { AIChatAssistantService };
 export const aiChatAssistantService = new AIChatAssistantService();

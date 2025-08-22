@@ -17,7 +17,10 @@ export const fetchMarketData = createAsyncThunk(
 
 export const fetchPriceHistory = createAsyncThunk(
   'market/fetchPriceHistory',
-  async ({ cardId, period }: { cardId: string; period: string }, { rejectWithValue }) => {
+  async (
+    { cardId, period }: { cardId: string; period: string },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await marketService.getPriceHistory(cardId, period);
       return response;
@@ -45,7 +48,7 @@ const initialState: MarketState = {
   priceHistory: [],
   marketTrends: [],
   isLoading: false,
-  error: null
+  error: null,
 };
 
 // Market slice
@@ -59,7 +62,7 @@ const marketSlice = createSlice({
     clearMarketData: (state) => {
       state.marketData = null;
       state.priceHistory = [];
-    }
+    },
   },
   extraReducers: (builder) => {
     // Fetch Market Data
@@ -113,7 +116,7 @@ const marketSlice = createSlice({
               changePercentage: 0,
               volume: 0,
               confidence: 0,
-              timeframe: '24h'
+              timeframe: '24h',
             });
           });
         }
@@ -125,7 +128,7 @@ const marketSlice = createSlice({
               changePercentage: 0,
               volume: 0,
               confidence: 0,
-              timeframe: '24h'
+              timeframe: '24h',
             });
           });
         }
@@ -137,7 +140,7 @@ const marketSlice = createSlice({
               changePercentage: 0,
               volume: 0,
               confidence: 0,
-              timeframe: '24h'
+              timeframe: '24h',
             });
           });
         }
@@ -148,7 +151,7 @@ const marketSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  }
+  },
 });
 
 export const { clearError, clearMarketData } = marketSlice.actions;

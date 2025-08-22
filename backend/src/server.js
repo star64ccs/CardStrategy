@@ -16,7 +16,7 @@ const {
   securityHeaders,
   inputValidation,
   sessionSecurity,
-  fileUploadSecurity
+  fileUploadSecurity,
 } = require('./middleware/security');
 
 // 導入路由
@@ -41,10 +41,17 @@ const alertService = require('./services/alertService');
 const monitoringService = require('./services/monitoringService');
 
 // 導入數據庫配置
-const { sequelize, testConnection, syncDatabase } = require('./config/database');
+const {
+  sequelize,
+  testConnection,
+  syncDatabase,
+} = require('./config/database');
 
 // 導入 Redis 配置
-const { connectRedis, healthCheck: redisHealthCheck } = require('./config/redis');
+const {
+  connectRedis,
+  healthCheck: redisHealthCheck,
+} = require('./config/redis');
 
 const app = express();
 
@@ -84,10 +91,10 @@ const generalLimiter = rateLimit({
   message: {
     success: false,
     message: '請求過於頻繁，請稍後再試',
-    code: 'RATE_LIMIT_EXCEEDED'
+    code: 'RATE_LIMIT_EXCEEDED',
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
 const strictLimiter = rateLimit({
@@ -96,10 +103,10 @@ const strictLimiter = rateLimit({
   message: {
     success: false,
     message: '操作過於頻繁，請稍後再試',
-    code: 'RATE_LIMIT_EXCEEDED'
+    code: 'RATE_LIMIT_EXCEEDED',
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
 });
 
 // 應用速率限制
@@ -148,10 +155,10 @@ app.get('/api/version', (req, res) => {
         performanceOptimization: true,
         securityEnhancement: true,
         advancedFeatures: true,
-        monitoringAndTesting: true
+        monitoringAndTesting: true,
       },
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 });
 
@@ -170,21 +177,21 @@ app.get('/api/health', async (req, res) => {
         environment: process.env.NODE_ENV || 'development',
         services: {
           database: dbStatus ? 'connected' : 'disconnected',
-          redis: await redisHealthCheck() ? 'connected' : 'disconnected',
+          redis: (await redisHealthCheck()) ? 'connected' : 'disconnected',
           memory: {
             used: Math.round(memoryUsage.heapUsed / 1024 / 1024),
             total: Math.round(memoryUsage.heapTotal / 1024 / 1024),
-            external: Math.round(memoryUsage.external / 1024 / 1024)
-          }
-        }
-      }
+            external: Math.round(memoryUsage.external / 1024 / 1024),
+          },
+        },
+      },
     });
   } catch (error) {
     logger.error('健康檢查失敗:', error);
     res.status(503).json({
       success: false,
       message: '服務不可用',
-      code: 'SERVICE_UNAVAILABLE'
+      code: 'SERVICE_UNAVAILABLE',
     });
   }
 });
@@ -202,16 +209,16 @@ app.get('/api/health/db', async (req, res) => {
         timestamp: new Date().toISOString(),
         database: {
           connected: dbStatus,
-          stats: dbStats
-        }
-      }
+          stats: dbStats,
+        },
+      },
     });
   } catch (error) {
     logger.error('數據庫健康檢查失敗:', error);
     res.status(503).json({
       success: false,
       message: '數據庫不可用',
-      code: 'DATABASE_UNAVAILABLE'
+      code: 'DATABASE_UNAVAILABLE',
     });
   }
 });
@@ -225,7 +232,7 @@ app.use((err, req, res, next) => {
     return res.status(503).json({
       success: false,
       message: '數據庫連接失敗',
-      code: 'DATABASE_CONNECTION_ERROR'
+      code: 'DATABASE_CONNECTION_ERROR',
     });
   }
 
@@ -233,7 +240,7 @@ app.use((err, req, res, next) => {
     return res.status(408).json({
       success: false,
       message: '數據庫操作超時',
-      code: 'DATABASE_TIMEOUT'
+      code: 'DATABASE_TIMEOUT',
     });
   }
 
@@ -242,7 +249,7 @@ app.use((err, req, res, next) => {
       success: false,
       message: '數據驗證失敗',
       code: 'VALIDATION_ERROR',
-      errors: err.errors
+      errors: err.errors,
     });
   }
 
@@ -251,7 +258,7 @@ app.use((err, req, res, next) => {
     return res.status(503).json({
       success: false,
       message: '系統資源不足',
-      code: 'INSUFFICIENT_MEMORY'
+      code: 'INSUFFICIENT_MEMORY',
     });
   }
 
@@ -261,7 +268,7 @@ app.use((err, req, res, next) => {
     return res.status(500).json({
       success: false,
       message: 'AI 模型處理失敗',
-      code: 'AI_MODEL_ERROR'
+      code: 'AI_MODEL_ERROR',
     });
   }
 
@@ -269,7 +276,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({
     success: false,
     message: '內部服務器錯誤',
-    code: 'INTERNAL_SERVER_ERROR'
+    code: 'INTERNAL_SERVER_ERROR',
   });
 });
 
@@ -278,7 +285,7 @@ app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
     message: '請求的端點不存在',
-    code: 'ENDPOINT_NOT_FOUND'
+    code: 'ENDPOINT_NOT_FOUND',
   });
 });
 

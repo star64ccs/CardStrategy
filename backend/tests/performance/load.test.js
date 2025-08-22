@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 const request = require('supertest');
 const app = require('../../src/server');
 const { sequelize } = require('../../src/config/database');
@@ -21,7 +23,7 @@ describe('性能測試', () => {
         username: `testuser${i}`,
         email: `test${i}@example.com`,
         password: hashedPassword,
-        role: 'user'
+        role: 'user',
       });
       testUsers.push(user);
 
@@ -30,7 +32,7 @@ describe('性能測試', () => {
         .post('/api/auth/login')
         .send({
           email: `test${i}@example.com`,
-          password: 'testpassword123'
+          password: 'testpassword123',
         });
       authTokens.push(loginResponse.body.data.token);
     }
@@ -46,7 +48,7 @@ describe('性能測試', () => {
         marketCap: Math.random() * 1000000 + 1000,
         totalSupply: Math.floor(Math.random() * 10000) + 100,
         imageUrl: `https://example.com/card${i}.jpg`,
-        description: `Test card description ${i}`
+        description: `Test card description ${i}`,
       });
       testCards.push(card);
     }
@@ -77,7 +79,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
         expect(response.body.data.cards).toBeDefined();
@@ -102,7 +104,7 @@ describe('性能測試', () => {
             .query({
               search: `Test Card ${i % 20}`,
               page: 1,
-              limit: 10
+              limit: 10,
             })
             .expect(200)
         );
@@ -113,7 +115,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
       });
@@ -132,11 +134,7 @@ describe('性能測試', () => {
       // 發送併發詳情請求
       for (let i = 0; i < concurrentRequests; i++) {
         const cardId = testCards[i % testCards.length].id;
-        promises.push(
-          request(app)
-            .get(`/api/cards/${cardId}`)
-            .expect(200)
-        );
+        promises.push(request(app).get(`/api/cards/${cardId}`).expect(200));
       }
 
       const responses = await Promise.all(promises);
@@ -144,7 +142,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
         expect(response.body.data.card).toBeDefined();
@@ -170,7 +168,7 @@ describe('性能測試', () => {
             .post('/api/auth/login')
             .send({
               email: `test${i % 10}@example.com`,
-              password: 'testpassword123'
+              password: 'testpassword123',
             })
         );
       }
@@ -180,7 +178,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
         expect(response.body.data.token).toBeDefined();
@@ -213,7 +211,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
         expect(response.body.data.user).toBeDefined();
@@ -241,7 +239,7 @@ describe('性能測試', () => {
             .set('Authorization', `Bearer ${token}`)
             .send({
               cardId: testCards[i % testCards.length].id,
-              timeframe: '7d'
+              timeframe: '7d',
             })
         );
       }
@@ -251,7 +249,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
       });
@@ -285,7 +283,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
       });
@@ -318,7 +316,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
       });
@@ -355,7 +353,7 @@ describe('性能測試', () => {
 
         // 每輪之間稍作停頓
         if (round < rounds - 1) {
-          await new Promise(resolve => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, 100));
         }
       }
 
@@ -363,7 +361,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      allResponses.forEach(response => {
+      allResponses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
       });
@@ -371,7 +369,9 @@ describe('性能測試', () => {
       // 性能檢查：50個請求應該在8秒內完成
       expect(totalTime).toBeLessThan(8000);
 
-      console.log(`✅ 壓力測試：${rounds * requestsPerRound}個請求在 ${totalTime}ms 內完成`);
+      console.log(
+        `✅ 壓力測試：${rounds * requestsPerRound}個請求在 ${totalTime}ms 內完成`
+      );
     });
 
     it('應該能夠處理大量數據的查詢', async () => {
@@ -387,7 +387,7 @@ describe('性能測試', () => {
               page: 1,
               limit: 100, // 大量數據
               sortBy: 'currentPrice',
-              sortOrder: 'desc'
+              sortOrder: 'desc',
             })
             .expect(200)
         );
@@ -398,7 +398,7 @@ describe('性能測試', () => {
       const totalTime = endTime - startTime;
 
       // 驗證所有請求都成功
-      responses.forEach(response => {
+      responses.forEach((response) => {
         expect(response.status).toBe(200);
         expect(response.body.success).toBe(true);
         expect(response.body.data.cards.length).toBeLessThanOrEqual(100);
@@ -436,7 +436,9 @@ describe('性能測試', () => {
       // 記憶體增長應該在合理範圍內（小於 50MB）
       expect(memoryIncreaseMB).toBeLessThan(50);
 
-      console.log(`✅ 記憶體使用測試：100個請求後記憶體增長 ${memoryIncreaseMB.toFixed(2)}MB`);
+      console.log(
+        `✅ 記憶體使用測試：100個請求後記憶體增長 ${memoryIncreaseMB.toFixed(2)}MB`
+      );
     });
   });
 
@@ -457,7 +459,8 @@ describe('性能測試', () => {
         responseTimes.push(endTime - startTime);
       }
 
-      const averageResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+      const averageResponseTime =
+        responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       const maxResponseTime = Math.max(...responseTimes);
       const minResponseTime = Math.min(...responseTimes);
 

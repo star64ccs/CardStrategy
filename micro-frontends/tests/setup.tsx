@@ -9,7 +9,7 @@ afterAll(() => server.close());
 // 模擬 window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -95,16 +95,16 @@ jest.mock('react', () => ({
   lazy: jest.fn((importFunc) => {
     const LazyComponent = jest.fn(() => {
       const [Component, setComponent] = React.useState(null);
-      
+
       React.useEffect(() => {
         importFunc().then((module) => {
           setComponent(() => module.default);
         });
       }, []);
-      
+
       return Component ? <Component /> : <div>Loading...</div>;
     });
-    
+
     LazyComponent.displayName = 'LazyComponent';
     return LazyComponent;
   }),
@@ -117,14 +117,14 @@ export const waitForElementToBeRemoved = (element: Element | null) => {
       resolve();
       return;
     }
-    
+
     const observer = new MutationObserver(() => {
       if (!document.contains(element)) {
         observer.disconnect();
         resolve();
       }
     });
-    
+
     observer.observe(document.body, {
       childList: true,
       subtree: true,
@@ -181,16 +181,16 @@ process.env.REACT_APP_ENVIRONMENT = 'test';
 export const cleanupTestEnvironment = () => {
   // 清理 DOM
   document.body.innerHTML = '';
-  
+
   // 清理 localStorage
   localStorageMock.clear();
-  
+
   // 清理 sessionStorage
   sessionStorageMock.clear();
-  
+
   // 重置 fetch mock
   (global.fetch as jest.Mock).mockClear();
-  
+
   // 重置 console mocks
   jest.clearAllMocks();
 };

@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import {
   convertImageToBase64,
   convertImagesToBase64,
@@ -6,7 +7,7 @@ import {
   isValidImageBase64,
   getBase64ImageDimensions,
   compressBase64Image,
-  dataQualityService
+  dataQualityService,
 } from '../../services/dataQualityService';
 
 // Mock Canvas API for testing
@@ -15,8 +16,8 @@ const mockCanvas = {
   height: 0,
   getContext: jest.fn(() => ({
     drawImage: jest.fn(),
-    toDataURL: jest.fn(() => 'data:image/jpeg;base64,mock-base64-data')
-  }))
+    toDataURL: jest.fn(() => 'data:image/jpeg;base64,mock-base64-data'),
+  })),
 };
 
 const mockImage = {
@@ -25,7 +26,7 @@ const mockImage = {
   onload: null as (() => void) | null,
   onerror: null as (() => void) | null,
   src: '',
-  crossOrigin: ''
+  crossOrigin: '',
 };
 
 // Mock DOM APIs
@@ -38,7 +39,7 @@ global.document = {
       return mockImage;
     }
     return {};
-  })
+  }),
 } as any;
 
 global.Image = jest.fn(() => mockImage) as any;
@@ -49,20 +50,20 @@ global.HTMLImageElement = jest.fn(() => mockImage) as any;
 const mockFileReader = {
   onload: null as ((event: any) => void) | null,
   onerror: null as (() => void) | null,
-  readAsDataURL: jest.fn(function(this: any) {
+  readAsDataURL: jest.fn(function (this: any) {
     setTimeout(() => {
       if (this.onload) {
         this.onload({ target: { result: 'data:image/jpeg;base64,mock-data' } });
       }
     }, 0);
-  })
+  }),
 };
 
 global.FileReader = jest.fn(() => mockFileReader) as any;
 
 // Mock performance API
 global.performance = {
-  now: jest.fn(() => 1000)
+  now: jest.fn(() => 1000),
 } as any;
 
 // Mock atob and btoa
@@ -80,14 +81,16 @@ describe('Image to Base64 Functions', () => {
 
   describe('convertImageToBase64', () => {
     it('應該成功轉換圖片文件為base64', async () => {
-      const mockFile = new File(['mock-image-data'], 'test.jpg', { type: 'image/jpeg' });
+      const mockFile = new File(['mock-image-data'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
 
       const result = await convertImageToBase64(mockFile, {
         quality: 0.8,
         maxWidth: 800,
         maxHeight: 600,
         format: 'jpeg',
-        compression: true
+        compression: true,
       });
 
       expect(result).toEqual({
@@ -99,18 +102,24 @@ describe('Image to Base64 Functions', () => {
         format: 'jpeg',
         mimeType: 'image/jpeg',
         compressionRatio: expect.any(Number),
-        processingTime: expect.any(Number)
+        processingTime: expect.any(Number),
       });
     });
 
     it('應該拒絕非圖片文件', async () => {
-      const mockFile = new File(['mock-data'], 'test.txt', { type: 'text/plain' });
+      const mockFile = new File(['mock-data'], 'test.txt', {
+        type: 'text/plain',
+      });
 
-      await expect(convertImageToBase64(mockFile)).rejects.toThrow('文件不是有效的圖片格式');
+      await expect(convertImageToBase64(mockFile)).rejects.toThrow(
+        '文件不是有效的圖片格式'
+      );
     });
 
     it('應該處理圖片加載錯誤', async () => {
-      const mockFile = new File(['mock-image-data'], 'test.jpg', { type: 'image/jpeg' });
+      const mockFile = new File(['mock-image-data'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
 
       // 模擬圖片加載失敗
       mockImage.onload = null;
@@ -118,7 +127,9 @@ describe('Image to Base64 Functions', () => {
         if (mockImage.onerror) mockImage.onerror();
       };
 
-      await expect(convertImageToBase64(mockFile)).rejects.toThrow('圖片加載失敗');
+      await expect(convertImageToBase64(mockFile)).rejects.toThrow(
+        '圖片加載失敗'
+      );
     });
   });
 
@@ -126,12 +137,12 @@ describe('Image to Base64 Functions', () => {
     it('應該批量轉換多個圖片文件', async () => {
       const mockFiles = [
         new File(['mock-data-1'], 'test1.jpg', { type: 'image/jpeg' }),
-        new File(['mock-data-2'], 'test2.jpg', { type: 'image/jpeg' })
+        new File(['mock-data-2'], 'test2.jpg', { type: 'image/jpeg' }),
       ];
 
       const result = await convertImagesToBase64(mockFiles, {
         quality: 0.8,
-        format: 'jpeg'
+        format: 'jpeg',
       });
 
       expect(result.totalImages).toBe(2);
@@ -144,7 +155,7 @@ describe('Image to Base64 Functions', () => {
     it('應該處理部分轉換失敗的情況', async () => {
       const mockFiles = [
         new File(['mock-data-1'], 'test1.jpg', { type: 'image/jpeg' }),
-        new File(['mock-data-2'], 'test2.txt', { type: 'text/plain' }) // 無效文件
+        new File(['mock-data-2'], 'test2.txt', { type: 'text/plain' }), // 無效文件
       ];
 
       const result = await convertImagesToBase64(mockFiles);
@@ -166,7 +177,7 @@ describe('Image to Base64 Functions', () => {
 
       const result = await convertImageUrlToBase64(imageUrl, {
         quality: 0.9,
-        format: 'png'
+        format: 'png',
       });
 
       expect(result.base64).toBe('data:image/jpeg;base64,mock-base64-data');
@@ -182,7 +193,9 @@ describe('Image to Base64 Functions', () => {
         if (mockImage.onerror) mockImage.onerror();
       }, 0);
 
-      await expect(convertImageUrlToBase64(imageUrl)).rejects.toThrow('圖片加載失敗');
+      await expect(convertImageUrlToBase64(imageUrl)).rejects.toThrow(
+        '圖片加載失敗'
+      );
     });
   });
 
@@ -232,7 +245,7 @@ describe('Image to Base64 Functions', () => {
 
       expect(dimensions).toEqual({
         width: 100,
-        height: 100
+        height: 100,
       });
     });
 
@@ -244,7 +257,9 @@ describe('Image to Base64 Functions', () => {
         if (mockImage.onerror) mockImage.onerror();
       }, 0);
 
-      await expect(getBase64ImageDimensions(base64)).rejects.toThrow('無法獲取圖片尺寸');
+      await expect(getBase64ImageDimensions(base64)).rejects.toThrow(
+        '無法獲取圖片尺寸'
+      );
     });
   });
 
@@ -261,7 +276,7 @@ describe('Image to Base64 Functions', () => {
         quality: 0.5,
         maxWidth: 800,
         maxHeight: 600,
-        format: 'jpeg'
+        format: 'jpeg',
       });
 
       expect(result.base64).toBe('data:image/jpeg;base64,mock-base64-data');
@@ -272,11 +287,13 @@ describe('Image to Base64 Functions', () => {
 
   describe('DataQualityService Methods', () => {
     it('應該通過服務類轉換圖片', async () => {
-      const mockFile = new File(['mock-image-data'], 'test.jpg', { type: 'image/jpeg' });
+      const mockFile = new File(['mock-image-data'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
 
       const result = await dataQualityService.convertImageToBase64(mockFile, {
         quality: 0.8,
-        format: 'jpeg'
+        format: 'jpeg',
       });
 
       expect(result.base64).toBe('data:image/jpeg;base64,mock-base64-data');
@@ -303,26 +320,36 @@ describe('Image to Base64 Functions', () => {
       // 模擬Canvas上下文創建失敗
       (mockCanvas.getContext as jest.Mock).mockReturnValue(null);
 
-      const mockFile = new File(['mock-image-data'], 'test.jpg', { type: 'image/jpeg' });
+      const mockFile = new File(['mock-image-data'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
 
-      await expect(convertImageToBase64(mockFile)).rejects.toThrow('無法創建canvas上下文');
+      await expect(convertImageToBase64(mockFile)).rejects.toThrow(
+        '無法創建canvas上下文'
+      );
     });
 
     it('應該處理文件讀取失敗', async () => {
-      const mockFile = new File(['mock-image-data'], 'test.jpg', { type: 'image/jpeg' });
+      const mockFile = new File(['mock-image-data'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
 
       // 模擬文件讀取失敗
       setTimeout(() => {
         if (mockFileReader.onerror) mockFileReader.onerror();
       }, 0);
 
-      await expect(convertImageToBase64(mockFile)).rejects.toThrow('文件讀取失敗');
+      await expect(convertImageToBase64(mockFile)).rejects.toThrow(
+        '文件讀取失敗'
+      );
     });
   });
 
   describe('Performance', () => {
     it('應該記錄處理時間', async () => {
-      const mockFile = new File(['mock-image-data'], 'test.jpg', { type: 'image/jpeg' });
+      const mockFile = new File(['mock-image-data'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
 
       const result = await convertImageToBase64(mockFile);
 
@@ -330,9 +357,13 @@ describe('Image to Base64 Functions', () => {
     });
 
     it('應該計算壓縮比例', async () => {
-      const mockFile = new File(['mock-image-data'], 'test.jpg', { type: 'image/jpeg' });
+      const mockFile = new File(['mock-image-data'], 'test.jpg', {
+        type: 'image/jpeg',
+      });
 
-      const result = await convertImageToBase64(mockFile, { compression: true });
+      const result = await convertImageToBase64(mockFile, {
+        compression: true,
+      });
 
       expect(result.compressionRatio).toBeGreaterThanOrEqual(0);
       expect(result.compressionRatio).toBeLessThanOrEqual(1);

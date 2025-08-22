@@ -21,7 +21,12 @@ export interface CacheStrategyConfig {
 }
 
 interface CacheStrategy {
-  strategy: 'cache-first' | 'network-first' | 'stale-while-revalidate' | 'cache-only' | 'network-only';
+  strategy:
+    | 'cache-first'
+    | 'network-first'
+    | 'stale-while-revalidate'
+    | 'cache-only'
+    | 'network-only';
   ttl: number;
   maxSize: number;
 }
@@ -73,12 +78,32 @@ const DEFAULT_CONFIG: ServiceWorkerConfig = {
   enablePushNotifications: true,
   enablePerformanceMonitoring: true,
   cacheStrategies: {
-    static: { strategy: 'cache-first', ttl: 7 * 24 * 60 * 60 * 1000, maxSize: 50 * 1024 * 1024 },
-    api: { strategy: 'network-first', ttl: 5 * 60 * 1000, maxSize: 10 * 1024 * 1024 },
-    image: { strategy: 'stale-while-revalidate', ttl: 24 * 60 * 60 * 1000, maxSize: 100 * 1024 * 1024 },
-    font: { strategy: 'cache-first', ttl: 30 * 24 * 60 * 60 * 1000, maxSize: 20 * 1024 * 1024 },
-    media: { strategy: 'cache-only', ttl: 7 * 24 * 60 * 60 * 1000, maxSize: 200 * 1024 * 1024 }
-  }
+    static: {
+      strategy: 'cache-first',
+      ttl: 7 * 24 * 60 * 60 * 1000,
+      maxSize: 50 * 1024 * 1024,
+    },
+    api: {
+      strategy: 'network-first',
+      ttl: 5 * 60 * 1000,
+      maxSize: 10 * 1024 * 1024,
+    },
+    image: {
+      strategy: 'stale-while-revalidate',
+      ttl: 24 * 60 * 60 * 1000,
+      maxSize: 100 * 1024 * 1024,
+    },
+    font: {
+      strategy: 'cache-first',
+      ttl: 30 * 24 * 60 * 60 * 1000,
+      maxSize: 20 * 1024 * 1024,
+    },
+    media: {
+      strategy: 'cache-only',
+      ttl: 7 * 24 * 60 * 60 * 1000,
+      maxSize: 200 * 1024 * 1024,
+    },
+  },
 };
 
 // 事件處理器類
@@ -91,12 +116,27 @@ class ServiceWorkerEventHandler {
   }
 
   private setupEventListeners(): void {
-    this.registration.addEventListener('install', this.handleInstall.bind(this));
-    this.registration.addEventListener('activate', this.handleActivate.bind(this));
-    this.registration.addEventListener('updatefound', this.handleUpdateFound.bind(this));
+    this.registration.addEventListener(
+      'install',
+      this.handleInstall.bind(this)
+    );
+    this.registration.addEventListener(
+      'activate',
+      this.handleActivate.bind(this)
+    );
+    this.registration.addEventListener(
+      'updatefound',
+      this.handleUpdateFound.bind(this)
+    );
 
-    navigator.serviceWorker.addEventListener('controllerchange', this.handleControllerChange.bind(this));
-    navigator.serviceWorker.addEventListener('message', this.handleMessage.bind(this));
+    navigator.serviceWorker.addEventListener(
+      'controllerchange',
+      this.handleControllerChange.bind(this)
+    );
+    navigator.serviceWorker.addEventListener(
+      'message',
+      this.handleMessage.bind(this)
+    );
   }
 
   private handleInstall(event: Event): void {
@@ -121,7 +161,10 @@ class ServiceWorkerEventHandler {
 
     switch (data.type) {
       case 'PERFORMANCE_METRICS':
-        logger.info('[SW Manager] 收到性能指標:', data.metrics as Record<string, unknown>);
+        logger.info(
+          '[SW Manager] 收到性能指標:',
+          data.metrics as Record<string, unknown>
+        );
         break;
       case 'CACHE_UPDATED':
         logger.info('[SW Manager] 緩存已更新:', data.cacheName as string);
@@ -168,7 +211,7 @@ class CacheManager {
           itemCount: keys.length,
           lastUpdated: new Date(),
           strategy: this.getStrategyForCache(name),
-          ttl: this.getTTLForCache(name)
+          ttl: this.getTTLForCache(name),
         });
       }
 
@@ -206,7 +249,7 @@ class PerformanceMonitor {
     networkRequests: 0,
     errors: 0,
     hitRate: 0,
-    lastReset: new Date()
+    lastReset: new Date(),
   };
 
   async getPerformanceMetrics(): Promise<PerformanceMetrics> {
@@ -220,7 +263,7 @@ class PerformanceMonitor {
       networkRequests: 0,
       errors: 0,
       hitRate: 0,
-      lastReset: new Date()
+      lastReset: new Date(),
     };
   }
 }
@@ -300,9 +343,12 @@ export class ServiceWorkerManager {
       clearInterval(this.updateCheckInterval);
     }
 
-    this.updateCheckInterval = setInterval(() => {
-      this.checkForUpdates();
-    }, 60 * 60 * 1000); // 每小時檢查一次
+    this.updateCheckInterval = setInterval(
+      () => {
+        this.checkForUpdates();
+      },
+      60 * 60 * 1000
+    ); // 每小時檢查一次
   }
 
   // 啟動性能監控
@@ -318,13 +364,13 @@ export class ServiceWorkerManager {
     active: boolean;
     installing: boolean;
     waiting: boolean;
-    } {
+  } {
     if (!this.registration) {
       return {
         registered: false,
         active: false,
         installing: false,
-        waiting: false
+        waiting: false,
       };
     }
 
@@ -332,7 +378,7 @@ export class ServiceWorkerManager {
       registered: true,
       active: !!this.registration.active,
       installing: !!this.registration.installing,
-      waiting: !!this.registration.waiting
+      waiting: !!this.registration.waiting,
     };
   }
 
@@ -363,7 +409,7 @@ export class ServiceWorkerManager {
         type: 'PREFETCH',
         urls: config.urls,
         priority: config.priority,
-        strategy: config.strategy
+        strategy: config.strategy,
       });
 
       logger.info('[SW Manager] 預取請求已發送:', config.urls);
@@ -401,7 +447,7 @@ export class ServiceWorkerManager {
       await this.prefetchResources({
         urls: prefetchUrls,
         priority: 'medium',
-        strategy: 'prefetch'
+        strategy: 'prefetch',
       });
     }
   }
@@ -416,7 +462,7 @@ export class ServiceWorkerManager {
     try {
       this.registration.active.postMessage({
         type: 'CLEAR_CACHE',
-        cacheName
+        cacheName,
       });
 
       logger.info('[SW Manager] 緩存清理請求已發送:', cacheName || 'all');
@@ -457,7 +503,10 @@ export class ServiceWorkerManager {
   }
 
   // 發送推送通知
-  async sendNotification(title: string, options?: NotificationOptions): Promise<void> {
+  async sendNotification(
+    title: string,
+    options?: NotificationOptions
+  ): Promise<void> {
     if (!this.config.enablePushNotifications || !this.registration) {
       logger.warn('[SW Manager] 推送通知未啟用或 Service Worker 未註冊');
       return;
@@ -470,7 +519,7 @@ export class ServiceWorkerManager {
         await this.registration.showNotification(title, {
           icon: '/logo192.png',
           badge: '/logo192.png',
-          ...options
+          ...options,
         });
         logger.info('[SW Manager] 推送通知已發送:', title);
       } else {
@@ -532,12 +581,17 @@ export class ServiceWorkerManager {
   }
 
   // 檢查是否支持特定功能
-  isSupported(feature: 'backgroundSync' | 'pushNotifications' | 'cache' | 'serviceWorker'): boolean {
+  isSupported(
+    feature: 'backgroundSync' | 'pushNotifications' | 'cache' | 'serviceWorker'
+  ): boolean {
     switch (feature) {
       case 'serviceWorker':
         return 'serviceWorker' in navigator;
       case 'backgroundSync':
-        return 'serviceWorker' in navigator && 'sync' in (navigator.serviceWorker.registration || {});
+        return (
+          'serviceWorker' in navigator &&
+          'sync' in (navigator.serviceWorker.registration || {})
+        );
       case 'pushNotifications':
         return 'Notification' in window && 'serviceWorker' in navigator;
       case 'cache':
@@ -553,7 +607,8 @@ export class ServiceWorkerManager {
 
     if (this.isSupported('serviceWorker')) features.push('serviceWorker');
     if (this.isSupported('backgroundSync')) features.push('backgroundSync');
-    if (this.isSupported('pushNotifications')) features.push('pushNotifications');
+    if (this.isSupported('pushNotifications'))
+      features.push('pushNotifications');
     if (this.isSupported('cache')) features.push('cache');
 
     return features;
@@ -562,4 +617,3 @@ export class ServiceWorkerManager {
 
 // 創建單例實例
 export const swManager = new ServiceWorkerManager();
-

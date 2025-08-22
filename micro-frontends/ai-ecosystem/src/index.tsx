@@ -26,7 +26,7 @@ const AIEcosystemApp: React.FC = () => {
             <a href="/training">模型訓練</a>
           </nav>
         </header>
-        
+
         <main className="app-main">
           <Routes>
             <Route path="/" element={<AIDashboard />} />
@@ -50,11 +50,11 @@ if (container) {
 }
 
 // 導出組件供 Module Federation 使用
-export { 
-  AIDashboard, 
-  CardScanner, 
-  MarketPredictor, 
-  RecommendationEngine, 
-  DataAnalyzer, 
-  AITraining 
+export {
+  AIDashboard,
+  CardScanner,
+  MarketPredictor,
+  RecommendationEngine,
+  DataAnalyzer,
+  AITraining,
 };

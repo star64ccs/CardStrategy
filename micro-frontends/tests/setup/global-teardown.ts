@@ -26,7 +26,6 @@ async function globalTeardown(config: FullConfig) {
     console.log('🔧 環境變數重置完成');
 
     console.log('🎉 全局清理完成！');
-
   } catch (error) {
     console.error('❌ 全局清理失敗:', error);
     // 不拋出錯誤，避免影響測試結果
@@ -48,23 +47,72 @@ async function generateTestSummary() {
       const testResults = JSON.parse(fs.readFileSync(jsonReportPath, 'utf8'));
 
       const summary = {
-        totalTests: testResults.suites?.reduce((acc: number, suite: any) =>
-          acc + (suite.specs?.reduce((specAcc: number, spec: any) =>
-            specAcc + spec.tests.length, 0) || 0), 0) || 0,
-        passedTests: testResults.suites?.reduce((acc: number, suite: any) =>
-          acc + (suite.specs?.reduce((specAcc: number, spec: any) =>
-            specAcc + spec.tests.filter((test: any) => test.outcome === 'passed').length, 0) || 0), 0) || 0,
-        failedTests: testResults.suites?.reduce((acc: number, suite: any) =>
-          acc + (suite.specs?.reduce((specAcc: number, spec: any) =>
-            specAcc + spec.tests.filter((test: any) => test.outcome === 'failed').length, 0) || 0), 0) || 0,
-        skippedTests: testResults.suites?.reduce((acc: number, suite: any) =>
-          acc + (suite.specs?.reduce((specAcc: number, spec: any) =>
-            specAcc + spec.tests.filter((test: any) => test.outcome === 'skipped').length, 0) || 0), 0) || 0,
-        totalDuration: testResults.suites?.reduce((acc: number, suite: any) =>
-          acc + (suite.specs?.reduce((specAcc: number, spec: any) =>
-            specAcc + spec.tests.reduce((testAcc: number, test: any) =>
-              testAcc + (test.duration || 0), 0), 0) || 0), 0) || 0,
-        timestamp: new Date().toISOString()
+        totalTests:
+          testResults.suites?.reduce(
+            (acc: number, suite: any) =>
+              acc +
+              (suite.specs?.reduce(
+                (specAcc: number, spec: any) => specAcc + spec.tests.length,
+                0
+              ) || 0),
+            0
+          ) || 0,
+        passedTests:
+          testResults.suites?.reduce(
+            (acc: number, suite: any) =>
+              acc +
+              (suite.specs?.reduce(
+                (specAcc: number, spec: any) =>
+                  specAcc +
+                  spec.tests.filter((test: any) => test.outcome === 'passed')
+                    .length,
+                0
+              ) || 0),
+            0
+          ) || 0,
+        failedTests:
+          testResults.suites?.reduce(
+            (acc: number, suite: any) =>
+              acc +
+              (suite.specs?.reduce(
+                (specAcc: number, spec: any) =>
+                  specAcc +
+                  spec.tests.filter((test: any) => test.outcome === 'failed')
+                    .length,
+                0
+              ) || 0),
+            0
+          ) || 0,
+        skippedTests:
+          testResults.suites?.reduce(
+            (acc: number, suite: any) =>
+              acc +
+              (suite.specs?.reduce(
+                (specAcc: number, spec: any) =>
+                  specAcc +
+                  spec.tests.filter((test: any) => test.outcome === 'skipped')
+                    .length,
+                0
+              ) || 0),
+            0
+          ) || 0,
+        totalDuration:
+          testResults.suites?.reduce(
+            (acc: number, suite: any) =>
+              acc +
+              (suite.specs?.reduce(
+                (specAcc: number, spec: any) =>
+                  specAcc +
+                  spec.tests.reduce(
+                    (testAcc: number, test: any) =>
+                      testAcc + (test.duration || 0),
+                    0
+                  ),
+                0
+              ) || 0),
+            0
+          ) || 0,
+        timestamp: new Date().toISOString(),
       };
 
       const summaryPath = path.join(testResultsPath, 'test-summary.json');
@@ -78,7 +126,10 @@ async function generateTestSummary() {
       console.log(`   總耗時: ${(summary.totalDuration / 1000).toFixed(2)}s`);
 
       // 計算通過率
-      const passRate = summary.totalTests > 0 ? (summary.passedTests / summary.totalTests * 100).toFixed(2) : '0.00';
+      const passRate =
+        summary.totalTests > 0
+          ? ((summary.passedTests / summary.totalTests) * 100).toFixed(2)
+          : '0.00';
       console.log(`   通過率: ${passRate}%`);
     }
   } catch (error) {
@@ -97,7 +148,7 @@ async function cleanupTempFiles() {
     const tempDirs = [
       'test-results/traces',
       'test-results/videos',
-      'test-results/screenshots'
+      'test-results/screenshots',
     ];
 
     for (const dir of tempDirs) {
@@ -128,7 +179,6 @@ async function cleanupTempFiles() {
     }
 
     console.log('🧹 臨時文件清理完成');
-
   } catch (error) {
     console.warn('⚠️ 清理臨時文件失敗:', error.message);
   }

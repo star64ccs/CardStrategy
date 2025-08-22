@@ -1,4 +1,6 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '..', '..', '.env') });
+require('dotenv').config({
+  path: require('path').resolve(__dirname, '..', '..', '.env'),
+});
 
 const { connectDB, getSequelize } = require('../config/database');
 const logger = require('../utils/logger');
@@ -25,11 +27,11 @@ const verifyDatabase = async () => {
       'collections',
       'investments',
       'collection_cards',
-      'price_alerts'
+      'price_alerts',
     ];
 
     for (const table of expectedTables) {
-      const exists = tables.some(t => t.name === table);
+      const exists = tables.some((t) => t.name === table);
       if (exists) {
         logger.info(`✅ ${table} - 存在`);
       } else {
@@ -50,10 +52,14 @@ const verifyDatabase = async () => {
         );
 
         logger.info(`\n📋 ${tableName} 表結構：`);
-        results.forEach(col => {
+        results.forEach((col) => {
           const nullable = col.is_nullable === 'YES' ? 'NULL' : 'NOT NULL';
-          const defaultValue = col.column_default ? ` DEFAULT ${col.column_default}` : '';
-          logger.info(`  - ${col.column_name}: ${col.data_type} ${nullable}${defaultValue}`);
+          const defaultValue = col.column_default
+            ? ` DEFAULT ${col.column_default}`
+            : '';
+          logger.info(
+            `  - ${col.column_name}: ${col.data_type} ${nullable}${defaultValue}`
+          );
         });
       } catch (error) {
         logger.error(`無法獲取 ${tableName} 表結構：`, error.message);
@@ -81,8 +87,10 @@ const verifyDatabase = async () => {
     `);
 
     logger.info('外鍵約束：');
-    foreignKeys.forEach(fk => {
-      logger.info(`  - ${fk.table_name}.${fk.column_name} -> ${fk.foreign_table_name}.${fk.foreign_column_name}`);
+    foreignKeys.forEach((fk) => {
+      logger.info(
+        `  - ${fk.table_name}.${fk.column_name} -> ${fk.foreign_table_name}.${fk.foreign_column_name}`
+      );
     });
 
     logger.info('\n✅ 數據庫驗證完成！');

@@ -70,12 +70,14 @@ CardStrategy 是一個基於 AI 的卡牌投資策略平台，提供卡牌管理
 ### 快速開始
 
 1. **克隆項目**
+
 ```bash
 git clone https://github.com/your-org/cardstrategy.git
 cd cardstrategy
 ```
 
 2. **安裝依賴**
+
 ```bash
 # 後端依賴
 cd backend
@@ -87,6 +89,7 @@ npm install
 ```
 
 3. **環境配置**
+
 ```bash
 # 複製環境變量文件
 cp .env.example .env
@@ -96,18 +99,21 @@ nano .env
 ```
 
 4. **啟動數據庫**
+
 ```bash
 # 使用 Docker Compose
 docker-compose up -d postgres redis
 ```
 
 5. **運行遷移**
+
 ```bash
 cd backend
 npm run migrate
 ```
 
 6. **啟動開發服務器**
+
 ```bash
 # 後端
 cd backend
@@ -199,12 +205,14 @@ git push origin feature/new-feature
 ### JavaScript/TypeScript 規範
 
 1. **使用 ESLint 和 Prettier**
+
 ```bash
 npm run lint
 npm run format
 ```
 
 2. **命名規範**
+
 ```javascript
 // 變量使用 camelCase
 const userName = 'john';
@@ -220,6 +228,7 @@ class UserService {}
 ```
 
 3. **函數規範**
+
 ```javascript
 /**
  * 獲取用戶信息
@@ -234,6 +243,7 @@ async function getUserById(userId) {
 ### 數據庫規範
 
 1. **表名使用 snake_case**
+
 ```sql
 CREATE TABLE user_profiles (
   id SERIAL PRIMARY KEY,
@@ -243,6 +253,7 @@ CREATE TABLE user_profiles (
 ```
 
 2. **索引命名**
+
 ```sql
 CREATE INDEX idx_users_email ON users(email);
 CREATE INDEX idx_cards_user_id ON cards(user_id);
@@ -251,6 +262,7 @@ CREATE INDEX idx_cards_user_id ON cards(user_id);
 ### API 設計規範
 
 1. **RESTful 設計**
+
 ```
 GET    /api/cards          # 獲取卡牌列表
 GET    /api/cards/:id      # 獲取單個卡牌
@@ -260,6 +272,7 @@ DELETE /api/cards/:id      # 刪除卡牌
 ```
 
 2. **響應格式**
+
 ```javascript
 {
   "success": true,
@@ -280,6 +293,7 @@ DELETE /api/cards/:id      # 刪除卡牌
 ### 測試類型
 
 1. **單元測試**
+
 ```bash
 # 運行單元測試
 npm run test:unit
@@ -289,12 +303,14 @@ npm run test:unit -- --grep "UserService"
 ```
 
 2. **集成測試**
+
 ```bash
 # 運行集成測試
 npm run test:integration
 ```
 
 3. **端到端測試**
+
 ```bash
 # 運行 E2E 測試
 npm run test:e2e
@@ -308,6 +324,7 @@ npm run test:coverage
 ```
 
 目標覆蓋率：
+
 - 單元測試: 80%+
 - 集成測試: 70%+
 - 總體覆蓋率: 75%+
@@ -315,6 +332,7 @@ npm run test:coverage
 ### 測試最佳實踐
 
 1. **測試文件命名**
+
 ```
 user-service.test.js
 auth-controller.test.js
@@ -322,6 +340,7 @@ card-routes.test.js
 ```
 
 2. **測試結構**
+
 ```javascript
 describe('UserService', () => {
   beforeEach(() => {
@@ -390,6 +409,7 @@ JWT_SECRET=your-production-secret
 ### 常見問題
 
 1. **數據庫連接失敗**
+
 ```bash
 # 檢查數據庫狀態
 docker-compose ps postgres
@@ -400,6 +420,7 @@ echo $DB_PORT
 ```
 
 2. **Redis 連接失敗**
+
 ```bash
 # 檢查 Redis 狀態
 docker-compose ps redis
@@ -409,6 +430,7 @@ redis-cli ping
 ```
 
 3. **端口衝突**
+
 ```bash
 # 檢查端口使用
 lsof -i :3000
@@ -417,6 +439,7 @@ lsof -i :6379
 ```
 
 4. **依賴安裝失敗**
+
 ```bash
 # 清理緩存
 npm cache clean --force
@@ -442,6 +465,7 @@ docker-compose logs -f redis
 ### 性能調優
 
 1. **數據庫優化**
+
 ```sql
 -- 創建索引
 CREATE INDEX idx_cards_name ON cards(name);
@@ -451,6 +475,7 @@ EXPLAIN ANALYZE SELECT * FROM cards WHERE name LIKE '%Charizard%';
 ```
 
 2. **緩存優化**
+
 ```javascript
 // 使用 Redis 緩存
 const cachedData = await redis.get('cache_key');
@@ -460,6 +485,7 @@ if (cachedData) {
 ```
 
 3. **內存優化**
+
 ```javascript
 // 監控內存使用
 const memUsage = process.memoryUsage();

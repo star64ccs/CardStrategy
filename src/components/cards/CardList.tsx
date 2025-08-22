@@ -5,7 +5,7 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
-  Text
+  Text,
 } from 'react-native';
 import { useTheme } from '@/config/ThemeProvider';
 import { Card } from '@/types';
@@ -36,7 +36,7 @@ export const CardList: React.FC<CardListProps> = ({
   showCondition = false,
   size = 'medium',
   variant = 'default',
-  numColumns = 2
+  numColumns = 2,
 }) => {
   const { theme } = useTheme();
 
@@ -104,27 +104,27 @@ export const CardList: React.FC<CardListProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 8
+    padding: 8,
   },
   row: {
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 40
+    paddingVertical: 40,
   },
   emptyText: {
     fontSize: 16,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 40
-  }
+    paddingVertical: 40,
+  },
 });
 
 export default CardList;

@@ -5,7 +5,7 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { useTheme } from '@/config/ThemeProvider';
 import { Card } from '@/types';
@@ -27,7 +27,7 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
   showPrice = true,
   showCondition = false,
   size = 'medium',
-  variant = 'default'
+  variant = 'default',
 }) => {
   const { theme } = useTheme();
 
@@ -56,7 +56,10 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
     if (variant === 'compact') {
       return (
         <View style={styles.compactInfo}>
-          <Text style={[styles.cardName, { color: theme.colors.textPrimary }]} numberOfLines={2}>
+          <Text
+            style={[styles.cardName, { color: theme.colors.textPrimary }]}
+            numberOfLines={2}
+          >
             {card.name}
           </Text>
           {showPrice && (
@@ -70,10 +73,16 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
 
     return (
       <View style={styles.cardInfo}>
-        <Text style={[styles.cardName, { color: theme.colors.textPrimary }]} numberOfLines={2}>
+        <Text
+          style={[styles.cardName, { color: theme.colors.textPrimary }]}
+          numberOfLines={2}
+        >
           {card.name}
         </Text>
-        <Text style={[styles.cardSet, { color: theme.colors.textSecondary }]} numberOfLines={1}>
+        <Text
+          style={[styles.cardSet, { color: theme.colors.textSecondary }]}
+          numberOfLines={1}
+        >
           {card.set}
         </Text>
         {showPrice && (
@@ -86,21 +95,35 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
                 style={[
                   styles.priceChange,
                   {
-                    color: card.priceChange > 0 ? theme.colors.success : theme.colors.error
-                  }
+                    color:
+                      card.priceChange > 0
+                        ? theme.colors.success
+                        : theme.colors.error,
+                  },
                 ]}
               >
-                {card.priceChange > 0 ? '+' : ''}{card.priceChange.toFixed(2)}%
+                {card.priceChange > 0 ? '+' : ''}
+                {card.priceChange.toFixed(2)}%
               </Text>
             )}
           </View>
         )}
         {showCondition && card.condition && (
           <View style={styles.conditionContainer}>
-            <Text style={[styles.conditionLabel, { color: theme.colors.textSecondary }]}>
+            <Text
+              style={[
+                styles.conditionLabel,
+                { color: theme.colors.textSecondary },
+              ]}
+            >
               狀況:
             </Text>
-            <Text style={[styles.conditionValue, { color: theme.colors.textPrimary }]}>
+            <Text
+              style={[
+                styles.conditionValue,
+                { color: theme.colors.textPrimary },
+              ]}
+            >
               {card.condition}
             </Text>
           </View>
@@ -110,7 +133,12 @@ export const CardDisplay: React.FC<CardDisplayProps> = ({
   };
 
   const cardContent = (
-    <View style={[styles.container, { backgroundColor: theme.colors.backgroundPaper }]}>
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.backgroundPaper },
+      ]}
+    >
       {renderCardImage()}
       {renderCardInfo()}
     </View>
@@ -140,58 +168,58 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   touchable: {
-    borderRadius: 12
+    borderRadius: 12,
   },
   cardImage: {
     borderRadius: 8,
-    margin: 8
+    margin: 8,
   },
   cardInfo: {
-    padding: 12
+    padding: 12,
   },
   compactInfo: {
     padding: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cardName: {
     fontSize: 14,
     fontWeight: '600',
-    marginBottom: 4
+    marginBottom: 4,
   },
   cardSet: {
     fontSize: 12,
-    marginBottom: 8
+    marginBottom: 8,
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4
+    marginBottom: 4,
   },
   cardPrice: {
     fontSize: 16,
-    fontWeight: '700'
+    fontWeight: '700',
   },
   priceChange: {
     fontSize: 12,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   conditionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4
+    marginTop: 4,
   },
   conditionLabel: {
     fontSize: 12,
-    marginRight: 4
+    marginRight: 4,
   },
   conditionValue: {
     fontSize: 12,
-    fontWeight: '500'
-  }
+    fontWeight: '500',
+  },
 });
 
 export default CardDisplay;

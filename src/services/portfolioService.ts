@@ -34,7 +34,9 @@ class PortfolioService {
       LoggingUtils.logApiCall('getPortfolio');
       const portfolioData = await AsyncStorage.getItem(this.PORTFOLIO_KEY);
       const portfolio = portfolioData ? JSON.parse(portfolioData) : [];
-      LoggingUtils.logApiCall('getPortfolio', undefined, { count: portfolio.length });
+      LoggingUtils.logApiCall('getPortfolio', undefined, {
+        count: portfolio.length,
+      });
       return portfolio;
     } catch (error) {
       LoggingUtils.logApiError('getPortfolio', error);
@@ -54,17 +56,22 @@ class PortfolioService {
       ValidationUtils.validateNumber(quantity, '數量', 1);
       ValidationUtils.validateNumber(purchasePrice, '購買價格', 0);
 
-      LoggingUtils.logApiCall('addToPortfolio', { cardId: card.id, quantity, purchasePrice });
+      LoggingUtils.logApiCall('addToPortfolio', {
+        cardId: card.id,
+        quantity,
+        purchasePrice,
+      });
 
       const portfolio = await this.getPortfolio();
 
       // 檢查是否已存在相同卡片
-      const existingItem = portfolio.find(item => item.card.id === card.id);
+      const existingItem = portfolio.find((item) => item.card.id === card.id);
 
       if (existingItem) {
         // 更新現有項目
         existingItem.quantity += quantity;
-        existingItem.purchasePrice = (existingItem.purchasePrice + purchasePrice) / 2; // 平均價格
+        existingItem.purchasePrice =
+          (existingItem.purchasePrice + purchasePrice) / 2; // 平均價格
         existingItem.notes = notes || existingItem.notes;
       } else {
         // 添加新項目
@@ -74,15 +81,23 @@ class PortfolioService {
           quantity,
           purchasePrice,
           purchaseDate: new Date().toISOString(),
-          notes
+          notes,
         };
         portfolio.push(newItem);
       }
 
       await AsyncStorage.setItem(this.PORTFOLIO_KEY, JSON.stringify(portfolio));
-      LoggingUtils.logApiCall('addToPortfolio', { cardId: card.id, quantity, purchasePrice }, { success: true });
+      LoggingUtils.logApiCall(
+        'addToPortfolio',
+        { cardId: card.id, quantity, purchasePrice },
+        { success: true }
+      );
     } catch (error) {
-      LoggingUtils.logApiError('addToPortfolio', error, { cardId: card.id, quantity, purchasePrice });
+      LoggingUtils.logApiError('addToPortfolio', error, {
+        cardId: card.id,
+        quantity,
+        purchasePrice,
+      });
       throw error;
     }
   }
@@ -91,8 +106,11 @@ class PortfolioService {
   async removeFromPortfolio(itemId: string): Promise<void> {
     try {
       const portfolio = await this.getPortfolio();
-      const updatedPortfolio = portfolio.filter(item => item.id !== itemId);
-      await AsyncStorage.setItem(this.PORTFOLIO_KEY, JSON.stringify(updatedPortfolio));
+      const updatedPortfolio = portfolio.filter((item) => item.id !== itemId);
+      await AsyncStorage.setItem(
+        this.PORTFOLIO_KEY,
+        JSON.stringify(updatedPortfolio)
+      );
     } catch (error) {
       logger.error('❌ Remove from portfolio error:', { error });
       throw error;
@@ -106,11 +124,14 @@ class PortfolioService {
   ): Promise<void> {
     try {
       const portfolio = await this.getPortfolio();
-      const itemIndex = portfolio.findIndex(item => item.id === itemId);
+      const itemIndex = portfolio.findIndex((item) => item.id === itemId);
 
       if (itemIndex !== -1) {
         portfolio[itemIndex] = { ...portfolio[itemIndex], ...updates };
-        await AsyncStorage.setItem(this.PORTFOLIO_KEY, JSON.stringify(portfolio));
+        await AsyncStorage.setItem(
+          this.PORTFOLIO_KEY,
+          JSON.stringify(portfolio)
+        );
       }
     } catch (error) {
       logger.error('❌ Update portfolio item error:', { error });
@@ -125,15 +146,16 @@ class PortfolioService {
 
       const totalItems = portfolio.length;
       const totalCost = portfolio.reduce(
-        (sum, item) => sum + (item.purchasePrice * item.quantity),
+        (sum, item) => sum + item.purchasePrice * item.quantity,
         0
       );
       const totalValue = portfolio.reduce(
-        (sum, item) => sum + (item.card.price.current * item.quantity),
+        (sum, item) => sum + item.card.price.current * item.quantity,
         0
       );
       const totalProfit = totalValue - totalCost;
-      const profitPercentage = totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
+      const profitPercentage =
+        totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
       const averageReturn = totalItems > 0 ? totalProfit / totalItems : 0;
 
       return {
@@ -142,7 +164,7 @@ class PortfolioService {
         totalCost,
         totalProfit,
         profitPercentage,
-        averageReturn
+        averageReturn,
       };
     } catch (error) {
       logger.error('❌ Get portfolio stats error:', { error });
@@ -152,14 +174,10 @@ class PortfolioService {
         totalCost: 0,
         totalProfit: 0,
         profitPercentage: 0,
-        averageReturn: 0
+        averageReturn: 0,
       };
     }
   }
-
-
-
-
 
   // 清空投資組合
   async clearPortfolio(): Promise<void> {
@@ -181,7 +199,7 @@ class PortfolioService {
         portfolio,
         stats,
         exportDate: new Date().toISOString(),
-        version: '1.0.0'
+        version: '1.0.0',
       };
 
       return JSON.stringify(exportData, null, 2);
@@ -197,7 +215,10 @@ class PortfolioService {
       const data = JSON.parse(importData);
 
       if (data.portfolio && Array.isArray(data.portfolio)) {
-        await AsyncStorage.setItem(this.PORTFOLIO_KEY, JSON.stringify(data.portfolio));
+        await AsyncStorage.setItem(
+          this.PORTFOLIO_KEY,
+          JSON.stringify(data.portfolio)
+        );
       } else {
         throw new Error('無效的投資組合數據格式');
       }
@@ -213,10 +234,11 @@ class PortfolioService {
       const portfolio = await this.getPortfolio();
       const lowerQuery = query.toLowerCase();
 
-      return portfolio.filter(item =>
-        item.card.name.toLowerCase().includes(lowerQuery) ||
-        item.card.setName.toLowerCase().includes(lowerQuery) ||
-        item.notes?.toLowerCase().includes(lowerQuery)
+      return portfolio.filter(
+        (item) =>
+          item.card.name.toLowerCase().includes(lowerQuery) ||
+          item.card.setName.toLowerCase().includes(lowerQuery) ||
+          item.notes?.toLowerCase().includes(lowerQuery)
       );
     } catch (error) {
       logger.error('❌ Search portfolio error:', { error });
@@ -230,7 +252,7 @@ class PortfolioService {
       const portfolio = await this.getPortfolio();
       const grouped: Record<string, PortfolioItem[]> = {};
 
-      portfolio.forEach(item => {
+      portfolio.forEach((item) => {
         const { setName } = item.card;
         if (!grouped[setName]) {
           grouped[setName] = [];
@@ -249,8 +271,10 @@ class PortfolioService {
   async getPortfolioHistory(): Promise<PortfolioItem[]> {
     try {
       const portfolio = await this.getPortfolio();
-      return portfolio.sort((a, b) =>
-        new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime()
+      return portfolio.sort(
+        (a, b) =>
+          new Date(b.purchaseDate).getTime() -
+          new Date(a.purchaseDate).getTime()
       );
     } catch (error) {
       logger.error('❌ Get portfolio history error:', { error });
@@ -268,34 +292,42 @@ class PortfolioService {
       const portfolio = await this.getPortfolio();
 
       // 計算每個項目的收益率
-      const itemsWithReturn = portfolio.map(item => ({
+      const itemsWithReturn = portfolio.map((item) => ({
         ...item,
-        returnRate: ((item.card.price.current - item.purchasePrice) / item.purchasePrice) * 100
+        returnRate:
+          ((item.card.price.current - item.purchasePrice) /
+            item.purchasePrice) *
+          100,
       }));
 
       // 按收益率排序
-      const sortedByReturn = itemsWithReturn.sort((a, b) => b.returnRate - a.returnRate);
+      const sortedByReturn = itemsWithReturn.sort(
+        (a, b) => b.returnRate - a.returnRate
+      );
 
       // 按購買日期排序
-      const sortedByDate = portfolio.sort((a, b) =>
-        new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime()
+      const sortedByDate = portfolio.sort(
+        (a, b) =>
+          new Date(b.purchaseDate).getTime() -
+          new Date(a.purchaseDate).getTime()
       );
 
       return {
         topPerformers: sortedByReturn.slice(0, 5),
         worstPerformers: sortedByReturn.slice(-5).reverse(),
-        recentAdditions: sortedByDate.slice(0, 5)
+        recentAdditions: sortedByDate.slice(0, 5),
       };
     } catch (error) {
       logger.error('❌ Get portfolio analysis error:', { error });
       return {
         topPerformers: [],
         worstPerformers: [],
-        recentAdditions: []
+        recentAdditions: [],
       };
     }
   }
 }
 
 // 導出投資組合服務實例
+export { PortfolioService };
 export const portfolioService = new PortfolioService();

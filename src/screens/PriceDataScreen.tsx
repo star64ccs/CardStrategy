@@ -6,7 +6,7 @@ import {
   ScrollView,
   RefreshControl,
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { theme } from '@/config/theme';
@@ -28,7 +28,7 @@ import {
   selectFilters,
   selectIsLoading,
   selectIsUpdating,
-  selectError
+  selectError,
 } from '@/store/slices/priceDataSlice';
 import { PricePlatform, GradingAgency } from '@/services/priceDataService';
 import { formatPrice } from '@/utils/formatters';
@@ -45,7 +45,7 @@ interface PriceDataScreenProps {
 
 export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
   route,
-  navigation
+  navigation,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -56,16 +56,27 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
     filters,
     isLoading,
     isUpdating,
-    error
+    error,
   } = useSelector(selectPriceData);
 
   const [refreshing, setRefreshing] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [selectedCardId, setSelectedCardId] = useState(route.params?.cardId || '');
-  const [selectedCardName, setSelectedCardName] = useState(route.params?.cardName || '');
+  const [selectedCardId, setSelectedCardId] = useState(
+    route.params?.cardId || ''
+  );
+  const [selectedCardName, setSelectedCardName] = useState(
+    route.params?.cardName || ''
+  );
 
   // 平台選項
-  const pricePlatforms: PricePlatform[] = ['EBAY', 'TCGPLAYER', 'CARDMARKET', 'PRICE_CHARTING', 'MERCARI', 'SNKR'];
+  const pricePlatforms: PricePlatform[] = [
+    'EBAY',
+    'TCGPLAYER',
+    'CARDMARKET',
+    'PRICE_CHARTING',
+    'MERCARI',
+    'SNKR',
+  ];
   const gradingAgencies: GradingAgency[] = ['PSA', 'BGS', 'CGC'];
 
   // 初始化數據
@@ -90,15 +101,19 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
 
     try {
       await Promise.all([
-        dispatch(fetchHistoricalPrices({
-          cardId: selectedCardId,
-          platforms: filters.selectedPlatforms,
-          timeRange: filters.timeRange
-        }) as any),
-        dispatch(fetchGradingAgencyData({
-          cardId: selectedCardId,
-          agencies: filters.selectedAgencies
-        }) as any)
+        dispatch(
+          fetchHistoricalPrices({
+            cardId: selectedCardId,
+            platforms: filters.selectedPlatforms,
+            timeRange: filters.timeRange,
+          }) as any
+        ),
+        dispatch(
+          fetchGradingAgencyData({
+            cardId: selectedCardId,
+            agencies: filters.selectedAgencies,
+          }) as any
+        ),
       ]);
     } catch (error) {
       // logger.info('Failed to load price data:', error);
@@ -117,7 +132,9 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
   // 檢查平台狀態
   const checkPlatformsStatus = async () => {
     try {
-      await dispatch(checkPlatformStatus([...pricePlatforms, ...gradingAgencies]) as any);
+      await dispatch(
+        checkPlatformStatus([...pricePlatforms, ...gradingAgencies]) as any
+      );
     } catch (error) {
       // logger.info('Failed to check platform status:', error);
     }
@@ -130,7 +147,7 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
       await Promise.all([
         loadPriceData(),
         loadRecommendedPlatforms(),
-        checkPlatformsStatus()
+        checkPlatformsStatus(),
       ]);
     } finally {
       setRefreshing(false);
@@ -170,10 +187,14 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
     const status = platformStatus[platform];
     if (!status) return '⚪'; // 未知
     switch (status.status) {
-      case 'online': return '🟢';
-      case 'limited': return '🟡';
-      case 'offline': return '🔴';
-      default: return '⚪';
+      case 'online':
+        return '🟢';
+      case 'limited':
+        return '🟡';
+      case 'offline':
+        return '🔴';
+      default:
+        return '⚪';
     }
   };
 
@@ -208,7 +229,7 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
       <View style={styles.platformStatus}>
         <Text style={styles.sectionTitle}>平台狀態</Text>
         <View style={styles.platformGrid}>
-          {pricePlatforms.map(platform => (
+          {pricePlatforms.map((platform) => (
             <View key={platform} style={styles.platformItem}>
               <Text style={styles.platformStatusIndicator}>
                 {getPlatformStatusIndicator(platform)}
@@ -263,7 +284,7 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
             <Text style={styles.sectionTitle}>推薦平台</Text>
             <View style={styles.recommendationsContainer}>
               <Text style={styles.subsectionTitle}>價格平台</Text>
-              {recommendedPlatforms.pricePlatforms.map(platform => (
+              {recommendedPlatforms.pricePlatforms.map((platform) => (
                 <View key={platform.platform} style={styles.recommendationItem}>
                   <View style={styles.recommendationHeader}>
                     <Text style={styles.platformName}>{platform.platform}</Text>
@@ -278,13 +299,14 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
                     {platform.description}
                   </Text>
                   <Text style={styles.recommendationDetails}>
-                    更新頻率: {platform.updateFrequency} | 覆蓋範圍: {platform.coverage}
+                    更新頻率: {platform.updateFrequency} | 覆蓋範圍:{' '}
+                    {platform.coverage}
                   </Text>
                 </View>
               ))}
 
               <Text style={styles.subsectionTitle}>鑑定機構</Text>
-              {recommendedPlatforms.gradingAgencies.map(agency => (
+              {recommendedPlatforms.gradingAgencies.map((agency) => (
                 <View key={agency.agency} style={styles.recommendationItem}>
                   <View style={styles.recommendationHeader}>
                     <Text style={styles.platformName}>{agency.agency}</Text>
@@ -299,7 +321,8 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
                     {agency.description}
                   </Text>
                   <Text style={styles.recommendationDetails}>
-                    更新頻率: {agency.updateFrequency} | 覆蓋範圍: {agency.coverage}
+                    更新頻率: {agency.updateFrequency} | 覆蓋範圍:{' '}
+                    {agency.coverage}
                   </Text>
                 </View>
               ))}
@@ -325,24 +348,30 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
         <View style={styles.filterModal}>
           <Text style={styles.filterSectionTitle}>價格平台</Text>
           <View style={styles.filterOptions}>
-            {pricePlatforms.map(platform => (
+            {pricePlatforms.map((platform) => (
               <TouchableOpacity
                 key={platform}
                 style={[
                   styles.filterOption,
-                  filters.selectedPlatforms.includes(platform) && styles.filterOptionSelected
+                  filters.selectedPlatforms.includes(platform) &&
+                    styles.filterOptionSelected,
                 ]}
                 onPress={() => {
-                  const newPlatforms = filters.selectedPlatforms.includes(platform)
-                    ? filters.selectedPlatforms.filter(p => p !== platform)
+                  const newPlatforms = filters.selectedPlatforms.includes(
+                    platform
+                  )
+                    ? filters.selectedPlatforms.filter((p) => p !== platform)
                     : [...filters.selectedPlatforms, platform];
                   updateFilters({ selectedPlatforms: newPlatforms });
                 }}
               >
-                <Text style={[
-                  styles.filterOptionText,
-                  filters.selectedPlatforms.includes(platform) && styles.filterOptionTextSelected
-                ]}>
+                <Text
+                  style={[
+                    styles.filterOptionText,
+                    filters.selectedPlatforms.includes(platform) &&
+                      styles.filterOptionTextSelected,
+                  ]}
+                >
                   {platform}
                 </Text>
               </TouchableOpacity>
@@ -351,24 +380,28 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
 
           <Text style={styles.filterSectionTitle}>鑑定機構</Text>
           <View style={styles.filterOptions}>
-            {gradingAgencies.map(agency => (
+            {gradingAgencies.map((agency) => (
               <TouchableOpacity
                 key={agency}
                 style={[
                   styles.filterOption,
-                  filters.selectedAgencies.includes(agency) && styles.filterOptionSelected
+                  filters.selectedAgencies.includes(agency) &&
+                    styles.filterOptionSelected,
                 ]}
                 onPress={() => {
                   const newAgencies = filters.selectedAgencies.includes(agency)
-                    ? filters.selectedAgencies.filter(a => a !== agency)
+                    ? filters.selectedAgencies.filter((a) => a !== agency)
                     : [...filters.selectedAgencies, agency];
                   updateFilters({ selectedAgencies: newAgencies });
                 }}
               >
-                <Text style={[
-                  styles.filterOptionText,
-                  filters.selectedAgencies.includes(agency) && styles.filterOptionTextSelected
-                ]}>
+                <Text
+                  style={[
+                    styles.filterOptionText,
+                    filters.selectedAgencies.includes(agency) &&
+                      styles.filterOptionTextSelected,
+                  ]}
+                >
                   {agency}
                 </Text>
               </TouchableOpacity>
@@ -400,7 +433,7 @@ export const PriceDataScreen: React.FC<PriceDataScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -410,30 +443,30 @@ const styles = StyleSheet.create({
     paddingVertical: theme.spacing.sm,
     backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   title: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   headerActions: {
     flexDirection: 'row',
-    gap: theme.spacing.sm
+    gap: theme.spacing.sm,
   },
   filterButton: {
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.xs,
     backgroundColor: theme.colors.primary,
-    borderRadius: theme.borderRadius.sm
+    borderRadius: theme.borderRadius.sm,
   },
   filterButtonText: {
     color: theme.colors.white,
     fontSize: theme.typography.sizes.sm,
-    fontWeight: theme.typography.weights.semibold
+    fontWeight: theme.typography.weights.semibold,
   },
   cardSelector: {
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   cardSelectorButton: {
     padding: theme.spacing.md,
@@ -441,27 +474,27 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    borderStyle: 'dashed'
+    borderStyle: 'dashed',
   },
   cardSelectorText: {
     textAlign: 'center',
     fontSize: theme.typography.sizes.md,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   platformStatus: {
     paddingHorizontal: theme.spacing.md,
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   sectionTitle: {
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   platformGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.sm
+    gap: theme.spacing.sm,
   },
   platformItem: {
     flexDirection: 'row',
@@ -469,32 +502,32 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     paddingHorizontal: theme.spacing.sm,
     paddingVertical: theme.spacing.xs,
-    borderRadius: theme.borderRadius.sm
+    borderRadius: theme.borderRadius.sm,
   },
   platformStatusIndicator: {
     fontSize: 16,
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   platformName: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   section: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   recommendationsContainer: {
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   subsectionTitle: {
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
     marginTop: theme.spacing.md,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   recommendationItem: {
     backgroundColor: theme.colors.surface,
@@ -505,59 +538,59 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
-    elevation: 2
+    elevation: 2,
   },
   recommendationHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   reliabilityContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   reliabilityLabel: {
     fontSize: theme.typography.sizes.xs,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   reliabilityValue: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.primary
+    color: theme.colors.primary,
   },
   recommendationDescription: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   recommendationDetails: {
     fontSize: theme.typography.sizes.xs,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   loadingContainer: {
     alignItems: 'center',
-    padding: theme.spacing.xl
+    padding: theme.spacing.xl,
   },
   loadingText: {
     marginTop: theme.spacing.sm,
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   filterModal: {
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   filterSectionTitle: {
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semibold,
     color: theme.colors.text.primary,
     marginTop: theme.spacing.md,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   filterOptions: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: theme.spacing.sm,
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   filterOption: {
     paddingHorizontal: theme.spacing.sm,
@@ -565,22 +598,22 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.sm,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   filterOptionSelected: {
     backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   filterOptionText: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   filterOptionTextSelected: {
-    color: theme.colors.white
+    color: theme.colors.white,
   },
   filterActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: theme.spacing.lg
-  }
+    marginTop: theme.spacing.lg,
+  },
 });

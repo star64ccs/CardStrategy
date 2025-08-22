@@ -9,11 +9,9 @@ module.exports = {
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
-      backgroundColor: '#1C2B3A'
+      backgroundColor: '#1C2B3A',
     },
-    assetBundlePatterns: [
-      '**/*'
-    ],
+    assetBundlePatterns: ['**/*'],
     ios: {
       supportsTablet: true,
       bundleIdentifier: 'com.cardstrategy.app',
@@ -21,20 +19,18 @@ module.exports = {
       infoPlist: {
         NSCameraUsageDescription: '此應用需要相機權限來掃描和識別卡牌',
         NSPhotoLibraryUsageDescription: '此應用需要相冊權限來選擇卡牌圖片',
-        NSLocationWhenInUseUsageDescription: '此應用需要位置權限來提供本地化服務',
+        NSLocationWhenInUseUsageDescription:
+          '此應用需要位置權限來提供本地化服務',
         NSMicrophoneUsageDescription: '此應用需要麥克風權限來進行語音輸入',
         NSFaceIDUsageDescription: '此應用使用Face ID來保護您的帳戶安全',
         ITSAppUsesNonExemptEncryption: false,
-        UIBackgroundModes: [
-          'fetch',
-          'remote-notification'
-        ]
-      }
+        UIBackgroundModes: ['fetch', 'remote-notification'],
+      },
     },
     android: {
       adaptiveIcon: {
         foregroundImage: './assets/adaptive-icon.png',
-        backgroundColor: '#1C2B3A'
+        backgroundColor: '#1C2B3A',
       },
       package: 'com.cardstrategy.app',
       versionCode: 1,
@@ -51,12 +47,12 @@ module.exports = {
         'android.permission.ACCESS_NETWORK_STATE',
         'android.permission.WAKE_LOCK',
         'android.permission.VIBRATE',
-        'android.permission.RECEIVE_BOOT_COMPLETED'
-      ]
+        'android.permission.RECEIVE_BOOT_COMPLETED',
+      ],
     },
     web: {
       favicon: './assets/favicon.png',
-      bundler: 'metro'
+      bundler: 'metro',
     },
     plugins: [
       'expo-camera',
@@ -64,19 +60,28 @@ module.exports = {
       'expo-file-system',
       'expo-secure-store',
       'expo-notifications',
-      'expo-location'
+      'expo-location',
+      [
+        'expo-build-properties',
+        {
+          'android': {
+            'minSdkVersion': 25
+          }
+        }
+      ],
+      '@logrocket/react-native'
     ],
     extra: {
       eas: {
-        projectId: '9665e10b-8055-4411-a919-242af1e6ac88'
-      }
+        projectId: '9665e10b-8055-4411-a919-242af1e6ac88',
+      },
     },
     owner: 'star64ccs',
     runtimeVersion: {
-      policy: 'appVersion'
+      policy: 'appVersion',
     },
     updates: {
-      url: 'https://u.expo.dev/cardstrategy-project'
-    }
-  }
+      url: 'https://u.expo.dev/cardstrategy-project',
+    },
+  },
 };

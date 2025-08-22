@@ -7,7 +7,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +30,7 @@ import {
   selectDataRightsRequestsLoading,
   selectComplianceCheck,
   selectComplianceCheckLoading,
-  selectCurrentRegion
+  selectCurrentRegion,
 } from '../store/slices/privacySlice';
 import { PrivacyPreferencesModal } from '../components/privacy/PrivacyPreferencesModal';
 import { ConsentHistoryModal } from '../components/privacy/ConsentHistoryModal';
@@ -56,7 +56,9 @@ const PrivacyScreen: React.FC = () => {
   const consentHistory = useSelector(selectConsentHistory);
   const consentHistoryLoading = useSelector(selectConsentHistoryLoading);
   const dataRightsRequests = useSelector(selectDataRightsRequests);
-  const dataRightsRequestsLoading = useSelector(selectDataRightsRequestsLoading);
+  const dataRightsRequestsLoading = useSelector(
+    selectDataRightsRequestsLoading
+  );
   const complianceCheck = useSelector(selectComplianceCheck);
   const complianceCheckLoading = useSelector(selectComplianceCheckLoading);
   const currentRegion = useSelector(selectCurrentRegion);
@@ -69,7 +71,9 @@ const PrivacyScreen: React.FC = () => {
   const [showComplianceModal, setShowComplianceModal] = useState(false);
   const [showDataBreachDetail, setShowDataBreachDetail] = useState(false);
   const [selectedBreachEvent, setSelectedBreachEvent] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'consent' | 'rights' | 'settings' | 'breach'>('overview');
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'consent' | 'rights' | 'settings' | 'breach'
+  >('overview');
 
   // 模擬用戶 ID (實際應用中應從認證狀態獲取)
   const userId = 'user-123';
@@ -85,7 +89,9 @@ const PrivacyScreen: React.FC = () => {
         dispatch(fetchPrivacyDashboard(userId) as any),
         dispatch(fetchConsentHistory(userId) as any),
         dispatch(fetchDataRightsRequestHistory(userId) as any),
-        dispatch(checkPrivacyCompliance({ userId, region: currentRegion }) as any)
+        dispatch(
+          checkPrivacyCompliance({ userId, region: currentRegion }) as any
+        ),
       ]);
     } catch (error) {
       // logger.info('加載隱私數據失敗:', error);
@@ -100,7 +106,9 @@ const PrivacyScreen: React.FC = () => {
 
   const handleComplianceCheck = async () => {
     try {
-      await dispatch(checkPrivacyCompliance({ userId, region: currentRegion }) as any);
+      await dispatch(
+        checkPrivacyCompliance({ userId, region: currentRegion }) as any
+      );
       setShowComplianceModal(true);
     } catch (error) {
       // logger.info('合規性檢查失敗:', error);
@@ -121,10 +129,16 @@ const PrivacyScreen: React.FC = () => {
     setComplianceCheckLoading(true);
     try {
       // 執行合規性檢查邏輯
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      Alert.alert(t('privacy.success.title'), t('privacy.success.compliance_check_passed'));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      Alert.alert(
+        t('privacy.success.title'),
+        t('privacy.success.compliance_check_passed')
+      );
     } catch (error) {
-      Alert.alert(t('privacy.error.title'), t('privacy.error.compliance_check_failed'));
+      Alert.alert(
+        t('privacy.error.title'),
+        t('privacy.error.compliance_check_failed')
+      );
     } finally {
       setComplianceCheckLoading(false);
     }
@@ -140,11 +154,27 @@ const PrivacyScreen: React.FC = () => {
   const renderTabBar = () => (
     <View style={styles.tabBar}>
       {[
-        { key: 'overview', label: t('privacy.tabs.overview'), icon: 'grid-outline' },
-        { key: 'consent', label: t('privacy.tabs.consent'), icon: 'checkmark-circle-outline' },
-        { key: 'rights', label: t('privacy.tabs.rights'), icon: 'shield-outline' },
+        {
+          key: 'overview',
+          label: t('privacy.tabs.overview'),
+          icon: 'grid-outline',
+        },
+        {
+          key: 'consent',
+          label: t('privacy.tabs.consent'),
+          icon: 'checkmark-circle-outline',
+        },
+        {
+          key: 'rights',
+          label: t('privacy.tabs.rights'),
+          icon: 'shield-outline',
+        },
         { key: 'breach', label: '數據洩露', icon: 'alert-circle-outline' },
-        { key: 'settings', label: t('privacy.tabs.settings'), icon: 'settings-outline' }
+        {
+          key: 'settings',
+          label: t('privacy.tabs.settings'),
+          icon: 'settings-outline',
+        },
       ].map((tab) => (
         <TouchableOpacity
           key={tab.key}
@@ -154,9 +184,18 @@ const PrivacyScreen: React.FC = () => {
           <Ionicons
             name={tab.icon as any}
             size={20}
-            color={activeTab === tab.key ? theme.colors.primary : theme.colors.textSecondary}
+            color={
+              activeTab === tab.key
+                ? theme.colors.primary
+                : theme.colors.textSecondary
+            }
           />
-          <Text style={[styles.tabLabel, activeTab === tab.key && styles.activeTabLabel]}>
+          <Text
+            style={[
+              styles.tabLabel,
+              activeTab === tab.key && styles.activeTabLabel,
+            ]}
+          >
             {tab.label}
           </Text>
         </TouchableOpacity>
@@ -176,7 +215,11 @@ const PrivacyScreen: React.FC = () => {
       {/* 合規性檢查 */}
       <Card style={styles.card}>
         <View style={styles.cardHeader}>
-          <Ionicons name="shield-checkmark" size={24} color={theme.colors.primary} />
+          <Ionicons
+            name="shield-checkmark"
+            size={24}
+            color={theme.colors.primary}
+          />
           <Text style={styles.cardTitle}>{t('privacy.compliance.title')}</Text>
         </View>
         <Text style={styles.cardDescription}>
@@ -194,7 +237,9 @@ const PrivacyScreen: React.FC = () => {
       <Card style={styles.card}>
         <View style={styles.cardHeader}>
           <Ionicons name="flash" size={24} color={theme.colors.primary} />
-          <Text style={styles.cardTitle}>{t('privacy.quick_actions.title')}</Text>
+          <Text style={styles.cardTitle}>
+            {t('privacy.quick_actions.title')}
+          </Text>
         </View>
         <View style={styles.quickActions}>
           <TouchableOpacity
@@ -202,21 +247,31 @@ const PrivacyScreen: React.FC = () => {
             onPress={() => setShowPreferencesModal(true)}
           >
             <Ionicons name="options" size={20} color={theme.colors.primary} />
-            <Text style={styles.quickActionText}>{t('privacy.quick_actions.preferences')}</Text>
+            <Text style={styles.quickActionText}>
+              {t('privacy.quick_actions.preferences')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.quickAction}
             onPress={() => setShowConsentHistoryModal(true)}
           >
             <Ionicons name="time" size={20} color={theme.colors.primary} />
-            <Text style={styles.quickActionText}>{t('privacy.quick_actions.history')}</Text>
+            <Text style={styles.quickActionText}>
+              {t('privacy.quick_actions.history')}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.quickAction}
             onPress={() => setShowDataRightsModal(true)}
           >
-            <Ionicons name="document-text" size={20} color={theme.colors.primary} />
-            <Text style={styles.quickActionText}>{t('privacy.quick_actions.rights')}</Text>
+            <Ionicons
+              name="document-text"
+              size={20}
+              color={theme.colors.primary}
+            />
+            <Text style={styles.quickActionText}>
+              {t('privacy.quick_actions.rights')}
+            </Text>
           </TouchableOpacity>
         </View>
       </Card>
@@ -255,43 +310,67 @@ const PrivacyScreen: React.FC = () => {
         {/* 地區設置 */}
         <View style={styles.settingItem}>
           <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>{t('privacy.settings.region')}</Text>
+            <Text style={styles.settingLabel}>
+              {t('privacy.settings.region')}
+            </Text>
             <Text style={styles.settingValue}>{currentRegion}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.textSecondary} />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.textSecondary}
+          />
         </View>
 
         {/* 通知設置 */}
         <View style={styles.settingItem}>
           <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>{t('privacy.settings.notifications')}</Text>
+            <Text style={styles.settingLabel}>
+              {t('privacy.settings.notifications')}
+            </Text>
             <Text style={styles.settingDescription}>
               {t('privacy.settings.notifications_description')}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.textSecondary} />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.textSecondary}
+          />
         </View>
 
         {/* 數據保留 */}
         <View style={styles.settingItem}>
           <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>{t('privacy.settings.data_retention')}</Text>
+            <Text style={styles.settingLabel}>
+              {t('privacy.settings.data_retention')}
+            </Text>
             <Text style={styles.settingDescription}>
               {t('privacy.settings.data_retention_description')}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.textSecondary} />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.textSecondary}
+          />
         </View>
 
         {/* 第三方共享 */}
         <View style={styles.settingItem}>
           <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>{t('privacy.settings.third_party')}</Text>
+            <Text style={styles.settingLabel}>
+              {t('privacy.settings.third_party')}
+            </Text>
             <Text style={styles.settingDescription}>
               {t('privacy.settings.third_party_description')}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.textSecondary} />
+          <Ionicons
+            name="chevron-forward"
+            size={20}
+            color={theme.colors.textSecondary}
+          />
         </View>
       </Card>
 
@@ -299,13 +378,17 @@ const PrivacyScreen: React.FC = () => {
       <Card style={styles.card}>
         <View style={styles.cardHeader}>
           <Ionicons name="construct" size={24} color={theme.colors.primary} />
-          <Text style={styles.cardTitle}>{t('privacy.settings.advanced.title')}</Text>
+          <Text style={styles.cardTitle}>
+            {t('privacy.settings.advanced.title')}
+          </Text>
         </View>
 
         <Button
           title={t('privacy.settings.advanced.export_data')}
           variant="outline"
-          onPress={() => {/* 導出數據 */}}
+          onPress={() => {
+            /* 導出數據 */
+          }}
           style={styles.button}
         />
 
@@ -318,7 +401,13 @@ const PrivacyScreen: React.FC = () => {
               t('privacy.settings.advanced.delete_confirm_message'),
               [
                 { text: t('common.cancel'), style: 'cancel' },
-                { text: t('common.confirm'), style: 'destructive', onPress: () => {/* 刪除數據 */} }
+                {
+                  text: t('common.confirm'),
+                  style: 'destructive',
+                  onPress: () => {
+                    /* 刪除數據 */
+                  },
+                },
               ]
             );
           }}
@@ -426,42 +515,42 @@ const PrivacyScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   scrollView: {
-    flex: 1
+    flex: 1,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   header: {
     padding: 20,
-    backgroundColor: theme.colors.primary
+    backgroundColor: theme.colors.primary,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: theme.colors.white,
-    marginBottom: 8
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
     color: theme.colors.white,
-    opacity: 0.8
+    opacity: 0.8,
   },
   tabBar: {
     flexDirection: 'row',
     backgroundColor: theme.colors.white,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   tab: {
     flex: 1,
@@ -469,60 +558,60 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.primary
+    borderBottomColor: theme.colors.primary,
   },
   tabLabel: {
     marginLeft: 4,
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   activeTabLabel: {
     color: theme.colors.primary,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   tabContent: {
-    padding: 16
+    padding: 16,
   },
   card: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.text,
-    marginLeft: 8
+    marginLeft: 8,
   },
   cardDescription: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     marginBottom: 16,
-    lineHeight: 20
+    lineHeight: 20,
   },
   button: {
-    marginTop: 8
+    marginTop: 8,
   },
   quickActions: {
     flexDirection: 'row',
-    justifyContent: 'space-around'
+    justifyContent: 'space-around',
   },
   quickAction: {
     alignItems: 'center',
-    padding: 12
+    padding: 12,
   },
   quickActionText: {
     fontSize: 12,
     color: theme.colors.text,
     marginTop: 4,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   settingItem: {
     flexDirection: 'row',
@@ -530,25 +619,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   settingInfo: {
-    flex: 1
+    flex: 1,
   },
   settingLabel: {
     fontSize: 16,
     color: theme.colors.text,
-    marginBottom: 2
+    marginBottom: 2,
   },
   settingValue: {
     fontSize: 14,
     color: theme.colors.primary,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   settingDescription: {
     fontSize: 14,
-    color: theme.colors.textSecondary
-  }
+    color: theme.colors.textSecondary,
+  },
 });
 
 export default PrivacyScreen;

@@ -7,6 +7,7 @@
 ## 🎯 開發目標
 
 ### 主要目標
+
 - 開發功能完整的AI聊天助手
 - 實現多模態輸入（文字、語音、圖片）
 - 集成智能建議系統
@@ -14,6 +15,7 @@
 - 提供高度可配置的用戶體驗
 
 ### 技術目標
+
 - 建立可擴展的AI服務架構
 - 實現響應式設計和動畫效果
 - 確保高性能和穩定性
@@ -81,6 +83,7 @@ Node.js/Express 服務層
 ### 1. EnhancedAIChatBot (主組件)
 
 **功能特性**:
+
 - 多模態輸入處理（文字、語音、圖片）
 - 智能建議系統集成
 - 情感分析和翻譯功能
@@ -88,6 +91,7 @@ Node.js/Express 服務層
 - 響應式設計和動畫效果
 
 **技術實現**:
+
 - 使用React Native Reanimated實現流暢動畫
 - 集成Redux進行狀態管理
 - 實現組件懶加載優化性能
@@ -96,12 +100,14 @@ Node.js/Express 服務層
 ### 2. VoiceInputButton (語音輸入)
 
 **功能特性**:
+
 - 麥克風權限管理
 - 錄音狀態視覺反饋
 - 語音轉文字功能
 - 錯誤處理和重試機制
 
 **技術實現**:
+
 - 使用Expo Permissions管理權限
 - 實現脈衝動畫效果
 - 集成語音識別API
@@ -110,12 +116,14 @@ Node.js/Express 服務層
 ### 3. ImagePickerButton (圖片選擇)
 
 **功能特性**:
+
 - 相冊和相機權限管理
 - 圖片質量控制
 - 多種圖片來源支持
 - 圖片預處理和壓縮
 
 **技術實現**:
+
 - 使用Expo ImagePicker
 - 實現圖片壓縮和格式轉換
 - 支持base64編碼
@@ -124,12 +132,14 @@ Node.js/Express 服務層
 ### 4. TranslationToggle (翻譯切換)
 
 **功能特性**:
+
 - 多語言支持（15種語言）
 - 語言選擇模態框
 - 實時翻譯切換
 - 語言偏好記憶
 
 **支持的語言**:
+
 - 繁體中文、English、日本語、한국어
 - Español、Français、Deutsch、Italiano
 - Português、Русский、العربية、हिन्दी
@@ -138,12 +148,14 @@ Node.js/Express 服務層
 ### 5. EmotionIndicator (情感指示器)
 
 **功能特性**:
+
 - 7種情感類型識別
 - 置信度顯示
 - 動態顏色和標籤
 - 情感分析結果可視化
 
 **情感類型**:
+
 - 😊 開心 (正面)
 - 😢 難過 (負面)
 - 😠 生氣 (負面)
@@ -155,12 +167,14 @@ Node.js/Express 服務層
 ### 6. SmartSuggestions (智能建議)
 
 **功能特性**:
+
 - 上下文感知建議
 - 分類建議系統
 - 動畫效果
 - 快速操作按鈕
 
 **建議分類**:
+
 - 卡片分析：分析價值、評估狀況、預測趨勢
 - 投資建議：推薦組合、風險評估、市場分析
 - 市場趨勢：市場狀況、熱門卡片、價格波動
@@ -169,6 +183,7 @@ Node.js/Express 服務層
 ### 7. ChatSettingsModal (聊天設置)
 
 **功能特性**:
+
 - 20+ 可配置選項
 - 輸入功能設置
 - AI功能配置
@@ -176,6 +191,7 @@ Node.js/Express 服務層
 - UI偏好設置
 
 **設置選項**:
+
 - 語音輸入、圖片輸入、自動語音播放
 - AI個性、分析深度、建議頻率
 - 回應長度、專業程度、幽默程度
@@ -184,12 +200,14 @@ Node.js/Express 服務層
 ### 8. QuickActionsPanel (快速操作)
 
 **功能特性**:
+
 - 常用AI任務快速訪問
 - 分類導航
 - 最近使用記錄
 - 一鍵執行操作
 
 **快速操作**:
+
 - 卡片掃描、價格查詢
 - 市場分析、投資建議
 - 歷史記錄、設置管理
@@ -197,12 +215,14 @@ Node.js/Express 服務層
 ### 9. ChatHistoryPanel (聊天歷史)
 
 **功能特性**:
+
 - 會話分組管理
 - 消息重新載入
 - 歷史記錄清理
 - 詳細消息信息
 
 **管理功能**:
+
 - 按日期分組顯示
 - 展開/收起會話
 - 重新載入消息
@@ -211,12 +231,14 @@ Node.js/Express 服務層
 ### 10. ContextualHelp (上下文幫助)
 
 **功能特性**:
+
 - 動態幫助內容
 - 快速提示
 - 支持聯繫信息
 - 上下文相關建議
 
 **幫助內容**:
+
 - 基本功能、卡片分析
 - 投資建議、市場分析
 - 高級功能、使用技巧
@@ -226,6 +248,7 @@ Node.js/Express 服務層
 ### AI服務擴展
 
 #### 1. 智能建議生成
+
 ```typescript
 async generateSuggestions(lastMessage: string, context: any = {}): Promise<{ suggestions: string[] }> {
   // 基於上下文生成相關建議
@@ -235,6 +258,7 @@ async generateSuggestions(lastMessage: string, context: any = {}): Promise<{ sug
 ```
 
 #### 2. 情感分析
+
 ```typescript
 async analyzeEmotion(text: string): Promise<{ emotion: string; confidence: number }> {
   // 分析文本情感
@@ -244,6 +268,7 @@ async analyzeEmotion(text: string): Promise<{ emotion: string; confidence: numbe
 ```
 
 #### 3. 文本翻譯
+
 ```typescript
 async translateText(text: string, targetLanguage: string): Promise<string> {
   // 支持15種語言翻譯
@@ -253,6 +278,7 @@ async translateText(text: string, targetLanguage: string): Promise<string> {
 ```
 
 #### 4. 圖片分析
+
 ```typescript
 async analyzeImage(imageBase64: string, prompt: string): Promise<string> {
   // 圖片識別和分析
@@ -269,31 +295,31 @@ async analyzeImage(imageBase64: string, prompt: string): Promise<string> {
 interface AIState {
   // 聊天消息
   chatMessages: AIChatMessage[];
-  
+
   // 加載狀態
   isLoading: boolean;
-  
+
   // 錯誤信息
   error: string | null;
-  
+
   // 聊天設置
   chatSettings: ChatSettings;
-  
+
   // 當前分析
   currentAnalysis: CardAnalysis | null;
-  
+
   // 價格預測
   pricePrediction: PricePrediction | null;
-  
+
   // 智能建議
   suggestions: string[];
-  
+
   // 情感分析
   emotion: {
     type: string;
     confidence: number;
   } | null;
-  
+
   // 翻譯設置
   translation: {
     enabled: boolean;

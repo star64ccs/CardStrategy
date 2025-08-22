@@ -13,7 +13,7 @@ async function globalSetup(config: FullConfig) {
       baseUrl: 'http://localhost:3000',
       apiBaseUrl: 'http://localhost:5000',
       timeout: 30000,
-      retries: 2
+      retries: 2,
     });
 
     console.log('✅ 測試環境設置完成');
@@ -29,7 +29,9 @@ async function globalSetup(config: FullConfig) {
       console.log('✅ 前端服務器運行正常');
 
       // 檢查後端 API 服務器
-      const response = await page.request.get('http://localhost:5000/api/health');
+      const response = await page.request.get(
+        'http://localhost:5000/api/health'
+      );
       if (response.ok()) {
         console.log('✅ 後端 API 服務器運行正常');
       } else {
@@ -51,7 +53,7 @@ async function globalSetup(config: FullConfig) {
       'test-results/screenshots',
       'test-results/videos',
       'test-results/traces',
-      'test-results/html-report'
+      'test-results/html-report',
     ];
 
     for (const dir of testDirs) {
@@ -67,7 +69,8 @@ async function globalSetup(config: FullConfig) {
     if (fs.existsSync(testResultsPath)) {
       const files = fs.readdirSync(testResultsPath);
       for (const file of files) {
-        if (file !== 'html-report') { // 保留 HTML 報告
+        if (file !== 'html-report') {
+          // 保留 HTML 報告
           const filePath = path.join(testResultsPath, file);
           if (fs.statSync(filePath).isFile()) {
             fs.unlinkSync(filePath);
@@ -90,7 +93,6 @@ async function globalSetup(config: FullConfig) {
     await checkDependencies();
 
     console.log('🎉 全局設置完成！');
-
   } catch (error) {
     console.error('❌ 全局設置失敗:', error);
     throw error;
@@ -105,8 +107,17 @@ async function checkDependencies() {
 
   const services = [
     { name: 'Node.js', check: () => process.version },
-    { name: 'npm', check: () => require('child_process').execSync('npm --version', { encoding: 'utf8' }).trim() },
-    { name: 'Playwright', check: () => require('@playwright/test/package.json').version }
+    {
+      name: 'npm',
+      check: () =>
+        require('child_process')
+          .execSync('npm --version', { encoding: 'utf8' })
+          .trim(),
+    },
+    {
+      name: 'Playwright',
+      check: () => require('@playwright/test/package.json').version,
+    },
   ];
 
   for (const service of services) {

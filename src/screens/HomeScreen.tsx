@@ -6,13 +6,19 @@ import {
   ScrollView,
   TouchableOpacity,
   RefreshControl,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../store/slices/authSlice';
 import { cardService, Card } from '../services/cardService';
 import { portfolioService, PortfolioItem } from '../services/portfolioService';
-import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+  shadows,
+} from '../config/theme';
 import { logger } from '../utils/logger';
 import { errorHandlerService } from '../services/errorHandlerService';
 import {
@@ -20,7 +26,7 @@ import {
   SlideUpView,
   AnimatedButton,
   SkeletonText,
-  SkeletonTitle
+  SkeletonTitle,
 } from '../components/common';
 
 const { width } = Dimensions.get('window');
@@ -36,7 +42,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   onCardPress,
   onNavigateToPortfolio,
   onNavigateToMarket,
-  onNavigateToAI
+  onNavigateToAI,
 }) => {
   const user = useSelector(selectUser);
   const [cards, setCards] = useState<Card[]>([]);
@@ -44,7 +50,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
   const [portfolioStats, setPortfolioStats] = useState({
     totalValue: 0,
     totalProfit: 0,
-    profitPercentage: 0
+    profitPercentage: 0,
   });
   const [refreshing, setRefreshing] = useState(false);
 
@@ -59,14 +65,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
         page: 1,
         limit: 10,
         sortBy: 'date',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
       });
 
       if (cardsResponse.success) {
         setCards(cardsResponse.data.cards);
       } else {
         // 如果 API 失敗，使用模擬數據作為備用
-        logger.warn('API 獲取卡片失敗，使用模擬數據', { error: cardsResponse.message });
+        logger.warn('API 獲取卡片失敗，使用模擬數據', {
+          error: cardsResponse.message,
+        });
         const mockCards = cardService.getMockCards();
         setCards(mockCards);
       }
@@ -80,11 +88,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       setPortfolioStats({
         totalValue: stats.totalValue,
         totalProfit: stats.totalProfit,
-        profitPercentage: stats.profitPercentage
+        profitPercentage: stats.profitPercentage,
       });
     } catch (error) {
       // 使用統一的錯誤處理
-      await errorHandlerService.handleError(error as Error, 'HomeScreen.loadData', 'medium', 'api');
+      await errorHandlerService.handleError(
+        error as Error,
+        'HomeScreen.loadData',
+        'medium',
+        'api'
+      );
 
       // 錯誤時使用模擬數據
       const mockCards = cardService.getMockCards();
@@ -121,9 +134,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
           <Text style={styles.welcomeText}>
             歡迎回來，{user?.username || '用戶'}！
           </Text>
-          <Text style={styles.welcomeSubtext}>
-            今天想要探索什麼卡牌呢？
-          </Text>
+          <Text style={styles.welcomeSubtext}>今天想要探索什麼卡牌呢？</Text>
         </View>
       </FadeInView>
 
@@ -147,25 +158,42 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>總收益</Text>
-                <Text style={[
-                  styles.statValue,
-                  { color: portfolioStats.totalProfit >= 0 ? colors.success : colors.error }
-                ]}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    {
+                      color:
+                        portfolioStats.totalProfit >= 0
+                          ? colors.success
+                          : colors.error,
+                    },
+                  ]}
+                >
                   {formatCurrency(portfolioStats.totalProfit)}
                 </Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>收益率</Text>
-                <Text style={[
-                  styles.statValue,
-                  { color: portfolioStats.profitPercentage >= 0 ? colors.success : colors.error }
-                ]}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    {
+                      color:
+                        portfolioStats.profitPercentage >= 0
+                          ? colors.success
+                          : colors.error,
+                    },
+                  ]}
+                >
                   {formatPercentage(portfolioStats.profitPercentage)}
                 </Text>
               </View>
             </View>
 
-            <TouchableOpacity style={styles.portfolioButton} onPress={onNavigateToPortfolio}>
+            <TouchableOpacity
+              style={styles.portfolioButton}
+              onPress={onNavigateToPortfolio}
+            >
               <Text style={styles.portfolioButtonText}>管理投資組合</Text>
             </TouchableOpacity>
           </View>
@@ -176,13 +204,19 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
       <View style={styles.quickActionsSection}>
         <Text style={styles.sectionTitle}>🚀 快速操作</Text>
         <View style={styles.quickActionsGrid}>
-          <TouchableOpacity style={styles.quickActionCard} onPress={onNavigateToMarket}>
+          <TouchableOpacity
+            style={styles.quickActionCard}
+            onPress={onNavigateToMarket}
+          >
             <Text style={styles.quickActionIcon}>📊</Text>
             <Text style={styles.quickActionTitle}>市場分析</Text>
             <Text style={styles.quickActionSubtitle}>查看市場趨勢</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.quickActionCard} onPress={onNavigateToAI}>
+          <TouchableOpacity
+            style={styles.quickActionCard}
+            onPress={onNavigateToAI}
+          >
             <Text style={styles.quickActionIcon}>🤖</Text>
             <Text style={styles.quickActionTitle}>AI 助手</Text>
             <Text style={styles.quickActionSubtitle}>智能投資建議</Text>
@@ -235,10 +269,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                 <Text style={styles.cardPrice}>
                   {formatCurrency(card.price.current)}
                 </Text>
-                <Text style={[
-                  styles.cardChange,
-                  { color: card.price.change24h >= 0 ? colors.success : colors.error }
-                ]}>
+                <Text
+                  style={[
+                    styles.cardChange,
+                    {
+                      color:
+                        card.price.change24h >= 0
+                          ? colors.success
+                          : colors.error,
+                    },
+                  ]}
+                >
                   {formatPercentage(card.price.change24h)}
                 </Text>
               </View>
@@ -275,87 +316,87 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   welcomeSection: {
     paddingHorizontal: spacing.large,
     paddingTop: spacing.large,
-    paddingBottom: spacing.medium
+    paddingBottom: spacing.medium,
   },
   welcomeText: {
     fontSize: typography.fontSize.xl,
     fontWeight: '700' as const,
     color: colors.textPrimary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   welcomeSubtext: {
     fontSize: typography.fontSize.base,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   portfolioSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   sectionTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: '600' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   seeAllText: {
     fontSize: typography.fontSize.sm,
     color: colors.accent,
-    fontWeight: '500' as const
+    fontWeight: '500' as const,
   },
   portfolioCard: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
-    ...shadows.base
+    ...shadows.base,
   },
   portfolioStats: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: spacing.large
+    marginBottom: spacing.large,
   },
   statItem: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   statLabel: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   statValue: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   portfolioButton: {
     backgroundColor: colors.primary,
     borderRadius: borderRadius.medium,
     paddingVertical: spacing.medium,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   portfolioButtonText: {
     color: colors.white,
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semiBold
+    fontWeight: typography.fontWeight.semiBold,
   },
   quickActionsSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   quickActionCard: {
     backgroundColor: colors.backgroundPaper,
@@ -364,29 +405,29 @@ const styles = StyleSheet.create({
     width: (width - spacing.large * 2 - spacing.medium) / 2,
     marginBottom: spacing.medium,
     alignItems: 'center',
-    ...shadows.sm
+    ...shadows.sm,
   },
   quickActionIcon: {
     fontSize: 32,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   quickActionTitle: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semiBold,
     color: colors.textPrimary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   quickActionSubtitle: {
     fontSize: typography.fontSize.xs,
     color: colors.textSecondary,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   hotCardsSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   hotCardsContainer: {
-    paddingRight: spacing.large
+    paddingRight: spacing.large,
   },
   hotCard: {
     backgroundColor: colors.backgroundPaper,
@@ -394,7 +435,7 @@ const styles = StyleSheet.create({
     padding: spacing.medium,
     marginRight: spacing.medium,
     width: 160,
-    ...shadows.sm
+    ...shadows.sm,
   },
   cardImageContainer: {
     width: '100%',
@@ -403,63 +444,63 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.small,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   cardImagePlaceholder: {
-    fontSize: 40
+    fontSize: 40,
   },
   cardInfo: {
-    flex: 1
+    flex: 1,
   },
   cardName: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.semiBold,
     color: colors.textPrimary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   cardSeries: {
     fontSize: typography.fontSize.xs,
     color: colors.textSecondary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   cardPrice: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   cardChange: {
     fontSize: typography.fontSize.xs,
-    fontWeight: typography.fontWeight.medium
+    fontWeight: typography.fontWeight.medium,
   },
   marketSection: {
     paddingHorizontal: spacing.large,
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   marketCard: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
-    ...shadows.base
+    ...shadows.base,
   },
   marketStat: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   marketStatLabel: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   marketStatValue: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   bottomSpacing: {
-    height: spacing.xlarge
-  }
+    height: spacing.xlarge,
+  },
 });
 
 export default HomeScreen;

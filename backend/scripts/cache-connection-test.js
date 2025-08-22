@@ -8,8 +8,8 @@ async function testCacheConnection() {
       url: process.env.REDIS_URL || 'redis://localhost:6379',
       socket: {
         connectTimeout: 5000,
-        lazyConnect: true
-      }
+        lazyConnect: true,
+      },
     });
 
     client.on('error', (err) => {
@@ -21,11 +21,11 @@ async function testCacheConnection() {
     });
 
     await client.connect();
-    
+
     // 測試基本操作
     await client.set('test:connection', 'success');
     const result = await client.get('test:connection');
-    
+
     if (result === 'success') {
       console.log('✅ Redis 基本操作測試成功');
     } else {

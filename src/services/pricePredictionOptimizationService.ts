@@ -178,7 +178,7 @@ class PricePredictionOptimizationService {
       seasonalFactors: true,
       competitiveAnalysis: true,
       socialMediaTrends: true,
-      newsAnalysis: true
+      newsAnalysis: true,
     },
     modelArchitecture: {
       useDeepLearning: true,
@@ -186,7 +186,7 @@ class PricePredictionOptimizationService {
       useLSTM: true,
       useTransformer: true,
       useAttention: true,
-      crossValidation: true
+      crossValidation: true,
     },
     featureEngineering: {
       technicalIndicators: true,
@@ -194,15 +194,15 @@ class PricePredictionOptimizationService {
       marketMicrostructure: true,
       sentimentFeatures: true,
       temporalFeatures: true,
-      interactionFeatures: true
+      interactionFeatures: true,
     },
     predictionValidation: {
       accuracyTracking: true,
       confidenceCalibration: true,
       backtesting: true,
       outOfSampleTesting: true,
-      modelComparison: true
-    }
+      modelComparison: true,
+    },
   };
 
   // 獲取當前配置
@@ -217,24 +217,33 @@ class PricePredictionOptimizationService {
   }
 
   // 整合市場因素
-  async integrateMarketFactors(cardId: string, timeframe: string): Promise<{
+  async integrateMarketFactors(
+    cardId: string,
+    timeframe: string
+  ): Promise<{
     success: boolean;
     marketFactors: MarketFactorsData;
     impactScore: number;
     confidence: number;
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 整合市場因素', { cardId, timeframe });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 整合市場因素', { cardId, timeframe });
 
-      const response = await apiService.post('/ai/prediction/market-factors/integrate', {
-        cardId,
-        timeframe,
-        config: this.config.marketFactors
-      });
+        const response = await apiService.post(
+          '/ai/prediction/market-factors/integrate',
+          {
+            cardId,
+            timeframe,
+            config: this.config.marketFactors,
+          }
+        );
 
-      logger.info('✅ 市場因素整合完成', { result: response.data });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+        logger.info('✅ 市場因素整合完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 改進模型架構
@@ -254,37 +263,52 @@ class PricePredictionOptimizationService {
       stability: number;
     };
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 改進模型架構', { options });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 改進模型架構', { options });
 
-      const response = await apiService.post('/ai/prediction/model/improve-architecture', {
-        config: this.config.modelArchitecture,
-        options
-      });
+        const response = await apiService.post(
+          '/ai/prediction/model/improve-architecture',
+          {
+            config: this.config.modelArchitecture,
+            options,
+          }
+        );
 
-      logger.info('✅ 模型架構改進完成', { result: response.data });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+        logger.info('✅ 模型架構改進完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 優化特徵工程
-  async optimizeFeatureEngineering(dataId: string, featureTypes: string[]): Promise<{
+  async optimizeFeatureEngineering(
+    dataId: string,
+    featureTypes: string[]
+  ): Promise<{
     success: boolean;
     optimizedFeatures: number;
     featureImportance: FeatureImportanceAnalysis;
     performanceImprovement: number;
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 優化特徵工程', { dataId, featureTypes });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 優化特徵工程', { dataId, featureTypes });
 
-      const response = await apiService.post(`/ai/prediction/features/${dataId}/optimize`, {
-        featureTypes,
-        config: this.config.featureEngineering
-      });
+        const response = await apiService.post(
+          `/ai/prediction/features/${dataId}/optimize`,
+          {
+            featureTypes,
+            config: this.config.featureEngineering,
+          }
+        );
 
-      logger.info('✅ 特徵工程優化完成', { result: response.data });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+        logger.info('✅ 特徵工程優化完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 驗證預測準確性
@@ -297,16 +321,22 @@ class PricePredictionOptimizationService {
       byCardType: Record<string, number>;
     };
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 驗證預測準確性', { predictionId });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 驗證預測準確性', { predictionId });
 
-      const response = await apiService.post(`/ai/prediction/${predictionId}/validate`, {
-        config: this.config.predictionValidation
-      });
+        const response = await apiService.post(
+          `/ai/prediction/${predictionId}/validate`,
+          {
+            config: this.config.predictionValidation,
+          }
+        );
 
-      logger.info('✅ 預測準確性驗證完成', { result: response.data });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+        logger.info('✅ 預測準確性驗證完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 比較模型性能
@@ -315,17 +345,23 @@ class PricePredictionOptimizationService {
     comparison: ModelComparisonResult;
     recommendations: string[];
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 比較模型性能', { modelIds });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 比較模型性能', { modelIds });
 
-      const response = await apiService.post('/ai/prediction/models/compare', {
-        modelIds,
-        config: this.config.predictionValidation
-      });
+        const response = await apiService.post(
+          '/ai/prediction/models/compare',
+          {
+            modelIds,
+            config: this.config.predictionValidation,
+          }
+        );
 
-      logger.info('✅ 模型性能比較完成', { result: response.data });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+        logger.info('✅ 模型性能比較完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 執行回測
@@ -353,37 +389,57 @@ class PricePredictionOptimizationService {
       profitLoss: number;
     }[];
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 執行回測', { options });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 執行回測', { options });
 
-      const response = await apiService.post('/ai/prediction/backtest', {
-        options,
-        config: this.config.predictionValidation
-      });
+        const response = await apiService.post('/ai/prediction/backtest', {
+          options,
+          config: this.config.predictionValidation,
+        });
 
-      logger.info('✅ 回測完成', { result: response.data });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+        logger.info('✅ 回測完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 獲取特徵重要性分析
-  async getFeatureImportanceAnalysis(modelId: string): Promise<FeatureImportanceAnalysis> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get(`/ai/prediction/model/${modelId}/feature-importance`);
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+  async getFeatureImportanceAnalysis(
+    modelId: string
+  ): Promise<FeatureImportanceAnalysis> {
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          `/ai/prediction/model/${modelId}/feature-importance`
+        );
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 獲取模型性能指標
-  async getModelPerformanceMetrics(modelId: string): Promise<ModelPerformanceMetrics> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get(`/ai/prediction/model/${modelId}/performance`);
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+  async getModelPerformanceMetrics(
+    modelId: string
+  ): Promise<ModelPerformanceMetrics> {
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          `/ai/prediction/model/${modelId}/performance`
+        );
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 獲取預測驗證歷史
-  async getPredictionValidationHistory(cardId?: string, limit?: number): Promise<{
+  async getPredictionValidationHistory(
+    cardId?: string,
+    limit?: number
+  ): Promise<{
     validations: PredictionValidation[];
     summary: {
       totalValidations: number;
@@ -392,14 +448,19 @@ class PricePredictionOptimizationService {
       accuracyTrend: 'improving' | 'declining' | 'stable';
     };
   }> {
-    return withErrorHandling(async () => {
-      const params = new URLSearchParams();
-      if (cardId) params.append('cardId', cardId);
-      if (limit) params.append('limit', limit.toString());
+    return withErrorHandling(
+      async () => {
+        const params = new URLSearchParams();
+        if (cardId) params.append('cardId', cardId);
+        if (limit) params.append('limit', limit.toString());
 
-      const response = await apiService.get(`/ai/prediction/validation-history?${params}`);
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+        const response = await apiService.get(
+          `/ai/prediction/validation-history?${params}`
+        );
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 校準預測置信度
@@ -419,16 +480,22 @@ class PricePredictionOptimizationService {
       improvement: number;
     };
   }> {
-    return withErrorHandling(async () => {
-      logger.info('🔄 校準預測置信度', { modelId });
+    return withErrorHandling(
+      async () => {
+        logger.info('🔄 校準預測置信度', { modelId });
 
-      const response = await apiService.post(`/ai/prediction/model/${modelId}/calibrate-confidence`, {
-        config: this.config.predictionValidation
-      });
+        const response = await apiService.post(
+          `/ai/prediction/model/${modelId}/calibrate-confidence`,
+          {
+            config: this.config.predictionValidation,
+          }
+        );
 
-      logger.info('✅ 預測置信度校準完成', { result: response.data });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+        logger.info('✅ 預測置信度校準完成', { result: response.data });
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 生成預測優化報告
@@ -450,17 +517,26 @@ class PricePredictionOptimizationService {
       nextSteps: string[];
     };
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai/prediction/optimization-report/generate', {
-        config: this.config,
-        options
-      });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post(
+          '/ai/prediction/optimization-report/generate',
+          {
+            config: this.config,
+            options,
+          }
+        );
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 設置預測準確率目標
-  async setPredictionAccuracyTarget(target: number, deadline: string): Promise<{
+  async setPredictionAccuracyTarget(
+    target: number,
+    deadline: string
+  ): Promise<{
     success: boolean;
     currentAccuracy: number;
     targetAccuracy: number;
@@ -473,14 +549,20 @@ class PricePredictionOptimizationService {
       timeline: string;
     }[];
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.post('/ai/prediction/accuracy-target/set', {
-        target,
-        deadline,
-        config: this.config
-      });
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.post(
+          '/ai/prediction/accuracy-target/set',
+          {
+            target,
+            deadline,
+            config: this.config,
+          }
+        );
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 
   // 獲取優化進度
@@ -499,12 +581,19 @@ class PricePredictionOptimizationService {
       estimatedTime: string;
     }[];
   }> {
-    return withErrorHandling(async () => {
-      const response = await apiService.get('/ai/prediction/optimization-progress');
-      return response.data;
-    }, { service: 'PricePredictionOptimization' })();
+    return withErrorHandling(
+      async () => {
+        const response = await apiService.get(
+          '/ai/prediction/optimization-progress'
+        );
+        return response.data;
+      },
+      { service: 'PricePredictionOptimization' }
+    )();
   }
 }
 
-// 創建單例實例
-export const pricePredictionOptimizationService = new PricePredictionOptimizationService();
+// 導出服務類和實例
+export { PricePredictionOptimizationService };
+export const pricePredictionOptimizationService =
+  new PricePredictionOptimizationService();

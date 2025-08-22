@@ -9,13 +9,13 @@ const PriceAlerts: React.FC = () => {
     cardId: '',
     cardName: '',
     targetPrice: '',
-    condition: 'above' as 'above' | 'below'
+    condition: 'above' as 'above' | 'below',
   });
 
   useEffect(() => {
     const loadAlerts = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise((resolve) => setTimeout(resolve, 800));
 
       const mockAlerts: PriceAlert[] = [
         {
@@ -25,7 +25,7 @@ const PriceAlerts: React.FC = () => {
           targetPrice: 1600,
           condition: 'above',
           isActive: true,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: '2',
@@ -34,8 +34,8 @@ const PriceAlerts: React.FC = () => {
           targetPrice: 700,
           condition: 'below',
           isActive: true,
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ];
 
       setAlerts(mockAlerts);
@@ -53,12 +53,12 @@ const PriceAlerts: React.FC = () => {
 
     const alert: PriceAlert = {
       id: Date.now().toString(),
-      cardId: newAlert.cardId || `card-${  Date.now()}`,
+      cardId: newAlert.cardId || `card-${Date.now()}`,
       cardName: newAlert.cardName,
       targetPrice: parseFloat(newAlert.targetPrice),
       condition: newAlert.condition,
       isActive: true,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     setAlerts([...alerts, alert]);
@@ -66,21 +66,21 @@ const PriceAlerts: React.FC = () => {
       cardId: '',
       cardName: '',
       targetPrice: '',
-      condition: 'above'
+      condition: 'above',
     });
     setShowCreateForm(false);
   };
 
   const toggleAlert = (alertId: string) => {
-    setAlerts(alerts.map(alert =>
-      (alert.id === alertId
-        ? { ...alert, isActive: !alert.isActive }
-        : alert)
-    ));
+    setAlerts(
+      alerts.map((alert) =>
+        alert.id === alertId ? { ...alert, isActive: !alert.isActive } : alert
+      )
+    );
   };
 
   const deleteAlert = (alertId: string) => {
-    setAlerts(alerts.filter(alert => alert.id !== alertId));
+    setAlerts(alerts.filter((alert) => alert.id !== alertId));
   };
 
   if (loading) {
@@ -107,7 +107,9 @@ const PriceAlerts: React.FC = () => {
             <input
               type="text"
               value={newAlert.cardName}
-              onChange={(e) => setNewAlert({...newAlert, cardName: e.target.value})}
+              onChange={(e) =>
+                setNewAlert({ ...newAlert, cardName: e.target.value })
+              }
               placeholder="輸入卡片名稱"
             />
           </div>
@@ -116,7 +118,9 @@ const PriceAlerts: React.FC = () => {
             <input
               type="number"
               value={newAlert.targetPrice}
-              onChange={(e) => setNewAlert({...newAlert, targetPrice: e.target.value})}
+              onChange={(e) =>
+                setNewAlert({ ...newAlert, targetPrice: e.target.value })
+              }
               placeholder="輸入目標價格"
             />
           </div>
@@ -124,7 +128,12 @@ const PriceAlerts: React.FC = () => {
             <label>警報條件:</label>
             <select
               value={newAlert.condition}
-              onChange={(e) => setNewAlert({...newAlert, condition: e.target.value as 'above' | 'below'})}
+              onChange={(e) =>
+                setNewAlert({
+                  ...newAlert,
+                  condition: e.target.value as 'above' | 'below',
+                })
+              }
             >
               <option value="above">價格高於</option>
               <option value="below">價格低於</option>
@@ -145,12 +154,17 @@ const PriceAlerts: React.FC = () => {
       )}
 
       <div className="alerts-list">
-        {alerts.map(alert => (
-          <div key={alert.id} className={`alert-card ${alert.isActive ? 'active' : 'inactive'}`}>
+        {alerts.map((alert) => (
+          <div
+            key={alert.id}
+            className={`alert-card ${alert.isActive ? 'active' : 'inactive'}`}
+          >
             <div className="alert-header">
               <div className="alert-info">
                 <h4>{alert.cardName}</h4>
-                <span className={`alert-status ${alert.isActive ? 'active' : 'inactive'}`}>
+                <span
+                  className={`alert-status ${alert.isActive ? 'active' : 'inactive'}`}
+                >
                   {alert.isActive ? '啟用中' : '已停用'}
                 </span>
               </div>
@@ -158,12 +172,16 @@ const PriceAlerts: React.FC = () => {
                 <span className="condition-text">
                   {alert.condition === 'above' ? '價格高於' : '價格低於'}
                 </span>
-                <span className="target-price">NT$ {alert.targetPrice.toLocaleString()}</span>
+                <span className="target-price">
+                  NT$ {alert.targetPrice.toLocaleString()}
+                </span>
               </div>
             </div>
 
             <div className="alert-meta">
-              <span>創建時間: {new Date(alert.createdAt).toLocaleString()}</span>
+              <span>
+                創建時間: {new Date(alert.createdAt).toLocaleString()}
+              </span>
             </div>
 
             <div className="alert-actions">
@@ -203,11 +221,15 @@ const PriceAlerts: React.FC = () => {
         </div>
         <div className="summary-item">
           <span className="summary-label">啟用中:</span>
-          <span className="summary-value">{alerts.filter(a => a.isActive).length}</span>
+          <span className="summary-value">
+            {alerts.filter((a) => a.isActive).length}
+          </span>
         </div>
         <div className="summary-item">
           <span className="summary-label">已停用:</span>
-          <span className="summary-value">{alerts.filter(a => !a.isActive).length}</span>
+          <span className="summary-value">
+            {alerts.filter((a) => !a.isActive).length}
+          </span>
         </div>
       </div>
     </div>

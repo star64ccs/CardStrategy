@@ -6,7 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { useBackgroundSync } from '@/hooks/useBackgroundSync';
 import { ConflictResolutionPanel } from './ConflictResolutionPanel';
@@ -18,7 +18,7 @@ interface BackgroundSyncStatusProps {
 
 export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
   showDetails = false,
-  onSyncComplete
+  onSyncComplete,
 }) => {
   const {
     status,
@@ -36,7 +36,7 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
     cleanupExpiredTasks,
     getTaskStats,
     addApiTask,
-    addDataTask
+    addDataTask,
   } = useBackgroundSync();
 
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -59,21 +59,30 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
   // 獲取優先級顏色
   const getPriorityColor = (priority: string): string => {
     switch (priority) {
-      case 'high': return '#F44336';
-      case 'medium': return '#FF9800';
-      case 'low': return '#4CAF50';
-      default: return '#666';
+      case 'high':
+        return '#F44336';
+      case 'medium':
+        return '#FF9800';
+      case 'low':
+        return '#4CAF50';
+      default:
+        return '#666';
     }
   };
 
   // 獲取任務類型圖標
   const getTaskTypeIcon = (type: string): string => {
     switch (type) {
-      case 'api': return '🌐';
-      case 'data': return '📊';
-      case 'file': return '📁';
-      case 'notification': return '🔔';
-      default: return '📋';
+      case 'api':
+        return '🌐';
+      case 'data':
+        return '📊';
+      case 'file':
+        return '📁';
+      case 'notification':
+        return '🔔';
+      default:
+        return '📋';
     }
   };
 
@@ -84,46 +93,38 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
       Alert.alert('成功', '同步已開始');
       onSyncComplete?.();
     } catch (error) {
-      Alert.alert('錯誤', `同步失敗: ${  error}`);
+      Alert.alert('錯誤', `同步失敗: ${error}`);
     }
   };
 
   // 處理停止自動同步
   const handleStopAutoSync = () => {
-    Alert.alert(
-      '確認停止',
-      '確定要停止自動同步嗎？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '確定',
-          style: 'destructive',
-          onPress: () => {
-            stopAutoSync();
-            Alert.alert('成功', '自動同步已停止');
-          }
-        }
-      ]
-    );
+    Alert.alert('確認停止', '確定要停止自動同步嗎？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '確定',
+        style: 'destructive',
+        onPress: () => {
+          stopAutoSync();
+          Alert.alert('成功', '自動同步已停止');
+        },
+      },
+    ]);
   };
 
   // 處理清空任務
   const handleClearTasks = () => {
-    Alert.alert(
-      '確認清空',
-      '確定要清空所有同步任務嗎？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '確定',
-          style: 'destructive',
-          onPress: () => {
-            clearTasks();
-            Alert.alert('成功', '所有任務已清空');
-          }
-        }
-      ]
-    );
+    Alert.alert('確認清空', '確定要清空所有同步任務嗎？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '確定',
+        style: 'destructive',
+        onPress: () => {
+          clearTasks();
+          Alert.alert('成功', '所有任務已清空');
+        },
+      },
+    ]);
   };
 
   // 處理清理過期任務
@@ -145,21 +146,17 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
 
   // 處理移除任務
   const handleRemoveTask = (id: string) => {
-    Alert.alert(
-      '確認移除',
-      '確定要移除這個任務嗎？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '確定',
-          style: 'destructive',
-          onPress: () => {
-            removeTask(id);
-            Alert.alert('成功', '任務已移除');
-          }
-        }
-      ]
-    );
+    Alert.alert('確認移除', '確定要移除這個任務嗎？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '確定',
+        style: 'destructive',
+        onPress: () => {
+          removeTask(id);
+          Alert.alert('成功', '任務已移除');
+        },
+      },
+    ]);
   };
 
   if (isLoading) {
@@ -182,7 +179,12 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
         <View style={styles.statusGrid}>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>運行狀態</Text>
-            <Text style={[styles.statusValue, status.isRunning ? styles.success : styles.error]}>
+            <Text
+              style={[
+                styles.statusValue,
+                status.isRunning ? styles.success : styles.error,
+              ]}
+            >
               {status.isRunning ? '運行中' : '已停止'}
             </Text>
           </View>
@@ -232,7 +234,9 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
 
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>平均時間</Text>
-            <Text style={styles.statValue}>{formatDuration(stats.averageSyncTime)}</Text>
+            <Text style={styles.statValue}>
+              {formatDuration(stats.averageSyncTime)}
+            </Text>
           </View>
         </View>
 
@@ -240,7 +244,8 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
           <View style={styles.lastSyncInfo}>
             <Text style={styles.lastSyncLabel}>上次同步:</Text>
             <Text style={styles.lastSyncValue}>
-              {formatTime(status.lastSyncTime)} ({formatDuration(stats.lastSyncDuration)})
+              {formatTime(status.lastSyncTime)} (
+              {formatDuration(stats.lastSyncDuration)})
             </Text>
           </View>
         )}
@@ -263,7 +268,13 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
           <View style={styles.taskStatItem}>
             <Text style={styles.taskStatLabel}>按優先級</Text>
             {Object.entries(taskStats.byPriority).map(([priority, count]) => (
-              <Text key={priority} style={[styles.taskStatValue, { color: getPriorityColor(priority) }]}>
+              <Text
+                key={priority}
+                style={[
+                  styles.taskStatValue,
+                  { color: getPriorityColor(priority) },
+                ]}
+              >
                 {priority}: {count}
               </Text>
             ))}
@@ -276,7 +287,10 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>同步任務 ({tasks.length})</Text>
-            <TouchableOpacity onPress={() => setShowTaskDetails(!showTaskDetails)} style={styles.toggleButton}>
+            <TouchableOpacity
+              onPress={() => setShowTaskDetails(!showTaskDetails)}
+              style={styles.toggleButton}
+            >
               <Text style={styles.toggleButtonText}>
                 {showTaskDetails ? '隱藏' : '顯示'}詳情
               </Text>
@@ -302,7 +316,12 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
                   <Text style={styles.taskType}>
                     {getTaskTypeIcon(task.type)} {task.type.toUpperCase()}
                   </Text>
-                  <Text style={[styles.taskPriority, { color: getPriorityColor(task.priority) }]}>
+                  <Text
+                    style={[
+                      styles.taskPriority,
+                      { color: getPriorityColor(task.priority) },
+                    ]}
+                  >
                     {task.priority}
                   </Text>
                 </View>
@@ -312,10 +331,16 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
 
                 {showTaskDetails && (
                   <View style={styles.taskDetails}>
-                    <Text style={styles.taskDetail}>重試次數: {task.retryCount}/{task.maxRetries}</Text>
-                    <Text style={styles.taskDetail}>創建時間: {formatTime(task.createdAt)}</Text>
+                    <Text style={styles.taskDetail}>
+                      重試次數: {task.retryCount}/{task.maxRetries}
+                    </Text>
+                    <Text style={styles.taskDetail}>
+                      創建時間: {formatTime(task.createdAt)}
+                    </Text>
                     {task.lastAttempt && (
-                      <Text style={styles.taskDetail}>最後嘗試: {formatTime(task.lastAttempt)}</Text>
+                      <Text style={styles.taskDetail}>
+                        最後嘗試: {formatTime(task.lastAttempt)}
+                      </Text>
                     )}
                     {task.error && (
                       <Text style={styles.taskError}>錯誤: {task.error}</Text>
@@ -345,12 +370,19 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
 
           <View style={styles.configItem}>
             <Text style={styles.configLabel}>同步間隔</Text>
-            <Text style={styles.configValue}>{formatDuration(config.syncInterval)}</Text>
+            <Text style={styles.configValue}>
+              {formatDuration(config.syncInterval)}
+            </Text>
           </View>
 
           <View style={styles.configItem}>
             <Text style={styles.configLabel}>自動同步</Text>
-            <Text style={[styles.configValue, config.enableAutoSync ? styles.success : styles.error]}>
+            <Text
+              style={[
+                styles.configValue,
+                config.enableAutoSync ? styles.success : styles.error,
+              ]}
+            >
               {config.enableAutoSync ? '啟用' : '禁用'}
             </Text>
           </View>
@@ -374,7 +406,10 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
             <Text style={styles.buttonText}>添加測試任務</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={handleCleanupExpired} style={styles.button}>
+          <TouchableOpacity
+            onPress={handleCleanupExpired}
+            style={styles.button}
+          >
             <Text style={styles.buttonText}>清理過期任務</Text>
           </TouchableOpacity>
 
@@ -413,7 +448,9 @@ export const BackgroundSyncStatus: React.FC<BackgroundSyncStatusProps> = ({
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => updateConfig({ enableAutoSync: !config.enableAutoSync })}
+            onPress={() =>
+              updateConfig({ enableAutoSync: !config.enableAutoSync })
+            }
             style={styles.button}
           >
             <Text style={styles.buttonText}>
@@ -447,13 +484,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   loadingText: {
     marginTop: 16,
     textAlign: 'center',
     fontSize: 16,
-    color: '#666'
+    color: '#666',
   },
   section: {
     backgroundColor: '#fff',
@@ -464,73 +501,73 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#333'
+    color: '#333',
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statusGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statusItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statusLabel: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   statusValue: {
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   success: {
-    color: '#4CAF50'
+    color: '#4CAF50',
   },
   error: {
-    color: '#F44336'
+    color: '#F44336',
   },
   errorContainer: {
     backgroundColor: '#FFEBEE',
     padding: 12,
     borderRadius: 4,
-    marginTop: 8
+    marginTop: 8,
   },
   errorText: {
     color: '#C62828',
-    fontSize: 14
+    fontSize: 14,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statItem: {
     width: '48%',
     marginBottom: 12,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statLabel: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   statValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   lastSyncInfo: {
     flexDirection: 'row',
@@ -539,122 +576,122 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0'
+    borderTopColor: '#e0e0e0',
   },
   lastSyncLabel: {
     fontSize: 14,
-    color: '#666'
+    color: '#666',
   },
   lastSyncValue: {
     fontSize: 14,
     color: '#333',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   taskStatsGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   taskStatItem: {
-    flex: 1
+    flex: 1,
   },
   taskStatLabel: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8
+    marginBottom: 8,
   },
   taskStatValue: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   taskItem: {
     borderWidth: 1,
     borderColor: '#e0e0e0',
     borderRadius: 4,
     padding: 12,
-    marginBottom: 8
+    marginBottom: 8,
   },
   taskHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   taskId: {
     fontSize: 12,
     color: '#999',
-    fontFamily: 'monospace'
+    fontFamily: 'monospace',
   },
   taskInfo: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   taskType: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   taskPriority: {
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   taskUrl: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   taskMethod: {
     fontSize: 12,
     color: '#999',
-    fontFamily: 'monospace'
+    fontFamily: 'monospace',
   },
   taskDetails: {
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0'
+    borderTopColor: '#e0e0e0',
   },
   taskDetail: {
     fontSize: 11,
     color: '#666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   taskError: {
     fontSize: 11,
     color: '#F44336',
-    marginTop: 4
+    marginTop: 4,
   },
   emptyText: {
     textAlign: 'center',
     color: '#999',
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   configGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   configItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   configLabel: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   configValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   buttonGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   button: {
     backgroundColor: '#007AFF',
@@ -663,45 +700,45 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     marginBottom: 8,
     width: '48%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonText: {
     color: '#fff',
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   toggleButton: {
     backgroundColor: '#4CAF50',
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 4
+    borderRadius: 4,
   },
   toggleButtonText: {
     color: '#fff',
     fontSize: 12,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   removeButton: {
     backgroundColor: '#F44336',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4
+    borderRadius: 4,
   },
   removeButtonText: {
     color: '#fff',
     fontSize: 10,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   advancedToggle: {
     backgroundColor: '#f0f0f0',
     padding: 12,
     borderRadius: 4,
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   advancedToggleText: {
     color: '#666',
     fontSize: 14,
-    fontWeight: '500'
-  }
+    fontWeight: '500',
+  },
 });

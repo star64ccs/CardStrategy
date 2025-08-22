@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { device, element, by, expect, waitFor } from 'detox';
 
 describe('卡片掃描流程', () => {
@@ -19,28 +20,38 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 3. 等待相機權限請求
-      await waitFor(element(by.text('相機權限'))).toBeVisible().withTimeout(5000);
+      await waitFor(element(by.text('相機權限')))
+        .toBeVisible()
+        .withTimeout(5000);
 
       // 4. 授予相機權限
       await element(by.text('允許')).tap();
 
       // 5. 等待相機界面載入
-      await waitFor(element(by.id('camera-view'))).toBeVisible().withTimeout(3000);
+      await waitFor(element(by.id('camera-view')))
+        .toBeVisible()
+        .withTimeout(3000);
 
       // 6. 模擬拍照
       await element(by.id('capture-button')).tap();
 
       // 7. 等待AI識別
-      await waitFor(element(by.text('正在識別...'))).toBeVisible().withTimeout(10000);
+      await waitFor(element(by.text('正在識別...')))
+        .toBeVisible()
+        .withTimeout(10000);
 
       // 8. 驗證識別結果
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
 
       // 9. 確認卡片信息
       await element(by.text('確認')).tap();
 
       // 10. 驗證保存成功
-      await waitFor(element(by.text('卡片已保存'))).toBeVisible().withTimeout(5000);
+      await waitFor(element(by.text('卡片已保存')))
+        .toBeVisible()
+        .withTimeout(5000);
     });
 
     it('應該處理掃描失敗的情況', async () => {
@@ -70,7 +81,9 @@ describe('卡片掃描流程', () => {
       await element(by.id('gallery-button')).tap();
 
       // 3. 等待相冊權限請求
-      await waitFor(element(by.text('相冊權限'))).toBeVisible().withTimeout(3000);
+      await waitFor(element(by.text('相冊權限')))
+        .toBeVisible()
+        .withTimeout(3000);
 
       // 4. 授予相冊權限
       await element(by.text('允許')).tap();
@@ -79,10 +92,14 @@ describe('卡片掃描流程', () => {
       await element(by.id('image-item-0')).tap();
 
       // 6. 等待AI識別
-      await waitFor(element(by.text('正在識別...'))).toBeVisible().withTimeout(10000);
+      await waitFor(element(by.text('正在識別...')))
+        .toBeVisible()
+        .withTimeout(10000);
 
       // 7. 驗證識別結果
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
     });
   });
 
@@ -107,7 +124,9 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 2. 模擬識別完成
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
 
       // 3. 點擊編輯按鈕
       await element(by.id('edit-button')).tap();
@@ -124,7 +143,9 @@ describe('卡片掃描流程', () => {
       await element(by.text('保存')).tap();
 
       // 7. 驗證修改成功
-      await waitFor(element(by.text('修改已保存'))).toBeVisible().withTimeout(3000);
+      await waitFor(element(by.text('修改已保存')))
+        .toBeVisible()
+        .withTimeout(3000);
     });
   });
 
@@ -135,7 +156,9 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 2. 等待識別完成
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
 
       // 3. 點擊條件評估按鈕
       await element(by.id('condition-assessment-button')).tap();
@@ -144,13 +167,17 @@ describe('卡片掃描流程', () => {
       await element(by.text('Near Mint')).tap();
 
       // 5. 添加條件描述
-      await element(by.id('condition-description-input')).typeText('卡片狀況良好，只有輕微磨損');
+      await element(by.id('condition-description-input')).typeText(
+        '卡片狀況良好，只有輕微磨損'
+      );
 
       // 6. 保存條件評估
       await element(by.text('保存評估')).tap();
 
       // 7. 驗證評估成功
-      await waitFor(element(by.text('條件評估已保存'))).toBeVisible().withTimeout(3000);
+      await waitFor(element(by.text('條件評估已保存')))
+        .toBeVisible()
+        .withTimeout(3000);
     });
   });
 
@@ -161,13 +188,17 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 2. 等待識別完成
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
 
       // 3. 點擊收藏按鈕
       await element(by.id('favorite-button')).tap();
 
       // 4. 驗證收藏成功
-      await waitFor(element(by.text('已添加到收藏'))).toBeVisible().withTimeout(3000);
+      await waitFor(element(by.text('已添加到收藏')))
+        .toBeVisible()
+        .withTimeout(3000);
 
       // 5. 導航到收藏頁面驗證
       await element(by.id('favorites-tab')).tap();
@@ -182,7 +213,9 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 2. 等待識別完成
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
 
       // 3. 點擊價格監控按鈕
       await element(by.id('price-monitor-button')).tap();
@@ -197,7 +230,9 @@ describe('卡片掃描流程', () => {
       await element(by.text('設置警報')).tap();
 
       // 7. 驗證警報設置成功
-      await waitFor(element(by.text('價格警報已設置'))).toBeVisible().withTimeout(3000);
+      await waitFor(element(by.text('價格警報已設置')))
+        .toBeVisible()
+        .withTimeout(3000);
     });
   });
 
@@ -208,7 +243,9 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 2. 等待識別完成
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
 
       // 3. 點擊分享按鈕
       await element(by.id('share-button')).tap();
@@ -217,7 +254,9 @@ describe('卡片掃描流程', () => {
       await element(by.text('Facebook')).tap();
 
       // 5. 驗證分享成功
-      await waitFor(element(by.text('分享成功'))).toBeVisible().withTimeout(5000);
+      await waitFor(element(by.text('分享成功')))
+        .toBeVisible()
+        .withTimeout(5000);
     });
   });
 
@@ -226,7 +265,9 @@ describe('卡片掃描流程', () => {
       // 1. 完成一次掃描
       await element(by.id('scan-tab')).tap();
       await element(by.id('scan-button')).tap();
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
       await element(by.text('確認')).tap();
 
       // 2. 導航到掃描歷史頁面
@@ -261,10 +302,14 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 2. 等待識別
-      await waitFor(element(by.text('正在識別...'))).toBeVisible().withTimeout(10000);
+      await waitFor(element(by.text('正在識別...')))
+        .toBeVisible()
+        .withTimeout(10000);
 
       // 3. 驗證錯誤提示
-      await waitFor(element(by.text('網絡連接失敗'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('網絡連接失敗')))
+        .toBeVisible()
+        .withTimeout(15000);
 
       // 4. 點擊重試
       await element(by.text('重試')).tap();
@@ -279,10 +324,14 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 2. 模擬識別失敗
-      await waitFor(element(by.text('正在識別...'))).toBeVisible().withTimeout(10000);
+      await waitFor(element(by.text('正在識別...')))
+        .toBeVisible()
+        .withTimeout(10000);
 
       // 3. 驗證失敗提示
-      await waitFor(element(by.text('無法識別卡片'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('無法識別卡片')))
+        .toBeVisible()
+        .withTimeout(15000);
 
       // 4. 選擇手動輸入
       await element(by.text('手動輸入')).tap();
@@ -301,7 +350,9 @@ describe('卡片掃描流程', () => {
       await element(by.id('scan-button')).tap();
 
       // 2. 等待識別完成
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(20000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(20000);
 
       const endTime = Date.now();
       const duration = endTime - startTime;
@@ -314,12 +365,16 @@ describe('卡片掃描流程', () => {
       // 1. 第一次掃描
       await element(by.id('scan-tab')).tap();
       await element(by.id('scan-button')).tap();
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
       await element(by.text('確認')).tap();
 
       // 2. 第二次掃描
       await element(by.id('scan-button')).tap();
-      await waitFor(element(by.text('識別結果'))).toBeVisible().withTimeout(15000);
+      await waitFor(element(by.text('識別結果')))
+        .toBeVisible()
+        .withTimeout(15000);
       await element(by.text('確認')).tap();
 
       // 3. 驗證兩次掃描都成功

@@ -1,6 +1,8 @@
 const { Op } = require('sequelize');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 const { v4: uuidv4 } = require('uuid');
+// eslint-disable-next-line no-unused-vars
 const moment = require('moment');
 const Bull = require('bull');
 const redis = require('redis');
@@ -19,7 +21,7 @@ class BatchOperationService {
   async initializeRedis() {
     try {
       this.redisClient = redis.createClient({
-        url: process.env.REDIS_URL || 'redis://localhost:6379'
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
       });
 
       await this.redisClient.connect();
@@ -38,8 +40,8 @@ class BatchOperationService {
       this.batchQueue = new Bull('batch-operations', {
         redis: {
           host: process.env.REDIS_HOST || 'localhost',
-          port: process.env.REDIS_PORT || 6379
-        }
+          port: process.env.REDIS_PORT || 6379,
+        },
       });
 
       // 設置隊列處理器
@@ -100,14 +102,17 @@ class BatchOperationService {
   async processBatchCards(data) {
     try {
       const { operation, cards, options = {} } = data;
+// eslint-disable-next-line no-unused-vars
       const results = {
         success: [],
         failed: [],
         total: cards.length,
-        operation
+        operation,
       };
 
+// eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
+// eslint-disable-next-line no-unused-vars
       const batchSize = options.batchSize || 100;
       const batches = this.chunkArray(cards, batchSize);
 
@@ -119,21 +124,24 @@ class BatchOperationService {
             case 'create':
               const createdCards = await Card.bulkCreate(batch, {
                 validate: true,
-                returning: true
+                returning: true,
               });
-              results.success.push(...createdCards.map(card => card.id));
+              results.success.push(...createdCards.map((card) => card.id));
               break;
 
             case 'update':
               for (const card of batch) {
                 const updated = await Card.update(card.data, {
                   where: { id: card.id },
-                  returning: true
+                  returning: true,
                 });
                 if (updated[0] > 0) {
                   results.success.push(card.id);
                 } else {
-                  results.failed.push({ id: card.id, reason: 'Card not found' });
+                  results.failed.push({
+                    id: card.id,
+                    reason: 'Card not found',
+                  });
                 }
               }
               break;
@@ -141,14 +149,16 @@ class BatchOperationService {
             case 'delete':
               const deletedCount = await Card.destroy({
                 where: {
-                  id: { [Op.in]: batch.map(card => card.id) }
-                }
+                  id: { [Op.in]: batch.map((card) => card.id) },
+                },
               });
-              results.success.push(...batch.map(card => card.id).slice(0, deletedCount));
+              results.success.push(
+                ...batch.map((card) => card.id).slice(0, deletedCount)
+              );
               break;
 
             case 'bulk-update':
-              const bulkUpdatePromises = batch.map(card =>
+              const bulkUpdatePromises = batch.map((card) =>
                 Card.update(card.data, { where: { id: card.id } })
               );
               const bulkResults = await Promise.allSettled(bulkUpdatePromises);
@@ -159,7 +169,10 @@ class BatchOperationService {
                 } else {
                   results.failed.push({
                     id: batch[index].id,
-                    reason: result.status === 'rejected' ? result.reason.message : 'Update failed'
+                    reason:
+                      result.status === 'rejected'
+                        ? result.reason.message
+                        : 'Update failed',
                   });
                 }
               });
@@ -170,10 +183,12 @@ class BatchOperationService {
           }
         } catch (error) {
           logger.error(`批量卡片操作批次 ${i + 1} 失敗:`, error);
-          results.failed.push(...batch.map(card => ({
-            id: card.id || card.data?.id,
-            reason: error.message
-          })));
+          results.failed.push(
+            ...batch.map((card) => ({
+              id: card.id || card.data?.id,
+              reason: error.message,
+            }))
+          );
         }
       }
 
@@ -190,14 +205,16 @@ class BatchOperationService {
   async processBatchInvestments(data) {
     try {
       const { operation, investments, options = {} } = data;
+// eslint-disable-next-line no-unused-vars
       const results = {
         success: [],
         failed: [],
         total: investments.length,
-        operation
+        operation,
       };
 
       const Investment = require('../models/Investment');
+// eslint-disable-next-line no-unused-vars
       const batchSize = options.batchSize || 50;
       const batches = this.chunkArray(investments, batchSize);
 
@@ -209,21 +226,24 @@ class BatchOperationService {
             case 'create':
               const createdInvestments = await Investment.bulkCreate(batch, {
                 validate: true,
-                returning: true
+                returning: true,
               });
-              results.success.push(...createdInvestments.map(inv => inv.id));
+              results.success.push(...createdInvestments.map((inv) => inv.id));
               break;
 
             case 'update':
               for (const investment of batch) {
                 const updated = await Investment.update(investment.data, {
                   where: { id: investment.id },
-                  returning: true
+                  returning: true,
                 });
                 if (updated[0] > 0) {
                   results.success.push(investment.id);
                 } else {
-                  results.failed.push({ id: investment.id, reason: 'Investment not found' });
+                  results.failed.push({
+                    id: investment.id,
+                    reason: 'Investment not found',
+                  });
                 }
               }
               break;
@@ -231,17 +251,19 @@ class BatchOperationService {
             case 'delete':
               const deletedCount = await Investment.destroy({
                 where: {
-                  id: { [Op.in]: batch.map(inv => inv.id) }
-                }
+                  id: { [Op.in]: batch.map((inv) => inv.id) },
+                },
               });
-              results.success.push(...batch.map(inv => inv.id).slice(0, deletedCount));
+              results.success.push(
+                ...batch.map((inv) => inv.id).slice(0, deletedCount)
+              );
               break;
 
             case 'calculate-returns':
               for (const investment of batch) {
                 try {
                   const inv = await Investment.findByPk(investment.id, {
-                    include: [{ model: require('../models/Card'), as: 'card' }]
+                    include: [{ model: require('../models/Card'), as: 'card' }],
                   });
 
                   if (inv && inv.card) {
@@ -254,15 +276,21 @@ class BatchOperationService {
                       currentValue,
                       returnAmount,
                       returnPercentage,
-                      lastCalculated: new Date()
+                      lastCalculated: new Date(),
                     });
 
                     results.success.push(investment.id);
                   } else {
-                    results.failed.push({ id: investment.id, reason: 'Investment or card not found' });
+                    results.failed.push({
+                      id: investment.id,
+                      reason: 'Investment or card not found',
+                    });
                   }
                 } catch (error) {
-                  results.failed.push({ id: investment.id, reason: error.message });
+                  results.failed.push({
+                    id: investment.id,
+                    reason: error.message,
+                  });
                 }
               }
               break;
@@ -272,10 +300,12 @@ class BatchOperationService {
           }
         } catch (error) {
           logger.error(`批量投資操作批次 ${i + 1} 失敗:`, error);
-          results.failed.push(...batch.map(inv => ({
-            id: inv.id || inv.data?.id,
-            reason: error.message
-          })));
+          results.failed.push(
+            ...batch.map((inv) => ({
+              id: inv.id || inv.data?.id,
+              reason: error.message,
+            }))
+          );
         }
       }
 
@@ -292,14 +322,17 @@ class BatchOperationService {
   async processBatchMarketData(data) {
     try {
       const { operation, marketData, options = {} } = data;
+// eslint-disable-next-line no-unused-vars
       const results = {
         success: [],
         failed: [],
         total: marketData.length,
-        operation
+        operation,
       };
 
+// eslint-disable-next-line no-unused-vars
       const MarketData = require('../models/MarketData');
+// eslint-disable-next-line no-unused-vars
       const batchSize = options.batchSize || 200;
       const batches = this.chunkArray(marketData, batchSize);
 
@@ -311,44 +344,57 @@ class BatchOperationService {
             case 'create':
               const createdData = await MarketData.bulkCreate(batch, {
                 validate: true,
-                returning: true
+                returning: true,
               });
-              results.success.push(...createdData.map(data => data.id));
+              results.success.push(...createdData.map((data) => data.id));
               break;
 
             case 'update':
+// eslint-disable-next-line no-unused-vars
               for (const data of batch) {
                 const updated = await MarketData.update(data.data, {
                   where: { id: data.id },
-                  returning: true
+                  returning: true,
                 });
                 if (updated[0] > 0) {
                   results.success.push(data.id);
                 } else {
-                  results.failed.push({ id: data.id, reason: 'Market data not found' });
+                  results.failed.push({
+                    id: data.id,
+                    reason: 'Market data not found',
+                  });
                 }
               }
               break;
 
             case 'aggregate':
               // 聚合市場數據
+// eslint-disable-next-line no-unused-vars
               for (const data of batch) {
                 try {
-                  const aggregated = await this.aggregateMarketData(data.cardId, data.date);
+                  const aggregated = await this.aggregateMarketData(
+                    data.cardId,
+                    data.date
+                  );
                   results.success.push(data.cardId);
                 } catch (error) {
-                  results.failed.push({ id: data.cardId, reason: error.message });
+                  results.failed.push({
+                    id: data.cardId,
+                    reason: error.message,
+                  });
                 }
               }
               break;
 
             case 'cleanup':
               // 清理過期市場數據
-              const cutoffDate = moment().subtract(options.days || 365, 'days').toDate();
+              const cutoffDate = moment()
+                .subtract(options.days || 365, 'days')
+                .toDate();
               const deletedCount = await MarketData.destroy({
                 where: {
-                  date: { [Op.lt]: cutoffDate }
-                }
+                  date: { [Op.lt]: cutoffDate },
+                },
               });
               results.success.push(`Deleted ${deletedCount} records`);
               break;
@@ -358,10 +404,12 @@ class BatchOperationService {
           }
         } catch (error) {
           logger.error(`批量市場數據操作批次 ${i + 1} 失敗:`, error);
-          results.failed.push(...batch.map(data => ({
-            id: data.id || data.cardId,
-            reason: error.message
-          })));
+          results.failed.push(
+            ...batch.map((data) => ({
+              id: data.id || data.cardId,
+              reason: error.message,
+            }))
+          );
         }
       }
 
@@ -378,14 +426,16 @@ class BatchOperationService {
   async processBatchUsers(data) {
     try {
       const { operation, users, options = {} } = data;
+// eslint-disable-next-line no-unused-vars
       const results = {
         success: [],
         failed: [],
         total: users.length,
-        operation
+        operation,
       };
 
       const User = require('../models/User');
+// eslint-disable-next-line no-unused-vars
       const batchSize = options.batchSize || 50;
       const batches = this.chunkArray(users, batchSize);
 
@@ -395,15 +445,19 @@ class BatchOperationService {
         try {
           switch (operation) {
             case 'update':
+// eslint-disable-next-line no-unused-vars
               for (const user of batch) {
                 const updated = await User.update(user.data, {
                   where: { id: user.id },
-                  returning: true
+                  returning: true,
                 });
                 if (updated[0] > 0) {
                   results.success.push(user.id);
                 } else {
-                  results.failed.push({ id: user.id, reason: 'User not found' });
+                  results.failed.push({
+                    id: user.id,
+                    reason: 'User not found',
+                  });
                 }
               }
               break;
@@ -413,11 +467,13 @@ class BatchOperationService {
                 { isActive: false, deactivatedAt: new Date() },
                 {
                   where: {
-                    id: { [Op.in]: batch.map(user => user.id) }
-                  }
+                    id: { [Op.in]: batch.map((user) => user.id) },
+                  },
                 }
               );
-              results.success.push(...batch.map(user => user.id).slice(0, deactivatedCount[0]));
+              results.success.push(
+                ...batch.map((user) => user.id).slice(0, deactivatedCount[0])
+              );
               break;
 
             case 'activate':
@@ -425,15 +481,19 @@ class BatchOperationService {
                 { isActive: true, deactivatedAt: null },
                 {
                   where: {
-                    id: { [Op.in]: batch.map(user => user.id) }
-                  }
+                    id: { [Op.in]: batch.map((user) => user.id) },
+                  },
                 }
               );
-              results.success.push(...batch.map(user => user.id).slice(0, activatedCount[0]));
+              results.success.push(
+                ...batch.map((user) => user.id).slice(0, activatedCount[0])
+              );
               break;
 
             case 'send-notification':
+// eslint-disable-next-line no-unused-vars
               const notificationService = require('./notificationService');
+// eslint-disable-next-line no-unused-vars
               for (const user of batch) {
                 try {
                   await notificationService.sendInstantNotification(
@@ -454,10 +514,12 @@ class BatchOperationService {
           }
         } catch (error) {
           logger.error(`批量用戶操作批次 ${i + 1} 失敗:`, error);
-          results.failed.push(...batch.map(user => ({
-            id: user.id,
-            reason: error.message
-          })));
+          results.failed.push(
+            ...batch.map((user) => ({
+              id: user.id,
+              reason: error.message,
+            }))
+          );
         }
       }
 
@@ -474,14 +536,17 @@ class BatchOperationService {
   async processBatchNotifications(data) {
     try {
       const { operation, notifications, options = {} } = data;
+// eslint-disable-next-line no-unused-vars
       const results = {
         success: [],
         failed: [],
         total: notifications.length,
-        operation
+        operation,
       };
 
+// eslint-disable-next-line no-unused-vars
       const notificationService = require('./notificationService');
+// eslint-disable-next-line no-unused-vars
       const batchSize = options.batchSize || 100;
       const batches = this.chunkArray(notifications, batchSize);
 
@@ -491,53 +556,62 @@ class BatchOperationService {
         try {
           switch (operation) {
             case 'send':
+// eslint-disable-next-line no-unused-vars
               for (const notification of batch) {
                 try {
-                  const notificationId = await notificationService.sendInstantNotification(
-                    notification.userId,
-                    notification.type,
-                    notification.data,
-                    notification.channels
-                  );
+// eslint-disable-next-line no-unused-vars
+                  const notificationId =
+                    await notificationService.sendInstantNotification(
+                      notification.userId,
+                      notification.type,
+                      notification.data,
+                      notification.channels
+                    );
                   results.success.push(notificationId);
                 } catch (error) {
                   results.failed.push({
                     userId: notification.userId,
-                    reason: error.message
+                    reason: error.message,
                   });
                 }
               }
               break;
 
             case 'schedule':
+// eslint-disable-next-line no-unused-vars
               for (const notification of batch) {
                 try {
-                  const notificationId = await notificationService.scheduleNotification(
-                    notification.userId,
-                    notification.type,
-                    notification.data,
-                    notification.scheduleTime,
-                    notification.channels
-                  );
+// eslint-disable-next-line no-unused-vars
+                  const notificationId =
+                    await notificationService.scheduleNotification(
+                      notification.userId,
+                      notification.type,
+                      notification.data,
+                      notification.scheduleTime,
+                      notification.channels
+                    );
                   results.success.push(notificationId);
                 } catch (error) {
                   results.failed.push({
                     userId: notification.userId,
-                    reason: error.message
+                    reason: error.message,
                   });
                 }
               }
               break;
 
             case 'cancel':
+// eslint-disable-next-line no-unused-vars
               for (const notification of batch) {
                 try {
-                  await notificationService.cancelScheduledNotification(notification.notificationId);
+                  await notificationService.cancelScheduledNotification(
+                    notification.notificationId
+                  );
                   results.success.push(notification.notificationId);
                 } catch (error) {
                   results.failed.push({
                     notificationId: notification.notificationId,
-                    reason: error.message
+                    reason: error.message,
                   });
                 }
               }
@@ -548,10 +622,12 @@ class BatchOperationService {
           }
         } catch (error) {
           logger.error(`批量通知操作批次 ${i + 1} 失敗:`, error);
-          results.failed.push(...batch.map(notification => ({
-            id: notification.userId || notification.notificationId,
-            reason: error.message
-          })));
+          results.failed.push(
+            ...batch.map((notification) => ({
+              id: notification.userId || notification.notificationId,
+              reason: error.message,
+            }))
+          );
         }
       }
 
@@ -573,18 +649,18 @@ class BatchOperationService {
         attempts: options.attempts || 3,
         backoff: {
           type: 'exponential',
-          delay: 2000
+          delay: 2000,
         },
         removeOnComplete: 100,
         removeOnFail: 50,
-        ...options
+        ...options,
       });
 
       logger.info(`批量操作任務已提交: ${jobId}, 類型: ${type}`);
       return {
         jobId,
         status: 'queued',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('提交批量操作任務失敗:', error);
@@ -605,8 +681,9 @@ class BatchOperationService {
 
       const state = await job.getState();
       const progress = job._progress;
+// eslint-disable-next-line no-unused-vars
       const result = job.returnvalue;
-      const {failedReason} = job;
+      const { failedReason } = job;
 
       return {
         jobId,
@@ -614,7 +691,7 @@ class BatchOperationService {
         progress,
         result,
         failedReason,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('獲取任務狀態失敗:', error);
@@ -639,7 +716,7 @@ class BatchOperationService {
       return {
         jobId,
         status: 'cancelled',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('取消任務失敗:', error);
@@ -662,8 +739,9 @@ class BatchOperationService {
         active: active.length,
         completed: completed.length,
         failed: failed.length,
-        total: waiting.length + active.length + completed.length + failed.length,
-        timestamp: new Date().toISOString()
+        total:
+          waiting.length + active.length + completed.length + failed.length,
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('獲取隊列統計失敗:', error);
@@ -676,6 +754,7 @@ class BatchOperationService {
    */
   async aggregateMarketData(cardId, date) {
     try {
+// eslint-disable-next-line no-unused-vars
       const MarketData = require('../models/MarketData');
 
       const dailyData = await MarketData.findAll({
@@ -683,18 +762,20 @@ class BatchOperationService {
           cardId,
           date: {
             [Op.gte]: moment(date).startOf('day').toDate(),
-            [Op.lt]: moment(date).endOf('day').toDate()
-          }
+            [Op.lt]: moment(date).endOf('day').toDate(),
+          },
         },
-        order: [['date', 'ASC']]
+        order: [['date', 'ASC']],
       });
 
       if (dailyData.length === 0) {
         throw new Error('No market data found for the specified date');
       }
 
-      const prices = dailyData.map(data => data.price);
-      const volumes = dailyData.map(data => data.volume || 0);
+// eslint-disable-next-line no-unused-vars
+      const prices = dailyData.map((data) => data.price);
+// eslint-disable-next-line no-unused-vars
+      const volumes = dailyData.map((data) => data.volume || 0);
 
       const aggregated = {
         cardId,
@@ -703,12 +784,14 @@ class BatchOperationService {
         closePrice: prices[prices.length - 1],
         highPrice: Math.max(...prices),
         lowPrice: Math.min(...prices),
-        averagePrice: prices.reduce((sum, price) => sum + price, 0) / prices.length,
+        averagePrice:
+          prices.reduce((sum, price) => sum + price, 0) / prices.length,
         totalVolume: volumes.reduce((sum, volume) => sum + volume, 0),
         priceChange: prices[prices.length - 1] - prices[0],
-        priceChangePercent: ((prices[prices.length - 1] - prices[0]) / prices[0]) * 100,
+        priceChangePercent:
+          ((prices[prices.length - 1] - prices[0]) / prices[0]) * 100,
         dataPoints: dailyData.length,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       };
 
       // 保存聚合數據

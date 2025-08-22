@@ -1,4 +1,6 @@
-const { by, device, element, expect } = require('detox');
+/* eslint-env jest, detox */
+
+const { by, device, element } = require('detox');
 
 describe('Settings and Profile Flow', () => {
   beforeAll(async () => {
@@ -313,7 +315,9 @@ describe('Settings and Profile Flow', () => {
 
       // 輸入新密碼
       await element(by.id('new-password-input')).typeText('NewPassword123!');
-      await element(by.id('confirm-password-input')).typeText('NewPassword123!');
+      await element(by.id('confirm-password-input')).typeText(
+        'NewPassword123!'
+      );
 
       // 保存新密碼
       await element(by.text('保存')).tap();

@@ -7,10 +7,10 @@ import * as Haptics from 'expo-haptics';
 export const PLATFORMS = {
   IOS: 'ios',
   ANDROID: 'android',
-  WEB: 'web'
+  WEB: 'web',
 } as const;
 
-export type PlatformType = typeof PLATFORMS[keyof typeof PLATFORMS];
+export type PlatformType = (typeof PLATFORMS)[keyof typeof PLATFORMS];
 
 // 獲取當前平台
 export const getCurrentPlatform = (): PlatformType => {
@@ -53,7 +53,7 @@ export const getDeviceInfo = () => {
     osBuildId: Device.osBuildId,
     osInternalBuildId: Device.osInternalBuildId,
     deviceName: Device.deviceName,
-    deviceType: Device.deviceType
+    deviceType: Device.deviceType,
   };
 };
 
@@ -70,7 +70,7 @@ export const getScreenDimensions = () => {
     isPortrait: height > width,
     // iOS 安全區域
     safeAreaTop: isIOS() ? 44 : statusBarHeight,
-    safeAreaBottom: isIOS() ? 34 : 0
+    safeAreaBottom: isIOS() ? 34 : 0,
   };
 };
 
@@ -78,81 +78,83 @@ export const getScreenDimensions = () => {
 export const getPlatformStyles = () => {
   const platform = getCurrentPlatform();
 
-  return {
-    // 導航欄樣式
-    navigationBar: {
-      ios: {
-        headerStyle: {
-          backgroundColor: '#FFFFFF',
+  return (
+    {
+      // 導航欄樣式
+      navigationBar: {
+        ios: {
+          headerStyle: {
+            backgroundColor: '#FFFFFF',
+            borderBottomColor: '#E5E5E5',
+            borderBottomWidth: 0.5,
+          },
+          headerTitleStyle: {
+            fontWeight: '600',
+            fontSize: 17,
+          },
+        },
+        android: {
+          headerStyle: {
+            backgroundColor: '#1C2B3A',
+            elevation: 4,
+          },
+          headerTitleStyle: {
+            fontWeight: '500',
+            fontSize: 20,
+          },
+        },
+      },
+
+      // 按鈕樣式
+      button: {
+        ios: {
+          borderRadius: 8,
+          paddingVertical: 12,
+          paddingHorizontal: 16,
+        },
+        android: {
+          borderRadius: 4,
+          paddingVertical: 8,
+          paddingHorizontal: 16,
+          elevation: 2,
+        },
+      },
+
+      // 卡片樣式
+      card: {
+        ios: {
+          borderRadius: 12,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: 8,
+        },
+        android: {
+          borderRadius: 8,
+          elevation: 4,
+        },
+      },
+
+      // 輸入框樣式
+      input: {
+        ios: {
+          borderRadius: 8,
+          borderWidth: 1,
+          borderColor: '#E5E5E5',
+          paddingHorizontal: 12,
+          paddingVertical: 8,
+        },
+        android: {
+          borderRadius: 4,
+          borderWidth: 0,
+          borderBottomWidth: 1,
           borderBottomColor: '#E5E5E5',
-          borderBottomWidth: 0.5
+          paddingHorizontal: 8,
+          paddingVertical: 12,
         },
-        headerTitleStyle: {
-          fontWeight: '600',
-          fontSize: 17
-        }
       },
-      android: {
-        headerStyle: {
-          backgroundColor: '#1C2B3A',
-          elevation: 4
-        },
-        headerTitleStyle: {
-          fontWeight: '500',
-          fontSize: 20
-        }
-      }
-    },
-
-    // 按鈕樣式
-    button: {
-      ios: {
-        borderRadius: 8,
-        paddingVertical: 12,
-        paddingHorizontal: 16
-      },
-      android: {
-        borderRadius: 4,
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        elevation: 2
-      }
-    },
-
-    // 卡片樣式
-    card: {
-      ios: {
-        borderRadius: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8
-      },
-      android: {
-        borderRadius: 8,
-        elevation: 4
-      }
-    },
-
-    // 輸入框樣式
-    input: {
-      ios: {
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#E5E5E5',
-        paddingHorizontal: 12,
-        paddingVertical: 8
-      },
-      android: {
-        borderRadius: 4,
-        borderWidth: 0,
-        borderBottomWidth: 1,
-        borderBottomColor: '#E5E5E5',
-        paddingHorizontal: 8,
-        paddingVertical: 12
-      }
-    }
-  }[platform] || {};
+    }[platform] || {}
+  );
 };
 
 // 平台特定手勢
@@ -165,7 +167,7 @@ export const getPlatformGestures = () => {
       // Haptic Feedback
       hapticFeedback: true,
       // 滑動手勢
-      swipeBack: true
+      swipeBack: true,
     },
 
     // Android 特定手勢
@@ -175,8 +177,8 @@ export const getPlatformGestures = () => {
       // 雙擊手勢
       doubleTap: true,
       // 滑動手勢
-      swipeGesture: true
-    }
+      swipeGesture: true,
+    },
   };
 };
 
@@ -189,8 +191,8 @@ export const getPlatformAnimations = () => {
       easing: 'ease-in-out',
       springConfig: {
         tension: 100,
-        friction: 8
-      }
+        friction: 8,
+      },
     },
 
     // Android 動畫配置
@@ -199,9 +201,9 @@ export const getPlatformAnimations = () => {
       easing: 'ease-out',
       springConfig: {
         tension: 150,
-        friction: 10
-      }
-    }
+        friction: 10,
+      },
+    },
   };
 };
 
@@ -214,7 +216,7 @@ export const getPlatformPermissions = () => {
       location: 'NSLocationWhenInUseUsageDescription',
       microphone: 'NSMicrophoneUsageDescription',
       faceID: 'NSFaceIDUsageDescription',
-      notifications: 'NSUserNotificationUsageDescription'
+      notifications: 'NSUserNotificationUsageDescription',
     },
     android: {
       camera: 'android.permission.CAMERA',
@@ -222,8 +224,8 @@ export const getPlatformPermissions = () => {
       location: 'android.permission.ACCESS_FINE_LOCATION',
       microphone: 'android.permission.RECORD_AUDIO',
       biometric: 'android.permission.USE_BIOMETRIC',
-      notifications: 'android.permission.POST_NOTIFICATIONS'
-    }
+      notifications: 'android.permission.POST_NOTIFICATIONS',
+    },
   };
 };
 
@@ -234,14 +236,14 @@ export const getPlatformNotificationConfig = () => {
       // iOS 通知配置
       presentationOptions: [
         Notifications.AndroidNotificationSound.DEFAULT,
-        Notifications.AndroidNotificationPriority.HIGH
+        Notifications.AndroidNotificationPriority.HIGH,
       ],
       // 角標支持
       badge: true,
       // 聲音支持
       sound: true,
       // 震動支持
-      vibrate: true
+      vibrate: true,
     },
     android: {
       // Android 通知配置
@@ -255,8 +257,8 @@ export const getPlatformNotificationConfig = () => {
       // 通知圖標
       icon: 'ic_notification',
       // 通知顏色
-      color: '#1C2B3A'
-    }
+      color: '#1C2B3A',
+    },
   };
 };
 
@@ -271,7 +273,7 @@ export const getPlatformPerformanceConfig = () => {
       // 電池優化
       batteryOptimization: true,
       // 後台處理限制
-      backgroundProcessingLimit: 30 // 秒
+      backgroundProcessingLimit: 30, // 秒
     },
     android: {
       // Android 性能配置
@@ -283,8 +285,8 @@ export const getPlatformPerformanceConfig = () => {
       // 電池優化
       batteryOptimization: true,
       // 後台處理限制
-      backgroundProcessingLimit: 60 // 秒
-    }
+      backgroundProcessingLimit: 60, // 秒
+    },
   };
 };
 
@@ -299,7 +301,7 @@ export const getPlatformSecurityConfig = () => {
       // 越獄檢測
       jailbreakDetection: true,
       // 證書固定
-      certificatePinning: true
+      certificatePinning: true,
     },
     android: {
       // Android 安全配置
@@ -310,8 +312,8 @@ export const getPlatformSecurityConfig = () => {
       // 證書固定
       certificatePinning: true,
       // 應用完整性檢查
-      appIntegrityCheck: true
-    }
+      appIntegrityCheck: true,
+    },
   };
 };
 
@@ -325,7 +327,7 @@ export const getPlatformErrorHandling = () => {
       // 錯誤恢復
       errorRecovery: true,
       // 用戶反饋
-      userFeedback: true
+      userFeedback: true,
     },
     android: {
       // Android 錯誤處理
@@ -336,8 +338,8 @@ export const getPlatformErrorHandling = () => {
       // 用戶反饋
       userFeedback: true,
       // ANR 檢測
-      anrDetection: true
-    }
+      anrDetection: true,
+    },
   };
 };
 
@@ -354,7 +356,7 @@ export const getPlatformAccessibility = () => {
       // 高對比度
       highContrast: true,
       // 減少動畫
-      reduceMotion: true
+      reduceMotion: true,
     },
     android: {
       // Android 無障礙功能
@@ -367,8 +369,8 @@ export const getPlatformAccessibility = () => {
       // 減少動畫
       reduceMotion: true,
       // 顏色反轉
-      colorInversion: true
-    }
+      colorInversion: true,
+    },
   };
 };
 
@@ -384,7 +386,7 @@ export const getPlatformLocalization = () => {
       // 地區設置
       locale: 'en_US',
       // 時區
-      timezone: 'America/New_York'
+      timezone: 'America/New_York',
     },
     android: {
       // Android 本地化
@@ -395,8 +397,8 @@ export const getPlatformLocalization = () => {
       // 地區設置
       locale: 'en_US',
       // 時區
-      timezone: 'America/New_York'
-    }
+      timezone: 'America/New_York',
+    },
   };
 };
 
@@ -410,7 +412,7 @@ export const getPlatformTestConfig = () => {
       // 測試設備
       testDevices: ['iPhone 15', 'iPhone 15 Pro', 'iPad Pro'],
       // 測試環境
-      testEnvironment: 'simulator'
+      testEnvironment: 'simulator',
     },
     android: {
       // Android 測試配置
@@ -419,8 +421,8 @@ export const getPlatformTestConfig = () => {
       // 測試設備
       testDevices: ['Pixel 4', 'Pixel 6', 'Samsung Galaxy S21'],
       // 測試環境
-      testEnvironment: 'emulator'
-    }
+      testEnvironment: 'emulator',
+    },
   };
 };
 
@@ -435,14 +437,14 @@ export const getPlatformDeploymentConfig = () => {
       appStore: {
         teamId: 'YOUR_TEAM_ID',
         provisioningProfile: 'CardStrategy_AppStore',
-        distributionCertificate: 'CardStrategy_Distribution'
+        distributionCertificate: 'CardStrategy_Distribution',
       },
       // TestFlight 配置
       testFlight: {
         teamId: 'YOUR_TEAM_ID',
         provisioningProfile: 'CardStrategy_Development',
-        developmentCertificate: 'CardStrategy_Development'
-      }
+        developmentCertificate: 'CardStrategy_Development',
+      },
     },
     android: {
       // Android 部署配置
@@ -458,10 +460,10 @@ export const getPlatformDeploymentConfig = () => {
           keyAlias: 'cardstrategy',
           keyPassword: 'YOUR_KEY_PASSWORD',
           storeFile: 'cardstrategy.keystore',
-          storePassword: 'YOUR_STORE_PASSWORD'
-        }
-      }
-    }
+          storePassword: 'YOUR_STORE_PASSWORD',
+        },
+      },
+    },
   };
 };
 
@@ -478,7 +480,7 @@ export const getPlatformMonitoringConfig = () => {
       // 電池監控
       batteryMonitoring: true,
       // 網絡監控
-      networkMonitoring: true
+      networkMonitoring: true,
     },
     android: {
       // Android 監控配置
@@ -492,8 +494,8 @@ export const getPlatformMonitoringConfig = () => {
       // 網絡監控
       networkMonitoring: true,
       // ANR 監控
-      anrMonitoring: true
-    }
+      anrMonitoring: true,
+    },
   };
 };
 
@@ -512,7 +514,9 @@ export const getPlatformFeatureSupport = () => {
       // Haptic Feedback
       hapticFeedback: true,
       // 動態島
-      dynamicIsland: Device.modelName?.includes('iPhone 14') || Device.modelName?.includes('iPhone 15')
+      dynamicIsland:
+        Device.modelName?.includes('iPhone 14') ||
+        Device.modelName?.includes('iPhone 15'),
     },
     android: {
       // Android 功能支持
@@ -528,8 +532,8 @@ export const getPlatformFeatureSupport = () => {
       // 虹膜識別
       irisAuth: false,
       // 手勢導航
-      gestureNavigation: true
-    }
+      gestureNavigation: true,
+    },
   };
 };
 
@@ -547,7 +551,7 @@ export const getPlatformOptimizationSuggestions = () => {
       '使用 Face ID/Touch ID 進行安全認證',
       '實現動態字體支持',
       '支持深色模式',
-      '實現無障礙功能'
+      '實現無障礙功能',
     ],
     android: [
       '使用 Material Design 組件',
@@ -558,8 +562,8 @@ export const getPlatformOptimizationSuggestions = () => {
       '實現動態字體支持',
       '支持深色模式',
       '實現無障礙功能',
-      '使用 WorkManager 進行後台任務'
-    ]
+      '使用 WorkManager 進行後台任務',
+    ],
   };
 
   return suggestions[platform] || [];
@@ -589,5 +593,5 @@ export default {
   getPlatformDeploymentConfig,
   getPlatformMonitoringConfig,
   getPlatformFeatureSupport,
-  getPlatformOptimizationSuggestions
+  getPlatformOptimizationSuggestions,
 };

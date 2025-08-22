@@ -7,7 +7,7 @@ class ErrorHandler {
       byType: {},
       byStatus: {},
       byRoute: {},
-      recentErrors: []
+      recentErrors: [],
     };
     this.maxRecentErrors = 100;
   }
@@ -48,13 +48,13 @@ class ErrorHandler {
         body: this.sanitizeBody(req.body),
         headers: this.sanitizeHeaders(req.headers),
         ip: req.ip,
-        userAgent: req.get('User-Agent')
+        userAgent: req.get('User-Agent'),
       },
       context: {
         route: req.route?.path,
         controller: req.route?.stack?.[0]?.name,
-        middleware: req.route?.stack?.map(s => s.name).filter(Boolean)
-      }
+        middleware: req.route?.stack?.map((s) => s.name).filter(Boolean),
+      },
     };
 
     return errorInfo;
@@ -108,8 +108,7 @@ class ErrorHandler {
 
     // 按路由統計
     const route = errorInfo.context.route || 'unknown';
-    this.errorStats.byRoute[route] =
-      (this.errorStats.byRoute[route] || 0) + 1;
+    this.errorStats.byRoute[route] = (this.errorStats.byRoute[route] || 0) + 1;
 
     // 記錄最近錯誤
     this.errorStats.recentErrors.push({
@@ -118,7 +117,7 @@ class ErrorHandler {
       status: errorInfo.status,
       type: errorInfo.type,
       timestamp: errorInfo.timestamp,
-      route
+      route,
     });
 
     // 限制最近錯誤數量
@@ -141,8 +140,8 @@ class ErrorHandler {
       requestInfo: {
         method: errorInfo.requestInfo.method,
         url: errorInfo.requestInfo.url,
-        ip: errorInfo.requestInfo.ip
-      }
+        ip: errorInfo.requestInfo.ip,
+      },
     };
 
     switch (errorInfo.severity) {
@@ -170,8 +169,8 @@ class ErrorHandler {
         id: errorInfo.id,
         message: errorInfo.message,
         status: errorInfo.status,
-        type: errorInfo.type
-      }
+        type: errorInfo.type,
+      },
     };
 
     // 開發環境返回詳細錯誤信息
@@ -196,9 +195,15 @@ class ErrorHandler {
     if (!body) return body;
 
     const sanitized = { ...body };
-    const sensitiveFields = ['password', 'token', 'secret', 'key', 'authorization'];
+    const sensitiveFields = [
+      'password',
+      'token',
+      'secret',
+      'key',
+      'authorization',
+    ];
 
-    sensitiveFields.forEach(field => {
+    sensitiveFields.forEach((field) => {
       if (sanitized[field]) {
         sanitized[field] = '[REDACTED]';
       }
@@ -214,7 +219,7 @@ class ErrorHandler {
     const sanitized = { ...headers };
     const sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'];
 
-    sensitiveHeaders.forEach(header => {
+    sensitiveHeaders.forEach((header) => {
       if (sanitized[header]) {
         sanitized[header] = '[REDACTED]';
       }
@@ -232,8 +237,8 @@ class ErrorHandler {
         errorRate: this.calculateErrorRate(),
         topErrorTypes: this.getTopErrorTypes(),
         topErrorRoutes: this.getTopErrorRoutes(),
-        recentErrorCount: this.errorStats.recentErrors.length
-      }
+        recentErrorCount: this.errorStats.recentErrors.length,
+      },
     };
   }
 
@@ -246,7 +251,7 @@ class ErrorHandler {
   // 獲取頂部錯誤類型
   getTopErrorTypes() {
     return Object.entries(this.errorStats.byType)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([type, count]) => ({ type, count }));
   }
@@ -254,7 +259,7 @@ class ErrorHandler {
   // 獲取頂部錯誤路由
   getTopErrorRoutes() {
     return Object.entries(this.errorStats.byRoute)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([route, count]) => ({ route, count }));
   }
@@ -266,7 +271,7 @@ class ErrorHandler {
       byType: {},
       byStatus: {},
       byRoute: {},
-      recentErrors: []
+      recentErrors: [],
     };
     logger.info('錯誤統計已清理');
   }
@@ -329,7 +334,9 @@ const asyncHandler = (fn) => {
 
 // 404 錯誤處理
 const handleNotFound = (req, res, next) => {
-  const error = errorHandler.createNotFoundError(`路由不存在: ${req.method} ${req.url}`);
+  const error = errorHandler.createNotFoundError(
+    `路由不存在: ${req.method} ${req.url}`
+  );
   next(error);
 };
 
@@ -365,5 +372,5 @@ module.exports = {
   asyncHandler,
   handleNotFound,
   handleTimeout,
-  handlePayloadTooLarge
+  handlePayloadTooLarge,
 };

@@ -14,12 +14,12 @@ export const getPlatformNavigationConfig = () => {
           backgroundColor: isIOS() ? '#FFFFFF' : '#1C2B3A',
           borderBottomColor: isIOS() ? '#E5E5E5' : 'transparent',
           borderBottomWidth: isIOS() ? 0.5 : 0,
-          elevation: isAndroid() ? 4 : 0
+          elevation: isAndroid() ? 4 : 0,
         },
         headerTitleStyle: {
           fontWeight: isIOS() ? '600' : '500',
           fontSize: isIOS() ? 17 : 20,
-          color: isIOS() ? '#1C2B3A' : '#FFFFFF'
+          color: isIOS() ? '#1C2B3A' : '#FFFFFF',
         },
         headerTintColor: isIOS() ? '#1C2B3A' : '#FFFFFF',
         headerBackTitleVisible: isIOS(),
@@ -27,9 +27,9 @@ export const getPlatformNavigationConfig = () => {
         gestureEnabled: isIOS(),
         gestureDirection: 'horizontal',
         cardStyle: {
-          backgroundColor: '#F8F9FA'
-        }
-      }
+          backgroundColor: '#F8F9FA',
+        },
+      },
     },
 
     // 標籤導航器配置
@@ -46,19 +46,19 @@ export const getPlatformNavigationConfig = () => {
           shadowRadius: isIOS() ? 4 : undefined,
           height: isIOS() ? 83 : 60,
           paddingBottom: isIOS() ? 20 : 8,
-          paddingTop: isIOS() ? 8 : 8
+          paddingTop: isIOS() ? 8 : 8,
         },
         tabBarActiveTintColor: '#1C2B3A',
         tabBarInactiveTintColor: isIOS() ? '#8E8E93' : '#B0B0B0',
         tabBarLabelStyle: {
           fontSize: isIOS() ? 10 : 12,
           fontWeight: isIOS() ? '500' : '400',
-          marginTop: isIOS() ? 4 : 0
+          marginTop: isIOS() ? 4 : 0,
         },
         tabBarIconStyle: {
-          marginBottom: isIOS() ? 0 : 4
-        }
-      }
+          marginBottom: isIOS() ? 0 : 4,
+        },
+      },
     },
 
     // 抽屜導航器配置
@@ -66,28 +66,28 @@ export const getPlatformNavigationConfig = () => {
       screenOptions: {
         headerStyle: {
           backgroundColor: '#1C2B3A',
-          elevation: isAndroid() ? 4 : 0
+          elevation: isAndroid() ? 4 : 0,
         },
         headerTitleStyle: {
           fontWeight: '600',
           fontSize: 20,
-          color: '#FFFFFF'
+          color: '#FFFFFF',
         },
         headerTintColor: '#FFFFFF',
         drawerStyle: {
           backgroundColor: '#FFFFFF',
-          width: 280
+          width: 280,
         },
         drawerLabelStyle: {
           fontSize: 16,
           fontWeight: '500',
-          color: '#1C2B3A'
+          color: '#1C2B3A',
         },
         drawerActiveTintColor: '#1C2B3A',
         drawerInactiveTintColor: '#8E8E93',
-        drawerActiveBackgroundColor: '#F0F0F0'
-      }
-    }
+        drawerActiveBackgroundColor: '#F0F0F0',
+      },
+    },
   };
 };
 
@@ -103,20 +103,20 @@ export const getPlatformAnimationConfig = () => {
             {
               translateX: current.progress.interpolate({
                 inputRange: [0, 1],
-                outputRange: [layouts.screen.width, 0]
-              })
-            }
-          ]
-        }
+                outputRange: [layouts.screen.width, 0],
+              }),
+            },
+          ],
+        },
       }),
       // 標籤切換動畫
       tabBarStyle: {
         transform: [
           {
-            translateY: 0
-          }
-        ]
-      }
+            translateY: 0,
+          },
+        ],
+      },
     },
 
     // Android 動畫配置
@@ -128,21 +128,21 @@ export const getPlatformAnimationConfig = () => {
             {
               translateX: current.progress.interpolate({
                 inputRange: [0, 1],
-                outputRange: [layouts.screen.width, 0]
-              })
-            }
-          ]
-        }
+                outputRange: [layouts.screen.width, 0],
+              }),
+            },
+          ],
+        },
       }),
       // 標籤切換動畫
       tabBarStyle: {
         transform: [
           {
-            translateY: 0
-          }
-        ]
-      }
-    }
+            translateY: 0,
+          },
+        ],
+      },
+    },
   };
 };
 
@@ -155,12 +155,12 @@ export const getPlatformGestureConfig = () => {
       gestureEnabled: true,
       gestureDirection: 'horizontal',
       gestureResponseDistance: {
-        horizontal: 50
+        horizontal: 50,
       },
       // 3D Touch 手勢
       enable3DTouch: true,
       // Haptic Feedback
-      hapticFeedback: true
+      hapticFeedback: true,
     },
 
     // Android 手勢配置
@@ -169,13 +169,13 @@ export const getPlatformGestureConfig = () => {
       gestureEnabled: true,
       gestureDirection: 'horizontal',
       gestureResponseDistance: {
-        horizontal: 50
+        horizontal: 50,
       },
       // 長按手勢
       longPressGesture: true,
       // 雙擊手勢
-      doubleTapGesture: true
-    }
+      doubleTapGesture: true,
+    },
   };
 };
 
@@ -195,7 +195,7 @@ export const getPlatformThemeConfig = () => {
         error: '#FF3B30',
         success: '#34C759',
         warning: '#FF9500',
-        info: '#007AFF'
+        info: '#007AFF',
       },
       typography: {
         fontFamily: 'SF Pro Display',
@@ -203,28 +203,28 @@ export const getPlatformThemeConfig = () => {
           small: 12,
           medium: 16,
           large: 20,
-          xlarge: 24
+          xlarge: 24,
         },
         fontWeight: {
           regular: '400',
           medium: '500',
           semibold: '600',
-          bold: '700'
-        }
+          bold: '700',
+        },
       },
       spacing: {
         xs: 4,
         sm: 8,
         md: 16,
         lg: 24,
-        xl: 32
+        xl: 32,
       },
       borderRadius: {
         small: 4,
         medium: 8,
         large: 12,
-        xlarge: 16
-      }
+        xlarge: 16,
+      },
     },
 
     // Android 主題配置
@@ -240,7 +240,7 @@ export const getPlatformThemeConfig = () => {
         error: '#F44336',
         success: '#4CAF50',
         warning: '#FF9800',
-        info: '#2196F3'
+        info: '#2196F3',
       },
       typography: {
         fontFamily: 'Roboto',
@@ -248,29 +248,29 @@ export const getPlatformThemeConfig = () => {
           small: 12,
           medium: 16,
           large: 20,
-          xlarge: 24
+          xlarge: 24,
         },
         fontWeight: {
           regular: '400',
           medium: '500',
           semibold: '600',
-          bold: '700'
-        }
+          bold: '700',
+        },
       },
       spacing: {
         xs: 4,
         sm: 8,
         md: 16,
         lg: 24,
-        xl: 32
+        xl: 32,
       },
       borderRadius: {
         small: 2,
         medium: 4,
         large: 8,
-        xlarge: 12
-      }
-    }
+        xlarge: 12,
+      },
+    },
   };
 };
 
@@ -289,7 +289,7 @@ export const getPlatformAccessibilityConfig = () => {
       // 高對比度支持
       accessibilityHighContrast: true,
       // 減少動畫支持
-      accessibilityReduceMotion: true
+      accessibilityReduceMotion: true,
     },
 
     // Android 無障礙配置
@@ -306,8 +306,8 @@ export const getPlatformAccessibilityConfig = () => {
       // 減少動畫支持
       accessibilityReduceMotion: true,
       // 顏色反轉支持
-      accessibilityColorInversion: true
-    }
+      accessibilityColorInversion: true,
+    },
   };
 };
 
@@ -323,7 +323,7 @@ export const getPlatformPerformanceConfig = () => {
       // 後台處理限制
       backgroundProcessingLimit: 30,
       // 圖片緩存大小
-      imageCacheSize: 50 * 1024 * 1024 // 50MB
+      imageCacheSize: 50 * 1024 * 1024, // 50MB
     },
 
     // Android 性能配置
@@ -337,8 +337,8 @@ export const getPlatformPerformanceConfig = () => {
       // 圖片緩存大小
       imageCacheSize: 100 * 1024 * 1024, // 100MB
       // RAM 優化
-      ramOptimization: true
-    }
+      ramOptimization: true,
+    },
   };
 };
 
@@ -349,5 +349,5 @@ export default {
   getPlatformGestureConfig,
   getPlatformThemeConfig,
   getPlatformAccessibilityConfig,
-  getPlatformPerformanceConfig
+  getPlatformPerformanceConfig,
 };

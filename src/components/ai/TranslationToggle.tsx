@@ -6,7 +6,7 @@ import {
   StyleSheet,
   Modal,
   ScrollView,
-  Alert
+  Alert,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
@@ -26,8 +26,18 @@ interface Language {
 }
 
 const SUPPORTED_LANGUAGES: Language[] = [
-  { code: 'zh-TW', name: 'Chinese (Traditional)', nativeName: '繁體中文', flag: '🇹🇼' },
-  { code: 'zh-CN', name: 'Chinese (Simplified)', nativeName: '簡體中文', flag: '🇨🇳' },
+  {
+    code: 'zh-TW',
+    name: 'Chinese (Traditional)',
+    nativeName: '繁體中文',
+    flag: '🇹🇼',
+  },
+  {
+    code: 'zh-CN',
+    name: 'Chinese (Simplified)',
+    nativeName: '簡體中文',
+    flag: '🇨🇳',
+  },
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇺🇸' },
   { code: 'ja', name: 'Japanese', nativeName: '日本語', flag: '🇯🇵' },
   { code: 'ko', name: 'Korean', nativeName: '한국어', flag: '🇰🇷' },
@@ -40,19 +50,21 @@ const SUPPORTED_LANGUAGES: Language[] = [
   { code: 'ar', name: 'Arabic', nativeName: 'العربية', flag: '🇸🇦' },
   { code: 'hi', name: 'Hindi', nativeName: 'हिन्दी', flag: '🇮🇳' },
   { code: 'th', name: 'Thai', nativeName: 'ไทย', flag: '🇹🇭' },
-  { code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt', flag: '🇻🇳' }
+  { code: 'vi', name: 'Vietnamese', nativeName: 'Tiếng Việt', flag: '🇻🇳' },
 ];
 
 export const TranslationToggle: React.FC<TranslationToggleProps> = ({
   isEnabled,
   onToggle,
   targetLanguage = 'zh-TW',
-  onLanguageChange
+  onLanguageChange,
 }) => {
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(targetLanguage);
 
-  const currentLanguage = SUPPORTED_LANGUAGES.find(lang => lang.code === selectedLanguage) || SUPPORTED_LANGUAGES[0];
+  const currentLanguage =
+    SUPPORTED_LANGUAGES.find((lang) => lang.code === selectedLanguage) ||
+    SUPPORTED_LANGUAGES[0];
 
   const handleToggle = () => {
     onToggle(!isEnabled);
@@ -66,14 +78,10 @@ export const TranslationToggle: React.FC<TranslationToggleProps> = ({
 
   const openLanguageModal = () => {
     if (!isEnabled) {
-      Alert.alert(
-        '翻譯功能未啟用',
-        '請先啟用翻譯功能，然後選擇目標語言。',
-        [
-          { text: '取消', style: 'cancel' },
-          { text: '啟用翻譯', onPress: () => onToggle(true) }
-        ]
-      );
+      Alert.alert('翻譯功能未啟用', '請先啟用翻譯功能，然後選擇目標語言。', [
+        { text: '取消', style: 'cancel' },
+        { text: '啟用翻譯', onPress: () => onToggle(true) },
+      ]);
       return;
     }
     setShowLanguageModal(true);
@@ -87,12 +95,14 @@ export const TranslationToggle: React.FC<TranslationToggleProps> = ({
           onPress={handleToggle}
           activeOpacity={0.7}
         >
-          <MaterialIcons 
-            name="translate" 
-            size={16} 
-            color={isEnabled ? '#fff' : theme.colors.textSecondary} 
+          <MaterialIcons
+            name="translate"
+            size={16}
+            color={isEnabled ? '#fff' : theme.colors.textSecondary}
           />
-          <Text style={[styles.toggleText, isEnabled && styles.toggleTextActive]}>
+          <Text
+            style={[styles.toggleText, isEnabled && styles.toggleTextActive]}
+          >
             {isEnabled ? '翻譯已啟用' : '翻譯'}
           </Text>
         </TouchableOpacity>
@@ -105,7 +115,11 @@ export const TranslationToggle: React.FC<TranslationToggleProps> = ({
           >
             <Text style={styles.languageFlag}>{currentLanguage.flag}</Text>
             <Text style={styles.languageCode}>{currentLanguage.code}</Text>
-            <MaterialIcons name="arrow-drop-down" size={16} color={theme.colors.textSecondary} />
+            <MaterialIcons
+              name="arrow-drop-down"
+              size={16}
+              color={theme.colors.textSecondary}
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -124,27 +138,43 @@ export const TranslationToggle: React.FC<TranslationToggleProps> = ({
                 style={styles.closeButton}
                 onPress={() => setShowLanguageModal(false)}
               >
-                <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
+                <MaterialIcons
+                  name="close"
+                  size={24}
+                  color={theme.colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
 
-            <ScrollView style={styles.languageList} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={styles.languageList}
+              showsVerticalScrollIndicator={false}
+            >
               {SUPPORTED_LANGUAGES.map((language) => (
                 <TouchableOpacity
                   key={language.code}
                   style={[
                     styles.languageItem,
-                    selectedLanguage === language.code && styles.languageItemSelected
+                    selectedLanguage === language.code &&
+                      styles.languageItemSelected,
                   ]}
                   onPress={() => handleLanguageSelect(language.code)}
                 >
                   <Text style={styles.languageFlag}>{language.flag}</Text>
                   <View style={styles.languageInfo}>
-                    <Text style={styles.languageName}>{language.nativeName}</Text>
-                    <Text style={styles.languageEnglishName}>{language.name}</Text>
+                    <Text style={styles.languageName}>
+                      {language.nativeName}
+                    </Text>
+                    <Text style={styles.languageEnglishName}>
+                      {language.name}
+                    </Text>
                   </View>
                   {selectedLanguage === language.code && (
-                    <MaterialIcons name="check" size={20} color={theme.colors.primary} />
+                    <MaterialIcons
+                      name="check"
+                      size={20}
+                      color={theme.colors.primary}
+                    />
                   )}
                 </TouchableOpacity>
               ))}
@@ -164,7 +194,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: theme.colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   toggleButton: {
     flexDirection: 'row',
@@ -174,19 +204,19 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: theme.colors.backgroundLight,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   toggleButtonActive: {
     backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   toggleText: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginLeft: 4
+    marginLeft: 4,
   },
   toggleTextActive: {
-    color: '#fff'
+    color: '#fff',
   },
   languageButton: {
     flexDirection: 'row',
@@ -197,29 +227,29 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: theme.colors.backgroundLight,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   languageFlag: {
     fontSize: 16,
-    marginRight: 4
+    marginRight: 4,
   },
   languageCode: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginRight: 2
+    marginRight: 2,
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   modalContent: {
     width: '80%',
     maxHeight: '70%',
     backgroundColor: theme.colors.background,
     borderRadius: 16,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   modalHeader: {
     flexDirection: 'row',
@@ -227,41 +257,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   closeButton: {
-    padding: 4
+    padding: 4,
   },
   languageList: {
-    maxHeight: 400
+    maxHeight: 400,
   },
   languageItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   languageItemSelected: {
-    backgroundColor: theme.colors.primary + '10'
+    backgroundColor: theme.colors.primary + '10',
   },
   languageInfo: {
     flex: 1,
-    marginLeft: 12
+    marginLeft: 12,
   },
   languageName: {
     fontSize: 16,
     color: theme.colors.textPrimary,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   languageEnglishName: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginTop: 2
-  }
+    marginTop: 2,
+  },
 });

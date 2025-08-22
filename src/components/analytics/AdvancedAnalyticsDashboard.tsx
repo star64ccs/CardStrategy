@@ -8,11 +8,23 @@ import {
   Alert,
   RefreshControl,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { analyticsService, MarketTrends, PortfolioAnalysis, UserBehaviorAnalysis, PredictiveAnalysis, AnomalyDetection, CorrelationAnalysis, SegmentationAnalysis, AnalyticsMetrics, ComprehensiveReport, ReportTemplate } from '@/services/analyticsService';
+import {
+  analyticsService,
+  MarketTrends,
+  PortfolioAnalysis,
+  UserBehaviorAnalysis,
+  PredictiveAnalysis,
+  AnomalyDetection,
+  CorrelationAnalysis,
+  SegmentationAnalysis,
+  AnalyticsMetrics,
+  ComprehensiveReport,
+  ReportTemplate,
+} from '@/services/analyticsService';
 import { useErrorHandler } from '@/hooks/useErrorHandler';
 import { logger } from '@/utils/logger';
 
@@ -25,7 +37,7 @@ interface AdvancedAnalyticsDashboardProps {
 
 const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
   userId,
-  onNavigate
+  onNavigate,
 }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(false);
@@ -35,54 +47,80 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
 
   // 數據狀態
   const [marketTrends, setMarketTrends] = useState<MarketTrends | null>(null);
-  const [portfolioAnalysis, setPortfolioAnalysis] = useState<PortfolioAnalysis | null>(null);
-  const [userBehavior, setUserBehavior] = useState<UserBehaviorAnalysis | null>(null);
-  const [predictiveAnalysis, setPredictiveAnalysis] = useState<PredictiveAnalysis | null>(null);
-  const [anomalyDetection, setAnomalyDetection] = useState<AnomalyDetection | null>(null);
-  const [correlationAnalysis, setCorrelationAnalysis] = useState<CorrelationAnalysis | null>(null);
-  const [segmentationAnalysis, setSegmentationAnalysis] = useState<SegmentationAnalysis | null>(null);
-  const [analyticsMetrics, setAnalyticsMetrics] = useState<AnalyticsMetrics | null>(null);
+  const [portfolioAnalysis, setPortfolioAnalysis] =
+    useState<PortfolioAnalysis | null>(null);
+  const [userBehavior, setUserBehavior] = useState<UserBehaviorAnalysis | null>(
+    null
+  );
+  const [predictiveAnalysis, setPredictiveAnalysis] =
+    useState<PredictiveAnalysis | null>(null);
+  const [anomalyDetection, setAnomalyDetection] =
+    useState<AnomalyDetection | null>(null);
+  const [correlationAnalysis, setCorrelationAnalysis] =
+    useState<CorrelationAnalysis | null>(null);
+  const [segmentationAnalysis, setSegmentationAnalysis] =
+    useState<SegmentationAnalysis | null>(null);
+  const [analyticsMetrics, setAnalyticsMetrics] =
+    useState<AnalyticsMetrics | null>(null);
   const [reportTemplates, setReportTemplates] = useState<ReportTemplate[]>([]);
-  const [comprehensiveReport, setComprehensiveReport] = useState<ComprehensiveReport | null>(null);
+  const [comprehensiveReport, setComprehensiveReport] =
+    useState<ComprehensiveReport | null>(null);
 
   const { handleError } = useErrorHandler();
 
   // 加載數據
-  const loadData = useCallback(async (useCache = true) => {
-    if (!userId) return;
+  const loadData = useCallback(
+    async (useCache = true) => {
+      if (!userId) return;
 
-    setLoading(true);
-    try {
-      const promises = [
-        analyticsService.getMarketTrends({ timeframe, useCache }),
-        analyticsService.getPortfolioAnalysis(userId, { timeframe, useCache }),
-        analyticsService.getUserBehaviorAnalysis(userId, { timeframe, useCache }),
-        analyticsService.getPredictiveAnalysis({ timeframe: '7d', useCache }),
-        analyticsService.getAnomalyDetection({ timeframe: '24h', useCache }),
-        analyticsService.getCorrelationAnalysis({ timeframe, useCache }),
-        analyticsService.getSegmentationAnalysis({ useCache }),
-        analyticsService.getAnalyticsMetrics({ timeframe, useCache }),
-        analyticsService.getReportTemplates()
-      ];
+      setLoading(true);
+      try {
+        const promises = [
+          analyticsService.getMarketTrends({ timeframe, useCache }),
+          analyticsService.getPortfolioAnalysis(userId, {
+            timeframe,
+            useCache,
+          }),
+          analyticsService.getUserBehaviorAnalysis(userId, {
+            timeframe,
+            useCache,
+          }),
+          analyticsService.getPredictiveAnalysis({ timeframe: '7d', useCache }),
+          analyticsService.getAnomalyDetection({ timeframe: '24h', useCache }),
+          analyticsService.getCorrelationAnalysis({ timeframe, useCache }),
+          analyticsService.getSegmentationAnalysis({ useCache }),
+          analyticsService.getAnalyticsMetrics({ timeframe, useCache }),
+          analyticsService.getReportTemplates(),
+        ];
 
-      const results = await Promise.allSettled(promises);
+        const results = await Promise.allSettled(promises);
 
-      if (results[0].status === 'fulfilled') setMarketTrends(results[0].value);
-      if (results[1].status === 'fulfilled') setPortfolioAnalysis(results[1].value);
-      if (results[2].status === 'fulfilled') setUserBehavior(results[2].value);
-      if (results[3].status === 'fulfilled') setPredictiveAnalysis(results[3].value);
-      if (results[4].status === 'fulfilled') setAnomalyDetection(results[4].value);
-      if (results[5].status === 'fulfilled') setCorrelationAnalysis(results[5].value);
-      if (results[6].status === 'fulfilled') setSegmentationAnalysis(results[6].value);
-      if (results[7].status === 'fulfilled') setAnalyticsMetrics(results[7].value);
-      if (results[8].status === 'fulfilled') setReportTemplates(results[8].value);
-
-    } catch (error) {
-      handleError(error, '數據加載失敗');
-    } finally {
-      setLoading(false);
-    }
-  }, [userId, timeframe, handleError]);
+        if (results[0].status === 'fulfilled')
+          setMarketTrends(results[0].value);
+        if (results[1].status === 'fulfilled')
+          setPortfolioAnalysis(results[1].value);
+        if (results[2].status === 'fulfilled')
+          setUserBehavior(results[2].value);
+        if (results[3].status === 'fulfilled')
+          setPredictiveAnalysis(results[3].value);
+        if (results[4].status === 'fulfilled')
+          setAnomalyDetection(results[4].value);
+        if (results[5].status === 'fulfilled')
+          setCorrelationAnalysis(results[5].value);
+        if (results[6].status === 'fulfilled')
+          setSegmentationAnalysis(results[6].value);
+        if (results[7].status === 'fulfilled')
+          setAnalyticsMetrics(results[7].value);
+        if (results[8].status === 'fulfilled')
+          setReportTemplates(results[8].value);
+      } catch (error) {
+        handleError(error, '數據加載失敗');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userId, timeframe, handleError]
+  );
 
   // 刷新數據
   const onRefresh = useCallback(async () => {
@@ -98,7 +136,7 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
       const report = await analyticsService.generateComprehensiveReport({
         reportType: 'monthly',
         includeCharts: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       });
       setComprehensiveReport(report);
       Alert.alert('成功', '綜合報告生成完成');
@@ -112,7 +150,9 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
   // 導出數據
   const exportData = async (type: string) => {
     try {
-      const exportData = await analyticsService.exportAnalyticsData(type, { timeframe });
+      const exportData = await analyticsService.exportAnalyticsData(type, {
+        timeframe,
+      });
       Alert.alert('成功', `數據已導出，下載鏈接: ${exportData.downloadUrl}`);
     } catch (error) {
       handleError(error, '數據導出失敗');
@@ -134,7 +174,10 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
   const performHealthCheck = async () => {
     try {
       const health = await analyticsService.healthCheck();
-      Alert.alert('健康檢查', `狀態: ${health.status}\n時間: ${health.timestamp.toLocaleString()}`);
+      Alert.alert(
+        '健康檢查',
+        `狀態: ${health.status}\n時間: ${health.timestamp.toLocaleString()}`
+      );
     } catch (error) {
       handleError(error, '健康檢查失敗');
     }
@@ -153,7 +196,8 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
         <View style={styles.metricCard}>
           <Text style={styles.metricLabel}>總交易量</Text>
           <Text style={styles.metricValue}>
-            {marketTrends?.summary.keyMetrics.totalTransactions?.toLocaleString() || '0'}
+            {marketTrends?.summary.keyMetrics.totalTransactions?.toLocaleString() ||
+              '0'}
           </Text>
           <Text style={styles.metricChange}>
             {marketTrends?.trends.volume.direction === 'up' ? '+' : ''}
@@ -164,7 +208,8 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
         <View style={styles.metricCard}>
           <Text style={styles.metricLabel}>平均價格變化</Text>
           <Text style={styles.metricValue}>
-            {marketTrends?.summary.keyMetrics.avgPriceChange?.toFixed(2) || '0'}%
+            {marketTrends?.summary.keyMetrics.avgPriceChange?.toFixed(2) || '0'}
+            %
           </Text>
           <Text style={styles.metricChange}>
             {marketTrends?.trends.price.direction === 'up' ? '+' : ''}
@@ -178,8 +223,9 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
             ${portfolioAnalysis?.portfolio.totalValue?.toLocaleString() || '0'}
           </Text>
           <Text style={styles.metricChange}>
-            {portfolioAnalysis?.performance?.totalReturn ?
-              `${(portfolioAnalysis.performance.totalReturn * 100).toFixed(1)}%` : 'N/A'}
+            {portfolioAnalysis?.performance?.totalReturn
+              ? `${(portfolioAnalysis.performance.totalReturn * 100).toFixed(1)}%`
+              : 'N/A'}
           </Text>
         </View>
 
@@ -200,10 +246,20 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
           <Text style={styles.chartTitle}>市場趨勢分析</Text>
           <LineChart
             data={{
-              labels: ['1週前', '6天前', '5天前', '4天前', '3天前', '2天前', '今天'],
-              datasets: [{
-                data: [20, 45, 28, 80, 99, 43, 50]
-              }]
+              labels: [
+                '1週前',
+                '6天前',
+                '5天前',
+                '4天前',
+                '3天前',
+                '2天前',
+                '今天',
+              ],
+              datasets: [
+                {
+                  data: [20, 45, 28, 80, 99, 43, 50],
+                },
+              ],
             }}
             width={width - 40}
             height={220}
@@ -214,8 +270,8 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
               decimalPlaces: 2,
               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
               style: {
-                borderRadius: 16
-              }
+                borderRadius: 16,
+              },
             }}
             bezier
             style={styles.chart}
@@ -228,9 +284,17 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
         <View style={styles.insightsContainer}>
           <Text style={styles.sectionTitle}>關鍵洞察</Text>
           {marketTrends.insights.map((insight, index) => (
-            <View key={index} style={[styles.insightCard, { borderLeftColor: getSeverityColor(insight.severity) }]}>
+            <View
+              key={index}
+              style={[
+                styles.insightCard,
+                { borderLeftColor: getSeverityColor(insight.severity) },
+              ]}
+            >
               <Text style={styles.insightMessage}>{insight.message}</Text>
-              <Text style={styles.insightConfidence}>置信度: {(insight.confidence * 100).toFixed(0)}%</Text>
+              <Text style={styles.insightConfidence}>
+                置信度: {(insight.confidence * 100).toFixed(0)}%
+              </Text>
             </View>
           ))}
         </View>
@@ -255,17 +319,31 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>卡片數量</Text>
-                <Text style={styles.statValue}>{portfolioAnalysis.portfolio.totalCards}</Text>
+                <Text style={styles.statValue}>
+                  {portfolioAnalysis.portfolio.totalCards}
+                </Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>多樣化評分</Text>
                 <Text style={styles.statValue}>
-                  {(portfolioAnalysis.portfolio.diversification.score * 100).toFixed(0)}%
+                  {(
+                    portfolioAnalysis.portfolio.diversification.score * 100
+                  ).toFixed(0)}
+                  %
                 </Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>風險等級</Text>
-                <Text style={[styles.statValue, { color: getRiskColor(portfolioAnalysis.portfolio.riskMetrics.riskLevel) }]}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    {
+                      color: getRiskColor(
+                        portfolioAnalysis.portfolio.riskMetrics.riskLevel
+                      ),
+                    },
+                  ]}
+                >
                   {portfolioAnalysis.portfolio.riskMetrics.riskLevel.toUpperCase()}
                 </Text>
               </View>
@@ -279,14 +357,40 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
               <View style={styles.performanceGrid}>
                 <View style={styles.performanceItem}>
                   <Text style={styles.performanceLabel}>總回報</Text>
-                  <Text style={[styles.performanceValue, { color: portfolioAnalysis.performance.totalReturn >= 0 ? '#4CAF50' : '#F44336' }]}>
-                    {(portfolioAnalysis.performance.totalReturn * 100).toFixed(2)}%
+                  <Text
+                    style={[
+                      styles.performanceValue,
+                      {
+                        color:
+                          portfolioAnalysis.performance.totalReturn >= 0
+                            ? '#4CAF50'
+                            : '#F44336',
+                      },
+                    ]}
+                  >
+                    {(portfolioAnalysis.performance.totalReturn * 100).toFixed(
+                      2
+                    )}
+                    %
                   </Text>
                 </View>
                 <View style={styles.performanceItem}>
                   <Text style={styles.performanceLabel}>年化回報</Text>
-                  <Text style={[styles.performanceValue, { color: portfolioAnalysis.performance.annualizedReturn >= 0 ? '#4CAF50' : '#F44336' }]}>
-                    {(portfolioAnalysis.performance.annualizedReturn * 100).toFixed(2)}%
+                  <Text
+                    style={[
+                      styles.performanceValue,
+                      {
+                        color:
+                          portfolioAnalysis.performance.annualizedReturn >= 0
+                            ? '#4CAF50'
+                            : '#F44336',
+                      },
+                    ]}
+                  >
+                    {(
+                      portfolioAnalysis.performance.annualizedReturn * 100
+                    ).toFixed(2)}
+                    %
                   </Text>
                 </View>
                 <View style={styles.performanceItem}>
@@ -298,7 +402,10 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
                 <View style={styles.performanceItem}>
                   <Text style={styles.performanceLabel}>最大回撤</Text>
                   <Text style={[styles.performanceValue, { color: '#F44336' }]}>
-                    {(portfolioAnalysis.performance.maxDrawdown * 100).toFixed(2)}%
+                    {(portfolioAnalysis.performance.maxDrawdown * 100).toFixed(
+                      2
+                    )}
+                    %
                   </Text>
                 </View>
               </View>
@@ -309,17 +416,22 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
           <View style={styles.diversificationContainer}>
             <Text style={styles.sectionTitle}>多樣化分析</Text>
             <PieChart
-              data={portfolioAnalysis.portfolio.diversification.categories.map((category, index) => ({
-                name: category,
-                population: portfolioAnalysis.portfolio.diversification.distribution[category] || 0,
-                color: getCategoryColor(index),
-                legendFontColor: '#7F7F7F',
-                legendFontSize: 12
-              }))}
+              data={portfolioAnalysis.portfolio.diversification.categories.map(
+                (category, index) => ({
+                  name: category,
+                  population:
+                    portfolioAnalysis.portfolio.diversification.distribution[
+                      category
+                    ] || 0,
+                  color: getCategoryColor(index),
+                  legendFontColor: '#7F7F7F',
+                  legendFontSize: 12,
+                })
+              )}
               width={width - 40}
               height={220}
               chartConfig={{
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`
+                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
               }}
               accessor="population"
               backgroundColor="transparent"
@@ -329,17 +441,28 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
           </View>
 
           {/* 建議 */}
-          {portfolioAnalysis.recommendations && portfolioAnalysis.recommendations.length > 0 && (
-            <View style={styles.recommendationsContainer}>
-              <Text style={styles.sectionTitle}>投資建議</Text>
-              {portfolioAnalysis.recommendations.map((rec, index) => (
-                <View key={index} style={[styles.recommendationCard, { borderLeftColor: getPriorityColor(rec.priority) }]}>
-                  <Text style={styles.recommendationMessage}>{rec.message}</Text>
-                  <Text style={styles.recommendationAction}>建議操作: {rec.action}</Text>
-                </View>
-              ))}
-            </View>
-          )}
+          {portfolioAnalysis.recommendations &&
+            portfolioAnalysis.recommendations.length > 0 && (
+              <View style={styles.recommendationsContainer}>
+                <Text style={styles.sectionTitle}>投資建議</Text>
+                {portfolioAnalysis.recommendations.map((rec, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.recommendationCard,
+                      { borderLeftColor: getPriorityColor(rec.priority) },
+                    ]}
+                  >
+                    <Text style={styles.recommendationMessage}>
+                      {rec.message}
+                    </Text>
+                    <Text style={styles.recommendationAction}>
+                      建議操作: {rec.action}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
         </>
       ) : (
         <View style={styles.emptyState}>
@@ -360,11 +483,15 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
             <View style={styles.predictionStats}>
               <View style={styles.predictionItem}>
                 <Text style={styles.predictionLabel}>預測目標</Text>
-                <Text style={styles.predictionValue}>{predictiveAnalysis.target}</Text>
+                <Text style={styles.predictionValue}>
+                  {predictiveAnalysis.target}
+                </Text>
               </View>
               <View style={styles.predictionItem}>
                 <Text style={styles.predictionLabel}>時間範圍</Text>
-                <Text style={styles.predictionValue}>{predictiveAnalysis.timeframe}</Text>
+                <Text style={styles.predictionValue}>
+                  {predictiveAnalysis.timeframe}
+                </Text>
               </View>
               <View style={styles.predictionItem}>
                 <Text style={styles.predictionLabel}>置信度</Text>
@@ -386,12 +513,17 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
             <Text style={styles.chartTitle}>價格預測趨勢</Text>
             <LineChart
               data={{
-                labels: predictiveAnalysis.predictions.map(p =>
-                  new Date(p.date).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' })
+                labels: predictiveAnalysis.predictions.map((p) =>
+                  new Date(p.date).toLocaleDateString('zh-CN', {
+                    month: 'short',
+                    day: 'numeric',
+                  })
                 ),
-                datasets: [{
-                  data: predictiveAnalysis.predictions.map(p => p.value)
-                }]
+                datasets: [
+                  {
+                    data: predictiveAnalysis.predictions.map((p) => p.value),
+                  },
+                ],
               }}
               width={width - 40}
               height={220}
@@ -402,8 +534,8 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
                 decimalPlaces: 0,
                 color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
                 style: {
-                  borderRadius: 16
-                }
+                  borderRadius: 16,
+                },
               }}
               bezier
               style={styles.chart}
@@ -411,17 +543,22 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
           </View>
 
           {/* 關鍵因素 */}
-          {predictiveAnalysis.factors && predictiveAnalysis.factors.length > 0 && (
-            <View style={styles.factorsContainer}>
-              <Text style={styles.sectionTitle}>關鍵影響因素</Text>
-              {predictiveAnalysis.factors.map((factor, index) => (
-                <View key={index} style={styles.factorItem}>
-                  <MaterialIcons name="trending-up" size={16} color="#4CAF50" />
-                  <Text style={styles.factorText}>{factor}</Text>
-                </View>
-              ))}
-            </View>
-          )}
+          {predictiveAnalysis.factors &&
+            predictiveAnalysis.factors.length > 0 && (
+              <View style={styles.factorsContainer}>
+                <Text style={styles.sectionTitle}>關鍵影響因素</Text>
+                {predictiveAnalysis.factors.map((factor, index) => (
+                  <View key={index} style={styles.factorItem}>
+                    <MaterialIcons
+                      name="trending-up"
+                      size={16}
+                      color="#4CAF50"
+                    />
+                    <Text style={styles.factorText}>{factor}</Text>
+                  </View>
+                ))}
+              </View>
+            )}
         </>
       ) : (
         <View style={styles.emptyState}>
@@ -446,15 +583,24 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
               </View>
               <View style={styles.anomalyItem}>
                 <Text style={styles.anomalyLabel}>敏感度</Text>
-                <Text style={styles.anomalyValue}>{anomalyDetection.sensitivity}</Text>
+                <Text style={styles.anomalyValue}>
+                  {anomalyDetection.sensitivity}
+                </Text>
               </View>
               <View style={styles.anomalyItem}>
                 <Text style={styles.anomalyLabel}>檢測數量</Text>
-                <Text style={styles.anomalyValue}>{anomalyDetection.totalDetected}</Text>
+                <Text style={styles.anomalyValue}>
+                  {anomalyDetection.totalDetected}
+                </Text>
               </View>
               <View style={styles.anomalyItem}>
                 <Text style={styles.anomalyLabel}>嚴重程度</Text>
-                <Text style={[styles.anomalyValue, { color: getSeverityColor(anomalyDetection.severity) }]}>
+                <Text
+                  style={[
+                    styles.anomalyValue,
+                    { color: getSeverityColor(anomalyDetection.severity) },
+                  ]}
+                >
                   {anomalyDetection.severity.toUpperCase()}
                 </Text>
               </View>
@@ -462,27 +608,40 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
           </View>
 
           {/* 異常列表 */}
-          {anomalyDetection.anomalies && anomalyDetection.anomalies.length > 0 && (
-            <View style={styles.anomaliesContainer}>
-              <Text style={styles.sectionTitle}>檢測到的異常</Text>
-              {anomalyDetection.anomalies.map((anomaly, index) => (
-                <View key={index} style={[styles.anomalyCard, { borderLeftColor: getSeverityColor(anomaly.severity) }]}>
-                  <View style={styles.anomalyHeader}>
-                    <Text style={styles.anomalyType}>{anomaly.type}</Text>
-                    <Text style={[styles.anomalySeverity, { color: getSeverityColor(anomaly.severity) }]}>
-                      {anomaly.severity.toUpperCase()}
+          {anomalyDetection.anomalies &&
+            anomalyDetection.anomalies.length > 0 && (
+              <View style={styles.anomaliesContainer}>
+                <Text style={styles.sectionTitle}>檢測到的異常</Text>
+                {anomalyDetection.anomalies.map((anomaly, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.anomalyCard,
+                      { borderLeftColor: getSeverityColor(anomaly.severity) },
+                    ]}
+                  >
+                    <View style={styles.anomalyHeader}>
+                      <Text style={styles.anomalyType}>{anomaly.type}</Text>
+                      <Text
+                        style={[
+                          styles.anomalySeverity,
+                          { color: getSeverityColor(anomaly.severity) },
+                        ]}
+                      >
+                        {anomaly.severity.toUpperCase()}
+                      </Text>
+                    </View>
+                    <Text style={styles.anomalyDetails}>
+                      卡片ID: {anomaly.cardId} | 實際值: {anomaly.value} |
+                      預期值: {anomaly.expected}
+                    </Text>
+                    <Text style={styles.anomalyTime}>
+                      {new Date(anomaly.timestamp).toLocaleString('zh-CN')}
                     </Text>
                   </View>
-                  <Text style={styles.anomalyDetails}>
-                    卡片ID: {anomaly.cardId} | 實際值: {anomaly.value} | 預期值: {anomaly.expected}
-                  </Text>
-                  <Text style={styles.anomalyTime}>
-                    {new Date(anomaly.timestamp).toLocaleString('zh-CN')}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          )}
+                ))}
+              </View>
+            )}
         </>
       ) : (
         <View style={styles.emptyState}>
@@ -508,7 +667,9 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
               <Text style={styles.reportTemplateName}>{template.name}</Text>
               <MaterialIcons name="description" size={20} color="#666" />
             </View>
-            <Text style={styles.reportTemplateDescription}>{template.description}</Text>
+            <Text style={styles.reportTemplateDescription}>
+              {template.description}
+            </Text>
             <Text style={styles.reportTemplateType}>類型: {template.type}</Text>
           </TouchableOpacity>
         ))}
@@ -533,10 +694,7 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
           <Text style={styles.actionButtonText}>導出數據</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={clearCache}
-        >
+        <TouchableOpacity style={styles.actionButton} onPress={clearCache}>
           <MaterialIcons name="clear" size={20} color="#fff" />
           <Text style={styles.actionButtonText}>清理緩存</Text>
         </TouchableOpacity>
@@ -559,7 +717,10 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
               報告類型: {comprehensiveReport.metadata.reportType}
             </Text>
             <Text style={styles.reportDate}>
-              生成時間: {new Date(comprehensiveReport.metadata.generatedAt).toLocaleString('zh-CN')}
+              生成時間:{' '}
+              {new Date(
+                comprehensiveReport.metadata.generatedAt
+              ).toLocaleString('zh-CN')}
             </Text>
             <Text style={styles.reportVersion}>
               版本: {comprehensiveReport.metadata.version}
@@ -573,33 +734,52 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
   // 輔助函數
   const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'high': return '#F44336';
-      case 'medium': return '#FF9800';
-      case 'low': return '#4CAF50';
-      default: return '#666';
+      case 'high':
+        return '#F44336';
+      case 'medium':
+        return '#FF9800';
+      case 'low':
+        return '#4CAF50';
+      default:
+        return '#666';
     }
   };
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
-      case 'high': return '#F44336';
-      case 'medium': return '#FF9800';
-      case 'low': return '#4CAF50';
-      default: return '#666';
+      case 'high':
+        return '#F44336';
+      case 'medium':
+        return '#FF9800';
+      case 'low':
+        return '#4CAF50';
+      default:
+        return '#666';
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return '#F44336';
-      case 'medium': return '#FF9800';
-      case 'low': return '#4CAF50';
-      default: return '#666';
+      case 'high':
+        return '#F44336';
+      case 'medium':
+        return '#FF9800';
+      case 'low':
+        return '#4CAF50';
+      default:
+        return '#666';
     }
   };
 
   const getCategoryColor = (index: number) => {
-    const colors = ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'];
+    const colors = [
+      '#FF6384',
+      '#36A2EB',
+      '#FFCE56',
+      '#4BC0C0',
+      '#9966FF',
+      '#FF9F40',
+    ];
     return colors[index % colors.length];
   };
 
@@ -628,10 +808,14 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
       <View style={styles.tabBar}>
         {[
           { key: 'overview', label: '概覽', icon: 'dashboard' },
-          { key: 'portfolio', label: '投資組合', icon: 'account-balance-wallet' },
+          {
+            key: 'portfolio',
+            label: '投資組合',
+            icon: 'account-balance-wallet',
+          },
           { key: 'predictive', label: '預測', icon: 'trending-up' },
           { key: 'anomaly', label: '異常', icon: 'warning' },
-          { key: 'reports', label: '報告', icon: 'assessment' }
+          { key: 'reports', label: '報告', icon: 'assessment' },
         ].map((tab) => (
           <TouchableOpacity
             key={tab.key}
@@ -643,7 +827,12 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
               size={20}
               color={activeTab === tab.key ? '#007AFF' : '#666'}
             />
-            <Text style={[styles.tabLabel, activeTab === tab.key && styles.activeTabLabel]}>
+            <Text
+              style={[
+                styles.tabLabel,
+                activeTab === tab.key && styles.activeTabLabel,
+              ]}
+            >
               {tab.label}
             </Text>
           </TouchableOpacity>
@@ -679,7 +868,7 @@ const AdvancedAnalyticsDashboard: React.FC<AdvancedAnalyticsDashboardProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
@@ -688,16 +877,16 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0'
+    borderBottomColor: '#e0e0e0',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   headerActions: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   timeframeButton: {
     flexDirection: 'row',
@@ -705,19 +894,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     backgroundColor: '#f0f0f0',
-    borderRadius: 16
+    borderRadius: 16,
   },
   timeframeText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#333',
-    marginRight: 4
+    marginRight: 4,
   },
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0'
+    borderBottomColor: '#e0e0e0',
   },
   tab: {
     flex: 1,
@@ -725,55 +914,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#007AFF'
+    borderBottomColor: '#007AFF',
   },
   tabLabel: {
     fontSize: 12,
     color: '#666',
-    marginLeft: 4
+    marginLeft: 4,
   },
   activeTabLabel: {
     color: '#007AFF',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   scrollView: {
-    flex: 1
+    flex: 1,
   },
   tabContent: {
-    padding: 16
+    padding: 16,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#666'
+    color: '#666',
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 40
+    paddingVertical: 40,
   },
   emptyText: {
     fontSize: 16,
-    color: '#666'
+    color: '#666',
   },
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 20,
   },
   metricCard: {
     width: '48%',
@@ -785,23 +974,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   metricLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   metricValue: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   metricChange: {
     fontSize: 12,
     color: '#4CAF50',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   chartContainer: {
     backgroundColor: '#fff',
@@ -812,17 +1001,17 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   chartTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 12
+    marginBottom: 12,
   },
   chart: {
     marginVertical: 8,
-    borderRadius: 16
+    borderRadius: 16,
   },
   insightsContainer: {
     backgroundColor: '#fff',
@@ -833,29 +1022,29 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 16
+    marginBottom: 16,
   },
   insightCard: {
     backgroundColor: '#f8f9fa',
     padding: 12,
     borderRadius: 6,
     marginBottom: 8,
-    borderLeftWidth: 4
+    borderLeftWidth: 4,
   },
   insightMessage: {
     fontSize: 14,
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   insightConfidence: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   portfolioOverview: {
     backgroundColor: '#fff',
@@ -866,26 +1055,26 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   portfolioStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   statValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   performanceContainer: {
     backgroundColor: '#fff',
@@ -896,25 +1085,25 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   performanceGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   performanceItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   performanceLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   performanceValue: {
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   diversificationContainer: {
     backgroundColor: '#fff',
@@ -925,7 +1114,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   recommendationsContainer: {
     backgroundColor: '#fff',
@@ -936,23 +1125,23 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   recommendationCard: {
     backgroundColor: '#f8f9fa',
     padding: 12,
     borderRadius: 6,
     marginBottom: 8,
-    borderLeftWidth: 4
+    borderLeftWidth: 4,
   },
   recommendationMessage: {
     fontSize: 14,
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   recommendationAction: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   predictionOverview: {
     backgroundColor: '#fff',
@@ -963,26 +1152,26 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   predictionStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   predictionItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   predictionLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   predictionValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   factorsContainer: {
     backgroundColor: '#fff',
@@ -993,17 +1182,17 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   factorItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   factorText: {
     fontSize: 14,
     color: '#333',
-    marginLeft: 8
+    marginLeft: 8,
   },
   anomalyOverview: {
     backgroundColor: '#fff',
@@ -1014,26 +1203,26 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   anomalyStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   anomalyItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   anomalyLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   anomalyValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   anomaliesContainer: {
     backgroundColor: '#fff',
@@ -1044,38 +1233,38 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   anomalyCard: {
     backgroundColor: '#f8f9fa',
     padding: 12,
     borderRadius: 6,
     marginBottom: 8,
-    borderLeftWidth: 4
+    borderLeftWidth: 4,
   },
   anomalyHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   anomalyType: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   anomalySeverity: {
     fontSize: 12,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   anomalyDetails: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   anomalyTime: {
     fontSize: 10,
-    color: '#999'
+    color: '#999',
   },
   reportsContainer: {
     backgroundColor: '#fff',
@@ -1086,39 +1275,39 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   reportTemplateCard: {
     backgroundColor: '#f8f9fa',
     padding: 12,
     borderRadius: 6,
-    marginBottom: 8
+    marginBottom: 8,
   },
   reportTemplateHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   reportTemplateName: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   reportTemplateDescription: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   reportTemplateType: {
     fontSize: 10,
-    color: '#999'
+    color: '#999',
   },
   actionButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 20,
   },
   actionButton: {
     flexDirection: 'row',
@@ -1128,13 +1317,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 6,
     marginBottom: 8,
-    width: '48%'
+    width: '48%',
   },
   actionButtonText: {
     color: '#fff',
     fontSize: 12,
     fontWeight: '600',
-    marginLeft: 4
+    marginLeft: 4,
   },
   comprehensiveReportContainer: {
     backgroundColor: '#fff',
@@ -1145,28 +1334,28 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   reportCard: {
     backgroundColor: '#f8f9fa',
     padding: 12,
-    borderRadius: 6
+    borderRadius: 6,
   },
   reportTitle: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   reportDate: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 2
+    marginBottom: 2,
   },
   reportVersion: {
     fontSize: 10,
-    color: '#999'
-  }
+    color: '#999',
+  },
 });
 
 export default AdvancedAnalyticsDashboard;

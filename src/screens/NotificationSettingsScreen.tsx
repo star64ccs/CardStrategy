@@ -7,12 +7,15 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { theme } from '@/config/theme';
-import { notificationService, NotificationSettings } from '@/services/notificationService';
+import {
+  notificationService,
+  NotificationSettings,
+} from '@/services/notificationService';
 import { logger } from '@/utils/logger';
 
 export const NotificationSettingsScreen: React.FC = () => {
@@ -22,7 +25,7 @@ export const NotificationSettingsScreen: React.FC = () => {
     investmentAdvice: true,
     systemNotifications: true,
     soundEnabled: true,
-    vibrationEnabled: true
+    vibrationEnabled: true,
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -69,13 +72,16 @@ export const NotificationSettingsScreen: React.FC = () => {
 
       // 保存到本地存儲
       const AsyncStorage = require('@react-native-async-storage/async-storage');
-      await AsyncStorage.setItem('notification_settings', JSON.stringify(newSettings));
+      await AsyncStorage.setItem(
+        'notification_settings',
+        JSON.stringify(newSettings)
+      );
 
       // 同步到 Redux store
       const { store } = require('@/store');
       store.dispatch({
         type: 'settings/updateNotificationSettings',
-        payload: newSettings
+        payload: newSettings,
       });
 
       logger.info('通知設置已保存', { settings: newSettings });
@@ -115,7 +121,7 @@ export const NotificationSettingsScreen: React.FC = () => {
   const toggleSetting = (key: keyof NotificationSettings) => {
     const newSettings = {
       ...settings,
-      [key]: !settings[key]
+      [key]: !settings[key],
     };
     saveSettings(newSettings);
   };
@@ -137,7 +143,10 @@ export const NotificationSettingsScreen: React.FC = () => {
       <Switch
         value={settings[key]}
         onValueChange={() => toggleSetting(key)}
-        trackColor={{ false: theme.colors.borderLight, true: theme.colors.primary }}
+        trackColor={{
+          false: theme.colors.borderLight,
+          true: theme.colors.primary,
+        }}
         thumbColor={settings[key] ? theme.colors.white : theme.colors.gray}
       />
     </View>
@@ -246,32 +255,30 @@ export const NotificationSettingsScreen: React.FC = () => {
                 發送一個測試通知來驗證設置
               </Text>
             </View>
-            {isLoading && <ActivityIndicator size="small" color={theme.colors.primary} />}
+            {isLoading && (
+              <ActivityIndicator size="small" color={theme.colors.primary} />
+            )}
           </TouchableOpacity>
 
           <TouchableOpacity
             style={[styles.actionButton, styles.dangerButton]}
             onPress={() => {
-              Alert.alert(
-                '確認操作',
-                '確定要清除所有通知設置嗎？',
-                [
-                  { text: '取消', style: 'cancel' },
-                  {
-                    text: '確定',
-                    style: 'destructive',
-                    onPress: async () => {
-                      try {
-                        await notificationService.cancelAllNotifications();
-                        Alert.alert('成功', '所有通知已清除');
-                      } catch (error) {
-                        logger.error('清除通知失敗:', { error });
-                        Alert.alert('錯誤', '清除通知失敗，請重試');
-                      }
+              Alert.alert('確認操作', '確定要清除所有通知設置嗎？', [
+                { text: '取消', style: 'cancel' },
+                {
+                  text: '確定',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await notificationService.cancelAllNotifications();
+                      Alert.alert('成功', '所有通知已清除');
+                    } catch (error) {
+                      logger.error('清除通知失敗:', { error });
+                      Alert.alert('錯誤', '清除通知失敗，請重試');
                     }
-                  }
-                ]
-              );
+                  },
+                },
+              ]);
             }}
           >
             <Text style={styles.actionButtonIcon}>🗑️</Text>
@@ -288,10 +295,10 @@ export const NotificationSettingsScreen: React.FC = () => {
         <View style={styles.infoContainer}>
           <Text style={styles.infoTitle}>💡 使用提示</Text>
           <Text style={styles.infoText}>
-            • 價格提醒：設置目標價格後，當卡牌價格達到目標時會自動通知{'\n'}
-            • 市場更新：定期接收市場趨勢分析和重要更新{'\n'}
-            • 投資建議：AI 會根據您的投資組合提供個性化建議{'\n'}
-            • 系統通知：包含應用更新、維護等重要信息
+            • 價格提醒：設置目標價格後，當卡牌價格達到目標時會自動通知{'\n'}•
+            市場更新：定期接收市場趨勢分析和重要更新{'\n'}• 投資建議：AI
+            會根據您的投資組合提供個性化建議{'\n'}•
+            系統通知：包含應用更新、維護等重要信息
           </Text>
         </View>
       </ScrollView>
@@ -302,60 +309,60 @@ export const NotificationSettingsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.backgroundLight
+    backgroundColor: theme.colors.backgroundLight,
   },
   content: {
     flex: 1,
-    padding: theme.spacing.large
+    padding: theme.spacing.large,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingText: {
     marginTop: theme.spacing.medium,
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   permissionContainer: {
     backgroundColor: theme.colors.warning,
     padding: theme.spacing.large,
     borderRadius: theme.borderRadius.medium,
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   permissionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.white,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   permissionText: {
     fontSize: 14,
     color: theme.colors.white,
     marginBottom: theme.spacing.medium,
-    lineHeight: 20
+    lineHeight: 20,
   },
   permissionButton: {
     backgroundColor: theme.colors.white,
     paddingHorizontal: theme.spacing.large,
     paddingVertical: theme.spacing.medium,
     borderRadius: theme.borderRadius.medium,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   permissionButtonText: {
     color: theme.colors.warning,
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   section: {
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   settingItem: {
     flexDirection: 'row',
@@ -363,30 +370,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: theme.spacing.medium,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.borderLight
+    borderBottomColor: theme.colors.borderLight,
   },
   settingInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   settingIcon: {
     fontSize: 24,
-    marginRight: theme.spacing.medium
+    marginRight: theme.spacing.medium,
   },
   settingText: {
-    flex: 1
+    flex: 1,
   },
   settingTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   settingDescription: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    lineHeight: 18
+    lineHeight: 18,
   },
   actionButton: {
     flexDirection: 'row',
@@ -394,44 +401,44 @@ const styles = StyleSheet.create({
     padding: theme.spacing.medium,
     backgroundColor: theme.colors.backgroundPaper,
     borderRadius: theme.borderRadius.medium,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   dangerButton: {
-    backgroundColor: `${theme.colors.error  }20`
+    backgroundColor: `${theme.colors.error}20`,
   },
   actionButtonIcon: {
     fontSize: 24,
-    marginRight: theme.spacing.medium
+    marginRight: theme.spacing.medium,
   },
   actionButtonText: {
-    flex: 1
+    flex: 1,
   },
   actionButtonTitle: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   actionButtonDescription: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    lineHeight: 18
+    lineHeight: 18,
   },
   infoContainer: {
     backgroundColor: theme.colors.backgroundPaper,
     padding: theme.spacing.large,
     borderRadius: theme.borderRadius.medium,
-    marginTop: theme.spacing.large
+    marginTop: theme.spacing.large,
   },
   infoTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   infoText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    lineHeight: 20
-  }
+    lineHeight: 20,
+  },
 });

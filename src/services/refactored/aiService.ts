@@ -1,6 +1,13 @@
 import { z } from 'zod';
 import { BaseApiService } from '@/services/base/BaseApiService';
-import { ApiMethod, ValidateInput, ValidateResponse, Retry, PerformanceMonitor, Cache } from '@/decorators/serviceDecorators';
+import {
+  ApiMethod,
+  ValidateInput,
+  ValidateResponse,
+  Retry,
+  PerformanceMonitor,
+  Cache,
+} from '@/decorators/serviceDecorators';
 import { ValidationUtils } from '@/utils/validationUtils';
 import { LoggingUtils } from '@/utils/loggingUtils';
 import { API_ENDPOINTS } from '@/config/api';
@@ -13,9 +20,9 @@ const AIAnalysisSchema = z.object({
     sentiment: z.enum(['positive', 'negative', 'neutral']),
     confidence: z.number().min(0).max(1),
     factors: z.array(z.string()),
-    recommendations: z.array(z.string())
+    recommendations: z.array(z.string()),
   }),
-  timestamp: z.string().datetime()
+  timestamp: z.string().datetime(),
 });
 
 const AIPredictionSchema = z.object({
@@ -25,7 +32,7 @@ const AIPredictionSchema = z.object({
   confidence: z.number().min(0).max(1),
   factors: z.array(z.string()),
   riskAssessment: z.string(),
-  trend: z.enum(['up', 'down', 'stable'])
+  trend: z.enum(['up', 'down', 'stable']),
 });
 
 const AIRecommendationSchema = z.object({
@@ -35,7 +42,7 @@ const AIRecommendationSchema = z.object({
   reasoning: z.string(),
   riskLevel: z.enum(['low', 'medium', 'high']),
   expectedReturn: z.number(),
-  timeHorizon: z.string()
+  timeHorizon: z.string(),
 });
 
 const AIChatMessageSchema = z.object({
@@ -43,7 +50,7 @@ const AIChatMessageSchema = z.object({
   message: z.string(),
   response: z.string(),
   timestamp: z.string().datetime(),
-  sessionId: z.string().uuid().optional()
+  sessionId: z.string().uuid().optional(),
 });
 
 /**
@@ -51,7 +58,6 @@ const AIChatMessageSchema = z.object({
  * 使用基類和裝飾器消除重複代碼
  */
 export class AIService extends BaseApiService {
-
   /**
    * 獲取卡片 AI 分析
    * 使用裝飾器自動處理驗證、錯誤處理和日誌記錄
@@ -82,7 +88,7 @@ export class AIService extends BaseApiService {
     'POST',
     z.object({
       cardId: z.string().uuid('無效的卡牌 ID'),
-      timeframe: z.enum(['1d', '7d', '30d', '90d'])
+      timeframe: z.enum(['1d', '7d', '30d', '90d']),
     }),
     AIPredictionSchema
   )
@@ -100,7 +106,7 @@ export class AIService extends BaseApiService {
       API_ENDPOINTS.AI.PREDICTION,
       z.object({
         cardId: z.string().uuid('無效的卡牌 ID'),
-        timeframe: z.enum(['1d', '7d', '30d', '90d'])
+        timeframe: z.enum(['1d', '7d', '30d', '90d']),
       }),
       AIPredictionSchema
     )({ cardId, timeframe });
@@ -127,13 +133,21 @@ export class AIService extends BaseApiService {
   /**
    * 發送聊天消息
    */
-  @ValidateInput(z.object({
-    message: z.string().min(1, '消息不能為空').max(1000, '消息不能超過 1000 個字元'),
-    sessionId: z.string().uuid().optional()
-  }))
+  @ValidateInput(
+    z.object({
+      message: z
+        .string()
+        .min(1, '消息不能為空')
+        .max(1000, '消息不能超過 1000 個字元'),
+      sessionId: z.string().uuid().optional(),
+    })
+  )
   @ValidateResponse(AIChatMessageSchema)
   @PerformanceMonitor('AI 聊天')
-  async sendChatMessage(message: string, sessionId?: string): Promise<ApiResponse<any>> {
+  async sendChatMessage(
+    message: string,
+    sessionId?: string
+  ): Promise<ApiResponse<any>> {
     // 使用驗證工具類
     if (message.length === 0) {
       throw new Error('消息不能為空');
@@ -142,8 +156,11 @@ export class AIService extends BaseApiService {
     return this.createPostCall<any, { message: string; sessionId?: string }>(
       API_ENDPOINTS.AI.CHAT,
       z.object({
-        message: z.string().min(1, '消息不能為空').max(1000, '消息不能超過 1000 個字元'),
-        sessionId: z.string().uuid().optional()
+        message: z
+          .string()
+          .min(1, '消息不能為空')
+          .max(1000, '消息不能超過 1000 個字元'),
+        sessionId: z.string().uuid().optional(),
       }),
       AIChatMessageSchema
     )({ message, sessionId });
@@ -159,15 +176,13 @@ export class AIService extends BaseApiService {
     ValidationUtils.validateUUIDs(cardIds, '卡牌 ID');
 
     // 使用基類的批量執行功能
-    const calls = cardIds.map(cardId =>
-      () => this.getCardAnalysis(cardId)
-    );
+    const calls = cardIds.map((cardId) => () => this.getCardAnalysis(cardId));
 
     const results = await this.executeBatch(calls);
     return {
       success: true,
-      data: results.map(r => r.data),
-      status: 200
+      data: results.map((r) => r.data),
+      status: 200,
     };
   }
 
@@ -183,11 +198,13 @@ export class AIService extends BaseApiService {
         totalRequests: z.number(),
         averageResponseTime: z.number(),
         accuracy: z.number().min(0).max(1),
-        models: z.array(z.object({
-          name: z.string(),
-          accuracy: z.number(),
-          usage: z.number()
-        }))
+        models: z.array(
+          z.object({
+            name: z.string(),
+            accuracy: z.number(),
+            usage: z.number(),
+          })
+        ),
       })
     )();
   }
@@ -195,11 +212,13 @@ export class AIService extends BaseApiService {
   /**
    * 訓練 AI 模型
    */
-  @ValidateInput(z.object({
-    modelType: z.enum(['sentiment', 'prediction', 'recommendation']),
-    trainingData: z.array(z.any()).min(1, '訓練數據不能為空'),
-    parameters: z.record(z.any()).optional()
-  }))
+  @ValidateInput(
+    z.object({
+      modelType: z.enum(['sentiment', 'prediction', 'recommendation']),
+      trainingData: z.array(z.any()).min(1, '訓練數據不能為空'),
+      parameters: z.record(z.any()).optional(),
+    })
+  )
   @PerformanceMonitor('AI 模型訓練')
   async trainAIModel(
     modelType: string,
@@ -213,22 +232,25 @@ export class AIService extends BaseApiService {
       { modelType, dataSize: trainingData.length }
     );
 
-    return this.createPostCall<any, {
-      modelType: string;
-      trainingData: any[];
-      parameters?: Record<string, any>;
-    }>(
+    return this.createPostCall<
+      any,
+      {
+        modelType: string;
+        trainingData: any[];
+        parameters?: Record<string, any>;
+      }
+    >(
       API_ENDPOINTS.AI.TRAIN,
       z.object({
         modelType: z.enum(['sentiment', 'prediction', 'recommendation']),
         trainingData: z.array(z.any()).min(1, '訓練數據不能為空'),
-        parameters: z.record(z.any()).optional()
+        parameters: z.record(z.any()).optional(),
       }),
       z.object({
         modelId: z.string().uuid(),
         status: z.enum(['training', 'completed', 'failed']),
         accuracy: z.number().optional(),
-        trainingTime: z.number()
+        trainingTime: z.number(),
       })
     )({ modelType, trainingData, parameters });
   }
@@ -240,15 +262,17 @@ export class AIService extends BaseApiService {
   async getAIModels(): Promise<ApiResponse<any[]>> {
     return this.createGetCall<any[]>(
       API_ENDPOINTS.AI.MODELS,
-      z.array(z.object({
-        id: z.string().uuid(),
-        name: z.string(),
-        type: z.enum(['sentiment', 'prediction', 'recommendation']),
-        version: z.string(),
-        accuracy: z.number(),
-        lastUpdated: z.string().datetime(),
-        status: z.enum(['active', 'inactive', 'training'])
-      }))
+      z.array(
+        z.object({
+          id: z.string().uuid(),
+          name: z.string(),
+          type: z.enum(['sentiment', 'prediction', 'recommendation']),
+          version: z.string(),
+          accuracy: z.number(),
+          lastUpdated: z.string().datetime(),
+          status: z.enum(['active', 'inactive', 'training']),
+        })
+      )
     )();
   }
 
@@ -275,16 +299,20 @@ export class AIService extends BaseApiService {
       API_ENDPOINTS.AI.HEALTH,
       z.object({
         status: z.enum(['healthy', 'degraded', 'unhealthy']),
-        services: z.record(z.object({
-          status: z.enum(['up', 'down']),
-          responseTime: z.number(),
-          lastCheck: z.string().datetime()
-        })),
-        models: z.record(z.object({
-          status: z.enum(['active', 'inactive', 'error']),
-          accuracy: z.number(),
-          lastTraining: z.string().datetime()
-        }))
+        services: z.record(
+          z.object({
+            status: z.enum(['up', 'down']),
+            responseTime: z.number(),
+            lastCheck: z.string().datetime(),
+          })
+        ),
+        models: z.record(
+          z.object({
+            status: z.enum(['active', 'inactive', 'error']),
+            accuracy: z.number(),
+            lastTraining: z.string().datetime(),
+          })
+        ),
       })
     )();
   }

@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   Animated,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
@@ -26,7 +26,7 @@ export const Toast: React.FC<ToastProps> = ({
   type = 'info',
   duration = 3000,
   onClose,
-  position = 'top'
+  position = 'top',
 }) => {
   const translateY = useRef(new Animated.Value(-100)).current;
   const opacity = useRef(new Animated.Value(0)).current;
@@ -36,13 +36,13 @@ export const Toast: React.FC<ToastProps> = ({
       Animated.timing(translateY, {
         toValue: -100,
         duration: 300,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.timing(opacity, {
         toValue: 0,
         duration: 300,
-        useNativeDriver: true
-      })
+        useNativeDriver: true,
+      }),
     ]).start(() => {
       onClose();
     });
@@ -55,13 +55,13 @@ export const Toast: React.FC<ToastProps> = ({
         Animated.timing(translateY, {
           toValue: 0,
           duration: 300,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(opacity, {
           toValue: 1,
           duration: 300,
-          useNativeDriver: true
-        })
+          useNativeDriver: true,
+        }),
       ]).start();
 
       // Auto hide after duration
@@ -73,7 +73,6 @@ export const Toast: React.FC<ToastProps> = ({
     }
     hideToast();
     return undefined;
-
   }, [visible, duration, translateY, opacity, hideToast]);
 
   const getIconName = () => {
@@ -116,8 +115,8 @@ export const Toast: React.FC<ToastProps> = ({
         {
           backgroundColor: getBackgroundColor(),
           transform: [{ translateY }],
-          opacity
-        }
+          opacity,
+        },
       ]}
     >
       <View style={styles.content}>
@@ -141,23 +140,23 @@ const styles = StyleSheet.create({
     shadowColor: theme.colors.shadow,
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   top: {
-    top: 50
+    top: 50,
   },
   bottom: {
-    bottom: 50
+    bottom: 50,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: theme.spacing.medium,
-    minHeight: 50
+    minHeight: 50,
   },
   message: {
     flex: 1,
@@ -165,9 +164,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     marginLeft: theme.spacing.small,
-    marginRight: theme.spacing.small
+    marginRight: theme.spacing.small,
   },
   closeButton: {
-    padding: theme.spacing.xsmall
-  }
+    padding: theme.spacing.xsmall,
+  },
 });

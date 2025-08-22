@@ -51,7 +51,8 @@ class ApiService {
 
       // 如果啟用緩存且不在線，嘗試從緩存獲取
       if (cacheOptions.enabled !== false && !isOnline) {
-        const cachedData = await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
+        const cachedData =
+          await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
         if (cachedData) {
           logger.info(`📦 Cache hit for ${endpoint}`);
           return cachedData;
@@ -68,7 +69,7 @@ class ApiService {
           await cacheManager.cacheApiResponse(cacheKey, apiResponse, {
             expiry: cacheOptions.expiry || CACHE_EXPIRY.MEDIUM,
             etag: cacheOptions.etag,
-            lastModified: cacheOptions.lastModified
+            lastModified: cacheOptions.lastModified,
           });
         }
 
@@ -77,7 +78,8 @@ class ApiService {
 
       // 嘗試從緩存獲取
       if (cacheOptions.enabled !== false) {
-        const cachedData = await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
+        const cachedData =
+          await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
         if (cachedData) {
           logger.info(`📦 Cache hit for ${endpoint}`);
           return cachedData;
@@ -93,7 +95,7 @@ class ApiService {
         await cacheManager.cacheApiResponse(cacheKey, apiResponse, {
           expiry: cacheOptions.expiry || CACHE_EXPIRY.MEDIUM,
           etag: response.headers?.etag,
-          lastModified: response.headers?.['last-modified']
+          lastModified: response.headers?.['last-modified'],
         });
       }
 
@@ -104,9 +106,12 @@ class ApiService {
       // 如果網絡錯誤且啟用緩存，嘗試從緩存獲取
       if (this.isNetworkError(error) && cacheOptions.enabled !== false) {
         const cacheKey = this.generateCacheKey(endpoint, params);
-        const cachedData = await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
+        const cachedData =
+          await cacheManager.getCachedApiResponse<ApiResponse<T>>(cacheKey);
         if (cachedData) {
-          logger.info(`📦 Using cached data for ${endpoint} due to network error`);
+          logger.info(
+            `📦 Using cached data for ${endpoint} due to network error`
+          );
           return cachedData;
         }
       }
@@ -119,7 +124,10 @@ class ApiService {
   async post<T>(
     endpoint: string,
     data?: any,
-    options: { offlineQueue?: boolean; priority?: 'low' | 'medium' | 'high' } = {}
+    options: {
+      offlineQueue?: boolean;
+      priority?: 'low' | 'medium' | 'high';
+    } = {}
   ): Promise<ApiResponse<T>> {
     try {
       const isOnline = await networkMonitor.isConnected();
@@ -131,7 +139,7 @@ class ApiService {
           endpoint,
           data,
           maxRetries: 3,
-          priority: options.priority || 'medium'
+          priority: options.priority || 'medium',
         });
 
         logger.info(`📝 Added to offline queue: ${operationId}`);
@@ -140,7 +148,7 @@ class ApiService {
         return {
           success: true,
           message: '操作已加入離線隊列，將在網絡恢復時同步',
-          data: { operationId } as any
+          data: { operationId } as any,
         };
       }
 
@@ -156,15 +164,17 @@ class ApiService {
           endpoint,
           data,
           maxRetries: 3,
-          priority: options.priority || 'medium'
+          priority: options.priority || 'medium',
         });
 
-        logger.info(`📝 Added to offline queue after network error: ${operationId}`);
+        logger.info(
+          `📝 Added to offline queue after network error: ${operationId}`
+        );
 
         return {
           success: true,
           message: '操作已加入離線隊列，將在網絡恢復時同步',
-          data: { operationId } as any
+          data: { operationId } as any,
         };
       }
 
@@ -176,7 +186,10 @@ class ApiService {
   async put<T>(
     endpoint: string,
     data?: any,
-    options: { offlineQueue?: boolean; priority?: 'low' | 'medium' | 'high' } = {}
+    options: {
+      offlineQueue?: boolean;
+      priority?: 'low' | 'medium' | 'high';
+    } = {}
   ): Promise<ApiResponse<T>> {
     try {
       const isOnline = await networkMonitor.isConnected();
@@ -188,7 +201,7 @@ class ApiService {
           endpoint,
           data,
           maxRetries: 3,
-          priority: options.priority || 'medium'
+          priority: options.priority || 'medium',
         });
 
         logger.info(`📝 Added to offline queue: ${operationId}`);
@@ -196,7 +209,7 @@ class ApiService {
         return {
           success: true,
           message: '操作已加入離線隊列，將在網絡恢復時同步',
-          data: { operationId } as any
+          data: { operationId } as any,
         };
       }
 
@@ -216,15 +229,17 @@ class ApiService {
           endpoint,
           data,
           maxRetries: 3,
-          priority: options.priority || 'medium'
+          priority: options.priority || 'medium',
         });
 
-        logger.info(`📝 Added to offline queue after network error: ${operationId}`);
+        logger.info(
+          `📝 Added to offline queue after network error: ${operationId}`
+        );
 
         return {
           success: true,
           message: '操作已加入離線隊列，將在網絡恢復時同步',
-          data: { operationId } as any
+          data: { operationId } as any,
         };
       }
 
@@ -235,7 +250,10 @@ class ApiService {
   // 通用 DELETE 請求（支持離線隊列）
   async delete<T>(
     endpoint: string,
-    options: { offlineQueue?: boolean; priority?: 'low' | 'medium' | 'high' } = {}
+    options: {
+      offlineQueue?: boolean;
+      priority?: 'low' | 'medium' | 'high';
+    } = {}
   ): Promise<ApiResponse<T>> {
     try {
       const isOnline = await networkMonitor.isConnected();
@@ -247,7 +265,7 @@ class ApiService {
           endpoint,
           data: {},
           maxRetries: 3,
-          priority: options.priority || 'medium'
+          priority: options.priority || 'medium',
         });
 
         logger.info(`📝 Added to offline queue: ${operationId}`);
@@ -255,7 +273,7 @@ class ApiService {
         return {
           success: true,
           message: '操作已加入離線隊列，將在網絡恢復時同步',
-          data: { operationId } as any
+          data: { operationId } as any,
         };
       }
 
@@ -275,15 +293,17 @@ class ApiService {
           endpoint,
           data: {},
           maxRetries: 3,
-          priority: options.priority || 'medium'
+          priority: options.priority || 'medium',
         });
 
-        logger.info(`📝 Added to offline queue after network error: ${operationId}`);
+        logger.info(
+          `📝 Added to offline queue after network error: ${operationId}`
+        );
 
         return {
           success: true,
           message: '操作已加入離線隊列，將在網絡恢復時同步',
-          data: { operationId } as any
+          data: { operationId } as any,
         };
       }
 
@@ -299,7 +319,8 @@ class ApiService {
   ): Promise<ApiResponse<T>> {
     return cacheManager.smartCache(
       this.generateCacheKey(endpoint, params),
-      () => this.get<T>(endpoint, params, { ...cacheOptions, forceRefresh: true }),
+      () =>
+        this.get<T>(endpoint, params, { ...cacheOptions, forceRefresh: true }),
       cacheOptions
     );
   }
@@ -309,7 +330,10 @@ class ApiService {
     try {
       const promises = endpoints.map(async (endpoint) => {
         try {
-          await this.get(endpoint, undefined, { enabled: true, expiry: CACHE_EXPIRY.LONG });
+          await this.get(endpoint, undefined, {
+            enabled: true,
+            expiry: CACHE_EXPIRY.LONG,
+          });
         } catch (error) {
           logger.error(`Preload data error for ${endpoint}:`, { error });
         }
@@ -420,4 +444,5 @@ class ApiService {
 }
 
 // 導出單例實例
+export { ApiService };
 export const apiService = new ApiService();

@@ -1,12 +1,30 @@
-import { dataBreachNotificationService, DataBreachEvent, RiskLevel } from '../../../services/dataBreachNotificationService';
+/* global jest, describe, it, expect, beforeEach, afterEach */
+import {
+  dataBreachNotificationService,
+  DataBreachEvent,
+  RiskLevel,
+} from '../../../services/dataBreachNotificationService';
 import { storage } from '../../../utils/storage';
 
 // Mock dependencies
-jest.mock('../../../utils/storage');
+jest.mock('../../../utils/storage', () => ({
+  storage: {
+    get: jest.fn(),
+    set: jest.fn(),
+    remove: jest.fn(),
+    clear: jest.fn(),
+  },
+}));
+
 jest.mock('../../../utils/logger');
 jest.mock('../../../services/notificationService');
 
-const mockStorage = storage as jest.Mocked<typeof storage>;
+const mockStorage = {
+  get: jest.fn(),
+  set: jest.fn(),
+  remove: jest.fn(),
+  clear: jest.fn(),
+};
 
 describe('DataBreachNotificationService', () => {
   beforeEach(() => {
@@ -17,20 +35,24 @@ describe('DataBreachNotificationService', () => {
 
   describe('initialization', () => {
     it('should initialize successfully', async () => {
-      await expect(dataBreachNotificationService.initialize()).resolves.not.toThrow();
+      await expect(
+        dataBreachNotificationService.initialize()
+      ).resolves.not.toThrow();
     });
 
     it('should load configuration from storage', async () => {
       const mockConfig = {
         enableAutoNotification: false,
         notificationDelay: 2,
-        regulatoryDeadline: 48
+        regulatoryDeadline: 48,
       };
       mockStorage.get.mockResolvedValueOnce(mockConfig);
 
       await dataBreachNotificationService.initialize();
 
-      expect(mockStorage.get).toHaveBeenCalledWith('dataBreachNotificationConfig');
+      expect(mockStorage.get).toHaveBeenCalledWith(
+        'dataBreachNotificationConfig'
+      );
     });
   });
 
@@ -40,10 +62,11 @@ describe('DataBreachNotificationService', () => {
         title: 'Test Breach',
         description: 'Test description',
         breachType: 'unauthorized_access' as const,
-        riskLevel: 'medium' as RiskLevel
+        riskLevel: 'medium' as RiskLevel,
       };
 
-      const event = await dataBreachNotificationService.createBreachEvent(eventData);
+      const event =
+        await dataBreachNotificationService.createBreachEvent(eventData);
 
       expect(event.id).toBeDefined();
       expect(event.title).toBe('Test Breach');
@@ -64,16 +87,20 @@ describe('DataBreachNotificationService', () => {
           dataCategories: ['personal_info', 'contact_info'],
           affectedUsers: 100,
           dataSensitivity: 'high' as const,
-          estimatedRecords: 500
-        }
+          estimatedRecords: 500,
+        },
       };
 
-      const event = await dataBreachNotificationService.createBreachEvent(eventData);
+      const event =
+        await dataBreachNotificationService.createBreachEvent(eventData);
 
       expect(event.affectedData.affectedUsers).toBe(100);
       expect(event.affectedData.estimatedRecords).toBe(500);
       expect(event.affectedData.dataSensitivity).toBe('high');
-      expect(event.affectedData.dataCategories).toEqual(['personal_info', 'contact_info']);
+      expect(event.affectedData.dataCategories).toEqual([
+        'personal_info',
+        'contact_info',
+      ]);
     });
   });
 
@@ -90,7 +117,7 @@ describe('DataBreachNotificationService', () => {
             dataCategories: [],
             affectedUsers: 0,
             dataSensitivity: 'low',
-            estimatedRecords: 0
+            estimatedRecords: 0,
           },
           discoveryDate: new Date(),
           status: 'discovered',
@@ -99,8 +126,8 @@ describe('DataBreachNotificationService', () => {
           affectedRegions: ['TW'],
           complianceDeadline: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -123,7 +150,7 @@ describe('DataBreachNotificationService', () => {
             dataCategories: [],
             affectedUsers: 0,
             dataSensitivity: 'low',
-            estimatedRecords: 0
+            estimatedRecords: 0,
           },
           discoveryDate: new Date(),
           status: 'discovered',
@@ -132,13 +159,16 @@ describe('DataBreachNotificationService', () => {
           affectedRegions: ['TW'],
           complianceDeadline: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      await dataBreachNotificationService.updateEventStatus('test-1', 'investigating');
+      await dataBreachNotificationService.updateEventStatus(
+        'test-1',
+        'investigating'
+      );
 
       expect(mockStorage.set).toHaveBeenCalled();
     });
@@ -157,7 +187,7 @@ describe('DataBreachNotificationService', () => {
             dataCategories: [],
             affectedUsers: 100,
             dataSensitivity: 'high',
-            estimatedRecords: 1000
+            estimatedRecords: 1000,
           },
           discoveryDate: new Date(),
           status: 'resolved',
@@ -167,7 +197,7 @@ describe('DataBreachNotificationService', () => {
           complianceDeadline: new Date(),
           resolutionDate: new Date(Date.now() + 3600000), // 1 hour later
           createdAt: new Date(),
-          updatedAt: new Date()
+          updatedAt: new Date(),
         },
         {
           id: 'test-2',
@@ -179,7 +209,7 @@ describe('DataBreachNotificationService', () => {
             dataCategories: [],
             affectedUsers: 50,
             dataSensitivity: 'medium',
-            estimatedRecords: 500
+            estimatedRecords: 500,
           },
           discoveryDate: new Date(),
           status: 'discovered',
@@ -188,8 +218,8 @@ describe('DataBreachNotificationService', () => {
           affectedRegions: ['TW'],
           complianceDeadline: new Date(),
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       ];
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
@@ -238,10 +268,11 @@ describe('DataBreachNotificationService', () => {
         title: 'Manual Test Event',
         description: 'Manual test description',
         breachType: 'accidental_disclosure' as const,
-        riskLevel: 'low' as RiskLevel
+        riskLevel: 'low' as RiskLevel,
       };
 
-      const event = await dataBreachNotificationService.createManualBreachEvent(eventData);
+      const event =
+        await dataBreachNotificationService.createManualBreachEvent(eventData);
 
       expect(event.title).toBe('Manual Test Event');
       expect(event.breachType).toBe('accidental_disclosure');
@@ -263,7 +294,7 @@ describe('DataBreachNotificationService', () => {
 
       await expect(
         dataBreachNotificationService.createBreachEvent({
-          title: 'Error Test'
+          title: 'Error Test',
         })
       ).rejects.toThrow('Save error');
     });

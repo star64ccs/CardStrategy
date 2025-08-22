@@ -11,14 +11,14 @@ const AITraining: React.FC = () => {
     dataset: {
       training: 10000,
       validation: 2000,
-      test: 1000
-    }
+      test: 1000,
+    },
   });
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockModels: AIModel[] = [
         {
@@ -33,8 +33,8 @@ const AITraining: React.FC = () => {
           performance: {
             precision: 0.958,
             recall: 0.945,
-            f1Score: 0.951
-          }
+            f1Score: 0.951,
+          },
         },
         {
           id: '2',
@@ -48,9 +48,9 @@ const AITraining: React.FC = () => {
           performance: {
             precision: 0.873,
             recall: 0.861,
-            f1Score: 0.867
-          }
-        }
+            f1Score: 0.867,
+          },
+        },
       ];
 
       const mockTrainingJobs: TrainingJob[] = [
@@ -64,13 +64,13 @@ const AITraining: React.FC = () => {
           dataset: {
             training: 45000,
             validation: 5000,
-            test: 5000
+            test: 5000,
           },
           metrics: {
             loss: 0.045,
             accuracy: 0.956,
-            validationAccuracy: 0.952
-          }
+            validationAccuracy: 0.952,
+          },
         },
         {
           id: '2',
@@ -83,14 +83,14 @@ const AITraining: React.FC = () => {
           dataset: {
             training: 80000,
             validation: 10000,
-            test: 10000
+            test: 10000,
           },
           metrics: {
             loss: 0.123,
             accuracy: 0.873,
-            validationAccuracy: 0.861
-          }
-        }
+            validationAccuracy: 0.861,
+          },
+        },
       ];
 
       setModels(mockModels);
@@ -107,7 +107,7 @@ const AITraining: React.FC = () => {
       return;
     }
 
-    const selectedModel = models.find(m => m.id === newJob.modelId);
+    const selectedModel = models.find((m) => m.id === newJob.modelId);
     if (!selectedModel) return;
 
     const job: TrainingJob = {
@@ -121,8 +121,8 @@ const AITraining: React.FC = () => {
       metrics: {
         loss: 0,
         accuracy: 0,
-        validationAccuracy: 0
-      }
+        validationAccuracy: 0,
+      },
     };
 
     setTrainingJobs([job, ...trainingJobs]);
@@ -131,8 +131,8 @@ const AITraining: React.FC = () => {
       dataset: {
         training: 10000,
         validation: 2000,
-        test: 1000
-      }
+        test: 1000,
+      },
     });
     setShowCreateForm(false);
 
@@ -148,38 +148,38 @@ const AITraining: React.FC = () => {
         progress = 100;
         clearInterval(interval);
 
-        setTrainingJobs(prev =>
-          prev.map(job =>
-            (job.id === jobId
+        setTrainingJobs((prev) =>
+          prev.map((job) =>
+            job.id === jobId
               ? {
-                ...job,
-                status: 'completed',
-                progress: 100,
-                endTime: new Date().toISOString(),
-                metrics: {
-                  loss: 0.1 + Math.random() * 0.1,
-                  accuracy: 0.85 + Math.random() * 0.1,
-                  validationAccuracy: 0.83 + Math.random() * 0.1
+                  ...job,
+                  status: 'completed',
+                  progress: 100,
+                  endTime: new Date().toISOString(),
+                  metrics: {
+                    loss: 0.1 + Math.random() * 0.1,
+                    accuracy: 0.85 + Math.random() * 0.1,
+                    validationAccuracy: 0.83 + Math.random() * 0.1,
+                  },
                 }
-              }
-              : job)
+              : job
           )
         );
       } else {
-        setTrainingJobs(prev =>
-          prev.map(job =>
-            (job.id === jobId
+        setTrainingJobs((prev) =>
+          prev.map((job) =>
+            job.id === jobId
               ? {
-                ...job,
-                status: 'running',
-                progress: Math.min(progress, 99),
-                metrics: {
-                  loss: 0.2 - (progress / 100) * 0.1,
-                  accuracy: 0.7 + (progress / 100) * 0.2,
-                  validationAccuracy: 0.68 + (progress / 100) * 0.18
+                  ...job,
+                  status: 'running',
+                  progress: Math.min(progress, 99),
+                  metrics: {
+                    loss: 0.2 - (progress / 100) * 0.1,
+                    accuracy: 0.7 + (progress / 100) * 0.2,
+                    validationAccuracy: 0.68 + (progress / 100) * 0.18,
+                  },
                 }
-              }
-              : job)
+              : job
           )
         );
       }
@@ -188,21 +188,31 @@ const AITraining: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'running': return 'warning';
-      case 'completed': return 'success';
-      case 'failed': return 'danger';
-      case 'pending': return 'secondary';
-      default: return 'secondary';
+      case 'running':
+        return 'warning';
+      case 'completed':
+        return 'success';
+      case 'failed':
+        return 'danger';
+      case 'pending':
+        return 'secondary';
+      default:
+        return 'secondary';
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'running': return '訓練中';
-      case 'completed': return '已完成';
-      case 'failed': return '失敗';
-      case 'pending': return '等待中';
-      default: return status;
+      case 'running':
+        return '訓練中';
+      case 'completed':
+        return '已完成';
+      case 'failed':
+        return '失敗';
+      case 'pending':
+        return '等待中';
+      default:
+        return status;
     }
   };
 
@@ -229,10 +239,12 @@ const AITraining: React.FC = () => {
             <label>選擇模型:</label>
             <select
               value={newJob.modelId}
-              onChange={(e) => setNewJob({...newJob, modelId: e.target.value})}
+              onChange={(e) =>
+                setNewJob({ ...newJob, modelId: e.target.value })
+              }
             >
               <option value="">請選擇模型</option>
-              {models.map(model => (
+              {models.map((model) => (
                 <option key={model.id} value={model.id}>
                   {model.name} (v{model.version})
                 </option>
@@ -244,10 +256,15 @@ const AITraining: React.FC = () => {
             <input
               type="number"
               value={newJob.dataset.training}
-              onChange={(e) => setNewJob({
-                ...newJob,
-                dataset: {...newJob.dataset, training: parseInt(e.target.value)}
-              })}
+              onChange={(e) =>
+                setNewJob({
+                  ...newJob,
+                  dataset: {
+                    ...newJob.dataset,
+                    training: parseInt(e.target.value),
+                  },
+                })
+              }
               placeholder="訓練數據數量"
             />
           </div>
@@ -256,10 +273,15 @@ const AITraining: React.FC = () => {
             <input
               type="number"
               value={newJob.dataset.validation}
-              onChange={(e) => setNewJob({
-                ...newJob,
-                dataset: {...newJob.dataset, validation: parseInt(e.target.value)}
-              })}
+              onChange={(e) =>
+                setNewJob({
+                  ...newJob,
+                  dataset: {
+                    ...newJob.dataset,
+                    validation: parseInt(e.target.value),
+                  },
+                })
+              }
               placeholder="驗證數據數量"
             />
           </div>
@@ -280,7 +302,7 @@ const AITraining: React.FC = () => {
       <div className="training-jobs">
         <h4>訓練任務</h4>
         <div className="jobs-list">
-          {trainingJobs.map(job => (
+          {trainingJobs.map((job) => (
             <div key={job.id} className="training-job-card">
               <div className="job-header">
                 <h5>{job.modelName}</h5>
@@ -296,21 +318,29 @@ const AITraining: React.FC = () => {
                     style={{ width: `${job.progress}%` }}
                   ></div>
                 </div>
-                <span className="progress-text">{job.progress.toFixed(1)}%</span>
+                <span className="progress-text">
+                  {job.progress.toFixed(1)}%
+                </span>
               </div>
 
               <div className="job-metrics">
                 <div className="metric">
                   <span className="metric-label">Loss:</span>
-                  <span className="metric-value">{job.metrics.loss.toFixed(4)}</span>
+                  <span className="metric-value">
+                    {job.metrics.loss.toFixed(4)}
+                  </span>
                 </div>
                 <div className="metric">
                   <span className="metric-label">Accuracy:</span>
-                  <span className="metric-value">{(job.metrics.accuracy * 100).toFixed(2)}%</span>
+                  <span className="metric-value">
+                    {(job.metrics.accuracy * 100).toFixed(2)}%
+                  </span>
                 </div>
                 <div className="metric">
                   <span className="metric-label">Val Accuracy:</span>
-                  <span className="metric-value">{(job.metrics.validationAccuracy * 100).toFixed(2)}%</span>
+                  <span className="metric-value">
+                    {(job.metrics.validationAccuracy * 100).toFixed(2)}%
+                  </span>
                 </div>
               </div>
 
@@ -324,9 +354,13 @@ const AITraining: React.FC = () => {
               </div>
 
               <div className="job-meta">
-                <span>開始時間: {new Date(job.startTime).toLocaleString()}</span>
+                <span>
+                  開始時間: {new Date(job.startTime).toLocaleString()}
+                </span>
                 {job.endTime && (
-                  <span>結束時間: {new Date(job.endTime).toLocaleString()}</span>
+                  <span>
+                    結束時間: {new Date(job.endTime).toLocaleString()}
+                  </span>
                 )}
               </div>
 

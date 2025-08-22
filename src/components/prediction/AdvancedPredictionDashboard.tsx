@@ -6,13 +6,16 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
 import { Card, Button, Loading } from '../common';
 import { theme } from '../../config/theme';
-import { advancedPredictionService, AdvancedModelType } from '../../services/advancedPredictionService';
+import {
+  advancedPredictionService,
+  AdvancedModelType,
+} from '../../services/advancedPredictionService';
 import { logger } from '../../utils/logger';
 
 interface AdvancedPredictionDashboardProps {
@@ -20,16 +23,17 @@ interface AdvancedPredictionDashboardProps {
   onClose?: () => void;
 }
 
-export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardProps> = ({
-  cardId,
-  onClose
-}) => {
+export const AdvancedPredictionDashboard: React.FC<
+  AdvancedPredictionDashboardProps
+> = ({ cardId, onClose }) => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [modelStats, setModelStats] = useState<any>(null);
   const [advancedModels, setAdvancedModels] = useState<any[]>([]);
-  const [selectedTimeframe, setSelectedTimeframe] = useState<'7d' | '30d' | '90d'>('30d');
+  const [selectedTimeframe, setSelectedTimeframe] = useState<
+    '7d' | '30d' | '90d'
+  >('30d');
   const [predictionHistory, setPredictionHistory] = useState<any[]>([]);
 
   useEffect(() => {
@@ -41,7 +45,7 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
     try {
       const [stats, models] = await Promise.all([
         advancedPredictionService.getModelPerformanceStats(),
-        advancedPredictionService.getAdvancedModels()
+        advancedPredictionService.getAdvancedModels(),
       ]);
 
       setModelStats(stats);
@@ -84,7 +88,7 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
           useAllModels: true,
           includeSentiment: true,
           includeTechnicalAnalysis: true,
-          confidenceThreshold: 0.8
+          confidenceThreshold: 0.8,
         }
       );
 
@@ -105,10 +109,14 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
 
   const getTrendText = (trend: string) => {
     switch (trend) {
-      case 'up': return '上升趨勢';
-      case 'down': return '下降趨勢';
-      case 'stable': return '穩定趨勢';
-      default: return '未知趨勢';
+      case 'up':
+        return '上升趨勢';
+      case 'down':
+        return '下降趨勢';
+      case 'stable':
+        return '穩定趨勢';
+      default:
+        return '未知趨勢';
     }
   };
 
@@ -154,38 +162,55 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
         {modelStats && (
           <Card style={styles.card}>
             <View style={styles.cardHeader}>
-              <Ionicons name="analytics" size={24} color={theme.colors.primary} />
+              <Ionicons
+                name="analytics"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text style={styles.cardTitle}>整體性能統計</Text>
             </View>
 
             <View style={styles.statsGrid}>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>總預測數</Text>
-                <Text style={styles.statValue}>{modelStats.overallStats.totalPredictions}</Text>
+                <Text style={styles.statValue}>
+                  {modelStats.overallStats.totalPredictions}
+                </Text>
               </View>
 
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>平均準確率</Text>
-                <Text style={[
-                  styles.statValue,
-                  { color: getAccuracyColor(modelStats.overallStats.averageAccuracy) }
-                ]}>
+                <Text
+                  style={[
+                    styles.statValue,
+                    {
+                      color: getAccuracyColor(
+                        modelStats.overallStats.averageAccuracy
+                      ),
+                    },
+                  ]}
+                >
                   {(modelStats.overallStats.averageAccuracy * 100).toFixed(1)}%
                 </Text>
               </View>
 
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>最佳模型</Text>
-                <Text style={styles.statValue}>{modelStats.overallStats.bestModel}</Text>
+                <Text style={styles.statValue}>
+                  {modelStats.overallStats.bestModel}
+                </Text>
               </View>
 
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>準確率提升</Text>
-                <Text style={[
-                  styles.statValue,
-                  { color: theme.colors.success }
-                ]}>
-                  +{(modelStats.overallStats.accuracyImprovement * 100).toFixed(1)}%
+                <Text
+                  style={[styles.statValue, { color: theme.colors.success }]}
+                >
+                  +
+                  {(modelStats.overallStats.accuracyImprovement * 100).toFixed(
+                    1
+                  )}
+                  %
                 </Text>
               </View>
             </View>
@@ -205,14 +230,18 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
                 key={timeframe}
                 style={[
                   styles.timeframeButton,
-                  selectedTimeframe === timeframe && styles.timeframeButtonActive
+                  selectedTimeframe === timeframe &&
+                    styles.timeframeButtonActive,
                 ]}
                 onPress={() => setSelectedTimeframe(timeframe)}
               >
-                <Text style={[
-                  styles.timeframeText,
-                  selectedTimeframe === timeframe && styles.timeframeTextActive
-                ]}>
+                <Text
+                  style={[
+                    styles.timeframeText,
+                    selectedTimeframe === timeframe &&
+                      styles.timeframeTextActive,
+                  ]}
+                >
                   {timeframe}
                 </Text>
               </TouchableOpacity>
@@ -232,10 +261,13 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
               <View key={model.type} style={styles.modelItem}>
                 <View style={styles.modelInfo}>
                   <Text style={styles.modelName}>{model.name}</Text>
-                  <Text style={styles.modelDescription}>{model.description}</Text>
+                  <Text style={styles.modelDescription}>
+                    {model.description}
+                  </Text>
                   <View style={styles.modelMetrics}>
                     <Text style={styles.modelMetric}>
-                      準確率: <Text style={{ color: getAccuracyColor(model.accuracy) }}>
+                      準確率:{' '}
+                      <Text style={{ color: getAccuracyColor(model.accuracy) }}>
                         {(model.accuracy * 100).toFixed(1)}%
                       </Text>
                     </Text>
@@ -245,10 +277,17 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
                   </View>
                 </View>
 
-                <View style={[
-                  styles.modelStatus,
-                  { backgroundColor: model.status === 'active' ? theme.colors.success : theme.colors.warning }
-                ]}>
+                <View
+                  style={[
+                    styles.modelStatus,
+                    {
+                      backgroundColor:
+                        model.status === 'active'
+                          ? theme.colors.success
+                          : theme.colors.warning,
+                    },
+                  ]}
+                >
                   <Text style={styles.modelStatusText}>
                     {model.status === 'active' ? '活躍' : '維護中'}
                   </Text>
@@ -273,18 +312,24 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
                     <Text style={styles.historyDate}>
                       {new Date(prediction.predictionDate).toLocaleDateString()}
                     </Text>
-                    <Text style={styles.historyModel}>{prediction.modelType}</Text>
+                    <Text style={styles.historyModel}>
+                      {prediction.modelType}
+                    </Text>
                   </View>
 
                   <View style={styles.historyPrediction}>
                     <Text style={styles.historyPrice}>
                       ${prediction.predictedPrice.toFixed(2)}
                     </Text>
-                    <Text style={[
-                      styles.historyAccuracy,
-                      { color: getAccuracyColor(prediction.accuracy || 0) }
-                    ]}>
-                      {prediction.accuracy ? `${(prediction.accuracy * 100).toFixed(1)}%` : '待評估'}
+                    <Text
+                      style={[
+                        styles.historyAccuracy,
+                        { color: getAccuracyColor(prediction.accuracy || 0) },
+                      ]}
+                    >
+                      {prediction.accuracy
+                        ? `${(prediction.accuracy * 100).toFixed(1)}%`
+                        : '待評估'}
                     </Text>
                   </View>
                 </View>
@@ -328,7 +373,11 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
         {/* 性能提升說明 */}
         <Card style={styles.card}>
           <View style={styles.cardHeader}>
-            <Ionicons name="information-circle" size={24} color={theme.colors.primary} />
+            <Ionicons
+              name="information-circle"
+              size={24}
+              color={theme.colors.primary}
+            />
             <Text style={styles.cardTitle}>性能提升說明</Text>
           </View>
 
@@ -358,18 +407,18 @@ export const AdvancedPredictionDashboard: React.FC<AdvancedPredictionDashboardPr
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   header: {
     flexDirection: 'row',
@@ -377,43 +426,43 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: theme.colors.border,
-    backgroundColor: theme.colors.surface
+    backgroundColor: theme.colors.surface,
   },
   closeButton: {
-    padding: 4
+    padding: 4,
   },
   headerTitle: {
     flex: 1,
     fontSize: 20,
     fontWeight: 'bold',
     color: theme.colors.text,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   headerSpacer: {
-    width: 32
+    width: 32,
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   card: {
     margin: 16,
-    marginTop: 8
+    marginTop: 8,
   },
   cardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginLeft: 8
+    marginLeft: 8,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12
+    gap: 12,
   },
   statItem: {
     flex: 1,
@@ -421,84 +470,84 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: theme.colors.surface,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statLabel: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: 4
+    marginBottom: 4,
   },
   statValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   timeframeSelector: {
     flexDirection: 'row',
-    gap: 8
+    gap: 8,
   },
   timeframeButton: {
     flex: 1,
     padding: 12,
     backgroundColor: theme.colors.surface,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   timeframeButtonActive: {
-    backgroundColor: theme.colors.primary
+    backgroundColor: theme.colors.primary,
   },
   timeframeText: {
     fontSize: 14,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   timeframeTextActive: {
-    color: theme.colors.white
+    color: theme.colors.white,
   },
   modelsList: {
-    gap: 12
+    gap: 12,
   },
   modelItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 12,
     backgroundColor: theme.colors.surface,
-    borderRadius: 8
+    borderRadius: 8,
   },
   modelInfo: {
-    flex: 1
+    flex: 1,
   },
   modelName: {
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.text,
-    marginBottom: 4
+    marginBottom: 4,
   },
   modelDescription: {
     fontSize: 12,
     color: theme.colors.textSecondary,
-    marginBottom: 8
+    marginBottom: 8,
   },
   modelMetrics: {
     flexDirection: 'row',
-    gap: 16
+    gap: 16,
   },
   modelMetric: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   modelStatus: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 4
+    borderRadius: 4,
   },
   modelStatusText: {
     fontSize: 10,
     color: theme.colors.white,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   historyList: {
-    gap: 8
+    gap: 8,
   },
   historyItem: {
     flexDirection: 'row',
@@ -506,47 +555,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     backgroundColor: theme.colors.surface,
-    borderRadius: 8
+    borderRadius: 8,
   },
   historyInfo: {
-    flex: 1
+    flex: 1,
   },
   historyDate: {
     fontSize: 14,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   historyModel: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   historyPrediction: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   historyPrice: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   historyAccuracy: {
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   actions: {
-    gap: 12
+    gap: 12,
   },
   actionButton: {
-    marginBottom: 8
+    marginBottom: 8,
   },
   secondaryButton: {
-    backgroundColor: theme.colors.secondary
+    backgroundColor: theme.colors.secondary,
   },
   infoContent: {
-    gap: 8
+    gap: 8,
   },
   infoText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
-    lineHeight: 20
-  }
+    lineHeight: 20,
+  },
 });

@@ -8,7 +8,7 @@ const defaultNotificationSettings: NotificationSettings = {
   investmentAdvice: true,
   systemNotifications: true,
   soundEnabled: true,
-  vibrationEnabled: true
+  vibrationEnabled: true,
 };
 
 interface SettingsState {
@@ -20,7 +20,7 @@ interface SettingsState {
 const initialState: SettingsState = {
   notificationSettings: defaultNotificationSettings,
   isLoading: false,
-  error: null
+  error: null,
 };
 
 const settingsSlice = createSlice({
@@ -28,7 +28,10 @@ const settingsSlice = createSlice({
   initialState,
   reducers: {
     // 更新通知設置
-    updateNotificationSettings: (state, action: PayloadAction<NotificationSettings>) => {
+    updateNotificationSettings: (
+      state,
+      action: PayloadAction<NotificationSettings>
+    ) => {
       state.notificationSettings = action.payload;
     },
 
@@ -49,11 +52,14 @@ const settingsSlice = createSlice({
     },
 
     // 切換單個設置
-    toggleNotificationSetting: (state, action: PayloadAction<keyof NotificationSettings>) => {
+    toggleNotificationSetting: (
+      state,
+      action: PayloadAction<keyof NotificationSettings>
+    ) => {
       const key = action.payload;
       state.notificationSettings[key] = !state.notificationSettings[key];
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -61,7 +67,7 @@ export const {
   setLoading,
   setError,
   resetSettings,
-  toggleNotificationSetting
+  toggleNotificationSetting,
 } = settingsSlice.actions;
 
 export default settingsSlice.reducer;

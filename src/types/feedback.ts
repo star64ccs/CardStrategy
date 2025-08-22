@@ -2,41 +2,41 @@
 
 // 反饋類型
 export type FeedbackType =
-  | 'bug_report'           // 錯誤報告
-  | 'feature_request'      // 功能請求
-  | 'improvement'          // 改進建議
-  | 'general'              // 一般反饋
-  | 'compliment'           // 讚美
-  | 'complaint';           // 投訴
+  | 'bug_report' // 錯誤報告
+  | 'feature_request' // 功能請求
+  | 'improvement' // 改進建議
+  | 'general' // 一般反饋
+  | 'compliment' // 讚美
+  | 'complaint'; // 投訴
 
 // 反饋優先級
 export type FeedbackPriority =
-  | 'low'      // 低優先級
-  | 'medium'   // 中優先級
-  | 'high'     // 高優先級
+  | 'low' // 低優先級
+  | 'medium' // 中優先級
+  | 'high' // 高優先級
   | 'critical'; // 緊急
 
 // 反饋狀態
 export type FeedbackStatus =
-  | 'pending'      // 待處理
-  | 'in_review'    // 審核中
-  | 'in_progress'  // 處理中
-  | 'resolved'     // 已解決
-  | 'closed'       // 已關閉
-  | 'rejected';    // 已拒絕
+  | 'pending' // 待處理
+  | 'in_review' // 審核中
+  | 'in_progress' // 處理中
+  | 'resolved' // 已解決
+  | 'closed' // 已關閉
+  | 'rejected'; // 已拒絕
 
 // 反饋分類
 export type FeedbackCategory =
-  | 'ui_ux'           // 用戶界面/體驗
-  | 'performance'     // 性能問題
-  | 'functionality'   // 功能問題
-  | 'ai_features'     // AI 功能
-  | 'scanning'        // 掃描功能
-  | 'pricing'         // 價格相關
-  | 'notifications'   // 通知系統
-  | 'data_accuracy'   // 數據準確性
-  | 'security'        // 安全問題
-  | 'other';          // 其他
+  | 'ui_ux' // 用戶界面/體驗
+  | 'performance' // 性能問題
+  | 'functionality' // 功能問題
+  | 'ai_features' // AI 功能
+  | 'scanning' // 掃描功能
+  | 'pricing' // 價格相關
+  | 'notifications' // 通知系統
+  | 'data_accuracy' // 數據準確性
+  | 'security' // 安全問題
+  | 'other'; // 其他
 
 // 用戶反饋
 export interface UserFeedback {

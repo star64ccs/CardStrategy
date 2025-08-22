@@ -4,7 +4,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -46,7 +46,7 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
   onAddToWishlist,
   onBuyNow,
   onDismiss,
-  onShare
+  onShare,
 }) => {
   const [expanded, setExpanded] = useState(false);
 
@@ -64,7 +64,7 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
     const riskColors = {
       low: theme.colors.status.success,
       medium: theme.colors.status.warning,
-      high: theme.colors.status.error
+      high: theme.colors.status.error,
     };
     return riskColors[risk as keyof typeof riskColors];
   };
@@ -73,7 +73,7 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
     const riskLabels = {
       low: '低風險',
       medium: '中風險',
-      high: '高風險'
+      high: '高風險',
     };
     return riskLabels[risk as keyof typeof riskLabels];
   };
@@ -82,7 +82,7 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
     const horizonLabels = {
       short: '短期 (1-3個月)',
       medium: '中期 (3-12個月)',
-      long: '長期 (1年以上)'
+      long: '長期 (1年以上)',
     };
     return horizonLabels[horizon as keyof typeof horizonLabels];
   };
@@ -91,7 +91,7 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
     const trendIcons = {
       bullish: 'trending-up',
       bearish: 'trending-down',
-      neutral: 'remove'
+      neutral: 'remove',
     };
     return trendIcons[trend as keyof typeof trendIcons];
   };
@@ -100,7 +100,7 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
     const trendColors = {
       bullish: theme.colors.status.success,
       bearish: theme.colors.status.error,
-      neutral: theme.colors.text.secondary
+      neutral: theme.colors.text.secondary,
     };
     return trendColors[trend as keyof typeof trendColors];
   };
@@ -109,12 +109,13 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
     const trendLabels = {
       bullish: '看漲',
       bearish: '看跌',
-      neutral: '持平'
+      neutral: '持平',
     };
     return trendLabels[trend as keyof typeof trendLabels];
   };
 
-  const priceChange = recommendation.predictedPrice - recommendation.currentPrice;
+  const priceChange =
+    recommendation.predictedPrice - recommendation.currentPrice;
   const priceChangePercent = (priceChange / recommendation.currentPrice) * 100;
   const isAffordable = recommendation.currentPrice <= userBudget;
 
@@ -132,11 +133,7 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
             <Text style={styles.cardName} numberOfLines={2}>
               {recommendation.name}
             </Text>
-            <Badge
-              text={recommendation.rarity}
-              variant="gold"
-              size="small"
-            />
+            <Badge text={recommendation.rarity} variant="gold" size="small" />
           </View>
         </View>
         <View style={styles.headerActions}>
@@ -144,13 +141,21 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
             style={styles.actionButton}
             onPress={() => onShare(recommendation)}
           >
-            <Ionicons name="share-outline" size={20} color={theme.colors.gold.primary} />
+            <Ionicons
+              name="share-outline"
+              size={20}
+              color={theme.colors.gold.primary}
+            />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => onDismiss(recommendation.id)}
           >
-            <Ionicons name="close" size={20} color={theme.colors.text.tertiary} />
+            <Ionicons
+              name="close"
+              size={20}
+              color={theme.colors.text.tertiary}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -165,7 +170,17 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
         </View>
         <View style={styles.priceRow}>
           <Text style={styles.priceLabel}>預測價格:</Text>
-          <Text style={[styles.predictedPrice, { color: priceChange >= 0 ? theme.colors.status.success : theme.colors.status.error }]}>
+          <Text
+            style={[
+              styles.predictedPrice,
+              {
+                color:
+                  priceChange >= 0
+                    ? theme.colors.status.success
+                    : theme.colors.status.error,
+              },
+            ]}
+          >
             {formatPrice(recommendation.predictedPrice)}
           </Text>
         </View>
@@ -173,10 +188,26 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
           <Ionicons
             name={priceChange >= 0 ? 'trending-up' : 'trending-down'}
             size={16}
-            color={priceChange >= 0 ? theme.colors.status.success : theme.colors.status.error}
+            color={
+              priceChange >= 0
+                ? theme.colors.status.success
+                : theme.colors.status.error
+            }
           />
-          <Text style={[styles.priceChangeText, { color: priceChange >= 0 ? theme.colors.status.success : theme.colors.status.error }]}>
-            {priceChange >= 0 ? '+' : ''}{formatPrice(priceChange)} ({priceChangePercent >= 0 ? '+' : ''}{priceChangePercent.toFixed(1)}%)
+          <Text
+            style={[
+              styles.priceChangeText,
+              {
+                color:
+                  priceChange >= 0
+                    ? theme.colors.status.success
+                    : theme.colors.status.error,
+              },
+            ]}
+          >
+            {priceChange >= 0 ? '+' : ''}
+            {formatPrice(priceChange)} ({priceChangePercent >= 0 ? '+' : ''}
+            {priceChangePercent.toFixed(1)}%)
           </Text>
         </View>
       </View>
@@ -199,7 +230,9 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
               text={getRiskLabel(recommendation.riskLevel)}
               variant="default"
               size="small"
-              style={{ backgroundColor: getRiskColor(recommendation.riskLevel) }}
+              style={{
+                backgroundColor: getRiskColor(recommendation.riskLevel),
+              }}
             />
           </View>
         </View>
@@ -218,7 +251,12 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
                 size={16}
                 color={getMarketTrendColor(recommendation.marketTrend)}
               />
-              <Text style={[styles.trendText, { color: getMarketTrendColor(recommendation.marketTrend) }]}>
+              <Text
+                style={[
+                  styles.trendText,
+                  { color: getMarketTrendColor(recommendation.marketTrend) },
+                ]}
+              >
                 {getMarketTrendLabel(recommendation.marketTrend)}
               </Text>
             </View>
@@ -291,142 +329,142 @@ export const AIRecommendationCard: React.FC<AIRecommendationCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   cardInfo: {
     flexDirection: 'row',
-    flex: 1
+    flex: 1,
   },
   cardDetails: {
     marginLeft: theme.spacing.sm,
-    flex: 1
+    flex: 1,
   },
   cardName: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   headerActions: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   actionButton: {
     padding: theme.spacing.xs,
     marginLeft: theme.spacing.xs,
     borderRadius: theme.borderRadius.sm,
-    backgroundColor: theme.colors.background.secondary
+    backgroundColor: theme.colors.background.secondary,
   },
   priceSection: {
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.md,
     padding: theme.spacing.md,
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   priceLabel: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   currentPrice: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   predictedPrice: {
     fontSize: theme.typography.sizes.lg,
-    fontWeight: theme.typography.weights.bold
+    fontWeight: theme.typography.weights.bold,
   },
   priceChange: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: theme.spacing.xs
+    marginTop: theme.spacing.xs,
   },
   priceChangeText: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.medium,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   analysisSection: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   analysisRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   analysisItem: {
     flex: 1,
-    marginHorizontal: theme.spacing.xs
+    marginHorizontal: theme.spacing.xs,
   },
   analysisLabel: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   analysisValue: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.primary,
-    fontWeight: theme.typography.weights.medium
+    fontWeight: theme.typography.weights.medium,
   },
   trendContainer: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   trendText: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.medium,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   reasoningSection: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   reasoningHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: theme.spacing.sm
+    paddingVertical: theme.spacing.sm,
   },
   reasoningTitle: {
     fontSize: theme.typography.sizes.base,
     fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   reasoningContent: {
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.md,
-    padding: theme.spacing.md
+    padding: theme.spacing.md,
   },
   reasoningItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   reasoningText: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.primary,
     marginLeft: theme.spacing.sm,
     flex: 1,
-    lineHeight: theme.typography.lineHeights.normal
+    lineHeight: theme.typography.lineHeights.normal,
   },
   actionsSection: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   updateTime: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.tertiary,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });

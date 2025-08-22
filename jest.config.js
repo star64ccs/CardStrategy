@@ -1,11 +1,10 @@
 module.exports = {
   preset: 'jest-expo',
   setupFilesAfterEnv: [
-    '<rootDir>/jest.setup.js'
-    // '<rootDir>/src/__tests__/setup/test-utils.ts' // 暫時註釋掉
+    '<rootDir>/jest.setup.minimal.js',
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@react-native|react-native|@react-native-community)'
+    'node_modules/(?!(react-native|@react-native|@react-native-community|@react-native/js-polyfills|expo|@expo|react-navigation|@react-navigation|@unimodules|unimodules|sentry-expo|native-base|react-native-svg|expo-modules-core|expo-image-manipulator)/)',
   ],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',
@@ -27,39 +26,39 @@ module.exports = {
     '!src/**/test-fixtures.{ts,tsx}',
     '!src/**/test-stubs.{ts,tsx}',
     '!src/__tests__/**/*',
-    '!src/**/__mocks__/**/*'
+    '!src/**/__mocks__/**/*',
   ],
   coverageThreshold: {
     global: {
       branches: 80,
       functions: 80,
       lines: 80,
-      statements: 80
+      statements: 80,
     },
     './src/utils/': {
       branches: 90,
       functions: 90,
       lines: 90,
-      statements: 90
+      statements: 90,
     },
     './src/services/': {
       branches: 85,
       functions: 85,
       lines: 85,
-      statements: 85
+      statements: 85,
     },
     './src/store/': {
       branches: 85,
       functions: 85,
       lines: 85,
-      statements: 85
-    }
+      statements: 85,
+    },
   },
   coverageReporters: ['text', 'lcov', 'html', 'json', 'text-summary'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.{ts,tsx}',
     '<rootDir>/src/**/*.{test,spec}.{ts,tsx}',
-    '<rootDir>/src/__tests__/**/*.{ts,tsx}'
+    '<rootDir>/src/__tests__/**/*.{ts,tsx}',
   ],
   testEnvironment: 'jsdom',
   moduleNameMapper: {
@@ -73,9 +72,9 @@ module.exports = {
     '^@/i18n/(.*)$': '<rootDir>/src/i18n/$1',
     '^@/types/(.*)$': '<rootDir>/src/types/$1',
     '^@/assets/(.*)$': '<rootDir>/assets/$1',
-    '^@/__tests__/(.*)$': '<rootDir>/src/__tests__/$1'
+    '^@/__tests__/(.*)$': '<rootDir>/src/__tests__/$1',
   },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'flow'],
   testPathIgnorePatterns: [
     '/node_modules/',
     '/android/',
@@ -83,22 +82,24 @@ module.exports = {
     '/.expo/',
     '/dist/',
     '/build/',
-    '/coverage/'
+    '/coverage/',
   ],
   transform: {
-    '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest'
+    '^.+\\.(js|jsx|ts|tsx|flow)$': 'babel-jest',
   },
   globals: {
     'ts-jest': {
-      tsconfig: 'tsconfig.json'
-    }
+      useESM: true,
+    },
   },
   verbose: true,
   clearMocks: true,
   restoreMocks: true,
   resetMocks: true,
   testTimeout: 15000,
-  maxWorkers: '50%',
+  testSequencer: '<rootDir>/scripts/test-sequencer.js',
+  maxWorkers: '15%',
+  workerIdleMemoryLimit: '2GB',
   bail: 0,
   collectCoverage: false,
   coverageDirectory: 'coverage',
@@ -107,17 +108,22 @@ module.exports = {
     '/src/__tests__/',
     '/src/.*/__mocks__/',
     '/src/.*\\.test\\.{ts,tsx}',
-    '/src/.*\\.spec\\.{ts,tsx}'
+    '/src/.*\\.spec\\.{ts,tsx}',
   ],
   reporters: [
     'default',
-    ['jest-junit', {
-      outputDirectory: 'coverage',
-      outputName: 'junit.xml',
-      classNameTemplate: '{classname}',
-      titleTemplate: '{title}',
-      ancestorSeparator: ' › ',
-      usePathForSuiteName: true
-    }]
-  ]
+    [
+      'jest-junit',
+      {
+        outputDirectory: 'coverage',
+        outputName: 'junit.xml',
+        classNameTemplate: '{classname}',
+        titleTemplate: '{title}',
+        ancestorSeparator: ' › ',
+        usePathForSuiteName: true,
+      },
+    ],
+  ],
+  // 添加對 ES 模組的支持
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
 };

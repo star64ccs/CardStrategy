@@ -1,4 +1,6 @@
-const { by, device, element, expect } = require('detox');
+/* eslint-env jest, detox */
+
+const { by, device, element } = require('detox');
 
 describe('Anti-Counterfeit Flow', () => {
   beforeAll(async () => {
@@ -241,5 +243,3 @@ describe('Anti-Counterfeit Flow', () => {
     });
   });
 });
-
-

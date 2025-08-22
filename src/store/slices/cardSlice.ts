@@ -67,12 +67,12 @@ const initialState: CardState = {
     isFoil: false,
     isGraded: false,
     inStock: false,
-    set: []
+    set: [],
   },
   sortOptions: {
     field: 'name',
     order: 'asc',
-    direction: 'asc'
+    direction: 'asc',
   },
   pagination: {
     page: 1,
@@ -80,7 +80,7 @@ const initialState: CardState = {
     total: 0,
     totalPages: 0,
     hasNext: false,
-    hasPrev: false
+    hasPrev: false,
   },
   isRecognizing: false,
   recognizedCard: null,
@@ -93,7 +93,7 @@ const initialState: CardState = {
   isVerifying: false,
   searchResults: [],
   recognitionHistory: [],
-  recognitionStats: null
+  recognitionStats: null,
 };
 
 // Card slice
@@ -120,21 +120,28 @@ const cardSlice = createSlice({
     setSortOptions: (state, action: PayloadAction<CardSortOptions>) => {
       state.sortOptions = action.payload;
     },
-    setPagination: (state, action: PayloadAction<Partial<typeof state.pagination>>) => {
+    setPagination: (
+      state,
+      action: PayloadAction<Partial<typeof state.pagination>>
+    ) => {
       state.pagination = { ...state.pagination, ...action.payload };
     },
     addCard: (state, action: PayloadAction<Card>) => {
       state.cards.unshift(action.payload);
     },
     updateCard: (state, action: PayloadAction<Card>) => {
-      const index = state.cards.findIndex((card: any) => card.id === action.payload.id);
+      const index = state.cards.findIndex(
+        (card: any) => card.id === action.payload.id
+      );
       if (index !== -1) {
         state.cards[index] = action.payload;
       }
     },
     removeCard: (state, action: PayloadAction<string>) => {
-      state.cards = state.cards.filter((card: any) => card.id !== action.payload);
-    }
+      state.cards = state.cards.filter(
+        (card: any) => card.id !== action.payload
+      );
+    },
   },
   extraReducers: (builder) => {
     // Recognize Card
@@ -156,7 +163,7 @@ const cardSlice = createSlice({
             card: action.payload.data.recognizedCard,
             confidence: action.payload.data.confidence,
             timestamp: new Date().toISOString(),
-            processingTime: action.payload.data.processingTime
+            processingTime: action.payload.data.processingTime,
           });
 
           // 限制歷史記錄數量
@@ -232,15 +239,18 @@ const cardSlice = createSlice({
         state.isAnalyzing = false;
         if (state.selectedCard) {
           // 將單個分析結果轉換為數組格式
-          state.selectedCard.conditionAnalysis = [{
-            category: 'condition',
-            score: action.payload.overall,
-            confidence: action.payload.confidence,
-            details: `條件: ${action.payload.condition}, 置中: ${action.payload.centering}, ` +
-              `邊角: ${action.payload.corners}, 邊緣: ${action.payload.edges}, ` +
-              `表面: ${action.payload.surface}`,
-            evidence: [`整體評分: ${action.payload.overall}/10`]
-          }];
+          state.selectedCard.conditionAnalysis = [
+            {
+              category: 'condition',
+              score: action.payload.overall,
+              confidence: action.payload.confidence,
+              details:
+                `條件: ${action.payload.condition}, 置中: ${action.payload.centering}, ` +
+                `邊角: ${action.payload.corners}, 邊緣: ${action.payload.edges}, ` +
+                `表面: ${action.payload.surface}`,
+              evidence: [`整體評分: ${action.payload.overall}/10`],
+            },
+          ];
         }
         state.error = null;
       })
@@ -259,14 +269,17 @@ const cardSlice = createSlice({
         state.isVerifying = false;
         if (state.selectedCard) {
           // 將單個驗證結果轉換為數組格式
-          state.selectedCard.authenticityCheck = [{
-            category: 'authenticity',
-            score: action.payload.isAuthentic ? 10 : 0,
-            confidence: action.payload.confidence,
-            details: `真偽判斷: ${action.payload.isAuthentic ? '真品' : '仿品'}, ` +
-              `信心度: ${action.payload.confidence}%`,
-            evidence: action.payload.evidence
-          }];
+          state.selectedCard.authenticityCheck = [
+            {
+              category: 'authenticity',
+              score: action.payload.isAuthentic ? 10 : 0,
+              confidence: action.payload.confidence,
+              details:
+                `真偽判斷: ${action.payload.isAuthentic ? '真品' : '仿品'}, ` +
+                `信心度: ${action.payload.confidence}%`,
+              evidence: action.payload.evidence,
+            },
+          ];
         }
         state.error = null;
       })
@@ -274,7 +287,7 @@ const cardSlice = createSlice({
         state.isVerifying = false;
         state.error = action.payload as string;
       });
-  }
+  },
 });
 
 export const {
@@ -287,14 +300,19 @@ export const {
   setPagination,
   addCard,
   updateCard,
-  removeCard
+  removeCard,
 } = cardSlice.actions;
 
 // 選擇器
-export const selectIsRecognizing = (state: { cards: CardState }) => state.cards.isRecognizing;
-export const selectRecognizedCard = (state: { cards: CardState }) => state.cards.recognizedCard;
-export const selectRecognitionResult = (state: { cards: CardState }) => state.cards.recognitionResult;
-export const selectRecognitionAlternatives = (state: { cards: CardState }) => state.cards.recognitionAlternatives;
-export const selectRecognitionFeatures = (state: { cards: CardState }) => state.cards.recognitionFeatures;
+export const selectIsRecognizing = (state: { cards: CardState }) =>
+  state.cards.isRecognizing;
+export const selectRecognizedCard = (state: { cards: CardState }) =>
+  state.cards.recognizedCard;
+export const selectRecognitionResult = (state: { cards: CardState }) =>
+  state.cards.recognitionResult;
+export const selectRecognitionAlternatives = (state: { cards: CardState }) =>
+  state.cards.recognitionAlternatives;
+export const selectRecognitionFeatures = (state: { cards: CardState }) =>
+  state.cards.recognitionFeatures;
 
 export default cardSlice.reducer;

@@ -11,7 +11,7 @@ import {
   DataProcessingPurpose,
   ConsentType,
   LegalBasis,
-  PrivacySettingsConfig
+  PrivacySettingsConfig,
 } from '../types/privacy';
 
 class PrivacyService {
@@ -20,7 +20,9 @@ class PrivacyService {
   // 獲取用戶隱私偏好
   async getPrivacyPreferences(userId: string): Promise<PrivacyPreferences> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/preferences/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/preferences/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取隱私偏好失敗', { userId, error });
@@ -34,7 +36,10 @@ class PrivacyService {
     preferences: Partial<PrivacyPreferences>
   ): Promise<PrivacyPreferences> {
     try {
-      const response = await apiService.put(`${this.baseUrl}/preferences/${userId}`, preferences);
+      const response = await apiService.put(
+        `${this.baseUrl}/preferences/${userId}`,
+        preferences
+      );
       return response.data;
     } catch (error) {
       logger.error('更新隱私偏好失敗', { userId, error });
@@ -60,7 +65,7 @@ class PrivacyService {
         userId,
         ...consentData,
         grantedAt: new Date(),
-        isActive: true
+        isActive: true,
       });
       return response.data;
     } catch (error) {
@@ -75,11 +80,14 @@ class PrivacyService {
     purpose: DataProcessingPurpose
   ): Promise<ConsentRecord> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/consent/withdraw`, {
-        userId,
-        purpose,
-        withdrawnAt: new Date()
-      });
+      const response = await apiService.post(
+        `${this.baseUrl}/consent/withdraw`,
+        {
+          userId,
+          purpose,
+          withdrawnAt: new Date(),
+        }
+      );
       return response.data;
     } catch (error) {
       logger.error('撤回同意失敗', { userId, purpose, error });
@@ -90,7 +98,9 @@ class PrivacyService {
   // 獲取同意歷史
   async getConsentHistory(userId: string): Promise<ConsentRecord[]> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/consent/history/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/consent/history/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取同意歷史失敗', { userId, error });
@@ -102,7 +112,13 @@ class PrivacyService {
   async submitDataRightsRequest(
     userId: string,
     requestData: {
-      requestType: 'access' | 'rectification' | 'erasure' | 'portability' | 'restriction' | 'objection';
+      requestType:
+        | 'access'
+        | 'rectification'
+        | 'erasure'
+        | 'portability'
+        | 'restriction'
+        | 'objection';
       description: string;
       priority: 'low' | 'medium' | 'high' | 'urgent';
     }
@@ -112,7 +128,7 @@ class PrivacyService {
         userId,
         ...requestData,
         status: 'pending',
-        deadline: this.calculateDeadline(requestData.priority)
+        deadline: this.calculateDeadline(requestData.priority),
       });
       return response.data;
     } catch (error) {
@@ -122,9 +138,13 @@ class PrivacyService {
   }
 
   // 獲取數據權利請求狀態
-  async getDataRightsRequestStatus(requestId: string): Promise<DataRightsRequest> {
+  async getDataRightsRequestStatus(
+    requestId: string
+  ): Promise<DataRightsRequest> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/rights-request/${requestId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/rights-request/${requestId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取數據權利請求狀態失敗', { requestId, error });
@@ -133,9 +153,13 @@ class PrivacyService {
   }
 
   // 獲取用戶數據權利請求歷史
-  async getDataRightsRequestHistory(userId: string): Promise<DataRightsRequest[]> {
+  async getDataRightsRequestHistory(
+    userId: string
+  ): Promise<DataRightsRequest[]> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/rights-request/history/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/rights-request/history/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取數據權利請求歷史失敗', { userId, error });
@@ -144,7 +168,9 @@ class PrivacyService {
   }
 
   // 獲取地區隱私法律要求
-  async getPrivacyLawRequirements(region: RegionCode): Promise<PrivacyLawRequirement[]> {
+  async getPrivacyLawRequirements(
+    region: RegionCode
+  ): Promise<PrivacyLawRequirement[]> {
     try {
       const response = await apiService.get(`${this.baseUrl}/laws/${region}`);
       return response.data;
@@ -155,7 +181,9 @@ class PrivacyService {
   }
 
   // 獲取隱私設置配置
-  async getPrivacySettingsConfig(region: RegionCode): Promise<PrivacySettingsConfig> {
+  async getPrivacySettingsConfig(
+    region: RegionCode
+  ): Promise<PrivacySettingsConfig> {
     try {
       const response = await apiService.get(`${this.baseUrl}/config/${region}`);
       return response.data;
@@ -166,16 +194,22 @@ class PrivacyService {
   }
 
   // 驗證年齡
-  async verifyAge(userId: string, birthDate: Date): Promise<{
+  async verifyAge(
+    userId: string,
+    birthDate: Date
+  ): Promise<{
     isMinor: boolean;
     age: number;
     requiresParentalConsent: boolean;
   }> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/age-verification`, {
-        userId,
-        birthDate
-      });
+      const response = await apiService.post(
+        `${this.baseUrl}/age-verification`,
+        {
+          userId,
+          birthDate,
+        }
+      );
       return response.data;
     } catch (error) {
       logger.error('年齡驗證失敗', { userId, error });
@@ -192,10 +226,13 @@ class PrivacyService {
     status: 'pending' | 'sent' | 'verified' | 'rejected';
   }> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/parental-consent`, {
-        userId,
-        parentEmail
-      });
+      const response = await apiService.post(
+        `${this.baseUrl}/parental-consent`,
+        {
+          userId,
+          parentEmail,
+        }
+      );
       return response.data;
     } catch (error) {
       logger.error('請求父母同意失敗', { userId, error });
@@ -210,7 +247,9 @@ class PrivacyService {
     format: 'json' | 'csv' | 'xml';
   }> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/export/${userId}`);
+      const response = await apiService.post(
+        `${this.baseUrl}/export/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('導出用戶數據失敗', { userId, error });
@@ -224,7 +263,9 @@ class PrivacyService {
     estimatedCompletion: Date;
   }> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/delete/${userId}`);
+      const response = await apiService.post(
+        `${this.baseUrl}/delete/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('刪除用戶數據失敗', { userId, error });
@@ -235,7 +276,9 @@ class PrivacyService {
   // 獲取數據處理記錄
   async getDataProcessingRecords(userId: string): Promise<any[]> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/processing-records/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/processing-records/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取數據處理記錄失敗', { userId, error });
@@ -246,7 +289,9 @@ class PrivacyService {
   // 獲取第三方數據處理者列表
   async getThirdPartyProcessors(): Promise<any[]> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/third-party-processors`);
+      const response = await apiService.get(
+        `${this.baseUrl}/third-party-processors`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取第三方數據處理者失敗', { error });
@@ -261,7 +306,7 @@ class PrivacyService {
   ): Promise<any> {
     try {
       const response = await apiService.get(`${this.baseUrl}/privacy-policy`, {
-        params: { region, language }
+        params: { region, language },
       });
       return response.data;
     } catch (error) {
@@ -281,10 +326,13 @@ class PrivacyService {
     score: number;
   }> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/compliance-check`, {
-        userId,
-        region
-      });
+      const response = await apiService.post(
+        `${this.baseUrl}/compliance-check`,
+        {
+          userId,
+          region,
+        }
+      );
       return response.data;
     } catch (error) {
       logger.error('檢查隱私合規性失敗', { userId, region, error });
@@ -295,7 +343,11 @@ class PrivacyService {
   // 發送隱私通知
   async sendPrivacyNotification(
     userId: string,
-    notificationType: 'policy_update' | 'consent_change' | 'data_breach' | 'legal_update',
+    notificationType:
+      | 'policy_update'
+      | 'consent_change'
+      | 'data_breach'
+      | 'legal_update',
     message: string
   ): Promise<{
     sent: boolean;
@@ -305,7 +357,7 @@ class PrivacyService {
       const response = await apiService.post(`${this.baseUrl}/notifications`, {
         userId,
         type: notificationType,
-        message
+        message,
       });
       return response.data;
     } catch (error) {
@@ -315,7 +367,9 @@ class PrivacyService {
   }
 
   // 本地存儲隱私偏好
-  async savePrivacyPreferencesLocally(preferences: PrivacyPreferences): Promise<void> {
+  async savePrivacyPreferencesLocally(
+    preferences: PrivacyPreferences
+  ): Promise<void> {
     try {
       await storage.setItem('privacy_preferences', JSON.stringify(preferences));
     } catch (error) {
@@ -335,13 +389,15 @@ class PrivacyService {
   }
 
   // 計算數據權利請求截止日期
-  private calculateDeadline(priority: 'low' | 'medium' | 'high' | 'urgent'): Date {
+  private calculateDeadline(
+    priority: 'low' | 'medium' | 'high' | 'urgent'
+  ): Date {
     const now = new Date();
     const days = {
       low: 30,
       medium: 15,
       high: 7,
-      urgent: 3
+      urgent: 3,
     };
 
     const deadline = new Date(now);
@@ -368,7 +424,9 @@ class PrivacyService {
     purposes: DataProcessingPurpose[];
   }> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/consent/renewal-check/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/consent/renewal-check/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('檢查同意更新失敗', { userId, error });
@@ -386,10 +444,13 @@ class PrivacyService {
     }[]
   ): Promise<ConsentRecord[]> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/consent/batch-update`, {
-        userId,
-        consents
-      });
+      const response = await apiService.post(
+        `${this.baseUrl}/consent/batch-update`,
+        {
+          userId,
+          consents,
+        }
+      );
       return response.data;
     } catch (error) {
       logger.error('批量更新同意失敗', { userId, error });
@@ -414,7 +475,9 @@ class PrivacyService {
     lastUpdated: Date;
   }> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/dashboard/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/dashboard/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取隱私儀表板失敗', { userId, error });
@@ -423,4 +486,5 @@ class PrivacyService {
   }
 }
 
+export { PrivacyService };
 export const privacyService = new PrivacyService();

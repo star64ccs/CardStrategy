@@ -16,13 +16,13 @@ export const SyncExample: React.FC = () => {
     isSyncing,
     hasError,
     isOffline,
-    hasPendingChanges
+    hasPendingChanges,
   } = useIncrementalSync();
 
   const [testData, setTestData] = useState({
     cardCount: 0,
     collectionCount: 0,
-    annotationCount: 0
+    annotationCount: 0,
   });
 
   // 添加測試卡片
@@ -36,10 +36,10 @@ export const SyncExample: React.FC = () => {
         description: '這是一個測試卡片',
         rarity: 'common',
         condition: 'mint',
-        estimatedValue: 100
-      }
+        estimatedValue: 100,
+      },
     });
-    setTestData(prev => ({ ...prev, cardCount: prev.cardCount + 1 }));
+    setTestData((prev) => ({ ...prev, cardCount: prev.cardCount + 1 }));
   };
 
   // 添加測試收藏
@@ -52,10 +52,13 @@ export const SyncExample: React.FC = () => {
         name: `測試收藏 ${testData.collectionCount + 1}`,
         description: '這是一個測試收藏',
         category: 'pokemon',
-        isPublic: false
-      }
+        isPublic: false,
+      },
     });
-    setTestData(prev => ({ ...prev, collectionCount: prev.collectionCount + 1 }));
+    setTestData((prev) => ({
+      ...prev,
+      collectionCount: prev.collectionCount + 1,
+    }));
   };
 
   // 添加測試註釋
@@ -68,10 +71,13 @@ export const SyncExample: React.FC = () => {
         cardId: 'test_card_1',
         content: `測試註釋 ${testData.annotationCount + 1}`,
         type: 'note',
-        position: { x: 100, y: 100 }
-      }
+        position: { x: 100, y: 100 },
+      },
     });
-    setTestData(prev => ({ ...prev, annotationCount: prev.annotationCount + 1 }));
+    setTestData((prev) => ({
+      ...prev,
+      annotationCount: prev.annotationCount + 1,
+    }));
   };
 
   // 批量添加測試數據
@@ -88,8 +94,8 @@ export const SyncExample: React.FC = () => {
           description: '批量添加的測試卡片',
           rarity: 'rare',
           condition: 'near_mint',
-          estimatedValue: 200 + i * 50
-        }
+          estimatedValue: 200 + i * 50,
+        },
       });
     }
 
@@ -102,36 +108,32 @@ export const SyncExample: React.FC = () => {
           name: `批量收藏 ${i + 1}`,
           description: '批量添加的測試收藏',
           category: 'yugioh',
-          isPublic: true
-        }
+          isPublic: true,
+        },
       });
     }
 
     incrementalSyncManager.addBatchChanges(items);
-    setTestData(prev => ({
+    setTestData((prev) => ({
       ...prev,
       cardCount: prev.cardCount + 5,
-      collectionCount: prev.collectionCount + 3
+      collectionCount: prev.collectionCount + 3,
     }));
   };
 
   // 清除所有待同步項目
   const clearAllPending = () => {
-    Alert.alert(
-      '確認清除',
-      '確定要清除所有待同步的項目嗎？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '確定',
-          style: 'destructive',
-          onPress: () => {
-            incrementalSyncManager.clearPendingChanges();
-            setTestData({ cardCount: 0, collectionCount: 0, annotationCount: 0 });
-          }
-        }
-      ]
-    );
+    Alert.alert('確認清除', '確定要清除所有待同步的項目嗎？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '確定',
+        style: 'destructive',
+        onPress: () => {
+          incrementalSyncManager.clearPendingChanges();
+          setTestData({ cardCount: 0, collectionCount: 0, annotationCount: 0 });
+        },
+      },
+    ]);
   };
 
   // 顯示同步詳情
@@ -140,10 +142,10 @@ export const SyncExample: React.FC = () => {
     Alert.alert(
       '同步詳情',
       `狀態: ${syncStatus}\n` +
-      `待同步項目: ${pendingChangesCount}\n` +
-      `最後同步: ${lastSyncTime ? new Date(lastSyncTime).toLocaleString() : '從未同步'}\n` +
-      `網絡狀態: ${isOnline ? '在線' : '離線'}\n` +
-      `錯誤: ${error || '無'}`
+        `待同步項目: ${pendingChangesCount}\n` +
+        `最後同步: ${lastSyncTime ? new Date(lastSyncTime).toLocaleString() : '從未同步'}\n` +
+        `網絡狀態: ${isOnline ? '在線' : '離線'}\n` +
+        `錯誤: ${error || '無'}`
     );
   };
 
@@ -237,8 +239,12 @@ export const SyncExample: React.FC = () => {
       <View style={styles.statsSection}>
         <Text style={styles.sectionTitle}>統計信息</Text>
         <Text style={styles.statsText}>已添加卡片: {testData.cardCount}</Text>
-        <Text style={styles.statsText}>已添加收藏: {testData.collectionCount}</Text>
-        <Text style={styles.statsText}>已添加註釋: {testData.annotationCount}</Text>
+        <Text style={styles.statsText}>
+          已添加收藏: {testData.collectionCount}
+        </Text>
+        <Text style={styles.statsText}>
+          已添加註釋: {testData.annotationCount}
+        </Text>
         <Text style={styles.statsText}>待同步項目: {pendingChangesCount}</Text>
       </View>
     </View>
@@ -249,66 +255,66 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 20,
-    color: '#333'
+    color: '#333',
   },
   statusSection: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   testSection: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   controlSection: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   statsSection: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 10,
-    color: '#333'
+    color: '#333',
   },
   button: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
     marginBottom: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   addButton: {
-    backgroundColor: '#4caf50'
+    backgroundColor: '#4caf50',
   },
   batchButton: {
-    backgroundColor: '#2196f3'
+    backgroundColor: '#2196f3',
   },
   syncButton: {
-    backgroundColor: '#ff9800'
+    backgroundColor: '#ff9800',
   },
   detailsButton: {
-    backgroundColor: '#9c27b0'
+    backgroundColor: '#9c27b0',
   },
   clearButton: {
-    backgroundColor: '#f44336'
+    backgroundColor: '#f44336',
   },
   errorButton: {
-    backgroundColor: '#ff5722'
+    backgroundColor: '#ff5722',
   },
   buttonText: {
     color: 'white',
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   statsText: {
     fontSize: 14,
     color: '#666',
-    marginBottom: 4
-  }
+    marginBottom: 4,
+  },
 });

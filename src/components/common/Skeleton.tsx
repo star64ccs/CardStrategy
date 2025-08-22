@@ -19,7 +19,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
   style,
   variant = 'text',
   lines = 1,
-  spacing = 8
+  spacing = 8,
 }) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
 
@@ -29,13 +29,13 @@ export const Skeleton: React.FC<SkeletonProps> = ({
         Animated.timing(animatedValue, {
           toValue: 1,
           duration: 1000,
-          useNativeDriver: false
+          useNativeDriver: false,
         }),
         Animated.timing(animatedValue, {
           toValue: 0,
           duration: 1000,
-          useNativeDriver: false
-        })
+          useNativeDriver: false,
+        }),
       ])
     );
     animation.start();
@@ -81,7 +81,7 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 
   const opacity = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.3, 0.7]
+    outputRange: [0.3, 0.7],
   });
 
   if (lines > 1) {
@@ -97,9 +97,9 @@ export const Skeleton: React.FC<SkeletonProps> = ({
                 height: variantStyles.height,
                 borderRadius: variantBorderRadius,
                 opacity,
-                marginBottom: index < lines - 1 ? spacing : 0
+                marginBottom: index < lines - 1 ? spacing : 0,
               },
-              style
+              style,
             ]}
           />
         ))}
@@ -115,9 +115,9 @@ export const Skeleton: React.FC<SkeletonProps> = ({
           width: variantStyles.width,
           height: variantStyles.height,
           borderRadius: variantBorderRadius,
-          opacity
+          opacity,
         },
-        style
+        style,
       ]}
     />
   );
@@ -125,34 +125,34 @@ export const Skeleton: React.FC<SkeletonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   skeleton: {
-    backgroundColor: theme.colors.backgroundPaper
-  }
+    backgroundColor: theme.colors.backgroundPaper,
+  },
 });
 
 // 預定義的骨架屏組件
-export const SkeletonText: React.FC<Omit<SkeletonProps, 'variant'>> = (props) => (
-  <Skeleton variant="text" {...props} />
-);
+export const SkeletonText: React.FC<Omit<SkeletonProps, 'variant'>> = (
+  props
+) => <Skeleton variant="text" {...props} />;
 
-export const SkeletonTitle: React.FC<Omit<SkeletonProps, 'variant'>> = (props) => (
-  <Skeleton variant="title" {...props} />
-);
+export const SkeletonTitle: React.FC<Omit<SkeletonProps, 'variant'>> = (
+  props
+) => <Skeleton variant="title" {...props} />;
 
-export const SkeletonAvatar: React.FC<Omit<SkeletonProps, 'variant'>> = (props) => (
-  <Skeleton variant="avatar" {...props} />
-);
+export const SkeletonAvatar: React.FC<Omit<SkeletonProps, 'variant'>> = (
+  props
+) => <Skeleton variant="avatar" {...props} />;
 
-export const SkeletonCard: React.FC<Omit<SkeletonProps, 'variant'>> = (props) => (
-  <Skeleton variant="card" {...props} />
-);
+export const SkeletonCard: React.FC<Omit<SkeletonProps, 'variant'>> = (
+  props
+) => <Skeleton variant="card" {...props} />;
 
-export const SkeletonButton: React.FC<Omit<SkeletonProps, 'variant'>> = (props) => (
-  <Skeleton variant="button" {...props} />
-);
+export const SkeletonButton: React.FC<Omit<SkeletonProps, 'variant'>> = (
+  props
+) => <Skeleton variant="button" {...props} />;
 
-export const SkeletonImage: React.FC<Omit<SkeletonProps, 'variant'>> = (props) => (
-  <Skeleton variant="image" {...props} />
-);
+export const SkeletonImage: React.FC<Omit<SkeletonProps, 'variant'>> = (
+  props
+) => <Skeleton variant="image" {...props} />;

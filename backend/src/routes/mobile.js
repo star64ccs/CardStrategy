@@ -2,14 +2,14 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const { validateRequest } = require('../middleware/validation');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
-// 移動端服務
-const mobileService = require('../services/mobileService');
+// 移�?端�???const mobileService = require('../services/mobileService');
 
-// ==================== 離線同步 ====================
+// ==================== ?��??�步 ====================
 
-// 獲取離線數據
+// ?��??��??��?
 router.get('/offline/data', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -18,49 +18,51 @@ router.get('/offline/data', authenticateToken, async (req, res) => {
     const offlineData = await mobileService.getOfflineData({
       userId,
       lastSyncTime: lastSyncTime ? new Date(lastSyncTime) : null,
-      dataTypes: dataTypes ? dataTypes.split(',') : ['cards', 'portfolio', 'market']
+      dataTypes: dataTypes
+        ? dataTypes.split(',')
+        : ['cards', 'portfolio', 'market'],
     });
 
     res.json({
       success: true,
-      data: offlineData
+      data: offlineData,
     });
   } catch (error) {
-    logger.error('獲取離線數據失敗:', error);
+    logger.error('?��??��??��?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '獲取離線數據失敗'
+      error: '?��??��??��?失�?',
     });
   }
 });
 
-// 提交離線變更
+// ?�交?��?變更
 router.post('/offline/changes', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { changes, syncId } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.submitOfflineChanges({
       userId,
       changes,
-      syncId
+      syncId,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('提交離線變更失敗:', error);
+    logger.error('?�交?��?變更失�?:', error);
     res.status(500).json({
       success: false,
-      error: '提交離線變更失敗'
+      error: '?�交?��?變更失�?',
     });
   }
 });
 
-// 獲取同步狀態
-router.get('/offline/sync-status', authenticateToken, async (req, res) => {
+// ?��??�步?�??router.get('/offline/sync-status', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
 
@@ -68,74 +70,75 @@ router.get('/offline/sync-status', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: syncStatus
+      data: syncStatus,
     });
   } catch (error) {
-    logger.error('獲取同步狀態失敗:', error);
+    logger.error('?��??�步?�?�失??', error);
     res.status(500).json({
       success: false,
-      error: '獲取同步狀態失敗'
+      error: '?��??�步?�?�失??,
     });
   }
 });
 
-// ==================== 推送通知 ====================
+// ==================== ?�送通知 ====================
 
-// 註冊推送令牌
-router.post('/push/register', authenticateToken, async (req, res) => {
+// 註�??�送令??router.post('/push/register', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { token, platform, deviceId } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.registerPushToken({
       userId,
       token,
       platform,
-      deviceId
+      deviceId,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('註冊推送令牌失敗:', error);
+    logger.error('註�??�送令?�失??', error);
     res.status(500).json({
       success: false,
-      error: '註冊推送令牌失敗'
+      error: '註�??�送令?�失??,
     });
   }
 });
 
-// 發送推送通知
+// ?�送推?�通知
 router.post('/push/send', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { title, body, data, targetUsers, notificationType } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.sendPushNotification({
       title,
       body,
       data,
       targetUsers,
       notificationType,
-      senderId: userId
+      senderId: userId,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('發送推送通知失敗:', error);
+    logger.error('?�送推?�通知失�?:', error);
     res.status(500).json({
       success: false,
-      error: '發送推送通知失敗'
+      error: '?�送推?�通知失�?',
     });
   }
 });
 
-// 獲取通知設置
+// ?��??�知設置
 router.get('/push/settings', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -144,66 +147,71 @@ router.get('/push/settings', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: settings
+      data: settings,
     });
   } catch (error) {
-    logger.error('獲取通知設置失敗:', error);
+    logger.error('?��??�知設置失�?:', error);
     res.status(500).json({
       success: false,
-      error: '獲取通知設置失敗'
+      error: '?��??�知設置失�?',
     });
   }
 });
 
-// 更新通知設置
+// ?�新?�知設置
 router.put('/push/settings', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { settings } = req.body;
 
-    const result = await mobileService.updateNotificationSettings(userId, settings);
+// eslint-disable-next-line no-unused-vars
+    const result = await mobileService.updateNotificationSettings(
+      userId,
+      settings
+    );
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('更新通知設置失敗:', error);
+    logger.error('?�新?�知設置失�?:', error);
     res.status(500).json({
       success: false,
-      error: '更新通知設置失敗'
+      error: '?�新?�知設置失�?',
     });
   }
 });
 
-// ==================== 設備管理 ====================
+// ==================== 設�?管�? ====================
 
-// 註冊設備
+// 註�?設�?
 router.post('/device/register', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { deviceInfo, capabilities } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.registerDevice({
       userId,
       deviceInfo,
-      capabilities
+      capabilities,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('註冊設備失敗:', error);
+    logger.error('註�?設�?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '註冊設備失敗'
+      error: '註�?設�?失�?',
     });
   }
 });
 
-// 獲取用戶設備列表
+// ?��??�戶設�??�表
 router.get('/device/list', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -212,69 +220,69 @@ router.get('/device/list', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      data: devices
+      data: devices,
     });
   } catch (error) {
-    logger.error('獲取設備列表失敗:', error);
+    logger.error('?��?設�??�表失�?:', error);
     res.status(500).json({
       success: false,
-      error: '獲取設備列表失敗'
+      error: '?��?設�??�表失�?',
     });
   }
 });
 
-// 註銷設備
+// 註銷設�?
 router.delete('/device/:deviceId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { deviceId } = req.params;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.unregisterDevice(userId, deviceId);
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('註銷設備失敗:', error);
+    logger.error('註銷設�?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '註銷設備失敗'
+      error: '註銷設�?失�?',
     });
   }
 });
 
-// ==================== 移動端分析 ====================
+// ==================== 移�?端�???====================
 
-// 記錄移動端事件
-router.post('/analytics/event', authenticateToken, async (req, res) => {
+// 記�?移�?端�?�?router.post('/analytics/event', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { eventType, eventData, deviceInfo, timestamp } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.recordMobileEvent({
       userId,
       eventType,
       eventData,
       deviceInfo,
-      timestamp: timestamp ? new Date(timestamp) : new Date()
+      timestamp: timestamp ? new Date(timestamp) : new Date(),
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('記錄移動端事件失敗:', error);
+    logger.error('記�?移�?端�?件失??', error);
     res.status(500).json({
       success: false,
-      error: '記錄移動端事件失敗'
+      error: '記�?移�?端�?件失??,
     });
   }
 });
 
-// 獲取移動端分析報告
-router.get('/analytics/report', authenticateToken, async (req, res) => {
+// ?��?移�?端�??�報??router.get('/analytics/report', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { timeframe, metrics } = req.query;
@@ -282,49 +290,51 @@ router.get('/analytics/report', authenticateToken, async (req, res) => {
     const report = await mobileService.getMobileAnalyticsReport({
       userId,
       timeframe: timeframe || '7d',
-      metrics: metrics ? metrics.split(',') : ['usage', 'performance', 'engagement']
+      metrics: metrics
+        ? metrics.split(',')
+        : ['usage', 'performance', 'engagement'],
     });
 
     res.json({
       success: true,
-      data: report
+      data: report,
     });
   } catch (error) {
-    logger.error('獲取移動端分析報告失敗:', error);
+    logger.error('?��?移�?端�??�報?�失??', error);
     res.status(500).json({
       success: false,
-      error: '獲取移動端分析報告失敗'
+      error: '?��?移�?端�??�報?�失??,
     });
   }
 });
 
-// ==================== 移動端優化 ====================
+// ==================== 移�?端優??====================
 
-// 獲取移動端配置
-router.get('/config', authenticateToken, async (req, res) => {
+// ?��?移�?端�?�?router.get('/config', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { deviceInfo } = req.query;
 
+// eslint-disable-next-line no-unused-vars
     const config = await mobileService.getMobileConfig({
       userId,
-      deviceInfo: deviceInfo ? JSON.parse(deviceInfo) : null
+      deviceInfo: deviceInfo ? JSON.parse(deviceInfo) : null,
     });
 
     res.json({
       success: true,
-      data: config
+      data: config,
     });
   } catch (error) {
-    logger.error('獲取移動端配置失敗:', error);
+    logger.error('?��?移�?端�?置失??', error);
     res.status(500).json({
       success: false,
-      error: '獲取移動端配置失敗'
+      error: '?��?移�?端�?置失??,
     });
   }
 });
 
-// 獲取優化建議
+// ?��??��?建議
 router.get('/optimization/suggestions', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -333,102 +343,105 @@ router.get('/optimization/suggestions', authenticateToken, async (req, res) => {
     const suggestions = await mobileService.getOptimizationSuggestions({
       userId,
       deviceInfo: deviceInfo ? JSON.parse(deviceInfo) : null,
-      performanceData: performanceData ? JSON.parse(performanceData) : null
+      performanceData: performanceData ? JSON.parse(performanceData) : null,
     });
 
     res.json({
       success: true,
-      data: suggestions
+      data: suggestions,
     });
   } catch (error) {
-    logger.error('獲取優化建議失敗:', error);
+    logger.error('?��??��?建議失�?:', error);
     res.status(500).json({
       success: false,
-      error: '獲取優化建議失敗'
+      error: '?��??��?建議失�?',
     });
   }
 });
 
-// ==================== 生物識別認證 ====================
+// ==================== ?�物識別認�? ====================
 
-// 啟用生物識別認證
+// ?�用?�物識別認�?
 router.post('/biometric/enable', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { biometricType, deviceId } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.enableBiometricAuth({
       userId,
       biometricType,
-      deviceId
+      deviceId,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('啟用生物識別認證失敗:', error);
+    logger.error('?�用?�物識別認�?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '啟用生物識別認證失敗'
+      error: '?�用?�物識別認�?失�?',
     });
   }
 });
 
-// 驗證生物識別
+// 驗�??�物識別
 router.post('/biometric/verify', async (req, res) => {
   try {
     const { biometricData, deviceId, userId } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.verifyBiometricAuth({
       biometricData,
       deviceId,
-      userId
+      userId,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('驗證生物識別失敗:', error);
+    logger.error('驗�??�物識別失�?:', error);
     res.status(500).json({
       success: false,
-      error: '驗證生物識別失敗'
+      error: '驗�??�物識別失�?',
     });
   }
 });
 
-// ==================== 語音命令 ====================
+// ==================== 語音?�令 ====================
 
-// 處理語音命令
+// ?��?語音?�令
 router.post('/voice/command', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { audioData, commandType, language } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.processVoiceCommand({
       userId,
       audioData,
       commandType,
-      language
+      language,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('處理語音命令失敗:', error);
+    logger.error('?��?語音?�令失�?:', error);
     res.status(500).json({
       success: false,
-      error: '處理語音命令失敗'
+      error: '?��?語音?�令失�?',
     });
   }
 });
 
-// 獲取語音命令列表
+// ?��?語音?�令?�表
 router.get('/voice/commands', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -436,25 +449,25 @@ router.get('/voice/commands', authenticateToken, async (req, res) => {
 
     const commands = await mobileService.getVoiceCommands({
       userId,
-      language: language || 'zh-TW'
+      language: language || 'zh-TW',
     });
 
     res.json({
       success: true,
-      data: commands
+      data: commands,
     });
   } catch (error) {
-    logger.error('獲取語音命令列表失敗:', error);
+    logger.error('?��?語音?�令?�表失�?:', error);
     res.status(500).json({
       success: false,
-      error: '獲取語音命令列表失敗'
+      error: '?��?語音?�令?�表失�?',
     });
   }
 });
 
-// ==================== AR 功能 ====================
+// ==================== AR ?�能 ====================
 
-// 獲取 AR 卡片數據
+// ?��? AR ?��??��?
 router.get('/ar/card/:cardId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -464,94 +477,93 @@ router.get('/ar/card/:cardId', authenticateToken, async (req, res) => {
     const arData = await mobileService.getARCardData({
       userId,
       cardId,
-      arType: arType || '3d-model'
+      arType: arType || '3d-model',
     });
 
     res.json({
       success: true,
-      data: arData
+      data: arData,
     });
   } catch (error) {
-    logger.error('獲取 AR 卡片數據失敗:', error);
+    logger.error('?��? AR ?��??��?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '獲取 AR 卡片數據失敗'
+      error: '?��? AR ?��??��?失�?',
     });
   }
 });
 
-// 處理 AR 掃描
+// ?��? AR ?��?
 router.post('/ar/scan', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { scanData, scanType, location } = req.body;
 
+// eslint-disable-next-line no-unused-vars
     const result = await mobileService.processARScan({
       userId,
       scanData,
       scanType,
-      location
+      location,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
-    logger.error('處理 AR 掃描失敗:', error);
+    logger.error('?��? AR ?��?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '處理 AR 掃描失敗'
+      error: '?��? AR ?��?失�?',
     });
   }
 });
 
-// ==================== 移動端健康檢查 ====================
+// ==================== 移�?端健康檢??====================
 
-// 移動端健康檢查
-router.get('/health', authenticateToken, async (req, res) => {
+// 移�?端健康檢??router.get('/health', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { deviceInfo } = req.query;
 
     const health = await mobileService.getMobileHealth({
       userId,
-      deviceInfo: deviceInfo ? JSON.parse(deviceInfo) : null
+      deviceInfo: deviceInfo ? JSON.parse(deviceInfo) : null,
     });
 
     res.json({
       success: true,
-      data: health
+      data: health,
     });
   } catch (error) {
-    logger.error('移動端健康檢查失敗:', error);
+    logger.error('移�?端健康檢?�失??', error);
     res.status(500).json({
       success: false,
-      error: '移動端健康檢查失敗'
+      error: '移�?端健康檢?�失??,
     });
   }
 });
 
-// 獲取移動端指標
-router.get('/metrics', authenticateToken, async (req, res) => {
+// ?��?移�?端�?�?router.get('/metrics', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { timeframe } = req.query;
 
     const metrics = await mobileService.getMobileMetrics({
       userId,
-      timeframe: timeframe || '24h'
+      timeframe: timeframe || '24h',
     });
 
     res.json({
       success: true,
-      data: metrics
+      data: metrics,
     });
   } catch (error) {
-    logger.error('獲取移動端指標失敗:', error);
+    logger.error('?��?移�?端�?標失??', error);
     res.status(500).json({
       success: false,
-      error: '獲取移動端指標失敗'
+      error: '?��?移�?端�?標失??,
     });
   }
 });

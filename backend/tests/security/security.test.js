@@ -1,3 +1,5 @@
+/* eslint-env jest */
+
 const request = require('supertest');
 const app = require('../../src/server');
 const { sequelize } = require('../../src/config/database');
@@ -18,16 +20,14 @@ describe('安全測試', () => {
       username: 'testuser',
       email: 'test@example.com',
       password: hashedPassword,
-      role: 'user'
+      role: 'user',
     });
 
     // 登錄獲取 token
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'test@example.com',
-        password: 'testpassword123'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'test@example.com',
+      password: 'testpassword123',
+    });
     authToken = loginResponse.body.data.token;
   });
 
@@ -43,7 +43,7 @@ describe('安全測試', () => {
         "' UNION SELECT * FROM users --",
         "'; INSERT INTO users (username, email) VALUES ('hacker', 'hacker@evil.com'); --",
         "' OR 1=1; --",
-        "'; UPDATE users SET role='admin' WHERE id=1; --"
+        "'; UPDATE users SET role='admin' WHERE id=1; --",
       ];
 
       for (const payload of sqlInjectionPayloads) {
@@ -66,7 +66,7 @@ describe('安全測試', () => {
       const sqlInjectionPayloads = [
         "admin'; --",
         "' OR '1'='1' --",
-        "'; DROP TABLE users; --"
+        "'; DROP TABLE users; --",
       ];
 
       for (const payload of sqlInjectionPayloads) {
@@ -75,7 +75,7 @@ describe('安全測試', () => {
           .send({
             username: payload,
             email: `test${Date.now()}@example.com`,
-            password: 'testpassword123'
+            password: 'testpassword123',
           });
 
         // 應該返回驗證錯誤，而不是執行惡意 SQL
@@ -88,7 +88,7 @@ describe('安全測試', () => {
       const sqlInjectionPayloads = [
         "test@example.com'; DROP TABLE users; --",
         "test@example.com' OR '1'='1",
-        "'; INSERT INTO users VALUES (999, 'hacker', 'hacker@evil.com', 'hash', 'admin'); --"
+        "'; INSERT INTO users VALUES (999, 'hacker', 'hacker@evil.com', 'hash', 'admin'); --",
       ];
 
       for (const payload of sqlInjectionPayloads) {
@@ -97,7 +97,7 @@ describe('安全測試', () => {
           .send({
             username: `testuser${Date.now()}`,
             email: payload,
-            password: 'testpassword123'
+            password: 'testpassword123',
           });
 
         // 應該返回驗證錯誤
@@ -115,7 +115,7 @@ describe('安全測試', () => {
         'javascript:alert("XSS")',
         '<svg onload="alert(\'XSS\')">',
         '"><script>alert("XSS")</script>',
-        '&#60;script&#62;alert("XSS")&#60;/script&#62;'
+        '&#60;script&#62;alert("XSS")&#60;/script&#62;',
       ];
 
       for (const payload of xssPayloads) {
@@ -124,7 +124,7 @@ describe('安全測試', () => {
           .send({
             username: payload,
             email: `test${Date.now()}@example.com`,
-            password: 'testpassword123'
+            password: 'testpassword123',
           });
 
         // 應該返回驗證錯誤
@@ -137,7 +137,7 @@ describe('安全測試', () => {
       const xssPayloads = [
         '<script>alert("XSS")</script>',
         '<img src="x" onerror="alert(\'XSS\')">',
-        'javascript:alert("XSS")'
+        'javascript:alert("XSS")',
       ];
 
       for (const payload of xssPayloads) {
@@ -156,7 +156,7 @@ describe('安全測試', () => {
       const xssPayloads = [
         '<script>alert("XSS")</script>',
         '<img src="x" onerror="alert(\'XSS\')">',
-        'javascript:alert("XSS")'
+        'javascript:alert("XSS")',
       ];
 
       for (const payload of xssPayloads) {
@@ -166,7 +166,7 @@ describe('安全測試', () => {
           .send({
             name: 'Test Card',
             description: payload,
-            currentPrice: 100
+            currentPrice: 100,
           });
 
         // 應該返回驗證錯誤
@@ -183,7 +183,7 @@ describe('安全測試', () => {
         '..\\..\\..\\windows\\system32\\drivers\\etc\\hosts',
         '....//....//....//etc/passwd',
         '%2e%2e%2f%2e%2e%2f%2e%2e%2fetc%2fpasswd',
-        '..%252f..%252f..%252fetc%252fpasswd'
+        '..%252f..%252f..%252fetc%252fpasswd',
       ];
 
       for (const payload of pathTraversalPayloads) {
@@ -199,7 +199,7 @@ describe('安全測試', () => {
     it('應該防止路徑遍歷攻擊在文件上傳中', async () => {
       const pathTraversalPayloads = [
         '../../../etc/passwd',
-        '..\\..\\..\\windows\\system32\\drivers\\etc\\hosts'
+        '..\\..\\..\\windows\\system32\\drivers\\etc\\hosts',
       ];
 
       for (const payload of pathTraversalPayloads) {
@@ -225,7 +225,7 @@ describe('安全測試', () => {
         '| cat /etc/passwd',
         '&& cat /etc/passwd',
         '$(rm -rf /)',
-        '`rm -rf /`'
+        '`rm -rf /`',
       ];
 
       for (const payload of commandInjectionPayloads) {
@@ -249,7 +249,7 @@ describe('安全測試', () => {
         .set('Authorization', `Bearer ${authToken}`)
         .send({
           currentPassword: 'testpassword123',
-          newPassword: 'newpassword123'
+          newPassword: 'newpassword123',
         });
 
       // 應該返回 403 錯誤（CSRF 保護）
@@ -263,7 +263,7 @@ describe('安全測試', () => {
         .set('x-csrf-token', 'invalid-token')
         .send({
           currentPassword: 'testpassword123',
-          newPassword: 'newpassword123'
+          newPassword: 'newpassword123',
         });
 
       // 應該返回 403 錯誤（無效的 CSRF token）
@@ -277,12 +277,10 @@ describe('安全測試', () => {
 
       // 嘗試多次錯誤登錄
       for (let i = 0; i < maxAttempts + 1; i++) {
-        const response = await request(app)
-          .post('/api/auth/login')
-          .send({
-            email: 'test@example.com',
-            password: 'wrongpassword'
-          });
+        const response = await request(app).post('/api/auth/login').send({
+          email: 'test@example.com',
+          password: 'wrongpassword',
+        });
 
         if (i < maxAttempts) {
           // 前幾次應該返回 401
@@ -304,7 +302,7 @@ describe('安全測試', () => {
           .send({
             username: `testuser${i}`,
             email: `test${i}@example.com`,
-            password: 'testpassword123'
+            password: 'testpassword123',
           });
 
         if (i < maxAttempts) {
@@ -324,7 +322,7 @@ describe('安全測試', () => {
         { method: 'GET', path: '/api/monitoring/metrics' },
         { method: 'GET', path: '/api/export/users' },
         { method: 'DELETE', path: '/api/monitoring/cleanup' },
-        { method: 'POST', path: '/api/monitoring/restart' }
+        { method: 'POST', path: '/api/monitoring/restart' },
       ];
 
       for (const endpoint of adminEndpoints) {
@@ -344,7 +342,7 @@ describe('安全測試', () => {
         username: 'otheruser',
         email: 'other@example.com',
         password: hashedPassword,
-        role: 'user'
+        role: 'user',
       });
 
       // 嘗試修改其他用戶的資料
@@ -352,7 +350,7 @@ describe('安全測試', () => {
         .put(`/api/auth/profile/${otherUser.id}`)
         .set('Authorization', `Bearer ${authToken}`)
         .send({
-          username: 'hackeduser'
+          username: 'hackeduser',
         });
 
       // 應該返回 403 錯誤（權限不足）
@@ -366,7 +364,7 @@ describe('安全測試', () => {
         'invalid.token.here',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.invalid.signature',
         'Bearer invalid',
-        ''
+        '',
       ];
 
       for (const token of invalidTokens) {
@@ -381,7 +379,7 @@ describe('安全測試', () => {
 
     it('應該拒絕過期的 JWT token', async () => {
       // 創建一個過期的 token（這裡需要手動設置過期時間）
-      const jwt = require('jsonwebtoken');
+      // const jwt = require('jsonwebtoken');
       const expiredToken = jwt.sign(
         { userId: testUser.id },
         process.env.JWT_SECRET || 'your-secret-key',
@@ -398,7 +396,7 @@ describe('安全測試', () => {
 
     it('應該拒絕篡改的 JWT token', async () => {
       // 創建一個被篡改的 token
-      const jwt = require('jsonwebtoken');
+      // const jwt = require('jsonwebtoken');
       const tamperedToken = jwt.sign(
         { userId: 999999, role: 'admin' }, // 篡改用戶 ID 和角色
         process.env.JWT_SECRET || 'your-secret-key',
@@ -423,17 +421,15 @@ describe('安全測試', () => {
         'test..test@example.com',
         'test@example..com',
         'test@example',
-        'test@.com'
+        'test@.com',
       ];
 
       for (const email of invalidEmails) {
-        const response = await request(app)
-          .post('/api/auth/register')
-          .send({
-            username: 'testuser',
-            email,
-            password: 'testpassword123'
-          });
+        const response = await request(app).post('/api/auth/register').send({
+          username: 'testuser',
+          email,
+          password: 'testpassword123',
+        });
 
         // 應該返回驗證錯誤
         expect(response.status).toBe(400);
@@ -448,17 +444,15 @@ describe('安全測試', () => {
         '123456',
         'qwerty',
         'abc123',
-        'password123'
+        'password123',
       ];
 
       for (const password of weakPasswords) {
-        const response = await request(app)
-          .post('/api/auth/register')
-          .send({
-            username: 'testuser',
-            email: 'test@example.com',
-            password
-          });
+        const response = await request(app).post('/api/auth/register').send({
+          username: 'testuser',
+          email: 'test@example.com',
+          password,
+        });
 
         // 應該返回驗證錯誤
         expect(response.status).toBe(400);
@@ -474,17 +468,15 @@ describe('安全測試', () => {
         'user name', // 包含空格
         'user@name', // 包含特殊字符
         'user-name', // 包含連字符
-        'user_name' // 包含下劃線
+        'user_name', // 包含下劃線
       ];
 
       for (const username of invalidUsernames) {
-        const response = await request(app)
-          .post('/api/auth/register')
-          .send({
-            username,
-            email: 'test@example.com',
-            password: 'testpassword123'
-          });
+        const response = await request(app).post('/api/auth/register').send({
+          username,
+          email: 'test@example.com',
+          password: 'testpassword123',
+        });
 
         // 應該返回驗證錯誤
         expect(response.status).toBe(400);
@@ -499,7 +491,7 @@ describe('安全測試', () => {
         { name: 'test.txt', content: 'This is a text file' },
         { name: 'test.pdf', content: '%PDF-1.4 fake pdf content' },
         { name: 'test.exe', content: 'fake executable content' },
-        { name: 'test.js', content: 'console.log("malicious code")' }
+        { name: 'test.js', content: 'console.log("malicious code")' },
       ];
 
       for (const file of nonImageFiles) {
@@ -534,7 +526,7 @@ describe('安全測試', () => {
         'script.js',
         'virus.exe',
         'malware.bat',
-        'shell.php'
+        'shell.php',
       ];
 
       for (const filename of maliciousFilenames) {
@@ -558,16 +550,14 @@ describe('安全測試', () => {
       const promises = [];
       for (let i = 0; i < maxRequests + 10; i++) {
         promises.push(
-          request(app)
-            .get('/api/cards')
-            .query({ page: 1, limit: 10 })
+          request(app).get('/api/cards').query({ page: 1, limit: 10 })
         );
       }
 
       const responses = await Promise.all(promises);
 
       // 檢查是否有請求被限制
-      const rateLimitedResponses = responses.filter(r => r.status === 429);
+      const rateLimitedResponses = responses.filter((r) => r.status === 429);
 
       // 應該有一些請求被限制
       expect(rateLimitedResponses.length).toBeGreaterThan(0);
@@ -578,12 +568,10 @@ describe('安全測試', () => {
 
       // 嘗試多次登錄
       for (let i = 0; i < maxAttempts + 1; i++) {
-        const response = await request(app)
-          .post('/api/auth/login')
-          .send({
-            email: 'test@example.com',
-            password: 'wrongpassword'
-          });
+        const response = await request(app).post('/api/auth/login').send({
+          email: 'test@example.com',
+          password: 'wrongpassword',
+        });
 
         if (i >= maxAttempts) {
           // 超過限制後應該返回 429
@@ -595,9 +583,7 @@ describe('安全測試', () => {
 
   describe('安全標頭測試', () => {
     it('應該設置正確的安全標頭', async () => {
-      const response = await request(app)
-        .get('/api/cards')
-        .expect(200);
+      const response = await request(app).get('/api/cards').expect(200);
 
       // 檢查安全標頭
       expect(response.headers['x-frame-options']).toBe('DENY');
@@ -608,18 +594,14 @@ describe('安全測試', () => {
     });
 
     it('應該防止點擊劫持', async () => {
-      const response = await request(app)
-        .get('/api/cards')
-        .expect(200);
+      const response = await request(app).get('/api/cards').expect(200);
 
       // X-Frame-Options 應該設置為 DENY
       expect(response.headers['x-frame-options']).toBe('DENY');
     });
 
     it('應該防止 MIME 類型嗅探', async () => {
-      const response = await request(app)
-        .get('/api/cards')
-        .expect(200);
+      const response = await request(app).get('/api/cards').expect(200);
 
       // X-Content-Type-Options 應該設置為 nosniff
       expect(response.headers['x-content-type-options']).toBe('nosniff');
@@ -632,14 +614,16 @@ describe('安全測試', () => {
         .post('/api/auth/login')
         .send({
           email: 'test@example.com',
-          password: 'testpassword123'
+          password: 'testpassword123',
         })
         .expect(200);
 
       // 檢查會話 cookie 的安全屬性
       const cookies = response.headers['set-cookie'];
       if (cookies) {
-        const sessionCookie = cookies.find(cookie => cookie.includes('connect.sid'));
+        const sessionCookie = cookies.find((cookie) =>
+          cookie.includes('connect.sid')
+        );
         if (sessionCookie) {
           expect(sessionCookie).toContain('HttpOnly');
           expect(sessionCookie).toContain('Secure');

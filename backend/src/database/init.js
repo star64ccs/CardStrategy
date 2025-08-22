@@ -7,7 +7,7 @@ const initDatabase = async () => {
     port: 5432,
     user: 'postgres',
     password: 'sweetcorn831',
-    database: 'postgres' // 連接到默認數據庫
+    database: 'postgres', // 連接到默認數據庫
   });
 
   try {

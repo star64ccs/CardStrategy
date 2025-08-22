@@ -5,7 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  Alert
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,7 +21,7 @@ import {
   searchScanHistory,
   clearFilters,
   setFilters,
-  toggleSelectionMode
+  toggleSelectionMode,
 } from '@/store/slices/scanHistorySlice';
 import { ScanHistoryList } from '@/components/scan/ScanHistoryList';
 import { ScanHistoryDetail } from '@/components/scan/ScanHistoryDetail';
@@ -33,7 +33,7 @@ interface ScanHistoryScreenProps {
 }
 
 export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
-  navigation
+  navigation,
 }) => {
   const dispatch = useDispatch();
   const {
@@ -42,13 +42,14 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
     isLoading,
     filters,
     selectedRecord,
-    isSelectionMode
+    isSelectionMode,
   } = useSelector((state: RootState) => state.scanHistory);
 
   const [showFilters, setShowFilters] = useState(false);
   const [showDetail, setShowDetail] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRecordForDetail, setSelectedRecordForDetail] = useState<any>(null);
+  const [selectedRecordForDetail, setSelectedRecordForDetail] =
+    useState<any>(null);
 
   useEffect(() => {
     loadData();
@@ -87,16 +88,12 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
   };
 
   const handleExport = () => {
-    Alert.alert(
-      '導出掃描歷史',
-      '選擇導出格式',
-      [
-        { text: '取消', style: 'cancel' },
-        { text: 'CSV', onPress: () => exportHistory('csv') },
-        { text: 'JSON', onPress: () => exportHistory('json') },
-        { text: 'PDF', onPress: () => exportHistory('pdf') }
-      ]
-    );
+    Alert.alert('導出掃描歷史', '選擇導出格式', [
+      { text: '取消', style: 'cancel' },
+      { text: 'CSV', onPress: () => exportHistory('csv') },
+      { text: 'JSON', onPress: () => exportHistory('json') },
+      { text: 'PDF', onPress: () => exportHistory('pdf') },
+    ]);
   };
 
   const exportHistory = (format: 'csv' | 'json' | 'pdf') => {
@@ -118,19 +115,28 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
           style={styles.actionButton}
           onPress={() => setShowFilters(!showFilters)}
         >
-          <Ionicons name="filter" size={24} color={theme.colors.textSecondary} />
+          <Ionicons
+            name="filter"
+            size={24}
+            color={theme.colors.textSecondary}
+          />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={handleExport}
-        >
-          <Ionicons name="download" size={24} color={theme.colors.textSecondary} />
+        <TouchableOpacity style={styles.actionButton} onPress={handleExport}>
+          <Ionicons
+            name="download"
+            size={24}
+            color={theme.colors.textSecondary}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.actionButton}
           onPress={() => dispatch(toggleSelectionMode())}
         >
-          <Ionicons name="checkbox" size={24} color={theme.colors.textSecondary} />
+          <Ionicons
+            name="checkbox"
+            size={24}
+            color={theme.colors.textSecondary}
+          />
         </TouchableOpacity>
       </View>
     </View>
@@ -149,7 +155,11 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
         />
         {searchQuery.length > 0 && (
           <TouchableOpacity onPress={handleClearSearch}>
-            <Ionicons name="close-circle" size={20} color={theme.colors.textSecondary} />
+            <Ionicons
+              name="close-circle"
+              size={20}
+              color={theme.colors.textSecondary}
+            />
           </TouchableOpacity>
         )}
       </View>
@@ -171,19 +181,27 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
           <Text style={styles.statisticsTitle}>掃描統計</Text>
           <View style={styles.statisticsGrid}>
             <View style={styles.statisticItem}>
-              <Text style={styles.statisticValue}>{formatNumber(statistics.totalScans)}</Text>
+              <Text style={styles.statisticValue}>
+                {formatNumber(statistics.totalScans)}
+              </Text>
               <Text style={styles.statisticLabel}>總掃描</Text>
             </View>
             <View style={styles.statisticItem}>
-              <Text style={styles.statisticValue}>{formatNumber(statistics.successfulScans)}</Text>
+              <Text style={styles.statisticValue}>
+                {formatNumber(statistics.successfulScans)}
+              </Text>
               <Text style={styles.statisticLabel}>成功</Text>
             </View>
             <View style={styles.statisticItem}>
-              <Text style={styles.statisticValue}>{statistics.successRate.toFixed(1)}%</Text>
+              <Text style={styles.statisticValue}>
+                {statistics.successRate.toFixed(1)}%
+              </Text>
               <Text style={styles.statisticLabel}>成功率</Text>
             </View>
             <View style={styles.statisticItem}>
-              <Text style={styles.statisticValue}>{statistics.averageProcessingTime.toFixed(1)}s</Text>
+              <Text style={styles.statisticValue}>
+                {statistics.averageProcessingTime.toFixed(1)}s
+              </Text>
               <Text style={styles.statisticLabel}>平均時間</Text>
             </View>
           </View>
@@ -193,19 +211,27 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
             <View style={styles.scanTypeGrid}>
               <View style={styles.scanTypeItem}>
                 <Text style={styles.scanTypeLabel}>識別</Text>
-                <Text style={styles.scanTypeValue}>{statistics.scansByType.recognition}</Text>
+                <Text style={styles.scanTypeValue}>
+                  {statistics.scansByType.recognition}
+                </Text>
               </View>
               <View style={styles.scanTypeItem}>
                 <Text style={styles.scanTypeLabel}>條件分析</Text>
-                <Text style={styles.scanTypeValue}>{statistics.scansByType.condition}</Text>
+                <Text style={styles.scanTypeValue}>
+                  {statistics.scansByType.condition}
+                </Text>
               </View>
               <View style={styles.scanTypeItem}>
                 <Text style={styles.scanTypeLabel}>真偽驗證</Text>
-                <Text style={styles.scanTypeValue}>{statistics.scansByType.authenticity}</Text>
+                <Text style={styles.scanTypeValue}>
+                  {statistics.scansByType.authenticity}
+                </Text>
               </View>
               <View style={styles.scanTypeItem}>
                 <Text style={styles.scanTypeLabel}>批量掃描</Text>
-                <Text style={styles.scanTypeValue}>{statistics.scansByType.batch}</Text>
+                <Text style={styles.scanTypeValue}>
+                  {statistics.scansByType.batch}
+                </Text>
               </View>
             </View>
           </View>
@@ -230,23 +256,32 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
           <View style={styles.filterSection}>
             <Text style={styles.filterLabel}>掃描類型</Text>
             <View style={styles.filterButtons}>
-              {['recognition', 'condition', 'authenticity', 'batch'].map((type) => (
-                <TouchableOpacity
-                  key={type}
-                  style={[
-                    styles.filterButton,
-                    filters.scanType === type && styles.filterButtonActive
-                  ]}
-                  onPress={() => handleFilterChange({ scanType: filters.scanType === type ? undefined : type })}
-                >
-                  <Text style={[
-                    styles.filterButtonText,
-                    filters.scanType === type && styles.filterButtonTextActive
-                  ]}>
-                    {getScanTypeLabel(type)}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              {['recognition', 'condition', 'authenticity', 'batch'].map(
+                (type) => (
+                  <TouchableOpacity
+                    key={type}
+                    style={[
+                      styles.filterButton,
+                      filters.scanType === type && styles.filterButtonActive,
+                    ]}
+                    onPress={() =>
+                      handleFilterChange({
+                        scanType: filters.scanType === type ? undefined : type,
+                      })
+                    }
+                  >
+                    <Text
+                      style={[
+                        styles.filterButtonText,
+                        filters.scanType === type &&
+                          styles.filterButtonTextActive,
+                      ]}
+                    >
+                      {getScanTypeLabel(type)}
+                    </Text>
+                  </TouchableOpacity>
+                )
+              )}
             </View>
           </View>
 
@@ -256,20 +291,23 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
               {[
                 { key: 'date', label: '時間' },
                 { key: 'processingTime', label: '處理時間' },
-                { key: 'confidence', label: '信心度' }
+                { key: 'confidence', label: '信心度' },
               ].map((sort) => (
                 <TouchableOpacity
                   key={sort.key}
                   style={[
                     styles.filterButton,
-                    filters.sortBy === sort.key && styles.filterButtonActive
+                    filters.sortBy === sort.key && styles.filterButtonActive,
                   ]}
                   onPress={() => handleFilterChange({ sortBy: sort.key })}
                 >
-                  <Text style={[
-                    styles.filterButtonText,
-                    filters.sortBy === sort.key && styles.filterButtonTextActive
-                  ]}>
+                  <Text
+                    style={[
+                      styles.filterButtonText,
+                      filters.sortBy === sort.key &&
+                        styles.filterButtonTextActive,
+                    ]}
+                  >
                     {sort.label}
                   </Text>
                 </TouchableOpacity>
@@ -283,28 +321,34 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
               <TouchableOpacity
                 style={[
                   styles.filterButton,
-                  filters.sortOrder === 'desc' && styles.filterButtonActive
+                  filters.sortOrder === 'desc' && styles.filterButtonActive,
                 ]}
                 onPress={() => handleFilterChange({ sortOrder: 'desc' })}
               >
-                <Text style={[
-                  styles.filterButtonText,
-                  filters.sortOrder === 'desc' && styles.filterButtonTextActive
-                ]}>
+                <Text
+                  style={[
+                    styles.filterButtonText,
+                    filters.sortOrder === 'desc' &&
+                      styles.filterButtonTextActive,
+                  ]}
+                >
                   降序
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
                   styles.filterButton,
-                  filters.sortOrder === 'asc' && styles.filterButtonActive
+                  filters.sortOrder === 'asc' && styles.filterButtonActive,
                 ]}
                 onPress={() => handleFilterChange({ sortOrder: 'asc' })}
               >
-                <Text style={[
-                  styles.filterButtonText,
-                  filters.sortOrder === 'asc' && styles.filterButtonTextActive
-                ]}>
+                <Text
+                  style={[
+                    styles.filterButtonText,
+                    filters.sortOrder === 'asc' &&
+                      styles.filterButtonTextActive,
+                  ]}
+                >
                   升序
                 </Text>
               </TouchableOpacity>
@@ -320,7 +364,7 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
       recognition: '識別',
       condition: '條件分析',
       authenticity: '真偽驗證',
-      batch: '批量掃描'
+      batch: '批量掃描',
     };
     return labels[type as keyof typeof labels] || type;
   };
@@ -332,10 +376,7 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
       {renderStatistics()}
       {renderFilters()}
 
-      <ScanHistoryList
-        onRecordPress={handleRecordPress}
-        onRefresh={loadData}
-      />
+      <ScanHistoryList onRecordPress={handleRecordPress} onRefresh={loadData} />
 
       {/* 詳細記錄模態框 */}
       <Modal
@@ -370,7 +411,7 @@ export const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -378,33 +419,33 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: theme.spacing.medium,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   headerLeft: {
-    flex: 1
+    flex: 1,
   },
   title: {
     fontSize: 24,
     fontWeight: '700',
     color: theme.colors.text,
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   subtitle: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   headerActions: {
     flexDirection: 'row',
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   actionButton: {
-    padding: theme.spacing.small
+    padding: theme.spacing.small,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: theme.spacing.medium,
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   searchInputContainer: {
     flex: 1,
@@ -413,108 +454,108 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.backgroundPaper,
     borderRadius: theme.borderRadius.medium,
     paddingHorizontal: theme.spacing.medium,
-    paddingVertical: theme.spacing.small
+    paddingVertical: theme.spacing.small,
   },
   searchInput: {
     flex: 1,
     marginLeft: theme.spacing.small,
-    fontSize: 16
+    fontSize: 16,
   },
   statisticsContainer: {
     paddingHorizontal: theme.spacing.medium,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   statisticsCard: {
-    padding: theme.spacing.medium
+    padding: theme.spacing.medium,
   },
   statisticsTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.text,
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   statisticsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: theme.spacing.large
+    marginBottom: theme.spacing.large,
   },
   statisticItem: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   statisticValue: {
     fontSize: 20,
     fontWeight: '700',
     color: theme.colors.primary,
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   statisticLabel: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   scanTypeStats: {
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    paddingTop: theme.spacing.medium
+    paddingTop: theme.spacing.medium,
   },
   scanTypeTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: theme.colors.text,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   scanTypeGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   scanTypeItem: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   scanTypeLabel: {
     fontSize: 10,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   scanTypeValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   filtersCard: {
     margin: theme.spacing.medium,
-    padding: theme.spacing.medium
+    padding: theme.spacing.medium,
   },
   filtersHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   filtersTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   clearFiltersText: {
     fontSize: 14,
-    color: theme.colors.primary
+    color: theme.colors.primary,
   },
   filterOptions: {
-    gap: theme.spacing.medium
+    gap: theme.spacing.medium,
   },
   filterSection: {
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   filterLabel: {
     fontSize: 14,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   filterButtons: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.small
+    gap: theme.spacing.small,
   },
   filterButton: {
     paddingHorizontal: theme.spacing.medium,
@@ -522,22 +563,22 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.small,
     backgroundColor: theme.colors.backgroundSecondary,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   filterButtonActive: {
     backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   filterButtonText: {
     fontSize: 12,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   filterButtonTextActive: {
-    color: theme.colors.white
+    color: theme.colors.white,
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -545,19 +586,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: theme.spacing.medium,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   closeButton: {
-    padding: theme.spacing.small
+    padding: theme.spacing.small,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   modalPlaceholder: {
-    width: 44
-  }
+    width: 44,
+  },
 });
 
 export default ScanHistoryScreen;

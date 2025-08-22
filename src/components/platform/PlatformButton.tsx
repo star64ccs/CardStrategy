@@ -1,5 +1,11 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+} from 'react-native';
 import { isIOS, isAndroid, getPlatformStyles } from '../../utils/platformUtils';
 
 interface PlatformButtonProps {
@@ -23,7 +29,7 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({
   loading = false,
   style,
   textStyle,
-  testID
+  testID,
 }) => {
   const platformStyles = getPlatformStyles();
 
@@ -34,51 +40,53 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({
     const variantStyles = {
       primary: {
         backgroundColor: '#1C2B3A',
-        borderColor: '#1C2B3A'
+        borderColor: '#1C2B3A',
       },
       secondary: {
         backgroundColor: '#CBA135',
-        borderColor: '#CBA135'
+        borderColor: '#CBA135',
       },
       outline: {
         backgroundColor: 'transparent',
         borderColor: '#1C2B3A',
-        borderWidth: 1
+        borderWidth: 1,
       },
       ghost: {
         backgroundColor: 'transparent',
-        borderColor: 'transparent'
-      }
+        borderColor: 'transparent',
+      },
     };
 
     const sizeStyles = {
       small: {
         paddingVertical: 6,
         paddingHorizontal: 12,
-        minHeight: 32
+        minHeight: 32,
       },
       medium: {
         paddingVertical: 8,
         paddingHorizontal: 16,
-        minHeight: 40
+        minHeight: 40,
       },
       large: {
         paddingVertical: 12,
         paddingHorizontal: 24,
-        minHeight: 48
-      }
+        minHeight: 48,
+      },
     };
 
-    const disabledStyle = disabled ? {
-      opacity: 0.5
-    } : {};
+    const disabledStyle = disabled
+      ? {
+          opacity: 0.5,
+        }
+      : {};
 
     return {
       ...baseStyle,
       ...variantStyles[variant],
       ...sizeStyles[size],
       ...disabledStyle,
-      ...style
+      ...style,
     };
   };
 
@@ -86,33 +94,35 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({
     const baseTextStyle: TextStyle = {
       fontSize: size === 'small' ? 14 : size === 'large' ? 18 : 16,
       fontWeight: isIOS() ? '600' : '500',
-      textAlign: 'center'
+      textAlign: 'center',
     };
 
     const variantTextStyles = {
       primary: {
-        color: '#FFFFFF'
+        color: '#FFFFFF',
       },
       secondary: {
-        color: '#FFFFFF'
+        color: '#FFFFFF',
       },
       outline: {
-        color: '#1C2B3A'
+        color: '#1C2B3A',
       },
       ghost: {
-        color: '#1C2B3A'
-      }
+        color: '#1C2B3A',
+      },
     };
 
-    const disabledTextStyle = disabled ? {
-      opacity: 0.5
-    } : {};
+    const disabledTextStyle = disabled
+      ? {
+          opacity: 0.5,
+        }
+      : {};
 
     return {
       ...baseTextStyle,
       ...variantTextStyles[variant],
       ...disabledTextStyle,
-      ...textStyle
+      ...textStyle,
     };
   };
 
@@ -130,9 +140,7 @@ const PlatformButton: React.FC<PlatformButtonProps> = ({
       activeOpacity={0.7}
       testID={testID}
     >
-      <Text style={getTextStyle()}>
-        {loading ? '載入中...' : title}
-      </Text>
+      <Text style={getTextStyle()}>{loading ? '載入中...' : title}</Text>
     </TouchableOpacity>
   );
 };

@@ -8,10 +8,14 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { registerUser, selectIsLoading, selectError } from '../../store/slices/authSlice';
+import {
+  registerUser,
+  selectIsLoading,
+  selectError,
+} from '../../store/slices/authSlice';
 
 interface RegisterScreenProps {
   navigation: any;
@@ -31,8 +35,13 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validateForm = () => {
-    if (!username.trim() || !email.trim() || !password.trim() ||
-        !confirmPassword.trim() || !displayName.trim()) {
+    if (
+      !username.trim() ||
+      !email.trim() ||
+      !password.trim() ||
+      !confirmPassword.trim() ||
+      !displayName.trim()
+    ) {
       Alert.alert('錯誤', '請填寫所有必填欄位');
       return false;
     }
@@ -81,18 +90,20 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
     }
 
     try {
-      await dispatch(registerUser({
-        username,
-        email,
-        password,
-        displayName
-      })).unwrap();
+      await dispatch(
+        registerUser({
+          username,
+          email,
+          password,
+          displayName,
+        })
+      ).unwrap();
 
       Alert.alert('成功', '註冊成功！歡迎加入卡策！', [
         {
           text: '確定',
-          onPress: () => navigation.navigate('Login')
-        }
+          onPress: () => navigation.navigate('Login'),
+        },
       ]);
     } catch (error: any) {
       Alert.alert('註冊失敗', error || '請檢查您的輸入信息');
@@ -190,7 +201,9 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
                 style={styles.eyeButton}
                 onPress={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                <Text style={styles.eyeText}>{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</Text>
+                <Text style={styles.eyeText}>
+                  {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -217,10 +230,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
             <View style={styles.dividerLine} />
           </View>
 
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={handleLogin}
-          >
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <Text style={styles.loginButtonText}>已有帳戶？登錄</Text>
           </TouchableOpacity>
         </View>
@@ -232,27 +242,27 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa'
+    backgroundColor: '#f8f9fa',
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20
+    padding: 20,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 40
+    marginBottom: 40,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: 8
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
     color: '#7f8c8d',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   form: {
     backgroundColor: '#ffffff',
@@ -261,20 +271,20 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 4
+    elevation: 4,
   },
   inputContainer: {
-    marginBottom: 20
+    marginBottom: 20,
   },
   label: {
     fontSize: 14,
     fontWeight: '600',
     color: '#2c3e50',
-    marginBottom: 8
+    marginBottom: 8,
   },
   input: {
     borderWidth: 1,
@@ -282,81 +292,81 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   passwordContainer: {
-    position: 'relative'
+    position: 'relative',
   },
   passwordInput: {
-    paddingRight: 50
+    paddingRight: 50,
   },
   eyeButton: {
     position: 'absolute',
     right: 12,
     top: 12,
-    padding: 4
+    padding: 4,
   },
   eyeText: {
-    fontSize: 20
+    fontSize: 20,
   },
   hint: {
     fontSize: 12,
     color: '#7f8c8d',
-    marginTop: 4
+    marginTop: 4,
   },
   registerButton: {
     backgroundColor: '#27ae60',
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   disabledButton: {
-    backgroundColor: '#bdc3c7'
+    backgroundColor: '#bdc3c7',
   },
   registerButtonText: {
     color: '#ffffff',
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   errorContainer: {
     backgroundColor: '#ffebee',
     borderRadius: 8,
     padding: 12,
-    marginBottom: 16
+    marginBottom: 16,
   },
   errorText: {
     color: '#c62828',
     fontSize: 14,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 20
+    marginVertical: 20,
   },
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#e1e8ed'
+    backgroundColor: '#e1e8ed',
   },
   dividerText: {
     marginHorizontal: 16,
     color: '#7f8c8d',
-    fontSize: 14
+    fontSize: 14,
   },
   loginButton: {
     borderWidth: 1,
     borderColor: '#3498db',
     borderRadius: 8,
     padding: 16,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loginButtonText: {
     color: '#3498db',
     fontSize: 16,
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default RegisterScreen;

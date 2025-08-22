@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import {
   formatDate,
   formatPrice,
@@ -8,7 +9,7 @@ import {
   formatDuration,
   formatRelativeTime,
   formatCardName,
-  formatCardCondition
+  formatCardCondition,
 } from '@/utils/formatters';
 
 describe('Formatters', () => {
@@ -225,8 +226,12 @@ describe('Formatters', () => {
 
   describe('formatCardName', () => {
     it('應該正確格式化卡片名稱', () => {
-      expect(formatCardName('Blue-Eyes White Dragon')).toBe('Blue-Eyes White Dragon');
-      expect(formatCardName('blue-eyes white dragon')).toBe('Blue-Eyes White Dragon');
+      expect(formatCardName('Blue-Eyes White Dragon')).toBe(
+        'Blue-Eyes White Dragon'
+      );
+      expect(formatCardName('blue-eyes white dragon')).toBe(
+        'Blue-Eyes White Dragon'
+      );
     });
 
     it('應該處理特殊字符', () => {
@@ -278,9 +283,15 @@ describe('Formatters', () => {
     });
 
     it('應該處理極端數值', () => {
-      expect(formatPrice(Number.MAX_SAFE_INTEGER)).toBe('$9,007,199,254,740,991.00');
-      expect(formatPrice(Number.MIN_SAFE_INTEGER)).toBe('-$9,007,199,254,740,991.00');
-      expect(formatNumber(Number.MAX_SAFE_INTEGER)).toBe('9,007,199,254,740,991');
+      expect(formatPrice(Number.MAX_SAFE_INTEGER)).toBe(
+        '$9,007,199,254,740,991.00'
+      );
+      expect(formatPrice(Number.MIN_SAFE_INTEGER)).toBe(
+        '-$9,007,199,254,740,991.00'
+      );
+      expect(formatNumber(Number.MAX_SAFE_INTEGER)).toBe(
+        '9,007,199,254,740,991'
+      );
     });
 
     it('應該處理 NaN 值', () => {

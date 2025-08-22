@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Animated,
   ViewStyle,
-  TextStyle
+  TextStyle,
 } from 'react-native';
 import { theme } from '../../theme/designSystem';
 
@@ -26,7 +26,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   showLabel = false,
   animated = true,
   style,
-  labelStyle
+  labelStyle,
 }) => {
   const animatedProgress = useRef(new Animated.Value(0)).current;
 
@@ -35,7 +35,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       Animated.timing(animatedProgress, {
         toValue: Math.min(Math.max(progress, 0), 100),
         duration: 500,
-        useNativeDriver: false
+        useNativeDriver: false,
       }).start();
     } else {
       animatedProgress.setValue(Math.min(Math.max(progress, 0), 100));
@@ -46,7 +46,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
     const sizeMap = {
       small: { height: 4, fontSize: theme.typography.sizes.xs },
       medium: { height: 8, fontSize: theme.typography.sizes.sm },
-      large: { height: 12, fontSize: theme.typography.sizes.base }
+      large: { height: 12, fontSize: theme.typography.sizes.base },
     };
     return sizeMap[size];
   };
@@ -57,7 +57,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
       success: theme.colors.status.success,
       warning: theme.colors.status.warning,
       error: theme.colors.status.error,
-      gold: theme.colors.gold.primary
+      gold: theme.colors.gold.primary,
     };
     return colorMap[variant];
   };
@@ -65,7 +65,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
   const getProgressWidth = () => {
     return animatedProgress.interpolate({
       inputRange: [0, 100],
-      outputRange: ['0%', '100%']
+      outputRange: ['0%', '100%'],
     });
   };
 
@@ -83,18 +83,14 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
             {
               backgroundColor: getVariantColor(),
               width: getProgressWidth(),
-              height: getSize().height
-            }
+              height: getSize().height,
+            },
           ]}
         />
       </View>
       {showLabel && (
         <Text
-          style={[
-            styles.label,
-            { fontSize: getSize().fontSize },
-            labelStyle
-          ]}
+          style={[styles.label, { fontSize: getSize().fontSize }, labelStyle]}
         >
           {getProgressText()}
         </Text>
@@ -105,22 +101,22 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%'
+    width: '100%',
   },
   track: {
     backgroundColor: theme.colors.background.secondary,
     borderRadius: theme.borderRadius.full,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: theme.colors.border.primary
+    borderColor: theme.colors.border.primary,
   },
   fill: {
-    borderRadius: theme.borderRadius.full
+    borderRadius: theme.borderRadius.full,
   },
   label: {
     color: theme.colors.text.secondary,
     textAlign: 'center',
     marginTop: theme.spacing.xs,
-    fontWeight: theme.typography.weights.medium
-  }
+    fontWeight: theme.typography.weights.medium,
+  },
 });

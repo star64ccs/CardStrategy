@@ -19,6 +19,7 @@ npm run check:services
 ```
 
 或者在 `.env` 文件中添加：
+
 ```bash
 SKIP_LOCAL_SERVICES=true
 ```
@@ -26,11 +27,13 @@ SKIP_LOCAL_SERVICES=true
 ### **選項 2: 使用 Docker Desktop**
 
 1. **啟動 Docker Desktop**
+
    - 在 Windows 開始菜單中搜索 "Docker Desktop"
    - 啟動應用程序
    - 等待 Docker 引擎完全啟動
 
 2. **運行 Redis 容器**
+
    ```bash
    docker run -d --name redis-cardstrategy -p 6379:6379 redis:7-alpine
    ```
@@ -58,14 +61,17 @@ docker-compose ps
 ### **選項 4: 安裝 Windows 版本的 Redis**
 
 1. **下載 Redis for Windows**
+
    - 前往: https://github.com/microsoftarchive/redis/releases
    - 下載最新版本的 Redis-x64-xxx.msi
 
 2. **安裝 Redis**
+
    - 運行下載的 .msi 文件
    - 按照安裝嚮導完成安裝
 
 3. **啟動 Redis 服務**
+
    ```bash
    # 啟動 Redis 服務
    net start Redis
@@ -89,6 +95,7 @@ redis-cli ping
 ## 📊 **預期結果**
 
 ### **成功設置後**:
+
 ```
 🔍 檢查 Redis 連接...
 ✅ Redis 連接成功
@@ -97,6 +104,7 @@ redis-cli ping
 ```
 
 ### **跳過檢查後**:
+
 ```
 🔍 檢查 Redis 連接...
 ⚠️  跳過 Redis 檢查 - 設置了 SKIP_LOCAL_SERVICES
@@ -111,6 +119,7 @@ redis-cli ping
 ## 🚨 **故障排除**
 
 ### **Docker 連接問題**:
+
 ```bash
 # 檢查 Docker 是否運行
 docker --version
@@ -121,6 +130,7 @@ docker ps
 ```
 
 ### **端口衝突**:
+
 ```bash
 # 檢查端口是否被佔用
 netstat -an | findstr :6379
@@ -130,6 +140,7 @@ docker run -d --name redis-cardstrategy -p 6380:6379 redis:7-alpine
 ```
 
 ### **權限問題**:
+
 ```bash
 # 以管理員身份運行 PowerShell
 # 然後執行 Docker 命令

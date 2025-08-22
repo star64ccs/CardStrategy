@@ -1,10 +1,20 @@
-import { TaskDependencyManager, TaskStatus, TaskPriority, DependencyType, TaskExecutor, TaskSyncData, SyncConflict, SyncStatus } from './taskDependencyManager';
+import {
+  TaskDependencyManager,
+  TaskStatus,
+  TaskPriority,
+  DependencyType,
+  TaskExecutor,
+  TaskSyncData,
+  SyncConflict,
+  SyncStatus,
+} from './taskDependencyManager';
 
 // 模擬同步測試執行器
-const createSyncTestExecutor = (name: string, steps: string[] = ['初始化', '同步中', '完成']): TaskExecutor => ({
+const createSyncTestExecutor = (
+  name: string,
+  steps: string[] = ['初始化', '同步中', '完成']
+): TaskExecutor => ({
   execute: async (task, progressTracker) => {
-    console.log(`[Sync Test Executor] 開始執行任務: ${name}`);
-
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
       const percentage = ((i + 1) / steps.length) * 100;
@@ -15,17 +25,17 @@ const createSyncTestExecutor = (name: string, steps: string[] = ['初始化', '�
           currentStep: step,
           totalSteps: steps.length,
           currentStepIndex: i + 1,
-          estimatedTimeRemaining: (task.estimatedDuration / steps.length) * (steps.length - i - 1)
+          estimatedTimeRemaining:
+            (task.estimatedDuration / steps.length) * (steps.length - i - 1),
         });
       }
 
       // 模擬同步延遲
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
-    console.log(`[Sync Test Executor] 任務完成: ${name}`);
     return { message: `${name} 同步成功`, timestamp: new Date().toISOString() };
-  }
+  },
 });
 
 describe('TaskDependencyManager 跨設備同步', () => {
@@ -39,7 +49,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
       defaultRetryAttempts: 2,
       retryDelay: 500,
       enableTimeout: true,
-      defaultTimeout: 10000
+      defaultTimeout: 10000,
     });
   });
 
@@ -96,7 +106,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
         dependencies: [],
         dependents: [],
         estimatedDuration: 5000,
-        executor: createSyncTestExecutor('同步測試')
+        executor: createSyncTestExecutor('同步測試'),
       });
 
       // 模擬衝突檢測
@@ -109,7 +119,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
           operation: 'UPDATE',
           taskData: { name: '本地版本' },
           version: 1,
-          checksum: 'local_checksum'
+          checksum: 'local_checksum',
         },
         remoteVersion: {
           taskId,
@@ -118,10 +128,10 @@ describe('TaskDependencyManager 跨設備同步', () => {
           operation: 'UPDATE',
           taskData: { name: '遠程版本' },
           version: 2,
-          checksum: 'remote_checksum'
+          checksum: 'remote_checksum',
         },
         conflictType: 'VERSION_MISMATCH',
-        resolution: 'REMOTE_WINS'
+        resolution: 'REMOTE_WINS',
       };
 
       // 手動添加衝突
@@ -138,7 +148,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
         dependencies: [],
         dependents: [],
         estimatedDuration: 3000,
-        executor: createSyncTestExecutor('衝突解決')
+        executor: createSyncTestExecutor('衝突解決'),
       });
 
       // 模擬衝突解決
@@ -162,7 +172,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
           dependencies: [],
           dependents: [],
           estimatedDuration: 2000,
-          executor: createSyncTestExecutor(`手動同步 ${i + 1}`)
+          executor: createSyncTestExecutor(`手動同步 ${i + 1}`),
         });
         taskIds.push(taskId);
       }
@@ -179,7 +189,9 @@ describe('TaskDependencyManager 跨設備同步', () => {
 
     test('手動同步應該處理錯誤情況', async () => {
       // 模擬網絡錯誤
-      jest.spyOn(taskManager as any, 'checkNetworkConnection').mockResolvedValue(false);
+      jest
+        .spyOn(taskManager as any, 'checkNetworkConnection')
+        .mockResolvedValue(false);
 
       const result = await taskManager.manualSync();
 
@@ -199,7 +211,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
         dependencies: [],
         dependents: [],
         estimatedDuration: 1000,
-        executor: createSyncTestExecutor('清理測試')
+        executor: createSyncTestExecutor('清理測試'),
       });
 
       // 執行清理
@@ -256,16 +268,18 @@ describe('TaskDependencyManager 跨設備同步', () => {
       // 創建大量任務
       const promises = [];
       for (let i = 0; i < 10; i++) {
-        promises.push(taskManager.addTask({
-          name: `性能測試任務 ${i + 1}`,
-          description: `測試同步性能 - 任務 ${i + 1}`,
-          type: 'performance_test',
-          priority: TaskPriority.NORMAL,
-          dependencies: [],
-          dependents: [],
-          estimatedDuration: 1000,
-          executor: createSyncTestExecutor(`性能測試 ${i + 1}`)
-        }));
+        promises.push(
+          taskManager.addTask({
+            name: `性能測試任務 ${i + 1}`,
+            description: `測試同步性能 - 任務 ${i + 1}`,
+            type: 'performance_test',
+            priority: TaskPriority.NORMAL,
+            dependencies: [],
+            dependents: [],
+            estimatedDuration: 1000,
+            executor: createSyncTestExecutor(`性能測試 ${i + 1}`),
+          })
+        );
       }
 
       await Promise.all(promises);
@@ -284,16 +298,18 @@ describe('TaskDependencyManager 跨設備同步', () => {
       // 創建並行任務
       const promises = [];
       for (let i = 0; i < concurrentTasks; i++) {
-        promises.push(taskManager.addTask({
-          name: `並行測試任務 ${i + 1}`,
-          description: `測試並行同步 - 任務 ${i + 1}`,
-          type: 'parallel_test',
-          priority: TaskPriority.HIGH,
-          dependencies: [],
-          dependents: [],
-          estimatedDuration: 2000,
-          executor: createSyncTestExecutor(`並行測試 ${i + 1}`)
-        }));
+        promises.push(
+          taskManager.addTask({
+            name: `並行測試任務 ${i + 1}`,
+            description: `測試並行同步 - 任務 ${i + 1}`,
+            type: 'parallel_test',
+            priority: TaskPriority.HIGH,
+            dependencies: [],
+            dependents: [],
+            estimatedDuration: 2000,
+            executor: createSyncTestExecutor(`並行測試 ${i + 1}`),
+          })
+        );
       }
 
       await Promise.all(promises);
@@ -312,7 +328,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
       const failingExecutor: TaskExecutor = {
         execute: async () => {
           throw new Error('同步失敗測試');
-        }
+        },
       };
 
       const taskId = await taskManager.addTask({
@@ -323,7 +339,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
         dependencies: [],
         dependents: [],
         estimatedDuration: 1000,
-        executor: failingExecutor
+        executor: failingExecutor,
       });
 
       // 執行同步
@@ -341,7 +357,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
             throw new Error(`重試測試 - 第 ${attemptCount} 次失敗`);
           }
           return { message: '重試成功' };
-        }
+        },
       };
 
       await taskManager.addTask({
@@ -352,7 +368,7 @@ describe('TaskDependencyManager 跨設備同步', () => {
         dependencies: [],
         dependents: [],
         estimatedDuration: 1000,
-        executor: retryingExecutor
+        executor: retryingExecutor,
       });
 
       // 執行同步
@@ -366,8 +382,6 @@ describe('TaskDependencyManager 跨設備同步', () => {
 
 // 跨設備同步演示函數
 export const demonstrateCrossDeviceSync = async () => {
-  console.log('=== 跨設備同步演示 ===');
-
   const taskManager = new TaskDependencyManager({
     maxConcurrentTasks: 2,
     enableParallelExecution: true,
@@ -375,12 +389,11 @@ export const demonstrateCrossDeviceSync = async () => {
     defaultRetryAttempts: 3,
     retryDelay: 1000,
     enableTimeout: true,
-    defaultTimeout: 15000
+    defaultTimeout: 15000,
   });
 
   try {
     // 1. 創建多個任務
-    console.log('\n1. 創建測試任務...');
     const taskIds = [];
 
     for (let i = 0; i < 3; i++) {
@@ -392,49 +405,26 @@ export const demonstrateCrossDeviceSync = async () => {
         dependencies: [],
         dependents: [],
         estimatedDuration: 3000 + i * 1000,
-        executor: createSyncTestExecutor(`跨設備同步 ${i + 1}`)
+        executor: createSyncTestExecutor(`跨設備同步 ${i + 1}`),
       });
       taskIds.push(taskId);
-      console.log(`  創建任務: ${taskId}`);
     }
 
     // 2. 檢查同步狀態
-    console.log('\n2. 檢查同步狀態...');
     const syncStatus = await taskManager.getSyncStatus();
-    console.log(`  網絡狀態: ${syncStatus.isOnline ? '在線' : '離線'}`);
-    console.log(`  同步狀態: ${syncStatus.isSyncing ? '同步中' : '閒置'}`);
-    console.log(`  待同步操作: ${syncStatus.pendingSyncs}`);
-    console.log(`  失敗操作: ${syncStatus.failedSyncs}`);
-
     // 3. 執行手動同步
-    console.log('\n3. 執行手動同步...');
     const syncResult = await taskManager.manualSync();
-    console.log(`  同步結果: 成功 ${syncResult.success} 個，失敗 ${syncResult.failed} 個`);
-
     // 4. 檢查同步衝突
-    console.log('\n4. 檢查同步衝突...');
     const conflicts = taskManager.getSyncConflicts();
-    console.log(`  發現衝突: ${conflicts.length} 個`);
-
     if (conflicts.length > 0) {
-      conflicts.forEach((conflict, index) => {
-        console.log(`  衝突 ${index + 1}: ${conflict.taskId} - ${conflict.conflictType}`);
-      });
+      conflicts.forEach((conflict, index) => {});
     }
 
     // 5. 清理同步數據
-    console.log('\n5. 清理同步數據...');
     await taskManager.cleanupSyncData();
-    console.log('  清理完成');
-
     // 6. 最終狀態檢查
-    console.log('\n6. 最終狀態檢查...');
     const finalStatus = await taskManager.getSyncStatus();
-    console.log(`  最終待同步: ${finalStatus.pendingSyncs}`);
-    console.log(`  最終衝突: ${taskManager.getSyncConflicts().length}`);
-
-    console.log('\n=== 跨設備同步演示完成 ===');
-
+    console.log(`同步狀態: ${finalStatus.syncedTasks.length} 個任務已同步`);
   } catch (error) {
     console.error('跨設備同步演示錯誤:', error);
   } finally {

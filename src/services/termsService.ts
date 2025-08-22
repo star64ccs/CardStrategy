@@ -14,7 +14,7 @@ import {
   TermsStatistics,
   TermsComplianceCheck,
   TermsExportOptions,
-  ConsentStatus
+  ConsentStatus,
 } from '../types/terms';
 
 class TermsService {
@@ -55,7 +55,7 @@ class TermsService {
       requireAgeVerification: false,
       minimumAge: 13,
       defaultLanguage: 'zh-TW',
-      supportedLanguages: ['zh-TW', 'en-US', 'ja-JP']
+      supportedLanguages: ['zh-TW', 'en-US', 'ja-JP'],
     };
   }
 
@@ -72,16 +72,21 @@ class TermsService {
   }
 
   // 獲取條款版本
-  async getTermsVersion(type: TermsType, language?: string): Promise<TermsVersion> {
+  async getTermsVersion(
+    type: TermsType,
+    language?: string
+  ): Promise<TermsVersion> {
     try {
       const params: TermsQueryParams = {
         type,
         language: language || this.config.defaultLanguage,
         status: 'active',
-        includeContent: true
+        includeContent: true,
       };
 
-      const response = await apiService.get(`${this.baseUrl}/version`, { params });
+      const response = await apiService.get(`${this.baseUrl}/version`, {
+        params,
+      });
       return response.data;
     } catch (error) {
       logger.error('獲取條款版本失敗:', { type, language, error });
@@ -95,10 +100,12 @@ class TermsService {
       const params: TermsQueryParams = {
         language: language || this.config.defaultLanguage,
         status: 'active',
-        includeContent: true
+        includeContent: true,
       };
 
-      const response = await apiService.get(`${this.baseUrl}/active`, { params });
+      const response = await apiService.get(`${this.baseUrl}/active`, {
+        params,
+      });
       return response.data;
     } catch (error) {
       logger.error('獲取活躍條款失敗:', { language, error });
@@ -109,7 +116,9 @@ class TermsService {
   // 檢查用戶同意狀態
   async checkUserConsent(userId: string): Promise<TermsComplianceCheck> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/compliance/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/compliance/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('檢查用戶同意狀態失敗:', { userId, error });
@@ -118,13 +127,22 @@ class TermsService {
   }
 
   // 記錄用戶同意
-  async recordConsent(request: TermsConsentRequest): Promise<TermsConsentResponse> {
+  async recordConsent(
+    request: TermsConsentRequest
+  ): Promise<TermsConsentResponse> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/consent`, request);
+      const response = await apiService.post(
+        `${this.baseUrl}/consent`,
+        request
+      );
 
       if (response.success && response.data) {
         // 更新本地存儲
-        await this.updateLocalConsent(userId, request.termsType, response.data.consent);
+        await this.updateLocalConsent(
+          userId,
+          request.termsType,
+          response.data.consent
+        );
 
         // 檢查是否需要通知
         if (response.data.allTermsAccepted) {
@@ -140,19 +158,24 @@ class TermsService {
   }
 
   // 批量同意條款
-  async acceptAllTerms(userId: string, language?: string): Promise<TermsConsentResponse> {
+  async acceptAllTerms(
+    userId: string,
+    language?: string
+  ): Promise<TermsConsentResponse> {
     try {
       const activeTerms = await this.getActiveTerms(language);
-      const consentRequests: TermsConsentRequest[] = activeTerms.map(terms => ({
-        userId,
-        termsType: terms.type,
-        action: 'accept',
-        version: terms.version
-      }));
+      const consentRequests: TermsConsentRequest[] = activeTerms.map(
+        (terms) => ({
+          userId,
+          termsType: terms.type,
+          action: 'accept',
+          version: terms.version,
+        })
+      );
 
       const response = await apiService.post(`${this.baseUrl}/consent/batch`, {
         userId,
-        consents: consentRequests
+        consents: consentRequests,
       });
 
       if (response.success) {
@@ -173,7 +196,9 @@ class TermsService {
   // 獲取用戶同意歷史
   async getUserConsentHistory(userId: string): Promise<UserConsent[]> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/consent/history/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/consent/history/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('獲取用戶同意歷史失敗:', { userId, error });
@@ -182,12 +207,18 @@ class TermsService {
   }
 
   // 撤回同意
-  async withdrawConsent(userId: string, termsType: TermsType): Promise<TermsConsentResponse> {
+  async withdrawConsent(
+    userId: string,
+    termsType: TermsType
+  ): Promise<TermsConsentResponse> {
     try {
-      const response = await apiService.post(`${this.baseUrl}/consent/withdraw`, {
-        userId,
-        termsType
-      });
+      const response = await apiService.post(
+        `${this.baseUrl}/consent/withdraw`,
+        {
+          userId,
+          termsType,
+        }
+      );
 
       if (response.success) {
         // 更新本地存儲
@@ -207,7 +238,9 @@ class TermsService {
   // 檢查條款更新
   async checkTermsUpdates(userId: string): Promise<TermsVersion[]> {
     try {
-      const response = await apiService.get(`${this.baseUrl}/updates/${userId}`);
+      const response = await apiService.get(
+        `${this.baseUrl}/updates/${userId}`
+      );
       return response.data;
     } catch (error) {
       logger.error('檢查條款更新失敗:', { userId, error });
@@ -238,7 +271,11 @@ class TermsService {
   }
 
   // 更新本地同意記錄
-  private async updateLocalConsent(userId: string, termsType: TermsType, consent: UserConsent): Promise<void> {
+  private async updateLocalConsent(
+    userId: string,
+    termsType: TermsType,
+    consent: UserConsent
+  ): Promise<void> {
     try {
       const key = `terms_consent_${userId}_${termsType}`;
       await storage.set(key, consent);
@@ -248,9 +285,12 @@ class TermsService {
   }
 
   // 批量更新本地同意記錄
-  private async updateLocalConsents(userId: string, consents: UserConsent[]): Promise<void> {
+  private async updateLocalConsents(
+    userId: string,
+    consents: UserConsent[]
+  ): Promise<void> {
     try {
-      const updates = consents.map(consent =>
+      const updates = consents.map((consent) =>
         this.updateLocalConsent(userId, consent.termsType, consent)
       );
       await Promise.all(updates);
@@ -269,8 +309,8 @@ class TermsService {
         message: '您已成功同意所有必要條款，現在可以使用完整功能。',
         data: {
           action: 'terms_accepted',
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
     } catch (error) {
       logger.warn('發送條款接受通知失敗:', { userId, error });
@@ -278,7 +318,10 @@ class TermsService {
   }
 
   // 通知同意已撤回
-  private async notifyConsentWithdrawn(userId: string, termsType: TermsType): Promise<void> {
+  private async notifyConsentWithdrawn(
+    userId: string,
+    termsType: TermsType
+  ): Promise<void> {
     try {
       await notificationService.sendNotification({
         userId,
@@ -288,8 +331,8 @@ class TermsService {
         data: {
           action: 'consent_withdrawn',
           termsType,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       });
     } catch (error) {
       logger.warn('發送同意撤回通知失敗:', { userId, termsType, error });
@@ -303,7 +346,7 @@ class TermsService {
       disclaimer: '免責聲明',
       cookie_policy: 'Cookie 政策',
       terms_of_use: '使用條款',
-      ai_usage_policy: 'AI 使用政策'
+      ai_usage_policy: 'AI 使用政策',
     };
     return displayNames[type] || type;
   }
@@ -328,7 +371,7 @@ class TermsService {
       }
 
       const activeTerms = await this.getActiveTerms();
-      return activeTerms.filter(terms =>
+      return activeTerms.filter((terms) =>
         compliance.pendingTerms.includes(terms.type)
       );
     } catch (error) {
@@ -355,4 +398,5 @@ class TermsService {
   }
 }
 
+export { TermsService };
 export const termsService = new TermsService();

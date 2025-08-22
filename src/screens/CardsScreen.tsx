@@ -6,10 +6,16 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { cardService, Card } from '../services/cardService';
-import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+  shadows,
+} from '../config/theme';
 import { logger } from '../utils/logger';
 import { errorHandlerService } from '../services/errorHandlerService';
 import {
@@ -19,7 +25,7 @@ import {
   SlideUpView,
   AnimatedButton,
   LazyImage,
-  VirtualizedCardList
+  VirtualizedCardList,
 } from '../components/common';
 import { optimizeImage, getThumbnailUrl } from '../utils/imageOptimizer';
 
@@ -57,7 +63,7 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
         page: 1,
         limit: 20,
         sortBy: 'name',
-        sortOrder: 'asc'
+        sortOrder: 'asc',
       });
 
       if (cardsResponse.success) {
@@ -65,14 +71,21 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
         setHasMore(cardsResponse.data.totalPages > 1);
       } else {
         // 如果 API 失敗，使用模擬數據作為備用
-        logger.warn('API 獲取卡片失敗，使用模擬數據', { error: cardsResponse.message });
+        logger.warn('API 獲取卡片失敗，使用模擬數據', {
+          error: cardsResponse.message,
+        });
         const mockCards = cardService.getMockCards();
         setCards(mockCards);
         setHasMore(false);
       }
     } catch (error) {
       // 使用統一的錯誤處理
-      await errorHandlerService.handleError(error as Error, 'CardsScreen.loadCards', 'medium', 'api');
+      await errorHandlerService.handleError(
+        error as Error,
+        'CardsScreen.loadCards',
+        'medium',
+        'api'
+      );
 
       // 錯誤時使用模擬數據
       const mockCards = cardService.getMockCards();
@@ -103,22 +116,32 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
         page: nextPage,
         limit: 20,
         sortBy: 'name',
-        sortOrder: 'asc'
+        sortOrder: 'asc',
       });
 
-      if (moreCardsResponse.success && moreCardsResponse.data.cards.length > 0) {
-        setCards(prev => [...prev, ...moreCardsResponse.data.cards]);
+      if (
+        moreCardsResponse.success &&
+        moreCardsResponse.data.cards.length > 0
+      ) {
+        setCards((prev) => [...prev, ...moreCardsResponse.data.cards]);
         setHasMore(nextPage < moreCardsResponse.data.totalPages);
       } else {
         // 如果沒有更多數據或 API 失敗
         setHasMore(false);
         if (!moreCardsResponse.success) {
-          logger.warn('加載更多卡片 API 失敗', { error: moreCardsResponse.message });
+          logger.warn('加載更多卡片 API 失敗', {
+            error: moreCardsResponse.message,
+          });
         }
       }
     } catch (error) {
       // 使用統一的錯誤處理
-      await errorHandlerService.handleError(error as Error, 'CardsScreen.onLoadMore', 'medium', 'api');
+      await errorHandlerService.handleError(
+        error as Error,
+        'CardsScreen.onLoadMore',
+        'medium',
+        'api'
+      );
       setHasMore(false);
     } finally {
       setLoadingMore(false);
@@ -131,21 +154,22 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
     // 搜索過濾
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(card =>
-        card.name.toLowerCase().includes(query) ||
-        card.setName.toLowerCase().includes(query) ||
-        card.description?.toLowerCase().includes(query)
+      filtered = filtered.filter(
+        (card) =>
+          card.name.toLowerCase().includes(query) ||
+          card.setName.toLowerCase().includes(query) ||
+          card.description?.toLowerCase().includes(query)
       );
     }
 
     // 稀有度過濾
     if (selectedRarity) {
-      filtered = filtered.filter(card => card.rarity === selectedRarity);
+      filtered = filtered.filter((card) => card.rarity === selectedRarity);
     }
 
     // 類型過濾
     if (selectedType) {
-      filtered = filtered.filter(card => card.type === selectedType);
+      filtered = filtered.filter((card) => card.type === selectedType);
     }
 
     setFilteredCards(filtered);
@@ -211,10 +235,17 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
             <Text style={styles.priceText}>
               {formatCurrency(item.price?.current || 0)}
             </Text>
-            <Text style={[
-              styles.changeText,
-              { color: (item.price?.change24h || 0) >= 0 ? colors.success : colors.error }
-            ]}>
+            <Text
+              style={[
+                styles.changeText,
+                {
+                  color:
+                    (item.price?.change24h || 0) >= 0
+                      ? colors.success
+                      : colors.error,
+                },
+              ]}
+            >
               {formatPercentage(item.price?.change24h || 0)}
             </Text>
           </View>
@@ -233,10 +264,12 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
       style={[styles.filterChip, isSelected && styles.filterChipSelected]}
       onPress={onPress}
     >
-      <Text style={[
-        styles.filterChipText,
-        isSelected && styles.filterChipTextSelected
-      ]}>
+      <Text
+        style={[
+          styles.filterChipText,
+          isSelected && styles.filterChipTextSelected,
+        ]}
+      >
         {label}
       </Text>
     </TouchableOpacity>
@@ -263,13 +296,14 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.filtersRow}>
             <Text style={styles.filterLabel}>稀有度:</Text>
-            {rarities.map(rarity => (
+            {rarities.map((rarity) => (
               <View key={rarity} style={styles.filterChipContainer}>
                 {renderFilterChip(
                   rarity,
                   rarity,
                   selectedRarity === rarity,
-                  () => setSelectedRarity(selectedRarity === rarity ? '' : rarity)
+                  () =>
+                    setSelectedRarity(selectedRarity === rarity ? '' : rarity)
                 )}
               </View>
             ))}
@@ -279,13 +313,10 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.filtersRow}>
             <Text style={styles.filterLabel}>類型:</Text>
-            {types.map(type => (
+            {types.map((type) => (
               <View key={type} style={styles.filterChipContainer}>
-                {renderFilterChip(
-                  type,
-                  type,
-                  selectedType === type,
-                  () => setSelectedType(selectedType === type ? '' : type)
+                {renderFilterChip(type, type, selectedType === type, () =>
+                  setSelectedType(selectedType === type ? '' : type)
                 )}
               </View>
             ))}
@@ -293,7 +324,10 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
         </ScrollView>
 
         {(searchQuery || selectedRarity || selectedType) && (
-          <TouchableOpacity style={styles.clearFiltersButton} onPress={clearFilters}>
+          <TouchableOpacity
+            style={styles.clearFiltersButton}
+            onPress={clearFilters}
+          >
             <Text style={styles.clearFiltersText}>清除過濾器</Text>
           </TouchableOpacity>
         )}
@@ -332,14 +366,12 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
           getItemLayout={(data, index) => ({
             length: 200,
             offset: 200 * index,
-            index
+            index,
           })}
           ListEmptyComponent={
             <SlideUpView animation="slideUp" duration={500}>
               <View style={styles.emptyContainer}>
-                <Text style={styles.emptyText}>
-                  沒有找到卡片
-                </Text>
+                <Text style={styles.emptyText}>沒有找到卡片</Text>
                 <Text style={styles.emptySubtext}>
                   嘗試調整搜索條件或過濾器
                 </Text>
@@ -355,14 +387,14 @@ const CardsScreen: React.FC<CardsScreenProps> = ({ onCardPress }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   searchContainer: {
     paddingHorizontal: spacing.large,
     paddingVertical: spacing.medium,
     backgroundColor: colors.backgroundPaper,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border
+    borderBottomColor: colors.border,
   },
   searchInput: {
     backgroundColor: colors.background,
@@ -372,28 +404,28 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.base,
     color: colors.textPrimary,
     borderWidth: 1,
-    borderColor: colors.border
+    borderColor: colors.border,
   },
   filtersContainer: {
     paddingHorizontal: spacing.large,
     paddingVertical: spacing.medium,
     backgroundColor: colors.backgroundPaper,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border
+    borderBottomColor: colors.border,
   },
   filtersRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   filterLabel: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
     marginRight: spacing.small,
-    fontWeight: '500' as const
+    fontWeight: '500' as const,
   },
   filterChipContainer: {
-    marginRight: spacing.small
+    marginRight: spacing.small,
   },
   filterChip: {
     paddingHorizontal: spacing.medium,
@@ -401,133 +433,133 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.large,
     backgroundColor: colors.backgroundSecondary,
     borderWidth: 1,
-    borderColor: colors.border
+    borderColor: colors.border,
   },
   filterChipSelected: {
     backgroundColor: colors.primary,
-    borderColor: colors.primary
+    borderColor: colors.primary,
   },
   filterChipText: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   filterChipTextSelected: {
-    color: colors.white
+    color: colors.white,
   },
   clearFiltersButton: {
     alignSelf: 'flex-start',
-    paddingVertical: spacing.small
+    paddingVertical: spacing.small,
   },
   clearFiltersText: {
     fontSize: typography.fontSize.sm,
     color: colors.primary,
-    textDecorationLine: 'underline'
+    textDecorationLine: 'underline',
   },
   resultsContainer: {
     paddingHorizontal: spacing.large,
     paddingVertical: spacing.small,
-    backgroundColor: colors.backgroundPaper
+    backgroundColor: colors.backgroundPaper,
   },
   resultsText: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   cardItem: {
     width: (width - spacing.large * 3) / 2,
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.medium,
     marginBottom: spacing.medium,
-    ...shadows.small
+    ...shadows.small,
   },
   cardContent: {
-    flex: 1
+    flex: 1,
   },
   cardImageContainer: {
     width: '100%',
     height: 120,
     borderRadius: borderRadius.medium,
     overflow: 'hidden',
-    backgroundColor: colors.backgroundSecondary
+    backgroundColor: colors.backgroundSecondary,
   },
   cardImage: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   cardImagePlaceholder: {
     width: '100%',
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: colors.backgroundSecondary
+    backgroundColor: colors.backgroundSecondary,
   },
   cardImagePlaceholderText: {
     fontSize: 32,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   cardInfo: {
-    padding: spacing.medium
+    padding: spacing.medium,
   },
   cardName: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
     color: colors.textPrimary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   cardSetName: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   cardMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   rarityContainer: {
     backgroundColor: colors.primary,
     paddingHorizontal: spacing.small,
     paddingVertical: 2,
-    borderRadius: borderRadius.small
+    borderRadius: borderRadius.small,
   },
   rarityText: {
     fontSize: typography.fontSize.xs,
     color: colors.white,
-    fontWeight: '500' as const
+    fontWeight: '500' as const,
   },
   typeText: {
     fontSize: typography.fontSize.xs,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   priceContainer: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   priceText: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
-    color: colors.primary
+    color: colors.primary,
   },
   changeText: {
     fontSize: typography.fontSize.xs,
-    fontWeight: '500' as const
+    fontWeight: '500' as const,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 40
+    paddingVertical: 40,
   },
   emptyText: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
     textAlign: 'center',
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   emptySubtext: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 export default CardsScreen;

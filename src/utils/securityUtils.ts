@@ -32,8 +32,8 @@ const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
     requireUppercase: true,
     requireLowercase: true,
     requireNumbers: true,
-    requireSpecialChars: true
-  }
+    requireSpecialChars: true,
+  },
 };
 
 // 安全工具類
@@ -53,14 +53,20 @@ export class SecurityUtils {
   }
 
   // 輸入驗證
-  public validateInput(input: string, type: 'text' | 'email' | 'url' | 'phone' | 'number'): boolean {
+  public validateInput(
+    input: string,
+    type: 'text' | 'email' | 'url' | 'phone' | 'number'
+  ): boolean {
     if (!input || typeof input !== 'string') {
       return false;
     }
 
     // 檢查長度
     if (input.length > this.config.maxInputLength) {
-      logger.warn('輸入長度超過限制:', { length: input.length, max: this.config.maxInputLength });
+      logger.warn('輸入長度超過限制:', {
+        length: input.length,
+        max: this.config.maxInputLength,
+      });
       return false;
     }
 
@@ -144,7 +150,10 @@ export class SecurityUtils {
     }
 
     // 檢查特殊字符
-    if (passwordRequirements.requireSpecialChars && !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    if (
+      passwordRequirements.requireSpecialChars &&
+      !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)
+    ) {
       errors.push('密碼需要包含至少一個特殊字符');
     }
 
@@ -161,7 +170,7 @@ export class SecurityUtils {
     return {
       isValid: errors.length === 0,
       errors,
-      strength
+      strength,
     };
   }
 
@@ -208,12 +217,23 @@ export class SecurityUtils {
 
     // 移除危險的 SQL 關鍵字
     const sqlKeywords = [
-      'SELECT', 'INSERT', 'UPDATE', 'DELETE', 'DROP', 'CREATE', 'ALTER',
-      'UNION', 'EXEC', 'EXECUTE', 'SCRIPT', 'EVAL', 'EXPRESSION'
+      'SELECT',
+      'INSERT',
+      'UPDATE',
+      'DELETE',
+      'DROP',
+      'CREATE',
+      'ALTER',
+      'UNION',
+      'EXEC',
+      'EXECUTE',
+      'SCRIPT',
+      'EVAL',
+      'EXPRESSION',
     ];
 
     let sanitized = input;
-    sqlKeywords.forEach(keyword => {
+    sqlKeywords.forEach((keyword) => {
       const regex = new RegExp(keyword, 'gi');
       sanitized = sanitized.replace(regex, '');
     });
@@ -230,7 +250,9 @@ export class SecurityUtils {
 
     // 檢查文件大小
     if (file.size > this.config.maxFileSize) {
-      errors.push(`文件大小不能超過 ${this.formatFileSize(this.config.maxFileSize)}`);
+      errors.push(
+        `文件大小不能超過 ${this.formatFileSize(this.config.maxFileSize)}`
+      );
     }
 
     // 檢查文件類型
@@ -241,8 +263,13 @@ export class SecurityUtils {
 
     // 檢查 MIME 類型
     const allowedMimeTypes = [
-      'image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp',
-      'application/pdf', 'text/plain'
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'application/pdf',
+      'text/plain',
     ];
 
     if (!allowedMimeTypes.includes(file.type)) {
@@ -251,13 +278,13 @@ export class SecurityUtils {
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
   // 獲取文件擴展名
   private getFileExtension(filename: string): string {
-    return filename.slice((filename.lastIndexOf('.') - 1 >>> 0) + 2);
+    return filename.slice(((filename.lastIndexOf('.') - 1) >>> 0) + 2);
   }
 
   // 格式化文件大小
@@ -268,12 +295,13 @@ export class SecurityUtils {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
   }
 
   // 生成安全的隨機字符串
   public generateSecureRandom(length: number = 32): string {
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charset =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';
 
     for (let i = 0; i < length; i++) {
@@ -323,7 +351,10 @@ export class SecurityUtils {
   }
 
   // 敏感信息遮罩
-  public maskSensitiveData(data: string, type: 'email' | 'phone' | 'creditCard' | 'ssn'): string {
+  public maskSensitiveData(
+    data: string,
+    type: 'email' | 'phone' | 'creditCard' | 'ssn'
+  ): string {
     switch (type) {
       case 'email':
         return this.maskEmail(data);
@@ -345,7 +376,10 @@ export class SecurityUtils {
       return email;
     }
 
-    const maskedLocal = localPart.charAt(0) + '*'.repeat(localPart.length - 2) + localPart.charAt(localPart.length - 1);
+    const maskedLocal =
+      localPart.charAt(0) +
+      '*'.repeat(localPart.length - 2) +
+      localPart.charAt(localPart.length - 1);
     return `${maskedLocal}@${domain}`;
   }
 
@@ -376,7 +410,7 @@ export class SecurityUtils {
       return ssn;
     }
 
-    return `***-**-${  cleaned.slice(-4)}`;
+    return `***-**-${cleaned.slice(-4)}`;
   }
 
   // 會話超時檢查
@@ -429,19 +463,26 @@ export class SecurityUtils {
     // 檢查 Content-Type
     if (request.method !== 'GET' && request.headers['content-type']) {
       const contentType = request.headers['content-type'];
-      if (!contentType.includes('application/json') && !contentType.includes('multipart/form-data')) {
+      if (
+        !contentType.includes('application/json') &&
+        !contentType.includes('multipart/form-data')
+      ) {
         errors.push('不支持的 Content-Type');
       }
     }
 
     // 檢查請求體大小（如果適用）
-    if (request.body && typeof request.body === 'string' && request.body.length > this.config.maxInputLength) {
+    if (
+      request.body &&
+      typeof request.body === 'string' &&
+      request.body.length > this.config.maxInputLength
+    ) {
       errors.push('請求體過大');
     }
 
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
 
@@ -461,8 +502,10 @@ export class SecurityUtils {
 export const securityUtils = SecurityUtils.getInstance();
 
 // 導出便捷函數
-export const validateInput = (input: string, type: 'text' | 'email' | 'url' | 'phone' | 'number') =>
-  securityUtils.validateInput(input, type);
+export const validateInput = (
+  input: string,
+  type: 'text' | 'email' | 'url' | 'phone' | 'number'
+) => securityUtils.validateInput(input, type);
 
 export const validatePassword = (password: string) =>
   securityUtils.validatePassword(password);
@@ -476,5 +519,7 @@ export const sanitizeUserInput = (input: string) =>
 export const generateSecureRandom = (length?: number) =>
   securityUtils.generateSecureRandom(length);
 
-export const maskSensitiveData = (data: string, type: 'email' | 'phone' | 'creditCard' | 'ssn') =>
-  securityUtils.maskSensitiveData(data, type);
+export const maskSensitiveData = (
+  data: string,
+  type: 'email' | 'phone' | 'creditCard' | 'ssn'
+) => securityUtils.maskSensitiveData(data, type);

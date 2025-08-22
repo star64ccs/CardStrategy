@@ -1,10 +1,16 @@
-import { EncryptionManager, EncryptedData, EncryptionConfig, KeyInfo, EncryptionStats } from './encryption';
+import {
+  EncryptionManager,
+  EncryptedData,
+  EncryptionConfig,
+  KeyInfo,
+  EncryptionStats,
+} from './encryption';
 
 // Mock React Native Platform
 jest.mock('react-native', () => ({
   Platform: {
-    OS: 'web'
-  }
+    OS: 'web',
+  },
 }));
 
 // Mock crypto API for testing
@@ -19,14 +25,14 @@ const mockCrypto = {
     importKey: jest.fn(),
     deriveKey: jest.fn(),
     encrypt: jest.fn(),
-    decrypt: jest.fn()
-  }
+    decrypt: jest.fn(),
+  },
 };
 
 // Mock global crypto
 Object.defineProperty(global, 'crypto', {
   value: mockCrypto,
-  writable: true
+  writable: true,
 });
 
 describe('EncryptionManager', () => {
@@ -40,12 +46,12 @@ describe('EncryptionManager', () => {
     // Mock storage
     mockStorage = {
       get: jest.fn(),
-      set: jest.fn()
+      set: jest.fn(),
     };
 
     // Mock StorageManager
     jest.doMock('./storage', () => ({
-      StorageManager: mockStorage
+      StorageManager: mockStorage,
     }));
 
     // Create new instance
@@ -65,7 +71,7 @@ describe('EncryptionManager', () => {
       const customConfig: Partial<EncryptionConfig> = {
         algorithm: 'AES-256-CBC',
         enableCompression: false,
-        enableChecksum: false
+        enableChecksum: false,
       };
 
       const manager = new EncryptionManager(customConfig);
@@ -129,7 +135,7 @@ describe('EncryptionManager', () => {
         array: [1, 2, 3],
         object: { nested: 'value' },
         null: null,
-        undefined
+        undefined,
       };
 
       const encrypted = await encryptionManager.encrypt(complexData);
@@ -166,8 +172,8 @@ describe('EncryptionManager', () => {
           createdAt: Date.now(),
           lastUsed: Date.now(),
           isActive: true,
-          keySize: 32
-        }
+          keySize: 32,
+        },
       ];
 
       mockStorage.get.mockResolvedValue(mockKeys);
@@ -179,8 +185,24 @@ describe('EncryptionManager', () => {
 
     it('應該刪除密鑰', async () => {
       const mockKeys: KeyInfo[] = [
-        { id: 'key1', name: 'Key 1', algorithm: 'AES-256-GCM', createdAt: Date.now(), lastUsed: Date.now(), isActive: true, keySize: 32 },
-        { id: 'key2', name: 'Key 2', algorithm: 'AES-256-GCM', createdAt: Date.now(), lastUsed: Date.now(), isActive: true, keySize: 32 }
+        {
+          id: 'key1',
+          name: 'Key 1',
+          algorithm: 'AES-256-GCM',
+          createdAt: Date.now(),
+          lastUsed: Date.now(),
+          isActive: true,
+          keySize: 32,
+        },
+        {
+          id: 'key2',
+          name: 'Key 2',
+          algorithm: 'AES-256-GCM',
+          createdAt: Date.now(),
+          lastUsed: Date.now(),
+          isActive: true,
+          keySize: 32,
+        },
       ];
 
       mockStorage.get.mockResolvedValue(mockKeys);
@@ -188,7 +210,9 @@ describe('EncryptionManager', () => {
       const success = await encryptionManager.deleteKey('key1');
 
       expect(success).toBe(true);
-      expect(mockStorage.set).toHaveBeenCalledWith('encryption_keys', [mockKeys[1]]);
+      expect(mockStorage.set).toHaveBeenCalledWith('encryption_keys', [
+        mockKeys[1],
+      ]);
     });
   });
 
@@ -220,7 +244,7 @@ describe('EncryptionManager', () => {
     it('應該更新配置', () => {
       const newConfig: Partial<EncryptionConfig> = {
         algorithm: 'AES-256-CBC',
-        enableCompression: false
+        enableCompression: false,
       };
 
       encryptionManager.updateConfig(newConfig);
@@ -250,7 +274,7 @@ describe('EncryptionManager', () => {
           createdAt: Date.now() - 60 * 24 * 60 * 60 * 1000, // 60天前
           lastUsed: Date.now() - 60 * 24 * 60 * 60 * 1000,
           isActive: true,
-          keySize: 32
+          keySize: 32,
         },
         {
           id: 'new-key',
@@ -259,13 +283,15 @@ describe('EncryptionManager', () => {
           createdAt: Date.now(),
           lastUsed: Date.now(),
           isActive: true,
-          keySize: 32
-        }
+          keySize: 32,
+        },
       ];
 
       mockStorage.get.mockResolvedValue(mockKeys);
 
-      const removedCount = await encryptionManager.cleanupExpiredKeys(30 * 24 * 60 * 60 * 1000); // 30天
+      const removedCount = await encryptionManager.cleanupExpiredKeys(
+        30 * 24 * 60 * 60 * 1000
+      ); // 30天
 
       expect(removedCount).toBe(1);
     });
@@ -273,18 +299,24 @@ describe('EncryptionManager', () => {
 
   describe('錯誤處理', () => {
     it('應該處理加密錯誤', async () => {
-      mockCrypto.subtle.encrypt.mockRejectedValue(new Error('Encryption failed'));
+      mockCrypto.subtle.encrypt.mockRejectedValue(
+        new Error('Encryption failed')
+      );
 
       const testData = { test: 'data' };
 
-      await expect(encryptionManager.encrypt(testData)).rejects.toThrow('Encryption failed');
+      await expect(encryptionManager.encrypt(testData)).rejects.toThrow(
+        'Encryption failed'
+      );
 
       const stats = encryptionManager.getStats();
       expect(stats.failedEncryptions).toBe(1);
     });
 
     it('應該處理解密錯誤', async () => {
-      mockCrypto.subtle.decrypt.mockRejectedValue(new Error('Decryption failed'));
+      mockCrypto.subtle.decrypt.mockRejectedValue(
+        new Error('Decryption failed')
+      );
 
       const mockEncryptedData: EncryptedData = {
         algorithm: 'AES-256-GCM',
@@ -293,10 +325,12 @@ describe('EncryptionManager', () => {
         data: 'encrypteddata',
         checksum: 'checksum',
         timestamp: Date.now(),
-        version: '1.0'
+        version: '1.0',
       };
 
-      await expect(encryptionManager.decrypt(mockEncryptedData)).rejects.toThrow('Decryption failed');
+      await expect(
+        encryptionManager.decrypt(mockEncryptedData)
+      ).rejects.toThrow('Decryption failed');
 
       const stats = encryptionManager.getStats();
       expect(stats.failedDecryptions).toBe(1);
@@ -313,8 +347,11 @@ describe('EncryptionManager', () => {
   describe('性能測試', () => {
     it('應該處理大量數據', async () => {
       const largeData = {
-        array: Array.from({ length: 1000 }, (_, i) => ({ id: i, value: `value-${i}` })),
-        timestamp: Date.now()
+        array: Array.from({ length: 1000 }, (_, i) => ({
+          id: i,
+          value: `value-${i}`,
+        })),
+        timestamp: Date.now(),
       };
 
       const startTime = Date.now();
@@ -337,7 +374,7 @@ describe('EncryptionManager', () => {
       const results = await Promise.all(promises);
 
       expect(results).toHaveLength(10);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result).toBeDefined();
         expect(result.algorithm).toBe('AES-256-GCM');
       });
@@ -346,7 +383,9 @@ describe('EncryptionManager', () => {
 });
 
 // 導出測試用的加密管理器實例
-export const createTestEncryptionManager = (config?: Partial<EncryptionConfig>) => {
+export const createTestEncryptionManager = (
+  config?: Partial<EncryptionConfig>
+) => {
   return new EncryptionManager(config);
 };
 
@@ -357,12 +396,12 @@ export const generateTestData = (size: number = 100) => {
     data: Array.from({ length: size }, (_, i) => ({
       index: i,
       value: `value-${i}`,
-      timestamp: Date.now() + i
+      timestamp: Date.now() + i,
     })),
     metadata: {
       source: 'test',
       version: '1.0',
-      checksum: Math.random().toString(36).substr(2, 16)
-    }
+      checksum: Math.random().toString(36).substr(2, 16),
+    },
   };
 };

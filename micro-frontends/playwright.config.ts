@@ -9,7 +9,7 @@ export default defineConfig({
   timeout: 30 * 1000,
   /* 每個測試的最大時間 */
   expect: {
-    timeout: 5000
+    timeout: 5000,
   },
   /* 失敗時重試測試的次數 */
   retries: process.env.CI ? 2 : 0,
@@ -21,7 +21,7 @@ export default defineConfig({
     ['json', { outputFile: 'test-results/test-results.json' }],
     ['junit', { outputFile: 'test-results/junit.xml' }],
     ['list'],
-    ['dot']
+    ['dot'],
   ],
   /* 共享設置 */
   use: {
@@ -44,61 +44,55 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
 
     /* 用戶代理 */
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    userAgent:
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
 
     /* 額外的 HTTP 頭 */
     extraHTTPHeaders: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    }
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
   },
 
   /* 配置不同瀏覽器的測試 */
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
+      use: { ...devices['Desktop Chrome'] },
     },
 
     {
       name: 'firefox',
-      use: { ...devices['Desktop Firefox'] }
+      use: { ...devices['Desktop Firefox'] },
     },
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] }
+      use: { ...devices['Desktop Safari'] },
     },
 
     /* 測試移動端 */
     {
       name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] }
+      use: { ...devices['Pixel 5'] },
     },
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] }
+      use: { ...devices['iPhone 12'] },
     },
 
     /* 測試平板 */
     {
       name: 'Tablet Chrome',
-      use: { ...devices['iPad Pro 11 landscape'] }
-    }
+      use: { ...devices['iPad Pro 11 landscape'] },
+    },
   ],
 
   /* 運行測試的目錄 */
-  testMatch: [
-    '**/*.test.ts',
-    '**/*.spec.ts'
-  ],
+  testMatch: ['**/*.test.ts', '**/*.spec.ts'],
 
   /* 忽略的文件 */
-  testIgnore: [
-    '**/node_modules/**',
-    '**/dist/**',
-    '**/build/**'
-  ],
+  testIgnore: ['**/node_modules/**', '**/dist/**', '**/build/**'],
 
   /* 全局設置 */
   globalSetup: require.resolve('./tests/setup/global-setup.ts'),
@@ -110,13 +104,13 @@ export default defineConfig({
   /* 測試環境變數 */
   env: {
     NODE_ENV: 'test',
-    TEST_MODE: 'e2e'
+    TEST_MODE: 'e2e',
   },
 
   /* 超時設置 */
   timeout: 30000,
   expect: {
-    timeout: 5000
+    timeout: 5000,
   },
 
   /* 重試設置 */
@@ -127,18 +121,27 @@ export default defineConfig({
 
   /* 報告設置 */
   reporter: [
-    ['html', {
-      outputFolder: 'test-results/html-report',
-      open: 'never'
-    }],
-    ['json', {
-      outputFile: 'test-results/test-results.json'
-    }],
-    ['junit', {
-      outputFile: 'test-results/junit.xml'
-    }],
+    [
+      'html',
+      {
+        outputFolder: 'test-results/html-report',
+        open: 'never',
+      },
+    ],
+    [
+      'json',
+      {
+        outputFile: 'test-results/test-results.json',
+      },
+    ],
+    [
+      'junit',
+      {
+        outputFile: 'test-results/junit.xml',
+      },
+    ],
     ['list'],
-    ['dot']
+    ['dot'],
   ],
 
   /* 使用設置 */
@@ -162,12 +165,13 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
 
     /* 用戶代理 */
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    userAgent:
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
 
     /* 額外的 HTTP 頭 */
     extraHTTPHeaders: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
 
     /* 動作超時 */
@@ -177,7 +181,7 @@ export default defineConfig({
     navigationTimeout: 15000,
 
     /* 等待超時 */
-    waitForTimeout: 5000
+    waitForTimeout: 5000,
   },
 
   /* 瀏覽器設置 */
@@ -185,20 +189,17 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000
+    timeout: 120 * 1000,
   },
 
   /* 測試目錄結構 */
   testDir: './tests/e2e',
-  testMatch: [
-    '**/*.test.ts',
-    '**/*.spec.ts'
-  ],
+  testMatch: ['**/*.test.ts', '**/*.spec.ts'],
   testIgnore: [
     '**/node_modules/**',
     '**/dist/**',
     '**/build/**',
-    '**/coverage/**'
+    '**/coverage/**',
   ],
 
   /* 全局設置文件 */
@@ -212,13 +213,13 @@ export default defineConfig({
   env: {
     NODE_ENV: 'test',
     TEST_MODE: 'e2e',
-    API_BASE_URL: 'http://localhost:5000'
+    API_BASE_URL: 'http://localhost:5000',
   },
 
   /* 超時設置 */
   timeout: 30000,
   expect: {
-    timeout: 5000
+    timeout: 5000,
   },
 
   /* 重試設置 */
@@ -229,18 +230,27 @@ export default defineConfig({
 
   /* 報告設置 */
   reporter: [
-    ['html', {
-      outputFolder: 'test-results/html-report',
-      open: 'never'
-    }],
-    ['json', {
-      outputFile: 'test-results/test-results.json'
-    }],
-    ['junit', {
-      outputFile: 'test-results/junit.xml'
-    }],
+    [
+      'html',
+      {
+        outputFolder: 'test-results/html-report',
+        open: 'never',
+      },
+    ],
+    [
+      'json',
+      {
+        outputFile: 'test-results/test-results.json',
+      },
+    ],
+    [
+      'junit',
+      {
+        outputFile: 'test-results/junit.xml',
+      },
+    ],
     ['list'],
-    ['dot']
+    ['dot'],
   ],
 
   /* 使用設置 */
@@ -264,12 +274,13 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
 
     /* 用戶代理 */
-    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    userAgent:
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
 
     /* 額外的 HTTP 頭 */
     extraHTTPHeaders: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
     },
 
     /* 動作超時 */
@@ -279,7 +290,7 @@ export default defineConfig({
     navigationTimeout: 15000,
 
     /* 等待超時 */
-    waitForTimeout: 5000
+    waitForTimeout: 5000,
   },
 
   /* 瀏覽器設置 */
@@ -287,6 +298,6 @@ export default defineConfig({
     command: 'npm run dev',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000
-  }
+    timeout: 120 * 1000,
+  },
 });

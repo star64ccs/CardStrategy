@@ -66,7 +66,7 @@ const initialState: MembershipState = {
     isActive: false,
     startDate: '',
     endDate: '',
-    daysRemaining: 0
+    daysRemaining: 0,
   },
   membershipEndDate: null,
   usage: {
@@ -74,14 +74,14 @@ const initialState: MembershipState = {
     conditionAnalysis: { used: 0, limit: 5 },
     authenticityCheck: { used: 0, limit: 5 },
     pricePrediction: { used: 0, limit: 10 },
-    aiChat: { used: 0, limit: 20 }
+    aiChat: { used: 0, limit: 20 },
   },
   limits: {
     cardRecognition: 10,
     conditionAnalysis: 5,
     authenticityCheck: 5,
     pricePrediction: 10,
-    aiChat: 20
+    aiChat: 20,
   },
   features: {
     cardRecognition: true,
@@ -91,13 +91,13 @@ const initialState: MembershipState = {
     aiChat: true,
     advancedAnalytics: false,
     prioritySupport: false,
-    exclusiveContent: false
+    exclusiveContent: false,
   },
   isLoading: false,
   error: null,
   isTrialActive: false,
   trialEndDate: null,
-  isUpgrading: false
+  isUpgrading: false,
 };
 
 // Membership slice
@@ -108,33 +108,44 @@ const membershipSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
-    updateUsage: (state, action: PayloadAction<{ feature: string; used: number }>) => {
+    updateUsage: (
+      state,
+      action: PayloadAction<{ feature: string; used: number }>
+    ) => {
       const { feature, used } = action.payload;
       if (state.usage[feature as keyof typeof state.usage]) {
         state.usage[feature as keyof typeof state.usage].used = used;
       }
     },
     resetDailyUsage: (state) => {
-      Object.keys(state.usage).forEach(feature => {
+      Object.keys(state.usage).forEach((feature) => {
         state.usage[feature as keyof typeof state.usage].used = 0;
       });
     },
-    setFeatureAccess: (state, action: PayloadAction<{ feature: string; enabled: boolean }>) => {
+    setFeatureAccess: (
+      state,
+      action: PayloadAction<{ feature: string; enabled: boolean }>
+    ) => {
       const { feature, enabled } = action.payload;
-      if (state.features[feature as keyof typeof state.features] !== undefined) {
+      if (
+        state.features[feature as keyof typeof state.features] !== undefined
+      ) {
         state.features[feature as keyof typeof state.features] = enabled;
       }
     },
-    updateLimits: (state, action: PayloadAction<Partial<typeof state.limits>>) => {
+    updateLimits: (
+      state,
+      action: PayloadAction<Partial<typeof state.limits>>
+    ) => {
       state.limits = { ...state.limits, ...action.payload };
       // Update usage limits accordingly
-      Object.keys(action.payload).forEach(feature => {
+      Object.keys(action.payload).forEach((feature) => {
         if (state.usage[feature as keyof typeof state.usage]) {
           state.usage[feature as keyof typeof state.usage].limit =
             action.payload[feature as keyof typeof state.limits] || 0;
         }
       });
-    }
+    },
   },
   extraReducers: (builder) => {
     // Fetch Membership Status
@@ -229,11 +240,23 @@ const membershipSlice = createSlice({
         state.isLoading = false;
         // 將 FeatureUsage 轉換為 MembershipUsage 格式
         state.usage = {
-          cardRecognition: { used: action.payload.usage.cardRecognition, limit: 0 },
-          conditionAnalysis: { used: action.payload.usage.conditionAnalysis, limit: 0 },
-          authenticityCheck: { used: action.payload.usage.authenticityCheck, limit: 0 },
-          pricePrediction: { used: action.payload.usage.pricePrediction, limit: 0 },
-          aiChat: { used: action.payload.usage.aiChat, limit: 0 }
+          cardRecognition: {
+            used: action.payload.usage.cardRecognition,
+            limit: 0,
+          },
+          conditionAnalysis: {
+            used: action.payload.usage.conditionAnalysis,
+            limit: 0,
+          },
+          authenticityCheck: {
+            used: action.payload.usage.authenticityCheck,
+            limit: 0,
+          },
+          pricePrediction: {
+            used: action.payload.usage.pricePrediction,
+            limit: 0,
+          },
+          aiChat: { used: action.payload.usage.aiChat, limit: 0 },
         };
         state.error = null;
       })
@@ -252,11 +275,23 @@ const membershipSlice = createSlice({
         state.isLoading = false;
         // 將 FeatureUsage 轉換為 MembershipUsage 格式
         state.usage = {
-          cardRecognition: { used: action.payload.usage.cardRecognition, limit: 0 },
-          conditionAnalysis: { used: action.payload.usage.conditionAnalysis, limit: 0 },
-          authenticityCheck: { used: action.payload.usage.authenticityCheck, limit: 0 },
-          pricePrediction: { used: action.payload.usage.pricePrediction, limit: 0 },
-          aiChat: { used: action.payload.usage.aiChat, limit: 0 }
+          cardRecognition: {
+            used: action.payload.usage.cardRecognition,
+            limit: 0,
+          },
+          conditionAnalysis: {
+            used: action.payload.usage.conditionAnalysis,
+            limit: 0,
+          },
+          authenticityCheck: {
+            used: action.payload.usage.authenticityCheck,
+            limit: 0,
+          },
+          pricePrediction: {
+            used: action.payload.usage.pricePrediction,
+            limit: 0,
+          },
+          aiChat: { used: action.payload.usage.aiChat, limit: 0 },
         };
         state.error = null;
       })
@@ -264,7 +299,7 @@ const membershipSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  }
+  },
 });
 
 export const {
@@ -272,7 +307,7 @@ export const {
   updateUsage,
   resetDailyUsage,
   setFeatureAccess,
-  updateLimits
+  updateLimits,
 } = membershipSlice.actions;
 
 export default membershipSlice.reducer;

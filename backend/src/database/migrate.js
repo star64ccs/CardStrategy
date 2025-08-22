@@ -1,4 +1,6 @@
-require('dotenv').config({ path: require('path').resolve(__dirname, '..', '..', '.env') });
+require('dotenv').config({
+  path: require('path').resolve(__dirname, '..', '..', '.env'),
+});
 
 const { connectDB, getSequelize } = require('../config/database');
 const logger = require('../utils/logger');
@@ -14,10 +16,22 @@ const getMarketDataModel = require('../models/MarketData');
 const getAIAnalysisModel = require('../models/AIAnalysis');
 
 // 導入新的數據質量相關模型
-const { createTrainingDataModel, getTrainingDataModel } = require('../models/TrainingData');
-const { createAnnotatorModel, getAnnotatorModel } = require('../models/Annotator');
-const { createAnnotationDataModel, getAnnotationDataModel } = require('../models/AnnotationData');
-const { createDataQualityMetricsModel, getDataQualityMetricsModel } = require('../models/DataQualityMetrics');
+const {
+  createTrainingDataModel,
+  getTrainingDataModel,
+} = require('../models/TrainingData');
+const {
+  createAnnotatorModel,
+  getAnnotatorModel,
+} = require('../models/Annotator');
+const {
+  createAnnotationDataModel,
+  getAnnotationDataModel,
+} = require('../models/AnnotationData');
+const {
+  createDataQualityMetricsModel,
+  getDataQualityMetricsModel,
+} = require('../models/DataQualityMetrics');
 
 // 導入反饋相關模型
 const Feedback = require('../models/Feedback');
@@ -46,8 +60,20 @@ const setupAssociations = (sequelize) => {
   // 反饋相關模型
   // Feedback, FeedbackResponse, FeedbackAnalytics 已經通過 require 直接導入
 
-  if (!User || !Card || !Collection || !Investment || !CollectionCard || !PriceAlert || !MarketData || !AIAnalysis ||
-      !TrainingData || !Annotator || !AnnotationData || !DataQualityMetrics) {
+  if (
+    !User ||
+    !Card ||
+    !Collection ||
+    !Investment ||
+    !CollectionCard ||
+    !PriceAlert ||
+    !MarketData ||
+    !AIAnalysis ||
+    !TrainingData ||
+    !Annotator ||
+    !AnnotationData ||
+    !DataQualityMetrics
+  ) {
     throw new Error('無法創建模型實例');
   }
 
@@ -59,9 +85,18 @@ const setupAssociations = (sequelize) => {
     User.hasMany(AIAnalysis, { foreignKey: 'userId', as: 'aiAnalyses' });
     User.hasOne(Annotator, { foreignKey: 'userId', as: 'annotator' });
     User.hasMany(Feedback, { foreignKey: 'userId', as: 'feedbacks' });
-    User.hasMany(FeedbackResponse, { foreignKey: 'userId', as: 'feedbackResponses' });
-    User.hasMany(DataQualityAssessment, { as: 'TriggeredAssessments', foreignKey: 'triggeredByUserId' });
-    User.hasMany(AssessmentSchedule, { as: 'CreatedSchedules', foreignKey: 'createdBy' });
+    User.hasMany(FeedbackResponse, {
+      foreignKey: 'userId',
+      as: 'feedbackResponses',
+    });
+    User.hasMany(DataQualityAssessment, {
+      as: 'TriggeredAssessments',
+      foreignKey: 'triggeredByUserId',
+    });
+    User.hasMany(AssessmentSchedule, {
+      as: 'CreatedSchedules',
+      foreignKey: 'createdBy',
+    });
 
     Collection.belongsTo(User, { foreignKey: 'userId', as: 'user' });
     Investment.belongsTo(User, { foreignKey: 'userId', as: 'user' });
@@ -70,8 +105,14 @@ const setupAssociations = (sequelize) => {
     Annotator.belongsTo(User, { foreignKey: 'userId', as: 'user' });
     Feedback.belongsTo(User, { foreignKey: 'userId', as: 'user' });
     FeedbackResponse.belongsTo(User, { foreignKey: 'userId', as: 'user' });
-    DataQualityAssessment.belongsTo(User, { as: 'TriggeredByUser', foreignKey: 'triggeredByUserId' });
-    AssessmentSchedule.belongsTo(User, { as: 'CreatedByUser', foreignKey: 'createdBy' });
+    DataQualityAssessment.belongsTo(User, {
+      as: 'TriggeredByUser',
+      foreignKey: 'triggeredByUserId',
+    });
+    AssessmentSchedule.belongsTo(User, {
+      as: 'CreatedByUser',
+      foreignKey: 'createdBy',
+    });
 
     // Card 關聯
     Card.hasMany(Investment, { foreignKey: 'cardId', as: 'investments' });
@@ -83,7 +124,7 @@ const setupAssociations = (sequelize) => {
       through: CollectionCard,
       foreignKey: 'cardId',
       otherKey: 'collectionId',
-      as: 'collections'
+      as: 'collections',
     });
 
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
@@ -97,38 +138,77 @@ const setupAssociations = (sequelize) => {
       through: CollectionCard,
       foreignKey: 'collectionId',
       otherKey: 'cardId',
-      as: 'cards'
+      as: 'cards',
     });
-    Collection.hasMany(CollectionCard, { foreignKey: 'collectionId', as: 'collectionCards' });
+    Collection.hasMany(CollectionCard, {
+      foreignKey: 'collectionId',
+      as: 'collectionCards',
+    });
 
     // CollectionCard 關聯
-    CollectionCard.belongsTo(Collection, { foreignKey: 'collectionId', as: 'collection' });
+    CollectionCard.belongsTo(Collection, {
+      foreignKey: 'collectionId',
+      as: 'collection',
+    });
     CollectionCard.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     // 數據質量相關關聯
     // TrainingData 關聯
-    TrainingData.hasMany(AnnotationData, { foreignKey: 'trainingDataId', as: 'annotations' });
+    TrainingData.hasMany(AnnotationData, {
+      foreignKey: 'trainingDataId',
+      as: 'annotations',
+    });
     TrainingData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     // Annotator 關聯
-    Annotator.hasMany(AnnotationData, { foreignKey: 'annotatorId', as: 'annotations' });
-    Annotator.hasMany(AnnotationData, { foreignKey: 'reviewedBy', as: 'reviewedAnnotations' });
+    Annotator.hasMany(AnnotationData, {
+      foreignKey: 'annotatorId',
+      as: 'annotations',
+    });
+    Annotator.hasMany(AnnotationData, {
+      foreignKey: 'reviewedBy',
+      as: 'reviewedAnnotations',
+    });
     Annotator.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
     // AnnotationData 關聯
-    AnnotationData.belongsTo(TrainingData, { foreignKey: 'trainingDataId', as: 'trainingData' });
-    AnnotationData.belongsTo(Annotator, { foreignKey: 'annotatorId', as: 'annotator' });
-    AnnotationData.belongsTo(Annotator, { foreignKey: 'reviewedBy', as: 'reviewer' });
+    AnnotationData.belongsTo(TrainingData, {
+      foreignKey: 'trainingDataId',
+      as: 'trainingData',
+    });
+    AnnotationData.belongsTo(Annotator, {
+      foreignKey: 'annotatorId',
+      as: 'annotator',
+    });
+    AnnotationData.belongsTo(Annotator, {
+      foreignKey: 'reviewedBy',
+      as: 'reviewer',
+    });
 
     // 反饋相關關聯
-    Feedback.hasMany(FeedbackResponse, { foreignKey: 'feedbackId', as: 'responses' });
+    Feedback.hasMany(FeedbackResponse, {
+      foreignKey: 'feedbackId',
+      as: 'responses',
+    });
     Feedback.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedUser' });
-    Feedback.belongsTo(User, { foreignKey: 'resolvedBy', as: 'resolvedByUser' });
-    FeedbackResponse.belongsTo(Feedback, { foreignKey: 'feedbackId', as: 'feedback' });
+    Feedback.belongsTo(User, {
+      foreignKey: 'resolvedBy',
+      as: 'resolvedByUser',
+    });
+    FeedbackResponse.belongsTo(Feedback, {
+      foreignKey: 'feedbackId',
+      as: 'feedback',
+    });
 
     // 數據質量評估關聯
-    DataQualityAssessment.belongsTo(User, { as: 'TriggeredByUser', foreignKey: 'triggeredByUserId' });
-    AssessmentSchedule.belongsTo(User, { as: 'CreatedByUser', foreignKey: 'createdBy' });
+    DataQualityAssessment.belongsTo(User, {
+      as: 'TriggeredByUser',
+      foreignKey: 'triggeredByUserId',
+    });
+    AssessmentSchedule.belongsTo(User, {
+      as: 'CreatedByUser',
+      foreignKey: 'createdBy',
+    });
 
     logger.info('模型關聯設置完成');
   } catch (error) {
@@ -197,7 +277,10 @@ const syncDatabase = async () => {
 
     // 顯示表信息
     const tables = await sequelize.showAllSchemas();
-    logger.info('數據庫中的所有表：', tables.map(t => t.name));
+    logger.info(
+      '數據庫中的所有表：',
+      tables.map((t) => t.name)
+    );
 
     process.exit(0);
   } catch (error) {

@@ -9,12 +9,18 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Image
+  Image,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { login } from '../store/slices/authSlice';
 import { authService } from '../services/authService';
-import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+  shadows,
+} from '../config/theme';
 
 interface LoginScreenProps {
   onNavigate: (screen: 'Login' | 'Register' | 'Dashboard') => void;
@@ -102,7 +108,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
 
           {/* 登錄按鈕 */}
           <TouchableOpacity
-            style={[styles.loginButton, isLoading && styles.loginButtonDisabled]}
+            style={[
+              styles.loginButton,
+              isLoading && styles.loginButtonDisabled,
+            ]}
             onPress={handleLogin}
             disabled={isLoading}
           >
@@ -148,17 +157,17 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: spacing.large,
     paddingTop: spacing.xlarge * 2,
-    paddingBottom: spacing.xlarge
+    paddingBottom: spacing.xlarge,
   },
   header: {
     alignItems: 'center',
-    marginBottom: spacing.xlarge * 2
+    marginBottom: spacing.xlarge * 2,
   },
   logoContainer: {
     width: 80,
@@ -168,44 +177,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.medium,
-    ...shadows.lg
+    ...shadows.lg,
   },
   logo: {
-    fontSize: 40
+    fontSize: 40,
   },
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   subtitle: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   formContainer: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
     marginBottom: spacing.xlarge,
-    ...shadows.base
+    ...shadows.base,
   },
   formTitle: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.semiBold,
     color: colors.textPrimary,
     marginBottom: spacing.large,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: spacing.large
+    marginBottom: spacing.large,
   },
   inputLabel: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
     color: colors.textPrimary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   input: {
     borderWidth: 1,
@@ -215,7 +224,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.medium,
     fontSize: typography.fontSize.base,
     color: colors.textPrimary,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   loginButton: {
     backgroundColor: colors.primary,
@@ -223,62 +232,62 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.medium,
     alignItems: 'center',
     marginBottom: spacing.medium,
-    ...shadows.sm
+    ...shadows.sm,
   },
   loginButtonDisabled: {
-    backgroundColor: colors.textDisabled
+    backgroundColor: colors.textDisabled,
   },
   loginButtonText: {
     color: colors.white,
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semiBold
+    fontWeight: typography.fontWeight.semiBold,
   },
   forgotPassword: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   forgotPasswordText: {
     color: colors.accent,
-    fontSize: typography.fontSize.sm
+    fontSize: typography.fontSize.sm,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   footerText: {
     color: colors.textSecondary,
-    fontSize: typography.fontSize.base
+    fontSize: typography.fontSize.base,
   },
   registerLink: {
     color: colors.accent,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
-    marginLeft: spacing.small
+    marginLeft: spacing.small,
   },
   quickLoginContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   quickLoginTitle: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   quickLoginButtons: {
     flexDirection: 'row',
-    gap: spacing.medium
+    gap: spacing.medium,
   },
   quickLoginButton: {
     backgroundColor: colors.secondary,
     borderRadius: borderRadius.medium,
     paddingHorizontal: spacing.large,
-    paddingVertical: spacing.small
+    paddingVertical: spacing.small,
   },
   quickLoginButtonText: {
     color: colors.white,
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium
-  }
+    fontWeight: typography.fontWeight.medium,
+  },
 });
 
 export default LoginScreen;

@@ -21,7 +21,7 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
   padding = 16,
   margin = 8,
   backgroundColor = '#FFFFFF',
-  testID
+  testID,
 }) => {
   const platformStyles = getPlatformStyles();
 
@@ -29,28 +29,30 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
   const getCardStyle = (): ViewStyle => {
     const baseStyle = platformStyles.card || {};
 
-    const platformSpecificStyle = isIOS() ? {
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: elevation / 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: elevation,
-      backgroundColor
-    } : {
-      elevation,
-      backgroundColor
-    };
+    const platformSpecificStyle = isIOS()
+      ? {
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: elevation / 2 },
+          shadowOpacity: 0.1,
+          shadowRadius: elevation,
+          backgroundColor,
+        }
+      : {
+          elevation,
+          backgroundColor,
+        };
 
     const customStyle = {
       borderRadius: borderRadius || (isIOS() ? 12 : 8),
       padding,
-      margin
+      margin,
     };
 
     return {
       ...baseStyle,
       ...platformSpecificStyle,
       ...customStyle,
-      ...style
+      ...style,
     };
   };
 

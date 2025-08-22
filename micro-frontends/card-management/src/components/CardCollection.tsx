@@ -12,9 +12,10 @@ const CardCollection: React.FC<CardCollectionProps> = ({
   collections = [],
   onCollectionSelect,
   onCreateCollection,
-  onAddCardToCollection
+  onAddCardToCollection,
 }) => {
-  const [selectedCollection, setSelectedCollection] = useState<CollectionType | null>(null);
+  const [selectedCollection, setSelectedCollection] =
+    useState<CollectionType | null>(null);
 
   const handleCollectionClick = (collection: CollectionType) => {
     setSelectedCollection(collection);
@@ -29,10 +30,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
     <div className="card-collection">
       <div className="collection-header">
         <h2>我的收藏</h2>
-        <button
-          className="btn btn-primary"
-          onClick={handleCreateCollection}
-        >
+        <button className="btn btn-primary" onClick={handleCreateCollection}>
           建立新收藏
         </button>
       </div>
@@ -47,8 +45,12 @@ const CardCollection: React.FC<CardCollectionProps> = ({
             <div className="collection-info">
               <h3>{collection.name}</h3>
               <p>{collection.description}</p>
-              <span className="card-count">{collection.cards.length} 張卡片</span>
-              <span className={`visibility ${collection.isPublic ? 'public' : 'private'}`}>
+              <span className="card-count">
+                {collection.cards.length} 張卡片
+              </span>
+              <span
+                className={`visibility ${collection.isPublic ? 'public' : 'private'}`}
+              >
                 {collection.isPublic ? '公開' : '私人'}
               </span>
             </div>
@@ -77,10 +79,7 @@ const CardCollection: React.FC<CardCollectionProps> = ({
       {collections.length === 0 && (
         <div className="no-collections">
           <p>您還沒有建立任何收藏</p>
-          <button
-            className="btn btn-primary"
-            onClick={handleCreateCollection}
-          >
+          <button className="btn btn-primary" onClick={handleCreateCollection}>
             建立第一個收藏
           </button>
         </div>

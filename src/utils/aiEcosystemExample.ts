@@ -1,6 +1,11 @@
 import { aiEcosystem } from '../services/aiEcosystem';
 import { aiEcosystemMonitor } from '../services/aiEcosystemMonitor';
-import { multiAIService, AIProvider, AIModelType, AITaskType } from '../services/multiAIService';
+import {
+  multiAIService,
+  AIProvider,
+  AIModelType,
+  AITaskType,
+} from '../services/multiAIService';
 import { aiModelManager } from '../services/aiModelManager';
 import { dataQualityService } from '../services/dataQualityService';
 import { logger } from '../utils/logger';
@@ -38,14 +43,15 @@ export class AIEcosystemExample {
       logger.info('📸 開始卡片識別示例...');
 
       // 模擬圖片數據
-      const imageData = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/8A';
+      const imageData =
+        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/8A';
 
       // 使用AI生態系統進行卡片識別
       const result = await aiEcosystem.recognizeCard(imageData, {
         enableConditionAnalysis: true,
         enablePriceEstimation: true,
         model: 'gpt-4',
-        provider: 'openai'
+        provider: 'openai',
       });
 
       logger.info('✅ 卡片識別結果:', result);
@@ -63,13 +69,14 @@ export class AIEcosystemExample {
       logger.info('🔍 開始條件分析示例...');
 
       // 模擬圖片數據
-      const imageData = 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/8A';
+      const imageData =
+        'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/2wBDAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQH/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwA/8A';
 
       // 使用AI生態系統進行條件分析
       const result = await aiEcosystem.analyzeCardCondition(imageData, {
         detailedAnalysis: true,
         model: 'claude-3',
-        provider: 'anthropic'
+        provider: 'anthropic',
       });
 
       logger.info('✅ 條件分析結果:', result);
@@ -92,21 +99,21 @@ export class AIEcosystemExample {
         series: '遊戲王',
         rarity: 'UR',
         condition: 'NM',
-        year: 2002
+        year: 2002,
       };
 
       // 模擬市場數據
       const marketData = {
         currentTrend: 'rising',
         averagePrice: 150,
-        volume: 1000
+        volume: 1000,
       };
 
       // 使用AI生態系統進行價格預測
       const result = await aiEcosystem.predictCardPrice(cardData, {
         marketData,
         model: 'gemini-pro',
-        provider: 'gemini'
+        provider: 'gemini',
       });
 
       logger.info('✅ 價格預測結果:', result);
@@ -128,14 +135,14 @@ export class AIEcosystemExample {
         totalVolume: 50000,
         averagePrice: 120,
         trendingCards: ['青眼白龍', '黑魔導', '真紅眼黑龍'],
-        marketSentiment: 'positive'
+        marketSentiment: 'positive',
       };
 
       // 使用AI生態系統進行市場分析
       const result = await aiEcosystem.analyzeMarket(marketData, {
         analysisType: 'trend',
         model: 'claude-3',
-        provider: 'anthropic'
+        provider: 'anthropic',
       });
 
       logger.info('✅ 市場分析結果:', result);
@@ -156,18 +163,18 @@ export class AIEcosystemExample {
         {
           taskType: 'recognition' as AITaskType,
           prompt: '識別這張卡片：青眼白龍',
-          config: { model: 'gpt-4', maxTokens: 500 }
+          config: { model: 'gpt-4', maxTokens: 500 },
         },
         {
           taskType: 'analysis' as AITaskType,
           prompt: '分析這張卡片的市場價值',
-          config: { model: 'claude-3', maxTokens: 800 }
+          config: { model: 'claude-3', maxTokens: 800 },
         },
         {
           taskType: 'prediction' as AITaskType,
           prompt: '預測這張卡片的未來價格趨勢',
-          config: { model: 'gemini-pro', maxTokens: 600 }
-        }
+          config: { model: 'gemini-pro', maxTokens: 600 },
+        },
       ];
 
       // 使用AI生態系統執行批量任務
@@ -207,7 +214,7 @@ export class AIEcosystemExample {
         metrics,
         dashboard,
         alerts,
-        dailyReport
+        dailyReport,
       };
     } catch (error) {
       logger.error('❌ 監控示例失敗:', error);
@@ -222,11 +229,16 @@ export class AIEcosystemExample {
       logger.info('🤖 開始模型管理示例...');
 
       // 獲取推薦模型
-      const recommendedModels = aiEcosystem.getRecommendedModels('card_recognition');
+      const recommendedModels =
+        aiEcosystem.getRecommendedModels('card_recognition');
       logger.info('🎯 推薦模型:', recommendedModels);
 
       // 比較模型
-      const modelComparison = aiEcosystem.compareModels(['gpt-4', 'claude-3', 'gemini-pro']);
+      const modelComparison = aiEcosystem.compareModels([
+        'gpt-4',
+        'claude-3',
+        'gemini-pro',
+      ]);
       logger.info('⚖️ 模型比較:', modelComparison);
 
       // 獲取模型能力
@@ -234,17 +246,20 @@ export class AIEcosystemExample {
       logger.info('💪 模型能力:', modelCapabilities);
 
       // 選擇最佳模型
-      const bestModel = aiModelManager.selectBestModelForTask('card_recognition', {
-        prioritizeAccuracy: true,
-        requireVision: true
-      });
+      const bestModel = aiModelManager.selectBestModelForTask(
+        'card_recognition',
+        {
+          prioritizeAccuracy: true,
+          requireVision: true,
+        }
+      );
       logger.info('🏆 最佳模型:', bestModel);
 
       return {
         recommendedModels,
         modelComparison,
         modelCapabilities,
-        bestModel
+        bestModel,
       };
     } catch (error) {
       logger.error('❌ 模型管理示例失敗:', error);
@@ -259,29 +274,37 @@ export class AIEcosystemExample {
       logger.info('🖼️ 開始圖片處理示例...');
 
       // 模擬圖片文件
-      const mockImageFile = new Blob(['mock image data'], { type: 'image/jpeg' });
+      const mockImageFile = new Blob(['mock image data'], {
+        type: 'image/jpeg',
+      });
 
       // 轉換圖片為base64
-      const base64Result = await dataQualityService.convertImageToBase64(mockImageFile, {
-        quality: 0.8,
-        maxWidth: 1024,
-        maxHeight: 1024
-      });
+      const base64Result = await dataQualityService.convertImageToBase64(
+        mockImageFile,
+        {
+          quality: 0.8,
+          maxWidth: 1024,
+          maxHeight: 1024,
+        }
+      );
 
       logger.info('✅ 圖片轉base64結果:', base64Result);
 
       // 壓縮圖片
-      const compressedResult = await dataQualityService.compressBase64Image(base64Result.base64, {
-        quality: 0.6,
-        maxWidth: 512,
-        maxHeight: 512
-      });
+      const compressedResult = await dataQualityService.compressBase64Image(
+        base64Result.base64,
+        {
+          quality: 0.6,
+          maxWidth: 512,
+          maxHeight: 512,
+        }
+      );
 
       logger.info('✅ 圖片壓縮結果:', compressedResult);
 
       return {
         base64Result,
-        compressedResult
+        compressedResult,
       };
     } catch (error) {
       logger.error('❌ 圖片處理示例失敗:', error);
@@ -310,7 +333,7 @@ export class AIEcosystemExample {
       return {
         connectionResults,
         providerStatus,
-        usageStats
+        usageStats,
       };
     } catch (error) {
       logger.error('❌ 連接測試示例失敗:', error);
@@ -332,7 +355,7 @@ export class AIEcosystemExample {
       aiEcosystem.updateConfig({
         maxConcurrentRequests: 15,
         monthlyBudget: 1500,
-        enableCostOptimization: true
+        enableCostOptimization: true,
       });
 
       logger.info('✅ 配置已更新');
@@ -343,7 +366,7 @@ export class AIEcosystemExample {
 
       return {
         currentConfig,
-        updatedConfig
+        updatedConfig,
       };
     } catch (error) {
       logger.error('❌ 配置管理示例失敗:', error);
@@ -390,7 +413,7 @@ export class AIEcosystemExample {
         priceResult,
         marketResult,
         monitoringResult,
-        report
+        report,
       };
     } catch (error) {
       logger.error('❌ 完整工作流程失敗:', error);
@@ -411,7 +434,7 @@ export class AIEcosystemExample {
       const promises = Array.from({ length: 10 }, (_, i) =>
         aiEcosystem.executeTask('analysis', `測試任務 ${i + 1}`, {
           model: 'gpt-3.5-turbo',
-          maxTokens: 100
+          maxTokens: 100,
         })
       );
 
@@ -421,12 +444,14 @@ export class AIEcosystemExample {
       const totalTime = endTime - startTime;
       const averageTime = totalTime / batchResults.length;
 
-      logger.info(`⚡ 性能測試結果: 總時間 ${totalTime}ms, 平均時間 ${averageTime}ms`);
+      logger.info(
+        `⚡ 性能測試結果: 總時間 ${totalTime}ms, 平均時間 ${averageTime}ms`
+      );
 
       return {
         totalTime,
         averageTime,
-        results: batchResults
+        results: batchResults,
       };
     } catch (error) {
       logger.error('❌ 性能測試失敗:', error);
@@ -444,7 +469,7 @@ export class AIEcosystemExample {
       try {
         await multiAIService.executeRequest('測試請求', {
           provider: 'invalid_provider' as AIProvider,
-          model: 'gpt-4'
+          model: 'gpt-4',
         });
       } catch (error) {
         logger.info('✅ 正確捕獲無效提供商錯誤:', error.message);
@@ -453,7 +478,7 @@ export class AIEcosystemExample {
       // 測試無效的模型
       try {
         await aiEcosystem.executeTask('recognition', '測試', {
-          model: 'invalid_model' as AIModelType
+          model: 'invalid_model' as AIModelType,
         });
       } catch (error) {
         logger.info('✅ 正確捕獲無效模型錯誤:', error.message);
@@ -494,7 +519,7 @@ export class AIEcosystemExample {
         configuration: await this.configurationExample(),
         performanceTest: await this.performanceTestExample(),
         errorHandling: await this.errorHandlingExample(),
-        completeWorkflow: await this.completeWorkflowExample()
+        completeWorkflow: await this.completeWorkflowExample(),
       };
 
       logger.info('🎉 所有示例運行完成！');

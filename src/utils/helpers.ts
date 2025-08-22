@@ -17,17 +17,24 @@ export const groupBy = <T, K extends keyof any>(
   array: T[],
   key: (item: T) => K
 ): Record<K, T[]> => {
-  return array.reduce((groups, item) => {
-    const groupKey = key(item);
-    if (!groups[groupKey]) {
-      groups[groupKey] = [];
-    }
-    groups[groupKey].push(item);
-    return groups;
-  }, {} as Record<K, T[]>);
+  return array.reduce(
+    (groups, item) => {
+      const groupKey = key(item);
+      if (!groups[groupKey]) {
+        groups[groupKey] = [];
+      }
+      groups[groupKey].push(item);
+      return groups;
+    },
+    {} as Record<K, T[]>
+  );
 };
 
-export const sortBy = <T>(array: T[], key: keyof T, order: 'asc' | 'desc' = 'asc'): T[] => {
+export const sortBy = <T>(
+  array: T[],
+  key: keyof T,
+  order: 'asc' | 'desc' = 'asc'
+): T[] => {
   return [...array].sort((a, b) => {
     const aVal = a[key];
     const bVal = b[key];
@@ -38,14 +45,20 @@ export const sortBy = <T>(array: T[], key: keyof T, order: 'asc' | 'desc' = 'asc
   });
 };
 
-export const filterBy = <T>(array: T[], predicate: (item: T) => boolean): T[] => {
+export const filterBy = <T>(
+  array: T[],
+  predicate: (item: T) => boolean
+): T[] => {
   return array.filter(predicate);
 };
 
 // 物件操作工具
-export const pick = <T extends object, K extends keyof T>(obj: T, keys: K[]): Pick<T, K> => {
+export const pick = <T extends object, K extends keyof T>(
+  obj: T,
+  keys: K[]
+): Pick<T, K> => {
   const result = {} as Pick<T, K>;
-  keys.forEach(key => {
+  keys.forEach((key) => {
     if (key in obj) {
       result[key] = obj[key];
     }
@@ -55,7 +68,7 @@ export const pick = <T extends object, K extends keyof T>(obj: T, keys: K[]): Pi
 
 export const omit = <T, K extends keyof T>(obj: T, keys: K[]): Omit<T, K> => {
   const result = { ...obj };
-  keys.forEach(key => {
+  keys.forEach((key) => {
     delete result[key];
   });
   return result;
@@ -71,7 +84,7 @@ export const deepClone = <T>(obj: T): T => {
   }
 
   if (obj instanceof Array) {
-    return obj.map(item => deepClone(item)) as T;
+    return obj.map((item) => deepClone(item)) as T;
   }
 
   if (typeof obj === 'object') {
@@ -87,15 +100,22 @@ export const deepClone = <T>(obj: T): T => {
   return obj;
 };
 
-export const merge = <T extends Record<string, any>>(target: T, ...sources: Partial<T>[]): T => {
+export const merge = <T extends Record<string, any>>(
+  target: T,
+  ...sources: Partial<T>[]
+): T => {
   const result = { ...target };
 
-  sources.forEach(source => {
+  sources.forEach((source) => {
     if (source) {
-      Object.keys(source).forEach(key => {
+      Object.keys(source).forEach((key) => {
         const value = source[key];
         if (value !== undefined) {
-          if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          if (
+            typeof value === 'object' &&
+            value !== null &&
+            !Array.isArray(value)
+          ) {
             (result as any)[key] = merge((result as any)[key] || {}, value);
           } else {
             (result as any)[key] = value;
@@ -131,7 +151,11 @@ export const snakeCase = (str: string): string => {
     .toLowerCase();
 };
 
-export const truncate = (str: string, length: number, suffix: string = '...'): string => {
+export const truncate = (
+  str: string,
+  length: number,
+  suffix: string = '...'
+): string => {
   if (str.length <= length) return str;
   return str.substring(0, length - suffix.length) + suffix;
 };
@@ -204,7 +228,10 @@ export const isThisWeek = (date: Date): boolean => {
 
 export const isThisMonth = (date: Date): boolean => {
   const today = new Date();
-  return date.getMonth() === today.getMonth() && date.getFullYear() === today.getFullYear();
+  return (
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
+  );
 };
 
 // 防抖和節流工具
@@ -280,7 +307,7 @@ export const retry = async <T>(
         throw lastError;
       }
 
-      await new Promise(resolve => setTimeout(resolve, delay * attempt));
+      await new Promise((resolve) => setTimeout(resolve, delay * attempt));
     }
   }
 
@@ -314,8 +341,8 @@ export const generateId = (): string => {
 
 export const generateUUID = (): string => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 };

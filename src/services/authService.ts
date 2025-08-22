@@ -2,7 +2,11 @@ import { api, API_ENDPOINTS } from '../config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { logger } from '../utils/logger';
 import { validateInput, validateApiResponse } from '../utils/validationService';
-import { LoginRequestSchema, RegisterRequestSchema, AuthResponseSchema } from '../utils/validationSchemas';
+import {
+  LoginRequestSchema,
+  RegisterRequestSchema,
+  AuthResponseSchema,
+} from '../utils/validationSchemas';
 import { errorHandler, withErrorHandling } from '@/utils/errorHandler';
 
 // 用戶類型
@@ -52,16 +56,27 @@ class AuthService {
   async login(credentials: LoginRequest): Promise<ApiResponse<AuthResponse>> {
     try {
       // 驗證輸入數據
-      const inputValidation = validateInput(LoginRequestSchema, credentials, '登錄請求');
+      const inputValidation = validateInput(
+        LoginRequestSchema,
+        credentials,
+        '登錄請求'
+      );
       if (!inputValidation.isValid) {
         throw new Error(inputValidation.errorMessage || '登錄數據驗證失敗');
       }
 
-      const response = await api.post<AuthResponse>(API_ENDPOINTS.AUTH.LOGIN, inputValidation.data);
+      const response = await api.post<AuthResponse>(
+        API_ENDPOINTS.AUTH.LOGIN,
+        inputValidation.data
+      );
 
       // 驗證 API 響應
       if (response.success && response.data) {
-        const responseValidation = validateApiResponse(AuthResponseSchema, response.data, '登錄響應');
+        const responseValidation = validateApiResponse(
+          AuthResponseSchema,
+          response.data,
+          '登錄響應'
+        );
         if (!responseValidation.isValid) {
           logger.error('登錄響應數據驗證失敗:', responseValidation.errors);
           throw new Error('服務器響應數據格式錯誤');
@@ -78,19 +93,32 @@ class AuthService {
   }
 
   // 註冊
-  async register(userData: RegisterRequest): Promise<ApiResponse<AuthResponse>> {
+  async register(
+    userData: RegisterRequest
+  ): Promise<ApiResponse<AuthResponse>> {
     try {
       // 驗證輸入數據
-      const inputValidation = validateInput(RegisterRequestSchema, userData, '註冊請求');
+      const inputValidation = validateInput(
+        RegisterRequestSchema,
+        userData,
+        '註冊請求'
+      );
       if (!inputValidation.isValid) {
         throw new Error(inputValidation.errorMessage || '註冊數據驗證失敗');
       }
 
-      const response = await api.post<AuthResponse>(API_ENDPOINTS.AUTH.REGISTER, inputValidation.data);
+      const response = await api.post<AuthResponse>(
+        API_ENDPOINTS.AUTH.REGISTER,
+        inputValidation.data
+      );
 
       // 驗證 API 響應
       if (response.success && response.data) {
-        const responseValidation = validateApiResponse(AuthResponseSchema, response.data, '註冊響應');
+        const responseValidation = validateApiResponse(
+          AuthResponseSchema,
+          response.data,
+          '註冊響應'
+        );
         if (!responseValidation.isValid) {
           logger.error('註冊響應數據驗證失敗:', responseValidation.errors);
           throw new Error('服務器響應數據格式錯誤');
@@ -129,9 +157,12 @@ class AuthService {
     }
 
     try {
-      const response = await api.post<AuthResponse>(API_ENDPOINTS.AUTH.REFRESH, {
-        refreshToken
-      });
+      const response = await api.post<AuthResponse>(
+        API_ENDPOINTS.AUTH.REFRESH,
+        {
+          refreshToken,
+        }
+      );
 
       if (response.success && response.data) {
         this.saveAuthData(response.data);
@@ -157,7 +188,10 @@ class AuthService {
   // 更新用戶資料
   async updateProfile(profileData: Partial<User>): Promise<ApiResponse<User>> {
     try {
-      const response = await api.put<User>(API_ENDPOINTS.AUTH.PROFILE, profileData);
+      const response = await api.put<User>(
+        API_ENDPOINTS.AUTH.PROFILE,
+        profileData
+      );
       return response;
     } catch (error: any) {
       logger.error('❌ Update profile error:', { error: error.message });
@@ -217,5 +251,6 @@ class AuthService {
   }
 }
 
-// 導出認證服務實例
+// 導出認證服務類和實例
+export { AuthService };
 export const authService = new AuthService();

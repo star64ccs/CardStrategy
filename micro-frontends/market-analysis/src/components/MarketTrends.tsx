@@ -9,7 +9,7 @@ const MarketTrends: React.FC = () => {
   useEffect(() => {
     const loadTrends = async () => {
       setLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockTrends: MarketTrend[] = [
         {
@@ -20,7 +20,7 @@ const MarketTrends: React.FC = () => {
           confidence: 85,
           factors: ['交易量增加', '市場需求上升', '供應減少'],
           prediction: 1600,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         {
           id: '2',
@@ -30,7 +30,7 @@ const MarketTrends: React.FC = () => {
           confidence: 72,
           factors: ['供應過剩', '需求下降'],
           prediction: 750,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         {
           id: '3',
@@ -40,8 +40,8 @@ const MarketTrends: React.FC = () => {
           confidence: 90,
           factors: ['供需平衡', '市場穩定'],
           prediction: 1200,
-          timestamp: new Date().toISOString()
-        }
+          timestamp: new Date().toISOString(),
+        },
       ];
 
       setTrends(mockTrends);
@@ -53,19 +53,27 @@ const MarketTrends: React.FC = () => {
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'up': return '📈';
-      case 'down': return '📉';
-      case 'stable': return '➡️';
-      default: return '❓';
+      case 'up':
+        return '📈';
+      case 'down':
+        return '📉';
+      case 'stable':
+        return '➡️';
+      default:
+        return '❓';
     }
   };
 
   const getTrendColor = (trend: string) => {
     switch (trend) {
-      case 'up': return 'positive';
-      case 'down': return 'negative';
-      case 'stable': return 'neutral';
-      default: return 'neutral';
+      case 'up':
+        return 'positive';
+      case 'down':
+        return 'negative';
+      case 'stable':
+        return 'neutral';
+      default:
+        return 'neutral';
     }
   };
 
@@ -75,8 +83,8 @@ const MarketTrends: React.FC = () => {
     return 'low';
   };
 
-  const filteredTrends = trends.filter(trend =>
-    filter === 'all' || trend.trend === filter
+  const filteredTrends = trends.filter(
+    (trend) => filter === 'all' || trend.trend === filter
   );
 
   if (loading) {
@@ -98,37 +106,47 @@ const MarketTrends: React.FC = () => {
             className={`filter-btn ${filter === 'up' ? 'active' : ''}`}
             onClick={() => setFilter('up')}
           >
-            上升 ({trends.filter(t => t.trend === 'up').length})
+            上升 ({trends.filter((t) => t.trend === 'up').length})
           </button>
           <button
             className={`filter-btn ${filter === 'down' ? 'active' : ''}`}
             onClick={() => setFilter('down')}
           >
-            下降 ({trends.filter(t => t.trend === 'down').length})
+            下降 ({trends.filter((t) => t.trend === 'down').length})
           </button>
           <button
             className={`filter-btn ${filter === 'stable' ? 'active' : ''}`}
             onClick={() => setFilter('stable')}
           >
-            穩定 ({trends.filter(t => t.trend === 'stable').length})
+            穩定 ({trends.filter((t) => t.trend === 'stable').length})
           </button>
         </div>
       </div>
 
       <div className="trends-list">
-        {filteredTrends.map(trend => (
-          <div key={trend.id} className={`trend-card ${getTrendColor(trend.trend)}`}>
+        {filteredTrends.map((trend) => (
+          <div
+            key={trend.id}
+            className={`trend-card ${getTrendColor(trend.trend)}`}
+          >
             <div className="trend-header">
               <div className="trend-info">
                 <span className="trend-icon">{getTrendIcon(trend.trend)}</span>
                 <h4>{trend.cardName}</h4>
-                <span className={`trend-direction ${getTrendColor(trend.trend)}`}>
-                  {trend.trend === 'up' ? '上升趨勢' :
-                    trend.trend === 'down' ? '下降趨勢' : '穩定趨勢'}
+                <span
+                  className={`trend-direction ${getTrendColor(trend.trend)}`}
+                >
+                  {trend.trend === 'up'
+                    ? '上升趨勢'
+                    : trend.trend === 'down'
+                      ? '下降趨勢'
+                      : '穩定趨勢'}
                 </span>
               </div>
               <div className="trend-confidence">
-                <span className={`confidence-badge ${getConfidenceColor(trend.confidence)}`}>
+                <span
+                  className={`confidence-badge ${getConfidenceColor(trend.confidence)}`}
+                >
                   {trend.confidence}% 信心度
                 </span>
               </div>
@@ -146,12 +164,16 @@ const MarketTrends: React.FC = () => {
 
               <div className="trend-prediction">
                 <h5>價格預測:</h5>
-                <span className="prediction-price">NT$ {trend.prediction.toLocaleString()}</span>
+                <span className="prediction-price">
+                  NT$ {trend.prediction.toLocaleString()}
+                </span>
               </div>
             </div>
 
             <div className="trend-meta">
-              <span>分析時間: {new Date(trend.timestamp).toLocaleString()}</span>
+              <span>
+                分析時間: {new Date(trend.timestamp).toLocaleString()}
+              </span>
               <div className="trend-actions">
                 <button className="btn btn-primary">查看詳情</button>
                 <button className="btn btn-secondary">設置警報</button>

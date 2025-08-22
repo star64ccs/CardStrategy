@@ -16,144 +16,174 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     severity = 'medium',
     enableRetry = true,
     maxRetries = 3,
-    onError
+    onError,
   } = options;
 
   // 處理錯誤
-  const handleError = useCallback(async (
-    error: Error | string,
-    errorContext?: string,
-    errorSeverity?: 'low' | 'medium' | 'high' | 'critical'
-  ): Promise<AppError> => {
-    const finalContext = errorContext || context || 'Unknown';
-    const finalSeverity = errorSeverity || severity;
+  const handleError = useCallback(
+    async (
+      error: Error | string,
+      errorContext?: string,
+      errorSeverity?: 'low' | 'medium' | 'high' | 'critical'
+    ): Promise<AppError> => {
+      const finalContext = errorContext || context || 'Unknown';
+      const finalSeverity = errorSeverity || severity;
 
-    try {
-      const appError = await errorHandlerService.handleError(
-        error,
-        finalContext,
-        finalSeverity
-      );
+      try {
+        const appError = await errorHandlerService.handleError(
+          error,
+          finalContext,
+          finalSeverity
+        );
 
-      // 調用自定義錯誤處理回調
-      if (onError) {
-        onError(appError);
+        // 調用自定義錯誤處理回調
+        if (onError) {
+          onError(appError);
+        }
+
+        return appError;
+      } catch (handlerError) {
+        logger.error('錯誤處理失敗', {
+          error: handlerError,
+          originalError: error,
+        });
+        throw handlerError;
       }
-
-      return appError;
-    } catch (handlerError) {
-      logger.error('錯誤處理失敗', { error: handlerError, originalError: error });
-      throw handlerError;
-    }
-  }, [context, severity, onError]);
+    },
+    [context, severity, onError]
+  );
 
   // 處理 API 錯誤
-  const handleApiError = useCallback(async (
-    error: any,
-    errorContext?: string
-  ): Promise<AppError> => {
-    const finalContext = errorContext || context || 'API';
+  const handleApiError = useCallback(
+    async (error: any, errorContext?: string): Promise<AppError> => {
+      const finalContext = errorContext || context || 'API';
 
-    try {
-      const appError = await errorHandlerService.handleApiError(error, finalContext);
+      try {
+        const appError = await errorHandlerService.handleApiError(
+          error,
+          finalContext
+        );
 
-      // 調用自定義錯誤處理回調
-      if (onError) {
-        onError(appError);
+        // 調用自定義錯誤處理回調
+        if (onError) {
+          onError(appError);
+        }
+
+        return appError;
+      } catch (handlerError) {
+        logger.error('API 錯誤處理失敗', {
+          error: handlerError,
+          originalError: error,
+        });
+        throw handlerError;
       }
-
-      return appError;
-    } catch (handlerError) {
-      logger.error('API 錯誤處理失敗', { error: handlerError, originalError: error });
-      throw handlerError;
-    }
-  }, [context, onError]);
+    },
+    [context, onError]
+  );
 
   // 處理驗證錯誤
-  const handleValidationError = useCallback(async (
-    errors: string[],
-    errorContext?: string
-  ): Promise<AppError> => {
-    const finalContext = errorContext || context || 'Validation';
+  const handleValidationError = useCallback(
+    async (errors: string[], errorContext?: string): Promise<AppError> => {
+      const finalContext = errorContext || context || 'Validation';
 
-    try {
-      const appError = await errorHandlerService.handleValidationError(errors, finalContext);
+      try {
+        const appError = await errorHandlerService.handleValidationError(
+          errors,
+          finalContext
+        );
 
-      // 調用自定義錯誤處理回調
-      if (onError) {
-        onError(appError);
+        // 調用自定義錯誤處理回調
+        if (onError) {
+          onError(appError);
+        }
+
+        return appError;
+      } catch (handlerError) {
+        logger.error('驗證錯誤處理失敗', {
+          error: handlerError,
+          originalErrors: errors,
+        });
+        throw handlerError;
       }
-
-      return appError;
-    } catch (handlerError) {
-      logger.error('驗證錯誤處理失敗', { error: handlerError, originalErrors: errors });
-      throw handlerError;
-    }
-  }, [context, onError]);
+    },
+    [context, onError]
+  );
 
   // 處理認證錯誤
-  const handleAuthError = useCallback(async (
-    error: Error | string,
-    errorContext?: string
-  ): Promise<AppError> => {
-    const finalContext = errorContext || context || 'Authentication';
+  const handleAuthError = useCallback(
+    async (error: Error | string, errorContext?: string): Promise<AppError> => {
+      const finalContext = errorContext || context || 'Authentication';
 
-    try {
-      const appError = await errorHandlerService.handleAuthError(error, finalContext);
+      try {
+        const appError = await errorHandlerService.handleAuthError(
+          error,
+          finalContext
+        );
 
-      // 調用自定義錯誤處理回調
-      if (onError) {
-        onError(appError);
+        // 調用自定義錯誤處理回調
+        if (onError) {
+          onError(appError);
+        }
+
+        return appError;
+      } catch (handlerError) {
+        logger.error('認證錯誤處理失敗', {
+          error: handlerError,
+          originalError: error,
+        });
+        throw handlerError;
       }
-
-      return appError;
-    } catch (handlerError) {
-      logger.error('認證錯誤處理失敗', { error: handlerError, originalError: error });
-      throw handlerError;
-    }
-  }, [context, onError]);
+    },
+    [context, onError]
+  );
 
   // 重試操作
-  const retryOperation = useCallback(async <T>(
-    operation: () => Promise<T>,
-    operationContext?: string,
-    operationMaxRetries?: number
-  ): Promise<T> => {
-    if (!enableRetry) {
-      throw new Error('重試功能已禁用');
-    }
+  const retryOperation = useCallback(
+    async <T>(
+      operation: () => Promise<T>,
+      operationContext?: string,
+      operationMaxRetries?: number
+    ): Promise<T> => {
+      if (!enableRetry) {
+        throw new Error('重試功能已禁用');
+      }
 
-    const finalContext = operationContext || context || 'RetryOperation';
-    const finalMaxRetries = operationMaxRetries || maxRetries;
+      const finalContext = operationContext || context || 'RetryOperation';
+      const finalMaxRetries = operationMaxRetries || maxRetries;
 
-    try {
-      return await errorHandlerService.retryOperation(
-        operation,
-        finalContext,
-        finalMaxRetries
-      );
-    } catch (error) {
-      // 重試失敗後，使用統一的錯誤處理
-      await handleError(error as Error, finalContext, 'high');
-      throw error;
-    }
-  }, [context, enableRetry, maxRetries, handleError]);
+      try {
+        return await errorHandlerService.retryOperation(
+          operation,
+          finalContext,
+          finalMaxRetries
+        );
+      } catch (error) {
+        // 重試失敗後，使用統一的錯誤處理
+        await handleError(error as Error, finalContext, 'high');
+        throw error;
+      }
+    },
+    [context, enableRetry, maxRetries, handleError]
+  );
 
   // 安全執行操作
-  const safeExecute = useCallback(async <T>(
-    operation: () => Promise<T>,
-    operationContext?: string,
-    fallback?: T
-  ): Promise<T | undefined> => {
-    const finalContext = operationContext || context || 'SafeExecute';
+  const safeExecute = useCallback(
+    async <T>(
+      operation: () => Promise<T>,
+      operationContext?: string,
+      fallback?: T
+    ): Promise<T | undefined> => {
+      const finalContext = operationContext || context || 'SafeExecute';
 
-    try {
-      return await operation();
-    } catch (error) {
-      await handleError(error as Error, finalContext, 'medium');
-      return fallback;
-    }
-  }, [context, handleError]);
+      try {
+        return await operation();
+      } catch (error) {
+        await handleError(error as Error, finalContext, 'medium');
+        return fallback;
+      }
+    },
+    [context, handleError]
+  );
 
   // 獲取錯誤統計
   const getErrorStats = useCallback(() => {
@@ -185,6 +215,6 @@ export const useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     getErrorStats,
     getAllErrors,
     getUnhandledErrors,
-    cleanupOldErrors
+    cleanupOldErrors,
   };
 };

@@ -1,5 +1,6 @@
 const { Server } = require('socket.io');
 const jwt = require('jsonwebtoken');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 const redis = require('redis');
 const { v4: uuidv4 } = require('uuid');
@@ -26,10 +27,10 @@ class WebSocketService {
             'http://localhost:3001',
             'https://cardstrategy.com',
             'https://www.cardstrategy.com',
-            'https://staging.cardstrategy.com'
+            'https://staging.cardstrategy.com',
           ],
           methods: ['GET', 'POST'],
-          credentials: true
+          credentials: true,
         },
         transports: ['websocket', 'polling'],
         allowEIO3: true,
@@ -40,7 +41,7 @@ class WebSocketService {
         allowRequest: (req, callback) => {
           // 允許所有請求，在連接時進行身份驗證
           callback(null, true);
-        }
+        },
       });
 
       // 初始化 Redis 客戶端
@@ -86,7 +87,7 @@ class WebSocketService {
             return new Error('Redis 重試次數超過限制');
           }
           return Math.min(options.attempt * 100, 3000);
-        }
+        },
       });
 
       await this.redisClient.connect();
@@ -105,7 +106,8 @@ class WebSocketService {
     // 身份驗證中間件
     this.io.use(async (socket, next) => {
       try {
-        const token = socket.handshake.auth.token || socket.handshake.headers.authorization;
+        const token =
+          socket.handshake.auth.token || socket.handshake.headers.authorization;
 
         if (!token) {
           return next(new Error('未提供認證令牌'));
@@ -133,6 +135,7 @@ class WebSocketService {
     this.io.use(async (socket, next) => {
       try {
         const clientId = socket.handshake.address;
+// eslint-disable-next-line no-unused-vars
         const key = `ws_rate_limit:${clientId}`;
 
         if (this.redisClient) {
@@ -166,7 +169,7 @@ class WebSocketService {
         userRole: socket.userRole,
         connectedAt: new Date(),
         lastActivity: new Date(),
-        rooms: new Set()
+        rooms: new Set(),
       });
 
       // 加入用戶專屬房間
@@ -223,7 +226,7 @@ class WebSocketService {
       socket.emit('welcome', {
         message: '歡迎使用 CardStrategy 實時服務',
         userId: socket.userId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       // 發送連接統計
@@ -252,6 +255,7 @@ class WebSocketService {
       socket.join(roomName);
 
       // 更新用戶房間列表
+// eslint-disable-next-line no-unused-vars
       const userData = this.connectedUsers.get(socket.userId);
       if (userData) {
         userData.rooms.add(roomName);
@@ -263,7 +267,7 @@ class WebSocketService {
       socket.emit('room_joined', {
         room: roomName,
         message: `已加入房間: ${roomName}`,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       logger.info(`用戶 ${socket.userId} 加入房間: ${roomName}`);
@@ -281,6 +285,7 @@ class WebSocketService {
       socket.leave(roomName);
 
       // 更新用戶房間列表
+// eslint-disable-next-line no-unused-vars
       const userData = this.connectedUsers.get(socket.userId);
       if (userData) {
         userData.rooms.delete(roomName);
@@ -292,7 +297,7 @@ class WebSocketService {
       socket.emit('room_left', {
         room: roomName,
         message: `已離開房間: ${roomName}`,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       logger.info(`用戶 ${socket.userId} 離開房間: ${roomName}`);
@@ -320,7 +325,7 @@ class WebSocketService {
         to,
         message,
         type,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // 發送給目標用戶
@@ -329,7 +334,7 @@ class WebSocketService {
       // 發送確認給發送者
       socket.emit('message_sent', {
         messageId: messageData.id,
-        timestamp: messageData.timestamp
+        timestamp: messageData.timestamp,
       });
 
       // 保存到 Redis
@@ -355,6 +360,7 @@ class WebSocketService {
       }
 
       // 檢查用戶是否在房間中
+// eslint-disable-next-line no-unused-vars
       const userData = this.connectedUsers.get(socket.userId);
       if (!userData || !userData.rooms.has(room)) {
         socket.emit('error', { message: '您不在該房間中' });
@@ -367,7 +373,7 @@ class WebSocketService {
         room,
         message,
         type,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // 發送到房間
@@ -407,7 +413,7 @@ class WebSocketService {
         message,
         type,
         target,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // 根據目標發送廣播
@@ -431,6 +437,7 @@ class WebSocketService {
     try {
       const { status, customStatus } = data;
 
+// eslint-disable-next-line no-unused-vars
       const userData = this.connectedUsers.get(socket.userId);
       if (userData) {
         userData.status = status;
@@ -443,7 +450,7 @@ class WebSocketService {
         userId: socket.userId,
         status,
         customStatus,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       logger.info(`用戶狀態更新: ${socket.userId} -> ${status}`);
@@ -465,7 +472,7 @@ class WebSocketService {
     // 通知其他用戶
     socket.broadcast.emit('user_disconnected', {
       userId: socket.userId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // 更新連接統計
@@ -476,6 +483,7 @@ class WebSocketService {
    * 更新用戶活動時間
    */
   updateUserActivity(userId) {
+// eslint-disable-next-line no-unused-vars
     const userData = this.connectedUsers.get(userId);
     if (userData) {
       userData.lastActivity = new Date();
@@ -488,17 +496,17 @@ class WebSocketService {
   async updateRoomMembers(roomName) {
     try {
       const sockets = await this.io.in(roomName).fetchSockets();
-      const members = sockets.map(socket => ({
+      const members = sockets.map((socket) => ({
         userId: socket.userId,
         userRole: socket.userRole,
-        connectedAt: socket.handshake.time
+        connectedAt: socket.handshake.time,
       }));
 
       this.rooms.set(roomName, {
         name: roomName,
         members,
         memberCount: members.length,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       });
 
       // 發送房間成員更新
@@ -506,7 +514,7 @@ class WebSocketService {
         room: roomName,
         members,
         memberCount: members.length,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } catch (error) {
       logger.error('更新房間成員失敗:', error);
@@ -520,7 +528,7 @@ class WebSocketService {
     const stats = {
       totalConnections: this.connectedUsers.size,
       activeRooms: this.rooms.size,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.io.emit('connection_stats', stats);
@@ -533,6 +541,7 @@ class WebSocketService {
     if (!this.redisClient) return;
 
     try {
+// eslint-disable-next-line no-unused-vars
       const key = `messages:${messageData.id}`;
       await this.redisClient.setex(key, 86400, JSON.stringify(messageData)); // 24小時過期
     } catch (error) {
@@ -545,20 +554,14 @@ class WebSocketService {
    */
   setupRoomManagement() {
     // 創建默認房間
-    const defaultRooms = [
-      'general',
-      'trading',
-      'analysis',
-      'news',
-      'support'
-    ];
+    const defaultRooms = ['general', 'trading', 'analysis', 'news', 'support'];
 
-    defaultRooms.forEach(room => {
+    defaultRooms.forEach((room) => {
       this.rooms.set(room, {
         name: room,
         members: [],
         memberCount: 0,
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
       });
     });
   }
@@ -568,17 +571,21 @@ class WebSocketService {
    */
   setupPeriodicCleanup() {
     // 每5分鐘清理不活躍的連接
-    setInterval(() => {
-      const now = new Date();
-      const inactiveThreshold = 30 * 60 * 1000; // 30分鐘
+    setInterval(
+      () => {
+// eslint-disable-next-line no-unused-vars
+        const now = new Date();
+        const inactiveThreshold = 30 * 60 * 1000; // 30分鐘
 
-      for (const [userId, userData] of this.connectedUsers.entries()) {
-        if (now - userData.lastActivity > inactiveThreshold) {
-          logger.info(`清理不活躍用戶: ${userId}`);
-          this.connectedUsers.delete(userId);
+        for (const [userId, userData] of this.connectedUsers.entries()) {
+          if (now - userData.lastActivity > inactiveThreshold) {
+            logger.info(`清理不活躍用戶: ${userId}`);
+            this.connectedUsers.delete(userId);
+          }
         }
-      }
-    }, 5 * 60 * 1000);
+      },
+      5 * 60 * 1000
+    );
   }
 
   /**
@@ -589,7 +596,7 @@ class WebSocketService {
       this.io.to(`user:${userId}`).emit('notification', {
         id: uuidv4(),
         ...notification,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       logger.info(`發送通知給用戶: ${userId}`);
@@ -606,7 +613,7 @@ class WebSocketService {
       this.io.to(roomName).emit('notification', {
         id: uuidv4(),
         ...notification,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
 
       logger.info(`發送通知給房間: ${roomName}`);
@@ -620,10 +627,11 @@ class WebSocketService {
    */
   broadcastNotification(notification, target = 'all') {
     try {
+// eslint-disable-next-line no-unused-vars
       const notificationData = {
         id: uuidv4(),
         ...notification,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       if (target === 'all') {
@@ -647,7 +655,7 @@ class WebSocketService {
       activeRooms: this.rooms.size,
       connectedUsers: Array.from(this.connectedUsers.keys()),
       rooms: Array.from(this.rooms.keys()),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 

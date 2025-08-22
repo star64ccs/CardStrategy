@@ -6,7 +6,7 @@ import {
   Modal,
   ScrollView,
   TouchableOpacity,
-  Alert
+  Alert,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
@@ -33,7 +33,7 @@ export const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
   messages,
   onClose,
   onLoadMessage,
-  onClearHistory
+  onClearHistory,
 }) => {
   const [selectedSession, setSelectedSession] = useState<string | null>(null);
 
@@ -49,18 +49,20 @@ export const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
         if (currentSession) {
           sessions.push(currentSession);
         }
-        
+
         const sessionId = `session_${index}`;
-        const sessionTitle = message.type === 'user' 
-          ? message.content.substring(0, 30) + (message.content.length > 30 ? '...' : '')
-          : `會話 ${sessions.length + 1}`;
-        
+        const sessionTitle =
+          message.type === 'user'
+            ? message.content.substring(0, 30) +
+              (message.content.length > 30 ? '...' : '')
+            : `會話 ${sessions.length + 1}`;
+
         currentSession = {
           id: sessionId,
           title: sessionTitle,
           timestamp: message.timestamp,
           messageCount: 1,
-          messages: [message]
+          messages: [message],
         };
         sessionMessages = [message];
       } else {
@@ -91,21 +93,17 @@ export const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
   };
 
   const handleClearHistory = () => {
-    Alert.alert(
-      '清除聊天歷史',
-      '確定要清除所有聊天歷史嗎？此操作無法撤銷。',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '確定',
-          style: 'destructive',
-          onPress: () => {
-            onClearHistory?.();
-            setSelectedSession(null);
-          }
-        }
-      ]
-    );
+    Alert.alert('清除聊天歷史', '確定要清除所有聊天歷史嗎？此操作無法撤銷。', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '確定',
+        style: 'destructive',
+        onPress: () => {
+          onClearHistory?.();
+          setSelectedSession(null);
+        },
+      },
+    ]);
   };
 
   const formatTimestamp = (timestamp: Date) => {
@@ -139,10 +137,10 @@ export const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
             {session.messageCount} 條消息 • {formatTimestamp(session.timestamp)}
           </Text>
         </View>
-        <MaterialIcons 
-          name={selectedSession === session.id ? 'expand-less' : 'expand-more'} 
-          size={20} 
-          color={theme.colors.textSecondary} 
+        <MaterialIcons
+          name={selectedSession === session.id ? 'expand-less' : 'expand-more'}
+          size={20}
+          color={theme.colors.textSecondary}
         />
       </TouchableOpacity>
 
@@ -156,10 +154,14 @@ export const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
               activeOpacity={0.7}
             >
               <View style={styles.messageHeader}>
-                <MaterialIcons 
-                  name={message.type === 'user' ? 'person' : 'smart-toy'} 
-                  size={16} 
-                  color={message.type === 'user' ? theme.colors.primary : theme.colors.textSecondary} 
+                <MaterialIcons
+                  name={message.type === 'user' ? 'person' : 'smart-toy'}
+                  size={16}
+                  color={
+                    message.type === 'user'
+                      ? theme.colors.primary
+                      : theme.colors.textSecondary
+                  }
                 />
                 <Text style={styles.messageType}>
                   {message.type === 'user' ? '用戶' : 'AI助手'}
@@ -187,7 +189,11 @@ export const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <MaterialIcons name="history" size={48} color={theme.colors.textSecondary} />
+      <MaterialIcons
+        name="history"
+        size={48}
+        color={theme.colors.textSecondary}
+      />
       <Text style={styles.emptyStateTitle}>沒有聊天記錄</Text>
       <Text style={styles.emptyStateDescription}>
         開始與AI助手對話，您的聊天記錄將顯示在這裡
@@ -206,27 +212,43 @@ export const ChatHistoryPanel: React.FC<ChatHistoryPanelProps> = ({
         <View style={styles.modalContent}>
           <View style={styles.header}>
             <View style={styles.headerLeft}>
-              <MaterialIcons name="history" size={24} color={theme.colors.primary} />
+              <MaterialIcons
+                name="history"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text style={styles.headerTitle}>聊天歷史</Text>
             </View>
             <View style={styles.headerRight}>
               {sessions.length > 0 && (
-                <TouchableOpacity style={styles.clearButton} onPress={handleClearHistory}>
-                  <MaterialIcons name="clear-all" size={20} color={theme.colors.error} />
+                <TouchableOpacity
+                  style={styles.clearButton}
+                  onPress={handleClearHistory}
+                >
+                  <MaterialIcons
+                    name="clear-all"
+                    size={20}
+                    color={theme.colors.error}
+                  />
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-                <MaterialIcons name="close" size={24} color={theme.colors.textSecondary} />
+                <MaterialIcons
+                  name="close"
+                  size={24}
+                  color={theme.colors.textSecondary}
+                />
               </TouchableOpacity>
             </View>
           </View>
 
-          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-            {sessions.length > 0 ? (
-              sessions.map(renderSessionItem)
-            ) : (
-              renderEmptyState()
-            )}
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+          >
+            {sessions.length > 0
+              ? sessions.map(renderSessionItem)
+              : renderEmptyState()}
           </ScrollView>
 
           {sessions.length > 0 && (
@@ -247,14 +269,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   modalContent: {
     width: '90%',
     maxHeight: '80%',
     backgroundColor: theme.colors.background,
     borderRadius: 16,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   header: {
     flexDirection: 'row',
@@ -262,63 +284,63 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   headerLeft: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginLeft: 8
+    marginLeft: 8,
   },
   headerRight: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   clearButton: {
     padding: 8,
-    marginRight: 8
+    marginRight: 8,
   },
   closeButton: {
-    padding: 4
+    padding: 4,
   },
   content: {
     flex: 1,
-    padding: 16
+    padding: 16,
   },
   sessionItem: {
     marginBottom: 16,
     backgroundColor: theme.colors.backgroundLight,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   sessionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16
+    padding: 16,
   },
   sessionInfo: {
-    flex: 1
+    flex: 1,
   },
   sessionTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: 4
+    marginBottom: 4,
   },
   sessionMeta: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   sessionMessages: {
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    padding: 16
+    padding: 16,
   },
   messageItem: {
     marginBottom: 12,
@@ -326,27 +348,27 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.background,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   messageHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   messageType: {
     fontSize: 12,
     color: theme.colors.textSecondary,
     marginLeft: 6,
-    marginRight: 'auto'
+    marginRight: 'auto',
   },
   messageTime: {
     fontSize: 10,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   messageContent: {
     fontSize: 14,
     color: theme.colors.textPrimary,
-    lineHeight: 18
+    lineHeight: 18,
   },
   messageTag: {
     alignSelf: 'flex-start',
@@ -354,39 +376,39 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     backgroundColor: theme.colors.primary + '20',
-    borderRadius: 12
+    borderRadius: 12,
   },
   messageTagText: {
     fontSize: 10,
     color: theme.colors.primary,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32
+    padding: 32,
   },
   emptyStateTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
     marginTop: 16,
-    marginBottom: 8
+    marginBottom: 8,
   },
   emptyStateDescription: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 20
+    lineHeight: 20,
   },
   footer: {
     padding: 16,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   footerText: {
     fontSize: 12,
-    color: theme.colors.textSecondary
-  }
+    color: theme.colors.textSecondary,
+  },
 });

@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { validationService } from '@/utils/validationService';
 
 describe('ValidationService', () => {
@@ -7,10 +8,10 @@ describe('ValidationService', () => {
         'test@example.com',
         'user.name@domain.co.uk',
         'user+tag@example.org',
-        '123@test.com'
+        '123@test.com',
       ];
 
-      validEmails.forEach(email => {
+      validEmails.forEach((email) => {
         expect(validationService.validateEmail(email)).toBe(true);
       });
     });
@@ -22,10 +23,10 @@ describe('ValidationService', () => {
         'user@',
         'user@.com',
         'user..name@example.com',
-        'user@example..com'
+        'user@example..com',
       ];
 
-      invalidEmails.forEach(email => {
+      invalidEmails.forEach((email) => {
         expect(validationService.validateEmail(email)).toBe(false);
       });
     });
@@ -43,10 +44,10 @@ describe('ValidationService', () => {
         'Password123!',
         'MySecurePass1@',
         'ComplexP@ssw0rd',
-        'Str0ng#Pass'
+        'Str0ng#Pass',
       ];
 
-      strongPasswords.forEach(password => {
+      strongPasswords.forEach((password) => {
         const result = validationService.validatePassword(password);
         expect(result.isValid).toBe(true);
         expect(result.errors).toHaveLength(0);
@@ -60,10 +61,10 @@ describe('ValidationService', () => {
         'PASSWORD', // no lowercase, no number, no special char
         'Password', // no number, no special char
         'password123', // no uppercase, no special char
-        'Password123' // no special char
+        'Password123', // no special char
       ];
 
-      weakPasswords.forEach(password => {
+      weakPasswords.forEach((password) => {
         const result = validationService.validatePassword(password);
         expect(result.isValid).toBe(false);
         expect(result.errors.length).toBeGreaterThan(0);
@@ -74,10 +75,18 @@ describe('ValidationService', () => {
       const result = validationService.validatePassword('weak');
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Password must be at least 8 characters long');
-      expect(result.errors).toContain('Password must contain at least one uppercase letter');
-      expect(result.errors).toContain('Password must contain at least one number');
-      expect(result.errors).toContain('Password must contain at least one special character');
+      expect(result.errors).toContain(
+        'Password must be at least 8 characters long'
+      );
+      expect(result.errors).toContain(
+        'Password must contain at least one uppercase letter'
+      );
+      expect(result.errors).toContain(
+        'Password must contain at least one number'
+      );
+      expect(result.errors).toContain(
+        'Password must contain at least one special character'
+      );
     });
   });
 
@@ -88,10 +97,10 @@ describe('ValidationService', () => {
         'user_name',
         'user-name',
         'userName',
-        'user123name'
+        'user123name',
       ];
 
-      validUsernames.forEach(username => {
+      validUsernames.forEach((username) => {
         expect(validationService.validateUsername(username)).toBe(true);
       });
     });
@@ -103,10 +112,10 @@ describe('ValidationService', () => {
         'user name', // space not allowed
         'user#name', // invalid character
         'user.name', // dot not allowed
-        'user_name_with_very_long_name_that_exceeds_limit' // too long
+        'user_name_with_very_long_name_that_exceeds_limit', // too long
       ];
 
-      invalidUsernames.forEach(username => {
+      invalidUsernames.forEach((username) => {
         expect(validationService.validateUsername(username)).toBe(false);
       });
     });
@@ -119,10 +128,10 @@ describe('ValidationService', () => {
         'Dark Magician',
         'Red-Eyes B. Dragon',
         'Summoned Skull',
-        'Blue-Eyes Ultimate Dragon'
+        'Blue-Eyes Ultimate Dragon',
       ];
 
-      validCardNames.forEach(name => {
+      validCardNames.forEach((name) => {
         expect(validationService.validateCardName(name)).toBe(true);
       });
     });
@@ -133,10 +142,10 @@ describe('ValidationService', () => {
         'A', // too short
         'A'.repeat(101), // too long
         'Card@Name', // invalid character
-        'Card#Name' // invalid character
+        'Card#Name', // invalid character
       ];
 
-      invalidCardNames.forEach(name => {
+      invalidCardNames.forEach((name) => {
         expect(validationService.validateCardName(name)).toBe(false);
       });
     });
@@ -144,15 +153,9 @@ describe('ValidationService', () => {
 
   describe('validatePrice', () => {
     it('should validate valid prices', () => {
-      const validPrices = [
-        0,
-        10.50,
-        100.99,
-        999.99,
-        1000
-      ];
+      const validPrices = [0, 10.5, 100.99, 999.99, 1000];
 
-      validPrices.forEach(price => {
+      validPrices.forEach((price) => {
         expect(validationService.validatePrice(price)).toBe(true);
       });
     });
@@ -160,12 +163,12 @@ describe('ValidationService', () => {
     it('should reject invalid prices', () => {
       const invalidPrices = [
         -1, // negative
-        -10.50, // negative
+        -10.5, // negative
         1001, // too high
-        9999.99 // too high
+        9999.99, // too high
       ];
 
-      invalidPrices.forEach(price => {
+      invalidPrices.forEach((price) => {
         expect(validationService.validatePrice(price)).toBe(false);
       });
     });
@@ -183,16 +186,17 @@ describe('ValidationService', () => {
           sms: false,
           push: true,
           thirdParty: false,
-          personalized: true
+          personalized: true,
         },
         dataSharingConsent: {
           analytics: true,
           thirdParty: false,
-          crossBorder: false
-        }
+          crossBorder: false,
+        },
       };
 
-      const result = validationService.validatePrivacyPreferences(validPreferences);
+      const result =
+        validationService.validatePrivacyPreferences(validPreferences);
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
@@ -208,11 +212,12 @@ describe('ValidationService', () => {
           sms: false,
           push: true,
           thirdParty: false,
-          personalized: true
-        }
+          personalized: true,
+        },
       };
 
-      const result = validationService.validatePrivacyPreferences(invalidPreferences);
+      const result =
+        validationService.validatePrivacyPreferences(invalidPreferences);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
@@ -220,10 +225,11 @@ describe('ValidationService', () => {
     it('should provide specific error messages for privacy preferences', () => {
       const invalidPreferences = {
         region: 'INVALID',
-        termsAccepted: false
+        termsAccepted: false,
       };
 
-      const result = validationService.validatePrivacyPreferences(invalidPreferences);
+      const result =
+        validationService.validatePrivacyPreferences(invalidPreferences);
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Invalid region code');
@@ -238,7 +244,7 @@ describe('ValidationService', () => {
         title: 'Test Bug Report',
         description: 'This is a detailed description of the bug',
         category: 'ui_ux',
-        priority: 'medium'
+        priority: 'medium',
       };
 
       const result = validationService.validateFeedback(validFeedback);
@@ -252,7 +258,7 @@ describe('ValidationService', () => {
         title: '', // empty title
         description: 'Short', // too short
         category: 'invalid_category',
-        priority: 'invalid_priority'
+        priority: 'invalid_priority',
       };
 
       const result = validationService.validateFeedback(invalidFeedback);
@@ -264,7 +270,7 @@ describe('ValidationService', () => {
       const invalidFeedback = {
         type: 'invalid_type',
         title: '',
-        description: 'Short'
+        description: 'Short',
       };
 
       const result = validationService.validateFeedback(invalidFeedback);
@@ -272,7 +278,9 @@ describe('ValidationService', () => {
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Invalid feedback type');
       expect(result.errors).toContain('Title is required');
-      expect(result.errors).toContain('Description must be at least 10 characters long');
+      expect(result.errors).toContain(
+        'Description must be at least 10 characters long'
+      );
     });
   });
 
@@ -281,7 +289,7 @@ describe('ValidationService', () => {
       const validRequest = {
         type: 'access',
         description: 'I would like to access my personal data',
-        priority: 'medium'
+        priority: 'medium',
       };
 
       const result = validationService.validateDataRightsRequest(validRequest);
@@ -293,10 +301,11 @@ describe('ValidationService', () => {
       const invalidRequest = {
         type: 'invalid_type',
         description: '', // empty description
-        priority: 'invalid_priority'
+        priority: 'invalid_priority',
       };
 
-      const result = validationService.validateDataRightsRequest(invalidRequest);
+      const result =
+        validationService.validateDataRightsRequest(invalidRequest);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
@@ -306,7 +315,7 @@ describe('ValidationService', () => {
     it('should validate valid age verification data', () => {
       const validAgeData = {
         birthDate: '1990-01-01',
-        verificationMethod: 'document'
+        verificationMethod: 'document',
       };
 
       const result = validationService.validateAgeVerification(validAgeData);
@@ -317,7 +326,7 @@ describe('ValidationService', () => {
     it('should reject invalid age verification data', () => {
       const invalidAgeData = {
         birthDate: 'invalid-date',
-        verificationMethod: 'invalid_method'
+        verificationMethod: 'invalid_method',
       };
 
       const result = validationService.validateAgeVerification(invalidAgeData);
@@ -328,7 +337,7 @@ describe('ValidationService', () => {
     it('should validate minimum age requirement', () => {
       const tooYoungAgeData = {
         birthDate: '2010-01-01', // 14 years old
-        verificationMethod: 'document'
+        verificationMethod: 'document',
       };
 
       const result = validationService.validateAgeVerification(tooYoungAgeData);
@@ -344,7 +353,7 @@ describe('ValidationService', () => {
         purpose: 'email_marketing',
         legalBasis: 'consent',
         granted: true,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       const result = validationService.validateConsentData(validConsentData);
@@ -358,7 +367,7 @@ describe('ValidationService', () => {
         purpose: 'invalid_purpose',
         legalBasis: 'invalid_basis',
         granted: 'invalid', // should be boolean
-        timestamp: 'invalid-timestamp'
+        timestamp: 'invalid-timestamp',
       };
 
       const result = validationService.validateConsentData(invalidConsentData);
@@ -372,10 +381,10 @@ describe('ValidationService', () => {
       const validImages = [
         { name: 'test.jpg', size: 1024 * 1024, type: 'image/jpeg' },
         { name: 'test.png', size: 2 * 1024 * 1024, type: 'image/png' },
-        { name: 'test.webp', size: 500 * 1024, type: 'image/webp' }
+        { name: 'test.webp', size: 500 * 1024, type: 'image/webp' },
       ];
 
-      validImages.forEach(image => {
+      validImages.forEach((image) => {
         expect(validationService.validateImageFile(image)).toBe(true);
       });
     });
@@ -384,10 +393,10 @@ describe('ValidationService', () => {
       const invalidImages = [
         { name: 'test.txt', size: 1024, type: 'text/plain' }, // wrong type
         { name: 'test.jpg', size: 10 * 1024 * 1024, type: 'image/jpeg' }, // too large
-        { name: 'test.png', size: 100, type: 'image/png' } // too small
+        { name: 'test.png', size: 100, type: 'image/png' }, // too small
       ];
 
-      invalidImages.forEach(image => {
+      invalidImages.forEach((image) => {
         expect(validationService.validateImageFile(image)).toBe(false);
       });
     });
@@ -426,13 +435,17 @@ describe('ValidationService', () => {
 
   describe('validatePattern', () => {
     it('should validate patterns', () => {
-      expect(validationService.validatePattern('test123', /^[a-z0-9]+$/)).toBe(true);
+      expect(validationService.validatePattern('test123', /^[a-z0-9]+$/)).toBe(
+        true
+      );
       expect(validationService.validatePattern('TEST', /^[A-Z]+$/)).toBe(true);
       expect(validationService.validatePattern('123', /^\d+$/)).toBe(true);
     });
 
     it('should reject patterns that do not match', () => {
-      expect(validationService.validatePattern('test@123', /^[a-z0-9]+$/)).toBe(false);
+      expect(validationService.validatePattern('test@123', /^[a-z0-9]+$/)).toBe(
+        false
+      );
       expect(validationService.validatePattern('test', /^[A-Z]+$/)).toBe(false);
       expect(validationService.validatePattern('abc', /^\d+$/)).toBe(false);
     });
@@ -474,10 +487,10 @@ describe('ValidationService', () => {
         'http://example.com',
         'https://www.example.com',
         'https://example.com/path',
-        'https://example.com/path?param=value'
+        'https://example.com/path?param=value',
       ];
 
-      validUrls.forEach(url => {
+      validUrls.forEach((url) => {
         expect(validationService.validateUrl(url)).toBe(true);
       });
     });
@@ -488,10 +501,10 @@ describe('ValidationService', () => {
         'ftp://example.com', // unsupported protocol
         'example.com', // missing protocol
         'https://', // missing domain
-        'https://.com' // invalid domain
+        'https://.com', // invalid domain
       ];
 
-      invalidUrls.forEach(url => {
+      invalidUrls.forEach((url) => {
         expect(validationService.validateUrl(url)).toBe(false);
       });
     });
@@ -504,10 +517,10 @@ describe('ValidationService', () => {
         '+1-234-567-8900',
         '+1 (234) 567-8900',
         '123-456-7890',
-        '(123) 456-7890'
+        '(123) 456-7890',
       ];
 
-      validPhoneNumbers.forEach(phone => {
+      validPhoneNumbers.forEach((phone) => {
         expect(validationService.validatePhoneNumber(phone)).toBe(true);
       });
     });
@@ -518,10 +531,10 @@ describe('ValidationService', () => {
         'not-a-phone',
         '+12345678901234567890', // too long
         '123-456-789', // incomplete
-        '+1-234-567-89000' // too many digits
+        '+1-234-567-89000', // too many digits
       ];
 
-      invalidPhoneNumbers.forEach(phone => {
+      invalidPhoneNumbers.forEach((phone) => {
         expect(validationService.validatePhoneNumber(phone)).toBe(false);
       });
     });

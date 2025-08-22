@@ -4,7 +4,14 @@ import { theme } from '@/config/theme';
 
 export interface AnimatedViewProps extends ViewProps {
   children: ReactNode;
-  animation?: 'fadeIn' | 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'scale' | 'bounce';
+  animation?:
+    | 'fadeIn'
+    | 'slideUp'
+    | 'slideDown'
+    | 'slideLeft'
+    | 'slideRight'
+    | 'scale'
+    | 'bounce';
   duration?: number;
   delay?: number;
   style?: ViewStyle;
@@ -38,7 +45,7 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
               toValue: 1,
               duration,
               delay,
-              useNativeDriver: true
+              useNativeDriver: true,
             })
           );
           break;
@@ -50,14 +57,14 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
                 toValue: 1,
                 duration,
                 delay,
-                useNativeDriver: true
+                useNativeDriver: true,
               }),
               Animated.timing(translateY, {
                 toValue: 0,
                 duration,
                 delay,
-                useNativeDriver: true
-              })
+                useNativeDriver: true,
+              }),
             ])
           );
           break;
@@ -69,14 +76,14 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
                 toValue: 1,
                 duration,
                 delay,
-                useNativeDriver: true
+                useNativeDriver: true,
               }),
               Animated.timing(translateY, {
                 toValue: 0,
                 duration,
                 delay,
-                useNativeDriver: true
-              })
+                useNativeDriver: true,
+              }),
             ])
           );
           break;
@@ -88,14 +95,14 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
                 toValue: 1,
                 duration,
                 delay,
-                useNativeDriver: true
+                useNativeDriver: true,
               }),
               Animated.timing(translateX, {
                 toValue: 0,
                 duration,
                 delay,
-                useNativeDriver: true
-              })
+                useNativeDriver: true,
+              }),
             ])
           );
           break;
@@ -107,14 +114,14 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
                 toValue: 1,
                 duration,
                 delay,
-                useNativeDriver: true
+                useNativeDriver: true,
               }),
               Animated.timing(translateX, {
                 toValue: 0,
                 duration,
                 delay,
-                useNativeDriver: true
-              })
+                useNativeDriver: true,
+              }),
             ])
           );
           break;
@@ -126,14 +133,14 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
                 toValue: 1,
                 duration,
                 delay,
-                useNativeDriver: true
+                useNativeDriver: true,
               }),
               Animated.timing(scale, {
                 toValue: 1,
                 duration,
                 delay,
-                useNativeDriver: true
-              })
+                useNativeDriver: true,
+              }),
             ])
           );
           break;
@@ -145,18 +152,18 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
                 toValue: 1,
                 duration: duration * 0.6,
                 delay,
-                useNativeDriver: true
+                useNativeDriver: true,
               }),
               Animated.timing(scale, {
                 toValue: 1.1,
                 duration: duration * 0.2,
-                useNativeDriver: true
+                useNativeDriver: true,
               }),
               Animated.timing(scale, {
                 toValue: 1,
                 duration: duration * 0.2,
-                useNativeDriver: true
-              })
+                useNativeDriver: true,
+              }),
             ])
           );
           break;
@@ -172,7 +179,17 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
       translateX.setValue(50);
       scale.setValue(0.8);
     }
-  }, [visible, animation, duration, delay, animatedValue, translateY, translateX, scale, onAnimationComplete]);
+  }, [
+    visible,
+    animation,
+    duration,
+    delay,
+    animatedValue,
+    translateY,
+    translateX,
+    scale,
+    onAnimationComplete,
+  ]);
 
   const getTransform = () => {
     const transforms = [];
@@ -197,9 +214,9 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
       style={[
         {
           opacity: animatedValue,
-          transform: getTransform()
+          transform: getTransform(),
         },
-        style
+        style,
       ]}
       {...props}
     >
@@ -209,30 +226,30 @@ export const AnimatedView: React.FC<AnimatedViewProps> = ({
 };
 
 // 預定義的動畫組件
-export const FadeInView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (props) => (
-  <AnimatedView animation="fadeIn" {...props} />
-);
+export const FadeInView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (
+  props
+) => <AnimatedView animation="fadeIn" {...props} />;
 
-export const SlideUpView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (props) => (
-  <AnimatedView animation="slideUp" {...props} />
-);
+export const SlideUpView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (
+  props
+) => <AnimatedView animation="slideUp" {...props} />;
 
-export const SlideDownView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (props) => (
-  <AnimatedView animation="slideDown" {...props} />
-);
+export const SlideDownView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (
+  props
+) => <AnimatedView animation="slideDown" {...props} />;
 
-export const SlideLeftView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (props) => (
-  <AnimatedView animation="slideLeft" {...props} />
-);
+export const SlideLeftView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (
+  props
+) => <AnimatedView animation="slideLeft" {...props} />;
 
-export const SlideRightView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (props) => (
-  <AnimatedView animation="slideRight" {...props} />
-);
+export const SlideRightView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (
+  props
+) => <AnimatedView animation="slideRight" {...props} />;
 
-export const ScaleView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (props) => (
-  <AnimatedView animation="scale" {...props} />
-);
+export const ScaleView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (
+  props
+) => <AnimatedView animation="scale" {...props} />;
 
-export const BounceView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (props) => (
-  <AnimatedView animation="bounce" {...props} />
-);
+export const BounceView: React.FC<Omit<AnimatedViewProps, 'animation'>> = (
+  props
+) => <AnimatedView animation="bounce" {...props} />;

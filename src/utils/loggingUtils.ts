@@ -50,7 +50,7 @@ export class LoggingUtils {
   ): void {
     const logData: any = {
       error: error.message || String(error),
-      stack: error.stack
+      stack: error.stack,
     };
 
     if (params) {
@@ -70,13 +70,9 @@ export class LoggingUtils {
    * @param errors 驗證錯誤
    * @param data 驗證的數據（可選）
    */
-  static logValidationError(
-    operation: string,
-    errors: any,
-    data?: any
-  ): void {
+  static logValidationError(operation: string, errors: any, data?: any): void {
     const logData: any = {
-      errors: this.sanitizeForLogging(errors)
+      errors: this.sanitizeForLogging(errors),
     };
 
     if (data) {
@@ -98,7 +94,7 @@ export class LoggingUtils {
     additionalInfo?: Record<string, any>
   ): void {
     const logData: any = {
-      duration: `${duration}ms`
+      duration: `${duration}ms`,
     };
 
     if (additionalInfo) {
@@ -123,11 +119,11 @@ export class LoggingUtils {
       hit: '📦',
       miss: '❌',
       set: '💾',
-      clear: '🗑️'
+      clear: '🗑️',
     };
 
     const logData: any = {
-      action
+      action,
     };
 
     if (key) {
@@ -155,7 +151,7 @@ export class LoggingUtils {
     const logData: any = {
       table,
       action,
-      duration: `${duration}ms`
+      duration: `${duration}ms`,
     };
 
     if (rowCount !== undefined) {
@@ -184,12 +180,12 @@ export class LoggingUtils {
       upload: '📤',
       download: '📥',
       delete: '🗑️',
-      process: '⚙️'
+      process: '⚙️',
     };
 
     const logData: any = {
       action,
-      filename
+      filename,
     };
 
     if (size !== undefined) {
@@ -218,7 +214,7 @@ export class LoggingUtils {
   ): void {
     const logData: any = {
       userId,
-      action
+      action,
     };
 
     if (details) {
@@ -273,11 +269,11 @@ export class LoggingUtils {
       low: '🔒',
       medium: '🛡️',
       high: '🚨',
-      critical: '🚨🚨'
+      critical: '🚨🚨',
     };
 
     const logData: any = {
-      severity
+      severity,
     };
 
     if (details) {
@@ -301,7 +297,7 @@ export class LoggingUtils {
     duration?: number
   ): void {
     const logData: any = {
-      businessLogic
+      businessLogic,
     };
 
     if (result) {
@@ -336,7 +332,7 @@ export class LoggingUtils {
     const logData: any = {
       service,
       success,
-      duration: `${duration}ms`
+      duration: `${duration}ms`,
     };
 
     if (details) {
@@ -361,14 +357,15 @@ export class LoggingUtils {
     failedCount: number,
     duration: number
   ): void {
-    const successRate = totalCount > 0 ? (successCount / totalCount * 100).toFixed(2) : '0';
+    const successRate =
+      totalCount > 0 ? ((successCount / totalCount) * 100).toFixed(2) : '0';
 
     const logData = {
       totalCount,
       successCount,
       failedCount,
       successRate: `${successRate}%`,
-      duration: `${duration}ms`
+      duration: `${duration}ms`,
     };
 
     if (failedCount === 0) {
@@ -392,7 +389,7 @@ export class LoggingUtils {
     const usageMB = Math.round(memoryUsage / 1024 / 1024);
 
     const logData: any = {
-      memoryUsage: `${usageMB}MB`
+      memoryUsage: `${usageMB}MB`,
     };
 
     if (threshold) {
@@ -429,7 +426,7 @@ export class LoggingUtils {
       'sessionId',
       'creditCard',
       'ssn',
-      'phone'
+      'phone',
     ];
 
     if (typeof data === 'object') {

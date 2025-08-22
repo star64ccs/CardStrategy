@@ -237,17 +237,21 @@ const UserProfileSchema = z.object({
   bio: z.string().max(500).optional(),
   location: z.string().max(100).optional(),
   website: z.string().url().optional(),
-  socialLinks: z.object({
-    twitter: z.string().url().optional(),
-    facebook: z.string().url().optional(),
-    instagram: z.string().url().optional(),
-    linkedin: z.string().url().optional()
-  }).optional(),
-  preferences: z.object({
-    privacy: z.enum(['public', 'friends', 'private']),
-    notifications: z.boolean(),
-    emailUpdates: z.boolean()
-  }).optional()
+  socialLinks: z
+    .object({
+      twitter: z.string().url().optional(),
+      facebook: z.string().url().optional(),
+      instagram: z.string().url().optional(),
+      linkedin: z.string().url().optional(),
+    })
+    .optional(),
+  preferences: z
+    .object({
+      privacy: z.enum(['public', 'friends', 'private']),
+      notifications: z.boolean(),
+      emailUpdates: z.boolean(),
+    })
+    .optional(),
 });
 
 const PostSchema = z.object({
@@ -258,21 +262,23 @@ const PostSchema = z.object({
     video: z.string().optional(),
     cardData: z.any().optional(),
     analysisData: z.any().optional(),
-    pollData: z.any().optional()
+    pollData: z.any().optional(),
   }),
   tags: z.array(z.string()).max(10),
   visibility: z.enum(['public', 'friends', 'private']),
-  location: z.object({
-    latitude: z.number(),
-    longitude: z.number(),
-    address: z.string()
-  }).optional()
+  location: z
+    .object({
+      latitude: z.number(),
+      longitude: z.number(),
+      address: z.string(),
+    })
+    .optional(),
 });
 
 const CommentSchema = z.object({
   content: z.string().min(1).max(1000),
   parentId: z.string().optional(),
-  mentions: z.array(z.string()).optional()
+  mentions: z.array(z.string()).optional(),
 });
 
 // ==================== 社交功能服務 ====================
@@ -293,7 +299,7 @@ class SocialService {
       enableAnalytics: true,
       enableGamification: true,
       enableCollaboration: true,
-      ...config
+      ...config,
     };
   }
 
@@ -351,7 +357,10 @@ class SocialService {
   /**
    * 創建用戶資料
    */
-  async createUserProfile(userId: string, profileData: Partial<UserProfile>): Promise<UserProfile> {
+  async createUserProfile(
+    userId: string,
+    profileData: Partial<UserProfile>
+  ): Promise<UserProfile> {
     try {
       // 驗證數據
       const validatedData = UserProfileSchema.parse(profileData);
@@ -371,18 +380,18 @@ class SocialService {
         preferences: validatedData.preferences || {
           privacy: 'public',
           notifications: true,
-          emailUpdates: true
+          emailUpdates: true,
         },
         stats: {
           followers: 0,
           following: 0,
           posts: 0,
           likes: 0,
-          reputation: 0
+          reputation: 0,
         },
         badges: [],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -397,7 +406,10 @@ class SocialService {
   /**
    * 更新用戶資料
    */
-  async updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<UserProfile> {
+  async updateUserProfile(
+    userId: string,
+    updates: Partial<UserProfile>
+  ): Promise<UserProfile> {
     try {
       logger.info('更新用戶資料:', userId);
 
@@ -410,7 +422,7 @@ class SocialService {
       const updatedProfile: UserProfile = {
         ...profile,
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -441,7 +453,10 @@ class SocialService {
   /**
    * 搜索用戶
    */
-  async searchUsers(query: string, filters?: Record<string, any>): Promise<UserProfile[]> {
+  async searchUsers(
+    query: string,
+    filters?: Record<string, any>
+  ): Promise<UserProfile[]> {
     try {
       logger.info('搜索用戶:', query);
 
@@ -477,13 +492,13 @@ class SocialService {
           likes: 0,
           comments: 0,
           shares: 0,
-          views: 0
+          views: 0,
         },
         isEdited: false,
         isPinned: false,
         isSponsored: false,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -513,7 +528,11 @@ class SocialService {
   /**
    * 獲取用戶帖子
    */
-  async getUserPosts(userId: string, page: number = 1, limit: number = 20): Promise<Post[]> {
+  async getUserPosts(
+    userId: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<Post[]> {
     try {
       logger.info('獲取用戶帖子:', userId, page, limit);
 
@@ -528,7 +547,11 @@ class SocialService {
   /**
    * 獲取動態流
    */
-  async getFeed(userId: string, page: number = 1, limit: number = 20): Promise<Post[]> {
+  async getFeed(
+    userId: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<Post[]> {
     try {
       logger.info('獲取動態流:', userId, page, limit);
 
@@ -557,7 +580,7 @@ class SocialService {
         ...post,
         ...updates,
         isEdited: true,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       logger.info('帖子更新成功');
@@ -588,7 +611,11 @@ class SocialService {
   /**
    * 添加評論
    */
-  async addComment(postId: string, userId: string, commentData: Partial<Comment>): Promise<Comment> {
+  async addComment(
+    postId: string,
+    userId: string,
+    commentData: Partial<Comment>
+  ): Promise<Comment> {
     try {
       // 驗證數據
       const validatedData = CommentSchema.parse(commentData);
@@ -605,10 +632,10 @@ class SocialService {
         isEdited: false,
         stats: {
           likes: 0,
-          replies: 0
+          replies: 0,
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -623,7 +650,11 @@ class SocialService {
   /**
    * 獲取帖子評論
    */
-  async getPostComments(postId: string, page: number = 1, limit: number = 20): Promise<Comment[]> {
+  async getPostComments(
+    postId: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<Comment[]> {
     try {
       logger.info('獲取帖子評論:', postId, page, limit);
 
@@ -638,7 +669,11 @@ class SocialService {
   /**
    * 點讚
    */
-  async likePost(postId: string, userId: string, type: Like['type'] = 'like'): Promise<Like> {
+  async likePost(
+    postId: string,
+    userId: string,
+    type: Like['type'] = 'like'
+  ): Promise<Like> {
     try {
       logger.info('點讚帖子:', postId, userId, type);
 
@@ -648,7 +683,7 @@ class SocialService {
         targetType: 'post',
         targetId: postId,
         type,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -678,7 +713,12 @@ class SocialService {
   /**
    * 分享帖子
    */
-  async sharePost(postId: string, userId: string, platform: Share['platform'], message?: string): Promise<Share> {
+  async sharePost(
+    postId: string,
+    userId: string,
+    platform: Share['platform'],
+    message?: string
+  ): Promise<Share> {
     try {
       logger.info('分享帖子:', postId, userId, platform);
 
@@ -688,7 +728,7 @@ class SocialService {
         originalPostId: postId,
         platform,
         message,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -714,7 +754,7 @@ class SocialService {
         followerId,
         followingId,
         status: 'accepted',
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -744,7 +784,11 @@ class SocialService {
   /**
    * 獲取關注者列表
    */
-  async getFollowers(userId: string, page: number = 1, limit: number = 20): Promise<UserProfile[]> {
+  async getFollowers(
+    userId: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<UserProfile[]> {
     try {
       logger.info('獲取關注者列表:', userId, page, limit);
 
@@ -759,7 +803,11 @@ class SocialService {
   /**
    * 獲取關注列表
    */
-  async getFollowing(userId: string, page: number = 1, limit: number = 20): Promise<UserProfile[]> {
+  async getFollowing(
+    userId: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<UserProfile[]> {
     try {
       logger.info('獲取關注列表:', userId, page, limit);
 
@@ -776,7 +824,13 @@ class SocialService {
   /**
    * 發送消息
    */
-  async sendMessage(senderId: string, recipientId: string, content: string, type: Message['type'] = 'text', metadata?: any): Promise<Message> {
+  async sendMessage(
+    senderId: string,
+    recipientId: string,
+    content: string,
+    type: Message['type'] = 'text',
+    metadata?: any
+  ): Promise<Message> {
     try {
       logger.info('發送消息:', senderId, recipientId);
 
@@ -790,7 +844,7 @@ class SocialService {
         isRead: false,
         isEdited: false,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -820,7 +874,11 @@ class SocialService {
   /**
    * 獲取對話消息
    */
-  async getConversationMessages(conversationId: string, page: number = 1, limit: number = 50): Promise<Message[]> {
+  async getConversationMessages(
+    conversationId: string,
+    page: number = 1,
+    limit: number = 50
+  ): Promise<Message[]> {
     try {
       logger.info('獲取對話消息:', conversationId, page, limit);
 
@@ -852,7 +910,10 @@ class SocialService {
   /**
    * 創建社區
    */
-  async createCommunity(creatorId: string, communityData: Partial<Community>): Promise<Community> {
+  async createCommunity(
+    creatorId: string,
+    communityData: Partial<Community>
+  ): Promise<Community> {
     try {
       logger.info('創建社區:', creatorId);
 
@@ -869,12 +930,12 @@ class SocialService {
         stats: {
           members: 0,
           posts: 0,
-          online: 0
+          online: 0,
         },
         moderators: [],
         admins: [creatorId],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -889,7 +950,10 @@ class SocialService {
   /**
    * 加入社區
    */
-  async joinCommunity(communityId: string, userId: string): Promise<CommunityMember> {
+  async joinCommunity(
+    communityId: string,
+    userId: string
+  ): Promise<CommunityMember> {
     try {
       logger.info('加入社區:', communityId, userId);
 
@@ -900,7 +964,7 @@ class SocialService {
         role: 'member',
         status: 'active',
         joinedAt: new Date(),
-        lastActiveAt: new Date()
+        lastActiveAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -915,7 +979,11 @@ class SocialService {
   /**
    * 獲取社區帖子
    */
-  async getCommunityPosts(communityId: string, page: number = 1, limit: number = 20): Promise<Post[]> {
+  async getCommunityPosts(
+    communityId: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<Post[]> {
     try {
       logger.info('獲取社區帖子:', communityId, page, limit);
 
@@ -932,7 +1000,10 @@ class SocialService {
   /**
    * 創建通知
    */
-  async createNotification(userId: string, notificationData: Partial<Notification>): Promise<Notification> {
+  async createNotification(
+    userId: string,
+    notificationData: Partial<Notification>
+  ): Promise<Notification> {
     try {
       logger.info('創建通知:', userId);
 
@@ -946,7 +1017,7 @@ class SocialService {
         isRead: false,
         isActionable: notificationData.isActionable || false,
         actionUrl: notificationData.actionUrl,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -961,7 +1032,11 @@ class SocialService {
   /**
    * 獲取用戶通知
    */
-  async getUserNotifications(userId: string, page: number = 1, limit: number = 20): Promise<Notification[]> {
+  async getUserNotifications(
+    userId: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<Notification[]> {
     try {
       logger.info('獲取用戶通知:', userId, page, limit);
 
@@ -976,7 +1051,10 @@ class SocialService {
   /**
    * 標記通知為已讀
    */
-  async markNotificationAsRead(notificationId: string, userId: string): Promise<void> {
+  async markNotificationAsRead(
+    notificationId: string,
+    userId: string
+  ): Promise<void> {
     try {
       logger.info('標記通知為已讀:', notificationId, userId);
 
@@ -993,7 +1071,10 @@ class SocialService {
   /**
    * 獲取社交分析
    */
-  async getSocialAnalytics(userId: string, period: SocialAnalytics['period'] = 'month'): Promise<SocialAnalytics> {
+  async getSocialAnalytics(
+    userId: string,
+    period: SocialAnalytics['period'] = 'month'
+  ): Promise<SocialAnalytics> {
     try {
       logger.info('獲取社交分析:', userId, period);
 
@@ -1008,12 +1089,12 @@ class SocialService {
           comments: 0,
           shares: 0,
           views: 0,
-          engagement: 0
+          engagement: 0,
         },
         trends: [],
         topPosts: [],
         topFollowers: [],
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       // 這裡應該計算分析數據
@@ -1059,5 +1140,6 @@ class SocialService {
 
 // ==================== 導出 ====================
 
+export { SocialService };
 export const socialService = new SocialService();
 export default socialService;

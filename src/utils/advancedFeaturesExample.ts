@@ -20,26 +20,28 @@ export class AdvancedFeaturesExample {
         timeRange: '30d',
         metrics: ['price', 'volume', 'demand'],
         includeForecast: true,
-        forecastPeriod: '7d'
+        forecastPeriod: '7d',
       });
       logger.info('趨勢分析結果:', trendAnalysis);
 
       // 2. 統計分析
-      const statisticalAnalysis = await advancedAnalyticsService.performStatisticalAnalysis({
-        dataSource: 'market_data',
-        metrics: ['mean', 'median', 'std_dev', 'correlation'],
-        filters: { category: 'pokemon' },
-        includeVisualizations: true
-      });
+      const statisticalAnalysis =
+        await advancedAnalyticsService.performStatisticalAnalysis({
+          dataSource: 'market_data',
+          metrics: ['mean', 'median', 'std_dev', 'correlation'],
+          filters: { category: 'pokemon' },
+          includeVisualizations: true,
+        });
       logger.info('統計分析結果:', statisticalAnalysis);
 
       // 3. 相關性分析
-      const correlationAnalysis = await advancedAnalyticsService.analyzeCorrelations({
-        dataSource: 'investment_data',
-        variables: ['price', 'volume', 'market_cap', 'sentiment'],
-        method: 'pearson',
-        includeHeatmap: true
-      });
+      const correlationAnalysis =
+        await advancedAnalyticsService.analyzeCorrelations({
+          dataSource: 'investment_data',
+          variables: ['price', 'volume', 'market_cap', 'sentiment'],
+          method: 'pearson',
+          includeHeatmap: true,
+        });
       logger.info('相關性分析結果:', correlationAnalysis);
 
       // 4. 異常檢測
@@ -47,27 +49,29 @@ export class AdvancedFeaturesExample {
         dataSource: 'price_data',
         algorithm: 'isolation_forest',
         sensitivity: 'medium',
-        includeVisualizations: true
+        includeVisualizations: true,
       });
       logger.info('異常檢測結果:', anomalyDetection);
 
       // 5. 市場洞察
-      const marketInsights = await advancedAnalyticsService.generateMarketInsights({
-        dataSource: 'market_data',
-        timeRange: '7d',
-        includeTrends: true,
-        includeOpportunities: true,
-        includeRisks: true
-      });
+      const marketInsights =
+        await advancedAnalyticsService.generateMarketInsights({
+          dataSource: 'market_data',
+          timeRange: '7d',
+          includeTrends: true,
+          includeOpportunities: true,
+          includeRisks: true,
+        });
       logger.info('市場洞察結果:', marketInsights);
 
       // 6. 投資建議
-      const investmentAdvice = await advancedAnalyticsService.generateInvestmentAdvice({
-        portfolio: { cards: ['card1', 'card2', 'card3'] },
-        riskTolerance: 'medium',
-        investmentHorizon: '1y',
-        includeDiversification: true
-      });
+      const investmentAdvice =
+        await advancedAnalyticsService.generateInvestmentAdvice({
+          portfolio: { cards: ['card1', 'card2', 'card3'] },
+          riskTolerance: 'medium',
+          investmentHorizon: '1y',
+          includeDiversification: true,
+        });
       logger.info('投資建議結果:', investmentAdvice);
 
       logger.info('高級數據分析示例完成');
@@ -84,96 +88,103 @@ export class AdvancedFeaturesExample {
       logger.info('=== 報告生成示例 ===');
 
       // 1. 生成分析報告
-      const analyticsReport = await reportGenerationService.generateAnalyticsReport({
-        reportType: 'comprehensive',
-        dataSource: 'cards',
-        timeRange: '30d',
-        metrics: ['price', 'volume', 'demand', 'sentiment'],
-        includeVisualizations: true,
-        includeInsights: true,
-        includeRecommendations: true
-      });
+      const analyticsReport =
+        await reportGenerationService.generateAnalyticsReport({
+          reportType: 'comprehensive',
+          dataSource: 'cards',
+          timeRange: '30d',
+          metrics: ['price', 'volume', 'demand', 'sentiment'],
+          includeVisualizations: true,
+          includeInsights: true,
+          includeRecommendations: true,
+        });
       logger.info('分析報告生成結果:', analyticsReport);
 
       // 2. 生成性能報告
-      const performanceReport = await reportGenerationService.generatePerformanceReport({
-        reportType: 'comprehensive',
-        timeRange: '7d',
-        metrics: ['response_time', 'throughput', 'error_rate'],
-        includeTrends: true,
-        includeComparisons: true,
-        includeForecasts: true
-      });
+      const performanceReport =
+        await reportGenerationService.generatePerformanceReport({
+          reportType: 'comprehensive',
+          timeRange: '7d',
+          metrics: ['response_time', 'throughput', 'error_rate'],
+          includeTrends: true,
+          includeComparisons: true,
+          includeForecasts: true,
+        });
       logger.info('性能報告生成結果:', performanceReport);
 
       // 3. 生成質量報告
-      const qualityReport = await reportGenerationService.generateQualityReport({
-        reportType: 'comprehensive',
-        dataSource: 'user_data',
-        timeRange: '30d',
-        qualityMetrics: ['completeness', 'accuracy', 'consistency'],
-        includeTrends: true,
-        includeImprovements: true,
-        includeRecommendations: true
-      });
+      const qualityReport = await reportGenerationService.generateQualityReport(
+        {
+          reportType: 'comprehensive',
+          dataSource: 'user_data',
+          timeRange: '30d',
+          qualityMetrics: ['completeness', 'accuracy', 'consistency'],
+          includeTrends: true,
+          includeImprovements: true,
+          includeRecommendations: true,
+        }
+      );
       logger.info('質量報告生成結果:', qualityReport);
 
       // 4. 生成財務報告
-      const financialReport = await reportGenerationService.generateFinancialReport({
-        reportType: 'comprehensive',
-        timeRange: '30d',
-        currency: 'USD',
-        includeCharts: true,
-        includeProjections: true,
-        includeComparisons: true
-      });
+      const financialReport =
+        await reportGenerationService.generateFinancialReport({
+          reportType: 'comprehensive',
+          timeRange: '30d',
+          currency: 'USD',
+          includeCharts: true,
+          includeProjections: true,
+          includeComparisons: true,
+        });
       logger.info('財務報告生成結果:', financialReport);
 
       // 5. 創建自定義報告模板
-      const customTemplate = await reportGenerationService.createCustomTemplate({
-        name: '自定義卡片分析報告',
-        description: '專門用於卡片分析的報告模板',
-        type: 'custom',
-        sections: [
-          {
-            id: 'card-overview',
-            name: '卡片概覽',
-            type: 'text',
-            content: {},
-            position: 1,
-            isVisible: true,
-            isCollapsible: false
+      const customTemplate = await reportGenerationService.createCustomTemplate(
+        {
+          name: '自定義卡片分析報告',
+          description: '專門用於卡片分析的報告模板',
+          type: 'custom',
+          sections: [
+            {
+              id: 'card-overview',
+              name: '卡片概覽',
+              type: 'text',
+              content: {},
+              position: 1,
+              isVisible: true,
+              isCollapsible: false,
+            },
+            {
+              id: 'price-analysis',
+              name: '價格分析',
+              type: 'chart',
+              content: {},
+              position: 2,
+              isVisible: true,
+              isCollapsible: true,
+            },
+          ],
+          styling: {
+            theme: 'light',
+            colors: {
+              primary: '#007bff',
+              secondary: '#6c757d',
+              accent: '#28a745',
+              background: '#ffffff',
+              text: '#212529',
+            },
+            fonts: {
+              heading: 'Arial, sans-serif',
+              body: 'Arial, sans-serif',
+              data: 'Courier New, monospace',
+            },
+            layout: 'portrait',
+            margins: { top: 20, right: 20, bottom: 20, left: 20 },
           },
-          {
-            id: 'price-analysis',
-            name: '價格分析',
-            type: 'chart',
-            content: {},
-            position: 2,
-            isVisible: true,
-            isCollapsible: true
-          }
-        ],
-        styling: {
-          theme: 'light',
-          colors: {
-            primary: '#007bff',
-            secondary: '#6c757d',
-            accent: '#28a745',
-            background: '#ffffff',
-            text: '#212529'
-          },
-          fonts: {
-            heading: 'Arial, sans-serif',
-            body: 'Arial, sans-serif',
-            data: 'Courier New, monospace'
-          },
-          layout: 'portrait',
-          margins: { top: 20, right: 20, bottom: 20, left: 20 }
-        },
-        dataSources: ['cards', 'market'],
-        permissions: ['read', 'write']
-      });
+          dataSources: ['cards', 'market'],
+          permissions: ['read', 'write'],
+        }
+      );
       logger.info('自定義報告模板創建結果:', customTemplate);
 
       logger.info('報告生成示例完成');
@@ -200,13 +211,13 @@ export class AdvancedFeaturesExample {
         website: 'https://mycardcollection.com',
         socialLinks: {
           twitter: 'https://twitter.com/cardcollector',
-          instagram: 'https://instagram.com/cardcollector'
+          instagram: 'https://instagram.com/cardcollector',
         },
         preferences: {
           privacy: 'public',
           notifications: true,
-          emailUpdates: true
-        }
+          emailUpdates: true,
+        },
       });
       logger.info('用戶資料創建結果:', userProfile);
 
@@ -218,18 +229,18 @@ export class AdvancedFeaturesExample {
           cardData: {
             name: '皮卡丘',
             rarity: 'rare',
-            condition: 'mint'
-          }
+            condition: 'mint',
+          },
         },
         tags: ['pokemon', 'rare', 'collection'],
-        visibility: 'public'
+        visibility: 'public',
       });
       logger.info('帖子創建結果:', post);
 
       // 3. 添加評論
       const comment = await socialService.addComment(post.id, userId, {
         content: '恭喜！這張卡片真的很稀有！',
-        mentions: []
+        mentions: [],
       });
       logger.info('評論添加結果:', comment);
 
@@ -248,11 +259,7 @@ export class AdvancedFeaturesExample {
         category: 'collecting',
         tags: ['pokemon', 'cards', 'collecting'],
         privacy: 'public',
-        rules: [
-          '尊重其他成員',
-          '分享真實的收藏經驗',
-          '不允許商業廣告'
-        ]
+        rules: ['尊重其他成員', '分享真實的收藏經驗', '不允許商業廣告'],
       });
       logger.info('社區創建結果:', community);
 
@@ -261,7 +268,12 @@ export class AdvancedFeaturesExample {
       logger.info('加入社區結果:', member);
 
       // 8. 發送消息
-      const message = await socialService.sendMessage(userId, 'user456', '你好！我對你的收藏很感興趣', 'text');
+      const message = await socialService.sendMessage(
+        userId,
+        'user456',
+        '你好！我對你的收藏很感興趣',
+        'text'
+      );
       logger.info('消息發送結果:', message);
 
       // 9. 創建通知
@@ -270,12 +282,15 @@ export class AdvancedFeaturesExample {
         title: '新的點讚',
         message: '有人點讚了你的帖子',
         isActionable: true,
-        actionUrl: `/posts/${post.id}`
+        actionUrl: `/posts/${post.id}`,
       });
       logger.info('通知創建結果:', notification);
 
       // 10. 獲取社交分析
-      const socialAnalytics = await socialService.getSocialAnalytics(userId, 'month');
+      const socialAnalytics = await socialService.getSocialAnalytics(
+        userId,
+        'month'
+      );
       logger.info('社交分析結果:', socialAnalytics);
 
       logger.info('社交功能示例完成');
@@ -304,12 +319,12 @@ export class AdvancedFeaturesExample {
           {
             type: 'count',
             action: 'unique_cards',
-            target: 1000
-          }
+            target: 1000,
+          },
         ],
         isHidden: false,
         isRepeatable: false,
-        maxProgress: 1000
+        maxProgress: 1000,
       });
       logger.info('成就創建結果:', achievement);
 
@@ -318,7 +333,12 @@ export class AdvancedFeaturesExample {
       logger.info('成就進度檢查完成');
 
       // 3. 添加積分
-      await gamificationService.addPoints(userId, 50, 'collection', '添加新卡片');
+      await gamificationService.addPoints(
+        userId,
+        50,
+        'collection',
+        '添加新卡片'
+      );
       logger.info('積分添加完成');
 
       // 4. 計算用戶等級
@@ -334,12 +354,16 @@ export class AdvancedFeaturesExample {
         timeframe: 'all-time',
         scope: 'global',
         maxEntries: 100,
-        isActive: true
+        isActive: true,
       });
       logger.info('排行榜創建結果:', leaderboard);
 
       // 6. 更新排行榜分數
-      await gamificationService.updateLeaderboardScore(leaderboard.id, userId, 150);
+      await gamificationService.updateLeaderboardScore(
+        leaderboard.id,
+        userId,
+        150
+      );
       logger.info('排行榜分數更新完成');
 
       // 7. 創建挑戰
@@ -353,24 +377,30 @@ export class AdvancedFeaturesExample {
             type: 'count',
             action: 'add_cards',
             target: 5,
-            conditions: { timeframe: 'daily' }
-          }
+            conditions: { timeframe: 'daily' },
+          },
         ],
         startDate: new Date(),
         endDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
         isRepeatable: true,
-        difficulty: 'easy'
+        difficulty: 'easy',
       });
       logger.info('挑戰創建結果:', challenge);
 
       // 8. 參與挑戰
-      const userChallenge = await gamificationService.joinChallenge(challenge.id, userId);
+      const userChallenge = await gamificationService.joinChallenge(
+        challenge.id,
+        userId
+      );
       logger.info('挑戰參與結果:', userChallenge);
 
       // 9. 開始任務
       const quest = await gamificationService.getQuest('beginner-quest');
       if (quest) {
-        const userQuest = await gamificationService.startQuest(quest.id, userId);
+        const userQuest = await gamificationService.startQuest(
+          quest.id,
+          userId
+        );
         logger.info('任務開始結果:', userQuest);
       }
 
@@ -382,7 +412,11 @@ export class AdvancedFeaturesExample {
       }
 
       // 11. 發放獎勵
-      const reward = await gamificationService.grantReward(userId, 'daily-points', 1);
+      const reward = await gamificationService.grantReward(
+        userId,
+        'daily-points',
+        1
+      );
       logger.info('獎勵發放結果:', reward);
 
       logger.info('遊戲化功能示例完成');
@@ -401,14 +435,18 @@ export class AdvancedFeaturesExample {
       const userId = 'user123';
 
       // 1. 創建支付方法
-      const paymentMethod = await paymentService.createPaymentMethod(userId, 'stripe', {
-        card: {
-          brand: 'visa',
-          last4: '4242',
-          expiryMonth: 12,
-          expiryYear: 2025
+      const paymentMethod = await paymentService.createPaymentMethod(
+        userId,
+        'stripe',
+        {
+          card: {
+            brand: 'visa',
+            last4: '4242',
+            expiryMonth: 12,
+            expiryYear: 2025,
+          },
         }
-      });
+      );
       logger.info('支付方法創建結果:', paymentMethod);
 
       // 2. 創建支付意圖
@@ -419,13 +457,15 @@ export class AdvancedFeaturesExample {
         description: '購買高級會員訂閱',
         metadata: {
           product: 'premium_subscription',
-          userId
-        }
+          userId,
+        },
       });
       logger.info('支付意圖創建結果:', paymentIntent);
 
       // 3. 確認支付
-      const confirmedPayment = await paymentService.confirmPayment(paymentIntent.id);
+      const confirmedPayment = await paymentService.confirmPayment(
+        paymentIntent.id
+      );
       logger.info('支付確認結果:', confirmedPayment);
 
       // 4. 創建訂單
@@ -437,8 +477,8 @@ export class AdvancedFeaturesExample {
             description: '30天高級會員服務',
             quantity: 1,
             unitPrice: 29.99,
-            currency: 'USD'
-          }
+            currency: 'USD',
+          },
         ],
         shippingAddress: {
           firstName: '張',
@@ -449,7 +489,7 @@ export class AdvancedFeaturesExample {
           postalCode: '110',
           country: 'TW',
           phone: '+886912345678',
-          email: 'zhang.san@example.com'
+          email: 'zhang.san@example.com',
         },
         billingAddress: {
           firstName: '張',
@@ -460,9 +500,9 @@ export class AdvancedFeaturesExample {
           postalCode: '110',
           country: 'TW',
           phone: '+886912345678',
-          email: 'zhang.san@example.com'
+          email: 'zhang.san@example.com',
         },
-        notes: '請盡快處理'
+        notes: '請盡快處理',
       });
       logger.info('訂單創建結果:', order);
 
@@ -475,22 +515,25 @@ export class AdvancedFeaturesExample {
         interval: 'month',
         intervalCount: 1,
         trialPeriodDays: 7,
-        features: [
-          '無限卡片掃描',
-          '高級AI分析',
-          '優先客服支持',
-          '獨家內容'
-        ],
-        isActive: true
+        features: ['無限卡片掃描', '高級AI分析', '優先客服支持', '獨家內容'],
+        isActive: true,
       });
       logger.info('訂閱計劃創建結果:', subscriptionPlan);
 
       // 6. 創建訂閱
-      const subscription = await paymentService.createSubscription(userId, subscriptionPlan.id, paymentMethod.id);
+      const subscription = await paymentService.createSubscription(
+        userId,
+        subscriptionPlan.id,
+        paymentMethod.id
+      );
       logger.info('訂閱創建結果:', subscription);
 
       // 7. 創建退款（如果需要）
-      const refund = await paymentService.createRefund(paymentIntent.id, 2999, 'requested_by_customer');
+      const refund = await paymentService.createRefund(
+        paymentIntent.id,
+        2999,
+        'requested_by_customer'
+      );
       logger.info('退款創建結果:', refund);
 
       // 8. 獲取支付分析
@@ -511,45 +554,57 @@ export class AdvancedFeaturesExample {
       logger.info('=== AI生態系統集成示例 ===');
 
       // 1. 卡片識別
-      const cardRecognition = await aiEcosystem.recognizeCard('base64_image_data', {
-        model: 'gpt-4-vision',
-        provider: 'openai',
-        enableConditionAnalysis: true,
-        enablePriceEstimation: true
-      });
+      const cardRecognition = await aiEcosystem.recognizeCard(
+        'base64_image_data',
+        {
+          model: 'gpt-4-vision',
+          provider: 'openai',
+          enableConditionAnalysis: true,
+          enablePriceEstimation: true,
+        }
+      );
       logger.info('卡片識別結果:', cardRecognition);
 
       // 2. 條件分析
-      const conditionAnalysis = await aiEcosystem.analyzeCardCondition('base64_image_data', {
-        model: 'gpt-4-vision',
-        provider: 'openai',
-        detailedAnalysis: true
-      });
+      const conditionAnalysis = await aiEcosystem.analyzeCardCondition(
+        'base64_image_data',
+        {
+          model: 'gpt-4-vision',
+          provider: 'openai',
+          detailedAnalysis: true,
+        }
+      );
       logger.info('條件分析結果:', conditionAnalysis);
 
       // 3. 價格預測
-      const pricePrediction = await aiEcosystem.predictCardPrice({
-        name: '皮卡丘',
-        rarity: 'rare',
-        condition: 'mint'
-      }, {
-        model: 'gpt-4',
-        provider: 'openai',
-        marketData: { trend: 'upward' },
-        historicalData: { avgPrice: 50 }
-      });
+      const pricePrediction = await aiEcosystem.predictCardPrice(
+        {
+          name: '皮卡丘',
+          rarity: 'rare',
+          condition: 'mint',
+        },
+        {
+          model: 'gpt-4',
+          provider: 'openai',
+          marketData: { trend: 'upward' },
+          historicalData: { avgPrice: 50 },
+        }
+      );
       logger.info('價格預測結果:', pricePrediction);
 
       // 4. 市場分析
-      const marketAnalysis = await aiEcosystem.analyzeMarket({
-        cards: ['card1', 'card2', 'card3'],
-        timeRange: '30d',
-        indicators: ['price', 'volume', 'sentiment']
-      }, {
-        model: 'gpt-4',
-        provider: 'openai',
-        analysisType: 'trend'
-      });
+      const marketAnalysis = await aiEcosystem.analyzeMarket(
+        {
+          cards: ['card1', 'card2', 'card3'],
+          timeRange: '30d',
+          indicators: ['price', 'volume', 'sentiment'],
+        },
+        {
+          model: 'gpt-4',
+          provider: 'openai',
+          analysisType: 'trend',
+        }
+      );
       logger.info('市場分析結果:', marketAnalysis);
 
       logger.info('AI生態系統集成示例完成');

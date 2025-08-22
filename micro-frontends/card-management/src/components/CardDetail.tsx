@@ -12,7 +12,7 @@ const CardDetail: React.FC<CardDetailProps> = ({
   card,
   onClose,
   onAddToCollection,
-  onEdit
+  onEdit,
 }) => {
   const handleAddToCollection = () => {
     onAddToCollection?.(card);
@@ -74,7 +74,9 @@ const CardDetail: React.FC<CardDetailProps> = ({
 
             <div className="info-item">
               <label>價格:</label>
-              <span className="card-price">NT$ {card.price.toLocaleString()}</span>
+              <span className="card-price">
+                NT$ {card.price.toLocaleString()}
+              </span>
             </div>
 
             <div className="info-item">
@@ -86,17 +88,11 @@ const CardDetail: React.FC<CardDetailProps> = ({
           </div>
 
           <div className="card-detail-actions">
-            <button
-              className="btn btn-primary"
-              onClick={handleAddToCollection}
-            >
+            <button className="btn btn-primary" onClick={handleAddToCollection}>
               加入收藏
             </button>
 
-            <button
-              className="btn btn-secondary"
-              onClick={handleEdit}
-            >
+            <button className="btn btn-secondary" onClick={handleEdit}>
               編輯卡片
             </button>
           </div>

@@ -1,3 +1,4 @@
+/* global jest, describe, it, expect, beforeEach, afterEach */
 import { MarketService } from '@/services/marketService';
 import { mockApiResponse, mockApiError } from '@/__tests__/setup/test-utils';
 
@@ -5,8 +6,8 @@ import { mockApiResponse, mockApiError } from '@/__tests__/setup/test-utils';
 jest.mock('@/services/apiService', () => ({
   apiService: {
     get: jest.fn(),
-    post: jest.fn()
-  }
+    post: jest.fn(),
+  },
 }));
 
 // Mock logger
@@ -15,14 +16,14 @@ jest.mock('@/utils/logger', () => ({
     info: jest.fn(),
     error: jest.fn(),
     warn: jest.fn(),
-    debug: jest.fn()
-  }
+    debug: jest.fn(),
+  },
 }));
 
 // Mock validation service
 jest.mock('@/utils/validationService', () => ({
   validateApiResponse: jest.fn(() => ({ isValid: true, errors: [] })),
-  validateInput: jest.fn(() => ({ isValid: true, errors: [] }))
+  validateInput: jest.fn(() => ({ isValid: true, errors: [] })),
 }));
 
 describe('MarketService', () => {
@@ -48,13 +49,13 @@ describe('MarketService', () => {
         averagePrice: 50,
         trendingCards: [
           { id: '1', name: '熱門卡片1', priceChange: 15.5 },
-          { id: '2', name: '熱門卡片2', priceChange: -8.2 }
+          { id: '2', name: '熱門卡片2', priceChange: -8.2 },
         ],
         marketTrend: {
           daily: [{ date: '2024-01-01', value: 50000 }],
           weekly: [{ week: '2024-W01', value: 350000 }],
-          monthly: [{ month: '2024-01', value: 1500000 }]
-        }
+          monthly: [{ month: '2024-01', value: 1500000 }],
+        },
       };
       const mockResponse = mockApiResponse(mockMarketData);
 
@@ -73,7 +74,9 @@ describe('MarketService', () => {
 
       mockApiService.get.mockRejectedValue(mockError);
 
-      await expect(marketService.getMarketData()).rejects.toThrow('獲取市場數據失敗');
+      await expect(marketService.getMarketData()).rejects.toThrow(
+        '獲取市場數據失敗'
+      );
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -87,11 +90,11 @@ describe('MarketService', () => {
         prices: [
           { date: '2024-01-01', price: 100, platform: 'ebay' },
           { date: '2024-01-02', price: 105, platform: 'ebay' },
-          { date: '2024-01-03', price: 98, platform: 'ebay' }
+          { date: '2024-01-03', price: 98, platform: 'ebay' },
         ],
         averagePrice: 101,
         priceChange: 5.0,
-        volatility: 3.2
+        volatility: 3.2,
       };
       const mockResponse = mockApiResponse(mockPriceHistory);
 
@@ -102,7 +105,9 @@ describe('MarketService', () => {
       expect(result.success).toBe(true);
       expect(result.data.cardId).toBe('1');
       expect(result.data.prices).toHaveLength(3);
-      expect(mockApiService.get).toHaveBeenCalledWith(`/market/cards/${cardId}/price-history`);
+      expect(mockApiService.get).toHaveBeenCalledWith(
+        `/market/cards/${cardId}/price-history`
+      );
     });
 
     it('應該處理獲取價格歷史錯誤', async () => {
@@ -111,7 +116,9 @@ describe('MarketService', () => {
 
       mockApiService.get.mockRejectedValue(mockError);
 
-      await expect(marketService.getCardPriceHistory(cardId)).rejects.toThrow('卡片不存在');
+      await expect(marketService.getCardPriceHistory(cardId)).rejects.toThrow(
+        '卡片不存在'
+      );
     });
   });
 
@@ -120,16 +127,16 @@ describe('MarketService', () => {
       const mockTrends = {
         topGainers: [
           { id: '1', name: '上漲卡片1', priceChange: 25.5 },
-          { id: '2', name: '上漲卡片2', priceChange: 18.2 }
+          { id: '2', name: '上漲卡片2', priceChange: 18.2 },
         ],
         topLosers: [
           { id: '3', name: '下跌卡片1', priceChange: -12.5 },
-          { id: '4', name: '下跌卡片2', priceChange: -8.7 }
+          { id: '4', name: '下跌卡片2', priceChange: -8.7 },
         ],
         mostTraded: [
           { id: '5', name: '交易量最高1', volume: 150 },
-          { id: '6', name: '交易量最高2', volume: 120 }
-        ]
+          { id: '6', name: '交易量最高2', volume: 120 },
+        ],
       };
       const mockResponse = mockApiResponse(mockTrends);
 
@@ -149,7 +156,9 @@ describe('MarketService', () => {
 
       mockApiService.get.mockRejectedValue(mockError);
 
-      await expect(marketService.getMarketTrends()).rejects.toThrow('獲取市場趨勢失敗');
+      await expect(marketService.getMarketTrends()).rejects.toThrow(
+        '獲取市場趨勢失敗'
+      );
     });
   });
 
@@ -164,7 +173,7 @@ describe('MarketService', () => {
           currentPrice: 95,
           condition: 'below',
           isActive: true,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         },
         {
           id: '2',
@@ -174,8 +183,8 @@ describe('MarketService', () => {
           currentPrice: 210,
           condition: 'above',
           isActive: true,
-          createdAt: new Date().toISOString()
-        }
+          createdAt: new Date().toISOString(),
+        },
       ];
       const mockResponse = mockApiResponse(mockAlerts);
 
@@ -193,7 +202,9 @@ describe('MarketService', () => {
 
       mockApiService.get.mockRejectedValue(mockError);
 
-      await expect(marketService.getPriceAlerts()).rejects.toThrow('獲取價格警報失敗');
+      await expect(marketService.getPriceAlerts()).rejects.toThrow(
+        '獲取價格警報失敗'
+      );
     });
   });
 
@@ -202,13 +213,13 @@ describe('MarketService', () => {
       const alertData = {
         cardId: '1',
         targetPrice: 100,
-        condition: 'below' as const
+        condition: 'below' as const,
       };
       const mockResponse = mockApiResponse({
         id: '1',
         ...alertData,
         isActive: true,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       });
 
       mockApiService.post.mockResolvedValue(mockResponse);
@@ -218,20 +229,25 @@ describe('MarketService', () => {
       expect(result.success).toBe(true);
       expect(result.data.cardId).toBe('1');
       expect(result.data.targetPrice).toBe(100);
-      expect(mockApiService.post).toHaveBeenCalledWith('/market/price-alerts', alertData);
+      expect(mockApiService.post).toHaveBeenCalledWith(
+        '/market/price-alerts',
+        alertData
+      );
     });
 
     it('應該處理創建價格警報錯誤', async () => {
       const alertData = {
         cardId: '1',
         targetPrice: -10,
-        condition: 'below' as const
+        condition: 'below' as const,
       };
       const mockError = mockApiError('目標價格必須大於0');
 
       mockApiService.post.mockRejectedValue(mockError);
 
-      await expect(marketService.createPriceAlert(alertData)).rejects.toThrow('目標價格必須大於0');
+      await expect(marketService.createPriceAlert(alertData)).rejects.toThrow(
+        '目標價格必須大於0'
+      );
     });
   });
 
@@ -245,18 +261,18 @@ describe('MarketService', () => {
           '0-10': 200,
           '10-50': 500,
           '50-100': 200,
-          '100+': 100
+          '100+': 100,
         },
         topCategories: [
           { name: '遊戲王', volume: 100000 },
           { name: '寶可夢', volume: 80000 },
-          { name: '魔法風雲會', volume: 70000 }
+          { name: '魔法風雲會', volume: 70000 },
         ],
         marketSentiment: {
           bullish: 60,
           bearish: 25,
-          neutral: 15
-        }
+          neutral: 15,
+        },
       };
       const mockResponse = mockApiResponse(mockAnalysis);
 
@@ -275,7 +291,9 @@ describe('MarketService', () => {
 
       mockApiService.get.mockRejectedValue(mockError);
 
-      await expect(marketService.getMarketAnalysis()).rejects.toThrow('獲取市場分析失敗');
+      await expect(marketService.getMarketAnalysis()).rejects.toThrow(
+        '獲取市場分析失敗'
+      );
     });
   });
 
@@ -292,7 +310,7 @@ describe('MarketService', () => {
             shipping: 5,
             totalPrice: 105,
             condition: 'NM',
-            lastUpdated: new Date().toISOString()
+            lastUpdated: new Date().toISOString(),
           },
           {
             name: 'tcgplayer',
@@ -300,14 +318,14 @@ describe('MarketService', () => {
             shipping: 3,
             totalPrice: 98,
             condition: 'NM',
-            lastUpdated: new Date().toISOString()
-          }
+            lastUpdated: new Date().toISOString(),
+          },
         ],
         bestPrice: {
           platform: 'tcgplayer',
           price: 98,
-          condition: 'NM'
-        }
+          condition: 'NM',
+        },
       };
       const mockResponse = mockApiResponse(mockPlatformPrices);
 
@@ -318,7 +336,9 @@ describe('MarketService', () => {
       expect(result.success).toBe(true);
       expect(result.data.platforms).toHaveLength(2);
       expect(result.data.bestPrice.platform).toBe('tcgplayer');
-      expect(mockApiService.get).toHaveBeenCalledWith(`/market/cards/${cardId}/platform-prices`);
+      expect(mockApiService.get).toHaveBeenCalledWith(
+        `/market/cards/${cardId}/platform-prices`
+      );
     });
 
     it('應該處理獲取平台價格錯誤', async () => {
@@ -327,7 +347,9 @@ describe('MarketService', () => {
 
       mockApiService.get.mockRejectedValue(mockError);
 
-      await expect(marketService.getPlatformPrices(cardId)).rejects.toThrow('卡片不存在');
+      await expect(marketService.getPlatformPrices(cardId)).rejects.toThrow(
+        '卡片不存在'
+      );
     });
   });
 
@@ -340,7 +362,7 @@ describe('MarketService', () => {
           content: '市場新聞內容1',
           source: 'TCG新聞',
           publishedAt: new Date().toISOString(),
-          impact: 'positive' as const
+          impact: 'positive' as const,
         },
         {
           id: '2',
@@ -348,8 +370,8 @@ describe('MarketService', () => {
           content: '市場新聞內容2',
           source: '遊戲新聞',
           publishedAt: new Date().toISOString(),
-          impact: 'neutral' as const
-        }
+          impact: 'neutral' as const,
+        },
       ];
       const mockResponse = mockApiResponse(mockNews);
 
@@ -367,7 +389,9 @@ describe('MarketService', () => {
 
       mockApiService.get.mockRejectedValue(mockError);
 
-      await expect(marketService.getMarketNews()).rejects.toThrow('獲取市場新聞失敗');
+      await expect(marketService.getMarketNews()).rejects.toThrow(
+        '獲取市場新聞失敗'
+      );
     });
   });
 
@@ -381,8 +405,8 @@ describe('MarketService', () => {
             currentPrice: 100,
             predictedPrice: 110,
             confidence: 0.85,
-            timeframe: '7d'
-          }
+            timeframe: '7d',
+          },
         ],
         longTerm: [
           {
@@ -391,14 +415,14 @@ describe('MarketService', () => {
             currentPrice: 200,
             predictedPrice: 250,
             confidence: 0.75,
-            timeframe: '30d'
-          }
+            timeframe: '30d',
+          },
         ],
         factors: {
           marketTrend: 'bullish',
           seasonality: 'high',
-          events: ['新系列發布', '比賽活動']
-        }
+          events: ['新系列發布', '比賽活動'],
+        },
       };
       const mockResponse = mockApiResponse(mockPredictions);
 
@@ -418,7 +442,9 @@ describe('MarketService', () => {
 
       mockApiService.get.mockRejectedValue(mockError);
 
-      await expect(marketService.getMarketPredictions()).rejects.toThrow('獲取市場預測失敗');
+      await expect(marketService.getMarketPredictions()).rejects.toThrow(
+        '獲取市場預測失敗'
+      );
     });
   });
 });

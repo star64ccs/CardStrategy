@@ -13,7 +13,9 @@ const mockCardManagement = {
 };
 
 const mockMarketAnalysis = {
-  MarketDashboard: () => <div data-testid="market-dashboard">市場分析儀表板</div>,
+  MarketDashboard: () => (
+    <div data-testid="market-dashboard">市場分析儀表板</div>
+  ),
   PriceChart: () => <div data-testid="price-chart">價格圖表</div>,
   MarketTrends: () => <div data-testid="market-trends">市場趨勢</div>,
 };
@@ -164,12 +166,14 @@ describe('微前端模組間通信集成測試', () => {
     test('卡片掃描事件能觸發市場分析更新', async () => {
       const mockEventBus = {
         listeners: new Map(),
-        emit: function(event: string, data: any) {
+        emit: function (event: string, data: any) {
           if (this.listeners.has(event)) {
-            this.listeners.get(event).forEach((callback: Function) => callback(data));
+            this.listeners
+              .get(event)
+              .forEach((callback: Function) => callback(data));
           }
         },
-        on: function(event: string, callback: Function) {
+        on: function (event: string, callback: Function) {
           if (!this.listeners.has(event)) {
             this.listeners.set(event, []);
           }
@@ -202,12 +206,14 @@ describe('微前端模組間通信集成測試', () => {
     test('市場預測結果能通知投資組合模組', async () => {
       const mockEventBus = {
         listeners: new Map(),
-        emit: function(event: string, data: any) {
+        emit: function (event: string, data: any) {
           if (this.listeners.has(event)) {
-            this.listeners.get(event).forEach((callback: Function) => callback(data));
+            this.listeners
+              .get(event)
+              .forEach((callback: Function) => callback(data));
           }
         },
-        on: function(event: string, callback: Function) {
+        on: function (event: string, callback: Function) {
           if (!this.listeners.has(event)) {
             this.listeners.set(event, []);
           }
@@ -301,9 +307,15 @@ describe('微前端模組間通信集成測試', () => {
           <BrowserRouter>
             <div>
               <nav>
-                <a href="/cards" data-testid="nav-cards">卡片管理</a>
-                <a href="/market" data-testid="nav-market">市場分析</a>
-                <a href="/ai" data-testid="nav-ai">AI 生態</a>
+                <a href="/cards" data-testid="nav-cards">
+                  卡片管理
+                </a>
+                <a href="/market" data-testid="nav-market">
+                  市場分析
+                </a>
+                <a href="/ai" data-testid="nav-ai">
+                  AI 生態
+                </a>
               </nav>
               <mockCardManagement.CardList />
               <mockMarketAnalysis.MarketDashboard />

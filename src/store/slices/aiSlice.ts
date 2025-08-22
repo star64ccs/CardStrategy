@@ -62,7 +62,7 @@ const initialState: AIState = {
   confidence: 0,
   processingTime: 0,
   isPredicting: false,
-  marketInsights: null
+  marketInsights: null,
 };
 
 // AI slice
@@ -89,7 +89,7 @@ const aiSlice = createSlice({
     },
     setProcessingTime: (state, action: PayloadAction<number>) => {
       state.processingTime = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     // Analyze Card With AI
@@ -174,7 +174,7 @@ const aiSlice = createSlice({
         state.isLoading = false;
         state.error = action.payload as string;
       });
-  }
+  },
 });
 
 export const {
@@ -183,7 +183,7 @@ export const {
   clearChat,
   addChatMessage,
   updateConfidence,
-  setProcessingTime
+  setProcessingTime,
 } = aiSlice.actions;
 
 export default aiSlice.reducer;

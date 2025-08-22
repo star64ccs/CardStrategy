@@ -6,7 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Card } from '@/components/common/Card';
@@ -31,11 +31,12 @@ interface ConditionAnalysisHistoryProps {
   onRefresh?: () => Promise<void>;
 }
 
-export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> = ({
-  onItemPress,
-  onRefresh
-}) => {
-  const [historyItems, setHistoryItems] = useState<ConditionAnalysisHistoryItem[]>([]);
+export const ConditionAnalysisHistory: React.FC<
+  ConditionAnalysisHistoryProps
+> = ({ onItemPress, onRefresh }) => {
+  const [historyItems, setHistoryItems] = useState<
+    ConditionAnalysisHistoryItem[]
+  >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +51,7 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
       setError(null);
 
       // 模擬加載歷史記錄
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const mockHistory: ConditionAnalysisHistoryItem[] = [
         {
@@ -72,7 +73,7 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
                   edges: { score: 85, grade: 'Near Mint', details: [] },
                   surface: { score: 80, grade: 'Excellent', details: [] },
                   centering: { score: 88, grade: 'Near Mint', details: [] },
-                  printQuality: { score: 92, grade: 'Near Mint', details: [] }
+                  printQuality: { score: 92, grade: 'Near Mint', details: [] },
                 },
                 damageAssessment: {
                   scratches: 2,
@@ -80,28 +81,28 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
                   creases: 0,
                   stains: 1,
                   fading: 0,
-                  totalDamage: 3
+                  totalDamage: 3,
                 },
                 marketImpact: {
                   valueMultiplier: 0.85,
                   estimatedValue: 850,
                   valueRange: { min: 800, max: 900 },
-                  recommendations: []
+                  recommendations: [],
                 },
                 preservationTips: [],
-                restorationSuggestions: []
+                restorationSuggestions: [],
               },
               processingTime: 2.5,
               metadata: {
                 analysisMethod: 'AI 視覺分析',
                 modelVersion: 'v2.1.0',
                 imageQuality: '高質量',
-                lightingConditions: '良好'
-              }
-            }
+                lightingConditions: '良好',
+              },
+            },
           },
           createdAt: new Date('2024-12-15T10:30:00Z'),
-          updatedAt: new Date('2024-12-15T10:30:00Z')
+          updatedAt: new Date('2024-12-15T10:30:00Z'),
         },
         {
           id: '2',
@@ -122,7 +123,7 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
                   edges: { score: 80, grade: 'Excellent', details: [] },
                   surface: { score: 75, grade: 'Good', details: [] },
                   centering: { score: 82, grade: 'Excellent', details: [] },
-                  printQuality: { score: 85, grade: 'Excellent', details: [] }
+                  printQuality: { score: 85, grade: 'Excellent', details: [] },
                 },
                 damageAssessment: {
                   scratches: 3,
@@ -130,28 +131,28 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
                   creases: 0,
                   stains: 2,
                   fading: 0,
-                  totalDamage: 6
+                  totalDamage: 6,
                 },
                 marketImpact: {
                   valueMultiplier: 0.78,
                   estimatedValue: 650,
                   valueRange: { min: 600, max: 700 },
-                  recommendations: []
+                  recommendations: [],
                 },
                 preservationTips: [],
-                restorationSuggestions: []
+                restorationSuggestions: [],
               },
               processingTime: 2.8,
               metadata: {
                 analysisMethod: 'AI 視覺分析',
                 modelVersion: 'v2.1.0',
                 imageQuality: '高質量',
-                lightingConditions: '良好'
-              }
-            }
+                lightingConditions: '良好',
+              },
+            },
           },
           createdAt: new Date('2024-12-14T15:45:00Z'),
-          updatedAt: new Date('2024-12-14T15:45:00Z')
+          updatedAt: new Date('2024-12-14T15:45:00Z'),
         },
         {
           id: '3',
@@ -172,7 +173,7 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
                   edges: { score: 95, grade: 'Mint', details: [] },
                   surface: { score: 92, grade: 'Near Mint', details: [] },
                   centering: { score: 96, grade: 'Mint', details: [] },
-                  printQuality: { score: 98, grade: 'Mint', details: [] }
+                  printQuality: { score: 98, grade: 'Mint', details: [] },
                 },
                 damageAssessment: {
                   scratches: 0,
@@ -180,36 +181,40 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
                   creases: 0,
                   stains: 0,
                   fading: 0,
-                  totalDamage: 0
+                  totalDamage: 0,
                 },
                 marketImpact: {
                   valueMultiplier: 0.95,
                   estimatedValue: 1200,
                   valueRange: { min: 1150, max: 1250 },
-                  recommendations: []
+                  recommendations: [],
                 },
                 preservationTips: [],
-                restorationSuggestions: []
+                restorationSuggestions: [],
               },
               processingTime: 2.2,
               metadata: {
                 analysisMethod: 'AI 視覺分析',
                 modelVersion: 'v2.1.0',
                 imageQuality: '高質量',
-                lightingConditions: '良好'
-              }
-            }
+                lightingConditions: '良好',
+              },
+            },
           },
           createdAt: new Date('2024-12-13T09:15:00Z'),
-          updatedAt: new Date('2024-12-13T09:15:00Z')
-        }
+          updatedAt: new Date('2024-12-13T09:15:00Z'),
+        },
       ];
 
       setHistoryItems(mockHistory);
-      logger.info('✅ Condition analysis history loaded', { count: mockHistory.length });
+      logger.info('✅ Condition analysis history loaded', {
+        count: mockHistory.length,
+      });
     } catch (error: any) {
       setError(error.message || '加載失敗');
-      logger.error('❌ Load condition analysis history failed:', { error: error.message });
+      logger.error('❌ Load condition analysis history failed:', {
+        error: error.message,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -223,7 +228,9 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
       await onRefresh?.();
       await loadHistory();
     } catch (error: any) {
-      logger.error('❌ Refresh condition analysis history failed:', { error: error.message });
+      logger.error('❌ Refresh condition analysis history failed:', {
+        error: error.message,
+      });
     } finally {
       setIsRefreshing(false);
     }
@@ -231,13 +238,13 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
 
   const getGradeColor = (grade: string) => {
     const gradeColors: { [key: string]: string } = {
-      'Mint': theme.colors.success,
+      Mint: theme.colors.success,
       'Near Mint': theme.colors.success,
-      'Excellent': theme.colors.warning,
-      'Good': theme.colors.warning,
+      Excellent: theme.colors.warning,
+      Good: theme.colors.warning,
       'Light Played': theme.colors.error,
-      'Played': theme.colors.error,
-      'Poor': theme.colors.error
+      Played: theme.colors.error,
+      Poor: theme.colors.error,
     };
     return gradeColors[grade] || theme.colors.textSecondary;
   };
@@ -248,8 +255,12 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
     return theme.colors.error;
   };
 
-  const renderHistoryItem = ({ item }: { item: ConditionAnalysisHistoryItem }) => {
-    const {analysis} = item.analysisResult.data;
+  const renderHistoryItem = ({
+    item,
+  }: {
+    item: ConditionAnalysisHistoryItem;
+  }) => {
+    const { analysis } = item.analysisResult.data;
 
     return (
       <TouchableOpacity
@@ -269,7 +280,11 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
                 />
               ) : (
                 <View style={styles.cardPlaceholder}>
-                  <Ionicons name="card" size={24} color={theme.colors.textSecondary} />
+                  <Ionicons
+                    name="card"
+                    size={24}
+                    color={theme.colors.textSecondary}
+                  />
                 </View>
               )}
             </View>
@@ -284,11 +299,21 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
           </View>
           <View style={styles.analysisSummary}>
             <View style={styles.gradeContainer}>
-              <Text style={[styles.gradeText, { color: getGradeColor(analysis.overallGrade) }]}>
+              <Text
+                style={[
+                  styles.gradeText,
+                  { color: getGradeColor(analysis.overallGrade) },
+                ]}
+              >
                 {analysis.overallGrade}
               </Text>
             </View>
-            <Text style={[styles.scoreText, { color: getScoreColor(analysis.overallScore) }]}>
+            <Text
+              style={[
+                styles.scoreText,
+                { color: getScoreColor(analysis.overallScore) },
+              ]}
+            >
               {analysis.overallScore}/100
             </Text>
           </View>
@@ -309,7 +334,16 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
           </View>
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>損傷指數:</Text>
-            <Text style={[styles.detailValue, { color: getScoreColor(100 - analysis.damageAssessment.totalDamage) }]}>
+            <Text
+              style={[
+                styles.detailValue,
+                {
+                  color: getScoreColor(
+                    100 - analysis.damageAssessment.totalDamage
+                  ),
+                },
+              ]}
+            >
               {analysis.damageAssessment.totalDamage}
             </Text>
           </View>
@@ -321,7 +355,11 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
             <Text style={styles.actionText}>查看詳情</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
-            <Ionicons name="share" size={16} color={theme.colors.textSecondary} />
+            <Ionicons
+              name="share"
+              size={16}
+              color={theme.colors.textSecondary}
+            />
             <Text style={styles.actionText}>分享</Text>
           </TouchableOpacity>
         </View>
@@ -367,9 +405,7 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>條件分析記錄</Text>
-        <Text style={styles.subtitle}>
-          共 {historyItems.length} 條記錄
-        </Text>
+        <Text style={styles.subtitle}>共 {historyItems.length} 條記錄</Text>
       </View>
 
       <FlatList
@@ -396,188 +432,188 @@ export const ConditionAnalysisHistory: React.FC<ConditionAnalysisHistoryProps> =
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   header: {
     padding: theme.spacing.medium,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   title: {
     fontSize: 20,
     fontWeight: '600',
     color: theme.colors.text,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   subtitle: {
     fontSize: 14,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   listContainer: {
-    padding: theme.spacing.medium
+    padding: theme.spacing.medium,
   },
   historyItem: {
     backgroundColor: theme.colors.backgroundPaper,
     borderRadius: theme.borderRadius.medium,
     padding: theme.spacing.medium,
     marginBottom: theme.spacing.medium,
-    ...theme.shadows.small
+    ...theme.shadows.small,
   },
   itemHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   cardInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   cardImageContainer: {
     width: 60,
     height: 80,
     borderRadius: theme.borderRadius.small,
     overflow: 'hidden',
-    marginRight: theme.spacing.medium
+    marginRight: theme.spacing.medium,
   },
   cardImage: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   cardPlaceholder: {
     width: '100%',
     height: '100%',
     backgroundColor: theme.colors.backgroundSecondary,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   cardDetails: {
-    flex: 1
+    flex: 1,
   },
   cardName: {
     fontSize: 16,
     fontWeight: '600',
     color: theme.colors.text,
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   analysisDate: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   analysisSummary: {
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   gradeContainer: {
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   gradeText: {
     fontSize: 14,
     fontWeight: '700',
-    textTransform: 'uppercase'
+    textTransform: 'uppercase',
   },
   scoreText: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   itemDetails: {
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.xsmall
+    marginBottom: theme.spacing.xsmall,
   },
   detailLabel: {
     fontSize: 12,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   detailValue: {
     fontSize: 12,
     fontWeight: '600',
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   itemActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    paddingTop: theme.spacing.medium
+    paddingTop: theme.spacing.medium,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing.small
+    padding: theme.spacing.small,
   },
   actionText: {
     fontSize: 12,
-    marginLeft: theme.spacing.xsmall
+    marginLeft: theme.spacing.xsmall,
   },
   separator: {
     height: 1,
     backgroundColor: theme.colors.border,
-    marginVertical: theme.spacing.small
+    marginVertical: theme.spacing.small,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingText: {
     fontSize: 16,
     color: theme.colors.textSecondary,
-    marginTop: theme.spacing.medium
+    marginTop: theme.spacing.medium,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: theme.spacing.xlarge
+    paddingVertical: theme.spacing.xlarge,
   },
   emptyTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.text,
     marginTop: theme.spacing.medium,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   emptySubtext: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    paddingHorizontal: theme.spacing.large
+    paddingHorizontal: theme.spacing.large,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: theme.spacing.xlarge
+    paddingVertical: theme.spacing.xlarge,
   },
   errorTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: theme.colors.error,
     marginTop: theme.spacing.medium,
-    marginBottom: theme.spacing.small
+    marginBottom: theme.spacing.small,
   },
   errorText: {
     fontSize: 14,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginBottom: theme.spacing.medium
+    marginBottom: theme.spacing.medium,
   },
   retryButton: {
     backgroundColor: theme.colors.primary,
     paddingHorizontal: theme.spacing.large,
     paddingVertical: theme.spacing.medium,
-    borderRadius: theme.borderRadius.medium
+    borderRadius: theme.borderRadius.medium,
   },
   retryButtonText: {
     color: theme.colors.white,
     fontSize: 14,
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 export default ConditionAnalysisHistory;

@@ -37,7 +37,7 @@ const initSentry = (app) => {
         new Sentry.Integrations.OnUnhandledRejection(),
 
         // 未捕獲的異常
-        new Sentry.Integrations.OnUncaughtException()
+        new Sentry.Integrations.OnUncaughtException(),
       ],
 
       // 追蹤配置
@@ -56,7 +56,7 @@ const initSentry = (app) => {
         // 過濾密碼字段
         if (event.request && event.request.data) {
           const sensitiveFields = ['password', 'token', 'secret', 'key'];
-          sensitiveFields.forEach(field => {
+          sensitiveFields.forEach((field) => {
             if (event.request.data[field]) {
               event.request.data[field] = '[REDACTED]';
             }
@@ -66,7 +66,7 @@ const initSentry = (app) => {
         // 過濾查詢參數中的敏感信息
         if (event.request && event.request.query_string) {
           const sensitiveParams = ['password', 'token', 'secret', 'key'];
-          sensitiveParams.forEach(param => {
+          sensitiveParams.forEach((param) => {
             if (event.request.query_string.includes(param)) {
               event.request.query_string = event.request.query_string.replace(
                 new RegExp(`${param}=[^&]*`, 'g'),
@@ -104,12 +104,11 @@ const initSentry = (app) => {
       defaultTags: {
         service: 'cardstrategy-api',
         version: process.env.APP_VERSION || '1.0.0',
-        environment: process.env.NODE_ENV || 'development'
-      }
+        environment: process.env.NODE_ENV || 'development',
+      },
     });
 
     // logger.info('Sentry initialized successfully');
-
   } catch (error) {
     // logger.info('Failed to initialize Sentry:', error);
   }
@@ -153,15 +152,18 @@ const setupSentryErrorHandlers = (app) => {
         method: req.method,
         url: req.url,
         userAgent: req.get('User-Agent'),
-        ip: req.ip
-      }
+        ip: req.ip,
+      },
     });
 
     // 返回錯誤響應
     res.status(500).json({
       error: 'Internal Server Error',
-      message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
-      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+      message:
+        process.env.NODE_ENV === 'development'
+          ? err.message
+          : 'Something went wrong',
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
     });
   });
 };
@@ -181,8 +183,8 @@ const captureException = (error, context = {}) => {
     extra: context,
     tags: {
       source: 'manual',
-      ...context.tags
-    }
+      ...context.tags,
+    },
   });
 };
 
@@ -203,8 +205,8 @@ const captureMessage = (message, level = 'info', context = {}) => {
     extra: context,
     tags: {
       source: 'manual',
-      ...context.tags
-    }
+      ...context.tags,
+    },
   });
 };
 
@@ -221,7 +223,7 @@ const setUser = (user) => {
     id: user.id,
     email: user.email,
     username: user.username,
-    ip_address: user.ip
+    ip_address: user.ip,
   });
 };
 
@@ -287,7 +289,7 @@ const startTransaction = (name, operation) => {
 
   return Sentry.startTransaction({
     name,
-    op: operation
+    op: operation,
   });
 };
 
@@ -299,7 +301,7 @@ const healthCheck = () => {
     enabled: !!process.env.SENTRY_DSN,
     dsn: process.env.SENTRY_DSN ? 'configured' : 'not configured',
     environment: process.env.NODE_ENV || 'development',
-    release: process.env.APP_VERSION || '1.0.0'
+    release: process.env.APP_VERSION || '1.0.0',
   };
 };
 
@@ -315,5 +317,5 @@ module.exports = {
   addExtra,
   setContext,
   startTransaction,
-  healthCheck
+  healthCheck,
 };

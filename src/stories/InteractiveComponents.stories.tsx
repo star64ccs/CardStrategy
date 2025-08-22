@@ -9,41 +9,41 @@ import {
   Avatar,
   Badge,
   Skeleton,
-  Toast
+  Toast,
 } from '../components/common';
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#1a1a1a',
-    flex: 1
+    flex: 1,
   },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
     marginBottom: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   section: {
-    marginBottom: 30
+    marginBottom: 30,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 10
+    marginBottom: 10,
   },
   modalContent: {
     padding: 20,
     backgroundColor: '#2a2a2a',
-    borderRadius: 10
+    borderRadius: 10,
   },
   tooltipContent: {
     padding: 10,
     backgroundColor: '#333333',
-    borderRadius: 5
-  }
+    borderRadius: 5,
+  },
 });
 
 export default {
@@ -51,23 +51,26 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: '交互組件提供豐富的用戶交互體驗，包括模態框、開關、工具提示等。'
-      }
-    }
+        component:
+          '交互組件提供豐富的用戶交互體驗，包括模態框、開關、工具提示等。',
+      },
+    },
   },
   decorators: [
     (Story) => (
       <View style={styles.container}>
         <Story />
       </View>
-    )
-  ]
+    ),
+  ],
 };
 
 // 模態框故事
 export const ModalStory = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [modalSize, setModalSize] = useState<'small' | 'medium' | 'large' | 'full'>('medium');
+  const [modalSize, setModalSize] = useState<
+    'small' | 'medium' | 'large' | 'full'
+  >('medium');
 
   return (
     <View style={styles.section}>
@@ -142,26 +145,15 @@ export const SwitchStory = () => {
       <Text style={styles.sectionTitle}>開關組件</Text>
       <View style={styles.row}>
         <Text style={{ color: '#ffffff', marginRight: 10 }}>默認開關:</Text>
-        <Switch
-          value={switch1}
-          onValueChange={setSwitch1}
-        />
+        <Switch value={switch1} onValueChange={setSwitch1} />
       </View>
       <View style={styles.row}>
         <Text style={{ color: '#ffffff', marginRight: 10 }}>成功開關:</Text>
-        <Switch
-          value={switch2}
-          onValueChange={setSwitch2}
-          variant="success"
-        />
+        <Switch value={switch2} onValueChange={setSwitch2} variant="success" />
       </View>
       <View style={styles.row}>
         <Text style={{ color: '#ffffff', marginRight: 10 }}>禁用開關:</Text>
-        <Switch
-          value={switch3}
-          onValueChange={setSwitch3}
-          disabled={true}
-        />
+        <Switch value={switch3} onValueChange={setSwitch3} disabled={true} />
       </View>
     </View>
   );
@@ -173,28 +165,16 @@ export const TooltipStory = () => {
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>工具提示</Text>
       <View style={styles.row}>
-        <Tooltip
-          content="這是一個頂部工具提示"
-          position="top"
-        >
+        <Tooltip content="這是一個頂部工具提示" position="top">
           <Text style={{ color: '#ffd700' }}>頂部提示</Text>
         </Tooltip>
-        <Tooltip
-          content="這是一個底部工具提示"
-          position="bottom"
-        >
+        <Tooltip content="這是一個底部工具提示" position="bottom">
           <Text style={{ color: '#ffd700' }}>底部提示</Text>
         </Tooltip>
-        <Tooltip
-          content="這是一個左側工具提示"
-          position="left"
-        >
+        <Tooltip content="這是一個左側工具提示" position="left">
           <Text style={{ color: '#ffd700' }}>左側提示</Text>
         </Tooltip>
-        <Tooltip
-          content="這是一個右側工具提示"
-          position="right"
-        >
+        <Tooltip content="這是一個右側工具提示" position="right">
           <Text style={{ color: '#ffd700' }}>右側提示</Text>
         </Tooltip>
       </View>
@@ -208,21 +188,9 @@ export const LoadingSpinnerStory = () => {
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>加載動畫</Text>
       <View style={styles.row}>
-        <LoadingSpinner
-          size="small"
-          variant="spinner"
-          text="小尺寸"
-        />
-        <LoadingSpinner
-          size="medium"
-          variant="dots"
-          text="點狀動畫"
-        />
-        <LoadingSpinner
-          size="large"
-          variant="pulse"
-          text="脈衝動畫"
-        />
+        <LoadingSpinner size="small" variant="spinner" text="小尺寸" />
+        <LoadingSpinner size="medium" variant="dots" text="點狀動畫" />
+        <LoadingSpinner size="large" variant="pulse" text="脈衝動畫" />
       </View>
     </View>
   );
@@ -252,25 +220,13 @@ export const ProgressBarStory = () => {
         />
       </View>
       <View style={styles.row}>
-        <ProgressBar
-          progress={65}
-          variant="success"
-          showLabel={true}
-        />
+        <ProgressBar progress={65} variant="success" showLabel={true} />
       </View>
       <View style={styles.row}>
-        <ProgressBar
-          progress={45}
-          variant="warning"
-          showLabel={true}
-        />
+        <ProgressBar progress={45} variant="warning" showLabel={true} />
       </View>
       <View style={styles.row}>
-        <ProgressBar
-          progress={80}
-          variant="gold"
-          showLabel={true}
-        />
+        <ProgressBar progress={80} variant="gold" showLabel={true} />
       </View>
     </View>
   );
@@ -287,24 +243,14 @@ export const AvatarStory = () => {
           size="small"
           showBorder={true}
         />
-        <Avatar
-          initials="JD"
-          size="medium"
-          variant="circle"
-          status="online"
-        />
+        <Avatar initials="JD" size="medium" variant="circle" status="online" />
         <Avatar
           source={{ uri: 'https://example.com/avatar2.jpg' }}
           size="large"
           variant="rounded"
           status="away"
         />
-        <Avatar
-          initials="AB"
-          size="xlarge"
-          variant="square"
-          status="busy"
-        />
+        <Avatar initials="AB" size="xlarge" variant="square" status="busy" />
       </View>
     </View>
   );
@@ -361,7 +307,9 @@ export const SkeletonStory = () => {
 // Toast故事
 export const ToastStory = () => {
   const [toastVisible, setToastVisible] = useState(false);
-  const [toastType, setToastType] = useState<'success' | 'error' | 'warning' | 'info'>('success');
+  const [toastType, setToastType] = useState<
+    'success' | 'error' | 'warning' | 'info'
+  >('success');
 
   const showToast = (type: 'success' | 'error' | 'warning' | 'info') => {
     setToastType(type);
@@ -390,10 +338,7 @@ export const ToastStory = () => {
         >
           警告提示
         </Text>
-        <Text
-          style={{ color: '#45b7d1' }}
-          onPress={() => showToast('info')}
-        >
+        <Text style={{ color: '#45b7d1' }} onPress={() => showToast('info')}>
           信息提示
         </Text>
       </View>
@@ -428,20 +373,13 @@ export const CompleteExample = () => {
             打開模態框
           </Text>
         </Tooltip>
-        <Switch
-          value={switchValue}
-          onValueChange={setSwitchValue}
-        />
+        <Switch value={switchValue} onValueChange={setSwitchValue} />
         <Text style={{ color: '#ffffff', marginLeft: 10 }}>
           開關狀態: {switchValue ? '開啟' : '關閉'}
         </Text>
       </View>
       <View style={styles.row}>
-        <Avatar
-          initials="U"
-          size="medium"
-          status="online"
-        />
+        <Avatar initials="U" size="medium" status="online" />
         <Badge text="3" variant="error" />
         <LoadingSpinner size="small" variant="spinner" />
       </View>
@@ -538,11 +476,15 @@ export const InteractiveComponentsDocumentation = () => (
         <Text style={styles.sectionTitle}>使用示例</Text>
         <View style={{ color: '#ffffff' }}>
           <Text>```tsx</Text>
-          <Text>import { Modal, Switch, Tooltip } from '@components/common';</Text>
+          <Text>
+            import {(Modal, Switch, Tooltip)} from '@components/common';
+          </Text>
           <Text></Text>
           <Text>// 模態框</Text>
-          <Text>{'<Modal visible={visible} onClose={onClose} title="標題">'}</Text>
-          <Text>  內容</Text>
+          <Text>
+            {'<Modal visible={visible} onClose={onClose} title="標題">'}
+          </Text>
+          <Text> 內容</Text>
           <Text>{'</Modal>'}</Text>
           <Text></Text>
           <Text>// 開關</Text>
@@ -550,7 +492,7 @@ export const InteractiveComponentsDocumentation = () => (
           <Text></Text>
           <Text>// 工具提示</Text>
           <Text>{'<Tooltip content="提示內容">'}</Text>
-          <Text>  觸發元素</Text>
+          <Text> 觸發元素</Text>
           <Text>{'</Tooltip>'}</Text>
           <Text>```</Text>
         </View>

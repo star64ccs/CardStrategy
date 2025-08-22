@@ -2,14 +2,17 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const simulatedGradingService = require('../services/simulatedGradingService');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
-// å‰µå»ºæ¨¡æ“¬é‘‘å®šå ±å‘Š
+// ?µå»ºæ¨¡æ“¬?‘å??±å?
 router.post('/create', authenticateToken, async (req, res) => {
   try {
     const { cardId, gradingResult, imageData } = req.body;
+// eslint-disable-next-line no-unused-vars
     const userId = req.user.id;
 
+// eslint-disable-next-line no-unused-vars
     const result = await simulatedGradingService.createGradingReport(
       userId,
       cardId,
@@ -17,180 +20,195 @@ router.post('/create', authenticateToken, async (req, res) => {
       imageData
     );
 
-    logger.info('æ¨¡æ“¬é‘‘å®šå ±å‘Šå‰µå»ºæˆåŠŸ', {
+    logger.info('æ¨¡æ“¬?‘å??±å??µå»º?å?', {
       userId,
       cardId,
       agency: result.agency,
-      gradingNumber: result.gradingNumber
+      gradingNumber: result.gradingNumber,
     });
 
     res.status(201).json({
       success: true,
-      message: 'æ¨¡æ“¬é‘‘å®šå ±å‘Šå‰µå»ºæˆåŠŸ',
-      data: result
+      message: 'æ¨¡æ“¬?‘å??±å??µå»º?å?',
+      data: result,
     });
   } catch (error) {
-    logger.error('å‰µå»ºæ¨¡æ“¬é‘‘å®šå ±å‘Šå¤±æ•—:', error);
+    logger.error('?µå»ºæ¨¡æ“¬?‘å??±å?å¤±æ?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'å‰µå»ºæ¨¡æ“¬é‘‘å®šå ±å‘Šå¤±æ•—',
-      code: 'SIMULATED_GRADING_CREATE_ERROR'
+      message: error.message || '?µå»ºæ¨¡æ“¬?‘å??±å?å¤±æ?',
+      code: 'SIMULATED_GRADING_CREATE_ERROR',
     });
   }
 });
 
-// æŸ¥è©¢é‘‘å®šå ±å‘Š
+// ?¥è©¢?‘å??±å?
 router.get('/:gradingNumber', async (req, res) => {
   try {
     const { gradingNumber } = req.params;
 
-    const result = await simulatedGradingService.getGradingReport(gradingNumber);
+// eslint-disable-next-line no-unused-vars
+    const result =
+      await simulatedGradingService.getGradingReport(gradingNumber);
 
     if (!result) {
       return res.status(404).json({
         success: false,
-        message: 'é‘‘å®šå ±å‘Šä¸å­˜åœ¨æˆ–å·²å¤±æ•ˆ',
-        code: 'GRADING_REPORT_NOT_FOUND'
+        message: '?‘å??±å?ä¸å??¨æ?å·²å¤±??,
+        code: 'GRADING_REPORT_NOT_FOUND',
       });
     }
 
-    logger.info('é‘‘å®šå ±å‘ŠæŸ¥è©¢æˆåŠŸ', {
+    logger.info('?‘å??±å??¥è©¢?å?', {
       gradingNumber,
-      viewCount: result.viewCount
+      viewCount: result.viewCount,
     });
 
     res.status(200).json({
       success: true,
-      message: 'é‘‘å®šå ±å‘ŠæŸ¥è©¢æˆåŠŸ',
-      data: result
+      message: '?‘å??±å??¥è©¢?å?',
+      data: result,
     });
   } catch (error) {
-    logger.error('æŸ¥è©¢é‘‘å®šå ±å‘Šå¤±æ•—:', error);
+    logger.error('?¥è©¢?‘å??±å?å¤±æ?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'æŸ¥è©¢é‘‘å®šå ±å‘Šå¤±æ•—',
-      code: 'SIMULATED_GRADING_LOOKUP_ERROR'
+      message: error.message || '?¥è©¢?‘å??±å?å¤±æ?',
+      code: 'SIMULATED_GRADING_LOOKUP_ERROR',
     });
   }
 });
 
-// ç²å–ç”¨æˆ¶çš„é‘‘å®šå ±å‘Šåˆ—è¡¨
-router.get('/user/:userId', authenticateToken, async (req, res) => {
+// ?²å??¨æˆ¶?„é?å®šå ±?Šå?è¡?router.get('/user/:userId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
     const { page, limit, agency, sortBy, sortOrder } = req.query;
 
-    // é©—è­‰ç”¨æˆ¶æ¬Šé™
+    // é©—è??¨æˆ¶æ¬Šé?
     if (req.user.id !== parseInt(userId) && req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: 'ç„¡æ¬Šé™è¨ªå•æ­¤ç”¨æˆ¶çš„é‘‘å®šå ±å‘Š',
-        code: 'UNAUTHORIZED_ACCESS'
+        message: '?¡æ??è¨ª?æ­¤?¨æˆ¶?„é?å®šå ±??,
+        code: 'UNAUTHORIZED_ACCESS',
       });
     }
 
+// eslint-disable-next-line no-unused-vars
     const options = {
       page: parseInt(page) || 1,
       limit: parseInt(limit) || 20,
       agency,
       sortBy: sortBy || 'createdAt',
-      sortOrder: sortOrder || 'DESC'
+      sortOrder: sortOrder || 'DESC',
     };
 
-    const result = await simulatedGradingService.getUserGradingReports(userId, options);
-
-    logger.info('ç”¨æˆ¶é‘‘å®šå ±å‘Šåˆ—è¡¨ç²å–æˆåŠŸ', {
+// eslint-disable-next-line no-unused-vars
+    const result = await simulatedGradingService.getUserGradingReports(
       userId,
-      totalReports: result.pagination.total
+      options
+    );
+
+    logger.info('?¨æˆ¶?‘å??±å??—è¡¨?²å??å?', {
+      userId,
+      totalReports: result.pagination.total,
     });
 
     res.status(200).json({
       success: true,
-      message: 'ç”¨æˆ¶é‘‘å®šå ±å‘Šåˆ—è¡¨ç²å–æˆåŠŸ',
-      data: result
+      message: '?¨æˆ¶?‘å??±å??—è¡¨?²å??å?',
+      data: result,
     });
   } catch (error) {
-    logger.error('ç²å–ç”¨æˆ¶é‘‘å®šå ±å‘Šåˆ—è¡¨å¤±æ•—:', error);
+    logger.error('?²å??¨æˆ¶?‘å??±å??—è¡¨å¤±æ?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'ç²å–ç”¨æˆ¶é‘‘å®šå ±å‘Šåˆ—è¡¨å¤±æ•—',
-      code: 'SIMULATED_GRADING_USER_REPORTS_ERROR'
+      message: error.message || '?²å??¨æˆ¶?‘å??±å??—è¡¨å¤±æ?',
+      code: 'SIMULATED_GRADING_USER_REPORTS_ERROR',
     });
   }
 });
 
-// æœç´¢é‘‘å®šå ±å‘Š
+// ?œç´¢?‘å??±å?
 router.get('/search', async (req, res) => {
   try {
     const { query, page, limit, agency, sortBy, sortOrder } = req.query;
 
+// eslint-disable-next-line no-unused-vars
     const options = {
       page: parseInt(page) || 1,
       limit: parseInt(limit) || 20,
       agency,
       sortBy: sortBy || 'createdAt',
-      sortOrder: sortOrder || 'DESC'
+      sortOrder: sortOrder || 'DESC',
     };
 
-    const result = await simulatedGradingService.searchGradingReports(query, options);
-
-    logger.info('é‘‘å®šå ±å‘Šæœç´¢æˆåŠŸ', {
+// eslint-disable-next-line no-unused-vars
+    const result = await simulatedGradingService.searchGradingReports(
       query,
-      totalResults: result.pagination.total
+      options
+    );
+
+    logger.info('?‘å??±å??œç´¢?å?', {
+      query,
+      totalResults: result.pagination.total,
     });
 
     res.status(200).json({
       success: true,
-      message: 'é‘‘å®šå ±å‘Šæœç´¢æˆåŠŸ',
-      data: result
+      message: '?‘å??±å??œç´¢?å?',
+      data: result,
     });
   } catch (error) {
-    logger.error('æœç´¢é‘‘å®šå ±å‘Šå¤±æ•—:', error);
+    logger.error('?œç´¢?‘å??±å?å¤±æ?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'æœç´¢é‘‘å®šå ±å‘Šå¤±æ•—',
-      code: 'SIMULATED_GRADING_SEARCH_ERROR'
+      message: error.message || '?œç´¢?‘å??±å?å¤±æ?',
+      code: 'SIMULATED_GRADING_SEARCH_ERROR',
     });
   }
 });
 
-// ç²å–é‘‘å®šçµ±è¨ˆæ•¸æ“š
+// ?²å??‘å?çµ±è??¸æ?
 router.get('/stats/:userId?', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // é©—è­‰ç”¨æˆ¶æ¬Šé™
-    if (userId && req.user.id !== parseInt(userId) && req.user.role !== 'admin') {
+    // é©—è??¨æˆ¶æ¬Šé?
+    if (
+      userId &&
+      req.user.id !== parseInt(userId) &&
+      req.user.role !== 'admin'
+    ) {
       return res.status(403).json({
         success: false,
-        message: 'ç„¡æ¬Šé™è¨ªå•æ­¤ç”¨æˆ¶çš„çµ±è¨ˆæ•¸æ“š',
-        code: 'UNAUTHORIZED_ACCESS'
+        message: '?¡æ??è¨ª?æ­¤?¨æˆ¶?„çµ±è¨ˆæ•¸??,
+        code: 'UNAUTHORIZED_ACCESS',
       });
     }
 
     const stats = await simulatedGradingService.getGradingStats(userId || null);
 
-    logger.info('é‘‘å®šçµ±è¨ˆæ•¸æ“šç²å–æˆåŠŸ', {
+    logger.info('?‘å?çµ±è??¸æ??²å??å?', {
       userId: userId || 'all',
-      totalReports: stats.totalReports
+      totalReports: stats.totalReports,
     });
 
     res.status(200).json({
       success: true,
-      message: 'é‘‘å®šçµ±è¨ˆæ•¸æ“šç²å–æˆåŠŸ',
-      data: stats
+      message: '?‘å?çµ±è??¸æ??²å??å?',
+      data: stats,
     });
   } catch (error) {
-    logger.error('ç²å–é‘‘å®šçµ±è¨ˆæ•¸æ“šå¤±æ•—:', error);
+    logger.error('?²å??‘å?çµ±è??¸æ?å¤±æ?:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'ç²å–é‘‘å®šçµ±è¨ˆæ•¸æ“šå¤±æ•—',
-      code: 'SIMULATED_GRADING_STATS_ERROR'
+      message: error.message || '?²å??‘å?çµ±è??¸æ?å¤±æ?',
+      code: 'SIMULATED_GRADING_STATS_ERROR',
     });
   }
 });
 
-// ç²å–æœ€å—æ­¡è¿çš„é‘‘å®šå ±å‘Š
+// ?²å??€?—æ­¡è¿ç??‘å??±å?
 router.get('/popular/:userId?', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -201,22 +219,22 @@ router.get('/popular/:userId?', async (req, res) => {
       parseInt(limit) || 10
     );
 
-    logger.info('æœ€å—æ­¡è¿é‘‘å®šå ±å‘Šç²å–æˆåŠŸ', {
+    logger.info('?€?—æ­¡è¿é?å®šå ±?Šç²?–æ???, {
       userId: userId || 'all',
-      reportCount: reports.length
+      reportCount: reports.length,
     });
 
     res.status(200).json({
       success: true,
-      message: 'æœ€å—æ­¡è¿é‘‘å®šå ±å‘Šç²å–æˆåŠŸ',
-      data: { reports }
+      message: '?€?—æ­¡è¿é?å®šå ±?Šç²?–æ???,
+      data: { reports },
     });
   } catch (error) {
-    logger.error('ç²å–æœ€å—æ­¡è¿é‘‘å®šå ±å‘Šå¤±æ•—:', error);
+    logger.error('?²å??€?—æ­¡è¿é?å®šå ±?Šå¤±??', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'ç²å–æœ€å—æ­¡è¿é‘‘å®šå ±å‘Šå¤±æ•—',
-      code: 'SIMULATED_GRADING_POPULAR_ERROR'
+      message: error.message || '?²å??€?—æ­¡è¿é?å®šå ±?Šå¤±??,
+      code: 'SIMULATED_GRADING_POPULAR_ERROR',
     });
   }
 });

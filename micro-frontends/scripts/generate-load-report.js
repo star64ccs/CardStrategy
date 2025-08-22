@@ -11,29 +11,29 @@ const path = require('path');
 // 負載測試基準配置
 const LOAD_TEST_BENCHMARKS = {
   responseTime: {
-    excellent: 1000,  // < 1秒
-    good: 2000,       // < 2秒
+    excellent: 1000, // < 1秒
+    good: 2000, // < 2秒
     acceptable: 3000, // < 3秒
-    poor: 5000        // < 5秒
+    poor: 5000, // < 5秒
   },
   errorRate: {
-    excellent: 0.01,  // < 1%
-    good: 0.05,       // < 5%
-    acceptable: 0.10, // < 10%
-    poor: 0.20        // < 20%
+    excellent: 0.01, // < 1%
+    good: 0.05, // < 5%
+    acceptable: 0.1, // < 10%
+    poor: 0.2, // < 20%
   },
   throughput: {
-    excellent: 100,   // > 100 RPS
-    good: 50,         // > 50 RPS
-    acceptable: 20,   // > 20 RPS
-    poor: 10          // > 10 RPS
+    excellent: 100, // > 100 RPS
+    good: 50, // > 50 RPS
+    acceptable: 20, // > 20 RPS
+    poor: 10, // > 10 RPS
   },
   concurrency: {
     light: 10,
     medium: 50,
     heavy: 100,
-    stress: 200
-  }
+    stress: 200,
+  },
 };
 
 /**
@@ -70,11 +70,15 @@ function collectLoadTestResults() {
   const results = {
     basic: null,
     advanced: null,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   // 讀取基本負載測試結果
-  const basicReportPath = path.join(process.cwd(), 'test-results', 'load-testing-basic.json');
+  const basicReportPath = path.join(
+    process.cwd(),
+    'test-results',
+    'load-testing-basic.json'
+  );
   if (fs.existsSync(basicReportPath)) {
     try {
       results.basic = JSON.parse(fs.readFileSync(basicReportPath, 'utf8'));
@@ -84,10 +88,16 @@ function collectLoadTestResults() {
   }
 
   // 讀取高級負載測試結果
-  const advancedReportPath = path.join(process.cwd(), 'test-results', 'load-testing-advanced.json');
+  const advancedReportPath = path.join(
+    process.cwd(),
+    'test-results',
+    'load-testing-advanced.json'
+  );
   if (fs.existsSync(advancedReportPath)) {
     try {
-      results.advanced = JSON.parse(fs.readFileSync(advancedReportPath, 'utf8'));
+      results.advanced = JSON.parse(
+        fs.readFileSync(advancedReportPath, 'utf8')
+      );
     } catch (error) {
       // logger.info('⚠️ 無法讀取高級負載測試結果:', error.message);
     }
@@ -105,7 +115,7 @@ function generateLoadTestReportData(testResults) {
       timestamp: testResults.timestamp,
       version: '1.0.0',
       project: 'CardStrategy',
-      environment: process.env.NODE_ENV || 'development'
+      environment: process.env.NODE_ENV || 'development',
     },
     summary: {
       overallScore: 0,
@@ -117,20 +127,20 @@ function generateLoadTestReportData(testResults) {
       totalErrors: 0,
       averageResponseTime: 0,
       averageErrorRate: 0,
-      averageThroughput: 0
+      averageThroughput: 0,
     },
     testResults: {
       basic: [],
-      advanced: []
+      advanced: [],
     },
     performanceAnalysis: {
       responseTimeAnalysis: {},
       errorRateAnalysis: {},
       throughputAnalysis: {},
-      scalabilityAnalysis: {}
+      scalabilityAnalysis: {},
     },
     recommendations: [],
-    alerts: []
+    alerts: [],
   };
 
   // 分析基本負載測試
@@ -164,11 +174,11 @@ function analyzeBasicLoadTest(basicResults, report) {
   const responseTimes = [];
   const errorRates = [];
 
-  basicResults.suites.forEach(suite => {
+  basicResults.suites.forEach((suite) => {
     if (suite.specs) {
-      suite.specs.forEach(spec => {
+      suite.specs.forEach((spec) => {
         if (spec.tests) {
-          spec.tests.forEach(test => {
+          spec.tests.forEach((test) => {
             totalUsers += extractUserCount(test.title) || 0;
 
             // 提取測試結果數據
@@ -176,7 +186,8 @@ function analyzeBasicLoadTest(basicResults, report) {
             if (testData) {
               totalRequests += testData.requests || 0;
               totalErrors += testData.errors || 0;
-              if (testData.responseTime) responseTimes.push(testData.responseTime);
+              if (testData.responseTime)
+                responseTimes.push(testData.responseTime);
               if (testData.errorRate) errorRates.push(testData.errorRate);
             }
 
@@ -184,7 +195,7 @@ function analyzeBasicLoadTest(basicResults, report) {
               name: test.title,
               status: test.outcome,
               duration: test.duration,
-              data: testData
+              data: testData,
             });
           });
         }
@@ -198,11 +209,13 @@ function analyzeBasicLoadTest(basicResults, report) {
   report.summary.totalErrors += totalErrors;
 
   if (responseTimes.length > 0) {
-    report.summary.averageResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+    report.summary.averageResponseTime =
+      responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
   }
 
   if (errorRates.length > 0) {
-    report.summary.averageErrorRate = errorRates.reduce((a, b) => a + b, 0) / errorRates.length;
+    report.summary.averageErrorRate =
+      errorRates.reduce((a, b) => a + b, 0) / errorRates.length;
   }
 }
 
@@ -218,11 +231,11 @@ function analyzeAdvancedLoadTest(advancedResults, report) {
   const responseTimes = [];
   const errorRates = [];
 
-  advancedResults.suites.forEach(suite => {
+  advancedResults.suites.forEach((suite) => {
     if (suite.specs) {
-      suite.specs.forEach(spec => {
+      suite.specs.forEach((spec) => {
         if (spec.tests) {
-          spec.tests.forEach(test => {
+          spec.tests.forEach((test) => {
             totalUsers += extractUserCount(test.title) || 0;
 
             // 提取測試結果數據
@@ -230,7 +243,8 @@ function analyzeAdvancedLoadTest(advancedResults, report) {
             if (testData) {
               totalRequests += testData.requests || 0;
               totalErrors += testData.errors || 0;
-              if (testData.responseTime) responseTimes.push(testData.responseTime);
+              if (testData.responseTime)
+                responseTimes.push(testData.responseTime);
               if (testData.errorRate) errorRates.push(testData.errorRate);
             }
 
@@ -238,7 +252,7 @@ function analyzeAdvancedLoadTest(advancedResults, report) {
               name: test.title,
               status: test.outcome,
               duration: test.duration,
-              data: testData
+              data: testData,
             });
           });
         }
@@ -252,13 +266,17 @@ function analyzeAdvancedLoadTest(advancedResults, report) {
   report.summary.totalErrors += totalErrors;
 
   if (responseTimes.length > 0) {
-    const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
-    report.summary.averageResponseTime = (report.summary.averageResponseTime + avgResponseTime) / 2;
+    const avgResponseTime =
+      responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+    report.summary.averageResponseTime =
+      (report.summary.averageResponseTime + avgResponseTime) / 2;
   }
 
   if (errorRates.length > 0) {
-    const avgErrorRate = errorRates.reduce((a, b) => a + b, 0) / errorRates.length;
-    report.summary.averageErrorRate = (report.summary.averageErrorRate + avgErrorRate) / 2;
+    const avgErrorRate =
+      errorRates.reduce((a, b) => a + b, 0) / errorRates.length;
+    report.summary.averageErrorRate =
+      (report.summary.averageErrorRate + avgErrorRate) / 2;
   }
 }
 
@@ -281,7 +299,7 @@ function extractTestData(test) {
     errors: Math.floor(Math.random() * 50),
     responseTime: Math.random() * 3000 + 500,
     errorRate: Math.random() * 0.1,
-    throughput: Math.random() * 50 + 10
+    throughput: Math.random() * 50 + 10,
   };
 }
 
@@ -293,22 +311,31 @@ function calculateLoadTestScore(report) {
   let totalWeight = 0;
 
   // 響應時間評分 (40%)
-  const responseTimeScore = calculateResponseTimeScore(report.summary.averageResponseTime);
+  const responseTimeScore = calculateResponseTimeScore(
+    report.summary.averageResponseTime
+  );
   score += responseTimeScore * 0.4;
   totalWeight += 0.4;
 
   // 錯誤率評分 (30%)
-  const errorRateScore = calculateErrorRateScore(report.summary.averageErrorRate);
+  const errorRateScore = calculateErrorRateScore(
+    report.summary.averageErrorRate
+  );
   score += errorRateScore * 0.3;
   totalWeight += 0.3;
 
   // 吞吐量評分 (20%)
-  const throughputScore = calculateThroughputScore(report.summary.averageThroughput);
+  const throughputScore = calculateThroughputScore(
+    report.summary.averageThroughput
+  );
   score += throughputScore * 0.2;
   totalWeight += 0.2;
 
   // 測試通過率評分 (10%)
-  const passRate = report.summary.totalTests > 0 ? report.summary.passedTests / report.summary.totalTests : 0;
+  const passRate =
+    report.summary.totalTests > 0
+      ? report.summary.passedTests / report.summary.totalTests
+      : 0;
   score += passRate * 100 * 0.1;
   totalWeight += 0.1;
 
@@ -366,16 +393,26 @@ function generateLoadTestRecommendations(report) {
   }
 
   // 基於具體指標生成建議
-  if (report.summary.averageResponseTime > LOAD_TEST_BENCHMARKS.responseTime.acceptable) {
+  if (
+    report.summary.averageResponseTime >
+    LOAD_TEST_BENCHMARKS.responseTime.acceptable
+  ) {
     recommendations.push('優化響應時間：考慮使用緩存、數據庫優化或代碼分割');
   }
 
-  if (report.summary.averageErrorRate > LOAD_TEST_BENCHMARKS.errorRate.acceptable) {
+  if (
+    report.summary.averageErrorRate > LOAD_TEST_BENCHMARKS.errorRate.acceptable
+  ) {
     recommendations.push('降低錯誤率：檢查服務器穩定性、錯誤處理和網絡連接');
   }
 
-  if (report.summary.averageThroughput < LOAD_TEST_BENCHMARKS.throughput.acceptable) {
-    recommendations.push('提高吞吐量：優化服務器配置、使用負載均衡或增加服務器資源');
+  if (
+    report.summary.averageThroughput <
+    LOAD_TEST_BENCHMARKS.throughput.acceptable
+  ) {
+    recommendations.push(
+      '提高吞吐量：優化服務器配置、使用負載均衡或增加服務器資源'
+    );
   }
 
   if (report.summary.totalUsers > LOAD_TEST_BENCHMARKS.concurrency.heavy) {
@@ -460,22 +497,30 @@ function generateLoadTestHtmlReport(report) {
     
     <h2>測試結果</h2>
     <h3>基本負載測試</h3>
-    ${report.testResults.basic.map(test => `
+    ${report.testResults.basic
+      .map(
+        (test) => `
         <div class="test-result ${test.status === 'passed' ? 'passed' : 'failed'}">
             <strong>${test.name}</strong> - ${test.status} (${test.duration}ms)
         </div>
-    `).join('')}
+    `
+      )
+      .join('')}
     
     <h3>高級負載測試</h3>
-    ${report.testResults.advanced.map(test => `
+    ${report.testResults.advanced
+      .map(
+        (test) => `
         <div class="test-result ${test.status === 'passed' ? 'passed' : 'failed'}">
             <strong>${test.name}</strong> - ${test.status} (${test.duration}ms)
         </div>
-    `).join('')}
+    `
+      )
+      .join('')}
     
     <h2>優化建議</h2>
     <div class="recommendations">
-        ${report.recommendations.map(rec => `<p>• ${rec}</p>`).join('')}
+        ${report.recommendations.map((rec) => `<p>• ${rec}</p>`).join('')}
     </div>
 </body>
 </html>
@@ -507,10 +552,10 @@ function generateLoadTestMarkdownReport(report) {
 ## 測試結果
 
 ### 基本負載測試
-${report.testResults.basic.map(test => `- **${test.name}**: ${test.status} (${test.duration}ms)`).join('\n')}
+${report.testResults.basic.map((test) => `- **${test.name}**: ${test.status} (${test.duration}ms)`).join('\n')}
 
 ### 高級負載測試
-${report.testResults.advanced.map(test => `- **${test.name}**: ${test.status} (${test.duration}ms)`).join('\n')}
+${report.testResults.advanced.map((test) => `- **${test.name}**: ${test.status} (${test.duration}ms)`).join('\n')}
 
 ## 性能分析
 
@@ -527,7 +572,7 @@ ${report.testResults.advanced.map(test => `- **${test.name}**: ${test.status} ($
 - 基準評估: ${getThroughputGrade(report.summary.averageThroughput)}
 
 ## 優化建議
-${report.recommendations.map(rec => `- ${rec}`).join('\n')}
+${report.recommendations.map((rec) => `- ${rec}`).join('\n')}
 
 ## 詳細報告
 完整的 JSON 報告請查看 \`load-test-report.json\` 文件。
@@ -538,10 +583,14 @@ ${report.recommendations.map(rec => `- ${rec}`).join('\n')}
  * 獲取響應時間等級
  */
 function getResponseTimeGrade(responseTime) {
-  if (responseTime <= LOAD_TEST_BENCHMARKS.responseTime.excellent) return '優秀 (< 1秒)';
-  if (responseTime <= LOAD_TEST_BENCHMARKS.responseTime.good) return '良好 (< 2秒)';
-  if (responseTime <= LOAD_TEST_BENCHMARKS.responseTime.acceptable) return '可接受 (< 3秒)';
-  if (responseTime <= LOAD_TEST_BENCHMARKS.responseTime.poor) return '較差 (< 5秒)';
+  if (responseTime <= LOAD_TEST_BENCHMARKS.responseTime.excellent)
+    return '優秀 (< 1秒)';
+  if (responseTime <= LOAD_TEST_BENCHMARKS.responseTime.good)
+    return '良好 (< 2秒)';
+  if (responseTime <= LOAD_TEST_BENCHMARKS.responseTime.acceptable)
+    return '可接受 (< 3秒)';
+  if (responseTime <= LOAD_TEST_BENCHMARKS.responseTime.poor)
+    return '較差 (< 5秒)';
   return '很差 (> 5秒)';
 }
 
@@ -549,9 +598,11 @@ function getResponseTimeGrade(responseTime) {
  * 獲取錯誤率等級
  */
 function getErrorRateGrade(errorRate) {
-  if (errorRate <= LOAD_TEST_BENCHMARKS.errorRate.excellent) return '優秀 (< 1%)';
+  if (errorRate <= LOAD_TEST_BENCHMARKS.errorRate.excellent)
+    return '優秀 (< 1%)';
   if (errorRate <= LOAD_TEST_BENCHMARKS.errorRate.good) return '良好 (< 5%)';
-  if (errorRate <= LOAD_TEST_BENCHMARKS.errorRate.acceptable) return '可接受 (< 10%)';
+  if (errorRate <= LOAD_TEST_BENCHMARKS.errorRate.acceptable)
+    return '可接受 (< 10%)';
   if (errorRate <= LOAD_TEST_BENCHMARKS.errorRate.poor) return '較差 (< 20%)';
   return '很差 (> 20%)';
 }
@@ -560,10 +611,14 @@ function getErrorRateGrade(errorRate) {
  * 獲取吞吐量等級
  */
 function getThroughputGrade(throughput) {
-  if (throughput >= LOAD_TEST_BENCHMARKS.throughput.excellent) return '優秀 (> 100 RPS)';
-  if (throughput >= LOAD_TEST_BENCHMARKS.throughput.good) return '良好 (> 50 RPS)';
-  if (throughput >= LOAD_TEST_BENCHMARKS.throughput.acceptable) return '可接受 (> 20 RPS)';
-  if (throughput >= LOAD_TEST_BENCHMARKS.throughput.poor) return '較差 (> 10 RPS)';
+  if (throughput >= LOAD_TEST_BENCHMARKS.throughput.excellent)
+    return '優秀 (> 100 RPS)';
+  if (throughput >= LOAD_TEST_BENCHMARKS.throughput.good)
+    return '良好 (> 50 RPS)';
+  if (throughput >= LOAD_TEST_BENCHMARKS.throughput.acceptable)
+    return '可接受 (> 20 RPS)';
+  if (throughput >= LOAD_TEST_BENCHMARKS.throughput.poor)
+    return '較差 (> 10 RPS)';
   return '很差 (< 10 RPS)';
 }
 
@@ -595,5 +650,5 @@ if (require.main === module) {
 module.exports = {
   generateLoadTestReport,
   generateLoadTestReportData,
-  calculateLoadTestScore
+  calculateLoadTestScore,
 };

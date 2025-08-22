@@ -21,7 +21,7 @@ const development: Environment = {
   maxRetries: 3,
   cacheExpiry: 5 * 60 * 1000, // 5 minutes
   imageQuality: 0.8,
-  maxImageSize: 5 * 1024 * 1024 // 5MB
+  maxImageSize: 5 * 1024 * 1024, // 5MB
 };
 
 // 測試環境配置
@@ -34,7 +34,7 @@ const staging: Environment = {
   maxRetries: 3,
   cacheExpiry: 10 * 60 * 1000, // 10 minutes
   imageQuality: 0.8,
-  maxImageSize: 5 * 1024 * 1024 // 5MB
+  maxImageSize: 5 * 1024 * 1024, // 5MB
 };
 
 // 生產環境配置
@@ -47,7 +47,7 @@ const production: Environment = {
   maxRetries: 5,
   cacheExpiry: 30 * 60 * 1000, // 30 minutes
   imageQuality: 0.9,
-  maxImageSize: 10 * 1024 * 1024 // 10MB
+  maxImageSize: 10 * 1024 * 1024, // 10MB
 };
 
 // 根據環境變量選擇配置
@@ -69,9 +69,11 @@ const getEnvironment = (): Environment => {
 export const environment = getEnvironment();
 
 // 導出環境檢查函數
-export const isDevelopment = () => (process.env as any)['NODE_ENV'] === 'development';
+export const isDevelopment = () =>
+  (process.env as any)['NODE_ENV'] === 'development';
 export const isStaging = () => (process.env as any)['NODE_ENV'] === 'staging';
-export const isProduction = () => (process.env as any)['NODE_ENV'] === 'production';
+export const isProduction = () =>
+  (process.env as any)['NODE_ENV'] === 'production';
 
 // 導出便捷方法
 export const getApiUrl = (endpoint: string): string => {

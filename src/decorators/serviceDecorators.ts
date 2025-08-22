@@ -12,7 +12,11 @@ export function ApiMethod<T, P = any>(
   inputSchema?: ZodSchema<P>,
   responseSchema?: ZodSchema<T>
 ) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -24,7 +28,9 @@ export function ApiMethod<T, P = any>(
         if (inputSchema && args.length > 0) {
           const validationResult = validateInput(inputSchema, args[0]);
           if (!validationResult.isValid) {
-            throw new Error(validationResult.errorMessage || `${operation} 參數驗證失敗`);
+            throw new Error(
+              validationResult.errorMessage || `${operation} 參數驗證失敗`
+            );
           }
         }
 
@@ -33,21 +39,26 @@ export function ApiMethod<T, P = any>(
 
         // 響應驗證
         if (responseSchema && result?.data) {
-          const responseValidation = validateApiResponse(responseSchema, result.data);
+          const responseValidation = validateApiResponse(
+            responseSchema,
+            result.data
+          );
           if (!responseValidation.isValid) {
-            throw new Error(responseValidation.errorMessage || `${operation} 響應數據驗證失敗`);
+            throw new Error(
+              responseValidation.errorMessage || `${operation} 響應數據驗證失敗`
+            );
           }
 
           const validatedResult = {
             ...result,
-            data: responseValidation.data!
+            data: responseValidation.data!,
           };
 
           // 記錄成功日誌
           const duration = Date.now() - startTime;
           logger.info(`✅ ${operation} 成功`, {
             duration: `${duration}ms`,
-            status: result.status
+            status: result.status,
           });
 
           return validatedResult;
@@ -57,7 +68,7 @@ export function ApiMethod<T, P = any>(
         const duration = Date.now() - startTime;
         logger.info(`✅ ${operation} 成功`, {
           duration: `${duration}ms`,
-          status: result?.status
+          status: result?.status,
         });
 
         return result;
@@ -67,7 +78,7 @@ export function ApiMethod<T, P = any>(
         logger.error(`❌ ${operation} 失敗`, {
           error: error.message,
           duration: `${duration}ms`,
-          stack: error.stack
+          stack: error.stack,
         });
         throw error;
       }
@@ -80,14 +91,20 @@ export function ApiMethod<T, P = any>(
  * 只處理輸入驗證，不處理 API 調用
  */
 export function ValidateInput<P = any>(schema: ZodSchema<P>) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
       if (args.length > 0) {
         const validationResult = validateInput(schema, args[0]);
         if (!validationResult.isValid) {
-          throw new Error(validationResult.errorMessage || `${propertyName} 參數驗證失敗`);
+          throw new Error(
+            validationResult.errorMessage || `${propertyName} 參數驗證失敗`
+          );
         }
       }
 
@@ -101,7 +118,11 @@ export function ValidateInput<P = any>(schema: ZodSchema<P>) {
  * 只處理響應驗證，不處理輸入驗證
  */
 export function ValidateResponse<T>(schema: ZodSchema<T>) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -110,12 +131,15 @@ export function ValidateResponse<T>(schema: ZodSchema<T>) {
       if (result?.data) {
         const responseValidation = validateApiResponse(schema, result.data);
         if (!responseValidation.isValid) {
-          throw new Error(responseValidation.errorMessage || `${propertyName} 響應數據驗證失敗`);
+          throw new Error(
+            responseValidation.errorMessage ||
+              `${propertyName} 響應數據驗證失敗`
+          );
         }
 
         return {
           ...result,
-          data: responseValidation.data!
+          data: responseValidation.data!,
         };
       }
 
@@ -129,7 +153,11 @@ export function ValidateResponse<T>(schema: ZodSchema<T>) {
  * 為方法添加重試功能
  */
 export function Retry(maxRetries: number = 3, retryDelay: number = 1000) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -142,17 +170,25 @@ export function Retry(maxRetries: number = 3, retryDelay: number = 1000) {
           lastError = error;
 
           if (attempt === maxRetries) {
-            logger.error(`❌ ${propertyName} 重試失敗 (${attempt}/${maxRetries})`, {
-              error: error.message
-            });
+            logger.error(
+              `❌ ${propertyName} 重試失敗 (${attempt}/${maxRetries})`,
+              {
+                error: error.message,
+              }
+            );
             throw error;
           }
 
-          logger.warn(`⚠️ ${propertyName} 失敗，${retryDelay}ms 後重試 (${attempt}/${maxRetries})`, {
-            error: error.message
-          });
+          logger.warn(
+            `⚠️ ${propertyName} 失敗，${retryDelay}ms 後重試 (${attempt}/${maxRetries})`,
+            {
+              error: error.message,
+            }
+          );
 
-          await new Promise(resolve => setTimeout(resolve, retryDelay * attempt));
+          await new Promise((resolve) =>
+            setTimeout(resolve, retryDelay * attempt)
+          );
         }
       }
 
@@ -166,7 +202,11 @@ export function Retry(maxRetries: number = 3, retryDelay: number = 1000) {
  * 記錄方法執行時間
  */
 export function PerformanceMonitor(operationName?: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
     const operation = operationName || propertyName;
 
@@ -183,7 +223,7 @@ export function PerformanceMonitor(operationName?: string) {
       } catch (error: any) {
         const duration = Date.now() - startTime;
         logger.error(`❌ ${operation} 執行失敗 (${duration}ms)`, {
-          error: error.message
+          error: error.message,
         });
         throw error;
       }
@@ -195,8 +235,15 @@ export function PerformanceMonitor(operationName?: string) {
  * 緩存裝飾器
  * 為方法添加緩存功能
  */
-export function Cache(ttl: number = 60000, keyGenerator?: (...args: any[]) => string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+export function Cache(
+  ttl: number = 60000,
+  keyGenerator?: (...args: any[]) => string
+) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
     const cache = new Map<string, { data: any; timestamp: number }>();
 
@@ -206,7 +253,7 @@ export function Cache(ttl: number = 60000, keyGenerator?: (...args: any[]) => st
 
       // 檢查緩存
       const cached = cache.get(key);
-      if (cached && (now - cached.timestamp) < ttl) {
+      if (cached && now - cached.timestamp < ttl) {
         logger.debug(`📦 ${propertyName} 使用緩存數據`);
         return cached.data;
       }
@@ -228,7 +275,11 @@ export function Cache(ttl: number = 60000, keyGenerator?: (...args: any[]) => st
  * 將單個操作轉換為批量操作
  */
 export function BatchProcess(batchSize: number = 10) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (items: any[], ...args: any[]) {
@@ -253,7 +304,11 @@ export function BatchProcess(batchSize: number = 10) {
  * 為方法添加事務支持
  */
 export function Transaction() {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {
@@ -277,7 +332,11 @@ export function Transaction() {
  * 為方法添加權限檢查
  */
 export function RequirePermission(permission: string) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: any[]) {

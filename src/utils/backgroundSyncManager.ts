@@ -2,14 +2,14 @@ import { logger } from '@/utils/logger';
 
 // 衝突解決策略類型
 export type ConflictResolutionStrategy =
-  | 'server-wins'           // 服務器優先
-  | 'client-wins'           // 客戶端優先
-  | 'merge'                 // 智能合併
-  | 'timestamp-based'       // 基於時間戳
-  | 'user-choice'           // 用戶選擇
-  | 'field-level'           // 字段級別合併
-  | 'version-based'         // 基於版本號
-  | 'custom';               // 自定義策略
+  | 'server-wins' // 服務器優先
+  | 'client-wins' // 客戶端優先
+  | 'merge' // 智能合併
+  | 'timestamp-based' // 基於時間戳
+  | 'user-choice' // 用戶選擇
+  | 'field-level' // 字段級別合併
+  | 'version-based' // 基於版本號
+  | 'custom'; // 自定義策略
 
 // 衝突信息
 export interface ConflictInfo {
@@ -135,9 +135,9 @@ export class BackgroundSyncManager {
         timestampThreshold: 1000, // 1秒
         versionCheckEnabled: false,
         fieldLevelMerge: true,
-        customResolvers: {}
+        customResolvers: {},
       },
-      ...config
+      ...config,
     };
 
     this.status = {
@@ -146,7 +146,7 @@ export class BackgroundSyncManager {
       completedTasks: 0,
       failedTasks: 0,
       pendingTasks: 0,
-      errors: []
+      errors: [],
     };
 
     this.stats = {
@@ -154,7 +154,7 @@ export class BackgroundSyncManager {
       successfulSyncs: 0,
       failedSyncs: 0,
       averageSyncTime: 0,
-      syncHistory: []
+      syncHistory: [],
     };
 
     this.loadTasks();
@@ -168,7 +168,7 @@ export class BackgroundSyncManager {
       ...task,
       id,
       retryCount: 0,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
 
     this.tasks.set(id, syncTask);
@@ -180,7 +180,9 @@ export class BackgroundSyncManager {
   }
 
   // 批量添加任務
-  addTasks(tasks: Omit<SyncTask, 'id' | 'retryCount' | 'createdAt'>[]): string[] {
+  addTasks(
+    tasks: Omit<SyncTask, 'id' | 'retryCount' | 'createdAt'>[]
+  ): string[] {
     const ids: string[] = [];
 
     for (const task of tasks) {
@@ -223,7 +225,7 @@ export class BackgroundSyncManager {
   // 獲取待處理任務
   getPendingTasks(): SyncTask[] {
     return Array.from(this.tasks.values())
-      .filter(task => task.retryCount < task.maxRetries)
+      .filter((task) => task.retryCount < task.maxRetries)
       .sort((a, b) => {
         // 按優先級排序
         const priorityOrder = { high: 3, medium: 2, low: 1 };
@@ -265,10 +267,13 @@ export class BackgroundSyncManager {
       }
 
       // 並行處理任務
-      const chunks = this.chunkArray(pendingTasks, this.config.maxConcurrentTasks);
+      const chunks = this.chunkArray(
+        pendingTasks,
+        this.config.maxConcurrentTasks
+      );
 
       for (const chunk of chunks) {
-        await Promise.allSettled(chunk.map(task => this.processTask(task)));
+        await Promise.allSettled(chunk.map((task) => this.processTask(task)));
       }
 
       const duration = Date.now() - startTime;
@@ -278,13 +283,14 @@ export class BackgroundSyncManager {
         duration,
         totalTasks: this.status.totalTasks,
         completedTasks: this.status.completedTasks,
-        failedTasks: this.status.failedTasks
+        failedTasks: this.status.failedTasks,
       });
-
     } catch (error) {
       const duration = Date.now() - startTime;
       this.updateStats(false, duration, this.status.totalTasks);
-      this.status.errors.push(error instanceof Error ? error.message : '同步失敗');
+      this.status.errors.push(
+        error instanceof Error ? error.message : '同步失敗'
+      );
 
       logger.error('[Background Sync] 同步失敗:', error);
     } finally {
@@ -303,7 +309,8 @@ export class BackgroundSyncManager {
 
       if (response.ok) {
         // 檢查是否需要衝突解決
-        if (response.status === 409) { // Conflict
+        if (response.status === 409) {
+          // Conflict
           const serverData = await response.json();
           const resolution = await this.resolveConflict(task, serverData);
 
@@ -311,14 +318,20 @@ export class BackgroundSyncManager {
             // 使用解決後的數據重新提交
             const retryResponse = await this.executeTask({
               ...task,
-              body: resolution.finalValue
+              body: resolution.finalValue,
             });
 
             if (retryResponse.ok) {
               this.completeTask(task);
-              logger.info('[Background Sync] 衝突解決成功，任務完成:', task.id, resolution.strategy);
+              logger.info(
+                '[Background Sync] 衝突解決成功，任務完成:',
+                task.id,
+                resolution.strategy
+              );
             } else {
-              throw new Error(`衝突解決後重試失敗: HTTP ${retryResponse.status}`);
+              throw new Error(
+                `衝突解決後重試失敗: HTTP ${retryResponse.status}`
+              );
             }
           } else {
             throw new Error('衝突解決失敗');
@@ -330,7 +343,6 @@ export class BackgroundSyncManager {
       } else {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
-
     } catch (error) {
       this.handleTaskError(task, error);
     }
@@ -344,8 +356,8 @@ export class BackgroundSyncManager {
       method,
       headers: {
         'Content-Type': 'application/json',
-        ...headers
-      }
+        ...headers,
+      },
     };
 
     if (body && method !== 'GET') {
@@ -374,16 +386,25 @@ export class BackgroundSyncManager {
       this.tasks.delete(task.id);
       this.status.failedTasks++;
       this.status.pendingTasks--;
-      logger.error('[Background Sync] 任務失敗，已達最大重試次數:', task.id, task.error);
+      logger.error(
+        '[Background Sync] 任務失敗，已達最大重試次數:',
+        task.id,
+        task.error
+      );
     } else {
       // 計算下次重試延遲
       const delay = Math.min(
-        task.retryDelay * Math.pow(this.config.retryBackoffMultiplier, task.retryCount - 1),
+        task.retryDelay *
+          Math.pow(this.config.retryBackoffMultiplier, task.retryCount - 1),
         this.config.maxRetryDelay
       );
       task.retryDelay = delay;
 
-      logger.warn('[Background Sync] 任務重試:', task.id, `重試 ${task.retryCount}/${task.maxRetries}`);
+      logger.warn(
+        '[Background Sync] 任務重試:',
+        task.id,
+        `重試 ${task.retryCount}/${task.maxRetries}`
+      );
     }
 
     this.updateStatus();
@@ -391,17 +412,22 @@ export class BackgroundSyncManager {
   }
 
   // 衝突解決
-  private async resolveConflict(task: SyncTask, serverData: any): Promise<ConflictResolution> {
+  private async resolveConflict(
+    task: SyncTask,
+    serverData: any
+  ): Promise<ConflictResolution> {
     if (!this.config.enableConflictResolution) {
       return {
         resolved: true,
         finalValue: task.body,
         strategy: 'client-wins',
-        confidence: 1.0
+        confidence: 1.0,
       };
     }
 
-    const strategy = task.conflictResolutionStrategy || this.config.conflictResolution.defaultStrategy;
+    const strategy =
+      task.conflictResolutionStrategy ||
+      this.config.conflictResolution.defaultStrategy;
     const conflictInfo = this.detectConflict(task, serverData);
 
     if (!conflictInfo) {
@@ -409,7 +435,7 @@ export class BackgroundSyncManager {
         resolved: true,
         finalValue: serverData,
         strategy: 'server-wins',
-        confidence: 1.0
+        confidence: 1.0,
       };
     }
 
@@ -443,7 +469,9 @@ export class BackgroundSyncManager {
         finalValue: task.body,
         strategy: 'client-wins',
         confidence: 0.0,
-        metadata: { error: error instanceof Error ? error.message : '未知錯誤' }
+        metadata: {
+          error: error instanceof Error ? error.message : '未知錯誤',
+        },
       };
     }
   }
@@ -473,26 +501,30 @@ export class BackgroundSyncManager {
       clientVersion: task.version,
       serverVersion: serverData.version,
       conflictType: 'update',
-      severity: this.calculateConflictSeverity(clientData, serverData)
+      severity: this.calculateConflictSeverity(clientData, serverData),
     };
   }
 
   // 計算衝突嚴重程度
-  private calculateConflictSeverity(clientData: any, serverData: any): 'low' | 'medium' | 'high' {
+  private calculateConflictSeverity(
+    clientData: any,
+    serverData: any
+  ): 'low' | 'medium' | 'high' {
     if (typeof clientData !== 'object' || typeof serverData !== 'object') {
       return 'medium';
     }
 
     const clientKeys = Object.keys(clientData);
     const serverKeys = Object.keys(serverData);
-    const commonKeys = clientKeys.filter(key => serverKeys.includes(key));
+    const commonKeys = clientKeys.filter((key) => serverKeys.includes(key));
 
     if (commonKeys.length === 0) {
       return 'low'; // 沒有共同字段，衝突較輕
     }
 
-    const conflictingFields = commonKeys.filter(key =>
-      JSON.stringify(clientData[key]) !== JSON.stringify(serverData[key])
+    const conflictingFields = commonKeys.filter(
+      (key) =>
+        JSON.stringify(clientData[key]) !== JSON.stringify(serverData[key])
     );
 
     const conflictRatio = conflictingFields.length / commonKeys.length;
@@ -509,7 +541,7 @@ export class BackgroundSyncManager {
       finalValue: conflictInfo.serverValue,
       strategy: 'server-wins',
       confidence: 0.8,
-      metadata: { reason: '服務器數據優先' }
+      metadata: { reason: '服務器數據優先' },
     };
   }
 
@@ -520,50 +552,65 @@ export class BackgroundSyncManager {
       finalValue: conflictInfo.clientValue,
       strategy: 'client-wins',
       confidence: 0.8,
-      metadata: { reason: '客戶端數據優先' }
+      metadata: { reason: '客戶端數據優先' },
     };
   }
 
   // 智能合併策略
   private resolveMerge(conflictInfo: ConflictInfo): ConflictResolution {
-    const merged = this.deepMerge(conflictInfo.clientValue, conflictInfo.serverValue);
+    const merged = this.deepMerge(
+      conflictInfo.clientValue,
+      conflictInfo.serverValue
+    );
     return {
       resolved: true,
       finalValue: merged,
       strategy: 'merge',
       confidence: 0.7,
-      metadata: { mergedFields: this.getMergedFields(conflictInfo.clientValue, conflictInfo.serverValue) }
+      metadata: {
+        mergedFields: this.getMergedFields(
+          conflictInfo.clientValue,
+          conflictInfo.serverValue
+        ),
+      },
     };
   }
 
   // 基於時間戳策略
-  private resolveTimestampBased(conflictInfo: ConflictInfo): ConflictResolution {
-    const timeDiff = Math.abs(conflictInfo.serverTimestamp - conflictInfo.clientTimestamp);
+  private resolveTimestampBased(
+    conflictInfo: ConflictInfo
+  ): ConflictResolution {
+    const timeDiff = Math.abs(
+      conflictInfo.serverTimestamp - conflictInfo.clientTimestamp
+    );
     const threshold = this.config.conflictResolution.timestampThreshold;
 
     if (timeDiff <= threshold) {
       // 時間差異小，合併數據
-      const merged = this.deepMerge(conflictInfo.clientValue, conflictInfo.serverValue);
+      const merged = this.deepMerge(
+        conflictInfo.clientValue,
+        conflictInfo.serverValue
+      );
       return {
         resolved: true,
         finalValue: merged,
         strategy: 'timestamp-based',
         confidence: 0.6,
-        metadata: { timeDiff, threshold, action: 'merged' }
+        metadata: { timeDiff, threshold, action: 'merged' },
       };
     }
     // 時間差異大，選擇較新的數據
-    const newerValue = conflictInfo.serverTimestamp > conflictInfo.clientTimestamp
-      ? conflictInfo.serverValue
-      : conflictInfo.clientValue;
+    const newerValue =
+      conflictInfo.serverTimestamp > conflictInfo.clientTimestamp
+        ? conflictInfo.serverValue
+        : conflictInfo.clientValue;
     return {
       resolved: true,
       finalValue: newerValue,
       strategy: 'timestamp-based',
       confidence: 0.9,
-      metadata: { timeDiff, threshold, action: 'newer_wins' }
+      metadata: { timeDiff, threshold, action: 'newer_wins' },
     };
-
   }
 
   // 字段級別合併策略
@@ -572,13 +619,21 @@ export class BackgroundSyncManager {
       return this.resolveServerWins(conflictInfo);
     }
 
-    const merged = this.fieldLevelMerge(conflictInfo.clientValue, conflictInfo.serverValue);
+    const merged = this.fieldLevelMerge(
+      conflictInfo.clientValue,
+      conflictInfo.serverValue
+    );
     return {
       resolved: true,
       finalValue: merged,
       strategy: 'field-level',
       confidence: 0.8,
-      metadata: { mergedFields: this.getMergedFields(conflictInfo.clientValue, conflictInfo.serverValue) }
+      metadata: {
+        mergedFields: this.getMergedFields(
+          conflictInfo.clientValue,
+          conflictInfo.serverValue
+        ),
+      },
     };
   }
 
@@ -597,7 +652,10 @@ export class BackgroundSyncManager {
         finalValue: conflictInfo.clientValue,
         strategy: 'version-based',
         confidence: 0.9,
-        metadata: { clientVersion: conflictInfo.clientVersion, serverVersion: conflictInfo.serverVersion }
+        metadata: {
+          clientVersion: conflictInfo.clientVersion,
+          serverVersion: conflictInfo.serverVersion,
+        },
       };
     }
     return {
@@ -605,9 +663,11 @@ export class BackgroundSyncManager {
       finalValue: conflictInfo.serverValue,
       strategy: 'version-based',
       confidence: 0.9,
-      metadata: { clientVersion: conflictInfo.clientVersion, serverVersion: conflictInfo.serverVersion }
+      metadata: {
+        clientVersion: conflictInfo.clientVersion,
+        serverVersion: conflictInfo.serverVersion,
+      },
     };
-
   }
 
   // 用戶選擇策略
@@ -623,27 +683,37 @@ export class BackgroundSyncManager {
       finalValue: conflictInfo.serverValue,
       strategy: 'user-choice',
       confidence: 0.5,
-      metadata: { reason: '用戶選擇功能待實現' }
+      metadata: { reason: '用戶選擇功能待實現' },
     };
   }
 
   // 自定義策略
-  private resolveCustom(conflictInfo: ConflictInfo, task: SyncTask): ConflictResolution {
-    const {customResolvers} = this.config.conflictResolution;
-    const resolverKey = `${task.type  }_${  task.url}`;
+  private resolveCustom(
+    conflictInfo: ConflictInfo,
+    task: SyncTask
+  ): ConflictResolution {
+    const { customResolvers } = this.config.conflictResolution;
+    const resolverKey = `${task.type}_${task.url}`;
 
     if (customResolvers[resolverKey]) {
       try {
-        const result = customResolvers[resolverKey](conflictInfo.clientValue, conflictInfo.serverValue);
+        const result = customResolvers[resolverKey](
+          conflictInfo.clientValue,
+          conflictInfo.serverValue
+        );
         return {
           resolved: true,
           finalValue: result,
           strategy: 'custom',
           confidence: 0.8,
-          metadata: { customResolver: resolverKey }
+          metadata: { customResolver: resolverKey },
         };
       } catch (error) {
-        logger.error('[Background Sync] 自定義衝突解決器失敗:', resolverKey, error);
+        logger.error(
+          '[Background Sync] 自定義衝突解決器失敗:',
+          resolverKey,
+          error
+        );
       }
     }
 
@@ -659,7 +729,11 @@ export class BackgroundSyncManager {
 
     for (const key in server) {
       if (server.hasOwnProperty(key)) {
-        if (key in result && typeof result[key] === 'object' && typeof server[key] === 'object') {
+        if (
+          key in result &&
+          typeof result[key] === 'object' &&
+          typeof server[key] === 'object'
+        ) {
           result[key] = this.deepMerge(result[key], server[key]);
         } else {
           result[key] = server[key];
@@ -681,7 +755,8 @@ export class BackgroundSyncManager {
       if (server.hasOwnProperty(key)) {
         if (key in result) {
           // 檢查是否有字段級別的自定義解決器
-          const fieldResolver = this.config.conflictResolution.customResolvers[key];
+          const fieldResolver =
+            this.config.conflictResolution.customResolvers[key];
           if (fieldResolver) {
             result[key] = fieldResolver(result[key], server[key]);
           } else {
@@ -702,12 +777,12 @@ export class BackgroundSyncManager {
 
     const clientKeys = Object.keys(client);
     const serverKeys = Object.keys(server);
-    return clientKeys.filter(key => serverKeys.includes(key));
+    return clientKeys.filter((key) => serverKeys.includes(key));
   }
 
   // 解析版本號
   private parseVersion(version: string): number[] {
-    return version.split('.').map(v => parseInt(v, 10) || 0);
+    return version.split('.').map((v) => parseInt(v, 10) || 0);
   }
 
   // 比較版本號
@@ -729,11 +804,17 @@ export class BackgroundSyncManager {
   private updateStatus(): void {
     const allTasks = Array.from(this.tasks.values());
     this.status.totalTasks = allTasks.length;
-    this.status.pendingTasks = allTasks.filter(t => t.retryCount < t.maxRetries).length;
+    this.status.pendingTasks = allTasks.filter(
+      (t) => t.retryCount < t.maxRetries
+    ).length;
   }
 
   // 更新統計
-  private updateStats(success: boolean, duration: number, taskCount: number): void {
+  private updateStats(
+    success: boolean,
+    duration: number,
+    taskCount: number
+  ): void {
     this.stats.totalSyncs++;
 
     if (success) {
@@ -745,7 +826,8 @@ export class BackgroundSyncManager {
     this.stats.lastSyncDuration = duration;
 
     // 更新平均同步時間
-    const totalTime = this.stats.averageSyncTime * (this.stats.totalSyncs - 1) + duration;
+    const totalTime =
+      this.stats.averageSyncTime * (this.stats.totalSyncs - 1) + duration;
     this.stats.averageSyncTime = totalTime / this.stats.totalSyncs;
 
     // 添加同步歷史
@@ -753,7 +835,7 @@ export class BackgroundSyncManager {
       timestamp: Date.now(),
       duration,
       success,
-      taskCount
+      taskCount,
     });
 
     // 保留最近100條記錄
@@ -770,7 +852,10 @@ export class BackgroundSyncManager {
       this.startSync();
     }, this.config.syncInterval);
 
-    logger.info('[Background Sync] 自動同步已啟動，間隔:', this.config.syncInterval);
+    logger.info(
+      '[Background Sync] 自動同步已啟動，間隔:',
+      this.config.syncInterval
+    );
   }
 
   // 停止自動同步
@@ -882,10 +967,14 @@ export class BackgroundSyncManager {
     byType: Record<string, number>;
     byPriority: Record<string, number>;
     byStatus: Record<string, number>;
-    } {
+  } {
     const byType: Record<string, number> = {};
     const byPriority: Record<string, number> = {};
-    const byStatus: Record<string, number> = { pending: 0, completed: 0, failed: 0 };
+    const byStatus: Record<string, number> = {
+      pending: 0,
+      completed: 0,
+      failed: 0,
+    };
 
     for (const task of this.tasks.values()) {
       // 按類型統計
@@ -908,7 +997,10 @@ export class BackgroundSyncManager {
   }
 
   // 設置衝突解決策略
-  setConflictResolutionStrategy(taskId: string, strategy: ConflictResolutionStrategy): boolean {
+  setConflictResolutionStrategy(
+    taskId: string,
+    strategy: ConflictResolutionStrategy
+  ): boolean {
     const task = this.tasks.get(taskId);
     if (task) {
       task.conflictResolutionStrategy = strategy;
@@ -920,7 +1012,10 @@ export class BackgroundSyncManager {
   }
 
   // 添加自定義衝突解決器
-  addCustomResolver(key: string, resolver: (client: any, server: any) => any): void {
+  addCustomResolver(
+    key: string,
+    resolver: (client: any, server: any) => any
+  ): void {
     this.config.conflictResolution.customResolvers[key] = resolver;
     logger.info('[Background Sync] 添加自定義衝突解決器:', key);
   }
@@ -940,8 +1035,13 @@ export class BackgroundSyncManager {
   }
 
   // 更新衝突解決配置
-  updateConflictResolutionConfig(config: Partial<ConflictResolutionConfig>): void {
-    this.config.conflictResolution = { ...this.config.conflictResolution, ...config };
+  updateConflictResolutionConfig(
+    config: Partial<ConflictResolutionConfig>
+  ): void {
+    this.config.conflictResolution = {
+      ...this.config.conflictResolution,
+      ...config,
+    };
     logger.info('[Background Sync] 更新衝突解決配置:', config);
   }
 
@@ -963,7 +1063,7 @@ export class BackgroundSyncManager {
       maxRetries: 3,
       retryDelay: 1000,
       createdAt: Date.now(),
-      conflictResolutionStrategy: strategy
+      conflictResolutionStrategy: strategy,
     };
 
     return await this.resolveConflict(mockTask, serverData);

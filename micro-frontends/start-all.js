@@ -9,7 +9,7 @@ const modules = [
   { name: 'ai-ecosystem', port: 3003, cwd: './ai-ecosystem' },
   { name: 'user-management', port: 3004, cwd: './user-management' },
   { name: 'investment-portfolio', port: 3005, cwd: './investment-portfolio' },
-  { name: 'social-features', port: 3006, cwd: './social-features' }
+  { name: 'social-features', port: 3006, cwd: './social-features' },
 ];
 
 // 啟動所有模組
@@ -18,13 +18,13 @@ function startAllModules() {
 
   const processes = [];
 
-  modules.forEach(module => {
+  modules.forEach((module) => {
     // logger.info(`📦 啟動 ${module.name} 模組 (端口: ${module.port})`);
 
     const child = spawn('npm', ['start'], {
       cwd: path.join(__dirname, module.cwd),
       stdio: 'pipe',
-      shell: true
+      shell: true,
     });
 
     child.stdout.on('data', (data) => {
@@ -45,7 +45,7 @@ function startAllModules() {
   // 優雅關閉
   process.on('SIGINT', () => {
     // logger.info('\n🛑 正在關閉所有模組...');
-    processes.forEach(child => {
+    processes.forEach((child) => {
       child.kill('SIGINT');
     });
     process.exit(0);
@@ -69,7 +69,7 @@ function checkAndStart() {
   const fs = require('fs');
   const missingModules = [];
 
-  modules.forEach(module => {
+  modules.forEach((module) => {
     const packageJsonPath = path.join(__dirname, module.cwd, 'package.json');
     if (!fs.existsSync(packageJsonPath)) {
       missingModules.push(module.name);
@@ -78,7 +78,9 @@ function checkAndStart() {
 
   if (missingModules.length > 0) {
     // logger.info('❌ 以下模組缺少 package.json 文件:');
-    missingModules.forEach(name => // logger.info(`   - ${name}`));
+    missingModules.forEach((name) => {
+      /* logger.info(`   - ${name}`) */
+    });
     // logger.info('\n請先創建這些模組的配置文件。');
     return;
   }

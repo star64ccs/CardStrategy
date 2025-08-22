@@ -7,7 +7,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -22,7 +22,7 @@ import {
   Badge,
   AnimatedView,
   SlideUpView,
-  FadeInView
+  FadeInView,
 } from '../components/common';
 import { theme } from '../config/theme';
 import { logger } from '../utils/logger';
@@ -37,7 +37,7 @@ import {
   selectFeedbackTags,
   selectFeedbackLoadingStates,
   selectFeedbackError,
-  clearError
+  clearError,
 } from '../store/slices/feedbackSlice';
 import { FeedbackItem } from '../components/feedback/FeedbackItem';
 import { FeedbackFilter } from '../components/feedback/FeedbackFilter';
@@ -51,7 +51,7 @@ interface FeedbackScreenProps {
 }
 
 const FeedbackScreen: React.FC<FeedbackScreenProps> = ({
-  onNavigateToDetail
+  onNavigateToDetail,
 }) => {
   const { t } = useTranslation();
   const navigation = useNavigation();
@@ -83,7 +83,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({
       Toast.show({
         type: 'error',
         title: t('feedback.error.title'),
-        message: error
+        message: error,
       });
       dispatch(clearError());
     }
@@ -95,7 +95,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({
         dispatch(fetchFeedbacks()).unwrap(),
         dispatch(fetchFeedbackStats()).unwrap(),
         dispatch(fetchFeedbackTemplates()).unwrap(),
-        dispatch(fetchFeedbackTags()).unwrap()
+        dispatch(fetchFeedbackTags()).unwrap(),
       ]);
     } catch (error) {
       logger.error('載入反饋數據失敗', { error });
@@ -124,7 +124,7 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({
     Toast.show({
       type: 'success',
       title: t('feedback.create.success.title'),
-      message: t('feedback.create.success.message')
+      message: t('feedback.create.success.message'),
     });
 
     // 導航到新創建的反饋詳情
@@ -266,8 +266,14 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({
               Alert.alert(t('feedback.sort.title'), t('feedback.sort.message'));
             }}
           >
-            <Ionicons name="swap-vertical" size={16} color={theme.colors.textSecondary} />
-            <Text style={styles.sortButtonText}>{t('feedback.sort.button')}</Text>
+            <Ionicons
+              name="swap-vertical"
+              size={16}
+              color={theme.colors.textSecondary}
+            />
+            <Text style={styles.sortButtonText}>
+              {t('feedback.sort.button')}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -336,52 +342,52 @@ const FeedbackScreen: React.FC<FeedbackScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background
+    backgroundColor: theme.colors.background,
   },
   scrollView: {
-    flex: 1
+    flex: 1,
   },
   header: {
     padding: theme.spacing.lg,
     backgroundColor: theme.colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   title: {
     fontSize: theme.typography.sizes.xl,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   headerActions: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   iconButton: {
     padding: theme.spacing.sm,
-    marginLeft: theme.spacing.sm
+    marginLeft: theme.spacing.sm,
   },
   statsContainer: {
-    marginTop: theme.spacing.md
+    marginTop: theme.spacing.md,
   },
   filterContainer: {
-    marginTop: theme.spacing.md
+    marginTop: theme.spacing.md,
   },
   templatesSection: {
-    padding: theme.spacing.lg
+    padding: theme.spacing.lg,
   },
   sectionTitle: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.semiBold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   templatesContainer: {
-    paddingRight: theme.spacing.lg
+    paddingRight: theme.spacing.lg,
   },
   templateCard: {
     width: 200,
@@ -390,88 +396,88 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.surface,
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   templateName: {
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semiBold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   templateDescription: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.textSecondary,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing.xl
+    padding: theme.spacing.xl,
   },
   loadingText: {
     marginTop: theme.spacing.md,
     fontSize: theme.typography.sizes.md,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: theme.spacing.xl
+    padding: theme.spacing.xl,
   },
   emptyTitle: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.semiBold,
     color: theme.colors.text,
     marginTop: theme.spacing.md,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   emptyMessage: {
     fontSize: theme.typography.sizes.md,
     color: theme.colors.textSecondary,
     textAlign: 'center',
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   emptyButton: {
-    minWidth: 200
+    minWidth: 200,
   },
   feedbacksContainer: {
-    padding: theme.spacing.lg
+    padding: theme.spacing.lg,
   },
   feedbacksHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   feedbacksTitle: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.semiBold,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   sortButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: theme.spacing.sm
+    padding: theme.spacing.sm,
   },
   sortButtonText: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.textSecondary,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   feedbackItem: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   createButtonContainer: {
     position: 'absolute',
     bottom: theme.spacing.lg,
     right: theme.spacing.lg,
-    left: theme.spacing.lg
+    left: theme.spacing.lg,
   },
   createButton: {
-    borderRadius: theme.borderRadius.full
-  }
+    borderRadius: theme.borderRadius.full,
+  },
 });
 
 export default FeedbackScreen;

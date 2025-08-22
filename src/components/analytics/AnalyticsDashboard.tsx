@@ -6,7 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { analyticsService } from '@/services/analyticsService';
@@ -34,7 +34,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
       const [trends, portfolio, predictive] = await Promise.all([
         analyticsService.getMarketTrends({ timeframe }),
         analyticsService.getPortfolioAnalysis(userId, { timeframe }),
-        analyticsService.getPredictiveAnalysis({ timeframe: '7d' })
+        analyticsService.getPredictiveAnalysis({ timeframe: '7d' }),
       ]);
 
       setMarketTrends(trends);
@@ -57,7 +57,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
       await analyticsService.generateComprehensiveReport({
         reportType: 'monthly',
         includeCharts: true,
-        includeRecommendations: true
+        includeRecommendations: true,
       });
       Alert.alert('成功', '綜合報告生成完成');
     } catch (error) {
@@ -69,7 +69,10 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
 
   const exportData = async () => {
     try {
-      const exportData = await analyticsService.exportAnalyticsData('market_trends', { timeframe });
+      const exportData = await analyticsService.exportAnalyticsData(
+        'market_trends',
+        { timeframe }
+      );
       Alert.alert('成功', `數據已導出，下載鏈接: ${exportData.downloadUrl}`);
     } catch (error) {
       handleError(error, '數據導出失敗');
@@ -82,13 +85,16 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
         <View style={styles.metricCard}>
           <Text style={styles.metricLabel}>總交易量</Text>
           <Text style={styles.metricValue}>
-            {marketTrends?.summary?.keyMetrics?.totalTransactions?.toLocaleString() || '0'}
+            {marketTrends?.summary?.keyMetrics?.totalTransactions?.toLocaleString() ||
+              '0'}
           </Text>
         </View>
         <View style={styles.metricCard}>
           <Text style={styles.metricLabel}>平均價格變化</Text>
           <Text style={styles.metricValue}>
-            {marketTrends?.summary?.keyMetrics?.avgPriceChange?.toFixed(2) || '0'}%
+            {marketTrends?.summary?.keyMetrics?.avgPriceChange?.toFixed(2) ||
+              '0'}
+            %
           </Text>
         </View>
         <View style={styles.metricCard}>
@@ -100,7 +106,9 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
         <View style={styles.metricCard}>
           <Text style={styles.metricLabel}>預測準確率</Text>
           <Text style={styles.metricValue}>
-            {predictiveAnalysis?.accuracy ? `${(predictiveAnalysis.accuracy * 100).toFixed(0)}%` : 'N/A'}
+            {predictiveAnalysis?.accuracy
+              ? `${(predictiveAnalysis.accuracy * 100).toFixed(0)}%`
+              : 'N/A'}
           </Text>
         </View>
       </View>
@@ -136,12 +144,17 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>卡片數量</Text>
-                <Text style={styles.statValue}>{portfolioAnalysis.portfolio.totalCards}</Text>
+                <Text style={styles.statValue}>
+                  {portfolioAnalysis.portfolio.totalCards}
+                </Text>
               </View>
               <View style={styles.statItem}>
                 <Text style={styles.statLabel}>多樣化評分</Text>
                 <Text style={styles.statValue}>
-                  {(portfolioAnalysis.portfolio.diversification.score * 100).toFixed(0)}%
+                  {(
+                    portfolioAnalysis.portfolio.diversification.score * 100
+                  ).toFixed(0)}
+                  %
                 </Text>
               </View>
               <View style={styles.statItem}>
@@ -156,14 +169,18 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
           {portfolioAnalysis.recommendations && (
             <View style={styles.recommendationsContainer}>
               <Text style={styles.sectionTitle}>投資建議</Text>
-              {portfolioAnalysis.recommendations.map((rec: any, index: number) => (
-                <View key={index} style={styles.recommendationCard}>
-                  <Text style={styles.recommendationMessage}>{rec.message}</Text>
-                  <Text style={styles.recommendationAction}>
-                    建議操作: {rec.action}
-                  </Text>
-                </View>
-              ))}
+              {portfolioAnalysis.recommendations.map(
+                (rec: any, index: number) => (
+                  <View key={index} style={styles.recommendationCard}>
+                    <Text style={styles.recommendationMessage}>
+                      {rec.message}
+                    </Text>
+                    <Text style={styles.recommendationAction}>
+                      建議操作: {rec.action}
+                    </Text>
+                  </View>
+                )
+              )}
             </View>
           )}
         </>
@@ -184,11 +201,15 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
             <View style={styles.predictionStats}>
               <View style={styles.predictionItem}>
                 <Text style={styles.predictionLabel}>預測目標</Text>
-                <Text style={styles.predictionValue}>{predictiveAnalysis.target}</Text>
+                <Text style={styles.predictionValue}>
+                  {predictiveAnalysis.target}
+                </Text>
               </View>
               <View style={styles.predictionItem}>
                 <Text style={styles.predictionLabel}>時間範圍</Text>
-                <Text style={styles.predictionValue}>{predictiveAnalysis.timeframe}</Text>
+                <Text style={styles.predictionValue}>
+                  {predictiveAnalysis.timeframe}
+                </Text>
               </View>
               <View style={styles.predictionItem}>
                 <Text style={styles.predictionLabel}>置信度</Text>
@@ -208,12 +229,18 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
           {predictiveAnalysis.factors && (
             <View style={styles.factorsContainer}>
               <Text style={styles.sectionTitle}>關鍵影響因素</Text>
-              {predictiveAnalysis.factors.map((factor: string, index: number) => (
-                <View key={index} style={styles.factorItem}>
-                  <MaterialIcons name="trending-up" size={16} color="#4CAF50" />
-                  <Text style={styles.factorText}>{factor}</Text>
-                </View>
-              ))}
+              {predictiveAnalysis.factors.map(
+                (factor: string, index: number) => (
+                  <View key={index} style={styles.factorItem}>
+                    <MaterialIcons
+                      name="trending-up"
+                      size={16}
+                      color="#4CAF50"
+                    />
+                    <Text style={styles.factorText}>{factor}</Text>
+                  </View>
+                )
+              )}
             </View>
           )}
         </>
@@ -237,10 +264,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
           <Text style={styles.actionButtonText}>生成綜合報告</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={exportData}
-        >
+        <TouchableOpacity style={styles.actionButton} onPress={exportData}>
           <MaterialIcons name="file-download" size={20} color="#fff" />
           <Text style={styles.actionButtonText}>導出數據</Text>
         </TouchableOpacity>
@@ -269,9 +293,13 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
       <View style={styles.tabBar}>
         {[
           { key: 'overview', label: '概覽', icon: 'dashboard' },
-          { key: 'portfolio', label: '投資組合', icon: 'account-balance-wallet' },
+          {
+            key: 'portfolio',
+            label: '投資組合',
+            icon: 'account-balance-wallet',
+          },
           { key: 'predictive', label: '預測', icon: 'trending-up' },
-          { key: 'reports', label: '報告', icon: 'assessment' }
+          { key: 'reports', label: '報告', icon: 'assessment' },
         ].map((tab) => (
           <TouchableOpacity
             key={tab.key}
@@ -283,7 +311,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
               size={20}
               color={activeTab === tab.key ? '#007AFF' : '#666'}
             />
-            <Text style={[styles.tabLabel, activeTab === tab.key && styles.activeTabLabel]}>
+            <Text
+              style={[
+                styles.tabLabel,
+                activeTab === tab.key && styles.activeTabLabel,
+              ]}
+            >
               {tab.label}
             </Text>
           </TouchableOpacity>
@@ -312,7 +345,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ userId }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   header: {
     flexDirection: 'row',
@@ -321,12 +354,12 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0'
+    borderBottomColor: '#e0e0e0',
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   timeframeButton: {
     flexDirection: 'row',
@@ -334,19 +367,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     backgroundColor: '#f0f0f0',
-    borderRadius: 16
+    borderRadius: 16,
   },
   timeframeText: {
     fontSize: 14,
     fontWeight: '600',
     color: '#333',
-    marginRight: 4
+    marginRight: 4,
   },
   tabBar: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0'
+    borderBottomColor: '#e0e0e0',
   },
   tab: {
     flex: 1,
@@ -354,53 +387,53 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: '#007AFF'
+    borderBottomColor: '#007AFF',
   },
   tabLabel: {
     fontSize: 12,
     color: '#666',
-    marginLeft: 4
+    marginLeft: 4,
   },
   activeTabLabel: {
     color: '#007AFF',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   content: {
-    flex: 1
+    flex: 1,
   },
   tabContent: {
-    padding: 16
+    padding: 16,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 40
+    paddingVertical: 40,
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: '#666'
+    color: '#666',
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 40
+    paddingVertical: 40,
   },
   emptyText: {
     fontSize: 16,
-    color: '#666'
+    color: '#666',
   },
   metricsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 20,
   },
   metricCard: {
     width: '48%',
@@ -412,17 +445,17 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   metricLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   metricValue: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   insightsContainer: {
     backgroundColor: '#fff',
@@ -433,28 +466,28 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 16
+    marginBottom: 16,
   },
   insightCard: {
     backgroundColor: '#f8f9fa',
     padding: 12,
     borderRadius: 6,
-    marginBottom: 8
+    marginBottom: 8,
   },
   insightMessage: {
     fontSize: 14,
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   insightConfidence: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   portfolioOverview: {
     backgroundColor: '#fff',
@@ -465,26 +498,26 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   portfolioStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   statValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   recommendationsContainer: {
     backgroundColor: '#fff',
@@ -495,22 +528,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   recommendationCard: {
     backgroundColor: '#f8f9fa',
     padding: 12,
     borderRadius: 6,
-    marginBottom: 8
+    marginBottom: 8,
   },
   recommendationMessage: {
     fontSize: 14,
     color: '#333',
-    marginBottom: 4
+    marginBottom: 4,
   },
   recommendationAction: {
     fontSize: 12,
-    color: '#666'
+    color: '#666',
   },
   predictionOverview: {
     backgroundColor: '#fff',
@@ -521,26 +554,26 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   predictionStats: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   predictionItem: {
     width: '48%',
-    marginBottom: 12
+    marginBottom: 12,
   },
   predictionLabel: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   predictionValue: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   factorsContainer: {
     backgroundColor: '#fff',
@@ -551,22 +584,22 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   factorItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   factorText: {
     fontSize: 14,
     color: '#333',
-    marginLeft: 8
+    marginLeft: 8,
   },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20
+    marginBottom: 20,
   },
   actionButton: {
     flexDirection: 'row',
@@ -575,14 +608,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
-    width: '48%'
+    width: '48%',
   },
   actionButtonText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '600',
-    marginLeft: 8
-  }
+    marginLeft: 8,
+  },
 });
 
 export default AnalyticsDashboard;

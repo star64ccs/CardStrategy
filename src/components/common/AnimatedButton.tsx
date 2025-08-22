@@ -6,7 +6,7 @@ import {
   ViewStyle,
   TextStyle,
   Text,
-  View
+  View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../../theme/designSystem';
@@ -14,7 +14,7 @@ import {
   ADVANCED_ANIMATION_CONFIG,
   animationComposers,
   ANIMATION_PRESETS,
-  animationUtils
+  animationUtils,
 } from '../../utils/advancedAnimations';
 
 export interface AnimatedButtonProps {
@@ -27,7 +27,14 @@ export interface AnimatedButtonProps {
   scaleOnPress?: boolean;
   rippleEffect?: boolean;
   animationDuration?: number;
-  variant?: 'default' | 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success';
+  variant?:
+    | 'default'
+    | 'primary'
+    | 'secondary'
+    | 'outline'
+    | 'ghost'
+    | 'danger'
+    | 'success';
   size?: 'small' | 'medium' | 'large';
   loading?: boolean;
   icon?: string;
@@ -66,7 +73,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   pulseEffect = false,
   shakeOnError = false,
   successAnimation = false,
-  errorAnimation = false
+  errorAnimation = false,
 }) => {
   const scaleValue = useRef(new Animated.Value(1)).current;
   const rippleValue = useRef(new Animated.Value(0)).current;
@@ -89,14 +96,14 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
             toValue: 1,
             duration: 2000,
             easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-            useNativeDriver: false
+            useNativeDriver: false,
           }),
           Animated.timing(glowValue, {
             toValue: 0.3,
             duration: 2000,
             easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-            useNativeDriver: false
-          })
+            useNativeDriver: false,
+          }),
         ])
       );
       glowAnimation.start();
@@ -113,14 +120,14 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
             toValue: 1.05,
             duration: 1000,
             easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(pulseValue, {
             toValue: 1,
             duration: 1000,
             easing: ADVANCED_ANIMATION_CONFIG.easing.smoothInOut,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ])
       );
       pulseAnimation.start();
@@ -136,7 +143,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
           toValue: 1,
           duration: 1000,
           easing: ADVANCED_ANIMATION_CONFIG.easing.easeInOut,
-          useNativeDriver: true
+          useNativeDriver: true,
         })
       );
       loadingAnimation.start();
@@ -175,7 +182,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         toValue: 0.95,
         duration: ANIMATION_PRESETS.button.press.duration,
         easing: ANIMATION_PRESETS.button.press.easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
 
@@ -184,7 +191,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       Animated.timing(rippleValue, {
         toValue: 1,
         duration: animationDuration,
-        useNativeDriver: false
+        useNativeDriver: false,
       }).start();
     }
   };
@@ -196,7 +203,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         toValue: 1,
         duration: ANIMATION_PRESETS.button.release.duration,
         easing: ANIMATION_PRESETS.button.release.easing,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
   };
@@ -218,27 +225,27 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
 
   const rippleOpacity = rippleValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.3, 0]
+    outputRange: [0.3, 0],
   });
 
   const rippleScale = rippleValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 1]
+    outputRange: [0, 1],
   });
 
   const glowOpacity = glowValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 0.3]
+    outputRange: [0, 0.3],
   });
 
   const loadingRotation = loadingValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg']
+    outputRange: ['0deg', '360deg'],
   });
 
   const shakeTranslateX = shakeValue.interpolate({
     inputRange: [-10, 0, 10],
-    outputRange: [-10, 0, 10]
+    outputRange: [-10, 0, 10],
   });
 
   // 獲取變體樣式
@@ -248,7 +255,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       borderWidth: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      flexDirection: 'row'
+      flexDirection: 'row',
     };
 
     switch (variant) {
@@ -256,43 +263,43 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         return {
           ...baseStyle,
           backgroundColor: theme.colors.gold.primary,
-          borderColor: theme.colors.gold.primary
+          borderColor: theme.colors.gold.primary,
         };
       case 'secondary':
         return {
           ...baseStyle,
           backgroundColor: theme.colors.background.secondary,
-          borderColor: theme.colors.border.primary
+          borderColor: theme.colors.border.primary,
         };
       case 'outline':
         return {
           ...baseStyle,
           backgroundColor: 'transparent',
-          borderColor: theme.colors.gold.primary
+          borderColor: theme.colors.gold.primary,
         };
       case 'ghost':
         return {
           ...baseStyle,
           backgroundColor: 'transparent',
-          borderColor: 'transparent'
+          borderColor: 'transparent',
         };
       case 'danger':
         return {
           ...baseStyle,
           backgroundColor: theme.colors.status.error,
-          borderColor: theme.colors.status.error
+          borderColor: theme.colors.status.error,
         };
       case 'success':
         return {
           ...baseStyle,
           backgroundColor: theme.colors.status.success,
-          borderColor: theme.colors.status.success
+          borderColor: theme.colors.status.success,
         };
       default:
         return {
           ...baseStyle,
           backgroundColor: theme.colors.background.tertiary,
-          borderColor: theme.colors.border.primary
+          borderColor: theme.colors.border.primary,
         };
     }
   };
@@ -303,18 +310,18 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       small: {
         paddingHorizontal: theme.spacing.sm,
         paddingVertical: theme.spacing.xs,
-        minHeight: 32
+        minHeight: 32,
       },
       medium: {
         paddingHorizontal: theme.spacing.md,
         paddingVertical: theme.spacing.sm,
-        minHeight: 40
+        minHeight: 40,
       },
       large: {
         paddingHorizontal: theme.spacing.lg,
         paddingVertical: theme.spacing.md,
-        minHeight: 48
-      }
+        minHeight: 48,
+      },
     };
     return sizeMap[size];
   };
@@ -322,13 +329,13 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   // 獲取文字樣式
   const getTextStyles = (): TextStyle => {
     const baseStyle: TextStyle = {
-      fontWeight: theme.typography.weights.medium as any
+      fontWeight: theme.typography.weights.medium as any,
     };
 
     const sizeMap = {
       small: { fontSize: theme.typography.sizes.sm },
       medium: { fontSize: theme.typography.sizes.base },
-      large: { fontSize: theme.typography.sizes.lg }
+      large: { fontSize: theme.typography.sizes.lg },
     };
 
     const variantColorMap = {
@@ -338,13 +345,13 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       ghost: { color: theme.colors.text.primary },
       danger: { color: theme.colors.background.primary },
       success: { color: theme.colors.background.primary },
-      default: { color: theme.colors.text.primary }
+      default: { color: theme.colors.text.primary },
     };
 
     return {
       ...baseStyle,
       ...sizeMap[size],
-      ...variantColorMap[variant]
+      ...variantColorMap[variant],
     };
   };
 
@@ -359,7 +366,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
       ghost: theme.colors.text.primary,
       danger: theme.colors.background.primary,
       success: theme.colors.background.primary,
-      default: theme.colors.text.primary
+      default: theme.colors.text.primary,
     };
 
     return variantColorMap[variant];
@@ -383,11 +390,11 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
             transform: [
               { scale: scaleValue },
               { scale: pulseValue },
-              { translateX: shakeTranslateX }
+              { translateX: shakeTranslateX },
             ],
-            opacity: disabled ? 0.5 : 1
+            opacity: disabled ? 0.5 : 1,
           },
-          style
+          style,
         ]}
       >
         {/* 光暈效果 */}
@@ -397,8 +404,8 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
               styles.glowEffect,
               {
                 opacity: glowOpacity,
-                backgroundColor: theme.colors.gold.primary
-              }
+                backgroundColor: theme.colors.gold.primary,
+              },
             ]}
           />
         )}
@@ -411,15 +418,20 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
               {
                 opacity: rippleOpacity,
                 transform: [{ scale: rippleScale }],
-                backgroundColor: theme.colors.gold.primary
-              }
+                backgroundColor: theme.colors.gold.primary,
+              },
             ]}
           />
         )}
 
         {/* 徽章 */}
         {badge && (
-          <View style={[styles.badge, { backgroundColor: badgeColor || theme.colors.status.error }]}>
+          <View
+            style={[
+              styles.badge,
+              { backgroundColor: badgeColor || theme.colors.status.error },
+            ]}
+          >
             <Text style={styles.badgeText}>{badge}</Text>
           </View>
         )}
@@ -440,15 +452,11 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
             style={[
               styles.loadingIcon,
               {
-                transform: [{ rotate: loadingRotation }]
-              }
+                transform: [{ rotate: loadingRotation }],
+              },
             ]}
           >
-            <Ionicons
-              name="refresh"
-              size={iconSize}
-              color={getIconColor()}
-            />
+            <Ionicons name="refresh" size={iconSize} color={getIconColor()} />
           </Animated.View>
         )}
 
@@ -473,11 +481,11 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
 
 const styles = StyleSheet.create({
   touchable: {
-    width: '100%'
+    width: '100%',
   },
   container: {
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   glowEffect: {
     position: 'absolute',
@@ -486,7 +494,7 @@ const styles = StyleSheet.create({
     right: -10,
     bottom: -10,
     borderRadius: theme.borderRadius.lg,
-    zIndex: -1
+    zIndex: -1,
   },
   rippleEffect: {
     position: 'absolute',
@@ -497,7 +505,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginTop: -50,
     marginLeft: -50,
-    zIndex: 1
+    zIndex: 1,
   },
   badge: {
     position: 'absolute',
@@ -506,32 +514,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: theme.spacing.xs,
     paddingVertical: 2,
     borderRadius: theme.borderRadius.full,
-    zIndex: 2
+    zIndex: 2,
   },
   badgeText: {
     fontSize: theme.typography.sizes.xs,
     fontWeight: theme.typography.weights.bold,
-    color: theme.colors.text.inverse
+    color: theme.colors.text.inverse,
   },
   text: {
-    textAlign: 'center'
+    textAlign: 'center',
   },
   leftIcon: {
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   rightIcon: {
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   loadingIcon: {
-    marginRight: theme.spacing.xs
-  }
+    marginRight: theme.spacing.xs,
+  },
 });
 
 // 特殊動畫按鈕組件
-export const PulseButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'rippleEffect' | 'pulseEffect'> & {
-  pulseColor?: string;
-  pulseDuration?: number;
-}> = ({
+export const PulseButton: React.FC<
+  Omit<AnimatedButtonProps, 'scaleOnPress' | 'rippleEffect' | 'pulseEffect'> & {
+    pulseColor?: string;
+    pulseDuration?: number;
+  }
+> = ({
   children,
   onPress,
   style,
@@ -549,13 +559,13 @@ export const PulseButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'r
           Animated.timing(pulseValue, {
             toValue: 1,
             duration: pulseDuration,
-            useNativeDriver: false
+            useNativeDriver: false,
           }),
           Animated.timing(pulseValue, {
             toValue: 0,
             duration: pulseDuration,
-            useNativeDriver: false
-          })
+            useNativeDriver: false,
+          }),
         ])
       );
       pulseAnimation.start();
@@ -566,7 +576,7 @@ export const PulseButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'r
 
   const pulseOpacity = pulseValue.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, 0.3]
+    outputRange: [0, 0.3],
   });
 
   return (
@@ -583,8 +593,8 @@ export const PulseButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'r
           styles.pulseEffect,
           {
             backgroundColor: pulseColor,
-            opacity: pulseOpacity
-          }
+            opacity: pulseOpacity,
+          },
         ]}
       />
     </AnimatedButton>
@@ -592,9 +602,11 @@ export const PulseButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'r
 };
 
 // 搖擺動畫按鈕
-export const ShakeButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'rippleEffect'> & {
-  shakeOnPress?: boolean;
-}> = ({
+export const ShakeButton: React.FC<
+  Omit<AnimatedButtonProps, 'scaleOnPress' | 'rippleEffect'> & {
+    shakeOnPress?: boolean;
+  }
+> = ({
   children,
   onPress,
   style,
@@ -614,7 +626,7 @@ export const ShakeButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'r
 
   const shakeTranslateX = shakeValue.interpolate({
     inputRange: [-10, 0, 10],
-    outputRange: [-10, 0, 10]
+    outputRange: [-10, 0, 10],
   });
 
   return (
@@ -623,8 +635,8 @@ export const ShakeButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'r
       style={[
         style,
         {
-          transform: [{ translateX: shakeTranslateX }]
-        }
+          transform: [{ translateX: shakeTranslateX }],
+        },
       ]}
       disabled={disabled}
       {...props}
@@ -635,16 +647,11 @@ export const ShakeButton: React.FC<Omit<AnimatedButtonProps, 'scaleOnPress' | 'r
 };
 
 // 成功動畫按鈕
-export const SuccessButton: React.FC<Omit<AnimatedButtonProps, 'successAnimation'> & {
-  onSuccess?: () => void;
-}> = ({
-  children,
-  onPress,
-  onSuccess,
-  style,
-  disabled = false,
-  ...props
-}) => {
+export const SuccessButton: React.FC<
+  Omit<AnimatedButtonProps, 'successAnimation'> & {
+    onSuccess?: () => void;
+  }
+> = ({ children, onPress, onSuccess, style, disabled = false, ...props }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const scaleValue = useRef(new Animated.Value(1)).current;
   const rotateValue = useRef(new Animated.Value(0)).current;
@@ -670,7 +677,7 @@ export const SuccessButton: React.FC<Omit<AnimatedButtonProps, 'successAnimation
 
   const rotate = rotateValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '360deg']
+    outputRange: ['0deg', '360deg'],
   });
 
   return (
@@ -679,11 +686,8 @@ export const SuccessButton: React.FC<Omit<AnimatedButtonProps, 'successAnimation
       style={[
         style,
         {
-          transform: [
-            { scale: scaleValue },
-            { rotate }
-          ]
-        }
+          transform: [{ scale: scaleValue }, { rotate }],
+        },
       ]}
       disabled={disabled || isSuccess}
       {...props}
@@ -702,26 +706,26 @@ export const SuccessButton: React.FC<Omit<AnimatedButtonProps, 'successAnimation
 };
 
 // 預定義的動畫按鈕
-export const PrimaryButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (props) => (
-  <AnimatedButton {...props} variant="primary" />
-);
+export const PrimaryButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (
+  props
+) => <AnimatedButton {...props} variant="primary" />;
 
-export const SecondaryButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (props) => (
-  <AnimatedButton {...props} variant="secondary" />
-);
+export const SecondaryButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (
+  props
+) => <AnimatedButton {...props} variant="secondary" />;
 
-export const OutlineButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (props) => (
-  <AnimatedButton {...props} variant="outline" />
-);
+export const OutlineButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (
+  props
+) => <AnimatedButton {...props} variant="outline" />;
 
-export const GhostButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (props) => (
-  <AnimatedButton {...props} variant="ghost" />
-);
+export const GhostButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (
+  props
+) => <AnimatedButton {...props} variant="ghost" />;
 
-export const DangerButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (props) => (
-  <AnimatedButton {...props} variant="danger" />
-);
+export const DangerButton: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (
+  props
+) => <AnimatedButton {...props} variant="danger" />;
 
-export const SuccessButtonVariant: React.FC<Omit<AnimatedButtonProps, 'variant'>> = (props) => (
-  <AnimatedButton {...props} variant="success" />
-);
+export const SuccessButtonVariant: React.FC<
+  Omit<AnimatedButtonProps, 'variant'>
+> = (props) => <AnimatedButton {...props} variant="success" />;

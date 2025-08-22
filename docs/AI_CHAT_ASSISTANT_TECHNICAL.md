@@ -46,6 +46,7 @@ EnhancedAIChatBot (主組件)
 **文件位置**: `src/components/ai/EnhancedAIChatBot.tsx`
 
 **功能特性**:
+
 - 多模態輸入處理（文字、語音、圖片）
 - 智能建議系統集成
 - 情感分析和翻譯功能
@@ -53,6 +54,7 @@ EnhancedAIChatBot (主組件)
 - 響應式設計和動畫效果
 
 **主要Props**:
+
 ```typescript
 interface EnhancedAIChatBotProps {
   displayMode?: 'full' | 'compact' | 'floating';
@@ -65,9 +67,13 @@ interface EnhancedAIChatBotProps {
 ```
 
 **核心方法**:
+
 ```typescript
 // 發送消息
-const handleSendMessage = async (content: string, type: 'text' | 'voice' | 'image') => {
+const handleSendMessage = async (
+  content: string,
+  type: 'text' | 'voice' | 'image'
+) => {
   // 消息處理邏輯
 };
 
@@ -87,12 +93,14 @@ const updateSettings = (newSettings: Partial<ChatSettings>) => {
 **文件位置**: `src/components/ai/VoiceInputButton.tsx`
 
 **功能特性**:
+
 - 麥克風權限管理
 - 錄音狀態視覺反饋
 - 語音轉文字功能
 - 錯誤處理和重試機制
 
 **主要Props**:
+
 ```typescript
 interface VoiceInputButtonProps {
   onTranscript: (transcript: string) => void;
@@ -103,6 +111,7 @@ interface VoiceInputButtonProps {
 ```
 
 **核心方法**:
+
 ```typescript
 // 請求麥克風權限
 const requestMicrophonePermission = async () => {
@@ -125,12 +134,14 @@ const stopRecording = async () => {
 **文件位置**: `src/components/ai/ImagePickerButton.tsx`
 
 **功能特性**:
+
 - 相冊和相機權限管理
 - 圖片質量控制
 - 多種圖片來源支持
 - 圖片預處理和壓縮
 
 **主要Props**:
+
 ```typescript
 interface ImagePickerButtonProps {
   onImageSelect: (imageUri: string, base64?: string) => void;
@@ -143,6 +154,7 @@ interface ImagePickerButtonProps {
 ```
 
 **核心方法**:
+
 ```typescript
 // 從相冊選擇圖片
 const pickFromGallery = async () => {
@@ -165,12 +177,14 @@ const preprocessImage = async (uri: string) => {
 **文件位置**: `src/components/ai/TranslationToggle.tsx`
 
 **功能特性**:
+
 - 多語言支持（15種語言）
 - 語言選擇模態框
 - 實時翻譯切換
 - 語言偏好記憶
 
 **支持的語言**:
+
 ```typescript
 const SUPPORTED_LANGUAGES = [
   { code: 'zh-TW', name: '繁體中文', nativeName: '繁體中文', flag: '🇹🇼' },
@@ -185,17 +199,29 @@ const SUPPORTED_LANGUAGES = [
 **文件位置**: `src/components/ai/EmotionIndicator.tsx`
 
 **功能特性**:
+
 - 7種情感類型識別
 - 置信度顯示
 - 動態顏色和標籤
 - 情感分析結果可視化
 
 **情感類型配置**:
+
 ```typescript
 const EMOTION_CONFIGS = {
-  happy: { icon: '😊', color: '#4CAF50', label: '開心', description: '正面情緒' },
+  happy: {
+    icon: '😊',
+    color: '#4CAF50',
+    label: '開心',
+    description: '正面情緒',
+  },
   sad: { icon: '😢', color: '#2196F3', label: '難過', description: '負面情緒' },
-  angry: { icon: '😠', color: '#F44336', label: '生氣', description: '負面情緒' },
+  angry: {
+    icon: '😠',
+    color: '#F44336',
+    label: '生氣',
+    description: '負面情緒',
+  },
   // ... 更多情感類型
 };
 ```
@@ -205,18 +231,20 @@ const EMOTION_CONFIGS = {
 **文件位置**: `src/components/ai/SmartSuggestions.tsx`
 
 **功能特性**:
+
 - 上下文感知建議
 - 分類建議系統
 - 動畫效果
 - 快速操作按鈕
 
 **建議分類**:
+
 ```typescript
 const categorizedSuggestions = {
-  '卡片分析': ['分析這張卡片的價值', '評估卡片狀況', '預測價格趨勢'],
-  '投資建議': ['推薦投資組合', '風險評估', '市場分析'],
-  '市場趨勢': ['當前市場狀況', '熱門卡片', '價格波動'],
-  '一般問題': ['如何使用平台', '功能說明', '技術支持']
+  卡片分析: ['分析這張卡片的價值', '評估卡片狀況', '預測價格趨勢'],
+  投資建議: ['推薦投資組合', '風險評估', '市場分析'],
+  市場趨勢: ['當前市場狀況', '熱門卡片', '價格波動'],
+  一般問題: ['如何使用平台', '功能說明', '技術支持'],
 };
 ```
 
@@ -229,11 +257,12 @@ const categorizedSuggestions = {
 **新增方法**:
 
 #### 1. 智能建議生成
+
 ```typescript
 async generateSuggestions(lastMessage: string, context: any = {}): Promise<{ suggestions: string[] }> {
   try {
     const prompt = `基於用戶的最後一條消息："${lastMessage}"，生成5個相關的建議問題。返回JSON格式：{"suggestions": ["問題1", "問題2", ...]}`;
-    
+
     const response = await this.callAI(prompt, {
       model: 'gpt-3.5-turbo',
       maxTokens: 300,
@@ -251,11 +280,12 @@ async generateSuggestions(lastMessage: string, context: any = {}): Promise<{ sug
 ```
 
 #### 2. 情感分析
+
 ```typescript
 async analyzeEmotion(text: string): Promise<{ emotion: string; confidence: number }> {
   try {
     const prompt = `分析以下文本的情感："${text}"。返回JSON格式：{"emotion": "happy|sad|angry|neutral|excited|worried|surprised", "confidence": 0.85}`;
-    
+
     const response = await this.callAI(prompt, {
       model: 'gpt-3.5-turbo',
       maxTokens: 100,
@@ -272,11 +302,12 @@ async analyzeEmotion(text: string): Promise<{ emotion: string; confidence: numbe
 ```
 
 #### 3. 文本翻譯
+
 ```typescript
 async translateText(text: string, targetLanguage: string): Promise<string> {
   try {
     const prompt = `將以下文本翻譯成${targetLanguage}："${text}"。只返回翻譯結果，不要其他內容。`;
-    
+
     const response = await this.callAI(prompt, {
       model: 'gpt-3.5-turbo',
       maxTokens: 200,
@@ -292,6 +323,7 @@ async translateText(text: string, targetLanguage: string): Promise<string> {
 ```
 
 #### 4. 圖片分析
+
 ```typescript
 async analyzeImage(imageBase64: string, prompt: string): Promise<string> {
   try {
@@ -327,35 +359,36 @@ async analyzeImage(imageBase64: string, prompt: string): Promise<string> {
 **文件位置**: `src/store/slices/aiSlice.ts`
 
 **狀態結構**:
+
 ```typescript
 interface AIState {
   // 聊天消息
   chatMessages: AIChatMessage[];
-  
+
   // 加載狀態
   isLoading: boolean;
-  
+
   // 錯誤信息
   error: string | null;
-  
+
   // 聊天設置
   chatSettings: ChatSettings;
-  
+
   // 當前分析
   currentAnalysis: CardAnalysis | null;
-  
+
   // 價格預測
   pricePrediction: PricePrediction | null;
-  
+
   // 智能建議
   suggestions: string[];
-  
+
   // 情感分析
   emotion: {
     type: string;
     confidence: number;
   } | null;
-  
+
   // 翻譯設置
   translation: {
     enabled: boolean;
@@ -365,6 +398,7 @@ interface AIState {
 ```
 
 **主要Actions**:
+
 ```typescript
 // 發送消息
 export const sendMessage = createAsyncThunk(
@@ -375,7 +409,8 @@ export const sendMessage = createAsyncThunk(
 );
 
 // 更新設置
-export const updateChatSettings = createAction<Partial<ChatSettings>>('ai/updateSettings');
+export const updateChatSettings =
+  createAction<Partial<ChatSettings>>('ai/updateSettings');
 
 // 生成建議
 export const generateSuggestions = createAsyncThunk(
@@ -403,12 +438,17 @@ export const analyzeEmotion = createAsyncThunk(
 **主要端點**:
 
 #### 1. 聊天對話
+
 ```javascript
 // POST /api/ai/chat
 router.post('/chat', async (req, res) => {
   try {
     const { message, context, settings } = req.body;
-    const response = await aiService.processChatMessage(message, context, settings);
+    const response = await aiService.processChatMessage(
+      message,
+      context,
+      settings
+    );
     res.json(response);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -417,6 +457,7 @@ router.post('/chat', async (req, res) => {
 ```
 
 #### 2. 圖片分析
+
 ```javascript
 // POST /api/ai/analyze-image
 router.post('/analyze-image', async (req, res) => {
@@ -431,12 +472,16 @@ router.post('/analyze-image', async (req, res) => {
 ```
 
 #### 3. 智能建議
+
 ```javascript
 // POST /api/ai/suggestions
 router.post('/suggestions', async (req, res) => {
   try {
     const { lastMessage, context } = req.body;
-    const suggestions = await aiService.generateSuggestions(lastMessage, context);
+    const suggestions = await aiService.generateSuggestions(
+      lastMessage,
+      context
+    );
     res.json({ suggestions });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -445,6 +490,7 @@ router.post('/suggestions', async (req, res) => {
 ```
 
 #### 4. 情感分析
+
 ```javascript
 // POST /api/ai/emotion
 router.post('/emotion', async (req, res) => {
@@ -511,21 +557,21 @@ const theme = {
     background: '#F2F2F7',
     surface: '#FFFFFF',
     text: '#000000',
-    textSecondary: '#8E8E93'
+    textSecondary: '#8E8E93',
   },
   spacing: {
     xs: 4,
     sm: 8,
     md: 16,
     lg: 24,
-    xl: 32
+    xl: 32,
   },
   borderRadius: {
     sm: 4,
     md: 8,
     lg: 12,
-    xl: 16
-  }
+    xl: 16,
+  },
 };
 ```
 
@@ -553,13 +599,17 @@ const checkPermissions = async (permission: string) => {
 };
 
 // 麥克風權限
-const microphonePermission = await checkPermissions(Permissions.AUDIO_RECORDING);
+const microphonePermission = await checkPermissions(
+  Permissions.AUDIO_RECORDING
+);
 
 // 相機權限
 const cameraPermission = await checkPermissions(Permissions.CAMERA);
 
 // 相冊權限
-const mediaLibraryPermission = await checkPermissions(Permissions.MEDIA_LIBRARY);
+const mediaLibraryPermission = await checkPermissions(
+  Permissions.MEDIA_LIBRARY
+);
 ```
 
 ## 🧪 測試策略
@@ -574,13 +624,13 @@ describe('EnhancedAIChatBot', () => {
     const { getByTestId } = render(
       <EnhancedAIChatBot onMessageSend={mockOnMessageSend} />
     );
-    
+
     const input = getByTestId('message-input');
     const sendButton = getByTestId('send-button');
-    
+
     fireEvent.changeText(input, '測試消息');
     fireEvent.press(sendButton);
-    
+
     expect(mockOnMessageSend).toHaveBeenCalledWith(
       expect.objectContaining({
         content: '測試消息',
@@ -599,7 +649,7 @@ describe('AIService', () => {
   it('應該正確生成智能建議', async () => {
     const aiService = new AIService();
     const result = await aiService.generateSuggestions('分析這張卡片');
-    
+
     expect(result.suggestions).toBeDefined();
     expect(Array.isArray(result.suggestions)).toBe(true);
     expect(result.suggestions.length).toBeGreaterThan(0);
@@ -614,14 +664,14 @@ describe('AIService', () => {
 describe('AI聊天助手', () => {
   it('應該完成完整的聊天流程', async () => {
     await page.goto('/ai-chat');
-    
+
     // 發送消息
     await page.fill('[data-testid="message-input"]', '你好');
     await page.click('[data-testid="send-button"]');
-    
+
     // 等待AI響應
     await page.waitForSelector('[data-testid="ai-response"]');
-    
+
     // 驗證響應
     const response = await page.textContent('[data-testid="ai-response"]');
     expect(response).toBeTruthy();
@@ -654,7 +704,7 @@ const performanceMetrics = {
   suggestionGenerationTime: 0,
   imageAnalysisTime: 0,
   errorRate: 0,
-  userSatisfaction: 0
+  userSatisfaction: 0,
 };
 
 // 記錄性能指標

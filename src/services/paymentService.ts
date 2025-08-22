@@ -22,7 +22,13 @@ export interface PaymentConfig {
 export interface PaymentProvider {
   id: string;
   name: string;
-  type: 'stripe' | 'paypal' | 'apple_pay' | 'google_pay' | 'crypto' | 'bank_transfer';
+  type:
+    | 'stripe'
+    | 'paypal'
+    | 'apple_pay'
+    | 'google_pay'
+    | 'crypto'
+    | 'bank_transfer';
   isActive: boolean;
   config: Record<string, any>;
   supportedCurrencies: string[];
@@ -84,7 +90,14 @@ export interface Order {
   discount: number;
   total: number;
   currency: string;
-  status: 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'refunded';
+  status:
+    | 'pending'
+    | 'confirmed'
+    | 'processing'
+    | 'shipped'
+    | 'delivered'
+    | 'cancelled'
+    | 'refunded';
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
   paymentIntentId?: string;
   shippingAddress: Address;
@@ -158,7 +171,11 @@ export interface Refund {
   paymentIntentId: string;
   amount: number;
   currency: string;
-  reason: 'duplicate' | 'fraudulent' | 'requested_by_customer' | 'expired_uncaptured';
+  reason:
+    | 'duplicate'
+    | 'fraudulent'
+    | 'requested_by_customer'
+    | 'expired_uncaptured';
   status: 'pending' | 'succeeded' | 'failed' | 'canceled';
   providerRefundId: string;
   metadata: Record<string, any>;
@@ -169,8 +186,23 @@ export interface Refund {
 export interface Dispute {
   id: string;
   paymentIntentId: string;
-  reason: 'duplicate' | 'fraudulent' | 'subscription_canceled' | 'product_not_received' | 'product_not_as_described' | 'credit_not_processed' | 'general';
-  status: 'warning_needs_response' | 'warning_under_review' | 'warning_closed' | 'needs_response' | 'under_review' | 'charge_refunded' | 'won' | 'lost';
+  reason:
+    | 'duplicate'
+    | 'fraudulent'
+    | 'subscription_canceled'
+    | 'product_not_received'
+    | 'product_not_as_described'
+    | 'credit_not_processed'
+    | 'general';
+  status:
+    | 'warning_needs_response'
+    | 'warning_under_review'
+    | 'warning_closed'
+    | 'needs_response'
+    | 'under_review'
+    | 'charge_refunded'
+    | 'won'
+    | 'lost';
   amount: number;
   currency: string;
   evidence: DisputeEvidence;
@@ -238,19 +270,21 @@ const PaymentIntentSchema = z.object({
   currency: z.string().length(3),
   paymentMethodId: z.string(),
   description: z.string().min(1).max(255),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 const OrderSchema = z.object({
-  items: z.array(z.object({
-    productId: z.string(),
-    name: z.string(),
-    description: z.string(),
-    quantity: z.number().positive(),
-    unitPrice: z.number().positive(),
-    currency: z.string().length(3),
-    metadata: z.record(z.any()).optional()
-  })),
+  items: z.array(
+    z.object({
+      productId: z.string(),
+      name: z.string(),
+      description: z.string(),
+      quantity: z.number().positive(),
+      unitPrice: z.number().positive(),
+      currency: z.string().length(3),
+      metadata: z.record(z.any()).optional(),
+    })
+  ),
   shippingAddress: z.object({
     firstName: z.string(),
     lastName: z.string(),
@@ -260,7 +294,7 @@ const OrderSchema = z.object({
     postalCode: z.string(),
     country: z.string(),
     phone: z.string().optional(),
-    email: z.string().email().optional()
+    email: z.string().email().optional(),
   }),
   billingAddress: z.object({
     firstName: z.string(),
@@ -271,9 +305,9 @@ const OrderSchema = z.object({
     postalCode: z.string(),
     country: z.string(),
     phone: z.string().optional(),
-    email: z.string().email().optional()
+    email: z.string().email().optional(),
   }),
-  notes: z.string().optional()
+  notes: z.string().optional(),
 });
 
 const SubscriptionPlanSchema = z.object({
@@ -286,7 +320,7 @@ const SubscriptionPlanSchema = z.object({
   trialPeriodDays: z.number().min(0).optional(),
   features: z.array(z.string()),
   isActive: z.boolean(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.any()).optional(),
 });
 
 // ==================== 支付服務 ====================
@@ -308,7 +342,7 @@ class PaymentService {
       enableRefunds: true,
       enableDisputes: true,
       enableAnalytics: true,
-      ...config
+      ...config,
     };
   }
 
@@ -360,19 +394,19 @@ class PaymentService {
         config: {
           publishableKey: process.env.STRIPE_PUBLISHABLE_KEY,
           secretKey: process.env.STRIPE_SECRET_KEY,
-          webhookSecret: process.env.STRIPE_WEBHOOK_SECRET
+          webhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
         },
         supportedCurrencies: ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'],
         supportedCountries: ['US', 'CA', 'GB', 'DE', 'FR', 'JP', 'AU'],
         fees: {
           percentage: 2.9,
           fixed: 30,
-          currency: 'USD'
+          currency: 'USD',
         },
         processingTime: {
           instant: true,
-          estimatedHours: 0
-        }
+          estimatedHours: 0,
+        },
       };
       this.providers.set('stripe', stripeProvider);
     }
@@ -387,19 +421,19 @@ class PaymentService {
         config: {
           clientId: process.env.PAYPAL_CLIENT_ID,
           clientSecret: process.env.PAYPAL_CLIENT_SECRET,
-          environment: process.env.PAYPAL_ENVIRONMENT || 'sandbox'
+          environment: process.env.PAYPAL_ENVIRONMENT || 'sandbox',
         },
         supportedCurrencies: ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'],
         supportedCountries: ['US', 'CA', 'GB', 'DE', 'FR', 'JP', 'AU'],
         fees: {
           percentage: 3.49,
           fixed: 49,
-          currency: 'USD'
+          currency: 'USD',
         },
         processingTime: {
           instant: false,
-          estimatedHours: 24
-        }
+          estimatedHours: 24,
+        },
       };
       this.providers.set('paypal', paypalProvider);
     }
@@ -413,19 +447,19 @@ class PaymentService {
         isActive: true,
         config: {
           merchantId: process.env.APPLE_PAY_MERCHANT_ID,
-          domain: process.env.APPLE_PAY_DOMAIN
+          domain: process.env.APPLE_PAY_DOMAIN,
         },
         supportedCurrencies: ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'],
         supportedCountries: ['US', 'CA', 'GB', 'DE', 'FR', 'JP', 'AU'],
         fees: {
           percentage: 2.9,
           fixed: 30,
-          currency: 'USD'
+          currency: 'USD',
         },
         processingTime: {
           instant: true,
-          estimatedHours: 0
-        }
+          estimatedHours: 0,
+        },
       };
       this.providers.set('apple_pay', applePayProvider);
     }
@@ -439,19 +473,19 @@ class PaymentService {
         isActive: true,
         config: {
           merchantId: process.env.GOOGLE_PAY_MERCHANT_ID,
-          environment: process.env.GOOGLE_PAY_ENVIRONMENT || 'TEST'
+          environment: process.env.GOOGLE_PAY_ENVIRONMENT || 'TEST',
         },
         supportedCurrencies: ['USD', 'EUR', 'GBP', 'JPY', 'CAD', 'AUD'],
         supportedCountries: ['US', 'CA', 'GB', 'DE', 'FR', 'JP', 'AU'],
         fees: {
           percentage: 2.9,
           fixed: 30,
-          currency: 'USD'
+          currency: 'USD',
         },
         processingTime: {
           instant: true,
-          estimatedHours: 0
-        }
+          estimatedHours: 0,
+        },
       };
       this.providers.set('google_pay', googlePayProvider);
     }
@@ -472,7 +506,11 @@ class PaymentService {
   /**
    * 創建支付方法
    */
-  async createPaymentMethod(userId: string, provider: string, paymentData: any): Promise<PaymentMethod> {
+  async createPaymentMethod(
+    userId: string,
+    provider: string,
+    paymentData: any
+  ): Promise<PaymentMethod> {
     try {
       logger.info('創建支付方法:', userId, provider);
 
@@ -492,7 +530,7 @@ class PaymentService {
         isDefault: false,
         isVerified: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -522,7 +560,10 @@ class PaymentService {
   /**
    * 更新支付方法
    */
-  async updatePaymentMethod(paymentMethodId: string, updates: Partial<PaymentMethod>): Promise<PaymentMethod> {
+  async updatePaymentMethod(
+    paymentMethodId: string,
+    updates: Partial<PaymentMethod>
+  ): Promise<PaymentMethod> {
     try {
       logger.info('更新支付方法:', paymentMethodId);
 
@@ -535,7 +576,7 @@ class PaymentService {
       const updatedPaymentMethod: PaymentMethod = {
         ...paymentMethod,
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       logger.info('支付方法更新成功');
@@ -549,7 +590,10 @@ class PaymentService {
   /**
    * 刪除支付方法
    */
-  async deletePaymentMethod(paymentMethodId: string, userId: string): Promise<void> {
+  async deletePaymentMethod(
+    paymentMethodId: string,
+    userId: string
+  ): Promise<void> {
     try {
       logger.info('刪除支付方法:', paymentMethodId, userId);
 
@@ -564,7 +608,10 @@ class PaymentService {
   /**
    * 設置默認支付方法
    */
-  async setDefaultPaymentMethod(paymentMethodId: string, userId: string): Promise<void> {
+  async setDefaultPaymentMethod(
+    paymentMethodId: string,
+    userId: string
+  ): Promise<void> {
     try {
       logger.info('設置默認支付方法:', paymentMethodId, userId);
 
@@ -581,15 +628,23 @@ class PaymentService {
   /**
    * 創建支付意圖
    */
-  async createPaymentIntent(paymentData: Partial<PaymentIntent>): Promise<PaymentIntent> {
+  async createPaymentIntent(
+    paymentData: Partial<PaymentIntent>
+  ): Promise<PaymentIntent> {
     try {
       // 驗證數據
       const validatedData = PaymentIntentSchema.parse(paymentData);
 
-      logger.info('創建支付意圖:', validatedData.amount, validatedData.currency);
+      logger.info(
+        '創建支付意圖:',
+        validatedData.amount,
+        validatedData.currency
+      );
 
       // 驗證支付方法
-      const paymentMethod = await this.getPaymentMethod(validatedData.paymentMethodId);
+      const paymentMethod = await this.getPaymentMethod(
+        validatedData.paymentMethodId
+      );
       if (!paymentMethod) {
         throw new Error('支付方法不存在');
       }
@@ -613,7 +668,7 @@ class PaymentService {
         metadata: validatedData.metadata || {},
         description: validatedData.description,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -628,7 +683,10 @@ class PaymentService {
   /**
    * 確認支付
    */
-  async confirmPayment(paymentIntentId: string, confirmationData?: any): Promise<PaymentIntent> {
+  async confirmPayment(
+    paymentIntentId: string,
+    confirmationData?: any
+  ): Promise<PaymentIntent> {
     try {
       logger.info('確認支付:', paymentIntentId);
 
@@ -647,7 +705,7 @@ class PaymentService {
         ...paymentIntent,
         status: 'succeeded',
         receiptUrl: this.generateReceiptUrl(paymentIntentId),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       logger.info('支付確認成功');
@@ -679,7 +737,7 @@ class PaymentService {
       const updatedPaymentIntent: PaymentIntent = {
         ...paymentIntent,
         status: 'canceled',
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       logger.info('支付取消成功');
@@ -693,7 +751,9 @@ class PaymentService {
   /**
    * 獲取支付意圖
    */
-  async getPaymentIntent(paymentIntentId: string): Promise<PaymentIntent | null> {
+  async getPaymentIntent(
+    paymentIntentId: string
+  ): Promise<PaymentIntent | null> {
     try {
       logger.info('獲取支付意圖:', paymentIntentId);
 
@@ -718,7 +778,10 @@ class PaymentService {
       logger.info('創建訂單');
 
       // 計算訂單總額
-      const subtotal = validatedData.items.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+      const subtotal = validatedData.items.reduce(
+        (sum, item) => sum + item.unitPrice * item.quantity,
+        0
+      );
       const tax = subtotal * 0.1; // 10% 稅率
       const shipping = 0; // 免運費
       const discount = 0; // 無折扣
@@ -727,10 +790,10 @@ class PaymentService {
       const order: Order = {
         id: this.generateId(),
         userId: '', // 應該從認證服務獲取
-        items: validatedData.items.map(item => ({
+        items: validatedData.items.map((item) => ({
           id: this.generateId(),
           ...item,
-          totalPrice: item.unitPrice * item.quantity
+          totalPrice: item.unitPrice * item.quantity,
         })),
         subtotal,
         tax,
@@ -744,7 +807,7 @@ class PaymentService {
         billingAddress: validatedData.billingAddress,
         notes: validatedData.notes,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -774,7 +837,11 @@ class PaymentService {
   /**
    * 獲取用戶訂單
    */
-  async getUserOrders(userId: string, page: number = 1, limit: number = 20): Promise<Order[]> {
+  async getUserOrders(
+    userId: string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<Order[]> {
     try {
       logger.info('獲取用戶訂單:', userId, page, limit);
 
@@ -789,7 +856,10 @@ class PaymentService {
   /**
    * 更新訂單狀態
    */
-  async updateOrderStatus(orderId: string, status: Order['status']): Promise<Order> {
+  async updateOrderStatus(
+    orderId: string,
+    status: Order['status']
+  ): Promise<Order> {
     try {
       logger.info('更新訂單狀態:', orderId, status);
 
@@ -802,7 +872,7 @@ class PaymentService {
       const updatedOrder: Order = {
         ...order,
         status,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       logger.info('訂單狀態更新成功');
@@ -818,7 +888,9 @@ class PaymentService {
   /**
    * 創建訂閱計劃
    */
-  async createSubscriptionPlan(planData: Partial<SubscriptionPlan>): Promise<SubscriptionPlan> {
+  async createSubscriptionPlan(
+    planData: Partial<SubscriptionPlan>
+  ): Promise<SubscriptionPlan> {
     try {
       // 驗證數據
       const validatedData = SubscriptionPlanSchema.parse(planData);
@@ -838,7 +910,7 @@ class PaymentService {
         isActive: validatedData.isActive,
         metadata: validatedData.metadata || {},
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -853,7 +925,11 @@ class PaymentService {
   /**
    * 創建訂閱
    */
-  async createSubscription(userId: string, planId: string, paymentMethodId: string): Promise<Subscription> {
+  async createSubscription(
+    userId: string,
+    planId: string,
+    paymentMethodId: string
+  ): Promise<Subscription> {
     try {
       logger.info('創建訂閱:', userId, planId);
 
@@ -869,7 +945,7 @@ class PaymentService {
         paymentMethodId,
         metadata: {},
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -884,7 +960,10 @@ class PaymentService {
   /**
    * 取消訂閱
    */
-  async cancelSubscription(subscriptionId: string, cancelAtPeriodEnd: boolean = true): Promise<Subscription> {
+  async cancelSubscription(
+    subscriptionId: string,
+    cancelAtPeriodEnd: boolean = true
+  ): Promise<Subscription> {
     try {
       logger.info('取消訂閱:', subscriptionId, cancelAtPeriodEnd);
 
@@ -899,7 +978,7 @@ class PaymentService {
         status: cancelAtPeriodEnd ? 'active' : 'canceled',
         cancelAtPeriodEnd,
         canceledAt: cancelAtPeriodEnd ? undefined : new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       logger.info('訂閱取消成功');
@@ -945,7 +1024,11 @@ class PaymentService {
   /**
    * 創建退款
    */
-  async createRefund(paymentIntentId: string, amount: number, reason: Refund['reason']): Promise<Refund> {
+  async createRefund(
+    paymentIntentId: string,
+    amount: number,
+    reason: Refund['reason']
+  ): Promise<Refund> {
     try {
       logger.info('創建退款:', paymentIntentId, amount, reason);
 
@@ -974,7 +1057,7 @@ class PaymentService {
         providerRefundId: this.generateProviderRefundId(),
         metadata: {},
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -1021,7 +1104,11 @@ class PaymentService {
   /**
    * 創建爭議
    */
-  async createDispute(paymentIntentId: string, reason: Dispute['reason'], evidence: DisputeEvidence): Promise<Dispute> {
+  async createDispute(
+    paymentIntentId: string,
+    reason: Dispute['reason'],
+    evidence: DisputeEvidence
+  ): Promise<Dispute> {
     try {
       logger.info('創建爭議:', paymentIntentId, reason);
 
@@ -1042,7 +1129,7 @@ class PaymentService {
         evidence,
         dueBy: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7天後
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -1057,7 +1144,10 @@ class PaymentService {
   /**
    * 更新爭議
    */
-  async updateDispute(disputeId: string, updates: Partial<Dispute>): Promise<Dispute> {
+  async updateDispute(
+    disputeId: string,
+    updates: Partial<Dispute>
+  ): Promise<Dispute> {
     try {
       logger.info('更新爭議:', disputeId);
 
@@ -1070,7 +1160,7 @@ class PaymentService {
       const updatedDispute: Dispute = {
         ...dispute,
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       logger.info('爭議更新成功');
@@ -1101,7 +1191,9 @@ class PaymentService {
   /**
    * 獲取支付分析
    */
-  async getPaymentAnalytics(timeRange: string = '30d'): Promise<PaymentAnalytics> {
+  async getPaymentAnalytics(
+    timeRange: string = '30d'
+  ): Promise<PaymentAnalytics> {
     try {
       logger.info('獲取支付分析:', timeRange);
 
@@ -1115,7 +1207,7 @@ class PaymentService {
         chargebackRate: 0,
         topPaymentMethods: [],
         revenueByPeriod: [],
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       logger.info('支付分析獲取成功');
@@ -1176,18 +1268,18 @@ class PaymentService {
         brand: paymentData.card.brand,
         last4: paymentData.card.last4,
         expiryMonth: paymentData.card.expiryMonth,
-        expiryYear: paymentData.card.expiryYear
+        expiryYear: paymentData.card.expiryYear,
       };
     }
     if (paymentData.bankAccount) {
       return {
         bankName: paymentData.bankAccount.bankName,
-        accountType: paymentData.bankAccount.accountType
+        accountType: paymentData.bankAccount.accountType,
       };
     }
     if (paymentData.digitalWallet) {
       return {
-        walletType: paymentData.digitalWallet.type
+        walletType: paymentData.digitalWallet.type,
       };
     }
     return {};
@@ -1196,7 +1288,9 @@ class PaymentService {
   /**
    * 獲取支付方法
    */
-  private async getPaymentMethod(paymentMethodId: string): Promise<PaymentMethod | null> {
+  private async getPaymentMethod(
+    paymentMethodId: string
+  ): Promise<PaymentMethod | null> {
     // 這裡應該從數據庫獲取支付方法
     return null;
   }
@@ -1233,5 +1327,6 @@ class PaymentService {
 
 // ==================== 導出 ====================
 
+export { PaymentService };
 export const paymentService = new PaymentService();
 export default paymentService;

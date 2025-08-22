@@ -7,7 +7,10 @@ const logger = require('./utils/logger');
 const { sequelize, testConnection } = require('./config/database');
 
 // 導入 Redis 配置
-const { connectRedis, healthCheck: redisHealthCheck } = require('./config/redis');
+const {
+  connectRedis,
+  healthCheck: redisHealthCheck,
+} = require('./config/redis');
 
 const app = express();
 
@@ -20,7 +23,7 @@ app.get('/api/health', async (req, res) => {
   try {
     const dbStatus = await testConnection();
     const redisStatus = await redisHealthCheck();
-    
+
     res.json({
       success: true,
       message: 'CardStrategy API 服務正常運行',
@@ -28,15 +31,15 @@ app.get('/api/health', async (req, res) => {
       environment: process.env.NODE_ENV || 'development',
       services: {
         database: dbStatus ? 'connected' : 'disconnected',
-        redis: redisStatus ? 'connected' : 'disconnected'
-      }
+        redis: redisStatus ? 'connected' : 'disconnected',
+      },
     });
   } catch (error) {
     logger.error('健康檢查失敗:', error);
     res.status(503).json({
       success: false,
       message: '服務健康檢查失敗',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -49,13 +52,13 @@ app.get('/api/test/db', async (req, res) => {
       res.json({
         success: true,
         message: '數據庫連接正常',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } else {
       res.status(503).json({
         success: false,
         message: '數據庫連接失敗',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   } catch (error) {
@@ -63,7 +66,7 @@ app.get('/api/test/db', async (req, res) => {
     res.status(500).json({
       success: false,
       message: '數據庫測試失敗',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -76,13 +79,13 @@ app.get('/api/test/redis', async (req, res) => {
       res.json({
         success: true,
         message: 'Redis 連接正常',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     } else {
       res.status(503).json({
         success: false,
         message: 'Redis 連接失敗',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
   } catch (error) {
@@ -90,7 +93,7 @@ app.get('/api/test/redis', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Redis 測試失敗',
-      error: error.message
+      error: error.message,
     });
   }
 });
@@ -104,8 +107,8 @@ app.get('/', (req, res) => {
     endpoints: {
       health: '/api/health',
       testDb: '/api/test/db',
-      testRedis: '/api/test/redis'
-    }
+      testRedis: '/api/test/redis',
+    },
   });
 });
 

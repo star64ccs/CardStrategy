@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   Alert,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { TaskDependencyVisualizer } from '@/components/task/TaskDependencyVisualizer';
 import { TaskProgressDisplay } from '@/components/task/TaskProgressDisplay';
@@ -17,24 +17,29 @@ import {
   TaskStatus,
   DependencyType,
   TaskPriority,
-  TaskExecutor
+  TaskExecutor,
 } from '@/utils/taskDependencyManager';
 import { logger } from '@/utils/logger';
 
 export const TaskDependencyScreen: React.FC = () => {
-  const [taskManager] = useState(() => new TaskDependencyManager({
-    maxConcurrentTasks: 3,
-    enableParallelExecution: true,
-    enableRetry: true,
-    defaultRetryAttempts: 2,
-    enableTimeout: true,
-    defaultTimeout: 10000,
-    enableDeadlockDetection: true,
-    enableCircularDependencyCheck: true
-  }));
+  const [taskManager] = useState(
+    () =>
+      new TaskDependencyManager({
+        maxConcurrentTasks: 3,
+        enableParallelExecution: true,
+        enableRetry: true,
+        defaultRetryAttempts: 2,
+        enableTimeout: true,
+        defaultTimeout: 10000,
+        enableDeadlockDetection: true,
+        enableCircularDependencyCheck: true,
+      })
+  );
 
   const [demoTasksCreated, setDemoTasksCreated] = useState(false);
-  const [activeTab, setActiveTab] = useState<'visualizer' | 'progress' | 'sync' | 'encryption'>('progress');
+  const [activeTab, setActiveTab] = useState<
+    'visualizer' | 'progress' | 'sync' | 'encryption'
+  >('progress');
 
   useEffect(() => {
     // 設置事件監聽器
@@ -69,7 +74,7 @@ export const TaskDependencyScreen: React.FC = () => {
         type: 'data_collection',
         priority: TaskPriority.HIGH,
         estimatedDuration: 3000,
-        executor: createDemoExecutor('數據收集')
+        executor: createDemoExecutor('數據收集'),
       });
 
       const task2Id = taskManager.addTask({
@@ -78,7 +83,7 @@ export const TaskDependencyScreen: React.FC = () => {
         type: 'data_analysis',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 5000,
-        executor: createDemoExecutor('數據分析')
+        executor: createDemoExecutor('數據分析'),
       });
 
       const task3Id = taskManager.addTask({
@@ -87,7 +92,7 @@ export const TaskDependencyScreen: React.FC = () => {
         type: 'report_generation',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 2000,
-        executor: createDemoExecutor('生成報告')
+        executor: createDemoExecutor('生成報告'),
       });
 
       const task4Id = taskManager.addTask({
@@ -96,23 +101,23 @@ export const TaskDependencyScreen: React.FC = () => {
         type: 'notification',
         priority: TaskPriority.LOW,
         estimatedDuration: 1000,
-        executor: createDemoExecutor('發送通知')
+        executor: createDemoExecutor('發送通知'),
       });
 
       // 建立依賴關係
       taskManager.addDependency(task2Id, {
         taskId: task1Id,
-        type: DependencyType.REQUIRES
+        type: DependencyType.REQUIRES,
       });
 
       taskManager.addDependency(task3Id, {
         taskId: task2Id,
-        type: DependencyType.REQUIRES
+        type: DependencyType.REQUIRES,
       });
 
       taskManager.addDependency(task4Id, {
         taskId: task3Id,
-        type: DependencyType.TRIGGERS
+        type: DependencyType.TRIGGERS,
       });
 
       setDemoTasksCreated(true);
@@ -127,13 +132,7 @@ export const TaskDependencyScreen: React.FC = () => {
       execute: async (task, progressTracker) => {
         logger.info(`[Demo Executor] 開始執行任務: ${taskName}`);
 
-        const steps = [
-          '初始化',
-          '數據準備',
-          '處理中',
-          '驗證結果',
-          '完成'
-        ];
+        const steps = ['初始化', '數據準備', '處理中', '驗證結果', '完成'];
 
         for (let i = 0; i < steps.length; i++) {
           const step = steps[i];
@@ -146,44 +145,44 @@ export const TaskDependencyScreen: React.FC = () => {
               currentStep: step,
               totalSteps: steps.length,
               currentStepIndex: i + 1,
-              estimatedTimeRemaining: (task.estimatedDuration / steps.length) * (steps.length - i - 1)
+              estimatedTimeRemaining:
+                (task.estimatedDuration / steps.length) *
+                (steps.length - i - 1),
             });
           }
 
           // 模擬步驟執行時間
-          await new Promise(resolve => setTimeout(resolve, task.estimatedDuration / steps.length));
+          await new Promise((resolve) =>
+            setTimeout(resolve, task.estimatedDuration / steps.length)
+          );
         }
 
         logger.info(`[Demo Executor] 任務完成: ${taskName}`);
         return {
           message: `${taskName} 執行成功`,
           timestamp: new Date().toISOString(),
-          duration: task.estimatedDuration
+          duration: task.estimatedDuration,
         };
-      }
+      },
     };
   };
 
   const clearAllTasks = () => {
-    Alert.alert(
-      '確認清除',
-      '確定要清除所有任務嗎？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '確定',
-          style: 'destructive',
-          onPress: () => {
-            const tasks = taskManager.getAllTasks();
-            tasks.forEach(task => {
-              taskManager.removeTask(task.id);
-            });
-            setDemoTasksCreated(false);
-            Alert.alert('成功', '所有任務已清除');
-          }
-        }
-      ]
-    );
+    Alert.alert('確認清除', '確定要清除所有任務嗎？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '確定',
+        style: 'destructive',
+        onPress: () => {
+          const tasks = taskManager.getAllTasks();
+          tasks.forEach((task) => {
+            taskManager.removeTask(task.id);
+          });
+          setDemoTasksCreated(false);
+          Alert.alert('成功', '所有任務已清除');
+        },
+      },
+    ]);
   };
 
   const handleTaskSelect = (taskId: string) => {
@@ -193,12 +192,18 @@ export const TaskDependencyScreen: React.FC = () => {
     }
   };
 
-  const handleDependencyAdd = (fromTaskId: string, toTaskId: string, type: DependencyType) => {
+  const handleDependencyAdd = (
+    fromTaskId: string,
+    toTaskId: string,
+    type: DependencyType
+  ) => {
     const fromTask = taskManager.getTask(fromTaskId);
     const toTask = taskManager.getTask(toTaskId);
 
     if (fromTask && toTask) {
-      logger.info(`[Task Screen] 添加依賴: ${fromTask.name} -> ${toTask.name} (${type})`);
+      logger.info(
+        `[Task Screen] 添加依賴: ${fromTask.name} -> ${toTask.name} (${type})`
+      );
     }
   };
 
@@ -238,34 +243,66 @@ export const TaskDependencyScreen: React.FC = () => {
 
       <View style={styles.tabContainer}>
         <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'progress' && styles.activeTabButton]}
+          style={[
+            styles.tabButton,
+            activeTab === 'progress' && styles.activeTabButton,
+          ]}
           onPress={() => setActiveTab('progress')}
         >
-          <Text style={[styles.tabButtonText, activeTab === 'progress' && styles.activeTabButtonText]}>
+          <Text
+            style={[
+              styles.tabButtonText,
+              activeTab === 'progress' && styles.activeTabButtonText,
+            ]}
+          >
             進度顯示
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'visualizer' && styles.activeTabButton]}
+          style={[
+            styles.tabButton,
+            activeTab === 'visualizer' && styles.activeTabButton,
+          ]}
           onPress={() => setActiveTab('visualizer')}
         >
-          <Text style={[styles.tabButtonText, activeTab === 'visualizer' && styles.activeTabButtonText]}>
+          <Text
+            style={[
+              styles.tabButtonText,
+              activeTab === 'visualizer' && styles.activeTabButtonText,
+            ]}
+          >
             依賴圖
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'sync' && styles.activeTabButton]}
+          style={[
+            styles.tabButton,
+            activeTab === 'sync' && styles.activeTabButton,
+          ]}
           onPress={() => setActiveTab('sync')}
         >
-          <Text style={[styles.tabButtonText, activeTab === 'sync' && styles.activeTabButtonText]}>
+          <Text
+            style={[
+              styles.tabButtonText,
+              activeTab === 'sync' && styles.activeTabButtonText,
+            ]}
+          >
             跨設備同步
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'encryption' && styles.activeTabButton]}
+          style={[
+            styles.tabButton,
+            activeTab === 'encryption' && styles.activeTabButton,
+          ]}
           onPress={() => setActiveTab('encryption')}
         >
-          <Text style={[styles.tabButtonText, activeTab === 'encryption' && styles.activeTabButtonText]}>
+          <Text
+            style={[
+              styles.tabButtonText,
+              activeTab === 'encryption' && styles.activeTabButtonText,
+            ]}
+          >
             加密管理
           </Text>
         </TouchableOpacity>
@@ -279,15 +316,21 @@ export const TaskDependencyScreen: React.FC = () => {
             <Text style={styles.statLabel}>總任務</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>{getStatistics().runningTasks}</Text>
+            <Text style={styles.statNumber}>
+              {getStatistics().runningTasks}
+            </Text>
             <Text style={styles.statLabel}>執行中</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>{getStatistics().completedTasks}</Text>
+            <Text style={styles.statNumber}>
+              {getStatistics().completedTasks}
+            </Text>
             <Text style={styles.statLabel}>已完成</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>{getStatistics().successRate.toFixed(1)}%</Text>
+            <Text style={styles.statNumber}>
+              {getStatistics().successRate.toFixed(1)}%
+            </Text>
             <Text style={styles.statLabel}>成功率</Text>
           </View>
         </View>
@@ -330,17 +373,15 @@ export const TaskDependencyScreen: React.FC = () => {
         <Text style={styles.helpTitle}>使用說明</Text>
         <ScrollView style={styles.helpContent}>
           <Text style={styles.helpText}>
-            • 點擊「創建演示任務」來創建示例任務和依賴關係{'\n'}
-            • 使用可視化界面添加、編輯和管理任務{'\n'}
-            • 任務狀態顏色說明：{'\n'}
+            • 點擊「創建演示任務」來創建示例任務和依賴關係{'\n'}•
+            使用可視化界面添加、編輯和管理任務{'\n'}• 任務狀態顏色說明：{'\n'}
             {'  '}🟠 待處理 (PENDING){'\n'}
             {'  '}🟢 準備就緒 (READY){'\n'}
             {'  '}🔵 執行中 (RUNNING){'\n'}
             {'  '}🟢 已完成 (COMPLETED){'\n'}
             {'  '}🔴 失敗 (FAILED){'\n'}
             {'  '}⚫ 已取消 (CANCELLED){'\n'}
-            {'  '}🟡 已阻塞 (BLOCKED){'\n'}
-            • 依賴類型說明：{'\n'}
+            {'  '}🟡 已阻塞 (BLOCKED){'\n'}• 依賴類型說明：{'\n'}
             {'  '}🔴 REQUIRES: 必須依賴{'\n'}
             {'  '}🟢 OPTIONAL: 可選依賴{'\n'}
             {'  '}🟡 BLOCKS: 阻塞依賴{'\n'}
@@ -355,75 +396,75 @@ export const TaskDependencyScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5'
+    backgroundColor: '#F5F5F5',
   },
   header: {
     backgroundColor: '#2196F3',
     padding: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 4
+    marginBottom: 4,
   },
   subtitle: {
     fontSize: 14,
-    color: '#E3F2FD'
+    color: '#E3F2FD',
   },
   controls: {
     flexDirection: 'row',
     padding: 16,
-    gap: 12
+    gap: 12,
   },
   controlButton: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   primaryButton: {
-    backgroundColor: '#4CAF50'
+    backgroundColor: '#4CAF50',
   },
   dangerButton: {
-    backgroundColor: '#F44336'
+    backgroundColor: '#F44336',
   },
   controlButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   statsContainer: {
     backgroundColor: '#FFFFFF',
     margin: 16,
     padding: 16,
     borderRadius: 12,
-    elevation: 2
+    elevation: 2,
   },
   statsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#333'
+    color: '#333',
   },
   statsGrid: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   statCard: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   statNumber: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2196F3'
+    color: '#2196F3',
   },
   statLabel: {
     fontSize: 12,
     color: '#666',
-    marginTop: 4
+    marginTop: 4,
   },
   tabContainer: {
     flexDirection: 'row',
@@ -432,32 +473,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 4,
-    elevation: 2
+    elevation: 2,
   },
   tabButton: {
     flex: 1,
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   activeTabButton: {
-    backgroundColor: '#2196F3'
+    backgroundColor: '#2196F3',
   },
   tabButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666'
+    color: '#666',
   },
   activeTabButtonText: {
-    color: '#FFFFFF'
+    color: '#FFFFFF',
   },
   mainContentContainer: {
     flex: 1,
     margin: 16,
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   helpContainer: {
     backgroundColor: '#FFFFFF',
@@ -465,20 +506,20 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 12,
     elevation: 2,
-    maxHeight: 200
+    maxHeight: 200,
   },
   helpTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#333'
+    color: '#333',
   },
   helpContent: {
-    flex: 1
+    flex: 1,
   },
   helpText: {
     fontSize: 12,
     color: '#666',
-    lineHeight: 18
-  }
+    lineHeight: 18,
+  },
 });

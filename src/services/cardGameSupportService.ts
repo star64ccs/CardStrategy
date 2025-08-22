@@ -24,7 +24,18 @@ export interface CardGameConfig {
 export interface CardGame {
   id: string;
   name: string;
-  type: 'pokemon' | 'yugioh' | 'mtg' | 'hearthstone' | 'onepiece' | 'gwent' | 'runeterra' | 'shadowverse' | 'artifact' | 'eternal' | 'faeria';
+  type:
+    | 'pokemon'
+    | 'yugioh'
+    | 'mtg'
+    | 'hearthstone'
+    | 'onepiece'
+    | 'gwent'
+    | 'runeterra'
+    | 'shadowverse'
+    | 'artifact'
+    | 'eternal'
+    | 'faeria';
   isActive: boolean;
   version: string;
   releaseDate: Date;
@@ -67,7 +78,15 @@ export interface CardGameCard {
   id: string;
   gameId: string;
   name: string;
-  type: 'creature' | 'spell' | 'artifact' | 'land' | 'trap' | 'monster' | 'energy' | 'item';
+  type:
+    | 'creature'
+    | 'spell'
+    | 'artifact'
+    | 'land'
+    | 'trap'
+    | 'monster'
+    | 'energy'
+    | 'item';
   rarity: 'common' | 'uncommon' | 'rare' | 'mythic' | 'legendary';
   manaCost: number;
   power?: number;
@@ -182,7 +201,7 @@ const CardGameDeckSchema = z.object({
   cards: z.array(z.string()),
   format: z.string(),
   isPublic: z.boolean().optional(),
-  isCompetitive: z.boolean().optional()
+  isCompetitive: z.boolean().optional(),
 });
 
 const CardGameTournamentSchema = z.object({
@@ -194,7 +213,7 @@ const CardGameTournamentSchema = z.object({
   endDate: z.date(),
   entryFee: z.number().min(0),
   prizePool: z.number().min(0),
-  maxParticipants: z.number().min(2)
+  maxParticipants: z.number().min(2),
 });
 
 // ==================== 卡片遊戲支持服務 ====================
@@ -217,7 +236,7 @@ class CardGameSupportService {
       enableArtifact: false,
       enableEternal: false,
       enableFaeria: false,
-      ...config
+      ...config,
     };
   }
 
@@ -281,14 +300,24 @@ class CardGameSupportService {
           tournaments: true,
           rankings: true,
           analytics: true,
-          api: true
+          api: true,
         },
         metadata: {
-          energyTypes: ['Grass', 'Fire', 'Water', 'Lightning', 'Psychic', 'Fighting', 'Darkness', 'Metal', 'Fairy'],
-          cardTypes: ['Pokemon', 'Trainer', 'Energy']
+          energyTypes: [
+            'Grass',
+            'Fire',
+            'Water',
+            'Lightning',
+            'Psychic',
+            'Fighting',
+            'Darkness',
+            'Metal',
+            'Fairy',
+          ],
+          cardTypes: ['Pokemon', 'Trainer', 'Energy'],
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       this.games.set('pokemon', pokemonGame);
     }
@@ -310,14 +339,22 @@ class CardGameSupportService {
           tournaments: true,
           rankings: true,
           analytics: true,
-          api: true
+          api: true,
         },
         metadata: {
           cardTypes: ['Monster', 'Spell', 'Trap'],
-          attributes: ['DARK', 'LIGHT', 'EARTH', 'WATER', 'FIRE', 'WIND', 'DIVINE']
+          attributes: [
+            'DARK',
+            'LIGHT',
+            'EARTH',
+            'WATER',
+            'FIRE',
+            'WIND',
+            'DIVINE',
+          ],
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       this.games.set('yugioh', yugiohGame);
     }
@@ -339,14 +376,22 @@ class CardGameSupportService {
           tournaments: true,
           rankings: true,
           analytics: true,
-          api: true
+          api: true,
         },
         metadata: {
           colors: ['White', 'Blue', 'Black', 'Red', 'Green'],
-          cardTypes: ['Creature', 'Instant', 'Sorcery', 'Enchantment', 'Artifact', 'Planeswalker', 'Land']
+          cardTypes: [
+            'Creature',
+            'Instant',
+            'Sorcery',
+            'Enchantment',
+            'Artifact',
+            'Planeswalker',
+            'Land',
+          ],
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       this.games.set('mtg', mtgGame);
     }
@@ -368,14 +413,25 @@ class CardGameSupportService {
           tournaments: true,
           rankings: true,
           analytics: true,
-          api: true
+          api: true,
         },
         metadata: {
-          classes: ['Warrior', 'Paladin', 'Hunter', 'Rogue', 'Priest', 'Shaman', 'Mage', 'Warlock', 'Druid', 'Demon Hunter'],
-          cardTypes: ['Minion', 'Spell', 'Weapon']
+          classes: [
+            'Warrior',
+            'Paladin',
+            'Hunter',
+            'Rogue',
+            'Priest',
+            'Shaman',
+            'Mage',
+            'Warlock',
+            'Druid',
+            'Demon Hunter',
+          ],
+          cardTypes: ['Minion', 'Spell', 'Weapon'],
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       this.games.set('hearthstone', hearthstoneGame);
     }
@@ -397,16 +453,27 @@ class CardGameSupportService {
           tournaments: true,
           rankings: true,
           analytics: true,
-          api: true
+          api: true,
         },
         metadata: {
           cardTypes: ['Leader', 'Character', 'Event', 'Stage'],
           colors: ['Red', 'Blue', 'Green', 'Purple', 'Black'],
           rarities: ['Common', 'Uncommon', 'Rare', 'Super Rare', 'Secret Rare'],
-          leaders: ['Luffy', 'Zoro', 'Nami', 'Usopp', 'Sanji', 'Chopper', 'Robin', 'Franky', 'Brook', 'Jinbe']
+          leaders: [
+            'Luffy',
+            'Zoro',
+            'Nami',
+            'Usopp',
+            'Sanji',
+            'Chopper',
+            'Robin',
+            'Franky',
+            'Brook',
+            'Jinbe',
+          ],
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
       this.games.set('onepiece', onePieceGame);
     }
@@ -441,7 +508,10 @@ class CardGameSupportService {
   /**
    * 更新遊戲配置
    */
-  async updateGameConfig(gameId: string, updates: Partial<CardGame>): Promise<CardGame> {
+  async updateGameConfig(
+    gameId: string,
+    updates: Partial<CardGame>
+  ): Promise<CardGame> {
     try {
       logger.info('更新遊戲配置:', gameId);
 
@@ -453,7 +523,7 @@ class CardGameSupportService {
       const updatedGame: CardGame = {
         ...game,
         ...updates,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       this.games.set(gameId, updatedGame);
@@ -471,7 +541,10 @@ class CardGameSupportService {
   /**
    * 創建牌組
    */
-  async createDeck(userId: string, deckData: Partial<CardGameDeck>): Promise<CardGameDeck> {
+  async createDeck(
+    userId: string,
+    deckData: Partial<CardGameDeck>
+  ): Promise<CardGameDeck> {
     try {
       // 驗證數據
       const validatedData = CardGameDeckSchema.parse(deckData);
@@ -498,10 +571,10 @@ class CardGameSupportService {
           totalCards: 0,
           manaCost: 0,
           winRate: 0,
-          playCount: 0
+          playCount: 0,
         },
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -531,7 +604,10 @@ class CardGameSupportService {
   /**
    * 更新牌組
    */
-  async updateDeck(deckId: string, updates: Partial<CardGameDeck>): Promise<CardGameDeck> {
+  async updateDeck(
+    deckId: string,
+    updates: Partial<CardGameDeck>
+  ): Promise<CardGameDeck> {
     try {
       logger.info('更新牌組:', deckId);
 
@@ -564,7 +640,10 @@ class CardGameSupportService {
   /**
    * 獲取遊戲的卡片
    */
-  async getGameCards(gameId: string, filters?: Record<string, any>): Promise<CardGameCard[]> {
+  async getGameCards(
+    gameId: string,
+    filters?: Record<string, any>
+  ): Promise<CardGameCard[]> {
     try {
       logger.info('獲取遊戲卡片:', gameId, filters);
 
@@ -596,7 +675,9 @@ class CardGameSupportService {
   /**
    * 創建錦標賽
    */
-  async createTournament(tournamentData: Partial<CardGameTournament>): Promise<CardGameTournament> {
+  async createTournament(
+    tournamentData: Partial<CardGameTournament>
+  ): Promise<CardGameTournament> {
     try {
       // 驗證數據
       const validatedData = CardGameTournamentSchema.parse(tournamentData);
@@ -625,7 +706,7 @@ class CardGameSupportService {
         participants: [],
         brackets: [],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       // 這裡應該保存到數據庫
@@ -640,7 +721,9 @@ class CardGameSupportService {
   /**
    * 獲取錦標賽
    */
-  async getTournament(tournamentId: string): Promise<CardGameTournament | null> {
+  async getTournament(
+    tournamentId: string
+  ): Promise<CardGameTournament | null> {
     try {
       logger.info('獲取錦標賽:', tournamentId);
 
@@ -655,7 +738,10 @@ class CardGameSupportService {
   /**
    * 獲取遊戲的錦標賽
    */
-  async getGameTournaments(gameId: string, status?: CardGameTournament['status']): Promise<CardGameTournament[]> {
+  async getGameTournaments(
+    gameId: string,
+    status?: CardGameTournament['status']
+  ): Promise<CardGameTournament[]> {
     try {
       logger.info('獲取遊戲錦標賽:', gameId, status);
 
@@ -670,7 +756,11 @@ class CardGameSupportService {
   /**
    * 報名錦標賽
    */
-  async joinTournament(tournamentId: string, userId: string, deckId: string): Promise<CardGameTournamentParticipant> {
+  async joinTournament(
+    tournamentId: string,
+    userId: string,
+    deckId: string
+  ): Promise<CardGameTournamentParticipant> {
     try {
       logger.info('報名錦標賽:', tournamentId, userId, deckId);
 
@@ -685,7 +775,7 @@ class CardGameSupportService {
         wins: 0,
         losses: 0,
         status: 'registered',
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       logger.info('錦標賽報名成功');
@@ -701,7 +791,10 @@ class CardGameSupportService {
   /**
    * 獲取遊戲排行榜
    */
-  async getGameRankings(gameId: string, season?: string): Promise<CardGameRanking[]> {
+  async getGameRankings(
+    gameId: string,
+    season?: string
+  ): Promise<CardGameRanking[]> {
     try {
       logger.info('獲取遊戲排行榜:', gameId, season);
 
@@ -716,7 +809,11 @@ class CardGameSupportService {
   /**
    * 獲取用戶排名
    */
-  async getUserRanking(userId: string, gameId: string, season?: string): Promise<CardGameRanking | null> {
+  async getUserRanking(
+    userId: string,
+    gameId: string,
+    season?: string
+  ): Promise<CardGameRanking | null> {
     try {
       logger.info('獲取用戶排名:', userId, gameId, season);
 
@@ -733,7 +830,11 @@ class CardGameSupportService {
   /**
    * 獲取遊戲分析
    */
-  async getGameAnalytics(userId: string, gameId: string, period: CardGameAnalytics['period'] = 'month'): Promise<CardGameAnalytics> {
+  async getGameAnalytics(
+    userId: string,
+    gameId: string,
+    period: CardGameAnalytics['period'] = 'month'
+  ): Promise<CardGameAnalytics> {
     try {
       logger.info('獲取遊戲分析:', userId, gameId, period);
 
@@ -750,12 +851,12 @@ class CardGameSupportService {
           winRate: 0,
           averageGameTime: 0,
           cardsPlayed: 0,
-          decksUsed: 0
+          decksUsed: 0,
         },
         topDecks: [],
         topCards: [],
         trends: [],
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       logger.info('遊戲分析獲取成功');
@@ -800,5 +901,6 @@ class CardGameSupportService {
 
 // ==================== 導出 ====================
 
+export { CardGameSupportService };
 export const cardGameSupportService = new CardGameSupportService();
 export default cardGameSupportService;

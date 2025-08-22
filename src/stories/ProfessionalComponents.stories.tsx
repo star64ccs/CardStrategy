@@ -5,30 +5,30 @@ import {
   CardPriceChart,
   AIRecommendationCard,
   CardCollectionManager,
-  CardScannerOverlay
+  CardScannerOverlay,
 } from '../components/common';
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#1a1a1a',
-    flex: 1
+    flex: 1,
   },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   section: {
-    marginBottom: 30
+    marginBottom: 30,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 10
-  }
+    marginBottom: 10,
+  },
 });
 
 // 模擬數據
@@ -38,38 +38,38 @@ const mockGradingResult = {
     centering: 9.5,
     corners: 9.0,
     edges: 9.5,
-    surface: 9.5
+    surface: 9.5,
   },
   confidence: 85,
   estimatedValue: 2500,
   serialNumber: 'PSA-12345678',
   gradingDate: '2024-01-15',
   cardName: 'Charizard GX',
-  cardType: 'POKEMON'
+  cardType: 'POKEMON',
 };
 
 const mockPriceData = {
-  currentPrice: 150.00,
-  priceChange: 12.50,
+  currentPrice: 150.0,
+  priceChange: 12.5,
   priceChangePercent: 8.33,
   priceHistory: [
-    { date: '2024-01-01', price: 120.00 },
-    { date: '2024-01-08', price: 135.00 },
-    { date: '2024-01-15', price: 150.00 }
+    { date: '2024-01-01', price: 120.0 },
+    { date: '2024-01-08', price: 135.0 },
+    { date: '2024-01-15', price: 150.0 },
   ],
   statistics: {
-    high24h: 155.00,
-    low24h: 145.00,
+    high24h: 155.0,
+    low24h: 145.0,
     volume24h: 1250,
-    marketCap: 1500000
-  }
+    marketCap: 1500000,
+  },
 };
 
 const mockRecommendation = {
   cardName: 'Pikachu VMAX',
   cardType: 'POKEMON',
-  currentPrice: 45.00,
-  predictedPrice: 65.00,
+  currentPrice: 45.0,
+  predictedPrice: 65.0,
   confidence: 78,
   riskLevel: 'medium',
   reasoning: '基於市場趨勢和卡片稀有度分析，預計未來3個月內價格將上漲。',
@@ -78,7 +78,7 @@ const mockRecommendation = {
   timeHorizon: '3-6 months',
   budgetMatch: true,
   minBudget: 30,
-  maxBudget: 80
+  maxBudget: 80,
 };
 
 const mockCollectionCards = [
@@ -93,7 +93,7 @@ const mockCollectionCards = [
     isForSale: false,
     isWishlist: false,
     acquisitionDate: '2023-12-01',
-    acquisitionPrice: 2000
+    acquisitionPrice: 2000,
   },
   {
     id: '2',
@@ -106,8 +106,8 @@ const mockCollectionCards = [
     isForSale: true,
     isWishlist: false,
     acquisitionDate: '2023-11-15',
-    acquisitionPrice: 1500
-  }
+    acquisitionPrice: 1500,
+  },
 ];
 
 export default {
@@ -115,17 +115,18 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: '專業組件提供卡片策略應用的核心功能，包括評級顯示、價格圖表、AI推薦等。'
-      }
-    }
+        component:
+          '專業組件提供卡片策略應用的核心功能，包括評級顯示、價格圖表、AI推薦等。',
+      },
+    },
   },
   decorators: [
     (Story) => (
       <View style={styles.container}>
         <Story />
       </View>
-    )
-  ]
+    ),
+  ],
 };
 
 // 卡片評級顯示故事
@@ -135,8 +136,12 @@ export const CardGradingDisplayStory = () => (
     <View style={styles.row}>
       <CardGradingDisplay
         result={mockGradingResult}
-        onShare={() => // logger.info('Share grading result')}
-        onViewDetails={() => // logger.info('View grading details')}
+        onShare={() => {
+          /* logger.info('Share grading result') */
+        }}
+        onViewDetails={() => {
+          /* logger.info('View grading details') */
+        }}
       />
     </View>
   </View>
@@ -151,8 +156,12 @@ export const CardPriceChartStory = () => (
         data={mockPriceData}
         cardName="Charizard GX"
         cardType="POKEMON"
-        onTimeRangeChange={(range) => // logger.info('Time range changed:', range)}
-        onPriceAlert={() => // logger.info('Set price alert')}
+        onTimeRangeChange={(range) => {
+          /* logger.info('Time range changed:', range) */
+        }}
+        onPriceAlert={() => {
+          /* logger.info('Set price alert') */
+        }}
       />
     </View>
   </View>
@@ -165,9 +174,15 @@ export const AIRecommendationCardStory = () => (
     <View style={styles.row}>
       <AIRecommendationCard
         recommendation={mockRecommendation}
-        onInvest={() => // logger.info('Invest in card')}
-        onViewDetails={() => // logger.info('View card details')}
-        onDismiss={() => // logger.info('Dismiss recommendation')}
+        onInvest={() => {
+          /* logger.info('Invest in card') */
+        }}
+        onViewDetails={() => {
+          /* logger.info('View card details') */
+        }}
+        onDismiss={() => {
+          /* logger.info('Dismiss recommendation') */
+        }}
       />
     </View>
   </View>
@@ -180,14 +195,30 @@ export const CardCollectionManagerStory = () => (
     <View style={styles.row}>
       <CardCollectionManager
         cards={mockCollectionCards}
-        onCardPress={(card) => // logger.info('Card pressed:', card)}
-        onAddCard={() => // logger.info('Add new card')}
-        onEditCard={(card) => // logger.info('Edit card:', card)}
-        onDeleteCard={(cardId) => // logger.info('Delete card:', cardId)}
-        onToggleSale={(cardId, isForSale) => // logger.info('Toggle sale:', cardId, isForSale)}
-        onToggleWishlist={(cardId, isWishlist) => // logger.info('Toggle wishlist:', cardId, isWishlist)}
-        onImport={() => // logger.info('Import cards')}
-        onExport={() => // logger.info('Export cards')}
+        onCardPress={(card) => {
+          /* logger.info('Card pressed:', card) */
+        }}
+        onAddCard={() => {
+          /* logger.info('Add new card') */
+        }}
+        onEditCard={(card) => {
+          /* logger.info('Edit card:', card) */
+        }}
+        onDeleteCard={(cardId) => {
+          /* logger.info('Delete card:', cardId) */
+        }}
+        onToggleSale={(cardId, isForSale) => {
+          /* logger.info('Toggle sale:', cardId, isForSale) */
+        }}
+        onToggleWishlist={(cardId, isWishlist) => {
+          /* logger.info('Toggle wishlist:', cardId, isWishlist) */
+        }}
+        onImport={() => {
+          /* logger.info('Import cards') */
+        }}
+        onExport={() => {
+          /* logger.info('Export cards') */
+        }}
       />
     </View>
   </View>
@@ -201,10 +232,18 @@ export const CardScannerOverlayStory = () => (
       <CardScannerOverlay
         isScanning={true}
         scanProgress={65}
-        onCapture={() => // logger.info('Capture image')}
-        onCancel={() => // logger.info('Cancel scanning')}
-        onToggleFlash={() => // logger.info('Toggle flash')}
-        onSwitchCamera={() => // logger.info('Switch camera')}
+        onCapture={() => {
+          /* logger.info('Capture image') */
+        }}
+        onCancel={() => {
+          /* logger.info('Cancel scanning') */
+        }}
+        onToggleFlash={() => {
+          /* logger.info('Toggle flash') */
+        }}
+        onSwitchCamera={() => {
+          /* logger.info('Switch camera') */
+        }}
         scanInstructions="將卡片放在框內，保持穩定"
         detectedCard="Charizard GX"
         confidence={85}
@@ -285,16 +324,23 @@ export const ProfessionalComponentsDocumentation = () => (
         <Text style={styles.sectionTitle}>使用示例</Text>
         <View style={{ color: '#ffffff' }}>
           <Text>```tsx</Text>
-          <Text>import { CardGradingDisplay, CardPriceChart } from '@components/common';</Text>
+          <Text>
+            import {(CardGradingDisplay, CardPriceChart)} from
+            '@components/common';
+          </Text>
           <Text></Text>
           <Text>// 評級顯示</Text>
           <Text>{'<CardGradingDisplay result={gradingResult} />'}</Text>
           <Text></Text>
           <Text>// 價格圖表</Text>
-          <Text>{'<CardPriceChart data={priceData} cardName="Charizard" />'}</Text>
+          <Text>
+            {'<CardPriceChart data={priceData} cardName="Charizard" />'}
+          </Text>
           <Text></Text>
           <Text>// AI推薦</Text>
-          <Text>{'<AIRecommendationCard recommendation={recommendation} />'}</Text>
+          <Text>
+            {'<AIRecommendationCard recommendation={recommendation} />'}
+          </Text>
           <Text>```</Text>
         </View>
       </View>

@@ -75,7 +75,10 @@ export class StorageManager {
   static async multiGet(keys: string[]): Promise<[string, any][]> {
     try {
       const pairs = await AsyncStorage.multiGet(keys);
-      return pairs.map(([key, value]) => [key, value ? JSON.parse(value) : null]);
+      return pairs.map(([key, value]) => [
+        key,
+        value ? JSON.parse(value) : null,
+      ]);
     } catch (error) {
       logger.error('Storage multiGet error:', { error, keys });
       return [];
@@ -85,9 +88,10 @@ export class StorageManager {
   // 設置多個值
   static async multiSet(keyValuePairs: [string, any][]): Promise<void> {
     try {
-      const pairs: [string, string][] = keyValuePairs.map(
-        ([key, value]) => [key, JSON.stringify(value)]
-      );
+      const pairs: [string, string][] = keyValuePairs.map(([key, value]) => [
+        key,
+        JSON.stringify(value),
+      ]);
       await AsyncStorage.multiSet(pairs);
     } catch (error) {
       logger.error('Storage multiSet error:', { error, keyValuePairs });
@@ -143,9 +147,9 @@ export const AuthStorage = {
     await StorageManager.multiRemove([
       STORAGE_KEYS.AUTH_TOKEN,
       STORAGE_KEYS.REFRESH_TOKEN,
-      STORAGE_KEYS.USER_DATA
+      STORAGE_KEYS.USER_DATA,
     ]);
-  }
+  },
 };
 
 // 設置相關存儲
@@ -178,7 +182,7 @@ export const SettingsStorage = {
   // 獲取語言
   getLanguage: (): Promise<string | null> => {
     return StorageManager.get<string>(STORAGE_KEYS.LANGUAGE);
-  }
+  },
 };
 
 // 快取相關存儲
@@ -188,7 +192,7 @@ export const CacheStorage = {
     const cacheItem = {
       data,
       timestamp: Date.now(),
-      expiry: expiry || Date.now() + 24 * 60 * 60 * 1000 // 預設 24 小時
+      expiry: expiry || Date.now() + 24 * 60 * 60 * 1000, // 預設 24 小時
     };
     return StorageManager.set(`cache_${key}`, cacheItem);
   },
@@ -228,7 +232,7 @@ export const CacheStorage = {
   clearCache: async (): Promise<void> => {
     try {
       const keys = await StorageManager.getAllKeys();
-      const cacheKeys = keys.filter(key => key.startsWith('cache_'));
+      const cacheKeys = keys.filter((key) => key.startsWith('cache_'));
       await StorageManager.multiRemove(cacheKeys);
     } catch (error) {
       logger.error('Cache clear error:', { error });
@@ -240,7 +244,7 @@ export const CacheStorage = {
   cleanupExpiredCache: async (): Promise<void> => {
     try {
       const keys = await StorageManager.getAllKeys();
-      const cacheKeys = keys.filter(key => key.startsWith('cache_'));
+      const cacheKeys = keys.filter((key) => key.startsWith('cache_'));
 
       for (const key of cacheKeys) {
         const cacheItem = await StorageManager.get<{
@@ -256,7 +260,7 @@ export const CacheStorage = {
     } catch (error) {
       logger.error('Cache cleanup error:', { error });
     }
-  }
+  },
 };
 
 // 應用數據存儲
@@ -268,7 +272,10 @@ export const AppStorage = {
 
   // 獲取引導完成狀態
   getOnboardingCompleted: async (): Promise<boolean> => {
-    const result = await StorageManager.get<boolean>(STORAGE_KEYS.ONBOARDING_COMPLETED, false);
+    const result = await StorageManager.get<boolean>(
+      STORAGE_KEYS.ONBOARDING_COMPLETED,
+      false
+    );
     return result ?? false;
   },
 
@@ -289,7 +296,7 @@ export const AppStorage = {
       return true;
     }
     return Date.now() - lastSync > syncInterval;
-  }
+  },
 };
 
 // 導出預設存儲管理器

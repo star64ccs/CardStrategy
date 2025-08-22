@@ -28,7 +28,10 @@ const workflowSlice = createSlice({
     workflowHistory: [],
   } as WorkflowState,
   reducers: {
-    setCurrentStep: (state, action: PayloadAction<WorkflowState['currentStep']>) => {
+    setCurrentStep: (
+      state,
+      action: PayloadAction<WorkflowState['currentStep']>
+    ) => {
       state.currentStep = action.payload;
       state.workflowHistory.push({
         step: action.payload,
@@ -59,21 +62,19 @@ const workflowSlice = createSlice({
 });
 
 // 模擬工作流程組件
-const MockWorkflowController = ({ onStepChange }: { onStepChange: (step: string) => void }) => (
+const MockWorkflowController = ({
+  onStepChange,
+}: {
+  onStepChange: (step: string) => void;
+}) => (
   <div data-testid="workflow-controller">
-    <button 
-      data-testid="next-step-btn"
-      onClick={() => onStepChange('next')}
-    >
+    <button data-testid="next-step-btn" onClick={() => onStepChange('next')}>
       下一步
     </button>
-    <button 
-      data-testid="prev-step-btn"
-      onClick={() => onStepChange('prev')}
-    >
+    <button data-testid="prev-step-btn" onClick={() => onStepChange('prev')}>
       上一步
     </button>
-    <button 
+    <button
       data-testid="reset-workflow-btn"
       onClick={() => onStepChange('reset')}
     >
@@ -82,16 +83,22 @@ const MockWorkflowController = ({ onStepChange }: { onStepChange: (step: string)
   </div>
 );
 
-const MockCardScanner = ({ onScanComplete }: { onScanComplete: (result: any) => void }) => (
+const MockCardScanner = ({
+  onScanComplete,
+}: {
+  onScanComplete: (result: any) => void;
+}) => (
   <div data-testid="card-scanner">
-    <button 
+    <button
       data-testid="scan-card-btn"
-      onClick={() => onScanComplete({
-        cardId: 1,
-        cardName: '測試卡片',
-        confidence: 0.95,
-        imageUrl: 'test-image.jpg',
-      })}
+      onClick={() =>
+        onScanComplete({
+          cardId: 1,
+          cardName: '測試卡片',
+          confidence: 0.95,
+          imageUrl: 'test-image.jpg',
+        })
+      }
     >
       掃描卡片
     </button>
@@ -99,17 +106,23 @@ const MockCardScanner = ({ onScanComplete }: { onScanComplete: (result: any) => 
   </div>
 );
 
-const MockMarketAnalyzer = ({ onAnalysisComplete }: { onAnalysisComplete: (analysis: any) => void }) => (
+const MockMarketAnalyzer = ({
+  onAnalysisComplete,
+}: {
+  onAnalysisComplete: (analysis: any) => void;
+}) => (
   <div data-testid="market-analyzer">
-    <button 
+    <button
       data-testid="analyze-market-btn"
-      onClick={() => onAnalysisComplete({
-        cardId: 1,
-        currentPrice: 100,
-        priceHistory: [90, 95, 100, 105, 110],
-        trend: 'upward',
-        volatility: 'medium',
-      })}
+      onClick={() =>
+        onAnalysisComplete({
+          cardId: 1,
+          currentPrice: 100,
+          priceHistory: [90, 95, 100, 105, 110],
+          trend: 'upward',
+          volatility: 'medium',
+        })
+      }
     >
       分析市場
     </button>
@@ -117,17 +130,23 @@ const MockMarketAnalyzer = ({ onAnalysisComplete }: { onAnalysisComplete: (analy
   </div>
 );
 
-const MockAIPredictor = ({ onPredictionComplete }: { onPredictionComplete: (prediction: any) => void }) => (
+const MockAIPredictor = ({
+  onPredictionComplete,
+}: {
+  onPredictionComplete: (prediction: any) => void;
+}) => (
   <div data-testid="ai-predictor">
-    <button 
+    <button
       data-testid="predict-price-btn"
-      onClick={() => onPredictionComplete({
-        cardId: 1,
-        predictedPrice: 120,
-        confidence: 0.85,
-        timeframe: '1m',
-        factors: ['market_trend', 'demand_increase'],
-      })}
+      onClick={() =>
+        onPredictionComplete({
+          cardId: 1,
+          predictedPrice: 120,
+          confidence: 0.85,
+          timeframe: '1m',
+          factors: ['market_trend', 'demand_increase'],
+        })
+      }
     >
       AI 預測
     </button>
@@ -135,43 +154,57 @@ const MockAIPredictor = ({ onPredictionComplete }: { onPredictionComplete: (pred
   </div>
 );
 
-const MockInvestmentAdvisor = ({ onDecisionComplete }: { onDecisionComplete: (decision: any) => void }) => (
+const MockInvestmentAdvisor = ({
+  onDecisionComplete,
+}: {
+  onDecisionComplete: (decision: any) => void;
+}) => (
   <div data-testid="investment-advisor">
-    <button 
+    <button
       data-testid="buy-btn"
-      onClick={() => onDecisionComplete({
-        action: 'buy',
-        amount: 1000,
-        reasoning: '價格預期上漲',
-        risk: 'medium',
-      })}
+      onClick={() =>
+        onDecisionComplete({
+          action: 'buy',
+          amount: 1000,
+          reasoning: '價格預期上漲',
+          risk: 'medium',
+        })
+      }
     >
       建議購買
     </button>
-    <button 
+    <button
       data-testid="hold-btn"
-      onClick={() => onDecisionComplete({
-        action: 'hold',
-        reasoning: '等待更好時機',
-        risk: 'low',
-      })}
+      onClick={() =>
+        onDecisionComplete({
+          action: 'hold',
+          reasoning: '等待更好時機',
+          risk: 'low',
+        })
+      }
     >
       建議持有
     </button>
-    <button 
+    <button
       data-testid="sell-btn"
-      onClick={() => onDecisionComplete({
-        action: 'sell',
-        reasoning: '價格可能下跌',
-        risk: 'high',
-      })}
+      onClick={() =>
+        onDecisionComplete({
+          action: 'sell',
+          reasoning: '價格可能下跌',
+          risk: 'high',
+        })
+      }
     >
       建議賣出
     </button>
   </div>
 );
 
-const MockWorkflowSummary = ({ workflowData }: { workflowData: WorkflowState }) => (
+const MockWorkflowSummary = ({
+  workflowData,
+}: {
+  workflowData: WorkflowState;
+}) => (
   <div data-testid="workflow-summary">
     <h3>工作流程摘要</h3>
     <div data-testid="current-step">當前步驟: {workflowData.currentStep}</div>
@@ -280,15 +313,23 @@ describe('端到端工作流程集成測試', () => {
     test('從掃描到投資決策的完整流程', async () => {
       const TestComponent = () => {
         const workflowState = store.getState().workflow;
-        
+
         const handleStepChange = (direction: string) => {
           const steps = ['scan', 'analyze', 'predict', 'invest', 'complete'];
           const currentIndex = steps.indexOf(workflowState.currentStep);
-          
+
           if (direction === 'next' && currentIndex < steps.length - 1) {
-            store.dispatch(workflowSlice.actions.setCurrentStep(steps[currentIndex + 1] as any));
+            store.dispatch(
+              workflowSlice.actions.setCurrentStep(
+                steps[currentIndex + 1] as any
+              )
+            );
           } else if (direction === 'prev' && currentIndex > 0) {
-            store.dispatch(workflowSlice.actions.setCurrentStep(steps[currentIndex - 1] as any));
+            store.dispatch(
+              workflowSlice.actions.setCurrentStep(
+                steps[currentIndex - 1] as any
+              )
+            );
           } else if (direction === 'reset') {
             store.dispatch(workflowSlice.actions.resetWorkflow());
           }
@@ -299,43 +340,59 @@ describe('端到端工作流程集成測試', () => {
             <BrowserRouter>
               <div data-testid="e2e-workflow">
                 <MockWorkflowController onStepChange={handleStepChange} />
-                
+
                 {workflowState.currentStep === 'scan' && (
-                  <MockCardScanner 
+                  <MockCardScanner
                     onScanComplete={(result) => {
-                      store.dispatch(workflowSlice.actions.setScanResult(result));
-                      store.dispatch(workflowSlice.actions.setCurrentStep('analyze'));
-                    }} 
+                      store.dispatch(
+                        workflowSlice.actions.setScanResult(result)
+                      );
+                      store.dispatch(
+                        workflowSlice.actions.setCurrentStep('analyze')
+                      );
+                    }}
                   />
                 )}
-                
+
                 {workflowState.currentStep === 'analyze' && (
-                  <MockMarketAnalyzer 
+                  <MockMarketAnalyzer
                     onAnalysisComplete={(analysis) => {
-                      store.dispatch(workflowSlice.actions.setMarketAnalysis(analysis));
-                      store.dispatch(workflowSlice.actions.setCurrentStep('predict'));
-                    }} 
+                      store.dispatch(
+                        workflowSlice.actions.setMarketAnalysis(analysis)
+                      );
+                      store.dispatch(
+                        workflowSlice.actions.setCurrentStep('predict')
+                      );
+                    }}
                   />
                 )}
-                
+
                 {workflowState.currentStep === 'predict' && (
-                  <MockAIPredictor 
+                  <MockAIPredictor
                     onPredictionComplete={(prediction) => {
-                      store.dispatch(workflowSlice.actions.setPrediction(prediction));
-                      store.dispatch(workflowSlice.actions.setCurrentStep('invest');
-                    }} 
+                      store.dispatch(
+                        workflowSlice.actions.setPrediction(prediction)
+                      );
+                      store.dispatch(
+                        workflowSlice.actions.setCurrentStep('invest')
+                      );
+                    }}
                   />
                 )}
-                
+
                 {workflowState.currentStep === 'invest' && (
-                  <MockInvestmentAdvisor 
+                  <MockInvestmentAdvisor
                     onDecisionComplete={(decision) => {
-                      store.dispatch(workflowSlice.actions.setInvestmentDecision(decision));
-                      store.dispatch(workflowSlice.actions.setCurrentStep('complete');
-                    }} 
+                      store.dispatch(
+                        workflowSlice.actions.setInvestmentDecision(decision)
+                      );
+                      store.dispatch(
+                        workflowSlice.actions.setCurrentStep('complete')
+                      );
+                    }}
                   />
                 )}
-                
+
                 {workflowState.currentStep === 'complete' && (
                   <MockWorkflowSummary workflowData={workflowState} />
                 )}
@@ -391,15 +448,23 @@ describe('端到端工作流程集成測試', () => {
     test('能在步驟間前後導航', async () => {
       const TestComponent = () => {
         const workflowState = store.getState().workflow;
-        
+
         const handleStepChange = (direction: string) => {
           const steps = ['scan', 'analyze', 'predict', 'invest', 'complete'];
           const currentIndex = steps.indexOf(workflowState.currentStep);
-          
+
           if (direction === 'next' && currentIndex < steps.length - 1) {
-            store.dispatch(workflowSlice.actions.setCurrentStep(steps[currentIndex + 1] as any));
+            store.dispatch(
+              workflowSlice.actions.setCurrentStep(
+                steps[currentIndex + 1] as any
+              )
+            );
           } else if (direction === 'prev' && currentIndex > 0) {
-            store.dispatch(workflowSlice.actions.setCurrentStep(steps[currentIndex - 1] as any));
+            store.dispatch(
+              workflowSlice.actions.setCurrentStep(
+                steps[currentIndex - 1] as any
+              )
+            );
           }
         };
 
@@ -450,7 +515,7 @@ describe('端到端工作流程集成測試', () => {
     test('能重置工作流程', async () => {
       const TestComponent = () => {
         const workflowState = store.getState().workflow;
-        
+
         const handleStepChange = (direction: string) => {
           if (direction === 'reset') {
             store.dispatch(workflowSlice.actions.resetWorkflow());
@@ -474,7 +539,9 @@ describe('端到端工作流程集成測試', () => {
       render(<TestComponent />);
 
       // 設置一些數據
-      store.dispatch(workflowSlice.actions.setScanResult({ cardId: 1, cardName: '測試卡片' }));
+      store.dispatch(
+        workflowSlice.actions.setScanResult({ cardId: 1, cardName: '測試卡片' })
+      );
       store.dispatch(workflowSlice.actions.setCurrentStep('analyze'));
 
       await waitFor(() => {
@@ -499,7 +566,7 @@ describe('端到端工作流程集成測試', () => {
     test('能通過 API 完成完整流程', async () => {
       const TestComponent = () => {
         const workflowState = store.getState().workflow;
-        
+
         const handleAPIScan = async () => {
           try {
             const response = await fetch('/api/cards/scan', {
@@ -509,7 +576,9 @@ describe('端到端工作流程集成測試', () => {
             });
             const result = await response.json();
             if (result.success) {
-              store.dispatch(workflowSlice.actions.setScanResult(result.result));
+              store.dispatch(
+                workflowSlice.actions.setScanResult(result.result)
+              );
               store.dispatch(workflowSlice.actions.setCurrentStep('analyze'));
             }
           } catch (error) {
@@ -522,7 +591,9 @@ describe('端到端工作流程集成測試', () => {
             const response = await fetch('/api/market/analysis/1');
             const result = await response.json();
             if (result.success) {
-              store.dispatch(workflowSlice.actions.setMarketAnalysis(result.analysis));
+              store.dispatch(
+                workflowSlice.actions.setMarketAnalysis(result.analysis)
+              );
               store.dispatch(workflowSlice.actions.setCurrentStep('predict'));
             }
           } catch (error) {
@@ -539,7 +610,9 @@ describe('端到端工作流程集成測試', () => {
             });
             const result = await response.json();
             if (result.success) {
-              store.dispatch(workflowSlice.actions.setPrediction(result.prediction));
+              store.dispatch(
+                workflowSlice.actions.setPrediction(result.prediction)
+              );
               store.dispatch(workflowSlice.actions.setCurrentStep('invest'));
             }
           } catch (error) {
@@ -552,7 +625,7 @@ describe('端到端工作流程集成測試', () => {
             const response = await fetch('/api/investment/advise', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ 
+              body: JSON.stringify({
                 cardId: 1,
                 currentPrice: 100,
                 predictedPrice: 120,
@@ -560,7 +633,9 @@ describe('端到端工作流程集成測試', () => {
             });
             const result = await response.json();
             if (result.success) {
-              store.dispatch(workflowSlice.actions.setInvestmentDecision(result.advice));
+              store.dispatch(
+                workflowSlice.actions.setInvestmentDecision(result.advice)
+              );
               store.dispatch(workflowSlice.actions.setCurrentStep('complete'));
             }
           } catch (error) {
@@ -577,25 +652,34 @@ describe('端到端工作流程集成測試', () => {
                     API 掃描
                   </button>
                 )}
-                
+
                 {workflowState.currentStep === 'analyze' && (
-                  <button data-testid="api-analysis-btn" onClick={handleAPIAnalysis}>
+                  <button
+                    data-testid="api-analysis-btn"
+                    onClick={handleAPIAnalysis}
+                  >
                     API 分析
                   </button>
                 )}
-                
+
                 {workflowState.currentStep === 'predict' && (
-                  <button data-testid="api-prediction-btn" onClick={handleAPIPrediction}>
+                  <button
+                    data-testid="api-prediction-btn"
+                    onClick={handleAPIPrediction}
+                  >
                     API 預測
                   </button>
                 )}
-                
+
                 {workflowState.currentStep === 'invest' && (
-                  <button data-testid="api-advice-btn" onClick={handleAPIAdvice}>
+                  <button
+                    data-testid="api-advice-btn"
+                    onClick={handleAPIAdvice}
+                  >
                     API 建議
                   </button>
                 )}
-                
+
                 {workflowState.currentStep === 'complete' && (
                   <MockWorkflowSummary workflowData={workflowState} />
                 )}
@@ -645,13 +729,16 @@ describe('端到端工作流程集成測試', () => {
       // 模擬 API 錯誤
       server.use(
         rest.post('/api/cards/scan', (req, res, ctx) => {
-          return res(ctx.status(500), ctx.json({ error: '掃描服務暫時不可用' }));
+          return res(
+            ctx.status(500),
+            ctx.json({ error: '掃描服務暫時不可用' })
+          );
         })
       );
 
       const TestComponent = () => {
         const workflowState = store.getState().workflow;
-        
+
         const handleAPIScan = async () => {
           try {
             const response = await fetch('/api/cards/scan', {
@@ -667,11 +754,13 @@ describe('端到端工作流程集成測試', () => {
             store.dispatch(workflowSlice.actions.setCurrentStep('analyze'));
           } catch (error) {
             // 使用模擬數據繼續流程
-            store.dispatch(workflowSlice.actions.setScanResult({
-              cardId: 1,
-              cardName: '模擬卡片',
-              confidence: 0.8,
-            }));
+            store.dispatch(
+              workflowSlice.actions.setScanResult({
+                cardId: 1,
+                cardName: '模擬卡片',
+                confidence: 0.8,
+              })
+            );
             store.dispatch(workflowSlice.actions.setCurrentStep('analyze'));
           }
         };
@@ -685,7 +774,7 @@ describe('端到端工作流程集成測試', () => {
                     錯誤掃描測試
                   </button>
                 )}
-                
+
                 {workflowState.currentStep === 'analyze' && (
                   <div data-testid="error-recovery">錯誤恢復成功</div>
                 )}
@@ -715,26 +804,43 @@ describe('端到端工作流程集成測試', () => {
     test('完整流程執行時間在可接受範圍內', async () => {
       const TestComponent = () => {
         const workflowState = store.getState().workflow;
-        
+
         const handleCompleteWorkflow = async () => {
           const startTime = performance.now();
-          
+
           // 快速執行完整流程
-          store.dispatch(workflowSlice.actions.setScanResult({ cardId: 1, cardName: '性能測試卡片' }));
+          store.dispatch(
+            workflowSlice.actions.setScanResult({
+              cardId: 1,
+              cardName: '性能測試卡片',
+            })
+          );
           store.dispatch(workflowSlice.actions.setCurrentStep('analyze'));
-          
-          store.dispatch(workflowSlice.actions.setMarketAnalysis({ cardId: 1, trend: 'upward' }));
+
+          store.dispatch(
+            workflowSlice.actions.setMarketAnalysis({
+              cardId: 1,
+              trend: 'upward',
+            })
+          );
           store.dispatch(workflowSlice.actions.setCurrentStep('predict'));
-          
-          store.dispatch(workflowSlice.actions.setPrediction({ cardId: 1, predictedPrice: 120 }));
+
+          store.dispatch(
+            workflowSlice.actions.setPrediction({
+              cardId: 1,
+              predictedPrice: 120,
+            })
+          );
           store.dispatch(workflowSlice.actions.setCurrentStep('invest'));
-          
-          store.dispatch(workflowSlice.actions.setInvestmentDecision({ action: 'buy' }));
+
+          store.dispatch(
+            workflowSlice.actions.setInvestmentDecision({ action: 'buy' })
+          );
           store.dispatch(workflowSlice.actions.setCurrentStep('complete'));
-          
+
           const endTime = performance.now();
           const executionTime = endTime - startTime;
-          
+
           // 驗證執行時間
           expect(executionTime).toBeLessThan(100); // 100ms 內完成
         };
@@ -743,7 +849,10 @@ describe('端到端工作流程集成測試', () => {
           <Provider store={store}>
             <BrowserRouter>
               <div data-testid="performance-workflow">
-                <button data-testid="performance-test-btn" onClick={handleCompleteWorkflow}>
+                <button
+                  data-testid="performance-test-btn"
+                  onClick={handleCompleteWorkflow}
+                >
                   性能測試
                 </button>
                 {workflowState.currentStep === 'complete' && (

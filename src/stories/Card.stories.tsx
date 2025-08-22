@@ -8,33 +8,33 @@ import {
   BounceCard,
   FlipCard,
   GlowCard,
-  PulseCard
+  PulseCard,
 } from '../components/common';
 
 const styles = StyleSheet.create({
   container: {
     padding: 20,
     backgroundColor: '#1a1a1a',
-    flex: 1
+    flex: 1,
   },
   row: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 20
+    marginBottom: 20,
   },
   section: {
-    marginBottom: 30
+    marginBottom: 30,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#ffffff',
-    marginBottom: 10
+    marginBottom: 10,
   },
   cardContent: {
-    padding: 10
-  }
+    padding: 10,
+  },
 });
 
 export default {
@@ -43,17 +43,17 @@ export default {
   parameters: {
     docs: {
       description: {
-        component: 'Card 組件提供多種變體和動畫效果，支持豐富的內容展示。'
-      }
-    }
+        component: 'Card 組件提供多種變體和動畫效果，支持豐富的內容展示。',
+      },
+    },
   },
   decorators: [
     (Story) => (
       <View style={styles.container}>
         <Story />
       </View>
-    )
-  ]
+    ),
+  ],
 };
 
 // 基礎卡片故事
@@ -165,29 +165,17 @@ export const SizeVariants = () => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>尺寸變體</Text>
     <View style={styles.row}>
-      <AnimatedCard
-        size="small"
-        title="小卡片"
-        subtitle="小尺寸"
-      >
+      <AnimatedCard size="small" title="小卡片" subtitle="小尺寸">
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>小尺寸卡片</Text>
         </View>
       </AnimatedCard>
-      <AnimatedCard
-        size="medium"
-        title="中卡片"
-        subtitle="中尺寸"
-      >
+      <AnimatedCard size="medium" title="中卡片" subtitle="中尺寸">
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>中尺寸卡片</Text>
         </View>
       </AnimatedCard>
-      <AnimatedCard
-        size="large"
-        title="大卡片"
-        subtitle="大尺寸"
-      >
+      <AnimatedCard size="large" title="大卡片" subtitle="大尺寸">
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>大尺寸卡片</Text>
         </View>
@@ -201,29 +189,17 @@ export const StateVariants = () => (
   <View style={styles.section}>
     <Text style={styles.sectionTitle}>狀態變體</Text>
     <View style={styles.row}>
-      <AnimatedCard
-        loading={true}
-        title="加載卡片"
-        subtitle="加載狀態"
-      >
+      <AnimatedCard loading={true} title="加載卡片" subtitle="加載狀態">
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>加載中的卡片</Text>
         </View>
       </AnimatedCard>
-      <AnimatedCard
-        error={true}
-        title="錯誤卡片"
-        subtitle="錯誤狀態"
-      >
+      <AnimatedCard error={true} title="錯誤卡片" subtitle="錯誤狀態">
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>錯誤狀態的卡片</Text>
         </View>
       </AnimatedCard>
-      <AnimatedCard
-        success={true}
-        title="成功卡片"
-        subtitle="成功狀態"
-      >
+      <AnimatedCard success={true} title="成功卡片" subtitle="成功狀態">
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>成功狀態的卡片</Text>
         </View>
@@ -284,7 +260,9 @@ export const InteractiveCards = () => (
         title="懸停效果"
         subtitle="hoverEffect={true}"
         hoverEffect={true}
-        onPress={() => // logger.info('Card pressed')}
+        onPress={() => {
+          /* logger.info('Card pressed') */
+        }}
       >
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>懸停時會放大</Text>
@@ -294,7 +272,9 @@ export const InteractiveCards = () => (
         title="按壓效果"
         subtitle="pressEffect={true}"
         pressEffect={true}
-        onPress={() => // logger.info('Card pressed')}
+        onPress={() => {
+          /* logger.info('Card pressed') */
+        }}
       >
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>按壓時會縮小</Text>
@@ -304,7 +284,9 @@ export const InteractiveCards = () => (
         title="光暈效果"
         subtitle="glowEffect={true}"
         glowEffect={true}
-        onPress={() => // logger.info('Card pressed')}
+        onPress={() => {
+          /* logger.info('Card pressed') */
+        }}
       >
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc' }}>持續光暈效果</Text>
@@ -332,7 +314,9 @@ export const CompleteExample = () => (
         badgeColor="#ffd700"
         icon="star"
         iconColor="#ffd700"
-        onPress={() => // logger.info('Complete card pressed')}
+        onPress={() => {
+          /* logger.info('Complete card pressed') */
+        }}
       >
         <View style={styles.cardContent}>
           <Text style={{ color: '#cccccc', marginBottom: 10 }}>
@@ -361,7 +345,10 @@ export const CardDocumentation = () => (
           <Text>• children: 卡片內容</Text>
           <Text>• variant: 卡片變體 (default, elevated, outlined, glass)</Text>
           <Text>• size: 卡片尺寸 (small, medium, large)</Text>
-          <Text>• animationType: 動畫類型 (fadeIn, slideUp, slideLeft, scale, bounce, flip)</Text>
+          <Text>
+            • animationType: 動畫類型 (fadeIn, slideUp, slideLeft, scale,
+            bounce, flip)
+          </Text>
           <Text>• hoverEffect: 是否啟用懸停效果</Text>
           <Text>• pressEffect: 是否啟用按壓效果</Text>
           <Text>• glowEffect: 是否啟用光暈效果</Text>
@@ -382,21 +369,23 @@ export const CardDocumentation = () => (
         <Text style={styles.sectionTitle}>使用示例</Text>
         <View style={{ color: '#ffffff' }}>
           <Text>```tsx</Text>
-          <Text>import { Card, AnimatedCard } from '@components/common';</Text>
+          <Text>import {(Card, AnimatedCard)} from '@components/common';</Text>
           <Text></Text>
           <Text>// 基礎卡片</Text>
           <Text>{'<Card title="標題" subtitle="副標題">'}</Text>
-          <Text>  內容</Text>
+          <Text> 內容</Text>
           <Text>{'</Card>'}</Text>
           <Text></Text>
           <Text>// 動畫卡片</Text>
-          <Text>{'<AnimatedCard animationType="slideUp" title="動畫卡片">'}</Text>
-          <Text>  內容</Text>
+          <Text>
+            {'<AnimatedCard animationType="slideUp" title="動畫卡片">'}
+          </Text>
+          <Text> 內容</Text>
           <Text>{'</AnimatedCard>'}</Text>
           <Text></Text>
           <Text>// 預定義卡片</Text>
           <Text>{'<FadeInCard title="淡入卡片">'}</Text>
-          <Text>  內容</Text>
+          <Text> 內容</Text>
           <Text>{'</FadeInCard>'}</Text>
           <Text>```</Text>
         </View>

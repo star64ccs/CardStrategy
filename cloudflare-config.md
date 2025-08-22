@@ -3,6 +3,7 @@
 ## 1. DNS 設置
 
 ### 添加域名記錄
+
 在 Cloudflare DNS 設置中添加以下記錄：
 
 ```
@@ -12,6 +13,7 @@ CNAME api    cardstrategy.com    Auto
 ```
 
 ### 設置子域名
+
 - `cardstrategy.com` - 主網站
 - `api.cardstrategy.com` - API 服務
 - `cdn.cardstrategy.com` - 靜態資源
@@ -19,11 +21,13 @@ CNAME api    cardstrategy.com    Auto
 ## 2. SSL/TLS 設置
 
 ### 加密模式
+
 - 設置為 "Full (strict)"
 - 啟用 "Always Use HTTPS"
 - 啟用 "Minimum TLS Version" 為 1.2
 
 ### 證書設置
+
 - 啟用 "Opportunistic Encryption"
 - 啟用 "TLS 1.3"
 - 啟用 "Automatic HTTPS Rewrites"
@@ -31,6 +35,7 @@ CNAME api    cardstrategy.com    Auto
 ## 3. 緩存設置
 
 ### 頁面規則
+
 創建以下頁面規則：
 
 ```
@@ -52,6 +57,7 @@ URL: cardstrategy.com/*
 ## 4. 安全設置
 
 ### 防火牆規則
+
 ```
 規則名稱: Block Suspicious Requests
 表達式: (http.request.method eq "POST" and http.request.uri contains "/api/auth") and (ip.src in $suspicious_ips or http.user_agent contains "bot")
@@ -59,6 +65,7 @@ URL: cardstrategy.com/*
 ```
 
 ### 速率限制
+
 ```
 規則名稱: API Rate Limiting
 表達式: http.request.uri contains "/api/"
@@ -69,6 +76,7 @@ URL: cardstrategy.com/*
 ## 5. 性能優化
 
 ### 啟用功能
+
 - ✅ Auto Minify (JavaScript, CSS, HTML)
 - ✅ Brotli Compression
 - ✅ Early Hints
@@ -79,6 +87,7 @@ URL: cardstrategy.com/*
 - ✅ Minify HTML
 
 ### 圖片優化
+
 - ✅ Polish (Lossy)
 - ✅ WebP
 - ✅ Image Resizing
@@ -86,11 +95,13 @@ URL: cardstrategy.com/*
 ## 6. 監控設置
 
 ### 分析
+
 - 啟用 Web Analytics
 - 設置自定義事件追蹤
 - 配置錯誤監控
 
 ### 日誌
+
 - 啟用 Logpush
 - 設置日誌保留期為 30 天
 - 配置日誌格式
@@ -98,26 +109,27 @@ URL: cardstrategy.com/*
 ## 7. Workers (可選)
 
 ### API 代理 Worker
+
 ```javascript
-addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
+addEventListener('fetch', (event) => {
+  event.respondWith(handleRequest(event.request));
+});
 
 async function handleRequest(request) {
-  const url = new URL(request.url)
-  
+  const url = new URL(request.url);
+
   // API 請求代理到後端
   if (url.pathname.startsWith('/api/')) {
-    const apiUrl = `https://api.cardstrategy.com${url.pathname}${url.search}`
+    const apiUrl = `https://api.cardstrategy.com${url.pathname}${url.search}`;
     return fetch(apiUrl, {
       method: request.method,
       headers: request.headers,
-      body: request.body
-    })
+      body: request.body,
+    });
   }
-  
+
   // 靜態資源緩存
-  return fetch(request)
+  return fetch(request);
 }
 ```
 

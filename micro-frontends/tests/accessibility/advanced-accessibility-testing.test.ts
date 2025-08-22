@@ -1,5 +1,8 @@
 import { test, expect, Page, Browser, BrowserContext } from '@playwright/test';
-import { setupTestEnvironment, cleanupTestEnvironment } from '../setup/e2e-setup';
+import {
+  setupTestEnvironment,
+  cleanupTestEnvironment,
+} from '../setup/e2e-setup';
 
 // 高級可訪問性測試配置
 const ADVANCED_ACCESSIBILITY_CONFIG = {
@@ -10,20 +13,14 @@ const ADVANCED_ACCESSIBILITY_CONFIG = {
       'form_interaction',
       'dynamic_content',
       'error_handling',
-      'status_updates'
+      'status_updates',
     ],
-    expectedBehavior: 'accessible'
+    expectedBehavior: 'accessible',
   },
   // 鍵盤陷阱測試配置
   keyboardTraps: {
-    testElements: [
-      'modal',
-      'dropdown',
-      'carousel',
-      'lightbox',
-      'tooltip'
-    ],
-    expectedBehavior: 'no_trap'
+    testElements: ['modal', 'dropdown', 'carousel', 'lightbox', 'tooltip'],
+    expectedBehavior: 'no_trap',
   },
   // 動態內容測試配置
   dynamicContent: {
@@ -32,9 +29,9 @@ const ADVANCED_ACCESSIBILITY_CONFIG = {
       'real_time_updates',
       'infinite_scroll',
       'auto_refresh',
-      'live_region'
+      'live_region',
     ],
-    expectedBehavior: 'announced'
+    expectedBehavior: 'announced',
   },
   // 錯誤處理測試配置
   errorHandling: {
@@ -43,10 +40,10 @@ const ADVANCED_ACCESSIBILITY_CONFIG = {
       'api_errors',
       'network_errors',
       'timeout_errors',
-      'permission_errors'
+      'permission_errors',
     ],
-    expectedBehavior: 'clear_message'
-  }
+    expectedBehavior: 'clear_message',
+  },
 };
 
 // 高級可訪問性測試工具類
@@ -74,7 +71,9 @@ class AdvancedAccessibilityTestUtils {
 
     try {
       // 檢查是否有跳過導航鏈接
-      const skipLinks = await this.page.locator('a[href^="#"], [role="navigation"] a').all();
+      const skipLinks = await this.page
+        .locator('a[href^="#"], [role="navigation"] a')
+        .all();
 
       if (skipLinks.length === 0) {
         this.addAccessibilityViolation(
@@ -89,7 +88,9 @@ class AdvancedAccessibilityTestUtils {
       }
 
       // 檢查導航結構
-      const navElements = await this.page.locator('nav, [role="navigation"]').all();
+      const navElements = await this.page
+        .locator('nav, [role="navigation"]')
+        .all();
 
       for (const nav of navElements) {
         const ariaLabel = await nav.getAttribute('aria-label');
@@ -131,7 +132,6 @@ class AdvancedAccessibilityTestUtils {
           }
         }
       }
-
     } catch (error) {
       console.warn(`屏幕閱讀器導航測試失敗: ${error.message}`);
     }
@@ -166,7 +166,9 @@ class AdvancedAccessibilityTestUtils {
         }
 
         // 檢查錯誤處理
-        const errorElements = await form.locator('[role="alert"], .error, .invalid').all();
+        const errorElements = await form
+          .locator('[role="alert"], .error, .invalid')
+          .all();
 
         for (const error of errorElements) {
           const errorText = await error.textContent();
@@ -186,7 +188,9 @@ class AdvancedAccessibilityTestUtils {
         }
 
         // 檢查必填字段指示
-        const requiredFields = await form.locator('[required], [aria-required="true"]').all();
+        const requiredFields = await form
+          .locator('[required], [aria-required="true"]')
+          .all();
 
         for (const field of requiredFields) {
           const ariaRequired = await field.getAttribute('aria-required');
@@ -205,7 +209,6 @@ class AdvancedAccessibilityTestUtils {
           }
         }
       }
-
     } catch (error) {
       console.warn(`表單可訪問性測試失敗: ${error.message}`);
     }
@@ -244,7 +247,9 @@ class AdvancedAccessibilityTestUtils {
       }
 
       // 檢查加載狀態
-      const loadingElements = await this.page.locator('[aria-busy="true"], .loading, .spinner').all();
+      const loadingElements = await this.page
+        .locator('[aria-busy="true"], .loading, .spinner')
+        .all();
 
       for (const loading of loadingElements) {
         const ariaBusy = await loading.getAttribute('aria-busy');
@@ -264,7 +269,9 @@ class AdvancedAccessibilityTestUtils {
       }
 
       // 檢查進度指示器
-      const progressElements = await this.page.locator('[role="progressbar"], progress').all();
+      const progressElements = await this.page
+        .locator('[role="progressbar"], progress')
+        .all();
 
       for (const progress of progressElements) {
         const ariaValueNow = await progress.getAttribute('aria-valuenow');
@@ -284,7 +291,6 @@ class AdvancedAccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`動態內容可訪問性測試失敗: ${error.message}`);
     }
@@ -300,14 +306,20 @@ class AdvancedAccessibilityTestUtils {
 
     try {
       // 檢查模態對話框
-      const modals = await this.page.locator('[role="dialog"], .modal, .popup').all();
+      const modals = await this.page
+        .locator('[role="dialog"], .modal, .popup')
+        .all();
 
       for (const modal of modals) {
         const isVisible = await modal.isVisible();
 
         if (isVisible) {
           // 檢查是否有關閉按鈕
-          const closeButtons = await modal.locator('[aria-label*="close"], [aria-label*="關閉"], .close, .close-btn').count();
+          const closeButtons = await modal
+            .locator(
+              '[aria-label*="close"], [aria-label*="關閉"], .close, .close-btn'
+            )
+            .count();
 
           if (closeButtons === 0) {
             this.addAccessibilityViolation(
@@ -344,7 +356,9 @@ class AdvancedAccessibilityTestUtils {
       }
 
       // 檢查下拉菜單
-      const dropdowns = await this.page.locator('[role="menu"], .dropdown, .select').all();
+      const dropdowns = await this.page
+        .locator('[role="menu"], .dropdown, .select')
+        .all();
 
       for (const dropdown of dropdowns) {
         const isExpanded = await dropdown.getAttribute('aria-expanded');
@@ -370,7 +384,6 @@ class AdvancedAccessibilityTestUtils {
           }
         }
       }
-
     } catch (error) {
       console.warn(`鍵盤陷阱測試失敗: ${error.message}`);
     }
@@ -386,7 +399,9 @@ class AdvancedAccessibilityTestUtils {
 
     try {
       // 檢查錯誤信息
-      const errorMessages = await this.page.locator('[role="alert"], .error, .alert, .notification').all();
+      const errorMessages = await this.page
+        .locator('[role="alert"], .error, .alert, .notification')
+        .all();
 
       for (const error of errorMessages) {
         const errorText = await error.textContent();
@@ -408,8 +423,15 @@ class AdvancedAccessibilityTestUtils {
           }
 
           // 檢查錯誤信息是否清晰
-          const clearErrorWords = ['錯誤', 'error', 'invalid', '無效', 'required', '必填'];
-          const hasClearError = clearErrorWords.some(word =>
+          const clearErrorWords = [
+            '錯誤',
+            'error',
+            'invalid',
+            '無效',
+            'required',
+            '必填',
+          ];
+          const hasClearError = clearErrorWords.some((word) =>
             errorText.toLowerCase().includes(word.toLowerCase())
           );
 
@@ -428,7 +450,9 @@ class AdvancedAccessibilityTestUtils {
       }
 
       // 檢查成功信息
-      const successMessages = await this.page.locator('[role="status"], .success, .message').all();
+      const successMessages = await this.page
+        .locator('[role="status"], .success, .message')
+        .all();
 
       for (const success of successMessages) {
         const successText = await success.textContent();
@@ -446,7 +470,6 @@ class AdvancedAccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`錯誤處理可訪問性測試失敗: ${error.message}`);
     }
@@ -462,7 +485,9 @@ class AdvancedAccessibilityTestUtils {
 
     try {
       // 檢查狀態指示器
-      const statusElements = await this.page.locator('[role="status"], [aria-live="polite"]').all();
+      const statusElements = await this.page
+        .locator('[role="status"], [aria-live="polite"]')
+        .all();
 
       for (const status of statusElements) {
         const statusText = await status.textContent();
@@ -484,7 +509,9 @@ class AdvancedAccessibilityTestUtils {
       }
 
       // 檢查計時器
-      const timerElements = await this.page.locator('[role="timer"], .timer, .countdown').all();
+      const timerElements = await this.page
+        .locator('[role="timer"], .timer, .countdown')
+        .all();
 
       for (const timer of timerElements) {
         const timerText = await timer.textContent();
@@ -502,7 +529,6 @@ class AdvancedAccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`狀態更新可訪問性測試失敗: ${error.message}`);
     }
@@ -518,9 +544,11 @@ class AdvancedAccessibilityTestUtils {
 
     try {
       // 檢查焦點順序
-      const focusableElements = await this.page.locator(
-        'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      ).all();
+      const focusableElements = await this.page
+        .locator(
+          'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        .all();
 
       const tabIndexes: number[] = [];
 
@@ -532,7 +560,7 @@ class AdvancedAccessibilityTestUtils {
       }
 
       // 檢查 tabindex 是否合理
-      const hasLargeTabIndex = tabIndexes.some(index => index > 0);
+      const hasLargeTabIndex = tabIndexes.some((index) => index > 0);
       if (hasLargeTabIndex) {
         this.addAccessibilityViolation(
           'Focus Management',
@@ -549,14 +577,14 @@ class AdvancedAccessibilityTestUtils {
       await this.page.keyboard.press('Tab');
       const focusedElement = await this.page.locator(':focus').first();
 
-      if (await focusedElement.count() > 0) {
-        const focusStyles = await focusedElement.evaluate(el => {
+      if ((await focusedElement.count()) > 0) {
+        const focusStyles = await focusedElement.evaluate((el) => {
           const style = window.getComputedStyle(el);
           return {
             outline: style.outline,
             border: style.border,
             boxShadow: style.boxShadow,
-            backgroundColor: style.backgroundColor
+            backgroundColor: style.backgroundColor,
           };
         });
 
@@ -578,7 +606,6 @@ class AdvancedAccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`焦點管理測試失敗: ${error.message}`);
     }
@@ -609,7 +636,9 @@ class AdvancedAccessibilityTestUtils {
       }
 
       // 檢查頁面結構
-      const structuralElements = await this.page.locator('header, nav, main, aside, footer, section, article').all();
+      const structuralElements = await this.page
+        .locator('header, nav, main, aside, footer, section, article')
+        .all();
 
       if (structuralElements.length < 3) {
         this.addAccessibilityViolation(
@@ -661,7 +690,6 @@ class AdvancedAccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`語義化標記測試失敗: ${error.message}`);
     }
@@ -687,10 +715,12 @@ class AdvancedAccessibilityTestUtils {
       wcagGuideline,
       element,
       timestamp: Date.now(),
-      details
+      details,
     });
 
-    console.warn(`🚨 高級可訪問性違規 [${severity.toUpperCase()}]: ${description}`);
+    console.warn(
+      `🚨 高級可訪問性違規 [${severity.toUpperCase()}]: ${description}`
+    );
   }
 
   /**
@@ -700,22 +730,35 @@ class AdvancedAccessibilityTestUtils {
     return {
       totalViolations: this.accessibilityViolations.length,
       violationsBySeverity: {
-        critical: this.accessibilityViolations.filter(v => v.severity === 'critical').length,
-        high: this.accessibilityViolations.filter(v => v.severity === 'high').length,
-        medium: this.accessibilityViolations.filter(v => v.severity === 'medium').length,
-        low: this.accessibilityViolations.filter(v => v.severity === 'low').length
+        critical: this.accessibilityViolations.filter(
+          (v) => v.severity === 'critical'
+        ).length,
+        high: this.accessibilityViolations.filter((v) => v.severity === 'high')
+          .length,
+        medium: this.accessibilityViolations.filter(
+          (v) => v.severity === 'medium'
+        ).length,
+        low: this.accessibilityViolations.filter((v) => v.severity === 'low')
+          .length,
       },
-      violationsByType: this.accessibilityViolations.reduce((acc, violation) => {
-        acc[violation.type] = (acc[violation.type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      violationsByWCAG: this.accessibilityViolations.reduce((acc, violation) => {
-        if (violation.wcagGuideline) {
-          acc[violation.wcagGuideline] = (acc[violation.wcagGuideline] || 0) + 1;
-        }
-        return acc;
-      }, {} as Record<string, number>),
-      violations: this.accessibilityViolations
+      violationsByType: this.accessibilityViolations.reduce(
+        (acc, violation) => {
+          acc[violation.type] = (acc[violation.type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      violationsByWCAG: this.accessibilityViolations.reduce(
+        (acc, violation) => {
+          if (violation.wcagGuideline) {
+            acc[violation.wcagGuideline] =
+              (acc[violation.wcagGuideline] || 0) + 1;
+          }
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      violations: this.accessibilityViolations,
     };
   }
 }
@@ -745,7 +788,8 @@ describe('CardStrategy 高級可訪問性測試', () => {
   test('屏幕閱讀器導航測試', async () => {
     console.log('🚀 開始屏幕閱讀器導航測試...');
 
-    const hasNavigationIssue = await accessibilityUtils.testScreenReaderNavigation();
+    const hasNavigationIssue =
+      await accessibilityUtils.testScreenReaderNavigation();
 
     expect(hasNavigationIssue).toBe(false);
   });
@@ -761,7 +805,8 @@ describe('CardStrategy 高級可訪問性測試', () => {
   test('動態內容可訪問性測試', async () => {
     console.log('🚀 開始動態內容可訪問性測試...');
 
-    const hasDynamicContentIssue = await accessibilityUtils.testDynamicContentAccessibility();
+    const hasDynamicContentIssue =
+      await accessibilityUtils.testDynamicContentAccessibility();
 
     expect(hasDynamicContentIssue).toBe(false);
   });
@@ -777,7 +822,8 @@ describe('CardStrategy 高級可訪問性測試', () => {
   test('錯誤處理可訪問性測試', async () => {
     console.log('🚀 開始錯誤處理可訪問性測試...');
 
-    const hasErrorHandlingIssue = await accessibilityUtils.testErrorHandlingAccessibility();
+    const hasErrorHandlingIssue =
+      await accessibilityUtils.testErrorHandlingAccessibility();
 
     expect(hasErrorHandlingIssue).toBe(false);
   });
@@ -785,7 +831,8 @@ describe('CardStrategy 高級可訪問性測試', () => {
   test('狀態更新可訪問性測試', async () => {
     console.log('🚀 開始狀態更新可訪問性測試...');
 
-    const hasStatusUpdateIssue = await accessibilityUtils.testStatusUpdatesAccessibility();
+    const hasStatusUpdateIssue =
+      await accessibilityUtils.testStatusUpdatesAccessibility();
 
     expect(hasStatusUpdateIssue).toBe(false);
   });
@@ -793,7 +840,8 @@ describe('CardStrategy 高級可訪問性測試', () => {
   test('焦點管理測試', async () => {
     console.log('🚀 開始焦點管理測試...');
 
-    const hasFocusManagementIssue = await accessibilityUtils.testFocusManagement();
+    const hasFocusManagementIssue =
+      await accessibilityUtils.testFocusManagement();
 
     expect(hasFocusManagementIssue).toBe(false);
   });
@@ -801,7 +849,8 @@ describe('CardStrategy 高級可訪問性測試', () => {
   test('語義化標記測試', async () => {
     console.log('🚀 開始語義化標記測試...');
 
-    const hasSemanticMarkupIssue = await accessibilityUtils.testSemanticMarkup();
+    const hasSemanticMarkupIssue =
+      await accessibilityUtils.testSemanticMarkup();
 
     expect(hasSemanticMarkupIssue).toBe(false);
   });
@@ -818,11 +867,11 @@ describe('CardStrategy 高級可訪問性測試', () => {
       accessibilityUtils.testErrorHandlingAccessibility(),
       accessibilityUtils.testStatusUpdatesAccessibility(),
       accessibilityUtils.testFocusManagement(),
-      accessibilityUtils.testSemanticMarkup()
+      accessibilityUtils.testSemanticMarkup(),
     ];
 
     const results = await Promise.all(tests);
-    const hasAnyViolation = results.some(result => result === true);
+    const hasAnyViolation = results.some((result) => result === true);
 
     // 生成可訪問性報告
     const accessibilityReport = accessibilityUtils.getAccessibilityReport();
@@ -836,7 +885,9 @@ describe('CardStrategy 高級可訪問性測試', () => {
     if (accessibilityReport.violations.length > 0) {
       console.log('🚨 發現的高級可訪問性問題:');
       accessibilityReport.violations.forEach((violation, index) => {
-        console.log(`${index + 1}. [${violation.severity.toUpperCase()}] ${violation.type}: ${violation.description}`);
+        console.log(
+          `${index + 1}. [${violation.severity.toUpperCase()}] ${violation.type}: ${violation.description}`
+        );
         if (violation.wcagGuideline) {
           console.log(`   WCAG 指南: ${violation.wcagGuideline}`);
         }

@@ -7,7 +7,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +21,7 @@ import {
   Loading,
   Toast,
   AnimatedView,
-  SlideUpView
+  SlideUpView,
 } from '../common';
 import { theme } from '../../config/theme';
 import { logger } from '../../utils/logger';
@@ -31,12 +31,12 @@ import {
   selectFeedbackTags,
   selectFeedbackLoadingStates,
   selectFeedbackError,
-  clearError
+  clearError,
 } from '../../store/slices/feedbackSlice';
 import {
   CreateFeedbackRequest,
   FeedbackTemplate,
-  FeedbackTag
+  FeedbackTag,
 } from '../../types/feedback';
 
 interface CreateFeedbackModalProps {
@@ -50,7 +50,7 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
   visible,
   templateId,
   onClose,
-  onSuccess
+  onSuccess,
 }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -69,9 +69,10 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
     title: '',
     description: '',
     isAnonymous: false,
-    tags: []
+    tags: [],
   });
-  const [selectedTemplate, setSelectedTemplate] = useState<FeedbackTemplate | null>(null);
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<FeedbackTemplate | null>(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [attachments, setAttachments] = useState<File[]>([]);
 
@@ -81,7 +82,7 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
       Toast.show({
         type: 'error',
         title: t('feedback.create.error.title'),
-        message: error
+        message: error,
       });
       dispatch(clearError());
     }
@@ -90,45 +91,54 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
   // 當模板 ID 改變時，自動填充表單
   useEffect(() => {
     if (templateId && templates.length > 0) {
-      const template = templates.find(t => t.id === templateId);
+      const template = templates.find((t) => t.id === templateId);
       if (template) {
         setSelectedTemplate(template);
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           type: template.type,
           category: template.category,
           title: template.title,
-          description: template.description
+          description: template.description,
         }));
       }
     }
   }, [templateId, templates]);
 
-  const handleInputChange = (field: keyof CreateFeedbackRequest, value: any) => {
-    setFormData(prev => ({
+  const handleInputChange = (
+    field: keyof CreateFeedbackRequest,
+    value: any
+  ) => {
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleTagToggle = (tag: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       tags: prev.tags?.includes(tag)
-        ? prev.tags.filter(t => t !== tag)
-        : [...(prev.tags || []), tag]
+        ? prev.tags.filter((t) => t !== tag)
+        : [...(prev.tags || []), tag],
     }));
   };
 
   const handleSubmit = async () => {
     // 驗證必填字段
     if (!formData.title?.trim()) {
-      Alert.alert(t('feedback.create.validation.title'), t('feedback.create.validation.title_required'));
+      Alert.alert(
+        t('feedback.create.validation.title'),
+        t('feedback.create.validation.title_required')
+      );
       return;
     }
 
     if (!formData.description?.trim()) {
-      Alert.alert(t('feedback.create.validation.description'), t('feedback.create.validation.description_required'));
+      Alert.alert(
+        t('feedback.create.validation.description'),
+        t('feedback.create.validation.description_required')
+      );
       return;
     }
 
@@ -141,7 +151,7 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
         description: formData.description.trim(),
         isAnonymous: formData.isAnonymous || false,
         tags: formData.tags || [],
-        attachments
+        attachments,
       };
 
       const result = await dispatch(createFeedback(feedbackData)).unwrap();
@@ -155,12 +165,11 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
         title: '',
         description: '',
         isAnonymous: false,
-        tags: []
+        tags: [],
       });
       setSelectedTemplate(null);
       setShowAdvanced(false);
       setAttachments([]);
-
     } catch (error) {
       logger.error('創建反饋失敗', { error });
     }
@@ -183,14 +192,14 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
               title: '',
               description: '',
               isAnonymous: false,
-              tags: []
+              tags: [],
             });
             setSelectedTemplate(null);
             setShowAdvanced(false);
             setAttachments([]);
             onClose();
-          }
-        }
+          },
+        },
       ]
     );
   };
@@ -200,12 +209,36 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
       <Text style={styles.sectionTitle}>{t('feedback.create.type.title')}</Text>
       <View style={styles.typeGrid}>
         {[
-          { type: 'bug_report', icon: 'bug-outline', label: t('feedback.type.bug_report') },
-          { type: 'feature_request', icon: 'add-circle-outline', label: t('feedback.type.feature_request') },
-          { type: 'improvement', icon: 'trending-up-outline', label: t('feedback.type.improvement') },
-          { type: 'general', icon: 'chatbubble-outline', label: t('feedback.type.general') },
-          { type: 'compliment', icon: 'heart-outline', label: t('feedback.type.compliment') },
-          { type: 'complaint', icon: 'warning-outline', label: t('feedback.type.complaint') }
+          {
+            type: 'bug_report',
+            icon: 'bug-outline',
+            label: t('feedback.type.bug_report'),
+          },
+          {
+            type: 'feature_request',
+            icon: 'add-circle-outline',
+            label: t('feedback.type.feature_request'),
+          },
+          {
+            type: 'improvement',
+            icon: 'trending-up-outline',
+            label: t('feedback.type.improvement'),
+          },
+          {
+            type: 'general',
+            icon: 'chatbubble-outline',
+            label: t('feedback.type.general'),
+          },
+          {
+            type: 'compliment',
+            icon: 'heart-outline',
+            label: t('feedback.type.compliment'),
+          },
+          {
+            type: 'complaint',
+            icon: 'warning-outline',
+            label: t('feedback.type.complaint'),
+          },
         ].map(({ type, icon, label }) => (
           <Button
             key={type}
@@ -223,19 +256,36 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
 
   const renderCategorySelector = () => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{t('feedback.create.category.title')}</Text>
+      <Text style={styles.sectionTitle}>
+        {t('feedback.create.category.title')}
+      </Text>
       <View style={styles.categoryGrid}>
         {[
           { category: 'ui_ux', label: t('feedback.category.ui_ux') },
-          { category: 'performance', label: t('feedback.category.performance') },
-          { category: 'functionality', label: t('feedback.category.functionality') },
-          { category: 'ai_features', label: t('feedback.category.ai_features') },
+          {
+            category: 'performance',
+            label: t('feedback.category.performance'),
+          },
+          {
+            category: 'functionality',
+            label: t('feedback.category.functionality'),
+          },
+          {
+            category: 'ai_features',
+            label: t('feedback.category.ai_features'),
+          },
           { category: 'scanning', label: t('feedback.category.scanning') },
           { category: 'pricing', label: t('feedback.category.pricing') },
-          { category: 'notifications', label: t('feedback.category.notifications') },
-          { category: 'data_accuracy', label: t('feedback.category.data_accuracy') },
+          {
+            category: 'notifications',
+            label: t('feedback.category.notifications'),
+          },
+          {
+            category: 'data_accuracy',
+            label: t('feedback.category.data_accuracy'),
+          },
           { category: 'security', label: t('feedback.category.security') },
-          { category: 'other', label: t('feedback.category.other') }
+          { category: 'other', label: t('feedback.category.other') },
         ].map(({ category, label }) => (
           <Button
             key={category}
@@ -252,13 +302,31 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
 
   const renderPrioritySelector = () => (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{t('feedback.create.priority.title')}</Text>
+      <Text style={styles.sectionTitle}>
+        {t('feedback.create.priority.title')}
+      </Text>
       <View style={styles.priorityRow}>
         {[
-          { priority: 'low', label: t('feedback.priority.low'), color: theme.colors.success },
-          { priority: 'medium', label: t('feedback.priority.medium'), color: theme.colors.warning },
-          { priority: 'high', label: t('feedback.priority.high'), color: theme.colors.error },
-          { priority: 'critical', label: t('feedback.priority.critical'), color: theme.colors.error }
+          {
+            priority: 'low',
+            label: t('feedback.priority.low'),
+            color: theme.colors.success,
+          },
+          {
+            priority: 'medium',
+            label: t('feedback.priority.medium'),
+            color: theme.colors.warning,
+          },
+          {
+            priority: 'high',
+            label: t('feedback.priority.high'),
+            color: theme.colors.error,
+          },
+          {
+            priority: 'critical',
+            label: t('feedback.priority.critical'),
+            color: theme.colors.error,
+          },
         ].map(({ priority, label, color }) => (
           <Button
             key={priority}
@@ -282,14 +350,17 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
             key={tag.id}
             style={[
               styles.tagButton,
-              formData.tags?.includes(tag.name) && styles.tagButtonSelected
+              formData.tags?.includes(tag.name) && styles.tagButtonSelected,
             ]}
             onPress={() => handleTagToggle(tag.name)}
           >
-            <Text style={[
-              styles.tagButtonText,
-              formData.tags?.includes(tag.name) && styles.tagButtonTextSelected
-            ]}>
+            <Text
+              style={[
+                styles.tagButtonText,
+                formData.tags?.includes(tag.name) &&
+                  styles.tagButtonTextSelected,
+              ]}
+            >
               {tag.name}
             </Text>
           </TouchableOpacity>
@@ -304,7 +375,9 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
         style={styles.advancedHeader}
         onPress={() => setShowAdvanced(!showAdvanced)}
       >
-        <Text style={styles.advancedTitle}>{t('feedback.create.advanced.title')}</Text>
+        <Text style={styles.advancedTitle}>
+          {t('feedback.create.advanced.title')}
+        </Text>
         <Ionicons
           name={showAdvanced ? 'chevron-up' : 'chevron-down'}
           size={20}
@@ -315,12 +388,16 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
       {showAdvanced && (
         <SlideUpView style={styles.advancedContent}>
           <View style={styles.anonymousOption}>
-            <Text style={styles.anonymousLabel}>{t('feedback.create.anonymous.label')}</Text>
+            <Text style={styles.anonymousLabel}>
+              {t('feedback.create.anonymous.label')}
+            </Text>
             <Button
               title={formData.isAnonymous ? t('common.yes') : t('common.no')}
               variant={formData.isAnonymous ? 'primary' : 'outline'}
               size="small"
-              onPress={() => handleInputChange('isAnonymous', !formData.isAnonymous)}
+              onPress={() =>
+                handleInputChange('isAnonymous', !formData.isAnonymous)
+              }
             />
           </View>
         </SlideUpView>
@@ -339,15 +416,26 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.container}
       >
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+        >
           {selectedTemplate && (
             <AnimatedView style={styles.templateInfo}>
               <View style={styles.templateHeader}>
-                <Ionicons name="document-text" size={20} color={theme.colors.primary} />
-                <Text style={styles.templateTitle}>{t('feedback.create.template.selected')}</Text>
+                <Ionicons
+                  name="document-text"
+                  size={20}
+                  color={theme.colors.primary}
+                />
+                <Text style={styles.templateTitle}>
+                  {t('feedback.create.template.selected')}
+                </Text>
               </View>
               <Text style={styles.templateName}>{selectedTemplate.name}</Text>
-              <Text style={styles.templateDescription}>{selectedTemplate.description}</Text>
+              <Text style={styles.templateDescription}>
+                {selectedTemplate.description}
+              </Text>
             </AnimatedView>
           )}
 
@@ -356,7 +444,9 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
           {renderPrioritySelector()}
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('feedback.create.title.label')} *</Text>
+            <Text style={styles.sectionTitle}>
+              {t('feedback.create.title.label')} *
+            </Text>
             <Input
               value={formData.title}
               onChangeText={(text) => handleInputChange('title', text)}
@@ -366,7 +456,9 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('feedback.create.description.label')} *</Text>
+            <Text style={styles.sectionTitle}>
+              {t('feedback.create.description.label')} *
+            </Text>
             <Input
               value={formData.description}
               onChangeText={(text) => handleInputChange('description', text)}
@@ -392,7 +484,11 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
             title={t('feedback.create.submit')}
             onPress={handleSubmit}
             loading={isCreating}
-            disabled={isCreating || !formData.title?.trim() || !formData.description?.trim()}
+            disabled={
+              isCreating ||
+              !formData.title?.trim() ||
+              !formData.description?.trim()
+            }
             style={styles.footerButton}
           />
         </View>
@@ -403,11 +499,11 @@ export const CreateFeedbackModal: React.FC<CreateFeedbackModalProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   scrollView: {
     flex: 1,
-    padding: theme.spacing.lg
+    padding: theme.spacing.lg,
   },
   templateInfo: {
     backgroundColor: theme.colors.surface,
@@ -415,67 +511,67 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.md,
     borderWidth: 1,
     borderColor: theme.colors.primary,
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   templateHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   templateTitle: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.semiBold,
     color: theme.colors.primary,
-    marginLeft: theme.spacing.xs
+    marginLeft: theme.spacing.xs,
   },
   templateName: {
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semiBold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   templateDescription: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.textSecondary
+    color: theme.colors.textSecondary,
   },
   section: {
-    marginBottom: theme.spacing.lg
+    marginBottom: theme.spacing.lg,
   },
   sectionTitle: {
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semiBold,
     color: theme.colors.text,
-    marginBottom: theme.spacing.sm
+    marginBottom: theme.spacing.sm,
   },
   typeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.sm
+    gap: theme.spacing.sm,
   },
   typeButton: {
     flex: 1,
-    minWidth: '45%'
+    minWidth: '45%',
   },
   categoryGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.sm
+    gap: theme.spacing.sm,
   },
   categoryButton: {
     flex: 1,
-    minWidth: '45%'
+    minWidth: '45%',
   },
   priorityRow: {
     flexDirection: 'row',
-    gap: theme.spacing.sm
+    gap: theme.spacing.sm,
   },
   priorityButton: {
-    flex: 1
+    flex: 1,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: theme.spacing.xs
+    gap: theme.spacing.xs,
   },
   tagButton: {
     paddingHorizontal: theme.spacing.sm,
@@ -483,51 +579,51 @@ const styles = StyleSheet.create({
     borderRadius: theme.borderRadius.sm,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surface
+    backgroundColor: theme.colors.surface,
   },
   tagButtonSelected: {
     backgroundColor: theme.colors.primary,
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   tagButtonText: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   tagButtonTextSelected: {
-    color: theme.colors.white
+    color: theme.colors.white,
   },
   advancedHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: theme.spacing.sm
+    paddingVertical: theme.spacing.sm,
   },
   advancedTitle: {
     fontSize: theme.typography.sizes.md,
     fontWeight: theme.typography.weights.semiBold,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   advancedContent: {
-    marginTop: theme.spacing.sm
+    marginTop: theme.spacing.sm,
   },
   anonymousOption: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: theme.spacing.sm
+    paddingVertical: theme.spacing.sm,
   },
   anonymousLabel: {
     fontSize: theme.typography.sizes.md,
-    color: theme.colors.text
+    color: theme.colors.text,
   },
   footer: {
     flexDirection: 'row',
     padding: theme.spacing.lg,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
-    gap: theme.spacing.md
+    gap: theme.spacing.md,
   },
   footerButton: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });

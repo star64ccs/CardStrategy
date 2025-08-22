@@ -15,7 +15,10 @@ export class IntegrationFeaturesExample {
 
       // 獲取所有平台
       const platforms = await socialMediaIntegrationService.getAllPlatforms();
-      logger.info('支持的社交媒體平台:', platforms.map(p => p.name));
+      logger.info(
+        '支持的社交媒體平台:',
+        platforms.map((p) => p.name)
+      );
 
       // 連接Twitter賬戶
       const twitterAccount = await socialMediaIntegrationService.connectAccount(
@@ -29,7 +32,7 @@ export class IntegrationFeaturesExample {
           profileUrl: 'https://twitter.com/cardcollector',
           isVerified: true,
           permissions: ['read', 'write'],
-          metadata: { followers: 1000 }
+          metadata: { followers: 1000 },
         }
       );
       logger.info('Twitter賬戶連接成功:', twitterAccount.username);
@@ -39,26 +42,33 @@ export class IntegrationFeaturesExample {
         platformId: 'twitter',
         content: {
           text: '剛剛掃描了一張稀有的Pokemon卡片！🔥 #PokemonTCG #CardCollector',
-          hashtags: ['PokemonTCG', 'CardCollector', 'RareCards']
+          hashtags: ['PokemonTCG', 'CardCollector', 'RareCards'],
         },
         type: 'text',
-        visibility: 'public'
+        visibility: 'public',
       });
       logger.info('內容發布成功:', post.id);
 
       // 分享內容到Facebook
-      const share = await socialMediaIntegrationService.shareContent('user123', {
-        platformId: 'facebook',
-        originalPostId: post.id,
-        content: {
-          text: '看看我的新收藏！',
-          hashtags: ['CardCollection', 'TradingCards']
+      const share = await socialMediaIntegrationService.shareContent(
+        'user123',
+        {
+          platformId: 'facebook',
+          originalPostId: post.id,
+          content: {
+            text: '看看我的新收藏！',
+            hashtags: ['CardCollection', 'TradingCards'],
+          },
         }
-      });
+      );
       logger.info('內容分享成功:', share.id);
 
       // 獲取社交媒體分析
-      const analytics = await socialMediaIntegrationService.getAnalytics('user123', 'twitter', 'month');
+      const analytics = await socialMediaIntegrationService.getAnalytics(
+        'user123',
+        'twitter',
+        'month'
+      );
       logger.info('社交媒體分析:', analytics.metrics);
 
       logger.info('=== 社交媒體集成示例完成 ===');
@@ -79,7 +89,10 @@ export class IntegrationFeaturesExample {
 
       // 獲取所有支持的遊戲
       const games = await cardGameSupportService.getAllGames();
-      logger.info('支持的卡片遊戲:', games.map(g => g.name));
+      logger.info(
+        '支持的卡片遊戲:',
+        games.map((g) => g.name)
+      );
 
       // 創建Pokemon牌組
       const pokemonDeck = await cardGameSupportService.createDeck('user123', {
@@ -89,7 +102,7 @@ export class IntegrationFeaturesExample {
         cards: ['card1', 'card2', 'card3'], // 卡片ID列表
         format: 'Standard',
         isPublic: true,
-        isCompetitive: false
+        isCompetitive: false,
       });
       logger.info('Pokemon牌組創建成功:', pokemonDeck.name);
 
@@ -101,7 +114,7 @@ export class IntegrationFeaturesExample {
         cards: ['card4', 'card5', 'card6'],
         format: 'Advanced',
         isPublic: true,
-        isCompetitive: true
+        isCompetitive: true,
       });
       logger.info('Yu-Gi-Oh!牌組創建成功:', yugiohDeck.name);
 
@@ -113,7 +126,7 @@ export class IntegrationFeaturesExample {
         cards: ['card7', 'card8', 'card9'],
         format: 'Standard',
         isPublic: true,
-        isCompetitive: true
+        isCompetitive: true,
       });
       logger.info('ONE PIECE牌組創建成功:', onePieceDeck.name);
 
@@ -127,7 +140,7 @@ export class IntegrationFeaturesExample {
         endDate: new Date('2024-04-02'),
         entryFee: 50,
         prizePool: 1000,
-        maxParticipants: 32
+        maxParticipants: 32,
       });
       logger.info('錦標賽創建成功:', tournament.name);
 
@@ -140,15 +153,26 @@ export class IntegrationFeaturesExample {
       logger.info('錦標賽報名成功:', participant.id);
 
       // 獲取遊戲排行榜
-      const rankings = await cardGameSupportService.getGameRankings('pokemon', '2024-Spring');
+      const rankings = await cardGameSupportService.getGameRankings(
+        'pokemon',
+        '2024-Spring'
+      );
       logger.info('Pokemon排行榜:', rankings.slice(0, 5));
 
       // 獲取遊戲分析
-      const analytics = await cardGameSupportService.getGameAnalytics('user123', 'pokemon', 'month');
+      const analytics = await cardGameSupportService.getGameAnalytics(
+        'user123',
+        'pokemon',
+        'month'
+      );
       logger.info('Pokemon遊戲分析:', analytics.stats);
 
       // 獲取ONE PIECE遊戲分析
-      const onePieceAnalytics = await cardGameSupportService.getGameAnalytics('user123', 'onepiece', 'month');
+      const onePieceAnalytics = await cardGameSupportService.getGameAnalytics(
+        'user123',
+        'onepiece',
+        'month'
+      );
       logger.info('ONE PIECE遊戲分析:', onePieceAnalytics.stats);
 
       logger.info('=== 卡片遊戲支持示例完成 ===');
@@ -167,7 +191,7 @@ export class IntegrationFeaturesExample {
       // 初始化所有服務
       await Promise.all([
         socialMediaIntegrationService.initialize(),
-        cardGameSupportService.initialize()
+        cardGameSupportService.initialize(),
       ]);
 
       // 創建卡片遊戲牌組
@@ -178,7 +202,7 @@ export class IntegrationFeaturesExample {
         cards: ['card7', 'card8', 'card9'],
         format: 'Modern',
         isPublic: true,
-        isCompetitive: true
+        isCompetitive: true,
       });
 
       // 在社交媒體上分享牌組
@@ -186,39 +210,45 @@ export class IntegrationFeaturesExample {
         platformId: 'twitter',
         content: {
           text: `剛剛創建了一副新的MTG牌組：${deck.name}！大家覺得怎麼樣？`,
-          hashtags: ['MTG', 'MagicTheGathering', 'DeckBuilding']
+          hashtags: ['MTG', 'MagicTheGathering', 'DeckBuilding'],
         },
         type: 'text',
-        visibility: 'public'
+        visibility: 'public',
       });
 
       // 在LinkedIn上分享專業內容
-      const linkedinPost = await socialMediaIntegrationService.publishPost('user123', {
-        platformId: 'linkedin',
-        content: {
-          text: '分享我的MTG牌組構建經驗和策略分析。這副藍色控制牌組在現代賽制中表現出色。',
-          hashtags: ['MTG', 'Strategy', 'Gaming']
-        },
-        type: 'text',
-        visibility: 'public'
-      });
+      const linkedinPost = await socialMediaIntegrationService.publishPost(
+        'user123',
+        {
+          platformId: 'linkedin',
+          content: {
+            text: '分享我的MTG牌組構建經驗和策略分析。這副藍色控制牌組在現代賽制中表現出色。',
+            hashtags: ['MTG', 'Strategy', 'Gaming'],
+          },
+          type: 'text',
+          visibility: 'public',
+        }
+      );
 
       // 創建社交媒體活動
-      const campaign = await socialMediaIntegrationService.createCampaign('user123', {
-        name: 'MTG牌組分享活動',
-        description: '分享你的MTG牌組，獲得社區反饋',
-        platforms: ['twitter', 'facebook', 'linkedin'],
-        content: {
-          text: '分享你的MTG牌組構建！使用標籤 #MTGDeckShare 參與活動',
-          hashtags: ['MTGDeckShare', 'MTG', 'DeckBuilding']
-        },
-        schedule: {
-          startDate: new Date(),
-          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          frequency: 'daily',
-          timeSlots: ['09:00', '18:00']
+      const campaign = await socialMediaIntegrationService.createCampaign(
+        'user123',
+        {
+          name: 'MTG牌組分享活動',
+          description: '分享你的MTG牌組，獲得社區反饋',
+          platforms: ['twitter', 'facebook', 'linkedin'],
+          content: {
+            text: '分享你的MTG牌組構建！使用標籤 #MTGDeckShare 參與活動',
+            hashtags: ['MTGDeckShare', 'MTG', 'DeckBuilding'],
+          },
+          schedule: {
+            startDate: new Date(),
+            endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+            frequency: 'daily',
+            timeSlots: ['09:00', '18:00'],
+          },
         }
-      });
+      );
 
       logger.info('綜合集成示例完成');
       logger.info('創建的牌組:', deck.name);

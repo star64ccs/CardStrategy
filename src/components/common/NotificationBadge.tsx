@@ -14,7 +14,7 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
   count = 0,
   size = 'medium',
   showZero = false,
-  animated = true
+  animated = true,
 }) => {
   const [badgeCount, setBadgeCount] = useState(count);
   const scaleAnim = new Animated.Value(1);
@@ -32,26 +32,26 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
             Animated.timing(scaleAnim, {
               toValue: 1.3,
               duration: 200,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(opacityAnim, {
               toValue: 0.8,
               duration: 200,
-              useNativeDriver: true
-            })
+              useNativeDriver: true,
+            }),
           ]),
           Animated.parallel([
             Animated.timing(scaleAnim, {
               toValue: 1,
               duration: 200,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(opacityAnim, {
               toValue: 1,
               duration: 200,
-              useNativeDriver: true
-            })
-          ])
+              useNativeDriver: true,
+            }),
+          ]),
         ]).start();
       }
     };
@@ -79,21 +79,21 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
           width: 16,
           height: 16,
           fontSize: 10,
-          borderRadius: 8
+          borderRadius: 8,
         };
       case 'large':
         return {
           width: 24,
           height: 24,
           fontSize: 14,
-          borderRadius: 12
+          borderRadius: 12,
         };
       default: // medium
         return {
           width: 20,
           height: 20,
           fontSize: 12,
-          borderRadius: 10
+          borderRadius: 10,
         };
     }
   };
@@ -110,8 +110,9 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
           borderRadius: badgeSize.borderRadius,
           transform: [{ scale: scaleAnim }],
           opacity: opacityAnim,
-          backgroundColor: badgeCount > 0 ? theme.colors.error : theme.colors.gray
-        }
+          backgroundColor:
+            badgeCount > 0 ? theme.colors.error : theme.colors.gray,
+        },
       ]}
     >
       <Text
@@ -119,8 +120,8 @@ export const NotificationBadge: React.FC<NotificationBadgeProps> = ({
           styles.badgeText,
           {
             fontSize: badgeSize.fontSize,
-            color: theme.colors.white
-          }
+            color: theme.colors.white,
+          },
         ]}
       >
         {displayCount}
@@ -142,11 +143,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5
+    elevation: 5,
   },
   badgeText: {
     fontWeight: 'bold',
     textAlign: 'center',
-    lineHeight: 16
-  }
+    lineHeight: 16,
+  },
 });

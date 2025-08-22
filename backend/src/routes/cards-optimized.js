@@ -2,133 +2,131 @@ const express = require('express');
 const router = express.Router();
 const advancedCacheService = require('../services/advancedCacheService');
 
-// 模擬數據庫優化器
+// 模擬?��?庫優?�器
+// eslint-disable-next-line no-unused-vars
 const databaseOptimizer = {
-  // 查詢優化
+  // ?�詢?��?
   optimizeQuery: (query, options = {}) => {
-    const { limit = 20, offset = 0, orderBy = 'created_at', order = 'DESC' } = options;
-    
-    // 添加 LIMIT 和 OFFSET
+    const {
+      limit = 20,
+      offset = 0,
+      orderBy = 'created_at',
+      order = 'DESC',
+    } = options;
+
+    // 添�? LIMIT ??OFFSET
     if (!query.includes('LIMIT')) {
       query += ` LIMIT ${limit} OFFSET ${offset}`;
     }
-    
-    // 添加 ORDER BY
+
+    // 添�? ORDER BY
     if (!query.includes('ORDER BY')) {
       query += ` ORDER BY ${orderBy} ${order}`;
     }
-    
+
     return query;
   },
 
-  // 批量查詢優化
+  // ?��??�詢?��?
   batchQueries: (queries) => {
     return Promise.all(queries);
   },
 
-  // 連接池管理
-  getConnection: () => {
-    // 模擬連接池
-    return Promise.resolve({ id: Date.now() });
-  }
+  // ??��池管??  getConnection: () => {
+    // 模擬??���?    return Promise.resolve({ id: Date.now() });
+  },
 };
 
-// 獲取卡片列表（優化版本）
+// ?��??��??�表（優?��??��?
 router.get('/list', async (req, res) => {
   try {
     const { page = 1, limit = 20, type, rarity, search } = req.query;
     const offset = (page - 1) * limit;
-    
-    // 生成緩存鍵
-    const cacheKey = `cards:list:${page}:${limit}:${type || 'all'}:${rarity || 'all'}:${search || 'all'}`;
-    
-    // 嘗試從緩存獲取
-    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
-    
+
+    // ?��?緩�???    const cacheKey = `cards:list:${page}:${limit}:${type || 'all'}:${rarity || 'all'}:${search || 'all'}`;
+
+    // ?�試從緩存獲??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
+
     if (!cards) {
-      // logger.info('📊 從數據庫獲取卡片列表...');
-      
-      // 構建查詢條件
+      // logger.info('?? 從數?�庫?��??��??�表...');
+
+      // 構建?�詢條件
       let whereClause = 'WHERE 1=1';
       const params = [];
-      
+
       if (type) {
         whereClause += ' AND card_type = $' + (params.length + 1);
         params.push(type);
       }
-      
+
       if (rarity) {
         whereClause += ' AND rarity = $' + (params.length + 1);
         params.push(rarity);
       }
-      
+
       if (search) {
         whereClause += ' AND name ILIKE $' + (params.length + 1);
         params.push(`%${search}%`);
       }
-      
-      // 優化查詢
+
+      // ?��??�詢
       const query = databaseOptimizer.optimizeQuery(
         `SELECT * FROM cards ${whereClause}`,
         { limit, offset, orderBy: 'created_at', order: 'DESC' }
       );
-      
-      // 模擬數據庫查詢結果
-      cards = {
+
+      // 模擬?��?庫查詢�???      cards = {
         data: [
           {
             id: 1,
-            name: '優化測試卡片',
+            name: '?��?測試?��?',
             type: type || 'Monster',
             rarity: rarity || 'Common',
-            description: '這是一個優化測試卡片',
-            created_at: new Date().toISOString()
-          }
+            description: '?�是一?�優?�測試卡??,
+            created_at: new Date().toISOString(),
+          },
         ],
         pagination: {
           page: parseInt(page),
           limit: parseInt(limit),
           total: 100,
-          totalPages: Math.ceil(100 / limit)
-        }
+          totalPages: Math.ceil(100 / limit),
+        },
       };
-      
-      // 緩存結果（5分鐘）
-      await advancedCacheService.set(cacheKey, cards, 'apiResponse');
+
+      // 緩�?結�?�??��?�?      await advancedCacheService.set(cacheKey, cards, 'apiResponse');
     }
-    
+
     res.json({
       success: true,
       data: cards,
       cached: !!cards,
       performance: {
         responseTime: Date.now() - req.startTime,
-        cacheHit: !!cards
-      }
+        cacheHit: !!cards,
+      },
     });
-    
   } catch (error) {
-    // logger.info('❌ 獲取卡片列表失敗:', error);
+    // logger.info('???��??��??�表失�?:', error);
     res.status(500).json({
       success: false,
-      error: '獲取卡片列表失敗'
+      error: '?��??��??�表失�?',
     });
   }
 });
 
-// 獲取卡片詳情（優化版本）
+// ?��??��?詳�?（優?��??��?
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const cacheKey = `card:detail:${id}`;
-    
-    // 嘗試從緩存獲取
-    let card = await advancedCacheService.get(cacheKey, 'apiResponse');
-    
+
+    // ?�試從緩存獲??    let card = await advancedCacheService.get(cacheKey, 'apiResponse');
+
     if (!card) {
-      // logger.info(`📊 從數據庫獲取卡片詳情: ${id}`);
-      
-      // 優化查詢 - 使用索引
+      // logger.info(`?? 從數?�庫?��??��?詳�?: ${id}`);
+
+      // ?��??�詢 - 使用索�?
       const query = `
         SELECT c.*, 
                md.price as current_price,
@@ -139,88 +137,83 @@ router.get('/:id', async (req, res) => {
         ORDER BY md.date DESC
         LIMIT 1
       `;
-      
-      // 模擬數據庫查詢結果
-      card = {
+
+      // 模擬?��?庫查詢�???      card = {
         id: parseInt(id),
-        name: '優化測試卡片詳情',
+        name: '?��?測試?��?詳�?',
         type: 'Monster',
         rarity: 'Rare',
-        description: '這是一個優化測試卡片的詳細信息',
-        current_price: 150.00,
+        description: '?�是一?�優?�測試卡?��?詳細信息',
+        current_price: 150.0,
         last_updated: new Date().toISOString(),
-        created_at: new Date().toISOString()
+        created_at: new Date().toISOString(),
       };
-      
-      // 緩存結果（10分鐘）
-      await advancedCacheService.set(cacheKey, card, 'apiResponse');
+
+      // 緩�?結�?�?0?��?�?      await advancedCacheService.set(cacheKey, card, 'apiResponse');
     }
-    
+
     res.json({
       success: true,
       data: card,
       cached: !!card,
       performance: {
         responseTime: Date.now() - req.startTime,
-        cacheHit: !!card
-      }
+        cacheHit: !!card,
+      },
     });
-    
   } catch (error) {
-    // logger.info('❌ 獲取卡片詳情失敗:', error);
+    // logger.info('???��??��?詳�?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '獲取卡片詳情失敗'
+      error: '?��??��?詳�?失�?',
     });
   }
 });
 
-// 批量獲取卡片（優化版本）
+// ?��??��??��?（優?��??��?
 router.post('/batch', async (req, res) => {
   try {
     const { ids } = req.body;
-    
+
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
       return res.status(400).json({
         success: false,
-        error: '請提供有效的卡片ID列表'
+        error: '請�?供�??��??��?ID?�表',
       });
     }
-    
-    // 限制批量查詢數量
+
+    // ?�制?��??�詢?��?
     const limitedIds = ids.slice(0, 50);
-    
-    // 生成緩存鍵
-    const cacheKey = `cards:batch:${limitedIds.sort().join(',')}`;
-    
-    // 嘗試從緩存獲取
-    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
-    
+
+    // ?��?緩�???    const cacheKey = `cards:batch:${limitedIds.sort().join(',')}`;
+
+    // ?�試從緩存獲??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
+
     if (!cards) {
-      // logger.info(`📊 批量從數據庫獲取卡片: ${limitedIds.length} 個`);
-      
-      // 優化批量查詢
-      const placeholders = limitedIds.map((_, index) => `$${index + 1}`).join(',');
+      // logger.info(`?? ?��?從數?�庫?��??��?: ${limitedIds.length} ?�`);
+
+      // ?��??��??�詢
+      const placeholders = limitedIds
+        .map((_, index) => `$${index + 1}`)
+        .join(',');
       const query = `
         SELECT * FROM cards 
         WHERE id IN (${placeholders})
         ORDER BY id
       `;
-      
-      // 模擬數據庫查詢結果
-      cards = limitedIds.map(id => ({
+
+      // 模擬?��?庫查詢�???      cards = limitedIds.map((id) => ({
         id: parseInt(id),
-        name: `批量卡片 ${id}`,
+        name: `?��??��? ${id}`,
         type: 'Monster',
         rarity: 'Common',
-        description: `這是批量查詢的卡片 ${id}`,
-        created_at: new Date().toISOString()
+        description: `?�是?��??�詢?�卡??${id}`,
+        created_at: new Date().toISOString(),
       }));
-      
-      // 緩存結果（5分鐘）
-      await advancedCacheService.set(cacheKey, cards, 'apiResponse');
+
+      // 緩�?結�?�??��?�?      await advancedCacheService.set(cacheKey, cards, 'apiResponse');
     }
-    
+
     res.json({
       success: true,
       data: cards,
@@ -228,34 +221,33 @@ router.post('/batch', async (req, res) => {
       performance: {
         responseTime: Date.now() - req.startTime,
         cacheHit: !!cards,
-        batchSize: limitedIds.length
-      }
+        batchSize: limitedIds.length,
+      },
     });
-    
   } catch (error) {
-    // logger.info('❌ 批量獲取卡片失敗:', error);
+    // logger.info('???��??��??��?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '批量獲取卡片失敗'
+      error: '?��??��??��?失�?',
     });
   }
 });
 
-// 搜索卡片（優化版本）
+// ?�索?��?（優?��??��?
 router.get('/search/:query', async (req, res) => {
   try {
     const { query } = req.params;
     const { limit = 20 } = req.query;
-    
+
     const cacheKey = `cards:search:${query}:${limit}`;
-    
-    // 嘗試從緩存獲取
+
+    // ?�試從緩存獲??// eslint-disable-next-line no-unused-vars
     let results = await advancedCacheService.get(cacheKey, 'apiResponse');
-    
+
     if (!results) {
-      // logger.info(`🔍 搜索卡片: ${query}`);
-      
-      // 優化搜索查詢 - 使用全文搜索索引
+      // logger.info(`?? ?�索?��?: ${query}`);
+
+      // ?��??�索?�詢 - 使用?��??�索索�?
       const searchQuery = `
         SELECT * FROM cards 
         WHERE name ILIKE $1 
@@ -265,23 +257,22 @@ router.get('/search/:query', async (req, res) => {
           created_at DESC
         LIMIT $2
       `;
-      
-      // 模擬搜索結果
+
+      // 模擬?�索結�?
       results = [
         {
           id: 1,
-          name: `包含 "${query}" 的卡片`,
+          name: `?�含 "${query}" ?�卡?�`,
           type: 'Monster',
           rarity: 'Common',
-          description: `這是一個包含 "${query}" 的卡片描述`,
-          created_at: new Date().toISOString()
-        }
+          description: `?�是一?��???"${query}" ?�卡?��?述`,
+          created_at: new Date().toISOString(),
+        },
       ];
-      
-      // 緩存結果（3分鐘）
-      await advancedCacheService.set(cacheKey, results, 'apiResponse');
+
+      // 緩�?結�?�??��?�?      await advancedCacheService.set(cacheKey, results, 'apiResponse');
     }
-    
+
     res.json({
       success: true,
       data: results,
@@ -289,21 +280,19 @@ router.get('/search/:query', async (req, res) => {
       performance: {
         responseTime: Date.now() - req.startTime,
         cacheHit: !!results,
-        query: query
-      }
+        query: query,
+      },
     });
-    
   } catch (error) {
-    // logger.info('❌ 搜索卡片失敗:', error);
+    // logger.info('???�索?��?失�?:', error);
     res.status(500).json({
       success: false,
-      error: '搜索卡片失敗'
+      error: '?�索?��?失�?',
     });
   }
 });
 
-// 性能監控中間件
-router.use((req, res, next) => {
+// ?�能??��中�?�?router.use((req, res, next) => {
   req.startTime = Date.now();
   next();
 });

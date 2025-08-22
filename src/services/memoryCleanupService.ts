@@ -26,7 +26,7 @@ export class MemoryCleanupService {
     totalTasks: 0,
     completedTasks: 0,
     failedTasks: 0,
-    averageCleanupTime: 0
+    averageCleanupTime: 0,
   };
 
   static getInstance(): MemoryCleanupService {
@@ -48,7 +48,7 @@ export class MemoryCleanupService {
       name,
       task,
       priority,
-      runCount: 0
+      runCount: 0,
     });
 
     logger.debug('註冊內存清理任務', { id, name, priority });
@@ -102,10 +102,12 @@ export class MemoryCleanupService {
 
     try {
       // 按優先級排序任務
-      const sortedTasks = Array.from(this.cleanupTasks.values()).sort((a, b) => {
-        const priorityOrder = { high: 3, medium: 2, low: 1 };
-        return priorityOrder[b.priority] - priorityOrder[a.priority];
-      });
+      const sortedTasks = Array.from(this.cleanupTasks.values()).sort(
+        (a, b) => {
+          const priorityOrder = { high: 3, medium: 2, low: 1 };
+          return priorityOrder[b.priority] - priorityOrder[a.priority];
+        }
+      );
 
       // 執行高優先級任務
       for (const task of sortedTasks) {
@@ -118,14 +120,14 @@ export class MemoryCleanupService {
           logger.debug('清理任務執行成功', {
             id: task.id,
             name: task.name,
-            runCount: task.runCount
+            runCount: task.runCount,
           });
         } catch (error) {
           failedTasks++;
           logger.error('清理任務執行失敗', {
             id: task.id,
             name: task.name,
-            error: error.message
+            error: error.message,
           });
         }
       }
@@ -137,20 +139,19 @@ export class MemoryCleanupService {
         completedTasks,
         failedTasks,
         lastCleanupTime: Date.now(),
-        averageCleanupTime: this.calculateAverageCleanupTime(cleanupTime)
+        averageCleanupTime: this.calculateAverageCleanupTime(cleanupTime),
       };
 
       logger.info('內存清理完成', {
         completed: completedTasks,
         failed: failedTasks,
-        duration: `${cleanupTime}ms`
+        duration: `${cleanupTime}ms`,
       });
 
       // 強制垃圾回收（僅在開發環境）
       if (process.env.NODE_ENV === 'development') {
         this.forceGarbageCollection();
       }
-
     } catch (error) {
       logger.error('內存清理過程發生錯誤', { error: error.message });
     } finally {
@@ -177,7 +178,9 @@ export class MemoryCleanupService {
 
     if (totalRuns === 0) return currentTime;
 
-    return Math.round((currentAverage * (totalRuns - 1) + currentTime) / totalRuns);
+    return Math.round(
+      (currentAverage * (totalRuns - 1) + currentTime) / totalRuns
+    );
   }
 
   // 獲取清理統計信息
@@ -211,7 +214,11 @@ export class MemoryCleanupService {
       logger.info('手動執行清理任務成功', { id, name: task.name });
       return true;
     } catch (error) {
-      logger.error('手動執行清理任務失敗', { id, name: task.name, error: error.message });
+      logger.error('手動執行清理任務失敗', {
+        id,
+        name: task.name,
+        error: error.message,
+      });
       return false;
     }
   }
@@ -224,7 +231,7 @@ export class MemoryCleanupService {
       totalTasks: 0,
       completedTasks: 0,
       failedTasks: 0,
-      averageCleanupTime: 0
+      averageCleanupTime: 0,
     };
     this.isRunning = false;
 
@@ -232,7 +239,8 @@ export class MemoryCleanupService {
   }
 }
 
-// 導出單例實例
+// 導出服務類和實例
+export { MemoryCleanupService };
 export const memoryCleanupService = MemoryCleanupService.getInstance();
 
 // 預定義的清理任務

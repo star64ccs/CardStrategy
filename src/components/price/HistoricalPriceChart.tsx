@@ -2,7 +2,10 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { theme } from '@/config/theme';
-import { HistoricalPriceData, PricePlatform } from '@/services/priceDataService';
+import {
+  HistoricalPriceData,
+  PricePlatform,
+} from '@/services/priceDataService';
 import { formatPrice, formatDate } from '@/utils/formatters';
 
 interface HistoricalPriceChartProps {
@@ -22,29 +25,32 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
   timeRange,
   height = 300,
   showLegend = true,
-  showStatistics = true
+  showStatistics = true,
 }) => {
   // 處理圖表數據
   const chartData = useMemo(() => {
     if (!data || data.length === 0) {
       return {
         labels: [],
-        datasets: []
+        datasets: [],
       };
     }
 
     // 按日期分組所有平台的價格數據
     const dateMap = new Map<string, { [platform: string]: number }>();
 
-    data.forEach(platformData => {
-      if (selectedPlatforms.length > 0 && !selectedPlatforms.includes(platformData.platform)) {
+    data.forEach((platformData) => {
+      if (
+        selectedPlatforms.length > 0 &&
+        !selectedPlatforms.includes(platformData.platform)
+      ) {
         return;
       }
 
-      platformData.priceHistory.forEach(pricePoint => {
+      platformData.priceHistory.forEach((pricePoint) => {
         const date = new Date(pricePoint.date).toLocaleDateString('zh-TW', {
           month: 'short',
-          day: 'numeric'
+          day: 'numeric',
         });
 
         if (!dateMap.has(date)) {
@@ -57,10 +63,14 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
     // 轉換為圖表格式
     const labels = Array.from(dateMap.keys()).slice(-10); // 只顯示最近10個數據點
     const datasets = data
-      .filter(platformData => selectedPlatforms.length === 0 || selectedPlatforms.includes(platformData.platform))
+      .filter(
+        (platformData) =>
+          selectedPlatforms.length === 0 ||
+          selectedPlatforms.includes(platformData.platform)
+      )
       .map((platformData, index) => {
         const color = getPlatformColor(platformData.platform);
-        const data = labels.map(date => {
+        const data = labels.map((date) => {
           const platformData = dateMap.get(date);
           return platformData?.[platformData.platform] || 0;
         });
@@ -69,7 +79,7 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
           data,
           color: () => color,
           strokeWidth: 2,
-          legend: platformData.platform
+          legend: platformData.platform,
         };
       });
 
@@ -87,7 +97,7 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
       SNKR: theme.colors.error,
       PSA: theme.colors.primary,
       BGS: theme.colors.secondary,
-      CGC: theme.colors.success
+      CGC: theme.colors.success,
     };
     return colors[platform] || theme.colors.gray;
   };
@@ -96,11 +106,12 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
   const statistics = useMemo(() => {
     if (!data || data.length === 0) return null;
 
-    const allPrices = data.flatMap(platformData =>
-      platformData.priceHistory.map(point => point.price)
+    const allPrices = data.flatMap((platformData) =>
+      platformData.priceHistory.map((point) => point.price)
     );
 
-    const average = allPrices.reduce((sum, price) => sum + price, 0) / allPrices.length;
+    const average =
+      allPrices.reduce((sum, price) => sum + price, 0) / allPrices.length;
     const min = Math.min(...allPrices);
     const max = Math.max(...allPrices);
     const change = data[0]?.trends?.changePercentage || 0;
@@ -142,13 +153,13 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
             color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
             style: {
-              borderRadius: 16
+              borderRadius: 16,
             },
             propsForDots: {
               r: '4',
               strokeWidth: '2',
-              stroke: theme.colors.primary
-            }
+              stroke: theme.colors.primary,
+            },
           }}
           bezier
           style={styles.chart}
@@ -169,7 +180,9 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
         <View style={styles.statisticsContainer}>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>平均價格</Text>
-            <Text style={styles.statValue}>{formatPrice(statistics.average)}</Text>
+            <Text style={styles.statValue}>
+              {formatPrice(statistics.average)}
+            </Text>
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>最低價格</Text>
@@ -181,11 +194,19 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statLabel}>變化率</Text>
-            <Text style={[
-              styles.statValue,
-              { color: statistics.change >= 0 ? theme.colors.success : theme.colors.error }
-            ]}>
-              {statistics.change >= 0 ? '+' : ''}{statistics.change.toFixed(2)}%
+            <Text
+              style={[
+                styles.statValue,
+                {
+                  color:
+                    statistics.change >= 0
+                      ? theme.colors.success
+                      : theme.colors.error,
+                },
+              ]}
+            >
+              {statistics.change >= 0 ? '+' : ''}
+              {statistics.change.toFixed(2)}%
             </Text>
           </View>
         </View>
@@ -195,13 +216,21 @@ export const HistoricalPriceChart: React.FC<HistoricalPriceChartProps> = ({
       {showLegend && (
         <View style={styles.legendContainer}>
           {data
-            .filter(platformData => selectedPlatforms.length === 0 || selectedPlatforms.includes(platformData.platform))
+            .filter(
+              (platformData) =>
+                selectedPlatforms.length === 0 ||
+                selectedPlatforms.includes(platformData.platform)
+            )
             .map((platformData, index) => (
               <View key={platformData.platform} style={styles.legendItem}>
-                <View style={[
-                  styles.legendColor,
-                  { backgroundColor: getPlatformColor(platformData.platform) }
-                ]} />
+                <View
+                  style={[
+                    styles.legendColor,
+                    {
+                      backgroundColor: getPlatformColor(platformData.platform),
+                    },
+                  ]}
+                />
                 <Text style={styles.legendText}>{platformData.platform}</Text>
                 <Text style={styles.legendPrice}>
                   {formatPrice(platformData.statistics.averagePrice)}
@@ -224,33 +253,33 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3
+    elevation: 3,
   },
   header: {
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   title: {
     fontSize: theme.typography.sizes.lg,
     fontWeight: theme.typography.weights.bold,
     color: theme.colors.text.primary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   subtitle: {
     fontSize: theme.typography.sizes.sm,
-    color: theme.colors.text.secondary
+    color: theme.colors.text.secondary,
   },
   chartContainer: {
     alignItems: 'center',
-    marginBottom: theme.spacing.md
+    marginBottom: theme.spacing.md,
   },
   chart: {
-    borderRadius: theme.borderRadius.lg
+    borderRadius: theme.borderRadius.lg,
   },
   noDataText: {
     textAlign: 'center',
     fontSize: theme.typography.sizes.md,
     color: theme.colors.text.secondary,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   statisticsContainer: {
     flexDirection: 'row',
@@ -258,21 +287,21 @@ const styles = StyleSheet.create({
     marginBottom: theme.spacing.md,
     paddingTop: theme.spacing.md,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border
+    borderTopColor: theme.colors.border,
   },
   statItem: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   statLabel: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.secondary,
-    marginBottom: theme.spacing.xs
+    marginBottom: theme.spacing.xs,
   },
   statValue: {
     fontSize: theme.typography.sizes.sm,
     fontWeight: theme.typography.weights.semibold,
-    color: theme.colors.text.primary
+    color: theme.colors.text.primary,
   },
   legendContainer: {
     flexDirection: 'row',
@@ -280,28 +309,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: theme.spacing.md,
     borderTopWidth: 1,
-    borderTopColor: theme.colors.border
+    borderTopColor: theme.colors.border,
   },
   legendItem: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: theme.spacing.sm,
-    minWidth: '45%'
+    minWidth: '45%',
   },
   legendColor: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   legendText: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.text.primary,
-    marginRight: theme.spacing.xs
+    marginRight: theme.spacing.xs,
   },
   legendPrice: {
     fontSize: theme.typography.sizes.xs,
     color: theme.colors.text.secondary,
-    fontWeight: theme.typography.weights.semibold
-  }
+    fontWeight: theme.typography.weights.semibold,
+  },
 });

@@ -33,7 +33,7 @@ export function useFormValidation<T extends Record<string, any>>(
     validateOnSubmit = true,
     initialValues = {} as T,
     onSubmit,
-    onValidationError
+    onValidationError,
   } = config;
 
   // 表單狀態
@@ -43,7 +43,7 @@ export function useFormValidation<T extends Record<string, any>>(
     touched: {},
     isValid: false,
     isSubmitting: false,
-    hasChanges: false
+    hasChanges: false,
   });
 
   // 初始值引用（用於檢測變化）
@@ -59,7 +59,7 @@ export function useFormValidation<T extends Record<string, any>>(
         // 如果指定了特定字段，創建部分驗證模式
         if (fields && fields.length > 0) {
           const partialSchema: Record<string, any> = {};
-          fields.forEach(field => {
+          fields.forEach((field) => {
             if (schema.shape && schema.shape[field]) {
               partialSchema[field] = schema.shape[field];
             }
@@ -70,13 +70,13 @@ export function useFormValidation<T extends Record<string, any>>(
         const validatedData = validationSchema.parse(values);
         return {
           isValid: true,
-          data: validatedData
+          data: validatedData,
         };
       } catch (error) {
         if (error instanceof z.ZodError) {
           const errors: Record<string, string[]> = {};
 
-          error.errors.forEach(zodError => {
+          error.errors.forEach((zodError) => {
             const field = zodError.path.join('.');
             if (!errors[field]) {
               errors[field] = [];
@@ -89,14 +89,14 @@ export function useFormValidation<T extends Record<string, any>>(
             errors: Object.entries(errors).map(([field, messages]) => ({
               field,
               message: messages.join('; '),
-              code: 'VALIDATION_ERROR'
-            }))
+              code: 'VALIDATION_ERROR',
+            })),
           };
         }
 
         return {
           isValid: false,
-          errorMessage: '驗證過程中發生未知錯誤'
+          errorMessage: '驗證過程中發生未知錯誤',
         };
       }
     },
@@ -106,9 +106,11 @@ export function useFormValidation<T extends Record<string, any>>(
   // 更新表單值
   const setValue = useCallback(
     (field: keyof T, value: any) => {
-      setState(prevState => {
+      setState((prevState) => {
         const newValues = { ...prevState.values, [field]: value };
-        const hasChanges = JSON.stringify(newValues) !== JSON.stringify(initialValuesRef.current);
+        const hasChanges =
+          JSON.stringify(newValues) !==
+          JSON.stringify(initialValuesRef.current);
 
         const newErrors = { ...prevState.errors };
 
@@ -116,7 +118,7 @@ export function useFormValidation<T extends Record<string, any>>(
         if (validateOnChange) {
           const validation = validate(newValues, [field as string]);
           if (!validation.isValid && validation.errors) {
-            validation.errors.forEach(error => {
+            validation.errors.forEach((error) => {
               newErrors[error.field] = [error.message];
             });
           } else {
@@ -130,7 +132,7 @@ export function useFormValidation<T extends Record<string, any>>(
           values: newValues,
           errors: newErrors,
           hasChanges,
-          isValid: Object.keys(newErrors).length === 0
+          isValid: Object.keys(newErrors).length === 0,
         };
       });
     },
@@ -138,32 +140,28 @@ export function useFormValidation<T extends Record<string, any>>(
   );
 
   // 批量更新表單值
-  const setValues = useCallback(
-    (newValues: Partial<T>) => {
-      setState(prevState => {
-        const updatedValues = { ...prevState.values, ...newValues };
-        const hasChanges = JSON.stringify(updatedValues) !== JSON.stringify(initialValuesRef.current);
+  const setValues = useCallback((newValues: Partial<T>) => {
+    setState((prevState) => {
+      const updatedValues = { ...prevState.values, ...newValues };
+      const hasChanges =
+        JSON.stringify(updatedValues) !==
+        JSON.stringify(initialValuesRef.current);
 
-        return {
-          ...prevState,
-          values: updatedValues,
-          hasChanges
-        };
-      });
-    },
-    []
-  );
+      return {
+        ...prevState,
+        values: updatedValues,
+        hasChanges,
+      };
+    });
+  }, []);
 
   // 設置字段為已觸摸狀態
-  const setTouched = useCallback(
-    (field: keyof T, touched: boolean = true) => {
-      setState(prevState => ({
-        ...prevState,
-        touched: { ...prevState.touched, [field]: touched }
-      }));
-    },
-    []
-  );
+  const setTouched = useCallback((field: keyof T, touched: boolean = true) => {
+    setState((prevState) => ({
+      ...prevState,
+      touched: { ...prevState.touched, [field]: touched },
+    }));
+  }, []);
 
   // 處理字段變化
   const handleChange = useCallback(
@@ -180,11 +178,11 @@ export function useFormValidation<T extends Record<string, any>>(
 
       if (validateOnBlur) {
         const validation = validate(state.values, [field as string]);
-        setState(prevState => {
+        setState((prevState) => {
           const newErrors = { ...prevState.errors };
 
           if (!validation.isValid && validation.errors) {
-            validation.errors.forEach(error => {
+            validation.errors.forEach((error) => {
               newErrors[error.field] = [error.message];
             });
           } else {
@@ -194,7 +192,7 @@ export function useFormValidation<T extends Record<string, any>>(
           return {
             ...prevState,
             errors: newErrors,
-            isValid: Object.keys(newErrors).length === 0
+            isValid: Object.keys(newErrors).length === 0,
           };
         });
       }
@@ -203,70 +201,64 @@ export function useFormValidation<T extends Record<string, any>>(
   );
 
   // 重置表單
-  const reset = useCallback(
-    (newValues?: T) => {
-      const resetValues = newValues || initialValuesRef.current;
-      setState({
-        values: resetValues,
-        errors: {},
-        touched: {},
-        isValid: false,
-        isSubmitting: false,
-        hasChanges: false
-      });
-    },
-    []
-  );
+  const reset = useCallback((newValues?: T) => {
+    const resetValues = newValues || initialValuesRef.current;
+    setState({
+      values: resetValues,
+      errors: {},
+      touched: {},
+      isValid: false,
+      isSubmitting: false,
+      hasChanges: false,
+    });
+  }, []);
 
   // 提交表單
-  const submit = useCallback(
-    async () => {
-      if (state.isSubmitting) return;
+  const submit = useCallback(async () => {
+    if (state.isSubmitting) return;
 
-      setState(prevState => ({ ...prevState, isSubmitting: true }));
+    setState((prevState) => ({ ...prevState, isSubmitting: true }));
 
-      try {
-        // 驗證整個表單
-        const validation = validate(state.values);
+    try {
+      // 驗證整個表單
+      const validation = validate(state.values);
 
-        if (!validation.isValid) {
-          // 設置所有錯誤
-          const errors: Record<string, string[]> = {};
-          if (validation.errors) {
-            validation.errors.forEach(error => {
-              errors[error.field] = [error.message];
-            });
-          }
-
-          setState(prevState => ({
-            ...prevState,
-            errors,
-            isValid: false,
-            isSubmitting: false
-          }));
-
-          // 調用錯誤回調
-          if (onValidationError && validation.errors) {
-            onValidationError(validation.errors);
-          }
-
-          return;
+      if (!validation.isValid) {
+        // 設置所有錯誤
+        const errors: Record<string, string[]> = {};
+        if (validation.errors) {
+          validation.errors.forEach((error) => {
+            errors[error.field] = [error.message];
+          });
         }
 
-        // 調用提交回調
-        if (onSubmit) {
-          await onSubmit(validation.data || state.values);
+        setState((prevState) => ({
+          ...prevState,
+          errors,
+          isValid: false,
+          isSubmitting: false,
+        }));
+
+        // 調用錯誤回調
+        if (onValidationError && validation.errors) {
+          onValidationError(validation.errors);
         }
 
-        // 重置提交狀態
-        setState(prevState => ({ ...prevState, isSubmitting: false }));
-      } catch (error) {
-        // logger.info('表單提交錯誤:', error);
-        setState(prevState => ({ ...prevState, isSubmitting: false }));
+        return;
       }
-    },
-    [state.values, state.isSubmitting, validate, onSubmit, onValidationError]
-  );
+
+      // 調用提交回調
+      if (onSubmit) {
+        await onSubmit(validation.data || state.values);
+      }
+
+      // 重置提交狀態
+      setState((prevState) => ({ ...prevState, isSubmitting: false }));
+    } catch (error) {
+      // logger.info('表單提交錯誤:', error);
+      setState((prevState) => ({ ...prevState, isSubmitting: false }));
+    }
+  }, [state.values, state.isSubmitting, validate, onSubmit, onValidationError]);
 
   // 獲取字段錯誤
   const getFieldError = useCallback(
@@ -279,7 +271,10 @@ export function useFormValidation<T extends Record<string, any>>(
   // 檢查字段是否有效
   const isFieldValid = useCallback(
     (field: keyof T): boolean => {
-      return !state.errors[field as string] || state.errors[field as string].length === 0;
+      return (
+        !state.errors[field as string] ||
+        state.errors[field as string].length === 0
+      );
     },
     [state.errors]
   );
@@ -304,9 +299,9 @@ export function useFormValidation<T extends Record<string, any>>(
   useEffect(() => {
     if (!isInitialized.current) {
       const validation = validate(state.values);
-      setState(prevState => ({
+      setState((prevState) => ({
         ...prevState,
-        isValid: validation.isValid
+        isValid: validation.isValid,
       }));
       isInitialized.current = true;
     }
@@ -335,7 +330,7 @@ export function useFormValidation<T extends Record<string, any>>(
     getFieldError,
     isFieldValid,
     isFieldTouched,
-    shouldShowFieldError
+    shouldShowFieldError,
   };
 }
 

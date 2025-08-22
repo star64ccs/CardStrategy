@@ -22,8 +22,8 @@ const limiter = rateLimit({
   message: {
     success: false,
     message: '請求過於頻繁，請稍後再試',
-    code: 'RATE_LIMIT_EXCEEDED'
-  }
+    code: 'RATE_LIMIT_EXCEEDED',
+  },
 });
 
 app.use('/api', limiter);
@@ -35,7 +35,7 @@ app.get('/api/health', (req, res) => {
     message: 'CardStrategy Backend API 運行正常',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
-    status: 'healthy'
+    status: 'healthy',
   });
 });
 
@@ -46,8 +46,8 @@ app.get('/api/test', (req, res) => {
     message: '測試端點正常',
     data: {
       message: 'Hello from CardStrategy Backend!',
-      timestamp: new Date().toISOString()
-    }
+      timestamp: new Date().toISOString(),
+    },
   });
 });
 
@@ -62,7 +62,7 @@ app.get('/api/cards', (req, res) => {
       price: 9999.99,
       imageUrl: 'https://example.com/blue-eyes-white-dragon.jpg',
       condition: 'mint',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     },
     {
       id: 2,
@@ -72,7 +72,7 @@ app.get('/api/cards', (req, res) => {
       price: 2999.99,
       imageUrl: 'https://example.com/dark-magician.jpg',
       condition: 'near-mint',
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     },
     {
       id: 3,
@@ -82,14 +82,14 @@ app.get('/api/cards', (req, res) => {
       price: 7999.99,
       imageUrl: 'https://example.com/red-eyes-black-dragon.jpg',
       condition: 'excellent',
-      createdAt: new Date().toISOString()
-    }
+      createdAt: new Date().toISOString(),
+    },
   ];
 
   res.json({
     success: true,
     message: '卡片列表獲取成功',
-    data: mockCards
+    data: mockCards,
   });
 });
 
@@ -107,16 +107,16 @@ app.post('/api/auth/login', (req, res) => {
           id: 1,
           name: '測試用戶',
           email: 'test@cardstrategy.com',
-          role: 'user'
+          role: 'user',
         },
-        token: `mock-jwt-token-${  Date.now()}`
-      }
+        token: `mock-jwt-token-${Date.now()}`,
+      },
     });
   } else {
     res.status(401).json({
       success: false,
       message: '郵箱或密碼錯誤',
-      code: 'INVALID_CREDENTIALS'
+      code: 'INVALID_CREDENTIALS',
     });
   }
 });
@@ -133,17 +133,13 @@ app.post('/api/cards/scan', (req, res) => {
     condition: 'mint',
     rarity: 'UR',
     description: '傳說中的最強龍族卡片',
-    recommendations: [
-      '建議進行專業鑑定',
-      '市場價格穩定',
-      '收藏價值極高'
-    ]
+    recommendations: ['建議進行專業鑑定', '市場價格穩定', '收藏價值極高'],
   };
 
   res.json({
     success: true,
     message: '卡片掃描完成',
-    data: scanResult
+    data: scanResult,
   });
 });
 
@@ -153,23 +149,23 @@ app.get('/api/market/trends', (req, res) => {
     topGainers: [
       { name: '青眼白龍', change: '+15%', price: 9999.99 },
       { name: '黑魔導', change: '+8%', price: 2999.99 },
-      { name: '真紅眼黑龍', change: '+12%', price: 7999.99 }
+      { name: '真紅眼黑龍', change: '+12%', price: 7999.99 },
     ],
     topLosers: [
-      { name: '普通卡片A', change: '-5%', price: 100.00 },
-      { name: '普通卡片B', change: '-3%', price: 50.00 }
+      { name: '普通卡片A', change: '-5%', price: 100.0 },
+      { name: '普通卡片B', change: '-3%', price: 50.0 },
     ],
     marketSummary: {
       totalVolume: 150000,
       activeCards: 1250,
-      averagePrice: 2500
-    }
+      averagePrice: 2500,
+    },
   };
 
   res.json({
     success: true,
     message: '市場趨勢獲取成功',
-    data: mockTrends
+    data: mockTrends,
   });
 });
 
@@ -181,7 +177,7 @@ app.get('/api/investments/portfolio', (req, res) => {
     performance: {
       totalReturn: 12.5,
       monthlyReturn: 2.3,
-      yearlyReturn: 15.8
+      yearlyReturn: 15.8,
     },
     cards: [
       {
@@ -190,7 +186,7 @@ app.get('/api/investments/portfolio', (req, res) => {
         quantity: 1,
         avgPrice: 8500,
         currentPrice: 9999.99,
-        return: 17.6
+        return: 17.6,
       },
       {
         id: 2,
@@ -198,15 +194,15 @@ app.get('/api/investments/portfolio', (req, res) => {
         quantity: 2,
         avgPrice: 2800,
         currentPrice: 2999.99,
-        return: 7.1
-      }
-    ]
+        return: 7.1,
+      },
+    ],
   };
 
   res.json({
     success: true,
     message: '投資組合獲取成功',
-    data: mockPortfolio
+    data: mockPortfolio,
   });
 });
 
@@ -224,15 +220,15 @@ app.get('/', (req, res) => {
       auth: '/api/auth/login',
       scan: '/api/cards/scan',
       market: '/api/market/trends',
-      portfolio: '/api/investments/portfolio'
+      portfolio: '/api/investments/portfolio',
     },
     features: [
       '卡片管理',
       '市場分析',
       '投資組合追蹤',
       '卡片掃描識別',
-      '價格預測'
-    ]
+      '價格預測',
+    ],
   });
 });
 
@@ -242,7 +238,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({
     success: false,
     message: '內部服務器錯誤',
-    error: process.env.NODE_ENV === 'development' ? err.message : '請稍後再試'
+    error: process.env.NODE_ENV === 'development' ? err.message : '請稍後再試',
   });
 });
 
@@ -259,8 +255,8 @@ app.use('*', (req, res) => {
       '/api/auth/login',
       '/api/cards/scan',
       '/api/market/trends',
-      '/api/investments/portfolio'
-    ]
+      '/api/investments/portfolio',
+    ],
   });
 });
 

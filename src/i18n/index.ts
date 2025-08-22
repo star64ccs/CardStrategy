@@ -14,18 +14,18 @@ export const supportedLanguages = {
   'zh-TW': {
     name: '繁體中文',
     nativeName: '繁體中文',
-    flag: '🇹🇼'
+    flag: '🇹🇼',
   },
   'en-US': {
     name: 'English',
     nativeName: 'English',
-    flag: '🇺🇸'
+    flag: '🇺🇸',
   },
   'ja-JP': {
     name: '日本語',
     nativeName: '日本語',
-    flag: '🇯🇵'
-  }
+    flag: '🇯🇵',
+  },
 } as const;
 
 export type SupportedLanguage = keyof typeof supportedLanguages;
@@ -50,7 +50,7 @@ const getLanguageFromStorage = async (): Promise<SupportedLanguage> => {
   const languageMap: Record<string, SupportedLanguage> = {
     zh: 'zh-TW',
     en: 'en-US',
-    ja: 'ja-JP'
+    ja: 'ja-JP',
   };
 
   return languageMap[languageCode as keyof typeof languageMap] || 'en-US';
@@ -59,43 +59,41 @@ const getLanguageFromStorage = async (): Promise<SupportedLanguage> => {
 // 語言資源
 const resources = {
   'zh-TW': {
-    translation: zhTW
+    translation: zhTW,
   },
   'en-US': {
-    translation: enUS
+    translation: enUS,
   },
   'ja-JP': {
-    translation: jaJP
-  }
+    translation: jaJP,
+  },
 };
 
 // i18n 配置
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: 'en-US', // 默認語言，會在初始化時更新
-    fallbackLng: 'en-US',
-    debug: __DEV__,
+i18n.use(initReactI18next).init({
+  resources,
+  lng: 'en-US', // 默認語言，會在初始化時更新
+  fallbackLng: 'en-US',
+  debug: __DEV__,
 
-    interpolation: {
-      escapeValue: false // React 已經處理了 XSS
-    },
+  interpolation: {
+    escapeValue: false, // React 已經處理了 XSS
+  },
 
-    react: {
-      useSuspense: false
-    },
+  react: {
+    useSuspense: false,
+  },
 
-    // 命名空間
-    ns: ['translation'],
-    defaultNS: 'translation',
+  // 命名空間
+  ns: ['translation'],
+  defaultNS: 'translation',
 
-    // 檢測選項
-    detection: {
-      order: ['localStorage', 'navigator'],
-      caches: ['localStorage']
-    }
-  });
+  // 檢測選項
+  detection: {
+    order: ['localStorage', 'navigator'],
+    caches: ['localStorage'],
+  },
+});
 
 // 初始化語言
 const initializeLanguage = async (): Promise<void> => {
@@ -108,7 +106,9 @@ const initializeLanguage = async (): Promise<void> => {
 };
 
 // 語言切換
-export const changeLanguage = async (language: SupportedLanguage): Promise<void> => {
+export const changeLanguage = async (
+  language: SupportedLanguage
+): Promise<void> => {
   try {
     await AsyncStorage.setItem('userLanguage', language);
     await i18n.changeLanguage(language);
@@ -128,7 +128,10 @@ export const getLanguageInfo = (language: SupportedLanguage) => {
 };
 
 // 格式化數字
-export const formatNumber = (value: number, options?: Intl.NumberFormatOptions): string => {
+export const formatNumber = (
+  value: number,
+  options?: Intl.NumberFormatOptions
+): string => {
   const language = getCurrentLanguage();
   return new Intl.NumberFormat(language, options).format(value);
 };
@@ -138,12 +141,15 @@ export const formatCurrency = (value: number, currency = 'TWD'): string => {
   const language = getCurrentLanguage();
   return new Intl.NumberFormat(language, {
     style: 'currency',
-    currency
+    currency,
   }).format(value);
 };
 
 // 格式化日期
-export const formatDate = (date: Date, options?: Intl.DateTimeFormatOptions): string => {
+export const formatDate = (
+  date: Date,
+  options?: Intl.DateTimeFormatOptions
+): string => {
   const language = getCurrentLanguage();
   return new Intl.DateTimeFormat(language, options).format(date);
 };
@@ -168,14 +174,13 @@ export const formatRelativeTime = (date: Date): string => {
     return rtf.format(-Math.floor(diffInSeconds / 2592000), 'month');
   }
   return rtf.format(-Math.floor(diffInSeconds / 31536000), 'year');
-
 };
 
 // 語言映射
 const languageMap: Record<string, string> = {
-  'zh': 'zh-TW',
-  'en': 'en-US',
-  'ja': 'ja-JP'
+  zh: 'zh-TW',
+  en: 'en-US',
+  ja: 'ja-JP',
 };
 
 // 獲取語言代碼

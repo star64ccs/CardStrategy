@@ -8,12 +8,18 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { login } from '../store/slices/authSlice';
 import { authService } from '../services/authService';
-import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+  shadows,
+} from '../config/theme';
 
 interface RegisterScreenProps {
   onNavigate: (screen: 'Login' | 'Register' | 'Dashboard') => void;
@@ -25,16 +31,21 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
     email: '',
     username: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
   const [isLoading, setIsLoading] = useState(false);
 
   const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const validateForm = () => {
-    if (!formData.email || !formData.username || !formData.password || !formData.confirmPassword) {
+    if (
+      !formData.email ||
+      !formData.username ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
       Alert.alert('錯誤', '請填寫所有必填欄位');
       return false;
     }
@@ -70,13 +81,13 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
       const response = await authService.register({
         email: formData.email,
         username: formData.username,
-        password: formData.password
+        password: formData.password,
       });
 
       if (response.success) {
         dispatch(login(response.data));
         Alert.alert('註冊成功', '歡迎加入卡策！', [
-          { text: '確定', onPress: () => onNavigate('Dashboard') }
+          { text: '確定', onPress: () => onNavigate('Dashboard') },
         ]);
       } else {
         Alert.alert('註冊失敗', response.message || '註冊時發生錯誤');
@@ -169,7 +180,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
 
           {/* 註冊按鈕 */}
           <TouchableOpacity
-            style={[styles.registerButton, isLoading && styles.registerButtonDisabled]}
+            style={[
+              styles.registerButton,
+              isLoading && styles.registerButtonDisabled,
+            ]}
             onPress={handleRegister}
             disabled={isLoading}
           >
@@ -198,7 +212,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
                   email: 'demo@cardstrategy.com',
                   username: 'demo_user',
                   password: 'demo123',
-                  confirmPassword: 'demo123'
+                  confirmPassword: 'demo123',
                 });
               }}
             >
@@ -211,8 +225,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
         <View style={styles.termsContainer}>
           <Text style={styles.termsText}>
             註冊即表示您同意我們的{' '}
-            <Text style={styles.termsLink}>服務條款</Text>
-            {' '}和{' '}
+            <Text style={styles.termsLink}>服務條款</Text> 和{' '}
             <Text style={styles.termsLink}>隱私政策</Text>
           </Text>
         </View>
@@ -224,17 +237,17 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ onNavigate }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: spacing.large,
     paddingTop: spacing.xlarge * 2,
-    paddingBottom: spacing.xlarge
+    paddingBottom: spacing.xlarge,
   },
   header: {
     alignItems: 'center',
-    marginBottom: spacing.xlarge * 2
+    marginBottom: spacing.xlarge * 2,
   },
   logoContainer: {
     width: 80,
@@ -244,44 +257,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.medium,
-    ...shadows.lg
+    ...shadows.lg,
   },
   logo: {
-    fontSize: 40
+    fontSize: 40,
   },
   title: {
     fontSize: typography.fontSize['3xl'],
     fontWeight: typography.fontWeight.bold,
     color: colors.textPrimary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   subtitle: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   formContainer: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
     marginBottom: spacing.xlarge,
-    ...shadows.base
+    ...shadows.base,
   },
   formTitle: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.semiBold,
     color: colors.textPrimary,
     marginBottom: spacing.large,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   inputContainer: {
-    marginBottom: spacing.large
+    marginBottom: spacing.large,
   },
   inputLabel: {
     fontSize: typography.fontSize.sm,
     fontWeight: typography.fontWeight.medium,
     color: colors.textPrimary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   input: {
     borderWidth: 1,
@@ -291,7 +304,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.medium,
     fontSize: typography.fontSize.base,
     color: colors.textPrimary,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   registerButton: {
     backgroundColor: colors.primary,
@@ -299,69 +312,69 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.medium,
     alignItems: 'center',
     marginBottom: spacing.medium,
-    ...shadows.sm
+    ...shadows.sm,
   },
   registerButtonDisabled: {
-    backgroundColor: colors.textDisabled
+    backgroundColor: colors.textDisabled,
   },
   registerButtonText: {
     color: colors.white,
     fontSize: typography.fontSize.base,
-    fontWeight: typography.fontWeight.semiBold
+    fontWeight: typography.fontWeight.semiBold,
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.xlarge
+    marginBottom: spacing.xlarge,
   },
   footerText: {
     color: colors.textSecondary,
-    fontSize: typography.fontSize.base
+    fontSize: typography.fontSize.base,
   },
   loginLink: {
     color: colors.accent,
     fontSize: typography.fontSize.base,
     fontWeight: typography.fontWeight.medium,
-    marginLeft: spacing.small
+    marginLeft: spacing.small,
   },
   quickRegisterContainer: {
     alignItems: 'center',
-    marginBottom: spacing.large
+    marginBottom: spacing.large,
   },
   quickRegisterTitle: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   quickRegisterButtons: {
     flexDirection: 'row',
-    gap: spacing.medium
+    gap: spacing.medium,
   },
   quickRegisterButton: {
     backgroundColor: colors.secondary,
     borderRadius: borderRadius.medium,
     paddingHorizontal: spacing.large,
-    paddingVertical: spacing.small
+    paddingVertical: spacing.small,
   },
   quickRegisterButtonText: {
     color: colors.white,
     fontSize: typography.fontSize.sm,
-    fontWeight: typography.fontWeight.medium
+    fontWeight: typography.fontWeight.medium,
   },
   termsContainer: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   termsText: {
     fontSize: typography.fontSize.xs,
     color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 18
+    lineHeight: 18,
   },
   termsLink: {
     color: colors.accent,
-    textDecorationLine: 'underline'
-  }
+    textDecorationLine: 'underline',
+  },
 });
 
 export default RegisterScreen;

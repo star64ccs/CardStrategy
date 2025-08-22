@@ -38,7 +38,9 @@ const CardScanner: React.FC = () => {
 
       canvas.toBlob((blob) => {
         if (blob) {
-          const file = new File([blob], 'captured-card.jpg', { type: 'image/jpeg' });
+          const file = new File([blob], 'captured-card.jpg', {
+            type: 'image/jpeg',
+          });
           simulateCardScan(file);
         }
       }, 'image/jpeg');
@@ -49,7 +51,7 @@ const CardScanner: React.FC = () => {
     setScanning(true);
 
     // 模擬 AI 處理時間
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     const mockResult: CardScanResult = {
       id: Date.now().toString(),
@@ -62,15 +64,15 @@ const CardScanner: React.FC = () => {
         '8星',
         '攻擊力3000',
         '守備力2500',
-        '效果怪獸'
+        '效果怪獸',
       ],
       processingTime: 1.2 + Math.random() * 0.8,
       timestamp: new Date().toISOString(),
-      modelVersion: '2.1.0'
+      modelVersion: '2.1.0',
     };
 
     setScanResult(mockResult);
-    setScanHistory(prev => [mockResult, ...prev.slice(0, 9)]);
+    setScanHistory((prev) => [mockResult, ...prev.slice(0, 9)]);
     setScanning(false);
   };
 
@@ -114,9 +116,7 @@ const CardScanner: React.FC = () => {
               />
               <div className="camera-overlay">
                 <div className="scan-frame"></div>
-                <div className="scan-instructions">
-                  將卡片放在框內進行掃描
-                </div>
+                <div className="scan-instructions">將卡片放在框內進行掃描</div>
               </div>
             </div>
             <div className="camera-controls">
@@ -174,13 +174,17 @@ const CardScanner: React.FC = () => {
                       style={{ width: `${scanResult.confidence}%` }}
                     ></div>
                   </div>
-                  <span className="confidence-value">{scanResult.confidence.toFixed(1)}%</span>
+                  <span className="confidence-value">
+                    {scanResult.confidence.toFixed(1)}%
+                  </span>
                 </div>
                 <div className="detected-features">
                   <h6>檢測到的特徵:</h6>
                   <div className="features-grid">
                     {scanResult.detectedFeatures.map((feature, index) => (
-                      <span key={index} className="feature-tag">{feature}</span>
+                      <span key={index} className="feature-tag">
+                        {feature}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -193,7 +197,9 @@ const CardScanner: React.FC = () => {
             <div className="result-actions">
               <button className="btn btn-primary">添加到收藏</button>
               <button className="btn btn-secondary">查看市場價格</button>
-              <button className="btn btn-outline" onClick={clearScan}>重新掃描</button>
+              <button className="btn btn-outline" onClick={clearScan}>
+                重新掃描
+              </button>
             </div>
           </div>
         )}
@@ -203,13 +209,17 @@ const CardScanner: React.FC = () => {
         <div className="scan-history">
           <h4>掃描歷史</h4>
           <div className="history-list">
-            {scanHistory.map(result => (
+            {scanHistory.map((result) => (
               <div key={result.id} className="history-item">
                 <img src={result.imageUrl} alt={result.cardName} />
                 <div className="history-info">
                   <h6>{result.cardName}</h6>
-                  <span className="confidence">{result.confidence.toFixed(1)}%</span>
-                  <span className="time">{new Date(result.timestamp).toLocaleTimeString()}</span>
+                  <span className="confidence">
+                    {result.confidence.toFixed(1)}%
+                  </span>
+                  <span className="time">
+                    {new Date(result.timestamp).toLocaleTimeString()}
+                  </span>
                 </div>
               </div>
             ))}

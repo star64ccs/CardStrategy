@@ -7,12 +7,14 @@
 ## 核心功能
 
 ### 1. 任務管理
+
 - **任務創建**: 支持創建具有不同優先級、類型和執行器的任務
 - **任務狀態管理**: 完整的任務狀態生命週期（待處理、準備就緒、執行中、已完成、失敗、取消、阻塞）
 - **任務優先級**: 支持低、正常、高、緊急四個優先級
 - **任務執行器**: 可自定義的任務執行邏輯
 
 ### 2. 依賴關係管理
+
 - **多種依賴類型**:
   - `REQUIRES`: 必須依賴 - 依賴任務必須成功完成
   - `OPTIONAL`: 可選依賴 - 依賴任務完成或失敗都可以
@@ -22,6 +24,7 @@
 - **自定義依賴條件**: 支持複雜的依賴條件邏輯
 
 ### 3. 執行調度
+
 - **並行執行**: 支持多個任務同時執行
 - **優先級調度**: 基於優先級的任務排序
 - **死鎖檢測**: 自動檢測和處理死鎖情況
@@ -29,6 +32,7 @@
 - **重試機制**: 失敗任務自動重試
 
 ### 4. 監控和統計
+
 - **實時統計**: 任務執行統計信息
 - **進度追蹤**: 實時進度更新、步驟追蹤、進度歷史
 - **依賴圖可視化**: 任務依賴關係圖形化展示
@@ -43,7 +47,9 @@
 ### 核心組件
 
 #### TaskDependencyManager
+
 主要的任務管理器類，負責：
+
 - 任務的增刪改查
 - 依賴關係管理
 - 執行調度
@@ -51,20 +57,26 @@
 - 事件分發
 
 #### Task
+
 任務實體，包含：
+
 - 基本信息（ID、名稱、描述、類型）
 - 狀態信息（狀態、創建時間、開始時間、完成時間）
 - 執行信息（執行器、預估時間、實際時間）
 - 依賴信息（依賴列表、被依賴列表）
 
 #### TaskExecutor
+
 任務執行器接口，定義：
+
 - `execute(task, progressTracker)`: 執行任務的具體邏輯，支持進度追蹤
 - `validate(task)`: 驗證任務參數（可選）
 - `cleanup(task)`: 清理任務資源（可選）
 
 #### ProgressTracker
+
 進度追蹤器接口，提供：
+
 - `updateProgress(update)`: 更新任務進度
 - `complete()`: 標記任務完成
 - `fail(error)`: 標記任務失敗
@@ -110,7 +122,11 @@ interface TaskDependency {
 #### 1. 創建任務管理器
 
 ```typescript
-import { TaskDependencyManager, TaskPriority, DependencyType } from '@/utils/taskDependencyManager';
+import {
+  TaskDependencyManager,
+  TaskPriority,
+  DependencyType,
+} from '@/utils/taskDependencyManager';
 
 const taskManager = new TaskDependencyManager({
   maxConcurrentTasks: 5,
@@ -120,7 +136,7 @@ const taskManager = new TaskDependencyManager({
   enableTimeout: true,
   defaultTimeout: 30000,
   enableDeadlockDetection: true,
-  enableCircularDependencyCheck: true
+  enableCircularDependencyCheck: true,
 });
 ```
 
@@ -133,7 +149,7 @@ const dataCollectionExecutor: TaskExecutor = {
     // 執行數據收集邏輯
     await collectMarketData();
     return { collectedData: marketData };
-  }
+  },
 };
 
 // 創建任務
@@ -144,7 +160,7 @@ const taskId = taskManager.addTask({
   priority: TaskPriority.HIGH,
   estimatedDuration: 5000,
   executor: dataCollectionExecutor,
-  dependencies: []
+  dependencies: [],
 });
 ```
 
@@ -154,7 +170,7 @@ const taskId = taskManager.addTask({
 // 添加依賴關係
 taskManager.addDependency(analysisTaskId, {
   taskId: dataCollectionTaskId,
-  type: DependencyType.REQUIRES
+  type: DependencyType.REQUIRES,
 });
 ```
 
@@ -175,9 +191,11 @@ taskManager.addDependency(taskId, {
   type: DependencyType.REQUIRES,
   condition: (task) => {
     // 自定義條件：只有當任務結果包含特定數據時才滿足依賴
-    return task.status === TaskStatus.COMPLETED && 
-           task.metadata?.hasRequiredData === true;
-  }
+    return (
+      task.status === TaskStatus.COMPLETED &&
+      task.metadata?.hasRequiredData === true
+    );
+  },
 });
 ```
 
@@ -206,7 +224,7 @@ console.log('任務統計:', {
   總任務數: stats.totalTasks,
   執行中: stats.runningTasks,
   已完成: stats.completedTasks,
-  成功率: `${stats.successRate.toFixed(1)}%`
+  成功率: `${stats.successRate.toFixed(1)}%`,
 });
 ```
 
@@ -216,7 +234,7 @@ console.log('任務統計:', {
 const graph = taskManager.getDependencyGraph();
 console.log('依賴圖:', {
   節點: graph.nodes,
-  邊: graph.edges
+  邊: graph.edges,
 });
 ```
 
@@ -227,11 +245,11 @@ console.log('依賴圖:', {
 const dataProcessingExecutor: TaskExecutor = {
   execute: async (task, progressTracker) => {
     const steps = ['初始化', '數據載入', '處理計算', '結果驗證', '保存完成'];
-    
+
     for (let i = 0; i < steps.length; i++) {
       const step = steps[i];
       const percentage = ((i + 1) / steps.length) * 100;
-      
+
       // 更新進度
       if (progressTracker) {
         progressTracker.updateProgress({
@@ -239,21 +257,24 @@ const dataProcessingExecutor: TaskExecutor = {
           currentStep: step,
           totalSteps: steps.length,
           currentStepIndex: i + 1,
-          estimatedTimeRemaining: (task.estimatedDuration / steps.length) * (steps.length - i - 1)
+          estimatedTimeRemaining:
+            (task.estimatedDuration / steps.length) * (steps.length - i - 1),
         });
       }
-      
+
       // 執行步驟邏輯
       await processStep(step);
     }
-    
+
     return { processedData: result };
-  }
+  },
 };
 
 // 監聽進度更新事件
 taskManager.on('taskProgressUpdate', (data) => {
-  console.log(`任務 ${data.taskId} 進度: ${data.progress.percentage}% - ${data.progress.currentStep}`);
+  console.log(
+    `任務 ${data.taskId} 進度: ${data.progress.percentage}% - ${data.progress.currentStep}`
+  );
 });
 
 taskManager.on('progressBroadcast', (data) => {
@@ -267,6 +288,7 @@ const summary = taskManager.getProgressSummary();
 ```
 
 #### 6. 跨設備同步
+
 ```typescript
 // 監聽同步狀態變更
 taskManager.addSyncStatusListener((status) => {
@@ -299,6 +321,7 @@ await taskManager.cleanupSyncData();
 ```
 
 #### 7. 同步加密
+
 ```typescript
 // 更新加密配置
 taskManager.updateEncryptionConfig({
@@ -307,7 +330,7 @@ taskManager.updateEncryptionConfig({
   encryptSyncData: true,
   encryptMetadata: true,
   algorithm: 'AES-256-GCM',
-  keyRotationEnabled: false
+  keyRotationEnabled: false,
 });
 
 // 獲取加密配置
@@ -333,7 +356,8 @@ taskManager.on('keyRotated', (data) => {
   console.log('密鑰已輪換:', data);
 });
 ```
-```
+
+````
 
 ## 實際應用場景
 
@@ -369,7 +393,7 @@ for (let i = 1; i < taskIds.length; i++) {
     type: DependencyType.REQUIRES
   });
 }
-```
+````
 
 ### 2. 並行任務處理
 
@@ -378,16 +402,16 @@ for (let i = 1; i < taskIds.length; i++) {
 const parallelTasks = [
   { name: '處理圖片A', type: 'image_processing' },
   { name: '處理圖片B', type: 'image_processing' },
-  { name: '處理圖片C', type: 'image_processing' }
+  { name: '處理圖片C', type: 'image_processing' },
 ];
 
-const parallelTaskIds = parallelTasks.map(task => 
+const parallelTaskIds = parallelTasks.map((task) =>
   taskManager.addTask({
     name: task.name,
     type: task.type,
     priority: TaskPriority.NORMAL,
     estimatedDuration: 4000,
-    executor: imageProcessingExecutor
+    executor: imageProcessingExecutor,
   })
 );
 
@@ -397,14 +421,14 @@ const summaryTaskId = taskManager.addTask({
   type: 'summary',
   priority: TaskPriority.HIGH,
   estimatedDuration: 2000,
-  executor: summaryExecutor
+  executor: summaryExecutor,
 });
 
 // 添加依賴關係
-parallelTaskIds.forEach(taskId => {
+parallelTaskIds.forEach((taskId) => {
   taskManager.addDependency(summaryTaskId, {
     taskId,
-    type: DependencyType.REQUIRES
+    type: DependencyType.REQUIRES,
   });
 });
 ```
@@ -418,7 +442,7 @@ const conditionTaskId = taskManager.addTask({
   type: 'quality_check',
   priority: TaskPriority.HIGH,
   estimatedDuration: 1000,
-  executor: qualityCheckExecutor
+  executor: qualityCheckExecutor,
 });
 
 const goodDataTaskId = taskManager.addTask({
@@ -426,7 +450,7 @@ const goodDataTaskId = taskManager.addTask({
   type: 'process_good_data',
   priority: TaskPriority.NORMAL,
   estimatedDuration: 3000,
-  executor: goodDataProcessor
+  executor: goodDataProcessor,
 });
 
 const badDataTaskId = taskManager.addTask({
@@ -434,20 +458,20 @@ const badDataTaskId = taskManager.addTask({
   type: 'process_bad_data',
   priority: TaskPriority.NORMAL,
   estimatedDuration: 5000,
-  executor: badDataProcessor
+  executor: badDataProcessor,
 });
 
 // 添加條件依賴
 taskManager.addDependency(goodDataTaskId, {
   taskId: conditionTaskId,
   type: DependencyType.REQUIRES,
-  condition: (task) => task.metadata?.dataQuality === 'good'
+  condition: (task) => task.metadata?.dataQuality === 'good',
 });
 
 taskManager.addDependency(badDataTaskId, {
   taskId: conditionTaskId,
   type: DependencyType.REQUIRES,
-  condition: (task) => task.metadata?.dataQuality === 'bad'
+  condition: (task) => task.metadata?.dataQuality === 'bad',
 });
 ```
 
@@ -457,15 +481,15 @@ taskManager.addDependency(badDataTaskId, {
 
 ```typescript
 interface TaskSchedulerConfig {
-  maxConcurrentTasks: number;           // 最大並行任務數
-  enableParallelExecution: boolean;     // 啟用並行執行
-  enableRetry: boolean;                 // 啟用重試機制
-  defaultRetryAttempts: number;         // 默認重試次數
-  retryDelay: number;                   // 重試延遲（毫秒）
-  enableTimeout: boolean;               // 啟用超時控制
-  defaultTimeout: number;               // 默認超時時間（毫秒）
-  enablePriorityPreemption: boolean;    // 啟用優先級搶占
-  enableDeadlockDetection: boolean;     // 啟用死鎖檢測
+  maxConcurrentTasks: number; // 最大並行任務數
+  enableParallelExecution: boolean; // 啟用並行執行
+  enableRetry: boolean; // 啟用重試機制
+  defaultRetryAttempts: number; // 默認重試次數
+  retryDelay: number; // 重試延遲（毫秒）
+  enableTimeout: boolean; // 啟用超時控制
+  defaultTimeout: number; // 默認超時時間（毫秒）
+  enablePriorityPreemption: boolean; // 啟用優先級搶占
+  enableDeadlockDetection: boolean; // 啟用死鎖檢測
   enableCircularDependencyCheck: boolean; // 啟用循環依賴檢查
   logLevel: 'debug' | 'info' | 'warn' | 'error'; // 日誌級別
 }
@@ -474,26 +498,31 @@ interface TaskSchedulerConfig {
 ## 最佳實踐
 
 ### 1. 任務設計
+
 - 將複雜任務分解為小的、可重用的任務
 - 為每個任務設置合理的預估執行時間
 - 使用描述性的任務名稱和類型
 
 ### 2. 依賴關係設計
+
 - 避免過於複雜的依賴關係
 - 使用適當的依賴類型
 - 定期檢查和清理不必要的依賴
 
 ### 3. 錯誤處理
+
 - 為任務執行器實現適當的錯誤處理
 - 設置合理的重試次數和超時時間
 - 監聽任務失敗事件並記錄詳細信息
 
 ### 4. 性能優化
+
 - 根據系統資源調整並行任務數
 - 使用任務標籤進行分類和過濾
 - 定期清理已完成的任務
 
 ### 5. 監控和調試
+
 - 使用事件監聽器監控任務執行
 - 定期檢查統計信息
 - 使用依賴圖可視化工具調試複雜工作流
@@ -503,21 +532,25 @@ interface TaskSchedulerConfig {
 ### 常見問題
 
 #### 1. 任務卡在 PENDING 狀態
+
 - 檢查依賴任務是否已完成
 - 確認依賴條件是否滿足
 - 檢查是否有循環依賴
 
 #### 2. 任務執行超時
+
 - 調整任務的超時時間
 - 檢查任務執行器是否有阻塞操作
 - 考慮將長時間任務分解為多個小任務
 
 #### 3. 死鎖檢測
+
 - 檢查依賴關係是否形成循環
 - 使用依賴圖可視化工具分析
 - 考慮重新設計任務依賴關係
 
 #### 4. 內存使用過高
+
 - 定期清理已完成的任務
 - 減少並行任務數量
 - 檢查任務執行器是否有內存洩漏
@@ -525,6 +558,7 @@ interface TaskSchedulerConfig {
 ## 擴展功能
 
 ### 1. 持久化存儲
+
 可以擴展系統以支持任務和依賴關係的持久化存儲：
 
 ```typescript
@@ -537,6 +571,7 @@ interface TaskStorage {
 ```
 
 ### 2. 分布式執行
+
 可以擴展支持分布式任務執行：
 
 ```typescript
@@ -548,6 +583,7 @@ interface DistributedTaskManager {
 ```
 
 ### 3. 工作流模板
+
 可以創建預定義的工作流模板：
 
 ```typescript

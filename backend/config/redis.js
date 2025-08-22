@@ -17,7 +17,7 @@ class RedisConfig {
     try {
       // 從環境變量獲取 Redis 配置
       const redisUrl = process.env.REDIS_URL;
-      
+
       if (!redisUrl) {
         logger.warn('REDIS_URL 環境變量未設置，使用默認配置');
         // 使用默認配置
@@ -39,7 +39,7 @@ class RedisConfig {
               return undefined;
             }
             return Math.min(options.attempt * 100, 3000);
-          }
+          },
         });
       } else {
         // 使用 REDIS_URL
@@ -59,7 +59,7 @@ class RedisConfig {
               return undefined;
             }
             return Math.min(options.attempt * 100, 3000);
-          }
+          },
         });
       }
 

@@ -7,10 +7,16 @@ import {
   TouchableOpacity,
   Alert,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import { useTheme } from '../config/theme';
-import { predictionService, Prediction, ModelType, Timeframe, ModelInfo } from '../services/predictionService';
+import {
+  predictionService,
+  Prediction,
+  ModelType,
+  Timeframe,
+  ModelInfo,
+} from '../services/predictionService';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { Input } from '../components/common/Input';
@@ -23,7 +29,10 @@ interface PredictionScreenProps {
   route: any;
 }
 
-const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }) => {
+const PredictionScreen: React.FC<PredictionScreenProps> = ({
+  navigation,
+  route,
+}) => {
   const { theme } = useTheme();
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -41,7 +50,7 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
     { value: '30d', label: '30天' },
     { value: '90d', label: '90天' },
     { value: '180d', label: '180天' },
-    { value: '365d', label: '365天' }
+    { value: '365d', label: '365天' },
   ];
 
   useEffect(() => {
@@ -97,7 +106,10 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
     if (!cardId.trim()) return;
 
     try {
-      const response = await predictionService.getPredictionHistory(parseInt(cardId), 10);
+      const response = await predictionService.getPredictionHistory(
+        parseInt(cardId),
+        10
+      );
       if (response.success && response.data) {
         setPredictionHistory(response.data.predictions);
       }
@@ -108,26 +120,24 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([
-      loadAvailableModels(),
-      loadPredictionHistory()
-    ]);
+    await Promise.all([loadAvailableModels(), loadPredictionHistory()]);
     setRefreshing(false);
   };
 
   const handleCalculateAccuracy = async (predictionId: number) => {
     try {
       setLoading(true);
-      const response = await predictionService.calculatePredictionAccuracy(predictionId);
+      const response =
+        await predictionService.calculatePredictionAccuracy(predictionId);
 
       if (response.success && response.data) {
         const accuracy = response.data;
         Alert.alert(
           '預測準確性',
           `實際價格: $${accuracy.actualPrice.toFixed(2)}\n` +
-          `預測價格: $${accuracy.predictedPrice.toFixed(2)}\n` +
-          `準確性: ${(accuracy.accuracy * 100).toFixed(1)}%\n` +
-          `誤差: $${accuracy.error.toFixed(2)}`
+            `預測價格: $${accuracy.predictedPrice.toFixed(2)}\n` +
+            `準確性: ${(accuracy.accuracy * 100).toFixed(1)}%\n` +
+            `誤差: $${accuracy.error.toFixed(2)}`
         );
       } else {
         Toast.show('目標日期還沒有實際數據', 'info');
@@ -142,43 +152,83 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
 
   const renderModelSelector = () => (
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>選擇預測模型</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.modelScroll}>
+      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+        選擇預測模型
+      </Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.modelScroll}
+      >
         {availableModels.map((model) => (
           <TouchableOpacity
             key={model.id}
             style={[
               styles.modelCard,
               {
-                backgroundColor: selectedModel === model.id ? theme.colors.primary : theme.colors.surface,
-                borderColor: selectedModel === model.id ? theme.colors.primary : theme.colors.border
-              }
+                backgroundColor:
+                  selectedModel === model.id
+                    ? theme.colors.primary
+                    : theme.colors.surface,
+                borderColor:
+                  selectedModel === model.id
+                    ? theme.colors.primary
+                    : theme.colors.border,
+              },
             ]}
             onPress={() => setSelectedModel(model.id)}
           >
-            <Text style={[
-              styles.modelName,
-              { color: selectedModel === model.id ? theme.colors.onPrimary : theme.colors.text }
-            ]}>
+            <Text
+              style={[
+                styles.modelName,
+                {
+                  color:
+                    selectedModel === model.id
+                      ? theme.colors.onPrimary
+                      : theme.colors.text,
+                },
+              ]}
+            >
               {model.name}
             </Text>
-            <Text style={[
-              styles.modelDescription,
-              { color: selectedModel === model.id ? theme.colors.onPrimary : theme.colors.textSecondary }
-            ]}>
+            <Text
+              style={[
+                styles.modelDescription,
+                {
+                  color:
+                    selectedModel === model.id
+                      ? theme.colors.onPrimary
+                      : theme.colors.textSecondary,
+                },
+              ]}
+            >
               {model.description}
             </Text>
             <View style={styles.modelStats}>
-              <Text style={[
-                styles.modelStat,
-                { color: selectedModel === model.id ? theme.colors.onPrimary : theme.colors.textSecondary }
-              ]}>
+              <Text
+                style={[
+                  styles.modelStat,
+                  {
+                    color:
+                      selectedModel === model.id
+                        ? theme.colors.onPrimary
+                        : theme.colors.textSecondary,
+                  },
+                ]}
+              >
                 準確性: {model.accuracy}
               </Text>
-              <Text style={[
-                styles.modelStat,
-                { color: selectedModel === model.id ? theme.colors.onPrimary : theme.colors.textSecondary }
-              ]}>
+              <Text
+                style={[
+                  styles.modelStat,
+                  {
+                    color:
+                      selectedModel === model.id
+                        ? theme.colors.onPrimary
+                        : theme.colors.textSecondary,
+                  },
+                ]}
+              >
                 速度: {model.speed}
               </Text>
             </View>
@@ -190,7 +240,9 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
 
   const renderTimeframeSelector = () => (
     <View style={styles.section}>
-      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>選擇時間框架</Text>
+      <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+        選擇時間框架
+      </Text>
       <View style={styles.timeframeGrid}>
         {timeframes.map((timeframe) => (
           <TouchableOpacity
@@ -198,16 +250,29 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
             style={[
               styles.timeframeButton,
               {
-                backgroundColor: selectedTimeframe === timeframe.value ? theme.colors.primary : theme.colors.surface,
-                borderColor: selectedTimeframe === timeframe.value ? theme.colors.primary : theme.colors.border
-              }
+                backgroundColor:
+                  selectedTimeframe === timeframe.value
+                    ? theme.colors.primary
+                    : theme.colors.surface,
+                borderColor:
+                  selectedTimeframe === timeframe.value
+                    ? theme.colors.primary
+                    : theme.colors.border,
+              },
             ]}
             onPress={() => setSelectedTimeframe(timeframe.value)}
           >
-            <Text style={[
-              styles.timeframeText,
-              { color: selectedTimeframe === timeframe.value ? theme.colors.onPrimary : theme.colors.text }
-            ]}>
+            <Text
+              style={[
+                styles.timeframeText,
+                {
+                  color:
+                    selectedTimeframe === timeframe.value
+                      ? theme.colors.onPrimary
+                      : theme.colors.text,
+                },
+              ]}
+            >
               {timeframe.label}
             </Text>
           </TouchableOpacity>
@@ -223,16 +288,27 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
 
     return (
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>預測結果</Text>
-        <Card style={[styles.predictionCard, { backgroundColor: theme.colors.surface }]}>
+        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+          預測結果
+        </Text>
+        <Card
+          style={[
+            styles.predictionCard,
+            { backgroundColor: theme.colors.surface },
+          ]}
+        >
           <View style={styles.predictionHeader}>
-            <Text style={[styles.predictionTitle, { color: theme.colors.text }]}>
+            <Text
+              style={[styles.predictionTitle, { color: theme.colors.text }]}
+            >
               {formattedPrediction.trendIcon} 價格預測
             </Text>
-            <View style={[
-              styles.riskBadge,
-              { backgroundColor: formattedPrediction.riskLevelColor }
-            ]}>
+            <View
+              style={[
+                styles.riskBadge,
+                { backgroundColor: formattedPrediction.riskLevelColor },
+              ]}
+            >
               <Text style={styles.riskText}>
                 {prediction.riskLevel.toUpperCase()}
               </Text>
@@ -241,55 +317,97 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
 
           <View style={styles.predictionDetails}>
             <View style={styles.predictionRow}>
-              <Text style={[styles.predictionLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.predictionLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 預測價格:
               </Text>
-              <Text style={[styles.predictionValue, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.predictionValue, { color: theme.colors.text }]}
+              >
                 {formattedPrediction.predictedPriceFormatted}
               </Text>
             </View>
 
             <View style={styles.predictionRow}>
-              <Text style={[styles.predictionLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.predictionLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 置信度:
               </Text>
-              <Text style={[styles.predictionValue, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.predictionValue, { color: theme.colors.text }]}
+              >
                 {formattedPrediction.confidenceFormatted}
               </Text>
             </View>
 
             <View style={styles.predictionRow}>
-              <Text style={[styles.predictionLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.predictionLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 趨勢:
               </Text>
-              <Text style={[styles.predictionValue, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.predictionValue, { color: theme.colors.text }]}
+              >
                 {formattedPrediction.trendIcon} {prediction.trend}
               </Text>
             </View>
 
             <View style={styles.predictionRow}>
-              <Text style={[styles.predictionLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.predictionLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 波動性:
               </Text>
-              <Text style={[styles.predictionValue, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.predictionValue, { color: theme.colors.text }]}
+              >
                 {formattedPrediction.volatilityFormatted}
               </Text>
             </View>
 
             <View style={styles.predictionRow}>
-              <Text style={[styles.predictionLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.predictionLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 目標日期:
               </Text>
-              <Text style={[styles.predictionValue, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.predictionValue, { color: theme.colors.text }]}
+              >
                 {formattedPrediction.targetDateFormatted}
               </Text>
             </View>
 
             <View style={styles.predictionRow}>
-              <Text style={[styles.predictionLabel, { color: theme.colors.textSecondary }]}>
+              <Text
+                style={[
+                  styles.predictionLabel,
+                  { color: theme.colors.textSecondary },
+                ]}
+              >
                 模型:
               </Text>
-              <Text style={[styles.predictionValue, { color: theme.colors.text }]}>
+              <Text
+                style={[styles.predictionValue, { color: theme.colors.text }]}
+              >
                 {predictionService.getModelDisplayName(prediction.modelType)}
               </Text>
             </View>
@@ -319,39 +437,76 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
 
     return (
       <View style={styles.section}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>預測歷史</Text>
+        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+          預測歷史
+        </Text>
         <ScrollView style={styles.historyList}>
           {predictionHistory.map((historyPrediction) => {
-            const formatted = predictionService.formatPrediction(historyPrediction);
+            const formatted =
+              predictionService.formatPrediction(historyPrediction);
             return (
-              <Card key={historyPrediction.id} style={[styles.historyCard, { backgroundColor: theme.colors.surface }]}>
+              <Card
+                key={historyPrediction.id}
+                style={[
+                  styles.historyCard,
+                  { backgroundColor: theme.colors.surface },
+                ]}
+              >
                 <View style={styles.historyHeader}>
-                  <Text style={[styles.historyDate, { color: theme.colors.text }]}>
+                  <Text
+                    style={[styles.historyDate, { color: theme.colors.text }]}
+                  >
                     {formatted.predictionDateFormatted}
                   </Text>
-                  <Text style={[styles.historyModel, { color: theme.colors.textSecondary }]}>
-                    {predictionService.getModelDisplayName(historyPrediction.modelType)}
+                  <Text
+                    style={[
+                      styles.historyModel,
+                      { color: theme.colors.textSecondary },
+                    ]}
+                  >
+                    {predictionService.getModelDisplayName(
+                      historyPrediction.modelType
+                    )}
                   </Text>
                 </View>
 
                 <View style={styles.historyDetails}>
-                  <Text style={[styles.historyPrice, { color: theme.colors.text }]}>
+                  <Text
+                    style={[styles.historyPrice, { color: theme.colors.text }]}
+                  >
                     {formatted.predictedPriceFormatted}
                   </Text>
-                  <Text style={[styles.historyConfidence, { color: theme.colors.textSecondary }]}>
+                  <Text
+                    style={[
+                      styles.historyConfidence,
+                      { color: theme.colors.textSecondary },
+                    ]}
+                  >
                     置信度: {formatted.confidenceFormatted}
                   </Text>
-                  <Text style={[styles.historyTrend, { color: theme.colors.text }]}>
+                  <Text
+                    style={[styles.historyTrend, { color: theme.colors.text }]}
+                  >
                     {formatted.trendIcon} {historyPrediction.trend}
                   </Text>
                 </View>
 
                 {historyPrediction.accuracy !== null && (
                   <View style={styles.accuracyRow}>
-                    <Text style={[styles.accuracyLabel, { color: theme.colors.textSecondary }]}>
+                    <Text
+                      style={[
+                        styles.accuracyLabel,
+                        { color: theme.colors.textSecondary },
+                      ]}
+                    >
                       準確性:
                     </Text>
-                    <Text style={[styles.accuracyValue, { color: theme.colors.text }]}>
+                    <Text
+                      style={[
+                        styles.accuracyValue,
+                        { color: theme.colors.text },
+                      ]}
+                    >
                       {formatted.accuracyFormatted}
                     </Text>
                   </View>
@@ -376,14 +531,18 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
       }
     >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text }]}>AI 預測模型</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>
+          AI 預測模型
+        </Text>
         <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
           使用機器學習模型預測卡牌價格趨勢
         </Text>
       </View>
 
       <View style={styles.inputSection}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>輸入卡牌ID</Text>
+        <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+          輸入卡牌ID
+        </Text>
         <Input
           placeholder="輸入卡牌ID"
           value={cardId}
@@ -410,68 +569,68 @@ const PredictionScreen: React.FC<PredictionScreenProps> = ({ navigation, route }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16
+    padding: 16,
   },
   header: {
-    marginBottom: 24
+    marginBottom: 24,
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    marginBottom: 8
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    lineHeight: 24
+    lineHeight: 24,
   },
   inputSection: {
-    marginBottom: 24
+    marginBottom: 24,
   },
   section: {
-    marginBottom: 24
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 20,
     fontWeight: '600',
-    marginBottom: 16
+    marginBottom: 16,
   },
   cardIdInput: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   predictButton: {
-    marginTop: 8
+    marginTop: 8,
   },
   modelScroll: {
-    marginBottom: 8
+    marginBottom: 8,
   },
   modelCard: {
     width: 200,
     padding: 16,
     marginRight: 12,
     borderRadius: 12,
-    borderWidth: 1
+    borderWidth: 1,
   },
   modelName: {
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 4
+    marginBottom: 4,
   },
   modelDescription: {
     fontSize: 12,
     marginBottom: 8,
-    lineHeight: 16
+    lineHeight: 16,
   },
   modelStats: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   modelStat: {
-    fontSize: 10
+    fontSize: 10,
   },
   timeframeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8
+    gap: 8,
   },
   timeframeButton: {
     paddingHorizontal: 16,
@@ -479,95 +638,95 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     minWidth: 60,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   timeframeText: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   predictionCard: {
     padding: 16,
-    borderRadius: 12
+    borderRadius: 12,
   },
   predictionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16
+    marginBottom: 16,
   },
   predictionTitle: {
     fontSize: 18,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   riskBadge: {
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12
+    borderRadius: 12,
   },
   riskText: {
     color: 'white',
     fontSize: 10,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   predictionDetails: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   predictionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 4
+    paddingVertical: 4,
   },
   predictionLabel: {
-    fontSize: 14
+    fontSize: 14,
   },
   predictionValue: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   predictionActions: {
     flexDirection: 'row',
-    gap: 12
+    gap: 12,
   },
   actionButton: {
-    flex: 1
+    flex: 1,
   },
   historyList: {
-    maxHeight: 300
+    maxHeight: 300,
   },
   historyCard: {
     padding: 12,
     marginBottom: 8,
-    borderRadius: 8
+    borderRadius: 8,
   },
   historyHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   historyDate: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   historyModel: {
-    fontSize: 12
+    fontSize: 12,
   },
   historyDetails: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   historyPrice: {
     fontSize: 16,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   historyConfidence: {
-    fontSize: 12
+    fontSize: 12,
   },
   historyTrend: {
-    fontSize: 14
+    fontSize: 14,
   },
   accuracyRow: {
     flexDirection: 'row',
@@ -576,15 +735,15 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingTop: 4,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0'
+    borderTopColor: '#E0E0E0',
   },
   accuracyLabel: {
-    fontSize: 12
+    fontSize: 12,
   },
   accuracyValue: {
     fontSize: 12,
-    fontWeight: '500'
-  }
+    fontWeight: '500',
+  },
 });
 
 export default PredictionScreen;

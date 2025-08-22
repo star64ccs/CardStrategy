@@ -1,6 +1,7 @@
 # 🚀 CardStrategy 執行環境配置指南
 
 ## 📋 目錄
+
 - [系統需求](#系統需求)
 - [快速開始](#快速開始)
 - [詳細配置步驟](#詳細配置步驟)
@@ -11,6 +12,7 @@
 ## 🖥️ 系統需求
 
 ### 最低系統要求
+
 - **Node.js**: 18.0.0 或更高版本
 - **npm**: 8.0.0 或更高版本
 - **Docker**: 20.10 或更高版本
@@ -18,6 +20,7 @@
 - **Git**: 2.30 或更高版本
 
 ### 推薦系統配置
+
 - **RAM**: 8GB 或更多
 - **CPU**: 4核心 或更多
 - **磁碟空間**: 50GB 可用空間
@@ -28,12 +31,14 @@
 ### 方法一：使用自動化腳本（推薦）
 
 #### Windows 用戶
+
 ```powershell
 # 在 PowerShell 中執行
 .\scripts\quick-start.ps1
 ```
 
 #### Linux/macOS 用戶
+
 ```bash
 # 在終端中執行
 chmod +x scripts/quick-start.sh
@@ -41,6 +46,7 @@ chmod +x scripts/quick-start.sh
 ```
 
 ### 方法二：使用 Node.js 腳本
+
 ```bash
 node scripts/setup-environment.js
 ```
@@ -50,6 +56,7 @@ node scripts/setup-environment.js
 ### 1. 安裝必要軟體
 
 #### Node.js 安裝
+
 1. 訪問 [Node.js 官網](https://nodejs.org/)
 2. 下載並安裝 LTS 版本（18.x 或更高）
 3. 驗證安裝：
@@ -59,6 +66,7 @@ node scripts/setup-environment.js
    ```
 
 #### Docker 安裝
+
 1. **Windows/macOS**: 下載並安裝 [Docker Desktop](https://www.docker.com/products/docker-desktop)
 2. **Linux**: 使用包管理器安裝 Docker Engine
 3. 驗證安裝：
@@ -68,6 +76,7 @@ node scripts/setup-environment.js
    ```
 
 ### 2. 克隆專案
+
 ```bash
 git clone https://github.com/your-username/CardStrategy.git
 cd CardStrategy
@@ -76,12 +85,14 @@ cd CardStrategy
 ### 3. 環境變數配置
 
 #### 創建環境變數檔案
+
 ```bash
 # 複製範例檔案
 cp env.example .env
 ```
 
 #### 編輯 .env 檔案
+
 ```env
 # 應用配置
 NODE_ENV=development
@@ -117,11 +128,13 @@ CORS_ORIGIN=http://localhost:3000
 ### 4. 安裝依賴
 
 #### 前端依賴
+
 ```bash
 npm install
 ```
 
 #### 後端依賴
+
 ```bash
 cd backend
 npm install
@@ -131,6 +144,7 @@ cd ..
 ### 5. 啟動服務
 
 #### 使用 Docker Compose（推薦）
+
 ```bash
 # 啟動數據庫和緩存服務
 docker-compose up -d postgres redis
@@ -146,6 +160,7 @@ cd ..
 ```
 
 #### 手動啟動服務
+
 ```bash
 # 啟動 PostgreSQL（如果已安裝）
 sudo systemctl start postgresql
@@ -157,12 +172,14 @@ sudo systemctl start redis
 ### 6. 啟動應用
 
 #### 啟動後端服務
+
 ```bash
 cd backend
 npm run dev
 ```
 
 #### 啟動前端服務
+
 ```bash
 # 在新的終端視窗中
 npm run start
@@ -171,12 +188,14 @@ npm run start
 ## 🛠️ 開發環境配置
 
 ### 開發工具推薦
+
 - **IDE**: Visual Studio Code
 - **資料庫管理**: pgAdmin 或 DBeaver
 - **API 測試**: Postman 或 Insomnia
 - **Git 客戶端**: GitKraken 或 SourceTree
 
 ### VS Code 擴展推薦
+
 ```json
 {
   "recommendations": [
@@ -191,6 +210,7 @@ npm run start
 ```
 
 ### 開發腳本
+
 ```bash
 # 運行測試
 npm run test
@@ -211,6 +231,7 @@ npm run type-check
 ## 🚀 生產環境配置
 
 ### 生產環境變數
+
 ```env
 NODE_ENV=production
 PORT=3000
@@ -234,6 +255,7 @@ CORS_ORIGIN=https://cardstrategy.com
 ```
 
 ### 部署腳本
+
 ```bash
 # 構建生產版本
 npm run build
@@ -247,6 +269,7 @@ npm run deploy:production
 ### 常見問題
 
 #### 1. Node.js 版本過低
+
 ```bash
 # 錯誤訊息：需要 Node.js 18.0.0 或更高版本
 # 解決方案：更新 Node.js
@@ -255,6 +278,7 @@ nvm use 18
 ```
 
 #### 2. Docker 服務啟動失敗
+
 ```bash
 # 檢查 Docker 狀態
 docker info
@@ -267,6 +291,7 @@ docker system prune -a
 ```
 
 #### 3. 數據庫連接失敗
+
 ```bash
 # 檢查 PostgreSQL 狀態
 sudo systemctl status postgresql
@@ -282,6 +307,7 @@ npm run seed
 ```
 
 #### 4. 端口被佔用
+
 ```bash
 # 檢查端口使用情況
 netstat -tulpn | grep :3000
@@ -291,6 +317,7 @@ sudo kill -9 <PID>
 ```
 
 #### 5. 依賴安裝失敗
+
 ```bash
 # 清理 npm 緩存
 npm cache clean --force
@@ -301,6 +328,7 @@ npm install
 ```
 
 ### 日誌查看
+
 ```bash
 # 查看應用日誌
 tail -f logs/app.log
@@ -313,6 +341,7 @@ docker-compose logs -f postgres
 ```
 
 ### 性能監控
+
 ```bash
 # 啟動監控服務
 docker-compose up -d prometheus grafana

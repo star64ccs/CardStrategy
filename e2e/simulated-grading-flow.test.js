@@ -1,4 +1,6 @@
-const { by, device, element, expect } = require('detox');
+/* eslint-env jest, detox */
+
+const { by, device, element } = require('detox');
 
 describe('Simulated Grading Flow', () => {
   beforeAll(async () => {
@@ -305,5 +307,3 @@ describe('Simulated Grading Flow', () => {
     });
   });
 });
-
-

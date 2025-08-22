@@ -28,7 +28,11 @@ export interface SyncStatus {
 }
 
 // 衝突解決策略
-export type ConflictResolution = 'server-wins' | 'client-wins' | 'manual' | 'merge';
+export type ConflictResolution =
+  | 'server-wins'
+  | 'client-wins'
+  | 'manual'
+  | 'merge';
 
 // 離線同步管理器類
 export class OfflineSyncManager {
@@ -71,14 +75,16 @@ export class OfflineSyncManager {
   }
 
   // 添加離線操作
-  async addOfflineOperation(operation: Omit<OfflineOperation, 'id' | 'timestamp' | 'retryCount'>): Promise<string> {
+  async addOfflineOperation(
+    operation: Omit<OfflineOperation, 'id' | 'timestamp' | 'retryCount'>
+  ): Promise<string> {
     try {
       const id = `${this.operationPrefix}${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const offlineOperation: OfflineOperation = {
         ...operation,
         id,
         timestamp: Date.now(),
-        retryCount: 0
+        retryCount: 0,
       };
 
       // 保存到本地存儲
@@ -89,7 +95,8 @@ export class OfflineSyncManager {
       this.syncQueue.sort((a, b) => {
         // 按優先級排序
         const priorityOrder = { high: 3, medium: 2, low: 1 };
-        const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
+        const priorityDiff =
+          priorityOrder[b.priority] - priorityOrder[a.priority];
         if (priorityDiff !== 0) return priorityDiff;
 
         // 同優先級按時間排序
@@ -97,7 +104,11 @@ export class OfflineSyncManager {
       });
 
       this.notifyListeners();
-      logger.info('Offline operation added:', { id, type: operation.type, endpoint: operation.endpoint });
+      logger.info('Offline operation added:', {
+        id,
+        type: operation.type,
+        endpoint: operation.endpoint,
+      });
 
       return id;
     } catch (error) {
@@ -107,9 +118,15 @@ export class OfflineSyncManager {
   }
 
   // 執行離線操作
-  private async executeOperation(operation: OfflineOperation): Promise<boolean> {
+  private async executeOperation(
+    operation: OfflineOperation
+  ): Promise<boolean> {
     try {
-      logger.info('Executing offline operation:', { id: operation.id, type: operation.type, endpoint: operation.endpoint });
+      logger.info('Executing offline operation:', {
+        id: operation.id,
+        type: operation.type,
+        endpoint: operation.endpoint,
+      });
 
       let response;
       switch (operation.type) {
@@ -128,7 +145,9 @@ export class OfflineSyncManager {
 
       // 操作成功，從隊列中移除
       await this.removeOperation(operation.id);
-      logger.info('Offline operation executed successfully:', { id: operation.id });
+      logger.info('Offline operation executed successfully:', {
+        id: operation.id,
+      });
 
       return true;
     } catch (error) {
@@ -194,7 +213,10 @@ export class OfflineSyncManager {
       // 更新最後同步時間
       await StorageManager.set('last_offline_sync', Date.now());
 
-      logger.info('Offline sync completed:', { success: successCount, failed: failedCount });
+      logger.info('Offline sync completed:', {
+        success: successCount,
+        failed: failedCount,
+      });
       return { success: successCount, failed: failedCount };
     } catch (error) {
       logger.error('Sync offline operations error:', { error });
@@ -313,7 +335,7 @@ export class OfflineSyncManager {
       }
 
       // 更新操作數據
-      const operation = this.syncQueue.find(op => op.id === operationId);
+      const operation = this.syncQueue.find((op) => op.id === operationId);
       if (operation) {
         operation.data = resolvedData;
         await StorageManager.set(operationId, operation);
@@ -331,7 +353,9 @@ export class OfflineSyncManager {
   async getSyncStatus(): Promise<SyncStatus> {
     const isOnline = await networkMonitor.isConnected();
     const lastSyncTime = await StorageManager.get<number>('last_offline_sync');
-    const failedOperations = this.syncQueue.filter(op => op.retryCount >= op.maxRetries).length;
+    const failedOperations = this.syncQueue.filter(
+      (op) => op.retryCount >= op.maxRetries
+    ).length;
 
     return {
       isOnline,
@@ -339,7 +363,7 @@ export class OfflineSyncManager {
       lastSyncTime,
       pendingOperations: this.syncQueue.length,
       failedOperations,
-      syncProgress: 0
+      syncProgress: 0,
     };
   }
 
@@ -404,7 +428,9 @@ export class OfflineSyncManager {
   private async loadOfflineQueue(): Promise<void> {
     try {
       const keys = await StorageManager.getAllKeys();
-      const operationKeys = keys.filter(key => key.startsWith(this.operationPrefix));
+      const operationKeys = keys.filter((key) =>
+        key.startsWith(this.operationPrefix)
+      );
 
       const operations = await StorageManager.multiGet(operationKeys);
       this.syncQueue = operations
@@ -412,7 +438,8 @@ export class OfflineSyncManager {
         .filter(Boolean)
         .sort((a, b) => {
           const priorityOrder = { high: 3, medium: 2, low: 1 };
-          const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
+          const priorityDiff =
+            priorityOrder[b.priority] - priorityOrder[a.priority];
           if (priorityDiff !== 0) return priorityDiff;
           return a.timestamp - b.timestamp;
         });
@@ -426,22 +453,28 @@ export class OfflineSyncManager {
   private async removeOperation(operationId: string): Promise<void> {
     try {
       await StorageManager.remove(operationId);
-      this.syncQueue = this.syncQueue.filter(op => op.id !== operationId);
+      this.syncQueue = this.syncQueue.filter((op) => op.id !== operationId);
       this.notifyListeners();
     } catch (error) {
       logger.error('Remove operation error:', { error, operationId });
     }
   }
 
-  private async markOperationAsFailed(operationId: string, error: any): Promise<void> {
+  private async markOperationAsFailed(
+    operationId: string,
+    error: any
+  ): Promise<void> {
     try {
-      const operation = this.syncQueue.find(op => op.id === operationId);
+      const operation = this.syncQueue.find((op) => op.id === operationId);
       if (operation) {
         operation.metadata = { ...operation.metadata, error: error.message };
         await StorageManager.set(operationId, operation);
       }
 
-      logger.error('Operation marked as failed:', { operationId, error: error.message });
+      logger.error('Operation marked as failed:', {
+        operationId,
+        error: error.message,
+      });
     } catch (error) {
       logger.error('Mark operation as failed error:', { error, operationId });
     }
@@ -464,7 +497,7 @@ export class OfflineSyncManager {
 
   private async notifyListeners(): Promise<void> {
     const status = await this.getSyncStatus();
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(status);
       } catch (error) {

@@ -9,8 +9,14 @@ interface CardDetailProps {
   onAddToPortfolio?: (card: Card) => void;
 }
 
-const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio }) => {
-  const [activeTab, setActiveTab] = useState<'overview' | 'market' | 'analysis'>('overview');
+const CardDetail: React.FC<CardDetailProps> = ({
+  card,
+  onClose,
+  onAddToPortfolio,
+}) => {
+  const [activeTab, setActiveTab] = useState<
+    'overview' | 'market' | 'analysis'
+  >('overview');
   const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis | null>(null);
   const [loadingAnalysis, setLoadingAnalysis] = useState(false);
 
@@ -18,7 +24,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
     return new Intl.NumberFormat('zh-TW', {
       style: 'currency',
       currency: 'TWD',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(price);
   };
 
@@ -84,9 +90,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
                 'https://via.placeholder.com/400x600/ecf0f1/2c3e50?text=No+Image';
             }}
           />
-          <div style={styles.rarityBadge}>
-            {card.rarity}
-          </div>
+          <div style={styles.rarityBadge}>{card.rarity}</div>
         </div>
 
         {/* 內容區域 */}
@@ -104,24 +108,30 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
               {formatPrice(card.price.current)}
             </div>
             <div style={styles.priceChanges}>
-              <div style={{
-                ...styles.priceChange,
-                color: getPriceChangeColor(card.price.change24h)
-              }}>
+              <div
+                style={{
+                  ...styles.priceChange,
+                  color: getPriceChangeColor(card.price.change24h),
+                }}
+              >
                 24h: {getPriceChangeIcon(card.price.change24h)}{' '}
                 {formatPrice(Math.abs(card.price.change24h))}
               </div>
-              <div style={{
-                ...styles.priceChange,
-                color: getPriceChangeColor(card.price.change7d)
-              }}>
+              <div
+                style={{
+                  ...styles.priceChange,
+                  color: getPriceChangeColor(card.price.change7d),
+                }}
+              >
                 7d: {getPriceChangeIcon(card.price.change7d)}{' '}
                 {formatPrice(Math.abs(card.price.change7d))}
               </div>
-              <div style={{
-                ...styles.priceChange,
-                color: getPriceChangeColor(card.price.change30d)
-              }}>
+              <div
+                style={{
+                  ...styles.priceChange,
+                  color: getPriceChangeColor(card.price.change30d),
+                }}
+              >
                 30d: {getPriceChangeIcon(card.price.change30d)}{' '}
                 {formatPrice(Math.abs(card.price.change30d))}
               </div>
@@ -145,9 +155,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
             >
               💎 加入投資組合
             </button>
-            <button style={styles.secondaryButton}>
-              📊 查看市場分析
-            </button>
+            <button style={styles.secondaryButton}>📊 查看市場分析</button>
           </div>
 
           {/* 標籤頁 */}
@@ -155,7 +163,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
             <button
               style={{
                 ...styles.tab,
-                ...(activeTab === 'overview' && styles.activeTab)
+                ...(activeTab === 'overview' && styles.activeTab),
               }}
               onClick={() => setActiveTab('overview')}
             >
@@ -164,7 +172,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
             <button
               style={{
                 ...styles.tab,
-                ...(activeTab === 'market' && styles.activeTab)
+                ...(activeTab === 'market' && styles.activeTab),
               }}
               onClick={() => setActiveTab('market')}
             >
@@ -173,7 +181,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
             <button
               style={{
                 ...styles.tab,
-                ...(activeTab === 'analysis' && styles.activeTab)
+                ...(activeTab === 'analysis' && styles.activeTab),
               }}
               onClick={() => setActiveTab('analysis')}
             >
@@ -195,25 +203,33 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
                       {card.stats.attack && (
                         <div style={styles.stat}>
                           <span style={styles.statLabel}>攻擊力</span>
-                          <span style={styles.statValue}>{card.stats.attack}</span>
+                          <span style={styles.statValue}>
+                            {card.stats.attack}
+                          </span>
                         </div>
                       )}
                       {card.stats.defense && (
                         <div style={styles.stat}>
                           <span style={styles.statLabel}>防禦力</span>
-                          <span style={styles.statValue}>{card.stats.defense}</span>
+                          <span style={styles.statValue}>
+                            {card.stats.defense}
+                          </span>
                         </div>
                       )}
                       {card.stats.health && (
                         <div style={styles.stat}>
                           <span style={styles.statLabel}>生命值</span>
-                          <span style={styles.statValue}>{card.stats.health}</span>
+                          <span style={styles.statValue}>
+                            {card.stats.health}
+                          </span>
                         </div>
                       )}
                       {card.stats.mana && (
                         <div style={styles.stat}>
                           <span style={styles.statLabel}>法力值</span>
-                          <span style={styles.statValue}>{card.stats.mana}</span>
+                          <span style={styles.statValue}>
+                            {card.stats.mana}
+                          </span>
                         </div>
                       )}
                     </div>
@@ -250,30 +266,36 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
                 <div style={styles.priceTrend}>
                   <div style={styles.trendItem}>
                     <span style={styles.trendLabel}>24小時</span>
-                    <span style={{
-                      ...styles.trendValue,
-                      color: getPriceChangeColor(card.price.change24h)
-                    }}>
+                    <span
+                      style={{
+                        ...styles.trendValue,
+                        color: getPriceChangeColor(card.price.change24h),
+                      }}
+                    >
                       {getPriceChangeIcon(card.price.change24h)}{' '}
                       {formatPrice(Math.abs(card.price.change24h))}
                     </span>
                   </div>
                   <div style={styles.trendItem}>
                     <span style={styles.trendLabel}>7天</span>
-                    <span style={{
-                      ...styles.trendValue,
-                      color: getPriceChangeColor(card.price.change7d)
-                    }}>
+                    <span
+                      style={{
+                        ...styles.trendValue,
+                        color: getPriceChangeColor(card.price.change7d),
+                      }}
+                    >
                       {getPriceChangeIcon(card.price.change7d)}{' '}
                       {formatPrice(Math.abs(card.price.change7d))}
                     </span>
                   </div>
                   <div style={styles.trendItem}>
                     <span style={styles.trendLabel}>30天</span>
-                    <span style={{
-                      ...styles.trendValue,
-                      color: getPriceChangeColor(card.price.change30d)
-                    }}>
+                    <span
+                      style={{
+                        ...styles.trendValue,
+                        color: getPriceChangeColor(card.price.change30d),
+                      }}
+                    >
                       {getPriceChangeIcon(card.price.change30d)}{' '}
                       {formatPrice(Math.abs(card.price.change30d))}
                     </span>
@@ -295,14 +317,23 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
                     <div style={styles.analysisCard}>
                       <h4 style={styles.analysisTitle}>📈 投資評級</h4>
                       <div style={styles.rating}>
-                        <span style={styles.ratingValue}>{aiAnalysis.rating}</span>
+                        <span style={styles.ratingValue}>
+                          {aiAnalysis.rating}
+                        </span>
                         <span style={styles.ratingText}>
-                          {aiAnalysis.rating === 'A+' ? '強烈推薦' :
-                            aiAnalysis.rating === 'A' ? '推薦' :
-                              aiAnalysis.rating === 'B+' ? '良好' :
-                                aiAnalysis.rating === 'B' ? '一般' :
-                                  aiAnalysis.rating === 'C+' ? '謹慎' :
-                                    aiAnalysis.rating === 'C' ? '不推薦' : '避免'}
+                          {aiAnalysis.rating === 'A+'
+                            ? '強烈推薦'
+                            : aiAnalysis.rating === 'A'
+                              ? '推薦'
+                              : aiAnalysis.rating === 'B+'
+                                ? '良好'
+                                : aiAnalysis.rating === 'B'
+                                  ? '一般'
+                                  : aiAnalysis.rating === 'C+'
+                                    ? '謹慎'
+                                    : aiAnalysis.rating === 'C'
+                                      ? '不推薦'
+                                      : '避免'}
                         </span>
                       </div>
                       <div style={styles.confidence}>
@@ -313,17 +344,29 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
                     <div style={styles.analysisCard}>
                       <h4 style={styles.analysisTitle}>🎯 風險評估</h4>
                       <div style={styles.riskLevel}>
-                        <span style={{
-                          ...styles.riskValue,
-                          color: aiAnalysis.riskLevel === 'low' ? '#27ae60' :
-                            aiAnalysis.riskLevel === 'medium' ? '#f39c12' : '#e74c3c'
-                        }}>
-                          {aiAnalysis.riskLevel === 'low' ? '低風險' :
-                            aiAnalysis.riskLevel === 'medium' ? '中等風險' : '高風險'}
+                        <span
+                          style={{
+                            ...styles.riskValue,
+                            color:
+                              aiAnalysis.riskLevel === 'low'
+                                ? '#27ae60'
+                                : aiAnalysis.riskLevel === 'medium'
+                                  ? '#f39c12'
+                                  : '#e74c3c',
+                          }}
+                        >
+                          {aiAnalysis.riskLevel === 'low'
+                            ? '低風險'
+                            : aiAnalysis.riskLevel === 'medium'
+                              ? '中等風險'
+                              : '高風險'}
                         </span>
                         <span style={styles.riskText}>
-                          {aiAnalysis.riskLevel === 'low' ? '適合保守投資者' :
-                            aiAnalysis.riskLevel === 'medium' ? '適合穩健投資者' : '適合激進投資者'}
+                          {aiAnalysis.riskLevel === 'low'
+                            ? '適合保守投資者'
+                            : aiAnalysis.riskLevel === 'medium'
+                              ? '適合穩健投資者'
+                              : '適合激進投資者'}
                         </span>
                       </div>
                     </div>
@@ -371,10 +414,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ card, onClose, onAddToPortfolio
                 ) : (
                   <div style={styles.errorContainer}>
                     <p style={styles.errorText}>無法載入 AI 分析，請稍後再試</p>
-                    <button
-                      style={styles.retryButton}
-                      onClick={loadAIAnalysis}
-                    >
+                    <button style={styles.retryButton} onClick={loadAIAnalysis}>
                       重新載入
                     </button>
                   </div>
@@ -400,7 +440,7 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1000,
-    padding: '20px'
+    padding: '20px',
   },
   modal: {
     backgroundColor: '#ffffff',
@@ -410,7 +450,7 @@ const styles = {
     maxHeight: '90vh',
     overflow: 'hidden',
     display: 'flex',
-    position: 'relative' as const
+    position: 'relative' as const,
   },
   closeButton: {
     position: 'absolute' as const,
@@ -424,16 +464,16 @@ const styles = {
     height: '32px',
     cursor: 'pointer',
     fontSize: '16px',
-    zIndex: 10
+    zIndex: 10,
   },
   imageSection: {
     flex: '0 0 300px',
-    position: 'relative' as const
+    position: 'relative' as const,
   },
   cardImage: {
     width: '100%',
     height: '100%',
-    objectFit: 'cover'
+    objectFit: 'cover',
   },
   rarityBadge: {
     position: 'absolute' as const,
@@ -444,55 +484,55 @@ const styles = {
     padding: '6px 12px',
     borderRadius: '6px',
     fontSize: '14px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   contentSection: {
     flex: 1,
     padding: '24px',
-    overflowY: 'auto' as const
+    overflowY: 'auto' as const,
   },
   header: {
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   title: {
     fontSize: '28px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 8px 0'
+    margin: '0 0 8px 0',
   },
   setName: {
     fontSize: '16px',
     color: '#7f8c8d',
-    margin: '0 0 4px 0'
+    margin: '0 0 4px 0',
   },
   type: {
     fontSize: '16px',
     color: '#3498db',
     margin: '0',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   priceSection: {
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   currentPrice: {
     fontSize: '32px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    marginBottom: '8px'
+    marginBottom: '8px',
   },
   priceChanges: {
     display: 'flex',
-    gap: '16px'
+    gap: '16px',
   },
   priceChange: {
     fontSize: '14px',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   tags: {
     display: 'flex',
     flexWrap: 'wrap' as const,
     gap: '8px',
-    marginBottom: '24px'
+    marginBottom: '24px',
   },
   tag: {
     backgroundColor: '#ecf0f1',
@@ -500,12 +540,12 @@ const styles = {
     padding: '4px 8px',
     borderRadius: '6px',
     fontSize: '12px',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   actions: {
     display: 'flex',
     gap: '12px',
-    marginBottom: '24px'
+    marginBottom: '24px',
   },
   primaryButton: {
     backgroundColor: '#3498db',
@@ -515,7 +555,7 @@ const styles = {
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '14px',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   secondaryButton: {
     backgroundColor: '#ecf0f1',
@@ -525,12 +565,12 @@ const styles = {
     borderRadius: '8px',
     cursor: 'pointer',
     fontSize: '14px',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   tabs: {
     display: 'flex',
     borderBottom: '1px solid #ecf0f1',
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   tab: {
     backgroundColor: 'transparent',
@@ -539,53 +579,53 @@ const styles = {
     cursor: 'pointer',
     fontSize: '14px',
     color: '#7f8c8d',
-    borderBottom: '2px solid transparent'
+    borderBottom: '2px solid transparent',
   },
   activeTab: {
     color: '#3498db',
-    borderBottomColor: '#3498db'
+    borderBottomColor: '#3498db',
   },
   tabContent: {
-    minHeight: '200px'
+    minHeight: '200px',
   },
   sectionTitle: {
     fontSize: '18px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 12px 0'
+    margin: '0 0 12px 0',
   },
   description: {
     fontSize: '14px',
     color: '#7f8c8d',
     lineHeight: '1.6',
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   stats: {
     display: 'flex',
     gap: '20px',
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   stat: {
     display: 'flex',
     flexDirection: 'column' as const,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   statLabel: {
     fontSize: '12px',
     color: '#7f8c8d',
     textTransform: 'uppercase' as const,
-    marginBottom: '4px'
+    marginBottom: '4px',
   },
   statValue: {
     fontSize: '18px',
     fontWeight: 'bold',
-    color: '#2c3e50'
+    color: '#2c3e50',
   },
   marketData: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gap: '16px',
-    marginBottom: '20px'
+    marginBottom: '20px',
   },
   marketItem: {
     display: 'flex',
@@ -593,21 +633,21 @@ const styles = {
     alignItems: 'center',
     padding: '16px',
     backgroundColor: '#f8f9fa',
-    borderRadius: '8px'
+    borderRadius: '8px',
   },
   marketLabel: {
     fontSize: '12px',
     color: '#7f8c8d',
-    marginBottom: '4px'
+    marginBottom: '4px',
   },
   marketValue: {
     fontSize: '16px',
     fontWeight: 'bold',
-    color: '#2c3e50'
+    color: '#2c3e50',
   },
   priceTrend: {
     display: 'flex',
-    gap: '16px'
+    gap: '16px',
   },
   trendItem: {
     display: 'flex',
@@ -616,95 +656,95 @@ const styles = {
     padding: '12px',
     backgroundColor: '#f8f9fa',
     borderRadius: '6px',
-    minWidth: '80px'
+    minWidth: '80px',
   },
   trendLabel: {
     fontSize: '12px',
     color: '#7f8c8d',
-    marginBottom: '4px'
+    marginBottom: '4px',
   },
   trendValue: {
     fontSize: '14px',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   aiAnalysis: {
     display: 'grid',
-    gap: '16px'
+    gap: '16px',
   },
   analysisCard: {
     padding: '16px',
     backgroundColor: '#f8f9fa',
-    borderRadius: '8px'
+    borderRadius: '8px',
   },
   analysisTitle: {
     fontSize: '16px',
     fontWeight: 'bold',
     color: '#2c3e50',
-    margin: '0 0 12px 0'
+    margin: '0 0 12px 0',
   },
   rating: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '12px',
   },
   ratingValue: {
     fontSize: '24px',
     fontWeight: 'bold',
-    color: '#27ae60'
+    color: '#27ae60',
   },
   ratingText: {
     fontSize: '14px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   riskLevel: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '12px',
   },
   riskValue: {
     fontSize: '18px',
     fontWeight: 'bold',
-    color: '#f39c12'
+    color: '#f39c12',
   },
   riskText: {
     fontSize: '14px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   prediction: {
     fontSize: '14px',
     color: '#7f8c8d',
     lineHeight: '1.6',
-    margin: 0
+    margin: 0,
   },
   loadingContainer: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '40px 20px'
+    padding: '40px 20px',
   },
   loadingSpinner: {
     fontSize: '32px',
     animation: 'spin 1s linear infinite',
-    marginBottom: '16px'
+    marginBottom: '16px',
   },
   loadingText: {
     fontSize: '16px',
     color: '#7f8c8d',
-    margin: 0
+    margin: 0,
   },
   errorContainer: {
     display: 'flex',
     flexDirection: 'column' as const,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '40px 20px'
+    padding: '40px 20px',
   },
   errorText: {
     fontSize: '16px',
     color: '#e74c3c',
     marginBottom: '16px',
-    textAlign: 'center' as const
+    textAlign: 'center' as const,
   },
   retryButton: {
     backgroundColor: '#3498db',
@@ -713,48 +753,48 @@ const styles = {
     padding: '8px 16px',
     borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '14px'
+    fontSize: '14px',
   },
   confidence: {
     fontSize: '12px',
     color: '#7f8c8d',
-    marginTop: '8px'
+    marginTop: '8px',
   },
   priceTargets: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '12px'
+    gap: '12px',
   },
   priceTarget: {
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   targetLabel: {
     fontSize: '14px',
-    color: '#7f8c8d'
+    color: '#7f8c8d',
   },
   targetValue: {
     fontSize: '16px',
     fontWeight: 'bold',
-    color: '#2c3e50'
+    color: '#2c3e50',
   },
   recommendations: {
     display: 'flex',
     flexDirection: 'column' as const,
-    gap: '8px'
+    gap: '8px',
   },
   recommendation: {
     fontSize: '14px',
     color: '#2c3e50',
-    lineHeight: '1.4'
+    lineHeight: '1.4',
   },
   summary: {
     fontSize: '14px',
     color: '#7f8c8d',
     lineHeight: '1.6',
-    margin: 0
-  }
+    margin: 0,
+  },
 };
 
 export default CardDetail;

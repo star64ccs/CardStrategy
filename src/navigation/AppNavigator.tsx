@@ -1,4 +1,5 @@
 import React from 'react';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -26,6 +27,10 @@ import AnnotationAssignmentScreen from '@/screens/AnnotationAssignmentScreen';
 import DataQualityDashboardScreen from '@/screens/DataQualityDashboardScreen';
 import FeedbackManagementScreen from '@/screens/FeedbackManagementScreen';
 import DataQualityAssessmentScreen from '@/screens/DataQualityAssessmentScreen';
+// 導入假卡回報相關畫面
+import FakeCardReportScreen from '@/screens/FakeCardReportScreen';
+import FakeCardHistoryScreen from '@/screens/FakeCardHistoryScreen';
+import FakeCardTrainingScreen from '@/screens/FakeCardTrainingScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -72,17 +77,17 @@ const MainTabs = () => {
           borderTopColor: theme.colors.border,
           paddingBottom: 5,
           paddingTop: 5,
-          height: 60
+          height: 60,
         },
         headerStyle: {
           backgroundColor: theme.colors.background,
           borderBottomColor: theme.colors.border,
-          borderBottomWidth: 1
+          borderBottomWidth: 1,
         },
         headerTintColor: theme.colors.text,
         headerTitleStyle: {
-          fontWeight: '600'
-        }
+          fontWeight: '600',
+        },
       })}
     >
       <Tab.Screen
@@ -121,7 +126,7 @@ const AppStack = () => {
     return (
       <Stack.Navigator
         screenOptions={{
-          headerShown: false
+          headerShown: false,
         }}
       >
         <Stack.Screen name="Login" component={LoginScreen} />
@@ -136,12 +141,12 @@ const AppStack = () => {
         headerStyle: {
           backgroundColor: theme.colors.background,
           borderBottomColor: theme.colors.border,
-          borderBottomWidth: 1
+          borderBottomWidth: 1,
         },
         headerTintColor: theme.colors.text,
         headerTitleStyle: {
-          fontWeight: '600'
-        }
+          fontWeight: '600',
+        },
       }}
     >
       <Stack.Screen
@@ -197,7 +202,7 @@ const AppStack = () => {
       <Stack.Screen
         name="DataQualityDashboard"
         component={DataQualityDashboardScreen}
-        options={{ title: '數據質量監控儀表板' }}
+        options={{ title: '數據質量儀表板' }}
       />
       <Stack.Screen
         name="FeedbackManagement"
@@ -207,16 +212,34 @@ const AppStack = () => {
       <Stack.Screen
         name="DataQualityAssessment"
         component={DataQualityAssessmentScreen}
-        options={{ title: '定期數據質量評估' }}
+        options={{ title: '數據質量評估' }}
       />
+                        {/* 假卡回報相關路由 */}
+                  <Stack.Screen
+                    name="FakeCardReport"
+                    component={FakeCardReportScreen}
+                    options={{ title: '假卡回報', headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="FakeCardHistory"
+                    component={FakeCardHistoryScreen}
+                    options={{ title: '假卡提交記錄', headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="FakeCardTraining"
+                    component={FakeCardTrainingScreen}
+                    options={{ title: '假卡AI訓練', headerShown: false }}
+                  />
     </Stack.Navigator>
   );
 };
 
-export const AppNavigator: React.FC = () => {
+const AppNavigator = () => {
   return (
     <NavigationContainer>
       <AppStack />
     </NavigationContainer>
   );
 };
+
+export default AppNavigator;

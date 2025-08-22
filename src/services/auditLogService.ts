@@ -17,7 +17,7 @@ import {
   AuditLogExportOptions,
   AuditLogCleanupOptions,
   AuditLogSearchResult,
-  AuditLogMonitor
+  AuditLogMonitor,
 } from '../types/audit';
 
 // 審計日誌服務類
@@ -73,7 +73,7 @@ class AuditLogService {
       notificationChannels: ['email', 'push'],
       autoExportEnabled: false,
       exportFormat: 'json',
-      exportSchedule: '0 0 * * 0' // 每週日午夜
+      exportSchedule: '0 0 * * 0', // 每週日午夜
     };
   }
 
@@ -117,7 +117,7 @@ class AuditLogService {
         timestamp: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
-        ...eventData
+        ...eventData,
       };
 
       // 添加到隊列
@@ -147,7 +147,7 @@ class AuditLogService {
       low: 1,
       medium: 2,
       high: 3,
-      critical: 4
+      critical: 4,
     };
 
     const configLevel = severityLevels[this.config.logLevel];
@@ -251,7 +251,10 @@ class AuditLogService {
   /**
    * 觸發警報
    */
-  private async triggerAlert(event: AuditEvent, severity: AuditSeverity): Promise<void> {
+  private async triggerAlert(
+    event: AuditEvent,
+    severity: AuditSeverity
+  ): Promise<void> {
     try {
       const alert: AuditLogAlert = {
         id: this.generateAlertId(),
@@ -268,7 +271,7 @@ class AuditLogService {
         recipients: [],
         createdAt: new Date(),
         updatedAt: new Date(),
-        createdBy: 'system'
+        createdBy: 'system',
       };
 
       // 保存警報
@@ -291,7 +294,7 @@ class AuditLogService {
         const recentFailures = await this.getRecentEvents({
           eventTypes: ['failed_login_attempt'],
           userIds: event.userId ? [event.userId] : undefined,
-          startDate: new Date(Date.now() - 15 * 60 * 1000) // 15分鐘內
+          startDate: new Date(Date.now() - 15 * 60 * 1000), // 15分鐘內
         });
 
         if (recentFailures.length >= 5) {
@@ -324,7 +327,10 @@ class AuditLogService {
   /**
    * 發送警報通知
    */
-  private async sendAlertNotification(alert: AuditLogAlert, event: AuditEvent): Promise<void> {
+  private async sendAlertNotification(
+    alert: AuditLogAlert,
+    event: AuditEvent
+  ): Promise<void> {
     try {
       const notification = {
         type: 'audit_alert',
@@ -334,8 +340,8 @@ class AuditLogService {
         data: {
           alertId: alert.id,
           eventId: event.id,
-          severity: alert.severity
-        }
+          severity: alert.severity,
+        },
       };
 
       await notificationService.sendNotification(notification);
@@ -357,7 +363,11 @@ class AuditLogService {
 
       // 排序
       if (query.sortBy) {
-        filteredEvents = this.sortEvents(filteredEvents, query.sortBy, query.sortOrder || 'desc');
+        filteredEvents = this.sortEvents(
+          filteredEvents,
+          query.sortBy,
+          query.sortOrder || 'desc'
+        );
       }
 
       // 分頁
@@ -375,7 +385,7 @@ class AuditLogService {
         page: query.page,
         totalPages,
         hasMore: query.page < totalPages,
-        searchTime
+        searchTime,
       };
     } catch (error) {
       logger.error('查詢審計事件失敗:', error);
@@ -386,32 +396,58 @@ class AuditLogService {
   /**
    * 應用過濾器
    */
-  private applyFilters(events: AuditEvent[], query: AuditLogQuery): AuditEvent[] {
-    return events.filter(event => {
+  private applyFilters(
+    events: AuditEvent[],
+    query: AuditLogQuery
+  ): AuditEvent[] {
+    return events.filter((event) => {
       // 日期過濾
       if (query.startDate && event.timestamp < query.startDate) return false;
       if (query.endDate && event.timestamp > query.endDate) return false;
 
       // 事件類型過濾
-      if (query.eventTypes && !query.eventTypes.includes(event.eventType)) return false;
+      if (query.eventTypes && !query.eventTypes.includes(event.eventType))
+        return false;
 
       // 嚴重性過濾
-      if (query.severities && !query.severities.includes(event.severity)) return false;
+      if (query.severities && !query.severities.includes(event.severity))
+        return false;
 
       // 用戶ID過濾
-      if (query.userIds && event.userId && !query.userIds.includes(event.userId)) return false;
+      if (
+        query.userIds &&
+        event.userId &&
+        !query.userIds.includes(event.userId)
+      )
+        return false;
 
       // 狀態過濾
-      if (query.statuses && !query.statuses.includes(event.status)) return false;
+      if (query.statuses && !query.statuses.includes(event.status))
+        return false;
 
       // 資源類型過濾
-      if (query.resourceTypes && event.resourceType && !query.resourceTypes.includes(event.resourceType)) return false;
+      if (
+        query.resourceTypes &&
+        event.resourceType &&
+        !query.resourceTypes.includes(event.resourceType)
+      )
+        return false;
 
       // 資源ID過濾
-      if (query.resourceIds && event.resourceId && !query.resourceIds.includes(event.resourceId)) return false;
+      if (
+        query.resourceIds &&
+        event.resourceId &&
+        !query.resourceIds.includes(event.resourceId)
+      )
+        return false;
 
       // IP地址過濾
-      if (query.ipAddresses && event.ipAddress && !query.ipAddresses.includes(event.ipAddress)) return false;
+      if (
+        query.ipAddresses &&
+        event.ipAddress &&
+        !query.ipAddresses.includes(event.ipAddress)
+      )
+        return false;
 
       // 文本搜索
       if (query.searchText) {
@@ -421,8 +457,11 @@ class AuditLogService {
           event.description,
           event.userEmail,
           event.resourceName,
-          event.errorMessage
-        ].filter(Boolean).join(' ').toLowerCase();
+          event.errorMessage,
+        ]
+          .filter(Boolean)
+          .join(' ')
+          .toLowerCase();
 
         if (!searchableText.includes(searchText)) return false;
       }
@@ -434,7 +473,11 @@ class AuditLogService {
   /**
    * 排序事件
    */
-  private sortEvents(events: AuditEvent[], sortBy: string, sortOrder: 'asc' | 'desc'): AuditEvent[] {
+  private sortEvents(
+    events: AuditEvent[],
+    sortBy: string,
+    sortOrder: 'asc' | 'desc'
+  ): AuditEvent[] {
     return events.sort((a, b) => {
       let aValue: any = a[sortBy as keyof AuditEvent];
       let bValue: any = b[sortBy as keyof AuditEvent];
@@ -451,22 +494,35 @@ class AuditLogService {
   /**
    * 獲取統計信息
    */
-  async getStatistics(query?: Partial<AuditLogQuery>): Promise<AuditLogStatistics> {
+  async getStatistics(
+    query?: Partial<AuditLogQuery>
+  ): Promise<AuditLogStatistics> {
     try {
       const events = await this.getEvents();
-      const filteredEvents = query ? this.applyFilters(events, query as AuditLogQuery) : events;
+      const filteredEvents = query
+        ? this.applyFilters(events, query as AuditLogQuery)
+        : events;
 
       const now = new Date();
       const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
       const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
       // 基本統計
-      const eventsByType: Record<AuditEventType, number> = {} as Record<AuditEventType, number>;
+      const eventsByType: Record<AuditEventType, number> = {} as Record<
+        AuditEventType,
+        number
+      >;
       const eventsBySeverity: Record<AuditSeverity, number> = {
-        low: 0, medium: 0, high: 0, critical: 0
+        low: 0,
+        medium: 0,
+        high: 0,
+        critical: 0,
       };
       const eventsByStatus: Record<AuditEventStatus, number> = {
-        success: 0, failure: 0, pending: 0, cancelled: 0
+        success: 0,
+        failure: 0,
+        pending: 0,
+        cancelled: 0,
       };
       const eventsByUser: Record<string, number> = {};
       const eventsByResource: Record<string, number> = {};
@@ -494,9 +550,10 @@ class AuditLogService {
       let complianceEvents = 0;
       let regulatoryViolations = 0;
 
-      filteredEvents.forEach(event => {
+      filteredEvents.forEach((event) => {
         // 按類型統計
-        eventsByType[event.eventType] = (eventsByType[event.eventType] || 0) + 1;
+        eventsByType[event.eventType] =
+          (eventsByType[event.eventType] || 0) + 1;
 
         // 按嚴重性統計
         eventsBySeverity[event.severity]++;
@@ -511,7 +568,8 @@ class AuditLogService {
 
         // 按資源統計
         if (event.resourceType) {
-          eventsByResource[event.resourceType] = (eventsByResource[event.resourceType] || 0) + 1;
+          eventsByResource[event.resourceType] =
+            (eventsByResource[event.resourceType] || 0) + 1;
         }
 
         // 時間統計
@@ -539,12 +597,19 @@ class AuditLogService {
         if (event.status === 'failure') {
           errorCount++;
           if (event.errorCode) {
-            errorCodes[event.errorCode] = (errorCodes[event.errorCode] || 0) + 1;
+            errorCodes[event.errorCode] =
+              (errorCodes[event.errorCode] || 0) + 1;
           }
         }
 
         // 安全統計
-        if (['security_alert', 'failed_login_attempt', 'suspicious_activity'].includes(event.eventType)) {
+        if (
+          [
+            'security_alert',
+            'failed_login_attempt',
+            'suspicious_activity',
+          ].includes(event.eventType)
+        ) {
           securityEvents++;
         }
         if (event.eventType === 'failed_login_attempt') {
@@ -558,7 +623,10 @@ class AuditLogService {
         if (event.complianceTags && event.complianceTags.length > 0) {
           complianceEvents++;
         }
-        if (event.regulatoryRequirements && event.regulatoryRequirements.length > 0) {
+        if (
+          event.regulatoryRequirements &&
+          event.regulatoryRequirements.length > 0
+        ) {
           regulatoryViolations++;
         }
       });
@@ -567,8 +635,9 @@ class AuditLogService {
       const slowestOperations = Object.entries(operationDurations)
         .map(([eventType, durations]) => ({
           eventType: eventType as AuditEventType,
-          averageDuration: durations.reduce((sum, d) => sum + d, 0) / durations.length,
-          count: durations.length
+          averageDuration:
+            durations.reduce((sum, d) => sum + d, 0) / durations.length,
+          count: durations.length,
         }))
         .sort((a, b) => b.averageDuration - a.averageDuration)
         .slice(0, 10);
@@ -578,7 +647,7 @@ class AuditLogService {
         .map(([errorCode, count]) => ({
           errorCode,
           count,
-          percentage: (count / errorCount) * 100
+          percentage: (count / errorCount) * 100,
         }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 10);
@@ -593,15 +662,19 @@ class AuditLogService {
         eventsByHour,
         eventsByDay,
         eventsByMonth,
-        averageResponseTime: durationCount > 0 ? totalDuration / durationCount : 0,
+        averageResponseTime:
+          durationCount > 0 ? totalDuration / durationCount : 0,
         slowestOperations,
-        errorRate: filteredEvents.length > 0 ? (errorCount / filteredEvents.length) * 100 : 0,
+        errorRate:
+          filteredEvents.length > 0
+            ? (errorCount / filteredEvents.length) * 100
+            : 0,
         topErrors,
         securityEvents,
         failedLoginAttempts,
         suspiciousActivities,
         complianceEvents,
-        regulatoryViolations
+        regulatoryViolations,
       };
     } catch (error) {
       logger.error('獲取統計信息失敗:', error);
@@ -626,12 +699,12 @@ class AuditLogService {
         endDate: options.endDate,
         page: 1,
         limit: 1000,
-        ...options.filters
+        ...options.filters,
       };
 
       const [statistics, searchResult] = await Promise.all([
         this.getStatistics(query),
-        this.queryEvents(query)
+        this.queryEvents(query),
       ]);
 
       const report: AuditLogReport = {
@@ -649,7 +722,7 @@ class AuditLogService {
         generatedBy: 'system',
         generatedAt: new Date(),
         format: options.format || 'json',
-        status: 'completed'
+        status: 'completed',
       };
 
       // 保存報告
@@ -665,10 +738,13 @@ class AuditLogService {
   /**
    * 生成報告摘要
    */
-  private generateReportSummary(statistics: AuditLogStatistics, type: string): string {
-    const {totalEvents} = statistics;
-    const {errorRate} = statistics;
-    const {securityEvents} = statistics;
+  private generateReportSummary(
+    statistics: AuditLogStatistics,
+    type: string
+  ): string {
+    const { totalEvents } = statistics;
+    const { errorRate } = statistics;
+    const { securityEvents } = statistics;
 
     let summary = `總共記錄了 ${totalEvents} 個審計事件。`;
 
@@ -686,7 +762,10 @@ class AuditLogService {
   /**
    * 生成建議
    */
-  private generateRecommendations(statistics: AuditLogStatistics, type: string): string[] {
+  private generateRecommendations(
+    statistics: AuditLogStatistics,
+    type: string
+  ): string[] {
     const recommendations: string[] = [];
 
     if (statistics.errorRate > 5) {
@@ -725,31 +804,31 @@ class AuditLogService {
       const searchResult = await this.queryEvents({
         ...options.filters,
         page: 1,
-        limit: options.maxRecords || 10000
+        limit: options.maxRecords || 10000,
       });
 
       let exportData = searchResult.events;
 
       // 過濾詳細信息
       if (!options.includeDetails) {
-        exportData = exportData.map(event => ({
+        exportData = exportData.map((event) => ({
           ...event,
           details: undefined,
-          metadata: undefined
+          metadata: undefined,
         }));
       }
 
       if (!options.includeMetadata) {
-        exportData = exportData.map(event => ({
+        exportData = exportData.map((event) => ({
           ...event,
-          metadata: undefined
+          metadata: undefined,
         }));
       }
 
       if (!options.includeStackTrace) {
-        exportData = exportData.map(event => ({
+        exportData = exportData.map((event) => ({
           ...event,
-          stackTrace: undefined
+          stackTrace: undefined,
         }));
       }
 
@@ -790,7 +869,7 @@ class AuditLogService {
     const csvRows = [headers.join(',')];
 
     for (const event of events) {
-      const values = headers.map(header => {
+      const values = headers.map((header) => {
         const value = event[header as keyof AuditEvent];
         if (value instanceof Date) {
           return value.toISOString();
@@ -836,7 +915,9 @@ class AuditLogService {
   async cleanupLogs(options: AuditLogCleanupOptions): Promise<void> {
     try {
       const events = await this.getEvents();
-      const cutoffDate = new Date(Date.now() - options.retentionDays * 24 * 60 * 60 * 1000);
+      const cutoffDate = new Date(
+        Date.now() - options.retentionDays * 24 * 60 * 60 * 1000
+      );
 
       // 分離要刪除和歸檔的事件
       const toDelete: AuditEvent[] = [];
@@ -870,7 +951,9 @@ class AuditLogService {
       // 更新存儲
       await storage.set('auditEvents', toKeep);
 
-      logger.info(`清理完成: 刪除 ${toDelete.length} 個事件, 歸檔 ${toArchive.length} 個事件, 保留 ${toKeep.length} 個事件`);
+      logger.info(
+        `清理完成: 刪除 ${toDelete.length} 個事件, 歸檔 ${toArchive.length} 個事件, 保留 ${toKeep.length} 個事件`
+      );
     } catch (error) {
       logger.error('清理審計日誌失敗:', error);
       throw error;
@@ -893,16 +976,19 @@ class AuditLogService {
   /**
    * 歸檔事件
    */
-  private async archiveEvents(events: AuditEvent[], compress: boolean): Promise<void> {
+  private async archiveEvents(
+    events: AuditEvent[],
+    compress: boolean
+  ): Promise<void> {
     try {
       const archiveId = `archive_${Date.now()}`;
       let archiveData = events;
 
       if (compress) {
         // 簡單的壓縮（實際應用中應使用專業壓縮庫）
-        archiveData = events.map(event => ({
+        archiveData = events.map((event) => ({
           ...event,
-          description: event.description.substring(0, 100) // 截斷描述
+          description: event.description.substring(0, 100), // 截斷描述
         }));
       }
 
@@ -955,12 +1041,14 @@ class AuditLogService {
   /**
    * 獲取最近事件
    */
-  private async getRecentEvents(query: Partial<AuditLogQuery>): Promise<AuditEvent[]> {
+  private async getRecentEvents(
+    query: Partial<AuditLogQuery>
+  ): Promise<AuditEvent[]> {
     const events = await this.getEvents();
     return this.applyFilters(events, {
       ...query,
       page: 1,
-      limit: 1000
+      limit: 1000,
     });
   }
 
@@ -1009,4 +1097,5 @@ class AuditLogService {
 }
 
 // 創建單例實例
+export { AuditLogService };
 export const auditLogService = new AuditLogService();

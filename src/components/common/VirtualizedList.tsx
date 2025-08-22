@@ -2,7 +2,8 @@ import React, { useCallback, useMemo } from 'react';
 import { FlatList, FlatListProps, View, Text, StyleSheet } from 'react-native';
 import { theme } from '../../theme/designSystem';
 
-export interface VirtualizedListProps<T> extends Omit<FlatListProps<T>, 'data' | 'renderItem'> {
+export interface VirtualizedListProps<T>
+  extends Omit<FlatListProps<T>, 'data' | 'renderItem'> {
   data: T[];
   renderItem: (item: T, index: number) => React.ReactElement;
   keyExtractor: (item: T, index: number) => string;
@@ -36,7 +37,6 @@ export const VirtualizedList = <T extends any>({
   contentContainerStyle,
   ...props
 }: VirtualizedListProps<T>) => {
-
   // 計算初始渲染數量
   const initialNumToRender = useMemo(() => {
     const screenHeight = 800; // 假設屏幕高度
@@ -44,16 +44,22 @@ export const VirtualizedList = <T extends any>({
   }, [itemHeight]);
 
   // 獲取項目佈局
-  const getItemLayout = useCallback((data: any, index: number) => ({
-    length: itemHeight,
-    offset: itemHeight * index,
-    index
-  }), [itemHeight]);
+  const getItemLayout = useCallback(
+    (data: any, index: number) => ({
+      length: itemHeight,
+      offset: itemHeight * index,
+      index,
+    }),
+    [itemHeight]
+  );
 
   // 渲染項目
-  const renderItemCallback = useCallback(({ item, index }: { item: T; index: number }) => {
-    return renderItem(item, index);
-  }, [renderItem]);
+  const renderItemCallback = useCallback(
+    ({ item, index }: { item: T; index: number }) => {
+      return renderItem(item, index);
+    },
+    [renderItem]
+  );
 
   // 渲染空狀態
   const renderEmptyComponent = useCallback(() => {
@@ -114,7 +120,7 @@ export const VirtualizedList = <T extends any>({
       contentContainerStyle={[
         styles.contentContainer,
         data.length === 0 && styles.emptyContentContainer,
-        contentContainerStyle
+        contentContainerStyle,
       ]}
       showsVerticalScrollIndicator={false}
       showsHorizontalScrollIndicator={false}
@@ -125,34 +131,34 @@ export const VirtualizedList = <T extends any>({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   contentContainer: {
-    flexGrow: 1
+    flexGrow: 1,
   },
   emptyContentContainer: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 40
+    paddingVertical: 40,
   },
   emptyText: {
     fontSize: 16,
     color: theme.colors.text.secondary,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   loadingContainer: {
     paddingVertical: 20,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   loadingText: {
     fontSize: 14,
-    color: theme.colors.text.secondary
-  }
+    color: theme.colors.text.secondary,
+  },
 });
 
 // 導出便捷的虛擬化列表組件

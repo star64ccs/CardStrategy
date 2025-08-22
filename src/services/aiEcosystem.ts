@@ -1,5 +1,17 @@
-import { multiAIService, AIProvider, AIModelType, AITaskType, AIRequestConfig, AIResponse, BatchAIResponse } from './multiAIService';
-import { aiModelManager, AIModelCapability, CardAITask } from './aiModelManager';
+import {
+  multiAIService,
+  AIProvider,
+  AIModelType,
+  AITaskType,
+  AIRequestConfig,
+  AIResponse,
+  BatchAIResponse,
+} from './multiAIService';
+import {
+  aiModelManager,
+  AIModelCapability,
+  CardAITask,
+} from './aiModelManager';
 import { dataQualityService } from './dataQualityService';
 import { enhancedAIService } from './enhancedAIService';
 import { predictionService } from './predictionService';
@@ -48,36 +60,51 @@ export interface AIEcosystemStats {
   averageResponseTime: number;
   totalCost: number;
   monthlyCost: number;
-  providerUsage: Record<AIProvider, {
-    requests: number;
-    cost: number;
-    successRate: number;
-    averageResponseTime: number;
-  }>;
-  modelUsage: Record<AIModelType, {
-    requests: number;
-    cost: number;
-    successRate: number;
-  }>;
-  taskUsage: Record<AITaskType, {
-    requests: number;
-    averageResponseTime: number;
-  }>;
+  providerUsage: Record<
+    AIProvider,
+    {
+      requests: number;
+      cost: number;
+      successRate: number;
+      averageResponseTime: number;
+    }
+  >;
+  modelUsage: Record<
+    AIModelType,
+    {
+      requests: number;
+      cost: number;
+      successRate: number;
+    }
+  >;
+  taskUsage: Record<
+    AITaskType,
+    {
+      requests: number;
+      averageResponseTime: number;
+    }
+  >;
 }
 
 export interface AIEcosystemHealth {
   overallHealth: 'excellent' | 'good' | 'fair' | 'poor';
-  providers: Record<AIProvider, {
-    status: 'online' | 'offline' | 'degraded';
-    responseTime: number;
-    errorRate: number;
-    lastCheck: Date;
-  }>;
-  models: Record<AIModelType, {
-    availability: number;
-    performance: number;
-    cost: number;
-  }>;
+  providers: Record<
+    AIProvider,
+    {
+      status: 'online' | 'offline' | 'degraded';
+      responseTime: number;
+      errorRate: number;
+      lastCheck: Date;
+    }
+  >;
+  models: Record<
+    AIModelType,
+    {
+      availability: number;
+      performance: number;
+      cost: number;
+    }
+  >;
   system: {
     cpuUsage: number;
     memoryUsage: number;
@@ -123,7 +150,7 @@ class AIEcosystem {
         recognition: 'gpt-4',
         analysis: 'claude-3',
         prediction: 'gemini-pro',
-        generation: 'gpt-4'
+        generation: 'gpt-4',
       },
       maxConcurrentRequests: 10,
       requestTimeout: 30000,
@@ -132,7 +159,7 @@ class AIEcosystem {
       costAlertThreshold: 0.8,
       enableRealTimeMonitoring: true,
       logLevel: 'info',
-      ...config
+      ...config,
     };
 
     this.stats = this.initializeStats();
@@ -174,7 +201,7 @@ class AIEcosystem {
       enableLoadBalancing: this.config.enableLoadBalancing,
       enableCostOptimization: this.config.enableCostOptimization,
       maxConcurrentRequests: this.config.maxConcurrentRequests,
-      requestTimeout: this.config.requestTimeout
+      requestTimeout: this.config.requestTimeout,
     });
   }
 
@@ -213,15 +240,19 @@ class AIEcosystem {
       type: taskType,
       prompt,
       config: {
-        model: config.model || this.config.defaultModels[taskType as keyof typeof this.config.defaultModels],
+        model:
+          config.model ||
+          this.config.defaultModels[
+            taskType as keyof typeof this.config.defaultModels
+          ],
         provider: config.provider,
         maxTokens: config.maxTokens || 1000,
         temperature: config.temperature || 0.7,
-        ...config
+        ...config,
       },
       priority,
       status: 'pending',
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     // 添加到任務隊列
@@ -242,119 +273,159 @@ class AIEcosystem {
       priority?: 'low' | 'medium' | 'high' | 'critical';
     }[]
   ): Promise<BatchAIResponse> {
-    const batchTasks = tasks.map(task => ({
+    const batchTasks = tasks.map((task) => ({
       id: this.generateTaskId(),
       type: task.taskType,
       prompt: task.prompt,
       config: {
-        model: task.config?.model || this.config.defaultModels[task.taskType as keyof typeof this.config.defaultModels],
+        model:
+          task.config?.model ||
+          this.config.defaultModels[
+            task.taskType as keyof typeof this.config.defaultModels
+          ],
         provider: task.config?.provider,
         maxTokens: task.config?.maxTokens || 1000,
         temperature: task.config?.temperature || 0.7,
-        ...task.config
+        ...task.config,
       },
       priority: task.priority || 'medium',
       status: 'pending' as const,
-      createdAt: new Date()
+      createdAt: new Date(),
     }));
 
     // 添加到任務隊列
-    batchTasks.forEach(task => this.addTaskToQueue(task));
+    batchTasks.forEach((task) => this.addTaskToQueue(task));
 
     // 等待所有任務完成
     const results = await Promise.all(
-      batchTasks.map(task => this.waitForTaskCompletion(task.id))
+      batchTasks.map((task) => this.waitForTaskCompletion(task.id))
     );
 
     return {
       results,
       totalRequests: results.length,
-      successfulRequests: results.filter(r => r.success).length,
-      failedRequests: results.filter(r => !r.success).length,
+      successfulRequests: results.filter((r) => r.success).length,
+      failedRequests: results.filter((r) => !r.success).length,
       totalCost: results.reduce((sum, r) => sum + (r.cost || 0), 0),
-      averageResponseTime: results.reduce((sum, r) => sum + (r.responseTime || 0), 0) / results.length
+      averageResponseTime:
+        results.reduce((sum, r) => sum + (r.responseTime || 0), 0) /
+        results.length,
     };
   }
 
   /**
    * 卡片識別任務
    */
-  async recognizeCard(imageData: string, options?: {
-    model?: AIModelType;
-    provider?: AIProvider;
-    enableConditionAnalysis?: boolean;
-    enablePriceEstimation?: boolean;
-  }): Promise<AIResponse> {
+  async recognizeCard(
+    imageData: string,
+    options?: {
+      model?: AIModelType;
+      provider?: AIProvider;
+      enableConditionAnalysis?: boolean;
+      enablePriceEstimation?: boolean;
+    }
+  ): Promise<AIResponse> {
     const prompt = this.buildCardRecognitionPrompt(imageData, options);
 
-    return this.executeTask('recognition', prompt, {
-      model: options?.model || 'gpt-4',
-      provider: options?.provider,
-      maxTokens: 2000,
-      temperature: 0.3
-    }, 'high');
+    return this.executeTask(
+      'recognition',
+      prompt,
+      {
+        model: options?.model || 'gpt-4',
+        provider: options?.provider,
+        maxTokens: 2000,
+        temperature: 0.3,
+      },
+      'high'
+    );
   }
 
   /**
    * 卡片條件分析任務
    */
-  async analyzeCardCondition(imageData: string, options?: {
-    model?: AIModelType;
-    provider?: AIProvider;
-    detailedAnalysis?: boolean;
-  }): Promise<AIResponse> {
+  async analyzeCardCondition(
+    imageData: string,
+    options?: {
+      model?: AIModelType;
+      provider?: AIProvider;
+      detailedAnalysis?: boolean;
+    }
+  ): Promise<AIResponse> {
     const prompt = this.buildConditionAnalysisPrompt(imageData, options);
 
-    return this.executeTask('analysis', prompt, {
-      model: options?.model || 'claude-3',
-      provider: options?.provider,
-      maxTokens: 1500,
-      temperature: 0.2
-    }, 'medium');
+    return this.executeTask(
+      'analysis',
+      prompt,
+      {
+        model: options?.model || 'claude-3',
+        provider: options?.provider,
+        maxTokens: 1500,
+        temperature: 0.2,
+      },
+      'medium'
+    );
   }
 
   /**
    * 價格預測任務
    */
-  async predictCardPrice(cardData: any, options?: {
-    model?: AIModelType;
-    provider?: AIProvider;
-    marketData?: any;
-    historicalData?: any;
-  }): Promise<AIResponse> {
+  async predictCardPrice(
+    cardData: any,
+    options?: {
+      model?: AIModelType;
+      provider?: AIProvider;
+      marketData?: any;
+      historicalData?: any;
+    }
+  ): Promise<AIResponse> {
     const prompt = this.buildPricePredictionPrompt(cardData, options);
 
-    return this.executeTask('prediction', prompt, {
-      model: options?.model || 'gemini-pro',
-      provider: options?.provider,
-      maxTokens: 1000,
-      temperature: 0.1
-    }, 'medium');
+    return this.executeTask(
+      'prediction',
+      prompt,
+      {
+        model: options?.model || 'gemini-pro',
+        provider: options?.provider,
+        maxTokens: 1000,
+        temperature: 0.1,
+      },
+      'medium'
+    );
   }
 
   /**
    * 市場分析任務
    */
-  async analyzeMarket(marketData: any, options?: {
-    model?: AIModelType;
-    provider?: AIProvider;
-    analysisType?: 'trend' | 'sentiment' | 'opportunity';
-  }): Promise<AIResponse> {
+  async analyzeMarket(
+    marketData: any,
+    options?: {
+      model?: AIModelType;
+      provider?: AIProvider;
+      analysisType?: 'trend' | 'sentiment' | 'opportunity';
+    }
+  ): Promise<AIResponse> {
     const prompt = this.buildMarketAnalysisPrompt(marketData, options);
 
-    return this.executeTask('analysis', prompt, {
-      model: options?.model || 'claude-3',
-      provider: options?.provider,
-      maxTokens: 2000,
-      temperature: 0.3
-    }, 'medium');
+    return this.executeTask(
+      'analysis',
+      prompt,
+      {
+        model: options?.model || 'claude-3',
+        provider: options?.provider,
+        maxTokens: 2000,
+        temperature: 0.3,
+      },
+      'medium'
+    );
   }
 
   // ==================== 任務管理方法 ====================
 
   private addTaskToQueue(task: AIEcosystemTask): void {
     // 根據優先級插入任務
-    const insertIndex = this.taskQueue.findIndex(t => t.priority < task.priority);
+    const insertIndex = this.taskQueue.findIndex(
+      (t) => t.priority < task.priority
+    );
     if (insertIndex === -1) {
       this.taskQueue.push(task);
     } else {
@@ -386,7 +457,10 @@ class AIEcosystem {
 
   private startTaskProcessor(): void {
     setInterval(async () => {
-      if (this.activeTasks.size < this.config.maxConcurrentRequests && this.taskQueue.length > 0) {
+      if (
+        this.activeTasks.size < this.config.maxConcurrentRequests &&
+        this.taskQueue.length > 0
+      ) {
         const task = this.taskQueue.shift();
         if (task) {
           this.processTask(task);
@@ -402,7 +476,10 @@ class AIEcosystem {
       this.activeTasks.set(task.id, task);
 
       // 執行AI請求
-      const response = await multiAIService.executeRequest(task.prompt, task.config);
+      const response = await multiAIService.executeRequest(
+        task.prompt,
+        task.config
+      );
 
       task.status = 'completed';
       task.completedAt = new Date();
@@ -413,7 +490,6 @@ class AIEcosystem {
 
       // 更新統計信息
       this.updateStats(response);
-
     } catch (error) {
       task.status = 'failed';
       task.completedAt = new Date();
@@ -437,7 +513,7 @@ class AIEcosystem {
       monthlyCost: 0,
       providerUsage: {} as any,
       modelUsage: {} as any,
-      taskUsage: {} as any
+      taskUsage: {} as any,
     };
   }
 
@@ -450,8 +526,8 @@ class AIEcosystem {
         cpuUsage: 0,
         memoryUsage: 0,
         networkLatency: 0,
-        queueLength: 0
-      }
+        queueLength: 0,
+      },
     };
   }
 
@@ -465,7 +541,9 @@ class AIEcosystem {
     }
 
     // 更新平均響應時間
-    const totalTime = this.stats.averageResponseTime * (this.stats.totalRequests - 1) + (response.responseTime || 0);
+    const totalTime =
+      this.stats.averageResponseTime * (this.stats.totalRequests - 1) +
+      (response.responseTime || 0);
     this.stats.averageResponseTime = totalTime / this.stats.totalRequests;
 
     // 更新成本
@@ -479,15 +557,17 @@ class AIEcosystem {
           requests: 0,
           cost: 0,
           successRate: 0,
-          averageResponseTime: 0
+          averageResponseTime: 0,
         };
       }
 
       const provider = this.stats.providerUsage[response.provider];
       provider.requests++;
       provider.cost += response.cost || 0;
-      provider.successRate = provider.requests > 0 ?
-        (provider.requests - (response.success ? 0 : 1)) / provider.requests : 0;
+      provider.successRate =
+        provider.requests > 0
+          ? (provider.requests - (response.success ? 0 : 1)) / provider.requests
+          : 0;
     }
 
     // 更新模型使用統計
@@ -496,15 +576,17 @@ class AIEcosystem {
         this.stats.modelUsage[response.model] = {
           requests: 0,
           cost: 0,
-          successRate: 0
+          successRate: 0,
         };
       }
 
       const model = this.stats.modelUsage[response.model];
       model.requests++;
       model.cost += response.cost || 0;
-      model.successRate = model.requests > 0 ?
-        (model.requests - (response.success ? 0 : 1)) / model.requests : 0;
+      model.successRate =
+        model.requests > 0
+          ? (model.requests - (response.success ? 0 : 1)) / model.requests
+          : 0;
     }
   }
 
@@ -517,7 +599,7 @@ class AIEcosystem {
           status: provider.isActive ? 'online' : 'offline',
           responseTime: 0, // 需要實際測試
           errorRate: 0, // 需要計算
-          lastCheck: new Date()
+          lastCheck: new Date(),
         };
       }
 
@@ -527,8 +609,12 @@ class AIEcosystem {
         this.health.models[capability.model] = {
           availability: 1.0, // 需要實際測試
           performance: 0.8, // 需要計算
-          cost: capability.performance.cost === 'low' ? 0.3 :
-            capability.performance.cost === 'medium' ? 0.6 : 1.0
+          cost:
+            capability.performance.cost === 'low'
+              ? 0.3
+              : capability.performance.cost === 'medium'
+                ? 0.6
+                : 1.0,
         };
       }
 
@@ -536,8 +622,10 @@ class AIEcosystem {
       this.health.system.queueLength = this.taskQueue.length;
 
       // 計算整體健康狀態
-      const providerHealth = Object.values(this.health.providers)
-        .filter(p => p.status === 'online').length / Object.keys(this.health.providers).length;
+      const providerHealth =
+        Object.values(this.health.providers).filter(
+          (p) => p.status === 'online'
+        ).length / Object.keys(this.health.providers).length;
 
       if (providerHealth >= 0.8) {
         this.health.overallHealth = 'excellent';
@@ -548,7 +636,6 @@ class AIEcosystem {
       } else {
         this.health.overallHealth = 'poor';
       }
-
     } catch (error) {
       logger.error('更新健康狀態失敗:', error);
     }
@@ -583,7 +670,10 @@ ${options?.enablePriceEstimation ? '請提供價格範圍估計' : ''}
 圖片數據：${imageData.substring(0, 100)}...`;
   }
 
-  private buildConditionAnalysisPrompt(imageData: string, options?: any): string {
+  private buildConditionAnalysisPrompt(
+    imageData: string,
+    options?: any
+  ): string {
     return `請詳細分析這張卡片的條件：
 
 1. 表面狀況：
@@ -709,7 +799,9 @@ ${options?.historicalData ? `歷史價格：${JSON.stringify(options.historicalD
 
     for (const provider of providers) {
       try {
-        const isConnected = await multiAIService.testProviderConnection(provider.provider);
+        const isConnected = await multiAIService.testProviderConnection(
+          provider.provider
+        );
         results[provider.provider] = isConnected;
       } catch (error) {
         results[provider.provider] = false;
@@ -723,7 +815,9 @@ ${options?.historicalData ? `歷史價格：${JSON.stringify(options.historicalD
     return aiModelManager.getRecommendedModels(useCase);
   }
 
-  compareModels(models: AIModelType[]): { model: AIModelType; capability: AIModelCapability; score: number }[] {
+  compareModels(
+    models: AIModelType[]
+  ): { model: AIModelType; capability: AIModelCapability; score: number }[] {
     return aiModelManager.compareModels(models);
   }
 }

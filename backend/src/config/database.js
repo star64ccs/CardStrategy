@@ -15,8 +15,8 @@ const config = {
       max: 10,
       min: 0,
       acquire: 30000,
-      idle: 10000
-    }
+      idle: 10000,
+    },
   },
   test: {
     username: process.env.DB_USER || 'postgres',
@@ -30,8 +30,8 @@ const config = {
       max: 5,
       min: 0,
       acquire: 30000,
-      idle: 10000
-    }
+      idle: 10000,
+    },
   },
   production: {
     username: process.env.DB_USER,
@@ -45,15 +45,15 @@ const config = {
       max: 20,
       min: 5,
       acquire: 30000,
-      idle: 10000
+      idle: 10000,
     },
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false
-      }
-    }
-  }
+        rejectUnauthorized: false,
+      },
+    },
+  },
 };
 
 // 獲取當前環境配置
@@ -75,8 +75,8 @@ const sequelize = new Sequelize(
     define: {
       timestamps: true,
       underscored: true,
-      freezeTableName: true
-    }
+      freezeTableName: true,
+    },
   }
 );
 
@@ -90,7 +90,7 @@ const getModelPersistenceModel = require('../models/ModelPersistence');
 const Card = getCardModel();
 const MarketData = getMarketDataModel();
 const PredictionModel = getPredictionModel();
-const ModelPersistence = getModelPersistenceModel();
+// const ModelPersistence = getModelPersistenceModel(); // 暫時註釋
 
 // 定義模型關聯
 const defineAssociations = () => {
@@ -98,22 +98,22 @@ const defineAssociations = () => {
   Card.hasMany(MarketData, {
     foreignKey: 'cardId',
     as: 'marketData',
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   });
   MarketData.belongsTo(Card, {
     foreignKey: 'cardId',
-    as: 'card'
+    as: 'card',
   });
 
   // Card 與 PredictionModel 的一對多關係
   Card.hasMany(PredictionModel, {
     foreignKey: 'cardId',
     as: 'predictions',
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   });
   PredictionModel.belongsTo(Card, {
     foreignKey: 'cardId',
-    as: 'card'
+    as: 'card',
   });
 
   // ModelPersistence 沒有直接關聯，但可以通過 cardId 關聯到 Card
@@ -146,7 +146,6 @@ const syncDatabase = async (force = false) => {
     }
     logger.warn('生產環境不允許強制同步數據庫');
     return false;
-
   } catch (error) {
     logger.error('數據庫同步失敗:', error);
     return false;
@@ -172,5 +171,5 @@ module.exports = {
   testConnection,
   syncDatabase,
   closeConnection,
-  config: dbConfig
+  config: dbConfig,
 };

@@ -9,7 +9,7 @@ import {
   Modal,
   TextInput,
   Switch,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { logger } from '@/utils/logger';
 import {
@@ -18,13 +18,17 @@ import {
   TaskStatus,
   TaskPriority,
   DependencyType,
-  TaskExecutor
+  TaskExecutor,
 } from '@/utils/taskDependencyManager';
 
 interface TaskDependencyVisualizerProps {
   taskManager?: TaskDependencyManager;
   onTaskSelect?: (taskId: string) => void;
-  onDependencyAdd?: (fromTaskId: string, toTaskId: string, type: DependencyType) => void;
+  onDependencyAdd?: (
+    fromTaskId: string,
+    toTaskId: string,
+    type: DependencyType
+  ) => void;
   onTaskStatusChange?: (taskId: string, status: TaskStatus) => void;
 }
 
@@ -45,15 +49,17 @@ interface TaskEdge {
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> = ({
-  taskManager,
-  onTaskSelect,
-  onDependencyAdd,
-  onTaskStatusChange
-}) => {
+export const TaskDependencyVisualizer: React.FC<
+  TaskDependencyVisualizerProps
+> = ({ taskManager, onTaskSelect, onDependencyAdd, onTaskStatusChange }) => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [dependencyGraph, setDependencyGraph] = useState<{
-    nodes: { id: string; name: string; status: TaskStatus; priority: TaskPriority }[];
+    nodes: {
+      id: string;
+      name: string;
+      status: TaskStatus;
+      priority: TaskPriority;
+    }[];
     edges: { from: string; to: string; type: DependencyType }[];
   }>({ nodes: [], edges: [] });
   const [selectedTask, setSelectedTask] = useState<string | null>(null);
@@ -64,17 +70,19 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
     description: '',
     type: '',
     priority: TaskPriority.NORMAL,
-    estimatedDuration: 5000
+    estimatedDuration: 5000,
   });
   const [newDependency, setNewDependency] = useState({
     fromTaskId: '',
     toTaskId: '',
-    type: DependencyType.REQUIRES
+    type: DependencyType.REQUIRES,
   });
   const [statistics, setStatistics] = useState<any>({});
 
   // 使用默認的任務管理器
-  const manager = taskManager || require('@/utils/taskDependencyManager').taskDependencyManager;
+  const manager =
+    taskManager ||
+    require('@/utils/taskDependencyManager').taskDependencyManager;
 
   useEffect(() => {
     loadTasks();
@@ -127,16 +135,18 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
       const executor: TaskExecutor = {
         execute: async (task: Task) => {
           // 模擬任務執行
-          await new Promise(resolve => setTimeout(resolve, task.estimatedDuration));
+          await new Promise((resolve) =>
+            setTimeout(resolve, task.estimatedDuration)
+          );
           return { message: `任務 ${task.name} 執行完成` };
-        }
+        },
       };
 
       const taskId = manager.addTask({
         ...newTask,
         executor,
         dependencies: [],
-        estimatedDuration: newTask.estimatedDuration
+        estimatedDuration: newTask.estimatedDuration,
       });
 
       setNewTask({
@@ -144,7 +154,7 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
         description: '',
         type: '',
         priority: TaskPriority.NORMAL,
-        estimatedDuration: 5000
+        estimatedDuration: 5000,
       });
       setShowAddTaskModal(false);
 
@@ -168,17 +178,21 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
     try {
       const success = manager.addDependency(newDependency.toTaskId, {
         taskId: newDependency.fromTaskId,
-        type: newDependency.type
+        type: newDependency.type,
       });
 
       if (success) {
         setNewDependency({
           fromTaskId: '',
           toTaskId: '',
-          type: DependencyType.REQUIRES
+          type: DependencyType.REQUIRES,
         });
         setShowAddDependencyModal(false);
-        onDependencyAdd?.(newDependency.fromTaskId, newDependency.toTaskId, newDependency.type);
+        onDependencyAdd?.(
+          newDependency.fromTaskId,
+          newDependency.toTaskId,
+          newDependency.type
+        );
       } else {
         Alert.alert('錯誤', '添加依賴關係失敗');
       }
@@ -280,8 +294,8 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
           {
             borderColor: isSelected ? '#2196F3' : getStatusColor(task.status),
             borderWidth: isSelected ? 3 : 2,
-            backgroundColor: isSelected ? '#E3F2FD' : '#FFFFFF'
-          }
+            backgroundColor: isSelected ? '#E3F2FD' : '#FFFFFF',
+          },
         ]}
         onPress={() => {
           setSelectedTask(task.id);
@@ -292,7 +306,12 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
           <Text style={styles.taskName} numberOfLines={1}>
             {task.name}
           </Text>
-          <View style={[styles.priorityBadge, { backgroundColor: getPriorityColor(task.priority) }]}>
+          <View
+            style={[
+              styles.priorityBadge,
+              { backgroundColor: getPriorityColor(task.priority) },
+            ]}
+          >
             <Text style={styles.priorityText}>{task.priority}</Text>
           </View>
         </View>
@@ -320,8 +339,8 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
   };
 
   const renderDependencyEdge = (edge: TaskEdge) => {
-    const fromTask = tasks.find(t => t.id === edge.from);
-    const toTask = tasks.find(t => t.id === edge.to);
+    const fromTask = tasks.find((t) => t.id === edge.from);
+    const toTask = tasks.find((t) => t.id === edge.to);
 
     if (!fromTask || !toTask) return null;
 
@@ -332,11 +351,16 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
           styles.dependencyEdge,
           {
             borderColor: getDependencyTypeColor(edge.type),
-            borderWidth: 2
-          }
+            borderWidth: 2,
+          },
         ]}
       >
-        <Text style={[styles.edgeLabel, { color: getDependencyTypeColor(edge.type) }]}>
+        <Text
+          style={[
+            styles.edgeLabel,
+            { color: getDependencyTypeColor(edge.type) },
+          ]}
+        >
           {edge.type}
         </Text>
       </View>
@@ -354,11 +378,15 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
             <Text style={styles.statLabel}>總任務</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{statistics.runningTasks || 0}</Text>
+            <Text style={styles.statNumber}>
+              {statistics.runningTasks || 0}
+            </Text>
             <Text style={styles.statLabel}>執行中</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{statistics.completedTasks || 0}</Text>
+            <Text style={styles.statNumber}>
+              {statistics.completedTasks || 0}
+            </Text>
             <Text style={styles.statLabel}>已完成</Text>
           </View>
           <View style={styles.statItem}>
@@ -367,7 +395,9 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
           </View>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statNumber}>{statistics.successRate?.toFixed(1) || 0}%</Text>
+          <Text style={styles.statNumber}>
+            {statistics.successRate?.toFixed(1) || 0}%
+          </Text>
           <Text style={styles.statLabel}>成功率</Text>
         </View>
       </View>
@@ -420,7 +450,7 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
       {selectedTask && (
         <View style={styles.selectedTaskActions}>
           <Text style={styles.selectedTaskTitle}>
-            選中任務: {tasks.find(t => t.id === selectedTask)?.name}
+            選中任務: {tasks.find((t) => t.id === selectedTask)?.name}
           </Text>
           <View style={styles.actionButtons}>
             <TouchableOpacity
@@ -479,7 +509,9 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
               style={styles.input}
               placeholder="任務描述"
               value={newTask.description}
-              onChangeText={(text) => setNewTask({ ...newTask, description: text })}
+              onChangeText={(text) =>
+                setNewTask({ ...newTask, description: text })
+              }
               multiline
             />
 
@@ -492,12 +524,13 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
 
             <View style={styles.priorityContainer}>
               <Text style={styles.priorityLabel}>優先級:</Text>
-              {Object.values(TaskPriority).map(priority => (
+              {Object.values(TaskPriority).map((priority) => (
                 <TouchableOpacity
                   key={priority}
                   style={[
                     styles.priorityOption,
-                    newTask.priority === priority && styles.priorityOptionSelected
+                    newTask.priority === priority &&
+                      styles.priorityOptionSelected,
                   ]}
                   onPress={() => setNewTask({ ...newTask, priority })}
                 >
@@ -510,7 +543,12 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
               style={styles.input}
               placeholder="預估執行時間 (毫秒)"
               value={String(newTask.estimatedDuration)}
-              onChangeText={(text) => setNewTask({ ...newTask, estimatedDuration: parseInt(text) || 5000 })}
+              onChangeText={(text) =>
+                setNewTask({
+                  ...newTask,
+                  estimatedDuration: parseInt(text) || 5000,
+                })
+              }
               keyboardType="numeric"
             />
 
@@ -525,7 +563,14 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
                 style={[styles.modalButton, styles.modalButtonPrimary]}
                 onPress={handleAddTask}
               >
-                <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>添加</Text>
+                <Text
+                  style={[
+                    styles.modalButtonText,
+                    styles.modalButtonTextPrimary,
+                  ]}
+                >
+                  添加
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -546,14 +591,20 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
             <View style={styles.dependencyContainer}>
               <Text style={styles.dependencyLabel}>從任務:</Text>
               <ScrollView style={styles.taskList}>
-                {tasks.map(task => (
+                {tasks.map((task) => (
                   <TouchableOpacity
                     key={task.id}
                     style={[
                       styles.taskOption,
-                      newDependency.fromTaskId === task.id && styles.taskOptionSelected
+                      newDependency.fromTaskId === task.id &&
+                        styles.taskOptionSelected,
                     ]}
-                    onPress={() => setNewDependency({ ...newDependency, fromTaskId: task.id })}
+                    onPress={() =>
+                      setNewDependency({
+                        ...newDependency,
+                        fromTaskId: task.id,
+                      })
+                    }
                   >
                     <Text style={styles.taskOptionText}>{task.name}</Text>
                   </TouchableOpacity>
@@ -564,14 +615,17 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
             <View style={styles.dependencyContainer}>
               <Text style={styles.dependencyLabel}>到任務:</Text>
               <ScrollView style={styles.taskList}>
-                {tasks.map(task => (
+                {tasks.map((task) => (
                   <TouchableOpacity
                     key={task.id}
                     style={[
                       styles.taskOption,
-                      newDependency.toTaskId === task.id && styles.taskOptionSelected
+                      newDependency.toTaskId === task.id &&
+                        styles.taskOptionSelected,
                     ]}
-                    onPress={() => setNewDependency({ ...newDependency, toTaskId: task.id })}
+                    onPress={() =>
+                      setNewDependency({ ...newDependency, toTaskId: task.id })
+                    }
                   >
                     <Text style={styles.taskOptionText}>{task.name}</Text>
                   </TouchableOpacity>
@@ -581,12 +635,13 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
 
             <View style={styles.dependencyTypeContainer}>
               <Text style={styles.dependencyLabel}>依賴類型:</Text>
-              {Object.values(DependencyType).map(type => (
+              {Object.values(DependencyType).map((type) => (
                 <TouchableOpacity
                   key={type}
                   style={[
                     styles.dependencyTypeOption,
-                    newDependency.type === type && styles.dependencyTypeOptionSelected
+                    newDependency.type === type &&
+                      styles.dependencyTypeOptionSelected,
                   ]}
                   onPress={() => setNewDependency({ ...newDependency, type })}
                 >
@@ -606,7 +661,14 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
                 style={[styles.modalButton, styles.modalButtonPrimary]}
                 onPress={handleAddDependency}
               >
-                <Text style={[styles.modalButtonText, styles.modalButtonTextPrimary]}>添加</Text>
+                <Text
+                  style={[
+                    styles.modalButtonText,
+                    styles.modalButtonTextPrimary,
+                  ]}
+                >
+                  添加
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -619,70 +681,70 @@ export const TaskDependencyVisualizer: React.FC<TaskDependencyVisualizerProps> =
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5'
+    backgroundColor: '#F5F5F5',
   },
   statisticsContainer: {
     backgroundColor: '#FFFFFF',
     padding: 16,
     margin: 8,
     borderRadius: 8,
-    elevation: 2
+    elevation: 2,
   },
   statisticsTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#333'
+    color: '#333',
   },
   statisticsGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12
+    marginBottom: 12,
   },
   statItem: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   statNumber: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#2196F3'
+    color: '#2196F3',
   },
   statLabel: {
     fontSize: 12,
     color: '#666',
-    marginTop: 4
+    marginTop: 4,
   },
   actionsContainer: {
     flexDirection: 'row',
     padding: 8,
-    gap: 8
+    gap: 8,
   },
   actionButton: {
     backgroundColor: '#2196F3',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 6,
-    flex: 1
+    flex: 1,
   },
   actionButtonText: {
     color: '#FFFFFF',
     textAlign: 'center',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   graphContainer: {
     flex: 1,
     backgroundColor: '#FFFFFF',
     margin: 8,
-    borderRadius: 8
+    borderRadius: 8,
   },
   graphContent: {
-    flex: 1
+    flex: 1,
   },
   graphArea: {
     minWidth: screenWidth * 2,
     minHeight: screenHeight * 1.5,
-    padding: 20
+    padding: 20,
   },
   taskNode: {
     position: 'absolute',
@@ -694,111 +756,111 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
-    shadowRadius: 4
+    shadowRadius: 4,
   },
   taskHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8
+    marginBottom: 8,
   },
   taskName: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#333',
-    flex: 1
+    flex: 1,
   },
   priorityBadge: {
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
-    marginLeft: 4
+    marginLeft: 4,
   },
   priorityText: {
     fontSize: 10,
     color: '#FFFFFF',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   taskStatus: {
     fontSize: 12,
     color: '#666',
-    marginBottom: 4
+    marginBottom: 4,
   },
   taskDescription: {
     fontSize: 11,
     color: '#888',
-    marginBottom: 8
+    marginBottom: 8,
   },
   taskFooter: {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   taskDuration: {
     fontSize: 10,
-    color: '#666'
+    color: '#666',
   },
   taskDependencies: {
     fontSize: 10,
-    color: '#666'
+    color: '#666',
   },
   dependencyEdge: {
     position: 'absolute',
     height: 2,
-    backgroundColor: 'transparent'
+    backgroundColor: 'transparent',
   },
   edgeLabel: {
     fontSize: 10,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginTop: -8
+    marginTop: -8,
   },
   selectedTaskActions: {
     backgroundColor: '#FFFFFF',
     padding: 16,
     margin: 8,
     borderRadius: 8,
-    elevation: 2
+    elevation: 2,
   },
   selectedTaskTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#333'
+    color: '#333',
   },
   actionButtons: {
     flexDirection: 'row',
-    gap: 8
+    gap: 8,
   },
   smallActionButton: {
     backgroundColor: '#E0E0E0',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 4,
-    flex: 1
+    flex: 1,
   },
   smallActionButtonText: {
     fontSize: 12,
     color: '#333',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   modalContent: {
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 20,
     width: '90%',
-    maxHeight: '80%'
+    maxHeight: '80%',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 16,
-    color: '#333'
+    color: '#333',
   },
   input: {
     borderWidth: 1,
@@ -806,96 +868,96 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 12,
     marginBottom: 12,
-    fontSize: 16
+    fontSize: 16,
   },
   priorityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   priorityLabel: {
     fontSize: 16,
     marginRight: 12,
-    color: '#333'
+    color: '#333',
   },
   priorityOption: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 4,
     marginRight: 8,
-    backgroundColor: '#E0E0E0'
+    backgroundColor: '#E0E0E0',
   },
   priorityOptionSelected: {
-    backgroundColor: '#2196F3'
+    backgroundColor: '#2196F3',
   },
   priorityOptionText: {
     fontSize: 12,
-    color: '#333'
+    color: '#333',
   },
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 12,
-    marginTop: 16
+    marginTop: 16,
   },
   modalButton: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 6,
-    backgroundColor: '#E0E0E0'
+    backgroundColor: '#E0E0E0',
   },
   modalButtonPrimary: {
-    backgroundColor: '#2196F3'
+    backgroundColor: '#2196F3',
   },
   modalButtonText: {
     fontSize: 16,
-    color: '#333'
+    color: '#333',
   },
   modalButtonTextPrimary: {
-    color: '#FFFFFF'
+    color: '#FFFFFF',
   },
   dependencyContainer: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   dependencyLabel: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
-    color: '#333'
+    color: '#333',
   },
   taskList: {
-    maxHeight: 120
+    maxHeight: 120,
   },
   taskOption: {
     padding: 12,
     borderWidth: 1,
     borderColor: '#E0E0E0',
     borderRadius: 6,
-    marginBottom: 4
+    marginBottom: 4,
   },
   taskOptionSelected: {
     backgroundColor: '#E3F2FD',
-    borderColor: '#2196F3'
+    borderColor: '#2196F3',
   },
   taskOptionText: {
     fontSize: 14,
-    color: '#333'
+    color: '#333',
   },
   dependencyTypeContainer: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   dependencyTypeOption: {
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 4,
     marginBottom: 4,
-    backgroundColor: '#E0E0E0'
+    backgroundColor: '#E0E0E0',
   },
   dependencyTypeOptionSelected: {
-    backgroundColor: '#2196F3'
+    backgroundColor: '#2196F3',
   },
   dependencyTypeOptionText: {
     fontSize: 14,
-    color: '#333'
-  }
+    color: '#333',
+  },
 });

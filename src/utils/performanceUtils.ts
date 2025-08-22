@@ -69,7 +69,9 @@ export function asyncDebounce<T extends (...args: any[]) => Promise<any>>(
   let timeout: NodeJS.Timeout | null = null;
   let promise: Promise<ReturnType<T>> | null = null;
 
-  return function executedFunction(...args: Parameters<T>): Promise<ReturnType<T>> {
+  return function executedFunction(
+    ...args: Parameters<T>
+  ): Promise<ReturnType<T>> {
     if (timeout) {
       clearTimeout(timeout);
     }
@@ -102,7 +104,9 @@ export function asyncThrottle<T extends (...args: any[]) => Promise<any>>(
   let inThrottle: boolean = false;
   let lastPromise: Promise<ReturnType<T>> | null = null;
 
-  return function executedFunction(...args: Parameters<T>): Promise<ReturnType<T>> {
+  return function executedFunction(
+    ...args: Parameters<T>
+  ): Promise<ReturnType<T>> {
     if (inThrottle && lastPromise) {
       return lastPromise;
     }
@@ -140,7 +144,7 @@ export function batchProcess<T, R>(
 
       try {
         const batchResults = await Promise.all(
-          batch.map(item => processor(item))
+          batch.map((item) => processor(item))
         );
         results.push(...batchResults);
         currentIndex += batchSize;
@@ -160,10 +164,7 @@ export function batchProcess<T, R>(
 }
 
 // 性能測量函數
-export function measurePerformance<T>(
-  name: string,
-  fn: () => T
-): T {
+export function measurePerformance<T>(name: string, fn: () => T): T {
   const start = performance.now();
   const result = fn();
   const end = performance.now();
@@ -197,7 +198,10 @@ export function isInViewport(element: Element): boolean {
 }
 
 // 預加載資源
-export function preloadResource(url: string, type: 'image' | 'script' | 'style'): void {
+export function preloadResource(
+  url: string,
+  type: 'image' | 'script' | 'style'
+): void {
   const link = document.createElement('link');
   link.rel = 'preload';
   link.href = url;
@@ -229,7 +233,9 @@ export function getMemoryUsage(): number {
 }
 
 // 檢查記憶體使用是否過高
-export function isMemoryUsageHigh(threshold: number = 100 * 1024 * 1024): boolean {
+export function isMemoryUsageHigh(
+  threshold: number = 100 * 1024 * 1024
+): boolean {
   return getMemoryUsage() > threshold;
 }
 
@@ -317,6 +323,15 @@ export class PerformanceMonitor {
 export const performanceMonitor = new PerformanceMonitor();
 
 // 導出便捷函數
-export const debounceSearch = debounce((callback: () => void) => callback(), 300);
-export const throttleScroll = throttle((callback: () => void) => callback(), 16);
-export const throttleResize = throttle((callback: () => void) => callback(), 100);
+export const debounceSearch = debounce(
+  (callback: () => void) => callback(),
+  300
+);
+export const throttleScroll = throttle(
+  (callback: () => void) => callback(),
+  16
+);
+export const throttleResize = throttle(
+  (callback: () => void) => callback(),
+  100
+);

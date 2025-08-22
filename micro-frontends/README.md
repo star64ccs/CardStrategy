@@ -1,9 +1,11 @@
 # CardStrategy 微前端架構
 
 ## 📋 概述
+
 CardStrategy 微前端架構是一個基於 Webpack Module Federation 的現代化前端架構，支持多個獨立模組的開發、部署和集成。
 
 ### 核心組件
+
 1. **Shell 應用** - 主應用容器，負責路由和模組協調
 2. **卡片管理模組** - 卡片 CRUD 操作和搜索功能
 3. **市場分析模組** - 價格分析和市場趨勢
@@ -15,11 +17,13 @@ CardStrategy 微前端架構是一個基於 Webpack Module Federation 的現代�
 ## 🚀 快速開始
 
 ### 環境要求
+
 - Node.js >= 18.0.0
 - npm >= 8.0.0
 - 現代瀏覽器支持
 
 ### 安裝和設置
+
 ```bash
 # 克隆項目
 git clone <repository-url>
@@ -33,6 +37,7 @@ npm run dev
 ```
 
 ### 開發命令
+
 ```bash
 # 啟動所有模組的開發服務器
 npm run dev
@@ -48,6 +53,7 @@ npm run lint:fix
 ## 🧪 測試系統
 
 ### 測試類型
+
 1. **單元測試** - 使用 Jest 和 React Testing Library
 2. **集成測試** - 模組間通信和狀態管理測試
 3. **端到端測試** - 使用 Playwright 進行完整用戶流程測試
@@ -58,6 +64,7 @@ npm run lint:fix
 ### 性能測試詳解
 
 #### 性能基準測試 (`performance-benchmark.test.ts`)
+
 - **頁面加載性能**: DOM 內容加載、首次內容繪製、最大內容繪製等
 - **模組加載性能**: 各微前端模組的動態加載時間
 - **API 響應性能**: 後端 API 的響應時間和錯誤率
@@ -65,6 +72,7 @@ npm run lint:fix
 - **渲染性能**: 幀率、丟幀檢測、動畫流暢度
 
 #### 負載測試 (`load-testing.test.ts`)
+
 - **輕度負載測試**: 10個並發用戶，30秒持續時間
 - **中度負載測試**: 50個並發用戶，60秒持續時間
 - **重度負載測試**: 100個並發用戶，90秒持續時間
@@ -73,6 +81,7 @@ npm run lint:fix
 - **數據庫查詢性能測試**: 各種查詢類型的性能評估
 
 #### 性能優化測試 (`performance-optimization.test.ts`)
+
 - **代碼分割和模組化**: JavaScript 包大小、chunk 數量、動態加載
 - **圖片優化和懶加載**: 圖片大小、格式、懶加載功能
 - **緩存策略**: Service Worker、緩存命中率、離線功能
@@ -83,6 +92,7 @@ npm run lint:fix
 ### 安全測試詳解
 
 #### 基本安全測試 (`security-testing.test.ts`)
+
 - **XSS 漏洞檢測**: 跨站腳本攻擊防護測試
 - **SQL 注入檢測**: 數據庫注入攻擊防護測試
 - **CSRF 漏洞檢測**: 跨站請求偽造防護測試
@@ -93,6 +103,7 @@ npm run lint:fix
 - **HTTPS/SSL 測試**: 傳輸層安全性測試
 
 #### 高級安全測試 (`advanced-security-testing.test.ts`)
+
 - **滲透測試**: 目錄遍歷、文件上傳、命令注入等
 - **加密測試**: 數據加密、密鑰管理、證書驗證
 - **安全標頭測試**: CSP、HSTS、X-Frame-Options 等
@@ -105,6 +116,7 @@ npm run lint:fix
 ### 性能監控工具
 
 #### PerformanceMonitor 類
+
 ```typescript
 import { PerformanceMonitor } from './tests/performance/performance-monitor';
 
@@ -112,7 +124,7 @@ const monitor = new PerformanceMonitor(page, {
   enableRealTimeMonitoring: true,
   collectInterval: 5000,
   maxDataPoints: 100,
-  enableAlerts: true
+  enableAlerts: true,
 });
 
 await monitor.startMonitoring();
@@ -121,6 +133,7 @@ const report = monitor.getPerformanceReport();
 ```
 
 #### 監控指標
+
 - **頁面加載指標**: DOM 內容加載、首次內容繪製、最大內容繪製
 - **資源加載指標**: 總資源數量、平均加載時間、最慢資源
 - **內存使用指標**: JavaScript 堆內存、內存增長趨勢
@@ -129,7 +142,8 @@ const report = monitor.getPerformanceReport();
 - **用戶交互指標**: 交互次數、平均響應時間
 
 ### 運行性能測試
-```bash
+
+````bash
 # 運行所有性能測試
 npm run test:performance
 
@@ -169,8 +183,9 @@ npm run security:full
 
 # 僅生成安全報告
 npm run security:report
-```
-```
+````
+
+````
 
 ### 性能基準
 - **頁面加載**: DOM 內容加載 < 1.5秒，最大內容繪製 < 2秒
@@ -235,22 +250,25 @@ npm run test:performance:report
 
 # 查看報告文件
 open test-results/performance/performance-report.html
-```
+````
 
 ## 🔒 安全報告
 
 ### 報告格式
+
 - **JSON 報告**: 詳細的安全測試數據和違規記錄
 - **HTML 報告**: 可視化的安全報告界面
 - **Markdown 報告**: 便於版本控制的文本報告
 
 ### 報告內容
+
 - **安全評分**: 0-100 的綜合安全分數和等級 (A-F)
 - **違規統計**: 按嚴重程度和類型分類的違規數量
 - **漏洞詳情**: 具體的安全漏洞描述和技術細節
 - **安全建議**: 基於測試結果的修復建議和最佳實踐
 
 ### 安全等級標準
+
 - **A級 (90-100分)**: 優秀 - 安全性極高
 - **B級 (80-89分)**: 良好 - 安全性高
 - **C級 (70-79分)**: 一般 - 安全性中等
@@ -258,6 +276,7 @@ open test-results/performance/performance-report.html
 - **F級 (0-59分)**: 危險 - 存在嚴重安全漏洞
 
 ### 生成安全報告
+
 ```bash
 # 生成完整安全報告
 npm run test:security:report
@@ -271,6 +290,7 @@ open test-results/security-report.html
 ### 可訪問性測試詳解
 
 #### 基本可訪問性測試 (`accessibility-testing.test.ts`)
+
 - **頁面標題測試**: 檢查頁面是否有描述性標題
 - **圖片替代文本測試**: 驗證所有圖片是否有適當的 alt 屬性
 - **表單標籤測試**: 確保所有表單控件都有正確的標籤
@@ -281,6 +301,7 @@ open test-results/security-report.html
 - **語言屬性測試**: 驗證頁面語言屬性的設置
 
 #### 高級可訪問性測試 (`advanced-accessibility-testing.test.ts`)
+
 - **屏幕閱讀器導航測試**: 模擬屏幕閱讀器的使用體驗
 - **表單可訪問性測試**: 驗證表單的完整可訪問性
 - **動態內容可訪問性測試**: 檢查動態加載內容的可訪問性
@@ -291,6 +312,7 @@ open test-results/security-report.html
 - **語義化標記測試**: 檢查 HTML 語義化標記的使用
 
 ### 可訪問性基準
+
 - **WCAG 2.1 AA 合規性**: 目標 > 95% 合規率
 - **可訪問性評分**: 目標 > 90分 (A級)
 - **違規數量**: 嚴重違規 = 0，高風險違規 ≤ 3
@@ -299,6 +321,7 @@ open test-results/security-report.html
 - **屏幕閱讀器支持**: 完整的屏幕閱讀器支持
 
 ### 運行可訪問性測試
+
 ```bash
 # 運行所有可訪問性測試
 npm run test:accessibility
@@ -323,6 +346,7 @@ npm run accessibility:report
 ```
 
 ### 可訪問性等級標準
+
 - **A級 (90-100分)**: 優秀 - 可訪問性極高
 - **B級 (80-89分)**: 良好 - 可訪問性高
 - **C級 (70-79分)**: 一般 - 可訪問性中等
@@ -330,6 +354,7 @@ npm run accessibility:report
 - **F級 (0-59分)**: 危險 - 存在嚴重可訪問性問題
 
 ### 生成可訪問性報告
+
 ```bash
 # 生成完整可訪問性報告
 npm run test:accessibility:report
@@ -341,18 +366,21 @@ open test-results/accessibility-report.html
 ## 🛠️ 開發指南
 
 ### 添加新模組
+
 1. 在 `micro-frontends/` 目錄下創建新模組目錄
 2. 配置 `webpack.config.js` 和 `package.json`
 3. 在 Shell 應用中註冊新模組
 4. 添加相應的測試用例
 
 ### 性能測試最佳實踐
+
 1. **基準測試**: 在每次重要更改後運行基準測試
 2. **負載測試**: 在發布前進行負載測試
 3. **監控**: 在生產環境中持續監控性能指標
 4. **優化**: 根據測試結果進行針對性優化
 
 ### 安全測試最佳實踐
+
 1. **定期測試**: 在每次發布前進行安全測試
 2. **自動化**: 將安全測試集成到 CI/CD 流程
 3. **漏洞修復**: 優先修復嚴重和高風險漏洞
@@ -360,6 +388,7 @@ open test-results/accessibility-report.html
 5. **安全審計**: 定期進行第三方安全審計
 
 ### 可訪問性測試最佳實踐
+
 1. **設計階段**: 在設計階段就考慮可訪問性需求
 2. **開發階段**: 使用語義化 HTML 和 ARIA 屬性
 3. **測試階段**: 定期進行可訪問性測試
@@ -368,6 +397,7 @@ open test-results/accessibility-report.html
 6. **培訓**: 定期進行可訪問性開發培訓
 
 ### 調試技巧
+
 - 使用 Chrome DevTools 的 Performance 面板
 - 監控 Network 面板的資源加載
 - 使用 Memory 面板檢測內存洩漏
@@ -376,18 +406,21 @@ open test-results/accessibility-report.html
 ## 📝 貢獻指南
 
 ### 代碼規範
+
 - 使用 TypeScript 進行類型安全開發
 - 遵循 ESLint 規則
 - 編寫單元測試和集成測試
 - 保持代碼覆蓋率 > 80%
 
 ### 性能要求
+
 - 新功能必須通過性能測試
 - 不得引入性能回歸
 - 遵循性能基準要求
 - 提供性能測試報告
 
 ### 安全要求
+
 - 新功能必須通過安全測試
 - 不得引入安全漏洞
 - 遵循安全基準要求
@@ -395,6 +428,7 @@ open test-results/accessibility-report.html
 - 實施安全最佳實踐
 
 ### 可訪問性要求
+
 - 新功能必須通過可訪問性測試
 - 不得引入可訪問性問題
 - 遵循 WCAG 2.1 AA 標準
@@ -405,6 +439,7 @@ open test-results/accessibility-report.html
 ## 🚀 部署
 
 ### 生產環境
+
 ```bash
 # 構建生產版本
 npm run build
@@ -417,6 +452,7 @@ npm run deploy
 ```
 
 ### 性能監控
+
 - 使用 New Relic 或 Sentry 進行生產環境監控
 - 設置性能警報和自動化報告
 - 定期進行性能審計和優化
@@ -424,28 +460,33 @@ npm run deploy
 ## 📞 支持
 
 ### 文檔
+
 - [開發指南](./docs/developer-guide/)
 - [用戶手冊](./docs/user-guide/)
 - [API 文檔](./docs/api/)
 
 ### 問題反饋
+
 - 創建 GitHub Issue
 - 提供詳細的錯誤信息和重現步驟
 - 附上性能測試報告（如果適用）
 
 ### 性能問題
+
 - 運行 `npm run test:performance` 收集數據
 - 生成性能報告並分析結果
 - 根據建議進行優化
 - 重新測試驗證改進效果
 
 ### 安全問題
+
 - 運行 `npm run test:security` 收集數據
 - 生成安全報告並分析結果
 - 根據建議修復漏洞
 - 重新測試驗證修復效果
 
 ### 可訪問性問題
+
 - 運行 `npm run test:accessibility` 收集數據
 - 生成可訪問性報告並分析結果
 - 根據建議修復可訪問性問題

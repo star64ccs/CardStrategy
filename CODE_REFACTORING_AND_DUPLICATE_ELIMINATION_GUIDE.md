@@ -9,18 +9,21 @@
 ## 🎯 重構目標
 
 ### 1. 消除重複代碼
+
 - 統一 API 調用模式
 - 標準化錯誤處理邏輯
 - 合併相似的驗證邏輯
 - 提取公共工具函數
 
 ### 2. 提高代碼質量
+
 - 改善代碼可讀性
 - 增強可維護性
 - 提升性能
 - 減少技術債務
 
 ### 3. 優化架構設計
+
 - 實現更好的關注點分離
 - 建立清晰的依賴關係
 - 提高代碼復用性
@@ -33,7 +36,9 @@
 ### 1. API 服務重複模式
 
 #### 問題描述
+
 所有服務類都有相似的結構：
+
 ```typescript
 // 重複的模式
 async methodName(params): Promise<ApiResponse<T>> {
@@ -43,16 +48,16 @@ async methodName(params): Promise<ApiResponse<T>> {
     if (!validationResult.isValid) {
       throw new Error(validationResult.errorMessage);
     }
-    
+
     // 2. API 調用
     const response = await apiService.post(endpoint, data);
-    
+
     // 3. 響應驗證
     const responseValidation = validateApiResponse(schema, response.data);
     if (!responseValidation.isValid) {
       throw new Error(responseValidation.errorMessage);
     }
-    
+
     // 4. 返回結果
     return {
       ...response,
@@ -66,45 +71,54 @@ async methodName(params): Promise<ApiResponse<T>> {
 ```
 
 #### 解決方案
+
 創建統一的 API 服務基類和裝飾器。
 
 ### 2. 後端路由重複模式
 
 #### 問題描述
+
 所有路由都有相似的錯誤處理：
+
 ```javascript
 // 重複的模式
 router.method('/', auth, validation, async (req, res) => {
   try {
     // 業務邏輯
     const result = await service.method(params);
-    
+
     res.status(200).json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
     logger.error('操作失敗:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '操作失敗'
+      message: error.message || '操作失敗',
     });
   }
 });
 ```
 
 #### 解決方案
+
 創建統一的錯誤處理中間件和路由裝飾器。
 
 ### 3. 驗證邏輯重複
 
 #### 問題描述
+
 相似的驗證邏輯在多個地方重複：
+
 ```typescript
 // 重複的 UUID 驗證
-const validationResult = validateInput(z.object({ 
-  id: z.string().uuid('無效的 ID') 
-}), { id });
+const validationResult = validateInput(
+  z.object({
+    id: z.string().uuid('無效的 ID'),
+  }),
+  { id }
+);
 
 // 重複的錯誤處理
 if (!validationResult.isValid) {
@@ -113,12 +127,15 @@ if (!validationResult.isValid) {
 ```
 
 #### 解決方案
+
 創建統一的驗證裝飾器和工具函數。
 
 ### 4. 日誌記錄重複
 
 #### 問題描述
+
 相似的日誌記錄模式：
+
 ```typescript
 // 重複的錯誤日誌
 logger.error('❌ Operation error:', { error: error.message });
@@ -128,6 +145,7 @@ logger.info('✅ Operation successful');
 ```
 
 #### 解決方案
+
 創建統一的日誌裝飾器和工具函數。
 
 ---
@@ -137,6 +155,7 @@ logger.info('✅ Operation successful');
 ### 1. 前端重構
 
 #### 1.1 創建 API 服務基類
+
 ```typescript
 // src/services/base/BaseApiService.ts
 export abstract class BaseApiService {
@@ -152,7 +171,9 @@ export abstract class BaseApiService {
       if (inputSchema && inputData) {
         const validationResult = validateInput(inputSchema, inputData);
         if (!validationResult.isValid) {
-          throw new Error(validationResult.errorMessage || `${operation} 參數驗證失敗`);
+          throw new Error(
+            validationResult.errorMessage || `${operation} 參數驗證失敗`
+          );
         }
       }
 
@@ -161,13 +182,18 @@ export abstract class BaseApiService {
 
       // 響應驗證
       if (responseSchema) {
-        const responseValidation = validateApiResponse(responseSchema, response.data);
+        const responseValidation = validateApiResponse(
+          responseSchema,
+          response.data
+        );
         if (!responseValidation.isValid) {
-          throw new Error(responseValidation.errorMessage || `${operation} 響應數據驗證失敗`);
+          throw new Error(
+            responseValidation.errorMessage || `${operation} 響應數據驗證失敗`
+          );
         }
         return {
           ...response,
-          data: responseValidation.data!
+          data: responseValidation.data!,
         };
       }
 
@@ -186,7 +212,7 @@ export abstract class BaseApiService {
   ) {
     return async (data?: P): Promise<ApiResponse<T>> => {
       const operation = `${method} ${endpoint}`;
-      
+
       const apiCall = () => {
         switch (method) {
           case 'GET':
@@ -202,13 +228,20 @@ export abstract class BaseApiService {
         }
       };
 
-      return this.executeApiCall(operation, apiCall, inputSchema, responseSchema, data);
+      return this.executeApiCall(
+        operation,
+        apiCall,
+        inputSchema,
+        responseSchema,
+        data
+      );
     };
   }
 }
 ```
 
 #### 1.2 創建服務裝飾器
+
 ```typescript
 // src/decorators/serviceDecorators.ts
 export function ApiMethod<T, P = any>(
@@ -217,18 +250,24 @@ export function ApiMethod<T, P = any>(
   inputSchema?: ZodSchema<P>,
   responseSchema?: ZodSchema<T>
 ) {
-  return function (target: any, propertyName: string, descriptor: PropertyDescriptor) {
+  return function (
+    target: any,
+    propertyName: string,
+    descriptor: PropertyDescriptor
+  ) {
     const originalMethod = descriptor.value;
-    
+
     descriptor.value = async function (...args: any[]) {
       const operation = `${method} ${endpoint}`;
-      
+
       try {
         // 輸入驗證
         if (inputSchema && args.length > 0) {
           const validationResult = validateInput(inputSchema, args[0]);
           if (!validationResult.isValid) {
-            throw new Error(validationResult.errorMessage || `${operation} 參數驗證失敗`);
+            throw new Error(
+              validationResult.errorMessage || `${operation} 參數驗證失敗`
+            );
           }
         }
 
@@ -237,13 +276,18 @@ export function ApiMethod<T, P = any>(
 
         // 響應驗證
         if (responseSchema && result?.data) {
-          const responseValidation = validateApiResponse(responseSchema, result.data);
+          const responseValidation = validateApiResponse(
+            responseSchema,
+            result.data
+          );
           if (!responseValidation.isValid) {
-            throw new Error(responseValidation.errorMessage || `${operation} 響應數據驗證失敗`);
+            throw new Error(
+              responseValidation.errorMessage || `${operation} 響應數據驗證失敗`
+            );
           }
           return {
             ...result,
-            data: responseValidation.data!
+            data: responseValidation.data!,
           };
         }
 
@@ -258,6 +302,7 @@ export function ApiMethod<T, P = any>(
 ```
 
 #### 1.3 重構現有服務
+
 ```typescript
 // src/services/aiService.ts (重構後)
 export class AIService extends BaseApiService {
@@ -281,7 +326,7 @@ export class AIService extends BaseApiService {
     'POST',
     z.object({
       cardId: z.string().uuid('無效的卡牌 ID'),
-      timeframe: z.enum(['1d', '7d', '30d', '90d'])
+      timeframe: z.enum(['1d', '7d', '30d', '90d']),
     }),
     AIPredictionSchema
   )
@@ -289,12 +334,15 @@ export class AIService extends BaseApiService {
     cardId: string,
     timeframe: AIPrediction['timeframe']
   ): Promise<ApiResponse<AIPrediction>> {
-    return this.createApiCall<AIPrediction, { cardId: string; timeframe: string }>(
+    return this.createApiCall<
+      AIPrediction,
+      { cardId: string; timeframe: string }
+    >(
       API_ENDPOINTS.AI.PREDICTION,
       'POST',
       z.object({
         cardId: z.string().uuid('無效的卡牌 ID'),
-        timeframe: z.enum(['1d', '7d', '30d', '90d'])
+        timeframe: z.enum(['1d', '7d', '30d', '90d']),
       }),
       AIPredictionSchema
     )({ cardId, timeframe });
@@ -305,6 +353,7 @@ export class AIService extends BaseApiService {
 ### 2. 後端重構
 
 #### 2.1 創建統一錯誤處理中間件
+
 ```javascript
 // backend/src/middleware/errorHandler.js (增強版)
 const asyncHandler = (fn) => {
@@ -318,16 +367,20 @@ const createRouteHandler = (handler, options = {}) => {
     auth = true,
     validation = null,
     permissions = [],
-    logOperation = true
+    logOperation = true,
   } = options;
 
   return asyncHandler(async (req, res, next) => {
     try {
       // 權限檢查
-      if (auth && (!req.user || (permissions.length > 0 && !permissions.includes(req.user.role)))) {
+      if (
+        auth &&
+        (!req.user ||
+          (permissions.length > 0 && !permissions.includes(req.user.role)))
+      ) {
         return res.status(403).json({
           success: false,
-          message: '權限不足'
+          message: '權限不足',
         });
       }
 
@@ -338,7 +391,7 @@ const createRouteHandler = (handler, options = {}) => {
           return res.status(400).json({
             success: false,
             message: '驗證失敗',
-            errors: errors.array()
+            errors: errors.array(),
           });
         }
       }
@@ -348,7 +401,7 @@ const createRouteHandler = (handler, options = {}) => {
         logger.info(`${req.method} ${req.path}`, {
           userId: req.user?.id,
           ip: req.ip,
-          userAgent: req.get('User-Agent')
+          userAgent: req.get('User-Agent'),
         });
       }
 
@@ -359,7 +412,7 @@ const createRouteHandler = (handler, options = {}) => {
       if (result !== undefined) {
         res.json({
           success: true,
-          data: result
+          data: result,
         });
       }
     } catch (error) {
@@ -370,66 +423,80 @@ const createRouteHandler = (handler, options = {}) => {
 ```
 
 #### 2.2 重構路由
+
 ```javascript
 // backend/src/routes/alerts.js (重構後)
-router.get('/', createRouteHandler(
-  async (req, res) => {
-    const { limit = 50, type, severity } = req.query;
-    let alerts = alertService.getCurrentAlerts();
+router.get(
+  '/',
+  createRouteHandler(
+    async (req, res) => {
+      const { limit = 50, type, severity } = req.query;
+      let alerts = alertService.getCurrentAlerts();
 
-    if (type) alerts = alerts.filter(alert => alert.type === type);
-    if (severity) alerts = alerts.filter(alert => alert.severity === severity);
-    
-    return alerts.slice(-parseInt(limit));
-  },
-  {
-    auth: true,
-    permissions: ['user', 'admin']
-  }
-));
+      if (type) alerts = alerts.filter((alert) => alert.type === type);
+      if (severity)
+        alerts = alerts.filter((alert) => alert.severity === severity);
 
-router.post('/', createRouteHandler(
-  async (req, res) => {
-    if (req.user.role !== 'admin') {
-      throw new Error('只有管理員可以創建警報');
+      return alerts.slice(-parseInt(limit));
+    },
+    {
+      auth: true,
+      permissions: ['user', 'admin'],
     }
+  )
+);
 
-    const alertData = {
-      ...req.body,
-      createdBy: req.user.id
-    };
+router.post(
+  '/',
+  createRouteHandler(
+    async (req, res) => {
+      if (req.user.role !== 'admin') {
+        throw new Error('只有管理員可以創建警報');
+      }
 
-    return await alertService.createAlert(alertData);
-  },
-  {
-    auth: true,
-    validation: validateAlertCreation,
-    permissions: ['admin']
-  }
-));
+      const alertData = {
+        ...req.body,
+        createdBy: req.user.id,
+      };
+
+      return await alertService.createAlert(alertData);
+    },
+    {
+      auth: true,
+      validation: validateAlertCreation,
+      permissions: ['admin'],
+    }
+  )
+);
 ```
 
 ### 3. 工具函數重構
 
 #### 3.1 創建統一驗證工具
+
 ```typescript
 // src/utils/validationUtils.ts
 export class ValidationUtils {
   static readonly schemas = {
     uuid: z.string().uuid('無效的 UUID'),
     email: z.string().email('無效的電子郵件'),
-    password: z.string().min(8, '密碼至少8個字元').max(128, '密碼不能超過128個字元'),
+    password: z
+      .string()
+      .min(8, '密碼至少8個字元')
+      .max(128, '密碼不能超過128個字元'),
     cardId: z.string().uuid('無效的卡牌 ID'),
     collectionId: z.string().uuid('無效的收藏 ID'),
     userId: z.string().uuid('無效的用戶 ID'),
     positiveNumber: z.number().positive('必須是正數'),
     percentage: z.number().min(0).max(100, '百分比必須在0-100之間'),
-    dateRange: z.object({
-      startDate: z.string().datetime(),
-      endDate: z.string().datetime()
-    }).refine(data => new Date(data.startDate) <= new Date(data.endDate), {
-      message: '開始日期不能晚於結束日期'
-    })
+    dateRange: z
+      .object({
+        startDate: z.string().datetime(),
+        endDate: z.string().datetime(),
+      })
+      .refine((data) => new Date(data.startDate) <= new Date(data.endDate), {
+        message: '開始日期不能晚於結束日期',
+      }),
   };
 
   static validateUUID(id: string, fieldName: string = 'ID'): void {
@@ -463,13 +530,14 @@ export class ValidationUtils {
 ```
 
 #### 3.2 創建統一日誌工具
+
 ```typescript
 // src/utils/loggingUtils.ts
 export class LoggingUtils {
   static logApiCall(operation: string, params?: any, result?: any): void {
     logger.info(`✅ ${operation} 成功`, {
       params: this.sanitizeForLogging(params),
-      result: this.sanitizeForLogging(result)
+      result: this.sanitizeForLogging(result),
     });
   }
 
@@ -477,13 +545,13 @@ export class LoggingUtils {
     logger.error(`❌ ${operation} 失敗`, {
       error: error.message,
       params: this.sanitizeForLogging(params),
-      stack: error.stack
+      stack: error.stack,
     });
   }
 
   static logValidationError(operation: string, errors: any): void {
     logger.warn(`⚠️ ${operation} 驗證失敗`, {
-      errors: this.sanitizeForLogging(errors)
+      errors: this.sanitizeForLogging(errors),
     });
   }
 
@@ -493,16 +561,16 @@ export class LoggingUtils {
 
   private static sanitizeForLogging(data: any): any {
     if (!data) return data;
-    
+
     const sensitiveFields = ['password', 'token', 'secret', 'authorization'];
     const sanitized = { ...data };
-    
-    sensitiveFields.forEach(field => {
+
+    sensitiveFields.forEach((field) => {
       if (sanitized[field]) {
         sanitized[field] = '[REDACTED]';
       }
     });
-    
+
     return sanitized;
   }
 }
@@ -511,6 +579,7 @@ export class LoggingUtils {
 ### 4. 組件重構
 
 #### 4.1 創建高階組件
+
 ```typescript
 // src/components/hoc/withErrorBoundary.tsx
 export function withErrorBoundary<P extends object>(
@@ -540,12 +609,12 @@ export function withLoading<P extends object>(
 ) {
   const WrappedComponent = (props: P) => {
     const isLoading = loadingProps?.loadingCondition?.(props) ?? false;
-    
+
     if (isLoading) {
       const LoadingComponent = loadingProps?.loadingComponent || DefaultLoadingComponent;
       return <LoadingComponent />;
     }
-    
+
     return <Component {...props} />;
   };
 
@@ -555,6 +624,7 @@ export function withLoading<P extends object>(
 ```
 
 #### 4.2 創建自定義 Hook
+
 ```typescript
 // src/hooks/useApiCall.ts
 export function useApiCall<T, P = any>(
@@ -570,24 +640,27 @@ export function useApiCall<T, P = any>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const execute = useCallback(async (params: P) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await apiCall(params);
-      setData(response.data);
-      options.onSuccess?.(response.data);
-      return response;
-    } catch (err) {
-      const error = err as Error;
-      setError(error);
-      options.onError?.(error);
-      throw error;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiCall, options.onSuccess, options.onError]);
+  const execute = useCallback(
+    async (params: P) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await apiCall(params);
+        setData(response.data);
+        options.onSuccess?.(response.data);
+        return response;
+      } catch (err) {
+        const error = err as Error;
+        setError(error);
+        options.onError?.(error);
+        throw error;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [apiCall, options.onSuccess, options.onError]
+  );
 
   useEffect(() => {
     if (options.immediate && options.initialParams) {
@@ -603,7 +676,7 @@ export function useApiCall<T, P = any>(
     reset: () => {
       setData(null);
       setError(null);
-    }
+    },
   };
 }
 ```
@@ -613,21 +686,25 @@ export function useApiCall<T, P = any>(
 ## 📊 重構效果評估
 
 ### 1. 代碼行數減少
+
 - **API 服務類**: 平均減少 60-70% 的重複代碼
 - **路由處理**: 平均減少 50-60% 的重複代碼
 - **驗證邏輯**: 平均減少 80-90% 的重複代碼
 
 ### 2. 維護性提升
+
 - **統一錯誤處理**: 錯誤處理邏輯集中管理
 - **標準化響應**: API 響應格式統一
 - **可配置性**: 通過配置控制行為
 
 ### 3. 性能優化
+
 - **減少重複計算**: 驗證邏輯復用
 - **內存優化**: 減少重複對象創建
 - **打包優化**: 更好的 Tree Shaking
 
 ### 4. 開發效率
+
 - **快速開發**: 使用裝飾器和基類
 - **錯誤減少**: 統一的錯誤處理
 - **測試簡化**: 更容易進行單元測試
@@ -637,26 +714,31 @@ export function useApiCall<T, P = any>(
 ## 🚀 實施步驟
 
 ### 階段 1: 基礎設施建設 (1-2 天)
+
 1. 創建基類和裝飾器
 2. 建立統一工具函數
 3. 設置錯誤處理中間件
 
 ### 階段 2: 服務層重構 (2-3 天)
+
 1. 重構 API 服務類
 2. 應用裝飾器模式
 3. 統一錯誤處理
 
 ### 階段 3: 路由層重構 (1-2 天)
+
 1. 重構後端路由
 2. 應用統一錯誤處理
 3. 標準化響應格式
 
 ### 階段 4: 組件層重構 (2-3 天)
+
 1. 創建高階組件
 2. 重構現有組件
 3. 應用自定義 Hook
 
 ### 階段 5: 測試和優化 (1-2 天)
+
 1. 單元測試
 2. 集成測試
 3. 性能測試
@@ -667,21 +749,25 @@ export function useApiCall<T, P = any>(
 ## 📝 最佳實踐
 
 ### 1. 漸進式重構
+
 - 不要一次性重構所有代碼
 - 按模塊逐步進行
 - 保持向後兼容性
 
 ### 2. 測試驅動
+
 - 重構前編寫測試
 - 確保功能不變
 - 持續集成測試
 
 ### 3. 文檔更新
+
 - 更新 API 文檔
 - 編寫使用指南
 - 記錄重構決策
 
 ### 4. 代碼審查
+
 - 團隊代碼審查
 - 確保代碼質量
 - 分享最佳實踐
@@ -691,6 +777,7 @@ export function useApiCall<T, P = any>(
 ## 🔧 工具和腳本
 
 ### 1. 重構腳本
+
 ```bash
 # 自動化重構腳本
 npm run refactor:services
@@ -699,6 +786,7 @@ npm run refactor:components
 ```
 
 ### 2. 代碼分析工具
+
 ```bash
 # 檢測重複代碼
 npm run analyze:duplicates
@@ -707,6 +795,7 @@ npm run analyze:coverage
 ```
 
 ### 3. 性能監控
+
 ```bash
 # 性能測試
 npm run test:performance
@@ -719,18 +808,21 @@ npm run test:coverage
 ## 📈 監控和維護
 
 ### 1. 代碼質量指標
+
 - 重複代碼比例
 - 圈複雜度
 - 測試覆蓋率
 - 技術債務
 
 ### 2. 性能指標
+
 - API 響應時間
 - 內存使用量
 - 打包大小
 - 加載時間
 
 ### 3. 維護指標
+
 - Bug 修復時間
 - 新功能開發時間
 - 代碼審查時間

@@ -10,24 +10,23 @@ interface CardFiltersProps {
 const CardFilters: React.FC<CardFiltersProps> = ({
   filters,
   onFiltersChange,
-  onClearFilters
+  onClearFilters,
 }) => {
   const handleFilterChange = (key: keyof FiltersType, value: any) => {
     const newFilters = { ...filters, [key]: value };
     onFiltersChange(newFilters);
   };
 
-  const hasActiveFilters = Object.values(filters).some(value => value !== undefined && value !== '');
+  const hasActiveFilters = Object.values(filters).some(
+    (value) => value !== undefined && value !== ''
+  );
 
   return (
     <div className="card-filters">
       <div className="filters-header">
         <h3>篩選條件</h3>
         {hasActiveFilters && (
-          <button
-            onClick={onClearFilters}
-            className="clear-filters-btn"
-          >
+          <button onClick={onClearFilters} className="clear-filters-btn">
             清除全部
           </button>
         )}
@@ -39,7 +38,9 @@ const CardFilters: React.FC<CardFiltersProps> = ({
             <label>遊戲</label>
             <select
               value={filters.game || ''}
-              onChange={(e) => handleFilterChange('game', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('game', e.target.value || undefined)
+              }
             >
               <option value="">全部遊戲</option>
               <option value="Pokemon TCG">Pokemon TCG</option>
@@ -55,7 +56,9 @@ const CardFilters: React.FC<CardFiltersProps> = ({
               type="text"
               placeholder="輸入系列名稱"
               value={filters.setName || ''}
-              onChange={(e) => handleFilterChange('setName', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('setName', e.target.value || undefined)
+              }
             />
           </div>
         </div>
@@ -65,7 +68,9 @@ const CardFilters: React.FC<CardFiltersProps> = ({
             <label>稀有度</label>
             <select
               value={filters.rarity || ''}
-              onChange={(e) => handleFilterChange('rarity', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('rarity', e.target.value || undefined)
+              }
             >
               <option value="">全部稀有度</option>
               <option value="普通">普通</option>
@@ -80,7 +85,9 @@ const CardFilters: React.FC<CardFiltersProps> = ({
             <label>類型</label>
             <select
               value={filters.type || ''}
-              onChange={(e) => handleFilterChange('type', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('type', e.target.value || undefined)
+              }
             >
               <option value="">全部類型</option>
               <option value="基本">基本</option>
@@ -96,7 +103,9 @@ const CardFilters: React.FC<CardFiltersProps> = ({
             <label>狀態</label>
             <select
               value={filters.condition || ''}
-              onChange={(e) => handleFilterChange('condition', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('condition', e.target.value || undefined)
+              }
             >
               <option value="">全部狀態</option>
               <option value="全新">全新</option>
@@ -111,7 +120,9 @@ const CardFilters: React.FC<CardFiltersProps> = ({
             <label>語言</label>
             <select
               value={filters.language || ''}
-              onChange={(e) => handleFilterChange('language', e.target.value || undefined)}
+              onChange={(e) =>
+                handleFilterChange('language', e.target.value || undefined)
+              }
             >
               <option value="">全部語言</option>
               <option value="繁體中文">繁體中文</option>
@@ -129,14 +140,24 @@ const CardFilters: React.FC<CardFiltersProps> = ({
                 type="number"
                 placeholder="最低價"
                 value={filters.priceMin || ''}
-                onChange={(e) => handleFilterChange('priceMin', e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) =>
+                  handleFilterChange(
+                    'priceMin',
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
               />
               <span className="price-separator">-</span>
               <input
                 type="number"
                 placeholder="最高價"
                 value={filters.priceMax || ''}
-                onChange={(e) => handleFilterChange('priceMax', e.target.value ? Number(e.target.value) : undefined)}
+                onChange={(e) =>
+                  handleFilterChange(
+                    'priceMax',
+                    e.target.value ? Number(e.target.value) : undefined
+                  )
+                }
               />
             </div>
           </div>
@@ -150,46 +171,69 @@ const CardFilters: React.FC<CardFiltersProps> = ({
             {filters.game && (
               <span className="filter-tag">
                 遊戲: {filters.game}
-                <button onClick={() => handleFilterChange('game', undefined)}>×</button>
+                <button onClick={() => handleFilterChange('game', undefined)}>
+                  ×
+                </button>
               </span>
             )}
             {filters.setName && (
               <span className="filter-tag">
                 系列: {filters.setName}
-                <button onClick={() => handleFilterChange('setName', undefined)}>×</button>
+                <button
+                  onClick={() => handleFilterChange('setName', undefined)}
+                >
+                  ×
+                </button>
               </span>
             )}
             {filters.rarity && (
               <span className="filter-tag">
                 稀有度: {filters.rarity}
-                <button onClick={() => handleFilterChange('rarity', undefined)}>×</button>
+                <button onClick={() => handleFilterChange('rarity', undefined)}>
+                  ×
+                </button>
               </span>
             )}
             {filters.type && (
               <span className="filter-tag">
                 類型: {filters.type}
-                <button onClick={() => handleFilterChange('type', undefined)}>×</button>
+                <button onClick={() => handleFilterChange('type', undefined)}>
+                  ×
+                </button>
               </span>
             )}
             {filters.condition && (
               <span className="filter-tag">
                 狀態: {filters.condition}
-                <button onClick={() => handleFilterChange('condition', undefined)}>×</button>
+                <button
+                  onClick={() => handleFilterChange('condition', undefined)}
+                >
+                  ×
+                </button>
               </span>
             )}
             {filters.language && (
               <span className="filter-tag">
                 語言: {filters.language}
-                <button onClick={() => handleFilterChange('language', undefined)}>×</button>
+                <button
+                  onClick={() => handleFilterChange('language', undefined)}
+                >
+                  ×
+                </button>
               </span>
             )}
-            {(filters.priceMin !== undefined || filters.priceMax !== undefined) && (
+            {(filters.priceMin !== undefined ||
+              filters.priceMax !== undefined) && (
               <span className="filter-tag">
                 價格: {filters.priceMin || 0} - {filters.priceMax || '∞'}
-                <button onClick={() => {
-                  handleFilterChange('priceMin', undefined);
-                  handleFilterChange('priceMax', undefined);
-                }}>×</button>
+                <button
+                  onClick={() => {
+                    handleFilterChange('priceMin', undefined);
+                    handleFilterChange('priceMax', undefined);
+                  }}
+                >
+                  ×
+                </button>
               </span>
             )}
           </div>

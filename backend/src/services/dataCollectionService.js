@@ -1,7 +1,9 @@
 const { Op } = require('sequelize');
 const getTrainingDataModel = require('../models/TrainingData');
+// eslint-disable-next-line no-unused-vars
 const getCardModel = require('../models/Card');
 const getDataQualityMetricsModel = require('../models/DataQualityMetrics');
+// eslint-disable-next-line no-unused-vars
 const logger = require('../utils/logger');
 
 class DataCollectionService {
@@ -14,7 +16,8 @@ class DataCollectionService {
   async initializeModels() {
     if (!this.TrainingData) this.TrainingData = getTrainingDataModel();
     if (!this.Card) this.Card = getCardModel();
-    if (!this.DataQualityMetrics) this.DataQualityMetrics = getDataQualityMetricsModel();
+    if (!this.DataQualityMetrics)
+      this.DataQualityMetrics = getDataQualityMetricsModel();
 
     if (!this.TrainingData || !this.Card || !this.DataQualityMetrics) {
       throw new Error('Failed to initialize data collection service models');
@@ -32,9 +35,10 @@ class DataCollectionService {
         this.collectFromOfficialAPIs(),
         this.collectFromThirdPartyPlatforms(),
         this.collectFromUserCorrections(),
-        this.collectFromWebScraping()
+        this.collectFromWebScraping(),
       ];
 
+// eslint-disable-next-line no-unused-vars
       const results = await Promise.allSettled(collectionTasks);
       const processedResults = this.processCollectionResults(results);
 
@@ -56,20 +60,21 @@ class DataCollectionService {
 
       // 這裡應該從用戶上傳的圖片中收集數據
       // 實際實現中會從文件系統或雲存儲中讀取
+// eslint-disable-next-line no-unused-vars
       const userUploads = await this.TrainingData.findAll({
         where: {
           source: 'user_upload',
           status: 'pending',
-          isActive: true
+          isActive: true,
         },
-        limit: 100
+        limit: 100,
       });
 
       return {
         source: 'user_upload',
         count: userUploads.length,
         data: userUploads,
-        quality: 'medium'
+        quality: 'medium',
       };
     } catch (error) {
       logger.error('收集用戶上傳數據失敗:', error);
@@ -98,9 +103,9 @@ class DataCollectionService {
             imageDimensions: { width: 800, height: 600 },
             lightingConditions: 'good',
             imageQuality: 'high',
-            uploadSource: 'official_yugioh_api'
-          }
-        }
+            uploadSource: 'official_yugioh_api',
+          },
+        },
       ];
 
       // 批量保存到數據庫
@@ -110,7 +115,7 @@ class DataCollectionService {
         source: 'official_api',
         count: savedData.length,
         data: savedData,
-        quality: 'high'
+        quality: 'high',
       };
     } catch (error) {
       logger.error('從官方API收集數據失敗:', error);
@@ -139,9 +144,9 @@ class DataCollectionService {
             imageDimensions: { width: 640, height: 480 },
             lightingConditions: 'medium',
             imageQuality: 'medium',
-            uploadSource: 'tcgplayer_api'
-          }
-        }
+            uploadSource: 'tcgplayer_api',
+          },
+        },
       ];
 
       const savedData = await this.TrainingData.bulkCreate(thirdPartyData);
@@ -150,7 +155,7 @@ class DataCollectionService {
         source: 'third_party',
         count: savedData.length,
         data: savedData,
-        quality: 'medium'
+        quality: 'medium',
       };
     } catch (error) {
       logger.error('從第三方平台收集數據失敗:', error);
@@ -168,16 +173,16 @@ class DataCollectionService {
         where: {
           source: 'user_correction',
           status: 'pending',
-          isActive: true
+          isActive: true,
         },
-        limit: 50
+        limit: 50,
       });
 
       return {
         source: 'user_correction',
         count: corrections.length,
         data: corrections,
-        quality: 'high'
+        quality: 'high',
       };
     } catch (error) {
       logger.error('收集用戶糾正數據失敗:', error);
@@ -199,16 +204,16 @@ class DataCollectionService {
           quality: 'medium',
           metadata: {
             uploadDate: new Date(),
-            confidence: 0.80,
+            confidence: 0.8,
             processingTime: 3000,
             imageSize: 1024000,
             imageFormat: 'JPEG',
             imageDimensions: { width: 512, height: 384 },
             lightingConditions: 'poor',
             imageQuality: 'medium',
-            uploadSource: 'cardmarket_scraper'
-          }
-        }
+            uploadSource: 'cardmarket_scraper',
+          },
+        },
       ];
 
       const savedData = await this.TrainingData.bulkCreate(scrapedData);
@@ -217,7 +222,7 @@ class DataCollectionService {
         source: 'web_scraping',
         count: savedData.length,
         data: savedData,
-        quality: 'medium'
+        quality: 'medium',
       };
     } catch (error) {
       logger.error('從網頁爬蟲收集數據失敗:', error);
@@ -231,11 +236,12 @@ class DataCollectionService {
       totalCollected: 0,
       sources: {},
       qualityDistribution: { high: 0, medium: 0, low: 0 },
-      errors: []
+      errors: [],
     };
 
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
+// eslint-disable-next-line no-unused-vars
         const data = result.value;
         processedResults.totalCollected += data.count;
         processedResults.sources[data.source] = data.count;
@@ -245,8 +251,14 @@ class DataCollectionService {
         }
       } else {
         processedResults.errors.push({
-          source: ['user_upload', 'official_api', 'third_party', 'user_correction', 'web_scraping'][index],
-          error: result.reason.message
+          source: [
+            'user_upload',
+            'official_api',
+            'third_party',
+            'user_correction',
+            'web_scraping',
+          ][index],
+          error: result.reason.message,
         });
       }
     });
@@ -262,16 +274,15 @@ class DataCollectionService {
         accuracy: this.calculateAccuracy(data),
         consistency: this.calculateConsistency(data),
         timeliness: this.calculateTimeliness(data),
-        overallScore: 0
+        overallScore: 0,
       };
 
       // 計算總體分數
-      qualityReport.overallScore = (
+      qualityReport.overallScore =
         qualityReport.completeness * 0.25 +
-        qualityReport.accuracy * 0.30 +
+        qualityReport.accuracy * 0.3 +
         qualityReport.consistency * 0.25 +
-        qualityReport.timeliness * 0.20
-      );
+        qualityReport.timeliness * 0.2;
 
       return qualityReport;
     } catch (error) {
@@ -284,12 +295,13 @@ class DataCollectionService {
   calculateCompleteness(data) {
     if (!data || data.length === 0) return 0;
 
+// eslint-disable-next-line no-unused-vars
     const requiredFields = ['imageData', 'source', 'quality'];
     let completeRecords = 0;
 
-    data.forEach(record => {
-      const hasAllFields = requiredFields.every(field =>
-        record[field] !== null && record[field] !== undefined
+    data.forEach((record) => {
+      const hasAllFields = requiredFields.every(
+        (field) => record[field] !== null && record[field] !== undefined
       );
       if (hasAllFields) completeRecords++;
     });
@@ -304,7 +316,7 @@ class DataCollectionService {
     let totalConfidence = 0;
     let validRecords = 0;
 
-    data.forEach(record => {
+    data.forEach((record) => {
       if (record.metadata && record.metadata.confidence) {
         totalConfidence += record.metadata.confidence;
         validRecords++;
@@ -319,7 +331,7 @@ class DataCollectionService {
     if (!data || data.length === 0) return 0;
 
     const sources = {};
-    data.forEach(record => {
+    data.forEach((record) => {
       sources[record.source] = (sources[record.source] || 0) + 1;
     });
 
@@ -334,15 +346,18 @@ class DataCollectionService {
   calculateTimeliness(data) {
     if (!data || data.length === 0) return 0;
 
+// eslint-disable-next-line no-unused-vars
     const now = new Date();
+// eslint-disable-next-line no-unused-vars
     let recentRecords = 0;
 
-    data.forEach(record => {
+    data.forEach((record) => {
       if (record.metadata && record.metadata.uploadDate) {
         const uploadDate = new Date(record.metadata.uploadDate);
         const daysDiff = (now - uploadDate) / (1000 * 60 * 60 * 24);
 
-        if (daysDiff <= 30) { // 30天內算作時效
+        if (daysDiff <= 30) {
+          // 30天內算作時效
           recentRecords++;
         }
       }
@@ -361,7 +376,7 @@ class DataCollectionService {
         imageData: data.imageData,
         source: data.source,
         quality: data.quality,
-        metadata: data.metadata
+        metadata: data.metadata,
       });
 
       logger.info(`訓練數據已存儲: ID ${trainingData.id}`);
@@ -394,9 +409,10 @@ class DataCollectionService {
         metadata: {
           assessmentMethod: 'automated_validation',
           qualityThreshold: 0.8,
-          improvementSuggestions: this.generateImprovementSuggestions(qualityMetrics),
-          qualityTrend: 'stable'
-        }
+          improvementSuggestions:
+            this.generateImprovementSuggestions(qualityMetrics),
+          qualityTrend: 'stable',
+        },
       });
 
       logger.info('數據質量指標已更新');
@@ -438,15 +454,15 @@ class DataCollectionService {
         endDate = new Date(),
         source = null,
         quality = null,
-        status = null
+        status = null,
       } = options;
 
       // 構建查詢條件
       const whereClause = {
         createdAt: {
-          [Op.between]: [startDate, endDate]
+          [Op.between]: [startDate, endDate],
         },
-        isActive: true
+        isActive: true,
       };
 
       if (source) whereClause.source = source;
@@ -454,175 +470,319 @@ class DataCollectionService {
       if (status) whereClause.status = status;
 
       // 獲取基礎統計數據
-      const totalRecords = await this.TrainingData.count({ where: whereClause });
+      const totalRecords = await this.TrainingData.count({
+        where: whereClause,
+      });
 
       // 按來源統計
       const sourceStats = await this.TrainingData.findAll({
         attributes: [
           'source',
-          [this.TrainingData.sequelize.fn('COUNT', this.TrainingData.sequelize.col('id')), 'count'],
-          [this.TrainingData.sequelize.fn('AVG', this.TrainingData.sequelize.col('metadata->confidence')), 'avgConfidence']
+          [
+            this.TrainingData.sequelize.fn(
+              'COUNT',
+              this.TrainingData.sequelize.col('id')
+            ),
+            'count',
+          ],
+          [
+            this.TrainingData.sequelize.fn(
+              'AVG',
+              this.TrainingData.sequelize.col('metadata->confidence')
+            ),
+            'avgConfidence',
+          ],
         ],
         where: whereClause,
         group: ['source'],
-        raw: true
+        raw: true,
       });
 
       // 按質量統計
       const qualityStats = await this.TrainingData.findAll({
         attributes: [
           'quality',
-          [this.TrainingData.sequelize.fn('COUNT', this.TrainingData.sequelize.col('id')), 'count']
+          [
+            this.TrainingData.sequelize.fn(
+              'COUNT',
+              this.TrainingData.sequelize.col('id')
+            ),
+            'count',
+          ],
         ],
         where: whereClause,
         group: ['quality'],
-        raw: true
+        raw: true,
       });
 
       // 按狀態統計
+// eslint-disable-next-line no-unused-vars
       const statusStats = await this.TrainingData.findAll({
         attributes: [
           'status',
-          [this.TrainingData.sequelize.fn('COUNT', this.TrainingData.sequelize.col('id')), 'count']
+          [
+            this.TrainingData.sequelize.fn(
+              'COUNT',
+              this.TrainingData.sequelize.col('id')
+            ),
+            'count',
+          ],
         ],
         where: whereClause,
         group: ['status'],
-        raw: true
+        raw: true,
       });
 
       // 按時間統計（每日）
       const dailyStats = await this.TrainingData.findAll({
         attributes: [
-          [this.TrainingData.sequelize.fn('DATE', this.TrainingData.sequelize.col('createdAt')), 'date'],
-          [this.TrainingData.sequelize.fn('COUNT', this.TrainingData.sequelize.col('id')), 'count']
+          [
+            this.TrainingData.sequelize.fn(
+              'DATE',
+              this.TrainingData.sequelize.col('createdAt')
+            ),
+            'date',
+          ],
+          [
+            this.TrainingData.sequelize.fn(
+              'COUNT',
+              this.TrainingData.sequelize.col('id')
+            ),
+            'count',
+          ],
         ],
         where: whereClause,
-        group: [this.TrainingData.sequelize.fn('DATE', this.TrainingData.sequelize.col('createdAt'))],
-        order: [[this.TrainingData.sequelize.fn('DATE', this.TrainingData.sequelize.col('createdAt')), 'ASC']],
-        raw: true
+        group: [
+          this.TrainingData.sequelize.fn(
+            'DATE',
+            this.TrainingData.sequelize.col('createdAt')
+          ),
+        ],
+        order: [
+          [
+            this.TrainingData.sequelize.fn(
+              'DATE',
+              this.TrainingData.sequelize.col('createdAt')
+            ),
+            'ASC',
+          ],
+        ],
+        raw: true,
       });
 
       // 按小時統計（最近7天）
       const hourlyStats = await this.TrainingData.findAll({
         attributes: [
-          [this.TrainingData.sequelize.fn('DATE_TRUNC', 'hour', this.TrainingData.sequelize.col('createdAt')), 'hour'],
-          [this.TrainingData.sequelize.fn('COUNT', this.TrainingData.sequelize.col('id')), 'count']
+          [
+            this.TrainingData.sequelize.fn(
+              'DATE_TRUNC',
+              'hour',
+              this.TrainingData.sequelize.col('createdAt')
+            ),
+            'hour',
+          ],
+          [
+            this.TrainingData.sequelize.fn(
+              'COUNT',
+              this.TrainingData.sequelize.col('id')
+            ),
+            'count',
+          ],
         ],
         where: {
           ...whereClause,
           createdAt: {
-            [Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-          }
+            [Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          },
         },
-        group: [this.TrainingData.sequelize.fn('DATE_TRUNC', 'hour', this.TrainingData.sequelize.col('createdAt'))],
-        order: [[this.TrainingData.sequelize.fn('DATE_TRUNC', 'hour', this.TrainingData.sequelize.col('createdAt')), 'ASC']],
-        raw: true
+        group: [
+          this.TrainingData.sequelize.fn(
+            'DATE_TRUNC',
+            'hour',
+            this.TrainingData.sequelize.col('createdAt')
+          ),
+        ],
+        order: [
+          [
+            this.TrainingData.sequelize.fn(
+              'DATE_TRUNC',
+              'hour',
+              this.TrainingData.sequelize.col('createdAt')
+            ),
+            'ASC',
+          ],
+        ],
+        raw: true,
       });
 
       // 獲取最新的數據質量指標
       const latestQualityMetrics = await this.DataQualityMetrics.findOne({
         where: { dataType: 'training' },
         order: [['assessmentDate', 'DESC']],
-        raw: true
+        raw: true,
       });
 
       // 計算處理時間統計
       const processingTimeStats = await this.TrainingData.findAll({
         attributes: [
-          [this.TrainingData.sequelize.fn('AVG', this.TrainingData.sequelize.col('metadata->processingTime')), 'avgProcessingTime'],
-          [this.TrainingData.sequelize.fn('MIN', this.TrainingData.sequelize.col('metadata->processingTime')), 'minProcessingTime'],
-          [this.TrainingData.sequelize.fn('MAX', this.TrainingData.sequelize.col('metadata->processingTime')), 'maxProcessingTime']
+          [
+            this.TrainingData.sequelize.fn(
+              'AVG',
+              this.TrainingData.sequelize.col('metadata->processingTime')
+            ),
+            'avgProcessingTime',
+          ],
+          [
+            this.TrainingData.sequelize.fn(
+              'MIN',
+              this.TrainingData.sequelize.col('metadata->processingTime')
+            ),
+            'minProcessingTime',
+          ],
+          [
+            this.TrainingData.sequelize.fn(
+              'MAX',
+              this.TrainingData.sequelize.col('metadata->processingTime')
+            ),
+            'maxProcessingTime',
+          ],
         ],
         where: whereClause,
-        raw: true
+        raw: true,
       });
 
       // 計算圖片大小統計
       const imageSizeStats = await this.TrainingData.findAll({
         attributes: [
-          [this.TrainingData.sequelize.fn('AVG', this.TrainingData.sequelize.col('metadata->imageSize')), 'avgImageSize'],
-          [this.TrainingData.sequelize.fn('MIN', this.TrainingData.sequelize.col('metadata->imageSize')), 'minImageSize'],
-          [this.TrainingData.sequelize.fn('MAX', this.TrainingData.sequelize.col('metadata->imageSize')), 'maxImageSize']
+          [
+            this.TrainingData.sequelize.fn(
+              'AVG',
+              this.TrainingData.sequelize.col('metadata->imageSize')
+            ),
+            'avgImageSize',
+          ],
+          [
+            this.TrainingData.sequelize.fn(
+              'MIN',
+              this.TrainingData.sequelize.col('metadata->imageSize')
+            ),
+            'minImageSize',
+          ],
+          [
+            this.TrainingData.sequelize.fn(
+              'MAX',
+              this.TrainingData.sequelize.col('metadata->imageSize')
+            ),
+            'maxImageSize',
+          ],
         ],
         where: whereClause,
-        raw: true
+        raw: true,
       });
 
       // 按圖片格式統計
       const formatStats = await this.TrainingData.findAll({
         attributes: [
-          [this.TrainingData.sequelize.col('metadata->imageFormat'), 'imageFormat'],
-          [this.TrainingData.sequelize.fn('COUNT', this.TrainingData.sequelize.col('id')), 'count']
+          [
+            this.TrainingData.sequelize.col('metadata->imageFormat'),
+            'imageFormat',
+          ],
+          [
+            this.TrainingData.sequelize.fn(
+              'COUNT',
+              this.TrainingData.sequelize.col('id')
+            ),
+            'count',
+          ],
         ],
         where: whereClause,
         group: [this.TrainingData.sequelize.col('metadata->imageFormat')],
-        raw: true
+        raw: true,
       });
 
       // 計算增長趨勢
       const growthTrend = await this.calculateGrowthTrend(startDate, endDate);
 
       // 計算收集效率指標
-      const efficiencyMetrics = await this.calculateEfficiencyMetrics(startDate, endDate);
+      const efficiencyMetrics = await this.calculateEfficiencyMetrics(
+        startDate,
+        endDate
+      );
 
       // 構建統計報告
       const stats = {
         summary: {
           totalRecords,
           dateRange: { startDate, endDate },
-          collectionPeriod: Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24))
+          collectionPeriod: Math.ceil(
+            (endDate - startDate) / (1000 * 60 * 60 * 24)
+          ),
         },
-        sourceDistribution: sourceStats.map(stat => ({
+        sourceDistribution: sourceStats.map((stat) => ({
           source: stat.source,
           count: parseInt(stat.count),
           percentage: ((parseInt(stat.count) / totalRecords) * 100).toFixed(2),
-          avgConfidence: parseFloat(stat.avgConfidence || 0).toFixed(3)
+          avgConfidence: parseFloat(stat.avgConfidence || 0).toFixed(3),
         })),
-        qualityDistribution: qualityStats.map(stat => ({
+        qualityDistribution: qualityStats.map((stat) => ({
           quality: stat.quality,
           count: parseInt(stat.count),
-          percentage: ((parseInt(stat.count) / totalRecords) * 100).toFixed(2)
+          percentage: ((parseInt(stat.count) / totalRecords) * 100).toFixed(2),
         })),
-        statusDistribution: statusStats.map(stat => ({
+        statusDistribution: statusStats.map((stat) => ({
           status: stat.status,
           count: parseInt(stat.count),
-          percentage: ((parseInt(stat.count) / totalRecords) * 100).toFixed(2)
+          percentage: ((parseInt(stat.count) / totalRecords) * 100).toFixed(2),
         })),
         timeSeries: {
-          daily: dailyStats.map(stat => ({
+          daily: dailyStats.map((stat) => ({
             date: stat.date,
-            count: parseInt(stat.count)
+            count: parseInt(stat.count),
           })),
-          hourly: hourlyStats.map(stat => ({
+          hourly: hourlyStats.map((stat) => ({
             hour: stat.hour,
-            count: parseInt(stat.count)
-          }))
+            count: parseInt(stat.count),
+          })),
         },
         performance: {
           processingTime: {
-            average: parseFloat(processingTimeStats[0]?.avgProcessingTime || 0).toFixed(2),
-            minimum: parseFloat(processingTimeStats[0]?.minProcessingTime || 0).toFixed(2),
-            maximum: parseFloat(processingTimeStats[0]?.maxProcessingTime || 0).toFixed(2)
+            average: parseFloat(
+              processingTimeStats[0]?.avgProcessingTime || 0
+            ).toFixed(2),
+            minimum: parseFloat(
+              processingTimeStats[0]?.minProcessingTime || 0
+            ).toFixed(2),
+            maximum: parseFloat(
+              processingTimeStats[0]?.maxProcessingTime || 0
+            ).toFixed(2),
           },
           imageSize: {
-            average: parseFloat(imageSizeStats[0]?.avgImageSize || 0).toFixed(2),
-            minimum: parseFloat(imageSizeStats[0]?.minImageSize || 0).toFixed(2),
-            maximum: parseFloat(imageSizeStats[0]?.maxImageSize || 0).toFixed(2)
-          }
+            average: parseFloat(imageSizeStats[0]?.avgImageSize || 0).toFixed(
+              2
+            ),
+            minimum: parseFloat(imageSizeStats[0]?.minImageSize || 0).toFixed(
+              2
+            ),
+            maximum: parseFloat(imageSizeStats[0]?.maxImageSize || 0).toFixed(
+              2
+            ),
+          },
         },
-        formatDistribution: formatStats.map(stat => ({
+        formatDistribution: formatStats.map((stat) => ({
           format: stat.imageFormat,
           count: parseInt(stat.count),
-          percentage: ((parseInt(stat.count) / totalRecords) * 100).toFixed(2)
+          percentage: ((parseInt(stat.count) / totalRecords) * 100).toFixed(2),
         })),
-        qualityMetrics: latestQualityMetrics ? {
-          completeness: latestQualityMetrics.completeness,
-          accuracy: latestQualityMetrics.accuracy,
-          consistency: latestQualityMetrics.consistency,
-          timeliness: latestQualityMetrics.timeliness,
-          overallScore: latestQualityMetrics.overallScore,
-          assessmentDate: latestQualityMetrics.assessmentDate
-        } : null,
+        qualityMetrics: latestQualityMetrics
+          ? {
+              completeness: latestQualityMetrics.completeness,
+              accuracy: latestQualityMetrics.accuracy,
+              consistency: latestQualityMetrics.consistency,
+              timeliness: latestQualityMetrics.timeliness,
+              overallScore: latestQualityMetrics.overallScore,
+              assessmentDate: latestQualityMetrics.assessmentDate,
+            }
+          : null,
         trends: growthTrend,
         efficiency: efficiencyMetrics,
         insights: this.generateCollectionInsights({
@@ -630,8 +790,8 @@ class DataCollectionService {
           sourceStats,
           qualityStats,
           growthTrend,
-          efficiencyMetrics
-        })
+          efficiencyMetrics,
+        }),
       };
 
       logger.info(`數據收集統計生成完成: ${totalRecords} 條記錄`);
@@ -645,43 +805,67 @@ class DataCollectionService {
   // 計算增長趨勢
   async calculateGrowthTrend(startDate, endDate) {
     try {
-      const periodDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-      const midPoint = new Date(startDate.getTime() + (endDate.getTime() - startDate.getTime()) / 2);
+      const periodDays = Math.ceil(
+        (endDate - startDate) / (1000 * 60 * 60 * 24)
+      );
+      const midPoint = new Date(
+        startDate.getTime() + (endDate.getTime() - startDate.getTime()) / 2
+      );
 
       // 前半段統計
       const firstHalfCount = await this.TrainingData.count({
         where: {
           createdAt: {
-            [Op.between]: [startDate, midPoint]
+            [Op.between]: [startDate, midPoint],
           },
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
       // 後半段統計
       const secondHalfCount = await this.TrainingData.count({
         where: {
           createdAt: {
-            [Op.between]: [midPoint, endDate]
+            [Op.between]: [midPoint, endDate],
           },
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
-      const growthRate = firstHalfCount > 0 ?
-        ((secondHalfCount - firstHalfCount) / firstHalfCount * 100).toFixed(2) :
-        secondHalfCount > 0 ? 100 : 0;
+      const growthRate =
+        firstHalfCount > 0
+          ? (
+              ((secondHalfCount - firstHalfCount) / firstHalfCount) *
+              100
+            ).toFixed(2)
+          : secondHalfCount > 0
+            ? 100
+            : 0;
 
       return {
         firstHalfCount,
         secondHalfCount,
         growthRate: parseFloat(growthRate),
-        trend: parseFloat(growthRate) > 0 ? 'increasing' : parseFloat(growthRate) < 0 ? 'decreasing' : 'stable',
-        averageDailyGrowth: periodDays > 0 ? ((secondHalfCount - firstHalfCount) / periodDays).toFixed(2) : 0
+        trend:
+          parseFloat(growthRate) > 0
+            ? 'increasing'
+            : parseFloat(growthRate) < 0
+              ? 'decreasing'
+              : 'stable',
+        averageDailyGrowth:
+          periodDays > 0
+            ? ((secondHalfCount - firstHalfCount) / periodDays).toFixed(2)
+            : 0,
       };
     } catch (error) {
       logger.error('計算增長趨勢失敗:', error);
-      return { firstHalfCount: 0, secondHalfCount: 0, growthRate: 0, trend: 'stable', averageDailyGrowth: 0 };
+      return {
+        firstHalfCount: 0,
+        secondHalfCount: 0,
+        growthRate: 0,
+        trend: 'stable',
+        averageDailyGrowth: 0,
+      };
     }
   }
 
@@ -691,48 +875,60 @@ class DataCollectionService {
       const totalRecords = await this.TrainingData.count({
         where: {
           createdAt: {
-            [Op.between]: [startDate, endDate]
+            [Op.between]: [startDate, endDate],
           },
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
-      const periodDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+      const periodDays = Math.ceil(
+        (endDate - startDate) / (1000 * 60 * 60 * 24)
+      );
 
       // 計算平均每日收集量
-      const averageDailyCollection = periodDays > 0 ? (totalRecords / periodDays).toFixed(2) : 0;
+      const averageDailyCollection =
+        periodDays > 0 ? (totalRecords / periodDays).toFixed(2) : 0;
 
       // 計算高質量數據比例
       const highQualityCount = await this.TrainingData.count({
         where: {
           createdAt: {
-            [Op.between]: [startDate, endDate]
+            [Op.between]: [startDate, endDate],
           },
           quality: 'high',
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
-      const highQualityRatio = totalRecords > 0 ? (highQualityCount / totalRecords * 100).toFixed(2) : 0;
+      const highQualityRatio =
+        totalRecords > 0
+          ? ((highQualityCount / totalRecords) * 100).toFixed(2)
+          : 0;
 
       // 計算處理成功率
       const processedCount = await this.TrainingData.count({
         where: {
           createdAt: {
-            [Op.between]: [startDate, endDate]
+            [Op.between]: [startDate, endDate],
           },
           status: { [Op.in]: ['annotated', 'validated'] },
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
-      const successRate = totalRecords > 0 ? (processedCount / totalRecords * 100).toFixed(2) : 0;
+      const successRate =
+        totalRecords > 0
+          ? ((processedCount / totalRecords) * 100).toFixed(2)
+          : 0;
 
       return {
         averageDailyCollection: parseFloat(averageDailyCollection),
         highQualityRatio: parseFloat(highQualityRatio),
         successRate: parseFloat(successRate),
-        efficiencyScore: ((parseFloat(highQualityRatio) + parseFloat(successRate)) / 2).toFixed(2)
+        efficiencyScore: (
+          (parseFloat(highQualityRatio) + parseFloat(successRate)) /
+          2
+        ).toFixed(2),
       };
     } catch (error) {
       logger.error('計算效率指標失敗:', error);
@@ -740,7 +936,7 @@ class DataCollectionService {
         averageDailyCollection: 0,
         highQualityRatio: 0,
         successRate: 0,
-        efficiencyScore: 0
+        efficiencyScore: 0,
       };
     }
   }
@@ -750,23 +946,30 @@ class DataCollectionService {
     const insights = [];
 
     // 分析來源分布
-    const topSource = data.sourceStats.reduce((max, stat) =>
-      (parseInt(stat.count) > parseInt(max.count) ? stat : max), { count: 0, source: 'none' }
+    const topSource = data.sourceStats.reduce(
+      (max, stat) => (parseInt(stat.count) > parseInt(max.count) ? stat : max),
+      { count: 0, source: 'none' }
     );
 
     if (topSource.source !== 'none') {
-      insights.push(`主要數據來源: ${topSource.source} (${topSource.percentage}%)`);
+      insights.push(
+        `主要數據來源: ${topSource.source} (${topSource.percentage}%)`
+      );
     }
 
     // 分析質量分布
-    const highQualityCount = data.qualityStats.find(stat => stat.quality === 'high');
+    const highQualityCount = data.qualityStats.find(
+      (stat) => stat.quality === 'high'
+    );
     if (highQualityCount && parseFloat(highQualityCount.percentage) < 60) {
       insights.push('高質量數據比例偏低，建議加強數據質量控制');
     }
 
     // 分析增長趨勢
     if (data.growthTrend.trend === 'increasing') {
-      insights.push(`數據收集呈增長趨勢，增長率: ${data.growthTrend.growthRate}%`);
+      insights.push(
+        `數據收集呈增長趨勢，增長率: ${data.growthTrend.growthRate}%`
+      );
     } else if (data.growthTrend.trend === 'decreasing') {
       insights.push('數據收集呈下降趨勢，需要檢查收集流程');
     }

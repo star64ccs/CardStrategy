@@ -7,10 +7,16 @@ import {
   TouchableOpacity,
   RefreshControl,
   Alert,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { portfolioService, PortfolioItem } from '../services/portfolioService';
-import { colors, typography, spacing, borderRadius, shadows } from '../config/theme';
+import {
+  colors,
+  typography,
+  spacing,
+  borderRadius,
+  shadows,
+} from '../config/theme';
 import { logger } from '../utils/logger';
 
 const { width } = Dimensions.get('window');
@@ -19,14 +25,16 @@ interface InvestmentsScreenProps {
   onCardPress: (card: any) => void;
 }
 
-const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) => {
+const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({
+  onCardPress,
+}) => {
   const [portfolio, setPortfolio] = useState<PortfolioItem[]>([]);
   const [stats, setStats] = useState({
     totalValue: 0,
     totalCost: 0,
     totalProfit: 0,
     profitPercentage: 0,
-    totalItems: 0
+    totalItems: 0,
   });
   const [refreshing, setRefreshing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -47,7 +55,7 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) =>
         totalCost: portfolioStats.totalCost,
         totalProfit: portfolioStats.totalProfit,
         profitPercentage: portfolioStats.profitPercentage,
-        totalItems: portfolioStats.totalItems
+        totalItems: portfolioStats.totalItems,
       });
     } catch (error) {
       logger.error('載入投資組合失敗:', { error });
@@ -63,26 +71,22 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) =>
   };
 
   const handleRemoveItem = (itemId: string) => {
-    Alert.alert(
-      '確認移除',
-      '確定要從投資組合中移除這張卡片嗎？',
-      [
-        { text: '取消', style: 'cancel' },
-        {
-          text: '移除',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await portfolioService.removeFromPortfolio(itemId);
-              await loadPortfolio();
-              Alert.alert('成功', '已從投資組合中移除');
-            } catch (error) {
-              Alert.alert('錯誤', '移除失敗，請稍後再試');
-            }
+    Alert.alert('確認移除', '確定要從投資組合中移除這張卡片嗎？', [
+      { text: '取消', style: 'cancel' },
+      {
+        text: '移除',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await portfolioService.removeFromPortfolio(itemId);
+            await loadPortfolio();
+            Alert.alert('成功', '已從投資組合中移除');
+          } catch (error) {
+            Alert.alert('錯誤', '移除失敗，請稍後再試');
           }
-        }
-      ]
-    );
+        },
+      },
+    ]);
   };
 
   const formatCurrency = (amount: number) => {
@@ -124,9 +128,7 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) =>
           </Text>
 
           <View style={styles.itemMeta}>
-            <Text style={styles.quantityText}>
-              數量: {item.quantity}
-            </Text>
+            <Text style={styles.quantityText}>數量: {item.quantity}</Text>
             <Text style={styles.dateText}>
               購買: {formatDate(item.purchaseDate)}
             </Text>
@@ -150,19 +152,26 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) =>
           <View style={styles.profitInfo}>
             <View style={styles.profitRow}>
               <Text style={styles.profitLabel}>總收益:</Text>
-              <Text style={[
-                styles.profitValue,
-                { color: profit >= 0 ? colors.success : colors.error }
-              ]}>
+              <Text
+                style={[
+                  styles.profitValue,
+                  { color: profit >= 0 ? colors.success : colors.error },
+                ]}
+              >
                 {formatCurrency(profit)}
               </Text>
             </View>
             <View style={styles.profitRow}>
               <Text style={styles.profitLabel}>收益率:</Text>
-              <Text style={[
-                styles.profitValue,
-                { color: profitPercentage >= 0 ? colors.success : colors.error }
-              ]}>
+              <Text
+                style={[
+                  styles.profitValue,
+                  {
+                    color:
+                      profitPercentage >= 0 ? colors.success : colors.error,
+                  },
+                ]}
+              >
                 {formatPercentage(profitPercentage)}
               </Text>
             </View>
@@ -206,20 +215,27 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) =>
 
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>總收益</Text>
-          <Text style={[
-            styles.statValue,
-            { color: stats.totalProfit >= 0 ? colors.success : colors.error }
-          ]}>
+          <Text
+            style={[
+              styles.statValue,
+              { color: stats.totalProfit >= 0 ? colors.success : colors.error },
+            ]}
+          >
             {formatCurrency(stats.totalProfit)}
           </Text>
         </View>
 
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>收益率</Text>
-          <Text style={[
-            styles.statValue,
-            { color: stats.profitPercentage >= 0 ? colors.success : colors.error }
-          ]}>
+          <Text
+            style={[
+              styles.statValue,
+              {
+                color:
+                  stats.profitPercentage >= 0 ? colors.success : colors.error,
+              },
+            ]}
+          >
             {formatPercentage(stats.profitPercentage)}
           </Text>
         </View>
@@ -241,9 +257,7 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) =>
       <View style={styles.listContainer}>
         <View style={styles.listHeader}>
           <Text style={styles.listTitle}>💎 我的投資</Text>
-          <Text style={styles.listSubtitle}>
-            {portfolio.length} 張卡片
-          </Text>
+          <Text style={styles.listSubtitle}>{portfolio.length} 張卡片</Text>
         </View>
 
         <FlatList
@@ -274,42 +288,42 @@ const InvestmentsScreen: React.FC<InvestmentsScreenProps> = ({ onCardPress }) =>
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background
+    backgroundColor: colors.background,
   },
   statsCard: {
     backgroundColor: colors.backgroundPaper,
     borderRadius: borderRadius.large,
     padding: spacing.large,
     margin: spacing.large,
-    ...shadows.base
+    ...shadows.base,
   },
   statsTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: '600' as const,
     color: colors.textPrimary,
     marginBottom: spacing.large,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    marginBottom: spacing.large
+    marginBottom: spacing.large,
   },
   statItem: {
     width: '48%',
     alignItems: 'center',
-    marginBottom: spacing.medium
+    marginBottom: spacing.medium,
   },
   statLabel: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   statValue: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -317,40 +331,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: spacing.medium,
     borderTopWidth: 1,
-    borderTopColor: colors.border
+    borderTopColor: colors.border,
   },
   summaryLabel: {
     fontSize: typography.fontSize.base,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   summaryValue: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   listContainer: {
-    flex: 1
+    flex: 1,
   },
   listHeader: {
     paddingHorizontal: spacing.large,
     paddingVertical: spacing.medium,
     backgroundColor: colors.backgroundPaper,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border
+    borderBottomColor: colors.border,
   },
   listTitle: {
     fontSize: typography.fontSize.lg,
     fontWeight: '600' as const,
     color: colors.textPrimary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   listSubtitle: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   portfolioList: {
     paddingHorizontal: spacing.large,
-    paddingBottom: spacing.xlarge
+    paddingBottom: spacing.xlarge,
   },
   portfolioItem: {
     backgroundColor: colors.backgroundPaper,
@@ -358,7 +372,7 @@ const styles = StyleSheet.create({
     padding: spacing.large,
     marginBottom: spacing.medium,
     flexDirection: 'row',
-    ...shadows.base
+    ...shadows.base,
   },
   cardImageContainer: {
     width: 80,
@@ -367,75 +381,75 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.medium,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: spacing.medium
+    marginRight: spacing.medium,
   },
   cardImagePlaceholder: {
-    fontSize: 30
+    fontSize: 30,
   },
   itemInfo: {
-    flex: 1
+    flex: 1,
   },
   cardName: {
     fontSize: typography.fontSize.base,
     fontWeight: '600' as const,
     color: colors.textPrimary,
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   cardSetName: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   itemMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   quantityText: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   dateText: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   priceInfo: {
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   priceLabel: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   priceValue: {
     fontSize: typography.fontSize.sm,
     fontWeight: '500' as const,
-    color: colors.textPrimary
+    color: colors.textPrimary,
   },
   profitInfo: {
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   profitRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: spacing.xsmall
+    marginBottom: spacing.xsmall,
   },
   profitLabel: {
     fontSize: typography.fontSize.sm,
-    color: colors.textSecondary
+    color: colors.textSecondary,
   },
   profitValue: {
     fontSize: typography.fontSize.sm,
-    fontWeight: '600' as const
+    fontWeight: '600' as const,
   },
   notesText: {
     fontSize: typography.fontSize.xs,
     color: colors.textSecondary,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   removeButton: {
     backgroundColor: colors.error,
@@ -443,30 +457,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.medium,
     paddingVertical: spacing.small,
     justifyContent: 'center',
-    marginLeft: spacing.small
+    marginLeft: spacing.small,
   },
   removeButtonText: {
     color: colors.white,
     fontSize: typography.fontSize.sm,
-    fontWeight: '500' as const
+    fontWeight: '500' as const,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: spacing.xlarge * 2
+    paddingVertical: spacing.xlarge * 2,
   },
   emptyText: {
     fontSize: typography.fontSize.base,
     color: colors.textSecondary,
     textAlign: 'center',
-    marginBottom: spacing.small
+    marginBottom: spacing.small,
   },
   emptySubtext: {
     fontSize: typography.fontSize.sm,
     color: colors.textSecondary,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
 
 export default InvestmentsScreen;

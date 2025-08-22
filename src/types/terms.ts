@@ -2,11 +2,11 @@
 
 // 條款類型
 export type TermsType =
-  | 'purchase_refund_policy'    // 購買及退款政策
-  | 'disclaimer'                // 免責聲明
-  | 'cookie_policy'             // Cookie 政策
-  | 'terms_of_use'              // 使用條款
-  | 'ai_usage_policy';          // AI 使用政策
+  | 'purchase_refund_policy' // 購買及退款政策
+  | 'disclaimer' // 免責聲明
+  | 'cookie_policy' // Cookie 政策
+  | 'terms_of_use' // 使用條款
+  | 'ai_usage_policy'; // AI 使用政策
 
 // 條款狀態
 export type TermsStatus = 'active' | 'inactive' | 'draft' | 'archived';
@@ -54,27 +54,27 @@ export interface UserConsent {
 // 條款配置
 export interface TermsConfig {
   // 強制同意設置
-  requireAllTerms: boolean;           // 是否要求同意所有條款
-  allowPartialConsent: boolean;       // 是否允許部分同意
-  consentExpiryDays: number;          // 同意有效期（天）
+  requireAllTerms: boolean; // 是否要求同意所有條款
+  allowPartialConsent: boolean; // 是否允許部分同意
+  consentExpiryDays: number; // 同意有效期（天）
 
   // 顯示設置
-  showOnFirstLaunch: boolean;         // 首次啟動時顯示
-  showOnUpdate: boolean;              // 更新時顯示
-  showOnLogin: boolean;               // 登錄時顯示
+  showOnFirstLaunch: boolean; // 首次啟動時顯示
+  showOnUpdate: boolean; // 更新時顯示
+  showOnLogin: boolean; // 登錄時顯示
 
   // 通知設置
-  notifyOnExpiry: boolean;            // 到期時通知
-  notifyOnUpdate: boolean;            // 更新時通知
+  notifyOnExpiry: boolean; // 到期時通知
+  notifyOnUpdate: boolean; // 更新時通知
 
   // 合規設置
-  requireExplicitConsent: boolean;    // 要求明確同意
-  requireAgeVerification: boolean;    // 要求年齡驗證
-  minimumAge: number;                 // 最小年齡要求
+  requireExplicitConsent: boolean; // 要求明確同意
+  requireAgeVerification: boolean; // 要求年齡驗證
+  minimumAge: number; // 最小年齡要求
 
   // 多語言設置
-  defaultLanguage: string;            // 默認語言
-  supportedLanguages: string[];       // 支持語言列表
+  defaultLanguage: string; // 默認語言
+  supportedLanguages: string[]; // 支持語言列表
 }
 
 // 條款同意請求

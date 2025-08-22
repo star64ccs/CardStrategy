@@ -5,7 +5,7 @@ import { Button } from '@/components/common/Button';
 describe('Button Component', () => {
   const defaultProps = {
     title: '測試按鈕',
-    onPress: jest.fn()
+    onPress: jest.fn(),
   };
 
   beforeEach(() => {
@@ -21,7 +21,9 @@ describe('Button Component', () => {
     });
 
     it('應該正確渲染不同變體的按鈕', () => {
-      const { getByText, rerender } = render(<Button {...defaultProps} variant="primary" />);
+      const { getByText, rerender } = render(
+        <Button {...defaultProps} variant="primary" />
+      );
       expect(getByText('測試按鈕')).toBeTruthy();
 
       rerender(<Button {...defaultProps} variant="secondary" />);
@@ -35,7 +37,9 @@ describe('Button Component', () => {
     });
 
     it('應該正確渲染不同尺寸的按鈕', () => {
-      const { getByText, rerender } = render(<Button {...defaultProps} size="small" />);
+      const { getByText, rerender } = render(
+        <Button {...defaultProps} size="small" />
+      );
       expect(getByText('測試按鈕')).toBeTruthy();
 
       rerender(<Button {...defaultProps} size="medium" />);
@@ -70,7 +74,9 @@ describe('Button Component', () => {
   describe('Interaction', () => {
     it('應該在點擊時調用 onPress 回調', () => {
       const onPress = jest.fn();
-      const { getByText } = render(<Button {...defaultProps} onPress={onPress} />);
+      const { getByText } = render(
+        <Button {...defaultProps} onPress={onPress} />
+      );
 
       const button = getByText('測試按鈕');
       fireEvent.press(button);
@@ -80,7 +86,9 @@ describe('Button Component', () => {
 
     it('應該在禁用狀態下不調用 onPress 回調', () => {
       const onPress = jest.fn();
-      const { getByText } = render(<Button {...defaultProps} onPress={onPress} disabled />);
+      const { getByText } = render(
+        <Button {...defaultProps} onPress={onPress} disabled />
+      );
 
       const button = getByText('測試按鈕');
       fireEvent.press(button);
@@ -90,7 +98,9 @@ describe('Button Component', () => {
 
     it('應該在加載狀態下不調用 onPress 回調', () => {
       const onPress = jest.fn();
-      const { getByText } = render(<Button {...defaultProps} onPress={onPress} loading />);
+      const { getByText } = render(
+        <Button {...defaultProps} onPress={onPress} loading />
+      );
 
       const button = getByText('測試按鈕');
       fireEvent.press(button);
@@ -176,7 +186,9 @@ describe('Button Component', () => {
     });
 
     it('應該處理異步 onPress 回調', async () => {
-      const asyncOnPress = jest.fn().mockImplementation(() => Promise.resolve());
+      const asyncOnPress = jest
+        .fn()
+        .mockImplementation(() => Promise.resolve());
       const { getByText } = render(
         <Button {...defaultProps} onPress={asyncOnPress} />
       );

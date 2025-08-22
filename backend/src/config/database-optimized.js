@@ -9,32 +9,32 @@ const sequelize = new Sequelize(
   {
     host: config.database.host,
     port: config.database.port,
-    dialect: config.database.dialect,
+    dialect: 'postgres', // 明確指定 dialect
     logging: config.database.logging,
     pool: config.database.pool,
-    
+
     // 連接池配置
     pool: {
       max: config.database.pool.max,
       min: config.database.pool.min,
       acquire: config.database.pool.acquire,
-      idle: config.database.pool.idle
+      idle: config.database.pool.idle,
     },
-    
+
     // 查詢優化
     define: {
       timestamps: true,
       underscored: true,
-      freezeTableName: true
+      freezeTableName: true,
     },
-    
+
     // 時區設置
     timezone: '+08:00',
-    
+
     // 查詢超時
     query: {
-      timeout: 30000
-    }
+      timeout: 30000,
+    },
   }
 );
 
@@ -53,7 +53,6 @@ const testConnection = async () => {
 const initDatabase = async () => {
   try {
     await sequelize.sync({ alter: true });
-    console.log('數據庫同步完成');
   } catch (error) {
     console.error('數據庫同步失敗:', error);
     throw error;
@@ -63,5 +62,5 @@ const initDatabase = async () => {
 module.exports = {
   sequelize,
   testConnection,
-  initDatabase
+  initDatabase,
 };

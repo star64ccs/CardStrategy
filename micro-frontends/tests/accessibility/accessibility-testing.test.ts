@@ -1,5 +1,8 @@
 import { test, expect, Page, Browser, BrowserContext } from '@playwright/test';
-import { setupTestEnvironment, cleanupTestEnvironment } from '../setup/e2e-setup';
+import {
+  setupTestEnvironment,
+  cleanupTestEnvironment,
+} from '../setup/e2e-setup';
 
 // 可訪問性測試配置
 const ACCESSIBILITY_TEST_CONFIG = {
@@ -21,8 +24,8 @@ const ACCESSIBILITY_TEST_CONFIG = {
       '3.2.1', // 焦點變化
       '3.2.2', // 輸入變化
       '4.1.1', // 解析
-      '4.1.2'  // 名稱、角色、值
-    ]
+      '4.1.2', // 名稱、角色、值
+    ],
   },
   // 顏色對比度測試配置
   colorContrast: {
@@ -33,11 +36,16 @@ const ACCESSIBILITY_TEST_CONFIG = {
       'a',
       'input',
       'label',
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
       'p',
       'span',
-      'div'
-    ]
+      'div',
+    ],
   },
   // 鍵盤導航測試配置
   keyboardNavigation: {
@@ -50,13 +58,9 @@ const ACCESSIBILITY_TEST_CONFIG = {
       '[role="button"]',
       '[role="link"]',
       '[role="menuitem"]',
-      '[tabindex]'
+      '[tabindex]',
     ],
-    skipElements: [
-      '[tabindex="-1"]',
-      '[aria-hidden="true"]',
-      '[hidden]'
-    ]
+    skipElements: ['[tabindex="-1"]', '[aria-hidden="true"]', '[hidden]'],
   },
   // 屏幕閱讀器測試配置
   screenReader: {
@@ -69,9 +73,9 @@ const ACCESSIBILITY_TEST_CONFIG = {
       '[role]',
       '[aria-expanded]',
       '[aria-pressed]',
-      '[aria-checked]'
-    ]
-  }
+      '[aria-checked]',
+    ],
+  },
 };
 
 // 可訪問性測試工具類
@@ -127,7 +131,7 @@ class AccessibilityTestUtils {
       // 檢查標題是否描述性
       const descriptiveWords = ['home', 'main', 'index', 'page', 'site'];
       const lowerTitle = title.toLowerCase();
-      if (descriptiveWords.some(word => lowerTitle.includes(word))) {
+      if (descriptiveWords.some((word) => lowerTitle.includes(word))) {
         this.addAccessibilityViolation(
           'Page Title',
           '頁面標題不夠描述性',
@@ -138,7 +142,6 @@ class AccessibilityTestUtils {
         );
         return true;
       }
-
     } catch (error) {
       console.warn(`頁面標題測試失敗: ${error.message}`);
     }
@@ -199,7 +202,6 @@ class AccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`圖片替代文本測試失敗: ${error.message}`);
     }
@@ -214,17 +216,21 @@ class AccessibilityTestUtils {
     console.log('🔍 測試表單標籤...');
 
     try {
-      const formControls = await this.page.locator('input, select, textarea').all();
+      const formControls = await this.page
+        .locator('input, select, textarea')
+        .all();
 
       for (const control of formControls) {
-        const tagName = await control.evaluate(el => el.tagName.toLowerCase());
+        const tagName = await control.evaluate((el) =>
+          el.tagName.toLowerCase()
+        );
         const type = await control.getAttribute('type');
         const id = await control.getAttribute('id');
         const ariaLabel = await control.getAttribute('aria-label');
         const ariaLabelledby = await control.getAttribute('aria-labelledby');
 
         // 跳過隱藏的控件
-        const isHidden = await control.evaluate(el => {
+        const isHidden = await control.evaluate((el) => {
           const style = window.getComputedStyle(el);
           return style.display === 'none' || style.visibility === 'hidden';
         });
@@ -232,7 +238,8 @@ class AccessibilityTestUtils {
         if (isHidden) continue;
 
         // 跳過按鈕類型的輸入
-        if (type === 'button' || type === 'submit' || type === 'reset') continue;
+        if (type === 'button' || type === 'submit' || type === 'reset')
+          continue;
 
         // 檢查是否有標籤
         let hasLabel = false;
@@ -246,7 +253,9 @@ class AccessibilityTestUtils {
           hasLabel = label > 0;
         } else {
           // 檢查是否有父級標籤
-          const parentLabel = await control.locator('xpath=ancestor::label').count();
+          const parentLabel = await control
+            .locator('xpath=ancestor::label')
+            .count();
           hasLabel = parentLabel > 0;
         }
 
@@ -262,7 +271,6 @@ class AccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`表單標籤測試失敗: ${error.message}`);
     }
@@ -282,13 +290,13 @@ class AccessibilityTestUtils {
 
       // 檢查是否有焦點指示器
       const focusedElement = await this.page.locator(':focus').first();
-      if (await focusedElement.count() > 0) {
-        const focusStyles = await focusedElement.evaluate(el => {
+      if ((await focusedElement.count()) > 0) {
+        const focusStyles = await focusedElement.evaluate((el) => {
           const style = window.getComputedStyle(el);
           return {
             outline: style.outline,
             border: style.border,
-            boxShadow: style.boxShadow
+            boxShadow: style.boxShadow,
           };
         });
 
@@ -311,12 +319,16 @@ class AccessibilityTestUtils {
       }
 
       // 測試所有可聚焦元素
-      const focusableElements = await this.page.locator(
-        'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'
-      ).all();
+      const focusableElements = await this.page
+        .locator(
+          'button, a, input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        .all();
 
       for (const element of focusableElements) {
-        const tagName = await element.evaluate(el => el.tagName.toLowerCase());
+        const tagName = await element.evaluate((el) =>
+          el.tagName.toLowerCase()
+        );
         const tabIndex = await element.getAttribute('tabindex');
 
         // 檢查元素是否可以通過鍵盤激活
@@ -335,7 +347,6 @@ class AccessibilityTestUtils {
           }
         }
       }
-
     } catch (error) {
       console.warn(`鍵盤導航測試失敗: ${error.message}`);
     }
@@ -351,26 +362,32 @@ class AccessibilityTestUtils {
 
     try {
       // 測試文本元素的顏色對比度
-      const textElements = await this.page.locator('p, h1, h2, h3, h4, h5, h6, span, div, a, button, label').all();
+      const textElements = await this.page
+        .locator('p, h1, h2, h3, h4, h5, h6, span, div, a, button, label')
+        .all();
 
       for (const element of textElements) {
         const text = await element.textContent();
         if (!text || text.trim() === '') continue;
 
-        const styles = await element.evaluate(el => {
+        const styles = await element.evaluate((el) => {
           const style = window.getComputedStyle(el);
           return {
             color: style.color,
             backgroundColor: style.backgroundColor,
             fontSize: style.fontSize,
-            fontWeight: style.fontWeight
+            fontWeight: style.fontWeight,
           };
         });
 
         // 檢查是否有足夠的顏色對比度
-        const contrastRatio = this.calculateContrastRatio(styles.color, styles.backgroundColor);
+        const contrastRatio = this.calculateContrastRatio(
+          styles.color,
+          styles.backgroundColor
+        );
         const fontSize = parseFloat(styles.fontSize);
-        const isLargeText = fontSize >= 18 || (fontSize >= 14 && styles.fontWeight >= '700');
+        const isLargeText =
+          fontSize >= 18 || (fontSize >= 14 && styles.fontWeight >= '700');
         const requiredRatio = isLargeText ? 3.0 : 4.5;
 
         if (contrastRatio < requiredRatio) {
@@ -386,13 +403,12 @@ class AccessibilityTestUtils {
               color: styles.color,
               backgroundColor: styles.backgroundColor,
               fontSize,
-              isLargeText
+              isLargeText,
             }
           );
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`顏色對比度測試失敗: ${error.message}`);
     }
@@ -408,11 +424,15 @@ class AccessibilityTestUtils {
 
     try {
       // 測試 ARIA 標籤
-      const elementsWithAriaLabel = await this.page.locator('[aria-label]').all();
+      const elementsWithAriaLabel = await this.page
+        .locator('[aria-label]')
+        .all();
 
       for (const element of elementsWithAriaLabel) {
         const ariaLabel = await element.getAttribute('aria-label');
-        const tagName = await element.evaluate(el => el.tagName.toLowerCase());
+        const tagName = await element.evaluate((el) =>
+          el.tagName.toLowerCase()
+        );
 
         if (!ariaLabel || ariaLabel.trim() === '') {
           this.addAccessibilityViolation(
@@ -428,14 +448,20 @@ class AccessibilityTestUtils {
       }
 
       // 測試 ARIA 描述
-      const elementsWithAriaDescribedby = await this.page.locator('[aria-describedby]').all();
+      const elementsWithAriaDescribedby = await this.page
+        .locator('[aria-describedby]')
+        .all();
 
       for (const element of elementsWithAriaDescribedby) {
         const ariaDescribedby = await element.getAttribute('aria-describedby');
-        const tagName = await element.evaluate(el => el.tagName.toLowerCase());
+        const tagName = await element.evaluate((el) =>
+          el.tagName.toLowerCase()
+        );
 
         if (ariaDescribedby) {
-          const describedElements = ariaDescribedby.split(' ').filter(id => id.trim() !== '');
+          const describedElements = ariaDescribedby
+            .split(' ')
+            .filter((id) => id.trim() !== '');
 
           for (const id of describedElements) {
             const describedElement = await this.page.locator(`#${id}`).count();
@@ -459,18 +485,71 @@ class AccessibilityTestUtils {
 
       for (const element of elementsWithRole) {
         const role = await element.getAttribute('role');
-        const tagName = await element.evaluate(el => el.tagName.toLowerCase());
+        const tagName = await element.evaluate((el) =>
+          el.tagName.toLowerCase()
+        );
 
         const validRoles = [
-          'button', 'link', 'menuitem', 'menubar', 'menu', 'tab', 'tablist', 'tabpanel',
-          'combobox', 'listbox', 'option', 'textbox', 'searchbox', 'spinbutton',
-          'slider', 'progressbar', 'meter', 'scrollbar', 'status', 'timer',
-          'log', 'marquee', 'alert', 'alertdialog', 'dialog', 'tooltip',
-          'tree', 'treeitem', 'grid', 'gridcell', 'row', 'rowgroup', 'columnheader',
-          'rowheader', 'table', 'table', 'row', 'cell', 'columnheader', 'rowheader',
-          'banner', 'complementary', 'contentinfo', 'form', 'main', 'navigation',
-          'region', 'search', 'article', 'aside', 'section', 'figure', 'img',
-          'list', 'listitem', 'definition', 'term', 'math', 'note', 'presentation'
+          'button',
+          'link',
+          'menuitem',
+          'menubar',
+          'menu',
+          'tab',
+          'tablist',
+          'tabpanel',
+          'combobox',
+          'listbox',
+          'option',
+          'textbox',
+          'searchbox',
+          'spinbutton',
+          'slider',
+          'progressbar',
+          'meter',
+          'scrollbar',
+          'status',
+          'timer',
+          'log',
+          'marquee',
+          'alert',
+          'alertdialog',
+          'dialog',
+          'tooltip',
+          'tree',
+          'treeitem',
+          'grid',
+          'gridcell',
+          'row',
+          'rowgroup',
+          'columnheader',
+          'rowheader',
+          'table',
+          'table',
+          'row',
+          'cell',
+          'columnheader',
+          'rowheader',
+          'banner',
+          'complementary',
+          'contentinfo',
+          'form',
+          'main',
+          'navigation',
+          'region',
+          'search',
+          'article',
+          'aside',
+          'section',
+          'figure',
+          'img',
+          'list',
+          'listitem',
+          'definition',
+          'term',
+          'math',
+          'note',
+          'presentation',
         ];
 
         if (role && !validRoles.includes(role)) {
@@ -485,7 +564,6 @@ class AccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`ARIA 屬性測試失敗: ${error.message}`);
     }
@@ -504,7 +582,9 @@ class AccessibilityTestUtils {
       const headingLevels: number[] = [];
 
       for (const heading of headings) {
-        const tagName = await heading.evaluate(el => el.tagName.toLowerCase());
+        const tagName = await heading.evaluate((el) =>
+          el.tagName.toLowerCase()
+        );
         const level = parseInt(tagName.substring(1));
         headingLevels.push(level);
       }
@@ -539,7 +619,6 @@ class AccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`標題結構測試失敗: ${error.message}`);
     }
@@ -588,7 +667,9 @@ class AccessibilityTestUtils {
 
       for (const element of elementsWithLang) {
         const lang = await element.getAttribute('lang');
-        const tagName = await element.evaluate(el => el.tagName.toLowerCase());
+        const tagName = await element.evaluate((el) =>
+          el.tagName.toLowerCase()
+        );
 
         if (!lang || lang.trim() === '') {
           this.addAccessibilityViolation(
@@ -602,7 +683,6 @@ class AccessibilityTestUtils {
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`語言屬性測試失敗: ${error.message}`);
     }
@@ -625,9 +705,12 @@ class AccessibilityTestUtils {
       const g = parseInt(hex.substr(2, 2), 16) / 255;
       const b = parseInt(hex.substr(4, 2), 16) / 255;
 
-      const rsRGB = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
-      const gsRGB = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
-      const bsRGB = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
+      const rsRGB =
+        r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+      const gsRGB =
+        g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+      const bsRGB =
+        b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
 
       return 0.2126 * rsRGB + 0.7152 * gsRGB + 0.0722 * bsRGB;
     };
@@ -659,7 +742,7 @@ class AccessibilityTestUtils {
       wcagGuideline,
       element,
       timestamp: Date.now(),
-      details
+      details,
     });
 
     console.warn(`🚨 可訪問性違規 [${severity.toUpperCase()}]: ${description}`);
@@ -672,22 +755,35 @@ class AccessibilityTestUtils {
     return {
       totalViolations: this.accessibilityViolations.length,
       violationsBySeverity: {
-        critical: this.accessibilityViolations.filter(v => v.severity === 'critical').length,
-        high: this.accessibilityViolations.filter(v => v.severity === 'high').length,
-        medium: this.accessibilityViolations.filter(v => v.severity === 'medium').length,
-        low: this.accessibilityViolations.filter(v => v.severity === 'low').length
+        critical: this.accessibilityViolations.filter(
+          (v) => v.severity === 'critical'
+        ).length,
+        high: this.accessibilityViolations.filter((v) => v.severity === 'high')
+          .length,
+        medium: this.accessibilityViolations.filter(
+          (v) => v.severity === 'medium'
+        ).length,
+        low: this.accessibilityViolations.filter((v) => v.severity === 'low')
+          .length,
       },
-      violationsByType: this.accessibilityViolations.reduce((acc, violation) => {
-        acc[violation.type] = (acc[violation.type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      violationsByWCAG: this.accessibilityViolations.reduce((acc, violation) => {
-        if (violation.wcagGuideline) {
-          acc[violation.wcagGuideline] = (acc[violation.wcagGuideline] || 0) + 1;
-        }
-        return acc;
-      }, {} as Record<string, number>),
-      violations: this.accessibilityViolations
+      violationsByType: this.accessibilityViolations.reduce(
+        (acc, violation) => {
+          acc[violation.type] = (acc[violation.type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      violationsByWCAG: this.accessibilityViolations.reduce(
+        (acc, violation) => {
+          if (violation.wcagGuideline) {
+            acc[violation.wcagGuideline] =
+              (acc[violation.wcagGuideline] || 0) + 1;
+          }
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      violations: this.accessibilityViolations,
     };
   }
 }
@@ -790,11 +886,11 @@ describe('CardStrategy 基本可訪問性測試', () => {
       accessibilityUtils.testColorContrast(),
       accessibilityUtils.testARIAAttributes(),
       accessibilityUtils.testHeadingStructure(),
-      accessibilityUtils.testLanguageAttributes()
+      accessibilityUtils.testLanguageAttributes(),
     ];
 
     const results = await Promise.all(tests);
-    const hasAnyViolation = results.some(result => result === true);
+    const hasAnyViolation = results.some((result) => result === true);
 
     // 生成可訪問性報告
     const accessibilityReport = accessibilityUtils.getAccessibilityReport();
@@ -808,7 +904,9 @@ describe('CardStrategy 基本可訪問性測試', () => {
     if (accessibilityReport.violations.length > 0) {
       console.log('🚨 發現的可訪問性問題:');
       accessibilityReport.violations.forEach((violation, index) => {
-        console.log(`${index + 1}. [${violation.severity.toUpperCase()}] ${violation.type}: ${violation.description}`);
+        console.log(
+          `${index + 1}. [${violation.severity.toUpperCase()}] ${violation.type}: ${violation.description}`
+        );
         if (violation.wcagGuideline) {
           console.log(`   WCAG 指南: ${violation.wcagGuideline}`);
         }

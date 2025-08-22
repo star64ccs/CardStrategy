@@ -1,5 +1,8 @@
 import { test, expect, Page, Browser, BrowserContext } from '@playwright/test';
-import { setupTestEnvironment, cleanupTestEnvironment } from '../setup/e2e-setup';
+import {
+  setupTestEnvironment,
+  cleanupTestEnvironment,
+} from '../setup/e2e-setup';
 
 // 安全測試配置
 const SECURITY_TEST_CONFIG = {
@@ -13,9 +16,9 @@ const SECURITY_TEST_CONFIG = {
       '"><script>alert("XSS")</script>',
       '\'><script>alert("XSS")</script>',
       '"><img src="x" onerror="alert(\'XSS\')">',
-      '\'><img src="x" onerror="alert(\'XSS\')">'
+      '\'><img src="x" onerror="alert(\'XSS\')">',
     ],
-    expectedBehavior: 'sanitized'
+    expectedBehavior: 'sanitized',
   },
   // SQL 注入測試配置
   sqlInjection: {
@@ -25,9 +28,9 @@ const SECURITY_TEST_CONFIG = {
       "' UNION SELECT * FROM users --",
       "admin'--",
       "1' OR '1' = '1' --",
-      "'; INSERT INTO users VALUES ('hacker', 'password'); --"
+      "'; INSERT INTO users VALUES ('hacker', 'password'); --",
     ],
-    expectedBehavior: 'rejected'
+    expectedBehavior: 'rejected',
   },
   // CSRF 測試配置
   csrf: {
@@ -35,9 +38,9 @@ const SECURITY_TEST_CONFIG = {
       '/api/cards/add',
       '/api/portfolio/update',
       '/api/user/settings',
-      '/api/payment/process'
+      '/api/payment/process',
     ],
-    expectedBehavior: 'protected'
+    expectedBehavior: 'protected',
   },
   // 認證測試配置
   authentication: {
@@ -47,9 +50,9 @@ const SECURITY_TEST_CONFIG = {
       'expired_token',
       'missing_token',
       'tampered_token',
-      'weak_password'
+      'weak_password',
     ],
-    expectedBehavior: 'secure'
+    expectedBehavior: 'secure',
   },
   // 授權測試配置
   authorization: {
@@ -58,10 +61,10 @@ const SECURITY_TEST_CONFIG = {
       'user_access',
       'guest_access',
       'cross_user_access',
-      'privilege_escalation'
+      'privilege_escalation',
     ],
-    expectedBehavior: 'restricted'
-  }
+    expectedBehavior: 'restricted',
+  },
 };
 
 // 安全測試工具類
@@ -82,7 +85,10 @@ class SecurityTestUtils {
   /**
    * 檢測 XSS 漏洞
    */
-  async testXSSVulnerability(inputSelector: string, submitSelector: string): Promise<boolean> {
+  async testXSSVulnerability(
+    inputSelector: string,
+    submitSelector: string
+  ): Promise<boolean> {
     console.log('🔍 測試 XSS 漏洞...');
 
     for (const payload of SECURITY_TEST_CONFIG.xss.payloads) {
@@ -95,20 +101,34 @@ class SecurityTestUtils {
         await this.page.waitForTimeout(2000);
 
         // 檢查是否有彈出警告
-        const dialog = await this.page.waitForEvent('dialog', { timeout: 1000 }).catch(() => null);
+        const dialog = await this.page
+          .waitForEvent('dialog', { timeout: 1000 })
+          .catch(() => null);
         if (dialog) {
-          this.addSecurityViolation('XSS', `檢測到 XSS 漏洞: ${payload}`, 'high', { payload });
+          this.addSecurityViolation(
+            'XSS',
+            `檢測到 XSS 漏洞: ${payload}`,
+            'high',
+            { payload }
+          );
           await dialog.dismiss();
           return true;
         }
 
         // 檢查頁面源碼是否包含未過濾的載荷
         const pageContent = await this.page.content();
-        if (pageContent.includes(payload) && !this.isSanitized(payload, pageContent)) {
-          this.addSecurityViolation('XSS', `頁面包含未過濾的 XSS 載荷: ${payload}`, 'medium', { payload });
+        if (
+          pageContent.includes(payload) &&
+          !this.isSanitized(payload, pageContent)
+        ) {
+          this.addSecurityViolation(
+            'XSS',
+            `頁面包含未過濾的 XSS 載荷: ${payload}`,
+            'medium',
+            { payload }
+          );
           return true;
         }
-
       } catch (error) {
         console.warn(`XSS 測試失敗: ${error.message}`);
       }
@@ -120,7 +140,10 @@ class SecurityTestUtils {
   /**
    * 檢測 SQL 注入漏洞
    */
-  async testSQLInjection(inputSelector: string, submitSelector: string): Promise<boolean> {
+  async testSQLInjection(
+    inputSelector: string,
+    submitSelector: string
+  ): Promise<boolean> {
     console.log('🔍 測試 SQL 注入漏洞...');
 
     for (const payload of SECURITY_TEST_CONFIG.sqlInjection.payloads) {
@@ -140,12 +163,17 @@ class SecurityTestUtils {
           'oracle error',
           'postgresql error',
           'sqlite error',
-          'database error'
+          'database error',
         ];
 
         for (const error of sqlErrors) {
           if (pageContent.toLowerCase().includes(error)) {
-            this.addSecurityViolation('SQL Injection', `檢測到 SQL 錯誤信息: ${error}`, 'high', { payload, error });
+            this.addSecurityViolation(
+              'SQL Injection',
+              `檢測到 SQL 錯誤信息: ${error}`,
+              'high',
+              { payload, error }
+            );
             return true;
           }
         }
@@ -155,16 +183,20 @@ class SecurityTestUtils {
           'welcome admin',
           'user list',
           'database',
-          'table'
+          'table',
         ];
 
         for (const indicator of successIndicators) {
           if (pageContent.toLowerCase().includes(indicator)) {
-            this.addSecurityViolation('SQL Injection', `檢測到可能的 SQL 注入成功: ${indicator}`, 'critical', { payload, indicator });
+            this.addSecurityViolation(
+              'SQL Injection',
+              `檢測到可能的 SQL 注入成功: ${indicator}`,
+              'critical',
+              { payload, indicator }
+            );
             return true;
           }
         }
-
       } catch (error) {
         console.warn(`SQL 注入測試失敗: ${error.message}`);
       }
@@ -185,19 +217,23 @@ class SecurityTestUtils {
         const response = await this.page.request.post(endpoint, {
           data: {
             action: 'test',
-            data: 'test_data'
+            data: 'test_data',
           },
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
         // 檢查響應狀態
         if (response.status() === 200) {
-          this.addSecurityViolation('CSRF', `端點 ${endpoint} 缺少 CSRF 保護`, 'high', { endpoint, status: response.status() });
+          this.addSecurityViolation(
+            'CSRF',
+            `端點 ${endpoint} 缺少 CSRF 保護`,
+            'high',
+            { endpoint, status: response.status() }
+          );
           return true;
         }
-
       } catch (error) {
         console.warn(`CSRF 測試失敗: ${error.message}`);
       }
@@ -223,10 +259,14 @@ class SecurityTestUtils {
       // 檢查是否仍然在登錄頁面
       const currentUrl = this.page.url();
       if (!currentUrl.includes('/login') && !currentUrl.includes('/auth')) {
-        this.addSecurityViolation('Authentication', '無效憑證仍能登錄', 'critical', { email: 'invalid@test.com' });
+        this.addSecurityViolation(
+          'Authentication',
+          '無效憑證仍能登錄',
+          'critical',
+          { email: 'invalid@test.com' }
+        );
         return true;
       }
-
     } catch (error) {
       console.warn(`認證測試失敗: ${error.message}`);
     }
@@ -242,11 +282,18 @@ class SecurityTestUtils {
 
         // 檢查是否有弱密碼警告
         const pageContent = await this.page.content();
-        if (!pageContent.includes('weak') && !pageContent.includes('password')) {
-          this.addSecurityViolation('Authentication', `允許弱密碼: ${weakPassword}`, 'medium', { password: weakPassword });
+        if (
+          !pageContent.includes('weak') &&
+          !pageContent.includes('password')
+        ) {
+          this.addSecurityViolation(
+            'Authentication',
+            `允許弱密碼: ${weakPassword}`,
+            'medium',
+            { password: weakPassword }
+          );
           return true;
         }
-
       } catch (error) {
         console.warn(`弱密碼測試失敗: ${error.message}`);
       }
@@ -274,13 +321,17 @@ class SecurityTestUtils {
       const response = await this.page.request.get('/api/user/B/profile');
 
       if (response.status() === 200) {
-        this.addSecurityViolation('Authorization', '允許跨用戶訪問', 'critical', {
-          requestedUser: 'B',
-          currentUser: 'A'
-        });
+        this.addSecurityViolation(
+          'Authorization',
+          '允許跨用戶訪問',
+          'critical',
+          {
+            requestedUser: 'B',
+            currentUser: 'A',
+          }
+        );
         return true;
       }
-
     } catch (error) {
       console.warn(`授權測試失敗: ${error.message}`);
     }
@@ -292,19 +343,18 @@ class SecurityTestUtils {
           action: 'create',
           user: {
             email: 'hacker@test.com',
-            role: 'admin'
-          }
-        }
+            role: 'admin',
+          },
+        },
       });
 
       if (response.status() === 200) {
         this.addSecurityViolation('Authorization', '允許權限提升', 'critical', {
           action: 'create_admin',
-          status: response.status()
+          status: response.status(),
         });
         return true;
       }
-
     } catch (error) {
       console.warn(`權限提升測試失敗: ${error.message}`);
     }
@@ -331,7 +381,7 @@ class SecurityTestUtils {
       // 特殊字符
       '<script>alert("test")</script>',
       'javascript:alert("test")',
-      'data:text/html,<script>alert("test")</script>'
+      'data:text/html,<script>alert("test")</script>',
     ];
 
     for (const input of maliciousInputs) {
@@ -344,11 +394,18 @@ class SecurityTestUtils {
 
         // 檢查響應
         const pageContent = await this.page.content();
-        if (pageContent.includes(input) && !this.isSanitized(input, pageContent)) {
-          this.addSecurityViolation('Input Validation', `輸入未正確驗證: ${input}`, 'medium', { input });
+        if (
+          pageContent.includes(input) &&
+          !this.isSanitized(input, pageContent)
+        ) {
+          this.addSecurityViolation(
+            'Input Validation',
+            `輸入未正確驗證: ${input}`,
+            'medium',
+            { input }
+          );
           return true;
         }
-
       } catch (error) {
         console.warn(`輸入驗證測試失敗: ${error.message}`);
       }
@@ -366,38 +423,53 @@ class SecurityTestUtils {
     try {
       // 檢查會話超時
       const cookies = await this.page.context().cookies();
-      const sessionCookie = cookies.find(cookie =>
-        cookie.name.includes('session') ||
-        cookie.name.includes('token') ||
-        cookie.name.includes('auth')
+      const sessionCookie = cookies.find(
+        (cookie) =>
+          cookie.name.includes('session') ||
+          cookie.name.includes('token') ||
+          cookie.name.includes('auth')
       );
 
       if (sessionCookie) {
         // 檢查是否有過期時間
         if (!sessionCookie.expires) {
-          this.addSecurityViolation('Session Management', '會話 cookie 沒有過期時間', 'medium', {
-            cookieName: sessionCookie.name
-          });
+          this.addSecurityViolation(
+            'Session Management',
+            '會話 cookie 沒有過期時間',
+            'medium',
+            {
+              cookieName: sessionCookie.name,
+            }
+          );
           return true;
         }
 
         // 檢查是否使用 HttpOnly
         if (!sessionCookie.httpOnly) {
-          this.addSecurityViolation('Session Management', '會話 cookie 未設置 HttpOnly', 'medium', {
-            cookieName: sessionCookie.name
-          });
+          this.addSecurityViolation(
+            'Session Management',
+            '會話 cookie 未設置 HttpOnly',
+            'medium',
+            {
+              cookieName: sessionCookie.name,
+            }
+          );
           return true;
         }
 
         // 檢查是否使用 Secure
         if (!sessionCookie.secure) {
-          this.addSecurityViolation('Session Management', '會話 cookie 未設置 Secure', 'low', {
-            cookieName: sessionCookie.name
-          });
+          this.addSecurityViolation(
+            'Session Management',
+            '會話 cookie 未設置 Secure',
+            'low',
+            {
+              cookieName: sessionCookie.name,
+            }
+          );
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`會話管理測試失敗: ${error.message}`);
     }
@@ -416,7 +488,9 @@ class SecurityTestUtils {
 
       // 檢查是否使用 HTTPS
       if (!currentUrl.startsWith('https://')) {
-        this.addSecurityViolation('HTTPS', '未使用 HTTPS', 'high', { url: currentUrl });
+        this.addSecurityViolation('HTTPS', '未使用 HTTPS', 'high', {
+          url: currentUrl,
+        });
         return true;
       }
 
@@ -426,22 +500,30 @@ class SecurityTestUtils {
 
       // 檢查 HSTS
       if (!headers['strict-transport-security']) {
-        this.addSecurityViolation('HTTPS', '缺少 HSTS 標頭', 'medium', { headers });
+        this.addSecurityViolation('HTTPS', '缺少 HSTS 標頭', 'medium', {
+          headers,
+        });
         return true;
       }
 
       // 檢查 CSP
       if (!headers['content-security-policy']) {
-        this.addSecurityViolation('HTTPS', '缺少 CSP 標頭', 'medium', { headers });
+        this.addSecurityViolation('HTTPS', '缺少 CSP 標頭', 'medium', {
+          headers,
+        });
         return true;
       }
 
       // 檢查 X-Frame-Options
       if (!headers['x-frame-options']) {
-        this.addSecurityViolation('HTTPS', '缺少 X-Frame-Options 標頭', 'medium', { headers });
+        this.addSecurityViolation(
+          'HTTPS',
+          '缺少 X-Frame-Options 標頭',
+          'medium',
+          { headers }
+        );
         return true;
       }
-
     } catch (error) {
       console.warn(`HTTPS 測試失敗: ${error.message}`);
     }
@@ -465,16 +547,21 @@ class SecurityTestUtils {
         /secret\s*[:=]\s*['"][^'"]+['"]/i,
         /token\s*[:=]\s*['"][^'"]+['"]/i,
         /database_url\s*[:=]\s*['"][^'"]+['"]/i,
-        /connection_string\s*[:=]\s*['"][^'"]+['"]/i
+        /connection_string\s*[:=]\s*['"][^'"]+['"]/i,
       ];
 
       for (const pattern of sensitivePatterns) {
         const matches = pageContent.match(pattern);
         if (matches) {
-          this.addSecurityViolation('Information Disclosure', `檢測到敏感信息洩露: ${matches[0]}`, 'high', {
-            pattern: pattern.source,
-            match: matches[0]
-          });
+          this.addSecurityViolation(
+            'Information Disclosure',
+            `檢測到敏感信息洩露: ${matches[0]}`,
+            'high',
+            {
+              pattern: pattern.source,
+              match: matches[0],
+            }
+          );
           return true;
         }
       }
@@ -484,20 +571,24 @@ class SecurityTestUtils {
         /sql.*error/i,
         /database.*error/i,
         /stack.*trace/i,
-        /exception.*details/i
+        /exception.*details/i,
       ];
 
       for (const pattern of errorPatterns) {
         const matches = pageContent.match(pattern);
         if (matches) {
-          this.addSecurityViolation('Information Disclosure', `檢測到詳細錯誤信息: ${matches[0]}`, 'medium', {
-            pattern: pattern.source,
-            match: matches[0]
-          });
+          this.addSecurityViolation(
+            'Information Disclosure',
+            `檢測到詳細錯誤信息: ${matches[0]}`,
+            'medium',
+            {
+              pattern: pattern.source,
+              match: matches[0],
+            }
+          );
           return true;
         }
       }
-
     } catch (error) {
       console.warn(`信息洩露測試失敗: ${error.message}`);
     }
@@ -508,13 +599,18 @@ class SecurityTestUtils {
   /**
    * 添加安全違規記錄
    */
-  private addSecurityViolation(type: string, description: string, severity: 'low' | 'medium' | 'high' | 'critical', details: any) {
+  private addSecurityViolation(
+    type: string,
+    description: string,
+    severity: 'low' | 'medium' | 'high' | 'critical',
+    details: any
+  ) {
     this.securityViolations.push({
       type,
       description,
       severity,
       timestamp: Date.now(),
-      details
+      details,
     });
 
     console.warn(`🚨 安全違規 [${severity.toUpperCase()}]: ${description}`);
@@ -541,16 +637,23 @@ class SecurityTestUtils {
     return {
       totalViolations: this.securityViolations.length,
       violationsBySeverity: {
-        critical: this.securityViolations.filter(v => v.severity === 'critical').length,
-        high: this.securityViolations.filter(v => v.severity === 'high').length,
-        medium: this.securityViolations.filter(v => v.severity === 'medium').length,
-        low: this.securityViolations.filter(v => v.severity === 'low').length
+        critical: this.securityViolations.filter(
+          (v) => v.severity === 'critical'
+        ).length,
+        high: this.securityViolations.filter((v) => v.severity === 'high')
+          .length,
+        medium: this.securityViolations.filter((v) => v.severity === 'medium')
+          .length,
+        low: this.securityViolations.filter((v) => v.severity === 'low').length,
       },
-      violationsByType: this.securityViolations.reduce((acc, violation) => {
-        acc[violation.type] = (acc[violation.type] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>),
-      violations: this.securityViolations
+      violationsByType: this.securityViolations.reduce(
+        (acc, violation) => {
+          acc[violation.type] = (acc[violation.type] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ),
+      violations: this.securityViolations,
     };
   }
 }
@@ -587,7 +690,7 @@ describe('CardStrategy 安全測試', () => {
     );
 
     // 測試評論框
-    if (await page.locator('[data-testid="comment-input"]').count() > 0) {
+    if ((await page.locator('[data-testid="comment-input"]').count()) > 0) {
       const hasCommentXSS = await securityUtils.testXSSVulnerability(
         '[data-testid="comment-input"]',
         '[data-testid="comment-submit"]'
@@ -672,19 +775,25 @@ describe('CardStrategy 安全測試', () => {
 
     // 執行所有安全測試
     const tests = [
-      securityUtils.testXSSVulnerability('[data-testid="search-input"]', '[data-testid="search-button"]'),
-      securityUtils.testSQLInjection('[data-testid="email-input"]', '[data-testid="login-button"]'),
+      securityUtils.testXSSVulnerability(
+        '[data-testid="search-input"]',
+        '[data-testid="search-button"]'
+      ),
+      securityUtils.testSQLInjection(
+        '[data-testid="email-input"]',
+        '[data-testid="login-button"]'
+      ),
       securityUtils.testCSRFVulnerability(),
       securityUtils.testAuthentication(),
       securityUtils.testAuthorization(),
       securityUtils.testInputValidation(),
       securityUtils.testSessionManagement(),
       securityUtils.testHTTPSAndSSL(),
-      securityUtils.testInformationDisclosure()
+      securityUtils.testInformationDisclosure(),
     ];
 
     const results = await Promise.all(tests);
-    const hasAnyVulnerability = results.some(result => result === true);
+    const hasAnyVulnerability = results.some((result) => result === true);
 
     // 生成安全報告
     const securityReport = securityUtils.getSecurityReport();
@@ -697,7 +806,9 @@ describe('CardStrategy 安全測試', () => {
     if (securityReport.violations.length > 0) {
       console.log('🚨 發現的安全問題:');
       securityReport.violations.forEach((violation, index) => {
-        console.log(`${index + 1}. [${violation.severity.toUpperCase()}] ${violation.type}: ${violation.description}`);
+        console.log(
+          `${index + 1}. [${violation.severity.toUpperCase()}] ${violation.type}: ${violation.description}`
+        );
       });
     }
 

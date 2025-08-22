@@ -3,23 +3,24 @@ import {
   TaskStatus,
   TaskPriority,
   DependencyType,
-  TaskExecutor
+  TaskExecutor,
 } from './taskDependencyManager';
 
 // 測試用的任務執行器
-const createTestExecutor = (name: string, shouldFail = false): TaskExecutor => ({
+const createTestExecutor = (
+  name: string,
+  shouldFail = false
+): TaskExecutor => ({
   execute: async (task) => {
-    console.log(`[Test] 執行任務: ${name}`);
-
     // 模擬執行時間
-    await new Promise(resolve => setTimeout(resolve, task.estimatedDuration));
+    await new Promise((resolve) => setTimeout(resolve, task.estimatedDuration));
 
     if (shouldFail) {
       throw new Error(`${name} 執行失敗`);
     }
 
     return { message: `${name} 執行成功`, timestamp: new Date().toISOString() };
-  }
+  },
 });
 
 describe('TaskDependencyManager', () => {
@@ -34,14 +35,14 @@ describe('TaskDependencyManager', () => {
       enableTimeout: true,
       defaultTimeout: 5000,
       enableDeadlockDetection: true,
-      enableCircularDependencyCheck: true
+      enableCircularDependencyCheck: true,
     });
   });
 
   afterEach(() => {
     // 清理所有任務
     const tasks = taskManager.getAllTasks();
-    tasks.forEach(task => taskManager.removeTask(task.id));
+    tasks.forEach((task) => taskManager.removeTask(task.id));
   });
 
   describe('基本任務管理', () => {
@@ -52,7 +53,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('測試任務')
+        executor: createTestExecutor('測試任務'),
       });
 
       expect(taskId).toBeDefined();
@@ -69,7 +70,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('測試任務')
+        executor: createTestExecutor('測試任務'),
       });
 
       const result = taskManager.removeTask(taskId);
@@ -85,12 +86,12 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('測試任務')
+        executor: createTestExecutor('測試任務'),
       });
 
       const result = taskManager.updateTask(taskId, {
         name: '更新後的任務',
-        priority: TaskPriority.HIGH
+        priority: TaskPriority.HIGH,
       });
 
       expect(result).toBe(true);
@@ -108,7 +109,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務1')
+        executor: createTestExecutor('任務1'),
       });
 
       const task2Id = taskManager.addTask({
@@ -116,12 +117,12 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務2')
+        executor: createTestExecutor('任務2'),
       });
 
       const result = taskManager.addDependency(task2Id, {
         taskId: task1Id,
-        type: DependencyType.REQUIRES
+        type: DependencyType.REQUIRES,
       });
 
       expect(result).toBe(true);
@@ -138,7 +139,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務1')
+        executor: createTestExecutor('任務1'),
       });
 
       const task2Id = taskManager.addTask({
@@ -146,12 +147,12 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務2')
+        executor: createTestExecutor('任務2'),
       });
 
       taskManager.addDependency(task2Id, {
         taskId: task1Id,
-        type: DependencyType.REQUIRES
+        type: DependencyType.REQUIRES,
       });
 
       const result = taskManager.removeDependency(task2Id, task1Id);
@@ -167,7 +168,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務1')
+        executor: createTestExecutor('任務1'),
       });
 
       const task2Id = taskManager.addTask({
@@ -175,19 +176,19 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務2')
+        executor: createTestExecutor('任務2'),
       });
 
       // 添加第一個依賴
       taskManager.addDependency(task2Id, {
         taskId: task1Id,
-        type: DependencyType.REQUIRES
+        type: DependencyType.REQUIRES,
       });
 
       // 嘗試添加循環依賴
       const result = taskManager.addDependency(task1Id, {
         taskId: task2Id,
-        type: DependencyType.REQUIRES
+        type: DependencyType.REQUIRES,
       });
 
       expect(result).toBe(false);
@@ -201,14 +202,14 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 100,
-        executor: createTestExecutor('簡單任務')
+        executor: createTestExecutor('簡單任務'),
       });
 
       // 開始執行
       const executionPromise = taskManager.startExecution();
 
       // 等待執行完成
-      await new Promise(resolve => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       const task = taskManager.getTask(taskId);
       expect(task?.status).toBe(TaskStatus.COMPLETED);
@@ -220,7 +221,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 100,
-        executor: createTestExecutor('前置任務')
+        executor: createTestExecutor('前置任務'),
       });
 
       const task2Id = taskManager.addTask({
@@ -228,20 +229,20 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 100,
-        executor: createTestExecutor('後置任務')
+        executor: createTestExecutor('後置任務'),
       });
 
       // 添加依賴關係
       taskManager.addDependency(task2Id, {
         taskId: task1Id,
-        type: DependencyType.REQUIRES
+        type: DependencyType.REQUIRES,
       });
 
       // 開始執行
       const executionPromise = taskManager.startExecution();
 
       // 等待執行完成
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 300));
 
       const task1 = taskManager.getTask(task1Id);
       const task2 = taskManager.getTask(task2Id);
@@ -257,14 +258,14 @@ describe('TaskDependencyManager', () => {
         priority: TaskPriority.NORMAL,
         estimatedDuration: 100,
         executor: createTestExecutor('失敗任務', true), // 設置為失敗
-        maxRetries: 1
+        maxRetries: 1,
       });
 
       // 開始執行
       const executionPromise = taskManager.startExecution();
 
       // 等待執行完成
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       const task = taskManager.getTask(taskId);
       expect(task?.status).toBe(TaskStatus.FAILED);
@@ -280,7 +281,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務1')
+        executor: createTestExecutor('任務1'),
       });
 
       taskManager.addTask({
@@ -288,7 +289,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.HIGH,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務2')
+        executor: createTestExecutor('任務2'),
       });
 
       const stats = taskManager.getStatistics();
@@ -308,7 +309,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務1')
+        executor: createTestExecutor('任務1'),
       });
 
       const task2Id = taskManager.addTask({
@@ -316,12 +317,12 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 1000,
-        executor: createTestExecutor('任務2')
+        executor: createTestExecutor('任務2'),
       });
 
       taskManager.addDependency(task2Id, {
         taskId: task1Id,
-        type: DependencyType.REQUIRES
+        type: DependencyType.REQUIRES,
       });
 
       const graph = taskManager.getDependencyGraph();
@@ -347,7 +348,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 100,
-        executor: createTestExecutor('事件測試任務')
+        executor: createTestExecutor('事件測試任務'),
       });
 
       // 開始執行
@@ -371,7 +372,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.HIGH,
         estimatedDuration: 100,
-        executor: createTestExecutor('任務A')
+        executor: createTestExecutor('任務A'),
       });
 
       const taskB = taskManager.addTask({
@@ -379,7 +380,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 100,
-        executor: createTestExecutor('任務B')
+        executor: createTestExecutor('任務B'),
       });
 
       const taskC = taskManager.addTask({
@@ -387,7 +388,7 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 100,
-        executor: createTestExecutor('任務C')
+        executor: createTestExecutor('任務C'),
       });
 
       const taskD = taskManager.addTask({
@@ -395,24 +396,36 @@ describe('TaskDependencyManager', () => {
         type: 'test',
         priority: TaskPriority.NORMAL,
         estimatedDuration: 100,
-        executor: createTestExecutor('任務D')
+        executor: createTestExecutor('任務D'),
       });
 
       // 建立依賴關係
-      taskManager.addDependency(taskB, { taskId: taskA, type: DependencyType.REQUIRES });
-      taskManager.addDependency(taskC, { taskId: taskA, type: DependencyType.REQUIRES });
-      taskManager.addDependency(taskD, { taskId: taskB, type: DependencyType.REQUIRES });
-      taskManager.addDependency(taskD, { taskId: taskC, type: DependencyType.REQUIRES });
+      taskManager.addDependency(taskB, {
+        taskId: taskA,
+        type: DependencyType.REQUIRES,
+      });
+      taskManager.addDependency(taskC, {
+        taskId: taskA,
+        type: DependencyType.REQUIRES,
+      });
+      taskManager.addDependency(taskD, {
+        taskId: taskB,
+        type: DependencyType.REQUIRES,
+      });
+      taskManager.addDependency(taskD, {
+        taskId: taskC,
+        type: DependencyType.REQUIRES,
+      });
 
       // 開始執行
       taskManager.startExecution();
 
       // 等待執行完成
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
       // 驗證所有任務都已完成
       const allTasks = taskManager.getAllTasks();
-      allTasks.forEach(task => {
+      allTasks.forEach((task) => {
         expect(task.status).toBe(TaskStatus.COMPLETED);
       });
     }, 10000);
@@ -421,8 +434,6 @@ describe('TaskDependencyManager', () => {
 
 // 演示函數
 export const demonstrateTaskDependencySystem = async () => {
-  console.log('=== 任務依賴管理系統演示 ===');
-
   const taskManager = new TaskDependencyManager({
     maxConcurrentTasks: 3,
     enableParallelExecution: true,
@@ -431,32 +442,30 @@ export const demonstrateTaskDependencySystem = async () => {
     enableTimeout: true,
     defaultTimeout: 10000,
     enableDeadlockDetection: true,
-    enableCircularDependencyCheck: true
+    enableCircularDependencyCheck: true,
   });
 
   // 設置事件監聽器
   taskManager.on('taskStarted', (data) => {
-    console.log(`🚀 任務開始: ${data.taskId}`);
+    console.log(`任務開始: ${data.task.name}`);
   });
 
   taskManager.on('taskCompleted', (data) => {
-    console.log(`✅ 任務完成: ${data.taskId}`, data.result);
+    console.log(`任務完成: ${data.task.name}`);
   });
 
   taskManager.on('taskFailed', (data) => {
-    console.log(`❌ 任務失敗: ${data.taskId}`, data.error);
+    console.log(`任務失敗: ${data.task.name} - ${data.error.message}`);
   });
 
   // 創建演示任務
-  console.log('\n📋 創建演示任務...');
-
   const dataCollectionId = taskManager.addTask({
     name: '數據收集',
     description: '收集市場數據和價格信息',
     type: 'data_collection',
     priority: TaskPriority.HIGH,
     estimatedDuration: 2000,
-    executor: createTestExecutor('數據收集')
+    executor: createTestExecutor('數據收集'),
   });
 
   const dataAnalysisId = taskManager.addTask({
@@ -465,7 +474,7 @@ export const demonstrateTaskDependencySystem = async () => {
     type: 'data_analysis',
     priority: TaskPriority.NORMAL,
     estimatedDuration: 3000,
-    executor: createTestExecutor('數據分析')
+    executor: createTestExecutor('數據分析'),
   });
 
   const reportGenerationId = taskManager.addTask({
@@ -474,7 +483,7 @@ export const demonstrateTaskDependencySystem = async () => {
     type: 'report_generation',
     priority: TaskPriority.NORMAL,
     estimatedDuration: 1500,
-    executor: createTestExecutor('生成報告')
+    executor: createTestExecutor('生成報告'),
   });
 
   const notificationId = taskManager.addTask({
@@ -483,52 +492,42 @@ export const demonstrateTaskDependencySystem = async () => {
     type: 'notification',
     priority: TaskPriority.LOW,
     estimatedDuration: 1000,
-    executor: createTestExecutor('發送通知')
+    executor: createTestExecutor('發送通知'),
   });
 
   // 建立依賴關係
-  console.log('\n🔗 建立依賴關係...');
-
   taskManager.addDependency(dataAnalysisId, {
     taskId: dataCollectionId,
-    type: DependencyType.REQUIRES
+    type: DependencyType.REQUIRES,
   });
 
   taskManager.addDependency(reportGenerationId, {
     taskId: dataAnalysisId,
-    type: DependencyType.REQUIRES
+    type: DependencyType.REQUIRES,
   });
 
   taskManager.addDependency(notificationId, {
     taskId: reportGenerationId,
-    type: DependencyType.TRIGGERS
+    type: DependencyType.TRIGGERS,
   });
 
   // 顯示依賴圖
-  console.log('\n📊 依賴圖:');
   const graph = taskManager.getDependencyGraph();
-  graph.nodes.forEach(node => {
-    console.log(`  📦 ${node.name} (${node.status})`);
+  graph.nodes.forEach((node) => {
+    console.log(`節點: ${node.id} - ${node.name}`);
   });
 
-  graph.edges.forEach(edge => {
-    const fromNode = graph.nodes.find(n => n.id === edge.from);
-    const toNode = graph.nodes.find(n => n.id === edge.to);
-    console.log(`  🔗 ${fromNode?.name} -> ${toNode?.name} (${edge.type})`);
+  graph.edges.forEach((edge) => {
+    const fromNode = graph.nodes.find((n) => n.id === edge.from);
+    const toNode = graph.nodes.find((n) => n.id === edge.to);
+    console.log(`邊: ${fromNode.name} -> ${toNode.name}`);
   });
 
   // 開始執行
-  console.log('\n🚀 開始執行任務...');
   await taskManager.startExecution();
 
   // 顯示最終統計
-  console.log('\n📈 執行統計:');
   const stats = taskManager.getStatistics();
-  console.log(`  總任務數: ${stats.totalTasks}`);
-  console.log(`  已完成: ${stats.completedTasks}`);
-  console.log(`  失敗: ${stats.failedTasks}`);
-  console.log(`  成功率: ${stats.successRate.toFixed(1)}%`);
-  console.log(`  平均執行時間: ${stats.averageExecutionTime.toFixed(0)}ms`);
-
-  console.log('\n✅ 演示完成！');
+  console.log(`成功率: ${stats.successRate}%`);
+  console.log(`平均執行時間: ${stats.averageExecutionTime}ms`);
 };

@@ -1,91 +1,88 @@
-const jwt = require('jsonwebtoken');
-const getUserModel = require('../models/User');
-const logger = require('../utils/logger');
+const { verifyToken, logSecurityEvent } = require('../utils/security-utils');
+const { logger } = require('../utils/unified-logger');
 
-const protect = async (req, res, next) => {
-  let token;
+// JWT 認證中間件
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      // 獲取token
-      [, token] = req.headers.authorization.split(' ');
+  if (!token) {
+    logSecurityEvent('Missing Token', {
+      ip: req.ip,
+      url: req.url,
+      method: req.method,
+    });
 
-      // 驗證token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-      // 獲取用戶信息（Sequelize方式）
-      const User = getUserModel();
-      if (User) {
-        req.user = await User.findByPk(decoded.id, {
-          attributes: { exclude: ['password'] }
-        });
-      }
-
-      if (!req.user) {
-        return res.status(401).json({
-          success: false,
-          message: '用戶不存在',
-          code: 'USER_NOT_FOUND'
-        });
-      }
-
-      next();
-    } catch (error) {
-      logger.error('Token驗證失敗:', error);
-      return res.status(401).json({
-        success: false,
-        message: '無效的認證令牌',
-        code: 'INVALID_TOKEN'
-      });
-    }
-  } else {
     return res.status(401).json({
       success: false,
-      message: '未提供認證令牌',
-      code: 'NO_TOKEN'
+      message: 'Access token required',
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  try {
+    const decoded = verifyToken(token);
+    if (!decoded) {
+      logSecurityEvent('Invalid Token', {
+        ip: req.ip,
+        url: req.url,
+        method: req.method,
+      });
+
+      return res.status(403).json({
+        success: false,
+        message: 'Invalid or expired token',
+        timestamp: new Date().toISOString(),
+      });
+    }
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    logger.error('Token verification error:', error);
+
+    logSecurityEvent('Token Verification Error', {
+      ip: req.ip,
+      url: req.url,
+      method: req.method,
+      error: error.message,
+    });
+
+    return res.status(403).json({
+      success: false,
+      message: 'Invalid token',
+      timestamp: new Date().toISOString(),
     });
   }
 };
 
-// 可選認證中間件（不強制要求登錄）
-const optionalAuth = async (req, res, next) => {
-  let token;
-
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      [, token] = req.headers.authorization.split(' ');
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const User = getUserModel();
-      if (User) {
-        req.user = await User.findByPk(decoded.id, {
-          attributes: { exclude: ['password'] }
-        });
-      }
-    } catch (error) {
-      logger.warn('可選認證失敗:', error);
-      // 不拋出錯誤，繼續執行
-    }
-  }
-
-  next();
-};
-
 // 角色驗證中間件
-const authorize = (...roles) => {
+const requireRole = (roles) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({
         success: false,
-        message: '需要登錄',
-        code: 'LOGIN_REQUIRED'
+        message: 'Authentication required',
+        timestamp: new Date().toISOString(),
       });
     }
 
-    if (!roles.includes(req.user.role)) {
+    const userRole = req.user.role || 'user';
+    const allowedRoles = Array.isArray(roles) ? roles : [roles];
+
+    if (!allowedRoles.includes(userRole)) {
+      logSecurityEvent('Insufficient Permissions', {
+        ip: req.ip,
+        url: req.url,
+        method: req.method,
+        userRole,
+        requiredRoles: allowedRoles,
+      });
+
       return res.status(403).json({
         success: false,
-        message: '權限不足',
-        code: 'INSUFFICIENT_PERMISSIONS'
+        message: 'Insufficient permissions',
+        timestamp: new Date().toISOString(),
       });
     }
 
@@ -93,12 +90,36 @@ const authorize = (...roles) => {
   };
 };
 
-// 別名：authenticateToken 等同於 protect
-const authenticateToken = protect;
+// 管理員驗證中間件
+const requireAdmin = requireRole('admin');
+
+// 用戶驗證中間件
+const requireUser = requireRole(['user', 'admin']);
+
+// 可選認證中間件（不強制要求認證）
+const optionalAuth = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token) {
+    try {
+      const decoded = verifyToken(token);
+      if (decoded) {
+        req.user = decoded;
+      }
+    } catch (error) {
+      // 靜默處理錯誤，不影響請求
+      logger.debug('Optional auth failed:', error.message);
+    }
+  }
+
+  next();
+};
 
 module.exports = {
-  protect,
   authenticateToken,
+  requireRole,
+  requireAdmin,
+  requireUser,
   optionalAuth,
-  authorize
 };

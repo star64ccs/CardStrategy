@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Animated,
-  Dimensions
+  Dimensions,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { theme } from '@/config/theme';
@@ -32,7 +32,7 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
   suggestions,
   onSuggestion,
   onClose,
-  maxSuggestions = 6
+  maxSuggestions = 6,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [slideAnimation] = useState(new Animated.Value(0));
@@ -42,7 +42,7 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
     Animated.timing(slideAnimation, {
       toValue: 1,
       duration: 300,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start();
   }, []);
 
@@ -56,8 +56,8 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
         '分析這張卡片的投資價值',
         '這張卡片的稀有度如何',
         '卡片狀況評估',
-        '市場價格分析'
-      ]
+        '市場價格分析',
+      ],
     },
     {
       id: 'investment',
@@ -68,8 +68,8 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
         '這張卡片值得投資嗎',
         '投資時機建議',
         '風險評估',
-        '長期投資策略'
-      ]
+        '長期投資策略',
+      ],
     },
     {
       id: 'market',
@@ -80,21 +80,16 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
         '最近的市場趨勢',
         '價格預測',
         '市場熱度分析',
-        '競爭對手分析'
-      ]
+        '競爭對手分析',
+      ],
     },
     {
       id: 'general',
       title: '一般問題',
       icon: 'help',
       color: '#9C27B0',
-      suggestions: [
-        '如何保存卡片',
-        '真偽鑑定方法',
-        '交易平台推薦',
-        '收藏建議'
-      ]
-    }
+      suggestions: ['如何保存卡片', '真偽鑑定方法', '交易平台推薦', '收藏建議'],
+    },
   ];
 
   const handleSuggestionPress = (suggestion: string) => {
@@ -102,7 +97,7 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
     Animated.timing(slideAnimation, {
       toValue: 0,
       duration: 200,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start(() => {
       onSuggestion(suggestion);
     });
@@ -112,7 +107,7 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
     Animated.timing(slideAnimation, {
       toValue: 0,
       duration: 200,
-      useNativeDriver: true
+      useNativeDriver: true,
     }).start(() => {
       onClose();
     });
@@ -125,16 +120,16 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
       onPress={() => handleSuggestionPress(suggestion)}
       activeOpacity={0.7}
     >
-      <MaterialIcons 
-        name="lightbulb-outline" 
-        size={16} 
-        color={theme.colors.primary} 
+      <MaterialIcons
+        name="lightbulb-outline"
+        size={16}
+        color={theme.colors.primary}
       />
       <Text style={styles.suggestionText}>{suggestion}</Text>
-      <MaterialIcons 
-        name="arrow-forward-ios" 
-        size={12} 
-        color={theme.colors.textSecondary} 
+      <MaterialIcons
+        name="arrow-forward-ios"
+        size={12}
+        color={theme.colors.textSecondary}
       />
     </TouchableOpacity>
   );
@@ -144,40 +139,48 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
       key={category.id}
       style={[
         styles.categoryItem,
-        selectedCategory === category.id && styles.categoryItemSelected
+        selectedCategory === category.id && styles.categoryItemSelected,
       ]}
-      onPress={() => setSelectedCategory(
-        selectedCategory === category.id ? null : category.id
-      )}
+      onPress={() =>
+        setSelectedCategory(
+          selectedCategory === category.id ? null : category.id
+        )
+      }
       activeOpacity={0.7}
     >
-      <View style={[
-        styles.categoryIcon,
-        { backgroundColor: category.color + '20' }
-      ]}>
-        <MaterialIcons 
-          name={category.icon as any} 
-          size={20} 
-          color={category.color} 
+      <View
+        style={[
+          styles.categoryIcon,
+          { backgroundColor: category.color + '20' },
+        ]}
+      >
+        <MaterialIcons
+          name={category.icon as any}
+          size={20}
+          color={category.color}
         />
       </View>
-      <Text style={[
-        styles.categoryTitle,
-        selectedCategory === category.id && styles.categoryTitleSelected
-      ]}>
+      <Text
+        style={[
+          styles.categoryTitle,
+          selectedCategory === category.id && styles.categoryTitleSelected,
+        ]}
+      >
         {category.title}
       </Text>
-      <MaterialIcons 
-        name={selectedCategory === category.id ? 'expand-less' : 'expand-more'} 
-        size={16} 
-        color={theme.colors.textSecondary} 
+      <MaterialIcons
+        name={selectedCategory === category.id ? 'expand-less' : 'expand-more'}
+        size={16}
+        color={theme.colors.textSecondary}
       />
     </TouchableOpacity>
   );
 
   const getDisplaySuggestions = () => {
     if (selectedCategory) {
-      const category = categorizedSuggestions.find(c => c.id === selectedCategory);
+      const category = categorizedSuggestions.find(
+        (c) => c.id === selectedCategory
+      );
       return category ? category.suggestions : suggestions;
     }
     return suggestions.slice(0, maxSuggestions);
@@ -192,25 +195,33 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
             {
               translateY: slideAnimation.interpolate({
                 inputRange: [0, 1],
-                outputRange: [100, 0]
-              })
-            }
+                outputRange: [100, 0],
+              }),
+            },
           ],
-          opacity: slideAnimation
-        }
+          opacity: slideAnimation,
+        },
       ]}
     >
       <View style={styles.header}>
         <View style={styles.headerLeft}>
-          <MaterialIcons name="lightbulb" size={20} color={theme.colors.primary} />
+          <MaterialIcons
+            name="lightbulb"
+            size={20}
+            color={theme.colors.primary}
+          />
           <Text style={styles.headerTitle}>智能建議</Text>
         </View>
         <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
-          <MaterialIcons name="close" size={20} color={theme.colors.textSecondary} />
+          <MaterialIcons
+            name="close"
+            size={20}
+            color={theme.colors.textSecondary}
+          />
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled
@@ -225,8 +236,8 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
         {selectedCategory && (
           <View style={styles.expandedSuggestions}>
             {categorizedSuggestions
-              .find(c => c.id === selectedCategory)
-              ?.suggestions.map((suggestion, index) => 
+              .find((c) => c.id === selectedCategory)
+              ?.suggestions.map((suggestion, index) =>
                 renderSuggestionItem(suggestion, index)
               )}
           </View>
@@ -236,7 +247,7 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
         {!selectedCategory && (
           <View style={styles.generalSuggestions}>
             <Text style={styles.sectionTitle}>推薦問題</Text>
-            {getDisplaySuggestions().map((suggestion, index) => 
+            {getDisplaySuggestions().map((suggestion, index) =>
               renderSuggestionItem(suggestion, index)
             )}
           </View>
@@ -250,31 +261,47 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
               style={styles.quickActionButton}
               onPress={() => handleSuggestionPress('分析當前卡片')}
             >
-              <MaterialIcons name="camera-alt" size={24} color={theme.colors.primary} />
+              <MaterialIcons
+                name="camera-alt"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text style={styles.quickActionText}>掃描卡片</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={styles.quickActionButton}
               onPress={() => handleSuggestionPress('查看市場趨勢')}
             >
-              <MaterialIcons name="trending-up" size={24} color={theme.colors.primary} />
+              <MaterialIcons
+                name="trending-up"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text style={styles.quickActionText}>市場趨勢</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={styles.quickActionButton}
               onPress={() => handleSuggestionPress('投資建議')}
             >
-              <MaterialIcons name="lightbulb" size={24} color={theme.colors.primary} />
+              <MaterialIcons
+                name="lightbulb"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text style={styles.quickActionText}>投資建議</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity
               style={styles.quickActionButton}
               onPress={() => handleSuggestionPress('價格預測')}
             >
-              <MaterialIcons name="show-chart" size={24} color={theme.colors.primary} />
+              <MaterialIcons
+                name="show-chart"
+                size={24}
+                color={theme.colors.primary}
+              />
               <Text style={styles.quickActionText}>價格預測</Text>
             </TouchableOpacity>
           </View>
@@ -298,7 +325,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 8,
-    maxHeight: '60%'
+    maxHeight: '60%',
   },
   header: {
     flexDirection: 'row',
@@ -306,32 +333,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border
+    borderBottomColor: theme.colors.border,
   },
   headerLeft: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginLeft: 8
+    marginLeft: 8,
   },
   closeButton: {
-    padding: 4
+    padding: 4,
   },
   content: {
-    padding: 16
+    padding: 16,
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: 'bold',
     color: theme.colors.textPrimary,
-    marginBottom: 12
+    marginBottom: 12,
   },
   categoriesContainer: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   categoryItem: {
     flexDirection: 'row',
@@ -341,11 +368,11 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.backgroundLight,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   categoryItemSelected: {
     backgroundColor: theme.colors.primary + '10',
-    borderColor: theme.colors.primary
+    borderColor: theme.colors.primary,
   },
   categoryIcon: {
     width: 32,
@@ -353,22 +380,22 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12
+    marginRight: 12,
   },
   categoryTitle: {
     flex: 1,
     fontSize: 14,
-    color: theme.colors.textPrimary
+    color: theme.colors.textPrimary,
   },
   categoryTitleSelected: {
     color: theme.colors.primary,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   expandedSuggestions: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   generalSuggestions: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   suggestionItem: {
     flexDirection: 'row',
@@ -378,22 +405,22 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.backgroundLight,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   suggestionText: {
     flex: 1,
     fontSize: 14,
     color: theme.colors.textPrimary,
     marginLeft: 8,
-    marginRight: 8
+    marginRight: 8,
   },
   quickActions: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   quickActionButton: {
     width: (screenWidth - 64) / 2 - 8,
@@ -403,12 +430,12 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.backgroundLight,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: theme.colors.border
+    borderColor: theme.colors.border,
   },
   quickActionText: {
     fontSize: 12,
     color: theme.colors.textPrimary,
     marginTop: 4,
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
