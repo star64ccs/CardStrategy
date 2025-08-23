@@ -7,13 +7,15 @@
       "developmentClient": true,
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "credentialsSource": "remote"
       }
     },
     "preview": {
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "credentialsSource": "remote"
       },
       "android": {
         "buildType": "apk"
@@ -21,16 +23,17 @@
     },
     "production": {
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "m-medium",
+        "credentialsSource": "remote"
       }
     }
   },
   "submit": {
     "production": {
       "ios": {
-        "appleId": "your-apple-id@example.com",
-        "ascAppId": "your-app-store-connect-app-id",
-        "appleTeamId": "your-apple-team-id"
+        "appleId": "star64ccs@gmail.com",
+        "ascAppId": "6751428940",
+        "appleTeamId": "B7RS38N4N2"
       },
       "android": {
         "serviceAccountKeyPath": "./path/to/service-account-key.json",
