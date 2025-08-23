@@ -9,6 +9,53 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// 模擬數據庫響應的用戶數據
+const mockUsers = [
+  {
+    id: 1,
+    username: 'demo_user',
+    email: 'demo@cardstrategy.com',
+    displayName: '演示用戶',
+    role: 'user',
+    isVerified: true,
+    isActive: true
+  }
+];
+
+// 模擬卡片數據
+const mockCards = [
+  {
+    id: 1,
+    name: '皮卡丘',
+    setName: '基礎系列',
+    cardNumber: '025/102',
+    rarity: '稀有',
+    type: '電氣',
+    price: {
+      current: 15.99,
+      change24h: 2.50,
+      change7d: -1.20,
+      change30d: 5.30
+    },
+    image: 'https://via.placeholder.com/300x400/FFD700/000000?text=Pikachu'
+  },
+  {
+    id: 2,
+    name: '超夢',
+    setName: '傳說系列',
+    cardNumber: '150/150',
+    rarity: '傳說',
+    type: '超能力',
+    price: {
+      current: 89.99,
+      change24h: 5.20,
+      change7d: 12.50,
+      change30d: 25.80
+    },
+    image: 'https://via.placeholder.com/300x400/9370DB/FFFFFF?text=Mewtwo'
+  }
+];
+
 // 健康檢查端點
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -34,7 +81,8 @@ app.get('/api/health', (req, res) => {
         'Health Check',
         'CORS Enabled',
         'JSON Parsing',
-        'URL Encoding'
+        'URL Encoding',
+        'Mock Data API'
       ]
     });
   } catch (error) {
@@ -56,7 +104,103 @@ app.get('/', (req, res) => {
     timestamp: new Date().toISOString(),
     message: 'API is running successfully',
     status: 'operational',
-    healthCheck: '/api/health'
+    healthCheck: '/api/health',
+    endpoints: {
+      health: '/api/health',
+      cards: '/api/cards',
+      users: '/api/users',
+      collections: '/api/collections'
+    }
+  });
+});
+
+// 模擬卡片 API
+app.get('/api/cards', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: '卡片列表獲取成功',
+    data: mockCards
+  });
+});
+
+app.get('/api/cards/:id', (req, res) => {
+  const cardId = parseInt(req.params.id);
+  const card = mockCards.find(c => c.id === cardId);
+  
+  if (!card) {
+    return res.status(404).json({
+      success: false,
+      message: '卡片不存在'
+    });
+  }
+  
+  res.status(200).json({
+    success: true,
+    message: '卡片詳情獲取成功',
+    data: card
+  });
+});
+
+// 模擬用戶 API
+app.get('/api/users/profile', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: '用戶資料獲取成功',
+    data: mockUsers[0]
+  });
+});
+
+// 模擬收藏 API
+app.get('/api/collections', (req, res) => {
+  const mockCollections = [
+    {
+      id: 1,
+      name: '我的收藏',
+      description: '個人收藏夾',
+      cardCount: 2,
+      totalValue: 105.98,
+      isPublic: false
+    }
+  ];
+  
+  res.status(200).json({
+    success: true,
+    message: '收藏列表獲取成功',
+    data: mockCollections
+  });
+});
+
+// 模擬認證 API
+app.post('/api/auth/login', (req, res) => {
+  const { identifier, password } = req.body;
+  
+  // 簡單的演示登錄
+  if (identifier === 'demo' && password === 'demo123') {
+    res.status(200).json({
+      success: true,
+      message: '登錄成功',
+      data: {
+        user: mockUsers[0],
+        token: 'mock_jwt_token_' + Date.now(),
+        refreshToken: 'mock_refresh_token_' + Date.now()
+      }
+    });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: '用戶名或密碼錯誤'
+    });
+  }
+});
+
+app.post('/api/auth/register', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: '註冊成功（演示模式）',
+    data: {
+      user: mockUsers[0],
+      token: 'mock_jwt_token_' + Date.now()
+    }
   });
 });
 
@@ -84,16 +228,18 @@ const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 const startServer = async () => {
   try {
-    console.log('Starting CardStrategy Render Server...');
+    console.log('Starting CardStrategy Render Server (Offline Mode)...');
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     console.log(`Port: ${PORT}`);
     console.log(`Host: ${HOST}`);
+    console.log('Mode: Offline with Mock Data');
     
     const server = app.listen(PORT, HOST, () => {
       console.log(`🚀 CardStrategy Render Server running on http://${HOST}:${PORT}`);
       console.log(`🏥 Health check: http://${HOST}:${PORT}/health`);
       console.log(`🔧 API Health check: http://${HOST}:${PORT}/api/health`);
       console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`📱 Demo login: demo / demo123`);
     });
 
     // 優雅關閉

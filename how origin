@@ -1,5 +1,0 @@
-[33mea79871[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: 移除Render配置中的數據庫環境變數 - 簡化render.yml配置避免數據庫連接錯誤 - 只保留必要的環境變數：NODE_ENV, PORT, JWT_SECRET, CORS_ORIGIN - 確保簡化服務器能夠成功部署
-[33maa82e06[m fix: 完成EAS Build前檢查清單修復 - 修復依賴版本衝突和相容性問題 - 清理原生項目文件夾 - 添加建置前腳本 - 修復app.config.js圖片引用問題 - 更新TypeScript配置
-[33m258f29e[m fix: 創建Render專用簡化服務器以解決部署問題 - 創建server-render.js避免數據庫連接錯誤 - 更新render.yml使用簡化服務器 - 確保端口綁定和健康檢查正常工作
-[33meb35a85[m fix: 修復Render部署端口綁定問題 - 在生產環境中將HOST設置為0.0.0.0 - 修復端口掃描超時錯誤
-[33m7f5c6b9[m fix: 添加zod依賴以修復Render部署錯誤 - 修復fakeCardTrainingService.js中缺少的zod依賴 - 更新backend/package.json
