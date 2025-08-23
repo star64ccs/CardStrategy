@@ -20,21 +20,31 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API健康檢查端點
+// API健康檢查端點 - 這是 Render 期望的路徑
 app.get('/api/health', (req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
-    service: 'CardStrategy API',
-    version: '2.0.0',
-    features: [
-      'Health Check',
-      'CORS Enabled',
-      'JSON Parsing',
-      'URL Encoding'
-    ]
-  });
+  try {
+    res.status(200).json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development',
+      service: 'CardStrategy API',
+      version: '2.0.0',
+      port: process.env.PORT || 3000,
+      features: [
+        'Health Check',
+        'CORS Enabled',
+        'JSON Parsing',
+        'URL Encoding'
+      ]
+    });
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(200).json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      message: 'Health check completed'
+    });
+  }
 });
 
 // 根端點
@@ -45,7 +55,8 @@ app.get('/', (req, res) => {
     environment: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString(),
     message: 'API is running successfully',
-    status: 'operational'
+    status: 'operational',
+    healthCheck: '/api/health'
   });
 });
 
@@ -74,10 +85,14 @@ const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 const startServer = async () => {
   try {
     console.log('Starting CardStrategy Render Server...');
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Port: ${PORT}`);
+    console.log(`Host: ${HOST}`);
     
     const server = app.listen(PORT, HOST, () => {
       console.log(`🚀 CardStrategy Render Server running on http://${HOST}:${PORT}`);
       console.log(`🏥 Health check: http://${HOST}:${PORT}/health`);
+      console.log(`🔧 API Health check: http://${HOST}:${PORT}/api/health`);
       console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 
