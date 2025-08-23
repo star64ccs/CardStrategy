@@ -9,7 +9,7 @@ services:
       npm install
     startCommand: |
       cd backend
-      node src/server-render.js
+      node src/server-render-standalone.js
     envVars:
       - key: NODE_ENV
         value: production
