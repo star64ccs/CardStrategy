@@ -6,6 +6,7 @@ const path = require('path');
  * 全面評估專案各項指標和核心功能準確率
  */
 
+// eslint-disable-next-line no-console
 console.log('📊 生成 CardStrategy 專案效能和完成度分析報告...\n');
 
 // 專案結構分析
@@ -733,27 +734,40 @@ fs.writeFileSync(
   generateHTMLReport(report)
 );
 
+// eslint-disable-next-line no-console
 console.log('✅ 專案效能報告已生成！');
+// eslint-disable-next-line no-console
 console.log('\n📊 報告摘要:');
+// eslint-disable-next-line no-console
 console.log(`   總體評分: ${report.executiveSummary.overallScore}/100`);
+// eslint-disable-next-line no-console
 console.log(`   專案狀態: ${report.executiveSummary.status}`);
+// eslint-disable-next-line no-console
 console.log(`   報告文件: reports/project-performance-report.json`);
+// eslint-disable-next-line no-console
 console.log(`   HTML 報告: reports/project-performance-report.html`);
 
+// eslint-disable-next-line no-console
 console.log('\n🎯 核心功能準確率:');
 Object.entries(report.detailedAnalysis.featureCompletion).forEach(([key, feature]) => {
+  // eslint-disable-next-line no-console
   console.log(`   ${feature.description}: ${feature.accuracy}%`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n🔗 服務集成準確率:');
 Object.entries(report.detailedAnalysis.serviceIntegration).forEach(([category, services]) => {
+  // eslint-disable-next-line no-console
   console.log(`   ${category}:`);
   Object.entries(services).forEach(([service, config]) => {
+    // eslint-disable-next-line no-console
     console.log(`     ${service}: ${config.accuracy}%`);
   });
 });
 
+// eslint-disable-next-line no-console
 console.log('\n💡 主要建議:');
 report.recommendations.immediate.forEach(item => {
+  // eslint-disable-next-line no-console
   console.log(`   • ${item}`);
 });

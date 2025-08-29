@@ -41,21 +41,12 @@ function generateSshKey(sshDir) {
     return keyPath;
   }
 
-  try {
-    // 使用 ssh-keygen 生成密鑰
-    const command = `ssh-keygen -t rsa -b 4096 -f "${keyPath}" -C "cardstrategy@digitalocean.com" -N ""`;
-    execSync(command, { stdio: 'inherit' });
+  // 使用 ssh-keygen 生成密鑰
+  const command = `ssh-keygen -t rsa -b 4096 -f "${keyPath}" -C "cardstrategy@digitalocean.com" -N ""`;
+  execSync(command, { stdio: 'inherit' });
 
-    // logger.info('✅ SSH 密鑰生成完成');
-    return keyPath;
-  } catch (error) {
-    // logger.info('❌ 生成 SSH 密鑰失敗:', error.message);
-    // logger.info('\n💡 如果 ssh-keygen 不可用，請安裝 OpenSSH:');
-    // logger.info('1. 打開 Windows 設置');
-    // logger.info('2. 應用程序 → 可選功能');
-    // logger.info('3. 添加功能 → OpenSSH 客戶端');
-    throw error;
-  }
+  // logger.info('✅ SSH 密鑰生成完成');
+  return keyPath;
 }
 
 // 顯示密鑰信息

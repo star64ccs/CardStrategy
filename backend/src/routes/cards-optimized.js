@@ -1,88 +1,76 @@
-const express = require('express');
-const router = express.Router();
+const express = require('express');'
+const router = express.Router();''
 const advancedCacheService = require('../services/advancedCacheService');
 
-// æ¨¡æ“¬?¸æ?åº«å„ª?–å™¨
+// æ¨¡æ“¬?ï¿½ï¿½?åº«å„ª?ï¿½å™¨
 // eslint-disable-next-line no-unused-vars
 const databaseOptimizer = {
-  // ?¥è©¢?ªå?
+  // ?ï¿½è©¢?ï¿½ï¿½?
   optimizeQuery: (query, options = {}) => {
     const {
-      limit = 20,
-      offset = 0,
-      orderBy = 'created_at',
+      limit = 20,'
+      offset = 0,''
+      orderBy = 'created_at',''
       order = 'DESC',
-    } = options;
-
-    // æ·»å? LIMIT ??OFFSET
+    } = options;'
+    // æ·»ï¿½? LIMIT ??OFFSET''
     if (!query.includes('LIMIT')) {
-      query += ` LIMIT ${limit} OFFSET ${offset}`;
+      query += ` LIMIT ${limit} OFFSET ${offset}`;'
     }
-
-    // æ·»å? ORDER BY
+    // æ·»ï¿½? ORDER BY''
     if (!query.includes('ORDER BY')) {
       query += ` ORDER BY ${orderBy} ${order}`;
     }
-
     return query;
   },
 
-  // ?¹é??¥è©¢?ªå?
+  // ?ï¿½ï¿½??ï¿½è©¢?ï¿½ï¿½?
   batchQueries: (queries) => {
     return Promise.all(queries);
   },
 
-  // ??Ž¥æ± ç®¡??  getConnection: () => {
-    // æ¨¡æ“¬??Ž¥æ±?    return Promise.resolve({ id: Date.now() });
+  // ??ï¿½ï¿½æ± ç®¡??  getConnection: () => {
+    // æ¨¡æ“¬??ï¿½ï¿½ï¿½?    return Promise.resolve({ id: Date.now() });
   },
-};
-
-// ?²å??¡ç??—è¡¨ï¼ˆå„ª?–ç??¬ï?
+};'
+// ?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨ï¼ˆå„ª?ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/list', async (req, res) => {
   try {
-    const { page = 1, limit = 20, type, rarity, search } = req.query;
-    const offset = (page - 1) * limit;
-
-    // ?Ÿæ?ç·©å???    const cacheKey = `cards:list:${page}:${limit}:${type || 'all'}:${rarity || 'all'}:${search || 'all'}`;
-
-    // ?—è©¦å¾žç·©å­˜ç²??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
-
-    if (!cards) {
-      // logger.info('?? å¾žæ•¸?šåº«?²å??¡ç??—è¡¨...');
-
-      // æ§‹å»º?¥è©¢æ¢ä»¶
+    const { page = 1, limit = 20, type, rarity, search } = req.query;'
+    const offset = (page - 1) * limit;''
+    // ?ï¿½ï¿½?ç·©ï¿½???    const cacheKey = `cards:list:${page}:${limit}:${type || 'all'}:${rarity || 'all'}:${search || 'all'}`;''
+    // ?ï¿½è©¦å¾žç·©å­˜ç²??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');'
+    if (!cards) {''
+      // logger.info('?? å¾žæ•¸?ï¿½åº«?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨...');'
+      // æ§‹å»º?ï¿½è©¢æ¢ä»¶''
       let whereClause = 'WHERE 1=1';
-      const params = [];
-
-      if (type) {
+      const params = [];'
+      if (type) {''
         whereClause += ' AND card_type = $' + (params.length + 1);
-        params.push(type);
+        params.push(type);'
       }
-
-      if (rarity) {
+      if (rarity) {''
         whereClause += ' AND rarity = $' + (params.length + 1);
-        params.push(rarity);
+        params.push(rarity);'
       }
-
-      if (search) {
+      if (search) {''
         whereClause += ' AND name ILIKE $' + (params.length + 1);
         params.push(`%${search}%`);
       }
-
-      // ?ªå??¥è©¢
-      const query = databaseOptimizer.optimizeQuery(
-        `SELECT * FROM cards ${whereClause}`,
+      // ?ï¿½ï¿½??ï¿½è©¢
+      const query = databaseOptimizer.optimizeQuery('
+        `SELECT * FROM cards ${whereClause}`,''
         { limit, offset, orderBy: 'created_at', order: 'DESC' }
       );
 
-      // æ¨¡æ“¬?¸æ?åº«æŸ¥è©¢ç???      cards = {
+      // æ¨¡æ“¬?ï¿½ï¿½?åº«æŸ¥è©¢ï¿½???      cards = {
         data: [
-          {
-            id: 1,
-            name: '?ªå?æ¸¬è©¦?¡ç?',
-            type: type || 'Monster',
-            rarity: rarity || 'Common',
-            description: '?™æ˜¯ä¸€?‹å„ª?–æ¸¬è©¦å¡??,
+          {'
+            id: 1,''
+            name: '?ï¿½ï¿½?æ¸¬è©¦?ï¿½ï¿½?',''
+            type: type || 'Monster',''
+            rarity: rarity || 'Common',''
+            description: '?ï¿½æ˜¯ä¸€?ï¿½å„ª?ï¿½æ¸¬è©¦å¡??,
             created_at: new Date().toISOString(),
           },
         ],
@@ -91,12 +79,10 @@ router.get('/list', async (req, res) => {
           limit: parseInt(limit),
           total: 100,
           totalPages: Math.ceil(100 / limit),
-        },
-      };
-
-      // ç·©å?çµæ?ï¼??†é?ï¼?      await advancedCacheService.set(cacheKey, cards, 'apiResponse');
+        },'
+      };''
+      // ç·©ï¿½?çµï¿½?ï¿½??ï¿½ï¿½?ï¿½?      await advancedCacheService.set(cacheKey, cards, 'apiResponse');
     }
-
     res.json({
       success: true,
       data: cards,
@@ -105,28 +91,26 @@ router.get('/list', async (req, res) => {
         responseTime: Date.now() - req.startTime,
         cacheHit: !!cards,
       },
-    });
-  } catch (error) {
-    // logger.info('???²å??¡ç??—è¡¨å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å??¡ç??—è¡¨å¤±æ?',
+    });'
+  } catch (error) {''
+    // logger.info('???ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨å¤±ï¿½?',
     });
   }
-});
-
-// ?²å??¡ç?è©³æ?ï¼ˆå„ª?–ç??¬ï?
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½?è©³ï¿½?ï¼ˆå„ª?ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/:id', async (req, res) => {
   try {
-    const { id } = req.params;
-    const cacheKey = `card:detail:${id}`;
-
-    // ?—è©¦å¾žç·©å­˜ç²??    let card = await advancedCacheService.get(cacheKey, 'apiResponse');
+    const { id } = req.params;'
+    const cacheKey = `card:detail:${id}`;''
+    // ?ï¿½è©¦å¾žç·©å­˜ç²??    let card = await advancedCacheService.get(cacheKey, 'apiResponse');
 
     if (!card) {
-      // logger.info(`?? å¾žæ•¸?šåº«?²å??¡ç?è©³æ?: ${id}`);
+      // logger.info(`?? å¾žæ•¸?ï¿½åº«?ï¿½ï¿½??ï¿½ï¿½?è©³ï¿½?: ${id}`);
 
-      // ?ªå??¥è©¢ - ä½¿ç”¨ç´¢å?
+      // ?ï¿½ï¿½??ï¿½è©¢ - ä½¿ç”¨ç´¢ï¿½?
       const query = `
         SELECT c.*, 
                md.price as current_price,
@@ -138,20 +122,18 @@ router.get('/:id', async (req, res) => {
         LIMIT 1
       `;
 
-      // æ¨¡æ“¬?¸æ?åº«æŸ¥è©¢ç???      card = {
-        id: parseInt(id),
-        name: '?ªå?æ¸¬è©¦?¡ç?è©³æ?',
-        type: 'Monster',
-        rarity: 'Rare',
-        description: '?™æ˜¯ä¸€?‹å„ª?–æ¸¬è©¦å¡?‡ç?è©³ç´°ä¿¡æ¯',
+      // æ¨¡æ“¬?ï¿½ï¿½?åº«æŸ¥è©¢ï¿½???      card = {'
+        id: parseInt(id),''
+        name: '?ï¿½ï¿½?æ¸¬è©¦?ï¿½ï¿½?è©³ï¿½?',''
+        type: 'Monster',''
+        rarity: 'Rare',''
+        description: '?ï¿½æ˜¯ä¸€?ï¿½å„ª?ï¿½æ¸¬è©¦å¡?ï¿½ï¿½?è©³ç´°ä¿¡æ¯',
         current_price: 150.0,
         last_updated: new Date().toISOString(),
-        created_at: new Date().toISOString(),
-      };
-
-      // ç·©å?çµæ?ï¼?0?†é?ï¼?      await advancedCacheService.set(cacheKey, card, 'apiResponse');
+        created_at: new Date().toISOString(),'
+      };''
+      // ç·©ï¿½?çµï¿½?ï¿½?0?ï¿½ï¿½?ï¿½?      await advancedCacheService.set(cacheKey, card, 'apiResponse');
     }
-
     res.json({
       success: true,
       data: card,
@@ -160,60 +142,54 @@ router.get('/:id', async (req, res) => {
         responseTime: Date.now() - req.startTime,
         cacheHit: !!card,
       },
-    });
-  } catch (error) {
-    // logger.info('???²å??¡ç?è©³æ?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å??¡ç?è©³æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    // logger.info('???ï¿½ï¿½??ï¿½ï¿½?è©³ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½ï¿½?è©³ï¿½?å¤±ï¿½?',
     });
   }
-});
-
-// ?¹é??²å??¡ç?ï¼ˆå„ª?–ç??¬ï?
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?ï¼ˆå„ª?ï¿½ï¿½??ï¿½ï¿½?''
 router.post('/batch', async (req, res) => {
   try {
     const { ids } = req.body;
 
     if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return res.status(400).json({
-        success: false,
-        error: 'è«‹æ?ä¾›æ??ˆç??¡ç?ID?—è¡¨',
+      return res.status(400).json({'
+        success: false,''
+        error: 'è«‹ï¿½?ä¾›ï¿½??ï¿½ï¿½??ï¿½ï¿½?ID?ï¿½è¡¨',
       });
     }
-
-    // ?åˆ¶?¹é??¥è©¢?¸é?
-    const limitedIds = ids.slice(0, 50);
-
-    // ?Ÿæ?ç·©å???    const cacheKey = `cards:batch:${limitedIds.sort().join(',')}`;
-
-    // ?—è©¦å¾žç·©å­˜ç²??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
+    // ?ï¿½åˆ¶?ï¿½ï¿½??ï¿½è©¢?ï¿½ï¿½?'
+    const limitedIds = ids.slice(0, 50);''
+    // ?ï¿½ï¿½?ç·©ï¿½???    const cacheKey = `cards:batch:${limitedIds.sort().join(',')}`;''
+    // ?ï¿½è©¦å¾žç·©å­˜ç²??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
 
     if (!cards) {
-      // logger.info(`?? ?¹é?å¾žæ•¸?šåº«?²å??¡ç?: ${limitedIds.length} ?‹`);
+      // logger.info(`?? ?ï¿½ï¿½?å¾žæ•¸?ï¿½åº«?ï¿½ï¿½??ï¿½ï¿½?: ${limitedIds.length} ?ï¿½`);
 
-      // ?ªå??¹é??¥è©¢
-      const placeholders = limitedIds
-        .map((_, index) => `$${index + 1}`)
+      // ?ï¿½ï¿½??ï¿½ï¿½??ï¿½è©¢
+      const placeholders = limitedIds'
+        .map((_, index) => `$${index + 1}`)''
         .join(',');
       const query = `
         SELECT * FROM cards 
-        WHERE id IN (${placeholders})
+        WHERE id IN (${placeholders});
         ORDER BY id
       `;
 
-      // æ¨¡æ“¬?¸æ?åº«æŸ¥è©¢ç???      cards = limitedIds.map((id) => ({
-        id: parseInt(id),
-        name: `?¹é??¡ç? ${id}`,
-        type: 'Monster',
+      // æ¨¡æ“¬?ï¿½ï¿½?åº«æŸ¥è©¢ï¿½???      cards = limitedIds.map((id) => ({
+        id: parseInt(id),'
+        name: `?ï¿½ï¿½??ï¿½ï¿½? ${id}`,''
+        type: 'Monster',''
         rarity: 'Common',
-        description: `?™æ˜¯?¹é??¥è©¢?„å¡??${id}`,
-        created_at: new Date().toISOString(),
-      }));
-
-      // ç·©å?çµæ?ï¼??†é?ï¼?      await advancedCacheService.set(cacheKey, cards, 'apiResponse');
+        description: `?ï¿½æ˜¯?ï¿½ï¿½??ï¿½è©¢?ï¿½å¡??${id}`,
+        created_at: new Date().toISOString(),'
+      }));''
+      // ç·©ï¿½?çµï¿½?ï¿½??ï¿½ï¿½?ï¿½?      await advancedCacheService.set(cacheKey, cards, 'apiResponse');
     }
-
     res.json({
       success: true,
       data: cards,
@@ -223,31 +199,29 @@ router.post('/batch', async (req, res) => {
         cacheHit: !!cards,
         batchSize: limitedIds.length,
       },
-    });
-  } catch (error) {
-    // logger.info('???¹é??²å??¡ç?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?¹é??²å??¡ç?å¤±æ?',
+    });'
+  } catch (error) {''
+    // logger.info('???ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',
     });
   }
-});
-
-// ?œç´¢?¡ç?ï¼ˆå„ª?–ç??¬ï?
+});'
+// ?ï¿½ç´¢?ï¿½ï¿½?ï¼ˆå„ª?ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/search/:query', async (req, res) => {
   try {
     const { query } = req.params;
     const { limit = 20 } = req.query;
 
-    const cacheKey = `cards:search:${query}:${limit}`;
-
-    // ?—è©¦å¾žç·©å­˜ç²??// eslint-disable-next-line no-unused-vars
+    const cacheKey = `cards:search:${query}:${limit}`;'
+    // ?ï¿½è©¦å¾žç·©å­˜ç²??// eslint-disable-next-line no-unused-vars''
     let results = await advancedCacheService.get(cacheKey, 'apiResponse');
 
     if (!results) {
-      // logger.info(`?? ?œç´¢?¡ç?: ${query}`);
+      // logger.info(`?? ?ï¿½ç´¢?ï¿½ï¿½?: ${query}`);
 
-      // ?ªå??œç´¢?¥è©¢ - ä½¿ç”¨?¨æ??œç´¢ç´¢å?
+      // ?ï¿½ï¿½??ï¿½ç´¢?ï¿½è©¢ - ä½¿ç”¨?ï¿½ï¿½??ï¿½ç´¢ç´¢ï¿½?
       const searchQuery = `
         SELECT * FROM cards 
         WHERE name ILIKE $1 
@@ -258,21 +232,19 @@ router.get('/search/:query', async (req, res) => {
         LIMIT $2
       `;
 
-      // æ¨¡æ“¬?œç´¢çµæ?
+      // æ¨¡æ“¬?ï¿½ç´¢çµï¿½?
       results = [
         {
-          id: 1,
-          name: `?…å« "${query}" ?„å¡?‡`,
-          type: 'Monster',
+          id: 1,'
+          name: `?ï¿½å« "${query}" ?ï¿½å¡?ï¿½`,''
+          type: 'Monster',''
           rarity: 'Common',
-          description: `?™æ˜¯ä¸€?‹å???"${query}" ?„å¡?‡æ?è¿°`,
+          description: `?ï¿½æ˜¯ä¸€?ï¿½ï¿½???"${query}" ?ï¿½å¡?ï¿½ï¿½?è¿°`,
           created_at: new Date().toISOString(),
-        },
-      ];
-
-      // ç·©å?çµæ?ï¼??†é?ï¼?      await advancedCacheService.set(cacheKey, results, 'apiResponse');
+        },'
+      ];''
+      // ç·©ï¿½?çµï¿½?ï¿½??ï¿½ï¿½?ï¿½?      await advancedCacheService.set(cacheKey, results, 'apiResponse');
     }
-
     res.json({
       success: true,
       data: results,
@@ -282,19 +254,18 @@ router.get('/search/:query', async (req, res) => {
         cacheHit: !!results,
         query: query,
       },
-    });
-  } catch (error) {
-    // logger.info('???œç´¢?¡ç?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?œç´¢?¡ç?å¤±æ?',
+    });'
+  } catch (error) {''
+    // logger.info('???ï¿½ç´¢?ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ç´¢?ï¿½ï¿½?å¤±ï¿½?',
     });
   }
 });
 
-// ?§èƒ½??Ž§ä¸­é?ä»?router.use((req, res, next) => {
+// ?ï¿½èƒ½??ï¿½ï¿½ä¸­ï¿½?ï¿½?router.use((req, res, next) => {
   req.startTime = Date.now();
   next();
-});
-
-module.exports = router;
+});'
+module.exports = router;''

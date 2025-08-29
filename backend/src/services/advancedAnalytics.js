@@ -1,52 +1,48 @@
-const { Op } = require('sequelize');
-const { Card, Transaction, User, Portfolio, MarketData } = require('../models');
+const { Op } = require('sequelize');'
+const { Card, Transaction, User, Portfolio, MarketData } = require('../models');'
 const { redis } = require('../config/database');
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars'
 const logger = require('../utils/logger');
-
-// 分析配置
+'
+// 分析配置'
 const ANALYTICS_CONFIG = {
   cacheTTL: 3600, // 1小時緩存
-  maxDataPoints: 1000,
+  maxDataPoints: 1000,'
   defaultTimeframe: '30d',
-  batchSize: 100,
-};
-
+  batchSize: 100,'
+};'
 // 分析類型
-const ANALYSIS_TYPES = {
-  TREND: 'trend',
-  CORRELATION: 'correlation',
-  PREDICTION: 'prediction',
-  SEGMENTATION: 'segmentation',
-  ANOMALY: 'anomaly',
-  FORECAST: 'forecast',
-};
-
+const ANALYSIS_TYPES = {'
+  TREND: 'trend','
+  CORRELATION: 'correlation','
+  PREDICTION: 'prediction','
+  SEGMENTATION: 'segmentation','
+  ANOMALY: 'anomaly','
+  FORECAST: 'forecast','
+};'
 // 報告類型
-const REPORT_TYPES = {
-  DAILY: 'daily',
-  WEEKLY: 'weekly',
-  MONTHLY: 'monthly',
-  QUARTERLY: 'quarterly',
-  YEARLY: 'yearly',
+const REPORT_TYPES = {'
+  DAILY: 'daily','
+  WEEKLY: 'weekly','
+  MONTHLY: 'monthly','
+  QUARTERLY: 'quarterly','
+  YEARLY: 'yearly','
   CUSTOM: 'custom',
 };
 
 class AdvancedAnalyticsService {
   constructor() {
     this.cache = redis;
-    this.config = ANALYTICS_CONFIG;
-  }
-
+    this.config = ANALYTICS_CONFIG;'
+  }'
   // 獲取市場趨勢分析
   async getMarketTrends(options = {}) {
-    const {
+    const {'
       timeframe = '30d',
       categories = [],
       limit = 50,
-      useCache = true,
+      useCache = true,'
     } = options;
-
     const cacheKey = `market_trends:${timeframe}:${categories.join(',')}:${limit}`;
 
     if (useCache) {
@@ -55,7 +51,6 @@ class AdvancedAnalyticsService {
         return JSON.parse(cached);
       }
     }
-
     try {
       const endDate = new Date();
       const startDate = this.getStartDate(timeframe);
@@ -67,16 +62,15 @@ class AdvancedAnalyticsService {
       };
 
       if (categories.length > 0) {
-        whereClause.category = { [Op.in]: categories };
-      }
-
+        whereClause.category = { [Op.in]: categories };'
+      }'
       const transactions = await Transaction.findAll({
         where: whereClause,
-        include: [
-          { model: Card, as: 'card' },
-          { model: User, as: 'buyer' },
+        include: ['
+          { model: Card, as: 'card' },'
+          { model: User, as: 'buyer' },'
           { model: User, as: 'seller' },
-        ],
+        ],'
         order: [['createdAt', 'ASC']],
         limit: this.config.maxDataPoints,
       });
@@ -98,20 +92,18 @@ class AdvancedAnalyticsService {
         await this.cache.setex(
           cacheKey,
           this.config.cacheTTL,
-          JSON.stringify(result)
-        );
+          JSON.stringify(result)'
+        );'
       }
-
       return result;
-    } catch (error) {
-      logger.error('獲取市場趨勢分析失敗:', error);
+    } catch (error) {'
+      logger.error('獲取市場趨勢分析失敗:', error);'
       throw new Error('市場趨勢分析失敗');
-    }
-  }
-
+    }'
+  }'
   // 獲取投資組合分析
   async getPortfolioAnalysis(userId, options = {}) {
-    const {
+    const {'
       timeframe = '30d',
       includeTransactions = true,
       includePerformance = true,
@@ -125,21 +117,19 @@ class AdvancedAnalyticsService {
       if (cached) {
         return JSON.parse(cached);
       }
-    }
-
-    try {
+    }'
+    try {'
       const portfolio = await Portfolio.findOne({
         where: { userId },
-        include: [
-          { model: Card, as: 'cards' },
+        include: ['
+          { model: Card, as: 'cards' },'
           { model: Transaction, as: 'transactions' },
         ],
       });
 
-      if (!portfolio) {
+      if (!portfolio) {'
         throw new Error('投資組合不存在');
       }
-
       const analysis = {
         portfolio: {
           id: portfolio.id,
@@ -163,20 +153,18 @@ class AdvancedAnalyticsService {
         await this.cache.setex(
           cacheKey,
           this.config.cacheTTL,
-          JSON.stringify(analysis)
-        );
+          JSON.stringify(analysis)'
+        );'
       }
-
       return analysis;
-    } catch (error) {
-      logger.error('獲取投資組合分析失敗:', error);
+    } catch (error) {'
+      logger.error('獲取投資組合分析失敗:', error);'
       throw new Error('投資組合分析失敗');
-    }
-  }
-
+    }'
+  }'
   // 獲取用戶行為分析
   async getUserBehaviorAnalysis(userId, options = {}) {
-    const {
+    const {'
       timeframe = '30d',
       includePatterns = true,
       includePredictions = true,
@@ -190,22 +178,20 @@ class AdvancedAnalyticsService {
       if (cached) {
         return JSON.parse(cached);
       }
-    }
-
-    try {
+    }'
+    try {'
 // eslint-disable-next-line no-unused-vars
       const user = await User.findByPk(userId, {
-        include: [
-          { model: Transaction, as: 'buyerTransactions' },
-          { model: Transaction, as: 'sellerTransactions' },
+        include: ['
+          { model: Transaction, as: 'buyerTransactions' },'
+          { model: Transaction, as: 'sellerTransactions' },'
           { model: Portfolio, as: 'portfolios' },
         ],
       });
 
-      if (!user) {
+      if (!user) {'
         throw new Error('用戶不存在');
       }
-
       const behavior = {
         user: {
           id: user.id,
@@ -226,36 +212,34 @@ class AdvancedAnalyticsService {
         await this.cache.setex(
           cacheKey,
           this.config.cacheTTL,
-          JSON.stringify(behavior)
-        );
+          JSON.stringify(behavior)'
+        );'
       }
-
       return behavior;
-    } catch (error) {
-      logger.error('獲取用戶行為分析失敗:', error);
+    } catch (error) {'
+      logger.error('獲取用戶行為分析失敗:', error);'
       throw new Error('用戶行為分析失敗');
     }
   }
-
   // 生成綜合報告
   async generateComprehensiveReport(options = {}) {
     const {
-      reportType = REPORT_TYPES.MONTHLY,
-      startDate,
+      reportType = REPORT_TYPES.MONTHLY,'
+      startDate,'
       endDate,
       includeCharts = true,
-      includeRecommendations = true,
+      includeRecommendations = true,'
       format = 'json',
     } = options;
 
     try {
       const dateRange = this.getDateRange(reportType, startDate, endDate);
 
-      const report = {
-        metadata: {
+      const report = {'
+        metadata: {'
           reportType,
           dateRange,
-          generatedAt: new Date(),
+          generatedAt: new Date(),'
           version: '1.0',
         },
         executive: await this.generateExecutiveSummary(dateRange),
@@ -266,20 +250,18 @@ class AdvancedAnalyticsService {
         charts: includeCharts ? await this.generateCharts(dateRange) : null,
         recommendations: includeRecommendations
           ? await this.generateRecommendations(dateRange)
-          : null,
+          : null,'
       };
-
       return format === 'json' ? report : this.formatReport(report, format);
-    } catch (error) {
-      logger.error('生成綜合報告失敗:', error);
+    } catch (error) {'
+      logger.error('生成綜合報告失敗:', error);'
       throw new Error('報告生成失敗');
-    }
-  }
-
+    }'
+  }'
   // 獲取預測分析
   async getPredictiveAnalysis(options = {}) {
-    const {
-      target = 'price',
+    const {'
+      target = 'price','
       timeframe = '7d',
       confidence = 0.8,
       useCache = true,
@@ -293,7 +275,6 @@ class AdvancedAnalyticsService {
         return JSON.parse(cached);
       }
     }
-
     try {
 // eslint-disable-next-line no-unused-vars
       const predictions = await this.generatePredictions(
@@ -317,22 +298,20 @@ class AdvancedAnalyticsService {
         await this.cache.setex(
           cacheKey,
           this.config.cacheTTL,
-          JSON.stringify(result)
-        );
+          JSON.stringify(result)'
+        );'
       }
-
       return result;
-    } catch (error) {
-      logger.error('獲取預測分析失敗:', error);
+    } catch (error) {'
+      logger.error('獲取預測分析失敗:', error);'
       throw new Error('預測分析失敗');
-    }
-  }
-
+    }'
+  }'
   // 獲取異常檢測
   async getAnomalyDetection(options = {}) {
-    const {
-      type = 'price',
-      sensitivity = 'medium',
+    const {'
+      type = 'price','
+      sensitivity = 'medium','
       timeframe = '24h',
       useCache = true,
     } = options;
@@ -345,7 +324,6 @@ class AdvancedAnalyticsService {
         return JSON.parse(cached);
       }
     }
-
     try {
       const anomalies = await this.detectAnomalies(
         type,
@@ -368,26 +346,23 @@ class AdvancedAnalyticsService {
         await this.cache.setex(
           cacheKey,
           this.config.cacheTTL,
-          JSON.stringify(result)
-        );
+          JSON.stringify(result)'
+        );'
       }
-
       return result;
-    } catch (error) {
-      logger.error('獲取異常檢測失敗:', error);
+    } catch (error) {'
+      logger.error('獲取異常檢測失敗:', error);'
       throw new Error('異常檢測失敗');
-    }
-  }
-
+    }'
+  }'
   // 獲取相關性分析
   async getCorrelationAnalysis(options = {}) {
-    const {
-      variables = ['price', 'volume', 'demand'],
-      timeframe = '30d',
+    const {'
+      variables = ['price', 'volume', 'demand'],'
+      timeframe = '30d','
       method = 'pearson',
-      useCache = true,
+      useCache = true,'
     } = options;
-
     const cacheKey = `correlation:${variables.join(',')}:${timeframe}:${method}`;
 
     if (useCache) {
@@ -396,7 +371,6 @@ class AdvancedAnalyticsService {
         return JSON.parse(cached);
       }
     }
-
     try {
       const correlations = await this.calculateCorrelations(
         variables,
@@ -419,26 +393,23 @@ class AdvancedAnalyticsService {
         await this.cache.setex(
           cacheKey,
           this.config.cacheTTL,
-          JSON.stringify(result)
-        );
+          JSON.stringify(result)'
+        );'
       }
-
       return result;
-    } catch (error) {
-      logger.error('獲取相關性分析失敗:', error);
+    } catch (error) {'
+      logger.error('獲取相關性分析失敗:', error);'
       throw new Error('相關性分析失敗');
-    }
-  }
-
+    }'
+  }'
   // 獲取分段分析
   async getSegmentationAnalysis(options = {}) {
-    const {
-      dimension = 'user',
+    const {'
+      dimension = 'user','
       criteria = ['activity', 'value', 'preference'],
       segments = 5,
-      useCache = true,
+      useCache = true,'
     } = options;
-
     const cacheKey = `segmentation:${dimension}:${criteria.join(',')}:${segments}`;
 
     if (useCache) {
@@ -447,7 +418,6 @@ class AdvancedAnalyticsService {
         return JSON.parse(cached);
       }
     }
-
     try {
       const segments = await this.performSegmentation(
         dimension,
@@ -469,20 +439,18 @@ class AdvancedAnalyticsService {
         await this.cache.setex(
           cacheKey,
           this.config.cacheTTL,
-          JSON.stringify(result)
-        );
+          JSON.stringify(result)'
+        );'
       }
-
       return result;
-    } catch (error) {
-      logger.error('獲取分段分析失敗:', error);
+    } catch (error) {'
+      logger.error('獲取分段分析失敗:', error);'
       throw new Error('分段分析失敗');
-    }
-  }
-
+    }'
+  }'
   // 獲取分析指標
   async getAnalyticsMetrics(options = {}) {
-    const {
+    const {'
       timeframe = '24h',
       includeTrends = true,
       useCache = true,
@@ -496,7 +464,6 @@ class AdvancedAnalyticsService {
         return JSON.parse(cached);
       }
     }
-
     try {
       const metrics = {
         overview: await this.getOverviewMetrics(timeframe),
@@ -511,33 +478,30 @@ class AdvancedAnalyticsService {
         await this.cache.setex(
           cacheKey,
           this.config.cacheTTL,
-          JSON.stringify(metrics)
-        );
+          JSON.stringify(metrics)'
+        );'
       }
-
       return metrics;
-    } catch (error) {
-      logger.error('獲取分析指標失敗:', error);
-      throw new Error('分析指標獲取失敗');
+    } catch (error) {'
+      logger.error('獲取分析指標失敗:', error);'
+      throw new Error('分析指標獲取失敗');'
     }
   }
-
-  // 清理分析緩存
+  // 清理分析緩存'
   async clearAnalyticsCache(pattern = '*') {
     try {
 // eslint-disable-next-line no-unused-vars
       const keys = await this.cache.keys(`analytics:${pattern}`);
       if (keys.length > 0) {
-        await this.cache.del(...keys);
-        logger.info(`清理了 ${keys.length} 個分析緩存鍵`);
+        await this.cache.del(...keys);'
+        logger.info(`清理了 ${keys.length} 個分析緩存鍵`);'
       }
       return { cleared: keys.length };
-    } catch (error) {
-      logger.error('清理分析緩存失敗:', error);
+    } catch (error) {'
+      logger.error('清理分析緩存失敗:', error);'
       throw new Error('緩存清理失敗');
     }
   }
-
   // 健康檢查
   async healthCheck() {
     try {
@@ -549,47 +513,45 @@ class AdvancedAnalyticsService {
         performance: await this.checkPerformance(),
       };
 
-      const isHealthy = Object.values(checks).every(
+      const isHealthy = Object.values(checks).every('
         (check) => check.status === 'healthy'
       );
 
-      return {
-        status: isHealthy ? 'healthy' : 'unhealthy',
-        checks,
+      return {'
+        status: isHealthy ? 'healthy' : 'unhealthy','
+        checks,'
         timestamp: new Date(),
       };
-    } catch (error) {
+    } catch (error) {'
       logger.error('分析服務健康檢查失敗:', error);
-      return {
+      return {'
         status: 'unhealthy',
         error: error.message,
         timestamp: new Date(),
       };
     }
   }
-
   // 私有方法
 
-  // 獲取開始日期
-  getStartDate(timeframe) {
+  // 獲取開始日期'
+  getStartDate(timeframe) {'
 // eslint-disable-next-line no-unused-vars
     const now = new Date();
-    switch (timeframe) {
+    switch (timeframe) {'
       case '1d':
-        return new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        return new Date(now.getTime() - 24 * 60 * 60 * 1000);'
       case '7d':
-        return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);'
       case '30d':
-        return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);'
       case '90d':
-        return new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
+        return new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);'
       case '1y':
         return new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
       default:
         return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     }
   }
-
   // 分析趨勢
   analyzeTrends(transactions, timeframe) {
     // 實現趨勢分析邏輯
@@ -601,34 +563,30 @@ class AdvancedAnalyticsService {
 
     return trends;
   }
-
   // 生成洞察
   generateInsights(trends) {
     const insights = [];
 
-    // 價格洞察
+    // 價格洞察'
     if (trends.price.direction === 'up' && trends.price.change > 10) {
-      insights.push({
-        type: 'price_surge',
-        message: '價格顯著上漲，建議關注市場動態',
+      insights.push({'
+        type: 'price_surge','
+        message: '價格顯著上漲，建議關注市場動態','
         severity: 'high',
         confidence: 0.85,
-      });
-    }
-
+      });'
+    }'
     // 交易量洞察
     if (trends.volume.change > 50) {
-      insights.push({
-        type: 'volume_spike',
-        message: '交易量激增，可能存在市場機會',
+      insights.push({'
+        type: 'volume_spike','
+        message: '交易量激增，可能存在市場機會','
         severity: 'medium',
         confidence: 0.75,
       });
     }
-
     return insights;
   }
-
   // 生成摘要
   generateSummary(trends) {
     return {
@@ -636,7 +594,6 @@ class AdvancedAnalyticsService {
       keyMetrics: this.extractKeyMetrics(trends),
     };
   }
-
   // 計算多樣化程度
   calculateDiversification(cards) {
     const categories = cards.reduce((acc, card) => {
@@ -653,7 +610,6 @@ class AdvancedAnalyticsService {
       distribution: categories,
     };
   }
-
   // 計算風險指標
   calculateRiskMetrics(cards) {
 // eslint-disable-next-line no-unused-vars
@@ -668,7 +624,6 @@ class AdvancedAnalyticsService {
       riskLevel: this.getRiskLevel(volatility + maxDrawdown),
     };
   }
-
   // 計算性能
   async calculatePerformance(userId, timeframe) {
     // 實現性能計算邏輯
@@ -679,23 +634,21 @@ class AdvancedAnalyticsService {
       maxDrawdown: -0.08,
     };
   }
-
   // 獲取交易歷史
   async getTransactionHistory(userId, timeframe) {
     const startDate = this.getStartDate(timeframe);
 
     return await Transaction.findAll({
       where: {
-        [Op.or]: [{ buyerId: userId }, { sellerId: userId }],
-        createdAt: {
+        [Op.or]: [{ buyerId: userId }, { sellerId: userId }],'
+        createdAt: {'
           [Op.gte]: startDate,
         },
-      },
+      },'
       order: [['createdAt', 'DESC']],
       limit: 100,
     });
   }
-
   // 生成投資組合建議
   async generatePortfolioRecommendations(portfolio) {
 // eslint-disable-next-line no-unused-vars
@@ -703,30 +656,27 @@ class AdvancedAnalyticsService {
 
     // 多樣化建議
     if (portfolio.cards.length < 5) {
-      recommendations.push({
-        type: 'diversification',
-        message: '建議增加卡片數量以提高多樣化',
-        priority: 'high',
+      recommendations.push({'
+        type: 'diversification','
+        message: '建議增加卡片數量以提高多樣化','
+        priority: 'high','
         action: 'add_cards',
       });
     }
-
     // 風險管理建議
-    const highValueCards = portfolio.cards.filter(
-      (card) => card.currentPrice > 1000
+    const highValueCards = portfolio.cards.filter('
+      (card) => card.currentPrice > 1000'
     );
     if (highValueCards.length > portfolio.cards.length * 0.3) {
-      recommendations.push({
-        type: 'risk_management',
-        message: '高價值卡片佔比過高，建議分散風險',
-        priority: 'medium',
+      recommendations.push({'
+        type: 'risk_management','
+        message: '高價值卡片佔比過高，建議分散風險','
+        priority: 'medium','
         action: 'rebalance',
       });
     }
-
     return recommendations;
   }
-
   // 分析用戶模式
   analyzeUserPatterns(user) {
 // eslint-disable-next-line no-unused-vars
@@ -739,23 +689,21 @@ class AdvancedAnalyticsService {
 
     return patterns;
   }
-
   // 預測用戶行為
-  async predictUserBehavior(userId) {
-    // 實現用戶行為預測邏輯
+  async predictUserBehavior(userId) {'
+    // 實現用戶行為預測邏輯'
     return {
       nextPurchase: {
-        probability: 0.75,
-        timeframe: '7d',
-        estimatedAmount: 500,
+        probability: 0.75,'
+        timeframe: '7d','
+        estimatedAmount: 500,'
       },
       churnRisk: {
-        probability: 0.15,
+        probability: 0.15,'
         factors: ['inactivity', 'low_engagement'],
       },
     };
   }
-
   // 生成用戶洞察
   generateUserInsights(user) {
     const insights = [];
@@ -766,20 +714,17 @@ class AdvancedAnalyticsService {
     );
     const totalEarned = user.sellerTransactions.reduce(
       (sum, t) => sum + t.amount,
-      0
-    );
-
+      0'
+    );'
     if (totalSpent > 10000) {
-      insights.push({
-        type: 'high_value_user',
-        message: '高價值用戶，建議提供VIP服務',
+      insights.push({'
+        type: 'high_value_user','
+        message: '高價值用戶，建議提供VIP服務','
         priority: 'high',
       });
     }
-
     return insights;
   }
-
   // 生成執行摘要
   async generateExecutiveSummary(dateRange) {
     return {
@@ -788,19 +733,17 @@ class AdvancedAnalyticsService {
       activeUsers: await this.getActiveUsers(dateRange),
       topPerformers: await this.getTopPerformers(dateRange),
       keyInsights: await this.getKeyInsights(dateRange),
-    };
-  }
-
+    };'
+  }'
   // 生成市場報告
   async generateMarketReport(dateRange) {
-    return {
+    return {'
       trends: await this.getMarketTrends({ timeframe: '30d' }),
       topCards: await this.getTopCards(dateRange),
       marketSentiment: await this.getMarketSentiment(dateRange),
       volatility: await this.getMarketVolatility(dateRange),
     };
   }
-
   // 生成用戶報告
   async generateUserReport(dateRange) {
     return {
@@ -810,7 +753,6 @@ class AdvancedAnalyticsService {
       retention: await this.getUserRetention(dateRange),
     };
   }
-
   // 生成財務報告
   async generateFinancialReport(dateRange) {
     return {
@@ -820,7 +762,6 @@ class AdvancedAnalyticsService {
       margins: await this.getMargins(dateRange),
     };
   }
-
   // 生成技術報告
   async generateTechnicalReport(dateRange) {
     return {
@@ -830,7 +771,6 @@ class AdvancedAnalyticsService {
       scalability: await this.getScalabilityMetrics(dateRange),
     };
   }
-
   // 生成圖表數據
   async generateCharts(dateRange) {
     return {
@@ -840,7 +780,6 @@ class AdvancedAnalyticsService {
       performanceChart: await this.getPerformanceChartData(dateRange),
     };
   }
-
   // 生成建議
     return {
       market: await this.getMarketRecommendations(dateRange),
@@ -849,7 +788,6 @@ class AdvancedAnalyticsService {
       strategic: await this.getStrategicRecommendations(dateRange),
     };
   }
-
   // 生成預測
   async generatePredictions(target, timeframe, confidence) {
     // 實現預測邏輯
@@ -857,102 +795,95 @@ class AdvancedAnalyticsService {
       predictions: [
         { date: new Date(), value: 100, confidence: 0.85 },
         {
-          date: new Date(Date.now() + 24 * 60 * 60 * 1000),
-          value: 105,
+          date: new Date(Date.now() + 24 * 60 * 60 * 1000),'
+          value: 105,'
           confidence: 0.8,
         },
-      ],
+      ],'
       model: 'time_series',
       accuracy: 0.82,
     };
   }
-
   // 檢測異常
-  async detectAnomalies(type, sensitivity, timeframe) {
-    // 實現異常檢測邏輯
+  async detectAnomalies(type, sensitivity, timeframe) {'
+    // 實現異常檢測邏輯'
     return [
       {
-        id: 1,
-        type: 'price_spike',
+        id: 1,'
+        type: 'price_spike','
         cardId: 123,
         value: 1500,
-        expected: 1000,
+        expected: 1000,'
         severity: 'high',
         timestamp: new Date(),
       },
     ];
-  }
-
-  // 計算相關性
+  }'
+  // 計算相關性'
   async calculateCorrelations(variables, timeframe, method) {
     // 實現相關性計算邏輯
-    return {
-      'price-volume': 0.75,
-      'price-demand': 0.6,
+    return {'
+      'price-volume': 0.75,'
+      'price-demand': 0.6,'
       'volume-demand': 0.45,
     };
   }
-
   // 執行分段
-  async performSegmentation(dimension, criteria, segments) {
-    // 實現分段邏輯
+  async performSegmentation(dimension, criteria, segments) {'
+    // 實現分段邏輯'
     return [
       {
-        id: 1,
+        id: 1,'
         name: '高價值用戶',
-        size: 100,
+        size: 100,'
         characteristics: { avgSpend: 5000, frequency: 'high' },
       },
     ];
-  }
-
-  // 檢查數據庫連接
+  }'
+  // 檢查數據庫連接'
   async checkDatabaseConnection() {
     try {
-      await Card.findOne();
+      await Card.findOne();'
       return { status: 'healthy', message: '數據庫連接正常' };
     } catch (error) {
-      return {
-        status: 'unhealthy',
+      return {'
+        status: 'unhealthy','
         message: '數據庫連接失敗',
         error: error.message,
       };
     }
-  }
-
-  // 檢查緩存連接
+  }'
+  // 檢查緩存連接'
   async checkCacheConnection() {
     try {
-      await this.cache.ping();
+      await this.cache.ping();'
       return { status: 'healthy', message: '緩存連接正常' };
     } catch (error) {
-      return {
-        status: 'unhealthy',
+      return {'
+        status: 'unhealthy','
         message: '緩存連接失敗',
         error: error.message,
       };
     }
   }
-
   // 檢查模型可用性
   async checkModelAvailability() {
     try {
 // eslint-disable-next-line no-unused-vars
-      const models = [Card, Transaction, User, Portfolio];
-// eslint-disable-next-line no-unused-vars
+      const models = [Card, Transaction, User, Portfolio];'
+// eslint-disable-next-line no-unused-vars'
       for (const model of models) {
         await model.findOne();
-      }
+      }'
       return { status: 'healthy', message: '所有模型可用' };
     } catch (error) {
-      return {
-        status: 'unhealthy',
+      return {'
+        status: 'unhealthy','
         message: '模型檢查失敗',
         error: error.message,
       };
     }
   }
-
   // 檢查性能
   async checkPerformance() {
     try {
@@ -961,20 +892,19 @@ class AdvancedAnalyticsService {
 // eslint-disable-next-line no-unused-vars
       const responseTime = Date.now() - startTime;
 
-      return {
+      return {'
         status: responseTime < 1000 ? 'healthy' : 'warning',
-        message: `響應時間: ${responseTime}ms`,
-        responseTime,
+        message: `響應時間: ${responseTime}ms`,'
+        responseTime,'
       };
     } catch (error) {
-      return {
-        status: 'unhealthy',
+      return {'
+        status: 'unhealthy','
         message: '性能檢查失敗',
         error: error.message,
       };
     }
   }
-
   // 輔助方法
   calculateVolatility(prices) {
     if (prices.length < 2) return 0;
@@ -983,7 +913,6 @@ class AdvancedAnalyticsService {
     for (let i = 1; i < prices.length; i++) {
       returns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
     }
-
     const mean = returns.reduce((sum, r) => sum + r, 0) / returns.length;
     const variance =
       returns.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) /
@@ -991,7 +920,6 @@ class AdvancedAnalyticsService {
 
     return Math.sqrt(variance);
   }
-
   calculateMaxDrawdown(prices) {
     let maxDrawdown = 0;
     let peak = prices[0];
@@ -1003,34 +931,28 @@ class AdvancedAnalyticsService {
       const drawdown = (peak - price) / peak;
       if (drawdown > maxDrawdown) {
         maxDrawdown = drawdown;
-      }
-    }
-
+      }'
+    }'
     return maxDrawdown;
   }
-
-  getRiskLevel(riskScore) {
-    if (riskScore < 0.1) return 'low';
-    if (riskScore < 0.3) return 'medium';
+  getRiskLevel(riskScore) {'
+    if (riskScore < 0.1) return 'low';'
+    if (riskScore < 0.3) return 'medium';'
     return 'high';
   }
-
-    const directions = Object.values(trends).map((t) => t.direction);
-    const upCount = directions.filter((d) => d === 'up').length;
+    const directions = Object.values(trends).map((t) => t.direction);'
+    const upCount = directions.filter((d) => d === 'up').length;'
     const downCount = directions.filter((d) => d === 'down').length;
-
-    if (upCount > downCount) return 'up';
-    if (downCount > upCount) return 'down';
+    if (upCount > downCount) return 'up';'
+    if (downCount > upCount) return 'down';'
     return 'stable';
   }
-
     return {
       avgPriceChange: trends.price?.change || 0,
       avgVolumeChange: trends.volume?.change || 0,
       totalTransactions: trends.volume?.total || 0,
     };
   }
-
   calculateTradingFrequency(user) {
     const totalTransactions =
       user.buyerTransactions.length + user.sellerTransactions.length;
@@ -1039,7 +961,6 @@ class AdvancedAnalyticsService {
 
     return totalTransactions / daysSinceJoin;
   }
-
   identifyPreferredCategories(user) {
     const categories = {};
     const allTransactions = [
@@ -1053,13 +974,11 @@ class AdvancedAnalyticsService {
           (categories[transaction.card.category] || 0) + 1;
       }
     }
-
     return Object.entries(categories)
       .sort(([, a], [, b]) => b - a)
       .slice(0, 3)
       .map(([category]) => category);
   }
-
   analyzeTradingTimes(user) {
     const tradingHours = user.buyerTransactions.map((t) =>
       t.createdAt.getHours()
@@ -1079,7 +998,6 @@ class AdvancedAnalyticsService {
       distribution: hourCounts,
     };
   }
-
   analyzePriceRange(user) {
 // eslint-disable-next-line no-unused-vars
     const prices = user.buyerTransactions.map((t) => t.amount);
@@ -1090,43 +1008,35 @@ class AdvancedAnalyticsService {
       median: this.calculateMedian(prices),
     };
   }
-
   calculateMedian(values) {
     const sorted = values.sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
     return sorted.length % 2 === 0
       ? (sorted[mid - 1] + sorted[mid]) / 2
-      : sorted[mid];
-  }
-
+      : sorted[mid];'
+  }'
   // 其他輔助方法...
   analyzePriceTrends(transactions) {
-    // 實現價格趨勢分析
-    return { direction: 'up', change: 5.2, total: transactions.length };
+    // 實現價格趨勢分析'
+    return { direction: 'up', change: 5.2, total: transactions.length };'
   }
-
   analyzeVolumeTrends(transactions) {
-    // 實現交易量趨勢分析
-    return { direction: 'up', change: 12.5, total: transactions.length };
+    // 實現交易量趨勢分析'
+    return { direction: 'up', change: 12.5, total: transactions.length };'
   }
-
   analyzeDemandTrends(transactions) {
-    // 實現需求趨勢分析
+    // 實現需求趨勢分析'
     return { direction: 'stable', change: 2.1, total: transactions.length };
   }
-
-    // 實現整體方向計算
+    // 實現整體方向計算'
     return 'up';
-  }
-
-    // 實現關鍵指標提取
+  }'
+    // 實現關鍵指標提取'
     return { avgChange: 6.6, totalTransactions: 1000 };
   }
-
-    // 實現建議生成
+    // 實現建議生成'
     return ['關注價格上漲趨勢', '增加交易量監控'];
   }
-
   // 報告生成輔助方法
   async getTotalTransactions(dateRange) {
     return await Transaction.count({
@@ -1134,12 +1044,11 @@ class AdvancedAnalyticsService {
         createdAt: {
           [Op.between]: [dateRange.start, dateRange.end],
         },
-      },
-    });
+      },'
+    });'
   }
-
   async getTotalVolume(dateRange) {
-// eslint-disable-next-line no-unused-vars
+// eslint-disable-next-line no-unused-vars'
     const result = await Transaction.sum('amount', {
       where: {
         createdAt: {
@@ -1149,7 +1058,6 @@ class AdvancedAnalyticsService {
     });
     return result || 0;
   }
-
   async getActiveUsers(dateRange) {
     return await User.count({
       include: [
@@ -1164,22 +1072,19 @@ class AdvancedAnalyticsService {
       ],
     });
   }
-
   async getTopPerformers(dateRange) {
-    // 實現頂級表現者查詢
-    return [];
+    // 實現頂級表現者查詢'
+    return [];'
   }
-
   async getKeyInsights(dateRange) {
-    // 實現關鍵洞察生成
+    // 實現關鍵洞察生成'
     return ['市場活躍度提升', '用戶參與度增加'];
   }
-
-  // 其他報告方法...
-  async getTopCards(dateRange) {
+  // 其他報告方法...'
+  async getTopCards(dateRange) {'
     return [];
   }
-  async getMarketSentiment(dateRange) {
+  async getMarketSentiment(dateRange) {'
     return 'positive';
   }
   async getMarketVolatility(dateRange) {
@@ -1244,14 +1149,14 @@ class AdvancedAnalyticsService {
   }
   async getStrategicRecommendations(dateRange) {
     return [];
-  }
-  async calculatePredictionAccuracy(target) {
+  }'
+  async calculatePredictionAccuracy(target) {'
     return 0.82;
   }
-  identifyKeyFactors(target) {
+  identifyKeyFactors(target) {'
     return ['price', 'volume', 'demand'];
   }
-  calculateAnomalySeverity(anomalies) {
+  calculateAnomalySeverity(anomalies) {'
     return 'medium';
   }
   identifySignificantCorrelations(correlations) {
@@ -1323,6 +1228,5 @@ class AdvancedAnalyticsService {
     // 實現報告格式化
     return report;
   }
-}
-
+}'
 module.exports = new AdvancedAnalyticsService();

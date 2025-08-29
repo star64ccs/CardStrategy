@@ -1,57 +1,60 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import { logger } from '../../core/utils/logger';
+import type {
+  PriceHistory,
+  MarketStats,
+  PriceAlert,
+} from '../../shared/services/priceDataService';
 import {
-  priceDataService,
-  HistoricalPriceData,
-  GradingAgencyData,
+  PriceDataService,
+  PriceData,
+} from '../../shared/services/priceDataService';
+import type {
   PricePlatform,
   GradingAgency,
-} from '@/services/priceDataService';
-import { logger } from '@/utils/logger';
+  HistoricalPriceData,
+  GradingAgencyData,
+} from '../../types/priceData';
+
+// 創建服務實例
+const _priceDataService = new PriceDataService();
 
 // 價格數據狀態類型
 export interface PriceDataState {
   // 歷史價格數據
   historicalPrices: {
     [cardId: string]: {
-      [platform: string]: HistoricalPriceData;
+      [platform: string]: PriceHistory;
     };
   };
 
-  // 鑑定機構數據
+  // 評級數據
   gradingData: {
     [cardId: string]: {
       [agency: string]: GradingAgencyData;
     };
   };
 
-  // 平台推薦
-  recommendedPlatforms: {
-    pricePlatforms: {
-      platform: PricePlatform;
-      reliability: number;
-      dataQuality: number;
-      updateFrequency: string;
-      coverage: string;
-      description: string;
-    }[];
-    gradingAgencies: {
-      agency: GradingAgency;
-      reliability: number;
-      dataQuality: number;
-      updateFrequency: string;
-      coverage: string;
-      description: string;
-    }[];
-  } | null;
+  // 推薦平台
+  recommendedPlatforms: PricePlatform[] | null;
 
   // 平台狀態
   platformStatus: {
-    [platform: string]: {
-      status: 'online' | 'offline' | 'limited';
-      lastCheck: string;
-      responseTime: number;
-      error?: string;
+    [platformId: string]: {
+      isActive: boolean;
+      lastUpdate: Date;
+      reliability: number;
     };
+  };
+
+  // 價格警報
+  priceAlerts: PriceAlert[];
+
+  // 市場統計
+  marketStats: {
+    [cardId: string]: MarketStats;
   };
 
   // 加載狀態
@@ -63,8 +66,6 @@ export interface PriceDataState {
 
   // 過濾器和設置
   filters: {
-    selectedPlatforms: PricePlatform[];
-    selectedAgencies: GradingAgency[];
     timeRange: {
       start: string;
       end: string;
@@ -86,12 +87,12 @@ const initialState: PriceDataState = {
   gradingData: {},
   recommendedPlatforms: null,
   platformStatus: {},
+  priceAlerts: [],
+  marketStats: {},
   isLoading: false,
   isUpdating: false,
   error: null,
   filters: {
-    selectedPlatforms: ['EBAY', 'TCGPLAYER', 'CARDMARKET', 'PRICE_CHARTING'],
-    selectedAgencies: ['PSA', 'BGS', 'CGC'],
     timeRange: {
       start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
       end: new Date().toISOString(),
@@ -108,7 +109,7 @@ const initialState: PriceDataState = {
 // 異步 Thunk Actions
 
 // 獲取歷史價格數據
-export const fetchHistoricalPrices = createAsyncThunk(
+export const _fetchHistoricalPrices = createAsyncThunk(
   'priceData/fetchHistoricalPrices',
   async (
     params: {
@@ -119,13 +120,13 @@ export const fetchHistoricalPrices = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await priceDataService.getHistoricalPrices(
+      const _response = await priceDataService.getHistoricalPrices(
         params.cardId,
         params.platforms,
         params.timeRange
       );
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('❌ Fetch historical prices failed:', {
         error: error.message,
       });
@@ -135,7 +136,7 @@ export const fetchHistoricalPrices = createAsyncThunk(
 );
 
 // 獲取鑑定機構數據
-export const fetchGradingAgencyData = createAsyncThunk(
+export const _fetchGradingAgencyData = createAsyncThunk(
   'priceData/fetchGradingAgencyData',
   async (
     params: {
@@ -145,12 +146,12 @@ export const fetchGradingAgencyData = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await priceDataService.getGradingAgencyData(
+      const _response = await priceDataService.getGradingAgencyData(
         params.cardId,
         params.agencies
       );
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('❌ Fetch grading agency data failed:', {
         error: error.message,
       });
@@ -160,13 +161,13 @@ export const fetchGradingAgencyData = createAsyncThunk(
 );
 
 // 獲取平台推薦
-export const fetchRecommendedPlatforms = createAsyncThunk(
+export const _fetchRecommendedPlatforms = createAsyncThunk(
   'priceData/fetchRecommendedPlatforms',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await priceDataService.getRecommendedPlatforms();
+      const _response = await priceDataService.getRecommendedPlatforms();
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('❌ Fetch recommended platforms failed:', {
         error: error.message,
       });
@@ -176,13 +177,13 @@ export const fetchRecommendedPlatforms = createAsyncThunk(
 );
 
 // 檢查平台狀態
-export const checkPlatformStatus = createAsyncThunk(
+export const _checkPlatformStatus = createAsyncThunk(
   'priceData/checkPlatformStatus',
   async (platforms: PricePlatform[], { rejectWithValue }) => {
     try {
-      const response = await priceDataService.checkPlatformStatus(platforms);
+      const _response = await priceDataService.checkPlatformStatus(platforms);
       return response.data;
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('❌ Check platform status failed:', {
         error: error.message,
       });
@@ -192,7 +193,7 @@ export const checkPlatformStatus = createAsyncThunk(
 );
 
 // 批量獲取價格數據
-export const fetchBatchPriceData = createAsyncThunk(
+export const _fetchBatchPriceData = createAsyncThunk(
   'priceData/fetchBatchPriceData',
   async (
     params: {
@@ -204,16 +205,16 @@ export const fetchBatchPriceData = createAsyncThunk(
     { rejectWithValue, dispatch }
   ) => {
     try {
-      const results = {
+      const _results = {
         historicalPrices: [] as HistoricalPriceData[],
         gradingData: [] as GradingAgencyData[],
       };
 
       // 並行獲取歷史價格數據
-      const historicalPromises = params.cardIds.map((cardId) =>
+      const _historicalPromises = params.cardIds.map(cardId =>
         priceDataService
           .getHistoricalPrices(cardId, params.platforms, params.timeRange)
-          .catch((error) => {
+          .catch((error: unknown) => {
             logger.error(
               `❌ Failed to fetch historical prices for card ${cardId}:`,
               { error: error.message }
@@ -223,10 +224,10 @@ export const fetchBatchPriceData = createAsyncThunk(
       );
 
       // 並行獲取鑑定機構數據
-      const gradingPromises = params.cardIds.map((cardId) =>
+      const _gradingPromises = params.cardIds.map(cardId =>
         priceDataService
           .getGradingAgencyData(cardId, params.agencies)
-          .catch((error) => {
+          .catch((error: unknown) => {
             logger.error(
               `❌ Failed to fetch grading data for card ${cardId}:`,
               { error: error.message }
@@ -241,36 +242,38 @@ export const fetchBatchPriceData = createAsyncThunk(
       ]);
 
       // 處理歷史價格結果
-      historicalResults.forEach((result, index) => {
-        if (result && result.data) {
+      historicalResults.forEach((result: unknown, index: number) => {
+        if (result?.data) {
           results.historicalPrices.push(...result.data);
         }
       });
 
       // 處理鑑定機構結果
-      gradingResults.forEach((result, index) => {
-        if (result && result.data) {
+      gradingResults.forEach((result: unknown, index: number) => {
+        if (result?.data) {
           results.gradingData.push(...result.data);
         }
       });
 
       return results;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const _errorMessage =
+        error instanceof Error ? error.message : '批量獲取價格數據失敗';
       logger.error('❌ Fetch batch price data failed:', {
-        error: error.message,
+        error: errorMessage,
       });
-      return rejectWithValue(error.message || '批量獲取價格數據失敗');
+      return rejectWithValue(errorMessage);
     }
   }
 );
 
 // 價格數據 Slice
-const priceDataSlice = createSlice({
+const _priceDataSlice = createSlice({
   name: 'priceData',
   initialState,
   reducers: {
     // 清除錯誤
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
 
@@ -283,7 +286,7 @@ const priceDataSlice = createSlice({
     },
 
     // 清除過濾器
-    clearFilters: (state) => {
+    clearFilters: state => {
       state.filters = initialState.filters;
     },
 
@@ -297,13 +300,13 @@ const priceDataSlice = createSlice({
 
     // 清除特定卡牌的數據
     clearCardData: (state, action: PayloadAction<string>) => {
-      const cardId = action.payload;
+      const _cardId = action.payload;
       delete state.historicalPrices[cardId];
       delete state.gradingData[cardId];
     },
 
     // 清除所有數據
-    clearAllData: (state) => {
+    clearAllData: state => {
       state.historicalPrices = {};
       state.gradingData = {};
       state.recommendedPlatforms = null;
@@ -315,17 +318,28 @@ const priceDataSlice = createSlice({
       state,
       action: PayloadAction<HistoricalPriceData[]>
     ) => {
-      action.payload.forEach((data) => {
+      action.payload.forEach((data: unknown) => {
         if (!state.historicalPrices[data.cardId]) {
           state.historicalPrices[data.cardId] = {};
         }
-        state.historicalPrices[data.cardId][data.platform] = data;
+        // 轉換 HistoricalPriceData 為 PriceHistory 格式
+        state.historicalPrices[data.cardId][data.platform] = {
+          cardId: data.cardId,
+          prices: [
+            {
+              price: data.price,
+              timestamp: new Date(data.date),
+              volume: data.volume,
+            },
+          ],
+          period: '1m',
+        };
       });
     },
 
     // 更新鑑定機構數據
     updateGradingData: (state, action: PayloadAction<GradingAgencyData[]>) => {
-      action.payload.forEach((data) => {
+      action.payload.forEach(data => {
         if (!state.gradingData[data.cardId]) {
           state.gradingData[data.cardId] = {};
         }
@@ -345,24 +359,49 @@ const priceDataSlice = createSlice({
         };
       }>
     ) => {
-      state.platformStatus = { ...state.platformStatus, ...action.payload };
+      // 轉換平台狀態格式
+      const convertedStatus: unknown = {};
+      Object.entries(action.payload).forEach(([platform, status]) => {
+        convertedStatus[platform] = {
+          isActive: status.status === 'online',
+          lastUpdate: new Date(status.lastCheck),
+          reliability:
+            status.status === 'online'
+              ? 1.0
+              : status.status === 'limited'
+                ? 0.5
+                : 0.0,
+        };
+      });
+      state.platformStatus = { ...state.platformStatus, ...convertedStatus };
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Fetch Historical Prices
     builder
-      .addCase(fetchHistoricalPrices.pending, (state) => {
+      .addCase(fetchHistoricalPrices.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(fetchHistoricalPrices.fulfilled, (state, action) => {
         state.isLoading = false;
         // 將數據組織到狀態中
-        action.payload.forEach((data) => {
+        action.payload.forEach((data: unknown) => {
           if (!state.historicalPrices[data.cardId]) {
             state.historicalPrices[data.cardId] = {};
           }
-          state.historicalPrices[data.cardId][data.platform] = data;
+          // 轉換 HistoricalPriceData 為 PriceHistory 格式
+          state.historicalPrices[data.cardId][data.platform] = {
+            cardId: data.cardId,
+            prices: [
+              {
+                price: data.price,
+                timestamp: new Date(data.date),
+                volume: data.volume,
+              },
+            ],
+            period: '1m',
+          };
         });
         state.error = null;
       })
@@ -373,14 +412,14 @@ const priceDataSlice = createSlice({
 
     // Fetch Grading Agency Data
     builder
-      .addCase(fetchGradingAgencyData.pending, (state) => {
+      .addCase(fetchGradingAgencyData.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(fetchGradingAgencyData.fulfilled, (state, action) => {
         state.isLoading = false;
         // 將數據組織到狀態中
-        action.payload.forEach((data) => {
+        action.payload.forEach((data: unknown) => {
           if (!state.gradingData[data.cardId]) {
             state.gradingData[data.cardId] = {};
           }
@@ -395,7 +434,7 @@ const priceDataSlice = createSlice({
 
     // Fetch Recommended Platforms
     builder
-      .addCase(fetchRecommendedPlatforms.pending, (state) => {
+      .addCase(fetchRecommendedPlatforms.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -411,7 +450,7 @@ const priceDataSlice = createSlice({
 
     // Check Platform Status
     builder
-      .addCase(checkPlatformStatus.pending, (state) => {
+      .addCase(checkPlatformStatus.pending, state => {
         state.isUpdating = true;
         state.error = null;
       })
@@ -427,21 +466,21 @@ const priceDataSlice = createSlice({
 
     // Fetch Batch Price Data
     builder
-      .addCase(fetchBatchPriceData.pending, (state) => {
+      .addCase(fetchBatchPriceData.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(fetchBatchPriceData.fulfilled, (state, action) => {
         state.isLoading = false;
         // 處理歷史價格數據
-        action.payload.historicalPrices.forEach((data) => {
+        action.payload.historicalPrices.forEach((data: unknown) => {
           if (!state.historicalPrices[data.cardId]) {
             state.historicalPrices[data.cardId] = {};
           }
           state.historicalPrices[data.cardId][data.platform] = data;
         });
         // 處理鑑定機構數據
-        action.payload.gradingData.forEach((data) => {
+        action.payload.gradingData.forEach((data: unknown) => {
           if (!state.gradingData[data.cardId]) {
             state.gradingData[data.cardId] = {};
           }
@@ -473,24 +512,24 @@ export const {
 export default priceDataSlice.reducer;
 
 // 導出選擇器
-export const selectPriceData = (state: { priceData: PriceDataState }) =>
+export const _selectPriceData = (state: { priceData: PriceDataState }) =>
   state.priceData;
-export const selectHistoricalPrices = (state: { priceData: PriceDataState }) =>
+export const _selectHistoricalPrices = (state: { priceData: PriceDataState }) =>
   state.priceData.historicalPrices;
-export const selectGradingData = (state: { priceData: PriceDataState }) =>
+export const _selectGradingData = (state: { priceData: PriceDataState }) =>
   state.priceData.gradingData;
-export const selectRecommendedPlatforms = (state: {
+export const _selectRecommendedPlatforms = (state: {
   priceData: PriceDataState;
 }) => state.priceData.recommendedPlatforms;
-export const selectPlatformStatus = (state: { priceData: PriceDataState }) =>
+export const _selectPlatformStatus = (state: { priceData: PriceDataState }) =>
   state.priceData.platformStatus;
-export const selectFilters = (state: { priceData: PriceDataState }) =>
+export const _selectFilters = (state: { priceData: PriceDataState }) =>
   state.priceData.filters;
-export const selectPagination = (state: { priceData: PriceDataState }) =>
+export const _selectPagination = (state: { priceData: PriceDataState }) =>
   state.priceData.pagination;
-export const selectIsLoading = (state: { priceData: PriceDataState }) =>
+export const _selectIsLoading = (state: { priceData: PriceDataState }) =>
   state.priceData.isLoading;
-export const selectIsUpdating = (state: { priceData: PriceDataState }) =>
+export const _selectIsUpdating = (state: { priceData: PriceDataState }) =>
   state.priceData.isUpdating;
-export const selectError = (state: { priceData: PriceDataState }) =>
+export const _selectError = (state: { priceData: PriceDataState }) =>
   state.priceData.error;

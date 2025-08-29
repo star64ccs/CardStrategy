@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-08-26T09:06:54.214Z",
+  "testFilesCount": 130,
+  "testTypes": {
+    "unit": 48,
+    "integration": 2,
+    "e2e": 3,
+    "component": 4,
+    "service": 2,
+    "other": 71
+  },
+  "recommendations": [
+    "1. 使用 --maxWorkers=25% 提高並行度",
+    "2. 設置 workerIdleMemoryLimit=1GB 避免記憶體溢出",
+    "3. 優先執行快速測試（單元測試、服務測試）",
+    "4. 使用 jest.clearAllMocks() 替代 jest.resetAllMocks()",
+    "5. 避免在測試中使用真實的網絡請求",
+    "6. 使用 jest.fn() 創建輕量級 mock",
+    "7. 定期清理測試環境以避免狀態污染",
+    "8. 使用 --verbose 模式調試測試問題",
+    "9. 考慮使用 --bail 模式在首次失敗時停止",
+    "10. 定期更新 Jest 和相關依賴"
+  ],
+  "jestConfigExists": true,
+  "jestSetupExists": true
+}

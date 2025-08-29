@@ -1,8 +1,9 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { notificationService } from '../../../services/notificationService';
-import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
+import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+
+import { notificationService } from '../../../services/notificationService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
@@ -11,10 +12,10 @@ jest.mock('expo-device');
 jest.mock('react-native');
 jest.mock('../../../utils/logger');
 
-const mockNotifications = Notifications as jest.Mocked<typeof Notifications>;
-const mockDevice = Device as jest.Mocked<typeof Device>;
-const mockPlatform = Platform as jest.Mocked<typeof Platform>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockNotifications = Notifications as jest.Mocked<typeof Notifications>;
+const _mockDevice = Device as jest.Mocked<typeof Device>;
+const _mockPlatform = Platform as jest.Mocked<typeof Platform>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('NotificationService', () => {
   beforeEach(() => {
@@ -98,7 +99,7 @@ describe('NotificationService', () => {
   });
 
   describe('sendLocalNotification', () => {
-    const mockNotification = {
+    const _mockNotification = {
       title: '測試通知',
       body: '這是一個測試通知',
       data: { type: 'test' },
@@ -107,7 +108,7 @@ describe('NotificationService', () => {
     };
 
     it('應該成功發送本地通知', async () => {
-      const result =
+      const _result =
         await notificationService.sendLocalNotification(mockNotification);
 
       expect(result).toBe('test-notification-id');
@@ -143,7 +144,7 @@ describe('NotificationService', () => {
   });
 
   describe('sendPriceAlert', () => {
-    const mockPriceAlert = {
+    const _mockPriceAlert = {
       cardId: 'card-123',
       cardName: '測試卡片',
       targetPrice: 100,
@@ -152,7 +153,7 @@ describe('NotificationService', () => {
     };
 
     it('應該成功發送價格提醒通知', async () => {
-      const result = await notificationService.sendPriceAlert(mockPriceAlert);
+      const _result = await notificationService.sendPriceAlert(mockPriceAlert);
 
       expect(result).toBe('test-notification-id');
       expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledWith({
@@ -175,7 +176,7 @@ describe('NotificationService', () => {
     });
 
     it('應該處理下跌價格提醒', async () => {
-      const alert = {
+      const _alert = {
         ...mockPriceAlert,
         type: 'below' as const,
         currentPrice: 80,
@@ -195,7 +196,7 @@ describe('NotificationService', () => {
 
   describe('sendMarketUpdate', () => {
     it('應該成功發送市場更新通知', async () => {
-      const result = await notificationService.sendMarketUpdate(
+      const _result = await notificationService.sendMarketUpdate(
         '市場更新',
         '市場出現新動態',
         { marketId: 'market-123' }
@@ -221,7 +222,7 @@ describe('NotificationService', () => {
 
   describe('sendInvestmentAdvice', () => {
     it('應該成功發送投資建議通知', async () => {
-      const result = await notificationService.sendInvestmentAdvice(
+      const _result = await notificationService.sendInvestmentAdvice(
         '投資建議',
         '建議買入這張卡片',
         { cardId: 'card-123' }
@@ -247,7 +248,7 @@ describe('NotificationService', () => {
 
   describe('sendSystemNotification', () => {
     it('應該成功發送系統通知', async () => {
-      const result = await notificationService.sendSystemNotification(
+      const _result = await notificationService.sendSystemNotification(
         '系統通知',
         '系統維護通知',
         { maintenance: true }
@@ -272,7 +273,7 @@ describe('NotificationService', () => {
   });
 
   describe('scheduleNotification', () => {
-    const mockNotification = {
+    const _mockNotification = {
       title: '延遲通知',
       body: '這是一個延遲通知',
       data: { type: 'delayed' },
@@ -280,12 +281,12 @@ describe('NotificationService', () => {
       priority: 'normal' as const,
     };
 
-    const mockTrigger = {
+    const _mockTrigger = {
       seconds: 60,
     };
 
     it('應該成功安排延遲通知', async () => {
-      const result = await notificationService.scheduleNotification(
+      const _result = await notificationService.scheduleNotification(
         mockNotification,
         mockTrigger
       );
@@ -375,7 +376,7 @@ describe('NotificationService', () => {
   });
 
   describe('getScheduledNotifications', () => {
-    const mockScheduledNotifications = [
+    const _mockScheduledNotifications = [
       {
         identifier: 'notification-1',
         content: {
@@ -391,7 +392,7 @@ describe('NotificationService', () => {
         mockScheduledNotifications
       );
 
-      const result = await notificationService.getScheduledNotifications();
+      const _result = await notificationService.getScheduledNotifications();
 
       expect(result).toEqual(mockScheduledNotifications);
       expect(mockLogger.info).toHaveBeenCalledWith('獲取待發送通知成功', {
@@ -416,10 +417,10 @@ describe('NotificationService', () => {
 
   describe('getPermissionStatus', () => {
     it('應該成功獲取權限狀態', async () => {
-      const mockStatus = { status: 'granted' };
+      const _mockStatus = { status: 'granted' };
       mockNotifications.getPermissionsAsync.mockResolvedValue(mockStatus);
 
-      const result = await notificationService.getPermissionStatus();
+      const _result = await notificationService.getPermissionStatus();
 
       expect(result).toEqual(mockStatus);
       expect(mockLogger.info).toHaveBeenCalledWith('獲取通知權限狀態成功', {
@@ -447,19 +448,19 @@ describe('NotificationService', () => {
       // 先初始化服務以設置 token
       notificationService.initialize();
 
-      const token = notificationService.getExpoPushToken();
+      const _token = notificationService.getExpoPushToken();
       expect(token).toBe('test-token');
     });
 
     it('應該在未初始化時返回 null', () => {
-      const token = notificationService.getExpoPushToken();
+      const _token = notificationService.getExpoPushToken();
       expect(token).toBeNull();
     });
   });
 
   describe('testNotification', () => {
     it('應該發送測試通知', async () => {
-      const result = await notificationService.testNotification();
+      const _result = await notificationService.testNotification();
 
       expect(result).toBe('test-notification-id');
       expect(mockNotifications.scheduleNotificationAsync).toHaveBeenCalledWith({
@@ -478,7 +479,7 @@ describe('NotificationService', () => {
   describe('cleanup', () => {
     it('應該清理通知監聽器', () => {
       // 模擬監聽器
-      const mockListener = { remove: jest.fn() };
+      const _mockListener = { remove: jest.fn() };
       (notificationService as any).notificationListener = mockListener;
       (notificationService as any).responseListener = mockListener;
 

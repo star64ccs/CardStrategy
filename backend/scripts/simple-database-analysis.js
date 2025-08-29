@@ -159,7 +159,10 @@ async function analyzeDatabase() {
     recommendations.push('- 建議定期分析表統計信息');
     recommendations.push('- 建議對頻繁查詢的列添加索引');
 
-    recommendations.forEach((rec) => console.log(rec));
+    recommendations.forEach((rec) => {
+      // eslint-disable-next-line no-console
+      console.log(rec);
+    });
 
     // 生成報告文件
     const report = {

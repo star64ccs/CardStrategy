@@ -1,23 +1,23 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { validationService } from '@/utils/validationService';
+import { validationService } from '@/core/utils/validationService';
 
 describe('ValidationService', () => {
   describe('validateEmail', () => {
     it('should validate correct email addresses', () => {
-      const validEmails = [
+      const _validEmails = [
         'test@example.com',
         'user.name@domain.co.uk',
         'user+tag@example.org',
         '123@test.com',
       ];
 
-      validEmails.forEach((email) => {
+      validEmails.forEach(email => {
         expect(validationService.validateEmail(email)).toBe(true);
       });
     });
 
     it('should reject invalid email addresses', () => {
-      const invalidEmails = [
+      const _invalidEmails = [
         'invalid-email',
         '@example.com',
         'user@',
@@ -26,7 +26,7 @@ describe('ValidationService', () => {
         'user@example..com',
       ];
 
-      invalidEmails.forEach((email) => {
+      invalidEmails.forEach(email => {
         expect(validationService.validateEmail(email)).toBe(false);
       });
     });
@@ -40,22 +40,22 @@ describe('ValidationService', () => {
 
   describe('validatePassword', () => {
     it('should validate strong passwords', () => {
-      const strongPasswords = [
-        'Password123!',
+      const _strongPasswords = [
+        'Password123',
         'MySecurePass1@',
         'ComplexP@ssw0rd',
         'Str0ng#Pass',
       ];
 
-      strongPasswords.forEach((password) => {
-        const result = validationService.validatePassword(password);
+      strongPasswords.forEach(password => {
+        const _result = validationService.validatePassword(password);
         expect(result.isValid).toBe(true);
         expect(result.errors).toHaveLength(0);
       });
     });
 
     it('should reject weak passwords', () => {
-      const weakPasswords = [
+      const _weakPasswords = [
         '123456', // too short
         'password', // no uppercase, no number, no special char
         'PASSWORD', // no lowercase, no number, no special char
@@ -64,15 +64,15 @@ describe('ValidationService', () => {
         'Password123', // no special char
       ];
 
-      weakPasswords.forEach((password) => {
-        const result = validationService.validatePassword(password);
+      weakPasswords.forEach(password => {
+        const _result = validationService.validatePassword(password);
         expect(result.isValid).toBe(false);
         expect(result.errors.length).toBeGreaterThan(0);
       });
     });
 
     it('should provide specific error messages', () => {
-      const result = validationService.validatePassword('weak');
+      const _result = validationService.validatePassword('weak');
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain(
@@ -92,7 +92,7 @@ describe('ValidationService', () => {
 
   describe('validateUsername', () => {
     it('should validate valid usernames', () => {
-      const validUsernames = [
+      const _validUsernames = [
         'user123',
         'user_name',
         'user-name',
@@ -100,13 +100,13 @@ describe('ValidationService', () => {
         'user123name',
       ];
 
-      validUsernames.forEach((username) => {
+      validUsernames.forEach(username => {
         expect(validationService.validateUsername(username)).toBe(true);
       });
     });
 
     it('should reject invalid usernames', () => {
-      const invalidUsernames = [
+      const _invalidUsernames = [
         'u', // too short
         'user@name', // invalid character
         'user name', // space not allowed
@@ -115,7 +115,7 @@ describe('ValidationService', () => {
         'user_name_with_very_long_name_that_exceeds_limit', // too long
       ];
 
-      invalidUsernames.forEach((username) => {
+      invalidUsernames.forEach(username => {
         expect(validationService.validateUsername(username)).toBe(false);
       });
     });
@@ -123,7 +123,7 @@ describe('ValidationService', () => {
 
   describe('validateCardName', () => {
     it('should validate card names', () => {
-      const validCardNames = [
+      const _validCardNames = [
         'Blue-Eyes White Dragon',
         'Dark Magician',
         'Red-Eyes B. Dragon',
@@ -131,13 +131,13 @@ describe('ValidationService', () => {
         'Blue-Eyes Ultimate Dragon',
       ];
 
-      validCardNames.forEach((name) => {
+      validCardNames.forEach(name => {
         expect(validationService.validateCardName(name)).toBe(true);
       });
     });
 
     it('should reject invalid card names', () => {
-      const invalidCardNames = [
+      const _invalidCardNames = [
         '', // empty
         'A', // too short
         'A'.repeat(101), // too long
@@ -145,7 +145,7 @@ describe('ValidationService', () => {
         'Card#Name', // invalid character
       ];
 
-      invalidCardNames.forEach((name) => {
+      invalidCardNames.forEach(name => {
         expect(validationService.validateCardName(name)).toBe(false);
       });
     });
@@ -153,22 +153,22 @@ describe('ValidationService', () => {
 
   describe('validatePrice', () => {
     it('should validate valid prices', () => {
-      const validPrices = [0, 10.5, 100.99, 999.99, 1000];
+      const _validPrices = [0, 10.5, 100.99, 999.99, 1000];
 
-      validPrices.forEach((price) => {
+      validPrices.forEach(price => {
         expect(validationService.validatePrice(price)).toBe(true);
       });
     });
 
     it('should reject invalid prices', () => {
-      const invalidPrices = [
+      const _invalidPrices = [
         -1, // negative
         -10.5, // negative
         1001, // too high
         9999.99, // too high
       ];
 
-      invalidPrices.forEach((price) => {
+      invalidPrices.forEach(price => {
         expect(validationService.validatePrice(price)).toBe(false);
       });
     });
@@ -176,7 +176,7 @@ describe('ValidationService', () => {
 
   describe('validatePrivacyPreferences', () => {
     it('should validate valid privacy preferences', () => {
-      const validPreferences = {
+      const _validPreferences = {
         region: 'CN',
         language: 'zh-TW',
         termsAccepted: true,
@@ -195,14 +195,14 @@ describe('ValidationService', () => {
         },
       };
 
-      const result =
+      const _result =
         validationService.validatePrivacyPreferences(validPreferences);
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     it('should reject invalid privacy preferences', () => {
-      const invalidPreferences = {
+      const _invalidPreferences = {
         region: 'INVALID', // invalid region
         language: '', // empty language
         termsAccepted: false, // must be true
@@ -216,19 +216,19 @@ describe('ValidationService', () => {
         },
       };
 
-      const result =
+      const _result =
         validationService.validatePrivacyPreferences(invalidPreferences);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it('should provide specific error messages for privacy preferences', () => {
-      const invalidPreferences = {
+      const _invalidPreferences = {
         region: 'INVALID',
         termsAccepted: false,
       };
 
-      const result =
+      const _result =
         validationService.validatePrivacyPreferences(invalidPreferences);
 
       expect(result.isValid).toBe(false);
@@ -239,7 +239,7 @@ describe('ValidationService', () => {
 
   describe('validateFeedback', () => {
     it('should validate valid feedback', () => {
-      const validFeedback = {
+      const _validFeedback = {
         type: 'bug_report',
         title: 'Test Bug Report',
         description: 'This is a detailed description of the bug',
@@ -247,13 +247,13 @@ describe('ValidationService', () => {
         priority: 'medium',
       };
 
-      const result = validationService.validateFeedback(validFeedback);
+      const _result = validationService.validateFeedback(validFeedback);
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     it('should reject invalid feedback', () => {
-      const invalidFeedback = {
+      const _invalidFeedback = {
         type: 'invalid_type',
         title: '', // empty title
         description: 'Short', // too short
@@ -261,19 +261,19 @@ describe('ValidationService', () => {
         priority: 'invalid_priority',
       };
 
-      const result = validationService.validateFeedback(invalidFeedback);
+      const _result = validationService.validateFeedback(invalidFeedback);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it('should provide specific error messages for feedback', () => {
-      const invalidFeedback = {
+      const _invalidFeedback = {
         type: 'invalid_type',
         title: '',
         description: 'Short',
       };
 
-      const result = validationService.validateFeedback(invalidFeedback);
+      const _result = validationService.validateFeedback(invalidFeedback);
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Invalid feedback type');
@@ -286,25 +286,25 @@ describe('ValidationService', () => {
 
   describe('validateDataRightsRequest', () => {
     it('should validate valid data rights request', () => {
-      const validRequest = {
+      const _validRequest = {
         type: 'access',
         description: 'I would like to access my personal data',
         priority: 'medium',
       };
 
-      const result = validationService.validateDataRightsRequest(validRequest);
+      const _result = validationService.validateDataRightsRequest(validRequest);
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     it('should reject invalid data rights request', () => {
-      const invalidRequest = {
+      const _invalidRequest = {
         type: 'invalid_type',
         description: '', // empty description
         priority: 'invalid_priority',
       };
 
-      const result =
+      const _result =
         validationService.validateDataRightsRequest(invalidRequest);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -313,34 +313,34 @@ describe('ValidationService', () => {
 
   describe('validateAgeVerification', () => {
     it('should validate valid age verification data', () => {
-      const validAgeData = {
+      const _validAgeData = {
         birthDate: '1990-01-01',
         verificationMethod: 'document',
       };
 
-      const result = validationService.validateAgeVerification(validAgeData);
+      const _result = validationService.validateAgeVerification(validAgeData);
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     it('should reject invalid age verification data', () => {
-      const invalidAgeData = {
+      const _invalidAgeData = {
         birthDate: 'invalid-date',
         verificationMethod: 'invalid_method',
       };
 
-      const result = validationService.validateAgeVerification(invalidAgeData);
+      const _result = validationService.validateAgeVerification(invalidAgeData);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it('should validate minimum age requirement', () => {
-      const tooYoungAgeData = {
-        birthDate: '2010-01-01', // 14 years old
+      const _tooYoungAgeData = {
+        birthDate: '2015-01-01', // 9 years old
         verificationMethod: 'document',
       };
 
-      const result = validationService.validateAgeVerification(tooYoungAgeData);
+      const _result = validationService.validateAgeVerification(tooYoungAgeData);
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('User must be at least 13 years old');
     });
@@ -348,7 +348,7 @@ describe('ValidationService', () => {
 
   describe('validateConsentData', () => {
     it('should validate valid consent data', () => {
-      const validConsentData = {
+      const _validConsentData = {
         type: 'marketing',
         purpose: 'email_marketing',
         legalBasis: 'consent',
@@ -356,13 +356,13 @@ describe('ValidationService', () => {
         timestamp: new Date().toISOString(),
       };
 
-      const result = validationService.validateConsentData(validConsentData);
+      const _result = validationService.validateConsentData(validConsentData);
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
     it('should reject invalid consent data', () => {
-      const invalidConsentData = {
+      const _invalidConsentData = {
         type: 'invalid_type',
         purpose: 'invalid_purpose',
         legalBasis: 'invalid_basis',
@@ -370,7 +370,7 @@ describe('ValidationService', () => {
         timestamp: 'invalid-timestamp',
       };
 
-      const result = validationService.validateConsentData(invalidConsentData);
+      const _result = validationService.validateConsentData(invalidConsentData);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
@@ -378,25 +378,25 @@ describe('ValidationService', () => {
 
   describe('validateImageFile', () => {
     it('should validate valid image files', () => {
-      const validImages = [
+      const _validImages = [
         { name: 'test.jpg', size: 1024 * 1024, type: 'image/jpeg' },
         { name: 'test.png', size: 2 * 1024 * 1024, type: 'image/png' },
         { name: 'test.webp', size: 500 * 1024, type: 'image/webp' },
       ];
 
-      validImages.forEach((image) => {
+      validImages.forEach(image => {
         expect(validationService.validateImageFile(image)).toBe(true);
       });
     });
 
     it('should reject invalid image files', () => {
-      const invalidImages = [
+      const _invalidImages = [
         { name: 'test.txt', size: 1024, type: 'text/plain' }, // wrong type
         { name: 'test.jpg', size: 10 * 1024 * 1024, type: 'image/jpeg' }, // too large
         { name: 'test.png', size: 100, type: 'image/png' }, // too small
       ];
 
-      invalidImages.forEach((image) => {
+      invalidImages.forEach(image => {
         expect(validationService.validateImageFile(image)).toBe(false);
       });
     });
@@ -482,7 +482,7 @@ describe('ValidationService', () => {
 
   describe('validateUrl', () => {
     it('should validate valid URLs', () => {
-      const validUrls = [
+      const _validUrls = [
         'https://example.com',
         'http://example.com',
         'https://www.example.com',
@@ -490,13 +490,13 @@ describe('ValidationService', () => {
         'https://example.com/path?param=value',
       ];
 
-      validUrls.forEach((url) => {
+      validUrls.forEach(url => {
         expect(validationService.validateUrl(url)).toBe(true);
       });
     });
 
     it('should reject invalid URLs', () => {
-      const invalidUrls = [
+      const _invalidUrls = [
         'not-a-url',
         'ftp://example.com', // unsupported protocol
         'example.com', // missing protocol
@@ -504,7 +504,7 @@ describe('ValidationService', () => {
         'https://.com', // invalid domain
       ];
 
-      invalidUrls.forEach((url) => {
+      invalidUrls.forEach(url => {
         expect(validationService.validateUrl(url)).toBe(false);
       });
     });
@@ -512,7 +512,7 @@ describe('ValidationService', () => {
 
   describe('validatePhoneNumber', () => {
     it('should validate valid phone numbers', () => {
-      const validPhoneNumbers = [
+      const _validPhoneNumbers = [
         '+1234567890',
         '+1-234-567-8900',
         '+1 (234) 567-8900',
@@ -520,13 +520,13 @@ describe('ValidationService', () => {
         '(123) 456-7890',
       ];
 
-      validPhoneNumbers.forEach((phone) => {
+      validPhoneNumbers.forEach(phone => {
         expect(validationService.validatePhoneNumber(phone)).toBe(true);
       });
     });
 
     it('should reject invalid phone numbers', () => {
-      const invalidPhoneNumbers = [
+      const _invalidPhoneNumbers = [
         '123', // too short
         'not-a-phone',
         '+12345678901234567890', // too long
@@ -534,7 +534,7 @@ describe('ValidationService', () => {
         '+1-234-567-89000', // too many digits
       ];
 
-      invalidPhoneNumbers.forEach((phone) => {
+      invalidPhoneNumbers.forEach(phone => {
         expect(validationService.validatePhoneNumber(phone)).toBe(false);
       });
     });

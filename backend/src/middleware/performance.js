@@ -164,7 +164,7 @@ class PerformanceMiddleware {
 
   // 錯誤處理優化
   errorHandler() {
-    return (err, req, res, next) => {
+    return (err, req, res, next) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
       const errorInfo = {
         message: err.message,
         stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,

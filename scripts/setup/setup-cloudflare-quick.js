@@ -55,31 +55,21 @@ async function getZoneId() {
 async function testAPIConnection() {
   // logger.info('\n🔍 測試 API 連接...');
 
-  try {
-// eslint-disable-next-line no-unused-vars
-// eslint-disable-next-line no-unused-vars
-    const response = await axios.get(`${cloudflareConfig.apiUrl}/user`, {
-      headers: {
-        Authorization: `Bearer ${cloudflareConfig.apiToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
+  const response = await axios.get(`${cloudflareConfig.apiUrl}/user`, {
+    headers: {
+      Authorization: `Bearer ${cloudflareConfig.apiToken}`,
+      'Content-Type': 'application/json',
+    },
+  });
 
-    if (response.data.success) {
-// eslint-disable-next-line no-unused-vars
-// eslint-disable-next-line no-unused-vars
-// eslint-disable-next-line no-unused-vars
-      const user = response.data.result;
-      // logger.info(`✅ API 連接成功`);
-      // logger.info(`👤 用戶: ${user.email}`);
-      // logger.info(`🏢 組織: ${user.organizations?.[0]?.name || 'N/A'}`);
-      return true;
-    } else {
-      throw new Error('API 響應失敗');
-    }
-  } catch (error) {
-    // logger.info('❌ API 連接失敗:', error.message);
-    throw error;
+  if (response.data.success) {
+    const user = response.data.result;
+    // logger.info(`✅ API 連接成功`);
+    // logger.info(`👤 用戶: ${user.email}`);
+    // logger.info(`🏢 組織: ${user.organizations?.[0]?.name || 'N/A'}`);
+    return true;
+  } else {
+    throw new Error('API 響應失敗');
   }
 }
 
@@ -87,31 +77,24 @@ async function testAPIConnection() {
 async function checkDomainStatus(zoneId) {
   // logger.info('\n🔍 檢查域名狀態...');
 
-  try {
-// eslint-disable-next-line no-unused-vars
-// eslint-disable-next-line no-unused-vars
-    const response = await axios.get(
-      `${cloudflareConfig.apiUrl}/zones/${zoneId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${cloudflareConfig.apiToken}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    if (response.data.success) {
-      const zone = response.data.result;
-      // logger.info(`✅ 域名狀態: ${zone.status}`);
-      // logger.info(`📊 計劃: ${zone.plan.name}`);
-      // logger.info(`🌍 名稱服務器: ${zone.name_servers.join(', ')}`);
-      return zone;
-    } else {
-      throw new Error('獲取域名信息失敗');
+  const response = await axios.get(
+    `${cloudflareConfig.apiUrl}/zones/${zoneId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${cloudflareConfig.apiToken}`,
+        'Content-Type': 'application/json',
+      },
     }
-  } catch (error) {
-    // logger.info('❌ 檢查域名狀態失敗:', error.message);
-    throw error;
+  );
+
+  if (response.data.success) {
+    const zone = response.data.result;
+    // logger.info(`✅ 域名狀態: ${zone.status}`);
+    // logger.info(`📊 計劃: ${zone.plan.name}`);
+    // logger.info(`🌍 名稱服務器: ${zone.name_servers.join(', ')}`);
+    return zone;
+  } else {
+    throw new Error('獲取域名信息失敗');
   }
 }
 

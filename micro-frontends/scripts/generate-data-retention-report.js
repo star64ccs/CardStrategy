@@ -909,14 +909,16 @@ function printDataRetentionSummary(report) {
   // logger.info(`總違規數: ${report.summary.totalViolations}`);
 
   // logger.info('\n🔒 合規狀態:');
-  for (const [framework, status] of Object.entries(
+  for (const [, status] of Object.entries(
     report.summary.complianceStatus
   )) {
+    // eslint-disable-next-line no-unused-vars
     // logger.info(`  ${framework.toUpperCase()}: ${status.compliant ? '✅ 合規' : '❌ 不合規'} (${status.score}/100)`);
   }
 
   // logger.info('\n🚨 違規統計:');
-  for (const [type, count] of Object.entries(report.violations.byType)) {
+  for (const [, count] of Object.entries(report.violations.byType)) {
+    // eslint-disable-next-line no-unused-vars
     // logger.info(`  ${type.replace(/_/g, ' ').toUpperCase()}: ${count} 個`);
   }
 
@@ -929,6 +931,7 @@ function printDataRetentionSummary(report) {
   if (criticalRecs.length > 0) {
     // logger.info('  緊急修復:');
     criticalRecs.forEach((rec) => {
+      // eslint-disable-next-line no-unused-vars
       /* logger.info(`    - ${rec.title}`) */
     });
   }
@@ -936,6 +939,7 @@ function printDataRetentionSummary(report) {
   if (highRecs.length > 0) {
     // logger.info('  高優先級:');
     highRecs.forEach((rec) => {
+      // eslint-disable-next-line no-unused-vars
       /* logger.info(`    - ${rec.title}`) */
     });
   }

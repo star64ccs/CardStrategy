@@ -1,52 +1,67 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Card, CardState, CardFilters, CardSortOptions } from '@/types';
-import { cardService } from '@/services/cardService';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import type {
+  Card,
+  CardState,
+  CardFilters,
+  CardSortOptions,
+} from '../../core/types';
+import { cardService } from '../../shared/services/cardService';
 
 // 異步 thunk
-export const recognizeCard = createAsyncThunk(
+export const _recognizeCard = createAsyncThunk(
   'card/recognizeCard',
   async (imageUri: string) => {
-    const response = await cardService.recognizeCard(imageUri);
+    const _response = await cardService.recognizeCard(imageUri);
     return response;
   }
 );
 
-export const fetchCard = createAsyncThunk(
+export const _fetchCard = createAsyncThunk(
   'card/fetchCard',
   async (cardId: string) => {
-    const response = await cardService.getCard(cardId);
+    const _response = await cardService.getCard(cardId);
     return response;
   }
 );
 
-export const searchCards = createAsyncThunk(
+export const _fetchCardDetails = createAsyncThunk(
+  'card/fetchCardDetails',
+  async (cardId: string) => {
+    const _response = await cardService.getCard(cardId);
+    return response;
+  }
+);
+
+export const _searchCards = createAsyncThunk(
   'card/searchCards',
   async ({ query, filters }: { query: string; filters?: CardFilters }) => {
-    const response = await cardService.searchCards(query, filters);
+    const _response = await cardService.searchCards(query);
     return response;
   }
 );
 
-export const filterCards = createAsyncThunk(
+export const _filterCards = createAsyncThunk(
   'card/filterCards',
   async (filters: CardFilters) => {
-    const response = await cardService.filterCards(filters);
+    const _response = await cardService.filterCards(filters);
     return response;
   }
 );
 
-export const analyzeCondition = createAsyncThunk(
+export const _analyzeCondition = createAsyncThunk(
   'card/analyzeCondition',
   async ({ cardId, imageUri }: { cardId: string; imageUri?: string }) => {
-    const response = await cardService.analyzeCondition(cardId, imageUri);
+    const _response = await cardService.analyzeCondition(cardId);
     return response;
   }
 );
 
-export const verifyAuthenticity = createAsyncThunk(
+export const _verifyAuthenticity = createAsyncThunk(
   'card/verifyAuthenticity',
   async ({ cardId, imageUri }: { cardId: string; imageUri?: string }) => {
-    const response = await cardService.verifyAuthenticity(cardId, imageUri);
+    const _response = await cardService.verifyAuthenticity(cardId);
     return response;
   }
 );
@@ -97,20 +112,20 @@ const initialState: CardState = {
 };
 
 // Card slice
-const cardSlice = createSlice({
+const _cardSlice = createSlice({
   name: 'cards',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
     setSelectedCard: (state, action: PayloadAction<Card | null>) => {
       state.selectedCard = action.payload;
     },
-    clearRecognizedCard: (state) => {
+    clearRecognizedCard: state => {
       state.recognizedCard = null;
     },
-    clearSearchResults: (state) => {
+    clearSearchResults: state => {
       state.searchResults = [];
     },
     setFilters: (state, action: PayloadAction<Partial<CardFilters>>) => {
@@ -130,8 +145,8 @@ const cardSlice = createSlice({
       state.cards.unshift(action.payload);
     },
     updateCard: (state, action: PayloadAction<Card>) => {
-      const index = state.cards.findIndex(
-        (card: any) => card.id === action.payload.id
+      const _index = state.cards.findIndex(
+        (card: unknown) => card.id === action.payload.id
       );
       if (index !== -1) {
         state.cards[index] = action.payload;
@@ -139,14 +154,14 @@ const cardSlice = createSlice({
     },
     removeCard: (state, action: PayloadAction<string>) => {
       state.cards = state.cards.filter(
-        (card: any) => card.id !== action.payload
+        (card: unknown) => card.id !== action.payload
       );
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Recognize Card
     builder
-      .addCase(recognizeCard.pending, (state) => {
+      .addCase(recognizeCard.pending, state => {
         state.isRecognizing = true;
         state.error = null;
       })
@@ -181,7 +196,7 @@ const cardSlice = createSlice({
 
     // Fetch Card
     builder
-      .addCase(fetchCard.pending, (state) => {
+      .addCase(fetchCard.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -195,9 +210,25 @@ const cardSlice = createSlice({
         state.error = action.payload as string;
       });
 
+    // Fetch Card Details
+    builder
+      .addCase(fetchCardDetails.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchCardDetails.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.selectedCard = action.payload;
+        state.error = null;
+      })
+      .addCase(fetchCardDetails.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
     // Search Cards
     builder
-      .addCase(searchCards.pending, (state) => {
+      .addCase(searchCards.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -214,7 +245,7 @@ const cardSlice = createSlice({
 
     // Filter Cards
     builder
-      .addCase(filterCards.pending, (state) => {
+      .addCase(filterCards.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -231,7 +262,7 @@ const cardSlice = createSlice({
 
     // 分析卡牌條件
     builder
-      .addCase(analyzeCondition.pending, (state) => {
+      .addCase(analyzeCondition.pending, state => {
         state.isAnalyzing = true;
         state.error = null;
       })
@@ -261,7 +292,7 @@ const cardSlice = createSlice({
 
     // 驗證真偽
     builder
-      .addCase(verifyAuthenticity.pending, (state) => {
+      .addCase(verifyAuthenticity.pending, state => {
         state.isVerifying = true;
         state.error = null;
       })
@@ -304,15 +335,15 @@ export const {
 } = cardSlice.actions;
 
 // 選擇器
-export const selectIsRecognizing = (state: { cards: CardState }) =>
+export const _selectIsRecognizing = (state: { cards: CardState }) =>
   state.cards.isRecognizing;
-export const selectRecognizedCard = (state: { cards: CardState }) =>
+export const _selectRecognizedCard = (state: { cards: CardState }) =>
   state.cards.recognizedCard;
-export const selectRecognitionResult = (state: { cards: CardState }) =>
+export const _selectRecognitionResult = (state: { cards: CardState }) =>
   state.cards.recognitionResult;
-export const selectRecognitionAlternatives = (state: { cards: CardState }) =>
+export const _selectRecognitionAlternatives = (state: { cards: CardState }) =>
   state.cards.recognitionAlternatives;
-export const selectRecognitionFeatures = (state: { cards: CardState }) =>
+export const _selectRecognitionFeatures = (state: { cards: CardState }) =>
   state.cards.recognitionFeatures;
 
 export default cardSlice.reducer;

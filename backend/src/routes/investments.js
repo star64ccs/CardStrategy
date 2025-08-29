@@ -1,21 +1,21 @@
-const express = require('express');
-const { body, validationResult } = require('express-validator');
-const { Op } = require('sequelize');
-const { authenticateToken: protect } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
-const getInvestmentModel = require('../models/Investment');
-// eslint-disable-next-line no-unused-vars
-const getCardModel = require('../models/Card');
-const getUserModel = require('../models/User');
-// eslint-disable-next-line no-unused-vars
+const express = require('express');''
+const { body, validationResult } = require('express-validator');''
+const { Op } = require('sequelize');''
+const { authenticateToken: protect } = require('../middleware/auth');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');''
+const getInvestmentModel = require('../models/Investment');'
+// eslint-disable-next-line no-unused-vars''
+const getCardModel = require('../models/Card');''
+const getUserModel = require('../models/User');'
+// eslint-disable-next-line no-unused-vars''
 const databaseOptimizer = require('../services/databaseOptimizer');
 
 const router = express.Router();
 
 // @route   GET /api/investments
-// @desc    ?²å??¨æˆ¶?•è??—è¡¨
-// @access  Private
+// @desc    ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½??ï¿½è¡¨'
+// @access  Private''
 router.get('/', protect, async (req, res) => {
   try {
     const Investment = getInvestmentModel();
@@ -23,14 +23,13 @@ router.get('/', protect, async (req, res) => {
     const Card = getCardModel();
 
     if (!Investment || !Card) {
-      return res.status(500).json({
-        success: false,
-        message: '?¸æ?åº«æ¨¡?‹å?å§‹å?å¤±æ?',
+      return res.status(500).json({'
+        success: false,''
+        message: '?ï¿½ï¿½?åº«æ¨¡?ï¿½ï¿½?å§‹ï¿½?å¤±ï¿½?',''
         code: 'MODEL_INIT_FAILED',
-      });
+      });'
     }
-
-    // è¨­ç½®?œè¯
+    // è¨­ç½®?ï¿½è¯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     const {
@@ -38,49 +37,44 @@ router.get('/', protect, async (req, res) => {
       limit = 10,
       search,
       type,
-      status,
-      riskLevel,
-      sortBy = 'purchaseDate',
+      status,'
+      riskLevel,''
+      sortBy = 'purchaseDate',''
       sortOrder = 'DESC',
     } = req.query;
     const offset = (page - 1) * limit;
 
-    // æ§‹å»º?¥è©¢æ¢ä»¶
+    // æ§‹å»º?ï¿½è©¢æ¢ä»¶
     const whereClause = {
       userId: req.user.id,
       isActive: true,
-    };
-
-    if (search) {
+    };'
+    if (search) {''
       whereClause['$card.name$'] = { [Op.iLike]: `%${search}%` };
     }
-
     if (type) {
       whereClause.type = type;
     }
-
     if (status) {
       whereClause.status = status;
     }
-
     if (riskLevel) {
       whereClause.riskLevel = riskLevel;
     }
-
-    // ä½¿ç”¨ databaseOptimizer ?ªå??¥è©¢
+    // ä½¿ç”¨ databaseOptimizer ?ï¿½ï¿½??ï¿½è©¢
     const optimizedQuery = databaseOptimizer.optimizeQuery({
       where: whereClause,
       include: [
-        {
-          model: Card,
-          as: 'card',
-          attributes: [
-            'id',
-            'name',
-            'setName',
-            'rarity',
-            'cardType',
-            'currentPrice',
+        {'
+          model: Card,''
+          as: 'card','
+          attributes: [''
+            'id',''
+            'name',''
+            'setName',''
+            'rarity',''
+            'cardType',''
+            'currentPrice',''
             'imageUrl',
           ],
         },
@@ -90,29 +84,29 @@ router.get('/', protect, async (req, res) => {
       offset: parseInt(offset),
     });
 
-    // ?·è??ªå?å¾Œç??¥è©¢ä¸¦ç›£?§æ€§èƒ½
+    // ?ï¿½ï¿½??ï¿½ï¿½?å¾Œï¿½??ï¿½è©¢ä¸¦ç›£?ï¿½æ€§èƒ½
     const startTime = Date.now();
-    const { count, rows: investments } = await databaseOptimizer.monitorQuery(
-      Investment,
+    const { count, rows: investments } = await databaseOptimizer.monitorQuery('
+      Investment,''
       'findAndCountAll',
       optimizedQuery
     );
 
-    // è¨ˆç??•è?çµ„å?çµ±è?
+    // è¨ˆï¿½??ï¿½ï¿½?çµ„ï¿½?çµ±ï¿½?
     const allUserInvestments = await databaseOptimizer.cachedQuery(
       Investment,
       `user_investments:${req.user.id}`,
       {
         where: { userId: req.user.id, isActive: true },
         include: [
-          {
-            model: Card,
-            as: 'card',
+          {'
+            model: Card,''
+            as: 'card',''
             attributes: ['currentPrice'],
           },
         ],
       },
-      300 // 5?†é?ç·©å?
+      300 // 5?ï¿½ï¿½?ç·©ï¿½?
     );
 
     const totalInvested = allUserInvestments.reduce(
@@ -152,7 +146,7 @@ router.get('/', protect, async (req, res) => {
           : 0,
     };
 
-    logger.info(`?²å??•è??—è¡¨: ${req.user.username}`);
+    logger.info(`?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨: ${req.user.username}`);
 
     res.json({
       success: true,
@@ -166,20 +160,20 @@ router.get('/', protect, async (req, res) => {
           itemsPerPage: parseInt(limit),
         },
       },
-    });
-  } catch (error) {
-    logger.error('?²å??•è??—è¡¨?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å??•è??—è¡¨å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨å¤±ï¿½?',''
       code: 'GET_INVESTMENTS_FAILED',
     });
   }
 });
 
 // @route   GET /api/investments/portfolio
-// @desc    ?²å??•è?çµ„å?æ¦‚è¦½
-// @access  Private
+// @desc    ?ï¿½ï¿½??ï¿½ï¿½?çµ„ï¿½?æ¦‚è¦½'
+// @access  Private''
 router.get('/portfolio', protect, async (req, res) => {
   try {
     const Investment = getInvestmentModel();
@@ -187,29 +181,28 @@ router.get('/portfolio', protect, async (req, res) => {
     const Card = getCardModel();
 
     if (!Investment || !Card) {
-      return res.status(500).json({
-        success: false,
-        message: '?¸æ?åº«æ¨¡?‹å?å§‹å?å¤±æ?',
+      return res.status(500).json({'
+        success: false,''
+        message: '?ï¿½ï¿½?åº«æ¨¡?ï¿½ï¿½?å§‹ï¿½?å¤±ï¿½?',''
         code: 'MODEL_INIT_FAILED',
-      });
+      });'
     }
-
-    // è¨­ç½®?œè¯
+    // è¨­ç½®?ï¿½è¯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
 // eslint-disable-next-line no-unused-vars
     const userInvestments = await Investment.findAll({
       where: { userId: req.user.id, isActive: true },
       include: [
-        {
-          model: Card,
-          as: 'card',
+        {'
+          model: Card,''
+          as: 'card',''
           attributes: ['currentPrice'],
         },
       ],
     });
 
-    // è¨ˆç?è©³ç´°çµ±è?
+    // è¨ˆï¿½?è©³ç´°çµ±ï¿½?
     const totalInvested = userInvestments.reduce(
       (sum, inv) => sum + parseFloat(inv.purchasePrice) * inv.quantity,
       0
@@ -225,19 +218,17 @@ router.get('/portfolio', protect, async (req, res) => {
     const totalProfitLossPercent =
       totalInvested > 0 ? (totalProfitLoss / totalInvested) * 100 : 0;
 
-    // é¢¨éšªè©•ä¼°
-    const riskLevels = userInvestments.map((inv) => inv.riskLevel);
-    const lowRisk = riskLevels.filter((risk) => risk === 'low').length;
-    const mediumRisk = riskLevels.filter((risk) => risk === 'medium').length;
-    const highRisk = riskLevels.filter((risk) => risk === 'high').length;
-
-    let overallRiskLevel = 'low';
-    if (highRisk > lowRisk + mediumRisk) overallRiskLevel = 'high';
-    else if (mediumRisk > lowRisk) overallRiskLevel = 'medium';
-
-    // ?‰ç??‹å?çµ?    const byStatus = {
-      active: userInvestments.filter((inv) => inv.status === 'active').length,
-      sold: userInvestments.filter((inv) => inv.status === 'sold').length,
+    // é¢¨éšªè©•ä¼°'
+    const riskLevels = userInvestments.map((inv) => inv.riskLevel);''
+    const lowRisk = riskLevels.filter((risk) => risk === 'low').length;''
+    const mediumRisk = riskLevels.filter((risk) => risk === 'medium').length;''
+    const highRisk = riskLevels.filter((risk) => risk === 'high').length;''
+    let overallRiskLevel = 'low';''
+    if (highRisk > lowRisk + mediumRisk) overallRiskLevel = 'high';''
+    else if (mediumRisk > lowRisk) overallRiskLevel = 'medium';'
+    // ?ï¿½ï¿½??ï¿½ï¿½?ï¿½?    const byStatus = {''
+      active: userInvestments.filter((inv) => inv.status === 'active').length,''
+      sold: userInvestments.filter((inv) => inv.status === 'sold').length,''
       cancelled: userInvestments.filter((inv) => inv.status === 'cancelled')
         .length,
     };
@@ -271,25 +262,25 @@ router.get('/portfolio', protect, async (req, res) => {
       statusBreakdown: byStatus,
     };
 
-    logger.info(`?²å??•è?çµ„å?: ${req.user.username}`);
+    logger.info(`?ï¿½ï¿½??ï¿½ï¿½?çµ„ï¿½?: ${req.user.username}`);
 
     res.json({
       success: true,
       data: { portfolioOverview },
-    });
-  } catch (error) {
-    logger.error('?²å??•è?çµ„å??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å??•è?çµ„å?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½?çµ„ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½ï¿½?çµ„ï¿½?å¤±ï¿½?',''
       code: 'GET_PORTFOLIO_FAILED',
     });
   }
 });
 
 // @route   GET /api/investments/analytics
-// @desc    ?²å??•è??†æ?
-// @access  Private
+// @desc    ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?'
+// @access  Private''
 router.get('/analytics', protect, async (req, res) => {
   try {
     const Investment = getInvestmentModel();
@@ -297,54 +288,50 @@ router.get('/analytics', protect, async (req, res) => {
     const Card = getCardModel();
 
     if (!Investment || !Card) {
-      return res.status(500).json({
-        success: false,
-        message: '?¸æ?åº«æ¨¡?‹å?å§‹å?å¤±æ?',
+      return res.status(500).json({'
+        success: false,''
+        message: '?ï¿½ï¿½?åº«æ¨¡?ï¿½ï¿½?å§‹ï¿½?å¤±ï¿½?',''
         code: 'MODEL_INIT_FAILED',
-      });
+      });'
     }
-
-    // è¨­ç½®?œè¯
+    // è¨­ç½®?ï¿½è¯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
 // eslint-disable-next-line no-unused-vars
     const userInvestments = await Investment.findAll({
       where: { userId: req.user.id, isActive: true },
       include: [
-        {
-          model: Card,
-          as: 'card',
-          attributes: [
-            'id',
-            'name',
-            'setName',
-            'rarity',
-            'cardType',
-            'currentPrice',
+        {'
+          model: Card,''
+          as: 'card','
+          attributes: [''
+            'id',''
+            'name',''
+            'setName',''
+            'rarity',''
+            'cardType',''
+            'currentPrice',''
             'imageUrl',
           ],
         },
       ],
-    });
-
-    // ?‰é??‹å?çµ?    const byType = {
-      purchase: userInvestments.filter((inv) => inv.type === 'purchase'),
+    });'
+    // ?ï¿½ï¿½??ï¿½ï¿½?ï¿½?    const byType = {''
+      purchase: userInvestments.filter((inv) => inv.type === 'purchase'),''
       sale: userInvestments.filter((inv) => inv.type === 'sale'),
-    };
-
-    // ?‰é¢¨?ªç?ç´šå?çµ?    const byRisk = {
-      low: userInvestments.filter((inv) => inv.riskLevel === 'low'),
-      medium: userInvestments.filter((inv) => inv.riskLevel === 'medium'),
+    };'
+    // ?ï¿½é¢¨?ï¿½ï¿½?ç´šï¿½?ï¿½?    const byRisk = {''
+      low: userInvestments.filter((inv) => inv.riskLevel === 'low'),''
+      medium: userInvestments.filter((inv) => inv.riskLevel === 'medium'),''
       high: userInvestments.filter((inv) => inv.riskLevel === 'high'),
-    };
-
-    // ?‰ç??‹å?çµ?    const byStatus = {
-      active: userInvestments.filter((inv) => inv.status === 'active'),
-      sold: userInvestments.filter((inv) => inv.status === 'sold'),
+    };'
+    // ?ï¿½ï¿½??ï¿½ï¿½?ï¿½?    const byStatus = {''
+      active: userInvestments.filter((inv) => inv.status === 'active'),''
+      sold: userInvestments.filter((inv) => inv.status === 'sold'),''
       cancelled: userInvestments.filter((inv) => inv.status === 'cancelled'),
     };
 
-    // ?‰ç??‰åº¦?†ç?
+    // ?ï¿½ï¿½??ï¿½åº¦?ï¿½ï¿½?
     const byRarity = {};
     userInvestments.forEach((inv) => {
       const { rarity } = inv.card;
@@ -354,7 +341,7 @@ router.get('/analytics', protect, async (req, res) => {
       byRarity[rarity].push(inv);
     });
 
-    // ?‰ç³»?—å?çµ?    const bySet = {};
+    // ?ï¿½ç³»?ï¿½ï¿½?ï¿½?    const bySet = {};
     userInvestments.forEach((inv) => {
       const set = inv.card.setName;
       if (!bySet[set]) {
@@ -413,113 +400,110 @@ router.get('/analytics', protect, async (req, res) => {
       },
     };
 
-    logger.info(`?²å??•è??†æ?: ${req.user.username}`);
+    logger.info(`?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?: ${req.user.username}`);
 
     res.json({
       success: true,
       data: { analytics },
-    });
-  } catch (error) {
-    logger.error('?²å??•è??†æ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å??•è??†æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',''
       code: 'GET_ANALYTICS_FAILED',
     });
   }
 });
 
 // @route   POST /api/investments
-// @desc    æ·»å??°æ?è³?// @access  Private
-router.post(
+// @desc    æ·»ï¿½??ï¿½ï¿½?ï¿½?// @access  Private'
+router.post(''
   '/',
-  protect,
-  [
-    body('cardId').isInt({ min: 1 }).withMessage('?¡ç?IDå¿…é??¯æ­£?´æ•¸'),
-    body('type')
-      .isIn(['purchase', 'sale'])
-      .withMessage('?•è?é¡å?å¿…é??¯purchase?–sale'),
-    body('purchasePrice').isFloat({ min: 0 }).withMessage('è³¼è²·?¹æ ¼å¿…é?å¤§æ–¼0'),
-    body('quantity').isInt({ min: 1 }).withMessage('?¸é?å¿…é?å¤§æ–¼0'),
+  protect,'
+  [''
+    body('cardId').isInt({ min: 1 }).withMessage('?ï¿½ï¿½?IDå¿…ï¿½??ï¿½æ­£?ï¿½æ•¸'),''
+    body('type')''
+      .isIn(['purchase', 'sale'])''
+      .withMessage('?ï¿½ï¿½?é¡ï¿½?å¿…ï¿½??ï¿½purchase?ï¿½sale'),''
+    body('purchasePrice').isFloat({ min: 0 }).withMessage('è³¼è²·?ï¿½æ ¼å¿…ï¿½?å¤§æ–¼0'),''
+    body('quantity').isInt({ min: 1 }).withMessage('?ï¿½ï¿½?å¿…ï¿½?å¤§æ–¼0'),''
     body('condition')
-      .optional()
-      .isIn([
-        'mint',
-        'near-mint',
-        'excellent',
-        'good',
-        'light-played',
-        'played',
-        'poor',
-      ])
-      .withMessage('?¡ç??€æ³ç„¡??),
+      .optional()'
+      .isIn([''
+        'mint',''
+        'near-mint',''
+        'excellent',''
+        'good',''
+        'light-played',''
+        'played',''
+        'poor','
+      ])''
+      .withMessage('?ï¿½ï¿½??ï¿½æ³ç„¡??),''
     body('notes')
-      .optional()
-      .isLength({ max: 500 })
-      .withMessage('?™è¨»?€å¤?00?‹å?ç¬?),
-    body('riskLevel')
-      .optional()
-      .isIn(['low', 'medium', 'high'])
-      .withMessage('é¢¨éšªç­‰ç?å¿…é??¯low?medium?–high'),
-    body('purchaseDate').optional().isISO8601().withMessage('è³¼è²·?¥æ??¼å??¡æ?'),
+      .optional()'
+      .isLength({ max: 500 });''
+      .withMessage('?ï¿½è¨»?ï¿½ï¿½?00?ï¿½ï¿½?ï¿½?),''
+    body('riskLevel')'
+      .optional()''
+      .isIn(['low', 'medium', 'high'])''
+      .withMessage('é¢¨éšªç­‰ï¿½?å¿…ï¿½??ï¿½low?ï¿½medium?ï¿½high'),''
+    body('purchaseDate').optional().isISO8601().withMessage('è³¼è²·?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?'),
   ],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'è¼¸å…¥é©—è?å¤±æ?',
+        return res.status(400).json({'
+          success: false,''
+          message: 'è¼¸å…¥é©—ï¿½?å¤±ï¿½?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
       }
-
       const Investment = getInvestmentModel();
 // eslint-disable-next-line no-unused-vars
       const Card = getCardModel();
 
       if (!Investment || !Card) {
-        return res.status(500).json({
-          success: false,
-          message: '?¸æ?åº«æ¨¡?‹å?å§‹å?å¤±æ?',
+        return res.status(500).json({'
+          success: false,''
+          message: '?ï¿½ï¿½?åº«æ¨¡?ï¿½ï¿½?å§‹ï¿½?å¤±ï¿½?',''
           code: 'MODEL_INIT_FAILED',
-        });
+        });'
       }
-
-      // è¨­ç½®?œè¯
+      // è¨­ç½®?ï¿½è¯''
       Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
-      const {
-        cardId,
+      const {'
+        cardId,''
         type = 'purchase',
-        purchasePrice,
-        quantity = 1,
-        condition = 'near-mint',
-        notes = '',
+        purchasePrice,'
+        quantity = 1,''
+        condition = 'near-mint',''
+        notes = '',''
         riskLevel = 'medium',
         purchaseDate = new Date(),
       } = req.body;
 
-      // æª¢æŸ¥?¡ç??¯å¦å­˜åœ¨
+      // æª¢æŸ¥?ï¿½ï¿½??ï¿½å¦å­˜åœ¨
       const card = await Card.findByPk(cardId);
       if (!card) {
-        return res.status(404).json({
-          success: false,
-          message: '?¡ç?ä¸å???,
+        return res.status(404).json({'
+          success: false,''
+          message: '?ï¿½ï¿½?ä¸ï¿½???,''
           code: 'CARD_NOT_FOUND',
         });
       }
-
-      // è¨ˆç??å???      const currentValue = parseFloat(card.currentPrice || 0) * quantity;
+      // è¨ˆï¿½??ï¿½ï¿½???      const currentValue = parseFloat(card.currentPrice || 0) * quantity;
       const profitLoss = currentValue - parseFloat(purchasePrice) * quantity;
       const profitLossPercentage =
         parseFloat(purchasePrice) > 0
           ? (profitLoss / (parseFloat(purchasePrice) * quantity)) * 100
           : 0;
 
-      // ?µå»º?•è?è¨˜é?
+      // ?ï¿½å»º?ï¿½ï¿½?è¨˜ï¿½?
 // eslint-disable-next-line no-unused-vars
       const newInvestment = await Investment.create({
         userId: req.user.id,
@@ -531,42 +515,42 @@ router.post(
         condition,
         notes,
         currentValue,
-        profitLoss,
-        profitLossPercentage,
+        profitLoss,'
+        profitLossPercentage,''
         status: 'active',
         riskLevel,
       });
 
-      // ?²å??…å«?¡ç?ä¿¡æ¯?„å??´è???      const investmentWithCard = await Investment.findByPk(newInvestment.id, {
+      // ?ï¿½ï¿½??ï¿½å«?ï¿½ï¿½?ä¿¡æ¯?ï¿½ï¿½??ï¿½ï¿½???      const investmentWithCard = await Investment.findByPk(newInvestment.id, {
         include: [
-          {
-            model: Card,
-            as: 'card',
-            attributes: [
-              'id',
-              'name',
-              'setName',
-              'rarity',
-              'cardType',
-              'currentPrice',
+          {'
+            model: Card,''
+            as: 'card','
+            attributes: [''
+              'id',''
+              'name',''
+              'setName',''
+              'rarity',''
+              'cardType',''
+              'currentPrice',''
               'imageUrl',
             ],
           },
         ],
       });
 
-      logger.info(`æ·»å??•è?: ${req.user.username} æ·»å?äº?${card.name} ?•è?`);
+      logger.info(`æ·»ï¿½??ï¿½ï¿½?: ${req.user.username} æ·»ï¿½?ï¿½?${card.name} ?ï¿½ï¿½?`);
 
-      res.status(201).json({
-        success: true,
-        message: '?•è?æ·»å??å?',
+      res.status(201).json({'
+        success: true,''
+        message: '?ï¿½ï¿½?æ·»ï¿½??ï¿½ï¿½?',
         data: { investment: investmentWithCard },
-      });
-    } catch (error) {
-      logger.error('æ·»å??•è??¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: 'æ·»å??•è?å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('æ·»ï¿½??ï¿½ï¿½??ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: 'æ·»ï¿½??ï¿½ï¿½?å¤±ï¿½?',''
         code: 'ADD_INVESTMENT_FAILED',
       });
     }
@@ -574,8 +558,8 @@ router.post(
 );
 
 // @route   GET /api/investments/:id
-// @desc    ?²å??•è?è©³æ?
-// @access  Private
+// @desc    ?ï¿½ï¿½??ï¿½ï¿½?è©³ï¿½?'
+// @access  Private''
 router.get('/:id', protect, async (req, res) => {
   try {
     const { id } = req.params;
@@ -585,14 +569,13 @@ router.get('/:id', protect, async (req, res) => {
     const Card = getCardModel();
 
     if (!Investment || !Card) {
-      return res.status(500).json({
-        success: false,
-        message: '?¸æ?åº«æ¨¡?‹å?å§‹å?å¤±æ?',
+      return res.status(500).json({'
+        success: false,''
+        message: '?ï¿½ï¿½?åº«æ¨¡?ï¿½ï¿½?å§‹ï¿½?å¤±ï¿½?',''
         code: 'MODEL_INIT_FAILED',
-      });
+      });'
     }
-
-    // è¨­ç½®?œè¯
+    // è¨­ç½®?ï¿½è¯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     const investment = await Investment.findOne({
@@ -602,17 +585,17 @@ router.get('/:id', protect, async (req, res) => {
         isActive: true,
       },
       include: [
-        {
-          model: Card,
-          as: 'card',
-          attributes: [
-            'id',
-            'name',
-            'setName',
-            'rarity',
-            'cardType',
-            'currentPrice',
-            'imageUrl',
+        {'
+          model: Card,''
+          as: 'card','
+          attributes: [''
+            'id',''
+            'name',''
+            'setName',''
+            'rarity',''
+            'cardType',''
+            'currentPrice',''
+            'imageUrl',''
             'description',
           ],
         },
@@ -620,77 +603,75 @@ router.get('/:id', protect, async (req, res) => {
     });
 
     if (!investment) {
-      return res.status(404).json({
-        success: false,
-        message: '?•è?ä¸å???,
+      return res.status(404).json({'
+        success: false,''
+        message: '?ï¿½ï¿½?ä¸ï¿½???,''
         code: 'INVESTMENT_NOT_FOUND',
       });
     }
-
     logger.info(
-      `?²å??•è?è©³æ?: ${req.user.username} ?¥ç??•è? ${investment.card.name}`
+      `?ï¿½ï¿½??ï¿½ï¿½?è©³ï¿½?: ${req.user.username} ?ï¿½ï¿½??ï¿½ï¿½? ${investment.card.name}`
     );
 
     res.json({
       success: true,
       data: { investment },
-    });
-  } catch (error) {
-    logger.error('?²å??•è?è©³æ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å??•è?è©³æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½?è©³ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½ï¿½?è©³ï¿½?å¤±ï¿½?',''
       code: 'GET_INVESTMENT_FAILED',
     });
   }
 });
 
 // @route   PUT /api/investments/:id
-// @desc    ?´æ–°?•è?
-// @access  Private
-router.put(
+// @desc    ?ï¿½æ–°?ï¿½ï¿½?
+// @access  Private'
+router.put(''
   '/:id',
-  protect,
-  [
+  protect,'
+  [''
     body('notes')
-      .optional()
-      .isLength({ max: 500 })
-      .withMessage('?™è¨»?€å¤?00?‹å?ç¬?),
-    body('status')
-      .optional()
-      .isIn(['active', 'sold', 'cancelled'])
-      .withMessage('?€?‹å??ˆæ˜¯active?sold?–cancelled'),
+      .optional()'
+      .isLength({ max: 500 });''
+      .withMessage('?ï¿½è¨»?ï¿½ï¿½?00?ï¿½ï¿½?ï¿½?),''
+    body('status')'
+      .optional()''
+      .isIn(['active', 'sold', 'cancelled'])''
+      .withMessage('?ï¿½?ï¿½ï¿½??ï¿½æ˜¯active?ï¿½sold?ï¿½cancelled'),''
     body('condition')
-      .optional()
-      .isIn([
-        'mint',
-        'near-mint',
-        'excellent',
-        'good',
-        'light-played',
-        'played',
-        'poor',
-      ])
-      .withMessage('?¡ç??€æ³ç„¡??),
-    body('riskLevel')
-      .optional()
-      .isIn(['low', 'medium', 'high'])
-      .withMessage('é¢¨éšªç­‰ç?å¿…é??¯low?medium?–high'),
-    body('quantity').optional().isInt({ min: 1 }).withMessage('?¸é?å¿…é?å¤§æ–¼0'),
+      .optional()'
+      .isIn([''
+        'mint',''
+        'near-mint',''
+        'excellent',''
+        'good',''
+        'light-played',''
+        'played',''
+        'poor','
+      ])''
+      .withMessage('?ï¿½ï¿½??ï¿½æ³ç„¡??),''
+    body('riskLevel')'
+      .optional()''
+      .isIn(['low', 'medium', 'high'])''
+      .withMessage('é¢¨éšªç­‰ï¿½?å¿…ï¿½??ï¿½low?ï¿½medium?ï¿½high'),''
+    body('quantity').optional().isInt({ min: 1 }).withMessage('?ï¿½ï¿½?å¿…ï¿½?å¤§æ–¼0'),
   ],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'è¼¸å…¥é©—è?å¤±æ?',
+        return res.status(400).json({'
+          success: false,''
+          message: 'è¼¸å…¥é©—ï¿½?å¤±ï¿½?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
       }
-
       const { id } = req.params;
       const { notes, status, condition, riskLevel, quantity } = req.body;
 
@@ -699,14 +680,13 @@ router.put(
       const Card = getCardModel();
 
       if (!Investment || !Card) {
-        return res.status(500).json({
-          success: false,
-          message: '?¸æ?åº«æ¨¡?‹å?å§‹å?å¤±æ?',
+        return res.status(500).json({'
+          success: false,''
+          message: '?ï¿½ï¿½?åº«æ¨¡?ï¿½ï¿½?å§‹ï¿½?å¤±ï¿½?',''
           code: 'MODEL_INIT_FAILED',
-        });
+        });'
       }
-
-      // è¨­ç½®?œè¯
+      // è¨­ç½®?ï¿½è¯''
       Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
       const investment = await Investment.findOne({
@@ -716,23 +696,22 @@ router.put(
           isActive: true,
         },
         include: [
-          {
-            model: Card,
-            as: 'card',
+          {'
+            model: Card,''
+            as: 'card',''
             attributes: ['currentPrice'],
           },
         ],
       });
 
       if (!investment) {
-        return res.status(404).json({
-          success: false,
-          message: '?•è?ä¸å???,
+        return res.status(404).json({'
+          success: false,''
+          message: '?ï¿½ï¿½?ä¸ï¿½???,''
           code: 'INVESTMENT_NOT_FOUND',
         });
       }
-
-      // ?´æ–°å­—æ®µ
+      // ?ï¿½æ–°å­—æ®µ
       const updateData = {};
       if (notes !== undefined) updateData.notes = notes;
       if (status !== undefined) updateData.status = status;
@@ -740,7 +719,7 @@ router.put(
       if (riskLevel !== undefined) updateData.riskLevel = riskLevel;
       if (quantity !== undefined) updateData.quantity = quantity;
 
-      // å¦‚æ??¸é??¹è?ï¼Œé??°è?ç®—åƒ¹?¼å??ˆè™§
+      // å¦‚ï¿½??ï¿½ï¿½??ï¿½ï¿½?ï¼Œï¿½??ï¿½ï¿½?ç®—åƒ¹?ï¿½ï¿½??ï¿½è™§
       if (quantity !== undefined) {
 // eslint-disable-next-line no-unused-vars
         const newCurrentValue =
@@ -760,23 +739,22 @@ router.put(
         updateData.profitLoss = newProfitLoss;
         updateData.profitLossPercentage = newProfitLossPercentage;
       }
-
-      // ?´æ–°?•è?è¨˜é?
+      // ?ï¿½æ–°?ï¿½ï¿½?è¨˜ï¿½?
       await investment.update(updateData);
 
-      // ?²å??´æ–°å¾Œç?å®Œæ•´è¨˜é?
+      // ?ï¿½ï¿½??ï¿½æ–°å¾Œï¿½?å®Œæ•´è¨˜ï¿½?
       const updatedInvestment = await Investment.findByPk(id, {
         include: [
-          {
-            model: Card,
-            as: 'card',
-            attributes: [
-              'id',
-              'name',
-              'setName',
-              'rarity',
-              'cardType',
-              'currentPrice',
+          {'
+            model: Card,''
+            as: 'card','
+            attributes: [''
+              'id',''
+              'name',''
+              'setName',''
+              'rarity',''
+              'cardType',''
+              'currentPrice',''
               'imageUrl',
             ],
           },
@@ -784,27 +762,27 @@ router.put(
       });
 
       logger.info(
-        `?´æ–°?•è?: ${req.user.username} ?´æ–°äº?${updatedInvestment.card.name} ?•è?`
+        `?ï¿½æ–°?ï¿½ï¿½?: ${req.user.username} ?ï¿½æ–°ï¿½?${updatedInvestment.card.name} ?ï¿½ï¿½?`
       );
 
-      res.json({
-        success: true,
-        message: '?•è??´æ–°?å?',
+      res.json({'
+        success: true,''
+        message: '?ï¿½ï¿½??ï¿½æ–°?ï¿½ï¿½?',
         data: { investment: updatedInvestment },
-      });
-    } catch (error) {
-      logger.error('?´æ–°?•è??¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?´æ–°?•è?å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('?ï¿½æ–°?ï¿½ï¿½??ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½æ–°?ï¿½ï¿½?å¤±ï¿½?',''
         code: 'UPDATE_INVESTMENT_FAILED',
       });
     }
   }
 );
 
-// @route   DELETE /api/investments/:id
-// @desc    è»Ÿåˆª?¤æ?è³?// @access  Private
+// @route   DELETE /api/investments/:id'
+// @desc    è»Ÿåˆª?ï¿½ï¿½?ï¿½?// @access  Private''
 router.delete('/:id', protect, async (req, res) => {
   try {
     const { id } = req.params;
@@ -814,14 +792,13 @@ router.delete('/:id', protect, async (req, res) => {
     const Card = getCardModel();
 
     if (!Investment || !Card) {
-      return res.status(500).json({
-        success: false,
-        message: '?¸æ?åº«æ¨¡?‹å?å§‹å?å¤±æ?',
+      return res.status(500).json({'
+        success: false,''
+        message: '?ï¿½ï¿½?åº«æ¨¡?ï¿½ï¿½?å§‹ï¿½?å¤±ï¿½?',''
         code: 'MODEL_INIT_FAILED',
-      });
+      });'
     }
-
-    // è¨­ç½®?œè¯
+    // è¨­ç½®?ï¿½è¯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     const investment = await Investment.findOne({
@@ -831,40 +808,38 @@ router.delete('/:id', protect, async (req, res) => {
         isActive: true,
       },
       include: [
-        {
-          model: Card,
-          as: 'card',
+        {'
+          model: Card,''
+          as: 'card',''
           attributes: ['name'],
         },
       ],
     });
 
     if (!investment) {
-      return res.status(404).json({
-        success: false,
-        message: '?•è?ä¸å???,
+      return res.status(404).json({'
+        success: false,''
+        message: '?ï¿½ï¿½?ä¸ï¿½???,''
         code: 'INVESTMENT_NOT_FOUND',
       });
     }
-
     // è»Ÿåˆª??    await investment.update({ isActive: false });
 
     logger.info(
-      `?ªé™¤?•è?: ${req.user.username} ?ªé™¤äº?${investment.card.name} ?•è?`
+      `?ï¿½é™¤?ï¿½ï¿½?: ${req.user.username} ?ï¿½é™¤ï¿½?${investment.card.name} ?ï¿½ï¿½?`
     );
 
-    res.json({
-      success: true,
-      message: '?•è??ªé™¤?å?',
-    });
-  } catch (error) {
-    logger.error('?ªé™¤?•è??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?ªé™¤?•è?å¤±æ?',
+    res.json({'
+      success: true,''
+      message: '?ï¿½ï¿½??ï¿½é™¤?ï¿½ï¿½?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½é™¤?ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½é™¤?ï¿½ï¿½?å¤±ï¿½?',''
       code: 'DELETE_INVESTMENT_FAILED',
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

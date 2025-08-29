@@ -1,0 +1,702 @@
+/**
+ * RegulatoryAdaptationLayer - 法規適應層
+ * 負責檢測用戶所在司法管轄區，映射適用法規，並提供動態適應功能
+ */
+
+// 法規類型定義
+export interface Regulation {
+  id: string;
+  name: string;
+  jurisdiction: string;
+  category: RegulationCategory;
+  version: string;
+  effectiveDate: Date;
+  requirements: RegulationRequirement[];
+  priority: 'HIGH' | 'MEDIUM' | 'LOW';
+  status: 'ACTIVE' | 'DEPRECATED' | 'PENDING';
+}
+
+export interface RegulationRequirement {
+  id: string;
+  name: string;
+  description: string;
+  type: 'MANDATORY' | 'RECOMMENDED' | 'OPTIONAL';
+  implementation: string;
+  validation: string;
+  impact: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+}
+
+export type RegulationCategory =
+  | 'PRIVACY'
+  | 'DATA_PROTECTION'
+  | 'CYBERSECURITY'
+  | 'AI_GOVERNANCE'
+  | 'CONSUMER_PROTECTION'
+  | 'E_COMMERCE'
+  | 'PAYMENT_FINANCIAL'
+  | 'GAMING_ENTERTAINMENT'
+  | 'CONTENT_COPYRIGHT'
+  | 'ADVERTISING_MARKETING'
+  | 'TAX'
+  | 'ANTITRUST_COMPETITION'
+  | 'APP_STORE';
+
+// 司法管轄區定義
+export interface Jurisdiction {
+  code: string;
+  name: string;
+  country: string;
+  region?: string;
+  regulations: string[];
+  dataResidency?: string;
+  language: string[];
+  currency: string;
+  timezone: string;
+}
+
+// 法規映射結果
+export interface RegulationMapping {
+  jurisdiction: Jurisdiction;
+  applicableRegulations: Regulation[];
+  complianceStatus: ComplianceStatus;
+  requiredActions: RequiredAction[];
+  lastUpdated: Date;
+}
+
+export interface ComplianceStatus {
+  overall: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIAL' | 'UNKNOWN';
+  details: ComplianceDetail[];
+  score: number; // 0-100
+  lastAssessment: Date;
+}
+
+export interface ComplianceDetail {
+  regulationId: string;
+  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIAL' | 'UNKNOWN';
+  score: number;
+  issues: ComplianceIssue[];
+  recommendations: string[];
+}
+
+export interface ComplianceIssue {
+  id: string;
+  severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
+  description: string;
+  affectedComponents: string[];
+  remediationSteps: string[];
+}
+
+export interface RequiredAction {
+  id: string;
+  priority: 'IMMEDIATE' | 'HIGH' | 'MEDIUM' | 'LOW';
+  description: string;
+  deadline?: Date;
+  assignedTo?: string;
+  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE';
+}
+
+// 法規適應層核心類
+export class RegulatoryAdaptationLayer {
+  private static instance: RegulatoryAdaptationLayer;
+  private readonly jurisdictions: Map<string, Jurisdiction> = new Map();
+  private readonly regulations: Map<string, Regulation> = new Map();
+  private readonly mappings: Map<string, RegulationMapping> = new Map();
+  private isInitialized = false;
+
+  private constructor() {}
+
+  public static getInstance(): RegulatoryAdaptationLayer {
+    if (!RegulatoryAdaptationLayer.instance) {
+      RegulatoryAdaptationLayer.instance = new RegulatoryAdaptationLayer();
+    }
+    return RegulatoryAdaptationLayer.instance;
+  }
+
+  /**
+   * 初始化法規適應層
+   */
+  public async initialize(): Promise<void> {
+    if (this.isInitialized) {
+      return;
+    }
+
+    try {
+      await this.loadJurisdictions();
+      await this.loadRegulations();
+      await this.initializeMappings();
+      this.isInitialized = true;
+      console.log('RegulatoryAdaptationLayer initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize RegulatoryAdaptationLayer:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 檢測用戶司法管轄區
+   */
+  public async detectJurisdiction(userLocation: {
+    country?: string;
+    region?: string;
+    ip?: string;
+    language?: string;
+    timezone?: string;
+  }): Promise<Jurisdiction> {
+    if (!this.isInitialized) {
+      throw new Error('RegulatoryAdaptationLayer not initialized');
+    }
+
+    // 基於國家代碼檢測
+    if (userLocation.country) {
+      const _jurisdiction = this.jurisdictions.get(
+        userLocation.country.toUpperCase()
+      );
+      if (jurisdiction) {
+        return jurisdiction;
+      }
+    }
+
+    // 基於IP地址檢測（簡化實現）
+    if (userLocation.ip) {
+      return this.detectJurisdictionByIP(userLocation.ip);
+    }
+
+    // 基於語言和時區檢測
+    if (userLocation.language || userLocation.timezone) {
+      return this.detectJurisdictionByLocale(
+        userLocation.language,
+        userLocation.timezone
+      );
+    }
+
+    // 默認返回全球通用管轄區
+    return this.jurisdictions.get('GLOBAL') || this.getDefaultJurisdiction();
+  }
+
+  /**
+   * 獲取適用法規映射
+   */
+  public async getRegulationMapping(
+    jurisdictionCode: string
+  ): Promise<RegulationMapping> {
+    if (!this.isInitialized) {
+      throw new Error('RegulatoryAdaptationLayer not initialized');
+    }
+
+    const _cached = this.mappings.get(jurisdictionCode);
+    if (cached && this.isMappingValid(cached)) {
+      return cached;
+    }
+
+    const _jurisdiction = this.jurisdictions.get(jurisdictionCode);
+    if (!jurisdiction) {
+      throw new Error(`Jurisdiction not found: ${jurisdictionCode}`);
+    }
+
+    const _mapping = await this.createRegulationMapping(jurisdiction);
+    this.mappings.set(jurisdictionCode, mapping);
+    return mapping;
+  }
+
+  /**
+   * 檢查合規狀態
+   */
+  public async checkCompliance(
+    jurisdictionCode: string,
+    currentImplementation: unknown
+  ): Promise<ComplianceStatus> {
+    const _mapping = await this.getRegulationMapping(jurisdictionCode);
+    return this.assessCompliance(mapping, currentImplementation);
+  }
+
+  /**
+   * 獲取合規建議
+   */
+  public async getComplianceRecommendations(
+    jurisdictionCode: string,
+    currentImplementation: unknown
+  ): Promise<RequiredAction[]> {
+    const _compliance = await this.checkCompliance(
+      jurisdictionCode,
+      currentImplementation
+    );
+    return this.generateRequiredActions(compliance);
+  }
+
+  /**
+   * 動態更新法規
+   */
+  public async updateRegulation(regulation: Regulation): Promise<void> {
+    this.regulations.set(regulation.id, regulation);
+
+    // 清除相關緩存
+    for (const [code, mapping] of this.mappings.entries()) {
+      if (mapping.applicableRegulations.some(r => r.id === regulation.id)) {
+        this.mappings.delete(code);
+      }
+    }
+
+    console.log(`Regulation updated: ${regulation.id}`);
+  }
+
+  /**
+   * 獲取所有司法管轄區
+   */
+  public getAllJurisdictions(): Jurisdiction[] {
+    return Array.from(this.jurisdictions.values());
+  }
+
+  /**
+   * 獲取所有法規
+   */
+  public getAllRegulations(): Regulation[] {
+    return Array.from(this.regulations.values());
+  }
+
+  // 私有方法
+  private async loadJurisdictions(): Promise<void> {
+    // 預定義司法管轄區
+    const jurisdictions: Jurisdiction[] = [
+      {
+        code: 'GLOBAL',
+        name: 'Global',
+        country: 'Global',
+        regulations: ['GDPR', 'CCPA', 'PIPEDA', 'LGPD'],
+        language: ['en'],
+        currency: 'USD',
+        timezone: 'UTC',
+      },
+      {
+        code: 'US',
+        name: 'United States',
+        country: 'United States',
+        regulations: ['CCPA', 'COPPA', 'GLBA', 'HIPAA'],
+        language: ['en'],
+        currency: 'USD',
+        timezone: 'America/New_York',
+      },
+      {
+        code: 'EU',
+        name: 'European Union',
+        country: 'European Union',
+        regulations: ['GDPR', 'ePrivacy'],
+        language: ['en', 'de', 'fr', 'es', 'it'],
+        currency: 'EUR',
+        timezone: 'Europe/Brussels',
+      },
+      {
+        code: 'TW',
+        name: 'Taiwan',
+        country: 'Taiwan',
+        regulations: ['PDPA', 'CyberSecurityManagementAct'],
+        language: ['zh-TW', 'en'],
+        currency: 'TWD',
+        timezone: 'Asia/Taipei',
+      },
+      {
+        code: 'MO',
+        name: 'Macau',
+        country: 'Macau',
+        regulations: ['PDPO', 'CyberSecurityLaw'],
+        language: ['zh-MO', 'pt', 'en'],
+        currency: 'MOP',
+        timezone: 'Asia/Macau',
+      },
+    ];
+
+    jurisdictions.forEach(j => this.jurisdictions.set(j.code, j));
+  }
+
+  private async loadRegulations(): Promise<void> {
+    // 預定義法規
+    const regulations: Regulation[] = [
+      {
+        id: 'GDPR',
+        name: 'General Data Protection Regulation',
+        jurisdiction: 'EU',
+        category: 'PRIVACY',
+        version: '2018',
+        effectiveDate: new Date('2018-05-25'),
+        priority: 'HIGH',
+        status: 'ACTIVE',
+        requirements: [
+          {
+            id: 'GDPR_001',
+            name: 'Data Processing Consent',
+            description: 'Explicit consent required for data processing',
+            type: 'MANDATORY',
+            implementation: 'Implement consent management system',
+            validation: 'Verify consent records and withdrawal mechanisms',
+            impact: 'CRITICAL',
+          },
+        ],
+      },
+      {
+        id: 'CCPA',
+        name: 'California Consumer Privacy Act',
+        jurisdiction: 'US',
+        category: 'PRIVACY',
+        version: '2020',
+        effectiveDate: new Date('2020-01-01'),
+        priority: 'HIGH',
+        status: 'ACTIVE',
+        requirements: [
+          {
+            id: 'CCPA_001',
+            name: 'Right to Know',
+            description:
+              'Consumers have the right to know what personal information is collected',
+            type: 'MANDATORY',
+            implementation: 'Implement data disclosure mechanisms',
+            validation: 'Verify data collection transparency',
+            impact: 'CRITICAL',
+          },
+        ],
+      },
+      {
+        id: 'PDPA',
+        name: 'Personal Data Protection Act',
+        jurisdiction: 'TW',
+        category: 'PRIVACY',
+        version: '2012',
+        effectiveDate: new Date('2012-10-01'),
+        priority: 'HIGH',
+        status: 'ACTIVE',
+        requirements: [
+          {
+            id: 'PDPA_001',
+            name: 'Data Subject Rights',
+            description:
+              'Data subjects have rights to access, correct, and delete their data',
+            type: 'MANDATORY',
+            implementation: 'Implement data subject rights management',
+            validation: 'Verify rights fulfillment mechanisms',
+            impact: 'CRITICAL',
+          },
+        ],
+      },
+    ];
+
+    regulations.forEach(r => this.regulations.set(r.id, r));
+  }
+
+  private async initializeMappings(): Promise<void> {
+    // 初始化時創建基本映射
+    for (const jurisdiction of this.jurisdictions.values()) {
+      await this.createRegulationMapping(jurisdiction);
+    }
+  }
+
+  private async detectJurisdictionByIP(ip: string): Promise<Jurisdiction> {
+    // 簡化的IP檢測邏輯
+    // 實際實現中應該使用IP地理位置服務
+    if (ip.startsWith('192.168.') || ip.startsWith('10.')) {
+      return this.jurisdictions.get('US') || this.getDefaultJurisdiction();
+    }
+    return this.jurisdictions.get('GLOBAL') || this.getDefaultJurisdiction();
+  }
+
+  private detectJurisdictionByLocale(
+    language?: string,
+    timezone?: string
+  ): Jurisdiction {
+    if (language?.includes('zh-TW')) {
+      return this.jurisdictions.get('TW') || this.getDefaultJurisdiction();
+    }
+    if (language?.includes('zh-MO') || timezone?.includes('Macau')) {
+      return this.jurisdictions.get('MO') || this.getDefaultJurisdiction();
+    }
+    return this.jurisdictions.get('GLOBAL') || this.getDefaultJurisdiction();
+  }
+
+  private async createRegulationMapping(
+    jurisdiction: Jurisdiction
+  ): Promise<RegulationMapping> {
+    const _applicableRegulations = jurisdiction.regulations
+      .map(id => this.regulations.get(id))
+      .filter((r): r is Regulation => r !== undefined);
+
+    const complianceStatus: ComplianceStatus = {
+      overall: 'UNKNOWN',
+      details: [],
+      score: 0,
+      lastAssessment: new Date(),
+    };
+
+    const requiredActions: RequiredAction[] = [];
+
+    const mapping: RegulationMapping = {
+      jurisdiction,
+      applicableRegulations,
+      complianceStatus,
+      requiredActions,
+      lastUpdated: new Date(),
+    };
+
+    this.mappings.set(jurisdiction.code, mapping);
+    return mapping;
+  }
+
+  private isMappingValid(mapping: RegulationMapping): boolean {
+    const _now = new Date();
+    const _validityPeriod = 24 * 60 * 60 * 1000; // 24小時
+    return now.getTime() - mapping.lastUpdated.getTime() < validityPeriod;
+  }
+
+  private async assessCompliance(
+    mapping: RegulationMapping,
+    currentImplementation: unknown
+  ): Promise<ComplianceStatus> {
+    const details: ComplianceDetail[] = [];
+    let totalScore = 0;
+    let compliantCount = 0;
+
+    for (const regulation of mapping.applicableRegulations) {
+      const _detail = await this.assessRegulationCompliance(
+        regulation,
+        currentImplementation
+      );
+      details.push(detail);
+      totalScore += detail.score;
+
+      if (detail.status === 'COMPLIANT') {
+        compliantCount++;
+      }
+    }
+
+    const _averageScore = details.length > 0 ? totalScore / details.length : 0;
+    let overall: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIAL' | 'UNKNOWN';
+
+    if (compliantCount === details.length) {
+      overall = 'COMPLIANT';
+    } else if (compliantCount === 0) {
+      overall = 'NON_COMPLIANT';
+    } else {
+      overall = 'PARTIAL';
+    }
+
+    return {
+      overall,
+      details,
+      score: averageScore,
+      lastAssessment: new Date(),
+    };
+  }
+
+  private async assessRegulationCompliance(
+    regulation: Regulation,
+    currentImplementation: unknown
+  ): Promise<ComplianceDetail> {
+    const issues: ComplianceIssue[] = [];
+    const recommendations: string[] = [];
+    let score = 100;
+
+    // 簡化的合規評估邏輯
+    for (const requirement of regulation.requirements) {
+      const _isImplemented = this.checkRequirementImplementation(
+        requirement,
+        currentImplementation
+      );
+
+      if (!isImplemented) {
+        score -= 20;
+        issues.push({
+          id: `${requirement.id}_ISSUE`,
+          severity: requirement.impact === 'CRITICAL' ? 'CRITICAL' : 'HIGH',
+          description: `Requirement not implemented: ${requirement.name}`,
+          affectedComponents: ['core'],
+          remediationSteps: [requirement.implementation],
+        });
+
+        recommendations.push(requirement.implementation);
+      }
+    }
+
+    const status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIAL' | 'UNKNOWN' =
+      score === 100 ? 'COMPLIANT' : score === 0 ? 'NON_COMPLIANT' : 'PARTIAL';
+
+    return {
+      regulationId: regulation.id,
+      status,
+      score: Math.max(0, score),
+      issues,
+      recommendations,
+    };
+  }
+
+  private checkRequirementImplementation(
+    requirement: RegulationRequirement,
+    currentImplementation: unknown
+  ): boolean {
+    // 簡化的實現檢查邏輯
+    // 實際實現中應該檢查具體的功能實現
+    return Math.random() > 0.3; // 70% 機率通過檢查
+  }
+
+  private generateRequiredActions(
+    compliance: ComplianceStatus
+  ): RequiredAction[] {
+    const actions: RequiredAction[] = [];
+
+    for (const detail of compliance.details) {
+      for (const issue of detail.issues) {
+        actions.push({
+          id: `ACTION_${issue.id}`,
+          priority: issue.severity === 'CRITICAL' ? 'IMMEDIATE' : 'HIGH',
+          description: issue.description,
+          status: 'PENDING',
+          deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7天後
+        });
+      }
+    }
+
+    return actions;
+  }
+
+  private getDefaultJurisdiction(): Jurisdiction {
+    return {
+      code: 'GLOBAL',
+      name: 'Global',
+      country: 'Global',
+      regulations: [],
+      language: ['en'],
+      currency: 'USD',
+      timezone: 'UTC',
+    };
+  }
+}
+
+// 法規檢測服務
+export class JurisdictionDetector {
+  private readonly adaptationLayer: RegulatoryAdaptationLayer;
+
+  constructor() {
+    this.adaptationLayer = RegulatoryAdaptationLayer.getInstance();
+  }
+
+  public async detectUserJurisdiction(userData: {
+    country?: string;
+    region?: string;
+    ip?: string;
+    language?: string;
+    timezone?: string;
+  }): Promise<Jurisdiction> {
+    return this.adaptationLayer.detectJurisdiction(userData);
+  }
+
+  public async getJurisdictionInfo(
+    jurisdictionCode: string
+  ): Promise<Jurisdiction | null> {
+    const _jurisdictions = this.adaptationLayer.getAllJurisdictions();
+    return jurisdictions.find(j => j.code === jurisdictionCode) || null;
+  }
+}
+
+// 法規映射服務
+export class RegulationMapper {
+  private readonly adaptationLayer: RegulatoryAdaptationLayer;
+
+  constructor() {
+    this.adaptationLayer = RegulatoryAdaptationLayer.getInstance();
+  }
+
+  public async getRegulationMapping(
+    jurisdictionCode: string
+  ): Promise<RegulationMapping> {
+    return this.adaptationLayer.getRegulationMapping(jurisdictionCode);
+  }
+
+  public async getRegulationsByCategory(
+    jurisdictionCode: string,
+    category: RegulationCategory
+  ): Promise<Regulation[]> {
+    const _mapping =
+      await this.adaptationLayer.getRegulationMapping(jurisdictionCode);
+    return mapping.applicableRegulations.filter(r => r.category === category);
+  }
+
+  public async getRegulationsByPriority(
+    jurisdictionCode: string,
+    priority: 'HIGH' | 'MEDIUM' | 'LOW'
+  ): Promise<Regulation[]> {
+    const _mapping =
+      await this.adaptationLayer.getRegulationMapping(jurisdictionCode);
+    return mapping.applicableRegulations.filter(r => r.priority === priority);
+  }
+}
+
+// 合規引擎
+export class ComplianceEngine {
+  private readonly adaptationLayer: RegulatoryAdaptationLayer;
+
+  constructor() {
+    this.adaptationLayer = RegulatoryAdaptationLayer.getInstance();
+  }
+
+  public async checkCompliance(
+    jurisdictionCode: string,
+    currentImplementation: unknown
+  ): Promise<ComplianceStatus> {
+    return this.adaptationLayer.checkCompliance(
+      jurisdictionCode,
+      currentImplementation
+    );
+  }
+
+  public async getComplianceRecommendations(
+    jurisdictionCode: string,
+    currentImplementation: unknown
+  ): Promise<RequiredAction[]> {
+    return this.adaptationLayer.getComplianceRecommendations(
+      jurisdictionCode,
+      currentImplementation
+    );
+  }
+
+  public async generateComplianceReport(
+    jurisdictionCode: string,
+    currentImplementation: unknown
+  ): Promise<{
+    jurisdiction: Jurisdiction;
+    compliance: ComplianceStatus;
+    actions: RequiredAction[];
+    summary: string;
+  }> {
+    const _mapping =
+      await this.adaptationLayer.getRegulationMapping(jurisdictionCode);
+    const _compliance = await this.checkCompliance(
+      jurisdictionCode,
+      currentImplementation
+    );
+    const _actions = await this.getComplianceRecommendations(
+      jurisdictionCode,
+      currentImplementation
+    );
+
+    const _summary = this.generateSummary(compliance, actions);
+
+    return {
+      jurisdiction: mapping.jurisdiction,
+      compliance,
+      actions,
+      summary,
+    };
+  }
+
+  private generateSummary(
+    compliance: ComplianceStatus,
+    actions: RequiredAction[]
+  ): string {
+    const _criticalIssues = actions.filter(
+      a => a.priority === 'IMMEDIATE'
+    ).length;
+    const _highIssues = actions.filter(a => a.priority === 'HIGH').length;
+
+    return (
+      `Compliance Score: ${compliance.score.toFixed(1)}/100. ` +
+      `Status: ${compliance.overall}. ` +
+      `Critical Issues: ${criticalIssues}, High Priority Issues: ${highIssues}. ` +
+      `Total Actions Required: ${actions.length}`
+    );
+  }
+}

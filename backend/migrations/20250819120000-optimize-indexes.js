@@ -1,7 +1,8 @@
 'use strict';
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface, Sequelize) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     // logger.info('🔧 開始創建索引優化...');
 
     try {
@@ -169,7 +170,8 @@ module.exports = {
     }
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface, Sequelize) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     // logger.info('🗑️ 開始移除索引...');
 
     try {

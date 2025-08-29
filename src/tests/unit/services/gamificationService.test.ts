@@ -1,7 +1,7 @@
-import { gamificationService } from '../../../services/gamificationService';
-import { authService } from '../../../services/authService';
-import { socialService } from '../../../services/socialService';
 import { aiEcosystem } from '../../../services/aiEcosystem';
+import { authService } from '../../../services/authService';
+import { gamificationService } from '../../../services/gamificationService';
+import { socialService } from '../../../services/socialService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
@@ -10,10 +10,10 @@ jest.mock('../../../services/socialService');
 jest.mock('../../../services/aiEcosystem');
 jest.mock('../../../utils/logger');
 
-const mockAuthService = authService as jest.Mocked<typeof authService>;
-const mockSocialService = socialService as jest.Mocked<typeof socialService>;
-const mockAiEcosystem = aiEcosystem as jest.Mocked<typeof aiEcosystem>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockAuthService = authService as jest.Mocked<typeof authService>;
+const _mockSocialService = socialService as jest.Mocked<typeof socialService>;
+const _mockAiEcosystem = aiEcosystem as jest.Mocked<typeof aiEcosystem>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('GamificationService', () => {
   beforeEach(() => {
@@ -44,7 +44,7 @@ describe('GamificationService', () => {
 
   describe('createAchievement', () => {
     it('應該成功創建成就', async () => {
-      const achievementData = {
+      const _achievementData = {
         name: '測試成就',
         description: '這是一個測試成就',
         category: 'collection' as const,
@@ -63,7 +63,7 @@ describe('GamificationService', () => {
         maxProgress: 10,
       };
 
-      const result =
+      const _result =
         await gamificationService.createAchievement(achievementData);
 
       expect(result).toMatchObject({
@@ -92,7 +92,7 @@ describe('GamificationService', () => {
     });
 
     it('應該處理無效的成就數據', async () => {
-      const invalidAchievementData = {
+      const _invalidAchievementData = {
         name: '', // 無效：空名稱
         description: '這是一個測試成就',
         category: 'collection' as const,
@@ -111,7 +111,7 @@ describe('GamificationService', () => {
     });
 
     it('應該使用默認值創建成就', async () => {
-      const minimalAchievementData = {
+      const _minimalAchievementData = {
         name: '測試成就',
         description: '這是一個測試成就',
         category: 'collection' as const,
@@ -120,7 +120,7 @@ describe('GamificationService', () => {
         requirements: [],
       };
 
-      const result = await gamificationService.createAchievement(
+      const _result = await gamificationService.createAchievement(
         minimalAchievementData
       );
 
@@ -135,7 +135,7 @@ describe('GamificationService', () => {
   describe('getAchievement', () => {
     it('應該成功獲取成就', async () => {
       // 先創建一個成就
-      const achievementData = {
+      const _achievementData = {
         name: '測試成就',
         description: '這是一個測試成就',
         category: 'collection' as const,
@@ -144,9 +144,9 @@ describe('GamificationService', () => {
         requirements: [],
       };
 
-      const createdAchievement =
+      const _createdAchievement =
         await gamificationService.createAchievement(achievementData);
-      const result = await gamificationService.getAchievement(
+      const _result = await gamificationService.getAchievement(
         createdAchievement.id
       );
 
@@ -154,7 +154,7 @@ describe('GamificationService', () => {
     });
 
     it('應該在成就不存在時返回 null', async () => {
-      const result = await gamificationService.getAchievement(
+      const _result = await gamificationService.getAchievement(
         'nonexistent-achievement'
       );
 
@@ -165,7 +165,7 @@ describe('GamificationService', () => {
   describe('getAllAchievements', () => {
     it('應該成功獲取所有成就', async () => {
       // 創建多個成就
-      const achievement1 = await gamificationService.createAchievement({
+      const _achievement1 = await gamificationService.createAchievement({
         name: '成就1',
         description: '第一個成就',
         category: 'collection' as const,
@@ -174,7 +174,7 @@ describe('GamificationService', () => {
         requirements: [],
       });
 
-      const achievement2 = await gamificationService.createAchievement({
+      const _achievement2 = await gamificationService.createAchievement({
         name: '成就2',
         description: '第二個成就',
         category: 'social' as const,
@@ -183,7 +183,7 @@ describe('GamificationService', () => {
         requirements: [],
       });
 
-      const result = await gamificationService.getAllAchievements();
+      const _result = await gamificationService.getAllAchievements();
 
       expect(result).toHaveLength(5); // 3個默認成就 + 2個新創建的成就
       expect(result).toContainEqual(achievement1);
@@ -193,7 +193,7 @@ describe('GamificationService', () => {
 
   describe('getUserAchievements', () => {
     it('應該成功獲取用戶成就', async () => {
-      const result = await gamificationService.getUserAchievements('user-1');
+      const _result = await gamificationService.getUserAchievements('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶成就:', 'user-1');
       expect(result).toEqual([]);
@@ -245,7 +245,7 @@ describe('GamificationService', () => {
 
   describe('getUserPoints', () => {
     it('應該成功獲取用戶積分', async () => {
-      const result = await gamificationService.getUserPoints('user-1');
+      const _result = await gamificationService.getUserPoints('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶積分:', 'user-1');
       expect(result).toBeNull();
@@ -312,7 +312,7 @@ describe('GamificationService', () => {
 
   describe('calculateUserLevel', () => {
     it('應該成功計算用戶等級', async () => {
-      const result = await gamificationService.calculateUserLevel('user-1');
+      const _result = await gamificationService.calculateUserLevel('user-1');
 
       expect(result).toEqual({
         level: 1,
@@ -338,7 +338,7 @@ describe('GamificationService', () => {
 
   describe('createLeaderboard', () => {
     it('應該成功創建排行榜', async () => {
-      const leaderboardData = {
+      const _leaderboardData = {
         name: '測試排行榜',
         description: '這是一個測試排行榜',
         type: 'points' as const,
@@ -348,7 +348,7 @@ describe('GamificationService', () => {
         maxEntries: 50,
       };
 
-      const result =
+      const _result =
         await gamificationService.createLeaderboard(leaderboardData);
 
       expect(result).toMatchObject({
@@ -382,7 +382,7 @@ describe('GamificationService', () => {
 
   describe('getLeaderboard', () => {
     it('應該成功獲取排行榜', async () => {
-      const result = await gamificationService.getLeaderboard('leaderboard-1');
+      const _result = await gamificationService.getLeaderboard('leaderboard-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取排行榜:',
@@ -407,7 +407,7 @@ describe('GamificationService', () => {
 
   describe('getLeaderboardEntries', () => {
     it('應該成功獲取排行榜條目', async () => {
-      const result = await gamificationService.getLeaderboardEntries(
+      const _result = await gamificationService.getLeaderboardEntries(
         'leaderboard-1',
         1,
         20
@@ -473,7 +473,7 @@ describe('GamificationService', () => {
 
   describe('createChallenge', () => {
     it('應該成功創建挑戰', async () => {
-      const challengeData = {
+      const _challengeData = {
         name: '測試挑戰',
         description: '這是一個測試挑戰',
         type: 'daily' as const,
@@ -493,7 +493,7 @@ describe('GamificationService', () => {
         difficulty: 'medium' as const,
       };
 
-      const result = await gamificationService.createChallenge(challengeData);
+      const _result = await gamificationService.createChallenge(challengeData);
 
       expect(result).toMatchObject({
         name: '測試挑戰',
@@ -524,7 +524,7 @@ describe('GamificationService', () => {
     });
 
     it('應該處理無效的挑戰數據', async () => {
-      const invalidChallengeData = {
+      const _invalidChallengeData = {
         name: '', // 無效：空名稱
         description: '這是一個測試挑戰',
         type: 'daily' as const,
@@ -548,7 +548,7 @@ describe('GamificationService', () => {
   describe('getChallenge', () => {
     it('應該成功獲取挑戰', async () => {
       // 先創建一個挑戰
-      const challengeData = {
+      const _challengeData = {
         name: '測試挑戰',
         description: '這是一個測試挑戰',
         type: 'daily' as const,
@@ -559,9 +559,9 @@ describe('GamificationService', () => {
         difficulty: 'easy' as const,
       };
 
-      const createdChallenge =
+      const _createdChallenge =
         await gamificationService.createChallenge(challengeData);
-      const result = await gamificationService.getChallenge(
+      const _result = await gamificationService.getChallenge(
         createdChallenge.id
       );
 
@@ -569,7 +569,7 @@ describe('GamificationService', () => {
     });
 
     it('應該在挑戰不存在時返回 null', async () => {
-      const result = await gamificationService.getChallenge(
+      const _result = await gamificationService.getChallenge(
         'nonexistent-challenge'
       );
 
@@ -580,7 +580,7 @@ describe('GamificationService', () => {
   describe('getAllChallenges', () => {
     it('應該成功獲取所有挑戰', async () => {
       // 創建多個挑戰
-      const challenge1 = await gamificationService.createChallenge({
+      const _challenge1 = await gamificationService.createChallenge({
         name: '挑戰1',
         description: '第一個挑戰',
         type: 'daily' as const,
@@ -591,7 +591,7 @@ describe('GamificationService', () => {
         difficulty: 'easy' as const,
       });
 
-      const challenge2 = await gamificationService.createChallenge({
+      const _challenge2 = await gamificationService.createChallenge({
         name: '挑戰2',
         description: '第二個挑戰',
         type: 'weekly' as const,
@@ -602,7 +602,7 @@ describe('GamificationService', () => {
         difficulty: 'medium' as const,
       });
 
-      const result = await gamificationService.getAllChallenges();
+      const _result = await gamificationService.getAllChallenges();
 
       expect(result).toHaveLength(3); // 1個默認挑戰 + 2個新創建的挑戰
       expect(result).toContainEqual(challenge1);
@@ -613,7 +613,7 @@ describe('GamificationService', () => {
   describe('joinChallenge', () => {
     it('應該成功參與挑戰', async () => {
       // 先創建一個挑戰
-      const challenge = await gamificationService.createChallenge({
+      const _challenge = await gamificationService.createChallenge({
         name: '測試挑戰',
         description: '這是一個測試挑戰',
         type: 'daily' as const,
@@ -624,7 +624,7 @@ describe('GamificationService', () => {
         difficulty: 'easy' as const,
       });
 
-      const result = await gamificationService.joinChallenge(
+      const _result = await gamificationService.joinChallenge(
         challenge.id,
         'user-1'
       );
@@ -658,7 +658,7 @@ describe('GamificationService', () => {
 
     it('應該處理挑戰未激活的情況', async () => {
       // 創建一個未激活的挑戰
-      const challenge = await gamificationService.createChallenge({
+      const _challenge = await gamificationService.createChallenge({
         name: '未激活挑戰',
         description: '這是一個未激活的挑戰',
         type: 'daily' as const,
@@ -684,7 +684,7 @@ describe('GamificationService', () => {
 
   describe('getUserChallenges', () => {
     it('應該成功獲取用戶挑戰', async () => {
-      const result = await gamificationService.getUserChallenges('user-1');
+      const _result = await gamificationService.getUserChallenges('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶挑戰:', 'user-1');
       expect(result).toEqual([]);
@@ -706,7 +706,7 @@ describe('GamificationService', () => {
 
   describe('getQuest', () => {
     it('應該成功獲取任務', async () => {
-      const result = await gamificationService.getQuest('beginner-quest');
+      const _result = await gamificationService.getQuest('beginner-quest');
 
       expect(result).toMatchObject({
         id: 'beginner-quest',
@@ -718,7 +718,7 @@ describe('GamificationService', () => {
     });
 
     it('應該在任務不存在時返回 null', async () => {
-      const result = await gamificationService.getQuest('nonexistent-quest');
+      const _result = await gamificationService.getQuest('nonexistent-quest');
 
       expect(result).toBeNull();
     });
@@ -726,7 +726,7 @@ describe('GamificationService', () => {
 
   describe('getAllQuests', () => {
     it('應該成功獲取所有任務', async () => {
-      const result = await gamificationService.getAllQuests();
+      const _result = await gamificationService.getAllQuests();
 
       expect(result).toHaveLength(1); // 1個默認任務
       expect(result[0].id).toBe('beginner-quest');
@@ -735,7 +735,7 @@ describe('GamificationService', () => {
 
   describe('startQuest', () => {
     it('應該成功開始任務', async () => {
-      const result = await gamificationService.startQuest(
+      const _result = await gamificationService.startQuest(
         'beginner-quest',
         'user-1'
       );
@@ -770,7 +770,7 @@ describe('GamificationService', () => {
 
     it('應該處理任務未激活的情況', async () => {
       // 創建一個未激活的任務
-      const quest = await gamificationService.getQuest('beginner-quest');
+      const _quest = await gamificationService.getQuest('beginner-quest');
       if (quest) {
         (quest as any).isActive = false;
 
@@ -787,7 +787,7 @@ describe('GamificationService', () => {
 
   describe('getUserQuests', () => {
     it('應該成功獲取用戶任務', async () => {
-      const result = await gamificationService.getUserQuests('user-1');
+      const _result = await gamificationService.getUserQuests('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶任務:', 'user-1');
       expect(result).toEqual([]);
@@ -809,7 +809,7 @@ describe('GamificationService', () => {
 
   describe('getEvent', () => {
     it('應該成功獲取事件', async () => {
-      const result = await gamificationService.getEvent('winter-collection');
+      const _result = await gamificationService.getEvent('winter-collection');
 
       expect(result).toMatchObject({
         id: 'winter-collection',
@@ -820,7 +820,7 @@ describe('GamificationService', () => {
     });
 
     it('應該在事件不存在時返回 null', async () => {
-      const result = await gamificationService.getEvent('nonexistent-event');
+      const _result = await gamificationService.getEvent('nonexistent-event');
 
       expect(result).toBeNull();
     });
@@ -828,7 +828,7 @@ describe('GamificationService', () => {
 
   describe('getAllEvents', () => {
     it('應該成功獲取所有事件', async () => {
-      const result = await gamificationService.getAllEvents();
+      const _result = await gamificationService.getAllEvents();
 
       expect(result).toHaveLength(1); // 1個默認事件
       expect(result[0].id).toBe('winter-collection');
@@ -859,7 +859,7 @@ describe('GamificationService', () => {
 
     it('應該處理事件未激活的情況', async () => {
       // 創建一個未激活的事件
-      const event = await gamificationService.getEvent('winter-collection');
+      const _event = await gamificationService.getEvent('winter-collection');
       if (event) {
         (event as any).isActive = false;
 
@@ -876,7 +876,7 @@ describe('GamificationService', () => {
 
   describe('grantReward', () => {
     it('應該成功發放獎勵', async () => {
-      const result = await gamificationService.grantReward(
+      const _result = await gamificationService.grantReward(
         'user-1',
         'reward-1',
         5
@@ -913,7 +913,7 @@ describe('GamificationService', () => {
     });
 
     it('應該使用默認數量發放獎勵', async () => {
-      const result = await gamificationService.grantReward(
+      const _result = await gamificationService.grantReward(
         'user-1',
         'reward-1'
       );
@@ -950,7 +950,7 @@ describe('GamificationService', () => {
 
   describe('getUserRewards', () => {
     it('應該成功獲取用戶獎勵', async () => {
-      const result = await gamificationService.getUserRewards('user-1');
+      const _result = await gamificationService.getUserRewards('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶獎勵:', 'user-1');
       expect(result).toEqual([]);
@@ -972,7 +972,7 @@ describe('GamificationService', () => {
 
   describe('配置管理', () => {
     it('應該成功獲取配置', () => {
-      const config = gamificationService.getConfig();
+      const _config = gamificationService.getConfig();
 
       expect(config).toMatchObject({
         enableAchievements: true,
@@ -989,14 +989,14 @@ describe('GamificationService', () => {
     });
 
     it('應該成功更新配置', () => {
-      const newConfig = {
+      const _newConfig = {
         enableAchievements: false,
         enableCompetitions: false,
       };
 
       gamificationService.updateConfig(newConfig);
 
-      const updatedConfig = gamificationService.getConfig();
+      const _updatedConfig = gamificationService.getConfig();
       expect(updatedConfig.enableAchievements).toBe(false);
       expect(updatedConfig.enableCompetitions).toBe(false);
       expect(mockLogger.info).toHaveBeenCalledWith('遊戲化服務配置已更新');

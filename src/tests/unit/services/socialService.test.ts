@@ -1,7 +1,7 @@
-import { socialService } from '../../../services/socialService';
+import { aiEcosystem } from '../../../services/aiEcosystem';
 import { authService } from '../../../services/authService';
 import { cardService } from '../../../services/cardService';
-import { aiEcosystem } from '../../../services/aiEcosystem';
+import { socialService } from '../../../services/socialService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
@@ -10,10 +10,10 @@ jest.mock('../../../services/cardService');
 jest.mock('../../../services/aiEcosystem');
 jest.mock('../../../utils/logger');
 
-const mockAuthService = authService as jest.Mocked<typeof authService>;
-const mockCardService = cardService as jest.Mocked<typeof cardService>;
-const mockAiEcosystem = aiEcosystem as jest.Mocked<typeof aiEcosystem>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockAuthService = authService as jest.Mocked<typeof authService>;
+const _mockCardService = cardService as jest.Mocked<typeof cardService>;
+const _mockAiEcosystem = aiEcosystem as jest.Mocked<typeof aiEcosystem>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('SocialService', () => {
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe('SocialService', () => {
 
   describe('createUserProfile', () => {
     it('應該成功創建用戶資料', async () => {
-      const profileData = {
+      const _profileData = {
         username: 'testuser',
         displayName: '測試用戶',
         bio: '這是一個測試用戶',
@@ -58,7 +58,7 @@ describe('SocialService', () => {
         },
       };
 
-      const result = await socialService.createUserProfile(
+      const _result = await socialService.createUserProfile(
         'user-1',
         profileData
       );
@@ -95,7 +95,7 @@ describe('SocialService', () => {
     });
 
     it('應該處理無效的用戶資料數據', async () => {
-      const invalidProfileData = {
+      const _invalidProfileData = {
         username: '', // 無效：空字符串
         displayName: '測試用戶',
       };
@@ -110,12 +110,12 @@ describe('SocialService', () => {
     });
 
     it('應該使用默認值創建用戶資料', async () => {
-      const minimalProfileData = {
+      const _minimalProfileData = {
         username: 'testuser',
         displayName: '測試用戶',
       };
 
-      const result = await socialService.createUserProfile(
+      const _result = await socialService.createUserProfile(
         'user-1',
         minimalProfileData
       );
@@ -135,12 +135,12 @@ describe('SocialService', () => {
 
   describe('updateUserProfile', () => {
     it('應該成功更新用戶資料', async () => {
-      const updates = {
+      const _updates = {
         displayName: '更新後的用戶名',
         bio: '更新後的個人簡介',
       };
 
-      const result = await socialService.updateUserProfile('user-1', updates);
+      const _result = await socialService.updateUserProfile('user-1', updates);
 
       expect(result).toMatchObject({
         displayName: '更新後的用戶名',
@@ -152,7 +152,7 @@ describe('SocialService', () => {
     });
 
     it('應該處理用戶資料不存在的情況', async () => {
-      const updates = { displayName: '新名稱' };
+      const _updates = { displayName: '新名稱' };
 
       await expect(
         socialService.updateUserProfile('nonexistent-user', updates)
@@ -166,7 +166,7 @@ describe('SocialService', () => {
 
   describe('getUserProfile', () => {
     it('應該成功獲取用戶資料', async () => {
-      const result = await socialService.getUserProfile('user-1');
+      const _result = await socialService.getUserProfile('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶資料:', 'user-1');
       // 目前實現返回 null，所以這裡測試 null
@@ -187,7 +187,7 @@ describe('SocialService', () => {
 
   describe('searchUsers', () => {
     it('應該成功搜索用戶', async () => {
-      const result = await socialService.searchUsers('test');
+      const _result = await socialService.searchUsers('test');
 
       expect(mockLogger.info).toHaveBeenCalledWith('搜索用戶:', 'test');
       expect(result).toEqual([]);
@@ -207,7 +207,7 @@ describe('SocialService', () => {
 
   describe('createPost', () => {
     it('應該成功創建帖子', async () => {
-      const postData = {
+      const _postData = {
         type: 'text' as const,
         content: {
           text: '這是一個測試帖子',
@@ -216,7 +216,7 @@ describe('SocialService', () => {
         visibility: 'public' as const,
       };
 
-      const result = await socialService.createPost('user-1', postData);
+      const _result = await socialService.createPost('user-1', postData);
 
       expect(result).toMatchObject({
         authorId: 'user-1',
@@ -244,7 +244,7 @@ describe('SocialService', () => {
     });
 
     it('應該處理無效的帖子數據', async () => {
-      const invalidPostData = {
+      const _invalidPostData = {
         type: 'text' as const,
         content: {
           text: 'a'.repeat(10001), // 超過最大長度
@@ -263,7 +263,7 @@ describe('SocialService', () => {
     });
 
     it('應該處理過多的標籤', async () => {
-      const postData = {
+      const _postData = {
         type: 'text' as const,
         content: {
           text: '測試帖子',
@@ -284,7 +284,7 @@ describe('SocialService', () => {
 
   describe('getPost', () => {
     it('應該成功獲取帖子', async () => {
-      const result = await socialService.getPost('post-1');
+      const _result = await socialService.getPost('post-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取帖子:', 'post-1');
       expect(result).toBeNull();
@@ -304,7 +304,7 @@ describe('SocialService', () => {
 
   describe('getUserPosts', () => {
     it('應該成功獲取用戶帖子', async () => {
-      const result = await socialService.getUserPosts('user-1', 1, 20);
+      const _result = await socialService.getUserPosts('user-1', 1, 20);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取用戶帖子:',
@@ -329,7 +329,7 @@ describe('SocialService', () => {
 
   describe('getFeed', () => {
     it('應該成功獲取動態流', async () => {
-      const result = await socialService.getFeed('user-1', 1, 20);
+      const _result = await socialService.getFeed('user-1', 1, 20);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取動態流:',
@@ -354,13 +354,13 @@ describe('SocialService', () => {
 
   describe('updatePost', () => {
     it('應該成功更新帖子', async () => {
-      const updates = {
+      const _updates = {
         content: {
           text: '更新後的帖子內容',
         },
       };
 
-      const result = await socialService.updatePost('post-1', updates);
+      const _result = await socialService.updatePost('post-1', updates);
 
       expect(result).toMatchObject({
         content: {
@@ -374,7 +374,7 @@ describe('SocialService', () => {
     });
 
     it('應該處理帖子不存在的情況', async () => {
-      const updates = { content: { text: '新內容' } };
+      const _updates = { content: { text: '新內容' } };
 
       await expect(
         socialService.updatePost('nonexistent-post', updates)
@@ -414,13 +414,13 @@ describe('SocialService', () => {
 
   describe('addComment', () => {
     it('應該成功添加評論', async () => {
-      const commentData = {
+      const _commentData = {
         content: '這是一個測試評論',
         parentId: 'parent-comment-1',
         mentions: ['user-2'],
       };
 
-      const result = await socialService.addComment(
+      const _result = await socialService.addComment(
         'post-1',
         'user-1',
         commentData
@@ -450,7 +450,7 @@ describe('SocialService', () => {
     });
 
     it('應該處理無效的評論數據', async () => {
-      const invalidCommentData = {
+      const _invalidCommentData = {
         content: '', // 無效：空內容
       };
 
@@ -464,7 +464,7 @@ describe('SocialService', () => {
     });
 
     it('應該處理評論內容過長', async () => {
-      const commentData = {
+      const _commentData = {
         content: 'a'.repeat(1001), // 超過最大長度
       };
 
@@ -480,7 +480,7 @@ describe('SocialService', () => {
 
   describe('getPostComments', () => {
     it('應該成功獲取帖子評論', async () => {
-      const result = await socialService.getPostComments('post-1', 1, 20);
+      const _result = await socialService.getPostComments('post-1', 1, 20);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取帖子評論:',
@@ -505,7 +505,7 @@ describe('SocialService', () => {
 
   describe('likePost', () => {
     it('應該成功點讚帖子', async () => {
-      const result = await socialService.likePost('post-1', 'user-1', 'love');
+      const _result = await socialService.likePost('post-1', 'user-1', 'love');
 
       expect(result).toMatchObject({
         userId: 'user-1',
@@ -525,7 +525,7 @@ describe('SocialService', () => {
     });
 
     it('應該使用默認點讚類型', async () => {
-      const result = await socialService.likePost('post-1', 'user-1');
+      const _result = await socialService.likePost('post-1', 'user-1');
 
       expect(result.type).toBe('like');
     });
@@ -572,7 +572,7 @@ describe('SocialService', () => {
 
   describe('sharePost', () => {
     it('應該成功分享帖子', async () => {
-      const result = await socialService.sharePost(
+      const _result = await socialService.sharePost(
         'post-1',
         'user-1',
         'twitter',
@@ -612,7 +612,7 @@ describe('SocialService', () => {
 
   describe('followUser', () => {
     it('應該成功關注用戶', async () => {
-      const result = await socialService.followUser(
+      const _result = await socialService.followUser(
         'follower-1',
         'following-1'
       );
@@ -674,7 +674,7 @@ describe('SocialService', () => {
 
   describe('getFollowers', () => {
     it('應該成功獲取關注者列表', async () => {
-      const result = await socialService.getFollowers('user-1', 1, 20);
+      const _result = await socialService.getFollowers('user-1', 1, 20);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取關注者列表:',
@@ -699,7 +699,7 @@ describe('SocialService', () => {
 
   describe('getFollowing', () => {
     it('應該成功獲取關注列表', async () => {
-      const result = await socialService.getFollowing('user-1', 1, 20);
+      const _result = await socialService.getFollowing('user-1', 1, 20);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取關注列表:',
@@ -724,7 +724,7 @@ describe('SocialService', () => {
 
   describe('sendMessage', () => {
     it('應該成功發送消息', async () => {
-      const result = await socialService.sendMessage(
+      const _result = await socialService.sendMessage(
         'sender-1',
         'recipient-1',
         '測試消息',
@@ -753,7 +753,7 @@ describe('SocialService', () => {
     });
 
     it('應該使用默認消息類型', async () => {
-      const result = await socialService.sendMessage(
+      const _result = await socialService.sendMessage(
         'sender-1',
         'recipient-1',
         '測試消息'
@@ -778,7 +778,7 @@ describe('SocialService', () => {
 
   describe('getConversations', () => {
     it('應該成功獲取對話列表', async () => {
-      const result = await socialService.getConversations('user-1');
+      const _result = await socialService.getConversations('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取對話列表:', 'user-1');
       expect(result).toEqual([]);
@@ -798,7 +798,7 @@ describe('SocialService', () => {
 
   describe('getConversationMessages', () => {
     it('應該成功獲取對話消息', async () => {
-      const result = await socialService.getConversationMessages(
+      const _result = await socialService.getConversationMessages(
         'conversation-1',
         1,
         50
@@ -855,7 +855,7 @@ describe('SocialService', () => {
 
   describe('createCommunity', () => {
     it('應該成功創建社區', async () => {
-      const communityData = {
+      const _communityData = {
         name: '測試社區',
         description: '這是一個測試社區',
         avatar: 'avatar.jpg',
@@ -866,7 +866,7 @@ describe('SocialService', () => {
         rules: ['遵守規則'],
       };
 
-      const result = await socialService.createCommunity(
+      const _result = await socialService.createCommunity(
         'creator-1',
         communityData
       );
@@ -911,7 +911,7 @@ describe('SocialService', () => {
 
   describe('joinCommunity', () => {
     it('應該成功加入社區', async () => {
-      const result = await socialService.joinCommunity('community-1', 'user-1');
+      const _result = await socialService.joinCommunity('community-1', 'user-1');
 
       expect(result).toMatchObject({
         communityId: 'community-1',
@@ -946,7 +946,7 @@ describe('SocialService', () => {
 
   describe('getCommunityPosts', () => {
     it('應該成功獲取社區帖子', async () => {
-      const result = await socialService.getCommunityPosts(
+      const _result = await socialService.getCommunityPosts(
         'community-1',
         1,
         20
@@ -977,7 +977,7 @@ describe('SocialService', () => {
 
   describe('createNotification', () => {
     it('應該成功創建通知', async () => {
-      const notificationData = {
+      const _notificationData = {
         type: 'like' as const,
         title: '新點讚',
         message: '有人點讚了你的帖子',
@@ -986,7 +986,7 @@ describe('SocialService', () => {
         actionUrl: '/post/post-1',
       };
 
-      const result = await socialService.createNotification(
+      const _result = await socialService.createNotification(
         'user-1',
         notificationData
       );
@@ -1023,7 +1023,7 @@ describe('SocialService', () => {
 
   describe('getUserNotifications', () => {
     it('應該成功獲取用戶通知', async () => {
-      const result = await socialService.getUserNotifications('user-1', 1, 20);
+      const _result = await socialService.getUserNotifications('user-1', 1, 20);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取用戶通知:',
@@ -1076,7 +1076,7 @@ describe('SocialService', () => {
 
   describe('getSocialAnalytics', () => {
     it('應該成功獲取社交分析', async () => {
-      const result = await socialService.getSocialAnalytics('user-1', 'month');
+      const _result = await socialService.getSocialAnalytics('user-1', 'month');
 
       expect(result).toMatchObject({
         userId: 'user-1',
@@ -1120,7 +1120,7 @@ describe('SocialService', () => {
 
   describe('配置管理', () => {
     it('應該成功獲取配置', () => {
-      const config = socialService.getConfig();
+      const _config = socialService.getConfig();
 
       expect(config).toMatchObject({
         enableUserProfiles: true,
@@ -1137,14 +1137,14 @@ describe('SocialService', () => {
     });
 
     it('應該成功更新配置', () => {
-      const newConfig = {
+      const _newConfig = {
         enableUserProfiles: false,
         enableMessaging: false,
       };
 
       socialService.updateConfig(newConfig);
 
-      const updatedConfig = socialService.getConfig();
+      const _updatedConfig = socialService.getConfig();
       expect(updatedConfig.enableUserProfiles).toBe(false);
       expect(updatedConfig.enableMessaging).toBe(false);
       expect(mockLogger.info).toHaveBeenCalledWith('社交功能服務配置已更新');

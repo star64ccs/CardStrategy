@@ -86,6 +86,7 @@ app.get('/api/health', (req, res) => {
       ]
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Health check error:', error);
     res.status(200).json({
       status: 'healthy',
@@ -214,7 +215,8 @@ app.use('*', (req, res) => {
 });
 
 // 錯誤處理
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-console
   console.error('Error:', err);
   res.status(500).json({
     error: 'Internal Server Error',
@@ -228,25 +230,38 @@ const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
 
 const startServer = async () => {
   try {
+    // eslint-disable-next-line no-console
     console.log('Starting CardStrategy Render Server (Standalone Mode)...');
+    // eslint-disable-next-line no-console
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    // eslint-disable-next-line no-console
     console.log(`Port: ${PORT}`);
+    // eslint-disable-next-line no-console
     console.log(`Host: ${HOST}`);
+    // eslint-disable-next-line no-console
     console.log('Mode: Standalone with Mock Data - No Database Dependencies');
     
     const server = app.listen(PORT, HOST, () => {
+      // eslint-disable-next-line no-console
       console.log(`🚀 CardStrategy Render Server running on http://${HOST}:${PORT}`);
+      // eslint-disable-next-line no-console
       console.log(`🏥 Health check: http://${HOST}:${PORT}/health`);
+      // eslint-disable-next-line no-console
       console.log(`🔧 API Health check: http://${HOST}:${PORT}/api/health`);
+      // eslint-disable-next-line no-console
       console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+      // eslint-disable-next-line no-console
       console.log(`📱 Demo login: demo / demo123`);
+      // eslint-disable-next-line no-console
       console.log(`✅ Server started successfully - No database connections attempted`);
     });
 
     // 優雅關閉
     process.on('SIGTERM', () => {
+      // eslint-disable-next-line no-console
       console.log('SIGTERM received, shutting down gracefully');
       server.close(() => {
+        // eslint-disable-next-line no-console
         console.log('Process terminated');
         process.exit(0);
       });
@@ -254,6 +269,7 @@ const startServer = async () => {
 
     return server;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Server startup failed:', error);
     process.exit(1);
   }

@@ -21,6 +21,7 @@ class MonitoringService {
         systemMetrics: performance.metrics
       };
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('獲取儀表板數據失敗:', error);
       throw error;
     }
@@ -31,6 +32,7 @@ class MonitoringService {
       const response = await axios.get(`${API_BASE_URL}/ai-ecosystem/stats`);
       return response.data;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('獲取AI生態系統數據失敗:', error);
       return {
         successRate: 0,
@@ -45,6 +47,7 @@ class MonitoringService {
       const response = await axios.get(`${API_BASE_URL}/performance/metrics`);
       return response.data;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('獲取性能數據失敗:', error);
       return {
         activeUsers: 0,
@@ -63,6 +66,7 @@ class MonitoringService {
       const response = await axios.get(`${API_BASE_URL}/cost/analysis`);
       return response.data;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('獲取成本數據失敗:', error);
       return {
         monthlyCost: 0,

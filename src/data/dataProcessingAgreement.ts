@@ -1,5 +1,5 @@
 // 數據處理協議
-export const DATA_PROCESSING_AGREEMENT = {
+export const _DATA_PROCESSING_AGREEMENT = {
   type: 'data_processing_agreement',
   version: '1.0',
   title: '數據處理協議',
@@ -265,4 +265,4 @@ export const DATA_PROCESSING_AGREEMENT = {
 };
 
 // 導出協議內容
-export const getDataProcessingAgreement = () => DATA_PROCESSING_AGREEMENT;
+export const _getDataProcessingAgreement = () => DATA_PROCESSING_AGREEMENT;

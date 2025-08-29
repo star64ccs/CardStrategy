@@ -1,13 +1,13 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { investmentService } from '../../../services/investmentService';
 import { apiService } from '../../../services/apiService';
+import { investmentService } from '../../../services/investmentService';
 
 // Mock 依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../utils/validationService');
 jest.mock('../../../utils/validationSchemas');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
 
 describe('InvestmentService', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('InvestmentService', () => {
   });
 
   describe('getInvestments', () => {
-    const mockInvestments = [
+    const _mockInvestments = [
       {
         id: 'investment-1',
         cardId: 'card-123',
@@ -39,7 +39,7 @@ describe('InvestmentService', () => {
         message: '投資列表獲取成功',
       });
 
-      const result = await investmentService.getInvestments();
+      const _result = await investmentService.getInvestments();
 
       expect(result).toEqual(mockInvestments);
       expect(mockApiService.get).toHaveBeenCalledWith('/investments');
@@ -55,8 +55,8 @@ describe('InvestmentService', () => {
   });
 
   describe('getInvestment', () => {
-    const mockInvestmentId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockInvestment = {
+    const _mockInvestmentId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockInvestment = {
       id: mockInvestmentId,
       cardId: 'card-123',
       type: 'buy' as const,
@@ -78,7 +78,7 @@ describe('InvestmentService', () => {
         message: '投資獲取成功',
       });
 
-      const result = await investmentService.getInvestment(mockInvestmentId);
+      const _result = await investmentService.getInvestment(mockInvestmentId);
 
       expect(result).toEqual(mockInvestment);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -87,7 +87,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的投資 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         investmentService.getInvestment(invalidId)
@@ -104,7 +104,7 @@ describe('InvestmentService', () => {
   });
 
   describe('addInvestment', () => {
-    const mockInvestmentData = {
+    const _mockInvestmentData = {
       cardId: 'card-123',
       type: 'buy' as const,
       amount: 1000,
@@ -113,7 +113,7 @@ describe('InvestmentService', () => {
       notes: '看好這張卡的前景',
     };
 
-    const mockAddedInvestment = {
+    const _mockAddedInvestment = {
       id: 'investment-2',
       ...mockInvestmentData,
       currentPrice: 500,
@@ -130,7 +130,7 @@ describe('InvestmentService', () => {
         message: '投資添加成功',
       });
 
-      const result = await investmentService.addInvestment(mockInvestmentData);
+      const _result = await investmentService.addInvestment(mockInvestmentData);
 
       expect(result).toEqual(mockAddedInvestment);
       expect(mockApiService.post).toHaveBeenCalledWith(
@@ -140,7 +140,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidData = { ...mockInvestmentData, cardId: 'invalid-id' };
+      const _invalidData = { ...mockInvestmentData, cardId: 'invalid-id' };
 
       await expect(
         investmentService.addInvestment(invalidData)
@@ -148,7 +148,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的投資類型', async () => {
-      const invalidData = { ...mockInvestmentData, type: 'invalid' as any };
+      const _invalidData = { ...mockInvestmentData, type: 'invalid' as any };
 
       await expect(
         investmentService.addInvestment(invalidData)
@@ -156,7 +156,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理負數金額', async () => {
-      const invalidData = { ...mockInvestmentData, amount: -100 };
+      const _invalidData = { ...mockInvestmentData, amount: -100 };
 
       await expect(
         investmentService.addInvestment(invalidData)
@@ -164,7 +164,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理零數量', async () => {
-      const invalidData = { ...mockInvestmentData, quantity: 0 };
+      const _invalidData = { ...mockInvestmentData, quantity: 0 };
 
       await expect(
         investmentService.addInvestment(invalidData)
@@ -181,13 +181,13 @@ describe('InvestmentService', () => {
   });
 
   describe('updateInvestment', () => {
-    const mockInvestmentId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockUpdateData = {
+    const _mockInvestmentId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockUpdateData = {
       notes: '更新後的備註',
       quantity: 3,
     };
 
-    const mockUpdatedInvestment = {
+    const _mockUpdatedInvestment = {
       id: mockInvestmentId,
       cardId: 'card-123',
       type: 'buy' as const,
@@ -209,7 +209,7 @@ describe('InvestmentService', () => {
         message: '投資更新成功',
       });
 
-      const result = await investmentService.updateInvestment(
+      const _result = await investmentService.updateInvestment(
         mockInvestmentId,
         mockUpdateData
       );
@@ -222,7 +222,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的投資 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         investmentService.updateInvestment(invalidId, mockUpdateData)
@@ -239,7 +239,7 @@ describe('InvestmentService', () => {
   });
 
   describe('removeInvestment', () => {
-    const mockInvestmentId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockInvestmentId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該成功移除投資', async () => {
       mockApiService.delete.mockResolvedValue({
@@ -255,7 +255,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的投資 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         investmentService.removeInvestment(invalidId)
@@ -272,7 +272,7 @@ describe('InvestmentService', () => {
   });
 
   describe('getPortfolio', () => {
-    const mockPortfolio = {
+    const _mockPortfolio = {
       id: 'portfolio-1',
       totalValue: 5000,
       totalProfitLoss: 500,
@@ -301,7 +301,7 @@ describe('InvestmentService', () => {
         message: '投資組合獲取成功',
       });
 
-      const result = await investmentService.getPortfolio();
+      const _result = await investmentService.getPortfolio();
 
       expect(result).toEqual(mockPortfolio);
       expect(mockApiService.get).toHaveBeenCalledWith('/investments/portfolio');
@@ -317,8 +317,8 @@ describe('InvestmentService', () => {
   });
 
   describe('getInvestmentAdvice', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockAdvice = {
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockAdvice = {
       cardId: mockCardId,
       recommendation: 'buy' as const,
       confidence: 0.85,
@@ -334,7 +334,7 @@ describe('InvestmentService', () => {
         message: '投資建議獲取成功',
       });
 
-      const result = await investmentService.getInvestmentAdvice(mockCardId);
+      const _result = await investmentService.getInvestmentAdvice(mockCardId);
 
       expect(result).toEqual(mockAdvice);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -343,7 +343,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         investmentService.getInvestmentAdvice(invalidId)
@@ -360,7 +360,7 @@ describe('InvestmentService', () => {
   });
 
   describe('getInvestmentStatistics', () => {
-    const mockStatistics = {
+    const _mockStatistics = {
       totalValue: 5000,
       totalProfitLoss: 500,
       totalProfitLossPercentage: 11.11,
@@ -393,7 +393,7 @@ describe('InvestmentService', () => {
         message: '統計獲取成功',
       });
 
-      const result = await investmentService.getInvestmentStatistics();
+      const _result = await investmentService.getInvestmentStatistics();
 
       expect(result).toEqual(mockStatistics);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -411,11 +411,11 @@ describe('InvestmentService', () => {
   });
 
   describe('setPriceAlert', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockTargetPrice = 600;
-    const mockType = 'above' as const;
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockTargetPrice = 600;
+    const _mockType = 'above' as const;
 
-    const mockPriceAlert = {
+    const _mockPriceAlert = {
       id: 'alert-1',
       cardId: mockCardId,
       targetPrice: mockTargetPrice,
@@ -430,7 +430,7 @@ describe('InvestmentService', () => {
         message: '價格警報設置成功',
       });
 
-      const result = await investmentService.setPriceAlert(
+      const _result = await investmentService.setPriceAlert(
         mockCardId,
         mockTargetPrice,
         mockType
@@ -448,7 +448,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidCardId = 'invalid-id';
+      const _invalidCardId = 'invalid-id';
 
       await expect(
         investmentService.setPriceAlert(
@@ -460,7 +460,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理負數目標價格', async () => {
-      const invalidPrice = -100;
+      const _invalidPrice = -100;
 
       await expect(
         investmentService.setPriceAlert(mockCardId, invalidPrice, mockType)
@@ -468,7 +468,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的警報類型', async () => {
-      const invalidType = 'invalid' as any;
+      const _invalidType = 'invalid' as any;
 
       await expect(
         investmentService.setPriceAlert(
@@ -489,7 +489,7 @@ describe('InvestmentService', () => {
   });
 
   describe('getPriceAlerts', () => {
-    const mockPriceAlerts = [
+    const _mockPriceAlerts = [
       {
         id: 'alert-1',
         cardId: 'card-123',
@@ -515,7 +515,7 @@ describe('InvestmentService', () => {
         message: '價格警報獲取成功',
       });
 
-      const result = await investmentService.getPriceAlerts();
+      const _result = await investmentService.getPriceAlerts();
 
       expect(result).toEqual(mockPriceAlerts);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -533,7 +533,7 @@ describe('InvestmentService', () => {
   });
 
   describe('deletePriceAlert', () => {
-    const mockAlertId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockAlertId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該成功刪除價格警報', async () => {
       mockApiService.delete.mockResolvedValue({
@@ -549,7 +549,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該處理無效的警報 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         investmentService.deletePriceAlert(invalidId)
@@ -566,7 +566,7 @@ describe('InvestmentService', () => {
   });
 
   describe('getInvestmentHistory', () => {
-    const mockFilters = {
+    const _mockFilters = {
       startDate: '2024-01-01',
       endDate: '2024-12-31',
       type: 'buy' as const,
@@ -574,7 +574,7 @@ describe('InvestmentService', () => {
       offset: 0,
     };
 
-    const mockHistory = {
+    const _mockHistory = {
       investments: [
         {
           id: 'investment-1',
@@ -604,7 +604,7 @@ describe('InvestmentService', () => {
         message: '投資歷史獲取成功',
       });
 
-      const result = await investmentService.getInvestmentHistory(mockFilters);
+      const _result = await investmentService.getInvestmentHistory(mockFilters);
 
       expect(result).toEqual(mockHistory);
       expect(mockApiService.get).toHaveBeenCalledWith('/investments/history', {
@@ -619,7 +619,7 @@ describe('InvestmentService', () => {
         message: '投資歷史獲取成功',
       });
 
-      const result = await investmentService.getInvestmentHistory();
+      const _result = await investmentService.getInvestmentHistory();
 
       expect(result).toEqual(mockHistory);
       expect(mockApiService.get).toHaveBeenCalledWith('/investments/history', {
@@ -638,14 +638,14 @@ describe('InvestmentService', () => {
 
   describe('exportInvestmentReport', () => {
     it('應該成功導出 PDF 報告', async () => {
-      const mockPdfData = 'base64-encoded-pdf-data';
+      const _mockPdfData = 'base64-encoded-pdf-data';
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockPdfData,
         message: '報告導出成功',
       });
 
-      const result = await investmentService.exportInvestmentReport('pdf');
+      const _result = await investmentService.exportInvestmentReport('pdf');
 
       expect(result).toBe(mockPdfData);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -654,7 +654,7 @@ describe('InvestmentService', () => {
     });
 
     it('應該成功導出 CSV 報告', async () => {
-      const mockCsvData =
+      const _mockCsvData =
         'investment_id,card_id,type,amount\ninvestment-1,card-123,buy,1000';
       mockApiService.get.mockResolvedValue({
         success: true,
@@ -662,7 +662,7 @@ describe('InvestmentService', () => {
         message: '報告導出成功',
       });
 
-      const result = await investmentService.exportInvestmentReport('csv');
+      const _result = await investmentService.exportInvestmentReport('csv');
 
       expect(result).toBe(mockCsvData);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -671,14 +671,14 @@ describe('InvestmentService', () => {
     });
 
     it('應該成功導出 JSON 報告', async () => {
-      const mockJsonData = '{"investments": []}';
+      const _mockJsonData = '{"investments": []}';
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockJsonData,
         message: '報告導出成功',
       });
 
-      const result = await investmentService.exportInvestmentReport('json');
+      const _result = await investmentService.exportInvestmentReport('json');
 
       expect(result).toBe(mockJsonData);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -702,7 +702,7 @@ describe('InvestmentService', () => {
   });
 
   describe('getMarketTrends', () => {
-    const mockTrends = {
+    const _mockTrends = {
       trendingUp: ['card-123', 'card-456'],
       trendingDown: ['card-789'],
       stable: ['card-101', 'card-102'],
@@ -715,7 +715,7 @@ describe('InvestmentService', () => {
         message: '市場趨勢獲取成功',
       });
 
-      const result = await investmentService.getMarketTrends();
+      const _result = await investmentService.getMarketTrends();
 
       expect(result).toEqual(mockTrends);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -733,7 +733,7 @@ describe('InvestmentService', () => {
   });
 
   describe('getRiskAnalysis', () => {
-    const mockRiskAnalysis = {
+    const _mockRiskAnalysis = {
       riskLevel: 'medium' as const,
       factors: ['市場波動性高', '投資集中度過高'],
       recommendations: ['分散投資', '設置止損點'],
@@ -746,7 +746,7 @@ describe('InvestmentService', () => {
         message: '風險分析獲取成功',
       });
 
-      const result = await investmentService.getRiskAnalysis();
+      const _result = await investmentService.getRiskAnalysis();
 
       expect(result).toEqual(mockRiskAnalysis);
       expect(mockApiService.get).toHaveBeenCalledWith(

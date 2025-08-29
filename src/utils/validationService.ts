@@ -1,436 +1,326 @@
-import { z, ZodError, ZodSchema } from 'zod';
 import { logger } from './logger';
-import { ValidationSchemas } from './validationSchemas';
 
-// 驗證結果類型
 export interface ValidationResult<T = any> {
   isValid: boolean;
   data?: T;
-  errors?: ValidationError[];
+  errors: string[];
   errorMessage?: string;
 }
 
-// 驗證錯誤類型
-export interface ValidationError {
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  errors?: string[];
+  statusCode?: number;
+}
+
+export interface ValidationRule {
   field: string;
-  message: string;
-  code?: string;
-  path?: (string | number)[];
+  required?: boolean;
+  type?: 'string' | 'number' | 'boolean' | 'email' | 'url' | 'date';
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+  pattern?: RegExp;
+  custom?: (value: unknown) => boolean;
+  message?: string;
 }
 
-// 驗證配置
-export interface ValidationConfig {
-  strict?: boolean; // 嚴格模式，不允許額外字段
-  transform?: boolean; // 是否轉換數據類型
-  stripUnknown?: boolean; // 是否移除未知字段
-  abortEarly?: boolean; // 是否在遇到第一個錯誤時停止
-}
+export class ValidationService {
+  private static instance: ValidationService;
 
-// 默認驗證配置
-const defaultConfig: ValidationConfig = {
-  strict: false,
-  transform: true,
-  stripUnknown: true,
-  abortEarly: false,
-};
-
-// 數據驗證服務類
-class ValidationService {
-  private config: ValidationConfig;
-
-  constructor(config: Partial<ValidationConfig> = {}) {
-    this.config = { ...defaultConfig, ...config };
+  public static getInstance(): ValidationService {
+    if (!ValidationService.instance) {
+      ValidationService.instance = new ValidationService();
+    }
+    return ValidationService.instance;
   }
 
   /**
    * 驗證輸入數據
-   * @param schema 驗證模式
-   * @param data 要驗證的數據
-   * @param context 驗證上下文（用於錯誤消息）
-   * @returns 驗證結果
    */
-  validateInput<T>(
-    schema: ZodSchema<T>,
+  public validateInput<T = any>(
     data: unknown,
-    context?: string
+    rules: ValidationRule[]
   ): ValidationResult<T> {
+    const errors: string[] = [];
+    const validatedData: unknown = {};
+
     try {
-      const validatedData = schema.parse(data);
-      return {
-        isValid: true,
-        data: validatedData,
-      };
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const validationErrors = this.formatZodErrors(error);
-        const errorMessage = this.generateErrorMessage(
-          validationErrors,
-          context
-        );
+      for (const rule of rules) {
+        const _value = data[rule.field];
+        const _validationResult = this.validateField(value, rule);
 
-        logger.warn(`輸入驗證失敗${context ? ` (${context})` : ''}:`, {
-          errors: validationErrors,
-          data: this.sanitizeDataForLogging(data),
-        });
-
-        return {
-          isValid: false,
-          errors: validationErrors,
-          errorMessage,
-        };
-      }
-
-      logger.error('驗證過程中發生未知錯誤:', error);
-      return {
-        isValid: false,
-        errorMessage: '驗證過程中發生未知錯誤',
-      };
-    }
-  }
-
-  /**
-   * 驗證 API 響應數據
-   * @param schema 驗證模式
-   * @param response API 響應數據
-   * @param endpoint API 端點名稱
-   * @returns 驗證結果
-   */
-  validateApiResponse<T>(
-    schema: ZodSchema<T>,
-    response: unknown,
-    endpoint?: string
-  ): ValidationResult<T> {
-    try {
-      const validatedData = schema.parse(response);
-      return {
-        isValid: true,
-        data: validatedData,
-      };
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const validationErrors = this.formatZodErrors(error);
-        const errorMessage = this.generateErrorMessage(
-          validationErrors,
-          `API 響應${endpoint ? ` (${endpoint})` : ''}`
-        );
-
-        logger.error(`API 響應驗證失敗${endpoint ? ` (${endpoint})` : ''}:`, {
-          errors: validationErrors,
-          response: this.sanitizeDataForLogging(response),
-        });
-
-        return {
-          isValid: false,
-          errors: validationErrors,
-          errorMessage,
-        };
-      }
-
-      logger.error('API 響應驗證過程中發生未知錯誤:', error);
-      return {
-        isValid: false,
-        errorMessage: 'API 響應驗證過程中發生未知錯誤',
-      };
-    }
-  }
-
-  /**
-   * 安全驗證（不拋出錯誤）
-   * @param schema 驗證模式
-   * @param data 要驗證的數據
-   * @returns 驗證結果
-   */
-  safeValidate<T>(schema: ZodSchema<T>, data: unknown): ValidationResult<T> {
-    const result = schema.safeParse(data);
-
-    if (result.success) {
-      return {
-        isValid: true,
-        data: result.data,
-      };
-    }
-    const validationErrors = this.formatZodErrors(result.error);
-    return {
-      isValid: false,
-      errors: validationErrors,
-      errorMessage: this.generateErrorMessage(validationErrors),
-    };
-  }
-
-  /**
-   * 部分驗證（只驗證提供的字段）
-   * @param schema 驗證模式
-   * @param data 要驗證的數據
-   * @param partial 是否為部分驗證
-   * @returns 驗證結果
-   */
-  validatePartial<T>(
-    schema: ZodSchema<T>,
-    data: unknown,
-    partial: boolean = true
-  ): ValidationResult<T> {
-    try {
-      const partialSchema = partial ? schema.partial() : schema;
-      const validatedData = partialSchema.parse(data);
-      return {
-        isValid: true,
-        data: validatedData,
-      };
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const validationErrors = this.formatZodErrors(error);
-        return {
-          isValid: false,
-          errors: validationErrors,
-          errorMessage: this.generateErrorMessage(validationErrors, '部分驗證'),
-        };
-      }
-
-      return {
-        isValid: false,
-        errorMessage: '部分驗證過程中發生未知錯誤',
-      };
-    }
-  }
-
-  /**
-   * 驗證表單數據
-   * @param formData 表單數據
-   * @param fieldValidations 字段驗證規則
-   * @returns 驗證結果
-   */
-  validateForm(
-    formData: Record<string, any>,
-    fieldValidations: Record<string, ZodSchema<any>>
-  ): ValidationResult<Record<string, any>> {
-    const errors: ValidationError[] = [];
-    const validatedData: Record<string, any> = {};
-
-    for (const [field, schema] of Object.entries(fieldValidations)) {
-      const fieldValue = formData[field];
-      const result = this.safeValidate(schema, fieldValue);
-
-      if (result.isValid && result.data !== undefined) {
-        validatedData[field] = result.data;
-      } else if (result.errors) {
-        errors.push(
-          ...result.errors.map((error) => ({
-            ...error,
-            field,
-          }))
-        );
-      }
-    }
-
-    if (errors.length === 0) {
-      return {
-        isValid: true,
-        data: validatedData,
-      };
-    }
-    return {
-      isValid: false,
-      errors,
-      errorMessage: this.generateErrorMessage(errors, '表單驗證'),
-    };
-  }
-
-  /**
-   * 驗證文件上傳
-   * @param file 文件對象
-   * @param options 驗證選項
-   * @returns 驗證結果
-   */
-  validateFile(
-    file: File,
-    options: {
-      maxSize?: number; // 最大文件大小（字節）
-      allowedTypes?: string[]; // 允許的文件類型
-      allowedExtensions?: string[]; // 允許的文件擴展名
-    } = {}
-  ): ValidationResult<File> {
-    const errors: ValidationError[] = [];
-
-    // 檢查文件大小
-    if (options.maxSize && file.size > options.maxSize) {
-      errors.push({
-        field: 'file',
-        message: `文件大小不能超過 ${this.formatFileSize(options.maxSize)}`,
-        code: 'FILE_TOO_LARGE',
-      });
-    }
-
-    // 檢查文件類型
-    if (options.allowedTypes && !options.allowedTypes.includes(file.type)) {
-      errors.push({
-        field: 'file',
-        message: `不支持的文件類型: ${file.type}`,
-        code: 'INVALID_FILE_TYPE',
-      });
-    }
-
-    // 檢查文件擴展名
-    if (options.allowedExtensions) {
-      const extension = file.name.split('.').pop()?.toLowerCase();
-      if (!extension || !options.allowedExtensions.includes(extension)) {
-        errors.push({
-          field: 'file',
-          message: `不支持的文件擴展名: ${extension}`,
-          code: 'INVALID_FILE_EXTENSION',
-        });
-      }
-    }
-
-    if (errors.length === 0) {
-      return {
-        isValid: true,
-        data: file,
-      };
-    }
-    return {
-      isValid: false,
-      errors,
-      errorMessage: this.generateErrorMessage(errors, '文件驗證'),
-    };
-  }
-
-  /**
-   * 格式化 Zod 錯誤
-   * @param error Zod 錯誤對象
-   * @returns 格式化的驗證錯誤數組
-   */
-  private formatZodErrors(error: ZodError): ValidationError[] {
-    return error.errors.map((zodError) => ({
-      field: zodError.path.join('.'),
-      message: zodError.message,
-      code: zodError.code,
-      path: zodError.path,
-    }));
-  }
-
-  /**
-   * 生成錯誤消息
-   * @param errors 驗證錯誤數組
-   * @param context 錯誤上下文
-   * @returns 格式化的錯誤消息
-   */
-  private generateErrorMessage(
-    errors: ValidationError[],
-    context?: string
-  ): string {
-    if (errors.length === 0) {
-      return '驗證失敗';
-    }
-
-    const errorMessages = errors.map(
-      (error) => `${error.field}: ${error.message}`
-    );
-
-    const prefix = context ? `${context}失敗` : '驗證失敗';
-    return `${prefix}: ${errorMessages.join('; ')}`;
-  }
-
-  /**
-   * 清理數據用於日誌記錄（移除敏感信息）
-   * @param data 原始數據
-   * @returns 清理後的數據
-   */
-  private sanitizeDataForLogging(data: unknown): unknown {
-    if (typeof data === 'object' && data !== null) {
-      const sanitized = { ...(data as Record<string, any>) };
-
-      // 移除敏感字段
-      const sensitiveFields = [
-        'password',
-        'token',
-        'refreshToken',
-        'secret',
-        'key',
-      ];
-      sensitiveFields.forEach((field) => {
-        if (field in sanitized) {
-          sanitized[field] = '[REDACTED]';
+        if (validationResult.isValid) {
+          validatedData[rule.field] = value;
+        } else {
+          errors.push(...validationResult.errors);
         }
-      });
+      }
 
-      return sanitized;
+      return {
+        isValid: errors.length === 0,
+        data: errors.length === 0 ? validatedData : undefined,
+        errors,
+        errorMessage: errors.length > 0 ? errors.join('; ') : undefined,
+      };
+    } catch (error) {
+      logger.error('Validation error', error);
+      return {
+        isValid: false,
+        errors: ['Validation service error'],
+        errorMessage: 'Validation service error',
+      };
+    }
+  }
+
+  /**
+   * 驗證單個字段
+   */
+  private validateField(value: unknown, rule: ValidationRule): ValidationResult {
+    const errors: string[] = [];
+
+    // 檢查必填字段
+    if (
+      rule.required &&
+      (value === undefined || value === null || value === '')
+    ) {
+      errors.push(rule.message || `${rule.field} is required`);
+      return { isValid: false, errors };
     }
 
-    return data;
-  }
-
-  /**
-   * 格式化文件大小
-   * @param bytes 字節數
-   * @returns 格式化的文件大小字符串
-   */
-  private formatFileSize(bytes: number): string {
-    const units = ['B', 'KB', 'MB', 'GB'];
-    let size = bytes;
-    let unitIndex = 0;
-
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex++;
+    // 如果字段不是必填且為空，跳過其他驗證
+    if (
+      !rule.required &&
+      (value === undefined || value === null || value === '')
+    ) {
+      return { isValid: true, errors: [] };
     }
 
-    return `${size.toFixed(1)} ${units[unitIndex]}`;
+    // 類型驗證
+    if (rule.type) {
+      const _typeError = this.validateType(value, rule.type);
+      if (typeError) {
+        errors.push(typeError);
+      }
+    }
+
+    // 長度驗證
+    if (typeof value === 'string') {
+      if (rule.minLength && value.length < rule.minLength) {
+        errors.push(
+          rule.message ||
+            `${rule.field} must be at least ${rule.minLength} characters`
+        );
+      }
+      if (rule.maxLength && value.length > rule.maxLength) {
+        errors.push(
+          rule.message ||
+            `${rule.field} must be no more than ${rule.maxLength} characters`
+        );
+      }
+    }
+
+    // 數值範圍驗證
+    if (typeof value === 'number') {
+      if (rule.min !== undefined && value < rule.min) {
+        errors.push(
+          rule.message || `${rule.field} must be at least ${rule.min}`
+        );
+      }
+      if (rule.max !== undefined && value > rule.max) {
+        errors.push(
+          rule.message || `${rule.field} must be no more than ${rule.max}`
+        );
+      }
+    }
+
+    // 正則表達式驗證
+    if (rule.pattern && typeof value === 'string') {
+      if (!rule.pattern.test(value)) {
+        errors.push(rule.message || `${rule.field} format is invalid`);
+      }
+    }
+
+    // 自定義驗證
+    if (rule.custom && !rule.custom(value)) {
+      errors.push(rule.message || `${rule.field} validation failed`);
+    }
+
+    return {
+      isValid: errors.length === 0,
+      errors,
+    };
   }
 
   /**
-   * 更新驗證配置
-   * @param newConfig 新的配置
+   * 驗證數據類型
    */
-  updateConfig(newConfig: Partial<ValidationConfig>): void {
-    this.config = { ...this.config, ...newConfig };
+  private validateType(value: unknown, type: string): string | null {
+    switch (type) {
+      case 'string':
+        return typeof value === 'string' ? null : 'Must be a string';
+      case 'number':
+        return typeof value === 'number' && !isNaN(value)
+          ? null
+          : 'Must be a number';
+      case 'boolean':
+        return typeof value === 'boolean' ? null : 'Must be a boolean';
+      case 'email':
+        return this.isValidEmail(value) ? null : 'Must be a valid email';
+      case 'url':
+        return this.isValidUrl(value) ? null : 'Must be a valid URL';
+      case 'date':
+        return this.isValidDate(value) ? null : 'Must be a valid date';
+      default:
+        return null;
+    }
   }
 
   /**
-   * 獲取當前配置
-   * @returns 當前驗證配置
+   * 驗證郵箱格式
    */
-  getConfig(): ValidationConfig {
-    return { ...this.config };
+  private isValidEmail(email: string): boolean {
+    const _emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  /**
+   * 驗證URL格式
+   */
+  private isValidUrl(url: string): boolean {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * 驗證日期格式
+   */
+  private isValidDate(date: unknown): boolean {
+    const _dateObj = new Date(date);
+    return dateObj instanceof Date && !isNaN(dateObj.getTime());
+  }
+
+  /**
+   * 驗證API響應
+   */
+  public validateApiResponse<T = any>(
+    response: unknown
+  ): ValidationResult<ApiResponse<T>> {
+    try {
+      // 檢查響應結構
+      if (!response || typeof response !== 'object') {
+        return {
+          isValid: false,
+          errors: ['Invalid response format'],
+          errorMessage: 'Invalid response format',
+        };
+      }
+
+      // 檢查必要字段
+      if (typeof response.success !== 'boolean') {
+        return {
+          isValid: false,
+          errors: ['Response must contain success field'],
+          errorMessage: 'Response must contain success field',
+        };
+      }
+
+      // 如果成功，檢查數據字段
+      if (response.success && response.data === undefined) {
+        return {
+          isValid: false,
+          errors: ['Successful response must contain data field'],
+          errorMessage: 'Successful response must contain data field',
+        };
+      }
+
+      // 如果失敗，檢查錯誤信息
+      if (!response.success && !response.message && !response.errors) {
+        return {
+          isValid: false,
+          errors: ['Failed response must contain error information'],
+          errorMessage: 'Failed response must contain error information',
+        };
+      }
+
+      return {
+        isValid: true,
+        data: response as ApiResponse<T>,
+        errors: [],
+      };
+    } catch (error) {
+      logger.error('API response validation error', error);
+      return {
+        isValid: false,
+        errors: ['API response validation failed'],
+        errorMessage: 'API response validation failed',
+      };
+    }
+  }
+
+  /**
+   * 驗證用戶登錄數據
+   */
+  public validateLoginData(data: unknown): ValidationResult {
+    const rules: ValidationRule[] = [
+      { field: 'email', required: true, type: 'email' },
+      { field: 'password', required: true, minLength: 6 },
+    ];
+
+    return this.validateInput(data, rules);
+  }
+
+  /**
+   * 驗證用戶註冊數據
+   */
+  public validateRegisterData(data: unknown): ValidationResult {
+    const rules: ValidationRule[] = [
+      { field: 'email', required: true, type: 'email' },
+      { field: 'password', required: true, minLength: 8 },
+      { field: 'username', required: true, minLength: 3, maxLength: 50 },
+    ];
+
+    return this.validateInput(data, rules);
+  }
+
+  /**
+   * 驗證卡片數據
+   */
+  public validateCardData(data: unknown): ValidationResult {
+    const rules: ValidationRule[] = [
+      { field: 'name', required: true, minLength: 1, maxLength: 100 },
+      { field: 'type', required: true },
+      { field: 'rarity', required: true },
+    ];
+
+    return this.validateInput(data, rules);
   }
 }
 
-// 創建全局驗證服務實例
-export const validationService = new ValidationService();
+// 導出單例實例
+export const _validationService = ValidationService.getInstance();
 
 // 導出便捷函數
-export const validateInput = <T>(
-  schema: ZodSchema<T>,
-  data: unknown,
-  context?: string
-): ValidationResult<T> =>
-  validationService.validateInput(schema, data, context);
+export const _validateInput = (data: unknown, rules: ValidationRule[]) =>
+  validationService.validateInput(data, rules);
 
-export const validateApiResponse = <T>(
-  schema: ZodSchema<T>,
-  response: unknown,
-  endpoint?: string
-): ValidationResult<T> =>
-  validationService.validateApiResponse(schema, response, endpoint);
+export const _validateApiResponse = (response: unknown) =>
+  validationService.validateApiResponse(response);
 
-export const safeValidate = <T>(
-  schema: ZodSchema<T>,
-  data: unknown
-): ValidationResult<T> => validationService.safeValidate(schema, data);
+export const _validateLoginData = (data: unknown) =>
+  validationService.validateLoginData(data);
 
-export const validateForm = (
-  formData: Record<string, any>,
-  fieldValidations: Record<string, ZodSchema<any>>
-): ValidationResult<Record<string, any>> =>
-  validationService.validateForm(formData, fieldValidations);
+export const _validateRegisterData = (data: unknown) =>
+  validationService.validateRegisterData(data);
 
-export const validateFile = (
-  file: File,
-  options?: {
-    maxSize?: number;
-    allowedTypes?: string[];
-    allowedExtensions?: string[];
-  }
-): ValidationResult<File> => validationService.validateFile(file, options);
+export const _validateCardData = (data: unknown) =>
+  validationService.validateCardData(data);
 
-// 導出類型
-export type { ValidationResult, ValidationError, ValidationConfig };
+export default validationService;

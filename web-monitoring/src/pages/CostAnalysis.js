@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic, Spin, Alert, Table, Tag } from 'antd';
-import { 
-  DollarOutlined, 
-  ArrowUpOutlined, 
-  ArrowDownOutlined 
+import {
+  DollarOutlined,
+  ArrowUpOutlined,
+  ArrowDownOutlined
 } from '@ant-design/icons';
+import { Card, Row, Col, Statistic, Spin, Alert, Table, Tag } from 'antd';
+import React, { useState, useEffect } from 'react';
 import { Line, Pie } from 'react-chartjs-2';
+
 import { monitoringService } from '../services/monitoringService';
 
 const CostAnalysis = () => {
@@ -23,7 +24,7 @@ const CostAnalysis = () => {
       const costData = await monitoringService.getCostData();
       setData(costData);
     } catch (err) {
-      setError('加載成本數據失敗: ' + err.message);
+      setError(`加載成本數據失敗: ${  err.message}`);
     } finally {
       setLoading(false);
     }
@@ -111,7 +112,7 @@ const CostAnalysis = () => {
   return (
     <div>
       <h1><DollarOutlined /> 成本分析</h1>
-      
+
       {/* 成本概覽 */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={6}>
@@ -223,9 +224,9 @@ const CostAnalysis = () => {
 
       {/* 成本明細表格 */}
       <Card title="成本明細">
-        <Table 
-          columns={columns} 
-          dataSource={costBreakdownData} 
+        <Table
+          columns={columns}
+          dataSource={costBreakdownData}
           pagination={false}
           size="middle"
         />

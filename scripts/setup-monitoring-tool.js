@@ -5,6 +5,7 @@ const path = require('path');
  * CardStrategy 專案監控工具快速設置腳本
  */
 
+// eslint-disable-next-line no-console
 console.log('🚀 開始設置 CardStrategy 專案監控工具...\n');
 
 // 項目配置
@@ -17,6 +18,7 @@ const config = {
 
 // 創建基本目錄結構
 function createDirectories() {
+  // eslint-disable-next-line no-console
   console.log('📁 創建項目目錄...');
   
   const dirs = [
@@ -29,6 +31,7 @@ function createDirectories() {
   dirs.forEach(dir => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
+      // eslint-disable-next-line no-console
       console.log(`   ✅ ${dir}`);
     }
   });
@@ -36,6 +39,7 @@ function createDirectories() {
 
 // 創建 Docker Compose 配置
 function createDockerCompose() {
+  // eslint-disable-next-line no-console
   console.log('🐳 創建 Docker Compose 配置...');
   
   const compose = `version: '3.8'
@@ -88,11 +92,13 @@ volumes:
 `;
   
   fs.writeFileSync('docker-compose.yml', compose);
+  // eslint-disable-next-line no-console
   console.log('   ✅ docker-compose.yml');
 }
 
 // 創建 README
 function createReadme() {
+  // eslint-disable-next-line no-console
   console.log('📖 創建 README...');
   
   const readme = `# CardStrategy 專案監控工具
@@ -116,11 +122,13 @@ function createReadme() {
 `;
   
   fs.writeFileSync('README.md', readme);
+  // eslint-disable-next-line no-console
   console.log('   ✅ README.md');
 }
 
 // 創建部署腳本
 function createDeployScript() {
+  // eslint-disable-next-line no-console
   console.log('🚀 創建部署腳本...');
   
   const script = `#!/bin/bash
@@ -130,6 +138,7 @@ echo "✅ 部署完成！訪問 http://localhost:${config.frontendPort}"
 `;
   
   fs.writeFileSync('deploy.sh', script);
+  // eslint-disable-next-line no-console
   console.log('   ✅ deploy.sh');
 }
 
@@ -140,10 +149,15 @@ function main() {
   createReadme();
   createDeployScript();
   
+  // eslint-disable-next-line no-console
   console.log('\n✅ 設置完成！');
+  // eslint-disable-next-line no-console
   console.log('\n📋 下一步:');
+  // eslint-disable-next-line no-console
   console.log('   1. 配置域名: ${config.domain}');
+  // eslint-disable-next-line no-console
   console.log('   2. 運行: ./deploy.sh');
+  // eslint-disable-next-line no-console
   console.log('   3. 訪問: http://localhost:${config.frontendPort}');
 }
 

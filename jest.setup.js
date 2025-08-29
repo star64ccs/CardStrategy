@@ -54,7 +54,7 @@ jest.mock('react-redux');
 
 // Mock i18next
 jest.mock('i18next', () => ({
-  t: (key) => key,
+  t: key => key,
   changeLanguage: jest.fn(),
   language: 'zh-TW',
 }));
@@ -97,16 +97,51 @@ global.console = {
   error: jest.fn(),
 };
 
-// Mock AsyncStorage
+// Setup TextEncoder and TextDecoder for Node.js environment
+const { TextEncoder, TextDecoder } = require('util');
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// Setup btoa and atob for Node.js environment
+global.btoa = function (str) {
+  return Buffer.from(str, 'binary').toString('base64');
+};
+
+global.atob = function (str) {
+  return Buffer.from(str, 'base64').toString('binary');
+};
+
+// Mock AsyncStorage with actual storage implementation
+let storage = new Map();
 const mockAsyncStorage = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
-  getAllKeys: jest.fn(),
-  multiGet: jest.fn(),
-  multiSet: jest.fn(),
-  multiRemove: jest.fn(),
+  getItem: jest.fn(async key => {
+    return storage.get(key) || null;
+  }),
+  setItem: jest.fn(async (key, value) => {
+    storage.set(key, value);
+  }),
+  removeItem: jest.fn(async key => {
+    storage.delete(key);
+  }),
+  clear: jest.fn(async () => {
+    storage.clear();
+  }),
+  getAllKeys: jest.fn(async () => {
+    return Array.from(storage.keys());
+  }),
+  multiGet: jest.fn(async keys => {
+    return keys.map(key => [key, storage.get(key) || null]);
+  }),
+  multiSet: jest.fn(async keyValuePairs => {
+    keyValuePairs.forEach(([key, value]) => storage.set(key, value));
+  }),
+  multiRemove: jest.fn(async keys => {
+    keys.forEach(key => storage.delete(key));
+  }),
+  // 添加清除方法供測試使用
+  _clearStorage: () => {
+    storage = new Map();
+  },
 };
 
 jest.mock('@react-native-async-storage/async-storage', () => mockAsyncStorage);
@@ -197,7 +232,7 @@ const mockPlatform = {
   Version: 15,
   isPad: false,
   isTV: false,
-  select: jest.fn((obj) => obj.ios || obj.default),
+  select: jest.fn(obj => obj.ios || obj.default),
 };
 
 jest.mock('react-native/Libraries/Utilities/Platform', () => mockPlatform);
@@ -290,7 +325,7 @@ jest.mock('react-native-gesture-handler', () => {
     PinchGestureHandler: View,
     RotationGestureHandler: View,
     Directions: {},
-    gestureHandlerRootHOC: jest.fn((component) => component),
+    gestureHandlerRootHOC: jest.fn(component => component),
     // Swipeable: removed duplicate,
     // DrawerLayout: removed duplicate,
     TouchableHighlight: TouchableOpacity,

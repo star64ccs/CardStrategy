@@ -1,149 +1,84 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { authenticateToken: protect } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
+const { protect } = require('../middleware/authMiddleware');
 const logger = require('../utils/logger');
 
 const router = express.Router();
 
 // @route   GET /api/settings
-// @desc    ?��??�戶設置
+// @desc    獲取用戶設置
 // @access  Private
 router.get('/', protect, async (req, res) => {
   try {
-    // 模擬?�戶設置
+    // 模擬用戶設置數據
     const settings = {
-      preferences: {
-        language: 'zh-TW',
-        theme: 'auto',
-        currency: 'TWD',
-        timezone: 'Asia/Taipei',
-        dateFormat: 'YYYY-MM-DD',
-        timeFormat: '24h',
-      },
       notifications: {
-        email: {
-          enabled: true,
-          types: ['market_updates', 'price_alerts', 'investment_news'],
-        },
-        push: {
-          enabled: true,
-          types: ['price_alerts', 'market_updates'],
-        },
-        sms: {
-          enabled: false,
-          types: [],
-        },
-      },
-      privacy: {
-        profileVisibility: 'public',
-        collectionVisibility: 'friends',
-        showEmail: false,
-        showPhone: false,
-        allowDataCollection: true,
+        email: true,
+        push: true,
+        sms: false,
+        types: ['price_alerts', 'market_updates', 'system_notifications'],
       },
       security: {
         twoFactorEnabled: false,
+        twoFactorMethod: 'app',
+        sessionTimeout: 3600,
         loginNotifications: true,
-        sessionTimeout: 30,
-        passwordChangeRequired: false,
       },
-      display: {
-        defaultView: 'grid',
-        cardsPerPage: 20,
-        showPrices: true,
-        showCondition: true,
-        compactMode: false,
+      privacy: {
+        profileVisibility: 'public',
+        dataSharing: false,
+        analyticsTracking: true,
+      },
+      preferences: {
+        language: 'zh-TW',
+        currency: 'TWD',
+        timezone: 'Asia/Taipei',
+        theme: 'light',
+      },
+      dataExport: {
+        enabled: true,
+        formats: ['json', 'csv', 'pdf'],
+        retentionDays: 30,
       },
     };
 
-    logger.info(`?��??�戶設置: ${req.user.username}`);
+    logger.info(`獲取用戶設置: ${req.user.username}`);
 
     res.json({
       success: true,
+      message: '設置獲取成功',
       data: { settings },
     });
   } catch (error) {
-    logger.error('?��??�戶設置?�誤:', error);
+    logger.error('獲取用戶設置錯誤:', error);
     res.status(500).json({
       success: false,
-      message: '?��??�戶設置失�?',
-      code: 'GET_SETTINGS_FAILED',
+      message: error.message || '獲取設置失敗',
+      code: 'SETTINGS_FETCH_FAILED',
     });
   }
 });
 
-// @route   PUT /api/settings
-// @desc    ?�新?�戶設置
+// @route   PUT /api/settings/notifications
+// @desc    更新通知設置
 // @access  Private
 router.put(
-  '/',
-  protect,
-  [
-    body('preferences.language').optional().isIn(['zh-TW', 'en-US', 'ja-JP']),
-    body('preferences.theme').optional().isIn(['light', 'dark', 'auto']),
-    body('preferences.currency').optional().isIn(['TWD', 'USD', 'EUR', 'JPY']),
-    body('notifications.email.enabled').optional().isBoolean(),
-    body('notifications.push.enabled').optional().isBoolean(),
-    body('privacy.profileVisibility')
-      .optional()
-      .isIn(['public', 'friends', 'private']),
-    body('security.twoFactorEnabled').optional().isBoolean(),
-  ],
-  async (req, res) => {
-    try {
-// eslint-disable-next-line no-unused-vars
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: '輸入驗�?失�?',
-          code: 'VALIDATION_ERROR',
-          errors: errors.array(),
-        });
-      }
-
-      const updatedSettings = req.body;
-
-      logger.info(`?�新?�戶設置: ${req.user.username}`);
-
-      res.json({
-        success: true,
-        message: '設置?�新?��?',
-        data: { settings: updatedSettings },
-      });
-    } catch (error) {
-      logger.error('?�新?�戶設置?�誤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?�新?�戶設置失�?',
-        code: 'UPDATE_SETTINGS_FAILED',
-      });
-    }
-  }
-);
-
-// @route   POST /api/settings/notifications
-// @desc    ?�新?�知設置
-// @access  Private
-router.post(
   '/notifications',
   protect,
   [
     body('type')
       .isIn(['email', 'push', 'sms'])
-      .withMessage('?�知類�?必�??�email?�push?�sms'),
-    body('enabled').isBoolean().withMessage('?�用?�?��??�是布爾??),
-    body('types').optional().isArray().withMessage('?�知類�?必�??�數�?),
+      .withMessage('通知類型必須是email/push/sms'),
+    body('enabled').isBoolean().withMessage('啟用狀態必須是布爾值'),
+    body('types').optional().isArray().withMessage('通知類型必須是數組'),
   ],
   async (req, res) => {
     try {
-// eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗�?失�?',
+          message: '輸入驗證失敗',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -152,19 +87,19 @@ router.post(
       const { type, enabled, types = [] } = req.body;
 
       logger.info(
-        `?�新?�知設置: ${req.user.username}, 類�?: ${type}, ?�用: ${enabled}`
+        `更新通知設置: ${req.user.username}, 類型: ${type}, 啟用: ${enabled}`
       );
 
       res.json({
         success: true,
-        message: '?�知設置?�新?��?',
+        message: '通知設置更新成功',
         data: { type, enabled, types },
       });
     } catch (error) {
-      logger.error('?�新?�知設置?�誤:', error);
+      logger.error('更新通知設置錯誤:', error);
       res.status(500).json({
         success: false,
-        message: '?�新?�知設置失�?',
+        message: '更新通知設置失敗',
         code: 'UPDATE_NOTIFICATIONS_FAILED',
       });
     }
@@ -172,25 +107,25 @@ router.post(
 );
 
 // @route   POST /api/settings/security/two-factor
-// @desc    ?�用/禁用?��?素�?�?// @access  Private
+// @desc    啟用/禁用雙因素認證
+// @access  Private
 router.post(
   '/security/two-factor',
   protect,
   [
-    body('enabled').isBoolean().withMessage('?�用?�?��??�是布爾??),
+    body('enabled').isBoolean().withMessage('啟用狀態必須是布爾值'),
     body('method')
       .optional()
       .isIn(['app', 'sms', 'email'])
-      .withMessage('認�??��?必�??�app?�sms?�email'),
+      .withMessage('認證方法必須是app/sms/email'),
   ],
   async (req, res) => {
     try {
-// eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗�?失�?',
+          message: '輸入驗證失敗',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -199,57 +134,59 @@ router.post(
       const { enabled, method = 'app' } = req.body;
 
       if (enabled) {
-        // 模擬?��??��?素�?證設�?        const twoFactorSetup = {
+        // 模擬雙因素認證設置
+        const twoFactorSetup = {
           secret: 'JBSWY3DPEHPK3PXP',
           qrCode:
             'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
           backupCodes: ['123456', '234567', '345678', '456789', '567890'],
         };
 
-        logger.info(`?�用?��?素�?�? ${req.user.username}, ?��?: ${method}`);
+        logger.info(`啟用雙因素認證: ${req.user.username}, 方法: ${method}`);
 
         res.json({
           success: true,
-          message: '?��?素�?證已?�用',
+          message: '雙因素認證已啟用',
           data: { twoFactorSetup },
         });
       } else {
-        logger.info(`禁用?��?素�?�? ${req.user.username}`);
+        logger.info(`禁用雙因素認證: ${req.user.username}`);
 
         res.json({
           success: true,
-          message: '?��?素�?證已禁用',
+          message: '雙因素認證已禁用',
         });
       }
     } catch (error) {
-      logger.error('?��?素�?證設置錯�?', error);
+      logger.error('雙因素認證設置錯誤:', error);
       res.status(500).json({
         success: false,
-        message: '?��?素�?證設置失??,
+        message: '雙因素認證設置失敗',
         code: 'TWO_FACTOR_SETUP_FAILED',
       });
     }
   }
 );
 
-// @route   POST /api/settings/security/verify-two-factor
-// @desc    驗�??��?素�?�?// @access  Private
+// @route   POST /api/settings/security/two-factor/verify
+// @desc    驗證雙因素認證
+// @access  Private
 router.post(
-  '/security/verify-two-factor',
+  '/security/two-factor/verify',
   protect,
   [
     body('code')
       .isLength({ min: 6, max: 6 })
-      .withMessage('驗�?碼�??�是6位數�?),
+      .isNumeric()
+      .withMessage('驗證碼必須是6位數字'),
   ],
   async (req, res) => {
     try {
-// eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗�?失�?',
+          message: '輸入驗證失敗',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -257,168 +194,251 @@ router.post(
 
       const { code } = req.body;
 
-      // 模擬驗�?（實?��?該�?證�?實�?TOTP�?���?      const isValid = code === '123456';
-
-      if (isValid) {
-        logger.info(`?��?素�?證�?證�??? ${req.user.username}`);
+      // 模擬驗證邏輯
+      if (code === '123456') {
+        logger.info(`雙因素認證驗證成功: ${req.user.username}`);
 
         res.json({
           success: true,
-          message: '?��?素�?證�?證�???,
+          message: '雙因素認證驗證成功',
         });
       } else {
-        logger.warn(`?��?素�?證�?證失?? ${req.user.username}`);
+        logger.warn(`雙因素認證驗證失敗: ${req.user.username}, 代碼: ${code}`);
 
         res.status(400).json({
           success: false,
-          message: '驗�?碼錯�?,
+          message: '驗證碼錯誤',
           code: 'INVALID_2FA_CODE',
         });
       }
     } catch (error) {
-      logger.error('?��?素�?證�?證錯�?', error);
+      logger.error('雙因素認證驗證錯誤:', error);
       res.status(500).json({
         success: false,
-        message: '?��?素�?證�?證失??,
+        message: '雙因素認證驗證失敗',
         code: 'VERIFY_2FA_FAILED',
       });
     }
   }
 );
 
-// @route   POST /api/settings/export-data
-// @desc    導出?�戶?��?
+// @route   PUT /api/settings/privacy
+// @desc    更新隱私設置
 // @access  Private
-router.post(
-  '/export-data',
+router.put(
+  '/privacy',
   protect,
   [
-    body('format')
-      .isIn(['json', 'csv', 'pdf'])
-      .withMessage('導出?��?必�??�json?�csv?�pdf'),
-    body('dataTypes').isArray().withMessage('?��?類�?必�??�數�?),
+    body('profileVisibility')
+      .isIn(['public', 'private', 'friends'])
+      .withMessage('個人資料可見性必須是public/private/friends'),
+    body('dataSharing').isBoolean().withMessage('數據共享必須是布爾值'),
+    body('analyticsTracking').isBoolean().withMessage('分析追蹤必須是布爾值'),
   ],
   async (req, res) => {
     try {
-// eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗�?失�?',
+          message: '輸入驗證失敗',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
       }
 
-      const { format, dataTypes } = req.body;
+      const { profileVisibility, dataSharing, analyticsTracking } = req.body;
 
-      // 模擬?��?導出
-      const exportData = {
-        id: Date.now().toString(),
-        userId: req.user.id,
-        format,
-        dataTypes,
-        status: 'processing',
-        downloadUrl: null,
-        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24小�?後�???        createdAt: new Date().toISOString(),
-      };
-
-      logger.info(`?��?導出請�?: ${req.user.username}, ?��?: ${format}`);
+      logger.info(`更新隱私設置: ${req.user.username}`);
 
       res.json({
         success: true,
-        message: '?��?導出請�?已�?�?,
+        message: '隱私設置更新成功',
+        data: { profileVisibility, dataSharing, analyticsTracking },
+      });
+    } catch (error) {
+      logger.error('更新隱私設置錯誤:', error);
+      res.status(500).json({
+        success: false,
+        message: '更新隱私設置失敗',
+        code: 'UPDATE_PRIVACY_FAILED',
+      });
+    }
+  }
+);
+
+// @route   PUT /api/settings/preferences
+// @desc    更新偏好設置
+// @access  Private
+router.put(
+  '/preferences',
+  protect,
+  [
+    body('language').isIn(['zh-TW', 'en-US', 'ja-JP']).withMessage('語言必須是zh-TW/en-US/ja-JP'),
+    body('currency').isIn(['TWD', 'USD', 'JPY']).withMessage('貨幣必須是TWD/USD/JPY'),
+    body('timezone').isString().withMessage('時區必須是字符串'),
+    body('theme').isIn(['light', 'dark', 'auto']).withMessage('主題必須是light/dark/auto'),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: '輸入驗證失敗',
+          code: 'VALIDATION_ERROR',
+          errors: errors.array(),
+        });
+      }
+
+      const { language, currency, timezone, theme } = req.body;
+
+      logger.info(`更新偏好設置: ${req.user.username}`);
+
+      res.json({
+        success: true,
+        message: '偏好設置更新成功',
+        data: { language, currency, timezone, theme },
+      });
+    } catch (error) {
+      logger.error('更新偏好設置錯誤:', error);
+      res.status(500).json({
+        success: false,
+        message: '更新偏好設置失敗',
+        code: 'UPDATE_PREFERENCES_FAILED',
+      });
+    }
+  }
+);
+
+// @route   POST /api/settings/data-export
+// @desc    請求數據導出
+// @access  Private
+router.post(
+  '/data-export',
+  protect,
+  [
+    body('dataTypes').isArray().withMessage('數據類型必須是數組'),
+    body('format').isIn(['json', 'csv', 'pdf']).withMessage('格式必須是json/csv/pdf'),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          success: false,
+          message: '輸入驗證失敗',
+          code: 'VALIDATION_ERROR',
+          errors: errors.array(),
+        });
+      }
+
+      const { dataTypes, format } = req.body;
+
+      // 模擬數據導出
+      const exportData = {
+        id: 'export_' + Date.now(),
+        status: 'processing',
+        dataTypes,
+        format,
+        createdAt: new Date(),
+        estimatedCompletion: new Date(Date.now() + 5 * 60 * 1000), // 5分鐘後
+      };
+
+      logger.info(`請求數據導出: ${req.user.username}, 格式: ${format}`);
+
+      res.json({
+        success: true,
+        message: '數據導出請求已提交',
         data: { exportData },
       });
     } catch (error) {
-      logger.error('?��?導出?�誤:', error);
+      logger.error('數據導出請求錯誤:', error);
       res.status(500).json({
         success: false,
-        message: '?��?導出失�?',
-        code: 'EXPORT_DATA_FAILED',
+        message: '數據導出請求失敗',
+        code: 'DATA_EXPORT_REQUEST_FAILED',
       });
     }
   }
 );
 
-// @route   DELETE /api/settings/delete-account
-// @desc    ?�除?�戶賬戶
+// @route   GET /api/settings/data-export/:exportId
+// @desc    獲取數據導出狀態
+// @access  Private
+router.get('/data-export/:exportId', protect, async (req, res) => {
+  try {
+    const { exportId } = req.params;
+
+    // 模擬導出狀態
+    const exportStatus = {
+      id: exportId,
+      status: 'completed',
+      downloadUrl: `https://api.cardstrategy.com/exports/${exportId}.json`,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24小時後過期
+    };
+
+    logger.info(`獲取數據導出狀態: ${req.user.username}, 導出ID: ${exportId}`);
+
+    res.json({
+      success: true,
+      message: '導出狀態獲取成功',
+      data: { exportStatus },
+    });
+  } catch (error) {
+    logger.error('獲取數據導出狀態錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '獲取導出狀態失敗',
+      code: 'EXPORT_STATUS_FETCH_FAILED',
+    });
+  }
+});
+
+// @route   DELETE /api/settings/account
+// @desc    刪除賬戶
 // @access  Private
 router.delete(
-  '/delete-account',
+  '/account',
   protect,
   [
-    body('reason')
-      .optional()
-      .isLength({ max: 500 })
-      .withMessage('?�除?��??��?00?��?�?),
-    body('password').notEmpty().withMessage('密碼?��?填�?'),
+    body('confirmation').equals('DELETE').withMessage('確認刪除必須輸入DELETE'),
+    body('password').notEmpty().withMessage('密碼不能為空'),
   ],
   async (req, res) => {
     try {
-// eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗�?失�?',
+          message: '輸入驗證失敗',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
       }
 
-      const { reason = '', password } = req.body;
+      const { confirmation, password } = req.body;
 
-      // 模擬賬戶?�除
-      const accountDeletion = {
-        id: Date.now().toString(),
-        userId: req.user.id,
-        requestedAt: new Date().toISOString(),
-        effectiveDate: new Date(
-          Date.now() + 30 * 24 * 60 * 60 * 1000
-        ).toISOString(), // 30天�??��?
-        reason,
-        status: 'pending',
-      };
-
-      logger.info(`賬戶?�除請�?: ${req.user.username}, ?��?: ${reason}`);
+      // 模擬賬戶刪除
+      logger.info(`刪除賬戶: ${req.user.username}`);
 
       res.json({
         success: true,
-        message: '賬戶?�除請�?已�?交�?將在30天�??��?',
-        data: { accountDeletion },
+        message: '賬戶刪除已確認',
+        data: {
+          deletedAt: new Date(),
+          userId: req.user.id,
+        },
       });
     } catch (error) {
-      logger.error('賬戶?�除?�誤:', error);
+      logger.error('刪除賬戶錯誤:', error);
       res.status(500).json({
         success: false,
-        message: '賬戶?�除失�?',
-        code: 'DELETE_ACCOUNT_FAILED',
+        message: '刪除賬戶失敗',
+        code: 'ACCOUNT_DELETE_FAILED',
       });
     }
   }
 );
-
-// @route   POST /api/settings/cancel-deletion
-// @desc    ?��?賬戶?�除
-// @access  Private
-router.post('/cancel-deletion', protect, async (req, res) => {
-  try {
-    logger.info(`?��?賬戶?�除: ${req.user.username}`);
-
-    res.json({
-      success: true,
-      message: '賬戶?�除已�?�?,
-    });
-  } catch (error) {
-    logger.error('?��?賬戶?�除?�誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?��?賬戶?�除失�?',
-      code: 'CANCEL_DELETION_FAILED',
-    });
-  }
-});
 
 module.exports = router;

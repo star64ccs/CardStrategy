@@ -1,5 +1,7 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
 import { configureStore } from '@reduxjs/toolkit';
+
+import { createMockScanHistory } from '@/__tests__/setup/test-utils';
 import scanHistoryReducer, {
   fetchScanHistory,
   fetchScanRecord,
@@ -19,7 +21,6 @@ import scanHistoryReducer, {
   selectAllRecords,
   clearSelection,
 } from '@/store/slices/scanHistorySlice';
-import { createMockScanHistory } from '@/__tests__/setup/test-utils';
 
 // Mock scan history service
 jest.mock('@/services/scanHistoryService', () => ({
@@ -38,8 +39,8 @@ jest.mock('@/services/scanHistoryService', () => ({
 }));
 
 describe('ScanHistory Slice', () => {
-  let store: any;
-  let mockScanHistoryService: any;
+  let store: unknown;
+  let mockScanHistoryService: unknown;
 
   beforeEach(() => {
     store = configureStore({
@@ -54,7 +55,7 @@ describe('ScanHistory Slice', () => {
 
   describe('Initial State', () => {
     it('應該有正確的初始狀態', () => {
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
 
       expect(state.history).toEqual([]);
       expect(state.selectedRecord).toBeNull();
@@ -88,11 +89,11 @@ describe('ScanHistory Slice', () => {
 
   describe('fetchScanHistory', () => {
     it('應該成功獲取掃描歷史', async () => {
-      const mockHistory = [
+      const _mockHistory = [
         createMockScanHistory(),
         createMockScanHistory({ id: '2' }),
       ];
-      const mockResponse = {
+      const _mockResponse = {
         history: mockHistory,
         total: 2,
         page: 1,
@@ -107,7 +108,7 @@ describe('ScanHistory Slice', () => {
 
       await store.dispatch(fetchScanHistory());
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.history).toEqual(mockHistory);
       expect(state.pagination.total).toBe(2);
       expect(state.isLoading).toBe(false);
@@ -115,14 +116,14 @@ describe('ScanHistory Slice', () => {
     });
 
     it('應該處理獲取掃描歷史失敗', async () => {
-      const errorMessage = '獲取掃描歷史失敗';
+      const _errorMessage = '獲取掃描歷史失敗';
       mockScanHistoryService.getScanHistory.mockRejectedValue(
         new Error(errorMessage)
       );
 
       await store.dispatch(fetchScanHistory());
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.error).toBe(errorMessage);
       expect(state.isLoading).toBe(false);
     });
@@ -130,12 +131,12 @@ describe('ScanHistory Slice', () => {
 
   describe('fetchScanRecord', () => {
     it('應該成功獲取單個掃描記錄', async () => {
-      const mockRecord = createMockScanHistory();
+      const _mockRecord = createMockScanHistory();
       mockScanHistoryService.getScanRecord.mockResolvedValue(mockRecord);
 
       await store.dispatch(fetchScanRecord('1'));
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.selectedRecord).toEqual(mockRecord);
       expect(state.isLoading).toBe(false);
     });
@@ -143,8 +144,8 @@ describe('ScanHistory Slice', () => {
 
   describe('createScanRecord', () => {
     it('應該成功創建掃描記錄', async () => {
-      const mockRecord = createMockScanHistory();
-      const newRecordData = {
+      const _mockRecord = createMockScanHistory();
+      const _newRecordData = {
         cardId: '1',
         scanType: 'recognition' as const,
         imageUri: 'file://test.jpg',
@@ -155,15 +156,15 @@ describe('ScanHistory Slice', () => {
 
       await store.dispatch(createScanRecord(newRecordData));
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.history).toContainEqual(mockRecord);
     });
   });
 
   describe('updateScanRecord', () => {
     it('應該成功更新掃描記錄', async () => {
-      const mockRecord = createMockScanHistory();
-      const updatedRecord = { ...mockRecord, notes: 'Updated note' };
+      const _mockRecord = createMockScanHistory();
+      const _updatedRecord = { ...mockRecord, notes: 'Updated note' };
 
       mockScanHistoryService.updateScanRecord.mockResolvedValue(updatedRecord);
 
@@ -171,14 +172,14 @@ describe('ScanHistory Slice', () => {
         updateScanRecord({ recordId: '1', updates: { notes: 'Updated note' } })
       );
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.history).toContainEqual(updatedRecord);
     });
   });
 
   describe('deleteScanRecord', () => {
     it('應該成功刪除掃描記錄', async () => {
-      const mockRecord = createMockScanHistory();
+      const _mockRecord = createMockScanHistory();
 
       // 先添加記錄到狀態
       store.dispatch({
@@ -196,56 +197,56 @@ describe('ScanHistory Slice', () => {
 
       await store.dispatch(deleteScanRecord('1'));
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.history).not.toContainEqual(mockRecord);
     });
   });
 
   describe('toggleFavorite', () => {
     it('應該成功切換收藏狀態', async () => {
-      const mockRecord = createMockScanHistory({ isFavorite: false });
-      const updatedRecord = { ...mockRecord, isFavorite: true };
+      const _mockRecord = createMockScanHistory({ isFavorite: false });
+      const _updatedRecord = { ...mockRecord, isFavorite: true };
 
       mockScanHistoryService.toggleFavorite.mockResolvedValue(updatedRecord);
 
       await store.dispatch(toggleFavorite('1'));
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.history).toContainEqual(updatedRecord);
     });
   });
 
   describe('addNote', () => {
     it('應該成功添加筆記', async () => {
-      const mockRecord = createMockScanHistory();
-      const updatedRecord = { ...mockRecord, notes: 'New note' };
+      const _mockRecord = createMockScanHistory();
+      const _updatedRecord = { ...mockRecord, notes: 'New note' };
 
       mockScanHistoryService.addNote.mockResolvedValue(updatedRecord);
 
       await store.dispatch(addNote({ recordId: '1', note: 'New note' }));
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.history).toContainEqual(updatedRecord);
     });
   });
 
   describe('addTags', () => {
     it('應該成功添加標籤', async () => {
-      const mockRecord = createMockScanHistory();
-      const updatedRecord = { ...mockRecord, tags: ['new', 'tag'] };
+      const _mockRecord = createMockScanHistory();
+      const _updatedRecord = { ...mockRecord, tags: ['new', 'tag'] };
 
       mockScanHistoryService.addTags.mockResolvedValue(updatedRecord);
 
       await store.dispatch(addTags({ recordId: '1', tags: ['new', 'tag'] }));
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.history).toContainEqual(updatedRecord);
     });
   });
 
   describe('fetchScanStatistics', () => {
     it('應該成功獲取統計數據', async () => {
-      const mockStatistics = {
+      const _mockStatistics = {
         totalScans: 100,
         successfulScans: 95,
         failedScans: 5,
@@ -271,15 +272,15 @@ describe('ScanHistory Slice', () => {
 
       await store.dispatch(fetchScanStatistics());
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.statistics).toEqual(mockStatistics);
     });
   });
 
   describe('searchScanHistory', () => {
     it('應該成功搜索掃描歷史', async () => {
-      const mockHistory = [createMockScanHistory()];
-      const mockResponse = {
+      const _mockHistory = [createMockScanHistory()];
+      const _mockResponse = {
         history: mockHistory,
         total: 1,
         page: 1,
@@ -294,7 +295,7 @@ describe('ScanHistory Slice', () => {
 
       await store.dispatch(searchScanHistory({ query: 'test', filters: {} }));
 
-      const state = store.getState().scanHistory;
+      const _state = store.getState().scanHistory;
       expect(state.history).toEqual(mockHistory);
     });
   });
@@ -310,17 +311,17 @@ describe('ScanHistory Slice', () => {
 
         store.dispatch(clearError());
 
-        const state = store.getState().scanHistory;
+        const _state = store.getState().scanHistory;
         expect(state.error).toBeNull();
       });
     });
 
     describe('setFilters', () => {
       it('應該設置過濾器', () => {
-        const newFilters = { scanType: 'recognition', successOnly: true };
+        const _newFilters = { scanType: 'recognition', successOnly: true };
         store.dispatch(setFilters(newFilters));
 
-        const state = store.getState().scanHistory;
+        const _state = store.getState().scanHistory;
         expect(state.filters.scanType).toBe('recognition');
         expect(state.filters.successOnly).toBe(true);
       });
@@ -333,7 +334,7 @@ describe('ScanHistory Slice', () => {
 
         store.dispatch(clearFilters());
 
-        const state = store.getState().scanHistory;
+        const _state = store.getState().scanHistory;
         expect(state.filters.scanType).toBeUndefined();
       });
     });
@@ -342,7 +343,7 @@ describe('ScanHistory Slice', () => {
       it('應該切換選擇模式', () => {
         store.dispatch(toggleSelectionMode());
 
-        const state = store.getState().scanHistory;
+        const _state = store.getState().scanHistory;
         expect(state.isSelectionMode).toBe(true);
 
         store.dispatch(toggleSelectionMode());
@@ -354,7 +355,7 @@ describe('ScanHistory Slice', () => {
       it('應該切換記錄選擇狀態', () => {
         store.dispatch(toggleRecordSelection('1'));
 
-        const state = store.getState().scanHistory;
+        const _state = store.getState().scanHistory;
         expect(state.selectedRecords).toContain('1');
 
         store.dispatch(toggleRecordSelection('1'));
@@ -364,7 +365,7 @@ describe('ScanHistory Slice', () => {
 
     describe('selectAllRecords', () => {
       it('應該選擇所有記錄', () => {
-        const mockHistory = [
+        const _mockHistory = [
           createMockScanHistory(),
           createMockScanHistory({ id: '2' }),
         ];
@@ -383,7 +384,7 @@ describe('ScanHistory Slice', () => {
 
         store.dispatch(selectAllRecords());
 
-        const state = store.getState().scanHistory;
+        const _state = store.getState().scanHistory;
         expect(state.selectedRecords).toEqual(['1', '2']);
       });
     });
@@ -396,7 +397,7 @@ describe('ScanHistory Slice', () => {
 
         store.dispatch(clearSelection());
 
-        const state = store.getState().scanHistory;
+        const _state = store.getState().scanHistory;
         expect(state.selectedRecords).toEqual([]);
       });
     });

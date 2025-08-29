@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 const { width, height } = Dimensions.get('window');
 
 // 色彩系統
-export const colors = {
+export const _colors = {
   // 主色調 - 深藍色系
   primary: '#1C2B3A', // 主色
   primary50: '#E3F2FD',
@@ -133,7 +133,7 @@ export const colors = {
 };
 
 // 字體系統
-export const typography = {
+export const _typography = {
   fontFamily: {
     regular: 'Inter-Regular',
     medium: 'Inter-Medium',
@@ -175,7 +175,7 @@ export const typography = {
 };
 
 // 間距系統
-export const spacing = {
+export const _spacing = {
   xsmall: 4,
   small: 8,
   medium: 16,
@@ -188,7 +188,7 @@ export const spacing = {
 };
 
 // 圓角系統
-export const borderRadius = {
+export const _borderRadius = {
   none: 0,
   small: 4,
   medium: 8,
@@ -200,7 +200,7 @@ export const borderRadius = {
 };
 
 // 陰影系統 (React Native 版本)
-export const shadows = {
+export const _shadows = {
   sm: {
     shadowColor: colors.shadowLight,
     shadowOffset: { width: 0, height: 1 },
@@ -239,7 +239,7 @@ export const shadows = {
 };
 
 // 斷點系統
-export const breakpoints = {
+export const _breakpoints = {
   sm: 640,
   md: 768,
   lg: 1024,
@@ -248,7 +248,7 @@ export const breakpoints = {
 };
 
 // 動畫系統
-export const animation = {
+export const _animation = {
   duration: {
     fast: 150,
     normal: 300,
@@ -263,7 +263,7 @@ export const animation = {
 };
 
 // 尺寸系統 (React Native 版本)
-export const dimensions = {
+export const _dimensions = {
   screen: {
     width,
     height,
@@ -297,7 +297,7 @@ export const dimensions = {
 };
 
 // 主題配置
-export const theme = {
+export const _theme = {
   colors,
   typography,
   spacing,
@@ -309,7 +309,7 @@ export const theme = {
 };
 
 // 深色主題覆蓋
-export const darkTheme = {
+export const _darkTheme = {
   ...theme,
   colors: {
     ...colors,

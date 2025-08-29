@@ -6,6 +6,7 @@ const path = require('path');
  * 優化核心代碼結構和性能
  */
 
+// eslint-disable-next-line no-console
 console.log('⚡ 開始代碼優化增強...\n');
 
 // 優化結果
@@ -24,6 +25,7 @@ const optimizationResult = {
 
 // 1. 優化服務文件結構
 function optimizeServiceFiles() {
+  // eslint-disable-next-line no-console
   console.log('🔧 優化服務文件結構...');
   
   const serviceFiles = [
@@ -55,11 +57,13 @@ function optimizeServiceFiles() {
           content = performanceComment + content;
           fs.writeFileSync(serviceFile, content);
           optimizationResult.optimizedFiles.push(serviceFile);
+          // eslint-disable-next-line no-console
           console.log(`   ✅ 已優化: ${serviceFile}`);
         }
       }
     } catch (error) {
       optimizationResult.errors.push(`優化 ${serviceFile} 失敗: ${error.message}`);
+      // eslint-disable-next-line no-console
       console.log(`   ❌ 優化失敗: ${serviceFile}`);
     }
   });
@@ -67,6 +71,7 @@ function optimizeServiceFiles() {
 
 // 2. 優化組件結構
 function optimizeComponents() {
+  // eslint-disable-next-line no-console
   console.log('🎨 優化組件結構...');
   
   const componentFiles = [
@@ -103,11 +108,13 @@ function optimizeComponents() {
           
           fs.writeFileSync(componentFile, content);
           optimizationResult.optimizedFiles.push(componentFile);
+          // eslint-disable-next-line no-console
           console.log(`   ✅ 已優化: ${componentFile}`);
         }
       }
     } catch (error) {
       optimizationResult.errors.push(`優化 ${componentFile} 失敗: ${error.message}`);
+      // eslint-disable-next-line no-console
       console.log(`   ❌ 優化失敗: ${componentFile}`);
     }
   });
@@ -115,6 +122,7 @@ function optimizeComponents() {
 
 // 3. 創建性能監控工具
 function createPerformanceMonitoring() {
+  // eslint-disable-next-line no-console
   console.log('📊 創建性能監控工具...');
   
   const performanceMonitor = `
@@ -191,15 +199,18 @@ export const performanceMonitor = PerformanceMonitor.getInstance();
   try {
     fs.writeFileSync('src/utils/performanceMonitor.ts', performanceMonitor);
     optimizationResult.optimizedFiles.push('src/utils/performanceMonitor.ts');
+    // eslint-disable-next-line no-console
     console.log('   ✅ 已創建性能監控工具');
   } catch (error) {
     optimizationResult.errors.push(`創建性能監控工具失敗: ${error.message}`);
+    // eslint-disable-next-line no-console
     console.log('   ❌ 創建性能監控工具失敗');
   }
 }
 
 // 4. 創建緩存管理工具
 function createCacheManager() {
+  // eslint-disable-next-line no-console
   console.log('💾 創建緩存管理工具...');
   
   const cacheManager = `
@@ -308,15 +319,18 @@ export const cacheManager = CacheManager.getInstance();
   try {
     fs.writeFileSync('src/utils/cacheManager.ts', cacheManager);
     optimizationResult.optimizedFiles.push('src/utils/cacheManager.ts');
+    // eslint-disable-next-line no-console
     console.log('   ✅ 已創建緩存管理工具');
   } catch (error) {
     optimizationResult.errors.push(`創建緩存管理工具失敗: ${error.message}`);
+    // eslint-disable-next-line no-console
     console.log('   ❌ 創建緩存管理工具失敗');
   }
 }
 
 // 5. 創建錯誤處理增強
 function createErrorHandler() {
+  // eslint-disable-next-line no-console
   console.log('🛡️ 創建錯誤處理增強...');
   
   const errorHandler = `
@@ -411,15 +425,18 @@ export const errorHandler = ErrorHandler.getInstance();
   try {
     fs.writeFileSync('src/utils/errorHandler.ts', errorHandler);
     optimizationResult.optimizedFiles.push('src/utils/errorHandler.ts');
+    // eslint-disable-next-line no-console
     console.log('   ✅ 已創建錯誤處理增強');
   } catch (error) {
     optimizationResult.errors.push(`創建錯誤處理增強失敗: ${error.message}`);
+    // eslint-disable-next-line no-console
     console.log('   ❌ 創建錯誤處理增強失敗');
   }
 }
 
 // 6. 創建代碼質量檢查工具
 function createCodeQualityChecker() {
+  // eslint-disable-next-line no-console
   console.log('🔍 創建代碼質量檢查工具...');
   
   const codeQualityChecker = `
@@ -507,15 +524,18 @@ export const codeQualityChecker = CodeQualityChecker.getInstance();
   try {
     fs.writeFileSync('src/utils/codeQualityChecker.ts', codeQualityChecker);
     optimizationResult.optimizedFiles.push('src/utils/codeQualityChecker.ts');
+    // eslint-disable-next-line no-console
     console.log('   ✅ 已創建代碼質量檢查工具');
   } catch (error) {
     optimizationResult.errors.push(`創建代碼質量檢查工具失敗: ${error.message}`);
+    // eslint-disable-next-line no-console
     console.log('   ❌ 創建代碼質量檢查工具失敗');
   }
 }
 
 // 7. 創建優化摘要
 function createOptimizationSummary() {
+  // eslint-disable-next-line no-console
   console.log('📋 創建優化摘要...');
   
   const summary = {
@@ -572,6 +592,7 @@ ${summary.recommendations.map(rec => `- ${rec}`).join('\n')}
     );
     
     optimizationResult.optimizedFiles.push('CODE_OPTIMIZATION_SUMMARY.md');
+    // eslint-disable-next-line no-console
     console.log('   ✅ 已創建優化摘要: CODE_OPTIMIZATION_SUMMARY.md');
     
   } catch (error) {
@@ -581,6 +602,7 @@ ${summary.recommendations.map(rec => `- ${rec}`).join('\n')}
 
 // 主執行函數
 function executeOptimization() {
+  // eslint-disable-next-line no-console
   console.log('🚀 開始代碼優化增強...\n');
   
   optimizeServiceFiles();
@@ -608,34 +630,55 @@ function executeOptimization() {
   );
   
   // 輸出摘要
+  // eslint-disable-next-line no-console
   console.log('\n✅ 代碼優化增強完成！');
+  // eslint-disable-next-line no-console
   console.log('\n📊 優化摘要:');
+  // eslint-disable-next-line no-console
   console.log(`   優化文件: ${optimizationResult.summary.filesOptimized}`);
+  // eslint-disable-next-line no-console
   console.log(`   性能提升: ${optimizationResult.summary.performanceGain}%`);
+  // eslint-disable-next-line no-console
   console.log(`   代碼質量: ${optimizationResult.summary.codeQuality}/100`);
+  // eslint-disable-next-line no-console
   console.log(`   錯誤數量: ${optimizationResult.errors.length}`);
   
   if (optimizationResult.errors.length > 0) {
+    // eslint-disable-next-line no-console
     console.log('\n⚠️ 優化錯誤:');
     optimizationResult.errors.forEach(error => {
+      // eslint-disable-next-line no-console
       console.log(`   - ${error}`);
     });
   }
   
+  // eslint-disable-next-line no-console
   console.log('\n📁 詳細報告: reports/code-optimization-result.json');
+  // eslint-disable-next-line no-console
   console.log('📋 優化摘要: CODE_OPTIMIZATION_SUMMARY.md');
   
+  // eslint-disable-next-line no-console
   console.log('\n🔧 新增工具:');
+  // eslint-disable-next-line no-console
   console.log('   • 性能監控工具: src/utils/performanceMonitor.ts');
+  // eslint-disable-next-line no-console
   console.log('   • 緩存管理工具: src/utils/cacheManager.ts');
+  // eslint-disable-next-line no-console
   console.log('   • 錯誤處理增強: src/utils/errorHandler.ts');
+  // eslint-disable-next-line no-console
   console.log('   • 代碼質量檢查: src/utils/codeQualityChecker.ts');
   
+  // eslint-disable-next-line no-console
   console.log('\n💡 使用建議:');
+  // eslint-disable-next-line no-console
   console.log('   1. 在組件中導入並使用 React.memo');
+  // eslint-disable-next-line no-console
   console.log('   2. 使用性能監控工具追蹤關鍵操作');
+  // eslint-disable-next-line no-console
   console.log('   3. 實施緩存策略減少重複計算');
+  // eslint-disable-next-line no-console
   console.log('   4. 使用錯誤處理器提升穩定性');
+  // eslint-disable-next-line no-console
   console.log('   5. 定期運行代碼質量檢查');
 }
 

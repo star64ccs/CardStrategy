@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+// eslint-disable-next-line no-console
 console.log('🔄 開始更新條款內容...');
 
 // 讀取原始條款文件
@@ -588,44 +589,59 @@ const aiUsagePolicyUpdates = `
 // 應用更新
 termsContent = termsContent.replace(
   /## 1\. 服務說明[\s\S]*?## 2\. 付費服務[\s\S]*?## 3\. 付款方式[\s\S]*?## 4\. 退款政策[\s\S]*?## 5\. 取消訂閱[\s\S]*?## 6\. 聯繫方式[\s\S]*?## 7\. 政策更新[\s\S]*?`;/,
-  purchasePolicyUpdates + '`,'
+  `${purchasePolicyUpdates  }\`,`
 );
 
 termsContent = termsContent.replace(
   /## 1\. 投資風險警告[\s\S]*?## 2\. 服務限制[\s\S]*?## 3\. 第三方內容[\s\S]*?## 4\. 技術限制[\s\S]*?## 5\. 責任限制[\s\S]*?## 6\. 聯繫方式[\s\S]*?`;/,
-  disclaimerUpdates + '`,'
+  `${disclaimerUpdates  }\`,`
 );
 
 termsContent = termsContent.replace(
   /## 3\. 第三方 Cookie[\s\S]*?## 4\. Cookie 管理[\s\S]*?## 5\. 移動應用數據[\s\S]*?## 6\. 數據保護[\s\S]*?## 7\. 政策更新[\s\S]*?## 8\. 聯繫方式[\s\S]*?`;/,
-  cookiePolicyUpdates + '`,'
+  `${cookiePolicyUpdates  }\`,`
 );
 
 termsContent = termsContent.replace(
   /## 1\. 服務概述[\s\S]*?## 2\. 帳戶註冊[\s\S]*?## 3\. 可接受使用[\s\S]*?## 4\. 內容政策[\s\S]*?## 5\. 知識產權[\s\S]*?## 6\. 服務變更[\s\S]*?## 7\. 責任限制[\s\S]*?## 8\. 爭議解決[\s\S]*?## 9\. 條款更新[\s\S]*?## 10\. 聯繫方式[\s\S]*?`;/,
-  termsOfUseUpdates + '`,'
+  `${termsOfUseUpdates  }\`,`
 );
 
 termsContent = termsContent.replace(
   /## 1\. AI 功能概述[\s\S]*?## 2\. AI 功能說明[\s\S]*?## 3\. 數據使用[\s\S]*?## 4\. AI 決策透明度[\s\S]*?## 5\. 用戶權利[\s\S]*?## 6\. 風險和限制[\s\S]*?## 7\. 持續改進[\s\S]*?## 8\. 合規要求[\s\S]*?## 9\. 政策更新[\s\S]*?## 10\. 聯繫方式[\s\S]*?`;/,
-  aiUsagePolicyUpdates + '`,'
+  `${aiUsagePolicyUpdates  }\`,`
 );
 
 // 寫入更新後的文件
 fs.writeFileSync(termsPath, termsContent, 'utf8');
 
+// eslint-disable-next-line no-console
 console.log('✅ 條款內容更新完成！');
+// eslint-disable-next-line no-console
 console.log('📝 已更新以下條款：');
+// eslint-disable-next-line no-console
 console.log('   - 購買及退款政策 (v2.0)');
+// eslint-disable-next-line no-console
 console.log('   - 免責聲明 (v2.0)');
+// eslint-disable-next-line no-console
 console.log('   - Cookie 政策 (v2.0)');
+// eslint-disable-next-line no-console
 console.log('   - 使用條款 (v2.0)');
+// eslint-disable-next-line no-console
 console.log('   - AI 使用政策 (v2.0)');
+// eslint-disable-next-line no-console
 console.log('');
+// eslint-disable-next-line no-console
 console.log('🎯 主要更新內容：');
+// eslint-disable-next-line no-console
 console.log('   - 添加了AI功能相關條款');
+// eslint-disable-next-line no-console
 console.log('   - 更新了準確率承諾');
+// eslint-disable-next-line no-console
 console.log('   - 加強了第三方服務說明');
+// eslint-disable-next-line no-console
 console.log('   - 完善了數據保護條款');
+// eslint-disable-next-line no-console
 console.log('   - 更新了服務等級和價格');
+// eslint-disable-next-line no-console
 console.log('   - 添加了AI功能退款政策');

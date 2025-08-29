@@ -65,7 +65,7 @@ module.exports = {
     );
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
     // 刪除測試數據
     await queryInterface.bulkDelete('Collections', null, {});
     await queryInterface.bulkDelete('Cards', null, {});

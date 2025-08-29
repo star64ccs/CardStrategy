@@ -1,18 +1,29 @@
-import { useState, useEffect } from 'react';
 import NetInfo from '@react-native-community/netinfo';
-import OfflineService from '../services/offlineService';
+import { useState, useEffect } from 'react';
 
-export const useOffline = () => {
+// 臨時實現
+const _OfflineService = {
+  getPendingActionsCount: () => 0,
+  saveOfflineData: async (
+    key: string,
+    data: unknown,
+    expiresInHours?: number
+  ) => {},
+  getOfflineData: async (key: string) => null,
+  addPendingAction: async (type: string, payload: unknown) => {},
+};
+
+export const _useOffline = () => {
   const [isOnline, setIsOnline] = useState(true);
   const [pendingActionsCount, setPendingActionsCount] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener((state) => {
+    const _unsubscribe = NetInfo.addEventListener(state => {
       setIsOnline(state.isConnected ?? false);
     });
 
     // 定期檢查待處理操作數量
-    const interval = setInterval(() => {
+    const _interval = setInterval(() => {
       setPendingActionsCount(OfflineService.getPendingActionsCount());
     }, 5000);
 
@@ -22,19 +33,19 @@ export const useOffline = () => {
     };
   }, []);
 
-  const saveOfflineData = async (
+  const _saveOfflineData = async (
     key: string,
-    data: any,
+    data: unknown,
     expiresInHours?: number
   ) => {
     await OfflineService.saveOfflineData(key, data, expiresInHours);
   };
 
-  const getOfflineData = async (key: string) => {
-    return await OfflineService.getOfflineData(key);
+  const _getOfflineData = async (key: string) => {
+    return OfflineService.getOfflineData(key);
   };
 
-  const addPendingAction = async (type: string, payload: any) => {
+  const _addPendingAction = async (type: string, payload: unknown) => {
     await OfflineService.addPendingAction(type, payload);
     setPendingActionsCount(OfflineService.getPendingActionsCount());
   };

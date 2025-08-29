@@ -1,14 +1,14 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { scanHistoryService } from '../../../services/scanHistoryService';
 import { apiService } from '../../../services/apiService';
+import { scanHistoryService } from '../../../services/scanHistoryService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../utils/logger');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('ScanHistoryService', () => {
   beforeEach(() => {
@@ -16,14 +16,14 @@ describe('ScanHistoryService', () => {
   });
 
   describe('getScanHistory', () => {
-    const mockFilters = {
+    const _mockFilters = {
       scanType: 'recognition' as const,
       successOnly: true,
       page: 1,
       limit: 10,
     };
 
-    const mockScanHistory = {
+    const _mockScanHistory = {
       history: [
         {
           id: 'scan-1',
@@ -66,7 +66,7 @@ describe('ScanHistoryService', () => {
         message: '掃描歷史獲取成功',
       });
 
-      const result = await scanHistoryService.getScanHistory(mockFilters);
+      const _result = await scanHistoryService.getScanHistory(mockFilters);
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockScanHistory);
@@ -83,7 +83,7 @@ describe('ScanHistoryService', () => {
         message: '掃描歷史獲取成功',
       });
 
-      const result = await scanHistoryService.getScanHistory();
+      const _result = await scanHistoryService.getScanHistory();
 
       expect(result.success).toBe(true);
       expect(mockApiService.get).toHaveBeenCalledWith(expect.any(String), {});
@@ -100,8 +100,8 @@ describe('ScanHistoryService', () => {
   });
 
   describe('getScanRecord', () => {
-    const mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockScanRecord = {
+    const _mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockScanRecord = {
       id: mockRecordId,
       userId: 'user-123',
       cardId: 'card-123',
@@ -133,7 +133,7 @@ describe('ScanHistoryService', () => {
         message: '掃描記錄獲取成功',
       });
 
-      const result = await scanHistoryService.getScanRecord(mockRecordId);
+      const _result = await scanHistoryService.getScanRecord(mockRecordId);
 
       expect(result).toEqual(mockScanRecord);
       expect(mockApiService.get).toHaveBeenCalledWith(expect.any(String));
@@ -162,7 +162,7 @@ describe('ScanHistoryService', () => {
   });
 
   describe('createScanRecord', () => {
-    const mockScanData = {
+    const _mockScanData = {
       cardId: 'card-123',
       cardName: '火球術',
       scanType: 'recognition' as const,
@@ -183,7 +183,7 @@ describe('ScanHistoryService', () => {
       isFavorite: false,
     };
 
-    const mockCreatedRecord = {
+    const _mockCreatedRecord = {
       id: 'scan-2',
       userId: 'user-123',
       ...mockScanData,
@@ -198,7 +198,7 @@ describe('ScanHistoryService', () => {
         message: '掃描記錄創建成功',
       });
 
-      const result = await scanHistoryService.createScanRecord(mockScanData);
+      const _result = await scanHistoryService.createScanRecord(mockScanData);
 
       expect(result).toEqual(mockCreatedRecord);
       expect(mockApiService.post).toHaveBeenCalledWith(
@@ -219,13 +219,13 @@ describe('ScanHistoryService', () => {
   });
 
   describe('updateScanRecord', () => {
-    const mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockUpdates = {
+    const _mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockUpdates = {
       notes: '更新後的筆記',
       tags: ['spell', 'fire', 'updated'],
     };
 
-    const mockUpdatedRecord = {
+    const _mockUpdatedRecord = {
       id: mockRecordId,
       userId: 'user-123',
       cardId: 'card-123',
@@ -254,7 +254,7 @@ describe('ScanHistoryService', () => {
         message: '掃描記錄更新成功',
       });
 
-      const result = await scanHistoryService.updateScanRecord(
+      const _result = await scanHistoryService.updateScanRecord(
         mockRecordId,
         mockUpdates
       );
@@ -284,7 +284,7 @@ describe('ScanHistoryService', () => {
   });
 
   describe('deleteScanRecord', () => {
-    const mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該成功刪除掃描記錄', async () => {
       mockApiService.delete.mockResolvedValue({
@@ -315,7 +315,7 @@ describe('ScanHistoryService', () => {
   });
 
   describe('deleteMultipleRecords', () => {
-    const mockRecordIds = ['scan-1', 'scan-2', 'scan-3'];
+    const _mockRecordIds = ['scan-1', 'scan-2', 'scan-3'];
 
     it('應該成功批量刪除掃描記錄', async () => {
       mockApiService.post.mockResolvedValue({
@@ -354,8 +354,8 @@ describe('ScanHistoryService', () => {
   });
 
   describe('toggleFavorite', () => {
-    const mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockToggledRecord = {
+    const _mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockToggledRecord = {
       id: mockRecordId,
       userId: 'user-123',
       cardId: 'card-123',
@@ -383,7 +383,7 @@ describe('ScanHistoryService', () => {
         message: '收藏狀態切換成功',
       });
 
-      const result = await scanHistoryService.toggleFavorite(mockRecordId);
+      const _result = await scanHistoryService.toggleFavorite(mockRecordId);
 
       expect(result).toEqual(mockToggledRecord);
       expect(mockApiService.patch).toHaveBeenCalledWith(expect.any(String));
@@ -407,9 +407,9 @@ describe('ScanHistoryService', () => {
   });
 
   describe('addNote', () => {
-    const mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockNote = '這是一張很好的卡片';
-    const mockUpdatedRecord = {
+    const _mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockNote = '這是一張很好的卡片';
+    const _mockUpdatedRecord = {
       id: mockRecordId,
       userId: 'user-123',
       cardId: 'card-123',
@@ -438,7 +438,7 @@ describe('ScanHistoryService', () => {
         message: '筆記添加成功',
       });
 
-      const result = await scanHistoryService.addNote(mockRecordId, mockNote);
+      const _result = await scanHistoryService.addNote(mockRecordId, mockNote);
 
       expect(result).toEqual(mockUpdatedRecord);
       expect(mockApiService.patch).toHaveBeenCalledWith(expect.any(String), {
@@ -476,9 +476,9 @@ describe('ScanHistoryService', () => {
   });
 
   describe('addTags', () => {
-    const mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockTags = ['rare', 'foil', 'graded'];
-    const mockUpdatedRecord = {
+    const _mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockTags = ['rare', 'foil', 'graded'];
+    const _mockUpdatedRecord = {
       id: mockRecordId,
       userId: 'user-123',
       cardId: 'card-123',
@@ -506,7 +506,7 @@ describe('ScanHistoryService', () => {
         message: '標籤添加成功',
       });
 
-      const result = await scanHistoryService.addTags(mockRecordId, mockTags);
+      const _result = await scanHistoryService.addTags(mockRecordId, mockTags);
 
       expect(result).toEqual(mockUpdatedRecord);
       expect(mockApiService.patch).toHaveBeenCalledWith(expect.any(String), {
@@ -544,7 +544,7 @@ describe('ScanHistoryService', () => {
   });
 
   describe('getScanStatistics', () => {
-    const mockStatistics = {
+    const _mockStatistics = {
       totalScans: 100,
       successfulScans: 85,
       failedScans: 15,
@@ -577,7 +577,7 @@ describe('ScanHistoryService', () => {
         message: '統計獲取成功',
       });
 
-      const result = await scanHistoryService.getScanStatistics();
+      const _result = await scanHistoryService.getScanStatistics();
 
       expect(result).toEqual(mockStatistics);
       expect(mockApiService.get).toHaveBeenCalledWith(expect.any(String));
@@ -594,20 +594,20 @@ describe('ScanHistoryService', () => {
   });
 
   describe('exportScanHistory', () => {
-    const mockFilters = {
+    const _mockFilters = {
       scanType: 'recognition' as const,
       successOnly: true,
     };
 
     it('應該成功導出 CSV 格式', async () => {
-      const mockDownloadUrl = 'https://example.com/export.csv';
+      const _mockDownloadUrl = 'https://example.com/export.csv';
       mockApiService.post.mockResolvedValue({
         success: true,
         data: { downloadUrl: mockDownloadUrl },
         message: '導出成功',
       });
 
-      const result = await scanHistoryService.exportScanHistory(
+      const _result = await scanHistoryService.exportScanHistory(
         'csv',
         mockFilters
       );
@@ -621,14 +621,14 @@ describe('ScanHistoryService', () => {
     });
 
     it('應該成功導出 JSON 格式', async () => {
-      const mockDownloadUrl = 'https://example.com/export.json';
+      const _mockDownloadUrl = 'https://example.com/export.json';
       mockApiService.post.mockResolvedValue({
         success: true,
         data: { downloadUrl: mockDownloadUrl },
         message: '導出成功',
       });
 
-      const result = await scanHistoryService.exportScanHistory('json');
+      const _result = await scanHistoryService.exportScanHistory('json');
 
       expect(result).toBe(mockDownloadUrl);
       expect(mockApiService.post).toHaveBeenCalledWith(expect.any(String), {
@@ -648,13 +648,13 @@ describe('ScanHistoryService', () => {
   });
 
   describe('searchScanHistory', () => {
-    const mockQuery = '火球術';
-    const mockFilters = {
+    const _mockQuery = '火球術';
+    const _mockFilters = {
       scanType: 'recognition' as const,
       successOnly: true,
     };
 
-    const mockSearchResult = {
+    const _mockSearchResult = {
       history: [
         {
           id: 'scan-1',
@@ -691,7 +691,7 @@ describe('ScanHistoryService', () => {
         message: '搜索成功',
       });
 
-      const result = await scanHistoryService.searchScanHistory(
+      const _result = await scanHistoryService.searchScanHistory(
         mockQuery,
         mockFilters
       );
@@ -727,7 +727,7 @@ describe('ScanHistoryService', () => {
   });
 
   describe('getRecommendedTags', () => {
-    const mockRecommendedTags = ['rare', 'foil', 'graded', 'mint', 'near-mint'];
+    const _mockRecommendedTags = ['rare', 'foil', 'graded', 'mint', 'near-mint'];
 
     it('應該成功獲取推薦標籤', async () => {
       mockApiService.get.mockResolvedValue({
@@ -736,7 +736,7 @@ describe('ScanHistoryService', () => {
         message: '推薦標籤獲取成功',
       });
 
-      const result = await scanHistoryService.getRecommendedTags();
+      const _result = await scanHistoryService.getRecommendedTags();
 
       expect(result).toEqual(mockRecommendedTags);
       expect(mockApiService.get).toHaveBeenCalledWith(expect.any(String));
@@ -754,14 +754,14 @@ describe('ScanHistoryService', () => {
 
   describe('cleanupExpiredRecords', () => {
     it('應該成功清理過期記錄', async () => {
-      const mockCleanupResult = { deletedCount: 25 };
+      const _mockCleanupResult = { deletedCount: 25 };
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockCleanupResult,
         message: '清理成功',
       });
 
-      const result = await scanHistoryService.cleanupExpiredRecords(30);
+      const _result = await scanHistoryService.cleanupExpiredRecords(30);
 
       expect(result).toEqual(mockCleanupResult);
       expect(mockApiService.post).toHaveBeenCalledWith(expect.any(String), {
@@ -771,14 +771,14 @@ describe('ScanHistoryService', () => {
     });
 
     it('應該使用默認天數', async () => {
-      const mockCleanupResult = { deletedCount: 10 };
+      const _mockCleanupResult = { deletedCount: 10 };
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockCleanupResult,
         message: '清理成功',
       });
 
-      const result = await scanHistoryService.cleanupExpiredRecords();
+      const _result = await scanHistoryService.cleanupExpiredRecords();
 
       expect(result).toEqual(mockCleanupResult);
       expect(mockApiService.post).toHaveBeenCalledWith(expect.any(String), {

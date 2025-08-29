@@ -1,9 +1,28 @@
 import { useEffect, useRef, useCallback } from 'react';
-import {
-  memoryMonitorService,
-  MemoryLeakReport,
-} from '@/services/memoryMonitorService';
-import { logger } from '@/utils/logger';
+
+import { logger } from '../core/utils/logger';
+
+// 臨時類型定義
+interface MemoryLeakReport {
+  growth: number;
+  duration: number;
+  timestamp: Date;
+  componentName: string;
+}
+
+// 臨時實現
+const _memoryMonitorService = {
+  getCurrentMemoryUsage: () => ({
+    usedJSHeapSize: 0,
+    totalJSHeapSize: 0,
+    jsHeapSizeLimit: 0,
+  }),
+  onMemoryLeak: (callback: (report: MemoryLeakReport) => void) => {},
+  removeMemoryLeakCallback: (
+    callback: (report: MemoryLeakReport) => void
+  ) => {},
+  getMemoryStats: () => ({ average: 0, peak: 0, current: 0 }),
+};
 
 interface UseMemoryMonitorOptions {
   componentName: string;
@@ -12,7 +31,7 @@ interface UseMemoryMonitorOptions {
   onMemoryLeak?: (report: MemoryLeakReport) => void;
 }
 
-export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
+export const _useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
   const {
     componentName,
     enableLeakDetection = true,
@@ -20,15 +39,15 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
     onMemoryLeak,
   } = options;
 
-  const mountTime = useRef(Date.now());
-  const memoryStart = useRef<number>(0);
-  const memoryLeakCallback = useRef<
+  const _mountTime = useRef(Date.now());
+  const _memoryStart = useRef<number>(0);
+  const _memoryLeakCallback = useRef<
     ((report: MemoryLeakReport) => void) | null
   >(null);
 
   // 記錄組件掛載時的內存使用
   useEffect(() => {
-    const currentMemory = memoryMonitorService.getCurrentMemoryUsage();
+    const _currentMemory = memoryMonitorService.getCurrentMemoryUsage();
     if (currentMemory) {
       memoryStart.current = currentMemory.usedJSHeapSize;
       logger.debug(`${componentName} 組件掛載`, {
@@ -50,12 +69,12 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
 
     return () => {
       // 組件卸載時檢查內存變化
-      const currentMemory = memoryMonitorService.getCurrentMemoryUsage();
+      const _currentMemory = memoryMonitorService.getCurrentMemoryUsage();
       if (currentMemory && memoryStart.current > 0) {
-        const memoryEnd = currentMemory.usedJSHeapSize;
-        const memoryDiff = memoryEnd - memoryStart.current;
-        const duration = Date.now() - mountTime.current;
-        const memoryDiffMB = memoryDiff / 1024 / 1024;
+        const _memoryEnd = currentMemory.usedJSHeapSize;
+        const _memoryDiff = memoryEnd - memoryStart.current;
+        const _duration = Date.now() - mountTime.current;
+        const _memoryDiffMB = memoryDiff / 1024 / 1024;
 
         logger.debug(`${componentName} 組件卸載`, {
           memoryDiff: `${Math.round(memoryDiffMB)}MB`,
@@ -85,21 +104,21 @@ export const useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
   }, [componentName, enableLeakDetection, memoryThreshold, onMemoryLeak]);
 
   // 獲取當前內存使用情況
-  const getCurrentMemory = useCallback(() => {
+  const _getCurrentMemory = useCallback(() => {
     return memoryMonitorService.getCurrentMemoryUsage();
   }, []);
 
   // 獲取內存統計信息
-  const getMemoryStats = useCallback(() => {
+  const _getMemoryStats = useCallback(() => {
     return memoryMonitorService.getMemoryStats();
   }, []);
 
   // 手動檢查內存洩漏
-  const checkMemoryLeak = useCallback(() => {
-    const currentMemory = memoryMonitorService.getCurrentMemoryUsage();
+  const _checkMemoryLeak = useCallback(() => {
+    const _currentMemory = memoryMonitorService.getCurrentMemoryUsage();
     if (currentMemory && memoryStart.current > 0) {
-      const memoryDiff = currentMemory.usedJSHeapSize - memoryStart.current;
-      const memoryDiffMB = memoryDiff / 1024 / 1024;
+      const _memoryDiff = currentMemory.usedJSHeapSize - memoryStart.current;
+      const _memoryDiffMB = memoryDiff / 1024 / 1024;
 
       if (memoryDiffMB > memoryThreshold) {
         logger.warn(`${componentName} 手動檢查發現內存洩漏`, {

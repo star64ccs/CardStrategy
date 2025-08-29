@@ -1,15 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const { validateRequest } = require('../middleware/validation');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
+const express = require('express');'
+const router = express.Router();''
+const { authenticateToken } = require('../middleware/auth');''
+const { validateRequest } = require('../middleware/validation');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');''
+// ç§»ï¿½?ç«¯ï¿½???const mobileService = require('../services/mobileService');
 
-// ç§»å?ç«¯æ???const mobileService = require('../services/mobileService');
-
-// ==================== ?¢ç??Œæ­¥ ====================
-
-// ?²å??¢ç??¸æ?
+// ==================== ?ï¿½ï¿½??ï¿½æ­¥ ===================='
+// ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/offline/data', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -17,26 +15,25 @@ router.get('/offline/data', authenticateToken, async (req, res) => {
 
     const offlineData = await mobileService.getOfflineData({
       userId,
-      lastSyncTime: lastSyncTime ? new Date(lastSyncTime) : null,
-      dataTypes: dataTypes
-        ? dataTypes.split(',')
+      lastSyncTime: lastSyncTime ? new Date(lastSyncTime) : null,'
+      dataTypes: dataTypes''
+        ? dataTypes.split(',')''
         : ['cards', 'portfolio', 'market'],
     });
 
     res.json({
       success: true,
       data: offlineData,
-    });
-  } catch (error) {
-    logger.error('?²å??¢ç??¸æ?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å??¢ç??¸æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',
     });
   }
-});
-
-// ?äº¤?¢ç?è®Šæ›´
+});'
+// ?ï¿½äº¤?ï¿½ï¿½?è®Šæ›´''
 router.post('/offline/changes', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -52,17 +49,16 @@ router.post('/offline/changes', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('?äº¤?¢ç?è®Šæ›´å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?äº¤?¢ç?è®Šæ›´å¤±æ?',
-    });
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½äº¤?ï¿½ï¿½?è®Šæ›´å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½äº¤?ï¿½ï¿½?è®Šæ›´å¤±ï¿½?',
+    });'
   }
-});
-
-// ?²å??Œæ­¥?€??router.get('/offline/sync-status', authenticateToken, async (req, res) => {
+});''
+// ?ï¿½ï¿½??ï¿½æ­¥?ï¿½??router.get('/offline/sync-status', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
 
@@ -71,19 +67,17 @@ router.post('/offline/changes', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: syncStatus,
-    });
-  } catch (error) {
-    logger.error('?²å??Œæ­¥?€?‹å¤±??', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å??Œæ­¥?€?‹å¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½æ­¥?ï¿½?ï¿½å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½æ­¥?ï¿½?ï¿½å¤±??,
     });
   }
-});
-
-// ==================== ?¨é€é€šçŸ¥ ====================
-
-// è¨»å??¨é€ä»¤??router.post('/push/register', authenticateToken, async (req, res) => {
+});'
+// ==================== ?ï¿½é€é€šçŸ¥ ====================''
+// è¨»ï¿½??ï¿½é€ä»¤??router.post('/push/register', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { token, platform, deviceId } = req.body;
@@ -99,17 +93,16 @@ router.post('/offline/changes', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('è¨»å??¨é€ä»¤?Œå¤±??', error);
-    res.status(500).json({
-      success: false,
-      error: 'è¨»å??¨é€ä»¤?Œå¤±??,
+    });'
+  } catch (error) {''
+    logger.error('è¨»ï¿½??ï¿½é€ä»¤?ï¿½å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      error: 'è¨»ï¿½??ï¿½é€ä»¤?ï¿½å¤±??,
     });
   }
-});
-
-// ?¼é€æŽ¨?é€šçŸ¥
+});'
+// ?ï¿½é€æŽ¨?ï¿½é€šçŸ¥''
 router.post('/push/send', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -128,17 +121,16 @@ router.post('/push/send', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('?¼é€æŽ¨?é€šçŸ¥å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?¼é€æŽ¨?é€šçŸ¥å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½é€æŽ¨?ï¿½é€šçŸ¥å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½é€æŽ¨?ï¿½é€šçŸ¥å¤±ï¿½?',
     });
   }
-});
-
-// ?²å??šçŸ¥è¨­ç½®
+});'
+// ?ï¿½ï¿½??ï¿½çŸ¥è¨­ç½®''
 router.get('/push/settings', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -148,17 +140,16 @@ router.get('/push/settings', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: settings,
-    });
-  } catch (error) {
-    logger.error('?²å??šçŸ¥è¨­ç½®å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å??šçŸ¥è¨­ç½®å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½çŸ¥è¨­ç½®å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½çŸ¥è¨­ç½®å¤±ï¿½?',
     });
   }
-});
-
-// ?´æ–°?šçŸ¥è¨­ç½®
+});'
+// ?ï¿½æ–°?ï¿½çŸ¥è¨­ç½®''
 router.put('/push/settings', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -173,19 +164,18 @@ router.put('/push/settings', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('?´æ–°?šçŸ¥è¨­ç½®å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?´æ–°?šçŸ¥è¨­ç½®å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½æ–°?ï¿½çŸ¥è¨­ç½®å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½æ–°?ï¿½çŸ¥è¨­ç½®å¤±ï¿½?',
     });
   }
 });
 
-// ==================== è¨­å?ç®¡ç? ====================
-
-// è¨»å?è¨­å?
+// ==================== è¨­ï¿½?ç®¡ï¿½? ===================='
+// è¨»ï¿½?è¨­ï¿½?''
 router.post('/device/register', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -201,17 +191,16 @@ router.post('/device/register', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('è¨»å?è¨­å?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: 'è¨»å?è¨­å?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('è¨»ï¿½?è¨­ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: 'è¨»ï¿½?è¨­ï¿½?å¤±ï¿½?',
     });
   }
-});
-
-// ?²å??¨æˆ¶è¨­å??—è¡¨
+});'
+// ?ï¿½ï¿½??ï¿½æˆ¶è¨­ï¿½??ï¿½è¡¨''
 router.get('/device/list', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -221,17 +210,16 @@ router.get('/device/list', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: devices,
-    });
-  } catch (error) {
-    logger.error('?²å?è¨­å??—è¡¨å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å?è¨­å??—è¡¨å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?è¨­ï¿½??ï¿½è¡¨å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½?è¨­ï¿½??ï¿½è¡¨å¤±ï¿½?',
     });
   }
-});
-
-// è¨»éŠ·è¨­å?
+});'
+// è¨»éŠ·è¨­ï¿½?''
 router.delete('/device/:deviceId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -243,19 +231,17 @@ router.delete('/device/:deviceId', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('è¨»éŠ·è¨­å?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: 'è¨»éŠ·è¨­å?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('è¨»éŠ·è¨­ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: 'è¨»éŠ·è¨­ï¿½?å¤±ï¿½?',
     });
   }
-});
-
-// ==================== ç§»å?ç«¯å???====================
-
-// è¨˜é?ç§»å?ç«¯ä?ä»?router.post('/analytics/event', authenticateToken, async (req, res) => {
+});'
+// ==================== ç§»ï¿½?ç«¯ï¿½???====================''
+// è¨˜ï¿½?ç§»ï¿½?ç«¯ï¿½?ï¿½?router.post('/analytics/event', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { eventType, eventData, deviceInfo, timestamp } = req.body;
@@ -272,45 +258,42 @@ router.delete('/device/:deviceId', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('è¨˜é?ç§»å?ç«¯ä?ä»¶å¤±??', error);
-    res.status(500).json({
-      success: false,
-      error: 'è¨˜é?ç§»å?ç«¯ä?ä»¶å¤±??,
-    });
+    });'
+  } catch (error) {''
+    logger.error('è¨˜ï¿½?ç§»ï¿½?ç«¯ï¿½?ä»¶å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      error: 'è¨˜ï¿½?ç§»ï¿½?ç«¯ï¿½?ä»¶å¤±??,
+    });'
   }
-});
-
-// ?²å?ç§»å?ç«¯å??å ±??router.get('/analytics/report', authenticateToken, async (req, res) => {
+});''
+// ?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½??ï¿½å ±??router.get('/analytics/report', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { timeframe, metrics } = req.query;
 
-    const report = await mobileService.getMobileAnalyticsReport({
-      userId,
-      timeframe: timeframe || '7d',
-      metrics: metrics
-        ? metrics.split(',')
+    const report = await mobileService.getMobileAnalyticsReport({'
+      userId,''
+      timeframe: timeframe || '7d','
+      metrics: metrics''
+        ? metrics.split(',')''
         : ['usage', 'performance', 'engagement'],
     });
 
     res.json({
       success: true,
       data: report,
-    });
-  } catch (error) {
-    logger.error('?²å?ç§»å?ç«¯å??å ±?Šå¤±??', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å?ç§»å?ç«¯å??å ±?Šå¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½??ï¿½å ±?ï¿½å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½??ï¿½å ±?ï¿½å¤±??,
     });
   }
-});
-
-// ==================== ç§»å?ç«¯å„ª??====================
-
-// ?²å?ç§»å?ç«¯é?ç½?router.get('/config', authenticateToken, async (req, res) => {
+});'
+// ==================== ç§»ï¿½?ç«¯å„ª??====================''
+// ?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½?ï¿½?router.get('/config', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { deviceInfo } = req.query;
@@ -324,17 +307,16 @@ router.delete('/device/:deviceId', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: config,
-    });
-  } catch (error) {
-    logger.error('?²å?ç§»å?ç«¯é?ç½®å¤±??', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å?ç§»å?ç«¯é?ç½®å¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½?ç½®å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½?ç½®å¤±??,
     });
   }
-});
-
-// ?²å??ªå?å»ºè­°
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½?å»ºè­°''
 router.get('/optimization/suggestions', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -349,19 +331,18 @@ router.get('/optimization/suggestions', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: suggestions,
-    });
-  } catch (error) {
-    logger.error('?²å??ªå?å»ºè­°å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å??ªå?å»ºè­°å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½?å»ºè­°å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½ï¿½?å»ºè­°å¤±ï¿½?',
     });
   }
 });
 
-// ==================== ?Ÿç‰©è­˜åˆ¥èªè? ====================
-
-// ?Ÿç”¨?Ÿç‰©è­˜åˆ¥èªè?
+// ==================== ?ï¿½ç‰©è­˜åˆ¥èªï¿½? ===================='
+// ?ï¿½ç”¨?ï¿½ç‰©è­˜åˆ¥èªï¿½?''
 router.post('/biometric/enable', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -377,17 +358,16 @@ router.post('/biometric/enable', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('?Ÿç”¨?Ÿç‰©è­˜åˆ¥èªè?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?Ÿç”¨?Ÿç‰©è­˜åˆ¥èªè?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ç”¨?ï¿½ç‰©è­˜åˆ¥èªï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ç”¨?ï¿½ç‰©è­˜åˆ¥èªï¿½?å¤±ï¿½?',
     });
   }
-});
-
-// é©—è??Ÿç‰©è­˜åˆ¥
+});'
+// é©—ï¿½??ï¿½ç‰©è­˜åˆ¥''
 router.post('/biometric/verify', async (req, res) => {
   try {
     const { biometricData, deviceId, userId } = req.body;
@@ -402,19 +382,18 @@ router.post('/biometric/verify', async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('é©—è??Ÿç‰©è­˜åˆ¥å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: 'é©—è??Ÿç‰©è­˜åˆ¥å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('é©—ï¿½??ï¿½ç‰©è­˜åˆ¥å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: 'é©—ï¿½??ï¿½ç‰©è­˜åˆ¥å¤±ï¿½?',
     });
   }
 });
 
-// ==================== èªžéŸ³?½ä»¤ ====================
-
-// ?•ç?èªžéŸ³?½ä»¤
+// ==================== èªžéŸ³?ï¿½ä»¤ ===================='
+// ?ï¿½ï¿½?èªžéŸ³?ï¿½ä»¤''
 router.post('/voice/command', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -431,43 +410,41 @@ router.post('/voice/command', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('?•ç?èªžéŸ³?½ä»¤å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?•ç?èªžéŸ³?½ä»¤å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?èªžéŸ³?ï¿½ä»¤å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½?èªžéŸ³?ï¿½ä»¤å¤±ï¿½?',
     });
   }
-});
-
-// ?²å?èªžéŸ³?½ä»¤?—è¡¨
+});'
+// ?ï¿½ï¿½?èªžéŸ³?ï¿½ä»¤?ï¿½è¡¨''
 router.get('/voice/commands', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { language } = req.query;
 
-    const commands = await mobileService.getVoiceCommands({
-      userId,
+    const commands = await mobileService.getVoiceCommands({'
+      userId,''
       language: language || 'zh-TW',
     });
 
     res.json({
       success: true,
       data: commands,
-    });
-  } catch (error) {
-    logger.error('?²å?èªžéŸ³?½ä»¤?—è¡¨å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å?èªžéŸ³?½ä»¤?—è¡¨å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?èªžéŸ³?ï¿½ä»¤?ï¿½è¡¨å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½?èªžéŸ³?ï¿½ä»¤?ï¿½è¡¨å¤±ï¿½?',
     });
   }
 });
 
-// ==================== AR ?Ÿèƒ½ ====================
-
-// ?²å? AR ?¡ç??¸æ?
+// ==================== AR ?ï¿½èƒ½ ===================='
+// ?ï¿½ï¿½? AR ?ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/ar/card/:cardId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -475,25 +452,24 @@ router.get('/ar/card/:cardId', authenticateToken, async (req, res) => {
     const { arType } = req.query;
 
     const arData = await mobileService.getARCardData({
-      userId,
-      cardId,
+      userId,'
+      cardId,''
       arType: arType || '3d-model',
     });
 
     res.json({
       success: true,
       data: arData,
-    });
-  } catch (error) {
-    logger.error('?²å? AR ?¡ç??¸æ?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å? AR ?¡ç??¸æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½? AR ?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½? AR ?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',
     });
   }
-});
-
-// ?•ç? AR ?ƒæ?
+});'
+// ?ï¿½ï¿½? AR ?ï¿½ï¿½?''
 router.post('/ar/scan', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -510,19 +486,17 @@ router.post('/ar/scan', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('?•ç? AR ?ƒæ?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?•ç? AR ?ƒæ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½? AR ?ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½? AR ?ï¿½ï¿½?å¤±ï¿½?',
     });
   }
-});
-
-// ==================== ç§»å?ç«¯å¥åº·æª¢??====================
-
-// ç§»å?ç«¯å¥åº·æª¢??router.get('/health', authenticateToken, async (req, res) => {
+});'
+// ==================== ç§»ï¿½?ç«¯å¥åº·æª¢??====================''
+// ç§»ï¿½?ç«¯å¥åº·æª¢??router.get('/health', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { deviceInfo } = req.query;
@@ -535,37 +509,35 @@ router.post('/ar/scan', authenticateToken, async (req, res) => {
     res.json({
       success: true,
       data: health,
-    });
-  } catch (error) {
-    logger.error('ç§»å?ç«¯å¥åº·æª¢?¥å¤±??', error);
-    res.status(500).json({
-      success: false,
-      error: 'ç§»å?ç«¯å¥åº·æª¢?¥å¤±??,
-    });
+    });'
+  } catch (error) {''
+    logger.error('ç§»ï¿½?ç«¯å¥åº·æª¢?ï¿½å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      error: 'ç§»ï¿½?ç«¯å¥åº·æª¢?ï¿½å¤±??,
+    });'
   }
-});
-
-// ?²å?ç§»å?ç«¯æ?æ¨?router.get('/metrics', authenticateToken, async (req, res) => {
+});''
+// ?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½?ï¿½?router.get('/metrics', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
     const { timeframe } = req.query;
 
-    const metrics = await mobileService.getMobileMetrics({
-      userId,
+    const metrics = await mobileService.getMobileMetrics({'
+      userId,''
       timeframe: timeframe || '24h',
     });
 
     res.json({
       success: true,
       data: metrics,
-    });
-  } catch (error) {
-    logger.error('?²å?ç§»å?ç«¯æ?æ¨™å¤±??', error);
-    res.status(500).json({
-      success: false,
-      error: '?²å?ç§»å?ç«¯æ?æ¨™å¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½?æ¨™å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½?ç§»ï¿½?ç«¯ï¿½?æ¨™å¤±??,
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

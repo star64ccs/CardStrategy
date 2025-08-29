@@ -13,52 +13,56 @@ describe('AI預測價格功能測試', () => {
 
   describe('機器學習模型測試', () => {
     it('應該正確使用集成模型進行預測', async () => {
-      const mockCardId = 'card-123';
-      const mockTimeframes = ['7d', '30d', '90d'] as const;
-      const mockPredictionResult = {
+      const _mockCardId = 'card-123';
+      const _mockTimeframes = ['7d', '30d', '90d'] as const;
+      const _mockPredictionResult = {
         success: true,
         data: {
           predictions: [
             {
               timeframe: '7d',
-              predictedPrice: 150.50,
+              predictedPrice: 150.5,
               confidence: 0.85,
               change: '+5.2%',
-              factors: ['市場需求上升', '供應減少']
+              factors: ['市場需求上升', '供應減少'],
             },
             {
               timeframe: '30d',
               predictedPrice: 165.75,
               confidence: 0.78,
               change: '+12.8%',
-              factors: ['季節性需求', '競賽影響']
+              factors: ['季節性需求', '競賽影響'],
             },
             {
               timeframe: '90d',
               predictedPrice: 180.25,
               confidence: 0.72,
               change: '+22.5%',
-              factors: ['長期趨勢', '收藏價值提升']
-            }
+              factors: ['長期趨勢', '收藏價值提升'],
+            },
           ],
           modelPerformance: {
             accuracy: 0.82,
             mse: 12.5,
-            mae: 8.3
-          }
-        }
+            mae: 8.3,
+          },
+        },
       };
 
-      const mockApiService = require('../../../services/apiService');
+      const _mockApiService = require('../../../services/apiService');
       mockApiService.apiService.post.mockResolvedValue(mockPredictionResult);
 
-      const result = await enhancedAIService.enhancedPricePrediction(mockCardId, mockTimeframes, {
-        useEnsembleModels: true,
-        includeMarketSentiment: true,
-        includeCompetitiveAnalysis: true,
-        includeSeasonalFactors: true,
-        includeEventImpact: true
-      });
+      const _result = await enhancedAIService.enhancedPricePrediction(
+        mockCardId,
+        mockTimeframes,
+        {
+          useEnsembleModels: true,
+          includeMarketSentiment: true,
+          includeCompetitiveAnalysis: true,
+          includeSeasonalFactors: true,
+          includeEventImpact: true,
+        }
+      );
 
       expect(result.success).toBe(true);
       expect(result.data.predictions).toHaveLength(3);
@@ -67,17 +71,20 @@ describe('AI預測價格功能測試', () => {
     });
 
     it('應該處理預測失敗的情況', async () => {
-      const mockCardId = 'card-456';
-      const mockTimeframes = ['7d'] as const;
-      const mockPredictionResult = {
+      const _mockCardId = 'card-456';
+      const _mockTimeframes = ['7d'] as const;
+      const _mockPredictionResult = {
         success: false,
-        message: '數據不足，無法進行預測'
+        message: '數據不足，無法進行預測',
       };
 
-      const mockApiService = require('../../../services/apiService');
+      const _mockApiService = require('../../../services/apiService');
       mockApiService.apiService.post.mockResolvedValue(mockPredictionResult);
 
-      const result = await enhancedAIService.enhancedPricePrediction(mockCardId, mockTimeframes);
+      const _result = await enhancedAIService.enhancedPricePrediction(
+        mockCardId,
+        mockTimeframes
+      );
 
       expect(result.success).toBe(false);
       expect(result.message).toContain('數據不足');
@@ -86,14 +93,14 @@ describe('AI預測價格功能測試', () => {
 
   describe('預測準確性測試', () => {
     it('應該評估預測模型的準確性', async () => {
-      const mockHistoricalData = [
+      const _mockHistoricalData = [
         { date: '2024-01-01', price: 100 },
         { date: '2024-01-08', price: 105 },
         { date: '2024-01-15', price: 110 },
-        { date: '2024-01-22', price: 108 }
+        { date: '2024-01-22', price: 108 },
       ];
 
-      const mockAccuracyResult = {
+      const _mockAccuracyResult = {
         overallAccuracy: 0.85,
         accuracyByModel: {
           linear: 0.82,
@@ -101,19 +108,22 @@ describe('AI預測價格功能測試', () => {
           exponential: 0.84,
           arima: 0.86,
           lstm: 0.88,
-          ensemble: 0.90
+          ensemble: 0.9,
         },
         metrics: {
           mse: 15.2,
           mae: 9.8,
-          rmse: 3.9
-        }
+          rmse: 3.9,
+        },
       };
 
-      const mockPrediction = require('../../../services/predictionService');
-      mockPrediction.predictionService.evaluateAccuracy.mockResolvedValue(mockAccuracyResult);
+      const _mockPrediction = require('../../../services/predictionService');
+      mockPrediction.predictionService.evaluateAccuracy.mockResolvedValue(
+        mockAccuracyResult
+      );
 
-      const result = await predictionService.evaluateAccuracy(mockHistoricalData);
+      const _result =
+        await predictionService.evaluateAccuracy(mockHistoricalData);
 
       expect(result.overallAccuracy).toBeGreaterThan(0.8);
       expect(result.accuracyByModel.ensemble).toBeGreaterThan(0.85);
@@ -123,34 +133,36 @@ describe('AI預測價格功能測試', () => {
 
   describe('模型性能評估測試', () => {
     it('應該評估不同模型的性能', async () => {
-      const mockModelPerformance = {
+      const _mockModelPerformance = {
         models: [
           {
             name: 'linear',
             accuracy: 0.82,
             speed: 'fast',
-            resourceUsage: 'low'
+            resourceUsage: 'low',
           },
           {
             name: 'lstm',
             accuracy: 0.88,
             speed: 'slow',
-            resourceUsage: 'high'
+            resourceUsage: 'high',
           },
           {
             name: 'ensemble',
-            accuracy: 0.90,
+            accuracy: 0.9,
             speed: 'medium',
-            resourceUsage: 'medium'
-          }
+            resourceUsage: 'medium',
+          },
         ],
-        recommendations: ['建議使用集成模型以獲得最佳準確性']
+        recommendations: ['建議使用集成模型以獲得最佳準確性'],
       };
 
-      const mockPrediction = require('../../../services/predictionService');
-      mockPrediction.predictionService.evaluateModelPerformance.mockResolvedValue(mockModelPerformance);
+      const _mockPrediction = require('../../../services/predictionService');
+      mockPrediction.predictionService.evaluateModelPerformance.mockResolvedValue(
+        mockModelPerformance
+      );
 
-      const result = await predictionService.evaluateModelPerformance();
+      const _result = await predictionService.evaluateModelPerformance();
 
       expect(result.models).toHaveLength(3);
       expect(result.models[2].accuracy).toBeGreaterThan(0.85);
@@ -160,25 +172,27 @@ describe('AI預測價格功能測試', () => {
 
   describe('市場情緒分析測試', () => {
     it('應該正確分析市場情緒對價格的影響', async () => {
-      const mockSentimentData = {
+      const _mockSentimentData = {
         overallSentiment: 'positive',
         score: 0.75,
         factors: {
           socialMedia: { sentiment: 'positive', score: 0.8 },
           news: { sentiment: 'neutral', score: 0.5 },
-          marketActivity: { sentiment: 'positive', score: 0.7 }
+          marketActivity: { sentiment: 'positive', score: 0.7 },
         },
         impact: {
           priceDirection: 'upward',
           confidence: 0.72,
-          magnitude: 'moderate'
-        }
+          magnitude: 'moderate',
+        },
       };
 
-      const mockPrediction = require('../../../services/predictionService');
-      mockPrediction.predictionService.analyzeMarketSentiment.mockResolvedValue(mockSentimentData);
+      const _mockPrediction = require('../../../services/predictionService');
+      mockPrediction.predictionService.analyzeMarketSentiment.mockResolvedValue(
+        mockSentimentData
+      );
 
-      const result = await predictionService.analyzeMarketSentiment('card-123');
+      const _result = await predictionService.analyzeMarketSentiment('card-123');
 
       expect(result.overallSentiment).toBe('positive');
       expect(result.score).toBeGreaterThan(0.7);
@@ -188,21 +202,23 @@ describe('AI預測價格功能測試', () => {
 
   describe('競爭分析測試', () => {
     it('應該正確分析競爭對價格的影響', async () => {
-      const mockCompetitiveData = {
+      const _mockCompetitiveData = {
         competitivePosition: 'strong',
         score: 0.85,
         analysis: {
           marketShare: 'high',
           priceCompetitiveness: 'competitive',
-          demandVsSupply: 'demand_high'
+          demandVsSupply: 'demand_high',
         },
-        recommendations: ['保持當前定價策略', '關注競爭對手動態']
+        recommendations: ['保持當前定價策略', '關注競爭對手動態'],
       };
 
-      const mockPrediction = require('../../../services/predictionService');
-      mockPrediction.predictionService.analyzeCompetition.mockResolvedValue(mockCompetitiveData);
+      const _mockPrediction = require('../../../services/predictionService');
+      mockPrediction.predictionService.analyzeCompetition.mockResolvedValue(
+        mockCompetitiveData
+      );
 
-      const result = await predictionService.analyzeCompetition('card-123');
+      const _result = await predictionService.analyzeCompetition('card-123');
 
       expect(result.competitivePosition).toBe('strong');
       expect(result.score).toBeGreaterThan(0.8);
@@ -212,25 +228,27 @@ describe('AI預測價格功能測試', () => {
 
   describe('季節性因素分析測試', () => {
     it('應該正確分析季節性對價格的影響', async () => {
-      const mockSeasonalData = {
+      const _mockSeasonalData = {
         seasonalPattern: 'summer_peak',
         score: 0.78,
         factors: {
           currentSeason: 'summer',
           seasonalImpact: 'positive',
-          historicalTrend: 'consistent'
+          historicalTrend: 'consistent',
         },
         predictions: {
           nextSeason: 'autumn',
           expectedChange: 'slight_decrease',
-          confidence: 0.75
-        }
+          confidence: 0.75,
+        },
       };
 
-      const mockPrediction = require('../../../services/predictionService');
-      mockPrediction.predictionService.analyzeSeasonalFactors.mockResolvedValue(mockSeasonalData);
+      const _mockPrediction = require('../../../services/predictionService');
+      mockPrediction.predictionService.analyzeSeasonalFactors.mockResolvedValue(
+        mockSeasonalData
+      );
 
-      const result = await predictionService.analyzeSeasonalFactors('card-123');
+      const _result = await predictionService.analyzeSeasonalFactors('card-123');
 
       expect(result.seasonalPattern).toBe('summer_peak');
       expect(result.score).toBeGreaterThan(0.7);

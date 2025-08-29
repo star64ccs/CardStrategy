@@ -1,13 +1,13 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { settingsService } from '../../../services/settingsService';
 import { apiService } from '../../../services/apiService';
+import { settingsService } from '../../../services/settingsService';
 
 // Mock 依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../utils/validationService');
 jest.mock('../../../utils/validationSchemas');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
 
 describe('SettingsService', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('SettingsService', () => {
   });
 
   describe('getSettings', () => {
-    const mockSettings = {
+    const _mockSettings = {
       theme: {
         mode: 'dark' as const,
         primaryColor: '#007AFF',
@@ -63,7 +63,7 @@ describe('SettingsService', () => {
         message: '設置獲取成功',
       });
 
-      const result = await settingsService.getSettings();
+      const _result = await settingsService.getSettings();
 
       expect(result).toEqual(mockSettings);
       expect(mockApiService.get).toHaveBeenCalledWith('/settings');
@@ -77,14 +77,14 @@ describe('SettingsService', () => {
   });
 
   describe('updateSettings', () => {
-    const mockSettings = {
+    const _mockSettings = {
       theme: {
         mode: 'light' as const,
         primaryColor: '#007AFF',
       },
     };
 
-    const mockUpdatedSettings = {
+    const _mockUpdatedSettings = {
       theme: {
         mode: 'light' as const,
         primaryColor: '#007AFF',
@@ -132,7 +132,7 @@ describe('SettingsService', () => {
         message: '設置更新成功',
       });
 
-      const result = await settingsService.updateSettings(mockSettings);
+      const _result = await settingsService.updateSettings(mockSettings);
 
       expect(result).toEqual(mockUpdatedSettings);
       expect(mockApiService.put).toHaveBeenCalledWith(
@@ -151,13 +151,13 @@ describe('SettingsService', () => {
   });
 
   describe('updateThemeSettings', () => {
-    const mockThemeSettings = {
+    const _mockThemeSettings = {
       mode: 'dark' as const,
       primaryColor: '#007AFF',
       accentColor: '#FF3B30',
     };
 
-    const mockUpdatedSettings = {
+    const _mockUpdatedSettings = {
       theme: mockThemeSettings,
       language: { code: 'zh-TW', name: '繁體中文', nativeName: '繁體中文' },
       notifications: {
@@ -197,7 +197,7 @@ describe('SettingsService', () => {
         message: '主題設置更新成功',
       });
 
-      const result =
+      const _result =
         await settingsService.updateThemeSettings(mockThemeSettings);
 
       expect(result).toEqual(mockUpdatedSettings);
@@ -208,7 +208,7 @@ describe('SettingsService', () => {
     });
 
     it('應該處理無效的主題設置', async () => {
-      const invalidThemeSettings = {
+      const _invalidThemeSettings = {
         mode: 'invalid' as any,
         primaryColor: 'invalid-color',
       };
@@ -228,13 +228,13 @@ describe('SettingsService', () => {
   });
 
   describe('updateLanguageSettings', () => {
-    const mockLanguageSettings = {
+    const _mockLanguageSettings = {
       code: 'en-US',
       name: 'English',
       nativeName: 'English',
     };
 
-    const mockUpdatedSettings = {
+    const _mockUpdatedSettings = {
       theme: {
         mode: 'dark' as const,
         primaryColor: '#007AFF',
@@ -278,7 +278,7 @@ describe('SettingsService', () => {
         message: '語言設置更新成功',
       });
 
-      const result =
+      const _result =
         await settingsService.updateLanguageSettings(mockLanguageSettings);
 
       expect(result).toEqual(mockUpdatedSettings);
@@ -289,7 +289,7 @@ describe('SettingsService', () => {
     });
 
     it('應該處理無效的語言設置', async () => {
-      const invalidLanguageSettings = {
+      const _invalidLanguageSettings = {
         code: 'invalid',
         name: '',
         nativeName: '',
@@ -310,7 +310,7 @@ describe('SettingsService', () => {
   });
 
   describe('updateNotificationSettings', () => {
-    const mockNotificationSettings = {
+    const _mockNotificationSettings = {
       pushEnabled: true,
       emailEnabled: false,
       smsEnabled: false,
@@ -320,7 +320,7 @@ describe('SettingsService', () => {
       socialAlerts: false,
     };
 
-    const mockUpdatedSettings = {
+    const _mockUpdatedSettings = {
       theme: {
         mode: 'dark' as const,
         primaryColor: '#007AFF',
@@ -356,7 +356,7 @@ describe('SettingsService', () => {
         message: '通知設置更新成功',
       });
 
-      const result = await settingsService.updateNotificationSettings(
+      const _result = await settingsService.updateNotificationSettings(
         mockNotificationSettings
       );
 
@@ -368,7 +368,7 @@ describe('SettingsService', () => {
     });
 
     it('應該處理無效的通知設置', async () => {
-      const invalidNotificationSettings = {
+      const _invalidNotificationSettings = {
         pushEnabled: 'invalid' as any,
         emailEnabled: false,
         smsEnabled: false,
@@ -393,7 +393,7 @@ describe('SettingsService', () => {
   });
 
   describe('updatePrivacySettings', () => {
-    const mockPrivacySettings = {
+    const _mockPrivacySettings = {
       profileVisibility: 'public' as const,
       collectionVisibility: 'friends' as const,
       activityVisibility: 'private' as const,
@@ -401,7 +401,7 @@ describe('SettingsService', () => {
       analyticsEnabled: false,
     };
 
-    const mockUpdatedSettings = {
+    const _mockUpdatedSettings = {
       theme: {
         mode: 'dark' as const,
         primaryColor: '#007AFF',
@@ -439,7 +439,7 @@ describe('SettingsService', () => {
         message: '隱私設置更新成功',
       });
 
-      const result =
+      const _result =
         await settingsService.updatePrivacySettings(mockPrivacySettings);
 
       expect(result).toEqual(mockUpdatedSettings);
@@ -450,7 +450,7 @@ describe('SettingsService', () => {
     });
 
     it('應該處理無效的隱私設置', async () => {
-      const invalidPrivacySettings = {
+      const _invalidPrivacySettings = {
         profileVisibility: 'invalid' as any,
         collectionVisibility: 'friends' as const,
         activityVisibility: 'private' as const,
@@ -473,14 +473,14 @@ describe('SettingsService', () => {
   });
 
   describe('updatePerformanceSettings', () => {
-    const mockPerformanceSettings = {
+    const _mockPerformanceSettings = {
       imageQuality: 'high' as const,
       cacheEnabled: true,
       autoSync: true,
       backgroundRefresh: false,
     };
 
-    const mockUpdatedSettings = {
+    const _mockUpdatedSettings = {
       theme: {
         mode: 'dark' as const,
         primaryColor: '#007AFF',
@@ -519,7 +519,7 @@ describe('SettingsService', () => {
         message: '性能設置更新成功',
       });
 
-      const result = await settingsService.updatePerformanceSettings(
+      const _result = await settingsService.updatePerformanceSettings(
         mockPerformanceSettings
       );
 
@@ -531,7 +531,7 @@ describe('SettingsService', () => {
     });
 
     it('應該處理無效的性能設置', async () => {
-      const invalidPerformanceSettings = {
+      const _invalidPerformanceSettings = {
         imageQuality: 'invalid' as any,
         cacheEnabled: true,
         autoSync: true,
@@ -553,7 +553,7 @@ describe('SettingsService', () => {
   });
 
   describe('resetSettings', () => {
-    const mockDefaultSettings = {
+    const _mockDefaultSettings = {
       theme: {
         mode: 'system' as const,
         primaryColor: '#007AFF',
@@ -597,7 +597,7 @@ describe('SettingsService', () => {
         message: '設置重置成功',
       });
 
-      const result = await settingsService.resetSettings();
+      const _result = await settingsService.resetSettings();
 
       expect(result).toEqual(mockDefaultSettings);
       expect(mockApiService.post).toHaveBeenCalledWith('/settings/reset');
@@ -611,7 +611,7 @@ describe('SettingsService', () => {
   });
 
   describe('exportSettings', () => {
-    const mockExportedData =
+    const _mockExportedData =
       '{"theme":{"mode":"dark"},"language":{"code":"zh-TW"}}';
 
     it('應該成功導出設置', async () => {
@@ -621,7 +621,7 @@ describe('SettingsService', () => {
         message: '設置導出成功',
       });
 
-      const result = await settingsService.exportSettings();
+      const _result = await settingsService.exportSettings();
 
       expect(result).toBe(mockExportedData);
       expect(mockApiService.get).toHaveBeenCalledWith('/settings/export');
@@ -637,9 +637,9 @@ describe('SettingsService', () => {
   });
 
   describe('importSettings', () => {
-    const mockSettingsData =
+    const _mockSettingsData =
       '{"theme":{"mode":"dark"},"language":{"code":"zh-TW"}}';
-    const mockImportedSettings = {
+    const _mockImportedSettings = {
       theme: {
         mode: 'dark' as const,
         primaryColor: '#007AFF',
@@ -683,7 +683,7 @@ describe('SettingsService', () => {
         message: '設置導入成功',
       });
 
-      const result = await settingsService.importSettings(mockSettingsData);
+      const _result = await settingsService.importSettings(mockSettingsData);
 
       expect(result).toEqual(mockImportedSettings);
       expect(mockApiService.post).toHaveBeenCalledWith('/settings/import', {
@@ -705,7 +705,7 @@ describe('SettingsService', () => {
   });
 
   describe('getAvailableThemes', () => {
-    const mockThemes = {
+    const _mockThemes = {
       themes: [
         {
           id: 'dark',
@@ -729,7 +729,7 @@ describe('SettingsService', () => {
         message: '主題獲取成功',
       });
 
-      const result = await settingsService.getAvailableThemes();
+      const _result = await settingsService.getAvailableThemes();
 
       expect(result).toEqual(mockThemes);
       expect(mockApiService.get).toHaveBeenCalledWith('/settings/themes');
@@ -745,7 +745,7 @@ describe('SettingsService', () => {
   });
 
   describe('getAvailableLanguages', () => {
-    const mockLanguages = {
+    const _mockLanguages = {
       languages: [
         {
           code: 'zh-TW',
@@ -775,7 +775,7 @@ describe('SettingsService', () => {
         message: '語言獲取成功',
       });
 
-      const result = await settingsService.getAvailableLanguages();
+      const _result = await settingsService.getAvailableLanguages();
 
       expect(result).toEqual(mockLanguages);
       expect(mockApiService.get).toHaveBeenCalledWith('/settings/languages');
@@ -791,7 +791,7 @@ describe('SettingsService', () => {
   });
 
   describe('getSettingsStatistics', () => {
-    const mockStatistics = {
+    const _mockStatistics = {
       lastUpdated: '2024-01-31T00:00:00Z',
       version: '1.0.0',
       totalSettings: 25,
@@ -805,7 +805,7 @@ describe('SettingsService', () => {
         message: '統計獲取成功',
       });
 
-      const result = await settingsService.getSettingsStatistics();
+      const _result = await settingsService.getSettingsStatistics();
 
       expect(result).toEqual(mockStatistics);
       expect(mockApiService.get).toHaveBeenCalledWith('/settings/statistics');

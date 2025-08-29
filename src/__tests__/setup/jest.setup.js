@@ -20,8 +20,7 @@ jest.mock('axios', () => ({
     patch: jest.fn(),
   })),
   default: {
-      },
-    })),
+    patch: jest.fn(),
   },
 }));
 
@@ -46,14 +45,15 @@ jest.mock('../../config/environment', () => ({
 // Mock validation service - 更詳細的 mock
 jest.mock('../../utils/validationService', () => ({
   validateApiResponse: jest.fn(() => ({ isValid: true, errors: [] })),
-  validateInput: jest.fn((schema, data, context) => ({ 
-    isValid: true, 
-    data: data, // 返回原始數據
+  validateInput: jest.fn((schema, data, context) => ({
+    isValid: true,
+    data, // 返回原始數據
     errors: [],
-    errorMessage: undefined
+    errorMessage: undefined,
   })),
   validationService: {
-    })),
+    validate: jest.fn(),
+    validateSchema: jest.fn(),
   },
 }));
 
@@ -121,26 +121,27 @@ jest.mock('expo-sharing', () => ({
 
 // Mock @react-native-community/netinfo
 jest.mock('@react-native-community/netinfo', () => ({
-  fetch: jest.fn(() => Promise.resolve({
-    isConnected: true,
-    isInternetReachable: true,
-    type: 'wifi',
-    isWifi: true,
-    isCellular: false,
-    isEthernet: false,
-    isBluetooth: false,
-    isVpn: false,
-    isLocationEnabled: true,
-    isAirplaneMode: false,
-    isCarrier: false,
-    isEmulator: false,
-    isTablet: false,
-    isTV: false,
-    isPhone: false,
-  })),
+  fetch: jest.fn(() =>
+    Promise.resolve({
+      isConnected: true,
+      isInternetReachable: true,
+      type: 'wifi',
+      isWifi: true,
+      isCellular: false,
+      isEthernet: false,
+      isBluetooth: false,
+      isVpn: false,
+      isLocationEnabled: true,
+      isAirplaneMode: false,
+      isCarrier: false,
+      isEmulator: false,
+      isTablet: false,
+      isTV: false,
+      isPhone: false,
+    })
+  ),
   refresh: jest.fn(),
-  useNetInfo: jest.fn(() => ({
-  })),
+  useNetInfo: jest.fn(() => ({})),
 }));
 
 // Mock process.env

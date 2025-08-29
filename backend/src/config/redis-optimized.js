@@ -36,6 +36,7 @@ const createRedisClient = () => {
     redisClient.on('connect', () => {});
 
     redisClient.on('error', (error) => {
+      // eslint-disable-next-line no-console
       console.error('Redis 連接錯誤:', error);
     });
 
@@ -54,6 +55,7 @@ const connectRedis = async () => {
     await client.ping();
     return client;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Redis 連接失敗:', error);
     throw error;
   }
@@ -66,6 +68,7 @@ const healthCheck = async () => {
     await client.ping();
     return true;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Redis 健康檢查失敗:', error);
     return false;
   }
@@ -80,6 +83,7 @@ const cacheUtils = {
       await client.setex(key, ttl, JSON.stringify(value));
       return true;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('設置緩存失敗:', error);
       return false;
     }
@@ -92,6 +96,7 @@ const cacheUtils = {
       const value = await client.get(key);
       return value ? JSON.parse(value) : null;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('獲取緩存失敗:', error);
       return null;
     }
@@ -104,6 +109,7 @@ const cacheUtils = {
       await client.del(key);
       return true;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('刪除緩存失敗:', error);
       return false;
     }
@@ -116,6 +122,7 @@ const cacheUtils = {
       await client.flushdb();
       return true;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('清空緩存失敗:', error);
       return false;
     }

@@ -17,16 +17,16 @@ describe('ImageOptimizer', () => {
 
   describe('getInstance', () => {
     it('應該返回單例實例', () => {
-      const instance1 = ImageOptimizer.getInstance();
-      const instance2 = ImageOptimizer.getInstance();
+      const _instance1 = ImageOptimizer.getInstance();
+      const _instance2 = ImageOptimizer.getInstance();
       expect(instance1).toBe(instance2);
     });
   });
 
   describe('optimizeImageUrl', () => {
     it('應該為圖片URL添加優化參數', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const optimizedUrl = imageOptimizer.optimizeImageUrl(originalUrl, {
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _optimizedUrl = imageOptimizer.optimizeImageUrl(originalUrl, {
         quality: 80,
         width: 300,
         height: 200,
@@ -40,14 +40,14 @@ describe('ImageOptimizer', () => {
     });
 
     it('應該處理已經是優化URL的情況', () => {
-      const optimizedUrl = 'https://example.com/image.jpg?quality=80&width=300';
-      const result = imageOptimizer.optimizeImageUrl(optimizedUrl);
+      const _optimizedUrl = 'https://example.com/image.jpg?quality=80&width=300';
+      const _result = imageOptimizer.optimizeImageUrl(optimizedUrl);
       expect(result).toBe(optimizedUrl);
     });
 
     it('應該使用默認參數', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const optimizedUrl = imageOptimizer.optimizeImageUrl(originalUrl);
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _optimizedUrl = imageOptimizer.optimizeImageUrl(originalUrl);
 
       expect(optimizedUrl).toContain('quality=85');
       expect(optimizedUrl).toContain('format=jpeg');
@@ -56,8 +56,8 @@ describe('ImageOptimizer', () => {
 
   describe('generateThumbnailUrl', () => {
     it('應該生成縮略圖URL', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const thumbnailUrl = imageOptimizer.generateThumbnailUrl(
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _thumbnailUrl = imageOptimizer.generateThumbnailUrl(
         originalUrl,
         150
       );
@@ -70,8 +70,8 @@ describe('ImageOptimizer', () => {
 
   describe('generateMediumUrl', () => {
     it('應該生成中等質量URL', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const mediumUrl = imageOptimizer.generateMediumUrl(originalUrl, 600);
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _mediumUrl = imageOptimizer.generateMediumUrl(originalUrl, 600);
 
       expect(mediumUrl).toContain('width=600');
       expect(mediumUrl).toContain('quality=80');
@@ -80,8 +80,8 @@ describe('ImageOptimizer', () => {
 
   describe('generateHighQualityUrl', () => {
     it('應該生成高質量URL', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const highQualityUrl = imageOptimizer.generateHighQualityUrl(
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _highQualityUrl = imageOptimizer.generateHighQualityUrl(
         originalUrl,
         1200
       );
@@ -93,14 +93,14 @@ describe('ImageOptimizer', () => {
 
   describe('calculateOptimalSize', () => {
     it('應該計算最佳尺寸', () => {
-      const result = imageOptimizer.calculateOptimalSize(1000, 800, 500, 400);
+      const _result = imageOptimizer.calculateOptimalSize(1000, 800, 500, 400);
 
       expect(result.width).toBe(500);
       expect(result.height).toBe(400);
     });
 
     it('應該保持寬高比', () => {
-      const result = imageOptimizer.calculateOptimalSize(1000, 800, 500);
+      const _result = imageOptimizer.calculateOptimalSize(1000, 800, 500);
 
       expect(result.width).toBe(500);
       expect(result.height).toBe(400);
@@ -109,8 +109,8 @@ describe('ImageOptimizer', () => {
 
   describe('preloadImage', () => {
     it('應該預加載圖片', async () => {
-      const uri = 'https://example.com/image.jpg';
-      const result = await imageOptimizer.preloadImage(uri);
+      const _uri = 'https://example.com/image.jpg';
+      const _result = await imageOptimizer.preloadImage(uri);
 
       expect(typeof result).toBe('boolean');
     });
@@ -118,12 +118,12 @@ describe('ImageOptimizer', () => {
 
   describe('preloadImages', () => {
     it('應該預加載多張圖片', async () => {
-      const uris = [
+      const _uris = [
         'https://example.com/image1.jpg',
         'https://example.com/image2.jpg',
       ];
 
-      const result = await imageOptimizer.preloadImages(uris);
+      const _result = await imageOptimizer.preloadImages(uris);
 
       expect(result).toHaveProperty('success');
       expect(result).toHaveProperty('failed');
@@ -134,15 +134,15 @@ describe('ImageOptimizer', () => {
 
   describe('cache management', () => {
     it('應該管理緩存', () => {
-      const originalUrl = 'https://example.com/image.jpg';
+      const _originalUrl = 'https://example.com/image.jpg';
       imageOptimizer.optimizeImageUrl(originalUrl);
 
-      const stats = imageOptimizer.getCacheStats();
+      const _stats = imageOptimizer.getCacheStats();
       expect(stats.size).toBeGreaterThan(0);
       expect(stats.entries).toBeGreaterThan(0);
 
       imageOptimizer.clearCache();
-      const clearedStats = imageOptimizer.getCacheStats();
+      const _clearedStats = imageOptimizer.getCacheStats();
       expect(clearedStats.size).toBe(0);
       expect(clearedStats.entries).toBe(0);
     });
@@ -152,8 +152,8 @@ describe('ImageOptimizer', () => {
 describe('Utility functions', () => {
   describe('optimizeImage', () => {
     it('應該優化圖片URL', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const optimizedUrl = optimizeImage(originalUrl, { quality: 80 });
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _optimizedUrl = optimizeImage(originalUrl, { quality: 80 });
 
       expect(optimizedUrl).toContain('quality=80');
     });
@@ -161,8 +161,8 @@ describe('Utility functions', () => {
 
   describe('getThumbnailUrl', () => {
     it('應該獲取縮略圖URL', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const thumbnailUrl = getThumbnailUrl(originalUrl, 100);
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _thumbnailUrl = getThumbnailUrl(originalUrl, 100);
 
       expect(thumbnailUrl).toContain('width=100');
       expect(thumbnailUrl).toContain('height=100');
@@ -171,8 +171,8 @@ describe('Utility functions', () => {
 
   describe('getMediumUrl', () => {
     it('應該獲取中等質量URL', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const mediumUrl = getMediumUrl(originalUrl, 500);
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _mediumUrl = getMediumUrl(originalUrl, 500);
 
       expect(mediumUrl).toContain('width=500');
     });
@@ -180,8 +180,8 @@ describe('Utility functions', () => {
 
   describe('getHighQualityUrl', () => {
     it('應該獲取高質量URL', () => {
-      const originalUrl = 'https://example.com/image.jpg';
-      const highQualityUrl = getHighQualityUrl(originalUrl, 1000);
+      const _originalUrl = 'https://example.com/image.jpg';
+      const _highQualityUrl = getHighQualityUrl(originalUrl, 1000);
 
       expect(highQualityUrl).toContain('width=1000');
     });

@@ -28,6 +28,7 @@ const environments = {
       user: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASSWORD || 'password',
       dialect: 'postgres',
+      // eslint-disable-next-line no-console
       logging: console.log,
       pool: {
         max: 5,

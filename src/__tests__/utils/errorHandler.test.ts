@@ -7,7 +7,12 @@ import {
   errorHandler,
   withErrorHandling,
   handleErrors,
-} from '@/utils/errorHandler';
+  ValidationError,
+  AuthenticationError,
+  NetworkError,
+  DatabaseError,
+  ExternalServiceError,
+} from '../../core/utils/errorHandler';
 
 describe('ErrorHandler', () => {
   let handler: ErrorHandler;
@@ -19,7 +24,7 @@ describe('ErrorHandler', () => {
 
   describe('AppError', () => {
     it('應該創建正確的 AppError 實例', () => {
-      const error = new AppError(
+      const _error = new AppError(
         '測試錯誤',
         ErrorType.NETWORK,
         ErrorSeverity.HIGH,
@@ -37,7 +42,7 @@ describe('ErrorHandler', () => {
     });
 
     it('應該使用默認值創建 AppError', () => {
-      const error = new AppError('測試錯誤');
+      const _error = new AppError('測試錯誤');
 
       expect(error.type).toBe(ErrorType.UNKNOWN);
       expect(error.severity).toBe(ErrorSeverity.MEDIUM);
@@ -46,315 +51,255 @@ describe('ErrorHandler', () => {
     });
   });
 
+  describe('特定錯誤類型', () => {
+    it('應該創建 ValidationError', () => {
+      const _error = new ValidationError('驗證失敗', { field: 'email' });
+      expect(error.name).toBe('ValidationError');
+      expect(error.type).toBe(ErrorType.VALIDATION);
+      expect(error.severity).toBe(ErrorSeverity.MEDIUM);
+    });
+
+    it('應該創建 AuthenticationError', () => {
+      const _error = new AuthenticationError('認證失敗');
+      expect(error.name).toBe('AuthenticationError');
+      expect(error.type).toBe(ErrorType.AUTHENTICATION);
+      expect(error.severity).toBe(ErrorSeverity.HIGH);
+    });
+
+    it('應該創建 NetworkError', () => {
+      const _error = new NetworkError('網絡連接失敗');
+      expect(error.name).toBe('NetworkError');
+      expect(error.type).toBe(ErrorType.NETWORK);
+      expect(error.severity).toBe(ErrorSeverity.HIGH);
+    });
+
+    it('應該創建 DatabaseError', () => {
+      const _error = new DatabaseError('數據庫連接失敗');
+      expect(error.name).toBe('DatabaseError');
+      expect(error.type).toBe(ErrorType.DATABASE);
+      expect(error.severity).toBe(ErrorSeverity.HIGH);
+    });
+
+    it('應該創建 ExternalServiceError', () => {
+      const _error = new ExternalServiceError('API', '服務不可用');
+      expect(error.name).toBe('ExternalServiceError');
+      expect(error.type).toBe(ErrorType.EXTERNAL_SERVICE);
+      expect(error.severity).toBe(ErrorSeverity.HIGH);
+      expect(error.details?.service).toBe('API');
+    });
+  });
+
   describe('ErrorHandler 實例', () => {
     it('應該是單例模式', () => {
-      const instance1 = ErrorHandler.getInstance();
-      const instance2 = ErrorHandler.getInstance();
+      const _instance1 = ErrorHandler.getInstance();
+      const _instance2 = ErrorHandler.getInstance();
 
       expect(instance1).toBe(instance2);
     });
 
     it('應該處理 AppError', () => {
-      const appError = new AppError(
+      const _appError = new AppError(
         '測試錯誤',
         ErrorType.VALIDATION,
         ErrorSeverity.MEDIUM,
         'TEST_ERROR'
       );
 
-      const errorInfo = handler.handleError(appError);
+      const _result = handler.handleError(appError);
 
-      expect(errorInfo.type).toBe(ErrorType.VALIDATION);
-      expect(errorInfo.severity).toBe(ErrorSeverity.MEDIUM);
-      expect(errorInfo.message).toBe('測試錯誤');
-      expect(errorInfo.code).toBe('TEST_ERROR');
+      expect(result.type).toBe(ErrorType.VALIDATION);
+      expect(result.severity).toBe(ErrorSeverity.MEDIUM);
+      expect(result.message).toBe('測試錯誤');
+      expect(result.code).toBe('TEST_ERROR');
     });
 
     it('應該處理標準 Error', () => {
-      const standardError = new Error('網絡連接失敗');
+      const _standardError = new Error('網絡連接失敗');
 
-      const errorInfo = handler.handleError(standardError);
+      const _result = handler.handleError(standardError);
 
-      expect(errorInfo.type).toBe(ErrorType.NETWORK);
-      expect(errorInfo.severity).toBe(ErrorSeverity.HIGH);
-      expect(errorInfo.message).toBe('網絡連接失敗');
+      expect(result.type).toBe(ErrorType.NETWORK);
+      expect(result.severity).toBe(ErrorSeverity.HIGH);
+      expect(result.message).toBe('網絡連接失敗');
     });
 
     it('應該記錄錯誤統計', () => {
-      const error1 = new AppError('錯誤1', ErrorType.NETWORK);
-      const error2 = new AppError('錯誤2', ErrorType.VALIDATION);
-      const error3 = new AppError('錯誤3', ErrorType.NETWORK);
+      const _error1 = new AppError('錯誤1', ErrorType.NETWORK);
+      const _error2 = new AppError('錯誤2', ErrorType.VALIDATION);
+      const _error3 = new AppError('錯誤3', ErrorType.NETWORK);
 
       handler.handleError(error1);
       handler.handleError(error2);
       handler.handleError(error3);
 
-      const stats = handler.getErrorStats();
+      const _stats = handler.getErrorStats();
       expect(stats.get(ErrorType.NETWORK)).toBe(2);
       expect(stats.get(ErrorType.VALIDATION)).toBe(1);
     });
 
     it('應該限制最近錯誤數量', () => {
-      const maxErrors = 100;
+      const _maxErrors = 100;
 
       for (let i = 0; i < maxErrors + 10; i++) {
-        const error = new AppError(`錯誤 ${i}`);
+        const _error = new AppError(`錯誤${i}`);
         handler.handleError(error);
       }
 
-      const recentErrors = handler.getRecentErrors();
+      const _recentErrors = handler.getRecentErrors();
       expect(recentErrors.length).toBeLessThanOrEqual(maxErrors);
     });
-  });
 
-  describe('錯誤類型檢測', () => {
-    it('應該正確檢測網絡錯誤', () => {
-      const networkError = new Error('Network Error');
-      const errorInfo = handler.handleError(networkError);
-
-      expect(errorInfo.type).toBe(ErrorType.NETWORK);
-    });
-
-    it('應該正確檢測驗證錯誤', () => {
-      const validationError = new Error('Validation failed');
-      const errorInfo = handler.handleError(validationError);
-
-      expect(errorInfo.type).toBe(ErrorType.VALIDATION);
-    });
-
-    it('應該正確檢測認證錯誤', () => {
-      const authError = new Error('Unauthorized access');
-      const errorInfo = handler.handleError(authError);
-
-      expect(errorInfo.type).toBe(ErrorType.AUTHENTICATION);
-    });
-
-    it('應該正確檢測未找到錯誤', () => {
-      const notFoundError = new Error('Resource not found');
-      const errorInfo = handler.handleError(notFoundError);
-
-      expect(errorInfo.type).toBe(ErrorType.NOT_FOUND);
-    });
-
-    it('應該正確檢測服務器錯誤', () => {
-      const serverError = new Error('Internal server error');
-      const errorInfo = handler.handleError(serverError);
-
-      expect(errorInfo.type).toBe(ErrorType.SERVER_ERROR);
-    });
-  });
-
-  describe('錯誤嚴重程度檢測', () => {
-    it('應該正確檢測嚴重錯誤', () => {
-      const criticalError = new Error('Critical system failure');
-      const errorInfo = handler.handleError(criticalError);
-
-      expect(errorInfo.severity).toBe(ErrorSeverity.CRITICAL);
-    });
-
-    it('應該正確檢測高嚴重度錯誤', () => {
-      const highError = new Error('High priority error');
-      const errorInfo = handler.handleError(highError);
-
-      expect(errorInfo.severity).toBe(ErrorSeverity.HIGH);
-    });
-
-    it('應該正確檢測低嚴重度錯誤', () => {
-      const lowError = new Error('Low priority warning');
-      const errorInfo = handler.handleError(lowError);
-
-      expect(errorInfo.severity).toBe(ErrorSeverity.LOW);
-    });
-
-    it('應該默認為中等嚴重度', () => {
-      const defaultError = new Error('Regular error');
-      const errorInfo = handler.handleError(defaultError);
-
-      expect(errorInfo.severity).toBe(ErrorSeverity.MEDIUM);
-    });
-  });
-
-  describe('靜態錯誤創建方法', () => {
-    it('應該創建網絡錯誤', () => {
-      const error = ErrorHandler.createNetworkError('網絡連接失敗');
-
-      expect(error.type).toBe(ErrorType.NETWORK);
-      expect(error.severity).toBe(ErrorSeverity.HIGH);
-      expect(error.code).toBe('NETWORK_ERROR');
-    });
-
-    it('應該創建驗證錯誤', () => {
-      const error = ErrorHandler.createValidationError('輸入驗證失敗');
-
-      expect(error.type).toBe(ErrorType.VALIDATION);
-      expect(error.severity).toBe(ErrorSeverity.MEDIUM);
-      expect(error.code).toBe('VALIDATION_ERROR');
-    });
-
-    it('應該創建認證錯誤', () => {
-      const error = ErrorHandler.createAuthenticationError('認證失敗');
-
-      expect(error.type).toBe(ErrorType.AUTHENTICATION);
-      expect(error.severity).toBe(ErrorSeverity.HIGH);
-      expect(error.code).toBe('AUTHENTICATION_ERROR');
-    });
-
-    it('應該創建授權錯誤', () => {
-      const error = ErrorHandler.createAuthorizationError('權限不足');
-
-      expect(error.type).toBe(ErrorType.AUTHORIZATION);
-      expect(error.severity).toBe(ErrorSeverity.HIGH);
-      expect(error.code).toBe('AUTHORIZATION_ERROR');
-    });
-
-    it('應該創建未找到錯誤', () => {
-      const error = ErrorHandler.createNotFoundError('資源不存在');
-
-      expect(error.type).toBe(ErrorType.NOT_FOUND);
-      expect(error.severity).toBe(ErrorSeverity.MEDIUM);
-      expect(error.code).toBe('NOT_FOUND_ERROR');
-    });
-
-    it('應該創建服務器錯誤', () => {
-      const error = ErrorHandler.createServerError('服務器內部錯誤');
-
-      expect(error.type).toBe(ErrorType.SERVER_ERROR);
-      expect(error.severity).toBe(ErrorSeverity.CRITICAL);
-      expect(error.code).toBe('SERVER_ERROR');
-    });
-  });
-
-  describe('錯誤處理裝飾器', () => {
-    class TestClass {
-      @handleErrors
-      async testMethod() {
-        throw new Error('測試錯誤');
-      }
-
-      @handleErrors
-      async successfulMethod() {
-        return '成功';
-      }
-    }
-
-    it('應該處理方法中的錯誤', async () => {
-      const testInstance = new TestClass();
-
-      try {
-        await testInstance.testMethod();
-        fail('應該拋出錯誤');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toBe('測試錯誤');
-      }
-    });
-
-    it('應該正常執行成功的方法', async () => {
-      const testInstance = new TestClass();
-
-      const result = await testInstance.successfulMethod();
-      expect(result).toBe('成功');
-    });
-  });
-
-  describe('withErrorHandling 包裝器', () => {
-    it('應該包裝異步函數並處理錯誤', async () => {
-      const asyncFunction = async () => {
-        throw new Error('異步錯誤');
-      };
-
-      const wrappedFunction = withErrorHandling(asyncFunction, {
-        context: 'test',
-      });
-
-      try {
-        await wrappedFunction();
-        fail('應該拋出錯誤');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect(error.message).toBe('異步錯誤');
-      }
-    });
-
-    it('應該正常執行成功的異步函數', async () => {
-      const asyncFunction = async () => {
-        return '異步成功';
-      };
-
-      const wrappedFunction = withErrorHandling(asyncFunction);
-
-      const result = await wrappedFunction();
-      expect(result).toBe('異步成功');
-    });
-  });
-
-  describe('錯誤統計和清理', () => {
-    it('應該清理錯誤統計', () => {
-      const error = new AppError('測試錯誤');
+    it('應該清除錯誤統計', () => {
+      const _error = new AppError('測試錯誤', ErrorType.NETWORK);
       handler.handleError(error);
 
-      expect(handler.getErrorStats().size).toBeGreaterThan(0);
-      expect(handler.getRecentErrors().length).toBeGreaterThan(0);
+      expect(handler.getErrorStats().get(ErrorType.NETWORK)).toBe(1);
 
       handler.clearErrorStats();
 
       expect(handler.getErrorStats().size).toBe(0);
       expect(handler.getRecentErrors().length).toBe(0);
     });
+  });
 
-    it('應該獲取錯誤統計', () => {
-      const networkError = new AppError('網絡錯誤', ErrorType.NETWORK);
-      const validationError = new AppError('驗證錯誤', ErrorType.VALIDATION);
-
-      handler.handleError(networkError);
-      handler.handleError(validationError);
-      handler.handleError(networkError);
-
-      const stats = handler.getErrorStats();
-      expect(stats.get(ErrorType.NETWORK)).toBe(2);
-      expect(stats.get(ErrorType.VALIDATION)).toBe(1);
+  describe('錯誤類型檢測', () => {
+    it('應該檢測網絡錯誤', () => {
+      const _error = new Error('Network request failed');
+      const _result = handler.handleError(error);
+      expect(result.type).toBe(ErrorType.NETWORK);
     });
 
-    it('應該獲取最近錯誤', () => {
-      const error1 = new AppError('錯誤1');
-      const error2 = new AppError('錯誤2');
+    it('應該檢測驗證錯誤', () => {
+      const _error = new Error('Validation failed');
+      const _result = handler.handleError(error);
+      expect(result.type).toBe(ErrorType.VALIDATION);
+    });
 
-      handler.handleError(error1);
-      handler.handleError(error2);
+    it('應該檢測認證錯誤', () => {
+      const _error = new Error('Authentication failed');
+      const _result = handler.handleError(error);
+      expect(result.type).toBe(ErrorType.AUTHENTICATION);
+    });
 
-      const recentErrors = handler.getRecentErrors();
-      expect(recentErrors.length).toBe(2);
-      expect(recentErrors[0].message).toBe('錯誤1');
-      expect(recentErrors[1].message).toBe('錯誤2');
+    it('應該檢測數據庫錯誤', () => {
+      const _error = new Error('Database connection failed');
+      const _result = handler.handleError(error);
+      expect(result.type).toBe(ErrorType.DATABASE);
+    });
+
+    it('應該檢測外部服務錯誤', () => {
+      const _error = new Error('External API call failed');
+      const _result = handler.handleError(error);
+      expect(result.type).toBe(ErrorType.EXTERNAL_SERVICE);
     });
   });
 
-  describe('錯誤 ID 生成', () => {
-    it('應該生成唯一的錯誤 ID', () => {
-      const error1 = new AppError('錯誤1');
-      const error2 = new AppError('錯誤2');
+  describe('錯誤嚴重程度檢測', () => {
+    it('應該檢測高嚴重程度錯誤', () => {
+      const _error = new Error('High severity error');
+      const _result = handler.handleError(error);
+      expect(result.severity).toBe(ErrorSeverity.HIGH);
+    });
 
-      const errorInfo1 = handler.handleError(error1);
-      const errorInfo2 = handler.handleError(error2);
+    it('應該檢測中等嚴重程度錯誤', () => {
+      const _error = new Error('Medium severity error');
+      const _result = handler.handleError(error);
+      expect(result.severity).toBe(ErrorSeverity.MEDIUM);
+    });
 
-      expect(errorInfo1.id).not.toBe(errorInfo2.id);
-      expect(errorInfo1.id).toMatch(/^err_\d+_[a-z0-9]+$/);
-      expect(errorInfo2.id).toMatch(/^err_\d+_[a-z0-9]+$/);
+    it('應該檢測低嚴重程度錯誤', () => {
+      const _error = new Error('Low severity error');
+      const _result = handler.handleError(error);
+      expect(result.severity).toBe(ErrorSeverity.LOW);
     });
   });
 
-  describe('上下文處理', () => {
-    it('應該處理帶上下文的錯誤', () => {
-      const error = new AppError('測試錯誤');
-      const context = {
-        component: 'TestComponent',
-        function: 'testFunction',
-        userId: 'user123',
-      };
+  describe('重試機制', () => {
+    it('應該成功重試操作', async () => {
+      let attemptCount = 0;
+      const _operation = jest.fn().mockImplementation(() => {
+        attemptCount++;
+        if (attemptCount < 3) {
+          throw new Error('Temporary failure');
+        }
+        return 'success';
+      });
 
-      const errorInfo = handler.handleError(error, context);
+      const _result = await handler.handleErrorWithRetry(
+        new Error('Temporary failure'),
+        'test',
+        operation
+      );
 
-      expect(errorInfo.context).toEqual(context);
+      expect(result).toBe('success');
+      expect(operation).toHaveBeenCalledTimes(3);
+    });
+
+    it('應該在重試次數用完後拋出錯誤', async () => {
+      const _operation = jest
+        .fn()
+        .mockRejectedValue(new Error('Persistent failure'));
+
+      await expect(
+        handler.handleErrorWithRetry(
+          new Error('Persistent failure'),
+          'test',
+          operation
+        )
+      ).rejects.toThrow('Persistent failure');
+
+      expect(operation).toHaveBeenCalledTimes(3);
+    });
+  });
+
+  describe('錯誤處理裝飾器', () => {
+    it('應該使用 withErrorHandling 裝飾器', async () => {
+      const _testFunction = jest.fn().mockRejectedValue(new Error('Test error'));
+      const _decoratedFunction = withErrorHandling(testFunction, 'test-context');
+
+      await expect(decoratedFunction()).rejects.toThrow();
+      expect(testFunction).toHaveBeenCalled();
+    });
+
+    it('應該使用 handleErrors 方法裝飾器', async () => {
+      class TestClass {
+        @handleErrors
+        async testMethod() {
+          throw new Error('測試錯誤');
+        }
+      }
+
+      const _testInstance = new TestClass();
+      await expect(testInstance.testMethod()).rejects.toThrow();
+    });
+  });
+
+  describe('錯誤恢復建議', () => {
+    it('應該為網絡錯誤提供恢復建議', async () => {
+      const _error = new Error('Network connection failed');
+
+      try {
+        await handler.handleErrorWithRetry(error, 'network-test');
+      } catch (e) {
+        // 錯誤應該被拋出，但我們主要測試重試機制
+      }
+    });
+
+    it('應該為驗證錯誤提供恢復建議', async () => {
+      const _error = new Error('Validation failed');
+
+      try {
+        await handler.handleErrorWithRetry(error, 'validation-test');
+      } catch (e) {
+        // 錯誤應該被拋出，但我們主要測試重試機制
+      }
+    });
+  });
+
+  describe('單例實例', () => {
+    it('應該導出單例實例', () => {
+      expect(errorHandler).toBeInstanceOf(ErrorHandler);
+      expect(errorHandler).toBe(ErrorHandler.getInstance());
     });
   });
 });

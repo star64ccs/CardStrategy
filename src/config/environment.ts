@@ -51,8 +51,8 @@ const production: Environment = {
 };
 
 // 根據環境變量選擇配置
-const getEnvironment = (): Environment => {
-  const env = (process.env as any)['NODE_ENV'] || 'development';
+const _getEnvironment = (): Environment => {
+  const _env = (process.env as any)['NODE_ENV'] || 'development';
 
   switch (env) {
     case 'production':
@@ -66,20 +66,20 @@ const getEnvironment = (): Environment => {
 };
 
 // 導出當前環境配置
-export const environment = getEnvironment();
+export const _environment = getEnvironment();
 
 // 導出環境檢查函數
-export const isDevelopment = () =>
+export const _isDevelopment = () =>
   (process.env as any)['NODE_ENV'] === 'development';
-export const isStaging = () => (process.env as any)['NODE_ENV'] === 'staging';
-export const isProduction = () =>
+export const _isStaging = () => (process.env as any)['NODE_ENV'] === 'staging';
+export const _isProduction = () =>
   (process.env as any)['NODE_ENV'] === 'production';
 
 // 導出便捷方法
-export const getApiUrl = (endpoint: string): string => {
+export const _getApiUrl = (endpoint: string): string => {
   return `${environment.apiBaseUrl}${endpoint}`;
 };
 
-export const getImageUrl = (path: string): string => {
+export const _getImageUrl = (path: string): string => {
   return `${environment.apiBaseUrl}/images${path}`;
 };

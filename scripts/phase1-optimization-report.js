@@ -6,6 +6,7 @@ const path = require('path');
  * 卡牌辨識系統 + 置中評估系統優化
  */
 
+// eslint-disable-next-line no-console
 console.log('📊 生成第一階段優化報告...\n');
 
 const phase1Report = {
@@ -182,34 +183,54 @@ fs.writeFileSync(
   JSON.stringify(phase1Report, null, 2)
 );
 
+// eslint-disable-next-line no-console
 console.log('✅ 第一階段優化報告已生成！');
+// eslint-disable-next-line no-console
 console.log('\n📊 優化摘要:');
+// eslint-disable-next-line no-console
 console.log(`   階段: ${phase1Report.phase}`);
+// eslint-disable-next-line no-console
 console.log(`   狀態: ${phase1Report.status}`);
+// eslint-disable-next-line no-console
 console.log(`   報告文件: reports/phase1-optimization-report.json`);
 
+// eslint-disable-next-line no-console
 console.log('\n🎯 準確率提升:');
+// eslint-disable-next-line no-console
 console.log(`   卡牌辨識系統: ${phase1Report.metrics.before.cardRecognition}% → ${phase1Report.metrics.after.cardRecognition}% (${phase1Report.metrics.improvement.cardRecognition})`);
+// eslint-disable-next-line no-console
 console.log(`   置中評估系統: ${phase1Report.metrics.before.centeringEvaluation}% → ${phase1Report.metrics.after.centeringEvaluation}% (${phase1Report.metrics.improvement.centeringEvaluation})`);
+// eslint-disable-next-line no-console
 console.log(`   平均提升: ${phase1Report.metrics.before.average}% → ${phase1Report.metrics.after.average}% (${phase1Report.metrics.improvement.average})`);
 
+// eslint-disable-next-line no-console
 console.log('\n🔧 主要改進:');
+// eslint-disable-next-line no-console
 console.log('   卡牌辨識系統:');
 phase1Report.optimizations.cardRecognition.improvements.forEach(imp => {
+  // eslint-disable-next-line no-console
   console.log(`     • ${imp.feature}: ${imp.description}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n   置中評估系統:');
 phase1Report.optimizations.centeringEvaluation.improvements.forEach(imp => {
+  // eslint-disable-next-line no-console
   console.log(`     • ${imp.feature}: ${imp.description}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n📁 修改文件:');
 phase1Report.implementation.filesModified.forEach(file => {
+  // eslint-disable-next-line no-console
   console.log(`   • ${file}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n🔄 下一階段:');
+// eslint-disable-next-line no-console
 console.log(`   ${phase1Report.nextPhase.name}`);
+// eslint-disable-next-line no-console
 console.log(`   預計時間: ${phase1Report.nextPhase.estimatedTime}`);
+// eslint-disable-next-line no-console
 console.log(`   重點: ${phase1Report.nextPhase.focus}`);

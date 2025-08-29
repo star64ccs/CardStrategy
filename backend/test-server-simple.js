@@ -48,7 +48,10 @@ app.get('/api/test', (req, res) => {
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
+  // eslint-disable-next-line no-console
   console.log(`🚀 簡單測試服務器運行在 http://localhost:${PORT}`);
+  // eslint-disable-next-line no-console
   console.log(`🏥 健康檢查: http://localhost:${PORT}/health`);
+  // eslint-disable-next-line no-console
   console.log(`🧪 測試端點: http://localhost:${PORT}/api/test`);
 });

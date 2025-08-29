@@ -55,6 +55,7 @@ app.get('/', (req, res) => {
 // 根據環境加載不同的路由
 if (process.env.NODE_ENV === 'production') {
   // 生產環境：只加載核心功能
+  // eslint-disable-next-line no-console
   console.log.info('生產環境：加載核心功能');
 } else {
   // 開發環境：加載所有功能
@@ -67,8 +68,10 @@ if (process.env.NODE_ENV === 'production') {
     app.use('/api/cards', cardsRoutes);
     app.use('/api/collections', collectionsRoutes);
 
+    // eslint-disable-next-line no-console
     console.log.info('開發環境：加載所有路由');
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log.warning('部分路由加載失敗，使用簡化模式');
   }
 }
@@ -80,29 +83,37 @@ const startServer = async () => {
     // 初始化服務
     try {
       await connectRedis();
+      // eslint-disable-next-line no-console
       console.log.info('Redis 連接初始化成功');
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log.error('Redis 連接失敗:', error);
     }
 
     try {
       const dbConnected = await testConnection();
       if (dbConnected) {
+        // eslint-disable-next-line no-console
         console.log.info('數據庫連接測試成功');
       } else {
+        // eslint-disable-next-line no-console
         console.log.warn('數據庫連接測試失敗');
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log.error('數據庫連接測試失敗:', error);
     }
 
     const server = app.listen(PORT, () => {
+      // eslint-disable-next-line no-console
       console.log.info(`🚀 CardStrategy API 服務器運行在端口 ${PORT}`);
+      // eslint-disable-next-line no-console
       console.log.info(`🏥 健康檢查端點: http://localhost:${PORT}/api/health`);
     });
 
     return server;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log.error('服務器啟動失敗:', error);
     process.exit(1);
   }

@@ -6,6 +6,7 @@ const path = require('path');
  * 為 CardStrategy 項目創建監控和分析儀表板
  */
 
+// eslint-disable-next-line no-console
 console.log('📊 創建 CardStrategy 監控儀表板...\n');
 
 // 創建監控儀表板 HTML
@@ -443,11 +444,13 @@ try {
   // 創建儀表板 HTML
   const dashboardPath = path.join(monitoringDir, 'dashboard.html');
   fs.writeFileSync(dashboardPath, dashboardHTML);
+  // eslint-disable-next-line no-console
   console.log('✅ 創建監控儀表板: monitoring/dashboard.html');
 
   // 創建監控配置
   const configPath = path.join(monitoringDir, monitoringConfig.name);
   fs.writeFileSync(configPath, JSON.stringify(monitoringConfig.content, null, 2));
+  // eslint-disable-next-line no-console
   console.log('✅ 創建監控配置: monitoring/monitoring-config.json');
 
   // 創建監控腳本
@@ -505,26 +508,42 @@ checkServiceHealth().then(results => {
 
   const scriptPath = path.join(__dirname, 'monitor-services.js');
   fs.writeFileSync(scriptPath, monitoringScript);
+  // eslint-disable-next-line no-console
   console.log('✅ 創建監控腳本: scripts/monitor-services.js');
 
+  // eslint-disable-next-line no-console
   console.log('\n🎉 監控儀表板創建完成！');
+  // eslint-disable-next-line no-console
   console.log('\n📋 可用功能:');
+  // eslint-disable-next-line no-console
   console.log('   📊 監控儀表板: monitoring/dashboard.html');
+  // eslint-disable-next-line no-console
   console.log('   🔧 監控配置: monitoring/monitoring-config.json');
+  // eslint-disable-next-line no-console
   console.log('   🧪 服務監控: node scripts/monitor-services.js');
 
+  // eslint-disable-next-line no-console
   console.log('\n🚀 使用方式:');
+  // eslint-disable-next-line no-console
   console.log('   1. 在瀏覽器中打開 monitoring/dashboard.html');
+  // eslint-disable-next-line no-console
   console.log('   2. 運行 node scripts/monitor-services.js 進行健康檢查');
+  // eslint-disable-next-line no-console
   console.log('   3. 查看各服務的實時狀態和統計');
 
+  // eslint-disable-next-line no-console
   console.log('\n🔗 快速連結:');
+  // eslint-disable-next-line no-console
   console.log('   • Mixpanel: https://mixpanel.com/project/2818294');
+  // eslint-disable-next-line no-console
   console.log('   • SendGrid: https://app.sendgrid.com');
+  // eslint-disable-next-line no-console
   console.log('   • LogRocket: https://app.logrocket.com/lzzz2v/card-strategy/');
+  // eslint-disable-next-line no-console
   console.log('   • Segment: https://app.segment.com/chan-yat-sang/sources/javascript/overview');
 
 } catch (error) {
+  // eslint-disable-next-line no-console
   console.error('❌ 創建監控儀表板失敗:', error.message);
   process.exit(1);
 }

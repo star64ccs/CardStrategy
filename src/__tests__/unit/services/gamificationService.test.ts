@@ -19,7 +19,7 @@ describe('GamificationService', () => {
 
   describe('getUserProfile', () => {
     it('應該成功獲取用戶遊戲化檔案', async () => {
-      const mockProfile = {
+      const _mockProfile = {
         userId: 'user123',
         level: 5,
         experience: 1250,
@@ -32,7 +32,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('get', mockProfile);
 
-      const result = await gamificationService.getUserProfile('user123');
+      const _result = await gamificationService.getUserProfile('user123');
 
       expect(result).toEqual(mockProfile);
     });
@@ -48,14 +48,14 @@ describe('GamificationService', () => {
 
   describe('addExperience', () => {
     it('應該成功添加經驗值', async () => {
-      const experienceData = {
+      const _experienceData = {
         userId: 'user123',
         amount: 100,
         source: 'card_scan',
         description: '掃描卡片獲得經驗值',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         userId: 'user123',
         newExperience: 1350,
         newLevel: 6,
@@ -65,13 +65,13 @@ describe('GamificationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await gamificationService.addExperience(experienceData);
+      const _result = await gamificationService.addExperience(experienceData);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('應該處理添加經驗值失敗的情況', async () => {
-      const experienceData = {
+      const _experienceData = {
         userId: 'invalid_user',
         amount: 100,
         source: 'card_scan',
@@ -88,7 +88,7 @@ describe('GamificationService', () => {
 
   describe('getAchievements', () => {
     it('應該成功獲取成就列表', async () => {
-      const mockAchievements = [
+      const _mockAchievements = [
         {
           id: 'first_scan',
           name: '首次掃描',
@@ -119,7 +119,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('get', mockAchievements);
 
-      const result = await gamificationService.getAchievements('user123');
+      const _result = await gamificationService.getAchievements('user123');
 
       expect(result).toEqual(mockAchievements);
     });
@@ -127,12 +127,12 @@ describe('GamificationService', () => {
 
   describe('unlockAchievement', () => {
     it('應該成功解鎖成就', async () => {
-      const achievementData = {
+      const _achievementData = {
         userId: 'user123',
         achievementId: 'streak_30',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         achievementId: 'streak_30',
         unlocked: true,
         pointsEarned: 200,
@@ -141,7 +141,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result =
+      const _result =
         await gamificationService.unlockAchievement(achievementData);
 
       expect(result).toEqual(mockResponse);
@@ -150,7 +150,7 @@ describe('GamificationService', () => {
 
   describe('getLeaderboard', () => {
     it('應該成功獲取排行榜', async () => {
-      const mockLeaderboard = [
+      const _mockLeaderboard = [
         {
           rank: 1,
           userId: 'user1',
@@ -171,13 +171,13 @@ describe('GamificationService', () => {
 
       mockApiResponse('get', mockLeaderboard);
 
-      const result = await gamificationService.getLeaderboard();
+      const _result = await gamificationService.getLeaderboard();
 
       expect(result).toEqual(mockLeaderboard);
     });
 
     it('應該支持排行榜類型參數', async () => {
-      const leaderboardType = 'weekly';
+      const _leaderboardType = 'weekly';
 
       mockApiResponse('get', []);
 
@@ -196,7 +196,7 @@ describe('GamificationService', () => {
 
   describe('getChallenges', () => {
     it('應該成功獲取挑戰列表', async () => {
-      const mockChallenges = [
+      const _mockChallenges = [
         {
           id: 'daily_scan',
           name: '每日掃描',
@@ -223,7 +223,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('get', mockChallenges);
 
-      const result = await gamificationService.getChallenges('user123');
+      const _result = await gamificationService.getChallenges('user123');
 
       expect(result).toEqual(mockChallenges);
     });
@@ -231,13 +231,13 @@ describe('GamificationService', () => {
 
   describe('updateChallengeProgress', () => {
     it('應該成功更新挑戰進度', async () => {
-      const progressData = {
+      const _progressData = {
         userId: 'user123',
         challengeId: 'daily_scan',
         progress: 1,
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         challengeId: 'daily_scan',
         currentProgress: 4,
         isCompleted: false,
@@ -246,20 +246,20 @@ describe('GamificationService', () => {
 
       mockApiResponse('put', mockResponse);
 
-      const result =
+      const _result =
         await gamificationService.updateChallengeProgress(progressData);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('應該處理挑戰完成的情況', async () => {
-      const progressData = {
+      const _progressData = {
         userId: 'user123',
         challengeId: 'daily_scan',
         progress: 2,
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         challengeId: 'daily_scan',
         currentProgress: 5,
         isCompleted: true,
@@ -269,7 +269,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('put', mockResponse);
 
-      const result =
+      const _result =
         await gamificationService.updateChallengeProgress(progressData);
 
       expect(result).toEqual(mockResponse);
@@ -278,7 +278,7 @@ describe('GamificationService', () => {
 
   describe('getRewards', () => {
     it('應該成功獲取獎勵列表', async () => {
-      const mockRewards = [
+      const _mockRewards = [
         {
           id: 'badge_bronze',
           name: '青銅徽章',
@@ -300,7 +300,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('get', mockRewards);
 
-      const result = await gamificationService.getRewards('user123');
+      const _result = await gamificationService.getRewards('user123');
 
       expect(result).toEqual(mockRewards);
     });
@@ -308,12 +308,12 @@ describe('GamificationService', () => {
 
   describe('claimReward', () => {
     it('應該成功領取獎勵', async () => {
-      const rewardData = {
+      const _rewardData = {
         userId: 'user123',
         rewardId: 'points_100',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         rewardId: 'points_100',
         claimed: true,
         claimedAt: '2024-01-01T00:00:00Z',
@@ -322,7 +322,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await gamificationService.claimReward(rewardData);
+      const _result = await gamificationService.claimReward(rewardData);
 
       expect(result).toEqual(mockResponse);
     });
@@ -330,7 +330,7 @@ describe('GamificationService', () => {
 
   describe('getStreak', () => {
     it('應該成功獲取連續使用天數', async () => {
-      const mockStreak = {
+      const _mockStreak = {
         currentStreak: 7,
         longestStreak: 15,
         lastActivityDate: '2024-01-01T00:00:00Z',
@@ -339,7 +339,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('get', mockStreak);
 
-      const result = await gamificationService.getStreak('user123');
+      const _result = await gamificationService.getStreak('user123');
 
       expect(result).toEqual(mockStreak);
     });
@@ -347,7 +347,7 @@ describe('GamificationService', () => {
 
   describe('updateStreak', () => {
     it('應該成功更新連續使用天數', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         newStreak: 8,
         streakReward: 100,
         newTotalPoints: 5400,
@@ -355,7 +355,7 @@ describe('GamificationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await gamificationService.updateStreak('user123');
+      const _result = await gamificationService.updateStreak('user123');
 
       expect(result).toEqual(mockResponse);
     });
@@ -363,7 +363,7 @@ describe('GamificationService', () => {
 
   describe('getLevelInfo', () => {
     it('應該返回正確的等級信息', () => {
-      const levelInfo = gamificationService.getLevelInfo(1250);
+      const _levelInfo = gamificationService.getLevelInfo(1250);
 
       expect(levelInfo).toEqual({
         level: 5,
@@ -374,7 +374,7 @@ describe('GamificationService', () => {
     });
 
     it('應該處理最高等級的情況', () => {
-      const levelInfo = gamificationService.getLevelInfo(100000);
+      const _levelInfo = gamificationService.getLevelInfo(100000);
 
       expect(levelInfo).toEqual({
         level: 100,
@@ -430,13 +430,13 @@ describe('GamificationService', () => {
 
   describe('getAchievementProgress', () => {
     it('應該返回正確的成就進度', () => {
-      const achievement = {
+      const _achievement = {
         id: 'collector_100',
         target: 100,
         current: 75,
       };
 
-      const progress = gamificationService.getAchievementProgress(achievement);
+      const _progress = gamificationService.getAchievementProgress(achievement);
 
       expect(progress).toEqual({
         current: 75,
@@ -447,13 +447,13 @@ describe('GamificationService', () => {
     });
 
     it('應該處理已完成的成就', () => {
-      const achievement = {
+      const _achievement = {
         id: 'collector_100',
         target: 100,
         current: 100,
       };
 
-      const progress = gamificationService.getAchievementProgress(achievement);
+      const _progress = gamificationService.getAchievementProgress(achievement);
 
       expect(progress).toEqual({
         current: 100,

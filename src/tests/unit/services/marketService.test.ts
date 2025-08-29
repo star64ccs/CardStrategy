@@ -1,14 +1,14 @@
-import { marketService } from '../../../services/marketService';
 import { apiService } from '../../../services/apiService';
+import { marketService } from '../../../services/marketService';
 import { logger } from '../../../utils/logger';
-import {
-  validateInput,
-  validateApiResponse,
-} from '../../../utils/validationService';
 import {
   MarketDataEntitySchema,
   MarketTrendSchema,
 } from '../../../utils/validationSchemas';
+import {
+  validateInput,
+  validateApiResponse,
+} from '../../../utils/validationService';
 
 // Mock 依賴
 jest.mock('../../../services/apiService');
@@ -16,12 +16,12 @@ jest.mock('../../../utils/logger');
 jest.mock('../../../utils/validationService');
 jest.mock('../../../utils/validationSchemas');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
-const mockValidateInput = validateInput as jest.MockedFunction<
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockValidateInput = validateInput as jest.MockedFunction<
   typeof validateInput
 >;
-const mockValidateApiResponse = validateApiResponse as jest.MockedFunction<
+const _mockValidateApiResponse = validateApiResponse as jest.MockedFunction<
   typeof validateApiResponse
 >;
 
@@ -32,7 +32,7 @@ describe('MarketService', () => {
 
   describe('getMarketData', () => {
     it('應該成功獲取市場數據', async () => {
-      const mockMarketData = {
+      const _mockMarketData = {
         totalVolume: 1000000,
         totalTransactions: 5000,
         averagePrice: 150,
@@ -71,7 +71,7 @@ describe('MarketService', () => {
         ],
       };
 
-      const mockApiResponse = {
+      const _mockApiResponse = {
         success: true,
         data: mockMarketData,
         message: '獲取成功',
@@ -83,7 +83,7 @@ describe('MarketService', () => {
         data: mockMarketData,
       });
 
-      const result = await marketService.getMarketData();
+      const _result = await marketService.getMarketData();
 
       expect(result).toEqual(mockApiResponse);
       expect(mockApiService.get).toHaveBeenCalledWith('/market/data');
@@ -95,7 +95,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理數據驗證失敗', async () => {
-      const mockApiResponse = {
+      const _mockApiResponse = {
         success: true,
         data: { invalid: 'data' },
         message: '獲取成功',
@@ -117,7 +117,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理 API 錯誤', async () => {
-      const error = new Error('API 錯誤');
+      const _error = new Error('API 錯誤');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(marketService.getMarketData()).rejects.toThrow('API 錯誤');
@@ -130,7 +130,7 @@ describe('MarketService', () => {
 
   describe('getMarketTrends', () => {
     it('應該成功獲取市場趨勢', async () => {
-      const mockTrends = [
+      const _mockTrends = [
         {
           period: '7d' as const,
           data: [
@@ -140,7 +140,7 @@ describe('MarketService', () => {
         },
       ];
 
-      const mockApiResponse = {
+      const _mockApiResponse = {
         success: true,
         data: mockTrends,
         message: '獲取成功',
@@ -156,7 +156,7 @@ describe('MarketService', () => {
         data: mockTrends,
       });
 
-      const result = await marketService.getMarketTrends('7d');
+      const _result = await marketService.getMarketTrends('7d');
 
       expect(result).toEqual(mockApiResponse);
       expect(mockValidateInput).toHaveBeenCalledWith(expect.any(Object), {
@@ -184,7 +184,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理響應驗證失敗', async () => {
-      const mockApiResponse = {
+      const _mockApiResponse = {
         success: true,
         data: [{ invalid: 'trend' }],
         message: '獲取成功',
@@ -210,7 +210,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理 API 錯誤', async () => {
-      const error = new Error('API 錯誤');
+      const _error = new Error('API 錯誤');
       mockValidateInput.mockReturnValue({
         isValid: true,
         data: { period: '7d' },
@@ -227,7 +227,7 @@ describe('MarketService', () => {
     });
 
     it('應該使用默認時間週期', async () => {
-      const mockTrends = [
+      const _mockTrends = [
         {
           period: '7d' as const,
           data: [
@@ -236,7 +236,7 @@ describe('MarketService', () => {
         },
       ];
 
-      const mockApiResponse = {
+      const _mockApiResponse = {
         success: true,
         data: mockTrends,
         message: '獲取成功',
@@ -262,7 +262,7 @@ describe('MarketService', () => {
 
   describe('getMarketAnalysis', () => {
     it('應該成功獲取市場分析', async () => {
-      const mockAnalysis = {
+      const _mockAnalysis = {
         sentiment: 'bullish' as const,
         confidence: 0.75,
         factors: {
@@ -274,7 +274,7 @@ describe('MarketService', () => {
         riskLevel: 'medium' as const,
       };
 
-      const mockApiResponse = {
+      const _mockApiResponse = {
         success: true,
         data: mockAnalysis,
         message: '獲取成功',
@@ -286,7 +286,7 @@ describe('MarketService', () => {
         data: mockAnalysis,
       });
 
-      const result = await marketService.getMarketAnalysis();
+      const _result = await marketService.getMarketAnalysis();
 
       expect(result).toEqual(mockApiResponse);
       expect(mockApiService.get).toHaveBeenCalledWith('/market/analysis');
@@ -297,7 +297,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理分析數據驗證失敗', async () => {
-      const mockApiResponse = {
+      const _mockApiResponse = {
         success: true,
         data: { invalid: 'analysis' },
         message: '獲取成功',
@@ -319,7 +319,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理 API 錯誤', async () => {
-      const error = new Error('API 錯誤');
+      const _error = new Error('API 錯誤');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(marketService.getMarketAnalysis()).rejects.toThrow(
@@ -334,8 +334,8 @@ describe('MarketService', () => {
 
   describe('getPricePredictions', () => {
     it('應該成功獲取價格預測', async () => {
-      const cardIds = ['card-1', 'card-2'];
-      const mockPredictions = [
+      const _cardIds = ['card-1', 'card-2'];
+      const _mockPredictions = [
         {
           cardId: 'card-1',
           currentPrice: 100,
@@ -356,7 +356,7 @@ describe('MarketService', () => {
         },
       ];
 
-      const mockApiResponse = {
+      const _mockApiResponse = {
         success: true,
         data: mockPredictions,
         message: '預測成功',
@@ -372,7 +372,7 @@ describe('MarketService', () => {
         data: mockPredictions,
       });
 
-      const result = await marketService.getPricePredictions(cardIds);
+      const _result = await marketService.getPricePredictions(cardIds);
 
       expect(result).toEqual(mockApiResponse);
       expect(mockValidateInput).toHaveBeenCalledWith(expect.any(Object), {
@@ -412,8 +412,8 @@ describe('MarketService', () => {
     });
 
     it('應該處理響應驗證失敗', async () => {
-      const cardIds = ['card-1'];
-      const mockApiResponse = {
+      const _cardIds = ['card-1'];
+      const _mockApiResponse = {
         success: true,
         data: [{ invalid: 'prediction' }],
         message: '預測成功',
@@ -439,8 +439,8 @@ describe('MarketService', () => {
     });
 
     it('應該處理 API 錯誤', async () => {
-      const cardIds = ['card-1'];
-      const error = new Error('API 錯誤');
+      const _cardIds = ['card-1'];
+      const _error = new Error('API 錯誤');
 
       mockValidateInput.mockReturnValue({
         isValid: true,

@@ -3,7 +3,7 @@ import { PerformanceOptimizer } from '../utils/performanceOptimizer';
 
 describe('Performance Tests', () => {
   test('should measure performance correctly', () => {
-    const startTime = Date.now();
+    const _startTime = Date.now();
 
     // 模擬一些操作
     let result = 0;
@@ -11,15 +11,15 @@ describe('Performance Tests', () => {
       result += i;
     }
 
-    const endTime = Date.now();
-    const duration = endTime - startTime;
+    const _endTime = Date.now();
+    const _duration = endTime - startTime;
 
     expect(duration).toBeLessThan(100); // 應該在 100ms 內完成
     expect(result).toBeGreaterThan(0);
   });
 
   test('should get memory usage', () => {
-    const memoryUsage = PerformanceOptimizer.getMemoryUsage();
+    const _memoryUsage = PerformanceOptimizer.getMemoryUsage();
 
     expect(memoryUsage).toHaveProperty('used');
     expect(memoryUsage).toHaveProperty('total');

@@ -47,6 +47,7 @@ const createPredictionModelsTable = async (sequelize) => {
 };
 
 // 在主要遷移函數中添加預測模型表創建
+// eslint-disable-next-line no-unused-vars
 const runMigrations = async () => {
   try {
     // ... existing migrations ...

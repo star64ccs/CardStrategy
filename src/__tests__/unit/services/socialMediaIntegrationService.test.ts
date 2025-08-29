@@ -19,13 +19,13 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('connectSocialAccount', () => {
     it('應該成功連接Facebook帳戶', async () => {
-      const connectionData = {
+      const _connectionData = {
         platform: 'facebook',
         accessToken: 'facebook_access_token',
         userId: 'user123',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         success: true,
         accountId: expect.any(String),
         platform: 'facebook',
@@ -34,7 +34,7 @@ describe('SocialMediaIntegrationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.connectSocialAccount(
           connectionData
         );
@@ -43,13 +43,13 @@ describe('SocialMediaIntegrationService', () => {
     });
 
     it('應該成功連接Twitter帳戶', async () => {
-      const connectionData = {
+      const _connectionData = {
         platform: 'twitter',
         accessToken: 'twitter_access_token',
         userId: 'user123',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         success: true,
         accountId: expect.any(String),
         platform: 'twitter',
@@ -58,7 +58,7 @@ describe('SocialMediaIntegrationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.connectSocialAccount(
           connectionData
         );
@@ -67,7 +67,7 @@ describe('SocialMediaIntegrationService', () => {
     });
 
     it('應該處理連接失敗的情況', async () => {
-      const connectionData = {
+      const _connectionData = {
         platform: 'invalid_platform',
         accessToken: 'invalid_token',
         userId: 'user123',
@@ -83,14 +83,14 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('disconnectSocialAccount', () => {
     it('應該成功斷開社交媒體帳戶', async () => {
-      const disconnectData = {
+      const _disconnectData = {
         platform: 'facebook',
         userId: 'user123',
       };
 
       mockApiResponse('delete', { success: true });
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.disconnectSocialAccount(
           disconnectData
         );
@@ -102,7 +102,7 @@ describe('SocialMediaIntegrationService', () => {
     });
 
     it('應該處理斷開連接失敗的情況', async () => {
-      const disconnectData = {
+      const _disconnectData = {
         platform: 'facebook',
         userId: 'invalid_user',
       };
@@ -115,11 +115,11 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('getConnectedAccounts', () => {
     it('應該成功獲取已連接的社交媒體帳戶', async () => {
-      const mockConnections = [];
+      const _mockConnections = [];
 
       mockApiResponse('get', mockConnections);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.getConnectedAccounts('user123');
 
       expect(result).toEqual(mockConnections);
@@ -128,14 +128,14 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('shareCard', () => {
     it('應該成功在Facebook分享卡片', async () => {
-      const shareData = {
+      const _shareData = {
         platform: 'facebook',
         cardId: 'card123',
         message: '看看我發現的稀有卡片！',
         userId: 'user123',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         success: true,
         shareId: expect.any(String),
         sharedAt: expect.any(Date),
@@ -143,20 +143,20 @@ describe('SocialMediaIntegrationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await socialMediaIntegrationService.shareCard(shareData);
+      const _result = await socialMediaIntegrationService.shareCard(shareData);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('應該成功在Twitter分享卡片', async () => {
-      const shareData = {
+      const _shareData = {
         platform: 'twitter',
         cardId: 'card123',
         message: '稀有卡片發現！#TCG #CardCollector',
         userId: 'user123',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         success: true,
         shareId: expect.any(String),
         sharedAt: expect.any(Date),
@@ -164,13 +164,13 @@ describe('SocialMediaIntegrationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await socialMediaIntegrationService.shareCard(shareData);
+      const _result = await socialMediaIntegrationService.shareCard(shareData);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('應該處理分享失敗的情況', async () => {
-      const shareData = {
+      const _shareData = {
         platform: 'facebook',
         cardId: 'invalid_card',
         message: 'Test message',
@@ -185,14 +185,14 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('shareCollection', () => {
     it('應該成功分享收藏', async () => {
-      const shareData = {
+      const _shareData = {
         platform: 'facebook',
         collectionId: 'collection123',
         message: '我的卡片收藏！',
         userId: 'user123',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         success: true,
         shareId: expect.any(String),
         sharedAt: expect.any(Date),
@@ -200,7 +200,7 @@ describe('SocialMediaIntegrationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.shareCollection(shareData);
 
       expect(result).toEqual(mockResponse);
@@ -209,14 +209,14 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('shareAchievement', () => {
     it('應該成功分享成就', async () => {
-      const shareData = {
+      const _shareData = {
         platform: 'twitter',
         achievementId: 'achievement123',
         message: '我解鎖了新成就！',
         userId: 'user123',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         success: true,
         shareId: expect.any(String),
         sharedAt: expect.any(Date),
@@ -224,7 +224,7 @@ describe('SocialMediaIntegrationService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.shareAchievement(shareData);
 
       expect(result).toEqual(mockResponse);
@@ -233,19 +233,19 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('getShareHistory', () => {
     it('應該成功獲取分享歷史', async () => {
-      const mockHistory = [];
+      const _mockHistory = [];
 
       mockApiResponse('get', mockHistory);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.getShareHistory('user123');
 
       expect(result).toEqual(mockHistory);
     });
 
     it('應該支持分頁參數', async () => {
-      const page = 2;
-      const limit = 10;
+      const _page = 2;
+      const _limit = 10;
 
       mockApiResponse('get', []);
 
@@ -261,7 +261,7 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('getSocialAnalytics', () => {
     it('應該成功獲取社交媒體分析數據', async () => {
-      const mockAnalytics = {
+      const _mockAnalytics = {
         totalShares: 0,
         totalLikes: 0,
         totalComments: 0,
@@ -270,7 +270,7 @@ describe('SocialMediaIntegrationService', () => {
 
       mockApiResponse('get', mockAnalytics);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.getSocialAnalytics('user123');
 
       expect(result).toEqual(mockAnalytics);
@@ -279,28 +279,28 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('inviteFriends', () => {
     it('應該成功邀請Facebook好友', async () => {
-      const inviteData = {
+      const _inviteData = {
         platform: 'facebook',
         friendIds: ['friend1', 'friend2'],
         message: '來加入卡片收藏家！',
         userId: 'user123',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         success: true,
         invitedAt: expect.any(Date),
       };
 
       mockApiResponse('post', mockResponse);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.inviteFriends(inviteData);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('應該處理邀請失敗的情況', async () => {
-      const inviteData = {
+      const _inviteData = {
         platform: 'facebook',
         friendIds: ['invalid_friend'],
         message: 'Test invite',
@@ -315,11 +315,11 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('getFriendsList', () => {
     it('應該成功獲取Facebook好友列表', async () => {
-      const mockFriends = [];
+      const _mockFriends = [];
 
       mockApiResponse('get', mockFriends);
 
-      const result = await socialMediaIntegrationService.getFriendsList(
+      const _result = await socialMediaIntegrationService.getFriendsList(
         'facebook',
         'user123'
       );
@@ -330,20 +330,20 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('syncSocialData', () => {
     it('應該成功同步社交媒體數據', async () => {
-      const syncData = {
+      const _syncData = {
         platform: 'facebook',
         userId: 'user123',
         syncType: 'profile',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         success: true,
         syncedAt: expect.any(Date),
       };
 
       mockApiResponse('post', mockResponse);
 
-      const result =
+      const _result =
         await socialMediaIntegrationService.syncSocialData(syncData);
 
       expect(result).toEqual(mockResponse);
@@ -352,12 +352,12 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('getPlatformStatus', () => {
     it('應該返回正確的平台狀態', () => {
-      const connectedAccounts = [
+      const _connectedAccounts = [
         { platform: 'facebook', connected: true },
         { platform: 'twitter', connected: false },
       ];
 
-      const status =
+      const _status =
         socialMediaIntegrationService.getPlatformStatus(connectedAccounts);
 
       expect(status).toEqual({
@@ -370,13 +370,13 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('formatShareMessage', () => {
     it('應該正確格式化分享訊息', () => {
-      const cardData = {
+      const _cardData = {
         name: '稀有卡片',
         rarity: 'Legendary',
         price: 1000,
       };
 
-      const message = socialMediaIntegrationService.formatShareMessage(
+      const _message = socialMediaIntegrationService.formatShareMessage(
         'card',
         cardData,
         'facebook'
@@ -388,25 +388,27 @@ describe('SocialMediaIntegrationService', () => {
     });
 
     it('應該處理不同平台的字數限制', () => {
-      const cardData = {
+      const _cardData = {
         name: 'Very Long Card Name That Exceeds Twitter Character Limit',
         rarity: 'Legendary',
         price: 1000,
       };
 
-      const twitterMessage = socialMediaIntegrationService.formatShareMessage(
+      const _twitterMessage = socialMediaIntegrationService.formatShareMessage(
         'card',
         cardData,
         'twitter'
       );
-      const facebookMessage = socialMediaIntegrationService.formatShareMessage(
+      const _facebookMessage = socialMediaIntegrationService.formatShareMessage(
         'card',
         cardData,
         'facebook'
       );
 
       expect(twitterMessage.length).toBeLessThanOrEqual(280);
-      expect(facebookMessage.length).toBeGreaterThanOrEqual(twitterMessage.length);
+      expect(facebookMessage.length).toBeGreaterThanOrEqual(
+        twitterMessage.length
+      );
     });
   });
 
@@ -418,7 +420,9 @@ describe('SocialMediaIntegrationService', () => {
       expect(socialMediaIntegrationService.validatePlatform('twitter')).toBe(
         true
       );
-      expect(socialMediaIntegrationService.validatePlatform('instagram')).toBe(true);
+      expect(socialMediaIntegrationService.validatePlatform('instagram')).toBe(
+        true
+      );
       expect(socialMediaIntegrationService.validatePlatform('invalid')).toBe(
         false
       );
@@ -427,9 +431,9 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('getPlatformConfig', () => {
     it('應該返回正確的平台配置', () => {
-      const facebookConfig =
+      const _facebookConfig =
         socialMediaIntegrationService.getPlatformConfig('facebook');
-      const twitterConfig =
+      const _twitterConfig =
         socialMediaIntegrationService.getPlatformConfig('twitter');
 
       expect(facebookConfig).toEqual({
@@ -446,7 +450,7 @@ describe('SocialMediaIntegrationService', () => {
     });
 
     it('應該處理不支持的平台', () => {
-      const config = socialMediaIntegrationService.getPlatformConfig('invalid');
+      const _config = socialMediaIntegrationService.getPlatformConfig('invalid');
 
       expect(config).toBeNull();
     });
@@ -454,14 +458,14 @@ describe('SocialMediaIntegrationService', () => {
 
   describe('getSharePreview', () => {
     it('應該生成正確的分享預覽', () => {
-      const cardData = {
+      const _cardData = {
         name: '測試卡片',
         image: 'card_image.jpg',
         rarity: 'Rare',
         price: 500,
       };
 
-      const preview = socialMediaIntegrationService.getSharePreview(
+      const _preview = socialMediaIntegrationService.getSharePreview(
         'card',
         cardData,
         'facebook'

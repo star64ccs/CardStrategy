@@ -6,6 +6,7 @@ const path = require('path');
  * 詳細規劃卡牌辨識、防偽判斷、模擬鑑定、AI預測價格、置中評估等核心功能
  */
 
+// eslint-disable-next-line no-console
 console.log('🎯 生成 CardStrategy 核心功能開發計劃...\n');
 
 // 核心功能開發計劃
@@ -751,27 +752,42 @@ fs.writeFileSync(
   generateHTMLPlan(plan)
 );
 
+// eslint-disable-next-line no-console
 console.log('✅ 核心功能開發計劃已生成！');
+// eslint-disable-next-line no-console
 console.log('\n📋 計劃摘要:');
+// eslint-disable-next-line no-console
 console.log(`   核心功能數量: ${plan.coreFeaturesPlan.overview.totalFeatures} 個`);
+// eslint-disable-next-line no-console
 console.log(`   預計開發時間: ${plan.coreFeaturesPlan.overview.estimatedDuration}`);
+// eslint-disable-next-line no-console
 console.log(`   計劃文件: reports/core-features-development-plan.json`);
+// eslint-disable-next-line no-console
 console.log(`   HTML 計劃: reports/core-features-development-plan.html`);
 
+// eslint-disable-next-line no-console
 console.log('\n🎯 核心功能優先級:');
 Object.entries(plan.coreFeaturesPlan).filter(([key, value]) => 
   ['cardRecognition', 'counterfeitDetection', 'gradingSimulation', 'aiPricePrediction', 'centeringEvaluation'].includes(key)
 ).forEach(([key, feature]) => {
+  // eslint-disable-next-line no-console
   console.log(`   ${feature.name}: ${feature.priority} (${feature.estimatedTime})`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n📅 開發階段:');
 Object.entries(plan.coreFeaturesPlan.timeline).forEach(([phase, details]) => {
+  // eslint-disable-next-line no-console
   console.log(`   ${details.name}: ${details.features.join(', ')}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n💡 下一步行動:');
+// eslint-disable-next-line no-console
 console.log('   • 開始卡牌辨識系統開發');
+// eslint-disable-next-line no-console
 console.log('   • 建立防偽判斷算法');
+// eslint-disable-next-line no-console
 console.log('   • 配置圖像處理服務');
+// eslint-disable-next-line no-console
 console.log('   • 建立開發環境');

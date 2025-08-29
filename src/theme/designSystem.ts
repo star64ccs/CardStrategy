@@ -1,7 +1,7 @@
 // CardStrategy 設計系統
 // 基於深色背景配金色元素的現代化設計風格
 
-export const colors = {
+export const _colors = {
   // 主色調 - 深色背景
   background: {
     primary: '#0A0E1A', // 主背景色 - 深藍黑色
@@ -62,7 +62,7 @@ export const colors = {
   },
 };
 
-export const typography = {
+export const _typography = {
   // 字體大小
   sizes: {
     xs: 12,
@@ -101,7 +101,7 @@ export const typography = {
   },
 };
 
-export const spacing = {
+export const _spacing = {
   xs: 4,
   sm: 8,
   md: 16,
@@ -112,7 +112,7 @@ export const spacing = {
   '4xl': 96,
 };
 
-export const borderRadius = {
+export const _borderRadius = {
   none: 0,
   sm: 4,
   md: 8,
@@ -122,7 +122,7 @@ export const borderRadius = {
   full: 9999,
 };
 
-export const layout = {
+export const _layout = {
   // 容器最大寬度
   maxWidth: {
     sm: 640,
@@ -148,7 +148,7 @@ export const layout = {
   },
 };
 
-export const animations = {
+export const _animations = {
   // 過渡時間
   duration: {
     fast: 150,
@@ -182,7 +182,7 @@ export const animations = {
 };
 
 // 組件樣式預設
-export const componentStyles = {
+export const _componentStyles = {
   // 按鈕樣式
   button: {
     primary: {
@@ -232,7 +232,7 @@ export const componentStyles = {
 };
 
 // 主題配置
-export const theme = {
+export const _theme = {
   colors,
   typography,
   spacing,

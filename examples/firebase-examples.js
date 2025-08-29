@@ -1,8 +1,8 @@
 // CardStrategy Firebase 使用範例
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
 import messaging from '@react-native-firebase/messaging';
+import storage from '@react-native-firebase/storage';
 
 // ========================================
 // 🔐 身份驗證
@@ -11,27 +11,33 @@ import messaging from '@react-native-firebase/messaging';
 // 1. 用戶註冊
 export const registerUser = async (email, password, displayName) => {
   try {
-    const userCredential = await auth().createUserWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-    
+    const userCredential = await auth().createUserWithEmailAndPassword(
+      email,
+      password
+    );
+    const { user } = userCredential;
+
     // 更新用戶資料
     await user.updateProfile({
-      displayName: displayName
+      displayName,
     });
-    
+
     // 在 Firestore 中創建用戶檔案
-    await firestore().collection('users').doc(user.uid).set({
-      email: email,
-      displayName: displayName,
-      createdAt: firestore.FieldValue.serverTimestamp(),
-      plan: 'free',
-      preferences: {
-        emailNotifications: true,
-        pushNotifications: true,
-        priceAlerts: true
-      }
-    });
-    
+    await firestore()
+      .collection('users')
+      .doc(user.uid)
+      .set({
+        email,
+        displayName,
+        createdAt: firestore.FieldValue.serverTimestamp(),
+        plan: 'free',
+        preferences: {
+          emailNotifications: true,
+          pushNotifications: true,
+          priceAlerts: true,
+        },
+      });
+
     console.log('✅ 用戶註冊成功:', user.uid);
     return user;
   } catch (error) {
@@ -43,14 +49,17 @@ export const registerUser = async (email, password, displayName) => {
 // 2. 用戶登錄
 export const loginUser = async (email, password) => {
   try {
-    const userCredential = await auth().signInWithEmailAndPassword(email, password);
-    const user = userCredential.user;
-    
+    const userCredential = await auth().signInWithEmailAndPassword(
+      email,
+      password
+    );
+    const { user } = userCredential;
+
     // 更新最後登錄時間
     await firestore().collection('users').doc(user.uid).update({
-      lastLoginAt: firestore.FieldValue.serverTimestamp()
+      lastLoginAt: firestore.FieldValue.serverTimestamp(),
     });
-    
+
     console.log('✅ 用戶登錄成功:', user.uid);
     return user;
   } catch (error) {
@@ -81,7 +90,7 @@ export const addToCollection = async (userId, cardData) => {
       .collection('users')
       .doc(userId)
       .collection('collection');
-    
+
     await collectionRef.add({
       cardId: cardData.id,
       cardName: cardData.name,
@@ -90,9 +99,9 @@ export const addToCollection = async (userId, cardData) => {
       currentPrice: cardData.currentPrice,
       condition: cardData.condition,
       addedAt: firestore.FieldValue.serverTimestamp(),
-      tags: cardData.tags || []
+      tags: cardData.tags || [],
     });
-    
+
     console.log('✅ 卡片已添加到收藏');
   } catch (error) {
     console.error('❌ 添加收藏失敗:', error);
@@ -107,7 +116,7 @@ export const addToWishlist = async (userId, cardData) => {
       .collection('users')
       .doc(userId)
       .collection('wishlist');
-    
+
     await wishlistRef.add({
       cardId: cardData.id,
       cardName: cardData.name,
@@ -116,9 +125,9 @@ export const addToWishlist = async (userId, cardData) => {
       currentPrice: cardData.currentPrice,
       priority: cardData.priority || 'medium',
       addedAt: firestore.FieldValue.serverTimestamp(),
-      notifyOnPriceDrop: true
+      notifyOnPriceDrop: true,
     });
-    
+
     console.log('✅ 卡片已添加到願望清單');
   } catch (error) {
     console.error('❌ 添加願望清單失敗:', error);
@@ -127,7 +136,7 @@ export const addToWishlist = async (userId, cardData) => {
 };
 
 // 6. 獲取用戶收藏
-export const getUserCollection = async (userId) => {
+export const getUserCollection = async userId => {
   try {
     const snapshot = await firestore()
       .collection('users')
@@ -135,12 +144,12 @@ export const getUserCollection = async (userId) => {
       .collection('collection')
       .orderBy('addedAt', 'desc')
       .get();
-    
+
     const collection = snapshot.docs.map(doc => ({
       id: doc.id,
-      ...doc.data()
+      ...doc.data(),
     }));
-    
+
     console.log(`✅ 獲取收藏成功，共 ${collection.length} 張卡片`);
     return collection;
   } catch (error) {
@@ -160,12 +169,12 @@ export const setupPriceMonitoring = (userId, callback) => {
       .onSnapshot(snapshot => {
         const wishlistItems = snapshot.docs.map(doc => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         }));
-        
+
         callback(wishlistItems);
       });
-    
+
     console.log('✅ 價格監控已設置');
     return unsubscribe;
   } catch (error) {
@@ -183,10 +192,10 @@ export const uploadCardImage = async (userId, imageUri, cardId) => {
   try {
     const filename = `cards/${userId}/${cardId}_${Date.now()}.jpg`;
     const reference = storage().ref(filename);
-    
+
     await reference.putFile(imageUri);
     const downloadUrl = await reference.getDownloadURL();
-    
+
     console.log('✅ 圖片上傳成功:', downloadUrl);
     return downloadUrl;
   } catch (error) {
@@ -200,16 +209,16 @@ export const uploadUserAvatar = async (userId, imageUri) => {
   try {
     const filename = `avatars/${userId}/avatar.jpg`;
     const reference = storage().ref(filename);
-    
+
     await reference.putFile(imageUri);
     const downloadUrl = await reference.getDownloadURL();
-    
+
     // 更新用戶資料中的頭像 URL
     await firestore().collection('users').doc(userId).update({
       avatarUrl: downloadUrl,
-      updatedAt: firestore.FieldValue.serverTimestamp()
+      updatedAt: firestore.FieldValue.serverTimestamp(),
     });
-    
+
     console.log('✅ 頭像上傳成功:', downloadUrl);
     return downloadUrl;
   } catch (error) {
@@ -223,7 +232,7 @@ export const uploadUserAvatar = async (userId, imageUri) => {
 // ========================================
 
 // 10. 設置推送通知
-export const setupPushNotifications = async (userId) => {
+export const setupPushNotifications = async userId => {
   try {
     // 請求權限
     const authStatus = await messaging().requestPermission();
@@ -234,16 +243,19 @@ export const setupPushNotifications = async (userId) => {
     if (enabled) {
       // 獲取 FCM Token
       const fcmToken = await messaging().getToken();
-      
+
       // 保存 Token 到 Firestore
-      await firestore().collection('users').doc(userId).update({
-        fcmToken: fcmToken,
-        notificationSettings: {
-          enabled: true,
-          lastUpdated: firestore.FieldValue.serverTimestamp()
-        }
-      });
-      
+      await firestore()
+        .collection('users')
+        .doc(userId)
+        .update({
+          fcmToken,
+          notificationSettings: {
+            enabled: true,
+            lastUpdated: firestore.FieldValue.serverTimestamp(),
+          },
+        });
+
       console.log('✅ 推送通知設置成功');
       return fcmToken;
     } else {
@@ -291,14 +303,14 @@ export const setupNotificationListeners = () => {
 export const logUserActivity = async (userId, activity) => {
   try {
     await firestore().collection('analytics').add({
-      userId: userId,
+      userId,
       activity: activity.type,
       data: activity.data,
       timestamp: firestore.FieldValue.serverTimestamp(),
       platform: 'mobile',
-      version: '1.0.0'
+      version: '1.0.0',
     });
-    
+
     console.log('✅ 用戶行為記錄成功');
   } catch (error) {
     console.error('❌ 記錄用戶行為失敗:', error);
@@ -306,40 +318,40 @@ export const logUserActivity = async (userId, activity) => {
 };
 
 // 13. 獲取用戶統計
-export const getUserStats = async (userId) => {
+export const getUserStats = async userId => {
   try {
     const userDoc = await firestore().collection('users').doc(userId).get();
     const userData = userDoc.data();
-    
+
     // 獲取收藏統計
     const collectionSnapshot = await firestore()
       .collection('users')
       .doc(userId)
       .collection('collection')
       .get();
-    
+
     // 獲取願望清單統計
     const wishlistSnapshot = await firestore()
       .collection('users')
       .doc(userId)
       .collection('wishlist')
       .get();
-    
+
     const stats = {
       user: userData,
       collection: {
         count: collectionSnapshot.size,
-        totalValue: 0 // 需要計算
+        totalValue: 0, // 需要計算
       },
       wishlist: {
-        count: wishlistSnapshot.size
+        count: wishlistSnapshot.size,
       },
       activity: {
         lastLogin: userData?.lastLoginAt,
-        joinDate: userData?.createdAt
-      }
+        joinDate: userData?.createdAt,
+      },
     };
-    
+
     console.log('✅ 獲取用戶統計成功');
     return stats;
   } catch (error) {
@@ -362,5 +374,5 @@ export {
   setupPushNotifications,
   setupNotificationListeners,
   logUserActivity,
-  getUserStats
+  getUserStats,
 };

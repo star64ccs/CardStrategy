@@ -1,6 +1,6 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { MarketService } from '@/services/marketService';
 import { mockApiResponse, mockApiError } from '@/__tests__/setup/test-utils';
+import { MarketService } from '@/services/marketService';
 
 // Mock API service
 jest.mock('@/services/apiService', () => ({
@@ -28,9 +28,9 @@ jest.mock('@/utils/validationService', () => ({
 
 describe('MarketService', () => {
   let marketService: MarketService;
-  let mockApiService: any;
-  let mockLogger: any;
-  let mockValidationService: any;
+  let mockApiService: unknown;
+  let mockLogger: unknown;
+  let mockValidationService: unknown;
 
   beforeEach(() => {
     marketService = new MarketService();
@@ -43,7 +43,7 @@ describe('MarketService', () => {
 
   describe('getMarketData', () => {
     it('應該成功獲取市場數據', async () => {
-      const mockMarketData = {
+      const _mockMarketData = {
         totalCards: 1000,
         totalValue: 50000,
         averagePrice: 50,
@@ -57,11 +57,11 @@ describe('MarketService', () => {
           monthly: [{ month: '2024-01', value: 1500000 }],
         },
       };
-      const mockResponse = mockApiResponse(mockMarketData);
+      const _mockResponse = mockApiResponse(mockMarketData);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await marketService.getMarketData();
+      const _result = await marketService.getMarketData();
 
       expect(result.success).toBe(true);
       expect(result.data.totalCards).toBe(1000);
@@ -70,7 +70,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理獲取市場數據錯誤', async () => {
-      const mockError = mockApiError('獲取市場數據失敗');
+      const _mockError = mockApiError('獲取市場數據失敗');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -83,8 +83,8 @@ describe('MarketService', () => {
 
   describe('getCardPriceHistory', () => {
     it('應該成功獲取卡片價格歷史', async () => {
-      const cardId = '1';
-      const mockPriceHistory = {
+      const _cardId = '1';
+      const _mockPriceHistory = {
         cardId: '1',
         cardName: '測試卡片',
         prices: [
@@ -96,11 +96,11 @@ describe('MarketService', () => {
         priceChange: 5.0,
         volatility: 3.2,
       };
-      const mockResponse = mockApiResponse(mockPriceHistory);
+      const _mockResponse = mockApiResponse(mockPriceHistory);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await marketService.getCardPriceHistory(cardId);
+      const _result = await marketService.getCardPriceHistory(cardId);
 
       expect(result.success).toBe(true);
       expect(result.data.cardId).toBe('1');
@@ -111,8 +111,8 @@ describe('MarketService', () => {
     });
 
     it('應該處理獲取價格歷史錯誤', async () => {
-      const cardId = '999';
-      const mockError = mockApiError('卡片不存在');
+      const _cardId = '999';
+      const _mockError = mockApiError('卡片不存在');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -124,7 +124,7 @@ describe('MarketService', () => {
 
   describe('getMarketTrends', () => {
     it('應該成功獲取市場趨勢', async () => {
-      const mockTrends = {
+      const _mockTrends = {
         topGainers: [
           { id: '1', name: '上漲卡片1', priceChange: 25.5 },
           { id: '2', name: '上漲卡片2', priceChange: 18.2 },
@@ -138,11 +138,11 @@ describe('MarketService', () => {
           { id: '6', name: '交易量最高2', volume: 120 },
         ],
       };
-      const mockResponse = mockApiResponse(mockTrends);
+      const _mockResponse = mockApiResponse(mockTrends);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await marketService.getMarketTrends();
+      const _result = await marketService.getMarketTrends();
 
       expect(result.success).toBe(true);
       expect(result.data.topGainers).toHaveLength(2);
@@ -152,7 +152,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理獲取市場趨勢錯誤', async () => {
-      const mockError = mockApiError('獲取市場趨勢失敗');
+      const _mockError = mockApiError('獲取市場趨勢失敗');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -164,7 +164,7 @@ describe('MarketService', () => {
 
   describe('getPriceAlerts', () => {
     it('應該成功獲取價格警報', async () => {
-      const mockAlerts = [
+      const _mockAlerts = [
         {
           id: '1',
           cardId: '1',
@@ -186,11 +186,11 @@ describe('MarketService', () => {
           createdAt: new Date().toISOString(),
         },
       ];
-      const mockResponse = mockApiResponse(mockAlerts);
+      const _mockResponse = mockApiResponse(mockAlerts);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await marketService.getPriceAlerts();
+      const _result = await marketService.getPriceAlerts();
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(2);
@@ -198,7 +198,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理獲取價格警報錯誤', async () => {
-      const mockError = mockApiError('獲取價格警報失敗');
+      const _mockError = mockApiError('獲取價格警報失敗');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -210,12 +210,12 @@ describe('MarketService', () => {
 
   describe('createPriceAlert', () => {
     it('應該成功創建價格警報', async () => {
-      const alertData = {
+      const _alertData = {
         cardId: '1',
         targetPrice: 100,
         condition: 'below' as const,
       };
-      const mockResponse = mockApiResponse({
+      const _mockResponse = mockApiResponse({
         id: '1',
         ...alertData,
         isActive: true,
@@ -224,7 +224,7 @@ describe('MarketService', () => {
 
       mockApiService.post.mockResolvedValue(mockResponse);
 
-      const result = await marketService.createPriceAlert(alertData);
+      const _result = await marketService.createPriceAlert(alertData);
 
       expect(result.success).toBe(true);
       expect(result.data.cardId).toBe('1');
@@ -236,12 +236,12 @@ describe('MarketService', () => {
     });
 
     it('應該處理創建價格警報錯誤', async () => {
-      const alertData = {
+      const _alertData = {
         cardId: '1',
         targetPrice: -10,
         condition: 'below' as const,
       };
-      const mockError = mockApiError('目標價格必須大於0');
+      const _mockError = mockApiError('目標價格必須大於0');
 
       mockApiService.post.mockRejectedValue(mockError);
 
@@ -253,7 +253,7 @@ describe('MarketService', () => {
 
   describe('getMarketAnalysis', () => {
     it('應該成功獲取市場分析', async () => {
-      const mockAnalysis = {
+      const _mockAnalysis = {
         marketCap: 5000000,
         totalVolume: 250000,
         averagePrice: 50,
@@ -274,11 +274,11 @@ describe('MarketService', () => {
           neutral: 15,
         },
       };
-      const mockResponse = mockApiResponse(mockAnalysis);
+      const _mockResponse = mockApiResponse(mockAnalysis);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await marketService.getMarketAnalysis();
+      const _result = await marketService.getMarketAnalysis();
 
       expect(result.success).toBe(true);
       expect(result.data.marketCap).toBe(5000000);
@@ -287,7 +287,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理獲取市場分析錯誤', async () => {
-      const mockError = mockApiError('獲取市場分析失敗');
+      const _mockError = mockApiError('獲取市場分析失敗');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -299,8 +299,8 @@ describe('MarketService', () => {
 
   describe('getPlatformPrices', () => {
     it('應該成功獲取平台價格', async () => {
-      const cardId = '1';
-      const mockPlatformPrices = {
+      const _cardId = '1';
+      const _mockPlatformPrices = {
         cardId: '1',
         cardName: '測試卡片',
         platforms: [
@@ -327,11 +327,11 @@ describe('MarketService', () => {
           condition: 'NM',
         },
       };
-      const mockResponse = mockApiResponse(mockPlatformPrices);
+      const _mockResponse = mockApiResponse(mockPlatformPrices);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await marketService.getPlatformPrices(cardId);
+      const _result = await marketService.getPlatformPrices(cardId);
 
       expect(result.success).toBe(true);
       expect(result.data.platforms).toHaveLength(2);
@@ -342,8 +342,8 @@ describe('MarketService', () => {
     });
 
     it('應該處理獲取平台價格錯誤', async () => {
-      const cardId = '999';
-      const mockError = mockApiError('卡片不存在');
+      const _cardId = '999';
+      const _mockError = mockApiError('卡片不存在');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -355,7 +355,7 @@ describe('MarketService', () => {
 
   describe('getMarketNews', () => {
     it('應該成功獲取市場新聞', async () => {
-      const mockNews = [
+      const _mockNews = [
         {
           id: '1',
           title: '市場新聞標題1',
@@ -373,11 +373,11 @@ describe('MarketService', () => {
           impact: 'neutral' as const,
         },
       ];
-      const mockResponse = mockApiResponse(mockNews);
+      const _mockResponse = mockApiResponse(mockNews);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await marketService.getMarketNews();
+      const _result = await marketService.getMarketNews();
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(2);
@@ -385,7 +385,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理獲取市場新聞錯誤', async () => {
-      const mockError = mockApiError('獲取市場新聞失敗');
+      const _mockError = mockApiError('獲取市場新聞失敗');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -397,7 +397,7 @@ describe('MarketService', () => {
 
   describe('getMarketPredictions', () => {
     it('應該成功獲取市場預測', async () => {
-      const mockPredictions = {
+      const _mockPredictions = {
         shortTerm: [
           {
             cardId: '1',
@@ -424,11 +424,11 @@ describe('MarketService', () => {
           events: ['新系列發布', '比賽活動'],
         },
       };
-      const mockResponse = mockApiResponse(mockPredictions);
+      const _mockResponse = mockApiResponse(mockPredictions);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await marketService.getMarketPredictions();
+      const _result = await marketService.getMarketPredictions();
 
       expect(result.success).toBe(true);
       expect(result.data.shortTerm).toHaveLength(1);
@@ -438,7 +438,7 @@ describe('MarketService', () => {
     });
 
     it('應該處理獲取市場預測錯誤', async () => {
-      const mockError = mockApiError('獲取市場預測失敗');
+      const _mockError = mockApiError('獲取市場預測失敗');
 
       mockApiService.get.mockRejectedValue(mockError);
 

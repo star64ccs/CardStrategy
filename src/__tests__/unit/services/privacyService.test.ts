@@ -1,10 +1,10 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { privacyService } from '@/services/privacyService';
-import { apiService } from '@/services/apiService';
-import { storage } from '@/utils/storage';
-import { logger } from '@/utils/logger';
-import { validationService } from '@/utils/validationService';
 import { createMockPrivacyPreferences } from '@/__tests__/setup/test-utils';
+import { apiService } from '@/services/apiService';
+import { privacyService } from '@/services/privacyService';
+import { logger } from '@/utils/logger';
+import { storage } from '@/utils/storage';
+import { validationService } from '@/utils/validationService';
 
 // Mock dependencies
 jest.mock('@/services/apiService');
@@ -12,10 +12,10 @@ jest.mock('@/utils/storage');
 jest.mock('@/utils/logger');
 jest.mock('@/utils/validationService');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockStorage = storage as jest.Mocked<typeof storage>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
-const mockValidationService = validationService as jest.Mocked<
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockStorage = storage as jest.Mocked<typeof storage>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockValidationService = validationService as jest.Mocked<
   typeof validationService
 >;
 
@@ -26,13 +26,13 @@ describe('PrivacyService', () => {
 
   describe('getPrivacyPreferences', () => {
     it('should fetch privacy preferences successfully', async () => {
-      const mockPreferences = createMockPrivacyPreferences();
+      const _mockPreferences = createMockPrivacyPreferences();
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockPreferences,
       });
 
-      const result = await privacyService.getPrivacyPreferences('user-123');
+      const _result = await privacyService.getPrivacyPreferences('user-123');
 
       expect(mockApiService.get).toHaveBeenCalledWith(
         '/privacy/preferences/user-123'
@@ -52,14 +52,14 @@ describe('PrivacyService', () => {
 
   describe('updatePrivacyPreferences', () => {
     it('should update privacy preferences successfully', async () => {
-      const mockPreferences = createMockPrivacyPreferences();
-      const updateData = { region: 'US' as const };
+      const _mockPreferences = createMockPrivacyPreferences();
+      const _updateData = { region: 'US' as const };
       mockApiService.put.mockResolvedValue({
         success: true,
         data: { ...mockPreferences, ...updateData },
       });
 
-      const result = await privacyService.updatePrivacyPreferences(
+      const _result = await privacyService.updatePrivacyPreferences(
         'user-123',
         updateData
       );
@@ -72,7 +72,7 @@ describe('PrivacyService', () => {
     });
 
     it('should validate input data', async () => {
-      const invalidData = { region: 'INVALID' };
+      const _invalidData = { region: 'INVALID' };
       mockValidationService.validatePrivacyPreferences.mockReturnValue({
         isValid: false,
         errors: ['Invalid region'],
@@ -89,7 +89,7 @@ describe('PrivacyService', () => {
 
   describe('recordConsent', () => {
     it('should record consent successfully', async () => {
-      const consentData = {
+      const _consentData = {
         type: 'marketing' as const,
         purpose: 'email_marketing' as const,
         legalBasis: 'consent' as const,
@@ -102,7 +102,7 @@ describe('PrivacyService', () => {
         data: { id: 'consent-1', ...consentData },
       });
 
-      const result = await privacyService.recordConsent(
+      const _result = await privacyService.recordConsent(
         'user-123',
         consentData
       );
@@ -117,13 +117,13 @@ describe('PrivacyService', () => {
 
   describe('withdrawConsent', () => {
     it('should withdraw consent successfully', async () => {
-      const consentId = 'consent-1';
+      const _consentId = 'consent-1';
       mockApiService.delete.mockResolvedValue({
         success: true,
         data: { id: consentId, withdrawn: true },
       });
 
-      const result = await privacyService.withdrawConsent(
+      const _result = await privacyService.withdrawConsent(
         'user-123',
         consentId
       );
@@ -137,7 +137,7 @@ describe('PrivacyService', () => {
 
   describe('submitDataRightsRequest', () => {
     it('should submit data rights request successfully', async () => {
-      const requestData = {
+      const _requestData = {
         type: 'access' as const,
         description: 'Request access to my data',
         priority: 'medium' as const,
@@ -148,7 +148,7 @@ describe('PrivacyService', () => {
         data: { id: 'request-1', status: 'pending', ...requestData },
       });
 
-      const result = await privacyService.submitDataRightsRequest(
+      const _result = await privacyService.submitDataRightsRequest(
         'user-123',
         requestData
       );
@@ -164,7 +164,7 @@ describe('PrivacyService', () => {
 
   describe('verifyAge', () => {
     it('should verify age successfully', async () => {
-      const ageData = {
+      const _ageData = {
         birthDate: '1990-01-01',
         verificationMethod: 'document' as const,
       };
@@ -174,7 +174,7 @@ describe('PrivacyService', () => {
         data: { verified: true, age: 34 },
       });
 
-      const result = await privacyService.verifyAge('user-123', ageData);
+      const _result = await privacyService.verifyAge('user-123', ageData);
 
       expect(mockApiService.post).toHaveBeenCalledWith(
         '/privacy/age-verification/user-123',
@@ -187,7 +187,7 @@ describe('PrivacyService', () => {
 
   describe('exportUserData', () => {
     it('should export user data successfully', async () => {
-      const exportData = {
+      const _exportData = {
         format: 'json' as const,
         includeHistory: true,
       };
@@ -197,7 +197,7 @@ describe('PrivacyService', () => {
         data: { downloadUrl: 'https://example.com/export.zip' },
       });
 
-      const result = await privacyService.exportUserData(
+      const _result = await privacyService.exportUserData(
         'user-123',
         exportData
       );
@@ -212,7 +212,7 @@ describe('PrivacyService', () => {
 
   describe('deleteUserData', () => {
     it('should delete user data successfully', async () => {
-      const deleteData = {
+      const _deleteData = {
         reason: 'account_closure' as const,
         confirmation: true,
       };
@@ -222,7 +222,7 @@ describe('PrivacyService', () => {
         data: { deleted: true, timestamp: new Date().toISOString() },
       });
 
-      const result = await privacyService.deleteUserData(
+      const _result = await privacyService.deleteUserData(
         'user-123',
         deleteData
       );
@@ -237,7 +237,7 @@ describe('PrivacyService', () => {
 
   describe('checkPrivacyCompliance', () => {
     it('should check privacy compliance successfully', async () => {
-      const region = 'CN' as const;
+      const _region = 'CN' as const;
       mockApiService.post.mockResolvedValue({
         success: true,
         data: {
@@ -248,7 +248,7 @@ describe('PrivacyService', () => {
         },
       });
 
-      const result = await privacyService.checkPrivacyCompliance(
+      const _result = await privacyService.checkPrivacyCompliance(
         'user-123',
         region
       );
@@ -264,7 +264,7 @@ describe('PrivacyService', () => {
 
   describe('savePrivacyPreferencesLocally', () => {
     it('should save preferences to local storage', async () => {
-      const preferences = createMockPrivacyPreferences();
+      const _preferences = createMockPrivacyPreferences();
       mockStorage.setItem.mockResolvedValue();
 
       await privacyService.savePrivacyPreferencesLocally(
@@ -281,10 +281,10 @@ describe('PrivacyService', () => {
 
   describe('getPrivacyPreferencesLocally', () => {
     it('should retrieve preferences from local storage', async () => {
-      const preferences = createMockPrivacyPreferences();
+      const _preferences = createMockPrivacyPreferences();
       mockStorage.getItem.mockResolvedValue(JSON.stringify(preferences));
 
-      const result =
+      const _result =
         await privacyService.getPrivacyPreferencesLocally('user-123');
 
       expect(mockStorage.getItem).toHaveBeenCalledWith(
@@ -296,7 +296,7 @@ describe('PrivacyService', () => {
     it('should return null if no preferences found', async () => {
       mockStorage.getItem.mockResolvedValue(null);
 
-      const result =
+      const _result =
         await privacyService.getPrivacyPreferencesLocally('user-123');
 
       expect(result).toBeNull();
@@ -305,8 +305,8 @@ describe('PrivacyService', () => {
 
   describe('calculateDeadline', () => {
     it('should calculate deadline for data rights request', () => {
-      const requestDate = new Date('2024-01-01');
-      const deadline = privacyService.calculateDeadline(requestDate, 'CN');
+      const _requestDate = new Date('2024-01-01');
+      const _deadline = privacyService.calculateDeadline(requestDate, 'CN');
 
       expect(deadline).toBeInstanceOf(Date);
       expect(deadline.getTime()).toBeGreaterThan(requestDate.getTime());
@@ -320,7 +320,7 @@ describe('PrivacyService', () => {
         data: { region: 'US', country: 'United States' },
       });
 
-      const result = await privacyService.getUserRegion();
+      const _result = await privacyService.getUserRegion();
 
       expect(mockApiService.get).toHaveBeenCalledWith('/privacy/region');
       expect(result).toBe('US');
@@ -329,7 +329,7 @@ describe('PrivacyService', () => {
 
   describe('checkConsentRenewal', () => {
     it('should check if consent needs renewal', async () => {
-      const preferences = createMockPrivacyPreferences();
+      const _preferences = createMockPrivacyPreferences();
       mockApiService.post.mockResolvedValue({
         success: true,
         data: {
@@ -339,7 +339,7 @@ describe('PrivacyService', () => {
         },
       });
 
-      const result = await privacyService.checkConsentRenewal(
+      const _result = await privacyService.checkConsentRenewal(
         'user-123',
         preferences
       );
@@ -355,7 +355,7 @@ describe('PrivacyService', () => {
 
   describe('batchUpdateConsent', () => {
     it('should batch update multiple consents', async () => {
-      const consentUpdates = [
+      const _consentUpdates = [
         { type: 'marketing' as const, granted: true },
         { type: 'analytics' as const, granted: false },
       ];
@@ -365,7 +365,7 @@ describe('PrivacyService', () => {
         data: { updated: 2, failed: 0 },
       });
 
-      const result = await privacyService.batchUpdateConsent(
+      const _result = await privacyService.batchUpdateConsent(
         'user-123',
         consentUpdates
       );
@@ -381,7 +381,7 @@ describe('PrivacyService', () => {
 
   describe('getPrivacyDashboard', () => {
     it('should get privacy dashboard data', async () => {
-      const dashboardData = {
+      const _dashboardData = {
         consentSummary: {
           total: 10,
           active: 8,
@@ -399,7 +399,7 @@ describe('PrivacyService', () => {
         data: dashboardData,
       });
 
-      const result = await privacyService.getPrivacyDashboard('user-123');
+      const _result = await privacyService.getPrivacyDashboard('user-123');
 
       expect(mockApiService.get).toHaveBeenCalledWith(
         '/privacy/dashboard/user-123'

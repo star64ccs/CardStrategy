@@ -37,29 +37,22 @@ function checkConfiguration() {
 async function getZoneId() {
   // logger.info('🔍 獲取域名 Zone ID...');
 
-  try {
-// eslint-disable-next-line no-unused-vars
-// eslint-disable-next-line no-unused-vars
-    const response = await axios.get(
-      `${cloudflareConfig.apiUrl}/zones?name=${cloudflareConfig.domain}`,
-      {
-        headers: {
-          Authorization: `Bearer ${cloudflareConfig.apiToken}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    if (response.data.success && response.data.result.length > 0) {
-      const zoneId = response.data.result[0].id;
-      // logger.info(`✅ 找到 Zone ID: ${zoneId}`);
-      return zoneId;
-    } else {
-      throw new Error('找不到域名對應的 Zone ID');
+  const response = await axios.get(
+    `${cloudflareConfig.apiUrl}/zones?name=${cloudflareConfig.domain}`,
+    {
+      headers: {
+        Authorization: `Bearer ${cloudflareConfig.apiToken}`,
+        'Content-Type': 'application/json',
+      },
     }
-  } catch (error) {
-    // logger.info('❌ 獲取 Zone ID 失敗:', error.message);
-    throw error;
+  );
+
+  if (response.data.success && response.data.result.length > 0) {
+    const zoneId = response.data.result[0].id;
+    // logger.info(`✅ 找到 Zone ID: ${zoneId}`);
+    return zoneId;
+  } else {
+    throw new Error('找不到域名對應的 Zone ID');
   }
 }
 

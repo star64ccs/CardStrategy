@@ -1,0 +1,305 @@
+import { logger } from '../utils/logger';
+import { performanceMonitor } from '../utils/performanceMonitor';
+
+import { serviceManager } from './serviceManager';
+
+/**
+ * 應用初始化結果接口
+ */
+interface AppInitializationResult {
+  success: boolean;
+  startTime: Date;
+  endTime: Date;
+  duration: number;
+  services: {
+    total: number;
+    initialized: number;
+    failed: number;
+  };
+  errors: string[];
+  warnings: string[];
+}
+
+/**
+ * 應用初始化器
+ * 負責應用啟動時的所有初始化工作
+ */
+export class AppInitializer {
+  private static instance: AppInitializer;
+  private isInitialized = false;
+  private initializationResult: AppInitializationResult | null = null;
+
+  private constructor() {}
+
+  static getInstance(): AppInitializer {
+    if (!AppInitializer.instance) {
+      AppInitializer.instance = new AppInitializer();
+    }
+    return AppInitializer.instance;
+  }
+
+  /**
+   * 初始化應用
+   */
+  async initializeApp(): Promise<AppInitializationResult> {
+    if (this.isInitialized && this.initializationResult) {
+      return this.initializationResult;
+    }
+
+    const _startTime = new Date();
+    performanceMonitor.startTimer('app_initialization');
+
+    logger.info('開始應用初始化');
+
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    try {
+      // 1. 初始化第三方服務
+      logger.info('正在初始化第三方服務...');
+      const _serviceResult = await serviceManager.initializeAll();
+
+      if (!serviceResult.success) {
+        warnings.push(
+          `部分服務初始化失敗: ${serviceResult.failed.length} 個服務`
+        );
+        serviceResult.failed.forEach(failure => {
+          warnings.push(`服務 ${failure.service}: ${failure.error}`);
+        });
+      }
+
+      // 2. 執行健康檢查
+      logger.info('正在執行服務健康檢查...');
+      const _healthResults = await serviceManager.performHealthCheck();
+      const _unhealthyServices = Array.from(healthResults.entries())
+        .filter(([, isHealthy]) => !isHealthy)
+        .map(([service]) => service);
+
+      if (unhealthyServices.length > 0) {
+        warnings.push(`健康檢查失敗的服務: ${unhealthyServices.join(', ')}`);
+      }
+
+      // 3. 生成服務報告
+      const _serviceReport = serviceManager.generateServiceReport();
+      logger.info('服務初始化報告:', serviceReport);
+
+      const _endTime = new Date();
+      const _duration = performanceMonitor.endTimer('app_initialization');
+
+      this.initializationResult = {
+        success: errors.length === 0,
+        startTime,
+        endTime,
+        duration,
+        services: {
+          total: serviceReport.summary.total,
+          initialized: serviceReport.summary.initialized,
+          failed: serviceReport.summary.failed,
+        },
+        errors,
+        warnings,
+      };
+
+      this.isInitialized = true;
+
+      logger.info('應用初始化完成:', {
+        success: this.initializationResult.success,
+        duration: this.initializationResult.duration,
+        services: this.initializationResult.services,
+        errorsCount: errors.length,
+        warningsCount: warnings.length,
+      });
+
+      return this.initializationResult;
+    } catch (error) {
+      const _errorMessage = error instanceof Error ? error.message : '未知錯誤';
+      errors.push(`應用初始化失敗: ${errorMessage}`);
+
+      const _endTime = new Date();
+      const _duration = performanceMonitor.endTimer('app_initialization');
+
+      this.initializationResult = {
+        success: false,
+        startTime,
+        endTime,
+        duration,
+        services: {
+          total: 0,
+          initialized: 0,
+          failed: 0,
+        },
+        errors,
+        warnings,
+      };
+
+      logger.error('應用初始化失敗:', {
+        error: errorMessage,
+        duration: this.initializationResult.duration,
+      });
+
+      return this.initializationResult;
+    }
+  }
+
+  /**
+   * 檢查應用是否已初始化
+   */
+  isAppInitialized(): boolean {
+    return this.isInitialized;
+  }
+
+  /**
+   * 獲取初始化結果
+   */
+  getInitializationResult(): AppInitializationResult | null {
+    return this.initializationResult;
+  }
+
+  /**
+   * 重新初始化應用
+   */
+  async reinitializeApp(): Promise<AppInitializationResult> {
+    logger.info('開始重新初始化應用');
+
+    this.isInitialized = false;
+    this.initializationResult = null;
+
+    return this.initializeApp();
+  }
+
+  /**
+   * 獲取應用狀態
+   */
+  getAppStatus(): {
+    isInitialized: boolean;
+    initializationTime?: Date;
+    services: {
+      total: number;
+      available: number;
+      failed: number;
+    };
+    lastHealthCheck?: Date;
+  } {
+    const _serviceStats = serviceManager.getServiceStatistics();
+
+    return {
+      isInitialized: this.isInitialized,
+      initializationTime: this.initializationResult?.startTime,
+      services: {
+        total: serviceStats.total,
+        available: serviceStats.available,
+        failed: serviceStats.failed,
+      },
+      lastHealthCheck: new Date(), // 可以從服務管理器獲取實際時間
+    };
+  }
+
+  /**
+   * 執行應用健康檢查
+   */
+  async performAppHealthCheck(): Promise<{
+    isHealthy: boolean;
+    services: Map<string, boolean>;
+    issues: string[];
+  }> {
+    logger.info('開始執行應用健康檢查');
+
+    const issues: string[] = [];
+
+    try {
+      // 檢查應用是否已初始化
+      if (!this.isInitialized) {
+        issues.push('應用尚未初始化');
+      }
+
+      // 檢查服務健康狀態
+      const _serviceHealthResults = await serviceManager.performHealthCheck();
+      const _unhealthyServices = Array.from(serviceHealthResults.entries())
+        .filter(([, isHealthy]) => !isHealthy)
+        .map(([service]) => service);
+
+      if (unhealthyServices.length > 0) {
+        issues.push(`不健康的服務: ${unhealthyServices.join(', ')}`);
+      }
+
+      const _isHealthy = issues.length === 0;
+
+      logger.info('應用健康檢查完成:', {
+        isHealthy,
+        totalServices: serviceHealthResults.size,
+        healthyServices: Array.from(serviceHealthResults.values()).filter(
+          Boolean
+        ).length,
+        issuesCount: issues.length,
+      });
+
+      return {
+        isHealthy,
+        services: serviceHealthResults,
+        issues,
+      };
+    } catch (error) {
+      const _errorMessage = error instanceof Error ? error.message : '未知錯誤';
+      issues.push(`健康檢查執行失敗: ${errorMessage}`);
+
+      logger.error('應用健康檢查失敗:', { error: errorMessage });
+
+      return {
+        isHealthy: false,
+        services: new Map(),
+        issues,
+      };
+    }
+  }
+
+  /**
+   * 生成應用診斷報告
+   */
+  async generateDiagnosticReport(): Promise<{
+    timestamp: Date;
+    appStatus: unknown;
+    initializationResult: AppInitializationResult | null;
+    healthCheck: unknown;
+    serviceReport: unknown;
+    performance: {
+      initializationTime?: number;
+      memoryUsage?: unknown;
+    };
+  }> {
+    logger.info('生成應用診斷報告');
+
+    const _timestamp = new Date();
+    const _appStatus = this.getAppStatus();
+    const _healthCheck = await this.performAppHealthCheck();
+    const _serviceReport = serviceManager.generateServiceReport();
+
+    // 獲取性能信息
+    const performance: unknown = {
+      initializationTime: this.initializationResult?.duration,
+    };
+
+    // 如果在 Node.js 環境中，獲取內存使用情況
+    if (typeof process !== 'undefined' && process.memoryUsage) {
+      performance.memoryUsage = process.memoryUsage();
+    }
+
+    const _report = {
+      timestamp,
+      appStatus,
+      initializationResult: this.initializationResult,
+      healthCheck,
+      serviceReport,
+      performance,
+    };
+
+    logger.info('應用診斷報告生成完成');
+
+    return report;
+  }
+}
+
+// 導出單例實例
+export const _appInitializer = AppInitializer.getInstance();
+
+// 導出類型
+export type { AppInitializationResult };

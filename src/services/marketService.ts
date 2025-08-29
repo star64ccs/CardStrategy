@@ -1,193 +1,94 @@
-import { apiService, ApiResponse } from './apiService';
-import { API_CONFIG } from '../config/api';
-import { LoggingUtils } from '../utils/loggingUtils';
-import { ValidationUtils } from '../utils/validationUtils';
-import { z } from 'zod';
-import { errorHandler, withErrorHandling } from '@/utils/errorHandler';
+import { apiService } from './apiService';
+import { logger } from '../utils/logger';
 
-// 市場數據類型
 export interface MarketData {
-  totalVolume: number;
-  totalTransactions: number;
+  totalCards: number;
+  totalValue: number;
   averagePrice: number;
-  priceChange24h: number;
-  priceChange7d: number;
-  priceChange30d: number;
-  topGainers: MarketCard[];
-  topLosers: MarketCard[];
-  trendingCards: MarketCard[];
-}
-
-// 市場卡片
-export interface MarketCard {
-  id: string;
-  name: string;
-  price: number;
-  priceChange: number;
-  volume: number;
-  marketCap: number;
-}
-
-// 市場趨勢
-export interface MarketTrend {
-  period: '1h' | '24h' | '7d' | '30d';
-  data: {
-    timestamp: string;
-    price: number;
-    volume: number;
+  trendingCards: {
+    id: string;
+    name: string;
+    priceChange: number;
   }[];
-}
-
-// 市場分析
-export interface MarketAnalysis {
-  sentiment: 'bullish' | 'bearish' | 'neutral';
-  confidence: number;
-  factors: {
-    technical: number;
-    fundamental: number;
-    social: number;
+  marketTrend: {
+    daily: { date: string; value: number }[];
+    weekly: { week: string; value: number }[];
+    monthly: { month: string; value: number }[];
   };
-  recommendations: string[];
-  riskLevel: 'low' | 'medium' | 'high';
 }
 
-// 價格預測
-export interface PricePrediction {
+export interface PriceHistory {
   cardId: string;
-  currentPrice: number;
-  predictedPrice: number;
-  confidence: number;
-  timeframe: '1d' | '7d' | '30d' | '90d';
-  factors: string[];
-  riskAssessment: string;
+  cardName: string;
+  prices: {
+    date: string;
+    price: number;
+    platform: string;
+  }[];
+  averagePrice: number;
+  priceChange: number;
+  volatility: number;
 }
 
-// 市場服務類
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
+}
+
 class MarketService {
-  // 獲取市場數據
   async getMarketData(): Promise<ApiResponse<MarketData>> {
     try {
-      LoggingUtils.logApiCall('getMarketData');
-      const response = await apiService.get<MarketData>(API_CONFIG.MARKET.DATA);
-      LoggingUtils.logApiCall('getMarketData', undefined, response.data);
+      const _response = await apiService.get('/market/data');
       return response;
     } catch (error) {
-      LoggingUtils.logApiError('getMarketData', error);
-      throw error;
+      logger.error('獲取市場數據失敗:', error);
+      throw new Error('獲取市場數據失敗');
     }
   }
 
-  // 獲取市場趨勢
-  async getMarketTrends(
-    period: MarketTrend['period'] = '7d'
-  ): Promise<ApiResponse<MarketTrend[]>> {
+  async getCardPriceHistory(
+    cardId: string
+  ): Promise<ApiResponse<PriceHistory>> {
     try {
-      ValidationUtils.validateEnum(
-        period,
-        ['1h', '24h', '7d', '30d'],
-        '時間週期'
-      );
-      LoggingUtils.logApiCall('getMarketTrends', { period });
-
-      const response = await apiService.get<MarketTrend[]>(
-        API_CONFIG.MARKET.TRENDS,
-        { params: { period } }
-      );
-      LoggingUtils.logApiCall('getMarketTrends', { period }, response.data);
+      const _response = await apiService.get(`/market/price-history/${cardId}`);
       return response;
     } catch (error) {
-      LoggingUtils.logApiError('getMarketTrends', error, { period });
-      throw error;
+      logger.error('獲取卡片價格歷史失敗:', error);
+      throw new Error('獲取卡片價格歷史失敗');
     }
   }
 
-  // 獲取市場分析
-  async getMarketAnalysis(): Promise<ApiResponse<MarketAnalysis>> {
+  async getMarketTrends(): Promise<ApiResponse<any>> {
     try {
-      const response = await apiService.get<MarketAnalysis>(
-        API_ENDPOINTS.MARKET.ANALYSIS
-      );
-      const validationResult = validateApiResponse(
-        z.object({
-          sentiment: z.enum(['bullish', 'bearish', 'neutral']),
-          confidence: z.number().min(0).max(1),
-          factors: z.object({
-            technical: z.number().min(0).max(1),
-            fundamental: z.number().min(0).max(1),
-            social: z.number().min(0).max(1),
-          }),
-          recommendations: z.array(z.string()),
-          riskLevel: z.enum(['low', 'medium', 'high']),
-        }),
-        response.data
-      );
-      if (!validationResult.isValid) {
-        throw new Error(
-          validationResult.errorMessage || '市場分析數據驗證失敗'
-        );
-      }
-      return {
-        ...response,
-        data: validationResult.data!,
-      };
-    } catch (error: any) {
-      logger.error('❌ Get market analysis error:', { error: error.message });
-      throw error;
+      const _response = await apiService.get('/market/trends');
+      return response;
+    } catch (error) {
+      logger.error('獲取市場趨勢失敗:', error);
+      throw new Error('獲取市場趨勢失敗');
     }
   }
 
-  // 獲取價格預測
-  async getPricePredictions(
-    cardIds: string[]
-  ): Promise<ApiResponse<PricePrediction[]>> {
+  async getTrendingCards(): Promise<ApiResponse<any>> {
     try {
-      const validationResult = validateInput(
-        z.object({
-          cardIds: z
-            .array(z.string().uuid('無效的卡牌 ID'))
-            .min(1, '至少需要一個卡牌 ID'),
-        }),
-        { cardIds }
-      );
-      if (!validationResult.isValid) {
-        throw new Error(validationResult.errorMessage || '卡牌 ID 驗證失敗');
-      }
-      const response = await apiService.post<PricePrediction[]>(
-        API_ENDPOINTS.MARKET.PREDICTIONS,
-        {
-          cardIds: validationResult.data!.cardIds,
-        }
-      );
-      const responseValidation = validateApiResponse(
-        z.array(
-          z.object({
-            cardId: z.string().uuid(),
-            currentPrice: z.number().positive(),
-            predictedPrice: z.number().positive(),
-            confidence: z.number().min(0).max(1),
-            timeframe: z.enum(['1d', '7d', '30d', '90d']),
-            factors: z.array(z.string()),
-            riskAssessment: z.string(),
-          })
-        ),
-        response.data
-      );
-      if (!responseValidation.isValid) {
-        throw new Error(
-          responseValidation.errorMessage || '價格預測數據驗證失敗'
-        );
-      }
-      return {
-        ...response,
-        data: responseValidation.data!,
-      };
-    } catch (error: any) {
-      logger.error('❌ Get price predictions error:', { error: error.message });
-      throw error;
+      const _response = await apiService.get('/market/trending');
+      return response;
+    } catch (error) {
+      logger.error('獲取熱門卡片失敗:', error);
+      throw new Error('獲取熱門卡片失敗');
+    }
+  }
+
+  async getMarketStats(): Promise<ApiResponse<any>> {
+    try {
+      const _response = await apiService.get('/market/stats');
+      return response;
+    } catch (error) {
+      logger.error('獲取市場統計失敗:', error);
+      throw new Error('獲取市場統計失敗');
     }
   }
 }
 
-// 導出市場服務實例
-export { MarketService };
-export const marketService = new MarketService();
+export const _marketService = new MarketService();

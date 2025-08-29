@@ -1,25 +1,28 @@
-import React, { ReactElement, ReactNode } from 'react';
-import { render, RenderOptions } from '@testing-library/react-native';
-import { Provider } from 'react-redux';
-import { configureStore } from '@reduxjs/toolkit';
 import { NavigationContainer } from '@react-navigation/native';
+import { configureStore } from '@reduxjs/toolkit';
+import type { RenderOptions } from '@testing-library/react-native';
+import { render } from '@testing-library/react-native';
+import type { ReactElement, ReactNode } from 'react';
+import React from 'react';
+import { Provider } from 'react-redux';
+
 import { theme } from '@/config/theme';
 
 // Import all reducers
+import aiReducer from '@/store/slices/aiSlice';
 import authReducer from '@/store/slices/authSlice';
 import cardReducer from '@/store/slices/cardSlice';
 import collectionReducer from '@/store/slices/collectionSlice';
+import feedbackReducer from '@/store/slices/feedbackSlice';
 import investmentReducer from '@/store/slices/investmentSlice';
 import marketReducer from '@/store/slices/marketSlice';
-import aiReducer from '@/store/slices/aiSlice';
 import membershipReducer from '@/store/slices/membershipSlice';
-import settingsReducer from '@/store/slices/settingsSlice';
-import scanHistoryReducer from '@/store/slices/scanHistorySlice';
-import feedbackReducer from '@/store/slices/feedbackSlice';
 import privacyReducer from '@/store/slices/privacySlice';
+import scanHistoryReducer from '@/store/slices/scanHistorySlice';
+import settingsReducer from '@/store/slices/settingsSlice';
 
 // Create test Redux store
-const createTestStore = (preloadedState = {}) => {
+const _createTestStore = (preloadedState = {}) => {
   return configureStore({
     reducer: {
       auth: authReducer,
@@ -40,12 +43,12 @@ const createTestStore = (preloadedState = {}) => {
 
 // Custom render function
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  preloadedState?: any;
-  store?: any;
+  preloadedState?: unknown;
+  store?: unknown;
   withNavigation?: boolean;
 }
 
-const customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
+const _customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
   const {
     preloadedState = {},
     store = createTestStore(preloadedState),
@@ -53,8 +56,8 @@ const customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
     ...renderOptions
   } = options;
 
-  const Wrapper = ({ children }: { children: ReactNode }) => {
-    const content = <Provider store={store}>{children}</Provider>;
+  const _Wrapper = ({ children }: { children: ReactNode }) => {
+    const _content = <Provider store={store}>{children}</Provider>;
 
     if (withNavigation) {
       return <NavigationContainer>{content}</NavigationContainer>;
@@ -70,7 +73,7 @@ const customRender = (ui: ReactElement, options: CustomRenderOptions = {}) => {
 };
 
 // Test data factories
-export const createMockUser = (overrides = {}) => ({
+export const _createMockUser = (overrides = {}) => ({
   id: '1',
   username: 'testuser',
   email: 'test@example.com',
@@ -82,7 +85,7 @@ export const createMockUser = (overrides = {}) => ({
   ...overrides,
 });
 
-export const createMockCard = (overrides = {}) => ({
+export const _createMockCard = (overrides = {}) => ({
   id: '1',
   name: 'Test Card',
   type: 'Monster',
@@ -93,7 +96,7 @@ export const createMockCard = (overrides = {}) => ({
   ...overrides,
 });
 
-export const createMockScanHistory = (overrides = {}) => ({
+export const _createMockScanHistory = (overrides = {}) => ({
   id: '1',
   userId: '1',
   cardId: '1',
@@ -122,7 +125,7 @@ export const createMockScanHistory = (overrides = {}) => ({
   ...overrides,
 });
 
-export const createMockConditionAnalysis = (overrides = {}) => ({
+export const _createMockConditionAnalysis = (overrides = {}) => ({
   overallGrade: 'Near Mint',
   overallScore: 8.5,
   confidence: 0.92,
@@ -153,7 +156,7 @@ export const createMockConditionAnalysis = (overrides = {}) => ({
   ...overrides,
 });
 
-export const createMockFeedback = (overrides = {}) => ({
+export const _createMockFeedback = (overrides = {}) => ({
   id: '1',
   userId: '1',
   type: 'bug_report' as const,
@@ -170,7 +173,7 @@ export const createMockFeedback = (overrides = {}) => ({
   ...overrides,
 });
 
-export const createMockPrivacyPreferences = (overrides = {}) => ({
+export const _createMockPrivacyPreferences = (overrides = {}) => ({
   id: '1',
   userId: '1',
   region: 'CN' as const,
@@ -221,11 +224,11 @@ export const createMockPrivacyPreferences = (overrides = {}) => ({
 });
 
 // Utility functions
-export const waitFor = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+export const _waitFor = (ms: number) =>
+  new Promise(resolve => setTimeout(resolve, ms));
 
-export const mockApiResponse = (
-  data: any,
+export const _mockApiResponse = (
+  data: unknown,
   success = true,
   message = 'Success'
 ) => ({
@@ -234,23 +237,23 @@ export const mockApiResponse = (
   data,
 });
 
-export const mockApiError = (message = 'Error', status = 400) => ({
+export const _mockApiError = (message = 'Error', status = 400) => ({
   success: false,
   message,
   status,
 });
 
 // Custom matchers
-export const expectToBeVisible = (element: any) => {
+export const _expectToBeVisible = (element: unknown) => {
   expect(element).toBeTruthy();
   expect(element.props.style).not.toContainEqual({ display: 'none' });
 };
 
-export const expectToHaveText = (element: any, text: string) => {
+export const _expectToHaveText = (element: unknown, text: string) => {
   expect(element).toHaveTextContent(text);
 };
 
-export const expectToHaveStyle = (element: any, style: any) => {
+export const _expectToHaveStyle = (element: unknown, style: unknown) => {
   expect(element.props.style).toMatchObject(style);
 };
 

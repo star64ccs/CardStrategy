@@ -1,13 +1,13 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { collectionService } from '../../../services/collectionService';
 import { apiService } from '../../../services/apiService';
+import { collectionService } from '../../../services/collectionService';
 
 // Mock 依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../utils/validationService');
 jest.mock('../../../utils/validationSchemas');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
 
 describe('CollectionService', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('CollectionService', () => {
   });
 
   describe('getCollections', () => {
-    const mockCollections = [
+    const _mockCollections = [
       {
         id: 'collection-1',
         name: '我的收藏',
@@ -35,7 +35,7 @@ describe('CollectionService', () => {
         message: '收藏列表獲取成功',
       });
 
-      const result = await collectionService.getCollections();
+      const _result = await collectionService.getCollections();
 
       expect(result).toEqual(mockCollections);
       expect(mockApiService.get).toHaveBeenCalledWith('/collections');
@@ -51,8 +51,8 @@ describe('CollectionService', () => {
   });
 
   describe('getCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockCollection = {
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCollection = {
       id: mockCollectionId,
       name: '我的收藏',
       description: '我的第一個收藏',
@@ -70,7 +70,7 @@ describe('CollectionService', () => {
         message: '收藏獲取成功',
       });
 
-      const result = await collectionService.getCollection(mockCollectionId);
+      const _result = await collectionService.getCollection(mockCollectionId);
 
       expect(result).toEqual(mockCollection);
       expect(mockApiService.get).toHaveBeenCalledWith(
@@ -79,7 +79,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         collectionService.getCollection(invalidId)
@@ -96,13 +96,13 @@ describe('CollectionService', () => {
   });
 
   describe('createCollection', () => {
-    const mockCollectionData = {
+    const _mockCollectionData = {
       name: '新收藏',
       description: '這是一個新收藏',
       isPublic: true,
     };
 
-    const mockCreatedCollection = {
+    const _mockCreatedCollection = {
       id: 'collection-2',
       ...mockCollectionData,
       cardCount: 0,
@@ -118,7 +118,7 @@ describe('CollectionService', () => {
         message: '收藏創建成功',
       });
 
-      const result =
+      const _result =
         await collectionService.createCollection(mockCollectionData);
 
       expect(result).toEqual(mockCreatedCollection);
@@ -129,7 +129,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理空名稱', async () => {
-      const invalidData = { ...mockCollectionData, name: '' };
+      const _invalidData = { ...mockCollectionData, name: '' };
 
       await expect(
         collectionService.createCollection(invalidData)
@@ -137,7 +137,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理過長的名稱', async () => {
-      const invalidData = { ...mockCollectionData, name: 'a'.repeat(51) };
+      const _invalidData = { ...mockCollectionData, name: 'a'.repeat(51) };
 
       await expect(
         collectionService.createCollection(invalidData)
@@ -154,13 +154,13 @@ describe('CollectionService', () => {
   });
 
   describe('updateCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockUpdateData = {
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockUpdateData = {
       name: '更新後的收藏名稱',
       description: '更新後的描述',
     };
 
-    const mockUpdatedCollection = {
+    const _mockUpdatedCollection = {
       id: mockCollectionId,
       ...mockUpdateData,
       isPublic: false,
@@ -177,7 +177,7 @@ describe('CollectionService', () => {
         message: '收藏更新成功',
       });
 
-      const result = await collectionService.updateCollection(
+      const _result = await collectionService.updateCollection(
         mockCollectionId,
         mockUpdateData
       );
@@ -190,7 +190,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         collectionService.updateCollection(invalidId, mockUpdateData)
@@ -207,7 +207,7 @@ describe('CollectionService', () => {
   });
 
   describe('deleteCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該成功刪除收藏', async () => {
       mockApiService.delete.mockResolvedValue({
@@ -223,7 +223,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         collectionService.deleteCollection(invalidId)
@@ -240,8 +240,8 @@ describe('CollectionService', () => {
   });
 
   describe('addCardToCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockCardData = {
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardData = {
       cardId: 'card-123',
       quantity: 2,
       condition: 'mint',
@@ -250,7 +250,7 @@ describe('CollectionService', () => {
       notes: '這是一張好卡',
     };
 
-    const mockAddedCard = {
+    const _mockAddedCard = {
       id: 'collection-card-1',
       collectionId: mockCollectionId,
       ...mockCardData,
@@ -264,7 +264,7 @@ describe('CollectionService', () => {
         message: '卡牌添加成功',
       });
 
-      const result = await collectionService.addCardToCollection(
+      const _result = await collectionService.addCardToCollection(
         mockCollectionId,
         mockCardData
       );
@@ -277,7 +277,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidCollectionId = 'invalid-id';
+      const _invalidCollectionId = 'invalid-id';
 
       await expect(
         collectionService.addCardToCollection(invalidCollectionId, mockCardData)
@@ -285,7 +285,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidCardData = { ...mockCardData, cardId: 'invalid-id' };
+      const _invalidCardData = { ...mockCardData, cardId: 'invalid-id' };
 
       await expect(
         collectionService.addCardToCollection(mockCollectionId, invalidCardData)
@@ -293,7 +293,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的數量', async () => {
-      const invalidCardData = { ...mockCardData, quantity: 0 };
+      const _invalidCardData = { ...mockCardData, quantity: 0 };
 
       await expect(
         collectionService.addCardToCollection(mockCollectionId, invalidCardData)
@@ -310,8 +310,8 @@ describe('CollectionService', () => {
   });
 
   describe('removeCardFromCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockCardId = 'card-123';
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = 'card-123';
 
     it('應該成功從收藏移除卡牌', async () => {
       mockApiService.delete.mockResolvedValue({
@@ -330,7 +330,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidCollectionId = 'invalid-id';
+      const _invalidCollectionId = 'invalid-id';
 
       await expect(
         collectionService.removeCardFromCollection(
@@ -341,7 +341,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidCardId = 'invalid-id';
+      const _invalidCardId = 'invalid-id';
 
       await expect(
         collectionService.removeCardFromCollection(
@@ -361,15 +361,15 @@ describe('CollectionService', () => {
   });
 
   describe('updateCardInCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockCardId = 'card-123';
-    const mockUpdateData = {
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = 'card-123';
+    const _mockUpdateData = {
       quantity: 3,
       condition: 'near-mint',
       notes: '更新後的備註',
     };
 
-    const mockUpdatedCard = {
+    const _mockUpdatedCard = {
       id: 'collection-card-1',
       collectionId: mockCollectionId,
       cardId: mockCardId,
@@ -388,7 +388,7 @@ describe('CollectionService', () => {
         message: '卡牌更新成功',
       });
 
-      const result = await collectionService.updateCardInCollection(
+      const _result = await collectionService.updateCardInCollection(
         mockCollectionId,
         mockCardId,
         mockUpdateData
@@ -402,8 +402,8 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的 ID', async () => {
-      const invalidCollectionId = 'invalid-id';
-      const invalidCardId = 'invalid-id';
+      const _invalidCollectionId = 'invalid-id';
+      const _invalidCardId = 'invalid-id';
 
       await expect(
         collectionService.updateCardInCollection(
@@ -428,8 +428,8 @@ describe('CollectionService', () => {
   });
 
   describe('getCollectionStatistics', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockStatistics = {
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockStatistics = {
       totalCards: 50,
       totalValue: 5000,
       averageCondition: 4.2,
@@ -444,7 +444,7 @@ describe('CollectionService', () => {
         message: '統計獲取成功',
       });
 
-      const result =
+      const _result =
         await collectionService.getCollectionStatistics(mockCollectionId);
 
       expect(result).toEqual(mockStatistics);
@@ -454,7 +454,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         collectionService.getCollectionStatistics(invalidId)
@@ -471,15 +471,15 @@ describe('CollectionService', () => {
   });
 
   describe('searchCardsInCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockQuery = '火球術';
-    const mockFilters = {
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockQuery = '火球術';
+    const _mockFilters = {
       condition: 'mint',
       isFoil: true,
       minPrice: 100,
     };
 
-    const mockSearchResult = {
+    const _mockSearchResult = {
       cards: [
         {
           id: 'collection-card-1',
@@ -508,7 +508,7 @@ describe('CollectionService', () => {
         message: '搜索成功',
       });
 
-      const result = await collectionService.searchCardsInCollection(
+      const _result = await collectionService.searchCardsInCollection(
         mockCollectionId,
         mockQuery,
         mockFilters
@@ -524,7 +524,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理空查詢', async () => {
-      const emptyQuery = '';
+      const _emptyQuery = '';
 
       await expect(
         collectionService.searchCardsInCollection(mockCollectionId, emptyQuery)
@@ -532,7 +532,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         collectionService.searchCardsInCollection(invalidId, mockQuery)
@@ -549,7 +549,7 @@ describe('CollectionService', () => {
   });
 
   describe('importCollection', () => {
-    const mockImportData = {
+    const _mockImportData = {
       name: '導入的收藏',
       description: '從外部導入的收藏',
       cards: [
@@ -563,7 +563,7 @@ describe('CollectionService', () => {
       ],
     };
 
-    const mockImportedCollection = {
+    const _mockImportedCollection = {
       id: 'collection-imported',
       ...mockImportData,
       isPublic: false,
@@ -580,7 +580,7 @@ describe('CollectionService', () => {
         message: '收藏導入成功',
       });
 
-      const result = await collectionService.importCollection(mockImportData);
+      const _result = await collectionService.importCollection(mockImportData);
 
       expect(result).toEqual(mockImportedCollection);
       expect(mockApiService.post).toHaveBeenCalledWith(
@@ -590,7 +590,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理空卡牌列表', async () => {
-      const invalidData = { ...mockImportData, cards: [] };
+      const _invalidData = { ...mockImportData, cards: [] };
 
       await expect(
         collectionService.importCollection(invalidData)
@@ -607,8 +607,8 @@ describe('CollectionService', () => {
   });
 
   describe('exportCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockExportData = '{"collection": "exported data"}';
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockExportData = '{"collection": "exported data"}';
 
     it('應該成功導出收藏為 JSON', async () => {
       mockApiService.get.mockResolvedValue({
@@ -617,7 +617,7 @@ describe('CollectionService', () => {
         message: '導出成功',
       });
 
-      const result = await collectionService.exportCollection(
+      const _result = await collectionService.exportCollection(
         mockCollectionId,
         'json'
       );
@@ -629,14 +629,14 @@ describe('CollectionService', () => {
     });
 
     it('應該成功導出收藏為 CSV', async () => {
-      const csvData = 'card_id,name,quantity,condition\ncard-123,火球術,2,mint';
+      const _csvData = 'card_id,name,quantity,condition\ncard-123,火球術,2,mint';
       mockApiService.get.mockResolvedValue({
         success: true,
         data: csvData,
         message: '導出成功',
       });
 
-      const result = await collectionService.exportCollection(
+      const _result = await collectionService.exportCollection(
         mockCollectionId,
         'csv'
       );
@@ -648,7 +648,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         collectionService.exportCollection(invalidId)
@@ -671,14 +671,14 @@ describe('CollectionService', () => {
   });
 
   describe('shareCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockShareSettings = {
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockShareSettings = {
       isPublic: true,
       allowComments: true,
       allowRating: false,
     };
 
-    const mockShareResult = {
+    const _mockShareResult = {
       shareUrl: 'https://example.com/collections/shared-123',
     };
 
@@ -689,7 +689,7 @@ describe('CollectionService', () => {
         message: '分享成功',
       });
 
-      const result = await collectionService.shareCollection(
+      const _result = await collectionService.shareCollection(
         mockCollectionId,
         mockShareSettings
       );
@@ -702,7 +702,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         collectionService.shareCollection(invalidId, mockShareSettings)
@@ -719,7 +719,7 @@ describe('CollectionService', () => {
   });
 
   describe('getPublicCollections', () => {
-    const mockFilters = {
+    const _mockFilters = {
       search: '火球術',
       category: 'spell',
       sortBy: 'name',
@@ -728,7 +728,7 @@ describe('CollectionService', () => {
       offset: 0,
     };
 
-    const mockPublicCollections = {
+    const _mockPublicCollections = {
       collections: [
         {
           id: 'public-collection-1',
@@ -756,7 +756,7 @@ describe('CollectionService', () => {
         message: '公開收藏獲取成功',
       });
 
-      const result = await collectionService.getPublicCollections(mockFilters);
+      const _result = await collectionService.getPublicCollections(mockFilters);
 
       expect(result).toEqual(mockPublicCollections);
       expect(mockApiService.get).toHaveBeenCalledWith('/collections/public', {
@@ -771,7 +771,7 @@ describe('CollectionService', () => {
         message: '公開收藏獲取成功',
       });
 
-      const result = await collectionService.getPublicCollections();
+      const _result = await collectionService.getPublicCollections();
 
       expect(result).toEqual(mockPublicCollections);
       expect(mockApiService.get).toHaveBeenCalledWith('/collections/public', {
@@ -789,10 +789,10 @@ describe('CollectionService', () => {
   });
 
   describe('duplicateCollection', () => {
-    const mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockNewName = '複製的收藏';
+    const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockNewName = '複製的收藏';
 
-    const mockDuplicatedCollection = {
+    const _mockDuplicatedCollection = {
       id: 'duplicated-collection',
       name: mockNewName,
       description: '原始收藏的描述',
@@ -810,7 +810,7 @@ describe('CollectionService', () => {
         message: '收藏複製成功',
       });
 
-      const result = await collectionService.duplicateCollection(
+      const _result = await collectionService.duplicateCollection(
         mockCollectionId,
         mockNewName
       );
@@ -825,7 +825,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理無效的收藏 ID', async () => {
-      const invalidId = 'invalid-id';
+      const _invalidId = 'invalid-id';
 
       await expect(
         collectionService.duplicateCollection(invalidId, mockNewName)
@@ -833,7 +833,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理空的新名稱', async () => {
-      const emptyName = '';
+      const _emptyName = '';
 
       await expect(
         collectionService.duplicateCollection(mockCollectionId, emptyName)
@@ -841,7 +841,7 @@ describe('CollectionService', () => {
     });
 
     it('應該處理過長的新名稱', async () => {
-      const longName = 'a'.repeat(51);
+      const _longName = 'a'.repeat(51);
 
       await expect(
         collectionService.duplicateCollection(mockCollectionId, longName)

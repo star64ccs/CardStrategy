@@ -915,21 +915,25 @@ function printAccessibilitySummary(report) {
   // logger.info(`WCAG 合規性: ${report.summary.wcagCompliance.level} (${report.summary.wcagCompliance.compliancePercentage}%)`);
 
   // logger.info('\n🚨 違規統計:');
-  for (const [severity, count] of Object.entries(
+  for (const [, count] of Object.entries(
     report.violations.bySeverity
   )) {
+    // eslint-disable-next-line no-unused-vars
     // logger.info(`  ${severity.toUpperCase()}: ${count} 個`);
   }
 
   // logger.info('\n📋 違規類型:');
-  for (const [type, count] of Object.entries(report.violations.byType)) {
+  for (const [, count] of Object.entries(report.violations.byType)) {
+    // eslint-disable-next-line no-unused-vars
     // logger.info(`  ${type}: ${count} 個`);
   }
 
   // logger.info('\n♿ WCAG 指南違規:');
   for (const [guideline, count] of Object.entries(report.violations.byWCAG)) {
+    // eslint-disable-next-line no-unused-vars
     const guidelineName =
       ACCESSIBILITY_BENCHMARKS.wcagGuidelines[guideline] || '未知';
+    // eslint-disable-next-line no-unused-vars
     // logger.info(`  ${guideline} (${guidelineName}): ${count} 個`);
   }
 
@@ -942,6 +946,7 @@ function printAccessibilitySummary(report) {
   if (criticalRecs.length > 0) {
     // logger.info('  緊急修復:');
     criticalRecs.forEach((rec) => {
+      // eslint-disable-next-line no-unused-vars
       /* logger.info(`    - ${rec.title}`) */
     });
   }
@@ -949,6 +954,7 @@ function printAccessibilitySummary(report) {
   if (highRecs.length > 0) {
     // logger.info('  高優先級:');
     highRecs.forEach((rec) => {
+      // eslint-disable-next-line no-unused-vars
       /* logger.info(`    - ${rec.title}`) */
     });
   }

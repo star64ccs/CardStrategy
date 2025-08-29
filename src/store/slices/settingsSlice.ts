@@ -1,5 +1,7 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { NotificationSettings } from '@/types/notification';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+
+import type { NotificationSettings } from '../../types/notification';
 
 // 默認通知設置
 const defaultNotificationSettings: NotificationSettings = {
@@ -23,7 +25,7 @@ const initialState: SettingsState = {
   error: null,
 };
 
-const settingsSlice = createSlice({
+const _settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {
@@ -46,7 +48,7 @@ const settingsSlice = createSlice({
     },
 
     // 重置設置
-    resetSettings: (state) => {
+    resetSettings: state => {
       state.notificationSettings = defaultNotificationSettings;
       state.error = null;
     },
@@ -56,7 +58,7 @@ const settingsSlice = createSlice({
       state,
       action: PayloadAction<keyof NotificationSettings>
     ) => {
-      const key = action.payload;
+      const _key = action.payload;
       state.notificationSettings[key] = !state.notificationSettings[key];
     },
   },

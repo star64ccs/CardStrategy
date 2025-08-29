@@ -472,7 +472,7 @@ export type MainTabParamList = {
 // 組件 Props 類型
 export interface BaseComponentProps {
   testID?: string;
-  style?: any;
+  style?: unknown;
   children?: React.ReactNode;
 }
 
@@ -534,9 +534,9 @@ export interface CardState {
   pagination: Pagination;
   isRecognizing: boolean;
   recognizedCard: Card | null;
-  recognitionResult: any | null;
-  recognitionAlternatives: any[];
-  recognitionFeatures: any | null;
+  recognitionResult: unknown | null;
+  recognitionAlternatives: unknown[];
+  recognitionFeatures: unknown | null;
   isAnalyzing: boolean;
   conditionAnalysis: AnalysisResult[] | null;
   authenticityCheck: AnalysisResult[] | null;
@@ -611,11 +611,11 @@ export interface AIState {
     factors: string[];
     trend: 'stable' | 'up' | 'down';
   } | null;
-  investmentReport: any | null;
+  investmentReport: unknown | null;
   confidence: number;
   processingTime: number;
   isPredicting: boolean;
-  marketInsights: any | null;
+  marketInsights: unknown | null;
 }
 
 export interface MembershipState {
@@ -868,8 +868,8 @@ export const CARD_CONDITIONS: CardCondition[] = [
   'played',
   'poor',
 ];
-export const SUPPORTED_LANGUAGES = ['zh-TW', 'en-US', 'ja-JP'] as const;
-export const THEME_MODES = ['light', 'dark', 'auto'] as const;
+export const _SUPPORTED_LANGUAGES = ['zh-TW', 'en-US', 'ja-JP'] as const;
+export const _THEME_MODES = ['light', 'dark', 'auto'] as const;
 
 // 分享驗證相關類型
 export interface ShareVerification extends BaseEntity {

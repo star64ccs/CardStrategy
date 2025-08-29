@@ -19,7 +19,7 @@ describe('PaymentService', () => {
 
   describe('getPaymentMethods', () => {
     it('應該成功獲取支付方式列表', async () => {
-      const mockPaymentMethods = [
+      const _mockPaymentMethods = [
         {
           id: '1',
           type: 'credit_card',
@@ -38,7 +38,7 @@ describe('PaymentService', () => {
 
       mockApiResponse('get', mockPaymentMethods);
 
-      const result = await paymentService.getPaymentMethods();
+      const _result = await paymentService.getPaymentMethods();
 
       expect(result).toEqual(mockPaymentMethods);
     });
@@ -54,7 +54,7 @@ describe('PaymentService', () => {
 
   describe('addPaymentMethod', () => {
     it('應該成功添加信用卡支付方式', async () => {
-      const paymentData = {
+      const _paymentData = {
         type: 'credit_card',
         cardNumber: '4111111111111111',
         expiryMonth: '12',
@@ -63,7 +63,7 @@ describe('PaymentService', () => {
         cardholderName: 'Test User',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         id: 'new_payment_method_id',
         type: 'credit_card',
         last4: '1111',
@@ -73,20 +73,20 @@ describe('PaymentService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await paymentService.addPaymentMethod(paymentData);
+      const _result = await paymentService.addPaymentMethod(paymentData);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('應該成功添加銀行帳戶支付方式', async () => {
-      const paymentData = {
+      const _paymentData = {
         type: 'bank_account',
         accountNumber: '1234567890',
         routingNumber: '021000021',
         accountHolderName: 'Test User',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         id: 'new_bank_account_id',
         type: 'bank_account',
         last4: '7890',
@@ -96,13 +96,13 @@ describe('PaymentService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await paymentService.addPaymentMethod(paymentData);
+      const _result = await paymentService.addPaymentMethod(paymentData);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('應該處理添加支付方式失敗的情況', async () => {
-      const paymentData = {
+      const _paymentData = {
         type: 'credit_card',
         cardNumber: 'invalid',
         expiryMonth: '12',
@@ -121,13 +121,13 @@ describe('PaymentService', () => {
 
   describe('updatePaymentMethod', () => {
     it('應該成功更新支付方式', async () => {
-      const paymentMethodId = 'payment_method_id';
-      const updateData = {
+      const _paymentMethodId = 'payment_method_id';
+      const _updateData = {
         isDefault: true,
         cardholderName: 'Updated Name',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         id: paymentMethodId,
         type: 'credit_card',
         last4: '1111',
@@ -138,7 +138,7 @@ describe('PaymentService', () => {
 
       mockApiResponse('put', mockResponse);
 
-      const result = await paymentService.updatePaymentMethod(
+      const _result = await paymentService.updatePaymentMethod(
         paymentMethodId,
         updateData
       );
@@ -147,8 +147,8 @@ describe('PaymentService', () => {
     });
 
     it('應該處理更新支付方式失敗的情況', async () => {
-      const paymentMethodId = 'invalid_id';
-      const updateData = { isDefault: true };
+      const _paymentMethodId = 'invalid_id';
+      const _updateData = { isDefault: true };
 
       mockApiResponse('put', null, new Error('Payment method not found'));
 
@@ -160,17 +160,17 @@ describe('PaymentService', () => {
 
   describe('deletePaymentMethod', () => {
     it('應該成功刪除支付方式', async () => {
-      const paymentMethodId = 'payment_method_id';
+      const _paymentMethodId = 'payment_method_id';
 
       mockApiResponse('delete', { success: true });
 
-      const result = await paymentService.deletePaymentMethod(paymentMethodId);
+      const _result = await paymentService.deletePaymentMethod(paymentMethodId);
 
       expect(result).toEqual({ success: true });
     });
 
     it('應該處理刪除支付方式失敗的情況', async () => {
-      const paymentMethodId = 'invalid_id';
+      const _paymentMethodId = 'invalid_id';
 
       mockApiResponse(
         'delete',
@@ -186,14 +186,14 @@ describe('PaymentService', () => {
 
   describe('processPayment', () => {
     it('應該成功處理信用卡支付', async () => {
-      const paymentData = {
+      const _paymentData = {
         amount: 1000,
         currency: 'TWD',
         paymentMethodId: 'payment_method_id',
         description: 'Test payment',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         transactionId: 'txn_123456',
         status: 'succeeded',
         amount: 1000,
@@ -203,13 +203,13 @@ describe('PaymentService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await paymentService.processPayment(paymentData);
+      const _result = await paymentService.processPayment(paymentData);
 
       expect(result).toEqual(mockResponse);
     });
 
     it('應該處理支付失敗的情況', async () => {
-      const paymentData = {
+      const _paymentData = {
         amount: 1000,
         currency: 'TWD',
         paymentMethodId: 'invalid_method',
@@ -226,7 +226,7 @@ describe('PaymentService', () => {
 
   describe('getPaymentHistory', () => {
     it('應該成功獲取支付歷史', async () => {
-      const mockHistory = [
+      const _mockHistory = [
         {
           id: '1',
           amount: 1000,
@@ -247,14 +247,14 @@ describe('PaymentService', () => {
 
       mockApiResponse('get', mockHistory);
 
-      const result = await paymentService.getPaymentHistory();
+      const _result = await paymentService.getPaymentHistory();
 
       expect(result).toEqual(mockHistory);
     });
 
     it('應該支持分頁參數', async () => {
-      const page = 2;
-      const limit = 10;
+      const _page = 2;
+      const _limit = 10;
 
       mockApiResponse('get', []);
 
@@ -274,7 +274,7 @@ describe('PaymentService', () => {
 
   describe('getSubscriptionPlans', () => {
     it('應該成功獲取訂閱計劃列表', async () => {
-      const mockPlans = [
+      const _mockPlans = [
         {
           id: 'basic',
           name: 'Basic Plan',
@@ -295,7 +295,7 @@ describe('PaymentService', () => {
 
       mockApiResponse('get', mockPlans);
 
-      const result = await paymentService.getSubscriptionPlans();
+      const _result = await paymentService.getSubscriptionPlans();
 
       expect(result).toEqual(mockPlans);
     });
@@ -303,13 +303,13 @@ describe('PaymentService', () => {
 
   describe('createSubscription', () => {
     it('應該成功創建訂閱', async () => {
-      const subscriptionData = {
+      const _subscriptionData = {
         planId: 'premium',
         paymentMethodId: 'payment_method_id',
         startDate: '2024-01-01',
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         id: 'sub_123456',
         planId: 'premium',
         status: 'active',
@@ -319,7 +319,7 @@ describe('PaymentService', () => {
 
       mockApiResponse('post', mockResponse);
 
-      const result = await paymentService.createSubscription(subscriptionData);
+      const _result = await paymentService.createSubscription(subscriptionData);
 
       expect(result).toEqual(mockResponse);
     });
@@ -327,11 +327,11 @@ describe('PaymentService', () => {
 
   describe('cancelSubscription', () => {
     it('應該成功取消訂閱', async () => {
-      const subscriptionId = 'sub_123456';
+      const _subscriptionId = 'sub_123456';
 
       mockApiResponse('post', { success: true });
 
-      const result = await paymentService.cancelSubscription(subscriptionId);
+      const _result = await paymentService.cancelSubscription(subscriptionId);
 
       expect(result).toEqual({ success: true });
     });
@@ -339,7 +339,7 @@ describe('PaymentService', () => {
 
   describe('getInvoiceHistory', () => {
     it('應該成功獲取發票歷史', async () => {
-      const mockInvoices = [
+      const _mockInvoices = [
         {
           id: 'inv_123456',
           amount: 599,
@@ -352,7 +352,7 @@ describe('PaymentService', () => {
 
       mockApiResponse('get', mockInvoices);
 
-      const result = await paymentService.getInvoiceHistory();
+      const _result = await paymentService.getInvoiceHistory();
 
       expect(result).toEqual(mockInvoices);
     });
@@ -360,26 +360,26 @@ describe('PaymentService', () => {
 
   describe('validateCardNumber', () => {
     it('應該驗證有效的信用卡號', () => {
-      const validCardNumbers = [
+      const _validCardNumbers = [
         '4111111111111111', // Visa
         '5555555555554444', // Mastercard
         '378282246310005', // American Express
       ];
 
-      validCardNumbers.forEach((cardNumber) => {
+      validCardNumbers.forEach(cardNumber => {
         expect(paymentService.validateCardNumber(cardNumber)).toBe(true);
       });
     });
 
     it('應該拒絕無效的信用卡號', () => {
-      const invalidCardNumbers = [
+      const _invalidCardNumbers = [
         '4111111111111112',
         '1234567890123456',
         '0000000000000000',
         'invalid',
       ];
 
-      invalidCardNumbers.forEach((cardNumber) => {
+      invalidCardNumbers.forEach(cardNumber => {
         expect(paymentService.validateCardNumber(cardNumber)).toBe(false);
       });
     });

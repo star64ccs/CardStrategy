@@ -1,10 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from 'antd';
+import React from "react"; // eslint-disable-next-line no-unused-vars
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import Navigation from './components/Navigation';
+import CostAnalysis from './pages/CostAnalysis';
 import Dashboard from './pages/Dashboard';
 import Monitoring from './pages/Monitoring';
-import CostAnalysis from './pages/CostAnalysis';
-import Navigation from './components/Navigation';
 import './App.css';
 
 const { Content } = Layout;

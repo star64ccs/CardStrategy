@@ -1,13 +1,13 @@
-import { paymentService } from '../../../services/paymentService';
 import { authService } from '../../../services/authService';
+import { paymentService } from '../../../services/paymentService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
 jest.mock('../../../services/authService');
 jest.mock('../../../utils/logger');
 
-const mockAuthService = authService as jest.Mocked<typeof authService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockAuthService = authService as jest.Mocked<typeof authService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('PaymentService', () => {
   beforeEach(() => {
@@ -38,7 +38,7 @@ describe('PaymentService', () => {
 
   describe('createPaymentMethod', () => {
     it('應該成功創建支付方法', async () => {
-      const paymentData = {
+      const _paymentData = {
         card: {
           brand: 'visa',
           last4: '4242',
@@ -47,7 +47,7 @@ describe('PaymentService', () => {
         },
       };
 
-      const result = await paymentService.createPaymentMethod(
+      const _result = await paymentService.createPaymentMethod(
         'user-1',
         'stripe',
         paymentData
@@ -78,7 +78,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理無效的支付提供商', async () => {
-      const paymentData = { card: { brand: 'visa' } };
+      const _paymentData = { card: { brand: 'visa' } };
 
       await expect(
         paymentService.createPaymentMethod(
@@ -94,14 +94,14 @@ describe('PaymentService', () => {
     });
 
     it('應該處理銀行賬戶支付方法', async () => {
-      const paymentData = {
+      const _paymentData = {
         bankAccount: {
           bankName: 'Test Bank',
           accountType: 'checking',
         },
       };
 
-      const result = await paymentService.createPaymentMethod(
+      const _result = await paymentService.createPaymentMethod(
         'user-1',
         'stripe',
         paymentData
@@ -115,13 +115,13 @@ describe('PaymentService', () => {
     });
 
     it('應該處理數字錢包支付方法', async () => {
-      const paymentData = {
+      const _paymentData = {
         digitalWallet: {
           type: 'apple_pay',
         },
       };
 
-      const result = await paymentService.createPaymentMethod(
+      const _result = await paymentService.createPaymentMethod(
         'user-1',
         'stripe',
         paymentData
@@ -136,7 +136,7 @@ describe('PaymentService', () => {
 
   describe('getUserPaymentMethods', () => {
     it('應該成功獲取用戶支付方法', async () => {
-      const result = await paymentService.getUserPaymentMethods('user-1');
+      const _result = await paymentService.getUserPaymentMethods('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取用戶支付方法:',
@@ -161,12 +161,12 @@ describe('PaymentService', () => {
 
   describe('updatePaymentMethod', () => {
     it('應該成功更新支付方法', async () => {
-      const updates = {
+      const _updates = {
         isDefault: true,
         isVerified: false,
       };
 
-      const result = await paymentService.updatePaymentMethod(
+      const _result = await paymentService.updatePaymentMethod(
         'payment-method-1',
         updates
       );
@@ -184,7 +184,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理支付方法不存在的情況', async () => {
-      const updates = { isDefault: true };
+      const _updates = { isDefault: true };
 
       await expect(
         paymentService.updatePaymentMethod('nonexistent-method', updates)
@@ -253,7 +253,7 @@ describe('PaymentService', () => {
 
   describe('createPaymentIntent', () => {
     it('應該成功創建支付意圖', async () => {
-      const paymentData = {
+      const _paymentData = {
         amount: 1000,
         currency: 'USD',
         paymentMethodId: 'payment-method-1',
@@ -261,7 +261,7 @@ describe('PaymentService', () => {
         metadata: { orderId: 'order-1' },
       };
 
-      const result = await paymentService.createPaymentIntent(paymentData);
+      const _result = await paymentService.createPaymentIntent(paymentData);
 
       expect(result).toMatchObject({
         amount: 1000,
@@ -284,7 +284,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理無效的支付數據', async () => {
-      const invalidPaymentData = {
+      const _invalidPaymentData = {
         amount: -100, // 無效：負數金額
         currency: 'USD',
         paymentMethodId: 'payment-method-1',
@@ -301,7 +301,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理無效的貨幣代碼', async () => {
-      const invalidPaymentData = {
+      const _invalidPaymentData = {
         amount: 1000,
         currency: 'US', // 無效：不是3位字符
         paymentMethodId: 'payment-method-1',
@@ -318,7 +318,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理空描述', async () => {
-      const invalidPaymentData = {
+      const _invalidPaymentData = {
         amount: 1000,
         currency: 'USD',
         paymentMethodId: 'payment-method-1',
@@ -337,7 +337,7 @@ describe('PaymentService', () => {
 
   describe('confirmPayment', () => {
     it('應該成功確認支付', async () => {
-      const result = await paymentService.confirmPayment('payment-intent-1');
+      const _result = await paymentService.confirmPayment('payment-intent-1');
 
       expect(result).toMatchObject({
         status: 'succeeded',
@@ -363,7 +363,7 @@ describe('PaymentService', () => {
 
     it('應該處理支付意圖狀態不正確的情況', async () => {
       // 模擬已成功的支付意圖
-      const mockPaymentIntent = {
+      const _mockPaymentIntent = {
         id: 'payment-intent-1',
         status: 'succeeded',
       };
@@ -381,7 +381,7 @@ describe('PaymentService', () => {
 
   describe('cancelPayment', () => {
     it('應該成功取消支付', async () => {
-      const result = await paymentService.cancelPayment('payment-intent-1');
+      const _result = await paymentService.cancelPayment('payment-intent-1');
 
       expect(result).toMatchObject({
         status: 'canceled',
@@ -406,7 +406,7 @@ describe('PaymentService', () => {
 
     it('應該處理已成功支付的情況', async () => {
       // 模擬已成功的支付意圖
-      const mockPaymentIntent = {
+      const _mockPaymentIntent = {
         id: 'payment-intent-1',
         status: 'succeeded',
       };
@@ -423,7 +423,7 @@ describe('PaymentService', () => {
 
   describe('getPaymentIntent', () => {
     it('應該成功獲取支付意圖', async () => {
-      const result = await paymentService.getPaymentIntent('payment-intent-1');
+      const _result = await paymentService.getPaymentIntent('payment-intent-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取支付意圖:',
@@ -448,7 +448,7 @@ describe('PaymentService', () => {
 
   describe('createOrder', () => {
     it('應該成功創建訂單', async () => {
-      const orderData = {
+      const _orderData = {
         items: [
           {
             productId: 'product-1',
@@ -484,7 +484,7 @@ describe('PaymentService', () => {
         notes: '請小心包裝',
       };
 
-      const result = await paymentService.createOrder(orderData);
+      const _result = await paymentService.createOrder(orderData);
 
       expect(result).toMatchObject({
         items: [
@@ -518,7 +518,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理無效的訂單數據', async () => {
-      const invalidOrderData = {
+      const _invalidOrderData = {
         items: [
           {
             productId: 'product-1',
@@ -561,7 +561,7 @@ describe('PaymentService', () => {
 
   describe('getOrder', () => {
     it('應該成功獲取訂單', async () => {
-      const result = await paymentService.getOrder('order-1');
+      const _result = await paymentService.getOrder('order-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取訂單:', 'order-1');
       expect(result).toBeNull();
@@ -581,7 +581,7 @@ describe('PaymentService', () => {
 
   describe('getUserOrders', () => {
     it('應該成功獲取用戶訂單', async () => {
-      const result = await paymentService.getUserOrders('user-1', 1, 20);
+      const _result = await paymentService.getUserOrders('user-1', 1, 20);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取用戶訂單:',
@@ -606,7 +606,7 @@ describe('PaymentService', () => {
 
   describe('updateOrderStatus', () => {
     it('應該成功更新訂單狀態', async () => {
-      const result = await paymentService.updateOrderStatus(
+      const _result = await paymentService.updateOrderStatus(
         'order-1',
         'confirmed'
       );
@@ -636,7 +636,7 @@ describe('PaymentService', () => {
 
   describe('createSubscriptionPlan', () => {
     it('應該成功創建訂閱計劃', async () => {
-      const planData = {
+      const _planData = {
         name: '高級計劃',
         description: '包含所有高級功能',
         price: 2999,
@@ -649,7 +649,7 @@ describe('PaymentService', () => {
         metadata: { category: 'premium' },
       };
 
-      const result = await paymentService.createSubscriptionPlan(planData);
+      const _result = await paymentService.createSubscriptionPlan(planData);
 
       expect(result).toMatchObject({
         name: '高級計劃',
@@ -671,7 +671,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理無效的計劃數據', async () => {
-      const invalidPlanData = {
+      const _invalidPlanData = {
         name: '', // 無效：空名稱
         description: '包含所有高級功能',
         price: 2999,
@@ -694,7 +694,7 @@ describe('PaymentService', () => {
 
   describe('createSubscription', () => {
     it('應該成功創建訂閱', async () => {
-      const result = await paymentService.createSubscription(
+      const _result = await paymentService.createSubscription(
         'user-1',
         'plan-1',
         'payment-method-1'
@@ -740,7 +740,7 @@ describe('PaymentService', () => {
 
   describe('cancelSubscription', () => {
     it('應該成功取消訂閱', async () => {
-      const result = await paymentService.cancelSubscription(
+      const _result = await paymentService.cancelSubscription(
         'subscription-1',
         true
       );
@@ -759,7 +759,7 @@ describe('PaymentService', () => {
     });
 
     it('應該立即取消訂閱', async () => {
-      const result = await paymentService.cancelSubscription(
+      const _result = await paymentService.cancelSubscription(
         'subscription-1',
         false
       );
@@ -784,7 +784,7 @@ describe('PaymentService', () => {
 
   describe('getSubscription', () => {
     it('應該成功獲取訂閱', async () => {
-      const result = await paymentService.getSubscription('subscription-1');
+      const _result = await paymentService.getSubscription('subscription-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '獲取訂閱:',
@@ -809,7 +809,7 @@ describe('PaymentService', () => {
 
   describe('getUserSubscriptions', () => {
     it('應該成功獲取用戶訂閱', async () => {
-      const result = await paymentService.getUserSubscriptions('user-1');
+      const _result = await paymentService.getUserSubscriptions('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶訂閱:', 'user-1');
       expect(result).toEqual([]);
@@ -831,7 +831,7 @@ describe('PaymentService', () => {
 
   describe('createRefund', () => {
     it('應該成功創建退款', async () => {
-      const result = await paymentService.createRefund(
+      const _result = await paymentService.createRefund(
         'payment-intent-1',
         500,
         'requested_by_customer'
@@ -887,7 +887,7 @@ describe('PaymentService', () => {
 
   describe('getRefund', () => {
     it('應該成功獲取退款', async () => {
-      const result = await paymentService.getRefund('refund-1');
+      const _result = await paymentService.getRefund('refund-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取退款:', 'refund-1');
       expect(result).toBeNull();
@@ -907,7 +907,7 @@ describe('PaymentService', () => {
 
   describe('getPaymentIntentRefunds', () => {
     it('應該成功獲取支付意圖的退款', async () => {
-      const result =
+      const _result =
         await paymentService.getPaymentIntentRefunds('payment-intent-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -933,13 +933,13 @@ describe('PaymentService', () => {
 
   describe('createDispute', () => {
     it('應該成功創建爭議', async () => {
-      const evidence = {
+      const _evidence = {
         customerEmail: 'test@example.com',
         customerName: '張三',
         productDescription: '測試產品',
       };
 
-      const result = await paymentService.createDispute(
+      const _result = await paymentService.createDispute(
         'payment-intent-1',
         'product_not_received',
         evidence
@@ -964,7 +964,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理支付意圖不存在的情況', async () => {
-      const evidence = { customerEmail: 'test@example.com' };
+      const _evidence = { customerEmail: 'test@example.com' };
 
       await expect(
         paymentService.createDispute(
@@ -982,14 +982,14 @@ describe('PaymentService', () => {
 
   describe('updateDispute', () => {
     it('應該成功更新爭議', async () => {
-      const updates = {
+      const _updates = {
         status: 'under_review',
         evidence: {
           customerCommunication: '客戶已聯繫',
         },
       };
 
-      const result = await paymentService.updateDispute('dispute-1', updates);
+      const _result = await paymentService.updateDispute('dispute-1', updates);
 
       expect(result).toMatchObject({
         status: 'under_review',
@@ -1003,7 +1003,7 @@ describe('PaymentService', () => {
     });
 
     it('應該處理爭議不存在的情況', async () => {
-      const updates = { status: 'under_review' };
+      const _updates = { status: 'under_review' };
 
       await expect(
         paymentService.updateDispute('nonexistent-dispute', updates)
@@ -1017,7 +1017,7 @@ describe('PaymentService', () => {
 
   describe('getDispute', () => {
     it('應該成功獲取爭議', async () => {
-      const result = await paymentService.getDispute('dispute-1');
+      const _result = await paymentService.getDispute('dispute-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取爭議:', 'dispute-1');
       expect(result).toBeNull();
@@ -1037,7 +1037,7 @@ describe('PaymentService', () => {
 
   describe('getPaymentAnalytics', () => {
     it('應該成功獲取支付分析', async () => {
-      const result = await paymentService.getPaymentAnalytics('30d');
+      const _result = await paymentService.getPaymentAnalytics('30d');
 
       expect(result).toMatchObject({
         totalRevenue: 0,
@@ -1068,7 +1068,7 @@ describe('PaymentService', () => {
 
   describe('配置管理', () => {
     it('應該成功獲取配置', () => {
-      const config = paymentService.getConfig();
+      const _config = paymentService.getConfig();
 
       expect(config).toMatchObject({
         enableStripe: true,
@@ -1085,27 +1085,27 @@ describe('PaymentService', () => {
     });
 
     it('應該成功更新配置', () => {
-      const newConfig = {
+      const _newConfig = {
         enableCrypto: true,
         enableAnalytics: false,
       };
 
       paymentService.updateConfig(newConfig);
 
-      const updatedConfig = paymentService.getConfig();
+      const _updatedConfig = paymentService.getConfig();
       expect(updatedConfig.enableCrypto).toBe(true);
       expect(updatedConfig.enableAnalytics).toBe(false);
       expect(mockLogger.info).toHaveBeenCalledWith('支付服務配置已更新');
     });
 
     it('應該獲取支付提供商', () => {
-      const providers = paymentService.getProviders();
+      const _providers = paymentService.getProviders();
 
       expect(providers).toHaveLength(4); // Stripe, PayPal, Apple Pay, Google Pay
-      expect(providers.map((p) => p.name)).toContain('Stripe');
-      expect(providers.map((p) => p.name)).toContain('PayPal');
-      expect(providers.map((p) => p.name)).toContain('Apple Pay');
-      expect(providers.map((p) => p.name)).toContain('Google Pay');
+      expect(providers.map(p => p.name)).toContain('Stripe');
+      expect(providers.map(p => p.name)).toContain('PayPal');
+      expect(providers.map(p => p.name)).toContain('Apple Pay');
+      expect(providers.map(p => p.name)).toContain('Google Pay');
     });
 
     it('應該檢查服務狀態', () => {

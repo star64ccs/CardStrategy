@@ -1,33 +1,30 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken: protect } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
-const { validateInput } = require('../middleware/validation');
-
-// å¾®æ??™ç›¸?œæ¨¡??const ServiceRegistry =
-  require('../models/ServiceRegistry').getServiceRegistryModel();
-const LoadBalancer = require('../models/LoadBalancer').getLoadBalancerModel();
-const MessageQueue = require('../models/MessageQueue').getMessageQueueModel();
-const Trace = require('../models/Trace').getTraceModel();
-
-// ?å?è¨»å?
+const express = require('express');'
+const router = express.Router();''
+const { authenticateToken: protect } = require('../middleware/auth');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');''
+const { validateInput } = require('../middleware/validation');'
+// å¾®ï¿½??ï¿½ç›¸?ï¿½æ¨¡??const ServiceRegistry =''
+  require('../models/ServiceRegistry').getServiceRegistryModel();''
+const LoadBalancer = require('../models/LoadBalancer').getLoadBalancerModel();''
+const MessageQueue = require('../models/MessageQueue').getMessageQueueModel();''
+const Trace = require('../models/Trace').getTraceModel();'
+// ?ï¿½ï¿½?è¨»ï¿½?''
 router.post('/register', protect, async (req, res) => {
-  try {
-    const { registration, config } = req.body;
+  try {'
+    const { registration, config } = req.body;''
+    logger.info('?? è¨»ï¿½?å¾®ï¿½???, { serviceName: registration.serviceName });
 
-    logger.info('?? è¨»å?å¾®æ???, { serviceName: registration.serviceName });
-
-    // ?Ÿæ??å?ID
+    // ?ï¿½ï¿½??ï¿½ï¿½?ID
 // eslint-disable-next-line no-unused-vars
     const serviceId = `service_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // ?µå»º?å?è¨»å?è¨˜é?
+    // ?ï¿½å»º?ï¿½ï¿½?è¨»ï¿½?è¨˜ï¿½?
 // eslint-disable-next-line no-unused-vars
     const serviceRegistry = await ServiceRegistry.create({
       serviceId,
-      serviceName: registration.serviceName,
-      version: registration.version,
+      serviceName: registration.serviceName,'
+      version: registration.version,''
       status: 'starting',
       endpoints: registration.endpoints,
       metadata: registration.metadata,
@@ -36,80 +33,75 @@ router.post('/register', protect, async (req, res) => {
       lastHeartbeat: new Date(),
     });
 
-    // ?µå»ºè² è??‡è¡¡?¨è???    await LoadBalancer.create({
-      serviceId,
-      serviceName: registration.serviceName,
+    // ?ï¿½å»ºè² ï¿½??ï¿½è¡¡?ï¿½ï¿½???    await LoadBalancer.create({
+      serviceId,'
+      serviceName: registration.serviceName,''
       status: 'healthy',
       requestCount: 0,
       responseTime: 0,
-      errorCount: 0,
-      weight: 1,
-      algorithm: 'round_robin',
-    });
-
-    logger.info('??å¾®æ??™è¨»?Šæ???, {
+      errorCount: 0,'
+      weight: 1,''
+      algorithm: 'round_robin','
+    });''
+    logger.info('??å¾®ï¿½??ï¿½è¨»?ï¿½ï¿½???, {
       serviceId,
       serviceName: registration.serviceName,
     });
 
     res.status(201).json({
-      success: true,
-      serviceId,
+      success: true,'
+      serviceId,''
       message: 'Service registered successfully',
-    });
-  } catch (error) {
-    logger.error('??å¾®æ??™è¨»?Šå¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??å¾®ï¿½??ï¿½è¨»?ï¿½å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to register service',
       error: error.message,
     });
   }
-});
-
-// ?å?è¨»éŠ·
+});'
+// ?ï¿½ï¿½?è¨»éŠ·''
 router.delete('/deregister/:serviceId', protect, async (req, res) => {
-  try {
-    const { serviceId } = req.params;
+  try {'
+    const { serviceId } = req.params;''
+    logger.info('?? è¨»éŠ·å¾®ï¿½???, { serviceId });
 
-    logger.info('?? è¨»éŠ·å¾®æ???, { serviceId });
-
-    // ?ªé™¤?å?è¨»å?è¨˜é?
+    // ?ï¿½é™¤?ï¿½ï¿½?è¨»ï¿½?è¨˜ï¿½?
     await ServiceRegistry.destroy({
       where: { serviceId },
     });
 
-    // ?ªé™¤è² è??‡è¡¡?¨è???    await LoadBalancer.destroy({
-      where: { serviceId },
-    });
+    // ?ï¿½é™¤è² ï¿½??ï¿½è¡¡?ï¿½ï¿½???    await LoadBalancer.destroy({
+      where: { serviceId },'
+    });''
+    logger.info('??å¾®ï¿½??ï¿½è¨»?ï¿½ï¿½???, { serviceId });
 
-    logger.info('??å¾®æ??™è¨»?·æ???, { serviceId });
-
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: 'Service deregistered successfully',
-    });
-  } catch (error) {
-    logger.error('??å¾®æ??™è¨»?·å¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??å¾®ï¿½??ï¿½è¨»?ï¿½å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to deregister service',
       error: error.message,
     });
   }
-});
-
-// ?²å??å??—è¡¨
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨''
 router.get('/services', protect, async (req, res) => {
   try {
 // eslint-disable-next-line no-unused-vars
     const services = await ServiceRegistry.findAll({
       include: [
-        {
-          model: LoadBalancer,
+        {'
+          model: LoadBalancer,''
           as: 'loadBalancer',
-        },
-      ],
+        },'
+      ],''
       order: [['registeredAt', 'DESC']],
     });
 
@@ -133,25 +125,24 @@ router.get('/services', protect, async (req, res) => {
           : 100,
       },
       load: {
-        cpuUsage: 0, // ?€è¦å???Ž§ç³»çµ±?²å?
+        cpuUsage: 0, // ?ï¿½è¦ï¿½???ï¿½ï¿½ç³»çµ±?ï¿½ï¿½?
         memoryUsage: 0,
         activeConnections: 0,
         requestRate: service.loadBalancer?.requestCount || 0,
       },
     }));
 
-    res.json(serviceList);
-  } catch (error) {
-    logger.error('???²å??å??—è¡¨å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(serviceList);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get service list',
       error: error.message,
     });
   }
-});
-
-// ?¥åº·æª¢æŸ¥
+});'
+// ?ï¿½åº·æª¢æŸ¥''
 router.get('/health/:serviceId', protect, async (req, res) => {
   try {
     const { serviceId } = req.params;
@@ -162,45 +153,43 @@ router.get('/health/:serviceId', protect, async (req, res) => {
     });
 
     if (!service) {
-      return res.status(404).json({
-        success: false,
+      return res.status(404).json({'
+        success: false,''
         message: 'Service not found',
       });
     }
-
-    // ?´æ–°?€å¾Œå?è·³æ???    await service.update({
+    // ?ï¿½æ–°?ï¿½å¾Œï¿½?è·³ï¿½???    await service.update({
       lastHeartbeat: new Date(),
     });
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       status: 'healthy',
       serviceId,
       lastHeartbeat: service.lastHeartbeat,
-    });
-  } catch (error) {
-    logger.error('???¥åº·æª¢æŸ¥å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('???ï¿½åº·æª¢æŸ¥å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Health check failed',
       error: error.message,
-    });
+    });'
   }
-});
-
-// è² è??‡è¡¡?¨ç???router.get('/loadbalancer/status', protect, async (req, res) => {
+});''
+// è² ï¿½??ï¿½è¡¡?ï¿½ï¿½???router.get('/loadbalancer/status', protect, async (req, res) => {
   try {
     const loadBalancers = await LoadBalancer.findAll({
       include: [
-        {
-          model: ServiceRegistry,
+        {'
+          model: ServiceRegistry,''
           as: 'service',
         },
       ],
     });
 
-    const totalServices = loadBalancers.length;
-    const healthyServices = loadBalancers.filter(
+    const totalServices = loadBalancers.length;'
+    const healthyServices = loadBalancers.filter(''
       (lb) => lb.status === 'healthy'
     ).length;
     const unhealthyServices = totalServices - healthyServices;
@@ -224,9 +213,9 @@ router.get('/health/:serviceId', protect, async (req, res) => {
     const errorRate =
       totalRequests > 0 ? (totalErrors / totalRequests) * 100 : 0;
 
-// eslint-disable-next-line no-unused-vars
-    const status = {
-      algorithm: 'round_robin', // ?¯é?ç½?      totalServices,
+// eslint-disable-next-line no-unused-vars'
+    const status = {''
+      algorithm: 'round_robin', // ?ï¿½ï¿½?ï¿½?      totalServices,
       healthyServices,
       unhealthyServices,
       totalRequests,
@@ -243,20 +232,19 @@ router.get('/health/:serviceId', protect, async (req, res) => {
       })),
     };
 
-    res.json(status);
-  } catch (error) {
-    logger.error('???²å?è² è??‡è¡¡?¨ç??‹å¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(status);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½?è² ï¿½??ï¿½è¡¡?ï¿½ï¿½??ï¿½å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get load balancer status',
       error: error.message,
-    });
+    });'
   }
-});
-
-// æ¶ˆæ¯?Šå??€??router.get('/messagequeue/status', protect, async (req, res) => {
-  try {
-    const queues = await MessageQueue.findAll({
+});''
+// æ¶ˆæ¯?ï¿½ï¿½??ï¿½??router.get('/messagequeue/status', protect, async (req, res) => {
+  try {'
+    const queues = await MessageQueue.findAll({''
       order: [['createdAt', 'DESC']],
     });
 
@@ -294,25 +282,23 @@ router.get('/health/:serviceId', protect, async (req, res) => {
       })),
     };
 
-    res.json(status);
-  } catch (error) {
-    logger.error('???²å?æ¶ˆæ¯?Šå??€?‹å¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(status);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½?æ¶ˆæ¯?ï¿½ï¿½??ï¿½?ï¿½å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get message queue status',
       error: error.message,
     });
   }
-});
-
-// ?¼é€æ??¯åˆ°?Šå?
+});'
+// ?ï¿½é€ï¿½??ï¿½åˆ°?ï¿½ï¿½?''
 router.post('/messagequeue/send', protect, async (req, res) => {
-  try {
-    const { queueName, message, options } = req.body;
+  try {'
+    const { queueName, message, options } = req.body;''
+    logger.info('?? ?ï¿½é€ï¿½??ï¿½åˆ°?ï¿½ï¿½?', { queueName, messageId: message.id });
 
-    logger.info('?? ?¼é€æ??¯åˆ°?Šå?', { queueName, messageId: message.id });
-
-    // ?¥æ‰¾?–å‰µå»ºé???    let queue = await MessageQueue.findOne({
+    // ?ï¿½æ‰¾?ï¿½å‰µå»ºï¿½???    let queue = await MessageQueue.findOne({
       where: { queueName },
     });
 
@@ -328,32 +314,28 @@ router.post('/messagequeue/send', protect, async (req, res) => {
         errorRate: 0,
       });
     }
-
-    // ?´æ–°?Šå?çµ±è?
+    // ?ï¿½æ–°?ï¿½ï¿½?çµ±ï¿½?
     await queue.update({
       messageCount: queue.messageCount + 1,
-    });
-
-    const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-    logger.info('??æ¶ˆæ¯?¼é€æ???, { messageId, queueName });
+    });'
+    const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;''
+    logger.info('??æ¶ˆæ¯?ï¿½é€ï¿½???, { messageId, queueName });
 
     res.json({
       success: true,
       messageId,
       queueName,
-    });
-  } catch (error) {
-    logger.error('???¼é€æ??¯å¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('???ï¿½é€ï¿½??ï¿½å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to send message',
       error: error.message,
     });
   }
-});
-
-// ?µå»ºè¿½è¹¤
+});'
+// ?ï¿½å»ºè¿½è¹¤''
 router.post('/tracing/create', protect, async (req, res) => {
   try {
     const { operationName, serviceName } = req.body;
@@ -365,36 +347,34 @@ router.post('/tracing/create', protect, async (req, res) => {
       traceId,
       spanId,
       serviceName,
-      operationName,
-      startTime: new Date(),
+      operationName,'
+      startTime: new Date(),''
       status: 'success',
       tags: {},
-      logs: [],
-    });
-
-    logger.info('???µå»ºè¿½è¹¤?å?', { traceId, operationName });
+      logs: [],'
+    });''
+    logger.info('???ï¿½å»ºè¿½è¹¤?ï¿½ï¿½?', { traceId, operationName });
 
     res.json({
       traceId,
       spanId,
       serviceName,
-      operationName,
-      startTime: trace.startTime,
+      operationName,'
+      startTime: trace.startTime,''
       status: 'success',
       tags: {},
       logs: [],
-    });
-  } catch (error) {
-    logger.error('???µå»ºè¿½è¹¤å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('???ï¿½å»ºè¿½è¹¤å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to create trace',
       error: error.message,
     });
   }
-});
-
-// æ·»å?è¿½è¹¤?¥è?
+});'
+// æ·»ï¿½?è¿½è¹¤?ï¿½ï¿½?''
 router.post('/tracing/log', protect, async (req, res) => {
   try {
     const { traceId, level, message, fields, timestamp } = req.body;
@@ -404,12 +384,11 @@ router.post('/tracing/log', protect, async (req, res) => {
     });
 
     if (!trace) {
-      return res.status(404).json({
-        success: false,
+      return res.status(404).json({'
+        success: false,''
         message: 'Trace not found',
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const logs = trace.logs || [];
     logs.push({
@@ -420,26 +399,24 @@ router.post('/tracing/log', protect, async (req, res) => {
     });
 
     await trace.update({
-      logs,
-    });
+      logs,'
+    });''
+    logger.info('??è¿½è¹¤?ï¿½ï¿½?å·²æ·»??, { traceId, level, message });
 
-    logger.info('??è¿½è¹¤?¥è?å·²æ·»??, { traceId, level, message });
-
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: 'Log added successfully',
-    });
-  } catch (error) {
-    logger.error('??æ·»å?è¿½è¹¤?¥è?å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??æ·»ï¿½?è¿½è¹¤?ï¿½ï¿½?å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to add trace log',
       error: error.message,
     });
   }
-});
-
-// å®Œæ?è¿½è¹¤
+});'
+// å®Œï¿½?è¿½è¹¤''
 router.post('/tracing/complete', protect, async (req, res) => {
   try {
     const { traceId, status, endTime } = req.body;
@@ -449,12 +426,11 @@ router.post('/tracing/complete', protect, async (req, res) => {
     });
 
     if (!trace) {
-      return res.status(404).json({
-        success: false,
+      return res.status(404).json({'
+        success: false,''
         message: 'Trace not found',
       });
     }
-
     const duration = endTime
       ? new Date(endTime).getTime() - trace.startTime.getTime()
       : null;
@@ -462,32 +438,30 @@ router.post('/tracing/complete', protect, async (req, res) => {
     await trace.update({
       status,
       endTime: endTime ? new Date(endTime) : new Date(),
-      duration,
-    });
+      duration,'
+    });''
+    logger.info('??è¿½è¹¤å®Œï¿½?', { traceId, status, duration });
 
-    logger.info('??è¿½è¹¤å®Œæ?', { traceId, status, duration });
-
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: 'Trace completed successfully',
-    });
-  } catch (error) {
-    logger.error('??å®Œæ?è¿½è¹¤å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??å®Œï¿½?è¿½è¹¤å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to complete trace',
       error: error.message,
     });
   }
-});
-
-// ?²å??å??‡æ?
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/metrics/:serviceId', protect, async (req, res) => {
-  try {
-    const { serviceId } = req.params;
+  try {'
+    const { serviceId } = req.params;''
     const { timeRange = '24h' } = req.query;
 
-    // ?™è£¡?‰è©²å¾žç›£?§ç³»çµ±ç²?–å¯¦?›æ?æ¨?    // ?®å?è¿”å?æ¨¡æ“¬?¸æ?
+    // ?ï¿½è£¡?ï¿½è©²å¾žç›£?ï¿½ç³»çµ±ç²?ï¿½å¯¦?ï¿½ï¿½?ï¿½?    // ?ï¿½ï¿½?è¿”ï¿½?æ¨¡æ“¬?ï¿½ï¿½?
 // eslint-disable-next-line no-unused-vars
     const now = new Date();
     const timestamps = [];
@@ -500,7 +474,7 @@ router.get('/metrics/:serviceId', protect, async (req, res) => {
 // eslint-disable-next-line no-unused-vars
     const responseTime = [];
 
-    // ?Ÿæ??‚é?åºå??¸æ?
+    // ?ï¿½ï¿½??ï¿½ï¿½?åºï¿½??ï¿½ï¿½?
     for (let i = 23; i >= 0; i--) {
       const time = new Date(now.getTime() - i * 60 * 60 * 1000);
       timestamps.push(time.toISOString());
@@ -510,7 +484,6 @@ router.get('/metrics/:serviceId', protect, async (req, res) => {
       errorRate.push(Math.random() * 10);
       responseTime.push(Math.random() * 1000);
     }
-
     res.json({
       cpuUsage,
       memoryUsage,
@@ -518,44 +491,41 @@ router.get('/metrics/:serviceId', protect, async (req, res) => {
       errorRate,
       responseTime,
       timestamps,
-    });
-  } catch (error) {
-    logger.error('???²å??å??‡æ?å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get service metrics',
       error: error.message,
-    });
+    });'
   }
-});
-
-// ?´æ–°è² è??‡è¡¡?¨é?ç½?router.put('/loadbalancer/config', protect, async (req, res) => {
+});''
+// ?ï¿½æ–°è² ï¿½??ï¿½è¡¡?ï¿½ï¿½?ï¿½?router.put('/loadbalancer/config', protect, async (req, res) => {
   try {
     const { algorithm, weights } = req.body;
 
     if (weights) {
       for (const [serviceId, weight] of Object.entries(weights)) {
-        await LoadBalancer.update({ weight }, { where: { serviceId } });
+        await LoadBalancer.update({ weight }, { where: { serviceId } });'
       }
-    }
+    }''
+    logger.info('??è² ï¿½??ï¿½è¡¡?ï¿½ï¿½?ç½®å·²?ï¿½æ–°', { algorithm, weights });
 
-    logger.info('??è² è??‡è¡¡?¨é?ç½®å·²?´æ–°', { algorithm, weights });
-
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: 'Load balancer configuration updated successfully',
-    });
-  } catch (error) {
-    logger.error('???´æ–°è² è??‡è¡¡?¨é?ç½®å¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('???ï¿½æ–°è² ï¿½??ï¿½è¡¡?ï¿½ï¿½?ç½®å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to update load balancer configuration',
       error: error.message,
     });
   }
-});
-
-// æ¸…ç??Žæ?è¿½è¹¤
+});'
+// æ¸…ï¿½??ï¿½ï¿½?è¿½è¹¤''
 router.delete('/tracing/cleanup', protect, async (req, res) => {
   try {
     const { days = 7 } = req.query;
@@ -563,28 +533,26 @@ router.delete('/tracing/cleanup', protect, async (req, res) => {
     cutoffDate.setDate(cutoffDate.getDate() - parseInt(days));
 
     const deletedCount = await Trace.destroy({
-      where: {
-        startTime: {
+      where: {'
+        startTime: {''
           [require('sequelize').Op.lt]: cutoffDate,
         },
-      },
-    });
+      },'
+    });''
+    logger.info('??æ¸…ï¿½??ï¿½ï¿½?è¿½è¹¤å®Œï¿½?', { deletedCount, days });
 
-    logger.info('??æ¸…ç??Žæ?è¿½è¹¤å®Œæ?', { deletedCount, days });
-
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: 'Trace cleanup completed successfully',
       deletedCount,
-    });
-  } catch (error) {
-    logger.error('??æ¸…ç??Žæ?è¿½è¹¤å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??æ¸…ï¿½??ï¿½ï¿½?è¿½è¹¤å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to cleanup traces',
       error: error.message,
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

@@ -1,8 +1,15 @@
-import { setupServer } from 'msw/node';
-import { handlers } from './handlers';
+// 簡化的 MSW 服務器 mock
+const _mockServer = {
+  listen: jest.fn(),
+  close: jest.fn(),
+  use: jest.fn(),
+  resetHandlers: jest.fn(),
+};
 
-// 設置 MSW 服務器
-export const server = setupServer(...handlers);
+// 模擬 setupServer 函數
+const _setupServer = jest.fn(() => mockServer);
 
-// 導出用於測試的處理器
-export { handlers };
+// 導出mock server和handlers
+export const _server = mockServer;
+export { handlers } from './handlers';
+export { setupServer };

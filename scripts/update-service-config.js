@@ -6,6 +6,7 @@ const path = require('path');
  * 支持更新所有免費服務的配置
  */
 
+// eslint-disable-next-line no-console
 console.log('🔧 服務配置更新工具...\n');
 
 const services = {
@@ -41,6 +42,7 @@ function updateServiceConfig(serviceName, configData) {
   const backupPath = path.join(__dirname, '../backups/api-keys', `${serviceName}-config-backup.json`);
   
   if (!fs.existsSync(configPath)) {
+    // eslint-disable-next-line no-console
     console.log(`❌ ${services[serviceName].name} 配置文件不存在`);
     return false;
   }
@@ -57,34 +59,50 @@ function updateServiceConfig(serviceName, configData) {
     
     // 寫入更新後的配置
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+    // eslint-disable-next-line no-console
     console.log(`✅ ${services[serviceName].name} 配置文件已更新`);
     
     // 更新備份
     fs.copyFileSync(configPath, backupPath);
+    // eslint-disable-next-line no-console
     console.log(`✅ ${services[serviceName].name} 備份文件已更新`);
     
     return true;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error(`❌ 更新 ${services[serviceName].name} 配置失敗:`, error.message);
     return false;
   }
 }
 
 function showUsage() {
+  // eslint-disable-next-line no-console
   console.log('📋 使用方法:');
+  // eslint-disable-next-line no-console
   console.log('node scripts/update-service-config.js <service> <key1=value1> <key2=value2> ...');
+  // eslint-disable-next-line no-console
   console.log('');
+  // eslint-disable-next-line no-console
   console.log('🔹 支持的服務:');
   Object.entries(services).forEach(([key, service]) => {
+    // eslint-disable-next-line no-console
     console.log(`  ${key}: ${service.name} - ${service.description}`);
+    // eslint-disable-next-line no-console
     console.log(`    需要參數: ${service.required.join(', ')}`);
   });
+  // eslint-disable-next-line no-console
   console.log('');
+  // eslint-disable-next-line no-console
   console.log('📝 示例:');
+  // eslint-disable-next-line no-console
   console.log('node scripts/update-service-config.js mixpanel projectToken=1234567890abcdef apiSecret=your-secret');
+  // eslint-disable-next-line no-console
   console.log('node scripts/update-service-config.js sendgrid apiKey=SG.your-api-key');
+  // eslint-disable-next-line no-console
   console.log('node scripts/update-service-config.js logrocket appId=your-app-id');
+  // eslint-disable-next-line no-console
   console.log('node scripts/update-service-config.js slack botToken=xoxb-your-token signingSecret=your-secret webhookUrl=https://hooks.slack.com/services/xxx/xxx/xxx');
+  // eslint-disable-next-line no-console
   console.log('node scripts/update-service-config.js smtp host=smtp.gmail.com port=587 user=your-email@gmail.com pass=your-app-password');
 }
 
@@ -100,6 +118,7 @@ if (require.main === module) {
   const serviceName = args[0];
   
   if (!services[serviceName]) {
+    // eslint-disable-next-line no-console
     console.log(`❌ 不支持的服務: ${serviceName}`);
     showUsage();
     process.exit(1);
@@ -114,7 +133,9 @@ if (require.main === module) {
     const [key, value] = arg.split('=');
     
     if (!key || !value) {
+      // eslint-disable-next-line no-console
       console.log(`❌ 無效的參數格式: ${arg}`);
+      // eslint-disable-next-line no-console
       console.log('正確格式: key=value');
       process.exit(1);
     }
@@ -125,20 +146,28 @@ if (require.main === module) {
   // 檢查必需參數
   const missingParams = service.required.filter(param => !configData[param]);
   if (missingParams.length > 0) {
+    // eslint-disable-next-line no-console
     console.log(`❌ 缺少必需參數: ${missingParams.join(', ')}`);
+    // eslint-disable-next-line no-console
     console.log(`📋 ${service.name} 需要參數: ${service.required.join(', ')}`);
     process.exit(1);
   }
   
   // 更新配置
+  // eslint-disable-next-line no-console
   console.log(`🔄 更新 ${service.name} 配置...`);
   const success = updateServiceConfig(serviceName, configData);
   
   if (success) {
+    // eslint-disable-next-line no-console
     console.log(`\n🎉 ${service.name} 配置更新完成！`);
+    // eslint-disable-next-line no-console
     console.log('\n📋 下一步:');
+    // eslint-disable-next-line no-console
     console.log('1. 測試服務連接');
+    // eslint-disable-next-line no-console
     console.log('2. 更新環境變量文件');
+    // eslint-disable-next-line no-console
     console.log('3. 集成到應用中');
   } else {
     process.exit(1);

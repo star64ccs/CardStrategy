@@ -9,8 +9,8 @@ jest.mock('../../../utils/logger');
 jest.mock('../../../utils/validationService');
 jest.mock('../../../utils/validationSchemas');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('AIService', () => {
   beforeEach(() => {
@@ -18,8 +18,8 @@ describe('AIService', () => {
   });
 
   describe('getCardAnalysis', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockAnalysis = {
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockAnalysis = {
       cardId: mockCardId,
       rating: 'A+' as const,
       confidence: 0.95,
@@ -46,7 +46,7 @@ describe('AIService', () => {
         message: '分析成功',
       });
 
-      const result = await aiService.getCardAnalysis(mockCardId);
+      const _result = await aiService.getCardAnalysis(mockCardId);
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockAnalysis);
@@ -56,7 +56,7 @@ describe('AIService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidCardId = 'invalid-id';
+      const _invalidCardId = 'invalid-id';
 
       await expect(aiService.getCardAnalysis(invalidCardId)).rejects.toThrow();
     });
@@ -72,8 +72,8 @@ describe('AIService', () => {
   });
 
   describe('getPricePrediction', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockPrediction = {
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockPrediction = {
       cardId: mockCardId,
       timeframe: '7d' as const,
       predictedPrice: 150.5,
@@ -90,7 +90,7 @@ describe('AIService', () => {
         message: '預測成功',
       });
 
-      const result = await aiService.getPricePrediction(mockCardId, '7d');
+      const _result = await aiService.getPricePrediction(mockCardId, '7d');
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockPrediction);
@@ -117,8 +117,8 @@ describe('AIService', () => {
   });
 
   describe('getInvestmentRecommendation', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockRecommendation = {
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockRecommendation = {
       cardId: mockCardId,
       action: 'buy' as const,
       confidence: 0.9,
@@ -135,7 +135,7 @@ describe('AIService', () => {
         message: '建議生成成功',
       });
 
-      const result = await aiService.getInvestmentRecommendation(mockCardId);
+      const _result = await aiService.getInvestmentRecommendation(mockCardId);
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockRecommendation);
@@ -145,7 +145,7 @@ describe('AIService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidCardId = 'invalid-id';
+      const _invalidCardId = 'invalid-id';
 
       await expect(
         aiService.getInvestmentRecommendation(invalidCardId)
@@ -163,9 +163,9 @@ describe('AIService', () => {
   });
 
   describe('sendChatMessage', () => {
-    const mockMessage = '這張卡片的投資價值如何？';
-    const mockSessionId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockChatMessage = {
+    const _mockMessage = '這張卡片的投資價值如何？';
+    const _mockSessionId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockChatMessage = {
       id: 'msg-123',
       role: 'assistant' as const,
       content: '根據分析，這張卡片具有不錯的投資潛力...',
@@ -179,7 +179,7 @@ describe('AIService', () => {
         message: '消息發送成功',
       });
 
-      const result = await aiService.sendChatMessage(
+      const _result = await aiService.sendChatMessage(
         mockMessage,
         mockSessionId
       );
@@ -197,12 +197,12 @@ describe('AIService', () => {
     });
 
     it('應該處理過長的消息', async () => {
-      const longMessage = 'a'.repeat(1001);
+      const _longMessage = 'a'.repeat(1001);
       await expect(aiService.sendChatMessage(longMessage)).rejects.toThrow();
     });
 
     it('應該處理無效的會話 ID', async () => {
-      const invalidSessionId = 'invalid-id';
+      const _invalidSessionId = 'invalid-id';
       await expect(
         aiService.sendChatMessage(mockMessage, invalidSessionId)
       ).rejects.toThrow();
@@ -219,7 +219,7 @@ describe('AIService', () => {
   });
 
   describe('getChatSessions', () => {
-    const mockSessions = [
+    const _mockSessions = [
       {
         id: 'session-1',
         title: '投資諮詢',
@@ -249,7 +249,7 @@ describe('AIService', () => {
         message: '會話列表獲取成功',
       });
 
-      const result = await aiService.getChatSessions();
+      const _result = await aiService.getChatSessions();
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockSessions);
@@ -263,7 +263,7 @@ describe('AIService', () => {
         message: '沒有會話',
       });
 
-      const result = await aiService.getChatSessions();
+      const _result = await aiService.getChatSessions();
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual([]);

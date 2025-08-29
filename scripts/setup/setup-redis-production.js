@@ -48,9 +48,6 @@ async function setupProductionRedis() {
     await redis.del('test:connection');
 
     // logger.info('🎉 生產環境 Redis 設置完成！');
-  } catch (error) {
-    // logger.info('❌ 設置生產環境 Redis 時發生錯誤:', error);
-    throw error;
   } finally {
     await redis.disconnect();
   }

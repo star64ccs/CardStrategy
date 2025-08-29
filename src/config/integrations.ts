@@ -1,5 +1,5 @@
 // 第三方服務集成配置
-export const integrations = {
+export const _integrations = {
   analytics: {
     enabled: true,
     provider: 'mixpanel', // 或其他分析服務
@@ -54,8 +54,8 @@ export const integrations = {
 };
 
 // 環境變量驗證
-export const validateIntegrations = () => {
-  const requiredVars = {
+export const _validateIntegrations = () => {
+  const _requiredVars = {
     analytics: ['MIXPANEL_API_KEY'],
     payment: ['STRIPE_API_KEY'],
     storage: ['S3_BUCKET', 'S3_REGION', 'S3_ACCESS_KEY', 'S3_SECRET_KEY'],
@@ -67,11 +67,11 @@ export const validateIntegrations = () => {
     email: ['SENDGRID_API_KEY'],
   };
 
-  const missing = [];
+  const missing: string[] = [];
 
   Object.entries(requiredVars).forEach(([service, vars]) => {
-    if (integrations[service]?.enabled) {
-      vars.forEach((varName) => {
+    if (integrations[service as keyof typeof integrations]?.enabled) {
+      vars.forEach(varName => {
         if (!process.env[varName]) {
           missing.push(`${service}.${varName}`);
         }
@@ -86,8 +86,8 @@ export const validateIntegrations = () => {
 };
 
 // 初始化所有啟用的服務
-export const initializeIntegrations = async () => {
-  const validation = validateIntegrations();
+export const _initializeIntegrations = async () => {
+  const _validation = validateIntegrations();
 
   if (!validation.valid) {
     console.warn(

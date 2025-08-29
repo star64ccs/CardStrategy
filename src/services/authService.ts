@@ -1,15 +1,22 @@
-import { api, API_ENDPOINTS } from '../config/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { logger } from '../utils/logger';
-import { validateInput, validateApiResponse } from '../utils/validationService';
+import { apiService } from './apiService';
+import { logger } from '@/utils/logger';
 import {
-  LoginRequestSchema,
-  RegisterRequestSchema,
-  AuthResponseSchema,
-} from '../utils/validationSchemas';
-import { errorHandler, withErrorHandling } from '@/utils/errorHandler';
+  validateLoginData,
+  validateRegisterData,
+  validateApiResponse,
+} from '@/utils/validationService';
 
-// 用戶類型
+export interface LoginData {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  email: string;
+  password: string;
+  username: string;
+}
+
 export interface User {
   id: string;
   email: string;
@@ -19,238 +26,424 @@ export interface User {
   updatedAt: string;
 }
 
-// 登錄請求
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-// 註冊請求
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  username: string;
-}
-
-// 認證響應
 export interface AuthResponse {
+  user: User;
   token: string;
   refreshToken: string;
-  user: User;
 }
 
-// API 響應類型
-export interface ApiResponse<T = any> {
+export interface AuthResult {
   success: boolean;
-  message: string;
-  data: T;
-  error?: string;
+  data?: AuthResponse;
+  message?: string;
+  errors?: string[];
 }
 
-class AuthService {
-  private readonly TOKEN_KEY = 'auth_token';
-  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
-  private readonly USER_KEY = 'user_data';
+export class AuthService {
+  private static instance: AuthService;
+  private isInitialized = false;
 
-  // 登錄
-  async login(credentials: LoginRequest): Promise<ApiResponse<AuthResponse>> {
+  public static getInstance(): AuthService {
+    if (!AuthService.instance) {
+      AuthService.instance = new AuthService();
+    }
+    return AuthService.instance;
+  }
+
+  public async initialize(): Promise<void> {
+    if (this.isInitialized) {
+      return;
+    }
+
+    try {
+      // 檢查現有的認證狀態
+      await this.checkAuthStatus();
+      this.isInitialized = true;
+      logger.info('AuthService initialized successfully');
+    } catch (error) {
+      logger.error('AuthService initialization failed', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 用戶登錄
+   */
+  public async login(loginData: LoginData): Promise<AuthResult> {
     try {
       // 驗證輸入數據
-      const inputValidation = validateInput(
-        LoginRequestSchema,
-        credentials,
-        '登錄請求'
-      );
-      if (!inputValidation.isValid) {
-        throw new Error(inputValidation.errorMessage || '登錄數據驗證失敗');
+      const _validation = validateLoginData(loginData);
+      if (!validation.isValid) {
+        return {
+          success: false,
+          message: 'Invalid login data',
+          errors: validation.errors,
+        };
       }
 
-      const response = await api.post<AuthResponse>(
-        API_ENDPOINTS.AUTH.LOGIN,
-        inputValidation.data
-      );
+      logger.info('Attempting user login', { email: loginData.email });
 
-      // 驗證 API 響應
+      const _response = await apiService.post('/auth/login', loginData);
+
+      // apiService 已經返回 { success: true, data: ... } 格式
       if (response.success && response.data) {
-        const responseValidation = validateApiResponse(
-          AuthResponseSchema,
-          response.data,
-          '登錄響應'
-        );
-        if (!responseValidation.isValid) {
-          logger.error('登錄響應數據驗證失敗:', responseValidation.errors);
-          throw new Error('服務器響應數據格式錯誤');
-        }
+        // 保存認證信息
+        await this.saveAuthData(response.data);
+        logger.info('User login successful', {
+          userId: response.data.user.id,
+        });
 
-        // 保存認證信息到本地存儲
-        this.saveAuthData(responseValidation.data);
+        return {
+          success: true,
+          data: response.data,
+        };
+      } else {
+        return {
+          success: false,
+          message: response.error || 'Login failed',
+          errors: [response.error || 'Login failed'],
+        };
       }
-      return response;
-    } catch (error: any) {
-      logger.error('❌ Login error:', { error: error.message });
-      throw error;
+    } catch (error) {
+      logger.error('Login error', error);
+      // 如果是 API 錯誤，拋出異常
+      if (error instanceof Error) {
+        throw error;
+      }
+      return {
+        success: false,
+        message: 'Login failed',
+        errors: ['Network error or server unavailable'],
+      };
     }
   }
 
-  // 註冊
-  async register(
-    userData: RegisterRequest
-  ): Promise<ApiResponse<AuthResponse>> {
+  /**
+   * 用戶註冊
+   */
+  public async register(registerData: RegisterData): Promise<AuthResult> {
     try {
       // 驗證輸入數據
-      const inputValidation = validateInput(
-        RegisterRequestSchema,
-        userData,
-        '註冊請求'
-      );
-      if (!inputValidation.isValid) {
-        throw new Error(inputValidation.errorMessage || '註冊數據驗證失敗');
+      const _validation = validateRegisterData(registerData);
+      if (!validation.isValid) {
+        return {
+          success: false,
+          message: 'Invalid registration data',
+          errors: validation.errors,
+        };
       }
 
-      const response = await api.post<AuthResponse>(
-        API_ENDPOINTS.AUTH.REGISTER,
-        inputValidation.data
-      );
+      logger.info('Attempting user registration', {
+        email: registerData.email,
+      });
 
-      // 驗證 API 響應
+      const _response = await apiService.post('/auth/register', registerData);
+
+      // apiService 已經返回 { success: true, data: ... } 格式
       if (response.success && response.data) {
-        const responseValidation = validateApiResponse(
-          AuthResponseSchema,
-          response.data,
-          '註冊響應'
-        );
-        if (!responseValidation.isValid) {
-          logger.error('註冊響應數據驗證失敗:', responseValidation.errors);
-          throw new Error('服務器響應數據格式錯誤');
-        }
+        // 保存認證信息
+        await this.saveAuthData(response.data);
+        logger.info('User registration successful', {
+          userId: response.data.user.id,
+        });
 
-        // 保存認證信息到本地存儲
-        this.saveAuthData(responseValidation.data);
+        return {
+          success: true,
+          data: response.data,
+        };
+      } else {
+        return {
+          success: false,
+          message: response.error || 'Registration failed',
+          errors: [response.error || 'Registration failed'],
+        };
       }
-      return response;
-    } catch (error: any) {
-      logger.error('❌ Register error:', { error: error.message });
-      throw error;
+    } catch (error) {
+      logger.error('Registration error', error);
+      return {
+        success: false,
+        message: 'Registration failed',
+        errors: ['Network error or server unavailable'],
+      };
     }
   }
 
-  // 登出
-  async logout(): Promise<ApiResponse<void>> {
+  /**
+   * 用戶登出
+   */
+  public async logout(): Promise<AuthResult> {
     try {
-      const response = await api.post<void>(API_ENDPOINTS.AUTH.LOGOUT);
-      // 清除本地存儲的認證信息
-      this.clearAuthData();
-      return response;
-    } catch (error: any) {
-      logger.error('❌ Logout error:', { error: error.message });
-      // 即使 API 失敗，也要清除本地數據
-      this.clearAuthData();
-      return { success: true, message: '登出成功', data: undefined };
+      logger.info('Attempting user logout');
+
+      const _response = await apiService.post('/auth/logout');
+
+      // 清除本地認證信息
+      await this.clearAuthData();
+
+      logger.info('User logout successful');
+
+      return {
+        success: true,
+        message: 'Logout successful',
+      };
+    } catch (error) {
+      logger.error('Logout error', error);
+      // 即使API調用失敗，也要清除本地數據
+      await this.clearAuthData();
+
+      return {
+        success: false,
+        message: 'Logout failed',
+        errors: ['Network error or server unavailable'],
+      };
     }
   }
 
-  // 刷新令牌
-  async refreshToken(): Promise<ApiResponse<AuthResponse>> {
-    const refreshToken = await AsyncStorage.getItem(this.REFRESH_TOKEN_KEY);
-    if (!refreshToken) {
-      throw new Error('沒有刷新令牌');
-    }
-
+  /**
+   * 刷新令牌
+   */
+  public async refreshToken(): Promise<AuthResult> {
     try {
-      const response = await api.post<AuthResponse>(
-        API_ENDPOINTS.AUTH.REFRESH,
-        {
-          refreshToken,
-        }
-      );
-
-      if (response.success && response.data) {
-        this.saveAuthData(response.data);
+      const _refreshToken = await this.getRefreshToken();
+      if (!refreshToken) {
+        return {
+          success: false,
+          message: 'No refresh token available',
+          errors: ['Refresh token not found'],
+        };
       }
-      return response;
-    } catch (error: any) {
-      logger.error('❌ Refresh token error:', { error: error.message });
-      throw error;
+
+      logger.info('Attempting token refresh');
+
+      const _response = await apiService.post('/auth/refresh', { refreshToken });
+
+      // 驗證API響應
+      const _responseValidation = validateApiResponse(response.data);
+      if (!responseValidation.isValid) {
+        return {
+          success: false,
+          message: 'Invalid API response',
+          errors: responseValidation.errors,
+        };
+      }
+
+      if (response.data.success) {
+        // 更新認證信息
+        await this.saveAuthData(response.data.data);
+        logger.info('Token refresh successful');
+
+        return {
+          success: true,
+          data: response.data.data,
+        };
+      } else {
+        return {
+          success: false,
+          message: response.data.message || 'Token refresh failed',
+          errors: response.data.errors,
+        };
+      }
+    } catch (error) {
+      logger.error('Token refresh error', error);
+      return {
+        success: false,
+        message: 'Token refresh failed',
+        errors: ['Network error or server unavailable'],
+      };
     }
   }
 
-  // 獲取當前用戶
-  async getCurrentUser(): Promise<ApiResponse<User>> {
+  /**
+   * 檢查認證狀態
+   */
+  public async checkAuthStatus(): Promise<AuthResult> {
     try {
-      const response = await api.get<User>(API_ENDPOINTS.AUTH.ME);
-      return response;
-    } catch (error: any) {
-      logger.error('❌ Get current user error:', { error: error.message });
-      throw error;
+      const _token = await this.getAccessToken();
+      if (!token) {
+        return {
+          success: false,
+          message: 'No authentication token',
+          errors: ['Token not found'],
+        };
+      }
+
+      logger.info('Checking authentication status');
+
+      const _response = await apiService.get('/auth/me');
+
+      // 驗證API響應
+      const _responseValidation = validateApiResponse(response.data);
+      if (!responseValidation.isValid) {
+        return {
+          success: false,
+          message: 'Invalid API response',
+          errors: responseValidation.errors,
+        };
+      }
+
+      if (response.data.success) {
+        logger.info('Authentication status check successful');
+        return {
+          success: true,
+          data: {
+            user: response.data.data.user,
+            token,
+            refreshToken: (await this.getRefreshToken()) || '',
+          },
+        };
+      } else {
+        return {
+          success: false,
+          message: response.data.message || 'Authentication check failed',
+          errors: response.data.errors,
+        };
+      }
+    } catch (error) {
+      logger.error('Authentication status check error', error);
+      return {
+        success: false,
+        message: 'Authentication check failed',
+        errors: ['Network error or server unavailable'],
+      };
     }
   }
 
-  // 更新用戶資料
-  async updateProfile(profileData: Partial<User>): Promise<ApiResponse<User>> {
-    try {
-      const response = await api.put<User>(
-        API_ENDPOINTS.AUTH.PROFILE,
-        profileData
-      );
-      return response;
-    } catch (error: any) {
-      logger.error('❌ Update profile error:', { error: error.message });
-      throw error;
-    }
-  }
-
-  // 保存認證數據到本地存儲
+  /**
+   * 保存認證數據
+   */
   private async saveAuthData(authData: AuthResponse): Promise<void> {
     try {
-      await AsyncStorage.setItem(this.TOKEN_KEY, authData.token);
-      await AsyncStorage.setItem(this.REFRESH_TOKEN_KEY, authData.refreshToken);
-      await AsyncStorage.setItem(this.USER_KEY, JSON.stringify(authData.user));
+      // 在測試環境中使用 require，在運行時使用 import
+      let AsyncStorage;
+      if (process.env.NODE_ENV === 'test') {
+        AsyncStorage = require('@react-native-async-storage/async-storage');
+      } else {
+        const _module = await import(
+          '@react-native-async-storage/async-storage'
+        );
+        AsyncStorage = module.default;
+      }
+
+      await AsyncStorage.setItem('accessToken', authData.token);
+      await AsyncStorage.setItem('refreshToken', authData.refreshToken);
+      await AsyncStorage.setItem('user', JSON.stringify(authData.user));
+
+      logger.info('Auth data saved successfully');
     } catch (error) {
-      logger.error('保存認證數據失敗:', { error });
+      logger.error('Failed to save auth data', error);
+      throw error;
     }
   }
 
-  // 清除本地存儲的認證數據
+  /**
+   * 清除認證數據
+   */
   private async clearAuthData(): Promise<void> {
     try {
-      await AsyncStorage.removeItem(this.TOKEN_KEY);
-      await AsyncStorage.removeItem(this.REFRESH_TOKEN_KEY);
-      await AsyncStorage.removeItem(this.USER_KEY);
+      // 在測試環境中使用 require，在運行時使用 import
+      let AsyncStorage;
+      if (process.env.NODE_ENV === 'test') {
+        AsyncStorage = require('@react-native-async-storage/async-storage');
+      } else {
+        const _module = await import(
+          '@react-native-async-storage/async-storage'
+        );
+        AsyncStorage = module.default;
+      }
+
+      await AsyncStorage.removeItem('accessToken');
+      await AsyncStorage.removeItem('refreshToken');
+      await AsyncStorage.removeItem('user');
+
+      logger.info('Auth data cleared successfully');
     } catch (error) {
-      logger.error('清除認證數據失敗:', { error });
+      logger.error('Failed to clear auth data', error);
+      throw error;
     }
   }
 
-  // 檢查是否已登錄
-  async isAuthenticated(): Promise<boolean> {
+  /**
+   * 獲取訪問令牌
+   */
+  private async getAccessToken(): Promise<string | null> {
     try {
-      const token = await AsyncStorage.getItem(this.TOKEN_KEY);
+      // 在測試環境中使用 require，在運行時使用 import
+      let AsyncStorage;
+      if (process.env.NODE_ENV === 'test') {
+        AsyncStorage = require('@react-native-async-storage/async-storage');
+      } else {
+        const _module = await import(
+          '@react-native-async-storage/async-storage'
+        );
+        AsyncStorage = module.default;
+      }
+      return await AsyncStorage.getItem('accessToken');
+    } catch (error) {
+      logger.error('Failed to get access token', error);
+      return null;
+    }
+  }
+
+  /**
+   * 獲取刷新令牌
+   */
+  private async getRefreshToken(): Promise<string | null> {
+    try {
+      // 在測試環境中使用 require，在運行時使用 import
+      let AsyncStorage;
+      if (process.env.NODE_ENV === 'test') {
+        AsyncStorage = require('@react-native-async-storage/async-storage');
+      } else {
+        const _module = await import(
+          '@react-native-async-storage/async-storage'
+        );
+        AsyncStorage = module.default;
+      }
+      return await AsyncStorage.getItem('refreshToken');
+    } catch (error) {
+      logger.error('Failed to get refresh token', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 獲取當前用戶
+   */
+  public async getCurrentUser(): Promise<User | null> {
+    try {
+      // 在測試環境中使用 require，在運行時使用 import
+      let AsyncStorage;
+      if (process.env.NODE_ENV === 'test') {
+        AsyncStorage = require('@react-native-async-storage/async-storage');
+      } else {
+        const _module = await import(
+          '@react-native-async-storage/async-storage'
+        );
+        AsyncStorage = module.default;
+      }
+      const _userData = await AsyncStorage.getItem('user');
+      return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+      logger.error('Failed to get current user', error);
+      return null;
+    }
+  }
+
+  /**
+   * 檢查是否已登錄
+   */
+  public async isLoggedIn(): Promise<boolean> {
+    try {
+      const _token = await this.getAccessToken();
       return !!token;
     } catch (error) {
+      logger.error('Failed to check login status', error);
       return false;
     }
   }
-
-  // 獲取存儲的令牌
-  async getStoredToken(): Promise<string | null> {
-    try {
-      return await AsyncStorage.getItem(this.TOKEN_KEY);
-    } catch (error) {
-      return null;
-    }
-  }
-
-  // 獲取存儲的用戶信息
-  async getStoredUser(): Promise<User | null> {
-    try {
-      const userData = await AsyncStorage.getItem(this.USER_KEY);
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      return null;
-    }
-  }
 }
 
-// 導出認證服務類和實例
-export { AuthService };
-export const authService = new AuthService();
+// 導出單例實例
+export const _authService = AuthService.getInstance();
+
+export default authService;

@@ -63,10 +63,7 @@ async function setupProductionDatabase() {
     }
 
     // logger.info('🎉 生產環境數據庫設置完成！');
-  } catch (error) {
-    // logger.info('❌ 設置生產環境數據庫時發生錯誤:', error);
-    throw error;
-  } finally {
+      } finally {
     await client.end();
   }
 }

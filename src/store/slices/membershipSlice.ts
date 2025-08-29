@@ -1,59 +1,61 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { MembershipState } from '@/types';
-import { membershipService } from '@/services/membershipService';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import type { MembershipState } from '../../core/types';
+import { membershipService } from '../../shared/services/membershipService';
 
 // 異步 thunk
-export const fetchMembershipStatus = createAsyncThunk(
+export const _fetchMembershipStatus = createAsyncThunk(
   'membership/fetchStatus',
   async () => {
-    const response = await membershipService.getStatus();
+    const _response = await membershipService.getStatus();
     return response;
   }
 );
 
-export const upgradeMembership = createAsyncThunk(
+export const _upgradeMembership = createAsyncThunk(
   'membership/upgrade',
   async (tier: string) => {
-    const response = await membershipService.upgrade(tier);
+    const _response = await membershipService.upgrade(tier);
     return response;
   }
 );
 
-export const startTrial = createAsyncThunk(
+export const _startTrial = createAsyncThunk(
   'membership/startTrial',
   async () => {
-    const response = await membershipService.startTrial();
+    const _response = await membershipService.startTrial();
     return response;
   }
 );
 
-export const cancelMembership = createAsyncThunk(
+export const _cancelMembership = createAsyncThunk(
   'membership/cancel',
   async () => {
-    const response = await membershipService.cancel();
+    const _response = await membershipService.cancel();
     return response;
   }
 );
 
-export const checkFeatureUsage = createAsyncThunk(
+export const _checkFeatureUsage = createAsyncThunk(
   'membership/checkFeatureUsage',
   async (feature: string, { rejectWithValue }) => {
     try {
-      const response = await membershipService.checkFeatureUsage(feature);
+      const _response = await membershipService.checkFeatureUsage(feature);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '檢查功能使用失敗');
     }
   }
 );
 
-export const useFeature = createAsyncThunk(
+export const _useFeature = createAsyncThunk(
   'membership/useFeature',
   async (feature: string, { rejectWithValue }) => {
     try {
-      const response = await membershipService.useFeature(feature);
+      const _response = await membershipService.useFeature(feature);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '使用功能失敗');
     }
   }
@@ -101,11 +103,11 @@ const initialState: MembershipState = {
 };
 
 // Membership slice
-const membershipSlice = createSlice({
+const _membershipSlice = createSlice({
   name: 'membership',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
     updateUsage: (
@@ -117,8 +119,8 @@ const membershipSlice = createSlice({
         state.usage[feature as keyof typeof state.usage].used = used;
       }
     },
-    resetDailyUsage: (state) => {
-      Object.keys(state.usage).forEach((feature) => {
+    resetDailyUsage: state => {
+      Object.keys(state.usage).forEach(feature => {
         state.usage[feature as keyof typeof state.usage].used = 0;
       });
     },
@@ -139,7 +141,7 @@ const membershipSlice = createSlice({
     ) => {
       state.limits = { ...state.limits, ...action.payload };
       // Update usage limits accordingly
-      Object.keys(action.payload).forEach((feature) => {
+      Object.keys(action.payload).forEach(feature => {
         if (state.usage[feature as keyof typeof state.usage]) {
           state.usage[feature as keyof typeof state.usage].limit =
             action.payload[feature as keyof typeof state.limits] || 0;
@@ -147,10 +149,10 @@ const membershipSlice = createSlice({
       });
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Fetch Membership Status
     builder
-      .addCase(fetchMembershipStatus.pending, (state) => {
+      .addCase(fetchMembershipStatus.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -172,7 +174,7 @@ const membershipSlice = createSlice({
 
     // Upgrade To VIP
     builder
-      .addCase(upgradeMembership.pending, (state) => {
+      .addCase(upgradeMembership.pending, state => {
         state.isUpgrading = true;
         state.error = null;
       })
@@ -192,7 +194,7 @@ const membershipSlice = createSlice({
 
     // Start Trial
     builder
-      .addCase(startTrial.pending, (state) => {
+      .addCase(startTrial.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -212,7 +214,7 @@ const membershipSlice = createSlice({
 
     // Cancel Membership
     builder
-      .addCase(cancelMembership.pending, (state) => {
+      .addCase(cancelMembership.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -232,7 +234,7 @@ const membershipSlice = createSlice({
 
     // Check Feature Usage
     builder
-      .addCase(checkFeatureUsage.pending, (state) => {
+      .addCase(checkFeatureUsage.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -267,7 +269,7 @@ const membershipSlice = createSlice({
 
     // Use Feature
     builder
-      .addCase(useFeature.pending, (state) => {
+      .addCase(useFeature.pending, state => {
         state.isLoading = true;
         state.error = null;
       })

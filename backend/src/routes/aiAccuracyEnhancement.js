@@ -1,87 +1,82 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken: protect } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
-const { validateInput } = require('../middleware/validation');
-
-// å°Žå…¥?¸é??å?
+const express = require('express');'
+const router = express.Router();''
+const { authenticateToken: protect } = require('../middleware/auth');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');''
+const { validateInput } = require('../middleware/validation');'
+// å°Žå…¥?ï¿½ï¿½??ï¿½ï¿½?''
 const AIAnalysis = require('../models/AIAnalysis').getAIAnalysisModel();
-// eslint-disable-next-line no-unused-vars
-const DataQualityMetrics =
-  require('../models/DataQualityMetrics').getDataQualityMetricsModel();
-const PredictionModel =
+// eslint-disable-next-line no-unused-vars'
+const DataQualityMetrics =''
+  require('../models/DataQualityMetrics').getDataQualityMetricsModel();'
+const PredictionModel =''
   require('../models/PredictionModel').getPredictionModel();
 
-// ==================== è¨“ç·´?¸æ?ç®¡ç? ====================
-
-// ?¶é?è¨“ç·´?¸æ?
+// ==================== è¨“ç·´?ï¿½ï¿½?ç®¡ï¿½? ===================='
+// ?ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½?''
 router.post('/training-data/collect', protect, async (req, res) => {
-  try {
-    const { config, options } = req.body;
+  try {'
+    const { config, options } = req.body;''
+    logger.info('?ï¿½ï¿½??ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½?', { config, options });
 
-    logger.info('?‹å??¶é?è¨“ç·´?¸æ?', { config, options });
-
-    // æ¨¡æ“¬?¸æ??¶é??Žç?
+    // æ¨¡æ“¬?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?
 // eslint-disable-next-line no-unused-vars
     const dataCollected = Math.floor(Math.random() * 1000) + 500;
     const qualityScore = 0.85 + Math.random() * 0.1;
 
-    const distribution = {
-      Pokemon: Math.floor(dataCollected * 0.4),
+    const distribution = {'
+      Pokemon: Math.floor(dataCollected * 0.4),''
       'Yu-Gi-Oh': Math.floor(dataCollected * 0.3),
       Magic: Math.floor(dataCollected * 0.2),
       Other: Math.floor(dataCollected * 0.1),
     };
 
-    // è¨˜é??¸æ??¶é?çµ±è?
-    await DataQualityMetrics.create({
+    // è¨˜ï¿½??ï¿½ï¿½??ï¿½ï¿½?çµ±ï¿½?'
+    await DataQualityMetrics.create({''
       dataType: 'training',
       completeness: qualityScore,
       accuracy: qualityScore,
       consistency: qualityScore,
       timeliness: 0.9,
-      overallScore: qualityScore,
-      sampleSize: dataCollected,
+      overallScore: qualityScore,'
+      sampleSize: dataCollected,''
       dataSource: 'auto_collection',
     });
 
-    res.json({
-      success: true,
-      message: 'è¨“ç·´?¸æ??¶é?å®Œæ?',
+    res.json({'
+      success: true,''
+      message: 'è¨“ç·´?ï¿½ï¿½??ï¿½ï¿½?å®Œï¿½?',
       data: {
         dataCollected,
         qualityScore: parseFloat(qualityScore.toFixed(4)),
         distribution,
       },
-    });
-  } catch (error) {
-    logger.error('?¶é?è¨“ç·´?¸æ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?¶é?è¨“ç·´?¸æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// ?¸æ?å¢žå¼·
+});'
+// ?ï¿½ï¿½?å¢žå¼·''
 router.post('/training-data/:dataId/augment', protect, async (req, res) => {
   try {
-    const { dataId } = req.params;
-    const { methods, config } = req.body;
+    const { dataId } = req.params;'
+    const { methods, config } = req.body;''
+    logger.info('?ï¿½ï¿½??ï¿½ï¿½?å¢žå¼·', { dataId, methods });
 
-    logger.info('?‹å??¸æ?å¢žå¼·', { dataId, methods });
-
-    // æ¨¡æ“¬?¸æ?å¢žå¼·?Žç?
+    // æ¨¡æ“¬?ï¿½ï¿½?å¢žå¼·?ï¿½ï¿½?
     const augmentedDataCount = Math.floor(Math.random() * 500) + 200;
     const originalQuality = 0.85;
     const augmentedQuality = originalQuality + Math.random() * 0.1;
     const improvement = augmentedQuality - originalQuality;
 
-    res.json({
-      success: true,
-      message: '?¸æ?å¢žå¼·å®Œæ?',
+    res.json({'
+      success: true,''
+      message: '?ï¿½ï¿½?å¢žå¼·å®Œï¿½?',
       data: {
         augmentedDataCount,
         qualityMetrics: {
@@ -90,25 +85,24 @@ router.post('/training-data/:dataId/augment', protect, async (req, res) => {
           improvement: parseFloat(improvement.toFixed(4)),
         },
       },
-    });
-  } catch (error) {
-    logger.error('?¸æ?å¢žå¼·?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?¸æ?å¢žå¼·å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?å¢žå¼·?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?å¢žå¼·å¤±ï¿½?',
       error: error.message,
     });
   }
-});
+});'
+// ?ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½?çµ±ï¿½?''
+router.get('/training-data/stats', protect, async (req, res) => {'
+  try {''
+    logger.info('?ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½?çµ±ï¿½?');
 
-// ?²å?è¨“ç·´?¸æ?çµ±è?
-router.get('/training-data/stats', protect, async (req, res) => {
-  try {
-    logger.info('?²å?è¨“ç·´?¸æ?çµ±è?');
-
-    // å¾žæ•¸?šåº«?²å?çµ±è??¸æ?
-    const stats = await DataQualityMetrics.findOne({
-      where: { dataType: 'training' },
+    // å¾žæ•¸?ï¿½åº«?ï¿½ï¿½?çµ±ï¿½??ï¿½ï¿½?'
+    const stats = await DataQualityMetrics.findOne({''
+      where: { dataType: 'training' },''
       order: [['assessmentDate', 'DESC']],
     });
 
@@ -117,8 +111,8 @@ router.get('/training-data/stats', protect, async (req, res) => {
       highQualityData: 12000,
       lowQualityData: 3000,
       dataDistribution: {
-        cardTypes: {
-          Pokemon: 6000,
+        cardTypes: {'
+          Pokemon: 6000,''
           'Yu-Gi-Oh': 4500,
           Magic: 3000,
           Other: 1500,
@@ -129,16 +123,16 @@ router.get('/training-data/stats', protect, async (req, res) => {
           Rare: 2000,
           Legendary: 1000,
         },
-        conditions: {
-          Mint: 5000,
+        conditions: {'
+          Mint: 5000,''
           'Near Mint': 6000,
           Excellent: 3000,
           Good: 1000,
         },
       },
       accuracyByCategory: {
-        cardType: {
-          Pokemon: 0.92,
+        cardType: {'
+          Pokemon: 0.92,''
           'Yu-Gi-Oh': 0.88,
           Magic: 0.85,
           Other: 0.78,
@@ -149,8 +143,8 @@ router.get('/training-data/stats', protect, async (req, res) => {
           Rare: 0.85,
           Legendary: 0.8,
         },
-        condition: {
-          Mint: 0.93,
+        condition: {'
+          Mint: 0.93,''
           'Near Mint': 0.89,
           Excellent: 0.84,
           Good: 0.76,
@@ -173,39 +167,36 @@ router.get('/training-data/stats', protect, async (req, res) => {
           },
     };
 
-    res.json({
-      success: true,
-      message: 'è¨“ç·´?¸æ?çµ±è??²å??å?',
+    res.json({'
+      success: true,''
+      message: 'è¨“ç·´?ï¿½ï¿½?çµ±ï¿½??ï¿½ï¿½??ï¿½ï¿½?',
       data: mockStats,
-    });
-  } catch (error) {
-    logger.error('?²å?è¨“ç·´?¸æ?çµ±è??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?è¨“ç·´?¸æ?çµ±è?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½?çµ±ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½?çµ±ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
 });
 
-// ==================== æ¨¡å??ªå? ====================
-
-// æ¨¡å??ªå?
+// ==================== æ¨¡ï¿½??ï¿½ï¿½? ===================='
+// æ¨¡ï¿½??ï¿½ï¿½?''
 router.post('/model/optimize', protect, async (req, res) => {
-  try {
-    const { config, options } = req.body;
+  try {'
+    const { config, options } = req.body;''
+    logger.info('?ï¿½ï¿½?æ¨¡ï¿½??ï¿½ï¿½?', { config, options });
 
-    logger.info('?‹å?æ¨¡å??ªå?', { config, options });
-
-    // æ¨¡æ“¬æ¨¡å??ªå??Žç?
+    // æ¨¡æ“¬æ¨¡ï¿½??ï¿½ï¿½??ï¿½ï¿½?
     const currentAccuracy = 0.87;
 // eslint-disable-next-line no-unused-vars
     const newAccuracy = currentAccuracy + Math.random() * 0.08;
     const improvement = newAccuracy - currentAccuracy;
 // eslint-disable-next-line no-unused-vars
-    const modelVersion = `v${Math.floor(Math.random() * 10) + 1}.${Math.floor(Math.random() * 10)}.${Math.floor(Math.random() * 10)}`;
-
-    const optimizationDetails = {
+    const modelVersion = `v${Math.floor(Math.random() * 10) + 1}.${Math.floor(Math.random() * 10)}.${Math.floor(Math.random() * 10)}`;'
+    const optimizationDetails = {''
       method: options?.optimizationType || 'ensemble',
       parameters: {
         learningRate: 0.001,
@@ -221,91 +212,88 @@ router.post('/model/optimize', protect, async (req, res) => {
       },
     };
 
-    res.json({
-      success: true,
-      message: 'æ¨¡å??ªå?å®Œæ?',
+    res.json({'
+      success: true,''
+      message: 'æ¨¡ï¿½??ï¿½ï¿½?å®Œï¿½?',
       data: {
         newAccuracy: parseFloat(newAccuracy.toFixed(4)),
         improvement: parseFloat(improvement.toFixed(4)),
         modelVersion,
         optimizationDetails,
       },
-    });
-  } catch (error) {
-    logger.error('æ¨¡å??ªå??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: 'æ¨¡å??ªå?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('æ¨¡ï¿½??ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: 'æ¨¡ï¿½??ï¿½ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// ?ªå??æ–°è¨“ç·´
+});'
+// ?ï¿½ï¿½??ï¿½æ–°è¨“ç·´''
 router.post('/model/auto-retrain', protect, async (req, res) => {
-  try {
-    const { trigger, config } = req.body;
-
-    logger.info('?‹å??ªå??æ–°è¨“ç·´', { trigger });
+  try {'
+    const { trigger, config } = req.body;''
+    logger.info('?ï¿½ï¿½??ï¿½ï¿½??ï¿½æ–°è¨“ç·´', { trigger });
 
     const retrainingId = `retrain_${Date.now()}`;
-    const estimatedTime = `${Math.floor(Math.random() * 2) + 1}å°æ?`;
+    const estimatedTime = `${Math.floor(Math.random() * 2) + 1}å°ï¿½?`;
     const expectedImprovement = Math.random() * 0.05 + 0.02;
 
-    res.json({
-      success: true,
-      message: '?ªå??æ–°è¨“ç·´å·²å???,
+    res.json({'
+      success: true,''
+      message: '?ï¿½ï¿½??ï¿½æ–°è¨“ç·´å·²ï¿½???,
       data: {
         retrainingId,
         estimatedTime,
         expectedImprovement: parseFloat(expectedImprovement.toFixed(4)),
       },
-    });
-  } catch (error) {
-    logger.error('?ªå??æ–°è¨“ç·´?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?ªå??æ–°è¨“ç·´å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½æ–°è¨“ç·´?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½æ–°è¨“ç·´å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// ?²å?æ¨¡å??§èƒ½?‡æ?
-router.get('/model/performance', protect, async (req, res) => {
-  try {
-    logger.info('?²å?æ¨¡å??§èƒ½?‡æ?');
+});'
+// ?ï¿½ï¿½?æ¨¡ï¿½??ï¿½èƒ½?ï¿½ï¿½?''
+router.get('/model/performance', protect, async (req, res) => {'
+  try {''
+    logger.info('?ï¿½ï¿½?æ¨¡ï¿½??ï¿½èƒ½?ï¿½ï¿½?');
 
     const currentAccuracy = 0.89;
     const targetAccuracy = 0.95;
-    const improvementNeeded = targetAccuracy - currentAccuracy;
-// eslint-disable-next-line no-unused-vars
+    const improvementNeeded = targetAccuracy - currentAccuracy;'
+// eslint-disable-next-line no-unused-vars''
     const modelVersion = 'v2.1.3';
     const lastUpdated = new Date().toISOString();
 
     const performanceHistory = Array.from({ length: 30 }, (_, i) => ({
-      date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000)
-        .toISOString()
+      date: new Date(Date.now() - (29 - i) * 24 * 60 * 60 * 1000)'
+        .toISOString()''
         .split('T')[0],
       accuracy: currentAccuracy + (Math.random() - 0.5) * 0.02,
       confidence: 0.85 + Math.random() * 0.1,
       processingTime: Math.floor(Math.random() * 200) + 100,
     }));
 
-    const accuracyByModel = [
-      {
+    const accuracyByModel = ['
+      {''
         modelName: 'Ensemble',
         accuracy: 0.92,
         confidence: 0.88,
         usageCount: 5000,
-      },
-      {
+      },'
+      {''
         modelName: 'LSTM',
         accuracy: 0.89,
         confidence: 0.85,
         usageCount: 3000,
-      },
-      {
+      },'
+      {''
         modelName: 'CNN',
         accuracy: 0.87,
         confidence: 0.82,
@@ -313,9 +301,9 @@ router.get('/model/performance', protect, async (req, res) => {
       },
     ];
 
-    res.json({
-      success: true,
-      message: 'æ¨¡å??§èƒ½?‡æ??²å??å?',
+    res.json({'
+      success: true,''
+      message: 'æ¨¡ï¿½??ï¿½èƒ½?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?',
       data: {
         currentAccuracy: parseFloat(currentAccuracy.toFixed(4)),
         targetAccuracy: parseFloat(targetAccuracy.toFixed(4)),
@@ -325,73 +313,69 @@ router.get('/model/performance', protect, async (req, res) => {
         performanceHistory,
         accuracyByModel,
       },
-    });
-  } catch (error) {
-    logger.error('?²å?æ¨¡å??§èƒ½?‡æ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?æ¨¡å??§èƒ½?‡æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?æ¨¡ï¿½??ï¿½èƒ½?ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?æ¨¡ï¿½??ï¿½èƒ½?ï¿½ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
 });
 
-// ==================== ?¨æˆ¶?é?ç®¡ç? ====================
-
-// ?¶é??¨æˆ¶?é?
+// ==================== ?ï¿½æˆ¶?ï¿½ï¿½?ç®¡ï¿½? ===================='
+// ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½?''
 router.post('/feedback/collect', protect, async (req, res) => {
-  try {
-    const { feedback, config } = req.body;
-
-    logger.info('?¶é??¨æˆ¶?é?', { feedback });
+  try {'
+    const { feedback, config } = req.body;''
+    logger.info('?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½?', { feedback });
 
     const feedbackId = `feedback_${Date.now()}`;
     const qualityScore = 0.8 + Math.random() * 0.15;
     const reward = qualityScore > 0.9 ? Math.floor(Math.random() * 10) + 5 : 0;
 
-    // è¨˜é??é??°æ•¸?šåº«
+    // è¨˜ï¿½??ï¿½ï¿½??ï¿½æ•¸?ï¿½åº«
     await AIAnalysis.create({
-      userId: req.user.id,
-      cardId: feedback.cardId,
+      userId: req.user.id,'
+      cardId: feedback.cardId,''
       analysisType: 'user_feedback',
       confidence: qualityScore,
       inputData: feedback.originalPrediction,
-      result: feedback.userCorrection,
-      metadata: {
+      result: feedback.userCorrection,'
+      metadata: {''
         feedbackType: 'correction',
         qualityScore,
         reward,
       },
     });
 
-    res.json({
-      success: true,
-      message: '?¨æˆ¶?é??¶é??å?',
+    res.json({'
+      success: true,''
+      message: '?ï¿½æˆ¶?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?',
       data: {
         feedbackId,
         qualityScore: parseFloat(qualityScore.toFixed(4)),
         reward,
       },
-    });
-  } catch (error) {
-    logger.error('?¶é??¨æˆ¶?é??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?¶é??¨æˆ¶?é?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// é©—è??é?è³ªé?
+});'
+// é©—ï¿½??ï¿½ï¿½?è³ªï¿½?''
 router.post('/feedback/:feedbackId/validate', protect, async (req, res) => {
   try {
-    const { feedbackId } = req.params;
-    const { config } = req.body;
+    const { feedbackId } = req.params;'
+    const { config } = req.body;''
+    logger.info('é©—ï¿½??ï¿½ï¿½?è³ªï¿½?', { feedbackId });
 
-    logger.info('é©—è??é?è³ªé?', { feedbackId });
-
-    const isValid = Math.random() > 0.2; // 80% ?„æ??ˆç?
+    const isValid = Math.random() > 0.2; // 80% ?ï¿½ï¿½??ï¿½ï¿½?
     const qualityScore = isValid
       ? 0.8 + Math.random() * 0.15
       : 0.3 + Math.random() * 0.3;
@@ -402,52 +386,48 @@ router.post('/feedback/:feedbackId/validate', protect, async (req, res) => {
       completeness: 0.9 + Math.random() * 0.05,
     };
 
-    res.json({
-      success: true,
-      message: '?é?é©—è?å®Œæ?',
+    res.json({'
+      success: true,''
+      message: '?ï¿½ï¿½?é©—ï¿½?å®Œï¿½?',
       data: {
         isValid,
         qualityScore: parseFloat(qualityScore.toFixed(4)),
         validationDetails,
       },
-    });
-  } catch (error) {
-    logger.error('é©—è??é?è³ªé??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: 'é©—è??é?è³ªé?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('é©—ï¿½??ï¿½ï¿½?è³ªï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: 'é©—ï¿½??ï¿½ï¿½?è³ªï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// ==================== ??Ž§?Œå ±??====================
-
-// ??Ž§æº–ç¢º?‡è???router.get('/monitor', protect, async (req, res) => {
-  try {
-    const { timeRange } = req.query;
-
-    logger.info('??Ž§æº–ç¢º?‡è???, { timeRange });
+});'
+// ==================== ??ï¿½ï¿½?ï¿½å ±??====================''
+// ??ï¿½ï¿½æº–ç¢º?ï¿½ï¿½???router.get('/monitor', protect, async (req, res) => {
+  try {'
+    const { timeRange } = req.query;''
+    logger.info('??ï¿½ï¿½æº–ç¢º?ï¿½ï¿½???, { timeRange });
 
     const currentAccuracy = 0.89;
     const previousAccuracy = 0.87;
-    const change = currentAccuracy - previousAccuracy;
-    const trend =
+    const change = currentAccuracy - previousAccuracy;'
+    const trend =''
       change > 0.01 ? 'improving' : change < -0.01 ? 'declining' : 'stable';
 
     const alerts = [];
-    if (change < -0.02) {
-      alerts.push({
-        type: 'accuracy_drop',
-        severity: 'high',
-        message: 'æº–ç¢º?‡é¡¯?—ä??ï?å»ºè­°ç«‹å³æª¢æŸ¥æ¨¡å?',
+    if (change < -0.02) {'
+      alerts.push({''
+        type: 'accuracy_drop',''
+        severity: 'high',''
+        message: 'æº–ç¢º?ï¿½é¡¯?ï¿½ï¿½??ï¿½ï¿½?å»ºè­°ç«‹å³æª¢æŸ¥æ¨¡ï¿½?',
         timestamp: new Date().toISOString(),
       });
     }
-
-    res.json({
-      success: true,
-      message: 'æº–ç¢º?‡ç›£?§æ•¸?šç²?–æ???,
+    res.json({'
+      success: true,''
+      message: 'æº–ç¢º?ï¿½ç›£?ï¿½æ•¸?ï¿½ç²?ï¿½ï¿½???,
       data: {
         currentAccuracy: parseFloat(currentAccuracy.toFixed(4)),
         previousAccuracy: parseFloat(previousAccuracy.toFixed(4)),
@@ -455,75 +435,72 @@ router.post('/feedback/:feedbackId/validate', protect, async (req, res) => {
         trend,
         alerts,
       },
-    });
-  } catch (error) {
-    logger.error('??Ž§æº–ç¢º?‡è??–éŒ¯èª?', error);
-    res.status(500).json({
-      success: false,
-      message: '??Ž§æº–ç¢º?‡è??–å¤±??,
+    });'
+  } catch (error) {''
+    logger.error('??ï¿½ï¿½æº–ç¢º?ï¿½ï¿½??ï¿½éŒ¯ï¿½?', error);
+    res.status(500).json({'
+      success: false,''
+      message: '??ï¿½ï¿½æº–ç¢º?ï¿½ï¿½??ï¿½å¤±??,
       error: error.message,
-    });
+    });'
   }
-});
+});''
+// ?ï¿½ï¿½?æº–ç¢º?ï¿½ï¿½??ï¿½å»ºï¿½?router.get('/improvement-suggestions', protect, async (req, res) => {'
+  try {''
+    logger.info('?ï¿½ï¿½?æº–ç¢º?ï¿½ï¿½??ï¿½å»ºï¿½?);
 
-// ?²å?æº–ç¢º?‡æ??‡å»ºè­?router.get('/improvement-suggestions', protect, async (req, res) => {
-  try {
-    logger.info('?²å?æº–ç¢º?‡æ??‡å»ºè­?);
-
-    const suggestions = [
-      {
-        category: 'data',
-        priority: 'high',
-        title: 'å¢žå?ç¨€?‰å¡?‡è?ç·´æ•¸??,
-        description:
-          '?¶å?ç¨€?‰å¡?‡ç?è­˜åˆ¥æº–ç¢º?‡è?ä½Žï?å»ºè­°?¶é??´å?ç¨€?‰å¡?‡ç?è¨“ç·´?¸æ?',
-        expectedImpact: 0.05,
-        implementationEffort: 'medium',
-        estimatedTime: '2??,
-        dependencies: ['?¸æ??¶é?å·¥å…·', 'æ¨™è¨»?˜é?'],
-      },
-      {
-        category: 'model',
-        priority: 'medium',
-        title: 'å¯¦ç¾æ¨¡å??†æ?',
-        description: 'ä½¿ç”¨å¤šå€‹æ¨¡?‹ç??†æ??æ¸¬?¯ä»¥?é??´é?æº–ç¢º??,
-        expectedImpact: 0.03,
-        implementationEffort: 'high',
-        estimatedTime: '4??,
-        dependencies: ['æ¨¡å??¨ç½²ç³»çµ±', 'è² è??‡è¡¡'],
-      },
-      {
-        category: 'preprocessing',
-        priority: 'low',
-        title: '?ªå??–å??è???,
-        description: '?¹é€²å??é??•ç?ç®—æ??¯ä»¥?é?è­˜åˆ¥æº–ç¢º??,
-        expectedImpact: 0.02,
-        implementationEffort: 'low',
-        estimatedTime: '1??,
-        dependencies: ['?–å??•ç?åº?],
+    const suggestions = ['
+      {''
+        category: 'data',''
+        priority: 'high',''
+        title: 'å¢žï¿½?ç¨€?ï¿½å¡?ï¿½ï¿½?ç·´æ•¸??,'
+        description:''
+          '?ï¿½ï¿½?ç¨€?ï¿½å¡?ï¿½ï¿½?è­˜åˆ¥æº–ç¢º?ï¿½ï¿½?ä½Žï¿½?å»ºè­°?ï¿½ï¿½??ï¿½ï¿½?ç¨€?ï¿½å¡?ï¿½ï¿½?è¨“ç·´?ï¿½ï¿½?','
+        expectedImpact: 0.05,''
+        implementationEffort: 'medium',''
+        estimatedTime: '2??,''
+        dependencies: ['?ï¿½ï¿½??ï¿½ï¿½?å·¥å…·', 'æ¨™è¨»?ï¿½ï¿½?'],
+      },'
+      {''
+        category: 'model',''
+        priority: 'medium',''
+        title: 'å¯¦ç¾æ¨¡ï¿½??ï¿½ï¿½?',''
+        description: 'ä½¿ç”¨å¤šå€‹æ¨¡?ï¿½ï¿½??ï¿½ï¿½??ï¿½æ¸¬?ï¿½ä»¥?ï¿½ï¿½??ï¿½ï¿½?æº–ç¢º??,'
+        expectedImpact: 0.03,''
+        implementationEffort: 'high',''
+        estimatedTime: '4??,''
+        dependencies: ['æ¨¡ï¿½??ï¿½ç½²ç³»çµ±', 'è² ï¿½??ï¿½è¡¡'],
+      },'
+      {''
+        category: 'preprocessing',''
+        priority: 'low',''
+        title: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½???,''
+        description: '?ï¿½é€²ï¿½??ï¿½ï¿½??ï¿½ï¿½?ç®—ï¿½??ï¿½ä»¥?ï¿½ï¿½?è­˜åˆ¥æº–ç¢º??,'
+        expectedImpact: 0.02,''
+        implementationEffort: 'low',''
+        estimatedTime: '1??,''
+        dependencies: ['?ï¿½ï¿½??ï¿½ï¿½?ï¿½?],
       },
     ];
 
-    res.json({
-      success: true,
-      message: 'æº–ç¢º?‡æ??‡å»ºè­°ç²?–æ???,
+    res.json({'
+      success: true,''
+      message: 'æº–ç¢º?ï¿½ï¿½??ï¿½å»ºè­°ç²?ï¿½ï¿½???,
       data: suggestions,
-    });
-  } catch (error) {
-    logger.error('?²å?æº–ç¢º?‡æ??‡å»ºè­°éŒ¯èª?', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?æº–ç¢º?‡æ??‡å»ºè­°å¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?æº–ç¢º?ï¿½ï¿½??ï¿½å»ºè­°éŒ¯ï¿½?', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?æº–ç¢º?ï¿½ï¿½??ï¿½å»ºè­°å¤±??,
       error: error.message,
-    });
+    });'
   }
-});
-
-// ?Ÿæ?æº–ç¢º?‡å ±??router.post('/report/generate', protect, async (req, res) => {
-  try {
-    const { config, options } = req.body;
-
-    logger.info('?Ÿæ?æº–ç¢º?‡å ±??, { options });
+});''
+// ?ï¿½ï¿½?æº–ç¢º?ï¿½å ±??router.post('/report/generate', protect, async (req, res) => {
+  try {'
+    const { config, options } = req.body;''
+    logger.info('?ï¿½ï¿½?æº–ç¢º?ï¿½å ±??, { options });
 
     const reportId = `report_${Date.now()}`;
     const currentAccuracy = 0.89;
@@ -534,69 +511,67 @@ router.post('/feedback/:feedbackId/validate', protect, async (req, res) => {
     const summary = {
       currentAccuracy: parseFloat(currentAccuracy.toFixed(4)),
       targetAccuracy: parseFloat(targetAccuracy.toFixed(4)),
-      improvementNeeded: parseFloat(improvementNeeded.toFixed(4)),
-      topSuggestions: [
-        'å¢žå?ç¨€?‰å¡?‡è?ç·´æ•¸??,
-        'å¯¦ç¾æ¨¡å??†æ?',
-        '?ªå??–å??è???,
-      ],
-      nextActions: ['?Ÿå??¸æ??¶é?è¨ˆå?', 'è©•ä¼°æ¨¡å??†æ??¹æ?', 'æ¸¬è©¦?è??†å„ª??],
+      improvementNeeded: parseFloat(improvementNeeded.toFixed(4)),'
+      topSuggestions: [''
+        'å¢žï¿½?ç¨€?ï¿½å¡?ï¿½ï¿½?ç·´æ•¸??,''
+        'å¯¦ç¾æ¨¡ï¿½??ï¿½ï¿½?',''
+        '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½???,'
+      ],''
+      nextActions: ['?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?è¨ˆï¿½?', 'è©•ä¼°æ¨¡ï¿½??ï¿½ï¿½??ï¿½ï¿½?', 'æ¸¬è©¦?ï¿½ï¿½??ï¿½å„ª??],
     };
 
-    res.json({
-      success: true,
-      message: 'æº–ç¢º?‡å ±?Šç??æ???,
+    res.json({'
+      success: true,''
+      message: 'æº–ç¢º?ï¿½å ±?ï¿½ï¿½??ï¿½ï¿½???,
       data: {
         reportId,
         downloadUrl: `/api/ai/accuracy/report/${reportId}/download`,
         summary,
       },
-    });
-  } catch (error) {
-    logger.error('?Ÿæ?æº–ç¢º?‡å ±?ŠéŒ¯èª?', error);
-    res.status(500).json({
-      success: false,
-      message: '?Ÿæ?æº–ç¢º?‡å ±?Šå¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?æº–ç¢º?ï¿½å ±?ï¿½éŒ¯ï¿½?', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?æº–ç¢º?ï¿½å ±?ï¿½å¤±??,
       error: error.message,
-    });
+    });'
   }
-});
+});''
+// è¨­ç½®æº–ç¢º?ï¿½ç›®ï¿½?router.post('/target/set', protect, async (req, res) => {
+  try {'
+    const { target, deadline, config } = req.body;''
+    logger.info('è¨­ç½®æº–ç¢º?ï¿½ç›®ï¿½?, { target, deadline });
 
-// è¨­ç½®æº–ç¢º?‡ç›®æ¨?router.post('/target/set', protect, async (req, res) => {
-  try {
-    const { target, deadline, config } = req.body;
-
-    logger.info('è¨­ç½®æº–ç¢º?‡ç›®æ¨?, { target, deadline });
-
-    const currentAccuracy = 0.89;
-    const gap = target - currentAccuracy;
-    const estimatedEffort = gap > 0.05 ? 'é«? : gap > 0.02 ? 'ä¸? : 'ä½?;
+    const currentAccuracy = 0.89;'
+    const gap = target - currentAccuracy;''
+    const estimatedEffort = gap > 0.05 ? 'ï¿½? : gap > 0.02 ? 'ï¿½? : 'ï¿½?;
 
     const milestones = [
       {
-        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split('T')[0],
-        targetAccuracy: currentAccuracy + gap * 0.3,
-        description: 'ç¬¬ä??Žæ®µï¼šæ•¸?šæ”¶?†å??è??†å„ª??,
+        date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)'
+          .toISOString()''
+          .split('T')[0],'
+        targetAccuracy: currentAccuracy + gap * 0.3,''
+        description: 'ç¬¬ï¿½??ï¿½æ®µï¼šæ•¸?ï¿½æ”¶?ï¿½ï¿½??ï¿½ï¿½??ï¿½å„ª??,
       },
       {
-        date: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split('T')[0],
-        targetAccuracy: currentAccuracy + gap * 0.7,
-        description: 'ç¬¬ä??Žæ®µï¼šæ¨¡?‹å„ª?–å??†æ?',
+        date: new Date(Date.now() + 21 * 24 * 60 * 60 * 1000)'
+          .toISOString()''
+          .split('T')[0],'
+        targetAccuracy: currentAccuracy + gap * 0.7,''
+        description: 'ç¬¬ï¿½??ï¿½æ®µï¼šæ¨¡?ï¿½å„ª?ï¿½ï¿½??ï¿½ï¿½?',
       },
       {
-        date: deadline,
-        targetAccuracy: target,
-        description: '?€çµ‚ç›®æ¨™ï??”åˆ°?®æ?æº–ç¢º??,
+        date: deadline,'
+        targetAccuracy: target,''
+        description: '?ï¿½çµ‚ç›®æ¨™ï¿½??ï¿½åˆ°?ï¿½ï¿½?æº–ç¢º??,
       },
     ];
 
-    res.json({
-      success: true,
-      message: 'æº–ç¢º?‡ç›®æ¨™è¨­ç½®æ???,
+    res.json({'
+      success: true,''
+      message: 'æº–ç¢º?ï¿½ç›®æ¨™è¨­ç½®ï¿½???,
       data: {
         currentAccuracy: parseFloat(currentAccuracy.toFixed(4)),
         targetAccuracy: parseFloat(target.toFixed(4)),
@@ -604,21 +579,20 @@ router.post('/feedback/:feedbackId/validate', protect, async (req, res) => {
         estimatedEffort,
         milestones,
       },
-    });
-  } catch (error) {
-    logger.error('è¨­ç½®æº–ç¢º?‡ç›®æ¨™éŒ¯èª?', error);
-    res.status(500).json({
-      success: false,
-      message: 'è¨­ç½®æº–ç¢º?‡ç›®æ¨™å¤±??,
+    });'
+  } catch (error) {''
+    logger.error('è¨­ç½®æº–ç¢º?ï¿½ç›®æ¨™éŒ¯ï¿½?', error);
+    res.status(500).json({'
+      success: false,''
+      message: 'è¨­ç½®æº–ç¢º?ï¿½ç›®æ¨™å¤±??,
       error: error.message,
     });
   }
-});
-
-// ?²å?æº–ç¢º?‡æ??‡é€²åº¦
-router.get('/progress', protect, async (req, res) => {
-  try {
-    logger.info('?²å?æº–ç¢º?‡æ??‡é€²åº¦');
+});'
+// ?ï¿½ï¿½?æº–ç¢º?ï¿½ï¿½??ï¿½é€²åº¦''
+router.get('/progress', protect, async (req, res) => {'
+  try {''
+    logger.info('?ï¿½ï¿½?æº–ç¢º?ï¿½ï¿½??ï¿½é€²åº¦');
 
     const currentAccuracy = 0.89;
     const targetAccuracy = 0.95;
@@ -631,31 +605,31 @@ router.get('/progress', protect, async (req, res) => {
 // eslint-disable-next-line no-unused-vars
     const recentImprovements = [
       {
-        date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split('T')[0],
-        improvement: 0.02,
-        method: '?¸æ?å¢žå¼·',
+        date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)'
+          .toISOString()''
+          .split('T')[0],'
+        improvement: 0.02,''
+        method: '?ï¿½ï¿½?å¢žå¼·',
       },
       {
-        date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split('T')[0],
-        improvement: 0.01,
-        method: 'æ¨¡å?å¾®èª¿',
+        date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)'
+          .toISOString()''
+          .split('T')[0],'
+        improvement: 0.01,''
+        method: 'æ¨¡ï¿½?å¾®èª¿',
       },
       {
-        date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000)
-          .toISOString()
-          .split('T')[0],
-        improvement: 0.015,
-        method: '?è??†å„ª??,
+        date: new Date(Date.now() - 21 * 24 * 60 * 60 * 1000)'
+          .toISOString()''
+          .split('T')[0],'
+        improvement: 0.015,''
+        method: '?ï¿½ï¿½??ï¿½å„ª??,
       },
     ];
 
-    res.json({
-      success: true,
-      message: 'æº–ç¢º?‡æ??‡é€²åº¦?²å??å?',
+    res.json({'
+      success: true,''
+      message: 'æº–ç¢º?ï¿½ï¿½??ï¿½é€²åº¦?ï¿½ï¿½??ï¿½ï¿½?',
       data: {
         currentAccuracy: parseFloat(currentAccuracy.toFixed(4)),
         targetAccuracy: parseFloat(targetAccuracy.toFixed(4)),
@@ -664,15 +638,14 @@ router.get('/progress', protect, async (req, res) => {
         estimatedCompletion,
         recentImprovements,
       },
-    });
-  } catch (error) {
-    logger.error('?²å?æº–ç¢º?‡æ??‡é€²åº¦?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?æº–ç¢º?‡æ??‡é€²åº¦å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?æº–ç¢º?ï¿½ï¿½??ï¿½é€²åº¦?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?æº–ç¢º?ï¿½ï¿½??ï¿½é€²åº¦å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

@@ -1,369 +1,289 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const { authenticateToken: protect } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
+const { protect } = require('../middleware/authMiddleware');
 const logger = require('../utils/logger');
-// eslint-disable-next-line no-unused-vars
-const predictionService = require('../services/predictionService');
 
 const router = express.Router();
 
-// @route   POST /api/predictions/predict
-// @desc    ?æ¸¬?¡ç??¹æ ¼
+// @route   POST /api/predictions
+// @desc    å‰µå»ºé æ¸¬è¨˜éŒ„
 // @access  Private
 router.post(
-  '/predict',
+  '/',
   protect,
   [
-    body('cardId').isInt({ min: 1 }).withMessage('?¡ç?IDå¿…é??¯æ­£?´æ•¸'),
-    body('timeframe')
-      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])
-      .withMessage('?‚é?æ¡†æ¶å¿…é???d??d??0d??0d??80d??65d'),
-    body('modelType')
-      .optional()
-      .isIn([
-        'linear',
-        'polynomial',
-        'exponential',
-        'arima',
-        'lstm',
-        'ensemble',
-      ])
-      .withMessage(
-        'æ¨¡å?é¡å?å¿…é??¯linear?polynomial?exponential?arima?lstm?–ensemble'
-      ),
+    body('cardId').isInt().withMessage('å¡ç‰‡IDå¿…é ˆæ˜¯æ•´æ•¸'),
+    body('predictedPrice').isFloat({ min: 0 }).withMessage('é æ¸¬åƒ¹æ ¼å¿…é ˆæ˜¯æ­£æ•¸'),
+    body('confidence').isFloat({ min: 0, max: 1 }).withMessage('ç½®ä¿¡åº¦å¿…é ˆåœ¨0-1ä¹‹é–“'),
+    body('timeframe').isIn(['short', 'medium', 'long']).withMessage('æ™‚é–“æ¡†æ¶å¿…é ˆæ˜¯short/medium/long'),
+    body('modelType').optional().isString().withMessage('æ¨¡å‹é¡å‹å¿…é ˆæ˜¯å­—ç¬¦ä¸²'),
+    body('notes').optional().isString().withMessage('å‚™è¨»å¿…é ˆæ˜¯å­—ç¬¦ä¸²'),
   ],
   async (req, res) => {
     try {
-// eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: 'è¼¸å…¥é©—è?å¤±æ?',
-          code: 'VALIDATION_ERROR',
+          message: 'é©—è­‰å¤±æ•—',
           errors: errors.array(),
         });
       }
 
-      const { cardId, timeframe, modelType = 'ensemble' } = req.body;
-
-      // ?·è??æ¸¬
-// eslint-disable-next-line no-unused-vars
-      const prediction = await predictionService.predictCardPrice(
+      const {
         cardId,
+        predictedPrice,
+        confidence,
         timeframe,
-        modelType
-      );
+        modelType = 'default',
+        notes = '',
+      } = req.body;
 
-      logger.info(
-        `?¹æ ¼?æ¸¬: ?¨æˆ¶ ${req.user.username} ?æ¸¬?¡ç? ${cardId}, æ¨¡å? ${modelType}, ?‚é?æ¡†æ¶ ${timeframe}`
-      );
+      const { getPredictionModel } = require('../models/PredictionModel');
+      const PredictionModel = getPredictionModel();
 
-      res.json({
+      if (!PredictionModel) {
+        throw new Error('é æ¸¬æ¨¡å‹æœªæ­£ç¢ºåˆå§‹åŒ–');
+      }
+
+      const prediction = await PredictionModel.create({
+        userId: req.user.id,
+        cardId,
+        predictedPrice,
+        confidence,
+        timeframe,
+        modelType,
+        notes,
+        isActive: true,
+      });
+
+      logger.info(`å‰µå»ºé æ¸¬è¨˜éŒ„: ç”¨æˆ¶ ${req.user.username} ç‚ºå¡ç‰‡ ${cardId} å‰µå»ºé æ¸¬`);
+
+      res.status(201).json({
         success: true,
-        message: '?æ¸¬å®Œæ?',
+        message: 'é æ¸¬è¨˜éŒ„å‰µå»ºæˆåŠŸ',
         data: { prediction },
       });
     } catch (error) {
-      logger.error('?¹æ ¼?æ¸¬?¯èª¤:', error);
+      logger.error('å‰µå»ºé æ¸¬è¨˜éŒ„éŒ¯èª¤:', error);
       res.status(500).json({
         success: false,
-        message: error.message || '?æ¸¬å¤±æ?',
-        code: 'PREDICTION_FAILED',
+        message: error.message || 'å‰µå»ºé æ¸¬è¨˜éŒ„å¤±æ•—',
+        code: 'PREDICTION_CREATE_FAILED',
       });
     }
   }
 );
 
-// @route   GET /api/predictions/history/:cardId
-// @desc    ?²å??æ¸¬æ­·å²
+// @route   GET /api/predictions
+// @desc    ç²å–ç”¨æˆ¶çš„é æ¸¬è¨˜éŒ„
 // @access  Private
-router.get(
-  '/history/:cardId',
-  protect,
-  [
-    body('limit')
-      .optional()
-      .isInt({ min: 1, max: 100 })
-      .withMessage('?åˆ¶?¸é?å¿…é???-100ä¹‹é?'),
-  ],
-  async (req, res) => {
-    try {
-      const { cardId } = req.params;
-      const { limit = 50 } = req.query;
-
-      // ?²å??æ¸¬æ­·å²
-// eslint-disable-next-line no-unused-vars
-      const predictions = await predictionService.getPredictionHistory(
-        parseInt(cardId),
-        parseInt(limit)
-      );
-
-      logger.info(
-        `?²å??æ¸¬æ­·å²: ?¨æˆ¶ ${req.user.username} ?¥ç??¡ç? ${cardId} ?„é?æ¸¬æ­·?²`
-      );
-
-      res.json({
-        success: true,
-        message: '?æ¸¬æ­·å²?²å??å?',
-        data: {
-          predictions,
-          total: predictions.length,
-          cardId: parseInt(cardId),
-        },
-      });
-    } catch (error) {
-      logger.error('?²å??æ¸¬æ­·å²?¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: error.message || '?²å??æ¸¬æ­·å²å¤±æ?',
-        code: 'HISTORY_FETCH_FAILED',
-      });
-    }
-  }
-);
-
-// @route   POST /api/predictions/accuracy/:predictionId
-// @desc    è¨ˆç??æ¸¬æº–ç¢º??// @access  Private
-router.post('/accuracy/:predictionId', protect, async (req, res) => {
+router.get('/', protect, async (req, res) => {
   try {
-    const { predictionId } = req.params;
+    const { page = 1, limit = 10, timeframe, modelType } = req.query;
+    const offset = (page - 1) * limit;
 
-    // è¨ˆç??æ¸¬æº–ç¢º??    const accuracy = await predictionService.calculatePredictionAccuracy(
-      parseInt(predictionId)
-    );
+    const { getPredictionModel } = require('../models/PredictionModel');
+    const PredictionModel = getPredictionModel();
 
-    if (!accuracy) {
-      return res.json({
-        success: true,
-        message: '?®æ??¥æ??„æ??‰å¯¦?›æ•¸?šï??¡æ?è¨ˆç?æº–ç¢º??,
-        data: { accuracy: null },
-      });
+    if (!PredictionModel) {
+      throw new Error('é æ¸¬æ¨¡å‹æœªæ­£ç¢ºåˆå§‹åŒ–');
     }
 
-    logger.info(
-      `è¨ˆç??æ¸¬æº–ç¢º?? ?¨æˆ¶ ${req.user.username} è¨ˆç??æ¸¬ ${predictionId} ?„æ?ç¢ºæ€§`
-    );
+    const whereClause = {
+      userId: req.user.id,
+      isActive: true,
+    };
+
+    if (timeframe) {
+      whereClause.timeframe = timeframe;
+    }
+
+    if (modelType) {
+      whereClause.modelType = modelType;
+    }
+
+    const predictions = await PredictionModel.findAndCountAll({
+      where: whereClause,
+      limit: parseInt(limit),
+      offset: parseInt(offset),
+      order: [['createdAt', 'DESC']],
+    });
+
+    logger.info(`ç²å–é æ¸¬è¨˜éŒ„: ç”¨æˆ¶ ${req.user.username} ç²å– ${predictions.rows.length} æ¢è¨˜éŒ„`);
 
     res.json({
       success: true,
-      message: 'æº–ç¢º?§è?ç®—å???,
-      data: { accuracy },
+      message: 'é æ¸¬è¨˜éŒ„ç²å–æˆåŠŸ',
+      data: {
+        predictions: predictions.rows,
+        pagination: {
+          currentPage: parseInt(page),
+          totalPages: Math.ceil(predictions.count / limit),
+          totalItems: predictions.count,
+          itemsPerPage: parseInt(limit),
+        },
+      },
     });
   } catch (error) {
-    logger.error('è¨ˆç??æ¸¬æº–ç¢º?§éŒ¯èª?', error);
+    logger.error('ç²å–é æ¸¬è¨˜éŒ„éŒ¯èª¤:', error);
     res.status(500).json({
       success: false,
-      message: error.message || 'è¨ˆç?æº–ç¢º?§å¤±??,
-      code: 'ACCURACY_CALCULATION_FAILED',
+      message: error.message || 'ç²å–é æ¸¬è¨˜éŒ„å¤±æ•—',
+      code: 'PREDICTIONS_FETCH_FAILED',
     });
   }
 });
 
-// @route   POST /api/predictions/batch
-// @desc    ?¹é??æ¸¬
+// @route   GET /api/predictions/:predictionId
+// @desc    ç²å–å–®å€‹é æ¸¬è¨˜éŒ„
 // @access  Private
-router.post(
-  '/batch',
+router.get('/:predictionId', protect, async (req, res) => {
+  try {
+    const { predictionId } = req.params;
+
+    const { getPredictionModel } = require('../models/PredictionModel');
+    const PredictionModel = getPredictionModel();
+
+    if (!PredictionModel) {
+      throw new Error('é æ¸¬æ¨¡å‹æœªæ­£ç¢ºåˆå§‹åŒ–');
+    }
+
+    const prediction = await PredictionModel.findOne({
+      where: {
+        id: predictionId,
+        userId: req.user.id,
+        isActive: true,
+      },
+    });
+
+    if (!prediction) {
+      return res.status(404).json({
+        success: false,
+        message: 'é æ¸¬è¨˜éŒ„ä¸å­˜åœ¨',
+        code: 'PREDICTION_NOT_FOUND',
+      });
+    }
+
+    logger.info(`ç²å–é æ¸¬è¨˜éŒ„: ç”¨æˆ¶ ${req.user.username} ç²å–é æ¸¬ ${predictionId}`);
+
+    res.json({
+      success: true,
+      message: 'é æ¸¬è¨˜éŒ„ç²å–æˆåŠŸ',
+      data: { prediction },
+    });
+  } catch (error) {
+    logger.error('ç²å–é æ¸¬è¨˜éŒ„éŒ¯èª¤:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'ç²å–é æ¸¬è¨˜éŒ„å¤±æ•—',
+      code: 'PREDICTION_FETCH_FAILED',
+    });
+  }
+});
+
+// @route   PUT /api/predictions/:predictionId
+// @desc    æ›´æ–°é æ¸¬è¨˜éŒ„
+// @access  Private
+router.put(
+  '/:predictionId',
   protect,
   [
-    body('cardIds')
-      .isArray({ min: 1, max: 10 })
-      .withMessage('?¡ç?IDå¿…é??¯å???-10?‹å?ç´ ç??¸ç?'),
-    body('timeframe')
-      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])
-      .withMessage('?‚é?æ¡†æ¶å¿…é???d??d??0d??0d??80d??65d'),
-    body('modelType')
-      .optional()
-      .isIn([
-        'linear',
-        'polynomial',
-        'exponential',
-        'arima',
-        'lstm',
-        'ensemble',
-      ])
-      .withMessage(
-        'æ¨¡å?é¡å?å¿…é??¯linear?polynomial?exponential?arima?lstm?–ensemble'
-      ),
+    body('predictedPrice').optional().isFloat({ min: 0 }).withMessage('é æ¸¬åƒ¹æ ¼å¿…é ˆæ˜¯æ­£æ•¸'),
+    body('confidence').optional().isFloat({ min: 0, max: 1 }).withMessage('ç½®ä¿¡åº¦å¿…é ˆåœ¨0-1ä¹‹é–“'),
+    body('notes').optional().isString().withMessage('å‚™è¨»å¿…é ˆæ˜¯å­—ç¬¦ä¸²'),
   ],
   async (req, res) => {
     try {
-// eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: 'è¼¸å…¥é©—è?å¤±æ?',
-          code: 'VALIDATION_ERROR',
+          message: 'é©—è­‰å¤±æ•—',
           errors: errors.array(),
         });
       }
 
-      const { cardIds, timeframe, modelType = 'ensemble' } = req.body;
+      const { predictionId } = req.params;
+      const { predictedPrice, confidence, notes } = req.body;
 
-      // ?¹é??æ¸¬
-// eslint-disable-next-line no-unused-vars
-      const predictions = [];
-// eslint-disable-next-line no-unused-vars
-      const predictionErrors = [];
+      const { getPredictionModel } = require('../models/PredictionModel');
+      const PredictionModel = getPredictionModel();
 
-      for (const cardId of cardIds) {
-        try {
-// eslint-disable-next-line no-unused-vars
-          const prediction = await predictionService.predictCardPrice(
-            cardId,
-            timeframe,
-            modelType
-          );
-          predictions.push(prediction);
-        } catch (error) {
-          predictionErrors.push({
-            cardId,
-            error: error.message,
-          });
-          logger.warn(`?¹é??æ¸¬å¤±æ? - ?¡ç? ${cardId}:`, error.message);
-        }
+      if (!PredictionModel) {
+        throw new Error('é æ¸¬æ¨¡å‹æœªæ­£ç¢ºåˆå§‹åŒ–');
       }
 
-      logger.info(
-        `?¹é??æ¸¬: ?¨æˆ¶ ${req.user.username} ?¹é??æ¸¬ ${cardIds.length} å¼µå¡?Œ`
-      );
+      const prediction = await PredictionModel.findOne({
+        where: {
+          id: predictionId,
+          userId: req.user.id,
+          isActive: true,
+        },
+      });
+
+      if (!prediction) {
+        return res.status(404).json({
+          success: false,
+          message: 'é æ¸¬è¨˜éŒ„ä¸å­˜åœ¨',
+          code: 'PREDICTION_NOT_FOUND',
+        });
+      }
+
+      const updateData = {};
+      if (predictedPrice !== undefined) updateData.predictedPrice = predictedPrice;
+      if (confidence !== undefined) updateData.confidence = confidence;
+      if (notes !== undefined) updateData.notes = notes;
+
+      await prediction.update(updateData);
+
+      logger.info(`æ›´æ–°é æ¸¬è¨˜éŒ„: ç”¨æˆ¶ ${req.user.username} æ›´æ–°é æ¸¬ ${predictionId}`);
 
       res.json({
         success: true,
-        message: '?¹é??æ¸¬å®Œæ?',
-        data: {
-          predictions,
-          errors: predictionErrors,
-          summary: {
-            total: cardIds.length,
-            successful: predictions.length,
-            failed: predictionErrors.length,
-          },
-        },
+        message: 'é æ¸¬è¨˜éŒ„æ›´æ–°æˆåŠŸ',
+        data: { prediction },
       });
     } catch (error) {
-      logger.error('?¹é??æ¸¬?¯èª¤:', error);
+      logger.error('æ›´æ–°é æ¸¬è¨˜éŒ„éŒ¯èª¤:', error);
       res.status(500).json({
         success: false,
-        message: error.message || '?¹é??æ¸¬å¤±æ?',
-        code: 'BATCH_PREDICTION_FAILED',
+        message: error.message || 'æ›´æ–°é æ¸¬è¨˜éŒ„å¤±æ•—',
+        code: 'PREDICTION_UPDATE_FAILED',
       });
     }
   }
 );
 
-// @route   GET /api/predictions/models
-// @desc    ?²å??¯ç”¨æ¨¡å??—è¡¨
+// @route   GET /api/predictions/stats/overview
+// @desc    ç²å–é æ¸¬çµ±è¨ˆä¿¡æ¯
 // @access  Private
-router.get('/models', protect, async (req, res) => {
-  try {
-// eslint-disable-next-line no-unused-vars
-    const models = [
-      {
-        id: 'linear',
-        name: 'ç·šæ€§å?æ­?,
-        description: '?ºæ–¼ç·šæ€§è¶¨?¢ç?ç°¡å–®?æ¸¬æ¨¡å?',
-        minDataPoints: 2,
-        accuracy: 'ä¸­ç?',
-        speed: 'å¿?,
-        complexity: 'ä½?,
-      },
-      {
-        id: 'polynomial',
-        name: 'å¤šé?å¼å?æ­?,
-        description: '?½å??•æ??ç??§è¶¨?¢ç??æ¸¬æ¨¡å?',
-        minDataPoints: 3,
-        accuracy: 'ä¸­é?',
-        speed: 'ä¸­ç?',
-        complexity: 'ä¸­ç?',
-      },
-      {
-        id: 'exponential',
-        name: '?‡æ•¸å¹³æ?',
-        description: '?ºæ–¼?‚é?åºå??„å¹³æ»‘é?æ¸¬æ¨¡??,
-        minDataPoints: 2,
-        accuracy: 'ä¸­ç?',
-        speed: 'å¿?,
-        complexity: 'ä½?,
-      },
-      {
-        id: 'arima',
-        name: 'ARIMAæ¨¡å?',
-        description: '?ªå?æ­¸ç??†ç§»?•å¹³?‡æ¨¡?‹ï??©å??‚é?åºå??æ¸¬',
-        minDataPoints: 10,
-        accuracy: 'é«?,
-        speed: 'ä¸­ç?',
-        complexity: 'é«?,
-      },
-      {
-        id: 'lstm',
-        name: 'LSTMç¥ç?ç¶²çµ¡',
-        description: '?·çŸ­?Ÿè??¶ç¶²çµ¡ï??½å?å­¸ç?è¤‡é??„æ??“æ¨¡å¼?,
-        minDataPoints: 20,
-        accuracy: 'å¾ˆé?',
-        speed: '??,
-        complexity: 'å¾ˆé?',
-      },
-      {
-        id: 'ensemble',
-        name: '?†æ?æ¨¡å?',
-        description: 'çµå?å¤šå€‹æ¨¡?‹ç??æ¸¬çµæ?ï¼Œæ?ä¾›æ?ç©©å??„é?æ¸?,
-        minDataPoints: 5,
-        accuracy: '?€é«?,
-        speed: 'ä¸­ç?',
-        complexity: 'ä¸­ç?',
-      },
-    ];
-
-    logger.info(`?²å?æ¨¡å??—è¡¨: ?¨æˆ¶ ${req.user.username}`);
-
-    res.json({
-      success: true,
-      message: 'æ¨¡å??—è¡¨?²å??å?',
-      data: { models },
-    });
-  } catch (error) {
-    logger.error('?²å?æ¨¡å??—è¡¨?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?æ¨¡å??—è¡¨å¤±æ?',
-      code: 'MODELS_FETCH_FAILED',
-    });
-  }
-});
-
-// @route   GET /api/predictions/statistics
-// @desc    ?²å??æ¸¬çµ±è?ä¿¡æ¯
-// @access  Private
-router.get('/statistics', protect, async (req, res) => {
+router.get('/stats/overview', protect, async (req, res) => {
   try {
     const { getPredictionModel } = require('../models/PredictionModel');
     const PredictionModel = getPredictionModel();
 
     if (!PredictionModel) {
-      throw new Error('?æ¸¬æ¨¡å??å??–å¤±??);
+      throw new Error('é æ¸¬æ¨¡å‹æœªæ­£ç¢ºåˆå§‹åŒ–');
     }
 
-    // ?²å?çµ±è?ä¿¡æ¯
     const totalPredictions = await PredictionModel.count({
-      where: { isActive: true },
-    });
-
-// eslint-disable-next-line no-unused-vars
-    const recentPredictions = await PredictionModel.count({
       where: {
+        userId: req.user.id,
         isActive: true,
-        predictionDate: {
-          [require('sequelize').Op.gte]: new Date(
-            Date.now() - 7 * 24 * 60 * 60 * 1000
-          ), // ?€è¿?å¤?        },
       },
     });
 
-// eslint-disable-next-line no-unused-vars
+    const recentPredictions = await PredictionModel.count({
+      where: {
+        userId: req.user.id,
+        isActive: true,
+        createdAt: {
+          [require('sequelize').Op.gte]: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+        },
+      },
+    });
+
     const modelStats = await PredictionModel.findAll({
       attributes: [
         'modelType',
@@ -372,10 +292,7 @@ router.get('/statistics', protect, async (req, res) => {
           'count',
         ],
         [
-          require('sequelize').fn(
-            'AVG',
-            require('sequelize').col('confidence')
-          ),
+          require('sequelize').fn('AVG', require('sequelize').col('confidence')),
           'avgConfidence',
         ],
         [
@@ -383,7 +300,10 @@ router.get('/statistics', protect, async (req, res) => {
           'avgAccuracy',
         ],
       ],
-      where: { isActive: true },
+      where: { 
+        userId: req.user.id,
+        isActive: true 
+      },
       group: ['modelType'],
     });
 
@@ -402,6 +322,7 @@ router.get('/statistics', protect, async (req, res) => {
         ],
       ],
       where: {
+        userId: req.user.id,
         isActive: true,
         accuracy: {
           [require('sequelize').Op.not]: null,
@@ -409,11 +330,11 @@ router.get('/statistics', protect, async (req, res) => {
       },
     });
 
-    logger.info(`?²å??æ¸¬çµ±è?: ?¨æˆ¶ ${req.user.username}`);
+    logger.info(`ç²å–é æ¸¬çµ±è¨ˆ: ç”¨æˆ¶ ${req.user.username}`);
 
     res.json({
       success: true,
-      message: 'çµ±è?ä¿¡æ¯?²å??å?',
+      message: 'çµ±è¨ˆä¿¡æ¯ç²å–æˆåŠŸ',
       data: {
         totalPredictions,
         recentPredictions,
@@ -425,17 +346,17 @@ router.get('/statistics', protect, async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('?²å??æ¸¬çµ±è??¯èª¤:', error);
+    logger.error('ç²å–é æ¸¬çµ±è¨ˆéŒ¯èª¤:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '?²å?çµ±è?ä¿¡æ¯å¤±æ?',
+      message: error.message || 'ç²å–çµ±è¨ˆä¿¡æ¯å¤±æ•—',
       code: 'STATISTICS_FETCH_FAILED',
     });
   }
 });
 
 // @route   DELETE /api/predictions/:predictionId
-// @desc    ?ªé™¤?æ¸¬è¨˜é?
+// @desc    åˆªé™¤é æ¸¬è¨˜éŒ„
 // @access  Private
 router.delete('/:predictionId', protect, async (req, res) => {
   try {
@@ -444,34 +365,34 @@ router.delete('/:predictionId', protect, async (req, res) => {
     const PredictionModel = getPredictionModel();
 
     if (!PredictionModel) {
-      throw new Error('?æ¸¬æ¨¡å??å??–å¤±??);
+      throw new Error('é æ¸¬æ¨¡å‹æœªæ­£ç¢ºåˆå§‹åŒ–');
     }
 
-// eslint-disable-next-line no-unused-vars
     const prediction = await PredictionModel.findByPk(predictionId);
     if (!prediction) {
       return res.status(404).json({
         success: false,
-        message: '?æ¸¬è¨˜é?ä¸å???,
+        message: 'é æ¸¬è¨˜éŒ„ä¸å­˜åœ¨',
         code: 'PREDICTION_NOT_FOUND',
       });
     }
 
-    // è»Ÿåˆª??    await prediction.update({ isActive: false });
+    // è»Ÿåˆªé™¤
+    await prediction.update({ isActive: false });
 
     logger.info(
-      `?ªé™¤?æ¸¬è¨˜é?: ?¨æˆ¶ ${req.user.username} ?ªé™¤?æ¸¬ ${predictionId}`
+      `åˆªé™¤é æ¸¬è¨˜éŒ„: ç”¨æˆ¶ ${req.user.username} åˆªé™¤é æ¸¬ ${predictionId}`
     );
 
     res.json({
       success: true,
-      message: '?æ¸¬è¨˜é??ªé™¤?å?',
+      message: 'é æ¸¬è¨˜éŒ„åˆªé™¤æˆåŠŸ',
     });
   } catch (error) {
-    logger.error('?ªé™¤?æ¸¬è¨˜é??¯èª¤:', error);
+    logger.error('åˆªé™¤é æ¸¬è¨˜éŒ„éŒ¯èª¤:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '?ªé™¤?æ¸¬è¨˜é?å¤±æ?',
+      message: error.message || 'åˆªé™¤é æ¸¬è¨˜éŒ„å¤±æ•—',
       code: 'PREDICTION_DELETE_FAILED',
     });
   }

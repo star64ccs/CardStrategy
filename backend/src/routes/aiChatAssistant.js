@@ -1,39 +1,36 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken: protect } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
-const { validateInput } = require('../middleware/validation');
-
-// AI?Šå¤©?©æ??¸é?æ¨¡å?
-const ChatSession = require('../models/ChatSession').getChatSessionModel();
-const ChatMessage = require('../models/ChatMessage').getChatMessageModel();
-const KnowledgeItem =
-  require('../models/KnowledgeItem').getKnowledgeItemModel();
-const Recommendation =
-  require('../models/Recommendation').getRecommendationModel();
-const UserPreference =
-  require('../models/UserPreference').getUserPreferenceModel();
-
-// ?¼é€æ??¯ä¸¦?²å??žæ?
+const express = require('express');'
+const router = express.Router();''
+const { authenticateToken: protect } = require('../middleware/auth');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');''
+const { validateInput } = require('../middleware/validation');'
+// AI?ï¿½å¤©?ï¿½ï¿½??ï¿½ï¿½?æ¨¡ï¿½?''
+const ChatSession = require('../models/ChatSession').getChatSessionModel();''
+const ChatMessage = require('../models/ChatMessage').getChatMessageModel();'
+const KnowledgeItem =''
+  require('../models/KnowledgeItem').getKnowledgeItemModel();'
+const Recommendation =''
+  require('../models/Recommendation').getRecommendationModel();'
+const UserPreference =''
+  require('../models/UserPreference').getUserPreferenceModel();'
+// ?ï¿½é€ï¿½??ï¿½ä¸¦?ï¿½ï¿½??ï¿½ï¿½?''
 router.post('/send-message', protect, async (req, res) => {
-  try {
-    const { content, sessionId, userId, context } = req.body;
-
-    logger.info('?? ?•ç?AI?Šå¤©æ¶ˆæ¯', {
+  try {'
+    const { content, sessionId, userId, context } = req.body;''
+    logger.info('?? ?ï¿½ï¿½?AI?ï¿½å¤©æ¶ˆæ¯', {
       sessionId,
       userId,
       contentLength: content.length,
     });
 
-    // ?Ÿæ?æ¶ˆæ¯ID
+    // ?ï¿½ï¿½?æ¶ˆæ¯ID
     const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // ?µå»º?¨æˆ¶æ¶ˆæ¯
+    // ?ï¿½å»º?ï¿½æˆ¶æ¶ˆæ¯
 // eslint-disable-next-line no-unused-vars
     const userMessage = await ChatMessage.create({
-      messageId,
-      timestamp: new Date(),
+      messageId,'
+      timestamp: new Date(),''
       type: 'user',
       content,
       sessionId,
@@ -41,46 +38,44 @@ router.post('/send-message', protect, async (req, res) => {
       context,
     });
 
-    // æ¨¡æ“¬?å?è­˜åˆ¥
-    const intents = [
-      'card_inquiry',
-      'price_check',
-      'investment_advice',
-      'market_analysis',
+    // æ¨¡æ“¬?ï¿½ï¿½?è­˜åˆ¥'
+    const intents = [''
+      'card_inquiry',''
+      'price_check',''
+      'investment_advice',''
+      'market_analysis',''
       'general_question',
     ];
     const randomIntent = intents[Math.floor(Math.random() * intents.length)];
-    const confidence = Math.random() * 0.3 + 0.7; // 70%-100%
-
-    // ?Ÿæ?AI?žæ?
-    let aiResponse = '';
-    switch (randomIntent) {
-      case 'card_inquiry':
-        aiResponse =
-          '?‘å¯ä»¥å¹«?¨æŸ¥è©¢å¡?‡ä¿¡?¯ã€‚è??Šè¨´?‘æ‚¨?³ä?è§?“ªå¼µå¡?‡ç?è©³ç´°ä¿¡æ¯ï¼?;
+    const confidence = Math.random() * 0.3 + 0.7; // 70%-100%'
+    // ?ï¿½ï¿½?AI?ï¿½ï¿½?''
+    let aiResponse = '';'
+    switch (randomIntent) {''
+      case 'card_inquiry':'
+        aiResponse =''
+          '?ï¿½å¯ä»¥å¹«?ï¿½æŸ¥è©¢å¡?ï¿½ä¿¡?ï¿½ã€‚ï¿½??ï¿½è¨´?ï¿½æ‚¨?ï¿½ï¿½?ï¿½?ï¿½ï¿½å¼µå¡?ï¿½ï¿½?è©³ç´°ä¿¡æ¯ï¿½?;'
+        break;''
+      case 'price_check':'
+        aiResponse =''
+          '?ï¿½å¯ä»¥å¹«?ï¿½æŸ¥è©¢å¡?ï¿½åƒ¹?ï¿½ã€‚ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½ç¨±?ï¿½ç·¨?ï¿½ï¿½??ï¿½ï¿½??ï¿½æ‚¨?ï¿½ï¿½??ï¿½?ï¿½ï¿½?å¸‚å ´?ï¿½æ ¼ä¿¡æ¯??;'
+        break;''
+      case 'investment_advice':'
+        aiResponse =''
+          '?ï¿½æ–¼?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¶¨?ï¿½ï¿½??ï¿½å»ºè­°æ‚¨?ï¿½æ³¨ä»¥ï¿½?å¹¾å€‹ï¿½?è³‡æ–¹?ï¿½ï¿½?1) ?ï¿½ï¿½??ï¿½æˆ²?ï¿½ï¿½? 2) ?ï¿½ï¿½??ï¿½æ”¶?ï¿½å¡ 3) ?ï¿½ç™¼è¡Œï¿½??ï¿½ï¿½?ç³»ï¿½??ï¿½æ‚¨?ï¿½ï¿½?ï¿½?ï¿½ï¿½?ï¿½æ–¹?ï¿½ï¿½?è©³ç´°å»ºè­°ï¿½?;'
+        break;''
+      case 'market_analysis':'
+        aiResponse =''
+          '?ï¿½ï¿½??ï¿½?ï¿½ï¿½?å¸‚å ´?ï¿½ï¿½??ï¿½ï¿½?ï¼Œå¡?ï¿½ï¿½??ï¿½æ•´é«”ï¿½??ï¿½ï¿½??ï¿½è¶¨?ï¿½ã€‚ç†±?ï¿½?ï¿½ï¿½??ï¿½åƒ¹?ï¿½åœ¨?ï¿½åŽ»30å¤©å…§å¹³ï¿½?ä¸Šæ¼²ï¿½?5%?ï¿½æ‚¨?ï¿½ï¿½?ï¿½?ï¿½ï¿½é«”ï¿½?å¸‚å ´?ï¿½ï¿½??ï¿½ï¿½?';
         break;
-      case 'price_check':
-        aiResponse =
-          '?‘å¯ä»¥å¹«?¨æŸ¥è©¢å¡?‡åƒ¹?¼ã€‚è??ä??¡ç??ç¨±?–ç·¨?Ÿï??‘æ??ºæ‚¨?²å??€?°ç?å¸‚å ´?¹æ ¼ä¿¡æ¯??;
-        break;
-      case 'investment_advice':
-        aiResponse =
-          '?ºæ–¼?¶å??„å??´è¶¨?¢ï??‘å»ºè­°æ‚¨?œæ³¨ä»¥ä?å¹¾å€‹æ?è³‡æ–¹?‘ï?1) ?±é??Šæˆ²?¡ç? 2) ?é??ˆæ”¶?å¡ 3) ?°ç™¼è¡Œç??¡ç?ç³»å??‚æ‚¨?³ä?è§?“ª?‹æ–¹?¢ç?è©³ç´°å»ºè­°ï¼?;
-        break;
-      case 'market_analysis':
-        aiResponse =
-          '?¹æ??€?°ç?å¸‚å ´?¸æ??†æ?ï¼Œå¡?Œå??´æ•´é«”å??¾ä??‡è¶¨?¢ã€‚ç†±?€?¡ç??„åƒ¹?¼åœ¨?ŽåŽ»30å¤©å…§å¹³å?ä¸Šæ¼²äº?5%?‚æ‚¨?³ä?è§?…·é«”ç?å¸‚å ´?¸æ??Žï?';
-        break;
-      default:
-        aiResponse =
-          '?Ÿè??¨ç??å?ï¼æ??¯æ‚¨?„AI?©æ?ï¼Œå¯ä»¥å¹«?©æ‚¨?¥è©¢?¡ç?ä¿¡æ¯?å??å??´è¶¨?¢ã€æ?ä¾›æ?è³‡å»ºè­°ç??‚è??Šè¨´?‘æ‚¨?€è¦ä?éº¼å¹«?©ï?';
+      default:'
+        aiResponse =''
+          '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?ï¼ï¿½??ï¿½æ‚¨?ï¿½AI?ï¿½ï¿½?ï¼Œå¯ä»¥å¹«?ï¿½æ‚¨?ï¿½è©¢?ï¿½ï¿½?ä¿¡æ¯?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¶¨?ï¿½ã€ï¿½?ä¾›ï¿½?è³‡å»ºè­°ï¿½??ï¿½ï¿½??ï¿½è¨´?ï¿½æ‚¨?ï¿½è¦ï¿½?éº¼å¹«?ï¿½ï¿½?';
     }
-
-    // ?µå»ºAI?žæ?æ¶ˆæ¯
+    // ?ï¿½å»ºAI?ï¿½ï¿½?æ¶ˆæ¯
     const aiMessageId = `ai_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const aiMessage = await ChatMessage.create({
-      messageId: aiMessageId,
-      timestamp: new Date(),
+      messageId: aiMessageId,'
+      timestamp: new Date(),''
       type: 'assistant',
       content: aiResponse,
       intent: randomIntent,
@@ -94,36 +89,33 @@ router.post('/send-message', protect, async (req, res) => {
       },
     });
 
-    // ?´æ–°?ƒè©±
+    // ?ï¿½æ–°?ï¿½è©±
     await ChatSession.update(
-      {
-        lastActivity: new Date(),
+      {'
+        lastActivity: new Date(),''
         'context.currentTopic': randomIntent,
       },
       {
-        where: { sessionId },
+        where: { sessionId },'
       }
-    );
+    );''
+    logger.info('??AI?ï¿½å¤©æ¶ˆæ¯?ï¿½ï¿½?å®Œï¿½?', { messageId, aiMessageId });
 
-    logger.info('??AI?Šå¤©æ¶ˆæ¯?•ç?å®Œæ?', { messageId, aiMessageId });
-
-    res.status(201).json(aiMessage);
-  } catch (error) {
-    logger.error('???•ç?AI?Šå¤©æ¶ˆæ¯å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.status(201).json(aiMessage);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½?AI?ï¿½å¤©æ¶ˆæ¯å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to process chat message',
       error: error.message,
     });
   }
-});
-
-// ?µå»º?°ç??Šå¤©?ƒè©±
+});'
+// ?ï¿½å»º?ï¿½ï¿½??ï¿½å¤©?ï¿½è©±''
 router.post('/sessions', protect, async (req, res) => {
-  try {
-    const { userId, initialContext } = req.body;
-
-    logger.info('?? ?µå»º?°ç??Šå¤©?ƒè©±', { userId });
+  try {'
+    const { userId, initialContext } = req.body;''
+    logger.info('?? ?ï¿½å»º?ï¿½ï¿½??ï¿½å¤©?ï¿½è©±', { userId });
 
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -132,29 +124,27 @@ router.post('/sessions', protect, async (req, res) => {
       userId,
       startTime: new Date(),
       lastActivity: new Date(),
-      messages: [],
-      context: {
+      messages: [],'
+      context: {''
         currentTopic: 'general',
         userPreferences: {},
-        conversationHistory: [],
-      },
-      status: 'active',
-    });
+        conversationHistory: [],'
+      },''
+      status: 'active','
+    });''
+    logger.info('???ï¿½å¤©?ï¿½è©±?ï¿½å»º?ï¿½ï¿½?', { sessionId });
 
-    logger.info('???Šå¤©?ƒè©±?µå»º?å?', { sessionId });
-
-    res.status(201).json(session);
-  } catch (error) {
-    logger.error('???µå»º?Šå¤©?ƒè©±å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.status(201).json(session);'
+  } catch (error) {''
+    logger.error('???ï¿½å»º?ï¿½å¤©?ï¿½è©±å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to create chat session',
       error: error.message,
     });
   }
-});
-
-// ?²å??Šå¤©?ƒè©±
+});'
+// ?ï¿½ï¿½??ï¿½å¤©?ï¿½è©±''
 router.get('/sessions/:sessionId', protect, async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -162,61 +152,58 @@ router.get('/sessions/:sessionId', protect, async (req, res) => {
     const session = await ChatSession.findOne({
       where: { sessionId },
       include: [
-        {
-          model: ChatMessage,
-          as: 'messages',
+        {'
+          model: ChatMessage,''
+          as: 'messages',''
           order: [['timestamp', 'ASC']],
         },
       ],
     });
 
     if (!session) {
-      return res.status(404).json({
-        success: false,
+      return res.status(404).json({'
+        success: false,''
         message: 'Session not found',
       });
     }
-
-    res.json(session);
-  } catch (error) {
-    logger.error('???²å??Šå¤©?ƒè©±å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(session);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½??ï¿½å¤©?ï¿½è©±å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get chat session',
       error: error.message,
-    });
+    });'
   }
-});
-
-// ?²å??¨æˆ¶?„æ??‰æ?è©?router.get('/sessions', protect, async (req, res) => {
+});''
+// ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½??ï¿½ï¿½?ï¿½?router.get('/sessions', protect, async (req, res) => {
   try {
     const { userId } = req.query;
 
-    const sessions = await ChatSession.findAll({
-      where: { userId },
+    const sessions = await ChatSession.findAll({'
+      where: { userId },''
       order: [['lastActivity', 'DESC']],
       include: [
-        {
-          model: ChatMessage,
-          as: 'messages',
-          limit: 5,
+        {'
+          model: ChatMessage,''
+          as: 'messages','
+          limit: 5,''
           order: [['timestamp', 'DESC']],
         },
       ],
     });
 
-    res.json(sessions);
-  } catch (error) {
-    logger.error('???²å??¨æˆ¶?ƒè©±å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(sessions);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½??ï¿½æˆ¶?ï¿½è©±å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get user sessions',
       error: error.message,
     });
   }
-});
-
-// çµæ??Šå¤©?ƒè©±
+});'
+// çµï¿½??ï¿½å¤©?ï¿½è©±''
 router.put('/sessions/:sessionId/end', protect, async (req, res) => {
   try {
     const { sessionId } = req.params;
@@ -224,189 +211,176 @@ router.put('/sessions/:sessionId/end', protect, async (req, res) => {
     const session = await ChatSession.findOne({
       where: { sessionId },
       include: [
-        {
-          model: ChatMessage,
+        {'
+          model: ChatMessage,''
           as: 'messages',
         },
       ],
     });
 
     if (!session) {
-      return res.status(404).json({
-        success: false,
+      return res.status(404).json({'
+        success: false,''
         message: 'Session not found',
       });
     }
-
-    // è¨ˆç??ƒè©±çµ±è?
+    // è¨ˆï¿½??ï¿½è©±çµ±ï¿½?
     const totalMessages = session.messages.length;
     const duration = new Date() - new Date(session.startTime);
     const topics = [
       ...new Set(session.messages.map((msg) => msg.intent).filter(Boolean)),
-    ];
-
-    // ?´æ–°?ƒè©±?€??    await session.update({
+    ];'
+    // ?ï¿½æ–°?ï¿½è©±?ï¿½??    await session.update({''
       status: 'ended',
-      lastActivity: new Date(),
-    });
+      lastActivity: new Date(),'
+    });''
+    logger.info('???ï¿½å¤©?ï¿½è©±çµï¿½?', { sessionId, totalMessages, duration });
 
-    logger.info('???Šå¤©?ƒè©±çµæ?', { sessionId, totalMessages, duration });
-
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: 'Session ended successfully',
       summary: {
         totalMessages,
         duration,
         topics,
       },
-    });
-  } catch (error) {
-    logger.error('??çµæ??Šå¤©?ƒè©±å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??çµï¿½??ï¿½å¤©?ï¿½è©±å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to end chat session',
       error: error.message,
     });
   }
-});
-
-// ?å?è­˜åˆ¥
+});'
+// ?ï¿½ï¿½?è­˜åˆ¥''
 router.post('/recognize-intent', protect, async (req, res) => {
-  try {
-    const { text, context } = req.body;
+  try {'
+    const { text, context } = req.body;''
+    logger.info('?? ?ï¿½ï¿½??ï¿½ï¿½?è­˜åˆ¥', { textLength: text.length });
 
-    logger.info('?? ?²è??å?è­˜åˆ¥', { textLength: text.length });
-
-    // æ¨¡æ“¬?å?è­˜åˆ¥
-    const intents = [
-      'card_inquiry',
-      'price_check',
-      'investment_advice',
-      'market_analysis',
+    // æ¨¡æ“¬?ï¿½ï¿½?è­˜åˆ¥'
+    const intents = [''
+      'card_inquiry',''
+      'price_check',''
+      'investment_advice',''
+      'market_analysis',''
       'general_question',
     ];
     const randomIntent = intents[Math.floor(Math.random() * intents.length)];
     const confidence = Math.random() * 0.3 + 0.7; // 70%-100%
 
-    // æ¨¡æ“¬å¯¦é?è­˜åˆ¥
-    const entities = [];
-    if (text.includes('?¹æ ¼') || text.includes('price')) {
-      entities.push({
-        type: 'price_query',
+    // æ¨¡æ“¬å¯¦ï¿½?è­˜åˆ¥'
+    const entities = [];''
+    if (text.includes('?ï¿½æ ¼') || text.includes('price')) {'
+      entities.push({''
+        type: 'price_query',''
         value: 'price_inquiry',
         confidence: 0.9,
-      });
-    }
-    if (text.includes('?•è?') || text.includes('investment')) {
-      entities.push({
-        type: 'investment_query',
+      });'
+    }''
+    if (text.includes('?ï¿½ï¿½?') || text.includes('investment')) {'
+      entities.push({''
+        type: 'investment_query',''
         value: 'investment_advice',
         confidence: 0.8,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const result = {
       intent: randomIntent,
       confidence,
       entities,
-      context: context || {},
-      suggestedActions: [
-        'provide_card_info',
-        'show_market_data',
+      context: context || {},'
+      suggestedActions: [''
+        'provide_card_info',''
+        'show_market_data',''
         'give_investment_advice',
-      ],
-    };
+      ],'
+    };''
+    logger.info('???ï¿½ï¿½?è­˜åˆ¥å®Œï¿½?', { intent: randomIntent, confidence });
 
-    logger.info('???å?è­˜åˆ¥å®Œæ?', { intent: randomIntent, confidence });
-
-    res.json(result);
-  } catch (error) {
-    logger.error('???å?è­˜åˆ¥å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(result);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½?è­˜åˆ¥å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to recognize intent',
       error: error.message,
-    });
+    });'
   }
-});
-
-// ?œç´¢?¥è?åº?router.get('/knowledge/search', protect, async (req, res) => {
-  try {
-    const { query, category, limit = 10 } = req.query;
-
-    logger.info('?? ?œç´¢?¥è?åº?, { query, category });
+});''
+// ?ï¿½ç´¢?ï¿½ï¿½?ï¿½?router.get('/knowledge/search', protect, async (req, res) => {
+  try {'
+    const { query, category, limit = 10 } = req.query;''
+    logger.info('?? ?ï¿½ç´¢?ï¿½ï¿½?ï¿½?, { query, category });
 
     const whereClause = {};
     if (category) {
       whereClause.category = category;
     }
-
-    // æ¨¡æ“¬?¥è?åº«æ?ç´?    const mockItems = [
-      {
-        itemId: 'kb_001',
-        category: 'card_info',
-        title: 'å¯¶å¯å¤¢å¡?ŒåŸºç¤ŽçŸ¥è­?,
-        content:
-          'å¯¶å¯å¤¢å¡?Œæ˜¯ä¸€ç¨®é??›å??¡ç??Šæˆ²ï¼Œå??«å¯¶?¯å¤¢?¡ã€è?ç·´å®¶?¡å??½é??¡ä?ç¨®é??‹ã€?,
-        keywords: ['å¯¶å¯å¤?, '?¡ç?', '?ºç?', '?¥è?'],
-        confidence: 0.95,
-        lastUpdated: new Date().toISOString(),
-        source: 'official_guide',
+    // æ¨¡æ“¬?ï¿½ï¿½?åº«ï¿½?ï¿½?    const mockItems = ['
+      {''
+        itemId: 'kb_001',''
+        category: 'card_info',''
+        title: 'å¯¶å¯å¤¢å¡?ï¿½åŸºç¤ŽçŸ¥ï¿½?,'
+        content:''
+          'å¯¶å¯å¤¢å¡?ï¿½æ˜¯ä¸€ç¨®ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½æˆ²ï¼Œï¿½??ï¿½å¯¶?ï¿½å¤¢?ï¿½ã€ï¿½?ç·´å®¶?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?ç¨®ï¿½??ï¿½ï¿½?,''
+        keywords: ['å¯¶å¯ï¿½?, '?ï¿½ï¿½?', '?ï¿½ï¿½?', '?ï¿½ï¿½?'],
+        confidence: 0.95,'
+        lastUpdated: new Date().toISOString(),''
+        source: 'official_guide',''
         language: 'zh-TW',
-      },
-      {
-        itemId: 'kb_002',
-        category: 'market_data',
-        title: '?¡ç?å¸‚å ´è¶¨å‹¢?†æ?',
-        content: '2024å¹´å¡?Œå??´æ•´é«”å??¾ä??‡è¶¨?¢ï??±é??¡ç??¹æ ¼?ç?ä¸Šæ¼²??,
-        keywords: ['å¸‚å ´', 'è¶¨å‹¢', '?†æ?', '?¹æ ¼'],
-        confidence: 0.88,
-        lastUpdated: new Date().toISOString(),
-        source: 'market_analysis',
+      },'
+      {''
+        itemId: 'kb_002',''
+        category: 'market_data',''
+        title: '?ï¿½ï¿½?å¸‚å ´è¶¨å‹¢?ï¿½ï¿½?',''
+        content: '2024å¹´å¡?ï¿½ï¿½??ï¿½æ•´é«”ï¿½??ï¿½ï¿½??ï¿½è¶¨?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½æ ¼?ï¿½ï¿½?ä¸Šæ¼²??,''
+        keywords: ['å¸‚å ´', 'è¶¨å‹¢', '?ï¿½ï¿½?', '?ï¿½æ ¼'],
+        confidence: 0.88,'
+        lastUpdated: new Date().toISOString(),''
+        source: 'market_analysis',''
         language: 'zh-TW',
-      },
-      {
-        itemId: 'kb_003',
-        category: 'trading_tips',
-        title: '?¡ç??•è?ç­–ç•¥',
-        content: 'å»ºè­°?œæ³¨?é??ˆå¡?Œã€æ–°?¼è?ç³»å??Œç†±?€?Šæˆ²?¸é??¡ç???,
-        keywords: ['?•è?', 'ç­–ç•¥', 'å»ºè­°', '?¡ç?'],
-        confidence: 0.92,
-        lastUpdated: new Date().toISOString(),
-        source: 'expert_advice',
+      },'
+      {''
+        itemId: 'kb_003',''
+        category: 'trading_tips',''
+        title: '?ï¿½ï¿½??ï¿½ï¿½?ç­–ç•¥',''
+        content: 'å»ºè­°?ï¿½æ³¨?ï¿½ï¿½??ï¿½å¡?ï¿½ã€æ–°?ï¿½ï¿½?ç³»ï¿½??ï¿½ç†±?ï¿½?ï¿½æˆ²?ï¿½ï¿½??ï¿½ï¿½???,''
+        keywords: ['?ï¿½ï¿½?', 'ç­–ç•¥', 'å»ºè­°', '?ï¿½ï¿½?'],
+        confidence: 0.92,'
+        lastUpdated: new Date().toISOString(),''
+        source: 'expert_advice',''
         language: 'zh-TW',
       },
     ];
 
-    // ç°¡å–®?„é??µè??¹é?
+    // ç°¡å–®?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?
     const filteredItems = mockItems
       .filter((item) =>
         item.keywords.some((keyword) =>
           query.toLowerCase().includes(keyword.toLowerCase())
         )
-      )
-      .slice(0, parseInt(limit));
+      )'
+      .slice(0, parseInt(limit));''
+    logger.info('???ï¿½ï¿½?åº«ï¿½?ç´¢ï¿½???, { results: filteredItems.length });
 
-    logger.info('???¥è?åº«æ?ç´¢å???, { results: filteredItems.length });
-
-    res.json(filteredItems);
-  } catch (error) {
-    logger.error('???œç´¢?¥è?åº«å¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(filteredItems);'
+  } catch (error) {''
+    logger.error('???ï¿½ç´¢?ï¿½ï¿½?åº«å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to search knowledge base',
       error: error.message,
-    });
+    });'
   }
-});
-
-// æ·»å??¥è?åº«é???router.post('/knowledge/items', protect, async (req, res) => {
-  try {
-    const { category, title, content, keywords, source, language } = req.body;
-
-    logger.info('?? æ·»å??¥è?åº«é???, { title, category });
+});''
+// æ·»ï¿½??ï¿½ï¿½?åº«ï¿½???router.post('/knowledge/items', protect, async (req, res) => {
+  try {'
+    const { category, title, content, keywords, source, language } = req.body;''
+    logger.info('?? æ·»ï¿½??ï¿½ï¿½?åº«ï¿½???, { title, category });
 
     const itemId = `kb_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -419,297 +393,281 @@ router.post('/recognize-intent', protect, async (req, res) => {
       confidence: 0.9,
       lastUpdated: new Date(),
       source,
-      language,
-    });
-
-    logger.info('???¥è?åº«é??®æ·»? æ???, { itemId });
+      language,'
+    });''
+    logger.info('???ï¿½ï¿½?åº«ï¿½??ï¿½æ·»?ï¿½ï¿½???, { itemId });
 
     res.status(201).json({
-      success: true,
-      itemId,
+      success: true,'
+      itemId,''
       message: 'Knowledge item added successfully',
-    });
-  } catch (error) {
-    logger.error('??æ·»å??¥è?åº«é??®å¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??æ·»ï¿½??ï¿½ï¿½?åº«ï¿½??ï¿½å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to add knowledge item',
       error: error.message,
     });
   }
-});
-
-// ?²å??ºèƒ½?¨è–¦
+});'
+// ?ï¿½ï¿½??ï¿½èƒ½?ï¿½è–¦''
 router.get('/recommendations', protect, async (req, res) => {
-  try {
-    const { userId, context } = req.query;
+  try {'
+    const { userId, context } = req.query;''
+    logger.info('?? ?ï¿½ï¿½??ï¿½èƒ½?ï¿½è–¦', { userId });
 
-    logger.info('?? ?²å??ºèƒ½?¨è–¦', { userId });
-
-    // æ¨¡æ“¬?ºèƒ½?¨è–¦
+    // æ¨¡æ“¬?ï¿½èƒ½?ï¿½è–¦
 // eslint-disable-next-line no-unused-vars
-    const recommendations = [
-      {
-        recommendationId: 'rec_001',
-        type: 'card_suggestion',
-        title: '?¨è–¦?¶è??¡ç?',
-        description:
-          '?ºæ–¼?¨ç??¶è??å¥½ï¼ŒæŽ¨?¦ä»¥ä¸‹é??¹å€¼å¡?Œï??®å¡ä¸˜VMAX?è?å¤¢GXç­‰ã€?,
-        confidence: 0.85,
-        reasoning: '?¹æ??¨ç??¶è?æ­·å²?Œå??´è¶¨?¢å???,
-        actions: [
-          {
-            action: '?¥ç??¨è–¦?¡ç?',
-            description: '?è¦½?¨è–¦?„å¡?Œå?è¡?,
+    const recommendations = ['
+      {''
+        recommendationId: 'rec_001',''
+        type: 'card_suggestion',''
+        title: '?ï¿½è–¦?ï¿½ï¿½??ï¿½ï¿½?','
+        description:''
+          '?ï¿½æ–¼?ï¿½ï¿½??ï¿½ï¿½??ï¿½å¥½ï¼ŒæŽ¨?ï¿½ä»¥ä¸‹ï¿½??ï¿½å€¼å¡?ï¿½ï¿½??ï¿½å¡ä¸˜VMAX?ï¿½ï¿½?å¤¢GXç­‰ï¿½?,'
+        confidence: 0.85,''
+        reasoning: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?æ­·å²?ï¿½ï¿½??ï¿½è¶¨?ï¿½ï¿½???,
+        actions: ['
+          {''
+            action: '?ï¿½ï¿½??ï¿½è–¦?ï¿½ï¿½?',''
+            description: '?ï¿½è¦½?ï¿½è–¦?ï¿½å¡?ï¿½ï¿½?ï¿½?,''
             url: '/cards/recommended',
-          },
-        ],
+          },'
+        ],''
         priority: 'high',
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-      {
-        recommendationId: 'rec_002',
-        type: 'investment_advice',
-        title: '?•è?çµ„å??ªå?å»ºè­°',
-        description: 'å»ºè­°èª¿æ•´?¨ç??•è?çµ„å?ï¼Œå?? æ–°?¼è?ç³»å??„æ??ã€?,
-        confidence: 0.78,
-        reasoning: '?ºæ–¼å¸‚å ´?†æ??Œæ‚¨?„æ?è³‡å?å¥?,
-        actions: [
-          {
-            action: '?¥ç??•è?å»ºè­°',
-            description: 'è©³ç´°?„æ?è³‡ç??ˆå„ª?–å»ºè­?,
+      },'
+      {''
+        recommendationId: 'rec_002',''
+        type: 'investment_advice',''
+        title: '?ï¿½ï¿½?çµ„ï¿½??ï¿½ï¿½?å»ºè­°',''
+        description: 'å»ºè­°èª¿æ•´?ï¿½ï¿½??ï¿½ï¿½?çµ„ï¿½?ï¼Œï¿½??ï¿½æ–°?ï¿½ï¿½?ç³»ï¿½??ï¿½ï¿½??ï¿½ï¿½?,'
+        confidence: 0.78,''
+        reasoning: '?ï¿½æ–¼å¸‚å ´?ï¿½ï¿½??ï¿½æ‚¨?ï¿½ï¿½?è³‡ï¿½?ï¿½?,
+        actions: ['
+          {''
+            action: '?ï¿½ï¿½??ï¿½ï¿½?å»ºè­°',''
+            description: 'è©³ç´°?ï¿½ï¿½?è³‡ï¿½??ï¿½å„ª?ï¿½å»ºï¿½?,''
             url: '/investment/advice',
-          },
-        ],
+          },'
+        ],''
         priority: 'medium',
         expiresAt: new Date(
           Date.now() + 14 * 24 * 60 * 60 * 1000
         ).toISOString(),
-      },
-      {
-        recommendationId: 'rec_003',
-        type: 'market_analysis',
-        title: 'å¸‚å ´è¶¨å‹¢?é?',
-        description: 'å¯¶å¯å¤¢å¡?Œå??´è??Ÿå‡º?¾ä?æ¼²è¶¨?¢ï?å»ºè­°?œæ³¨?¸é??•è?æ©Ÿæ???,
-        confidence: 0.92,
-        reasoning: '?ºæ–¼?€?°ç?å¸‚å ´?¸æ??†æ?',
-        actions: [
-          {
-            action: '?¥ç?å¸‚å ´?†æ?',
-            description: 'è©³ç´°?„å??´è¶¨?¢å ±??,
+      },'
+      {''
+        recommendationId: 'rec_003',''
+        type: 'market_analysis',''
+        title: 'å¸‚å ´è¶¨å‹¢?ï¿½ï¿½?',''
+        description: 'å¯¶å¯å¤¢å¡?ï¿½ï¿½??ï¿½ï¿½??ï¿½å‡º?ï¿½ï¿½?æ¼²è¶¨?ï¿½ï¿½?å»ºè­°?ï¿½æ³¨?ï¿½ï¿½??ï¿½ï¿½?æ©Ÿï¿½???,'
+        confidence: 0.92,''
+        reasoning: '?ï¿½æ–¼?ï¿½?ï¿½ï¿½?å¸‚å ´?ï¿½ï¿½??ï¿½ï¿½?',
+        actions: ['
+          {''
+            action: '?ï¿½ï¿½?å¸‚å ´?ï¿½ï¿½?',''
+            description: 'è©³ç´°?ï¿½ï¿½??ï¿½è¶¨?ï¿½å ±??,''
             url: '/market/analysis',
-          },
-        ],
+          },'
+        ],''
         priority: 'high',
         expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
-      },
-    ];
+      },'
+    ];''
+    logger.info('???ï¿½èƒ½?ï¿½è–¦?ï¿½ï¿½?å®Œï¿½?', { count: recommendations.length });
 
-    logger.info('???ºèƒ½?¨è–¦?Ÿæ?å®Œæ?', { count: recommendations.length });
-
-    res.json(recommendations);
-  } catch (error) {
-    logger.error('???²å??ºèƒ½?¨è–¦å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(recommendations);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½??ï¿½èƒ½?ï¿½è–¦å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get recommendations',
       error: error.message,
     });
   }
 });
 
-// ?ä??¨è–¦?é?
-router.post(
+// ?ï¿½ï¿½??ï¿½è–¦?ï¿½ï¿½?'
+router.post(''
   '/recommendations/:recommendationId/feedback',
   protect,
   async (req, res) => {
     try {
-      const { recommendationId } = req.params;
-      const { rating, helpful, comments, actionTaken } = req.body;
+      const { recommendationId } = req.params;'
+      const { rating, helpful, comments, actionTaken } = req.body;''
+      logger.info('?? ?ï¿½ï¿½??ï¿½è–¦?ï¿½ï¿½?', { recommendationId, rating, helpful });
 
-      logger.info('?? ?•ç??¨è–¦?é?', { recommendationId, rating, helpful });
+      // æ¨¡æ“¬?ï¿½ï¿½??ï¿½ï¿½?'
+      await new Promise((resolve) => setTimeout(resolve, 1000));''
+      logger.info('???ï¿½è–¦?ï¿½ï¿½??ï¿½ï¿½?å®Œï¿½?', { recommendationId });
 
-      // æ¨¡æ“¬?é??•ç?
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      logger.info('???¨è–¦?é??•ç?å®Œæ?', { recommendationId });
-
-      res.json({
-        success: true,
+      res.json({'
+        success: true,''
         message: 'Feedback processed successfully',
-      });
-    } catch (error) {
-      logger.error('???•ç??¨è–¦?é?å¤±æ?', { error: error.message });
-      res.status(500).json({
-        success: false,
+      });'
+    } catch (error) {''
+      logger.error('???ï¿½ï¿½??ï¿½è–¦?ï¿½ï¿½?å¤±ï¿½?', { error: error.message });
+      res.status(500).json({'
+        success: false,''
         message: 'Failed to process feedback',
         error: error.message,
       });
     }
   }
-);
-
-// ?²å?å°è©±?†æ?
+);'
+// ?ï¿½ï¿½?å°è©±?ï¿½ï¿½?''
 router.get('/analytics/sessions/:sessionId', protect, async (req, res) => {
-  try {
-    const { sessionId } = req.params;
+  try {'
+    const { sessionId } = req.params;''
+    logger.info('?? ?ï¿½ï¿½?å°è©±?ï¿½ï¿½?', { sessionId });
 
-    logger.info('?? ?²å?å°è©±?†æ?', { sessionId });
-
-    // æ¨¡æ“¬å°è©±?†æ?
+    // æ¨¡æ“¬å°è©±?ï¿½ï¿½?
     const analytics = {
       sessionId,
       totalMessages: 15,
       averageResponseTime: 2.3,
       userSatisfaction: 4.2,
-      topics: [
-        {
-          topic: 'card_inquiry',
-          frequency: 8,
+      topics: ['
+        {''
+          topic: 'card_inquiry','
+          frequency: 8,''
           sentiment: 'positive',
-        },
-        {
-          topic: 'price_check',
-          frequency: 5,
+        },'
+        {''
+          topic: 'price_check','
+          frequency: 5,''
           sentiment: 'neutral',
-        },
-        {
-          topic: 'investment_advice',
-          frequency: 2,
+        },'
+        {''
+          topic: 'investment_advice','
+          frequency: 2,''
           sentiment: 'positive',
         },
       ],
-      intents: [
-        {
+      intents: ['
+        {''
           intent: 'card_inquiry',
           count: 8,
           successRate: 0.88,
-        },
-        {
+        },'
+        {''
           intent: 'price_check',
           count: 5,
           successRate: 0.92,
-        },
-        {
+        },'
+        {''
           intent: 'investment_advice',
           count: 2,
           successRate: 0.75,
         },
       ],
-      recommendations: [
-        {
+      recommendations: ['
+        {''
           type: 'card_suggestion',
           count: 3,
           acceptanceRate: 0.67,
-        },
-        {
+        },'
+        {''
           type: 'investment_advice',
           count: 2,
           acceptanceRate: 0.5,
         },
-      ],
-    };
+      ],'
+    };''
+    logger.info('??å°è©±?ï¿½ï¿½?å®Œï¿½?', { sessionId });
 
-    logger.info('??å°è©±?†æ?å®Œæ?', { sessionId });
-
-    res.json(analytics);
-  } catch (error) {
-    logger.error('???²å?å°è©±?†æ?å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(analytics);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½?å°è©±?ï¿½ï¿½?å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get conversation analytics',
       error: error.message,
     });
   }
-});
-
-// ?²å??¨æˆ¶?†æ?
+});'
+// ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½?''
 router.get('/analytics/users/:userId', protect, async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const { timeRange = '30d' } = req.query;
+  try {'
+    const { userId } = req.params;''
+    const { timeRange = '30d' } = req.query;''
+    logger.info('?? ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½?', { userId, timeRange });
 
-    logger.info('?? ?²å??¨æˆ¶?†æ?', { userId, timeRange });
-
-    // æ¨¡æ“¬?¨æˆ¶?†æ?
+    // æ¨¡æ“¬?ï¿½æˆ¶?ï¿½ï¿½?
     const analytics = {
       userId,
       totalSessions: 25,
-      totalMessages: 156,
-      averageSessionDuration: 12.5,
-      favoriteTopics: ['card_inquiry', 'price_check', 'market_analysis'],
-      satisfactionTrend: [
-        { date: '2024-01-01', satisfaction: 4.1 },
-        { date: '2024-01-08', satisfaction: 4.3 },
-        { date: '2024-01-15', satisfaction: 4.2 },
+      totalMessages: 156,'
+      averageSessionDuration: 12.5,''
+      favoriteTopics: ['card_inquiry', 'price_check', 'market_analysis'],'
+      satisfactionTrend: [''
+        { date: '2024-01-01', satisfaction: 4.1 },''
+        { date: '2024-01-08', satisfaction: 4.3 },''
+        { date: '2024-01-15', satisfaction: 4.2 },''
         { date: '2024-01-22', satisfaction: 4.4 },
       ],
-      recommendationPerformance: [
-        {
+      recommendationPerformance: ['
+        {''
           type: 'card_suggestion',
           shown: 45,
           accepted: 32,
           conversionRate: 0.71,
-        },
-        {
+        },'
+        {''
           type: 'investment_advice',
           shown: 28,
           accepted: 18,
           conversionRate: 0.64,
-        },
-        {
+        },'
+        {''
           type: 'market_analysis',
           shown: 35,
           accepted: 29,
           conversionRate: 0.83,
         },
-      ],
-    };
+      ],'
+    };''
+    logger.info('???ï¿½æˆ¶?ï¿½ï¿½?å®Œï¿½?', { userId });
 
-    logger.info('???¨æˆ¶?†æ?å®Œæ?', { userId });
-
-    res.json(analytics);
-  } catch (error) {
-    logger.error('???²å??¨æˆ¶?†æ?å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(analytics);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½?å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get user analytics',
       error: error.message,
     });
   }
-});
-
-// è¨­ç½®?¨æˆ¶?å¥½
+});'
+// è¨­ç½®?ï¿½æˆ¶?ï¿½å¥½''
 router.put('/users/:userId/preferences', protect, async (req, res) => {
   try {
-    const { userId } = req.params;
-    const preferences = req.body;
+    const { userId } = req.params;'
+    const preferences = req.body;''
+    logger.info('?? è¨­ç½®?ï¿½æˆ¶?ï¿½å¥½', { userId });
 
-    logger.info('?? è¨­ç½®?¨æˆ¶?å¥½', { userId });
-
-    // ?´æ–°?–å‰µå»ºç”¨?¶å?å¥?    await UserPreference.upsert({
+    // ?ï¿½æ–°?ï¿½å‰µå»ºç”¨?ï¿½ï¿½?ï¿½?    await UserPreference.upsert({
       userId,
       ...preferences,
-      updatedAt: new Date(),
-    });
+      updatedAt: new Date(),'
+    });''
+    logger.info('???ï¿½æˆ¶?ï¿½å¥½è¨­ç½®?ï¿½ï¿½?', { userId });
 
-    logger.info('???¨æˆ¶?å¥½è¨­ç½®?å?', { userId });
-
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: 'User preferences updated successfully',
-    });
-  } catch (error) {
-    logger.error('??è¨­ç½®?¨æˆ¶?å¥½å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??è¨­ç½®?ï¿½æˆ¶?ï¿½å¥½å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to set user preferences',
       error: error.message,
     });
   }
-});
-
-// ?²å??¨æˆ¶?å¥½
+});'
+// ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½å¥½''
 router.get('/users/:userId/preferences', protect, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -719,13 +677,13 @@ router.get('/users/:userId/preferences', protect, async (req, res) => {
     });
 
     if (!preferences) {
-      // è¿”å?é»˜è??å¥½
-      return res.json({
-        language: 'zh-TW',
+      // è¿”ï¿½?é»˜ï¿½??ï¿½å¥½'
+      return res.json({''
+        language: 'zh-TW',''
         topics: ['card_info', 'market_data', 'investment_advice'],
         notificationSettings: {
-          email: true,
-          push: true,
+          email: true,'
+          push: true,''
           frequency: 'daily',
         },
         privacySettings: {
@@ -735,136 +693,125 @@ router.get('/users/:userId/preferences', protect, async (req, res) => {
         },
       });
     }
-
-    res.json(preferences);
-  } catch (error) {
-    logger.error('???²å??¨æˆ¶?å¥½å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(preferences);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½??ï¿½æˆ¶?ï¿½å¥½å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get user preferences',
       error: error.message,
-    });
+    });'
   }
-});
+});''
+// ?ï¿½ï¿½?ç³»çµ±?ï¿½??router.get('/system/status', protect, async (req, res) => {'
+  try {''
+    logger.info('?? ?ï¿½ï¿½?AI?ï¿½å¤©ç³»çµ±?ï¿½??);
 
-// ?²å?ç³»çµ±?€??router.get('/system/status', protect, async (req, res) => {
-  try {
-    logger.info('?? ?²å?AI?Šå¤©ç³»çµ±?€??);
-
-    // æ¨¡æ“¬ç³»çµ±?€??// eslint-disable-next-line no-unused-vars
-    const status = {
-      nlpService: {
+    // æ¨¡æ“¬ç³»çµ±?ï¿½??// eslint-disable-next-line no-unused-vars
+    const status = {'
+      nlpService: {''
         status: 'online',
         responseTime: 1.2,
         accuracy: 0.89,
-      },
-      knowledgeBase: {
+      },'
+      knowledgeBase: {''
         status: 'online',
         totalItems: 1250,
         lastUpdated: new Date().toISOString(),
-      },
-      recommendationEngine: {
+      },'
+      recommendationEngine: {''
         status: 'online',
         activeUsers: 156,
-        recommendationsGenerated: 892,
-      },
-      overallHealth: 'excellent',
-    };
+        recommendationsGenerated: 892,'
+      },''
+      overallHealth: 'excellent','
+    };''
+    logger.info('??ç³»çµ±?ï¿½?ï¿½ç²?ï¿½ï¿½???);
 
-    logger.info('??ç³»çµ±?€?‹ç²?–å???);
-
-    res.json(status);
-  } catch (error) {
-    logger.error('???²å?ç³»çµ±?€?‹å¤±??, { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(status);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½?ç³»çµ±?ï¿½?ï¿½å¤±??, { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get system status',
       error: error.message,
     });
   }
-});
-
-// ?²å??±é??é?
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/faq', protect, async (req, res) => {
-  try {
-    const { limit = 10 } = req.query;
+  try {'
+    const { limit = 10 } = req.query;''
+    logger.info('?? ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?', { limit });
 
-    logger.info('?? ?²å??±é??é?', { limit });
-
-    // æ¨¡æ“¬FAQ?¸æ?
-    const faqs = [
-      {
-        question: 'å¦‚ä??¤æ–·?¡ç??„åƒ¹?¼ï?',
-        answer:
-          '?¡ç??¹å€¼ä¸»è¦å?æ±ºæ–¼ç¨€?‰åº¦?ç??¬ã€ä?å­˜ç?æ³å?å¸‚å ´?€æ±‚ã€‚å»ºè­°æŸ¥?‹å?æ¥­è?ç´šå?å¸‚å ´?¹æ ¼??,
-        frequency: 156,
+    // æ¨¡æ“¬FAQ?ï¿½ï¿½?
+    const faqs = ['
+      {''
+        question: 'å¦‚ï¿½??ï¿½æ–·?ï¿½ï¿½??ï¿½åƒ¹?ï¿½ï¿½?','
+        answer:''
+          '?ï¿½ï¿½??ï¿½å€¼ä¸»è¦ï¿½?æ±ºæ–¼ç¨€?ï¿½åº¦?ï¿½ï¿½??ï¿½ã€ï¿½?å­˜ï¿½?æ³ï¿½?å¸‚å ´?ï¿½æ±‚ã€‚å»ºè­°æŸ¥?ï¿½ï¿½?æ¥­ï¿½?ç´šï¿½?å¸‚å ´?ï¿½æ ¼??,'
+        frequency: 156,''
         category: 'card_info',
-      },
-      {
-        question: 'ä»€éº¼æ??™æ˜¯?•è??¡ç??„æ?ä½³æ?æ©Ÿï?',
-        answer:
-          '?šå¸¸?¨æ–°ç³»å??¼è??æ??–ç†±?€?Šæˆ²?´æ–°?‚æ˜¯è¼ƒå¥½?„æ?è³‡æ?æ©Ÿã€‚å»ºè­°é?æ³¨å??´è¶¨?¢ã€?,
-        frequency: 89,
+      },'
+      {''
+        question: 'ä»€éº¼ï¿½??ï¿½æ˜¯?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?ä½³ï¿½?æ©Ÿï¿½?','
+        answer:''
+          '?ï¿½å¸¸?ï¿½æ–°ç³»ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½ç†±?ï¿½?ï¿½æˆ²?ï¿½æ–°?ï¿½æ˜¯è¼ƒå¥½?ï¿½ï¿½?è³‡ï¿½?æ©Ÿã€‚å»ºè­°ï¿½?æ³¨ï¿½??ï¿½è¶¨?ï¿½ï¿½?,'
+        frequency: 89,''
+        category: 'investment_advice',
+      },'
+      {''
+        question: 'å¦‚ï¿½?ä¿è­·?ï¿½ï¿½??ï¿½æ”¶?ï¿½åƒ¹?ï¿½ï¿½?','
+        answer:''
+          'ä½¿ç”¨å°ˆæ¥­?ï¿½å¡?ï¿½ï¿½?è­·ï¿½??ï¿½ï¿½??ï¿½ï¿½?ï¼Œé¿?ï¿½é™½?ï¿½ç›´å°„ï¿½?æ½®ï¿½??ï¿½ï¿½?ï¼Œï¿½??ï¿½æª¢?ï¿½ï¿½?å­˜ï¿½?æ³ï¿½?,'
+        frequency: 67,''
+        category: 'card_info',
+      },'
+      {''
+        question: '?ï¿½ï¿½?å¸‚å ´?ï¿½é¢¨?ï¿½ï¿½??ï¿½ï¿½?ï¿½?,'
+        answer:''
+          'ä¸»ï¿½?é¢¨éšª?ï¿½æ‹¬å¸‚å ´æ³¢ï¿½??ï¿½ï¿½?è²¨é¢¨?ï¿½ã€ï¿½?å­˜ï¿½?å£žï¿½??ï¿½å»ºè­°ï¿½????è³‡ä¸¦?ï¿½å¥½é¢¨éšªç®¡ï¿½???,'
+        frequency: 45,''
         category: 'investment_advice',
       },
-      {
-        question: 'å¦‚ä?ä¿è­·?¡ç??„æ”¶?åƒ¹?¼ï?',
-        answer:
-          'ä½¿ç”¨å°ˆæ¥­?„å¡?Œä?è­·å??Œå??²ç?ï¼Œé¿?é™½?‰ç›´å°„å?æ½®æ??°å?ï¼Œå??Ÿæª¢?¥ä?å­˜ç?æ³ã€?,
-        frequency: 67,
-        category: 'card_info',
-      },
-      {
-        question: '?¡ç?å¸‚å ´?„é¢¨?ªæ??ªä?ï¼?,
-        answer:
-          'ä¸»è?é¢¨éšª?…æ‹¬å¸‚å ´æ³¢å??å?è²¨é¢¨?ªã€ä?å­˜æ?å£žç??‚å»ºè­°å????è³‡ä¸¦?šå¥½é¢¨éšªç®¡ç???,
-        frequency: 45,
-        category: 'investment_advice',
-      },
-    ];
+    ];'
+    const limitedFaqs = faqs.slice(0, parseInt(limit));''
+    logger.info('???ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å®Œï¿½?', { count: limitedFaqs.length });
 
-    const limitedFaqs = faqs.slice(0, parseInt(limit));
-
-    logger.info('???±é??é??²å?å®Œæ?', { count: limitedFaqs.length });
-
-    res.json(limitedFaqs);
-  } catch (error) {
-    logger.error('???²å??±é??é?å¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    res.json(limitedFaqs);'
+  } catch (error) {''
+    logger.error('???ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to get FAQ',
       error: error.message,
     });
   }
-});
-
-// æ·»å?FAQ
+});'
+// æ·»ï¿½?FAQ''
 router.post('/faq', protect, async (req, res) => {
-  try {
-    const { question, answer, category, keywords } = req.body;
-
-    logger.info('?? æ·»å?FAQ', { question, category });
+  try {'
+    const { question, answer, category, keywords } = req.body;''
+    logger.info('?? æ·»ï¿½?FAQ', { question, category });
 
     const faqId = `faq_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // æ¨¡æ“¬FAQæ·»å?
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    logger.info('??FAQæ·»å??å?', { faqId });
+    // æ¨¡æ“¬FAQæ·»ï¿½?'
+    await new Promise((resolve) => setTimeout(resolve, 1000));''
+    logger.info('??FAQæ·»ï¿½??ï¿½ï¿½?', { faqId });
 
     res.status(201).json({
-      success: true,
-      faqId,
+      success: true,'
+      faqId,''
       message: 'FAQ added successfully',
-    });
-  } catch (error) {
-    logger.error('??æ·»å?FAQå¤±æ?', { error: error.message });
-    res.status(500).json({
-      success: false,
+    });'
+  } catch (error) {''
+    logger.error('??æ·»ï¿½?FAQå¤±ï¿½?', { error: error.message });
+    res.status(500).json({'
+      success: false,''
       message: 'Failed to add FAQ',
       error: error.message,
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

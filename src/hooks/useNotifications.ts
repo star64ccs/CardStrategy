@@ -9,10 +9,10 @@ export interface Notification {
   type: 'success' | 'error' | 'warning' | 'info';
 }
 
-export const useNotifications = () => {
+export const _useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const addNotification = (
+  const _addNotification = (
     notification: Omit<Notification, 'id' | 'timestamp' | 'read'>
   ) => {
     const newNotification: Notification = {
@@ -22,20 +22,20 @@ export const useNotifications = () => {
       read: false,
     };
 
-    setNotifications((prev) => [newNotification, ...prev]);
+    setNotifications(prev => [newNotification, ...prev]);
   };
 
-  const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((notification) =>
+  const _markAsRead = (id: string) => {
+    setNotifications(prev =>
+      prev.map(notification =>
         notification.id === id ? { ...notification, read: true } : notification
       )
     );
   };
 
-  const removeNotification = (id: string) => {
-    setNotifications((prev) =>
-      prev.filter((notification) => notification.id !== id)
+  const _removeNotification = (id: string) => {
+    setNotifications(prev =>
+      prev.filter(notification => notification.id !== id)
     );
   };
 

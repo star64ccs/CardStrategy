@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+// eslint-disable-next-line no-console
 console.log('🔍 CardStrategy 服務監控檢查...');
 
 async function checkServiceHealth() {
@@ -41,11 +42,14 @@ async function checkServiceHealth() {
 
 // 執行健康檢查
 checkServiceHealth().then(results => {
+  // eslint-disable-next-line no-console
   console.log('📊 監控結果:');
+  // eslint-disable-next-line no-console
   console.log(JSON.stringify(results, null, 2));
   
   // 保存結果
   const reportPath = path.join(__dirname, '../monitoring/health-report.json');
   fs.writeFileSync(reportPath, JSON.stringify(results, null, 2));
+  // eslint-disable-next-line no-console
   console.log('✅ 健康報告已保存: monitoring/health-report.json');
 });

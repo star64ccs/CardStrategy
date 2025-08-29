@@ -6,6 +6,7 @@ const path = require('path');
  * 為 CardStrategy 項目創建詳細的使用範例
  */
 
+// eslint-disable-next-line no-console
 console.log('📖 創建 CardStrategy 使用範例...\n');
 
 // 創建 examples 目錄
@@ -912,12 +913,15 @@ export {
 try {
   // 寫入範例文件
   fs.writeFileSync(path.join(examplesDir, 'segment-usage.js'), segmentExample);
+  // eslint-disable-next-line no-console
   console.log('✅ 創建 Segment 使用範例: examples/segment-usage.js');
 
   fs.writeFileSync(path.join(examplesDir, 'sendgrid-examples.js'), sendGridExample);
+  // eslint-disable-next-line no-console
   console.log('✅ 創建 SendGrid 郵件範例: examples/sendgrid-examples.js');
 
   fs.writeFileSync(path.join(examplesDir, 'firebase-examples.js'), firebaseExample);
+  // eslint-disable-next-line no-console
   console.log('✅ 創建 Firebase 使用範例: examples/firebase-examples.js');
 
   // 創建範例索引文件
@@ -984,21 +988,33 @@ console.log('📖 CardStrategy 使用範例已載入');
 console.log('💡 查看 examples/ 目錄獲取詳細範例代碼');`;
 
   fs.writeFileSync(path.join(examplesDir, 'index.js'), indexExample);
+  // eslint-disable-next-line no-console
   console.log('✅ 創建範例索引: examples/index.js');
 
+  // eslint-disable-next-line no-console
   console.log('\n🎉 使用範例創建完成！');
+  // eslint-disable-next-line no-console
   console.log('\n📚 可用範例:');
+  // eslint-disable-next-line no-console
   console.log('   📊 Segment 分析: examples/segment-usage.js');
+  // eslint-disable-next-line no-console
   console.log('   📧 SendGrid 郵件: examples/sendgrid-examples.js');
+  // eslint-disable-next-line no-console
   console.log('   🔥 Firebase 服務: examples/firebase-examples.js');
+  // eslint-disable-next-line no-console
   console.log('   📖 快速開始: examples/index.js');
 
+  // eslint-disable-next-line no-console
   console.log('\n💡 使用方式:');
+  // eslint-disable-next-line no-console
   console.log('   import { handleUserSignUp } from "./examples/segment-usage";');
+  // eslint-disable-next-line no-console
   console.log('   import { sendWelcomeEmail } from "./examples/sendgrid-examples";');
+  // eslint-disable-next-line no-console
   console.log('   import { registerUser } from "./examples/firebase-examples";');
 
 } catch (error) {
+  // eslint-disable-next-line no-console
   console.error('❌ 創建使用範例失敗:', error.message);
   process.exit(1);
 }

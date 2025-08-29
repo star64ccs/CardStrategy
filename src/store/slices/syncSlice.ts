@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface SyncState {
   status: 'idle' | 'syncing' | 'error' | 'offline';
@@ -16,7 +17,7 @@ const initialState: SyncState = {
   isOnline: navigator.onLine,
 };
 
-const syncSlice = createSlice({
+const _syncSlice = createSlice({
   name: 'sync',
   initialState,
   reducers: {
@@ -38,7 +39,7 @@ const syncSlice = createSlice({
     setOnlineStatus: (state, action: PayloadAction<boolean>) => {
       state.isOnline = action.payload;
     },
-    clearSyncError: (state) => {
+    clearSyncError: state => {
       state.error = null;
     },
   },

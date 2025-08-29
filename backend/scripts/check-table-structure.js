@@ -31,6 +31,7 @@ async function checkTableStructure() {
 
     // logger.info('📋 發現的表:');
     tables.forEach((table) => {
+      // eslint-disable-next-line no-unused-vars
       // logger.info(`  - ${table.table_name}`);
     });
 
@@ -54,6 +55,7 @@ async function checkTableStructure() {
       );
 
       columns.forEach((col) => {
+        // eslint-disable-next-line no-unused-vars
         // logger.info(`  - ${col.column_name}: ${col.data_type} ${col.is_nullable === 'NO' ? 'NOT NULL' : 'NULL'}`);
       });
     }

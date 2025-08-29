@@ -6,6 +6,7 @@ const path = require('path');
  * 模擬鑑定系統優化 + 整體系統整合
  */
 
+// eslint-disable-next-line no-console
 console.log('📊 生成第三階段優化報告...\n');
 
 const phase3Report = {
@@ -220,39 +221,64 @@ fs.writeFileSync(
   JSON.stringify(phase3Report, null, 2)
 );
 
+// eslint-disable-next-line no-console
 console.log('✅ 第三階段優化報告已生成！');
+// eslint-disable-next-line no-console
 console.log('\n📊 優化摘要:');
+// eslint-disable-next-line no-console
 console.log(`   階段: ${phase3Report.phase}`);
+// eslint-disable-next-line no-console
 console.log(`   狀態: ${phase3Report.status}`);
+// eslint-disable-next-line no-console
 console.log(`   報告文件: reports/phase3-optimization-report.json`);
 
+// eslint-disable-next-line no-console
 console.log('\n🎯 準確率提升:');
+// eslint-disable-next-line no-console
 console.log(`   模擬鑑定系統: ${phase3Report.metrics.before.simulatedGrading}% → ${phase3Report.metrics.after.simulatedGrading}% (${phase3Report.metrics.improvement.simulatedGrading})`);
+// eslint-disable-next-line no-console
 console.log(`   系統性能: ${phase3Report.metrics.before.systemPerformance}% → ${phase3Report.metrics.after.systemPerformance}% (${phase3Report.metrics.improvement.systemPerformance})`);
+// eslint-disable-next-line no-console
 console.log(`   平均提升: ${phase3Report.metrics.before.average}% → ${phase3Report.metrics.after.average}% (${phase3Report.metrics.improvement.average})`);
 
+// eslint-disable-next-line no-console
 console.log('\n🔧 主要改進:');
+// eslint-disable-next-line no-console
 console.log('   模擬鑑定系統:');
 phase3Report.optimizations.simulatedGrading.improvements.forEach(imp => {
+  // eslint-disable-next-line no-console
   console.log(`     • ${imp.feature}: ${imp.description}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n   整體系統整合:');
 phase3Report.optimizations.systemIntegration.improvements.forEach(imp => {
+  // eslint-disable-next-line no-console
   console.log(`     • ${imp.feature}: ${imp.description}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n📁 修改文件:');
 phase3Report.implementation.filesModified.forEach(file => {
+  // eslint-disable-next-line no-console
   console.log(`   • ${file}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n🎉 三階段優化完成總結:');
+// eslint-disable-next-line no-console
 console.log(`   總優化項目: ${phase3Report.finalSummary.totalOptimizations}`);
+// eslint-disable-next-line no-console
 console.log(`   卡牌辨識系統: ${phase3Report.finalSummary.accuracyImprovements.cardRecognition}`);
+// eslint-disable-next-line no-console
 console.log(`   置中評估系統: ${phase3Report.finalSummary.accuracyImprovements.centeringEvaluation}`);
+// eslint-disable-next-line no-console
 console.log(`   防偽判斷系統: ${phase3Report.finalSummary.accuracyImprovements.antiCounterfeit}`);
+// eslint-disable-next-line no-console
 console.log(`   AI預測價格系統: ${phase3Report.finalSummary.accuracyImprovements.aiPricePrediction}`);
+// eslint-disable-next-line no-console
 console.log(`   模擬鑑定系統: ${phase3Report.finalSummary.accuracyImprovements.simulatedGrading}`);
+// eslint-disable-next-line no-console
 console.log(`   系統整合性能: ${phase3Report.finalSummary.accuracyImprovements.systemIntegration}`);
+// eslint-disable-next-line no-console
 console.log(`   整體提升: ${phase3Report.finalSummary.overallImprovement.before} → ${phase3Report.finalSummary.overallImprovement.after} (${phase3Report.finalSummary.overallImprovement.improvement})`);

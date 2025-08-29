@@ -10,6 +10,7 @@ app.use(express.json());
 
 // 簡單的請求日誌中間件
 app.use((req, res, next) => {
+  // eslint-disable-next-line no-console
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
@@ -150,7 +151,8 @@ app.use('*', (req, res) => {
 });
 
 // 錯誤處理中間件
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-console
   console.error('Error:', err);
   res.status(500).json({
     success: false,
@@ -163,14 +165,19 @@ const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || 'localhost';
 
 const server = app.listen(PORT, HOST, () => {
+  // eslint-disable-next-line no-console
   console.log(
     `🚀 CardStrategy Progressive Enhanced Server running on http://${HOST}:${PORT}`
   );
+  // eslint-disable-next-line no-console
   console.log(`🏥 Health check: http://${HOST}:${PORT}/health`);
+  // eslint-disable-next-line no-console
   console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+  // eslint-disable-next-line no-console
   console.log(
     `📊 Performance test: http://${HOST}:${PORT}/api/test/performance`
   );
+  // eslint-disable-next-line no-console
   console.log(`🧪 Error test: http://${HOST}:${PORT}/api/test/error`);
 });
 

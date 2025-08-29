@@ -1,24 +1,24 @@
+import LogRocket from '@logrocket/react-native';
+import * as Updates from 'expo-updates';
 import React, { useEffect, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
+
+import type { Card } from './src/core/types/cards';
+import { logger } from './src/core/utils/logger';
+
+// 導入手機 App 組件
+import LoginScreen from './src/screens/LoginScreen';
+import RegisterScreen from './src/screens/RegisterScreen';
+import { cardService } from './src/shared/services/cardService';
+import { notificationService } from './src/shared/services/notificationService';
+import { portfolioService } from './src/shared/services/portfolioService';
+import type { PortfolioItem } from './src/shared/services/portfolioService';
 import { store } from './src/store';
-import * as Updates from 'expo-updates';
-import LogRocket from '@logrocket/react-native';
 import {
   checkAuthStatus,
   selectIsAuthenticated,
   selectIsLoading,
 } from './src/store/slices/authSlice';
-import { cardService, Card } from './src/services/cardService';
-import {
-  portfolioService,
-  PortfolioItem,
-} from './src/services/portfolioService';
-import { notificationService } from './src/services/notificationService';
-import { logger } from './src/utils/logger';
-
-// 導入手機 App 組件
-import LoginScreen from './src/screens/LoginScreen';
-import RegisterScreen from './src/screens/RegisterScreen';
 // import HomeScreen from './src/screens/HomeScreen';
 // import CardsScreen from './src/screens/CardsScreen';
 // import CollectionsScreen from './src/screens/CollectionsScreen';
@@ -29,16 +29,21 @@ import RegisterScreen from './src/screens/RegisterScreen';
 // import AIChatScreen from './src/screens/AIChatScreen';
 // import MarketAnalysisScreen from './src/screens/MarketAnalysisScreen';
 
+// 擴展 Card 類型以包含 series 屬性
+interface ExtendedCard extends Card {
+  series?: string;
+}
+
 // 主應用組件
-const AppContent = () => {
+const AppContent: React.FC = () => {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const isLoading = useSelector(selectIsLoading);
   const [currentScreen, setCurrentScreen] = useState<
     'Login' | 'Register' | 'Dashboard'
   >('Login');
-  const [cards, setCards] = useState<Card[]>([]);
-  const [selectedCard, setSelectedCard] = useState<Card | null>(null);
+  const [cards, setCards] = useState<ExtendedCard[]>([]);
+  const [selectedCard, setSelectedCard] = useState<ExtendedCard | null>(null);
   const [portfolio] = useState<PortfolioItem[]>([]);
 
   useEffect(() => {
@@ -59,7 +64,7 @@ const AppContent = () => {
     };
 
     // 檢查認證狀態
-    dispatch(checkAuthStatus());
+    dispatch(checkAuthStatus() as any);
 
     // 初始化通知服務
     initializeServices();
@@ -76,34 +81,111 @@ const AppContent = () => {
   const loadCards = async () => {
     try {
       // 使用真實 API 獲取卡片數據
-      const cardsResponse = await cardService.getCards({
-        page: 1,
-        limit: 10,
-        sortBy: 'date',
-        sortOrder: 'desc',
-      });
+      const cardsResponse = await cardService.getCards();
 
-      if (cardsResponse.success) {
-        setCards(cardsResponse.data.cards);
+      if (cardsResponse && Array.isArray(cardsResponse)) {
+        setCards(cardsResponse as ExtendedCard[]);
       } else {
         // 如果 API 失敗，使用模擬數據作為備用
-        logger.warn('API 獲取卡片失敗，使用模擬數據', {
-          error: cardsResponse.message,
-        });
-        const mockCards = cardService.getMockCards();
+        logger.warn('API 獲取卡片失敗，使用模擬數據');
+        const mockCards: ExtendedCard[] = [
+          {
+            id: '1',
+            name: '示例卡片',
+            setName: '示例系列',
+            cardNumber: '001',
+            rarity: 'rare',
+            type: 'creature',
+            attributes: {},
+            marketData: {
+              currentPrice: 100,
+              priceHistory: [],
+              marketTrend: 'stable',
+              volatility: 0.1,
+              demand: 'medium',
+              supply: 'medium',
+              lastUpdated: new Date(),
+            },
+            images: {
+              front: '',
+              thumbnail: '',
+            },
+            metadata: {
+              game: 'TCG',
+              set: '示例系列',
+              language: 'zh-TW',
+              condition: 'near-mint',
+              isFoil: false,
+              isSigned: false,
+              isGraded: false,
+            },
+            price: 100,
+            currentPrice: 100,
+            priceChange: 0,
+            condition: 'near-mint',
+            set: '示例系列',
+            isFavorite: false,
+            imageUrl: '',
+            description: '這是一個示例卡片',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
+        ];
         setCards(mockCards);
       }
     } catch (error) {
       logger.error('載入卡片失敗:', { error });
       // 錯誤時使用模擬數據
-      const mockCards = cardService.getMockCards();
+      const mockCards: ExtendedCard[] = [
+        {
+          id: '1',
+          name: '示例卡片',
+          setName: '示例系列',
+          cardNumber: '001',
+          rarity: 'rare',
+          type: 'creature',
+          attributes: {},
+          marketData: {
+            currentPrice: 100,
+            priceHistory: [],
+            marketTrend: 'stable',
+            volatility: 0.1,
+            demand: 'medium',
+            supply: 'medium',
+            lastUpdated: new Date(),
+          },
+          images: {
+            front: '',
+            thumbnail: '',
+          },
+          metadata: {
+            game: 'TCG',
+            set: '示例系列',
+            language: 'zh-TW',
+            condition: 'near-mint',
+            isFoil: false,
+            isSigned: false,
+            isGraded: false,
+          },
+          price: 100,
+          currentPrice: 100,
+          priceChange: 0,
+          condition: 'near-mint',
+          set: '示例系列',
+          isFavorite: false,
+          imageUrl: '',
+          description: '這是一個示例卡片',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ];
       setCards(mockCards);
     }
   };
 
-  const loadPortfolio = () => {
+  const loadPortfolio = async () => {
     try {
-      portfolioService.getPortfolio();
+      await portfolioService.getPortfolio();
     } catch (error) {
       logger.error('載入投資組合失敗:', { error });
     }
@@ -113,7 +195,7 @@ const AppContent = () => {
     setCurrentScreen(screen);
   };
 
-  const handleCardClick = (card: Card) => {
+  const handleCardClick = (card: ExtendedCard) => {
     setSelectedCard(card);
   };
 
@@ -121,29 +203,42 @@ const AppContent = () => {
     setSelectedCard(null);
   };
 
-  const handleAddToPortfolio = (card: Card) => {
+  const handleAddToPortfolio = async (card: ExtendedCard) => {
     // 簡單的添加邏輯，實際應用中可以彈出輸入框讓用戶輸入數量和價格
     const quantity = 1;
-    const purchasePrice = card.price.current;
+    const purchasePrice = card.price || card.currentPrice || 0;
 
-    portfolioService.addToPortfolio(
-      card,
-      quantity,
-      purchasePrice,
-      '從卡片詳情頁面添加'
-    );
-    loadPortfolio(); // 重新載入投資組合
+    try {
+      await portfolioService.addPortfolioItem({
+        cardId: card.id,
+        cardName: card.name,
+        quantity,
+        averagePrice: purchasePrice,
+        currentPrice: card.currentPrice || card.price || 0,
+        totalValue: (card.currentPrice || card.price || 0) * quantity,
+        profitLoss: 0,
+        profitLossPercentage: 0,
+        notes: '從卡片詳情頁面添加',
+      });
+      await loadPortfolio(); // 重新載入投資組合
 
-    logger.info(`已將 ${card.name} 加入投資組合！`, {
-      quantity,
-      purchasePrice,
-    });
+      logger.info(`已將 ${card.name} 加入投資組合！`, {
+        quantity,
+        purchasePrice,
+      });
+    } catch (error) {
+      logger.error('添加投資組合項目失敗:', { error });
+    }
   };
 
-  const handleRemoveFromPortfolio = (itemId: string) => {
+  const handleRemoveFromPortfolio = async (itemId: string) => {
     // 直接移除，假設確認已在其他地方處理
-    portfolioService.removeFromPortfolio(itemId);
-    loadPortfolio();
+    try {
+      await portfolioService.removePortfolioItem(itemId);
+      await loadPortfolio();
+    } catch (error) {
+      logger.error('移除投資組合項目失敗:', { error });
+    }
   };
 
   const handleLogout = () => {
@@ -198,261 +293,209 @@ const AppContent = () => {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <h1
-              style={{
-                fontSize: '24px',
-                color: '#2c3e50',
-                margin: '0',
-                fontWeight: 'bold',
-              }}
-            >
-              🎴 卡策
+            <h1 style={{ margin: 0, fontSize: '24px', color: '#2c3e50' }}>
+              🃏 卡策
             </h1>
-            <span
-              style={{
-                fontSize: '14px',
-                color: '#7f8c8d',
-                backgroundColor: '#ecf0f1',
-                padding: '4px 8px',
-                borderRadius: '4px',
-              }}
-            >
-              智選卡牌，策略致勝
-            </span>
           </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button
-              style={{
-                backgroundColor: '#27ae60',
-                color: '#ffffff',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '14px',
-              }}
-              onClick={() => setCurrentScreen('Dashboard')}
-            >
-              💎 投資組合 ({portfolio.length})
-            </button>
-            <button
-              style={{
-                backgroundColor: '#e74c3c',
-                color: '#ffffff',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                fontSize: '14px',
-              }}
-              onClick={handleLogout}
-            >
-              登出
-            </button>
-          </div>
+          <button
+            style={{
+              backgroundColor: '#e74c3c',
+              color: 'white',
+              border: 'none',
+              padding: '8px 16px',
+              borderRadius: '4px',
+              cursor: 'pointer',
+            }}
+            onClick={handleLogout}
+          >
+            登出
+          </button>
         </div>
 
-        {/* 主要內容 */}
         <div style={{ padding: '24px' }}>
           <div
             style={{
-              backgroundColor: '#ffffff',
-              borderRadius: '12px',
-              padding: '24px',
-              marginBottom: '24px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '24px',
+              marginBottom: '32px',
             }}
           >
-            <h2
+            <div
               style={{
-                fontSize: '28px',
-                color: '#2c3e50',
-                margin: '0 0 16px 0',
-                fontWeight: 'bold',
+                backgroundColor: '#ffffff',
+                padding: '24px',
+                borderRadius: '8px',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
               }}
             >
-              🎉 歡迎來到卡策！
-            </h2>
-            <p
-              style={{
-                fontSize: '16px',
-                color: '#7f8c8d',
-                margin: '0 0 24px 0',
-              }}
-            >
-              您已成功登錄，開始探索卡牌投資的世界
-            </p>
+              <h3
+                style={{
+                  margin: '0 0 16px 0',
+                  color: '#2c3e50',
+                  fontSize: '18px',
+                }}
+              >
+                📊 投資組合概覽
+              </h3>
+              <p
+                style={{
+                  margin: '0 0 8px 0',
+                  color: '#7f8c8d',
+                  fontSize: '14px',
+                }}
+              >
+                總卡片數：{portfolio.length}
+              </p>
+            </div>
 
             <div
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                gap: '16px',
-                marginBottom: '24px',
+                backgroundColor: '#ffffff',
+                padding: '24px',
+                borderRadius: '8px',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
               }}
             >
-              <div
+              <h3
                 style={{
-                  backgroundColor: '#e8f5e8',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  border: '1px solid #c8e6c9',
+                  margin: '0 0 16px 0',
+                  color: '#2c3e50',
+                  fontSize: '18px',
                 }}
               >
-                <h3
-                  style={{
-                    color: '#27ae60',
-                    margin: '0 0 8px 0',
-                    fontSize: '16px',
-                  }}
-                >
-                  🚀 功能開發中
-                </h3>
-                <p
-                  style={{
-                    color: '#7f8c8d',
-                    margin: '0',
-                    fontSize: '14px',
-                  }}
-                >
-                  主應用功能即將推出...
-                </p>
-              </div>
-              <div
+                💰 總價值
+              </h3>
+              <p
                 style={{
-                  backgroundColor: '#fff3e0',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  border: '1px solid #ffcc02',
+                  margin: '0 0 8px 0',
+                  color: '#7f8c8d',
+                  fontSize: '14px',
                 }}
               >
-                <h3
-                  style={{
-                    color: '#f39c12',
-                    margin: '0 0 8px 0',
-                    fontSize: '16px',
-                  }}
-                >
-                  📈 市場趨勢
-                </h3>
-                <p
-                  style={{
-                    color: '#7f8c8d',
-                    margin: '0',
-                    fontSize: '14px',
-                  }}
-                >
-                  AI驅動的市場分析
-                </p>
-              </div>
-              <div
+                計算中...
+              </p>
+            </div>
+
+            <div
+              style={{
+                backgroundColor: '#ffffff',
+                padding: '24px',
+                borderRadius: '8px',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+              }}
+            >
+              <h3
                 style={{
-                  backgroundColor: '#e3f2fd',
-                  borderRadius: '8px',
-                  padding: '16px',
-                  border: '1px solid #bbdefb',
+                  margin: '0 0 16px 0',
+                  color: '#2c3e50',
+                  fontSize: '18px',
                 }}
               >
-                <h3
-                  style={{
-                    color: '#3498db',
-                    margin: '0 0 8px 0',
-                    fontSize: '16px',
-                  }}
-                >
-                  🤖 AI助手
-                </h3>
-                <p
-                  style={{
-                    color: '#7f8c8d',
-                    margin: '0',
-                    fontSize: '14px',
-                  }}
-                >
-                  智能投資建議
-                </p>
-              </div>
+                📈 今日變化
+              </h3>
+              <p
+                style={{
+                  margin: '0 0 8px 0',
+                  color: '#7f8c8d',
+                  fontSize: '14px',
+                }}
+              >
+                更新中...
+              </p>
             </div>
           </div>
 
-          {/* 卡片展示 */}
           <div
             style={{
               backgroundColor: '#ffffff',
-              borderRadius: '12px',
               padding: '24px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              borderRadius: '8px',
+              boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
             }}
           >
             <h3
               style={{
-                fontSize: '24px',
+                margin: '0 0 24px 0',
                 color: '#2c3e50',
-                margin: '0 0 16px 0',
-                fontWeight: 'bold',
+                fontSize: '20px',
               }}
             >
-              🎴 熱門卡片
+              🃏 最新卡片
             </h3>
             <p
               style={{
-                fontSize: '16px',
+                margin: '0 0 16px 0',
                 color: '#7f8c8d',
-                margin: '0 0 24px 0',
+                fontSize: '16px',
               }}
             >
-              探索最受歡迎的卡牌，查看實時價格和市場趨勢
+              發現的最新卡片
             </p>
 
-            {/* 這裡應該使用 React Native 的 FlatList 或 ScrollView */}
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
                 gap: '16px',
               }}
             >
-              {cards.slice(0, 6).map((card) => (
+              {cards.map(card => (
                 <div
                   key={card.id}
                   style={{
-                    backgroundColor: '#ffffff',
+                    border: '1px solid #e1e8ed',
                     borderRadius: '8px',
                     padding: '16px',
-                    border: '1px solid #ecf0f1',
                     cursor: 'pointer',
-                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    transition: 'all 0.2s ease',
                   }}
                   onClick={() => handleCardClick(card)}
                 >
                   <h4
                     style={{
-                      fontSize: '16px',
-                      color: '#2c3e50',
                       margin: '0 0 8px 0',
-                      fontWeight: 'bold',
+                      color: '#2c3e50',
+                      fontSize: '16px',
                     }}
                   >
                     {card.name}
                   </h4>
                   <p
                     style={{
-                      fontSize: '14px',
-                      color: '#7f8c8d',
                       margin: '0 0 8px 0',
+                      color: '#7f8c8d',
+                      fontSize: '14px',
                     }}
                   >
-                    {card.series}
+                    {card.series || '未知系列'}
                   </p>
                   <div
                     style={{
-                      fontSize: '18px',
-                      color: '#27ae60',
-                      fontWeight: 'bold',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
                     }}
                   >
-                    {card.price.current} TWD
+                    <span
+                      style={{
+                        color: '#27ae60',
+                        fontWeight: 'bold',
+                        fontSize: '16px',
+                      }}
+                    >
+                      ${card.currentPrice || card.price || 0}
+                    </span>
+                    <span
+                      style={{
+                        color:
+                          (card.priceChange || 0) >= 0 ? '#27ae60' : '#e74c3c',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {(card.priceChange || 0) >= 0 ? '+' : ''}
+                      {(card.priceChange || 0).toFixed(2)}%
+                    </span>
                   </div>
                 </div>
               ))}
@@ -469,95 +512,101 @@ const AppContent = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
               zIndex: 1000,
-              padding: '20px',
             }}
           >
             <div
               style={{
                 backgroundColor: '#ffffff',
-                borderRadius: '16px',
-                maxWidth: '600px',
-                width: '100%',
-                maxHeight: '90vh',
-                overflow: 'hidden',
-                position: 'relative',
+                padding: '32px',
+                borderRadius: '12px',
+                maxWidth: '500px',
+                width: '90%',
+                maxHeight: '80vh',
+                overflow: 'auto',
               }}
             >
-              <button
-                style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
-                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                  color: '#ffffff',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  zIndex: 10,
-                }}
-                onClick={handleCloseCardDetail}
-              >
-                ✕
-              </button>
               <div
                 style={{
-                  padding: '24px',
-                  overflowY: 'auto',
-                  maxHeight: 'calc(90vh - 48px)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  marginBottom: '24px',
                 }}
               >
                 <h2
                   style={{
-                    fontSize: '24px',
-                    fontWeight: 'bold',
+                    margin: 0,
                     color: '#2c3e50',
-                    margin: '0 0 16px 0',
+                    fontSize: '24px',
                   }}
                 >
                   {selectedCard.name}
                 </h2>
+                <button
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: 'none',
+                    fontSize: '24px',
+                    cursor: 'pointer',
+                    color: '#7f8c8d',
+                  }}
+                  onClick={handleCloseCardDetail}
+                >
+                  ×
+                </button>
+              </div>
+
+              <div
+                style={{
+                  marginBottom: '16px',
+                }}
+              >
                 <p
                   style={{
-                    fontSize: '16px',
+                    margin: '0 0 8px 0',
                     color: '#7f8c8d',
-                    margin: '0 0 16px 0',
+                    fontSize: '16px',
                   }}
                 >
-                  {selectedCard.series} • {selectedCard.rarity}
+                  {selectedCard.series || '未知系列'} • {selectedCard.rarity}
                 </p>
                 <div
                   style={{
-                    fontSize: '24px',
-                    color: '#27ae60',
-                    fontWeight: 'bold',
-                    marginBottom: '16px',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    marginBottom: '24px',
                   }}
                 >
-                  {selectedCard.price.current} TWD
+                  <span
+                    style={{
+                      color: '#27ae60',
+                      fontWeight: 'bold',
+                      fontSize: '24px',
+                    }}
+                  >
+                    ${selectedCard.currentPrice || selectedCard.price || 0}
+                  </span>
+                  <button
+                    style={{
+                      backgroundColor: '#3498db',
+                      color: 'white',
+                      border: 'none',
+                      padding: '12px 24px',
+                      borderRadius: '6px',
+                      cursor: 'pointer',
+                      fontSize: '16px',
+                    }}
+                    onClick={() => handleAddToPortfolio(selectedCard)}
+                  >
+                    加入投資組合
+                  </button>
                 </div>
-                <button
-                  style={{
-                    backgroundColor: '#3498db',
-                    color: '#ffffff',
-                    border: 'none',
-                    padding: '12px 24px',
-                    borderRadius: '8px',
-                    cursor: 'pointer',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                  }}
-                  onClick={() => handleAddToPortfolio(selectedCard)}
-                >
-                  💎 加入投資組合
-                </button>
               </div>
             </div>
           </div>
@@ -566,23 +615,24 @@ const AppContent = () => {
     );
   }
 
-  // 未認證用戶 - 顯示認證屏幕
+  // 未認證用戶 - 顯示登錄/註冊頁面
   return (
     <>
-      {currentScreen === 'Login' ? (
-        <LoginScreen onNavigate={handleNavigate} />
-      ) : (
+      {currentScreen === 'Login' && <LoginScreen onNavigate={handleNavigate} />}
+      {currentScreen === 'Register' && (
         <RegisterScreen onNavigate={handleNavigate} />
       )}
     </>
   );
 };
 
-// 主App組件
-export default function App() {
+// 主應用組件
+const App: React.FC = () => {
   return (
     <Provider store={store}>
       <AppContent />
     </Provider>
   );
-}
+};
+
+export default App;

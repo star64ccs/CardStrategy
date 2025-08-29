@@ -1,129 +1,148 @@
 module.exports = {
-  preset: 'jest-expo',
-  setupFilesAfterEnv: [
-    '<rootDir>/jest.setup.minimal.js',
+  "preset": "jest-expo",
+  "setupFilesAfterEnv": [
+    "<rootDir>/jest.setup.simple.js"
   ],
-  transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-native-community|@react-native/js-polyfills|expo|@expo|react-navigation|@react-navigation|@unimodules|unimodules|sentry-expo|native-base|react-native-svg|expo-modules-core|expo-image-manipulator)/)',
+  "transformIgnorePatterns": [
+    "node_modules/(?!(react-native|@react-native|@react-native-community|@react-native/js-polyfills|expo|@expo|react-navigation|@react-navigation|@unimodules|unimodules|sentry-expo|native-base|react-native-svg|expo-modules-core|expo-image-manipulator|msw|@mswjs)/)"
   ],
-  collectCoverageFrom: [
-    'src/**/*.{ts,tsx}',
-    '!src/**/*.d.ts',
-    '!src/**/*.stories.{ts,tsx}',
-    '!src/**/*.test.{ts,tsx}',
-    '!src/**/*.spec.{ts,tsx}',
-    '!src/**/index.{ts,tsx}',
-    '!src/**/types.{ts,tsx}',
-    '!src/**/constants.{ts,tsx}',
-    '!src/**/utils.{ts,tsx}',
-    '!src/**/helpers.{ts,tsx}',
-    '!src/**/mocks.{ts,tsx}',
-    '!src/**/fixtures.{ts,tsx}',
-    '!src/**/stubs.{ts,tsx}',
-    '!src/**/test-utils.{ts,tsx}',
-    '!src/**/test-helpers.{ts,tsx}',
-    '!src/**/test-mocks.{ts,tsx}',
-    '!src/**/test-fixtures.{ts,tsx}',
-    '!src/**/test-stubs.{ts,tsx}',
-    '!src/__tests__/**/*',
-    '!src/**/__mocks__/**/*',
+  "collectCoverageFrom": [
+    "src/**/*.{ts,tsx}",
+    "!src/**/*.d.ts",
+    "!src/**/*.stories.{ts,tsx}",
+    "!src/**/*.test.{ts,tsx}",
+    "!src/**/*.spec.{ts,tsx}",
+    "!src/**/index.{ts,tsx}",
+    "!src/**/types.{ts,tsx}",
+    "!src/**/constants.{ts,tsx}",
+    "!src/**/utils.{ts,tsx}",
+    "!src/**/helpers.{ts,tsx}",
+    "!src/**/mocks.{ts,tsx}",
+    "!src/**/fixtures.{ts,tsx}",
+    "!src/**/stubs.{ts,tsx}",
+    "!src/**/test-utils.{ts,tsx}",
+    "!src/**/test-helpers.{ts,tsx}",
+    "!src/**/test-mocks.{ts,tsx}",
+    "!src/**/test-fixtures.{ts,tsx}",
+    "!src/**/test-stubs.{ts,tsx}",
+    "!src/__tests__/**/*",
+    "!src/**/__mocks__/**/*"
   ],
-  coverageThreshold: {
-    global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+  "coverageThreshold": {
+    "global": {
+      "branches": 80,
+      "functions": 80,
+      "lines": 80,
+      "statements": 80
     },
-    './src/utils/': {
-      branches: 90,
-      functions: 90,
-      lines: 90,
-      statements: 90,
+    "./src/utils/": {
+      "branches": 90,
+      "functions": 90,
+      "lines": 90,
+      "statements": 90
     },
-    './src/services/': {
-      branches: 85,
-      functions: 85,
-      lines: 85,
-      statements: 85,
+    "./src/services/": {
+      "branches": 85,
+      "functions": 85,
+      "lines": 85,
+      "statements": 85
     },
-    './src/store/': {
-      branches: 85,
-      functions: 85,
-      lines: 85,
-      statements: 85,
-    },
+    "./src/store/": {
+      "branches": 85,
+      "functions": 85,
+      "lines": 85,
+      "statements": 85
+    }
   },
-  coverageReporters: ['text', 'lcov', 'html', 'json', 'text-summary'],
-  testMatch: [
-    '<rootDir>/src/**/__tests__/**/*.{ts,tsx}',
-    '<rootDir>/src/**/*.{test,spec}.{ts,tsx}',
-    '<rootDir>/src/__tests__/**/*.{ts,tsx}',
+  "coverageReporters": [
+    "text",
+    "lcov",
+    "html",
+    "json",
+    "text-summary"
   ],
-  testEnvironment: 'jsdom',
-  moduleNameMapper: {
-    '^@/(.*)$': '<rootDir>/src/$1',
-    '^@/components/(.*)$': '<rootDir>/src/components/$1',
-    '^@/screens/(.*)$': '<rootDir>/src/screens/$1',
-    '^@/services/(.*)$': '<rootDir>/src/services/$1',
-    '^@/store/(.*)$': '<rootDir>/src/store/$1',
-    '^@/utils/(.*)$': '<rootDir>/src/utils/$1',
-    '^@/config/(.*)$': '<rootDir>/src/config/$1',
-    '^@/i18n/(.*)$': '<rootDir>/src/i18n/$1',
-    '^@/types/(.*)$': '<rootDir>/src/types/$1',
-    '^@/assets/(.*)$': '<rootDir>/assets/$1',
-    '^@/__tests__/(.*)$': '<rootDir>/src/__tests__/$1',
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node', 'flow'],
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/android/',
-    '/ios/',
-    '/.expo/',
-    '/dist/',
-    '/build/',
-    '/coverage/',
+  "testMatch": [
+    "<rootDir>/src/**/__tests__/**/*.{ts,tsx}",
+    "<rootDir>/src/**/*.{test,spec}.{ts,tsx}",
+    "<rootDir>/src/__tests__/**/*.{ts,tsx}"
   ],
-  transform: {
-    '^.+\\.(js|jsx|ts|tsx|flow)$': 'babel-jest',
+  "testEnvironment": "jsdom",
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^@/components/(.*)$": "<rootDir>/src/components/$1",
+    "^@/screens/(.*)$": "<rootDir>/src/screens/$1",
+    "^@/services/(.*)$": "<rootDir>/src/services/$1",
+    "^@/store/(.*)$": "<rootDir>/src/store/$1",
+    "^@/utils/(.*)$": "<rootDir>/src/utils/$1",
+    "^@/config/(.*)$": "<rootDir>/src/config/$1",
+    "^@/i18n/(.*)$": "<rootDir>/src/i18n/$1",
+    "^@/types/(.*)$": "<rootDir>/src/types/$1",
+    "^@/assets/(.*)$": "<rootDir>/assets/$1",
+    "^@/__tests__/(.*)$": "<rootDir>/src/__tests__/$1",
+    "^msw/node$": "<rootDir>/node_modules/msw/lib/node/index.js",
+    "^@mswjs/interceptors/(.*)$": "<rootDir>/node_modules/@mswjs/interceptors/$1"
   },
-  globals: {
-    'ts-jest': {
-      useESM: true,
-    },
-  },
-  verbose: true,
-  clearMocks: true,
-  restoreMocks: true,
-  resetMocks: true,
-  testTimeout: 15000,
-  testSequencer: '<rootDir>/scripts/test-sequencer.js',
-  maxWorkers: '15%',
-  workerIdleMemoryLimit: '2GB',
-  bail: 0,
-  collectCoverage: false,
-  coverageDirectory: 'coverage',
-  coveragePathIgnorePatterns: [
-    '/node_modules/',
-    '/src/__tests__/',
-    '/src/.*/__mocks__/',
-    '/src/.*\\.test\\.{ts,tsx}',
-    '/src/.*\\.spec\\.{ts,tsx}',
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "js",
+    "jsx",
+    "json",
+    "node",
+    "flow"
   ],
-  reporters: [
-    'default',
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/android/",
+    "/ios/",
+    "/.expo/",
+    "/dist/",
+    "/build/",
+    "/coverage/",
+    "/src/__tests__/e2e/"
+  ],
+  "transform": {
+    "^.+\\.(js|jsx|ts|tsx|flow)$": "babel-jest"
+  },
+  "globals": {
+    "ts-jest": {
+      "useESM": true
+    }
+  },
+  "verbose": false,
+  "clearMocks": true,
+  "restoreMocks": true,
+  "resetMocks": true,
+  "testTimeout": 15000,
+  "testSequencer": "<rootDir>/scripts/test-sequencer.js",
+  "maxWorkers": "50%",
+  "workerIdleMemoryLimit": "2GB",
+  "bail": 0,
+  "collectCoverage": false,
+  "coverageDirectory": "coverage",
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    "/src/__tests__/",
+    "/src/.*/__mocks__/",
+    "/src/.*\\.test\\.{ts,tsx}",
+    "/src/.*\\.spec\\.{ts,tsx}"
+  ],
+  "reporters": [
+    "default",
     [
-      'jest-junit',
+      "jest-junit",
       {
-        outputDirectory: 'coverage',
-        outputName: 'junit.xml',
-        classNameTemplate: '{classname}',
-        titleTemplate: '{title}',
-        ancestorSeparator: ' › ',
-        usePathForSuiteName: true,
-      },
-    ],
+        "outputDirectory": "coverage",
+        "outputName": "junit.xml",
+        "classNameTemplate": "{classname}",
+        "titleTemplate": "{title}",
+        "ancestorSeparator": " › ",
+        "usePathForSuiteName": true
+      }
+    ]
   ],
-  // 添加對 ES 模組的支持
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  "extensionsToTreatAsEsm": [
+    ".ts",
+    ".tsx"
+  ]
 };

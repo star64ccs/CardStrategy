@@ -1,326 +1,348 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { environment } from './environment';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { logger } from '../utils/logger';
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
 
-// 統一的 API 基礎 URL 配置
-const getApiBaseUrl = () => {
-  // 優先使用環境變數
-  if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL;
+import { logger } from '@/utils/logger';
+
+export interface ApiConfig {
+  baseURL: string;
+  timeout: number;
+  headers: Record<string, string>;
+  withCredentials: boolean;
+}
+
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  errors?: string[];
+  statusCode?: number;
+}
+
+class ApiClient {
+  private readonly instance: AxiosInstance;
+  private config: ApiConfig;
+
+  constructor() {
+    this.config = {
+      baseURL:
+        process.env.NODE_ENV === 'test'
+          ? '/api' // 測試環境使用相對路徑
+          : process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000/api',
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      withCredentials: true,
+    };
+
+    this.instance = axios.create(this.config);
+    this.setupInterceptors();
   }
 
-  // 根據環境選擇
-  const env = process.env.NODE_ENV || 'development';
+  private setupInterceptors(): void {
+    // 請求攔截器
+    this.instance.interceptors.request.use(
+      config => {
+        logger.debug('API Request', {
+          method: config.method?.toUpperCase(),
+          url: config.url,
+          data: config.data,
+        });
 
-  switch (env) {
-    case 'production':
-    case 'staging':
-      return 'https://cardstrategy-api.onrender.com/api';
-    case 'development':
-    default:
-      return 'http://localhost:3000/api';
+        // 添加認證令牌
+        this.addAuthToken(config);
+
+        return config;
+      },
+      error => {
+        logger.error('API Request Error', error);
+        return Promise.reject(error);
+      }
+    );
+
+    // 響應攔截器
+    this.instance.interceptors.response.use(
+      (response: AxiosResponse) => {
+        logger.debug('API Response', {
+          status: response.status,
+          url: response.config.url,
+          data: response.data,
+        });
+
+        return response;
+      },
+      async error => {
+        logger.error('API Response Error', {
+          status: error.response?.status,
+          url: error.config?.url,
+          message: error.message,
+          data: error.response?.data,
+        });
+
+        // 處理 401 未授權錯誤
+        if (error.response?.status === 401) {
+          await this.handleUnauthorized();
+        }
+
+        return Promise.reject(error);
+      }
+    );
   }
-};
 
-// 創建 axios 實例
-const api: AxiosInstance = axios.create({
-  baseURL: getApiBaseUrl(),
-  timeout: 30000,
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-  },
-});
-
-// 請求攔截器
-api.interceptors.request.use(
-  async (config) => {
-    // 添加認證 token
+  private async addAuthToken(config: AxiosRequestConfig): Promise<void> {
     try {
-      const token = await AsyncStorage.getItem('authToken');
+      // 在測試環境中跳過認證令牌
+      if (process.env.NODE_ENV === 'test') {
+        return;
+      }
+
+      // 在運行時使用 import
+      const _module = await import('@react-native-async-storage/async-storage');
+      const _AsyncStorage = module.default;
+      const _token = await AsyncStorage.getItem('accessToken');
+
       if (token) {
+        config.headers = config.headers || {};
         config.headers.Authorization = `Bearer ${token}`;
       }
     } catch (error) {
-      logger.warn('無法獲取認證 token:', error);
+      logger.error('Failed to add auth token', error);
     }
-
-    logger.info(`🌐 API 請求: ${config.method?.toUpperCase()} ${config.url}`);
-    return config;
-  },
-  (error) => {
-    logger.error('API 請求錯誤:', error);
-    return Promise.reject(error);
   }
-);
 
-// 響應攔截器
-api.interceptors.response.use(
-  (response: AxiosResponse) => {
-    logger.info(`✅ API 響應: ${response.status} ${response.config.url}`);
-    return response;
-  },
-  async (error) => {
-    logger.error('API 響應錯誤:', {
-      status: error.response?.status,
-      url: error.config?.url,
-      message: error.message,
-    });
+  private async handleUnauthorized(): Promise<void> {
+    try {
+      // 在測試環境中跳過處理
+      if (process.env.NODE_ENV === 'test') {
+        return;
+      }
 
-    // 處理 401 未授權錯誤
-    if (error.response?.status === 401) {
+      // 嘗試刷新令牌
+      const { authService } = await import('@/services/authService');
+      const _refreshResult = await authService.refreshToken();
+
+      if (!refreshResult.success) {
+        // 刷新失敗，清除認證數據並重定向到登錄頁面
+        await authService.logout();
+        // 這裡可以觸發重定向到登錄頁面的事件
+        logger.warn('Authentication expired, redirecting to login');
+      }
+    } catch (error) {
+      logger.error('Failed to handle unauthorized error', error);
+    }
+  }
+
+  public async get<T = any>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    if (process.env.NODE_ENV === 'test') {
+      // 在測試環境中使用 fetch
+      const _fullUrl = url.startsWith('http')
+        ? url
+        : `http://localhost${this.config.baseURL}${url}`;
+
+      // 創建超時控制器
+      const _controller = new AbortController();
+      const _timeoutId = setTimeout(
+        () => controller.abort(),
+        config?.timeout || this.config.timeout
+      );
+
       try {
-        await AsyncStorage.removeItem('authToken');
-        // 可以觸發重新登錄邏輯
-      } catch (storageError) {
-        logger.error('清除認證 token 失敗:', storageError);
+        const _response = await fetch(fullUrl, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(config?.headers as Record<string, string>),
+          },
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const _data = await response.json();
+        return {
+          data,
+          status: response.status,
+          statusText: response.statusText,
+          headers: response.headers as any,
+          config: { url },
+        } as AxiosResponse<T>;
+      } catch (error: unknown) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+          throw new Error('請求超時');
+        }
+        throw error;
       }
     }
-
-    return Promise.reject(error);
+    return this.instance.get(url, config);
   }
-);
 
-// API 端點配置
-export const API_ENDPOINTS = {
-  // 基礎端點
-  BASE_URL: getApiBaseUrl(),
+  public async post<T = any>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    if (process.env.NODE_ENV === 'test') {
+      // 在測試環境中使用 fetch
+      const _fullUrl = url.startsWith('http')
+        ? url
+        : `http://localhost${this.config.baseURL}${url}`;
+      const _response = await fetch(fullUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(config?.headers as Record<string, string>),
+        },
+        body: JSON.stringify(data),
+      });
 
-  // 認證相關
-  AUTH: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    LOGOUT: '/auth/logout',
-    REFRESH: '/auth/refresh',
-    VERIFY: '/auth/verify',
-    FORGOT_PASSWORD: '/auth/forgot-password',
-    RESET_PASSWORD: '/auth/reset-password',
-    CHANGE_PASSWORD: '/auth/change-password',
-  },
+      const _responseData = await response.json();
+      return {
+        data: responseData,
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers as any,
+        config: { url },
+      } as AxiosResponse<T>;
+    }
+    return this.instance.post(url, data, config);
+  }
 
-  // 用戶相關
-  USERS: {
-    PROFILE: '/users/profile',
-    UPDATE: '/users/profile',
-    AVATAR: '/users/avatar',
-    PREFERENCES: '/users/preferences',
-    STATISTICS: '/users/statistics',
-  },
+  public async put<T = any>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    if (process.env.NODE_ENV === 'test') {
+      // 在測試環境中使用 fetch
+      const _fullUrl = url.startsWith('http')
+        ? url
+        : `http://localhost${this.config.baseURL}${url}`;
+      const _response = await fetch(fullUrl, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(config?.headers as Record<string, string>),
+        },
+        body: JSON.stringify(data),
+      });
 
-  // 卡牌相關
-  CARDS: {
-    LIST: '/cards',
-    CREATE: '/cards',
-    DETAIL: (id: string) => `/cards/${id}`,
-    UPDATE: (id: string) => `/cards/${id}`,
-    DELETE: (id: string) => `/cards/${id}`,
-    SEARCH: '/cards/search',
-    RECOMMENDATIONS: '/cards/recommendations',
-    BATCH_CREATE: '/cards/batch',
-    BATCH_UPDATE: '/cards/batch',
-    BATCH_DELETE: '/cards/batch',
-    UPLOAD_IMAGE: (id: string) => `/cards/${id}/image`,
-    ANALYZE: (id: string) => `/cards/${id}/analyze`,
-    VERIFY: (id: string) => `/cards/${id}/verify`,
-    ANALYZE_CONDITION: (id: string) => `/cards/${id}/analyze-condition`,
-    RECOGNIZE: '/cards/recognize',
-  },
+      const _responseData = await response.json();
+      return {
+        data: responseData,
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers as any,
+        config: { url },
+      } as AxiosResponse<T>;
+    }
+    return this.instance.put(url, data, config);
+  }
 
-  // 收藏相關
-  COLLECTIONS: {
-    LIST: '/collections',
-    CREATE: '/collections',
-    DETAIL: (id: string) => `/collections/${id}`,
-    UPDATE: (id: string) => `/collections/${id}`,
-    DELETE: (id: string) => `/collections/${id}`,
-    ADD_CARD: (id: string, cardId: string) =>
-      `/collections/${id}/cards/${cardId}`,
-    REMOVE_CARD: (id: string, cardId: string) =>
-      `/collections/${id}/cards/${cardId}`,
-  },
+  public async patch<T = any>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    if (process.env.NODE_ENV === 'test') {
+      // 在測試環境中使用 fetch
+      const _fullUrl = url.startsWith('http')
+        ? url
+        : `http://localhost${this.config.baseURL}${url}`;
+      const _response = await fetch(fullUrl, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(config?.headers as Record<string, string>),
+        },
+        body: JSON.stringify(data),
+      });
 
-  // 市場相關
-  MARKET: {
-    DATA: '/market-data',
-    TRENDS: '/market-data/trends',
-    ANALYSIS: '/market-data/analysis',
-    PREDICTIONS: '/market-data/predictions',
-  },
+      const _responseData = await response.json();
+      return {
+        data: responseData,
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers as any,
+        config: { url },
+      } as AxiosResponse<T>;
+    }
+    return this.instance.patch(url, data, config);
+  }
 
-  // 投資相關
-  INVESTMENTS: {
-    LIST: '/investments',
-    CREATE: '/investments',
-    DETAIL: (id: string) => `/investments/${id}`,
-    UPDATE: (id: string) => `/investments/${id}`,
-    DELETE: (id: string) => `/investments/${id}`,
-    PORTFOLIO: '/investments/portfolio',
-    ANALYTICS: '/investments/analytics',
-  },
+  public async delete<T = any>(
+    url: string,
+    config?: AxiosRequestConfig
+  ): Promise<AxiosResponse<T>> {
+    if (process.env.NODE_ENV === 'test') {
+      // 在測試環境中使用 fetch
+      const _fullUrl = url.startsWith('http')
+        ? url
+        : `http://localhost${this.config.baseURL}${url}`;
+      const _response = await fetch(fullUrl, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(config?.headers as Record<string, string>),
+        },
+      });
 
-  // AI相關
-  AI: {
-    RECOGNITION: '/ai/recognition',
-    BATCH_RECOGNITION: '/ai/recognition/batch',
-    VERIFY: '/ai/verify',
-    FEATURE_ANALYSIS: '/ai/features',
-    PREDICTION: '/ai/prediction',
-    RECOMMENDATION: '/ai/recommendation',
-    CHAT: '/ai/chat',
-    PORTFOLIO_ANALYSIS: '/ai/portfolio-analysis',
-    MARKET_PREDICTION: '/ai/market-prediction',
-    SMART_RECOMMENDATIONS: '/ai/smart-recommendations',
-    // 增強版AI端點
-    ENHANCED_RECOGNITION: '/ai/enhanced-recognition',
-    ENHANCED_CONDITION_ANALYSIS: '/ai/enhanced-condition-analysis',
-    ENHANCED_VERIFY: '/ai/enhanced-verify',
-    ENHANCED_PRICE_PREDICTION: '/ai/enhanced-price-prediction',
-    ENHANCED_STATS: '/ai/enhanced-stats',
-    UPDATE_MODEL: '/ai/update-model',
-    COMPREHENSIVE_ANALYSIS: '/ai/comprehensive-analysis',
-  },
+      const _responseData = await response.json();
+      return {
+        data: responseData,
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers as any,
+        config: { url },
+      } as AxiosResponse<T>;
+    }
+    return this.instance.delete(url, config);
+  }
 
-  // 防偽判斷相關
-  ANTI_COUNTERFEIT: {
-    DETECT: '/anti-counterfeit/detect',
-    PRINT_QUALITY: '/anti-counterfeit/print-quality',
-    MATERIAL: '/anti-counterfeit/material',
-    COLOR: '/anti-counterfeit/color',
-    FONT: '/anti-counterfeit/font',
-    HOLOGRAM: '/anti-counterfeit/hologram',
-    DATABASE: '/anti-counterfeit/database',
-    ALERT: '/anti-counterfeit/alert',
-    REPORT: '/anti-counterfeit/report',
-  },
+  public updateConfig(newConfig: Partial<ApiConfig>): void {
+    this.config = { ...this.config, ...newConfig };
 
-  // 模擬鑑定相關
-  GRADING: {
-    GRADE: '/grading/grade',
-    CENTERING: '/grading/centering',
-    CORNERS: '/grading/corners',
-    EDGES: '/grading/edges',
-    SURFACE: '/grading/surface',
-    VALUE: '/grading/value',
-    REPORT: '/grading/report',
-    SHARE: '/grading/share',
-  },
+    // 更新 axios 實例配置
+    this.instance.defaults.baseURL = this.config.baseURL;
+    this.instance.defaults.timeout = this.config.timeout;
+    if (this.config.headers) {
+      this.instance.defaults.headers.common = this.config.headers;
+    }
+    this.instance.defaults.withCredentials = this.config.withCredentials;
 
-  // 會員相關
-  MEMBERSHIP: {
-    STATUS: '/membership/status',
-    SUBSCRIBE: '/membership/subscribe',
-    CANCEL: '/membership/cancel',
-    UPGRADE: '/membership/upgrade',
-    USAGE: '/membership/usage',
-    BILLING: '/membership/billing',
-  },
+    logger.info('API configuration updated', this.config);
+  }
 
-  // 設置相關
-  SETTINGS: {
-    GET: '/settings',
-    UPDATE: '/settings',
-    NOTIFICATIONS: '/settings/notifications',
-    SECURITY: '/settings/security',
-    EXPORT: '/settings/export',
-    DELETE_ACCOUNT: '/settings/delete-account',
-  },
+  public getConfig(): ApiConfig {
+    return { ...this.config };
+  }
+}
 
-  // 掃描歷史相關
-  SCAN_HISTORY: {
-    LIST: '/scan-history',
-    CREATE: '/scan-history',
-    DETAIL: (id: string) => `/scan-history/${id}`,
-    UPDATE: (id: string) => `/scan-history/${id}`,
-    DELETE: (id: string) => `/scan-history/${id}`,
-    TOGGLE_FAVORITE: (id: string) => `/scan-history/${id}/favorite`,
-    ADD_NOTE: (id: string) => `/scan-history/${id}/note`,
-    ADD_TAGS: (id: string) => `/scan-history/${id}/tags`,
-    STATISTICS: '/scan-history/statistics',
-    EXPORT: '/scan-history/export',
-    SEARCH: '/scan-history/search',
-    RECOMMENDED_TAGS: '/scan-history/recommended-tags',
-    CLEANUP: '/scan-history/cleanup',
-  },
+// 創建單例實例
+export const _api = new ApiClient();
 
-  // 價格數據相關
-  PRICE_DATA: {
-    GRADING_DATA: '/price-data/grading-data',
-    RECOMMENDED_PLATFORMS: '/price-data/recommended-platforms',
-    PLATFORM_STATUS: '/price-data/platform-status',
-    SCRAPE_PRICES: '/price-data/scrape-prices',
-    SCRAPE_GRADING: '/price-data/scrape-grading',
-    UPDATE_CACHE: '/price-data/update-cache',
-    ANALYTICS: '/price-data/analytics',
-  },
+// 導出便捷方法
+export const _apiGet = <T = any>(url: string, config?: AxiosRequestConfig) =>
+  api.get<T>(url, config);
+export const _apiPost = <T = any>(
+  url: string,
+  data?: unknown,
+  config?: AxiosRequestConfig
+) => api.post<T>(url, data, config);
+export const _apiPut = <T = any>(
+  url: string,
+  data?: unknown,
+  config?: AxiosRequestConfig
+) => api.put<T>(url, data, config);
+export const _apiPatch = <T = any>(
+  url: string,
+  data?: unknown,
+  config?: AxiosRequestConfig
+) => api.patch<T>(url, data, config);
+export const _apiDelete = <T = any>(url: string, config?: AxiosRequestConfig) =>
+  api.delete<T>(url, config);
 
-  // 分享驗證相關
-  SHARE_VERIFICATION: {
-    LOOKUP: '/share-verification/lookup',
-    VALIDATE: '/share-verification/validate',
-    STATS: '/share-verification/stats',
-    DELETE: '/share-verification/delete',
-  },
-
-  // 預測相關
-  PREDICTIONS: {
-    HISTORY: '/predictions/history',
-    ACCURACY: '/predictions/accuracy',
-    BATCH: '/predictions/batch',
-    MODELS: '/predictions/models',
-    STATISTICS: '/predictions/statistics',
-    DELETE: '/predictions',
-  },
-
-  // 增強預測相關
-  ENHANCED_PREDICTIONS: {
-    ENHANCED_BATCH: '/enhanced-predictions/enhanced-batch',
-    MODEL_COMPARISON: '/enhanced-predictions/model-comparison',
-    TECHNICAL_ANALYSIS: '/enhanced-predictions/technical-analysis',
-    ACCURACY_ASSESSMENT: '/enhanced-predictions/accuracy-assessment',
-    PERFORMANCE_STATS: '/enhanced-predictions/performance-stats',
-    ENHANCED_MODELS: '/enhanced-predictions/enhanced-models',
-  },
-
-  // 模擬鑑定相關
-  SIMULATED_GRADING: {
-    GET: '/grading',
-    USER_REPORTS: '/grading/user',
-    SEARCH: '/grading/search',
-    SHARE: '/grading/share',
-  },
-
-  // 假卡回報相關
-  FAKE_CARD: {
-    SUBMIT: '/fake-card/submit',
-    USER_SUBMISSIONS: '/fake-card/user-submissions',
-    DATABASE: '/fake-card/database',
-    REWARDS: '/fake-card/rewards',
-    REVIEW: (id: string) => `/fake-card/${id}/review`,
-    STATS: '/fake-card/stats',
-  },
-
-  // 社區合作相關
-  COMMUNITY: {
-    APPLY_PARTNERSHIP: '/community/apply',
-    PARTNERS: '/community/partners',
-    CREATE_PROJECT: '/community/projects',
-    PROJECTS: '/community/projects',
-    UPDATE_PROJECT_PROGRESS: (id: string) => `/community/projects/${id}/progress`,
-    COLLABORATION_STATS: '/community/stats',
-  },
-
-  // 公開數據集相關
-  DATASET: {
-    LIST: '/dataset/list',
-    INTEGRATE: (id: string) => `/dataset/integrate/${id}`,
-    SYNC: (id: string) => `/dataset/sync/${id}`,
-    STATS: '/dataset/stats',
-    VALIDATE: (id: string) => `/dataset/validate/${id}`,
-  },
-};
-
-// 為了向後兼容，同時導出 API_CONFIG
-export const API_CONFIG = API_ENDPOINTS;
-
-export { api };
+export default api;

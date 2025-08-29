@@ -7,6 +7,7 @@ const path = require('path');
  * 在不影響效能和運作下找出可精簡部分
  */
 
+// eslint-disable-next-line no-console
 console.log('🔍 開始專案優化分析...\n');
 
 // 分析結果
@@ -69,6 +70,7 @@ const analysisResult = {
 
 // 分析依賴項
 function analyzeDependencies() {
+  // eslint-disable-next-line no-console
   console.log('📦 分析依賴項...');
   
   try {
@@ -119,12 +121,14 @@ function analyzeDependencies() {
     };
     
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('分析依賴項失敗:', error);
   }
 }
 
 // 分析文檔
 function analyzeDocumentation() {
+  // eslint-disable-next-line no-console
   console.log('📚 分析文檔...');
   
   const redundantDocs = [
@@ -168,6 +172,7 @@ function analyzeDocumentation() {
 
 // 分析配置文件
 function analyzeConfiguration() {
+  // eslint-disable-next-line no-console
   console.log('⚙️ 分析配置文件...');
   
   const redundantConfigs = [
@@ -207,6 +212,7 @@ function analyzeConfiguration() {
 
 // 分析腳本
 function analyzeScripts() {
+  // eslint-disable-next-line no-console
   console.log('🔧 分析腳本...');
   
   const scriptsDir = 'scripts';
@@ -244,6 +250,7 @@ function analyzeScripts() {
 
 // 分析代碼結構
 function analyzeCodeStructure() {
+  // eslint-disable-next-line no-console
   console.log('🏗️ 分析代碼結構...');
   
   const canSimplify = [
@@ -276,6 +283,7 @@ function analyzeCodeStructure() {
 
 // 生成建議
 function generateRecommendations() {
+  // eslint-disable-next-line no-console
   console.log('💡 生成優化建議...');
   
   // 立即執行
@@ -351,30 +359,45 @@ function performAnalysis() {
   );
   
   // 輸出摘要
+  // eslint-disable-next-line no-console
   console.log('\n✅ 專案優化分析完成！');
+  // eslint-disable-next-line no-console
   console.log('\n📊 分析摘要:');
+  // eslint-disable-next-line no-console
   console.log(`   總文件數: ${4204 + 56485 + 18696 + 789 + 5261}`);
+  // eslint-disable-next-line no-console
   console.log(`   可移除文件: ${optimizationPotential.filesToRemove}`);
+  // eslint-disable-next-line no-console
   console.log(`   可移除依賴: ${optimizationPotential.dependenciesToRemove}`);
+  // eslint-disable-next-line no-console
   console.log(`   預計節省空間: ${Math.round(optimizationPotential.sizeToSave / 1024)}MB`);
+  // eslint-disable-next-line no-console
   console.log(`   構建時間改善: ${optimizationPotential.buildTimeImprovement}`);
+  // eslint-disable-next-line no-console
   console.log(`   維護工作量減少: ${optimizationPotential.maintenanceEffort}`);
   
+  // eslint-disable-next-line no-console
   console.log('\n🔧 立即優化建議:');
   analysisResult.recommendations.immediate.forEach((rec, index) => {
+    // eslint-disable-next-line no-console
     console.log(`   ${index + 1}. ${rec}`);
   });
   
+  // eslint-disable-next-line no-console
   console.log('\n📈 短期優化建議:');
   analysisResult.recommendations.shortTerm.forEach((rec, index) => {
+    // eslint-disable-next-line no-console
     console.log(`   ${index + 1}. ${rec}`);
   });
   
+  // eslint-disable-next-line no-console
   console.log('\n🚀 長期優化建議:');
   analysisResult.recommendations.longTerm.forEach((rec, index) => {
+    // eslint-disable-next-line no-console
     console.log(`   ${index + 1}. ${rec}`);
   });
   
+  // eslint-disable-next-line no-console
   console.log('\n📁 詳細報告: reports/project-optimization-analysis.json');
 }
 

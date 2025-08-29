@@ -1,281 +1,437 @@
-// 用戶反饋相關類型定義
+// 反饋系統類型定義
 
-// 反饋類型
-export type FeedbackType =
-  | 'bug_report' // 錯誤報告
-  | 'feature_request' // 功能請求
-  | 'improvement' // 改進建議
-  | 'general' // 一般反饋
-  | 'compliment' // 讚美
-  | 'complaint'; // 投訴
+// 反饋類型枚舉
+export enum FeedbackType {
+  FEATURE_REQUEST = 'feature_request',
+  BUG_REPORT = 'bug_report',
+  USER_EXPERIENCE = 'user_experience',
+  PERFORMANCE_ISSUE = 'performance_issue',
+  GENERAL_FEEDBACK = 'general_feedback',
+  SURVEY_RESPONSE = 'survey_response',
+}
 
-// 反饋優先級
-export type FeedbackPriority =
-  | 'low' // 低優先級
-  | 'medium' // 中優先級
-  | 'high' // 高優先級
-  | 'critical'; // 緊急
+// 反饋優先級枚舉
+export enum FeedbackPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical',
+}
 
-// 反饋狀態
-export type FeedbackStatus =
-  | 'pending' // 待處理
-  | 'in_review' // 審核中
-  | 'in_progress' // 處理中
-  | 'resolved' // 已解決
-  | 'closed' // 已關閉
-  | 'rejected'; // 已拒絕
+// 反饋狀態枚舉
+export enum FeedbackStatus {
+  PENDING = 'pending',
+  IN_REVIEW = 'in_review',
+  IN_PROGRESS = 'in_progress',
+  RESOLVED = 'resolved',
+  CLOSED = 'closed',
+  REJECTED = 'rejected',
+}
 
-// 反饋分類
-export type FeedbackCategory =
-  | 'ui_ux' // 用戶界面/體驗
-  | 'performance' // 性能問題
-  | 'functionality' // 功能問題
-  | 'ai_features' // AI 功能
-  | 'scanning' // 掃描功能
-  | 'pricing' // 價格相關
-  | 'notifications' // 通知系統
-  | 'data_accuracy' // 數據準確性
-  | 'security' // 安全問題
-  | 'other'; // 其他
+// 反饋分類枚舉
+export enum FeedbackCategory {
+  UI_UX = 'ui_ux',
+  FUNCTIONALITY = 'functionality',
+  PERFORMANCE = 'performance',
+  SECURITY = 'security',
+  ACCESSIBILITY = 'accessibility',
+  INTEGRATION = 'integration',
+  DOCUMENTATION = 'documentation',
+  OTHER = 'other',
+}
 
-// 用戶反饋
-export interface UserFeedback {
+// 用戶滿意度評分
+export enum SatisfactionRating {
+  VERY_DISSATISFIED = 1,
+  DISSATISFIED = 2,
+  NEUTRAL = 3,
+  SATISFIED = 4,
+  VERY_SATISFIED = 5,
+}
+
+// 反饋數據接口
+export interface FeedbackData {
   id: string;
-  userId: string;
   type: FeedbackType;
   category: FeedbackCategory;
   priority: FeedbackPriority;
   status: FeedbackStatus;
   title: string;
   description: string;
-  attachments?: string[]; // 附件 URL
-  deviceInfo: {
-    platform: 'ios' | 'android' | 'web';
-    version: string;
-    model?: string;
-    osVersion?: string;
-  };
-  appInfo: {
-    version: string;
-    buildNumber: string;
-  };
-  location?: {
-    screen: string;
-    action?: string;
-  };
-  metadata?: {
-    [key: string]: any;
-  };
-  createdAt: string;
-  updatedAt: string;
-  resolvedAt?: string;
-  assignedTo?: string;
-  response?: FeedbackResponse;
+  userEmail?: string;
+  userName?: string;
+  userId?: string;
+  userAgent?: string;
+  platform: 'ios' | 'android' | 'web';
+  version: string;
+  timestamp: number;
+  location?: string;
+  metadata?: Record<string, any>;
+  attachments?: FeedbackAttachment[];
   tags?: string[];
-  votes: number;
-  isAnonymous: boolean;
+  satisfactionRating?: SatisfactionRating;
+  followUpRequired?: boolean;
+  assignedTo?: string;
+  estimatedResolutionTime?: number;
+  actualResolutionTime?: number;
+  resolutionNotes?: string;
+  userFeedback?: string;
 }
 
-// 反饋回應
-export interface FeedbackResponse {
+// 反饋附件接口
+export interface FeedbackAttachment {
   id: string;
-  feedbackId: string;
-  responderId: string;
-  responderName: string;
-  responderRole: 'admin' | 'moderator' | 'support';
-  message: string;
-  isInternal: boolean; // 是否為內部回應
-  createdAt: string;
-  updatedAt: string;
+  name: string;
+  type: 'image' | 'video' | 'document' | 'log';
+  size: number;
+  url: string;
+  uploadedAt: number;
 }
 
-// 反饋統計
-export interface FeedbackStats {
-  total: number;
-  byType: Record<FeedbackType, number>;
-  byCategory: Record<FeedbackCategory, number>;
-  byStatus: Record<FeedbackStatus, number>;
-  byPriority: Record<FeedbackPriority, number>;
-  recentTrends: {
-    date: string;
-    count: number;
-  }[];
-  averageResponseTime: number; // 平均回應時間（小時）
-  resolutionRate: number; // 解決率（百分比）
+// 反饋配置接口
+export interface FeedbackConfig {
+  enabled: boolean;
+  autoCollect: boolean;
+  requireAuthentication: boolean;
+  allowAnonymous: boolean;
+  maxAttachments: number;
+  maxAttachmentSize: number;
+  allowedFileTypes: string[];
+  categories: FeedbackCategory[];
+  priorities: FeedbackPriority[];
+  satisfactionSurvey: boolean;
+  followUpEnabled: boolean;
+  autoAssignment: boolean;
+  notificationEnabled: boolean;
+  analyticsEnabled: boolean;
+  retentionDays: number;
+  privacySettings: FeedbackPrivacySettings;
 }
 
-// 功能請求
-export interface FeatureRequest extends UserFeedback {
-  type: 'feature_request';
-  impact: 'low' | 'medium' | 'high'; // 影響程度
-  effort: 'low' | 'medium' | 'high'; // 開發難度
-  targetVersion?: string; // 目標版本
-  alternatives?: string[]; // 替代方案
-  useCases: string[]; // 使用場景
-  benefits: string[]; // 預期好處
+// 反饋隱私設置
+export interface FeedbackPrivacySettings {
+  collectUserInfo: boolean;
+  collectLocation: boolean;
+  collectDeviceInfo: boolean;
+  collectUsageData: boolean;
+  anonymizeData: boolean;
+  dataRetentionPeriod: number;
+  allowDataSharing: boolean;
+  gdprCompliant: boolean;
 }
 
-// 錯誤報告
-export interface BugReport extends UserFeedback {
-  type: 'bug_report';
-  severity: 'low' | 'medium' | 'high' | 'critical'; // 嚴重程度
-  reproducibility: 'always' | 'sometimes' | 'rarely' | 'once'; // 重現頻率
-  steps: string[]; // 重現步驟
-  expectedBehavior: string; // 預期行為
-  actualBehavior: string; // 實際行為
-  errorLogs?: string; // 錯誤日誌
-  crashReport?: string; // 崩潰報告
-}
-
-// 反饋過濾器
-export interface FeedbackFilter {
-  type?: FeedbackType[];
-  category?: FeedbackCategory[];
-  status?: FeedbackStatus[];
-  priority?: FeedbackPriority[];
-  dateRange?: {
-    start: string;
-    end: string;
-  };
-  search?: string;
-  assignedTo?: string;
-  tags?: string[];
-}
-
-// 反饋排序
-export type FeedbackSortBy =
-  | 'createdAt'
-  | 'updatedAt'
-  | 'priority'
-  | 'votes'
-  | 'status';
-
-export type FeedbackSortOrder = 'asc' | 'desc';
-
-// 反饋查詢參數
-export interface FeedbackQueryParams {
-  page?: number;
-  limit?: number;
-  filter?: FeedbackFilter;
-  sortBy?: FeedbackSortBy;
-  sortOrder?: FeedbackSortOrder;
-}
-
-// 反饋創建請求
-export interface CreateFeedbackRequest {
+// 反饋表單接口
+export interface FeedbackFormData {
   type: FeedbackType;
   category: FeedbackCategory;
   priority: FeedbackPriority;
   title: string;
   description: string;
+  userEmail?: string;
+  userName?: string;
+  satisfactionRating?: SatisfactionRating;
+  followUpRequired?: boolean;
   attachments?: File[];
-  isAnonymous?: boolean;
   tags?: string[];
-  // 特定類型的額外字段
-  impact?: 'low' | 'medium' | 'high';
-  effort?: 'low' | 'medium' | 'high';
-  severity?: 'low' | 'medium' | 'high' | 'critical';
-  reproducibility?: 'always' | 'sometimes' | 'rarely' | 'once';
-  steps?: string[];
-  expectedBehavior?: string;
-  actualBehavior?: string;
-  useCases?: string[];
-  benefits?: string[];
 }
 
-// 反饋更新請求
-export interface UpdateFeedbackRequest {
-  title?: string;
-  description?: string;
-  priority?: FeedbackPriority;
-  status?: FeedbackStatus;
-  tags?: string[];
-  assignedTo?: string;
-}
-
-// 反饋回應請求
-export interface CreateFeedbackResponseRequest {
-  feedbackId: string;
-  message: string;
-  isInternal?: boolean;
-}
-
-// 反饋投票
-export interface FeedbackVote {
-  id: string;
-  feedbackId: string;
-  userId: string;
-  vote: 1 | -1; // 1 = 贊成, -1 = 反對
-  createdAt: string;
-}
-
-// 反饋標籤
-export interface FeedbackTag {
-  id: string;
-  name: string;
-  color: string;
-  description?: string;
-  usageCount: number;
-  createdAt: string;
-}
-
-// 反饋模板
-export interface FeedbackTemplate {
-  id: string;
-  name: string;
-  type: FeedbackType;
-  category: FeedbackCategory;
-  title: string;
-  description: string;
-  fields: {
-    name: string;
-    type: 'text' | 'textarea' | 'select' | 'multiselect' | 'file';
-    label: string;
-    required: boolean;
-    options?: string[];
-    placeholder?: string;
-  }[];
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
-
-// 反饋通知設置
-export interface FeedbackNotificationSettings {
-  emailNotifications: boolean;
-  pushNotifications: boolean;
-  notifyOnStatusChange: boolean;
-  notifyOnResponse: boolean;
-  notifyOnAssignment: boolean;
-  digestFrequency: 'immediate' | 'daily' | 'weekly' | 'never';
-}
-
-// 反饋分析報告
-export interface FeedbackAnalysisReport {
-  period: {
-    start: string;
-    end: string;
+// 反饋分析數據接口
+export interface FeedbackAnalytics {
+  totalFeedbacks: number;
+  feedbacksByType: Record<FeedbackType, number>;
+  feedbacksByCategory: Record<FeedbackCategory, number>;
+  feedbacksByPriority: Record<FeedbackPriority, number>;
+  feedbacksByStatus: Record<FeedbackStatus, number>;
+  averageSatisfaction: number;
+  satisfactionDistribution: Record<SatisfactionRating, number>;
+  responseTime: {
+    average: number;
+    median: number;
+    p95: number;
   };
-  stats: FeedbackStats;
+  resolutionTime: {
+    average: number;
+    median: number;
+    p95: number;
+  };
   topIssues: {
     category: FeedbackCategory;
     count: number;
     percentage: number;
   }[];
-  userSatisfaction: {
-    score: number; // 1-10
-    trend: 'improving' | 'stable' | 'declining';
-    factors: string[];
-  };
-  responseMetrics: {
-    averageResponseTime: number;
-    resolutionTime: number;
-    satisfactionScore: number;
-  };
-  recommendations: {
-    priority: 'high' | 'medium' | 'low';
-    title: string;
-    description: string;
-    impact: string;
+  platformDistribution: Record<string, number>;
+  versionDistribution: Record<string, number>;
+  trends: {
+    date: string;
+    count: number;
+    satisfaction: number;
   }[];
+}
+
+// 反饋過濾器接口
+export interface FeedbackFilter {
+  types?: FeedbackType[];
+  categories?: FeedbackCategory[];
+  priorities?: FeedbackPriority[];
+  statuses?: FeedbackStatus[];
+  dateRange?: {
+    start: number;
+    end: number;
+  };
+  search?: string;
+  tags?: string[];
+  assignedTo?: string;
+  satisfactionRating?: SatisfactionRating;
+  platform?: string;
+  version?: string;
+}
+
+// 反饋排序選項
+export interface FeedbackSort {
+  field: 'timestamp' | 'priority' | 'status' | 'satisfactionRating' | 'title';
+  direction: 'asc' | 'desc';
+}
+
+// 反饋分頁接口
+export interface FeedbackPagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
+
+// 反饋查詢結果接口
+export interface FeedbackQueryResult {
+  feedbacks: FeedbackData[];
+  pagination: FeedbackPagination;
+  analytics: FeedbackAnalytics;
+}
+
+// 反饋事件接口
+export interface FeedbackEvent {
+  type:
+    | 'created'
+    | 'updated'
+    | 'deleted'
+    | 'status_changed'
+    | 'assigned'
+    | 'resolved';
+  feedbackId: string;
+  userId?: string;
+  timestamp: number;
+  data: unknown;
+}
+
+// 反饋通知接口
+export interface FeedbackNotification {
+  id: string;
+  type:
+    | 'new_feedback'
+    | 'status_update'
+    | 'assignment'
+    | 'resolution'
+    | 'follow_up';
+  feedbackId: string;
+  userId: string;
+  title: string;
+  message: string;
+  read: boolean;
+  timestamp: number;
+  actionUrl?: string;
+}
+
+// 反饋報告接口
+export interface FeedbackReport {
+  id: string;
+  title: string;
+  description: string;
+  type: 'summary' | 'detailed' | 'trend' | 'comparison';
+  dateRange: {
+    start: number;
+    end: number;
+  };
+  filters: FeedbackFilter;
+  data: FeedbackAnalytics;
+  generatedAt: number;
+  generatedBy: string;
+  format: 'pdf' | 'csv' | 'json' | 'html';
+  url?: string;
+}
+
+// 反饋服務配置接口
+export interface FeedbackServiceConfig {
+  apiEndpoint: string;
+  apiKey?: string;
+  timeout: number;
+  retryAttempts: number;
+  batchSize: number;
+  syncInterval: number;
+  offlineSupport: boolean;
+  encryptionEnabled: boolean;
+  compressionEnabled: boolean;
+}
+
+// React 組件 Props 接口
+
+// FeedbackForm 組件 Props
+export interface FeedbackFormProps {
+  config?: Partial<FeedbackConfig>;
+  onSubmit?: (data: FeedbackFormData) => void;
+  onCancel?: () => void;
+  initialData?: Partial<FeedbackFormData>;
+  disabled?: boolean;
+  loading?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+// FeedbackWidget 組件 Props
+export interface FeedbackWidgetProps {
+  config?: Partial<FeedbackConfig>;
+  position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
+  theme?: 'light' | 'dark' | 'auto';
+  size?: 'small' | 'medium' | 'large';
+  showBadge?: boolean;
+  badgeCount?: number;
+  onOpen?: () => void;
+  onClose?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+// FeedbackAnalytics 組件 Props
+export interface FeedbackAnalyticsProps {
+  dateRange?: {
+    start: number;
+    end: number;
+  };
+  filters?: FeedbackFilter;
+  refreshInterval?: number;
+  showCharts?: boolean;
+  showTable?: boolean;
+  showExport?: boolean;
+  onExport?: (format: string) => void;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+// FeedbackList 組件 Props
+export interface FeedbackListProps {
+  feedbacks: FeedbackData[];
+  loading?: boolean;
+  error?: string;
+  filters?: FeedbackFilter;
+  sort?: FeedbackSort;
+  pagination?: FeedbackPagination;
+  onFilterChange?: (filters: FeedbackFilter) => void;
+  onSortChange?: (sort: FeedbackSort) => void;
+  onPageChange?: (page: number) => void;
+  onFeedbackClick?: (feedback: FeedbackData) => void;
+  onFeedbackUpdate?: (feedback: FeedbackData) => void;
+  onFeedbackDelete?: (feedbackId: string) => void;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+// FeedbackDetail 組件 Props
+export interface FeedbackDetailProps {
+  feedback: FeedbackData;
+  loading?: boolean;
+  error?: string;
+  onUpdate?: (feedback: FeedbackData) => void;
+  onDelete?: (feedbackId: string) => void;
+  onAssign?: (feedbackId: string, userId: string) => void;
+  onStatusChange?: (feedbackId: string, status: FeedbackStatus) => void;
+  onAddComment?: (feedbackId: string, comment: string) => void;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+// 自定義 Hook 返回類型
+
+// useFeedback Hook 返回類型
+export interface UseFeedbackReturn {
+  // 狀態
+  feedbacks: FeedbackData[];
+  loading: boolean;
+  error: string | null;
+  analytics: FeedbackAnalytics | null;
+
+  // 操作
+  submitFeedback: (data: FeedbackFormData) => Promise<void>;
+  updateFeedback: (id: string, data: Partial<FeedbackData>) => Promise<void>;
+  deleteFeedback: (id: string) => Promise<void>;
+  getFeedback: (id: string) => Promise<FeedbackData | null>;
+  getFeedbacks: (
+    filters?: FeedbackFilter,
+    sort?: FeedbackSort,
+    pagination?: Partial<FeedbackPagination>
+  ) => Promise<FeedbackQueryResult>;
+  getAnalytics: (filters?: FeedbackFilter) => Promise<FeedbackAnalytics>;
+
+  // 工具方法
+  exportReport: (format: string, filters?: FeedbackFilter) => Promise<string>;
+  sendNotification: (
+    notification: Omit<FeedbackNotification, 'id' | 'timestamp'>
+  ) => Promise<void>;
+  markNotificationRead: (notificationId: string) => Promise<void>;
+}
+
+// useFeedbackService Hook 返回類型
+export interface UseFeedbackServiceReturn {
+  service: unknown; // FeedbackService 實例
+  config: FeedbackServiceConfig;
+  isInitialized: boolean;
+  isOnline: boolean;
+  syncStatus: 'idle' | 'syncing' | 'error';
+
+  // 服務方法
+  initialize: () => Promise<void>;
+  sync: () => Promise<void>;
+  clearCache: () => Promise<void>;
+  updateConfig: (config: Partial<FeedbackServiceConfig>) => void;
+}
+
+// useFeedbackState Hook 返回類型
+export interface UseFeedbackStateReturn {
+  // Redux 狀態
+  feedbacks: FeedbackData[];
+  analytics: FeedbackAnalytics | null;
+  notifications: FeedbackNotification[];
+  reports: FeedbackReport[];
+  filters: FeedbackFilter;
+  sort: FeedbackSort;
+  pagination: FeedbackPagination;
+
+  // 狀態選擇器
+  getFeedbackById: (id: string) => FeedbackData | undefined;
+  getFeedbacksByType: (type: FeedbackType) => FeedbackData[];
+  getFeedbacksByCategory: (category: FeedbackCategory) => FeedbackData[];
+  getFeedbacksByStatus: (status: FeedbackStatus) => FeedbackData[];
+  getUnreadNotifications: () => FeedbackNotification[];
+  getNotificationsByType: (type: string) => FeedbackNotification[];
+}
+
+// useFeedbackActions Hook 返回類型
+export interface UseFeedbackActionsReturn {
+  // Redux 動作
+  submitFeedback: (data: FeedbackFormData) => any;
+  updateFeedback: (id: string, data: Partial<FeedbackData>) => any;
+  deleteFeedback: (id: string) => any;
+  fetchFeedbacks: (
+    filters?: FeedbackFilter,
+    sort?: FeedbackSort,
+    pagination?: Partial<FeedbackPagination>
+  ) => any;
+  fetchAnalytics: (filters?: FeedbackFilter) => any;
+  createReport: (report: Omit<FeedbackReport, 'id' | 'generatedAt'>) => any;
+  sendNotification: (
+    notification: Omit<FeedbackNotification, 'id' | 'timestamp'>
+  ) => any;
+  markNotificationRead: (notificationId: string) => any;
+  updateFilters: (filters: Partial<FeedbackFilter>) => any;
+  updateSort: (sort: FeedbackSort) => any;
+  updatePagination: (pagination: Partial<FeedbackPagination>) => any;
+  clearError: () => any;
+  resetState: () => any;
 }

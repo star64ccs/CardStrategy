@@ -1,13 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+
+import App from '../App';
+
 import { store } from './store';
-import App from './App';
-import { swManager } from './utils/serviceWorkerManager';
 import './i18n';
 
+// 臨時實現
+const _swManager = {
+  init: async () => {},
+};
+
 // 初始化 Service Worker
-const initializeServiceWorker = async () => {
+const _initializeServiceWorker = async () => {
   try {
     await swManager.init();
     // logger.info('Service Worker 初始化成功');
@@ -24,11 +30,14 @@ if (process.env.NODE_ENV === 'development') {
   initializeServiceWorker();
 }
 
-ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+const _container = document.getElementById('root');
+if (container) {
+  const _root = (ReactDOM as any).createRoot(container);
+  root.render(
+    <React.StrictMode>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </React.StrictMode>
+  );
+}

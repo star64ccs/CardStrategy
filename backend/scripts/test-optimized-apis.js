@@ -12,12 +12,15 @@ app.use('/api/market', marketRouter);
 
 // 測試函數
 async function testOptimizedAPIs() {
+  // eslint-disable-next-line no-console
   console.log('🧪 開始測試優化的 API 路由...');
+  // eslint-disable-next-line no-console
   console.log('=====================================');
 
   const testResults = [];
 
   // 測試卡片列表 API
+  // eslint-disable-next-line no-console
   console.log('\n📋 測試卡片列表 API...');
   try {
     const response = await fetch(
@@ -26,10 +29,13 @@ async function testOptimizedAPIs() {
     const data = await response.json();
 
     if (data.success) {
+      // eslint-disable-next-line no-console
       console.log('✅ 卡片列表 API 測試成功');
+      // eslint-disable-next-line no-console
       console.log(
         `   - 響應時間: ${data.performance?.responseTime || 'N/A'}ms`
       );
+      // eslint-disable-next-line no-console
       console.log(`   - 緩存命中: ${data.performance?.cacheHit ? '是' : '否'}`);
       testResults.push({
         api: 'cards/list',
@@ -37,10 +43,12 @@ async function testOptimizedAPIs() {
         responseTime: data.performance?.responseTime,
       });
     } else {
+      // eslint-disable-next-line no-console
       console.log('❌ 卡片列表 API 測試失敗');
       testResults.push({ api: 'cards/list', status: 'failed' });
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('❌ 卡片列表 API 測試失敗:', error.message);
     testResults.push({
       api: 'cards/list',
@@ -50,16 +58,20 @@ async function testOptimizedAPIs() {
   }
 
   // 測試卡片詳情 API
+  // eslint-disable-next-line no-console
   console.log('\n📄 測試卡片詳情 API...');
   try {
     const response = await fetch('http://localhost:3001/api/cards/1');
     const data = await response.json();
 
     if (data.success) {
+      // eslint-disable-next-line no-console
       console.log('✅ 卡片詳情 API 測試成功');
+      // eslint-disable-next-line no-console
       console.log(
         `   - 響應時間: ${data.performance?.responseTime || 'N/A'}ms`
       );
+      // eslint-disable-next-line no-console
       console.log(`   - 緩存命中: ${data.performance?.cacheHit ? '是' : '否'}`);
       testResults.push({
         api: 'cards/detail',
@@ -67,10 +79,12 @@ async function testOptimizedAPIs() {
         responseTime: data.performance?.responseTime,
       });
     } else {
+      // eslint-disable-next-line no-console
       console.log('❌ 卡片詳情 API 測試失敗');
       testResults.push({ api: 'cards/detail', status: 'failed' });
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('❌ 卡片詳情 API 測試失敗:', error.message);
     testResults.push({
       api: 'cards/detail',
@@ -80,6 +94,7 @@ async function testOptimizedAPIs() {
   }
 
   // 測試批量卡片 API
+  // eslint-disable-next-line no-console
   console.log('\n📦 測試批量卡片 API...');
   try {
     const response = await fetch('http://localhost:3001/api/cards/batch', {
@@ -90,11 +105,15 @@ async function testOptimizedAPIs() {
     const data = await response.json();
 
     if (data.success) {
+      // eslint-disable-next-line no-console
       console.log('✅ 批量卡片 API 測試成功');
+      // eslint-disable-next-line no-console
       console.log(
         `   - 響應時間: ${data.performance?.responseTime || 'N/A'}ms`
       );
+      // eslint-disable-next-line no-console
       console.log(`   - 緩存命中: ${data.performance?.cacheHit ? '是' : '否'}`);
+      // eslint-disable-next-line no-console
       console.log(`   - 批量大小: ${data.performance?.batchSize || 'N/A'}`);
       testResults.push({
         api: 'cards/batch',
@@ -102,10 +121,12 @@ async function testOptimizedAPIs() {
         responseTime: data.performance?.responseTime,
       });
     } else {
+      // eslint-disable-next-line no-console
       console.log('❌ 批量卡片 API 測試失敗');
       testResults.push({ api: 'cards/batch', status: 'failed' });
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('❌ 批量卡片 API 測試失敗:', error.message);
     testResults.push({
       api: 'cards/batch',
@@ -115,6 +136,7 @@ async function testOptimizedAPIs() {
   }
 
   // 測試市場趨勢 API
+  // eslint-disable-next-line no-console
   console.log('\n📈 測試市場趨勢 API...');
   try {
     const response = await fetch(
@@ -123,10 +145,13 @@ async function testOptimizedAPIs() {
     const data = await response.json();
 
     if (data.success) {
+      // eslint-disable-next-line no-console
       console.log('✅ 市場趨勢 API 測試成功');
+      // eslint-disable-next-line no-console
       console.log(
         `   - 響應時間: ${data.performance?.responseTime || 'N/A'}ms`
       );
+      // eslint-disable-next-line no-console
       console.log(`   - 緩存命中: ${data.performance?.cacheHit ? '是' : '否'}`);
       testResults.push({
         api: 'market/trends',
@@ -134,10 +159,12 @@ async function testOptimizedAPIs() {
         responseTime: data.performance?.responseTime,
       });
     } else {
+      // eslint-disable-next-line no-console
       console.log('❌ 市場趨勢 API 測試失敗');
       testResults.push({ api: 'market/trends', status: 'failed' });
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('❌ 市場趨勢 API 測試失敗:', error.message);
     testResults.push({
       api: 'market/trends',
@@ -147,6 +174,7 @@ async function testOptimizedAPIs() {
   }
 
   // 測試價格歷史 API
+  // eslint-disable-next-line no-console
   console.log('\n📊 測試價格歷史 API...');
   try {
     const response = await fetch(
@@ -155,10 +183,13 @@ async function testOptimizedAPIs() {
     const data = await response.json();
 
     if (data.success) {
+      // eslint-disable-next-line no-console
       console.log('✅ 價格歷史 API 測試成功');
+      // eslint-disable-next-line no-console
       console.log(
         `   - 響應時間: ${data.performance?.responseTime || 'N/A'}ms`
       );
+      // eslint-disable-next-line no-console
       console.log(`   - 緩存命中: ${data.performance?.cacheHit ? '是' : '否'}`);
       testResults.push({
         api: 'market/price-history',
@@ -166,10 +197,12 @@ async function testOptimizedAPIs() {
         responseTime: data.performance?.responseTime,
       });
     } else {
+      // eslint-disable-next-line no-console
       console.log('❌ 價格歷史 API 測試失敗');
       testResults.push({ api: 'market/price-history', status: 'failed' });
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('❌ 價格歷史 API 測試失敗:', error.message);
     testResults.push({
       api: 'market/price-history',
@@ -179,16 +212,20 @@ async function testOptimizedAPIs() {
   }
 
   // 測試市場統計 API
+  // eslint-disable-next-line no-console
   console.log('\n📊 測試市場統計 API...');
   try {
     const response = await fetch('http://localhost:3001/api/market/statistics');
     const data = await response.json();
 
     if (data.success) {
+      // eslint-disable-next-line no-console
       console.log('✅ 市場統計 API 測試成功');
+      // eslint-disable-next-line no-console
       console.log(
         `   - 響應時間: ${data.performance?.responseTime || 'N/A'}ms`
       );
+      // eslint-disable-next-line no-console
       console.log(`   - 緩存命中: ${data.performance?.cacheHit ? '是' : '否'}`);
       testResults.push({
         api: 'market/statistics',
@@ -196,10 +233,12 @@ async function testOptimizedAPIs() {
         responseTime: data.performance?.responseTime,
       });
     } else {
+      // eslint-disable-next-line no-console
       console.log('❌ 市場統計 API 測試失敗');
       testResults.push({ api: 'market/statistics', status: 'failed' });
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('❌ 市場統計 API 測試失敗:', error.message);
     testResults.push({
       api: 'market/statistics',
@@ -209,25 +248,33 @@ async function testOptimizedAPIs() {
   }
 
   // 生成測試報告
+  // eslint-disable-next-line no-console
   console.log('\n📊 API 測試報告:');
+  // eslint-disable-next-line no-console
   console.log('=====================================');
 
   const successfulTests = testResults.filter((r) => r.status === 'success');
   const failedTests = testResults.filter((r) => r.status === 'failed');
   const errorTests = testResults.filter((r) => r.status === 'error');
 
+  // eslint-disable-next-line no-console
   console.log(`總測試數: ${testResults.length}`);
+  // eslint-disable-next-line no-console
   console.log(`成功: ${successfulTests.length}`);
+  // eslint-disable-next-line no-console
   console.log(`失敗: ${failedTests.length}`);
+  // eslint-disable-next-line no-console
   console.log(`錯誤: ${errorTests.length}`);
 
   if (successfulTests.length > 0) {
     const avgResponseTime =
       successfulTests.reduce((sum, test) => sum + (test.responseTime || 0), 0) /
       successfulTests.length;
+    // eslint-disable-next-line no-console
     console.log(`平均響應時間: ${avgResponseTime.toFixed(2)}ms`);
   }
 
+  // eslint-disable-next-line no-console
   console.log('\n詳細結果:');
   testResults.forEach((result) => {
     const status =
@@ -236,6 +283,7 @@ async function testOptimizedAPIs() {
         : result.status === 'failed'
           ? '❌'
           : '⚠️';
+    // eslint-disable-next-line no-console
     console.log(
       `${status} ${result.api}: ${result.status}${result.responseTime ? ` (${result.responseTime}ms)` : ''}`
     );
@@ -246,12 +294,14 @@ async function testOptimizedAPIs() {
 
 // 啟動測試服務器
 const server = app.listen(3001, () => {
+  // eslint-disable-next-line no-console
   console.log('🚀 測試服務器已啟動在端口 3001');
 
   // 延遲執行測試，確保服務器完全啟動
   setTimeout(async () => {
     await testOptimizedAPIs();
     server.close(() => {
+      // eslint-disable-next-line no-console
       console.log('✅ 測試完成，服務器已關閉');
     });
   }, 1000);

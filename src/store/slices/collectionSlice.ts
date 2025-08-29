@@ -1,29 +1,35 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Collection, CollectionState, CollectionItem } from '@/types';
-import { collectionService } from '@/services/collectionService';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import type {
+  Collection,
+  CollectionState,
+  CollectionItem,
+} from '../../core/types';
+import { collectionService } from '../../shared/services/collectionService';
 
 // 異步 thunk
-export const fetchCollections = createAsyncThunk(
+export const _fetchCollections = createAsyncThunk(
   'collection/fetchCollections',
   async () => {
-    const response = await collectionService.getCollections();
+    const _response = await collectionService.getCollections();
     return response;
   }
 );
 
-export const createCollection = createAsyncThunk(
+export const _createCollection = createAsyncThunk(
   'collection/createCollection',
   async (collectionData: {
     name: string;
     description?: string;
     isPublic: boolean;
   }) => {
-    const response = await collectionService.createCollection(collectionData);
+    const _response = await collectionService.createCollection(collectionData);
     return response;
   }
 );
 
-export const updateCollection = createAsyncThunk(
+export const _updateCollection = createAsyncThunk(
   'collection/updateCollection',
   async ({
     collectionId,
@@ -32,7 +38,7 @@ export const updateCollection = createAsyncThunk(
     collectionId: string;
     data: Partial<Collection>;
   }) => {
-    const response = await collectionService.updateCollection(
+    const _response = await collectionService.updateCollection(
       collectionId,
       data
     );
@@ -40,7 +46,7 @@ export const updateCollection = createAsyncThunk(
   }
 );
 
-export const deleteCollection = createAsyncThunk(
+export const _deleteCollection = createAsyncThunk(
   'collection/deleteCollection',
   async (collectionId: string) => {
     await collectionService.deleteCollection(collectionId);
@@ -48,7 +54,7 @@ export const deleteCollection = createAsyncThunk(
   }
 );
 
-export const addCardToCollection = createAsyncThunk(
+export const _addCardToCollection = createAsyncThunk(
   'collection/addCardToCollection',
   async ({
     collectionId,
@@ -64,7 +70,7 @@ export const addCardToCollection = createAsyncThunk(
       notes?: string;
     };
   }) => {
-    const response = await collectionService.addCardToCollection(
+    const _response = await collectionService.addCardToCollection(
       collectionId,
       cardData
     );
@@ -72,7 +78,7 @@ export const addCardToCollection = createAsyncThunk(
   }
 );
 
-export const removeCardFromCollection = createAsyncThunk(
+export const _removeCardFromCollection = createAsyncThunk(
   'collection/removeCardFromCollection',
   async ({
     collectionId,
@@ -86,7 +92,7 @@ export const removeCardFromCollection = createAsyncThunk(
   }
 );
 
-export const updateCardInCollection = createAsyncThunk(
+export const _updateCardInCollection = createAsyncThunk(
   'collection/updateCardInCollection',
   async ({
     collectionId,
@@ -97,7 +103,7 @@ export const updateCardInCollection = createAsyncThunk(
     cardId: string;
     data: Partial<CollectionItem>;
   }) => {
-    const response = await collectionService.updateCardInCollection(
+    const _response = await collectionService.updateCardInCollection(
       collectionId,
       cardId,
       data
@@ -106,11 +112,10 @@ export const updateCardInCollection = createAsyncThunk(
   }
 );
 
-export const getCollectionStatistics = createAsyncThunk(
+export const _getCollectionStatistics = createAsyncThunk(
   'collection/getCollectionStatistics',
-  async (collectionId: string) => {
-    const response =
-      await collectionService.getCollectionStatistics(collectionId);
+  async () => {
+    const _response = await collectionService.getCollectionStatistics();
     return response;
   }
 );
@@ -135,11 +140,11 @@ const initialState: CollectionState = {
 };
 
 // Collection slice
-const collectionSlice = createSlice({
+const _collectionSlice = createSlice({
   name: 'collection',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
     setSelectedCollection: (
@@ -153,22 +158,22 @@ const collectionSlice = createSlice({
       action: PayloadAction<{ collectionId: string; item: CollectionItem }>
     ) => {
       const { collectionId, item } = action.payload;
-      const collection = state.collections.find(
-        (c: any) => c.id === collectionId
+      const _collection = state.collections.find(
+        (c: unknown) => c.id === collectionId
       );
       if (collection) {
-        const itemIndex = collection.items.findIndex(
-          (i: any) => i.cardId === item.cardId
+        const _itemIndex = collection.items.findIndex(
+          (i: unknown) => i.cardId === item.cardId
         );
         if (itemIndex !== -1) {
           collection.items[itemIndex] = item;
         }
       }
     },
-    calculateStatistics: (state) => {
-      const allCards = state.collections.flatMap((c) => c.items);
-      const totalCards = allCards.reduce((sum, item) => sum + item.quantity, 0);
-      const totalValue = allCards.reduce(
+    calculateStatistics: state => {
+      const _allCards = state.collections.flatMap(c => c.items);
+      const _totalCards = allCards.reduce((sum, item) => sum + item.quantity, 0);
+      const _totalValue = allCards.reduce(
         (sum, item) => sum + item.currentValue * item.quantity,
         0
       );
@@ -179,7 +184,7 @@ const collectionSlice = createSlice({
         averageCondition:
           allCards.length > 0
             ? allCards.reduce((sum, item) => {
-                const conditionScore =
+                const _conditionScore =
                   item.condition === 'mint'
                     ? 10
                     : item.condition === 'near-mint'
@@ -207,10 +212,10 @@ const collectionSlice = createSlice({
       };
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Fetch User Collections
     builder
-      .addCase(fetchCollections.pending, (state) => {
+      .addCase(fetchCollections.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -226,7 +231,7 @@ const collectionSlice = createSlice({
 
     // Create Collection
     builder
-      .addCase(createCollection.pending, (state) => {
+      .addCase(createCollection.pending, state => {
         state.isCreating = true;
         state.error = null;
       })
@@ -242,14 +247,14 @@ const collectionSlice = createSlice({
 
     // Update Collection
     builder
-      .addCase(updateCollection.pending, (state) => {
+      .addCase(updateCollection.pending, state => {
         state.isUpdating = true;
         state.error = null;
       })
       .addCase(updateCollection.fulfilled, (state, action) => {
         state.isUpdating = false;
-        const index = state.collections.findIndex(
-          (c) => c.id === action.payload.id
+        const _index = state.collections.findIndex(
+          c => c.id === action.payload.id
         );
         if (index !== -1) {
           state.collections[index] = action.payload;
@@ -269,14 +274,14 @@ const collectionSlice = createSlice({
 
     // Delete Collection
     builder
-      .addCase(deleteCollection.pending, (state) => {
+      .addCase(deleteCollection.pending, state => {
         state.isDeleting = true;
         state.error = null;
       })
       .addCase(deleteCollection.fulfilled, (state, action) => {
         state.isDeleting = false;
         state.collections = state.collections.filter(
-          (c) => c.id !== action.payload
+          c => c.id !== action.payload
         );
         if (
           state.selectedCollection &&
@@ -293,22 +298,22 @@ const collectionSlice = createSlice({
 
     // Add Card to Collection
     builder
-      .addCase(addCardToCollection.pending, (state) => {
+      .addCase(addCardToCollection.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(addCardToCollection.fulfilled, (state, action) => {
         state.isLoading = false;
         // 更新對應的收藏
-        const collection = state.collections.find(
-          (c) => c.id === action.payload.collectionId
+        const _collection = state.collections.find(
+          c => c.id === action.payload.collectionId
         );
         if (collection) {
           // 將新的卡牌項目添加到 items 數組
-          const newItem = {
+          const _newItem = {
             cardId: action.payload.cardId,
             quantity: action.payload.quantity,
-            condition: action.payload.condition as any,
+            condition: action.payload.condition,
             isFoil: action.payload.isFoil,
             purchasePrice: action.payload.purchasePrice,
             notes: action.payload.notes,
@@ -324,10 +329,10 @@ const collectionSlice = createSlice({
           state.selectedCollection.id === action.payload.collectionId
         ) {
           // 同樣更新選中的收藏
-          const newItem = {
+          const _newItem = {
             cardId: action.payload.cardId,
             quantity: action.payload.quantity,
-            condition: action.payload.condition as any,
+            condition: action.payload.condition,
             isFoil: action.payload.isFoil,
             purchasePrice: action.payload.purchasePrice,
             notes: action.payload.notes,
@@ -347,17 +352,17 @@ const collectionSlice = createSlice({
 
     // Remove Card from Collection
     builder
-      .addCase(removeCardFromCollection.pending, (state) => {
+      .addCase(removeCardFromCollection.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(removeCardFromCollection.fulfilled, (state, action) => {
         state.isLoading = false;
         const { collectionId, cardId } = action.payload;
-        const collection = state.collections.find((c) => c.id === collectionId);
+        const _collection = state.collections.find(c => c.id === collectionId);
         if (collection) {
           collection.items = collection.items.filter(
-            (item) => item.cardId !== cardId
+            item => item.cardId !== cardId
           );
         }
         if (
@@ -366,7 +371,7 @@ const collectionSlice = createSlice({
         ) {
           state.selectedCollection.items =
             state.selectedCollection.items.filter(
-              (item) => item.cardId !== cardId
+              item => item.cardId !== cardId
             );
         }
         state.error = null;
@@ -378,30 +383,30 @@ const collectionSlice = createSlice({
 
     // Update Card in Collection
     builder
-      .addCase(updateCardInCollection.pending, (state) => {
+      .addCase(updateCardInCollection.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(updateCardInCollection.fulfilled, (state, action) => {
         state.isLoading = false;
         // 更新對應的收藏
-        const collection = state.collections.find(
-          (c) => c.id === action.payload.collectionId
+        const _collection = state.collections.find(
+          c => c.id === action.payload.collectionId
         );
         if (collection) {
           // 更新 items 數組中的對應項目
-          const itemIndex = collection.items.findIndex(
-            (item) => item.cardId === action.payload.cardId
+          const _itemIndex = collection.items.findIndex(
+            item => item.cardId === action.payload.cardId
           );
           if (itemIndex !== -1 && collection.items[itemIndex]) {
-            const updatedItem = {
+            const _updatedItem = {
               ...collection.items[itemIndex],
               ...action.payload,
             };
             // 確保 currentValue 有值
             if (updatedItem.currentValue === undefined) {
               updatedItem.currentValue =
-                collection.items[itemIndex]!.currentValue;
+                collection.items[itemIndex].currentValue;
             }
             collection.items[itemIndex] = updatedItem as CollectionItem;
           }
@@ -411,18 +416,18 @@ const collectionSlice = createSlice({
           state.selectedCollection.id === action.payload.collectionId
         ) {
           // 同樣更新選中的收藏
-          const itemIndex = state.selectedCollection.items.findIndex(
-            (item) => item.cardId === action.payload.cardId
+          const _itemIndex = state.selectedCollection.items.findIndex(
+            item => item.cardId === action.payload.cardId
           );
           if (itemIndex !== -1 && state.selectedCollection.items[itemIndex]) {
-            const updatedItem = {
+            const _updatedItem = {
               ...state.selectedCollection.items[itemIndex],
               ...action.payload,
             };
             // 確保 currentValue 有值
             if (updatedItem.currentValue === undefined) {
               updatedItem.currentValue =
-                state.selectedCollection.items[itemIndex]!.currentValue;
+                state.selectedCollection.items[itemIndex].currentValue;
             }
             state.selectedCollection.items[itemIndex] =
               updatedItem as CollectionItem;
@@ -437,7 +442,7 @@ const collectionSlice = createSlice({
 
     // Get Collection Statistics
     builder
-      .addCase(getCollectionStatistics.pending, (state) => {
+      .addCase(getCollectionStatistics.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -445,7 +450,7 @@ const collectionSlice = createSlice({
         state.isLoading = false;
         state.statistics = {
           ...action.payload,
-          completionRate: (action.payload as any).completionRate || 0,
+          completionRate: action.payload.completionRate || 0,
         };
         state.error = null;
       })

@@ -1,28 +1,27 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const { logger } = require('../utils/logger');
+const express = require('express');'
+const router = express.Router();''
+const { authenticateToken } = require('../middleware/auth');''
+const { logger } = require('../utils/logger');''
 const db = require('../models');
 
 /**
- * å¢é??Œæ­¥ API
- * POST /api/sync/incremental
- */
+ * å¢ï¿½??ï¿½æ­¥ API
+ * POST /api/sync/incremental'
+ */''
 router.post('/incremental', authenticateToken, async (req, res) => {
   try {
     const { batch, lastSyncTime, clientVersion } = req.body;
 // eslint-disable-next-line no-unused-vars
     const userId = req.user.id;
 
-    logger.info(`?‹å??•ç??¨æˆ¶ ${userId} ?„å??å?æ­¥è?æ±‚`);
+    logger.info(`?ï¿½ï¿½??ï¿½ï¿½??ï¿½æˆ¶ ${userId} ?ï¿½ï¿½??ï¿½ï¿½?æ­¥ï¿½?æ±‚`);
 
     if (!batch || !batch.items || !Array.isArray(batch.items)) {
-      return res.status(400).json({
-        success: false,
-        error: '?¡æ??„å?æ­¥æ‰¹æ¬¡æ ¼å¼?,
+      return res.status(400).json({'
+        success: false,''
+        error: '?ï¿½ï¿½??ï¿½ï¿½?æ­¥æ‰¹æ¬¡æ ¼ï¿½?,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const results = {
       processed: 0,
@@ -31,7 +30,7 @@ router.post('/incremental', authenticateToken, async (req, res) => {
       serverChanges: [],
     };
 
-    // ?•ç?å®¢æˆ¶ç«¯è???    for (const item of batch.items) {
+    // ?ï¿½ï¿½?å®¢æˆ¶ç«¯ï¿½???    for (const item of batch.items) {
       try {
 // eslint-disable-next-line no-unused-vars
         const result = await processSyncItem(item, userId, lastSyncTime);
@@ -45,15 +44,14 @@ router.post('/incremental', authenticateToken, async (req, res) => {
           results.errors++;
         }
       } catch (error) {
-        logger.error(`?•ç??Œæ­¥?…ç›®å¤±æ?: ${item.id}`, error);
+        logger.error(`?ï¿½ï¿½??ï¿½æ­¥?ï¿½ç›®å¤±ï¿½?: ${item.id}`, error);
         results.errors++;
       }
     }
-
-    // ?²å??å??¨ç«¯?„è??´ï??ªå?ä¸Šæ¬¡?Œæ­¥ä»¥ä?ï¼?    const serverChanges = await getServerChanges(userId, lastSyncTime);
+    // ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ç«¯?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?ä¸Šæ¬¡?ï¿½æ­¥ä»¥ï¿½?ï¿½?    const serverChanges = await getServerChanges(userId, lastSyncTime);
 
     logger.info(
-      `?Œæ­¥å®Œæ? - ?•ç?: ${results.processed}, è¡ç?: ${results.conflicts}, ?¯èª¤: ${results.errors}`
+      `?ï¿½æ­¥å®Œï¿½? - ?ï¿½ï¿½?: ${results.processed}, è¡ï¿½?: ${results.conflicts}, ?ï¿½èª¤: ${results.errors}`
     );
 
     res.json({
@@ -61,23 +59,23 @@ router.post('/incremental', authenticateToken, async (req, res) => {
       results,
       serverChanges,
       serverVersion: Date.now(),
-    });
-  } catch (error) {
-    logger.error('å¢é??Œæ­¥?•ç?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      error: '?å??¨å…§?¨éŒ¯èª?,
+    });'
+  } catch (error) {''
+    logger.error('å¢ï¿½??ï¿½æ­¥?ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½å…§?ï¿½éŒ¯ï¿½?,
     });
   }
 });
 
 /**
- * ?•ç??®å€‹å?æ­¥é??? */
+ * ?ï¿½ï¿½??ï¿½å€‹ï¿½?æ­¥ï¿½??? */
 async function processSyncItem(item, userId, lastSyncTime) {
   const { id, type, data, timestamp, version, isDeleted } = item;
 
-  try {
-    switch (type) {
+  try {'
+    switch (type) {''
       case 'card':
         return await processCardSync(
           id,
@@ -85,8 +83,8 @@ async function processSyncItem(item, userId, lastSyncTime) {
           userId,
           timestamp,
           version,
-          isDeleted
-        );
+          isDeleted'
+        );''
       case 'collection':
         return await processCollectionSync(
           id,
@@ -94,8 +92,8 @@ async function processSyncItem(item, userId, lastSyncTime) {
           userId,
           timestamp,
           version,
-          isDeleted
-        );
+          isDeleted'
+        );''
       case 'user':
         return await processUserSync(
           id,
@@ -103,8 +101,8 @@ async function processSyncItem(item, userId, lastSyncTime) {
           userId,
           timestamp,
           version,
-          isDeleted
-        );
+          isDeleted'
+        );''
       case 'annotation':
         return await processAnnotationSync(
           id,
@@ -113,18 +111,17 @@ async function processSyncItem(item, userId, lastSyncTime) {
           timestamp,
           version,
           isDeleted
-        );
-      default:
-        return { success: false, error: '?ªçŸ¥?„å?æ­¥é??? };
+        );'
+      default:''
+        return { success: false, error: '?ï¿½çŸ¥?ï¿½ï¿½?æ­¥ï¿½??? };
     }
   } catch (error) {
-    logger.error(`?•ç??Œæ­¥?…ç›®å¤±æ?: ${type} - ${id}`, error);
+    logger.error(`?ï¿½ï¿½??ï¿½æ­¥?ï¿½ç›®å¤±ï¿½?: ${type} - ${id}`, error);
     return { success: false, error: error.message };
   }
 }
-
 /**
- * ?•ç??¡ç??Œæ­¥
+ * ?ï¿½ï¿½??ï¿½ï¿½??ï¿½æ­¥
  */
 async function processCardSync(
   id,
@@ -140,30 +137,28 @@ async function processCardSync(
     });
 
     if (isDeleted) {
-      // ?ªé™¤?ä?
+      // ?ï¿½é™¤?ï¿½ï¿½?
       if (existingCard) {
         await existingCard.destroy();
         return { success: true };
       }
-      return { success: true }; // å·²ç?ä¸å???    }
-
+      return { success: true }; // å·²ï¿½?ä¸ï¿½???    }
     if (existingCard) {
-      // ?´æ–°?¾æ??¡ç?
+      // ?ï¿½æ–°?ï¿½ï¿½??ï¿½ï¿½?
       if (existingCard.updatedAt.getTime() > timestamp) {
-        // ?å??¨ç??¬æ›´?°ï?è¿”å?è¡ç?
+        // ?ï¿½ï¿½??ï¿½ï¿½??ï¿½æ›´?ï¿½ï¿½?è¿”ï¿½?è¡ï¿½?
         return {
           success: false,
           conflict: true,
           serverData: existingCard.toJSON(),
         };
       }
-
       await existingCard.update({
         ...data,
         updatedAt: new Date(timestamp),
       });
     } else {
-      // ?µå»º?°å¡??      await db.Card.create({
+      // ?ï¿½å»º?ï¿½å¡??      await db.Card.create({
         id,
         userId,
         ...data,
@@ -171,15 +166,13 @@ async function processCardSync(
         updatedAt: new Date(timestamp),
       });
     }
-
     return { success: true };
   } catch (error) {
     throw error;
   }
 }
-
 /**
- * ?•ç??¶è??Œæ­¥
+ * ?ï¿½ï¿½??ï¿½ï¿½??ï¿½æ­¥
  */
 async function processCollectionSync(
   id,
@@ -201,7 +194,6 @@ async function processCollectionSync(
       }
       return { success: true };
     }
-
     if (existingCollection) {
       if (existingCollection.updatedAt.getTime() > timestamp) {
         return {
@@ -210,7 +202,6 @@ async function processCollectionSync(
           serverData: existingCollection.toJSON(),
         };
       }
-
       await existingCollection.update({
         ...data,
         updatedAt: new Date(timestamp),
@@ -224,15 +215,13 @@ async function processCollectionSync(
         updatedAt: new Date(timestamp),
       });
     }
-
     return { success: true };
   } catch (error) {
     throw error;
   }
 }
-
 /**
- * ?•ç??¨æˆ¶?¸æ??Œæ­¥
+ * ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½??ï¿½æ­¥
  */
 async function processUserSync(
   id,
@@ -243,13 +232,11 @@ async function processUserSync(
   isDeleted
 ) {
   try {
-    const existingUser = await db.User.findByPk(userId);
-
-    if (!existingUser) {
-      return { success: false, error: '?¨æˆ¶ä¸å??? };
+    const existingUser = await db.User.findByPk(userId);'
+    if (!existingUser) {''
+      return { success: false, error: '?ï¿½æˆ¶ä¸ï¿½??? };'
     }
-
-    // ?ªæ›´?°å?è¨±å?æ­¥ç??¨æˆ¶å­—æ®µ
+    // ?ï¿½æ›´?ï¿½ï¿½?è¨±ï¿½?æ­¥ï¿½??ï¿½æˆ¶å­—æ®µ''
     const allowedFields = ['preferences', 'settings', 'profile'];
     const updateData = {};
 
@@ -258,22 +245,19 @@ async function processUserSync(
         updateData[field] = data[field];
       }
     }
-
     if (Object.keys(updateData).length > 0) {
       await existingUser.update({
         ...updateData,
         updatedAt: new Date(timestamp),
       });
     }
-
     return { success: true };
   } catch (error) {
     throw error;
   }
 }
-
 /**
- * ?•ç?è¨»é??Œæ­¥
+ * ?ï¿½ï¿½?è¨»ï¿½??ï¿½æ­¥
  */
 async function processAnnotationSync(
   id,
@@ -295,7 +279,6 @@ async function processAnnotationSync(
       }
       return { success: true };
     }
-
     if (existingAnnotation) {
       if (existingAnnotation.updatedAt.getTime() > timestamp) {
         return {
@@ -304,7 +287,6 @@ async function processAnnotationSync(
           serverData: existingAnnotation.toJSON(),
         };
       }
-
       await existingAnnotation.update({
         ...data,
         updatedAt: new Date(timestamp),
@@ -318,22 +300,20 @@ async function processAnnotationSync(
         updatedAt: new Date(timestamp),
       });
     }
-
     return { success: true };
   } catch (error) {
     throw error;
   }
 }
-
 /**
- * ?²å??å??¨ç«¯è®Šæ›´
+ * ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ç«¯è®Šæ›´
  */
 async function getServerChanges(userId, lastSyncTime) {
   const changes = [];
   const syncTime = new Date(lastSyncTime);
 
   try {
-    // ?²å??¡ç?è®Šæ›´
+    // ?ï¿½ï¿½??ï¿½ï¿½?è®Šæ›´
     const cardChanges = await db.Card.findAll({
       where: {
         userId,
@@ -344,8 +324,8 @@ async function getServerChanges(userId, lastSyncTime) {
     });
 
     cardChanges.forEach((card) => {
-      changes.push({
-        id: card.id,
+      changes.push({'
+        id: card.id,''
         type: 'card',
         data: card.toJSON(),
         timestamp: card.updatedAt.getTime(),
@@ -353,7 +333,7 @@ async function getServerChanges(userId, lastSyncTime) {
       });
     });
 
-    // ?²å??¶è?è®Šæ›´
+    // ?ï¿½ï¿½??ï¿½ï¿½?è®Šæ›´
     const collectionChanges = await db.Collection.findAll({
       where: {
         userId,
@@ -364,8 +344,8 @@ async function getServerChanges(userId, lastSyncTime) {
     });
 
     collectionChanges.forEach((collection) => {
-      changes.push({
-        id: collection.id,
+      changes.push({'
+        id: collection.id,''
         type: 'collection',
         data: collection.toJSON(),
         timestamp: collection.updatedAt.getTime(),
@@ -373,7 +353,7 @@ async function getServerChanges(userId, lastSyncTime) {
       });
     });
 
-    // ?²å?è¨»é?è®Šæ›´
+    // ?ï¿½ï¿½?è¨»ï¿½?è®Šæ›´
     const annotationChanges = await db.Annotation.findAll({
       where: {
         userId,
@@ -384,8 +364,8 @@ async function getServerChanges(userId, lastSyncTime) {
     });
 
     annotationChanges.forEach((annotation) => {
-      changes.push({
-        id: annotation.id,
+      changes.push({'
+        id: annotation.id,''
         type: 'annotation',
         data: annotation.toJSON(),
         timestamp: annotation.updatedAt.getTime(),
@@ -393,41 +373,39 @@ async function getServerChanges(userId, lastSyncTime) {
       });
     });
 
-    logger.info(`?²å???${changes.length} ?‹æ??™å™¨è®Šæ›´`);
-    return changes;
-  } catch (error) {
-    logger.error('?²å??å??¨è??´å¤±??', error);
+    logger.info(`?ï¿½ï¿½???${changes.length} ?ï¿½ï¿½??ï¿½å™¨è®Šæ›´`);
+    return changes;'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½å¤±??', error);
     return [];
   }
 }
-
 /**
- * ?²å??Œæ­¥?€?? * GET /api/sync/status
- */
+ * ?ï¿½ï¿½??ï¿½æ­¥?ï¿½?? * GET /api/sync/status'
+ */''
 router.get('/status', authenticateToken, async (req, res) => {
   try {
 // eslint-disable-next-line no-unused-vars
     const userId = req.user.id;
 
-    // ?²å??¨æˆ¶?„æ?å¾Œå?æ­¥æ???// eslint-disable-next-line no-unused-vars
+    // ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½?å¾Œï¿½?æ­¥ï¿½???// eslint-disable-next-line no-unused-vars
     const user = await db.User.findByPk(userId);
 // eslint-disable-next-line no-unused-vars
     const lastSyncTime = user.lastSyncTime || 0;
 
-    // ?²å?å¾…å?æ­¥é??®æ•¸?ï??™è£¡?¯ä»¥å¯¦ç¾?´è??œç??è¼¯ï¼?    const pendingCount = 0; // ?«æ?è¨­ç‚º0ï¼Œå¯ä»¥æ ¹?šå¯¦?›é?æ±‚å¯¦??
+    // ?ï¿½ï¿½?å¾…ï¿½?æ­¥ï¿½??ï¿½æ•¸?ï¿½ï¿½??ï¿½è£¡?ï¿½ä»¥å¯¦ç¾?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¼¯ï¿½?    const pendingCount = 0; // ?ï¿½ï¿½?è¨­ç‚º0ï¼Œå¯ä»¥æ ¹?ï¿½å¯¦?ï¿½ï¿½?æ±‚å¯¦??
     res.json({
       success: true,
       lastSyncTime,
       pendingCount,
       serverVersion: Date.now(),
-    });
-  } catch (error) {
-    logger.error('?²å??Œæ­¥?€?‹å¤±??', error);
-    res.status(500).json({
-      success: false,
-      error: '?å??¨å…§?¨éŒ¯èª?,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½æ­¥?ï¿½?ï¿½å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      error: '?ï¿½ï¿½??ï¿½å…§?ï¿½éŒ¯ï¿½?,
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

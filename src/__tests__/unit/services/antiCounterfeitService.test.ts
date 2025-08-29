@@ -7,8 +7,8 @@ import { logger } from '../../../utils/logger';
 jest.mock('../../../services/apiService');
 jest.mock('../../../utils/logger');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('AntiCounterfeitService', () => {
   beforeEach(() => {
@@ -16,10 +16,10 @@ describe('AntiCounterfeitService', () => {
   });
 
   describe('verifyAuthenticity', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockImageData = 'base64_image_data';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockImageData = 'base64_image_data';
 
-    const mockAuthenticResult = {
+    const _mockAuthenticResult = {
       success: true,
       data: {
         cardId: mockCardId,
@@ -56,7 +56,7 @@ describe('AntiCounterfeitService', () => {
       },
     };
 
-    const mockCounterfeitResult = {
+    const _mockCounterfeitResult = {
       success: true,
       data: {
         cardId: mockCardId,
@@ -96,7 +96,7 @@ describe('AntiCounterfeitService', () => {
     it('應該成功驗證真品卡片', async () => {
       mockApiService.post.mockResolvedValue(mockAuthenticResult);
 
-      const result = await antiCounterfeitService.verifyAuthenticity(
+      const _result = await antiCounterfeitService.verifyAuthenticity(
         mockCardId,
         mockImageData
       );
@@ -113,7 +113,7 @@ describe('AntiCounterfeitService', () => {
     it('應該檢測到偽造卡片', async () => {
       mockApiService.post.mockResolvedValue(mockCounterfeitResult);
 
-      const result = await antiCounterfeitService.verifyAuthenticity(
+      const _result = await antiCounterfeitService.verifyAuthenticity(
         mockCardId,
         mockImageData
       );
@@ -125,7 +125,7 @@ describe('AntiCounterfeitService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidCardId = 'invalid-id';
+      const _invalidCardId = 'invalid-id';
 
       await expect(
         antiCounterfeitService.verifyAuthenticity(invalidCardId, mockImageData)
@@ -143,10 +143,10 @@ describe('AntiCounterfeitService', () => {
   });
 
   describe('analyzeHologram', () => {
-    const mockImageData = 'base64_image_data';
+    const _mockImageData = 'base64_image_data';
 
     it('應該分析全息圖特徵', async () => {
-      const mockHologramResult = {
+      const _mockHologramResult = {
         success: true,
         data: {
           isAuthentic: true,
@@ -162,7 +162,7 @@ describe('AntiCounterfeitService', () => {
 
       mockApiService.post.mockResolvedValue(mockHologramResult);
 
-      const result =
+      const _result =
         await antiCounterfeitService.analyzeHologram(mockImageData);
 
       expect(result.success).toBe(true);
@@ -172,10 +172,10 @@ describe('AntiCounterfeitService', () => {
   });
 
   describe('analyzePrinting', () => {
-    const mockImageData = 'base64_image_data';
+    const _mockImageData = 'base64_image_data';
 
     it('應該分析印刷質量', async () => {
-      const mockPrintingResult = {
+      const _mockPrintingResult = {
         success: true,
         data: {
           isAuthentic: true,
@@ -191,7 +191,7 @@ describe('AntiCounterfeitService', () => {
 
       mockApiService.post.mockResolvedValue(mockPrintingResult);
 
-      const result =
+      const _result =
         await antiCounterfeitService.analyzePrinting(mockImageData);
 
       expect(result.success).toBe(true);
@@ -201,10 +201,10 @@ describe('AntiCounterfeitService', () => {
   });
 
   describe('analyzeMaterial', () => {
-    const mockImageData = 'base64_image_data';
+    const _mockImageData = 'base64_image_data';
 
     it('應該分析材料特性', async () => {
-      const mockMaterialResult = {
+      const _mockMaterialResult = {
         success: true,
         data: {
           isAuthentic: true,
@@ -220,7 +220,7 @@ describe('AntiCounterfeitService', () => {
 
       mockApiService.post.mockResolvedValue(mockMaterialResult);
 
-      const result =
+      const _result =
         await antiCounterfeitService.analyzeMaterial(mockImageData);
 
       expect(result.success).toBe(true);
@@ -230,10 +230,10 @@ describe('AntiCounterfeitService', () => {
   });
 
   describe('verifyBlockchain', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該驗證區塊鏈記錄', async () => {
-      const mockBlockchainResult = {
+      const _mockBlockchainResult = {
         success: true,
         data: {
           isVerified: true,
@@ -247,7 +247,7 @@ describe('AntiCounterfeitService', () => {
 
       mockApiService.post.mockResolvedValue(mockBlockchainResult);
 
-      const result = await antiCounterfeitService.verifyBlockchain(mockCardId);
+      const _result = await antiCounterfeitService.verifyBlockchain(mockCardId);
 
       expect(result.success).toBe(true);
       expect(result.data.isVerified).toBe(true);
@@ -256,10 +256,10 @@ describe('AntiCounterfeitService', () => {
   });
 
   describe('getRiskAssessment', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該評估風險等級', async () => {
-      const mockRiskResult = {
+      const _mockRiskResult = {
         success: true,
         data: {
           riskLevel: 'low' as const,
@@ -272,7 +272,7 @@ describe('AntiCounterfeitService', () => {
 
       mockApiService.get.mockResolvedValue(mockRiskResult);
 
-      const result = await antiCounterfeitService.getRiskAssessment(mockCardId);
+      const _result = await antiCounterfeitService.getRiskAssessment(mockCardId);
 
       expect(result.success).toBe(true);
       expect(result.data.riskLevel).toBe('low');

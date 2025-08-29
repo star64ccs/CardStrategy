@@ -1,5 +1,5 @@
 // 第三方服務條款
-export const THIRD_PARTY_SERVICES_TERMS = {
+export const _THIRD_PARTY_SERVICES_TERMS = {
   type: 'third_party_services_terms',
   version: '1.0',
   title: '第三方服務條款',
@@ -270,4 +270,4 @@ export const THIRD_PARTY_SERVICES_TERMS = {
 };
 
 // 導出條款內容
-export const getThirdPartyServicesTerms = () => THIRD_PARTY_SERVICES_TERMS;
+export const _getThirdPartyServicesTerms = () => THIRD_PARTY_SERVICES_TERMS;

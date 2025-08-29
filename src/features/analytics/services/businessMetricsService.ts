@@ -1,0 +1,799 @@
+// 業務指標分析服務
+import type {
+  BusinessMetrics,
+  BusinessMetricsFilter,
+  BusinessMetricsReport,
+  BusinessMetricsInsight,
+  BusinessMetricsRecommendation,
+  BusinessMetricsAlert,
+  BusinessMetricsConfig,
+  BusinessMetricsExportOptions,
+  BusinessMetricsAnalysisResponse,
+} from '../types/businessMetrics';
+import {
+  RevenueMetrics,
+  ProfitMetrics,
+  GrowthMetrics,
+  EfficiencyMetrics,
+  MarketMetrics,
+  CustomerMetrics,
+  OperationalMetrics,
+  FinancialMetrics,
+} from '../types/businessMetrics';
+
+type EventListener = (data: unknown) => void;
+type EventType =
+  | 'metrics_updated'
+  | 'alert_triggered'
+  | 'report_generated'
+  | 'insight_discovered';
+
+class BusinessMetricsService {
+  private static instance: BusinessMetricsService;
+  private config: BusinessMetricsConfig;
+  private readonly metrics: BusinessMetrics;
+  private readonly reports: BusinessMetricsReport[] = [];
+  private readonly insights: BusinessMetricsInsight[] = [];
+  private readonly recommendations: BusinessMetricsRecommendation[] = [];
+  private alerts: BusinessMetricsAlert[] = [];
+  private readonly eventListeners: Map<EventType, EventListener[]> = new Map();
+  private isInitialized = false;
+  private updateInterval?: NodeJS.Timeout;
+
+  private constructor() {
+    this.config = this.getDefaultConfig();
+    this.metrics = this.getDefaultMetrics();
+  }
+
+  public static getInstance(): BusinessMetricsService {
+    if (!BusinessMetricsService.instance) {
+      BusinessMetricsService.instance = new BusinessMetricsService();
+    }
+    return BusinessMetricsService.instance;
+  }
+
+  // 初始化服務
+  public async initialize(
+    config?: Partial<BusinessMetricsConfig>
+  ): Promise<boolean> {
+    try {
+      if (config) {
+        this.config = { ...this.config, ...config };
+      }
+
+      if (this.config.enabled) {
+        await this.initializeAnalytics();
+        this.startPeriodicUpdates();
+        this.isInitialized = true;
+        console.log('業務指標分析服務初始化成功');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('業務指標分析服務初始化失敗:', error);
+      return false;
+    }
+  }
+
+  // 獲取業務指標分析
+  public async getBusinessMetrics(
+    filter?: BusinessMetricsFilter
+  ): Promise<BusinessMetricsAnalysisResponse> {
+    if (!this.isInitialized) {
+      throw new Error('服務未初始化');
+    }
+
+    try {
+      const _filteredMetrics = filter
+        ? this.applyFilter(this.metrics, filter)
+        : this.metrics;
+
+      const _insights = await this.generateInsights(filteredMetrics);
+      const _recommendations = await this.generateRecommendations(
+        filteredMetrics,
+        insights
+      );
+      const _alerts = this.getActiveAlerts();
+
+      const _summary = this.generateSummary(filteredMetrics, insights, alerts);
+
+      return {
+        metrics: filteredMetrics,
+        insights,
+        recommendations,
+        alerts,
+        summary,
+        metadata: {
+          generatedAt: new Date(),
+          dataPoints: this.calculateDataPoints(filteredMetrics),
+          timeRange: {
+            start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30天前
+            end: new Date(),
+          },
+          version: '1.0.0',
+        },
+      };
+    } catch (error) {
+      console.error('獲取業務指標分析失敗:', error);
+      throw new Error('獲取業務指標分析失敗');
+    }
+  }
+
+  // 生成業務指標報告
+  public async generateReport(
+    filter?: BusinessMetricsFilter
+  ): Promise<BusinessMetricsReport> {
+    if (!this.isInitialized) {
+      throw new Error('服務未初始化');
+    }
+
+    try {
+      const _analysis = await this.getBusinessMetrics(filter);
+
+      const report: BusinessMetricsReport = {
+        id: `report_${Date.now()}`,
+        title: '業務指標分析報告',
+        description: '基於當前數據的業務指標分析報告',
+        period: {
+          start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          end: new Date(),
+        },
+        filter,
+        metrics: analysis.metrics,
+        insights: analysis.insights,
+        recommendations: analysis.recommendations,
+        alerts: analysis.alerts,
+        status: 'completed',
+        generatedAt: new Date(),
+        version: '1.0.0',
+      };
+
+      this.reports.push(report);
+      this.emitEvent('report_generated', report);
+
+      return report;
+    } catch (error) {
+      console.error('生成業務指標報告失敗:', error);
+      throw new Error('生成業務指標報告失敗');
+    }
+  }
+
+  // 導出數據
+  public async exportData(
+    analysis: BusinessMetricsAnalysisResponse,
+    options: BusinessMetricsExportOptions
+  ): Promise<string> {
+    try {
+      const {
+        convertToJSON,
+        convertToCSV,
+        convertToExcel,
+        convertToPDF,
+      } = require('../utils/dataConverters');
+
+      switch (options.format) {
+        case 'json':
+          return convertToJSON(analysis);
+        case 'csv':
+          return convertToCSV(analysis);
+        case 'excel':
+          return convertToExcel(analysis);
+        case 'pdf':
+          return convertToPDF(analysis);
+        default:
+          throw new Error(`不支持的導出格式: ${options.format}`);
+      }
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.includes('不支持的導出格式')
+      ) {
+        throw error;
+      }
+      throw new Error('導出失敗');
+    }
+  }
+
+  // 創建警報
+  public createAlert(
+    alert: Omit<BusinessMetricsAlert, 'id' | 'timestamp' | 'acknowledged'>
+  ): BusinessMetricsAlert {
+    const newAlert: BusinessMetricsAlert = {
+      ...alert,
+      id: `alert_${Date.now()}`,
+      timestamp: new Date(),
+      acknowledged: false,
+    };
+
+    this.alerts.push(newAlert);
+    this.emitEvent('alert_triggered', newAlert);
+
+    return newAlert;
+  }
+
+  // 更新警報
+  public updateAlert(
+    alertId: string,
+    updates: Partial<BusinessMetricsAlert>
+  ): BusinessMetricsAlert | null {
+    const _index = this.alerts.findIndex(alert => alert.id === alertId);
+    if (index === -1) return null;
+
+    this.alerts[index] = { ...this.alerts[index], ...updates };
+    return this.alerts[index];
+  }
+
+  // 刪除警報
+  public deleteAlert(alertId: string): boolean {
+    const _index = this.alerts.findIndex(alert => alert.id === alertId);
+    if (index === -1) return false;
+
+    this.alerts.splice(index, 1);
+    return true;
+  }
+
+  // 獲取所有警報
+  public getAlerts(): BusinessMetricsAlert[] {
+    return [...this.alerts];
+  }
+
+  // 獲取警報
+  public async getAlert(alertId: string): Promise<BusinessMetricsAlert | null> {
+    const _alert = this.alerts.find(a => a.id === alertId);
+    return alert || null;
+  }
+
+  // 獲取配置
+  public getConfig(): BusinessMetricsConfig {
+    return { ...this.config };
+  }
+
+  // 更新配置
+  public updateConfig(updates: Partial<BusinessMetricsConfig>): void {
+    this.config = { ...this.config, ...updates };
+
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+
+    if (this.config.enabled) {
+      this.startPeriodicUpdates();
+    }
+  }
+
+  // 添加事件監聽器
+  public addEventListener(eventType: EventType, listener: EventListener): void {
+    if (!this.eventListeners.has(eventType)) {
+      this.eventListeners.set(eventType, []);
+    }
+    this.eventListeners.get(eventType)!.push(listener);
+  }
+
+  // 移除事件監聽器
+  public removeEventListener(
+    eventType: EventType,
+    listener: EventListener
+  ): void {
+    const _listeners = this.eventListeners.get(eventType);
+    if (listeners) {
+      const _index = listeners.indexOf(listener);
+      if (index > -1) {
+        listeners.splice(index, 1);
+      }
+    }
+  }
+
+  // 獲取報告
+  public getReports(): BusinessMetricsReport[] {
+    return [...this.reports];
+  }
+
+  // 獲取洞察
+  public getInsights(): BusinessMetricsInsight[] {
+    return [...this.insights];
+  }
+
+  // 獲取建議
+  public getRecommendations(): BusinessMetricsRecommendation[] {
+    return [...this.recommendations];
+  }
+
+  // 獲取實時指標
+  public getRealTimeMetrics(): BusinessMetrics {
+    return { ...this.metrics };
+  }
+
+  // 私有方法
+
+  private getDefaultConfig(): BusinessMetricsConfig {
+    return {
+      enabled: true,
+      updateInterval: 300000, // 5分鐘
+      retentionPeriod: 90, // 90天
+      alertThresholds: {
+        revenue: {
+          minGrowth: 0.05,
+          maxDecline: -0.1,
+        },
+        profit: {
+          minMargin: 0.15,
+          maxDecline: -0.2,
+        },
+        customer: {
+          maxChurn: 0.05,
+          minRetention: 0.8,
+        },
+        operational: {
+          minEfficiency: 0.7,
+          maxDefectRate: 0.05,
+        },
+      },
+      dataSources: {
+        sales: true,
+        marketing: true,
+        operations: true,
+        finance: true,
+        customer: true,
+      },
+      exportFormats: ['json', 'csv', 'excel', 'pdf'],
+      realTimeUpdates: true,
+      historicalData: true,
+      forecasting: true,
+      comparisons: true,
+    };
+  }
+
+  private getDefaultMetrics(): BusinessMetrics {
+    return {
+      revenue: {
+        totalRevenue: 1000000,
+        monthlyRecurringRevenue: 85000,
+        annualRecurringRevenue: 1020000,
+        averageRevenuePerUser: 150,
+        revenueGrowthRate: 0.12,
+        revenueByProduct: {
+          product_a: 400000,
+          product_b: 350000,
+          product_c: 250000,
+        },
+        revenueByRegion: {
+          north: 400000,
+          south: 300000,
+          east: 200000,
+          west: 100000,
+        },
+        revenueByChannel: { online: 600000, retail: 300000, partner: 100000 },
+        revenueByTimeframe: {
+          daily: Array.from(
+            { length: 30 },
+            () => Math.random() * 50000 + 20000
+          ),
+          weekly: Array.from(
+            { length: 12 },
+            () => Math.random() * 300000 + 150000
+          ),
+          monthly: Array.from(
+            { length: 12 },
+            () => Math.random() * 1200000 + 800000
+          ),
+          quarterly: Array.from(
+            { length: 4 },
+            () => Math.random() * 3500000 + 2500000
+          ),
+          yearly: Array.from(
+            { length: 3 },
+            () => Math.random() * 12000000 + 8000000
+          ),
+        },
+      },
+      profit: {
+        grossProfit: 600000,
+        netProfit: 200000,
+        grossProfitMargin: 0.6,
+        netProfitMargin: 0.2,
+        operatingProfit: 250000,
+        operatingMargin: 0.25,
+        profitGrowthRate: 0.15,
+        profitByProduct: {
+          product_a: 240000,
+          product_b: 210000,
+          product_c: 150000,
+        },
+        profitByRegion: {
+          north: 240000,
+          south: 180000,
+          east: 120000,
+          west: 60000,
+        },
+        costBreakdown: {
+          costOfGoodsSold: 400000,
+          operatingExpenses: 200000,
+          marketingExpenses: 100000,
+          researchAndDevelopment: 80000,
+          administrativeExpenses: 20000,
+        },
+      },
+      growth: {
+        userGrowthRate: 0.18,
+        revenueGrowthRate: 0.12,
+        marketShareGrowth: 0.08,
+        productAdoptionRate: 0.25,
+        featureUsageGrowth: 0.3,
+        geographicExpansion: 0.15,
+        customerAcquisitionGrowth: 0.2,
+        retentionGrowth: 0.05,
+        growthBySegment: { enterprise: 0.25, sme: 0.15, startup: 0.1 },
+        growthByTimeframe: {
+          daily: Array.from({ length: 30 }, () => Math.random() * 0.1 + 0.05),
+          weekly: Array.from({ length: 12 }, () => Math.random() * 0.15 + 0.08),
+          monthly: Array.from({ length: 12 }, () => Math.random() * 0.2 + 0.1),
+          quarterly: Array.from(
+            { length: 4 },
+            () => Math.random() * 0.25 + 0.15
+          ),
+          yearly: Array.from({ length: 3 }, () => Math.random() * 0.3 + 0.2),
+        },
+      },
+      efficiency: {
+        customerAcquisitionCost: 50,
+        customerLifetimeValue: 500,
+        paybackPeriod: 3.3,
+        conversionRate: 0.25,
+        churnRate: 0.03,
+        retentionRate: 0.97,
+        averageOrderValue: 200,
+        inventoryTurnover: 8,
+        assetUtilization: 0.75,
+        employeeProductivity: 0.85,
+        efficiencyByChannel: { online: 0.3, retail: 0.2, partner: 0.15 },
+        efficiencyByProduct: {
+          product_a: 0.28,
+          product_b: 0.25,
+          product_c: 0.22,
+        },
+      },
+      market: {
+        marketShare: 0.15,
+        marketSize: 10000000,
+        marketGrowthRate: 0.08,
+        competitivePosition: 0.7,
+        brandAwareness: 0.65,
+        customerSatisfaction: 0.85,
+        netPromoterScore: 0.72,
+        marketPenetration: 0.12,
+        marketByRegion: { north: 0.2, south: 0.15, east: 0.1, west: 0.08 },
+        marketBySegment: { enterprise: 0.25, sme: 0.18, startup: 0.12 },
+        competitiveAnalysis: {
+          competitors: ['competitor_a', 'competitor_b', 'competitor_c'],
+          ourPosition: 0.7,
+          competitiveAdvantages: ['技術領先', '客戶服務', '價格優勢'],
+          threats: ['新競爭者進入', '技術變革', '市場飽和'],
+        },
+      },
+      customer: {
+        totalCustomers: 6667,
+        activeCustomers: 6000,
+        newCustomers: 1200,
+        returningCustomers: 4800,
+        customerSatisfaction: 0.85,
+        customerLifetimeValue: 500,
+        customerAcquisitionCost: 50,
+        customerRetentionRate: 0.97,
+        customerChurnRate: 0.03,
+        averageOrderValue: 200,
+        customerBySegment: { enterprise: 2000, sme: 3000, startup: 1667 },
+        customerByRegion: { north: 2667, south: 2000, east: 1333, west: 667 },
+        customerByProduct: {
+          product_a: 2667,
+          product_b: 2333,
+          product_c: 1667,
+        },
+        customerBehavior: {
+          averageSessionDuration: 1800,
+          sessionFrequency: 3.5,
+          featureUsage: { feature_a: 0.8, feature_b: 0.6, feature_c: 0.4 },
+          purchaseFrequency: 2.5,
+          supportTickets: 150,
+        },
+      },
+      operational: {
+        orderFulfillmentRate: 0.98,
+        averageOrderProcessingTime: 2.5,
+        inventoryAccuracy: 0.95,
+        supplierPerformance: 0.92,
+        qualityMetrics: {
+          defectRate: 0.02,
+          returnRate: 0.03,
+          customerComplaints: 25,
+          productQualityScore: 0.95,
+        },
+        operationalEfficiency: {
+          employeeProductivity: 0.85,
+          systemUptime: 0.995,
+          responseTime: 200,
+          throughput: 1000,
+        },
+        operationalByRegion: {
+          north: 0.95,
+          south: 0.92,
+          east: 0.9,
+          west: 0.88,
+        },
+        operationalByProduct: {
+          product_a: 0.96,
+          product_b: 0.94,
+          product_c: 0.92,
+        },
+      },
+      financial: {
+        cashFlow: {
+          operatingCashFlow: 300000,
+          investingCashFlow: -100000,
+          financingCashFlow: -50000,
+          freeCashFlow: 150000,
+        },
+        liquidity: {
+          currentRatio: 2.5,
+          quickRatio: 1.8,
+          cashRatio: 0.8,
+          workingCapital: 500000,
+        },
+        solvency: {
+          debtToEquityRatio: 0.4,
+          debtToAssetRatio: 0.3,
+          interestCoverageRatio: 8.0,
+          debtServiceCoverageRatio: 3.5,
+        },
+        profitability: {
+          returnOnAssets: 0.15,
+          returnOnEquity: 0.25,
+          returnOnInvestment: 0.2,
+          returnOnCapitalEmployed: 0.18,
+        },
+        financialByPeriod: {
+          daily: this.getDefaultFinancialPeriodMetrics(),
+          weekly: this.getDefaultFinancialPeriodMetrics(),
+          monthly: this.getDefaultFinancialPeriodMetrics(),
+          quarterly: this.getDefaultFinancialPeriodMetrics(),
+          yearly: this.getDefaultFinancialPeriodMetrics(),
+        },
+      },
+    };
+  }
+
+  private getDefaultFinancialPeriodMetrics() {
+    return {
+      revenue: 100000,
+      expenses: 80000,
+      profit: 20000,
+      cashFlow: 25000,
+      assets: 2000000,
+      liabilities: 800000,
+      equity: 1200000,
+    };
+  }
+
+  private async initializeAnalytics(): Promise<void> {
+    // 模擬初始化過程
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+
+  private startPeriodicUpdates(): void {
+    if (this.config.realTimeUpdates) {
+      this.updateInterval = setInterval(() => {
+        this.updateMetrics();
+      }, this.config.updateInterval);
+    }
+  }
+
+  private updateMetrics(): void {
+    // 模擬實時數據更新
+    this.metrics.revenue.totalRevenue += Math.random() * 10000;
+    this.metrics.profit.netProfit += Math.random() * 2000;
+    this.metrics.customer.totalCustomers += Math.floor(Math.random() * 10);
+
+    this.emitEvent('metrics_updated', this.metrics);
+    this.checkAlerts();
+  }
+
+  private applyFilter(
+    metrics: BusinessMetrics,
+    filter: BusinessMetricsFilter
+  ): BusinessMetrics {
+    // 簡化的過濾邏輯
+    return { ...metrics };
+  }
+
+  private async generateInsights(
+    metrics: BusinessMetrics
+  ): Promise<BusinessMetricsInsight[]> {
+    const insights: BusinessMetricsInsight[] = [];
+
+    // 收入洞察
+    if (metrics.revenue.revenueGrowthRate > 0.1) {
+      insights.push({
+        id: `insight_${Date.now()}_1`,
+        type: 'positive',
+        category: 'revenue',
+        title: '收入增長強勁',
+        description: '收入增長率達到12%，超過行業平均水平',
+        impact: 'high',
+        confidence: 0.85,
+        dataPoints: [
+          {
+            metric: 'revenueGrowthRate',
+            value: metrics.revenue.revenueGrowthRate,
+            change: 0.02,
+            trend: 'up',
+          },
+        ],
+        timestamp: new Date(),
+      });
+    }
+
+    // 客戶洞察
+    if (metrics.customer.customerChurnRate < 0.05) {
+      insights.push({
+        id: `insight_${Date.now()}_2`,
+        type: 'positive',
+        category: 'customer',
+        title: '客戶流失率低',
+        description: '客戶流失率僅為3%，表現優異',
+        impact: 'medium',
+        confidence: 0.9,
+        dataPoints: [
+          {
+            metric: 'customerChurnRate',
+            value: metrics.customer.customerChurnRate,
+            change: -0.01,
+            trend: 'down',
+          },
+        ],
+        timestamp: new Date(),
+      });
+    }
+
+    return insights;
+  }
+
+  private async generateRecommendations(
+    metrics: BusinessMetrics,
+    insights: BusinessMetricsInsight[]
+  ): Promise<BusinessMetricsRecommendation[]> {
+    const recommendations: BusinessMetricsRecommendation[] = [];
+
+    // 基於收入增長的建議
+    if (metrics.revenue.revenueGrowthRate > 0.1) {
+      recommendations.push({
+        id: `rec_${Date.now()}_1`,
+        type: 'investment',
+        priority: 'high',
+        title: '擴大市場投入',
+        description:
+          '鑑於收入增長強勁，建議增加市場營銷投入以進一步擴大市場份額',
+        expectedImpact: {
+          metric: 'revenueGrowthRate',
+          improvement: 0.05,
+          timeframe: '3個月',
+        },
+        implementation: {
+          steps: ['增加廣告預算', '擴展銷售團隊', '開發新市場'],
+          resources: ['營銷預算', '人力資源', '技術支持'],
+          timeline: '3個月',
+          cost: 500000,
+        },
+        risks: ['市場飽和', '競爭加劇', '投資回報率下降'],
+        dependencies: ['資金支持', '團隊擴張', '技術升級'],
+        timestamp: new Date(),
+      });
+    }
+
+    return recommendations;
+  }
+
+  private getActiveAlerts(): BusinessMetricsAlert[] {
+    return this.alerts.filter(alert => !alert.acknowledged);
+  }
+
+  private checkAlerts(): void {
+    // 檢查收入警報
+    if (
+      this.metrics.revenue.revenueGrowthRate <
+      this.config.alertThresholds.revenue.maxDecline
+    ) {
+      this.createAlert({
+        type: 'threshold',
+        severity: 'high',
+        category: 'revenue',
+        title: '收入下降警報',
+        description: '收入增長率低於預警閾值',
+        metric: 'revenueGrowthRate',
+        currentValue: this.metrics.revenue.revenueGrowthRate,
+        thresholdValue: this.config.alertThresholds.revenue.maxDecline,
+        deviation:
+          this.metrics.revenue.revenueGrowthRate -
+          this.config.alertThresholds.revenue.maxDecline,
+        trend: 'down',
+      });
+    }
+
+    // 檢查客戶流失警報
+    if (
+      this.metrics.customer.customerChurnRate >
+      this.config.alertThresholds.customer.maxChurn
+    ) {
+      this.createAlert({
+        type: 'threshold',
+        severity: 'medium',
+        category: 'customer',
+        title: '客戶流失警報',
+        description: '客戶流失率高於預警閾值',
+        metric: 'customerChurnRate',
+        currentValue: this.metrics.customer.customerChurnRate,
+        thresholdValue: this.config.alertThresholds.customer.maxChurn,
+        deviation:
+          this.metrics.customer.customerChurnRate -
+          this.config.alertThresholds.customer.maxChurn,
+        trend: 'up',
+      });
+    }
+  }
+
+  private generateSummary(
+    metrics: BusinessMetrics,
+    insights: BusinessMetricsInsight[],
+    alerts: BusinessMetricsAlert[]
+  ) {
+    const _positiveInsights = insights.filter(i => i.type === 'positive');
+    const _negativeInsights = insights.filter(i => i.type === 'negative');
+    const _criticalAlerts = alerts.filter(a => a.severity === 'critical');
+
+    let overallHealth: 'excellent' | 'good' | 'fair' | 'poor' = 'good';
+    if (criticalAlerts.length > 0) {
+      overallHealth = 'poor';
+    } else if (negativeInsights.length > positiveInsights.length) {
+      overallHealth = 'fair';
+    } else if (positiveInsights.length > negativeInsights.length * 2) {
+      overallHealth = 'excellent';
+    }
+
+    return {
+      overallHealth,
+      keyMetrics: [
+        'revenueGrowthRate',
+        'customerChurnRate',
+        'netProfitMargin',
+        'customerSatisfaction',
+      ],
+      trends: {
+        positive: positiveInsights.map(i => i.title),
+        negative: negativeInsights.map(i => i.title),
+        stable: [],
+      },
+      opportunities: insights
+        .filter(i => i.type === 'opportunity')
+        .map(i => i.title),
+      risks: insights.filter(i => i.type === 'risk').map(i => i.title),
+    };
+  }
+
+  private calculateDataPoints(metrics: BusinessMetrics): number {
+    // 簡化的數據點計算
+    return Object.keys(metrics).length * 10;
+  }
+
+  private emitEvent(eventType: EventType, data: unknown): void {
+    const _listeners = this.eventListeners.get(eventType);
+    if (listeners) {
+      listeners.forEach(listener => {
+        try {
+          listener(data);
+        } catch (error) {
+          console.error('事件監聽器執行錯誤:', error);
+        }
+      });
+    }
+  }
+}
+
+export default BusinessMetricsService;

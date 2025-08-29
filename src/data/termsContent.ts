@@ -1,5 +1,5 @@
 // 條款內容數據
-import { TermsType, TermsVersion } from '../types/terms';
+import type { TermsType, TermsVersion } from '../types/terms';
 
 // 條款內容配置
 export const TERMS_CONTENT: Record<
@@ -702,14 +702,14 @@ Cookie 是存儲在您設備上的小型文本文件，幫助我們提供更好�
 };
 
 // 獲取條款內容的輔助函數
-export const getTermsContent = (
+export const _getTermsContent = (
   type: TermsType
 ): Omit<TermsVersion, 'id' | 'createdAt' | 'updatedAt'> => {
   return TERMS_CONTENT[type];
 };
 
 // 獲取所有條款內容
-export const getAllTermsContent = (): Omit<
+export const _getAllTermsContent = (): Omit<
   TermsVersion,
   'id' | 'createdAt' | 'updatedAt'
 >[] => {

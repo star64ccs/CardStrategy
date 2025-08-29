@@ -1,10 +1,23 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import {
-  scanHistoryService,
-  ScanHistoryItem,
-  ScanHistoryFilters,
-  ScanStatistics,
-} from '@/services/scanHistoryService';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import type {
+  ScanRecord as ScanHistoryItem,
+  ScanStats as ScanStatistics,
+} from '../../shared/services/scanHistoryService';
+import { scanHistoryService } from '../../shared/services/scanHistoryService';
+
+// 掃描歷史過濾器類型
+export interface ScanHistoryFilters {
+  page?: number;
+  limit?: number;
+  scanType?: string;
+  status?: string;
+  startDate?: Date;
+  endDate?: Date;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
 
 // 掃描歷史記錄狀態類型
 export interface ScanHistoryState {
@@ -28,49 +41,58 @@ export interface ScanHistoryState {
 }
 
 // 異步 thunk
-export const fetchScanHistory = createAsyncThunk(
+export const _fetchScanHistory = createAsyncThunk(
   'scanHistory/fetchScanHistory',
   async (filters: ScanHistoryFilters = {}, { rejectWithValue }) => {
     try {
-      const response = await scanHistoryService.getScanHistory(filters);
+      const _response = await scanHistoryService.getScanHistory(filters);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '獲取掃描歷史失敗');
     }
   }
 );
 
-export const fetchScanRecord = createAsyncThunk(
+export const _fetchScanRecord = createAsyncThunk(
   'scanHistory/fetchScanRecord',
   async (recordId: string, { rejectWithValue }) => {
     try {
-      const response = await scanHistoryService.getScanRecord(recordId);
+      const _response = await scanHistoryService.getScanRecord(recordId);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '獲取掃描記錄失敗');
     }
   }
 );
 
-export const createScanRecord = createAsyncThunk(
+export const _createScanRecord = createAsyncThunk(
   'scanHistory/createScanRecord',
   async (
-    scanData: Omit<
-      ScanHistoryItem,
-      'id' | 'userId' | 'createdAt' | 'updatedAt'
-    >,
+    {
+      userId,
+      scanData,
+    }: {
+      userId: string;
+      scanData: Omit<
+        ScanHistoryItem,
+        'id' | 'userId' | 'createdAt' | 'updatedAt'
+      >;
+    },
     { rejectWithValue }
   ) => {
     try {
-      const response = await scanHistoryService.createScanRecord(scanData);
+      const _response = await scanHistoryService.createScanRecord(
+        userId,
+        scanData
+      );
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '創建掃描記錄失敗');
     }
   }
 );
 
-export const updateScanRecord = createAsyncThunk(
+export const _updateScanRecord = createAsyncThunk(
   'scanHistory/updateScanRecord',
   async (
     {
@@ -80,108 +102,108 @@ export const updateScanRecord = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await scanHistoryService.updateScanRecord(
+      const _response = await scanHistoryService.updateScanRecord(
         recordId,
         updates
       );
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '更新掃描記錄失敗');
     }
   }
 );
 
-export const deleteScanRecord = createAsyncThunk(
+export const _deleteScanRecord = createAsyncThunk(
   'scanHistory/deleteScanRecord',
   async (recordId: string, { rejectWithValue }) => {
     try {
       await scanHistoryService.deleteScanRecord(recordId);
       return recordId;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '刪除掃描記錄失敗');
     }
   }
 );
 
-export const deleteMultipleRecords = createAsyncThunk(
+export const _deleteMultipleRecords = createAsyncThunk(
   'scanHistory/deleteMultipleRecords',
   async (recordIds: string[], { rejectWithValue }) => {
     try {
       await scanHistoryService.deleteMultipleRecords(recordIds);
       return recordIds;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '批量刪除掃描記錄失敗');
     }
   }
 );
 
-export const toggleFavorite = createAsyncThunk(
+export const _toggleFavorite = createAsyncThunk(
   'scanHistory/toggleFavorite',
   async (recordId: string, { rejectWithValue }) => {
     try {
-      const response = await scanHistoryService.toggleFavorite(recordId);
+      const _response = await scanHistoryService.toggleFavorite(recordId);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '切換收藏狀態失敗');
     }
   }
 );
 
-export const addNote = createAsyncThunk(
+export const _addNote = createAsyncThunk(
   'scanHistory/addNote',
   async (
     { recordId, note }: { recordId: string; note: string },
     { rejectWithValue }
   ) => {
     try {
-      const response = await scanHistoryService.addNote(recordId, note);
+      const _response = await scanHistoryService.addNote(recordId, note);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '添加筆記失敗');
     }
   }
 );
 
-export const addTags = createAsyncThunk(
+export const _addTags = createAsyncThunk(
   'scanHistory/addTags',
   async (
     { recordId, tags }: { recordId: string; tags: string[] },
     { rejectWithValue }
   ) => {
     try {
-      const response = await scanHistoryService.addTags(recordId, tags);
+      const _response = await scanHistoryService.addTags(recordId, tags);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '添加標籤失敗');
     }
   }
 );
 
-export const fetchScanStatistics = createAsyncThunk(
+export const _fetchScanStatistics = createAsyncThunk(
   'scanHistory/fetchScanStatistics',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await scanHistoryService.getScanStatistics();
+      const _response = await scanHistoryService.getScanStatistics();
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '獲取掃描統計失敗');
     }
   }
 );
 
-export const searchScanHistory = createAsyncThunk(
+export const _searchScanHistory = createAsyncThunk(
   'scanHistory/searchScanHistory',
   async (
     { query, filters }: { query: string; filters?: ScanHistoryFilters },
     { rejectWithValue }
   ) => {
     try {
-      const response = await scanHistoryService.searchScanHistory(
+      const _response = await scanHistoryService.searchScanHistory(
         query,
         filters
       );
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '搜索掃描歷史失敗');
     }
   }
@@ -214,20 +236,20 @@ const initialState: ScanHistoryState = {
 };
 
 // Scan History slice
-const scanHistorySlice = createSlice({
+const _scanHistorySlice = createSlice({
   name: 'scanHistory',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
-    clearSelectedRecord: (state) => {
+    clearSelectedRecord: state => {
       state.selectedRecord = null;
     },
     setFilters: (state, action: PayloadAction<Partial<ScanHistoryFilters>>) => {
       state.filters = { ...state.filters, ...action.payload };
     },
-    clearFilters: (state) => {
+    clearFilters: state => {
       state.filters = {
         page: 1,
         limit: 20,
@@ -235,35 +257,35 @@ const scanHistorySlice = createSlice({
         sortOrder: 'desc',
       };
     },
-    toggleSelectionMode: (state) => {
+    toggleSelectionMode: state => {
       state.isSelectionMode = !state.isSelectionMode;
       if (!state.isSelectionMode) {
         state.selectedRecords = [];
       }
     },
     toggleRecordSelection: (state, action: PayloadAction<string>) => {
-      const recordId = action.payload;
-      const index = state.selectedRecords.indexOf(recordId);
+      const _recordId = action.payload;
+      const _index = state.selectedRecords.indexOf(recordId);
       if (index > -1) {
         state.selectedRecords.splice(index, 1);
       } else {
         state.selectedRecords.push(recordId);
       }
     },
-    selectAllRecords: (state) => {
-      state.selectedRecords = state.history.map((record) => record.id);
+    selectAllRecords: state => {
+      state.selectedRecords = state.history.map((record: unknown) => record.id);
     },
-    clearSelection: (state) => {
+    clearSelection: state => {
       state.selectedRecords = [];
     },
     setPage: (state, action: PayloadAction<number>) => {
       state.filters.page = action.payload;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Fetch Scan History
     builder
-      .addCase(fetchScanHistory.pending, (state) => {
+      .addCase(fetchScanHistory.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -287,7 +309,7 @@ const scanHistorySlice = createSlice({
 
     // Fetch Scan Record
     builder
-      .addCase(fetchScanRecord.pending, (state) => {
+      .addCase(fetchScanRecord.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -309,8 +331,8 @@ const scanHistorySlice = createSlice({
 
     // Update Scan Record
     builder.addCase(updateScanRecord.fulfilled, (state, action) => {
-      const index = state.history.findIndex(
-        (record) => record.id === action.payload.id
+      const _index = state.history.findIndex(
+        record => record.id === action.payload.id
       );
       if (index !== -1) {
         state.history[index] = action.payload;
@@ -323,7 +345,7 @@ const scanHistorySlice = createSlice({
     // Delete Scan Record
     builder.addCase(deleteScanRecord.fulfilled, (state, action) => {
       state.history = state.history.filter(
-        (record) => record.id !== action.payload
+        record => record.id !== action.payload
       );
       state.pagination.total -= 1;
       if (state.selectedRecord?.id === action.payload) {
@@ -334,7 +356,7 @@ const scanHistorySlice = createSlice({
     // Delete Multiple Records
     builder.addCase(deleteMultipleRecords.fulfilled, (state, action) => {
       state.history = state.history.filter(
-        (record) => !action.payload.includes(record.id)
+        record => !action.payload.includes(record.id)
       );
       state.pagination.total -= action.payload.length;
       state.selectedRecords = [];
@@ -343,8 +365,8 @@ const scanHistorySlice = createSlice({
 
     // Toggle Favorite
     builder.addCase(toggleFavorite.fulfilled, (state, action) => {
-      const index = state.history.findIndex(
-        (record) => record.id === action.payload.id
+      const _index = state.history.findIndex(
+        record => record.id === action.payload.id
       );
       if (index !== -1) {
         state.history[index] = action.payload;
@@ -356,8 +378,8 @@ const scanHistorySlice = createSlice({
 
     // Add Note
     builder.addCase(addNote.fulfilled, (state, action) => {
-      const index = state.history.findIndex(
-        (record) => record.id === action.payload.id
+      const _index = state.history.findIndex(
+        record => record.id === action.payload.id
       );
       if (index !== -1) {
         state.history[index] = action.payload;
@@ -369,8 +391,8 @@ const scanHistorySlice = createSlice({
 
     // Add Tags
     builder.addCase(addTags.fulfilled, (state, action) => {
-      const index = state.history.findIndex(
-        (record) => record.id === action.payload.id
+      const _index = state.history.findIndex(
+        record => record.id === action.payload.id
       );
       if (index !== -1) {
         state.history[index] = action.payload;
@@ -382,7 +404,7 @@ const scanHistorySlice = createSlice({
 
     // Fetch Scan Statistics
     builder
-      .addCase(fetchScanStatistics.pending, (state) => {
+      .addCase(fetchScanStatistics.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -398,7 +420,7 @@ const scanHistorySlice = createSlice({
 
     // Search Scan History
     builder
-      .addCase(searchScanHistory.pending, (state) => {
+      .addCase(searchScanHistory.pending, state => {
         state.isLoading = true;
         state.error = null;
       })

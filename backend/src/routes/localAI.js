@@ -1,29 +1,27 @@
-const express = require('express');
-const router = express.Router();
-const localAIService = require('../services/localAIService');
-const { authenticateToken } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
-
-// ?¥åº·æª¢æŸ¥
+const express = require('express');'
+const router = express.Router();''
+const localAIService = require('../services/localAIService');''
+const { authenticateToken } = require('../middleware/auth');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');'
+// ?ï¿½åº·æª¢æŸ¥''
 router.get('/health', async (req, res) => {
   try {
     const health = await localAIService.healthCheck();
     res.json({
       success: true,
       data: health,
-    });
-  } catch (error) {
-    logger.error('AI?¥åº·æª¢æŸ¥?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: 'AI?å??¥åº·æª¢æŸ¥å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('AI?ï¿½åº·æª¢æŸ¥?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: 'AI?ï¿½ï¿½??ï¿½åº·æª¢æŸ¥å¤±ï¿½?',
       error: error.message,
-    });
+    });'
   }
-});
-
-// ?²å??¯ç”¨?ä???router.get('/providers', authenticateToken, async (req, res) => {
+});''
+// ?ï¿½ï¿½??ï¿½ç”¨?ï¿½ï¿½???router.get('/providers', authenticateToken, async (req, res) => {
   try {
     const providers = localAIService.getAvailableProviders();
     res.json({
@@ -32,145 +30,135 @@ router.get('/health', async (req, res) => {
         providers,
         count: providers.length,
       },
-    });
-  } catch (error) {
-    logger.error('?²å?AI?ä??†éŒ¯èª?', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?AI?ä??†å¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?AI?ï¿½ï¿½??ï¿½éŒ¯ï¿½?', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?AI?ï¿½ï¿½??ï¿½å¤±??,
       error: error.message,
     });
   }
-});
-
-// ?šç”¨?‡æœ¬?Ÿæ?
-router.post('/generate', authenticateToken, async (req, res) => {
-  try {
+});'
+// ?ï¿½ç”¨?ï¿½æœ¬?ï¿½ï¿½?''
+router.post('/generate', authenticateToken, async (req, res) => {'
+  try {''
     const { prompt, taskType = 'general', options = {} } = req.body;
 
     if (!prompt) {
-      return res.status(400).json({
-        success: false,
-        message: 'è«‹æ?ä¾›æ?ç¤ºæ???,
+      return res.status(400).json({'
+        success: false,''
+        message: 'è«‹ï¿½?ä¾›ï¿½?ç¤ºï¿½???,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const result = await localAIService.generateText(prompt, taskType, options);
 
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('AI?‡æœ¬?Ÿæ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: 'AI?‡æœ¬?Ÿæ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('AI?ï¿½æœ¬?ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: 'AI?ï¿½æœ¬?ï¿½ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// ?¡ç??†æ?
-router.post('/analyze-card', authenticateToken, async (req, res) => {
-  try {
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½?''
+router.post('/analyze-card', authenticateToken, async (req, res) => {'
+  try {''
     const { cardData, analysisType = 'investment' } = req.body;
 
     if (!cardData) {
-      return res.status(400).json({
-        success: false,
-        message: 'è«‹æ?ä¾›å¡?‡æ•¸??,
+      return res.status(400).json({'
+        success: false,''
+        message: 'è«‹ï¿½?ä¾›å¡?ï¿½æ•¸??,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const result = await localAIService.analyzeCard(cardData, analysisType);
 
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('?¡ç??†æ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?¡ç??†æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// ?¹æ ¼?æ¸¬
-router.post('/predict-price', authenticateToken, async (req, res) => {
-  try {
+});'
+// ?ï¿½æ ¼?ï¿½æ¸¬''
+router.post('/predict-price', authenticateToken, async (req, res) => {'
+  try {''
     const { cardData, timeframe = '1m' } = req.body;
 
     if (!cardData) {
-      return res.status(400).json({
-        success: false,
-        message: 'è«‹æ?ä¾›å¡?‡æ•¸??,
+      return res.status(400).json({'
+        success: false,''
+        message: 'è«‹ï¿½?ä¾›å¡?ï¿½æ•¸??,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const result = await localAIService.predictPrice(cardData, timeframe);
 
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('?¹æ ¼?æ¸¬?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?¹æ ¼?æ¸¬å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½æ ¼?ï¿½æ¸¬?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½æ ¼?ï¿½æ¸¬å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// å¸‚å ´?†æ?
+});'
+// å¸‚å ´?ï¿½ï¿½?''
 router.post('/analyze-market', authenticateToken, async (req, res) => {
   try {
     const { marketData } = req.body;
 
     if (!marketData) {
-      return res.status(400).json({
-        success: false,
-        message: 'è«‹æ?ä¾›å??´æ•¸??,
+      return res.status(400).json({'
+        success: false,''
+        message: 'è«‹ï¿½?ä¾›ï¿½??ï¿½æ•¸??,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const result = await localAIService.analyzeMarket(marketData);
 
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
-    logger.error('å¸‚å ´?†æ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: 'å¸‚å ´?†æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('å¸‚å ´?ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: 'å¸‚å ´?ï¿½ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// ?¹é??†æ?
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½?''
 router.post('/batch-analyze', authenticateToken, async (req, res) => {
   try {
     const { tasks } = req.body;
 
     if (!tasks || !Array.isArray(tasks)) {
-      return res.status(400).json({
-        success: false,
-        message: 'è«‹æ?ä¾›ä»»?™æ•¸çµ?,
+      return res.status(400).json({'
+        success: false,''
+        message: 'è«‹ï¿½?ä¾›ä»»?ï¿½æ•¸ï¿½?,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const results = [];
 // eslint-disable-next-line no-unused-vars
@@ -179,23 +167,23 @@ router.post('/batch-analyze', authenticateToken, async (req, res) => {
     for (const task of tasks) {
       try {
 // eslint-disable-next-line no-unused-vars
-        let result;
-        switch (task.type) {
+        let result;'
+        switch (task.type) {''
           case 'card_analysis':
             result = await localAIService.analyzeCard(
               task.data,
               task.analysisType
-            );
-            break;
+            );'
+            break;''
           case 'price_prediction':
             result = await localAIService.predictPrice(
               task.data,
               task.timeframe
-            );
-            break;
+            );'
+            break;''
           case 'market_analysis':
-            result = await localAIService.analyzeMarket(task.data);
-            break;
+            result = await localAIService.analyzeMarket(task.data);'
+            break;''
           case 'text_generation':
             result = await localAIService.generateText(
               task.prompt,
@@ -204,7 +192,7 @@ router.post('/batch-analyze', authenticateToken, async (req, res) => {
             );
             break;
           default:
-            throw new Error(`ä¸æ”¯?ç?ä»»å?é¡å?: ${task.type}`);
+            throw new Error(`ä¸æ”¯?ï¿½ï¿½?ä»»ï¿½?é¡ï¿½?: ${task.type}`);
         }
         results.push({
           taskId: task.id,
@@ -221,7 +209,6 @@ router.post('/batch-analyze', authenticateToken, async (req, res) => {
         });
       }
     }
-
     res.json({
       success: true,
       data: {
@@ -233,26 +220,25 @@ router.post('/batch-analyze', authenticateToken, async (req, res) => {
           failed: errors.length,
         },
       },
-    });
-  } catch (error) {
-    logger.error('?¹é??†æ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?¹é??†æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// æ¸¬è©¦ç«¯é?
+});'
+// æ¸¬è©¦ç«¯ï¿½?''
 router.post('/test', authenticateToken, async (req, res) => {
-  try {
-// eslint-disable-next-line no-unused-vars
-    const testPrompt = 'è«‹ç°¡?­ä?ç´¹ä?ä¸‹å¡?‡æ?è³‡ç??ºæœ¬æ¦‚å¿µ';
+  try {'
+// eslint-disable-next-line no-unused-vars''
+    const testPrompt = 'è«‹ç°¡?ï¿½ï¿½?ç´¹ï¿½?ä¸‹å¡?ï¿½ï¿½?è³‡ï¿½??ï¿½æœ¬æ¦‚å¿µ';
 
 // eslint-disable-next-line no-unused-vars
-    const result = await localAIService.generateText(
-      testPrompt,
+    const result = await localAIService.generateText('
+      testPrompt,''
       'text_generation',
       {
         temperature: 0.7,
@@ -260,19 +246,18 @@ router.post('/test', authenticateToken, async (req, res) => {
       }
     );
 
-    res.json({
-      success: true,
-      message: 'AI?å?æ¸¬è©¦?å?',
+    res.json({'
+      success: true,''
+      message: 'AI?ï¿½ï¿½?æ¸¬è©¦?ï¿½ï¿½?',
       data: result,
-    });
-  } catch (error) {
-    logger.error('AI?å?æ¸¬è©¦?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: 'AI?å?æ¸¬è©¦å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('AI?ï¿½ï¿½?æ¸¬è©¦?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: 'AI?ï¿½ï¿½?æ¸¬è©¦å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

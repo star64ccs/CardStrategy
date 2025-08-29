@@ -1,42 +1,46 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { MarketState } from '@/types';
-import { marketService } from '@/services/marketService';
+
+import type { MarketState } from '../../core/types';
+import { marketService } from '../../shared/services/marketService';
 
 // Async thunks
-export const fetchMarketData = createAsyncThunk(
+export const _fetchMarketData = createAsyncThunk(
   'market/fetchMarketData',
   async (cardId: string, { rejectWithValue }) => {
     try {
-      const response = await marketService.getMarketData(cardId);
+      const _response = await marketService.getMarketData(cardId);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '獲取市場數據失敗');
     }
   }
 );
 
-export const fetchPriceHistory = createAsyncThunk(
+export const _fetchPriceHistory = createAsyncThunk(
   'market/fetchPriceHistory',
   async (
-    { cardId, period }: { cardId: string; period: string },
+    {
+      cardId,
+      period,
+    }: { cardId: string; period: '1d' | '1w' | '1m' | '3m' | '6m' | '1y' },
     { rejectWithValue }
   ) => {
     try {
-      const response = await marketService.getPriceHistory(cardId, period);
+      const _response = await marketService.getPriceHistory(cardId, period);
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '獲取價格歷史失敗');
     }
   }
 );
 
-export const fetchMarketTrends = createAsyncThunk(
+export const _fetchMarketTrends = createAsyncThunk(
   'market/fetchMarketTrends',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await marketService.getMarketTrends();
+      const _response = await marketService.getMarketTrends();
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '獲取市場趨勢失敗');
     }
   }
@@ -52,28 +56,28 @@ const initialState: MarketState = {
 };
 
 // Market slice
-const marketSlice = createSlice({
+const _marketSlice = createSlice({
   name: 'market',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
-    clearMarketData: (state) => {
+    clearMarketData: state => {
       state.marketData = null;
       state.priceHistory = [];
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Fetch Market Data
     builder
-      .addCase(fetchMarketData.pending, (state) => {
+      .addCase(fetchMarketData.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(fetchMarketData.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.marketData = action.payload;
+        state.marketData = [action.payload];
         state.error = null;
       })
       .addCase(fetchMarketData.rejected, (state, action) => {
@@ -83,7 +87,7 @@ const marketSlice = createSlice({
 
     // Get Price History
     builder
-      .addCase(fetchPriceHistory.pending, (state) => {
+      .addCase(fetchPriceHistory.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -100,14 +104,14 @@ const marketSlice = createSlice({
 
     // Get Market Trends
     builder
-      .addCase(fetchMarketTrends.pending, (state) => {
+      .addCase(fetchMarketTrends.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
       .addCase(fetchMarketTrends.fulfilled, (state, action) => {
         state.isLoading = false;
         // 將市場趨勢數據轉換為 MarketTrend 數組格式
-        const marketTrends: any[] = [];
+        const marketTrends: unknown[] = [];
         if (action.payload.trendingUp) {
           action.payload.trendingUp.forEach((cardId: string) => {
             marketTrends.push({

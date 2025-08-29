@@ -1,48 +1,50 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { AIState, AIChatMessage } from '@/types';
-import { aiService } from '@/services/aiService';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import type { AIState, AIChatMessage } from '../../core/types';
+import { aiService } from '../../shared/services/aiService';
 
 // 異步 thunk
-export const analyzeCard = createAsyncThunk(
+export const _analyzeCard = createAsyncThunk(
   'ai/analyzeCard',
   async (cardId: string) => {
-    const response = await aiService.analyzeCard(cardId);
+    const _response = await aiService.analyzeCard(cardId);
     return response;
   }
 );
 
-export const predictPrice = createAsyncThunk(
+export const _predictPrice = createAsyncThunk(
   'ai/predictPrice',
   async ({ cardId, timeframe }: { cardId: string; timeframe: string }) => {
-    const response = await aiService.predictPrice(cardId, timeframe);
+    const _response = await aiService.predictPrice(cardId, timeframe);
     return response;
   }
 );
 
-export const sendChatMessage = createAsyncThunk(
+export const _sendChatMessage = createAsyncThunk(
   'ai/sendChatMessage',
   async (message: string) => {
-    const response = await aiService.sendMessage(message);
+    const _response = await aiService.sendMessage(message);
     return response;
   }
 );
 
-export const getMarketInsights = createAsyncThunk(
+export const _getMarketInsights = createAsyncThunk(
   'ai/getMarketInsights',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await aiService.getMarketInsights();
+      const _response = await aiService.getMarketInsights();
       return response;
-    } catch (error: any) {
+    } catch (error: unknown) {
       return rejectWithValue(error.message || '獲取市場洞察失敗');
     }
   }
 );
 
-export const generateInvestmentReport = createAsyncThunk(
+export const _generateInvestmentReport = createAsyncThunk(
   'ai/generateInvestmentReport',
   async (cardIds: string[]) => {
-    const response = await aiService.generateInvestmentReport(cardIds);
+    const _response = await aiService.generateInvestmentReport(cardIds);
     return response;
   }
 );
@@ -66,19 +68,19 @@ const initialState: AIState = {
 };
 
 // AI slice
-const aiSlice = createSlice({
+const _aiSlice = createSlice({
   name: 'ai',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
-    clearAnalysis: (state) => {
+    clearAnalysis: state => {
       state.currentAnalysis = null;
       state.pricePrediction = null;
       state.investmentReport = null;
     },
-    clearChat: (state) => {
+    clearChat: state => {
       state.chatMessages = [];
     },
     addChatMessage: (state, action: PayloadAction<AIChatMessage>) => {
@@ -91,10 +93,10 @@ const aiSlice = createSlice({
       state.processingTime = action.payload;
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Analyze Card With AI
     builder
-      .addCase(analyzeCard.pending, (state) => {
+      .addCase(analyzeCard.pending, state => {
         state.isAnalyzing = true;
         state.error = null;
       })
@@ -112,7 +114,7 @@ const aiSlice = createSlice({
 
     // Predict Card Price
     builder
-      .addCase(predictPrice.pending, (state) => {
+      .addCase(predictPrice.pending, state => {
         state.isPredicting = true;
         state.error = null;
       })
@@ -129,7 +131,7 @@ const aiSlice = createSlice({
 
     // Send AI Chat Message
     builder
-      .addCase(sendChatMessage.pending, (state) => {
+      .addCase(sendChatMessage.pending, state => {
         state.isChatting = true;
         state.error = null;
       })
@@ -145,7 +147,7 @@ const aiSlice = createSlice({
 
     // Get Market Insights
     builder
-      .addCase(getMarketInsights.pending, (state) => {
+      .addCase(getMarketInsights.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -161,7 +163,7 @@ const aiSlice = createSlice({
 
     // Generate Investment Report
     builder
-      .addCase(generateInvestmentReport.pending, (state) => {
+      .addCase(generateInvestmentReport.pending, state => {
         state.isLoading = true;
         state.error = null;
       })

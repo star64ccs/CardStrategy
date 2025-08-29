@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+// eslint-disable-next-line no-console
 console.log('🔍 檢查專案配置狀態...\n');
 
 // 檢查配置狀態
@@ -36,10 +37,12 @@ const configStatus = {
 };
 
 // 1. 檢查 API Keys 配置
+// eslint-disable-next-line no-console
 console.log('📋 檢查 API Keys 配置...');
 const apiKeysDir = path.join(__dirname, '../src/config/ai-keys');
 if (fs.existsSync(apiKeysDir)) {
   const apiFiles = fs.readdirSync(apiKeysDir);
+  // eslint-disable-next-line no-console
   console.log(`  ✅ API Keys 目錄存在: ${apiFiles.length} 個配置文件`);
   
   apiFiles.forEach(file => {
@@ -61,11 +64,13 @@ if (fs.existsSync(apiKeysDir)) {
   
   configStatus.apiKeys.status = configStatus.apiKeys.details.every(d => d.includes('✅')) ? 'configured' : 'partial';
 } else {
+  // eslint-disable-next-line no-console
   console.log('  ❌ API Keys 目錄不存在');
   configStatus.apiKeys.status = 'missing';
 }
 
 // 2. 檢查環境變量文件
+// eslint-disable-next-line no-console
 console.log('\n🔧 檢查環境變量配置...');
 const envFiles = [
   'api-keys.env',
@@ -78,15 +83,18 @@ envFiles.forEach(envFile => {
   if (fs.existsSync(envPath)) {
     const content = fs.readFileSync(envPath, 'utf8');
     const hasRealValues = !content.includes('your-') && !content.includes('placeholder');
+    // eslint-disable-next-line no-console
     console.log(`  ${hasRealValues ? '✅' : '⚠️'} ${envFile}: ${hasRealValues ? '真實值' : '佔位符'}`);
     configStatus.environment.details.push(`${envFile}: ${hasRealValues ? '真實值' : '佔位符'}`);
   } else {
+    // eslint-disable-next-line no-console
     console.log(`  ❌ ${envFile}: 文件不存在`);
     configStatus.environment.details.push(`${envFile}: 缺失`);
   }
 });
 
 // 3. 檢查數據庫配置
+// eslint-disable-next-line no-console
 console.log('\n🗄️ 檢查數據庫配置...');
 const dbConfigPath = path.join(__dirname, '../backend/src/config/database.js');
 if (fs.existsSync(dbConfigPath)) {
@@ -97,25 +105,30 @@ if (fs.existsSync(dbConfigPath)) {
   const hasDefaultValues = content.includes('localhost') || content.includes('postgres');
   
   if (hasEnvVars) {
+    // eslint-disable-next-line no-console
     console.log('  ✅ 數據庫配置使用環境變量');
     configStatus.database.details.push('使用環境變量配置');
   } else {
+    // eslint-disable-next-line no-console
     console.log('  ⚠️ 數據庫配置使用硬編碼值');
     configStatus.database.details.push('使用硬編碼值');
   }
   
   if (hasDefaultValues) {
+    // eslint-disable-next-line no-console
     console.log('  ⚠️ 包含默認開發值');
     configStatus.database.details.push('包含默認開發值');
   }
   
   configStatus.database.status = hasEnvVars ? 'configured' : 'default';
 } else {
+  // eslint-disable-next-line no-console
   console.log('  ❌ 數據庫配置文件不存在');
   configStatus.database.status = 'missing';
 }
 
 // 4. 檢查 Redis 配置
+// eslint-disable-next-line no-console
 console.log('\n🔴 檢查 Redis 配置...');
 const redisConfigPath = path.join(__dirname, '../backend/src/config/redis.js');
 if (fs.existsSync(redisConfigPath)) {
@@ -125,25 +138,30 @@ if (fs.existsSync(redisConfigPath)) {
   const hasDefaultValues = content.includes('localhost:6379');
   
   if (hasEnvVars) {
+    // eslint-disable-next-line no-console
     console.log('  ✅ Redis 配置使用環境變量');
     configStatus.redis.details.push('使用環境變量配置');
   } else {
+    // eslint-disable-next-line no-console
     console.log('  ⚠️ Redis 配置使用硬編碼值');
     configStatus.redis.details.push('使用硬編碼值');
   }
   
   if (hasDefaultValues) {
+    // eslint-disable-next-line no-console
     console.log('  ⚠️ 包含默認開發值');
     configStatus.redis.details.push('包含默認開發值');
   }
   
   configStatus.redis.status = hasEnvVars ? 'configured' : 'default';
 } else {
+  // eslint-disable-next-line no-console
   console.log('  ❌ Redis 配置文件不存在');
   configStatus.redis.status = 'missing';
 }
 
 // 5. 檢查核心集成服務配置
+// eslint-disable-next-line no-console
 console.log('\n🔗 檢查核心集成服務配置...');
 const coreIntegrations = [
   { name: 'Mixpanel', env: 'MIXPANEL_API_KEY', desc: '用戶行為分析' },
@@ -159,9 +177,11 @@ const coreIntegrations = [
 coreIntegrations.forEach(integration => {
   const envValue = process.env[integration.env];
   if (envValue && !envValue.includes('your-') && !envValue.includes('placeholder')) {
+    // eslint-disable-next-line no-console
     console.log(`  ✅ ${integration.name}: 已配置 (${integration.desc})`);
     configStatus.coreIntegrations.details.push(`${integration.name}: ✅ 已配置`);
   } else {
+    // eslint-disable-next-line no-console
     console.log(`  ⚠️ ${integration.name}: 未配置 (${integration.desc})`);
     configStatus.coreIntegrations.details.push(`${integration.name}: ⚠️ 未配置`);
   }
@@ -170,6 +190,7 @@ coreIntegrations.forEach(integration => {
 configStatus.coreIntegrations.status = configStatus.coreIntegrations.details.every(d => d.includes('✅')) ? 'configured' : 'partial';
 
 // 6. 檢查服務配置
+// eslint-disable-next-line no-console
 console.log('\n🌐 檢查服務配置...');
 const serviceConfigs = [
   { name: 'Cloudflare', file: 'cloudflare-config.env' },
@@ -182,15 +203,18 @@ serviceConfigs.forEach(service => {
   if (fs.existsSync(servicePath)) {
     const content = fs.readFileSync(servicePath, 'utf8');
     const hasRealValues = !content.includes('your-') && !content.includes('placeholder');
+    // eslint-disable-next-line no-console
     console.log(`  ${hasRealValues ? '✅' : '⚠️'} ${service.name}: ${hasRealValues ? '真實值' : '佔位符'}`);
     configStatus.services.details.push(`${service.name}: ${hasRealValues ? '真實值' : '佔位符'}`);
   } else {
+    // eslint-disable-next-line no-console
     console.log(`  ❌ ${service.name}: 配置文件不存在`);
     configStatus.services.details.push(`${service.name}: 缺失`);
   }
 });
 
 // 7. 檢查 .gitignore 保護
+// eslint-disable-next-line no-console
 console.log('\n🛡️ 檢查安全保護...');
 const gitignorePath = path.join(__dirname, '../.gitignore');
 if (fs.existsSync(gitignorePath)) {
@@ -199,19 +223,24 @@ if (fs.existsSync(gitignorePath)) {
   const hasEnvProtection = content.includes('.env');
   
   if (hasApiKeyProtection) {
+    // eslint-disable-next-line no-console
     console.log('  ✅ API Keys 受到 .gitignore 保護');
   } else {
+    // eslint-disable-next-line no-console
     console.log('  ❌ API Keys 未受到 .gitignore 保護');
   }
   
   if (hasEnvProtection) {
+    // eslint-disable-next-line no-console
     console.log('  ✅ 環境變量文件受到 .gitignore 保護');
   } else {
+    // eslint-disable-next-line no-console
     console.log('  ❌ 環境變量文件未受到 .gitignore 保護');
   }
 }
 
 // 8. 後期擴充計劃
+// eslint-disable-next-line no-console
 console.log('\n📋 後期擴充計劃 (暫時不配置)...');
 const futureExpansions = [
   'Stripe 支付處理',
@@ -229,12 +258,15 @@ const futureExpansions = [
 ];
 
 futureExpansions.forEach(expansion => {
+  // eslint-disable-next-line no-console
   console.log(`  📅 ${expansion}: 後期擴充計劃`);
   configStatus.futureExpansions.details.push(`${expansion}: 後期擴充計劃`);
 });
 
 // 生成總結報告
+// eslint-disable-next-line no-console
 console.log('\n📊 專案配置狀態總結');
+// eslint-disable-next-line no-console
 console.log('='.repeat(50));
 
 const getStatusEmoji = (status) => {
@@ -249,10 +281,13 @@ const getStatusEmoji = (status) => {
 };
 
 Object.entries(configStatus).forEach(([category, info]) => {
+  // eslint-disable-next-line no-console
   console.log(`${getStatusEmoji(info.status)} ${category.toUpperCase()}: ${info.status.toUpperCase()}`);
   info.details.forEach(detail => {
+    // eslint-disable-next-line no-console
     console.log(`    ${detail}`);
   });
+  // eslint-disable-next-line no-console
   console.log('');
 });
 
@@ -269,35 +304,50 @@ Object.values(configStatus).forEach(info => {
   statusCounts[info.status]++;
 });
 
+// eslint-disable-next-line no-console
 console.log('🎯 整體配置評估:');
 if (statusCounts.configured >= 4) {
+  // eslint-disable-next-line no-console
   console.log('  🟢 專案配置良好，核心服務已配置真實值');
 } else if (statusCounts.configured >= 2) {
+  // eslint-disable-next-line no-console
   console.log('  🟡 專案配置部分完成，需要進一步配置核心服務');
 } else {
+  // eslint-disable-next-line no-console
   console.log('  🔴 專案配置不完整，需要大量配置工作');
 }
 
+// eslint-disable-next-line no-console
 console.log('\n📋 當前配置建議:');
 if (configStatus.apiKeys.status !== 'configured') {
+  // eslint-disable-next-line no-console
   console.log('  - 確保所有 API Keys 都使用真實值');
 }
 if (configStatus.coreIntegrations.status !== 'configured') {
+  // eslint-disable-next-line no-console
   console.log('  - 配置核心集成服務 (Mixpanel, AWS S3, Firebase, SendGrid, Sentry)');
 }
 if (configStatus.database.status === 'default') {
+  // eslint-disable-next-line no-console
   console.log('  - 配置生產環境數據庫連接');
 }
 if (configStatus.redis.status === 'default') {
+  // eslint-disable-next-line no-console
   console.log('  - 配置生產環境 Redis 連接');
 }
 if (configStatus.environment.details.some(d => d.includes('佔位符'))) {
+  // eslint-disable-next-line no-console
   console.log('  - 更新環境變量文件中的佔位符值');
 }
 
+// eslint-disable-next-line no-console
 console.log('\n📅 後期擴充計劃:');
+// eslint-disable-next-line no-console
 console.log('  - 支付服務: Stripe, PayPal 等');
+// eslint-disable-next-line no-console
 console.log('  - 社交媒體: Twitter, Facebook, Instagram 等');
+// eslint-disable-next-line no-console
 console.log('  - 其他第三方服務根據業務需求添加');
 
+// eslint-disable-next-line no-console
 console.log('\n🎉 配置檢查完成！');

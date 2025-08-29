@@ -1,14 +1,15 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { portfolioService } from '../../../services/portfolioService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { portfolioService } from '../../../services/portfolioService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
 jest.mock('@react-native-async-storage/async-storage');
 jest.mock('../../../utils/logger');
 
-const mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockAsyncStorage = AsyncStorage as jest.Mocked<typeof AsyncStorage>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('PortfolioService', () => {
   beforeEach(() => {
@@ -16,7 +17,7 @@ describe('PortfolioService', () => {
   });
 
   describe('getPortfolio', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -35,7 +36,7 @@ describe('PortfolioService', () => {
     it('應該成功獲取投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.getPortfolio();
+      const _result = await portfolioService.getPortfolio();
 
       expect(result).toEqual(mockPortfolio);
       expect(mockAsyncStorage.getItem).toHaveBeenCalledWith('user_portfolio');
@@ -44,7 +45,7 @@ describe('PortfolioService', () => {
     it('應該處理空投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(null);
 
-      const result = await portfolioService.getPortfolio();
+      const _result = await portfolioService.getPortfolio();
 
       expect(result).toEqual([]);
     });
@@ -52,7 +53,7 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      const result = await portfolioService.getPortfolio();
+      const _result = await portfolioService.getPortfolio();
 
       expect(result).toEqual([]);
       expect(mockLogger.error).toHaveBeenCalled();
@@ -60,7 +61,7 @@ describe('PortfolioService', () => {
   });
 
   describe('addToPortfolio', () => {
-    const mockCard = {
+    const _mockCard = {
       id: 'card-1',
       name: '火球術',
       setName: '基礎系列',
@@ -85,7 +86,7 @@ describe('PortfolioService', () => {
     });
 
     it('應該更新現有卡片', async () => {
-      const existingPortfolio = [
+      const _existingPortfolio = [
         {
           id: 'item-1',
           card: mockCard,
@@ -120,7 +121,7 @@ describe('PortfolioService', () => {
   });
 
   describe('removeFromPortfolio', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -182,7 +183,7 @@ describe('PortfolioService', () => {
   });
 
   describe('updatePortfolioItem', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -202,7 +203,7 @@ describe('PortfolioService', () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
       mockAsyncStorage.setItem.mockResolvedValue();
 
-      const updates = { quantity: 3, notes: '更新後的筆記' };
+      const _updates = { quantity: 3, notes: '更新後的筆記' };
 
       await portfolioService.updatePortfolioItem('item-1', updates);
 
@@ -237,7 +238,7 @@ describe('PortfolioService', () => {
   });
 
   describe('getPortfolioStats', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -267,7 +268,7 @@ describe('PortfolioService', () => {
     it('應該成功計算投資組合統計', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.getPortfolioStats();
+      const _result = await portfolioService.getPortfolioStats();
 
       expect(result).toEqual({
         totalItems: 2,
@@ -282,7 +283,7 @@ describe('PortfolioService', () => {
     it('應該處理空投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue('[]');
 
-      const result = await portfolioService.getPortfolioStats();
+      const _result = await portfolioService.getPortfolioStats();
 
       expect(result).toEqual({
         totalItems: 0,
@@ -297,7 +298,7 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      const result = await portfolioService.getPortfolioStats();
+      const _result = await portfolioService.getPortfolioStats();
 
       expect(result).toEqual({
         totalItems: 0,
@@ -333,7 +334,7 @@ describe('PortfolioService', () => {
   });
 
   describe('exportPortfolio', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -351,9 +352,9 @@ describe('PortfolioService', () => {
     it('應該成功導出投資組合數據', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.exportPortfolio();
+      const _result = await portfolioService.exportPortfolio();
 
-      const exportData = JSON.parse(result);
+      const _exportData = JSON.parse(result);
       expect(exportData).toHaveProperty('portfolio');
       expect(exportData).toHaveProperty('stats');
       expect(exportData).toHaveProperty('exportDate');
@@ -372,7 +373,7 @@ describe('PortfolioService', () => {
   });
 
   describe('importPortfolio', () => {
-    const mockImportData = {
+    const _mockImportData = {
       portfolio: [
         {
           id: 'item-1',
@@ -411,7 +412,7 @@ describe('PortfolioService', () => {
     });
 
     it('應該處理無效的數據格式', async () => {
-      const invalidData = { invalid: 'data' };
+      const _invalidData = { invalid: 'data' };
 
       await expect(
         portfolioService.importPortfolio(JSON.stringify(invalidData))
@@ -437,7 +438,7 @@ describe('PortfolioService', () => {
   });
 
   describe('searchPortfolio', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -469,7 +470,7 @@ describe('PortfolioService', () => {
     it('應該成功搜索卡片名稱', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.searchPortfolio('火球術');
+      const _result = await portfolioService.searchPortfolio('火球術');
 
       expect(result).toHaveLength(1);
       expect(result[0].card.name).toBe('火球術');
@@ -478,7 +479,7 @@ describe('PortfolioService', () => {
     it('應該成功搜索系列名稱', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.searchPortfolio('基礎系列');
+      const _result = await portfolioService.searchPortfolio('基礎系列');
 
       expect(result).toHaveLength(2);
     });
@@ -486,7 +487,7 @@ describe('PortfolioService', () => {
     it('應該成功搜索筆記', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.searchPortfolio('看好');
+      const _result = await portfolioService.searchPortfolio('看好');
 
       expect(result).toHaveLength(1);
       expect(result[0].notes).toBe('看好這張卡的前景');
@@ -495,7 +496,7 @@ describe('PortfolioService', () => {
     it('應該處理不區分大小寫的搜索', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.searchPortfolio('HUOQIUSHU');
+      const _result = await portfolioService.searchPortfolio('HUOQIUSHU');
 
       expect(result).toHaveLength(1);
     });
@@ -503,7 +504,7 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      const result = await portfolioService.searchPortfolio('test');
+      const _result = await portfolioService.searchPortfolio('test');
 
       expect(result).toEqual([]);
       expect(mockLogger.error).toHaveBeenCalled();
@@ -511,7 +512,7 @@ describe('PortfolioService', () => {
   });
 
   describe('getPortfolioBySeries', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -553,7 +554,7 @@ describe('PortfolioService', () => {
     it('應該成功按系列分組投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.getPortfolioBySeries();
+      const _result = await portfolioService.getPortfolioBySeries();
 
       expect(result).toEqual({
         基礎系列: [mockPortfolio[0], mockPortfolio[1]],
@@ -564,7 +565,7 @@ describe('PortfolioService', () => {
     it('應該處理空投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue('[]');
 
-      const result = await portfolioService.getPortfolioBySeries();
+      const _result = await portfolioService.getPortfolioBySeries();
 
       expect(result).toEqual({});
     });
@@ -572,7 +573,7 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      const result = await portfolioService.getPortfolioBySeries();
+      const _result = await portfolioService.getPortfolioBySeries();
 
       expect(result).toEqual({});
       expect(mockLogger.error).toHaveBeenCalled();
@@ -580,7 +581,7 @@ describe('PortfolioService', () => {
   });
 
   describe('getPortfolioHistory', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -610,7 +611,7 @@ describe('PortfolioService', () => {
     it('應該成功獲取按日期排序的投資組合歷史', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.getPortfolioHistory();
+      const _result = await portfolioService.getPortfolioHistory();
 
       expect(result).toHaveLength(2);
       expect(result[0].purchaseDate).toBe('2024-01-02T00:00:00Z'); // 最新的在前
@@ -620,7 +621,7 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      const result = await portfolioService.getPortfolioHistory();
+      const _result = await portfolioService.getPortfolioHistory();
 
       expect(result).toEqual([]);
       expect(mockLogger.error).toHaveBeenCalled();
@@ -628,7 +629,7 @@ describe('PortfolioService', () => {
   });
 
   describe('getPortfolioAnalysis', () => {
-    const mockPortfolio = [
+    const _mockPortfolio = [
       {
         id: 'item-1',
         card: {
@@ -670,7 +671,7 @@ describe('PortfolioService', () => {
     it('應該成功獲取投資組合分析', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      const result = await portfolioService.getPortfolioAnalysis();
+      const _result = await portfolioService.getPortfolioAnalysis();
 
       expect(result).toHaveProperty('topPerformers');
       expect(result).toHaveProperty('worstPerformers');
@@ -683,7 +684,7 @@ describe('PortfolioService', () => {
     it('應該處理空投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue('[]');
 
-      const result = await portfolioService.getPortfolioAnalysis();
+      const _result = await portfolioService.getPortfolioAnalysis();
 
       expect(result).toEqual({
         topPerformers: [],
@@ -695,7 +696,7 @@ describe('PortfolioService', () => {
     it('應該處理存儲錯誤', async () => {
       mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
 
-      const result = await portfolioService.getPortfolioAnalysis();
+      const _result = await portfolioService.getPortfolioAnalysis();
 
       expect(result).toEqual({
         topPerformers: [],

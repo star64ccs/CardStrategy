@@ -6,6 +6,7 @@ const path = require('path');
  * 防偽判斷系統 + AI預測價格系統優化
  */
 
+// eslint-disable-next-line no-console
 console.log('📊 生成第二階段優化報告...\n');
 
 const phase2Report = {
@@ -219,34 +220,54 @@ fs.writeFileSync(
   JSON.stringify(phase2Report, null, 2)
 );
 
+// eslint-disable-next-line no-console
 console.log('✅ 第二階段優化報告已生成！');
+// eslint-disable-next-line no-console
 console.log('\n📊 優化摘要:');
+// eslint-disable-next-line no-console
 console.log(`   階段: ${phase2Report.phase}`);
+// eslint-disable-next-line no-console
 console.log(`   狀態: ${phase2Report.status}`);
+// eslint-disable-next-line no-console
 console.log(`   報告文件: reports/phase2-optimization-report.json`);
 
+// eslint-disable-next-line no-console
 console.log('\n🎯 準確率提升:');
+// eslint-disable-next-line no-console
 console.log(`   防偽判斷系統: ${phase2Report.metrics.before.antiCounterfeit}% → ${phase2Report.metrics.after.antiCounterfeit}% (${phase2Report.metrics.improvement.antiCounterfeit})`);
+// eslint-disable-next-line no-console
 console.log(`   AI預測價格系統: ${phase2Report.metrics.before.aiPricePrediction}% → ${phase2Report.metrics.after.aiPricePrediction}% (${phase2Report.metrics.improvement.aiPricePrediction})`);
+// eslint-disable-next-line no-console
 console.log(`   平均提升: ${phase2Report.metrics.before.average}% → ${phase2Report.metrics.after.average}% (${phase2Report.metrics.improvement.average})`);
 
+// eslint-disable-next-line no-console
 console.log('\n🔧 主要改進:');
+// eslint-disable-next-line no-console
 console.log('   防偽判斷系統:');
 phase2Report.optimizations.antiCounterfeit.improvements.forEach(imp => {
+  // eslint-disable-next-line no-console
   console.log(`     • ${imp.feature}: ${imp.description}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n   AI預測價格系統:');
 phase2Report.optimizations.aiPricePrediction.improvements.forEach(imp => {
+  // eslint-disable-next-line no-console
   console.log(`     • ${imp.feature}: ${imp.description}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n📁 修改文件:');
 phase2Report.implementation.filesModified.forEach(file => {
+  // eslint-disable-next-line no-console
   console.log(`   • ${file}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n🔄 下一階段:');
+// eslint-disable-next-line no-console
 console.log(`   ${phase2Report.nextPhase.name}`);
+// eslint-disable-next-line no-console
 console.log(`   預計時間: ${phase2Report.nextPhase.estimatedTime}`);
+// eslint-disable-next-line no-console
 console.log(`   重點: ${phase2Report.nextPhase.focus}`);

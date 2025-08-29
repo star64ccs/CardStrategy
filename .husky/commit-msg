@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "📝 檢查提交信息格式..."
+
+# 檢查提交信息格式
+commit_regex='^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .{1,50}'
+
+if ! grep -qE "$commit_regex" "$1"; then
+    echo "❌ 提交信息格式不正確！"
+    echo "正確格式: <type>(<scope>): <description>"
+    echo "類型: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+    echo "例如: feat(auth): 添加用戶登錄功能"
+    exit 1
+fi
+
+echo "✅ 提交信息格式正確"

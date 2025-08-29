@@ -6,6 +6,7 @@ const path = require('path');
  * 檢查所有免費服務的配置狀態
  */
 
+// eslint-disable-next-line no-console
 console.log('🔍 檢查免費服務配置狀態...\n');
 
 class FreeServicesChecker {
@@ -50,6 +51,7 @@ class FreeServicesChecker {
   }
 
   checkAllServices() {
+    // eslint-disable-next-line no-console
     console.log('📋 檢查所有免費服務配置...\n');
 
     const results = this.services.map(service => this.checkConfigFile(service));
@@ -60,14 +62,21 @@ class FreeServicesChecker {
                         result.status === 'pending' ? '⏳' : 
                         result.status === 'error' ? '❌' : '❓';
       
+      // eslint-disable-next-line no-console
       console.log(`${statusIcon} ${result.service.toUpperCase()}`);
+      // eslint-disable-next-line no-console
       console.log(`   配置文件: ${result.configExists ? '✅' : '❌'}`);
+      // eslint-disable-next-line no-console
       console.log(`   備份文件: ${result.backupExists ? '✅' : '❌'}`);
+      // eslint-disable-next-line no-console
       console.log(`   環境模板: ${result.envTemplateExists ? '✅' : '❌'}`);
+      // eslint-disable-next-line no-console
       console.log(`   狀態: ${result.status}`);
       if (result.plan) {
+        // eslint-disable-next-line no-console
         console.log(`   計劃: ${result.plan}`);
       }
+      // eslint-disable-next-line no-console
       console.log('');
     });
 
@@ -75,7 +84,9 @@ class FreeServicesChecker {
   }
 
   generateSummary(results) {
+    // eslint-disable-next-line no-console
     console.log('📊 配置狀態總結');
+    // eslint-disable-next-line no-console
     console.log('='.repeat(50));
 
     const total = results.length;
@@ -83,37 +94,49 @@ class FreeServicesChecker {
     const withBackup = results.filter(r => r.backupExists).length;
     const withEnvTemplate = results.filter(r => r.envTemplateExists).length;
 
+    // eslint-disable-next-line no-console
     console.log(`總服務數: ${total}`);
+    // eslint-disable-next-line no-console
     console.log(`已配置: ${configured}/${total}`);
+    // eslint-disable-next-line no-console
     console.log(`有備份: ${withBackup}/${total}`);
+    // eslint-disable-next-line no-console
     console.log(`有環境模板: ${withEnvTemplate}/${total}`);
 
+    // eslint-disable-next-line no-console
     console.log('\n🎯 下一步行動:');
     
     const pendingServices = results.filter(r => r.status === 'pending');
     if (pendingServices.length > 0) {
+      // eslint-disable-next-line no-console
       console.log('\n⏳ 需要配置的服務:');
       pendingServices.forEach(service => {
+        // eslint-disable-next-line no-console
         console.log(`  - ${service.service.toUpperCase()}`);
       });
     }
 
     const missingConfigs = results.filter(r => !r.configExists);
     if (missingConfigs.length > 0) {
+      // eslint-disable-next-line no-console
       console.log('\n❌ 缺少配置文件的服務:');
       missingConfigs.forEach(service => {
+        // eslint-disable-next-line no-console
         console.log(`  - ${service.service.toUpperCase()}`);
       });
     }
 
+    // eslint-disable-next-line no-console
     console.log('\n📚 配置指南:');
     this.services.forEach(service => {
       const guidePath = path.join(__dirname, '..', `${service.toUpperCase()}_CONFIGURATION_GUIDE.md`);
       if (fs.existsSync(guidePath)) {
+        // eslint-disable-next-line no-console
         console.log(`  - ${service.toUpperCase()}: ${service.toUpperCase()}_CONFIGURATION_GUIDE.md`);
       }
     });
 
+    // eslint-disable-next-line no-console
     console.log('\n🛡️ 安全檢查:');
     const gitignorePath = path.join(__dirname, '..', '.gitignore');
     if (fs.existsSync(gitignorePath)) {
@@ -121,6 +144,7 @@ class FreeServicesChecker {
       const protectedServices = this.services.filter(service => 
         gitignoreContent.includes(`${service}-config.env`)
       );
+      // eslint-disable-next-line no-console
       console.log(`受保護的配置文件: ${protectedServices.length}/${this.services.length}`);
     }
 
@@ -135,7 +159,9 @@ class FreeServicesChecker {
   }
 
   showServiceDetails() {
+    // eslint-disable-next-line no-console
     console.log('\n📋 各服務詳細信息:');
+    // eslint-disable-next-line no-console
     console.log('='.repeat(50));
 
     const serviceDetails = {
@@ -177,26 +203,36 @@ class FreeServicesChecker {
     };
 
     Object.entries(serviceDetails).forEach(([key, details]) => {
+      // eslint-disable-next-line no-console
       console.log(`\n🔹 ${details.name}`);
+      // eslint-disable-next-line no-console
       console.log(`   用途: ${details.purpose}`);
+      // eslint-disable-next-line no-console
       console.log(`   免費限制: ${details.freeLimit}`);
+      // eslint-disable-next-line no-console
       console.log(`   關鍵信息: ${details.keyInfo}`);
+      // eslint-disable-next-line no-console
       console.log(`   網站: ${details.website}`);
     });
   }
 
   run() {
+    // eslint-disable-next-line no-console
     console.log('🚀 開始檢查免費服務配置...\n');
 
     // 檢查目錄
     if (!fs.existsSync(this.configDir)) {
+      // eslint-disable-next-line no-console
       console.log(`❌ 配置目錄不存在: ${this.configDir}`);
+      // eslint-disable-next-line no-console
       console.log('💡 請先運行配置創建腳本');
       return;
     }
 
     if (!fs.existsSync(this.backupDir)) {
+      // eslint-disable-next-line no-console
       console.log(`❌ 備份目錄不存在: ${this.backupDir}`);
+      // eslint-disable-next-line no-console
       console.log('💡 請先運行配置創建腳本');
       return;
     }
@@ -210,12 +246,19 @@ class FreeServicesChecker {
     // 顯示詳細信息
     this.showServiceDetails();
 
+    // eslint-disable-next-line no-console
     console.log('\n🎉 檢查完成！');
+    // eslint-disable-next-line no-console
     console.log('\n💡 建議:');
+    // eslint-disable-next-line no-console
     console.log('1. 按照配置指南逐一設置各服務');
+    // eslint-disable-next-line no-console
     console.log('2. 獲取必要的 API Key 和 Token');
+    // eslint-disable-next-line no-console
     console.log('3. 更新環境變量文件');
+    // eslint-disable-next-line no-console
     console.log('4. 測試各服務功能');
+    // eslint-disable-next-line no-console
     console.log('5. 監控使用量避免超出免費限制');
 
     return summary;

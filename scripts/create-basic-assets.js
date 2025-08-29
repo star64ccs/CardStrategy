@@ -21,12 +21,15 @@ const minimalPNG = Buffer.from([
 const assetsDir = path.join(__dirname, '..', 'assets');
 const files = ['icon.png', 'splash.png', 'adaptive-icon.png', 'favicon.png'];
 
+// eslint-disable-next-line no-console
 console.log('Creating basic asset files...');
 
 files.forEach(file => {
   const filePath = path.join(assetsDir, file);
   fs.writeFileSync(filePath, minimalPNG);
+  // eslint-disable-next-line no-console
   console.log(`Created: ${file}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('Basic asset files created successfully!');

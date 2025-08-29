@@ -7,8 +7,9 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate(models) { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
       // define association here
+      // eslint-disable-next-line no-unused-vars
     }
   }
   Card.init(

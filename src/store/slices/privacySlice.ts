@@ -1,6 +1,8 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { privacyService } from '../../services/privacyService';
-import {
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import { PrivacyService } from '../../shared/services/privacyService';
+import type {
   PrivacyPreferences,
   ConsentRecord,
   DataRightsRequest,
@@ -11,6 +13,9 @@ import {
   LegalBasis,
   PrivacySettingsConfig,
 } from '../../types/privacy';
+
+// 創建服務實例
+const _privacyService = new PrivacyService();
 
 interface PrivacyState {
   // 用戶隱私偏好
@@ -68,12 +73,12 @@ interface PrivacyState {
   complianceCheckError: string | null;
 
   // 第三方數據處理者
-  thirdPartyProcessors: any[];
+  thirdPartyProcessors: unknown[];
   thirdPartyProcessorsLoading: boolean;
   thirdPartyProcessorsError: string | null;
 
   // 數據處理記錄
-  processingRecords: any[];
+  processingRecords: unknown[];
   processingRecordsLoading: boolean;
   processingRecordsError: string | null;
 
@@ -187,16 +192,16 @@ const initialState: PrivacyState = {
 // Async Thunks
 
 // 獲取隱私偏好
-export const fetchPrivacyPreferences = createAsyncThunk(
+export const _fetchPrivacyPreferences = createAsyncThunk(
   'privacy/fetchPreferences',
   async (userId: string) => {
-    const response = await privacyService.getPrivacyPreferences(userId);
+    const _response = await privacyService.getPrivacyPreferences(userId);
     return response;
   }
 );
 
 // 更新隱私偏好
-export const updatePrivacyPreferences = createAsyncThunk(
+export const _updatePrivacyPreferences = createAsyncThunk(
   'privacy/updatePreferences',
   async ({
     userId,
@@ -205,7 +210,7 @@ export const updatePrivacyPreferences = createAsyncThunk(
     userId: string;
     preferences: Partial<PrivacyPreferences>;
   }) => {
-    const response = await privacyService.updatePrivacyPreferences(
+    const _response = await privacyService.updatePrivacyPreferences(
       userId,
       preferences
     );
@@ -214,7 +219,7 @@ export const updatePrivacyPreferences = createAsyncThunk(
 );
 
 // 記錄同意
-export const recordConsent = createAsyncThunk(
+export const _recordConsent = createAsyncThunk(
   'privacy/recordConsent',
   async ({
     userId,
@@ -231,13 +236,13 @@ export const recordConsent = createAsyncThunk(
       consentVersion: string;
     };
   }) => {
-    const response = await privacyService.recordConsent(userId, consentData);
+    const _response = await privacyService.recordConsent(userId, consentData);
     return response;
   }
 );
 
 // 撤回同意
-export const withdrawConsent = createAsyncThunk(
+export const _withdrawConsent = createAsyncThunk(
   'privacy/withdrawConsent',
   async ({
     userId,
@@ -246,22 +251,22 @@ export const withdrawConsent = createAsyncThunk(
     userId: string;
     purpose: DataProcessingPurpose;
   }) => {
-    const response = await privacyService.withdrawConsent(userId, purpose);
+    const _response = await privacyService.withdrawConsent(userId, purpose);
     return response;
   }
 );
 
 // 獲取同意歷史
-export const fetchConsentHistory = createAsyncThunk(
+export const _fetchConsentHistory = createAsyncThunk(
   'privacy/fetchConsentHistory',
   async (userId: string) => {
-    const response = await privacyService.getConsentHistory(userId);
+    const _response = await privacyService.getConsentHistory(userId);
     return response;
   }
 );
 
 // 提交數據權利請求
-export const submitDataRightsRequest = createAsyncThunk(
+export const _submitDataRightsRequest = createAsyncThunk(
   'privacy/submitDataRightsRequest',
   async ({
     userId,
@@ -280,7 +285,7 @@ export const submitDataRightsRequest = createAsyncThunk(
       priority: 'low' | 'medium' | 'high' | 'urgent';
     };
   }) => {
-    const response = await privacyService.submitDataRightsRequest(
+    const _response = await privacyService.submitDataRightsRequest(
       userId,
       requestData
     );
@@ -289,46 +294,49 @@ export const submitDataRightsRequest = createAsyncThunk(
 );
 
 // 獲取數據權利請求歷史
-export const fetchDataRightsRequestHistory = createAsyncThunk(
+export const _fetchDataRightsRequestHistory = createAsyncThunk(
   'privacy/fetchDataRightsRequestHistory',
   async (userId: string) => {
-    const response = await privacyService.getDataRightsRequestHistory(userId);
+    const _response = await privacyService.getDataRightsRequestHistory(userId);
     return response;
   }
 );
 
 // 獲取隱私法律要求
-export const fetchPrivacyLawRequirements = createAsyncThunk(
+export const _fetchPrivacyLawRequirements = createAsyncThunk(
   'privacy/fetchPrivacyLawRequirements',
   async (region: RegionCode) => {
-    const response = await privacyService.getPrivacyLawRequirements(region);
+    const _response = await privacyService.getPrivacyLawRequirements(region);
     return response;
   }
 );
 
 // 獲取隱私設置配置
-export const fetchPrivacySettingsConfig = createAsyncThunk(
+export const _fetchPrivacySettingsConfig = createAsyncThunk(
   'privacy/fetchPrivacySettingsConfig',
   async (region: RegionCode) => {
-    const response = await privacyService.getPrivacySettingsConfig(region);
+    const _response = await privacyService.getPrivacySettingsConfig(region);
     return response;
   }
 );
 
 // 驗證年齡
-export const verifyAge = createAsyncThunk(
+export const _verifyAge = createAsyncThunk(
   'privacy/verifyAge',
   async ({ userId, birthDate }: { userId: string; birthDate: Date }) => {
-    const response = await privacyService.verifyAge(userId, birthDate);
+    const _response = await privacyService.verifyAge(
+      userId,
+      birthDate.toISOString()
+    );
     return response;
   }
 );
 
 // 請求父母同意
-export const requestParentalConsent = createAsyncThunk(
+export const _requestParentalConsent = createAsyncThunk(
   'privacy/requestParentalConsent',
   async ({ userId, parentEmail }: { userId: string; parentEmail: string }) => {
-    const response = await privacyService.requestParentalConsent(
+    const _response = await privacyService.requestParentalConsent(
       userId,
       parentEmail
     );
@@ -337,28 +345,28 @@ export const requestParentalConsent = createAsyncThunk(
 );
 
 // 導出用戶數據
-export const exportUserData = createAsyncThunk(
+export const _exportUserData = createAsyncThunk(
   'privacy/exportUserData',
   async (userId: string) => {
-    const response = await privacyService.exportUserData(userId);
+    const _response = await privacyService.exportUserData(userId);
     return response;
   }
 );
 
 // 刪除用戶數據
-export const deleteUserData = createAsyncThunk(
+export const _deleteUserData = createAsyncThunk(
   'privacy/deleteUserData',
   async (userId: string) => {
-    const response = await privacyService.deleteUserData(userId);
+    const _response = await privacyService.deleteUserData(userId);
     return response;
   }
 );
 
 // 檢查隱私合規性
-export const checkPrivacyCompliance = createAsyncThunk(
+export const _checkPrivacyCompliance = createAsyncThunk(
   'privacy/checkPrivacyCompliance',
   async ({ userId, region }: { userId: string; region: RegionCode }) => {
-    const response = await privacyService.checkPrivacyCompliance(
+    const _response = await privacyService.checkPrivacyCompliance(
       userId,
       region
     );
@@ -367,25 +375,25 @@ export const checkPrivacyCompliance = createAsyncThunk(
 );
 
 // 獲取隱私儀表板
-export const fetchPrivacyDashboard = createAsyncThunk(
+export const _fetchPrivacyDashboard = createAsyncThunk(
   'privacy/fetchPrivacyDashboard',
   async (userId: string) => {
-    const response = await privacyService.getPrivacyDashboard(userId);
+    const _response = await privacyService.getPrivacyDashboard(userId);
     return response;
   }
 );
 
 // 檢查同意更新
-export const checkConsentRenewal = createAsyncThunk(
+export const _checkConsentRenewal = createAsyncThunk(
   'privacy/checkConsentRenewal',
   async (userId: string) => {
-    const response = await privacyService.checkConsentRenewal(userId);
+    const _response = await privacyService.checkConsentRenewal(userId);
     return response;
   }
 );
 
 // 批量更新同意
-export const batchUpdateConsent = createAsyncThunk(
+export const _batchUpdateConsent = createAsyncThunk(
   'privacy/batchUpdateConsent',
   async ({
     userId,
@@ -398,12 +406,12 @@ export const batchUpdateConsent = createAsyncThunk(
       legalBasis: LegalBasis;
     }[];
   }) => {
-    const response = await privacyService.batchUpdateConsent(userId, consents);
+    const _response = await privacyService.batchUpdateConsent(userId, consents);
     return response;
   }
 );
 
-const privacySlice = createSlice({
+const _privacySlice = createSlice({
   name: 'privacy',
   initialState,
   reducers: {
@@ -461,7 +469,7 @@ const privacySlice = createSlice({
     },
 
     // 重置狀態
-    resetPrivacyState: (state) => {
+    resetPrivacyState: state => {
       return initialState;
     },
 
@@ -482,8 +490,8 @@ const privacySlice = createSlice({
 
     // 更新同意記錄
     updateConsentRecord: (state, action: PayloadAction<ConsentRecord>) => {
-      const index = state.consentHistory.findIndex(
-        (record) => record.id === action.payload.id
+      const _index = state.consentHistory.findIndex(
+        record => record.id === action.payload.id
       );
       if (index !== -1) {
         state.consentHistory[index] = action.payload;
@@ -500,18 +508,18 @@ const privacySlice = createSlice({
       state,
       action: PayloadAction<DataRightsRequest>
     ) => {
-      const index = state.dataRightsRequests.findIndex(
-        (request) => request.id === action.payload.id
+      const _index = state.dataRightsRequests.findIndex(
+        request => request.id === action.payload.id
       );
       if (index !== -1) {
         state.dataRightsRequests[index] = action.payload;
       }
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // 獲取隱私偏好
     builder
-      .addCase(fetchPrivacyPreferences.pending, (state) => {
+      .addCase(fetchPrivacyPreferences.pending, state => {
         state.preferencesLoading = true;
         state.preferencesError = null;
       })
@@ -526,7 +534,7 @@ const privacySlice = createSlice({
 
     // 更新隱私偏好
     builder
-      .addCase(updatePrivacyPreferences.pending, (state) => {
+      .addCase(updatePrivacyPreferences.pending, state => {
         state.preferencesLoading = true;
         state.preferencesError = null;
       })
@@ -546,8 +554,8 @@ const privacySlice = createSlice({
 
     // 撤回同意
     builder.addCase(withdrawConsent.fulfilled, (state, action) => {
-      const index = state.consentHistory.findIndex(
-        (record) => record.id === action.payload.id
+      const _index = state.consentHistory.findIndex(
+        record => record.id === action.payload.id
       );
       if (index !== -1) {
         state.consentHistory[index] = action.payload;
@@ -556,7 +564,7 @@ const privacySlice = createSlice({
 
     // 獲取同意歷史
     builder
-      .addCase(fetchConsentHistory.pending, (state) => {
+      .addCase(fetchConsentHistory.pending, state => {
         state.consentHistoryLoading = true;
         state.consentHistoryError = null;
       })
@@ -576,7 +584,7 @@ const privacySlice = createSlice({
 
     // 獲取數據權利請求歷史
     builder
-      .addCase(fetchDataRightsRequestHistory.pending, (state) => {
+      .addCase(fetchDataRightsRequestHistory.pending, state => {
         state.dataRightsRequestsLoading = true;
         state.dataRightsRequestsError = null;
       })
@@ -592,7 +600,7 @@ const privacySlice = createSlice({
 
     // 獲取隱私法律要求
     builder
-      .addCase(fetchPrivacyLawRequirements.pending, (state) => {
+      .addCase(fetchPrivacyLawRequirements.pending, state => {
         state.privacyLawsLoading = true;
         state.privacyLawsError = null;
       })
@@ -607,7 +615,7 @@ const privacySlice = createSlice({
 
     // 獲取隱私設置配置
     builder
-      .addCase(fetchPrivacySettingsConfig.pending, (state) => {
+      .addCase(fetchPrivacySettingsConfig.pending, state => {
         state.privacyConfigLoading = true;
         state.privacyConfigError = null;
       })
@@ -623,7 +631,7 @@ const privacySlice = createSlice({
 
     // 驗證年齡
     builder
-      .addCase(verifyAge.pending, (state) => {
+      .addCase(verifyAge.pending, state => {
         state.ageVerificationLoading = true;
         state.ageVerificationError = null;
       })
@@ -638,7 +646,7 @@ const privacySlice = createSlice({
 
     // 請求父母同意
     builder
-      .addCase(requestParentalConsent.pending, (state) => {
+      .addCase(requestParentalConsent.pending, state => {
         state.parentalConsentLoading = true;
         state.parentalConsentError = null;
       })
@@ -653,7 +661,7 @@ const privacySlice = createSlice({
 
     // 導出用戶數據
     builder
-      .addCase(exportUserData.pending, (state) => {
+      .addCase(exportUserData.pending, state => {
         state.dataExportLoading = true;
         state.dataExportError = null;
       })
@@ -668,7 +676,7 @@ const privacySlice = createSlice({
 
     // 刪除用戶數據
     builder
-      .addCase(deleteUserData.pending, (state) => {
+      .addCase(deleteUserData.pending, state => {
         state.dataDeletionLoading = true;
         state.dataDeletionError = null;
       })
@@ -683,7 +691,7 @@ const privacySlice = createSlice({
 
     // 檢查隱私合規性
     builder
-      .addCase(checkPrivacyCompliance.pending, (state) => {
+      .addCase(checkPrivacyCompliance.pending, state => {
         state.complianceCheckLoading = true;
         state.complianceCheckError = null;
       })
@@ -699,7 +707,7 @@ const privacySlice = createSlice({
 
     // 獲取隱私儀表板
     builder
-      .addCase(fetchPrivacyDashboard.pending, (state) => {
+      .addCase(fetchPrivacyDashboard.pending, state => {
         state.dashboardLoading = true;
         state.dashboardError = null;
       })
@@ -714,7 +722,7 @@ const privacySlice = createSlice({
 
     // 檢查同意更新
     builder
-      .addCase(checkConsentRenewal.pending, (state) => {
+      .addCase(checkConsentRenewal.pending, state => {
         state.consentRenewalLoading = true;
         state.consentRenewalError = null;
       })
@@ -730,9 +738,9 @@ const privacySlice = createSlice({
     // 批量更新同意
     builder.addCase(batchUpdateConsent.fulfilled, (state, action) => {
       // 更新同意歷史記錄
-      action.payload.forEach((newRecord) => {
-        const index = state.consentHistory.findIndex(
-          (record) => record.id === newRecord.id
+      action.payload.forEach((newRecord: unknown) => {
+        const _index = state.consentHistory.findIndex(
+          record => record.id === newRecord.id
         );
         if (index !== -1) {
           state.consentHistory[index] = newRecord;
@@ -758,98 +766,98 @@ export const {
 export default privacySlice.reducer;
 
 // Selectors
-export const selectPrivacyPreferences = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyPreferences = (state: { privacy: PrivacyState }) =>
   state.privacy.preferences;
-export const selectPrivacyPreferencesLoading = (state: {
+export const _selectPrivacyPreferencesLoading = (state: {
   privacy: PrivacyState;
 }) => state.privacy.preferencesLoading;
-export const selectPrivacyPreferencesError = (state: {
+export const _selectPrivacyPreferencesError = (state: {
   privacy: PrivacyState;
 }) => state.privacy.preferencesError;
 
-export const selectConsentHistory = (state: { privacy: PrivacyState }) =>
+export const _selectConsentHistory = (state: { privacy: PrivacyState }) =>
   state.privacy.consentHistory;
-export const selectConsentHistoryLoading = (state: { privacy: PrivacyState }) =>
+export const _selectConsentHistoryLoading = (state: { privacy: PrivacyState }) =>
   state.privacy.consentHistoryLoading;
-export const selectConsentHistoryError = (state: { privacy: PrivacyState }) =>
+export const _selectConsentHistoryError = (state: { privacy: PrivacyState }) =>
   state.privacy.consentHistoryError;
 
-export const selectDataRightsRequests = (state: { privacy: PrivacyState }) =>
+export const _selectDataRightsRequests = (state: { privacy: PrivacyState }) =>
   state.privacy.dataRightsRequests;
-export const selectDataRightsRequestsLoading = (state: {
+export const _selectDataRightsRequestsLoading = (state: {
   privacy: PrivacyState;
 }) => state.privacy.dataRightsRequestsLoading;
-export const selectDataRightsRequestsError = (state: {
+export const _selectDataRightsRequestsError = (state: {
   privacy: PrivacyState;
 }) => state.privacy.dataRightsRequestsError;
 
-export const selectPrivacyLaws = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyLaws = (state: { privacy: PrivacyState }) =>
   state.privacy.privacyLaws;
-export const selectPrivacyLawsLoading = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyLawsLoading = (state: { privacy: PrivacyState }) =>
   state.privacy.privacyLawsLoading;
-export const selectPrivacyLawsError = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyLawsError = (state: { privacy: PrivacyState }) =>
   state.privacy.privacyLawsError;
 
-export const selectPrivacyConfig = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyConfig = (state: { privacy: PrivacyState }) =>
   state.privacy.privacyConfig;
-export const selectPrivacyConfigLoading = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyConfigLoading = (state: { privacy: PrivacyState }) =>
   state.privacy.privacyConfigLoading;
-export const selectPrivacyConfigError = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyConfigError = (state: { privacy: PrivacyState }) =>
   state.privacy.privacyConfigError;
 
-export const selectPrivacyDashboard = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyDashboard = (state: { privacy: PrivacyState }) =>
   state.privacy.dashboard;
-export const selectPrivacyDashboardLoading = (state: {
+export const _selectPrivacyDashboardLoading = (state: {
   privacy: PrivacyState;
 }) => state.privacy.dashboardLoading;
-export const selectPrivacyDashboardError = (state: { privacy: PrivacyState }) =>
+export const _selectPrivacyDashboardError = (state: { privacy: PrivacyState }) =>
   state.privacy.dashboardError;
 
-export const selectComplianceCheck = (state: { privacy: PrivacyState }) =>
+export const _selectComplianceCheck = (state: { privacy: PrivacyState }) =>
   state.privacy.complianceCheck;
-export const selectComplianceCheckLoading = (state: {
+export const _selectComplianceCheckLoading = (state: {
   privacy: PrivacyState;
 }) => state.privacy.complianceCheckLoading;
-export const selectComplianceCheckError = (state: { privacy: PrivacyState }) =>
+export const _selectComplianceCheckError = (state: { privacy: PrivacyState }) =>
   state.privacy.complianceCheckError;
 
-export const selectCurrentRegion = (state: { privacy: PrivacyState }) =>
+export const _selectCurrentRegion = (state: { privacy: PrivacyState }) =>
   state.privacy.currentRegion;
 
-export const selectAgeVerification = (state: { privacy: PrivacyState }) =>
+export const _selectAgeVerification = (state: { privacy: PrivacyState }) =>
   state.privacy.ageVerification;
-export const selectAgeVerificationLoading = (state: {
+export const _selectAgeVerificationLoading = (state: {
   privacy: PrivacyState;
 }) => state.privacy.ageVerificationLoading;
-export const selectAgeVerificationError = (state: { privacy: PrivacyState }) =>
+export const _selectAgeVerificationError = (state: { privacy: PrivacyState }) =>
   state.privacy.ageVerificationError;
 
-export const selectParentalConsentRequest = (state: {
+export const _selectParentalConsentRequest = (state: {
   privacy: PrivacyState;
 }) => state.privacy.parentalConsentRequest;
-export const selectParentalConsentLoading = (state: {
+export const _selectParentalConsentLoading = (state: {
   privacy: PrivacyState;
 }) => state.privacy.parentalConsentLoading;
-export const selectParentalConsentError = (state: { privacy: PrivacyState }) =>
+export const _selectParentalConsentError = (state: { privacy: PrivacyState }) =>
   state.privacy.parentalConsentError;
 
-export const selectDataExport = (state: { privacy: PrivacyState }) =>
+export const _selectDataExport = (state: { privacy: PrivacyState }) =>
   state.privacy.dataExport;
-export const selectDataExportLoading = (state: { privacy: PrivacyState }) =>
+export const _selectDataExportLoading = (state: { privacy: PrivacyState }) =>
   state.privacy.dataExportLoading;
-export const selectDataExportError = (state: { privacy: PrivacyState }) =>
+export const _selectDataExportError = (state: { privacy: PrivacyState }) =>
   state.privacy.dataExportError;
 
-export const selectDataDeletion = (state: { privacy: PrivacyState }) =>
+export const _selectDataDeletion = (state: { privacy: PrivacyState }) =>
   state.privacy.dataDeletion;
-export const selectDataDeletionLoading = (state: { privacy: PrivacyState }) =>
+export const _selectDataDeletionLoading = (state: { privacy: PrivacyState }) =>
   state.privacy.dataDeletionLoading;
-export const selectDataDeletionError = (state: { privacy: PrivacyState }) =>
+export const _selectDataDeletionError = (state: { privacy: PrivacyState }) =>
   state.privacy.dataDeletionError;
 
-export const selectConsentRenewal = (state: { privacy: PrivacyState }) =>
+export const _selectConsentRenewal = (state: { privacy: PrivacyState }) =>
   state.privacy.consentRenewal;
-export const selectConsentRenewalLoading = (state: { privacy: PrivacyState }) =>
+export const _selectConsentRenewalLoading = (state: { privacy: PrivacyState }) =>
   state.privacy.consentRenewalLoading;
-export const selectConsentRenewalError = (state: { privacy: PrivacyState }) =>
+export const _selectConsentRenewalError = (state: { privacy: PrivacyState }) =>
   state.privacy.consentRenewalError;

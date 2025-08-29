@@ -1,6 +1,7 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { dataQualityService } from '../../../services/dataQualityService';
 import { api } from '../../../config/api';
+
+import { dataQualityService } from '@/features/dataQuality/services/dataQualityService';
 
 // Mock API
 jest.mock('../../../config/api', () => ({
@@ -12,7 +13,7 @@ jest.mock('../../../config/api', () => ({
   },
 }));
 
-const mockApi = api as jest.Mocked<typeof api>;
+const _mockApi = api as jest.Mocked<typeof api>;
 
 describe('DataQualityService', () => {
   beforeEach(() => {
@@ -21,7 +22,7 @@ describe('DataQualityService', () => {
 
   describe('getCollectionStats', () => {
     it('應該成功獲取數據收集統計', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           totalRecords: 1000,
           qualityScore: 85.5,
@@ -31,15 +32,15 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getCollectionStats();
+      const _result = await dataQualityService.getCollectionStats();
 
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/collect/stats?');
       expect(result).toEqual(mockResponse.data);
     });
 
     it('應該使用自定義選項獲取統計', async () => {
-      const options = { startDate: '2024-01-01', endDate: '2024-01-31' };
-      const mockResponse = { data: { totalRecords: 500 } };
+      const _options = { startDate: '2024-01-01', endDate: '2024-01-31' };
+      const _mockResponse = { data: { totalRecords: 500 } };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
@@ -53,7 +54,7 @@ describe('DataQualityService', () => {
 
   describe('startDataCollection', () => {
     it('應該成功啟動數據收集', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           status: 'started',
           collectionId: 'coll-123',
@@ -63,7 +64,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.startDataCollection();
+      const _result = await dataQualityService.startDataCollection();
 
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/collect');
       expect(result).toEqual(mockResponse.data);
@@ -72,8 +73,8 @@ describe('DataQualityService', () => {
 
   describe('assignAnnotationTasks', () => {
     it('應該成功分配註釋任務', async () => {
-      const options = { annotatorId: 1, taskCount: 10 };
-      const mockResponse = {
+      const _options = { annotatorId: 1, taskCount: 10 };
+      const _mockResponse = {
         data: {
           tasks: [
             { id: 1, type: 'image_annotation', priority: 'high' },
@@ -85,7 +86,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.assignAnnotationTasks(options);
+      const _result = await dataQualityService.assignAnnotationTasks(options);
 
       expect(mockApi.post).toHaveBeenCalledWith(
         '/data-quality/annotate/assign',
@@ -97,12 +98,12 @@ describe('DataQualityService', () => {
 
   describe('learnFromResults', () => {
     it('應該成功從結果中學習', async () => {
-      const request = {
+      const _request = {
         annotationId: 1,
         learningType: 'pattern_recognition',
         parameters: { threshold: 0.8 },
       };
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           learningId: 'learn-123',
           status: 'completed',
@@ -112,7 +113,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.learnFromResults(request);
+      const _result = await dataQualityService.learnFromResults(request);
 
       expect(mockApi.post).toHaveBeenCalledWith(
         '/data-quality/annotate/learn',
@@ -124,7 +125,7 @@ describe('DataQualityService', () => {
 
   describe('getAssignmentConfig', () => {
     it('應該成功獲取分配配置', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           config: {
             maxTasksPerAnnotator: 50,
@@ -139,7 +140,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getAssignmentConfig();
+      const _result = await dataQualityService.getAssignmentConfig();
 
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/annotate/config');
       expect(result).toEqual(mockResponse.data);
@@ -148,8 +149,8 @@ describe('DataQualityService', () => {
 
   describe('updateAssignmentConfig', () => {
     it('應該成功更新分配配置', async () => {
-      const config = { maxTasksPerAnnotator: 75 };
-      const mockResponse = {
+      const _config = { maxTasksPerAnnotator: 75 };
+      const _mockResponse = {
         data: {
           config,
           timestamp: '2024-01-01T00:00:00Z',
@@ -158,7 +159,7 @@ describe('DataQualityService', () => {
 
       mockApi.put.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.updateAssignmentConfig(config);
+      const _result = await dataQualityService.updateAssignmentConfig(config);
 
       expect(mockApi.put).toHaveBeenCalledWith(
         '/data-quality/annotate/config',
@@ -170,7 +171,7 @@ describe('DataQualityService', () => {
 
   describe('getAnnotatorDetails', () => {
     it('應該成功獲取註釋者詳情', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           annotators: [
             { id: 1, name: 'Annotator 1', level: 'expert', accuracy: 0.95 },
@@ -187,7 +188,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getAnnotatorDetails();
+      const _result = await dataQualityService.getAnnotatorDetails();
 
       expect(mockApi.get).toHaveBeenCalledWith(
         '/data-quality/annotate/annotators?'
@@ -196,7 +197,7 @@ describe('DataQualityService', () => {
     });
 
     it('應該包含非活躍註釋者', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           annotators: [
             { id: 1, name: 'Active Annotator', isActive: true },
@@ -217,15 +218,15 @@ describe('DataQualityService', () => {
 
   describe('submitAnnotation', () => {
     it('應該成功提交註釋', async () => {
-      const annotationId = 1;
-      const annotationResult = {
+      const _annotationId = 1;
+      const _annotationResult = {
         label: 'card',
         confidence: 0.95,
         boundingBox: { x: 10, y: 20, width: 100, height: 50 },
       };
-      const confidence = 0.95;
+      const _confidence = 0.95;
 
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           annotationId,
           status: 'submitted',
@@ -235,7 +236,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.submitAnnotation(
+      const _result = await dataQualityService.submitAnnotation(
         annotationId,
         annotationResult,
         confidence
@@ -255,11 +256,11 @@ describe('DataQualityService', () => {
 
   describe('reviewAnnotation', () => {
     it('應該成功審查註釋', async () => {
-      const annotationId = 1;
-      const reviewStatus = 'approved';
-      const reviewNotes = 'Good quality annotation';
+      const _annotationId = 1;
+      const _reviewStatus = 'approved';
+      const _reviewNotes = 'Good quality annotation';
 
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           annotationId,
           reviewStatus,
@@ -271,7 +272,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.reviewAnnotation(
+      const _result = await dataQualityService.reviewAnnotation(
         annotationId,
         reviewStatus,
         reviewNotes
@@ -291,7 +292,7 @@ describe('DataQualityService', () => {
 
   describe('batchReviewAnnotations', () => {
     it('應該成功批量審查註釋', async () => {
-      const reviews = [
+      const _reviews = [
         { annotationId: 1, reviewStatus: 'approved', reviewNotes: 'Good' },
         {
           annotationId: 2,
@@ -300,7 +301,7 @@ describe('DataQualityService', () => {
         },
       ];
 
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           processed: 2,
           approved: 1,
@@ -311,7 +312,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.batchReviewAnnotations(reviews);
+      const _result = await dataQualityService.batchReviewAnnotations(reviews);
 
       expect(mockApi.post).toHaveBeenCalledWith(
         '/data-quality/annotate/batch-review',
@@ -325,7 +326,7 @@ describe('DataQualityService', () => {
 
   describe('getAnnotationStats', () => {
     it('應該成功獲取註釋統計', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           totalAnnotators: 10,
           totalAnnotations: 1000,
@@ -336,7 +337,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getAnnotationStats();
+      const _result = await dataQualityService.getAnnotationStats();
 
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/annotate/stats');
       expect(result).toEqual(mockResponse.data);
@@ -345,7 +346,7 @@ describe('DataQualityService', () => {
 
   describe('performDataCleaning', () => {
     it('應該成功執行數據清理', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           status: 'completed',
           cleanedRecords: 150,
@@ -357,7 +358,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.performDataCleaning();
+      const _result = await dataQualityService.performDataCleaning();
 
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/clean');
       expect(result).toEqual(mockResponse.data);
@@ -366,7 +367,7 @@ describe('DataQualityService', () => {
 
   describe('getQualityMetrics', () => {
     it('應該成功獲取質量指標', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: [
           {
             metric: 'completeness',
@@ -385,7 +386,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getQualityMetrics();
+      const _result = await dataQualityService.getQualityMetrics();
 
       expect(mockApi.get).toHaveBeenCalledWith(
         '/data-quality/quality-metrics?limit=10'
@@ -394,9 +395,9 @@ describe('DataQualityService', () => {
     });
 
     it('應該使用自定義參數獲取指標', async () => {
-      const dataType = 'image_annotation';
-      const limit = 20;
-      const mockResponse = { data: [{ metric: 'accuracy', value: 0.9 }] };
+      const _dataType = 'image_annotation';
+      const _limit = 20;
+      const _mockResponse = { data: [{ metric: 'accuracy', value: 0.9 }] };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
@@ -410,9 +411,9 @@ describe('DataQualityService', () => {
 
   describe('getQualityReport', () => {
     it('應該成功獲取質量報告', async () => {
-      const startDate = '2024-01-01';
-      const endDate = '2024-01-31';
-      const mockResponse = {
+      const _startDate = '2024-01-01';
+      const _endDate = '2024-01-31';
+      const _mockResponse = {
         data: {
           period: { startDate, endDate },
           overallScore: 87.5,
@@ -426,7 +427,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getQualityReport(
+      const _result = await dataQualityService.getQualityReport(
         startDate,
         endDate
       );
@@ -440,7 +441,7 @@ describe('DataQualityService', () => {
 
   describe('performQualityImprovement', () => {
     it('應該成功執行質量改進', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           status: 'completed',
           improvements: [
@@ -453,7 +454,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.performQualityImprovement();
+      const _result = await dataQualityService.performQualityImprovement();
 
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/improve');
       expect(result).toEqual(mockResponse.data);
@@ -462,7 +463,7 @@ describe('DataQualityService', () => {
 
   describe('getRecommendations', () => {
     it('應該成功獲取改進建議', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           recommendations: [
             {
@@ -479,7 +480,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getRecommendations();
+      const _result = await dataQualityService.getRecommendations();
 
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/recommendations');
       expect(result).toEqual(mockResponse.data);
@@ -488,13 +489,13 @@ describe('DataQualityService', () => {
 
   describe('exportStatsReport', () => {
     it('應該成功導出統計報告', async () => {
-      const options = { format: 'pdf', includeCharts: true };
-      const mockBlob = new Blob(['report data'], { type: 'application/pdf' });
-      const mockResponse = { data: mockBlob };
+      const _options = { format: 'pdf', includeCharts: true };
+      const _mockBlob = new Blob(['report data'], { type: 'application/pdf' });
+      const _mockResponse = { data: mockBlob };
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.exportStatsReport(options);
+      const _result = await dataQualityService.exportStatsReport(options);
 
       expect(mockApi.get).toHaveBeenCalledWith(
         '/data-quality/collect/stats/export?',
@@ -508,7 +509,7 @@ describe('DataQualityService', () => {
 
   describe('getRealTimeStats', () => {
     it('應該成功獲取實時統計', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           currentProcessing: 15,
           queueLength: 25,
@@ -519,7 +520,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getRealTimeStats();
+      const _result = await dataQualityService.getRealTimeStats();
 
       expect(mockApi.get).toHaveBeenCalledWith(
         '/data-quality/collect/stats/realtime'
@@ -530,13 +531,13 @@ describe('DataQualityService', () => {
 
   describe('setCollectionAlerts', () => {
     it('應該成功設置收集警報', async () => {
-      const alerts = {
+      const _alerts = {
         qualityThreshold: 80,
         enableNotifications: true,
         alertChannels: ['email', 'push'],
       };
 
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           status: 'configured',
           alertId: 'alert-123',
@@ -546,7 +547,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.setCollectionAlerts(alerts);
+      const _result = await dataQualityService.setCollectionAlerts(alerts);
 
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/alerts', alerts);
       expect(result).toEqual(mockResponse.data);
@@ -555,7 +556,7 @@ describe('DataQualityService', () => {
 
   describe('getCollectionAlerts', () => {
     it('應該成功獲取收集警報', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           alerts: [
             {
@@ -570,7 +571,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getCollectionAlerts();
+      const _result = await dataQualityService.getCollectionAlerts();
 
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/alerts');
       expect(result).toEqual(mockResponse.data);
@@ -579,8 +580,8 @@ describe('DataQualityService', () => {
 
   describe('getDashboardData', () => {
     it('應該成功獲取儀表板數據', async () => {
-      const options = { timeRange: '7d', includeTrends: true };
-      const mockResponse = {
+      const _options = { timeRange: '7d', includeTrends: true };
+      const _mockResponse = {
         data: {
           overview: {
             qualityScore: 85.5,
@@ -596,7 +597,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getDashboardData(options);
+      const _result = await dataQualityService.getDashboardData(options);
 
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/dashboard?');
       expect(result).toEqual(mockResponse.data);
@@ -605,7 +606,7 @@ describe('DataQualityService', () => {
 
   describe('getRealTimeAlerts', () => {
     it('應該成功獲取實時警報', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: [
           {
             id: 1,
@@ -618,7 +619,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getRealTimeAlerts();
+      const _result = await dataQualityService.getRealTimeAlerts();
 
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/alerts');
       expect(result).toEqual(mockResponse.data);
@@ -627,8 +628,8 @@ describe('DataQualityService', () => {
 
   describe('getOverallMetrics', () => {
     it('應該成功獲取整體指標', async () => {
-      const options = { timeRange: '30d' };
-      const mockResponse = {
+      const _options = { timeRange: '30d' };
+      const _mockResponse = {
         data: {
           overallScore: 87.5,
           completeness: 0.95,
@@ -640,7 +641,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getOverallMetrics(options);
+      const _result = await dataQualityService.getOverallMetrics(options);
 
       expect(mockApi.get).toHaveBeenCalledWith(
         '/data-quality/overall-metrics?'
@@ -651,8 +652,8 @@ describe('DataQualityService', () => {
 
   describe('getTrendData', () => {
     it('應該成功獲取趨勢數據', async () => {
-      const options = { metric: 'quality_score', period: '7d' };
-      const mockResponse = {
+      const _options = { metric: 'quality_score', period: '7d' };
+      const _mockResponse = {
         data: {
           metric: 'quality_score',
           period: '7d',
@@ -665,7 +666,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getTrendData(options);
+      const _result = await dataQualityService.getTrendData(options);
 
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/trends?');
       expect(result).toEqual(mockResponse.data);
@@ -674,9 +675,9 @@ describe('DataQualityService', () => {
 
   describe('getSourceBreakdown', () => {
     it('應該成功獲取來源分析', async () => {
-      const startDate = '2024-01-01';
-      const endDate = '2024-01-31';
-      const mockResponse = {
+      const _startDate = '2024-01-01';
+      const _endDate = '2024-01-31';
+      const _mockResponse = {
         data: {
           sources: [
             { source: 'manual_upload', count: 500, percentage: 50 },
@@ -688,7 +689,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getSourceBreakdown(
+      const _result = await dataQualityService.getSourceBreakdown(
         startDate,
         endDate
       );
@@ -702,9 +703,9 @@ describe('DataQualityService', () => {
 
   describe('getQualityDistribution', () => {
     it('應該成功獲取質量分佈', async () => {
-      const startDate = '2024-01-01';
-      const endDate = '2024-01-31';
-      const mockResponse = {
+      const _startDate = '2024-01-01';
+      const _endDate = '2024-01-31';
+      const _mockResponse = {
         data: {
           distribution: [
             { quality: 'excellent', count: 400, percentage: 40 },
@@ -717,7 +718,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getQualityDistribution(
+      const _result = await dataQualityService.getQualityDistribution(
         startDate,
         endDate
       );
@@ -731,9 +732,9 @@ describe('DataQualityService', () => {
 
   describe('getAnnotatorPerformance', () => {
     it('應該成功獲取註釋者表現', async () => {
-      const startDate = '2024-01-01';
-      const endDate = '2024-01-31';
-      const mockResponse = {
+      const _startDate = '2024-01-01';
+      const _endDate = '2024-01-31';
+      const _mockResponse = {
         data: {
           annotators: [
             {
@@ -756,7 +757,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getAnnotatorPerformance(
+      const _result = await dataQualityService.getAnnotatorPerformance(
         startDate,
         endDate
       );
@@ -770,9 +771,9 @@ describe('DataQualityService', () => {
 
   describe('getRecentIssues', () => {
     it('應該成功獲取最近問題', async () => {
-      const startDate = '2024-01-01';
-      const endDate = '2024-01-31';
-      const mockResponse = {
+      const _startDate = '2024-01-01';
+      const _endDate = '2024-01-31';
+      const _mockResponse = {
         data: {
           issues: [
             {
@@ -788,7 +789,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getRecentIssues(
+      const _result = await dataQualityService.getRecentIssues(
         startDate,
         endDate
       );
@@ -802,7 +803,7 @@ describe('DataQualityService', () => {
 
   describe('getImprovementSuggestions', () => {
     it('應該成功獲取改進建議', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           suggestions: [
             {
@@ -820,7 +821,7 @@ describe('DataQualityService', () => {
 
       mockApi.get.mockResolvedValue(mockResponse);
 
-      const result = await dataQualityService.getImprovementSuggestions();
+      const _result = await dataQualityService.getImprovementSuggestions();
 
       expect(mockApi.get).toHaveBeenCalledWith(
         '/data-quality/improvement-suggestions'
@@ -831,7 +832,7 @@ describe('DataQualityService', () => {
 
   describe('錯誤處理', () => {
     it('應該處理API錯誤', async () => {
-      const error = new Error('API Error');
+      const _error = new Error('API Error');
       mockApi.get.mockRejectedValue(error);
 
       await expect(dataQualityService.getCollectionStats()).rejects.toThrow(
@@ -840,7 +841,7 @@ describe('DataQualityService', () => {
     });
 
     it('應該處理網絡錯誤', async () => {
-      const error = new Error('Network Error');
+      const _error = new Error('Network Error');
       mockApi.get.mockRejectedValue(error);
 
       await expect(dataQualityService.getCollectionStats()).rejects.toThrow(
@@ -851,7 +852,7 @@ describe('DataQualityService', () => {
 
   describe('參數驗證', () => {
     it('應該驗證必要參數', async () => {
-      const mockResponse = {
+      const _mockResponse = {
         data: {
           annotationId: 1,
           status: 'submitted',

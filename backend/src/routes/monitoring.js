@@ -1,57 +1,57 @@
-const express = require('express');
-const router = express.Router();
-const { query, validationResult } = require('express-validator');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
-const monitoringService = require('../services/monitoringService');
+const express = require('express');'
+const router = express.Router();''
+const { query, validationResult } = require('express-validator');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');''
+const monitoringService = require('../services/monitoringService');''
 const { authenticateToken: protect, authorize } = require('../middleware/auth');
 
 /**
  * ?��???��?��?
- * GET /api/monitoring/metrics
- */
-router.get('/metrics', [protect, authorize('admin')], async (req, res) => {
-  try {
+ * GET /api/monitoring/metrics'
+ */''
+router.get('/metrics', [protect, authorize('admin')], async (req, res) => {'
+  try {''
     logger.info('?��???��?��?', { adminId: req.user.id });
 
     const metrics = monitoringService.getMetrics();
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '??��?��??��??��?',
       data: metrics,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��???��?��?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��???��?��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��???��?��?失�?',''
       code: 'MONITORING_METRICS_ERROR',
     });
   }
 });
 
 /**
- * ?��??�康檢查?�?? * GET /api/monitoring/health
- */
-router.get('/health', async (req, res) => {
-  try {
+ * ?��??�康檢查?�?? * GET /api/monitoring/health'
+ */''
+router.get('/health', async (req, res) => {'
+  try {''
     logger.info('?�康檢查請�?');
 
     const healthStatus = await monitoringService.getHealthStatus();
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '?�康檢查完�?',
       data: healthStatus,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?�康檢查失�?:', error);
-    res.status(503).json({
-      success: false,
-      message: '?��?不可??,
-      code: 'HEALTH_CHECK_FAILED',
-      data: {
+    res.status(503).json({'
+      success: false,''
+      message: '?��?不可??,''
+      code: 'HEALTH_CHECK_FAILED','
+      data: {''
         overall: 'unhealthy',
         timestamp: new Date().toISOString(),
         error: error.message,
@@ -61,17 +61,17 @@ router.get('/health', async (req, res) => {
 });
 
 /**
- * ?��?系統?�?? * GET /api/monitoring/system
- */
-router.get('/system', [protect, authorize('admin')], async (req, res) => {
-  try {
+ * ?��?系統?�?? * GET /api/monitoring/system'
+ */''
+router.get('/system', [protect, authorize('admin')], async (req, res) => {'
+  try {''
     logger.info('?��?系統?�??, { adminId: req.user.id });
 
     const metrics = monitoringService.getMetrics();
     const systemMetrics = metrics.system;
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '系統?�?�獲?��???,
       data: {
         timestamp: new Date().toISOString(),
@@ -85,29 +85,29 @@ router.get('/system', [protect, authorize('admin')], async (req, res) => {
           cpuLoad: systemMetrics.cpu?.loadAverage?.[0],
         },
       },
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��?系統?�?�失??', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��?系統?�?�失??,
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��?系統?�?�失??,''
       code: 'SYSTEM_STATUS_ERROR',
     });
   }
 });
 
 /**
- * ?��??�用程�??�?? * GET /api/monitoring/application
- */
-router.get('/application', [protect, authorize('admin')], async (req, res) => {
-  try {
+ * ?��??�用程�??�?? * GET /api/monitoring/application'
+ */''
+router.get('/application', [protect, authorize('admin')], async (req, res) => {'
+  try {''
     logger.info('?��??�用程�??�??, { adminId: req.user.id });
 
     const metrics = monitoringService.getMetrics();
     const appMetrics = metrics.application;
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '?�用程�??�?�獲?��???,
       data: {
         timestamp: new Date().toISOString(),
@@ -123,29 +123,29 @@ router.get('/application', [protect, authorize('admin')], async (req, res) => {
           },
         },
       },
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??�用程�??�?�失??', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��??�用程�??�?�失??,
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��??�用程�??�?�失??,''
       code: 'APPLICATION_STATUS_ERROR',
     });
   }
 });
 
 /**
- * ?��??��?庫�??? * GET /api/monitoring/database
- */
-router.get('/database', [protect, authorize('admin')], async (req, res) => {
-  try {
+ * ?��??��?庫�??? * GET /api/monitoring/database'
+ */''
+router.get('/database', [protect, authorize('admin')], async (req, res) => {'
+  try {''
     logger.info('?��??��?庫�???, { adminId: req.user.id });
 
     const metrics = monitoringService.getMetrics();
     const dbMetrics = metrics.database;
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '?��?庫�??�獲?��???,
       data: {
         timestamp: new Date().toISOString(),
@@ -160,12 +160,12 @@ router.get('/database', [protect, authorize('admin')], async (req, res) => {
           averageResponseTime: dbMetrics.performance?.averageResponseTime,
         },
       },
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??��?庫�??�失??', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��??��?庫�??�失??,
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��??��?庫�??�失??,''
       code: 'DATABASE_STATUS_ERROR',
     });
   }
@@ -173,17 +173,17 @@ router.get('/database', [protect, authorize('admin')], async (req, res) => {
 
 /**
  * ?��??�能?��?
- * GET /api/monitoring/performance
- */
-router.get('/performance', [protect, authorize('admin')], async (req, res) => {
-  try {
+ * GET /api/monitoring/performance'
+ */''
+router.get('/performance', [protect, authorize('admin')], async (req, res) => {'
+  try {''
     logger.info('?��??�能?��?', { adminId: req.user.id });
 
     const metrics = monitoringService.getMetrics();
     const perfMetrics = metrics.performance;
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '?�能?��??��??��?',
       data: {
         timestamp: new Date().toISOString(),
@@ -203,12 +203,12 @@ router.get('/performance', [protect, authorize('admin')], async (req, res) => {
           totalRequests: perfMetrics.requests?.total,
         },
       },
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??�能?��?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��??�能?��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��??�能?��?失�?',''
       code: 'PERFORMANCE_METRICS_ERROR',
     });
   }
@@ -217,16 +217,16 @@ router.get('/performance', [protect, authorize('admin')], async (req, res) => {
 /**
  * ?��??�誤?��?
  * GET /api/monitoring/errors
- */
-router.get(
+ */'
+router.get(''
   '/errors',
-  [
-    protect,
-    authorize('admin'),
+  ['
+    protect,''
+    authorize('admin'),''
     query('limit')
-      .optional()
-      .isInt({ min: 1, max: 100 })
-      .withMessage('?�制?��?必�???1-100 之�?'),
+      .optional()'
+      .isInt({ min: 1, max: 100 });''
+      .withMessage('?�制?��?必�???1-100 之�?'),''
     query('type').optional().isString().withMessage('?�誤類�?必�??��?符串'),
   ],
   async (req, res) => {
@@ -234,14 +234,13 @@ router.get(
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
+        return res.status(400).json({'
+          success: false,''
           message: '請�??�數驗�?失�?',
           errors: errors.array(),
-        });
+        });'
       }
-
-      const { limit = 20, type } = req.query;
+      const { limit = 20, type } = req.query;''
       logger.info('?��??�誤?��?', { adminId: req.user.id, limit, type });
 
       const metrics = monitoringService.getMetrics();
@@ -251,12 +250,11 @@ router.get(
       // ?��??��?�?      if (type) {
         errorLogs = errorLogs.filter((error) => error.type === type);
       }
-
       // ?�制?��?
       errorLogs = errorLogs.slice(-parseInt(limit));
 
-      res.json({
-        success: true,
+      res.json({'
+        success: true,''
         message: '?�誤?��??��??��?',
         data: {
           timestamp: new Date().toISOString(),
@@ -267,12 +265,12 @@ router.get(
             errorTypes: [...new Set(metrics.errors.map((e) => e.type))],
           },
         },
-      });
-    } catch (error) {
+      });'
+    } catch (error) {''
       logger.error('?��??�誤?��?失�?:', error);
-      res.status(500).json({
-        success: false,
-        message: error.message || '?��??�誤?��?失�?',
+      res.status(500).json({'
+        success: false,''
+        message: error.message || '?��??�誤?��?失�?',''
         code: 'ERROR_LOGS_ERROR',
       });
     }
@@ -281,24 +279,24 @@ router.get(
 
 /**
  * ?��???��?��?
- * GET /api/monitoring/report
- */
-router.get('/report', [protect, authorize('admin')], async (req, res) => {
-  try {
+ * GET /api/monitoring/report'
+ */''
+router.get('/report', [protect, authorize('admin')], async (req, res) => {'
+  try {''
     logger.info('?��???��?��?', { adminId: req.user.id });
 
     const report = monitoringService.generateReport();
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '??��?��??��??��?',
       data: report,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��???��?��?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��???��?��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��???��?��?失�?',''
       code: 'MONITORING_REPORT_ERROR',
     });
   }
@@ -306,27 +304,27 @@ router.get('/report', [protect, authorize('admin')], async (req, res) => {
 
 /**
  * 設置警報?��? * PUT /api/monitoring/thresholds
- */
-router.put(
+ */'
+router.put(''
   '/thresholds',
-  [
-    protect,
-    authorize('admin'),
+  ['
+    protect,''
+    authorize('admin'),''
     query('cpu')
-      .optional()
-      .isFloat({ min: 0, max: 100 })
-      .withMessage('CPU ?�值�??�在 0-100 之�?'),
+      .optional()'
+      .isFloat({ min: 0, max: 100 });''
+      .withMessage('CPU ?�值�??�在 0-100 之�?'),''
     query('memory')
-      .optional()
-      .isFloat({ min: 0, max: 100 })
-      .withMessage('?��??�值�??�在 0-100 之�?'),
+      .optional()'
+      .isFloat({ min: 0, max: 100 });''
+      .withMessage('?��??�值�??�在 0-100 之�?'),''
     query('responseTime')
-      .optional()
-      .isInt({ min: 0 })
-      .withMessage('?��??��??�值�??�是?��??�數'),
+      .optional()'
+      .isInt({ min: 0 });''
+      .withMessage('?��??��??�值�??�是?��??�數'),''
     query('errorRate')
-      .optional()
-      .isFloat({ min: 0, max: 100 })
+      .optional()'
+      .isFloat({ min: 0, max: 100 });''
       .withMessage('?�誤?�閾?��??�在 0-100 之�?'),
   ],
   async (req, res) => {
@@ -334,14 +332,13 @@ router.put(
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
+        return res.status(400).json({'
+          success: false,''
           message: '請�??�數驗�?失�?',
           errors: errors.array(),
-        });
+        });'
       }
-
-      const { cpu, memory, responseTime, errorRate } = req.query;
+      const { cpu, memory, responseTime, errorRate } = req.query;''
       logger.info('設置警報?��?, {
         adminId: req.user.id,
         cpu,
@@ -359,19 +356,19 @@ router.put(
 
       monitoringService.setAlertThresholds(thresholds);
 
-      res.json({
-        success: true,
+      res.json({'
+        success: true,''
         message: '警報?�值設置�???,
         data: {
           timestamp: new Date().toISOString(),
           thresholds,
         },
-      });
-    } catch (error) {
+      });'
+    } catch (error) {''
       logger.error('設置警報?�值失??', error);
-      res.status(500).json({
-        success: false,
-        message: error.message || '設置警報?�值失??,
+      res.status(500).json({'
+        success: false,''
+        message: error.message || '設置警報?�值失??,''
         code: 'THRESHOLDS_SETTING_ERROR',
       });
     }
@@ -380,27 +377,27 @@ router.put(
 
 /**
  * 清�???��?��?
- * DELETE /api/monitoring/cleanup
- */
-router.delete('/cleanup', [protect, authorize('admin')], async (req, res) => {
-  try {
+ * DELETE /api/monitoring/cleanup'
+ */''
+router.delete('/cleanup', [protect, authorize('admin')], async (req, res) => {'
+  try {''
     logger.info('清�???��?��?', { adminId: req.user.id });
 
     monitoringService.cleanupOldData();
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '??��?��?清�??��?',
-      data: {
-        timestamp: new Date().toISOString(),
+      data: {'
+        timestamp: new Date().toISOString(),''
         action: 'cleanup_completed',
       },
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('清�???��?��?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '清�???��?��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '清�???��?��?失�?',''
       code: 'MONITORING_CLEANUP_ERROR',
     });
   }
@@ -408,10 +405,10 @@ router.delete('/cleanup', [protect, authorize('admin')], async (req, res) => {
 
 /**
  * ?��???��?��?
- * POST /api/monitoring/restart
- */
-router.post('/restart', [protect, authorize('admin')], async (req, res) => {
-  try {
+ * POST /api/monitoring/restart'
+ */''
+router.post('/restart', [protect, authorize('admin')], async (req, res) => {'
+  try {''
     logger.info('?��???��?��?', { adminId: req.user.id });
 
     // ?�止?��???��?��?
@@ -419,22 +416,21 @@ router.post('/restart', [protect, authorize('admin')], async (req, res) => {
 
     // ?�新?��??�監?��???    await monitoringService.initialize();
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '??��?��??��??��?',
-      data: {
-        timestamp: new Date().toISOString(),
+      data: {'
+        timestamp: new Date().toISOString(),''
         action: 'restart_completed',
       },
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��???��?��?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��???��?��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��???��?��?失�?',''
       code: 'MONITORING_RESTART_ERROR',
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

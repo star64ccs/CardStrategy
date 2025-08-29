@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic, Progress, Spin, Alert } from 'antd';
-import { 
-  MonitorOutlined, 
-  CheckCircleOutlined, 
-  ExclamationCircleOutlined 
+import {
+  MonitorOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons';
+import { Card, Row, Col, Statistic, Progress, Spin, Alert } from 'antd';
+import React, { useState, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
+
 import { monitoringService } from '../services/monitoringService';
 
 const Monitoring = () => {
@@ -23,7 +24,7 @@ const Monitoring = () => {
       const monitoringData = await monitoringService.getPerformanceData();
       setData(monitoringData);
     } catch (err) {
-      setError('加載監控數據失敗: ' + err.message);
+      setError(`加載監控數據失敗: ${  err.message}`);
     } finally {
       setLoading(false);
     }
@@ -45,7 +46,7 @@ const Monitoring = () => {
   return (
     <div>
       <h1><MonitorOutlined /> 系統監控</h1>
-      
+
       {/* 系統性能指標 */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={6}>
@@ -57,8 +58,8 @@ const Monitoring = () => {
               valueStyle={{ color: data?.metrics?.cpu > 80 ? '#cf1322' : '#3f8600' }}
               prefix={<MonitorOutlined />}
             />
-            <Progress 
-              percent={data?.metrics?.cpu || 0} 
+            <Progress
+              percent={data?.metrics?.cpu || 0}
               status={data?.metrics?.cpu > 80 ? 'exception' : 'active'}
               size="small"
             />
@@ -73,8 +74,8 @@ const Monitoring = () => {
               valueStyle={{ color: data?.metrics?.memory > 85 ? '#cf1322' : '#3f8600' }}
               prefix={<MonitorOutlined />}
             />
-            <Progress 
-              percent={data?.metrics?.memory || 0} 
+            <Progress
+              percent={data?.metrics?.memory || 0}
               status={data?.metrics?.memory > 85 ? 'exception' : 'active'}
               size="small"
             />
@@ -89,8 +90,8 @@ const Monitoring = () => {
               valueStyle={{ color: data?.metrics?.disk > 90 ? '#cf1322' : '#3f8600' }}
               prefix={<MonitorOutlined />}
             />
-            <Progress 
-              percent={data?.metrics?.disk || 0} 
+            <Progress
+              percent={data?.metrics?.disk || 0}
               status={data?.metrics?.disk > 90 ? 'exception' : 'active'}
               size="small"
             />

@@ -6,6 +6,7 @@ const path = require('path');
  * 基於實際程式碼檢查的詳細分析
  */
 
+// eslint-disable-next-line no-console
 console.log('🔍 開始真實專案分析...\n');
 
 // 分析專案結構
@@ -413,33 +414,51 @@ fs.writeFileSync(
   JSON.stringify(report, null, 2)
 );
 
+// eslint-disable-next-line no-console
 console.log('✅ 真實專案分析報告已生成！');
+// eslint-disable-next-line no-console
 console.log('\n📊 報告摘要:');
+// eslint-disable-next-line no-console
 console.log(`   總體評分: ${report.executiveSummary.overallScore}/100`);
+// eslint-disable-next-line no-console
 console.log(`   專案狀態: ${report.executiveSummary.status}`);
+// eslint-disable-next-line no-console
 console.log(`   分析方法: ${report.analysisMethod}`);
+// eslint-disable-next-line no-console
 console.log(`   報告文件: reports/realistic-project-analysis.json`);
 
+// eslint-disable-next-line no-console
 console.log('\n🎯 核心功能真實狀況:');
 Object.entries(report.detailedAnalysis.coreFeatures).forEach(([key, feature]) => {
+  // eslint-disable-next-line no-console
   console.log(`   ${feature.description}: ${feature.accuracy}% (${feature.status})`);
+  // eslint-disable-next-line no-console
   console.log(`     實現狀況: ${feature.implementation}`);
+  // eslint-disable-next-line no-console
   console.log(`     技術棧: ${feature.technicalStack.join(', ')}`);
+  // eslint-disable-next-line no-console
   console.log(`     代碼質量: ${feature.codeQuality}`);
+  // eslint-disable-next-line no-console
   console.log('');
 });
 
+// eslint-disable-next-line no-console
 console.log('\n🏗️ 技術架構評估:');
 Object.entries(report.detailedAnalysis.technicalArchitecture).forEach(([key, tech]) => {
+  // eslint-disable-next-line no-console
   console.log(`   ${key}: ${tech.score}/100 (${tech.status})`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n📋 待辦事項:');
 report.todoItems.forEach(item => {
+  // eslint-disable-next-line no-console
   console.log(`   • ${item}`);
 });
 
+// eslint-disable-next-line no-console
 console.log('\n💡 主要建議:');
 report.recommendations.immediate.forEach(item => {
+  // eslint-disable-next-line no-console
   console.log(`   • ${item}`);
 });

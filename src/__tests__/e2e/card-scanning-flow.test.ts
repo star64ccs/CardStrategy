@@ -343,7 +343,7 @@ describe('卡片掃描流程', () => {
 
   describe('性能測試', () => {
     it('應該在合理時間內完成掃描', async () => {
-      const startTime = Date.now();
+      const _startTime = Date.now();
 
       // 1. 開始掃描
       await element(by.id('scan-tab')).tap();
@@ -354,8 +354,8 @@ describe('卡片掃描流程', () => {
         .toBeVisible()
         .withTimeout(20000);
 
-      const endTime = Date.now();
-      const duration = endTime - startTime;
+      const _endTime = Date.now();
+      const _duration = endTime - startTime;
 
       // 驗證掃描時間在合理範圍內（30秒內）
       expect(duration).toBeLessThan(30000);

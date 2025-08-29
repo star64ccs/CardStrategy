@@ -88,6 +88,7 @@ describe('性能測試', () => {
       // 性能檢查：50個併發請求應該在5秒內完成
       expect(totalTime).toBeLessThan(5000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 50個併發卡片查詢請求在 ${totalTime}ms 內完成`);
     });
 
@@ -123,6 +124,7 @@ describe('性能測試', () => {
       // 性能檢查：30個併發搜索請求應該在3秒內完成
       expect(totalTime).toBeLessThan(3000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 30個併發卡片搜索請求在 ${totalTime}ms 內完成`);
     });
 
@@ -151,6 +153,7 @@ describe('性能測試', () => {
       // 性能檢查：20個併發詳情請求應該在2秒內完成
       expect(totalTime).toBeLessThan(2000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 20個併發卡片詳情請求在 ${totalTime}ms 內完成`);
     });
   });
@@ -187,6 +190,7 @@ describe('性能測試', () => {
       // 性能檢查：20個併發登錄請求應該在3秒內完成
       expect(totalTime).toBeLessThan(3000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 20個併發登錄請求在 ${totalTime}ms 內完成`);
     });
 
@@ -220,6 +224,7 @@ describe('性能測試', () => {
       // 性能檢查：30個併發用戶資料請求應該在2秒內完成
       expect(totalTime).toBeLessThan(2000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 30個併發用戶資料請求在 ${totalTime}ms 內完成`);
     });
   });
@@ -257,6 +262,7 @@ describe('性能測試', () => {
       // 性能檢查：10個併發 AI 請求應該在10秒內完成
       expect(totalTime).toBeLessThan(10000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 10個併發 AI 價格預測請求在 ${totalTime}ms 內完成`);
     });
   });
@@ -291,6 +297,7 @@ describe('性能測試', () => {
       // 性能檢查：5個併發導出請求應該在15秒內完成
       expect(totalTime).toBeLessThan(15000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 5個併發數據導出請求在 ${totalTime}ms 內完成`);
     });
   });
@@ -324,6 +331,7 @@ describe('性能測試', () => {
       // 性能檢查：20個併發監控請求應該在2秒內完成
       expect(totalTime).toBeLessThan(2000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 20個併發監控請求在 ${totalTime}ms 內完成`);
     });
   });
@@ -369,6 +377,7 @@ describe('性能測試', () => {
       // 性能檢查：50個請求應該在8秒內完成
       expect(totalTime).toBeLessThan(8000);
 
+      // eslint-disable-next-line no-console
       console.log(
         `✅ 壓力測試：${rounds * requestsPerRound}個請求在 ${totalTime}ms 內完成`
       );
@@ -407,6 +416,7 @@ describe('性能測試', () => {
       // 性能檢查：10個大量數據查詢應該在5秒內完成
       expect(totalTime).toBeLessThan(5000);
 
+      // eslint-disable-next-line no-console
       console.log(`✅ 大量數據查詢測試：10個請求在 ${totalTime}ms 內完成`);
     });
   });
@@ -436,6 +446,7 @@ describe('性能測試', () => {
       // 記憶體增長應該在合理範圍內（小於 50MB）
       expect(memoryIncreaseMB).toBeLessThan(50);
 
+      // eslint-disable-next-line no-console
       console.log(
         `✅ 記憶體使用測試：100個請求後記憶體增長 ${memoryIncreaseMB.toFixed(2)}MB`
       );
@@ -470,9 +481,13 @@ describe('性能測試', () => {
       // 最大響應時間應該小於 1000ms
       expect(maxResponseTime).toBeLessThan(1000);
 
+      // eslint-disable-next-line no-console
       console.log('✅ 響應時間測試：');
+      // eslint-disable-next-line no-console
       console.log(`   平均響應時間: ${averageResponseTime.toFixed(2)}ms`);
+      // eslint-disable-next-line no-console
       console.log(`   最小響應時間: ${minResponseTime}ms`);
+      // eslint-disable-next-line no-console
       console.log(`   最大響應時間: ${maxResponseTime}ms`);
     });
   });

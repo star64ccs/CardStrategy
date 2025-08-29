@@ -6,6 +6,7 @@ const path = require('path');
  * 用於配置 Segment 與 Mixpanel 的集成
  */
 
+// eslint-disable-next-line no-console
 console.log('🔗 設置 Segment 與 Mixpanel 集成...\n');
 
 // Segment 配置模板
@@ -86,6 +87,7 @@ if (!fs.existsSync(configDir)) {
 
 const configPath = path.join(configDir, segmentConfig.name);
 fs.writeFileSync(configPath, JSON.stringify(segmentConfig.content, null, 2));
+// eslint-disable-next-line no-console
 console.log(`✅ 創建 Segment 配置文件: ${segmentConfig.name}`);
 
 // 創建 JavaScript 集成代碼模板
@@ -188,6 +190,7 @@ export const trackSignUp = (userData) => {
 
 const jsPath = path.join(__dirname, '../src/integrations/segment-integration.js');
 fs.writeFileSync(jsPath, jsIntegrationCode);
+// eslint-disable-next-line no-console
 console.log('✅ 創建 Segment 集成代碼模板');
 
 // 創建設置指南
@@ -304,16 +307,27 @@ analytics.track('Card Purchased', {
 
 const guidePath = path.join(__dirname, '../SEGMENT_INTEGRATION_GUIDE.md');
 fs.writeFileSync(guidePath, setupGuide);
+// eslint-disable-next-line no-console
 console.log('✅ 創建 Segment 集成指南');
 
+// eslint-disable-next-line no-console
 console.log('\n🎉 Segment 集成設置完成！');
+// eslint-disable-next-line no-console
 console.log('\n📋 下一步:');
+// eslint-disable-next-line no-console
 console.log('1. 獲取 Segment Write Key');
+// eslint-disable-next-line no-console
 console.log('2. 獲取 Mixpanel API Secret');
+// eslint-disable-next-line no-console
 console.log('3. 在 Segment 中設置 Mixpanel 目標');
+// eslint-disable-next-line no-console
 console.log('4. 集成 JavaScript 代碼到前端應用');
+// eslint-disable-next-line no-console
 console.log('5. 測試事件追蹤');
 
+// eslint-disable-next-line no-console
 console.log('\n📚 文檔:');
+// eslint-disable-next-line no-console
 console.log('- Segment 集成指南: SEGMENT_INTEGRATION_GUIDE.md');
+// eslint-disable-next-line no-console
 console.log('- 集成代碼模板: src/integrations/segment-integration.js');

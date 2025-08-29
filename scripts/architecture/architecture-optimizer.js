@@ -77,15 +77,15 @@ class ArchitectureOptimizer {
     const issues = [];
 
     // 檢查目錄結構
-    if (!structure.hasOwnProperty('src')) {
+    if (!Object.prototype.hasOwnProperty.call(structure, 'src')) {
       issues.push('缺少 src 目錄');
     }
 
-    if (!structure.hasOwnProperty('config')) {
+    if (!Object.prototype.hasOwnProperty.call(structure, 'config')) {
       issues.push('缺少 config 目錄');
     }
 
-    if (!structure.hasOwnProperty('middleware')) {
+    if (!Object.prototype.hasOwnProperty.call(structure, 'middleware')) {
       issues.push('缺少 middleware 目錄');
     }
 

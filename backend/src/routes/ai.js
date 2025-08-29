@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
+
 const { logger } = require('../utils/logger');
+
 const aiService = require('../services/aiService');
+
 const { authenticateToken: protect } = require('../middleware/auth');
 
 /**
- * ?ºèƒ½?¡ç??¨è–¦
+ * ?ï¿½èƒ½?ï¿½ï¿½??ï¿½è–¦
  */
 router.post('/recommend/cards', protect, async (req, res) => {
   try {
@@ -27,17 +30,17 @@ router.post('/recommend/cards', protect, async (req, res) => {
       data: recommendations,
     });
   } catch (error) {
-    logger.error('?¡ç??¨è–¦å¤±æ?:', error);
+    logger.error('?ï¿½ï¿½??ï¿½è–¦å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?¡ç??¨è–¦å¤±æ?',
+      error: '?ï¿½ï¿½??ï¿½è–¦å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * å¸‚å ´è¶¨å‹¢?æ¸¬
+ * å¸‚å ´è¶¨å‹¢?ï¿½æ¸¬
  */
 router.post('/predict/market', async (req, res) => {
   try {
@@ -54,17 +57,17 @@ router.post('/predict/market', async (req, res) => {
       data: predictions,
     });
   } catch (error) {
-    logger.error('å¸‚å ´?æ¸¬å¤±æ?:', error);
+    logger.error('å¸‚å ´?ï¿½æ¸¬å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: 'å¸‚å ´?æ¸¬å¤±æ?',
+      error: 'å¸‚å ´?ï¿½æ¸¬å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * ?•è?çµ„å??ªå?
+ * ?ï¿½ï¿½?çµ„ï¿½??ï¿½ï¿½?
  */
 router.post('/optimize/portfolio', protect, async (req, res) => {
   try {
@@ -84,17 +87,17 @@ router.post('/optimize/portfolio', protect, async (req, res) => {
       data: recommendations,
     });
   } catch (error) {
-    logger.error('?•è?çµ„å??ªå?å¤±æ?:', error);
+    logger.error('?ï¿½ï¿½?çµ„ï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?•è?çµ„å??ªå?å¤±æ?',
+      error: '?ï¿½ï¿½?çµ„ï¿½??ï¿½ï¿½?å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * ?ºèƒ½?œç´¢
+ * ?ï¿½èƒ½?ï¿½ç´¢
  */
 router.post('/search/intelligent', async (req, res) => {
   try {
@@ -112,17 +115,17 @@ router.post('/search/intelligent', async (req, res) => {
       data: results,
     });
   } catch (error) {
-    logger.error('?ºèƒ½?œç´¢å¤±æ?:', error);
+    logger.error('?ï¿½èƒ½?ï¿½ç´¢å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?ºèƒ½?œç´¢å¤±æ?',
+      error: '?ï¿½èƒ½?ï¿½ç´¢å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * ?ªç„¶èªžè??•ç?
+ * ?ï¿½ç„¶èªžï¿½??ï¿½ï¿½?
  */
 router.post('/nlp/process', async (req, res) => {
   try {
@@ -139,17 +142,17 @@ router.post('/nlp/process', async (req, res) => {
       data: result,
     });
   } catch (error) {
-    logger.error('?ªç„¶èªžè??•ç?å¤±æ?:', error);
+    logger.error('?ï¿½ç„¶èªžï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?ªç„¶èªžè??•ç?å¤±æ?',
+      error: '?ï¿½ç„¶èªžï¿½??ï¿½ï¿½?å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * ?ºèƒ½?šçŸ¥
+ * ?ï¿½èƒ½?ï¿½çŸ¥
  */
 router.post('/notifications/smart', protect, async (req, res) => {
   try {
@@ -168,17 +171,17 @@ router.post('/notifications/smart', protect, async (req, res) => {
       data: notifications,
     });
   } catch (error) {
-    logger.error('?ºèƒ½?šçŸ¥?Ÿæ?å¤±æ?:', error);
+    logger.error('?ï¿½èƒ½?ï¿½çŸ¥?ï¿½ï¿½?å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?ºèƒ½?šçŸ¥?Ÿæ?å¤±æ?',
+      error: '?ï¿½èƒ½?ï¿½çŸ¥?ï¿½ï¿½?å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * ?Šå¤©æ©Ÿå™¨äº? */
+ * ?ï¿½å¤©æ©Ÿå™¨ï¿½? */
 router.post('/chat', async (req, res) => {
   try {
     const { message, context, model, maxTokens, temperature } = req.body;
@@ -195,17 +198,17 @@ router.post('/chat', async (req, res) => {
       data: response,
     });
   } catch (error) {
-    logger.error('?Šå¤©æ©Ÿå™¨äººå¤±??', error);
+    logger.error('?ï¿½å¤©æ©Ÿå™¨äººå¤±??', error);
     res.status(500).json({
       success: false,
-      error: '?Šå¤©æ©Ÿå™¨äººå¤±??,
+      error: '?ï¿½å¤©æ©Ÿå™¨äººå¤±??,
       message: error.message,
     });
   }
 });
 
 /**
- * ?²å?AI?å??‡æ?
+ * ?ï¿½ï¿½?AI?ï¿½ï¿½??ï¿½ï¿½?
  */
 router.get('/metrics', async (req, res) => {
   try {
@@ -216,17 +219,17 @@ router.get('/metrics', async (req, res) => {
       data: metrics,
     });
   } catch (error) {
-    logger.error('?²å?AI?‡æ?å¤±æ?:', error);
+    logger.error('?ï¿½ï¿½?AI?ï¿½ï¿½?å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?²å?AI?‡æ?å¤±æ?',
+      error: '?ï¿½ï¿½?AI?ï¿½ï¿½?å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * AI?å??¥åº·æª¢æŸ¥
+ * AI?ï¿½ï¿½??ï¿½åº·æª¢æŸ¥
  */
 router.get('/health', async (req, res) => {
   try {
@@ -237,17 +240,17 @@ router.get('/health', async (req, res) => {
       data: health,
     });
   } catch (error) {
-    logger.error('AI?¥åº·æª¢æŸ¥å¤±æ?:', error);
+    logger.error('AI?ï¿½åº·æª¢æŸ¥å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: 'AI?¥åº·æª¢æŸ¥å¤±æ?',
+      error: 'AI?ï¿½åº·æª¢æŸ¥å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * ?´æ–°AI?ç½®
+ * ?ï¿½æ–°AI?ï¿½ç½®
  */
 router.put('/config', protect, async (req, res) => {
   try {
@@ -262,22 +265,22 @@ router.put('/config', protect, async (req, res) => {
     res.json({
       success: true,
       data: {
-        message: 'AI?ç½®å·²æ›´??,
+        message: 'AI?ï¿½ç½®å·²æ›´??,
         config: aiService.getConfig(),
       },
     });
   } catch (error) {
-    logger.error('?´æ–°AI?ç½®å¤±æ?:', error);
+    logger.error('?ï¿½æ–°AI?ï¿½ç½®å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?´æ–°AI?ç½®å¤±æ?',
+      error: '?ï¿½æ–°AI?ï¿½ç½®å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * ?²å?AI?ç½®
+ * ?ï¿½ï¿½?AI?ï¿½ç½®
  */
 router.get('/config', async (req, res) => {
   try {
@@ -289,17 +292,17 @@ router.get('/config', async (req, res) => {
       data: config,
     });
   } catch (error) {
-    logger.error('?²å?AI?ç½®å¤±æ?:', error);
+    logger.error('?ï¿½ï¿½?AI?ï¿½ç½®å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?²å?AI?ç½®å¤±æ?',
+      error: '?ï¿½ï¿½?AI?ï¿½ç½®å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * ?¹é?AI?ä?
+ * ?ï¿½ï¿½?AI?ï¿½ï¿½?
  */
 router.post('/batch', async (req, res) => {
   try {
@@ -308,10 +311,9 @@ router.post('/batch', async (req, res) => {
     if (!Array.isArray(operations)) {
       return res.status(400).json({
         success: false,
-        error: '?ä?å¿…é??¯æ•¸çµ?,
+        error: '?ï¿½ï¿½?å¿…ï¿½??ï¿½æ•¸ï¿½?,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const results = [];
 
@@ -357,9 +359,8 @@ router.post('/batch', async (req, res) => {
             );
             break;
           default:
-            throw new Error(`ä¸æ”¯?ç?AI?ä?é¡žå?: ${type}`);
+            throw new Error(`ä¸æ”¯?ï¿½ï¿½?AI?ï¿½ï¿½?é¡žï¿½?: ${type}`);
         }
-
         results.push({
           operation: type,
           status: 'success',
@@ -373,7 +374,6 @@ router.post('/batch', async (req, res) => {
         });
       }
     }
-
     res.json({
       success: true,
       data: {
@@ -386,17 +386,17 @@ router.post('/batch', async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('?¹é?AI?ä?å¤±æ?:', error);
+    logger.error('?ï¿½ï¿½?AI?ï¿½ï¿½?å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?¹é?AI?ä?å¤±æ?',
+      error: '?ï¿½ï¿½?AI?ï¿½ï¿½?å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * AIæ¨¡å?ä¿¡æ¯
+ * AIæ¨¡ï¿½?ä¿¡æ¯
  */
 router.get('/models', async (req, res) => {
   try {
@@ -405,21 +405,21 @@ router.get('/models', async (req, res) => {
       {
         id: 'gpt-3.5-turbo',
         name: 'GPT-3.5 Turbo',
-        description: 'å¿«é€Ÿä?ç¶“æ??„å?è©±æ¨¡??,
+        description: 'å¿«é€Ÿï¿½?ç¶“ï¿½??ï¿½ï¿½?è©±æ¨¡??,
         maxTokens: 4096,
         capabilities: ['chat', 'completion', 'analysis'],
       },
       {
         id: 'gpt-4',
         name: 'GPT-4',
-        description: '?€?ˆé€²ç?èªžè?æ¨¡å?',
+        description: '?ï¿½?ï¿½é€²ï¿½?èªžï¿½?æ¨¡ï¿½?',
         maxTokens: 8192,
         capabilities: ['chat', 'completion', 'analysis', 'reasoning'],
       },
       {
         id: 'text-davinci-003',
         name: 'Text Davinci 003',
-        description: 'å¼·å¤§?„æ??¬ç??æ¨¡??,
+        description: 'å¼·å¤§?ï¿½ï¿½??ï¿½ï¿½??ï¿½æ¨¡??,
         maxTokens: 4097,
         capabilities: ['completion', 'analysis'],
       },
@@ -430,67 +430,67 @@ router.get('/models', async (req, res) => {
       data: models,
     });
   } catch (error) {
-    logger.error('?²å?AIæ¨¡å?ä¿¡æ¯å¤±æ?:', error);
+    logger.error('?ï¿½ï¿½?AIæ¨¡ï¿½?ä¿¡æ¯å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?²å?AIæ¨¡å?ä¿¡æ¯å¤±æ?',
+      error: '?ï¿½ï¿½?AIæ¨¡ï¿½?ä¿¡æ¯å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
 /**
- * AI?Ÿèƒ½?—è¡¨
+ * AI?ï¿½èƒ½?ï¿½è¡¨
  */
 router.get('/features', async (req, res) => {
   try {
     const features = [
       {
         id: 'cardRecommendation',
-        name: '?ºèƒ½?¡ç??¨è–¦',
-        description: '?ºæ–¼?¨æˆ¶?å¥½?Œå??´æ•¸?šæŽ¨?¦å¡??,
+        name: '?ï¿½èƒ½?ï¿½ï¿½??ï¿½è–¦',
+        description: '?ï¿½æ–¼?ï¿½æˆ¶?ï¿½å¥½?ï¿½ï¿½??ï¿½æ•¸?ï¿½æŽ¨?ï¿½å¡??,
         endpoint: '/api/ai/recommend/cards',
         method: 'POST',
       },
       {
         id: 'marketPrediction',
-        name: 'å¸‚å ´è¶¨å‹¢?æ¸¬',
-        description: '?æ¸¬?¡ç?å¸‚å ´?¹æ ¼?Œè¶¨??,
+        name: 'å¸‚å ´è¶¨å‹¢?ï¿½æ¸¬',
+        description: '?ï¿½æ¸¬?ï¿½ï¿½?å¸‚å ´?ï¿½æ ¼?ï¿½è¶¨??,
         endpoint: '/api/ai/predict/market',
         method: 'POST',
       },
       {
         id: 'portfolioOptimization',
-        name: '?•è?çµ„å??ªå?',
-        description: '?ä??•è?çµ„å??ªå?å»ºè­°',
+        name: '?ï¿½ï¿½?çµ„ï¿½??ï¿½ï¿½?',
+        description: '?ï¿½ï¿½??ï¿½ï¿½?çµ„ï¿½??ï¿½ï¿½?å»ºè­°',
         endpoint: '/api/ai/optimize/portfolio',
         method: 'POST',
       },
       {
         id: 'intelligentSearch',
-        name: '?ºèƒ½?œç´¢',
-        description: '?†è§£?¨æˆ¶?å??„æ™º?½æ?ç´?,
+        name: '?ï¿½èƒ½?ï¿½ç´¢',
+        description: '?ï¿½è§£?ï¿½æˆ¶?ï¿½ï¿½??ï¿½æ™º?ï¿½ï¿½?ï¿½?,
         endpoint: '/api/ai/search/intelligent',
         method: 'POST',
       },
       {
         id: 'naturalLanguageProcessing',
-        name: '?ªç„¶èªžè??•ç?',
-        description: '?‡æœ¬?†æ??ç¸½çµã€æ??Ÿå??ç?',
+        name: '?ï¿½ç„¶èªžï¿½??ï¿½ï¿½?',
+        description: '?ï¿½æœ¬?ï¿½ï¿½??ï¿½ç¸½çµã€ï¿½??ï¿½ï¿½??ï¿½ï¿½?',
         endpoint: '/api/ai/nlp/process',
         method: 'POST',
       },
       {
         id: 'smartNotifications',
-        name: '?ºèƒ½?šçŸ¥',
-        description: '?Ÿæ??‹æ€§å??„æ™º?½é€šçŸ¥',
+        name: '?ï¿½èƒ½?ï¿½çŸ¥',
+        description: '?ï¿½ï¿½??ï¿½æ€§ï¿½??ï¿½æ™º?ï¿½é€šçŸ¥',
         endpoint: '/api/ai/notifications/smart',
         method: 'POST',
       },
       {
         id: 'chatBot',
-        name: '?Šå¤©æ©Ÿå™¨äº?,
-        description: '?ºèƒ½å°è©±?©æ?',
+        name: '?ï¿½å¤©æ©Ÿå™¨ï¿½?,
+        description: '?ï¿½èƒ½å°è©±?ï¿½ï¿½?',
         endpoint: '/api/ai/chat',
         method: 'POST',
       },
@@ -501,13 +501,13 @@ router.get('/features', async (req, res) => {
       data: features,
     });
   } catch (error) {
-    logger.error('?²å?AI?Ÿèƒ½?—è¡¨å¤±æ?:', error);
+    logger.error('?ï¿½ï¿½?AI?ï¿½èƒ½?ï¿½è¡¨å¤±ï¿½?:', error);
     res.status(500).json({
       success: false,
-      error: '?²å?AI?Ÿèƒ½?—è¡¨å¤±æ?',
+      error: '?ï¿½ï¿½?AI?ï¿½èƒ½?ï¿½è¡¨å¤±ï¿½?',
       message: error.message,
     });
   }
 });
 
-module.exports = router;
+module.exports = router;

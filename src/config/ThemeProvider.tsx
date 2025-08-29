@@ -1,25 +1,28 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { theme, darkTheme, ThemeMode, ThemeContextType } from './theme';
-import { logger } from '@/utils/logger';
+
+import { logger } from '../core/utils/logger';
+
+import type { ThemeMode, ThemeContextType } from './theme';
+import { theme, darkTheme } from './theme';
 
 // 創建主題上下文
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const _ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // 主題提供者組件
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const systemColorScheme = useColorScheme();
+  const _systemColorScheme = useColorScheme();
   const [mode, setMode] = useState<ThemeMode>('auto');
   const [isDark, setIsDark] = useState(false);
 
   // 從存儲中加載主題模式
   useEffect(() => {
-    const loadThemeMode = async () => {
+    const _loadThemeMode = async () => {
       try {
-        const storedMode = await AsyncStorage.getItem('themeMode');
+        const _storedMode = await AsyncStorage.getItem('themeMode');
         if (storedMode && ['light', 'dark', 'auto'].includes(storedMode)) {
           setMode(storedMode as ThemeMode);
         }
@@ -33,7 +36,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // 根據模式和系統設置確定當前主題
   useEffect(() => {
-    const determineTheme = () => {
+    const _determineTheme = () => {
       if (mode === 'auto') {
         setIsDark(systemColorScheme === 'dark');
       } else {
@@ -45,13 +48,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [mode, systemColorScheme]);
 
   // 切換主題
-  const toggleTheme = () => {
-    const newMode = isDark ? 'light' : 'dark';
+  const _toggleTheme = () => {
+    const _newMode = isDark ? 'light' : 'dark';
     setThemeMode(newMode);
   };
 
   // 設置主題模式
-  const setThemeMode = async (newMode: ThemeMode) => {
+  const _setThemeMode = async (newMode: ThemeMode) => {
     try {
       await AsyncStorage.setItem('themeMode', newMode);
       setMode(newMode);
@@ -61,7 +64,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   // 當前主題
-  const currentTheme = isDark ? darkTheme : theme;
+  const _currentTheme = isDark ? darkTheme : theme;
 
   const contextValue: ThemeContextType = {
     theme: currentTheme as any, // 臨時類型轉換
@@ -79,8 +82,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
 };
 
 // 使用主題的 Hook
-export const useTheme = (): ThemeContextType => {
-  const context = useContext(ThemeContext);
+export const _useTheme = (): ThemeContextType => {
+  const _context = useContext(ThemeContext);
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }

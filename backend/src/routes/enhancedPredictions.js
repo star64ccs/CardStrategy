@@ -1,45 +1,43 @@
-const express = require('express');
-const { body, validationResult } = require('express-validator');
-const { authenticateToken: protect } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
+const express = require('express');''
+const { body, validationResult } = require('express-validator');''
+const { authenticateToken: protect } = require('../middleware/auth');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');''
 const enhancedPredictionService = require('../services/enhancedPredictionService');
-const router = express.Router();
-
-// å¢å¼·?„å–®?¡é?æ¸?router.post(
+const router = express.Router();'
+// å¢å¼·?ï¿½å–®?ï¿½ï¿½?ï¿½?router.post(''
   '/enhanced-predict',
-  protect,
-  [
-    body('cardId').isInt({ min: 1 }).withMessage('?¡ç?IDå¿…é??¯æ­£?´æ•¸'),
-    body('timeframe')
-      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])
-      .withMessage('?‚é?æ¡†æ¶?¡æ?'),
+  protect,'
+  [''
+    body('cardId').isInt({ min: 1 }).withMessage('?ï¿½ï¿½?IDå¿…ï¿½??ï¿½æ­£?ï¿½æ•¸'),''
+    body('timeframe')''
+      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])''
+      .withMessage('?ï¿½ï¿½?æ¡†æ¶?ï¿½ï¿½?'),''
     body('modelType')
-      .optional()
-      .isIn([
-        'enhancedLSTM',
-        'transformer',
-        'technicalEnsemble',
-        'dynamicEnsemble',
-      ])
-      .withMessage('æ¨¡å?é¡å??¡æ?'),
+      .optional()'
+      .isIn([''
+        'enhancedLSTM',''
+        'transformer',''
+        'technicalEnsemble',''
+        'dynamicEnsemble','
+      ])''
+      .withMessage('æ¨¡ï¿½?é¡ï¿½??ï¿½ï¿½?'),
   ],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'é©—è??¯èª¤',
+        return res.status(400).json({'
+          success: false,''
+          message: 'é©—ï¿½??ï¿½èª¤',
           errors: errors.array(),
-        });
-      }
-
+        });'
+      }''
       const { cardId, timeframe, modelType = 'dynamicEnsemble' } = req.body;
 
       logger.info(
-        `?‹å?å¢å¼·?æ¸¬: ?¡ç? ${cardId}, æ¨¡å? ${modelType}, ?‚é?æ¡†æ¶ ${timeframe}`
+        `?ï¿½ï¿½?å¢å¼·?ï¿½æ¸¬: ?ï¿½ï¿½? ${cardId}, æ¨¡ï¿½? ${modelType}, ?ï¿½ï¿½?æ¡†æ¶ ${timeframe}`
       );
 
 // eslint-disable-next-line no-unused-vars
@@ -49,60 +47,59 @@ const router = express.Router();
         modelType
       );
 
-      res.json({
-        success: true,
-        message: 'å¢å¼·?æ¸¬å®Œæ?',
+      res.json({'
+        success: true,''
+        message: 'å¢å¼·?ï¿½æ¸¬å®Œï¿½?',
         data: prediction,
-      });
-    } catch (error) {
-      logger.error('å¢å¼·?æ¸¬?¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?æ¸¬å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('å¢å¼·?ï¿½æ¸¬?ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½æ¸¬å¤±ï¿½?',
         error: error.message,
       });
     }
   }
 );
 
-// ?¹é?å¢å¼·?æ¸¬
-router.post(
+// ?ï¿½ï¿½?å¢å¼·?ï¿½æ¸¬'
+router.post(''
   '/enhanced-batch',
-  protect,
-  [
-    body('cardIds')
-      .isArray({ min: 1, max: 50 })
-      .withMessage('?¡ç?ID?—è¡¨å¿…é??…å«1-50?‹ID'),
-    body('cardIds.*').isInt({ min: 1 }).withMessage('?€?‰å¡?ŒIDå¿…é??¯æ­£?´æ•¸'),
-    body('timeframe')
-      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])
-      .withMessage('?‚é?æ¡†æ¶?¡æ?'),
+  protect,'
+  [''
+    body('cardIds')'
+      .isArray({ min: 1, max: 50 });''
+      .withMessage('?ï¿½ï¿½?ID?ï¿½è¡¨å¿…ï¿½??ï¿½å«1-50?ï¿½ID'),''
+    body('cardIds.*').isInt({ min: 1 }).withMessage('?ï¿½?ï¿½å¡?ï¿½IDå¿…ï¿½??ï¿½æ­£?ï¿½æ•¸'),''
+    body('timeframe')''
+      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])''
+      .withMessage('?ï¿½ï¿½?æ¡†æ¶?ï¿½ï¿½?'),''
     body('modelType')
-      .optional()
-      .isIn([
-        'enhancedLSTM',
-        'transformer',
-        'technicalEnsemble',
-        'dynamicEnsemble',
-      ])
-      .withMessage('æ¨¡å?é¡å??¡æ?'),
+      .optional()'
+      .isIn([''
+        'enhancedLSTM',''
+        'transformer',''
+        'technicalEnsemble',''
+        'dynamicEnsemble','
+      ])''
+      .withMessage('æ¨¡ï¿½?é¡ï¿½??ï¿½ï¿½?'),
   ],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'é©—è??¯èª¤',
+        return res.status(400).json({'
+          success: false,''
+          message: 'é©—ï¿½??ï¿½èª¤',
           errors: errors.array(),
-        });
-      }
-
+        });'
+      }''
       const { cardIds, timeframe, modelType = 'dynamicEnsemble' } = req.body;
 
       logger.info(
-        `?‹å??¹é?å¢å¼·?æ¸¬: ${cardIds.length} å¼µå¡?? æ¨¡å? ${modelType}, ?‚é?æ¡†æ¶ ${timeframe}`
+        `?ï¿½ï¿½??ï¿½ï¿½?å¢å¼·?ï¿½æ¸¬: ${cardIds.length} å¼µå¡?? æ¨¡ï¿½? ${modelType}, ?ï¿½ï¿½?æ¡†æ¶ ${timeframe}`
       );
 
 // eslint-disable-next-line no-unused-vars
@@ -120,14 +117,13 @@ router.post(
           );
           results.push(prediction);
         } catch (error) {
-          logger.warn(`?¡ç? ${cardId} ?æ¸¬å¤±æ?:`, error.message);
+          logger.warn(`?ï¿½ï¿½? ${cardId} ?ï¿½æ¸¬å¤±ï¿½?:`, error.message);
           predictionErrors.push({ cardId, error: error.message });
         }
       }
-
       res.json({
         success: true,
-        message: `?¹é??æ¸¬å®Œæ?: ${results.length} ?å?, ${predictionErrors.length} å¤±æ?`,
+        message: `?ï¿½ï¿½??ï¿½æ¸¬å®Œï¿½?: ${results.length} ?ï¿½ï¿½?, ${predictionErrors.length} å¤±ï¿½?`,
         data: {
           predictions: results,
           errors: predictionErrors,
@@ -138,49 +134,48 @@ router.post(
             successRate: `${((results.length / cardIds.length) * 100).toFixed(2)}%`,
           },
         },
-      });
-    } catch (error) {
-      logger.error('?¹é?å¢å¼·?æ¸¬?¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?¹é??æ¸¬å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('?ï¿½ï¿½?å¢å¼·?ï¿½æ¸¬?ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½ï¿½??ï¿½æ¸¬å¤±ï¿½?',
         error: error.message,
       });
     }
   }
 );
 
-// æ¨¡å??§èƒ½æ¯”è?
-router.post(
+// æ¨¡ï¿½??ï¿½èƒ½æ¯”ï¿½?'
+router.post(''
   '/model-comparison',
-  protect,
-  [
-    body('cardId').isInt({ min: 1 }).withMessage('?¡ç?IDå¿…é??¯æ­£?´æ•¸'),
-    body('timeframe')
-      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])
-      .withMessage('?‚é?æ¡†æ¶?¡æ?'),
+  protect,'
+  [''
+    body('cardId').isInt({ min: 1 }).withMessage('?ï¿½ï¿½?IDå¿…ï¿½??ï¿½æ­£?ï¿½æ•¸'),''
+    body('timeframe')''
+      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])''
+      .withMessage('?ï¿½ï¿½?æ¡†æ¶?ï¿½ï¿½?'),
   ],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'é©—è??¯èª¤',
+        return res.status(400).json({'
+          success: false,''
+          message: 'é©—ï¿½??ï¿½èª¤',
           errors: errors.array(),
         });
       }
-
       const { cardId, timeframe } = req.body;
 
-      logger.info(`?‹å?æ¨¡å?æ¯”è?: ?¡ç? ${cardId}, ?‚é?æ¡†æ¶ ${timeframe}`);
+      logger.info(`?ï¿½ï¿½?æ¨¡ï¿½?æ¯”ï¿½?: ?ï¿½ï¿½? ${cardId}, ?ï¿½ï¿½?æ¡†æ¶ ${timeframe}`);
 
-// eslint-disable-next-line no-unused-vars
-      const models = [
-        'enhancedLSTM',
-        'transformer',
-        'technicalEnsemble',
+// eslint-disable-next-line no-unused-vars'
+      const models = [''
+        'enhancedLSTM',''
+        'transformer',''
+        'technicalEnsemble',''
         'dynamicEnsemble',
       ];
       const comparisons = {};
@@ -203,12 +198,11 @@ router.post(
             factors: prediction.factors,
           };
         } catch (error) {
-          logger.warn(`æ¨¡å? ${modelType} æ¯”è?å¤±æ?:`, error.message);
+          logger.warn(`æ¨¡ï¿½? ${modelType} æ¯”ï¿½?å¤±ï¿½?:`, error.message);
           comparisons[modelType] = { error: error.message };
         }
       }
-
-      // è¨ˆç?æ¨¡å?ä¸€?´æ€?      const validPredictions = Object.values(comparisons).filter(
+      // è¨ˆï¿½?æ¨¡ï¿½?ä¸€?ï¿½ï¿½?      const validPredictions = Object.values(comparisons).filter(
         (p) => !p.error
       );
 // eslint-disable-next-line no-unused-vars
@@ -219,9 +213,9 @@ router.post(
         prices.length;
       const agreement = Math.max(0, 1 - variance / Math.pow(mean, 2));
 
-      res.json({
-        success: true,
-        message: 'æ¨¡å?æ¯”è?å®Œæ?',
+      res.json({'
+        success: true,''
+        message: 'æ¨¡ï¿½?æ¯”ï¿½?å®Œï¿½?',
         data: {
           cardId,
           timeframe,
@@ -235,57 +229,53 @@ router.post(
             modelAgreement: agreement.toFixed(4),
           },
         },
-      });
-    } catch (error) {
-      logger.error('æ¨¡å?æ¯”è??¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: 'æ¨¡å?æ¯”è?å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('æ¨¡ï¿½?æ¯”ï¿½??ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: 'æ¨¡ï¿½?æ¯”ï¿½?å¤±ï¿½?',
         error: error.message,
       });
     }
   }
-);
-
-// ?€è¡“æ?æ¨™å???router.get(
+);'
+// ?ï¿½è¡“ï¿½?æ¨™ï¿½???router.get(''
   '/technical-analysis/:cardId',
-  protect,
-  [
-    body('timeframe')
-      .optional()
-      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])
-      .withMessage('?‚é?æ¡†æ¶?¡æ?'),
+  protect,'
+  [''
+    body('timeframe')'
+      .optional()''
+      .isIn(['1d', '7d', '30d', '90d', '180d', '365d'])''
+      .withMessage('?ï¿½ï¿½?æ¡†æ¶?ï¿½ï¿½?'),
   ],
   async (req, res) => {
-    try {
-      const { cardId } = req.params;
+    try {'
+      const { cardId } = req.params;''
       const { timeframe = '30d' } = req.query;
 
-      logger.info(`?‹å??€è¡“æ?æ¨™å??? ?¡ç? ${cardId}, ?‚é?æ¡†æ¶ ${timeframe}`);
-
-// eslint-disable-next-line no-unused-vars
+      logger.info(`?ï¿½ï¿½??ï¿½è¡“ï¿½?æ¨™ï¿½??? ?ï¿½ï¿½? ${cardId}, ?ï¿½ï¿½?æ¡†æ¶ ${timeframe}`);'
+// eslint-disable-next-line no-unused-vars''
       const MarketData = require('../models/MarketData').getMarketDataModel();
 
 // eslint-disable-next-line no-unused-vars
-      const historicalData = await MarketData.findAll({
-        where: { cardId: parseInt(cardId), isActive: true },
+      const historicalData = await MarketData.findAll({'
+        where: { cardId: parseInt(cardId), isActive: true },''
         order: [['date', 'ASC']],
         limit: 100,
       });
 
       if (historicalData.length < 10) {
-        return res.status(400).json({
-          success: false,
-          message: 'æ­·å²?¸æ?ä¸è¶³ï¼Œç„¡æ³•é€²è??€è¡“å???,
+        return res.status(400).json({'
+          success: false,''
+          message: 'æ­·å²?ï¿½ï¿½?ä¸è¶³ï¼Œç„¡æ³•é€²ï¿½??ï¿½è¡“ï¿½???,
         });
       }
-
 // eslint-disable-next-line no-unused-vars
       const prices = historicalData.map((d) => parseFloat(d.closePrice));
 // eslint-disable-next-line no-unused-vars
-      const volumes = historicalData.map((d) => parseFloat(d.volume || 0));
-
-      // è¨ˆç??€è¡“æ?æ¨?      const technicalIndicators =
+      const volumes = historicalData.map((d) => parseFloat(d.volume || 0));'
+      // è¨ˆï¿½??ï¿½è¡“ï¿½?ï¿½?      const technicalIndicators =''
         new (require('../services/enhancedPredictionService').TechnicalIndicators)();
 
       const analysis = {
@@ -301,102 +291,96 @@ router.post(
         momentum: enhancedPredictionService.calculateMomentum(prices),
       };
 
-      // ?Ÿæ?äº¤æ?ä¿¡è?
-      const signals = [];
-
-      if (analysis.rsi < 30)
-        signals.push({ indicator: 'RSI', signal: 'è¶…è³£', strength: 'å¼? });
-      if (analysis.rsi > 70)
-        signals.push({ indicator: 'RSI', signal: 'è¶…è²·', strength: 'å¼? });
-
-      if (analysis.macd.macd > analysis.macd.signal)
-        signals.push({ indicator: 'MACD', signal: 'è²·å…¥', strength: 'ä¸? });
-      if (analysis.macd.macd < analysis.macd.signal)
-        signals.push({ indicator: 'MACD', signal: 'è³?‡º', strength: 'ä¸? });
+      // ?ï¿½ï¿½?äº¤ï¿½?ä¿¡ï¿½?
+      const signals = [];'
+      if (analysis.rsi < 30)''
+        signals.push({ indicator: 'RSI', signal: 'è¶…è³£', strength: 'ï¿½? });'
+      if (analysis.rsi > 70)''
+        signals.push({ indicator: 'RSI', signal: 'è¶…è²·', strength: 'ï¿½? });'
+      if (analysis.macd.macd > analysis.macd.signal)''
+        signals.push({ indicator: 'MACD', signal: 'è²·å…¥', strength: 'ï¿½? });'
+      if (analysis.macd.macd < analysis.macd.signal)''
+        signals.push({ indicator: 'MACD', signal: 'ï¿½?ï¿½ï¿½', strength: 'ï¿½? });
 
       const bbPosition =
         (analysis.currentPrice - analysis.bollingerBands.lower) /
         (analysis.bollingerBands.upper - analysis.bollingerBands.lower);
-      if (bbPosition < 0.2)
-        signals.push({
-          indicator: 'å¸ƒæ?å¸?,
-          signal: '?¥è?ä¸‹è?',
-          strength: 'å¼?,
+      if (bbPosition < 0.2)'
+        signals.push({''
+          indicator: 'å¸ƒï¿½?ï¿½?,''
+          signal: '?ï¿½ï¿½?ä¸‹ï¿½?',''
+          strength: 'ï¿½?,
         });
-      if (bbPosition > 0.8)
-        signals.push({
-          indicator: 'å¸ƒæ?å¸?,
-          signal: '?¥è?ä¸Šè?',
-          strength: 'å¼?,
+      if (bbPosition > 0.8)'
+        signals.push({''
+          indicator: 'å¸ƒï¿½?ï¿½?,''
+          signal: '?ï¿½ï¿½?ä¸Šï¿½?',''
+          strength: 'ï¿½?,
         });
 
-      res.json({
-        success: true,
-        message: '?€è¡“æ?æ¨™å??å???,
+      res.json({'
+        success: true,''
+        message: '?ï¿½è¡“ï¿½?æ¨™ï¿½??ï¿½ï¿½???,
         data: {
           cardId: parseInt(cardId),
           timeframe,
           analysis,
           signals,
           summary: {
-            totalSignals: signals.length,
-            buySignals: signals.filter(
-              (s) => s.signal.includes('è²?) || s.signal.includes('è¶…è³£')
-            ).length,
-            sellSignals: signals.filter(
-              (s) => s.signal.includes('è³?) || s.signal.includes('è¶…è²·')
-            ).length,
-            strongSignals: signals.filter((s) => s.strength === 'å¼?).length,
+            totalSignals: signals.length,'
+            buySignals: signals.filter(''
+              (s) => s.signal.includes('ï¿½?) || s.signal.includes('è¶…è³£')
+            ).length,'
+            sellSignals: signals.filter(''
+              (s) => s.signal.includes('ï¿½?) || s.signal.includes('è¶…è²·')'
+            ).length,''
+            strongSignals: signals.filter((s) => s.strength === 'ï¿½?).length,
           },
         },
-      });
-    } catch (error) {
-      logger.error('?€è¡“æ?æ¨™å??éŒ¯èª?', error);
-      res.status(500).json({
-        success: false,
-        message: '?€è¡“æ?æ¨™å??å¤±??,
+      });'
+    } catch (error) {''
+      logger.error('?ï¿½è¡“ï¿½?æ¨™ï¿½??ï¿½éŒ¯ï¿½?', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½è¡“ï¿½?æ¨™ï¿½??ï¿½å¤±??,
         error: error.message,
       });
     }
   }
-);
-
-// ?æ¸¬æº–ç¢º?§è?ä¼?router.post(
-  '/accuracy-assessment',
-  protect,
-  [body('predictionId').isInt({ min: 1 }).withMessage('?æ¸¬IDå¿…é??¯æ­£?´æ•¸')],
+);'
+// ?ï¿½æ¸¬æº–ç¢º?ï¿½ï¿½?ï¿½?router.post(''
+  '/accuracy-assessment','
+  protect,''
+  [body('predictionId').isInt({ min: 1 }).withMessage('?ï¿½æ¸¬IDå¿…ï¿½??ï¿½æ­£?ï¿½æ•¸')],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'é©—è??¯èª¤',
+        return res.status(400).json({'
+          success: false,''
+          message: 'é©—ï¿½??ï¿½èª¤',
           errors: errors.array(),
         });
       }
-
       const { predictionId } = req.body;
 
-      logger.info(`?‹å??æ¸¬æº–ç¢º?§è?ä¼? ?æ¸¬ID ${predictionId}`);
-
-      const PredictionModel =
-        require('../models/PredictionModel').getPredictionModel();
-// eslint-disable-next-line no-unused-vars
+      logger.info(`?ï¿½ï¿½??ï¿½æ¸¬æº–ç¢º?ï¿½ï¿½?ï¿½? ?ï¿½æ¸¬ID ${predictionId}`);'
+      const PredictionModel =''
+        require('../models/PredictionModel').getPredictionModel();'
+// eslint-disable-next-line no-unused-vars''
       const MarketData = require('../models/MarketData').getMarketDataModel();
 
-      // ?²å??æ¸¬è¨˜é?
+      // ?ï¿½ï¿½??ï¿½æ¸¬è¨˜ï¿½?
 // eslint-disable-next-line no-unused-vars
       const prediction = await PredictionModel.findByPk(predictionId);
       if (!prediction) {
-        return res.status(404).json({
-          success: false,
-          message: '?æ¸¬è¨˜é?ä¸å???,
+        return res.status(404).json({'
+          success: false,''
+          message: '?ï¿½æ¸¬è¨˜ï¿½?ä¸ï¿½???,
         });
       }
-
-      // ?²å??®æ??¥æ??„å¯¦?›åƒ¹??      const actualData = await MarketData.findOne({
+      // ?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½å¯¦?ï¿½åƒ¹??      const actualData = await MarketData.findOne({
         where: {
           cardId: prediction.cardId,
           date: prediction.targetDate,
@@ -405,21 +389,20 @@ router.post(
       });
 
       if (!actualData) {
-        return res.status(400).json({
-          success: false,
-          message: '?®æ??¥æ??„å¯¦?›åƒ¹?¼æ•¸?šä?å­˜åœ¨',
+        return res.status(400).json({'
+          success: false,''
+          message: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½å¯¦?ï¿½åƒ¹?ï¿½æ•¸?ï¿½ï¿½?å­˜åœ¨',
         });
       }
-
       const actualPrice = parseFloat(actualData.closePrice);
 // eslint-disable-next-line no-unused-vars
       const predictedPrice = parseFloat(prediction.predictedPrice);
 
-      // è¨ˆç?æº–ç¢º?§æ?æ¨?      const absoluteError = Math.abs(predictedPrice - actualPrice);
+      // è¨ˆï¿½?æº–ç¢º?ï¿½ï¿½?ï¿½?      const absoluteError = Math.abs(predictedPrice - actualPrice);
       const percentageError = (absoluteError / actualPrice) * 100;
       const accuracy = Math.max(0, 100 - percentageError) / 100;
 
-      // ?´æ–°?æ¸¬è¨˜é??„æ?ç¢ºæ€?      await prediction.update({ accuracy });
+      // ?ï¿½æ–°?ï¿½æ¸¬è¨˜ï¿½??ï¿½ï¿½?ç¢ºï¿½?      await prediction.update({ accuracy });
 
 // eslint-disable-next-line no-unused-vars
       const assessment = {
@@ -432,13 +415,13 @@ router.post(
         absoluteError: absoluteError.toFixed(2),
         percentageError: `${percentageError.toFixed(2)}%`,
         accuracy: accuracy.toFixed(4),
-        accuracyGrade:
-          accuracy >= 0.9
-            ? 'A'
-            : accuracy >= 0.8
-              ? 'B'
-              : accuracy >= 0.7
-                ? 'C'
+        accuracyGrade:'
+          accuracy >= 0.9''
+            ? 'A''
+            : accuracy >= 0.8''
+              ? 'B''
+              : accuracy >= 0.7''
+                ? 'C'
                 : 'D',
         predictionDate: prediction.predictionDate,
         targetDate: prediction.targetDate,
@@ -447,111 +430,109 @@ router.post(
         ),
       };
 
-      res.json({
-        success: true,
-        message: '?æ¸¬æº–ç¢º?§è?ä¼°å???,
+      res.json({'
+        success: true,''
+        message: '?ï¿½æ¸¬æº–ç¢º?ï¿½ï¿½?ä¼°ï¿½???,
         data: assessment,
-      });
-    } catch (error) {
-      logger.error('?æ¸¬æº–ç¢º?§è?ä¼°éŒ¯èª?', error);
-      res.status(500).json({
-        success: false,
-        message: '?æ¸¬æº–ç¢º?§è?ä¼°å¤±??,
+      });'
+    } catch (error) {''
+      logger.error('?ï¿½æ¸¬æº–ç¢º?ï¿½ï¿½?ä¼°éŒ¯ï¿½?', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½æ¸¬æº–ç¢º?ï¿½ï¿½?ä¼°å¤±??,
         error: error.message,
       });
     }
   }
-);
-
-// æ¨¡å??§èƒ½çµ±è?
-router.get('/performance-stats', protect, async (req, res) => {
-  try {
-    logger.info('?²å?æ¨¡å??§èƒ½çµ±è?');
-
-    const PredictionModel =
+);'
+// æ¨¡ï¿½??ï¿½èƒ½çµ±ï¿½?''
+router.get('/performance-stats', protect, async (req, res) => {'
+  try {''
+    logger.info('?ï¿½ï¿½?æ¨¡ï¿½??ï¿½èƒ½çµ±ï¿½?');'
+    const PredictionModel =''
       require('../models/PredictionModel').getPredictionModel();
 
-    // ?²å??„æ¨¡?‹ç??§èƒ½çµ±è?
-    const stats = await PredictionModel.findAll({
-      attributes: [
+    // ?ï¿½ï¿½??ï¿½æ¨¡?ï¿½ï¿½??ï¿½èƒ½çµ±ï¿½?
+    const stats = await PredictionModel.findAll({'
+      attributes: [''
         'modelType',
-        [
-          PredictionModel.sequelize.fn(
-            'COUNT',
-            PredictionModel.sequelize.col('id')
-          ),
+        ['
+          PredictionModel.sequelize.fn(''
+            'COUNT',''
+            PredictionModel.sequelize.col('id')'
+          ),''
           'totalPredictions',
         ],
-        [
-          PredictionModel.sequelize.fn(
-            'AVG',
-            PredictionModel.sequelize.col('confidence')
-          ),
+        ['
+          PredictionModel.sequelize.fn(''
+            'AVG',''
+            PredictionModel.sequelize.col('confidence')'
+          ),''
           'avgConfidence',
         ],
-        [
-          PredictionModel.sequelize.fn(
-            'AVG',
-            PredictionModel.sequelize.col('accuracy')
-          ),
+        ['
+          PredictionModel.sequelize.fn(''
+            'AVG',''
+            PredictionModel.sequelize.col('accuracy')'
+          ),''
           'avgAccuracy',
         ],
-        [
-          PredictionModel.sequelize.fn(
-            'COUNT',
-            PredictionModel.sequelize.literal(
+        ['
+          PredictionModel.sequelize.fn(''
+            'COUNT','
+            PredictionModel.sequelize.literal(''
               'CASE WHEN accuracy >= 0.8 THEN 1 END'
-            )
-          ),
+            )'
+          ),''
           'highAccuracyCount',
         ],
       ],
       where: {
-        accuracy: { [PredictionModel.sequelize.Op.not]: null },
-      },
+        accuracy: { [PredictionModel.sequelize.Op.not]: null },'
+      },''
       group: ['modelType'],
       order: [
-        [
-          PredictionModel.sequelize.fn(
-            'AVG',
-            PredictionModel.sequelize.col('accuracy')
-          ),
+        ['
+          PredictionModel.sequelize.fn(''
+            'AVG',''
+            PredictionModel.sequelize.col('accuracy')'
+          ),''
           'DESC',
         ],
       ],
     });
 
-    // è¨ˆç??´é?çµ±è?
+    // è¨ˆï¿½??ï¿½ï¿½?çµ±ï¿½?
     const overallStats = await PredictionModel.findOne({
       attributes: [
-        [
-          PredictionModel.sequelize.fn(
-            'COUNT',
-            PredictionModel.sequelize.col('id')
-          ),
+        ['
+          PredictionModel.sequelize.fn(''
+            'COUNT',''
+            PredictionModel.sequelize.col('id')'
+          ),''
           'totalPredictions',
         ],
-        [
-          PredictionModel.sequelize.fn(
-            'AVG',
-            PredictionModel.sequelize.col('confidence')
-          ),
+        ['
+          PredictionModel.sequelize.fn(''
+            'AVG',''
+            PredictionModel.sequelize.col('confidence')'
+          ),''
           'avgConfidence',
         ],
-        [
-          PredictionModel.sequelize.fn(
-            'AVG',
-            PredictionModel.sequelize.col('accuracy')
-          ),
+        ['
+          PredictionModel.sequelize.fn(''
+            'AVG',''
+            PredictionModel.sequelize.col('accuracy')'
+          ),''
           'avgAccuracy',
         ],
-        [
-          PredictionModel.sequelize.fn(
-            'COUNT',
-            PredictionModel.sequelize.literal(
+        ['
+          PredictionModel.sequelize.fn(''
+            'COUNT','
+            PredictionModel.sequelize.literal(''
               'CASE WHEN accuracy >= 0.8 THEN 1 END'
-            )
-          ),
+            )'
+          ),''
           'highAccuracyCount',
         ],
       ],
@@ -560,9 +541,9 @@ router.get('/performance-stats', protect, async (req, res) => {
       },
     });
 
-    res.json({
-      success: true,
-      message: 'æ¨¡å??§èƒ½çµ±è??²å??å?',
+    res.json({'
+      success: true,''
+      message: 'æ¨¡ï¿½??ï¿½èƒ½çµ±ï¿½??ï¿½ï¿½??ï¿½ï¿½?',
       data: {
         modelStats: stats.map((stat) => ({
           modelType: stat.modelType,
@@ -573,8 +554,8 @@ router.get('/performance-stats', protect, async (req, res) => {
           avgAccuracy: parseFloat(stat.dataValues.avgAccuracy || 0).toFixed(4),
           highAccuracyCount: parseInt(stat.dataValues.highAccuracyCount || 0),
           highAccuracyRate:
-            stat.dataValues.totalPredictions > 0
-              ? `${((stat.dataValues.highAccuracyCount / stat.dataValues.totalPredictions) * 100).toFixed(2)}%`
+            stat.dataValues.totalPredictions > 0'
+              ? `${((stat.dataValues.highAccuracyCount / stat.dataValues.totalPredictions) * 100).toFixed(2)}%`''
               : '0%',
         })),
         overallStats: {
@@ -591,82 +572,80 @@ router.get('/performance-stats', protect, async (req, res) => {
             overallStats.dataValues.highAccuracyCount || 0
           ),
           highAccuracyRate:
-            overallStats.dataValues.totalPredictions > 0
-              ? `${((overallStats.dataValues.highAccuracyCount / overallStats.dataValues.totalPredictions) * 100).toFixed(2)}%`
+            overallStats.dataValues.totalPredictions > 0'
+              ? `${((overallStats.dataValues.highAccuracyCount / overallStats.dataValues.totalPredictions) * 100).toFixed(2)}%`''
               : '0%',
         },
       },
-    });
-  } catch (error) {
-    logger.error('?²å?æ¨¡å??§èƒ½çµ±è??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?æ¨¡å??§èƒ½çµ±è?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?æ¨¡ï¿½??ï¿½èƒ½çµ±ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?æ¨¡ï¿½??ï¿½èƒ½çµ±ï¿½?å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-// ?²å?å¢å¼·æ¨¡å??—è¡¨
+});'
+// ?ï¿½ï¿½?å¢å¼·æ¨¡ï¿½??ï¿½è¡¨''
 router.get('/enhanced-models', protect, async (req, res) => {
   try {
 // eslint-disable-next-line no-unused-vars
-    const models = [
-      {
-        id: 'enhancedLSTM',
-        name: 'å¢å¼·LSTMæ¨¡å?',
-        description: '?ºæ–¼æ·±åº¦å­¸ç??„é•·?­æ?è¨˜æ†¶ç¶²çµ¡ï¼Œç??ˆæ?è¡“æ?æ¨™é€²è??æ¸¬',
-        accuracy: '80-85%',
-        speed: 'ä¸­ç?',
-        complexity: 'é«?,
-        features: ['?€è¡“æ?æ¨™æ•´??, 'åºå?å»ºæ¨¡', '?•æ??¹å¾µ?å?'],
-        bestFor: ['?·æ?è¶¨å‹¢?æ¸¬', 'è¤‡é?æ¨¡å?è­˜åˆ¥'],
-      },
-      {
-        id: 'transformer',
-        name: 'Transformeræ¨¡å?',
-        description: '?ºæ–¼æ³¨æ??›æ??¶ç?æ·±åº¦å­¸ç?æ¨¡å?ï¼Œæ??·æ??‰é•·?Ÿä?è³´é?ä¿?,
-        accuracy: '85-90%',
-        speed: 'ä¸­ç?',
-        complexity: 'é«?,
-        features: ['æ³¨æ??›æ???, 'ä¸¦è??•ç?', '?¨å?ä¾è³´å»ºæ¨¡'],
-        bestFor: ['è¤‡é??‚é?åºå?', 'å¤šè??é?æ¸?],
-      },
-      {
-        id: 'technicalEnsemble',
-        name: '?€è¡“æ?æ¨™é??æ¨¡??,
-        description: 'çµå?å¤šç¨®?€è¡“å??æ?æ¨™ç?çµ±è?æ¨¡å?',
-        accuracy: '75-80%',
-        speed: 'å¿?,
-        complexity: 'ä¸­ç?',
-        features: ['å¤šæ?æ¨™è???, 'ä¿¡è?å¼·åº¦?†æ?', 'ä¸€?´æ€§è?ä¼?],
-        bestFor: ['?­æ?äº¤æ?ä¿¡è?', '?€è¡“å???],
-      },
-      {
-        id: 'dynamicEnsemble',
-        name: '?•æ??†æ?æ¨¡å?',
-        description: '?ºèƒ½çµ„å?å¤šå€‹æ¨¡?‹ç??•æ?æ¬Šé??†æ?ç³»çµ±',
-        accuracy: '90-95%',
-        speed: 'ä¸­ç?',
-        complexity: 'é«?,
-        features: ['?•æ?æ¬Šé?èª¿æ•´', 'å¤šæ¨¡?‹è???, '?ªé©?‰å­¸ç¿?],
-        bestFor: ['ç¶œå??æ¸¬', 'é«˜ç²¾åº¦è?æ±?],
+    const models = ['
+      {''
+        id: 'enhancedLSTM',''
+        name: 'å¢å¼·LSTMæ¨¡ï¿½?',''
+        description: '?ï¿½æ–¼æ·±åº¦å­¸ï¿½??ï¿½é•·?ï¿½ï¿½?è¨˜æ†¶ç¶²çµ¡ï¼Œï¿½??ï¿½ï¿½?è¡“ï¿½?æ¨™é€²ï¿½??ï¿½æ¸¬',''
+        accuracy: '80-85%',''
+        speed: 'ä¸­ï¿½?',''
+        complexity: 'ï¿½?,''
+        features: ['?ï¿½è¡“ï¿½?æ¨™æ•´??, 'åºï¿½?å»ºæ¨¡', '?ï¿½ï¿½??ï¿½å¾µ?ï¿½ï¿½?'],''
+        bestFor: ['?ï¿½ï¿½?è¶¨å‹¢?ï¿½æ¸¬', 'è¤‡ï¿½?æ¨¡ï¿½?è­˜åˆ¥'],
+      },'
+      {''
+        id: 'transformer',''
+        name: 'Transformeræ¨¡ï¿½?',''
+        description: '?ï¿½æ–¼æ³¨ï¿½??ï¿½ï¿½??ï¿½ï¿½?æ·±åº¦å­¸ï¿½?æ¨¡ï¿½?ï¼Œï¿½??ï¿½ï¿½??ï¿½é•·?ï¿½ï¿½?è³´ï¿½?ï¿½?,''
+        accuracy: '85-90%',''
+        speed: 'ä¸­ï¿½?',''
+        complexity: 'ï¿½?,''
+        features: ['æ³¨ï¿½??ï¿½ï¿½???, 'ä¸¦ï¿½??ï¿½ï¿½?', '?ï¿½ï¿½?ä¾è³´å»ºæ¨¡'],''
+        bestFor: ['è¤‡ï¿½??ï¿½ï¿½?åºï¿½?', 'å¤šï¿½??ï¿½ï¿½?ï¿½?],
+      },'
+      {''
+        id: 'technicalEnsemble',''
+        name: '?ï¿½è¡“ï¿½?æ¨™ï¿½??ï¿½æ¨¡??,''
+        description: 'çµï¿½?å¤šç¨®?ï¿½è¡“ï¿½??ï¿½ï¿½?æ¨™ï¿½?çµ±ï¿½?æ¨¡ï¿½?',''
+        accuracy: '75-80%',''
+        speed: 'ï¿½?,''
+        complexity: 'ä¸­ï¿½?',''
+        features: ['å¤šï¿½?æ¨™ï¿½???, 'ä¿¡ï¿½?å¼·åº¦?ï¿½ï¿½?', 'ä¸€?ï¿½æ€§ï¿½?ï¿½?],''
+        bestFor: ['?ï¿½ï¿½?äº¤ï¿½?ä¿¡ï¿½?', '?ï¿½è¡“ï¿½???],
+      },'
+      {''
+        id: 'dynamicEnsemble',''
+        name: '?ï¿½ï¿½??ï¿½ï¿½?æ¨¡ï¿½?',''
+        description: '?ï¿½èƒ½çµ„ï¿½?å¤šå€‹æ¨¡?ï¿½ï¿½??ï¿½ï¿½?æ¬Šï¿½??ï¿½ï¿½?ç³»çµ±',''
+        accuracy: '90-95%',''
+        speed: 'ä¸­ï¿½?',''
+        complexity: 'ï¿½?,''
+        features: ['?ï¿½ï¿½?æ¬Šï¿½?èª¿æ•´', 'å¤šæ¨¡?ï¿½ï¿½???, '?ï¿½é©?ï¿½å­¸ï¿½?],''
+        bestFor: ['ç¶œï¿½??ï¿½æ¸¬', 'é«˜ç²¾åº¦ï¿½?ï¿½?],
       },
     ];
 
-    res.json({
-      success: true,
-      message: 'å¢å¼·æ¨¡å??—è¡¨?²å??å?',
+    res.json({'
+      success: true,''
+      message: 'å¢å¼·æ¨¡ï¿½??ï¿½è¡¨?ï¿½ï¿½??ï¿½ï¿½?',
       data: models,
-    });
-  } catch (error) {
-    logger.error('?²å?å¢å¼·æ¨¡å??—è¡¨?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?å¢å¼·æ¨¡å??—è¡¨å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?å¢å¼·æ¨¡ï¿½??ï¿½è¡¨?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?å¢å¼·æ¨¡ï¿½??ï¿½è¡¨å¤±ï¿½?',
       error: error.message,
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

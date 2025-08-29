@@ -1,10 +1,10 @@
-import { priceMonitorService } from '../../../services/priceMonitorService';
-import { notificationService } from '../../../services/notificationService';
-import { marketService } from '../../../services/marketService';
-import { investmentService } from '../../../services/investmentService';
 import { apiService } from '../../../services/apiService';
-import { logger } from '../../../utils/logger';
+import { investmentService } from '../../../services/investmentService';
+import { marketService } from '../../../services/marketService';
+import { notificationService } from '../../../services/notificationService';
+import { priceMonitorService } from '../../../services/priceMonitorService';
 import { cacheManager } from '../../../utils/cacheManager';
+import { logger } from '../../../utils/logger';
 import { networkMonitor } from '../../../utils/networkMonitor';
 
 // Mock 依賴
@@ -16,17 +16,17 @@ jest.mock('../../../utils/logger');
 jest.mock('../../../utils/cacheManager');
 jest.mock('../../../utils/networkMonitor');
 
-const mockNotificationService = notificationService as jest.Mocked<
+const _mockNotificationService = notificationService as jest.Mocked<
   typeof notificationService
 >;
-const mockMarketService = marketService as jest.Mocked<typeof marketService>;
-const mockInvestmentService = investmentService as jest.Mocked<
+const _mockMarketService = marketService as jest.Mocked<typeof marketService>;
+const _mockInvestmentService = investmentService as jest.Mocked<
   typeof investmentService
 >;
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
-const mockCacheManager = cacheManager as jest.Mocked<typeof cacheManager>;
-const mockNetworkMonitor = networkMonitor as jest.Mocked<typeof networkMonitor>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockCacheManager = cacheManager as jest.Mocked<typeof cacheManager>;
+const _mockNetworkMonitor = networkMonitor as jest.Mocked<typeof networkMonitor>;
 
 describe('PriceMonitorService', () => {
   beforeEach(() => {
@@ -46,7 +46,7 @@ describe('PriceMonitorService', () => {
 
   describe('initialize', () => {
     it('應該成功初始化價格監控服務', async () => {
-      const mockAlerts = {
+      const _mockAlerts = {
         data: [
           {
             id: 'alert-1',
@@ -74,7 +74,7 @@ describe('PriceMonitorService', () => {
     });
 
     it('應該處理初始化失敗', async () => {
-      const error = new Error('初始化失敗');
+      const _error = new Error('初始化失敗');
       mockInvestmentService.getPriceAlerts.mockRejectedValue(error);
 
       await priceMonitorService.initialize();
@@ -119,7 +119,7 @@ describe('PriceMonitorService', () => {
 
   describe('addPriceAlert', () => {
     it('應該成功添加價格提醒', async () => {
-      const mockAlert = {
+      const _mockAlert = {
         id: 'alert-1',
         cardId: 'card-1',
         cardName: '測試卡片',
@@ -136,7 +136,7 @@ describe('PriceMonitorService', () => {
         data: mockAlert,
       });
 
-      const result = await priceMonitorService.addPriceAlert(
+      const _result = await priceMonitorService.addPriceAlert(
         'card-1',
         100,
         'above',
@@ -158,7 +158,7 @@ describe('PriceMonitorService', () => {
     });
 
     it('應該處理添加提醒失敗', async () => {
-      const error = new Error('添加失敗');
+      const _error = new Error('添加失敗');
       mockInvestmentService.setPriceAlert.mockRejectedValue(error);
 
       await expect(
@@ -175,7 +175,7 @@ describe('PriceMonitorService', () => {
 
   describe('getStatistics', () => {
     it('應該返回監控統計信息', () => {
-      const stats = priceMonitorService.getStatistics();
+      const _stats = priceMonitorService.getStatistics();
 
       expect(stats).toEqual({
         totalAlerts: 0,
@@ -189,7 +189,7 @@ describe('PriceMonitorService', () => {
 
   describe('getConfig', () => {
     it('應該返回監控配置', () => {
-      const config = priceMonitorService.getConfig();
+      const _config = priceMonitorService.getConfig();
 
       expect(config).toEqual({
         checkInterval: 5 * 60 * 1000,
@@ -205,14 +205,14 @@ describe('PriceMonitorService', () => {
 
   describe('updateConfig', () => {
     it('應該成功更新配置', () => {
-      const newConfig = {
+      const _newConfig = {
         checkInterval: 10 * 60 * 1000,
         priceChangeThreshold: 10,
       };
 
       priceMonitorService.updateConfig(newConfig);
 
-      const updatedConfig = priceMonitorService.getConfig();
+      const _updatedConfig = priceMonitorService.getConfig();
       expect(updatedConfig.checkInterval).toBe(10 * 60 * 1000);
       expect(updatedConfig.priceChangeThreshold).toBe(10);
       expect(mockLogger.info).toHaveBeenCalledWith('監控配置已更新', {
@@ -233,7 +233,7 @@ describe('PriceMonitorService', () => {
 
   describe('getActiveAlerts', () => {
     it('應該返回活躍提醒列表', async () => {
-      const mockAlerts = {
+      const _mockAlerts = {
         data: [
           {
             id: 'alert-1',
@@ -253,7 +253,7 @@ describe('PriceMonitorService', () => {
       mockInvestmentService.getPriceAlerts.mockResolvedValue(mockAlerts);
       await priceMonitorService.initialize();
 
-      const activeAlerts = priceMonitorService.getActiveAlerts();
+      const _activeAlerts = priceMonitorService.getActiveAlerts();
 
       expect(activeAlerts).toHaveLength(1);
       expect(activeAlerts[0].id).toBe('alert-1');
@@ -272,7 +272,7 @@ describe('PriceMonitorService', () => {
 
   describe('價格檢查邏輯', () => {
     beforeEach(async () => {
-      const mockAlerts = {
+      const _mockAlerts = {
         data: [
           {
             id: 'alert-1',
@@ -331,7 +331,7 @@ describe('PriceMonitorService', () => {
     });
 
     it('應該從緩存獲取價格數據', async () => {
-      const mockCachedData = {
+      const _mockCachedData = {
         data: { currentPrice: 95 },
         timestamp: Date.now() - 2 * 60 * 1000, // 2分鐘前
       };
@@ -348,12 +348,12 @@ describe('PriceMonitorService', () => {
     });
 
     it('應該在緩存過期時從API獲取價格', async () => {
-      const mockCachedData = {
+      const _mockCachedData = {
         data: { currentPrice: 95 },
         timestamp: Date.now() - 10 * 60 * 1000, // 10分鐘前，已過期
       };
 
-      const mockMarketData = {
+      const _mockMarketData = {
         data: {
           currentPrice: 105,
           volume: 1000,
@@ -379,7 +379,7 @@ describe('PriceMonitorService', () => {
 
   describe('智能提醒功能', () => {
     beforeEach(async () => {
-      const mockAlerts = {
+      const _mockAlerts = {
         data: [
           {
             id: 'alert-1',
@@ -401,7 +401,7 @@ describe('PriceMonitorService', () => {
     });
 
     it('應該檢查市場趨勢提醒', async () => {
-      const mockMarketAnalysis = {
+      const _mockMarketAnalysis = {
         data: {
           sentiment: 'bullish' as const,
           confidence: 0.8,
@@ -441,7 +441,7 @@ describe('PriceMonitorService', () => {
   describe('網絡狀態處理', () => {
     it('應該在網絡恢復時重新開始監控', () => {
       // 模擬網絡變化
-      const networkChangeHandler =
+      const _networkChangeHandler =
         mockNetworkMonitor.addListener.mock.calls[0][0];
       networkChangeHandler(true);
 
@@ -454,7 +454,7 @@ describe('PriceMonitorService', () => {
       priceMonitorService.startMonitoring();
 
       // 模擬網絡變化
-      const networkChangeHandler =
+      const _networkChangeHandler =
         mockNetworkMonitor.addListener.mock.calls[0][0];
       networkChangeHandler(false);
 

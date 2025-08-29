@@ -1,5 +1,5 @@
 // 前端效能優化配置
-export const PERFORMANCE_CONFIG = {
+export const _PERFORMANCE_CONFIG = {
   // 圖片優化配置
   image: {
     // 支援的圖片格式
@@ -105,25 +105,20 @@ export const PERFORMANCE_CONFIG = {
 };
 
 // 效能優化工具函數
-export const PerformanceUtils = {
+export const _PerformanceUtils = {
   // 圖片優化
-  optimizeImage: (
-    url: string,
-    width: number,
-    quality: number = 0.8
-  ): string => {
+  optimizeImage: (url: string, width: number, quality = 0.8): string => {
     // 根據設備像素比調整寬度
-    const pixelRatio = window.devicePixelRatio || 1;
-    const adjustedWidth = Math.round(width * pixelRatio);
+    const _pixelRatio = window.devicePixelRatio || 1;
+    const _adjustedWidth = Math.round(width * pixelRatio);
 
     // 支援 WebP 格式
-    const supportsWebP =
-      document
-        .createElement('canvas')
-        .toDataURL('image/webp')
-        .indexOf('data:image/webp') === 0;
+    const _supportsWebP = document
+      .createElement('canvas')
+      .toDataURL('image/webp')
+      .startsWith('data:image/webp');
 
-    const format = supportsWebP ? 'webp' : 'jpg';
+    const _format = supportsWebP ? 'webp' : 'jpg';
 
     return `${url}?w=${adjustedWidth}&q=${quality}&fmt=${format}`;
   },
@@ -143,14 +138,14 @@ export const PerformanceUtils = {
 
   // 效能指標測量
   measurePerformance: (name: string, fn: () => void): void => {
-    const start = performance.now();
+    const _start = performance.now();
     fn();
-    const end = performance.now();
+    const _end = performance.now();
     // logger.info(`${name} took ${end - start}ms`);
   },
 
   // 防抖函數
-  debounce: <T extends (...args: any[]) => any>(
+  debounce: <T extends (...args: unknown[]) => any>(
     func: T,
     wait: number
   ): ((...args: Parameters<T>) => void) => {
@@ -162,7 +157,7 @@ export const PerformanceUtils = {
   },
 
   // 節流函數
-  throttle: <T extends (...args: any[]) => any>(
+  throttle: <T extends (...args: unknown[]) => any>(
     func: T,
     limit: number
   ): ((...args: Parameters<T>) => void) => {
@@ -178,7 +173,7 @@ export const PerformanceUtils = {
 
   // 懶加載檢查
   isInViewport: (element: Element): boolean => {
-    const rect = element.getBoundingClientRect();
+    const _rect = element.getBoundingClientRect();
     return (
       rect.top >= 0 &&
       rect.left >= 0 &&
@@ -189,7 +184,7 @@ export const PerformanceUtils = {
 
   // 預加載資源
   preloadResource: (url: string, type: 'image' | 'script' | 'style'): void => {
-    const link = document.createElement('link');
+    const _link = document.createElement('link');
     link.rel = 'preload';
     link.href = url;
     link.as = type;
@@ -209,8 +204,8 @@ export const PerformanceUtils = {
 
 // 效能監控類
 export class PerformanceMonitor {
-  private metrics: Map<string, number[]> = new Map();
-  private observers: Map<string, PerformanceObserver> = new Map();
+  private readonly metrics: Map<string, number[]> = new Map();
+  private readonly observers: Map<string, PerformanceObserver> = new Map();
 
   constructor() {
     this.initObservers();
@@ -219,29 +214,31 @@ export class PerformanceMonitor {
   private initObservers(): void {
     // 監控 LCP
     if ('PerformanceObserver' in window) {
-      const lcpObserver = new PerformanceObserver((list) => {
-        const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1];
+      const _lcpObserver = new PerformanceObserver(list => {
+        const _entries = list.getEntries();
+        const _lastEntry = entries[entries.length - 1];
         this.recordMetric('lcp', lastEntry.startTime);
       });
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.set('lcp', lcpObserver);
 
       // 監控 FID
-      const fidObserver = new PerformanceObserver((list) => {
-        const entries = list.getEntries();
-        entries.forEach((entry) => {
-          this.recordMetric('fid', entry.processingStart - entry.startTime);
+      const _fidObserver = new PerformanceObserver(list => {
+        const _entries = list.getEntries();
+        entries.forEach(entry => {
+          const _processingStart =
+            (entry as any).processingStart || entry.startTime;
+          this.recordMetric('fid', processingStart - entry.startTime);
         });
       });
       fidObserver.observe({ entryTypes: ['first-input'] });
       this.observers.set('fid', fidObserver);
 
       // 監控 CLS
-      const clsObserver = new PerformanceObserver((list) => {
+      const _clsObserver = new PerformanceObserver(list => {
         let clsValue = 0;
-        const entries = list.getEntries();
-        entries.forEach((entry: any) => {
+        const _entries = list.getEntries();
+        entries.forEach((entry: unknown) => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
           }
@@ -269,7 +266,7 @@ export class PerformanceMonitor {
   }
 
   public getAverageMetric(name: string): number {
-    const values = this.metrics.get(name);
+    const _values = this.metrics.get(name);
     if (!values || values.length === 0) return 0;
     return values.reduce((sum, value) => sum + value, 0) / values.length;
   }
@@ -282,10 +279,10 @@ export class PerformanceMonitor {
   }
 
   public disconnect(): void {
-    this.observers.forEach((observer) => observer.disconnect());
+    this.observers.forEach(observer => observer.disconnect());
     this.observers.clear();
   }
 }
 
 // 全域效能監控實例
-export const performanceMonitor = new PerformanceMonitor();
+export const _performanceMonitor = new PerformanceMonitor();

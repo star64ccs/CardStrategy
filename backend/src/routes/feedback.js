@@ -1,12 +1,12 @@
-const express = require('express');
-const logger = require('../utils/logger');
-const router = express.Router();
-const feedbackService = require('../services/feedbackService');
-// eslint-disable-next-line no-unused-vars
+const express = require('express');''
+const logger = require('../utils/logger');'
+const router = express.Router();''
+const feedbackService = require('../services/feedbackService');'
+// eslint-disable-next-line no-unused-vars''
 const { authenticateToken: protect } = require('../middleware/auth');
 const {
-  validateFeedbackSubmission,
-  validateFeedbackUpdate,
+  validateFeedbackSubmission,'
+  validateFeedbackUpdate,''
 } = require('../middleware/validation');
 
 /**
@@ -58,8 +58,8 @@ const {
  *         description: ?��??�交?��?
  *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
+ *       401:'
+ *         description: ?��?�? */''
 router.post('/', protect, validateFeedbackSubmission, async (req, res) => {
   try {
     const feedbackData = {
@@ -69,16 +69,16 @@ router.post('/', protect, validateFeedbackSubmission, async (req, res) => {
 
     const feedback = await feedbackService.submitFeedback(feedbackData);
 
-    res.status(201).json({
-      success: true,
+    res.status(201).json({'
+      success: true,''
       message: '?��??�交?��?',
       data: feedback,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?�交?��?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?�交?��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?�交?��?失�?',''
       code: 'FEEDBACK_SUBMISSION_ERROR',
     });
   }
@@ -124,8 +124,8 @@ router.post('/', protect, validateFeedbackSubmission, async (req, res) => {
  *     responses:
  *       200:
  *         description: ?��??��??��??�表
- *       401:
- *         description: ?��?�? */
+ *       401:'
+ *         description: ?��?�? */''
 router.get('/', protect, async (req, res) => {
   try {
 // eslint-disable-next-line no-unused-vars
@@ -135,8 +135,8 @@ router.get('/', protect, async (req, res) => {
       status: req.query.status,
       priority: req.query.priority,
       feedbackType: req.query.feedbackType,
-      category: req.query.category,
-      severity: req.query.severity,
+      category: req.query.category,'
+      severity: req.query.severity,''
       userId: req.user.role === 'admin' ? undefined : req.user.id,
     };
 
@@ -146,12 +146,12 @@ router.get('/', protect, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??��??�表失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��??��??�表失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��??��??�表失�?',''
       code: 'FEEDBACK_LIST_ERROR',
     });
   }
@@ -175,31 +175,29 @@ router.get('/', protect, async (req, res) => {
  *       200:
  *         description: ?��??��??��?詳�?
  *       404:
- *         description: ?��?不�??? *       401:
- *         description: ?��?�? */
+ *         description: ?��?不�??? *       401:'
+ *         description: ?��?�? */''
 router.get('/:id', protect, async (req, res) => {
   try {
     const feedback = await feedbackService.getFeedbackById(
       parseInt(req.params.id)
-    );
-
-    // 檢查權�?
+    );'
+    // 檢查權�?''
     if (req.user.role !== 'admin' && feedback.userId !== req.user.id) {
-      return res.status(403).json({
-        success: false,
+      return res.status(403).json({'
+        success: false,''
         message: '?��??�查?�此?��?',
       });
     }
-
     res.json({
       success: true,
       data: feedback,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??��?詳�?失�?:', error);
-    res.status(404).json({
-      success: false,
-      message: error.message || '?��?不�???,
+    res.status(404).json({'
+      success: false,''
+      message: error.message || '?��?不�???,''
       code: 'FEEDBACK_NOT_FOUND',
     });
   }
@@ -236,8 +234,8 @@ router.get('/:id', protect, async (req, res) => {
  *       200:
  *         description: ?�?�更?��??? *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
+ *       401:'
+ *         description: ?��?�? */''
 router.put('/:id/status', protect, validateFeedbackUpdate, async (req, res) => {
   try {
     const { status, resolution } = req.body;
@@ -250,16 +248,16 @@ router.put('/:id/status', protect, validateFeedbackUpdate, async (req, res) => {
       resolution
     );
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '?��??�?�更?��???,
       data: feedback,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?�新?��??�?�失??', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?�新?��??�?�失??,
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?�新?��??�?�失??,''
       code: 'FEEDBACK_STATUS_UPDATE_ERROR',
     });
   }
@@ -295,17 +293,16 @@ router.put('/:id/status', protect, validateFeedbackUpdate, async (req, res) => {
  *         description: ?��??��??��?
  *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
-router.put('/:id/assign', protect, async (req, res) => {
-  try {
+ *       401:'
+ *         description: ?��?�? */''
+router.put('/:id/assign', protect, async (req, res) => {'
+  try {''
     if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
+      return res.status(403).json({'
+        success: false,''
         message: '?��?管�??�可以�??��?�?,
       });
     }
-
     const { assignedTo } = req.body;
     const feedbackId = parseInt(req.params.id);
 
@@ -315,16 +312,16 @@ router.put('/:id/assign', protect, async (req, res) => {
       req.user.id
     );
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '?��??��??��?',
       data: feedback,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??��?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��??��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��??��?失�?',''
       code: 'FEEDBACK_ASSIGNMENT_ERROR',
     });
   }
@@ -368,10 +365,10 @@ router.put('/:id/assign', protect, async (req, res) => {
  *         description: ?��?添�??��?
  *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
-router.post('/:id/responses', protect, async (req, res) => {
-  try {
+ *       401:'
+ *         description: ?��?�? */''
+router.post('/:id/responses', protect, async (req, res) => {'
+  try {''
     const { content, responseType = 'comment', isInternal = false } = req.body;
     const feedbackId = parseInt(req.params.id);
 
@@ -384,16 +381,16 @@ router.post('/:id/responses', protect, async (req, res) => {
       isInternal
     );
 
-    res.status(201).json({
-      success: true,
+    res.status(201).json({'
+      success: true,''
       message: '?��?添�??��?',
       data: response,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('添�??��??��?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '添�??��??��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '添�??��??��?失�?',''
       code: 'FEEDBACK_RESPONSE_ERROR',
     });
   }
@@ -429,17 +426,16 @@ router.post('/:id/responses', protect, async (req, res) => {
  *     responses:
  *       200:
  *         description: ?��??��?統�??��?
- *       401:
- *         description: ?��?�? */
-router.get('/stats', protect, async (req, res) => {
-  try {
+ *       401:'
+ *         description: ?��?�? */''
+router.get('/stats', protect, async (req, res) => {'
+  try {''
     if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
+      return res.status(403).json({'
+        success: false,''
         message: '?��?管�??�可以查?�統計數??,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const options = {
       startDate: req.query.startDate,
@@ -453,12 +449,12 @@ router.get('/stats', protect, async (req, res) => {
     res.json({
       success: true,
       data: stats,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??��?統�?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��??��?統�?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��??��?統�?失�?',''
       code: 'FEEDBACK_STATS_ERROR',
     });
   }
@@ -473,31 +469,29 @@ router.get('/stats', protect, async (req, res) => {
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: ?��??��??�進建�? *       401:
- *         description: ?��?�? */
-router.get('/suggestions', protect, async (req, res) => {
-  try {
+ *         description: ?��??��??�進建�? *       401:'
+ *         description: ?��?�? */''
+router.get('/suggestions', protect, async (req, res) => {'
+  try {''
     if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
+      return res.status(403).json({'
+        success: false,''
         message: '?��?管�??�可以查?�改?�建�?,
       });
     }
-
     const suggestions = await feedbackService.generateImprovementSuggestions();
 
     res.json({
       success: true,
       data: suggestions,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??�進建議失??', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��??�進建議失??,
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��??�進建議失??,''
       code: 'FEEDBACK_SUGGESTIONS_ERROR',
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

@@ -205,7 +205,7 @@ const {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -718,7 +718,7 @@ const errorMonitor = new ErrorMonitor();
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
-const errorMonitoringMiddleware = (err, req, res, next) => {
+const errorMonitoringMiddleware = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars
   errorMonitor.recordError(err, req);
   next(err);
 };

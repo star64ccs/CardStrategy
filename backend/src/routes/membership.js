@@ -1,21 +1,21 @@
-const express = require('express');
-const { body, validationResult } = require('express-validator');
-const { authenticateToken: protect } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
+const express = require('express');''
+const { body, validationResult } = require('express-validator');''
+const { authenticateToken: protect } = require('../middleware/auth');'
+// eslint-disable-next-line no-unused-vars''
 const logger = require('../utils/logger');
 
 const router = express.Router();
 
-// æ¨¡æ“¬?ƒå“¡è¨ˆå??¸æ?
-const membershipPlans = [
-  {
-    id: 'free',
-    name: '?è²»??,
-    nameEn: 'Free',
-    price: 0,
-    currency: 'TWD',
-    interval: 'monthly',
-    features: ['?ºæœ¬?¡ç??è¦½', '?¶è?ç®¡ç?', '?ºæœ¬å¸‚å ´?¸æ?', 'ç¤¾å?è¨è?'],
+// æ¨¡æ“¬?ï¿½å“¡è¨ˆï¿½??ï¿½ï¿½?
+const membershipPlans = ['
+  {''
+    id: 'free',''
+    name: '?ï¿½è²»??,''
+    nameEn: 'Free','
+    price: 0,''
+    currency: 'TWD',''
+    interval: 'monthly',''
+    features: ['?ï¿½æœ¬?ï¿½ï¿½??ï¿½è¦½', '?ï¿½ï¿½?ç®¡ï¿½?', '?ï¿½æœ¬å¸‚å ´?ï¿½ï¿½?', 'ç¤¾ï¿½?è¨ï¿½?'],
     limits: {
       maxCollections: 3,
       maxCards: 100,
@@ -23,21 +23,21 @@ const membershipPlans = [
       marketInsights: false,
       prioritySupport: false,
     },
-  },
-  {
-    id: 'basic',
-    name: '?ºç???,
-    nameEn: 'Basic',
-    price: 299,
-    currency: 'TWD',
-    interval: 'monthly',
-    features: [
-      '?€?‰å?è²»ç??Ÿèƒ½',
-      '?¡é??¶è?ç®¡ç?',
-      '?¡é??¡ç?ç®¡ç?',
-      'AI?†æ?ï¼ˆæ???0æ¬¡ï?',
-      '?ºæœ¬å¸‚å ´æ´å?',
-      '?•è?çµ„å?è¿½è¹¤',
+  },'
+  {''
+    id: 'basic',''
+    name: '?ï¿½ï¿½???,''
+    nameEn: 'Basic','
+    price: 299,''
+    currency: 'TWD',''
+    interval: 'monthly','
+    features: [''
+      '?ï¿½?ï¿½ï¿½?è²»ï¿½??ï¿½èƒ½',''
+      '?ï¿½ï¿½??ï¿½ï¿½?ç®¡ï¿½?',''
+      '?ï¿½ï¿½??ï¿½ï¿½?ç®¡ï¿½?',''
+      'AI?ï¿½ï¿½?ï¼ˆï¿½???0æ¬¡ï¿½?',''
+      '?ï¿½æœ¬å¸‚å ´æ´ï¿½?',''
+      '?ï¿½ï¿½?çµ„ï¿½?è¿½è¹¤',
     ],
     limits: {
       maxCollections: -1,
@@ -46,22 +46,22 @@ const membershipPlans = [
       marketInsights: true,
       prioritySupport: false,
     },
-  },
-  {
-    id: 'premium',
-    name: 'é«˜ç???,
-    nameEn: 'Premium',
-    price: 599,
-    currency: 'TWD',
-    interval: 'monthly',
-    features: [
-      '?€?‰åŸºç¤ç??Ÿèƒ½',
-      'AI?†æ?ï¼ˆç„¡?æ¬¡ï¼?,
-      'é«˜ç?å¸‚å ´æ´å?',
-      '?•è?å»ºè­°',
-      '?¹æ ¼?æ¸¬',
-      '?ªå?å®¢æ??¯æ?',
-      '?¨å®¶?§å®¹',
+  },'
+  {''
+    id: 'premium',''
+    name: 'é«˜ï¿½???,''
+    nameEn: 'Premium','
+    price: 599,''
+    currency: 'TWD',''
+    interval: 'monthly','
+    features: [''
+      '?ï¿½?ï¿½åŸºç¤ï¿½??ï¿½èƒ½',''
+      'AI?ï¿½ï¿½?ï¼ˆç„¡?ï¿½æ¬¡ï¿½?,''
+      'é«˜ï¿½?å¸‚å ´æ´ï¿½?',''
+      '?ï¿½ï¿½?å»ºè­°',''
+      '?ï¿½æ ¼?ï¿½æ¸¬',''
+      '?ï¿½ï¿½?å®¢ï¿½??ï¿½ï¿½?',''
+      '?ï¿½å®¶?ï¿½å®¹',
     ],
     limits: {
       maxCollections: -1,
@@ -70,21 +70,21 @@ const membershipPlans = [
       marketInsights: true,
       prioritySupport: true,
     },
-  },
-  {
-    id: 'pro',
-    name: 'å°ˆæ¥­??,
-    nameEn: 'Pro',
-    price: 999,
-    currency: 'TWD',
-    interval: 'monthly',
-    features: [
-      '?€?‰é?ç´šç??Ÿèƒ½',
-      '?‹äºº?•è?é¡§å?',
-      '?¨å®¶å¸‚å ´?±å?',
-      'APIè¨ªå?',
-      '?½æ?è§?±º?¹æ?',
-      'å°ˆå±¬å®¢æ?ç¶“ç?',
+  },'
+  {''
+    id: 'pro',''
+    name: 'å°ˆæ¥­??,''
+    nameEn: 'Pro','
+    price: 999,''
+    currency: 'TWD',''
+    interval: 'monthly','
+    features: [''
+      '?ï¿½?ï¿½ï¿½?ç´šï¿½??ï¿½èƒ½',''
+      '?ï¿½äºº?ï¿½ï¿½?é¡§ï¿½?',''
+      '?ï¿½å®¶å¸‚å ´?ï¿½ï¿½?',''
+      'APIè¨ªï¿½?',''
+      '?ï¿½ï¿½?ï¿½?ï¿½ï¿½?ï¿½ï¿½?',''
+      'å°ˆå±¬å®¢ï¿½?ç¶“ï¿½?',
     ],
     limits: {
       maxCollections: -1,
@@ -97,78 +97,78 @@ const membershipPlans = [
 ];
 
 // @route   GET /api/membership/plans
-// @desc    ?²å??ƒå“¡è¨ˆå??—è¡¨
-// @access  Public
-router.get('/plans', async (req, res) => {
-  try {
-    logger.info('?²å??ƒå“¡è¨ˆå??—è¡¨');
+// @desc    ?ï¿½ï¿½??ï¿½å“¡è¨ˆï¿½??ï¿½è¡¨'
+// @access  Public''
+router.get('/plans', async (req, res) => {'
+  try {''
+    logger.info('?ï¿½ï¿½??ï¿½å“¡è¨ˆï¿½??ï¿½è¡¨');
 
     res.json({
       success: true,
       data: { plans: membershipPlans },
-    });
-  } catch (error) {
-    logger.error('?²å??ƒå“¡è¨ˆå??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å??ƒå“¡è¨ˆå?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½å“¡è¨ˆï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½å“¡è¨ˆï¿½?å¤±ï¿½?',''
       code: 'GET_PLANS_FAILED',
     });
   }
 });
 
-// @route   GET /api/membership/current
-// @desc    ?²å??¶å??¨æˆ¶?ƒå“¡?€??// @access  Private
+// @route   GET /api/membership/current'
+// @desc    ?ï¿½ï¿½??ï¿½ï¿½??ï¿½æˆ¶?ï¿½å“¡?ï¿½??// @access  Private''
 router.get('/current', protect, async (req, res) => {
-  try {
-    // æ¨¡æ“¬?¨æˆ¶?ƒå“¡?€??    const currentMembership = {
-      type: 'basic',
-      startDate: '2024-01-01T00:00:00Z',
+  try {'
+    // æ¨¡æ“¬?ï¿½æˆ¶?ï¿½å“¡?ï¿½??    const currentMembership = {''
+      type: 'basic',''
+      startDate: '2024-01-01T00:00:00Z',''
       endDate: '2024-12-31T23:59:59Z',
-      isActive: true,
-      daysLeft: 334,
+      isActive: true,'
+      daysLeft: 334,''
       plan: membershipPlans.find((p) => p.id === 'basic'),
       usage: {
         aiAnalysisUsed: 12,
         aiAnalysisLimit: 20,
         collectionsCount: 5,
         cardsCount: 150,
-      },
-      billing: {
-        nextBillingDate: '2024-03-01T00:00:00Z',
-        amount: 299,
+      },'
+      billing: {''
+        nextBillingDate: '2024-03-01T00:00:00Z','
+        amount: 299,''
         currency: 'TWD',
         autoRenew: true,
       },
     };
 
-    logger.info(`?²å??ƒå“¡?€?? ${req.user.username}`);
+    logger.info(`?ï¿½ï¿½??ï¿½å“¡?ï¿½?? ${req.user.username}`);
 
     res.json({
       success: true,
       data: { membership: currentMembership },
-    });
-  } catch (error) {
-    logger.error('?²å??ƒå“¡?€?‹éŒ¯èª?', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å??ƒå“¡?€?‹å¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½å“¡?ï¿½?ï¿½éŒ¯ï¿½?', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½??ï¿½å“¡?ï¿½?ï¿½å¤±??,''
       code: 'GET_MEMBERSHIP_FAILED',
     });
   }
 });
 
 // @route   POST /api/membership/subscribe
-// @desc    è¨‚é–±?ƒå“¡è¨ˆå?
-// @access  Private
-router.post(
+// @desc    è¨‚é–±?ï¿½å“¡è¨ˆï¿½?
+// @access  Private'
+router.post(''
   '/subscribe',
-  protect,
-  [
-    body('planId')
-      .isIn(['basic', 'premium', 'pro'])
-      .withMessage('è¨ˆå?IDå¿…é??¯basic?premium?–pro'),
-    body('paymentMethod').notEmpty().withMessage('?¯ä??¹å??ºå?å¡«é?'),
+  protect,'
+  [''
+    body('planId')''
+      .isIn(['basic', 'premium', 'pro'])''
+      .withMessage('è¨ˆï¿½?IDå¿…ï¿½??ï¿½basic?ï¿½premium?ï¿½pro'),''
+    body('paymentMethod').notEmpty().withMessage('?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¡«ï¿½?'),''
     body('autoRenew').optional().isBoolean(),
   ],
   async (req, res) => {
@@ -176,34 +176,32 @@ router.post(
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'è¼¸å…¥é©—è?å¤±æ?',
+        return res.status(400).json({'
+          success: false,''
+          message: 'è¼¸å…¥é©—ï¿½?å¤±ï¿½?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
       }
-
       const { planId, paymentMethod, autoRenew = true } = req.body;
 
       const selectedPlan = membershipPlans.find((p) => p.id === planId);
 
       if (!selectedPlan) {
-        return res.status(400).json({
-          success: false,
-          message: '?¡æ??„æ??¡è???,
+        return res.status(400).json({'
+          success: false,''
+          message: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½???,''
           code: 'INVALID_PLAN',
         });
       }
-
-      // æ¨¡æ“¬è¨‚é–±?•ç?
+      // æ¨¡æ“¬è¨‚é–±?ï¿½ï¿½?
       const subscription = {
         id: Date.now().toString(),
         userId: req.user.id,
         planId,
         plan: selectedPlan,
-        startDate: new Date().toISOString(),
-        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30å¤©å?
+        startDate: new Date().toISOString(),'
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30å¤©ï¿½?''
         status: 'active',
         paymentMethod,
         autoRenew,
@@ -211,18 +209,18 @@ router.post(
         currency: selectedPlan.currency,
       };
 
-      logger.info(`?ƒå“¡è¨‚é–±: ${req.user.username} è¨‚é–±äº?${selectedPlan.name}`);
+      logger.info(`?ï¿½å“¡è¨‚é–±: ${req.user.username} è¨‚é–±ï¿½?${selectedPlan.name}`);
 
-      res.status(201).json({
-        success: true,
-        message: '?ƒå“¡è¨‚é–±?å?',
+      res.status(201).json({'
+        success: true,''
+        message: '?ï¿½å“¡è¨‚é–±?ï¿½ï¿½?',
         data: { subscription },
-      });
-    } catch (error) {
-      logger.error('?ƒå“¡è¨‚é–±?¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?ƒå“¡è¨‚é–±å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('?ï¿½å“¡è¨‚é–±?ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½å“¡è¨‚é–±å¤±ï¿½?',''
         code: 'SUBSCRIBE_FAILED',
       });
     }
@@ -230,33 +228,32 @@ router.post(
 );
 
 // @route   POST /api/membership/cancel
-// @desc    ?–æ??ƒå“¡è¨‚é–±
-// @access  Private
-router.post(
+// @desc    ?ï¿½ï¿½??ï¿½å“¡è¨‚é–±
+// @access  Private'
+router.post(''
   '/cancel',
-  protect,
-  [
+  protect,'
+  [''
     body('reason')
-      .optional()
-      .isLength({ max: 500 })
-      .withMessage('?–æ??Ÿå??€å¤?00?‹å?ç¬?),
+      .optional()'
+      .isLength({ max: 500 });''
+      .withMessage('?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?00?ï¿½ï¿½?ï¿½?),
   ],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'è¼¸å…¥é©—è?å¤±æ?',
+        return res.status(400).json({'
+          success: false,''
+          message: 'è¼¸å…¥é©—ï¿½?å¤±ï¿½?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
-        });
-      }
-
+        });'
+      }''
       const { reason = '' } = req.body;
 
-      // æ¨¡æ“¬?–æ?è¨‚é–±
+      // æ¨¡æ“¬?ï¿½ï¿½?è¨‚é–±
       const cancellation = {
         id: Date.now().toString(),
         userId: req.user.id,
@@ -264,23 +261,23 @@ router.post(
         reason,
         effectiveDate: new Date(
           Date.now() + 30 * 24 * 60 * 60 * 1000
-        ).toISOString(), // 30å¤©å??Ÿæ?
-        refundAmount: 0,
-        refundReason: '?‰æ?æ¬¾å?æ¶ˆï??¡é€€æ¬?,
+        ).toISOString(), // 30å¤©ï¿½??ï¿½ï¿½?'
+        refundAmount: 0,''
+        refundReason: '?ï¿½ï¿½?æ¬¾ï¿½?æ¶ˆï¿½??ï¿½é€€ï¿½?,
       };
 
-      logger.info(`?–æ??ƒå“¡è¨‚é–±: ${req.user.username}, ?Ÿå?: ${reason}`);
+      logger.info(`?ï¿½ï¿½??ï¿½å“¡è¨‚é–±: ${req.user.username}, ?ï¿½ï¿½?: ${reason}`);
 
-      res.json({
-        success: true,
-        message: '?ƒå“¡è¨‚é–±å·²å?æ¶?,
+      res.json({'
+        success: true,''
+        message: '?ï¿½å“¡è¨‚é–±å·²ï¿½?ï¿½?,
         data: { cancellation },
-      });
-    } catch (error) {
-      logger.error('?–æ??ƒå“¡è¨‚é–±?¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?–æ??ƒå“¡è¨‚é–±å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('?ï¿½ï¿½??ï¿½å“¡è¨‚é–±?ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½ï¿½??ï¿½å“¡è¨‚é–±å¤±ï¿½?',''
         code: 'CANCEL_FAILED',
       });
     }
@@ -288,15 +285,15 @@ router.post(
 );
 
 // @route   PUT /api/membership/upgrade
-// @desc    ?‡ç??ƒå“¡è¨ˆå?
-// @access  Private
-router.put(
+// @desc    ?ï¿½ï¿½??ï¿½å“¡è¨ˆï¿½?
+// @access  Private'
+router.put(''
   '/upgrade',
-  protect,
-  [
-    body('newPlanId')
-      .isIn(['premium', 'pro'])
-      .withMessage('?°è??ƒIDå¿…é??¯premium?–pro'),
+  protect,'
+  [''
+    body('newPlanId')''
+      .isIn(['premium', 'pro'])''
+      .withMessage('?ï¿½ï¿½??ï¿½IDå¿…ï¿½??ï¿½premium?ï¿½pro'),''
     body('paymentMethod').optional().isString(),
   ],
   async (req, res) => {
@@ -304,51 +301,49 @@ router.put(
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'è¼¸å…¥é©—è?å¤±æ?',
+        return res.status(400).json({'
+          success: false,''
+          message: 'è¼¸å…¥é©—ï¿½?å¤±ï¿½?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
       }
-
       const { newPlanId, paymentMethod } = req.body;
 
 // eslint-disable-next-line no-unused-vars
       const newPlan = membershipPlans.find((p) => p.id === newPlanId);
 
       if (!newPlan) {
-        return res.status(400).json({
-          success: false,
-          message: '?¡æ??„æ??¡è???,
+        return res.status(400).json({'
+          success: false,''
+          message: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½???,''
           code: 'INVALID_PLAN',
         });
       }
-
-      // æ¨¡æ“¬?‡ç??•ç?
+      // æ¨¡æ“¬?ï¿½ï¿½??ï¿½ï¿½?
       const upgrade = {
-        id: Date.now().toString(),
-        userId: req.user.id,
+        id: Date.now().toString(),'
+        userId: req.user.id,''
         oldPlanId: 'basic',
         newPlanId,
         upgradedAt: new Date().toISOString(),
-        effectiveDate: new Date().toISOString(),
-        proratedAmount: 150, // ?‰æ?ä¾‹è?ç®—ç?è²»ç”¨
+        effectiveDate: new Date().toISOString(),'
+        proratedAmount: 150, // ?ï¿½ï¿½?ä¾‹ï¿½?ç®—ï¿½?è²»ç”¨''
         currency: 'TWD',
       };
 
-      logger.info(`?‡ç??ƒå“¡è¨ˆå?: ${req.user.username} ?‡ç???${newPlan.name}`);
+      logger.info(`?ï¿½ï¿½??ï¿½å“¡è¨ˆï¿½?: ${req.user.username} ?ï¿½ï¿½???${newPlan.name}`);
 
-      res.json({
-        success: true,
-        message: '?ƒå“¡è¨ˆå??‡ç??å?',
+      res.json({'
+        success: true,''
+        message: '?ï¿½å“¡è¨ˆï¿½??ï¿½ï¿½??ï¿½ï¿½?',
         data: { upgrade },
-      });
-    } catch (error) {
-      logger.error('?‡ç??ƒå“¡è¨ˆå??¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?‡ç??ƒå“¡è¨ˆå?å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('?ï¿½ï¿½??ï¿½å“¡è¨ˆï¿½??ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½ï¿½??ï¿½å“¡è¨ˆï¿½?å¤±ï¿½?',''
         code: 'UPGRADE_FAILED',
       });
     }
@@ -356,14 +351,14 @@ router.put(
 );
 
 // @route   GET /api/membership/usage
-// @desc    ?²å??ƒå“¡ä½¿ç”¨?…æ?
-// @access  Private
+// @desc    ?ï¿½ï¿½??ï¿½å“¡ä½¿ç”¨?ï¿½ï¿½?'
+// @access  Private''
 router.get('/usage', protect, async (req, res) => {
   try {
-    // æ¨¡æ“¬ä½¿ç”¨?…æ??¸æ?
-    const usage = {
-      currentPeriod: {
-        start: '2024-02-01T00:00:00Z',
+    // æ¨¡æ“¬ä½¿ç”¨?ï¿½ï¿½??ï¿½ï¿½?
+    const usage = {'
+      currentPeriod: {''
+        start: '2024-02-01T00:00:00Z',''
         end: '2024-02-29T23:59:59Z',
       },
       aiAnalysis: {
@@ -382,8 +377,8 @@ router.get('/usage', protect, async (req, res) => {
         limit: -1,
         percentage: 0,
       },
-      marketInsights: {
-        accessed: 25,
+      marketInsights: {'
+        accessed: 25,''
         lastAccess: '2024-02-15T10:30:00Z',
       },
       features: {
@@ -395,77 +390,77 @@ router.get('/usage', protect, async (req, res) => {
       },
     };
 
-    logger.info(`?²å?ä½¿ç”¨?…æ?: ${req.user.username}`);
+    logger.info(`?ï¿½ï¿½?ä½¿ç”¨?ï¿½ï¿½?: ${req.user.username}`);
 
     res.json({
       success: true,
       data: { usage },
-    });
-  } catch (error) {
-    logger.error('?²å?ä½¿ç”¨?…æ??¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?ä½¿ç”¨?…æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?ä½¿ç”¨?ï¿½ï¿½??ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?ä½¿ç”¨?ï¿½ï¿½?å¤±ï¿½?',''
       code: 'GET_USAGE_FAILED',
     });
   }
 });
 
 // @route   GET /api/membership/billing
-// @desc    ?²å?è³¬å–®æ­·å²
-// @access  Private
+// @desc    ?ï¿½ï¿½?è³¬å–®æ­·å²'
+// @access  Private''
 router.get('/billing', protect, async (req, res) => {
   try {
     // æ¨¡æ“¬è³¬å–®æ­·å²
-    const billingHistory = [
-      {
-        id: '1',
-        date: '2024-02-01T00:00:00Z',
-        amount: 299,
-        currency: 'TWD',
-        status: 'paid',
-        description: '?ºç??ˆæ???- 2024å¹???,
-        paymentMethod: 'ä¿¡ç”¨??,
+    const billingHistory = ['
+      {''
+        id: '1',''
+        date: '2024-02-01T00:00:00Z','
+        amount: 299,''
+        currency: 'TWD',''
+        status: 'paid',''
+        description: '?ï¿½ï¿½??ï¿½ï¿½???- 2024ï¿½???,''
+        paymentMethod: 'ä¿¡ç”¨??,''
         invoiceUrl: 'https://example.com/invoice/1',
-      },
-      {
-        id: '2',
-        date: '2024-01-01T00:00:00Z',
-        amount: 299,
-        currency: 'TWD',
-        status: 'paid',
-        description: '?ºç??ˆæ???- 2024å¹???,
-        paymentMethod: 'ä¿¡ç”¨??,
+      },'
+      {''
+        id: '2',''
+        date: '2024-01-01T00:00:00Z','
+        amount: 299,''
+        currency: 'TWD',''
+        status: 'paid',''
+        description: '?ï¿½ï¿½??ï¿½ï¿½???- 2024ï¿½???,''
+        paymentMethod: 'ä¿¡ç”¨??,''
         invoiceUrl: 'https://example.com/invoice/2',
       },
     ];
 
-    logger.info(`?²å?è³¬å–®æ­·å²: ${req.user.username}`);
+    logger.info(`?ï¿½ï¿½?è³¬å–®æ­·å²: ${req.user.username}`);
 
     res.json({
       success: true,
       data: { billingHistory },
-    });
-  } catch (error) {
-    logger.error('?²å?è³¬å–®æ­·å²?¯èª¤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?²å?è³¬å–®æ­·å²å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½?è³¬å–®æ­·å²?ï¿½èª¤:', error);
+    res.status(500).json({'
+      success: false,''
+      message: '?ï¿½ï¿½?è³¬å–®æ­·å²å¤±ï¿½?',''
       code: 'GET_BILLING_FAILED',
     });
   }
 });
 
 // @route   POST /api/membership/payment-method
-// @desc    ?´æ–°?¯ä??¹å?
-// @access  Private
-router.post(
+// @desc    ?ï¿½æ–°?ï¿½ï¿½??ï¿½ï¿½?
+// @access  Private'
+router.post(''
   '/payment-method',
-  protect,
-  [
-    body('paymentMethod').notEmpty().withMessage('?¯ä??¹å??ºå?å¡«é?'),
-    body('cardNumber').optional().isString(),
-    body('expiryDate').optional().isString(),
+  protect,'
+  [''
+    body('paymentMethod').notEmpty().withMessage('?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?å¡«ï¿½?'),''
+    body('cardNumber').optional().isString(),''
+    body('expiryDate').optional().isString(),''
     body('cvv').optional().isString(),
   ],
   async (req, res) => {
@@ -473,17 +468,16 @@ router.post(
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: 'è¼¸å…¥é©—è?å¤±æ?',
+        return res.status(400).json({'
+          success: false,''
+          message: 'è¼¸å…¥é©—ï¿½?å¤±ï¿½?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
       }
-
       const { paymentMethod, cardNumber, expiryDate, cvv } = req.body;
 
-      // æ¨¡æ“¬?´æ–°?¯ä??¹å?
+      // æ¨¡æ“¬?ï¿½æ–°?ï¿½ï¿½??ï¿½ï¿½?
       const updatedPaymentMethod = {
         id: Date.now().toString(),
         userId: req.user.id,
@@ -493,22 +487,21 @@ router.post(
         updatedAt: new Date().toISOString(),
       };
 
-      logger.info(`?´æ–°?¯ä??¹å?: ${req.user.username}`);
+      logger.info(`?ï¿½æ–°?ï¿½ï¿½??ï¿½ï¿½?: ${req.user.username}`);
 
-      res.json({
-        success: true,
-        message: '?¯ä??¹å??´æ–°?å?',
+      res.json({'
+        success: true,''
+        message: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½æ–°?ï¿½ï¿½?',
         data: { paymentMethod: updatedPaymentMethod },
-      });
-    } catch (error) {
-      logger.error('?´æ–°?¯ä??¹å??¯èª¤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?´æ–°?¯ä??¹å?å¤±æ?',
+      });'
+    } catch (error) {''
+      logger.error('?ï¿½æ–°?ï¿½ï¿½??ï¿½ï¿½??ï¿½èª¤:', error);
+      res.status(500).json({'
+        success: false,''
+        message: '?ï¿½æ–°?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',''
         code: 'UPDATE_PAYMENT_METHOD_FAILED',
       });
     }
   }
-);
-
-module.exports = router;
+);'
+module.exports = router;''

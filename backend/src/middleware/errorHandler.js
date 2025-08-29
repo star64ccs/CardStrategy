@@ -321,7 +321,7 @@ class ErrorHandler {
 const errorHandler = new ErrorHandler();
 
 // 中間件函數
-const errorHandlerMiddleware = (err, req, res, next) => {
+const errorHandlerMiddleware = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
   errorHandler.handleError(err, req, res, next);
 };
 
@@ -357,7 +357,7 @@ const handleTimeout = (timeout = 30000) => {
 };
 
 // 請求大小限制處理
-const handlePayloadTooLarge = (err, req, res, next) => {
+const handlePayloadTooLarge = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
   if (err.type === 'entity.too.large') {
     const error = errorHandler.createCustomError('請求體過大', 413, 'payload');
     next(error);

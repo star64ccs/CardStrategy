@@ -1,6 +1,6 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { FeedbackService } from '@/services/feedbackService';
 import { mockApiResponse, mockApiError } from '@/__tests__/setup/test-utils';
+import { FeedbackService } from '@/services/feedbackService';
 
 // Mock API service
 jest.mock('@/services/apiService', () => ({
@@ -40,10 +40,10 @@ jest.mock('@/utils/validationService', () => ({
 
 describe('FeedbackService', () => {
   let feedbackService: FeedbackService;
-  let mockApiService: any;
-  let mockStorage: any;
-  let mockLogger: any;
-  let mockValidationService: any;
+  let mockApiService: unknown;
+  let mockStorage: unknown;
+  let mockLogger: unknown;
+  let mockValidationService: unknown;
 
   beforeEach(() => {
     feedbackService = new FeedbackService();
@@ -57,14 +57,14 @@ describe('FeedbackService', () => {
 
   describe('createFeedback', () => {
     it('應該成功創建反饋', async () => {
-      const feedbackData = {
+      const _feedbackData = {
         type: 'bug_report' as const,
         title: '測試反饋',
         description: '這是一個測試反饋',
         category: 'ui_ux' as const,
         priority: 'medium' as const,
       };
-      const mockResponse = mockApiResponse({
+      const _mockResponse = mockApiResponse({
         id: '1',
         ...feedbackData,
         status: 'pending',
@@ -74,7 +74,7 @@ describe('FeedbackService', () => {
 
       mockApiService.post.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.createFeedback(feedbackData);
+      const _result = await feedbackService.createFeedback(feedbackData);
 
       expect(result.success).toBe(true);
       expect(result.data.id).toBe('1');
@@ -86,14 +86,14 @@ describe('FeedbackService', () => {
     });
 
     it('應該處理創建反饋錯誤', async () => {
-      const feedbackData = {
+      const _feedbackData = {
         type: 'bug_report' as const,
         title: '',
         description: '這是一個測試反饋',
         category: 'ui_ux' as const,
         priority: 'medium' as const,
       };
-      const mockError = mockApiError('標題不能為空');
+      const _mockError = mockApiError('標題不能為空');
 
       mockApiService.post.mockRejectedValue(mockError);
 
@@ -105,7 +105,7 @@ describe('FeedbackService', () => {
 
   describe('getFeedbacks', () => {
     it('應該成功獲取反饋列表', async () => {
-      const mockFeedbacks = [
+      const _mockFeedbacks = [
         {
           id: '1',
           type: 'bug_report' as const,
@@ -125,7 +125,7 @@ describe('FeedbackService', () => {
           createdAt: new Date().toISOString(),
         },
       ];
-      const mockResponse = mockApiResponse({
+      const _mockResponse = mockApiResponse({
         feedbacks: mockFeedbacks,
         pagination: {
           page: 1,
@@ -137,7 +137,7 @@ describe('FeedbackService', () => {
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.getFeedbacks({ page: 1, limit: 10 });
+      const _result = await feedbackService.getFeedbacks({ page: 1, limit: 10 });
 
       expect(result.success).toBe(true);
       expect(result.data.feedbacks).toHaveLength(2);
@@ -147,7 +147,7 @@ describe('FeedbackService', () => {
     });
 
     it('應該處理獲取反饋列表錯誤', async () => {
-      const mockError = mockApiError('獲取反饋列表失敗');
+      const _mockError = mockApiError('獲取反饋列表失敗');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -159,7 +159,7 @@ describe('FeedbackService', () => {
 
   describe('getFeedback', () => {
     it('應該成功獲取單個反饋', async () => {
-      const mockFeedback = {
+      const _mockFeedback = {
         id: '1',
         type: 'bug_report' as const,
         title: '測試反饋',
@@ -170,11 +170,11 @@ describe('FeedbackService', () => {
         responses: [],
         votes: { up: 5, down: 1 },
       };
-      const mockResponse = mockApiResponse(mockFeedback);
+      const _mockResponse = mockApiResponse(mockFeedback);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.getFeedback('1');
+      const _result = await feedbackService.getFeedback('1');
 
       expect(result.success).toBe(true);
       expect(result.data.id).toBe('1');
@@ -182,7 +182,7 @@ describe('FeedbackService', () => {
     });
 
     it('應該處理獲取反饋錯誤', async () => {
-      const mockError = mockApiError('反饋不存在');
+      const _mockError = mockApiError('反饋不存在');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -194,12 +194,12 @@ describe('FeedbackService', () => {
 
   describe('updateFeedback', () => {
     it('應該成功更新反饋', async () => {
-      const updateData = {
+      const _updateData = {
         title: '更新的標題',
         description: '更新的描述',
         priority: 'high' as const,
       };
-      const mockResponse = mockApiResponse({
+      const _mockResponse = mockApiResponse({
         id: '1',
         ...updateData,
         type: 'bug_report' as const,
@@ -209,7 +209,7 @@ describe('FeedbackService', () => {
 
       mockApiService.put.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.updateFeedback('1', updateData);
+      const _result = await feedbackService.updateFeedback('1', updateData);
 
       expect(result.success).toBe(true);
       expect(result.data.title).toBe('更新的標題');
@@ -220,8 +220,8 @@ describe('FeedbackService', () => {
     });
 
     it('應該處理更新反饋錯誤', async () => {
-      const updateData = { title: '更新的標題' };
-      const mockError = mockApiError('無權限更新此反饋');
+      const _updateData = { title: '更新的標題' };
+      const _mockError = mockApiError('無權限更新此反饋');
 
       mockApiService.put.mockRejectedValue(mockError);
 
@@ -233,18 +233,18 @@ describe('FeedbackService', () => {
 
   describe('deleteFeedback', () => {
     it('應該成功刪除反饋', async () => {
-      const mockResponse = mockApiResponse({ message: '反饋刪除成功' });
+      const _mockResponse = mockApiResponse({ message: '反饋刪除成功' });
 
       mockApiService.delete.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.deleteFeedback('1');
+      const _result = await feedbackService.deleteFeedback('1');
 
       expect(result.success).toBe(true);
       expect(mockApiService.delete).toHaveBeenCalledWith('/feedback/1');
     });
 
     it('應該處理刪除反饋錯誤', async () => {
-      const mockError = mockApiError('無權限刪除此反饋');
+      const _mockError = mockApiError('無權限刪除此反饋');
 
       mockApiService.delete.mockRejectedValue(mockError);
 
@@ -256,8 +256,8 @@ describe('FeedbackService', () => {
 
   describe('voteFeedback', () => {
     it('應該成功投票反饋', async () => {
-      const voteData = { vote: 1 as const };
-      const mockResponse = mockApiResponse({
+      const _voteData = { vote: 1 as const };
+      const _mockResponse = mockApiResponse({
         id: '1',
         votes: { up: 6, down: 1 },
         userVote: 1,
@@ -265,7 +265,7 @@ describe('FeedbackService', () => {
 
       mockApiService.post.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.voteFeedback('1', voteData);
+      const _result = await feedbackService.voteFeedback('1', voteData);
 
       expect(result.success).toBe(true);
       expect(result.data.votes.up).toBe(6);
@@ -276,8 +276,8 @@ describe('FeedbackService', () => {
     });
 
     it('應該處理投票錯誤', async () => {
-      const voteData = { vote: 1 as const };
-      const mockError = mockApiError('已經投票過此反饋');
+      const _voteData = { vote: 1 as const };
+      const _mockError = mockApiError('已經投票過此反饋');
 
       mockApiService.post.mockRejectedValue(mockError);
 
@@ -289,11 +289,11 @@ describe('FeedbackService', () => {
 
   describe('createResponse', () => {
     it('應該成功創建回應', async () => {
-      const responseData = {
+      const _responseData = {
         content: '這是一個官方回應',
         isOfficial: true,
       };
-      const mockResponse = mockApiResponse({
+      const _mockResponse = mockApiResponse({
         id: 'resp-1',
         feedbackId: '1',
         ...responseData,
@@ -303,7 +303,7 @@ describe('FeedbackService', () => {
 
       mockApiService.post.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.createResponse('1', responseData);
+      const _result = await feedbackService.createResponse('1', responseData);
 
       expect(result.success).toBe(true);
       expect(result.data.content).toBe('這是一個官方回應');
@@ -314,8 +314,8 @@ describe('FeedbackService', () => {
     });
 
     it('應該處理創建回應錯誤', async () => {
-      const responseData = { content: '回應內容' };
-      const mockError = mockApiError('無權限創建回應');
+      const _responseData = { content: '回應內容' };
+      const _mockError = mockApiError('無權限創建回應');
 
       mockApiService.post.mockRejectedValue(mockError);
 
@@ -327,7 +327,7 @@ describe('FeedbackService', () => {
 
   describe('getFeedbackStats', () => {
     it('應該成功獲取反饋統計', async () => {
-      const mockStats = {
+      const _mockStats = {
         total: 100,
         pending: 20,
         inProgress: 30,
@@ -346,11 +346,11 @@ describe('FeedbackService', () => {
           critical: 10,
         },
       };
-      const mockResponse = mockApiResponse(mockStats);
+      const _mockResponse = mockApiResponse(mockStats);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.getFeedbackStats();
+      const _result = await feedbackService.getFeedbackStats();
 
       expect(result.success).toBe(true);
       expect(result.data.total).toBe(100);
@@ -359,7 +359,7 @@ describe('FeedbackService', () => {
     });
 
     it('應該處理獲取統計錯誤', async () => {
-      const mockError = mockApiError('獲取統計失敗');
+      const _mockError = mockApiError('獲取統計失敗');
 
       mockApiService.get.mockRejectedValue(mockError);
 
@@ -371,7 +371,7 @@ describe('FeedbackService', () => {
 
   describe('getFeedbackAnalysis', () => {
     it('應該成功獲取反饋分析', async () => {
-      const mockAnalysis = {
+      const _mockAnalysis = {
         trends: {
           daily: [{ date: '2024-01-01', count: 10 }],
           weekly: [{ week: '2024-W01', count: 70 }],
@@ -386,11 +386,11 @@ describe('FeedbackService', () => {
           distribution: { '0-1h': 30, '1-24h': 50, '1-7d': 15, '7d+': 5 },
         },
       };
-      const mockResponse = mockApiResponse(mockAnalysis);
+      const _mockResponse = mockApiResponse(mockAnalysis);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.getFeedbackAnalysis();
+      const _result = await feedbackService.getFeedbackAnalysis();
 
       expect(result.success).toBe(true);
       expect(result.data.trends).toBeDefined();
@@ -401,13 +401,13 @@ describe('FeedbackService', () => {
 
   describe('searchFeedbacks', () => {
     it('應該成功搜索反饋', async () => {
-      const searchParams = {
+      const _searchParams = {
         query: '登錄問題',
         type: 'bug_report' as const,
         status: 'pending' as const,
         priority: 'high' as const,
       };
-      const mockFeedbacks = [
+      const _mockFeedbacks = [
         {
           id: '1',
           type: 'bug_report' as const,
@@ -417,14 +417,14 @@ describe('FeedbackService', () => {
           priority: 'high' as const,
         },
       ];
-      const mockResponse = mockApiResponse({
+      const _mockResponse = mockApiResponse({
         feedbacks: mockFeedbacks,
         total: 1,
       });
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.searchFeedbacks(searchParams);
+      const _result = await feedbackService.searchFeedbacks(searchParams);
 
       expect(result.success).toBe(true);
       expect(result.data.feedbacks).toHaveLength(1);
@@ -436,10 +436,10 @@ describe('FeedbackService', () => {
 
   describe('uploadAttachment', () => {
     it('應該成功上傳附件', async () => {
-      const file = new File(['test content'], 'test.txt', {
+      const _file = new File(['test content'], 'test.txt', {
         type: 'text/plain',
       });
-      const mockResponse = mockApiResponse({
+      const _mockResponse = mockApiResponse({
         id: 'att-1',
         filename: 'test.txt',
         url: 'https://example.com/attachments/test.txt',
@@ -449,7 +449,7 @@ describe('FeedbackService', () => {
 
       mockApiService.post.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.uploadAttachment(file);
+      const _result = await feedbackService.uploadAttachment(file);
 
       expect(result.success).toBe(true);
       expect(result.data.filename).toBe('test.txt');
@@ -460,10 +460,10 @@ describe('FeedbackService', () => {
     });
 
     it('應該處理上傳附件錯誤', async () => {
-      const file = new File(['test content'], 'test.txt', {
+      const _file = new File(['test content'], 'test.txt', {
         type: 'text/plain',
       });
-      const mockError = mockApiError('文件大小超過限制');
+      const _mockError = mockApiError('文件大小超過限制');
 
       mockApiService.post.mockRejectedValue(mockError);
 
@@ -475,7 +475,7 @@ describe('FeedbackService', () => {
 
   describe('getFeedbackTemplates', () => {
     it('應該成功獲取反饋模板', async () => {
-      const mockTemplates = [
+      const _mockTemplates = [
         {
           id: 'template-1',
           name: '錯誤報告模板',
@@ -484,11 +484,11 @@ describe('FeedbackService', () => {
           isDefault: true,
         },
       ];
-      const mockResponse = mockApiResponse(mockTemplates);
+      const _mockResponse = mockApiResponse(mockTemplates);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.getFeedbackTemplates();
+      const _result = await feedbackService.getFeedbackTemplates();
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(1);
@@ -498,15 +498,15 @@ describe('FeedbackService', () => {
 
   describe('getFeedbackTags', () => {
     it('應該成功獲取反饋標籤', async () => {
-      const mockTags = [
+      const _mockTags = [
         { id: 'tag-1', name: 'UI問題', color: '#ff0000' },
         { id: 'tag-2', name: '性能問題', color: '#00ff00' },
       ];
-      const mockResponse = mockApiResponse(mockTags);
+      const _mockResponse = mockApiResponse(mockTags);
 
       mockApiService.get.mockResolvedValue(mockResponse);
 
-      const result = await feedbackService.getFeedbackTags();
+      const _result = await feedbackService.getFeedbackTags();
 
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(2);

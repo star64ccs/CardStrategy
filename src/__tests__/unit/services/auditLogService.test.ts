@@ -1,11 +1,11 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import {
-  auditLogService,
+import type {
   AuditEvent,
   AuditSeverity,
   AuditEventStatus,
   OperationResult,
 } from '../../../services/auditLogService';
+import { auditLogService } from '../../../services/auditLogService';
 import { storage } from '../../../utils/storage';
 
 // Mock dependencies
@@ -14,7 +14,7 @@ jest.mock('../../../utils/logger');
 jest.mock('../../../services/notificationService');
 jest.mock('../../../services/apiService');
 
-const mockStorage = storage as jest.Mocked<typeof storage>;
+const _mockStorage = storage as jest.Mocked<typeof storage>;
 
 describe('AuditLogService', () => {
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('AuditLogService', () => {
     });
 
     it('should load configuration from storage', async () => {
-      const mockConfig = {
+      const _mockConfig = {
         enabled: false,
         logLevel: 'high',
         retentionDays: 180,
@@ -44,14 +44,14 @@ describe('AuditLogService', () => {
 
   describe('event logging', () => {
     it('should log event with default values', async () => {
-      const eventData = {
+      const _eventData = {
         title: 'Test Event',
         description: 'Test description',
         eventType: 'user_login' as const,
         severity: 'medium' as AuditSeverity,
       };
 
-      const eventId = await auditLogService.logEvent(eventData);
+      const _eventId = await auditLogService.logEvent(eventData);
 
       expect(eventId).toBeDefined();
       expect(mockStorage.set).toHaveBeenCalled();
@@ -63,7 +63,7 @@ describe('AuditLogService', () => {
 
       await auditLogService.initialize();
 
-      const eventId = await auditLogService.logEvent({
+      const _eventId = await auditLogService.logEvent({
         title: 'Test Event',
         eventType: 'user_login',
       });
@@ -77,7 +77,7 @@ describe('AuditLogService', () => {
 
       await auditLogService.initialize();
 
-      const eventId = await auditLogService.logEvent({
+      const _eventId = await auditLogService.logEvent({
         title: 'Test Event',
         eventType: 'user_login',
         severity: 'low',
@@ -87,7 +87,7 @@ describe('AuditLogService', () => {
     });
 
     it('should log event with full details', async () => {
-      const eventData = {
+      const _eventData = {
         title: 'Full Test Event',
         description: 'Complete test event with all details',
         eventType: 'data_export' as const,
@@ -113,7 +113,7 @@ describe('AuditLogService', () => {
         relatedEvents: ['event-1', 'event-2'],
       };
 
-      const eventId = await auditLogService.logEvent(eventData);
+      const _eventId = await auditLogService.logEvent(eventData);
 
       expect(eventId).toBeDefined();
     });
@@ -138,7 +138,7 @@ describe('AuditLogService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const query = {
+      const _query = {
         page: 1,
         limit: 10,
         eventTypes: ['user_login'],
@@ -147,7 +147,7 @@ describe('AuditLogService', () => {
         sortOrder: 'desc' as const,
       };
 
-      const result = await auditLogService.queryEvents(query);
+      const _result = await auditLogService.queryEvents(query);
 
       expect(result.events).toEqual(mockEvents);
       expect(result.totalCount).toBe(1);
@@ -186,14 +186,14 @@ describe('AuditLogService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const query = {
+      const _query = {
         page: 1,
         limit: 10,
         startDate: new Date('2024-01-10'),
         endDate: new Date('2024-01-20'),
       };
 
-      const result = await auditLogService.queryEvents(query);
+      const _result = await auditLogService.queryEvents(query);
 
       expect(result.events).toHaveLength(1);
       expect(result.events[0].id).toBe('test-2');
@@ -229,13 +229,13 @@ describe('AuditLogService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const query = {
+      const _query = {
         page: 1,
         limit: 10,
         searchText: 'login',
       };
 
-      const result = await auditLogService.queryEvents(query);
+      const _result = await auditLogService.queryEvents(query);
 
       expect(result.events).toHaveLength(1);
       expect(result.events[0].id).toBe('test-1');
@@ -285,7 +285,7 @@ describe('AuditLogService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const stats = await auditLogService.getStatistics();
+      const _stats = await auditLogService.getStatistics();
 
       expect(stats.totalEvents).toBe(3);
       expect(stats.eventsByType.user_login).toBe(2);
@@ -301,7 +301,7 @@ describe('AuditLogService', () => {
     it('should handle empty events list', async () => {
       mockStorage.get.mockResolvedValueOnce([]);
 
-      const stats = await auditLogService.getStatistics();
+      const _stats = await auditLogService.getStatistics();
 
       expect(stats.totalEvents).toBe(0);
       expect(stats.errorRate).toBe(0);
@@ -330,10 +330,10 @@ describe('AuditLogService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const startDate = new Date('2024-01-01');
-      const endDate = new Date('2024-01-31');
+      const _startDate = new Date('2024-01-01');
+      const _endDate = new Date('2024-01-31');
 
-      const report = await auditLogService.generateReport({
+      const _report = await auditLogService.generateReport({
         type: 'summary',
         startDate,
         endDate,
@@ -372,7 +372,7 @@ describe('AuditLogService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const fileName = await auditLogService.exportLogs({
+      const _fileName = await auditLogService.exportLogs({
         format: 'json',
         compression: false,
         encryption: false,
@@ -409,7 +409,7 @@ describe('AuditLogService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const fileName = await auditLogService.exportLogs({
+      const _fileName = await auditLogService.exportLogs({
         format: 'csv',
         compression: false,
         encryption: false,
@@ -445,7 +445,7 @@ describe('AuditLogService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const fileName = await auditLogService.exportLogs({
+      const _fileName = await auditLogService.exportLogs({
         format: 'xml',
         compression: false,
         encryption: false,
@@ -485,8 +485,8 @@ describe('AuditLogService', () => {
 
   describe('cleanup functionality', () => {
     it('should cleanup old logs', async () => {
-      const oldDate = new Date(Date.now() - 400 * 24 * 60 * 60 * 1000); // 400 days ago
-      const recentDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000); // 10 days ago
+      const _oldDate = new Date(Date.now() - 400 * 24 * 60 * 60 * 1000); // 400 days ago
+      const _recentDate = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000); // 10 days ago
 
       const mockEvents: AuditEvent[] = [
         {
@@ -533,7 +533,7 @@ describe('AuditLogService', () => {
     it('should handle storage errors gracefully', async () => {
       mockStorage.get.mockRejectedValueOnce(new Error('Storage error'));
 
-      const events = await auditLogService.queryEvents({
+      const _events = await auditLogService.queryEvents({
         page: 1,
         limit: 10,
       });

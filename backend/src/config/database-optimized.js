@@ -44,6 +44,7 @@ const testConnection = async () => {
     await sequelize.authenticate();
     return true;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('數據庫連接失敗:', error);
     return false;
   }
@@ -54,6 +55,7 @@ const initDatabase = async () => {
   try {
     await sequelize.sync({ alter: true });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('數據庫同步失敗:', error);
     throw error;
   }

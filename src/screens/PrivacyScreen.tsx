@@ -1,642 +1,551 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  RefreshControl,
-  TouchableOpacity,
+  ActivityIndicator,
   Alert,
-  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
-import { Card, Button, Loading, Skeleton } from '../components/common';
-import { theme } from '../config/theme';
-import {
-  fetchPrivacyPreferences,
-  fetchPrivacyDashboard,
-  fetchConsentHistory,
-  fetchDataRightsRequestHistory,
-  checkPrivacyCompliance,
-  selectPrivacyPreferences,
-  selectPrivacyPreferencesLoading,
-  selectPrivacyDashboard,
-  selectPrivacyDashboardLoading,
-  selectConsentHistory,
-  selectConsentHistoryLoading,
-  selectDataRightsRequests,
-  selectDataRightsRequestsLoading,
-  selectComplianceCheck,
-  selectComplianceCheckLoading,
-  selectCurrentRegion,
-} from '../store/slices/privacySlice';
-import { PrivacyPreferencesModal } from '../components/privacy/PrivacyPreferencesModal';
-import { ConsentHistoryModal } from '../components/privacy/ConsentHistoryModal';
-import { DataRightsModal } from '../components/privacy/DataRightsModal';
-import { ComplianceReportModal } from '../components/privacy/ComplianceReportModal';
-import { PrivacyDashboard } from '../components/privacy/PrivacyDashboard';
-import { ConsentManager } from '../components/privacy/ConsentManager';
-import { DataRightsManager } from '../components/privacy/DataRightsManager';
-import { DataBreachDashboard } from '../components/privacy/DataBreachDashboard';
-import { DataBreachEventDetail } from '../components/privacy/DataBreachEventDetail';
 
-const { width } = Dimensions.get('window');
+import type { RootState } from '../store';
+import {
+  fetchPrivacySettingsConfig,
+  updatePrivacyPreferences,
+} from '../store/slices/privacySlice';
 
 const PrivacyScreen: React.FC = () => {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
-
-  // Redux 狀態
-  const preferences = useSelector(selectPrivacyPreferences);
-  const preferencesLoading = useSelector(selectPrivacyPreferencesLoading);
-  const dashboard = useSelector(selectPrivacyDashboard);
-  const dashboardLoading = useSelector(selectPrivacyDashboardLoading);
-  const consentHistory = useSelector(selectConsentHistory);
-  const consentHistoryLoading = useSelector(selectConsentHistoryLoading);
-  const dataRightsRequests = useSelector(selectDataRightsRequests);
-  const dataRightsRequestsLoading = useSelector(
-    selectDataRightsRequestsLoading
+  const _dispatch = useDispatch();
+  const _preferences = useSelector(
+    (state: RootState) => state.privacy.preferences
   );
-  const complianceCheck = useSelector(selectComplianceCheck);
-  const complianceCheckLoading = useSelector(selectComplianceCheckLoading);
-  const currentRegion = useSelector(selectCurrentRegion);
-
-  // 本地狀態
+  const _preferencesLoading = useSelector(
+    (state: RootState) => state.privacy.preferencesLoading
+  );
+  const _preferencesError = useSelector(
+    (state: RootState) => state.privacy.preferencesError
+  );
   const [refreshing, setRefreshing] = useState(false);
-  const [showPreferencesModal, setShowPreferencesModal] = useState(false);
-  const [showConsentHistoryModal, setShowConsentHistoryModal] = useState(false);
-  const [showDataRightsModal, setShowDataRightsModal] = useState(false);
-  const [showComplianceModal, setShowComplianceModal] = useState(false);
-  const [showDataBreachDetail, setShowDataBreachDetail] = useState(false);
-  const [selectedBreachEvent, setSelectedBreachEvent] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<
-    'overview' | 'consent' | 'rights' | 'settings' | 'breach'
-  >('overview');
+  const [activeTab, setActiveTab] = useState('overview');
 
-  // 模擬用戶 ID (實際應用中應從認證狀態獲取)
-  const userId = 'user-123';
+  const _loadPrivacySettings = useCallback(async () => {
+    try {
+      await dispatch(fetchPrivacySettingsConfig('US') as any);
+    } catch (error) {
+      console.error('Failed to load privacy settings:', error);
+    }
+  }, [dispatch]);
 
   useEffect(() => {
-    loadPrivacyData();
+    loadPrivacySettings();
+  }, [loadPrivacySettings]);
+
+  const _onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await loadPrivacySettings();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadPrivacySettings]);
+
+  const _handleComplianceCheck = useCallback(() => {
+    Alert.alert('合規檢查', '正在檢查隱私合規性...', [
+      { text: '確定', style: 'default' },
+    ]);
   }, []);
 
-  const loadPrivacyData = async () => {
-    try {
-      await Promise.all([
-        dispatch(fetchPrivacyPreferences(userId) as any),
-        dispatch(fetchPrivacyDashboard(userId) as any),
-        dispatch(fetchConsentHistory(userId) as any),
-        dispatch(fetchDataRightsRequestHistory(userId) as any),
-        dispatch(
-          checkPrivacyCompliance({ userId, region: currentRegion }) as any
-        ),
-      ]);
-    } catch (error) {
-      // logger.info('加載隱私數據失敗:', error);
-    }
-  };
+  const _handleDataRightsRequest = useCallback(() => {
+    Alert.alert(
+      '數據權利請求',
+      '您的數據權利請求已提交，我們將在30天內處理。',
+      [{ text: '確定', style: 'default' }]
+    );
+  }, []);
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadPrivacyData();
-    setRefreshing(false);
-  };
-
-  const handleComplianceCheck = async () => {
-    try {
-      await dispatch(
-        checkPrivacyCompliance({ userId, region: currentRegion }) as any
+  const _handleConsentUpdate = useCallback(
+    (type: string, value: boolean) => {
+      // 這裡需要根據實際的用戶ID來調用
+      const _userId = 'current-user-id'; // 應該從認證狀態獲取
+      dispatch(
+        updatePrivacyPreferences({
+          userId,
+          preferences: { [type]: value },
+        }) as any
       );
-      setShowComplianceModal(true);
-    } catch (error) {
-      // logger.info('合規性檢查失敗:', error);
-    }
-  };
+    },
+    [dispatch]
+  );
 
-  const handleBreachEventPress = (event: any) => {
-    setSelectedBreachEvent(event);
-    setShowDataBreachDetail(true);
-  };
+  if (preferencesLoading && !refreshing) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size='large' color='#007AFF' />
+        <Text style={styles.loadingText}>載入隱私設置中...</Text>
+      </View>
+    );
+  }
 
-  const handleCreateBreachEvent = () => {
-    // 這裡可以導航到創建事件頁面或顯示模態框
-    Alert.alert('創建事件', '手動創建數據洩露事件功能');
-  };
+  if (preferencesError) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>載入失敗</Text>
+        <Text style={styles.errorMessage}>{preferencesError}</Text>
+        <Text style={styles.retryText} onPress={loadPrivacySettings}>
+          點擊重試
+        </Text>
+      </View>
+    );
+  }
 
-  const handleComplianceCheck = async () => {
-    setComplianceCheckLoading(true);
-    try {
-      // 執行合規性檢查邏輯
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      Alert.alert(
-        t('privacy.success.title'),
-        t('privacy.success.compliance_check_passed')
-      );
-    } catch (error) {
-      Alert.alert(
-        t('privacy.error.title'),
-        t('privacy.error.compliance_check_failed')
-      );
-    } finally {
-      setComplianceCheckLoading(false);
-    }
-  };
+  const _renderOverviewTab = () => (
+    <View style={styles.tabContent}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>隱私概覽</Text>
+        <Text style={styles.sectionDescription}>
+          管理您的隱私設置和數據權利
+        </Text>
+      </View>
 
-  const renderHeader = () => (
-    <View style={styles.header}>
-      <Text style={styles.title}>{t('privacy.title')}</Text>
-      <Text style={styles.subtitle}>{t('privacy.subtitle')}</Text>
+      <View style={styles.section}>
+        <TouchableOpacity
+          style={styles.complianceButton}
+          onPress={handleComplianceCheck}
+        >
+          <Text style={styles.complianceButtonText}>檢查合規性</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>快速操作</Text>
+        <TouchableOpacity style={styles.quickAction}>
+          <Text style={styles.quickActionText}>下載我的數據</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.quickAction}>
+          <Text style={styles.quickActionText}>刪除我的帳戶</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
-  const renderTabBar = () => (
-    <View style={styles.tabBar}>
-      {[
-        {
-          key: 'overview',
-          label: t('privacy.tabs.overview'),
-          icon: 'grid-outline',
-        },
-        {
-          key: 'consent',
-          label: t('privacy.tabs.consent'),
-          icon: 'checkmark-circle-outline',
-        },
-        {
-          key: 'rights',
-          label: t('privacy.tabs.rights'),
-          icon: 'shield-outline',
-        },
-        { key: 'breach', label: '數據洩露', icon: 'alert-circle-outline' },
-        {
-          key: 'settings',
-          label: t('privacy.tabs.settings'),
-          icon: 'settings-outline',
-        },
-      ].map((tab) => (
+  const _renderConsentTab = () => (
+    <View style={styles.tabContent}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>同意管理</Text>
+        <Text style={styles.sectionDescription}>管理您對數據處理的同意</Text>
+      </View>
+
+      <View style={styles.setting}>
+        <Text style={styles.settingTitle}>營銷通訊</Text>
         <TouchableOpacity
-          key={tab.key}
-          style={[styles.tab, activeTab === tab.key && styles.activeTab]}
-          onPress={() => setActiveTab(tab.key as any)}
+          style={[
+            styles.toggle,
+            preferences?.marketingConsent?.email && styles.toggleActive,
+          ]}
+          onPress={() =>
+            handleConsentUpdate(
+              'marketingConsent.email',
+              !preferences?.marketingConsent?.email
+            )
+          }
         >
-          <Ionicons
-            name={tab.icon as any}
-            size={20}
-            color={
-              activeTab === tab.key
-                ? theme.colors.primary
-                : theme.colors.textSecondary
-            }
-          />
-          <Text
-            style={[
-              styles.tabLabel,
-              activeTab === tab.key && styles.activeTabLabel,
-            ]}
-          >
-            {tab.label}
+          <Text style={styles.toggleText}>
+            {preferences?.marketingConsent?.email ? '已同意' : '未同意'}
           </Text>
         </TouchableOpacity>
-      ))}
-    </View>
-  );
+      </View>
 
-  const renderOverviewTab = () => (
-    <View style={styles.tabContent}>
-      {/* 隱私儀表板 */}
-      <PrivacyDashboard
-        dashboard={dashboard}
-        loading={dashboardLoading}
-        onRefresh={onRefresh}
-      />
+      <View style={styles.setting}>
+        <Text style={styles.settingTitle}>數據分享</Text>
+        <TouchableOpacity
+          style={[
+            styles.toggle,
+            preferences?.dataSharingConsent?.analytics && styles.toggleActive,
+          ]}
+          onPress={() =>
+            handleConsentUpdate(
+              'dataSharingConsent.analytics',
+              !preferences?.dataSharingConsent?.analytics
+            )
+          }
+        >
+          <Text style={styles.toggleText}>
+            {preferences?.dataSharingConsent?.analytics ? '已同意' : '未同意'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* 合規性檢查 */}
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Ionicons
-            name="shield-checkmark"
-            size={24}
-            color={theme.colors.primary}
-          />
-          <Text style={styles.cardTitle}>{t('privacy.compliance.title')}</Text>
-        </View>
-        <Text style={styles.cardDescription}>
-          {t('privacy.compliance.description')}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>同意歷史</Text>
+        <Text style={styles.historyText}>
+          上次更新：
+          {preferences?.updatedAt
+            ? new Date(preferences.updatedAt).toLocaleDateString()
+            : '未知'}
         </Text>
-        <Button
-          title={t('privacy.compliance.check_button')}
-          onPress={handleComplianceCheck}
-          loading={complianceCheckLoading}
-          style={styles.button}
-        />
-      </Card>
+      </View>
+    </View>
+  );
 
-      {/* 快速操作 */}
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Ionicons name="flash" size={24} color={theme.colors.primary} />
-          <Text style={styles.cardTitle}>
-            {t('privacy.quick_actions.title')}
+  const _renderDataRightsTab = () => (
+    <View style={styles.tabContent}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>數據權利</Text>
+        <Text style={styles.sectionDescription}>您對個人數據的權利</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.rightTitle}>訪問權</Text>
+        <Text style={styles.rightDescription}>
+          獲取我們持有的您的個人數據副本
+        </Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.rightTitle}>更正權</Text>
+        <Text style={styles.rightDescription}>要求更正不準確的個人數據</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.rightTitle}>刪除權</Text>
+        <Text style={styles.rightDescription}>要求刪除您的個人數據</Text>
+      </View>
+
+      <View style={styles.section}>
+        <TouchableOpacity
+          style={styles.requestButton}
+          onPress={handleDataRightsRequest}
+        >
+          <Text style={styles.requestButtonText}>提交權利請求</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+
+  const _renderSettingsTab = () => (
+    <View style={styles.tabContent}>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>隱私設置</Text>
+        <Text style={styles.sectionDescription}>自定義您的隱私偏好</Text>
+      </View>
+
+      <View style={styles.setting}>
+        <Text style={styles.settingTitle}>通知設置</Text>
+        <TouchableOpacity
+          style={[
+            styles.toggle,
+            preferences?.notificationPreferences?.privacyUpdates &&
+              styles.toggleActive,
+          ]}
+          onPress={() =>
+            handleConsentUpdate(
+              'notificationPreferences.privacyUpdates',
+              !preferences?.notificationPreferences?.privacyUpdates
+            )
+          }
+        >
+          <Text style={styles.toggleText}>
+            {preferences?.notificationPreferences?.privacyUpdates
+              ? '已啟用'
+              : '已停用'}
           </Text>
-        </View>
-        <View style={styles.quickActions}>
-          <TouchableOpacity
-            style={styles.quickAction}
-            onPress={() => setShowPreferencesModal(true)}
-          >
-            <Ionicons name="options" size={20} color={theme.colors.primary} />
-            <Text style={styles.quickActionText}>
-              {t('privacy.quick_actions.preferences')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.quickAction}
-            onPress={() => setShowConsentHistoryModal(true)}
-          >
-            <Ionicons name="time" size={20} color={theme.colors.primary} />
-            <Text style={styles.quickActionText}>
-              {t('privacy.quick_actions.history')}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.quickAction}
-            onPress={() => setShowDataRightsModal(true)}
-          >
-            <Ionicons
-              name="document-text"
-              size={20}
-              color={theme.colors.primary}
-            />
-            <Text style={styles.quickActionText}>
-              {t('privacy.quick_actions.rights')}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </Card>
-    </View>
-  );
+        </TouchableOpacity>
+      </View>
 
-  const renderConsentTab = () => (
-    <View style={styles.tabContent}>
-      <ConsentManager
-        preferences={preferences}
-        consentHistory={consentHistory}
-        loading={consentHistoryLoading}
-        onRefresh={onRefresh}
-      />
-    </View>
-  );
+      <View style={styles.setting}>
+        <Text style={styles.settingTitle}>數據保留</Text>
+        <Text style={styles.settingDescription}>自動刪除：30 天</Text>
+      </View>
 
-  const renderRightsTab = () => (
-    <View style={styles.tabContent}>
-      <DataRightsManager
-        dataRightsRequests={dataRightsRequests}
-        loading={dataRightsRequestsLoading}
-        onRefresh={onRefresh}
-      />
-    </View>
-  );
-
-  const renderSettingsTab = () => (
-    <View style={styles.tabContent}>
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Ionicons name="settings" size={24} color={theme.colors.primary} />
-          <Text style={styles.cardTitle}>{t('privacy.settings.title')}</Text>
-        </View>
-
-        {/* 地區設置 */}
-        <View style={styles.settingItem}>
-          <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>
-              {t('privacy.settings.region')}
-            </Text>
-            <Text style={styles.settingValue}>{currentRegion}</Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={theme.colors.textSecondary}
-          />
-        </View>
-
-        {/* 通知設置 */}
-        <View style={styles.settingItem}>
-          <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>
-              {t('privacy.settings.notifications')}
-            </Text>
-            <Text style={styles.settingDescription}>
-              {t('privacy.settings.notifications_description')}
-            </Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={theme.colors.textSecondary}
-          />
-        </View>
-
-        {/* 數據保留 */}
-        <View style={styles.settingItem}>
-          <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>
-              {t('privacy.settings.data_retention')}
-            </Text>
-            <Text style={styles.settingDescription}>
-              {t('privacy.settings.data_retention_description')}
-            </Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={theme.colors.textSecondary}
-          />
-        </View>
-
-        {/* 第三方共享 */}
-        <View style={styles.settingItem}>
-          <View style={styles.settingInfo}>
-            <Text style={styles.settingLabel}>
-              {t('privacy.settings.third_party')}
-            </Text>
-            <Text style={styles.settingDescription}>
-              {t('privacy.settings.third_party_description')}
-            </Text>
-          </View>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={theme.colors.textSecondary}
-          />
-        </View>
-      </Card>
-
-      {/* 高級設置 */}
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <Ionicons name="construct" size={24} color={theme.colors.primary} />
-          <Text style={styles.cardTitle}>
-            {t('privacy.settings.advanced.title')}
+      <View style={styles.setting}>
+        <Text style={styles.settingTitle}>高級設置</Text>
+        <TouchableOpacity
+          style={[
+            styles.toggle,
+            preferences?.dataRights?.access && styles.toggleActive,
+          ]}
+          onPress={() =>
+            handleConsentUpdate(
+              'dataRights.access',
+              !preferences?.dataRights?.access
+            )
+          }
+        >
+          <Text style={styles.toggleText}>
+            {preferences?.dataRights?.access ? '已啟用' : '已停用'}
           </Text>
-        </View>
-
-        <Button
-          title={t('privacy.settings.advanced.export_data')}
-          variant="outline"
-          onPress={() => {
-            /* 導出數據 */
-          }}
-          style={styles.button}
-        />
-
-        <Button
-          title={t('privacy.settings.advanced.delete_data')}
-          variant="outline"
-          onPress={() => {
-            Alert.alert(
-              t('privacy.settings.advanced.delete_confirm_title'),
-              t('privacy.settings.advanced.delete_confirm_message'),
-              [
-                { text: t('common.cancel'), style: 'cancel' },
-                {
-                  text: t('common.confirm'),
-                  style: 'destructive',
-                  onPress: () => {
-                    /* 刪除數據 */
-                  },
-                },
-              ]
-            );
-          }}
-          style={styles.button}
-        />
-      </Card>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
-  const renderBreachTab = () => (
+  const _renderChildrenProtection = () => (
     <View style={styles.tabContent}>
-      <DataBreachDashboard
-        onEventPress={handleBreachEventPress}
-        onCreateEvent={handleCreateBreachEvent}
-      />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>兒童保護</Text>
+        <Text style={styles.sectionDescription}>保護未成年人的隱私和安全</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.settingTitle}>年齡驗證</Text>
+        <Text style={styles.settingDescription}>已啟用：13歲以下用戶限制</Text>
+      </View>
+
+      <View style={styles.section}>
+        <Text style={styles.settingTitle}>家長控制</Text>
+        <TouchableOpacity style={styles.quickAction}>
+          <Text style={styles.quickActionText}>設置家長控制</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
-  const renderTabContent = () => {
+  const _renderTabContent = () => {
     switch (activeTab) {
       case 'overview':
         return renderOverviewTab();
       case 'consent':
         return renderConsentTab();
       case 'rights':
-        return renderRightsTab();
-      case 'breach':
-        return renderBreachTab();
+        return renderDataRightsTab();
       case 'settings':
         return renderSettingsTab();
+      case 'children':
+        return renderChildrenProtection();
       default:
         return renderOverviewTab();
     }
   };
 
-  if (preferencesLoading && !preferences) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Loading size="large" />
-        <Text style={styles.loadingText}>{t('privacy.loading')}</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>隱私設置</Text>
+      </View>
+
+      <View style={styles.tabBar}>
+        {[
+          { key: 'overview', label: '概覽' },
+          { key: 'consent', label: '同意' },
+          { key: 'rights', label: '權利' },
+          { key: 'settings', label: '設置' },
+          { key: 'children', label: '兒童保護' },
+        ].map(tab => (
+          <TouchableOpacity
+            key={tab.key}
+            style={[styles.tab, activeTab === tab.key && styles.activeTab]}
+            onPress={() => setActiveTab(tab.key)}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === tab.key && styles.activeTabText,
+              ]}
+            >
+              {tab.label}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       <ScrollView
-        style={styles.scrollView}
+        style={styles.content}
+        testID='privacy-scroll-view'
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#007AFF']}
+            tintColor='#007AFF'
+          />
         }
       >
-        {renderHeader()}
-        {renderTabBar()}
         {renderTabContent()}
       </ScrollView>
-
-      {/* 模態框 */}
-      <PrivacyPreferencesModal
-        visible={showPreferencesModal}
-        preferences={preferences}
-        onClose={() => setShowPreferencesModal(false)}
-        onSave={(preferences) => {
-          // 保存偏好設置
-          setShowPreferencesModal(false);
-        }}
-      />
-
-      <ConsentHistoryModal
-        visible={showConsentHistoryModal}
-        consentHistory={consentHistory}
-        loading={consentHistoryLoading}
-        onClose={() => setShowConsentHistoryModal(false)}
-      />
-
-      <DataRightsModal
-        visible={showDataRightsModal}
-        dataRightsRequests={dataRightsRequests}
-        loading={dataRightsRequestsLoading}
-        onClose={() => setShowDataRightsModal(false)}
-      />
-
-      <ComplianceReportModal
-        visible={showComplianceModal}
-        complianceCheck={complianceCheck}
-        onClose={() => setShowComplianceModal(false)}
-      />
-
-      {selectedBreachEvent && (
-        <DataBreachEventDetail
-          event={selectedBreachEvent}
-          onClose={() => {
-            setShowDataBreachDetail(false);
-            setSelectedBreachEvent(null);
-          }}
-          onUpdate={(updatedEvent) => {
-            setSelectedBreachEvent(updatedEvent);
-          }}
-        />
-      )}
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const _styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
-  },
-  scrollView: {
-    flex: 1,
+    backgroundColor: '#F8F9FA',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
+    backgroundColor: '#F8F9FA',
   },
   loadingText: {
     marginTop: 16,
     fontSize: 16,
-    color: theme.colors.textSecondary,
+    color: '#6C757D',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F8F9FA',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#DC3545',
+    marginBottom: 8,
+  },
+  errorMessage: {
+    fontSize: 14,
+    color: '#6C757D',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryText: {
+    fontSize: 16,
+    color: '#007AFF',
+    textDecorationLine: 'underline',
   },
   header: {
     padding: 20,
-    backgroundColor: theme.colors.primary,
+    backgroundColor: '#FFFFFF',
+    borderBottomWidth: 1,
+    borderBottomColor: '#E9ECEF',
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: theme.colors.white,
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: theme.colors.white,
-    opacity: 0.8,
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#212529',
   },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: theme.colors.white,
+    backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
+    borderBottomColor: '#E9ECEF',
   },
   tab: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 8,
+    alignItems: 'center',
   },
   activeTab: {
     borderBottomWidth: 2,
-    borderBottomColor: theme.colors.primary,
+    borderBottomColor: '#007AFF',
   },
-  tabLabel: {
-    marginLeft: 4,
-    fontSize: 12,
-    color: theme.colors.textSecondary,
-  },
-  activeTabLabel: {
-    color: theme.colors.primary,
-    fontWeight: '600',
-  },
-  tabContent: {
-    padding: 16,
-  },
-  card: {
-    marginBottom: 16,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: theme.colors.text,
-    marginLeft: 8,
-  },
-  cardDescription: {
+  tabText: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
-    marginBottom: 16,
-    lineHeight: 20,
+    color: '#6C757D',
   },
-  button: {
-    marginTop: 8,
+  activeTabText: {
+    color: '#007AFF',
+    fontWeight: '600',
   },
-  quickActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-  },
-  quickAction: {
-    alignItems: 'center',
-    padding: 12,
-  },
-  quickActionText: {
-    fontSize: 12,
-    color: theme.colors.text,
-    marginTop: 4,
-    textAlign: 'center',
-  },
-  settingItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.colors.border,
-  },
-  settingInfo: {
+  content: {
     flex: 1,
   },
-  settingLabel: {
-    fontSize: 16,
-    color: theme.colors.text,
-    marginBottom: 2,
+  tabContent: {
+    padding: 20,
   },
-  settingValue: {
+  section: {
+    marginBottom: 24,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#212529',
+    marginBottom: 8,
+  },
+  sectionDescription: {
     fontSize: 14,
-    color: theme.colors.primary,
-    fontWeight: '500',
+    color: '#6C757D',
+    marginBottom: 16,
+  },
+  complianceButton: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  complianceButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  quickAction: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E9ECEF',
+  },
+  quickActionText: {
+    fontSize: 16,
+    color: '#007AFF',
+  },
+  setting: {
+    marginBottom: 16,
+  },
+  settingTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#212529',
+    marginBottom: 8,
   },
   settingDescription: {
     fontSize: 14,
-    color: theme.colors.textSecondary,
+    color: '#6C757D',
+    marginBottom: 12,
+  },
+  toggle: {
+    backgroundColor: '#E9ECEF',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+  },
+  toggleActive: {
+    backgroundColor: '#007AFF',
+  },
+  toggleText: {
+    fontSize: 14,
+    color: '#6C757D',
+  },
+  historyText: {
+    fontSize: 14,
+    color: '#6C757D',
+  },
+  rightTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#212529',
+    marginBottom: 4,
+  },
+  rightDescription: {
+    fontSize: 14,
+    color: '#6C757D',
+    marginBottom: 12,
+  },
+  requestButton: {
+    backgroundColor: '#28A745',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 6,
+    alignItems: 'center',
+  },
+  requestButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
 

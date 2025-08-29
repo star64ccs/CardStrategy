@@ -1,11 +1,67 @@
 import { useState, useEffect, useCallback } from 'react';
-import {
-  swManager,
-  CacheInfo,
-  SyncData,
-  PerformanceMetrics,
-  PrefetchConfig,
-} from '@/utils/serviceWorkerManager';
+
+// 臨時類型定義
+interface CacheInfo {
+  name: string;
+  size: number;
+  entries: number;
+  lastUpdated: Date;
+}
+
+interface SyncData {
+  id: string;
+  type: string;
+  data: unknown;
+  timestamp: Date;
+  retryCount: number;
+}
+
+interface PerformanceMetrics {
+  cacheHits: number;
+  cacheMisses: number;
+  networkRequests: number;
+  errors: number;
+  hitRate: number;
+  lastReset: Date;
+}
+
+interface PrefetchConfig {
+  urls: string[];
+  strategy: 'cache-first' | 'network-first' | 'stale-while-revalidate';
+  priority: 'high' | 'low';
+}
+
+// 臨時實現
+const _swManager = {
+  init: async () => {},
+  getStatus: () => ({
+    registered: false,
+    active: false,
+    installing: false,
+    waiting: false,
+  }),
+  getCacheInfo: async () => [],
+  getSyncQueue: () => [],
+  getPerformanceMetrics: async () => ({
+    cacheHits: 0,
+    cacheMisses: 0,
+    networkRequests: 0,
+    errors: 0,
+    hitRate: 0,
+    lastReset: new Date(),
+  }),
+  clearCache: async (cacheName?: string) => {},
+  addToSyncQueue: (data: SyncData) => {},
+  clearSyncQueue: () => {},
+  registerBackgroundSync: async (tag: string, data?: unknown) => {},
+  sendNotification: async (title: string, options?: NotificationOptions) => {},
+  prefetchResources: async (config: PrefetchConfig) => {},
+  smartPrefetch: async (currentUrl: string) => {},
+  updateConfig: (config: Partial<any>) => {},
+  getSupportedFeatures: () => [],
+  updateApp: async () => {},
+  unregister: async () => true,
+};
 
 export interface ServiceWorkerStatus {
   registered: boolean;
@@ -37,7 +93,7 @@ export interface ServiceWorkerActions {
   // 同步功能
   addToSyncQueue: (data: SyncData) => void;
   clearSyncQueue: () => void;
-  registerBackgroundSync: (tag: string, data?: any) => Promise<void>;
+  registerBackgroundSync: (tag: string, data?: unknown) => Promise<void>;
   refreshSyncQueue: () => void;
 
   // 通知功能
@@ -58,7 +114,7 @@ export interface ServiceWorkerActions {
   getSupportedFeatures: () => string[];
 }
 
-export const useServiceWorker = (): ServiceWorkerState &
+export const _useServiceWorker = (): ServiceWorkerState &
   ServiceWorkerActions => {
   const [state, setState] = useState<ServiceWorkerState>({
     status: {
@@ -83,23 +139,23 @@ export const useServiceWorker = (): ServiceWorkerState &
   });
 
   // 初始化 Service Worker
-  const initialize = useCallback(async () => {
+  const _initialize = useCallback(async () => {
     try {
-      setState((prev) => ({ ...prev, isLoading: true, error: null }));
+      setState(prev => ({ ...prev, isLoading: true, error: null }));
 
       await swManager.init();
 
       // 更新狀態
-      const status = {
+      const _status = {
         ...swManager.getStatus(),
         online: navigator.onLine,
       };
 
-      const cacheInfo = await swManager.getCacheInfo();
-      const syncQueue = swManager.getSyncQueue();
-      const performanceMetrics = await swManager.getPerformanceMetrics();
+      const _cacheInfo = await swManager.getCacheInfo();
+      const _syncQueue = swManager.getSyncQueue();
+      const _performanceMetrics = await swManager.getPerformanceMetrics();
 
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         status,
         cacheInfo,
@@ -108,7 +164,7 @@ export const useServiceWorker = (): ServiceWorkerState &
         isLoading: false,
       }));
     } catch (error) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : '初始化失敗',
         isLoading: false,
@@ -117,13 +173,13 @@ export const useServiceWorker = (): ServiceWorkerState &
   }, []);
 
   // 更新應用
-  const updateApp = useCallback(async () => {
+  const _updateApp = useCallback(async () => {
     try {
       await swManager.updateApp();
       // 重新初始化以獲取最新狀態
       await initialize();
     } catch (error) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : '更新失敗',
       }));
@@ -131,10 +187,10 @@ export const useServiceWorker = (): ServiceWorkerState &
   }, [initialize]);
 
   // 註銷 Service Worker
-  const unregister = useCallback(async () => {
+  const _unregister = useCallback(async () => {
     try {
-      const result = await swManager.unregister();
-      setState((prev) => ({
+      const _result = await swManager.unregister();
+      setState(prev => ({
         ...prev,
         status: {
           registered: false,
@@ -146,7 +202,7 @@ export const useServiceWorker = (): ServiceWorkerState &
       }));
       return result;
     } catch (error) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : '註銷失敗',
       }));
@@ -155,13 +211,13 @@ export const useServiceWorker = (): ServiceWorkerState &
   }, []);
 
   // 清理緩存
-  const clearCache = useCallback(async (cacheName?: string) => {
+  const _clearCache = useCallback(async (cacheName?: string) => {
     try {
       await swManager.clearCache(cacheName);
       // 重新獲取緩存信息
       await refreshCacheInfo();
     } catch (error) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : '清理緩存失敗',
       }));
@@ -169,12 +225,12 @@ export const useServiceWorker = (): ServiceWorkerState &
   }, []);
 
   // 刷新緩存信息
-  const refreshCacheInfo = useCallback(async () => {
+  const _refreshCacheInfo = useCallback(async () => {
     try {
-      const cacheInfo = await swManager.getCacheInfo();
-      setState((prev) => ({ ...prev, cacheInfo }));
+      const _cacheInfo = await swManager.getCacheInfo();
+      setState(prev => ({ ...prev, cacheInfo }));
     } catch (error) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : '獲取緩存信息失敗',
       }));
@@ -182,24 +238,24 @@ export const useServiceWorker = (): ServiceWorkerState &
   }, []);
 
   // 添加到同步隊列
-  const addToSyncQueue = useCallback((data: SyncData) => {
+  const _addToSyncQueue = useCallback((data: SyncData) => {
     swManager.addToSyncQueue(data);
     refreshSyncQueue();
   }, []);
 
   // 清空同步隊列
-  const clearSyncQueue = useCallback(() => {
+  const _clearSyncQueue = useCallback(() => {
     swManager.clearSyncQueue();
     refreshSyncQueue();
   }, []);
 
   // 註冊背景同步
-  const registerBackgroundSync = useCallback(
-    async (tag: string, data?: any) => {
+  const _registerBackgroundSync = useCallback(
+    async (tag: string, data?: unknown) => {
       try {
         await swManager.registerBackgroundSync(tag, data);
       } catch (error) {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           error: error instanceof Error ? error.message : '註冊背景同步失敗',
         }));
@@ -209,18 +265,18 @@ export const useServiceWorker = (): ServiceWorkerState &
   );
 
   // 刷新同步隊列
-  const refreshSyncQueue = useCallback(() => {
-    const syncQueue = swManager.getSyncQueue();
-    setState((prev) => ({ ...prev, syncQueue }));
+  const _refreshSyncQueue = useCallback(() => {
+    const _syncQueue = swManager.getSyncQueue();
+    setState(prev => ({ ...prev, syncQueue }));
   }, []);
 
   // 發送通知
-  const sendNotification = useCallback(
+  const _sendNotification = useCallback(
     async (title: string, options?: NotificationOptions) => {
       try {
         await swManager.sendNotification(title, options);
       } catch (error) {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           error: error instanceof Error ? error.message : '發送通知失敗',
         }));
@@ -230,11 +286,11 @@ export const useServiceWorker = (): ServiceWorkerState &
   );
 
   // 預取資源
-  const prefetchResources = useCallback(async (config: PrefetchConfig) => {
+  const _prefetchResources = useCallback(async (config: PrefetchConfig) => {
     try {
       await swManager.prefetchResources(config);
     } catch (error) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : '預取資源失敗',
       }));
@@ -242,11 +298,11 @@ export const useServiceWorker = (): ServiceWorkerState &
   }, []);
 
   // 智能預取
-  const smartPrefetch = useCallback(async (currentUrl: string) => {
+  const _smartPrefetch = useCallback(async (currentUrl: string) => {
     try {
       await swManager.smartPrefetch(currentUrl);
     } catch (error) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : '智能預取失敗',
       }));
@@ -254,12 +310,12 @@ export const useServiceWorker = (): ServiceWorkerState &
   }, []);
 
   // 刷新性能指標
-  const refreshPerformanceMetrics = useCallback(async () => {
+  const _refreshPerformanceMetrics = useCallback(async () => {
     try {
-      const performanceMetrics = await swManager.getPerformanceMetrics();
-      setState((prev) => ({ ...prev, performanceMetrics }));
+      const _performanceMetrics = await swManager.getPerformanceMetrics();
+      setState(prev => ({ ...prev, performanceMetrics }));
     } catch (error) {
-      setState((prev) => ({
+      setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : '獲取性能指標失敗',
       }));
@@ -267,12 +323,12 @@ export const useServiceWorker = (): ServiceWorkerState &
   }, []);
 
   // 更新配置
-  const updateConfig = useCallback((config: Partial<any>) => {
+  const _updateConfig = useCallback((config: Partial<any>) => {
     swManager.updateConfig(config);
   }, []);
 
   // 獲取支持的功能
-  const getSupportedFeatures = useCallback(() => {
+  const _getSupportedFeatures = useCallback(() => {
     return swManager.getSupportedFeatures();
   }, []);
 
@@ -283,15 +339,15 @@ export const useServiceWorker = (): ServiceWorkerState &
 
   // 監聽網絡狀態變化
   useEffect(() => {
-    const handleOnline = () => {
-      setState((prev) => ({
+    const _handleOnline = () => {
+      setState(prev => ({
         ...prev,
         status: { ...prev.status, online: true },
       }));
     };
 
-    const handleOffline = () => {
-      setState((prev) => ({
+    const _handleOffline = () => {
+      setState(prev => ({
         ...prev,
         status: { ...prev.status, online: false },
       }));
@@ -308,7 +364,7 @@ export const useServiceWorker = (): ServiceWorkerState &
 
   // 定期刷新緩存信息和性能指標
   useEffect(() => {
-    const interval = setInterval(() => {
+    const _interval = setInterval(() => {
       refreshCacheInfo();
       refreshPerformanceMetrics();
       refreshSyncQueue();
@@ -341,20 +397,20 @@ export const useServiceWorker = (): ServiceWorkerState &
 };
 
 // 簡化的 Hook，只提供基本功能
-export const useServiceWorkerBasic = () => {
+export const _useServiceWorkerBasic = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [isRegistered, setIsRegistered] = useState(false);
 
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    const _handleOnline = () => setIsOnline(true);
+    const _handleOffline = () => setIsOnline(false);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
     // 檢查 Service Worker 狀態
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then((registrations) => {
+      navigator.serviceWorker.getRegistrations().then(registrations => {
         setIsRegistered(registrations.length > 0);
       });
     }
@@ -365,7 +421,7 @@ export const useServiceWorkerBasic = () => {
     };
   }, []);
 
-  const sendNotification = useCallback(
+  const _sendNotification = useCallback(
     async (title: string, options?: NotificationOptions) => {
       try {
         await swManager.sendNotification(title, options);

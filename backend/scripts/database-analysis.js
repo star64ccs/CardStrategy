@@ -152,7 +152,10 @@ async function analyzeDatabase() {
     recommendations.push('- 建議啟用查詢緩存');
     recommendations.push('- 建議定期分析表統計信息');
 
-    recommendations.forEach((rec) => console.log(rec));
+    recommendations.forEach((rec) => {
+      // eslint-disable-next-line no-console
+      console.log(rec);
+    });
 
     // 生成報告文件
     const report = {

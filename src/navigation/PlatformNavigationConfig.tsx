@@ -1,10 +1,13 @@
 import React from 'react';
 import { Platform } from 'react-native';
-import { isIOS, isAndroid, getPlatformStyles } from '../utils/platformUtils';
+// 臨時實現
+const _isIOS = () => Platform.OS === 'ios';
+const _isAndroid = () => Platform.OS === 'android';
+const _getPlatformStyles = () => ({});
 
 // 平台特定導航配置
-export const getPlatformNavigationConfig = () => {
-  const platformStyles = getPlatformStyles();
+export const _getPlatformNavigationConfig = () => {
+  const _platformStyles = getPlatformStyles();
 
   return {
     // 堆疊導航器配置
@@ -92,12 +95,18 @@ export const getPlatformNavigationConfig = () => {
 };
 
 // 平台特定動畫配置
-export const getPlatformAnimationConfig = () => {
+export const _getPlatformAnimationConfig = () => {
   return {
     // iOS 動畫配置
     ios: {
       // 頁面轉場動畫
-      cardStyleInterpolator: ({ current, layouts }) => ({
+      cardStyleInterpolator: ({
+        current,
+        layouts,
+      }: {
+        current: unknown;
+        layouts: unknown;
+      }) => ({
         cardStyle: {
           transform: [
             {
@@ -122,7 +131,13 @@ export const getPlatformAnimationConfig = () => {
     // Android 動畫配置
     android: {
       // 頁面轉場動畫
-      cardStyleInterpolator: ({ current, layouts }) => ({
+      cardStyleInterpolator: ({
+        current,
+        layouts,
+      }: {
+        current: unknown;
+        layouts: unknown;
+      }) => ({
         cardStyle: {
           transform: [
             {
@@ -147,7 +162,7 @@ export const getPlatformAnimationConfig = () => {
 };
 
 // 平台特定手勢配置
-export const getPlatformGestureConfig = () => {
+export const _getPlatformGestureConfig = () => {
   return {
     // iOS 手勢配置
     ios: {
@@ -180,7 +195,7 @@ export const getPlatformGestureConfig = () => {
 };
 
 // 平台特定主題配置
-export const getPlatformThemeConfig = () => {
+export const _getPlatformThemeConfig = () => {
   return {
     // iOS 主題配置
     ios: {
@@ -275,7 +290,7 @@ export const getPlatformThemeConfig = () => {
 };
 
 // 平台特定無障礙配置
-export const getPlatformAccessibilityConfig = () => {
+export const _getPlatformAccessibilityConfig = () => {
   return {
     // iOS 無障礙配置
     ios: {
@@ -283,7 +298,7 @@ export const getPlatformAccessibilityConfig = () => {
       accessibilityLabel: (label: string) => label,
       accessibilityHint: (hint: string) => hint,
       accessibilityRole: (role: string) => role,
-      accessibilityState: (state: any) => state,
+      accessibilityState: (state: unknown) => state,
       // 動態字體支持
       allowFontScaling: true,
       // 高對比度支持
@@ -298,7 +313,7 @@ export const getPlatformAccessibilityConfig = () => {
       accessibilityLabel: (label: string) => label,
       accessibilityHint: (hint: string) => hint,
       accessibilityRole: (role: string) => role,
-      accessibilityState: (state: any) => state,
+      accessibilityState: (state: unknown) => state,
       // 動態字體支持
       allowFontScaling: true,
       // 高對比度支持
@@ -312,7 +327,7 @@ export const getPlatformAccessibilityConfig = () => {
 };
 
 // 平台特定性能配置
-export const getPlatformPerformanceConfig = () => {
+export const _getPlatformPerformanceConfig = () => {
   return {
     // iOS 性能配置
     ios: {

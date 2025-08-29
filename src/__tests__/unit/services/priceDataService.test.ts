@@ -1,14 +1,14 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { priceDataService } from '../../../services/priceDataService';
 import { apiService } from '../../../services/apiService';
+import { priceDataService } from '../../../services/priceDataService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../utils/logger');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('PriceDataService', () => {
   beforeEach(() => {
@@ -16,14 +16,14 @@ describe('PriceDataService', () => {
   });
 
   describe('getHistoricalPrices', () => {
-    const mockCardId = 'card-123';
-    const mockPlatforms = ['EBAY', 'TCGPLAYER', 'CARDMARKET'] as const;
-    const mockTimeRange = {
+    const _mockCardId = 'card-123';
+    const _mockPlatforms = ['EBAY', 'TCGPLAYER', 'CARDMARKET'] as const;
+    const _mockTimeRange = {
       start: '2024-01-01T00:00:00Z',
       end: '2024-01-31T23:59:59Z',
     };
 
-    const mockHistoricalData = [
+    const _mockHistoricalData = [
       {
         cardId: mockCardId,
         cardName: '火球術',
@@ -71,7 +71,7 @@ describe('PriceDataService', () => {
         message: '歷史價格數據獲取成功',
       });
 
-      const result = await priceDataService.getHistoricalPrices(
+      const _result = await priceDataService.getHistoricalPrices(
         mockCardId,
         mockPlatforms,
         mockTimeRange
@@ -109,7 +109,7 @@ describe('PriceDataService', () => {
     });
 
     it('應該處理無效的平台', async () => {
-      const invalidPlatforms = ['INVALID_PLATFORM'] as any;
+      const _invalidPlatforms = ['INVALID_PLATFORM'] as any;
 
       await expect(
         priceDataService.getHistoricalPrices(mockCardId, invalidPlatforms)
@@ -117,7 +117,7 @@ describe('PriceDataService', () => {
     });
 
     it('應該處理無效的時間範圍', async () => {
-      const invalidTimeRange = {
+      const _invalidTimeRange = {
         start: 'invalid-date',
         end: 'invalid-date',
       };
@@ -146,10 +146,10 @@ describe('PriceDataService', () => {
   });
 
   describe('getGradingAgencyData', () => {
-    const mockCardId = 'card-123';
-    const mockAgencies = ['PSA', 'BGS', 'CGC'] as const;
+    const _mockCardId = 'card-123';
+    const _mockAgencies = ['PSA', 'BGS', 'CGC'] as const;
 
-    const mockGradingData = [
+    const _mockGradingData = [
       {
         agency: 'PSA' as const,
         cardId: mockCardId,
@@ -202,7 +202,7 @@ describe('PriceDataService', () => {
         message: '鑑定機構數據獲取成功',
       });
 
-      const result = await priceDataService.getGradingAgencyData(
+      const _result = await priceDataService.getGradingAgencyData(
         mockCardId,
         mockAgencies
       );
@@ -235,7 +235,7 @@ describe('PriceDataService', () => {
     });
 
     it('應該處理無效的鑑定機構', async () => {
-      const invalidAgencies = ['INVALID_AGENCY'] as any;
+      const _invalidAgencies = ['INVALID_AGENCY'] as any;
 
       await expect(
         priceDataService.getGradingAgencyData(mockCardId, invalidAgencies)
@@ -253,7 +253,7 @@ describe('PriceDataService', () => {
   });
 
   describe('getRecommendedPlatforms', () => {
-    const mockRecommendedPlatforms = {
+    const _mockRecommendedPlatforms = {
       pricePlatforms: [
         {
           platform: 'EBAY' as const,
@@ -291,7 +291,7 @@ describe('PriceDataService', () => {
         message: '平台推薦獲取成功',
       });
 
-      const result = await priceDataService.getRecommendedPlatforms();
+      const _result = await priceDataService.getRecommendedPlatforms();
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockRecommendedPlatforms);
@@ -309,9 +309,9 @@ describe('PriceDataService', () => {
   });
 
   describe('checkPlatformStatus', () => {
-    const mockPlatforms = ['EBAY', 'TCGPLAYER', 'CARDMARKET'] as const;
+    const _mockPlatforms = ['EBAY', 'TCGPLAYER', 'CARDMARKET'] as const;
 
-    const mockPlatformStatus = {
+    const _mockPlatformStatus = {
       EBAY: {
         status: 'online' as const,
         lastCheck: '2024-01-31T00:00:00Z',
@@ -339,7 +339,7 @@ describe('PriceDataService', () => {
         message: '平台狀態檢查成功',
       });
 
-      const result = await priceDataService.checkPlatformStatus(mockPlatforms);
+      const _result = await priceDataService.checkPlatformStatus(mockPlatforms);
 
       expect(result.success).toBe(true);
       expect(result.data).toEqual(mockPlatformStatus);
@@ -353,7 +353,7 @@ describe('PriceDataService', () => {
     });
 
     it('應該處理無效的平台', async () => {
-      const invalidPlatforms = ['INVALID_PLATFORM'] as any;
+      const _invalidPlatforms = ['INVALID_PLATFORM'] as any;
 
       await expect(
         priceDataService.checkPlatformStatus(invalidPlatforms)
@@ -372,7 +372,7 @@ describe('PriceDataService', () => {
 
   describe('getPlatformConfig', () => {
     it('應該成功獲取平台配置', () => {
-      const config = priceDataService.getPlatformConfig('EBAY');
+      const _config = priceDataService.getPlatformConfig('EBAY');
 
       expect(config).toBeDefined();
       expect(config?.name).toBe('EBAY');
@@ -383,7 +383,7 @@ describe('PriceDataService', () => {
     });
 
     it('應該處理不存在的平台', () => {
-      const config = priceDataService.getPlatformConfig(
+      const _config = priceDataService.getPlatformConfig(
         'INVALID_PLATFORM' as any
       );
 
@@ -391,19 +391,19 @@ describe('PriceDataService', () => {
     });
 
     it('應該返回所有支持的平台配置', () => {
-      const configs = priceDataService.getAllPlatformConfigs();
+      const _configs = priceDataService.getAllPlatformConfigs();
 
       expect(configs).toHaveLength(9); // 總共9個平台
-      expect(configs.map((c) => c.name)).toContain('EBAY');
-      expect(configs.map((c) => c.name)).toContain('TCGPLAYER');
-      expect(configs.map((c) => c.name)).toContain('CARDMARKET');
-      expect(configs.map((c) => c.name)).toContain('PSA');
-      expect(configs.map((c) => c.name)).toContain('BGS');
-      expect(configs.map((c) => c.name)).toContain('CGC');
+      expect(configs.map(c => c.name)).toContain('EBAY');
+      expect(configs.map(c => c.name)).toContain('TCGPLAYER');
+      expect(configs.map(c => c.name)).toContain('CARDMARKET');
+      expect(configs.map(c => c.name)).toContain('PSA');
+      expect(configs.map(c => c.name)).toContain('BGS');
+      expect(configs.map(c => c.name)).toContain('CGC');
     });
 
     it('應該包含正確的配置結構', () => {
-      const ebayConfig = priceDataService.getPlatformConfig('EBAY');
+      const _ebayConfig = priceDataService.getPlatformConfig('EBAY');
 
       expect(ebayConfig).toMatchObject({
         name: 'EBAY',
@@ -423,7 +423,7 @@ describe('PriceDataService', () => {
     });
 
     it('應該包含正確的鑑定機構配置', () => {
-      const psaConfig = priceDataService.getPlatformConfig('PSA');
+      const _psaConfig = priceDataService.getPlatformConfig('PSA');
 
       expect(psaConfig).toMatchObject({
         name: 'PSA',
@@ -445,8 +445,8 @@ describe('PriceDataService', () => {
 
   describe('平台配置驗證', () => {
     it('應該包含所有必要的平台', () => {
-      const configs = priceDataService.getAllPlatformConfigs();
-      const platformNames = configs.map((c) => c.name);
+      const _configs = priceDataService.getAllPlatformConfigs();
+      const _platformNames = configs.map(c => c.name);
 
       expect(platformNames).toContain('SNKR');
       expect(platformNames).toContain('MERCARI');
@@ -460,16 +460,16 @@ describe('PriceDataService', () => {
     });
 
     it('應該包含正確的 API 配置', () => {
-      const apiPlatforms = ['EBAY', 'TCGPLAYER', 'CARDMARKET'];
+      const _apiPlatforms = ['EBAY', 'TCGPLAYER', 'CARDMARKET'];
 
-      apiPlatforms.forEach((platform) => {
-        const config = priceDataService.getPlatformConfig(platform as any);
+      apiPlatforms.forEach(platform => {
+        const _config = priceDataService.getPlatformConfig(platform as any);
         expect(config?.hasApi).toBe(true);
       });
     });
 
     it('應該包含正確的非 API 平台配置', () => {
-      const nonApiPlatforms = [
+      const _nonApiPlatforms = [
         'SNKR',
         'MERCARI',
         'PRICE_CHARTING',
@@ -478,16 +478,16 @@ describe('PriceDataService', () => {
         'CGC',
       ];
 
-      nonApiPlatforms.forEach((platform) => {
-        const config = priceDataService.getPlatformConfig(platform as any);
+      nonApiPlatforms.forEach(platform => {
+        const _config = priceDataService.getPlatformConfig(platform as any);
         expect(config?.hasApi).toBe(false);
       });
     });
 
     it('應該包含合理的速率限制配置', () => {
-      const configs = priceDataService.getAllPlatformConfigs();
+      const _configs = priceDataService.getAllPlatformConfigs();
 
-      configs.forEach((config) => {
+      configs.forEach(config => {
         expect(config.rateLimit.requestsPerMinute).toBeGreaterThan(0);
         expect(config.rateLimit.requestsPerHour).toBeGreaterThan(0);
         expect(config.rateLimit.requestsPerHour).toBeGreaterThanOrEqual(
@@ -497,9 +497,9 @@ describe('PriceDataService', () => {
     });
 
     it('應該包含合理的延遲配置', () => {
-      const configs = priceDataService.getAllPlatformConfigs();
+      const _configs = priceDataService.getAllPlatformConfigs();
 
-      configs.forEach((config) => {
+      configs.forEach(config => {
         expect(config.scrapingRules.delayBetweenRequests).toBeGreaterThan(0);
         expect(config.scrapingRules.userAgent).toContain('CardStrategy-Bot');
       });

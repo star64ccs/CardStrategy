@@ -1,9 +1,9 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import {
-  dataBreachNotificationService,
+import type {
   DataBreachEvent,
   RiskLevel,
 } from '../../../services/dataBreachNotificationService';
+import { dataBreachNotificationService } from '../../../services/dataBreachNotificationService';
 import { storage } from '../../../utils/storage';
 
 // Mock dependencies
@@ -19,7 +19,7 @@ jest.mock('../../../utils/storage', () => ({
 jest.mock('../../../utils/logger');
 jest.mock('../../../services/notificationService');
 
-const mockStorage = {
+const _mockStorage = {
   get: jest.fn(),
   set: jest.fn(),
   remove: jest.fn(),
@@ -41,7 +41,7 @@ describe('DataBreachNotificationService', () => {
     });
 
     it('should load configuration from storage', async () => {
-      const mockConfig = {
+      const _mockConfig = {
         enableAutoNotification: false,
         notificationDelay: 2,
         regulatoryDeadline: 48,
@@ -58,14 +58,14 @@ describe('DataBreachNotificationService', () => {
 
   describe('breach event creation', () => {
     it('should create a breach event with default values', async () => {
-      const eventData = {
+      const _eventData = {
         title: 'Test Breach',
         description: 'Test description',
         breachType: 'unauthorized_access' as const,
         riskLevel: 'medium' as RiskLevel,
       };
 
-      const event =
+      const _event =
         await dataBreachNotificationService.createBreachEvent(eventData);
 
       expect(event.id).toBeDefined();
@@ -81,7 +81,7 @@ describe('DataBreachNotificationService', () => {
     });
 
     it('should create a breach event with custom affected data', async () => {
-      const eventData = {
+      const _eventData = {
         title: 'Custom Breach',
         affectedData: {
           dataCategories: ['personal_info', 'contact_info'],
@@ -91,7 +91,7 @@ describe('DataBreachNotificationService', () => {
         },
       };
 
-      const event =
+      const _event =
         await dataBreachNotificationService.createBreachEvent(eventData);
 
       expect(event.affectedData.affectedUsers).toBe(100);
@@ -132,7 +132,7 @@ describe('DataBreachNotificationService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const events = await dataBreachNotificationService.getBreachEvents();
+      const _events = await dataBreachNotificationService.getBreachEvents();
 
       expect(events).toEqual(mockEvents);
       expect(mockStorage.get).toHaveBeenCalledWith('dataBreachEvents');
@@ -224,7 +224,7 @@ describe('DataBreachNotificationService', () => {
 
       mockStorage.get.mockResolvedValueOnce(mockEvents);
 
-      const stats = await dataBreachNotificationService.getStatistics();
+      const _stats = await dataBreachNotificationService.getStatistics();
 
       expect(stats.totalEvents).toBe(2);
       expect(stats.criticalEvents).toBe(1);
@@ -236,7 +236,7 @@ describe('DataBreachNotificationService', () => {
     it('should handle empty events list', async () => {
       mockStorage.get.mockResolvedValueOnce([]);
 
-      const stats = await dataBreachNotificationService.getStatistics();
+      const _stats = await dataBreachNotificationService.getStatistics();
 
       expect(stats.totalEvents).toBe(0);
       expect(stats.criticalEvents).toBe(0);
@@ -264,14 +264,14 @@ describe('DataBreachNotificationService', () => {
 
   describe('manual event creation', () => {
     it('should create manual breach event', async () => {
-      const eventData = {
+      const _eventData = {
         title: 'Manual Test Event',
         description: 'Manual test description',
         breachType: 'accidental_disclosure' as const,
         riskLevel: 'low' as RiskLevel,
       };
 
-      const event =
+      const _event =
         await dataBreachNotificationService.createManualBreachEvent(eventData);
 
       expect(event.title).toBe('Manual Test Event');
@@ -284,7 +284,7 @@ describe('DataBreachNotificationService', () => {
     it('should handle storage errors gracefully', async () => {
       mockStorage.get.mockRejectedValueOnce(new Error('Storage error'));
 
-      const events = await dataBreachNotificationService.getBreachEvents();
+      const _events = await dataBreachNotificationService.getBreachEvents();
 
       expect(events).toEqual([]);
     });

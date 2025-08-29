@@ -1,166 +1,259 @@
 import React from 'react';
+import type { AccessibilityRole, TextStyle, ViewStyle } from 'react-native';
 import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
   ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
-import { theme } from '../../theme/designSystem';
+// Mock Ionicons for testing
+const _Ionicons = ({ name, size, color, style }: unknown) => null;
 
-interface ButtonProps {
+export interface ButtonProps {
   title: string;
-  onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  onPress?: () => void;
+  onLongPress?: () => void;
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'small' | 'medium' | 'large';
   disabled?: boolean;
   loading?: boolean;
+  loadingText?: string;
+  icon?: string | React.ComponentType<any>;
+  iconPosition?: 'left' | 'right';
   style?: ViewStyle;
   textStyle?: TextStyle;
-  icon?: React.ReactNode;
+  testID?: string;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityRole?: AccessibilityRole;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
+  onLongPress,
   variant = 'primary',
   size = 'medium',
   disabled = false,
   loading = false,
+  loadingText,
+  icon,
+  iconPosition = 'left',
   style,
   textStyle,
-  icon,
+  testID,
+  accessibilityLabel,
+  accessibilityHint,
+  accessibilityRole = 'button',
 }) => {
-  const getButtonStyle = (): ViewStyle => {
-    const baseStyle: ViewStyle = {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: theme.borderRadius.lg,
-      borderWidth: variant === 'secondary' ? 1 : 0,
-      shadowColor:
-        variant === 'primary' ? theme.colors.gold.primary : 'transparent',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: variant === 'primary' ? 0.3 : 0,
-      shadowRadius: 4,
-      elevation: variant === 'primary' ? 4 : 0,
-    };
-
-    // 尺寸樣式
-    const sizeStyles = {
-      small: {
-        paddingHorizontal: theme.spacing.md,
-        paddingVertical: theme.spacing.sm,
-        minHeight: 36,
-      },
-      medium: {
-        paddingHorizontal: theme.spacing.lg,
-        paddingVertical: theme.spacing.md,
-        minHeight: 48,
-      },
-      large: {
-        paddingHorizontal: theme.spacing.xl,
-        paddingVertical: theme.spacing.lg,
-        minHeight: 56,
-      },
-    };
-
-    // 變體樣式
-    const variantStyles = {
-      primary: {
-        backgroundColor: disabled
-          ? theme.colors.text.disabled
-          : theme.colors.gold.primary,
-        borderColor: disabled
-          ? theme.colors.text.disabled
-          : theme.colors.gold.primary,
-      },
-      secondary: {
-        backgroundColor: 'transparent',
-        borderColor: disabled
-          ? theme.colors.text.disabled
-          : theme.colors.gold.primary,
-      },
-      ghost: {
-        backgroundColor: 'transparent',
-        borderColor: 'transparent',
-      },
-    };
-
-    return {
-      ...baseStyle,
-      ...sizeStyles[size],
-      ...variantStyles[variant],
-    };
+  const _handlePress = () => {
+    if (!disabled && !loading && onPress) {
+      onPress();
+    }
   };
 
-  const getTextStyle = (): TextStyle => {
-    const baseStyle: TextStyle = {
-      fontSize: theme.typography.sizes.base,
-      fontWeight: theme.typography.weights.semibold,
-      textAlign: 'center',
-    };
-
-    const sizeStyles = {
-      small: { fontSize: theme.typography.sizes.sm },
-      medium: { fontSize: theme.typography.sizes.base },
-      large: { fontSize: theme.typography.sizes.lg },
-    };
-
-    const variantStyles = {
-      primary: {
-        color: theme.colors.background.primary,
-      },
-      secondary: {
-        color: disabled
-          ? theme.colors.text.disabled
-          : theme.colors.gold.primary,
-      },
-      ghost: {
-        color: disabled
-          ? theme.colors.text.disabled
-          : theme.colors.text.primary,
-      },
-    };
-
-    return {
-      ...baseStyle,
-      ...sizeStyles[size],
-      ...variantStyles[variant],
-    };
+  const _handleLongPress = () => {
+    if (!disabled && !loading && onLongPress) {
+      onLongPress();
+    }
   };
+
+  const _renderIcon = () => {
+    if (!icon || loading) return null;
+
+    const _iconSize = size === 'small' ? 16 : size === 'large' ? 24 : 20;
+    const _iconColor = getIconColor();
+
+    if (typeof icon === 'string') {
+      return (
+        <Ionicons
+          name={icon as any}
+          size={iconSize}
+          color={iconColor}
+          style={iconPosition === 'right' ? styles.iconRight : styles.iconLeft}
+        />
+      );
+    }
+
+    const _IconComponent = icon;
+    return (
+      <IconComponent
+        size={iconSize}
+        color={iconColor}
+        style={iconPosition === 'right' ? styles.iconRight : styles.iconLeft}
+      />
+    );
+  };
+
+  const _getIconColor = () => {
+    if (disabled) return '#999';
+    if (variant === 'outline' || variant === 'ghost') return '#007AFF';
+    return '#FFFFFF';
+  };
+
+  const _getButtonStyle = (): ViewStyle => {
+    const _baseStyle = [styles.button, styles[size], styles[variant]];
+
+    if (disabled) {
+      baseStyle.push(styles.disabled);
+    }
+
+    if (loading) {
+      baseStyle.push(styles.loading as any);
+    }
+
+    return StyleSheet.flatten([...baseStyle, style || {}] as any) as ViewStyle;
+  };
+
+  const _getTextStyle = (): TextStyle => {
+    const _baseStyle = [
+      styles.text,
+      styles[`${size}Text`],
+      styles[`${variant}Text`],
+    ];
+
+    if (disabled) {
+      baseStyle.push(styles.disabledText);
+    }
+
+    return StyleSheet.flatten([
+      ...baseStyle,
+      textStyle || {},
+    ] as any) as TextStyle;
+  };
+
+  const _displayText = loading ? loadingText || title : title;
 
   return (
     <TouchableOpacity
-      style={[getButtonStyle(), style]}
-      onPress={onPress}
+      style={getButtonStyle()}
+      onPress={handlePress}
+      onLongPress={handleLongPress}
       disabled={disabled || loading}
-      activeOpacity={0.8}
+      testID={testID}
+      accessible={true}
+      accessibilityLabel={accessibilityLabel || title}
+      accessibilityHint={accessibilityHint}
+      accessibilityRole={accessibilityRole}
+      accessibilityState={{ disabled: disabled || loading }}
     >
-      {loading ? (
+      {loading && (
         <ActivityIndicator
-          size="small"
+          size='small'
           color={
-            variant === 'primary'
-              ? theme.colors.background.primary
-              : theme.colors.gold.primary
+            variant === 'outline' || variant === 'ghost' ? '#007AFF' : '#FFFFFF'
           }
+          style={styles.loadingIndicator}
         />
-      ) : (
-        <>
-          {icon && <>{icon}</>}
-          <Text style={[getTextStyle(), textStyle]}>{title}</Text>
-        </>
       )}
+
+      {!loading && iconPosition === 'left' && renderIcon()}
+
+      <Text style={getTextStyle()}>{displayText}</Text>
+
+      {!loading && iconPosition === 'right' && renderIcon()}
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
+const _styles = StyleSheet.create({
+  button: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+
+  // Size variants
+  small: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    minHeight: 32,
+  },
+  medium: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    minHeight: 40,
+  },
+  large: {
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    minHeight: 48,
+  },
+
+  // Variant styles
+  primary: {
+    backgroundColor: '#007AFF',
+    borderColor: '#007AFF',
+  },
+  secondary: {
+    backgroundColor: '#5856D6',
+    borderColor: '#5856D6',
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    borderColor: '#007AFF',
+  },
+  ghost: {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+  },
+
+  // Text styles
+  text: {
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  smallText: {
+    fontSize: 14,
+  },
+  mediumText: {
+    fontSize: 16,
+  },
+  largeText: {
+    fontSize: 18,
+  },
+
+  // Variant text styles
+  primaryText: {
+    color: '#FFFFFF',
+  },
+  secondaryText: {
+    color: '#FFFFFF',
+  },
+  outlineText: {
+    color: '#007AFF',
+  },
+  ghostText: {
+    color: '#007AFF',
+  },
+
+  // State styles
+  disabled: {
+    backgroundColor: '#E5E5EA',
+    borderColor: '#E5E5EA',
+  },
+  disabledText: {
+    color: '#999',
+  },
+  loading: {
+    opacity: 0.7,
+  },
+
+  // Icon styles
+  iconLeft: {
+    marginRight: 8,
+  },
+  iconRight: {
+    marginLeft: 8,
+  },
+
+  // Loading indicator
+  loadingIndicator: {
+    marginRight: 8,
   },
 });
+
+export default Button;

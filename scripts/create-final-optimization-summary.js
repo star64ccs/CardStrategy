@@ -6,6 +6,7 @@ const path = require('path');
  * 整合所有優化成果
  */
 
+// eslint-disable-next-line no-console
 console.log('📋 創建最終優化總結報告...\n');
 
 // 讀取之前的優化報告
@@ -16,6 +17,7 @@ function readOptimizationReports() {
     const projectAnalysis = JSON.parse(fs.readFileSync('reports/project-optimization-analysis.json', 'utf8'));
     reports.projectAnalysis = projectAnalysis;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('   ⚠️ 無法讀取專案優化分析報告');
   }
   
@@ -23,6 +25,7 @@ function readOptimizationReports() {
     const cleanupResult = JSON.parse(fs.readFileSync('reports/optimization-cleanup-result.json', 'utf8'));
     reports.cleanupResult = cleanupResult;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('   ⚠️ 無法讀取清理結果報告');
   }
   
@@ -30,6 +33,7 @@ function readOptimizationReports() {
     const codeOptimization = JSON.parse(fs.readFileSync('reports/code-optimization-result.json', 'utf8'));
     reports.codeOptimization = codeOptimization;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('   ⚠️ 無法讀取代碼優化結果報告');
   }
   
@@ -38,6 +42,7 @@ function readOptimizationReports() {
 
 // 創建最終總結報告
 function generateFinalSummary(reports) {
+  // eslint-disable-next-line no-console
   console.log('📊 整合優化成果...');
   
   const finalSummary = {
@@ -231,6 +236,7 @@ function generateFinalSummary(reports) {
 
 // 生成 Markdown 報告
 function generateMarkdownReport(summary) {
+  // eslint-disable-next-line no-console
   console.log('📝 生成 Markdown 報告...');
   
   const markdown = `# CardStrategy 專案優化總結報告
@@ -362,6 +368,7 @@ ${summary.recommendations.longTerm.map(rec => `- ${rec}`).join('\n')}
 
 // 主執行函數
 function createFinalSummary() {
+  // eslint-disable-next-line no-console
   console.log('🚀 開始創建最終優化總結...\n');
   
   // 讀取之前的報告
@@ -376,8 +383,10 @@ function createFinalSummary() {
   // 保存報告
   try {
     fs.writeFileSync('FINAL_OPTIMIZATION_SUMMARY.md', markdown);
+    // eslint-disable-next-line no-console
     console.log('   ✅ 已創建最終優化總結: FINAL_OPTIMIZATION_SUMMARY.md');
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('   ❌ 創建最終優化總結失敗:', error.message);
   }
   
@@ -392,36 +401,59 @@ function createFinalSummary() {
       path.join(reportPath, 'final-optimization-summary.json'),
       JSON.stringify(summary, null, 2)
     );
+    // eslint-disable-next-line no-console
     console.log('   ✅ 已保存 JSON 報告: reports/final-optimization-summary.json');
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('   ❌ 保存 JSON 報告失敗:', error.message);
   }
   
   // 輸出摘要
+  // eslint-disable-next-line no-console
   console.log('\n✅ 最終優化總結完成！');
+  // eslint-disable-next-line no-console
   console.log('\n📊 優化成果摘要:');
+  // eslint-disable-next-line no-console
   console.log(`   總優化階段: ${summary.overview.totalOptimizations}`);
+  // eslint-disable-next-line no-console
   console.log(`   移除文件: ${summary.overview.filesRemoved}`);
+  // eslint-disable-next-line no-console
   console.log(`   優化文件: ${summary.overview.filesOptimized}`);
+  // eslint-disable-next-line no-console
   console.log(`   節省空間: ${summary.overview.spaceSaved}KB`);
+  // eslint-disable-next-line no-console
   console.log(`   性能提升: ${summary.overview.performanceGain}%`);
+  // eslint-disable-next-line no-console
   console.log(`   維護工作量: ${summary.overview.maintenanceEffort}`);
   
+  // eslint-disable-next-line no-console
   console.log('\n🛠️ 新增工具:');
+  // eslint-disable-next-line no-console
   console.log(`   • 性能監控工具: ${summary.newTools.performanceMonitor.file}`);
+  // eslint-disable-next-line no-console
   console.log(`   • 智能緩存管理器: ${summary.newTools.cacheManager.file}`);
+  // eslint-disable-next-line no-console
   console.log(`   • 增強錯誤處理器: ${summary.newTools.errorHandler.file}`);
+  // eslint-disable-next-line no-console
   console.log(`   • 代碼質量檢查工具: ${summary.newTools.codeQualityChecker.file}`);
   
+  // eslint-disable-next-line no-console
   console.log('\n📈 性能改善:');
+  // eslint-disable-next-line no-console
   console.log(`   構建時間: ${summary.metrics.improvements.buildTimeImproved}`);
+  // eslint-disable-next-line no-console
   console.log(`   代碼質量: ${summary.metrics.improvements.codeQualityImproved}`);
+  // eslint-disable-next-line no-console
   console.log(`   維護效率: ${summary.metrics.improvements.maintenanceEffortReduced}`);
   
+  // eslint-disable-next-line no-console
   console.log('\n📁 報告文件:');
+  // eslint-disable-next-line no-console
   console.log('   • FINAL_OPTIMIZATION_SUMMARY.md');
+  // eslint-disable-next-line no-console
   console.log('   • reports/final-optimization-summary.json');
   
+  // eslint-disable-next-line no-console
   console.log('\n🎉 優化完成！專案現在具備更好的性能、可維護性和開發體驗！');
 }
 

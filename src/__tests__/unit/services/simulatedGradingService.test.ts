@@ -1,14 +1,14 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { simulatedGradingService } from '../../../services/simulatedGradingService';
 import { apiService } from '../../../services/apiService';
+import { simulatedGradingService } from '../../../services/simulatedGradingService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../utils/logger');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('SimulatedGradingService', () => {
   beforeEach(() => {
@@ -16,10 +16,10 @@ describe('SimulatedGradingService', () => {
   });
 
   describe('analyzeCondition', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockImageData = 'base64_image_data';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockImageData = 'base64_image_data';
 
-    const mockGradingResult = {
+    const _mockGradingResult = {
       success: true,
       data: {
         cardId: mockCardId,
@@ -97,7 +97,7 @@ describe('SimulatedGradingService', () => {
     it('應該正確評分卡片條件', async () => {
       mockApiService.post.mockResolvedValue(mockGradingResult);
 
-      const result = await simulatedGradingService.analyzeCondition(
+      const _result = await simulatedGradingService.analyzeCondition(
         mockCardId,
         mockImageData
       );
@@ -113,7 +113,7 @@ describe('SimulatedGradingService', () => {
     });
 
     it('應該處理無效的卡牌 ID', async () => {
-      const invalidCardId = 'invalid-id';
+      const _invalidCardId = 'invalid-id';
 
       await expect(
         simulatedGradingService.analyzeCondition(invalidCardId, mockImageData)
@@ -131,10 +131,10 @@ describe('SimulatedGradingService', () => {
   });
 
   describe('generateGradingReport', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該生成鑑定報告', async () => {
-      const mockReportResult = {
+      const _mockReportResult = {
         success: true,
         data: {
           reportId: 'report-123',
@@ -166,7 +166,7 @@ describe('SimulatedGradingService', () => {
 
       mockApiService.post.mockResolvedValue(mockReportResult);
 
-      const result =
+      const _result =
         await simulatedGradingService.generateGradingReport(mockCardId);
 
       expect(result.success).toBe(true);
@@ -177,10 +177,10 @@ describe('SimulatedGradingService', () => {
   });
 
   describe('predictGrade', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該預測鑑定等級', async () => {
-      const mockPredictionResult = {
+      const _mockPredictionResult = {
         success: true,
         data: {
           cardId: mockCardId,
@@ -200,7 +200,7 @@ describe('SimulatedGradingService', () => {
 
       mockApiService.get.mockResolvedValue(mockPredictionResult);
 
-      const result = await simulatedGradingService.predictGrade(mockCardId);
+      const _result = await simulatedGradingService.predictGrade(mockCardId);
 
       expect(result.success).toBe(true);
       expect(result.data.predictedGrade).toBe('Near Mint');
@@ -210,11 +210,11 @@ describe('SimulatedGradingService', () => {
   });
 
   describe('assessMarketValue', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockGrade = 'Near Mint';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockGrade = 'Near Mint';
 
     it('應該評估市場價值', async () => {
-      const mockValueResult = {
+      const _mockValueResult = {
         success: true,
         data: {
           cardId: mockCardId,
@@ -240,7 +240,7 @@ describe('SimulatedGradingService', () => {
 
       mockApiService.post.mockResolvedValue(mockValueResult);
 
-      const result = await simulatedGradingService.assessMarketValue(
+      const _result = await simulatedGradingService.assessMarketValue(
         mockCardId,
         mockGrade
       );
@@ -253,10 +253,10 @@ describe('SimulatedGradingService', () => {
   });
 
   describe('getPreservationTips', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該獲取保存建議', async () => {
-      const mockTipsResult = {
+      const _mockTipsResult = {
         success: true,
         data: {
           cardId: mockCardId,
@@ -291,7 +291,7 @@ describe('SimulatedGradingService', () => {
 
       mockApiService.get.mockResolvedValue(mockTipsResult);
 
-      const result =
+      const _result =
         await simulatedGradingService.getPreservationTips(mockCardId);
 
       expect(result.success).toBe(true);
@@ -302,10 +302,10 @@ describe('SimulatedGradingService', () => {
   });
 
   describe('compareWithGradingStandards', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
 
     it('應該與鑑定標準比較', async () => {
-      const mockComparisonResult = {
+      const _mockComparisonResult = {
         success: true,
         data: {
           cardId: mockCardId,
@@ -354,7 +354,7 @@ describe('SimulatedGradingService', () => {
 
       mockApiService.get.mockResolvedValue(mockComparisonResult);
 
-      const result =
+      const _result =
         await simulatedGradingService.compareWithGradingStandards(mockCardId);
 
       expect(result.success).toBe(true);

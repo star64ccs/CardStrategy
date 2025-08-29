@@ -1,17 +1,19 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { InvestmentState, Investment } from '@/types';
-import { investmentService } from '@/services/investmentService';
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+import type { InvestmentState, Investment } from '../../core/types';
+import { investmentService } from '../../shared/services/investmentService';
 
 // 異步 thunk
-export const fetchInvestments = createAsyncThunk(
+export const _fetchInvestments = createAsyncThunk(
   'investment/fetchInvestments',
   async () => {
-    const response = await investmentService.getInvestments();
+    const _response = await investmentService.getInvestments();
     return response;
   }
 );
 
-export const addInvestment = createAsyncThunk(
+export const _addInvestment = createAsyncThunk(
   'investment/addInvestment',
   async (investmentData: {
     cardId: string;
@@ -21,12 +23,12 @@ export const addInvestment = createAsyncThunk(
     entryPrice: number;
     notes?: string;
   }) => {
-    const response = await investmentService.addInvestment(investmentData);
+    const _response = await investmentService.addInvestment(investmentData);
     return response;
   }
 );
 
-export const updateInvestment = createAsyncThunk(
+export const _updateInvestment = createAsyncThunk(
   'investment/updateInvestment',
   async ({
     investmentId,
@@ -35,7 +37,7 @@ export const updateInvestment = createAsyncThunk(
     investmentId: string;
     data: Partial<Investment>;
   }) => {
-    const response = await investmentService.updateInvestment(
+    const _response = await investmentService.updateInvestment(
       investmentId,
       data
     );
@@ -43,34 +45,38 @@ export const updateInvestment = createAsyncThunk(
   }
 );
 
-export const removeInvestment = createAsyncThunk(
+export const _removeInvestment = createAsyncThunk(
   'investment/removeInvestment',
-  async (investmentId: string) => {
-    await investmentService.removeInvestment(investmentId);
-    return investmentId;
+  async (investmentId: string, { rejectWithValue }) => {
+    try {
+      await investmentService.removeInvestment(investmentId);
+      return investmentId;
+    } catch (error: unknown) {
+      return rejectWithValue(error.message || '移除投資失敗');
+    }
   }
 );
 
-export const getPortfolio = createAsyncThunk(
+export const _getPortfolio = createAsyncThunk(
   'investment/getPortfolio',
   async () => {
-    const response = await investmentService.getPortfolio();
+    const _response = await investmentService.getUserPortfolio();
     return response;
   }
 );
 
-export const getInvestmentAdvice = createAsyncThunk(
+export const _getInvestmentAdvice = createAsyncThunk(
   'investment/getInvestmentAdvice',
   async (cardId: string) => {
-    const response = await investmentService.getInvestmentAdvice(cardId);
+    const _response = await investmentService.getInvestmentAdvice(cardId);
     return response;
   }
 );
 
-export const getInvestmentStatistics = createAsyncThunk(
+export const _getInvestmentStatistics = createAsyncThunk(
   'investment/getInvestmentStatistics',
   async () => {
-    const response = await investmentService.getInvestmentStatistics();
+    const _response = await investmentService.getInvestmentStatistics();
     return response;
   }
 );
@@ -106,11 +112,11 @@ const initialState: InvestmentState = {
 };
 
 // Investment slice
-const investmentSlice = createSlice({
+const _investmentSlice = createSlice({
   name: 'investments',
   initialState,
   reducers: {
-    clearError: (state) => {
+    clearError: state => {
       state.error = null;
     },
     setSelectedInvestment: (
@@ -119,7 +125,7 @@ const investmentSlice = createSlice({
     ) => {
       state.selectedInvestment = action.payload;
     },
-    clearInvestmentAdvice: (state) => {
+    clearInvestmentAdvice: state => {
       state.investmentAdvice = null;
     },
     updateInvestmentValue: (
@@ -127,10 +133,10 @@ const investmentSlice = createSlice({
       action: PayloadAction<{ id: string; currentPrice: number }>
     ) => {
       const { id, currentPrice } = action.payload;
-      const investment = state.investments.find((inv) => inv.id === id);
+      const _investment = state.investments.find(inv => inv.id === id);
       if (investment) {
         // 更新投資的當前價值
-        const currentValue = currentPrice * investment.quantity;
+        const _currentValue = currentPrice * investment.quantity;
         investment.currentPrice = currentPrice;
         investment.profitLoss = currentValue - investment.entryValue;
         investment.profitLossPercentage =
@@ -138,7 +144,7 @@ const investmentSlice = createSlice({
           100;
 
         // 重新計算投資組合總價值
-        const totalValue = state.investments.reduce(
+        const _totalValue = state.investments.reduce(
           (sum, inv) => sum + inv.currentPrice * inv.quantity,
           0
         );
@@ -158,23 +164,23 @@ const investmentSlice = createSlice({
         state.portfolio.totalProfitLossPercentage = state.profitLossPercentage;
       }
     },
-    calculateStatistics: (state) => {
-      const totalInvestments = state.investments.length;
-      const totalProfitLoss = state.investments.reduce(
+    calculateStatistics: state => {
+      const _totalInvestments = state.investments.length;
+      const _totalProfitLoss = state.investments.reduce(
         (sum, inv) => sum + inv.profitLoss,
         0
       );
-      const averageReturn =
+      const _averageReturn =
         totalInvestments > 0 ? totalProfitLoss / totalInvestments : 0;
 
-      const bestPerformer =
+      const _bestPerformer =
         state.investments.length > 0
           ? state.investments.reduce((best, inv) =>
               inv.profitLossPercentage > best.profitLossPercentage ? inv : best
             )
           : null;
 
-      const worstPerformer =
+      const _worstPerformer =
         state.investments.length > 0
           ? state.investments.reduce((worst, inv) =>
               inv.profitLossPercentage < worst.profitLossPercentage
@@ -186,10 +192,10 @@ const investmentSlice = createSlice({
       state.statistics = {
         totalInvestments,
         activeInvestments: state.investments.filter(
-          (inv) => inv.status === 'active'
+          inv => inv.status === 'active'
         ).length,
         completedInvestments: state.investments.filter(
-          (inv) => inv.status === 'completed'
+          inv => inv.status === 'completed'
         ).length,
         averageReturn,
         bestReturn: bestPerformer?.profitLossPercentage || 0,
@@ -197,10 +203,10 @@ const investmentSlice = createSlice({
       };
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     // Fetch User Investments
     builder
-      .addCase(fetchInvestments.pending, (state) => {
+      .addCase(fetchInvestments.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -216,7 +222,7 @@ const investmentSlice = createSlice({
 
     // Add Investment
     builder
-      .addCase(addInvestment.pending, (state) => {
+      .addCase(addInvestment.pending, state => {
         state.isAdding = true;
         state.error = null;
       })
@@ -232,14 +238,14 @@ const investmentSlice = createSlice({
 
     // Update Investment
     builder
-      .addCase(updateInvestment.pending, (state) => {
+      .addCase(updateInvestment.pending, state => {
         state.isUpdating = true;
         state.error = null;
       })
       .addCase(updateInvestment.fulfilled, (state, action) => {
         state.isUpdating = false;
-        const index = state.investments.findIndex(
-          (inv) => inv.id === action.payload.id
+        const _index = state.investments.findIndex(
+          inv => inv.id === action.payload.id
         );
         if (index !== -1) {
           state.investments[index] = action.payload;
@@ -256,14 +262,14 @@ const investmentSlice = createSlice({
 
     // Remove Investment
     builder
-      .addCase(removeInvestment.pending, (state) => {
+      .addCase(removeInvestment.pending, state => {
         state.isRemoving = true;
         state.error = null;
       })
       .addCase(removeInvestment.fulfilled, (state, action) => {
         state.isRemoving = false;
         state.investments = state.investments.filter(
-          (inv) => inv.id !== action.payload
+          inv => inv.id !== action.payload
         );
         if (state.selectedInvestment?.id === action.payload) {
           state.selectedInvestment = null;
@@ -277,7 +283,7 @@ const investmentSlice = createSlice({
 
     // Get Investment Advice
     builder
-      .addCase(getInvestmentAdvice.pending, (state) => {
+      .addCase(getInvestmentAdvice.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -293,7 +299,7 @@ const investmentSlice = createSlice({
 
     // Calculate Portfolio Value
     builder
-      .addCase(getPortfolio.pending, (state) => {
+      .addCase(getPortfolio.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -312,7 +318,7 @@ const investmentSlice = createSlice({
 
     // Get Investment Statistics
     builder
-      .addCase(getInvestmentStatistics.pending, (state) => {
+      .addCase(getInvestmentStatistics.pending, state => {
         state.isLoading = true;
         state.error = null;
       })
@@ -320,13 +326,12 @@ const investmentSlice = createSlice({
         state.isLoading = false;
         // 假設 action.payload 是 PortfolioStatistics 類型
         state.statistics = {
-          totalInvestments: (action.payload as any).totalInvestments || 0,
-          activeInvestments: (action.payload as any).activeInvestments || 0,
-          completedInvestments:
-            (action.payload as any).completedInvestments || 0,
-          averageReturn: (action.payload as any).averageReturn || 0,
-          bestReturn: (action.payload as any).bestReturn || 0,
-          worstReturn: (action.payload as any).worstReturn || 0,
+          totalInvestments: action.payload.totalInvestments || 0,
+          activeInvestments: action.payload.activeInvestments || 0,
+          completedInvestments: action.payload.completedInvestments || 0,
+          averageReturn: action.payload.averageReturn || 0,
+          bestReturn: action.payload.bestReturn || 0,
+          worstReturn: action.payload.worstReturn || 0,
         };
         state.error = null;
       })

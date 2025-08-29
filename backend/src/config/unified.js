@@ -19,6 +19,7 @@ const baseConfig = {
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || '',
     dialect: 'postgres',
+    // eslint-disable-next-line no-console
     logging: env === 'development' ? console.log : false,
     pool: {
       max: 10,
@@ -69,6 +70,7 @@ const baseConfig = {
 const envConfigs = {
   development: {
     database: {
+      // eslint-disable-next-line no-console
       logging: console.log,
       pool: {
         max: 10,

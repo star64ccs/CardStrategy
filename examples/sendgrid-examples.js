@@ -34,7 +34,7 @@ export const sendWelcomeEmail = async (userEmail, userName) => {
         </div>
         <p>祝您收藏愉快！<br>CardStrategy 團隊</p>
       </div>
-    `
+    `,
   };
 
   try {
@@ -78,7 +78,7 @@ export const sendPriceAlertEmail = async (userEmail, cardData) => {
           </a>
         </div>
       </div>
-    `
+    `,
   };
 
   try {
@@ -109,12 +109,16 @@ export const sendOrderConfirmationEmail = async (userEmail, orderData) => {
 
         <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">
           <h3>商品清單</h3>
-          ${orderData.items.map(item => `
+          ${orderData.items
+            .map(
+              item => `
             <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
               <p><strong>${item.name}</strong></p>
               <p>數量: ${item.quantity} × $${item.price} = $${item.total}</p>
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
           <div style="text-align: right; margin-top: 15px; font-size: 1.2em;">
             <strong>總計: $${orderData.total}</strong>
           </div>
@@ -128,7 +132,7 @@ export const sendOrderConfirmationEmail = async (userEmail, orderData) => {
           </a>
         </div>
       </div>
-    `
+    `,
   };
 
   try {
@@ -142,7 +146,7 @@ export const sendOrderConfirmationEmail = async (userEmail, orderData) => {
 // 4. 密碼重置郵件
 export const sendPasswordResetEmail = async (userEmail, resetToken) => {
   const resetUrl = `https://cardstrategy.app/reset-password?token=${resetToken}`;
-  
+
   const msg = {
     to: userEmail,
     from: 'security@cardstrategyapp.com',
@@ -173,7 +177,7 @@ export const sendPasswordResetEmail = async (userEmail, resetToken) => {
           </p>
         </div>
       </div>
-    `
+    `,
   };
 
   try {
@@ -208,14 +212,18 @@ export const sendWeeklySummaryEmail = async (userEmail, summaryData) => {
 
         <div style="background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0;">
           <h3>🎯 本週熱門卡片</h3>
-          ${summaryData.trendingCards.map(card => `
+          ${summaryData.trendingCards
+            .map(
+              card => `
             <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
               <strong>${card.name}</strong> - 價格趨勢: 
               <span style="color: ${card.trend === 'up' ? '#4CAF50' : '#F44336'};">
                 ${card.trend === 'up' ? '📈' : '📉'} ${card.changePercent}%
               </span>
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
         </div>
 
         <div style="text-align: center; margin: 30px 0;">
@@ -226,7 +234,7 @@ export const sendWeeklySummaryEmail = async (userEmail, summaryData) => {
           </a>
         </div>
       </div>
-    `
+    `,
   };
 
   try {
@@ -243,5 +251,5 @@ export {
   sendPriceAlertEmail,
   sendOrderConfirmationEmail,
   sendPasswordResetEmail,
-  sendWeeklySummaryEmail
+  sendWeeklySummaryEmail,
 };

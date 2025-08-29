@@ -1,138 +1,150 @@
-// 統一日誌工具
-export enum LogLevel {
-  DEBUG = 'debug',
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error',
-}
+import { Platform } from 'react-native';
 
-interface LogEntry {
-  level: LogLevel;
-  message: string;
-  timestamp: Date;
-  context?: Record<string, unknown>;
-  userId?: string;
+export interface LoggerConfig {
+  level: 'debug' | 'info' | 'warn' | 'error';
+  enableConsole: boolean;
+  enableFile: boolean;
+  maxFileSize: number;
+  maxFiles: number;
 }
 
 class Logger {
-  private isDevelopment = __DEV__;
-  private logHistory: LogEntry[] = [];
-  private maxHistorySize = 1000;
+  private config: LoggerConfig;
+  private isInitialized = false;
 
-  private log(
-    level: LogLevel,
-    message: string,
-    context?: Record<string, unknown>
-  ) {
-    const entry: LogEntry = {
+  constructor() {
+    this.config = {
+      level: 'info',
+      enableConsole: true,
+      enableFile: false,
+      maxFileSize: 1024 * 1024, // 1MB
+      maxFiles: 5,
+    };
+  }
+
+  public initialize(config?: Partial<LoggerConfig>): void {
+    if (this.isInitialized) {
+      return;
+    }
+
+    this.config = { ...this.config, ...config };
+    this.isInitialized = true;
+
+    if (__DEV__) {
+      this.info('Logger initialized', { config: this.config });
+    }
+  }
+
+  public debug(message: string, data?: unknown): void {
+    if (this.shouldLog('debug')) {
+      this.log('DEBUG', message, data);
+    }
+  }
+
+  public info(message: string, data?: unknown): void {
+    if (this.shouldLog('info')) {
+      this.log('INFO', message, data);
+    }
+  }
+
+  public warn(message: string, data?: unknown): void {
+    if (this.shouldLog('warn')) {
+      this.log('WARN', message, data);
+    }
+  }
+
+  public error(message: string, error?: unknown): void {
+    if (this.shouldLog('error')) {
+      this.log('ERROR', message, error);
+    }
+  }
+
+  private shouldLog(level: string): boolean {
+    if (!this.isInitialized) {
+      return true; // 允許未初始化時的日誌
+    }
+
+    const _levels = ['debug', 'info', 'warn', 'error'];
+    const _currentLevelIndex = levels.indexOf(this.config.level);
+    const _messageLevelIndex = levels.indexOf(level);
+
+    return messageLevelIndex >= currentLevelIndex;
+  }
+
+  private log(level: string, message: string, data?: unknown): void {
+    const _timestamp = new Date().toISOString();
+    const _logEntry = {
+      timestamp,
       level,
       message,
-      timestamp: new Date(),
-      context,
-      userId: this.getCurrentUserId(),
+      data,
+      platform: Platform.OS,
+      version: Platform.Version,
     };
 
-    // 保存到歷史記錄
-    this.logHistory.push(entry);
-    if (this.logHistory.length > this.maxHistorySize) {
-      this.logHistory.shift();
+    if (this.config.enableConsole) {
+      this.writeToConsole(level, logEntry);
     }
 
-    // 在開發環境中輸出到控制台
-    if (this.isDevelopment) {
-      const timestamp = entry.timestamp.toISOString();
-      const prefix = `[${timestamp}] [${level.toUpperCase()}]`;
-
-      switch (level) {
-        case LogLevel.DEBUG:
-          // eslint-disable-next-line no-console
-          // logger.info(prefix, message, context || '');
-          break;
-        case LogLevel.INFO:
-          // eslint-disable-next-line no-console
-          // logger.info(prefix, message, context || '');
-          break;
-        case LogLevel.WARN:
-          // eslint-disable-next-line no-console
-          // logger.info(prefix, message, context || '');
-          break;
-        case LogLevel.ERROR:
-          // eslint-disable-next-line no-console
-          // logger.info(prefix, message, context || '');
-          break;
-      }
-    }
-
-    // 在生產環境中發送到日誌服務
-    if (!this.isDevelopment && level === LogLevel.ERROR) {
-      // 發送錯誤到日誌服務
-      this.sendToLogService(entry);
+    if (this.config.enableFile) {
+      this.writeToFile(logEntry);
     }
   }
 
-  private getCurrentUserId(): string | undefined {
-    try {
-      // 從 Redux store 獲取用戶 ID
-      const { store } = require('@/store');
-      const state = store.getState();
-      return state.auth.user?.id;
-    } catch (error) {
-      // 如果無法獲取 Redux store，嘗試從 AsyncStorage 獲取
-      try {
-        const AsyncStorage = require('@react-native-async-storage/async-storage');
-        const userData = AsyncStorage.getItem('user_data');
-        if (userData) {
-          const parsed = JSON.parse(userData);
-          return parsed.id;
-        }
-      } catch {
-        // 如果都失敗了，返回 undefined
-      }
-      return undefined;
+  private writeToConsole(level: string, logEntry: unknown): void {
+    const { timestamp, message, data } = logEntry;
+    const _prefix = `[${timestamp}] [${level}]`;
+
+    switch (level) {
+      case 'DEBUG':
+        console.debug(prefix, message, data);
+        break;
+      case 'INFO':
+        console.info(prefix, message, data);
+        break;
+      case 'WARN':
+        console.warn(prefix, message, data);
+        break;
+      case 'ERROR':
+        console.error(prefix, message, data);
+        break;
+      default:
+        console.log(prefix, message, data);
     }
   }
 
-  private async sendToLogService(entry: LogEntry): Promise<void> {
-    try {
-      // 使用新的日誌服務
-      const { logService } = require('@/services/logService');
-      await logService.sendLog(entry.level, entry.message, entry.context);
-    } catch (error) {
-      // 如果日誌服務失敗，至少記錄到控制台
-      // logger.info('日誌服務發送失敗:', error);
+  private writeToFile(logEntry: unknown): void {
+    // 在 React Native 中，文件寫入需要額外的庫支持
+    // 這裡可以集成 react-native-fs 或其他文件系統庫
+    if (__DEV__) {
+      console.log('File logging not implemented yet');
     }
   }
 
-  debug(message: string, context?: Record<string, unknown>) {
-    this.log(LogLevel.DEBUG, message, context);
+  public getConfig(): LoggerConfig {
+    return { ...this.config };
   }
 
-  info(message: string, context?: Record<string, unknown>) {
-    this.log(LogLevel.INFO, message, context);
+  public updateConfig(config: Partial<LoggerConfig>): void {
+    this.config = { ...this.config, ...config };
   }
 
-  warn(message: string, context?: Record<string, unknown>) {
-    this.log(LogLevel.WARN, message, context);
-  }
-
-  error(message: string, context?: Record<string, unknown>) {
-    this.log(LogLevel.ERROR, message, context);
-  }
-
-  // 獲取日誌歷史
-  getHistory(): LogEntry[] {
-    return [...this.logHistory];
-  }
-
-  // 清除日誌歷史
-  clearHistory() {
-    this.logHistory = [];
-  }
-
-  // 導出日誌
-  exportLogs(): string {
-    return JSON.stringify(this.logHistory, null, 2);
+  public clear(): void {
+    // 清理日誌緩存或文件
+    if (__DEV__) {
+      console.log('Logger cleared');
+    }
   }
 }
 
-export const logger = new Logger();
+// 創建單例實例
+export const _logger = new Logger();
+
+// 自動初始化
+if (__DEV__) {
+  logger.initialize({ level: 'debug' });
+} else {
+  logger.initialize({ level: 'info' });
+}
+
+export default logger;

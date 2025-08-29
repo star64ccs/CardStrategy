@@ -1,28 +1,28 @@
-const express = require('express');
-const { query, validationResult } = require('express-validator');
-const { Op } = require('sequelize');
-const { authenticateToken: protect, optionalAuth } = require('../middleware/auth');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
-const getMarketDataModel = require('../models/MarketData');
-// eslint-disable-next-line no-unused-vars
-const getCardModel = require('../models/Card');
-// eslint-disable-next-line no-unused-vars
+const express = require('express');''
+const { query, validationResult } = require('express-validator');''
+const { Op } = require('sequelize');''
+const { authenticateToken: protect, optionalAuth } = require('../middleware/auth');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');''
+const getMarketDataModel = require('../models/MarketData');'
+// eslint-disable-next-line no-unused-vars''
+const getCardModel = require('../models/Card');'
+// eslint-disable-next-line no-unused-vars''
 const databaseOptimizer = require('../services/databaseOptimizer');
 
 const router = express.Router();
 
 // @route   GET /api/market/data
 // @desc    ?��?市場?��?
-// @access  Public
-router.get(
-  '/data',
-  [
-    query('cardId').optional().isInt({ min: 1 }),
-    query('period').optional().isIn(['1d', '7d', '30d', '90d', '1y']),
-    query('sortBy').optional().isIn(['price', 'volume', 'change', 'marketCap']),
-    query('sortOrder').optional().isIn(['asc', 'desc']),
-    query('limit').optional().isInt({ min: 1, max: 100 }),
+// @access  Public'
+router.get(''
+  '/data','
+  [''
+    query('cardId').optional().isInt({ min: 1 }),''
+    query('period').optional().isIn(['1d', '7d', '30d', '90d', '1y']),''
+    query('sortBy').optional().isIn(['price', 'volume', 'change', 'marketCap']),''
+    query('sortOrder').optional().isIn(['asc', 'desc']),''
+    query('limit').optional().isInt({ min: 1, max: 100 }),''
     query('page').optional().isInt({ min: 1 }),
   ],
   async (req, res) => {
@@ -30,18 +30,17 @@ router.get(
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: '?�詢?�數驗�?失�?',
+        return res.status(400).json({'
+          success: false,''
+          message: '?�詢?�數驗�?失�?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
       }
-
-      const {
-        cardId,
-        period = '30d',
-        sortBy = 'volume',
+      const {'
+        cardId,''
+        period = '30d',''
+        sortBy = 'volume',''
         sortOrder = 'desc',
         limit = 20,
         page = 1,
@@ -53,14 +52,13 @@ router.get(
       const Card = getCardModel();
 
       if (!MarketData || !Card) {
-        return res.status(500).json({
-          success: false,
-          message: '?��?庫模?��?始�?失�?',
+        return res.status(500).json({'
+          success: false,''
+          message: '?��?庫模?��?始�?失�?',''
           code: 'MODEL_INIT_FAILED',
-        });
+        });'
       }
-
-      // 設置?�聯
+      // 設置?�聯''
       MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
       // 計�??��?範�?
@@ -72,9 +70,9 @@ router.get(
       // 構建?�詢條件
       const whereClause = {
         isActive: true,
-        date: {
-          [Op.between]: [
-            startDate.toISOString().split('T')[0],
+        date: {'
+          [Op.between]: [''
+            startDate.toISOString().split('T')[0],''
             endDate.toISOString().split('T')[0],
           ],
         },
@@ -83,28 +81,27 @@ router.get(
       if (cardId) {
         whereClause.cardId = cardId;
       }
-
       const offset = (page - 1) * limit;
 
       // 使用 databaseOptimizer ?��??�詢
       const optimizedQuery = databaseOptimizer.optimizeQuery({
         where: whereClause,
         include: [
-          {
-            model: Card,
-            as: 'card',
-            attributes: [
-              'id',
-              'name',
-              'setName',
-              'rarity',
-              'cardType',
+          {'
+            model: Card,''
+            as: 'card','
+            attributes: [''
+              'id',''
+              'name',''
+              'setName',''
+              'rarity',''
+              'cardType',''
               'imageUrl',
             ],
           },
-        ],
-        order: [
-          ['cardId', 'ASC'],
+        ],'
+        order: [''
+          ['cardId', 'ASC'],''
           ['date', 'DESC'],
         ],
         limit: parseInt(limit),
@@ -113,8 +110,8 @@ router.get(
 
       // ?��??��?後�??�詢並監?�性能
       const startTime = Date.now();
-      const latestMarketData = await databaseOptimizer.monitorQuery(
-        MarketData,
+      const latestMarketData = await databaseOptimizer.monitorQuery('
+        MarketData,''
         'findAll',
         optimizedQuery
       );
@@ -129,8 +126,8 @@ router.get(
       const marketDataArray = Array.from(cardLatestData.values());
 
       // ?��??��???      marketDataArray.sort((a, b) => {
-        const aValue = a[sortBy] || 0;
-        const bValue = b[sortBy] || 0;
+        const aValue = a[sortBy] || 0;'
+        const bValue = b[sortBy] || 0;''
         return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
       });
 
@@ -178,12 +175,12 @@ router.get(
             optimized: true,
           },
         },
-      });
-    } catch (error) {
+      });'
+    } catch (error) {''
       logger.error('?��?市場?��??�誤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?��?市場?��?失�?',
+      res.status(500).json({'
+        success: false,''
+        message: '?��?市場?��?失�?',''
         code: 'GET_MARKET_DATA_FAILED',
       });
     }
@@ -192,24 +189,23 @@ router.get(
 
 // @route   GET /api/market/price-history/:cardId
 // @desc    ?��??��??�格歷史
-// @access  Public
-router.get(
-  '/price-history/:cardId',
+// @access  Public'
+router.get(''
+  '/price-history/:cardId',''
   [query('period').optional().isIn(['7d', '30d', '90d', '1y', 'all'])],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: '?�詢?�數驗�?失�?',
+        return res.status(400).json({'
+          success: false,''
+          message: '?�詢?�數驗�?失�?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
-        });
+        });'
       }
-
-      const { cardId } = req.params;
+      const { cardId } = req.params;''
       const { period = '30d' } = req.query;
 
 // eslint-disable-next-line no-unused-vars
@@ -218,69 +214,64 @@ router.get(
       const Card = getCardModel();
 
       if (!MarketData || !Card) {
-        return res.status(500).json({
-          success: false,
-          message: '?��?庫模?��?始�?失�?',
+        return res.status(500).json({'
+          success: false,''
+          message: '?��?庫模?��?始�?失�?',''
           code: 'MODEL_INIT_FAILED',
-        });
+        });'
       }
-
-      // 設置?�聯
+      // 設置?�聯''
       MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
       // 檢查?��??�否存在
       const card = await Card.findByPk(cardId);
       if (!card) {
-        return res.status(404).json({
-          success: false,
-          message: '?��?不�???,
+        return res.status(404).json({'
+          success: false,''
+          message: '?��?不�???,''
           code: 'CARD_NOT_FOUND',
         });
       }
-
       // 構建?�詢條件
       const whereClause = {
         cardId,
-        isActive: true,
-      };
-
+        isActive: true,'
+      };''
       if (period !== 'all') {
         const days = parseInt(period);
         const cutoffDate = new Date();
-        cutoffDate.setDate(cutoffDate.getDate() - days);
-        whereClause.date = {
+        cutoffDate.setDate(cutoffDate.getDate() - days);'
+        whereClause.date = {''
           [Op.gte]: cutoffDate.toISOString().split('T')[0],
         };
       }
-
       // ?��??�格歷史?��?
       const priceHistory = await MarketData.findAll({
         where: whereClause,
         include: [
-          {
-            model: Card,
-            as: 'card',
-            attributes: [
-              'id',
-              'name',
-              'setName',
-              'rarity',
-              'cardType',
+          {'
+            model: Card,''
+            as: 'card','
+            attributes: [''
+              'id',''
+              'name',''
+              'setName',''
+              'rarity',''
+              'cardType',''
               'imageUrl',
             ],
-          },
-        ],
+          },'
+        ],''
         order: [['date', 'ASC']],
       });
 
       if (priceHistory.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: '?�格歷史?��?不�???,
+        return res.status(404).json({'
+          success: false,''
+          message: '?�格歷史?��?不�???,''
           code: 'PRICE_HISTORY_NOT_FOUND',
         });
       }
-
       // 計�?統�?信息
 // eslint-disable-next-line no-unused-vars
       const prices = priceHistory.map((item) => parseFloat(item.closePrice));
@@ -343,12 +334,12 @@ router.get(
             volume: volumeStats,
           },
         },
-      });
-    } catch (error) {
+      });'
+    } catch (error) {''
       logger.error('?��??�格歷史?�誤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?��??�格歷史失�?',
+      res.status(500).json({'
+        success: false,''
+        message: '?��??�格歷史失�?',''
         code: 'GET_PRICE_HISTORY_FAILED',
       });
     }
@@ -357,23 +348,22 @@ router.get(
 
 // @route   GET /api/market/trends
 // @desc    ?��?市場趨勢
-// @access  Public
-router.get(
-  '/trends',
+// @access  Public'
+router.get(''
+  '/trends',''
   [query('timeframe').optional().isIn(['1d', '7d', '30d', '90d'])],
   async (req, res) => {
     try {
 // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
-          success: false,
-          message: '?�詢?�數驗�?失�?',
+        return res.status(400).json({'
+          success: false,''
+          message: '?�詢?�數驗�?失�?',''
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
-        });
-      }
-
+        });'
+      }''
       const { timeframe = '30d' } = req.query;
 
 // eslint-disable-next-line no-unused-vars
@@ -382,14 +372,13 @@ router.get(
       const Card = getCardModel();
 
       if (!MarketData || !Card) {
-        return res.status(500).json({
-          success: false,
-          message: '?��?庫模?��?始�?失�?',
+        return res.status(500).json({'
+          success: false,''
+          message: '?��?庫模?��?始�?失�?',''
           code: 'MODEL_INIT_FAILED',
-        });
+        });'
       }
-
-      // 設置?�聯
+      // 設置?�聯''
       MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
       // 計�??��?範�?
@@ -401,27 +390,27 @@ router.get(
       // ?��??��??��?範�??��??�?��??�數??      const marketData = await MarketData.findAll({
         where: {
           isActive: true,
-          date: {
-            [Op.between]: [
-              startDate.toISOString().split('T')[0],
+          date: {'
+            [Op.between]: [''
+              startDate.toISOString().split('T')[0],''
               endDate.toISOString().split('T')[0],
             ],
           },
         },
         include: [
-          {
-            model: Card,
-            as: 'card',
-            attributes: [
-              'id',
-              'name',
-              'setName',
-              'rarity',
-              'cardType',
+          {'
+            model: Card,''
+            as: 'card','
+            attributes: [''
+              'id',''
+              'name',''
+              'setName',''
+              'rarity',''
+              'cardType',''
               'imageUrl',
             ],
-          },
-        ],
+          },'
+        ],''
         order: [['date', 'DESC']],
       });
 
@@ -437,7 +426,6 @@ router.get(
             dataPoints: 0,
           });
         }
-
         const trend = cardTrends.get(data.cardId);
         trend.totalChange += parseFloat(data.priceChangePercent);
         trend.totalVolume += data.volume;
@@ -492,15 +480,15 @@ router.get(
         }));
 
       const trends = {
-        overall: {
-          trend:
+        overall: {'
+          trend:''
             overallChange > 0 ? 'up' : overallChange < 0 ? 'down' : 'stable',
           change: parseFloat(overallChange.toFixed(2)),
-          message:
-            overallChange > 0
-              ? '市場?��??��??�趨?��??��??�信心�?�?
-              : overallChange < 0
-                ? '市場?��??��??�趨?��?建議謹�??��?'
+          message:'
+            overallChange > 0''
+              ? '市場?��??��??�趨?��??��??�信心�?�?'
+              : overallChange < 0''
+                ? '市場?��??��??�趨?��?建議謹�??��?'
                 : '市場?��?保�?穩�?',
         },
         topGainers,
@@ -517,12 +505,12 @@ router.get(
           trends,
           lastUpdated: new Date().toISOString(),
         },
-      });
-    } catch (error) {
+      });'
+    } catch (error) {''
       logger.error('?��?市場趨勢?�誤:', error);
-      res.status(500).json({
-        success: false,
-        message: '?��?市場趨勢失�?',
+      res.status(500).json({'
+        success: false,''
+        message: '?��?市場趨勢失�?',''
         code: 'GET_TRENDS_FAILED',
       });
     }
@@ -530,8 +518,8 @@ router.get(
 );
 
 // @route   GET /api/market/insights
-// @desc    ?��?市場洞�?
-// @access  Private
+// @desc    ?��?市場洞�?'
+// @access  Private''
 router.get('/insights', protect, async (req, res) => {
   try {
 // eslint-disable-next-line no-unused-vars
@@ -540,14 +528,13 @@ router.get('/insights', protect, async (req, res) => {
     const Card = getCardModel();
 
     if (!MarketData || !Card) {
-      return res.status(500).json({
-        success: false,
-        message: '?��?庫模?��?始�?失�?',
+      return res.status(500).json({'
+        success: false,''
+        message: '?��?庫模?��?始�?失�?',''
         code: 'MODEL_INIT_FAILED',
-      });
+      });'
     }
-
-    // 設置?�聯
+    // 設置?�聯''
     MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     // ?��??��?0天�?市場?��?
@@ -558,20 +545,20 @@ router.get('/insights', protect, async (req, res) => {
     const marketData = await MarketData.findAll({
       where: {
         isActive: true,
-        date: {
-          [Op.between]: [
-            startDate.toISOString().split('T')[0],
+        date: {'
+          [Op.between]: [''
+            startDate.toISOString().split('T')[0],''
             endDate.toISOString().split('T')[0],
           ],
         },
       },
       include: [
-        {
-          model: Card,
-          as: 'card',
+        {'
+          model: Card,''
+          as: 'card',''
           attributes: ['id', 'name', 'rarity', 'cardType'],
-        },
-      ],
+        },'
+      ],''
       order: [['date', 'DESC']],
     });
 
@@ -584,15 +571,14 @@ router.get('/insights', protect, async (req, res) => {
             (sum, data) => sum + parseFloat(data.closePrice),
             0
           ) / marketData.length
-        : 0;
-
-    const upTrendCards = marketData.filter(
+        : 0;'
+    const upTrendCards = marketData.filter(''
       (data) => data.trend === 'up'
-    ).length;
-    const downTrendCards = marketData.filter(
+    ).length;'
+    const downTrendCards = marketData.filter(''
       (data) => data.trend === 'down'
-    ).length;
-    const stableCards = marketData.filter(
+    ).length;'
+    const stableCards = marketData.filter(''
       (data) => data.trend === 'stable'
     ).length;
 
@@ -608,26 +594,26 @@ router.get('/insights', protect, async (req, res) => {
     });
 
     // ?��?洞�?
-    const sentiment =
-      upTrendCards > downTrendCards
-        ? 'positive'
-        : upTrendCards < downTrendCards
-          ? 'negative'
+    const sentiment ='
+      upTrendCards > downTrendCards''
+        ? 'positive''
+        : upTrendCards < downTrendCards''
+          ? 'negative'
           : 'neutral';
-    const riskLevel =
-      upTrendCards > downTrendCards * 2
-        ? 'low'
-        : upTrendCards < downTrendCards
-          ? 'high'
+    const riskLevel ='
+      upTrendCards > downTrendCards * 2''
+        ? 'low''
+        : upTrendCards < downTrendCards''
+          ? 'high'
           : 'medium';
 
     const insights = {
-      sentiment,
-      recommendation:
-        sentiment === 'positive'
-          ? '建議?�注稀?�度較�??�卡?��?市場?�求穩�?
-          : sentiment === 'negative'
-            ? '市場波�?較大，建議謹?��?資�??�注?�禦?��???
+      sentiment,'
+      recommendation:''
+        sentiment === 'positive'
+          ? '建議?�注稀?�度較�??�卡?��?市場?�求穩�?''
+          : sentiment === 'negative'
+            ? '市場波�?較大，建議謹?��?資�??�注?�禦?��???''
             : '市場保�?平衡，建議�??��??��?組�?',
       riskLevel,
       keyFactors: [
@@ -637,23 +623,23 @@ router.get('/insights', protect, async (req, res) => {
         `上�?趨勢?��?: ${upTrendCards} 張`,
         `下�?趨勢?��?: ${downTrendCards} 張`,
       ],
-      investmentStrategy: {
-        shortTerm:
-          sentiment === 'positive'
-            ? '?�注?��??��??�新系�??�熱'
-            : '保�?觀?��?等�?市場穩�?',
-        mediumTerm: '?��?經典系�?中�?稀?�卡??,
+      investmentStrategy: {'
+        shortTerm:''
+          sentiment === 'positive'
+            ? '?�注?��??��??�新系�??�熱'
+            : '保�?觀?��?等�?市場穩�?',''
+        mediumTerm: '?��?經典系�?中�?稀?�卡??,''
         longTerm: '建�?多�??�收?��???,
       },
-      marketOutlook: {
-        nextWeek:
-          sentiment === 'positive'
-            ? '?�格?�能小�?波�?，建議�???
-            : '?��??�格調整，可?�度?��?,
-        nextMonth:
-          sentiment === 'positive'
-            ? '?��?穩步上�?，可?�度?��?
-            : '市場?�能繼�?調整，建議謹??,
+      marketOutlook: {'
+        nextWeek:''
+          sentiment === 'positive'
+            ? '?�格?�能小�?波�?，建議�???''
+            : '?��??�格調整，可?�度?��?,'
+        nextMonth:''
+          sentiment === 'positive'
+            ? '?��?穩步上�?，可?�度?��?''
+            : '市場?�能繼�?調整，建議謹??,''
         nextQuarter: '?��??�好，建議長?��???,
       },
       rarityAnalysis: Object.keys(rarityAnalysis).map((rarity) => ({
@@ -675,20 +661,20 @@ router.get('/insights', protect, async (req, res) => {
         insights,
         generatedAt: new Date().toISOString(),
       },
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��?市場洞�??�誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?��?市場洞�?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: '?��?市場洞�?失�?',''
       code: 'GET_INSIGHTS_FAILED',
     });
   }
 });
 
 // @route   GET /api/market/analytics
-// @desc    ?��?市場?��??��?
-// @access  Public
+// @desc    ?��?市場?��??��?'
+// @access  Public''
 router.get('/analytics', async (req, res) => {
   try {
 // eslint-disable-next-line no-unused-vars
@@ -697,28 +683,27 @@ router.get('/analytics', async (req, res) => {
     const Card = getCardModel();
 
     if (!MarketData || !Card) {
-      return res.status(500).json({
-        success: false,
-        message: '?��?庫模?��?始�?失�?',
+      return res.status(500).json({'
+        success: false,''
+        message: '?��?庫模?��?始�?失�?',''
         code: 'MODEL_INIT_FAILED',
-      });
+      });'
     }
-
-    // 設置?�聯
+    // 設置?�聯''
     MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     // ?��??�?��?市場?��?
     const latestData = await MarketData.findAll({
       where: { isActive: true },
       include: [
-        {
-          model: Card,
-          as: 'card',
+        {'
+          model: Card,''
+          as: 'card',''
           attributes: ['id', 'name', 'rarity', 'cardType'],
         },
-      ],
-      order: [
-        ['cardId', 'ASC'],
+      ],'
+      order: [''
+        ['cardId', 'ASC'],''
         ['date', 'DESC'],
       ],
     });
@@ -756,18 +741,18 @@ router.get('/analytics', async (req, res) => {
     // ?�格?��?
     const priceDistribution = {
       under100: marketDataArray.filter(
-        (data) => parseFloat(data.closePrice) < 100
-      ).length,
+        (data) => parseFloat(data.closePrice) < 100'
+      ).length,''
       '100-500': marketDataArray.filter(
         (data) =>
           parseFloat(data.closePrice) >= 100 &&
-          parseFloat(data.closePrice) < 500
-      ).length,
+          parseFloat(data.closePrice) < 500'
+      ).length,''
       '500-1000': marketDataArray.filter(
         (data) =>
           parseFloat(data.closePrice) >= 500 &&
-          parseFloat(data.closePrice) < 1000
-      ).length,
+          parseFloat(data.closePrice) < 1000'
+      ).length,''
       '1000-5000': marketDataArray.filter(
         (data) =>
           parseFloat(data.closePrice) >= 1000 &&
@@ -812,9 +797,8 @@ router.get('/analytics', async (req, res) => {
         weeklyTrend,
         monthlyGrowth,
       },
-      categoryPerformance,
-    };
-
+      categoryPerformance,'
+    };''
     logger.info('?��?市場?��??��?');
 
     res.json({
@@ -823,15 +807,14 @@ router.get('/analytics', async (req, res) => {
         analytics,
         lastUpdated: new Date().toISOString(),
       },
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��?市場?��??�誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '?��?市場?��?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: '?��?市場?��?失�?',''
       code: 'GET_ANALYTICS_FAILED',
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

@@ -15,26 +15,26 @@ import {
 describe('Formatters', () => {
   describe('formatDate', () => {
     it('應該正確格式化日期', () => {
-      const date = new Date('2024-01-15T10:30:00Z');
-      const result = formatDate(date);
+      const _date = new Date('2024-01-15T10:30:00Z');
+      const _result = formatDate(date);
       expect(result).toBe('2024-01-15');
     });
 
     it('應該正確格式化日期字符串', () => {
-      const dateString = '2024-01-15T10:30:00Z';
-      const result = formatDate(dateString);
+      const _dateString = '2024-01-15T10:30:00Z';
+      const _result = formatDate(dateString);
       expect(result).toBe('2024-01-15');
     });
 
     it('應該處理無效日期', () => {
-      const invalidDate = 'invalid-date';
-      const result = formatDate(invalidDate);
+      const _invalidDate = 'invalid-date';
+      const _result = formatDate(invalidDate);
       expect(result).toBe('Invalid Date');
     });
 
     it('應該支持自定義格式', () => {
-      const date = new Date('2024-01-15T10:30:00Z');
-      const result = formatDate(date, 'yyyy/MM/dd');
+      const _date = new Date('2024-01-15T10:30:00Z');
+      const _result = formatDate(date, 'yyyy/MM/dd');
       expect(result).toBe('2024/01/15');
     });
   });
@@ -200,10 +200,10 @@ describe('Formatters', () => {
     });
 
     it('應該正確格式化相對時間', () => {
-      const now = new Date('2024-01-15T12:00:00Z');
-      const oneMinuteAgo = new Date('2024-01-15T11:59:00Z');
-      const oneHourAgo = new Date('2024-01-15T11:00:00Z');
-      const oneDayAgo = new Date('2024-01-14T12:00:00Z');
+      const _now = new Date('2024-01-15T12:00:00Z');
+      const _oneMinuteAgo = new Date('2024-01-15T11:59:00Z');
+      const _oneHourAgo = new Date('2024-01-15T11:00:00Z');
+      const _oneDayAgo = new Date('2024-01-14T12:00:00Z');
 
       expect(formatRelativeTime(oneMinuteAgo)).toBe('1分鐘前');
       expect(formatRelativeTime(oneHourAgo)).toBe('1小時前');
@@ -211,15 +211,15 @@ describe('Formatters', () => {
     });
 
     it('應該處理未來時間', () => {
-      const oneMinuteLater = new Date('2024-01-15T12:01:00Z');
-      const oneHourLater = new Date('2024-01-15T13:00:00Z');
+      const _oneMinuteLater = new Date('2024-01-15T12:01:00Z');
+      const _oneHourLater = new Date('2024-01-15T13:00:00Z');
 
       expect(formatRelativeTime(oneMinuteLater)).toBe('1分鐘後');
       expect(formatRelativeTime(oneHourLater)).toBe('1小時後');
     });
 
     it('應該處理邊界情況', () => {
-      const now = new Date('2024-01-15T12:00:00Z');
+      const _now = new Date('2024-01-15T12:00:00Z');
       expect(formatRelativeTime(now)).toBe('剛剛');
     });
   });
@@ -310,7 +310,7 @@ describe('Formatters', () => {
 
   describe('Performance', () => {
     it('應該高效處理大量數據', () => {
-      const startTime = performance.now();
+      const _startTime = performance.now();
 
       for (let i = 0; i < 1000; i++) {
         formatPrice(Math.random() * 10000);
@@ -318,7 +318,7 @@ describe('Formatters', () => {
         formatPercentage(Math.random());
       }
 
-      const endTime = performance.now();
+      const _endTime = performance.now();
       expect(endTime - startTime).toBeLessThan(100); // 應該在100ms內完成
     });
   });

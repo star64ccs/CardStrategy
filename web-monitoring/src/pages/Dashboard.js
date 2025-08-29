@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Row, Col, Card, Statistic, Spin, Alert } from 'antd';
-import { 
-  DashboardOutlined, 
-  DollarOutlined, 
-  CheckCircleOutlined, 
-  ExclamationCircleOutlined 
+import {
+  DashboardOutlined,
+  DollarOutlined,
+  CheckCircleOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons';
+import { Row, Col, Card, Statistic, Spin, Alert } from 'antd';
+import React, { useState, useEffect } from 'react';
 import { Line, Bar } from 'react-chartjs-2';
+
 import { monitoringService } from '../services/monitoringService';
 
 const Dashboard = () => {
@@ -24,7 +25,7 @@ const Dashboard = () => {
       const dashboardData = await monitoringService.getDashboardData();
       setData(dashboardData);
     } catch (err) {
-      setError('加載數據失敗: ' + err.message);
+      setError(`加載數據失敗: ${  err.message}`);
     } finally {
       setLoading(false);
     }
@@ -46,7 +47,7 @@ const Dashboard = () => {
   return (
     <div>
       <h1><DashboardOutlined /> CardStrategy 監控儀表板</h1>
-      
+
       {/* 關鍵指標 */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={6}>

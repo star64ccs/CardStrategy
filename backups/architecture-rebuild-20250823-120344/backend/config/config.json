@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "postgres",
+    "password": "sweetcorn831",
+    "database": "cardstrategy",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "postgres",
+    "password": "sweetcorn831",
+    "database": "cardstrategy_test",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "postgres",
+    "password": "sweetcorn831",
+    "database": "cardstrategy_prod",
+    "host": "127.0.0.1",
+    "port": 5432,
+    "dialect": "postgres"
+  }
+}

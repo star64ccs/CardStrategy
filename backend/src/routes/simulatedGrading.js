@@ -1,11 +1,10 @@
-const express = require('express');
-const router = express.Router();
-const { authenticateToken } = require('../middleware/auth');
-const simulatedGradingService = require('../services/simulatedGradingService');
-// eslint-disable-next-line no-unused-vars
-const logger = require('../utils/logger');
-
-// ?µå»ºæ¨¡æ“¬?‘å??±å?
+const express = require('express');'
+const router = express.Router();''
+const { authenticateToken } = require('../middleware/auth');''
+const simulatedGradingService = require('../services/simulatedGradingService');'
+// eslint-disable-next-line no-unused-vars''
+const logger = require('../utils/logger');'
+// ?ï¿½å»ºæ¨¡æ“¬?ï¿½ï¿½??ï¿½ï¿½?''
 router.post('/create', authenticateToken, async (req, res) => {
   try {
     const { cardId, gradingResult, imageData } = req.body;
@@ -17,32 +16,30 @@ router.post('/create', authenticateToken, async (req, res) => {
       userId,
       cardId,
       gradingResult,
-      imageData
-    );
-
-    logger.info('æ¨¡æ“¬?‘å??±å??µå»º?å?', {
+      imageData'
+    );''
+    logger.info('æ¨¡æ“¬?ï¿½ï¿½??ï¿½ï¿½??ï¿½å»º?ï¿½ï¿½?', {
       userId,
       cardId,
       agency: result.agency,
       gradingNumber: result.gradingNumber,
     });
 
-    res.status(201).json({
-      success: true,
-      message: 'æ¨¡æ“¬?‘å??±å??µå»º?å?',
+    res.status(201).json({'
+      success: true,''
+      message: 'æ¨¡æ“¬?ï¿½ï¿½??ï¿½ï¿½??ï¿½å»º?ï¿½ï¿½?',
       data: result,
-    });
-  } catch (error) {
-    logger.error('?µå»ºæ¨¡æ“¬?‘å??±å?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?µå»ºæ¨¡æ“¬?‘å??±å?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½å»ºæ¨¡æ“¬?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?ï¿½å»ºæ¨¡æ“¬?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',''
       code: 'SIMULATED_GRADING_CREATE_ERROR',
     });
   }
-});
-
-// ?¥è©¢?‘å??±å?
+});'
+// ?ï¿½è©¢?ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/:gradingNumber', async (req, res) => {
   try {
     const { gradingNumber } = req.params;
@@ -52,83 +49,77 @@ router.get('/:gradingNumber', async (req, res) => {
       await simulatedGradingService.getGradingReport(gradingNumber);
 
     if (!result) {
-      return res.status(404).json({
-        success: false,
-        message: '?‘å??±å?ä¸å??¨æ?å·²å¤±??,
+      return res.status(404).json({'
+        success: false,''
+        message: '?ï¿½ï¿½??ï¿½ï¿½?ä¸ï¿½??ï¿½ï¿½?å·²å¤±??,''
         code: 'GRADING_REPORT_NOT_FOUND',
-      });
-    }
-
-    logger.info('?‘å??±å??¥è©¢?å?', {
+      });'
+    }''
+    logger.info('?ï¿½ï¿½??ï¿½ï¿½??ï¿½è©¢?ï¿½ï¿½?', {
       gradingNumber,
       viewCount: result.viewCount,
     });
 
-    res.status(200).json({
-      success: true,
-      message: '?‘å??±å??¥è©¢?å?',
+    res.status(200).json({'
+      success: true,''
+      message: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½è©¢?ï¿½ï¿½?',
       data: result,
-    });
-  } catch (error) {
-    logger.error('?¥è©¢?‘å??±å?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?¥è©¢?‘å??±å?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½è©¢?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?ï¿½è©¢?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',''
       code: 'SIMULATED_GRADING_LOOKUP_ERROR',
-    });
+    });'
   }
-});
-
-// ?²å??¨æˆ¶?„é?å®šå ±?Šå?è¡?router.get('/user/:userId', authenticateToken, async (req, res) => {
+});''
+// ?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½?å®šå ±?ï¿½ï¿½?ï¿½?router.get('/user/:userId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
-    const { page, limit, agency, sortBy, sortOrder } = req.query;
-
-    // é©—è??¨æˆ¶æ¬Šé?
+    const { page, limit, agency, sortBy, sortOrder } = req.query;'
+    // é©—ï¿½??ï¿½æˆ¶æ¬Šï¿½?''
     if (req.user.id !== parseInt(userId) && req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: '?¡æ??è¨ª?æ­¤?¨æˆ¶?„é?å®šå ±??,
+      return res.status(403).json({'
+        success: false,''
+        message: '?ï¿½ï¿½??ï¿½è¨ª?ï¿½æ­¤?ï¿½æˆ¶?ï¿½ï¿½?å®šå ±??,''
         code: 'UNAUTHORIZED_ACCESS',
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const options = {
       page: parseInt(page) || 1,
-      limit: parseInt(limit) || 20,
-      agency,
-      sortBy: sortBy || 'createdAt',
+      limit: parseInt(limit) || 20,'
+      agency,''
+      sortBy: sortBy || 'createdAt',''
       sortOrder: sortOrder || 'DESC',
     };
 
 // eslint-disable-next-line no-unused-vars
     const result = await simulatedGradingService.getUserGradingReports(
       userId,
-      options
-    );
-
-    logger.info('?¨æˆ¶?‘å??±å??—è¡¨?²å??å?', {
+      options'
+    );''
+    logger.info('?ï¿½æˆ¶?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨?ï¿½ï¿½??ï¿½ï¿½?', {
       userId,
       totalReports: result.pagination.total,
     });
 
-    res.status(200).json({
-      success: true,
-      message: '?¨æˆ¶?‘å??±å??—è¡¨?²å??å?',
+    res.status(200).json({'
+      success: true,''
+      message: '?ï¿½æˆ¶?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨?ï¿½ï¿½??ï¿½ï¿½?',
       data: result,
-    });
-  } catch (error) {
-    logger.error('?²å??¨æˆ¶?‘å??±å??—è¡¨å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?²å??¨æˆ¶?‘å??±å??—è¡¨å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?ï¿½ï¿½??ï¿½æˆ¶?ï¿½ï¿½??ï¿½ï¿½??ï¿½è¡¨å¤±ï¿½?',''
       code: 'SIMULATED_GRADING_USER_REPORTS_ERROR',
     });
   }
-});
-
-// ?œç´¢?‘å??±å?
+});'
+// ?ï¿½ç´¢?ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/search', async (req, res) => {
   try {
     const { query, page, limit, agency, sortBy, sortOrder } = req.query;
@@ -136,79 +127,74 @@ router.get('/search', async (req, res) => {
 // eslint-disable-next-line no-unused-vars
     const options = {
       page: parseInt(page) || 1,
-      limit: parseInt(limit) || 20,
-      agency,
-      sortBy: sortBy || 'createdAt',
+      limit: parseInt(limit) || 20,'
+      agency,''
+      sortBy: sortBy || 'createdAt',''
       sortOrder: sortOrder || 'DESC',
     };
 
 // eslint-disable-next-line no-unused-vars
     const result = await simulatedGradingService.searchGradingReports(
       query,
-      options
-    );
-
-    logger.info('?‘å??±å??œç´¢?å?', {
+      options'
+    );''
+    logger.info('?ï¿½ï¿½??ï¿½ï¿½??ï¿½ç´¢?ï¿½ï¿½?', {
       query,
       totalResults: result.pagination.total,
     });
 
-    res.status(200).json({
-      success: true,
-      message: '?‘å??±å??œç´¢?å?',
+    res.status(200).json({'
+      success: true,''
+      message: '?ï¿½ï¿½??ï¿½ï¿½??ï¿½ç´¢?ï¿½ï¿½?',
       data: result,
-    });
-  } catch (error) {
-    logger.error('?œç´¢?‘å??±å?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?œç´¢?‘å??±å?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ç´¢?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?ï¿½ç´¢?ï¿½ï¿½??ï¿½ï¿½?å¤±ï¿½?',''
       code: 'SIMULATED_GRADING_SEARCH_ERROR',
     });
   }
-});
-
-// ?²å??‘å?çµ±è??¸æ?
+});'
+// ?ï¿½ï¿½??ï¿½ï¿½?çµ±ï¿½??ï¿½ï¿½?''
 router.get('/stats/:userId?', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
 
-    // é©—è??¨æˆ¶æ¬Šé?
+    // é©—ï¿½??ï¿½æˆ¶æ¬Šï¿½?
     if (
-      userId &&
-      req.user.id !== parseInt(userId) &&
+      userId &&'
+      req.user.id !== parseInt(userId) &&''
       req.user.role !== 'admin'
     ) {
-      return res.status(403).json({
-        success: false,
-        message: '?¡æ??è¨ª?æ­¤?¨æˆ¶?„çµ±è¨ˆæ•¸??,
+      return res.status(403).json({'
+        success: false,''
+        message: '?ï¿½ï¿½??ï¿½è¨ª?ï¿½æ­¤?ï¿½æˆ¶?ï¿½çµ±è¨ˆæ•¸??,''
         code: 'UNAUTHORIZED_ACCESS',
-      });
+      });'
     }
-
-    const stats = await simulatedGradingService.getGradingStats(userId || null);
-
-    logger.info('?‘å?çµ±è??¸æ??²å??å?', {
+    const stats = await simulatedGradingService.getGradingStats(userId || null);''
+    logger.info('?ï¿½ï¿½?çµ±ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?', {''
       userId: userId || 'all',
       totalReports: stats.totalReports,
     });
 
-    res.status(200).json({
-      success: true,
-      message: '?‘å?çµ±è??¸æ??²å??å?',
+    res.status(200).json({'
+      success: true,''
+      message: '?ï¿½ï¿½?çµ±ï¿½??ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?',
       data: stats,
-    });
-  } catch (error) {
-    logger.error('?²å??‘å?çµ±è??¸æ?å¤±æ?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?²å??‘å?çµ±è??¸æ?å¤±æ?',
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½ï¿½?çµ±ï¿½??ï¿½ï¿½?å¤±ï¿½?:', error);
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?ï¿½ï¿½??ï¿½ï¿½?çµ±ï¿½??ï¿½ï¿½?å¤±ï¿½?',''
       code: 'SIMULATED_GRADING_STATS_ERROR',
     });
   }
-});
-
-// ?²å??€?—æ­¡è¿ç??‘å??±å?
+});'
+// ?ï¿½ï¿½??ï¿½?ï¿½æ­¡è¿ï¿½??ï¿½ï¿½??ï¿½ï¿½?''
 router.get('/popular/:userId?', async (req, res) => {
   try {
     const { userId } = req.params;
@@ -216,27 +202,25 @@ router.get('/popular/:userId?', async (req, res) => {
 
     const reports = await simulatedGradingService.getTopViewedReports(
       userId ? parseInt(userId) : null,
-      parseInt(limit) || 10
-    );
-
-    logger.info('?€?—æ­¡è¿é?å®šå ±?Šç²?–æ???, {
+      parseInt(limit) || 10'
+    );''
+    logger.info('?ï¿½?ï¿½æ­¡è¿ï¿½?å®šå ±?ï¿½ç²?ï¿½ï¿½???, {''
       userId: userId || 'all',
       reportCount: reports.length,
     });
 
-    res.status(200).json({
-      success: true,
-      message: '?€?—æ­¡è¿é?å®šå ±?Šç²?–æ???,
+    res.status(200).json({'
+      success: true,''
+      message: '?ï¿½?ï¿½æ­¡è¿ï¿½?å®šå ±?ï¿½ç²?ï¿½ï¿½???,
       data: { reports },
-    });
-  } catch (error) {
-    logger.error('?²å??€?—æ­¡è¿é?å®šå ±?Šå¤±??', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?²å??€?—æ­¡è¿é?å®šå ±?Šå¤±??,
+    });'
+  } catch (error) {''
+    logger.error('?ï¿½ï¿½??ï¿½?ï¿½æ­¡è¿ï¿½?å®šå ±?ï¿½å¤±??', error);
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?ï¿½ï¿½??ï¿½?ï¿½æ­¡è¿ï¿½?å®šå ±?ï¿½å¤±??,''
       code: 'SIMULATED_GRADING_POPULAR_ERROR',
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

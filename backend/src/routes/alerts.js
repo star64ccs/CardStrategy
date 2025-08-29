@@ -1,11 +1,11 @@
-const express = require('express');
-const logger = require('../utils/logger');
-const router = express.Router();
-const alertService = require('../services/alertService');
+const express = require('express');''
+const logger = require('../utils/logger');'
+const router = express.Router();''
+const alertService = require('../services/alertService');''
 const { authenticateToken: protect } = require('../middleware/auth');
 const {
-  validateAlertCreation,
-  validateAlertUpdate,
+  validateAlertCreation,'
+  validateAlertUpdate,''
 } = require('../middleware/validation');
 
 /**
@@ -47,17 +47,16 @@ const {
  *         description: 警報?�建?��?
  *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
-router.post('/', protect, validateAlertCreation, async (req, res) => {
-  try {
+ *       401:'
+ *         description: ?��?�? */''
+router.post('/', protect, validateAlertCreation, async (req, res) => {'
+  try {''
     if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
+      return res.status(403).json({'
+        success: false,''
         message: '?��?管�??�可以創建警??,
       });
     }
-
     const alertData = {
       ...req.body,
       createdBy: req.user.id,
@@ -65,16 +64,16 @@ router.post('/', protect, validateAlertCreation, async (req, res) => {
 
     const alert = await alertService.createAlert(alertData);
 
-    res.status(201).json({
-      success: true,
+    res.status(201).json({'
+      success: true,''
       message: '警報?�建?��?',
       data: alert,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?�建警報失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?�建警報失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?�建警報失�?',''
       code: 'ALERT_CREATION_ERROR',
     });
   }
@@ -126,8 +125,8 @@ router.post('/', protect, validateAlertCreation, async (req, res) => {
  *     responses:
  *       200:
  *         description: ?��??��?警報?�表
- *       401:
- *         description: ?��?�? */
+ *       401:'
+ *         description: ?��?�? */''
 router.get('/', protect, async (req, res) => {
   try {
 // eslint-disable-next-line no-unused-vars
@@ -147,12 +146,12 @@ router.get('/', protect, async (req, res) => {
     res.json({
       success: true,
       data: result,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��?警報?�表失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��?警報?�表失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��?警報?�表失�?',''
       code: 'ALERT_LIST_ERROR',
     });
   }
@@ -176,8 +175,8 @@ router.get('/', protect, async (req, res) => {
  *       200:
  *         description: ?��??��?警報詳�?
  *       404:
- *         description: 警報不�??? *       401:
- *         description: ?��?�? */
+ *         description: 警報不�??? *       401:'
+ *         description: ?��?�? */''
 router.get('/:id', protect, async (req, res) => {
   try {
     const alert = await alertService.getAlertById(parseInt(req.params.id));
@@ -185,12 +184,12 @@ router.get('/:id', protect, async (req, res) => {
     res.json({
       success: true,
       data: alert,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��?警報詳�?失�?:', error);
-    res.status(404).json({
-      success: false,
-      message: error.message || '警報不�???,
+    res.status(404).json({'
+      success: false,''
+      message: error.message || '警報不�???,''
       code: 'ALERT_NOT_FOUND',
     });
   }
@@ -227,8 +226,8 @@ router.get('/:id', protect, async (req, res) => {
  *       200:
  *         description: ?�?�更?��??? *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
+ *       401:'
+ *         description: ?��?�? */''
 router.put('/:id/status', protect, validateAlertUpdate, async (req, res) => {
   try {
     const { status, resolution } = req.body;
@@ -241,16 +240,16 @@ router.put('/:id/status', protect, validateAlertUpdate, async (req, res) => {
       resolution
     );
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '警報?�?�更?��???,
       data: alert,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?�新警報?�?�失??', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?�新警報?�?�失??,
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?�新警報?�?�失??,''
       code: 'ALERT_STATUS_UPDATE_ERROR',
     });
   }
@@ -275,24 +274,24 @@ router.put('/:id/status', protect, validateAlertUpdate, async (req, res) => {
  *         description: 警報確�??��?
  *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
+ *       401:'
+ *         description: ?��?�? */''
 router.post('/:id/acknowledge', protect, async (req, res) => {
   try {
     const alertId = parseInt(req.params.id);
 
     const alert = await alertService.acknowledgeAlert(alertId, req.user.id);
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '警報確�??��?',
       data: alert,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('確�?警報失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '確�?警報失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '確�?警報失�?',''
       code: 'ALERT_ACKNOWLEDGE_ERROR',
     });
   }
@@ -329,17 +328,16 @@ router.post('/:id/acknowledge', protect, async (req, res) => {
  *         description: ?��??�新?��?
  *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
-router.put('/bulk/status', protect, async (req, res) => {
-  try {
+ *       401:'
+ *         description: ?��?�? */''
+router.put('/bulk/status', protect, async (req, res) => {'
+  try {''
     if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
+      return res.status(403).json({'
+        success: false,''
         message: '?��?管�??�可以批?�更?�警??,
       });
     }
-
     const { alertIds, status, resolution } = req.body;
 
 // eslint-disable-next-line no-unused-vars
@@ -354,12 +352,12 @@ router.put('/bulk/status', protect, async (req, res) => {
       success: true,
       message: `?��??�新 ${result.updatedCount} ?�警?�`,
       data: result,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��??�新警報?�?�失??', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��??�新警報?�?�失??,
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��??�新警報?�?�失??,''
       code: 'ALERT_BULK_UPDATE_ERROR',
     });
   }
@@ -391,17 +389,16 @@ router.put('/bulk/status', protect, async (req, res) => {
  *     responses:
  *       200:
  *         description: ?��??��?統�??��?
- *       401:
- *         description: ?��?�? */
-router.get('/stats', protect, async (req, res) => {
-  try {
+ *       401:'
+ *         description: ?��?�? */''
+router.get('/stats', protect, async (req, res) => {'
+  try {''
     if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
+      return res.status(403).json({'
+        success: false,''
         message: '?��?管�??�可以查?�統計數??,
       });
     }
-
 // eslint-disable-next-line no-unused-vars
     const options = {
       startDate: req.query.startDate,
@@ -414,12 +411,12 @@ router.get('/stats', protect, async (req, res) => {
     res.json({
       success: true,
       data: stats,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��?警報統�?失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��?警報統�?失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��?警報統�?失�?',''
       code: 'ALERT_STATS_ERROR',
     });
   }
@@ -436,8 +433,8 @@ router.get('/stats', protect, async (req, res) => {
  *     responses:
  *       200:
  *         description: ?��??��?活�?警報
- *       401:
- *         description: ?��?�? */
+ *       401:'
+ *         description: ?��?�? */''
 router.get('/active', protect, async (req, res) => {
   try {
     const activeAlerts = await alertService.getActiveAlerts();
@@ -445,12 +442,12 @@ router.get('/active', protect, async (req, res) => {
     res.json({
       success: true,
       data: activeAlerts,
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?��?活�?警報失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?��?活�?警報失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?��?活�?警報失�?',''
       code: 'ALERT_ACTIVE_ERROR',
     });
   }
@@ -475,33 +472,31 @@ router.get('/active', protect, async (req, res) => {
  *         description: 警報?�除?��?
  *       400:
  *         description: 請�??�數?�誤
- *       401:
- *         description: ?��?�? */
-router.delete('/:id', protect, async (req, res) => {
-  try {
+ *       401:'
+ *         description: ?��?�? */''
+router.delete('/:id', protect, async (req, res) => {'
+  try {''
     if (req.user.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
+      return res.status(403).json({'
+        success: false,''
         message: '?��?管�??�可以刪?�警??,
       });
     }
-
     const alertId = parseInt(req.params.id);
 
     await alertService.deleteAlert(alertId);
 
-    res.json({
-      success: true,
+    res.json({'
+      success: true,''
       message: '警報?�除?��?',
-    });
-  } catch (error) {
+    });'
+  } catch (error) {''
     logger.error('?�除警報失�?:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || '?�除警報失�?',
+    res.status(500).json({'
+      success: false,''
+      message: error.message || '?�除警報失�?',''
       code: 'ALERT_DELETE_ERROR',
     });
   }
-});
-
-module.exports = router;
+});'
+module.exports = router;''

@@ -1,14 +1,14 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-import { enhancedAIService } from '../../../services/enhancedAIService';
 import { apiService } from '../../../services/apiService';
+import { enhancedAIService } from '../../../services/enhancedAIService';
 import { logger } from '../../../utils/logger';
 
 // Mock 依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../utils/logger');
 
-const mockApiService = apiService as jest.Mocked<typeof apiService>;
-const mockLogger = logger as jest.Mocked<typeof logger>;
+const _mockApiService = apiService as jest.Mocked<typeof apiService>;
+const _mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('EnhancedAIService', () => {
   beforeEach(() => {
@@ -16,9 +16,9 @@ describe('EnhancedAIService', () => {
   });
 
   describe('enhancedRecognizeCard', () => {
-    const mockImageData = 'base64_image_data';
+    const _mockImageData = 'base64_image_data';
 
-    const mockRecognitionResult = {
+    const _mockRecognitionResult = {
       success: true,
       data: {
         recognizedCard: {
@@ -62,7 +62,7 @@ describe('EnhancedAIService', () => {
     it('應該成功識別卡片', async () => {
       mockApiService.post.mockResolvedValue(mockRecognitionResult);
 
-      const result =
+      const _result =
         await enhancedAIService.enhancedRecognizeCard(mockImageData);
 
       expect(result.success).toBe(true);
@@ -75,7 +75,7 @@ describe('EnhancedAIService', () => {
     });
 
     it('應該處理識別失敗', async () => {
-      const mockFailedResult = {
+      const _mockFailedResult = {
         success: false,
         data: {
           recognizedCard: null,
@@ -87,7 +87,7 @@ describe('EnhancedAIService', () => {
 
       mockApiService.post.mockResolvedValue(mockFailedResult);
 
-      const result =
+      const _result =
         await enhancedAIService.enhancedRecognizeCard(mockImageData);
 
       expect(result.success).toBe(false);
@@ -106,10 +106,10 @@ describe('EnhancedAIService', () => {
   });
 
   describe('enhancedAnalyzeCondition', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockImageData = 'base64_image_data';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockImageData = 'base64_image_data';
 
-    const mockConditionResult = {
+    const _mockConditionResult = {
       success: true,
       data: {
         cardId: mockCardId,
@@ -189,7 +189,7 @@ describe('EnhancedAIService', () => {
     it('應該成功分析卡片條件', async () => {
       mockApiService.post.mockResolvedValue(mockConditionResult);
 
-      const result = await enhancedAIService.enhancedAnalyzeCondition(
+      const _result = await enhancedAIService.enhancedAnalyzeCondition(
         mockCardId,
         mockImageData
       );
@@ -206,10 +206,10 @@ describe('EnhancedAIService', () => {
   });
 
   describe('enhancedVerifyAuthenticity', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
-    const mockImageData = 'base64_image_data';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockImageData = 'base64_image_data';
 
-    const mockAuthenticityResult = {
+    const _mockAuthenticityResult = {
       success: true,
       data: {
         cardId: mockCardId,
@@ -268,7 +268,7 @@ describe('EnhancedAIService', () => {
     it('應該成功驗證真偽', async () => {
       mockApiService.post.mockResolvedValue(mockAuthenticityResult);
 
-      const result = await enhancedAIService.enhancedVerifyAuthenticity(
+      const _result = await enhancedAIService.enhancedVerifyAuthenticity(
         mockCardId,
         mockImageData
       );
@@ -285,9 +285,9 @@ describe('EnhancedAIService', () => {
   });
 
   describe('enhancedPricePrediction', () => {
-    const mockCardId = '123e4567-e89b-12d3-a456-426614174000';
+    const _mockCardId = '123e4567-e89b-12d3-a456-426614174000';
 
-    const mockPredictionResult = {
+    const _mockPredictionResult = {
       success: true,
       data: {
         cardId: mockCardId,
@@ -354,7 +354,7 @@ describe('EnhancedAIService', () => {
     it('應該成功預測價格', async () => {
       mockApiService.post.mockResolvedValue(mockPredictionResult);
 
-      const result = await enhancedAIService.enhancedPricePrediction(
+      const _result = await enhancedAIService.enhancedPricePrediction(
         mockCardId,
         ['7d', '30d', '90d']
       );
@@ -372,11 +372,11 @@ describe('EnhancedAIService', () => {
   });
 
   describe('comprehensiveAnalysis', () => {
-    const mockImageData = 'base64_image_data';
+    const _mockImageData = 'base64_image_data';
 
     it('應該執行綜合分析', async () => {
       // Mock 各個分析步驟的結果
-      const mockRecognitionResult = {
+      const _mockRecognitionResult = {
         success: true,
         data: {
           recognizedCard: { id: 'card-123', name: '皮卡丘' },
@@ -384,21 +384,21 @@ describe('EnhancedAIService', () => {
         },
       };
 
-      const mockConditionResult = {
+      const _mockConditionResult = {
         success: true,
         data: {
           analysis: { overallScore: 85, overallGrade: 'Near Mint' },
         },
       };
 
-      const mockAuthenticityResult = {
+      const _mockAuthenticityResult = {
         success: true,
         data: {
           authenticity: { score: 0.95, riskLevel: 'low' },
         },
       };
 
-      const mockPredictionResult = {
+      const _mockPredictionResult = {
         success: true,
         data: {
           predictions: [{ timeframe: '7d', predictedPrice: 150.5 }],
@@ -412,7 +412,7 @@ describe('EnhancedAIService', () => {
         .mockResolvedValueOnce(mockAuthenticityResult)
         .mockResolvedValueOnce(mockPredictionResult);
 
-      const result =
+      const _result =
         await enhancedAIService.comprehensiveAnalysis(mockImageData);
 
       expect(result.recognition.success).toBe(true);
@@ -432,7 +432,7 @@ describe('EnhancedAIService', () => {
     });
 
     it('應該處理識別失敗的情況', async () => {
-      const mockFailedRecognition = {
+      const _mockFailedRecognition = {
         success: false,
         data: { recognizedCard: null },
       };
@@ -447,7 +447,7 @@ describe('EnhancedAIService', () => {
 
   describe('getConfig', () => {
     it('應該返回當前配置', () => {
-      const config = enhancedAIService.getConfig();
+      const _config = enhancedAIService.getConfig();
 
       expect(config).toBeDefined();
       expect(config.recognition).toBeDefined();
@@ -465,7 +465,7 @@ describe('EnhancedAIService', () => {
 
   describe('updateConfig', () => {
     it('應該更新配置', () => {
-      const newConfig = {
+      const _newConfig = {
         recognition: {
           confidenceThreshold: 0.9,
         },
@@ -476,7 +476,7 @@ describe('EnhancedAIService', () => {
 
       enhancedAIService.updateConfig(newConfig);
 
-      const updatedConfig = enhancedAIService.getConfig();
+      const _updatedConfig = enhancedAIService.getConfig();
       expect(updatedConfig.recognition.confidenceThreshold).toBe(0.9);
       expect(updatedConfig.conditionAnalysis.confidenceThreshold).toBe(0.95);
       expect(

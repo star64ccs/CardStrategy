@@ -1,5 +1,8 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
 import { configureStore } from '@reduxjs/toolkit';
+
+import { createMockPrivacyPreferences } from '@/__tests__/setup/test-utils';
+import { privacyService } from '@/services/privacyService';
 import privacyReducer, {
   fetchPrivacyPreferences,
   updatePrivacyPreferences,
@@ -27,12 +30,10 @@ import privacyReducer, {
   addDataRightsRequest,
   updateDataRightsRequest,
 } from '@/store/slices/privacySlice';
-import { privacyService } from '@/services/privacyService';
-import { createMockPrivacyPreferences } from '@/__tests__/setup/test-utils';
 
 // Mock the privacy service
 jest.mock('@/services/privacyService');
-const mockPrivacyService = privacyService as jest.Mocked<typeof privacyService>;
+const _mockPrivacyService = privacyService as jest.Mocked<typeof privacyService>;
 
 describe('Privacy Slice', () => {
   let store: ReturnType<typeof configureStore>;
@@ -48,7 +49,7 @@ describe('Privacy Slice', () => {
 
   describe('Initial State', () => {
     it('should have correct initial state', () => {
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.preferences).toBeNull();
       expect(state.preferencesLoading).toBe(false);
@@ -64,19 +65,19 @@ describe('Privacy Slice', () => {
   describe('fetchPrivacyPreferences', () => {
     it('should handle pending state', () => {
       store.dispatch(fetchPrivacyPreferences.pending('', 'user-123'));
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.preferencesLoading).toBe(true);
       expect(state.preferencesError).toBeNull();
     });
 
     it('should handle fulfilled state', () => {
-      const mockPreferences = createMockPrivacyPreferences();
+      const _mockPreferences = createMockPrivacyPreferences();
 
       store.dispatch(
         fetchPrivacyPreferences.fulfilled(mockPreferences, '', 'user-123')
       );
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.preferences).toEqual(mockPreferences);
       expect(state.preferencesLoading).toBe(false);
@@ -84,7 +85,7 @@ describe('Privacy Slice', () => {
     });
 
     it('should handle rejected state', () => {
-      const errorMessage = 'Failed to fetch preferences';
+      const _errorMessage = 'Failed to fetch preferences';
 
       store.dispatch(
         fetchPrivacyPreferences.rejected(
@@ -94,14 +95,14 @@ describe('Privacy Slice', () => {
           errorMessage
         )
       );
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.preferencesLoading).toBe(false);
       expect(state.preferencesError).toBe(errorMessage);
     });
 
     it('should call privacy service', async () => {
-      const mockPreferences = createMockPrivacyPreferences();
+      const _mockPreferences = createMockPrivacyPreferences();
       mockPrivacyService.getPrivacyPreferences.mockResolvedValue(
         mockPreferences
       );
@@ -116,8 +117,8 @@ describe('Privacy Slice', () => {
 
   describe('updatePrivacyPreferences', () => {
     it('should handle fulfilled state', () => {
-      const mockPreferences = createMockPrivacyPreferences();
-      const updateData = { region: 'US' as const };
+      const _mockPreferences = createMockPrivacyPreferences();
+      const _updateData = { region: 'US' as const };
 
       store.dispatch(
         updatePrivacyPreferences.fulfilled(
@@ -126,15 +127,15 @@ describe('Privacy Slice', () => {
           { userId: 'user-123', preferences: updateData }
         )
       );
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.preferences?.region).toBe('US');
       expect(state.preferencesLoading).toBe(false);
     });
 
     it('should call privacy service', async () => {
-      const mockPreferences = createMockPrivacyPreferences();
-      const updateData = { region: 'US' as const };
+      const _mockPreferences = createMockPrivacyPreferences();
+      const _updateData = { region: 'US' as const };
       mockPrivacyService.updatePrivacyPreferences.mockResolvedValue({
         ...mockPreferences,
         ...updateData,
@@ -156,7 +157,7 @@ describe('Privacy Slice', () => {
 
   describe('recordConsent', () => {
     it('should handle fulfilled state', () => {
-      const consentData = {
+      const _consentData = {
         type: 'marketing' as const,
         purpose: 'email_marketing' as const,
         legalBasis: 'consent' as const,
@@ -170,14 +171,14 @@ describe('Privacy Slice', () => {
           consentData,
         })
       );
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.consentHistory).toHaveLength(1);
       expect(state.consentHistory[0].id).toBe('consent-1');
     });
 
     it('should call privacy service', async () => {
-      const consentData = {
+      const _consentData = {
         type: 'marketing' as const,
         purpose: 'email_marketing' as const,
         legalBasis: 'consent' as const,
@@ -200,7 +201,7 @@ describe('Privacy Slice', () => {
 
   describe('withdrawConsent', () => {
     it('should handle fulfilled state', () => {
-      const consentId = 'consent-1';
+      const _consentId = 'consent-1';
 
       store.dispatch(
         withdrawConsent.fulfilled({ id: consentId, withdrawn: true }, '', {
@@ -208,14 +209,14 @@ describe('Privacy Slice', () => {
           consentId,
         })
       );
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       // Should update the consent record in history
       expect(state.consentHistory).toEqual([]); // Initially empty
     });
 
     it('should call privacy service', async () => {
-      const consentId = 'consent-1';
+      const _consentId = 'consent-1';
       mockPrivacyService.withdrawConsent.mockResolvedValue({
         id: consentId,
         withdrawn: true,
@@ -232,7 +233,7 @@ describe('Privacy Slice', () => {
 
   describe('submitDataRightsRequest', () => {
     it('should handle fulfilled state', () => {
-      const requestData = {
+      const _requestData = {
         type: 'access' as const,
         description: 'Request access to my data',
         priority: 'medium' as const,
@@ -245,7 +246,7 @@ describe('Privacy Slice', () => {
           { userId: 'user-123', requestData }
         )
       );
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.dataRightsRequests).toHaveLength(1);
       expect(state.dataRightsRequests[0].id).toBe('request-1');
@@ -253,7 +254,7 @@ describe('Privacy Slice', () => {
     });
 
     it('should call privacy service', async () => {
-      const requestData = {
+      const _requestData = {
         type: 'access' as const,
         description: 'Request access to my data',
         priority: 'medium' as const,
@@ -277,8 +278,8 @@ describe('Privacy Slice', () => {
 
   describe('checkPrivacyCompliance', () => {
     it('should handle fulfilled state', () => {
-      const region = 'CN' as const;
-      const complianceResult = {
+      const _region = 'CN' as const;
+      const _complianceResult = {
         compliant: true,
         score: 95,
         issues: [],
@@ -291,14 +292,14 @@ describe('Privacy Slice', () => {
           region,
         })
       );
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.complianceCheck).toEqual(complianceResult);
     });
 
     it('should call privacy service', async () => {
-      const region = 'CN' as const;
-      const complianceResult = {
+      const _region = 'CN' as const;
+      const _complianceResult = {
         compliant: true,
         score: 95,
         issues: [],
@@ -321,7 +322,7 @@ describe('Privacy Slice', () => {
 
   describe('fetchPrivacyDashboard', () => {
     it('should handle fulfilled state', () => {
-      const dashboardData = {
+      const _dashboardData = {
         consentSummary: {
           total: 10,
           active: 8,
@@ -337,13 +338,13 @@ describe('Privacy Slice', () => {
       store.dispatch(
         fetchPrivacyDashboard.fulfilled(dashboardData, '', 'user-123')
       );
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.dashboard).toEqual(dashboardData);
     });
 
     it('should call privacy service', async () => {
-      const dashboardData = {
+      const _dashboardData = {
         consentSummary: { total: 10, active: 8, expired: 2 },
         dataRightsSummary: { pending: 1, completed: 5 },
         complianceScore: 95,
@@ -409,7 +410,7 @@ describe('Privacy Slice', () => {
 
     describe('updatePartialPreferences', () => {
       it('should update partial preferences', () => {
-        const mockPreferences = createMockPrivacyPreferences();
+        const _mockPreferences = createMockPrivacyPreferences();
         store.dispatch(
           fetchPrivacyPreferences.fulfilled(mockPreferences, '', 'user-123')
         );
@@ -421,7 +422,7 @@ describe('Privacy Slice', () => {
 
     describe('addConsentRecord', () => {
       it('should add consent record to history', () => {
-        const consentRecord = {
+        const _consentRecord = {
           id: 'consent-1',
           type: 'marketing' as const,
           purpose: 'email_marketing' as const,
@@ -440,7 +441,7 @@ describe('Privacy Slice', () => {
 
     describe('updateConsentRecord', () => {
       it('should update existing consent record', () => {
-        const consentRecord = {
+        const _consentRecord = {
           id: 'consent-1',
           type: 'marketing' as const,
           purpose: 'email_marketing' as const,
@@ -460,7 +461,7 @@ describe('Privacy Slice', () => {
 
     describe('addDataRightsRequest', () => {
       it('should add data rights request', () => {
-        const request = {
+        const _request = {
           id: 'request-1',
           type: 'access' as const,
           description: 'Request access to my data',
@@ -477,7 +478,7 @@ describe('Privacy Slice', () => {
 
     describe('updateDataRightsRequest', () => {
       it('should update existing data rights request', () => {
-        const request = {
+        const _request = {
           id: 'request-1',
           type: 'access' as const,
           description: 'Request access to my data',
@@ -503,13 +504,13 @@ describe('Privacy Slice', () => {
 
   describe('Error Handling', () => {
     it('should handle service errors gracefully', async () => {
-      const errorMessage = 'Service unavailable';
+      const _errorMessage = 'Service unavailable';
       mockPrivacyService.getPrivacyPreferences.mockRejectedValue(
         new Error(errorMessage)
       );
 
       await store.dispatch(fetchPrivacyPreferences('user-123'));
-      const state = store.getState().privacy;
+      const _state = store.getState().privacy;
 
       expect(state.preferencesLoading).toBe(false);
       expect(state.preferencesError).toBe(errorMessage);
