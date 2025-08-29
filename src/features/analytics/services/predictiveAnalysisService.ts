@@ -513,7 +513,7 @@ export class PredictiveAnalysisService {
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, []);
     }
-    this.eventListeners.get(eventType)!.push(listener);
+    this.eventListeners.get(eventType).push(listener);
   }
 
   /**

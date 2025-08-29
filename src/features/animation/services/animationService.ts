@@ -279,7 +279,10 @@ class AnimationService implements AnimationManager, AnimationTools {
     };
   }
 
-  createSpringAnimation(to: unknown, config: SpringConfig = {}): AnimationConfig {
+  createSpringAnimation(
+    to: unknown,
+    config: SpringConfig = {}
+  ): AnimationConfig {
     return {
       type: 'spring',
       duration: 500,
@@ -314,7 +317,11 @@ class AnimationService implements AnimationManager, AnimationTools {
   }
 
   // 動畫插值
-  interpolate(value: number, inputRange: number[], outputRange: unknown[]): unknown {
+  interpolate(
+    value: number,
+    inputRange: number[],
+    outputRange: unknown[]
+  ): unknown {
     // 簡化的插值實現
     if (inputRange.length !== outputRange.length) {
       throw new Error('Input and output ranges must have the same length');

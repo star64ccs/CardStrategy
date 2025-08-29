@@ -100,9 +100,12 @@ export const _useResponsive = (): UseResponsiveReturn => {
     []
   );
 
-  const _onResize = useCallback((callback: (event: ResponsiveEvent) => void) => {
-    return layoutService.onResize(callback);
-  }, []);
+  const _onResize = useCallback(
+    (callback: (event: ResponsiveEvent) => void) => {
+      return layoutService.onResize(callback);
+    },
+    []
+  );
 
   // 配置和狀態獲取
   const _getBreakpointConfig = useCallback(() => {
@@ -185,7 +188,9 @@ export const _useDeviceType = () => {
 };
 
 // 響應式條件 Hook
-export const _useResponsiveCondition = (condition: ResponsiveValue<boolean>) => {
+export const _useResponsiveCondition = (
+  condition: ResponsiveValue<boolean>
+) => {
   const { getResponsiveValue } = useResponsive();
 
   return useMemo(
@@ -207,7 +212,9 @@ export const _useResponsiveStyle = (
 };
 
 // 響應式類名 Hook
-export const _useResponsiveClassName = (classNames: ResponsiveValue<string>) => {
+export const _useResponsiveClassName = (
+  classNames: ResponsiveValue<string>
+) => {
   const { getResponsiveValue } = useResponsive();
 
   return useMemo(

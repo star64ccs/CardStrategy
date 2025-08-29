@@ -343,7 +343,10 @@ export class HybridRecommendationService {
     });
   }
 
-  private sortRecommendations(recommendations: unknown[], userId: string): unknown[] {
+  private sortRecommendations(
+    recommendations: unknown[],
+    userId: string
+  ): unknown[] {
     return recommendations.sort((a, b) => {
       const _scoreA = this.calculateHybridScore(a, userId);
       const _scoreB = this.calculateHybridScore(b, userId);
@@ -351,7 +354,10 @@ export class HybridRecommendationService {
     });
   }
 
-  private calculateHybridScore(recommendation: unknown, userId: string): number {
+  private calculateHybridScore(
+    recommendation: unknown,
+    userId: string
+  ): number {
     const _popularityScore = recommendation.popularity || 0;
     const _recencyScore = recommendation.recency || 0;
     const _relevanceScore = recommendation.relevance || 0;

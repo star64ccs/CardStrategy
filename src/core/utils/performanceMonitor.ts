@@ -33,7 +33,7 @@ export class PerformanceMonitor {
     if (!this.metrics.has(operation)) {
       this.metrics.set(operation, []);
     }
-    this.metrics.get(operation)!.push(duration);
+    this.metrics.get(operation).push(duration);
 
     logger.info('Performance metric:', {
       operation,

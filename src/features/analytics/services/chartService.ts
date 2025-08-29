@@ -422,7 +422,7 @@ class ChartService {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
     }
-    this.eventListeners.get(event)!.push(callback);
+    this.eventListeners.get(event).push(callback);
   }
 
   // 移除事件監聽器

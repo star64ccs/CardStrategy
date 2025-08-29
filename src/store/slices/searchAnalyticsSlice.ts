@@ -417,8 +417,9 @@ export const _selectIsLoading = (state: {
   searchAnalytics: SearchAnalyticsState;
 }) => state.searchAnalytics.isLoading;
 
-export const _selectError = (state: { searchAnalytics: SearchAnalyticsState }) =>
-  state.searchAnalytics.error;
+export const _selectError = (state: {
+  searchAnalytics: SearchAnalyticsState;
+}) => state.searchAnalytics.error;
 
 export const _selectConfig = (state: {
   searchAnalytics: SearchAnalyticsState;

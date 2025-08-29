@@ -524,7 +524,7 @@ export class AnimationService implements AnimationServiceInterface {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(callback);
+    this.eventListeners.get(event).add(callback);
   }
 
   /**

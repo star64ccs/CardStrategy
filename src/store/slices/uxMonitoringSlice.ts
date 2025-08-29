@@ -355,8 +355,9 @@ export const _selectLoading = (state: { uxMonitoring: UXMonitoringState }) =>
   state.uxMonitoring.loading;
 export const _selectError = (state: { uxMonitoring: UXMonitoringState }) =>
   state.uxMonitoring.error;
-export const _selectLastUpdated = (state: { uxMonitoring: UXMonitoringState }) =>
-  state.uxMonitoring.lastUpdated;
+export const _selectLastUpdated = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.lastUpdated;
 
 // 複合選擇器
 export const _selectSessionAnalytics = (state: {
@@ -391,8 +392,9 @@ export const _selectTotalActions = (state: {
   uxMonitoring: UXMonitoringState;
 }) => state.uxMonitoring.status.actionCount;
 
-export const _selectTotalErrors = (state: { uxMonitoring: UXMonitoringState }) =>
-  state.uxMonitoring.status.errorCount;
+export const _selectTotalErrors = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.status.errorCount;
 
 export const _selectTotalPerformanceMetrics = (state: {
   uxMonitoring: UXMonitoringState;
@@ -428,7 +430,9 @@ export const _selectAveragePageLoadTime = (state: {
   return analytics ? analytics.averagePageLoadTime : 0;
 };
 
-export const _selectErrorRate = (state: { uxMonitoring: UXMonitoringState }) => {
+export const _selectErrorRate = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => {
   const _analytics = state.uxMonitoring.analytics?.errorAnalytics;
   return analytics ? analytics.errorRate : 0;
 };

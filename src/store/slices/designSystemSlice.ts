@@ -186,7 +186,8 @@ const _designSystemSlice = createSlice({
 
 // 輔助函數
 function determineComponentCategory(
-  name: string): keyof DesignSystemState['components'] | null {
+  name: string
+): keyof DesignSystemState['components'] | null {
   const _atomComponents = ['Button', 'Input', 'Label', 'Icon', 'Badge'];
   const _moleculeComponents = ['Card', 'Modal', 'Dropdown', 'Tabs', 'Alert'];
   const _organismComponents = [
@@ -207,7 +208,9 @@ function determineComponentCategory(
 }
 
 function getComponentFromState(
-  state: DesignSystemState, name: string): ComponentConfig | null {
+  state: DesignSystemState,
+  name: string
+): ComponentConfig | null {
   for (const category of Object.values(state.components)) {
     if (category[name]) {
       return category[name];

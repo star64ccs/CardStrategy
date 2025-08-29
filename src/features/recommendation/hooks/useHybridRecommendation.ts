@@ -216,7 +216,11 @@ export const _useHybridRecommendation = () => {
 
   // 按分數排序
   const _sortByScore = useCallback((ascending = false) => {
-    setOptionsState((prev: unknown) => ({ ...prev, sortBy: 'score', ascending }));
+    setOptionsState((prev: unknown) => ({
+      ...prev,
+      sortBy: 'score',
+      ascending,
+    }));
   }, []);
 
   // 啟用多樣性

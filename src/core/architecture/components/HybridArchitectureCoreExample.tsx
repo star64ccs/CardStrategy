@@ -195,8 +195,8 @@ const HybridArchitectureCoreExample: React.FC = () => {
 
     try {
       // 測試核心層
-      const _coreTest = await hybridCore.core.businessLogic.processBusinessLogic(
-        {
+      const _coreTest =
+        await hybridCore.core.businessLogic.processBusinessLogic({
           id: 'test-operation',
           type: 'PROCESS',
           data: 'test',
@@ -208,8 +208,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
           },
           resource: 'test',
           timestamp: new Date(),
-        }
-      );
+        });
       results.push({
         test: '核心層 - 業務邏輯',
         success: coreTest.success,

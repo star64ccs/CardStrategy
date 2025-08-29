@@ -226,7 +226,10 @@ export function PerformanceMonitor(operationName?: string) {
  * 緩存裝飾器
  * 為方法添加緩存功能
  */
-export function Cache(_ttl = 60000, keyGenerator?: (...args: unknown[]) => string) {
+export function Cache(
+  _ttl = 60000,
+  keyGenerator?: (...args: unknown[]) => string
+) {
   return function (
     target: unknown,
     propertyName: string,

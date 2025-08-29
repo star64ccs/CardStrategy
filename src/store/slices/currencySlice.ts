@@ -289,8 +289,9 @@ export const {
 // 導出 Selectors
 export const _selectCurrentCurrency = (state: { currency: CurrencyState }) =>
   state.currency.currentCurrency;
-export const _selectAvailableCurrencies = (state: { currency: CurrencyState }) =>
-  state.currency.availableCurrencies;
+export const _selectAvailableCurrencies = (state: {
+  currency: CurrencyState;
+}) => state.currency.availableCurrencies;
 export const _selectExchangeRates = (state: { currency: CurrencyState }) =>
   state.currency.exchangeRates;
 export const _selectIsLoading = (state: { currency: CurrencyState }) =>

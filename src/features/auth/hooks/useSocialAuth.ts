@@ -252,7 +252,9 @@ export const _useSocialAuth = (
   const _linkAccount = useCallback(
     async (credentials: SocialLoginCredentials): Promise<SocialAccountLink> => {
       try {
-        const _account = await dispatch(linkSocialAccount(credentials)).unwrap();
+        const _account = await dispatch(
+          linkSocialAccount(credentials)
+        ).unwrap();
         logger.info('社交帳戶鏈接成功:', { provider: credentials.provider });
         onAccountLinked?.(account);
         return account;

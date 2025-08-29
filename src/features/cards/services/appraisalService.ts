@@ -282,7 +282,10 @@ class AppraisalService {
     return 'poor';
   }
 
-  private generateRecommendations(details: unknown, overallScore: number): unknown[] {
+  private generateRecommendations(
+    details: unknown,
+    overallScore: number
+  ): unknown[] {
     const _recommendations = [];
 
     if (overallScore < 7) {

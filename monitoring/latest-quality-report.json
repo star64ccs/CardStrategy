@@ -1,0 +1,32 @@
+{
+  "summary": {
+    "timestamp": "2025-08-29T12:50:36.974Z",
+    "overallStatus": "warning",
+    "score": 40,
+    "issues": 3
+  },
+  "details": {
+    "timestamp": "2025-08-29T12:50:36.974Z",
+    "eslint": {
+      "error": "ESLint檢查失敗"
+    },
+    "typescript": {
+      "status": "error",
+      "output": "Command failed: npm run type-check"
+    },
+    "tests": {
+      "status": "error",
+      "output": "spawnSync C:\\WINDOWS\\system32\\cmd.exe ENOBUFS"
+    },
+    "build": {
+      "status": "error",
+      "output": "Command failed: npm run build\nInvalid project root: C:\\TCG\\CardStrategy\\build\n"
+    },
+    "coverage": {}
+  },
+  "recommendations": [
+    "修復TypeScript類型錯誤",
+    "修復測試失敗",
+    "修復構建錯誤"
+  ]
+}

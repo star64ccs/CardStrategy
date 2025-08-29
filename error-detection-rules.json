@@ -1,0 +1,11 @@
+{
+  "variableDefinition": {
+    "pattern": {}
+  },
+  "importCheck": {
+    "pattern": {}
+  },
+  "functionCall": {
+    "pattern": {}
+  }
+}

@@ -67,7 +67,8 @@ export const _getAssessmentStats = createAsyncThunk(
   'centeringAssessment/getStats',
   async (userId: string, { rejectWithValue }) => {
     try {
-      const _stats = await centeringAssessmentService.getAssessmentStats(userId);
+      const _stats =
+        await centeringAssessmentService.getAssessmentStats(userId);
       return stats;
     } catch (error: unknown) {
       logger.error('獲取評估統計失敗:', error);

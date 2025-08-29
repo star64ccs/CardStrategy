@@ -392,7 +392,8 @@ export class ComplianceWorker {
       const _frameworks = [
         ...new Set(recentAnalyses.map(analysis => analysis.analysisType)),
       ];
-      const _overallCompliance = this.calculateOverallCompliance(recentAnalyses);
+      const _overallCompliance =
+        this.calculateOverallCompliance(recentAnalyses);
       const _recommendations =
         this.generateComplianceRecommendations(recentAnalyses);
 

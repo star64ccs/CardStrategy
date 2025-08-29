@@ -90,7 +90,9 @@ export const _useRecommendation = () => {
   const _generateInvestmentRecommendation = useCallback(
     async (request: InvestmentRecommendationRequest) => {
       try {
-        const _result = await dispatch(generateRecommendation(request)).unwrap();
+        const _result = await dispatch(
+          generateRecommendation(request)
+        ).unwrap();
         return result;
       } catch (error) {
         console.error('Failed to generate investment recommendation:', error);

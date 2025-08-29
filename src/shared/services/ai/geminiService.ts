@@ -173,7 +173,8 @@ export class GeminiService {
         requestBody
       );
 
-      const _generatedText = response.candidates?.[0]?.content?.parts?.[0]?.text;
+      const _generatedText =
+        response.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!generatedText) {
         throw new Error('Gemini API 未返回有效內容');
       }
@@ -530,7 +531,9 @@ export class GeminiService {
 
     try {
       const _response = await this.makeRequest('/models', 'GET');
-      return response.models.map((model: unknown) => model.name.split('/').pop());
+      return response.models.map((model: unknown) =>
+        model.name.split('/').pop()
+      );
     } catch (error) {
       logger.error('獲取 Gemini 模型列表失敗:', { error });
       return [];

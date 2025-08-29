@@ -26,7 +26,10 @@ const _errorHandlerService = {
       context: { context, severity },
     };
   },
-  handleApiError: async (error: unknown, context: string): Promise<AppError> => {
+  handleApiError: async (
+    error: unknown,
+    context: string
+  ): Promise<AppError> => {
     return {
       code: 'API_ERROR',
       message: error.message || 'API 錯誤',
@@ -45,7 +48,10 @@ const _errorHandlerService = {
       context: { context },
     };
   },
-  handleAuthError: async (error: unknown, context: string): Promise<AppError> => {
+  handleAuthError: async (
+    error: unknown,
+    context: string
+  ): Promise<AppError> => {
     return {
       code: 'AUTH_ERROR',
       message: error.message || '認證錯誤',

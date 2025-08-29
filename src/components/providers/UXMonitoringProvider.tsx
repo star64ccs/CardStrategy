@@ -82,7 +82,9 @@ interface UXMonitoringContextType {
   exportData: () => any;
 }
 
-const _UXMonitoringContext = createContext<UXMonitoringContextType | null>(null);
+const _UXMonitoringContext = createContext<UXMonitoringContextType | null>(
+  null
+);
 
 // Provider Props
 interface UXMonitoringProviderProps {

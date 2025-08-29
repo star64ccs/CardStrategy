@@ -243,15 +243,17 @@ export const _selectPredictionHistory = (state: {
   prediction: PredictionState;
 }) => state.prediction.predictionHistory;
 
-export const _selectPredictionStats = (state: { prediction: PredictionState }) =>
-  state.prediction.predictionStats;
+export const _selectPredictionStats = (state: {
+  prediction: PredictionState;
+}) => state.prediction.predictionStats;
 
 export const _selectPredictionLoading = (state: {
   prediction: PredictionState;
 }) => state.prediction.loading;
 
-export const _selectPredictionError = (state: { prediction: PredictionState }) =>
-  state.prediction.error;
+export const _selectPredictionError = (state: {
+  prediction: PredictionState;
+}) => state.prediction.error;
 
 export const _selectPredictionOptions = (state: {
   prediction: PredictionState;

@@ -436,8 +436,9 @@ export const _selectIsLoadingAccounts = (state: {
 }) => state.socialAuth.isLoadingAccounts;
 export const _selectAccountsError = (state: { socialAuth: SocialAuthState }) =>
   state.socialAuth.accountsError;
-export const _selectSocialLoginUrls = (state: { socialAuth: SocialAuthState }) =>
-  state.socialAuth.socialLoginUrls;
+export const _selectSocialLoginUrls = (state: {
+  socialAuth: SocialAuthState;
+}) => state.socialAuth.socialLoginUrls;
 export const _selectIsLoadingUrls = (state: { socialAuth: SocialAuthState }) =>
   state.socialAuth.isLoadingUrls;
 export const _selectUrlsError = (state: { socialAuth: SocialAuthState }) =>

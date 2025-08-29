@@ -67,7 +67,10 @@ class CenteringAssessmentService {
       );
 
       // 模擬調用後端評估 API
-      const _apiResponse = await this.callAssessmentAPI(processedImage, options);
+      const _apiResponse = await this.callAssessmentAPI(
+        processedImage,
+        options
+      );
 
       if (!apiResponse.success || !apiResponse.data) {
         const error: CenteringAssessmentError = {
@@ -105,7 +108,10 @@ class CenteringAssessmentService {
   ): Promise<CenteringAssessmentHistory[]> {
     logger.info('獲取置中評估歷史', { userId, limit });
     try {
-      const _apiResponse = await this.callGetAssessmentHistoryAPI(userId, limit);
+      const _apiResponse = await this.callGetAssessmentHistoryAPI(
+        userId,
+        limit
+      );
 
       if (!apiResponse.success || !apiResponse.data) {
         throw new Error(apiResponse.error?.message || '獲取評估歷史失敗');

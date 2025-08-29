@@ -229,7 +229,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
       this.performanceData.set(key, []);
     }
 
-    this.performanceData.get(key)!.push({
+    this.performanceData.get(key).push({
       ...metrics,
       timestamp: Date.now(),
     });
@@ -390,7 +390,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
       if (!groups.has(result.component)) {
         groups.set(result.component, []);
       }
-      groups.get(result.component)!.push(result);
+      groups.get(result.component).push(result);
     }
 
     return groups;
@@ -429,4 +429,5 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
 }
 
 // 創建單例實例
-export const _responsiveComponentService = new ResponsiveComponentServiceClass();
+export const _responsiveComponentService =
+  new ResponsiveComponentServiceClass();

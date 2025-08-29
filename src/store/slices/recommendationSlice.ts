@@ -172,9 +172,10 @@ const _recommendationSlice = createSlice({
       }>
     ) => {
       if (state.recommendationHistory) {
-        const _recommendation = state.recommendationHistory.recommendations.find(
-          rec => rec.id === action.payload.recommendationId
-        );
+        const _recommendation =
+          state.recommendationHistory.recommendations.find(
+            rec => rec.id === action.payload.recommendationId
+          );
         if (recommendation) {
           // 這裡可以添加反饋處理邏輯
           console.log('Feedback updated for recommendation:', action.payload);

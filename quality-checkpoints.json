@@ -1,0 +1,39 @@
+{
+  "preCommit": {
+    "name": "提交前檢查",
+    "checks": [
+      "lint",
+      "type-check",
+      "test-unit"
+    ],
+    "threshold": {
+      "errors": 0,
+      "warnings": 100
+    }
+  },
+  "preBuild": {
+    "name": "構建前檢查",
+    "checks": [
+      "lint",
+      "type-check",
+      "test-integration"
+    ],
+    "threshold": {
+      "errors": 0,
+      "warnings": 50
+    }
+  },
+  "preDeploy": {
+    "name": "部署前檢查",
+    "checks": [
+      "lint",
+      "type-check",
+      "test-e2e",
+      "security-scan"
+    ],
+    "threshold": {
+      "errors": 0,
+      "warnings": 10
+    }
+  }
+}

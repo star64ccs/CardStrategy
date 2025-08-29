@@ -70,7 +70,9 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
   const { isMobile, isTablet } = useResponsive();
   const _containerRef = useRef<HTMLDivElement>(null);
   const _contentRef = useRef<HTMLDivElement>(null);
-  const _componentId = useRef(`optimized-scroll-${Date.now()}-${Math.random()}`);
+  const _componentId = useRef(
+    `optimized-scroll-${Date.now()}-${Math.random()}`
+  );
 
   // 狀態管理
   const [scrollPosition, setScrollPosition] = useState({ x: 0, y: 0 });

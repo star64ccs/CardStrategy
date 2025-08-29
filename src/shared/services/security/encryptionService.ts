@@ -122,7 +122,9 @@ export class EncryptionService {
       }
 
       // 獲取加密密鑰
-      const _encryptionKey = keyId ? this.keys.get(keyId) : this.getDefaultKey();
+      const _encryptionKey = keyId
+        ? this.keys.get(keyId)
+        : this.getDefaultKey();
       if (!encryptionKey?.isActive) {
         return {
           success: false,

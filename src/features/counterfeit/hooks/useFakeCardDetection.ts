@@ -79,7 +79,9 @@ export const _useFakeCardDetection = () => {
   const _batchDetections = useSelector((state: RootState) =>
     selectBatchDetections(state)
   );
-  const _reportForm = useSelector((state: RootState) => selectReportForm(state));
+  const _reportForm = useSelector((state: RootState) =>
+    selectReportForm(state)
+  );
 
   // 初始化服務
   const _initialize = useCallback(

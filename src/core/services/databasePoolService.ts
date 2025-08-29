@@ -384,7 +384,10 @@ export class DatabasePoolService {
     }
   }
 
-  private async executeQueryInternal(sql: string, params: unknown[]): Promise<any> {
+  private async executeQueryInternal(
+    sql: string,
+    params: unknown[]
+  ): Promise<any> {
     // 模擬查詢執行
     await new Promise(resolve => setTimeout(resolve, Math.random() * 100 + 10));
 

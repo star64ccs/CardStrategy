@@ -294,7 +294,8 @@ export class ECommerceComplianceModule {
     jurisdiction: string
   ): ConsumerRightsCheck {
     try {
-      const _applicableRegulations = this.getApplicableRegulations(jurisdiction);
+      const _applicableRegulations =
+        this.getApplicableRegulations(jurisdiction);
 
       const _rights = {
         rightToInformation: this.checkRightToInformation(userId, jurisdiction),

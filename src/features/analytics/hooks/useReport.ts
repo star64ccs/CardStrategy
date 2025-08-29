@@ -353,7 +353,9 @@ export const _useReport = () => {
   // 快速創建方法
   const _quickCreateBusinessReport = useCallback(
     async (name: string) => {
-      const _businessTemplates = getTemplatesByCategory(ReportCategory.BUSINESS);
+      const _businessTemplates = getTemplatesByCategory(
+        ReportCategory.BUSINESS
+      );
       if (businessTemplates.length === 0) {
         throw new Error('沒有可用的業務報告模板');
       }

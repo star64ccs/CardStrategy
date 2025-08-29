@@ -548,8 +548,9 @@ export const _selectHistoryError = (state: {
   cardRecognition: RecognitionState;
 }) => state.cardRecognition.historyError;
 
-export const _selectBatchJobs = (state: { cardRecognition: RecognitionState }) =>
-  state.cardRecognition.batchJobs;
+export const _selectBatchJobs = (state: {
+  cardRecognition: RecognitionState;
+}) => state.cardRecognition.batchJobs;
 
 export const _selectIsBatchProcessing = (state: {
   cardRecognition: RecognitionState;

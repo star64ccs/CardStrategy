@@ -589,7 +589,9 @@ export class SecurityMonitor {
         riskLevel = 'medium';
       }
 
-      const _authMetrics = data.metrics.filter(m => m.type === 'authentication');
+      const _authMetrics = data.metrics.filter(
+        m => m.type === 'authentication'
+      );
       const _authBreaches = authMetrics.filter(m => m.status === 'breach');
 
       if (authBreaches.length > 0) {
@@ -786,7 +788,10 @@ export class HybridArchitectureCore {
   }
 
   // 執行業務操作（整合所有層）
-  async executeBusinessOperation(operation: unknown, context: unknown): Promise<any> {
+  async executeBusinessOperation(
+    operation: unknown,
+    context: unknown
+  ): Promise<any> {
     try {
       if (!this._isInitialized) {
         throw new Error('混合架構核心尚未初始化');

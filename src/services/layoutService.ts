@@ -347,7 +347,7 @@ export class LayoutServiceClass implements LayoutService {
       this.eventListeners.set(type, new Set());
     }
 
-    this.eventListeners.get(type)!.add(callback);
+    this.eventListeners.get(type).add(callback);
 
     // 返回取消監聽的函數
     return () => {

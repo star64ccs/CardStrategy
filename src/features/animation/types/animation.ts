@@ -176,7 +176,11 @@ export interface AnimationTools {
   ): AnimationConfig;
 
   // 動畫插值
-  interpolate(value: number, inputRange: number[], outputRange: unknown[]): unknown;
+  interpolate(
+    value: number,
+    inputRange: number[],
+    outputRange: unknown[]
+  ): unknown;
   interpolateColor(
     value: number,
     inputRange: number[],

@@ -393,12 +393,14 @@ export class IntelligentSearchInitializationOptimizationService {
         : 0;
 
       // 集成測試覆蓋
-      const _integrationTestCoverage = this.config.testing.enableIntegrationTests
+      const _integrationTestCoverage = this.config.testing
+        .enableIntegrationTests
         ? await this.runIntegrationTests()
         : 0;
 
       // 性能測試覆蓋
-      const _performanceTestCoverage = this.config.testing.enablePerformanceTests
+      const _performanceTestCoverage = this.config.testing
+        .enablePerformanceTests
         ? await this.runPerformanceTests()
         : 0;
 

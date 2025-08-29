@@ -465,10 +465,16 @@ export class FakeCardReportingService {
       });
 
       // 統計舉報者
-      const _reporterStats = new Map<string, { count: number; valid: number }>();
+      const _reporterStats = new Map<
+        string,
+        { count: number; valid: number }
+      >();
       reports.forEach(r => {
         const { reporterId } = r.report;
-        const _current = reporterStats.get(reporterId) || { count: 0, valid: 0 };
+        const _current = reporterStats.get(reporterId) || {
+          count: 0,
+          valid: 0,
+        };
         current.count++;
         if (
           r.response.status === ReportStatus.APPROVED ||
@@ -674,7 +680,9 @@ export class FakeCardReportingService {
   public async getActiveCommunityWarnings(): Promise<CommunityWarning[]> {
     try {
       const _now = new Date();
-      const _activeWarnings = Array.from(this.communityWarnings.values()).filter(
+      const _activeWarnings = Array.from(
+        this.communityWarnings.values()
+      ).filter(
         w =>
           w.isActive &&
           w.displayFrom <= now &&

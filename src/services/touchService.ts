@@ -591,7 +591,10 @@ class TouchServiceClass {
     // 性能測試分數 (15%)
     if (result.performance) {
       const _fpsScore = Math.min(100, result.performance.fps * 1.4);
-      const _memoryScore = Math.max(0, 100 - result.performance.memoryUsage / 2);
+      const _memoryScore = Math.max(
+        0,
+        100 - result.performance.memoryUsage / 2
+      );
       const _cpuScore = Math.max(0, 100 - result.performance.cpuUsage);
 
       const _performanceScore = (fpsScore + memoryScore + cpuScore) / 3;

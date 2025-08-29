@@ -90,7 +90,9 @@ export const _useI18n = (): I18nContextValue => {
   const _translateTextHandler = useCallback(
     async (request: TranslationRequest) => {
       try {
-        const _result = await (dispatch(translateText(request)) as any).unwrap();
+        const _result = await (
+          dispatch(translateText(request)) as any
+        ).unwrap();
         return result;
       } catch (error) {
         console.error('翻譯文本失敗:', error);
@@ -144,7 +146,9 @@ export const _useI18n = (): I18nContextValue => {
   const _formatRelativeTime = useCallback(
     (date: Date) => {
       const _now = new Date();
-      const _diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+      const _diffInSeconds = Math.floor(
+        (now.getTime() - date.getTime()) / 1000
+      );
 
       if (diffInSeconds < 60) {
         return t('time.justNow');
@@ -275,7 +279,9 @@ export const _useI18nTranslation = () => {
   const _translateTextHandler = useCallback(
     async (request: TranslationRequest): Promise<any> => {
       try {
-        const _result = await (dispatch(translateText(request)) as any).unwrap();
+        const _result = await (
+          dispatch(translateText(request)) as any
+        ).unwrap();
         return result;
       } catch (error) {
         console.error('翻譯文本失敗:', error);

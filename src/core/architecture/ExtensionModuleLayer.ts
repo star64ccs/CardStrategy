@@ -677,7 +677,7 @@ export class ConfigurationManager {
         if (!this.backups.has(config.id)) {
           this.backups.set(config.id, []);
         }
-        this.backups.get(config.id)!.push(backup);
+        this.backups.get(config.id).push(backup);
       }
 
       return {
@@ -965,7 +965,7 @@ export class RuleEngine {
         if (!this.ruleCategories.has(rule.category)) {
           this.ruleCategories.set(rule.category, []);
         }
-        this.ruleCategories.get(rule.category)!.push(rule);
+        this.ruleCategories.get(rule.category).push(rule);
       }
 
       return {
@@ -1053,7 +1053,7 @@ export class RuleEngine {
     if (!this.ruleCategories.has(rule.category)) {
       this.ruleCategories.set(rule.category, []);
     }
-    this.ruleCategories.get(rule.category)!.push(rule);
+    this.ruleCategories.get(rule.category).push(rule);
 
     return {
       success: true,

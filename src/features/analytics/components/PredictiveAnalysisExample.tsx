@@ -198,7 +198,9 @@ export const PredictiveAnalysisExample: React.FC = () => {
   };
 
   // 處理導出數據
-  const _handleExportData = async (format: 'json' | 'csv' | 'excel' | 'pdf') => {
+  const _handleExportData = async (
+    format: 'json' | 'csv' | 'excel' | 'pdf'
+  ) => {
     try {
       const _result = await exportData({
         format,
@@ -424,19 +426,21 @@ export const PredictiveAnalysisExample: React.FC = () => {
 
       <View style={styles.insightsContainer}>
         <Text style={styles.insightsTitle}>建議</Text>
-        {(recommendations as any[])?.slice(0, 3).map((recommendation: unknown) => (
-          <View key={recommendation.id} style={styles.recommendationCard}>
-            <Text style={styles.recommendationTitle}>
-              {recommendation.title}
-            </Text>
-            <Text style={styles.recommendationDescription}>
-              {recommendation.description}
-            </Text>
-            <Text style={styles.recommendationPriority}>
-              優先級: {recommendation.priority}
-            </Text>
-          </View>
-        ))}
+        {(recommendations as any[])
+          ?.slice(0, 3)
+          .map((recommendation: unknown) => (
+            <View key={recommendation.id} style={styles.recommendationCard}>
+              <Text style={styles.recommendationTitle}>
+                {recommendation.title}
+              </Text>
+              <Text style={styles.recommendationDescription}>
+                {recommendation.description}
+              </Text>
+              <Text style={styles.recommendationPriority}>
+                優先級: {recommendation.priority}
+              </Text>
+            </View>
+          ))}
       </View>
     </View>
   );

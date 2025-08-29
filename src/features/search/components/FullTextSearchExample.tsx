@@ -311,12 +311,14 @@ const FullTextSearchExample: React.FC = () => {
         <Text style={styles.sectionTitle}>🔍 搜索分面</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.facetsContainer}>
-            {facets.conditions?.slice(0, 5).map((facet: unknown, index: number) => (
-              <View key={index} style={styles.facetItem}>
-                <Text style={styles.facetValue}>{facet.value}</Text>
-                <Text style={styles.facetCount}>({facet.count})</Text>
-              </View>
-            ))}
+            {facets.conditions
+              ?.slice(0, 5)
+              .map((facet: unknown, index: number) => (
+                <View key={index} style={styles.facetItem}>
+                  <Text style={styles.facetValue}>{facet.value}</Text>
+                  <Text style={styles.facetCount}>({facet.count})</Text>
+                </View>
+              ))}
           </View>
         </ScrollView>
       </View>

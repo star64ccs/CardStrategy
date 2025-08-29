@@ -1,18 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo "🔍 運行 pre-commit 檢查..."
+echo "🚀 執行Husky pre-commit檢查..."
 
-# 運行 ESLint 檢查
-echo "📝 檢查代碼風格..."
 npm run lint
-
-# 運行 TypeScript 類型檢查
-echo "🔧 檢查 TypeScript 類型..."
 npm run type-check
-
-# 運行測試
-echo "🧪 運行測試..."
-npm run test:fast
-
-echo "✅ pre-commit 檢查完成"
+npm run test:unit

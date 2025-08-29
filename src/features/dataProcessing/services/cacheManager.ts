@@ -269,7 +269,10 @@ export class HighPerformanceCacheManager implements CacheManager {
     }
   }
 
-  private calculateCompressionRatio(original: unknown, compressed: unknown): number {
+  private calculateCompressionRatio(
+    original: unknown,
+    compressed: unknown
+  ): number {
     try {
       const _originalSize = this.calculateSize(original);
       const _compressedSize = this.calculateSize(compressed);

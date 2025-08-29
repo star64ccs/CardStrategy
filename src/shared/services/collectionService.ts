@@ -102,7 +102,10 @@ export class CollectionService {
   /**
    * 添加卡牌到收藏（存根方法）
    */
-  async addCardToCollection(collectionId: string, cardData: unknown): Promise<any> {
+  async addCardToCollection(
+    collectionId: string,
+    cardData: unknown
+  ): Promise<any> {
     logger.info('添加卡牌到收藏（存根方法）:', { collectionId, cardData });
     return {
       success: true,

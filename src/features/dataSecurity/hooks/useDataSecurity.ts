@@ -140,7 +140,9 @@ export const _useDataSecurity = () => {
   const _restoreBackupHandler = useCallback(
     async (request: RestoreRequest): Promise<any> => {
       try {
-        const _result = await (dispatch(restoreBackup(request)) as any).unwrap();
+        const _result = await (
+          dispatch(restoreBackup(request)) as any
+        ).unwrap();
         return result;
       } catch (error) {
         console.error('恢復備份失敗:', error);
@@ -152,7 +154,10 @@ export const _useDataSecurity = () => {
 
   // 生成密鑰
   const _generateKeyHandler = useCallback(
-    async (algorithm: EncryptionAlgorithm, metadata?: unknown): Promise<any> => {
+    async (
+      algorithm: EncryptionAlgorithm,
+      metadata?: unknown
+    ): Promise<any> => {
       try {
         const _result = await (
           dispatch(generateKey({ algorithm, metadata })) as any

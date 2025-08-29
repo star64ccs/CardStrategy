@@ -172,7 +172,10 @@ const _collectionSlice = createSlice({
     },
     calculateStatistics: state => {
       const _allCards = state.collections.flatMap(c => c.items);
-      const _totalCards = allCards.reduce((sum, item) => sum + item.quantity, 0);
+      const _totalCards = allCards.reduce(
+        (sum, item) => sum + item.quantity,
+        0
+      );
       const _totalValue = allCards.reduce(
         (sum, item) => sum + item.currentValue * item.quantity,
         0

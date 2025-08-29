@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🚀 執行Husky pre-push檢查..."
+
+npm run test
+npm run build

@@ -438,7 +438,9 @@ export class PaymentComplianceModule {
     };
   }
 
-  private performAMLScreeningCheck(transaction: unknown): PaymentComplianceCheck {
+  private performAMLScreeningCheck(
+    transaction: unknown
+  ): PaymentComplianceCheck {
     const _isAMLClear = Math.random() > 0.03; // 97%通過率
     return {
       id: `aml_check_${Date.now()}`,

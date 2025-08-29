@@ -418,7 +418,10 @@ export function withErrorHandling<T extends any[], R>(
 
 // 方法裝飾器
 export function handleErrors(
-  target: unknown, propertyKey: string, descriptor: PropertyDescriptor) {
+  target: unknown,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
+) {
   const _originalMethod = descriptor.value;
 
   descriptor.value = async function (...args: unknown[]) {

@@ -126,7 +126,8 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
     error,
 
     // 服務方法
-    createAnimation: (config: unknown) => animationService.createAnimation(config),
+    createAnimation: (config: unknown) =>
+      animationService.createAnimation(config),
     playAnimation: async (id: string) => {
       try {
         await animationService.playAnimation(id);

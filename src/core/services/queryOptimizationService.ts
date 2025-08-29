@@ -152,7 +152,10 @@ export class QueryOptimizationService {
       optimizedQuery,
       changes
     );
-    const _testingRequired = this.requiresTesting(originalQuery, optimizedQuery);
+    const _testingRequired = this.requiresTesting(
+      originalQuery,
+      optimizedQuery
+    );
 
     return {
       originalQuery,

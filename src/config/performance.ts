@@ -254,7 +254,7 @@ export class PerformanceMonitor {
     if (!this.metrics.has(name)) {
       this.metrics.set(name, []);
     }
-    this.metrics.get(name)!.push(value);
+    this.metrics.get(name).push(value);
   }
 
   public getMetrics(): Record<string, number[]> {

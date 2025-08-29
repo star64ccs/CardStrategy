@@ -438,8 +438,9 @@ export const _selectIsInitialized = (state: {
 export const _selectIsLoading = (state: {
   businessMetrics: BusinessMetricsState;
 }) => state.businessMetrics.isLoading;
-export const _selectError = (state: { businessMetrics: BusinessMetricsState }) =>
-  state.businessMetrics.error;
+export const _selectError = (state: {
+  businessMetrics: BusinessMetricsState;
+}) => state.businessMetrics.error;
 
 export const _selectMetrics = (state: {
   businessMetrics: BusinessMetricsState;

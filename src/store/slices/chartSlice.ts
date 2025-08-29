@@ -148,10 +148,13 @@ export const _exportChart = createAsyncThunk(
 );
 
 // 獲取模板
-export const _getTemplates = createAsyncThunk('chart/getTemplates', async () => {
-  const _chartService = ChartService.getInstance();
-  return chartService.getTemplates();
-});
+export const _getTemplates = createAsyncThunk(
+  'chart/getTemplates',
+  async () => {
+    const _chartService = ChartService.getInstance();
+    return chartService.getTemplates();
+  }
+);
 
 // 獲取分析數據
 export const _getAnalytics = createAsyncThunk(

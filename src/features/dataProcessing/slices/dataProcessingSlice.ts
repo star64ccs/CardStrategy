@@ -524,8 +524,9 @@ export const _selectFailedTasks = (state: {
 export const _selectTaskQueue = (state: {
   dataProcessing: DataProcessingState;
 }) => state.dataProcessing.taskQueue;
-export const _selectMetrics = (state: { dataProcessing: DataProcessingState }) =>
-  state.dataProcessing.metrics;
+export const _selectMetrics = (state: {
+  dataProcessing: DataProcessingState;
+}) => state.dataProcessing.metrics;
 export const _selectCurrentConfig = (state: {
   dataProcessing: DataProcessingState;
 }) => state.dataProcessing.currentConfig;

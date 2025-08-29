@@ -648,8 +648,9 @@ export const _selectDashboards = (state: { dashboard: DashboardState }) =>
   state.dashboard.dashboards;
 export const _selectCurrentDashboard = (state: { dashboard: DashboardState }) =>
   state.dashboard.currentDashboard;
-export const _selectDashboardsLoading = (state: { dashboard: DashboardState }) =>
-  state.dashboard.dashboardsLoading;
+export const _selectDashboardsLoading = (state: {
+  dashboard: DashboardState;
+}) => state.dashboard.dashboardsLoading;
 export const _selectDashboardsError = (state: { dashboard: DashboardState }) =>
   state.dashboard.dashboardsError;
 export const _selectDashboardData = (state: { dashboard: DashboardState }) =>

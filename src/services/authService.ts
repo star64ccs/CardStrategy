@@ -215,7 +215,9 @@ export class AuthService {
 
       logger.info('Attempting token refresh');
 
-      const _response = await apiService.post('/auth/refresh', { refreshToken });
+      const _response = await apiService.post('/auth/refresh', {
+        refreshToken,
+      });
 
       // 驗證API響應
       const _responseValidation = validateApiResponse(response.data);

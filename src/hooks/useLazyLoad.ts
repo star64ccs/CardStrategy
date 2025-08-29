@@ -21,7 +21,9 @@ import {
  * 組件懶加載 Hook
  */
 export function useLazyComponent(
-  id: string, config: ComponentLazyLoadConfig): UseLazyLoadReturn<React.ComponentType<any>> {
+  id: string,
+  config: ComponentLazyLoadConfig
+): UseLazyLoadReturn<React.ComponentType<any>> {
   const [state, setState] = useState<ComponentLazyLoadState>({
     status: LazyLoadStatus.IDLE,
     component: null,
@@ -64,7 +66,8 @@ export function useLazyComponent(
 
       if (isMounted.current) {
         const _loadEndTime = Date.now();
-        const _loadDuration = loadEndTime - (state.loadStartTime || loadEndTime);
+        const _loadDuration =
+          loadEndTime - (state.loadStartTime || loadEndTime);
 
         setState(prev => ({
           ...prev,
@@ -77,7 +80,8 @@ export function useLazyComponent(
     } catch (error) {
       if (isMounted.current) {
         const _loadEndTime = Date.now();
-        const _loadDuration = loadEndTime - (state.loadStartTime || loadEndTime);
+        const _loadDuration =
+          loadEndTime - (state.loadStartTime || loadEndTime);
 
         setState(prev => ({
           ...prev,
@@ -158,7 +162,9 @@ export function useLazyComponent(
  * 圖片懶加載 Hook
  */
 export function useLazyImage(
-  id: string, config: ImageLazyLoadConfig): UseLazyLoadReturn<string> {
+  id: string,
+  config: ImageLazyLoadConfig
+): UseLazyLoadReturn<string> {
   const [state, setState] = useState<ImageLazyLoadState>({
     status: LazyLoadStatus.IDLE,
     image: null,
@@ -202,7 +208,8 @@ export function useLazyImage(
 
       if (isMounted.current) {
         const _loadEndTime = Date.now();
-        const _loadDuration = loadEndTime - (state.loadStartTime || loadEndTime);
+        const _loadDuration =
+          loadEndTime - (state.loadStartTime || loadEndTime);
 
         setState(prev => ({
           ...prev,
@@ -216,7 +223,8 @@ export function useLazyImage(
     } catch (error) {
       if (isMounted.current) {
         const _loadEndTime = Date.now();
-        const _loadDuration = loadEndTime - (state.loadStartTime || loadEndTime);
+        const _loadDuration =
+          loadEndTime - (state.loadStartTime || loadEndTime);
 
         setState(prev => ({
           ...prev,
@@ -347,7 +355,8 @@ export function useLazyData<T>(
 
       if (isMounted.current) {
         const _loadEndTime = Date.now();
-        const _loadDuration = loadEndTime - (state.loadStartTime || loadEndTime);
+        const _loadDuration =
+          loadEndTime - (state.loadStartTime || loadEndTime);
 
         setState(prev => ({
           ...prev,
@@ -360,7 +369,8 @@ export function useLazyData<T>(
     } catch (error) {
       if (isMounted.current) {
         const _loadEndTime = Date.now();
-        const _loadDuration = loadEndTime - (state.loadStartTime || loadEndTime);
+        const _loadDuration =
+          loadEndTime - (state.loadStartTime || loadEndTime);
 
         setState(prev => ({
           ...prev,
@@ -467,7 +477,9 @@ export function useLazyLoad<T>(
  * 簡化的組件懶加載 Hook
  */
 export function useLazyComponentSimple(
-  path: string, options?: Partial<ComponentLazyLoadConfig>): UseLazyLoadReturn<React.ComponentType<any>> {
+  path: string,
+  options?: Partial<ComponentLazyLoadConfig>
+): UseLazyLoadReturn<React.ComponentType<any>> {
   const _id = `component_${path.replace(/[^a-zA-Z0-9]/g, '_')}`;
   const config: ComponentLazyLoadConfig = {
     path,
@@ -483,7 +495,9 @@ export function useLazyComponentSimple(
  * 簡化的圖片懶加載 Hook
  */
 export function useLazyImageSimple(
-  src: string, options?: Partial<ImageLazyLoadConfig>): UseLazyLoadReturn<string> {
+  src: string,
+  options?: Partial<ImageLazyLoadConfig>
+): UseLazyLoadReturn<string> {
   const _id = `image_${src.replace(/[^a-zA-Z0-9]/g, '_')}`;
   const config: ImageLazyLoadConfig = {
     src,

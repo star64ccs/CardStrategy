@@ -323,7 +323,10 @@ class RecommendationService {
       request.riskTolerance,
       request.timeHorizon
     );
-    const _riskLevel = this.determineCardRiskLevel(request.riskTolerance, index);
+    const _riskLevel = this.determineCardRiskLevel(
+      request.riskTolerance,
+      index
+    );
 
     return {
       cardId,
@@ -846,7 +849,9 @@ class RecommendationService {
     return allocations;
   }
 
-  private analyzeDiversification(portfolio: unknown[]): DiversificationAnalysis {
+  private analyzeDiversification(
+    portfolio: unknown[]
+  ): DiversificationAnalysis {
     return {
       score: 75, // 模擬多元化分數
       byCategory: [

@@ -31,7 +31,9 @@ export interface BatchConversionResult {
  * 將圖片文件轉換為 base64
  */
 export async function convertImageToBase64(
-  file: File, options: ImageConversionOptions = {}): Promise<string> {
+  file: File,
+  options: ImageConversionOptions = {}
+): Promise<string> {
   const _startTime = Date.now();
 
   try {
@@ -72,7 +74,9 @@ export async function convertImageToBase64(
  * 批量轉換多個圖片文件為 base64
  */
 export async function convertImagesToBase64(
-  files: File[], options: ImageConversionOptions = {}): Promise<BatchConversionResult> {
+  files: File[],
+  options: ImageConversionOptions = {}
+): Promise<BatchConversionResult> {
   const _startTime = Date.now();
   const results: {
     success: boolean;
@@ -124,7 +128,9 @@ export async function convertImagesToBase64(
  * 從 URL 轉換圖片為 base64
  */
 export async function convertImageUrlToBase64(
-  url: string, options: ImageConversionOptions = {}): Promise<string> {
+  url: string,
+  options: ImageConversionOptions = {}
+): Promise<string> {
   const _startTime = Date.now();
 
   try {
@@ -250,7 +256,8 @@ export function isValidImageBase64(base64: string): boolean {
  * 獲取 base64 圖片的尺寸
  */
 export function getBase64ImageDimensions(
-  base64: string): Promise<{ width: number; height: number }> {
+  base64: string
+): Promise<{ width: number; height: number }> {
   return new Promise((resolve, reject) => {
     if (!isValidImageBase64(base64)) {
       reject(new Error('無效的圖片格式'));
@@ -284,7 +291,9 @@ export function getBase64ImageDimensions(
  * 壓縮 base64 圖片
  */
 export async function compressBase64Image(
-  base64: string, options: ImageConversionOptions = {}): Promise<string> {
+  base64: string,
+  options: ImageConversionOptions = {}
+): Promise<string> {
   const { quality = 0.8, format = 'jpeg', maxWidth, maxHeight } = options;
 
   try {
@@ -325,7 +334,10 @@ export async function compressBase64Image(
           ctx?.drawImage(img, 0, 0, width, height);
 
           // 轉換為 base64
-          const _compressedBase64 = canvas.toDataURL(`image/${format}`, quality);
+          const _compressedBase64 = canvas.toDataURL(
+            `image/${format}`,
+            quality
+          );
           resolve(compressedBase64);
         } catch (error) {
           reject(new Error('無法創建canvas上下文'));

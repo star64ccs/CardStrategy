@@ -392,9 +392,7 @@ const RegulatoryAdaptationLayerExample: React.FC = () => {
         {state.currentJurisdiction && (
           <TouchableOpacity
             style={styles.button}
-            onPress={() =>
-              getRegulationMapping(state.currentJurisdiction.code)
-            }
+            onPress={() => getRegulationMapping(state.currentJurisdiction.code)}
           >
             <Text style={styles.buttonText}>獲取法規映射</Text>
           </TouchableOpacity>

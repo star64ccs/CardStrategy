@@ -131,9 +131,14 @@ export class CloudinaryService {
    */
   private async testConnection(): Promise<void> {
     try {
-      const _response = await this.makeRequest('/resources/image', 'GET', null, {
-        max_results: 1,
-      });
+      const _response = await this.makeRequest(
+        '/resources/image',
+        'GET',
+        null,
+        {
+          max_results: 1,
+        }
+      );
 
       if (!response.resources) {
         throw new Error('API 響應格式無效');
@@ -361,7 +366,10 @@ export class CloudinaryService {
       const _signature = await this.generateSignature(formData, timestamp);
       formData.append('signature', signature);
 
-      const _response = await this.makeUploadRequest('/image/destroy', formData);
+      const _response = await this.makeUploadRequest(
+        '/image/destroy',
+        formData
+      );
 
       logger.info('Cloudinary 圖片刪除成功:', {
         publicId,

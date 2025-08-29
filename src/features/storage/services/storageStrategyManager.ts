@@ -581,7 +581,8 @@ export class StorageStrategyManager {
       const { memory } = performance;
 
       if (memory) {
-        const _memoryUsageRatio = memory.usedJSHeapSize / memory.totalJSHeapSize;
+        const _memoryUsageRatio =
+          memory.usedJSHeapSize / memory.totalJSHeapSize;
 
         if (memoryUsageRatio > 0.9) {
           return DeviceCondition.LOW_STORAGE;

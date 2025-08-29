@@ -165,7 +165,11 @@ export class ChatService {
       this.stats.intentDistribution[intent]++;
 
       // 生成 AI 回應
-      const _aiResponse = await this.generateResponse(request, intent, messages);
+      const _aiResponse = await this.generateResponse(
+        request,
+        intent,
+        messages
+      );
 
       // 創建 AI 消息
       const aiMessage: ChatMessage = {

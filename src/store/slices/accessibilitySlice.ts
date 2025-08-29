@@ -299,7 +299,9 @@ const _accessibilitySlice = createSlice({
       const { focusOrder, currentFocus } = state.focusManager;
       if (focusOrder.length === 0) return;
 
-      const _currentIndex = currentFocus ? focusOrder.indexOf(currentFocus) : -1;
+      const _currentIndex = currentFocus
+        ? focusOrder.indexOf(currentFocus)
+        : -1;
       const _nextIndex =
         currentIndex < focusOrder.length - 1 ? currentIndex + 1 : 0;
       state.focusManager.currentFocus = focusOrder[nextIndex];
@@ -309,7 +311,9 @@ const _accessibilitySlice = createSlice({
       const { focusOrder, currentFocus } = state.focusManager;
       if (focusOrder.length === 0) return;
 
-      const _currentIndex = currentFocus ? focusOrder.indexOf(currentFocus) : -1;
+      const _currentIndex = currentFocus
+        ? focusOrder.indexOf(currentFocus)
+        : -1;
       const _prevIndex =
         currentIndex > 0 ? currentIndex - 1 : focusOrder.length - 1;
       state.focusManager.currentFocus = focusOrder[prevIndex];
@@ -526,7 +530,9 @@ const _accessibilitySlice = createSlice({
 
 // 輔助函數
 function calculateScore(
-  issues: AccessibilityIssue[], suggestions: AccessibilitySuggestion[]): number {
+  issues: AccessibilityIssue[],
+  suggestions: AccessibilitySuggestion[]
+): number {
   let score = 100;
 
   // 根據問題嚴重程度扣分

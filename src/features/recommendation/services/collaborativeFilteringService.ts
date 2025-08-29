@@ -256,7 +256,10 @@ export class CollaborativeFilteringService {
         method = this.config.similarityMethod,
       } = request;
 
-      const _similarUsers = await this.calculateUserSimilarities(userId, method);
+      const _similarUsers = await this.calculateUserSimilarities(
+        userId,
+        method
+      );
 
       const _filteredUsers = similarUsers
         .filter(user => user.score >= minSimilarity)
@@ -308,7 +311,10 @@ export class CollaborativeFilteringService {
         method = this.config.similarityMethod,
       } = request;
 
-      const _similarItems = await this.calculateItemSimilarities(itemId, method);
+      const _similarItems = await this.calculateItemSimilarities(
+        itemId,
+        method
+      );
 
       const _filteredItems = similarItems
         .filter(item => item.similarityScore >= minSimilarity)
@@ -453,7 +459,7 @@ export class CollaborativeFilteringService {
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, []);
     }
-    this.eventListeners.get(eventType)!.push(listener);
+    this.eventListeners.get(eventType).push(listener);
   }
 
   public removeEventListener(eventType: string, listener: EventListener): void {

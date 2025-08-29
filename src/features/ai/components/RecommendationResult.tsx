@@ -101,7 +101,11 @@ export const RecommendationResult: React.FC<RecommendationResultProps> = ({
     }).format(date);
   };
 
-  const _renderCardRecommendation = ({ item }: { item: CardRecommendation }) => (
+  const _renderCardRecommendation = ({
+    item,
+  }: {
+    item: CardRecommendation;
+  }) => (
     <View style={styles.cardItem}>
       <View style={styles.cardHeader}>
         <Text style={styles.cardName}>{item.cardName}</Text>

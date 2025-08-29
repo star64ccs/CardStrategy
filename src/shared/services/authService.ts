@@ -46,7 +46,10 @@ export class AuthService {
       }
 
       // 發送登錄請求
-      const _response = await api.post<AuthResponse>('/auth/login', credentials);
+      const _response = await api.post<AuthResponse>(
+        '/auth/login',
+        credentials
+      );
 
       if (response.success && response.data) {
         // 保存認證信息
@@ -94,7 +97,10 @@ export class AuthService {
       }
 
       // 發送註冊請求
-      const _response = await api.post<AuthResponse>('/auth/register', userData);
+      const _response = await api.post<AuthResponse>(
+        '/auth/register',
+        userData
+      );
 
       if (response.success && response.data) {
         // 保存認證信息

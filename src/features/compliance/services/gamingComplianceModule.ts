@@ -332,7 +332,9 @@ export class GamingComplianceModule {
 
       // 內容評級檢查
       if (this.config.requireContentRating) {
-        const _contentCheck = this.performContentRatingCheck(transaction.gameId);
+        const _contentCheck = this.performContentRatingCheck(
+          transaction.gameId
+        );
         complianceChecks.push(contentCheck);
         if (contentCheck.result === 'fail') riskScore += 15;
       }
@@ -606,7 +608,9 @@ export class GamingComplianceModule {
     };
   }
 
-  private performSpendingLimitCheck(transaction: unknown): GamingComplianceCheck {
+  private performSpendingLimitCheck(
+    transaction: unknown
+  ): GamingComplianceCheck {
     const _isWithinLimit = Math.random() > 0.02; // 98%在限制內
     return {
       id: `spending_check_${Date.now()}`,

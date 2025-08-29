@@ -414,7 +414,9 @@ export class PriceDataService {
     try {
       logger.info('獲取熱門卡牌:', { limit });
 
-      const _response = await api.get(`${this.baseUrl}/trending?limit=${limit}`);
+      const _response = await api.get(
+        `${this.baseUrl}/trending?limit=${limit}`
+      );
 
       if (response.success) {
         logger.info('熱門卡牌獲取成功:', {
@@ -533,7 +535,10 @@ export class PriceDataService {
   /**
    * 獲取評級機構數據
    */
-  async getGradingAgencyData(cardId: string, agencies?: unknown[]): Promise<any> {
+  async getGradingAgencyData(
+    cardId: string,
+    agencies?: unknown[]
+  ): Promise<any> {
     try {
       logger.info('獲取評級機構數據:', { cardId, agencies });
 

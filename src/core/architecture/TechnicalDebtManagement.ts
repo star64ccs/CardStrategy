@@ -879,10 +879,12 @@ export class TechnicalDebtManagement {
 
   async performInitialScan(): Promise<void> {
     // 執行初始掃描
-    const _codeQualityIssues = await this.identifier.identifyCodeQualityIssues();
+    const _codeQualityIssues =
+      await this.identifier.identifyCodeQualityIssues();
     const _architectureIssues =
       await this.identifier.identifyArchitectureIssues();
-    const _performanceIssues = await this.identifier.identifyPerformanceIssues();
+    const _performanceIssues =
+      await this.identifier.identifyPerformanceIssues();
     const _securityIssues = await this.identifier.identifySecurityIssues();
 
     // 評估並添加到追蹤器

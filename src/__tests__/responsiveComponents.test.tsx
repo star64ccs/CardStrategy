@@ -506,7 +506,8 @@ describe('響應式組件測試', () => {
         },
       ];
 
-      const _report = responsiveComponentService.generateTestReport(mockResults);
+      const _report =
+        responsiveComponentService.generateTestReport(mockResults);
       expect(report).toContain('響應式組件測試報告');
       expect(report).toContain('總測試數: 1');
       expect(report).toContain('通過測試: 1');

@@ -185,7 +185,8 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
       }
 
       // 四捨五入
-      const _targetCurrency = this.state.availableCurrencies[request.toCurrency];
+      const _targetCurrency =
+        this.state.availableCurrencies[request.toCurrency];
       convertedAmount = this.roundCurrency(
         convertedAmount,
         request.toCurrency,
@@ -403,7 +404,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(callback);
+    this.eventListeners.get(event).add(callback);
   }
 
   off(
@@ -606,7 +607,10 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
     const _url = `${this.config.apiEndpoints.exchangeRate}${fromCurrency}`;
 
     const _controller = new AbortController();
-    const _timeoutId = setTimeout(() => controller.abort(), this.config.timeout);
+    const _timeoutId = setTimeout(
+      () => controller.abort(),
+      this.config.timeout
+    );
 
     try {
       const _response = await fetch(url, { signal: controller.signal });

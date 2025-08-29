@@ -617,8 +617,9 @@ export const _selectFeedbacksByStatus = (
   status: string
 ) => state.feedback.feedbacks.filter(f => f.status === status);
 
-export const _selectUnreadNotifications = (state: { feedback: FeedbackState }) =>
-  state.feedback.notifications.filter(n => !n.read);
+export const _selectUnreadNotifications = (state: {
+  feedback: FeedbackState;
+}) => state.feedback.notifications.filter(n => !n.read);
 
 export const _selectNotificationsByType = (
   state: { feedback: FeedbackState },

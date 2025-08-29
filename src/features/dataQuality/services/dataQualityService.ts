@@ -76,7 +76,9 @@ export class DataQualityService {
     }
   }
 
-  public async analyzeDataQuality(dataset: unknown[]): Promise<DataQualityReport> {
+  public async analyzeDataQuality(
+    dataset: unknown[]
+  ): Promise<DataQualityReport> {
     try {
       logger.info('Starting data quality analysis', {
         datasetSize: dataset.length,
@@ -156,7 +158,9 @@ export class DataQualityService {
     };
   }
 
-  private async calculateMetrics(dataset: unknown[]): Promise<DataQualityMetrics> {
+  private async calculateMetrics(
+    dataset: unknown[]
+  ): Promise<DataQualityMetrics> {
     try {
       if (dataset.length === 0) {
         return {

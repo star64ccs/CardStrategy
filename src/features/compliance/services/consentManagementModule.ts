@@ -695,7 +695,9 @@ export class ConsentManagementModule {
     const _withdrawnConsents = consents.filter(
       c => c.status === 'withdrawn'
     ).length;
-    const _expiredConsents = consents.filter(c => c.status === 'expired').length;
+    const _expiredConsents = consents.filter(
+      c => c.status === 'expired'
+    ).length;
     const _consentRate =
       totalConsents > 0 ? (activeConsents / totalConsents) * 100 : 0;
 

@@ -777,8 +777,9 @@ export const _selectPrivacyPreferencesError = (state: {
 
 export const _selectConsentHistory = (state: { privacy: PrivacyState }) =>
   state.privacy.consentHistory;
-export const _selectConsentHistoryLoading = (state: { privacy: PrivacyState }) =>
-  state.privacy.consentHistoryLoading;
+export const _selectConsentHistoryLoading = (state: {
+  privacy: PrivacyState;
+}) => state.privacy.consentHistoryLoading;
 export const _selectConsentHistoryError = (state: { privacy: PrivacyState }) =>
   state.privacy.consentHistoryError;
 
@@ -810,8 +811,9 @@ export const _selectPrivacyDashboard = (state: { privacy: PrivacyState }) =>
 export const _selectPrivacyDashboardLoading = (state: {
   privacy: PrivacyState;
 }) => state.privacy.dashboardLoading;
-export const _selectPrivacyDashboardError = (state: { privacy: PrivacyState }) =>
-  state.privacy.dashboardError;
+export const _selectPrivacyDashboardError = (state: {
+  privacy: PrivacyState;
+}) => state.privacy.dashboardError;
 
 export const _selectComplianceCheck = (state: { privacy: PrivacyState }) =>
   state.privacy.complianceCheck;
@@ -857,7 +859,8 @@ export const _selectDataDeletionError = (state: { privacy: PrivacyState }) =>
 
 export const _selectConsentRenewal = (state: { privacy: PrivacyState }) =>
   state.privacy.consentRenewal;
-export const _selectConsentRenewalLoading = (state: { privacy: PrivacyState }) =>
-  state.privacy.consentRenewalLoading;
+export const _selectConsentRenewalLoading = (state: {
+  privacy: PrivacyState;
+}) => state.privacy.consentRenewalLoading;
 export const _selectConsentRenewalError = (state: { privacy: PrivacyState }) =>
   state.privacy.consentRenewalError;

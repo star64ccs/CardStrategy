@@ -63,7 +63,10 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
     }
   }, [error, clearError]);
 
-  const _handleInputChange = (field: keyof PredictionRequest, value: unknown) => {
+  const _handleInputChange = (
+    field: keyof PredictionRequest,
+    value: unknown
+  ) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,

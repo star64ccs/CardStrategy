@@ -269,7 +269,9 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
         // 旋轉手勢
         if (onRotate && Math.abs(currentAngle - initialAngle) > 5) {
           const _rotation = currentAngle - initialAngle;
-          const _touchData = createTouchEventData('rotate', event, { rotation });
+          const _touchData = createTouchEventData('rotate', event, {
+            rotation,
+          });
           onRotate(rotation, touchData);
           setInitialAngle(currentAngle);
         }

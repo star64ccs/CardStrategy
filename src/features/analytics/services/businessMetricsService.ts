@@ -266,7 +266,7 @@ class BusinessMetricsService {
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, []);
     }
-    this.eventListeners.get(eventType)!.push(listener);
+    this.eventListeners.get(eventType).push(listener);
   }
 
   // 移除事件監聽器

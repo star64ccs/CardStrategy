@@ -7,7 +7,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     preloadCriticalComponents: ['HomeScreen', 'Navigation'],
     maxInitialLoadTime: 2000, // ms
   },
-  
+
   // 圖像處理優化
   imageProcessing: {
     enableWebWorkers: true,
@@ -16,7 +16,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     compressionQuality: 0.8,
     cacheSize: 50, // MB
   },
-  
+
   // 數據同步優化
   dataSync: {
     enableCaching: true,
@@ -25,7 +25,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     syncInterval: 30 * 1000, // 30 seconds
     maxRetries: 3,
   },
-  
+
   // 搜索功能優化
   search: {
     enableDebounce: true,
@@ -34,7 +34,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     pageSize: 20,
     maxResults: 1000,
   },
-  
+
   // 數據庫優化
   database: {
     enableIndexing: true,
@@ -43,7 +43,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     maxConnections: 10,
     queryTimeout: 5000, // ms
   },
-  
+
   // 網絡優化
   network: {
     enableRequestCaching: true,
@@ -52,7 +52,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     timeout: 10000, // ms
     maxConcurrentRequests: 5,
   },
-  
+
   // 內存優化
   memory: {
     enableGarbageCollection: true,

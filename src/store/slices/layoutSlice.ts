@@ -190,8 +190,9 @@ export const {
 export default layoutSlice.reducer;
 
 // 選擇器
-export const _selectResponsiveState = (state: { layout: typeof initialState }) =>
-  state.layout.responsive;
+export const _selectResponsiveState = (state: {
+  layout: typeof initialState;
+}) => state.layout.responsive;
 export const _selectCurrentBreakpoint = (state: {
   layout: typeof initialState;
 }) => state.layout.responsive.currentBreakpoint;

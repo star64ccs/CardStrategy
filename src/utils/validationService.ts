@@ -79,7 +79,10 @@ export class ValidationService {
   /**
    * 驗證單個字段
    */
-  private validateField(value: unknown, rule: ValidationRule): ValidationResult {
+  private validateField(
+    value: unknown,
+    rule: ValidationRule
+  ): ValidationResult {
     const errors: string[] = [];
 
     // 檢查必填字段

@@ -245,7 +245,7 @@ export class MarketingComplianceModule {
       if (!this.userConsents.has(userId)) {
         this.userConsents.set(userId, new Map());
       }
-      this.userConsents.get(userId)!.set(channel, validationResult);
+      this.userConsents.get(userId).set(channel, validationResult);
 
       logger.info('營銷同意驗證完成', {
         userId,
@@ -281,7 +281,7 @@ export class MarketingComplianceModule {
       if (!this.optOuts.has(userId)) {
         this.optOuts.set(userId, []);
       }
-      this.optOuts.get(userId)!.push(optOutResult);
+      this.optOuts.get(userId).push(optOutResult);
 
       logger.info('退出管理完成', {
         userId,

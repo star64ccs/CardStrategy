@@ -262,7 +262,8 @@ export class ComplianceEngine {
    */
   public applyRegulations(jurisdiction: Jurisdiction): ComplianceRules {
     try {
-      const _applicableRegulations = this.getApplicableRegulations(jurisdiction);
+      const _applicableRegulations =
+        this.getApplicableRegulations(jurisdiction);
       const _featureRestrictions = this.getFeatureRestrictions(
         applicableRegulations
       );
@@ -315,7 +316,10 @@ export class ComplianceEngine {
       const auditTrail: AuditEvent[] = [];
 
       // 檢查數據最小化
-      const _dataMinimizationCheck = this.checkDataMinimization(data, operation);
+      const _dataMinimizationCheck = this.checkDataMinimization(
+        data,
+        operation
+      );
       if (!dataMinimizationCheck.isCompliant) {
         violations.push(...dataMinimizationCheck.violations);
         recommendations.push(...dataMinimizationCheck.recommendations);
@@ -717,7 +721,10 @@ export class ComplianceEngine {
     };
   }
 
-  private checkAgeVerification(data: unknown, operation: string): ComplianceResult {
+  private checkAgeVerification(
+    data: unknown,
+    operation: string
+  ): ComplianceResult {
     const violations: ComplianceViolation[] = [];
     const recommendations: string[] = [];
 

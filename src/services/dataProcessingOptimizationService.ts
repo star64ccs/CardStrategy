@@ -207,7 +207,10 @@ export class DataProcessingOptimizationService {
       const _optimizations = this.generateQueryOptimizations(analysis);
 
       // 應用優化
-      const _optimizedQuery = this.applyQueryOptimizations(query, optimizations);
+      const _optimizedQuery = this.applyQueryOptimizations(
+        query,
+        optimizations
+      );
 
       // 估算性能提升
       const _performanceImprovement = this.estimateQueryPerformanceImprovement(
@@ -563,7 +566,10 @@ export class DataProcessingOptimizationService {
     return optimizations;
   }
 
-  private applyQueryOptimizations(query: string, optimizations: unknown): string {
+  private applyQueryOptimizations(
+    query: string,
+    optimizations: unknown
+  ): string {
     // 模擬查詢優化
     return query.replace(/SELECT \*/g, 'SELECT specific_columns');
   }

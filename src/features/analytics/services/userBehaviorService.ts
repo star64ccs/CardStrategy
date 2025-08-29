@@ -147,7 +147,10 @@ export class UserBehaviorService {
     const _profiles = await this.generateProfiles(filteredEvents);
     const _stats = await this.calculateStats(filteredEvents);
     const _insights = await this.generateInsights(filteredEvents, stats);
-    const _recommendations = await this.generateRecommendations(insights, stats);
+    const _recommendations = await this.generateRecommendations(
+      insights,
+      stats
+    );
 
     return {
       events: filteredEvents,

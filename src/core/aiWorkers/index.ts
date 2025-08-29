@@ -90,7 +90,10 @@ export class AIWorkerManager {
   /**
    * 執行 Worker 任務
    */
-  public async executeWorkerTask(role: AIWorkerRole, task: unknown): Promise<any> {
+  public async executeWorkerTask(
+    role: AIWorkerRole,
+    task: unknown
+  ): Promise<any> {
     const _worker = this.getWorker(role);
     return await worker.execute(task);
   }
@@ -258,7 +261,8 @@ export class AIWorkerManager {
       config: placeholderConfig,
       metrics: { lastRun: new Date(), successRate: 0 },
       getStatus: () => ({ isRunning: false, config: placeholderConfig }),
-      updateConfig: (config: unknown) => Object.assign(placeholderConfig, config),
+      updateConfig: (config: unknown) =>
+        Object.assign(placeholderConfig, config),
       execute: async (task: unknown) => ({
         success: false,
         error: 'Worker 尚未實現',

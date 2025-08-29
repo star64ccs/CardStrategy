@@ -294,7 +294,7 @@ class I18nService implements I18nManager, I18nTools {
       );
     }
 
-    return this.formatters.number.get(cacheKey)!.format(value);
+    return this.formatters.number.get(cacheKey).format(value);
   }
 
   formatCurrency(
@@ -325,7 +325,7 @@ class I18nService implements I18nManager, I18nTools {
       );
     }
 
-    return this.formatters.date.get(cacheKey)!.format(date);
+    return this.formatters.date.get(cacheKey).format(date);
   }
 
   formatRelativeTime(date: Date): string {
@@ -411,7 +411,7 @@ class I18nService implements I18nManager, I18nTools {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(callback);
+    this.eventListeners.get(event).add(callback);
   }
 
   off(event: I18nEvent['type'], callback: (event: I18nEvent) => void): void {

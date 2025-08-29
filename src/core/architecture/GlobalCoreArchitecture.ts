@@ -656,7 +656,10 @@ export class GlobalDataModels {
     return { valid: errors.length === 0, errors };
   }
 
-  public async transformData(data: unknown, transformation: unknown): Promise<any> {
+  public async transformData(
+    data: unknown,
+    transformation: unknown
+  ): Promise<any> {
     // 數據轉換邏輯
     return data;
   }

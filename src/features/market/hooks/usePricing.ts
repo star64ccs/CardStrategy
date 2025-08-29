@@ -53,7 +53,9 @@ export const _usePricing = () => {
   const _marketAnalysis = useSelector((state: RootState) =>
     selectMarketAnalysis(state)
   );
-  const _userAlerts = useSelector((state: RootState) => selectUserAlerts(state));
+  const _userAlerts = useSelector((state: RootState) =>
+    selectUserAlerts(state)
+  );
   const _marketStats = useSelector((state: RootState) =>
     selectMarketStats(state)
   );

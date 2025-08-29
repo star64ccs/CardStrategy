@@ -509,10 +509,12 @@ export const _selectSessions = (state: { chat: ChatState }) =>
   state.chat.sessions;
 export const _selectMessages = (state: { chat: ChatState }) =>
   state.chat.messages;
-export const _selectChatStats = (state: { chat: ChatState }) => state.chat.stats;
+export const _selectChatStats = (state: { chat: ChatState }) =>
+  state.chat.stats;
 export const _selectChatLoading = (state: { chat: ChatState }) =>
   state.chat.loading;
-export const _selectChatError = (state: { chat: ChatState }) => state.chat.error;
+export const _selectChatError = (state: { chat: ChatState }) =>
+  state.chat.error;
 export const _selectIsTyping = (state: { chat: ChatState }) =>
   state.chat.isTyping;
 export const _selectQuickReplies = (state: { chat: ChatState }) =>

@@ -238,7 +238,9 @@ export const _useDashboard = () => {
   const _fetchAlerts = useCallback(
     async (dashboardId?: string) => {
       try {
-        const _alerts = await (dispatch as any)(getAlerts(dashboardId)).unwrap();
+        const _alerts = await (dispatch as any)(
+          getAlerts(dashboardId)
+        ).unwrap();
         return alerts;
       } catch (error) {
         console.error('Failed to fetch alerts:', error);

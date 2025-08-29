@@ -467,8 +467,9 @@ export const _selectIsAuthenticating = (state: {
 export const _selectAuthResult = (state: {
   biometricAuth: BiometricAuthState;
 }) => state.biometricAuth.authResult;
-export const _selectAuthError = (state: { biometricAuth: BiometricAuthState }) =>
-  state.biometricAuth.authError;
+export const _selectAuthError = (state: {
+  biometricAuth: BiometricAuthState;
+}) => state.biometricAuth.authError;
 export const _selectBiometricSettings = (state: {
   biometricAuth: BiometricAuthState;
 }) => state.biometricAuth.settings;

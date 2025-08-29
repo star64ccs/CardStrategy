@@ -22,7 +22,10 @@ export interface ValidationService {
     isValid: boolean;
     errors: string[];
   };
-  validateAgeVerification(data: unknown): { isValid: boolean; errors: string[] };
+  validateAgeVerification(data: unknown): {
+    isValid: boolean;
+    errors: string[];
+  };
   validateConsentData(data: unknown): { isValid: boolean; errors: string[] };
   validateImageFile(file: unknown): boolean;
   validateUrl(url: string): boolean;
@@ -433,7 +436,10 @@ class ValidationServiceImpl implements ValidationService {
     }
   }
 
-  validateAgeVerification(data: unknown): { isValid: boolean; errors: string[] } {
+  validateAgeVerification(data: unknown): {
+    isValid: boolean;
+    errors: string[];
+  } {
     const errors: string[] = [];
 
     try {

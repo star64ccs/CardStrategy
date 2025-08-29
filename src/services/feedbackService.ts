@@ -302,7 +302,7 @@ export class FeedbackService {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
     }
-    this.eventListeners.get(event)!.push(listener);
+    this.eventListeners.get(event).push(listener);
   }
 
   public off(event: string, listener: Function): void {

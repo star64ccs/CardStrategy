@@ -369,7 +369,10 @@ export class IntelligentSearchService {
     for (const result of baseResults) {
       // 計算各種分數
       const _relevanceScore = this.calculateRelevanceScore(result, query.query);
-      const _semanticScore = await this.calculateSemanticScore(result, analysis);
+      const _semanticScore = await this.calculateSemanticScore(
+        result,
+        analysis
+      );
       const _personalizationScore = await this.calculatePersonalizationScore(
         query,
         [result]

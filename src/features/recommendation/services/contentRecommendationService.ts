@@ -305,7 +305,7 @@ class ContentRecommendationService {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
     }
-    this.eventListeners.get(event)!.push(listener);
+    this.eventListeners.get(event).push(listener);
   }
 
   /**
@@ -736,7 +736,10 @@ class ContentRecommendationService {
     source: ContentItem,
     target: ContentItem
   ): number {
-    const _tagSimilarity = this.calculateTagSimilarity(source.tags, target.tags);
+    const _tagSimilarity = this.calculateTagSimilarity(
+      source.tags,
+      target.tags
+    );
     const _categorySimilarity = source.category === target.category ? 1 : 0;
     const _typeSimilarity = source.type === target.type ? 1 : 0;
 

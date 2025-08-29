@@ -47,7 +47,9 @@ export const _useCurrency = (): CurrencyContextValue => {
   // 貨幣轉換
   const _convertCurrencyHandler = useCallback(
     async (request: CurrencyConversionRequest): Promise<any> => {
-      const _result = await (dispatch(convertCurrency(request)) as any).unwrap();
+      const _result = await (
+        dispatch(convertCurrency(request)) as any
+      ).unwrap();
       return result;
     },
     [dispatch]
@@ -67,7 +69,9 @@ export const _useCurrency = (): CurrencyContextValue => {
   // 更改貨幣
   const _changeCurrencyHandler = useCallback(
     async (currency: string): Promise<any> => {
-      const _result = await (dispatch(changeCurrency(currency)) as any).unwrap();
+      const _result = await (
+        dispatch(changeCurrency(currency)) as any
+      ).unwrap();
       return result;
     },
     [dispatch]
@@ -103,7 +107,9 @@ export const _useCurrencyManagement = () => {
   // 更改貨幣
   const _changeCurrencyHandler2 = useCallback(
     async (currency: string): Promise<any> => {
-      const _result = await (dispatch(changeCurrency(currency)) as any).unwrap();
+      const _result = await (
+        dispatch(changeCurrency(currency)) as any
+      ).unwrap();
       return result;
     },
     [dispatch]
@@ -158,7 +164,9 @@ export const _useCurrencyConversion = () => {
   // 執行轉換
   const _convert = useCallback(
     async (request: CurrencyConversionRequest) => {
-      const _result = await (dispatch(convertCurrency(request)) as any).unwrap();
+      const _result = await (
+        dispatch(convertCurrency(request)) as any
+      ).unwrap();
       return result;
     },
     [dispatch]
@@ -361,9 +369,12 @@ export const _useCurrencyTools = () => {
   }, []);
 
   // 計算轉換手續費
-  const _calculateConversionFee = useCallback((amount: number, rate: number) => {
-    return currencyService.calculateConversionFee(amount, rate);
-  }, []);
+  const _calculateConversionFee = useCallback(
+    (amount: number, rate: number) => {
+      return currencyService.calculateConversionFee(amount, rate);
+    },
+    []
+  );
 
   // 應用加價
   const _applyMarkup = useCallback((amount: number, markup: number) => {

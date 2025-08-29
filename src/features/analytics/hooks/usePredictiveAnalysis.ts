@@ -244,17 +244,20 @@ export const _usePredictiveAnalysis = () => {
   );
 
   const _readyModels = useMemo(
-    () => (models as any[]).filter((model: unknown) => model.status === 'ready'),
+    () =>
+      (models as any[]).filter((model: unknown) => model.status === 'ready'),
     [models]
   );
 
   const _trainingModels = useMemo(
-    () => (models as any[]).filter((model: unknown) => model.status === 'training'),
+    () =>
+      (models as any[]).filter((model: unknown) => model.status === 'training'),
     [models]
   );
 
   const _errorModels = useMemo(
-    () => (models as any[]).filter((model: unknown) => model.status === 'error'),
+    () =>
+      (models as any[]).filter((model: unknown) => model.status === 'error'),
     [models]
   );
 

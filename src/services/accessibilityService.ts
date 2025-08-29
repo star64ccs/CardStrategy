@@ -144,7 +144,10 @@ class AccessibilityServiceClass implements AccessibilityService {
       ];
 
       // 計算分數
-      const _score = this.calculateAccessibilityScore(allIssues, allSuggestions);
+      const _score = this.calculateAccessibilityScore(
+        allIssues,
+        allSuggestions
+      );
 
       // 生成結果
       const result: AccessibilityTestResult = {
@@ -301,7 +304,7 @@ class AccessibilityServiceClass implements AccessibilityService {
     if (!this.eventListeners.has(type)) {
       this.eventListeners.set(type, []);
     }
-    this.eventListeners.get(type)!.push(handler);
+    this.eventListeners.get(type).push(handler);
   }
 
   public emitEvent(event: AccessibilityServiceEvent): void {
