@@ -1,4 +1,4 @@
-const { logger } = require('../utils/logger');
+const logger = require('../utils/logger');
 const redis = require('../config/redis');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');

@@ -24,16 +24,14 @@ describe('Assessment Service Tests', () => {
       username: 'testuser',
       email: 'test@example.com',
       password: 'password123',
-      role: 'admin'
+      role: 'admin',
     });
 
     // 獲取認證令牌
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'test@example.com',
-        password: 'password123'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'test@example.com',
+      password: 'password123',
+    });
 
     authToken = loginResponse.body.token;
   });
@@ -57,16 +55,16 @@ describe('Assessment Service Tests', () => {
         frequency: {
           interval: 1,
           unit: 'days',
-          timeOfDay: '00:00'
+          timeOfDay: '00:00',
         },
         dataTypes: ['training', 'annotation'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
-        createdBy: testUser.id
+        createdBy: testUser.id,
       };
 
       const schedule = await assessmentService.createAssessmentSchedule(scheduleData);
@@ -87,11 +85,11 @@ describe('Assessment Service Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
-        createdBy: testUser.id
+        createdBy: testUser.id,
       });
 
       const result = await assessmentService.getSchedules({ limit: 10 });
@@ -109,11 +107,11 @@ describe('Assessment Service Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
-        createdBy: testUser.id
+        createdBy: testUser.id,
       });
 
       const updatedSchedule = await assessmentService.updateScheduleStatus(schedule.id, false);
@@ -129,11 +127,11 @@ describe('Assessment Service Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
-        createdBy: testUser.id
+        createdBy: testUser.id,
       });
 
       await assessmentService.deleteSchedule(schedule.id);
@@ -149,11 +147,11 @@ describe('Assessment Service Tests', () => {
         dataTypes: ['training', 'annotation'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
-        userId: testUser.id
+        userId: testUser.id,
       };
 
       const assessment = await assessmentService.executeManualAssessment(assessmentData);
@@ -175,15 +173,19 @@ describe('Assessment Service Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
         createdBy: testUser.id,
-        isActive: true
+        isActive: true,
       });
 
-      const assessment = await assessmentService.executeScheduledAssessment(schedule.id, 'manual', testUser.id);
+      const assessment = await assessmentService.executeScheduledAssessment(
+        schedule.id,
+        'manual',
+        testUser.id
+      );
 
       expect(assessment).toBeDefined();
       expect(assessment.assessmentType).toBe('daily');
@@ -209,9 +211,9 @@ describe('Assessment Service Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
         status: 'completed',
         triggeredBy: 'manual',
@@ -226,8 +228,8 @@ describe('Assessment Service Tests', () => {
           dataSources: [],
           qualityDistribution: {},
           issues: [],
-          recommendations: []
-        }
+          recommendations: [],
+        },
       });
 
       const result = await assessmentService.getAssessments({ limit: 10 });
@@ -247,9 +249,9 @@ describe('Assessment Service Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
         status: 'completed',
         triggeredBy: 'manual',
@@ -264,9 +266,9 @@ describe('Assessment Service Tests', () => {
           dataSources: [],
           qualityDistribution: {},
           issues: [],
-          recommendations: []
+          recommendations: [],
         },
-        executionTime: 5000
+        executionTime: 5000,
       });
 
       const stats = await assessmentService.getAssessmentStats();
@@ -284,7 +286,7 @@ describe('Assessment Service Tests', () => {
     test('should calculate next run date for daily schedule', () => {
       const schedule = {
         assessmentType: 'daily',
-        frequency: { interval: 1, unit: 'days', timeOfDay: '00:00' }
+        frequency: { interval: 1, unit: 'days', timeOfDay: '00:00' },
       };
 
       const nextRunDate = assessmentService.calculateNextRunDate(schedule);
@@ -297,7 +299,7 @@ describe('Assessment Service Tests', () => {
     test('should calculate next run date for weekly schedule', () => {
       const schedule = {
         assessmentType: 'weekly',
-        frequency: { interval: 1, unit: 'weeks', timeOfDay: '00:00', daysOfWeek: [1] }
+        frequency: { interval: 1, unit: 'weeks', timeOfDay: '00:00', daysOfWeek: [1] },
       };
 
       const nextRunDate = assessmentService.calculateNextRunDate(schedule);
@@ -327,14 +329,14 @@ describe('Assessment Service Tests', () => {
         accuracy: 0.8,
         consistency: 0.75,
         timeliness: 0.6,
-        overallScore: 0.71
+        overallScore: 0.71,
       };
 
       const criteria = {
         completeness: { weight: 0.25, threshold: 0.8 },
-        accuracy: { weight: 0.30, threshold: 0.85 },
+        accuracy: { weight: 0.3, threshold: 0.85 },
         consistency: { weight: 0.25, threshold: 0.8 },
-        timeliness: { weight: 0.20, threshold: 0.75 }
+        timeliness: { weight: 0.2, threshold: 0.75 },
       };
 
       const recommendations = assessmentService.generateRecommendations(results, criteria);
@@ -352,23 +354,27 @@ describe('Assessment Service Tests', () => {
 describe('Assessment API Tests', () => {
   let testUser;
   let authToken;
+  let User, AssessmentSchedule, DataQualityAssessment;
 
   beforeAll(async () => {
+    // 初始化模型
+    User = getUserModel(sequelize);
+    AssessmentSchedule = getAssessmentScheduleModel(sequelize);
+    DataQualityAssessment = getDataQualityAssessmentModel(sequelize);
+
     await sequelize.sync({ force: true });
 
     testUser = await User.create({
       username: 'testuser',
       email: 'test@example.com',
       password: 'password123',
-      role: 'admin'
+      role: 'admin',
     });
 
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'test@example.com',
-        password: 'password123'
-      });
+    const loginResponse = await request(app).post('/api/auth/login').send({
+      email: 'test@example.com',
+      password: 'password123',
+    });
 
     authToken = loginResponse.body.token;
   });
@@ -391,15 +397,15 @@ describe('Assessment API Tests', () => {
         frequency: {
           interval: 1,
           unit: 'days',
-          timeOfDay: '00:00'
+          timeOfDay: '00:00',
         },
         dataTypes: ['training', 'annotation'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
-        }
+          timeliness: { weight: 0.2, threshold: 0.75 },
+        },
       };
 
       const response = await request(app)
@@ -414,9 +420,7 @@ describe('Assessment API Tests', () => {
     });
 
     test('should return 401 without authentication', async () => {
-      const response = await request(app)
-        .post('/api/data-quality/assessment/schedule')
-        .send({});
+      const response = await request(app).post('/api/data-quality/assessment/schedule').send({});
 
       expect(response.status).toBe(401);
     });
@@ -431,11 +435,11 @@ describe('Assessment API Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
-        createdBy: testUser.id
+        createdBy: testUser.id,
       });
 
       const response = await request(app)
@@ -458,11 +462,11 @@ describe('Assessment API Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
-        createdBy: testUser.id
+        createdBy: testUser.id,
       });
 
       const response = await request(app)
@@ -482,10 +486,10 @@ describe('Assessment API Tests', () => {
         dataTypes: ['training', 'annotation'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
-        }
+          timeliness: { weight: 0.2, threshold: 0.75 },
+        },
       };
 
       const response = await request(app)
@@ -510,9 +514,9 @@ describe('Assessment API Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
         status: 'completed',
         triggeredBy: 'manual',
@@ -527,8 +531,8 @@ describe('Assessment API Tests', () => {
           dataSources: [],
           qualityDistribution: {},
           issues: [],
-          recommendations: []
-        }
+          recommendations: [],
+        },
       });
 
       const response = await request(app)
@@ -551,9 +555,9 @@ describe('Assessment API Tests', () => {
         dataTypes: ['training'],
         assessmentCriteria: {
           completeness: { weight: 0.25, threshold: 0.8 },
-          accuracy: { weight: 0.30, threshold: 0.85 },
+          accuracy: { weight: 0.3, threshold: 0.85 },
           consistency: { weight: 0.25, threshold: 0.8 },
-          timeliness: { weight: 0.20, threshold: 0.75 }
+          timeliness: { weight: 0.2, threshold: 0.75 },
         },
         status: 'completed',
         triggeredBy: 'manual',
@@ -568,9 +572,9 @@ describe('Assessment API Tests', () => {
           dataSources: [],
           qualityDistribution: {},
           issues: [],
-          recommendations: []
+          recommendations: [],
         },
-        executionTime: 5000
+        executionTime: 5000,
       });
 
       const response = await request(app)

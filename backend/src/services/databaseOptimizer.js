@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { logger } = require('../utils/logger');
+const logger = require('../utils/logger');
 const redis = require('../config/redis');
 
 /**

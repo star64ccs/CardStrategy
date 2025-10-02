@@ -1,7 +1,17 @@
 const { Op } = require('sequelize');
-const { Card, Transaction, User, Portfolio, MarketData } = require('../models');
-const { redis } = require('../config/database');
+const { sequelize } = require('../config/database');
+const { getCardModel } = require('../models/Card');
+const { getInvestmentModel } = require('../models/Investment');
+const { getUserModel } = require('../models/User');
+const { getMarketDataModel } = require('../models/MarketData');
+const redis = require('../config/redis');
 const logger = require('../utils/logger');
+
+// 初始化模型
+const Card = getCardModel(sequelize);
+const Investment = getInvestmentModel(sequelize); // 替代 Transaction 和 Portfolio
+const User = getUserModel(sequelize);
+const MarketData = getMarketDataModel(sequelize);
 
 // 分析配置
 const ANALYTICS_CONFIG = {

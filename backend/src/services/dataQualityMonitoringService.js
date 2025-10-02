@@ -1,6 +1,24 @@
-const { DataQualityMetrics, TrainingData, AnnotationData, Annotator, Card, User } = require('../models');
 const { Op } = require('sequelize');
+const { sequelize } = require('../config/database');
+const { createDataQualityMetricsModel, getDataQualityMetricsModel } = require('../models/DataQualityMetrics');
+const { createTrainingDataModel, getTrainingDataModel } = require('../models/TrainingData');
+const { createAnnotationDataModel, getAnnotationDataModel } = require('../models/AnnotationData');
+const { createAnnotatorModel, getAnnotatorModel } = require('../models/Annotator');
+const { getCardModel } = require('../models/Card');
+const { getUserModel } = require('../models/User');
 const logger = require('../utils/logger');
+
+// 初始化模型
+createDataQualityMetricsModel(sequelize);
+createTrainingDataModel(sequelize);
+createAnnotationDataModel(sequelize);
+createAnnotatorModel(sequelize);
+const DataQualityMetrics = getDataQualityMetricsModel();
+const TrainingData = getTrainingDataModel();
+const AnnotationData = getAnnotationDataModel();
+const Annotator = getAnnotatorModel();
+const Card = getCardModel(sequelize);
+const User = getUserModel(sequelize);
 
 class DataQualityMonitoringService {
   /**

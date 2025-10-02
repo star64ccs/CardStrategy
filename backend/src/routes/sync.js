@@ -1,8 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
-const { logger } = require('../utils/logger');
-const db = require('../models');
+const logger = require('../utils/logger');
+const { sequelize } = require('../config/database');
+const { Op } = require('sequelize');
+const { getCardModel } = require('../models/Card');
+const { getCollectionModel } = require('../models/Collection');
+const { getUserModel } = require('../models/User');
+const { getAnnotationDataModel } = require('../models/AnnotationData');
+
+const Card = getCardModel(sequelize);
+const Collection = getCollectionModel(sequelize);
+const User = getUserModel(sequelize);
+const Annotation = getAnnotationDataModel(sequelize);
+const { Op } = Sequelize;
 
 /**
  * 增量同步 API
@@ -18,7 +29,7 @@ router.post('/incremental', authenticateToken, async (req, res) => {
     if (!batch || !batch.items || !Array.isArray(batch.items)) {
       return res.status(400).json({
         success: false,
-        error: '無效的同步批次格式'
+        error: '無效的同步批次格式',
       });
     }
 
@@ -26,7 +37,7 @@ router.post('/incremental', authenticateToken, async (req, res) => {
       processed: 0,
       conflicts: 0,
       errors: 0,
-      serverChanges: []
+      serverChanges: [],
     };
 
     // 處理客戶端變更
@@ -51,20 +62,21 @@ router.post('/incremental', authenticateToken, async (req, res) => {
     // 獲取服務器端的變更（自從上次同步以來）
     const serverChanges = await getServerChanges(userId, lastSyncTime);
 
-    logger.info(`同步完成 - 處理: ${results.processed}, 衝突: ${results.conflicts}, 錯誤: ${results.errors}`);
+    logger.info(
+      `同步完成 - 處理: ${results.processed}, 衝突: ${results.conflicts}, 錯誤: ${results.errors}`
+    );
 
     res.json({
       success: true,
       results,
       serverChanges,
-      serverVersion: Date.now()
+      serverVersion: Date.now(),
     });
-
   } catch (error) {
     logger.error('增量同步處理失敗:', error);
     res.status(500).json({
       success: false,
-      error: '服務器內部錯誤'
+      error: '服務器內部錯誤',
     });
   }
 });
@@ -98,8 +110,8 @@ async function processSyncItem(item, userId, lastSyncTime) {
  * 處理卡片同步
  */
 async function processCardSync(id, data, userId, timestamp, version, isDeleted) {
-  const existingCard = await db.Card.findOne({
-    where: { id, userId }
+  const existingCard = await Card.findOne({
+    where: { id, userId },
   });
 
   if (isDeleted) {
@@ -118,22 +130,22 @@ async function processCardSync(id, data, userId, timestamp, version, isDeleted) 
       return {
         success: false,
         conflict: true,
-        serverData: existingCard.toJSON()
+        serverData: existingCard.toJSON(),
       };
     }
 
     await existingCard.update({
       ...data,
-      updatedAt: new Date(timestamp)
+      updatedAt: new Date(timestamp),
     });
   } else {
     // 創建新卡片
-    await db.Card.create({
+    await Card.create({
       id,
       userId,
       ...data,
       createdAt: new Date(timestamp),
-      updatedAt: new Date(timestamp)
+      updatedAt: new Date(timestamp),
     });
   }
 
@@ -144,8 +156,8 @@ async function processCardSync(id, data, userId, timestamp, version, isDeleted) 
  * 處理收藏同步
  */
 async function processCollectionSync(id, data, userId, timestamp, version, isDeleted) {
-  const existingCollection = await db.Collection.findOne({
-    where: { id, userId }
+  const existingCollection = await Collection.findOne({
+    where: { id, userId },
   });
 
   if (isDeleted) {
@@ -161,21 +173,21 @@ async function processCollectionSync(id, data, userId, timestamp, version, isDel
       return {
         success: false,
         conflict: true,
-        serverData: existingCollection.toJSON()
+        serverData: existingCollection.toJSON(),
       };
     }
 
     await existingCollection.update({
       ...data,
-      updatedAt: new Date(timestamp)
+      updatedAt: new Date(timestamp),
     });
   } else {
-    await db.Collection.create({
+    await Collection.create({
       id,
       userId,
       ...data,
       createdAt: new Date(timestamp),
-      updatedAt: new Date(timestamp)
+      updatedAt: new Date(timestamp),
     });
   }
 
@@ -186,7 +198,7 @@ async function processCollectionSync(id, data, userId, timestamp, version, isDel
  * 處理用戶數據同步
  */
 async function processUserSync(id, data, userId, timestamp, version, isDeleted) {
-  const existingUser = await db.User.findByPk(userId);
+  const existingUser = await User.findByPk(userId);
 
   if (!existingUser) {
     return { success: false, error: '用戶不存在' };
@@ -205,7 +217,7 @@ async function processUserSync(id, data, userId, timestamp, version, isDeleted) 
   if (Object.keys(updateData).length > 0) {
     await existingUser.update({
       ...updateData,
-      updatedAt: new Date(timestamp)
+      updatedAt: new Date(timestamp),
     });
   }
 
@@ -216,8 +228,8 @@ async function processUserSync(id, data, userId, timestamp, version, isDeleted) 
  * 處理註釋同步
  */
 async function processAnnotationSync(id, data, userId, timestamp, version, isDeleted) {
-  const existingAnnotation = await db.Annotation.findOne({
-    where: { id, userId }
+  const existingAnnotation = await Annotation.findOne({
+    where: { id, userId },
   });
 
   if (isDeleted) {
@@ -233,21 +245,21 @@ async function processAnnotationSync(id, data, userId, timestamp, version, isDel
       return {
         success: false,
         conflict: true,
-        serverData: existingAnnotation.toJSON()
+        serverData: existingAnnotation.toJSON(),
       };
     }
 
     await existingAnnotation.update({
       ...data,
-      updatedAt: new Date(timestamp)
+      updatedAt: new Date(timestamp),
     });
   } else {
-    await db.Annotation.create({
+    await Annotation.create({
       id,
       userId,
       ...data,
       createdAt: new Date(timestamp),
-      updatedAt: new Date(timestamp)
+      updatedAt: new Date(timestamp),
     });
   }
 
@@ -263,13 +275,13 @@ async function getServerChanges(userId, lastSyncTime) {
 
   try {
     // 獲取卡片變更
-    const cardChanges = await db.Card.findAll({
+    const cardChanges = await Card.findAll({
       where: {
         userId,
         updatedAt: {
-          [db.Sequelize.Op.gt]: syncTime
-        }
-      }
+          [Op.gt]: syncTime,
+        },
+      },
     });
 
     cardChanges.forEach(card => {
@@ -278,18 +290,18 @@ async function getServerChanges(userId, lastSyncTime) {
         type: 'card',
         data: card.toJSON(),
         timestamp: card.updatedAt.getTime(),
-        version: card.updatedAt.getTime()
+        version: card.updatedAt.getTime(),
       });
     });
 
     // 獲取收藏變更
-    const collectionChanges = await db.Collection.findAll({
+    const collectionChanges = await Collection.findAll({
       where: {
         userId,
         updatedAt: {
-          [db.Sequelize.Op.gt]: syncTime
-        }
-      }
+          [Op.gt]: syncTime,
+        },
+      },
     });
 
     collectionChanges.forEach(collection => {
@@ -298,18 +310,18 @@ async function getServerChanges(userId, lastSyncTime) {
         type: 'collection',
         data: collection.toJSON(),
         timestamp: collection.updatedAt.getTime(),
-        version: collection.updatedAt.getTime()
+        version: collection.updatedAt.getTime(),
       });
     });
 
     // 獲取註釋變更
-    const annotationChanges = await db.Annotation.findAll({
+    const annotationChanges = await Annotation.findAll({
       where: {
         userId,
         updatedAt: {
-          [db.Sequelize.Op.gt]: syncTime
-        }
-      }
+          [Op.gt]: syncTime,
+        },
+      },
     });
 
     annotationChanges.forEach(annotation => {
@@ -318,13 +330,12 @@ async function getServerChanges(userId, lastSyncTime) {
         type: 'annotation',
         data: annotation.toJSON(),
         timestamp: annotation.updatedAt.getTime(),
-        version: annotation.updatedAt.getTime()
+        version: annotation.updatedAt.getTime(),
       });
     });
 
     logger.info(`獲取到 ${changes.length} 個服務器變更`);
     return changes;
-
   } catch (error) {
     logger.error('獲取服務器變更失敗:', error);
     return [];
@@ -340,7 +351,7 @@ router.get('/status', authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
     // 獲取用戶的最後同步時間
-    const user = await db.User.findByPk(userId);
+    const user = await User.findByPk(userId);
     const lastSyncTime = user.lastSyncTime || 0;
 
     // 獲取待同步項目數量（這裡可以實現更複雜的邏輯）
@@ -350,14 +361,13 @@ router.get('/status', authenticateToken, async (req, res) => {
       success: true,
       lastSyncTime,
       pendingCount,
-      serverVersion: Date.now()
+      serverVersion: Date.now(),
     });
-
   } catch (error) {
     logger.error('獲取同步狀態失敗:', error);
     res.status(500).json({
       success: false,
-      error: '服務器內部錯誤'
+      error: '服務器內部錯誤',
     });
   }
 });
