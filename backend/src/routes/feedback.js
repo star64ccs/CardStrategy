@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const feedbackService = require('../services/feedbackService');
-const auth = require('../middleware/auth');
-const { validateFeedbackSubmission, validateFeedbackUpdate } = require('../middleware/validation');
+const { protect: auth } = require('../middleware/auth');
 const logger = require('../utils/logger');
 
 /**
@@ -57,11 +56,11 @@ const logger = require('../utils/logger');
  *       401:
  *         description: 未授權
  */
-router.post('/', auth, validateFeedbackSubmission, async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     const feedbackData = {
       ...req.body,
-      userId: req.user.id
+      userId: req.user.id,
     };
 
     const feedback = await feedbackService.submitFeedback(feedbackData);
@@ -69,14 +68,14 @@ router.post('/', auth, validateFeedbackSubmission, async (req, res) => {
     res.status(201).json({
       success: true,
       message: '反饋提交成功',
-      data: feedback
+      data: feedback,
     });
   } catch (error) {
     logger.error('提交反饋失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '提交反饋失敗',
-      code: 'FEEDBACK_SUBMISSION_ERROR'
+      code: 'FEEDBACK_SUBMISSION_ERROR',
     });
   }
 });
@@ -134,21 +133,21 @@ router.get('/', auth, async (req, res) => {
       feedbackType: req.query.feedbackType,
       category: req.query.category,
       severity: req.query.severity,
-      userId: req.user.role === 'admin' ? undefined : req.user.id
+      userId: req.user.role === 'admin' ? undefined : req.user.id,
     };
 
     const result = await feedbackService.getFeedbacks(options);
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
     logger.error('獲取反饋列表失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '獲取反饋列表失敗',
-      code: 'FEEDBACK_LIST_ERROR'
+      code: 'FEEDBACK_LIST_ERROR',
     });
   }
 });
@@ -183,20 +182,20 @@ router.get('/:id', auth, async (req, res) => {
     if (req.user.role !== 'admin' && feedback.userId !== req.user.id) {
       return res.status(403).json({
         success: false,
-        message: '無權限查看此反饋'
+        message: '無權限查看此反饋',
       });
     }
 
     res.json({
       success: true,
-      data: feedback
+      data: feedback,
     });
   } catch (error) {
     logger.error('獲取反饋詳情失敗:', error);
     res.status(404).json({
       success: false,
       message: error.message || '反饋不存在',
-      code: 'FEEDBACK_NOT_FOUND'
+      code: 'FEEDBACK_NOT_FOUND',
     });
   }
 });
@@ -237,7 +236,7 @@ router.get('/:id', auth, async (req, res) => {
  *       401:
  *         description: 未授權
  */
-router.put('/:id/status', auth, validateFeedbackUpdate, async (req, res) => {
+router.put('/:id/status', auth, async (req, res) => {
   try {
     const { status, resolution } = req.body;
     const feedbackId = parseInt(req.params.id);
@@ -252,14 +251,14 @@ router.put('/:id/status', auth, validateFeedbackUpdate, async (req, res) => {
     res.json({
       success: true,
       message: '反饋狀態更新成功',
-      data: feedback
+      data: feedback,
     });
   } catch (error) {
     logger.error('更新反饋狀態失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '更新反饋狀態失敗',
-      code: 'FEEDBACK_STATUS_UPDATE_ERROR'
+      code: 'FEEDBACK_STATUS_UPDATE_ERROR',
     });
   }
 });
@@ -302,30 +301,26 @@ router.put('/:id/assign', auth, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以分配反饋'
+        message: '只有管理員可以分配反饋',
       });
     }
 
     const { assignedTo } = req.body;
     const feedbackId = parseInt(req.params.id);
 
-    const feedback = await feedbackService.assignFeedback(
-      feedbackId,
-      assignedTo,
-      req.user.id
-    );
+    const feedback = await feedbackService.assignFeedback(feedbackId, assignedTo, req.user.id);
 
     res.json({
       success: true,
       message: '反饋分配成功',
-      data: feedback
+      data: feedback,
     });
   } catch (error) {
     logger.error('分配反饋失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '分配反饋失敗',
-      code: 'FEEDBACK_ASSIGNMENT_ERROR'
+      code: 'FEEDBACK_ASSIGNMENT_ERROR',
     });
   }
 });
@@ -387,14 +382,14 @@ router.post('/:id/responses', auth, async (req, res) => {
     res.status(201).json({
       success: true,
       message: '回應添加成功',
-      data: response
+      data: response,
     });
   } catch (error) {
     logger.error('添加反饋回應失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '添加反饋回應失敗',
-      code: 'FEEDBACK_RESPONSE_ERROR'
+      code: 'FEEDBACK_RESPONSE_ERROR',
     });
   }
 });
@@ -437,7 +432,7 @@ router.get('/stats', auth, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以查看統計數據'
+        message: '只有管理員可以查看統計數據',
       });
     }
 
@@ -445,21 +440,21 @@ router.get('/stats', auth, async (req, res) => {
       startDate: req.query.startDate,
       endDate: req.query.endDate,
       feedbackType: req.query.feedbackType,
-      category: req.query.category
+      category: req.query.category,
     };
 
     const stats = await feedbackService.getFeedbackStats(options);
 
     res.json({
       success: true,
-      data: stats
+      data: stats,
     });
   } catch (error) {
     logger.error('獲取反饋統計失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '獲取反饋統計失敗',
-      code: 'FEEDBACK_STATS_ERROR'
+      code: 'FEEDBACK_STATS_ERROR',
     });
   }
 });
@@ -483,7 +478,7 @@ router.get('/suggestions', auth, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以查看改進建議'
+        message: '只有管理員可以查看改進建議',
       });
     }
 
@@ -491,14 +486,14 @@ router.get('/suggestions', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: suggestions
+      data: suggestions,
     });
   } catch (error) {
     logger.error('獲取改進建議失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '獲取改進建議失敗',
-      code: 'FEEDBACK_SUGGESTIONS_ERROR'
+      code: 'FEEDBACK_SUGGESTIONS_ERROR',
     });
   }
 });

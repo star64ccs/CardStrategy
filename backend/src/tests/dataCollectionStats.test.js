@@ -1,8 +1,8 @@
 const request = require('supertest');
 const app = require('../app');
 const { sequelize } = require('../config/database');
-const { getTrainingDataModel } = require('../models/TrainingData');
-const { getDataQualityMetricsModel } = require('../models/DataQualityMetrics');
+const { createTrainingDataModel, getTrainingDataModel } = require('../models/TrainingData');
+const { createDataQualityMetricsModel, getDataQualityMetricsModel } = require('../models/DataQualityMetrics');
 
 describe('Data Collection Statistics API', () => {
   let authToken;
@@ -11,8 +11,10 @@ describe('Data Collection Statistics API', () => {
 
   beforeAll(async () => {
     // 初始化模型
-    TrainingData = getTrainingDataModel(sequelize);
-    DataQualityMetrics = getDataQualityMetricsModel(sequelize);
+    createTrainingDataModel(sequelize);
+    createDataQualityMetricsModel(sequelize);
+    TrainingData = getTrainingDataModel();
+    DataQualityMetrics = getDataQualityMetricsModel();
 
     // 創建測試數據
     await TrainingData.bulkCreate([
