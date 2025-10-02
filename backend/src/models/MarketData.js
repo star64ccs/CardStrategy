@@ -132,4 +132,4 @@ const getMarketDataModel = () => {
   return MarketData;
 };
 
-module.exports = getMarketDataModel;
+module.exports = { createMarketDataModel, getMarketDataModel };

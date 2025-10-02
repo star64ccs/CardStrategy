@@ -77,15 +77,17 @@ const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.p
 
 // 導入所有模型
 const { createCardModel, getCardModel } = require('../models/Card');
-const { getMarketDataModel } = require('../models/MarketData');
-const { getPredictionModel } = require('../models/PredictionModel');
+const { createMarketDataModel, getMarketDataModel } = require('../models/MarketData');
+const { createPredictionModel, getPredictionModel } = require('../models/PredictionModel');
 const { getModelPersistenceModel } = require('../models/ModelPersistence');
 
 // 初始化模型
 createCardModel(sequelize);
+createMarketDataModel(sequelize);
+createPredictionModel(sequelize);
 const Card = getCardModel();
-const MarketData = getMarketDataModel(sequelize);
-const PredictionModel = getPredictionModel(sequelize);
+const MarketData = getMarketDataModel();
+const PredictionModel = getPredictionModel();
 const ModelPersistence = getModelPersistenceModel(sequelize);
 
 // 定義模型關聯

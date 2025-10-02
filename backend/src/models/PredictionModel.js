@@ -159,4 +159,4 @@ const getPredictionModel = () => {
   return PredictionModel;
 };
 
-module.exports = getPredictionModel;
+module.exports = { createPredictionModel, getPredictionModel };

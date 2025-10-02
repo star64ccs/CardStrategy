@@ -3,8 +3,8 @@ const { query, validationResult } = require('express-validator');
 const { Op } = require('sequelize');
 const { protect, optionalAuth } = require('../middleware/auth');
 const logger = require('../utils/logger');
-const getMarketDataModel = require('../models/MarketData');
-const getCardModel = require('../models/Card');
+const { createMarketDataModel, getMarketDataModel } = require('../models/MarketData');
+const { createCardModel, getCardModel } = require('../models/Card');
 const databaseOptimizer = require('../services/databaseOptimizer');
 
 const router = express.Router();
