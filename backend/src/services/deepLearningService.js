@@ -2,14 +2,14 @@ const tf = require('@tensorflow/tfjs-node');
 const { getMarketDataModel } = require('../models/MarketData');
 const { getCardModel } = require('../models/Card');
 const { getModelPersistenceModel } = require('../models/ModelPersistence');
-const ModelPersistenceService = require('./modelPersistenceService');
+const modelPersistenceService = require('./modelPersistenceService');
 const logger = require('../utils/logger');
 
 class DeepLearningService {
   constructor() {
     this.isInitialized = false;
     this.models = {};
-    this.modelPersistenceService = new ModelPersistenceService();
+    this.modelPersistenceService = modelPersistenceService;
     this.ModelPersistence = null;
     this.sequelize = null;
     this.MarketData = null;
@@ -58,7 +58,7 @@ class DeepLearningService {
             this.models[modelType] = {
               model,
               metadata: latestModel.getMetadata(),
-              performanceMetrics: latestModel.getPerformanceMetrics()
+              performanceMetrics: latestModel.getPerformanceMetrics(),
             };
             logger.info(`已加載 ${modelType} 模型，版本: ${latestModel.version}`);
           }
@@ -78,7 +78,7 @@ class DeepLearningService {
 
       const normalizedData = historicalData.map(d => ({
         ...d,
-        normalizedPrice: (d.price - minPrice) / (maxPrice - minPrice)
+        normalizedPrice: (d.price - minPrice) / (maxPrice - minPrice),
       }));
 
       // 創建序列數據
@@ -99,7 +99,7 @@ class DeepLearningService {
         targets: tf.tensor2d(targets, [targets.length, 1]),
         minPrice,
         maxPrice,
-        sequenceLength
+        sequenceLength,
       };
     } catch (error) {
       logger.error('數據預處理失敗:', error);
@@ -111,35 +111,43 @@ class DeepLearningService {
     try {
       const model = tf.sequential();
 
-      model.add(tf.layers.lstm({
-        units: 128,
-        returnSequences: true,
-        inputShape: [inputShape, 1]
-      }));
+      model.add(
+        tf.layers.lstm({
+          units: 128,
+          returnSequences: true,
+          inputShape: [inputShape, 1],
+        })
+      );
 
       model.add(tf.layers.dropout(0.2));
 
-      model.add(tf.layers.lstm({
-        units: 64,
-        returnSequences: false
-      }));
+      model.add(
+        tf.layers.lstm({
+          units: 64,
+          returnSequences: false,
+        })
+      );
 
       model.add(tf.layers.dropout(0.2));
 
-      model.add(tf.layers.dense({
-        units: 32,
-        activation: 'relu'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 32,
+          activation: 'relu',
+        })
+      );
 
-      model.add(tf.layers.dense({
-        units: 1,
-        activation: 'linear'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 1,
+          activation: 'linear',
+        })
+      );
 
       model.compile({
         optimizer: tf.train.adam(0.001),
         loss: 'meanSquaredError',
-        metrics: ['mae']
+        metrics: ['mae'],
       });
 
       return model;
@@ -153,35 +161,43 @@ class DeepLearningService {
     try {
       const model = tf.sequential();
 
-      model.add(tf.layers.gru({
-        units: 128,
-        returnSequences: true,
-        inputShape: [inputShape, 1]
-      }));
+      model.add(
+        tf.layers.gru({
+          units: 128,
+          returnSequences: true,
+          inputShape: [inputShape, 1],
+        })
+      );
 
       model.add(tf.layers.dropout(0.2));
 
-      model.add(tf.layers.gru({
-        units: 64,
-        returnSequences: false
-      }));
+      model.add(
+        tf.layers.gru({
+          units: 64,
+          returnSequences: false,
+        })
+      );
 
       model.add(tf.layers.dropout(0.2));
 
-      model.add(tf.layers.dense({
-        units: 32,
-        activation: 'relu'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 32,
+          activation: 'relu',
+        })
+      );
 
-      model.add(tf.layers.dense({
-        units: 1,
-        activation: 'linear'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 1,
+          activation: 'linear',
+        })
+      );
 
       model.compile({
         optimizer: tf.train.adam(0.001),
         loss: 'meanSquaredError',
-        metrics: ['mae']
+        metrics: ['mae'],
       });
 
       return model;
@@ -196,35 +212,43 @@ class DeepLearningService {
       const model = tf.sequential();
 
       // 簡化的 Transformer 架構
-      model.add(tf.layers.dense({
-        units: 128,
-        activation: 'relu',
-        inputShape: [inputShape]
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 128,
+          activation: 'relu',
+          inputShape: [inputShape],
+        })
+      );
 
       model.add(tf.layers.dropout(0.1));
 
-      model.add(tf.layers.dense({
-        units: 64,
-        activation: 'relu'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 64,
+          activation: 'relu',
+        })
+      );
 
       model.add(tf.layers.dropout(0.1));
 
-      model.add(tf.layers.dense({
-        units: 32,
-        activation: 'relu'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 32,
+          activation: 'relu',
+        })
+      );
 
-      model.add(tf.layers.dense({
-        units: 1,
-        activation: 'linear'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 1,
+          activation: 'linear',
+        })
+      );
 
       model.compile({
         optimizer: tf.train.adam(0.001),
         loss: 'meanSquaredError',
-        metrics: ['mae']
+        metrics: ['mae'],
       });
 
       return model;
@@ -238,39 +262,49 @@ class DeepLearningService {
     try {
       const model = tf.sequential();
 
-      model.add(tf.layers.conv1d({
-        filters: 64,
-        kernelSize: 3,
-        activation: 'relu',
-        inputShape: [inputShape, 1]
-      }));
+      model.add(
+        tf.layers.conv1d({
+          filters: 64,
+          kernelSize: 3,
+          activation: 'relu',
+          inputShape: [inputShape, 1],
+        })
+      );
 
-      model.add(tf.layers.maxPooling1d({
-        poolSize: 2
-      }));
+      model.add(
+        tf.layers.maxPooling1d({
+          poolSize: 2,
+        })
+      );
 
-      model.add(tf.layers.conv1d({
-        filters: 32,
-        kernelSize: 3,
-        activation: 'relu'
-      }));
+      model.add(
+        tf.layers.conv1d({
+          filters: 32,
+          kernelSize: 3,
+          activation: 'relu',
+        })
+      );
 
       model.add(tf.layers.globalAveragePooling1d());
 
-      model.add(tf.layers.dense({
-        units: 32,
-        activation: 'relu'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 32,
+          activation: 'relu',
+        })
+      );
 
-      model.add(tf.layers.dense({
-        units: 1,
-        activation: 'linear'
-      }));
+      model.add(
+        tf.layers.dense({
+          units: 1,
+          activation: 'linear',
+        })
+      );
 
       model.compile({
         optimizer: tf.train.adam(0.001),
         loss: 'meanSquaredError',
-        metrics: ['mae']
+        metrics: ['mae'],
       });
 
       return model;
@@ -294,10 +328,12 @@ class DeepLearningService {
         callbacks: {
           onEpochEnd: (epoch, logs) => {
             if (epoch % 10 === 0) {
-              logger.info(`Epoch ${epoch}: loss = ${logs.loss.toFixed(4)}, val_loss = ${logs.val_loss.toFixed(4)}`);
+              logger.info(
+                `Epoch ${epoch}: loss = ${logs.loss.toFixed(4)}, val_loss = ${logs.val_loss.toFixed(4)}`
+              );
             }
-          }
-        }
+          },
+        },
       });
 
       // 計算性能指標
@@ -309,7 +345,7 @@ class DeepLearningService {
         mse: mse.dataSync()[0],
         mae: mae.dataSync()[0],
         accuracy: this.calculateAccuracy(targets, predictions),
-        trainingHistory: history.history
+        trainingHistory: history.history,
       };
 
       // 保存模型
@@ -327,14 +363,13 @@ class DeepLearningService {
           modelType,
           inputShape: sequences.shape[1],
           trainingEpochs: 100,
-          batchSize: 32
+          batchSize: 32,
         },
-        performanceMetrics
+        performanceMetrics,
       };
 
       logger.info(`${modelType} 模型訓練完成，模型ID: ${modelId}`);
       return { modelId, performanceMetrics };
-
     } catch (error) {
       logger.error(`${modelType} 模型訓練失敗:`, error);
       throw error;
@@ -397,7 +432,7 @@ class DeepLearningService {
         predictedPrice: Math.round(predictedPrice * 100) / 100,
         confidence,
         modelType: 'lstm',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('LSTM 預測失敗:', error);
@@ -434,7 +469,7 @@ class DeepLearningService {
         predictedPrice: Math.round(predictedPrice * 100) / 100,
         confidence,
         modelType: 'gru',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('GRU 預測失敗:', error);
@@ -470,7 +505,7 @@ class DeepLearningService {
         predictedPrice: Math.round(predictedPrice * 100) / 100,
         confidence,
         modelType: 'transformer',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('Transformer 預測失敗:', error);
@@ -506,14 +541,15 @@ class DeepLearningService {
       const ensemblePredictedPrice = weightedSum / totalWeight;
 
       // 計算整體置信度
-      const avgConfidence = predictions.reduce((sum, pred) => sum + pred.confidence, 0) / predictions.length;
+      const avgConfidence =
+        predictions.reduce((sum, pred) => sum + pred.confidence, 0) / predictions.length;
 
       return {
         predictedPrice: Math.round(ensemblePredictedPrice * 100) / 100,
         confidence: avgConfidence,
         modelType: 'ensemble',
         individualPredictions: predictions,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       logger.error('集成預測失敗:', error);
@@ -526,11 +562,12 @@ class DeepLearningService {
       const recentPrices = historicalData.slice(-10).map(d => d.price);
       const avgPrice = recentPrices.reduce((sum, price) => sum + price, 0) / recentPrices.length;
       const priceVolatility = Math.sqrt(
-        recentPrices.reduce((sum, price) => sum + Math.pow(price - avgPrice, 2), 0) / recentPrices.length
+        recentPrices.reduce((sum, price) => sum + Math.pow(price - avgPrice, 2), 0) /
+          recentPrices.length
       );
 
       // 基於價格波動性計算置信度
-      const volatilityFactor = Math.max(0, 1 - (priceVolatility / avgPrice));
+      const volatilityFactor = Math.max(0, 1 - priceVolatility / avgPrice);
       const trendFactor = this.calculateTrendFactor(historicalData);
 
       return Math.min(0.95, Math.max(0.5, (volatilityFactor + trendFactor) / 2));
@@ -568,7 +605,7 @@ class DeepLearningService {
       const historicalData = await this.MarketData.findAll({
         where: { cardId },
         order: [['date', 'ASC']],
-        limit: 100
+        limit: 100,
       });
 
       if (historicalData.length < 30) {
@@ -601,7 +638,7 @@ class DeepLearningService {
         ...prediction,
         cardId,
         dataQuality,
-        historicalDataPoints: historicalData.length
+        historicalDataPoints: historicalData.length,
       };
     } catch (error) {
       logger.error(`卡牌 ${cardId} 價格預測失敗:`, error);
@@ -633,7 +670,7 @@ class DeepLearningService {
 
       const outliers = prices.filter(price => Math.abs(price - meanPrice) > 3 * stdPrice);
       const outlierRatio = outliers.length / prices.length;
-      score *= (1 - outlierRatio);
+      score *= 1 - outlierRatio;
 
       if (outlierRatio > 0.1) {
         issues.push(`價格異常值過多: ${(outlierRatio * 100).toFixed(1)}%`);
@@ -654,7 +691,7 @@ class DeepLearningService {
         issues,
         completeness,
         outlierRatio,
-        freshness
+        freshness,
       };
     } catch (error) {
       logger.error('評估數據質量失敗:', error);
@@ -663,7 +700,7 @@ class DeepLearningService {
         issues: ['數據質量評估失敗'],
         completeness: 0.5,
         outlierRatio: 0.1,
-        freshness: 0.5
+        freshness: 0.5,
       };
     }
   }
@@ -675,14 +712,14 @@ class DeepLearningService {
       const status = {
         isInitialized: this.isInitialized,
         models: {},
-        modelPersistence: await this.modelPersistenceService.getModelList()
+        modelPersistence: await this.modelPersistenceService.getModelList(),
       };
 
       for (const [modelType, modelInfo] of Object.entries(this.models)) {
         status.models[modelType] = {
           loaded: true,
           metadata: modelInfo.metadata,
-          performanceMetrics: modelInfo.performanceMetrics
+          performanceMetrics: modelInfo.performanceMetrics,
         };
       }
 
