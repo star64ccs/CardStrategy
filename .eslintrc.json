@@ -1,8 +1,6 @@
 {
   "root": true,
-  "extends": [
-    "eslint:recommended"
-  ],
+  "extends": ["eslint:recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
     "ecmaFeatures": {
@@ -11,13 +9,7 @@
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "plugins": [
-    "@typescript-eslint",
-    "react",
-    "react-hooks",
-    "react-native",
-    "import"
-  ],
+  "plugins": ["@typescript-eslint", "react", "react-hooks", "react-native", "import"],
   "rules": {
     "no-console": "warn",
     "no-debugger": "error",
@@ -83,7 +75,6 @@
     }
   },
   "env": {
-    "react-native/react-native": true,
     "es6": true,
     "node": true,
     "jest": true
