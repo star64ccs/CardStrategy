@@ -116,15 +116,16 @@ class BatchOperationService {
 
         try {
           switch (operation) {
-            case 'create':
+            case 'create': {
               const createdCards = await Card.bulkCreate(batch, {
                 validate: true,
                 returning: true
               });
               results.success.push(...createdCards.map(card => card.id));
               break;
+            }
 
-            case 'update':
+            case 'update': {
               for (const card of batch) {
                 const updated = await Card.update(card.data, {
                   where: { id: card.id },
@@ -137,8 +138,9 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
-            case 'delete':
+            case 'delete': {
               const deletedCount = await Card.destroy({
                 where: {
                   id: { [Op.in]: batch.map(card => card.id) }
@@ -146,8 +148,9 @@ class BatchOperationService {
               });
               results.success.push(...batch.map(card => card.id).slice(0, deletedCount));
               break;
+            }
 
-            case 'bulk-update':
+            case 'bulk-update': {
               const bulkUpdatePromises = batch.map(card =>
                 Card.update(card.data, { where: { id: card.id } })
               );
@@ -206,15 +209,16 @@ class BatchOperationService {
 
         try {
           switch (operation) {
-            case 'create':
+            case 'create': {
               const createdInvestments = await Investment.bulkCreate(batch, {
                 validate: true,
                 returning: true
               });
               results.success.push(...createdInvestments.map(inv => inv.id));
               break;
+            }
 
-            case 'update':
+            case 'update': {
               for (const investment of batch) {
                 const updated = await Investment.update(investment.data, {
                   where: { id: investment.id },
@@ -227,8 +231,9 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
-            case 'delete':
+            case 'delete': {
               const deletedCount = await Investment.destroy({
                 where: {
                   id: { [Op.in]: batch.map(inv => inv.id) }
@@ -236,8 +241,9 @@ class BatchOperationService {
               });
               results.success.push(...batch.map(inv => inv.id).slice(0, deletedCount));
               break;
+            }
 
-            case 'calculate-returns':
+            case 'calculate-returns': {
               for (const investment of batch) {
                 try {
                   const inv = await Investment.findByPk(investment.id, {
@@ -266,6 +272,7 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
             default:
               throw new Error(`未知的批量投資操作: ${operation}`);
@@ -308,15 +315,16 @@ class BatchOperationService {
 
         try {
           switch (operation) {
-            case 'create':
+            case 'create': {
               const createdData = await MarketData.bulkCreate(batch, {
                 validate: true,
                 returning: true
               });
               results.success.push(...createdData.map(data => data.id));
               break;
+            }
 
-            case 'update':
+            case 'update': {
               for (const data of batch) {
                 const updated = await MarketData.update(data.data, {
                   where: { id: data.id },
@@ -329,8 +337,9 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
-            case 'aggregate':
+            case 'aggregate': {
               // 聚合市場數據
               for (const data of batch) {
                 try {
@@ -341,8 +350,9 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
-            case 'cleanup':
+            case 'cleanup': {
               // 清理過期市場數據
               const cutoffDate = moment().subtract(options.days || 365, 'days').toDate();
               const deletedCount = await MarketData.destroy({
@@ -352,6 +362,7 @@ class BatchOperationService {
               });
               results.success.push(`Deleted ${deletedCount} records`);
               break;
+            }
 
             default:
               throw new Error(`未知的批量市場數據操作: ${operation}`);
@@ -394,7 +405,7 @@ class BatchOperationService {
 
         try {
           switch (operation) {
-            case 'update':
+            case 'update': {
               for (const user of batch) {
                 const updated = await User.update(user.data, {
                   where: { id: user.id },
@@ -407,8 +418,9 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
-            case 'deactivate':
+            case 'deactivate': {
               const deactivatedCount = await User.update(
                 { isActive: false, deactivatedAt: new Date() },
                 {
@@ -419,8 +431,9 @@ class BatchOperationService {
               );
               results.success.push(...batch.map(user => user.id).slice(0, deactivatedCount[0]));
               break;
+            }
 
-            case 'activate':
+            case 'activate': {
               const activatedCount = await User.update(
                 { isActive: true, deactivatedAt: null },
                 {
@@ -431,8 +444,9 @@ class BatchOperationService {
               );
               results.success.push(...batch.map(user => user.id).slice(0, activatedCount[0]));
               break;
+            }
 
-            case 'send-notification':
+            case 'send-notification': {
               const notificationService = require('./notificationService');
               for (const user of batch) {
                 try {
@@ -448,6 +462,7 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
             default:
               throw new Error(`未知的批量用戶操作: ${operation}`);
@@ -490,7 +505,7 @@ class BatchOperationService {
 
         try {
           switch (operation) {
-            case 'send':
+            case 'send': {
               for (const notification of batch) {
                 try {
                   const notificationId = await notificationService.sendInstantNotification(
@@ -508,8 +523,9 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
-            case 'schedule':
+            case 'schedule': {
               for (const notification of batch) {
                 try {
                   const notificationId = await notificationService.scheduleNotification(
@@ -528,8 +544,9 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
-            case 'cancel':
+            case 'cancel': {
               for (const notification of batch) {
                 try {
                   await notificationService.cancelScheduledNotification(notification.notificationId);
@@ -542,6 +559,7 @@ class BatchOperationService {
                 }
               }
               break;
+            }
 
             default:
               throw new Error(`未知的批量通知操作: ${operation}`);

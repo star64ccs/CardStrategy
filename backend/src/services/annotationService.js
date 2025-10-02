@@ -21,7 +21,7 @@ class AnnotationService {
       qualityWeight: 0.3, // 質量權重
       learningRate: 0.1, // 學習率
       priorityBoost: 1.5, // 優先級提升倍數
-      difficultyPenalty: 0.8 // 難度懲罰係數
+      difficultyPenalty: 0.8, // 難度懲罰係數
     };
   }
 
@@ -47,7 +47,7 @@ class AnnotationService {
         priorityFilter = null,
         difficultyFilter = null,
         annotationTypeFilter = null,
-        forceReassignment = false
+        forceReassignment = false,
       } = options;
 
       // 獲取待分配的訓練數據
@@ -55,7 +55,7 @@ class AnnotationService {
         limit: batchSize,
         priorityFilter,
         difficultyFilter,
-        annotationTypeFilter
+        annotationTypeFilter,
       });
 
       if (pendingData.length === 0) {
@@ -100,7 +100,7 @@ class AnnotationService {
   async getPendingTrainingData(filters) {
     const whereClause = {
       status: 'pending',
-      isActive: true
+      isActive: true,
     };
 
     if (filters.priorityFilter) {
@@ -120,8 +120,8 @@ class AnnotationService {
       limit: filters.limit,
       order: [
         ['priority', 'DESC'],
-        ['createdAt', 'ASC']
-      ]
+        ['createdAt', 'ASC'],
+      ],
     });
   }
 
@@ -130,25 +130,27 @@ class AnnotationService {
     const annotators = await this.Annotator.findAll({
       where: {
         isActive: true,
-        level: { [Op.in]: ['expert', 'senior', 'junior'] }
+        level: { [Op.in]: ['expert', 'senior', 'junior'] },
       },
-      include: [{
-        model: this.AnnotationData,
-        as: 'recentAnnotations',
-        where: {
-          createdAt: {
-            [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 最近30天
-          }
+      include: [
+        {
+          model: this.AnnotationData,
+          as: 'recentAnnotations',
+          where: {
+            createdAt: {
+              [Op.gte]: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 最近30天
+            },
+          },
+          required: false,
         },
-        required: false
-      }]
+      ],
     });
 
     return annotators.map(annotator => ({
       ...annotator.toJSON(),
       expertise: this.calculateAnnotatorExpertise(annotator),
       availability: this.calculateAnnotatorAvailability(annotator),
-      performanceHistory: this.extractPerformanceHistory(annotator.recentAnnotations)
+      performanceHistory: this.extractPerformanceHistory(annotator.recentAnnotations),
     }));
   }
 
@@ -158,14 +160,14 @@ class AnnotationService {
       card_identification: 0.5,
       condition_assessment: 0.5,
       authenticity_verification: 0.5,
-      centering_analysis: 0.5
+      centering_analysis: 0.5,
     };
 
     // 根據標註者等級調整基礎專業度
     const levelMultiplier = {
       expert: 1.2,
       senior: 1.0,
-      junior: 0.8
+      junior: 0.8,
     };
 
     const multiplier = levelMultiplier[annotator.level] || 1.0;
@@ -218,7 +220,7 @@ class AnnotationService {
         averageConfidence: 0.5,
         averageProcessingTime: 0,
         successRate: 0.5,
-        qualityTrend: 'stable'
+        qualityTrend: 'stable',
       };
     }
 
@@ -228,10 +230,12 @@ class AnnotationService {
 
     return {
       averageConfidence: confidences.reduce((sum, c) => sum + c, 0) / confidences.length,
-      averageProcessingTime: processingTimes.length > 0 ?
-        processingTimes.reduce((sum, t) => sum + t, 0) / processingTimes.length : 0,
+      averageProcessingTime:
+        processingTimes.length > 0
+          ? processingTimes.reduce((sum, t) => sum + t, 0) / processingTimes.length
+          : 0,
       successRate: successCount / annotations.length,
-      qualityTrend: this.calculateQualityTrend(annotations)
+      qualityTrend: this.calculateQualityTrend(annotations),
     };
   }
 
@@ -239,17 +243,19 @@ class AnnotationService {
   calculateQualityTrend(annotations) {
     if (annotations.length < 5) return 'stable';
 
-    const sortedAnnotations = annotations.sort((a, b) =>
-      new Date(a.createdAt) - new Date(b.createdAt)
+    const sortedAnnotations = annotations.sort(
+      (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
     );
 
     const recentAnnotations = sortedAnnotations.slice(-5);
     const olderAnnotations = sortedAnnotations.slice(0, -5);
 
-    const recentAvgConfidence = recentAnnotations.reduce((sum, a) =>
-      sum + parseFloat(a.confidence), 0) / recentAnnotations.length;
-    const olderAvgConfidence = olderAnnotations.reduce((sum, a) =>
-      sum + parseFloat(a.confidence), 0) / olderAnnotations.length;
+    const recentAvgConfidence =
+      recentAnnotations.reduce((sum, a) => sum + parseFloat(a.confidence), 0) /
+      recentAnnotations.length;
+    const olderAvgConfidence =
+      olderAnnotations.reduce((sum, a) => sum + parseFloat(a.confidence), 0) /
+      olderAnnotations.length;
 
     if (recentAvgConfidence > olderAvgConfidence + 0.1) return 'improving';
     if (recentAvgConfidence < olderAvgConfidence - 0.1) return 'declining';
@@ -265,14 +271,14 @@ class AnnotationService {
         where: {
           annotatorId: annotator.id,
           reviewStatus: 'pending',
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
       workloads[annotator.id] = {
         currentTasks: activeTasks,
         workloadScore: activeTasks / this.assignmentConfig.maxTasksPerAnnotator,
-        capacity: Math.max(0, this.assignmentConfig.maxTasksPerAnnotator - activeTasks)
+        capacity: Math.max(0, this.assignmentConfig.maxTasksPerAnnotator - activeTasks),
       };
     }
 
@@ -291,11 +297,7 @@ class AnnotationService {
       if (assignedDataIds.has(data.id)) continue;
 
       // 計算每個標註者的綜合評分
-      const annotatorScores = this.calculateAnnotatorScores(
-        data,
-        annotators,
-        workloads
-      );
+      const annotatorScores = this.calculateAnnotatorScores(data, annotators, workloads);
 
       // 選擇最佳標註者
       const bestAnnotator = this.selectBestAnnotator(annotatorScores, workloads);
@@ -308,7 +310,7 @@ class AnnotationService {
           priority: data.priority || 'normal',
           difficulty: this.assessDifficulty(data),
           expectedQuality: bestAnnotator.score,
-          assignmentReason: bestAnnotator.reason
+          assignmentReason: bestAnnotator.reason,
         });
 
         assignedDataIds.add(data.id);
@@ -317,8 +319,10 @@ class AnnotationService {
         workloads[bestAnnotator.id].currentTasks++;
         workloads[bestAnnotator.id].workloadScore =
           workloads[bestAnnotator.id].currentTasks / this.assignmentConfig.maxTasksPerAnnotator;
-        workloads[bestAnnotator.id].capacity =
-          Math.max(0, this.assignmentConfig.maxTasksPerAnnotator - workloads[bestAnnotator.id].currentTasks);
+        workloads[bestAnnotator.id].capacity = Math.max(
+          0,
+          this.assignmentConfig.maxTasksPerAnnotator - workloads[bestAnnotator.id].currentTasks
+        );
       }
     }
 
@@ -332,7 +336,7 @@ class AnnotationService {
       const priorityWeight = {
         high: 3,
         normal: 2,
-        low: 1
+        low: 1,
       };
 
       const aPriority = priorityWeight[a.priority] || 2;
@@ -366,11 +370,11 @@ class AnnotationService {
       const availabilityScore = annotator.availability;
 
       // 綜合評分
-      const totalScore = (
-        workloadScore * this.assignmentConfig.workloadWeight +
-        expertiseScore * this.assignmentConfig.expertiseWeight +
-        qualityScore * this.assignmentConfig.qualityWeight
-      ) * availabilityScore;
+      const totalScore =
+        (workloadScore * this.assignmentConfig.workloadWeight +
+          expertiseScore * this.assignmentConfig.expertiseWeight +
+          qualityScore * this.assignmentConfig.qualityWeight) *
+        availabilityScore;
 
       // 應用難度調整
       const difficulty = this.assessDifficulty(data);
@@ -383,7 +387,7 @@ class AnnotationService {
         expertiseScore,
         qualityScore,
         availabilityScore,
-        reason: this.generateAssignmentReason(annotator, data, adjustedScore)
+        reason: this.generateAssignmentReason(annotator, data, adjustedScore),
       });
     }
 
@@ -405,7 +409,7 @@ class AnnotationService {
   // 計算質量評分
   calculateQualityScore(annotator) {
     const baseScore = annotator.accuracy || 0.5;
-    const {performanceHistory} = annotator;
+    const { performanceHistory } = annotator;
 
     // 根據性能歷史調整
     let adjustedScore = baseScore;
@@ -424,7 +428,7 @@ class AnnotationService {
     const difficultyMultipliers = {
       easy: 1.0,
       medium: 0.9,
-      hard: 0.8
+      hard: 0.8,
     };
 
     const baseMultiplier = difficultyMultipliers[difficulty] || 1.0;
@@ -433,7 +437,7 @@ class AnnotationService {
     const levelMultipliers = {
       expert: 1.0,
       senior: 0.95,
-      junior: 0.9
+      junior: 0.9,
     };
 
     const levelMultiplier = levelMultipliers[annotator.level] || 1.0;
@@ -508,7 +512,7 @@ class AnnotationService {
           annotatorId: assignment.annotatorId,
           annotationType: assignment.annotationType,
           annotationResult: {},
-          confidence: 0.00,
+          confidence: 0.0,
           reviewStatus: 'pending',
           metadata: {
             annotationTool: 'smart_assignment',
@@ -523,8 +527,8 @@ class AnnotationService {
             featurePoints: [],
             textAnnotations: [],
             assignmentAlgorithm: 'smart_assignment_v2',
-            assignmentTimestamp: new Date()
-          }
+            assignmentTimestamp: new Date(),
+          },
         });
 
         createdTasks.push({
@@ -533,7 +537,7 @@ class AnnotationService {
           annotatorId: assignment.annotatorId,
           annotationType: assignment.annotationType,
           expectedQuality: assignment.expectedQuality,
-          assignmentReason: assignment.assignmentReason
+          assignmentReason: assignment.assignmentReason,
         });
       } catch (error) {
         logger.error(`創建標註任務失敗: ${assignment.trainingDataId}`, error);
@@ -551,7 +555,7 @@ class AnnotationService {
         averageExpectedQuality: 0,
         distributionByType: {},
         distributionByDifficulty: {},
-        distributionByAnnotator: {}
+        distributionByAnnotator: {},
       };
 
       if (assignments.length > 0) {
@@ -589,10 +593,12 @@ class AnnotationService {
   async learnFromResults(annotationId, actualQuality, processingTime) {
     try {
       const annotation = await this.AnnotationData.findByPk(annotationId, {
-        include: [{
-          model: this.Annotator,
-          as: 'annotator'
-        }]
+        include: [
+          {
+            model: this.Annotator,
+            as: 'annotator',
+          },
+        ],
       });
 
       if (!annotation) return;
@@ -636,8 +642,8 @@ class AnnotationService {
         metadata: {
           ...metadata,
           expertiseAreas,
-          lastExpertiseUpdate: new Date()
-        }
+          lastExpertiseUpdate: new Date(),
+        },
       });
     } catch (error) {
       logger.error('調整標註者專業度失敗:', error);
@@ -649,27 +655,33 @@ class AnnotationService {
     // 根據實際表現調整權重
     if (qualityDifference > 0.1) {
       // 實際質量比預期好，增加質量權重
-      this.assignmentConfig.qualityWeight = Math.min(0.5,
-        this.assignmentConfig.qualityWeight + 0.02);
+      this.assignmentConfig.qualityWeight = Math.min(
+        0.5,
+        this.assignmentConfig.qualityWeight + 0.02
+      );
     } else if (qualityDifference < -0.1) {
       // 實際質量比預期差，減少質量權重
-      this.assignmentConfig.qualityWeight = Math.max(0.1,
-        this.assignmentConfig.qualityWeight - 0.02);
+      this.assignmentConfig.qualityWeight = Math.max(
+        0.1,
+        this.assignmentConfig.qualityWeight - 0.02
+      );
     }
 
     // 根據處理時間調整工作量權重
     const expectedTime = 24 * 60 * 60 * 1000; // 24小時
     if (processingTime > expectedTime * 1.5) {
       // 處理時間過長，增加工作量權重
-      this.assignmentConfig.workloadWeight = Math.min(0.5,
-        this.assignmentConfig.workloadWeight + 0.01);
+      this.assignmentConfig.workloadWeight = Math.min(
+        0.5,
+        this.assignmentConfig.workloadWeight + 0.01
+      );
     }
   }
 
   // 確定標註類型
   determineAnnotationType(trainingData) {
     // 根據數據來源和內容確定標註類型
-    const {source} = trainingData;
+    const { source } = trainingData;
     const metadata = trainingData.metadata || {};
 
     if (source === 'user_correction') {
@@ -680,13 +692,12 @@ class AnnotationService {
       return 'authenticity_verification';
     }
     return 'centering_analysis';
-
   }
 
   // 評估難度等級
   assessDifficulty(trainingData) {
     const metadata = trainingData.metadata || {};
-    const {quality} = trainingData;
+    const { quality } = trainingData;
 
     if (quality === 'high' && metadata.confidence > 0.9) {
       return 'easy';
@@ -694,7 +705,6 @@ class AnnotationService {
       return 'hard';
     }
     return 'medium';
-
   }
 
   // 提交標註結果
@@ -716,8 +726,8 @@ class AnnotationService {
         metadata: {
           ...annotation.metadata,
           qualityScore: this.calculateAnnotationQuality(annotationResult, confidence),
-          lastUpdated: new Date()
-        }
+          lastUpdated: new Date(),
+        },
       });
 
       // 更新標註者統計
@@ -759,13 +769,15 @@ class AnnotationService {
 
       // 計算標註者的統計數據
       const annotations = await this.AnnotationData.findAll({
-        where: { annotatorId }
+        where: { annotatorId },
       });
 
       const totalAnnotations = annotations.length;
       const completedAnnotations = annotations.filter(a => a.reviewStatus === 'approved').length;
-      const averageConfidence = annotations.reduce((sum, a) => sum + parseFloat(a.confidence), 0) / totalAnnotations;
-      const averageProcessingTime = annotations.reduce((sum, a) => sum + (a.processingTime || 0), 0) / totalAnnotations;
+      const averageConfidence =
+        annotations.reduce((sum, a) => sum + parseFloat(a.confidence), 0) / totalAnnotations;
+      const averageProcessingTime =
+        annotations.reduce((sum, a) => sum + (a.processingTime || 0), 0) / totalAnnotations;
 
       // 計算準確率（基於審核結果）
       const accuracy = totalAnnotations > 0 ? completedAnnotations / totalAnnotations : 0;
@@ -779,8 +791,8 @@ class AnnotationService {
         metadata: {
           ...annotator.metadata,
           averageConfidence,
-          lastUpdated: new Date()
-        }
+          lastUpdated: new Date(),
+        },
       });
 
       logger.info(`標註者統計已更新: ID ${annotatorId}`);
@@ -803,7 +815,7 @@ class AnnotationService {
         reviewStatus,
         reviewNotes,
         reviewedBy: reviewerId,
-        reviewedAt: new Date()
+        reviewedAt: new Date(),
       });
 
       // 如果審核通過，更新訓練數據狀態
@@ -859,7 +871,7 @@ class AnnotationService {
       await this.initializeModels();
 
       const annotations = await this.AnnotationData.findAll({
-        where: { isActive: true }
+        where: { isActive: true },
       });
 
       const qualityMetrics = this.calculateAnnotationQualityMetrics(annotations);
@@ -880,8 +892,8 @@ class AnnotationService {
           improvementSuggestions: this.generateAnnotationImprovementSuggestions(qualityMetrics),
           qualityTrend: 'stable',
           averageConfidence: qualityMetrics.averageConfidence,
-          reviewRate: qualityMetrics.reviewRate
-        }
+          reviewRate: qualityMetrics.reviewRate,
+        },
       });
 
       logger.info('標註質量指標已更新');
@@ -900,7 +912,7 @@ class AnnotationService {
         timeliness: 0,
         overallScore: 0,
         averageConfidence: 0,
-        reviewRate: 0
+        reviewRate: 0,
       };
     }
 
@@ -908,15 +920,17 @@ class AnnotationService {
     const reviewedAnnotations = annotations.filter(a => a.reviewStatus !== 'pending').length;
     const approvedAnnotations = annotations.filter(a => a.reviewStatus === 'approved').length;
 
-    const averageConfidence = annotations.reduce((sum, a) => sum + parseFloat(a.confidence), 0) / totalAnnotations;
+    const averageConfidence =
+      annotations.reduce((sum, a) => sum + parseFloat(a.confidence), 0) / totalAnnotations;
     const reviewRate = totalAnnotations > 0 ? reviewedAnnotations / totalAnnotations : 0;
     const accuracy = reviewedAnnotations > 0 ? approvedAnnotations / reviewedAnnotations : 0;
 
     // 計算完整性（基於標註結果的完整性）
-    const completeness = annotations.reduce((sum, a) => {
-      const resultKeys = Object.keys(a.annotationResult || {});
-      return sum + (resultKeys.length / 5); // 假設有5個必要字段
-    }, 0) / totalAnnotations;
+    const completeness =
+      annotations.reduce((sum, a) => {
+        const resultKeys = Object.keys(a.annotationResult || {});
+        return sum + resultKeys.length / 5; // 假設有5個必要字段
+      }, 0) / totalAnnotations;
 
     // 計算一致性（基於標註者的一致性）
     const annotatorConsistency = this.calculateAnnotatorConsistency(annotations);
@@ -924,12 +938,8 @@ class AnnotationService {
     // 計算時效性（基於處理時間）
     const timeliness = this.calculateAnnotationTimeliness(annotations);
 
-    const overallScore = (
-      completeness * 0.25 +
-      accuracy * 0.30 +
-      annotatorConsistency * 0.25 +
-      timeliness * 0.20
-    );
+    const overallScore =
+      completeness * 0.25 + accuracy * 0.3 + annotatorConsistency * 0.25 + timeliness * 0.2;
 
     return {
       completeness,
@@ -938,7 +948,7 @@ class AnnotationService {
       timeliness,
       overallScore,
       averageConfidence,
-      reviewRate
+      reviewRate,
     };
   }
 
@@ -956,7 +966,8 @@ class AnnotationService {
 
     const consistencyScores = Object.values(annotatorGroups).map(confidences => {
       const avg = confidences.reduce((sum, c) => sum + c, 0) / confidences.length;
-      const variance = confidences.reduce((sum, c) => sum + Math.pow(c - avg, 2), 0) / confidences.length;
+      const variance =
+        confidences.reduce((sum, c) => sum + Math.pow(c - avg, 2), 0) / confidences.length;
       return 1 / (1 + variance); // 方差越小，一致性越高
     });
 
@@ -972,7 +983,8 @@ class AnnotationService {
       const created = new Date(annotation.createdAt);
       const daysDiff = (now - created) / (1000 * 60 * 60 * 24);
 
-      if (daysDiff <= 7) { // 7天內完成算作時效
+      if (daysDiff <= 7) {
+        // 7天內完成算作時效
         timelyAnnotations++;
       }
     });
@@ -1014,13 +1026,13 @@ class AnnotationService {
 
       const totalAnnotations = await this.AnnotationData.count({ where: { isActive: true } });
       const pendingAnnotations = await this.AnnotationData.count({
-        where: { reviewStatus: 'pending', isActive: true }
+        where: { reviewStatus: 'pending', isActive: true },
       });
       const approvedAnnotations = await this.AnnotationData.count({
-        where: { reviewStatus: 'approved', isActive: true }
+        where: { reviewStatus: 'approved', isActive: true },
       });
       const rejectedAnnotations = await this.AnnotationData.count({
-        where: { reviewStatus: 'rejected', isActive: true }
+        where: { reviewStatus: 'rejected', isActive: true },
       });
 
       const activeAnnotators = await this.Annotator.count({ where: { isActive: true } });
@@ -1032,7 +1044,7 @@ class AnnotationService {
         rejectedAnnotations,
         activeAnnotators,
         approvalRate: totalAnnotations > 0 ? approvedAnnotations / totalAnnotations : 0,
-        rejectionRate: totalAnnotations > 0 ? rejectedAnnotations / totalAnnotations : 0
+        rejectionRate: totalAnnotations > 0 ? rejectedAnnotations / totalAnnotations : 0,
       };
     } catch (error) {
       logger.error('獲取標註統計失敗:', error);
