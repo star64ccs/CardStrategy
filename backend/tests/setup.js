@@ -246,6 +246,8 @@ jest.mock('moment-timezone', () => {
   mockMoment.tz = jest.fn((date, tz) => moment(date));
   mockMoment.tz.setDefault = jest.fn();
   mockMoment.tz.guess = jest.fn(() => 'UTC');
+  mockMoment.tz.zone = jest.fn(() => null);  // Sequelize 需要此方法
+  mockMoment.tz.names = jest.fn(() => ['UTC']);
   return mockMoment;
 });
 
