@@ -1,24 +1,31 @@
 // 測試環境設置
 process.env.NODE_ENV = 'test';
+process.env.TZ = 'UTC';
+
+// Mock moment 以避免 timezone 問題
+process.env.MOMENT_SUPPRESS_TZ_WARNING = 'true';
 
 // 設置測試數據庫配置
 process.env.DB_HOST = 'localhost';
 process.env.DB_PORT = '5432';
-process.env.DB_NAME = 'cardstrategy_test';
+process.env.DB_NAME = 'test_db';
 process.env.DB_USER = 'postgres';
-process.env.DB_PASSWORD = 'password';
+process.env.DB_PASSWORD = 'postgres';
+process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/test_db';
 
 // 設置 JWT 密鑰
 process.env.JWT_SECRET = 'test-jwt-secret-key';
+process.env.JWT_REFRESH_SECRET = 'test-refresh-secret-key';
 
 // 設置 Redis 配置
 process.env.REDIS_HOST = 'localhost';
 process.env.REDIS_PORT = '6379';
+process.env.REDIS_URL = 'redis://localhost:6379';
 
 // 設置其他環境變量
 process.env.PORT = '3001';
 process.env.API_VERSION = 'v1';
-process.env.TZ = 'UTC';
+process.env.LOG_LEVEL = 'error';
 
 // 全局測試超時
 jest.setTimeout(30000);
@@ -226,10 +233,20 @@ jest.mock('uuid', () => ({
   v4: jest.fn(() => 'test-uuid')
 }));
 
-// 模擬 Moment
+// 模擬 Moment  
 jest.mock('moment', () => {
   const moment = jest.requireActual('moment');
   return jest.fn((date) => moment(date || '2024-01-01'));
+});
+
+// 模擬 Moment-Timezone
+jest.mock('moment-timezone', () => {
+  const moment = jest.requireActual('moment');
+  const mockMoment = jest.fn((date) => moment(date || '2024-01-01'));
+  mockMoment.tz = jest.fn((date, tz) => moment(date));
+  mockMoment.tz.setDefault = jest.fn();
+  mockMoment.tz.guess = jest.fn(() => 'UTC');
+  return mockMoment;
 });
 
 // 模擬 Lodash
