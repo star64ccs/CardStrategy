@@ -7,7 +7,7 @@ const {
   generateVerificationCode,
   generateShareUrl,
   generateQRCodeUrl,
-  generateSocialShareLinks
+  generateSocialShareLinks,
 } = require('../models/ShareVerification');
 
 class ShareVerificationService {
@@ -58,12 +58,12 @@ class ShareVerificationService {
         metadata: {
           createdBy: userId,
           expiresInDays,
-          analysisTimestamp: new Date().toISOString()
-        }
+          analysisTimestamp: new Date().toISOString(),
+        },
       });
 
       // 生成分享相關 URL 和鏈接
-      const {shareUrl} = shareVerification;
+      const { shareUrl } = shareVerification;
       const qrCodeUrl = generateQRCodeUrl(shareUrl);
       const socialShareLinks = generateSocialShareLinks(shareUrl);
 
@@ -71,7 +71,7 @@ class ShareVerificationService {
         verificationCode: shareVerification.verificationCode,
         userId,
         cardId,
-        analysisType
+        analysisType,
       });
 
       return {
@@ -79,7 +79,7 @@ class ShareVerificationService {
         shareUrl,
         qrCodeUrl,
         socialShareLinks,
-        expiresAt: shareVerification.expiresAt
+        expiresAt: shareVerification.expiresAt,
       };
     } catch (error) {
       logger.error('Create share verification error:', error);
@@ -96,20 +96,20 @@ class ShareVerificationService {
       const verification = await this.ShareVerification.findOne({
         where: {
           verificationCode,
-          isActive: true
+          isActive: true,
         },
         include: [
           {
             model: this.Card,
             as: 'card',
-            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl', 'price']
+            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl', 'price'],
           },
           {
             model: this.User,
             as: 'user',
-            attributes: ['id', 'username', 'avatar']
-          }
-        ]
+            attributes: ['id', 'username', 'avatar'],
+          },
+        ],
       });
 
       if (!verification) {
@@ -123,14 +123,14 @@ class ShareVerificationService {
       // 更新查看次數和最後查看時間
       await verification.update({
         viewCount: verification.viewCount + 1,
-        lastViewedAt: new Date()
+        lastViewedAt: new Date(),
       });
 
       logger.info('Share verification lookup', {
         verificationCode,
         viewCount: verification.viewCount + 1,
         isExpired,
-        isValid
+        isValid,
       });
 
       return {
@@ -147,12 +147,12 @@ class ShareVerificationService {
           viewCount: verification.viewCount + 1,
           lastViewedAt: verification.lastViewedAt,
           createdAt: verification.createdAt,
-          updatedAt: verification.updatedAt
+          updatedAt: verification.updatedAt,
         },
         card: verification.card,
         user: verification.user,
         isExpired,
-        isValid
+        isValid,
       };
     } catch (error) {
       logger.error('Lookup verification error:', error);
@@ -168,8 +168,8 @@ class ShareVerificationService {
       const verification = await this.ShareVerification.findOne({
         where: {
           verificationCode,
-          isActive: true
-        }
+          isActive: true,
+        },
       });
 
       if (!verification) {
@@ -198,21 +198,27 @@ class ShareVerificationService {
         attributes: [
           'analysisType',
           [this.ShareVerification.sequelize.fn('COUNT', '*'), 'total'],
-          [this.ShareVerification.sequelize.fn('SUM', this.ShareVerification.sequelize.col('viewCount')), 'totalViews']
+          [
+            this.ShareVerification.sequelize.fn(
+              'SUM',
+              this.ShareVerification.sequelize.col('viewCount')
+            ),
+            'totalViews',
+          ],
         ],
-        group: ['analysisType']
+        group: ['analysisType'],
       });
 
       const totalShares = await this.ShareVerification.count({
-        where: { userId }
+        where: { userId },
       });
 
       const activeShares = await this.ShareVerification.count({
         where: {
           userId,
           isActive: true,
-          expiresAt: { [Op.gt]: new Date() }
-        }
+          expiresAt: { [Op.gt]: new Date() },
+        },
       });
 
       return {
@@ -220,7 +226,7 @@ class ShareVerificationService {
         activeShares,
         expiredShares: totalShares - activeShares,
         byType: stats,
-        totalViews: stats.reduce((sum, stat) => sum + parseInt(stat.dataValues.totalViews || 0), 0)
+        totalViews: stats.reduce((sum, stat) => sum + parseInt(stat.dataValues.totalViews || 0), 0),
       };
     } catch (error) {
       logger.error('Get user share stats error:', error);
@@ -236,8 +242,8 @@ class ShareVerificationService {
       const verification = await this.ShareVerification.findOne({
         where: {
           verificationCode,
-          userId
-        }
+          userId,
+        },
       });
 
       if (!verification) {
@@ -248,7 +254,7 @@ class ShareVerificationService {
 
       logger.info('Share verification deleted', {
         verificationCode,
-        userId
+        userId,
       });
 
       return { success: true, message: '分享驗證已刪除' };
@@ -268,13 +274,13 @@ class ShareVerificationService {
         {
           where: {
             expiresAt: { [Op.lt]: new Date() },
-            isActive: true
-          }
+            isActive: true,
+          },
         }
       );
 
       logger.info('Expired verifications cleaned up', {
-        count: expiredCount[0]
+        count: expiredCount[0],
       });
 
       return { cleanedCount: expiredCount[0] };
@@ -292,22 +298,22 @@ class ShareVerificationService {
       const popularVerifications = await this.ShareVerification.findAll({
         where: {
           isActive: true,
-          expiresAt: { [Op.gt]: new Date() }
+          expiresAt: { [Op.gt]: new Date() },
         },
         include: [
           {
             model: this.Card,
             as: 'card',
-            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl']
+            attributes: ['id', 'name', 'setName', 'rarity', 'imageUrl'],
           },
           {
             model: this.User,
             as: 'user',
-            attributes: ['id', 'username', 'avatar']
-          }
+            attributes: ['id', 'username', 'avatar'],
+          },
         ],
         order: [['viewCount', 'DESC']],
-        limit
+        limit,
       });
 
       return popularVerifications;

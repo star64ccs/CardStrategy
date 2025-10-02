@@ -32,12 +32,12 @@ class DataCleaningService {
         cleanedRecords: 0,
         removedRecords: 0,
         errors: [],
-        qualityImprovements: {}
+        qualityImprovements: {},
       };
 
       // 獲取所有訓練數據
       const allTrainingData = await this.TrainingData.findAll({
-        where: { isActive: true }
+        where: { isActive: true },
       });
 
       cleaningResults.totalRecords = allTrainingData.length;
@@ -48,7 +48,7 @@ class DataCleaningService {
         this.removeLowQualityData.bind(this),
         this.standardizeDataFormat.bind(this),
         this.validateDataIntegrity.bind(this),
-        this.enrichDataMetadata.bind(this)
+        this.enrichDataMetadata.bind(this),
       ];
 
       for (const step of cleaningSteps) {
@@ -58,12 +58,12 @@ class DataCleaningService {
           cleaningResults.removedRecords += stepResult.removedRecords;
           cleaningResults.qualityImprovements = {
             ...cleaningResults.qualityImprovements,
-            ...stepResult.qualityImprovements
+            ...stepResult.qualityImprovements,
           };
         } catch (error) {
           cleaningResults.errors.push({
             step: step.name,
-            error: error.message
+            error: error.message,
           });
         }
       }
@@ -71,7 +71,9 @@ class DataCleaningService {
       // 更新數據質量指標
       await this.updateCleaningQualityMetrics(cleaningResults);
 
-      logger.info(`數據清洗完成: 處理 ${cleaningResults.totalRecords} 條記錄，清理 ${cleaningResults.cleanedRecords} 條，移除 ${cleaningResults.removedRecords} 條`);
+      logger.info(
+        `數據清洗完成: 處理 ${cleaningResults.totalRecords} 條記錄，清理 ${cleaningResults.cleanedRecords} 條，移除 ${cleaningResults.removedRecords} 條`
+      );
       return cleaningResults;
     } catch (error) {
       logger.error('數據清洗失敗:', error);
@@ -106,8 +108,8 @@ class DataCleaningService {
         cleanedRecords: trainingData.length - removedCount,
         removedRecords: removedCount,
         qualityImprovements: {
-          duplicateRemoval: removedCount
-        }
+          duplicateRemoval: removedCount,
+        },
       };
     } catch (error) {
       logger.error('移除重複數據失敗:', error);
@@ -150,10 +152,7 @@ class DataCleaningService {
     // 檢查卡片ID是否相同
     if (record1.cardId === record2.cardId) {
       // 檢查圖片數據的相似性（簡化版本）
-      const imageSimilarity = this.calculateImageSimilarity(
-        record1.imageData,
-        record2.imageData
-      );
+      const imageSimilarity = this.calculateImageSimilarity(record1.imageData, record2.imageData);
 
       return imageSimilarity > 0.95; // 95% 相似度視為重複
     }
@@ -174,7 +173,7 @@ class DataCleaningService {
     if (maxLength === 0) return 1.0;
 
     const distance = this.levenshteinDistance(imageData1, imageData2);
-    return 1 - (distance / maxLength);
+    return 1 - distance / maxLength;
   }
 
   // Levenshtein距離算法
@@ -227,8 +226,8 @@ class DataCleaningService {
         cleanedRecords: trainingData.length - removedCount,
         removedRecords: removedCount,
         qualityImprovements: {
-          lowQualityRemoval: removedCount
-        }
+          lowQualityRemoval: removedCount,
+        },
       };
     } catch (error) {
       logger.error('移除低質量數據失敗:', error);
@@ -266,10 +265,10 @@ class DataCleaningService {
   // 獲取圖片質量分數
   getImageQualityScore(imageQuality) {
     const qualityScores = {
-      'high': 1.0,
-      'medium': 0.7,
-      'low': 0.4,
-      'poor': 0.2
+      high: 1.0,
+      medium: 0.7,
+      low: 0.4,
+      poor: 0.2,
     };
     return qualityScores[imageQuality] || 0.5;
   }
@@ -277,11 +276,11 @@ class DataCleaningService {
   // 獲取來源質量分數
   getSourceQualityScore(source) {
     const sourceScores = {
-      'official_api': 1.0,
-      'user_correction': 0.9,
-      'third_party': 0.7,
-      'user_upload': 0.6,
-      'web_scraping': 0.5
+      official_api: 1.0,
+      user_correction: 0.9,
+      third_party: 0.7,
+      user_upload: 0.6,
+      web_scraping: 0.5,
     };
     return sourceScores[source] || 0.5;
   }
@@ -334,8 +333,13 @@ class DataCleaningService {
 
         // 標準化圖片尺寸
         if (record.metadata && record.metadata.imageDimensions) {
-          const standardizedDimensions = this.standardizeImageDimensions(record.metadata.imageDimensions);
-          if (JSON.stringify(standardizedDimensions) !== JSON.stringify(record.metadata.imageDimensions)) {
+          const standardizedDimensions = this.standardizeImageDimensions(
+            record.metadata.imageDimensions
+          );
+          if (
+            JSON.stringify(standardizedDimensions) !==
+            JSON.stringify(record.metadata.imageDimensions)
+          ) {
             record.metadata.imageDimensions = standardizedDimensions;
             hasChanges = true;
           }
@@ -343,7 +347,9 @@ class DataCleaningService {
 
         // 標準化光源條件
         if (record.metadata && record.metadata.lightingConditions) {
-          const standardizedLighting = this.standardizeLightingConditions(record.metadata.lightingConditions);
+          const standardizedLighting = this.standardizeLightingConditions(
+            record.metadata.lightingConditions
+          );
           if (standardizedLighting !== record.metadata.lightingConditions) {
             record.metadata.lightingConditions = standardizedLighting;
             hasChanges = true;
@@ -360,8 +366,8 @@ class DataCleaningService {
         cleanedRecords: trainingData.length,
         removedRecords: 0,
         qualityImprovements: {
-          formatStandardization: standardizedCount
-        }
+          formatStandardization: standardizedCount,
+        },
       };
     } catch (error) {
       logger.error('標準化數據格式失敗:', error);
@@ -372,12 +378,12 @@ class DataCleaningService {
   // 標準化圖片格式
   standardizeImageFormat(format) {
     const formatMap = {
-      'jpg': 'JPEG',
-      'jpeg': 'JPEG',
-      'png': 'PNG',
-      'gif': 'GIF',
-      'bmp': 'BMP',
-      'webp': 'WEBP'
+      jpg: 'JPEG',
+      jpeg: 'JPEG',
+      png: 'PNG',
+      gif: 'GIF',
+      bmp: 'BMP',
+      webp: 'WEBP',
     };
     return formatMap[format.toLowerCase()] || format.toUpperCase();
   }
@@ -386,21 +392,21 @@ class DataCleaningService {
   standardizeImageDimensions(dimensions) {
     return {
       width: parseInt(dimensions.width) || 0,
-      height: parseInt(dimensions.height) || 0
+      height: parseInt(dimensions.height) || 0,
     };
   }
 
   // 標準化光源條件
   standardizeLightingConditions(lighting) {
     const lightingMap = {
-      'good': 'good',
-      'excellent': 'good',
-      'bright': 'good',
-      'medium': 'medium',
-      'average': 'medium',
-      'poor': 'poor',
-      'dark': 'poor',
-      'dim': 'poor'
+      good: 'good',
+      excellent: 'good',
+      bright: 'good',
+      medium: 'medium',
+      average: 'medium',
+      poor: 'poor',
+      dark: 'poor',
+      dim: 'poor',
     };
     return lightingMap[lighting.toLowerCase()] || 'medium';
   }
@@ -428,8 +434,8 @@ class DataCleaningService {
         cleanedRecords: validatedCount,
         removedRecords: invalidCount,
         qualityImprovements: {
-          integrityValidation: validatedCount
-        }
+          integrityValidation: validatedCount,
+        },
       };
     } catch (error) {
       logger.error('驗證數據完整性失敗:', error);
@@ -478,7 +484,8 @@ class DataCleaningService {
     }
 
     // 檢查數據長度
-    if (imageData.length < 100) { // 最小長度檢查
+    if (imageData.length < 100) {
+      // 最小長度檢查
       return false;
     }
 
@@ -528,8 +535,8 @@ class DataCleaningService {
         cleanedRecords: trainingData.length,
         removedRecords: 0,
         qualityImprovements: {
-          metadataEnrichment: enrichedCount
-        }
+          metadataEnrichment: enrichedCount,
+        },
       };
     } catch (error) {
       logger.error('豐富數據元數據失敗:', error);
@@ -578,11 +585,11 @@ class DataCleaningService {
   // 獲取來源可靠性
   getSourceReliability(source) {
     const reliabilityScores = {
-      'official_api': 1.0,
-      'user_correction': 0.9,
-      'third_party': 0.7,
-      'user_upload': 0.6,
-      'web_scraping': 0.5
+      official_api: 1.0,
+      user_correction: 0.9,
+      third_party: 0.7,
+      user_upload: 0.6,
+      web_scraping: 0.5,
     };
     return reliabilityScores[source] || 0.5;
   }
@@ -631,7 +638,7 @@ class DataCleaningService {
       await this.initializeModels();
 
       const remainingData = await this.TrainingData.findAll({
-        where: { isActive: true }
+        where: { isActive: true },
       });
 
       const qualityMetrics = await this.validateDataQuality(remainingData);
@@ -651,8 +658,8 @@ class DataCleaningService {
           qualityThreshold: 0.8,
           improvementSuggestions: this.generateCleaningImprovementSuggestions(cleaningResults),
           qualityTrend: 'improving',
-          cleaningResults
-        }
+          cleaningResults,
+        },
       });
 
       logger.info('清洗質量指標已更新');
@@ -669,15 +676,14 @@ class DataCleaningService {
         accuracy: this.calculateAccuracy(data),
         consistency: this.calculateConsistency(data),
         timeliness: this.calculateTimeliness(data),
-        overallScore: 0
+        overallScore: 0,
       };
 
-      qualityReport.overallScore = (
+      qualityReport.overallScore =
         qualityReport.completeness * 0.25 +
-        qualityReport.accuracy * 0.30 +
+        qualityReport.accuracy * 0.3 +
         qualityReport.consistency * 0.25 +
-        qualityReport.timeliness * 0.20
-      );
+        qualityReport.timeliness * 0.2;
 
       return qualityReport;
     } catch (error) {
@@ -694,8 +700,8 @@ class DataCleaningService {
     let completeRecords = 0;
 
     data.forEach(record => {
-      const hasAllFields = requiredFields.every(field =>
-        record[field] !== null && record[field] !== undefined
+      const hasAllFields = requiredFields.every(
+        field => record[field] !== null && record[field] !== undefined
       );
       if (hasAllFields) completeRecords++;
     });
