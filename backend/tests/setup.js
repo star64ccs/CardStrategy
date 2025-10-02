@@ -35,7 +35,7 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error('Uncaught Exception:', error);
 });
 
@@ -46,7 +46,7 @@ global.console = {
   debug: jest.fn(),
   info: jest.fn(),
   warn: jest.fn(),
-  error: jest.fn()
+  error: jest.fn(),
 };
 
 // 模擬文件系統操作
@@ -55,14 +55,14 @@ jest.mock('fs', () => ({
   writeFileSync: jest.fn(),
   readFileSync: jest.fn(),
   existsSync: jest.fn(() => true),
-  mkdirSync: jest.fn()
+  mkdirSync: jest.fn(),
 }));
 
 // 模擬路徑操作
 jest.mock('path', () => ({
   ...jest.requireActual('path'),
   join: jest.fn((...args) => args.join('/')),
-  resolve: jest.fn((...args) => args.join('/'))
+  resolve: jest.fn((...args) => args.join('/')),
 }));
 
 // 模擬 TensorFlow.js
@@ -75,20 +75,20 @@ jest.mock('@tensorflow/tfjs-node', () => ({
     compile: jest.fn().mockReturnThis(),
     fit: jest.fn().mockResolvedValue({ history: { loss: [0.5], accuracy: [0.8] } }),
     predict: jest.fn().mockReturnValue([[[100]]]),
-    save: jest.fn().mockResolvedValue({})
+    save: jest.fn().mockResolvedValue({}),
   })),
   layers: {
     dense: jest.fn(() => ({})),
     lstm: jest.fn(() => ({})),
     gru: jest.fn(() => ({})),
-    dropout: jest.fn(() => ({}))
+    dropout: jest.fn(() => ({})),
   },
   losses: {
-    meanSquaredError: jest.fn()
+    meanSquaredError: jest.fn(),
   },
   optimizers: {
-    adam: jest.fn()
-  }
+    adam: jest.fn(),
+  },
 }));
 
 // 模擬 Redis
@@ -101,8 +101,8 @@ jest.mock('redis', () => ({
     del: jest.fn().mockResolvedValue(1),
     exists: jest.fn().mockResolvedValue(0),
     expire: jest.fn().mockResolvedValue(1),
-    on: jest.fn()
-  }))
+    on: jest.fn(),
+  })),
 }));
 
 // 模擬 Bull 隊列
@@ -116,10 +116,10 @@ jest.mock('bull', () => {
       id: 'test-job-id',
       data: {},
       progress: jest.fn(),
-      finished: jest.fn()
+      finished: jest.fn(),
     }),
     getJobs: jest.fn().mockResolvedValue([]),
-    clean: jest.fn().mockResolvedValue([])
+    clean: jest.fn().mockResolvedValue([]),
   }));
 });
 
@@ -134,7 +134,7 @@ jest.mock('socket.io', () => {
     use: jest.fn(),
     attach: jest.fn(),
     listen: jest.fn(),
-    close: jest.fn()
+    close: jest.fn(),
   }));
 });
 
@@ -143,9 +143,9 @@ jest.mock('nodemailer', () => ({
   createTransporter: jest.fn().mockReturnValue({
     sendMail: jest.fn().mockResolvedValue({
       messageId: 'test-message-id',
-      response: 'OK'
-    })
-  })
+      response: 'OK',
+    }),
+  }),
 }));
 
 // 模擬 Multer
@@ -161,14 +161,14 @@ jest.mock('multer', () => {
           size: 1024,
           destination: '/tmp',
           filename: 'test.jpg',
-          path: '/tmp/test.jpg'
+          path: '/tmp/test.jpg',
         };
         next();
       }),
       array: jest.fn().mockReturnValue((req, res, next) => {
         req.files = [];
         next();
-      })
+      }),
     };
   });
 });
@@ -185,8 +185,8 @@ jest.mock('sharp', () => {
     metadata: jest.fn().mockResolvedValue({
       width: 800,
       height: 600,
-      format: 'jpeg'
-    })
+      format: 'jpeg',
+    }),
   }));
 });
 
@@ -197,14 +197,14 @@ jest.mock('exceljs', () => ({
       addRow: jest.fn(),
       addRows: jest.fn(),
       getColumn: jest.fn().mockReturnValue({
-        width: 15
-      })
+        width: 15,
+      }),
     }),
     xlsx: {
       writeFile: jest.fn().mockResolvedValue(),
-      writeBuffer: jest.fn().mockResolvedValue(Buffer.from('fake-excel'))
-    }
-  }))
+      writeBuffer: jest.fn().mockResolvedValue(Buffer.from('fake-excel')),
+    },
+  })),
 }));
 
 // 模擬 PDFKit
@@ -216,7 +216,7 @@ jest.mock('pdfkit', () => {
     text: jest.fn().mockReturnThis(),
     moveDown: jest.fn().mockReturnThis(),
     addPage: jest.fn().mockReturnThis(),
-    end: jest.fn().mockResolvedValue()
+    end: jest.fn().mockResolvedValue(),
   }));
 });
 
@@ -224,57 +224,91 @@ jest.mock('pdfkit', () => {
 jest.mock('node-cron', () => ({
   schedule: jest.fn().mockReturnValue({
     start: jest.fn(),
-    stop: jest.fn()
-  })
+    stop: jest.fn(),
+  }),
 }));
 
 // 模擬 UUID
 jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'test-uuid')
+  v4: jest.fn(() => 'test-uuid'),
 }));
 
-// 模擬 Moment  
+// 模擬 Moment
 jest.mock('moment', () => {
   const moment = jest.requireActual('moment');
-  return jest.fn((date) => moment(date || '2024-01-01'));
+  return jest.fn(date => moment(date || '2024-01-01'));
 });
 
 // 模擬 Moment-Timezone
 jest.mock('moment-timezone', () => {
   const moment = jest.requireActual('moment');
-  const mockMoment = jest.fn((date) => moment(date || '2024-01-01'));
+  const mockMoment = jest.fn(date => moment(date || '2024-01-01'));
   mockMoment.tz = jest.fn((date, tz) => moment(date));
   mockMoment.tz.setDefault = jest.fn();
   mockMoment.tz.guess = jest.fn(() => 'UTC');
   return mockMoment;
 });
 
+// 模擬 OpenAI
+jest.mock('openai', () => ({
+  OpenAI: jest.fn().mockImplementation(() => ({
+    chat: {
+      completions: {
+        create: jest.fn().mockResolvedValue({
+          choices: [{ message: { content: 'Test AI response' } }],
+          usage: { total_tokens: 100 }
+        })
+      }
+    },
+    images: {
+      generate: jest.fn().mockResolvedValue({
+        data: [{ url: 'https://example.com/generated-image.jpg' }]
+      })
+    }
+  })),
+  Configuration: jest.fn(),
+  OpenAIApi: jest.fn().mockImplementation(() => ({
+    createChatCompletion: jest.fn().mockResolvedValue({
+      data: {
+        choices: [{ message: { content: 'Test response' } }]
+      }
+    }),
+    createCompletion: jest.fn().mockResolvedValue({
+      data: {
+        choices: [{ text: 'Test completion' }]
+      }
+    })
+  }))
+}));
+
 // 模擬 Lodash
 jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
-  debounce: jest.fn((fn) => fn),
-  throttle: jest.fn((fn) => fn)
+  debounce: jest.fn(fn => fn),
+  throttle: jest.fn(fn => fn),
 }));
 
 // 模擬 Joi
 jest.mock('joi', () => ({
   ...jest.requireActual('joi'),
-  validate: jest.fn().mockReturnValue({ error: null, value: {} })
+  validate: jest.fn().mockReturnValue({ error: null, value: {} }),
 }));
 
 // 模擬 AWS SDK
 jest.mock('aws-sdk', () => ({
   S3: jest.fn().mockImplementation(() => ({
     upload: jest.fn().mockReturnValue({
-      promise: jest.fn().mockResolvedValue({ Location: 'https://s3.amazonaws.com/test-bucket/test.jpg' })
+      promise: jest
+        .fn()
+        .mockResolvedValue({ Location: 'https://s3.amazonaws.com/test-bucket/test.jpg' }),
     }),
     getObject: jest.fn().mockReturnValue({
-      promise: jest.fn().mockResolvedValue({ Body: Buffer.from('fake-file') })
+      promise: jest.fn().mockResolvedValue({ Body: Buffer.from('fake-file') }),
     }),
     deleteObject: jest.fn().mockReturnValue({
-      promise: jest.fn().mockResolvedValue({})
-    })
-  }))
+      promise: jest.fn().mockResolvedValue({}),
+    }),
+  })),
 }));
 
 // 模擬 Multer-S3
@@ -291,10 +325,10 @@ jest.mock('multer-s3', () => {
           bucket: 'test-bucket',
           key: 'test.jpg',
           acl: 'public-read',
-          location: 'https://s3.amazonaws.com/test-bucket/test.jpg'
+          location: 'https://s3.amazonaws.com/test-bucket/test.jpg',
         };
         next();
-      })
+      }),
     };
   });
 });
@@ -306,7 +340,7 @@ jest.mock('fluent-ffmpeg', () => {
     output: jest.fn().mockReturnThis(),
     on: jest.fn().mockReturnThis(),
     run: jest.fn().mockResolvedValue(),
-    save: jest.fn().mockResolvedValue()
+    save: jest.fn().mockResolvedValue(),
   }));
 });
 
@@ -318,7 +352,7 @@ jest.mock('ws', () => {
   return jest.fn().mockImplementation(() => ({
     on: jest.fn(),
     send: jest.fn(),
-    close: jest.fn()
+    close: jest.fn(),
   }));
 });
 
@@ -327,7 +361,7 @@ jest.mock('eventemitter2', () => {
   return jest.fn().mockImplementation(() => ({
     on: jest.fn(),
     emit: jest.fn(),
-    removeAllListeners: jest.fn()
+    removeAllListeners: jest.fn(),
   }));
 });
 
@@ -342,7 +376,7 @@ jest.mock('circuit-breaker-js', () => {
     onFallback: jest.fn(),
     onOpen: jest.fn(),
     onHalfOpen: jest.fn(),
-    onClose: jest.fn()
+    onClose: jest.fn(),
   }));
 });
 
@@ -351,8 +385,8 @@ jest.mock('retry', () => ({
   operation: jest.fn().mockReturnValue({
     attempt: jest.fn(),
     retry: jest.fn(),
-    stop: jest.fn()
-  })
+    stop: jest.fn(),
+  }),
 }));
 
 // 模擬 Backoff
@@ -362,8 +396,8 @@ jest.mock('backoff', () => ({
     failAfter: jest.fn(),
     on: jest.fn(),
     start: jest.fn(),
-    stop: jest.fn()
-  })
+    stop: jest.fn(),
+  }),
 }));
 
 // 模擬 Rate Limiter Flexible
@@ -371,13 +405,13 @@ jest.mock('rate-limiter-flexible', () => ({
   RateLimiterRedis: jest.fn().mockImplementation(() => ({
     consume: jest.fn().mockResolvedValue({ remainingPoints: 9, msBeforeNext: 60000 }),
     get: jest.fn().mockResolvedValue({ remainingPoints: 10, msBeforeNext: 0 }),
-    resetKey: jest.fn().mockResolvedValue()
+    resetKey: jest.fn().mockResolvedValue(),
   })),
   RateLimiterMemory: jest.fn().mockImplementation(() => ({
     consume: jest.fn().mockResolvedValue({ remainingPoints: 9, msBeforeNext: 60000 }),
     get: jest.fn().mockResolvedValue({ remainingPoints: 10, msBeforeNext: 0 }),
-    resetKey: jest.fn().mockResolvedValue()
-  }))
+    resetKey: jest.fn().mockResolvedValue(),
+  })),
 }));
 
 // 模擬 Express Slow Down
@@ -387,7 +421,7 @@ jest.mock('express-slow-down', () => jest.fn(() => (req, res, next) => next()));
 jest.mock('express-brute', () => {
   return jest.fn().mockImplementation(() => ({
     prevent: jest.fn().mockReturnValue((req, res, next) => next()),
-    reset: jest.fn().mockResolvedValue()
+    reset: jest.fn().mockResolvedValue(),
   }));
 });
 
@@ -395,10 +429,9 @@ jest.mock('express-brute', () => {
 jest.mock('express-brute', () => {
   return jest.fn().mockImplementation(() => ({
     prevent: jest.fn().mockReturnValue((req, res, next) => next()),
-    reset: jest.fn().mockResolvedValue()
+    reset: jest.fn().mockResolvedValue(),
   }));
 });
-
 
 // 全局測試工具函數
 global.testUtils = {
@@ -412,7 +445,7 @@ global.testUtils = {
       email: 'test@example.com',
       password: await bcrypt.hash('testpassword123', 10),
       role: 'user',
-      ...userData
+      ...userData,
     };
 
     return await User.create(defaultData);
@@ -432,7 +465,7 @@ global.testUtils = {
       totalSupply: 1000,
       imageUrl: 'https://example.com/card.jpg',
       description: 'Test card description',
-      ...cardData
+      ...cardData,
     };
 
     return await Card.create(defaultData);
@@ -448,7 +481,7 @@ global.testUtils = {
       quantity: 1,
       purchasePrice: 100,
       purchaseDate: new Date(),
-      ...investmentData
+      ...investmentData,
     };
 
     return await Investment.create(defaultData);
@@ -470,15 +503,13 @@ global.testUtils = {
   // 生成測試 JWT token
   generateTestToken: (userId, role = 'user') => {
     const jwt = require('jsonwebtoken');
-    return jwt.sign(
-      { userId, role },
-      process.env.JWT_SECRET || 'test-jwt-secret-key',
-      { expiresIn: '1h' }
-    );
+    return jwt.sign({ userId, role }, process.env.JWT_SECRET || 'test-jwt-secret-key', {
+      expiresIn: '1h',
+    });
   },
 
   // 等待指定時間
-  wait: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
+  wait: ms => new Promise(resolve => setTimeout(resolve, ms)),
 
   // 模擬請求
   mockRequest: (data = {}) => ({
@@ -487,7 +518,7 @@ global.testUtils = {
     params: {},
     headers: {},
     user: null,
-    ...data
+    ...data,
   }),
 
   // 模擬響應
@@ -503,5 +534,5 @@ global.testUtils = {
   },
 
   // 模擬下一個中間件
-  mockNext: () => jest.fn()
+  mockNext: () => jest.fn(),
 };

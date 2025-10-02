@@ -10,13 +10,13 @@ const config = {
     host: process.env.DB_HOST || 'localhost',
     port: process.env.DB_PORT || 5432,
     dialect: 'postgres',
-    logging: (msg) => logger.debug(msg),
+    logging: msg => logger.debug(msg),
     pool: {
       max: 10,
       min: 0,
       acquire: 30000,
-      idle: 10000
-    }
+      idle: 10000,
+    },
   },
   test: {
     username: process.env.DB_USER || 'postgres',
@@ -30,8 +30,8 @@ const config = {
       max: 5,
       min: 0,
       acquire: 30000,
-      idle: 10000
-    }
+      idle: 10000,
+    },
   },
   production: {
     username: process.env.DB_USER,
@@ -45,15 +45,15 @@ const config = {
       max: 20,
       min: 5,
       acquire: 30000,
-      idle: 10000
+      idle: 10000,
     },
     dialectOptions: {
       ssl: {
         require: true,
-        rejectUnauthorized: false
-      }
-    }
-  }
+        rejectUnauthorized: false,
+      },
+    },
+  },
 };
 
 // 獲取當前環境配置
@@ -61,24 +61,19 @@ const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env];
 
 // 創建 Sequelize 實例
-const sequelize = new Sequelize(
-  dbConfig.database,
-  dbConfig.username,
-  dbConfig.password,
-  {
-    host: dbConfig.host,
-    port: dbConfig.port,
-    dialect: dbConfig.dialect,
-    logging: dbConfig.logging,
-    pool: dbConfig.pool,
-    dialectOptions: dbConfig.dialectOptions,
-    define: {
-      timestamps: true,
-      underscored: true,
-      freezeTableName: true
-    }
-  }
-);
+const sequelize = new Sequelize(dbConfig.database, dbConfig.username, dbConfig.password, {
+  host: dbConfig.host,
+  port: dbConfig.port,
+  dialect: dbConfig.dialect,
+  logging: dbConfig.logging,
+  pool: dbConfig.pool,
+  dialectOptions: dbConfig.dialectOptions,
+  define: {
+    timestamps: true,
+    underscored: true,
+    freezeTableName: true,
+  },
+});
 
 // 導入所有模型
 const getCardModel = require('../models/Card');
@@ -87,10 +82,10 @@ const getPredictionModel = require('../models/PredictionModel');
 const { getModelPersistenceModel } = require('../models/ModelPersistence');
 
 // 初始化模型
-const Card = getCardModel();
-const MarketData = getMarketDataModel();
-const PredictionModel = getPredictionModel();
-const ModelPersistence = getModelPersistenceModel();
+const Card = getCardModel(sequelize);
+const MarketData = getMarketDataModel(sequelize);
+const PredictionModel = getPredictionModel(sequelize);
+const ModelPersistence = getModelPersistenceModel(sequelize);
 
 // 定義模型關聯
 const defineAssociations = () => {
@@ -98,22 +93,22 @@ const defineAssociations = () => {
   Card.hasMany(MarketData, {
     foreignKey: 'cardId',
     as: 'marketData',
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   });
   MarketData.belongsTo(Card, {
     foreignKey: 'cardId',
-    as: 'card'
+    as: 'card',
   });
 
   // Card 與 PredictionModel 的一對多關係
   Card.hasMany(PredictionModel, {
     foreignKey: 'cardId',
     as: 'predictions',
-    onDelete: 'CASCADE'
+    onDelete: 'CASCADE',
   });
   PredictionModel.belongsTo(Card, {
     foreignKey: 'cardId',
-    as: 'card'
+    as: 'card',
   });
 
   // ModelPersistence 沒有直接關聯，但可以通過 cardId 關聯到 Card
@@ -146,7 +141,6 @@ const syncDatabase = async (force = false) => {
     }
     logger.warn('生產環境不允許強制同步數據庫');
     return false;
-
   } catch (error) {
     logger.error('數據庫同步失敗:', error);
     return false;
@@ -172,5 +166,5 @@ module.exports = {
   testConnection,
   syncDatabase,
   closeConnection,
-  config: dbConfig
+  config: dbConfig,
 };
