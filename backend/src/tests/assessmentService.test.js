@@ -2,9 +2,9 @@ const request = require('supertest');
 const app = require('../app');
 const { sequelize } = require('../config/database');
 const assessmentService = require('../services/assessmentService');
-const { getUserModel } = require('../models/User');
-const { getAssessmentScheduleModel } = require('../models/AssessmentSchedule');
-const { getDataQualityAssessmentModel } = require('../models/DataQualityAssessment');
+const { createUserModel, getUserModel } = require('../models/User');
+const { createAssessmentScheduleModel, getAssessmentScheduleModel } = require('../models/AssessmentSchedule');
+const { createDataQualityAssessmentModel, getDataQualityAssessmentModel } = require('../models/DataQualityAssessment');
 
 describe('Assessment Service Tests', () => {
   let testUser;
@@ -13,9 +13,12 @@ describe('Assessment Service Tests', () => {
 
   beforeAll(async () => {
     // 初始化模型
-    User = getUserModel(sequelize);
-    AssessmentSchedule = getAssessmentScheduleModel(sequelize);
-    DataQualityAssessment = getDataQualityAssessmentModel(sequelize);
+    createUserModel(sequelize);
+    createAssessmentScheduleModel(sequelize);
+    createDataQualityAssessmentModel(sequelize);
+    User = getUserModel();
+    AssessmentSchedule = getAssessmentScheduleModel();
+    DataQualityAssessment = getDataQualityAssessmentModel();
 
     await sequelize.sync({ force: true });
 
@@ -358,9 +361,12 @@ describe('Assessment API Tests', () => {
 
   beforeAll(async () => {
     // 初始化模型
-    User = getUserModel(sequelize);
-    AssessmentSchedule = getAssessmentScheduleModel(sequelize);
-    DataQualityAssessment = getDataQualityAssessmentModel(sequelize);
+    createUserModel(sequelize);
+    createAssessmentScheduleModel(sequelize);
+    createDataQualityAssessmentModel(sequelize);
+    User = getUserModel();
+    AssessmentSchedule = getAssessmentScheduleModel();
+    DataQualityAssessment = getDataQualityAssessmentModel();
 
     await sequelize.sync({ force: true });
 

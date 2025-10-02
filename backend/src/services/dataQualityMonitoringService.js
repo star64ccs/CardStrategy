@@ -7,8 +7,8 @@ const {
 const { createTrainingDataModel, getTrainingDataModel } = require('../models/TrainingData');
 const { createAnnotationDataModel, getAnnotationDataModel } = require('../models/AnnotationData');
 const { createAnnotatorModel, getAnnotatorModel } = require('../models/Annotator');
-const { getCardModel } = require('../models/Card');
-const { getUserModel } = require('../models/User');
+const { createCardModel, getCardModel } = require('../models/Card');
+const { createUserModel, getUserModel } = require('../models/User');
 const logger = require('../utils/logger');
 
 // 初始化模型
@@ -16,12 +16,14 @@ createDataQualityMetricsModel(sequelize);
 createTrainingDataModel(sequelize);
 createAnnotationDataModel(sequelize);
 createAnnotatorModel(sequelize);
+createCardModel(sequelize);
+createUserModel(sequelize);
 const DataQualityMetrics = getDataQualityMetricsModel();
 const TrainingData = getTrainingDataModel();
 const AnnotationData = getAnnotationDataModel();
 const Annotator = getAnnotatorModel();
-const Card = getCardModel(sequelize);
-const User = getUserModel(sequelize);
+const Card = getCardModel();
+const User = getUserModel();
 
 class DataQualityMonitoringService {
   /**
