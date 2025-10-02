@@ -81,15 +81,7 @@ module.exports = {
 
   // 報告器
   reporters: [
-    'default',
-    ['jest-junit', {
-      outputDirectory: 'reports/junit',
-      outputName: 'js-test-results.xml',
-      classNameTemplate: '{classname}-{title}',
-      titleTemplate: '{classname}-{title}',
-      ancestorSeparator: ' › ',
-      usePathForSuiteName: true
-    }]
+    'default'
   ],
 
   // 通知
@@ -99,8 +91,5 @@ module.exports = {
   notifyMode: 'failure-change',
 
   // 監視插件
-  watchPlugins: [
-    'jest-watch-typeahead/filename',
-    'jest-watch-typeahead/testname'
-  ]
+  watchPlugins: []
 };
