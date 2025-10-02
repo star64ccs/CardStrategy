@@ -64,9 +64,9 @@ export class TwoFactorService {
 
   async initialize(): Promise<ApiResponse> {
     try {
-      logger.info('初始化雙因素認證服務');
+      logger.info('Initialize雙因素認證Service');
 
-      // 驗證配置
+      // VerifyConfigure
       if (
         !this.config.totpSecret ||
         this.config.totpSecret === 'default-totp-secret'
@@ -75,7 +75,7 @@ export class TwoFactorService {
       }
 
       this.isInitialized = true;
-      logger.info('雙因素認證服務初始化完成');
+      logger.info('雙因素認證ServiceInitialize完成');
 
       return {
         success: true,
@@ -86,14 +86,14 @@ export class TwoFactorService {
           emailEnabled: this.config.emailEnabled,
           backupCodesCount: this.config.backupCodesCount,
         },
-        message: '雙因素認證服務初始化成功',
+        message: '雙因素認證ServiceInitializeSuccess',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('雙因素認證服務初始化失敗:', error);
+      logger.error('雙因素認證ServiceInitializeFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -107,7 +107,7 @@ export class TwoFactorService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '雙因素認證服務未初始化',
+          error: '雙因素認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -121,7 +121,7 @@ export class TwoFactorService {
       // 生成備用碼
       const _backupCodes = this.generateBackupCodes();
 
-      // 創建 TOTP 方法
+      // Create TOTP Method
       const method: TwoFactorMethod = {
         type: 'totp',
         enabled: false,
@@ -129,7 +129,7 @@ export class TwoFactorService {
         createdAt: new Date(),
       };
 
-      // 存儲用戶方法
+      // StorageUserMethod
       this.userMethods.set(userId, [method]);
       this.backupCodes.set(userId, backupCodes);
 
@@ -146,10 +146,10 @@ export class TwoFactorService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`設置 TOTP 失敗 (${userId}):`, error);
+      logger.error(`Settings TOTP Failed (${userId}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -163,7 +163,7 @@ export class TwoFactorService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '雙因素認證服務未初始化',
+          error: '雙因素認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -176,10 +176,10 @@ export class TwoFactorService {
         };
       }
 
-      // 生成驗證碼
+      // 生成Verify碼
       const _code = this.generateSMSCode();
 
-      // 發送 SMS（這裡應該調用 SMS 服務）
+      // Send SMS（這裡應該調用 SMS Service）
       const _smsResult = await this.sendSMS(
         phoneNumber,
         `您的驗證碼是: ${code}`
@@ -188,12 +188,12 @@ export class TwoFactorService {
       if (!smsResult.success) {
         return {
           success: false,
-          error: '發送 SMS 失敗',
+          error: '發送 SMS Failed',
           timestamp: Date.now(),
         };
       }
 
-      // 創建 SMS 方法
+      // Create SMS Method
       const method: TwoFactorMethod = {
         type: 'sms',
         enabled: false,
@@ -201,7 +201,7 @@ export class TwoFactorService {
         createdAt: new Date(),
       };
 
-      // 存儲用戶方法
+      // StorageUserMethod
       const _userMethods = this.userMethods.get(userId) || [];
       userMethods.push(method);
       this.userMethods.set(userId, userMethods);
@@ -217,10 +217,10 @@ export class TwoFactorService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`設置 SMS 雙因素認證失敗 (${userId}):`, error);
+      logger.error(`Settings SMS 雙因素認證Failed (${userId}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -234,7 +234,7 @@ export class TwoFactorService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '雙因素認證服務未初始化',
+          error: '雙因素認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -247,10 +247,10 @@ export class TwoFactorService {
         };
       }
 
-      // 生成驗證碼
+      // 生成Verify碼
       const _code = this.generateEmailCode();
 
-      // 發送郵件（這裡應該調用郵件服務）
+      // Send郵件（這裡應該調用郵件Service）
       const _emailResult = await this.sendEmail(
         email,
         '雙因素認證設置',
@@ -260,12 +260,12 @@ export class TwoFactorService {
       if (!emailResult.success) {
         return {
           success: false,
-          error: '發送郵件失敗',
+          error: '發送郵件Failed',
           timestamp: Date.now(),
         };
       }
 
-      // 創建郵件方法
+      // Create郵件Method
       const method: TwoFactorMethod = {
         type: 'email',
         enabled: false,
@@ -273,7 +273,7 @@ export class TwoFactorService {
         createdAt: new Date(),
       };
 
-      // 存儲用戶方法
+      // StorageUserMethod
       const _userMethods = this.userMethods.get(userId) || [];
       userMethods.push(method);
       this.userMethods.set(userId, userMethods);
@@ -289,10 +289,10 @@ export class TwoFactorService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`設置郵件雙因素認證失敗 (${userId}):`, error);
+      logger.error(`Settings郵件雙因素認證Failed (${userId}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -303,7 +303,7 @@ export class TwoFactorService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '雙因素認證服務未初始化',
+          error: '雙因素認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -327,10 +327,10 @@ export class TwoFactorService {
           };
       }
     } catch (error) {
-      logger.error(`驗證雙因素認證碼失敗:`, error);
+      logger.error(`Verify雙因素認證碼Failed:`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -344,7 +344,7 @@ export class TwoFactorService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '雙因素認證服務未初始化',
+          error: '雙因素認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -386,10 +386,10 @@ export class TwoFactorService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`啟用雙因素認證失敗 (${userId}):`, error);
+      logger.error(`啟用雙因素認證Failed (${userId}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -403,7 +403,7 @@ export class TwoFactorService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '雙因素認證服務未初始化',
+          error: '雙因素認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -436,10 +436,10 @@ export class TwoFactorService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`禁用雙因素認證失敗 (${userId}):`, error);
+      logger.error(`禁用雙因素認證Failed (${userId}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -450,7 +450,7 @@ export class TwoFactorService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '雙因素認證服務未初始化',
+          error: '雙因素認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -470,10 +470,10 @@ export class TwoFactorService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`獲取備用碼失敗 (${userId}):`, error);
+      logger.error(`Get備用碼Failed (${userId}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -484,7 +484,7 @@ export class TwoFactorService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '雙因素認證服務未初始化',
+          error: '雙因素認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -501,10 +501,10 @@ export class TwoFactorService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`重新生成備用碼失敗 (${userId}):`, error);
+      logger.error(`重新生成備用碼Failed (${userId}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -547,12 +547,12 @@ export class TwoFactorService {
   }
 
   private generateSMSCode(): string {
-    // 生成 6 位數字 SMS 驗證碼
+    // 生成 6 位數字 SMS Verify碼
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
   private generateEmailCode(): string {
-    // 生成 6 位數字郵件驗證碼
+    // 生成 6 位數字郵件Verify碼
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
 
@@ -560,11 +560,11 @@ export class TwoFactorService {
     phoneNumber: string,
     message: string
   ): Promise<ApiResponse> {
-    // 這裡應該調用 SMS 服務
-    // 目前返回成功
+    // 這裡應該調用 SMS Service
+    // 目前ReturnSuccess
     return {
       success: true,
-      message: 'SMS 發送成功',
+      message: 'SMS 發送Success',
       timestamp: Date.now(),
     };
   }
@@ -574,18 +574,18 @@ export class TwoFactorService {
     subject: string,
     message: string
   ): Promise<ApiResponse> {
-    // 這裡應該調用郵件服務
-    // 目前返回成功
+    // 這裡應該調用郵件Service
+    // 目前ReturnSuccess
     return {
       success: true,
-      message: '郵件發送成功',
+      message: '郵件發送Success',
       timestamp: Date.now(),
     };
   }
 
   private async verifyTOTP(userId: string, code: string): Promise<ApiResponse> {
-    // 簡化的 TOTP 驗證
-    // 在實際應用中，應該使用專業的 TOTP 庫
+    // 簡化的 TOTP Verify
+    // 在實際Apply中，應該使用專業的 TOTP Library
     const _userMethods = this.userMethods.get(userId);
     const _totpMethod = userMethods?.find(m => m.type === 'totp');
 
@@ -597,14 +597,14 @@ export class TwoFactorService {
       };
     }
 
-    // 簡化驗證：檢查代碼是否為 6 位數字
+    // 簡化Verify：Check代碼YesNo為 6 位數字
     if (/^\d{6}$/.test(code)) {
       totpMethod.verified = true;
       totpMethod.lastUsed = new Date();
 
       return {
         success: true,
-        message: 'TOTP 驗證成功',
+        message: 'TOTP VerifySuccess',
         timestamp: Date.now(),
       };
     }
@@ -628,14 +628,14 @@ export class TwoFactorService {
       };
     }
 
-    // 簡化驗證：檢查代碼是否為 6 位數字
+    // 簡化Verify：Check代碼YesNo為 6 位數字
     if (/^\d{6}$/.test(code)) {
       smsMethod.verified = true;
       smsMethod.lastUsed = new Date();
 
       return {
         success: true,
-        message: 'SMS 驗證成功',
+        message: 'SMS VerifySuccess',
         timestamp: Date.now(),
       };
     }
@@ -662,14 +662,14 @@ export class TwoFactorService {
       };
     }
 
-    // 簡化驗證：檢查代碼是否為 6 位數字
+    // 簡化Verify：Check代碼YesNo為 6 位數字
     if (/^\d{6}$/.test(code)) {
       emailMethod.verified = true;
       emailMethod.lastUsed = new Date();
 
       return {
         success: true,
-        message: '郵件驗證成功',
+        message: '郵件VerifySuccess',
         timestamp: Date.now(),
       };
     }
@@ -704,13 +704,13 @@ export class TwoFactorService {
       };
     }
 
-    // 移除已使用的備用碼
+    // Remove已使用的備用碼
     backupCodes.splice(index, 1);
     this.backupCodes.set(userId, backupCodes);
 
     return {
       success: true,
-      message: '備用碼驗證成功',
+      message: '備用碼VerifySuccess',
       timestamp: Date.now(),
     };
   }

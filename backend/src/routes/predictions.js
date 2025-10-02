@@ -6,7 +6,7 @@ const logger = require('../utils/logger');
 const router = express.Router();
 
 // @route   POST /api/predictions
-// @desc    創建預測記錄
+// @desc    Create預測Record
 // @access  Private
 router.post(
   '/',
@@ -25,7 +25,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '驗證失敗',
+          message: 'VerifyFailed',
           errors: errors.array(),
         });
       }
@@ -61,14 +61,14 @@ router.post(
 
       res.status(201).json({
         success: true,
-        message: '預測記錄創建成功',
+        message: '預測記錄CreateSuccess',
         data: { prediction },
       });
     } catch (error) {
-      logger.error('創建預測記錄錯誤:', error);
+      logger.error('Create預測記錄Error:', error);
       res.status(500).json({
         success: false,
-        message: error.message || '創建預測記錄失敗',
+        message: error.message || 'Create預測記錄Failed',
         code: 'PREDICTION_CREATE_FAILED',
       });
     }
@@ -76,7 +76,7 @@ router.post(
 );
 
 // @route   GET /api/predictions
-// @desc    獲取用戶的預測記錄
+// @desc    GetUser的預測Record
 // @access  Private
 router.get('/', protect, async (req, res) => {
   try {
@@ -114,7 +114,7 @@ router.get('/', protect, async (req, res) => {
 
     res.json({
       success: true,
-      message: '預測記錄獲取成功',
+      message: '預測記錄GetSuccess',
       data: {
         predictions: predictions.rows,
         pagination: {
@@ -126,17 +126,17 @@ router.get('/', protect, async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('獲取預測記錄錯誤:', error);
+    logger.error('Get預測記錄Error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取預測記錄失敗',
+      message: error.message || 'Get預測記錄Failed',
       code: 'PREDICTIONS_FETCH_FAILED',
     });
   }
 });
 
 // @route   GET /api/predictions/:predictionId
-// @desc    獲取單個預測記錄
+// @desc    GetSingle預測Record
 // @access  Private
 router.get('/:predictionId', protect, async (req, res) => {
   try {
@@ -169,21 +169,21 @@ router.get('/:predictionId', protect, async (req, res) => {
 
     res.json({
       success: true,
-      message: '預測記錄獲取成功',
+      message: '預測記錄GetSuccess',
       data: { prediction },
     });
   } catch (error) {
-    logger.error('獲取預測記錄錯誤:', error);
+    logger.error('Get預測記錄Error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取預測記錄失敗',
+      message: error.message || 'Get預測記錄Failed',
       code: 'PREDICTION_FETCH_FAILED',
     });
   }
 });
 
 // @route   PUT /api/predictions/:predictionId
-// @desc    更新預測記錄
+// @desc    Update預測Record
 // @access  Private
 router.put(
   '/:predictionId',
@@ -199,7 +199,7 @@ router.put(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '驗證失敗',
+          message: 'VerifyFailed',
           errors: errors.array(),
         });
       }
@@ -241,14 +241,14 @@ router.put(
 
       res.json({
         success: true,
-        message: '預測記錄更新成功',
+        message: '預測記錄UpdateSuccess',
         data: { prediction },
       });
     } catch (error) {
-      logger.error('更新預測記錄錯誤:', error);
+      logger.error('Update預測記錄Error:', error);
       res.status(500).json({
         success: false,
-        message: error.message || '更新預測記錄失敗',
+        message: error.message || 'Update預測記錄Failed',
         code: 'PREDICTION_UPDATE_FAILED',
       });
     }
@@ -256,7 +256,7 @@ router.put(
 );
 
 // @route   GET /api/predictions/stats/overview
-// @desc    獲取預測統計信息
+// @desc    Get預測StatisticsInformation
 // @access  Private
 router.get('/stats/overview', protect, async (req, res) => {
   try {
@@ -334,7 +334,7 @@ router.get('/stats/overview', protect, async (req, res) => {
 
     res.json({
       success: true,
-      message: '統計信息獲取成功',
+      message: '統計信息GetSuccess',
       data: {
         totalPredictions,
         recentPredictions,
@@ -346,17 +346,17 @@ router.get('/stats/overview', protect, async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('獲取預測統計錯誤:', error);
+    logger.error('Get預測統計Error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取統計信息失敗',
+      message: error.message || 'Get統計信息Failed',
       code: 'STATISTICS_FETCH_FAILED',
     });
   }
 });
 
 // @route   DELETE /api/predictions/:predictionId
-// @desc    刪除預測記錄
+// @desc    Delete預測Record
 // @access  Private
 router.delete('/:predictionId', protect, async (req, res) => {
   try {
@@ -377,7 +377,7 @@ router.delete('/:predictionId', protect, async (req, res) => {
       });
     }
 
-    // 軟刪除
+    // 軟Delete
     await prediction.update({ isActive: false });
 
     logger.info(
@@ -386,13 +386,13 @@ router.delete('/:predictionId', protect, async (req, res) => {
 
     res.json({
       success: true,
-      message: '預測記錄刪除成功',
+      message: '預測記錄DeleteSuccess',
     });
   } catch (error) {
-    logger.error('刪除預測記錄錯誤:', error);
+    logger.error('Delete預測記錄Error:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '刪除預測記錄失敗',
+      message: error.message || 'Delete預測記錄Failed',
       code: 'PREDICTION_DELETE_FAILED',
     });
   }

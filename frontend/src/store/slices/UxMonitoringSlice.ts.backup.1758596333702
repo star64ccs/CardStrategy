@@ -1,0 +1,655 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+// 定義 UX 監控相關類型
+export interface UXEvent {
+  id: string;
+  type:
+    | 'click'
+    | 'scroll'
+    | 'hover'
+    | 'focus'
+    | 'blur'
+    | 'input'
+    | 'navigation'
+    | 'error';
+  element: string;
+  timestamp: string;
+  page: string;
+  sessionId: string;
+  userId?: string;
+  metadata: {
+    x?: number;
+    y?: number;
+    duration?: number;
+    value?: string;
+    error?: string;
+    [key: string]: any;
+  };
+}
+
+export interface PerformanceMetric {
+  id: string;
+  name: string;
+  value: number;
+  unit: string;
+  timestamp: string;
+  page: string;
+  sessionId: string;
+  category: 'loading' | 'rendering' | 'interaction' | 'memory' | 'network';
+}
+
+export interface UserJourney {
+  id: string;
+  userId: string;
+  sessionId: string;
+  steps: {
+    page: string;
+    action: string;
+    timestamp: string;
+    duration?: number;
+  }[];
+  startTime: string;
+  endTime: string;
+  goal: string;
+  completed: boolean;
+  conversionRate?: number;
+}
+
+export interface HeatmapData {
+  id: string;
+  page: string;
+  type: 'click' | 'scroll' | 'move';
+  data: {
+    x: number;
+    y: number;
+    intensity: number;
+  }[];
+  viewport: {
+    width: number;
+    height: number;
+  };
+  timestamp: string;
+}
+
+export interface UXAlert {
+  id: string;
+  type: 'performance' | 'error' | 'conversion' | 'engagement';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  title: string;
+  description: string;
+  threshold: number;
+  currentValue: number;
+  triggeredAt: string;
+  resolvedAt?: string;
+  status: 'active' | 'resolved' | 'ignored';
+}
+
+export interface MonitoringFilters {
+  page?: string;
+  userId?: string;
+  sessionId?: string;
+  eventType?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  severity?: string;
+}
+
+// UX 監控狀態接口
+export interface UXMonitoringState {
+  events: UXEvent[];
+  performanceMetrics: PerformanceMetric[];
+  userJourneys: UserJourney[];
+  heatmapData: HeatmapData[];
+  alerts: UXAlert[];
+  filters: MonitoringFilters;
+  isLoading: boolean;
+  isRecording: boolean;
+  isAnalyzing: boolean;
+  error: string | null;
+  recordingConfig: {
+    enabled: boolean;
+    sampleRate: number;
+    maxEvents: number;
+    retentionDays: number;
+  };
+  realTimeStats: {
+    activeUsers: number;
+    pageViews: number;
+    bounceRate: number;
+    avgSessionDuration: number;
+  } | null;
+}
+
+// 異步 Action Creators
+export const initializeUXMonitoring = createAsyncThunk(
+  'uxMonitoring/initializeUXMonitoring',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬初始化 UX 監控
+      const config = {
+        enabled: true,
+        sampleRate: 0.1,
+        maxEvents: 1000,
+        retentionDays: 30,
+      };
+
+      const realTimeStats = {
+        activeUsers: 45,
+        pageViews: 1250,
+        bounceRate: 0.35,
+        avgSessionDuration: 180, // seconds
+      };
+
+      return { config, realTimeStats };
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '初始化 UX 監控失敗');
+    }
+  }
+);
+
+export const startRecording = createAsyncThunk(
+  'uxMonitoring/startRecording',
+  async (
+    config: { sampleRate?: number; maxEvents?: number },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬開始錄製
+      const recordingConfig = {
+        enabled: true,
+        sampleRate: config.sampleRate || 0.1,
+        maxEvents: config.maxEvents || 1000,
+        retentionDays: 30,
+      };
+
+      return recordingConfig;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '開始錄製失敗');
+    }
+  }
+);
+
+export const stopRecording = createAsyncThunk(
+  'uxMonitoring/stopRecording',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬停止錄製
+      return { enabled: false };
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '停止錄製失敗');
+    }
+  }
+);
+
+export const recordEvent = createAsyncThunk(
+  'uxMonitoring/recordEvent',
+  async (
+    event: {
+      type: string;
+      element: string;
+      page: string;
+      sessionId: string;
+      metadata: Record<string, any>;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬記錄事件
+      const newEvent: UXEvent = {
+        id: Date.now().toString(),
+        type: event.type as any,
+        element: event.element,
+        timestamp: new Date().toISOString(),
+        page: event.page,
+        sessionId: event.sessionId,
+        metadata: event.metadata,
+      };
+
+      return newEvent;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '記錄事件失敗');
+    }
+  }
+);
+
+export const fetchUXEvents = createAsyncThunk(
+  'uxMonitoring/fetchUXEvents',
+  async (filters: MonitoringFilters = {}, { rejectWithValue }) => {
+    try {
+      // 模擬獲取 UX 事件
+      const mockEvents: UXEvent[] = [
+        {
+          id: '1',
+          type: 'click',
+          element: 'button.submit',
+          timestamp: new Date().toISOString(),
+          page: '/dashboard',
+          sessionId: 'session-1',
+          metadata: { x: 100, y: 200 },
+        },
+        {
+          id: '2',
+          type: 'scroll',
+          element: 'window',
+          timestamp: new Date().toISOString(),
+          page: '/dashboard',
+          sessionId: 'session-1',
+          metadata: { duration: 500 },
+        },
+      ];
+
+      return mockEvents;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取 UX 事件失敗');
+    }
+  }
+);
+
+export const fetchPerformanceMetrics = createAsyncThunk(
+  'uxMonitoring/fetchPerformanceMetrics',
+  async (filters: MonitoringFilters = {}, { rejectWithValue }) => {
+    try {
+      // 模擬獲取性能指標
+      const mockMetrics: PerformanceMetric[] = [
+        {
+          id: '1',
+          name: 'page_load_time',
+          value: 1250,
+          unit: 'ms',
+          timestamp: new Date().toISOString(),
+          page: '/dashboard',
+          sessionId: 'session-1',
+          category: 'loading',
+        },
+        {
+          id: '2',
+          name: 'first_contentful_paint',
+          value: 800,
+          unit: 'ms',
+          timestamp: new Date().toISOString(),
+          page: '/dashboard',
+          sessionId: 'session-1',
+          category: 'rendering',
+        },
+      ];
+
+      return mockMetrics;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取性能指標失敗');
+    }
+  }
+);
+
+export const generateHeatmap = createAsyncThunk(
+  'uxMonitoring/generateHeatmap',
+  async (
+    config: {
+      page: string;
+      type: 'click' | 'scroll' | 'move';
+      timeframe: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬生成熱力圖
+      const heatmap: HeatmapData = {
+        id: Date.now().toString(),
+        page: config.page,
+        type: config.type,
+        data: [
+          { x: 100, y: 200, intensity: 0.8 },
+          { x: 150, y: 250, intensity: 0.6 },
+          { x: 200, y: 300, intensity: 0.4 },
+        ],
+        viewport: {
+          width: 1920,
+          height: 1080,
+        },
+        timestamp: new Date().toISOString(),
+      };
+
+      return heatmap;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '生成熱力圖失敗');
+    }
+  }
+);
+
+export const createUXAlert = createAsyncThunk(
+  'uxMonitoring/createUXAlert',
+  async (
+    alert: {
+      type: string;
+      severity: string;
+      title: string;
+      description: string;
+      threshold: number;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬創建 UX 提醒
+      const newAlert: UXAlert = {
+        id: Date.now().toString(),
+        type: alert.type as any,
+        severity: alert.severity as any,
+        title: alert.title,
+        description: alert.description,
+        threshold: alert.threshold,
+        currentValue: alert.threshold + 10,
+        triggeredAt: new Date().toISOString(),
+        status: 'active',
+      };
+
+      return newAlert;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '創建 UX 提醒失敗');
+    }
+  }
+);
+
+export const resolveAlert = createAsyncThunk(
+  'uxMonitoring/resolveAlert',
+  async (alertId: string, { rejectWithValue }) => {
+    try {
+      // 模擬解決提醒
+      return { alertId, resolvedAt: new Date().toISOString() };
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '解決提醒失敗');
+    }
+  }
+);
+
+export const analyzeUserJourney = createAsyncThunk(
+  'uxMonitoring/analyzeUserJourney',
+  async (
+    config: {
+      userId: string;
+      sessionId: string;
+      goal: string;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬分析用戶旅程
+      const journey: UserJourney = {
+        id: Date.now().toString(),
+        userId: config.userId,
+        sessionId: config.sessionId,
+        steps: [
+          {
+            page: '/home',
+            action: 'visit',
+            timestamp: new Date(Date.now() - 300000).toISOString(),
+            duration: 30,
+          },
+          {
+            page: '/products',
+            action: 'navigate',
+            timestamp: new Date(Date.now() - 270000).toISOString(),
+            duration: 120,
+          },
+          {
+            page: '/checkout',
+            action: 'navigate',
+            timestamp: new Date(Date.now() - 150000).toISOString(),
+            duration: 180,
+          },
+        ],
+        startTime: new Date(Date.now() - 300000).toISOString(),
+        endTime: new Date().toISOString(),
+        goal: config.goal,
+        completed: true,
+        conversionRate: 0.75,
+      };
+
+      return journey;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '分析用戶旅程失敗');
+    }
+  }
+);
+
+// 初始狀態
+const initialState: UXMonitoringState = {
+  events: [],
+  performanceMetrics: [],
+  userJourneys: [],
+  heatmapData: [],
+  alerts: [],
+  filters: {},
+  isLoading: false,
+  isRecording: false,
+  isAnalyzing: false,
+  error: null,
+  recordingConfig: {
+    enabled: false,
+    sampleRate: 0.1,
+    maxEvents: 1000,
+    retentionDays: 30,
+  },
+  realTimeStats: null,
+};
+
+// 創建 slice
+const uxMonitoringSlice = createSlice({
+  name: 'uxMonitoring',
+  initialState,
+  reducers: {
+    setFilters: (state, action: PayloadAction<MonitoringFilters>) => {
+      state.filters = action.payload;
+    },
+    clearFilters: state => {
+      state.filters = {};
+    },
+    clearError: state => {
+      state.error = null;
+    },
+    clearEvents: state => {
+      state.events = [];
+    },
+    clearAlerts: state => {
+      state.alerts = [];
+    },
+    updateRecordingConfig: (
+      state,
+      action: PayloadAction<Partial<typeof state.recordingConfig>>
+    ) => {
+      state.recordingConfig = { ...state.recordingConfig, ...action.payload };
+    },
+    addEvent: (state, action: PayloadAction<UXEvent>) => {
+      state.events.push(action.payload);
+      if (state.events.length > state.recordingConfig.maxEvents) {
+        state.events.shift();
+      }
+    },
+    addPerformanceMetric: (state, action: PayloadAction<PerformanceMetric>) => {
+      state.performanceMetrics.push(action.payload);
+    },
+    updateRealTimeStats: (
+      state,
+      action: PayloadAction<typeof state.realTimeStats>
+    ) => {
+      state.realTimeStats = action.payload;
+    },
+  },
+  extraReducers: builder => {
+    // Initialize UX Monitoring
+    builder
+      .addCase(initializeUXMonitoring.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(initializeUXMonitoring.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.recordingConfig = action.payload.config;
+        state.realTimeStats = action.payload.realTimeStats;
+        state.error = null;
+      })
+      .addCase(initializeUXMonitoring.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Start Recording
+    builder
+      .addCase(startRecording.fulfilled, (state, action) => {
+        state.recordingConfig = action.payload;
+        state.isRecording = true;
+      })
+      .addCase(startRecording.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Stop Recording
+    builder
+      .addCase(stopRecording.fulfilled, (state, action) => {
+        state.recordingConfig.enabled = action.payload.enabled;
+        state.isRecording = false;
+      })
+      .addCase(stopRecording.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Record Event
+    builder
+      .addCase(recordEvent.fulfilled, (state, action) => {
+        state.events.push(action.payload);
+        if (state.events.length > state.recordingConfig.maxEvents) {
+          state.events.shift();
+        }
+      })
+      .addCase(recordEvent.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Fetch UX Events
+    builder
+      .addCase(fetchUXEvents.fulfilled, (state, action) => {
+        state.events = action.payload;
+      })
+      .addCase(fetchUXEvents.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Fetch Performance Metrics
+    builder
+      .addCase(fetchPerformanceMetrics.fulfilled, (state, action) => {
+        state.performanceMetrics = action.payload;
+      })
+      .addCase(fetchPerformanceMetrics.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Generate Heatmap
+    builder
+      .addCase(generateHeatmap.fulfilled, (state, action) => {
+        state.heatmapData.push(action.payload);
+      })
+      .addCase(generateHeatmap.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Create UX Alert
+    builder
+      .addCase(createUXAlert.fulfilled, (state, action) => {
+        state.alerts.push(action.payload);
+      })
+      .addCase(createUXAlert.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Resolve Alert
+    builder
+      .addCase(resolveAlert.fulfilled, (state, action) => {
+        const alert = state.alerts.find(a => a.id === action.payload.alertId);
+        if (alert) {
+          alert.status = 'resolved';
+          alert.resolvedAt = action.payload.resolvedAt;
+        }
+      })
+      .addCase(resolveAlert.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Analyze User Journey
+    builder
+      .addCase(analyzeUserJourney.pending, state => {
+        state.isAnalyzing = true;
+        state.error = null;
+      })
+      .addCase(analyzeUserJourney.fulfilled, (state, action) => {
+        state.isAnalyzing = false;
+        state.userJourneys.push(action.payload);
+        state.error = null;
+      })
+      .addCase(analyzeUserJourney.rejected, (state, action) => {
+        state.isAnalyzing = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+
+// 導出 actions
+export const {
+  setFilters,
+  clearFilters,
+  clearError,
+  clearEvents,
+  clearAlerts,
+  updateRecordingConfig,
+  addEvent,
+  addPerformanceMetric,
+  updateRealTimeStats,
+} = uxMonitoringSlice.actions;
+
+// 導出 selectors
+export const selectUXEvents = (state: { uxMonitoring: UXMonitoringState }) =>
+  state.uxMonitoring.events;
+
+export const selectPerformanceMetrics = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.performanceMetrics;
+
+export const selectUserJourneys = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.userJourneys;
+
+export const selectHeatmapData = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.heatmapData;
+
+export const selectUXAlerts = (state: { uxMonitoring: UXMonitoringState }) =>
+  state.uxMonitoring.alerts;
+
+export const selectMonitoringFilters = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.filters;
+
+export const selectRecordingConfig = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.recordingConfig;
+
+export const selectRealTimeStats = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.realTimeStats;
+
+export const selectIsUXMonitoringLoading = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.isLoading;
+
+export const selectIsRecording = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.isRecording;
+
+export const selectIsAnalyzing = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.isAnalyzing;
+
+export const selectUXMonitoringError = (state: {
+  uxMonitoring: UXMonitoringState;
+}) => state.uxMonitoring.error;
+
+// 導出 reducer
+export default uxMonitoringSlice.reducer;

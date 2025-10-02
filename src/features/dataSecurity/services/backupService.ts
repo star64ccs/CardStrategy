@@ -1,6 +1,6 @@
 /**
- * 備份服務
- * 負責數據的備份、恢復、調度等操作
+ * BackupService
+ * 負責Data的Backup、Restore、Schedule等Operation
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -21,7 +21,7 @@ import {
 import { CryptoEncryptionService } from './encryptionService';
 
 /**
- * 備份服務實現
+ * BackupService實現
  */
 export class CryptoBackupService implements BackupService {
   private static instance: CryptoBackupService;
@@ -36,7 +36,7 @@ export class CryptoBackupService implements BackupService {
   }
 
   /**
-   * 獲取服務實例（單例模式）
+   * GetServiceInstance（單例模式）
    */
   public static getInstance(): CryptoBackupService {
     if (!CryptoBackupService.instance) {
@@ -46,7 +46,7 @@ export class CryptoBackupService implements BackupService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(): Promise<boolean> {
     if (this.isInitialized) {
@@ -55,33 +55,33 @@ export class CryptoBackupService implements BackupService {
     }
 
     try {
-      // 初始化加密服務
+      // InitializeEncryptService
       await this.encryptionService.initialize();
 
-      // 加載現有配置
+      // 加載現有Configure
       await this.loadBackupConfigs();
 
-      // 恢復調度任務
+      // RestoreScheduleTask
       await this.restoreScheduledJobs();
 
       this.isInitialized = true;
-      logger.info('CryptoBackupService 初始化成功');
+      logger.info('CryptoBackupService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('CryptoBackupService 初始化失敗:', error);
+      logger.error('CryptoBackupService InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * 創建備份
+   * CreateBackup
    */
   public async createBackup(config: BackupConfig): Promise<BackupTask> {
     try {
-      // 驗證配置
+      // VerifyConfigure
       this.validateBackupConfig(config);
 
-      // 創建備份任務
+      // CreateBackupTask
       const task: BackupTask = {
         id: this.generateTaskId(),
         configId: config.id,
@@ -106,13 +106,13 @@ export class CryptoBackupService implements BackupService {
         errors: [],
       };
 
-      // 存儲任務
+      // StorageTask
       this.backupTasks.set(task.id, task);
 
-      // 執行備份（延遲執行以保持 pending 狀態）
+      // 執RowBackup（延遲執Row以保持 pending Status）
       setTimeout(() => {
         this.executeBackup(task, config).catch(error => {
-          logger.error(`備份任務執行失敗: ${task.id}`, error);
+          logger.error(`備份任務執行Failed: ${task.id}`, error);
           this.updateTaskStatus(task.id, BackupStatus.FAILED, error.message);
         });
       }, 0);
@@ -123,21 +123,21 @@ export class CryptoBackupService implements BackupService {
       });
       return task;
     } catch (error) {
-      logger.error('創建備份失敗:', error);
+      logger.error('Create備份Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 調度備份
+   * ScheduleBackup
    */
   public async scheduleBackup(config: BackupConfig): Promise<boolean> {
     try {
-      // 存儲配置
+      // StorageConfigure
       this.backupConfigs.set(config.id, config);
       await this.persistBackupConfig(config);
 
-      // 解析 cron 表達式並創建調度
+      // Parse cron Table達式並CreateSchedule
       const _interval = this.parseCronExpression(config.schedule);
 
       const _scheduledJob = setInterval(async () => {
@@ -146,7 +146,7 @@ export class CryptoBackupService implements BackupService {
           const _task = await this.createBackup(config);
           task.metadata.triggerType = 'scheduled';
         } catch (error) {
-          logger.error(`調度備份執行失敗: ${config.id}`, error);
+          logger.error(`調度備份執行Failed: ${config.id}`, error);
         }
       }, interval);
 
@@ -157,13 +157,13 @@ export class CryptoBackupService implements BackupService {
       });
       return true;
     } catch (error) {
-      logger.error('調度備份失敗:', error);
+      logger.error('調度備份Failed:', error);
       return false;
     }
   }
 
   /**
-   * 取消備份
+   * CancelBackup
    */
   public async cancelBackup(taskId: string): Promise<boolean> {
     try {
@@ -182,32 +182,32 @@ export class CryptoBackupService implements BackupService {
         return false;
       }
 
-      // 更新任務狀態
+      // UpdateTaskStatus
       task.status = BackupStatus.CANCELLED;
       task.completedAt = new Date();
 
       logger.info(`備份任務已取消: ${taskId}`);
       return true;
     } catch (error) {
-      logger.error('取消備份失敗:', error);
+      logger.error('取消備份Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取備份狀態
+   * GetBackupStatus
    */
   public async getBackupStatus(taskId: string): Promise<BackupTask | null> {
     try {
       return this.backupTasks.get(taskId) || null;
     } catch (error) {
-      logger.error('獲取備份狀態失敗:', error);
+      logger.error('Get備份狀態Failed:', error);
       return null;
     }
   }
 
   /**
-   * 列出備份
+   * Column出Backup
    */
   public async listBackups(
     filter?: Partial<BackupTask>
@@ -215,7 +215,7 @@ export class CryptoBackupService implements BackupService {
     try {
       let tasks = Array.from(this.backupTasks.values());
 
-      // 應用過濾器
+      // ApplyFilter器
       if (filter) {
         tasks = tasks.filter(task => {
           return Object.entries(filter).every(([field, value]) => {
@@ -225,7 +225,7 @@ export class CryptoBackupService implements BackupService {
         });
       }
 
-      // 排序（按開始時間降序）
+      // Sort（按BeginTime降序）
       tasks.sort((a, b) => {
         const _timeA = a.startedAt?.getTime() || 0;
         const _timeB = b.startedAt?.getTime() || 0;
@@ -234,13 +234,13 @@ export class CryptoBackupService implements BackupService {
 
       return tasks;
     } catch (error) {
-      logger.error('列出備份失敗:', error);
+      logger.error('列出備份Failed:', error);
       return [];
     }
   }
 
   /**
-   * 刪除備份
+   * DeleteBackup
    */
   public async deleteBackup(backupId: string): Promise<boolean> {
     try {
@@ -251,34 +251,34 @@ export class CryptoBackupService implements BackupService {
         return false;
       }
 
-      // 刪除備份文件
+      // DeleteBackupFile
       await this.deleteBackupFiles(task);
 
-      // 從內存中移除
+      // 從Memory中Remove
       this.backupTasks.delete(backupId);
 
-      // 從持久化存儲中移除
+      // 從持久化Storage中Remove
       await this.removePersistedTask(backupId);
 
       logger.info(`備份已刪除: ${backupId}`);
       return true;
     } catch (error) {
-      logger.error('刪除備份失敗:', error);
+      logger.error('Delete備份Failed:', error);
       return false;
     }
   }
 
   /**
-   * 恢復備份
+   * RestoreBackup
    */
   public async restoreBackup(request: RestoreRequest): Promise<RestoreResult> {
     try {
       const _startTime = Date.now();
 
-      // 驗證請求
+      // VerifyRequest
       this.validateRestoreRequest(request);
 
-      // 獲取備份任務
+      // GetBackupTask
       const _backupTask = this.backupTasks.get(request.backupId);
       if (!backupTask) {
         throw new Error(`備份任務不存在: ${request.backupId}`);
@@ -288,10 +288,10 @@ export class CryptoBackupService implements BackupService {
         throw new Error(`備份任務未完成: ${request.backupId}`);
       }
 
-      // 創建恢復任務ID
+      // CreateRestoreTaskID
       const _restoreTaskId = this.generateTaskId();
 
-      // 執行恢復操作
+      // 執RowRestoreOperation
       const _result = await this.executeRestore(
         backupTask,
         request,
@@ -309,16 +309,16 @@ export class CryptoBackupService implements BackupService {
 
       return result;
     } catch (error) {
-      logger.error('恢復備份失敗:', error);
+      logger.error('恢復備份Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '恢復失敗',
+        error: error instanceof Error ? error.message : '恢復Failed',
       };
     }
   }
 
   /**
-   * 驗證備份
+   * VerifyBackup
    */
   public async verifyBackup(backupId: string): Promise<{
     valid: boolean;
@@ -336,10 +336,10 @@ export class CryptoBackupService implements BackupService {
         throw new Error(`備份任務未完成: ${backupId}`);
       }
 
-      // 計算備份文件的校驗和
+      // 計算BackupFile的校驗和
       const _checksum = await this.calculateBackupChecksum(task);
 
-      // 驗證完整性
+      // Verify完整性
       const _valid = task.metadata.checksum === checksum;
 
       const errors: string[] = [];
@@ -355,17 +355,17 @@ export class CryptoBackupService implements BackupService {
         errors: errors.length > 0 ? errors : undefined,
       };
     } catch (error) {
-      logger.error('驗證備份失敗:', error);
+      logger.error('Verify備份Failed:', error);
       return {
         valid: false,
         checksum: '',
-        errors: [error instanceof Error ? error.message : '驗證失敗'],
+        errors: [error instanceof Error ? error.message : 'VerifyFailed'],
       };
     }
   }
 
   /**
-   * 獲取備份統計信息
+   * GetBackupStatisticsInformation
    */
   public async getBackupStatistics(): Promise<{
     totalBackups: number;
@@ -418,15 +418,15 @@ export class CryptoBackupService implements BackupService {
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<void> {
     try {
-      // 清除所有調度任務
+      // Clear所有ScheduleTask
       this.scheduledJobs.forEach(job => clearInterval(job));
       this.scheduledJobs.clear();
 
-      // 取消所有進行中的備份
+      // Cancel所有In Progress的Backup
       const _activeTasks = Array.from(this.backupTasks.values()).filter(
         task => task.status === BackupStatus.IN_PROGRESS
       );
@@ -441,11 +441,11 @@ export class CryptoBackupService implements BackupService {
 
       logger.info('CryptoBackupService 已銷毀');
     } catch (error) {
-      logger.error('CryptoBackupService 銷毀失敗:', error);
+      logger.error('CryptoBackupService 銷毀Failed:', error);
     }
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private generateTaskId(): string {
     const _timestamp = Date.now().toString(36);
@@ -482,25 +482,25 @@ export class CryptoBackupService implements BackupService {
     config: BackupConfig
   ): Promise<void> {
     try {
-      // 更新任務狀態
+      // UpdateTaskStatus
       task.status = BackupStatus.IN_PROGRESS;
       task.progress = 0;
 
-      // 模擬文件掃描
+      // 模擬File掃描
       await this.scanFiles(task, config);
 
-      // 模擬數據處理
+      // 模擬DataHandle
       await this.processFiles(task, config);
 
       // 計算校驗和
       task.metadata.checksum = await this.calculateBackupChecksum(task);
 
-      // 完成備份
+      // CompleteBackup
       task.status = BackupStatus.COMPLETED;
       task.completedAt = new Date();
       task.progress = 100;
 
-      // 持久化任務
+      // 持久化Task
       await this.persistBackupTask(task);
 
       logger.info(`備份任務完成: ${task.id}`, {
@@ -514,7 +514,7 @@ export class CryptoBackupService implements BackupService {
       task.errors.push({
         timestamp: new Date(),
         level: 'critical',
-        message: error instanceof Error ? error.message : '未知錯誤',
+        message: error instanceof Error ? error.message : '未知Error',
         details: error,
       });
 
@@ -526,10 +526,10 @@ export class CryptoBackupService implements BackupService {
     task: BackupTask,
     config: BackupConfig
   ): Promise<void> {
-    // 模擬文件掃描
+    // 模擬File掃描
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // 模擬統計數據
+    // 模擬統Count據
     task.statistics.totalFiles = Math.floor(Math.random() * 1000) + 100;
     task.statistics.totalSize =
       Math.floor(Math.random() * 1000000000) + 10000000; // 10MB-1GB
@@ -544,7 +544,7 @@ export class CryptoBackupService implements BackupService {
     const { totalFiles } = task.statistics;
 
     for (let i = 0; i < totalFiles; i++) {
-      // 模擬文件處理
+      // 模擬FileHandle
       await new Promise(resolve => setTimeout(resolve, 1));
 
       task.statistics.processedFiles = i + 1;
@@ -562,9 +562,9 @@ export class CryptoBackupService implements BackupService {
           task.statistics.compressedSize / task.statistics.processedSize;
       }
 
-      // 模擬加密
+      // 模擬Encrypt
       if (config.encryption.enabled) {
-        // 加密處理（模擬）
+        // EncryptHandle（模擬）
         await new Promise(resolve => setTimeout(resolve, 0.5));
       }
     }
@@ -575,7 +575,7 @@ export class CryptoBackupService implements BackupService {
     request: RestoreRequest,
     restoreTaskId: string
   ): Promise<RestoreResult> {
-    // 模擬恢復操作
+    // 模擬RestoreOperation
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     const _restoredFiles = backupTask.statistics.totalFiles;
@@ -605,7 +605,7 @@ export class CryptoBackupService implements BackupService {
   }
 
   private async deleteBackupFiles(task: BackupTask): Promise<void> {
-    // 在真實環境中，這裡會刪除實際的備份文件
+    // 在True實環境中，這裡會Delete實際的BackupFile
     logger.debug(`刪除備份文件: ${task.id}`);
   }
 
@@ -630,16 +630,16 @@ export class CryptoBackupService implements BackupService {
   }
 
   private parseCronExpression(schedule: string): number {
-    // 簡化的 cron 解析，返回毫秒間隔
-    // 在真實環境中，會使用專門的 cron 解析庫
+    // 簡化的 cron Parse，Return毫Second間隔
+    // 在True實環境中，會使用專門的 cron ParseLibrary
 
-    // 默認每小時執行一次
+    // Default每Hour執Row一次
     return 60 * 60 * 1000; // 1 hour
   }
 
   private async loadBackupConfigs(): Promise<void> {
     try {
-      // 從持久化存儲加載配置
+      // 從持久化Storage加載Configure
       const _storage = localStorage || {};
 
       Object.keys(storage).forEach(key => {
@@ -648,20 +648,20 @@ export class CryptoBackupService implements BackupService {
             const _config = JSON.parse(storage[key]);
             this.backupConfigs.set(config.id, config);
           } catch (error) {
-            logger.warn(`載入備份配置失敗: ${key}`, error);
+            logger.warn(`載入備份ConfigureFailed: ${key}`, error);
           }
         }
       });
 
       logger.info(`載入 ${this.backupConfigs.size} 個備份配置`);
     } catch (error) {
-      logger.error('載入備份配置失敗:', error);
+      logger.error('載入備份ConfigureFailed:', error);
     }
   }
 
   private async restoreScheduledJobs(): Promise<void> {
     try {
-      // 恢復調度任務
+      // RestoreScheduleTask
       for (const config of this.backupConfigs.values()) {
         if (config.schedule) {
           await this.scheduleBackup(config);
@@ -670,7 +670,7 @@ export class CryptoBackupService implements BackupService {
 
       logger.info(`恢復 ${this.scheduledJobs.size} 個調度任務`);
     } catch (error) {
-      logger.error('恢復調度任務失敗:', error);
+      logger.error('恢復調度任務Failed:', error);
     }
   }
 
@@ -679,7 +679,7 @@ export class CryptoBackupService implements BackupService {
       const _storage = localStorage || {};
       storage[`backup_config_${config.id}`] = JSON.stringify(config);
     } catch (error) {
-      logger.error('持久化備份配置失敗:', error);
+      logger.error('持久化備份ConfigureFailed:', error);
     }
   }
 
@@ -692,7 +692,7 @@ export class CryptoBackupService implements BackupService {
         completedAt: task.completedAt?.toISOString(),
       });
     } catch (error) {
-      logger.error('持久化備份任務失敗:', error);
+      logger.error('持久化備份任務Failed:', error);
     }
   }
 
@@ -701,7 +701,7 @@ export class CryptoBackupService implements BackupService {
       const _storage = localStorage || {};
       delete storage[`backup_task_${taskId}`];
     } catch (error) {
-      logger.error('移除持久化任務失敗:', error);
+      logger.error('移除持久化任務Failed:', error);
     }
   }
 }

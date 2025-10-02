@@ -1,15 +1,15 @@
 import { Card } from './index';
 
-// 防偽判斷請求類型
+// 防偽判斷RequestClass型
 export interface AuthenticityCheckRequest {
-  imageData: string; // Base64 編碼的圖片數據
+  imageData: string; // Base64 Encode的Graph片Data
   imageFormat: 'jpeg' | 'png' | 'webp';
   cardId?: string;
   userId?: string;
   checkOptions?: AuthenticityCheckOptions;
 }
 
-// 防偽判斷結果類型
+// 防偽判斷結果Class型
 export interface AuthenticityCheckResult {
   cardId: string;
   isAuthentic: boolean;
@@ -78,7 +78,7 @@ export interface AuthenticityRecommendation {
   impact: 'positive' | 'negative' | 'neutral';
 }
 
-// 防偽檢查元數據
+// 防偽Check元Data
 export interface AuthenticityCheckMetadata {
   modelVersion: string;
   processingTimeMs: number;
@@ -96,7 +96,7 @@ export interface AuthenticityCheckMetadata {
   };
 }
 
-// 防偽檢查錯誤
+// 防偽CheckError
 export interface AuthenticityCheckError {
   code: string;
   message: string;
@@ -105,7 +105,7 @@ export interface AuthenticityCheckError {
   suggestedAction?: string;
 }
 
-// 防偽檢查選項
+// 防偽CheckOptions
 export interface AuthenticityCheckOptions {
   enableDetailedAnalysis?: boolean;
   includeSecurityFeatures?: boolean;
@@ -122,7 +122,7 @@ export interface AuthenticityCheckOptions {
   referenceCardId?: string;
 }
 
-// 防偽檢查歷史記錄
+// 防偽Check歷史Record
 export interface AuthenticityCheckHistory {
   id: string;
   cardId: string;
@@ -138,7 +138,7 @@ export interface AuthenticityCheckHistory {
   };
 }
 
-// 防偽檢查統計
+// 防偽CheckStatistics
 export interface AuthenticityCheckStats {
   totalChecks: number;
   authenticCards: number;
@@ -163,7 +163,7 @@ export interface AuthenticityCheckStats {
   }[];
 }
 
-// 類型定義
+// Class型定義
 export type AuthenticityCheckStatus =
   | 'success'
   | 'failed'
@@ -175,7 +175,7 @@ export type AuthenticityCheckEngine =
   | 'hybrid'
   | 'expert_system';
 
-// Redux 狀態類型
+// Redux StatusClass型
 export interface AuthenticityCheckState {
   isChecking: boolean;
   checkResult: AuthenticityCheckResult | null;

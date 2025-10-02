@@ -7,7 +7,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 const path = require('path');
 
-// 導入工具
+// ImportTool
 const logger = require('./utils/logger');
 
 const app = express();
@@ -24,10 +24,10 @@ app.use(
   })
 );
 
-// 速率限制
+// 速率Limit
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15分鐘
-  max: 100, // 限制每個IP 15分鐘內最多100個請求
+  windowMs: 15 * 60 * 1000, // 15Minute
+  max: 100, // Limit每個IP 15Minute內最多100個Request
   message: {
     error: '請求過於頻繁，請稍後再試',
   },
@@ -40,7 +40,7 @@ app.use('/api/', limiter);
 // 壓縮中間件
 app.use(compression());
 
-// 日誌中間件
+// Log中間件
 app.use(
   morgan('combined', {
     stream: {
@@ -49,11 +49,11 @@ app.use(
   })
 );
 
-// 解析JSON和URL編碼的請求體
+// ParseJSON和URLEncode的Request體
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 靜態文件服務
+// StaticFileService
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // 基本路由
@@ -77,24 +77,24 @@ app.get('/', (req, res) => {
   });
 });
 
-// 健康檢查端點
+// 健康Check端點
 app.get('/health', (req, res) => {
   res.json({
     success: true,
-    message: 'CardStrategy API 服務運行正常',
+    message: 'CardStrategy API Service運行正常',
     timestamp: new Date().toISOString(),
     version: '3.1.0',
     environment: process.env.NODE_ENV || 'development',
   });
 });
 
-// API 狀態端點
+// API Status端點
 app.get('/api/status', (req, res) => {
   res.json({
     success: true,
-    message: 'API 服務正常',
+    message: 'API Service正常',
     services: {
-      database: 'PostgreSQL - 已連接',
+      database: 'PostgreSQL - 已Connect',
       authentication: 'JWT - 已配置',
       security: 'Helmet - 已啟用',
       compression: '已啟用',
@@ -105,7 +105,7 @@ app.get('/api/status', (req, res) => {
   });
 });
 
-// 數據庫連接測試端點
+// DatabaseConnectTest端點
 app.get('/api/db/test', async (req, res) => {
   try {
     const { Client } = require('pg');
@@ -126,7 +126,7 @@ app.get('/api/db/test', async (req, res) => {
 
     res.json({
       success: true,
-      message: '數據庫連接正常',
+      message: '數據庫Connect正常',
       data: {
         version: result.rows[0].version,
         database: result.rows[0].database,
@@ -134,76 +134,76 @@ app.get('/api/db/test', async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('數據庫連接測試失敗:', error);
+    logger.error('數據庫Connect測試Failed:', error);
     res.status(500).json({
       success: false,
-      message: '數據庫連接失敗',
+      message: '數據庫ConnectFailed',
       error: error.message,
     });
   }
 });
 
-// 認證路由（基本版本）
+// Authenticate路由（基本Version）
 app.get('/api/auth/status', (req, res) => {
   res.json({
     success: true,
-    message: '認證服務正常',
+    message: '認證Service正常',
     features: ['JWT', '密碼加密', '用戶管理'],
     timestamp: new Date().toISOString(),
   });
 });
 
-// 卡片路由（基本版本）
+// 卡片路由（基本Version）
 app.get('/api/cards/status', (req, res) => {
   res.json({
     success: true,
-    message: '卡片服務正常',
+    message: '卡片Service正常',
     features: ['卡片管理', '條件分析', '價格追蹤'],
     timestamp: new Date().toISOString(),
   });
 });
 
-// 集合路由（基本版本）
+// Set路由（基本Version）
 app.get('/api/collections/status', (req, res) => {
   res.json({
     success: true,
-    message: '集合服務正常',
+    message: '集合Service正常',
     features: ['集合管理', '卡片分類', '統計分析'],
     timestamp: new Date().toISOString(),
   });
 });
 
-// 投資路由（基本版本）
+// 投資路由（基本Version）
 app.get('/api/investments/status', (req, res) => {
   res.json({
     success: true,
-    message: '投資服務正常',
+    message: '投資Service正常',
     features: ['投資追蹤', '收益分析', '風險評估'],
     timestamp: new Date().toISOString(),
   });
 });
 
-// 市場路由（基本版本）
+// 市場路由（基本Version）
 app.get('/api/market/status', (req, res) => {
   res.json({
     success: true,
-    message: '市場服務正常',
+    message: '市場Service正常',
     features: ['市場數據', '價格分析', '趨勢預測'],
     timestamp: new Date().toISOString(),
   });
 });
 
-// AI 路由（基本版本）
+// AI 路由（基本Version）
 app.get('/api/ai/status', (req, res) => {
   res.json({
     success: true,
-    message: 'AI 服務正常',
+    message: 'AI Service正常',
     features: ['卡片識別', '條件評估', '價格預測', '市場分析'],
     timestamp: new Date().toISOString(),
   });
 });
 
-// 404 處理
+// 404 Handle
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -225,21 +225,21 @@ app.use('*', (req, res) => {
   });
 });
 
-// 錯誤處理中間件
+// ErrorHandle中間件
 app.use((error, req, res, next) => {
-  logger.error('服務器錯誤:', error);
+  logger.error('ServerError:', error);
   res.status(500).json({
     success: false,
-    message: '內部服務器錯誤',
+    message: '內部ServerError',
     error:
       process.env.NODE_ENV === 'development' ? error.message : '請稍後再試',
   });
 });
 
-// 啟動服務器
+// StartServer
 app.listen(PORT, () => {
-  logger.info('🚀 CardStrategy API 服務已啟動');
-  logger.info(`📡 服務器運行在端口: ${PORT}`);
+  logger.info('🚀 CardStrategy API Service已啟動');
+  logger.info(`📡 Server運行在端口: ${PORT}`);
   logger.info(`🌐 本地訪問: http://localhost:${PORT}`);
   logger.info(`🔍 健康檢查: http://localhost:${PORT}/health`);
   logger.info(`📊 API 狀態: http://localhost:${PORT}/api/status`);

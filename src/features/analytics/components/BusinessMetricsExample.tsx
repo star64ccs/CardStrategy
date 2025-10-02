@@ -1,4 +1,4 @@
-// 業務指標分析示例組件
+// 業務指標Analysis示例Component
 import React, { useEffect, useState } from 'react';
 import {
   Alert,
@@ -61,15 +61,15 @@ const BusinessMetricsExample: React.FC = () => {
   const _handleGenerateReport = async () => {
     try {
       const _report = await generateReport();
-      Alert.alert('成功', `報告已生成: ${report.title}`);
+      Alert.alert('Success', `報告已生成: ${report.title}`);
     } catch (error) {
-      Alert.alert('錯誤', '生成報告失敗');
+      Alert.alert('Error', '生成報告Failed');
     }
   };
 
   const _handleExportData = async () => {
     if (!analysis) {
-      Alert.alert('錯誤', '沒有可導出的數據');
+      Alert.alert('Error', '沒有可導出的數據');
       return;
     }
 
@@ -88,17 +88,17 @@ const BusinessMetricsExample: React.FC = () => {
       };
 
       if (!exportData || typeof exportData !== 'function') {
-        Alert.alert('錯誤', '導出功能不可用');
+        Alert.alert('Error', '導出功能不可用');
         return;
       }
       const _exportedData = await (exportData as any)(analysis, options);
       Alert.alert(
-        '成功',
+        'Success',
         `數據已導出為 ${selectedExportFormat.toUpperCase()} 格式`
       );
       console.log('導出數據:', exportedData);
     } catch (error) {
-      Alert.alert('錯誤', '導出數據失敗');
+      Alert.alert('Error', '導出數據Failed');
     }
   };
 
@@ -116,21 +116,21 @@ const BusinessMetricsExample: React.FC = () => {
         deviation: -0.02,
         trend: 'down',
       });
-      Alert.alert('成功', `警報已創建: ${alert.title}`);
+      Alert.alert('Success', `警報已創建: ${alert.title}`);
     } catch (error) {
-      Alert.alert('錯誤', '創建警報失敗');
+      Alert.alert('Error', 'Create警報Failed');
     }
   };
 
   const _handleUpdateConfig = async () => {
     try {
       await updateConfig({
-        updateInterval: 60000, // 1分鐘
+        updateInterval: 60000, // 1Minute
         realTimeUpdates: true,
       });
-      Alert.alert('成功', '配置已更新');
+      Alert.alert('Success', '配置已更新');
     } catch (error) {
-      Alert.alert('錯誤', '更新配置失敗');
+      Alert.alert('Error', 'UpdateConfigureFailed');
     }
   };
 

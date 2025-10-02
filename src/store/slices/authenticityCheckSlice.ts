@@ -16,7 +16,7 @@ import {
 } from '../../features/cards/types/authenticity';
 import type { RootState } from '../index';
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 export const _initializeAuthenticityCheck = createAsyncThunk(
   'authenticityCheck/initialize',
   async (_, { rejectWithValue }) => {
@@ -25,8 +25,8 @@ export const _initializeAuthenticityCheck = createAsyncThunk(
       const _options = await authenticityCheckService.getCheckOptions();
       return options;
     } catch (error: unknown) {
-      logger.error('初始化防偽檢查失敗:', error);
-      return rejectWithValue(error.message || '初始化防偽檢查失敗');
+      logger.error('Initialize防偽CheckFailed:', error);
+      return rejectWithValue(error.message || 'Initialize防偽CheckFailed');
     }
   }
 );
@@ -38,7 +38,7 @@ export const _checkAuthenticity = createAsyncThunk(
       const _result = await authenticityCheckService.checkAuthenticity(request);
       return result;
     } catch (error: unknown) {
-      logger.error('防偽檢查失敗:', error);
+      logger.error('防偽CheckFailed:', error);
       return rejectWithValue(error as AuthenticityCheckError);
     }
   }
@@ -57,8 +57,8 @@ export const _getCheckHistory = createAsyncThunk(
       );
       return history;
     } catch (error: unknown) {
-      logger.error('獲取檢查歷史失敗:', error);
-      return rejectWithValue(error.message || '獲取檢查歷史失敗');
+      logger.error('GetCheck歷史Failed:', error);
+      return rejectWithValue(error.message || 'GetCheck歷史Failed');
     }
   }
 );
@@ -70,13 +70,13 @@ export const _getCheckStats = createAsyncThunk(
       const _stats = await authenticityCheckService.getCheckStats(userId);
       return stats;
     } catch (error: unknown) {
-      logger.error('獲取檢查統計失敗:', error);
-      return rejectWithValue(error.message || '獲取檢查統計失敗');
+      logger.error('GetCheck統計Failed:', error);
+      return rejectWithValue(error.message || 'GetCheck統計Failed');
     }
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: AuthenticityCheckState = {
   isChecking: false,
   checkResult: null,

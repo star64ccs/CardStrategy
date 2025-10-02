@@ -1,11 +1,11 @@
 /**
- * 搜索性能優化服務
- * 實現 TD-007: 優化搜索性能
+ * Search性能優化Service
+ * 實現 TD-007: 優化Search性能
  */
 
 import { logger } from '../core/utils/logger';
 
-// 配置接口
+// ConfigureInterface
 export interface SearchPerformanceOptimizationConfig {
   fullTextSearch: {
     enableFuzzySearch: boolean;
@@ -25,7 +25,7 @@ export interface SearchPerformanceOptimizationConfig {
   };
 }
 
-// 優化結果接口
+// 優化結果Interface
 export interface SearchOptimizationResult {
   originalQuery: string;
   optimizedQuery: string;
@@ -35,7 +35,7 @@ export interface SearchOptimizationResult {
 }
 
 /**
- * 搜索性能優化服務
+ * Search性能優化Service
  */
 export class SearchPerformanceOptimizationService {
   private static instance: SearchPerformanceOptimizationService;
@@ -79,10 +79,10 @@ export class SearchPerformanceOptimizationService {
 
     try {
       this.isInitialized = true;
-      logger.info('SearchPerformanceOptimizationService 初始化成功');
+      logger.info('SearchPerformanceOptimizationService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('SearchPerformanceOptimizationService 初始化失敗:', error);
+      logger.error('SearchPerformanceOptimizationService InitializeFailed:', error);
       return false;
     }
   }
@@ -93,17 +93,17 @@ export class SearchPerformanceOptimizationService {
     try {
       const _startTime = Date.now();
 
-      // 拼寫檢查
+      // 拼寫Check
       const _spellCorrections = this.config.fullTextSearch.enableSpellCheck
         ? this.performSpellCheck(query)
         : [];
 
-      // 同義詞擴展
+      // 同義詞Extension
       const _synonyms = this.config.fullTextSearch.enableSynonyms
         ? this.expandSynonyms(query)
         : [];
 
-      // 生成優化查詢
+      // 生成優化Query
       const _optimizedQuery = this.generateOptimizedQuery(
         query,
         spellCorrections,
@@ -133,7 +133,7 @@ export class SearchPerformanceOptimizationService {
 
       return result;
     } catch (error) {
-      logger.error('搜索性能優化失敗:', error);
+      logger.error('搜索性能優化Failed:', error);
       throw error;
     }
   }

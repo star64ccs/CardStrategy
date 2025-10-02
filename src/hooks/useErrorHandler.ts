@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { logger } from '../core/utils/logger';
 
-// 臨時類型定義
+// 臨時Class型定義
 interface AppError {
   code: string;
   message: string;
@@ -21,7 +21,7 @@ const _errorHandlerService = {
   ): Promise<AppError> => {
     return {
       code: 'UNKNOWN_ERROR',
-      message: error.message || '未知錯誤',
+      message: error.message || '未知Error',
       timestamp: new Date(),
       context: { context, severity },
     };
@@ -32,7 +32,7 @@ const _errorHandlerService = {
   ): Promise<AppError> => {
     return {
       code: 'API_ERROR',
-      message: error.message || 'API 錯誤',
+      message: error.message || 'API Error',
       timestamp: new Date(),
       context: { context },
     };
@@ -54,7 +54,7 @@ const _errorHandlerService = {
   ): Promise<AppError> => {
     return {
       code: 'AUTH_ERROR',
-      message: error.message || '認證錯誤',
+      message: error.message || '認證Error',
       timestamp: new Date(),
       context: { context },
     };
@@ -96,7 +96,7 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     onError,
   } = options;
 
-  // 處理錯誤
+  // HandleError
   const _handleError = useCallback(
     async (
       error: Error | string,
@@ -113,14 +113,14 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
           finalSeverity
         );
 
-        // 調用自定義錯誤處理回調
+        // 調用CustomErrorHandleCallback
         if (onError) {
           onError(appError);
         }
 
         return appError;
       } catch (handlerError) {
-        logger.error('錯誤處理失敗', {
+        logger.error('ErrorHandleFailed', {
           error: handlerError,
           originalError: error,
         });
@@ -130,7 +130,7 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     [context, severity, onError]
   );
 
-  // 處理 API 錯誤
+  // Handle API Error
   const _handleApiError = useCallback(
     async (error: unknown, errorContext?: string): Promise<AppError> => {
       const _finalContext = errorContext || context || 'API';
@@ -141,14 +141,14 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
           finalContext
         );
 
-        // 調用自定義錯誤處理回調
+        // 調用CustomErrorHandleCallback
         if (onError) {
           onError(appError);
         }
 
         return appError;
       } catch (handlerError) {
-        logger.error('API 錯誤處理失敗', {
+        logger.error('API ErrorHandleFailed', {
           error: handlerError,
           originalError: error,
         });
@@ -158,7 +158,7 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     [context, onError]
   );
 
-  // 處理驗證錯誤
+  // HandleVerifyError
   const _handleValidationError = useCallback(
     async (errors: string[], errorContext?: string): Promise<AppError> => {
       const _finalContext = errorContext || context || 'Validation';
@@ -169,14 +169,14 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
           finalContext
         );
 
-        // 調用自定義錯誤處理回調
+        // 調用CustomErrorHandleCallback
         if (onError) {
           onError(appError);
         }
 
         return appError;
       } catch (handlerError) {
-        logger.error('驗證錯誤處理失敗', {
+        logger.error('VerifyErrorHandleFailed', {
           error: handlerError,
           originalErrors: errors,
         });
@@ -186,7 +186,7 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     [context, onError]
   );
 
-  // 處理認證錯誤
+  // HandleAuthenticateError
   const _handleAuthError = useCallback(
     async (error: Error | string, errorContext?: string): Promise<AppError> => {
       const _finalContext = errorContext || context || 'Authentication';
@@ -197,14 +197,14 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
           finalContext
         );
 
-        // 調用自定義錯誤處理回調
+        // 調用CustomErrorHandleCallback
         if (onError) {
           onError(appError);
         }
 
         return appError;
       } catch (handlerError) {
-        logger.error('認證錯誤處理失敗', {
+        logger.error('認證ErrorHandleFailed', {
           error: handlerError,
           originalError: error,
         });
@@ -214,7 +214,7 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     [context, onError]
   );
 
-  // 重試操作
+  // RetryOperation
   const _retryOperation = useCallback(
     async <T>(
       operation: () => Promise<T>,
@@ -234,7 +234,7 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
           finalMaxRetries
         );
       } catch (error) {
-        // 重試失敗後，使用統一的錯誤處理
+        // RetryFailed後，使用統一的ErrorHandle
         await handleError(error as Error, finalContext, 'high');
         throw error;
       }
@@ -242,7 +242,7 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     [context, enableRetry, maxRetries, handleError]
   );
 
-  // 安全執行操作
+  // 安全執RowOperation
   const _safeExecute = useCallback(
     async <T>(
       operation: () => Promise<T>,
@@ -261,22 +261,22 @@ export const _useErrorHandler = (options: UseErrorHandlerOptions = {}) => {
     [context, handleError]
   );
 
-  // 獲取錯誤統計
+  // GetErrorStatistics
   const _getErrorStats = useCallback(() => {
     return errorHandlerService.getErrorStats();
   }, []);
 
-  // 獲取所有錯誤
+  // Get所有Error
   const _getAllErrors = useCallback(() => {
     return errorHandlerService.getAllErrors();
   }, []);
 
-  // 獲取未處理錯誤
+  // Get未HandleError
   const _getUnhandledErrors = useCallback(() => {
     return errorHandlerService.getUnhandledErrors();
   }, []);
 
-  // 清理舊錯誤
+  // 清理舊Error
   const _cleanupOldErrors = useCallback((maxAge?: number) => {
     errorHandlerService.cleanupOldErrors();
   }, []);

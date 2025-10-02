@@ -19,7 +19,7 @@ import type {
 import { HybridAlgorithm } from '../types/hybridRecommendation';
 
 /**
- * 混合推薦示例組件
+ * 混合推薦示例Component
  * 展示混合推薦功能的使用
  */
 export const HybridRecommendationExample: React.FC = () => {
@@ -36,7 +36,7 @@ export const HybridRecommendationExample: React.FC = () => {
   const [rating, setRating] = useState('5');
 
   const {
-    // 狀態
+    // Status
     recommendations,
     config,
     stats,
@@ -44,7 +44,7 @@ export const HybridRecommendationExample: React.FC = () => {
     performance,
     loading,
 
-    // 計算屬性
+    // 計算Property
     hasRecommendations,
     averageScore,
     total,
@@ -54,7 +54,7 @@ export const HybridRecommendationExample: React.FC = () => {
     isReady,
     isLoading,
 
-    // 操作方法
+    // OperationMethod
     recordClick,
     recordRating,
     fetchConfig,
@@ -64,7 +64,7 @@ export const HybridRecommendationExample: React.FC = () => {
     setOptions,
     clearError,
 
-    // 快速操作
+    // 快速Operation
     getRecommendationsForUser,
     clickRecommendation,
     rateRecommendation,
@@ -82,53 +82,53 @@ export const HybridRecommendationExample: React.FC = () => {
     reset,
   } = useHybridRecommendation();
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     fetchConfig();
     fetchStats();
   }, [fetchConfig, fetchStats]);
 
-  // 處理獲取推薦
+  // HandleGet推薦
   const _handleGetRecommendations = () => {
     if (!userId.trim()) {
-      Alert.alert('錯誤', '請輸入用戶ID');
+      Alert.alert('Error', '請輸入用戶ID');
       return;
     }
 
     const _limitNum = parseInt(limit);
     if (isNaN(limitNum) || limitNum < 1 || limitNum > 100) {
-      Alert.alert('錯誤', '數量限制必須在1-100之間');
+      Alert.alert('Error', '數量限制必須在1-100之間');
       return;
     }
 
     getRecommendationsForUser(userId, limitNum);
   };
 
-  // 處理記錄點擊
+  // HandleRecord點擊
   const _handleRecordClick = (recommendation: HybridRecommendation) => {
     clickRecommendation(userId, recommendation);
-    Alert.alert('成功', `已記錄點擊: ${recommendation.itemId}`);
+    Alert.alert('Success', `已記錄點擊: ${recommendation.itemId}`);
   };
 
-  // 處理記錄評分
+  // HandleRecord評分
   const _handleRecordRating = () => {
     if (!selectedRecommendation) {
-      Alert.alert('錯誤', '請先選擇一個推薦');
+      Alert.alert('Error', '請先選擇一個推薦');
       return;
     }
 
     const _ratingNum = parseInt(rating);
     if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-      Alert.alert('錯誤', '評分必須在1-5之間');
+      Alert.alert('Error', '評分必須在1-5之間');
       return;
     }
 
     rateRecommendation(userId, selectedRecommendation, ratingNum);
-    Alert.alert('成功', `已記錄評分: ${ratingNum}星`);
+    Alert.alert('Success', `已記錄評分: ${ratingNum}星`);
     setSelectedRecommendation(null);
   };
 
-  // 處理更新權重
+  // HandleUpdate權重
   const _handleUpdateWeights = () => {
     const newWeights: Partial<HybridWeights> = {
       collaborative: 0.4,
@@ -142,7 +142,7 @@ export const HybridRecommendationExample: React.FC = () => {
     };
 
     setWeights(newWeights as HybridWeights);
-    Alert.alert('成功', '已更新權重配置');
+    Alert.alert('Success', '已更新權重配置');
   };
 
   // 渲染推薦項目
@@ -192,7 +192,7 @@ export const HybridRecommendationExample: React.FC = () => {
     </View>
   );
 
-  // 渲染配置面板
+  // 渲染Configure面板
   const _renderConfigPanel = () => (
     <ScrollView style={styles.panel}>
       <Text style={styles.panelTitle}>配置管理</Text>
@@ -258,7 +258,7 @@ export const HybridRecommendationExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 渲染統計面板
+  // 渲染Statistics面板
   const _renderStatsPanel = () => (
     <ScrollView style={styles.panel}>
       <Text style={styles.panelTitle}>統計信息</Text>
@@ -420,7 +420,7 @@ export const HybridRecommendationExample: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.title}>混合推薦系統示例</Text>
 
-      {/* 輸入區域 */}
+      {/* InputDistrict域 */}
       <View style={styles.inputSection}>
         <TextInput
           style={styles.input}
@@ -450,7 +450,7 @@ export const HybridRecommendationExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 錯誤顯示 */}
+      {/* ErrorShow */}
       {error.recommendations && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>錯誤: {error.recommendations}</Text>
@@ -460,7 +460,7 @@ export const HybridRecommendationExample: React.FC = () => {
         </View>
       )}
 
-      {/* 標籤頁 */}
+      {/* Tag頁 */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[
@@ -522,7 +522,7 @@ export const HybridRecommendationExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 內容區域 */}
+      {/* ContentDistrict域 */}
       <View style={styles.contentContainer}>
         {activeTab === 'recommendations' && (
           <View style={styles.recommendationsContainer}>

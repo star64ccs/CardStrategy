@@ -34,7 +34,7 @@ describe('ShareVerificationService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // 設置默認的 API 端點
+    // SettingsDefault的 API 端點
     mockApiEndpoints.SHARE_VERIFICATION = {
       CREATE: '/share-verification/create',
       LOOKUP: '/share-verification/lookup',
@@ -42,7 +42,7 @@ describe('ShareVerificationService', () => {
   });
 
   describe('createShareVerification', () => {
-    it('應該成功創建分享驗證', async () => {
+    it('應該SuccessCreate分享Verify', async () => {
       const _request = {
         cardId: '123e4567-e89b-12d3-a456-426614174000',
         analysisType: 'comprehensive' as const,
@@ -149,7 +149,7 @@ describe('ShareVerificationService', () => {
       );
     });
 
-    it('應該處理 API 響應驗證失敗', async () => {
+    it('應該Handle API 響應VerifyFailed', async () => {
       const _request = {
         cardId: '123e4567-e89b-12d3-a456-426614174000',
         analysisType: 'comprehensive' as const,
@@ -167,7 +167,7 @@ describe('ShareVerificationService', () => {
       const _mockResponse = {
         data: {
           verificationCode: 'ABC123DEF456',
-          // 缺少必要的字段
+          // 缺少必要的Field
         },
       };
 
@@ -178,23 +178,23 @@ describe('ShareVerificationService', () => {
 
       mockValidateApiResponse.mockReturnValue({
         isValid: false,
-        errorMessage: '分享驗證響應驗證失敗',
+        errorMessage: '分享Verify響應VerifyFailed',
       });
 
       mockApiService.post.mockResolvedValue(mockResponse);
 
       await expect(
         shareVerificationService.createShareVerification(request)
-      ).rejects.toThrow('分享驗證響應驗證失敗');
+      ).rejects.toThrow('分享Verify響應VerifyFailed');
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Create share verification error:',
-        { error: '分享驗證響應驗證失敗' }
+        { error: '分享Verify響應VerifyFailed' }
       );
     });
   });
 
   describe('lookupVerification', () => {
-    it('應該成功查詢分享驗證', async () => {
+    it('應該Success查詢分享Verify', async () => {
       const _verificationCode = 'ABC123DEF456';
       const _mockResponse = {
         data: {
@@ -298,7 +298,7 @@ describe('ShareVerificationService', () => {
   });
 
   describe('shareToWhatsApp', () => {
-    it('應該成功分享到 WhatsApp', async () => {
+    it('應該Success分享到 WhatsApp', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
       const _message = '自定義消息';
 
@@ -308,10 +308,10 @@ describe('ShareVerificationService', () => {
       await shareVerificationService.shareToWhatsApp(shareUrl, message);
 
       expect(mockLinking.canOpenURL).toHaveBeenCalledWith(
-        'whatsapp://send?text=自定義消息%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456'
+        'whatsapp://send?text=CustomMessage%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456'
       );
       expect(mockLinking.openURL).toHaveBeenCalledWith(
-        'whatsapp://send?text=自定義消息%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456'
+        'whatsapp://send?text=CustomMessage%0A%0Ahttps://cardstrategy.com/share/ABC123DEF456'
       );
       expect(mockLogger.info).toHaveBeenCalledWith('✅ Shared to WhatsApp');
     });
@@ -345,7 +345,7 @@ describe('ShareVerificationService', () => {
   });
 
   describe('shareToInstagram', () => {
-    it('應該成功分享到 Instagram', async () => {
+    it('應該Success分享到 Instagram', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
       const _imageUrl = 'https://example.com/card-image.jpg';
 
@@ -392,7 +392,7 @@ describe('ShareVerificationService', () => {
   });
 
   describe('shareToFacebook', () => {
-    it('應該成功分享到 Facebook', async () => {
+    it('應該Success分享到 Facebook', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
       const _message = '自定義消息';
 
@@ -418,23 +418,23 @@ describe('ShareVerificationService', () => {
       );
     });
 
-    it('應該處理分享失敗', async () => {
+    it('應該Handle分享Failed', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
 
-      mockLinking.openURL.mockRejectedValue(new Error('分享失敗'));
+      mockLinking.openURL.mockRejectedValue(new Error('分享Failed'));
 
       await expect(
         shareVerificationService.shareToFacebook(shareUrl)
-      ).rejects.toThrow('分享失敗');
+      ).rejects.toThrow('分享Failed');
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Share to Facebook error:',
-        { error: '分享失敗' }
+        { error: '分享Failed' }
       );
     });
   });
 
   describe('shareToTwitter', () => {
-    it('應該成功分享到 Twitter', async () => {
+    it('應該Success分享到 Twitter', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
       const _message = '自定義消息';
 
@@ -460,23 +460,23 @@ describe('ShareVerificationService', () => {
       );
     });
 
-    it('應該處理分享失敗', async () => {
+    it('應該Handle分享Failed', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
 
-      mockLinking.openURL.mockRejectedValue(new Error('分享失敗'));
+      mockLinking.openURL.mockRejectedValue(new Error('分享Failed'));
 
       await expect(
         shareVerificationService.shareToTwitter(shareUrl)
-      ).rejects.toThrow('分享失敗');
+      ).rejects.toThrow('分享Failed');
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Share to Twitter error:',
-        { error: '分享失敗' }
+        { error: '分享Failed' }
       );
     });
   });
 
   describe('shareToTelegram', () => {
-    it('應該成功分享到 Telegram', async () => {
+    it('應該Success分享到 Telegram', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
       const _message = '自定義消息';
 
@@ -502,23 +502,23 @@ describe('ShareVerificationService', () => {
       );
     });
 
-    it('應該處理分享失敗', async () => {
+    it('應該Handle分享Failed', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
 
-      mockLinking.openURL.mockRejectedValue(new Error('分享失敗'));
+      mockLinking.openURL.mockRejectedValue(new Error('分享Failed'));
 
       await expect(
         shareVerificationService.shareToTelegram(shareUrl)
-      ).rejects.toThrow('分享失敗');
+      ).rejects.toThrow('分享Failed');
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Share to Telegram error:',
-        { error: '分享失敗' }
+        { error: '分享Failed' }
       );
     });
   });
 
   describe('shareGeneric', () => {
-    it('應該成功進行通用分享', async () => {
+    it('應該Success進行通用分享', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
       const _title = '自定義標題';
       const _message = '自定義消息';
@@ -565,23 +565,23 @@ describe('ShareVerificationService', () => {
       });
     });
 
-    it('應該處理分享失敗', async () => {
+    it('應該Handle分享Failed', async () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
 
       mockSharing.isAvailableAsync.mockResolvedValue(true);
-      mockSharing.shareAsync.mockRejectedValue(new Error('分享失敗'));
+      mockSharing.shareAsync.mockRejectedValue(new Error('分享Failed'));
 
       await expect(
         shareVerificationService.shareGeneric(shareUrl)
-      ).rejects.toThrow('分享失敗');
+      ).rejects.toThrow('分享Failed');
       expect(mockLogger.error).toHaveBeenCalledWith('❌ Generic share error:', {
-        error: '分享失敗',
+        error: '分享Failed',
       });
     });
   });
 
   describe('generateQRCodeUrl', () => {
-    it('應該成功生成 QR 碼 URL', () => {
+    it('應該Success生成 QR 碼 URL', () => {
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
       const _result = shareVerificationService.generateQRCodeUrl(shareUrl);
 
@@ -601,7 +601,7 @@ describe('ShareVerificationService', () => {
   });
 
   describe('validateShareUrl', () => {
-    it('應該成功驗證有效的分享鏈接', async () => {
+    it('應該SuccessVerify有效的分享鏈接', async () => {
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
       });
@@ -624,8 +624,8 @@ describe('ShareVerificationService', () => {
       expect(result).toBe(false);
     });
 
-    it('應該處理網絡錯誤', async () => {
-      global.fetch = jest.fn().mockRejectedValue(new Error('網絡錯誤'));
+    it('應該Handle網絡Error', async () => {
+      global.fetch = jest.fn().mockRejectedValue(new Error('網絡Error'));
 
       const _shareUrl = 'https://cardstrategy.com/share/ABC123DEF456';
       const _result = await shareVerificationService.validateShareUrl(shareUrl);

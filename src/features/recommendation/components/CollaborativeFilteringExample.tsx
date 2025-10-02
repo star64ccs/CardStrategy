@@ -1,4 +1,4 @@
-// 協同過濾推薦系統示例組件
+// 協同Filter推薦系統示例Component
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
@@ -18,7 +18,7 @@ import {
 
 const CollaborativeFilteringExample: React.FC = () => {
   const {
-    // 狀態
+    // Status
     isInitialized,
     isLoading,
     hasError,
@@ -34,7 +34,7 @@ const CollaborativeFilteringExample: React.FC = () => {
     loading,
     error,
 
-    // 操作
+    // Operation
     fetchRecommendations,
     fetchSimilarUsers,
     fetchSimilarItems,
@@ -56,7 +56,7 @@ const CollaborativeFilteringExample: React.FC = () => {
     quickTrackPurchase,
   } = useCollaborativeFiltering();
 
-  // 本地狀態
+  // LocalStatus
   const [activeTab, setActiveTab] = useState<
     'recommendations' | 'similarUsers' | 'similarItems' | 'performance'
   >('recommendations');
@@ -65,10 +65,10 @@ const CollaborativeFilteringExample: React.FC = () => {
   const [rating, setRating] = useState('5');
   const [limit, setLimit] = useState('10');
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     if (isInitialized) {
-      // 自動獲取一些初始數據
+      // AutoGet一些初始Data
       quickGetRecommendations(userId, 5);
       quickGetSimilarUsers(userId, 5);
       quickGetSimilarItems(itemId, 5);
@@ -76,7 +76,7 @@ const CollaborativeFilteringExample: React.FC = () => {
     }
   }, [isInitialized, userId, itemId]);
 
-  // 渲染推薦列表
+  // 渲染推薦List
   const _renderRecommendations = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>推薦項目</Text>
@@ -159,7 +159,7 @@ const CollaborativeFilteringExample: React.FC = () => {
     </View>
   );
 
-  // 渲染相似用戶列表
+  // 渲染相似UserList
   const _renderSimilarUsers = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>相似用戶</Text>
@@ -240,7 +240,7 @@ const CollaborativeFilteringExample: React.FC = () => {
     </View>
   );
 
-  // 渲染相似項目列表
+  // 渲染相似項目List
   const _renderSimilarItems = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>相似項目</Text>
@@ -375,7 +375,7 @@ const CollaborativeFilteringExample: React.FC = () => {
     </View>
   );
 
-  // 渲染評分和行為追蹤
+  // 渲染評分和Row為Trace
   const _renderRatingAndBehavior = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>評分與行為追蹤</Text>
@@ -460,7 +460,7 @@ const CollaborativeFilteringExample: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.title}>協同過濾推薦系統</Text>
 
-      {/* 標籤欄 */}
+      {/* Tag欄 */}
       <View style={styles.tabBar}>
         <TouchableOpacity
           style={[
@@ -519,14 +519,14 @@ const CollaborativeFilteringExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 內容區域 */}
+      {/* ContentDistrict域 */}
       <ScrollView style={styles.content}>
         {activeTab === 'recommendations' && renderRecommendations()}
         {activeTab === 'similarUsers' && renderSimilarUsers()}
         {activeTab === 'similarItems' && renderSimilarItems()}
         {activeTab === 'performance' && renderPerformance()}
 
-        {/* 評分與行為追蹤始終顯示 */}
+        {/* 評分與Row為Trace始終Show */}
         {renderRatingAndBehavior()}
       </ScrollView>
     </View>

@@ -5,9 +5,9 @@ import {
 } from '@/core/utils/errorHandler';
 
 /**
- * 服務錯誤處理模板
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * ServiceErrorHandle模板
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 export class ServiceErrorHandler {
   @handleErrors

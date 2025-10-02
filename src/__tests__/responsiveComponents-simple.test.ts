@@ -1,10 +1,10 @@
-// 響應式組件簡化測試
+// Response式Component簡化Test
 
 import { responsiveComponentService } from '../services/responsiveComponentService';
 
-describe('響應式組件服務測試', () => {
+describe('響應式組件Service測試', () => {
   beforeEach(() => {
-    // 重置服務狀態
+    // ResetServiceStatus
     jest.clearAllMocks();
   });
 
@@ -27,7 +27,7 @@ describe('響應式組件服務測試', () => {
     });
 
     it('應該返回所有註冊的組件', () => {
-      // 清理之前的測試數據
+      // 清理之前的TestData
       const _allComponents = responsiveComponentService.getAllComponents();
       const _initialCount = allComponents.length;
 
@@ -100,7 +100,7 @@ describe('響應式組件服務測試', () => {
       expect(report).toContain('響應式組件測試報告');
       expect(report).toContain('總測試數: 2');
       expect(report).toContain('通過測試: 1');
-      expect(report).toContain('失敗測試: 1');
+      expect(report).toContain('Failed測試: 1');
       expect(report).toContain('通過率: 50.00%');
     });
 
@@ -164,7 +164,7 @@ describe('響應式組件服務測試', () => {
 
 describe('響應式類型定義測試', () => {
   it('應該正確定義響應式值類型', () => {
-    // 測試響應式值類型
+    // TestResponse式ValueClass型
     const responsiveValue: unknown = {
       xs: '100px',
       sm: '200px',

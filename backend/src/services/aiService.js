@@ -4,8 +4,8 @@ const { OpenAI } = require('openai');
 const { Configuration, OpenAIApi } = require('openai');
 
 /**
- * AI服務
- * 提供智能推薦、預測分析、自然語言處理等功能
+ * AIService
+ * 提供智能推薦、預測Analysis、自然LanguageHandle等功能
  */
 class AIService {
   constructor() {
@@ -19,13 +19,13 @@ class AIService {
       },
       cache: {
         enabled: true,
-        ttl: 3600, // 1小時
+        ttl: 3600, // 1Hour
         prefix: 'ai:',
       },
       rateLimit: {
         enabled: true,
         maxRequests: 100,
-        windowMs: 15 * 60 * 1000, // 15分鐘
+        windowMs: 15 * 60 * 1000, // 15Minute
       },
     };
 
@@ -42,7 +42,7 @@ class AIService {
   }
 
   /**
-   * 初始化OpenAI
+   * InitializeOpenAI
    */
   initOpenAI() {
     if (this.config.openai.apiKey) {
@@ -52,9 +52,9 @@ class AIService {
           apiKey: this.config.openai.apiKey,
         });
         this.openai = new OpenAIApi(configuration);
-        logger.info('OpenAI 初始化成功');
+        logger.info('OpenAI InitializeSuccess');
       } catch (error) {
-        logger.error('OpenAI 初始化失敗:', error);
+        logger.error('OpenAI InitializeFailed:', error);
       }
     } else {
       logger.warn('OpenAI API Key 未配置，AI功能將受限');
@@ -82,12 +82,12 @@ class AIService {
     }
 
     try {
-      // 獲取用戶數據
+      // GetUserData
 // eslint-disable-next-line no-unused-vars
       const userData = await this.getUserData(userId);
       const marketData = await this.getMarketData();
 
-      // 分析用戶偏好
+      // AnalysisUserPreferences
 // eslint-disable-next-line no-unused-vars
       const userPreferences = await this.analyzeUserPreferences(userData);
 
@@ -99,7 +99,7 @@ class AIService {
         { limit, categories, priceRange, rarity, excludeOwned }
       );
 
-      // 緩存結果
+      // Cache結果
       if (useCache) {
         await this.cacheResult(cacheKey, recommendations);
       }
@@ -107,7 +107,7 @@ class AIService {
       this.recordMetrics('recommendCards', true);
       return recommendations;
     } catch (error) {
-      logger.error('卡片推薦失敗:', error);
+      logger.error('卡片推薦Failed:', error);
       this.recordMetrics('recommendCards', false);
       throw error;
     }
@@ -127,14 +127,14 @@ class AIService {
     }
 
     try {
-      // 獲取歷史數據
+      // Get歷史Data
 // eslint-disable-next-line no-unused-vars
       const historicalData = await this.getHistoricalMarketData(
         timeframe,
         categories
       );
 
-      // 分析趨勢
+      // Analysis趨勢
       const trends = await this.analyzeMarketTrends(historicalData);
 
       // 生成預測
@@ -144,7 +144,7 @@ class AIService {
         timeframe
       );
 
-      // 緩存結果
+      // Cache結果
       if (useCache) {
         await this.cacheResult(cacheKey, predictions);
       }
@@ -152,7 +152,7 @@ class AIService {
       this.recordMetrics('predictMarketTrends', true);
       return predictions;
     } catch (error) {
-      logger.error('市場趨勢預測失敗:', error);
+      logger.error('市場趨勢預測Failed:', error);
       this.recordMetrics('predictMarketTrends', false);
       throw error;
     }
@@ -177,11 +177,11 @@ class AIService {
     }
 
     try {
-      // 獲取投資組合數據
+      // Get投資組合Data
       const portfolio = await this.getPortfolioData(userId);
       const marketData = await this.getMarketData();
 
-      // 分析風險和收益
+      // Analysis風險和收益
       const analysis = await this.analyzePortfolioRisk(portfolio, marketData);
 
       // 生成優化建議
@@ -191,7 +191,7 @@ class AIService {
         { riskTolerance, investmentGoal, timeHorizon }
       );
 
-      // 緩存結果
+      // Cache結果
       if (useCache) {
         await this.cacheResult(cacheKey, recommendations);
       }
@@ -199,14 +199,14 @@ class AIService {
       this.recordMetrics('optimizePortfolio', true);
       return recommendations;
     } catch (error) {
-      logger.error('投資組合優化失敗:', error);
+      logger.error('投資組合優化Failed:', error);
       this.recordMetrics('optimizePortfolio', false);
       throw error;
     }
   }
 
   /**
-   * 智能搜索
+   * 智能Search
    */
   async intelligentSearch(query, options = {}) {
     const {
@@ -224,13 +224,13 @@ class AIService {
     }
 
     try {
-      // 解析查詢意圖
+      // ParseQuery意Graph
       const intent = await this.parseSearchIntent(query);
 
-      // 擴展查詢
+      // ExtensionQuery
       const expandedQuery = await this.expandSearchQuery(query, intent);
 
-      // 執行搜索
+      // 執RowSearch
 // eslint-disable-next-line no-unused-vars
       const results = await this.executeSearch(expandedQuery, {
         searchType,
@@ -238,10 +238,10 @@ class AIService {
         limit,
       });
 
-      // 智能排序
+      // 智能Sort
       const rankedResults = await this.rankSearchResults(results, intent);
 
-      // 緩存結果
+      // Cache結果
       if (useCache) {
         await this.cacheResult(cacheKey, rankedResults);
       }
@@ -249,14 +249,14 @@ class AIService {
       this.recordMetrics('intelligentSearch', true);
       return rankedResults;
     } catch (error) {
-      logger.error('智能搜索失敗:', error);
+      logger.error('智能搜索Failed:', error);
       this.recordMetrics('intelligentSearch', false);
       throw error;
     }
   }
 
   /**
-   * 自然語言處理
+   * 自然LanguageHandle
    */
   async processNaturalLanguage(text, options = {}) {
     const { task = 'analyze', language = 'zh', useCache = true } = options;
@@ -289,7 +289,7 @@ class AIService {
           throw new Error(`不支持的NLP任務: ${task}`);
       }
 
-      // 緩存結果
+      // Cache結果
       if (useCache) {
         await this.cacheResult(cacheKey, result);
       }
@@ -297,14 +297,14 @@ class AIService {
       this.recordMetrics('processNaturalLanguage', true);
       return result;
     } catch (error) {
-      logger.error('自然語言處理失敗:', error);
+      logger.error('自然語言HandleFailed:', error);
       this.recordMetrics('processNaturalLanguage', false);
       throw error;
     }
   }
 
   /**
-   * 智能通知
+   * 智能Notification
    */
   async generateSmartNotifications(userId, options = {}) {
     const {
@@ -324,35 +324,35 @@ class AIService {
 // eslint-disable-next-line no-unused-vars
       const notifications = [];
 
-      // 價格變動通知
+      // 價格變動Notification
       if (notificationTypes.includes('price')) {
         const priceNotifications =
           await this.generatePriceNotifications(userId);
         notifications.push(...priceNotifications);
       }
 
-      // 趨勢通知
+      // 趨勢Notification
       if (notificationTypes.includes('trend')) {
         const trendNotifications =
           await this.generateTrendNotifications(userId);
         notifications.push(...trendNotifications);
       }
 
-      // 投資組合通知
+      // 投資組合Notification
       if (notificationTypes.includes('portfolio')) {
         const portfolioNotifications =
           await this.generatePortfolioNotifications(userId);
         notifications.push(...portfolioNotifications);
       }
 
-      // 智能排序和過濾
+      // 智能Sort和Filter
       const smartNotifications = await this.rankNotifications(
         notifications,
         userId
       );
       const finalNotifications = smartNotifications.slice(0, maxNotifications);
 
-      // 緩存結果
+      // Cache結果
       if (useCache) {
         await this.cacheResult(cacheKey, finalNotifications);
       }
@@ -360,7 +360,7 @@ class AIService {
       this.recordMetrics('generateSmartNotifications', true);
       return finalNotifications;
     } catch (error) {
-      logger.error('智能通知生成失敗:', error);
+      logger.error('智能通知生成Failed:', error);
       this.recordMetrics('generateSmartNotifications', false);
       throw error;
     }
@@ -389,10 +389,10 @@ class AIService {
         throw new Error('OpenAI 未初始化');
       }
 
-      // 構建系統提示
+      // Build系統提示
       const systemPrompt = this.buildSystemPrompt(context);
 
-      // 發送請求到OpenAI
+      // SendRequest到OpenAI
 // eslint-disable-next-line no-unused-vars
       const response = await this.openai.createChatCompletion({
         model,
@@ -406,7 +406,7 @@ class AIService {
 
       const reply = response.data.choices[0].message.content;
 
-      // 緩存結果
+      // Cache結果
       if (useCache) {
         await this.cacheResult(cacheKey, { reply, context });
       }
@@ -414,14 +414,14 @@ class AIService {
       this.recordMetrics('chatBot', true);
       return { reply, context };
     } catch (error) {
-      logger.error('聊天機器人失敗:', error);
+      logger.error('聊天機器人Failed:', error);
       this.recordMetrics('chatBot', false);
       throw error;
     }
   }
 
   /**
-   * 獲取緩存結果
+   * GetCache結果
    */
   async getCachedResult(key) {
     if (!this.config.cache.enabled) return null;
@@ -436,13 +436,13 @@ class AIService {
       this.metrics.cacheMisses++;
       return null;
     } catch (error) {
-      logger.error('獲取緩存失敗:', error);
+      logger.error('Get緩存Failed:', error);
       return null;
     }
   }
 
   /**
-   * 緩存結果
+   * Cache結果
    */
   async cacheResult(key, data) {
     if (!this.config.cache.enabled) return;
@@ -455,12 +455,12 @@ class AIService {
         JSON.stringify(data)
       );
     } catch (error) {
-      logger.error('緩存結果失敗:', error);
+      logger.error('緩存結果Failed:', error);
     }
   }
 
   /**
-   * 記錄指標
+   * Record指標
    */
   recordMetrics(operation, success) {
     this.metrics.requests++;
@@ -470,7 +470,7 @@ class AIService {
   }
 
   /**
-   * 獲取指標
+   * Get指標
    */
   getMetrics() {
     return {
@@ -502,7 +502,7 @@ class AIService {
   }
 
   /**
-   * 構建系統提示
+   * Build系統提示
    */
   buildSystemPrompt(context) {
     return `你是一個專業的卡片交易助手，專門幫助用戶進行卡片投資和交易決策。
@@ -519,11 +519,11 @@ class AIService {
   }
 
   /**
-   * 獲取用戶數據
+   * GetUserData
    */
   async getUserData(userId) {
-    // 這裡應該從數據庫獲取用戶數據
-    // 暫時返回模擬數據
+    // 這裡應該從DatabaseGetUserData
+    // 暫時Return模擬Data
     return {
       userId,
       preferences: {
@@ -540,11 +540,11 @@ class AIService {
   }
 
   /**
-   * 獲取市場數據
+   * Get市場Data
    */
   async getMarketData() {
-    // 這裡應該從數據庫獲取市場數據
-    // 暫時返回模擬數據
+    // 這裡應該從DatabaseGet市場Data
+    // 暫時Return模擬Data
     return {
       trends: [],
       prices: [],
@@ -553,10 +553,10 @@ class AIService {
   }
 
   /**
-   * 分析用戶偏好
+   * AnalysisUserPreferences
    */
   async analyzeUserPreferences(userData) {
-    // 分析用戶偏好邏輯
+    // AnalysisUserPreferences邏輯
     return {
       preferredCategories: userData.preferences.categories,
       priceSensitivity: 'medium',
@@ -580,18 +580,18 @@ class AIService {
   }
 
   /**
-   * 獲取歷史市場數據
+   * Get歷史市場Data
    */
   async getHistoricalMarketData(timeframe, categories) {
-    // 獲取歷史數據邏輯
+    // Get歷史Data邏輯
     return [];
   }
 
   /**
-   * 分析市場趨勢
+   * Analysis市場趨勢
    */
   async analyzeMarketTrends(historicalData) {
-    // 分析趨勢邏輯
+    // Analysis趨勢邏輯
     return {
       overallTrend: 'up',
       volatility: 'medium',
@@ -612,10 +612,10 @@ class AIService {
   }
 
   /**
-   * 獲取投資組合數據
+   * Get投資組合Data
    */
   async getPortfolioData(userId) {
-    // 獲取投資組合數據邏輯
+    // Get投資組合Data邏輯
     return {
       cards: [],
       totalValue: 0,
@@ -624,10 +624,10 @@ class AIService {
   }
 
   /**
-   * 分析投資組合風險
+   * Analysis投資組合風險
    */
   async analyzePortfolioRisk(portfolio, marketData) {
-    // 分析風險邏輯
+    // Analysis風險邏輯
     return {
       riskLevel: 'medium',
       diversification: 'good',
@@ -651,10 +651,10 @@ class AIService {
   }
 
   /**
-   * 解析搜索意圖
+   * ParseSearch意Graph
    */
   async parseSearchIntent(query) {
-    // 解析意圖邏輯
+    // Parse意Graph邏輯
     return {
       intent: 'search',
       entities: [],
@@ -663,34 +663,34 @@ class AIService {
   }
 
   /**
-   * 擴展搜索查詢
+   * ExtensionSearchQuery
    */
   async expandSearchQuery(query, intent) {
-    // 擴展查詢邏輯
+    // ExtensionQuery邏輯
     return query;
   }
 
   /**
-   * 執行搜索
+   * 執RowSearch
    */
   async executeSearch(query, options) {
-    // 執行搜索邏輯
+    // 執RowSearch邏輯
     return [];
   }
 
   /**
-   * 排序搜索結果
+   * SortSearch結果
    */
   async rankSearchResults(results, intent) {
-    // 排序邏輯
+    // Sort邏輯
     return results;
   }
 
   /**
-   * 分析文本
+   * Analysis文本
    */
   async analyzeText(text, language) {
-    // 文本分析邏輯
+    // 文本Analysis邏輯
     return {
       sentiment: 'positive',
       keywords: [],
@@ -707,10 +707,10 @@ class AIService {
   }
 
   /**
-   * 分析情感
+   * Analysis情感
    */
   async analyzeSentiment(text, language) {
-    // 情感分析邏輯
+    // 情感Analysis邏輯
     return {
       sentiment: 'positive',
       confidence: 0.8,
@@ -729,54 +729,54 @@ class AIService {
   }
 
   /**
-   * 生成價格通知
+   * 生成價格Notification
    */
   async generatePriceNotifications(userId) {
-    // 生成價格通知邏輯
+    // 生成價格Notification邏輯
     return [];
   }
 
   /**
-   * 生成趨勢通知
+   * 生成趨勢Notification
    */
   async generateTrendNotifications(userId) {
-    // 生成趨勢通知邏輯
+    // 生成趨勢Notification邏輯
     return [];
   }
 
   /**
-   * 生成投資組合通知
+   * 生成投資組合Notification
    */
   async generatePortfolioNotifications(userId) {
-    // 生成投資組合通知邏輯
+    // 生成投資組合Notification邏輯
     return [];
   }
 
   /**
-   * 排序通知
+   * SortNotification
    */
   async rankNotifications(notifications, userId) {
-    // 排序通知邏輯
+    // SortNotification邏輯
     return notifications;
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   updateConfig(newConfig) {
     this.config = { ...this.config, ...newConfig };
-    logger.info('AI服務配置已更新:', newConfig);
+    logger.info('AIServiceConfigure已Update:', newConfig);
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   getConfig() {
     return this.config;
   }
 
   /**
-   * 健康檢查
+   * 健康Check
    */
   async healthCheck() {
     const health = {
@@ -786,7 +786,7 @@ class AIService {
     };
 
     try {
-      // 檢查OpenAI連接
+      // CheckOpenAIConnect
       if (this.openai) {
         health.checks.openai = 'healthy';
       } else {
@@ -794,12 +794,12 @@ class AIService {
         health.status = 'degraded';
       }
 
-      // 檢查Redis連接
+      // CheckRedisConnect
       const redisClient = redisConfig.getClient();
       await redisClient.ping();
       health.checks.redis = 'healthy';
 
-      // 檢查指標
+      // Check指標
       const metrics = this.getMetrics();
       if (metrics.errorRate > 10) {
         health.checks.metrics = 'warning';
@@ -817,7 +817,7 @@ class AIService {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 const aiService = new AIService();
 
 module.exports = aiService;

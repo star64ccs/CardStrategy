@@ -1,0 +1,17 @@
+{
+  "bgsCrawling": {
+    "schedule": "0 2 * * 0",
+    "description": "BGS數據收集",
+    "enabled": true,
+    "retryAttempts": 3,
+    "timeoutMinutes": 120,
+    "lastRun": null,
+    "nextRun": "2025-09-27T18:00:00.000Z",
+    "stats": {
+      "totalRuns": 0,
+      "successfulRuns": 0,
+      "failedRuns": 0,
+      "averageDuration": 0
+    }
+  }
+}

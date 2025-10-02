@@ -73,7 +73,7 @@ jest.mock('expo-file-system', () => mockExpoFileSystem, { virtual: true });
 describe('Android 平台特定功能測試', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // 設置為 Android 平台
+    // Settings為 Android 平台
     platformTestEnv.setPlatform({
       platform: 'android',
       version: '30',

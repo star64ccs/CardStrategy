@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
 /**
- * CI/CD 快速修復腳本
- * 自動診斷和修復常見的 CI/CD 問題
+ * CI/CD Quick Fix Script
+ * Automatically diagnose and fix common CI/CD issues
  */
 
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-console.log('🔧 CI/CD 快速修復腳本');
+console.log('🔧 CI/CD Quick Fix Script');
 console.log('========================\n');
 
-// 檢查函數
+// Check functions
 function checkFileExists(filePath) {
   return fs.existsSync(filePath);
 }
@@ -35,13 +35,13 @@ function checkPackageJson(filePath) {
   }
 }
 
-// 診斷問題
+// Diagnose issues
 function diagnoseIssues() {
-  console.log('🔍 診斷 CI/CD 問題...\n');
+  console.log('🔍 Diagnosing CI/CD issues...\n');
 
   const issues = [];
 
-  // 檢查工作流文件
+  // Check workflow files
   const workflowFiles = [
     '.github/workflows/backend-ci-cd.yml',
     '.github/workflows/frontend-ci-cd.yml',
@@ -50,27 +50,27 @@ function diagnoseIssues() {
 
   workflowFiles.forEach(file => {
     if (!checkFileExists(file)) {
-      issues.push(`❌ 缺少工作流文件: ${file}`);
+      issues.push(`❌ Missing workflow file: ${file}`);
     } else if (!checkYamlSyntax(file)) {
-      issues.push(`❌ YAML 語法錯誤: ${file}`);
+      issues.push(`❌ YAML syntax error: ${file}`);
     } else {
-      console.log(`✅ 工作流文件正常: ${file}`);
+      console.log(`✅ Workflow file OK: ${file}`);
     }
   });
 
-  // 檢查 package.json
+  // Check package.json
   const packageFiles = ['package.json', 'backend/package.json'];
   packageFiles.forEach(file => {
     if (!checkFileExists(file)) {
-      issues.push(`❌ 缺少 package.json: ${file}`);
+      issues.push(`❌ Missing package.json: ${file}`);
     } else if (!checkPackageJson(file)) {
-      issues.push(`❌ package.json 配置錯誤: ${file}`);
+      issues.push(`❌ package.json configuration error: ${file}`);
     } else {
-      console.log(`✅ package.json 正常: ${file}`);
+      console.log(`✅ package.json OK: ${file}`);
     }
   });
 
-  // 檢查配置文件
+  // Check configuration files
   const configFiles = [
     'render.yml',
     'docker-compose.yml',
@@ -79,83 +79,83 @@ function diagnoseIssues() {
 
   configFiles.forEach(file => {
     if (!checkFileExists(file)) {
-      issues.push(`❌ 缺少配置文件: ${file}`);
+      issues.push(`❌ Missing configuration file: ${file}`);
     } else {
-      console.log(`✅ 配置文件存在: ${file}`);
+      console.log(`✅ Configuration file exists: ${file}`);
     }
   });
 
   return issues;
 }
 
-// 修復問題
+// Fix issues
 function fixIssues(issues) {
-  console.log('\n🛠️ 修復問題...\n');
+  console.log('\n🛠️ Fixing issues...\n');
 
   issues.forEach(issue => {
-    console.log(`修復: ${issue}`);
+    console.log(`Fixing: ${issue}`);
 
-    if (issue.includes('缺少工作流文件')) {
-      // 創建簡化工作流
-      console.log('  → 使用簡化工作流');
-    } else if (issue.includes('缺少配置文件')) {
-      // 創建基本配置
-      console.log('  → 創建基本配置');
+    if (issue.includes('Missing workflow file')) {
+      // Create simplified workflow
+      console.log('  → Use simplified workflow');
+    } else if (issue.includes('Missing configuration file')) {
+      // Create basic configuration
+      console.log('  → Create basic configuration');
     } else if (issue.includes('package.json')) {
-      // 修復 package.json
-      console.log('  → 檢查 npm scripts');
+      // Fix package.json
+      console.log('  → Check npm scripts');
     }
   });
 }
 
-// 生成修復建議
+// Generate fix recommendations
 function generateRecommendations() {
-  console.log('\n📋 修復建議:\n');
+  console.log('\n📋 Fix recommendations:\n');
 
-  console.log('1. 設置 GitHub Secrets:');
-  console.log('   - 前往 GitHub Repository → Settings → Secrets → Actions');
-  console.log('   - 添加以下 Secrets:');
+  console.log('1. Set up GitHub Secrets:');
+  console.log('   - Go to GitHub Repository → Settings → Secrets → Actions');
+  console.log('   - Add the following Secrets:');
   console.log('     * DIGITALOCEAN_TOKEN');
   console.log('     * RENDER_TOKEN');
-  console.log('     * SNYK_TOKEN (可選)');
-  console.log('     * SLACK_WEBHOOK_URL (可選)\n');
+  console.log('     * SNYK_TOKEN (Optional)');
+  console.log('     * SLACK_WEBHOOK_URL (Optional)\n');
 
-  console.log('2. 測試本地環境:');
+  console.log('2. Test local environment:');
   console.log('   cd backend && npm test');
   console.log('   cd frontend && npm test\n');
 
-  console.log('3. 檢查服務狀態:');
+  console.log('3. Check service status:');
   console.log('   - Render Dashboard: https://dashboard.render.com');
   console.log('   - DigitalOcean Dashboard: https://cloud.digitalocean.com\n');
 
-  console.log('4. 使用簡化工作流:');
-  console.log('   - 如果複雜工作流失敗，使用 ci-cd-simplified.yml\n');
+  console.log('4. Use simplified workflow:');
+  console.log('   - If complex workflows fail, use ci-cd-simplified.yml\n');
 }
 
-// 主函數
+// Main function
 function main() {
   try {
     const issues = diagnoseIssues();
 
     if (issues.length === 0) {
-      console.log('\n✅ 沒有發現問題！CI/CD 配置正常。\n');
+      console.log('\n✅ No issues found! CI/CD configuration is healthy.\n');
     } else {
-      console.log(`\n⚠️ 發現 ${issues.length} 個問題:\n`);
+      console.log(`\n⚠️ Found ${issues.length} issues:\n`);
       issues.forEach(issue => console.log(issue));
 
       fixIssues(issues);
       generateRecommendations();
     }
 
-    console.log('\n🚀 快速修復完成！');
-    console.log('如果問題仍然存在，請查看 CICD_TROUBLESHOOTING_GUIDE.md\n');
+    console.log('\n🚀 Quick fix complete!');
+    console.log('If issues persist, check CICD_TROUBLESHOOTING_GUIDE.md\n');
   } catch (error) {
-    console.error('❌ 修復腳本執行失敗:', error.message);
+    console.error('❌ Fix script execution failed:', error.message);
     process.exit(1);
   }
 }
 
-// 執行主函數
+// Execute main function
 if (require.main === module) {
   main();
 }

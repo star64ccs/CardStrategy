@@ -1,0 +1,627 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+// 定義真偽檢查相關類型
+export interface AuthenticityCheck {
+  id: string;
+  cardId: string;
+  userId: string;
+  checkType:
+    | 'hologram'
+    | 'texture'
+    | 'color'
+    | 'edge'
+    | 'back'
+    | 'holo'
+    | 'comprehensive';
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  result: {
+    isAuthentic: boolean;
+    confidence: number;
+    details: {
+      hologramScore?: number;
+      textureScore?: number;
+      colorScore?: number;
+      edgeScore?: number;
+      backScore?: number;
+      holoScore?: number;
+    };
+    factors: string[];
+    recommendations: string[];
+  };
+  images: {
+    front: string;
+    back?: string;
+    holo?: string;
+    edge?: string;
+  };
+  metadata: {
+    timestamp: string;
+    processingTime: number;
+    modelVersion: string;
+    deviceInfo: {
+      platform: string;
+      os: string;
+      camera: string;
+    };
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AuthenticityReport {
+  id: string;
+  checkId: string;
+  summary: {
+    overallScore: number;
+    isAuthentic: boolean;
+    confidence: number;
+    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  };
+  detailedAnalysis: {
+    component: string;
+    score: number;
+    status: 'pass' | 'fail' | 'warning';
+    description: string;
+    evidence: string[];
+  }[];
+  recommendations: {
+    action: string;
+    priority: 'high' | 'medium' | 'low';
+    description: string;
+  }[];
+  expertReview?: {
+    reviewedBy: string;
+    reviewedAt: string;
+    notes: string;
+    finalDecision: boolean;
+  };
+  createdAt: string;
+}
+
+export interface AuthenticityHistory {
+  id: string;
+  cardId: string;
+  checks: AuthenticityCheck[];
+  statistics: {
+    totalChecks: number;
+    authenticCount: number;
+    fakeCount: number;
+    averageConfidence: number;
+    lastCheckDate: string;
+  };
+  trends: {
+    date: string;
+    authenticRate: number;
+    averageConfidence: number;
+  }[];
+}
+
+export interface AuthenticityFilters {
+  cardId?: string;
+  userId?: string;
+  status?: string;
+  checkType?: string;
+  isAuthentic?: boolean;
+  dateFrom?: string;
+  dateTo?: string;
+  confidenceMin?: number;
+  confidenceMax?: number;
+}
+
+// 真偽檢查狀態接口
+export interface AuthenticityCheckState {
+  checks: AuthenticityCheck[];
+  reports: AuthenticityReport[];
+  history: AuthenticityHistory[];
+  filters: AuthenticityFilters;
+  currentCheck: AuthenticityCheck | null;
+  isLoading: boolean;
+  isProcessing: boolean;
+  isGeneratingReport: boolean;
+  error: string | null;
+  statistics: {
+    totalChecks: number;
+    authenticRate: number;
+    averageConfidence: number;
+    processingTime: number;
+  } | null;
+}
+
+// 異步 Action Creators
+export const initializeAuthenticityCheck = createAsyncThunk(
+  'authenticityCheck/initializeAuthenticityCheck',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬初始化真偽檢查
+      const statistics = {
+        totalChecks: 1250,
+        authenticRate: 0.87,
+        averageConfidence: 0.92,
+        processingTime: 2.5,
+      };
+
+      return statistics;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '初始化真偽檢查失敗');
+    }
+  }
+);
+
+export const startAuthenticityCheck = createAsyncThunk(
+  'authenticityCheck/startAuthenticityCheck',
+  async (
+    checkData: {
+      cardId: string;
+      checkType: string;
+      images: {
+        front: string;
+        back?: string;
+        holo?: string;
+        edge?: string;
+      };
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬開始真偽檢查
+      const newCheck: AuthenticityCheck = {
+        id: Date.now().toString(),
+        cardId: checkData.cardId,
+        userId: 'current_user',
+        checkType: checkData.checkType as any,
+        status: 'processing',
+        result: {
+          isAuthentic: true,
+          confidence: 0.0,
+          details: {},
+          factors: [],
+          recommendations: [],
+        },
+        images: checkData.images,
+        metadata: {
+          timestamp: new Date().toISOString(),
+          processingTime: 0,
+          modelVersion: 'v2.1.0',
+          deviceInfo: {
+            platform: navigator.platform,
+            os: 'unknown',
+            camera: 'default',
+          },
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      return newCheck;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '開始真偽檢查失敗');
+    }
+  }
+);
+
+export const processAuthenticityCheck = createAsyncThunk(
+  'authenticityCheck/processAuthenticityCheck',
+  async (checkId: string, { rejectWithValue }) => {
+    try {
+      // 模擬處理真偽檢查
+      const processedCheck: AuthenticityCheck = {
+        id: checkId,
+        cardId: 'card-1',
+        userId: 'current_user',
+        checkType: 'comprehensive',
+        status: 'completed',
+        result: {
+          isAuthentic: true,
+          confidence: 0.92,
+          details: {
+            hologramScore: 0.95,
+            textureScore: 0.88,
+            colorScore: 0.91,
+            edgeScore: 0.89,
+            backScore: 0.93,
+            holoScore: 0.94,
+          },
+          factors: [
+            'Hologram pattern matches authentic cards',
+            'Card texture is consistent with original',
+            'Color saturation within normal range',
+            'Edge cutting quality is high',
+          ],
+          recommendations: [
+            'Card appears to be authentic',
+            'Consider professional grading for verification',
+            'Store in protective sleeve',
+          ],
+        },
+        images: {
+          front: 'image1.jpg',
+          back: 'image2.jpg',
+          holo: 'image3.jpg',
+          edge: 'image4.jpg',
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          processingTime: 2.3,
+          modelVersion: 'v2.1.0',
+          deviceInfo: {
+            platform: navigator.platform,
+            os: 'unknown',
+            camera: 'default',
+          },
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      return processedCheck;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '處理真偽檢查失敗');
+    }
+  }
+);
+
+export const generateAuthenticityReport = createAsyncThunk(
+  'authenticityCheck/generateAuthenticityReport',
+  async (checkId: string, { rejectWithValue }) => {
+    try {
+      // 模擬生成真偽報告
+      const report: AuthenticityReport = {
+        id: Date.now().toString(),
+        checkId,
+        summary: {
+          overallScore: 0.92,
+          isAuthentic: true,
+          confidence: 0.92,
+          riskLevel: 'low',
+        },
+        detailedAnalysis: [
+          {
+            component: 'Hologram',
+            score: 0.95,
+            status: 'pass',
+            description: 'Hologram pattern matches authentic cards',
+            evidence: ['Consistent pattern', 'Proper reflectivity'],
+          },
+          {
+            component: 'Texture',
+            score: 0.88,
+            status: 'pass',
+            description: 'Card texture is consistent with original',
+            evidence: ['Proper surface texture', 'Correct material feel'],
+          },
+        ],
+        recommendations: [
+          {
+            action: 'Store Safely',
+            priority: 'medium',
+            description: 'Store in protective sleeve to maintain condition',
+          },
+        ],
+        createdAt: new Date().toISOString(),
+      };
+
+      return report;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '生成真偽報告失敗');
+    }
+  }
+);
+
+export const fetchAuthenticityChecks = createAsyncThunk(
+  'authenticityCheck/fetchAuthenticityChecks',
+  async (filters: AuthenticityFilters = {}, { rejectWithValue }) => {
+    try {
+      // 模擬獲取真偽檢查記錄
+      const mockChecks: AuthenticityCheck[] = [
+        {
+          id: '1',
+          cardId: 'card-1',
+          userId: 'current_user',
+          checkType: 'comprehensive',
+          status: 'completed',
+          result: {
+            isAuthentic: true,
+            confidence: 0.92,
+            details: {
+              hologramScore: 0.95,
+              textureScore: 0.88,
+              colorScore: 0.91,
+            },
+            factors: ['Hologram pattern matches'],
+            recommendations: ['Card appears authentic'],
+          },
+          images: {
+            front: 'image1.jpg',
+            back: 'image2.jpg',
+          },
+          metadata: {
+            timestamp: new Date().toISOString(),
+            processingTime: 2.3,
+            modelVersion: 'v2.1.0',
+            deviceInfo: {
+              platform: navigator.platform,
+              os: 'unknown',
+              camera: 'default',
+            },
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ];
+
+      return mockChecks;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取真偽檢查記錄失敗');
+    }
+  }
+);
+
+export const fetchAuthenticityHistory = createAsyncThunk(
+  'authenticityCheck/fetchAuthenticityHistory',
+  async (cardId: string, { rejectWithValue }) => {
+    try {
+      // 模擬獲取真偽檢查歷史
+      const history: AuthenticityHistory = {
+        id: 'history-1',
+        cardId,
+        checks: [],
+        statistics: {
+          totalChecks: 5,
+          authenticCount: 4,
+          fakeCount: 1,
+          averageConfidence: 0.89,
+          lastCheckDate: new Date().toISOString(),
+        },
+        trends: [
+          {
+            date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+            authenticRate: 0.8,
+            averageConfidence: 0.85,
+          },
+          {
+            date: new Date().toISOString(),
+            authenticRate: 0.87,
+            averageConfidence: 0.89,
+          },
+        ],
+      };
+
+      return history;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取真偽檢查歷史失敗');
+    }
+  }
+);
+
+export const updateCheckStatus = createAsyncThunk(
+  'authenticityCheck/updateCheckStatus',
+  async (
+    { checkId, status }: { checkId: string; status: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬更新檢查狀態
+      return { checkId, status, updatedAt: new Date().toISOString() };
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '更新檢查狀態失敗');
+    }
+  }
+);
+
+// 初始狀態
+const initialState: AuthenticityCheckState = {
+  checks: [],
+  reports: [],
+  history: [],
+  filters: {},
+  currentCheck: null,
+  isLoading: false,
+  isProcessing: false,
+  isGeneratingReport: false,
+  error: null,
+  statistics: null,
+};
+
+// 創建 slice
+const authenticityCheckSlice = createSlice({
+  name: 'authenticityCheck',
+  initialState,
+  reducers: {
+    setFilters: (state, action: PayloadAction<AuthenticityFilters>) => {
+      state.filters = action.payload;
+    },
+    clearFilters: state => {
+      state.filters = {};
+    },
+    setCurrentCheck: (
+      state,
+      action: PayloadAction<AuthenticityCheck | null>
+    ) => {
+      state.currentCheck = action.payload;
+    },
+    clearCurrentCheck: state => {
+      state.currentCheck = null;
+    },
+    clearError: state => {
+      state.error = null;
+    },
+    clearChecks: state => {
+      state.checks = [];
+    },
+    clearReports: state => {
+      state.reports = [];
+    },
+    updateCheck: (state, action: PayloadAction<AuthenticityCheck>) => {
+      const index = state.checks.findIndex(c => c.id === action.payload.id);
+      if (index !== -1) {
+        state.checks[index] = action.payload;
+      } else {
+        state.checks.push(action.payload);
+      }
+    },
+    removeCheck: (state, action: PayloadAction<string>) => {
+      state.checks = state.checks.filter(c => c.id !== action.payload);
+    },
+  },
+  extraReducers: builder => {
+    // Initialize Authenticity Check
+    builder
+      .addCase(initializeAuthenticityCheck.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(initializeAuthenticityCheck.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.statistics = action.payload;
+        state.error = null;
+      })
+      .addCase(initializeAuthenticityCheck.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Start Authenticity Check
+    builder
+      .addCase(startAuthenticityCheck.fulfilled, (state, action) => {
+        state.checks.push(action.payload);
+        state.currentCheck = action.payload;
+      })
+      .addCase(startAuthenticityCheck.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Process Authenticity Check
+    builder
+      .addCase(processAuthenticityCheck.pending, state => {
+        state.isProcessing = true;
+        state.error = null;
+      })
+      .addCase(processAuthenticityCheck.fulfilled, (state, action) => {
+        state.isProcessing = false;
+        const index = state.checks.findIndex(c => c.id === action.payload.id);
+        if (index !== -1) {
+          state.checks[index] = action.payload;
+        }
+        if (state.currentCheck?.id === action.payload.id) {
+          state.currentCheck = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(processAuthenticityCheck.rejected, (state, action) => {
+        state.isProcessing = false;
+        state.error = action.payload as string;
+      });
+
+    // Generate Authenticity Report
+    builder
+      .addCase(generateAuthenticityReport.pending, state => {
+        state.isGeneratingReport = true;
+        state.error = null;
+      })
+      .addCase(generateAuthenticityReport.fulfilled, (state, action) => {
+        state.isGeneratingReport = false;
+        state.reports.push(action.payload);
+        state.error = null;
+      })
+      .addCase(generateAuthenticityReport.rejected, (state, action) => {
+        state.isGeneratingReport = false;
+        state.error = action.payload as string;
+      });
+
+    // Fetch Authenticity Checks
+    builder
+      .addCase(fetchAuthenticityChecks.fulfilled, (state, action) => {
+        state.checks = action.payload;
+      })
+      .addCase(fetchAuthenticityChecks.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Fetch Authenticity History
+    builder
+      .addCase(fetchAuthenticityHistory.fulfilled, (state, action) => {
+        const existingIndex = state.history.findIndex(
+          h => h.cardId === action.payload.cardId
+        );
+        if (existingIndex !== -1) {
+          state.history[existingIndex] = action.payload;
+        } else {
+          state.history.push(action.payload);
+        }
+      })
+      .addCase(fetchAuthenticityHistory.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Update Check Status
+    builder
+      .addCase(updateCheckStatus.fulfilled, (state, action) => {
+        const check = state.checks.find(c => c.id === action.payload.checkId);
+        if (check) {
+          check.status = action.payload.status as any;
+          check.updatedAt = action.payload.updatedAt;
+        }
+      })
+      .addCase(updateCheckStatus.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+  },
+});
+
+// 導出 actions
+export const {
+  setFilters,
+  clearFilters,
+  setCurrentCheck,
+  clearCurrentCheck,
+  clearError,
+  clearChecks,
+  clearReports,
+  updateCheck,
+  removeCheck,
+} = authenticityCheckSlice.actions;
+
+// 導出 selectors
+export const selectAuthenticityChecks = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.checks;
+
+export const selectAuthenticityReports = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.reports;
+
+export const selectAuthenticityHistory = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.history;
+
+export const selectCurrentAuthenticityCheck = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.currentCheck;
+
+export const selectAuthenticityFilters = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.filters;
+
+export const selectAuthenticityStatistics = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.statistics;
+
+export const selectIsAuthenticityCheckLoading = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.isLoading;
+
+export const selectIsProcessing = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.isProcessing;
+
+export const selectIsGeneratingReport = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.isGeneratingReport;
+
+export const selectAuthenticityCheckError = (state: {
+  authenticityCheck: AuthenticityCheckState;
+}) => state.authenticityCheck.error;
+
+// 導出 reducer
+export default authenticityCheckSlice.reducer;

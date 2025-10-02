@@ -17,8 +17,8 @@ import type {
 import ServiceWorkerService from '../services/serviceWorkerService';
 
 /**
- * Service Worker 示例組件
- * 展示 Service Worker 服務的所有功能
+ * Service Worker 示例Component
+ * 展示 Service Worker Service的所有功能
  */
 const ServiceWorkerExample: React.FC = () => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -30,7 +30,7 @@ const ServiceWorkerExample: React.FC = () => {
 
   const _service = ServiceWorkerService.getInstance();
 
-  // Service Worker 配置
+  // Service Worker Configure
   const swConfig: ServiceWorkerConfig = {
     swPath: '/sw.js',
     scope: '/',
@@ -105,7 +105,7 @@ const ServiceWorkerExample: React.FC = () => {
   }, []);
 
   /**
-   * 初始化 Service Worker
+   * Initialize Service Worker
    */
   const _initializeServiceWorker = async () => {
     if (Platform.OS !== 'web') {
@@ -120,14 +120,14 @@ const ServiceWorkerExample: React.FC = () => {
       if (result.success) {
         setIsInitialized(true);
         updateStatus();
-        Alert.alert('初始化成功', result.data as string);
+        Alert.alert('InitializeSuccess', result.data as string);
       } else {
-        Alert.alert('初始化失敗', result.error || '未知錯誤');
+        Alert.alert('InitializeFailed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '初始化錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        'InitializeError',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -135,7 +135,7 @@ const ServiceWorkerExample: React.FC = () => {
   };
 
   /**
-   * 更新狀態信息
+   * UpdateStatusInformation
    */
   const _updateStatus = () => {
     if (service.isServiceReady()) {
@@ -146,11 +146,11 @@ const ServiceWorkerExample: React.FC = () => {
   };
 
   /**
-   * 更新 Service Worker
+   * Update Service Worker
    */
   const _updateServiceWorker = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 Service Worker 服務');
+      Alert.alert('Service未就緒', '請先Initialize Service Worker Service');
       return;
     }
 
@@ -159,15 +159,15 @@ const ServiceWorkerExample: React.FC = () => {
       const _result = await service.updateServiceWorker();
 
       if (result.success) {
-        Alert.alert('更新成功', result.data as string);
+        Alert.alert('UpdateSuccess', result.data as string);
         updateStatus();
       } else {
-        Alert.alert('更新失敗', result.error || '未知錯誤');
+        Alert.alert('UpdateFailed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '更新錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        'UpdateError',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -175,11 +175,11 @@ const ServiceWorkerExample: React.FC = () => {
   };
 
   /**
-   * 跳過等待
+   * SkipAwait
    */
   const _skipWaiting = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 Service Worker 服務');
+      Alert.alert('Service未就緒', '請先Initialize Service Worker Service');
       return;
     }
 
@@ -188,15 +188,15 @@ const ServiceWorkerExample: React.FC = () => {
       const _result = await service.skipWaiting();
 
       if (result.success) {
-        Alert.alert('跳過等待成功', result.data as string);
+        Alert.alert('跳過等待Success', result.data as string);
         updateStatus();
       } else {
-        Alert.alert('跳過等待失敗', result.error || '未知錯誤');
+        Alert.alert('跳過等待Failed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '跳過等待錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        '跳過等待Error',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -204,11 +204,11 @@ const ServiceWorkerExample: React.FC = () => {
   };
 
   /**
-   * 緩存 URL
+   * Cache URL
    */
   const _cacheUrl = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 Service Worker 服務');
+      Alert.alert('Service未就緒', '請先Initialize Service Worker Service');
       return;
     }
 
@@ -219,15 +219,15 @@ const ServiceWorkerExample: React.FC = () => {
       );
 
       if (result.success) {
-        Alert.alert('緩存成功', `成功緩存 ${result.cachedUrls.length} 個資源`);
+        Alert.alert('緩存Success', `Success緩存 ${result.cachedUrls.length} 個資源`);
         getCacheInfo();
       } else {
-        Alert.alert('緩存失敗', `失敗: ${result.failedUrls.join(', ')}`);
+        Alert.alert('緩存Failed', `Failed: ${result.failedUrls.join(', ')}`);
       }
     } catch (error) {
       Alert.alert(
-        '緩存錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        '緩存Error',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -235,11 +235,11 @@ const ServiceWorkerExample: React.FC = () => {
   };
 
   /**
-   * 批量緩存 URL
+   * BatchCache URL
    */
   const _cacheUrls = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 Service Worker 服務');
+      Alert.alert('Service未就緒', '請先Initialize Service Worker Service');
       return;
     }
 
@@ -255,17 +255,17 @@ const ServiceWorkerExample: React.FC = () => {
 
       if (result.success) {
         Alert.alert(
-          '批量緩存成功',
-          `成功緩存 ${result.cachedUrls.length} 個資源，失敗 ${result.failedUrls.length} 個`
+          '批量緩存Success',
+          `Success緩存 ${result.cachedUrls.length} 個資源，Failed ${result.failedUrls.length} 個`
         );
         getCacheInfo();
       } else {
-        Alert.alert('批量緩存失敗', `失敗: ${result.failedUrls.join(', ')}`);
+        Alert.alert('批量緩存Failed', `Failed: ${result.failedUrls.join(', ')}`);
       }
     } catch (error) {
       Alert.alert(
-        '批量緩存錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        '批量緩存Error',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -273,11 +273,11 @@ const ServiceWorkerExample: React.FC = () => {
   };
 
   /**
-   * 清除緩存
+   * ClearCache
    */
   const _clearCache = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 Service Worker 服務');
+      Alert.alert('Service未就緒', '請先Initialize Service Worker Service');
       return;
     }
 
@@ -286,15 +286,15 @@ const ServiceWorkerExample: React.FC = () => {
       const _result = await service.clearCache();
 
       if (result.success) {
-        Alert.alert('清除成功', result.data as string);
+        Alert.alert('清除Success', result.data as string);
         getCacheInfo();
       } else {
-        Alert.alert('清除失敗', result.error || '未知錯誤');
+        Alert.alert('清除Failed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '清除錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        '清除Error',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -302,11 +302,11 @@ const ServiceWorkerExample: React.FC = () => {
   };
 
   /**
-   * 獲取緩存信息
+   * GetCacheInformation
    */
   const _getCacheInfo = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 Service Worker 服務');
+      Alert.alert('Service未就緒', '請先Initialize Service Worker Service');
       return;
     }
 
@@ -317,12 +317,12 @@ const ServiceWorkerExample: React.FC = () => {
       if (result.success) {
         setCacheInfo(result.data);
       } else {
-        Alert.alert('獲取緩存信息失敗', result.error || '未知錯誤');
+        Alert.alert('Get緩存信息Failed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '獲取緩存信息錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        'Get緩存信息Error',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -330,7 +330,7 @@ const ServiceWorkerExample: React.FC = () => {
   };
 
   /**
-   * 刷新狀態
+   * RefreshStatus
    */
   const _refreshStatus = () => {
     updateStatus();
@@ -344,7 +344,7 @@ const ServiceWorkerExample: React.FC = () => {
         <Text style={styles.subtitle}>離線功能和緩存管理演示</Text>
       </View>
 
-      {/* 平台檢查 */}
+      {/* 平台Check */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>平台支持</Text>
         <View style={styles.platformInfo}>
@@ -356,7 +356,7 @@ const ServiceWorkerExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 初始化狀態 */}
+      {/* InitializeStatus */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>初始化狀態</Text>
         <View style={styles.statusRow}>
@@ -383,7 +383,7 @@ const ServiceWorkerExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>操作</Text>
 
@@ -458,7 +458,7 @@ const ServiceWorkerExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* Service Worker 狀態 */}
+      {/* Service Worker Status */}
       {swStatus && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Service Worker 狀態</Text>
@@ -540,7 +540,7 @@ const ServiceWorkerExample: React.FC = () => {
         </View>
       )}
 
-      {/* 服務統計 */}
+      {/* ServiceStatistics */}
       {swStats && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>服務統計</Text>
@@ -593,7 +593,7 @@ const ServiceWorkerExample: React.FC = () => {
         </View>
       )}
 
-      {/* 緩存信息 */}
+      {/* CacheInformation */}
       {cacheInfo && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>緩存信息</Text>
@@ -620,7 +620,7 @@ const ServiceWorkerExample: React.FC = () => {
         </View>
       )}
 
-      {/* 服務信息 */}
+      {/* ServiceInformation */}
       {serviceInfo && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>服務信息</Text>

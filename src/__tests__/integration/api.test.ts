@@ -6,9 +6,9 @@ import { marketService } from '@/services/marketService';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
-// 創建 MSW 服務器
+// Create MSW Server
 const _server = setupServer(
-  // 認證 API
+  // Authenticate API
   http.post('/api/auth/login', () => {
     console.log('MSW: 攔截到 /api/auth/login 請求');
     return HttpResponse.json(
@@ -166,13 +166,13 @@ const _server = setupServer(
     );
   }),
 
-  // 錯誤處理測試
+  // ErrorHandleTest
   http.get('/api/error-test', () => {
     return HttpResponse.json(
       {
         success: false,
         error: 'Internal Server Error',
-        message: '測試錯誤',
+        message: '測試Error',
       },
       { status: 500 }
     );
@@ -190,30 +190,30 @@ const _server = setupServer(
   })
 );
 
-// 在所有測試之前啟動服務器
+// 在所有Test之前StartServer
 beforeAll(async () => {
   server.listen();
 
-  // 配置 axios 攔截器以支持 MSW
+  // Configure axios 攔截器以Support MSW
   const { setupServer: setupAxiosServer } = require('msw/node');
   const _axiosServer = setupAxiosServer();
   axiosServer.listen();
 
-  // 初始化所有服務
+  // Initialize所有Service
   await apiService.initialize();
   await authService.initialize();
   await cardService.initialize();
 });
 
-// 在每個測試後重置處理器
+// 在每個Test後ResetHandle器
 afterEach(() => server.resetHandlers());
 
-// 在所有測試完成後關閉服務器
+// 在所有TestComplete後Off閉Server
 afterAll(() => server.close());
 
 describe('API Integration Tests', () => {
   describe('Authentication API', () => {
-    it('應該成功登錄用戶', async () => {
+    it('應該Success登錄用戶', async () => {
       const _loginData = {
         email: 'test@example.com',
         password: 'password123',
@@ -228,7 +228,7 @@ describe('API Integration Tests', () => {
       expect(result.data.tokens.accessToken).toBe('mock-access-token');
     });
 
-    it('應該成功註冊用戶', async () => {
+    it('應該Success註冊用戶', async () => {
       const _registerData = {
         email: 'new@example.com',
         password: 'password123',
@@ -243,15 +243,15 @@ describe('API Integration Tests', () => {
       expect(result.data.user.name).toBe('New User');
     });
 
-    it('應該處理登錄錯誤', async () => {
-      // 覆蓋默認處理器以模擬錯誤
+    it('應該Handle登錄Error', async () => {
+      // 覆蓋DefaultHandle器以模擬Error
       server.use(
         http.post('/api/auth/login', () => {
           return HttpResponse.json(
             {
               success: false,
               error: 'Unauthorized',
-              message: '登錄失敗',
+              message: '登錄Failed',
             },
             { status: 401 }
           );
@@ -263,12 +263,12 @@ describe('API Integration Tests', () => {
         password: 'wrongpassword',
       };
 
-      await expect(authService.login(loginData)).rejects.toThrow('登錄失敗');
+      await expect(authService.login(loginData)).rejects.toThrow('登錄Failed');
     });
   });
 
   describe('Cards API', () => {
-    it('應該成功獲取卡片列表', async () => {
+    it('應該SuccessGet卡片列表', async () => {
       const _result = await cardService.getCards({ page: 1, limit: 10 });
 
       expect(result).toBeDefined();
@@ -278,7 +278,7 @@ describe('API Integration Tests', () => {
       expect(result[0].name).toBe('Blue-Eyes White Dragon');
     });
 
-    it('應該成功獲取單張卡片', async () => {
+    it('應該SuccessGet單張卡片', async () => {
       const _result = await cardService.getCard('1');
 
       expect(result).toBeDefined();
@@ -286,8 +286,8 @@ describe('API Integration Tests', () => {
       expect(result?.name).toBe('Blue-Eyes White Dragon');
     });
 
-    it('應該處理卡片不存在錯誤', async () => {
-      // 覆蓋默認處理器以模擬 404 錯誤
+    it('應該Handle卡片不存在Error', async () => {
+      // 覆蓋DefaultHandle器以模擬 404 Error
       server.use(
         http.get('/api/cards/:id', () => {
           return HttpResponse.json(
@@ -306,7 +306,7 @@ describe('API Integration Tests', () => {
   });
 
   describe('Market API', () => {
-    it('應該成功獲取市場數據', async () => {
+    it('應該SuccessGet市場數據', async () => {
       const _result = await marketService.getMarketData();
 
       expect(result.success).toBe(true);
@@ -316,7 +316,7 @@ describe('API Integration Tests', () => {
       expect(result.data.trendingCards).toHaveLength(2);
     });
 
-    it('應該成功獲取卡片價格歷史', async () => {
+    it('應該SuccessGet卡片價格歷史', async () => {
       const _result = await marketService.getCardPriceHistory('1');
 
       expect(result.success).toBe(true);
@@ -326,15 +326,15 @@ describe('API Integration Tests', () => {
       expect(result.data.averagePrice).toBe(101);
     });
 
-    it('應該處理市場數據獲取錯誤', async () => {
-      // 覆蓋默認處理器以模擬錯誤
+    it('應該Handle市場數據GetError', async () => {
+      // 覆蓋DefaultHandle器以模擬Error
       server.use(
         http.get('/api/market/data', () => {
           return HttpResponse.json(
             {
               success: false,
               error: 'Internal Server Error',
-              message: '獲取市場數據失敗',
+              message: 'Get市場數據Failed',
             },
             { status: 500 }
           );
@@ -342,7 +342,7 @@ describe('API Integration Tests', () => {
       );
 
       await expect(marketService.getMarketData()).rejects.toThrow(
-        '獲取市場數據失敗'
+        'Get市場數據Failed'
       );
     });
   });
@@ -366,13 +366,13 @@ describe('API Integration Tests', () => {
     });
 
     it('應該正確處理 PUT 請求', async () => {
-      // 添加 PUT 請求處理器
+      // Add PUT RequestHandle器
       server.use(
         http.put('/api/test-put', () => {
           return HttpResponse.json(
             {
               success: true,
-              data: { message: '更新成功' },
+              data: { message: 'UpdateSuccess' },
             },
             { status: 200 }
           );
@@ -382,17 +382,17 @@ describe('API Integration Tests', () => {
       const _result = await apiService.put('/test-put', { data: 'test' });
 
       expect(result.success).toBe(true);
-      expect(result.data.message).toBe('更新成功');
+      expect(result.data.message).toBe('UpdateSuccess');
     });
 
     it('應該正確處理 DELETE 請求', async () => {
-      // 添加 DELETE 請求處理器
+      // Add DELETE RequestHandle器
       server.use(
         http.delete('/api/test-delete', () => {
           return HttpResponse.json(
             {
               success: true,
-              data: { message: '刪除成功' },
+              data: { message: 'DeleteSuccess' },
             },
             { status: 200 }
           );
@@ -402,11 +402,11 @@ describe('API Integration Tests', () => {
       const _result = await apiService.delete('/test-delete');
 
       expect(result.success).toBe(true);
-      expect(result.data.message).toBe('刪除成功');
+      expect(result.data.message).toBe('DeleteSuccess');
     });
 
-    it('應該處理網絡錯誤', async () => {
-      // 模擬網絡錯誤
+    it('應該Handle網絡Error', async () => {
+      // 模擬NetworkError
       server.use(
         http.get('/api/network-error', () => {
           return HttpResponse.error();
@@ -416,8 +416,8 @@ describe('API Integration Tests', () => {
       await expect(apiService.get('/network-error')).rejects.toThrow();
     });
 
-    it('應該處理超時錯誤', async () => {
-      // 模擬超時 - 返回 500 錯誤
+    it('應該Handle超時Error', async () => {
+      // 模擬超時 - Return 500 Error
       server.use(
         http.get('/api/timeout', () => {
           return HttpResponse.json(
@@ -431,28 +431,28 @@ describe('API Integration Tests', () => {
         })
       );
 
-      // 期望拋出超時異常
+      // 期望Throw超時異常
       await expect(apiService.get('/timeout')).rejects.toThrow('請求超時');
     });
   });
 
   describe('Error Handling', () => {
-    it('應該處理 500 錯誤', async () => {
-      await expect(apiService.get('/error-test')).rejects.toThrow('測試錯誤');
+    it('應該Handle 500 Error', async () => {
+      await expect(apiService.get('/error-test')).rejects.toThrow('測試Error');
     });
 
-    it('應該處理 404 錯誤', async () => {
+    it('應該Handle 404 Error', async () => {
       await expect(apiService.get('/not-found')).rejects.toThrow('資源不存在');
     });
 
-    it('應該處理 400 錯誤', async () => {
+    it('應該Handle 400 Error', async () => {
       server.use(
         http.get('/api/bad-request', () => {
           return HttpResponse.json(
             {
               success: false,
               error: 'Bad Request',
-              message: '請求參數錯誤',
+              message: '請求參數Error',
             },
             { status: 400 }
           );
@@ -460,11 +460,11 @@ describe('API Integration Tests', () => {
       );
 
       await expect(apiService.get('/bad-request')).rejects.toThrow(
-        '請求參數錯誤'
+        '請求參數Error'
       );
     });
 
-    it('應該處理 401 錯誤', async () => {
+    it('應該Handle 401 Error', async () => {
       server.use(
         http.get('/api/unauthorized', () => {
           return HttpResponse.json(
@@ -483,7 +483,7 @@ describe('API Integration Tests', () => {
       );
     });
 
-    it('應該處理 403 錯誤', async () => {
+    it('應該Handle 403 Error', async () => {
       server.use(
         http.get('/api/forbidden', () => {
           return HttpResponse.json(
@@ -503,7 +503,7 @@ describe('API Integration Tests', () => {
 
   describe('Request/Response Interceptors', () => {
     it('應該正確添加請求頭', async () => {
-      // 檢查請求是否包含正確的頭部
+      // CheckRequestYesNoPackage含正確的頭部
       server.use(
         http.get('/api/test-headers', ({ request }) => {
           const _contentType = request.headers.get('content-type');
@@ -536,14 +536,14 @@ describe('API Integration Tests', () => {
     it('應該正確處理響應攔截器', async () => {
       const _result = await apiService.get('/cards');
 
-      // 檢查響應是否被正確處理
+      // CheckResponseYesNo被正確Handle
       expect(result.success).toBe(true);
       expect(result.data).toBeDefined();
     });
   });
 
   describe('Retry Logic', () => {
-    it('應該在失敗後重試請求', async () => {
+    it('應該在Failed後重試請求', async () => {
       let attemptCount = 0;
 
       server.use(
@@ -562,7 +562,7 @@ describe('API Integration Tests', () => {
           return HttpResponse.json(
             {
               success: true,
-              data: { message: '重試成功' },
+              data: { message: '重試Success' },
             },
             { status: 200 }
           );
@@ -572,7 +572,7 @@ describe('API Integration Tests', () => {
       const _result = await apiService.get('/retry-test');
 
       expect(result.success).toBe(true);
-      expect(result.data.message).toBe('重試成功');
+      expect(result.data.message).toBe('重試Success');
       expect(attemptCount).toBe(3);
     });
   });

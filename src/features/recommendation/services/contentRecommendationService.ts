@@ -24,8 +24,8 @@ import {
 // import { dataConverters } from '../../analytics/utils/dataConverters';
 
 /**
- * 內容推薦服務
- * 實現基於內容的推薦算法，包括標籤匹配、內容相似度、用戶偏好分析等
+ * Content推薦Service
+ * 實現基於Content的推薦算法，Package括Tag匹配、Content相似度、UserPreferencesAnalysis等
  */
 class ContentRecommendationService {
   private static instance: ContentRecommendationService;
@@ -56,7 +56,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -82,7 +82,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取內容推薦
+   * GetContent推薦
    */
   public async getContentRecommendations(
     request: GetContentRecommendationsRequest
@@ -90,7 +90,7 @@ class ContentRecommendationService {
     const _startTime = Date.now();
 
     try {
-      // 驗證輸入參數
+      // VerifyInputParameter
       if (!request.userId || request.userId.trim() === '') {
         throw new Error('用戶ID不能為空');
       }
@@ -168,7 +168,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取相似內容
+   * Get相似Content
    */
   public async getSimilarContent(
     contentId: string,
@@ -220,7 +220,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 更新用戶偏好
+   * UpdateUserPreferences
    */
   public async updateUserPreference(
     userId: string,
@@ -250,7 +250,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 記錄用戶互動
+   * RecordUser互動
    */
   public async recordUserInteraction(
     userId: string,
@@ -277,14 +277,14 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   public getConfig(): ContentRecommendationConfig {
     return { ...this.config };
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public updateConfig(config: Partial<ContentRecommendationConfig>): void {
     this.config = { ...this.config, ...config };
@@ -292,14 +292,14 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取統計數據
+   * Get統Count據
    */
   public getStats(): ContentRecommendationStats {
     return { ...this.stats };
   }
 
   /**
-   * 添加事件監聽器
+   * AddEvent監聽器
    */
   public addEventListener(event: string, listener: Function): void {
     if (!this.eventListeners.has(event)) {
@@ -309,7 +309,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 移除事件監聽器
+   * RemoveEvent監聽器
    */
   public removeEventListener(event: string, listener: Function): void {
     const _listeners = this.eventListeners.get(event);
@@ -322,7 +322,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 發送事件
+   * SendEvent
    */
   private emit(event: string, data: unknown): void {
     const _listeners = this.eventListeners.get(event);
@@ -450,7 +450,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 計算基於內容的分數
+   * 計算基於Content的分數
    */
   private calculateContentBasedScore(
     item: ContentItem,
@@ -490,7 +490,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 計算基於標籤的分數
+   * 計算基於Tag的分數
    */
   private calculateTagBasedScore(
     item: ContentItem,
@@ -504,7 +504,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 計算基於類別的分數
+   * 計算基於Class別的分數
    */
   private calculateCategoryBasedScore(
     item: ContentItem,
@@ -517,7 +517,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 計算基於屬性的分數
+   * 計算基於Property的分數
    */
   private calculateAttributeBasedScore(
     item: ContentItem,
@@ -691,7 +691,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 計算內容相似度
+   * 計算Content相似度
    */
   private async calculateContentSimilarity(
     source: ContentItem,
@@ -749,7 +749,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 計算標籤相似度
+   * 計算Tag相似度
    */
   private calculateTagSimilarity(
     sourceTags: string[],
@@ -801,7 +801,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 計算屬性相似度
+   * 計算Property相似度
    */
   private calculateAttributeSimilarity(
     source: ContentItem,
@@ -829,7 +829,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 應用過濾器
+   * ApplyFilter器
    */
   private applyFilters(
     items: ContentItem[],
@@ -900,14 +900,14 @@ class ContentRecommendationService {
   }
 
   /**
-   * 生成緩存鍵
+   * 生成CacheKey
    */
   private generateCacheKey(request: GetContentRecommendationsRequest): string {
     return `${request.userId}_${request.algorithm || 'default'}_${request.similarityMethod || 'default'}_${JSON.stringify(request.filters || {})}_${JSON.stringify(request.options || {})}`;
   }
 
   /**
-   * 獲取緩存的推薦
+   * GetCache的推薦
    */
   private getCachedRecommendations(
     cacheKey: string
@@ -920,7 +920,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 緩存推薦
+   * Cache推薦
    */
   private cacheRecommendations(
     cacheKey: string,
@@ -934,7 +934,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取緩存的相似度
+   * GetCache的相似度
    */
   private getCachedSimilarities(contentId: string): ContentSimilarity[] | null {
     const _cached = this.cache.similarities[contentId];
@@ -945,7 +945,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 緩存相似度
+   * Cache相似度
    */
   private cacheSimilarities(
     contentId: string,
@@ -959,7 +959,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 清理過期緩存
+   * 清理過期Cache
    */
   private cleanupExpiredCache(): void {
     const _now = new Date();
@@ -978,7 +978,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 清除用戶緩存
+   * ClearUserCache
    */
   private clearUserCache(userId: string): void {
     Object.keys(this.cache.recommendations).forEach(key => {
@@ -989,7 +989,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取默認配置
+   * GetDefaultConfigure
    */
   private getDefaultConfig(): ContentRecommendationConfig {
     return {
@@ -1028,7 +1028,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取默認統計
+   * GetDefaultStatistics
    */
   private getDefaultStats(): ContentRecommendationStats {
     return {
@@ -1057,21 +1057,21 @@ class ContentRecommendationService {
   }
 
   /**
-   * 加載配置
+   * 加載Configure
    */
   private async loadConfig(): Promise<void> {
     console.log('Loading ContentRecommendationService config...');
   }
 
   /**
-   * 初始化統計
+   * InitializeStatistics
    */
   private async initializeStats(): Promise<void> {
     console.log('Initializing ContentRecommendationService stats...');
   }
 
   /**
-   * 獲取用戶偏好
+   * GetUserPreferences
    */
   private async getUserPreference(userId: string): Promise<UserPreference> {
     return {
@@ -1089,7 +1089,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取內容項目
+   * GetContent項目
    */
   private async getContentItems(): Promise<ContentItem[]> {
     return [
@@ -1185,7 +1185,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取用戶互動
+   * GetUser互動
    */
   private async getUserInteraction(
     userId: string,
@@ -1203,7 +1203,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 提取內容特徵
+   * 提取Content特徵
    */
   private async extractContentFeatures(item: ContentItem): Promise<any> {
     return {
@@ -1238,7 +1238,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 獲取算法參數
+   * Get算法Parameter
    */
   private getAlgorithmParameters(): unknown {
     return {
@@ -1274,7 +1274,7 @@ class ContentRecommendationService {
   }
 
   /**
-   * 更新統計
+   * UpdateStatistics
    */
   private updateStats(response: GetContentRecommendationsResponse): void {
     this.stats.totalRecommendations += response.totalCount;

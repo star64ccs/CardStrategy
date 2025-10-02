@@ -16,26 +16,26 @@ import {
   ExportStatus,
 } from '../../features/analytics/types/report';
 
-// 狀態接口
+// StatusInterface
 export interface ReportState {
-  // 模板相關
+  // 模板相Off
   templates: ReportTemplate[];
   currentTemplate: ReportTemplate | null;
   selectedTemplateId: string | null;
 
-  // 報告相關
+  // Report相Off
   reports: ReportInstance[];
   currentReport: ReportInstance | null;
   selectedReportId: string | null;
 
-  // 導出相關
+  // Export相Off
   exports: ReportExport[];
   currentExport: ReportExport | null;
 
-  // 分析相關
+  // Analysis相Off
   analytics: ReportAnalytics | null;
 
-  // 過濾和分頁
+  // Filter和Paginate
   filterOptions: {
     category?: string;
     type?: string;
@@ -49,13 +49,13 @@ export interface ReportState {
     totalPages: number;
   };
 
-  // 狀態管理
+  // StatusManage
   isLoading: boolean;
   error: string | null;
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
 }
 
-// 初始狀態
+// 初始Status
 const initialState: ReportState = {
   templates: [],
   currentTemplate: null,
@@ -78,7 +78,7 @@ const initialState: ReportState = {
   status: 'idle',
 };
 
-// 異步 Thunks
+// Async Thunks
 export const _initializeReportService = createAsyncThunk(
   'report/initializeService',
   async (config?: unknown) => {
@@ -171,7 +171,7 @@ const _reportSlice = createSlice({
   name: 'report',
   initialState,
   reducers: {
-    // 模板相關
+    // 模板相Off
     setCurrentTemplate: (
       state,
       action: PayloadAction<ReportTemplate | null>
@@ -204,7 +204,7 @@ const _reportSlice = createSlice({
       }
     },
 
-    // 報告相關
+    // Report相Off
     setCurrentReport: (state, action: PayloadAction<ReportInstance | null>) => {
       state.currentReport = action.payload;
       state.selectedReportId = action.payload?.id || null;
@@ -234,7 +234,7 @@ const _reportSlice = createSlice({
       }
     },
 
-    // 導出相關
+    // Export相Off
     setCurrentExport: (state, action: PayloadAction<ReportExport | null>) => {
       state.currentExport = action.payload;
     },
@@ -251,21 +251,21 @@ const _reportSlice = createSlice({
       }
     },
 
-    // 分析相關
+    // Analysis相Off
     setAnalytics: (state, action: PayloadAction<ReportAnalytics>) => {
       state.analytics = action.payload;
     },
 
-    // 過濾和分頁
+    // Filter和Paginate
     setFilterOptions: (state, action: PayloadAction<any>) => {
       state.filterOptions = { ...state.filterOptions, ...action.payload };
-      state.pagination.page = 1; // 重置到第一頁
+      state.pagination.page = 1; // Reset到第一頁
     },
     setPagination: (state, action: PayloadAction<any>) => {
       state.pagination = { ...state.pagination, ...action.payload };
     },
 
-    // 狀態管理
+    // StatusManage
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
@@ -281,7 +281,7 @@ const _reportSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      // 初始化服務
+      // InitializeService
       .addCase(initializeReportService.pending, state => {
         state.status = 'loading';
         state.isLoading = true;
@@ -294,10 +294,10 @@ const _reportSlice = createSlice({
       .addCase(initializeReportService.rejected, (state, action) => {
         state.status = 'failed';
         state.isLoading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       })
 
-      // 創建模板
+      // Create模板
       .addCase(createTemplate.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -310,10 +310,10 @@ const _reportSlice = createSlice({
       })
       .addCase(createTemplate.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '創建模板失敗';
+        state.error = action.error.message || 'Create模板Failed';
       })
 
-      // 獲取模板
+      // Get模板
       .addCase(getTemplate.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -325,10 +325,10 @@ const _reportSlice = createSlice({
       })
       .addCase(getTemplate.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取模板失敗';
+        state.error = action.error.message || 'Get模板Failed';
       })
 
-      // 創建報告
+      // CreateReport
       .addCase(createReport.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -341,10 +341,10 @@ const _reportSlice = createSlice({
       })
       .addCase(createReport.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '創建報告失敗';
+        state.error = action.error.message || 'Create報告Failed';
       })
 
-      // 獲取報告
+      // GetReport
       .addCase(getReport.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -356,10 +356,10 @@ const _reportSlice = createSlice({
       })
       .addCase(getReport.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取報告失敗';
+        state.error = action.error.message || 'Get報告Failed';
       })
 
-      // 導出報告
+      // ExportReport
       .addCase(exportReport.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -371,10 +371,10 @@ const _reportSlice = createSlice({
       })
       .addCase(exportReport.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '導出報告失敗';
+        state.error = action.error.message || '導出報告Failed';
       })
 
-      // 獲取分析
+      // GetAnalysis
       .addCase(getAnalytics.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -385,12 +385,12 @@ const _reportSlice = createSlice({
       })
       .addCase(getAnalytics.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取分析失敗';
+        state.error = action.error.message || 'Get分析Failed';
       });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   setCurrentTemplate,
   setSelectedTemplateId,
@@ -414,7 +414,7 @@ export const {
   resetState,
 } = reportSlice.actions;
 
-// 選擇器
+// Select器
 export const _selectTemplates = (state: { report: ReportState }) =>
   state.report.templates;
 export const _selectCurrentTemplate = (state: { report: ReportState }) =>
@@ -444,7 +444,7 @@ export const _selectError = (state: { report: ReportState }) =>
 export const _selectStatus = (state: { report: ReportState }) =>
   state.report.status;
 
-// 計算選擇器
+// 計算Select器
 export const _selectActiveTemplates = (state: { report: ReportState }) =>
   state.report.templates.filter(t => t.isActive);
 

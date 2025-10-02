@@ -10,10 +10,10 @@ import { ApiError } from '../types';
 import { retry, safeExecute } from './helpers';
 import { AuthStorage } from './storage';
 
-// 導入類型定義
+// ImportClass型定義
 import type { HttpMethod, RequestConfig } from './types';
 
-// API 客戶端類
+// API ClientClass
 export class ApiClient {
   private readonly baseURL: string;
   private readonly defaultTimeout: number;
@@ -32,7 +32,7 @@ export class ApiClient {
     this.defaultRetryDelay = retryDelay;
   }
 
-  // 發送請求
+  // SendRequest
   async request<T>(config: RequestConfig): Promise<ApiResponse<T>> {
     const {
       method,
@@ -46,16 +46,16 @@ export class ApiClient {
       withAuth = true,
     } = config;
 
-    // 構建完整 URL
+    // Build完整 URL
     const _fullURL = this.buildURL(url, params);
 
-    // 準備請求頭
+    // 準備Request頭
     const _requestHeaders = await this.prepareHeaders(headers, withAuth);
 
-    // 準備請求體
+    // 準備Request體
     const _requestBody = this.prepareRequestBody(data);
 
-    // 發送請求（帶重試機制）
+    // SendRequest（帶Retry機制）
     return retry(
       () =>
         this.sendRequest<T>(
@@ -70,7 +70,7 @@ export class ApiClient {
     );
   }
 
-  // 構建完整 URL
+  // Build完整 URL
   private buildURL(url: string, params?: Record<string, any>): string {
     const _fullURL = url.startsWith('http') ? url : `${this.baseURL}${url}`;
 
@@ -88,7 +88,7 @@ export class ApiClient {
     return urlObj.toString();
   }
 
-  // 準備請求頭
+  // 準備Request頭
   private async prepareHeaders(
     headers: Record<string, string>,
     withAuth: boolean
@@ -111,7 +111,7 @@ export class ApiClient {
     return finalHeaders;
   }
 
-  // 準備請求體
+  // 準備Request體
   private prepareRequestBody(data?: unknown): string | undefined {
     if (!data) {
       return undefined;
@@ -124,7 +124,7 @@ export class ApiClient {
     return JSON.stringify(data);
   }
 
-  // 發送實際請求
+  // Send實際Request
   private async sendRequest<T>(
     url: string,
     method: HttpMethod,
@@ -168,7 +168,7 @@ export class ApiClient {
     }
   }
 
-  // 解析響應
+  // ParseResponse
   private async parseResponse<T>(response: Response): Promise<T> {
     const _contentType = response.headers.get('content-type');
 
@@ -184,7 +184,7 @@ export class ApiClient {
     return response.blob() as T;
   }
 
-  // 處理請求錯誤
+  // HandleRequestError
   private handleRequestError(error: unknown): Error {
     if (error instanceof Error) {
       return error;
@@ -195,13 +195,13 @@ export class ApiClient {
     }
 
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      return new Error('網絡連接失敗');
+      return new Error('網絡ConnectFailed');
     }
 
-    return new Error('未知錯誤');
+    return new Error('未知Error');
   }
 
-  // 便捷方法
+  // 便捷Method
   async get<T>(
     url: string,
     config?: Partial<RequestConfig>
@@ -241,10 +241,10 @@ export class ApiClient {
   }
 }
 
-// 創建默認 API 客戶端實例
+// CreateDefault API ClientInstance
 export const _apiClient = new ApiClient();
 
-// 導出便捷函數
+// Export便捷Function
 export const _api = {
   get: <T>(url: string, config?: Partial<RequestConfig>) =>
     apiClient.get<T>(url, config),
@@ -258,5 +258,5 @@ export const _api = {
     apiClient.patch<T>(url, data, config),
 };
 
-// 導出類型
+// ExportClass型
 export type { RequestConfig, HttpMethod } from './types';

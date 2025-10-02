@@ -5,7 +5,7 @@ require('dotenv').config({
 const { connectDB, getSequelize } = require('../config/database');
 const logger = require('../utils/logger');
 
-// 導入所有模型
+// Import所有模型
 const getUserModel = require('../models/User');
 const getCardModel = require('../models/Card');
 const getCollectionModel = require('../models/Collection');
@@ -15,7 +15,7 @@ const getPriceAlertModel = require('../models/PriceAlert');
 const getMarketDataModel = require('../models/MarketData');
 const getAIAnalysisModel = require('../models/AIAnalysis');
 
-// 建立模型關聯
+// 建立模型Off聯
 const setupAssociations = (sequelize) => {
   const User = getUserModel();
   const Card = getCardModel();
@@ -40,7 +40,7 @@ const setupAssociations = (sequelize) => {
   }
 
   try {
-    // User 關聯
+    // User Off聯
     User.hasMany(Collection, { foreignKey: 'userId', as: 'collections' });
     User.hasMany(Investment, { foreignKey: 'userId', as: 'investments' });
     User.hasMany(PriceAlert, { foreignKey: 'userId', as: 'priceAlerts' });
@@ -51,7 +51,7 @@ const setupAssociations = (sequelize) => {
     PriceAlert.belongsTo(User, { foreignKey: 'userId', as: 'user' });
     AIAnalysis.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-    // Card 關聯
+    // Card Off聯
     Card.hasMany(Investment, { foreignKey: 'cardId', as: 'investments' });
     Card.hasMany(PriceAlert, { foreignKey: 'cardId', as: 'priceAlerts' });
     Card.hasMany(MarketData, { foreignKey: 'cardId', as: 'marketDataRecords' });
@@ -68,7 +68,7 @@ const setupAssociations = (sequelize) => {
     MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
     AIAnalysis.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
-    // Collection 關聯
+    // Collection Off聯
     Collection.belongsToMany(Card, {
       through: CollectionCard,
       foreignKey: 'collectionId',
@@ -76,7 +76,7 @@ const setupAssociations = (sequelize) => {
       as: 'cards',
     });
 
-    // CollectionCard 關聯
+    // CollectionCard Off聯
     CollectionCard.belongsTo(Collection, {
       foreignKey: 'collectionId',
       as: 'collection',
@@ -90,12 +90,12 @@ const setupAssociations = (sequelize) => {
   }
 };
 
-// 創建測試數據
+// CreateTestData
 const createSeedData = async () => {
   try {
     logger.info('開始創建測試數據...');
 
-    // 連接數據庫
+    // ConnectDatabase
     await connectDB();
     const sequelize = getSequelize();
 
@@ -103,7 +103,7 @@ const createSeedData = async () => {
       throw new Error('無法獲取 Sequelize 實例');
     }
 
-    // 初始化所有模型
+    // Initialize所有模型
     getUserModel();
     getCardModel();
     getCollectionModel();
@@ -113,17 +113,17 @@ const createSeedData = async () => {
     getMarketDataModel();
     getAIAnalysisModel();
 
-    // 設置關聯
+    // SettingsOff聯
     setupAssociations(sequelize);
 
-    // 檢查是否已有數據
+    // CheckYesNo已有Data
     const userCount = await getUserModel().count();
     if (userCount > 0) {
       logger.info('數據庫中已有數據，跳過種子數據創建');
       return;
     }
 
-    // 創建測試用戶
+    // CreateTestUser
     logger.info('創建測試用戶...');
     const testUser = await getUserModel().create({
       username: 'testuser',
@@ -158,7 +158,7 @@ const createSeedData = async () => {
       },
     });
 
-    // 創建測試卡片
+    // CreateTest卡片
     logger.info('創建測試卡片...');
     const testCards = await getCardModel().bulkCreate([
       {
@@ -256,7 +256,7 @@ const createSeedData = async () => {
       },
     ]);
 
-    // 創建測試收藏
+    // CreateTest收藏
     logger.info('創建測試收藏...');
     const testCollection = await getCollectionModel().create({
       name: '我的最愛收藏',
@@ -275,7 +275,7 @@ const createSeedData = async () => {
       userId: testUser.id,
     });
 
-    // 創建收藏卡片關聯
+    // Create收藏卡片Off聯
     logger.info('創建收藏卡片關聯...');
     await getCollectionCardModel().bulkCreate([
       {
@@ -304,7 +304,7 @@ const createSeedData = async () => {
       },
     ]);
 
-    // 創建測試投資
+    // CreateTest投資
     logger.info('創建測試投資...');
     await getInvestmentModel().bulkCreate([
       {
@@ -343,7 +343,7 @@ const createSeedData = async () => {
       },
     ]);
 
-    // 創建測試價格提醒
+    // CreateTest價格提醒
     logger.info('創建測試價格提醒...');
     await getPriceAlertModel().bulkCreate([
       {
@@ -380,7 +380,7 @@ const createSeedData = async () => {
       },
     ]);
 
-    // 創建測試市場數據
+    // CreateTest市場Data
     logger.info('創建測試市場數據...');
     const today = new Date();
     const yesterday = new Date(today);
@@ -389,7 +389,7 @@ const createSeedData = async () => {
     weekAgo.setDate(weekAgo.getDate() - 7);
 
     await getMarketDataModel().bulkCreate([
-      // 青眼白龍的市場數據
+      // 青眼白龍的市場Data
       {
         cardId: testCards[0].id,
         date: weekAgo.toISOString().split('T')[0],
@@ -438,7 +438,7 @@ const createSeedData = async () => {
         volatility: 2.04,
         isActive: true,
       },
-      // 黑魔導的市場數據
+      // 黑魔導的市場Data
       {
         cardId: testCards[1].id,
         date: weekAgo.toISOString().split('T')[0],
@@ -487,7 +487,7 @@ const createSeedData = async () => {
         volatility: 1.26,
         isActive: true,
       },
-      // 真紅眼黑龍的市場數據
+      // True紅眼黑龍的市場Data
       {
         cardId: testCards[2].id,
         date: weekAgo.toISOString().split('T')[0],
@@ -538,7 +538,7 @@ const createSeedData = async () => {
       },
     ]);
 
-    // 更新用戶統計
+    // UpdateUserStatistics
     logger.info('更新用戶統計...');
     const totalCards = await getCollectionCardModel().count({
       include: [
@@ -586,13 +586,13 @@ const createSeedData = async () => {
 
     process.exit(0);
   } catch (error) {
-    logger.error('❌ 創建測試數據失敗：', error.message);
-    logger.error('錯誤詳情：', error);
+    logger.error('❌ Create測試數據Failed：', error.message);
+    logger.error('Error詳情：', error);
     process.exit(1);
   }
 };
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   createSeedData();
 }

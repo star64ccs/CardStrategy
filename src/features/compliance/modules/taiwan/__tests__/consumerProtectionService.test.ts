@@ -1,4 +1,4 @@
-// 台灣消費者保護法服務測試
+// 台灣消費者保護法ServiceTest
 // Taiwan Consumer Protection Act Service Tests
 
 import { TaiwanConsumerProtectionService } from '../services/consumerProtectionService';
@@ -52,7 +52,7 @@ describe('TaiwanConsumerProtectionService', () => {
       const rights: TaiwanConsumerRights = {
         id: 'test-rights-1',
         rightType: TaiwanConsumerRightType.SAFETY,
-        description: '消費者有權獲得安全的商品和服務',
+        description: '消費者有權獲得安全的商品和Service',
         applicableProducts: ['electronics', 'toys'],
         applicableServices: ['online_services'],
         enforcementMechanism: TaiwanEnforcementMechanism.ADMINISTRATIVE,
@@ -212,7 +212,7 @@ describe('TaiwanConsumerProtectionService', () => {
       const _result = service.handleConsumerDispute(dispute);
 
       expect(result.success).toBe(true);
-      expect(result.message).toContain('消費者爭議已成功提交');
+      expect(result.message).toContain('消費者爭議已Success提交');
       expect(result.data?.disputeId).toBe(dispute.id);
     });
   });

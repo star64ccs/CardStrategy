@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 模擬數據庫響應的用戶數據
+// 模擬DatabaseResponse的UserData
 const mockUsers = [
   {
     id: 1,
@@ -22,7 +22,7 @@ const mockUsers = [
   }
 ];
 
-// 模擬卡片數據
+// 模擬卡片Data
 const mockCards = [
   {
     id: 1,
@@ -56,7 +56,7 @@ const mockCards = [
   }
 ];
 
-// 健康檢查端點
+// 健康Check端點
 app.get('/health', (req, res) => {
   res.status(200).json({
     status: 'healthy',
@@ -67,7 +67,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API健康檢查端點 - 這是 Render 期望的路徑
+// API健康Check端點 - 這Yes Render 期望的Path
 app.get('/api/health', (req, res) => {
   try {
     res.status(200).json({
@@ -96,7 +96,7 @@ app.get('/api/health', (req, res) => {
   }
 });
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   res.status(200).json({
     name: 'CardStrategy API',
@@ -119,7 +119,7 @@ app.get('/', (req, res) => {
 app.get('/api/cards', (req, res) => {
   res.status(200).json({
     success: true,
-    message: '卡片列表獲取成功',
+    message: '卡片列表GetSuccess',
     data: mockCards
   });
 });
@@ -137,16 +137,16 @@ app.get('/api/cards/:id', (req, res) => {
   
   res.status(200).json({
     success: true,
-    message: '卡片詳情獲取成功',
+    message: '卡片詳情GetSuccess',
     data: card
   });
 });
 
-// 模擬用戶 API
+// 模擬User API
 app.get('/api/users/profile', (req, res) => {
   res.status(200).json({
     success: true,
-    message: '用戶資料獲取成功',
+    message: '用戶資料GetSuccess',
     data: mockUsers[0]
   });
 });
@@ -166,20 +166,20 @@ app.get('/api/collections', (req, res) => {
   
   res.status(200).json({
     success: true,
-    message: '收藏列表獲取成功',
+    message: '收藏列表GetSuccess',
     data: mockCollections
   });
 });
 
-// 模擬認證 API
+// 模擬Authenticate API
 app.post('/api/auth/login', (req, res) => {
   const { identifier, password } = req.body;
   
-  // 簡單的演示登錄
+  // 簡單的演示Login
   if (identifier === 'demo' && password === 'demo123') {
     res.status(200).json({
       success: true,
-      message: '登錄成功',
+      message: '登錄Success',
       data: {
         user: mockUsers[0],
         token: 'mock_jwt_token_' + Date.now(),
@@ -189,7 +189,7 @@ app.post('/api/auth/login', (req, res) => {
   } else {
     res.status(401).json({
       success: false,
-      message: '用戶名或密碼錯誤'
+      message: '用戶名或密碼Error'
     });
   }
 });
@@ -197,7 +197,7 @@ app.post('/api/auth/login', (req, res) => {
 app.post('/api/auth/register', (req, res) => {
   res.status(200).json({
     success: true,
-    message: '註冊成功（演示模式）',
+    message: '註冊Success（演示模式）',
     data: {
       user: mockUsers[0],
       token: 'mock_jwt_token_' + Date.now()
@@ -205,7 +205,7 @@ app.post('/api/auth/register', (req, res) => {
   });
 });
 
-// 404 處理
+// 404 Handle
 app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Not Found',
@@ -214,7 +214,7 @@ app.use('*', (req, res) => {
   });
 });
 
-// 錯誤處理
+// ErrorHandle
 app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
   // eslint-disable-next-line no-console
   console.error('Error:', err);
@@ -254,7 +254,7 @@ const startServer = async () => {
       console.log(`📱 Demo login: demo / demo123`);
     });
 
-    // 優雅關閉
+    // 優雅Off閉
     process.on('SIGTERM', () => {
       // eslint-disable-next-line no-console
       console.log('SIGTERM received, shutting down gracefully');
@@ -273,7 +273,7 @@ const startServer = async () => {
   }
 };
 
-// 啟動服務器
+// StartServer
 if (require.main === module) {
   startServer();
 }

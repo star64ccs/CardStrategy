@@ -26,7 +26,7 @@ class ApiClient {
     this.config = {
       baseURL:
         process.env.NODE_ENV === 'test'
-          ? '/api' // 測試環境使用相對路徑
+          ? '/api' // Test環境使用相對Path
           : process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000/api',
       timeout: 30000,
       headers: {
@@ -41,7 +41,7 @@ class ApiClient {
   }
 
   private setupInterceptors(): void {
-    // 請求攔截器
+    // Request攔截器
     this.instance.interceptors.request.use(
       config => {
         logger.debug('API Request', {
@@ -50,7 +50,7 @@ class ApiClient {
           data: config.data,
         });
 
-        // 添加認證令牌
+        // AddAuthenticate令牌
         this.addAuthToken(config);
 
         return config;
@@ -61,7 +61,7 @@ class ApiClient {
       }
     );
 
-    // 響應攔截器
+    // Response攔截器
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => {
         logger.debug('API Response', {
@@ -80,7 +80,7 @@ class ApiClient {
           data: error.response?.data,
         });
 
-        // 處理 401 未授權錯誤
+        // Handle 401 未AuthorizeError
         if (error.response?.status === 401) {
           await this.handleUnauthorized();
         }
@@ -92,12 +92,12 @@ class ApiClient {
 
   private async addAuthToken(config: AxiosRequestConfig): Promise<void> {
     try {
-      // 在測試環境中跳過認證令牌
+      // 在Test環境中SkipAuthenticate令牌
       if (process.env.NODE_ENV === 'test') {
         return;
       }
 
-      // 在運行時使用 import
+      // 在運Row時使用 import
       const _module = await import('@react-native-async-storage/async-storage');
       const _AsyncStorage = module.default;
       const _token = await AsyncStorage.getItem('accessToken');
@@ -113,19 +113,19 @@ class ApiClient {
 
   private async handleUnauthorized(): Promise<void> {
     try {
-      // 在測試環境中跳過處理
+      // 在Test環境中SkipHandle
       if (process.env.NODE_ENV === 'test') {
         return;
       }
 
-      // 嘗試刷新令牌
+      // 嘗試Refresh令牌
       const { authService } = await import('@/services/authService');
       const _refreshResult = await authService.refreshToken();
 
       if (!refreshResult.success) {
-        // 刷新失敗，清除認證數據並重定向到登錄頁面
+        // RefreshFailed，ClearAuthenticateData並重定向到Login頁面
         await authService.logout();
-        // 這裡可以觸發重定向到登錄頁面的事件
+        // 這裡可以觸發重定向到Login頁面的Event
         logger.warn('Authentication expired, redirecting to login');
       }
     } catch (error) {
@@ -138,12 +138,12 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
     if (process.env.NODE_ENV === 'test') {
-      // 在測試環境中使用 fetch
+      // 在Test環境中使用 fetch
       const _fullUrl = url.startsWith('http')
         ? url
         : `http://localhost${this.config.baseURL}${url}`;
 
-      // 創建超時控制器
+      // Create超時Control器
       const _controller = new AbortController();
       const _timeoutId = setTimeout(
         () => controller.abort(),
@@ -186,7 +186,7 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
     if (process.env.NODE_ENV === 'test') {
-      // 在測試環境中使用 fetch
+      // 在Test環境中使用 fetch
       const _fullUrl = url.startsWith('http')
         ? url
         : `http://localhost${this.config.baseURL}${url}`;
@@ -217,7 +217,7 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
     if (process.env.NODE_ENV === 'test') {
-      // 在測試環境中使用 fetch
+      // 在Test環境中使用 fetch
       const _fullUrl = url.startsWith('http')
         ? url
         : `http://localhost${this.config.baseURL}${url}`;
@@ -248,7 +248,7 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
     if (process.env.NODE_ENV === 'test') {
-      // 在測試環境中使用 fetch
+      // 在Test環境中使用 fetch
       const _fullUrl = url.startsWith('http')
         ? url
         : `http://localhost${this.config.baseURL}${url}`;
@@ -278,7 +278,7 @@ class ApiClient {
     config?: AxiosRequestConfig
   ): Promise<AxiosResponse<T>> {
     if (process.env.NODE_ENV === 'test') {
-      // 在測試環境中使用 fetch
+      // 在Test環境中使用 fetch
       const _fullUrl = url.startsWith('http')
         ? url
         : `http://localhost${this.config.baseURL}${url}`;
@@ -305,7 +305,7 @@ class ApiClient {
   public updateConfig(newConfig: Partial<ApiConfig>): void {
     this.config = { ...this.config, ...newConfig };
 
-    // 更新 axios 實例配置
+    // Update axios InstanceConfigure
     this.instance.defaults.baseURL = this.config.baseURL;
     this.instance.defaults.timeout = this.config.timeout;
     if (this.config.headers) {
@@ -321,10 +321,10 @@ class ApiClient {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _api = new ApiClient();
 
-// 導出便捷方法
+// Export便捷Method
 export const _apiGet = <T = any>(url: string, config?: AxiosRequestConfig) =>
   api.get<T>(url, config);
 export const _apiPost = <T = any>(

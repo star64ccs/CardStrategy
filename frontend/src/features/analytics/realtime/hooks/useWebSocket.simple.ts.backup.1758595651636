@@ -1,0 +1,120 @@
+/**
+ * 簡化版 WebSocket Hook
+ * 專為測試環境設計，避免複雜的依賴和異步操作
+ */
+
+import { useCallback, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../store';
+
+// 簡化的類型定義
+interface SimpleWebSocketState {
+  isInitialized: boolean;
+  status: string;
+  isConnected: boolean;
+  isConnecting: boolean;
+  hasError: boolean;
+  error: string | null;
+  lastMessage: any;
+  unreadCount: number;
+  notifications: any[];
+}
+
+interface SimpleWebSocketHandlers {
+  initialize: (config?: any) => Promise<void>;
+  connect: () => Promise<void>;
+  disconnect: () => Promise<void>;
+  sendMessage: (message: any) => Promise<void>;
+  clearMessages: () => void;
+  clearNotifications: () => void;
+  clearError: () => void;
+  getStats: () => any;
+  getConnectionState: () => string;
+  getConfig: () => any;
+}
+
+export const useWebSocket = (): SimpleWebSocketState &
+  SimpleWebSocketHandlers => {
+  const dispatch = useDispatch<AppDispatch>();
+  const websocketState = useSelector((state: RootState) => state.websocket);
+  const eventHandlersRef = useRef({});
+
+  // 防護性檢查 - 如果websocketState為undefined，使用默認值
+  const safeState: SimpleWebSocketState = websocketState || {
+    isInitialized: false,
+    status: 'disconnected',
+    isConnected: false,
+    isConnecting: false,
+    hasError: false,
+    error: null,
+    lastMessage: null,
+    unreadCount: 0,
+    notifications: [],
+  };
+
+  // 簡化的方法實現
+  const initialize = useCallback(async (config?: any) => {
+    // 在測試環境中，只返回成功，不做實際操作
+    // console.log('initialize called with config:', config);
+  }, []);
+
+  const connect = useCallback(async () => {
+    // console.log('connect called');
+  }, []);
+
+  const disconnect = useCallback(async () => {
+    // console.log('disconnect called');
+  }, []);
+
+  const sendMessage = useCallback(async (message: any) => {
+    // console.log('sendMessage called with:', message);
+  }, []);
+
+  const clearMessages = useCallback(() => {
+    // console.log('clearMessages called');
+  }, []);
+
+  const clearNotifications = useCallback(() => {
+    // console.log('clearNotifications called');
+  }, []);
+
+  const clearError = useCallback(() => {
+    // console.log('clearError called');
+  }, []);
+
+  const getStats = useCallback(() => {
+    return {
+      totalMessages: 0,
+      totalErrors: 0,
+      uptime: 0,
+    };
+  }, []);
+
+  const getConnectionState = useCallback(() => {
+    return 'disconnected';
+  }, []);
+
+  const getConfig = useCallback(() => {
+    return {
+      url: '',
+      reconnectInterval: 5000,
+      maxReconnectAttempts: 3,
+    };
+  }, []);
+
+  return {
+    // 狀態
+    ...safeState,
+    // 方法
+    initialize,
+    connect,
+    disconnect,
+    sendMessage,
+    clearMessages,
+    clearNotifications,
+    clearError,
+    getStats,
+    getConnectionState,
+    getConfig,
+  };
+};

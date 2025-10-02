@@ -1,4 +1,4 @@
-// 市場價格系統類型定義
+// 市場價格系統Class型定義
 export enum PriceSource {
   MARKETPLACE = 'marketplace',
   AUCTION = 'auction',

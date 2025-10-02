@@ -1,5 +1,5 @@
 /**
- * 價格平台類型
+ * 價格平台Class型
  */
 export interface PricePlatform {
   id: string;
@@ -11,7 +11,7 @@ export interface PricePlatform {
 }
 
 /**
- * 評級機構類型
+ * 評級機構Class型
  */
 export interface GradingAgency {
   id: string;
@@ -22,7 +22,7 @@ export interface GradingAgency {
 }
 
 /**
- * 歷史價格數據類型
+ * 歷史價格DataClass型
  */
 export interface HistoricalPriceData {
   cardId: string;
@@ -34,7 +34,7 @@ export interface HistoricalPriceData {
 }
 
 /**
- * 評級機構數據類型
+ * 評級機構DataClass型
  */
 export interface GradingAgencyData {
   cardId: string;
@@ -46,7 +46,7 @@ export interface GradingAgencyData {
 }
 
 /**
- * 價格警報類型
+ * 價格AlertClass型
  */
 export interface PriceAlert {
   id: string;
@@ -59,7 +59,7 @@ export interface PriceAlert {
 }
 
 /**
- * 市場統計類型
+ * 市場StatisticsClass型
  */
 export interface MarketStats {
   totalCards: number;

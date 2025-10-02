@@ -15,7 +15,7 @@ describe('MembershipService', () => {
   });
 
   describe('getMembershipStatus', () => {
-    it('應該成功獲取會員狀態', async () => {
+    it('應該SuccessGet會員狀態', async () => {
       const _mockStatus = {
         tier: 'premium',
         status: 'active',
@@ -28,19 +28,19 @@ describe('MembershipService', () => {
 
       expect(result).toEqual(mockStatus);
       expect(mockApiService.get).toHaveBeenCalledWith('/membership/status');
-      expect(mockLogger.info).toHaveBeenCalledWith('獲取會員狀態成功', {
+      expect(mockLogger.info).toHaveBeenCalledWith('Get會員狀態Success', {
         status: mockStatus,
       });
     });
 
-    it('應該處理獲取會員狀態失敗', async () => {
-      const _error = new Error('API 錯誤');
+    it('應該HandleGet會員狀態Failed', async () => {
+      const _error = new Error('API Error');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(membershipService.getMembershipStatus()).rejects.toThrow(
-        'API 錯誤'
+        'API Error'
       );
-      expect(mockLogger.error).toHaveBeenCalledWith('獲取會員狀態失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('Get會員狀態Failed:', error);
     });
   });
 
@@ -51,7 +51,7 @@ describe('MembershipService', () => {
       billingCycle: 'monthly',
     };
 
-    it('應該成功升級會員', async () => {
+    it('應該Success升級會員', async () => {
       const _mockResponse = {
         success: true,
         membership: {
@@ -69,19 +69,19 @@ describe('MembershipService', () => {
         '/membership/upgrade',
         mockUpgradeData
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('會員升級成功', {
+      expect(mockLogger.info).toHaveBeenCalledWith('會員升級Success', {
         tier: mockUpgradeData.tier,
       });
     });
 
-    it('應該處理升級失敗', async () => {
-      const _error = new Error('升級失敗');
+    it('應該Handle升級Failed', async () => {
+      const _error = new Error('升級Failed');
       mockApiService.post.mockRejectedValue(error);
 
       await expect(
         membershipService.upgradeMembership(mockUpgradeData)
-      ).rejects.toThrow('升級失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('會員升級失敗:', error);
+      ).rejects.toThrow('升級Failed');
+      expect(mockLogger.error).toHaveBeenCalledWith('會員升級Failed:', error);
     });
 
     it('應該驗證輸入數據', async () => {
@@ -100,7 +100,7 @@ describe('MembershipService', () => {
       duration: 7,
     };
 
-    it('應該成功開始試用期', async () => {
+    it('應該Success開始試用期', async () => {
       const _mockResponse = {
         success: true,
         trial: {
@@ -119,24 +119,24 @@ describe('MembershipService', () => {
         '/membership/trial/start',
         mockTrialData
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('試用期開始成功', {
+      expect(mockLogger.info).toHaveBeenCalledWith('試用期開始Success', {
         tier: mockTrialData.tier,
       });
     });
 
-    it('應該處理開始試用期失敗', async () => {
-      const _error = new Error('試用期開始失敗');
+    it('應該Handle開始試用期Failed', async () => {
+      const _error = new Error('試用期開始Failed');
       mockApiService.post.mockRejectedValue(error);
 
       await expect(membershipService.startTrial(mockTrialData)).rejects.toThrow(
-        '試用期開始失敗'
+        '試用期開始Failed'
       );
-      expect(mockLogger.error).toHaveBeenCalledWith('試用期開始失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('試用期開始Failed:', error);
     });
   });
 
   describe('cancelTrial', () => {
-    it('應該成功取消試用期', async () => {
+    it('應該Success取消試用期', async () => {
       const _mockResponse = { success: true };
       mockApiService.post.mockResolvedValue(mockResponse);
 
@@ -146,22 +146,22 @@ describe('MembershipService', () => {
       expect(mockApiService.post).toHaveBeenCalledWith(
         '/membership/trial/cancel'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('試用期取消成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('試用期取消Success');
     });
 
-    it('應該處理取消試用期失敗', async () => {
-      const _error = new Error('取消試用期失敗');
+    it('應該Handle取消試用期Failed', async () => {
+      const _error = new Error('取消試用期Failed');
       mockApiService.post.mockRejectedValue(error);
 
       await expect(membershipService.cancelTrial()).rejects.toThrow(
-        '取消試用期失敗'
+        '取消試用期Failed'
       );
-      expect(mockLogger.error).toHaveBeenCalledWith('試用期取消失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('試用期取消Failed:', error);
     });
   });
 
   describe('checkFeatureUsage', () => {
-    it('應該成功檢查功能使用情況', async () => {
+    it('應該SuccessCheck功能使用情況', async () => {
       const _mockUsage = {
         feature: 'ai_analysis',
         usage: 5,
@@ -176,20 +176,20 @@ describe('MembershipService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith(
         '/membership/features/ai_analysis/usage'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('檢查功能使用情況成功', {
+      expect(mockLogger.info).toHaveBeenCalledWith('Check功能使用情況Success', {
         feature: 'ai_analysis',
       });
     });
 
-    it('應該處理檢查功能使用情況失敗', async () => {
-      const _error = new Error('檢查失敗');
+    it('應該HandleCheck功能使用情況Failed', async () => {
+      const _error = new Error('CheckFailed');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(
         membershipService.checkFeatureUsage('ai_analysis')
-      ).rejects.toThrow('檢查失敗');
+      ).rejects.toThrow('CheckFailed');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '檢查功能使用情況失敗:',
+        'Check功能使用情況Failed:',
         error
       );
     });
@@ -202,7 +202,7 @@ describe('MembershipService', () => {
       metadata: { cardId: 'card-123' },
     };
 
-    it('應該成功記錄功能使用', async () => {
+    it('應該Success記錄功能使用', async () => {
       const _mockResponse = { success: true };
       mockApiService.post.mockResolvedValue(mockResponse);
 
@@ -213,24 +213,24 @@ describe('MembershipService', () => {
         '/membership/features/usage',
         mockUsageData
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('功能使用記錄成功', {
+      expect(mockLogger.info).toHaveBeenCalledWith('功能使用記錄Success', {
         feature: mockUsageData.feature,
       });
     });
 
-    it('應該處理記錄功能使用失敗', async () => {
-      const _error = new Error('記錄失敗');
+    it('應該Handle記錄功能使用Failed', async () => {
+      const _error = new Error('記錄Failed');
       mockApiService.post.mockRejectedValue(error);
 
       await expect(
         membershipService.recordFeatureUsage(mockUsageData)
-      ).rejects.toThrow('記錄失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('功能使用記錄失敗:', error);
+      ).rejects.toThrow('記錄Failed');
+      expect(mockLogger.error).toHaveBeenCalledWith('功能使用記錄Failed:', error);
     });
   });
 
   describe('getMembershipBenefits', () => {
-    it('應該成功獲取會員福利', async () => {
+    it('應該SuccessGet會員福利', async () => {
       const _mockBenefits = {
         tier: 'premium',
         benefits: [
@@ -244,22 +244,22 @@ describe('MembershipService', () => {
 
       expect(result).toEqual(mockBenefits);
       expect(mockApiService.get).toHaveBeenCalledWith('/membership/benefits');
-      expect(mockLogger.info).toHaveBeenCalledWith('獲取會員福利成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('Get會員福利Success');
     });
 
-    it('應該處理獲取會員福利失敗', async () => {
-      const _error = new Error('獲取失敗');
+    it('應該HandleGet會員福利Failed', async () => {
+      const _error = new Error('GetFailed');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(membershipService.getMembershipBenefits()).rejects.toThrow(
-        '獲取失敗'
+        'GetFailed'
       );
-      expect(mockLogger.error).toHaveBeenCalledWith('獲取會員福利失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('Get會員福利Failed:', error);
     });
   });
 
   describe('getFeatureLimits', () => {
-    it('應該成功獲取功能限制', async () => {
+    it('應該SuccessGet功能限制', async () => {
       const _mockLimits = {
         ai_analysis: { daily: 10, monthly: 100 },
         price_alerts: { daily: 5, monthly: 50 },
@@ -273,22 +273,22 @@ describe('MembershipService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith(
         '/membership/features/limits'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('獲取功能限制成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('Get功能限制Success');
     });
 
-    it('應該處理獲取功能限制失敗', async () => {
-      const _error = new Error('獲取失敗');
+    it('應該HandleGet功能限制Failed', async () => {
+      const _error = new Error('GetFailed');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(membershipService.getFeatureLimits()).rejects.toThrow(
-        '獲取失敗'
+        'GetFailed'
       );
-      expect(mockLogger.error).toHaveBeenCalledWith('獲取功能限制失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('Get功能限制Failed:', error);
     });
   });
 
   describe('getAvailableFeatures', () => {
-    it('應該成功獲取可用功能列表', async () => {
+    it('應該SuccessGet可用功能列表', async () => {
       const _mockFeatures = [
         { id: 'ai_analysis', name: 'AI 分析', description: '智能卡片分析' },
         { id: 'price_alerts', name: '價格提醒', description: '價格變動提醒' },
@@ -300,25 +300,25 @@ describe('MembershipService', () => {
 
       expect(result).toEqual(mockFeatures);
       expect(mockApiService.get).toHaveBeenCalledWith('/membership/features');
-      expect(mockLogger.info).toHaveBeenCalledWith('獲取可用功能列表成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('Get可用功能列表Success');
     });
 
-    it('應該處理獲取可用功能列表失敗', async () => {
-      const _error = new Error('獲取失敗');
+    it('應該HandleGet可用功能列表Failed', async () => {
+      const _error = new Error('GetFailed');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(membershipService.getAvailableFeatures()).rejects.toThrow(
-        '獲取失敗'
+        'GetFailed'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取可用功能列表失敗:',
+        'Get可用功能列表Failed:',
         error
       );
     });
   });
 
   describe('isFeatureAvailable', () => {
-    it('應該成功檢查功能是否可用', async () => {
+    it('應該SuccessCheck功能是否可用', async () => {
       const _mockAvailability = {
         available: true,
         reason: null,
@@ -332,27 +332,27 @@ describe('MembershipService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith(
         '/membership/features/ai_analysis/availability'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('檢查功能可用性成功', {
+      expect(mockLogger.info).toHaveBeenCalledWith('Check功能可用性Success', {
         feature: 'ai_analysis',
       });
     });
 
-    it('應該處理檢查功能可用性失敗', async () => {
-      const _error = new Error('檢查失敗');
+    it('應該HandleCheck功能可用性Failed', async () => {
+      const _error = new Error('CheckFailed');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(
         membershipService.isFeatureAvailable('ai_analysis')
-      ).rejects.toThrow('檢查失敗');
+      ).rejects.toThrow('CheckFailed');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '檢查功能可用性失敗:',
+        'Check功能可用性Failed:',
         error
       );
     });
   });
 
   describe('getTrialStatus', () => {
-    it('應該成功獲取試用期狀態', async () => {
+    it('應該SuccessGet試用期狀態', async () => {
       const _mockTrialStatus = {
         hasTrial: true,
         trialActive: false,
@@ -368,18 +368,18 @@ describe('MembershipService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith(
         '/membership/trial/status'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('獲取試用期狀態成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('Get試用期狀態Success');
     });
 
-    it('應該處理獲取試用期狀態失敗', async () => {
-      const _error = new Error('獲取失敗');
+    it('應該HandleGet試用期狀態Failed', async () => {
+      const _error = new Error('GetFailed');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(membershipService.getTrialStatus()).rejects.toThrow(
-        '獲取失敗'
+        'GetFailed'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取試用期狀態失敗:',
+        'Get試用期狀態Failed:',
         error
       );
     });
@@ -391,7 +391,7 @@ describe('MembershipService', () => {
       autoRenew: true,
     };
 
-    it('應該成功續費會員', async () => {
+    it('應該Success續費會員', async () => {
       const _mockResponse = {
         success: true,
         membership: {
@@ -409,17 +409,17 @@ describe('MembershipService', () => {
         '/membership/renew',
         mockRenewalData
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('會員續費成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('會員續費Success');
     });
 
-    it('應該處理續費失敗', async () => {
-      const _error = new Error('續費失敗');
+    it('應該Handle續費Failed', async () => {
+      const _error = new Error('續費Failed');
       mockApiService.post.mockRejectedValue(error);
 
       await expect(
         membershipService.renewMembership(mockRenewalData)
-      ).rejects.toThrow('續費失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('會員續費失敗:', error);
+      ).rejects.toThrow('續費Failed');
+      expect(mockLogger.error).toHaveBeenCalledWith('會員續費Failed:', error);
     });
   });
 
@@ -429,7 +429,7 @@ describe('MembershipService', () => {
       feedback: '價格太高',
     };
 
-    it('應該成功取消會員', async () => {
+    it('應該Success取消會員', async () => {
       const _mockResponse = {
         success: true,
         membership: {
@@ -448,17 +448,17 @@ describe('MembershipService', () => {
         '/membership/cancel',
         mockCancellationData
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('會員取消成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('會員取消Success');
     });
 
-    it('應該處理取消失敗', async () => {
-      const _error = new Error('取消失敗');
+    it('應該Handle取消Failed', async () => {
+      const _error = new Error('取消Failed');
       mockApiService.post.mockRejectedValue(error);
 
       await expect(
         membershipService.cancelMembership(mockCancellationData)
-      ).rejects.toThrow('取消失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('會員取消失敗:', error);
+      ).rejects.toThrow('取消Failed');
+      expect(mockLogger.error).toHaveBeenCalledWith('會員取消Failed:', error);
     });
   });
 
@@ -468,7 +468,7 @@ describe('MembershipService', () => {
       duration: 30,
     };
 
-    it('應該成功暫停會員', async () => {
+    it('應該Success暫停會員', async () => {
       const _mockResponse = {
         success: true,
         membership: {
@@ -486,17 +486,17 @@ describe('MembershipService', () => {
         '/membership/pause',
         mockPauseData
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('會員暫停成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('會員暫停Success');
     });
 
-    it('應該處理暫停失敗', async () => {
-      const _error = new Error('暫停失敗');
+    it('應該Handle暫停Failed', async () => {
+      const _error = new Error('暫停Failed');
       mockApiService.post.mockRejectedValue(error);
 
       await expect(
         membershipService.pauseMembership(mockPauseData)
-      ).rejects.toThrow('暫停失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('會員暫停失敗:', error);
+      ).rejects.toThrow('暫停Failed');
+      expect(mockLogger.error).toHaveBeenCalledWith('會員暫停Failed:', error);
     });
   });
 });

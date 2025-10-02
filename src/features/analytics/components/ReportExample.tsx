@@ -22,7 +22,7 @@ import {
 
 const ReportExample: React.FC = () => {
   const {
-    // 狀態
+    // Status
     templates,
     currentTemplate,
     reports,
@@ -33,7 +33,7 @@ const ReportExample: React.FC = () => {
     error,
     status,
 
-    // 計算屬性
+    // 計算Property
     hasTemplates,
     hasReports,
     hasExports,
@@ -44,7 +44,7 @@ const ReportExample: React.FC = () => {
     completedReportCount,
     completedExportCount,
 
-    // 操作方法
+    // OperationMethod
     createNewTemplate,
     createNewReport,
     exportReportById,
@@ -52,7 +52,7 @@ const ReportExample: React.FC = () => {
     selectTemplate,
     selectReport,
 
-    // 快速方法
+    // 快速Method
     quickCreateBusinessReport,
     quickCreateFinancialReport,
     quickExportToPDF,
@@ -73,7 +73,7 @@ const ReportExample: React.FC = () => {
 
   const _handleCreateTemplate = async () => {
     if (!newTemplateName.trim()) {
-      Alert.alert('錯誤', '請輸入模板名稱');
+      Alert.alert('Error', '請輸入模板名稱');
       return;
     }
 
@@ -132,15 +132,15 @@ const ReportExample: React.FC = () => {
       setNewTemplateName('');
       setNewTemplateDescription('');
       setNewTemplateCategory(ReportCategory.BUSINESS);
-      Alert.alert('成功', '模板創建成功');
+      Alert.alert('Success', '模板CreateSuccess');
     } catch (error) {
-      Alert.alert('錯誤', `創建模板失敗: ${error}`);
+      Alert.alert('Error', `Create模板Failed: ${error}`);
     }
   };
 
   const _handleCreateReport = async () => {
     if (!newReportName.trim() || !selectedTemplateId) {
-      Alert.alert('錯誤', '請輸入報告名稱並選擇模板');
+      Alert.alert('Error', '請輸入報告名稱並選擇模板');
       return;
     }
 
@@ -153,27 +153,27 @@ const ReportExample: React.FC = () => {
       setShowCreateReportModal(false);
       setNewReportName('');
       setSelectedTemplateId('');
-      Alert.alert('成功', '報告創建成功');
+      Alert.alert('Success', '報告CreateSuccess');
     } catch (error) {
-      Alert.alert('錯誤', `創建報告失敗: ${error}`);
+      Alert.alert('Error', `Create報告Failed: ${error}`);
     }
   };
 
   const _handleQuickCreateBusinessReport = async () => {
     try {
       await quickCreateBusinessReport('快速業務報告');
-      Alert.alert('成功', '業務報告創建成功');
+      Alert.alert('Success', '業務報告CreateSuccess');
     } catch (error) {
-      Alert.alert('錯誤', `創建業務報告失敗: ${error}`);
+      Alert.alert('Error', `Create業務報告Failed: ${error}`);
     }
   };
 
   const _handleQuickCreateFinancialReport = async () => {
     try {
       await quickCreateFinancialReport('快速財務報告');
-      Alert.alert('成功', '財務報告創建成功');
+      Alert.alert('Success', '財務報告CreateSuccess');
     } catch (error) {
-      Alert.alert('錯誤', `創建財務報告失敗: ${error}`);
+      Alert.alert('Error', `Create財務報告Failed: ${error}`);
     }
   };
 
@@ -182,18 +182,18 @@ const ReportExample: React.FC = () => {
       await exportReportById(reportId, {
         format: ExportFormat.PDF,
       });
-      Alert.alert('成功', 'PDF導出已開始');
+      Alert.alert('Success', 'PDF導出已開始');
     } catch (error) {
-      Alert.alert('錯誤', `PDF導出失敗: ${error}`);
+      Alert.alert('Error', `PDF導出Failed: ${error}`);
     }
   };
 
   const _handleExportToExcel = async (reportId: string) => {
     try {
       await quickExportToExcel(reportId);
-      Alert.alert('成功', 'Excel導出已開始');
+      Alert.alert('Success', 'Excel導出已開始');
     } catch (error) {
-      Alert.alert('錯誤', `Excel導出失敗: ${error}`);
+      Alert.alert('Error', `Excel導出Failed: ${error}`);
     }
   };
 
@@ -478,7 +478,7 @@ const ReportExample: React.FC = () => {
         {activeTab === 'analytics' && renderAnalyticsTab()}
       </ScrollView>
 
-      {/* 創建模板模態框 */}
+      {/* Create模板模態框 */}
       <Modal
         visible={showCreateTemplateModal}
         animationType='slide'
@@ -528,7 +528,7 @@ const ReportExample: React.FC = () => {
         </View>
       </Modal>
 
-      {/* 創建報告模態框 */}
+      {/* CreateReport模態框 */}
       <Modal
         visible={showCreateReportModal}
         animationType='slide'

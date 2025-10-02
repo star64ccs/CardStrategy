@@ -14,21 +14,21 @@ import type {
   PrivacySettingsConfig,
 } from '../../types/privacy';
 
-// 創建服務實例
+// CreateServiceInstance
 const _privacyService = new PrivacyService();
 
 interface PrivacyState {
-  // 用戶隱私偏好
+  // User隱私Preferences
   preferences: PrivacyPreferences | null;
   preferencesLoading: boolean;
   preferencesError: string | null;
 
-  // 同意記錄
+  // AgreeRecord
   consentHistory: ConsentRecord[];
   consentHistoryLoading: boolean;
   consentHistoryError: string | null;
 
-  // 數據權利請求
+  // Data權利Request
   dataRightsRequests: DataRightsRequest[];
   dataRightsRequestsLoading: boolean;
   dataRightsRequestsError: string | null;
@@ -38,12 +38,12 @@ interface PrivacyState {
   privacyLawsLoading: boolean;
   privacyLawsError: string | null;
 
-  // 隱私設置配置
+  // 隱私SettingsConfigure
   privacyConfig: PrivacySettingsConfig | null;
   privacyConfigLoading: boolean;
   privacyConfigError: string | null;
 
-  // 隱私儀表板
+  // 隱私儀Table板
   dashboard: {
     consentSummary: {
       total: number;
@@ -62,7 +62,7 @@ interface PrivacyState {
   dashboardLoading: boolean;
   dashboardError: string | null;
 
-  // 合規性檢查
+  // 合規性Check
   complianceCheck: {
     compliant: boolean;
     issues: string[];
@@ -72,20 +72,20 @@ interface PrivacyState {
   complianceCheckLoading: boolean;
   complianceCheckError: string | null;
 
-  // 第三方數據處理者
+  // 第三方DataHandle者
   thirdPartyProcessors: unknown[];
   thirdPartyProcessorsLoading: boolean;
   thirdPartyProcessorsError: string | null;
 
-  // 數據處理記錄
+  // DataHandleRecord
   processingRecords: unknown[];
   processingRecordsLoading: boolean;
   processingRecordsError: string | null;
 
-  // 當前用戶地區
+  // 當前UserLocale
   currentRegion: RegionCode;
 
-  // 年齡驗證
+  // AgeVerify
   ageVerification: {
     isMinor: boolean;
     age: number;
@@ -94,7 +94,7 @@ interface PrivacyState {
   ageVerificationLoading: boolean;
   ageVerificationError: string | null;
 
-  // 父母同意請求
+  // 父母AgreeRequest
   parentalConsentRequest: {
     requestId: string;
     status: 'pending' | 'sent' | 'verified' | 'rejected';
@@ -102,7 +102,7 @@ interface PrivacyState {
   parentalConsentLoading: boolean;
   parentalConsentError: string | null;
 
-  // 數據導出
+  // DataExport
   dataExport: {
     downloadUrl: string;
     expiresAt: Date;
@@ -111,7 +111,7 @@ interface PrivacyState {
   dataExportLoading: boolean;
   dataExportError: string | null;
 
-  // 數據刪除
+  // DataDelete
   dataDeletion: {
     status: 'pending' | 'processing' | 'completed';
     estimatedCompletion: Date;
@@ -119,7 +119,7 @@ interface PrivacyState {
   dataDeletionLoading: boolean;
   dataDeletionError: string | null;
 
-  // 同意更新檢查
+  // AgreeUpdateCheck
   consentRenewal: {
     needsRenewal: boolean;
     reasons: string[];
@@ -191,7 +191,7 @@ const initialState: PrivacyState = {
 
 // Async Thunks
 
-// 獲取隱私偏好
+// Get隱私Preferences
 export const _fetchPrivacyPreferences = createAsyncThunk(
   'privacy/fetchPreferences',
   async (userId: string) => {
@@ -200,7 +200,7 @@ export const _fetchPrivacyPreferences = createAsyncThunk(
   }
 );
 
-// 更新隱私偏好
+// Update隱私Preferences
 export const _updatePrivacyPreferences = createAsyncThunk(
   'privacy/updatePreferences',
   async ({
@@ -218,7 +218,7 @@ export const _updatePrivacyPreferences = createAsyncThunk(
   }
 );
 
-// 記錄同意
+// RecordAgree
 export const _recordConsent = createAsyncThunk(
   'privacy/recordConsent',
   async ({
@@ -241,7 +241,7 @@ export const _recordConsent = createAsyncThunk(
   }
 );
 
-// 撤回同意
+// 撤回Agree
 export const _withdrawConsent = createAsyncThunk(
   'privacy/withdrawConsent',
   async ({
@@ -256,7 +256,7 @@ export const _withdrawConsent = createAsyncThunk(
   }
 );
 
-// 獲取同意歷史
+// GetAgree歷史
 export const _fetchConsentHistory = createAsyncThunk(
   'privacy/fetchConsentHistory',
   async (userId: string) => {
@@ -265,7 +265,7 @@ export const _fetchConsentHistory = createAsyncThunk(
   }
 );
 
-// 提交數據權利請求
+// SubmitData權利Request
 export const _submitDataRightsRequest = createAsyncThunk(
   'privacy/submitDataRightsRequest',
   async ({
@@ -293,7 +293,7 @@ export const _submitDataRightsRequest = createAsyncThunk(
   }
 );
 
-// 獲取數據權利請求歷史
+// GetData權利Request歷史
 export const _fetchDataRightsRequestHistory = createAsyncThunk(
   'privacy/fetchDataRightsRequestHistory',
   async (userId: string) => {
@@ -302,7 +302,7 @@ export const _fetchDataRightsRequestHistory = createAsyncThunk(
   }
 );
 
-// 獲取隱私法律要求
+// Get隱私法律要求
 export const _fetchPrivacyLawRequirements = createAsyncThunk(
   'privacy/fetchPrivacyLawRequirements',
   async (region: RegionCode) => {
@@ -311,7 +311,7 @@ export const _fetchPrivacyLawRequirements = createAsyncThunk(
   }
 );
 
-// 獲取隱私設置配置
+// Get隱私SettingsConfigure
 export const _fetchPrivacySettingsConfig = createAsyncThunk(
   'privacy/fetchPrivacySettingsConfig',
   async (region: RegionCode) => {
@@ -320,7 +320,7 @@ export const _fetchPrivacySettingsConfig = createAsyncThunk(
   }
 );
 
-// 驗證年齡
+// VerifyAge
 export const _verifyAge = createAsyncThunk(
   'privacy/verifyAge',
   async ({ userId, birthDate }: { userId: string; birthDate: Date }) => {
@@ -332,7 +332,7 @@ export const _verifyAge = createAsyncThunk(
   }
 );
 
-// 請求父母同意
+// Request父母Agree
 export const _requestParentalConsent = createAsyncThunk(
   'privacy/requestParentalConsent',
   async ({ userId, parentEmail }: { userId: string; parentEmail: string }) => {
@@ -344,7 +344,7 @@ export const _requestParentalConsent = createAsyncThunk(
   }
 );
 
-// 導出用戶數據
+// ExportUserData
 export const _exportUserData = createAsyncThunk(
   'privacy/exportUserData',
   async (userId: string) => {
@@ -353,7 +353,7 @@ export const _exportUserData = createAsyncThunk(
   }
 );
 
-// 刪除用戶數據
+// DeleteUserData
 export const _deleteUserData = createAsyncThunk(
   'privacy/deleteUserData',
   async (userId: string) => {
@@ -362,7 +362,7 @@ export const _deleteUserData = createAsyncThunk(
   }
 );
 
-// 檢查隱私合規性
+// Check隱私合規性
 export const _checkPrivacyCompliance = createAsyncThunk(
   'privacy/checkPrivacyCompliance',
   async ({ userId, region }: { userId: string; region: RegionCode }) => {
@@ -374,7 +374,7 @@ export const _checkPrivacyCompliance = createAsyncThunk(
   }
 );
 
-// 獲取隱私儀表板
+// Get隱私儀Table板
 export const _fetchPrivacyDashboard = createAsyncThunk(
   'privacy/fetchPrivacyDashboard',
   async (userId: string) => {
@@ -383,7 +383,7 @@ export const _fetchPrivacyDashboard = createAsyncThunk(
   }
 );
 
-// 檢查同意更新
+// CheckAgreeUpdate
 export const _checkConsentRenewal = createAsyncThunk(
   'privacy/checkConsentRenewal',
   async (userId: string) => {
@@ -392,7 +392,7 @@ export const _checkConsentRenewal = createAsyncThunk(
   }
 );
 
-// 批量更新同意
+// BatchUpdateAgree
 export const _batchUpdateConsent = createAsyncThunk(
   'privacy/batchUpdateConsent',
   async ({
@@ -415,7 +415,7 @@ const _privacySlice = createSlice({
   name: 'privacy',
   initialState,
   reducers: {
-    // 清除錯誤
+    // ClearError
     clearError: (state, action: PayloadAction<string>) => {
       switch (action.payload) {
         case 'preferences':
@@ -463,17 +463,17 @@ const _privacySlice = createSlice({
       }
     },
 
-    // 設置當前地區
+    // Settings當前Locale
     setCurrentRegion: (state, action: PayloadAction<RegionCode>) => {
       state.currentRegion = action.payload;
     },
 
-    // 重置狀態
+    // ResetStatus
     resetPrivacyState: state => {
       return initialState;
     },
 
-    // 更新部分偏好
+    // UpdatePartialPreferences
     updatePartialPreferences: (
       state,
       action: PayloadAction<Partial<PrivacyPreferences>>
@@ -483,12 +483,12 @@ const _privacySlice = createSlice({
       }
     },
 
-    // 添加新的同意記錄
+    // Add新的AgreeRecord
     addConsentRecord: (state, action: PayloadAction<ConsentRecord>) => {
       state.consentHistory.unshift(action.payload);
     },
 
-    // 更新同意記錄
+    // UpdateAgreeRecord
     updateConsentRecord: (state, action: PayloadAction<ConsentRecord>) => {
       const _index = state.consentHistory.findIndex(
         record => record.id === action.payload.id
@@ -498,12 +498,12 @@ const _privacySlice = createSlice({
       }
     },
 
-    // 添加數據權利請求
+    // AddData權利Request
     addDataRightsRequest: (state, action: PayloadAction<DataRightsRequest>) => {
       state.dataRightsRequests.unshift(action.payload);
     },
 
-    // 更新數據權利請求
+    // UpdateData權利Request
     updateDataRightsRequest: (
       state,
       action: PayloadAction<DataRightsRequest>
@@ -517,7 +517,7 @@ const _privacySlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // 獲取隱私偏好
+    // Get隱私Preferences
     builder
       .addCase(fetchPrivacyPreferences.pending, state => {
         state.preferencesLoading = true;
@@ -529,10 +529,10 @@ const _privacySlice = createSlice({
       })
       .addCase(fetchPrivacyPreferences.rejected, (state, action) => {
         state.preferencesLoading = false;
-        state.preferencesError = action.error.message || '獲取隱私偏好失敗';
+        state.preferencesError = action.error.message || 'Get隱私偏好Failed';
       });
 
-    // 更新隱私偏好
+    // Update隱私Preferences
     builder
       .addCase(updatePrivacyPreferences.pending, state => {
         state.preferencesLoading = true;
@@ -544,15 +544,15 @@ const _privacySlice = createSlice({
       })
       .addCase(updatePrivacyPreferences.rejected, (state, action) => {
         state.preferencesLoading = false;
-        state.preferencesError = action.error.message || '更新隱私偏好失敗';
+        state.preferencesError = action.error.message || 'Update隱私偏好Failed';
       });
 
-    // 記錄同意
+    // RecordAgree
     builder.addCase(recordConsent.fulfilled, (state, action) => {
       state.consentHistory.unshift(action.payload);
     });
 
-    // 撤回同意
+    // 撤回Agree
     builder.addCase(withdrawConsent.fulfilled, (state, action) => {
       const _index = state.consentHistory.findIndex(
         record => record.id === action.payload.id
@@ -562,7 +562,7 @@ const _privacySlice = createSlice({
       }
     });
 
-    // 獲取同意歷史
+    // GetAgree歷史
     builder
       .addCase(fetchConsentHistory.pending, state => {
         state.consentHistoryLoading = true;
@@ -574,15 +574,15 @@ const _privacySlice = createSlice({
       })
       .addCase(fetchConsentHistory.rejected, (state, action) => {
         state.consentHistoryLoading = false;
-        state.consentHistoryError = action.error.message || '獲取同意歷史失敗';
+        state.consentHistoryError = action.error.message || 'Get同意歷史Failed';
       });
 
-    // 提交數據權利請求
+    // SubmitData權利Request
     builder.addCase(submitDataRightsRequest.fulfilled, (state, action) => {
       state.dataRightsRequests.unshift(action.payload);
     });
 
-    // 獲取數據權利請求歷史
+    // GetData權利Request歷史
     builder
       .addCase(fetchDataRightsRequestHistory.pending, state => {
         state.dataRightsRequestsLoading = true;
@@ -595,10 +595,10 @@ const _privacySlice = createSlice({
       .addCase(fetchDataRightsRequestHistory.rejected, (state, action) => {
         state.dataRightsRequestsLoading = false;
         state.dataRightsRequestsError =
-          action.error.message || '獲取數據權利請求歷史失敗';
+          action.error.message || 'Get數據權利請求歷史Failed';
       });
 
-    // 獲取隱私法律要求
+    // Get隱私法律要求
     builder
       .addCase(fetchPrivacyLawRequirements.pending, state => {
         state.privacyLawsLoading = true;
@@ -610,10 +610,10 @@ const _privacySlice = createSlice({
       })
       .addCase(fetchPrivacyLawRequirements.rejected, (state, action) => {
         state.privacyLawsLoading = false;
-        state.privacyLawsError = action.error.message || '獲取隱私法律要求失敗';
+        state.privacyLawsError = action.error.message || 'Get隱私法律要求Failed';
       });
 
-    // 獲取隱私設置配置
+    // Get隱私SettingsConfigure
     builder
       .addCase(fetchPrivacySettingsConfig.pending, state => {
         state.privacyConfigLoading = true;
@@ -626,10 +626,10 @@ const _privacySlice = createSlice({
       .addCase(fetchPrivacySettingsConfig.rejected, (state, action) => {
         state.privacyConfigLoading = false;
         state.privacyConfigError =
-          action.error.message || '獲取隱私設置配置失敗';
+          action.error.message || 'Get隱私SettingsConfigureFailed';
       });
 
-    // 驗證年齡
+    // VerifyAge
     builder
       .addCase(verifyAge.pending, state => {
         state.ageVerificationLoading = true;
@@ -641,10 +641,10 @@ const _privacySlice = createSlice({
       })
       .addCase(verifyAge.rejected, (state, action) => {
         state.ageVerificationLoading = false;
-        state.ageVerificationError = action.error.message || '年齡驗證失敗';
+        state.ageVerificationError = action.error.message || '年齡VerifyFailed';
       });
 
-    // 請求父母同意
+    // Request父母Agree
     builder
       .addCase(requestParentalConsent.pending, state => {
         state.parentalConsentLoading = true;
@@ -656,10 +656,10 @@ const _privacySlice = createSlice({
       })
       .addCase(requestParentalConsent.rejected, (state, action) => {
         state.parentalConsentLoading = false;
-        state.parentalConsentError = action.error.message || '請求父母同意失敗';
+        state.parentalConsentError = action.error.message || '請求父母同意Failed';
       });
 
-    // 導出用戶數據
+    // ExportUserData
     builder
       .addCase(exportUserData.pending, state => {
         state.dataExportLoading = true;
@@ -671,10 +671,10 @@ const _privacySlice = createSlice({
       })
       .addCase(exportUserData.rejected, (state, action) => {
         state.dataExportLoading = false;
-        state.dataExportError = action.error.message || '導出用戶數據失敗';
+        state.dataExportError = action.error.message || '導出用戶數據Failed';
       });
 
-    // 刪除用戶數據
+    // DeleteUserData
     builder
       .addCase(deleteUserData.pending, state => {
         state.dataDeletionLoading = true;
@@ -686,10 +686,10 @@ const _privacySlice = createSlice({
       })
       .addCase(deleteUserData.rejected, (state, action) => {
         state.dataDeletionLoading = false;
-        state.dataDeletionError = action.error.message || '刪除用戶數據失敗';
+        state.dataDeletionError = action.error.message || 'Delete用戶數據Failed';
       });
 
-    // 檢查隱私合規性
+    // Check隱私合規性
     builder
       .addCase(checkPrivacyCompliance.pending, state => {
         state.complianceCheckLoading = true;
@@ -702,10 +702,10 @@ const _privacySlice = createSlice({
       .addCase(checkPrivacyCompliance.rejected, (state, action) => {
         state.complianceCheckLoading = false;
         state.complianceCheckError =
-          action.error.message || '檢查隱私合規性失敗';
+          action.error.message || 'Check隱私合規性Failed';
       });
 
-    // 獲取隱私儀表板
+    // Get隱私儀Table板
     builder
       .addCase(fetchPrivacyDashboard.pending, state => {
         state.dashboardLoading = true;
@@ -717,10 +717,10 @@ const _privacySlice = createSlice({
       })
       .addCase(fetchPrivacyDashboard.rejected, (state, action) => {
         state.dashboardLoading = false;
-        state.dashboardError = action.error.message || '獲取隱私儀表板失敗';
+        state.dashboardError = action.error.message || 'Get隱私儀表板Failed';
       });
 
-    // 檢查同意更新
+    // CheckAgreeUpdate
     builder
       .addCase(checkConsentRenewal.pending, state => {
         state.consentRenewalLoading = true;
@@ -732,12 +732,12 @@ const _privacySlice = createSlice({
       })
       .addCase(checkConsentRenewal.rejected, (state, action) => {
         state.consentRenewalLoading = false;
-        state.consentRenewalError = action.error.message || '檢查同意更新失敗';
+        state.consentRenewalError = action.error.message || 'Check同意UpdateFailed';
       });
 
-    // 批量更新同意
+    // BatchUpdateAgree
     builder.addCase(batchUpdateConsent.fulfilled, (state, action) => {
-      // 更新同意歷史記錄
+      // UpdateAgree歷史Record
       action.payload.forEach((newRecord: unknown) => {
         const _index = state.consentHistory.findIndex(
           record => record.id === newRecord.id

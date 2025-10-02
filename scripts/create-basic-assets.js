@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 創建一個簡單的PNG文件（最小的有效PNG）
+// Create一個簡單的PNGFile（最小的有效PNG）
 const minimalPNG = Buffer.from([
   0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, // PNG signature
   0x00, 0x00, 0x00, 0x0D, // IHDR chunk length

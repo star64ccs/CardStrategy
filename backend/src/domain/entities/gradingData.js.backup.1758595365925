@@ -1,0 +1,113 @@
+const { DataTypes } = require('sequelize');
+
+const getGradingDataModel = sequelize => {
+  const GradingData = sequelize.define(
+    'GradingData',
+    {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
+      cardId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Cards',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      gradingCompany: {
+        type: DataTypes.ENUM('PSA', 'BGS', 'CGC', 'SGC', 'OTHER'),
+        allowNull: false,
+        comment: '鑑定公司',
+      },
+      grade: {
+        type: DataTypes.DECIMAL(3, 1),
+        allowNull: true,
+        comment: '鑑定分數',
+      },
+      population: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        comment: '人口數量',
+      },
+      value: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
+        comment: '市場價值',
+      },
+      lastSale: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+        comment: '最後銷售記錄',
+      },
+      lastUpdated: {
+        type: DataTypes.DATE,
+        allowNull: true,
+        comment: '最後更新時間',
+      },
+      source: {
+        type: DataTypes.STRING(100),
+        allowNull: false,
+        defaultValue: 'unknown',
+        comment: '數據來源',
+      },
+      metadata: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: '原始數據和元數據',
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: true,
+        comment: '是否啟用',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+      },
+    },
+    {
+      tableName: 'grading_data',
+      timestamps: true,
+      indexes: [
+        {
+          fields: ['cardId'],
+        },
+        {
+          fields: ['gradingCompany'],
+        },
+        {
+          fields: ['grade'],
+        },
+        {
+          fields: ['value'],
+        },
+        {
+          fields: ['isActive'],
+        },
+        {
+          fields: ['gradingCompany', 'grade'],
+        },
+        {
+          fields: ['cardId', 'gradingCompany'],
+          unique: true,
+        },
+      ],
+    }
+  );
+
+  return GradingData;
+};
+
+module.exports = getGradingDataModel;

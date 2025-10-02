@@ -1,6 +1,6 @@
 /**
- * 卡片服務
- * 提供卡片管理功能
+ * 卡片Service
+ * 提供卡片Manage功能
  */
 
 import { logger } from '../utils/logger';
@@ -50,7 +50,7 @@ class CardService {
   }
 
   /**
-   * 初始化卡片服務
+   * Initialize卡片Service
    */
   public async initialize(): Promise<boolean> {
     if (this.isInitialized) {
@@ -59,22 +59,22 @@ class CardService {
     }
 
     try {
-      // 確保 API 服務已初始化
+      // 確保 API Service已Initialize
       if (!apiService.isServiceAvailable()) {
         await apiService.initialize();
       }
 
       this.isInitialized = true;
-      logger.info('CardService 初始化成功');
+      logger.info('CardService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('CardService 初始化失敗:', error);
+      logger.error('CardService InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取卡片列表
+   * Get卡片List
    */
   public async getCards(filters?: Record<string, any>): Promise<Card[]> {
     if (!this.isInitialized) {
@@ -83,26 +83,26 @@ class CardService {
 
     try {
       const _response = await apiService.get('/cards', { params: filters });
-      // 處理不同的響應格式
+      // Handle不同的Response格式
       if (response.success && response.data) {
-        // 如果是 MSW 格式：{ success: true, data: { cards: [...] } }
+        // 如果Yes MSW 格式：{ success: true, data: { cards: [...] } }
         if (response.data.cards && Array.isArray(response.data.cards)) {
           return response.data.cards;
         }
-        // 如果是直接數組格式
+        // 如果Yes直接Array格式
         if (Array.isArray(response.data)) {
           return response.data;
         }
       }
       return [];
     } catch (error) {
-      logger.error('獲取卡片列表失敗:', error);
+      logger.error('Get卡片列表Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取單個卡片
+   * GetSingle卡片
    */
   public async getCard(id: string): Promise<Card | null> {
     if (!this.isInitialized) {
@@ -111,14 +111,14 @@ class CardService {
 
     try {
       const _response = await apiService.get(`/cards/${id}`);
-      // 處理不同的響應格式
+      // Handle不同的Response格式
       if (response.success && response.data) {
         return response.data;
       }
       return null;
     } catch (error) {
-      logger.error('獲取卡片失敗:', error);
-      // 如果是 404 錯誤，返回 null
+      logger.error('Get卡片Failed:', error);
+      // 如果Yes 404 Error，Return null
       if (error instanceof Error && error.message.includes('404')) {
         return null;
       }
@@ -127,7 +127,7 @@ class CardService {
   }
 
   /**
-   * 創建卡片
+   * Create卡片
    */
   public async createCard(data: CardCreateRequest): Promise<Card> {
     if (!this.isInitialized) {
@@ -138,13 +138,13 @@ class CardService {
       const _response = await apiService.post('/cards', data);
       return response.data;
     } catch (error) {
-      logger.error('創建卡片失敗:', error);
+      logger.error('Create卡片Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新卡片
+   * Update卡片
    */
   public async updateCard(data: CardUpdateRequest): Promise<Card> {
     if (!this.isInitialized) {
@@ -155,13 +155,13 @@ class CardService {
       const _response = await apiService.put(`/cards/${data.id}`, data);
       return response.data;
     } catch (error) {
-      logger.error('更新卡片失敗:', error);
+      logger.error('Update卡片Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 刪除卡片
+   * Delete卡片
    */
   public async deleteCard(id: string): Promise<boolean> {
     if (!this.isInitialized) {
@@ -172,13 +172,13 @@ class CardService {
       await apiService.delete(`/cards/${id}`);
       return true;
     } catch (error) {
-      logger.error('刪除卡片失敗:', error);
+      logger.error('Delete卡片Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 搜索卡片
+   * Search卡片
    */
   public async searchCards(
     query: string,
@@ -194,20 +194,20 @@ class CardService {
       });
       return response.data || [];
     } catch (error) {
-      logger.error('搜索卡片失敗:', error);
+      logger.error('搜索卡片Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   public isServiceAvailable(): boolean {
     return this.isInitialized;
   }
 
   /**
-   * 獲取服務統計
+   * GetServiceStatistics
    */
   public getStats(): unknown {
     return {
@@ -216,5 +216,5 @@ class CardService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _cardService = CardService.getInstance();

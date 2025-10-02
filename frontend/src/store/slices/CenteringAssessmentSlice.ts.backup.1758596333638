@@ -1,0 +1,732 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+// 定義置中評估相關類型
+export interface CenteringAssessment {
+  id: string;
+  cardId: string;
+  userId: string;
+  assessmentType: 'front' | 'back' | 'both';
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  result: {
+    overallScore: number;
+    grade:
+      | 'PSA 10'
+      | 'PSA 9'
+      | 'PSA 8'
+      | 'PSA 7'
+      | 'PSA 6'
+      | 'PSA 5'
+      | 'PSA 4'
+      | 'PSA 3'
+      | 'PSA 2'
+      | 'PSA 1';
+    details: {
+      frontScore?: number;
+      backScore?: number;
+      leftMargin?: number;
+      rightMargin?: number;
+      topMargin?: number;
+      bottomMargin?: number;
+      centerDeviation?: number;
+    };
+    measurements: {
+      cardWidth: number;
+      cardHeight: number;
+      imageWidth: number;
+      imageHeight: number;
+      margins: {
+        left: number;
+        right: number;
+        top: number;
+        bottom: number;
+      };
+    };
+    factors: string[];
+    recommendations: string[];
+  };
+  images: {
+    front: string;
+    back?: string;
+    overlay?: string;
+  };
+  metadata: {
+    timestamp: string;
+    processingTime: number;
+    algorithmVersion: string;
+    deviceInfo: {
+      platform: string;
+      os: string;
+      camera: string;
+      resolution: string;
+    };
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CenteringReport {
+  id: string;
+  assessmentId: string;
+  summary: {
+    overallGrade: string;
+    frontGrade?: string;
+    backGrade?: string;
+    confidence: number;
+    recommendations: string[];
+  };
+  detailedAnalysis: {
+    side: 'front' | 'back';
+    score: number;
+    grade: string;
+    measurements: {
+      left: number;
+      right: number;
+      top: number;
+      bottom: number;
+      centerDeviation: number;
+    };
+    issues: string[];
+    strengths: string[];
+  }[];
+  visualizations: {
+    type: 'overlay' | 'heatmap' | 'measurements';
+    imageUrl: string;
+    description: string;
+  }[];
+  createdAt: string;
+}
+
+export interface CenteringHistory {
+  id: string;
+  cardId: string;
+  assessments: CenteringAssessment[];
+  statistics: {
+    totalAssessments: number;
+    averageScore: number;
+    gradeDistribution: {
+      'PSA 10': number;
+      'PSA 9': number;
+      'PSA 8': number;
+      'PSA 7': number;
+      'PSA 6': number;
+      'PSA 5': number;
+      'PSA 4': number;
+      'PSA 3': number;
+      'PSA 2': number;
+      'PSA 1': number;
+    };
+    lastAssessmentDate: string;
+  };
+  trends: {
+    date: string;
+    averageScore: number;
+    gradeCount: number;
+  }[];
+}
+
+export interface CenteringFilters {
+  cardId?: string;
+  userId?: string;
+  status?: string;
+  assessmentType?: string;
+  grade?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  scoreMin?: number;
+  scoreMax?: number;
+}
+
+// 置中評估狀態接口
+export interface CenteringAssessmentState {
+  assessments: CenteringAssessment[];
+  reports: CenteringReport[];
+  history: CenteringHistory[];
+  filters: CenteringFilters;
+  currentAssessment: CenteringAssessment | null;
+  isLoading: boolean;
+  isProcessing: boolean;
+  isGeneratingReport: boolean;
+  error: string | null;
+  statistics: {
+    totalAssessments: number;
+    averageScore: number;
+    topGrade: string;
+    processingTime: number;
+  } | null;
+}
+
+// 異步 Action Creators
+export const initializeCenteringAssessment = createAsyncThunk(
+  'centeringAssessment/initializeCenteringAssessment',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬初始化置中評估
+      const statistics = {
+        totalAssessments: 850,
+        averageScore: 8.2,
+        topGrade: 'PSA 9',
+        processingTime: 1.8,
+      };
+
+      return statistics;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '初始化置中評估失敗');
+    }
+  }
+);
+
+export const startCenteringAssessment = createAsyncThunk(
+  'centeringAssessment/startCenteringAssessment',
+  async (
+    assessmentData: {
+      cardId: string;
+      assessmentType: string;
+      images: {
+        front: string;
+        back?: string;
+      };
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬開始置中評估
+      const newAssessment: CenteringAssessment = {
+        id: Date.now().toString(),
+        cardId: assessmentData.cardId,
+        userId: 'current_user',
+        assessmentType: assessmentData.assessmentType as any,
+        status: 'processing',
+        result: {
+          overallScore: 0,
+          grade: 'PSA 1',
+          details: {},
+          measurements: {
+            cardWidth: 0,
+            cardHeight: 0,
+            imageWidth: 0,
+            imageHeight: 0,
+            margins: {
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+            },
+          },
+          factors: [],
+          recommendations: [],
+        },
+        images: assessmentData.images,
+        metadata: {
+          timestamp: new Date().toISOString(),
+          processingTime: 0,
+          algorithmVersion: 'v1.5.0',
+          deviceInfo: {
+            platform: navigator.platform,
+            os: 'unknown',
+            camera: 'default',
+            resolution: '1920x1080',
+          },
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      return newAssessment;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '開始置中評估失敗');
+    }
+  }
+);
+
+export const processCenteringAssessment = createAsyncThunk(
+  'centeringAssessment/processCenteringAssessment',
+  async (assessmentId: string, { rejectWithValue }) => {
+    try {
+      // 模擬處理置中評估
+      const processedAssessment: CenteringAssessment = {
+        id: assessmentId,
+        cardId: 'card-1',
+        userId: 'current_user',
+        assessmentType: 'both',
+        status: 'completed',
+        result: {
+          overallScore: 8.5,
+          grade: 'PSA 9',
+          details: {
+            frontScore: 8.7,
+            backScore: 8.3,
+            leftMargin: 2.1,
+            rightMargin: 2.0,
+            topMargin: 1.9,
+            bottomMargin: 2.2,
+            centerDeviation: 0.1,
+          },
+          measurements: {
+            cardWidth: 63,
+            cardHeight: 88,
+            imageWidth: 58.8,
+            imageHeight: 83.9,
+            margins: {
+              left: 2.1,
+              right: 2.0,
+              top: 1.9,
+              bottom: 2.2,
+            },
+          },
+          factors: [
+            'Excellent centering on front',
+            'Slight right bias on back',
+            'Consistent margins',
+            'Within PSA 9 tolerance',
+          ],
+          recommendations: [
+            'Card shows excellent centering',
+            'Suitable for high-grade submission',
+            'Consider professional grading',
+          ],
+        },
+        images: {
+          front: 'image1.jpg',
+          back: 'image2.jpg',
+          overlay: 'overlay.jpg',
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          processingTime: 1.8,
+          algorithmVersion: 'v1.5.0',
+          deviceInfo: {
+            platform: navigator.platform,
+            os: 'unknown',
+            camera: 'default',
+            resolution: '1920x1080',
+          },
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+
+      return processedAssessment;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '處理置中評估失敗');
+    }
+  }
+);
+
+export const generateCenteringReport = createAsyncThunk(
+  'centeringAssessment/generateCenteringReport',
+  async (assessmentId: string, { rejectWithValue }) => {
+    try {
+      // 模擬生成置中報告
+      const report: CenteringReport = {
+        id: Date.now().toString(),
+        assessmentId,
+        summary: {
+          overallGrade: 'PSA 9',
+          frontGrade: 'PSA 9',
+          backGrade: 'PSA 8',
+          confidence: 0.92,
+          recommendations: [
+            'Excellent centering overall',
+            'Suitable for professional grading',
+          ],
+        },
+        detailedAnalysis: [
+          {
+            side: 'front',
+            score: 8.7,
+            grade: 'PSA 9',
+            measurements: {
+              left: 2.1,
+              right: 2.0,
+              top: 1.9,
+              bottom: 2.2,
+              centerDeviation: 0.1,
+            },
+            issues: [],
+            strengths: ['Perfect centering', 'Consistent margins'],
+          },
+          {
+            side: 'back',
+            score: 8.3,
+            grade: 'PSA 8',
+            measurements: {
+              left: 2.3,
+              right: 1.8,
+              top: 2.0,
+              bottom: 2.1,
+              centerDeviation: 0.25,
+            },
+            issues: ['Slight right bias'],
+            strengths: ['Good overall centering'],
+          },
+        ],
+        visualizations: [
+          {
+            type: 'overlay',
+            imageUrl: 'overlay.jpg',
+            description: 'Centering measurement overlay',
+          },
+          {
+            type: 'measurements',
+            imageUrl: 'measurements.jpg',
+            description: 'Detailed margin measurements',
+          },
+        ],
+        createdAt: new Date().toISOString(),
+      };
+
+      return report;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '生成置中報告失敗');
+    }
+  }
+);
+
+export const fetchCenteringAssessments = createAsyncThunk(
+  'centeringAssessment/fetchCenteringAssessments',
+  async (filters: CenteringFilters = {}, { rejectWithValue }) => {
+    try {
+      // 模擬獲取置中評估記錄
+      const mockAssessments: CenteringAssessment[] = [
+        {
+          id: '1',
+          cardId: 'card-1',
+          userId: 'current_user',
+          assessmentType: 'both',
+          status: 'completed',
+          result: {
+            overallScore: 8.5,
+            grade: 'PSA 9',
+            details: {
+              frontScore: 8.7,
+              backScore: 8.3,
+            },
+            measurements: {
+              cardWidth: 63,
+              cardHeight: 88,
+              imageWidth: 58.8,
+              imageHeight: 83.9,
+              margins: {
+                left: 2.1,
+                right: 2.0,
+                top: 1.9,
+                bottom: 2.2,
+              },
+            },
+            factors: ['Excellent centering'],
+            recommendations: ['Suitable for grading'],
+          },
+          images: {
+            front: 'image1.jpg',
+            back: 'image2.jpg',
+          },
+          metadata: {
+            timestamp: new Date().toISOString(),
+            processingTime: 1.8,
+            algorithmVersion: 'v1.5.0',
+            deviceInfo: {
+              platform: navigator.platform,
+              os: 'unknown',
+              camera: 'default',
+              resolution: '1920x1080',
+            },
+          },
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ];
+
+      return mockAssessments;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取置中評估記錄失敗');
+    }
+  }
+);
+
+export const fetchCenteringHistory = createAsyncThunk(
+  'centeringAssessment/fetchCenteringHistory',
+  async (cardId: string, { rejectWithValue }) => {
+    try {
+      // 模擬獲取置中評估歷史
+      const history: CenteringHistory = {
+        id: 'history-1',
+        cardId,
+        assessments: [],
+        statistics: {
+          totalAssessments: 3,
+          averageScore: 8.2,
+          gradeDistribution: {
+            'PSA 10': 0,
+            'PSA 9': 1,
+            'PSA 8': 1,
+            'PSA 7': 1,
+            'PSA 6': 0,
+            'PSA 5': 0,
+            'PSA 4': 0,
+            'PSA 3': 0,
+            'PSA 2': 0,
+            'PSA 1': 0,
+          },
+          lastAssessmentDate: new Date().toISOString(),
+        },
+        trends: [
+          {
+            date: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString(),
+            averageScore: 7.8,
+            gradeCount: 1,
+          },
+          {
+            date: new Date().toISOString(),
+            averageScore: 8.2,
+            gradeCount: 3,
+          },
+        ],
+      };
+
+      return history;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取置中評估歷史失敗');
+    }
+  }
+);
+
+export const updateAssessmentStatus = createAsyncThunk(
+  'centeringAssessment/updateAssessmentStatus',
+  async (
+    { assessmentId, status }: { assessmentId: string; status: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬更新評估狀態
+      return { assessmentId, status, updatedAt: new Date().toISOString() };
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '更新評估狀態失敗');
+    }
+  }
+);
+
+// 初始狀態
+const initialState: CenteringAssessmentState = {
+  assessments: [],
+  reports: [],
+  history: [],
+  filters: {},
+  currentAssessment: null,
+  isLoading: false,
+  isProcessing: false,
+  isGeneratingReport: false,
+  error: null,
+  statistics: null,
+};
+
+// 創建 slice
+const centeringAssessmentSlice = createSlice({
+  name: 'centeringAssessment',
+  initialState,
+  reducers: {
+    setFilters: (state, action: PayloadAction<CenteringFilters>) => {
+      state.filters = action.payload;
+    },
+    clearFilters: state => {
+      state.filters = {};
+    },
+    setCurrentAssessment: (
+      state,
+      action: PayloadAction<CenteringAssessment | null>
+    ) => {
+      state.currentAssessment = action.payload;
+    },
+    clearCurrentAssessment: state => {
+      state.currentAssessment = null;
+    },
+    clearError: state => {
+      state.error = null;
+    },
+    clearAssessments: state => {
+      state.assessments = [];
+    },
+    clearReports: state => {
+      state.reports = [];
+    },
+    updateAssessment: (state, action: PayloadAction<CenteringAssessment>) => {
+      const index = state.assessments.findIndex(
+        a => a.id === action.payload.id
+      );
+      if (index !== -1) {
+        state.assessments[index] = action.payload;
+      } else {
+        state.assessments.push(action.payload);
+      }
+    },
+    removeAssessment: (state, action: PayloadAction<string>) => {
+      state.assessments = state.assessments.filter(
+        a => a.id !== action.payload
+      );
+    },
+  },
+  extraReducers: builder => {
+    // Initialize Centering Assessment
+    builder
+      .addCase(initializeCenteringAssessment.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(initializeCenteringAssessment.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.statistics = action.payload;
+        state.error = null;
+      })
+      .addCase(initializeCenteringAssessment.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Start Centering Assessment
+    builder
+      .addCase(startCenteringAssessment.fulfilled, (state, action) => {
+        state.assessments.push(action.payload);
+        state.currentAssessment = action.payload;
+      })
+      .addCase(startCenteringAssessment.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Process Centering Assessment
+    builder
+      .addCase(processCenteringAssessment.pending, state => {
+        state.isProcessing = true;
+        state.error = null;
+      })
+      .addCase(processCenteringAssessment.fulfilled, (state, action) => {
+        state.isProcessing = false;
+        const index = state.assessments.findIndex(
+          a => a.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.assessments[index] = action.payload;
+        }
+        if (state.currentAssessment?.id === action.payload.id) {
+          state.currentAssessment = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(processCenteringAssessment.rejected, (state, action) => {
+        state.isProcessing = false;
+        state.error = action.payload as string;
+      });
+
+    // Generate Centering Report
+    builder
+      .addCase(generateCenteringReport.pending, state => {
+        state.isGeneratingReport = true;
+        state.error = null;
+      })
+      .addCase(generateCenteringReport.fulfilled, (state, action) => {
+        state.isGeneratingReport = false;
+        state.reports.push(action.payload);
+        state.error = null;
+      })
+      .addCase(generateCenteringReport.rejected, (state, action) => {
+        state.isGeneratingReport = false;
+        state.error = action.payload as string;
+      });
+
+    // Fetch Centering Assessments
+    builder
+      .addCase(fetchCenteringAssessments.fulfilled, (state, action) => {
+        state.assessments = action.payload;
+      })
+      .addCase(fetchCenteringAssessments.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Fetch Centering History
+    builder
+      .addCase(fetchCenteringHistory.fulfilled, (state, action) => {
+        const existingIndex = state.history.findIndex(
+          h => h.cardId === action.payload.cardId
+        );
+        if (existingIndex !== -1) {
+          state.history[existingIndex] = action.payload;
+        } else {
+          state.history.push(action.payload);
+        }
+      })
+      .addCase(fetchCenteringHistory.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Update Assessment Status
+    builder
+      .addCase(updateAssessmentStatus.fulfilled, (state, action) => {
+        const assessment = state.assessments.find(
+          a => a.id === action.payload.assessmentId
+        );
+        if (assessment) {
+          assessment.status = action.payload.status as any;
+          assessment.updatedAt = action.payload.updatedAt;
+        }
+      })
+      .addCase(updateAssessmentStatus.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+  },
+});
+
+// 導出 actions
+export const {
+  setFilters,
+  clearFilters,
+  setCurrentAssessment,
+  clearCurrentAssessment,
+  clearError,
+  clearAssessments,
+  clearReports,
+  updateAssessment,
+  removeAssessment,
+} = centeringAssessmentSlice.actions;
+
+// 導出 selectors
+export const selectCenteringAssessments = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.assessments;
+
+export const selectCenteringReports = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.reports;
+
+export const selectCenteringHistory = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.history;
+
+export const selectCurrentCenteringAssessment = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.currentAssessment;
+
+export const selectCenteringFilters = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.filters;
+
+export const selectCenteringStatistics = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.statistics;
+
+export const selectIsCenteringAssessmentLoading = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.isLoading;
+
+export const selectIsCenteringProcessing = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.isProcessing;
+
+export const selectIsCenteringGeneratingReport = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.isGeneratingReport;
+
+export const selectCenteringAssessmentError = (state: {
+  centeringAssessment: CenteringAssessmentState;
+}) => state.centeringAssessment.error;
+
+// 導出 reducer
+export default centeringAssessmentSlice.reducer;

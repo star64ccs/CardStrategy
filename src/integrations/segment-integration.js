@@ -1,28 +1,28 @@
 // Segment 與 Mixpanel 集成代碼
-// 請將此代碼添加到您的前端應用中
+// 請將此代碼Add到您的前端Apply中
 
-// 1. 安裝 Segment JavaScript 庫
+// 1. Install Segment JavaScript Library
 // npm install @segment/analytics-next
 // 或使用 CDN: https://cdn.segment.com/analytics.js/v1/analytics.min.js
 
-// 2. 初始化 Segment
+// 2. Initialize Segment
 import Analytics from '@segment/analytics-next';
 
 const analytics = Analytics({
   writeKey: 'mdGZ0xW3RFNPGXgMP6tbxIB25HPR7wLC',
 });
 
-// 3. 用戶識別
+// 3. User識別
 export const identifyUser = (userId, traits = {}) => {
   analytics.identify(userId, traits);
 };
 
-// 4. 追蹤事件
+// 4. TraceEvent
 export const trackEvent = (eventName, properties = {}) => {
   analytics.track(eventName, properties);
 };
 
-// 5. 卡片查看事件
+// 5. 卡片查看Event
 export const trackCardViewed = cardData => {
   trackEvent('Card Viewed', {
     card_id: cardData.id,
@@ -35,7 +35,7 @@ export const trackCardViewed = cardData => {
   });
 };
 
-// 6. 卡片購買事件
+// 6. 卡片購買Event
 export const trackCardPurchased = purchaseData => {
   trackEvent('Card Purchased', {
     card_id: purchaseData.cardId,
@@ -47,7 +47,7 @@ export const trackCardPurchased = purchaseData => {
   });
 };
 
-// 7. 搜索事件
+// 7. SearchEvent
 export const trackSearch = searchData => {
   trackEvent('Search Performed', {
     search_query: searchData.query,
@@ -59,7 +59,7 @@ export const trackSearch = searchData => {
   });
 };
 
-// 8. 願望清單事件
+// 8. 願望清單Event
 export const trackWishlistAdded = wishlistData => {
   trackEvent('Wishlist Added', {
     card_id: wishlistData.cardId,
@@ -71,7 +71,7 @@ export const trackWishlistAdded = wishlistData => {
   });
 };
 
-// 9. 頁面瀏覽事件
+// 9. 頁面瀏覽Event
 export const trackPageView = pageData => {
   trackEvent('Page View', {
     page_name: pageData.name,
@@ -81,7 +81,7 @@ export const trackPageView = pageData => {
   });
 };
 
-// 10. 用戶註冊事件
+// 10. UserRegisterEvent
 export const trackSignUp = userData => {
   trackEvent('Sign Up', {
     signup_method: userData.method,

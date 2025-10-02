@@ -228,13 +228,13 @@ export class DataQualityService {
       const _totalRecords = dataset.length;
 
       dataset.forEach(record => {
-        // 檢查價格是否為正數
+        // Check價格YesNo為正數
         if (
           record.price &&
           typeof record.price === 'number' &&
           record.price > 0
         ) {
-          // 檢查條件是否有效
+          // CheckConditionYesNo有效
           if (
             record.condition &&
             [
@@ -265,7 +265,7 @@ export class DataQualityService {
       const _totalRecords = dataset.length;
 
       dataset.forEach(record => {
-        // 檢查數據格式一致性
+        // CheckData格式一致性
         const _hasConsistentFormat =
           record.id &&
           typeof record.id === 'string' &&
@@ -300,7 +300,7 @@ export class DataQualityService {
             timelyRecords++;
           }
         } else {
-          // 沒有更新時間的記錄視為及時
+          // 沒有UpdateTime的Record視為及時
           timelyRecords++;
         }
       });
@@ -318,7 +318,7 @@ export class DataQualityService {
       const _totalRecords = dataset.length;
 
       dataset.forEach(record => {
-        // 檢查數據有效性
+        // CheckData有效性
         const _isValid =
           record.id &&
           record.name &&
@@ -345,19 +345,19 @@ export class DataQualityService {
     try {
       const issues: DataQualityIssue[] = [];
 
-      // 檢測缺失數據
+      // 檢測缺失Data
       const _missingIssues = this.detectMissingData(dataset);
       issues.push(...missingIssues);
 
-      // 檢測無效數據
+      // 檢測無效Data
       const _invalidIssues = this.detectInvalidData(dataset);
       issues.push(...invalidIssues);
 
-      // 檢測重複數據
+      // 檢測DuplicateData
       const _duplicateIssues = this.detectDuplicateData(dataset);
       issues.push(...duplicateIssues);
 
-      // 檢測不一致數據
+      // 檢測不一致Data
       const _inconsistentIssues = this.detectInconsistentData(dataset);
       issues.push(...inconsistentIssues);
 
@@ -417,7 +417,7 @@ export class DataQualityService {
       });
     }
 
-    // 檢測無效條件
+    // 檢測無效Condition
     const _validConditions = [
       'mint',
       'near-mint',
@@ -476,7 +476,7 @@ export class DataQualityService {
   private detectInconsistentData(dataset: unknown[]): DataQualityIssue[] {
     const issues: DataQualityIssue[] = [];
 
-    // 檢測數據類型不一致
+    // 檢測DataClass型不一致
     const _inconsistentTypes = dataset.filter(
       record =>
         record.price !== null &&
@@ -543,8 +543,8 @@ export class DataQualityService {
   private async performMonitoringCheck(): Promise<void> {
     try {
       logger.info('Performing data quality monitoring check');
-      // 這裡可以實現實際的監控檢查邏輯
-      // 例如從數據庫獲取數據並進行分析
+      // 這裡可以實現實際的MonitorCheck邏輯
+      // 例如從DatabaseGetData並進RowAnalysis
     } catch (error) {
       logger.error('Data quality monitoring check failed:', error);
     }
@@ -555,18 +555,18 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取集合統計信息
+   * GetSetStatisticsInformation
    */
   public async getCollectionStats(options?: unknown): Promise<any> {
     try {
       logger.info('Getting collection statistics', { options });
 
-      // 模擬網絡錯誤的情況
+      // 模擬NetworkError的情況
       if (options?.simulateError || options?.error) {
         throw new Error('Network Error');
       }
 
-      // 模擬統計數據
+      // 模擬統Count據
       const _totalRecords = options?.largeDataset ? 100000 : 1000;
       const _stats = {
         totalRecords,
@@ -591,14 +591,14 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取質量指標
+   * Get質量指標
    */
   public async getQualityMetrics(options?: unknown): Promise<any> {
     try {
       logger.info('Getting quality metrics', { options });
 
       if (options?.array) {
-        // 返回數組格式
+        // ReturnArray格式
         const _metricsArray = [
           { metric: 'completeness', value: 0.95, status: 'good' },
           { metric: 'accuracy', value: 0.92, status: 'good' },
@@ -607,7 +607,7 @@ export class DataQualityService {
         return metricsArray;
       }
 
-      // 返回對象格式
+      // ReturnObject格式
       const _metrics = {
         completeness: 0.95,
         accuracy: 0.92,
@@ -629,7 +629,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取建議
+   * Get建議
    */
   public async getRecommendations(options?: unknown): Promise<any> {
     try {
@@ -656,7 +656,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取實時統計
+   * Get實時Statistics
    */
   public async getRealTimeStats(options?: unknown): Promise<any> {
     try {
@@ -682,7 +682,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取標註員詳情
+   * Get標註員詳情
    */
   public async getAnnotatorDetails(
     includeStatsOrAnnotatorId?: boolean | number
@@ -690,7 +690,7 @@ export class DataQualityService {
     try {
       logger.info('Getting annotator details', { includeStatsOrAnnotatorId });
 
-      // 如果傳入的是數字，則調用單個標註員詳情
+      // 如果傳入的Yes數字，則調用Single標註員詳情
       if (typeof includeStatsOrAnnotatorId === 'number') {
         return {
           success: true,
@@ -704,7 +704,7 @@ export class DataQualityService {
         };
       }
 
-      // 否則返回所有標註員列表
+      // No則Return所有標註員List
       const _annotators = [
         {
           id: 1,
@@ -736,24 +736,24 @@ export class DataQualityService {
   }
 
   /**
-   * 分配標註任務
+   * 分配標註Task
    */
   public async assignAnnotationTasks(assignment: unknown): Promise<any> {
     try {
       logger.info('Assigning annotation tasks', { assignment });
 
-      // 處理不同的輸入格式
+      // Handle不同的Input格式
       let assignedTasks;
 
       if (Array.isArray(assignment)) {
-        // 如果傳入的是數組，直接使用
+        // 如果傳入的YesArray，直接使用
         assignedTasks = assignment.map((task, index) => ({
           id: index + 1,
           ...task,
           status: 'assigned',
         }));
       } else if (assignment.taskCount) {
-        // 如果傳入的是任務分配對象，創建指定數量的任務
+        // 如果傳入的YesTask分配Object，Create指定數量的Task
         assignedTasks = Array.from(
           { length: assignment.taskCount },
           (_, index) => ({
@@ -765,7 +765,7 @@ export class DataQualityService {
           })
         );
       } else {
-        // 否則將整個對象作為單個任務
+        // No則將整個Object作為SingleTask
         assignedTasks = [
           {
             id: 1,
@@ -792,7 +792,7 @@ export class DataQualityService {
   }
 
   /**
-   * 批量審查標註
+   * Batch審查標註
    */
   public async batchReviewAnnotations(reviews: unknown[]): Promise<any> {
     try {
@@ -820,7 +820,7 @@ export class DataQualityService {
   }
 
   /**
-   * 設置集合警報
+   * SettingsSetAlert
    */
   public async setCollectionAlerts(alerts: unknown): Promise<any> {
     try {
@@ -842,7 +842,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取質量報告
+   * Get質量Report
    */
   public async getQualityReport(
     startDate: string,
@@ -880,7 +880,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取儀表板數據
+   * Get儀Table板Data
    */
   public async getDashboardData(options?: unknown): Promise<any> {
     try {
@@ -917,7 +917,7 @@ export class DataQualityService {
   }
 
   /**
-   * 執行數據清理
+   * 執RowData清理
    */
   public async performDataCleaning(): Promise<any> {
     try {
@@ -938,7 +938,7 @@ export class DataQualityService {
   }
 
   /**
-   * 執行質量改進
+   * 執Row質量改進
    */
   public async performQualityImprovement(): Promise<any> {
     try {
@@ -962,7 +962,7 @@ export class DataQualityService {
   }
 
   /**
-   * 提交標註
+   * Submit標註
    */
   public async submitAnnotation(
     annotatorId: number,
@@ -993,7 +993,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取實時警報
+   * Get實時Alert
    */
   public async getRealTimeAlerts(): Promise<any> {
     try {
@@ -1022,7 +1022,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取來源分解
+   * Get來源分解
    */
   public async getSourceBreakdown(
     startDate: string,
@@ -1084,7 +1084,7 @@ export class DataQualityService {
   }
 
   /**
-   * 啟動數據收集
+   * StartData收集
    */
   public async startDataCollection(): Promise<any> {
     try {
@@ -1126,7 +1126,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取分配配置
+   * Get分配Configure
    */
   public async getAssignmentConfig(): Promise<any> {
     try {
@@ -1147,7 +1147,7 @@ export class DataQualityService {
   }
 
   /**
-   * 更新分配配置
+   * Update分配Configure
    */
   public async updateAssignmentConfig(config: unknown): Promise<any> {
     try {
@@ -1168,7 +1168,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取收集警報
+   * Get收集Alert
    */
   public async getCollectionAlerts(): Promise<any> {
     try {
@@ -1194,7 +1194,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取整體指標
+   * Get整體指標
    */
   public async getOverallMetrics(options?: unknown): Promise<any> {
     try {
@@ -1215,7 +1215,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取趨勢數據
+   * Get趨勢Data
    */
   public async getTrendData(options?: unknown): Promise<any> {
     try {
@@ -1237,7 +1237,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取質量分佈
+   * Get質量分佈
    */
   public async getQualityDistribution(
     startDate: string,
@@ -1264,7 +1264,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取註釋者表現
+   * GetComment者Table現
    */
   public async getAnnotatorPerformance(
     startDate: string,
@@ -1289,7 +1289,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取最近問題
+   * Get最近問題
    */
   public async getRecentIssues(
     startDate: string,
@@ -1324,7 +1324,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取改進建議
+   * Get改進建議
    */
   public async getImprovementSuggestions(): Promise<any> {
     try {
@@ -1347,7 +1347,7 @@ export class DataQualityService {
   }
 
   /**
-   * 獲取標註統計
+   * Get標註Statistics
    */
   public async getAnnotationStats(): Promise<any> {
     try {
@@ -1376,14 +1376,14 @@ export class DataQualityService {
   }
 
   /**
-   * 導出統計報告
+   * ExportStatisticsReport
    */
   public async exportStatsReport(options: unknown): Promise<any> {
     try {
       logger.info('Exporting stats report', { options });
 
       if (options?.responseType === 'blob') {
-        // 返回Blob對象
+        // ReturnBlobObject
         const _blob = new Blob(['mock report data'], {
           type: 'application/pdf',
         });

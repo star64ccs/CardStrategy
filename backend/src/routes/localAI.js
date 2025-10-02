@@ -4,7 +4,7 @@ const localAIService = require('../services/localAIService');''
 const { authenticateToken } = require('../middleware/auth');'
 // eslint-disable-next-line no-unused-vars''
 const logger = require('../utils/logger');'
-// ?�康檢查''
+// ?�康Check''
 router.get('/health', async (req, res) => {
   try {
     const health = await localAIService.healthCheck();
@@ -230,7 +230,7 @@ router.post('/batch-analyze', authenticateToken, async (req, res) => {
     });
   }
 });'
-// 測試端�?''
+// Test端�?''
 router.post('/test', authenticateToken, async (req, res) => {
   try {'
 // eslint-disable-next-line no-unused-vars''

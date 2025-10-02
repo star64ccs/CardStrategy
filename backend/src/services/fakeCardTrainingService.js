@@ -4,7 +4,7 @@ const logger = require('../utils/logger');
 const { validateRequest } = require('../middleware/validation');
 const { z } = require('zod');
 
-// 訓練模型配置驗證
+// 訓練模型ConfigureVerify
 const TrainingConfigSchema = z.object({
   modelType: z.enum(['authenticity', 'grading', 'hybrid']),
   algorithm: z.enum(['cnn', 'transformer', 'ensemble']),
@@ -17,7 +17,7 @@ const TrainingConfigSchema = z.object({
   pretrainedModel: z.string().optional(),
 });
 
-// 假卡訓練服務類
+// False卡訓練ServiceClass
 class FakeCardTrainingService {
   constructor() {
     this.FakeCard = null;
@@ -34,7 +34,7 @@ class FakeCardTrainingService {
     }
   }
 
-  // 獲取假卡訓練數據
+  // GetFalse卡訓練Data
   async getTrainingData(filters = {}) {
     try {
       await this.initializeModels();
@@ -48,7 +48,7 @@ class FakeCardTrainingService {
         },
       ];
 
-      // 應用過濾器
+      // ApplyFilter器
       if (filters.fakeType && filters.fakeType.length > 0) {
         whereClause.fakeType = filters.fakeType;
       }
@@ -72,7 +72,7 @@ class FakeCardTrainingService {
         order: [['submissionDate', 'DESC']],
       });
 
-      // 轉換為訓練數據格式
+      // Convert為訓練Data格式
       const trainingData = fakeCards.map((card) => ({
         id: card.id,
         cardName: card.cardName,
@@ -93,12 +93,12 @@ class FakeCardTrainingService {
         aiTrainingMetrics: {
           confidenceScore: this.calculateConfidenceScore(card),
           accuracyScore: this.calculateAccuracyScore(card),
-          falsePositiveRate: 0.05, // 預設值
-          falseNegativeRate: 0.03, // 預設值
+          falsePositiveRate: 0.05, // 預設Value
+          falseNegativeRate: 0.03, // 預設Value
         },
       }));
 
-      logger.info('✅ 成功獲取假卡訓練數據', {
+      logger.info('✅ SuccessGet假卡訓練數據', {
         count: trainingData.length,
         filters,
       });
@@ -106,27 +106,27 @@ class FakeCardTrainingService {
       return {
         success: true,
         data: trainingData,
-        message: `成功獲取 ${trainingData.length} 條訓練數據`,
+        message: `SuccessGet ${trainingData.length} 條訓練數據`,
       };
     } catch (error) {
-      logger.error('❌ 獲取假卡訓練數據失敗:', error);
+      logger.error('❌ Get假卡訓練數據Failed:', error);
       throw error;
     }
   }
 
-  // 開始模型訓練
+  // Begin模型訓練
   async startTraining(config, dataFilters = {}) {
     try {
-      // 驗證訓練配置
+      // Verify訓練Configure
       const validationResult = TrainingConfigSchema.safeParse(config);
       if (!validationResult.success) {
-        throw new Error('訓練配置驗證失敗: ' + validationResult.error.message);
+        throw new Error('訓練ConfigureVerifyFailed: ' + validationResult.error.message);
       }
 
       // 生成訓練ID
       const trainingId = `training_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      // 獲取訓練數據
+      // Get訓練Data
       const trainingDataResult = await this.getTrainingData(dataFilters);
       const trainingData = trainingDataResult.data;
 
@@ -134,7 +134,7 @@ class FakeCardTrainingService {
         throw new Error('訓練數據不足，至少需要10條數據');
       }
 
-      // 創建訓練任務
+      // Create訓練Task
       const trainingJob = {
         id: trainingId,
         config: validationResult.data,
@@ -157,7 +157,7 @@ class FakeCardTrainingService {
 
       this.trainingJobs.set(trainingId, trainingJob);
 
-      // 模擬訓練過程（實際應用中會啟動真正的AI訓練）
+      // 模擬訓練過程（實際Apply中會StartTrue正的AI訓練）
       this.simulateTraining(trainingId);
 
       logger.info('✅ 開始模型訓練', {
@@ -176,12 +176,12 @@ class FakeCardTrainingService {
         message: '模型訓練已開始',
       };
     } catch (error) {
-      logger.error('❌ 開始模型訓練失敗:', error);
+      logger.error('❌ 開始模型訓練Failed:', error);
       throw error;
     }
   }
 
-  // 獲取訓練進度
+  // Get訓練進度
   async getTrainingProgress(trainingId) {
     try {
       const trainingJob = this.trainingJobs.get(trainingId);
@@ -197,11 +197,11 @@ class FakeCardTrainingService {
         dataSize: {
           totalSamples: trainingJob.trainingData.length,
           fakeSamples: trainingJob.trainingData.filter(card => card.fakeType === 'counterfeit').length,
-          realSamples: 0, // 需要真實卡牌數據
+          realSamples: 0, // 需要True實卡牌Data
           validationSamples: Math.floor(trainingJob.trainingData.length * 0.2),
         },
         performance: {
-          averageInferenceTime: 150, // 毫秒
+          averageInferenceTime: 150, // 毫Second
           memoryUsage: 512, // MB
           modelSize: 25, // MB
         },
@@ -211,10 +211,10 @@ class FakeCardTrainingService {
       return {
         success: true,
         data: result,
-        message: '成功獲取訓練進度',
+        message: 'SuccessGet訓練進度',
       };
     } catch (error) {
-      logger.error('❌ 獲取訓練進度失敗:', error);
+      logger.error('❌ Get訓練進度Failed:', error);
       throw error;
     }
   }
@@ -290,12 +290,12 @@ class FakeCardTrainingService {
         message: '模型評估完成',
       };
     } catch (error) {
-      logger.error('❌ 模型評估失敗:', error);
+      logger.error('❌ 模型評估Failed:', error);
       throw error;
     }
   }
 
-  // 部署模型
+  // Deploy模型
   async deployModel(modelId, deploymentConfig = {}) {
     try {
       const trainingJob = this.trainingJobs.get(modelId);
@@ -309,7 +309,7 @@ class FakeCardTrainingService {
 
       const deploymentId = `deployment_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      // 模擬部署過程
+      // 模擬Deploy過程
       const deploymentResult = {
         deploymentId,
         status: 'deployed',
@@ -325,7 +325,7 @@ class FakeCardTrainingService {
         endpoint: `/api/ai/models/${modelId}/predict`,
       };
 
-      logger.info('✅ 模型部署成功', {
+      logger.info('✅ 模型部署Success', {
         modelId,
         deploymentId,
         status: deploymentResult.status,
@@ -334,15 +334,15 @@ class FakeCardTrainingService {
       return {
         success: true,
         data: deploymentResult,
-        message: '模型部署成功',
+        message: '模型部署Success',
       };
     } catch (error) {
-      logger.error('❌ 模型部署失敗:', error);
+      logger.error('❌ 模型部署Failed:', error);
       throw error;
     }
   }
 
-  // 獲取模型列表
+  // Get模型List
   async getModels(filters = {}) {
     try {
       const models = Array.from(this.trainingJobs.values()).map(job => ({
@@ -366,7 +366,7 @@ class FakeCardTrainingService {
         startTime: job.startTime,
       }));
 
-      // 應用過濾器
+      // ApplyFilter器
       let filteredModels = models;
       if (filters.modelType && filters.modelType.length > 0) {
         filteredModels = filteredModels.filter(model => 
@@ -383,15 +383,15 @@ class FakeCardTrainingService {
       return {
         success: true,
         data: filteredModels,
-        message: `成功獲取 ${filteredModels.length} 個模型`,
+        message: `SuccessGet ${filteredModels.length} 個模型`,
       };
     } catch (error) {
-      logger.error('❌ 獲取模型列表失敗:', error);
+      logger.error('❌ Get模型列表Failed:', error);
       throw error;
     }
   }
 
-  // 獲取訓練統計
+  // Get訓練Statistics
   async getTrainingStats() {
     try {
       const models = Array.from(this.trainingJobs.values());
@@ -420,15 +420,15 @@ class FakeCardTrainingService {
           totalTrainingData,
           recentPerformance,
         },
-        message: '成功獲取訓練統計',
+        message: 'SuccessGet訓練統計',
       };
     } catch (error) {
-      logger.error('❌ 獲取訓練統計失敗:', error);
+      logger.error('❌ Get訓練統計Failed:', error);
       throw error;
     }
   }
 
-  // 更新假卡數據的訓練特徵
+  // UpdateFalse卡Data的訓練特徵
   async updateTrainingFeatures(fakeCardId, features) {
     try {
       await this.initializeModels();
@@ -438,26 +438,26 @@ class FakeCardTrainingService {
         throw new Error('假卡數據不存在');
       }
 
-      // 更新訓練特徵
+      // Update訓練特徵
       await fakeCard.update({
         trainingFeatures: features,
         updatedAt: new Date(),
       });
 
-      logger.info('✅ 更新假卡訓練特徵成功', { fakeCardId });
+      logger.info('✅ Update假卡訓練特徵Success', { fakeCardId });
 
       return {
         success: true,
         data: { success: true },
-        message: '訓練特徵更新成功',
+        message: '訓練特徵UpdateSuccess',
       };
     } catch (error) {
-      logger.error('❌ 更新假卡訓練特徵失敗:', error);
+      logger.error('❌ Update假卡訓練特徵Failed:', error);
       throw error;
     }
   }
 
-  // 批量更新訓練數據
+  // BatchUpdate訓練Data
   async batchUpdateTrainingData(updates) {
     try {
       await this.initializeModels();
@@ -482,20 +482,20 @@ class FakeCardTrainingService {
         }
       }
 
-      logger.info('✅ 批量更新訓練數據成功', { updatedCount });
+      logger.info('✅ 批量Update訓練數據Success', { updatedCount });
 
       return {
         success: true,
         data: { success: true, updatedCount },
-        message: `成功更新 ${updatedCount} 條訓練數據`,
+        message: `SuccessUpdate ${updatedCount} 條訓練數據`,
       };
     } catch (error) {
-      logger.error('❌ 批量更新訓練數據失敗:', error);
+      logger.error('❌ 批量Update訓練數據Failed:', error);
       throw error;
     }
   }
 
-  // 私有方法：提取視覺特徵
+  // PrivateMethod：提取視覺特徵
   extractVisualFeatures(card) {
     // 模擬視覺特徵提取
     return [
@@ -506,7 +506,7 @@ class FakeCardTrainingService {
     ];
   }
 
-  // 私有方法：提取文本特徵
+  // PrivateMethod：提取文本特徵
   extractTextFeatures(card) {
     // 模擬文本特徵提取
     return [
@@ -517,7 +517,7 @@ class FakeCardTrainingService {
     ];
   }
 
-  // 私有方法：提取材料特徵
+  // PrivateMethod：提取材料特徵
   extractMaterialFeatures(card) {
     // 模擬材料特徵提取
     return [
@@ -528,7 +528,7 @@ class FakeCardTrainingService {
     ];
   }
 
-  // 私有方法：提取印刷特徵
+  // PrivateMethod：提取印刷特徵
   extractPrintingFeatures(card) {
     // 模擬印刷特徵提取
     return [
@@ -539,17 +539,17 @@ class FakeCardTrainingService {
     ];
   }
 
-  // 私有方法：計算信心度分數
+  // PrivateMethod：計算信心度分數
   calculateConfidenceScore(card) {
-    // 基於假卡指標數量計算信心度
+    // 基於False卡指標數量計算信心度
     const baseScore = 0.7;
     const indicatorBonus = card.fakeIndicators.length * 0.05;
     return Math.min(0.95, baseScore + indicatorBonus);
   }
 
-  // 私有方法：計算準確度分數
+  // PrivateMethod：計算準確度分數
   calculateAccuracyScore(card) {
-    // 基於審核狀態和描述詳細程度計算準確度
+    // 基於審核Status和Description詳細程度計算準確度
     let score = 0.8;
     if (card.status === 'approved') score += 0.1;
     if (card.description.length > 100) score += 0.05;
@@ -557,15 +557,15 @@ class FakeCardTrainingService {
     return Math.min(1.0, score);
   }
 
-  // 私有方法：估算訓練時間
+  // PrivateMethod：估算訓練Time
   estimateTrainingTime(config, dataSize) {
-    const baseTime = 300000; // 5分鐘基礎時間
-    const epochTime = config.trainingEpochs * 10000; // 每輪10秒
-    const dataTime = dataSize * 100; // 每條數據100毫秒
+    const baseTime = 300000; // 5Minute基礎Time
+    const epochTime = config.trainingEpochs * 10000; // 每輪10Second
+    const dataTime = dataSize * 100; // 每條Data100毫Second
     return baseTime + epochTime + dataTime;
   }
 
-  // 私有方法：模擬訓練過程
+  // PrivateMethod：模擬訓練過程
   simulateTraining(trainingId) {
     const trainingJob = this.trainingJobs.get(trainingId);
     if (!trainingJob) return;
@@ -576,7 +576,7 @@ class FakeCardTrainingService {
         trainingJob.currentEpoch++;
         trainingJob.progress = (trainingJob.currentEpoch / totalEpochs) * 100;
 
-        // 更新訓練指標
+        // Update訓練指標
         trainingJob.metrics.accuracy = 0.7 + (trainingJob.progress / 100) * 0.25;
         trainingJob.metrics.precision = 0.65 + (trainingJob.progress / 100) * 0.3;
         trainingJob.metrics.recall = 0.68 + (trainingJob.progress / 100) * 0.27;
@@ -590,7 +590,7 @@ class FakeCardTrainingService {
           logger.info('✅ 模型訓練完成', { trainingId });
         }
       }
-    }, 1000); // 每秒更新一次進度
+    }, 1000); // 每SecondUpdate一次進度
   }
 }
 

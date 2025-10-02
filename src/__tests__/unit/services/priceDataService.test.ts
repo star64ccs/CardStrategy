@@ -64,11 +64,11 @@ describe('PriceDataService', () => {
       },
     ];
 
-    it('應該成功獲取歷史價格數據', async () => {
+    it('應該SuccessGet歷史價格數據', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockHistoricalData,
-        message: '歷史價格數據獲取成功',
+        message: '歷史價格數據GetSuccess',
       });
 
       const _result = await priceDataService.getHistoricalPrices(
@@ -90,7 +90,7 @@ describe('PriceDataService', () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockHistoricalData,
-        message: '歷史價格數據獲取成功',
+        message: '歷史價格數據GetSuccess',
       });
 
       await priceDataService.getHistoricalPrices(mockCardId);
@@ -131,8 +131,8 @@ describe('PriceDataService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('API Error'));
 
       await expect(
         priceDataService.getHistoricalPrices(
@@ -140,7 +140,7 @@ describe('PriceDataService', () => {
           mockPlatforms,
           mockTimeRange
         )
-      ).rejects.toThrow('API 錯誤');
+      ).rejects.toThrow('API Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -195,11 +195,11 @@ describe('PriceDataService', () => {
       },
     ];
 
-    it('應該成功獲取鑑定機構數據', async () => {
+    it('應該SuccessGet鑑定機構數據', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockGradingData,
-        message: '鑑定機構數據獲取成功',
+        message: '鑑定機構數據GetSuccess',
       });
 
       const _result = await priceDataService.getGradingAgencyData(
@@ -219,7 +219,7 @@ describe('PriceDataService', () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockGradingData,
-        message: '鑑定機構數據獲取成功',
+        message: '鑑定機構數據GetSuccess',
       });
 
       await priceDataService.getGradingAgencyData(mockCardId);
@@ -242,12 +242,12 @@ describe('PriceDataService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('API Error'));
 
       await expect(
         priceDataService.getGradingAgencyData(mockCardId, mockAgencies)
-      ).rejects.toThrow('API 錯誤');
+      ).rejects.toThrow('API Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -284,11 +284,11 @@ describe('PriceDataService', () => {
       ],
     };
 
-    it('應該成功獲取平台推薦', async () => {
+    it('應該SuccessGet平台推薦', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockRecommendedPlatforms,
-        message: '平台推薦獲取成功',
+        message: '平台推薦GetSuccess',
       });
 
       const _result = await priceDataService.getRecommendedPlatforms();
@@ -298,11 +298,11 @@ describe('PriceDataService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith(expect.any(String));
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('API Error'));
 
       await expect(priceDataService.getRecommendedPlatforms()).rejects.toThrow(
-        'API 錯誤'
+        'API Error'
       );
       expect(mockLogger.error).toHaveBeenCalled();
     });
@@ -332,11 +332,11 @@ describe('PriceDataService', () => {
       },
     };
 
-    it('應該成功檢查平台狀態', async () => {
+    it('應該SuccessCheck平台狀態', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockPlatformStatus,
-        message: '平台狀態檢查成功',
+        message: '平台狀態CheckSuccess',
       });
 
       const _result = await priceDataService.checkPlatformStatus(mockPlatforms);
@@ -360,18 +360,18 @@ describe('PriceDataService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('API Error'));
 
       await expect(
         priceDataService.checkPlatformStatus(mockPlatforms)
-      ).rejects.toThrow('API 錯誤');
+      ).rejects.toThrow('API Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
 
   describe('getPlatformConfig', () => {
-    it('應該成功獲取平台配置', () => {
+    it('應該SuccessGet平台Configure', () => {
       const _config = priceDataService.getPlatformConfig('EBAY');
 
       expect(config).toBeDefined();

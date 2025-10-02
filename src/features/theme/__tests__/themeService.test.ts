@@ -18,13 +18,13 @@ describe('ThemeService', () => {
   let themeService: ThemeService;
 
   beforeEach(() => {
-    // 清除所有模擬
+    // Clear所有模擬
     jest.clearAllMocks();
 
-    // 重置單例
+    // Reset單例
     (ThemeService as any).instance = undefined;
 
-    // 獲取實例
+    // GetInstance
     themeService = ThemeService.getInstance();
   });
 
@@ -37,7 +37,7 @@ describe('ThemeService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化', async () => {
+    it('應該SuccessInitialize', async () => {
       const _mockConfig = {
         config: {
           defaultTheme: 'light',
@@ -106,12 +106,12 @@ describe('ThemeService', () => {
       expect(themeService.getCurrentTheme().id).toBe('light');
     });
 
-    it('應該處理初始化錯誤', async () => {
+    it('應該HandleInitializeError', async () => {
       (AsyncStorage.getItem as jest.Mock).mockRejectedValue(
         new Error('Storage error')
       );
 
-      // 初始化錯誤應該被捕獲並記錄警告，而不是拋出錯誤
+      // InitializeError應該被Catch並RecordWarning，而不YesThrowError
       await expect(themeService.initialize()).resolves.not.toThrow();
     });
   });
@@ -138,7 +138,7 @@ describe('ThemeService', () => {
       expect(AsyncStorage.setItem).toHaveBeenCalled();
     });
 
-    it('應該在設置不存在的主題時拋出錯誤', async () => {
+    it('應該在Settings不存在的主題時拋出Error', async () => {
       await expect(themeService.setTheme('nonexistent')).rejects.toThrow(
         'Theme not found: nonexistent'
       );
@@ -233,7 +233,7 @@ describe('ThemeService', () => {
       expect(customTheme?.colors.background).toBe('#000000');
     });
 
-    it('應該在自定義不存在的主題時拋出錯誤', async () => {
+    it('應該在自定義不存在的主題時拋出Error', async () => {
       const _customization = {
         themeId: 'nonexistent',
         customizations: { primary: '#FF0000' },
@@ -274,7 +274,7 @@ describe('ThemeService', () => {
       expect(parsed.name).toBe('淺色主題');
     });
 
-    it('應該在導出不存在的主題時拋出錯誤', async () => {
+    it('應該在導出不存在的主題時拋出Error', async () => {
       await expect(themeService.exportTheme('nonexistent')).rejects.toThrow(
         'Theme not found: nonexistent'
       );
@@ -339,13 +339,13 @@ describe('ThemeService', () => {
       expect(importedTheme?.name).toBe('導入的主題');
     });
 
-    it('應該在導入無效主題數據時拋出錯誤', async () => {
+    it('應該在導入無效主題數據時拋出Error', async () => {
       await expect(themeService.importTheme('invalid json')).rejects.toThrow(
         'Failed to import theme'
       );
     });
 
-    it('應該在導入缺少必要字段的主題時拋出錯誤', async () => {
+    it('應該在導入缺少必要字段的主題時拋出Error', async () => {
       const _invalidTheme = JSON.stringify({ id: 'invalid' });
       await expect(themeService.importTheme(invalidTheme)).rejects.toThrow(
         'Failed to import theme'
@@ -422,22 +422,22 @@ describe('ThemeService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
       await themeService.initialize();
     });
 
-    it('應該處理存儲錯誤', async () => {
+    it('應該Handle存儲Error', async () => {
       (AsyncStorage.setItem as jest.Mock).mockRejectedValue(
         new Error('Storage error')
       );
 
-      // 這不應該拋出錯誤，而是記錄警告
+      // 這不應該ThrowError，而YesRecordWarning
       await expect(themeService.setTheme('dark')).resolves.not.toThrow();
     });
 
-    it('應該處理事件監聽器錯誤', async () => {
+    it('應該Handle事件監聽器Error', async () => {
       (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 
       const _errorListener = jest.fn().mockImplementation(() => {
@@ -446,7 +446,7 @@ describe('ThemeService', () => {
 
       themeService.addEventListener(errorListener);
 
-      // 這不應該拋出錯誤，而是記錄警告
+      // 這不應該ThrowError，而YesRecordWarning
       await expect(themeService.setTheme('dark')).resolves.not.toThrow();
     });
   });
@@ -470,7 +470,7 @@ describe('ThemeService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 10次切換應該在100ms內完成
+      // 10次Switch應該在100ms內Complete
       expect(duration).toBeLessThan(100);
     });
 
@@ -486,7 +486,7 @@ describe('ThemeService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 1000次獲取應該在50ms內完成
+      // 1000次Get應該在50ms內Complete
       expect(duration).toBeLessThan(50);
     });
   });
@@ -498,7 +498,7 @@ describe('ThemeService', () => {
     });
 
     it('應該處理空主題列表', () => {
-      // 這是一個邊界情況，正常情況下不應該發生
+      // 這Yes一個邊界情況，正常情況下不應該發生
       themeService['availableThemes'] = [];
 
       expect(() => themeService.getAvailableThemes()).not.toThrow();
@@ -508,7 +508,7 @@ describe('ThemeService', () => {
     it('應該處理無效的存儲數據', async () => {
       (AsyncStorage.getItem as jest.Mock).mockResolvedValue('invalid json');
 
-      // 這不應該拋出錯誤，而是使用默認值
+      // 這不應該ThrowError，而Yes使用DefaultValue
       await expect(themeService.initialize()).resolves.not.toThrow();
     });
 
@@ -524,7 +524,7 @@ describe('ThemeService', () => {
 
       await themeService.initialize();
 
-      // 應該使用默認值
+      // 應該使用DefaultValue
       expect(themeService.getCurrentTheme().id).toBe('light');
       expect(themeService.isAutoThemeEnabled()).toBe(false);
     });

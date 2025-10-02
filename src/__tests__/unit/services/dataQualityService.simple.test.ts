@@ -1,6 +1,6 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-// 首先設置 mock，然後再導入
-// 導入被測試的模組
+// 首先Settings mock，然後再Import
+// Import被Test的模組
 import { api } from '../../../config/api';
 
 import { dataQualityService } from '@/features/dataQuality/services/dataQualityService';
@@ -19,8 +19,8 @@ describe('DataQualityService 修復驗證測試', () => {
     jest.clearAllMocks();
   });
 
-  it('應該成功修復 apiClient 到 api 的引用', async () => {
-    // 測試一個簡單的方法來驗證修復
+  it('應該Success修復 apiClient 到 api 的引用', async () => {
+    // Test一個簡單的Method來Verify修復
     const _mockResponse = {
       data: {
         status: 'success',
@@ -28,18 +28,18 @@ describe('DataQualityService 修復驗證測試', () => {
       },
     };
 
-    // 設置 mock 返回值
+    // Settings mock ReturnValue
     (api.get as jest.Mock).mockResolvedValue(mockResponse);
 
-    // 調用一個方法來驗證 api 引用是否正確
+    // 調用一個Method來Verify api 引用YesNo正確
     const _result = await dataQualityService.getCollectionStats();
 
-    // 驗證 mock 被調用
+    // Verify mock 被調用
     expect(api.get).toHaveBeenCalled();
     expect(result).toEqual(mockResponse.data);
   });
 
-  it('應該正確處理 API 錯誤', async () => {
+  it('應該正確Handle API Error', async () => {
     const _error = new Error('API Error');
     (api.get as jest.Mock).mockRejectedValue(error);
 

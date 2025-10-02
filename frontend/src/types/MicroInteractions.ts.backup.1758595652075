@@ -1,0 +1,418 @@
+// 微交互系統類型定義
+
+// 微交互類型枚舉
+export enum MicroInteractionType {
+  BUTTON_CLICK = 'button_click',
+  FORM_VALIDATION = 'form_validation',
+  LOADING = 'loading',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  PAGE_TRANSITION = 'page_transition',
+  LIST_ANIMATION = 'list_animation',
+  HOVER = 'hover',
+  FOCUS = 'focus',
+  SCROLL = 'scroll',
+  DRAG = 'drag',
+  SWIPE = 'swipe',
+  PINCH = 'pinch',
+  ROTATE = 'rotate',
+}
+
+// 微交互觸發器類型
+export enum TriggerType {
+  CLICK = 'click',
+  HOVER = 'hover',
+  FOCUS = 'focus',
+  SCROLL = 'scroll',
+  DRAG = 'drag',
+  SWIPE = 'swipe',
+  PINCH = 'pinch',
+  ROTATE = 'rotate',
+  AUTO = 'auto',
+  CUSTOM = 'custom',
+}
+
+// 微交互狀態枚舉
+export enum MicroInteractionStatus {
+  IDLE = 'idle',
+  TRIGGERED = 'triggered',
+  PLAYING = 'playing',
+  COMPLETED = 'completed',
+  ERROR = 'error',
+  DISABLED = 'disabled',
+}
+
+// 微交互可訪問性配置
+export interface MicroInteractionAccessibility {
+  reducedMotion: boolean;
+  screenReader: boolean;
+  keyboardOnly: boolean;
+  focusIndicator: boolean;
+  highContrast: boolean;
+  voiceControl: boolean;
+}
+
+// 微交互狀態對象
+export interface MicroInteractionState {
+  id: string;
+  type: MicroInteractionType;
+  status: MicroInteractionStatus;
+  config: MicroInteractionConfig;
+  performance: MicroInteractionPerformance;
+  accessibility: MicroInteractionAccessibility;
+  isActive: boolean;
+  startTime?: number;
+  endTime?: number;
+  duration?: number;
+  error?: string;
+}
+
+// 微交互配置
+export interface MicroInteractionConfig {
+  id: string;
+  type: MicroInteractionType;
+  trigger: TriggerType;
+  duration: number;
+  delay?: number;
+  easing?: string;
+  direction?: 'forward' | 'reverse' | 'alternate';
+  iterations?: number;
+  autoPlay?: boolean;
+  disabled?: boolean;
+  accessibility?: {
+    reducedMotion?: boolean;
+    screenReader?: boolean;
+    keyboardOnly?: boolean;
+  };
+  performance?: {
+    useTransform?: boolean;
+    useOpacity?: boolean;
+    useWillChange?: boolean;
+    throttleScroll?: boolean;
+  };
+  custom?: Record<string, any>;
+}
+
+// 按鈕點擊動畫配置
+export interface ButtonClickConfig extends MicroInteractionConfig {
+  type: MicroInteractionType.BUTTON_CLICK;
+  ripple?: {
+    enabled: boolean;
+    color?: string;
+    duration?: number;
+    scale?: number;
+  };
+  scale?: {
+    enabled: boolean;
+    scale?: number;
+    duration?: number;
+  };
+  shadow?: {
+    enabled: boolean;
+    intensity?: number;
+    duration?: number;
+  };
+}
+
+// 表單驗證動畫配置
+export interface FormValidationConfig extends MicroInteractionConfig {
+  type: MicroInteractionType.FORM_VALIDATION;
+  success?: {
+    icon?: string;
+    color?: string;
+    duration?: number;
+    shake?: boolean;
+  };
+  error?: {
+    icon?: string;
+    color?: string;
+    duration?: number;
+    shake?: boolean;
+    shakeIntensity?: number;
+  };
+  warning?: {
+    icon?: string;
+    color?: string;
+    duration?: number;
+    pulse?: boolean;
+  };
+}
+
+// 加載動畫配置
+export interface LoadingConfig extends MicroInteractionConfig {
+  type: MicroInteractionType.LOADING;
+  spinner?: {
+    type: 'circular' | 'linear' | 'dots' | 'pulse' | 'wave';
+    size?: number;
+    color?: string;
+    thickness?: number;
+  };
+  skeleton?: {
+    enabled: boolean;
+    rows?: number;
+    height?: number;
+    borderRadius?: number;
+  };
+  progress?: {
+    enabled: boolean;
+    type: 'determinate' | 'indeterminate';
+    value?: number;
+    color?: string;
+  };
+}
+
+// 成功/錯誤動畫配置
+export interface FeedbackConfig extends MicroInteractionConfig {
+  type: MicroInteractionType.SUCCESS | MicroInteractionType.ERROR;
+  icon?: {
+    enabled: boolean;
+    name?: string;
+    size?: number;
+    color?: string;
+    animation?: 'bounce' | 'pulse' | 'shake' | 'rotate';
+  };
+  message?: {
+    enabled: boolean;
+    text?: string;
+    duration?: number;
+    position?: 'top' | 'bottom' | 'center';
+  };
+  background?: {
+    enabled: boolean;
+    color?: string;
+    opacity?: number;
+    blur?: boolean;
+  };
+}
+
+// 頁面切換動畫配置
+export interface PageTransitionConfig extends MicroInteractionConfig {
+  type: MicroInteractionType.PAGE_TRANSITION;
+  enter?: {
+    animation: 'fade' | 'slide' | 'scale' | 'flip' | 'zoom';
+    direction?: 'left' | 'right' | 'up' | 'down';
+    duration?: number;
+    easing?: string;
+  };
+  exit?: {
+    animation: 'fade' | 'slide' | 'scale' | 'flip' | 'zoom';
+    direction?: 'left' | 'right' | 'up' | 'down';
+    duration?: number;
+    easing?: string;
+  };
+  overlay?: {
+    enabled: boolean;
+    color?: string;
+    opacity?: number;
+    blur?: boolean;
+  };
+}
+
+// 列表動畫配置
+export interface ListAnimationConfig extends MicroInteractionConfig {
+  type: MicroInteractionType.LIST_ANIMATION;
+  stagger?: {
+    enabled: boolean;
+    delay?: number;
+    easing?: string;
+  };
+  enter?: {
+    animation: 'fade' | 'slide' | 'scale' | 'bounce' | 'flip';
+    direction?: 'left' | 'right' | 'up' | 'down';
+    duration?: number;
+    easing?: string;
+  };
+  exit?: {
+    animation: 'fade' | 'slide' | 'scale' | 'bounce' | 'flip';
+    direction?: 'left' | 'right' | 'up' | 'down';
+    duration?: number;
+    easing?: string;
+  };
+  reorder?: {
+    enabled: boolean;
+    animation: 'slide' | 'scale' | 'flip';
+    duration?: number;
+    easing?: string;
+  };
+}
+
+// 微交互狀態
+export interface MicroInteractionState {
+  id: string;
+  type: MicroInteractionType;
+  status: MicroInteractionStatus;
+  config: MicroInteractionConfig;
+  performance: MicroInteractionPerformance;
+  accessibility: MicroInteractionAccessibility;
+  isActive: boolean;
+  startTime?: number;
+  endTime?: number;
+  duration?: number;
+  error?: string;
+}
+
+// 微交互事件
+export interface MicroInteractionEvent {
+  id: string;
+  type: MicroInteractionType;
+  trigger: TriggerType;
+  timestamp: number;
+  data?: Record<string, any>;
+}
+
+// 微交互管理器配置
+export interface MicroInteractionManagerConfig {
+  enabled: boolean;
+  performanceMode: boolean;
+  accessibilityMode: boolean;
+  debugMode: boolean;
+  maxConcurrent: number;
+  throttleDelay: number;
+  defaultDuration: number;
+  defaultEasing: string;
+}
+
+// 微交互性能指標
+export interface MicroInteractionPerformance {
+  id: string;
+  startTime: number;
+  endTime: number;
+  duration: number;
+  frameCount: number;
+  averageFPS: number;
+  memoryUsage?: number;
+  cpuUsage?: number;
+}
+
+// 微交互統計
+export interface MicroInteractionStats {
+  totalInteractions: number;
+  successfulInteractions: number;
+  failedInteractions: number;
+  averageDuration: number;
+  performanceScore: number;
+  accessibilityScore: number;
+  userSatisfactionScore: number;
+}
+
+// React 組件 Props
+export interface MicroInteractionProps {
+  config: MicroInteractionConfig;
+  children: React.ReactNode;
+  onStart?: (event: MicroInteractionEvent) => void;
+  onComplete?: (event: MicroInteractionEvent) => void;
+  onError?: (error: string) => void;
+  className?: string;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+}
+
+// 按鈕微交互 Props
+export interface ButtonMicroInteractionProps extends MicroInteractionProps {
+  config: ButtonClickConfig;
+  onClick?: (event: React.MouseEvent) => void;
+  onMouseDown?: (event: React.MouseEvent) => void;
+  onMouseUp?: (event: React.MouseEvent) => void;
+  onTouchStart?: (event: React.TouchEvent) => void;
+  onTouchEnd?: (event: React.TouchEvent) => void;
+}
+
+// 表單微交互 Props
+export interface FormMicroInteractionProps extends MicroInteractionProps {
+  config: FormValidationConfig;
+  validationState: 'idle' | 'validating' | 'success' | 'error' | 'warning';
+  message?: string;
+  onValidationChange?: (state: string, message?: string) => void;
+}
+
+// 加載微交互 Props
+export interface LoadingMicroInteractionProps extends MicroInteractionProps {
+  config: LoadingConfig;
+  loading: boolean;
+  progress?: number;
+  message?: string;
+  onComplete?: () => void;
+}
+
+// 反饋微交互 Props
+export interface FeedbackMicroInteractionProps extends MicroInteractionProps {
+  config: FeedbackConfig;
+  show: boolean;
+  message?: string;
+  onClose?: () => void;
+  autoClose?: boolean;
+  autoCloseDelay?: number;
+}
+
+// 頁面切換微交互 Props
+export interface PageTransitionMicroInteractionProps
+  extends MicroInteractionProps {
+  config: PageTransitionConfig;
+  in: boolean;
+  onEnter?: () => void;
+  onExit?: () => void;
+  onEntered?: () => void;
+  onExited?: () => void;
+}
+
+// 列表微交互 Props
+export interface ListMicroInteractionProps extends MicroInteractionProps {
+  config: ListAnimationConfig;
+  items: any[];
+  keyExtractor: (item: any, index: number) => string;
+  renderItem: (item: any, index: number) => React.ReactNode;
+  onItemEnter?: (item: any, index: number) => void;
+  onItemExit?: (item: any, index: number) => void;
+}
+
+// Hook 返回值
+export interface UseMicroInteractionReturn {
+  trigger: (data?: Record<string, any>) => void;
+  stop: () => void;
+  reset: () => void;
+  state: MicroInteractionState;
+  progress: number;
+  isPlaying: boolean;
+  isCompleted: boolean;
+  hasError: boolean;
+  performance: MicroInteractionPerformance | null;
+}
+
+// 微交互服務接口
+export interface MicroInteractionServiceInterface {
+  // 核心方法
+  initialize(config: MicroInteractionManagerConfig): Promise<void>;
+  register(config: MicroInteractionConfig): string;
+  unregister(id: string): void;
+  trigger(id: string, data?: Record<string, any>): Promise<void>;
+  stop(id: string): void;
+  reset(id: string): void;
+
+  // 批量操作
+  triggerMultiple(ids: string[], data?: Record<string, any>): Promise<void>;
+  stopAll(): void;
+  resetAll(): void;
+
+  // 狀態查詢
+  getState(id: string): MicroInteractionState | null;
+  getProgress(id: string): number;
+  isPlaying(id: string): boolean;
+  isCompleted(id: string): boolean;
+  hasError(id: string): boolean;
+
+  // 性能監控
+  getPerformance(id: string): MicroInteractionPerformance | null;
+  getStats(): MicroInteractionStats;
+  enablePerformanceMonitoring(enabled: boolean): void;
+
+  // 配置管理
+  updateConfig(id: string, config: Partial<MicroInteractionConfig>): void;
+  getConfig(id: string): MicroInteractionConfig | null;
+
+  // 事件監聽
+  on(event: string, callback: (data: any) => void): void;
+  off(event: string, callback: (data: any) => void): void;
+
+  // 清理
+  destroy(): void;
+}

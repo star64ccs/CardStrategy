@@ -1,6 +1,6 @@
-// 可訪問性提供者組件
-// 為整個應用提供可訪問性功能支持
-// 符合 WCAG 2.1 AA 標準和 Section 508 要求
+// 可訪問性提供者Component
+// 為整個Apply提供可訪問性功能Support
+// 符合 WCAG 2.1 AA Standard和 Section 508 要求
 
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useEffect, useRef } from 'react';
@@ -49,7 +49,7 @@ import type {
 
 // 可訪問性上下文
 interface AccessibilityContextType extends UseAccessibilityReturn {
-  // 額外的提供者特定方法
+  // 額外的提供者SpecificMethod
   initialize: (config?: Partial<AccessibilityConfig>) => Promise<void>;
   updateConfig: (config: Partial<AccessibilityConfig>) => Promise<void>;
   runTest: (
@@ -63,45 +63,45 @@ const _AccessibilityContext = createContext<AccessibilityContextType | null>(
   null
 );
 
-// 可訪問性提供者屬性
+// 可訪問性提供者Property
 interface AccessibilityProviderProps {
-  /** 子組件 */
+  /** 子Component */
   children: ReactNode;
-  /** 初始配置 */
+  /** 初始Configure */
   initialConfig?: Partial<AccessibilityConfig>;
-  /** 是否自動初始化 */
+  /** YesNoAutoInitialize */
   autoInitialize?: boolean;
-  /** 是否啟用鍵盤導航 */
+  /** YesNoEnableKey盤導航 */
   enableKeyboardNavigation?: boolean;
-  /** 是否啟用屏幕閱讀器 */
+  /** YesNoEnable屏幕閱讀器 */
   enableScreenReader?: boolean;
-  /** 是否啟用高對比度 */
+  /** YesNoEnable高對比度 */
   enableHighContrast?: boolean;
-  /** 是否啟用減少動畫 */
+  /** YesNoEnable減少動畫 */
   enableReducedMotion?: boolean;
-  /** 是否啟用大字體 */
+  /** YesNoEnable大字體 */
   enableLargeText?: boolean;
-  /** 焦點管理配置 */
+  /** 焦點ManageConfigure */
   focusManager?: Partial<FocusManagerConfig>;
-  /** 鍵盤導航配置 */
+  /** Key盤導航Configure */
   keyboardNavigation?: Partial<KeyboardNavigationConfig>;
-  /** 屏幕閱讀器配置 */
+  /** 屏幕閱讀器Configure */
   screenReader?: Partial<ScreenReaderConfig>;
-  /** 測試配置 */
+  /** TestConfigure */
   testConfig?: Partial<AccessibilityTestConfig>;
-  /** 事件處理器 */
+  /** EventHandle器 */
   onEvent?: (event: AccessibilityEvent) => void;
-  /** 錯誤處理器 */
+  /** ErrorHandle器 */
   onError?: (error: Error) => void;
-  /** 樣式類名 */
+  /** 樣式Class名 */
   className?: string;
   /** 內聯樣式 */
   style?: React.CSSProperties;
-  /** 測試 ID */
+  /** Test ID */
   testId?: string;
 }
 
-// 可訪問性提供者組件
+// 可訪問性提供者Component
 export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
   children,
   initialConfig,
@@ -144,7 +144,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     Map<string, (event: AccessibilityEvent) => void>
   >(new Map());
 
-  // 初始化可訪問性服務
+  // Initialize可訪問性Service
   useEffect(() => {
     if (autoInitialize && !initializedRef.current) {
       const config: Partial<AccessibilityConfig> = {
@@ -177,7 +177,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     }
 
     return () => {
-      // 清理服務
+      // 清理Service
       accessibilityService.destroy();
     };
   }, [
@@ -195,7 +195,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     onError,
   ]);
 
-  // 設置事件監聽器
+  // SettingsEvent監聽器
   useEffect(() => {
     if (onEvent) {
       const _eventHandler = (event: AccessibilityEvent) => {
@@ -216,7 +216,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     }
 
     return () => {
-      // 清理事件監聽器
+      // 清理Event監聽器
       eventListenersRef.current.clear();
     };
   }, [onEvent, dispatch]);
@@ -243,14 +243,14 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     };
   }, [dispatch]);
 
-  // 監聽鍵盤事件
+  // 監聽Key盤Event
   useEffect(() => {
     const _handleKeyDown = (event: KeyboardEvent) => {
       if (!keyboardNavigationEnabled) return;
 
       const { key, ctrlKey, altKey, shiftKey, metaKey } = event;
 
-      // 處理方向鍵導航
+      // Handle方向Key導航
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
         event.preventDefault();
         switch (key) {
@@ -265,10 +265,10 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
         }
       }
 
-      // 處理功能鍵
+      // Handle功能Key
       switch (key) {
         case 'Tab':
-          // Tab 鍵導航由瀏覽器處理
+          // Tab Key導航由瀏覽器Handle
           break;
         case 'Enter':
           if (currentFocus) {
@@ -322,7 +322,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     dispatch,
   ]);
 
-  // 應用可訪問性樣式
+  // Apply可訪問性樣式
   useEffect(() => {
     const _styleElement = document.createElement('style');
 
@@ -412,7 +412,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     accessibilityConfig.focusManager,
   ]);
 
-  // 屏幕閱讀器支持
+  // 屏幕閱讀器Support
   useEffect(() => {
     if (screenReaderEnabled && 'speechSynthesis' in window) {
       const _speak = (
@@ -435,7 +435,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
         speechSynthesis.speak(utterance);
       };
 
-      // 監聽焦點變化進行朗讀
+      // 監聽焦點變化進Row朗讀
       if (
         accessibilityConfig.screenReader?.reading?.readOnFocus &&
         currentFocus
@@ -456,7 +456,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     }
   }, [screenReaderEnabled, currentFocus, accessibilityConfig.screenReader]);
 
-  // 構建上下文值
+  // Build上下文Value
   const contextValue: AccessibilityContextType = {
     state: accessibilityState,
     focusManager: {
@@ -501,16 +501,16 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     },
     keyboardNavigation: {
       enable: () => {
-        // 鍵盤導航已通過 Redux 狀態管理
+        // Key盤導航已通過 Redux StatusManage
       },
       disable: () => {
-        // 鍵盤導航已通過 Redux 狀態管理
+        // Key盤導航已通過 Redux StatusManage
       },
       handleKeyDown: (event: KeyboardEvent) => {
-        // 鍵盤事件處理已在 useEffect 中實現
+        // Key盤EventHandle已在 useEffect 中實現
       },
       handleKeyUp: (event: KeyboardEvent) => {
-        // 鍵盤釋放事件處理
+        // Key盤釋放EventHandle
       },
     },
     screenReader: {
@@ -534,7 +534,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
         }
       },
       announce: (text: string) => {
-        // 創建 aria-live 區域進行公告
+        // Create aria-live District域進Row公告
         const _announcement = document.createElement('div');
         announcement.setAttribute('aria-live', 'assertive');
         announcement.setAttribute('aria-atomic', 'true');
@@ -610,7 +610,7 @@ export const AccessibilityProvider: React.FC<AccessibilityProviderProps> = ({
     switchMode: (mode: AccessibilityState['mode']) => {
       dispatch(switchMode(mode));
     },
-    // 提供者特定方法
+    // 提供者SpecificMethod
     initialize: async (config?: Partial<AccessibilityConfig>) => {
       try {
         await dispatch(initializeAccessibility(config)).unwrap();
@@ -668,5 +668,5 @@ export const _useAccessibility = (): AccessibilityContextType => {
   return context;
 };
 
-// 導出組件
+// ExportComponent
 export default AccessibilityProvider;

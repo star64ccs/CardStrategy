@@ -1,6 +1,6 @@
 /**
  * 稅務合規模組
- * 實現重構計劃任務 1.10: TaxComplianceModule
+ * 實現重構計劃Task 1.10: TaxComplianceModule
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -229,7 +229,7 @@ export class TaxComplianceModule {
       logger.info('稅務合規模組初始化完成', { config: this.config });
       return true;
     } catch (error) {
-      logger.error('稅務合規模組初始化失敗:', error);
+      logger.error('稅務合規模組InitializeFailed:', error);
       return false;
     }
   }
@@ -282,7 +282,7 @@ export class TaxComplianceModule {
 
       return vatCalculation;
     } catch (error) {
-      logger.error('VAT計算失敗:', error);
+      logger.error('VAT計算Failed:', error);
       throw error;
     }
   }
@@ -312,7 +312,7 @@ export class TaxComplianceModule {
 
       this.digitalServices.set(service.id, service);
 
-      logger.info('數字服務稅計算完成', {
+      logger.info('數字Service稅計算完成', {
         serviceId: service.id,
         taxRate,
         taxAmount,
@@ -321,7 +321,7 @@ export class TaxComplianceModule {
 
       return taxCalculation;
     } catch (error) {
-      logger.error('數字服務稅計算失敗:', error);
+      logger.error('數字Service稅計算Failed:', error);
       throw error;
     }
   }
@@ -377,7 +377,7 @@ export class TaxComplianceModule {
 
       return taxResult;
     } catch (error) {
-      logger.error('跨境稅務處理失敗:', error);
+      logger.error('跨境稅務HandleFailed:', error);
       throw error;
     }
   }
@@ -427,7 +427,7 @@ export class TaxComplianceModule {
 
       return taxReport;
     } catch (error) {
-      logger.error('稅務報告生成失敗:', error);
+      logger.error('稅務報告生成Failed:', error);
       throw error;
     }
   }
@@ -465,7 +465,7 @@ export class TaxComplianceModule {
 
       return filingResult;
     } catch (error) {
-      logger.error('稅務申報自動化失敗:', error);
+      logger.error('稅務申報自動化Failed:', error);
       throw error;
     }
   }
@@ -502,7 +502,7 @@ export class TaxComplianceModule {
 
       return validationResult;
     } catch (error) {
-      logger.error('發票合規驗證失敗:', error);
+      logger.error('發票合規VerifyFailed:', error);
       throw error;
     }
   }
@@ -524,7 +524,7 @@ export class TaxComplianceModule {
     logger.info('稅務合規模組已重置');
   }
 
-  // 私有方法
+  // PrivateMethod
   private getDefaultConfig(): TaxComplianceConfig {
     return {
       enableVATCalculation: true,
@@ -578,10 +578,10 @@ export class TaxComplianceModule {
     jurisdiction: string
   ): string {
     if (transaction.amount === 0) return '零金額交易';
-    if (transaction.category === 'financial_services') return '金融服務豁免';
-    if (transaction.category === 'healthcare') return '醫療服務豁免';
-    if (transaction.category === 'education') return '教育服務豁免';
-    if (transaction.category === 'charity') return '慈善服務豁免';
+    if (transaction.category === 'financial_services') return '金融Service豁免';
+    if (transaction.category === 'healthcare') return '醫療Service豁免';
+    if (transaction.category === 'education') return '教育Service豁免';
+    if (transaction.category === 'charity') return '慈善Service豁免';
     return '其他豁免原因';
   }
 
@@ -597,8 +597,8 @@ export class TaxComplianceModule {
     service: DigitalService,
     isApplicable: boolean
   ): string {
-    if (!isApplicable) return '數字服務稅不適用';
-    return `適用${service.consumerCountry}數字服務稅，稅率${this.config.digitalServicesTaxRate}%`;
+    if (!isApplicable) return '數字Service稅不適用';
+    return `適用${service.consumerCountry}數字Service稅，稅率${this.config.digitalServicesTaxRate}%`;
   }
 
   private isSellerCountryTaxApplicable(
@@ -802,7 +802,7 @@ export class TaxComplianceModule {
         id: `violation_${Date.now()}_3`,
         type: 'incorrect_calculation',
         severity: 'medium',
-        description: '稅額計算錯誤',
+        description: '稅額計算Error',
         regulation: '稅法',
         requiredAction: '重新計算稅額',
       });

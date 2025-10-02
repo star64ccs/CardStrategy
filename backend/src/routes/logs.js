@@ -4,7 +4,7 @@ const router = express.Router();''
 const { authenticateToken: protect, authorize } = require('../middleware/auth');'
 // eslint-disable-next-line no-unused-vars''
 const logger = require('../utils/logger');''
-// ?��?模�?（�??�使?�數?�庫�?// const Log = require('../models/Log');
+// ?��?模�?（�??�使?�數?�Library�?// const Log = require('../models/Log');
 
 // 驗�?請�?中�?�?// eslint-disable-next-line no-unused-vars
 const validateRequest = (req, res, next) => {
@@ -73,7 +73,7 @@ router.post('/', validateLogData, async (req, res) => {
       context,
       deviceInfo,'
     } = req.body;''
-    // 記�??��??��?�?    logger.info('?�到客戶端日�?, {
+    // 記�??��??��?�?    logger.info('?�到Client日�?, {
       level,
       message,
       userId,
@@ -85,9 +85,9 @@ router.post('/', validateLogData, async (req, res) => {
       context,
       deviceInfo,
     });'
-    // 如�??�錯誤日誌�??�以觸發警報''
+    // 如�??�ErrorLog�??�以觸發Alert''
     if (level === 'error') {'
-      // ?�裡?�以實現?�誤警報?�輯''
+      // ?�裡?�以實現?�誤Alert?�輯''
       logger.error('客戶端錯誤日�?, {
         message,
         userId,
@@ -96,7 +96,7 @@ router.post('/', validateLogData, async (req, res) => {
         deviceInfo,
       });
     }
-    // 保�??�數?�庫（�??�使?�數?�庫�?// eslint-disable-next-line no-unused-vars
+    // 保�??�數?�Library（�??�使?�數?�Library�?// eslint-disable-next-line no-unused-vars
     // const log = await Log.create({
     //   level,
     //   message,
@@ -115,7 +115,7 @@ router.post('/', validateLogData, async (req, res) => {
       success: true,''
       message: '?��?已接??,
       data: {
-        id: Date.now(), // ?��? ID，實?��?該使?�數?�庫?��???ID
+        id: Date.now(), // ?��? ID，實?��?該使?�數?�Library?��???ID
         timestamp: new Date().toISOString(),
       },
     });'
@@ -152,7 +152,7 @@ router.post('/batch', validateBatchLogData, async (req, res) => {
           userId: log.userId,
           sessionId: log.sessionId,
         });'
-        // 如�??�錯誤日誌�??��??��?''
+        // 如�??�ErrorLog�??��??��?''
         if (log.level === 'error') {
           errorLogs.push(log);
         }
@@ -162,12 +162,12 @@ router.post('/batch', validateBatchLogData, async (req, res) => {
           processedAt: new Date().toISOString(),
         });
 
-        // 保�??�數?�庫（�??�使?�數?�庫�?        // await Log.create(log);'
+        // 保�??�數?�Library（�??�使?�數?�Library�?        // await Log.create(log);'
       } catch (error) {''
         logger.error('?��??�個日誌失??', { error, log });
       }
     }
-    // 如�??�錯誤日誌�?觸發警報'
+    // 如�??�ErrorLog�?觸發Alert'
     if (errorLogs.length > 0) {''
       logger.error('?�次中�??�錯誤日�?, {
         errorCount: errorLogs.length,
@@ -203,7 +203,7 @@ router.get('/stats', protect, authorize('admin'), async (req, res) => {
   try {
     const { startDate, endDate, level, userId } = req.query;
 
-    // ?�裡?�該從數?�庫?�詢統�??��?
+    // ?�裡?�該從數?�Library?�詢統�??��?
     // ?��?返�?模擬?��?
     const stats = {
       totalLogs: 1250,
@@ -248,7 +248,7 @@ router.get('/stats', protect, authorize('admin'), async (req, res) => {
   }
 });
 
-// ?��??��??�表'
+// ?��??��??�Table'
 // GET /api/logs''
 router.get('/', protect, authorize('admin'), async (req, res) => {
   try {
@@ -263,7 +263,7 @@ router.get('/', protect, authorize('admin'), async (req, res) => {
       search,
     } = req.query;
 
-    // ?�裡?�該從數?�庫?�詢?��?
+    // ?�裡?�該從數?�Library?�詢?��?
     // ?��?返�?模擬?��?
     const mockLogs = Array.from({ length: Math.min(limit, 50) }, (_, i) => ({'
       id: `log_${Date.now()}_${i}`,''
@@ -321,7 +321,7 @@ router.get('/:id', protect, authorize('admin'), async (req, res) => {
   try {
     const { id } = req.params;
 
-    // ?�裡?�該從數?�庫?�詢?��??��?
+    // ?�裡?�該從數?�Library?�詢?��??��?
     // ?��?返�?模擬?��?
 // eslint-disable-next-line no-unused-vars
     const log = {'
@@ -376,7 +376,7 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
   try {
     const { id } = req.params;
 
-    // ?�裡?�該從數?�庫?�除?��?'
+    // ?�裡?�該從數?�Library?�除?��?'
     // await Log.findByIdAndDelete(id);''
     logger.info('?��?已刪??, { id });
 
@@ -409,7 +409,7 @@ router.delete(''
     try {
       const { ids } = req.body;
 
-      // ?�裡?�該從數?�庫?��??�除?��?'
+      // ?�裡?�該從數?�Library?��??�除?��?'
       // await Log.deleteMany({ _id: { $in: ids } });''
       logger.info('?��??�除?��?', { count: ids.length, ids });
 

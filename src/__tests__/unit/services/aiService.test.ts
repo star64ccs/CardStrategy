@@ -39,11 +39,11 @@ describe('AIService', () => {
       summary: '這是一張具有良好投資潛力的卡片',
     };
 
-    it('應該成功獲取卡片 AI 分析', async () => {
+    it('應該SuccessGet卡片 AI 分析', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockAnalysis,
-        message: '分析成功',
+        message: '分析Success',
       });
 
       const _result = await aiService.getCardAnalysis(mockCardId);
@@ -61,11 +61,11 @@ describe('AIService', () => {
       await expect(aiService.getCardAnalysis(invalidCardId)).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('API Error'));
 
       await expect(aiService.getCardAnalysis(mockCardId)).rejects.toThrow(
-        'API 錯誤'
+        'API Error'
       );
       expect(mockLogger.error).toHaveBeenCalled();
     });
@@ -83,11 +83,11 @@ describe('AIService', () => {
       trend: 'up' as const,
     };
 
-    it('應該成功獲取價格預測', async () => {
+    it('應該SuccessGet價格預測', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockPrediction,
-        message: '預測成功',
+        message: '預測Success',
       });
 
       const _result = await aiService.getPricePrediction(mockCardId, '7d');
@@ -106,12 +106,12 @@ describe('AIService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('預測服務錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('預測ServiceError'));
 
       await expect(
         aiService.getPricePrediction(mockCardId, '7d')
-      ).rejects.toThrow('預測服務錯誤');
+      ).rejects.toThrow('預測ServiceError');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -128,11 +128,11 @@ describe('AIService', () => {
       riskLevel: 'medium' as const,
     };
 
-    it('應該成功獲取投資建議', async () => {
+    it('應該SuccessGet投資建議', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockRecommendation,
-        message: '建議生成成功',
+        message: '建議生成Success',
       });
 
       const _result = await aiService.getInvestmentRecommendation(mockCardId);
@@ -152,12 +152,12 @@ describe('AIService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('建議服務錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('建議ServiceError'));
 
       await expect(
         aiService.getInvestmentRecommendation(mockCardId)
-      ).rejects.toThrow('建議服務錯誤');
+      ).rejects.toThrow('建議ServiceError');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -172,11 +172,11 @@ describe('AIService', () => {
       timestamp: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功發送聊天消息', async () => {
+    it('應該Success發送聊天消息', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockChatMessage,
-        message: '消息發送成功',
+        message: '消息發送Success',
       });
 
       const _result = await aiService.sendChatMessage(
@@ -208,11 +208,11 @@ describe('AIService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('聊天服務錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('聊天ServiceError'));
 
       await expect(aiService.sendChatMessage(mockMessage)).rejects.toThrow(
-        '聊天服務錯誤'
+        '聊天ServiceError'
       );
       expect(mockLogger.error).toHaveBeenCalled();
     });
@@ -242,11 +242,11 @@ describe('AIService', () => {
       },
     ];
 
-    it('應該成功獲取聊天會話列表', async () => {
+    it('應該SuccessGet聊天會話列表', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockSessions,
-        message: '會話列表獲取成功',
+        message: '會話列表GetSuccess',
       });
 
       const _result = await aiService.getChatSessions();
@@ -269,10 +269,10 @@ describe('AIService', () => {
       expect(result.data).toEqual([]);
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('會話服務錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('會話ServiceError'));
 
-      await expect(aiService.getChatSessions()).rejects.toThrow('會話服務錯誤');
+      await expect(aiService.getChatSessions()).rejects.toThrow('會話ServiceError');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });

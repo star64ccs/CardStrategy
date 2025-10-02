@@ -1,6 +1,6 @@
 import type { BaseEntity } from './common';
 
-// 用戶相關類型
+// User相OffClass型
 export interface User extends BaseEntity {
   email: string;
   username: string;
@@ -57,7 +57,7 @@ export interface UserStatistics {
   lastActive: Date;
 }
 
-// 認證相關類型
+// Authenticate相OffClass型
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -81,7 +81,7 @@ export interface AuthResponse {
   expiresIn: number;
 }
 
-// 通知類型
+// NotificationClass型
 export interface Notification extends BaseEntity {
   userId: string;
   type: NotificationType;
@@ -101,7 +101,7 @@ export type NotificationType =
   | 'social_login'
   | 'security_alert';
 
-// 社交登錄相關類型
+// 社交Login相OffClass型
 export type SocialProvider =
   | 'google'
   | 'facebook'
@@ -193,7 +193,7 @@ export interface SocialLoginConfig {
   };
 }
 
-// 雙因素認證類型
+// 雙因素AuthenticateClass型
 export interface TwoFactorAuth {
   isEnabled: boolean;
   method: 'sms' | 'email' | 'authenticator';
@@ -213,7 +213,7 @@ export interface TwoFactorVerification {
   rememberDevice?: boolean;
 }
 
-// 會話管理類型
+// 會話ManageClass型
 export interface UserSession {
   id: string;
   userId: string;
@@ -240,10 +240,10 @@ export interface SessionManagement {
   activeSessions: UserSession[];
   maxSessions: number;
   allowMultipleSessions: boolean;
-  sessionTimeout: number; // 分鐘
+  sessionTimeout: number; // Minute
 }
 
-// 生物識別認證類型
+// 生物識別AuthenticateClass型
 export type BiometricType =
   | 'fingerprint'
   | 'faceId'
@@ -301,7 +301,7 @@ export interface BiometricSettings {
   requireConfirmation: boolean;
   invalidateOnEnrollment: boolean;
   maxRetryAttempts: number;
-  lockoutDuration: number; // 秒
+  lockoutDuration: number; // Second
 }
 
 export interface BiometricEnrollmentStatus {
@@ -336,28 +336,28 @@ export interface BiometricAuthState {
   isCapabilityLoading: boolean;
   capabilityError: string | null;
 
-  // 認證狀態
+  // AuthenticateStatus
   isAuthenticating: boolean;
   authResult: BiometricAuthResult | null;
   authError: string | null;
 
-  // 設置
+  // Settings
   settings: BiometricSettings;
   isSettingsLoading: boolean;
   settingsError: string | null;
 
-  // 註冊狀態
+  // RegisterStatus
   enrollmentStatus: BiometricEnrollmentStatus | null;
   isEnrollmentLoading: boolean;
   enrollmentError: string | null;
 
-  // 安全信息
+  // 安全Information
   securityInfo: BiometricSecurityInfo | null;
   isSecurityLoading: boolean;
   securityError: string | null;
 }
 
-// Redux 認證狀態類型
+// Redux AuthenticateStatusClass型
 export interface AuthState {
   user: User | null;
   token: string | null;
@@ -368,7 +368,7 @@ export interface AuthState {
   isInitialized: boolean;
 }
 
-// 會話管理相關類型
+// 會話Manage相OffClass型
 export interface Session {
   id: string;
   userId: string;
@@ -414,10 +414,10 @@ export interface LocationInfo {
 
 export interface SessionConfig {
   maxSessionsPerUser: number;
-  sessionTimeout: number; // 分鐘
+  sessionTimeout: number; // Minute
   refreshTokenExpiry: number; // 天
   autoRefreshEnabled: boolean;
-  refreshThreshold: number; // 分鐘，在過期前多久開始刷新
+  refreshThreshold: number; // Minute，在過期前多久BeginRefresh
   concurrentSessionLimit: number;
   deviceTrackingEnabled: boolean;
   locationTrackingEnabled: boolean;
@@ -516,7 +516,7 @@ export interface SessionListResponse {
 export interface SessionAnalytics {
   totalSessions: number;
   activeSessions: number;
-  averageSessionDuration: number; // 分鐘
+  averageSessionDuration: number; // Minute
   mostActiveDevice: string;
   mostActiveLocation: string;
   sessionTrends: SessionTrend[];
@@ -538,12 +538,12 @@ export interface SessionState {
   isSessionLoading: boolean;
   sessionError: string | null;
 
-  // 會話列表
+  // 會話List
   sessions: Session[];
   isSessionsLoading: boolean;
   sessionsError: string | null;
 
-  // 會話配置
+  // 會話Configure
   config: SessionConfig;
   isConfigLoading: boolean;
   configError: string | null;
@@ -553,17 +553,17 @@ export interface SessionState {
   isActivitiesLoading: boolean;
   activitiesError: string | null;
 
-  // 安全信息
+  // 安全Information
   securityInfo: SessionSecurityInfo | null;
   isSecurityLoading: boolean;
   securityError: string | null;
 
-  // 會話分析
+  // 會話Analysis
   analytics: SessionAnalytics | null;
   isAnalyticsLoading: boolean;
   analyticsError: string | null;
 
-  // 操作狀態
+  // OperationStatus
   isRefreshing: boolean;
   refreshError: string | null;
   isTerminating: boolean;

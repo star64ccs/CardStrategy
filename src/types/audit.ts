@@ -1,358 +1,358 @@
-// 審計日誌系統類型定義
+// 審計Log系統Class型定義
 
-// 審計事件類型
+// 審計EventClass型
 export type AuditEventType =
-  // 用戶相關事件
-  | 'user_login' // 用戶登錄
-  | 'user_logout' // 用戶登出
-  | 'user_register' // 用戶註冊
-  | 'user_profile_update' // 用戶資料更新
-  | 'user_password_change' // 密碼變更
-  | 'user_account_delete' // 帳戶刪除
+  // User相OffEvent
+  | 'user_login' // UserLogin
+  | 'user_logout' // User登出
+  | 'user_register' // UserRegister
+  | 'user_profile_update' // User資料Update
+  | 'user_password_change' // Password變更
+  | 'user_account_delete' // 帳戶Delete
   | 'user_permission_change' // 權限變更
 
-  // 卡片相關事件
+  // 卡片相OffEvent
   | 'card_scan' // 卡片掃描
-  | 'card_add' // 添加卡片
-  | 'card_update' // 更新卡片
-  | 'card_delete' // 刪除卡片
+  | 'card_add' // Add卡片
+  | 'card_update' // Update卡片
+  | 'card_delete' // Delete卡片
   | 'card_favorite' // 收藏卡片
   | 'card_share' // 分享卡片
-  | 'card_price_monitor' // 價格監控
+  | 'card_price_monitor' // 價格Monitor
 
-  // 投資相關事件
-  | 'investment_create' // 創建投資
-  | 'investment_update' // 更新投資
-  | 'investment_delete' // 刪除投資
+  // 投資相OffEvent
+  | 'investment_create' // Create投資
+  | 'investment_update' // Update投資
+  | 'investment_delete' // Delete投資
   | 'portfolio_view' // 查看投資組合
-  | 'portfolio_export' // 導出投資組合
+  | 'portfolio_export' // Export投資組合
 
-  // 支付相關事件
-  | 'payment_method_add' // 添加支付方式
-  | 'payment_method_update' // 更新支付方式
-  | 'payment_method_delete' // 刪除支付方式
-  | 'payment_process' // 處理支付
-  | 'subscription_create' // 創建訂閱
-  | 'subscription_cancel' // 取消訂閱
+  // 支付相OffEvent
+  | 'payment_method_add' // Add支付方式
+  | 'payment_method_update' // Update支付方式
+  | 'payment_method_delete' // Delete支付方式
+  | 'payment_process' // Handle支付
+  | 'subscription_create' // Create訂閱
+  | 'subscription_cancel' // Cancel訂閱
 
-  // 數據相關事件
-  | 'data_export' // 數據導出
-  | 'data_import' // 數據導入
-  | 'data_backup' // 數據備份
-  | 'data_restore' // 數據恢復
-  | 'data_breach' // 數據洩露
+  // Data相OffEvent
+  | 'data_export' // DataExport
+  | 'data_import' // DataImport
+  | 'data_backup' // DataBackup
+  | 'data_restore' // DataRestore
+  | 'data_breach' // Data洩露
 
-  // 系統管理事件
-  | 'admin_login' // 管理員登錄
-  | 'admin_action' // 管理員操作
-  | 'system_config_change' // 系統配置變更
-  | 'user_management' // 用戶管理
-  | 'system_backup' // 系統備份
+  // 系統ManageEvent
+  | 'admin_login' // Manage員Login
+  | 'admin_action' // Manage員Operation
+  | 'system_config_change' // 系統Configure變更
+  | 'user_management' // UserManage
+  | 'system_backup' // 系統Backup
 
-  // 安全相關事件
-  | 'security_alert' // 安全警報
-  | 'failed_login_attempt' // 登錄失敗嘗試
+  // 安全相OffEvent
+  | 'security_alert' // 安全Alert
+  | 'failed_login_attempt' // LoginFailed嘗試
   | 'suspicious_activity' // 可疑活動
-  | 'api_rate_limit_exceeded' // API速率限制超標
+  | 'api_rate_limit_exceeded' // API速率Limit超標
 
-  // AI相關事件
-  | 'ai_analysis_request' // AI分析請求
-  | 'ai_model_update' // AI模型更新
-  | 'ai_prediction_request' // AI預測請求
+  // AI相OffEvent
+  | 'ai_analysis_request' // AIAnalysisRequest
+  | 'ai_model_update' // AI模型Update
+  | 'ai_prediction_request' // AI預測Request
 
-  // 通知相關事件
-  | 'notification_sent' // 發送通知
-  | 'notification_failed' // 通知失敗
-  | 'notification_preference_change' // 通知偏好變更
+  // Notification相OffEvent
+  | 'notification_sent' // SendNotification
+  | 'notification_failed' // NotificationFailed
+  | 'notification_preference_change' // NotificationPreferences變更
 
-  // 隱私相關事件
-  | 'privacy_setting_change' // 隱私設置變更
-  | 'consent_given' // 同意授權
-  | 'consent_withdrawn' // 撤回同意
-  | 'data_rights_request' // 數據權利請求
+  // 隱私相OffEvent
+  | 'privacy_setting_change' // 隱私Settings變更
+  | 'consent_given' // AgreeAuthorize
+  | 'consent_withdrawn' // 撤回Agree
+  | 'data_rights_request' // Data權利Request
 
-  // 其他事件
-  | 'app_error' // 應用錯誤
+  // 其他Event
+  | 'app_error' // ApplyError
   | 'performance_issue' // 性能問題
   | 'third_party_integration' // 第三方集成
-  | 'unknown'; // 未知事件
+  | 'unknown'; // 未知Event
 
-// 審計事件嚴重性等級
+// 審計Event嚴重性等級
 export type AuditSeverity = 'low' | 'medium' | 'high' | 'critical';
 
-// 審計事件狀態
+// 審計EventStatus
 export type AuditEventStatus = 'success' | 'failure' | 'pending' | 'cancelled';
 
-// 用戶操作結果
+// UserOperation結果
 export type OperationResult =
   | 'success'
   | 'failure'
   | 'partial_success'
   | 'timeout';
 
-// 審計事件詳細信息
+// 審計Event詳細Information
 export interface AuditEvent {
-  id: string; // 事件唯一標識
-  eventType: AuditEventType; // 事件類型
+  id: string; // EventUnique標識
+  eventType: AuditEventType; // EventClass型
   severity: AuditSeverity; // 嚴重性等級
-  status: AuditEventStatus; // 事件狀態
-  result: OperationResult; // 操作結果
+  status: AuditEventStatus; // EventStatus
+  result: OperationResult; // Operation結果
 
-  // 用戶信息
-  userId?: string; // 用戶ID
-  userEmail?: string; // 用戶郵箱
-  userRole?: string; // 用戶角色
-  userAgent?: string; // 用戶代理
-  ipAddress?: string; // IP地址
+  // UserInformation
+  userId?: string; // UserID
+  userEmail?: string; // UserEmail
+  userRole?: string; // User角色
+  userAgent?: string; // User代理
+  ipAddress?: string; // IPAddress
   location?: string; // 地理位置
 
-  // 事件詳情
-  title: string; // 事件標題
-  description: string; // 事件描述
-  details?: Record<string, any>; // 詳細信息
-  metadata?: Record<string, any>; // 元數據
+  // Event詳情
+  title: string; // Event標題
+  description: string; // EventDescription
+  details?: Record<string, any>; // 詳細Information
+  metadata?: Record<string, any>; // 元Data
 
-  // 資源信息
-  resourceType?: string; // 資源類型
-  resourceId?: string; // 資源ID
-  resourceName?: string; // 資源名稱
+  // ResourceInformation
+  resourceType?: string; // ResourceClass型
+  resourceId?: string; // ResourceID
+  resourceName?: string; // Resource名稱
 
-  // 時間信息
-  timestamp: Date; // 事件時間戳
-  duration?: number; // 操作持續時間（毫秒）
+  // TimeInformation
+  timestamp: Date; // EventTime戳
+  duration?: number; // Operation持續Time（毫Second）
 
-  // 系統信息
+  // 系統Information
   sessionId?: string; // 會話ID
-  requestId?: string; // 請求ID
-  traceId?: string; // 追蹤ID
+  requestId?: string; // RequestID
+  traceId?: string; // TraceID
 
-  // 錯誤信息
-  errorCode?: string; // 錯誤代碼
-  errorMessage?: string; // 錯誤消息
-  stackTrace?: string; // 堆疊追蹤
+  // ErrorInformation
+  errorCode?: string; // Error代碼
+  errorMessage?: string; // ErrorMessage
+  stackTrace?: string; // 堆疊Trace
 
-  // 合規信息
-  complianceTags?: string[]; // 合規標籤
+  // 合規Information
+  complianceTags?: string[]; // 合規Tag
   regulatoryRequirements?: string[]; // 法規要求
 
-  // 審計信息
-  auditTrail?: string[]; // 審計追蹤
-  relatedEvents?: string[]; // 相關事件ID
+  // 審計Information
+  auditTrail?: string[]; // 審計Trace
+  relatedEvents?: string[]; // 相OffEventID
 
-  createdAt: Date; // 創建時間
-  updatedAt: Date; // 更新時間
+  createdAt: Date; // CreateTime
+  updatedAt: Date; // UpdateTime
 }
 
-// 審計日誌配置
+// 審計LogConfigure
 export interface AuditLogConfig {
-  enabled: boolean; // 是否啟用審計日誌
-  logLevel: AuditSeverity; // 日誌級別
+  enabled: boolean; // YesNoEnable審計Log
+  logLevel: AuditSeverity; // Log級別
   retentionDays: number; // 保留天數
-  maxLogSize: number; // 最大日誌大小（MB）
-  compressionEnabled: boolean; // 是否啟用壓縮
-  encryptionEnabled: boolean; // 是否啟用加密
+  maxLogSize: number; // 最大Log大小（MB）
+  compressionEnabled: boolean; // YesNoEnable壓縮
+  encryptionEnabled: boolean; // YesNoEnableEncrypt
 
-  // 過濾配置
-  excludeEvents: AuditEventType[]; // 排除的事件類型
-  includeOnlyEvents: AuditEventType[]; // 僅包含的事件類型
+  // FilterConfigure
+  excludeEvents: AuditEventType[]; // 排除的EventClass型
+  includeOnlyEvents: AuditEventType[]; // 僅Package含的EventClass型
 
-  // 通知配置
-  alertOnCritical: boolean; // 嚴重事件警報
-  alertOnHigh: boolean; // 高級事件警報
-  notificationChannels: string[]; // 通知渠道
+  // NotificationConfigure
+  alertOnCritical: boolean; // 嚴重EventAlert
+  alertOnHigh: boolean; // 高級EventAlert
+  notificationChannels: string[]; // Notification渠道
 
-  // 導出配置
-  autoExportEnabled: boolean; // 自動導出
-  exportFormat: 'json' | 'csv' | 'xml'; // 導出格式
-  exportSchedule: string; // 導出計劃
+  // ExportConfigure
+  autoExportEnabled: boolean; // AutoExport
+  exportFormat: 'json' | 'csv' | 'xml'; // Export格式
+  exportSchedule: string; // Export計劃
 }
 
-// 審計日誌查詢參數
+// 審計LogQueryParameter
 export interface AuditLogQuery {
-  startDate?: Date; // 開始日期
-  endDate?: Date; // 結束日期
-  eventTypes?: AuditEventType[]; // 事件類型
+  startDate?: Date; // BeginDay
+  endDate?: Date; // EndDay
+  eventTypes?: AuditEventType[]; // EventClass型
   severities?: AuditSeverity[]; // 嚴重性等級
-  userIds?: string[]; // 用戶ID
-  statuses?: AuditEventStatus[]; // 事件狀態
-  resourceTypes?: string[]; // 資源類型
-  resourceIds?: string[]; // 資源ID
-  ipAddresses?: string[]; // IP地址
-  searchText?: string; // 搜索文本
+  userIds?: string[]; // UserID
+  statuses?: AuditEventStatus[]; // EventStatus
+  resourceTypes?: string[]; // ResourceClass型
+  resourceIds?: string[]; // ResourceID
+  ipAddresses?: string[]; // IPAddress
+  searchText?: string; // Search文本
 
-  // 分頁參數
+  // PaginateParameter
   page: number; // 頁碼
   limit: number; // 每頁數量
-  sortBy?: string; // 排序字段
-  sortOrder?: 'asc' | 'desc'; // 排序順序
+  sortBy?: string; // SortField
+  sortOrder?: 'asc' | 'desc'; // Sort順序
 }
 
-// 審計日誌統計
+// 審計LogStatistics
 export interface AuditLogStatistics {
-  totalEvents: number; // 總事件數
-  eventsByType: Record<AuditEventType, number>; // 按類型統計
-  eventsBySeverity: Record<AuditSeverity, number>; // 按嚴重性統計
-  eventsByStatus: Record<AuditEventStatus, number>; // 按狀態統計
-  eventsByUser: Record<string, number>; // 按用戶統計
-  eventsByResource: Record<string, number>; // 按資源統計
+  totalEvents: number; // 總Event數
+  eventsByType: Record<AuditEventType, number>; // 按Class型Statistics
+  eventsBySeverity: Record<AuditSeverity, number>; // 按嚴重性Statistics
+  eventsByStatus: Record<AuditEventStatus, number>; // 按StatusStatistics
+  eventsByUser: Record<string, number>; // 按UserStatistics
+  eventsByResource: Record<string, number>; // 按ResourceStatistics
 
-  // 時間統計
-  eventsByHour: Record<number, number>; // 按小時統計
-  eventsByDay: Record<string, number>; // 按天統計
-  eventsByMonth: Record<string, number>; // 按月統計
+  // TimeStatistics
+  eventsByHour: Record<number, number>; // 按HourStatistics
+  eventsByDay: Record<string, number>; // 按天Statistics
+  eventsByMonth: Record<string, number>; // 按月Statistics
 
-  // 性能統計
-  averageResponseTime: number; // 平均響應時間
+  // 性能Statistics
+  averageResponseTime: number; // 平均ResponseTime
   slowestOperations: {
-    // 最慢操作
+    // 最慢Operation
     eventType: AuditEventType;
     averageDuration: number;
     count: number;
   }[];
 
-  // 錯誤統計
-  errorRate: number; // 錯誤率
+  // ErrorStatistics
+  errorRate: number; // Error率
   topErrors: {
-    // 常見錯誤
+    // 常見Error
     errorCode: string;
     count: number;
     percentage: number;
   }[];
 
-  // 安全統計
-  securityEvents: number; // 安全事件數
-  failedLoginAttempts: number; // 登錄失敗嘗試
+  // 安全Statistics
+  securityEvents: number; // 安全Event數
+  failedLoginAttempts: number; // LoginFailed嘗試
   suspiciousActivities: number; // 可疑活動
 
-  // 合規統計
-  complianceEvents: number; // 合規事件數
+  // 合規Statistics
+  complianceEvents: number; // 合規Event數
   regulatoryViolations: number; // 法規違規數
 }
 
-// 審計日誌報告
+// 審計LogReport
 export interface AuditLogReport {
-  id: string; // 報告ID
-  title: string; // 報告標題
-  description: string; // 報告描述
-  type: 'summary' | 'detailed' | 'compliance' | 'security' | 'performance'; // 報告類型
+  id: string; // ReportID
+  title: string; // Report標題
+  description: string; // ReportDescription
+  type: 'summary' | 'detailed' | 'compliance' | 'security' | 'performance'; // ReportClass型
 
-  // 報告範圍
-  startDate: Date; // 開始日期
-  endDate: Date; // 結束日期
-  filters: AuditLogQuery; // 查詢過濾器
+  // Report範圍
+  startDate: Date; // BeginDay
+  endDate: Date; // EndDay
+  filters: AuditLogQuery; // QueryFilter器
 
-  // 報告內容
-  statistics: AuditLogStatistics; // 統計信息
-  events: AuditEvent[]; // 事件列表
+  // ReportContent
+  statistics: AuditLogStatistics; // StatisticsInformation
+  events: AuditEvent[]; // EventList
   summary: string; // 摘要
   recommendations: string[]; // 建議
 
-  // 報告元數據
+  // Report元Data
   generatedBy: string; // 生成者
-  generatedAt: Date; // 生成時間
-  format: 'pdf' | 'html' | 'json' | 'csv'; // 報告格式
+  generatedAt: Date; // 生成Time
+  format: 'pdf' | 'html' | 'json' | 'csv'; // Report格式
 
-  // 報告狀態
-  status: 'generating' | 'completed' | 'failed'; // 報告狀態
-  downloadUrl?: string; // 下載鏈接
-  expiresAt?: Date; // 過期時間
+  // ReportStatus
+  status: 'generating' | 'completed' | 'failed'; // ReportStatus
+  downloadUrl?: string; // Download鏈接
+  expiresAt?: Date; // 過期Time
 }
 
-// 審計日誌警報
+// 審計LogAlert
 export interface AuditLogAlert {
-  id: string; // 警報ID
-  title: string; // 警報標題
-  description: string; // 警報描述
+  id: string; // AlertID
+  title: string; // Alert標題
+  description: string; // AlertDescription
   severity: AuditSeverity; // 嚴重性等級
 
-  // 觸發條件
-  triggerType: 'threshold' | 'pattern' | 'anomaly' | 'manual'; // 觸發類型
-  triggerConditions: Record<string, any>; // 觸發條件
-  threshold?: number; // 閾值
+  // 觸發Condition
+  triggerType: 'threshold' | 'pattern' | 'anomaly' | 'manual'; // 觸發Class型
+  triggerConditions: Record<string, any>; // 觸發Condition
+  threshold?: number; // 閾Value
 
-  // 警報狀態
-  status: 'active' | 'triggered' | 'acknowledged' | 'resolved'; // 警報狀態
-  triggeredAt?: Date; // 觸發時間
-  acknowledgedAt?: Date; // 確認時間
-  resolvedAt?: Date; // 解決時間
+  // AlertStatus
+  status: 'active' | 'triggered' | 'acknowledged' | 'resolved'; // AlertStatus
+  triggeredAt?: Date; // 觸發Time
+  acknowledgedAt?: Date; // ConfirmTime
+  resolvedAt?: Date; // ResolveTime
 
-  // 相關事件
-  relatedEvents: string[]; // 相關事件ID
-  eventCount: number; // 事件數量
+  // 相OffEvent
+  relatedEvents: string[]; // 相OffEventID
+  eventCount: number; // Event數量
 
-  // 通知配置
-  notificationChannels: string[]; // 通知渠道
-  recipients: string[]; // 接收者
+  // NotificationConfigure
+  notificationChannels: string[]; // Notification渠道
+  recipients: string[]; // Receive者
 
-  // 警報元數據
-  createdAt: Date; // 創建時間
-  updatedAt: Date; // 更新時間
-  createdBy: string; // 創建者
+  // Alert元Data
+  createdAt: Date; // CreateTime
+  updatedAt: Date; // UpdateTime
+  createdBy: string; // Create者
 }
 
-// 審計日誌導出選項
+// 審計LogExportOptions
 export interface AuditLogExportOptions {
-  format: 'json' | 'csv' | 'xml' | 'pdf'; // 導出格式
-  compression: boolean; // 是否壓縮
-  encryption: boolean; // 是否加密
-  password?: string; // 加密密碼
+  format: 'json' | 'csv' | 'xml' | 'pdf'; // Export格式
+  compression: boolean; // YesNo壓縮
+  encryption: boolean; // YesNoEncrypt
+  password?: string; // EncryptPassword
 
-  // 內容選項
-  includeDetails: boolean; // 包含詳細信息
-  includeMetadata: boolean; // 包含元數據
-  includeStackTrace: boolean; // 包含堆疊追蹤
+  // ContentOptions
+  includeDetails: boolean; // Package含詳細Information
+  includeMetadata: boolean; // Package含元Data
+  includeStackTrace: boolean; // Package含堆疊Trace
 
-  // 過濾選項
-  filters: AuditLogQuery; // 查詢過濾器
+  // FilterOptions
+  filters: AuditLogQuery; // QueryFilter器
 
-  // 分頁選項
+  // PaginateOptions
   batchSize: number; // 批次大小
-  maxRecords: number; // 最大記錄數
+  maxRecords: number; // 最大Record數
 }
 
-// 審計日誌清理選項
+// 審計Log清理Options
 export interface AuditLogCleanupOptions {
   retentionDays: number; // 保留天數
-  deleteEvents: AuditEventType[]; // 刪除的事件類型
-  archiveEvents: AuditEventType[]; // 歸檔的事件類型
+  deleteEvents: AuditEventType[]; // Delete的EventClass型
+  archiveEvents: AuditEventType[]; // 歸檔的EventClass型
   compressArchives: boolean; // 壓縮歸檔
-  backupBeforeCleanup: boolean; // 清理前備份
+  backupBeforeCleanup: boolean; // 清理前Backup
 }
 
-// 審計日誌搜索結果
+// 審計LogSearch結果
 export interface AuditLogSearchResult {
-  events: AuditEvent[]; // 事件列表
+  events: AuditEvent[]; // EventList
   totalCount: number; // 總數量
   page: number; // 當前頁碼
   totalPages: number; // 總頁數
-  hasMore: boolean; // 是否有更多
-  searchTime: number; // 搜索時間（毫秒）
-  facets?: Record<string, any>; // 分面搜索結果
+  hasMore: boolean; // YesNo有更多
+  searchTime: number; // SearchTime（毫Second）
+  facets?: Record<string, any>; // 分面Search結果
 }
 
-// 審計日誌實時監控
+// 審計Log實時Monitor
 export interface AuditLogMonitor {
-  id: string; // 監控ID
-  name: string; // 監控名稱
-  description: string; // 監控描述
+  id: string; // MonitorID
+  name: string; // Monitor名稱
+  description: string; // MonitorDescription
 
-  // 監控配置
-  enabled: boolean; // 是否啟用
-  eventTypes: AuditEventType[]; // 監控的事件類型
-  severities: AuditSeverity[]; // 監控的嚴重性等級
+  // MonitorConfigure
+  enabled: boolean; // YesNoEnable
+  eventTypes: AuditEventType[]; // Monitor的EventClass型
+  severities: AuditSeverity[]; // Monitor的嚴重性等級
 
-  // 實時統計
-  eventsPerMinute: number; // 每分鐘事件數
-  eventsPerHour: number; // 每小時事件數
-  activeUsers: number; // 活躍用戶數
-  errorRate: number; // 錯誤率
+  // 實時Statistics
+  eventsPerMinute: number; // 每MinuteEvent數
+  eventsPerHour: number; // 每HourEvent數
+  activeUsers: number; // 活躍User數
+  errorRate: number; // Error率
 
-  // 警報配置
-  alerts: AuditLogAlert[]; // 相關警報
-  notificationEnabled: boolean; // 是否啟用通知
+  // AlertConfigure
+  alerts: AuditLogAlert[]; // 相OffAlert
+  notificationEnabled: boolean; // YesNoEnableNotification
 
-  // 監控狀態
-  lastUpdate: Date; // 最後更新時間
-  isHealthy: boolean; // 是否健康
-  status: 'active' | 'paused' | 'error'; // 監控狀態
+  // MonitorStatus
+  lastUpdate: Date; // 最後UpdateTime
+  isHealthy: boolean; // YesNo健康
+  status: 'active' | 'paused' | 'error'; // MonitorStatus
 }

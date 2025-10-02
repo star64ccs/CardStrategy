@@ -24,7 +24,7 @@ import type {
   ResponsiveState,
 } from '../../types/layout';
 
-// 響應式上下文
+// Response式上下文
 interface ResponsiveContextType {
   responsive: ResponsiveState;
   isMobile: boolean;
@@ -41,7 +41,7 @@ const _ResponsiveContext = createContext<ResponsiveContextType | undefined>(
   undefined
 );
 
-// 響應式提供者組件
+// Response式提供者Component
 export const ResponsiveProvider: React.FC<ResponsiveProviderProps> = ({
   children,
   breakpoints,
@@ -69,22 +69,22 @@ export const ResponsiveProvider: React.FC<ResponsiveProviderProps> = ({
     windowHeight: typeof window !== 'undefined' ? window.innerHeight : 768,
   });
 
-  // 初始化佈局服務
+  // Initialize佈局Service
   const _initializeLayoutService = useCallback(async () => {
     try {
       dispatch(setLayoutLoading(true));
 
-      // 更新配置
+      // UpdateConfigure
       if (breakpoints) {
         layoutService.updateConfig({
           breakpoints: breakpoints as any,
         });
       }
 
-      // 初始化服務
+      // InitializeService
       await layoutService.initialize();
 
-      // 獲取初始狀態
+      // Get初始Status
       const _initialState = layoutService.getResponsiveState();
       setResponsive(initialState);
       dispatch(setResponsiveState(initialState));
@@ -92,15 +92,15 @@ export const ResponsiveProvider: React.FC<ResponsiveProviderProps> = ({
       setIsInitialized(true);
       dispatch(setLayoutLoading(false));
     } catch (error) {
-      console.error('響應式提供者初始化失敗:', error);
+      console.error('響應式提供者InitializeFailed:', error);
       dispatch(
-        setLayoutError(error instanceof Error ? error.message : '初始化失敗')
+        setLayoutError(error instanceof Error ? error.message : 'InitializeFailed')
       );
       dispatch(setLayoutLoading(false));
     }
   }, [dispatch, breakpoints]);
 
-  // 處理響應式事件
+  // HandleResponse式Event
   const _handleResponsiveEvent = useCallback(
     (event: ResponsiveEvent) => {
       const _newState = layoutService.getResponsiveState();
@@ -108,7 +108,7 @@ export const ResponsiveProvider: React.FC<ResponsiveProviderProps> = ({
       dispatch(setResponsiveState(newState));
       dispatch(addLayoutEvent(event as any));
 
-      // 調用外部回調
+      // 調用ExternalCallback
       if (event.type === 'breakpointChange' && onBreakpointChange) {
         onBreakpointChange(event.breakpoint);
       }
@@ -116,7 +116,7 @@ export const ResponsiveProvider: React.FC<ResponsiveProviderProps> = ({
     [dispatch, onBreakpointChange]
   );
 
-  // 設置事件監聽器
+  // SettingsEvent監聽器
   useEffect(() => {
     if (!isInitialized) return;
 
@@ -134,12 +134,12 @@ export const ResponsiveProvider: React.FC<ResponsiveProviderProps> = ({
     };
   }, [isInitialized, handleResponsiveEvent]);
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     initializeLayoutService();
   }, [initializeLayoutService]);
 
-  // 同步 Redux 狀態
+  // Sync Redux Status
   useEffect(() => {
     if (!isInitialized) return;
 
@@ -152,7 +152,7 @@ export const ResponsiveProvider: React.FC<ResponsiveProviderProps> = ({
     );
   }, [dispatch, responsive, isInitialized]);
 
-  // 上下文值
+  // 上下文Value
   const contextValue: ResponsiveContextType = {
     responsive,
     isMobile: responsive.isMobile,
@@ -189,7 +189,7 @@ export const ResponsiveProvider: React.FC<ResponsiveProviderProps> = ({
   );
 };
 
-// 使用響應式 Hook
+// 使用Response式 Hook
 export const _useResponsive = (): ResponsiveContextType => {
   const _context = useContext(ResponsiveContext);
   if (context === undefined) {
@@ -198,5 +198,5 @@ export const _useResponsive = (): ResponsiveContextType => {
   return context;
 };
 
-// 導出上下文
+// Export上下文
 export { ResponsiveContext };

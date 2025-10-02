@@ -9,7 +9,7 @@ const verifyDatabase = async () => {
   try {
     logger.info('開始驗證數據庫表結構...');
 
-    // 連接數據庫
+    // ConnectDatabase
     await connectDB();
     const sequelize = getSequelize();
 
@@ -17,7 +17,7 @@ const verifyDatabase = async () => {
       throw new Error('無法獲取 Sequelize 實例');
     }
 
-    // 獲取所有表
+    // Get所有Table
     const tables = await sequelize.showAllSchemas();
     logger.info('數據庫中的所有表：');
 
@@ -39,7 +39,7 @@ const verifyDatabase = async () => {
       }
     }
 
-    // 檢查表結構
+    // CheckTable結構
     logger.info('\n檢查表結構詳情...');
 
     for (const tableName of expectedTables) {
@@ -66,7 +66,7 @@ const verifyDatabase = async () => {
       }
     }
 
-    // 檢查外鍵約束
+    // Check外Key約束
     logger.info('\n檢查外鍵約束...');
     const [foreignKeys] = await sequelize.query(`
       SELECT 
@@ -96,13 +96,13 @@ const verifyDatabase = async () => {
     logger.info('\n✅ 數據庫驗證完成！');
     process.exit(0);
   } catch (error) {
-    logger.error('❌ 數據庫驗證失敗：', error.message);
-    logger.error('錯誤詳情：', error);
+    logger.error('❌ 數據庫VerifyFailed：', error.message);
+    logger.error('Error詳情：', error);
     process.exit(1);
   }
 };
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   verifyDatabase();
 }

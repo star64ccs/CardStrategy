@@ -56,11 +56,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功獲取用戶設置', async () => {
+    it('應該SuccessGet用戶Settings', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockSettings,
-        message: '設置獲取成功',
+        message: 'SettingsGetSuccess',
       });
 
       const _result = await settingsService.getSettings();
@@ -69,10 +69,10 @@ describe('SettingsService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/settings');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('API Error'));
 
-      await expect(settingsService.getSettings()).rejects.toThrow('API 錯誤');
+      await expect(settingsService.getSettings()).rejects.toThrow('API Error');
     });
   });
 
@@ -125,11 +125,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功更新設置', async () => {
+    it('應該SuccessUpdateSettings', async () => {
       mockApiService.put.mockResolvedValue({
         success: true,
         data: mockUpdatedSettings,
-        message: '設置更新成功',
+        message: 'SettingsUpdateSuccess',
       });
 
       const _result = await settingsService.updateSettings(mockSettings);
@@ -141,12 +141,12 @@ describe('SettingsService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.put.mockRejectedValue(new Error('更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.put.mockRejectedValue(new Error('UpdateFailed'));
 
       await expect(
         settingsService.updateSettings(mockSettings)
-      ).rejects.toThrow('更新失敗');
+      ).rejects.toThrow('UpdateFailed');
     });
   });
 
@@ -190,11 +190,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功更新主題設置', async () => {
+    it('應該SuccessUpdate主題Settings', async () => {
       mockApiService.patch.mockResolvedValue({
         success: true,
         data: mockUpdatedSettings,
-        message: '主題設置更新成功',
+        message: '主題SettingsUpdateSuccess',
       });
 
       const _result =
@@ -218,12 +218,12 @@ describe('SettingsService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.patch.mockRejectedValue(new Error('主題更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.patch.mockRejectedValue(new Error('主題UpdateFailed'));
 
       await expect(
         settingsService.updateThemeSettings(mockThemeSettings)
-      ).rejects.toThrow('主題更新失敗');
+      ).rejects.toThrow('主題UpdateFailed');
     });
   });
 
@@ -271,11 +271,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功更新語言設置', async () => {
+    it('應該SuccessUpdate語言Settings', async () => {
       mockApiService.patch.mockResolvedValue({
         success: true,
         data: mockUpdatedSettings,
-        message: '語言設置更新成功',
+        message: '語言SettingsUpdateSuccess',
       });
 
       const _result =
@@ -300,12 +300,12 @@ describe('SettingsService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.patch.mockRejectedValue(new Error('語言更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.patch.mockRejectedValue(new Error('語言UpdateFailed'));
 
       await expect(
         settingsService.updateLanguageSettings(mockLanguageSettings)
-      ).rejects.toThrow('語言更新失敗');
+      ).rejects.toThrow('語言UpdateFailed');
     });
   });
 
@@ -349,11 +349,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功更新通知設置', async () => {
+    it('應該SuccessUpdate通知Settings', async () => {
       mockApiService.patch.mockResolvedValue({
         success: true,
         data: mockUpdatedSettings,
-        message: '通知設置更新成功',
+        message: '通知SettingsUpdateSuccess',
       });
 
       const _result = await settingsService.updateNotificationSettings(
@@ -383,12 +383,12 @@ describe('SettingsService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.patch.mockRejectedValue(new Error('通知更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.patch.mockRejectedValue(new Error('通知UpdateFailed'));
 
       await expect(
         settingsService.updateNotificationSettings(mockNotificationSettings)
-      ).rejects.toThrow('通知更新失敗');
+      ).rejects.toThrow('通知UpdateFailed');
     });
   });
 
@@ -432,11 +432,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功更新隱私設置', async () => {
+    it('應該SuccessUpdate隱私Settings', async () => {
       mockApiService.patch.mockResolvedValue({
         success: true,
         data: mockUpdatedSettings,
-        message: '隱私設置更新成功',
+        message: '隱私SettingsUpdateSuccess',
       });
 
       const _result =
@@ -463,12 +463,12 @@ describe('SettingsService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.patch.mockRejectedValue(new Error('隱私更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.patch.mockRejectedValue(new Error('隱私UpdateFailed'));
 
       await expect(
         settingsService.updatePrivacySettings(mockPrivacySettings)
-      ).rejects.toThrow('隱私更新失敗');
+      ).rejects.toThrow('隱私UpdateFailed');
     });
   });
 
@@ -512,11 +512,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功更新性能設置', async () => {
+    it('應該SuccessUpdate性能Settings', async () => {
       mockApiService.patch.mockResolvedValue({
         success: true,
         data: mockUpdatedSettings,
-        message: '性能設置更新成功',
+        message: '性能SettingsUpdateSuccess',
       });
 
       const _result = await settingsService.updatePerformanceSettings(
@@ -543,12 +543,12 @@ describe('SettingsService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.patch.mockRejectedValue(new Error('性能更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.patch.mockRejectedValue(new Error('性能UpdateFailed'));
 
       await expect(
         settingsService.updatePerformanceSettings(mockPerformanceSettings)
-      ).rejects.toThrow('性能更新失敗');
+      ).rejects.toThrow('性能UpdateFailed');
     });
   });
 
@@ -590,11 +590,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功重置設置為默認', async () => {
+    it('應該Success重置Settings為默認', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockDefaultSettings,
-        message: '設置重置成功',
+        message: 'Settings重置Success',
       });
 
       const _result = await settingsService.resetSettings();
@@ -603,10 +603,10 @@ describe('SettingsService', () => {
       expect(mockApiService.post).toHaveBeenCalledWith('/settings/reset');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('重置失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('重置Failed'));
 
-      await expect(settingsService.resetSettings()).rejects.toThrow('重置失敗');
+      await expect(settingsService.resetSettings()).rejects.toThrow('重置Failed');
     });
   });
 
@@ -614,11 +614,11 @@ describe('SettingsService', () => {
     const _mockExportedData =
       '{"theme":{"mode":"dark"},"language":{"code":"zh-TW"}}';
 
-    it('應該成功導出設置', async () => {
+    it('應該Success導出Settings', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockExportedData,
-        message: '設置導出成功',
+        message: 'Settings導出Success',
       });
 
       const _result = await settingsService.exportSettings();
@@ -627,11 +627,11 @@ describe('SettingsService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/settings/export');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('導出失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('導出Failed'));
 
       await expect(settingsService.exportSettings()).rejects.toThrow(
-        '導出失敗'
+        '導出Failed'
       );
     });
   });
@@ -676,11 +676,11 @@ describe('SettingsService', () => {
       },
     };
 
-    it('應該成功導入設置', async () => {
+    it('應該Success導入Settings', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockImportedSettings,
-        message: '設置導入成功',
+        message: 'Settings導入Success',
       });
 
       const _result = await settingsService.importSettings(mockSettingsData);
@@ -695,12 +695,12 @@ describe('SettingsService', () => {
       await expect(settingsService.importSettings('')).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('導入失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('導入Failed'));
 
       await expect(
         settingsService.importSettings(mockSettingsData)
-      ).rejects.toThrow('導入失敗');
+      ).rejects.toThrow('導入Failed');
     });
   });
 
@@ -722,11 +722,11 @@ describe('SettingsService', () => {
       ],
     };
 
-    it('應該成功獲取可用主題', async () => {
+    it('應該SuccessGet可用主題', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockThemes,
-        message: '主題獲取成功',
+        message: '主題GetSuccess',
       });
 
       const _result = await settingsService.getAvailableThemes();
@@ -735,11 +735,11 @@ describe('SettingsService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/settings/themes');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('主題獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('主題GetFailed'));
 
       await expect(settingsService.getAvailableThemes()).rejects.toThrow(
-        '主題獲取失敗'
+        '主題GetFailed'
       );
     });
   });
@@ -768,11 +768,11 @@ describe('SettingsService', () => {
       ],
     };
 
-    it('應該成功獲取可用語言', async () => {
+    it('應該SuccessGet可用語言', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockLanguages,
-        message: '語言獲取成功',
+        message: '語言GetSuccess',
       });
 
       const _result = await settingsService.getAvailableLanguages();
@@ -781,11 +781,11 @@ describe('SettingsService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/settings/languages');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('語言獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('語言GetFailed'));
 
       await expect(settingsService.getAvailableLanguages()).rejects.toThrow(
-        '語言獲取失敗'
+        '語言GetFailed'
       );
     });
   });
@@ -798,11 +798,11 @@ describe('SettingsService', () => {
       customizedSettings: 8,
     };
 
-    it('應該成功獲取設置統計', async () => {
+    it('應該SuccessGetSettings統計', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockStatistics,
-        message: '統計獲取成功',
+        message: '統計GetSuccess',
       });
 
       const _result = await settingsService.getSettingsStatistics();
@@ -811,11 +811,11 @@ describe('SettingsService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/settings/statistics');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('統計獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('統計GetFailed'));
 
       await expect(settingsService.getSettingsStatistics()).rejects.toThrow(
-        '統計獲取失敗'
+        '統計GetFailed'
       );
     });
   });

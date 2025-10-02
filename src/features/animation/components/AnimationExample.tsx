@@ -46,7 +46,7 @@ const AnimationExample: React.FC = () => {
 
       setActiveAnimations(prev => prev.filter(id => id !== animationId));
     } catch (error) {
-      Alert.alert('錯誤', '播放動畫失敗');
+      Alert.alert('Error', '播放動畫Failed');
     }
   };
 
@@ -209,7 +209,7 @@ const AnimationExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>動畫優化示例</Text>
 
-      {/* 性能設置 */}
+      {/* 性能Settings */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>性能設置</Text>
 
@@ -258,7 +258,7 @@ const AnimationExample: React.FC = () => {
           .map(renderPresetButton)}
       </View>
 
-      {/* 退出動畫 */}
+      {/* Exit動畫 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>退出動畫</Text>
         {presets
@@ -274,7 +274,7 @@ const AnimationExample: React.FC = () => {
           .map(renderPresetButton)}
       </View>
 
-      {/* 載入動畫 */}
+      {/* Load動畫 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>載入動畫</Text>
         {presets
@@ -282,7 +282,7 @@ const AnimationExample: React.FC = () => {
           .map(renderPresetButton)}
       </View>
 
-      {/* 動畫統計 */}
+      {/* 動畫Statistics */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>動畫統計</Text>
         <View style={styles.statsContainer}>
@@ -320,7 +320,7 @@ const AnimationExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 當前狀態 */}
+      {/* 當前Status */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>當前狀態</Text>
         <Text style={styles.infoText}>

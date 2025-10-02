@@ -1,4 +1,4 @@
-// 微交互服務簡化單元測試
+// 微交互Service簡化單元Test
 import { MicroInteractionService } from '../services/microInteractionService';
 import {
   MicroInteractionStatus,
@@ -45,7 +45,7 @@ const _mockRequestAnimationFrame = jest.fn().mockImplementation(callback => {
   return 1;
 });
 
-// 設置全局對象
+// SettingsGlobalObject
 Object.defineProperty(global, 'document', {
   value: mockDocument,
   writable: true,
@@ -64,9 +64,9 @@ Object.defineProperty(global, 'requestAnimationFrame', {
   configurable: true,
 });
 
-// 確保在測試開始前設置好環境
+// 確保在TestBegin前Settings好環境
 beforeAll(() => {
-  // 額外的環境設置
+  // 額外的環境Settings
   if (typeof global.document === 'undefined') {
     Object.defineProperty(global, 'document', {
       value: mockDocument,
@@ -88,19 +88,19 @@ describe('MicroInteractionService', () => {
   let service: MicroInteractionService;
 
   beforeEach(() => {
-    // 清除單例實例
+    // Clear單例Instance
     (MicroInteractionService as any).instance = null;
     service = MicroInteractionService.getInstance();
 
-    // 重置 mock
+    // Reset mock
     jest.clearAllMocks();
 
-    // 重置動畫 mock
+    // Reset動畫 mock
     mockElement.animate = jest.fn().mockReturnValue(createMockAnimation());
   });
 
   describe('初始化', () => {
-    test('應該正確初始化服務', async () => {
+    test('應該正確InitializeService', async () => {
       await service.initialize();
 
       expect(service).toBeDefined();
@@ -130,7 +130,7 @@ describe('MicroInteractionService', () => {
   });
 
   describe('註冊和註銷', () => {
-    test('應該成功註冊微交互', () => {
+    test('應該Success註冊微交互', () => {
       const _config = {
         id: 'test-interaction',
         type: MicroInteractionType.BUTTON_CLICK,
@@ -144,7 +144,7 @@ describe('MicroInteractionService', () => {
       expect(service.getConfig(id)).toEqual(expect.objectContaining(config));
     });
 
-    test('應該成功註銷微交互', () => {
+    test('應該Success註銷微交互', () => {
       const _config = {
         id: 'test-interaction',
         type: MicroInteractionType.BUTTON_CLICK,
@@ -235,7 +235,7 @@ describe('MicroInteractionService', () => {
       expect(currentConfig?.duration).toBe(500);
     });
 
-    test('應該在更新不存在的配置時拋出錯誤', () => {
+    test('應該在Update不存在的Configure時拋出Error', () => {
       expect(() => {
         service.updateConfig('non-existent', { duration: 500 });
       }).toThrow('微交互 non-existent 不存在');
@@ -263,7 +263,7 @@ describe('MicroInteractionService', () => {
 
       service.stopAll();
 
-      // 驗證所有狀態都被重置
+      // Verify所有Status都被Reset
       const _states = service['states'];
       Object.values(states).forEach(state => {
         expect(state.status).toBe(MicroInteractionStatus.IDLE);
@@ -280,7 +280,7 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬設置一些狀態
+      // 模擬Settings一些Status
       const _state = service.getState(id);
       if (state) {
         state.startTime = 1000;
@@ -315,7 +315,7 @@ describe('MicroInteractionService', () => {
       const _id = service.register(config);
       const _performance = service.getPerformance(id);
 
-      expect(performance).toBeNull(); // 初始狀態下應該為 null
+      expect(performance).toBeNull(); // 初始Status下應該為 null
     });
 
     test('應該正確獲取統計信息', () => {
@@ -344,8 +344,8 @@ describe('MicroInteractionService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    test('應該在觸發不存在的微交互時拋出錯誤', async () => {
+  describe('ErrorHandle', () => {
+    test('應該在觸發不存在的微交互時拋出Error', async () => {
       await expect(service.trigger('non-existent')).rejects.toThrow(
         '微交互 non-existent 不存在或已禁用'
       );
@@ -354,14 +354,14 @@ describe('MicroInteractionService', () => {
 
   describe('用戶偏好檢測', () => {
     test('應該正確檢測 prefers-reduced-motion', () => {
-      // 模擬用戶偏好減少動畫
+      // 模擬UserPreferences減少動畫
       mockWindow.matchMedia.mockReturnValue({
         matches: true,
         addEventListener: jest.fn(),
         removeEventListener: jest.fn(),
       });
 
-      // 清除現有實例並重新創建
+      // Clear現有Instance並ReCreate
       (MicroInteractionService as any).instance = null;
       const _newService = MicroInteractionService.getInstance();
 
@@ -373,7 +373,7 @@ describe('MicroInteractionService', () => {
       // 模擬 matchMedia 不可用
       mockWindow.matchMedia.mockReturnValue(null);
 
-      // 清除現有實例並重新創建
+      // Clear現有Instance並ReCreate
       (MicroInteractionService as any).instance = null;
       const _newService = MicroInteractionService.getInstance();
 
@@ -393,7 +393,7 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬成功的交互
+      // 模擬Success的交互
       const _state = service.getState(id);
       if (state) {
         state.status = MicroInteractionStatus.COMPLETED;
@@ -409,7 +409,7 @@ describe('MicroInteractionService', () => {
       expect(stats.failedInteractions).toBe(0);
     });
 
-    test('應該正確處理失敗的交互', () => {
+    test('應該正確HandleFailed的交互', () => {
       const _config = {
         id: 'test-interaction',
         type: MicroInteractionType.BUTTON_CLICK,
@@ -419,7 +419,7 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬失敗的交互
+      // 模擬Failed的交互
       const _state = service.getState(id);
       if (state) {
         state.status = MicroInteractionStatus.ERROR;
@@ -435,8 +435,8 @@ describe('MicroInteractionService', () => {
     });
   });
 
-  describe('服務銷毀', () => {
-    test('應該正確銷毀服務', () => {
+  describe('Service銷毀', () => {
+    test('應該正確銷毀Service', () => {
       const _config = {
         id: 'test-interaction',
         type: MicroInteractionType.BUTTON_CLICK,
@@ -448,7 +448,7 @@ describe('MicroInteractionService', () => {
 
       service.destroy();
 
-      // 驗證所有內部狀態都被清理
+      // Verify所有InternalStatus都被清理
       expect(service['interactions'].size).toBe(0);
       expect(service['states'].size).toBe(0);
       expect(service['activeAnimations'].size).toBe(0);
@@ -466,13 +466,13 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬動畫執行
+      // 模擬動畫執Row
       const _animation = createMockAnimation();
       mockElement.animate.mockReturnValue(animation);
 
       const _triggerPromise = service.trigger(id, { element: mockElement });
 
-      // 模擬動畫完成
+      // 模擬動畫Complete
       setTimeout(() => {
         if (animation.onfinish) {
           animation.onfinish();
@@ -497,7 +497,7 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬動畫執行
+      // 模擬動畫執Row
       const _animation = createMockAnimation();
       mockElement.animate.mockReturnValue(animation);
 
@@ -506,7 +506,7 @@ describe('MicroInteractionService', () => {
         validationState: 'success',
       });
 
-      // 模擬動畫完成
+      // 模擬動畫Complete
       setTimeout(() => {
         if (animation.onfinish) {
           animation.onfinish();
@@ -531,7 +531,7 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬動畫執行
+      // 模擬動畫執Row
       const _animation = createMockAnimation();
       mockElement.animate.mockReturnValue(animation);
 
@@ -540,7 +540,7 @@ describe('MicroInteractionService', () => {
         loading: true,
       });
 
-      // 模擬動畫完成
+      // 模擬動畫Complete
       setTimeout(() => {
         if (animation.onfinish) {
           animation.onfinish();
@@ -558,7 +558,7 @@ describe('MicroInteractionService', () => {
 
   describe('並發控制情境', () => {
     test('應該正確處理並發限制', async () => {
-      // 設置較小的並發限制
+      // Settings較小的ConcurrentLimit
       await service.initialize({ maxConcurrent: 1 });
 
       const _config = {
@@ -570,14 +570,14 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬動畫執行
+      // 模擬動畫執Row
       const _animation = createMockAnimation();
       mockElement.animate.mockReturnValue(animation);
 
-      // 第一次觸發應該成功
+      // 第一次觸發應該Success
       const _triggerPromise1 = service.trigger(id, { element: mockElement });
 
-      // 第二次觸發應該失敗（因為並發限制）
+      // 第二次觸發應該Failed（因為ConcurrentLimit）
       const _triggerPromise2 = service.trigger(id, { element: mockElement });
 
       await expect(triggerPromise2).rejects.toThrow('達到最大並發限制');
@@ -593,7 +593,7 @@ describe('MicroInteractionService', () => {
     });
 
     test('應該在動畫完成後釋放並發槽位', async () => {
-      // 設置並發限制為 1
+      // SettingsConcurrentLimit為 1
       await service.initialize({ maxConcurrent: 1 });
 
       const _config = {
@@ -605,14 +605,14 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬動畫執行
+      // 模擬動畫執Row
       const _animation = createMockAnimation();
       mockElement.animate.mockReturnValue(animation);
 
       // 第一次觸發
       const _triggerPromise1 = service.trigger(id, { element: mockElement });
 
-      // 等待動畫完成
+      // Await動畫Complete
       setTimeout(() => {
         if (animation.onfinish) {
           animation.onfinish();
@@ -621,7 +621,7 @@ describe('MicroInteractionService', () => {
 
       await triggerPromise1;
 
-      // 動畫完成後，應該可以再次觸發
+      // 動畫Complete後，應該可以再次觸發
       const _triggerPromise2 = service.trigger(id, { element: mockElement });
 
       setTimeout(() => {
@@ -630,11 +630,11 @@ describe('MicroInteractionService', () => {
         }
       }, 50);
 
-      await triggerPromise2; // 這次應該成功
+      await triggerPromise2; // 這次應該Success
     });
   });
 
-  describe('錯誤處理情境', () => {
+  describe('ErrorHandle情境', () => {
     test('應該正確處理動畫取消', async () => {
       const _config = {
         id: 'cancel-test',
@@ -645,13 +645,13 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 模擬動畫執行
+      // 模擬動畫執Row
       const _animation = createMockAnimation();
       mockElement.animate.mockReturnValue(animation);
 
       const _triggerPromise = service.trigger(id, { element: mockElement });
 
-      // 模擬動畫取消
+      // 模擬動畫Cancel
       setTimeout(() => {
         if (animation.oncancel) {
           animation.oncancel();
@@ -671,7 +671,7 @@ describe('MicroInteractionService', () => {
 
       const _id = service.register(config);
 
-      // 不提供 element 數據
+      // 不提供 element Data
       await expect(service.trigger(id)).rejects.toThrow(
         '找不到元素: no-element'
       );

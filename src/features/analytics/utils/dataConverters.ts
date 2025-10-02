@@ -1,4 +1,4 @@
-// 數據轉換工具
+// DataConvertTool
 import type { BusinessMetrics } from '../types/businessMetrics';
 import type {
   ChartAnalytics,
@@ -28,7 +28,7 @@ import type {
 } from '../types/report';
 import type { UserBehaviorAnalysisResponse } from '../types/userBehavior';
 
-// 聯合類型定義
+// 聯合Class型定義
 export type AnalysisData =
   | UserBehaviorAnalysisResponse
   | BusinessMetrics
@@ -57,16 +57,16 @@ export type AnalysisData =
   | ReportInstance[]
   | ReportTemplate[];
 
-// 轉換為 JSON 格式
+// Convert為 JSON 格式
 export const _convertToJSON = (data: AnalysisData): string => {
   try {
     return JSON.stringify(data, null, 2);
   } catch (error) {
-    throw new Error(`JSON 轉換失敗: ${error}`);
+    throw new Error(`JSON 轉換Failed: ${error}`);
   }
 };
 
-// 轉換為 CSV 格式
+// Convert為 CSV 格式
 export const _convertToCSV = (data: AnalysisData): string => {
   try {
     if (Array.isArray(data)) {
@@ -85,7 +85,7 @@ export const _convertToCSV = (data: AnalysisData): string => {
 
       return csvRows.join('\n');
     } else {
-      // 單個對象轉換為單行 CSV
+      // SingleObjectConvert為單Row CSV
       const _headers = Object.keys(data);
       const _values = headers.map(header => {
         const _value = data[header as keyof typeof data];
@@ -94,37 +94,37 @@ export const _convertToCSV = (data: AnalysisData): string => {
       return [headers.join(','), values.join(',')].join('\n');
     }
   } catch (error) {
-    throw new Error(`CSV 轉換失敗: ${error}`);
+    throw new Error(`CSV 轉換Failed: ${error}`);
   }
 };
 
-// 轉換為 Excel 格式 (簡化版本，實際應使用 xlsx 庫)
+// Convert為 Excel 格式 (簡化Version，實際應使用 xlsx Library)
 export const _convertToExcel = (data: AnalysisData): string => {
   try {
-    // 這裡應該使用 xlsx 庫來生成真正的 Excel 文件
-    // 目前返回 CSV 格式作為簡化實現
+    // 這裡應該使用 xlsx Library來生成True正的 Excel File
+    // 目前Return CSV 格式作為簡化實現
     return convertToCSV(data);
   } catch (error) {
-    throw new Error(`Excel 轉換失敗: ${error}`);
+    throw new Error(`Excel 轉換Failed: ${error}`);
   }
 };
 
-// 轉換為 PDF 格式 (簡化版本，實際應使用 jsPDF 庫)
+// Convert為 PDF 格式 (簡化Version，實際應使用 jsPDF Library)
 export const _convertToPDF = (data: AnalysisData): string => {
   try {
-    // 這裡應該使用 jsPDF 庫來生成真正的 PDF 文件
-    // 目前返回格式化的文本作為簡化實現
+    // 這裡應該使用 jsPDF Library來生成True正的 PDF File
+    // 目前ReturnFormat的文本作為簡化實現
     if (Array.isArray(data)) {
       return data.map(item => JSON.stringify(item, null, 2)).join('\n\n');
     } else {
       return JSON.stringify(data, null, 2);
     }
   } catch (error) {
-    throw new Error(`PDF 轉換失敗: ${error}`);
+    throw new Error(`PDF 轉換Failed: ${error}`);
   }
 };
 
-// 格式化數據顯示
+// FormatDataShow
 export const _formatDataForDisplay = (data: AnalysisData): string => {
   try {
     if (Array.isArray(data)) {
@@ -135,11 +135,11 @@ export const _formatDataForDisplay = (data: AnalysisData): string => {
       return String(data);
     }
   } catch (error) {
-    return '格式化失敗';
+    return '格式化Failed';
   }
 };
 
-// 驗證數據格式
+// VerifyData格式
 export const _validateDataFormat = (data: AnalysisData): boolean => {
   try {
     if (data === null || data === undefined) {
@@ -160,7 +160,7 @@ export const _validateDataFormat = (data: AnalysisData): boolean => {
   }
 };
 
-// 獲取數據摘要
+// GetData摘要
 export const _getDataSummary = (
   data: AnalysisData
 ): {

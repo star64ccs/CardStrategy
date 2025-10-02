@@ -25,7 +25,7 @@ describe('MacauPersonalDataProtectionService', () => {
     it('應該通過合規的資料處理', () => {
       const processing: MacauDataProcessing = {
         id: 'test_processing_1',
-        purpose: '客戶服務',
+        purpose: '客戶Service',
         legalBasis: '履行契約',
         dataCategories: [MacauDataCategory.CONTACT],
         processingMethods: [

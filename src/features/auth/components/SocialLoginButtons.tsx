@@ -125,12 +125,12 @@ export const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({
   );
 
   useEffect(() => {
-    // 檢查社交登錄配置
+    // Check社交LoginConfigure
     dispatch(checkSocialLoginConfig());
   }, [dispatch]);
 
   useEffect(() => {
-    // 處理社交登錄錯誤
+    // Handle社交LoginError
     if (socialLoginError) {
       onLoginError?.(socialLoginError);
       dispatch(clearSocialLoginError());
@@ -138,29 +138,29 @@ export const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({
   }, [socialLoginError, onLoginError, dispatch]);
 
   useEffect(() => {
-    // 處理 URL 錯誤
+    // Handle URL Error
     if (urlsError) {
-      Alert.alert('錯誤', urlsError);
+      Alert.alert('Error', urlsError);
       dispatch(clearUrlsError());
     }
   }, [urlsError, dispatch]);
 
   useEffect(() => {
-    // 處理配置錯誤
+    // HandleConfigureError
     if (configError) {
-      logger.error('社交登錄配置錯誤:', { error: configError });
+      logger.error('社交登錄ConfigureError:', { error: configError });
       dispatch(clearConfigError());
     }
   }, [configError, dispatch]);
 
   /**
-   * 處理社交登錄
+   * Handle社交Login
    */
   const _handleSocialLogin = async (provider: SocialProvider) => {
     try {
       setLoadingProvider(provider);
 
-      // 檢查提供商是否已配置
+      // Check提供商YesNo已Configure
       if (!configuredProviders.includes(provider)) {
         onProviderNotConfigured?.(provider);
         Alert.alert(
@@ -170,27 +170,27 @@ export const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({
         return;
       }
 
-      // 獲取社交登錄 URL
+      // Get社交Login URL
       const _result = await dispatch(getSocialLoginUrl({ provider })).unwrap();
       const { url } = result;
 
-      // 打開社交登錄頁面
+      // 打On社交Login頁面
       const _supported = await Linking.canOpenURL(url);
       if (supported) {
         await Linking.openURL(url);
       } else {
-        Alert.alert('錯誤', '無法打開登錄頁面');
+        Alert.alert('Error', '無法打開登錄頁面');
       }
     } catch (error: unknown) {
-      logger.error('社交登錄失敗:', { error, provider });
-      Alert.alert('登錄失敗', error.message || '社交登錄失敗');
+      logger.error('社交登錄Failed:', { error, provider });
+      Alert.alert('登錄Failed', error.message || '社交登錄Failed');
     } finally {
       setLoadingProvider(null);
     }
   };
 
   /**
-   * 處理社交登錄回調
+   * Handle社交LoginCallback
    */
   const _handleSocialCallbackInternal = async (
     provider: SocialProvider,
@@ -204,18 +204,18 @@ export const SocialLoginButtons: React.FC<SocialLoginButtonsProps> = ({
         handleSocialCallback({ provider, code, state })
       ).unwrap();
 
-      logger.info('社交登錄成功:', { provider, userId: response.user.id });
+      logger.info('社交登錄Success:', { provider, userId: response.user.id });
       onLoginSuccess?.(response);
     } catch (error: unknown) {
-      logger.error('社交登錄回調處理失敗:', { error, provider });
-      onLoginError?.(error.message || '社交登錄失敗');
+      logger.error('社交登錄回調HandleFailed:', { error, provider });
+      onLoginError?.(error.message || '社交登錄Failed');
     } finally {
       setLoadingProvider(null);
     }
   };
 
   /**
-   * 渲染社交登錄按鈕
+   * 渲染社交Login按鈕
    */
   const _renderSocialButton = (provider: SocialProvider) => {
     const _config = SOCIAL_PROVIDERS[provider];

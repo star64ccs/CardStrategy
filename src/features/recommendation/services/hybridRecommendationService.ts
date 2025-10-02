@@ -136,9 +136,9 @@ export class HybridRecommendationService {
   private isInitialized = false;
 
   private constructor() {
-    // 配置已在類屬性中初始化
+    // Configure已在ClassProperty中Initialize
 
-    // stats 已在類屬性中初始化
+    // stats 已在ClassProperty中Initialize
 
     this.collaborativeService = CollaborativeFilteringService.getInstance();
     this.contentService = ContentRecommendationService.getInstance();
@@ -153,17 +153,17 @@ export class HybridRecommendationService {
 
   async initialize(): Promise<boolean> {
     try {
-      // 初始化協作過濾服務
+      // Initialize協作FilterService
       await this.collaborativeService.initialize();
 
-      // 初始化內容推薦服務
+      // InitializeContent推薦Service
       await this.contentService.initialize();
 
       this.isInitialized = true;
       return true;
     } catch (error) {
       this.isInitialized = false;
-      console.error('混合推薦服務初始化失敗:', error);
+      console.error('混合推薦ServiceInitializeFailed:', error);
       return false;
     }
   }
@@ -172,13 +172,13 @@ export class HybridRecommendationService {
     request: GetHybridRecommendationsRequest
   ): Promise<GetHybridRecommendationsResponse> {
     if (!this.isInitialized) {
-      throw new Error('混合推薦服務尚未初始化');
+      throw new Error('混合推薦Service尚未Initialize');
     }
 
     const _startTime = Date.now();
 
     try {
-      // 獲取協作過濾推薦
+      // Get協作Filter推薦
       let collaborativeRecommendations = { recommendations: [] as any[] };
       if (this.config.weights.collaborative > 0) {
         try {
@@ -192,31 +192,31 @@ export class HybridRecommendationService {
             recommendations: response.data?.recommendations || [],
           };
         } catch (error) {
-          console.error('協作過濾推薦失敗:', error);
+          console.error('協作過濾推薦Failed:', error);
         }
       }
 
       const _contentRecommendations = { recommendations: [] as any[] };
       if (this.config.weights.content > 0) {
         try {
-          // 暫時註釋掉，等待 ContentRecommendationService 實現
+          // 暫時Comment掉，Await ContentRecommendationService 實現
           // const _response = await this.contentService.getRecommendations({
           //   userId: request.userId,
           //   limit: Math.ceil((request.limit || 10) * this.config.weights.content)
           // });
           // contentRecommendations = { recommendations: response.recommendations || [] };
         } catch (error) {
-          console.error('內容推薦失敗:', error);
+          console.error('內容推薦Failed:', error);
         }
       }
 
-      // 合併推薦結果
+      // Merge推薦結果
       const _allRecommendations = [
         ...collaborativeRecommendations.recommendations,
         ...contentRecommendations.recommendations,
       ];
 
-      // 去重和排序
+      // 去重和Sort
       const _uniqueRecommendations =
         this.deduplicateRecommendations(allRecommendations);
       const _sortedRecommendations = this.sortRecommendations(
@@ -224,13 +224,13 @@ export class HybridRecommendationService {
         request.userId
       );
 
-      // 限制數量
+      // Limit數量
       const _finalRecommendations = sortedRecommendations.slice(
         0,
         request.limit
       );
 
-      // 更新統計
+      // UpdateStatistics
       this.updateStats(finalRecommendations, Date.now() - startTime);
 
       return {
@@ -247,7 +247,7 @@ export class HybridRecommendationService {
         },
       };
     } catch (error) {
-      console.error('獲取混合推薦失敗:', error);
+      console.error('Get混合推薦Failed:', error);
       throw error;
     }
   }
@@ -257,14 +257,14 @@ export class HybridRecommendationService {
     recommendation: HybridRecommendation
   ): Promise<void> {
     try {
-      // 記錄到協作過濾服務
+      // Record到協作FilterService
       await this.collaborativeService.updateUserBehavior({
         userId,
         itemId: recommendation.id,
         action: UserAction.CLICK,
       });
 
-      // 記錄到內容推薦服務
+      // Record到Content推薦Service
       await this.contentService.recordUserInteraction(
         userId,
         recommendation.id,
@@ -274,14 +274,14 @@ export class HybridRecommendationService {
         }
       );
 
-      // 更新統計
+      // UpdateStatistics
       this.stats.performanceMetrics.clickThroughRate =
         (this.stats.performanceMetrics.clickThroughRate *
           this.stats.totalRecommendations +
           1) /
         (this.stats.totalRecommendations + 1);
     } catch (error) {
-      console.error('記錄點擊失敗:', error);
+      console.error('記錄點擊Failed:', error);
     }
   }
 
@@ -291,7 +291,7 @@ export class HybridRecommendationService {
     rating: number
   ): Promise<void> {
     try {
-      // 記錄到協作過濾服務
+      // Record到協作FilterService
       await this.collaborativeService.updateRating({
         userId,
         itemId: recommendation.id,
@@ -299,7 +299,7 @@ export class HybridRecommendationService {
         context: {},
       });
 
-      // 記錄到內容推薦服務
+      // Record到Content推薦Service
       await this.contentService.recordUserInteraction(
         userId,
         recommendation.id,
@@ -310,12 +310,12 @@ export class HybridRecommendationService {
         }
       );
 
-      // 更新統計
+      // UpdateStatistics
       this.stats.averageScore =
         (this.stats.averageScore * this.stats.totalRecommendations + rating) /
         (this.stats.totalRecommendations + 1);
     } catch (error) {
-      console.error('記錄評分失敗:', error);
+      console.error('記錄評分Failed:', error);
     }
   }
 

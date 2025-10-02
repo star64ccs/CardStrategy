@@ -59,7 +59,7 @@ describe('EnhancedAIService', () => {
       },
     };
 
-    it('應該成功識別卡片', async () => {
+    it('應該Success識別卡片', async () => {
       mockApiService.post.mockResolvedValue(mockRecognitionResult);
 
       const _result =
@@ -74,7 +74,7 @@ describe('EnhancedAIService', () => {
       });
     });
 
-    it('應該處理識別失敗', async () => {
+    it('應該Handle識別Failed', async () => {
       const _mockFailedResult = {
         success: false,
         data: {
@@ -95,12 +95,12 @@ describe('EnhancedAIService', () => {
       expect(result.data.confidence).toBe(0.0);
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('API Error'));
 
       await expect(
         enhancedAIService.enhancedRecognizeCard(mockImageData)
-      ).rejects.toThrow('API 錯誤');
+      ).rejects.toThrow('API Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -186,7 +186,7 @@ describe('EnhancedAIService', () => {
       },
     };
 
-    it('應該成功分析卡片條件', async () => {
+    it('應該Success分析卡片條件', async () => {
       mockApiService.post.mockResolvedValue(mockConditionResult);
 
       const _result = await enhancedAIService.enhancedAnalyzeCondition(
@@ -265,7 +265,7 @@ describe('EnhancedAIService', () => {
       },
     };
 
-    it('應該成功驗證真偽', async () => {
+    it('應該SuccessVerify真偽', async () => {
       mockApiService.post.mockResolvedValue(mockAuthenticityResult);
 
       const _result = await enhancedAIService.enhancedVerifyAuthenticity(
@@ -351,7 +351,7 @@ describe('EnhancedAIService', () => {
       },
     };
 
-    it('應該成功預測價格', async () => {
+    it('應該Success預測價格', async () => {
       mockApiService.post.mockResolvedValue(mockPredictionResult);
 
       const _result = await enhancedAIService.enhancedPricePrediction(
@@ -375,7 +375,7 @@ describe('EnhancedAIService', () => {
     const _mockImageData = 'base64_image_data';
 
     it('應該執行綜合分析', async () => {
-      // Mock 各個分析步驟的結果
+      // Mock 各個Analysis步驟的結果
       const _mockRecognitionResult = {
         success: true,
         data: {
@@ -431,7 +431,7 @@ describe('EnhancedAIService', () => {
       );
     });
 
-    it('應該處理識別失敗的情況', async () => {
+    it('應該Handle識別Failed的情況', async () => {
       const _mockFailedRecognition = {
         success: false,
         data: { recognizedCard: null },
@@ -441,7 +441,7 @@ describe('EnhancedAIService', () => {
 
       await expect(
         enhancedAIService.comprehensiveAnalysis(mockImageData)
-      ).rejects.toThrow('卡片識別失敗，無法進行後續分析');
+      ).rejects.toThrow('卡片識別Failed，無法進行後續分析');
     });
   });
 
@@ -481,7 +481,7 @@ describe('EnhancedAIService', () => {
       expect(updatedConfig.conditionAnalysis.confidenceThreshold).toBe(0.95);
       expect(
         updatedConfig.authenticityVerification.useBlockchainVerification
-      ).toBe(true); // 保持原值
+      ).toBe(true); // 保持原Value
     });
   });
 });

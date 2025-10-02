@@ -14,7 +14,7 @@ const databaseOptimizer = require('../services/databaseOptimizer');
 const router = express.Router();
 
 // @route   GET /api/investments
-// @desc    ?��??�戶?��??�表'
+// @desc    ?��??�戶?��??�Table'
 // @access  Private''
 router.get('/', protect, async (req, res) => {
   try {
@@ -29,7 +29,7 @@ router.get('/', protect, async (req, res) => {
         code: 'MODEL_INIT_FAILED',
       });'
     }
-    // 設置?�聯''
+    // Settings?�聯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     const {
@@ -44,7 +44,7 @@ router.get('/', protect, async (req, res) => {
     } = req.query;
     const offset = (page - 1) * limit;
 
-    // 構建?�詢條件
+    // Build?�詢Condition
     const whereClause = {
       userId: req.user.id,
       isActive: true,
@@ -187,7 +187,7 @@ router.get('/portfolio', protect, async (req, res) => {
         code: 'MODEL_INIT_FAILED',
       });'
     }
-    // 設置?�聯''
+    // Settings?�聯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
 // eslint-disable-next-line no-unused-vars
@@ -294,7 +294,7 @@ router.get('/analytics', protect, async (req, res) => {
         code: 'MODEL_INIT_FAILED',
       });'
     }
-    // 設置?�聯''
+    // Settings?�聯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
 // eslint-disable-next-line no-unused-vars
@@ -473,7 +473,7 @@ router.post(''
           code: 'MODEL_INIT_FAILED',
         });'
       }
-      // 設置?�聯''
+      // Settings?�聯''
       Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
       const {'
@@ -487,7 +487,7 @@ router.post(''
         purchaseDate = new Date(),
       } = req.body;
 
-      // 檢查?��??�否存在
+      // Check?��??�No存在
       const card = await Card.findByPk(cardId);
       if (!card) {
         return res.status(404).json({'
@@ -521,7 +521,7 @@ router.post(''
         riskLevel,
       });
 
-      // ?��??�含?��?信息?��??��???      const investmentWithCard = await Investment.findByPk(newInvestment.id, {
+      // ?��??�含?��?Information?��??��???      const investmentWithCard = await Investment.findByPk(newInvestment.id, {
         include: [
           {'
             model: Card,''
@@ -575,7 +575,7 @@ router.get('/:id', protect, async (req, res) => {
         code: 'MODEL_INIT_FAILED',
       });'
     }
-    // 設置?�聯''
+    // Settings?�聯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     const investment = await Investment.findOne({
@@ -686,7 +686,7 @@ router.put(''
           code: 'MODEL_INIT_FAILED',
         });'
       }
-      // 設置?�聯''
+      // Settings?�聯''
       Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
       const investment = await Investment.findOne({
@@ -711,7 +711,7 @@ router.put(''
           code: 'INVESTMENT_NOT_FOUND',
         });
       }
-      // ?�新字段
+      // ?�新Field
       const updateData = {};
       if (notes !== undefined) updateData.notes = notes;
       if (status !== undefined) updateData.status = status;
@@ -798,7 +798,7 @@ router.delete('/:id', protect, async (req, res) => {
         code: 'MODEL_INIT_FAILED',
       });'
     }
-    // 設置?�聯''
+    // Settings?�聯''
     Investment.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     const investment = await Investment.findOne({

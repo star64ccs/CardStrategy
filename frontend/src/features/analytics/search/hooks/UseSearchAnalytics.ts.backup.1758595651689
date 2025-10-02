@@ -1,0 +1,434 @@
+import { useCallback, useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import type { AppDispatch } from '../../../store';
+import {
+  addEvent,
+  clearError,
+  clearFilter,
+  createAlert,
+  deleteAlert,
+  deleteReport,
+  exportData,
+  fetchAnalytics,
+  generateReport,
+  initializeSearchAnalytics,
+  selectAlerts,
+  selectAnalytics,
+  selectConfig,
+  selectError,
+  selectIsInitialized,
+  selectIsLoading,
+  selectReports,
+  setCurrentReport,
+  setFilter,
+  updateAlert,
+  updateConfig,
+  updateRealTimeMetrics,
+} from '../../../store/slices/searchAnalyticsSlice';
+import { SearchAnalyticsService } from '../services/searchAnalyticsService';
+import type {
+  SearchAnalyticsAlert,
+  SearchAnalyticsEvent,
+  SearchAnalyticsExportOptions,
+  SearchAnalyticsFilter,
+} from '../types/searchAnalytics';
+
+export const useSearchAnalytics = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const analytics = useSelector(selectAnalytics);
+  const isInitialized = useSelector(selectIsInitialized);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+  const config = useSelector(selectConfig);
+  const alerts = useSelector(selectAlerts);
+  const reports = useSelector(selectReports);
+
+  // 初始化服務
+  const initialize = useCallback(async () => {
+    try {
+      await dispatch(initializeSearchAnalytics()).unwrap();
+
+      // 設置事件監聽器
+      const service = SearchAnalyticsService.getInstance();
+      service.addEventListener((event: SearchAnalyticsEvent) => {
+        dispatch(addEvent(event));
+      });
+
+      return true;
+    } catch (error) {
+      console.error('搜索分析初始化失敗:', error);
+      return false;
+    }
+  }, [dispatch]);
+
+  // 獲取分析數據
+  const getAnalytics = useCallback(
+    async (filter?: SearchAnalyticsFilter) => {
+      try {
+        await dispatch(fetchAnalytics(filter)).unwrap();
+        return true;
+      } catch (error) {
+        console.error('獲取分析數據失敗:', error);
+        return false;
+      }
+    },
+    [dispatch]
+  );
+
+  // 生成報告
+  const generateAnalyticsReport = useCallback(
+    async (
+      title: string,
+      description: string,
+      period: { start: number; end: number },
+      filter?: SearchAnalyticsFilter
+    ) => {
+      try {
+        const report = await dispatch(
+          generateReport({
+            title,
+            description,
+            period,
+            filter,
+          })
+        ).unwrap();
+        return report;
+      } catch (error) {
+        console.error('生成報告失敗:', error);
+        return null;
+      }
+    },
+    [dispatch]
+  );
+
+  // 導出數據
+  const exportAnalyticsData = useCallback(
+    async (analytics: any, options: SearchAnalyticsExportOptions) => {
+      try {
+        const data = await dispatch(
+          exportData({ analytics, options })
+        ).unwrap();
+        return data;
+      } catch (error) {
+        console.error('導出數據失敗:', error);
+        return null;
+      }
+    },
+    [dispatch]
+  );
+
+  // 創建警報
+  const createAnalyticsAlert = useCallback(
+    async (alert: Omit<SearchAnalyticsAlert, 'id' | 'triggerCount'>) => {
+      try {
+        const alertId = await dispatch(createAlert(alert)).unwrap();
+        return alertId;
+      } catch (error) {
+        console.error('創建警報失敗:', error);
+        return null;
+      }
+    },
+    [dispatch]
+  );
+
+  // 更新警報
+  const updateAnalyticsAlert = useCallback(
+    async (alertId: string, updates: Partial<SearchAnalyticsAlert>) => {
+      try {
+        await dispatch(updateAlert({ alertId, updates })).unwrap();
+        return true;
+      } catch (error) {
+        console.error('更新警報失敗:', error);
+        return false;
+      }
+    },
+    [dispatch]
+  );
+
+  // 刪除警報
+  const deleteAnalyticsAlert = useCallback(
+    async (alertId: string) => {
+      try {
+        await dispatch(deleteAlert(alertId)).unwrap();
+        return true;
+      } catch (error) {
+        console.error('刪除警報失敗:', error);
+        return false;
+      }
+    },
+    [dispatch]
+  );
+
+  // 設置過濾器
+  const setAnalyticsFilter = useCallback(
+    (filter: SearchAnalyticsFilter) => {
+      dispatch(setFilter(filter));
+    },
+    [dispatch]
+  );
+
+  // 清除過濾器
+  const clearAnalyticsFilter = useCallback(() => {
+    dispatch(clearFilter());
+  }, [dispatch]);
+
+  // 更新配置
+  const updateAnalyticsConfig = useCallback(
+    (newConfig: Partial<typeof config>) => {
+      dispatch(updateConfig(newConfig));
+    },
+    [dispatch, config]
+  );
+
+  // 清除錯誤
+  const clearAnalyticsError = useCallback(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  // 設置當前報告
+  const setCurrentAnalyticsReport = useCallback(
+    (report: any) => {
+      dispatch(setCurrentReport(report));
+    },
+    [dispatch]
+  );
+
+  // 刪除報告
+  const deleteAnalyticsReport = useCallback(
+    (reportId: string) => {
+      dispatch(deleteReport(reportId));
+    },
+    [dispatch]
+  );
+
+  // 追蹤搜索事件
+  const trackSearchEvent = useCallback(
+    (event: Omit<SearchAnalyticsEvent, 'timestamp'>) => {
+      const service = SearchAnalyticsService.getInstance();
+      service.trackEvent(event);
+    },
+    []
+  );
+
+  // 更新實時指標
+  const updateRealTimeAnalyticsMetrics = useCallback(
+    (metrics: {
+      currentSearches: number;
+      averageResponseTime: number;
+      errorRate: number;
+      throughput: number;
+    }) => {
+      dispatch(updateRealTimeMetrics(metrics));
+    },
+    [dispatch]
+  );
+
+  // 計算統計數據
+  const statistics = useMemo(() => {
+    if (!analytics) return null;
+
+    return {
+      totalSearches: analytics.totalSearches,
+      uniqueUsers: analytics.uniqueUsers,
+      averageSearchTime: analytics.averageSearchTime,
+      searchSuccessRate: analytics.searchSuccessRate,
+      averageResponseTime: analytics.performanceMetrics.averageResponseTime,
+      errorRate: analytics.errorRates.errorRate,
+      throughput: analytics.performanceMetrics.throughput,
+      cacheHitRate: analytics.cacheMetrics.hitRate,
+      conversionRate: analytics.conversionRates.overallConversion,
+    };
+  }, [analytics]);
+
+  // 獲取熱門搜索
+  const popularSearches = useMemo(() => {
+    return analytics?.popularSearches || [];
+  }, [analytics]);
+
+  // 獲取趨勢搜索
+  const trendingSearches = useMemo(() => {
+    return analytics?.trendingSearches || [];
+  }, [analytics]);
+
+  // 獲取類別統計
+  const categoryStats = useMemo(() => {
+    return analytics?.searchCategories || [];
+  }, [analytics]);
+
+  // 獲取時間統計
+  const hourlyStats = useMemo(() => {
+    return analytics?.searchesByHour || [];
+  }, [analytics]);
+
+  // 獲取性能指標
+  const performanceMetrics = useMemo(() => {
+    return analytics?.performanceMetrics || null;
+  }, [analytics]);
+
+  // 獲取用戶行為統計
+  const userBehavior = useMemo(() => {
+    return analytics?.userBehavior || null;
+  }, [analytics]);
+
+  // 檢查是否有重要洞察
+  const hasCriticalInsights = useMemo(() => {
+    // 洞察功能暫時不可用
+    return false;
+  }, []);
+
+  // 檢查是否有高優先級建議
+  const hasHighPriorityRecommendations = useMemo(() => {
+    // 建議功能暫時不可用
+    return false;
+  }, []);
+
+  // 檢查警報狀態
+  const activeAlerts = useMemo(() => {
+    return alerts.filter(alert => alert.enabled);
+  }, [alerts]);
+
+  // 檢查實時性能
+  const isPerformanceGood = useMemo(() => {
+    // 實時指標功能暫時不可用
+    return true;
+  }, []);
+
+  // 自動初始化
+  useEffect(() => {
+    if (!isInitialized && !isLoading) {
+      initialize();
+    }
+  }, [isInitialized, isLoading, initialize]);
+
+  // 定期更新實時指標
+  useEffect(() => {
+    if (!isInitialized) return;
+
+    const interval = setInterval(() => {
+      if (analytics) {
+        updateRealTimeAnalyticsMetrics({
+          currentSearches: analytics.totalSearches,
+          averageResponseTime: analytics.performanceMetrics.averageResponseTime,
+          errorRate: analytics.errorRates.errorRate,
+          throughput: analytics.performanceMetrics.throughput,
+        });
+      }
+    }, 30000); // 每30秒更新一次
+
+    return () => clearInterval(interval);
+  }, [isInitialized, analytics, updateRealTimeAnalyticsMetrics]);
+
+  return {
+    // 狀態
+    analytics,
+    isInitialized,
+    isLoading,
+    error,
+    config,
+    alerts,
+    reports,
+
+    // 計算屬性
+    statistics,
+    popularSearches,
+    trendingSearches,
+    categoryStats,
+    hourlyStats,
+    performanceMetrics,
+    userBehavior,
+    hasCriticalInsights,
+    hasHighPriorityRecommendations,
+    activeAlerts,
+    isPerformanceGood,
+
+    // 操作方法
+    initialize,
+    getAnalytics,
+    generateAnalyticsReport,
+    exportAnalyticsData,
+    createAnalyticsAlert,
+    updateAnalyticsAlert,
+    deleteAnalyticsAlert,
+    setAnalyticsFilter,
+    clearAnalyticsFilter,
+    updateAnalyticsConfig,
+    clearAnalyticsError,
+    setCurrentAnalyticsReport,
+    deleteAnalyticsReport,
+    trackSearchEvent,
+    updateRealTimeAnalyticsMetrics,
+  };
+};
+
+// 簡化的 Hook 用於基本分析功能
+export const useBasicSearchAnalytics = () => {
+  const {
+    analytics,
+    isInitialized,
+    isLoading,
+    error,
+    statistics,
+    popularSearches,
+    trendingSearches,
+    categoryStats,
+    performanceMetrics,
+    initialize,
+    getAnalytics,
+    trackSearchEvent,
+  } = useSearchAnalytics();
+
+  return {
+    analytics,
+    isInitialized,
+    isLoading,
+    error,
+    statistics,
+    popularSearches,
+    trendingSearches,
+    categoryStats,
+    performanceMetrics,
+    initialize,
+    getAnalytics,
+    trackSearchEvent,
+  };
+};
+
+// 專門用於警報管理的 Hook
+export const useSearchAnalyticsAlerts = () => {
+  const {
+    alerts,
+    activeAlerts,
+    createAnalyticsAlert,
+    updateAnalyticsAlert,
+    deleteAnalyticsAlert,
+  } = useSearchAnalytics();
+
+  return {
+    alerts,
+    activeAlerts,
+    createAlert: createAnalyticsAlert,
+    updateAlert: updateAnalyticsAlert,
+    deleteAlert: deleteAnalyticsAlert,
+  };
+};
+
+// 專門用於報告管理的 Hook
+export const useSearchAnalyticsReports = () => {
+  const {
+    reports,
+    generateAnalyticsReport,
+    exportAnalyticsData,
+    setCurrentAnalyticsReport,
+    deleteAnalyticsReport,
+  } = useSearchAnalytics();
+
+  return {
+    reports,
+    currentReport: null, // 暫時設為 null，等待實現
+    generateReport: generateAnalyticsReport,
+    exportData: exportAnalyticsData,
+    setCurrentReport: setCurrentAnalyticsReport,
+    deleteReport: deleteAnalyticsReport,
+  };
+};

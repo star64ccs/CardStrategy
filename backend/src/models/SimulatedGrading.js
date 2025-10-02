@@ -126,7 +126,7 @@ const createSimulatedGradingModel = (sequelize) => {
             instance.qrCode = generateQRCodeUrl(instance.gradingNumber);
           }
 
-          // 設置過期時間（默認 365 天）
+          // Settings過期Time（Default 365 天）
           if (!instance.expiresAt) {
             const expiresAt = new Date();
             expiresAt.setDate(expiresAt.getDate() + 365);

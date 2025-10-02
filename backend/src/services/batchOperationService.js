@@ -16,7 +16,7 @@ class BatchOperationService {
   }
 
   /**
-   * 初始化 Redis 客戶端
+   * Initialize Redis client
    */
   async initializeRedis() {
     try {
@@ -25,15 +25,15 @@ class BatchOperationService {
       });
 
       await this.redisClient.connect();
-      logger.info('批量操作服務 Redis 連接成功');
+      logger.info('Batch operation service Redis connection successful');
     } catch (error) {
-      logger.error('批量操作服務 Redis 連接失敗:', error);
+      logger.error('Batch operation service Redis connection failed:', error);
       this.redisClient = null;
     }
   }
 
   /**
-   * 初始化隊列
+   * InitializeQueue
    */
   initializeQueue() {
     try {
@@ -44,51 +44,51 @@ class BatchOperationService {
         },
       });
 
-      // 設置隊列處理器
+      // SettingsQueueHandle器
       this.setupQueueProcessors();
 
-      logger.info('批量操作隊列初始化成功');
+      logger.info('批量操作隊列InitializeSuccess');
     } catch (error) {
-      logger.error('批量操作隊列初始化失敗:', error);
+      logger.error('批量操作隊列InitializeFailed:', error);
     }
   }
 
   /**
-   * 設置隊列處理器
+   * SettingsQueueHandle器
    */
   setupQueueProcessors() {
-    // 批量卡片操作處理器
+    // Batch卡片OperationHandle器
     this.batchQueue.process('batch-cards', async (job) => {
       return await this.processBatchCards(job.data);
     });
 
-    // 批量投資操作處理器
+    // Batch投資OperationHandle器
     this.batchQueue.process('batch-investments', async (job) => {
       return await this.processBatchInvestments(job.data);
     });
 
-    // 批量市場數據操作處理器
+    // Batch市場DataOperationHandle器
     this.batchQueue.process('batch-market-data', async (job) => {
       return await this.processBatchMarketData(job.data);
     });
 
-    // 批量用戶操作處理器
+    // BatchUserOperationHandle器
     this.batchQueue.process('batch-users', async (job) => {
       return await this.processBatchUsers(job.data);
     });
 
-    // 批量通知操作處理器
+    // BatchNotificationOperationHandle器
     this.batchQueue.process('batch-notifications', async (job) => {
       return await this.processBatchNotifications(job.data);
     });
 
-    // 錯誤處理
+    // ErrorHandle
     this.batchQueue.on('error', (error) => {
-      logger.error('批量操作隊列錯誤:', error);
+      logger.error('批量操作隊列Error:', error);
     });
 
     this.batchQueue.on('failed', (job, error) => {
-      logger.error(`批量操作任務失敗: ${job.id}`, error);
+      logger.error(`批量操作任務Failed: ${job.id}`, error);
     });
 
     this.batchQueue.on('completed', (job) => {
@@ -97,7 +97,7 @@ class BatchOperationService {
   }
 
   /**
-   * 批量卡片操作
+   * Batch卡片Operation
    */
   async processBatchCards(data) {
     try {
@@ -182,7 +182,7 @@ class BatchOperationService {
               throw new Error(`未知的批量操作: ${operation}`);
           }
         } catch (error) {
-          logger.error(`批量卡片操作批次 ${i + 1} 失敗:`, error);
+          logger.error(`批量卡片操作批次 ${i + 1} Failed:`, error);
           results.failed.push(
             ...batch.map((card) => ({
               id: card.id || card.data?.id,
@@ -194,13 +194,13 @@ class BatchOperationService {
 
       return results;
     } catch (error) {
-      logger.error('批量卡片操作失敗:', error);
+      logger.error('批量卡片操作Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 批量投資操作
+   * Batch投資Operation
    */
   async processBatchInvestments(data) {
     try {
@@ -299,7 +299,7 @@ class BatchOperationService {
               throw new Error(`未知的批量投資操作: ${operation}`);
           }
         } catch (error) {
-          logger.error(`批量投資操作批次 ${i + 1} 失敗:`, error);
+          logger.error(`批量投資操作批次 ${i + 1} Failed:`, error);
           results.failed.push(
             ...batch.map((inv) => ({
               id: inv.id || inv.data?.id,
@@ -311,13 +311,13 @@ class BatchOperationService {
 
       return results;
     } catch (error) {
-      logger.error('批量投資操作失敗:', error);
+      logger.error('批量投資操作Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 批量市場數據操作
+   * Batch市場DataOperation
    */
   async processBatchMarketData(data) {
     try {
@@ -368,7 +368,7 @@ class BatchOperationService {
               break;
 
             case 'aggregate':
-              // 聚合市場數據
+              // 聚合市場Data
 // eslint-disable-next-line no-unused-vars
               for (const data of batch) {
                 try {
@@ -387,7 +387,7 @@ class BatchOperationService {
               break;
 
             case 'cleanup':
-              // 清理過期市場數據
+              // 清理過期市場Data
               const cutoffDate = moment()
                 .subtract(options.days || 365, 'days')
                 .toDate();
@@ -403,7 +403,7 @@ class BatchOperationService {
               throw new Error(`未知的批量市場數據操作: ${operation}`);
           }
         } catch (error) {
-          logger.error(`批量市場數據操作批次 ${i + 1} 失敗:`, error);
+          logger.error(`批量市場數據操作批次 ${i + 1} Failed:`, error);
           results.failed.push(
             ...batch.map((data) => ({
               id: data.id || data.cardId,
@@ -415,13 +415,13 @@ class BatchOperationService {
 
       return results;
     } catch (error) {
-      logger.error('批量市場數據操作失敗:', error);
+      logger.error('批量市場數據操作Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 批量用戶操作
+   * BatchUserOperation
    */
   async processBatchUsers(data) {
     try {
@@ -513,7 +513,7 @@ class BatchOperationService {
               throw new Error(`未知的批量用戶操作: ${operation}`);
           }
         } catch (error) {
-          logger.error(`批量用戶操作批次 ${i + 1} 失敗:`, error);
+          logger.error(`批量用戶操作批次 ${i + 1} Failed:`, error);
           results.failed.push(
             ...batch.map((user) => ({
               id: user.id,
@@ -525,13 +525,13 @@ class BatchOperationService {
 
       return results;
     } catch (error) {
-      logger.error('批量用戶操作失敗:', error);
+      logger.error('批量用戶操作Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 批量通知操作
+   * BatchNotificationOperation
    */
   async processBatchNotifications(data) {
     try {
@@ -621,7 +621,7 @@ class BatchOperationService {
               throw new Error(`未知的批量通知操作: ${operation}`);
           }
         } catch (error) {
-          logger.error(`批量通知操作批次 ${i + 1} 失敗:`, error);
+          logger.error(`批量通知操作批次 ${i + 1} Failed:`, error);
           results.failed.push(
             ...batch.map((notification) => ({
               id: notification.userId || notification.notificationId,
@@ -633,13 +633,13 @@ class BatchOperationService {
 
       return results;
     } catch (error) {
-      logger.error('批量通知操作失敗:', error);
+      logger.error('批量通知操作Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 提交批量操作任務
+   * SubmitBatchOperationTask
    */
   async submitBatchOperation(type, data, options = {}) {
     try {
@@ -663,13 +663,13 @@ class BatchOperationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('提交批量操作任務失敗:', error);
+      logger.error('提交批量操作任務Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取任務狀態
+   * GetTaskStatus
    */
   async getJobStatus(jobId) {
     try {
@@ -694,13 +694,13 @@ class BatchOperationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('獲取任務狀態失敗:', error);
+      logger.error('Get任務狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 取消任務
+   * CancelTask
    */
   async cancelJob(jobId) {
     try {
@@ -719,13 +719,13 @@ class BatchOperationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('取消任務失敗:', error);
+      logger.error('取消任務Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取隊列統計
+   * GetQueueStatistics
    */
   async getQueueStats() {
     try {
@@ -744,13 +744,13 @@ class BatchOperationService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('獲取隊列統計失敗:', error);
+      logger.error('Get隊列統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 聚合市場數據
+   * 聚合市場Data
    */
   async aggregateMarketData(cardId, date) {
     try {
@@ -794,18 +794,18 @@ class BatchOperationService {
         lastUpdated: new Date(),
       };
 
-      // 保存聚合數據
+      // Save聚合Data
       await MarketData.create(aggregated);
 
       return aggregated;
     } catch (error) {
-      logger.error('聚合市場數據失敗:', error);
+      logger.error('聚合市場數據Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 將數組分塊
+   * 將Array分塊
    */
   chunkArray(array, size) {
     const chunks = [];
@@ -816,14 +816,14 @@ class BatchOperationService {
   }
 
   /**
-   * 清理過期任務
+   * 清理過期Task
    */
   async cleanupExpiredJobs() {
     try {
       const completedJobs = await this.batchQueue.getCompleted();
       const failedJobs = await this.batchQueue.getFailed();
 
-      // 清理超過7天的已完成任務
+      // 清理超過7天的已CompleteTask
       const sevenDaysAgo = moment().subtract(7, 'days').toDate();
 
       for (const job of completedJobs) {
@@ -832,7 +832,7 @@ class BatchOperationService {
         }
       }
 
-      // 清理超過30天的失敗任務
+      // 清理超過30天的FailedTask
       const thirtyDaysAgo = moment().subtract(30, 'days').toDate();
 
       for (const job of failedJobs) {
@@ -843,12 +843,12 @@ class BatchOperationService {
 
       logger.info('過期任務清理完成');
     } catch (error) {
-      logger.error('清理過期任務失敗:', error);
+      logger.error('清理過期任務Failed:', error);
     }
   }
 
   /**
-   * 關閉服務
+   * Off閉Service
    */
   async close() {
     try {
@@ -860,9 +860,9 @@ class BatchOperationService {
         await this.redisClient.quit();
       }
 
-      logger.info('批量操作服務已關閉');
+      logger.info('批量操作Service已關閉');
     } catch (error) {
-      logger.error('關閉批量操作服務失敗:', error);
+      logger.error('關閉批量操作ServiceFailed:', error);
     }
   }
 }

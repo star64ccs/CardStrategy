@@ -37,14 +37,14 @@ class CenteringAssessmentService {
     if (this.isInitialized) return;
     logger.info('初始化 CenteringAssessmentService');
     try {
-      // 模擬從後端獲取配置
+      // 模擬從後端GetConfigure
       this.defaultOptions = await this.callGetAssessmentOptionsAPI();
       this.isInitialized = true;
       logger.info('CenteringAssessmentService 初始化完成', {
         options: this.defaultOptions,
       });
     } catch (error: unknown) {
-      logger.error('CenteringAssessmentService 初始化失敗:', error);
+      logger.error('CenteringAssessmentService InitializeFailed:', error);
       throw error;
     }
   }
@@ -57,10 +57,10 @@ class CenteringAssessmentService {
       userId: request.userId,
     });
     try {
-      // 合併選項
+      // MergeOptions
       const _options = { ...this.defaultOptions, ...request.assessmentOptions };
 
-      // 模擬圖像預處理
+      // 模擬Graph像預Handle
       const _processedImage = await this.preprocessImage(
         request.imageData,
         options
@@ -75,29 +75,29 @@ class CenteringAssessmentService {
       if (!apiResponse.success || !apiResponse.data) {
         const error: CenteringAssessmentError = {
           code: 'ASSESSMENT_FAILED',
-          message: apiResponse.error?.message || '置中評估失敗',
+          message: apiResponse.error?.message || '置中評估Failed',
           isRetryable: true,
         };
         logger.error(
-          '置中評估 API 返回失敗:',
+          '置中評估 API 返回Failed:',
           error as unknown as Record<string, unknown>
         );
         throw error;
       }
 
       const result: CenteringAssessmentResult = apiResponse.data;
-      logger.info('置中評估成功', {
+      logger.info('置中評估Success', {
         cardId: result.cardId,
         overallScore: result.overallScore,
         centeringScore: result.centeringScore,
       });
 
-      // 記錄評估歷史
+      // Record評估歷史
       await this.recordAssessmentHistory(request, result);
 
       return result;
     } catch (error: unknown) {
-      logger.error('置中評估失敗:', error);
+      logger.error('置中評估Failed:', error);
       throw error;
     }
   }
@@ -114,14 +114,14 @@ class CenteringAssessmentService {
       );
 
       if (!apiResponse.success || !apiResponse.data) {
-        throw new Error(apiResponse.error?.message || '獲取評估歷史失敗');
+        throw new Error(apiResponse.error?.message || 'Get評估歷史Failed');
       }
 
       this.assessmentHistory = apiResponse.data;
-      logger.info('成功獲取評估歷史', { count: this.assessmentHistory.length });
+      logger.info('SuccessGet評估歷史', { count: this.assessmentHistory.length });
       return this.assessmentHistory;
     } catch (error: unknown) {
-      logger.error('獲取評估歷史失敗:', error);
+      logger.error('Get評估歷史Failed:', error);
       throw error;
     }
   }
@@ -134,17 +134,17 @@ class CenteringAssessmentService {
       const _apiResponse = await this.callGetAssessmentStatsAPI(userId);
 
       if (!apiResponse.success || !apiResponse.data) {
-        throw new Error(apiResponse.error?.message || '獲取評估統計失敗');
+        throw new Error(apiResponse.error?.message || 'Get評估統計Failed');
       }
 
       this.assessmentStats = apiResponse.data;
-      logger.info('成功獲取評估統計', {
+      logger.info('SuccessGet評估統計', {
         totalAssessments: this.assessmentStats.totalAssessments,
         averageScore: this.assessmentStats.averageScore,
       });
       return this.assessmentStats;
     } catch (error: unknown) {
-      logger.error('獲取評估統計失敗:', error);
+      logger.error('Get評估統計Failed:', error);
       throw error;
     }
   }
@@ -154,10 +154,10 @@ class CenteringAssessmentService {
     try {
       const _options = await this.callGetAssessmentOptionsAPI();
       this.defaultOptions = options;
-      logger.info('成功獲取評估選項', { options });
+      logger.info('SuccessGet評估選項', { options });
       return options;
     } catch (error: unknown) {
-      logger.error('獲取評估選項失敗:', error);
+      logger.error('Get評估選項Failed:', error);
       throw error;
     }
   }
@@ -166,9 +166,9 @@ class CenteringAssessmentService {
     imageData: string,
     options: CenteringAssessmentOptions
   ): Promise<string> {
-    // 模擬圖像處理，例如調整大小、增強對比度等
+    // 模擬Graph像Handle，例如調整大小、增強對比度等
     logger.debug('模擬圖像預處理', { options });
-    return new Promise(resolve => setTimeout(() => resolve(imageData), 300)); // 模擬處理時間
+    return new Promise(resolve => setTimeout(() => resolve(imageData), 300)); // 模擬HandleTime
   }
 
   private async callAssessmentAPI(
@@ -178,7 +178,7 @@ class CenteringAssessmentService {
     logger.debug('模擬調用置中評估 API');
     return new Promise(resolve => {
       setTimeout(() => {
-        const _isSuccess = Math.random() > 0.1; // 90% 成功率
+        const _isSuccess = Math.random() > 0.1; // 90% Success率
         if (isSuccess) {
           const mockDetails: CenteringAssessmentDetails = {
             centering: {
@@ -417,7 +417,7 @@ class CenteringAssessmentService {
     result: CenteringAssessmentResult
   ): Promise<void> {
     logger.debug('記錄評估歷史');
-    // 模擬記錄到後端
+    // 模擬Record到後端
     return new Promise(resolve => setTimeout(resolve, 200));
   }
 }

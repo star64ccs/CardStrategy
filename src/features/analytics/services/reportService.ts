@@ -94,14 +94,14 @@ export class ReportService {
       return {
         success: true,
         data: template,
-        message: '模板創建成功',
+        message: '模板CreateSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         data: {} as ReportTemplate,
-        message: `模板創建失敗: ${error}`,
+        message: `模板CreateFailed: ${error}`,
         timestamp: new Date(),
       };
     }
@@ -124,14 +124,14 @@ export class ReportService {
       return {
         success: true,
         data: template,
-        message: '模板獲取成功',
+        message: '模板GetSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         data: {} as ReportTemplate,
-        message: `模板獲取失敗: ${error}`,
+        message: `模板GetFailed: ${error}`,
         timestamp: new Date(),
       };
     }
@@ -168,14 +168,14 @@ export class ReportService {
       return {
         success: true,
         data: report,
-        message: '報告創建成功',
+        message: '報告CreateSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         data: {} as ReportInstance,
-        message: `報告創建失敗: ${error}`,
+        message: `報告CreateFailed: ${error}`,
         timestamp: new Date(),
       };
     }
@@ -196,14 +196,14 @@ export class ReportService {
       return {
         success: true,
         data: report,
-        message: '報告獲取成功',
+        message: '報告GetSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         data: {} as ReportInstance,
-        message: `報告獲取失敗: ${error}`,
+        message: `報告GetFailed: ${error}`,
         timestamp: new Date(),
       };
     }
@@ -249,7 +249,7 @@ export class ReportService {
       return {
         success: false,
         data: {} as ReportExport,
-        message: `報告導出失敗: ${error}`,
+        message: `報告導出Failed: ${error}`,
         timestamp: new Date(),
       };
     }
@@ -262,14 +262,14 @@ export class ReportService {
       return {
         success: true,
         data: this.analytics,
-        message: '分析數據獲取成功',
+        message: '分析數據GetSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
       return {
         success: false,
         data: {} as ReportAnalytics,
-        message: `分析數據獲取失敗: ${error}`,
+        message: `分析數據GetFailed: ${error}`,
         timestamp: new Date(),
       };
     }

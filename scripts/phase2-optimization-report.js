@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 第二階段優化報告
+ * 第二階段優化Report
  * 防偽判斷系統 + AI預測價格系統優化
  */
 
@@ -209,7 +209,7 @@ const phase2Report = {
   }
 };
 
-// 保存報告
+// SaveReport
 const reportPath = path.join(__dirname, '../reports');
 if (!fs.existsSync(reportPath)) {
   fs.mkdirSync(reportPath, { recursive: true });

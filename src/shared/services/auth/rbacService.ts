@@ -86,21 +86,21 @@ export class RBACService {
 
   async initialize(): Promise<ApiResponse> {
     try {
-      logger.info('初始化 RBAC 服務');
+      logger.info('Initialize RBAC Service');
 
-      // 創建系統權限
+      // Create系統權限
       await this.createSystemPermissions();
 
-      // 創建系統角色
+      // Create系統角色
       await this.createSystemRoles();
 
-      // 設置角色層次結構
+      // Settings角色層次結構
       if (this.config.enableRoleHierarchy) {
         await this.setupRoleHierarchy();
       }
 
       this.isInitialized = true;
-      logger.info('RBAC 服務初始化完成');
+      logger.info('RBAC ServiceInitialize完成');
 
       return {
         success: true,
@@ -114,20 +114,20 @@ export class RBACService {
           totalRoles: this.roles.size,
           totalPermissions: this.permissions.size,
         },
-        message: 'RBAC 服務初始化成功',
+        message: 'RBAC ServiceInitializeSuccess',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('RBAC 服務初始化失敗:', error);
+      logger.error('RBAC ServiceInitializeFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 權限管理
+  // 權限Manage
   async createPermission(
     permission: Omit<Permission, 'id' | 'createdAt'>
   ): Promise<ApiResponse<Permission>> {
@@ -135,7 +135,7 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -156,10 +156,10 @@ export class RBACService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('創建權限失敗:', error);
+      logger.error('Create權限Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -173,7 +173,7 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -197,10 +197,10 @@ export class RBACService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('更新權限失敗:', error);
+      logger.error('Update權限Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -211,7 +211,7 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -225,7 +225,7 @@ export class RBACService {
         };
       }
 
-      // 檢查是否有角色使用此權限
+      // CheckYesNo有角色使用此權限
       const _rolesUsingPermission = Array.from(this.roles.values()).filter(
         role => role.permissions.includes(id)
       );
@@ -247,16 +247,16 @@ export class RBACService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('刪除權限失敗:', error);
+      logger.error('Delete權限Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 角色管理
+  // 角色Manage
   async createRole(
     role: Omit<Role, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<ApiResponse<Role>> {
@@ -264,12 +264,12 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 驗證權限是否存在
+      // Verify權限YesNo存在
       for (const permissionId of role.permissions) {
         if (!this.permissions.has(permissionId)) {
           return {
@@ -298,10 +298,10 @@ export class RBACService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('創建角色失敗:', error);
+      logger.error('Create角色Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -315,7 +315,7 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -337,7 +337,7 @@ export class RBACService {
         };
       }
 
-      // 驗證新權限是否存在
+      // Verify新權限YesNo存在
       if (updates.permissions) {
         for (const permissionId of updates.permissions) {
           if (!this.permissions.has(permissionId)) {
@@ -364,10 +364,10 @@ export class RBACService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('更新角色失敗:', error);
+      logger.error('Update角色Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -378,7 +378,7 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -400,7 +400,7 @@ export class RBACService {
         };
       }
 
-      // 檢查是否有用戶使用此角色
+      // CheckYesNo有User使用此角色
       const _usersWithRole = Array.from(this.userRoles.entries()).filter(
         ([_, roles]) => roles.some(ur => ur.roleId === id && ur.isActive)
       );
@@ -422,16 +422,16 @@ export class RBACService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('刪除角色失敗:', error);
+      logger.error('Delete角色Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 用戶角色分配
+  // User角色分配
   async assignRole(
     userId: string,
     roleId: string,
@@ -442,7 +442,7 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -458,7 +458,7 @@ export class RBACService {
 
       const _userRoles = this.userRoles.get(userId) || [];
 
-      // 檢查用戶是否已有此角色
+      // CheckUserYesNo已有此角色
       const _existingRole = userRoles.find(
         ur => ur.roleId === roleId && ur.isActive
       );
@@ -470,7 +470,7 @@ export class RBACService {
         };
       }
 
-      // 檢查角色數量限制
+      // Check角色數量Limit
       const _activeRoles = userRoles.filter(ur => ur.isActive);
       if (activeRoles.length >= this.config.maxRolesPerUser) {
         return {
@@ -480,7 +480,7 @@ export class RBACService {
         };
       }
 
-      // 檢查臨時角色設置
+      // Check臨時角色Settings
       if (expiresAt && !this.config.enableTemporaryRoles) {
         return {
           success: false,
@@ -504,14 +504,14 @@ export class RBACService {
 
       return {
         success: true,
-        message: '角色分配成功',
+        message: '角色分配Success',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('分配角色失敗:', error);
+      logger.error('分配角色Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -526,7 +526,7 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -551,7 +551,7 @@ export class RBACService {
         };
       }
 
-      // 檢查是否為默認角色
+      // CheckYesNo為Default角色
       if (roleId === this.config.defaultRole) {
         return {
           success: false,
@@ -566,20 +566,20 @@ export class RBACService {
 
       return {
         success: true,
-        message: '角色撤銷成功',
+        message: '角色撤銷Success',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('撤銷角色失敗:', error);
+      logger.error('撤銷角色Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 權限檢查
+  // 權限Check
   async checkAccess(
     request: AccessRequest
   ): Promise<ApiResponse<AccessResult>> {
@@ -587,24 +587,24 @@ export class RBACService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'RBAC 服務未初始化',
+          error: 'RBAC Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
       const { userId, resource, action, context } = request;
 
-      // 獲取用戶角色
+      // GetUser角色
       const _userRoles = this.getUserActiveRoles(userId);
       const _roleNames = userRoles.map(ur => {
         const _role = this.roles.get(ur.roleId);
         return role?.name || ur.roleId;
       });
 
-      // 獲取用戶所有權限
+      // GetUser所有權限
       const _userPermissions = this.getUserPermissions(userId);
 
-      // 檢查所需權限
+      // Check所需權限
       const _requiredPermission = `${resource}:${action}`;
       const _hasPermission = userPermissions.some(permission => {
         return (
@@ -632,16 +632,16 @@ export class RBACService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('權限檢查失敗:', error);
+      logger.error('權限CheckFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 獲取用戶信息
+  // GetUserInformation
   getUserRoles(userId: string): UserRole[] {
     return this.userRoles.get(userId) || [];
   }
@@ -653,7 +653,7 @@ export class RBACService {
     return userRoles.filter(ur => {
       if (!ur.isActive) return false;
       if (ur.expiresAt && ur.expiresAt < now) {
-        ur.isActive = false; // 自動過期
+        ur.isActive = false; // Auto過期
         return false;
       }
       return true;
@@ -668,7 +668,7 @@ export class RBACService {
     for (const userRole of activeRoles) {
       const _role = this.roles.get(userRole.roleId);
       if (role) {
-        // 添加角色權限
+        // Add角色權限
         for (const permissionId of role.permissions) {
           if (!permissionIds.has(permissionId)) {
             const _permission = this.permissions.get(permissionId);
@@ -679,7 +679,7 @@ export class RBACService {
           }
         }
 
-        // 添加繼承權限（如果啟用角色層次結構）
+        // Add繼承權限（如果Enable角色層次結構）
         if (this.config.enableRoleHierarchy) {
           const _inheritedPermissions = this.getInheritedPermissions(
             userRole.roleId
@@ -705,10 +705,10 @@ export class RBACService {
     return Array.from(this.permissions.values());
   }
 
-  // 私有方法
+  // PrivateMethod
   private async createSystemPermissions(): Promise<void> {
     const _systemPermissions = [
-      // 用戶管理權限
+      // UserManage權限
       {
         name: 'user:read',
         description: '查看用戶信息',
@@ -734,7 +734,7 @@ export class RBACService {
         action: 'admin',
       },
 
-      // 卡牌管理權限
+      // 卡牌Manage權限
       {
         name: 'card:read',
         description: '查看卡牌',
@@ -760,7 +760,7 @@ export class RBACService {
         action: 'admin',
       },
 
-      // 系統管理權限
+      // 系統Manage權限
       {
         name: 'system:read',
         description: '查看系統信息',
@@ -818,7 +818,7 @@ export class RBACService {
   private async createSystemRoles(): Promise<void> {
     const _now = new Date();
 
-    // 獲取權限 ID
+    // Get權限 ID
     const _getPermissionIds = (names: string[]) => {
       return Array.from(this.permissions.values())
         .filter(p => names.includes(p.name))
@@ -836,7 +836,7 @@ export class RBACService {
       updatedAt: now,
     };
 
-    // 普通用戶角色
+    // 普Generic戶角色
     const userRole: Role = {
       id: this.generateId(),
       name: 'user',
@@ -854,7 +854,7 @@ export class RBACService {
       updatedAt: now,
     };
 
-    // 管理員角色
+    // Manage員角色
     const adminRole: Role = {
       id: this.generateId(),
       name: 'admin',
@@ -871,7 +871,7 @@ export class RBACService {
   }
 
   private async setupRoleHierarchy(): Promise<void> {
-    // 設置角色層次結構：admin > user > guest
+    // Settings角色層次結構：admin > user > guest
     const _adminRole = Array.from(this.roles.values()).find(
       r => r.name === 'admin'
     );
@@ -903,7 +903,7 @@ export class RBACService {
             permissions.push(permission);
           }
         }
-        // 遞歸獲取子角色的權限
+        // 遞歸Get子角色的權限
         permissions.push(...this.getInheritedPermissions(childRoleId));
       }
     }
@@ -919,7 +919,7 @@ export class RBACService {
       return true;
     }
 
-    // 簡化的條件檢查邏輯
+    // 簡化的ConditionCheck邏輯
     for (const [key, value] of Object.entries(permission.conditions)) {
       if (context[key] !== value) {
         return false;

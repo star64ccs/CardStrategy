@@ -6,11 +6,11 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const logger = require('./utils/logger');
 
-// 導入性能優化中間件
+// Import性能優化中間件
 const performanceMiddleware = require('./middleware/performance');
 const databaseOptimizer = require('./services/databaseOptimizer');
 
-// 導入安全中間件
+// Import安全中間件
 const {
   securityMiddleware,
   securityHeaders,
@@ -19,7 +19,7 @@ const {
   fileUploadSecurity,
 } = require('./middleware/security');
 
-// 導入路由
+// Import路由
 const authRoutes = require('./routes/auth');
 const cardRoutes = require('./routes/cards');
 const marketDataRoutes = require('./routes/market');
@@ -31,23 +31,23 @@ const performanceRoutes = require('./routes/performance');
 const dataExportRoutes = require('./routes/dataExport');
 const batchRoutes = require('./routes/batch');
 
-// 導入高級功能服務
+// Import高級功能Service
 const websocketService = require('./services/websocketService');
 const notificationService = require('./services/notificationService');
 const batchOperationService = require('./services/batchOperationService');
 
-// 導入監控告警服務
+// ImportMonitor告警Service
 const alertService = require('./services/alertService');
 const monitoringService = require('./services/monitoringService');
 
-// 導入數據庫配置
+// ImportDatabaseConfigure
 const {
   sequelize,
   testConnection,
   syncDatabase,
 } = require('./config/database');
 
-// 導入 Redis 配置
+// Import Redis Configure
 const {
   connectRedis,
   healthCheck: redisHealthCheck,
@@ -55,39 +55,39 @@ const {
 
 const app = express();
 
-// 應用安全中間件
+// Apply安全中間件
 securityMiddleware(app);
 
 // 安全標頭
 app.use(securityHeaders);
 
-// 輸入驗證
+// InputVerify
 app.use(inputValidation);
 
 // 會話安全
 app.use(sessionSecurity);
 
-// 文件上傳安全
+// FileUpload安全
 app.use(fileUploadSecurity);
 
 // 壓縮中間件
 app.use(compression());
 
-// 性能監控中間件
+// 性能Monitor中間件
 app.use(performanceMiddleware.responseTimeMonitor());
 app.use(performanceMiddleware.memoryMonitor());
 app.use(performanceMiddleware.queryOptimizer());
 app.use(performanceMiddleware.dbPoolMonitor());
 
-// 緩存中間件
+// Cache中間件
 app.use('/api/cards', performanceMiddleware.cache(300));
 app.use('/api/market-data', performanceMiddleware.cache(60));
 app.use('/api/investments', performanceMiddleware.cache(180));
 
-// 速率限制
+// 速率Limit
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 分鐘
-  max: 100, // 限制每個 IP 100 個請求
+  windowMs: 15 * 60 * 1000, // 15 Minute
+  max: 100, // Limit每個 IP 100 個Request
   message: {
     success: false,
     message: '請求過於頻繁，請稍後再試',
@@ -98,8 +98,8 @@ const generalLimiter = rateLimit({
 });
 
 const strictLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 分鐘
-  max: 5, // 限制每個 IP 5 個請求
+  windowMs: 15 * 60 * 1000, // 15 Minute
+  max: 5, // Limit每個 IP 5 個Request
   message: {
     success: false,
     message: '操作過於頻繁，請稍後再試',
@@ -109,7 +109,7 @@ const strictLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-// 應用速率限制
+// Apply速率Limit
 app.use('/api/', generalLimiter);
 app.use('/api/auth/', strictLimiter);
 app.use('/api/ai/', strictLimiter);
@@ -126,7 +126,7 @@ app.use('/api/performance', performanceRoutes);
 app.use('/api/export', dataExportRoutes);
 app.use('/api/batch', batchRoutes);
 
-// 導入監控告警路由
+// ImportMonitor告警路由
 const alertRoutes = require('./routes/alerts');
 const feedbackRoutes = require('./routes/feedback');
 const monitoringRoutes = require('./routes/monitoring');
@@ -135,7 +135,7 @@ app.use('/api/monitoring', monitoringRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/feedback', feedbackRoutes);
 
-// 版本信息端點
+// VersionInformation端點
 app.get('/api/version', (req, res) => {
   res.json({
     success: true,
@@ -162,7 +162,7 @@ app.get('/api/version', (req, res) => {
   });
 });
 
-// 健康檢查端點
+// 健康Check端點
 app.get('/api/health', async (req, res) => {
   try {
     const dbStatus = await testConnection();
@@ -187,16 +187,16 @@ app.get('/api/health', async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('健康檢查失敗:', error);
+    logger.error('健康CheckFailed:', error);
     res.status(503).json({
       success: false,
-      message: '服務不可用',
+      message: 'Service不可用',
       code: 'SERVICE_UNAVAILABLE',
     });
   }
 });
 
-// 數據庫健康檢查端點
+// Database健康Check端點
 app.get('/api/health/db', async (req, res) => {
   try {
     const dbStatus = await testConnection();
@@ -214,7 +214,7 @@ app.get('/api/health/db', async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('數據庫健康檢查失敗:', error);
+    logger.error('數據庫健康CheckFailed:', error);
     res.status(503).json({
       success: false,
       message: '數據庫不可用',
@@ -223,15 +223,15 @@ app.get('/api/health/db', async (req, res) => {
   }
 });
 
-// 全局錯誤處理
+// GlobalErrorHandle
 app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
-  logger.error('全局錯誤:', err);
+  logger.error('全局Error:', err);
 
-  // 處理特定錯誤類型
+  // HandleSpecificErrorClass型
   if (err.name === 'SequelizeConnectionError') {
     return res.status(503).json({
       success: false,
-      message: '數據庫連接失敗',
+      message: '數據庫ConnectFailed',
       code: 'DATABASE_CONNECTION_ERROR',
     });
   }
@@ -247,14 +247,14 @@ app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
   if (err.name === 'ValidationError') {
     return res.status(400).json({
       success: false,
-      message: '數據驗證失敗',
+      message: '數據VerifyFailed',
       code: 'VALIDATION_ERROR',
       errors: err.errors,
     });
   }
 
   if (err.code === 'ENOMEM') {
-    logger.error('內存不足錯誤:', err);
+    logger.error('內存不足Error:', err);
     return res.status(503).json({
       success: false,
       message: '系統資源不足',
@@ -262,25 +262,25 @@ app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
     });
   }
 
-  // TensorFlow.js 錯誤處理
+  // TensorFlow.js ErrorHandle
   if (err.message && err.message.includes('TensorFlow')) {
-    logger.error('TensorFlow 錯誤:', err);
+    logger.error('TensorFlow Error:', err);
     return res.status(500).json({
       success: false,
-      message: 'AI 模型處理失敗',
+      message: 'AI 模型HandleFailed',
       code: 'AI_MODEL_ERROR',
     });
   }
 
-  // 默認錯誤響應
+  // DefaultErrorResponse
   res.status(500).json({
     success: false,
-    message: '內部服務器錯誤',
+    message: '內部ServerError',
     code: 'INTERNAL_SERVER_ERROR',
   });
 });
 
-// 404 處理
+// 404 Handle
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -289,43 +289,43 @@ app.use('*', (req, res) => {
   });
 });
 
-// 優雅關閉
+// 優雅Off閉
 const gracefulShutdown = async (signal) => {
   logger.info(`收到 ${signal} 信號，開始優雅關閉...`);
 
   try {
-    // 關閉高級功能服務
+    // Off閉高級功能Service
     try {
       await websocketService.close();
-      logger.info('WebSocket 服務已關閉');
+      logger.info('WebSocket Service已關閉');
     } catch (error) {
-      logger.error('關閉 WebSocket 服務失敗:', error);
+      logger.error('關閉 WebSocket ServiceFailed:', error);
     }
 
     try {
       await batchOperationService.close();
-      logger.info('批量操作服務已關閉');
+      logger.info('批量操作Service已關閉');
     } catch (error) {
-      logger.error('關閉批量操作服務失敗:', error);
+      logger.error('關閉批量操作ServiceFailed:', error);
     }
 
-    // 關閉監控告警服務
+    // Off閉Monitor告警Service
     try {
       await monitoringService.stopPeriodicMonitoring();
-      logger.info('監控服務已關閉');
+      logger.info('監控Service已關閉');
     } catch (error) {
-      logger.error('關閉監控服務失敗:', error);
+      logger.error('關閉監控ServiceFailed:', error);
     }
 
-    // 關閉數據庫連接
+    // Off閉DatabaseConnect
     await sequelize.close();
-    logger.info('數據庫連接已關閉');
+    logger.info('數據庫Connect已關閉');
 
-    // 清理性能監控緩存
+    // 清理性能MonitorCache
     performanceMiddleware.clearCache();
     logger.info('性能監控緩存已清理');
 
-    // 清理深度學習資源
+    // 清理深度學習Resource
     if (global.deepLearningService) {
       await global.deepLearningService.cleanup();
       logger.info('深度學習資源已清理');
@@ -334,57 +334,57 @@ const gracefulShutdown = async (signal) => {
     logger.info('優雅關閉完成');
     process.exit(0);
   } catch (error) {
-    logger.error('優雅關閉失敗:', error);
+    logger.error('優雅關閉Failed:', error);
     process.exit(1);
   }
 };
 
-// 監聽關閉信號
+// 監聽Off閉信號
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
-// 處理未捕獲的異常
+// Handle未Catch的異常
 process.on('uncaughtException', (err) => {
   logger.error('未捕獲的異常:', err);
   gracefulShutdown('uncaughtException');
 });
 
-// 處理未處理的 Promise 拒絕
+// Handle未Handle的 Promise Reject
 process.on('unhandledRejection', (reason, promise) => {
   logger.error('未處理的 Promise 拒絕:', reason);
   gracefulShutdown('unhandledRejection');
 });
 
-// 設置 sequelize 實例供中間件使用
+// Settings sequelize Instance供中間件使用
 app.set('sequelize', sequelize);
 
 const PORT = process.env.PORT || 5000;
 
 const startServer = async () => {
   try {
-    // 初始化 Redis 連接
+    // Initialize Redis Connect
     try {
       await connectRedis();
-      logger.info('Redis 連接初始化成功');
+      logger.info('Redis ConnectInitializeSuccess');
     } catch (error) {
-      logger.error('Redis 連接失敗:', error);
-      // 不阻止服務器啟動，但記錄錯誤
+      logger.error('Redis ConnectFailed:', error);
+      // 不阻止ServerStart，但RecordError
     }
 
-    // 測試數據庫連接
+    // TestDatabaseConnect
     const dbConnected = await testConnection();
     if (!dbConnected) {
-      logger.error('無法連接到數據庫');
+      logger.error('無法Connect到數據庫');
       process.exit(1);
     }
 
-    // 同步數據庫
+    // SyncDatabase
     await syncDatabase();
     logger.info('數據庫同步完成');
 
-    // 啟動服務器
+    // StartServer
     const server = app.listen(PORT, () => {
-      logger.info(`🚀 CardStrategy API 服務器運行在端口 ${PORT}`);
+      logger.info(`🚀 CardStrategy API Server運行在端口 ${PORT}`);
       logger.info(`📊 性能監控端點: http://localhost:${PORT}/api/performance`);
       logger.info(`🏥 健康檢查端點: http://localhost:${PORT}/api/health`);
       logger.info('🔒 安全增強已啟用');
@@ -395,37 +395,37 @@ const startServer = async () => {
       logger.info('📊 監控告警已啟用');
     });
 
-    // 初始化高級功能服務
+    // Initialize高級功能Service
     try {
-      // 初始化 WebSocket 服務
+      // Initialize WebSocket Service
       websocketService.initialize(server);
-      logger.info('🔌 WebSocket 服務已初始化');
+      logger.info('🔌 WebSocket Service已Initialize');
 
-      // 初始化通知服務
+      // InitializeNotificationService
       await notificationService.initialize();
-      logger.info('📢 通知服務已初始化');
+      logger.info('📢 通知Service已Initialize');
 
-      // 初始化批量操作服務
+      // InitializeBatchOperationService
       await batchOperationService.initialize();
-      logger.info('⚙️ 批量操作服務已初始化');
+      logger.info('⚙️ 批量操作Service已Initialize');
 
-      // 初始化監控告警服務
+      // InitializeMonitor告警Service
       await alertService.initialize();
-      logger.info('🚨 警報服務已初始化');
+      logger.info('🚨 警報Service已Initialize');
 
       await monitoringService.initialize();
       monitoringService.startPeriodicMonitoring();
-      logger.info('📊 監控服務已初始化');
+      logger.info('📊 監控Service已Initialize');
 
       logger.info('🚀 高級功能已啟用');
     } catch (error) {
-      logger.error('高級功能初始化失敗:', error);
-      // 不阻止服務器啟動，但記錄錯誤
+      logger.error('高級功能InitializeFailed:', error);
+      // 不阻止ServerStart，但RecordError
     }
 
     return server;
   } catch (error) {
-    logger.error('服務器啟動失敗:', error);
+    logger.error('Server啟動Failed:', error);
     process.exit(1);
   }
 };

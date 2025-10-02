@@ -18,8 +18,8 @@ import type {
 import PWAService from '../services/pwaService';
 
 /**
- * PWA 示例組件
- * 展示 PWA 服務的所有功能
+ * PWA 示例Component
+ * 展示 PWA Service的所有功能
  */
 const PWAExample: React.FC = () => {
   const [isInitialized, setIsInitialized] = useState(false);
@@ -38,7 +38,7 @@ const PWAExample: React.FC = () => {
 
   const _service = PWAService.getInstance();
 
-  // PWA 配置
+  // PWA Configure
   const pwaConfig: PWAServiceConfig = {
     appName: 'CardStrategy PWA',
     appShortName: 'CardStrategy',
@@ -160,7 +160,7 @@ const PWAExample: React.FC = () => {
   }, []);
 
   /**
-   * 初始化 PWA
+   * Initialize PWA
    */
   const _initializePWA = async () => {
     if (Platform.OS !== 'web') {
@@ -175,14 +175,14 @@ const PWAExample: React.FC = () => {
       if (result.success) {
         setIsInitialized(true);
         updateStatus();
-        Alert.alert('初始化成功', result.data as string);
+        Alert.alert('InitializeSuccess', result.data as string);
       } else {
-        Alert.alert('初始化失敗', result.error || '未知錯誤');
+        Alert.alert('InitializeFailed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '初始化錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        'InitializeError',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -190,7 +190,7 @@ const PWAExample: React.FC = () => {
   };
 
   /**
-   * 更新狀態信息
+   * UpdateStatusInformation
    */
   const _updateStatus = () => {
     if (service.isServiceReady()) {
@@ -202,11 +202,11 @@ const PWAExample: React.FC = () => {
   };
 
   /**
-   * 安裝 PWA
+   * Install PWA
    */
   const _installPWA = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 PWA 服務');
+      Alert.alert('Service未就緒', '請先Initialize PWA Service');
       return;
     }
 
@@ -215,15 +215,15 @@ const PWAExample: React.FC = () => {
       const _result = await service.installPWA();
 
       if (result.success) {
-        Alert.alert('安裝成功', result.data as string);
+        Alert.alert('安裝Success', result.data as string);
         updateStatus();
       } else {
-        Alert.alert('安裝失敗', result.error || '未知錯誤');
+        Alert.alert('安裝Failed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '安裝錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        '安裝Error',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -231,11 +231,11 @@ const PWAExample: React.FC = () => {
   };
 
   /**
-   * 更新 PWA
+   * Update PWA
    */
   const _updatePWA = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 PWA 服務');
+      Alert.alert('Service未就緒', '請先Initialize PWA Service');
       return;
     }
 
@@ -244,15 +244,15 @@ const PWAExample: React.FC = () => {
       const _result = await service.updatePWA();
 
       if (result.success) {
-        Alert.alert('更新成功', result.data as string);
+        Alert.alert('UpdateSuccess', result.data as string);
         updateStatus();
       } else {
-        Alert.alert('更新失敗', result.error || '未知錯誤');
+        Alert.alert('UpdateFailed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '更新錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        'UpdateError',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -260,11 +260,11 @@ const PWAExample: React.FC = () => {
   };
 
   /**
-   * 清除緩存
+   * ClearCache
    */
   const _clearCache = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 PWA 服務');
+      Alert.alert('Service未就緒', '請先Initialize PWA Service');
       return;
     }
 
@@ -273,15 +273,15 @@ const PWAExample: React.FC = () => {
       const _result = await service.clearCache();
 
       if (result.success) {
-        Alert.alert('清除成功', result.data as string);
+        Alert.alert('清除Success', result.data as string);
         getCacheInfo();
       } else {
-        Alert.alert('清除失敗', result.error || '未知錯誤');
+        Alert.alert('清除Failed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '清除錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        '清除Error',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -289,11 +289,11 @@ const PWAExample: React.FC = () => {
   };
 
   /**
-   * 獲取緩存信息
+   * GetCacheInformation
    */
   const _getCacheInfo = async () => {
     if (!service.isServiceReady()) {
-      Alert.alert('服務未就緒', '請先初始化 PWA 服務');
+      Alert.alert('Service未就緒', '請先Initialize PWA Service');
       return;
     }
 
@@ -304,12 +304,12 @@ const PWAExample: React.FC = () => {
       if (result.success) {
         setCacheInfo(result.data);
       } else {
-        Alert.alert('獲取緩存信息失敗', result.error || '未知錯誤');
+        Alert.alert('Get緩存信息Failed', result.error || '未知Error');
       }
     } catch (error) {
       Alert.alert(
-        '獲取緩存信息錯誤',
-        error instanceof Error ? error.message : '未知錯誤'
+        'Get緩存信息Error',
+        error instanceof Error ? error.message : '未知Error'
       );
     } finally {
       setLoading(false);
@@ -317,7 +317,7 @@ const PWAExample: React.FC = () => {
   };
 
   /**
-   * 刷新狀態
+   * RefreshStatus
    */
   const _refreshStatus = () => {
     updateStatus();
@@ -331,7 +331,7 @@ const PWAExample: React.FC = () => {
         <Text style={styles.subtitle}>Progressive Web App 功能演示</Text>
       </View>
 
-      {/* 平台檢查 */}
+      {/* 平台Check */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>平台支持</Text>
         <View style={styles.platformInfo}>
@@ -342,7 +342,7 @@ const PWAExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 初始化狀態 */}
+      {/* InitializeStatus */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>初始化狀態</Text>
         <View style={styles.statusRow}>
@@ -369,7 +369,7 @@ const PWAExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>操作</Text>
 
@@ -424,7 +424,7 @@ const PWAExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 安裝狀態 */}
+      {/* InstallStatus */}
       {installStatus && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>安裝狀態</Text>
@@ -453,7 +453,7 @@ const PWAExample: React.FC = () => {
         </View>
       )}
 
-      {/* 服務狀態 */}
+      {/* ServiceStatus */}
       {serviceStatus && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>服務狀態</Text>
@@ -513,7 +513,7 @@ const PWAExample: React.FC = () => {
         </View>
       )}
 
-      {/* 服務統計 */}
+      {/* ServiceStatistics */}
       {serviceStats && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>服務統計</Text>
@@ -554,7 +554,7 @@ const PWAExample: React.FC = () => {
         </View>
       )}
 
-      {/* 緩存信息 */}
+      {/* CacheInformation */}
       {cacheInfo && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>緩存信息</Text>
@@ -581,7 +581,7 @@ const PWAExample: React.FC = () => {
         </View>
       )}
 
-      {/* 服務信息 */}
+      {/* ServiceInformation */}
       {serviceInfo && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>服務信息</Text>

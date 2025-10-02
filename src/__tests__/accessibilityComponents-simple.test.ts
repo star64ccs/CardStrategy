@@ -1,5 +1,5 @@
-// 可訪問性組件單元測試
-// 測試可訪問性服務和類型定義
+// 可訪問性Component單元Test
+// Test可訪問性Service和Class型定義
 
 import { accessibilityService } from '../services/accessibilityService';
 import type {
@@ -16,12 +16,12 @@ import type {
 
 describe('AccessibilityService', () => {
   beforeEach(() => {
-    // 重置服務狀態
+    // ResetServiceStatus
     accessibilityService.destroy();
   });
 
   describe('初始化', () => {
-    test('應該正確初始化服務', () => {
+    test('應該正確InitializeService', () => {
       accessibilityService.init();
       const _state = accessibilityService.getState();
 
@@ -182,7 +182,7 @@ describe('AccessibilityService', () => {
 
       await accessibilityService.fixIssues(issues);
 
-      // 驗證問題已被標記為已修復
+      // Verify問題已被Mark為已修復
       issues.forEach(issue => {
         expect(issue.fixed).toBe(true);
       });

@@ -9,7 +9,7 @@ describe('PerformanceMonitoringService', () => {
   let performanceMonitoringService: PerformanceMonitoringService;
 
   beforeEach(() => {
-    // 重置單例
+    // Reset單例
     (PerformanceMonitoringService as any).instance = undefined;
     performanceMonitoringService = PerformanceMonitoringService.getInstance();
     mockConsoleLog.mockClear();
@@ -32,9 +32,9 @@ describe('PerformanceMonitoringService', () => {
   });
 
   describe('初始化測試', () => {
-    it('應該正確初始化服務', async () => {
+    it('應該正確InitializeService', async () => {
       await performanceMonitoringService.initialize();
-      expect(mockConsoleLog).toHaveBeenCalledWith('性能監控服務初始化完成');
+      expect(mockConsoleLog).toHaveBeenCalledWith('性能監控ServiceInitialize完成');
     });
 
     it('應該初始化歷史數據', async () => {
@@ -134,12 +134,12 @@ describe('PerformanceMonitoringService', () => {
   describe('警報檢查測試', () => {
     beforeEach(async () => {
       await performanceMonitoringService.initialize();
-      // 清理之前的警報
+      // 清理之前的Alert
       (performanceMonitoringService as any).alerts = [];
     });
 
     it('應該在內存使用率過高時生成警報', async () => {
-      // 模擬高內存使用率
+      // 模擬高Memory使用率
       const mockMetrics: PerformanceMetrics = {
         id: 'test_metrics',
         timestamp: new Date(),
@@ -155,7 +155,7 @@ describe('PerformanceMonitoringService', () => {
         battery: { level: 80, isCharging: false, temperature: 25 },
       };
 
-      // 手動觸發警報檢查
+      // Manual觸發AlertCheck
       await (performanceMonitoringService as any).checkAlerts(mockMetrics);
 
       const _alerts = performanceMonitoringService.getAlerts(false);
@@ -217,7 +217,7 @@ describe('PerformanceMonitoringService', () => {
       expect(networkAlert?.message).toContain('網絡響應時間過長');
     });
 
-    it('應該在錯誤率過高時生成警報', async () => {
+    it('應該在Error率過高時生成警報', async () => {
       const mockMetrics: PerformanceMetrics = {
         id: 'test_metrics',
         timestamp: new Date(),
@@ -237,7 +237,7 @@ describe('PerformanceMonitoringService', () => {
 
       const _alerts = performanceMonitoringService.getAlerts(false);
       const _errorAlert = alerts.find(alert =>
-        alert.message.includes('錯誤率過高')
+        alert.message.includes('Error率過高')
       );
 
       expect(errorAlert).toBeDefined();
@@ -258,7 +258,7 @@ describe('PerformanceMonitoringService', () => {
       await performanceMonitoringService.updateBaselines();
 
       const _baselines = performanceMonitoringService.getBaselines();
-      expect(baselines.length).toBeGreaterThan(1); // 默認基準 + 新基準
+      expect(baselines.length).toBeGreaterThan(1); // Default基準 + 新基準
     });
 
     it('應該生成正確的基準數據結構', async () => {
@@ -299,7 +299,7 @@ describe('PerformanceMonitoringService', () => {
         battery: { level: 80, isCharging: false, temperature: 25 },
       };
 
-      // 確保優化建議功能已啟用
+      // 確保優化建議功能已Enable
       performanceMonitoringService.updateConfig({
         enablePerformanceOptimization: true,
       });
@@ -315,7 +315,7 @@ describe('PerformanceMonitoringService', () => {
         optimizations.map(opt => opt.type)
       );
 
-      // 檢查是否有任何內存優化建議
+      // CheckYesNo有任何Memory優化建議
       const _memoryOptimizations = optimizations.filter(
         opt => opt.type === 'memory'
       );
@@ -342,7 +342,7 @@ describe('PerformanceMonitoringService', () => {
         battery: { level: 80, isCharging: false, temperature: 25 },
       };
 
-      // 確保優化建議功能已啟用
+      // 確保優化建議功能已Enable
       performanceMonitoringService.updateConfig({
         enablePerformanceOptimization: true,
       });
@@ -377,7 +377,7 @@ describe('PerformanceMonitoringService', () => {
         battery: { level: 80, isCharging: false, temperature: 25 },
       };
 
-      // 確保優化建議功能已啟用
+      // 確保優化建議功能已Enable
       performanceMonitoringService.updateConfig({
         enablePerformanceOptimization: true,
       });
@@ -437,7 +437,7 @@ describe('PerformanceMonitoringService', () => {
     });
 
     it('應該解決警報', async () => {
-      // 生成一個警報
+      // 生成一個Alert
       const mockMetrics: PerformanceMetrics = {
         id: 'test_metrics',
         timestamp: new Date(),
@@ -544,7 +544,7 @@ describe('PerformanceMonitoringService', () => {
     it('應該處理空指標數據', async () => {
       await performanceMonitoringService.updateBaselines();
       const _baselines = performanceMonitoringService.getBaselines();
-      expect(baselines.length).toBeGreaterThan(0); // 至少應該有默認基準
+      expect(baselines.length).toBeGreaterThan(0); // 至少應該有Default基準
     });
 
     it('應該處理極端性能指標', async () => {
@@ -568,7 +568,7 @@ describe('PerformanceMonitoringService', () => {
       const _alerts = performanceMonitoringService.getAlerts(false);
       expect(alerts.length).toBeGreaterThan(0);
 
-      // 檢查是否有嚴重警報
+      // CheckYesNo有嚴重Alert
       const _criticalAlerts = alerts.filter(
         alert => alert.severity === 'critical'
       );
@@ -592,7 +592,7 @@ describe('PerformanceMonitoringService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(5000); // 應該在5秒內完成
+      expect(duration).toBeLessThan(5000); // 應該在5Second內Complete
 
       const _metrics = performanceMonitoringService.getMetrics();
       expect(metrics.length).toBeGreaterThan(0);
@@ -623,7 +623,7 @@ describe('PerformanceMonitoringService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
 
       const _optimizations =
         performanceMonitoringService.getOptimizations(false);

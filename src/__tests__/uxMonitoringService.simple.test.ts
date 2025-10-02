@@ -1,4 +1,4 @@
-// 用戶體驗監控服務簡化測試
+// User體驗MonitorService簡化Test
 import UXMonitoringService from '../services/uxMonitoringService';
 import {
   PerformanceMetricType,
@@ -53,7 +53,7 @@ const _mockPerformanceObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
-// 設置全局 mock
+// SettingsGlobal mock
 Object.defineProperty(global, 'localStorage', {
   value: mockLocalStorage,
   writable: true,
@@ -101,7 +101,7 @@ describe('UXMonitoringService - 簡化測試', () => {
   });
 
   describe('基本功能', () => {
-    test('應該成功初始化服務', async () => {
+    test('應該SuccessInitializeService', async () => {
       await service.initialize();
 
       const _status = service.getStatus();
@@ -152,8 +152,8 @@ describe('UXMonitoringService - 簡化測試', () => {
       expect(status.performanceMetricCount).toBeGreaterThan(0);
     });
 
-    test('應該追蹤錯誤', () => {
-      service.trackError(new Error('測試錯誤'));
+    test('應該追蹤Error', () => {
+      service.trackError(new Error('測試Error'));
 
       const _status = service.getStatus();
       expect(status.errorCount).toBeGreaterThan(0);
@@ -180,7 +180,7 @@ describe('UXMonitoringService - 簡化測試', () => {
     });
 
     test('應該生成分析數據', () => {
-      // 添加一些測試數據
+      // Add一些TestData
       service.trackAction({
         type: UserActionType.CLICK,
         pageUrl: 'https://example.com',
@@ -195,7 +195,7 @@ describe('UXMonitoringService - 簡化測試', () => {
         pageUrl: 'https://example.com',
       });
 
-      service.trackError(new Error('測試錯誤'));
+      service.trackError(new Error('測試Error'));
 
       const _analytics = service.getAnalytics();
       expect(analytics).toBeDefined();
@@ -206,7 +206,7 @@ describe('UXMonitoringService - 簡化測試', () => {
     });
 
     test('應該計算會話統計', () => {
-      // 添加多個操作
+      // AddMultipleOperation
       for (let i = 0; i < 3; i++) {
         service.trackAction({
           type: UserActionType.CLICK,
@@ -220,7 +220,7 @@ describe('UXMonitoringService - 簡化測試', () => {
     });
 
     test('應該計算性能統計', () => {
-      // 添加多個性能指標
+      // AddMultiple性能指標
       for (let i = 0; i < 3; i++) {
         service.trackPerformance({
           type: PerformanceMetricType.PAGE_LOAD,
@@ -237,10 +237,10 @@ describe('UXMonitoringService - 簡化測試', () => {
       ).toBeGreaterThan(0);
     });
 
-    test('應該計算錯誤統計', () => {
-      // 添加多個錯誤
+    test('應該計算Error統計', () => {
+      // AddMultipleError
       for (let i = 0; i < 3; i++) {
-        service.trackError(new Error(`測試錯誤 ${i}`));
+        service.trackError(new Error(`測試Error ${i}`));
       }
 
       const _analytics = service.getAnalytics();
@@ -248,7 +248,7 @@ describe('UXMonitoringService - 簡化測試', () => {
     });
 
     test('應該計算滿意度統計', () => {
-      // 添加多個滿意度調查
+      // AddMultiple滿意度調查
       for (let i = 0; i < 3; i++) {
         service.submitSatisfaction({
           overallSatisfaction: SatisfactionLevel.SATISFIED,
@@ -306,16 +306,16 @@ describe('UXMonitoringService - 簡化測試', () => {
     });
 
     test('應該清理數據', () => {
-      // 添加一些數據
+      // Add一些Data
       service.trackAction({
         type: UserActionType.CLICK,
         pageUrl: 'https://example.com',
         pageTitle: 'Test Page',
       });
 
-      service.trackError(new Error('測試錯誤'));
+      service.trackError(new Error('測試Error'));
 
-      // 清理數據
+      // 清理Data
       service.clearData();
 
       const _status = service.getStatus();
@@ -325,7 +325,7 @@ describe('UXMonitoringService - 簡化測試', () => {
     });
 
     test('應該導出數據', () => {
-      // 添加一些數據
+      // Add一些Data
       service.trackAction({
         type: UserActionType.CLICK,
         pageUrl: 'https://example.com',
@@ -412,12 +412,12 @@ describe('UXMonitoringService - 簡化測試', () => {
 
     test('應該獲取 A/B 測試變體', () => {
       const _variant = service.getABTestVariant('test-button-color');
-      // 由於沒有設置測試數據，應該返回 null
+      // 由於沒有SettingsTestData，應該Return null
       expect(variant).toBeNull();
     });
 
     test('應該追蹤轉換', () => {
-      // 轉換追蹤不會拋出錯誤
+      // ConvertTrace不會ThrowError
       expect(() => {
         service.trackConversion('test-button-color', 'click', 1);
       }).not.toThrow();

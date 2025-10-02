@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 
-// import { Picker } from '@react-native-picker/picker'; // 模塊不存在，已移除
+// import { Picker } from '@react-native-picker/picker'; // Module不存在，已Remove
 import { usePrediction } from '../hooks/usePrediction';
 import type { PredictionRequest } from '../types/prediction';
 import {
@@ -58,7 +58,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
 
   useEffect(() => {
     if (error) {
-      Alert.alert('預測錯誤', error.message);
+      Alert.alert('預測Error', error.message);
       clearError();
     }
   }, [error, clearError]);
@@ -75,18 +75,18 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
 
   const _handleSubmit = async () => {
     if (!formData.cardId || !formData.cardName || !formData.currentPrice) {
-      Alert.alert('錯誤', '請填寫所有必填欄位');
+      Alert.alert('Error', '請填寫所有必填欄位');
       return;
     }
 
     if (formData.currentPrice <= 0) {
-      Alert.alert('錯誤', '當前價格必須大於0');
+      Alert.alert('Error', '當前價格必須大於0');
       return;
     }
 
     try {
       const _result = await predict(formData as PredictionRequest);
-      Alert.alert('預測成功', `預測值: ${result.predictedValue.toFixed(2)}`);
+      Alert.alert('預測Success', `預測值: ${result.predictedValue.toFixed(2)}`);
       onPredictionComplete?.(result);
     } catch (error) {
       console.error('Prediction failed:', error);
@@ -132,7 +132,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
       <Text style={styles.title}>AI 預測系統</Text>
 
       <View style={styles.form}>
-        {/* 卡牌信息 */}
+        {/* 卡牌Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>卡牌信息</Text>
 
@@ -195,7 +195,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
           </View>
         </View>
 
-        {/* 預測設置 */}
+        {/* 預測Settings */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>預測設置</Text>
 
@@ -204,7 +204,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
             <TouchableOpacity
               style={styles.pickerContainer}
               onPress={() => {
-                // 簡化實現，直接設置第一個選項
+                // 簡化實現，直接Settings第一個Options
                 handleInputChange(
                   'predictionType',
                   Object.values(PredictionType)[0]
@@ -224,7 +224,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
             <TouchableOpacity
               style={styles.pickerContainer}
               onPress={() => {
-                // 簡化實現，直接設置第一個選項
+                // 簡化實現，直接Settings第一個Options
                 handleInputChange('timeHorizon', Object.values(TimeHorizon)[0]);
               }}
             >
@@ -254,7 +254,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
           </View>
         </View>
 
-        {/* 預測選項 */}
+        {/* 預測Options */}
         {options && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>預測選項</Text>
@@ -295,7 +295,7 @@ export const PredictionForm: React.FC<PredictionFormProps> = ({
           </View>
         )}
 
-        {/* 操作按鈕 */}
+        {/* Operation按鈕 */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.cancelButton]}

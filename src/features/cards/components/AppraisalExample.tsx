@@ -35,7 +35,7 @@ export const AppraisalExample: React.FC = () => {
   const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
-    // 初始化數據
+    // InitializeData
     loadAppraisalStats();
     loadAppraisalOptions();
   }, [loadAppraisalStats, loadAppraisalOptions]);
@@ -55,7 +55,7 @@ export const AppraisalExample: React.FC = () => {
   };
 
   const _handleAppraisalError = (error: unknown) => {
-    Alert.alert('鑑定錯誤', error.message || '鑑定過程中發生錯誤');
+    Alert.alert('鑑定Error', error.message || '鑑定過程中發生Error');
   };
 
   const _renderStats = () => {
@@ -270,7 +270,7 @@ export const AppraisalExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>模擬鑑定系統示例</Text>
 
-      {/* 控制按鈕 */}
+      {/* Control按鈕 */}
       <View style={styles.controlContainer}>
         <TouchableOpacity
           style={styles.scannerButton}
@@ -290,19 +290,19 @@ export const AppraisalExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 統計信息 */}
+      {/* StatisticsInformation */}
       {renderStats()}
 
       {/* 等級分佈 */}
       {renderGradeDistribution()}
 
-      {/* 方法使用 */}
+      {/* Method使用 */}
       {renderMethodUsage()}
 
       {/* 選中的卡牌詳情 */}
       {renderSelectedCardDetails()}
 
-      {/* 歷史記錄 */}
+      {/* 歷史Record */}
       {renderHistory()}
     </ScrollView>
   );

@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { InvestmentState, Investment } from '../../core/types';
 import { investmentService } from '../../shared/services/investmentService';
 
-// 異步 thunk
+// Async thunk
 export const _fetchInvestments = createAsyncThunk(
   'investment/fetchInvestments',
   async () => {
@@ -52,7 +52,7 @@ export const _removeInvestment = createAsyncThunk(
       await investmentService.removeInvestment(investmentId);
       return investmentId;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '移除投資失敗');
+      return rejectWithValue(error.message || '移除投資Failed');
     }
   }
 );
@@ -81,7 +81,7 @@ export const _getInvestmentStatistics = createAsyncThunk(
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: InvestmentState = {
   investments: [],
   portfolio: {
@@ -135,7 +135,7 @@ const _investmentSlice = createSlice({
       const { id, currentPrice } = action.payload;
       const _investment = state.investments.find(inv => inv.id === id);
       if (investment) {
-        // 更新投資的當前價值
+        // Update投資的當前價Value
         const _currentValue = currentPrice * investment.quantity;
         investment.currentPrice = currentPrice;
         investment.profitLoss = currentValue - investment.entryValue;
@@ -143,7 +143,7 @@ const _investmentSlice = createSlice({
           ((currentValue - investment.entryValue) / investment.entryValue) *
           100;
 
-        // 重新計算投資組合總價值
+        // Re計算投資組合總價Value
         const _totalValue = state.investments.reduce(
           (sum, inv) => sum + inv.currentPrice * inv.quantity,
           0
@@ -158,7 +158,7 @@ const _investmentSlice = createSlice({
             ? (state.totalProfitLoss / totalValue) * 100
             : 0;
 
-        // 更新 portfolio 對象
+        // Update portfolio Object
         state.portfolio.totalValue = totalValue;
         state.portfolio.totalProfitLoss = state.totalProfitLoss;
         state.portfolio.totalProfitLossPercentage = state.profitLossPercentage;
@@ -324,7 +324,7 @@ const _investmentSlice = createSlice({
       })
       .addCase(getInvestmentStatistics.fulfilled, (state, action) => {
         state.isLoading = false;
-        // 假設 action.payload 是 PortfolioStatistics 類型
+        // False設 action.payload Yes PortfolioStatistics Class型
         state.statistics = {
           totalInvestments: action.payload.totalInvestments || 0,
           activeInvestments: action.payload.activeInvestments || 0,

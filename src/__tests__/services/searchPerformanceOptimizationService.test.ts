@@ -1,6 +1,6 @@
 /**
- * 搜索性能優化服務測試
- * 測試 TD-007: 優化搜索性能
+ * Search性能優化ServiceTest
+ * Test TD-007: 優化Search性能
  */
 
 import { SearchPerformanceOptimizationService } from '../../services/searchPerformanceOptimizationService';
@@ -46,7 +46,7 @@ describe('SearchPerformanceOptimizationService', () => {
   });
 
   describe('初始化測試', () => {
-    it('應該正確初始化服務', async () => {
+    it('應該正確InitializeService', async () => {
       const _result = await searchPerformanceOptimizationService.initialize();
       expect(result).toBe(true);
     });
@@ -75,7 +75,7 @@ describe('SearchPerformanceOptimizationService', () => {
       expect(result.responseTime).toBeGreaterThanOrEqual(0);
     });
 
-    it('應該處理拼寫錯誤', async () => {
+    it('應該Handle拼寫Error', async () => {
       const _query = 'yu-gi-oh cards';
       const _result =
         await searchPerformanceOptimizationService.optimizeSearch(query);
@@ -160,16 +160,16 @@ describe('SearchPerformanceOptimizationService', () => {
   });
 
   describe('重置測試', () => {
-    it('應該重置服務狀態', async () => {
+    it('應該重置Service狀態', async () => {
       await searchPerformanceOptimizationService.initialize();
 
-      // 執行一些操作
+      // 執Row一些Operation
       await searchPerformanceOptimizationService.optimizeSearch('test query');
 
-      // 重置
+      // Reset
       await searchPerformanceOptimizationService.reset();
 
-      // 檢查是否重置
+      // CheckYesNoReset
       const { isInitialized } = searchPerformanceOptimizationService as any;
       expect(isInitialized).toBe(false);
     });
@@ -232,7 +232,7 @@ describe('SearchPerformanceOptimizationService', () => {
 
       const _totalTime = Date.now() - startTime;
 
-      expect(totalTime).toBeLessThan(1000); // 應該在1秒內完成5個查詢
+      expect(totalTime).toBeLessThan(1000); // 應該在1Second內Complete5個Query
     });
 
     it('應該高效處理複雜查詢', async () => {
@@ -247,7 +247,7 @@ describe('SearchPerformanceOptimizationService', () => {
 
       expect(result.originalQuery).toBe(complexQuery);
       expect(result.optimizedQuery).toBeDefined();
-      expect(processingTime).toBeLessThan(200); // 應該在200ms內完成
+      expect(processingTime).toBeLessThan(200); // 應該在200ms內Complete
     });
   });
 

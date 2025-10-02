@@ -1,8 +1,8 @@
-// 簡化組件庫測試
+// 簡化ComponentLibraryTest
 import { designSystemService } from '../services/designSystemService';
 
 describe('組件庫基礎測試', () => {
-  describe('設計系統服務測試', () => {
+  describe('設計系統Service測試', () => {
     test('應該能夠獲取當前主題', () => {
       const _theme = designSystemService.getCurrentTheme();
       expect(theme).toBeDefined();
@@ -163,7 +163,7 @@ describe('組件庫基礎測試', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(100); // 應該在 100ms 內完成
+      expect(duration).toBeLessThan(100); // 應該在 100ms 內Complete
     });
 
     test('應該能夠快速處理大量令牌', () => {
@@ -181,11 +181,11 @@ describe('組件庫基礎測試', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(100); // 應該在 100ms 內完成
+      expect(duration).toBeLessThan(100); // 應該在 100ms 內Complete
     });
   });
 
-  describe('錯誤處理測試', () => {
+  describe('ErrorHandle測試', () => {
     test('應該處理不存在的組件', () => {
       const _component = designSystemService.getComponent(
         'NonExistentComponent'
@@ -217,7 +217,7 @@ describe('組件庫基礎測試', () => {
 
       requiredComponents.forEach(componentName => {
         const _component = designSystemService.getComponent(componentName);
-        // 注意：這裡只是檢查組件是否可以被註冊，實際的組件實現需要單獨測試
+        // 注意：這裡只YesCheckComponentYesNo可以被Register，實際的Component實現需要單獨Test
         expect(componentName).toBeDefined();
       });
     });

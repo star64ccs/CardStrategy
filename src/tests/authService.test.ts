@@ -19,7 +19,7 @@ const _mockApi = {
   delete: jest.fn(),
 };
 
-// 模擬 OAuth 服務
+// 模擬 OAuth Service
 class MockOAuthService {
   private isInitialized = false;
   private providers: Record<string, any> = {};
@@ -85,7 +85,7 @@ class MockOAuthService {
   }
 }
 
-// 模擬 JWT 服務
+// 模擬 JWT Service
 class MockJWTService {
   private isInitialized = false;
   private secret = 'test-secret';
@@ -151,7 +151,7 @@ class MockJWTService {
   }
 }
 
-// 模擬認證服務
+// 模擬AuthenticateService
 class MockAuthService {
   private isInitialized = false;
   private activeSessions = new Map();
@@ -240,30 +240,30 @@ describe('Authentication Services Tests', () => {
     mockJWTService = new MockJWTService();
     mockAuthService = new MockAuthService();
 
-    // 初始化服務
+    // InitializeService
     await mockOAuthService.initialize();
     await mockJWTService.initialize();
     await mockAuthService.initialize();
 
-    // 重置模擬函數
+    // Reset模擬Function
     jest.clearAllMocks();
   });
 
   describe('MockOAuthService', () => {
-    test('初始化應該成功', async () => {
+    test('Initialize應該Success', async () => {
       const _result = await mockOAuthService.initialize();
       expect(result.success).toBe(true);
       expect(result.data?.providers).toContain('google');
       expect(result.data?.providers).toContain('facebook');
     });
 
-    test('獲取授權 URL 應該成功', () => {
+    test('Get授權 URL 應該Success', () => {
       const _result = mockOAuthService.getAuthorizationUrl('google');
       expect(result.success).toBe(true);
       expect(result.data).toBe('https://google.com/auth');
     });
 
-    test('交換代碼獲取令牌應該成功', async () => {
+    test('交換代碼Get令牌應該Success', async () => {
       const _result = await mockOAuthService.exchangeCodeForToken(
         'google',
         'test-code'
@@ -272,7 +272,7 @@ describe('Authentication Services Tests', () => {
       expect(result.data?.access_token).toBe('test-access-token');
     });
 
-    test('獲取用戶信息應該成功', async () => {
+    test('Get用戶信息應該Success', async () => {
       const _result = await mockOAuthService.getUserInfo('google', 'test-token');
       expect(result.success).toBe(true);
       expect(result.data?.email).toBe('test@example.com');
@@ -286,13 +286,13 @@ describe('Authentication Services Tests', () => {
   });
 
   describe('MockJWTService', () => {
-    test('初始化應該成功', async () => {
+    test('Initialize應該Success', async () => {
       const _result = await mockJWTService.initialize();
       expect(result.success).toBe(true);
       expect(result.data?.expiresIn).toBe('15m');
     });
 
-    test('生成令牌應該成功', () => {
+    test('生成令牌應該Success', () => {
       const _payload = { userId: 'test-user-id', email: 'test@example.com' };
       const _result = mockJWTService.generateToken(payload);
       expect(result.success).toBe(true);
@@ -300,19 +300,19 @@ describe('Authentication Services Tests', () => {
       expect(result.data?.refreshToken).toBe('test-refresh-token');
     });
 
-    test('驗證令牌應該成功', () => {
+    test('Verify令牌應該Success', () => {
       const _result = mockJWTService.verifyToken('test-token');
       expect(result.success).toBe(true);
       expect(result.data?.userId).toBe('test-user-id');
     });
 
-    test('刷新令牌應該成功', () => {
+    test('刷新令牌應該Success', () => {
       const _result = mockJWTService.refreshToken('test-refresh-token');
       expect(result.success).toBe(true);
       expect(result.data?.accessToken).toBe('new-access-token');
     });
 
-    test('撤銷令牌應該成功', () => {
+    test('撤銷令牌應該Success', () => {
       const _result = mockJWTService.revokeToken('test-token');
       expect(result.success).toBe(true);
       expect(result.message).toBe('Token revoked');
@@ -320,14 +320,14 @@ describe('Authentication Services Tests', () => {
   });
 
   describe('MockAuthService', () => {
-    test('初始化應該成功', async () => {
+    test('Initialize應該Success', async () => {
       const _result = await mockAuthService.initialize();
       expect(result.success).toBe(true);
       expect(result.data?.oauth).toBeDefined();
       expect(result.data?.jwt).toBeDefined();
     });
 
-    test('OAuth 登錄應該成功', async () => {
+    test('OAuth 登錄應該Success', async () => {
       const _result = await mockAuthService.loginWithOAuth(
         'google',
         'test-code'
@@ -337,18 +337,18 @@ describe('Authentication Services Tests', () => {
       expect(result.session?.provider).toBe('google');
     });
 
-    test('令牌驗證應該成功', async () => {
-      // 先登錄
+    test('令牌Verify應該Success', async () => {
+      // 先Login
       await mockAuthService.loginWithOAuth('google', 'test-code');
 
-      // 然後驗證令牌
+      // 然後Verify令牌
       const _result = await mockAuthService.verifyToken('test-token');
       expect(result.success).toBe(true);
       expect(result.data?.email).toBe('test@example.com');
     });
 
-    test('登出應該成功', async () => {
-      // 先登錄
+    test('登出應該Success', async () => {
+      // 先Login
       await mockAuthService.loginWithOAuth('google', 'test-code');
 
       // 然後登出
@@ -357,7 +357,7 @@ describe('Authentication Services Tests', () => {
       expect(result.message).toBe('Logout successful');
     });
 
-    test('獲取授權 URL 應該成功', () => {
+    test('Get授權 URL 應該Success', () => {
       const _result = mockAuthService.getAuthorizationUrl('google');
       expect(result.success).toBe(true);
       expect(result.data).toBe('https://google.com/auth');
@@ -371,15 +371,15 @@ describe('Authentication Services Tests', () => {
   });
 
   describe('認證流程測試', () => {
-    test('完整的 OAuth 登錄流程應該成功', async () => {
-      // 1. 初始化服務
+    test('完整的 OAuth 登錄流程應該Success', async () => {
+      // 1. InitializeService
       await mockAuthService.initialize();
 
-      // 2. 獲取授權 URL
+      // 2. GetAuthorize URL
       const _authUrlResult = mockAuthService.getAuthorizationUrl('google');
       expect(authUrlResult.success).toBe(true);
 
-      // 3. 執行登錄
+      // 3. 執RowLogin
       const _loginResult = await mockAuthService.loginWithOAuth(
         'google',
         'test-code'
@@ -387,7 +387,7 @@ describe('Authentication Services Tests', () => {
       expect(loginResult.success).toBe(true);
       expect(loginResult.session).toBeDefined();
 
-      // 4. 驗證令牌
+      // 4. Verify令牌
       const _verifyResult = await mockAuthService.verifyToken('test-token');
       expect(verifyResult.success).toBe(true);
       expect(verifyResult.data?.email).toBe('test@example.com');
@@ -397,8 +397,8 @@ describe('Authentication Services Tests', () => {
       expect(logoutResult.success).toBe(true);
     });
 
-    test('錯誤處理應該正確', async () => {
-      // 創建未初始化的服務來測試錯誤處理
+    test('ErrorHandle應該正確', async () => {
+      // Create未Initialize的Service來TestErrorHandle
       const _uninitializedService = new MockAuthService();
       const _result = await uninitializedService.loginWithOAuth(
         'google',
@@ -409,16 +409,16 @@ describe('Authentication Services Tests', () => {
     });
   });
 
-  describe('服務可用性測試', () => {
-    test('OAuth 服務可用性檢查', () => {
+  describe('Service可用性測試', () => {
+    test('OAuth Service可用性Check', () => {
       expect(mockOAuthService.isAvailable()).toBe(true);
     });
 
-    test('JWT 服務可用性檢查', () => {
+    test('JWT Service可用性Check', () => {
       expect(mockJWTService.isAvailable()).toBe(true);
     });
 
-    test('認證服務可用性檢查', () => {
+    test('認證Service可用性Check', () => {
       expect(mockAuthService.isAvailable()).toBe(true);
     });
   });

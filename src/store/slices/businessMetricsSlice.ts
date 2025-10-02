@@ -1,4 +1,4 @@
-// 業務指標分析 Redux Slice
+// 業務指標Analysis Redux Slice
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -15,14 +15,14 @@ import type {
   BusinessMetricsAnalysisResponse,
 } from '../../features/analytics/types/businessMetrics';
 
-// 異步 thunk 動作
+// Async thunk 動作
 export const _initializeBusinessMetrics = createAsyncThunk(
   'businessMetrics/initialize',
   async (config?: Partial<BusinessMetricsConfig>) => {
     const _service = BusinessMetricsService.getInstance();
     const _success = await service.initialize(config);
     if (!success) {
-      throw new Error('業務指標分析服務初始化失敗');
+      throw new Error('業務指標分析ServiceInitializeFailed');
     }
     return success;
   }
@@ -163,14 +163,14 @@ export const _getRealTimeBusinessMetrics = createAsyncThunk(
   }
 );
 
-// 狀態接口
+// StatusInterface
 interface BusinessMetricsState {
-  // 服務狀態
+  // ServiceStatus
   isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
 
-  // 數據
+  // Data
   metrics: BusinessMetrics | null;
   analysis: BusinessMetricsAnalysisResponse | null;
   reports: BusinessMetricsReport[];
@@ -179,20 +179,20 @@ interface BusinessMetricsState {
   alerts: BusinessMetricsAlert[];
   config: BusinessMetricsConfig | null;
 
-  // 實時數據
+  // 實時Data
   realTimeMetrics: BusinessMetrics | null;
   lastUpdate: number | null;
 
-  // 過濾器
+  // Filter器
   currentFilter: BusinessMetricsFilter | null;
 
-  // 導出狀態
+  // ExportStatus
   exportData: string | null;
   isExporting: boolean;
   exportError: string | null;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: BusinessMetricsState = {
   isInitialized: false,
   isLoading: false,
@@ -212,38 +212,38 @@ const initialState: BusinessMetricsState = {
   exportError: null,
 };
 
-// 創建 slice
+// Create slice
 const _businessMetricsSlice = createSlice({
   name: 'businessMetrics',
   initialState,
   reducers: {
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
     },
 
-    // 清除導出錯誤
+    // ClearExportError
     clearExportError: state => {
       state.exportError = null;
     },
 
-    // 設置過濾器
+    // SettingsFilter器
     setFilter: (state, action: PayloadAction<BusinessMetricsFilter>) => {
       state.currentFilter = action.payload;
     },
 
-    // 清除過濾器
+    // ClearFilter器
     clearFilter: state => {
       state.currentFilter = null;
     },
 
-    // 更新實時指標
+    // Update實時指標
     updateRealTimeMetrics: (state, action: PayloadAction<BusinessMetrics>) => {
       state.realTimeMetrics = action.payload;
       state.lastUpdate = Date.now();
     },
 
-    // 添加事件監聽器
+    // AddEvent監聽器
     addEventListener: (
       state,
       action: PayloadAction<{
@@ -258,7 +258,7 @@ const _businessMetricsSlice = createSlice({
       );
     },
 
-    // 移除事件監聽器
+    // RemoveEvent監聽器
     removeEventListener: (
       state,
       action: PayloadAction<{
@@ -274,7 +274,7 @@ const _businessMetricsSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // 初始化
+    // Initialize
     builder
       .addCase(initializeBusinessMetrics.pending, state => {
         state.isLoading = true;
@@ -286,10 +286,10 @@ const _businessMetricsSlice = createSlice({
       })
       .addCase(initializeBusinessMetrics.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
-    // 獲取業務指標分析
+    // Get業務指標Analysis
     builder
       .addCase(getBusinessMetricsAnalysis.pending, state => {
         state.isLoading = true;
@@ -305,10 +305,10 @@ const _businessMetricsSlice = createSlice({
       })
       .addCase(getBusinessMetricsAnalysis.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取業務指標分析失敗';
+        state.error = action.error.message || 'Get業務指標分析Failed';
       });
 
-    // 生成報告
+    // 生成Report
     builder
       .addCase(generateBusinessMetricsReport.pending, state => {
         state.isLoading = true;
@@ -320,10 +320,10 @@ const _businessMetricsSlice = createSlice({
       })
       .addCase(generateBusinessMetricsReport.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '生成報告失敗';
+        state.error = action.error.message || '生成報告Failed';
       });
 
-    // 導出數據
+    // ExportData
     builder
       .addCase(exportBusinessMetricsData.pending, state => {
         state.isExporting = true;
@@ -335,15 +335,15 @@ const _businessMetricsSlice = createSlice({
       })
       .addCase(exportBusinessMetricsData.rejected, (state, action) => {
         state.isExporting = false;
-        state.exportError = action.error.message || '導出失敗';
+        state.exportError = action.error.message || '導出Failed';
       });
 
-    // 創建警報
+    // CreateAlert
     builder.addCase(createBusinessMetricsAlert.fulfilled, (state, action) => {
       state.alerts.push(action.payload);
     });
 
-    // 更新警報
+    // UpdateAlert
     builder.addCase(updateBusinessMetricsAlert.fulfilled, (state, action) => {
       const _index = state.alerts.findIndex(
         alert => alert.id === action.payload.id
@@ -353,12 +353,12 @@ const _businessMetricsSlice = createSlice({
       }
     });
 
-    // 刪除警報
+    // DeleteAlert
     builder.addCase(deleteBusinessMetricsAlert.fulfilled, (state, action) => {
       state.alerts = state.alerts.filter(alert => alert.id !== action.payload);
     });
 
-    // 獲取警報
+    // GetAlert
     builder.addCase(getBusinessMetricsAlert.fulfilled, (state, action) => {
       if (action.payload) {
         const _index = state.alerts.findIndex(
@@ -372,27 +372,27 @@ const _businessMetricsSlice = createSlice({
       }
     });
 
-    // 獲取配置
+    // GetConfigure
     builder.addCase(getBusinessMetricsConfig.fulfilled, (state, action) => {
       state.config = action.payload;
     });
 
-    // 更新配置
+    // UpdateConfigure
     builder.addCase(updateBusinessMetricsConfig.fulfilled, (state, action) => {
       state.config = action.payload;
     });
 
-    // 獲取報告
+    // GetReport
     builder.addCase(getBusinessMetricsReports.fulfilled, (state, action) => {
       state.reports = action.payload;
     });
 
-    // 獲取洞察
+    // Get洞察
     builder.addCase(getBusinessMetricsInsights.fulfilled, (state, action) => {
       state.insights = action.payload;
     });
 
-    // 獲取建議
+    // Get建議
     builder.addCase(
       getBusinessMetricsRecommendations.fulfilled,
       (state, action) => {
@@ -400,12 +400,12 @@ const _businessMetricsSlice = createSlice({
       }
     );
 
-    // 獲取警報
+    // GetAlert
     builder.addCase(getBusinessMetricsAlerts.fulfilled, (state, action) => {
       state.alerts = action.payload;
     });
 
-    // 獲取實時指標
+    // Get實時指標
     builder.addCase(getRealTimeBusinessMetrics.fulfilled, (state, action) => {
       state.realTimeMetrics = action.payload;
       state.lastUpdate = Date.now();
@@ -413,7 +413,7 @@ const _businessMetricsSlice = createSlice({
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   clearError,
   clearExportError,
@@ -424,10 +424,10 @@ export const {
   removeEventListener,
 } = businessMetricsSlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default businessMetricsSlice.reducer;
 
-// 選擇器
+// Select器
 export const _selectBusinessMetricsState = (state: {
   businessMetrics: BusinessMetricsState;
 }) => state.businessMetrics;

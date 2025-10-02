@@ -1,9 +1,9 @@
-// 佈局系統類型定義
+// 佈局系統Class型定義
 
-// 響應式斷點類型
+// Response式斷點Class型
 export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 
-// 斷點配置
+// 斷點Configure
 export interface BreakpointConfig {
   xs: number; // 0-575px
   sm: number; // 576-767px
@@ -13,10 +13,10 @@ export interface BreakpointConfig {
   xxl: number; // 1400px+
 }
 
-// 響應式值類型
+// Response式ValueClass型
 export type ResponsiveValue<T> = T | Partial<Record<Breakpoint, T>>;
 
-// 基礎佈局組件屬性
+// 基礎佈局ComponentProperty
 export interface BaseLayoutProps {
   className?: string;
   style?: React.CSSProperties;
@@ -25,7 +25,7 @@ export interface BaseLayoutProps {
   'data-testid'?: string;
 }
 
-// Container 組件屬性
+// Container ComponentProperty
 export interface ContainerProps extends BaseLayoutProps {
   maxWidth?: ResponsiveValue<'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'full'>;
   fluid?: boolean;
@@ -38,7 +38,7 @@ export interface ContainerProps extends BaseLayoutProps {
   shadow?: ResponsiveValue<'none' | 'sm' | 'md' | 'lg' | 'xl'>;
 }
 
-// Grid 組件屬性
+// Grid ComponentProperty
 export interface GridProps extends BaseLayoutProps {
   columns?: ResponsiveValue<number>;
   gap?: ResponsiveValue<string | number>;
@@ -73,7 +73,7 @@ export interface GridProps extends BaseLayoutProps {
   areas?: ResponsiveValue<string[]>;
 }
 
-// Grid Item 組件屬性
+// Grid Item ComponentProperty
 export interface GridItemProps extends BaseLayoutProps {
   column?: ResponsiveValue<number | string>;
   row?: ResponsiveValue<number | string>;
@@ -87,7 +87,7 @@ export interface GridItemProps extends BaseLayoutProps {
   order?: ResponsiveValue<number>;
 }
 
-// Flex 組件屬性
+// Flex ComponentProperty
 export interface FlexProps extends BaseLayoutProps {
   direction?: ResponsiveValue<
     'row' | 'column' | 'row-reverse' | 'column-reverse'
@@ -124,7 +124,7 @@ export interface FlexProps extends BaseLayoutProps {
   >;
 }
 
-// Stack 組件屬性
+// Stack ComponentProperty
 export interface StackProps extends BaseLayoutProps {
   direction?: ResponsiveValue<'vertical' | 'horizontal'>;
   spacing?: ResponsiveValue<string | number>;
@@ -142,7 +142,7 @@ export interface StackProps extends BaseLayoutProps {
   dividerProps?: Record<string, any>;
 }
 
-// ResponsiveProvider 組件屬性
+// ResponsiveProvider ComponentProperty
 export interface ResponsiveProviderProps {
   children: React.ReactNode;
   breakpoints?: Partial<BreakpointConfig>;
@@ -150,7 +150,7 @@ export interface ResponsiveProviderProps {
   onBreakpointChange?: (breakpoint: Breakpoint) => void;
 }
 
-// 響應式狀態
+// Response式Status
 export interface ResponsiveState {
   currentBreakpoint: Breakpoint;
   breakpoints: BreakpointConfig;
@@ -162,7 +162,7 @@ export interface ResponsiveState {
   windowHeight: number;
 }
 
-// 響應式事件
+// Response式Event
 export interface ResponsiveEvent {
   type: 'breakpointChange' | 'resize' | 'orientationChange';
   breakpoint: Breakpoint;
@@ -172,25 +172,25 @@ export interface ResponsiveEvent {
   timestamp: number;
 }
 
-// 佈局服務接口
+// 佈局ServiceInterface
 export interface LayoutService {
-  // 響應式管理
+  // Response式Manage
   getCurrentBreakpoint(): Breakpoint;
   getResponsiveValue<T>(value: ResponsiveValue<T>): T;
   isBreakpoint(breakpoint: Breakpoint): boolean;
   isAboveBreakpoint(breakpoint: Breakpoint): boolean;
   isBelowBreakpoint(breakpoint: Breakpoint): boolean;
 
-  // 事件管理
+  // EventManage
   onBreakpointChange(callback: (event: ResponsiveEvent) => void): () => void;
   onResize(callback: (event: ResponsiveEvent) => void): () => void;
 
-  // 工具方法
+  // ToolMethod
   getBreakpointConfig(): BreakpointConfig;
   getResponsiveState(): ResponsiveState;
 }
 
-// 佈局組件註冊
+// 佈局ComponentRegister
 export interface LayoutComponentRegistration {
   name: string;
   category: 'container' | 'grid' | 'flex' | 'stack' | 'responsive';
@@ -201,7 +201,7 @@ export interface LayoutComponentRegistration {
   accessible?: boolean;
 }
 
-// 佈局系統配置
+// 佈局系統Configure
 export interface LayoutSystemConfig {
   breakpoints: BreakpointConfig;
   defaultBreakpoint: Breakpoint;
@@ -214,7 +214,7 @@ export interface LayoutSystemConfig {
   defaultGap: string;
 }
 
-// 佈局系統狀態
+// 佈局系統Status
 export interface LayoutSystemState {
   responsive: ResponsiveState;
   components: Record<string, LayoutComponentRegistration>;
@@ -223,7 +223,7 @@ export interface LayoutSystemState {
   error: string | null;
 }
 
-// 佈局系統事件
+// 佈局系統Event
 export interface LayoutSystemEvent {
   type: 'componentRegister' | 'breakpointChange' | 'configUpdate' | 'error';
   componentName?: string;

@@ -1,6 +1,6 @@
 const path = require('path');
 
-// 添加後端路徑到模組搜索路徑
+// Add後端Path到模組SearchPath
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -11,20 +11,20 @@ const AnomalyDetectionService = require('../backend/src/services/anomalyDetectio
 
 async function testAnomalyDetection() {
   try {
-    // 初始化服務
+    // InitializeService
     await AnomalyDetectionService.initialize();
-    // 生成測試數據（包含一些異常值）
+    // 生成TestData（Package含一些異常Value）
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const normalData = Array.from(
       { length: 90 },
       (_, i) => 100 + Math.random() * 10
     );
-    const anomalyData = [50, 200, 45, 250, 35]; // 明顯的異常值
+    const anomalyData = [50, 200, 45, 250, 35]; // 明顯的異常Value
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const testData = [...normalData, ...anomalyData];
-    // 1. 統計異常檢測
+    // 1. Statistics異常檢測
     const statisticalResult =
       AnomalyDetectionService.statisticalAnomalyDetection(testData, 2);
 // eslint-disable-next-line no-console
@@ -51,7 +51,7 @@ async function testAnomalyDetection() {
       `🔍 DBSCAN 異常檢測結果: 檢測到 ${dbscanResult.anomalies.length} 個異常值, 聚類數=${dbscanResult.clusters.size}`
     );
 
-    // 4. 自編碼器異常檢測
+    // 4. 自Encode器異常檢測
     const autoencoderResult =
       AnomalyDetectionService.autoencoderAnomalyDetection(testData, 2);
 // eslint-disable-next-line no-console
@@ -70,7 +70,7 @@ async function testAnomalyDetection() {
         comprehensiveThreshold: 2,
       });
 
-    // 顯示詳細結果
+    // Show詳細結果
 // eslint-disable-next-line no-console
     console.log(
       `📈 綜合異常檢測結果: 檢測到 ${comprehensiveResult.anomalies.length} 個異常值`
@@ -92,7 +92,7 @@ async function testAnomalyDetection() {
       `檢測方法: [${comprehensiveResult.anomalies.map((a) => a.method).join(', ')}]`
     );
 
-    // 6. 動態閾值調整測試
+    // 6. Dynamic閾Value調整Test
     const currentThreshold = 2;
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -104,7 +104,7 @@ async function testAnomalyDetection() {
 // eslint-disable-next-line no-console
     console.log(`⚙️ 動態閾值調整: ${currentThreshold} -> ${newThreshold}`);
 
-    // 7. 性能測試
+    // 7. 性能Test
     const startTime = Date.now();
     const performanceData = Array.from(
       { length: 1000 },
@@ -115,17 +115,17 @@ async function testAnomalyDetection() {
 // eslint-disable-next-line no-console
     console.log(`⚡ 性能測試: 處理 1000 個數據點耗時 ${endTime - startTime}ms`);
 
-    // 清理資源
+    // 清理Resource
     AnomalyDetectionService.dispose();
 // eslint-disable-next-line no-console
-    console.log('✅ 異常檢測服務測試完成');
+    console.log('✅ 異常檢測Service測試完成');
   } catch (error) {
 // eslint-disable-next-line no-console
-    console.error('❌ 異常檢測服務測試失敗:', error.message);
+    console.error('❌ 異常檢測Service測試Failed:', error.message);
 // eslint-disable-next-line no-console
-    console.error('詳細錯誤:', error);
+    console.error('詳細Error:', error);
   }
 }
 
-// 運行測試
+// 運RowTest
 testAnomalyDetection();

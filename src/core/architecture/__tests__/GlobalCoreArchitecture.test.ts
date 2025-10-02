@@ -27,7 +27,7 @@ describe('GlobalCoreArchitecture', () => {
   let architecture: GlobalCoreArchitecture;
 
   beforeEach(() => {
-    // 重置單例實例
+    // Reset單例Instance
     (GlobalCoreArchitecture as any).instance = undefined;
     architecture = GlobalCoreArchitecture.getInstance();
   });
@@ -39,7 +39,7 @@ describe('GlobalCoreArchitecture', () => {
       expect(instance1).toBe(instance2);
     });
 
-    it('應該正確初始化所有服務', () => {
+    it('應該正確Initialize所有Service', () => {
       expect(architecture.getCoreBusinessService()).toBeInstanceOf(
         CoreBusinessService
       );
@@ -54,7 +54,7 @@ describe('GlobalCoreArchitecture', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化所有組件', async () => {
+    it('應該SuccessInitialize所有組件', async () => {
       const _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       await architecture.initialize();
@@ -65,16 +65,16 @@ describe('GlobalCoreArchitecture', () => {
       consoleSpy.mockRestore();
     });
 
-    it('應該處理初始化錯誤', async () => {
+    it('應該HandleInitializeError', async () => {
       const _consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
       const _mockService = architecture.getCoreBusinessService();
       jest
         .spyOn(mockService, 'initialize')
-        .mockRejectedValue(new Error('初始化失敗'));
+        .mockRejectedValue(new Error('InitializeFailed'));
 
-      await expect(architecture.initialize()).rejects.toThrow('初始化失敗');
+      await expect(architecture.initialize()).rejects.toThrow('InitializeFailed');
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '❌ GlobalCoreArchitecture 初始化失敗:',
+        '❌ GlobalCoreArchitecture InitializeFailed:',
         expect.any(Error)
       );
 
@@ -91,7 +91,7 @@ describe('CoreBusinessService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化', async () => {
+    it('應該SuccessInitialize', async () => {
       const _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       await service.initialize();
@@ -119,7 +119,7 @@ describe('CoreBusinessService', () => {
       timestamp: new Date(),
     };
 
-    it('應該成功處理有權限的操作', async () => {
+    it('應該SuccessHandle有權限的操作', async () => {
       const _result = await service.processBusinessLogic(mockOperation);
 
       expect(result.success).toBe(true);
@@ -144,7 +144,7 @@ describe('CoreBusinessService', () => {
       expect(result.error).toBe('權限不足');
     });
 
-    // 暫時跳過此測試，因為 complianceStatus 未正確實現
+    // 暫時Skip此Test，因為 complianceStatus 未正確實現
     it.skip('應該處理業務規則', async () => {
       const _result = await service.processBusinessLogic(mockOperation);
 
@@ -152,16 +152,16 @@ describe('CoreBusinessService', () => {
       expect(result.auditTrail[0].complianceImpact).toBeDefined();
     });
 
-    it('應該處理錯誤情況', async () => {
+    it('應該HandleError情況', async () => {
       const _consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // 模擬內部錯誤 - 使用無效的操作類型
+      // 模擬InternalError - 使用無效的OperationClass型
       const invalidOperation: BusinessOperation = {
         ...mockOperation,
         type: 'INVALID' as any,
         context: {
           ...mockOperation.context,
-          permissions: ['INVALID'], // 確保權限檢查通過，但操作類型檢查失敗
+          permissions: ['INVALID'], // 確保權限Check通過，但OperationClass型CheckFailed
         },
       };
 
@@ -169,8 +169,8 @@ describe('CoreBusinessService', () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('不支持的操作類型');
-      // 由於權限檢查失敗，不會進入錯誤處理邏輯
-      // expect(consoleErrorSpy).toHaveBeenCalledWith('❌ 業務邏輯處理失敗:', expect.any(Error));
+      // 由於權限CheckFailed，不會進入ErrorHandle邏輯
+      // expect(consoleErrorSpy).toHaveBeenCalledWith('❌ 業務邏輯HandleFailed:', expect.any(Error));
 
       consoleErrorSpy.mockRestore();
     });
@@ -231,7 +231,7 @@ describe('CoreBusinessService', () => {
       status: 'PENDING' as const,
     };
 
-    it('應該成功管理工作流程', async () => {
+    it('應該Success管理工作流程', async () => {
       const _result = await service.manageWorkflow(mockWorkflow);
 
       expect(result.success).toBe(true);
@@ -239,13 +239,13 @@ describe('CoreBusinessService', () => {
       expect(result.completed).toBe(true);
     });
 
-    it('應該處理工作流程錯誤', async () => {
+    it('應該Handle工作流程Error', async () => {
       const _failedWorkflow = {
         ...mockWorkflow,
         steps: [
           {
             id: 'step1',
-            name: '失敗步驟',
+            name: 'Failed步驟',
             action: 'fail',
             required: true,
             completed: false,
@@ -253,7 +253,7 @@ describe('CoreBusinessService', () => {
         ],
       };
 
-      // 模擬步驟執行失敗
+      // 模擬步驟執RowFailed
       jest
         .spyOn(service as any, 'executeWorkflowStep')
         .mockResolvedValue(false);
@@ -274,7 +274,7 @@ describe('GlobalSecurityFramework', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化', async () => {
+    it('應該SuccessInitialize', async () => {
       const _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       await framework.initialize();
@@ -302,27 +302,27 @@ describe('GlobalSecurityFramework', () => {
       jurisdiction: ['GLOBAL'],
     };
 
-    it('應該成功管理安全策略', async () => {
+    it('應該Success管理安全策略', async () => {
       const _result = await framework.manageSecurityPolicy(mockPolicy);
 
       expect(result.success).toBe(true);
       expect(result.policyId).toBe('test_policy');
     });
 
-    // 暫時跳過此測試，因為錯誤處理邏輯需要改進
-    it.skip('應該處理策略管理錯誤', async () => {
+    // 暫時Skip此Test，因為ErrorHandle邏輯需要改進
+    it.skip('應該Handle策略管理Error', async () => {
       const _consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // 模擬錯誤 - 直接模擬 manageSecurityPolicy 方法
+      // 模擬Error - 直接模擬 manageSecurityPolicy Method
       jest
         .spyOn(framework, 'manageSecurityPolicy')
-        .mockRejectedValue(new Error('策略管理失敗'));
+        .mockRejectedValue(new Error('策略管理Failed'));
 
       const _result = await framework.manageSecurityPolicy(mockPolicy);
 
       expect(result.success).toBe(false);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '❌ 安全策略管理失敗:',
+        '❌ 安全策略管理Failed:',
         expect.any(Error)
       );
 
@@ -377,20 +377,20 @@ describe('GlobalSecurityFramework', () => {
       expect(result.response).toContain('incident1');
     });
 
-    it('應該處理響應錯誤', async () => {
+    it('應該Handle響應Error', async () => {
       const _consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // 模擬錯誤
+      // 模擬Error
       jest
         .spyOn(framework as any, 'executeSecurityResponse')
-        .mockRejectedValue(new Error('響應失敗'));
+        .mockRejectedValue(new Error('響應Failed'));
 
       const _result = await framework.respondToSecurityIncident(mockIncident);
 
       expect(result.success).toBe(false);
-      expect(result.response).toBe('響應失敗');
+      expect(result.response).toBe('響應Failed');
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '❌ 安全事件響應失敗:',
+        '❌ 安全事件響應Failed:',
         expect.any(Error)
       );
 
@@ -417,7 +417,7 @@ describe('GlobalDataModels', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化', async () => {
+    it('應該SuccessInitialize', async () => {
       const _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       await dataModels.initialize();
@@ -459,27 +459,27 @@ describe('GlobalDataModels', () => {
       },
     };
 
-    it('應該成功定義數據模型', async () => {
+    it('應該Success定義數據模型', async () => {
       const _result = await dataModels.defineDataModel(mockModel);
 
       expect(result.success).toBe(true);
       expect(result.modelId).toBe('test_model');
     });
 
-    // 暫時跳過此測試，因為錯誤處理邏輯需要改進
-    it.skip('應該處理模型定義錯誤', async () => {
+    // 暫時Skip此Test，因為ErrorHandle邏輯需要改進
+    it.skip('應該Handle模型定義Error', async () => {
       const _consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // 模擬錯誤 - 直接模擬 defineDataModel 方法
+      // 模擬Error - 直接模擬 defineDataModel Method
       jest
         .spyOn(dataModels, 'defineDataModel')
-        .mockRejectedValue(new Error('模型定義失敗'));
+        .mockRejectedValue(new Error('模型定義Failed'));
 
       const _result = await dataModels.defineDataModel(mockModel);
 
       expect(result.success).toBe(false);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '❌ 數據模型定義失敗:',
+        '❌ 數據模型定義Failed:',
         expect.any(Error)
       );
 
@@ -530,7 +530,7 @@ describe('GlobalDataModels', () => {
     it('應該檢測無效數據', async () => {
       const _invalidData = {
         id: 'user123',
-        // 缺少必填的 email 字段
+        // 缺少必填的 email Field
       };
 
       const _result = await dataModels.validateData(invalidData, mockModel);
@@ -583,7 +583,7 @@ describe('GlobalDataModels', () => {
       const _sourceData = {
         id: 'user123',
         name: 'Test User',
-        email: 'test@example.com', // 目標模型中沒有的字段
+        email: 'test@example.com', // 目標模型中沒有的Field
       };
 
       const _result = await dataModels.mapData(sourceData, mockModel);
@@ -603,7 +603,7 @@ describe('GlobalAPIDesign', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化', async () => {
+    it('應該SuccessInitialize', async () => {
       const _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       await apiDesign.initialize();
@@ -622,7 +622,7 @@ describe('GlobalAPIDesign', () => {
           path: '/api/test',
           method: 'GET',
           parameters: [],
-          responses: [{ code: 200, description: '成功', schema: {} }],
+          responses: [{ code: 200, description: 'Success', schema: {} }],
           security: {
             authentication: true,
             authorization: true,
@@ -643,27 +643,27 @@ describe('GlobalAPIDesign', () => {
       },
     };
 
-    it('應該成功設計API', async () => {
+    it('應該Success設計API', async () => {
       const _result = await apiDesign.designAPI(mockAPI);
 
       expect(result.success).toBe(true);
       expect(result.apiId).toBe('Test API');
     });
 
-    // 暫時跳過此測試，因為錯誤處理邏輯需要改進
-    it.skip('應該處理API設計錯誤', async () => {
+    // 暫時Skip此Test，因為ErrorHandle邏輯需要改進
+    it.skip('應該HandleAPI設計Error', async () => {
       const _consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
-      // 模擬錯誤 - 直接模擬 designAPI 方法
+      // 模擬Error - 直接模擬 designAPI Method
       jest
         .spyOn(apiDesign, 'designAPI')
-        .mockRejectedValue(new Error('API設計失敗'));
+        .mockRejectedValue(new Error('API設計Failed'));
 
       const _result = await apiDesign.designAPI(mockAPI);
 
       expect(result.success).toBe(false);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '❌ API設計失敗:',
+        '❌ API設計Failed:',
         expect.any(Error)
       );
 
@@ -712,14 +712,14 @@ describe('GlobalAPIDesign', () => {
       expect(result.results).toHaveLength(2);
     });
 
-    it('應該處理測試失敗', async () => {
+    it('應該Handle測試Failed', async () => {
       const _api = { name: 'Test API' };
       const _testCases = [{ name: 'Failing Test', input: {}, expected: {} }];
 
-      // 模擬測試失敗
+      // 模擬TestFailed
       jest
         .spyOn(apiDesign as any, 'executeTestCase')
-        .mockRejectedValue(new Error('測試失敗'));
+        .mockRejectedValue(new Error('測試Failed'));
 
       const _result = await apiDesign.testAPI(api, testCases);
 

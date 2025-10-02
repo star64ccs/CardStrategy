@@ -1,4 +1,4 @@
-// 反饋系統測試工具
+// 反饋系統TestTool
 import React, { useState, useEffect } from 'react';
 
 import type {
@@ -15,29 +15,29 @@ import {
 import { useFeedback, useFeedbackState, useFeedbackActions } from '../providers/FeedbackProvider';
 import { FeedbackForm } from '../ui/FeedbackForm';
 
-// 反饋測試工具組件
+// 反饋TestToolComponent
 export const FeedbackTestTool: React.FC = () => {
   const { submitFeedback, getFeedbacks, getAnalytics, loading, error } = useFeedback();
   const { feedbacks, analytics, notifications, reports } = useFeedbackState();
   const { fetchFeedbacks, fetchAnalytics } = useFeedbackActions();
 
-  // 測試狀態
+  // TestStatus
   const [showForm, setShowForm] = useState(false);
   const [testResults, setTestResults] = useState<string[]>([]);
   const [filters, setFilters] = useState<FeedbackFilter>({});
   const [sort, setSort] = useState<FeedbackSort>({ field: 'timestamp', direction: 'desc' });
 
-  // 添加測試結果
+  // AddTest結果
   const _addTestResult = (result: string) => {
     setTestResults(prev => [...prev, `${new Date().toLocaleTimeString()}: ${result}`]);
   };
 
-  // 清除測試結果
+  // ClearTest結果
   const _clearTestResults = () => {
     setTestResults([]);
   };
 
-  // 測試提交反饋
+  // TestSubmit反饋
   const _testSubmitFeedback = async () => {
     try {
       const _testData = {
@@ -55,36 +55,36 @@ export const FeedbackTestTool: React.FC = () => {
       };
 
       await submitFeedback(testData);
-      addTestResult('✅ 反饋提交測試成功');
+      addTestResult('✅ 反饋提交測試Success');
     } catch (error) {
-      addTestResult(`❌ 反饋提交測試失敗: ${error}`);
+      addTestResult(`❌ 反饋提交測試Failed: ${error}`);
     }
   };
 
-  // 測試獲取反饋列表
+  // TestGet反饋List
   const _testGetFeedbacks = async () => {
     try {
       const _result = await getFeedbacks(filters, sort);
-      addTestResult(`✅ 獲取反饋列表成功，共 ${result.feedbacks.length} 條`);
+      addTestResult(`✅ Get反饋列表Success，共 ${result.feedbacks.length} 條`);
     } catch (error) {
-      addTestResult(`❌ 獲取反饋列表失敗: ${error}`);
+      addTestResult(`❌ Get反饋列表Failed: ${error}`);
     }
   };
 
-  // 測試獲取分析數據
+  // TestGetAnalysisData
   const _testGetAnalytics = async () => {
     try {
       const _result = await getAnalytics(filters);
-      addTestResult(`✅ 獲取分析數據成功，總反饋數: ${result.totalFeedbacks}`);
+      addTestResult(`✅ Get分析數據Success，總反饋數: ${result.totalFeedbacks}`);
     } catch (error) {
-      addTestResult(`❌ 獲取分析數據失敗: ${error}`);
+      addTestResult(`❌ Get分析數據Failed: ${error}`);
     }
   };
 
-  // 測試批量操作
+  // TestBatchOperation
   const _testBatchOperations = async () => {
     try {
-      // 提交多個測試反饋
+      // SubmitMultipleTest反饋
       const _testFeedbacks = [
         {
           type: FeedbackType.BUG_REPORT,
@@ -118,13 +118,13 @@ export const FeedbackTestTool: React.FC = () => {
         await submitFeedback(feedback);
       }
 
-      addTestResult('✅ 批量反饋提交測試成功');
+      addTestResult('✅ 批量反饋提交測試Success');
     } catch (error) {
-      addTestResult(`❌ 批量操作測試失敗: ${error}`);
+      addTestResult(`❌ 批量操作測試Failed: ${error}`);
     }
   };
 
-  // 測試過濾和排序
+  // TestFilter和Sort
   const _testFilterAndSort = async () => {
     try {
       const testFilters: FeedbackFilter = {
@@ -139,13 +139,13 @@ export const FeedbackTestTool: React.FC = () => {
       };
 
       const _result = await getFeedbacks(testFilters, testSort);
-      addTestResult(`✅ 過濾和排序測試成功，結果: ${result.feedbacks.length} 條`);
+      addTestResult(`✅ 過濾和排序測試Success，結果: ${result.feedbacks.length} 條`);
     } catch (error) {
-      addTestResult(`❌ 過濾和排序測試失敗: ${error}`);
+      addTestResult(`❌ 過濾和排序測試Failed: ${error}`);
     }
   };
 
-  // 運行所有測試
+  // 運Row所有Test
   const _runAllTests = async () => {
     clearTestResults();
     addTestResult('🚀 開始運行反饋系統測試...');
@@ -159,7 +159,7 @@ export const FeedbackTestTool: React.FC = () => {
     addTestResult('✅ 所有測試完成');
   };
 
-  // 組件加載時獲取初始數據
+  // Component加載時Get初始Data
   useEffect(() => {
     fetchFeedbacks();
     fetchAnalytics();
@@ -173,7 +173,7 @@ export const FeedbackTestTool: React.FC = () => {
       </div>
 
       <div className="feedback-test-tool__content">
-        {/* 測試控制面板 */}
+        {/* TestControl面板 */}
         <div className="feedback-test-tool__controls">
           <h3>測試控制</h3>
           <div className="feedback-test-tool__buttons">
@@ -234,13 +234,13 @@ export const FeedbackTestTool: React.FC = () => {
           </div>
         </div>
 
-        {/* 反饋表單 */}
+        {/* 反饋Table單 */}
         {showForm && (
           <div className="feedback-test-tool__form">
             <h3>反饋表單測試</h3>
             <FeedbackForm
               onSubmit={(data) => {
-                addTestResult(`✅ 表單提交成功: ${data.title}`);
+                addTestResult(`✅ 表單提交Success: ${data.title}`);
               }}
               onCancel={() => {
                 addTestResult('ℹ️ 表單取消');
@@ -249,7 +249,7 @@ export const FeedbackTestTool: React.FC = () => {
           </div>
         )}
 
-        {/* 系統狀態 */}
+        {/* 系統Status */}
         <div className="feedback-test-tool__status">
           <h3>系統狀態</h3>
           <div className="feedback-test-tool__status-grid">
@@ -279,7 +279,7 @@ export const FeedbackTestTool: React.FC = () => {
           )}
         </div>
 
-        {/* 分析數據 */}
+        {/* AnalysisData */}
         {analytics && (
           <div className="feedback-test-tool__analytics">
             <h3>分析數據</h3>
@@ -310,7 +310,7 @@ export const FeedbackTestTool: React.FC = () => {
           </div>
         )}
 
-        {/* 測試結果 */}
+        {/* Test結果 */}
         <div className="feedback-test-tool__results">
           <h3>測試結果</h3>
           <div className="feedback-test-tool__results-container">
@@ -326,7 +326,7 @@ export const FeedbackTestTool: React.FC = () => {
           </div>
         </div>
 
-        {/* 反饋列表 */}
+        {/* 反饋List */}
         <div className="feedback-test-tool__list">
           <h3>反饋列表 (最近5條)</h3>
           <div className="feedback-test-tool__list-container">
@@ -366,5 +366,5 @@ export const FeedbackTestTool: React.FC = () => {
   );
 };
 
-// 導出組件
+// ExportComponent
 export default FeedbackTestTool;

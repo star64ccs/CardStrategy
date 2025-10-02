@@ -1,6 +1,6 @@
 /**
- * API 服務
- * 提供統一的 API 調用接口和錯誤處理
+ * API Service
+ * 提供統一的 API 調用Interface和ErrorHandle
  */
 
 import { api } from '../config/api';
@@ -38,7 +38,7 @@ class ApiService {
   }
 
   /**
-   * 初始化 API 服務
+   * Initialize API Service
    */
   public async initialize(
     config?: Partial<ApiRequestConfig>
@@ -53,20 +53,20 @@ class ApiService {
         this.defaultConfig = { ...this.defaultConfig, ...config };
       }
 
-      // 驗證 API 配置
+      // Verify API Configure
       await this.validateApiConfig();
 
       this.isInitialized = true;
-      logger.info('ApiService 初始化成功');
+      logger.info('ApiService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('ApiService 初始化失敗:', error);
+      logger.error('ApiService InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * GET 請求
+   * GET Request
    */
   public async get<T = any>(
     endpoint: string,
@@ -76,7 +76,7 @@ class ApiService {
   }
 
   /**
-   * POST 請求
+   * POST Request
    */
   public async post<T = any>(
     endpoint: string,
@@ -87,7 +87,7 @@ class ApiService {
   }
 
   /**
-   * PUT 請求
+   * PUT Request
    */
   public async put<T = any>(
     endpoint: string,
@@ -98,7 +98,7 @@ class ApiService {
   }
 
   /**
-   * DELETE 請求
+   * DELETE Request
    */
   public async delete<T = any>(
     endpoint: string,
@@ -108,7 +108,7 @@ class ApiService {
   }
 
   /**
-   * PATCH 請求
+   * PATCH Request
    */
   public async patch<T = any>(
     endpoint: string,
@@ -119,7 +119,7 @@ class ApiService {
   }
 
   /**
-   * 統一請求方法
+   * 統一RequestMethod
    */
   private async request<T = any>(
     method: string,
@@ -152,7 +152,7 @@ class ApiService {
 
         if (attempt < requestConfig.retries) {
           logger.warn(
-            `API 請求失敗，重試 ${attempt + 1}/${requestConfig.retries}:`,
+            `API 請求Failed，重試 ${attempt + 1}/${requestConfig.retries}:`,
             {
               method,
               endpoint,
@@ -165,18 +165,18 @@ class ApiService {
       }
     }
 
-    logger.error('API 請求最終失敗:', {
+    logger.error('API 請求最終Failed:', {
       method,
       endpoint,
       error: lastError?.message,
     });
 
-    // 重新拋出最後的錯誤，而不是返回錯誤對象
-    throw lastError || new Error('請求失敗');
+    // ReThrow最後的Error，而不YesReturnErrorObject
+    throw lastError || new Error('請求Failed');
   }
 
   /**
-   * 執行實際請求
+   * 執Row實際Request
    */
   private async makeRequest<T = any>(
     method: string,
@@ -187,7 +187,7 @@ class ApiService {
     const _apiConfig = api.getConfig();
     let url = endpoint;
 
-    // 處理查詢參數
+    // HandleQueryParameter
     if (config?.params && method === 'GET') {
       const _params = new URLSearchParams();
       Object.entries(config.params).forEach(([key, value]) => {
@@ -237,16 +237,16 @@ class ApiService {
           throw new Error(`不支援的 HTTP 方法: ${method}`);
       }
 
-      // 首先檢查響應數據中的 success 字段
+      // 首先CheckResponseData中的 success Field
       if (
         response?.data &&
         typeof response.data === 'object' &&
         'success' in response.data
       ) {
-        // 如果是錯誤響應（success: false），拋出異常
+        // 如果YesErrorResponse（success: false），Throw異常
         if (response.data.success === false) {
           throw new Error(
-            response.data.message || response.data.error || '請求失敗'
+            response.data.message || response.data.error || '請求Failed'
           );
         }
 
@@ -257,7 +257,7 @@ class ApiService {
         };
       }
 
-      // 檢查響應狀態
+      // CheckResponseStatus
       if (response && response.status >= 200 && response.status < 300) {
         return {
           success: true,
@@ -265,7 +265,7 @@ class ApiService {
           status: response.status,
         };
       } else {
-        // 對於非 2xx 狀態碼，檢查響應數據中的錯誤信息
+        // 對於非 2xx Status碼，CheckResponseData中的ErrorInformation
         if (
           response?.data &&
           typeof response.data === 'object' &&
@@ -282,24 +282,24 @@ class ApiService {
         );
       }
     } catch (error: unknown) {
-      // 處理 axios 錯誤
+      // Handle axios Error
       if (error.response) {
-        // 服務器返回了錯誤狀態碼
+        // ServerReturn了ErrorStatus碼
         throw new Error(
           error.response.data?.error || `HTTP ${error.response.status}`
         );
       } else if (error.request) {
-        // 請求已發出但沒有收到響應
-        throw new Error('網絡錯誤：無法連接到服務器');
+        // Request已發出但沒有收到Response
+        throw new Error('網絡Error：無法Connect到Server');
       } else {
-        // 其他錯誤
-        throw new Error(error.message || '未知錯誤');
+        // 其他Error
+        throw new Error(error.message || '未知Error');
       }
     }
   }
 
   /**
-   * 驗證 API 配置
+   * Verify API Configure
    */
   private async validateApiConfig(): Promise<void> {
     const _apiConfig = api.getConfig();
@@ -307,30 +307,30 @@ class ApiService {
       throw new Error('API baseURL 未配置');
     }
 
-    // 測試連接
+    // TestConnect
     try {
       await this.get('/health');
     } catch (error) {
-      logger.warn('API 健康檢查失敗，但繼續初始化:', error);
+      logger.warn('API 健康CheckFailed，但繼續Initialize:', error);
     }
   }
 
   /**
-   * 延遲函數
+   * 延遲Function
    */
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   public isServiceAvailable(): boolean {
     return this.isInitialized;
   }
 
   /**
-   * 獲取服務統計
+   * GetServiceStatistics
    */
   public getStats(): unknown {
     return {
@@ -340,5 +340,5 @@ class ApiService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _apiService = ApiService.getInstance();

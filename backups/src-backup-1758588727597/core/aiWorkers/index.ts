@@ -1,0 +1,517 @@
+import { AIServiceManager } from './AIServiceManager';
+import { MediaWorker } from './MediaWorker';
+import { AccuracyWorker } from './workers/AccuracyWorker';
+import { ArchitectureWorker } from './workers/ArchitectureWorker';
+import { ComplianceWorker } from './workers/ComplianceWorker';
+import { CostWorker } from './workers/CostWorker';
+import { InsightWorker } from './workers/InsightWorker';
+import { RegulationWorker } from './workers/RegulationWorker';
+import { SecurityWorker } from './workers/SecurityWorker';
+import { StoreWorker } from './workers/StoreWorker';
+import { VersionWorker } from './workers/VersionWorker';
+
+// AI Worker 角色枚舉
+export enum AIWorkerRole {
+  Media = 'MediaWorker',
+  Regulation = 'RegulationWorker',
+  Cost = 'CostWorker',
+  Architecture = 'ArchitectureWorker',
+  Store = 'StoreWorker',
+  Accuracy = 'AccuracyWorker',
+  Security = 'SecurityWorker',
+  Version = 'VersionWorker',
+  Compliance = 'ComplianceWorker',
+  Insight = 'InsightWorker',
+}
+
+// AI Worker 管理器
+export class AIWorkerManager {
+  private static instance: AIWorkerManager;
+  private readonly workers: Map<AIWorkerRole, any> = new Map();
+  private readonly aiService: AIServiceManager;
+  private isInitialized = false;
+
+  private constructor() {
+    this.aiService = AIServiceManager.getInstance();
+  }
+
+  public static getInstance(): AIWorkerManager {
+    if (!AIWorkerManager.instance) {
+      AIWorkerManager.instance = new AIWorkerManager();
+    }
+    return AIWorkerManager.instance;
+  }
+
+  /**
+   * 初始化所有 AI Worker
+   */
+  public async initialize(): Promise<boolean> {
+    try {
+      console.log('🚀 初始化 AI Worker 管理器...');
+
+      // 初始化 AI 服務管理器
+      await this.initializeAIService();
+
+      // 初始化各個 Worker
+      await this.initializeWorkers();
+
+      this.isInitialized = true;
+      console.log('✅ AI Worker 管理器初始化完成');
+      return true;
+    } catch (error) {
+      console.error('❌ AI Worker 管理器初始化失敗:', error);
+      this.isInitialized = false;
+      return false;
+    }
+  }
+
+  /**
+   * 獲取指定的 Worker
+   */
+  public getWorker(role: AIWorkerRole): unknown {
+    if (!this.isInitialized) {
+      throw new Error('AI Worker 管理器尚未初始化');
+    }
+
+    const worker = this.workers.get(role);
+    if (!worker) {
+      throw new Error(`Worker ${role} 不存在`);
+    }
+
+    return worker;
+  }
+
+  /**
+   * 獲取所有 Worker 狀態
+   */
+  public getAllWorkerStatus(): Map<AIWorkerRole, any> {
+    const status = new Map<AIWorkerRole, any>();
+
+    this.workers.forEach((worker, role) => {
+      status.set(role, (worker as any).getStatus());
+    });
+
+    return status;
+  }
+
+  /**
+   * 執行 Worker 任務
+   */
+  public async executeWorkerTask(
+    role: AIWorkerRole,
+    task: unknown
+  ): Promise<any> {
+    const worker = this.getWorker(role);
+    return await (worker as any).execute(task);
+  }
+
+  /**
+   * 獲取 AI 服務統計
+   */
+  public getAIServiceStats(): unknown {
+    return this.aiService.getStats();
+  }
+
+  /**
+   * 更新 AI 服務配置
+   */
+  public updateAIServiceConfig(config: unknown): void {
+    this.aiService.updateConfig(config);
+  }
+
+  // 私有方法
+
+  /**
+   * 初始化 AI 服務
+   */
+  private async initializeAIService(): Promise<void> {
+    console.log('📊 初始化 AI 服務管理器...');
+
+    // 這裡可以設置默認配置
+    const defaultConfig = {
+      maxMonthlyBudget: 30,
+      preferredProviders: ['ollama', 'alibaba', 'baidu'],
+      fallbackProviders: ['zhipu', 'azure'],
+      costOptimization: {
+        enableModelSwitching: true,
+        enableBatchProcessing: true,
+        enableCaching: true,
+        enableCompression: true,
+      },
+      usageLimits: {
+        dailyRequests: 500,
+        monthlyTokens: 500000,
+        maxConcurrentRequests: 5,
+      },
+    };
+
+    this.aiService.updateConfig(defaultConfig);
+    console.log('✅ AI 服務管理器初始化完成');
+  }
+
+  /**
+   * 初始化各個 Worker
+   */
+  private async initializeWorkers(): Promise<void> {
+    console.log('🤖 初始化 AI Workers...');
+
+    // 初始化 MediaWorker
+    const mediaWorkerConfig = {
+      enabled: true,
+      schedule: '0 9 * * *', // 每天上午9點執行
+      contentGeneration: {
+        enableAutoGeneration: true,
+        maxArticlesPerDay: 3,
+        maxSocialPostsPerDay: 12,
+        preferredTopics: ['卡片遊戲', '策略分析', '市場趨勢'],
+        excludedTopics: ['政治', '宗教', '敏感話題'],
+      },
+      publishing: {
+        enableAutoPublish: false,
+        publishTime: '10:00',
+        platforms: ['facebook', 'twitter', 'instagram'],
+        approvalRequired: true,
+      },
+      costControl: {
+        maxDailyBudget: 5,
+        preferredAIProvider: 'ollama',
+        enableCostOptimization: true,
+      },
+    };
+
+    const mediaWorker = new MediaWorker(mediaWorkerConfig);
+    this.workers.set(AIWorkerRole.Media, mediaWorker);
+
+    // 初始化 RegulationWorker
+    const regulationWorkerConfig = {
+      enabled: true,
+      schedule: '0 */6 * * *', // 每6小時執行
+      monitoring: {
+        jurisdictions: ['EU', 'US', 'China', 'Global'],
+        categories: ['data-protection', 'ai-governance', 'privacy', 'security'],
+        sources: ['official', 'news', 'legal'],
+        checkInterval: 360, // 6小時
+      },
+      compliance: {
+        enableAutoCheck: true,
+        checkThreshold: 80,
+        autoAlert: true,
+        alertThreshold: 70,
+      },
+      costControl: {
+        maxDailyBudget: 3,
+        preferredAIProvider: 'ollama',
+        enableCostOptimization: true,
+      },
+    };
+
+    const regulationWorker = new RegulationWorker(regulationWorkerConfig);
+    this.workers.set(AIWorkerRole.Regulation, regulationWorker);
+
+    // 初始化 AccuracyWorker
+    const accuracyWorkerConfig = {
+      enabled: true,
+      schedule: '0 */4 * * *', // 每4小時執行
+      monitoring: {
+        accuracyThreshold: 85,
+        checkInterval: 240, // 4小時
+        enableRealTimeMonitoring: true,
+        enableErrorTracking: true,
+      },
+      optimization: {
+        enableModelFusion: true,
+        enableAutoRetraining: false,
+        enablePromptOptimization: true,
+        enableContextEnhancement: true,
+        fusionThreshold: 0.8,
+      },
+      evaluation: {
+        enableABTesting: true,
+        enableCrossValidation: true,
+        testDatasetSize: 100,
+        evaluationMetrics: ['accuracy', 'precision', 'recall', 'f1'],
+      },
+      costControl: {
+        maxDailyBudget: 4,
+        preferredAIProvider: 'ollama',
+        enableCostOptimization: true,
+      },
+    };
+
+    const accuracyWorker = new AccuracyWorker(accuracyWorkerConfig);
+    this.workers.set(AIWorkerRole.Accuracy, accuracyWorker);
+
+    // 初始化其他 Worker
+    await this.initializeAdditionalWorkers();
+
+    console.log(`✅ 已初始化 ${this.workers.size} 個 AI Workers`);
+  }
+
+  /**
+   * 初始化其他 Worker
+   */
+  private async initializeAdditionalWorkers(): Promise<void> {
+    const defaultWorkerConfig = {
+      enabled: true,
+      schedule: '0 */8 * * *', // 每8小時執行
+      costControl: {
+        maxDailyBudget: 2,
+        preferredAIProvider: 'ollama',
+        enableCostOptimization: true,
+      },
+    };
+
+    // 初始化 CostWorker
+    const costWorkerConfig = {
+      ...defaultWorkerConfig,
+      monitoring: {
+        budgetThreshold: 80,
+        alertThreshold: 90,
+        checkInterval: 360, // 6小時
+        enableRealTimeMonitoring: true,
+      },
+      reporting: {
+        enableDailyReports: true,
+        enableWeeklyReports: true,
+        enableMonthlyReports: true,
+        reportTime: '09:00',
+      },
+    };
+    const costWorker = new CostWorker(costWorkerConfig);
+    this.workers.set(AIWorkerRole.Cost, costWorker);
+
+    // 初始化 ArchitectureWorker
+    const architectureWorkerConfig = {
+      ...defaultWorkerConfig,
+      analysis: {
+        enablePerformanceAnalysis: true,
+        enableSecurityAnalysis: true,
+        enableScalabilityAnalysis: true,
+        enableMaintainabilityAnalysis: true,
+        analysisDepth: 'comprehensive',
+      },
+      recommendations: {
+        enableAutoRecommendations: true,
+        priorityThreshold: 'medium',
+        enableCostEstimates: true,
+      },
+    };
+    const architectureWorker = new ArchitectureWorker(architectureWorkerConfig);
+    this.workers.set(AIWorkerRole.Architecture, architectureWorker);
+
+    // 初始化 StoreWorker
+    const storeWorkerConfig = {
+      ...defaultWorkerConfig,
+      monitoring: {
+        enableInventoryMonitoring: true,
+        enableSalesMonitoring: true,
+        enablePerformanceMonitoring: true,
+        checkInterval: 180, // 3小時
+      },
+      optimization: {
+        enableAutoOptimization: true,
+        enableInventoryOptimization: true,
+        enableSalesOptimization: true,
+      },
+    };
+    const storeWorker = new StoreWorker(storeWorkerConfig);
+    this.workers.set(AIWorkerRole.Store, storeWorker);
+
+    // 初始化 SecurityWorker
+    const securityWorkerConfig = {
+      ...defaultWorkerConfig,
+      monitoring: {
+        enableThreatMonitoring: true,
+        enableVulnerabilityScanning: true,
+        enableComplianceChecking: true,
+        checkInterval: 120, // 2小時
+      },
+      alerts: {
+        enableRealTimeAlerts: true,
+        severityThreshold: 'medium',
+        enableAutoResponse: false,
+      },
+    };
+    const securityWorker = new SecurityWorker(securityWorkerConfig);
+    this.workers.set(AIWorkerRole.Security, securityWorker);
+
+    // 初始化 VersionWorker
+    const versionWorkerConfig = {
+      ...defaultWorkerConfig,
+      monitoring: {
+        enableVersionTracking: true,
+        enableCompatibilityChecking: true,
+        enableUpdateRecommendations: true,
+        checkInterval: 720, // 12小時
+      },
+      management: {
+        enableAutoUpdates: false,
+        enableRollbackSupport: true,
+        enableMigrationSupport: true,
+      },
+    };
+    const versionWorker = new VersionWorker(versionWorkerConfig);
+    this.workers.set(AIWorkerRole.Version, versionWorker);
+
+    // 初始化 ComplianceWorker
+    const complianceWorkerConfig = {
+      ...defaultWorkerConfig,
+      monitoring: {
+        regulations: ['GDPR', 'CCPA', 'HIPAA', 'SOX', 'PCI'],
+        enableContinuousMonitoring: true,
+        checkInterval: 240, // 4小時
+      },
+      reporting: {
+        enableComplianceReports: true,
+        enableAuditTrails: true,
+        enableRiskAssessments: true,
+      },
+    };
+    const complianceWorker = new ComplianceWorker(complianceWorkerConfig);
+    this.workers.set(AIWorkerRole.Compliance, complianceWorker);
+
+    // 初始化 InsightWorker
+    const insightWorkerConfig = {
+      ...defaultWorkerConfig,
+      analysis: {
+        enableTrendAnalysis: true,
+        enablePatternRecognition: true,
+        enableAnomalyDetection: true,
+        enablePredictiveAnalysis: true,
+        analysisDepth: 'deep',
+      },
+      insights: {
+        enableAutoInsights: true,
+        confidenceThreshold: 0.8,
+        enableActionableRecommendations: true,
+      },
+    };
+    const insightWorker = new InsightWorker(insightWorkerConfig);
+    this.workers.set(AIWorkerRole.Insight, insightWorker);
+  }
+}
+
+// 導出便捷函數
+export const getAIWorkerManager = (): AIWorkerManager => {
+  return AIWorkerManager.getInstance();
+};
+
+export const getMediaWorker = (): MediaWorker => {
+  return getAIWorkerManager().getWorker(AIWorkerRole.Media) as MediaWorker;
+};
+
+export const getRegulationWorker = (): RegulationWorker => {
+  return getAIWorkerManager().getWorker(
+    AIWorkerRole.Regulation
+  ) as RegulationWorker;
+};
+
+export const getAccuracyWorker = (): AccuracyWorker => {
+  return getAIWorkerManager().getWorker(
+    AIWorkerRole.Accuracy
+  ) as AccuracyWorker;
+};
+
+export const getCostWorker = (): CostWorker => {
+  return getAIWorkerManager().getWorker(AIWorkerRole.Cost) as CostWorker;
+};
+
+export const getArchitectureWorker = (): ArchitectureWorker => {
+  return getAIWorkerManager().getWorker(
+    AIWorkerRole.Architecture
+  ) as ArchitectureWorker;
+};
+
+export const getStoreWorker = (): StoreWorker => {
+  return getAIWorkerManager().getWorker(AIWorkerRole.Store) as StoreWorker;
+};
+
+export const getSecurityWorker = (): SecurityWorker => {
+  return getAIWorkerManager().getWorker(
+    AIWorkerRole.Security
+  ) as SecurityWorker;
+};
+
+export const getVersionWorker = (): VersionWorker => {
+  return getAIWorkerManager().getWorker(AIWorkerRole.Version) as VersionWorker;
+};
+
+export const getComplianceWorker = (): ComplianceWorker => {
+  return getAIWorkerManager().getWorker(
+    AIWorkerRole.Compliance
+  ) as ComplianceWorker;
+};
+
+export const getInsightWorker = (): InsightWorker => {
+  return getAIWorkerManager().getWorker(AIWorkerRole.Insight) as InsightWorker;
+};
+
+// 導出類型
+export type { AIRequest, AIResponse, AIServiceStats } from './AIServiceManager';
+
+export type { Article, MediaWorkerConfig, SocialPost } from './MediaWorker';
+
+export type {
+  ComplianceReport,
+  RegulationUpdate,
+  RegulationWorkerConfig,
+} from './workers/RegulationWorker';
+
+export type {
+  AccuracyReport,
+  AccuracyWorkerConfig,
+  ErrorAnalysis,
+  FusionResult,
+  ModelAccuracy,
+  RetrainJob,
+  TaskAccuracy,
+} from './workers/AccuracyWorker';
+
+export type {
+  Alert,
+  BudgetSummary,
+  CostReport,
+  CostWorkerConfig,
+} from './workers/CostWorker';
+
+export type {
+  ArchitectureAnalysis,
+  ArchitectureIssue,
+  ArchitectureRecommendation,
+  ArchitectureWorkerConfig,
+} from './workers/ArchitectureWorker';
+
+export type {
+  StoreAnalysis,
+  StoreIssue,
+  StoreRecommendation,
+  StoreWorkerConfig,
+} from './workers/StoreWorker';
+
+export type {
+  SecurityAnalysis,
+  SecurityIssue,
+  SecurityRecommendation,
+  SecurityWorkerConfig,
+} from './workers/SecurityWorker';
+
+export type {
+  VersionAnalysis,
+  VersionIssue,
+  VersionRecommendation,
+  VersionWorkerConfig,
+} from './workers/VersionWorker';
+
+export type {
+  ComplianceAnalysis,
+  ComplianceIssue,
+  ComplianceRecommendation,
+  ComplianceWorkerConfig,
+} from './workers/ComplianceWorker';
+
+export type {
+  DataInsight,
+  InsightAnalysis,
+  InsightRecommendation,
+  InsightWorkerConfig,
+} from './workers/InsightWorker';

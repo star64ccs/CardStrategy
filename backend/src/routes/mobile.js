@@ -76,7 +76,7 @@ router.post('/offline/changes', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ==================== ?�送通知 ====================''
+// ==================== ?�送Notification ====================''
 // 註�??�送令??router.post('/push/register', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -102,7 +102,7 @@ router.post('/offline/changes', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ?�送推?�通知''
+// ?�送推?�Notification''
 router.post('/push/send', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -130,7 +130,7 @@ router.post('/push/send', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ?��??�知設置''
+// ?��??�知Settings''
 router.get('/push/settings', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -149,7 +149,7 @@ router.get('/push/settings', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ?�新?�知設置''
+// ?�新?�知Settings''
 router.put('/push/settings', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -200,7 +200,7 @@ router.post('/device/register', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ?��??�戶設�??�表''
+// ?��??�戶設�??�Table''
 router.get('/device/list', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -219,7 +219,7 @@ router.get('/device/list', authenticateToken, async (req, res) => {
     });
   }
 });'
-// 註銷設�?''
+// Logout設�?''
 router.delete('/device/:deviceId', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;
@@ -419,7 +419,7 @@ router.post('/voice/command', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ?��?語音?�令?�表''
+// ?��?語音?�令?�Table''
 router.get('/voice/commands', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.user;

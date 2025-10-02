@@ -3,7 +3,7 @@ import React, { forwardRef, useMemo } from 'react';
 import { useResponsive } from '../../hooks/useResponsive';
 import type { GridProps } from '../../types/layout';
 
-// Grid 組件
+// Grid Component
 export const _Grid = forwardRef<HTMLDivElement, GridProps>(
   (
     {
@@ -47,7 +47,7 @@ export const _Grid = forwardRef<HTMLDivElement, GridProps>(
       const _responsiveTemplateColumns = getResponsiveValue(templateColumns);
       const _responsiveAreas = getResponsiveValue(areas);
 
-      // 網格模板列計算
+      // 網格模板Column計算
       let gridTemplateColumns = responsiveTemplateColumns;
       if (!gridTemplateColumns) {
         if (typeof responsiveColumns === 'number') {
@@ -65,7 +65,7 @@ export const _Grid = forwardRef<HTMLDivElement, GridProps>(
         gapValue = `${rowGapValue} ${columnGapValue}`;
       }
 
-      // 對齊方式映射
+      // 對齊方式Map
       const _alignmentMap = {
         start: 'flex-start',
         center: 'center',
@@ -119,7 +119,7 @@ export const _Grid = forwardRef<HTMLDivElement, GridProps>(
       style,
     ]);
 
-    // 生成 CSS 類名
+    // 生成 CSS Class名
     const _gridClassName = useMemo(() => {
       const _classes = ['layout-grid'];
 
@@ -155,5 +155,5 @@ export const _Grid = forwardRef<HTMLDivElement, GridProps>(
 
 Grid.displayName = 'Grid';
 
-// 重新導出 GridItem
+// ReExport GridItem
 export { GridItem } from './GridItem';

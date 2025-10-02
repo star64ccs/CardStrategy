@@ -1,0 +1,645 @@
+// 可訪問性 Redux Slice
+// 管理可訪問性狀態、配置和事件
+
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import { accessibilityService } from '../../services/accessibilityService';
+import type {
+  AccessibilityConfig,
+  AccessibilityEvent,
+  AccessibilityIssue,
+  AccessibilityState,
+  AccessibilitySuggestion,
+  AccessibilityTestConfig,
+} from '../../types/accessibility';
+
+// 異步 Action Creators
+export const initializeAccessibility = createAsyncThunk(
+  'accessibility/initialize',
+  async (config?: unknown) => {
+    accessibilityService.init(config);
+    return accessibilityService.getState();
+  }
+);
+
+export const updateAccessibilityConfig = createAsyncThunk(
+  'accessibility/updateConfig',
+  async (config: Partial<AccessibilityConfig>) => {
+    accessibilityService.updateConfig(config);
+    return accessibilityService.getState();
+  }
+);
+
+export const runAccessibilityTest = createAsyncThunk(
+  'accessibility/runTest',
+  async (config?: Partial<AccessibilityTestConfig>) => {
+    const result = await accessibilityService.runTest(config);
+    return result;
+  }
+);
+
+export const fixAccessibilityIssues = createAsyncThunk(
+  'accessibility/fixIssues',
+  async (issues: AccessibilityIssue[]) => {
+    await accessibilityService.fixIssues(issues);
+    return accessibilityService.getState();
+  }
+);
+
+// 初始狀態
+const initialState: AccessibilityState = {
+  config: {
+    focusManager: {
+      trapFocus: false,
+      restoreFocus: true,
+      focusOrder: [],
+      focusIndicator: 'outline',
+      focusIndicatorColor: '#007AFF',
+      focusIndicatorWidth: '2px',
+      focusIndicatorStyle: 'solid',
+      focusIndicatorOffset: '2px',
+      focusIndicatorAnimation: true,
+      focusIndicatorDuration: 200,
+      focusIndicatorEasing: 'ease-in-out',
+    },
+    keyboardNavigation: {
+      enabled: true,
+      mode: 'linear',
+      arrowKeys: true,
+      tabKey: true,
+      enterKey: true,
+      escapeKey: true,
+      spaceKey: true,
+      shortcuts: {},
+      handlers: {},
+    },
+    screenReader: {
+      enabled: true,
+      voice: {
+        rate: 1,
+        pitch: 1,
+        volume: 1,
+        language: 'zh-CN',
+      },
+      reading: {
+        autoRead: false,
+        readOnFocus: true,
+        readOnChange: true,
+        readOnError: true,
+        readOnSuccess: true,
+      },
+      feedback: {
+        onFocus: '已聚焦',
+        onBlur: '已失焦',
+        onChange: '已更改',
+        onError: '發生錯誤',
+        onSuccess: '操作成功',
+        onComplete: '操作完成',
+      },
+    },
+    highContrast: false,
+    reducedMotion: false,
+    largeText: false,
+    voiceControl: false,
+    switchControl: false,
+    assistiveTechnology: {
+      screenReader: false,
+      voiceControl: false,
+      switchControl: false,
+      keyboardOnly: false,
+      mouseOnly: false,
+    },
+  },
+  focusManager: {
+    currentFocus: null,
+    focusHistory: [],
+    isTrapped: false,
+    showIndicator: true,
+    focusOrder: [],
+    restoreElement: null,
+  },
+  mode: 'default',
+  assistiveTechnology: {
+    screenReader: false,
+    voiceControl: false,
+    switchControl: false,
+    keyboardOnly: false,
+    mouseOnly: false,
+  },
+  score: 0,
+  issues: [],
+  suggestions: [],
+};
+
+// 可訪問性 Slice
+const accessibilitySlice = createSlice({
+  name: 'accessibility',
+  initialState,
+  reducers: {
+    // 同步 Reducers
+    setCurrentFocus: (state, action: PayloadAction<string | null>) => {
+      state.focusManager.currentFocus = action.payload;
+      if (action.payload) {
+        state.focusManager.focusHistory.push(action.payload);
+        // 限制歷史記錄長度
+        if (state.focusManager.focusHistory.length > 50) {
+          state.focusManager.focusHistory.shift();
+        }
+      }
+    },
+
+    setFocusTrapped: (state, action: PayloadAction<boolean>) => {
+      state.focusManager.isTrapped = action.payload;
+    },
+
+    setShowIndicator: (state, action: PayloadAction<boolean>) => {
+      state.focusManager.showIndicator = action.payload;
+    },
+
+    setFocusOrder: (state, action: PayloadAction<string[]>) => {
+      state.focusManager.focusOrder = action.payload;
+    },
+
+    setRestoreElement: (state, action: PayloadAction<string | null>) => {
+      state.focusManager.restoreElement = action.payload;
+    },
+
+    switchMode: (
+      state,
+      action: PayloadAction<
+        'default' | 'highContrast' | 'reducedMotion' | 'largeText'
+      >
+    ) => {
+      state.mode = action.payload;
+
+      // 根據模式更新配置
+      switch (action.payload) {
+        case 'highContrast':
+          state.config.highContrast = true;
+          if (state.config.focusManager) {
+            state.config.focusManager.focusIndicatorColor = '#FFFFFF';
+            state.config.focusManager.focusIndicatorWidth = '3px';
+          }
+          break;
+        case 'reducedMotion':
+          state.config.reducedMotion = true;
+          if (state.config.focusManager) {
+            state.config.focusManager.focusIndicatorAnimation = false;
+          }
+          break;
+        case 'largeText':
+          state.config.largeText = true;
+          break;
+        default:
+          state.config.highContrast = false;
+          state.config.reducedMotion = false;
+          state.config.largeText = false;
+          if (state.config.focusManager) {
+            state.config.focusManager.focusIndicatorColor = '#007AFF';
+            state.config.focusManager.focusIndicatorWidth = '2px';
+            state.config.focusManager.focusIndicatorAnimation = true;
+          }
+      }
+    },
+
+    updateAssistiveTechnology: (
+      state,
+      action: PayloadAction<Partial<AccessibilityState['assistiveTechnology']>>
+    ) => {
+      state.assistiveTechnology = {
+        ...state.assistiveTechnology,
+        ...action.payload,
+      };
+    },
+
+    addIssue: (state, action: PayloadAction<AccessibilityIssue>) => {
+      state.issues.push(action.payload);
+      // 重新計算分數
+      state.score = calculateScore(state.issues, state.suggestions);
+    },
+
+    updateIssue: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        updates: Partial<AccessibilityIssue>;
+      }>
+    ) => {
+      const { id, updates } = action.payload;
+      const issueIndex = state.issues.findIndex(issue => issue.id === id);
+      if (issueIndex !== -1) {
+        state.issues[issueIndex] = { ...state.issues[issueIndex], ...updates };
+        // 重新計算分數
+        state.score = calculateScore(state.issues, state.suggestions);
+      }
+    },
+
+    removeIssue: (state, action: PayloadAction<string>) => {
+      state.issues = state.issues.filter(issue => issue.id !== action.payload);
+      // 重新計算分數
+      state.score = calculateScore(state.issues, state.suggestions);
+    },
+
+    addSuggestion: (state, action: PayloadAction<AccessibilitySuggestion>) => {
+      state.suggestions.push(action.payload);
+    },
+
+    updateSuggestion: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        updates: Partial<AccessibilitySuggestion>;
+      }>
+    ) => {
+      const { id, updates } = action.payload;
+      const suggestionIndex = state.suggestions.findIndex(
+        suggestion => suggestion.id === id
+      );
+      if (suggestionIndex !== -1) {
+        state.suggestions[suggestionIndex] = {
+          ...state.suggestions[suggestionIndex],
+          ...updates,
+        };
+      }
+    },
+
+    removeSuggestion: (state, action: PayloadAction<string>) => {
+      state.suggestions = state.suggestions.filter(
+        suggestion => suggestion.id !== action.payload
+      );
+    },
+
+    setScore: (state, action: PayloadAction<number>) => {
+      state.score = Math.max(0, Math.min(100, action.payload));
+    },
+
+    clearIssues: state => {
+      state.issues = [];
+      state.score = calculateScore(state.issues, state.suggestions);
+    },
+
+    clearSuggestions: state => {
+      state.suggestions = [];
+    },
+
+    resetFocusManager: state => {
+      state.focusManager = {
+        currentFocus: null,
+        focusHistory: [],
+        isTrapped: false,
+        showIndicator: true,
+        focusOrder: [],
+        restoreElement: null,
+      };
+    },
+
+    // 焦點管理相關
+    focusNext: state => {
+      const { focusOrder, currentFocus } = state.focusManager;
+      if (focusOrder.length === 0) return;
+
+      const currentIndex = currentFocus
+        ? focusOrder.indexOf(currentFocus)
+        : -1;
+      const nextIndex =
+        currentIndex < focusOrder.length - 1 ? currentIndex + 1 : 0;
+      state.focusManager.currentFocus = focusOrder[nextIndex];
+    },
+
+    focusPrevious: state => {
+      const { focusOrder, currentFocus } = state.focusManager;
+      if (focusOrder.length === 0) return;
+
+      const currentIndex = currentFocus
+        ? focusOrder.indexOf(currentFocus)
+        : -1;
+      const prevIndex =
+        currentIndex > 0 ? currentIndex - 1 : focusOrder.length - 1;
+      state.focusManager.currentFocus = focusOrder[prevIndex];
+    },
+
+    focusFirst: state => {
+      const { focusOrder } = state.focusManager;
+      if (focusOrder.length > 0) {
+        state.focusManager.currentFocus = focusOrder[0];
+      }
+    },
+
+    focusLast: state => {
+      const { focusOrder } = state.focusManager;
+      if (focusOrder.length > 0) {
+        state.focusManager.currentFocus = focusOrder[focusOrder.length - 1];
+      }
+    },
+
+    // 鍵盤導航相關
+    enableKeyboardNavigation: state => {
+      if (state.config.keyboardNavigation) {
+        state.config.keyboardNavigation.enabled = true;
+      }
+    },
+
+    disableKeyboardNavigation: state => {
+      if (state.config.keyboardNavigation) {
+        state.config.keyboardNavigation.enabled = false;
+      }
+    },
+
+    setKeyboardNavigationMode: (
+      state,
+      action: PayloadAction<'linear' | 'grid' | 'tree' | 'custom'>
+    ) => {
+      if (state.config.keyboardNavigation) {
+        state.config.keyboardNavigation.mode = action.payload;
+      }
+    },
+
+    addKeyboardShortcut: (
+      state,
+      action: PayloadAction<{ key: string; action: string }>
+    ) => {
+      const { key, action: actionName } = action.payload;
+      if (state.config.keyboardNavigation?.shortcuts) {
+        state.config.keyboardNavigation.shortcuts[key] = actionName;
+      }
+    },
+
+    removeKeyboardShortcut: (state, action: PayloadAction<string>) => {
+      if (state.config.keyboardNavigation?.shortcuts) {
+        delete state.config.keyboardNavigation.shortcuts[action.payload];
+      }
+    },
+
+    // 屏幕閱讀器相關
+    enableScreenReader: state => {
+      if (state.config.screenReader) {
+        state.config.screenReader.enabled = true;
+      }
+    },
+
+    disableScreenReader: state => {
+      if (state.config.screenReader) {
+        state.config.screenReader.enabled = false;
+      }
+    },
+
+    updateVoiceSettings: (
+      state,
+      action: PayloadAction<
+        Partial<NonNullable<AccessibilityState['config']['screenReader']>>
+      >
+    ) => {
+      if (state.config.screenReader) {
+        state.config.screenReader = {
+          ...state.config.screenReader,
+          ...action.payload,
+        };
+      }
+    },
+
+    updateReadingSettings: (
+      state,
+      action: PayloadAction<
+        Partial<NonNullable<AccessibilityState['config']['screenReader']>>
+      >
+    ) => {
+      if (state.config.screenReader) {
+        state.config.screenReader = {
+          ...state.config.screenReader,
+          ...action.payload,
+        };
+      }
+    },
+
+    updateFeedbackSettings: (
+      state,
+      action: PayloadAction<
+        Partial<NonNullable<AccessibilityState['config']['screenReader']>>
+      >
+    ) => {
+      if (state.config.screenReader) {
+        state.config.screenReader = {
+          ...state.config.screenReader,
+          ...action.payload,
+        };
+      }
+    },
+
+    // 焦點指示器相關
+    updateFocusIndicator: (
+      state,
+      action: PayloadAction<
+        Partial<AccessibilityState['config']['focusManager']>
+      >
+    ) => {
+      if (state.config.focusManager) {
+        state.config.focusManager = {
+          ...state.config.focusManager,
+          ...action.payload,
+        };
+      }
+    },
+
+    setFocusIndicatorColor: (state, action: PayloadAction<string>) => {
+      if (state.config.focusManager) {
+        state.config.focusManager.focusIndicatorColor = action.payload;
+      }
+    },
+
+    setFocusIndicatorWidth: (state, action: PayloadAction<string>) => {
+      if (state.config.focusManager) {
+        state.config.focusManager.focusIndicatorWidth = action.payload;
+      }
+    },
+
+    setFocusIndicatorStyle: (
+      state,
+      action: PayloadAction<'solid' | 'dashed' | 'dotted'>
+    ) => {
+      if (state.config.focusManager) {
+        state.config.focusManager.focusIndicatorStyle = action.payload;
+      }
+    },
+
+    setFocusIndicatorAnimation: (state, action: PayloadAction<boolean>) => {
+      if (state.config.focusManager) {
+        state.config.focusManager.focusIndicatorAnimation = action.payload;
+      }
+    },
+
+    // 事件處理
+    addAccessibilityEvent: (
+      state,
+      action: PayloadAction<AccessibilityEvent>
+    ) => {
+      // 這裡可以添加事件日誌記錄邏輯
+      // console.log('Accessibility event:', action.payload);
+    },
+  },
+  extraReducers: builder => {
+    builder
+      // 初始化可訪問性
+      .addCase(initializeAccessibility.pending, state => {
+        // 可以設置加載狀態
+      })
+      .addCase(initializeAccessibility.fulfilled, (state, action) => {
+        return { ...state, ...action.payload };
+      })
+      .addCase(initializeAccessibility.rejected, (state, action) => {
+        console.error('Failed to initialize accessibility:', action.error);
+      })
+
+      // 更新配置
+      .addCase(updateAccessibilityConfig.pending, state => {
+        // 可以設置加載狀態
+      })
+      .addCase(updateAccessibilityConfig.fulfilled, (state, action) => {
+        return { ...state, ...action.payload };
+      })
+      .addCase(updateAccessibilityConfig.rejected, (state, action) => {
+        console.error('Failed to update accessibility config:', action.error);
+      })
+
+      // 運行測試
+      .addCase(runAccessibilityTest.pending, state => {
+        // 可以設置測試狀態
+      })
+      .addCase(runAccessibilityTest.fulfilled, (state, action) => {
+        const result = action.payload;
+        state.issues = result.details.issues;
+        state.suggestions = result.details.suggestions;
+        state.score = result.details.score;
+      })
+      .addCase(runAccessibilityTest.rejected, (state, action) => {
+        console.error('Failed to run accessibility test:', action.error);
+      })
+
+      // 修復問題
+      .addCase(fixAccessibilityIssues.pending, state => {
+        // 可以設置修復狀態
+      })
+      .addCase(fixAccessibilityIssues.fulfilled, (state, action) => {
+        return { ...state, ...action.payload };
+      })
+      .addCase(fixAccessibilityIssues.rejected, (state, action) => {
+        console.error('Failed to fix accessibility issues:', action.error);
+      });
+  },
+});
+
+// 輔助函數
+function calculateScore(
+  issues: AccessibilityIssue[],
+  suggestions: AccessibilitySuggestion[]
+): number {
+  let score = 100;
+
+  // 根據問題嚴重程度扣分
+  issues.forEach(issue => {
+    switch (issue.severity) {
+      case 'critical':
+        score -= 20;
+        break;
+      case 'high':
+        score -= 10;
+        break;
+      case 'medium':
+        score -= 5;
+        break;
+      case 'low':
+        score -= 2;
+        break;
+    }
+  });
+
+  return Math.max(0, score);
+}
+
+// 導出 Actions
+export const {
+  setCurrentFocus,
+  setFocusTrapped,
+  setShowIndicator,
+  setFocusOrder,
+  setRestoreElement,
+  switchMode,
+  updateAssistiveTechnology,
+  addIssue,
+  updateIssue,
+  removeIssue,
+  addSuggestion,
+  updateSuggestion,
+  removeSuggestion,
+  setScore,
+  clearIssues,
+  clearSuggestions,
+  resetFocusManager,
+  focusNext,
+  focusPrevious,
+  focusFirst,
+  focusLast,
+  enableKeyboardNavigation,
+  disableKeyboardNavigation,
+  setKeyboardNavigationMode,
+  addKeyboardShortcut,
+  removeKeyboardShortcut,
+  enableScreenReader,
+  disableScreenReader,
+  updateVoiceSettings,
+  updateReadingSettings,
+  updateFeedbackSettings,
+  updateFocusIndicator,
+  setFocusIndicatorColor,
+  setFocusIndicatorWidth,
+  setFocusIndicatorStyle,
+  setFocusIndicatorAnimation,
+  addAccessibilityEvent,
+} = accessibilitySlice.actions;
+
+// 導出 Selectors
+export const selectAccessibilityState = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility;
+export const selectAccessibilityConfig = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.config;
+export const selectFocusManager = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.focusManager;
+export const selectCurrentFocus = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.focusManager.currentFocus;
+export const selectAccessibilityMode = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.mode;
+export const selectAssistiveTechnology = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.assistiveTechnology;
+export const selectAccessibilityScore = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.score;
+export const selectAccessibilityIssues = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.issues;
+export const selectAccessibilitySuggestions = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.suggestions;
+export const selectKeyboardNavigationEnabled = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.config.keyboardNavigation?.enabled || false;
+export const selectScreenReaderEnabled = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.config.screenReader?.enabled || false;
+export const selectHighContrastEnabled = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.config.highContrast;
+export const selectReducedMotionEnabled = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.config.reducedMotion;
+export const selectLargeTextEnabled = (state: {
+  accessibility: AccessibilityState;
+}) => state.accessibility.config.largeText;
+
+// 導出 Reducer
+export default accessibilitySlice.reducer;

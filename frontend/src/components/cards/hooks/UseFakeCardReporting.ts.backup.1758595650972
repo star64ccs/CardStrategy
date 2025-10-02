@@ -1,0 +1,506 @@
+import { useCallback, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+
+import type { RootState } from '../../../store';
+import { useAppDispatch } from '../../../store/hooks';
+import {
+  addBlacklistEntryToList,
+  addCommunityWarningToList,
+  addReportToList,
+  addToBlacklist,
+  addWarningToList,
+  checkUserBlacklistStatus,
+  clearError,
+  createCommunityWarning,
+  createReport,
+  createWarning,
+  destroyReportingService,
+  getActiveCommunityWarnings,
+  getReport,
+  getReportStats,
+  getUserWarnings,
+  // Actions
+  initializeReportingService,
+  queryReports,
+  removeReportFromList,
+  // Reducers
+  resetState,
+  selectBlacklist,
+  selectCommunityWarnings,
+  selectCurrentReport,
+  selectError,
+  selectIsInitialized,
+  selectIsLoading,
+  selectIsUserBlacklisted,
+  selectPagination,
+  selectQueryParams,
+  selectReports,
+  selectReportStats,
+  selectUserWarnings,
+  selectWarnings,
+  setCurrentReport,
+  setPagination,
+  updateBlacklistEntryInList,
+  updateCommunityWarningInList,
+  updateQueryParams,
+  updateReportInList,
+  updateReportStatus,
+  updateWarningInList,
+} from '../../../store/slices/fakeCardReportingSlice';
+import type {
+  BlacklistType,
+  EvidenceItem,
+  ReportQueryParams,
+  ReportSeverity,
+  ReportType,
+  WarningType,
+} from '../types/reporting';
+import { ReportStatus } from '../types/reporting';
+
+/**
+ * 假卡回報系統自定義 Hook
+ * 提供完整的假卡回報功能，包括舉報、警告、黑名單管理
+ */
+export const useFakeCardReporting = () => {
+  const dispatch = useAppDispatch();
+  const state = useSelector((state: RootState) => state.fakeCardReporting);
+
+  // 狀態選擇器
+  const isInitialized = useSelector(selectIsInitialized);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+  const reports = useSelector(selectReports);
+  const currentReport = useSelector(selectCurrentReport);
+  const reportStats = useSelector(selectReportStats);
+  const warnings = useSelector(selectWarnings);
+  const userWarnings = useSelector(selectUserWarnings);
+  const blacklist = useSelector(selectBlacklist);
+  const isUserBlacklisted = useSelector(selectIsUserBlacklisted);
+  const communityWarnings = useSelector(selectCommunityWarnings);
+  const queryParams = useSelector(selectQueryParams);
+  const pagination = useSelector(selectPagination);
+
+  // 服務初始化
+  const initializeService = (config?: unknown) => {
+    return (dispatch(initializeReportingService(config)) as any).unwrap();
+  };
+
+  const destroyService = () => {
+    return (dispatch(destroyReportingService()) as any).unwrap();
+  };
+
+  // 舉報管理
+  const submitReport = (reportData: {
+    reporterId: string;
+    reportedUserId?: string;
+    cardId?: string;
+    reportType: ReportType;
+    severity: ReportSeverity;
+    title: string;
+    description: string;
+    evidence: EvidenceItem[];
+    isAnonymous: boolean;
+    contactInfo?: string;
+    priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  }) => {
+    return (dispatch(createReport(reportData)) as any).unwrap();
+  };
+
+  const fetchReport = (reportId: string) => {
+    return (dispatch(getReport(reportId)) as any).unwrap();
+  };
+
+  const updateStatus = (params: {
+    reportId: string;
+    status: ReportStatus;
+    userId: string;
+    notes?: string;
+    actionTaken?: string;
+  }) => {
+    return (dispatch(updateReportStatus(params)) as any).unwrap();
+  };
+
+  const searchReports = (params: ReportQueryParams) => {
+    return (dispatch(queryReports(params)) as any).unwrap();
+  };
+
+  const getStats = () => {
+    return (dispatch(getReportStats()) as any).unwrap();
+  };
+
+  // 警告管理
+  const issueWarning = (warningData: {
+    type: WarningType;
+    targetId: string;
+    targetType: 'USER' | 'SELLER' | 'BUYER' | 'CARD' | 'LISTING';
+    title: string;
+    message: string;
+    severity: ReportSeverity;
+    isActive: boolean;
+    expiresAt?: Date;
+    createdBy: string;
+  }) => {
+    return (dispatch(createWarning(warningData)) as any).unwrap();
+  };
+
+  const fetchUserWarnings = (userId: string) => {
+    return (dispatch(getUserWarnings(userId)) as any).unwrap();
+  };
+
+  // 黑名單管理
+  const blacklistUser = (blacklistData: {
+    type: BlacklistType;
+    targetId: string;
+    targetValue: string;
+    reason: string;
+    severity: ReportSeverity;
+    isActive: boolean;
+    expiresAt?: Date;
+    createdBy: string;
+  }) => {
+    return (dispatch(addToBlacklist(blacklistData)) as any).unwrap();
+  };
+
+  const checkBlacklistStatus = (userId: string) => {
+    return (dispatch(checkUserBlacklistStatus(userId)) as any).unwrap();
+  };
+
+  // 社區警告管理
+  const issueCommunityWarning = (warningData: {
+    title: string;
+    message: string;
+    severity: ReportSeverity;
+    targetAudience: 'ALL' | 'SELLERS' | 'BUYERS' | 'SPECIFIC_GROUP';
+    targetGroupIds?: string[];
+    isActive: boolean;
+    displayFrom: Date;
+    displayUntil?: Date;
+    createdBy: string;
+  }) => {
+    return (dispatch(createCommunityWarning(warningData)) as any).unwrap();
+  };
+
+  const fetchCommunityWarnings = () => {
+    return (dispatch(getActiveCommunityWarnings()) as any).unwrap();
+  };
+
+  // 狀態管理
+  const setCurrentReportAction = (report: any) => {
+    dispatch(setCurrentReport(report));
+  };
+
+  const updateQueryParamsAction = (params: Partial<ReportQueryParams>) => {
+    dispatch(updateQueryParams(params));
+  };
+
+  const setPaginationAction = (pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    itemsPerPage: number;
+  }) => {
+    dispatch(setPagination(pagination));
+  };
+
+  const clearErrorAction = () => {
+    dispatch(clearError());
+  };
+
+  const resetStateAction = () => {
+    dispatch(resetState());
+  };
+
+  // 列表管理
+  const addReportToListAction = (report: any) => {
+    dispatch(addReportToList(report));
+  };
+
+  const updateReportInListAction = (report: any) => {
+    dispatch(updateReportInList(report));
+  };
+
+  const removeReportFromListAction = (reportId: string) => {
+    dispatch(removeReportFromList(reportId));
+  };
+
+  const addWarningToListAction = (warning: any) => {
+    dispatch(addWarningToList(warning));
+  };
+
+  const updateWarningInListAction = (warning: any) => {
+    dispatch(updateWarningInList(warning));
+  };
+
+  const addBlacklistEntryToListAction = (entry: any) => {
+    dispatch(addBlacklistEntryToList(entry));
+  };
+
+  const updateBlacklistEntryInListAction = (entry: any) => {
+    dispatch(updateBlacklistEntryInList(entry));
+  };
+
+  const addCommunityWarningToListAction = (warning: any) => {
+    dispatch(addCommunityWarningToList(warning));
+  };
+
+  const updateCommunityWarningInListAction = (warning: any) => {
+    dispatch(updateCommunityWarningInList(warning));
+  };
+
+  // 實用函數
+  const getReportById = (reportId: string) => {
+    return reports.find(report => report.id === reportId);
+  };
+
+  const getWarningById = (warningId: string) => {
+    return warnings.find(warning => warning.id === warningId);
+  };
+
+  const getBlacklistEntryById = (entryId: string) => {
+    return blacklist.find(entry => entry.id === entryId);
+  };
+
+  const getCommunityWarningById = (warningId: string) => {
+    return communityWarnings.find(warning => warning.id === warningId);
+  };
+
+  const getReportsByStatus = (status: ReportStatus) => {
+    return reports.filter(report => report.response.status === status);
+  };
+
+  const getReportsByType = (type: ReportType) => {
+    return reports.filter(report => report.report?.reportType === type);
+  };
+
+  const getReportsBySeverity = (severity: ReportSeverity) => {
+    return reports.filter(report => report.report?.severity === severity);
+  };
+
+  const getActiveWarnings = () => {
+    return warnings.filter(warning => warning.isActive);
+  };
+
+  const getActiveBlacklistEntries = () => {
+    return blacklist.filter(entry => entry.isActive);
+  };
+
+  const getReportsByUser = (userId: string) => {
+    return reports.filter(report => report.report.reporterId === userId);
+  };
+
+  const getReportsAgainstUser = (userId: string) => {
+    return reports.filter(report => report.report.reportedUserId === userId);
+  };
+
+  const getWarningsByUser = (userId: string) => {
+    return warnings.filter(warning => warning.targetId === userId);
+  };
+
+  const getBlacklistEntriesByUser = (userId: string) => {
+    return blacklist.filter(entry => entry.targetId === userId);
+  };
+
+  const getPendingReportsCount = () => {
+    return reports.filter(
+      report => report.response.status === ReportStatus.PENDING
+    ).length;
+  };
+
+  const getUnderReviewReportsCount = () => {
+    return reports.filter(
+      report => report.response.status === ReportStatus.UNDER_REVIEW
+    ).length;
+  };
+
+  const getResolvedReportsCount = () => {
+    return reports.filter(
+      report => report.response.status === ReportStatus.RESOLVED
+    ).length;
+  };
+
+  const getRejectedReportsCount = () => {
+    return reports.filter(
+      report => report.response.status === ReportStatus.REJECTED
+    ).length;
+  };
+
+  const getActiveWarningsCount = () => {
+    return warnings.filter(warning => warning.isActive).length;
+  };
+
+  const getActiveBlacklistEntriesCount = () => {
+    return blacklist.filter(entry => entry.isActive).length;
+  };
+
+  const getActiveCommunityWarningsCount = () => {
+    return communityWarnings.filter(warning => warning.isActive).length;
+  };
+
+  const getReportsByDateRange = (startDate: Date, endDate: Date) => {
+    return reports.filter(
+      report => report.createdAt >= startDate && report.createdAt <= endDate
+    );
+  };
+
+  const getWarningsByDateRange = (startDate: Date, endDate: Date) => {
+    return warnings.filter(
+      warning => warning.createdAt >= startDate && warning.createdAt <= endDate
+    );
+  };
+
+  const getBlacklistEntriesByDateRange = (startDate: Date, endDate: Date) => {
+    return blacklist.filter(
+      entry => entry.createdAt >= startDate && entry.createdAt <= endDate
+    );
+  };
+
+  const getCommunityWarningsByDateRange = (startDate: Date, endDate: Date) => {
+    return communityWarnings.filter(
+      warning => warning.createdAt >= startDate && warning.createdAt <= endDate
+    );
+  };
+
+  const getReportsWithEvidence = () => {
+    return reports.filter(report => report.report.evidence.length > 0);
+  };
+
+  const getAnonymousReports = () => {
+    return reports.filter(report => report.report.isAnonymous);
+  };
+
+  const getNonAnonymousReports = () => {
+    return reports.filter(report => !report.report.isAnonymous);
+  };
+
+  const getHighPriorityReports = () => {
+    return reports.filter(
+      report =>
+        report.report.priority === 'HIGH' || report.report.priority === 'URGENT'
+    );
+  };
+
+  const getLowPriorityReports = () => {
+    return reports.filter(
+      report =>
+        report.report.priority === 'LOW' || report.report.priority === 'MEDIUM'
+    );
+  };
+
+  const getExpiredWarnings = () => {
+    const now = new Date();
+    return warnings.filter(
+      warning => warning.expiresAt && warning.expiresAt < now
+    );
+  };
+
+  const getExpiredBlacklistEntries = () => {
+    const now = new Date();
+    return blacklist.filter(entry => entry.expiresAt && entry.expiresAt < now);
+  };
+
+  const getExpiredCommunityWarnings = () => {
+    const now = new Date();
+    return communityWarnings.filter(
+      warning => warning.displayUntil && warning.displayUntil < now
+    );
+  };
+
+  return {
+    // 狀態
+    state,
+    isInitialized,
+    isLoading,
+    error,
+    reports,
+    currentReport,
+    reportStats,
+    warnings,
+    userWarnings,
+    blacklist,
+    isUserBlacklisted,
+    communityWarnings,
+    queryParams,
+    pagination,
+
+    // 服務管理
+    initializeService,
+    destroyService,
+
+    // 舉報管理
+    submitReport,
+    fetchReport,
+    updateStatus,
+    searchReports,
+    getStats,
+
+    // 警告管理
+    issueWarning,
+    fetchUserWarnings,
+
+    // 黑名單管理
+    blacklistUser,
+    checkBlacklistStatus,
+
+    // 社區警告管理
+    issueCommunityWarning,
+    fetchCommunityWarnings,
+
+    // 狀態管理
+    setCurrentReport: setCurrentReportAction,
+    updateQueryParams: updateQueryParamsAction,
+    setPagination: setPaginationAction,
+    clearError: clearErrorAction,
+    resetState: resetStateAction,
+
+    // 列表管理
+    addReportToList: addReportToListAction,
+    updateReportInList: updateReportInListAction,
+    removeReportFromList: removeReportFromListAction,
+    addWarningToList: addWarningToListAction,
+    updateWarningInList: updateWarningInListAction,
+    addBlacklistEntryToList: addBlacklistEntryToListAction,
+    updateBlacklistEntryInList: updateBlacklistEntryInListAction,
+    addCommunityWarningToList: addCommunityWarningToListAction,
+    updateCommunityWarningInList: updateCommunityWarningInListAction,
+
+    // 查詢函數
+    getReportById,
+    getWarningById,
+    getBlacklistEntryById,
+    getCommunityWarningById,
+    getReportsByStatus,
+    getReportsByType,
+    getReportsBySeverity,
+    getActiveWarnings,
+    getActiveBlacklistEntries,
+    getReportsByUser,
+    getReportsAgainstUser,
+    getWarningsByUser,
+    getBlacklistEntriesByUser,
+
+    // 統計函數
+    getPendingReportsCount,
+    getUnderReviewReportsCount,
+    getResolvedReportsCount,
+    getRejectedReportsCount,
+    getActiveWarningsCount,
+    getActiveBlacklistEntriesCount,
+    getActiveCommunityWarningsCount,
+
+    // 日期範圍查詢
+    getReportsByDateRange,
+    getWarningsByDateRange,
+    getBlacklistEntriesByDateRange,
+    getCommunityWarningsByDateRange,
+
+    // 特殊查詢
+    getReportsWithEvidence,
+    getAnonymousReports,
+    getNonAnonymousReports,
+    getHighPriorityReports,
+    getLowPriorityReports,
+    getExpiredWarnings,
+    getExpiredBlacklistEntries,
+    getExpiredCommunityWarnings,
+  };
+};

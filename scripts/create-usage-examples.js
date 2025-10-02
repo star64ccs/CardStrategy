@@ -2,14 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 使用範例創建腳本
- * 為 CardStrategy 項目創建詳細的使用範例
+ * 使用範例Create腳本
+ * 為 CardStrategy 項目Create詳細的使用範例
  */
 
 // eslint-disable-next-line no-console
 console.log('📖 創建 CardStrategy 使用範例...\n');
 
-// 創建 examples 目錄
+// Create examples Directory
 const examplesDir = path.join(__dirname, '../examples');
 if (!fs.existsSync(examplesDir)) {
   fs.mkdirSync(examplesDir, { recursive: true });
@@ -29,12 +29,12 @@ import {
 } from '../src/integrations/segment-integration';
 
 // ========================================
-// 🔐 用戶識別和管理
+// 🔐 User識別和Manage
 // ========================================
 
-// 1. 用戶註冊時識別
+// 1. UserRegister時識別
 export const handleUserSignUp = async (userData) => {
-  // 識別用戶
+  // 識別User
   identifyUser(userData.id, {
     name: userData.name,
     email: userData.email,
@@ -43,7 +43,7 @@ export const handleUserSignUp = async (userData) => {
     source: 'mobile_app'
   });
 
-  // 追蹤註冊事件
+  // TraceRegisterEvent
   trackSignUp({
     method: userData.signupMethod, // 'email', 'google', 'facebook'
     source: 'registration_screen',
@@ -51,7 +51,7 @@ export const handleUserSignUp = async (userData) => {
   });
 };
 
-// 2. 用戶登錄時識別
+// 2. UserLogin時識別
 export const handleUserLogin = async (userData) => {
   identifyUser(userData.id, {
     name: userData.name,
@@ -68,10 +68,10 @@ export const handleUserLogin = async (userData) => {
 };
 
 // ========================================
-// 🃏 卡片相關事件
+// 🃏 卡片相OffEvent
 // ========================================
 
-// 3. 卡片瀏覽追蹤
+// 3. 卡片瀏覽Trace
 export const handleCardView = (cardData, viewContext) => {
   trackCardViewed({
     id: cardData.id,
@@ -83,7 +83,7 @@ export const handleCardView = (cardData, viewContext) => {
     userId: viewContext.userId
   });
 
-  // 頁面瀏覽追蹤
+  // 頁面瀏覽Trace
   trackPageView({
     name: 'Card Detail',
     url: \`/cards/\${cardData.id}\`,
@@ -92,7 +92,7 @@ export const handleCardView = (cardData, viewContext) => {
   });
 };
 
-// 4. 卡片購買追蹤
+// 4. 卡片購買Trace
 export const handleCardPurchase = (purchaseData) => {
   trackCardPurchased({
     cardId: purchaseData.cardId,
@@ -106,7 +106,7 @@ export const handleCardPurchase = (purchaseData) => {
     transactionId: purchaseData.transactionId
   });
 
-  // 追蹤收入
+  // Trace收入
   trackEvent('Revenue', {
     amount: purchaseData.finalPrice,
     currency: 'USD',
@@ -116,10 +116,10 @@ export const handleCardPurchase = (purchaseData) => {
 };
 
 // ========================================
-// 🔍 搜索和瀏覽
+// 🔍 Search和瀏覽
 // ========================================
 
-// 5. 搜索行為追蹤
+// 5. SearchRow為Trace
 export const handleSearch = (searchData) => {
   trackSearch({
     query: searchData.query,
@@ -130,7 +130,7 @@ export const handleSearch = (searchData) => {
     userId: searchData.userId
   });
 
-  // 無結果搜索特別追蹤
+  // 無結果Search特別Trace
   if (searchData.resultsCount === 0) {
     trackEvent('Search No Results', {
       query: searchData.query,
@@ -140,7 +140,7 @@ export const handleSearch = (searchData) => {
   }
 };
 
-// 6. 分類瀏覽追蹤
+// 6. 分Class瀏覽Trace
 export const handleCategoryBrowse = (categoryData, userId) => {
   trackEvent('Category Browsed', {
     category: categoryData.name,
@@ -152,10 +152,10 @@ export const handleCategoryBrowse = (categoryData, userId) => {
 };
 
 // ========================================
-// ❤️ 用戶互動
+// ❤️ User互動
 // ========================================
 
-// 7. 願望清單操作
+// 7. 願望清單Operation
 export const handleWishlistAdd = (wishlistData) => {
   trackWishlistAdded({
     cardId: wishlistData.cardId,
@@ -171,7 +171,7 @@ export const handleWishlistRemove = (wishlistData) => {
   trackEvent('Wishlist Removed', {
     cardId: wishlistData.cardId,
     cardName: wishlistData.cardName,
-    timeInWishlist: wishlistData.timeInWishlist, // 毫秒
+    timeInWishlist: wishlistData.timeInWishlist, // 毫Second
     userId: wishlistData.userId
   });
 };
@@ -187,10 +187,10 @@ export const handleCardRating = (ratingData) => {
 };
 
 // ========================================
-// 🎯 應用行為分析
+// 🎯 ApplyRow為Analysis
 // ========================================
 
-// 9. 應用使用模式
+// 9. Apply使用模式
 export const handleAppSession = (sessionData) => {
   trackEvent('App Session', {
     sessionDuration: sessionData.duration,
@@ -201,7 +201,7 @@ export const handleAppSession = (sessionData) => {
   });
 };
 
-// 10. 功能使用追蹤
+// 10. 功能使用Trace
 export const handleFeatureUsage = (featureName, userId, metadata = {}) => {
   trackEvent('Feature Used', {
     featureName: featureName, // 'ai_recommendation', 'price_alert', 'collection_tracker'
@@ -215,13 +215,13 @@ export const handleFeatureUsage = (featureName, userId, metadata = {}) => {
 // 💡 使用示例
 // ========================================
 
-// 完整的用戶旅程示例
+// 完整的User旅程示例
 export const exampleUserJourney = async () => {
   const userId = 'user_123';
   const userName = 'John Collector';
   const userEmail = 'john@example.com';
 
-  // 1. 用戶註冊
+  // 1. UserRegister
   await handleUserSignUp({
     id: userId,
     name: userName,
@@ -229,7 +229,7 @@ export const exampleUserJourney = async () => {
     signupMethod: 'email'
   });
 
-  // 2. 搜索卡片
+  // 2. Search卡片
   handleSearch({
     query: 'Black Lotus',
     selectedCategory: 'Magic',
@@ -251,7 +251,7 @@ export const exampleUserJourney = async () => {
     userId: userId
   });
 
-  // 4. 添加到願望清單
+  // 4. Add到願望清單
   handleWishlistAdd({
     cardId: 'card_001',
     cardName: 'Black Lotus',
@@ -277,7 +277,7 @@ export const exampleUserJourney = async () => {
   console.log('✅ 用戶旅程事件追蹤完成');
 };
 
-// 導出所有函數
+// Export所有Function
 export {
   handleUserSignUp,
   handleUserLogin,
@@ -297,7 +297,7 @@ export {
 const sendGridExample = `// CardStrategy SendGrid 郵件範例
 const sgMail = require('@sendgrid/mail');
 
-// 設置 API Key
+// Settings API Key
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // ========================================
@@ -335,9 +335,9 @@ export const sendWelcomeEmail = async (userEmail, userName) => {
 
   try {
     await sgMail.send(msg);
-    console.log('✅ 歡迎郵件發送成功');
+    console.log('✅ 歡迎郵件發送Success');
   } catch (error) {
-    console.error('❌ 歡迎郵件發送失敗:', error);
+    console.error('❌ 歡迎郵件發送Failed:', error);
   }
 };
 
@@ -379,13 +379,13 @@ export const sendPriceAlertEmail = async (userEmail, cardData) => {
 
   try {
     await sgMail.send(msg);
-    console.log('✅ 價格提醒郵件發送成功');
+    console.log('✅ 價格提醒郵件發送Success');
   } catch (error) {
-    console.error('❌ 價格提醒郵件發送失敗:', error);
+    console.error('❌ 價格提醒郵件發送Failed:', error);
   }
 };
 
-// 3. 訂單確認郵件
+// 3. 訂單Confirm郵件
 export const sendOrderConfirmationEmail = async (userEmail, orderData) => {
   const msg = {
     to: userEmail,
@@ -429,13 +429,13 @@ export const sendOrderConfirmationEmail = async (userEmail, orderData) => {
 
   try {
     await sgMail.send(msg);
-    console.log('✅ 訂單確認郵件發送成功');
+    console.log('✅ 訂單確認郵件發送Success');
   } catch (error) {
-    console.error('❌ 訂單確認郵件發送失敗:', error);
+    console.error('❌ 訂單確認郵件發送Failed:', error);
   }
 };
 
-// 4. 密碼重置郵件
+// 4. PasswordReset郵件
 export const sendPasswordResetEmail = async (userEmail, resetToken) => {
   const resetUrl = \`https://cardstrategy.app/reset-password?token=\${resetToken}\`;
   
@@ -474,9 +474,9 @@ export const sendPasswordResetEmail = async (userEmail, resetToken) => {
 
   try {
     await sgMail.send(msg);
-    console.log('✅ 密碼重置郵件發送成功');
+    console.log('✅ 密碼重置郵件發送Success');
   } catch (error) {
-    console.error('❌ 密碼重置郵件發送失敗:', error);
+    console.error('❌ 密碼重置郵件發送Failed:', error);
   }
 };
 
@@ -527,13 +527,13 @@ export const sendWeeklySummaryEmail = async (userEmail, summaryData) => {
 
   try {
     await sgMail.send(msg);
-    console.log('✅ 週度摘要郵件發送成功');
+    console.log('✅ 週度摘要郵件發送Success');
   } catch (error) {
-    console.error('❌ 週度摘要郵件發送失敗:', error);
+    console.error('❌ 週度摘要郵件發送Failed:', error);
   }
 };
 
-// 導出所有函數
+// Export所有Function
 export {
   sendWelcomeEmail,
   sendPriceAlertEmail,
@@ -550,21 +550,21 @@ import storage from '@react-native-firebase/storage';
 import messaging from '@react-native-firebase/messaging';
 
 // ========================================
-// 🔐 身份驗證
+// 🔐 身份Verify
 // ========================================
 
-// 1. 用戶註冊
+// 1. UserRegister
 export const registerUser = async (email, password, displayName) => {
   try {
     const userCredential = await auth().createUserWithEmailAndPassword(email, password);
     const user = userCredential.user;
     
-    // 更新用戶資料
+    // UpdateUser資料
     await user.updateProfile({
       displayName: displayName
     });
     
-    // 在 Firestore 中創建用戶檔案
+    // 在 Firestore 中CreateUser檔案
     await firestore().collection('users').doc(user.uid).set({
       email: email,
       displayName: displayName,
@@ -577,49 +577,49 @@ export const registerUser = async (email, password, displayName) => {
       }
     });
     
-    console.log('✅ 用戶註冊成功:', user.uid);
+    console.log('✅ 用戶註冊Success:', user.uid);
     return user;
   } catch (error) {
-    console.error('❌ 用戶註冊失敗:', error);
+    console.error('❌ 用戶註冊Failed:', error);
     throw error;
   }
 };
 
-// 2. 用戶登錄
+// 2. UserLogin
 export const loginUser = async (email, password) => {
   try {
     const userCredential = await auth().signInWithEmailAndPassword(email, password);
     const user = userCredential.user;
     
-    // 更新最後登錄時間
+    // Update最後LoginTime
     await firestore().collection('users').doc(user.uid).update({
       lastLoginAt: firestore.FieldValue.serverTimestamp()
     });
     
-    console.log('✅ 用戶登錄成功:', user.uid);
+    console.log('✅ 用戶登錄Success:', user.uid);
     return user;
   } catch (error) {
-    console.error('❌ 用戶登錄失敗:', error);
+    console.error('❌ 用戶登錄Failed:', error);
     throw error;
   }
 };
 
-// 3. 用戶登出
+// 3. User登出
 export const logoutUser = async () => {
   try {
     await auth().signOut();
-    console.log('✅ 用戶登出成功');
+    console.log('✅ 用戶登出Success');
   } catch (error) {
-    console.error('❌ 用戶登出失敗:', error);
+    console.error('❌ 用戶登出Failed:', error);
     throw error;
   }
 };
 
 // ========================================
-// 📊 Firestore 數據操作
+// 📊 Firestore DataOperation
 // ========================================
 
-// 4. 用戶收藏管理
+// 4. User收藏Manage
 export const addToCollection = async (userId, cardData) => {
   try {
     const collectionRef = firestore()
@@ -640,12 +640,12 @@ export const addToCollection = async (userId, cardData) => {
     
     console.log('✅ 卡片已添加到收藏');
   } catch (error) {
-    console.error('❌ 添加收藏失敗:', error);
+    console.error('❌ 添加收藏Failed:', error);
     throw error;
   }
 };
 
-// 5. 願望清單管理
+// 5. 願望清單Manage
 export const addToWishlist = async (userId, cardData) => {
   try {
     const wishlistRef = firestore()
@@ -666,12 +666,12 @@ export const addToWishlist = async (userId, cardData) => {
     
     console.log('✅ 卡片已添加到願望清單');
   } catch (error) {
-    console.error('❌ 添加願望清單失敗:', error);
+    console.error('❌ 添加願望清單Failed:', error);
     throw error;
   }
 };
 
-// 6. 獲取用戶收藏
+// 6. GetUser收藏
 export const getUserCollection = async (userId) => {
   try {
     const snapshot = await firestore()
@@ -686,15 +686,15 @@ export const getUserCollection = async (userId) => {
       ...doc.data()
     }));
     
-    console.log(\`✅ 獲取收藏成功，共 \${collection.length} 張卡片\`);
+    console.log(\`✅ Get收藏Success，共 \${collection.length} 張卡片\`);
     return collection;
   } catch (error) {
-    console.error('❌ 獲取收藏失敗:', error);
+    console.error('❌ Get收藏Failed:', error);
     throw error;
   }
 };
 
-// 7. 實時價格監控
+// 7. 實時價格Monitor
 export const setupPriceMonitoring = (userId, callback) => {
   try {
     const unsubscribe = firestore()
@@ -714,16 +714,16 @@ export const setupPriceMonitoring = (userId, callback) => {
     console.log('✅ 價格監控已設置');
     return unsubscribe;
   } catch (error) {
-    console.error('❌ 設置價格監控失敗:', error);
+    console.error('❌ Settings價格監控Failed:', error);
     throw error;
   }
 };
 
 // ========================================
-// 📁 Storage 文件操作
+// 📁 Storage FileOperation
 // ========================================
 
-// 8. 上傳卡片圖片
+// 8. Upload卡片Graph片
 export const uploadCardImage = async (userId, imageUri, cardId) => {
   try {
     const filename = \`cards/\${userId}/\${cardId}_\${Date.now()}.jpg\`;
@@ -732,15 +732,15 @@ export const uploadCardImage = async (userId, imageUri, cardId) => {
     await reference.putFile(imageUri);
     const downloadUrl = await reference.getDownloadURL();
     
-    console.log('✅ 圖片上傳成功:', downloadUrl);
+    console.log('✅ 圖片上傳Success:', downloadUrl);
     return downloadUrl;
   } catch (error) {
-    console.error('❌ 圖片上傳失敗:', error);
+    console.error('❌ 圖片上傳Failed:', error);
     throw error;
   }
 };
 
-// 9. 上傳用戶頭像
+// 9. UploadUser頭像
 export const uploadUserAvatar = async (userId, imageUri) => {
   try {
     const filename = \`avatars/\${userId}/avatar.jpg\`;
@@ -749,38 +749,38 @@ export const uploadUserAvatar = async (userId, imageUri) => {
     await reference.putFile(imageUri);
     const downloadUrl = await reference.getDownloadURL();
     
-    // 更新用戶資料中的頭像 URL
+    // UpdateUser資料中的頭像 URL
     await firestore().collection('users').doc(userId).update({
       avatarUrl: downloadUrl,
       updatedAt: firestore.FieldValue.serverTimestamp()
     });
     
-    console.log('✅ 頭像上傳成功:', downloadUrl);
+    console.log('✅ 頭像上傳Success:', downloadUrl);
     return downloadUrl;
   } catch (error) {
-    console.error('❌ 頭像上傳失敗:', error);
+    console.error('❌ 頭像上傳Failed:', error);
     throw error;
   }
 };
 
 // ========================================
-// 🔔 推送通知
+// 🔔 PushNotification
 // ========================================
 
-// 10. 設置推送通知
+// 10. SettingsPushNotification
 export const setupPushNotifications = async (userId) => {
   try {
-    // 請求權限
+    // Request權限
     const authStatus = await messaging().requestPermission();
     const enabled =
       authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (enabled) {
-      // 獲取 FCM Token
+      // Get FCM Token
       const fcmToken = await messaging().getToken();
       
-      // 保存 Token 到 Firestore
+      // Save Token 到 Firestore
       await firestore().collection('users').doc(userId).update({
         fcmToken: fcmToken,
         notificationSettings: {
@@ -789,39 +789,39 @@ export const setupPushNotifications = async (userId) => {
         }
       });
       
-      console.log('✅ 推送通知設置成功');
+      console.log('✅ 推送通知SettingsSuccess');
       return fcmToken;
     } else {
       console.log('❌ 推送通知權限被拒絕');
       return null;
     }
   } catch (error) {
-    console.error('❌ 設置推送通知失敗:', error);
+    console.error('❌ Settings推送通知Failed:', error);
     throw error;
   }
 };
 
-// 11. 監聽推送通知
+// 11. 監聽PushNotification
 export const setupNotificationListeners = () => {
-  // 前台消息監聽
+  // 前台Message監聽
   const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
     console.log('收到前台通知:', remoteMessage);
-    // 這裡可以顯示應用內通知
+    // 這裡可以ShowApply內Notification
   });
 
-  // 背景/退出狀態下點擊通知
+  // 背景/ExitStatus下點擊Notification
   messaging().onNotificationOpenedApp(remoteMessage => {
     console.log('從背景狀態打開應用:', remoteMessage);
-    // 處理導航邏輯
+    // Handle導航邏輯
   });
 
-  // 應用完全關閉時點擊通知啟動
+  // Apply完全Off閉時點擊NotificationStart
   messaging()
     .getInitialNotification()
     .then(remoteMessage => {
       if (remoteMessage) {
         console.log('從關閉狀態啟動應用:', remoteMessage);
-        // 處理導航邏輯
+        // Handle導航邏輯
       }
     });
 
@@ -829,10 +829,10 @@ export const setupNotificationListeners = () => {
 };
 
 // ========================================
-// 📊 分析和統計
+// 📊 Analysis和Statistics
 // ========================================
 
-// 12. 記錄用戶行為
+// 12. RecordUserRow為
 export const logUserActivity = async (userId, activity) => {
   try {
     await firestore().collection('analytics').add({
@@ -844,26 +844,26 @@ export const logUserActivity = async (userId, activity) => {
       version: '1.0.0'
     });
     
-    console.log('✅ 用戶行為記錄成功');
+    console.log('✅ 用戶行為記錄Success');
   } catch (error) {
-    console.error('❌ 記錄用戶行為失敗:', error);
+    console.error('❌ 記錄用戶行為Failed:', error);
   }
 };
 
-// 13. 獲取用戶統計
+// 13. GetUserStatistics
 export const getUserStats = async (userId) => {
   try {
     const userDoc = await firestore().collection('users').doc(userId).get();
     const userData = userDoc.data();
     
-    // 獲取收藏統計
+    // Get收藏Statistics
     const collectionSnapshot = await firestore()
       .collection('users')
       .doc(userId)
       .collection('collection')
       .get();
     
-    // 獲取願望清單統計
+    // Get願望清單Statistics
     const wishlistSnapshot = await firestore()
       .collection('users')
       .doc(userId)
@@ -885,15 +885,15 @@ export const getUserStats = async (userId) => {
       }
     };
     
-    console.log('✅ 獲取用戶統計成功');
+    console.log('✅ Get用戶統計Success');
     return stats;
   } catch (error) {
-    console.error('❌ 獲取用戶統計失敗:', error);
+    console.error('❌ Get用戶統計Failed:', error);
     throw error;
   }
 };
 
-// 導出所有函數
+// Export所有Function
 export {
   registerUser,
   loginUser,
@@ -911,7 +911,7 @@ export {
 };`;
 
 try {
-  // 寫入範例文件
+  // Write範例File
   fs.writeFileSync(path.join(examplesDir, 'segment-usage.js'), segmentExample);
   // eslint-disable-next-line no-console
   console.log('✅ 創建 Segment 使用範例: examples/segment-usage.js');
@@ -924,31 +924,31 @@ try {
   // eslint-disable-next-line no-console
   console.log('✅ 創建 Firebase 使用範例: examples/firebase-examples.js');
 
-  // 創建範例索引文件
-  const indexExample = `// CardStrategy 使用範例索引
-// 導入所有範例模組
+  // Create範例IndexFile
+  const indexExample = `// CardStrategy 使用範例Index
+// Import所有範例模組
 
-// Segment 分析範例
+// Segment Analysis範例
 export * from './segment-usage';
 
 // SendGrid 郵件範例
 export * from './sendgrid-examples';
 
-// Firebase 服務範例
+// Firebase Service範例
 export * from './firebase-examples';
 
-// 快速開始範例
+// 快速Begin範例
 export const quickStartExamples = {
-  // 用戶註冊流程
+  // UserRegister流程
   userRegistration: async (userData) => {
     const { registerUser } = await import('./firebase-examples');
     const { handleUserSignUp } = await import('./segment-usage');
     const { sendWelcomeEmail } = await import('./sendgrid-examples');
     
-    // 1. Firebase 註冊
+    // 1. Firebase Register
     const user = await registerUser(userData.email, userData.password, userData.name);
     
-    // 2. Segment 追蹤
+    // 2. Segment Trace
     await handleUserSignUp({
       id: user.uid,
       name: userData.name,
@@ -956,7 +956,7 @@ export const quickStartExamples = {
       signupMethod: 'email'
     });
     
-    // 3. 發送歡迎郵件
+    // 3. Send歡迎郵件
     await sendWelcomeEmail(userData.email, userData.name);
     
     return user;
@@ -968,16 +968,16 @@ export const quickStartExamples = {
     const { sendOrderConfirmationEmail } = await import('./sendgrid-examples');
     const { logUserActivity } = await import('./firebase-examples');
     
-    // 1. Segment 追蹤購買
+    // 1. Segment Trace購買
     await handleCardPurchase(purchaseData);
     
-    // 2. Firebase 記錄活動
+    // 2. Firebase Record活動
     await logUserActivity(purchaseData.userId, {
       type: 'card_purchase',
       data: purchaseData
     });
     
-    // 3. 發送確認郵件
+    // 3. SendConfirm郵件
     await sendOrderConfirmationEmail(purchaseData.userEmail, purchaseData);
     
     return { success: true };
@@ -1000,7 +1000,7 @@ console.log('💡 查看 examples/ 目錄獲取詳細範例代碼');`;
   // eslint-disable-next-line no-console
   console.log('   📧 SendGrid 郵件: examples/sendgrid-examples.js');
   // eslint-disable-next-line no-console
-  console.log('   🔥 Firebase 服務: examples/firebase-examples.js');
+  console.log('   🔥 Firebase Service: examples/firebase-examples.js');
   // eslint-disable-next-line no-console
   console.log('   📖 快速開始: examples/index.js');
 
@@ -1015,6 +1015,6 @@ console.log('💡 查看 examples/ 目錄獲取詳細範例代碼');`;
 
 } catch (error) {
   // eslint-disable-next-line no-console
-  console.error('❌ 創建使用範例失敗:', error.message);
+  console.error('❌ Create使用範例Failed:', error.message);
   process.exit(1);
 }

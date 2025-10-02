@@ -4,7 +4,7 @@ const { getMarketDataModel } = require('../models/MarketData');
 const { getPredictionModel } = require('../models/PredictionModel');
 const { getCardModel } = require('../models/Card');
 
-// 注意：在實際部署中需要安裝 TensorFlow.js
+// 注意：在實際Deploy中需要Install TensorFlow.js
 // npm install @tensorflow/tfjs-node
 
 class EnhancedPredictionService {
@@ -76,7 +76,7 @@ class EnhancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('增強的LSTM預測錯誤:', error);
+      logger.error('增強的LSTM預測Error:', error);
       throw error;
     }
   }
@@ -87,7 +87,7 @@ class EnhancedPredictionService {
 // eslint-disable-next-line no-unused-vars
       const prices = historicalData.map((d) => parseFloat(d.closePrice));
 
-      // 序列編碼
+      // 序ColumnEncode
       const sequence = this.encodeSequence(prices);
 
       // 注意力機制預測
@@ -113,7 +113,7 @@ class EnhancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('Transformer預測錯誤:', error);
+      logger.error('Transformer預測Error:', error);
       throw error;
     }
   }
@@ -126,7 +126,7 @@ class EnhancedPredictionService {
 // eslint-disable-next-line no-unused-vars
       const volumes = historicalData.map((d) => parseFloat(d.volume || 0));
 
-      // 計算多個技術指標
+      // 計算Multiple技術指標
       const indicators = {
         rsi: this.technicalIndicators.calculateRSI(prices),
         macd: this.technicalIndicators.calculateMACD(prices),
@@ -158,15 +158,15 @@ class EnhancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('技術指標集成預測錯誤:', error);
+      logger.error('技術指標集成預測Error:', error);
       throw error;
     }
   }
 
-  // 動態集成預測
+  // Dynamic集成預測
   async dynamicEnsemblePrediction(historicalData, timeframe) {
     try {
-      // 獲取各個模型的預測
+      // Get各個模型的預測
 // eslint-disable-next-line no-unused-vars
       const predictions = {};
 // eslint-disable-next-line no-unused-vars
@@ -182,15 +182,15 @@ class EnhancedPredictionService {
           );
           predictions[modelName] = prediction;
         } catch (error) {
-          logger.warn(`模型 ${modelName} 預測失敗:`, error.message);
+          logger.warn(`模型 ${modelName} 預測Failed:`, error.message);
         }
       }
 
       if (Object.keys(predictions).length === 0) {
-        throw new Error('所有模型預測都失敗了');
+        throw new Error('所有模型預測都Failed了');
       }
 
-      // 動態調整權重
+      // Dynamic調整權重
       await this.updateDynamicWeights(predictions);
 
       // 加權平均預測
@@ -209,12 +209,12 @@ class EnhancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('動態集成預測錯誤:', error);
+      logger.error('動態集成預測Error:', error);
       throw error;
     }
   }
 
-  // 主要預測方法
+  // 主要預測Method
   async predictCardPrice(cardId, timeframe, modelType = 'dynamicEnsemble') {
     try {
 // eslint-disable-next-line no-unused-vars
@@ -222,22 +222,22 @@ class EnhancedPredictionService {
       const PredictionModel = getPredictionModel();
 
       if (!MarketData || !PredictionModel) {
-        throw new Error('數據模型初始化失敗');
+        throw new Error('數據模型InitializeFailed');
       }
 
-      // 獲取歷史市場數據
+      // Get歷史市場Data
 // eslint-disable-next-line no-unused-vars
       const historicalData = await MarketData.findAll({
         where: { cardId, isActive: true },
         order: [['date', 'ASC']],
-        limit: 200, // 增加數據量以支持更複雜的模型
+        limit: 200, // 增加Data量以Support更複雜的模型
       });
 
       if (historicalData.length < 10) {
         throw new Error('歷史數據不足，無法進行預測');
       }
 
-      // 選擇預測模型
+      // Select預測模型
 // eslint-disable-next-line no-unused-vars
       const model = this.models[modelType] || this.models.dynamicEnsemble;
 // eslint-disable-next-line no-unused-vars
@@ -249,7 +249,7 @@ class EnhancedPredictionService {
         prediction.factors.volatility
       );
 
-      // 保存預測結果
+      // Save預測結果
       const targetDate = new Date();
       targetDate.setDate(
         targetDate.getDate() + this.getDaysFromTimeframe(timeframe)
@@ -294,12 +294,12 @@ class EnhancedPredictionService {
         modelParameters: prediction.modelParameters,
       };
     } catch (error) {
-      logger.error('增強預測卡牌價格錯誤:', error);
+      logger.error('增強預測卡牌價格Error:', error);
       throw error;
     }
   }
 
-  // 輔助方法
+  // 輔助Method
   extractAdvancedFeatures(prices, volumes, indicators) {
     const features = {};
 
@@ -327,7 +327,7 @@ class EnhancedPredictionService {
   }
 
   async advancedLSTMPredict(features, timeframe) {
-    // 簡化的LSTM實現（實際部署中應使用TensorFlow.js）
+    // 簡化的LSTM實現（實際Deploy中應使用TensorFlow.js）
 // eslint-disable-next-line no-unused-vars
     const daysToPredict = this.getDaysFromTimeframe(timeframe);
 
@@ -335,25 +335,25 @@ class EnhancedPredictionService {
 // eslint-disable-next-line no-unused-vars
     let prediction = 100; // 基礎價格
 
-    // 根據技術指標調整預測
+    // Root據技術指標調整預測
     if (features.rsi > 70) prediction *= 0.95; // 超買
     if (features.rsi < 30) prediction *= 1.05; // 超賣
 
     if (features.macd > features.macdSignal) prediction *= 1.02; // 上升趨勢
     if (features.macd < features.macdSignal) prediction *= 0.98; // 下降趨勢
 
-    // 根據布林帶位置調整
+    // Root據布林帶位置調整
     if (features.bollingerPosition > 0.8) prediction *= 0.97; // 接近上軌
     if (features.bollingerPosition < 0.2) prediction *= 1.03; // 接近下軌
 
-    // 時間框架調整
+    // TimeFramework調整
     prediction *= Math.pow(1 + features.priceChange * 0.1, daysToPredict / 30);
 
     return prediction;
   }
 
   encodeSequence(prices) {
-    // 簡化的序列編碼
+    // 簡化的序ColumnEncode
     const sequence = [];
     for (let i = 0; i < prices.length; i++) {
 // eslint-disable-next-line no-unused-vars
@@ -380,10 +380,10 @@ class EnhancedPredictionService {
       prediction += sequence[i] * attentionWeights[i];
     }
 
-    // 時間框架調整
+    // TimeFramework調整
     prediction *= Math.pow(1.01, daysToPredict);
 
-    return prediction * 100; // 轉換回價格範圍
+    return prediction * 100; // Convert回價格範圍
   }
 
   calculateAttentionWeights(sequence) {
@@ -392,7 +392,7 @@ class EnhancedPredictionService {
     const { length } = sequence;
 
     for (let i = 0; i < length; i++) {
-      // 越近的數據權重越大
+      // 越近的Data權重越大
       const weight = Math.exp((i - length + 1) / 10);
       weights.push(weight);
     }
@@ -412,7 +412,7 @@ class EnhancedPredictionService {
 
     // RSI信號
     if (indicators.rsi < 30) prediction *= 1.05; // 超賣反彈
-    if (indicators.rsi > 70) prediction *= 0.95; // 超買回調
+    if (indicators.rsi > 70) prediction *= 0.95; // 超買Callback
 
     // MACD信號
     if (indicators.macd.macd > indicators.macd.signal) prediction *= 1.02;
@@ -425,14 +425,14 @@ class EnhancedPredictionService {
     if (bbPosition > 0.8) prediction *= 0.97;
     if (bbPosition < 0.2) prediction *= 1.03;
 
-    // 時間框架調整
+    // TimeFramework調整
     prediction *= Math.pow(1.005, daysToPredict);
 
     return prediction;
   }
 
   async updateDynamicWeights(predictions) {
-    // 根據模型歷史表現調整權重
+    // Root據模型歷史Table現調整權重
 // eslint-disable-next-line no-unused-vars
     const recentPerformance = await this.calculateRecentPerformance();
 
@@ -470,7 +470,7 @@ class EnhancedPredictionService {
     };
   }
 
-  // 置信度計算方法
+  // 置信度計算Method
   calculateEnhancedConfidence(features, prediction) {
 // eslint-disable-next-line no-unused-vars
     const dataQuality = Math.min(1, Object.keys(features).length / 10);
@@ -504,7 +504,7 @@ class EnhancedPredictionService {
     return Math.max(0.1, Math.min(0.95, confidence));
   }
 
-  // 趨勢計算方法
+  // 趨勢計算Method
   calculateAdvancedTrend(features) {
 // eslint-disable-next-line no-unused-vars
     const momentum = features.priceMomentum || 0;
@@ -553,7 +553,7 @@ class EnhancedPredictionService {
     return 'stable';
   }
 
-  // 輔助計算方法
+  // 輔助計算Method
   calculateTechnicalStrength(features) {
     const rsi = features.rsi || 50;
     const macd = features.macd || 0;
@@ -609,7 +609,7 @@ class EnhancedPredictionService {
 // eslint-disable-next-line no-unused-vars
     const count = 0;
 
-    // 檢查指標一致性
+    // Check指標一致性
     const signals = [];
     if (indicators.rsi < 30) signals.push('buy');
     if (indicators.rsi > 70) signals.push('sell');
@@ -633,7 +633,7 @@ class EnhancedPredictionService {
     return 'high';
   }
 
-  // 工具方法
+  // ToolMethod
   getDaysFromTimeframe(timeframe) {
     const daysMap = {
       '1d': 1,
@@ -677,7 +677,7 @@ class EnhancedPredictionService {
   }
 
   async calculateRecentPerformance() {
-    // 簡化的性能計算（實際實現中應從數據庫獲取）
+    // 簡化的性能計算（實際實現中應從DatabaseGet）
     return {
       enhancedLSTM: 0.85,
       transformer: 0.82,
@@ -710,7 +710,7 @@ class EnhancedPredictionService {
   }
 }
 
-// 技術指標計算類
+// 技術指標計算Class
 class TechnicalIndicators {
   calculateRSI(prices, period = 14) {
     const gains = [];

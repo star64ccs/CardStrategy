@@ -2,9 +2,9 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { errorHandler } from '@/core/utils/errorHandler';
 
 /**
- * 組件錯誤處理模板
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * ComponentErrorHandle模板
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -29,10 +29,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // 記錄錯誤
+    // RecordError
     errorHandler.handleError(error, 'ErrorBoundary');
     
-    // 調用自定義錯誤處理
+    // 調用CustomErrorHandle
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
@@ -64,7 +64,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 }
 
-// Hook 錯誤處理
+// Hook ErrorHandle
 export function useErrorHandler() {
   const _handleError = (error: Error, context: string) => {
     return errorHandler.handleError(error, context);

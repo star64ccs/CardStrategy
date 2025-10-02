@@ -1,4 +1,4 @@
-// 業務指標分析服務
+// 業務指標AnalysisService
 import type {
   BusinessMetrics,
   BusinessMetricsFilter,
@@ -52,7 +52,7 @@ class BusinessMetricsService {
     return BusinessMetricsService.instance;
   }
 
-  // 初始化服務
+  // InitializeService
   public async initialize(
     config?: Partial<BusinessMetricsConfig>
   ): Promise<boolean> {
@@ -65,22 +65,22 @@ class BusinessMetricsService {
         await this.initializeAnalytics();
         this.startPeriodicUpdates();
         this.isInitialized = true;
-        console.log('業務指標分析服務初始化成功');
+        console.log('業務指標分析ServiceInitializeSuccess');
         return true;
       }
       return false;
     } catch (error) {
-      console.error('業務指標分析服務初始化失敗:', error);
+      console.error('業務指標分析ServiceInitializeFailed:', error);
       return false;
     }
   }
 
-  // 獲取業務指標分析
+  // Get業務指標Analysis
   public async getBusinessMetrics(
     filter?: BusinessMetricsFilter
   ): Promise<BusinessMetricsAnalysisResponse> {
     if (!this.isInitialized) {
-      throw new Error('服務未初始化');
+      throw new Error('Service未Initialize');
     }
 
     try {
@@ -114,17 +114,17 @@ class BusinessMetricsService {
         },
       };
     } catch (error) {
-      console.error('獲取業務指標分析失敗:', error);
-      throw new Error('獲取業務指標分析失敗');
+      console.error('Get業務指標分析Failed:', error);
+      throw new Error('Get業務指標分析Failed');
     }
   }
 
-  // 生成業務指標報告
+  // 生成業務指標Report
   public async generateReport(
     filter?: BusinessMetricsFilter
   ): Promise<BusinessMetricsReport> {
     if (!this.isInitialized) {
-      throw new Error('服務未初始化');
+      throw new Error('Service未Initialize');
     }
 
     try {
@@ -153,12 +153,12 @@ class BusinessMetricsService {
 
       return report;
     } catch (error) {
-      console.error('生成業務指標報告失敗:', error);
-      throw new Error('生成業務指標報告失敗');
+      console.error('生成業務指標報告Failed:', error);
+      throw new Error('生成業務指標報告Failed');
     }
   }
 
-  // 導出數據
+  // ExportData
   public async exportData(
     analysis: BusinessMetricsAnalysisResponse,
     options: BusinessMetricsExportOptions
@@ -190,11 +190,11 @@ class BusinessMetricsService {
       ) {
         throw error;
       }
-      throw new Error('導出失敗');
+      throw new Error('導出Failed');
     }
   }
 
-  // 創建警報
+  // CreateAlert
   public createAlert(
     alert: Omit<BusinessMetricsAlert, 'id' | 'timestamp' | 'acknowledged'>
   ): BusinessMetricsAlert {
@@ -211,7 +211,7 @@ class BusinessMetricsService {
     return newAlert;
   }
 
-  // 更新警報
+  // UpdateAlert
   public updateAlert(
     alertId: string,
     updates: Partial<BusinessMetricsAlert>
@@ -223,7 +223,7 @@ class BusinessMetricsService {
     return this.alerts[index];
   }
 
-  // 刪除警報
+  // DeleteAlert
   public deleteAlert(alertId: string): boolean {
     const _index = this.alerts.findIndex(alert => alert.id === alertId);
     if (index === -1) return false;
@@ -232,23 +232,23 @@ class BusinessMetricsService {
     return true;
   }
 
-  // 獲取所有警報
+  // Get所有Alert
   public getAlerts(): BusinessMetricsAlert[] {
     return [...this.alerts];
   }
 
-  // 獲取警報
+  // GetAlert
   public async getAlert(alertId: string): Promise<BusinessMetricsAlert | null> {
     const _alert = this.alerts.find(a => a.id === alertId);
     return alert || null;
   }
 
-  // 獲取配置
+  // GetConfigure
   public getConfig(): BusinessMetricsConfig {
     return { ...this.config };
   }
 
-  // 更新配置
+  // UpdateConfigure
   public updateConfig(updates: Partial<BusinessMetricsConfig>): void {
     this.config = { ...this.config, ...updates };
 
@@ -261,7 +261,7 @@ class BusinessMetricsService {
     }
   }
 
-  // 添加事件監聽器
+  // AddEvent監聽器
   public addEventListener(eventType: EventType, listener: EventListener): void {
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, []);
@@ -269,7 +269,7 @@ class BusinessMetricsService {
     this.eventListeners.get(eventType).push(listener);
   }
 
-  // 移除事件監聽器
+  // RemoveEvent監聽器
   public removeEventListener(
     eventType: EventType,
     listener: EventListener
@@ -283,32 +283,32 @@ class BusinessMetricsService {
     }
   }
 
-  // 獲取報告
+  // GetReport
   public getReports(): BusinessMetricsReport[] {
     return [...this.reports];
   }
 
-  // 獲取洞察
+  // Get洞察
   public getInsights(): BusinessMetricsInsight[] {
     return [...this.insights];
   }
 
-  // 獲取建議
+  // Get建議
   public getRecommendations(): BusinessMetricsRecommendation[] {
     return [...this.recommendations];
   }
 
-  // 獲取實時指標
+  // Get實時指標
   public getRealTimeMetrics(): BusinessMetrics {
     return { ...this.metrics };
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): BusinessMetricsConfig {
     return {
       enabled: true,
-      updateInterval: 300000, // 5分鐘
+      updateInterval: 300000, // 5Minute
       retentionPeriod: 90, // 90天
       alertThresholds: {
         revenue: {
@@ -466,7 +466,7 @@ class BusinessMetricsService {
         competitiveAnalysis: {
           competitors: ['competitor_a', 'competitor_b', 'competitor_c'],
           ourPosition: 0.7,
-          competitiveAdvantages: ['技術領先', '客戶服務', '價格優勢'],
+          competitiveAdvantages: ['技術領先', '客戶Service', '價格優勢'],
           threats: ['新競爭者進入', '技術變革', '市場飽和'],
         },
       },
@@ -574,7 +574,7 @@ class BusinessMetricsService {
   }
 
   private async initializeAnalytics(): Promise<void> {
-    // 模擬初始化過程
+    // 模擬Initialize過程
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
@@ -587,7 +587,7 @@ class BusinessMetricsService {
   }
 
   private updateMetrics(): void {
-    // 模擬實時數據更新
+    // 模擬實時DataUpdate
     this.metrics.revenue.totalRevenue += Math.random() * 10000;
     this.metrics.profit.netProfit += Math.random() * 2000;
     this.metrics.customer.totalCustomers += Math.floor(Math.random() * 10);
@@ -600,7 +600,7 @@ class BusinessMetricsService {
     metrics: BusinessMetrics,
     filter: BusinessMetricsFilter
   ): BusinessMetrics {
-    // 簡化的過濾邏輯
+    // 簡化的Filter邏輯
     return { ...metrics };
   }
 
@@ -696,7 +696,7 @@ class BusinessMetricsService {
   }
 
   private checkAlerts(): void {
-    // 檢查收入警報
+    // Check收入Alert
     if (
       this.metrics.revenue.revenueGrowthRate <
       this.config.alertThresholds.revenue.maxDecline
@@ -717,7 +717,7 @@ class BusinessMetricsService {
       });
     }
 
-    // 檢查客戶流失警報
+    // Check客戶流失Alert
     if (
       this.metrics.customer.customerChurnRate >
       this.config.alertThresholds.customer.maxChurn
@@ -778,7 +778,7 @@ class BusinessMetricsService {
   }
 
   private calculateDataPoints(metrics: BusinessMetrics): number {
-    // 簡化的數據點計算
+    // 簡化的Data點計算
     return Object.keys(metrics).length * 10;
   }
 
@@ -789,7 +789,7 @@ class BusinessMetricsService {
         try {
           listener(data);
         } catch (error) {
-          console.error('事件監聽器執行錯誤:', error);
+          console.error('事件監聽器執行Error:', error);
         }
       });
     }

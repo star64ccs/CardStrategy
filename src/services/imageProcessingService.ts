@@ -45,7 +45,7 @@ class ImageProcessingService {
   };
 
   /**
-   * 處理圖像（壓縮、調整大小、格式轉換）
+   * HandleGraph像（壓縮、調整大小、格式Convert）
    */
   async processImage(
     imageUri: string,
@@ -56,7 +56,7 @@ class ImageProcessingService {
 
       logger.info('開始處理圖像', { uri: imageUri, options: finalOptions });
 
-      // 獲取圖像信息
+      // GetGraph像Information
       const _imageInfo = await this.getImageInfo(imageUri);
 
       // 計算新的尺寸
@@ -67,12 +67,12 @@ class ImageProcessingService {
         finalOptions.maxHeight
       );
 
-      // 處理圖像（簡化版本，實際應該使用 ImageManipulator）
+      // HandleGraph像（簡化Version，實際應該使用 ImageManipulator）
       const _processedImage = {
-        uri: imageUri, // 簡化處理，實際應該返回處理後的 URI
+        uri: imageUri, // 簡化Handle，實際應該ReturnHandle後的 URI
       };
 
-      // 獲取處理後的圖像信息
+      // GetHandle後的Graph像Information
       const _processedInfo = await this.getImageInfo(processedImage.uri);
 
       logger.info('圖像處理完成', {
@@ -89,19 +89,19 @@ class ImageProcessingService {
         format: finalOptions.format,
       };
     } catch (error: unknown) {
-      logger.error('圖像處理失敗', { error: error.message, imageUri });
-      throw new Error(`圖像處理失敗: ${error.message}`);
+      logger.error('圖像HandleFailed', { error: error.message, imageUri });
+      throw new Error(`圖像HandleFailed: ${error.message}`);
     }
   }
 
   /**
-   * 從圖像中提取文字（OCR）
+   * 從Graph像中提取文字（OCR）
    */
   async extractText(imageUri: string): Promise<TextExtractionResult> {
     try {
       logger.info('開始文字提取', { imageUri });
 
-      // 模擬 OCR 處理
+      // 模擬 OCR Handle
       const mockResult: TextExtractionResult = {
         text: '青眼白龍\n攻擊力: 3000\n防禦力: 2500',
         confidence: 0.88,
@@ -133,13 +133,13 @@ class ImageProcessingService {
 
       return mockResult;
     } catch (error: unknown) {
-      logger.error('文字提取失敗', { error: error.message, imageUri });
-      throw new Error(`文字提取失敗: ${error.message}`);
+      logger.error('文字提取Failed', { error: error.message, imageUri });
+      throw new Error(`文字提取Failed: ${error.message}`);
     }
   }
 
   /**
-   * 獲取圖像信息
+   * GetGraph像Information
    */
   private async getImageInfo(
     imageUri: string
@@ -151,20 +151,20 @@ class ImageProcessingService {
         throw new Error('圖像文件不存在');
       }
 
-      // 模擬圖像尺寸信息
+      // 模擬Graph像尺寸Information
       return {
         width: 1920,
         height: 1080,
         size: fileInfo.size || 1024000,
       };
     } catch (error: unknown) {
-      logger.error('獲取圖像信息失敗', { error: error.message, imageUri });
-      throw new Error(`獲取圖像信息失敗: ${error.message}`);
+      logger.error('Get圖像信息Failed', { error: error.message, imageUri });
+      throw new Error(`Get圖像信息Failed: ${error.message}`);
     }
   }
 
   /**
-   * 計算圖像尺寸
+   * 計算Graph像尺寸
    */
   private calculateDimensions(
     originalWidth: number,
@@ -188,7 +188,7 @@ class ImageProcessingService {
   }
 
   /**
-   * 驗證圖像格式
+   * VerifyGraph像格式
    */
   validateImageFormat(imageUri: string): boolean {
     const _validExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
@@ -197,7 +197,7 @@ class ImageProcessingService {
   }
 
   /**
-   * 檢查圖像大小
+   * CheckGraph像大小
    */
   async checkImageSize(
     imageUri: string,
@@ -212,5 +212,5 @@ class ImageProcessingService {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _imageProcessingService = new ImageProcessingService();

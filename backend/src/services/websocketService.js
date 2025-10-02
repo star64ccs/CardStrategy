@@ -15,11 +15,11 @@ class WebSocketService {
   }
 
   /**
-   * 初始化 WebSocket 服務
+   * Initialize WebSocket Service
    */
   initialize(server) {
     try {
-      // 創建 Socket.IO 服務器
+      // Create Socket.IO Server
       this.io = new Server(server, {
         cors: {
           origin: [
@@ -39,35 +39,35 @@ class WebSocketService {
         upgradeTimeout: 10000,
         maxHttpBufferSize: 1e8,
         allowRequest: (req, callback) => {
-          // 允許所有請求，在連接時進行身份驗證
+          // Allow所有Request，在Connect時進Row身份Verify
           callback(null, true);
         },
       });
 
-      // 初始化 Redis 客戶端
+      // Initialize Redis Client
       this.initializeRedis();
 
-      // 設置中間件
+      // Settings中間件
       this.setupMiddleware();
 
-      // 設置事件處理器
+      // SettingsEventHandle器
       this.setupEventHandlers();
 
-      // 設置房間管理
+      // Settings房間Manage
       this.setupRoomManagement();
 
-      // 設置定期清理
+      // Settings定期清理
       this.setupPeriodicCleanup();
 
-      logger.info('WebSocket 服務初始化完成');
+      logger.info('WebSocket ServiceInitialize完成');
     } catch (error) {
-      logger.error('WebSocket 服務初始化失敗:', error);
+      logger.error('WebSocket ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 初始化 Redis 客戶端
+   * Initialize Redis Client
    */
   async initializeRedis() {
     try {
@@ -75,8 +75,8 @@ class WebSocketService {
         url: process.env.REDIS_URL || 'redis://localhost:6379',
         retry_strategy: (options) => {
           if (options.error && options.error.code === 'ECONNREFUSED') {
-            logger.error('Redis 服務器拒絕連接');
-            return new Error('Redis 服務器不可用');
+            logger.error('Redis Server拒絕Connect');
+            return new Error('Redis Server不可用');
           }
           if (options.total_retry_time > 1000 * 60 * 60) {
             logger.error('Redis 重試時間超過限制');
@@ -91,19 +91,19 @@ class WebSocketService {
       });
 
       await this.redisClient.connect();
-      logger.info('Redis 客戶端連接成功');
+      logger.info('Redis 客戶端ConnectSuccess');
     } catch (error) {
-      logger.error('Redis 客戶端連接失敗:', error);
-      // 如果 Redis 不可用，使用內存存儲
+      logger.error('Redis 客戶端ConnectFailed:', error);
+      // 如果 Redis 不可用，使用MemoryStorage
       this.redisClient = null;
     }
   }
 
   /**
-   * 設置中間件
+   * Settings中間件
    */
   setupMiddleware() {
-    // 身份驗證中間件
+    // 身份Verify中間件
     this.io.use(async (socket, next) => {
       try {
         const token =
@@ -113,25 +113,25 @@ class WebSocketService {
           return next(new Error('未提供認證令牌'));
         }
 
-        // 移除 Bearer 前綴
+        // Remove Bearer 前綴
         const cleanToken = token.replace('Bearer ', '');
 
-        // 驗證 JWT 令牌
+        // Verify JWT 令牌
         const decoded = jwt.verify(cleanToken, process.env.JWT_SECRET);
 
-        // 將用戶信息添加到 socket
+        // 將UserInformationAdd到 socket
         socket.userId = decoded.id;
         socket.userRole = decoded.role;
         socket.userData = decoded;
 
         next();
       } catch (error) {
-        logger.error('WebSocket 身份驗證失敗:', error);
-        next(new Error('身份驗證失敗'));
+        logger.error('WebSocket 身份VerifyFailed:', error);
+        next(new Error('身份VerifyFailed'));
       }
     });
 
-    // 速率限制中間件
+    // 速率Limit中間件
     this.io.use(async (socket, next) => {
       try {
         const clientId = socket.handshake.address;
@@ -149,20 +149,20 @@ class WebSocketService {
 
         next();
       } catch (error) {
-        logger.error('WebSocket 速率限制檢查失敗:', error);
+        logger.error('WebSocket 速率限制CheckFailed:', error);
         next();
       }
     });
   }
 
   /**
-   * 設置事件處理器
+   * SettingsEventHandle器
    */
   setupEventHandlers() {
     this.io.on('connection', (socket) => {
-      logger.info(`用戶連接: ${socket.userId} (${socket.handshake.address})`);
+      logger.info(`用戶Connect: ${socket.userId} (${socket.handshake.address})`);
 
-      // 將用戶添加到連接映射
+      // 將UserAdd到ConnectMap
       this.connectedUsers.set(socket.userId, {
         socketId: socket.id,
         userId: socket.userId,
@@ -172,80 +172,80 @@ class WebSocketService {
         rooms: new Set(),
       });
 
-      // 加入用戶專屬房間
+      // 加入User專屬房間
       socket.join(`user:${socket.userId}`);
       socket.join(`role:${socket.userRole}`);
 
-      // 處理加入房間
+      // Handle加入房間
       socket.on('join_room', (roomName) => {
         this.handleJoinRoom(socket, roomName);
       });
 
-      // 處理離開房間
+      // Handle離On房間
       socket.on('leave_room', (roomName) => {
         this.handleLeaveRoom(socket, roomName);
       });
 
-      // 處理私人消息
+      // Handle私人Message
       socket.on('private_message', (data) => {
         this.handlePrivateMessage(socket, data);
       });
 
-      // 處理房間消息
+      // Handle房間Message
       socket.on('room_message', (data) => {
         this.handleRoomMessage(socket, data);
       });
 
-      // 處理廣播消息
+      // Handle廣播Message
       socket.on('broadcast_message', (data) => {
         this.handleBroadcastMessage(socket, data);
       });
 
-      // 處理用戶狀態更新
+      // HandleUserStatusUpdate
       socket.on('user_status_update', (data) => {
         this.handleUserStatusUpdate(socket, data);
       });
 
-      // 處理心跳
+      // Handle心跳
       socket.on('ping', () => {
         socket.emit('pong', { timestamp: Date.now() });
         this.updateUserActivity(socket.userId);
       });
 
-      // 處理斷開連接
+      // HandleDisconnectConnect
       socket.on('disconnect', (reason) => {
         this.handleDisconnect(socket, reason);
       });
 
-      // 處理錯誤
+      // HandleError
       socket.on('error', (error) => {
-        logger.error(`Socket 錯誤 (${socket.userId}):`, error);
+        logger.error(`Socket Error (${socket.userId}):`, error);
       });
 
-      // 發送歡迎消息
+      // Send歡迎Message
       socket.emit('welcome', {
-        message: '歡迎使用 CardStrategy 實時服務',
+        message: '歡迎使用 CardStrategy 實時Service',
         userId: socket.userId,
         timestamp: new Date().toISOString(),
       });
 
-      // 發送連接統計
+      // SendConnectStatistics
       this.sendConnectionStats();
     });
   }
 
   /**
-   * 處理加入房間
+   * Handle加入房間
    */
   handleJoinRoom(socket, roomName) {
     try {
-      // 驗證房間名稱
+      // Verify房間名稱
       if (!roomName || typeof roomName !== 'string') {
         socket.emit('error', { message: '無效的房間名稱' });
         return;
       }
 
-      // 檢查用戶權限
+      // CheckUser權限
       if (roomName.startsWith('admin:') && socket.userRole !== 'admin') {
         socket.emit('error', { message: '權限不足' });
         return;
@@ -254,14 +254,14 @@ class WebSocketService {
       // 加入房間
       socket.join(roomName);
 
-      // 更新用戶房間列表
+      // UpdateUser房間List
 // eslint-disable-next-line no-unused-vars
       const userData = this.connectedUsers.get(socket.userId);
       if (userData) {
         userData.rooms.add(roomName);
       }
 
-      // 更新房間成員列表
+      // Update房間成員List
       this.updateRoomMembers(roomName);
 
       socket.emit('room_joined', {
@@ -272,26 +272,26 @@ class WebSocketService {
 
       logger.info(`用戶 ${socket.userId} 加入房間: ${roomName}`);
     } catch (error) {
-      logger.error('處理加入房間失敗:', error);
-      socket.emit('error', { message: '加入房間失敗' });
+      logger.error('Handle加入房間Failed:', error);
+      socket.emit('error', { message: '加入房間Failed' });
     }
   }
 
   /**
-   * 處理離開房間
+   * Handle離On房間
    */
   handleLeaveRoom(socket, roomName) {
     try {
       socket.leave(roomName);
 
-      // 更新用戶房間列表
+      // UpdateUser房間List
 // eslint-disable-next-line no-unused-vars
       const userData = this.connectedUsers.get(socket.userId);
       if (userData) {
         userData.rooms.delete(roomName);
       }
 
-      // 更新房間成員列表
+      // Update房間成員List
       this.updateRoomMembers(roomName);
 
       socket.emit('room_left', {
@@ -302,13 +302,13 @@ class WebSocketService {
 
       logger.info(`用戶 ${socket.userId} 離開房間: ${roomName}`);
     } catch (error) {
-      logger.error('處理離開房間失敗:', error);
-      socket.emit('error', { message: '離開房間失敗' });
+      logger.error('Handle離開房間Failed:', error);
+      socket.emit('error', { message: '離開房間Failed' });
     }
   }
 
   /**
-   * 處理私人消息
+   * Handle私人Message
    */
   handlePrivateMessage(socket, data) {
     try {
@@ -328,27 +328,27 @@ class WebSocketService {
         timestamp: new Date().toISOString(),
       };
 
-      // 發送給目標用戶
+      // Send給目標User
       this.io.to(`user:${to}`).emit('private_message', messageData);
 
-      // 發送確認給發送者
+      // SendConfirm給Send者
       socket.emit('message_sent', {
         messageId: messageData.id,
         timestamp: messageData.timestamp,
       });
 
-      // 保存到 Redis
+      // Save到 Redis
       this.saveMessageToRedis(messageData);
 
       logger.info(`私人消息: ${socket.userId} -> ${to}`);
     } catch (error) {
-      logger.error('處理私人消息失敗:', error);
-      socket.emit('error', { message: '發送消息失敗' });
+      logger.error('Handle私人消息Failed:', error);
+      socket.emit('error', { message: '發送消息Failed' });
     }
   }
 
   /**
-   * 處理房間消息
+   * Handle房間Message
    */
   handleRoomMessage(socket, data) {
     try {
@@ -359,7 +359,7 @@ class WebSocketService {
         return;
       }
 
-      // 檢查用戶是否在房間中
+      // CheckUserYesNo在房間中
 // eslint-disable-next-line no-unused-vars
       const userData = this.connectedUsers.get(socket.userId);
       if (!userData || !userData.rooms.has(room)) {
@@ -376,21 +376,21 @@ class WebSocketService {
         timestamp: new Date().toISOString(),
       };
 
-      // 發送到房間
+      // Send到房間
       this.io.to(room).emit('room_message', messageData);
 
-      // 保存到 Redis
+      // Save到 Redis
       this.saveMessageToRedis(messageData);
 
       logger.info(`房間消息: ${socket.userId} -> ${room}`);
     } catch (error) {
-      logger.error('處理房間消息失敗:', error);
-      socket.emit('error', { message: '發送消息失敗' });
+      logger.error('Handle房間消息Failed:', error);
+      socket.emit('error', { message: '發送消息Failed' });
     }
   }
 
   /**
-   * 處理廣播消息
+   * Handle廣播Message
    */
   handleBroadcastMessage(socket, data) {
     try {
@@ -401,7 +401,7 @@ class WebSocketService {
         return;
       }
 
-      // 檢查權限
+      // Check權限
       if (target === 'admin' && socket.userRole !== 'admin') {
         socket.emit('error', { message: '權限不足' });
         return;
@@ -416,7 +416,7 @@ class WebSocketService {
         timestamp: new Date().toISOString(),
       };
 
-      // 根據目標發送廣播
+      // Root據目標Send廣播
       if (target === 'all') {
         this.io.emit('broadcast_message', messageData);
       } else if (target === 'admin') {
@@ -425,13 +425,13 @@ class WebSocketService {
 
       logger.info(`廣播消息: ${socket.userId} -> ${target}`);
     } catch (error) {
-      logger.error('處理廣播消息失敗:', error);
-      socket.emit('error', { message: '發送廣播失敗' });
+      logger.error('Handle廣播消息Failed:', error);
+      socket.emit('error', { message: '發送廣播Failed' });
     }
   }
 
   /**
-   * 處理用戶狀態更新
+   * HandleUserStatusUpdate
    */
   handleUserStatusUpdate(socket, data) {
     try {
@@ -445,7 +445,7 @@ class WebSocketService {
         userData.lastActivity = new Date();
       }
 
-      // 通知其他用戶狀態更新
+      // Notification其他UserStatusUpdate
       socket.broadcast.emit('user_status_changed', {
         userId: socket.userId,
         status,
@@ -455,32 +455,32 @@ class WebSocketService {
 
       logger.info(`用戶狀態更新: ${socket.userId} -> ${status}`);
     } catch (error) {
-      logger.error('處理用戶狀態更新失敗:', error);
-      socket.emit('error', { message: '狀態更新失敗' });
+      logger.error('Handle用戶狀態UpdateFailed:', error);
+      socket.emit('error', { message: '狀態UpdateFailed' });
     }
   }
 
   /**
-   * 處理斷開連接
+   * HandleDisconnectConnect
    */
   handleDisconnect(socket, reason) {
-    logger.info(`用戶斷開連接: ${socket.userId} (原因: ${reason})`);
+    logger.info(`用戶斷開Connect: ${socket.userId} (原因: ${reason})`);
 
-    // 從連接映射中移除
+    // 從ConnectMap中Remove
     this.connectedUsers.delete(socket.userId);
 
-    // 通知其他用戶
+    // Notification其他User
     socket.broadcast.emit('user_disconnected', {
       userId: socket.userId,
       timestamp: new Date().toISOString(),
     });
 
-    // 更新連接統計
+    // UpdateConnectStatistics
     this.sendConnectionStats();
   }
 
   /**
-   * 更新用戶活動時間
+   * UpdateUser活動Time
    */
   updateUserActivity(userId) {
 // eslint-disable-next-line no-unused-vars
@@ -491,7 +491,7 @@ class WebSocketService {
   }
 
   /**
-   * 更新房間成員列表
+   * Update房間成員List
    */
   async updateRoomMembers(roomName) {
     try {
@@ -509,7 +509,7 @@ class WebSocketService {
         lastUpdated: new Date(),
       });
 
-      // 發送房間成員更新
+      // Send房間成員Update
       this.io.to(roomName).emit('room_members_updated', {
         room: roomName,
         members,
@@ -517,12 +517,12 @@ class WebSocketService {
         timestamp: new Date().toISOString(),
       });
     } catch (error) {
-      logger.error('更新房間成員失敗:', error);
+      logger.error('Update房間成員Failed:', error);
     }
   }
 
   /**
-   * 發送連接統計
+   * SendConnectStatistics
    */
   sendConnectionStats() {
     const stats = {
@@ -535,7 +535,7 @@ class WebSocketService {
   }
 
   /**
-   * 保存消息到 Redis
+   * SaveMessage到 Redis
    */
   async saveMessageToRedis(messageData) {
     if (!this.redisClient) return;
@@ -543,17 +543,17 @@ class WebSocketService {
     try {
 // eslint-disable-next-line no-unused-vars
       const key = `messages:${messageData.id}`;
-      await this.redisClient.setex(key, 86400, JSON.stringify(messageData)); // 24小時過期
+      await this.redisClient.setex(key, 86400, JSON.stringify(messageData)); // 24Hour過期
     } catch (error) {
-      logger.error('保存消息到 Redis 失敗:', error);
+      logger.error('保存消息到 Redis Failed:', error);
     }
   }
 
   /**
-   * 設置房間管理
+   * Settings房間Manage
    */
   setupRoomManagement() {
-    // 創建默認房間
+    // CreateDefault房間
     const defaultRooms = ['general', 'trading', 'analysis', 'news', 'support'];
 
     defaultRooms.forEach((room) => {
@@ -567,15 +567,15 @@ class WebSocketService {
   }
 
   /**
-   * 設置定期清理
+   * Settings定期清理
    */
   setupPeriodicCleanup() {
-    // 每5分鐘清理不活躍的連接
+    // 每5Minute清理不活躍的Connect
     setInterval(
       () => {
 // eslint-disable-next-line no-unused-vars
         const now = new Date();
-        const inactiveThreshold = 30 * 60 * 1000; // 30分鐘
+        const inactiveThreshold = 30 * 60 * 1000; // 30Minute
 
         for (const [userId, userData] of this.connectedUsers.entries()) {
           if (now - userData.lastActivity > inactiveThreshold) {
@@ -589,7 +589,7 @@ class WebSocketService {
   }
 
   /**
-   * 發送通知給用戶
+   * SendNotification給User
    */
   sendNotificationToUser(userId, notification) {
     try {
@@ -601,12 +601,12 @@ class WebSocketService {
 
       logger.info(`發送通知給用戶: ${userId}`);
     } catch (error) {
-      logger.error('發送通知失敗:', error);
+      logger.error('發送通知Failed:', error);
     }
   }
 
   /**
-   * 發送通知給房間
+   * SendNotification給房間
    */
   sendNotificationToRoom(roomName, notification) {
     try {
@@ -618,12 +618,12 @@ class WebSocketService {
 
       logger.info(`發送通知給房間: ${roomName}`);
     } catch (error) {
-      logger.error('發送房間通知失敗:', error);
+      logger.error('發送房間通知Failed:', error);
     }
   }
 
   /**
-   * 廣播通知
+   * 廣播Notification
    */
   broadcastNotification(notification, target = 'all') {
     try {
@@ -642,12 +642,12 @@ class WebSocketService {
 
       logger.info(`廣播通知: ${target}`);
     } catch (error) {
-      logger.error('廣播通知失敗:', error);
+      logger.error('廣播通知Failed:', error);
     }
   }
 
   /**
-   * 獲取連接統計
+   * GetConnectStatistics
    */
   getConnectionStats() {
     return {
@@ -660,21 +660,21 @@ class WebSocketService {
   }
 
   /**
-   * 獲取用戶信息
+   * GetUserInformation
    */
   getUserInfo(userId) {
     return this.connectedUsers.get(userId);
   }
 
   /**
-   * 檢查用戶是否在線
+   * CheckUserYesNo在線
    */
   isUserOnline(userId) {
     return this.connectedUsers.has(userId);
   }
 
   /**
-   * 關閉服務
+   * Off閉Service
    */
   async close() {
     try {
@@ -686,9 +686,9 @@ class WebSocketService {
         await this.redisClient.quit();
       }
 
-      logger.info('WebSocket 服務已關閉');
+      logger.info('WebSocket Service已關閉');
     } catch (error) {
-      logger.error('關閉 WebSocket 服務失敗:', error);
+      logger.error('關閉 WebSocket ServiceFailed:', error);
     }
   }
 }

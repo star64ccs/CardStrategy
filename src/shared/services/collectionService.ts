@@ -3,8 +3,8 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 收藏服務
- * 處理收藏相關功能
+ * 收藏Service
+ * Handle收藏相Off功能
  */
 export class CollectionService {
   private static instance: CollectionService;
@@ -19,7 +19,7 @@ export class CollectionService {
   }
 
   /**
-   * 獲取用戶收藏
+   * GetUser收藏
    */
   async getUserCollections(): Promise<Collection[]> {
     try {
@@ -28,16 +28,16 @@ export class CollectionService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('獲取收藏列表失敗');
+        throw new Error('Get收藏列表Failed');
       }
     } catch (error) {
-      logger.error('獲取收藏列表失敗:', { error });
+      logger.error('Get收藏列表Failed:', { error });
       throw error;
     }
   }
 
   /**
-   * 獲取收藏列表（存根方法）
+   * Get收藏List（存RootMethod）
    */
   async getCollections(): Promise<any> {
     logger.info('獲取收藏列表（存根方法）');
@@ -47,13 +47,13 @@ export class CollectionService {
         { id: '1', name: '我的收藏', description: '個人收藏' },
         { id: '2', name: '投資組合', description: '投資用收藏' },
       ],
-      message: '收藏列表獲取成功',
+      message: '收藏列表GetSuccess',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 創建收藏（存根方法）
+   * Create收藏（存RootMethod）
    */
   async createCollection(collectionData: unknown): Promise<any> {
     logger.info('創建收藏（存根方法）:', { collectionData });
@@ -64,13 +64,13 @@ export class CollectionService {
         name: collectionData.name,
         description: collectionData.description,
       },
-      message: '收藏創建成功',
+      message: '收藏CreateSuccess',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 更新收藏（存根方法）
+   * Update收藏（存RootMethod）
    */
   async updateCollection(collectionId: string, updates: unknown): Promise<any> {
     logger.info('更新收藏（存根方法）:', { collectionId, updates });
@@ -81,26 +81,26 @@ export class CollectionService {
         name: updates.name,
         description: updates.description,
       },
-      message: '收藏更新成功',
+      message: '收藏UpdateSuccess',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 刪除收藏（存根方法）
+   * Delete收藏（存RootMethod）
    */
   async deleteCollection(collectionId: string): Promise<any> {
     logger.info('刪除收藏（存根方法）:', { collectionId });
     return {
       success: true,
       data: { id: collectionId },
-      message: '收藏刪除成功',
+      message: '收藏DeleteSuccess',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 添加卡牌到收藏（存根方法）
+   * Add卡牌到收藏（存RootMethod）
    */
   async addCardToCollection(
     collectionId: string,
@@ -114,13 +114,13 @@ export class CollectionService {
         cardId: cardData.cardId,
         addedAt: new Date(),
       },
-      message: '卡牌添加成功',
+      message: '卡牌添加Success',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 從收藏移除卡牌（存根方法）
+   * 從收藏Remove卡牌（存RootMethod）
    */
   async removeCardFromCollection(
     collectionId: string,
@@ -130,13 +130,13 @@ export class CollectionService {
     return {
       success: true,
       data: { collectionId, cardId },
-      message: '卡牌移除成功',
+      message: '卡牌移除Success',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 更新收藏中的卡牌（存根方法）
+   * Update收藏中的卡牌（存RootMethod）
    */
   async updateCardInCollection(
     collectionId: string,
@@ -155,13 +155,13 @@ export class CollectionService {
         cardId,
         updates,
       },
-      message: '卡牌更新成功',
+      message: '卡牌UpdateSuccess',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 獲取收藏統計（存根方法）
+   * Get收藏Statistics（存RootMethod）
    */
   async getCollectionStatistics(): Promise<any> {
     logger.info('獲取收藏統計（存根方法）');
@@ -173,11 +173,11 @@ export class CollectionService {
         totalValue: 5000,
         averageValue: 33.33,
       },
-      message: '統計獲取成功',
+      message: '統計GetSuccess',
       timestamp: new Date(),
     };
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _collectionService = CollectionService.getInstance();

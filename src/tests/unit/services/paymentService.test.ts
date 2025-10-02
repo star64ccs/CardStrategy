@@ -15,29 +15,29 @@ describe('PaymentService', () => {
   });
 
   describe('initialize', () => {
-    it('應該成功初始化支付服務', async () => {
+    it('應該SuccessInitialize支付Service', async () => {
       await paymentService.initialize();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('初始化支付服務...');
+      expect(mockLogger.info).toHaveBeenCalledWith('Initialize支付Service...');
       expect(mockLogger.info).toHaveBeenCalledWith('支付提供商初始化完成');
       expect(mockLogger.info).toHaveBeenCalledWith('支付配置已加載');
-      expect(mockLogger.info).toHaveBeenCalledWith('支付服務初始化完成');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付ServiceInitialize完成');
     });
 
-    it('應該處理依賴服務未初始化的情況', async () => {
-      // 模擬依賴服務未初始化
+    it('應該Handle依賴Service未Initialize的情況', async () => {
+      // 模擬依賴Service未Initialize
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(paymentService.initialize()).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '支付服務初始化失敗:',
+        '支付ServiceInitializeFailed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createPaymentMethod', () => {
-    it('應該成功創建支付方法', async () => {
+    it('應該SuccessCreate支付方法', async () => {
       const _paymentData = {
         card: {
           brand: 'visa',
@@ -74,7 +74,7 @@ describe('PaymentService', () => {
         'user-1',
         'stripe'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('支付方法創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付方法CreateSuccess');
     });
 
     it('應該處理無效的支付提供商', async () => {
@@ -88,7 +88,7 @@ describe('PaymentService', () => {
         )
       ).rejects.toThrow('支付提供商不可用: invalid-provider');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建支付方法失敗:',
+        'Create支付方法Failed:',
         expect.any(Error)
       );
     });
@@ -135,7 +135,7 @@ describe('PaymentService', () => {
   });
 
   describe('getUserPaymentMethods', () => {
-    it('應該成功獲取用戶支付方法', async () => {
+    it('應該SuccessGet用戶支付方法', async () => {
       const _result = await paymentService.getUserPaymentMethods('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -145,22 +145,22 @@ describe('PaymentService', () => {
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取用戶支付方法失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet用戶支付方法Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         paymentService.getUserPaymentMethods('user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取用戶支付方法失敗:',
+        'Get用戶支付方法Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('updatePaymentMethod', () => {
-    it('應該成功更新支付方法', async () => {
+    it('應該SuccessUpdate支付方法', async () => {
       const _updates = {
         isDefault: true,
         isVerified: false,
@@ -180,7 +180,7 @@ describe('PaymentService', () => {
         '更新支付方法:',
         'payment-method-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('支付方法更新成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付方法UpdateSuccess');
     });
 
     it('應該處理支付方法不存在的情況', async () => {
@@ -190,14 +190,14 @@ describe('PaymentService', () => {
         paymentService.updatePaymentMethod('nonexistent-method', updates)
       ).rejects.toThrow('支付方法不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '更新支付方法失敗:',
+        'Update支付方法Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('deletePaymentMethod', () => {
-    it('應該成功刪除支付方法', async () => {
+    it('應該SuccessDelete支付方法', async () => {
       await paymentService.deletePaymentMethod('payment-method-1', 'user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -205,25 +205,25 @@ describe('PaymentService', () => {
         'payment-method-1',
         'user-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('支付方法刪除成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付方法DeleteSuccess');
     });
 
-    it('應該處理刪除支付方法失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleDelete支付方法Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         paymentService.deletePaymentMethod('payment-method-1', 'user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '刪除支付方法失敗:',
+        'Delete支付方法Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('setDefaultPaymentMethod', () => {
-    it('應該成功設置默認支付方法', async () => {
+    it('應該SuccessSettings默認支付方法', async () => {
       await paymentService.setDefaultPaymentMethod(
         'payment-method-1',
         'user-1'
@@ -234,25 +234,25 @@ describe('PaymentService', () => {
         'payment-method-1',
         'user-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('默認支付方法設置成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('默認支付方法SettingsSuccess');
     });
 
-    it('應該處理設置默認支付方法失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleSettings默認支付方法Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         paymentService.setDefaultPaymentMethod('payment-method-1', 'user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '設置默認支付方法失敗:',
+        'Settings默認支付方法Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createPaymentIntent', () => {
-    it('應該成功創建支付意圖', async () => {
+    it('應該SuccessCreate支付意圖', async () => {
       const _paymentData = {
         amount: 1000,
         currency: 'USD',
@@ -280,7 +280,7 @@ describe('PaymentService', () => {
         1000,
         'USD'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('支付意圖創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付意圖CreateSuccess');
     });
 
     it('應該處理無效的支付數據', async () => {
@@ -295,7 +295,7 @@ describe('PaymentService', () => {
         paymentService.createPaymentIntent(invalidPaymentData)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建支付意圖失敗:',
+        'Create支付意圖Failed:',
         expect.any(Error)
       );
     });
@@ -303,7 +303,7 @@ describe('PaymentService', () => {
     it('應該處理無效的貨幣代碼', async () => {
       const _invalidPaymentData = {
         amount: 1000,
-        currency: 'US', // 無效：不是3位字符
+        currency: 'US', // 無效：不Yes3位字符
         paymentMethodId: 'payment-method-1',
         description: '測試支付',
       };
@@ -312,7 +312,7 @@ describe('PaymentService', () => {
         paymentService.createPaymentIntent(invalidPaymentData)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建支付意圖失敗:',
+        'Create支付意圖Failed:',
         expect.any(Error)
       );
     });
@@ -322,21 +322,21 @@ describe('PaymentService', () => {
         amount: 1000,
         currency: 'USD',
         paymentMethodId: 'payment-method-1',
-        description: '', // 無效：空描述
+        description: '', // 無效：EmptyDescription
       };
 
       await expect(
         paymentService.createPaymentIntent(invalidPaymentData)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建支付意圖失敗:',
+        'Create支付意圖Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('confirmPayment', () => {
-    it('應該成功確認支付', async () => {
+    it('應該Success確認支付', async () => {
       const _result = await paymentService.confirmPayment('payment-intent-1');
 
       expect(result).toMatchObject({
@@ -348,7 +348,7 @@ describe('PaymentService', () => {
         '確認支付:',
         'payment-intent-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('支付確認成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付確認Success');
     });
 
     it('應該處理支付意圖不存在的情況', async () => {
@@ -356,31 +356,31 @@ describe('PaymentService', () => {
         paymentService.confirmPayment('nonexistent-intent')
       ).rejects.toThrow('支付意圖不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '確認支付失敗:',
+        '確認支付Failed:',
         expect.any(Error)
       );
     });
 
     it('應該處理支付意圖狀態不正確的情況', async () => {
-      // 模擬已成功的支付意圖
+      // 模擬已Success的支付意Graph
       const _mockPaymentIntent = {
         id: 'payment-intent-1',
         status: 'succeeded',
       };
 
-      // 這裡需要模擬 getPaymentIntent 方法返回已成功的支付意圖
+      // 這裡需要模擬 getPaymentIntent MethodReturn已Success的支付意Graph
       await expect(
         paymentService.confirmPayment('payment-intent-1')
       ).rejects.toThrow('支付意圖狀態不正確');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '確認支付失敗:',
+        '確認支付Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('cancelPayment', () => {
-    it('應該成功取消支付', async () => {
+    it('應該Success取消支付', async () => {
       const _result = await paymentService.cancelPayment('payment-intent-1');
 
       expect(result).toMatchObject({
@@ -391,7 +391,7 @@ describe('PaymentService', () => {
         '取消支付:',
         'payment-intent-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('支付取消成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付取消Success');
     });
 
     it('應該處理支付意圖不存在的情況', async () => {
@@ -399,13 +399,13 @@ describe('PaymentService', () => {
         paymentService.cancelPayment('nonexistent-intent')
       ).rejects.toThrow('支付意圖不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '取消支付失敗:',
+        '取消支付Failed:',
         expect.any(Error)
       );
     });
 
-    it('應該處理已成功支付的情況', async () => {
-      // 模擬已成功的支付意圖
+    it('應該Handle已Success支付的情況', async () => {
+      // 模擬已Success的支付意Graph
       const _mockPaymentIntent = {
         id: 'payment-intent-1',
         status: 'succeeded',
@@ -413,16 +413,16 @@ describe('PaymentService', () => {
 
       await expect(
         paymentService.cancelPayment('payment-intent-1')
-      ).rejects.toThrow('無法取消已成功的支付');
+      ).rejects.toThrow('無法取消已Success的支付');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '取消支付失敗:',
+        '取消支付Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getPaymentIntent', () => {
-    it('應該成功獲取支付意圖', async () => {
+    it('應該SuccessGet支付意圖', async () => {
       const _result = await paymentService.getPaymentIntent('payment-intent-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -432,22 +432,22 @@ describe('PaymentService', () => {
       expect(result).toBeNull();
     });
 
-    it('應該處理獲取支付意圖失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet支付意圖Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         paymentService.getPaymentIntent('payment-intent-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取支付意圖失敗:',
+        'Get支付意圖Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createOrder', () => {
-    it('應該成功創建訂單', async () => {
+    it('應該SuccessCreate訂單', async () => {
       const _orderData = {
         items: [
           {
@@ -514,7 +514,7 @@ describe('PaymentService', () => {
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.updatedAt).toBeInstanceOf(Date);
       expect(mockLogger.info).toHaveBeenCalledWith('創建訂單');
-      expect(mockLogger.info).toHaveBeenCalledWith('訂單創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('訂單CreateSuccess');
     });
 
     it('應該處理無效的訂單數據', async () => {
@@ -553,34 +553,34 @@ describe('PaymentService', () => {
         paymentService.createOrder(invalidOrderData)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建訂單失敗:',
+        'Create訂單Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getOrder', () => {
-    it('應該成功獲取訂單', async () => {
+    it('應該SuccessGet訂單', async () => {
       const _result = await paymentService.getOrder('order-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取訂單:', 'order-1');
       expect(result).toBeNull();
     });
 
-    it('應該處理獲取訂單失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet訂單Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(paymentService.getOrder('order-1')).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取訂單失敗:',
+        'Get訂單Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getUserOrders', () => {
-    it('應該成功獲取用戶訂單', async () => {
+    it('應該SuccessGet用戶訂單', async () => {
       const _result = await paymentService.getUserOrders('user-1', 1, 20);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -592,20 +592,20 @@ describe('PaymentService', () => {
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取用戶訂單失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet用戶訂單Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(paymentService.getUserOrders('user-1')).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取用戶訂單失敗:',
+        'Get用戶訂單Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('updateOrderStatus', () => {
-    it('應該成功更新訂單狀態', async () => {
+    it('應該SuccessUpdate訂單狀態', async () => {
       const _result = await paymentService.updateOrderStatus(
         'order-1',
         'confirmed'
@@ -620,7 +620,7 @@ describe('PaymentService', () => {
         'order-1',
         'confirmed'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('訂單狀態更新成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('訂單狀態UpdateSuccess');
     });
 
     it('應該處理訂單不存在的情況', async () => {
@@ -628,14 +628,14 @@ describe('PaymentService', () => {
         paymentService.updateOrderStatus('nonexistent-order', 'confirmed')
       ).rejects.toThrow('訂單不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '更新訂單狀態失敗:',
+        'Update訂單狀態Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createSubscriptionPlan', () => {
-    it('應該成功創建訂閱計劃', async () => {
+    it('應該SuccessCreate訂閱計劃', async () => {
       const _planData = {
         name: '高級計劃',
         description: '包含所有高級功能',
@@ -667,12 +667,12 @@ describe('PaymentService', () => {
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.updatedAt).toBeInstanceOf(Date);
       expect(mockLogger.info).toHaveBeenCalledWith('創建訂閱計劃:', '高級計劃');
-      expect(mockLogger.info).toHaveBeenCalledWith('訂閱計劃創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('訂閱計劃CreateSuccess');
     });
 
     it('應該處理無效的計劃數據', async () => {
       const _invalidPlanData = {
-        name: '', // 無效：空名稱
+        name: '', // 無效：Empty名稱
         description: '包含所有高級功能',
         price: 2999,
         currency: 'USD',
@@ -686,14 +686,14 @@ describe('PaymentService', () => {
         paymentService.createSubscriptionPlan(invalidPlanData)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建訂閱計劃失敗:',
+        'Create訂閱計劃Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createSubscription', () => {
-    it('應該成功創建訂閱', async () => {
+    it('應該SuccessCreate訂閱', async () => {
       const _result = await paymentService.createSubscription(
         'user-1',
         'plan-1',
@@ -717,11 +717,11 @@ describe('PaymentService', () => {
         'user-1',
         'plan-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('訂閱創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('訂閱CreateSuccess');
     });
 
-    it('應該處理創建訂閱失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleCreate訂閱Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
@@ -732,14 +732,14 @@ describe('PaymentService', () => {
         )
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建訂閱失敗:',
+        'Create訂閱Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('cancelSubscription', () => {
-    it('應該成功取消訂閱', async () => {
+    it('應該Success取消訂閱', async () => {
       const _result = await paymentService.cancelSubscription(
         'subscription-1',
         true
@@ -755,7 +755,7 @@ describe('PaymentService', () => {
         'subscription-1',
         true
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('訂閱取消成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('訂閱取消Success');
     });
 
     it('應該立即取消訂閱', async () => {
@@ -776,14 +776,14 @@ describe('PaymentService', () => {
         paymentService.cancelSubscription('nonexistent-subscription')
       ).rejects.toThrow('訂閱不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '取消訂閱失敗:',
+        '取消訂閱Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getSubscription', () => {
-    it('應該成功獲取訂閱', async () => {
+    it('應該SuccessGet訂閱', async () => {
       const _result = await paymentService.getSubscription('subscription-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -793,44 +793,44 @@ describe('PaymentService', () => {
       expect(result).toBeNull();
     });
 
-    it('應該處理獲取訂閱失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet訂閱Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         paymentService.getSubscription('subscription-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取訂閱失敗:',
+        'Get訂閱Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getUserSubscriptions', () => {
-    it('應該成功獲取用戶訂閱', async () => {
+    it('應該SuccessGet用戶訂閱', async () => {
       const _result = await paymentService.getUserSubscriptions('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶訂閱:', 'user-1');
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取用戶訂閱失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet用戶訂閱Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         paymentService.getUserSubscriptions('user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取用戶訂閱失敗:',
+        'Get用戶訂閱Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createRefund', () => {
-    it('應該成功創建退款', async () => {
+    it('應該SuccessCreate退款', async () => {
       const _result = await paymentService.createRefund(
         'payment-intent-1',
         500,
@@ -853,7 +853,7 @@ describe('PaymentService', () => {
         500,
         'requested_by_customer'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('退款創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('退款CreateSuccess');
     });
 
     it('應該處理支付意圖不存在的情況', async () => {
@@ -865,7 +865,7 @@ describe('PaymentService', () => {
         )
       ).rejects.toThrow('支付意圖不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建退款失敗:',
+        'Create退款Failed:',
         expect.any(Error)
       );
     });
@@ -879,34 +879,34 @@ describe('PaymentService', () => {
         )
       ).rejects.toThrow('退款金額不能超過支付金額');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建退款失敗:',
+        'Create退款Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getRefund', () => {
-    it('應該成功獲取退款', async () => {
+    it('應該SuccessGet退款', async () => {
       const _result = await paymentService.getRefund('refund-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取退款:', 'refund-1');
       expect(result).toBeNull();
     });
 
-    it('應該處理獲取退款失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet退款Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(paymentService.getRefund('refund-1')).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取退款失敗:',
+        'Get退款Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getPaymentIntentRefunds', () => {
-    it('應該成功獲取支付意圖的退款', async () => {
+    it('應該SuccessGet支付意圖的退款', async () => {
       const _result =
         await paymentService.getPaymentIntentRefunds('payment-intent-1');
 
@@ -917,22 +917,22 @@ describe('PaymentService', () => {
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取支付意圖退款失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet支付意圖退款Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         paymentService.getPaymentIntentRefunds('payment-intent-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取支付意圖退款失敗:',
+        'Get支付意圖退款Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createDispute', () => {
-    it('應該成功創建爭議', async () => {
+    it('應該SuccessCreate爭議', async () => {
       const _evidence = {
         customerEmail: 'test@example.com',
         customerName: '張三',
@@ -960,7 +960,7 @@ describe('PaymentService', () => {
         'payment-intent-1',
         'product_not_received'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('爭議創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('爭議CreateSuccess');
     });
 
     it('應該處理支付意圖不存在的情況', async () => {
@@ -974,14 +974,14 @@ describe('PaymentService', () => {
         )
       ).rejects.toThrow('支付意圖不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建爭議失敗:',
+        'Create爭議Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('updateDispute', () => {
-    it('應該成功更新爭議', async () => {
+    it('應該SuccessUpdate爭議', async () => {
       const _updates = {
         status: 'under_review',
         evidence: {
@@ -999,7 +999,7 @@ describe('PaymentService', () => {
       });
       expect(result.updatedAt).toBeInstanceOf(Date);
       expect(mockLogger.info).toHaveBeenCalledWith('更新爭議:', 'dispute-1');
-      expect(mockLogger.info).toHaveBeenCalledWith('爭議更新成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('爭議UpdateSuccess');
     });
 
     it('應該處理爭議不存在的情況', async () => {
@@ -1009,34 +1009,34 @@ describe('PaymentService', () => {
         paymentService.updateDispute('nonexistent-dispute', updates)
       ).rejects.toThrow('爭議不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '更新爭議失敗:',
+        'Update爭議Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getDispute', () => {
-    it('應該成功獲取爭議', async () => {
+    it('應該SuccessGet爭議', async () => {
       const _result = await paymentService.getDispute('dispute-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取爭議:', 'dispute-1');
       expect(result).toBeNull();
     });
 
-    it('應該處理獲取爭議失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet爭議Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(paymentService.getDispute('dispute-1')).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取爭議失敗:',
+        'Get爭議Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getPaymentAnalytics', () => {
-    it('應該成功獲取支付分析', async () => {
+    it('應該SuccessGet支付分析', async () => {
       const _result = await paymentService.getPaymentAnalytics('30d');
 
       expect(result).toMatchObject({
@@ -1051,23 +1051,23 @@ describe('PaymentService', () => {
       });
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(mockLogger.info).toHaveBeenCalledWith('獲取支付分析:', '30d');
-      expect(mockLogger.info).toHaveBeenCalledWith('支付分析獲取成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付分析GetSuccess');
     });
 
-    it('應該處理獲取支付分析失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet支付分析Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(paymentService.getPaymentAnalytics()).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取支付分析失敗:',
+        'Get支付分析Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('配置管理', () => {
-    it('應該成功獲取配置', () => {
+    it('應該SuccessGetConfigure', () => {
       const _config = paymentService.getConfig();
 
       expect(config).toMatchObject({
@@ -1084,7 +1084,7 @@ describe('PaymentService', () => {
       });
     });
 
-    it('應該成功更新配置', () => {
+    it('應該SuccessUpdateConfigure', () => {
       const _newConfig = {
         enableCrypto: true,
         enableAnalytics: false,
@@ -1095,7 +1095,7 @@ describe('PaymentService', () => {
       const _updatedConfig = paymentService.getConfig();
       expect(updatedConfig.enableCrypto).toBe(true);
       expect(updatedConfig.enableAnalytics).toBe(false);
-      expect(mockLogger.info).toHaveBeenCalledWith('支付服務配置已更新');
+      expect(mockLogger.info).toHaveBeenCalledWith('支付ServiceConfigure已Update');
     });
 
     it('應該獲取支付提供商', () => {
@@ -1108,10 +1108,10 @@ describe('PaymentService', () => {
       expect(providers.map(p => p.name)).toContain('Google Pay');
     });
 
-    it('應該檢查服務狀態', () => {
-      expect(paymentService.isReady()).toBe(false); // 未初始化
+    it('應該CheckService狀態', () => {
+      expect(paymentService.isReady()).toBe(false); // 未Initialize
 
-      // 初始化後應該返回 true
+      // Initialize後應該Return true
       paymentService.initialize().then(() => {
         expect(paymentService.isReady()).toBe(true);
       });

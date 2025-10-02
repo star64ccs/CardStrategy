@@ -1,5 +1,5 @@
 /**
- * RegulatoryAdaptationLayer 示例組件
+ * RegulatoryAdaptationLayer 示例Component
  * 演示法規適應層的核心功能
  */
 
@@ -66,7 +66,7 @@ const RegulatoryAdaptationLayerExample: React.FC = () => {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: `初始化失敗: ${error instanceof Error ? error.message : '未知錯誤'}`,
+        error: `InitializeFailed: ${error instanceof Error ? error.message : '未知Error'}`,
       }));
     }
   };
@@ -88,7 +88,7 @@ const RegulatoryAdaptationLayerExample: React.FC = () => {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: `司法管轄區檢測失敗: ${error instanceof Error ? error.message : '未知錯誤'}`,
+        error: `司法管轄區檢測Failed: ${error instanceof Error ? error.message : '未知Error'}`,
       }));
     }
   };
@@ -106,7 +106,7 @@ const RegulatoryAdaptationLayerExample: React.FC = () => {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: `法規映射獲取失敗: ${error instanceof Error ? error.message : '未知錯誤'}`,
+        error: `法規映射GetFailed: ${error instanceof Error ? error.message : '未知Error'}`,
       }));
     }
   };
@@ -143,7 +143,7 @@ const RegulatoryAdaptationLayerExample: React.FC = () => {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: `合規檢查失敗: ${error instanceof Error ? error.message : '未知錯誤'}`,
+        error: `合規CheckFailed: ${error instanceof Error ? error.message : '未知Error'}`,
       }));
     }
   };
@@ -174,7 +174,7 @@ const RegulatoryAdaptationLayerExample: React.FC = () => {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: `報告生成失敗: ${error instanceof Error ? error.message : '未知錯誤'}`,
+        error: `報告生成Failed: ${error instanceof Error ? error.message : '未知Error'}`,
       }));
     }
   };
@@ -183,17 +183,17 @@ const RegulatoryAdaptationLayerExample: React.FC = () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      // 1. 檢測司法管轄區
+      // 1. 檢測司法管轄District
       const _jurisdiction = await detector.detectUserJurisdiction({
         country: 'TW',
         language: 'zh-TW',
         timezone: 'Asia/Taipei',
       });
 
-      // 2. 獲取法規映射
+      // 2. Get法規Map
       const _mapping = await mapper.getRegulationMapping(jurisdiction.code);
 
-      // 3. 檢查合規狀態
+      // 3. Check合規Status
       const _mockImplementation = {
         consentManagement: true,
         dataDisclosure: false,
@@ -223,7 +223,7 @@ const RegulatoryAdaptationLayerExample: React.FC = () => {
       setState(prev => ({
         ...prev,
         loading: false,
-        error: `完整工作流程失敗: ${error instanceof Error ? error.message : '未知錯誤'}`,
+        error: `完整工作流程Failed: ${error instanceof Error ? error.message : '未知Error'}`,
       }));
     }
   };

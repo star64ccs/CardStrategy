@@ -5,7 +5,7 @@ describe('Performance Tests', () => {
   test('should measure performance correctly', () => {
     const _startTime = Date.now();
 
-    // 模擬一些操作
+    // 模擬一些Operation
     let result = 0;
     for (let i = 0; i < 1000000; i++) {
       result += i;
@@ -14,7 +14,7 @@ describe('Performance Tests', () => {
     const _endTime = Date.now();
     const _duration = endTime - startTime;
 
-    expect(duration).toBeLessThan(100); // 應該在 100ms 內完成
+    expect(duration).toBeLessThan(100); // 應該在 100ms 內Complete
     expect(result).toBeGreaterThan(0);
   });
 
@@ -34,7 +34,7 @@ describe('Performance Tests', () => {
       executed = true;
     });
 
-    // 等待異步任務執行
+    // AwaitAsyncTask執Row
     setTimeout(() => {
       expect(executed).toBe(true);
     }, 100);
@@ -52,7 +52,7 @@ describe('Performance Tests', () => {
 
     PerformanceOptimizer.batchTasks(tasks);
 
-    // 等待批量任務執行
+    // AwaitBatchTask執Row
     setTimeout(() => {
       expect(executedCount).toBe(5);
     }, 100);

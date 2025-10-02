@@ -1,50 +1,50 @@
-// 前端效能優化配置
+// 前端效能優化Configure
 export const _PERFORMANCE_CONFIG = {
-  // 圖片優化配置
+  // Graph片優化Configure
   image: {
-    // 支援的圖片格式
+    // 支援的Graph片格式
     supportedFormats: ['webp', 'avif', 'jpg', 'jpeg', 'png'],
-    // 預設圖片品質
+    // 預設Graph片品質
     defaultQuality: 0.8,
-    // 響應式圖片斷點
+    // Response式Graph片斷點
     breakpoints: {
       small: 480,
       medium: 768,
       large: 1024,
       xlarge: 1440,
     },
-    // 懶加載配置
+    // 懶加載Configure
     lazyLoading: {
       threshold: 0.1,
       rootMargin: '50px',
     },
   },
 
-  // 快取配置
+  // 快取Configure
   cache: {
-    // 本地存儲配置
+    // LocalStorageConfigure
     localStorage: {
       maxSize: 10 * 1024 * 1024, // 10MB
-      expirationTime: 24 * 60 * 60 * 1000, // 24小時
+      expirationTime: 24 * 60 * 60 * 1000, // 24Hour
     },
-    // 記憶體快取配置
+    // 記憶體快取Configure
     memoryCache: {
       maxSize: 100, // 最大快取項目數
-      expirationTime: 5 * 60 * 1000, // 5分鐘
+      expirationTime: 5 * 60 * 1000, // 5Minute
     },
   },
 
-  // API 配置
+  // API Configure
   api: {
-    // 請求超時時間
-    timeout: 10000, // 10秒
-    // 重試配置
+    // Request超時Time
+    timeout: 10000, // 10Second
+    // RetryConfigure
     retry: {
       maxAttempts: 3,
-      delay: 1000, // 1秒
+      delay: 1000, // 1Second
       backoffMultiplier: 2,
     },
-    // 請求合併配置
+    // RequestMergeConfigure
     batch: {
       enabled: true,
       maxBatchSize: 10,
@@ -52,63 +52,63 @@ export const _PERFORMANCE_CONFIG = {
     },
   },
 
-  // 渲染優化配置
+  // 渲染優化Configure
   rendering: {
-    // 虛擬化配置
+    // 虛擬化Configure
     virtualization: {
       itemHeight: 60,
       overscan: 5,
     },
-    // 防抖配置
+    // 防抖Configure
     debounce: {
       search: 300,
       resize: 150,
       scroll: 100,
     },
-    // 節流配置
+    // 節流Configure
     throttle: {
       scroll: 16, // 60fps
       resize: 100,
     },
   },
 
-  // 監控配置
+  // MonitorConfigure
   monitoring: {
-    // 效能指標閾值
+    // 效能指標閾Value
     thresholds: {
-      fcp: 1500, // 首次內容繪製
-      lcp: 2500, // 最大內容繪製
-      fid: 100, // 首次輸入延遲
-      cls: 0.1, // 累積佈局偏移
+      fcp: 1500, // 首次Content繪製
+      lcp: 2500, // 最大Content繪製
+      fid: 100, // 首次Input延遲
+      cls: 0.1, // 累積佈局Offset
     },
-    // 錯誤監控
+    // ErrorMonitor
     errorReporting: {
       enabled: true,
       sampleRate: 1.0, // 100% 採樣率
     },
   },
 
-  // 離線配置
+  // 離線Configure
   offline: {
-    // 離線存儲配置
+    // 離線StorageConfigure
     storage: {
       maxSize: 50 * 1024 * 1024, // 50MB
       priority: ['critical', 'important', 'normal'],
     },
-    // 同步配置
+    // SyncConfigure
     sync: {
       enabled: true,
-      interval: 5 * 60 * 1000, // 5分鐘
+      interval: 5 * 60 * 1000, // 5Minute
       maxRetries: 3,
     },
   },
 };
 
-// 效能優化工具函數
+// 效能優化ToolFunction
 export const _PerformanceUtils = {
-  // 圖片優化
+  // Graph片優化
   optimizeImage: (url: string, width: number, quality = 0.8): string => {
-    // 根據設備像素比調整寬度
+    // Root據設備像素比調整寬度
     const _pixelRatio = window.devicePixelRatio || 1;
     const _adjustedWidth = Math.round(width * pixelRatio);
 
@@ -123,12 +123,12 @@ export const _PerformanceUtils = {
     return `${url}?w=${adjustedWidth}&q=${quality}&fmt=${format}`;
   },
 
-  // 響應式圖片
+  // Response式Graph片
   getResponsiveImage: (url: string, sizes: string): string => {
     return `${url}?sizes=${sizes}`;
   },
 
-  // 記憶體使用監控
+  // 記憶體使用Monitor
   getMemoryUsage: (): number => {
     if ('memory' in performance) {
       return (performance as any).memory.usedJSHeapSize;
@@ -144,7 +144,7 @@ export const _PerformanceUtils = {
     // logger.info(`${name} took ${end - start}ms`);
   },
 
-  // 防抖函數
+  // 防抖Function
   debounce: <T extends (...args: unknown[]) => any>(
     func: T,
     wait: number
@@ -156,7 +156,7 @@ export const _PerformanceUtils = {
     };
   },
 
-  // 節流函數
+  // 節流Function
   throttle: <T extends (...args: unknown[]) => any>(
     func: T,
     limit: number
@@ -171,7 +171,7 @@ export const _PerformanceUtils = {
     };
   },
 
-  // 懶加載檢查
+  // 懶加載Check
   isInViewport: (element: Element): boolean => {
     const _rect = element.getBoundingClientRect();
     return (
@@ -182,7 +182,7 @@ export const _PerformanceUtils = {
     );
   },
 
-  // 預加載資源
+  // 預加載Resource
   preloadResource: (url: string, type: 'image' | 'script' | 'style'): void => {
     const _link = document.createElement('link');
     link.rel = 'preload';
@@ -193,7 +193,7 @@ export const _PerformanceUtils = {
 
   // 清理記憶體
   cleanupMemory: (): void => {
-    // 清理事件監聽器
+    // 清理Event監聽器
     // 清理定時器
     // 清理快取
     if ('memory' in performance) {
@@ -202,7 +202,7 @@ export const _PerformanceUtils = {
   },
 };
 
-// 效能監控類
+// 效能MonitorClass
 export class PerformanceMonitor {
   private readonly metrics: Map<string, number[]> = new Map();
   private readonly observers: Map<string, PerformanceObserver> = new Map();
@@ -212,7 +212,7 @@ export class PerformanceMonitor {
   }
 
   private initObservers(): void {
-    // 監控 LCP
+    // Monitor LCP
     if ('PerformanceObserver' in window) {
       const _lcpObserver = new PerformanceObserver(list => {
         const _entries = list.getEntries();
@@ -222,7 +222,7 @@ export class PerformanceMonitor {
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.set('lcp', lcpObserver);
 
-      // 監控 FID
+      // Monitor FID
       const _fidObserver = new PerformanceObserver(list => {
         const _entries = list.getEntries();
         entries.forEach(entry => {
@@ -234,7 +234,7 @@ export class PerformanceMonitor {
       fidObserver.observe({ entryTypes: ['first-input'] });
       this.observers.set('fid', fidObserver);
 
-      // 監控 CLS
+      // Monitor CLS
       const _clsObserver = new PerformanceObserver(list => {
         let clsValue = 0;
         const _entries = list.getEntries();
@@ -284,5 +284,5 @@ export class PerformanceMonitor {
   }
 }
 
-// 全域效能監控實例
+// 全域效能MonitorInstance
 export const _performanceMonitor = new PerformanceMonitor();

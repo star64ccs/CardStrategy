@@ -1,50 +1,50 @@
 /**
- * 第三方服務配置
- * 統一管理所有第三方服務的配置信息
+ * 第三方ServiceConfigure
+ * 統一Manage所有第三方Service的ConfigureInformation
  */
 
-// 環境變量類型定義
+// 環境VariableClass型定義
 interface EnvironmentConfig {
-  // OpenAI 配置
+  // OpenAI Configure
   OPENAI_API_KEY: string;
   OPENAI_MODEL: string;
   OPENAI_MAX_TOKENS: number;
   OPENAI_TEMPERATURE: number;
 
-  // Google Cloud 配置
+  // Google Cloud Configure
   GOOGLE_CLOUD_PROJECT_ID: string;
   GOOGLE_CLOUD_PRIVATE_KEY: string;
   GOOGLE_CLOUD_CLIENT_EMAIL: string;
   GOOGLE_VISION_API_KEY: string;
 
-  // Google Gemini 配置
+  // Google Gemini Configure
   GOOGLE_GEMINI_API_KEY: string;
   GOOGLE_GEMINI_MODEL: string;
 
-  // Cohere 配置
+  // Cohere Configure
   COHERE_API_KEY: string;
   COHERE_MODEL: string;
 
-  // Replicate 配置
+  // Replicate Configure
   REPLICATE_API_TOKEN: string;
 
-  // Cloudinary 配置
+  // Cloudinary Configure
   CLOUDINARY_CLOUD_NAME: string;
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_API_SECRET: string;
 
-  // AWS S3 配置
+  // AWS S3 Configure
   AWS_ACCESS_KEY_ID: string;
   AWS_SECRET_ACCESS_KEY: string;
   AWS_REGION: string;
   AWS_S3_BUCKET: string;
 
-  // Cloudflare 配置
+  // Cloudflare Configure
   CLOUDFLARE_ZONE_ID: string;
   CLOUDFLARE_ACCOUNT_ID: string;
   CLOUDFLARE_API_TOKEN: string;
 
-  // 通信服務配置
+  // 通信ServiceConfigure
   SENDGRID_API_KEY: string;
   SENDGRID_FROM_EMAIL: string;
   TWILIO_ACCOUNT_SID: string;
@@ -53,17 +53,17 @@ interface EnvironmentConfig {
   GMAIL_SMTP_USER: string;
   GMAIL_SMTP_PASS: string;
 
-  // 分析服務配置
+  // AnalysisServiceConfigure
   SEGMENT_WRITE_KEY: string;
   MIXEL_PROJECT_TOKEN: string;
   MIXEL_API_SECRET: string;
 
-  // 應用配置
+  // ApplyConfigure
   NODE_ENV: string;
   API_BASE_URL: string;
 }
 
-// 默認配置值
+// DefaultConfigureValue
 const DEFAULT_CONFIG: Partial<EnvironmentConfig> = {
   OPENAI_MODEL: 'gpt-3.5-turbo',
   OPENAI_MAX_TOKENS: 2000,
@@ -75,8 +75,8 @@ const DEFAULT_CONFIG: Partial<EnvironmentConfig> = {
 };
 
 /**
- * 服務配置類
- * 提供統一的配置管理和驗證
+ * ServiceConfigureClass
+ * 提供統一的ConfigureManage和Verify
  */
 export class ServiceConfig {
   private static instance: ServiceConfig;
@@ -93,7 +93,7 @@ export class ServiceConfig {
   }
 
   /**
-   * 初始化配置
+   * InitializeConfigure
    */
   async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -101,30 +101,30 @@ export class ServiceConfig {
     }
 
     try {
-      // 從環境變量加載配置
+      // 從環境Variable加載Configure
       this.loadFromEnvironment();
 
-      // 從本地存儲加載配置（用於開發環境）
+      // 從LocalStorage加載Configure（用於On發環境）
       await this.loadFromStorage();
 
-      // 驗證必需的配置
+      // VerifyRequired的Configure
       this.validateRequiredConfig();
 
       this.isInitialized = true;
-      console.log('服務配置初始化完成');
+      console.log('ServiceConfigureInitialize完成');
     } catch (error) {
-      console.error('服務配置初始化失敗:', error);
+      console.error('ServiceConfigureInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 從環境變量加載配置
+   * 從環境Variable加載Configure
    */
   private loadFromEnvironment(): void {
     const _env = process.env as any;
 
-    // OpenAI 配置
+    // OpenAI Configure
     if (env.OPENAI_API_KEY) {
       this.config.OPENAI_API_KEY = env.OPENAI_API_KEY;
     }
@@ -132,7 +132,7 @@ export class ServiceConfig {
       this.config.OPENAI_MODEL = env.OPENAI_MODEL;
     }
 
-    // Google Cloud 配置
+    // Google Cloud Configure
     if (env.GOOGLE_CLOUD_PROJECT_ID) {
       this.config.GOOGLE_CLOUD_PROJECT_ID = env.GOOGLE_CLOUD_PROJECT_ID;
     }
@@ -140,22 +140,22 @@ export class ServiceConfig {
       this.config.GOOGLE_VISION_API_KEY = env.GOOGLE_VISION_API_KEY;
     }
 
-    // Google Gemini 配置
+    // Google Gemini Configure
     if (env.GOOGLE_GEMINI_API_KEY) {
       this.config.GOOGLE_GEMINI_API_KEY = env.GOOGLE_GEMINI_API_KEY;
     }
 
-    // Cohere 配置
+    // Cohere Configure
     if (env.COHERE_API_KEY) {
       this.config.COHERE_API_KEY = env.COHERE_API_KEY;
     }
 
-    // Replicate 配置
+    // Replicate Configure
     if (env.REPLICATE_API_TOKEN) {
       this.config.REPLICATE_API_TOKEN = env.REPLICATE_API_TOKEN;
     }
 
-    // Cloudinary 配置
+    // Cloudinary Configure
     if (env.CLOUDINARY_CLOUD_NAME) {
       this.config.CLOUDINARY_CLOUD_NAME = env.CLOUDINARY_CLOUD_NAME;
     }
@@ -166,7 +166,7 @@ export class ServiceConfig {
       this.config.CLOUDINARY_API_SECRET = env.CLOUDINARY_API_SECRET;
     }
 
-    // AWS S3 配置
+    // AWS S3 Configure
     if (env.AWS_ACCESS_KEY_ID) {
       this.config.AWS_ACCESS_KEY_ID = env.AWS_ACCESS_KEY_ID;
     }
@@ -174,7 +174,7 @@ export class ServiceConfig {
       this.config.AWS_SECRET_ACCESS_KEY = env.AWS_SECRET_ACCESS_KEY;
     }
 
-    // Cloudflare 配置
+    // Cloudflare Configure
     if (env.CLOUDFLARE_ZONE_ID) {
       this.config.CLOUDFLARE_ZONE_ID = env.CLOUDFLARE_ZONE_ID;
     }
@@ -182,7 +182,7 @@ export class ServiceConfig {
       this.config.CLOUDFLARE_ACCOUNT_ID = env.CLOUDFLARE_ACCOUNT_ID;
     }
 
-    // 通信服務配置
+    // 通信ServiceConfigure
     if (env.SENDGRID_API_KEY) {
       this.config.SENDGRID_API_KEY = env.SENDGRID_API_KEY;
     }
@@ -193,7 +193,7 @@ export class ServiceConfig {
       this.config.TWILIO_AUTH_TOKEN = env.TWILIO_AUTH_TOKEN;
     }
 
-    // 分析服務配置
+    // AnalysisServiceConfigure
     if (env.SEGMENT_WRITE_KEY) {
       this.config.SEGMENT_WRITE_KEY = env.SEGMENT_WRITE_KEY;
     }
@@ -201,16 +201,16 @@ export class ServiceConfig {
       this.config.MIXEL_PROJECT_TOKEN = env.MIXEL_PROJECT_TOKEN;
     }
 
-    // 應用默認配置
+    // ApplyDefaultConfigure
     this.config = { ...DEFAULT_CONFIG, ...this.config };
   }
 
   /**
-   * 從本地存儲加載配置（開發環境）
+   * 從LocalStorage加載Configure（On發環境）
    */
   private async loadFromStorage(): Promise<void> {
     try {
-      // 在 React Native 環境中，可以從 AsyncStorage 加載配置
+      // 在 React Native 環境中，可以從 AsyncStorage 加載Configure
       if (typeof window === 'undefined') {
         const _AsyncStorage = require('@react-native-async-storage/async-storage');
         const _storedConfig = await AsyncStorage.getItem('service_config');
@@ -220,12 +220,12 @@ export class ServiceConfig {
         }
       }
     } catch (error) {
-      console.warn('從存儲加載配置失敗:', error);
+      console.warn('從存儲加載ConfigureFailed:', error);
     }
   }
 
   /**
-   * 驗證必需的配置
+   * VerifyRequired的Configure
    */
   private validateRequiredConfig(): void {
     const requiredKeys: (keyof EnvironmentConfig)[] = [
@@ -247,7 +247,7 @@ export class ServiceConfig {
 
     if (missingKeys.length > 0) {
       console.warn('缺少以下必需的配置項:', missingKeys);
-      // 在開發環境中，我們可以使用模擬配置
+      // 在On發環境中，我們可以使用模擬Configure
       if (this.config.NODE_ENV === 'development') {
         this.setMockConfig(missingKeys);
       }
@@ -255,7 +255,7 @@ export class ServiceConfig {
   }
 
   /**
-   * 設置模擬配置（開發環境）
+   * Settings模擬Configure（On發環境）
    */
   private setMockConfig(missingKeys: string[]): void {
     const mockConfig: Partial<EnvironmentConfig> = {
@@ -278,7 +278,7 @@ export class ServiceConfig {
   }
 
   /**
-   * 獲取配置值
+   * GetConfigureValue
    */
   get<K extends keyof EnvironmentConfig>(
     key: K
@@ -287,7 +287,7 @@ export class ServiceConfig {
   }
 
   /**
-   * 設置配置值
+   * SettingsConfigureValue
    */
   set<K extends keyof EnvironmentConfig>(
     key: K,
@@ -297,14 +297,14 @@ export class ServiceConfig {
   }
 
   /**
-   * 獲取所有配置
+   * Get所有Configure
    */
   getAll(): Partial<EnvironmentConfig> {
     return { ...this.config };
   }
 
   /**
-   * 檢查服務是否可用
+   * CheckServiceYesNo可用
    */
   isServiceAvailable(service: string): boolean {
     switch (service) {
@@ -344,7 +344,7 @@ export class ServiceConfig {
   }
 
   /**
-   * 獲取服務狀態報告
+   * GetServiceStatusReport
    */
   getServiceStatus(): Record<string, boolean> {
     return {
@@ -363,8 +363,8 @@ export class ServiceConfig {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _serviceConfig = ServiceConfig.getInstance();
 
-// 導出配置類型
+// ExportConfigureClass型
 export type { EnvironmentConfig };

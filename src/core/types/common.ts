@@ -1,11 +1,11 @@
-// 基礎類型定義
+// 基礎Class型定義
 export interface BaseEntity {
   id: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-// API 響應類型
+// API ResponseClass型
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -20,7 +20,7 @@ export interface ApiError {
   details?: Record<string, unknown>;
 }
 
-// 分頁類型
+// PaginateClass型
 export interface PaginationParams {
   page: number;
   limit: number;
@@ -40,14 +40,14 @@ export interface PaginatedResponse<T> {
   };
 }
 
-// 搜索類型
+// SearchClass型
 export interface SearchParams {
   query: string;
   filters?: Record<string, unknown>;
   pagination: PaginationParams;
 }
 
-// 地址類型
+// AddressClass型
 export interface Address {
   street: string;
   city: string;
@@ -56,7 +56,7 @@ export interface Address {
   country: string;
 }
 
-// 錯誤類型
+// ErrorClass型
 export interface AppError {
   code: string;
   message: string;
@@ -66,7 +66,7 @@ export interface AppError {
   context?: Record<string, unknown>;
 }
 
-// 日誌類型
+// LogClass型
 export interface LogEntry {
   level: 'debug' | 'info' | 'warn' | 'error';
   message: string;
@@ -76,7 +76,7 @@ export interface LogEntry {
   stack?: string;
 }
 
-// 工具類型
+// ToolClass型
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };

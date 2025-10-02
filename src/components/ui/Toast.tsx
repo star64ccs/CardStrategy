@@ -1,4 +1,4 @@
-// Toast 組件
+// Toast Component
 import React, {
   forwardRef,
   useCallback,
@@ -12,7 +12,7 @@ import { useDesignSystem } from '../../hooks/useDesignSystem';
 import type { ToastProps } from '../../types/components';
 import { enhanceComponent } from '../../utils/accessibilityEnhancer';
 
-// Toast 組件
+// Toast Component
 export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
   (
     {
@@ -42,7 +42,7 @@ export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
     const [isVisible, setIsVisible] = useState(true);
     const [isAnimating, setIsAnimating] = useState(false);
 
-    // 自動關閉
+    // AutoOff閉
     useEffect(() => {
       if (isVisible && duration > 0) {
         const _timer = setTimeout(() => {
@@ -77,7 +77,7 @@ export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
         ...style,
       };
 
-      // 類型樣式
+      // Class型樣式
       const typeStyles: Record<string, React.CSSProperties> = {
         success: {
           backgroundColor: theme.colors?.brand?.success || '#28A745',
@@ -165,7 +165,7 @@ export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
       };
     }, [position]);
 
-    // 處理關閉
+    // HandleOff閉
     const _handleClose = useCallback(() => {
       setIsAnimating(true);
       setIsVisible(false);
@@ -175,12 +175,12 @@ export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
       }, 300);
     }, [onClose]);
 
-    // 處理操作
+    // HandleOperation
     const _handleAction = useCallback(() => {
       onAction?.();
     }, [onAction]);
 
-    // 渲染圖標
+    // 渲染Graph標
     const _renderIcon = () => {
       if (icon) return icon;
 
@@ -205,7 +205,7 @@ export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
       );
     };
 
-    // 渲染關閉按鈕
+    // 渲染Off閉按鈕
     const _renderCloseButton = () => {
       if (!closable) return null;
 
@@ -235,7 +235,7 @@ export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
       );
     };
 
-    // 渲染操作按鈕
+    // 渲染Operation按鈕
     const _renderAction = () => {
       if (!action) return null;
 
@@ -267,7 +267,7 @@ export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
       );
     };
 
-    // 渲染內容
+    // 渲染Content
     const _renderContent = () => {
       return (
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -362,8 +362,8 @@ export const _Toast = forwardRef<HTMLDivElement, ToastProps>(
   }
 );
 
-// 設置顯示名稱
+// SettingsShow名稱
 Toast.displayName = 'Toast';
 
-// 導出組件
+// ExportComponent
 export default Toast;

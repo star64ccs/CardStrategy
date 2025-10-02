@@ -20,10 +20,10 @@ describe('HybridArchitectureCore', () => {
   let mockExtensionLayer: jest.Mocked<ExtensionModuleLayer>;
 
   beforeEach(() => {
-    // 重置所有 mock
+    // Reset所有 mock
     jest.clearAllMocks();
 
-    // 創建 mock 實例
+    // Create mock Instance
     mockGlobalCore = {
       initialize: jest.fn().mockResolvedValue(true),
       getCoreBusinessService: jest.fn().mockReturnValue({
@@ -66,7 +66,7 @@ describe('HybridArchitectureCore', () => {
       },
     } as any;
 
-    // 設置 mock 返回值
+    // Settings mock ReturnValue
     (GlobalCoreArchitecture.getInstance as jest.Mock).mockReturnValue(
       mockGlobalCore
     );
@@ -77,7 +77,7 @@ describe('HybridArchitectureCore', () => {
       mockExtensionLayer
     );
 
-    // 重置單例實例
+    // Reset單例Instance
     (HybridArchitectureCore as any).instance = undefined;
     hybridCore = HybridArchitectureCore.getInstance();
   });
@@ -91,7 +91,7 @@ describe('HybridArchitectureCore', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化混合架構核心', async () => {
+    it('應該SuccessInitialize混合架構核心', async () => {
       const _result = await hybridCore.initialize();
 
       expect(result).toBe(true);
@@ -100,12 +100,12 @@ describe('HybridArchitectureCore', () => {
       expect(mockExtensionLayer.initialize).toHaveBeenCalled();
     });
 
-    it('應該處理初始化失敗', async () => {
-      // 重置單例實例以確保測試隔離
+    it('應該HandleInitializeFailed', async () => {
+      // Reset單例Instance以確保Test隔離
       (HybridArchitectureCore as any).instance = undefined;
       const _testCore = HybridArchitectureCore.getInstance();
 
-      mockGlobalCore.initialize.mockRejectedValue(new Error('初始化失敗'));
+      mockGlobalCore.initialize.mockRejectedValue(new Error('InitializeFailed'));
 
       const _result = await testCore.initialize();
 
@@ -160,7 +160,7 @@ describe('HybridArchitectureCore', () => {
       await hybridCore.initialize();
     });
 
-    it('應該成功執行業務操作', async () => {
+    it('應該Success執行業務操作', async () => {
       const _operation = { type: 'test', data: 'test' };
       const _context = { startTime: Date.now() };
 
@@ -184,7 +184,7 @@ describe('HybridArchitectureCore', () => {
     });
 
     it('應該處理未初始化的情況', async () => {
-      // 重置初始化狀態
+      // ResetInitializeStatus
       (hybridCore as any)._isInitialized = false;
 
       const _operation = { type: 'test', data: 'test' };
@@ -199,15 +199,15 @@ describe('HybridArchitectureCore', () => {
       expect(result.error).toBe('混合架構核心尚未初始化');
     });
 
-    it('應該處理業務操作執行錯誤', async () => {
-      // 重置單例實例以確保測試隔離
+    it('應該Handle業務操作執行Error', async () => {
+      // Reset單例Instance以確保Test隔離
       (HybridArchitectureCore as any).instance = undefined;
       const _testCore = HybridArchitectureCore.getInstance();
       await testCore.initialize();
 
       mockGlobalCore
         .getCoreBusinessService()
-        .processBusinessLogic.mockRejectedValue(new Error('業務操作失敗'));
+        .processBusinessLogic.mockRejectedValue(new Error('業務操作Failed'));
 
       const _operation = { type: 'test', data: 'test' };
       const _context = { startTime: Date.now() };
@@ -218,7 +218,7 @@ describe('HybridArchitectureCore', () => {
       );
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('業務操作失敗');
+      expect(result.error).toBe('業務操作Failed');
     });
   });
 
@@ -235,10 +235,10 @@ describe('HybridArchitectureCore', () => {
   });
 
   describe('關閉架構', () => {
-    it('應該成功關閉架構', async () => {
+    it('應該Success關閉架構', async () => {
       await hybridCore.shutdown();
 
-      // 驗證狀態已重置
+      // VerifyStatus已Reset
       const _status = hybridCore.getArchitectureStatus();
       expect(status.isInitialized).toBe(false);
     });
@@ -269,7 +269,7 @@ describe('PerformanceMonitor', () => {
 
       expect(result.success).toBe(true);
       expect(result.data.metrics).toEqual(metrics);
-      // 檢查是否有問題（85 > 80 閾值）
+      // CheckYesNo有問題（85 > 80 閾Value）
       expect(result.data.issues.length).toBeGreaterThanOrEqual(0);
     });
 
@@ -469,7 +469,7 @@ describe('SecurityMonitor', () => {
           status: 'breach' as const,
           severity: 'high' as const,
           timestamp: new Date(),
-          details: '認證失敗',
+          details: '認證Failed',
         },
       ];
 

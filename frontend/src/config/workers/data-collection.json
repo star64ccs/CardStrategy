@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "interval": "0 */6 * * *",
+  "batchSize": 100,
+  "timeout": 300000
+}

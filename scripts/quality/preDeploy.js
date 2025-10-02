@@ -8,6 +8,6 @@ try {
   execSync('npm run lint && npm run type-check && npm run test:e2e', { stdio: 'inherit' });
   console.log('✅ preDeploy檢查通過');
 } catch (error) {
-  console.error('❌ preDeploy檢查失敗');
+  console.error('❌ preDeployCheckFailed');
   process.exit(1);
 }

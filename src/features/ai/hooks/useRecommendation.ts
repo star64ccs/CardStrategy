@@ -55,13 +55,13 @@ import {
 } from '../types/recommendation';
 
 /**
- * 投資建議系統自定義 Hook
- * 提供投資建議生成、用戶配置管理、組合分析等功能
+ * 投資建議系統Custom Hook
+ * 提供投資建議生成、UserConfigureManage、組合Analysis等功能
  */
 export const _useRecommendation = () => {
   const _dispatch = useAppDispatch();
 
-  // 狀態選擇器
+  // StatusSelect器
   const _currentRecommendation = useAppSelector(selectCurrentRecommendation);
   const _recommendationHistory = useAppSelector(selectRecommendationHistory);
   const _recommendationStats = useAppSelector(selectRecommendationStats);
@@ -86,7 +86,7 @@ export const _useRecommendation = () => {
   const _userSatisfaction = useAppSelector(selectUserSatisfaction);
   const _conversionRate = useAppSelector(selectConversionRate);
 
-  // 投資建議操作
+  // 投資建議Operation
   const _generateInvestmentRecommendation = useCallback(
     async (request: InvestmentRecommendationRequest) => {
       try {
@@ -102,7 +102,7 @@ export const _useRecommendation = () => {
     [dispatch]
   );
 
-  // 獲取建議歷史
+  // Get建議歷史
   const _getHistory = useCallback(
     async (userId: string) => {
       try {
@@ -118,7 +118,7 @@ export const _useRecommendation = () => {
     [dispatch]
   );
 
-  // 獲取建議統計
+  // Get建議Statistics
   const _getStats = useCallback(async () => {
     try {
       const _stats = await dispatch(getRecommendationStats()).unwrap();
@@ -129,7 +129,7 @@ export const _useRecommendation = () => {
     }
   }, [dispatch]);
 
-  // 更新用戶配置
+  // UpdateUserConfigure
   const _updateProfile = useCallback(
     async (userId: string, profile: UserProfile) => {
       try {
@@ -143,7 +143,7 @@ export const _useRecommendation = () => {
     [dispatch]
   );
 
-  // 獲取用戶配置
+  // GetUserConfigure
   const _getProfile = useCallback(
     async (userId: string) => {
       try {
@@ -157,7 +157,7 @@ export const _useRecommendation = () => {
     [dispatch]
   );
 
-  // 分析投資組合
+  // Analysis投資組合
   const _analyzeUserPortfolio = useCallback(
     async (userId: string, portfolio: unknown[]) => {
       try {
@@ -173,22 +173,22 @@ export const _useRecommendation = () => {
     [dispatch]
   );
 
-  // 清除當前建議
+  // Clear當前建議
   const _clearRecommendation = useCallback(() => {
     dispatch(clearCurrentRecommendation());
   }, [dispatch]);
 
-  // 清除錯誤
+  // ClearError
   const _clearErrorState = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 重置建議狀態
+  // Reset建議Status
   const _resetState = useCallback(() => {
     dispatch(resetRecommendationState());
   }, [dispatch]);
 
-  // 設置用戶配置
+  // SettingsUserConfigure
   const _setProfile = useCallback(
     (profile: UserProfile) => {
       dispatch(setUserProfile(profile));
@@ -196,7 +196,7 @@ export const _useRecommendation = () => {
     [dispatch]
   );
 
-  // 更新建議反饋
+  // Update建議反饋
   const _updateFeedback = useCallback(
     (
       recommendationId: string,
@@ -218,7 +218,7 @@ export const _useRecommendation = () => {
     [dispatch]
   );
 
-  // 實用函數 - 根據動作篩選建議
+  // 實用Function - Root據動作篩選建議
   const _getRecommendationsByAction = useCallback(
     (action: RecommendationAction) => {
       if (!currentRecommendation) return [];
@@ -229,7 +229,7 @@ export const _useRecommendation = () => {
     [currentRecommendation]
   );
 
-  // 獲取高優先級建議
+  // Get高優先級建議
   const _getHighPriorityRecommendations = useCallback(() => {
     if (!currentRecommendation) return [];
     return currentRecommendation.recommendations.filter(
@@ -238,7 +238,7 @@ export const _useRecommendation = () => {
     );
   }, [currentRecommendation]);
 
-  // 根據風險等級篩選建議
+  // Root據風險等級篩選建議
   const _getRecommendationsByRisk = useCallback(
     (riskLevel: RiskLevel) => {
       if (!currentRecommendation) return [];
@@ -249,22 +249,22 @@ export const _useRecommendation = () => {
     [currentRecommendation]
   );
 
-  // 獲取強烈購買建議
+  // Get強烈購買建議
   const _getStrongBuyRecommendations = useCallback(() => {
     return getRecommendationsByAction(RecommendationAction.STRONG_BUY);
   }, [getRecommendationsByAction]);
 
-  // 獲取購買建議
+  // Get購買建議
   const _getBuyRecommendations = useCallback(() => {
     return getRecommendationsByAction(RecommendationAction.BUY);
   }, [getRecommendationsByAction]);
 
-  // 獲取持有建議
+  // Get持有建議
   const _getHoldRecommendations = useCallback(() => {
     return getRecommendationsByAction(RecommendationAction.HOLD);
   }, [getRecommendationsByAction]);
 
-  // 獲取賣出建議
+  // Get賣出建議
   const _getSellRecommendations = useCallback(() => {
     return [
       ...getRecommendationsByAction(RecommendationAction.SELL),
@@ -272,22 +272,22 @@ export const _useRecommendation = () => {
     ];
   }, [getRecommendationsByAction]);
 
-  // 獲取低風險建議
+  // Get低風險建議
   const _getLowRiskRecommendations = useCallback(() => {
     return getRecommendationsByRisk(RiskLevel.LOW);
   }, [getRecommendationsByRisk]);
 
-  // 獲取中等風險建議
+  // Get中等風險建議
   const _getMediumRiskRecommendations = useCallback(() => {
     return getRecommendationsByRisk(RiskLevel.MEDIUM);
   }, [getRecommendationsByRisk]);
 
-  // 獲取高風險建議
+  // Get高風險建議
   const _getHighRiskRecommendations = useCallback(() => {
     return getRecommendationsByRisk(RiskLevel.HIGH);
   }, [getRecommendationsByRisk]);
 
-  // 根據預期回報排序建議
+  // Root據預期回報Sort建議
   const _getRecommendationsByReturn = useCallback(
     (descending = true) => {
       if (!currentRecommendation) return [];
@@ -301,7 +301,7 @@ export const _useRecommendation = () => {
     [currentRecommendation]
   );
 
-  // 根據置信度排序建議
+  // Root據置信度Sort建議
   const _getRecommendationsByConfidence = useCallback(
     (descending = true) => {
       if (!currentRecommendation) return [];
@@ -313,7 +313,7 @@ export const _useRecommendation = () => {
     [currentRecommendation]
   );
 
-  // 獲取最佳建議（高回報 + 高置信度）
+  // Get最佳建議（高回報 + 高置信度）
   const _getBestRecommendations = useCallback(
     (limit = 5) => {
       if (!currentRecommendation) return [];
@@ -326,7 +326,7 @@ export const _useRecommendation = () => {
     [currentRecommendation]
   );
 
-  // 獲取適合新手的建議
+  // Get適合新手的建議
   const _getBeginnerFriendlyRecommendations = useCallback(() => {
     if (!currentRecommendation) return [];
     return currentRecommendation.recommendations.filter(
@@ -335,7 +335,7 @@ export const _useRecommendation = () => {
     );
   }, [currentRecommendation]);
 
-  // 獲取投機性建議
+  // Get投機性建議
   const _getSpeculativeRecommendations = useCallback(() => {
     if (!currentRecommendation) return [];
     return currentRecommendation.recommendations.filter(
@@ -345,7 +345,7 @@ export const _useRecommendation = () => {
     );
   }, [currentRecommendation]);
 
-  // 根據預算篩選建議
+  // Root據預算篩選建議
   const _getRecommendationsByBudget = useCallback(
     (maxBudget: number) => {
       if (!currentRecommendation) return [];
@@ -356,7 +356,7 @@ export const _useRecommendation = () => {
     [currentRecommendation]
   );
 
-  // 根據時間框架篩選建議
+  // Root據TimeFramework篩選建議
   const _getRecommendationsByTimeFrame = useCallback(
     (timeFrame: string) => {
       if (!currentRecommendation) return [];
@@ -373,13 +373,13 @@ export const _useRecommendation = () => {
     return portfolioSuggestion.diversification.score;
   }, [portfolioSuggestion]);
 
-  // 獲取再平衡建議
+  // Get再平衡建議
   const _getRebalanceRecommendations = useCallback(() => {
     if (!portfolioSuggestion) return [];
     return portfolioSuggestion.rebalanceRecommendations;
   }, [portfolioSuggestion]);
 
-  // 檢查建議是否即將過期
+  // Check建議YesNo即將過期
   const _isRecommendationExpiringSoon = useCallback(
     (hours = 24) => {
       if (!validUntil) return false;
@@ -392,7 +392,7 @@ export const _useRecommendation = () => {
     [validUntil]
   );
 
-  // 獲取建議摘要
+  // Get建議摘要
   const _getRecommendationSummary = useCallback(() => {
     if (!currentRecommendation) return null;
 
@@ -429,7 +429,7 @@ export const _useRecommendation = () => {
     isValid,
   ]);
 
-  // 格式化貨幣
+  // Format貨幣
   const _formatCurrency = useCallback((amount: number, currency = 'TWD') => {
     return new Intl.NumberFormat('zh-TW', {
       style: 'currency',
@@ -439,12 +439,12 @@ export const _useRecommendation = () => {
     }).format(amount);
   }, []);
 
-  // 格式化百分比
+  // Format百分比
   const _formatPercentage = useCallback((value: number, decimals = 1) => {
     return `${(value * 100).toFixed(decimals)}%`;
   }, []);
 
-  // 格式化風險等級
+  // Format風險等級
   const _formatRiskLevel = useCallback((riskLevel: RiskLevel) => {
     const _riskLabels = {
       [RiskLevel.VERY_LOW]: '極低風險',
@@ -456,7 +456,7 @@ export const _useRecommendation = () => {
     return riskLabels[riskLevel] || riskLevel;
   }, []);
 
-  // 格式化建議動作
+  // Format建議動作
   const _formatRecommendationAction = useCallback(
     (action: RecommendationAction) => {
       const _actionLabels = {
@@ -472,7 +472,7 @@ export const _useRecommendation = () => {
     []
   );
 
-  // 格式化優先級
+  // Format優先級
   const _formatPriority = useCallback((priority: Priority) => {
     const _priorityLabels = {
       [Priority.VERY_HIGH]: '極高',
@@ -485,7 +485,7 @@ export const _useRecommendation = () => {
   }, []);
 
   return {
-    // 狀態
+    // Status
     currentRecommendation,
     recommendationHistory,
     recommendationStats,
@@ -510,7 +510,7 @@ export const _useRecommendation = () => {
     userSatisfaction,
     conversionRate,
 
-    // 操作
+    // Operation
     generateInvestmentRecommendation,
     getHistory,
     getStats,
@@ -523,7 +523,7 @@ export const _useRecommendation = () => {
     setProfile,
     updateFeedback,
 
-    // 實用函數
+    // 實用Function
     getRecommendationsByAction,
     getHighPriorityRecommendations,
     getRecommendationsByRisk,
@@ -546,7 +546,7 @@ export const _useRecommendation = () => {
     isRecommendationExpiringSoon,
     getRecommendationSummary,
 
-    // 格式化函數
+    // FormatFunction
     formatCurrency,
     formatPercentage,
     formatRiskLevel,

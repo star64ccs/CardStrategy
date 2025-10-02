@@ -1,5 +1,5 @@
 module.exports = {
-  // Ollama配置 (本地運行的大語言模型)
+  // OllamaConfigure (Local運Row的大Language模型)
   ollama: {
     baseUrl: process.env.OLLAMA_BASE_URL || 'http://localhost:11434',
     models: {
@@ -36,7 +36,7 @@ module.exports = {
     timeout: 30000,
   },
 
-  // Hugging Face配置 (免費API)
+  // Hugging FaceConfigure (免費API)
   huggingface: {
     baseUrl: 'https://api-inference.huggingface.co',
     apiKey: process.env.HUGGING_FACE_API_KEY || '',
@@ -78,7 +78,7 @@ module.exports = {
     },
   },
 
-  // OpenAI兼容服務配置 (本地部署)
+  // OpenAI兼容ServiceConfigure (LocalDeploy)
   openaiCompatible: {
     baseUrl: process.env.OPENAI_COMPATIBLE_URL || 'http://localhost:8080',
     models: {
@@ -101,7 +101,7 @@ module.exports = {
     timeout: 30000,
   },
 
-  // 任務類型配置
+  // TaskClass型Configure
   taskTypes: {
     card_analysis: {
       description: '卡片分析任務',
@@ -141,7 +141,7 @@ module.exports = {
     },
   },
 
-  // 錯誤處理配置
+  // ErrorHandleConfigure
   errorHandling: {
     maxRetries: 3,
     retryDelay: 1000,
@@ -149,14 +149,14 @@ module.exports = {
     timeout: 30000,
   },
 
-  // 緩存配置
+  // CacheConfigure
   caching: {
     enabled: true,
-    ttl: 3600, // 1小時
+    ttl: 3600, // 1Hour
     maxSize: 1000,
   },
 
-  // 監控配置
+  // MonitorConfigure
   monitoring: {
     enabled: true,
     logRequests: true,

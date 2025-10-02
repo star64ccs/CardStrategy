@@ -1,6 +1,6 @@
 /**
- * 合規性引擎測試
- * 測試重構計劃任務 1.1: ComplianceEngine 核心服務
+ * 合規性引擎Test
+ * Test重構計劃Task 1.1: ComplianceEngine 核心Service
  */
 
 import type { Location, Consent } from '../../services/complianceEngine';
@@ -32,7 +32,7 @@ describe('ComplianceEngine', () => {
   });
 
   describe('初始化測試', () => {
-    it('應該成功初始化引擎', async () => {
+    it('應該SuccessInitialize引擎', async () => {
       const _result = await complianceEngine.initialize();
       expect(result).toBe(true);
     });
@@ -92,7 +92,7 @@ describe('ComplianceEngine', () => {
       };
 
       const _jurisdiction = complianceEngine.detectJurisdiction(location);
-      expect(jurisdiction.id).toBe('taiwan'); // 默認管轄區
+      expect(jurisdiction.id).toBe('taiwan'); // Default管轄District
     });
   });
 
@@ -264,7 +264,7 @@ describe('ComplianceEngine', () => {
       };
 
       const _result = complianceEngine.validateConsent(consent);
-      expect(result.isValid).toBe(true); // 版本缺失只是警告
+      expect(result.isValid).toBe(true); // Version缺失只YesWarning
       expect(result.warnings).toContain('同意版本信息缺失');
     });
 
@@ -281,7 +281,7 @@ describe('ComplianceEngine', () => {
       };
 
       const _result = complianceEngine.validateConsent(consent);
-      expect(result.isValid).toBe(true); // IP缺失只是警告
+      expect(result.isValid).toBe(true); // IP缺失只YesWarning
       expect(result.warnings).toContain('IP地址信息缺失');
     });
   });
@@ -323,7 +323,7 @@ describe('ComplianceEngine', () => {
 
       complianceEngine.updateConfig(newConfig);
 
-      // 驗證配置已更新（通過檢查行為變化）
+      // VerifyConfigure已Update（通過CheckRow為變化）
       const _data = { name: 'Test', consent: true };
       const _result = complianceEngine.checkCompliance(data, 'data_collection');
       expect(result).toBeDefined();
@@ -332,14 +332,14 @@ describe('ComplianceEngine', () => {
 
   describe('重置測試', () => {
     it('應該重置引擎狀態', async () => {
-      // 先執行一些操作
+      // 先執Row一些Operation
       const location: Location = { country: 'TW' };
       complianceEngine.detectJurisdiction(location);
 
-      // 重置
+      // Reset
       await complianceEngine.reset();
 
-      // 驗證重置後可以重新初始化
+      // VerifyReset後可以ReInitialize
       const _initResult = await complianceEngine.initialize();
       expect(initResult).toBe(true);
     });
@@ -362,7 +362,7 @@ describe('ComplianceEngine', () => {
     it('應該處理無效位置', () => {
       const location: Location = { country: '' };
       const _jurisdiction = complianceEngine.detectJurisdiction(location);
-      expect(jurisdiction.id).toBe('taiwan'); // 應該返回默認管轄區
+      expect(jurisdiction.id).toBe('taiwan'); // 應該ReturnDefault管轄District
     });
   });
 
@@ -378,13 +378,13 @@ describe('ComplianceEngine', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成100次檢查
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete100次Check
     });
   });
 
   describe('功能測試', () => {
     it('應該處理複雜的合規場景', () => {
-      // 模擬複雜的用戶數據
+      // 模擬複雜的UserData
       const _complexData = {
         personalInfo: {
           name: 'John Doe',

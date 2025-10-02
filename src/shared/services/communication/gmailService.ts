@@ -50,7 +50,7 @@ export class GmailService {
   }
 
   /**
-   * 初始化郵件傳輸器
+   * Initialize郵件傳輸器
    */
   private initializeTransporter(): void {
     try {
@@ -73,14 +73,14 @@ export class GmailService {
   }
 
   /**
-   * 檢查服務是否可用
+   * CheckServiceYesNo可用
    */
   isAvailable(): boolean {
     return !!(this.config.user && this.config.pass && this.transporter);
   }
 
   /**
-   * 驗證連接
+   * VerifyConnect
    */
   async verifyConnection(): Promise<ApiResponse<boolean>> {
     try {
@@ -122,7 +122,7 @@ export class GmailService {
   }
 
   /**
-   * 發送郵件
+   * Send郵件
    */
   async sendEmail(
     email: GmailEmail
@@ -175,7 +175,7 @@ export class GmailService {
   }
 
   /**
-   * 批量發送郵件
+   * BatchSend郵件
    */
   async sendBulkEmails(emails: GmailEmail[]): Promise<
     ApiResponse<{
@@ -211,7 +211,7 @@ export class GmailService {
       let successCount = 0;
       let failedCount = 0;
 
-      // 串行發送郵件以避免 Gmail 限制
+      // SerialSend郵件以避免 Gmail Limit
       for (let i = 0; i < emails.length; i++) {
         try {
           const _result = await this.sendEmail(emails[i]);
@@ -223,7 +223,7 @@ export class GmailService {
             failedCount++;
           }
 
-          // 添加延遲以避免速率限制
+          // Add延遲以避免速率Limit
           if (i < emails.length - 1) {
             await new Promise(resolve => setTimeout(resolve, 1000));
           }
@@ -251,7 +251,7 @@ export class GmailService {
   }
 
   /**
-   * 發送歡迎郵件
+   * Send歡迎郵件
    */
   async sendWelcomeEmail(
     userEmail: string,
@@ -299,7 +299,7 @@ export class GmailService {
   }
 
   /**
-   * 發送密碼重置郵件
+   * SendPasswordReset郵件
    */
   async sendPasswordResetEmail(
     userEmail: string,
@@ -341,7 +341,7 @@ export class GmailService {
   }
 
   /**
-   * 發送市場價格提醒郵件
+   * Send市場價格提醒郵件
    */
   async sendPriceAlertEmail(
     userEmail: string,
@@ -378,7 +378,7 @@ export class GmailService {
   }
 
   /**
-   * 發送安全警告郵件
+   * Send安全Warning郵件
    */
   async sendSecurityAlertEmail(
     userEmail: string,
@@ -422,7 +422,7 @@ export class GmailService {
   }
 
   /**
-   * 獲取服務統計信息
+   * GetServiceStatisticsInformation
    */
   async getServiceStats(): Promise<
     ApiResponse<{
@@ -473,5 +473,5 @@ export class GmailService {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _gmailService = new GmailService();

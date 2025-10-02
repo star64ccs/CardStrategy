@@ -1,11 +1,11 @@
-// Loading 組件
+// Loading Component
 import React, { forwardRef, useMemo } from 'react';
 
 import { useDesignSystem } from '../../hooks/useDesignSystem';
 import type { ComponentSize, LoadingProps } from '../../types/components';
 import { enhanceComponent } from '../../utils/accessibilityEnhancer';
 
-// 加載組件
+// 加載Component
 export const _Loading = forwardRef<HTMLDivElement, LoadingProps>(
   (
     {
@@ -34,7 +34,7 @@ export const _Loading = forwardRef<HTMLDivElement, LoadingProps>(
   ) => {
     const { currentThemeData } = useDesignSystem();
 
-    // 計算加載組件樣式
+    // 計算加載Component樣式
     const _loadingStyles = useMemo(() => {
       const _theme = currentThemeData;
       if (!theme) return {};
@@ -323,8 +323,8 @@ export const _Loading = forwardRef<HTMLDivElement, LoadingProps>(
   }
 );
 
-// 設置顯示名稱
+// SettingsShow名稱
 Loading.displayName = 'Loading';
 
-// 導出組件
+// ExportComponent
 export default Loading;

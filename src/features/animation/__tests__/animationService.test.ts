@@ -28,7 +28,7 @@ describe('AnimationService', () => {
   let animationService: AnimationService;
 
   beforeEach(() => {
-    // 不需要重置實例，直接獲取
+    // 不需要ResetInstance，直接Get
     animationService = AnimationService.getInstance();
   });
 
@@ -41,7 +41,7 @@ describe('AnimationService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功創建實例', () => {
+    it('應該SuccessCreate實例', () => {
       expect(animationService).toBeDefined();
       expect(animationService).toBeInstanceOf(AnimationService);
     });
@@ -55,7 +55,7 @@ describe('AnimationService', () => {
 
   describe('動畫管理', () => {
     beforeEach(() => {
-      // 不需要初始化
+      // 不需要Initialize
     });
 
     it('應該創建動畫', () => {
@@ -103,7 +103,7 @@ describe('AnimationService', () => {
 
   describe('預設動畫', () => {
     beforeEach(() => {
-      // 不需要初始化
+      // 不需要Initialize
     });
 
     it('應該獲取預設動畫', () => {
@@ -136,7 +136,7 @@ describe('AnimationService', () => {
 
   describe('性能管理', () => {
     beforeEach(() => {
-      // 不需要初始化
+      // 不需要Initialize
     });
 
     it('應該獲取動畫統計', () => {
@@ -159,7 +159,7 @@ describe('AnimationService', () => {
 
   describe('動畫工具', () => {
     beforeEach(() => {
-      // 不需要初始化
+      // 不需要Initialize
     });
 
     it('應該組合動畫', () => {
@@ -191,14 +191,14 @@ describe('AnimationService', () => {
 
   describe('事件系統', () => {
     beforeEach(() => {
-      // 不需要初始化
+      // 不需要Initialize
     });
 
     it('應該註冊和觸發事件', () => {
       const _mockCallback = jest.fn();
       animationService.addEventListener(mockCallback);
 
-      // 創建並啟動動畫來觸發事件
+      // Create並Start動畫來觸發Event
       const _animationId = animationService.createAnimation({
         type: 'timing',
         duration: 100,
@@ -220,7 +220,7 @@ describe('AnimationService', () => {
       animationService.addEventListener(mockCallback);
       animationService.removeEventListener(mockCallback);
 
-      // 創建並啟動動畫來觸發事件
+      // Create並Start動畫來觸發Event
       const _animationId = animationService.createAnimation({
         type: 'timing',
         duration: 100,
@@ -238,21 +238,21 @@ describe('AnimationService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     it('應該處理無效的動畫ID', async () => {
       await expect(
         animationService.startAnimation('invalid_id')
       ).rejects.toThrow('Animation not found: invalid_id');
     });
 
-    it('應該處理事件監聽器錯誤', () => {
+    it('應該Handle事件監聽器Error', () => {
       const _mockCallback = jest.fn().mockImplementation(() => {
         throw new Error('Callback error');
       });
 
       animationService.addEventListener(mockCallback);
       expect(() => {
-        // 創建並啟動動畫來觸發事件
+        // Create並Start動畫來觸發Event
         const _animationId = animationService.createAnimation({
           type: 'timing',
           duration: 100,
@@ -271,7 +271,7 @@ describe('AnimationService', () => {
 
   describe('性能測試', () => {
     beforeEach(() => {
-      // 不需要初始化
+      // 不需要Initialize
     });
 
     it('應該快速創建動畫', () => {
@@ -305,7 +305,7 @@ describe('AnimationService', () => {
 
   describe('邊界條件', () => {
     beforeEach(() => {
-      // 不需要初始化
+      // 不需要Initialize
     });
 
     it('應該處理無效的插值範圍', () => {

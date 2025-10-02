@@ -1,6 +1,6 @@
 /**
- * 第三方服務集成測試
- * 驗證所有第三方服務的配置和連接
+ * 第三方Service集成Test
+ * Verify所有第三方Service的Configure和Connect
  */
 
 import { appInitializer } from '../core/config/appInitializer';
@@ -10,18 +10,18 @@ import { openaiService } from '../shared/services/ai/openaiService';
 import { aiService } from '../shared/services/aiService';
 import { cloudinaryService } from '../shared/services/storage/cloudinaryService';
 
-describe('第三方服務集成測試', () => {
+describe('第三方Service集成測試', () => {
   beforeAll(async () => {
-    // 初始化應用
+    // InitializeApply
     await appInitializer.initializeApp();
   });
 
-  describe('服務管理器測試', () => {
-    test('應該成功初始化服務管理器', () => {
+  describe('Service管理器測試', () => {
+    test('應該SuccessInitializeService管理器', () => {
       expect(serviceManager.isInitialized()).toBe(true);
     });
 
-    test('應該獲取服務統計信息', () => {
+    test('應該GetService統計Information', () => {
       const _stats = serviceManager.getServiceStatistics();
       expect(stats.total).toBeGreaterThan(0);
       expect(typeof stats.initialized).toBe('number');
@@ -29,7 +29,7 @@ describe('第三方服務集成測試', () => {
       expect(typeof stats.failed).toBe('number');
     });
 
-    test('應該生成服務報告', () => {
+    test('應該生成Service報告', () => {
       const _report = serviceManager.generateServiceReport();
       expect(report.summary).toBeDefined();
       expect(report.services).toBeDefined();
@@ -39,8 +39,8 @@ describe('第三方服務集成測試', () => {
     });
   });
 
-  describe('OpenAI 服務測試', () => {
-    test('應該獲取 OpenAI 服務狀態', async () => {
+  describe('OpenAI Service測試', () => {
+    test('應該Get OpenAI Service狀態', async () => {
       const _status = await openaiService.getServiceStatus();
       expect(status).toBeDefined();
       expect(typeof status.isAvailable).toBe('boolean');
@@ -53,13 +53,13 @@ describe('第三方服務集成測試', () => {
         const _models = await openaiService.getAvailableModels();
         expect(Array.isArray(models)).toBe(true);
       } else {
-        console.log('OpenAI 服務不可用，跳過測試');
+        console.log('OpenAI Service不可用，跳過測試');
       }
     });
   });
 
-  describe('Gemini 服務測試', () => {
-    test('應該獲取 Gemini 服務狀態', async () => {
+  describe('Gemini Service測試', () => {
+    test('應該Get Gemini Service狀態', async () => {
       const _status = await geminiService.getServiceStatus();
       expect(status).toBeDefined();
       expect(typeof status.isAvailable).toBe('boolean');
@@ -72,13 +72,13 @@ describe('第三方服務集成測試', () => {
         const _models = await geminiService.getAvailableModels();
         expect(Array.isArray(models)).toBe(true);
       } else {
-        console.log('Gemini 服務不可用，跳過測試');
+        console.log('Gemini Service不可用，跳過測試');
       }
     });
   });
 
-  describe('Cloudinary 服務測試', () => {
-    test('應該獲取 Cloudinary 服務狀態', async () => {
+  describe('Cloudinary Service測試', () => {
+    test('應該Get Cloudinary Service狀態', async () => {
       const _status = await cloudinaryService.getServiceStatus();
       expect(status).toBeDefined();
       expect(typeof status.isAvailable).toBe('boolean');
@@ -98,20 +98,20 @@ describe('第三方服務集成測試', () => {
         expect(url).toContain('h_200');
         expect(url).toContain('c_fill');
       } else {
-        console.log('Cloudinary 服務不可用，跳過測試');
+        console.log('Cloudinary Service不可用，跳過測試');
       }
     });
   });
 
-  describe('統一 AI 服務測試', () => {
-    test('應該獲取可用的 AI 服務', () => {
+  describe('統一 AI Service測試', () => {
+    test('應該Get可用的 AI Service', () => {
       const _availableServices = aiService.getAvailableServices();
       expect(availableServices).toBeDefined();
       expect(typeof availableServices.openai).toBe('boolean');
       expect(typeof availableServices.gemini).toBe('boolean');
     });
 
-    test('應該獲取服務統計信息', () => {
+    test('應該GetService統計Information', () => {
       const _stats = aiService.getServiceStatistics();
       expect(stats).toBeDefined();
       expect(typeof stats.totalServices).toBe('number');
@@ -165,7 +165,7 @@ describe('第三方服務集成測試', () => {
 
   describe('環境配置測試', () => {
     test('應該檢查環境變量配置', () => {
-      // 檢查關鍵環境變量是否存在
+      // CheckOffKey環境VariableYesNo存在
       const _requiredEnvVars = [
         'OPENAI_API_KEY',
         'GOOGLE_GEMINI_API_KEY',
@@ -174,8 +174,8 @@ describe('第三方服務集成測試', () => {
         'CLOUDINARY_API_SECRET',
       ];
 
-      // 在測試環境中，這些可能是模擬值
-      // 我們只檢查它們是否被定義
+      // 在Test環境中，這些可能Yes模擬Value
+      // 我們只Check它們YesNo被定義
       requiredEnvVars.forEach(envVar => {
         const _value = process.env[envVar];
         if (value) {
@@ -188,18 +188,18 @@ describe('第三方服務集成測試', () => {
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('應該正確處理服務不可用的情況', async () => {
-      // 測試當服務不可用時的錯誤處理
+  describe('ErrorHandle測試', () => {
+    test('應該正確HandleService不可用的情況', async () => {
+      // Test當Service不可用時的ErrorHandle
       const _unavailableServices = serviceManager
         .getAllServiceStatus()
         .filter(status => !status.isAvailable)
         .map(status => status.name);
 
       if (unavailableServices.length > 0) {
-        console.log('不可用的服務:', unavailableServices);
+        console.log('不可用的Service:', unavailableServices);
 
-        // 驗證錯誤信息是否正確記錄
+        // VerifyErrorInformationYesNo正確Record
         unavailableServices.forEach(serviceName => {
           const _status = serviceManager.getServiceStatus(serviceName);
           expect(status).toBeDefined();
@@ -212,20 +212,20 @@ describe('第三方服務集成測試', () => {
       }
     });
 
-    test('應該能夠重新初始化失敗的服務', async () => {
+    test('應該能夠重新InitializeFailed的Service', async () => {
       const _reinitialized = await serviceManager.reinitializeFailedServices();
       expect(Array.isArray(reinitialized)).toBe(true);
-      console.log('重新初始化的服務:', reinitialized);
+      console.log('重新Initialize的Service:', reinitialized);
     });
   });
 });
 
-// 性能測試
-describe('服務性能測試', () => {
-  test('服務初始化時間應該在合理範圍內', () => {
+// 性能Test
+describe('Service性能測試', () => {
+  test('ServiceInitialize時間應該在合理範圍內', () => {
     const _result = appInitializer.getInitializationResult();
     if (result) {
-      // 初始化時間應該少於 10 秒
+      // InitializeTime應該少於 10 Second
       expect(result.duration).toBeLessThan(10000);
       console.log(`應用初始化時間: ${result.duration}ms`);
     }
@@ -236,15 +236,15 @@ describe('服務性能測試', () => {
     await serviceManager.performHealthCheck();
     const _duration = Date.now() - startTime;
 
-    // 健康檢查應該在 5 秒內完成
+    // 健康Check應該在 5 Second內Complete
     expect(duration).toBeLessThan(5000);
     console.log(`健康檢查時間: ${duration}ms`);
   });
 });
 
-// 集成測試
-describe('服務集成測試', () => {
-  test('AI 服務應該能夠處理簡單的文本生成', async () => {
+// 集成Test
+describe('Service集成測試', () => {
+  test('AI Service應該能夠Handle簡單的文本生成', async () => {
     if (
       serviceManager.isServiceAvailable('openai') ||
       serviceManager.isServiceAvailable('gemini')
@@ -253,16 +253,16 @@ describe('服務集成測試', () => {
         const _response = await aiService.chat('你好，請簡單介紹一下卡牌收藏');
         expect(typeof response).toBe('string');
         expect(response.length).toBeGreaterThan(0);
-        console.log('AI 響應測試成功');
+        console.log('AI 響應測試Success');
       } catch (error) {
-        console.log('AI 服務測試失敗，可能是 API 配置問題:', error);
+        console.log('AI Service測試Failed，可能是 API Configure問題:', error);
       }
     } else {
-      console.log('沒有可用的 AI 服務，跳過集成測試');
+      console.log('沒有可用的 AI Service，跳過集成測試');
     }
   });
 
-  test('圖片服務應該能夠生成正確的 URL', () => {
+  test('圖片Service應該能夠生成正確的 URL', () => {
     if (serviceManager.isServiceAvailable('cloudinary')) {
       const _urls = cloudinaryService.generateResponsiveUrls('test_card');
 
@@ -272,9 +272,9 @@ describe('服務集成測試', () => {
       expect(urls.large).toContain('w_1200');
       expect(urls.original).toContain('test_card');
 
-      console.log('圖片 URL 生成測試成功');
+      console.log('圖片 URL 生成測試Success');
     } else {
-      console.log('Cloudinary 服務不可用，跳過測試');
+      console.log('Cloudinary Service不可用，跳過測試');
     }
   });
 });

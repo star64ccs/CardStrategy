@@ -34,18 +34,18 @@ export const _useTheme = () => {
     error,
   } = useSelector((state: RootState) => state.theme);
 
-  // 初始化主題
+  // InitializeTheme
   const _initialize = useCallback(async () => {
     try {
       await dispatch(initializeTheme()).unwrap();
       return true;
     } catch (error) {
-      console.error('主題初始化失敗:', error);
+      console.error('主題InitializeFailed:', error);
       return false;
     }
   }, [dispatch]);
 
-  // 設置主題
+  // SettingsTheme
   const _changeTheme = useCallback(
     async (themeId: string, persist = true) => {
       try {
@@ -57,7 +57,7 @@ export const _useTheme = () => {
     [dispatch]
   );
 
-  // 切換主題
+  // SwitchTheme
   const _toggle = useCallback(async () => {
     try {
       await dispatch(toggleTheme()).unwrap();
@@ -66,7 +66,7 @@ export const _useTheme = () => {
     }
   }, [dispatch]);
 
-  // 設置自動主題
+  // SettingsAutoTheme
   const _setAuto = useCallback(
     async (enabled: boolean) => {
       try {
@@ -78,7 +78,7 @@ export const _useTheme = () => {
     [dispatch]
   );
 
-  // 自定義主題
+  // CustomTheme
   const _customize = useCallback(
     async (customization: ThemeCustomization) => {
       try {
@@ -90,7 +90,7 @@ export const _useTheme = () => {
     [dispatch]
   );
 
-  // 重置主題
+  // ResetTheme
   const _reset = useCallback(async () => {
     try {
       await dispatch(resetTheme()).unwrap();
@@ -99,7 +99,7 @@ export const _useTheme = () => {
     }
   }, [dispatch]);
 
-  // 導出主題
+  // ExportTheme
   const _exportThemeData = useCallback(
     async (themeId: string) => {
       try {
@@ -112,7 +112,7 @@ export const _useTheme = () => {
     [dispatch]
   );
 
-  // 導入主題
+  // ImportTheme
   const _importThemeData = useCallback(
     async (themeData: string) => {
       try {
@@ -124,48 +124,48 @@ export const _useTheme = () => {
     [dispatch]
   );
 
-  // 清除錯誤
+  // ClearError
   const _clearThemeError = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 檢查是否為深色模式
+  // CheckYesNo為深色模式
   const _isDarkMode = useMemo(() => {
     return currentTheme.type === 'dark';
   }, [currentTheme.type]);
 
-  // 獲取主題顏色
+  // GetTheme顏色
   const _colors = useMemo(() => {
     return currentTheme.colors;
   }, [currentTheme.colors]);
 
-  // 獲取主題間距
+  // GetTheme間距
   const _spacing = useMemo(() => {
     return currentTheme.spacing;
   }, [currentTheme.spacing]);
 
-  // 獲取主題字體
+  // GetTheme字體
   const _typography = useMemo(() => {
     return currentTheme.typography;
   }, [currentTheme.typography]);
 
-  // 獲取主題圓角
+  // GetTheme圓角
   const _borderRadius = useMemo(() => {
     return currentTheme.borderRadius;
   }, [currentTheme.borderRadius]);
 
-  // 獲取主題陰影
+  // GetTheme陰影
   const _shadows = useMemo(() => {
     return currentTheme.shadows;
   }, [currentTheme.shadows]);
 
-  // 初始化效果
+  // Initialize效果
   useEffect(() => {
     initialize();
   }, [initialize]);
 
   return {
-    // 狀態
+    // Status
     currentTheme,
     availableThemes,
     config,
@@ -175,14 +175,14 @@ export const _useTheme = () => {
     error,
     isDarkMode,
 
-    // 主題屬性
+    // ThemeProperty
     colors,
     spacing,
     typography,
     borderRadius,
     shadows,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     changeTheme,
     toggle,
@@ -195,43 +195,43 @@ export const _useTheme = () => {
   };
 };
 
-// 專門用於獲取主題顏色的 Hook
+// 專門用於GetTheme顏色的 Hook
 export const _useThemeColors = (): ThemeColors => {
   const { colors } = useTheme();
   return colors;
 };
 
-// 專門用於獲取主題間距的 Hook
+// 專門用於GetTheme間距的 Hook
 export const _useThemeSpacing = (): ThemeSpacing => {
   const { spacing } = useTheme();
   return spacing;
 };
 
-// 專門用於獲取主題字體的 Hook
+// 專門用於GetTheme字體的 Hook
 export const _useThemeTypography = (): ThemeTypography => {
   const { typography } = useTheme();
   return typography;
 };
 
-// 專門用於獲取主題圓角的 Hook
+// 專門用於GetTheme圓角的 Hook
 export const _useThemeBorderRadius = (): ThemeBorderRadius => {
   const { borderRadius } = useTheme();
   return borderRadius;
 };
 
-// 專門用於獲取主題陰影的 Hook
+// 專門用於GetTheme陰影的 Hook
 export const _useThemeShadows = (): ThemeShadows => {
   const { shadows } = useTheme();
   return shadows;
 };
 
-// 專門用於檢查深色模式的 Hook
+// 專門用於Check深色模式的 Hook
 export const _useIsDarkMode = (): boolean => {
   const { isDarkMode } = useTheme();
   return isDarkMode;
 };
 
-// 主題切換 Hook
+// ThemeSwitch Hook
 export const _useThemeToggle = () => {
   const { toggle, isLoading, error } = useTheme();
 
@@ -242,7 +242,7 @@ export const _useThemeToggle = () => {
   };
 };
 
-// 主題自定義 Hook
+// ThemeCustom Hook
 export const _useThemeCustomization = () => {
   const { customize, availableThemes, isLoading, error } = useTheme();
 
@@ -254,7 +254,7 @@ export const _useThemeCustomization = () => {
   };
 };
 
-// 主題導入/導出 Hook
+// ThemeImport/Export Hook
 export const _useThemeImportExport = () => {
   const { exportTheme, importTheme, availableThemes, isLoading, error } =
     useTheme();

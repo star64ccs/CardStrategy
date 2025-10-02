@@ -64,9 +64,9 @@ export class OAuthService {
 
   async initialize(): Promise<ApiResponse> {
     try {
-      logger.info('初始化 OAuth 服務');
+      logger.info('Initialize OAuth Service');
 
-      // 配置 Google OAuth
+      // Configure Google OAuth
       if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         this.config.providers.google = {
           name: 'Google',
@@ -82,7 +82,7 @@ export class OAuthService {
         };
       }
 
-      // 配置 Facebook OAuth
+      // Configure Facebook OAuth
       if (process.env.FACEBOOK_APP_ID && process.env.FACEBOOK_APP_SECRET) {
         this.config.providers.facebook = {
           name: 'Facebook',
@@ -98,7 +98,7 @@ export class OAuthService {
         };
       }
 
-      // 配置 Apple OAuth
+      // Configure Apple OAuth
       if (process.env.APPLE_CLIENT_ID && process.env.APPLE_TEAM_ID) {
         this.config.providers.apple = {
           name: 'Apple',
@@ -114,7 +114,7 @@ export class OAuthService {
         };
       }
 
-      // 配置 GitHub OAuth
+      // Configure GitHub OAuth
       if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
         this.config.providers.github = {
           name: 'GitHub',
@@ -132,7 +132,7 @@ export class OAuthService {
 
       this.isInitialized = true;
       logger.info(
-        `OAuth 服務初始化完成，已配置 ${Object.keys(this.config.providers).length} 個提供商`
+        `OAuth ServiceInitialize完成，已Configure ${Object.keys(this.config.providers).length} 個提供商`
       );
 
       return {
@@ -141,14 +141,14 @@ export class OAuthService {
           providers: Object.keys(this.config.providers),
           defaultProvider: this.config.defaultProvider,
         },
-        message: 'OAuth 服務初始化成功',
+        message: 'OAuth ServiceInitializeSuccess',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('OAuth 服務初始化失敗:', error);
+      logger.error('OAuth ServiceInitializeFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -183,10 +183,10 @@ export class OAuthService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`生成 ${provider} 授權 URL 失敗:`, error);
+      logger.error(`生成 ${provider} 授權 URL Failed:`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -224,13 +224,13 @@ export class OAuthService {
       if (!response.success || !response.data) {
         return {
           success: false,
-          error: '獲取訪問令牌失敗',
+          error: 'Get訪問令牌Failed',
           timestamp: Date.now(),
         };
       }
 
       const token: OAuthToken = response.data as OAuthToken;
-      logger.info(`成功獲取 ${provider} 訪問令牌`);
+      logger.info(`SuccessGet ${provider} 訪問令牌`);
 
       return {
         success: true,
@@ -238,10 +238,10 @@ export class OAuthService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`交換 ${provider} 代碼失敗:`, error);
+      logger.error(`交換 ${provider} 代碼Failed:`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -266,7 +266,7 @@ export class OAuthService {
         Accept: 'application/json',
       };
 
-      // GitHub 需要特殊的 Accept 頭
+      // GitHub 需要Special的 Accept 頭
       if (provider === 'github') {
         headers['Accept'] = 'application/vnd.github.v3+json';
       }
@@ -276,7 +276,7 @@ export class OAuthService {
       if (!response.success || !response.data) {
         return {
           success: false,
-          error: '獲取用戶信息失敗',
+          error: 'Get用戶信息Failed',
           timestamp: Date.now(),
         };
       }
@@ -291,7 +291,7 @@ export class OAuthService {
         verified: userData.verified || userData.email_verified || false,
       };
 
-      logger.info(`成功獲取 ${provider} 用戶信息: ${user.email}`);
+      logger.info(`SuccessGet ${provider} 用戶信息: ${user.email}`);
 
       return {
         success: true,
@@ -299,10 +299,10 @@ export class OAuthService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`獲取 ${provider} 用戶信息失敗:`, error);
+      logger.error(`Get ${provider} 用戶信息Failed:`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -339,13 +339,13 @@ export class OAuthService {
       if (!response.success || !response.data) {
         return {
           success: false,
-          error: '刷新令牌失敗',
+          error: '刷新令牌Failed',
           timestamp: Date.now(),
         };
       }
 
       const token: OAuthToken = response.data as OAuthToken;
-      logger.info(`成功刷新 ${provider} 訪問令牌`);
+      logger.info(`Success刷新 ${provider} 訪問令牌`);
 
       return {
         success: true,
@@ -353,10 +353,10 @@ export class OAuthService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`刷新 ${provider} 令牌失敗:`, error);
+      logger.error(`刷新 ${provider} 令牌Failed:`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }

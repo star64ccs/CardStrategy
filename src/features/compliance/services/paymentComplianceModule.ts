@@ -1,6 +1,6 @@
 /**
  * 支付合規模組
- * 實現重構計劃任務 1.6: PaymentComplianceModule
+ * 實現重構計劃Task 1.6: PaymentComplianceModule
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -140,10 +140,10 @@ export class PaymentComplianceModule {
       await this.initializeRegulations();
 
       this.isInitialized = true;
-      logger.info('支付合規模組初始化成功');
+      logger.info('支付合規模組InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('支付合規模組初始化失敗:', error);
+      logger.error('支付合規模組InitializeFailed:', error);
       return false;
     }
   }
@@ -155,14 +155,14 @@ export class PaymentComplianceModule {
       const complianceChecks: PaymentComplianceCheck[] = [];
       let isCompliant = true;
 
-      // PSD2 合規檢查
+      // PSD2 合規Check
       if (this.config.enablePSD2Compliance) {
         const _psd2Check = this.performPSD2Check(paymentMethod);
         complianceChecks.push(psd2Check);
         if (psd2Check.result === 'fail') isCompliant = false;
       }
 
-      // PCI DSS 合規檢查
+      // PCI DSS 合規Check
       if (this.config.enablePCIDSSCompliance) {
         const _pciCheck = this.performPCICheck(paymentMethod);
         complianceChecks.push(pciCheck);
@@ -192,7 +192,7 @@ export class PaymentComplianceModule {
 
       return paymentMethodCompliance;
     } catch (error) {
-      logger.error('支付方式合規檢查失敗:', error);
+      logger.error('支付方式合規CheckFailed:', error);
       throw error;
     }
   }
@@ -214,7 +214,7 @@ export class PaymentComplianceModule {
         if (amlCheck.result === 'fail') riskScore += 40;
       }
 
-      // KYC 驗證
+      // KYC Verify
       if (this.config.enableKYCVerification) {
         const _kycCheck = this.performKYCVerificationCheck(
           transaction.customerId
@@ -252,7 +252,7 @@ export class PaymentComplianceModule {
 
       return paymentTransaction;
     } catch (error) {
-      logger.error('支付交易合規檢查失敗:', error);
+      logger.error('支付交易合規CheckFailed:', error);
       throw error;
     }
   }
@@ -284,7 +284,7 @@ export class PaymentComplianceModule {
 
       return amlCheck;
     } catch (error) {
-      logger.error('AML篩查失敗:', error);
+      logger.error('AML篩查Failed:', error);
       throw error;
     }
   }
@@ -318,7 +318,7 @@ export class PaymentComplianceModule {
 
       return kycCheck;
     } catch (error) {
-      logger.error('KYC驗證失敗:', error);
+      logger.error('KYCVerifyFailed:', error);
       throw error;
     }
   }
@@ -348,7 +348,7 @@ export class PaymentComplianceModule {
 
       return report;
     } catch (error) {
-      logger.error('生成支付合規報告失敗:', error);
+      logger.error('生成支付合規報告Failed:', error);
       throw error;
     }
   }
@@ -368,7 +368,7 @@ export class PaymentComplianceModule {
     logger.info('支付合規模組已重置');
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): PaymentComplianceConfig {
     return {
@@ -387,7 +387,7 @@ export class PaymentComplianceModule {
     const _regulations = [
       {
         id: 'psd2_eu',
-        name: 'PSD2支付服務指令',
+        name: 'PSD2支付Service指令',
         jurisdiction: 'eu',
         category: 'psd2' as const,
         requirements: ['強客戶認證', '開放銀行API', '支付安全'],
@@ -454,7 +454,7 @@ export class PaymentComplianceModule {
   private performKYCVerificationCheck(
     customerId: string
   ): PaymentComplianceCheck {
-    const _isKYCVerified = Math.random() > 0.02; // 98%驗證率
+    const _isKYCVerified = Math.random() > 0.02; // 98%Verify率
     return {
       id: `kyc_check_${Date.now()}`,
       type: 'kyc_verification',

@@ -11,11 +11,11 @@ describe('QueryOptimizationService', () => {
   let queryOptimizationService: QueryOptimizationService;
 
   beforeEach(() => {
-    // 重置單例狀態
+    // Reset單例Status
     (QueryOptimizationService as any).instance = null;
     queryOptimizationService = QueryOptimizationService.getInstance();
 
-    // 重置初始化狀態
+    // ResetInitializeStatus
     (queryOptimizationService as any).isInitialized = false;
     (queryOptimizationService as any).queryHistory = [];
     (queryOptimizationService as any).optimizationRules = new Map();
@@ -26,7 +26,7 @@ describe('QueryOptimizationService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化服務', async () => {
+    it('應該SuccessInitializeService', async () => {
       await queryOptimizationService.initialize();
 
       expect(queryOptimizationService.getStatus().isInitialized).toBe(true);
@@ -42,8 +42,8 @@ describe('QueryOptimizationService', () => {
       expect(queryOptimizationService.getStatus().isInitialized).toBe(true);
     });
 
-    it('應該處理初始化錯誤', async () => {
-      // 模擬初始化錯誤
+    it('應該HandleInitializeError', async () => {
+      // 模擬InitializeError
       jest
         .spyOn(queryOptimizationService as any, 'setupOptimizationRules')
         .mockImplementation(() => {
@@ -52,7 +52,7 @@ describe('QueryOptimizationService', () => {
 
       try {
         await queryOptimizationService.initialize();
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('Setup failed');
       }
@@ -64,7 +64,7 @@ describe('QueryOptimizationService', () => {
       await queryOptimizationService.initialize();
     });
 
-    it('應該成功分析查詢', () => {
+    it('應該Success分析查詢', () => {
       const queryMetrics: QueryMetrics = {
         queryId: 'test-query-1',
         sql: 'SELECT * FROM users WHERE id = 1',
@@ -86,7 +86,7 @@ describe('QueryOptimizationService', () => {
       expect(analysis.riskLevel).toMatch(/^(LOW|MEDIUM|HIGH)$/);
     });
 
-    it('應該在未初始化時拋出錯誤', () => {
+    it('應該在未Initialize時拋出Error', () => {
       (queryOptimizationService as any).isInitialized = false;
 
       const queryMetrics: QueryMetrics = {
@@ -99,7 +99,7 @@ describe('QueryOptimizationService', () => {
 
       try {
         queryOptimizationService.analyzeQuery(queryMetrics);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
@@ -127,7 +127,7 @@ describe('QueryOptimizationService', () => {
       await queryOptimizationService.initialize();
     });
 
-    it('應該成功優化查詢', () => {
+    it('應該Success優化查詢', () => {
       const _originalQuery = 'SELECT DISTINCT name FROM users WHERE id = 1';
       const _result = queryOptimizationService.optimizeQuery(originalQuery);
 
@@ -139,12 +139,12 @@ describe('QueryOptimizationService', () => {
       expect(typeof result.testingRequired).toBe('boolean');
     });
 
-    it('應該在未初始化時拋出錯誤', () => {
+    it('應該在未Initialize時拋出Error', () => {
       (queryOptimizationService as any).isInitialized = false;
 
       try {
         queryOptimizationService.optimizeQuery('SELECT * FROM users');
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
@@ -154,7 +154,7 @@ describe('QueryOptimizationService', () => {
       const _query = 'SELECT DISTINCT name FROM users WHERE id = 1';
       const _result = queryOptimizationService.optimizeQuery(query);
 
-      // 檢查是否有優化建議
+      // CheckYesNo有優化建議
       expect(result.changes.length).toBeGreaterThanOrEqual(0);
     });
 
@@ -172,7 +172,7 @@ describe('QueryOptimizationService', () => {
       await queryOptimizationService.initialize();
     });
 
-    it('應該成功記錄查詢指標', () => {
+    it('應該Success記錄查詢指標', () => {
       const metrics: QueryMetrics = {
         queryId: 'test-query-1',
         sql: 'SELECT * FROM users',
@@ -188,7 +188,7 @@ describe('QueryOptimizationService', () => {
     });
 
     it('應該限制歷史記錄大小', () => {
-      // 添加超過限制的查詢記錄
+      // Add超過Limit的QueryRecord
       for (let i = 0; i < 11000; i++) {
         const metrics: QueryMetrics = {
           queryId: `query-${i}`,
@@ -224,19 +224,19 @@ describe('QueryOptimizationService', () => {
       expect(report.overallScore).toBe(100);
     });
 
-    it('應該在未初始化時拋出錯誤', () => {
+    it('應該在未Initialize時拋出Error', () => {
       (queryOptimizationService as any).isInitialized = false;
 
       try {
         queryOptimizationService.generatePerformanceReport();
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
     });
 
     it('應該分析有數據的性能報告', () => {
-      // 添加一些測試數據
+      // Add一些TestData
       const _testQueries = [
         { sql: 'SELECT * FROM users', executionTime: 50 },
         { sql: 'SELECT * FROM users WHERE id = 1', executionTime: 1500 },
@@ -273,7 +273,7 @@ describe('QueryOptimizationService', () => {
       await queryOptimizationService.initialize();
     });
 
-    it('應該成功批量優化查詢', () => {
+    it('應該Success批量優化查詢', () => {
       const _queries = [
         'SELECT * FROM users',
         'SELECT DISTINCT name FROM users WHERE id = 1',
@@ -290,12 +290,12 @@ describe('QueryOptimizationService', () => {
       });
     });
 
-    it('應該在未初始化時拋出錯誤', () => {
+    it('應該在未Initialize時拋出Error', () => {
       (queryOptimizationService as any).isInitialized = false;
 
       try {
         queryOptimizationService.batchOptimizeQueries(['SELECT * FROM users']);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
@@ -314,7 +314,7 @@ describe('QueryOptimizationService', () => {
     });
 
     it('應該分析重複查詢模式', () => {
-      // 添加重複的查詢
+      // AddDuplicate的Query
       for (let i = 0; i < 5; i++) {
         const metrics: QueryMetrics = {
           queryId: `query-${i}`,
@@ -341,8 +341,8 @@ describe('QueryOptimizationService', () => {
       await queryOptimizationService.initialize();
     });
 
-    it('應該成功清理歷史記錄', () => {
-      // 添加一些測試數據
+    it('應該Success清理歷史記錄', () => {
+      // Add一些TestData
       const metrics: QueryMetrics = {
         queryId: 'test-query',
         sql: 'SELECT * FROM users',
@@ -359,8 +359,8 @@ describe('QueryOptimizationService', () => {
     });
   });
 
-  describe('服務狀態', () => {
-    it('應該返回服務狀態', () => {
+  describe('Service狀態', () => {
+    it('應該返回Service狀態', () => {
       const _status = queryOptimizationService.getStatus();
 
       expect(status.isInitialized).toBe(false);
@@ -378,13 +378,13 @@ describe('QueryOptimizationService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       await queryOptimizationService.initialize();
     });
 
-    it('應該處理優化規則錯誤', () => {
-      // 模擬優化規則錯誤
+    it('應該Handle優化規則Error', () => {
+      // 模擬優化規則Error
       const _mockRule = jest.fn().mockImplementation(() => {
         throw new Error('Rule error');
       });
@@ -394,7 +394,7 @@ describe('QueryOptimizationService', () => {
         mockRule
       );
 
-      // 應該不會拋出錯誤，而是記錄警告
+      // 應該不會ThrowError，而YesRecordWarning
       const _result = queryOptimizationService.optimizeQuery(
         'SELECT * FROM users'
       );
@@ -421,7 +421,7 @@ describe('QueryOptimizationService', () => {
       queryOptimizationService.analyzeQuery(queryMetrics);
 
       const _executionTime = Date.now() - startTime;
-      expect(executionTime).toBeLessThan(100); // 應該在100ms內完成
+      expect(executionTime).toBeLessThan(100); // 應該在100ms內Complete
     });
 
     it('應該支持並發分析', async () => {

@@ -7,7 +7,7 @@ import type {
 } from '../../shared/services/scanHistoryService';
 import { scanHistoryService } from '../../shared/services/scanHistoryService';
 
-// 掃描歷史過濾器類型
+// 掃描歷史Filter器Class型
 export interface ScanHistoryFilters {
   page?: number;
   limit?: number;
@@ -19,7 +19,7 @@ export interface ScanHistoryFilters {
   sortOrder?: 'asc' | 'desc';
 }
 
-// 掃描歷史記錄狀態類型
+// 掃描歷史RecordStatusClass型
 export interface ScanHistoryState {
   history: ScanHistoryItem[];
   selectedRecord: ScanHistoryItem | null;
@@ -40,7 +40,7 @@ export interface ScanHistoryState {
   isSelectionMode: boolean;
 }
 
-// 異步 thunk
+// Async thunk
 export const _fetchScanHistory = createAsyncThunk(
   'scanHistory/fetchScanHistory',
   async (filters: ScanHistoryFilters = {}, { rejectWithValue }) => {
@@ -48,7 +48,7 @@ export const _fetchScanHistory = createAsyncThunk(
       const _response = await scanHistoryService.getScanHistory(filters);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取掃描歷史失敗');
+      return rejectWithValue(error.message || 'Get掃描歷史Failed');
     }
   }
 );
@@ -60,7 +60,7 @@ export const _fetchScanRecord = createAsyncThunk(
       const _response = await scanHistoryService.getScanRecord(recordId);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取掃描記錄失敗');
+      return rejectWithValue(error.message || 'Get掃描記錄Failed');
     }
   }
 );
@@ -87,7 +87,7 @@ export const _createScanRecord = createAsyncThunk(
       );
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '創建掃描記錄失敗');
+      return rejectWithValue(error.message || 'Create掃描記錄Failed');
     }
   }
 );
@@ -108,7 +108,7 @@ export const _updateScanRecord = createAsyncThunk(
       );
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '更新掃描記錄失敗');
+      return rejectWithValue(error.message || 'Update掃描記錄Failed');
     }
   }
 );
@@ -120,7 +120,7 @@ export const _deleteScanRecord = createAsyncThunk(
       await scanHistoryService.deleteScanRecord(recordId);
       return recordId;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '刪除掃描記錄失敗');
+      return rejectWithValue(error.message || 'Delete掃描記錄Failed');
     }
   }
 );
@@ -132,7 +132,7 @@ export const _deleteMultipleRecords = createAsyncThunk(
       await scanHistoryService.deleteMultipleRecords(recordIds);
       return recordIds;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '批量刪除掃描記錄失敗');
+      return rejectWithValue(error.message || '批量Delete掃描記錄Failed');
     }
   }
 );
@@ -144,7 +144,7 @@ export const _toggleFavorite = createAsyncThunk(
       const _response = await scanHistoryService.toggleFavorite(recordId);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '切換收藏狀態失敗');
+      return rejectWithValue(error.message || '切換收藏狀態Failed');
     }
   }
 );
@@ -159,7 +159,7 @@ export const _addNote = createAsyncThunk(
       const _response = await scanHistoryService.addNote(recordId, note);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '添加筆記失敗');
+      return rejectWithValue(error.message || '添加筆記Failed');
     }
   }
 );
@@ -174,7 +174,7 @@ export const _addTags = createAsyncThunk(
       const _response = await scanHistoryService.addTags(recordId, tags);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '添加標籤失敗');
+      return rejectWithValue(error.message || '添加標籤Failed');
     }
   }
 );
@@ -186,7 +186,7 @@ export const _fetchScanStatistics = createAsyncThunk(
       const _response = await scanHistoryService.getScanStatistics();
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取掃描統計失敗');
+      return rejectWithValue(error.message || 'Get掃描統計Failed');
     }
   }
 );
@@ -204,12 +204,12 @@ export const _searchScanHistory = createAsyncThunk(
       );
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '搜索掃描歷史失敗');
+      return rejectWithValue(error.message || '搜索掃描歷史Failed');
     }
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: ScanHistoryState = {
   history: [],
   selectedRecord: null,
@@ -444,7 +444,7 @@ const _scanHistorySlice = createSlice({
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   clearError,
   clearSelectedRecord,
@@ -457,5 +457,5 @@ export const {
   setPage,
 } = scanHistorySlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default scanHistorySlice.reducer;

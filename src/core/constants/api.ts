@@ -1,14 +1,14 @@
-// API 相關常量
+// API 相OffConstant
 export const _API_BASE_URL =
   process.env.REACT_APP_API_URL || 'http://localhost:3000';
 export const _API_VERSION = 'v1';
-export const _API_TIMEOUT = 30000; // 30秒
+export const _API_TIMEOUT = 30000; // 30Second
 export const _API_RETRY_ATTEMPTS = 3;
-export const _API_RETRY_DELAY = 1000; // 1秒
+export const _API_RETRY_DELAY = 1000; // 1Second
 
 // API 端點
 export const _API_ENDPOINTS = {
-  // 認證相關
+  // Authenticate相Off
   AUTH: {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
@@ -19,7 +19,7 @@ export const _API_ENDPOINTS = {
     RESET_PASSWORD: '/auth/reset-password',
   },
 
-  // 用戶相關
+  // User相Off
   USER: {
     PROFILE: '/user/profile',
     UPDATE_PROFILE: '/user/profile',
@@ -28,7 +28,7 @@ export const _API_ENDPOINTS = {
     NOTIFICATIONS: '/user/notifications',
   },
 
-  // 卡片相關
+  // 卡片相Off
   CARDS: {
     LIST: '/cards',
     DETAIL: '/cards/:id',
@@ -38,7 +38,7 @@ export const _API_ENDPOINTS = {
     PREDICT: '/cards/predict',
   },
 
-  // 收藏相關
+  // 收藏相Off
   COLLECTIONS: {
     LIST: '/collections',
     DETAIL: '/collections/:id',
@@ -49,7 +49,7 @@ export const _API_ENDPOINTS = {
     REMOVE_CARD: '/collections/:id/cards/:cardId',
   },
 
-  // 投資相關
+  // 投資相Off
   INVESTMENTS: {
     LIST: '/investments',
     DETAIL: '/investments/:id',
@@ -60,7 +60,7 @@ export const _API_ENDPOINTS = {
     STATISTICS: '/investments/statistics',
   },
 
-  // 市場相關
+  // 市場相Off
   MARKET: {
     DATA: '/market/data',
     TRENDS: '/market/trends',
@@ -68,7 +68,7 @@ export const _API_ENDPOINTS = {
     ANALYSIS: '/market/analysis',
   },
 
-  // AI 相關
+  // AI 相Off
   AI: {
     CHAT: '/ai/chat',
     ANALYSIS: '/ai/analysis',
@@ -76,20 +76,20 @@ export const _API_ENDPOINTS = {
     RECOMMENDATION: '/ai/recommendation',
   },
 
-  // 搜索相關
+  // Search相Off
   SEARCH: {
     GLOBAL: '/search',
     SUGGESTIONS: '/search/suggestions',
     HISTORY: '/search/history',
   },
 
-  // 文件上傳
+  // FileUpload
   UPLOAD: {
     IMAGE: '/upload/image',
     BATCH: '/upload/batch',
   },
 
-  // 分享驗證
+  // 分享Verify
   SHARE: {
     CREATE: '/share/create',
     VERIFY: '/share/verify/:code',
@@ -97,7 +97,7 @@ export const _API_ENDPOINTS = {
   },
 } as const;
 
-// HTTP 狀態碼
+// HTTP Status碼
 export const _HTTP_STATUS = {
   OK: 200,
   CREATED: 201,
@@ -113,7 +113,7 @@ export const _HTTP_STATUS = {
   SERVICE_UNAVAILABLE: 503,
 } as const;
 
-// 請求方法
+// RequestMethod
 export const _HTTP_METHODS = {
   GET: 'GET',
   POST: 'POST',
@@ -122,7 +122,7 @@ export const _HTTP_METHODS = {
   DELETE: 'DELETE',
 } as const;
 
-// 內容類型
+// ContentClass型
 export const _CONTENT_TYPES = {
   JSON: 'application/json',
   FORM_DATA: 'multipart/form-data',
@@ -130,9 +130,9 @@ export const _CONTENT_TYPES = {
   HTML: 'text/html',
 } as const;
 
-// 錯誤代碼
+// Error代碼
 export const _ERROR_CODES = {
-  // 認證錯誤
+  // AuthenticateError
   AUTH_INVALID_CREDENTIALS: 'AUTH_INVALID_CREDENTIALS',
   AUTH_TOKEN_EXPIRED: 'AUTH_TOKEN_EXPIRED',
   AUTH_TOKEN_INVALID: 'AUTH_TOKEN_INVALID',
@@ -140,59 +140,59 @@ export const _ERROR_CODES = {
   AUTH_EMAIL_ALREADY_EXISTS: 'AUTH_EMAIL_ALREADY_EXISTS',
   AUTH_USERNAME_ALREADY_EXISTS: 'AUTH_USERNAME_ALREADY_EXISTS',
 
-  // 權限錯誤
+  // 權限Error
   PERMISSION_DENIED: 'PERMISSION_DENIED',
   INSUFFICIENT_PERMISSIONS: 'INSUFFICIENT_PERMISSIONS',
 
-  // 資源錯誤
+  // ResourceError
   RESOURCE_NOT_FOUND: 'RESOURCE_NOT_FOUND',
   RESOURCE_ALREADY_EXISTS: 'RESOURCE_ALREADY_EXISTS',
   RESOURCE_CONFLICT: 'RESOURCE_CONFLICT',
 
-  // 驗證錯誤
+  // VerifyError
   VALIDATION_ERROR: 'VALIDATION_ERROR',
   INVALID_INPUT: 'INVALID_INPUT',
   MISSING_REQUIRED_FIELD: 'MISSING_REQUIRED_FIELD',
 
-  // 服務錯誤
+  // ServiceError
   SERVICE_UNAVAILABLE: 'SERVICE_UNAVAILABLE',
   EXTERNAL_SERVICE_ERROR: 'EXTERNAL_SERVICE_ERROR',
   RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED',
 
-  // 文件錯誤
+  // FileError
   FILE_TOO_LARGE: 'FILE_TOO_LARGE',
   INVALID_FILE_TYPE: 'INVALID_FILE_TYPE',
   FILE_UPLOAD_FAILED: 'FILE_UPLOAD_FAILED',
 
-  // AI 錯誤
+  // AI Error
   AI_SERVICE_ERROR: 'AI_SERVICE_ERROR',
   AI_MODEL_UNAVAILABLE: 'AI_MODEL_UNAVAILABLE',
   AI_PROCESSING_FAILED: 'AI_PROCESSING_FAILED',
 
-  // 網絡錯誤
+  // NetworkError
   NETWORK_ERROR: 'NETWORK_ERROR',
   TIMEOUT_ERROR: 'TIMEOUT_ERROR',
   CONNECTION_ERROR: 'CONNECTION_ERROR',
 } as const;
 
-// 分頁默認值
+// PaginateDefaultValue
 export const _PAGINATION_DEFAULTS = {
   PAGE: 1,
   LIMIT: 20,
   MAX_LIMIT: 100,
 } as const;
 
-// 緩存時間（毫秒）
+// CacheTime（毫Second）
 export const _CACHE_DURATION = {
-  SHORT: 5 * 60 * 1000, // 5分鐘
-  MEDIUM: 30 * 60 * 1000, // 30分鐘
-  LONG: 2 * 60 * 60 * 1000, // 2小時
-  VERY_LONG: 24 * 60 * 60 * 1000, // 24小時
+  SHORT: 5 * 60 * 1000, // 5Minute
+  MEDIUM: 30 * 60 * 1000, // 30Minute
+  LONG: 2 * 60 * 60 * 1000, // 2Hour
+  VERY_LONG: 24 * 60 * 60 * 1000, // 24Hour
 } as const;
 
-// 重試配置
+// RetryConfigure
 export const _RETRY_CONFIG = {
   MAX_RETRIES: 3,
-  RETRY_DELAY: 1000, // 1秒
+  RETRY_DELAY: 1000, // 1Second
   RETRY_BACKOFF_MULTIPLIER: 2,
 } as const;

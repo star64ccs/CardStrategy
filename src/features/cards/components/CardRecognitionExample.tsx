@@ -42,10 +42,10 @@ export const CardRecognitionExample: React.FC = () => {
     autoLoadHistory: true,
     autoLoadStats: true,
     onRecognitionComplete: result => {
-      Alert.alert('識別成功', `識別到卡牌: ${result.card.name}`);
+      Alert.alert('識別Success', `識別到卡牌: ${result.card.name}`);
     },
     onRecognitionError: error => {
-      Alert.alert('識別錯誤', error);
+      Alert.alert('識別Error', error);
     },
   });
 
@@ -53,10 +53,10 @@ export const CardRecognitionExample: React.FC = () => {
   const [showStats, setShowStats] = useState(false);
   const [selectedGame, setSelectedGame] = useState<CardGame>('pokemon');
 
-  // 模擬識別測試
+  // 模擬識別Test
   const _handleTestRecognition = async () => {
     try {
-      // 創建一個模擬的 Base64 圖像數據（實際使用中應該是真實的圖像）
+      // Create一個模擬的 Base64 Graph像Data（實際使用中應該YesTrue實的Graph像）
       const _mockImageData =
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='; // 1x1 透明像素
 
@@ -77,7 +77,7 @@ export const CardRecognitionExample: React.FC = () => {
         },
       });
     } catch (error: unknown) {
-      logger.error('測試識別失敗:', error);
+      logger.error('測試識別Failed:', error);
     }
   };
 
@@ -166,7 +166,7 @@ export const CardRecognitionExample: React.FC = () => {
     );
   };
 
-  // 渲染遊戲選擇器
+  // 渲染遊戲Select器
   const _renderGameSelector = () => {
     const _supportedGames = getSupportedGames();
 
@@ -200,7 +200,7 @@ export const CardRecognitionExample: React.FC = () => {
     );
   };
 
-  // 渲染歷史記錄
+  // 渲染歷史Record
   const _renderHistory = () => {
     if (!showHistory) return null;
 
@@ -249,7 +249,7 @@ export const CardRecognitionExample: React.FC = () => {
     );
   };
 
-  // 渲染統計信息
+  // 渲染StatisticsInformation
   const _renderStats = () => {
     if (!showStats || !stats) return null;
 
@@ -314,7 +314,7 @@ export const CardRecognitionExample: React.FC = () => {
     );
   };
 
-  // 獲取遊戲顯示名稱
+  // Get遊戲Show名稱
   const _getGameDisplayName = (game: CardGame): string => {
     const gameNames: Record<CardGame, string> = {
       pokemon: '寶可夢',
@@ -333,7 +333,7 @@ export const CardRecognitionExample: React.FC = () => {
     return gameNames[game] || game;
   };
 
-  // 獲取信心度樣式
+  // Get信心度樣式
   const _getConfidenceStyle = (
     level: 'low' | 'medium' | 'high' | 'very_high'
   ) => {
@@ -358,10 +358,10 @@ export const CardRecognitionExample: React.FC = () => {
         <Text style={styles.subtitle}>智能識別卡牌種類、系列、版本</Text>
       </View>
 
-      {/* 遊戲選擇器 */}
+      {/* 遊戲Select器 */}
       {renderGameSelector()}
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.actionContainer}>
         <TouchableOpacity
           style={[
@@ -436,13 +436,13 @@ export const CardRecognitionExample: React.FC = () => {
       {/* 識別結果 */}
       {renderCurrentResult()}
 
-      {/* 歷史記錄 */}
+      {/* 歷史Record */}
       {renderHistory()}
 
-      {/* 統計信息 */}
+      {/* StatisticsInformation */}
       {renderStats()}
 
-      {/* 配置信息 */}
+      {/* ConfigureInformation */}
       <View style={styles.configContainer}>
         <Text style={styles.sectionTitle}>配置信息</Text>
         <View style={styles.configInfo}>
@@ -490,7 +490,7 @@ const _styles = StyleSheet.create({
     color: '#666',
   },
 
-  // 遊戲選擇器
+  // 遊戲Select器
   gameSelectorContainer: {
     padding: 16,
     backgroundColor: 'white',
@@ -521,7 +521,7 @@ const _styles = StyleSheet.create({
     color: 'white',
   },
 
-  // 操作區域
+  // OperationDistrict域
   actionContainer: {
     padding: 16,
     backgroundColor: 'white',
@@ -576,7 +576,7 @@ const _styles = StyleSheet.create({
     color: 'white',
   },
 
-  // 結果區域
+  // 結果District域
   resultContainer: {
     padding: 20,
     backgroundColor: 'white',
@@ -680,7 +680,7 @@ const _styles = StyleSheet.create({
     color: '#333',
   },
 
-  // 通用部分
+  // GenericPartial
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
@@ -701,7 +701,7 @@ const _styles = StyleSheet.create({
     marginBottom: 12,
   },
 
-  // 歷史記錄
+  // 歷史Record
   historyContainer: {
     padding: 16,
     backgroundColor: 'white',
@@ -753,7 +753,7 @@ const _styles = StyleSheet.create({
     paddingVertical: 20,
   },
 
-  // 統計信息
+  // StatisticsInformation
   statsContainer: {
     padding: 16,
     backgroundColor: 'white',
@@ -813,7 +813,7 @@ const _styles = StyleSheet.create({
     color: '#34C759',
   },
 
-  // 配置信息
+  // ConfigureInformation
   configContainer: {
     padding: 16,
     backgroundColor: 'white',

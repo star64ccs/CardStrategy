@@ -25,7 +25,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證所有平台都提供相同的基本方法
+        // Verify所有平台都提供相同的基本Method
         expect(platformTestEnv.isIOS()).toBeDefined();
         expect(platformTestEnv.isAndroid()).toBeDefined();
         expect(platformTestEnv.isWeb()).toBeDefined();
@@ -53,7 +53,7 @@ describe('跨平台兼容性測試', () => {
           platform as 'ios' | 'android' | 'web'
         );
 
-        // 驗證所有平台都生成一致的數據結構
+        // Verify所有平台都生成一致的Data結構
         expect(biometricData).toHaveProperty('biometricType');
         expect(biometricData).toHaveProperty('supportedTypes');
         expect(biometricData).toHaveProperty('securityLevel');
@@ -150,8 +150,8 @@ describe('跨平台兼容性測試', () => {
     });
   });
 
-  describe('錯誤處理一致性測試', () => {
-    it('應該在所有平台上提供一致的錯誤處理', () => {
+  describe('ErrorHandle一致性測試', () => {
+    it('應該在所有平台上提供一致的ErrorHandle', () => {
       const _platforms = ['ios', 'android', 'web'];
 
       platforms.forEach(platform => {
@@ -168,7 +168,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證錯誤處理驗證器在所有平台都可用
+        // VerifyErrorHandleVerify器在所有平台都可用
         expect(
           PlatformTestValidator.validateBiometricSupport(
             platform as 'ios' | 'android' | 'web'
@@ -216,7 +216,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證性能指標結構一致性
+        // Verify性能指標結構一致性
         const _performanceMetrics = {
           memoryUsage: '100MB',
           cpuUsage: '20%',
@@ -252,7 +252,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證權限處理結構一致性
+        // Verify權限Handle結構一致性
         const _permissionHandlers = {
           requestPermission: jest.fn(),
           checkPermission: jest.fn(),
@@ -286,7 +286,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證存儲接口一致性
+        // VerifyStorageInterface一致性
         const _storageInterface = {
           getItem: jest.fn(),
           setItem: jest.fn(),
@@ -322,7 +322,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證網絡處理接口一致性
+        // VerifyNetworkHandleInterface一致性
         const _networkInterface = {
           request: jest.fn(),
           get: jest.fn(),
@@ -362,7 +362,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證 UI 組件接口一致性
+        // Verify UI ComponentInterface一致性
         const _uiComponents = {
           Button: { onPress: jest.fn(), title: 'Test' },
           Text: { children: 'Test Text' },
@@ -400,7 +400,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證導航接口一致性
+        // Verify導航Interface一致性
         const _navigationInterface = {
           navigate: jest.fn(),
           goBack: jest.fn(),
@@ -446,7 +446,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證測試覆蓋率目標一致性
+        // VerifyTest覆蓋率目標一致性
         expect(expectedCoverage.statements).toBeGreaterThanOrEqual(90);
         expect(expectedCoverage.branches).toBeGreaterThanOrEqual(85);
         expect(expectedCoverage.functions).toBeGreaterThanOrEqual(90);
@@ -455,8 +455,8 @@ describe('跨平台兼容性測試', () => {
     });
   });
 
-  describe('錯誤恢復一致性測試', () => {
-    it('應該在所有平台上提供一致的錯誤恢復機制', () => {
+  describe('Error恢復一致性測試', () => {
+    it('應該在所有平台上提供一致的Error恢復機制', () => {
       const _platforms = ['ios', 'android', 'web'];
 
       platforms.forEach(platform => {
@@ -473,7 +473,7 @@ describe('跨平台兼容性測試', () => {
           },
         });
 
-        // 驗證錯誤恢復機制一致性
+        // VerifyErrorRestore機制一致性
         const _errorRecoveryMechanisms = {
           retry: jest.fn(),
           fallback: jest.fn(),

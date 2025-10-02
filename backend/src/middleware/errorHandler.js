@@ -12,21 +12,21 @@ class ErrorHandler {
     this.maxRecentErrors = 100;
   }
 
-  // 統一錯誤處理中間件
+  // 統一ErrorHandle中間件
   handleError(err, req, res, next) {
     const errorInfo = this.parseError(err, req);
 
-    // 記錄錯誤統計
+    // RecordErrorStatistics
     this.recordError(errorInfo);
 
-    // 記錄錯誤日誌
+    // RecordErrorLog
     this.logError(errorInfo);
 
-    // 發送錯誤響應
+    // SendErrorResponse
     this.sendErrorResponse(errorInfo, res);
   }
 
-  // 解析錯誤信息
+  // ParseErrorInformation
   parseError(err, req) {
     const errorInfo = {
       id: this.generateErrorId(),
@@ -60,7 +60,7 @@ class ErrorHandler {
     return errorInfo;
   }
 
-  // 獲取錯誤類型
+  // GetErrorClass型
   getErrorType(err) {
     if (err.name === 'ValidationError') return 'validation';
     if (err.name === 'CastError') return 'cast';
@@ -73,7 +73,7 @@ class ErrorHandler {
     return 'unknown';
   }
 
-  // 獲取錯誤分類
+  // GetError分Class
   getErrorCategory(err) {
     if (err.status >= 500) return 'system';
     if (err.status === 401 || err.status === 403) return 'auth';
@@ -84,7 +84,7 @@ class ErrorHandler {
     return 'api';
   }
 
-  // 獲取錯誤嚴重程度
+  // GetError嚴重程度
   getErrorSeverity(err) {
     if (err.status >= 500) return 'high';
     if (err.status === 401 || err.status === 403) return 'medium';
@@ -94,23 +94,23 @@ class ErrorHandler {
     return 'medium';
   }
 
-  // 記錄錯誤統計
+  // RecordErrorStatistics
   recordError(errorInfo) {
     this.errorStats.total++;
 
-    // 按類型統計
+    // 按Class型Statistics
     this.errorStats.byType[errorInfo.type] =
       (this.errorStats.byType[errorInfo.type] || 0) + 1;
 
-    // 按狀態碼統計
+    // 按Status碼Statistics
     this.errorStats.byStatus[errorInfo.status] =
       (this.errorStats.byStatus[errorInfo.status] || 0) + 1;
 
-    // 按路由統計
+    // 按路由Statistics
     const route = errorInfo.context.route || 'unknown';
     this.errorStats.byRoute[route] = (this.errorStats.byRoute[route] || 0) + 1;
 
-    // 記錄最近錯誤
+    // Record最近Error
     this.errorStats.recentErrors.push({
       id: errorInfo.id,
       message: errorInfo.message,
@@ -120,13 +120,13 @@ class ErrorHandler {
       route,
     });
 
-    // 限制最近錯誤數量
+    // Limit最近Error數量
     if (this.errorStats.recentErrors.length > this.maxRecentErrors) {
       this.errorStats.recentErrors.shift();
     }
   }
 
-  // 記錄錯誤日誌
+  // RecordErrorLog
   logError(errorInfo) {
     const logData = {
       id: errorInfo.id,
@@ -146,20 +146,20 @@ class ErrorHandler {
 
     switch (errorInfo.severity) {
       case 'high':
-        logger.error('嚴重錯誤', logData);
+        logger.error('嚴重Error', logData);
         break;
       case 'medium':
-        logger.warn('中級錯誤', logData);
+        logger.warn('中級Error', logData);
         break;
       case 'low':
-        logger.info('低級錯誤', logData);
+        logger.info('低級Error', logData);
         break;
       default:
-        logger.error('未知錯誤', logData);
+        logger.error('未知Error', logData);
     }
   }
 
-  // 發送錯誤響應
+  // SendErrorResponse
   sendErrorResponse(errorInfo, res) {
     const isDevelopment = process.env.NODE_ENV === 'development';
 
@@ -173,24 +173,24 @@ class ErrorHandler {
       },
     };
 
-    // 開發環境返回詳細錯誤信息
+    // On發環境Return詳細ErrorInformation
     if (isDevelopment) {
       response.error.stack = errorInfo.stack;
       response.error.context = errorInfo.context;
     }
 
-    // 根據錯誤類型設置適當的狀態碼
+    // Root據ErrorClass型Settings適當的Status碼
     const statusCode = errorInfo.status || 500;
 
     res.status(statusCode).json(response);
   }
 
-  // 生成錯誤 ID
+  // 生成Error ID
   generateErrorId() {
     return `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // 清理請求體（移除敏感信息）
+  // 清理Request體（Remove敏感Information）
   sanitizeBody(body) {
     if (!body) return body;
 
@@ -212,7 +212,7 @@ class ErrorHandler {
     return sanitized;
   }
 
-  // 清理請求頭（移除敏感信息）
+  // 清理Request頭（Remove敏感Information）
   sanitizeHeaders(headers) {
     if (!headers) return headers;
 
@@ -228,7 +228,7 @@ class ErrorHandler {
     return sanitized;
   }
 
-  // 獲取錯誤統計
+  // GetErrorStatistics
   getErrorStats() {
     return {
       ...this.errorStats,
@@ -242,13 +242,13 @@ class ErrorHandler {
     };
   }
 
-  // 計算錯誤率
+  // 計算Error率
   calculateErrorRate() {
-    // 這裡可以實現更複雜的錯誤率計算邏輯
+    // 這裡可以實現更複雜的Error率計算邏輯
     return this.errorStats.total;
   }
 
-  // 獲取頂部錯誤類型
+  // GetTopErrorClass型
   getTopErrorTypes() {
     return Object.entries(this.errorStats.byType)
       .sort(([, a], [, b]) => b - a)
@@ -256,7 +256,7 @@ class ErrorHandler {
       .map(([type, count]) => ({ type, count }));
   }
 
-  // 獲取頂部錯誤路由
+  // GetTopError路由
   getTopErrorRoutes() {
     return Object.entries(this.errorStats.byRoute)
       .sort(([, a], [, b]) => b - a)
@@ -264,7 +264,7 @@ class ErrorHandler {
       .map(([route, count]) => ({ route, count }));
   }
 
-  // 清理錯誤統計
+  // 清理ErrorStatistics
   clearErrorStats() {
     this.errorStats = {
       total: 0,
@@ -273,10 +273,10 @@ class ErrorHandler {
       byRoute: {},
       recentErrors: [],
     };
-    logger.info('錯誤統計已清理');
+    logger.info('Error統計已清理');
   }
 
-  // 自定義錯誤類
+  // CustomErrorClass
   createCustomError(message, status = 500, type = 'unknown') {
     const error = new Error(message);
     error.status = status;
@@ -284,55 +284,55 @@ class ErrorHandler {
     return error;
   }
 
-  // 驗證錯誤
+  // VerifyError
   createValidationError(message, fields = {}) {
     const error = this.createCustomError(message, 422, 'validation');
     error.fields = fields;
     return error;
   }
 
-  // 認證錯誤
-  createAuthError(message = '認證失敗') {
+  // AuthenticateError
+  createAuthError(message = '認證Failed') {
     return this.createCustomError(message, 401, 'auth');
   }
 
-  // 權限錯誤
+  // 權限Error
   createPermissionError(message = '權限不足') {
     return this.createCustomError(message, 403, 'auth');
   }
 
-  // 資源不存在錯誤
+  // Resource不存在Error
   createNotFoundError(message = '資源不存在') {
     return this.createCustomError(message, 404, 'api');
   }
 
-  // 數據庫錯誤
-  createDatabaseError(message = '數據庫操作失敗') {
+  // DatabaseError
+  createDatabaseError(message = '數據庫操作Failed') {
     return this.createCustomError(message, 500, 'database');
   }
 
-  // 網絡錯誤
-  createNetworkError(message = '網絡連接失敗') {
+  // NetworkError
+  createNetworkError(message = '網絡ConnectFailed') {
     return this.createCustomError(message, 500, 'network');
   }
 }
 
-// 創建錯誤處理器實例
+// CreateErrorHandle器Instance
 const errorHandler = new ErrorHandler();
 
-// 中間件函數
+// 中間件Function
 const errorHandlerMiddleware = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
   errorHandler.handleError(err, req, res, next);
 };
 
-// 異步錯誤處理包裝器
+// AsyncErrorHandlePackage裝器
 const asyncHandler = (fn) => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
 
-// 404 錯誤處理
+// 404 ErrorHandle
 const handleNotFound = (req, res, next) => {
   const error = errorHandler.createNotFoundError(
     `路由不存在: ${req.method} ${req.url}`
@@ -340,7 +340,7 @@ const handleNotFound = (req, res, next) => {
   next(error);
 };
 
-// 請求超時處理
+// Request超時Handle
 const handleTimeout = (timeout = 30000) => {
   return (req, res, next) => {
     const timer = setTimeout(() => {
@@ -356,7 +356,7 @@ const handleTimeout = (timeout = 30000) => {
   };
 };
 
-// 請求大小限制處理
+// Request大小LimitHandle
 const handlePayloadTooLarge = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
   if (err.type === 'entity.too.large') {
     const error = errorHandler.createCustomError('請求體過大', 413, 'payload');

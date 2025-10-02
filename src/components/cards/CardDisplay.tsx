@@ -29,7 +29,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ navigation }) => {
   const [isMonitoring, setIsMonitoring] = useState(false);
 
   useEffect(() => {
-    // 只在沒有選中卡片且沒有錯誤且不在測試環境時才自動載入
+    // 只在沒有選中卡片且沒有Error且不在Test環境時才AutoLoad
     if (!selectedCard && !error && !loading && !__DEV__) {
       dispatch(fetchCardDetails('card1') as any);
     }
@@ -231,7 +231,7 @@ const CardDisplay: React.FC<CardDisplayProps> = ({ navigation }) => {
           </Text>
         </View>
 
-        {/* 功能按鈕區域 */}
+        {/* 功能按鈕District域 */}
         <View
           style={styles.actionButtons}
           accessibilityRole='toolbar'

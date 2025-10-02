@@ -7,7 +7,7 @@ const logger = require('../utils/logger');
 
 class FeedbackService {
   /**
-   * 提交反饋
+   * Submit反饋
    */
   async submitFeedback(feedbackData) {
     try {
@@ -27,10 +27,10 @@ class FeedbackService {
         metadata: feedbackData.metadata || {},
       });
 
-      // 更新分析數據
+      // UpdateAnalysisData
       await this.updateFeedbackAnalytics(feedback);
 
-      // 生成自動回應
+      // 生成Auto回應
       await this.generateAutoResponse(feedback);
 
       logger.info(
@@ -74,7 +74,7 @@ class FeedbackService {
   }
 
   /**
-   * 更新反饋分析數據
+   * Update反饋AnalysisData
    */
   async updateFeedbackAnalytics(feedback) {
     try {
@@ -101,10 +101,10 @@ class FeedbackService {
         });
       }
 
-      // 更新統計數據
+      // Update統Count據
       analytics.totalSubmitted += 1;
 
-      // 更新分佈數據
+      // Update分佈Data
       const priorityDist = analytics.priorityDistribution || {};
       priorityDist[feedback.priority] =
         (priorityDist[feedback.priority] || 0) + 1;
@@ -132,7 +132,7 @@ class FeedbackService {
   }
 
   /**
-   * 生成自動回應
+   * 生成Auto回應
    */
   async generateAutoResponse(feedback) {
     try {
@@ -140,7 +140,7 @@ class FeedbackService {
 
       await FeedbackResponse.create({
         feedbackId: feedback.id,
-        userId: 1, // 系統用戶ID
+        userId: 1, // 系統UserID
         responseType: 'comment',
         content: autoResponse,
         isInternal: false,
@@ -153,7 +153,7 @@ class FeedbackService {
   }
 
   /**
-   * 生成自動回應內容
+   * 生成Auto回應Content
    */
   generateAutoResponseContent(feedback) {
 // eslint-disable-next-line no-unused-vars
@@ -173,7 +173,7 @@ class FeedbackService {
       },
       annotation_quality: '感謝您對標註質量的關注！我們會加強質量控制流程。',
       system_suggestion: '感謝您的建議！我們會評估並考慮實施您的想法。',
-      bug_report: '感謝您的錯誤報告！我們會盡快修復這個問題。',
+      bug_report: '感謝您的Error報告！我們會盡快修復這個問題。',
       feature_request: '感謝您的功能請求！我們會評估並考慮在未來版本中實現。',
     };
 
@@ -190,7 +190,7 @@ class FeedbackService {
   }
 
   /**
-   * 獲取反饋列表
+   * Get反饋List
    */
   async getFeedbacks(options = {}) {
     try {
@@ -275,7 +275,7 @@ class FeedbackService {
   }
 
   /**
-   * 獲取單個反饋詳情
+   * GetSingle反饋詳情
    */
   async getFeedbackById(feedbackId) {
     try {
@@ -323,7 +323,7 @@ class FeedbackService {
   }
 
   /**
-   * 更新反饋狀態
+   * Update反饋Status
    */
   async updateFeedbackStatus(feedbackId, status, userId, resolution = null) {
     try {
@@ -341,7 +341,7 @@ class FeedbackService {
 
       await feedback.update(updateData);
 
-      // 添加狀態更新回應
+      // AddStatusUpdate回應
       await FeedbackResponse.create({
         feedbackId,
         userId,
@@ -350,7 +350,7 @@ class FeedbackService {
         isInternal: false,
       });
 
-      // 更新分析數據
+      // UpdateAnalysisData
       if (status === 'resolved') {
         await this.updateResolutionAnalytics(feedback);
       }
@@ -375,7 +375,7 @@ class FeedbackService {
 
       await feedback.update({ assignedTo });
 
-      // 添加分配回應
+      // Add分配回應
       await FeedbackResponse.create({
         feedbackId,
         userId,
@@ -393,7 +393,7 @@ class FeedbackService {
   }
 
   /**
-   * 添加回應
+   * Add回應
    */
   async addResponse(
     feedbackId,
@@ -426,7 +426,7 @@ class FeedbackService {
   }
 
   /**
-   * 更新解決分析數據
+   * UpdateResolveAnalysisData
    */
   async updateResolutionAnalytics(feedback) {
     try {
@@ -443,7 +443,7 @@ class FeedbackService {
       if (analytics) {
         analytics.totalResolved += 1;
 
-        // 計算平均解決時間
+        // 計算平均ResolveTime
 // eslint-disable-next-line no-unused-vars
         const resolutionTime =
           (new Date() - new Date(feedback.createdAt)) / (1000 * 60 * 60 * 24); // 天
@@ -461,7 +461,7 @@ class FeedbackService {
   }
 
   /**
-   * 獲取反饋統計
+   * Get反饋Statistics
    */
   async getFeedbackStats(options = {}) {
     try {
@@ -494,13 +494,13 @@ class FeedbackService {
         stats.totalSubmitted += record.totalSubmitted;
         stats.totalResolved += record.totalResolved;
 
-        // 累積平均解決時間
+        // 累積平均ResolveTime
         if (record.averageResolutionTime) {
           stats.averageResolutionTime =
             (stats.averageResolutionTime + record.averageResolutionTime) / 2;
         }
 
-        // 分佈統計
+        // 分佈Statistics
         stats.feedbackTypeDistribution[record.feedbackType] =
           (stats.feedbackTypeDistribution[record.feedbackType] || 0) +
           record.totalSubmitted;
@@ -509,7 +509,7 @@ class FeedbackService {
           (stats.categoryDistribution[record.category] || 0) +
           record.totalSubmitted;
 
-        // 合併分佈數據
+        // Merge分佈Data
         Object.entries(record.priorityDistribution || {}).forEach(
           ([priority, count]) => {
             stats.priorityDistribution[priority] =
@@ -556,7 +556,7 @@ class FeedbackService {
       const stats = await this.getFeedbackStats();
       const suggestions = [];
 
-      // 基於反饋類型的建議
+      // 基於反饋Class型的建議
 // eslint-disable-next-line no-unused-vars
       const typeStats = stats.feedbackTypeDistribution;
       const mostCommonType = Object.keys(typeStats).reduce((a, b) =>
@@ -577,13 +577,13 @@ class FeedbackService {
         suggestions.push({
           priority: 'urgent',
           category: 'bug_fixes',
-          title: '優先處理錯誤報告',
-          description: '錯誤報告數量較多，建議優先處理和修復',
+          title: '優先HandleError報告',
+          description: 'Error報告數量較多，建議優先Handle和修復',
           action: 'prioritize_bug_fixes',
         });
       }
 
-      // 基於解決時間的建議
+      // 基於ResolveTime的建議
       if (stats.averageResolutionTime > 7) {
         suggestions.push({
           priority: 'high',
@@ -594,7 +594,7 @@ class FeedbackService {
         });
       }
 
-      // 基於解決率的建議
+      // 基於Resolve率的建議
 // eslint-disable-next-line no-unused-vars
       const resolutionRate = stats.totalResolved / stats.totalSubmitted;
       if (resolutionRate < 0.8) {

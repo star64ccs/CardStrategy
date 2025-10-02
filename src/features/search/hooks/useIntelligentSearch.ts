@@ -48,7 +48,7 @@ export const _useIntelligentSearch = () => {
     SearchContext | undefined
   >();
 
-  // 執行智能搜索
+  // 執Row智能Search
   const _search = useCallback(
     async (
       searchQuery: IntelligentSearchQuery
@@ -59,14 +59,14 @@ export const _useIntelligentSearch = () => {
         ).unwrap();
         return response;
       } catch (error) {
-        console.error('智能搜索失敗:', error);
+        console.error('智能搜索Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取搜索建議
+  // GetSearch建議
   const _getSuggestions = useCallback(
     async (
       query: string,
@@ -78,14 +78,14 @@ export const _useIntelligentSearch = () => {
         ).unwrap();
         return suggestions;
       } catch (error) {
-        console.error('獲取搜索建議失敗:', error);
+        console.error('Get搜索建議Failed:', error);
         return [];
       }
     },
     [dispatch]
   );
 
-  // 獲取搜索歷史
+  // GetSearch歷史
   const _getSearchHistory = useCallback(
     async (userId: string): Promise<SearchHistoryItem[]> => {
       try {
@@ -94,14 +94,14 @@ export const _useIntelligentSearch = () => {
         ).unwrap();
         return history;
       } catch (error) {
-        console.error('獲取搜索歷史失敗:', error);
+        console.error('Get搜索歷史Failed:', error);
         return [];
       }
     },
     [dispatch]
   );
 
-  // 保存搜索歷史
+  // SaveSearch歷史
   const _saveSearchHistory = useCallback(
     async (userId: string, query: string, results: string[]): Promise<void> => {
       try {
@@ -111,13 +111,13 @@ export const _useIntelligentSearch = () => {
           ) as any
         ).unwrap();
       } catch (error) {
-        console.error('保存搜索歷史失敗:', error);
+        console.error('保存搜索歷史Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 獲取熱門搜索
+  // Get熱門Search
   const _getPopularSearches = useCallback(
     async (category?: string): Promise<PopularSearchItem[]> => {
       try {
@@ -126,14 +126,14 @@ export const _useIntelligentSearch = () => {
         ).unwrap();
         return popular;
       } catch (error) {
-        console.error('獲取熱門搜索失敗:', error);
+        console.error('Get熱門搜索Failed:', error);
         return [];
       }
     },
     [dispatch]
   );
 
-  // 獲取相關搜索
+  // Get相OffSearch
   const _getRelatedSearches = useCallback(
     async (query: string): Promise<RelatedSearchItem[]> => {
       try {
@@ -142,14 +142,14 @@ export const _useIntelligentSearch = () => {
         ).unwrap();
         return related;
       } catch (error) {
-        console.error('獲取相關搜索失敗:', error);
+        console.error('Get相關搜索Failed:', error);
         return [];
       }
     },
     [dispatch]
   );
 
-  // 分析查詢
+  // AnalysisQuery
   const _analyzeQuery = useCallback(
     async (query: string): Promise<QueryAnalysis> => {
       try {
@@ -158,14 +158,14 @@ export const _useIntelligentSearch = () => {
         ).unwrap();
         return analysis;
       } catch (error) {
-        console.error('分析查詢失敗:', error);
+        console.error('分析查詢Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 更新用戶偏好
+  // UpdateUserPreferences
   const _updateUserPreferences = useCallback(
     async (
       userId: string,
@@ -178,13 +178,13 @@ export const _useIntelligentSearch = () => {
           ) as any
         ).unwrap();
       } catch (error) {
-        console.error('更新用戶偏好失敗:', error);
+        console.error('Update用戶偏好Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 獲取用戶偏好
+  // GetUserPreferences
   const _getUserPreferences = useCallback(
     async (userId: string): Promise<UserSearchPreferences> => {
       try {
@@ -193,14 +193,14 @@ export const _useIntelligentSearch = () => {
         ).unwrap();
         return preferences;
       } catch (error) {
-        console.error('獲取用戶偏好失敗:', error);
+        console.error('Get用戶偏好Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取搜索統計
+  // GetSearchStatistics
   const _getSearchStats =
     useCallback(async (): Promise<IntelligentSearchStats> => {
       try {
@@ -209,72 +209,72 @@ export const _useIntelligentSearch = () => {
         ).unwrap();
         return stats;
       } catch (error) {
-        console.error('獲取搜索統計失敗:', error);
+        console.error('Get搜索統計Failed:', error);
         throw error;
       }
     }, [dispatch]);
 
-  // 清除搜索歷史
+  // ClearSearch歷史
   const _clearSearchHistory = useCallback(
     async (userId: string): Promise<void> => {
       try {
         await (dispatch(clearIntelligentSearchHistory(userId)) as any).unwrap();
       } catch (error) {
-        console.error('清除搜索歷史失敗:', error);
+        console.error('清除搜索歷史Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 自動獲取建議
+  // AutoGet建議
   useEffect(() => {
     if (currentQuery && currentQuery.length >= 2) {
       getSuggestions(currentQuery, currentContext);
     }
   }, [currentQuery, currentContext, getSuggestions]);
 
-  // 設置搜索上下文
+  // SettingsSearch上下文
   const _handleSetContext = useCallback((context: SearchContext) => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
-  // 設置搜索過濾器
+  // SettingsSearchFilter器
   const _handleSetFilters = useCallback((filters: unknown) => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
-  // 更新搜索過濾器
+  // UpdateSearchFilter器
   const _handleUpdateFilters = useCallback((filters: unknown) => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
-  // 清除搜索結果
+  // ClearSearch結果
   const _handleClearResults = useCallback(() => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
-  // 清除搜索查詢
+  // ClearSearchQuery
   const _handleClearQuery = useCallback(() => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
-  // 清除錯誤
+  // ClearError
   const _handleClearError = useCallback(() => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
-  // 重置狀態
+  // ResetStatus
   const _handleReset = useCallback(() => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback((newConfig: Partial<any>) => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
   return {
-    // 狀態
+    // Status
     results,
     suggestions,
     searchHistory,
@@ -288,7 +288,7 @@ export const _useIntelligentSearch = () => {
     currentQuery,
     currentContext,
 
-    // 操作方法
+    // OperationMethod
     search,
     getSuggestions,
     getSearchHistory,
@@ -301,7 +301,7 @@ export const _useIntelligentSearch = () => {
     getSearchStats,
     clearSearchHistory,
 
-    // 事件處理器
+    // EventHandle器
     setCurrentQuery,
     setCurrentContext: handleSetContext,
     setFilters: handleSetFilters,
@@ -314,7 +314,7 @@ export const _useIntelligentSearch = () => {
   };
 };
 
-// 簡化的智能搜索 Hook
+// 簡化的智能Search Hook
 export const _useSimpleIntelligentSearch = () => {
   const { results, suggestions, isLoading, error, search, getSuggestions } =
     useIntelligentSearch();
@@ -329,7 +329,7 @@ export const _useSimpleIntelligentSearch = () => {
   };
 };
 
-// 智能搜索建議 Hook
+// 智能Search建議 Hook
 export const _useIntelligentSearchSuggestions = () => {
   const _dispatch = useAppDispatch();
   const { suggestions, isSuggestionsLoading } = useSelector(
@@ -347,7 +347,7 @@ export const _useIntelligentSearchSuggestions = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('獲取智能搜索建議失敗:', error);
+        console.error('Get智能搜索建議Failed:', error);
         return [];
       }
     },
@@ -361,7 +361,7 @@ export const _useIntelligentSearchSuggestions = () => {
   };
 };
 
-// 智能搜索歷史 Hook
+// 智能Search歷史 Hook
 export const _useIntelligentSearchHistory = () => {
   const _dispatch = useAppDispatch();
   const { searchHistory, recentSearches } = useSelector(
@@ -376,7 +376,7 @@ export const _useIntelligentSearchHistory = () => {
         ).unwrap();
         return history;
       } catch (error) {
-        console.error('獲取智能搜索歷史失敗:', error);
+        console.error('Get智能搜索歷史Failed:', error);
         return [];
       }
     },
@@ -392,7 +392,7 @@ export const _useIntelligentSearchHistory = () => {
           ) as any
         ).unwrap();
       } catch (error) {
-        console.error('保存智能搜索歷史失敗:', error);
+        console.error('保存智能搜索歷史Failed:', error);
       }
     },
     [dispatch]
@@ -403,7 +403,7 @@ export const _useIntelligentSearchHistory = () => {
       try {
         await (dispatch(clearIntelligentSearchHistory(userId)) as any).unwrap();
       } catch (error) {
-        console.error('清除智能搜索歷史失敗:', error);
+        console.error('清除智能搜索歷史Failed:', error);
       }
     },
     [dispatch]
@@ -418,7 +418,7 @@ export const _useIntelligentSearchHistory = () => {
   };
 };
 
-// 智能搜索偏好 Hook
+// 智能SearchPreferences Hook
 export const _useIntelligentSearchPreferences = () => {
   const _dispatch = useAppDispatch();
   const { currentPreferences, userPreferences, config } = useSelector(
@@ -437,7 +437,7 @@ export const _useIntelligentSearchPreferences = () => {
           ) as any
         ).unwrap();
       } catch (error) {
-        console.error('更新智能搜索用戶偏好失敗:', error);
+        console.error('Update智能搜索用戶偏好Failed:', error);
       }
     },
     [dispatch]
@@ -451,7 +451,7 @@ export const _useIntelligentSearchPreferences = () => {
         ).unwrap();
         return preferences;
       } catch (error) {
-        console.error('獲取智能搜索用戶偏好失敗:', error);
+        console.error('Get智能搜索用戶偏好Failed:', error);
         throw error;
       }
     },
@@ -459,7 +459,7 @@ export const _useIntelligentSearchPreferences = () => {
   );
 
   const _updateConfig = useCallback((newConfig: Partial<any>) => {
-    // 暫時註釋掉，等待 slice 實現
+    // 暫時Comment掉，Await slice 實現
   }, []);
 
   return {
@@ -472,7 +472,7 @@ export const _useIntelligentSearchPreferences = () => {
   };
 };
 
-// 智能搜索統計 Hook
+// 智能SearchStatistics Hook
 export const _useIntelligentSearchStats = () => {
   const _dispatch = useAppDispatch();
   const { searchStats, responseTime, cacheHit, totalResults } = useSelector(
@@ -487,7 +487,7 @@ export const _useIntelligentSearchStats = () => {
         ).unwrap();
         return stats;
       } catch (error) {
-        console.error('獲取智能搜索統計失敗:', error);
+        console.error('Get智能搜索統計Failed:', error);
         throw error;
       }
     }, [dispatch]);

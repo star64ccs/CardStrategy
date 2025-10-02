@@ -12,8 +12,8 @@ import { AuthStorage, UserStorage } from '../../core/utils/storage';
 import { biometricAuthService } from '../../features/auth/services/biometricAuthService';
 
 /**
- * 認證服務
- * 處理用戶登錄、註冊、登出等認證相關功能
+ * AuthenticateService
+ * HandleUserLogin、Register、登出等Authenticate相Off功能
  */
 export class AuthService {
   private static instance: AuthService;
@@ -30,13 +30,13 @@ export class AuthService {
   }
 
   /**
-   * 用戶登錄
+   * UserLogin
    */
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
       logger.info('用戶登錄嘗試:', { email: credentials.email });
 
-      // 驗證輸入
+      // VerifyInput
       if (!securityUtils.validateInput(credentials.email, 'email')) {
         throw new Error('無效的電子郵件格式');
       }
@@ -45,39 +45,39 @@ export class AuthService {
         throw new Error('密碼長度不足');
       }
 
-      // 發送登錄請求
+      // SendLoginRequest
       const _response = await api.post<AuthResponse>(
         '/auth/login',
         credentials
       );
 
       if (response.success && response.data) {
-        // 保存認證信息
+        // SaveAuthenticateInformation
         await this.saveAuthData(response.data);
 
-        // 更新狀態
+        // UpdateStatus
         this.currentUser = response.data.user;
         this.isAuthenticated = true;
 
-        logger.info('用戶登錄成功:', { userId: this.currentUser?.id });
+        logger.info('用戶登錄Success:', { userId: this.currentUser?.id });
         return response.data;
       } else {
-        throw new Error('登錄失敗');
+        throw new Error('登錄Failed');
       }
     } catch (error) {
-      logger.error('用戶登錄失敗:', { error, email: credentials.email });
+      logger.error('用戶登錄Failed:', { error, email: credentials.email });
       throw error;
     }
   }
 
   /**
-   * 用戶註冊
+   * UserRegister
    */
   async register(userData: RegisterData): Promise<AuthResponse> {
     try {
       logger.info('用戶註冊嘗試:', { email: userData.email });
 
-      // 驗證輸入
+      // VerifyInput
       if (!securityUtils.validateInput(userData.email, 'email')) {
         throw new Error('無效的電子郵件格式');
       }
@@ -86,7 +86,7 @@ export class AuthService {
         throw new Error('無效的用戶名格式');
       }
 
-      // 驗證密碼強度
+      // VerifyPassword強度
       const _passwordValidation = securityUtils.validatePassword(
         userData.password
       );
@@ -96,52 +96,52 @@ export class AuthService {
         );
       }
 
-      // 發送註冊請求
+      // SendRegisterRequest
       const _response = await api.post<AuthResponse>(
         '/auth/register',
         userData
       );
 
       if (response.success && response.data) {
-        // 保存認證信息
+        // SaveAuthenticateInformation
         await this.saveAuthData(response.data);
 
-        // 更新狀態
+        // UpdateStatus
         this.currentUser = response.data.user;
         this.isAuthenticated = true;
 
-        logger.info('用戶註冊成功:', { userId: this.currentUser?.id });
+        logger.info('用戶註冊Success:', { userId: this.currentUser?.id });
         return response.data;
       } else {
-        throw new Error('註冊失敗');
+        throw new Error('註冊Failed');
       }
     } catch (error) {
-      logger.error('用戶註冊失敗:', { error, email: userData.email });
+      logger.error('用戶註冊Failed:', { error, email: userData.email });
       throw error;
     }
   }
 
   /**
-   * 用戶登出
+   * User登出
    */
   async logout(): Promise<void> {
     try {
       logger.info('用戶登出:', { userId: this.currentUser?.id });
 
-      // 發送登出請求
+      // Send登出Request
       await api.post('/auth/logout');
 
-      // 清除本地認證信息
+      // ClearLocalAuthenticateInformation
       await this.clearAuthData();
 
-      // 更新狀態
+      // UpdateStatus
       this.currentUser = null;
       this.isAuthenticated = false;
 
-      logger.info('用戶登出成功');
+      logger.info('用戶登出Success');
     } catch (error) {
-      logger.error('用戶登出失敗:', { error });
-      // 即使服務器請求失敗，也要清除本地數據
+      logger.error('用戶登出Failed:', { error });
+      // 即使ServerRequestFailed，也要ClearLocalData
       await this.clearAuthData();
       this.currentUser = null;
       this.isAuthenticated = false;
@@ -149,7 +149,7 @@ export class AuthService {
   }
 
   /**
-   * 刷新認證令牌
+   * RefreshAuthenticate令牌
    */
   async refreshToken(): Promise<AuthResponse> {
     try {
@@ -163,21 +163,21 @@ export class AuthService {
       });
 
       if (response.success && response.data) {
-        // 保存新的認證信息
+        // Save新的AuthenticateInformation
         await this.saveAuthData(response.data);
 
-        // 更新狀態
+        // UpdateStatus
         this.currentUser = response.data.user;
         this.isAuthenticated = true;
 
-        logger.info('令牌刷新成功');
+        logger.info('令牌刷新Success');
         return response.data;
       } else {
-        throw new Error('令牌刷新失敗');
+        throw new Error('令牌刷新Failed');
       }
     } catch (error) {
-      logger.error('令牌刷新失敗:', { error });
-      // 刷新失敗，清除認證信息
+      logger.error('令牌刷新Failed:', { error });
+      // RefreshFailed，ClearAuthenticateInformation
       await this.clearAuthData();
       this.currentUser = null;
       this.isAuthenticated = false;
@@ -186,7 +186,7 @@ export class AuthService {
   }
 
   /**
-   * 檢查認證狀態
+   * CheckAuthenticateStatus
    */
   async checkAuthStatus(): Promise<boolean> {
     try {
@@ -196,7 +196,7 @@ export class AuthService {
         return false;
       }
 
-      // 發送請求驗證令牌
+      // SendRequestVerify令牌
       const _response = await api.get<User>('/auth/me');
 
       if (response.success && response.data) {
@@ -204,7 +204,7 @@ export class AuthService {
         this.isAuthenticated = true;
         return true;
       } else {
-        // 令牌無效，嘗試刷新
+        // 令牌無效，嘗試Refresh
         try {
           await this.refreshToken();
           return true;
@@ -215,28 +215,28 @@ export class AuthService {
         }
       }
     } catch (error) {
-      logger.error('檢查認證狀態失敗:', { error });
+      logger.error('Check認證狀態Failed:', { error });
       this.isAuthenticated = false;
       return false;
     }
   }
 
   /**
-   * 獲取當前用戶（同步版本）
+   * Get當前User（SyncVersion）
    */
   getCurrentUser(): User | null {
     return this.currentUser;
   }
 
   /**
-   * 檢查是否已認證
+   * CheckYesNo已Authenticate
    */
   isUserAuthenticated(): boolean {
     return this.isAuthenticated;
   }
 
   /**
-   * 更新用戶信息
+   * UpdateUserInformation
    */
   async updateUserProfile(updates: Partial<User>): Promise<User> {
     try {
@@ -248,19 +248,19 @@ export class AuthService {
 
       if (response.success && response.data) {
         this.currentUser = response.data;
-        logger.info('用戶信息更新成功');
+        logger.info('用戶信息UpdateSuccess');
         return response.data;
       } else {
-        throw new Error('更新用戶信息失敗');
+        throw new Error('Update用戶信息Failed');
       }
     } catch (error) {
-      logger.error('更新用戶信息失敗:', { error });
+      logger.error('Update用戶信息Failed:', { error });
       throw error;
     }
   }
 
   /**
-   * 修改密碼
+   * ModifyPassword
    */
   async changePassword(
     currentPassword: string,
@@ -271,7 +271,7 @@ export class AuthService {
         throw new Error('用戶未認證');
       }
 
-      // 驗證新密碼強度
+      // Verify新Password強度
       const _passwordValidation = securityUtils.validatePassword(newPassword);
       if (!passwordValidation.isValid) {
         throw new Error(
@@ -285,18 +285,18 @@ export class AuthService {
       });
 
       if (response.success) {
-        logger.info('密碼修改成功');
+        logger.info('密碼修改Success');
       } else {
-        throw new Error('密碼修改失敗');
+        throw new Error('密碼修改Failed');
       }
     } catch (error) {
-      logger.error('密碼修改失敗:', { error });
+      logger.error('密碼修改Failed:', { error });
       throw error;
     }
   }
 
   /**
-   * 忘記密碼
+   * 忘記Password
    */
   async forgotPassword(email: string): Promise<void> {
     try {
@@ -309,20 +309,20 @@ export class AuthService {
       if (response.success) {
         logger.info('密碼重置郵件已發送');
       } else {
-        throw new Error('發送密碼重置郵件失敗');
+        throw new Error('發送密碼重置郵件Failed');
       }
     } catch (error) {
-      logger.error('忘記密碼請求失敗:', { error, email });
+      logger.error('忘記密碼請求Failed:', { error, email });
       throw error;
     }
   }
 
   /**
-   * 重置密碼
+   * ResetPassword
    */
   async resetPassword(token: string, newPassword: string): Promise<void> {
     try {
-      // 驗證新密碼強度
+      // Verify新Password強度
       const _passwordValidation = securityUtils.validatePassword(newPassword);
       if (!passwordValidation.isValid) {
         throw new Error(
@@ -336,18 +336,18 @@ export class AuthService {
       });
 
       if (response.success) {
-        logger.info('密碼重置成功');
+        logger.info('密碼重置Success');
       } else {
-        throw new Error('密碼重置失敗');
+        throw new Error('密碼重置Failed');
       }
     } catch (error) {
-      logger.error('密碼重置失敗:', { error });
+      logger.error('密碼重置Failed:', { error });
       throw error;
     }
   }
 
   /**
-   * 保存認證數據
+   * SaveAuthenticateData
    */
   private async saveAuthData(authData: AuthResponse): Promise<void> {
     if (authData.token) {
@@ -362,7 +362,7 @@ export class AuthService {
   }
 
   /**
-   * 清除認證數據
+   * ClearAuthenticateData
    */
   private async clearAuthData(): Promise<void> {
     await AuthStorage.clearAuth();
@@ -370,14 +370,14 @@ export class AuthService {
   }
 
   /**
-   * 檢查是否已認證
+   * CheckYesNo已Authenticate
    */
   async checkAuthenticationStatus(): Promise<boolean> {
     return this.isAuthenticated;
   }
 
   /**
-   * 獲取當前用戶（異步版本）
+   * Get當前User（AsyncVersion）
    */
   async getCurrentUserAsync(): Promise<User | null> {
     if (!this.isAuthenticated) {
@@ -387,14 +387,14 @@ export class AuthService {
   }
 
   /**
-   * 獲取存儲的令牌
+   * GetStorage的令牌
    */
   async getStoredToken(): Promise<string | null> {
     return AuthStorage.getToken();
   }
 
   /**
-   * 更新用戶資料（存根方法）
+   * UpdateUser資料（存RootMethod）
    */
   async updateProfile(updates: Partial<User>): Promise<User> {
     logger.info('更新用戶資料（存根方法）:', { updates });
@@ -406,36 +406,36 @@ export class AuthService {
   }
 
   /**
-   * 生物識別登錄
+   * 生物識別Login
    */
   async biometricLogin(request?: BiometricAuthRequest): Promise<AuthResponse> {
     try {
       logger.info('生物識別登錄嘗試');
 
-      // 檢查生物識別是否可用
+      // Check生物識別YesNo可用
       const _isAvailable = await biometricAuthService.isBiometricAvailable();
       if (!isAvailable) {
         throw new Error('生物識別不可用');
       }
 
-      // 執行生物識別認證
+      // 執Row生物識別Authenticate
       const _biometricResult = await biometricAuthService.authenticate(request);
 
       if (!biometricResult.success) {
-        throw new Error(biometricResult.errorMessage || '生物識別認證失敗');
+        throw new Error(biometricResult.errorMessage || '生物識別認證Failed');
       }
 
-      // 創建生物識別簽名用於服務器驗證
+      // Create生物識別Sign用於ServerVerify
       const _payload = JSON.stringify({
         timestamp: Date.now(),
         biometricType: biometricResult.biometricType,
-        deviceId: 'device-id', // 實際應用中應該是真實的設備ID
+        deviceId: 'device-id', // 實際Apply中應該YesTrue實的設備ID
       });
 
       const _signature =
         await biometricAuthService.createBiometricSignature(payload);
 
-      // 發送生物識別登錄請求到服務器
+      // Send生物識別LoginRequest到Server
       const _response = await api.post<AuthResponse>('/auth/biometric/login', {
         biometricType: biometricResult.biometricType,
         signature,
@@ -444,29 +444,29 @@ export class AuthService {
       });
 
       if (response.success && response.data) {
-        // 保存認證信息
+        // SaveAuthenticateInformation
         await this.saveAuthData(response.data);
 
-        // 更新狀態
+        // UpdateStatus
         this.currentUser = response.data.user;
         this.isAuthenticated = true;
 
-        logger.info('生物識別登錄成功:', {
+        logger.info('生物識別登錄Success:', {
           userId: this.currentUser?.id,
           biometricType: biometricResult.biometricType,
         });
         return response.data;
       } else {
-        throw new Error('生物識別登錄失敗');
+        throw new Error('生物識別登錄Failed');
       }
     } catch (error) {
-      logger.error('生物識別登錄失敗:', error);
+      logger.error('生物識別登錄Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 啟用生物識別認證
+   * Enable生物識別Authenticate
    */
   async enableBiometricAuth(): Promise<boolean> {
     try {
@@ -476,7 +476,7 @@ export class AuthService {
         throw new Error('用戶未認證');
       }
 
-      // 檢查生物識別能力
+      // Check生物識別能力
       const _capabilities =
         await biometricAuthService.detectBiometricCapabilities();
       const _availableCapabilities = capabilities.filter(
@@ -487,45 +487,45 @@ export class AuthService {
         throw new Error('沒有可用的生物識別方式');
       }
 
-      // 創建生物識別密鑰
+      // Create生物識別密鑰
       const _keyCreated = await biometricAuthService.createBiometricKeys();
       if (!keyCreated) {
-        throw new Error('創建生物識別密鑰失敗');
+        throw new Error('Create生物識別密鑰Failed');
       }
 
-      // 執行一次認證以驗證設置
+      // 執Row一次Authenticate以VerifySettings
       const _authResult = await biometricAuthService.authenticate({
         promptMessage: '請進行生物識別認證以完成設置',
       });
 
       if (!authResult.success) {
-        // 如果認證失敗，刪除已創建的密鑰
+        // 如果AuthenticateFailed，Delete已Create的密鑰
         await biometricAuthService.deleteBiometricKeys();
-        throw new Error('生物識別認證驗證失敗');
+        throw new Error('生物識別認證VerifyFailed');
       }
 
-      // 向服務器註冊生物識別
+      // 向ServerRegister生物識別
       const _response = await api.post('/auth/biometric/register', {
         biometricType: authResult.biometricType,
         capabilities: availableCapabilities,
       });
 
       if (response.success) {
-        logger.info('生物識別認證啟用成功');
+        logger.info('生物識別認證啟用Success');
         return true;
       } else {
-        // 註冊失敗，清理本地密鑰
+        // RegisterFailed，清理Local密鑰
         await biometricAuthService.deleteBiometricKeys();
-        throw new Error('服務器註冊生物識別失敗');
+        throw new Error('Server註冊生物識別Failed');
       }
     } catch (error) {
-      logger.error('啟用生物識別認證失敗:', error);
+      logger.error('啟用生物識別認證Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 禁用生物識別認證
+   * Disable生物識別Authenticate
    */
   async disableBiometricAuth(): Promise<boolean> {
     try {
@@ -535,33 +535,33 @@ export class AuthService {
         throw new Error('用戶未認證');
       }
 
-      // 向服務器註銷生物識別
+      // 向ServerLogout生物識別
       const _response = await api.delete('/auth/biometric/unregister');
 
-      // 無論服務器請求是否成功，都要清理本地密鑰
+      // 無論ServerRequestYesNoSuccess，都要清理Local密鑰
       await biometricAuthService.deleteBiometricKeys();
 
       if (response.success) {
-        logger.info('生物識別認證禁用成功');
+        logger.info('生物識別認證禁用Success');
         return true;
       } else {
-        logger.warn('服務器註銷生物識別失敗，但本地密鑰已清理');
+        logger.warn('Server註銷生物識別Failed，但本地密鑰已清理');
         return false;
       }
     } catch (error) {
-      logger.error('禁用生物識別認證失敗:', error);
-      // 即使出錯也要嘗試清理本地密鑰
+      logger.error('禁用生物識別認證Failed:', error);
+      // 即使出錯也要嘗試清理Local密鑰
       try {
         await biometricAuthService.deleteBiometricKeys();
       } catch (cleanupError) {
-        logger.error('清理生物識別密鑰失敗:', cleanupError);
+        logger.error('清理生物識別密鑰Failed:', cleanupError);
       }
       throw error;
     }
   }
 
   /**
-   * 檢查生物識別認證狀態
+   * Check生物識別AuthenticateStatus
    */
   async checkBiometricAuthStatus(): Promise<{
     isAvailable: boolean;
@@ -572,7 +572,7 @@ export class AuthService {
     try {
       logger.info('檢查生物識別認證狀態');
 
-      // 檢查本地生物識別能力
+      // CheckLocal生物識別能力
       const _capabilities =
         await biometricAuthService.detectBiometricCapabilities();
       const _isAvailable = await biometricAuthService.isBiometricAvailable();
@@ -580,14 +580,14 @@ export class AuthService {
 
       let isRegistered = false;
 
-      // 如果用戶已認證，檢查服務器註冊狀態
+      // 如果User已Authenticate，CheckServerRegisterStatus
       if (this.isAuthenticated) {
         try {
           const _response = await api.get('/auth/biometric/status');
           isRegistered =
             response.success && (response.data as any)?.isRegistered;
         } catch (error) {
-          logger.warn('檢查服務器生物識別狀態失敗:', error);
+          logger.warn('CheckServer生物識別狀態Failed:', error);
         }
       }
 
@@ -601,19 +601,19 @@ export class AuthService {
       logger.info('生物識別認證狀態:', status);
       return status;
     } catch (error) {
-      logger.error('檢查生物識別認證狀態失敗:', error);
+      logger.error('Check生物識別認證狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 快速登錄（優先使用生物識別）
+   * 快速Login（優先使用生物識別）
    */
   async quickLogin(): Promise<AuthResponse> {
     try {
       logger.info('快速登錄嘗試');
 
-      // 首先嘗試生物識別登錄
+      // 首先嘗試生物識別Login
       const _biometricStatus = await this.checkBiometricAuthStatus();
 
       if (
@@ -626,23 +626,23 @@ export class AuthService {
             promptMessage: '使用生物識別快速登錄',
           });
         } catch (biometricError) {
-          logger.warn('生物識別快速登錄失敗，嘗試令牌刷新:', biometricError);
+          logger.warn('生物識別快速登錄Failed，嘗試令牌刷新:', biometricError);
         }
       }
 
-      // 生物識別失敗或不可用，嘗試令牌刷新
+      // 生物識別Failed或不可用，嘗試令牌Refresh
       try {
         return await this.refreshToken();
       } catch (tokenError) {
-        logger.warn('令牌刷新失敗:', tokenError);
-        throw new Error('快速登錄失敗，請使用用戶名密碼登錄');
+        logger.warn('令牌刷新Failed:', tokenError);
+        throw new Error('快速登錄Failed，請使用用戶名密碼登錄');
       }
     } catch (error) {
-      logger.error('快速登錄失敗:', error);
+      logger.error('快速登錄Failed:', error);
       throw error;
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _authService = AuthService.getInstance();

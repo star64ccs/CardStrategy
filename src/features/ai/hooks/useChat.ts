@@ -44,18 +44,18 @@ export const _useChat = () => {
   const _quickReplies = useAppSelector(selectQuickReplies);
   const _suggestedActions = useAppSelector(selectSuggestedActions);
 
-  // 初始化聊天服務
+  // Initialize聊天Service
   const _initialize = useCallback(async () => {
     try {
       await dispatch(initializeChat()).unwrap();
       return true;
     } catch (error) {
-      console.error('初始化聊天服務失敗:', error);
+      console.error('Initialize聊天ServiceFailed:', error);
       return false;
     }
   }, [dispatch]);
 
-  // 創建新會話
+  // Create新會話
   const _createNewSession = useCallback(
     async (userId: string, category?: ChatCategory) => {
       try {
@@ -64,14 +64,14 @@ export const _useChat = () => {
         ).unwrap();
         return session;
       } catch (error) {
-        console.error('創建會話失敗:', error);
+        console.error('Create會話Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 發送消息
+  // SendMessage
   const _sendChatMessage = useCallback(
     async (
       sessionId: string,
@@ -92,56 +92,56 @@ export const _useChat = () => {
         ).unwrap();
         return response;
       } catch (error) {
-        console.error('發送消息失敗:', error);
+        console.error('發送消息Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取用戶會話列表
+  // GetUser會話List
   const _loadUserSessions = useCallback(
     async (userId: string) => {
       try {
         await dispatch(getUserSessions(userId)).unwrap();
       } catch (error) {
-        console.error('獲取會話列表失敗:', error);
+        console.error('Get會話列表Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 載入會話歷史
+  // Load會話歷史
   const _loadSessionHistory = useCallback(
     async (sessionId: string) => {
       try {
         await dispatch(getSessionHistory(sessionId)).unwrap();
       } catch (error) {
-        console.error('載入會話歷史失敗:', error);
+        console.error('載入會話歷史Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取聊天統計
+  // Get聊天Statistics
   const _loadChatStats = useCallback(async () => {
     try {
       await dispatch(getChatStats()).unwrap();
     } catch (error) {
-      console.error('獲取聊天統計失敗:', error);
+      console.error('Get聊天統計Failed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 關閉會話
+  // Off閉會話
   const _closeChatSession = useCallback(
     async (sessionId: string) => {
       try {
         await dispatch(closeSession(sessionId)).unwrap();
       } catch (error) {
-        console.error('關閉會話失敗:', error);
+        console.error('關閉會話Failed:', error);
         throw error;
       }
     },
@@ -154,46 +154,46 @@ export const _useChat = () => {
       try {
         await dispatch(archiveSession(sessionId)).unwrap();
       } catch (error) {
-        console.error('歸檔會話失敗:', error);
+        console.error('歸檔會話Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 更新會話優先級
+  // Update會話優先級
   const _updateSessionPriorityLevel = useCallback(
     async (sessionId: string, priority: ChatPriority) => {
       try {
         await dispatch(updateSessionPriority({ sessionId, priority })).unwrap();
       } catch (error) {
-        console.error('更新會話優先級失敗:', error);
+        console.error('Update會話優先級Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 添加會話標籤
+  // Add會話Tag
   const _addSessionTagLabel = useCallback(
     async (sessionId: string, tag: string) => {
       try {
         await dispatch(addSessionTag({ sessionId, tag })).unwrap();
       } catch (error) {
-        console.error('添加會話標籤失敗:', error);
+        console.error('添加會話標籤Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 移除會話標籤
+  // Remove會話Tag
   const _removeSessionTagLabel = useCallback(
     async (sessionId: string, tag: string) => {
       try {
         await dispatch(removeSessionTag({ sessionId, tag })).unwrap();
       } catch (error) {
-        console.error('移除會話標籤失敗:', error);
+        console.error('移除會話標籤Failed:', error);
         throw error;
       }
     },
@@ -208,22 +208,22 @@ export const _useChat = () => {
     [dispatch]
   );
 
-  // 清除消息
+  // ClearMessage
   const _clearChatMessages = useCallback(() => {
     dispatch(clearMessages());
   }, [dispatch]);
 
-  // 清除錯誤
+  // ClearError
   const _clearChatError = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 重置聊天狀態
+  // Reset聊天Status
   const _resetChat = useCallback(() => {
     dispatch(resetChatState());
   }, [dispatch]);
 
-  // 計算統計數據
+  // 計算統Count據
   const _chatStatistics = useMemo(() => {
     if (!stats) return null;
 
@@ -244,22 +244,22 @@ export const _useChat = () => {
     };
   }, [stats]);
 
-  // 獲取活躍會話
+  // Get活躍會話
   const _activeSessions = useMemo(() => {
     return sessions.filter(session => session.status === 'active');
   }, [sessions]);
 
-  // 獲取已關閉會話
+  // Get已Off閉會話
   const _closedSessions = useMemo(() => {
     return sessions.filter(session => session.status === 'closed');
   }, [sessions]);
 
-  // 獲取已歸檔會話
+  // Get已歸檔會話
   const _archivedSessions = useMemo(() => {
     return sessions.filter(session => session.status === 'archived');
   }, [sessions]);
 
-  // 按優先級分組會話
+  // 按優先級Group會話
   const _sessionsByPriority = useMemo(() => {
     const _grouped = {
       urgent: sessions.filter(s => s.priority === ChatPriority.URGENT),
@@ -270,47 +270,47 @@ export const _useChat = () => {
     return grouped;
   }, [sessions]);
 
-  // 獲取用戶消息
+  // GetUserMessage
   const _userMessages = useMemo(() => {
     return messages.filter(msg => msg.type === 'user');
   }, [messages]);
 
-  // 獲取 AI 回應
+  // Get AI 回應
   const _aiMessages = useMemo(() => {
     return messages.filter(msg => msg.type === 'assistant');
   }, [messages]);
 
-  // 檢查是否有錯誤
+  // CheckYesNo有Error
   const _hasError = useMemo(() => {
     return error !== null;
   }, [error]);
 
-  // 檢查是否正在載入
+  // CheckYesNo正在Load
   const _isLoading = useMemo(() => {
     return loading;
   }, [loading]);
 
-  // 檢查是否有當前會話
+  // CheckYesNo有當前會話
   const _hasCurrentSession = useMemo(() => {
     return currentSession !== null;
   }, [currentSession]);
 
-  // 檢查是否有消息
+  // CheckYesNo有Message
   const _hasMessages = useMemo(() => {
     return messages.length > 0;
   }, [messages]);
 
-  // 獲取最後一條消息
+  // Get最後一條Message
   const _lastMessage = useMemo(() => {
     return messages.length > 0 ? messages[messages.length - 1] : null;
   }, [messages]);
 
-  // 獲取消息數量
+  // GetMessage數量
   const _messageCount = useMemo(() => {
     return messages.length;
   }, [messages]);
 
-  // 格式化時間
+  // FormatTime
   const _formatMessageTime = useCallback((timestamp: string) => {
     const _date = new Date(timestamp);
     return date.toLocaleString('zh-TW', {
@@ -322,14 +322,14 @@ export const _useChat = () => {
     });
   }, []);
 
-  // 檢查消息是否為今天
+  // CheckMessageYesNo為Today
   const _isMessageToday = useCallback((timestamp: string) => {
     const _messageDate = new Date(timestamp);
     const _today = new Date();
     return messageDate.toDateString() === today.toDateString();
   }, []);
 
-  // 檢查消息是否為昨天
+  // CheckMessageYesNo為Yesterday
   const _isMessageYesterday = useCallback((timestamp: string) => {
     const _messageDate = new Date(timestamp);
     const _yesterday = new Date();
@@ -337,7 +337,7 @@ export const _useChat = () => {
     return messageDate.toDateString() === yesterday.toDateString();
   }, []);
 
-  // 獲取消息時間顯示
+  // GetMessageTimeShow
   const _getMessageTimeDisplay = useCallback(
     (timestamp: string) => {
       if (isMessageToday(timestamp)) {
@@ -357,7 +357,7 @@ export const _useChat = () => {
     [isMessageToday, isMessageYesterday]
   );
 
-  // 快速回覆處理
+  // 快速回覆Handle
   const _handleQuickReply = useCallback(
     async (reply: string) => {
       if (!currentSession) return;
@@ -370,13 +370,13 @@ export const _useChat = () => {
           currentSession.category
         );
       } catch (error) {
-        console.error('快速回覆失敗:', error);
+        console.error('快速回覆Failed:', error);
       }
     },
     [currentSession, sendChatMessage]
   );
 
-  // 建議操作處理
+  // 建議OperationHandle
   const _handleSuggestedAction = useCallback(
     async (action: string) => {
       if (!currentSession) return;
@@ -389,14 +389,14 @@ export const _useChat = () => {
           currentSession.category
         );
       } catch (error) {
-        console.error('建議操作失敗:', error);
+        console.error('建議操作Failed:', error);
       }
     },
     [currentSession, sendChatMessage]
   );
 
   return {
-    // 狀態
+    // Status
     currentSession,
     sessions,
     messages,
@@ -407,7 +407,7 @@ export const _useChat = () => {
     quickReplies,
     suggestedActions,
 
-    // 計算屬性
+    // 計算Property
     activeSessions,
     closedSessions,
     archivedSessions,
@@ -420,7 +420,7 @@ export const _useChat = () => {
     lastMessage,
     messageCount,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     createNewSession,
     sendChatMessage,
@@ -437,7 +437,7 @@ export const _useChat = () => {
     clearChatError,
     resetChat,
 
-    // 工具方法
+    // ToolMethod
     formatMessageTime,
     getMessageTimeDisplay,
     handleQuickReply,

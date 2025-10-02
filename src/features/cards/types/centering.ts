@@ -1,15 +1,15 @@
 import { Card } from './index';
 
-// 置中評估請求類型
+// 置中評估RequestClass型
 export interface CenteringAssessmentRequest {
-  imageData: string; // Base64 編碼的圖片數據
+  imageData: string; // Base64 Encode的Graph片Data
   imageFormat: 'jpeg' | 'png' | 'webp';
   cardId?: string;
   userId?: string;
   assessmentOptions?: CenteringAssessmentOptions;
 }
 
-// 置中評估結果類型
+// 置中評估結果Class型
 export interface CenteringAssessmentResult {
   cardId: string;
   overallScore: number; // 0-10 分制
@@ -24,11 +24,11 @@ export interface CenteringAssessmentResult {
   error?: CenteringAssessmentError;
 }
 
-// 置中評估詳細信息
+// 置中評估詳細Information
 export interface CenteringAssessmentDetails {
   centering: {
-    horizontalOffset: number; // 水平偏移百分比 (-50 到 50)
-    verticalOffset: number; // 垂直偏移百分比 (-50 到 50)
+    horizontalOffset: number; // 水平Offset百分比 (-50 到 50)
+    verticalOffset: number; // 垂直Offset百分比 (-50 到 50)
     tolerance: number; // 容許範圍
     isCentered: boolean;
   };
@@ -52,7 +52,7 @@ export interface CenteringAssessmentDetails {
   };
 }
 
-// 邊緣磨損信息
+// 邊緣磨損Information
 export interface EdgeWearInfo {
   wearLevel: 'none' | 'light' | 'moderate' | 'heavy' | 'severe';
   wearPercentage: number; // 0-100
@@ -61,7 +61,7 @@ export interface EdgeWearInfo {
   location: { start: number; end: number }; // 邊緣位置範圍
 }
 
-// 角落磨損信息
+// 角落磨損Information
 export interface CornerWearInfo {
   wearLevel: 'none' | 'light' | 'moderate' | 'heavy' | 'severe';
   wearPercentage: number; // 0-100
@@ -70,7 +70,7 @@ export interface CornerWearInfo {
   whiteCorner: boolean;
 }
 
-// 表面缺陷
+// Table面缺陷
 export interface SurfaceDefect {
   type: 'scratch' | 'dent' | 'stain' | 'crease' | 'ink_blemish';
   severity: 'minor' | 'moderate' | 'major' | 'severe';
@@ -88,7 +88,7 @@ export interface CenteringRecommendation {
   impact: 'positive' | 'negative' | 'neutral';
 }
 
-// 置中評估元數據
+// 置中評估元Data
 export interface CenteringAssessmentMetadata {
   modelVersion: string;
   processingTimeMs: number;
@@ -101,7 +101,7 @@ export interface CenteringAssessmentMetadata {
   cameraAngle: 'perpendicular' | 'slight_angle' | 'significant_angle';
 }
 
-// 置中評估錯誤
+// 置中評估Error
 export interface CenteringAssessmentError {
   code: string;
   message: string;
@@ -110,7 +110,7 @@ export interface CenteringAssessmentError {
   suggestedAction?: string;
 }
 
-// 置中評估選項
+// 置中評估Options
 export interface CenteringAssessmentOptions {
   enableDetailedAnalysis?: boolean;
   includeRecommendations?: boolean;
@@ -119,7 +119,7 @@ export interface CenteringAssessmentOptions {
   qualityThreshold?: number; // 0-1
 }
 
-// 置中評估歷史記錄
+// 置中評估歷史Record
 export interface CenteringAssessmentHistory {
   id: string;
   cardId: string;
@@ -131,7 +131,7 @@ export interface CenteringAssessmentHistory {
   improvement?: number; // 相對於上次評估的改進分數
 }
 
-// 置中評估統計
+// 置中評估Statistics
 export interface CenteringAssessmentStats {
   totalAssessments: number;
   averageScore: number;
@@ -154,7 +154,7 @@ export interface CenteringAssessmentStats {
   }[];
 }
 
-// 類型定義
+// Class型定義
 export type CenteringAssessmentStatus =
   | 'success'
   | 'failed'
@@ -166,7 +166,7 @@ export type CenteringAssessmentEngine =
   | 'hybrid'
   | 'manual';
 
-// Redux 狀態類型
+// Redux StatusClass型
 export interface CenteringAssessmentState {
   isAssessing: boolean;
   assessmentResult: CenteringAssessmentResult | null;

@@ -29,12 +29,12 @@ export const CenteringAssessmentExample: React.FC = () => {
     clearErrors,
   } = useCenteringAssessment({
     onAssessmentSuccess: result => {
-      logger.info('示例組件收到評估成功:', {
+      logger.info('示例組件收到評估Success:', {
         overallScore: result.overallScore,
       } as Record<string, unknown>);
     },
     onAssessmentError: error => {
-      logger.error('示例組件收到評估失敗:', {
+      logger.error('示例組件收到評估Failed:', {
         message: error.message,
       } as Record<string, unknown>);
     },

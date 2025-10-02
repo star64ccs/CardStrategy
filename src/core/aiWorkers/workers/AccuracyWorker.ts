@@ -111,7 +111,7 @@ export class AccuracyWorker {
   }
 
   /**
-   * 分析準確性
+   * Analysis準確性
    */
   public async analyzeAccuracy(): Promise<AccuracyReport> {
     try {
@@ -157,13 +157,13 @@ export class AccuracyWorker {
       this.lastCheck = new Date();
       return report;
     } catch (error) {
-      console.error('分析準確性失敗:', error);
+      console.error('分析準確性Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 執行模型融合
+   * 執Row模型融合
    */
   public async dispatchFusion(): Promise<FusionResult> {
     try {
@@ -181,7 +181,7 @@ export class AccuracyWorker {
           const _result = await this.getModelPrediction(model);
           results.push(result);
         } catch (error) {
-          console.warn(`模型 ${model} 預測失敗:`, error);
+          console.warn(`模型 ${model} 預測Failed:`, error);
         }
       }
 
@@ -204,7 +204,7 @@ export class AccuracyWorker {
 
       return fusionResult;
     } catch (error) {
-      console.error('模型融合失敗:', error);
+      console.error('模型融合Failed:', error);
       throw error;
     }
   }
@@ -249,7 +249,7 @@ export class AccuracyWorker {
       );
       return optimizedPrompt;
     } catch (error) {
-      console.error('優化提示詞失敗:', error);
+      console.error('優化提示詞Failed:', error);
       throw error;
     }
   }
@@ -291,13 +291,13 @@ export class AccuracyWorker {
 
       return enhancementResponse.content;
     } catch (error) {
-      console.error('增強上下文失敗:', error);
+      console.error('增強上下文Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 執行A/B測試
+   * 執RowA/BTest
    */
   public async executeABTest(testConfig: {
     modelA: string;
@@ -331,7 +331,7 @@ export class AccuracyWorker {
           resultsA.push(resultA);
           resultsB.push(resultB);
         } catch (error) {
-          console.warn(`A/B測試用例失敗:`, error);
+          console.warn(`A/B測試用例Failed:`, error);
         }
       }
 
@@ -361,13 +361,13 @@ export class AccuracyWorker {
         },
       };
     } catch (error) {
-      console.error('A/B測試失敗:', error);
+      console.error('A/B測試Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取工作狀態
+   * Get工作Status
    */
   public getStatus(): {
     isRunning: boolean;
@@ -382,16 +382,16 @@ export class AccuracyWorker {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public updateConfig(config: Partial<AccuracyWorkerConfig>): void {
     this.config = { ...this.config, ...config };
   }
 
-  // 私有方法
+  // PrivateMethod
 
   /**
-   * 分析模型性能
+   * Analysis模型性能
    */
   private async analyzeModelPerformance(
     stats: unknown
@@ -424,7 +424,7 @@ export class AccuracyWorker {
   }
 
   /**
-   * 分析任務性能
+   * AnalysisTask性能
    */
   private async analyzeTaskPerformance(): Promise<
     Record<string, TaskAccuracy>
@@ -435,7 +435,7 @@ export class AccuracyWorker {
         accuracy: 85,
         totalAttempts: 100,
         successfulAttempts: 85,
-        commonErrors: ['內容重複', '語法錯誤', '邏輯不清'],
+        commonErrors: ['內容重複', '語法Error', '邏輯不清'],
         improvementSuggestions: [
           '增加上下文信息',
           '優化提示詞',
@@ -459,7 +459,7 @@ export class AccuracyWorker {
         accuracy: 88,
         totalAttempts: 75,
         successfulAttempts: 66,
-        commonErrors: ['計算錯誤', '預測偏差'],
+        commonErrors: ['計算Error', '預測偏差'],
         improvementSuggestions: [
           '使用更準確的算法',
           '增加歷史數據',
@@ -472,7 +472,7 @@ export class AccuracyWorker {
   }
 
   /**
-   * 分析錯誤
+   * AnalysisError
    */
   private async analyzeErrors(): Promise<ErrorAnalysis[]> {
     const errorAnalysis: ErrorAnalysis[] = [
@@ -551,7 +551,7 @@ export class AccuracyWorker {
     errorAnalysis.forEach(error => {
       if (error.impact === 'high' || error.impact === 'critical') {
         recommendations.push(
-          `優先解決 ${error.errorType} 錯誤：${error.suggestedFix}`
+          `優先解決 ${error.errorType} Error：${error.suggestedFix}`
         );
       }
     });
@@ -579,7 +579,7 @@ export class AccuracyWorker {
   }
 
   /**
-   * 獲取模型預測
+   * Get模型預測
    */
   private async getModelPrediction(
     model: string,
@@ -605,7 +605,7 @@ export class AccuracyWorker {
   }
 
   /**
-   * 執行融合
+   * 執Row融合
    */
   private async performFusion(results: unknown[]): Promise<any> {
     return results[0]; // 簡化實現
@@ -708,7 +708,7 @@ export class AccuracyWorker {
   }
 
   /**
-   * 檢查成本限制
+   * Check成本Limit
    */
   private async checkCostLimits(): Promise<void> {
     const _stats = this.aiService.getStats();

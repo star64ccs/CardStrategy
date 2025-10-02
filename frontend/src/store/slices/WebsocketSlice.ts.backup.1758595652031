@@ -1,0 +1,452 @@
+/**
+ * WebSocket Redux Slice
+ * 管理 WebSocket 連接狀態和消息
+ */
+
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import { _websocketService as websocketService  } from '@/features/realtime/services/websocketService';
+import type {
+  BroadcastOptions,
+  ConnectionState,
+  SubscriptionFilter,
+  WebSocketConfig,
+  WebSocketMessage,
+  WebSocketStats,
+  WebSocketStatus,
+} from '../../features/realtime/types/websocket';
+
+// 異步操作
+export const initializeWebSocket = createAsyncThunk(
+  'websocket/initialize',
+  async (config?: Partial<WebSocketConfig>) => {
+    await websocketService.initialize(config);
+    return websocketService.getConfig();
+  }
+);
+
+export const connectWebSocket = createAsyncThunk(
+  'websocket/connect',
+  async () => {
+    await websocketService.connect();
+    return websocketService.getConnectionState();
+  }
+);
+
+export const disconnectWebSocket = createAsyncThunk(
+  'websocket/disconnect',
+  async () => {
+    websocketService.disconnect();
+    return websocketService.getConnectionState();
+  }
+);
+
+export const sendWebSocketMessage = createAsyncThunk(
+  'websocket/sendMessage',
+  async (message: Partial<WebSocketMessage>) => {
+    await websocketService.sendMessage(message);
+    return message;
+  }
+);
+
+export const broadcastMessage = createAsyncThunk(
+  'websocket/broadcast',
+  async ({
+    message,
+    options,
+  }: {
+    message: Partial<WebSocketMessage>;
+    options?: BroadcastOptions;
+  }) => {
+    await websocketService.broadcast(message, options);
+    return { message, options };
+  }
+);
+
+export const reconnectWebSocket = createAsyncThunk(
+  'websocket/reconnect',
+  async () => {
+    await websocketService.reconnect();
+    return websocketService.getConnectionState();
+  }
+);
+
+export const joinRoom = createAsyncThunk(
+  'websocket/joinRoom',
+  async ({ roomId, userInfo }: { roomId: string; userInfo: any }) => {
+    // WebSocketService 中沒有 joinRoom 方法，暫時使用 sendMessage 代替
+    await websocketService.sendMessage({
+      type: 'custom' as any,
+      data: { roomId, userInfo },
+    });
+    return { roomId, userInfo };
+  }
+);
+
+export const leaveRoom = createAsyncThunk(
+  'websocket/leaveRoom',
+  async (roomId: string) => {
+    // WebSocketService 中沒有 leaveRoom 方法，暫時使用 sendMessage 代替
+    await websocketService.sendMessage({
+      type: 'custom' as any,
+      data: { roomId },
+    });
+    return roomId;
+  }
+);
+
+// 狀態介面
+export interface WebSocketState {
+  // 基本狀態
+  isInitialized: boolean;
+  status: WebSocketStatus;
+  connectionState: ConnectionState | null;
+  config: WebSocketConfig | null;
+
+  // 消息
+  messages: WebSocketMessage[];
+  lastMessage: WebSocketMessage | null;
+  messageHistory: WebSocketMessage[];
+
+  // 統計
+  stats: WebSocketStats | null;
+
+  // 房間和訂閱
+  currentRooms: string[];
+  subscriptions: { id: string; filter: SubscriptionFilter }[];
+
+  // 載入狀態
+  loading: {
+    initializing: boolean;
+    connecting: boolean;
+    disconnecting: boolean;
+    sendingMessage: boolean;
+    broadcasting: boolean;
+    reconnecting: boolean;
+    joiningRoom: boolean;
+    leavingRoom: boolean;
+  };
+
+  // 錯誤
+  error: string | null;
+  lastError: string | null;
+
+  // UI 狀態
+  isVisible: boolean;
+  unreadCount: number;
+  notifications: WebSocketMessage[];
+}
+
+const initialState: WebSocketState = {
+  isInitialized: false,
+  status: 'disconnected',
+  connectionState: {
+    status: 'disconnected',
+    reconnectAttempts: 0,
+    bytesReceived: 0,
+    bytesSent: 0,
+    messagesReceived: 0,
+    messagesSent: 0,
+  },
+  config: {
+    url: 'ws://localhost:8080/ws',
+    reconnectInterval: 5000,
+    maxReconnectAttempts: 5,
+    heartbeatInterval: 30000,
+    autoConnect: true,
+    enableLogging: true,
+    messageHistoryLimit: 100,
+    notificationLimit: 50,
+  } as WebSocketConfig,
+  messages: [],
+  lastMessage: null,
+  messageHistory: [],
+  stats: {
+    uptime: 0,
+    totalConnections: 0,
+    successfulConnections: 0,
+    failedConnections: 0,
+    totalMessagesSent: 0,
+    totalMessagesReceived: 0,
+    errorCount: 0,
+    errorRate: 0,
+    reliability: 100,
+    averageLatency: 0,
+    lastHeartbeat: null,
+  } as WebSocketStats,
+  currentRooms: [],
+  subscriptions: [],
+  loading: {
+    initializing: false,
+    connecting: false,
+    disconnecting: false,
+    sendingMessage: false,
+    broadcasting: false,
+    reconnecting: false,
+    joiningRoom: false,
+    leavingRoom: false,
+  },
+  error: null,
+  lastError: null,
+  isVisible: true,
+  unreadCount: 0,
+  notifications: [],
+};
+
+const websocketSlice = createSlice({
+  name: 'websocket',
+  initialState,
+  reducers: {
+    // 接收消息
+    receiveMessage: (state, action: PayloadAction<WebSocketMessage>) => {
+      const message = action.payload;
+      state.messages.push(message);
+      state.lastMessage = message;
+      state.messageHistory.push(message);
+
+      // 限制消息歷史長度
+      if (
+        state.messageHistory.length > (state.config?.messageHistoryLimit || 100)
+      ) {
+        state.messageHistory = state.messageHistory.slice(
+          -(state.config?.messageHistoryLimit || 100)
+        );
+      }
+
+      // 更新未讀計數
+      if (!state.isVisible) {
+        state.unreadCount++;
+      }
+
+      // 添加到通知（如果是重要消息）
+      if (message.priority === 'high' || message.priority === 'urgent') {
+        state.notifications.push(message);
+        if (
+          state.notifications.length > (state.config?.notificationLimit || 50)
+        ) {
+          state.notifications = state.notifications.slice(
+            -(state.config?.notificationLimit || 50)
+          );
+        }
+      }
+    },
+
+    // 更新連接狀態
+    updateConnectionState: (state, action: PayloadAction<ConnectionState>) => {
+      state.connectionState = action.payload;
+      state.status = action.payload.status;
+    },
+
+    // 更新統計信息
+    updateStats: (state, action: PayloadAction<WebSocketStats>) => {
+      state.stats = action.payload;
+    },
+
+    // 清空消息
+    clearMessages: state => {
+      state.messages = [];
+      state.lastMessage = null;
+      state.unreadCount = 0;
+    },
+
+    // 清空通知
+    clearNotifications: state => {
+      state.notifications = [];
+      state.unreadCount = 0;
+    },
+
+    // 設置可見性
+    setVisibility: (state, action: PayloadAction<boolean>) => {
+      state.isVisible = action.payload;
+      if (action.payload) {
+        state.unreadCount = 0;
+      }
+    },
+
+    // 添加訂閱
+    addSubscription: (
+      state,
+      action: PayloadAction<{ id: string; filter: SubscriptionFilter }>
+    ) => {
+      const { id, filter } = action.payload;
+      state.subscriptions.push({ id, filter });
+    },
+
+    // 移除訂閱
+    removeSubscription: (state, action: PayloadAction<string>) => {
+      state.subscriptions = state.subscriptions.filter(
+        sub => sub.id !== action.payload
+      );
+    },
+
+    // 清空錯誤
+    clearError: state => {
+      state.error = null;
+    },
+
+    // 設置錯誤
+    setError: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+      state.lastError = action.payload;
+    },
+
+    // 重置狀態
+    resetState: state => {
+      Object.assign(state, initialState);
+    },
+  },
+  extraReducers: builder => {
+    // 初始化
+    builder
+      .addCase(initializeWebSocket.pending, state => {
+        state.loading.initializing = true;
+        state.error = null;
+      })
+      .addCase(initializeWebSocket.fulfilled, (state, action) => {
+        state.loading.initializing = false;
+        state.isInitialized = true;
+        state.config = action.payload;
+      })
+      .addCase(initializeWebSocket.rejected, (state, action) => {
+        state.loading.initializing = false;
+        state.error = action.error instanceof Error ? error.message : 'WebSocket 初始化失敗';
+      });
+
+    // 連接
+    builder
+      .addCase(connectWebSocket.pending, state => {
+        state.loading.connecting = true;
+        state.error = null;
+      })
+      .addCase(connectWebSocket.fulfilled, (state, action) => {
+        state.loading.connecting = false;
+        state.connectionState = action.payload;
+        state.status = action.payload?.status || 'disconnected';
+      })
+      .addCase(connectWebSocket.rejected, (state, action) => {
+        state.loading.connecting = false;
+        state.error = action.error instanceof Error ? error.message : 'WebSocket 連接失敗';
+      });
+
+    // 斷開連接
+    builder
+      .addCase(disconnectWebSocket.pending, state => {
+        state.loading.disconnecting = true;
+      })
+      .addCase(disconnectWebSocket.fulfilled, (state, action) => {
+        state.loading.disconnecting = false;
+        state.connectionState = action.payload;
+        state.status = action.payload?.status || 'disconnected';
+      })
+      .addCase(disconnectWebSocket.rejected, (state, action) => {
+        state.loading.disconnecting = false;
+        state.error = action.error instanceof Error ? error.message : 'WebSocket 斷開連接失敗';
+      });
+
+    // 發送消息
+    builder
+      .addCase(sendWebSocketMessage.pending, state => {
+        state.loading.sendingMessage = true;
+        state.error = null;
+      })
+      .addCase(sendWebSocketMessage.fulfilled, state => {
+        state.loading.sendingMessage = false;
+      })
+      .addCase(sendWebSocketMessage.rejected, (state, action) => {
+        state.loading.sendingMessage = false;
+        state.error = action.error instanceof Error ? error.message : '發送消息失敗';
+      });
+
+    // 廣播消息
+    builder
+      .addCase(broadcastMessage.pending, state => {
+        state.loading.broadcasting = true;
+        state.error = null;
+      })
+      .addCase(broadcastMessage.fulfilled, state => {
+        state.loading.broadcasting = false;
+      })
+      .addCase(broadcastMessage.rejected, (state, action) => {
+        state.loading.broadcasting = false;
+        state.error = action.error instanceof Error ? error.message : '廣播消息失敗';
+      });
+
+    // 重新連接
+    builder
+      .addCase(reconnectWebSocket.pending, state => {
+        state.loading.reconnecting = true;
+        state.error = null;
+      })
+      .addCase(reconnectWebSocket.fulfilled, (state, action) => {
+        state.loading.reconnecting = false;
+        state.connectionState = action.payload;
+        state.status = action.payload?.status || 'disconnected';
+      })
+      .addCase(reconnectWebSocket.rejected, (state, action) => {
+        state.loading.reconnecting = false;
+        state.error = action.error instanceof Error ? error.message : '重新連接失敗';
+      });
+
+    // 加入房間
+    builder
+      .addCase(joinRoom.pending, state => {
+        state.loading.joiningRoom = true;
+        state.error = null;
+      })
+      .addCase(joinRoom.fulfilled, (state, action) => {
+        state.loading.joiningRoom = false;
+        const { roomId } = action.payload;
+        if (!state.currentRooms.includes(roomId)) {
+          state.currentRooms.push(roomId);
+        }
+      })
+      .addCase(joinRoom.rejected, (state, action) => {
+        state.loading.joiningRoom = false;
+        state.error = action.error instanceof Error ? error.message : '加入房間失敗';
+      });
+
+    // 離開房間
+    builder
+      .addCase(leaveRoom.pending, state => {
+        state.loading.leavingRoom = true;
+        state.error = null;
+      })
+      .addCase(leaveRoom.fulfilled, (state, action) => {
+        state.loading.leavingRoom = false;
+        const roomId = action.payload;
+        state.currentRooms = state.currentRooms.filter(id => id !== roomId);
+      })
+      .addCase(leaveRoom.rejected, (state, action) => {
+        state.loading.leavingRoom = false;
+        state.error = action.error instanceof Error ? error.message : '離開房間失敗';
+      });
+  },
+});
+
+export const {
+  receiveMessage,
+  updateConnectionState,
+  updateStats,
+  clearMessages,
+  clearNotifications,
+  setVisibility,
+  addSubscription,
+  removeSubscription,
+  clearError,
+  setError,
+  resetState,
+} = websocketSlice.actions;
+
+// Selectors
+export const selectStatus = (state: { websocket: WebSocketState }) =>
+  state.websocket.status;
+export const selectIsConnected = (state: { websocket: WebSocketState }) =>
+  state.websocket.status === 'connected';
+export const selectIsConnecting = (state: { websocket: WebSocketState }) =>
+  state.websocket.status === 'connecting' ||
+  state.websocket.status === 'reconnecting';
+export const selectHasError = (state: { websocket: WebSocketState }) =>
+  !!state.websocket.error;
+
+export default websocketSlice.reducer;

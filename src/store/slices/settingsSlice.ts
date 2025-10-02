@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import type { NotificationSettings } from '../../types/notification';
 
-// 默認通知設置
+// DefaultNotificationSettings
 const defaultNotificationSettings: NotificationSettings = {
   priceAlerts: true,
   marketUpdates: true,
@@ -29,7 +29,7 @@ const _settingsSlice = createSlice({
   name: 'settings',
   initialState,
   reducers: {
-    // 更新通知設置
+    // UpdateNotificationSettings
     updateNotificationSettings: (
       state,
       action: PayloadAction<NotificationSettings>
@@ -37,23 +37,23 @@ const _settingsSlice = createSlice({
       state.notificationSettings = action.payload;
     },
 
-    // 設置加載狀態
+    // Settings加載Status
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
 
-    // 設置錯誤
+    // SettingsError
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
 
-    // 重置設置
+    // ResetSettings
     resetSettings: state => {
       state.notificationSettings = defaultNotificationSettings;
       state.error = null;
     },
 
-    // 切換單個設置
+    // SwitchSingleSettings
     toggleNotificationSetting: (
       state,
       action: PayloadAction<keyof NotificationSettings>

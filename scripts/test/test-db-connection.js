@@ -2,7 +2,7 @@
 
 const { execSync } = require('child_process');
 
-// 測試 postgres 用戶連接
+// Test postgres UserConnect
 try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -12,13 +12,13 @@ try {
     { encoding: 'utf8' }
   );
 // eslint-disable-next-line no-console
-  console.log('✅ PostgreSQL 連接成功');
+  console.log('✅ PostgreSQL ConnectSuccess');
 } catch (error) {
 // eslint-disable-next-line no-console
-  console.log('❌ PostgreSQL 連接失敗:', error.message);
+  console.log('❌ PostgreSQL ConnectFailed:', error.message);
 }
 
-// 測試 cardstrategy 用戶連接
+// Test cardstrategy UserConnect
 try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -28,21 +28,21 @@ try {
     { encoding: 'utf8' }
   );
 // eslint-disable-next-line no-console
-  console.log('✅ cardstrategy 用戶連接成功');
+  console.log('✅ cardstrategy 用戶ConnectSuccess');
 } catch (error) {
 // eslint-disable-next-line no-console
-  console.log('❌ cardstrategy 用戶連接失敗:', error.message);
+  console.log('❌ cardstrategy 用戶ConnectFailed:', error.message);
 }
 
-// 檢查數據庫列表
+// CheckDatabaseList
 try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
   const result = execSync('psql -U postgres -l', { encoding: 'utf8' });
 // eslint-disable-next-line no-console
-  console.log('✅ 數據庫列表查詢成功');
+  console.log('✅ 數據庫列表查詢Success');
 } catch (error) {
 // eslint-disable-next-line no-console
-  console.log('❌ 數據庫列表查詢失敗:', error.message);
+  console.log('❌ 數據庫列表查詢Failed:', error.message);
 }

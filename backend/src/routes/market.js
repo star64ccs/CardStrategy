@@ -58,7 +58,7 @@ router.get(''
           code: 'MODEL_INIT_FAILED',
         });'
       }
-      // 設置?�聯''
+      // Settings?�聯''
       MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
       // 計�??��?範�?
@@ -67,7 +67,7 @@ router.get(''
       const days = parseInt(period);
       startDate.setDate(startDate.getDate() - days);
 
-      // 構建?�詢條件
+      // Build?�詢Condition
       const whereClause = {
         isActive: true,
         date: {'
@@ -131,7 +131,7 @@ router.get(''
         return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
       });
 
-      // 計�?統�?信息
+      // 計�?統�?Information
       const totalRecords = marketDataArray.length;
       const totalPages = Math.ceil(totalRecords / parseInt(limit));
       const startIndex = (parseInt(page) - 1) * parseInt(limit);
@@ -220,10 +220,10 @@ router.get(''
           code: 'MODEL_INIT_FAILED',
         });'
       }
-      // 設置?�聯''
+      // Settings?�聯''
       MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
-      // 檢查?��??�否存在
+      // Check?��??�No存在
       const card = await Card.findByPk(cardId);
       if (!card) {
         return res.status(404).json({'
@@ -232,7 +232,7 @@ router.get(''
           code: 'CARD_NOT_FOUND',
         });
       }
-      // 構建?�詢條件
+      // Build?�詢Condition
       const whereClause = {
         cardId,
         isActive: true,'
@@ -272,7 +272,7 @@ router.get(''
           code: 'PRICE_HISTORY_NOT_FOUND',
         });
       }
-      // 計�?統�?信息
+      // 計�?統�?Information
 // eslint-disable-next-line no-unused-vars
       const prices = priceHistory.map((item) => parseFloat(item.closePrice));
 // eslint-disable-next-line no-unused-vars
@@ -378,7 +378,7 @@ router.get(''
           code: 'MODEL_INIT_FAILED',
         });'
       }
-      // 設置?�聯''
+      // Settings?�聯''
       MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
       // 計�??��?範�?
@@ -442,7 +442,7 @@ router.get(''
             allChanges.length
           : 0;
 
-      // ?��??��?表現?�好�??�差�??��?
+      // ?��??��?Table現?�好�??�差�??��?
       const sortedTrends = Array.from(cardTrends.values()).sort((a, b) => {
         const aAvgChange = a.totalChange / a.dataPoints;
         const bAvgChange = b.totalChange / b.dataPoints;
@@ -534,7 +534,7 @@ router.get('/insights', protect, async (req, res) => {
         code: 'MODEL_INIT_FAILED',
       });'
     }
-    // 設置?�聯''
+    // Settings?�聯''
     MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     // ?��??��?0天�?市場?��?
@@ -689,7 +689,7 @@ router.get('/analytics', async (req, res) => {
         code: 'MODEL_INIT_FAILED',
       });'
     }
-    // 設置?�聯''
+    // Settings?�聯''
     MarketData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
     // ?��??�?��?市場?��?
@@ -766,7 +766,7 @@ router.get('/analytics', async (req, res) => {
     // 交�??��???    const dailyAverage = totalVolume / 30; // ?�設30�?    const weeklyTrend = 5.2; // 模擬?��?
     const monthlyGrowth = 12.5; // 模擬?��?
 
-    // ?��??��??�表??    const categoryPerformance = {};
+    // ?��??��??�Table??    const categoryPerformance = {};
     marketDataArray.forEach((data) => {
 // eslint-disable-next-line no-unused-vars
       const type = data.card.cardType;

@@ -22,7 +22,7 @@ const createTrainingDataModel = (sequelize) => {
         },
       },
       imageData: {
-        type: DataTypes.TEXT, // base64圖片數據
+        type: DataTypes.TEXT, // base64Graph片Data
         allowNull: false,
       },
       source: {

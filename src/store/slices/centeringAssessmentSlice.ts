@@ -16,7 +16,7 @@ import {
 } from '../../features/cards/types/centering';
 import type { RootState } from '../index';
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 export const _initializeCenteringAssessment = createAsyncThunk(
   'centeringAssessment/initialize',
   async (_, { rejectWithValue }) => {
@@ -25,8 +25,8 @@ export const _initializeCenteringAssessment = createAsyncThunk(
       const _options = await centeringAssessmentService.getAssessmentOptions();
       return options;
     } catch (error: unknown) {
-      logger.error('初始化置中評估失敗:', error);
-      return rejectWithValue(error.message || '初始化置中評估失敗');
+      logger.error('Initialize置中評估Failed:', error);
+      return rejectWithValue(error.message || 'Initialize置中評估Failed');
     }
   }
 );
@@ -38,7 +38,7 @@ export const _assessCentering = createAsyncThunk(
       const _result = await centeringAssessmentService.assessCentering(request);
       return result;
     } catch (error: unknown) {
-      logger.error('置中評估失敗:', error);
+      logger.error('置中評估Failed:', error);
       return rejectWithValue(error as CenteringAssessmentError);
     }
   }
@@ -57,8 +57,8 @@ export const _getAssessmentHistory = createAsyncThunk(
       );
       return history;
     } catch (error: unknown) {
-      logger.error('獲取評估歷史失敗:', error);
-      return rejectWithValue(error.message || '獲取評估歷史失敗');
+      logger.error('Get評估歷史Failed:', error);
+      return rejectWithValue(error.message || 'Get評估歷史Failed');
     }
   }
 );
@@ -71,13 +71,13 @@ export const _getAssessmentStats = createAsyncThunk(
         await centeringAssessmentService.getAssessmentStats(userId);
       return stats;
     } catch (error: unknown) {
-      logger.error('獲取評估統計失敗:', error);
-      return rejectWithValue(error.message || '獲取評估統計失敗');
+      logger.error('Get評估統計Failed:', error);
+      return rejectWithValue(error.message || 'Get評估統計Failed');
     }
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: CenteringAssessmentState = {
   isAssessing: false,
   assessmentResult: null,

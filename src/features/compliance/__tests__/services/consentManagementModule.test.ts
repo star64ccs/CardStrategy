@@ -1,6 +1,6 @@
 /**
- * 同意管理模組測試
- * 測試同意收集、驗證、撤銷、更新等核心功能
+ * AgreeManage模組Test
+ * TestAgree收集、Verify、撤銷、Update等核心功能
  */
 
 import { ConsentManagementModule } from '../../services/consentManagementModule';
@@ -22,7 +22,7 @@ describe('ConsentManagementModule', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功初始化模組', async () => {
+    test('應該SuccessInitialize模組', async () => {
       const _result = await consentModule.initialize();
       expect(result).toBe(true);
     });
@@ -43,7 +43,7 @@ describe('ConsentManagementModule', () => {
       await consentModule.initialize();
     });
 
-    test('應該成功收集明確同意', () => {
+    test('應該Success收集明確同意', () => {
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -71,7 +71,7 @@ describe('ConsentManagementModule', () => {
       expect(consent.evidence.method).toBe('web_form');
     });
 
-    test('應該成功收集隱含同意', () => {
+    test('應該Success收集隱含同意', () => {
       const _evidence = {
         method: 'mobile_app',
         location: 'settings',
@@ -126,7 +126,7 @@ describe('ConsentManagementModule', () => {
     });
 
     test('應該驗證有效的同意', () => {
-      // 先收集同意
+      // 先收集Agree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -146,7 +146,7 @@ describe('ConsentManagementModule', () => {
         evidence
       );
 
-      // 驗證同意
+      // VerifyAgree
       const _result = consentModule.validateConsent('user_123', 'essential');
 
       expect(result.isValid).toBe(true);
@@ -163,7 +163,7 @@ describe('ConsentManagementModule', () => {
     });
 
     test('應該檢測撤銷的同意', () => {
-      // 先收集同意
+      // 先收集Agree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -183,7 +183,7 @@ describe('ConsentManagementModule', () => {
         evidence
       );
 
-      // 撤銷同意
+      // 撤銷Agree
       const _withdrawalRequest = {
         id: 'withdrawal_1',
         userId: 'user_123',
@@ -197,7 +197,7 @@ describe('ConsentManagementModule', () => {
 
       consentModule.withdrawConsent(withdrawalRequest);
 
-      // 驗證同意
+      // VerifyAgree
       const _result = consentModule.validateConsent('user_123', 'analytics');
 
       expect(result.isValid).toBe(false);
@@ -211,8 +211,8 @@ describe('ConsentManagementModule', () => {
       await consentModule.initialize();
     });
 
-    test('應該成功撤銷單個同意', () => {
-      // 先收集同意
+    test('應該Success撤銷單個同意', () => {
+      // 先收集Agree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -232,7 +232,7 @@ describe('ConsentManagementModule', () => {
         evidence
       );
 
-      // 撤銷同意
+      // 撤銷Agree
       const _withdrawalRequest = {
         id: 'withdrawal_1',
         userId: 'user_123',
@@ -248,13 +248,13 @@ describe('ConsentManagementModule', () => {
 
       expect(result).toBe(true);
 
-      // 驗證同意已被撤銷
+      // VerifyAgree已被撤銷
       const _validation = consentModule.validateConsent('user_123', 'marketing');
       expect(validation.status).toBe('withdrawn');
     });
 
-    test('應該成功撤銷多個同意', () => {
-      // 先收集多個同意
+    test('應該Success撤銷多個同意', () => {
+      // 先收集MultipleAgree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -280,7 +280,7 @@ describe('ConsentManagementModule', () => {
         evidence
       );
 
-      // 撤銷多個同意
+      // 撤銷MultipleAgree
       const _withdrawalRequest = {
         id: 'withdrawal_2',
         userId: 'user_123',
@@ -296,7 +296,7 @@ describe('ConsentManagementModule', () => {
 
       expect(result).toBe(true);
 
-      // 驗證所有同意都被撤銷
+      // Verify所有Agree都被撤銷
       const _analyticsValidation = consentModule.validateConsent(
         'user_123',
         'analytics'
@@ -333,8 +333,8 @@ describe('ConsentManagementModule', () => {
       await consentModule.initialize();
     });
 
-    test('應該成功更新同意類型', () => {
-      // 先收集隱含同意
+    test('應該SuccessUpdate同意類型', () => {
+      // 先收集隱含Agree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -354,7 +354,7 @@ describe('ConsentManagementModule', () => {
         evidence
       );
 
-      // 更新為明確同意
+      // Update為明確Agree
       const _updateRequest = {
         id: 'update_1',
         userId: 'user_123',
@@ -373,7 +373,7 @@ describe('ConsentManagementModule', () => {
       expect(newConsent.consentType).toBe('explicit');
       expect(newConsent.status).toBe('active');
 
-      // 驗證舊同意已被撤銷
+      // Verify舊Agree已被撤銷
       const _validation = consentModule.validateConsent(
         'user_123',
         'functional'
@@ -407,7 +407,7 @@ describe('ConsentManagementModule', () => {
     });
 
     test('應該獲取用戶所有同意狀態', () => {
-      // 收集多個同意
+      // 收集MultipleAgree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -449,7 +449,7 @@ describe('ConsentManagementModule', () => {
     });
 
     test('應該生成同意報告', () => {
-      // 收集一些同意
+      // 收集一些Agree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -502,7 +502,7 @@ describe('ConsentManagementModule', () => {
     });
 
     test('應該清理過期同意', () => {
-      // 收集同意（默認1年後過期）
+      // 收集Agree（Default1年後過期）
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -522,7 +522,7 @@ describe('ConsentManagementModule', () => {
         evidence
       );
 
-      // 模擬時間過去（這裡只是測試清理功能，實際過期需要時間）
+      // 模擬Time過去（這裡只YesTest清理功能，實際過期需要Time）
       const _cleanedCount = consentModule.cleanupExpiredConsents();
 
       expect(cleanedCount).toBeGreaterThanOrEqual(0);
@@ -538,7 +538,7 @@ describe('ConsentManagementModule', () => {
 
       consentModule.updateConfig(newConfig);
 
-      // 配置更新應該成功（這裡只是測試方法調用）
+      // ConfigureUpdate應該Success（這裡只YesTestMethod調用）
       expect(true).toBe(true);
     });
   });
@@ -547,7 +547,7 @@ describe('ConsentManagementModule', () => {
     test('應該重置模組狀態', async () => {
       await consentModule.initialize();
 
-      // 收集一些同意
+      // 收集一些Agree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -567,10 +567,10 @@ describe('ConsentManagementModule', () => {
         evidence
       );
 
-      // 重置
+      // Reset
       await consentModule.reset();
 
-      // 驗證同意已被清除
+      // VerifyAgree已被Clear
       const _validation = consentModule.validateConsent('user_123', 'essential');
       expect(validation.status).toBe('missing');
     });
@@ -618,7 +618,7 @@ describe('ConsentManagementModule', () => {
         userAgent: 'Mozilla/5.0',
       };
 
-      // TypeScript 會阻止無效類型，這裡測試有效類型
+      // TypeScript 會阻止無效Class型，這裡Test有效Class型
       const _consent = consentModule.collectConsent(
         'user_123',
         'essential',
@@ -648,7 +648,7 @@ describe('ConsentManagementModule', () => {
         userAgent: 'Mozilla/5.0',
       };
 
-      // 收集100個同意
+      // 收集100個Agree
       for (let i = 0; i < 100; i++) {
         consentModule.collectConsent(
           `user_${i}`,
@@ -661,11 +661,11 @@ describe('ConsentManagementModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     test('應該快速驗證同意', () => {
-      // 先收集同意
+      // 先收集Agree
       const _evidence = {
         method: 'web_form',
         location: 'registration',
@@ -687,7 +687,7 @@ describe('ConsentManagementModule', () => {
 
       const _startTime = Date.now();
 
-      // 驗證100次
+      // Verify100次
       for (let i = 0; i < 100; i++) {
         consentModule.validateConsent('user_123', 'essential');
       }
@@ -695,7 +695,7 @@ describe('ConsentManagementModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(500); // 應該在500ms內完成
+      expect(duration).toBeLessThan(500); // 應該在500ms內Complete
     });
   });
 
@@ -717,7 +717,7 @@ describe('ConsentManagementModule', () => {
         userAgent: 'Mozilla/5.0',
       };
 
-      // 收集多個同意
+      // 收集MultipleAgree
       const _essentialConsent = consentModule.collectConsent(
         'user_123',
         'essential',
@@ -737,7 +737,7 @@ describe('ConsentManagementModule', () => {
         evidence
       );
 
-      // 驗證所有同意
+      // Verify所有Agree
       const _essentialValidation = consentModule.validateConsent(
         'user_123',
         'essential'
@@ -755,7 +755,7 @@ describe('ConsentManagementModule', () => {
       expect(analyticsValidation.isValid).toBe(true);
       expect(marketingValidation.isValid).toBe(true);
 
-      // 撤銷部分同意
+      // 撤銷PartialAgree
       const _withdrawalRequest = {
         id: 'withdrawal_complex',
         userId: 'user_123',
@@ -769,7 +769,7 @@ describe('ConsentManagementModule', () => {
 
       consentModule.withdrawConsent(withdrawalRequest);
 
-      // 驗證撤銷後的狀態
+      // Verify撤銷後的Status
       const _updatedAnalyticsValidation = consentModule.validateConsent(
         'user_123',
         'analytics'
@@ -781,7 +781,7 @@ describe('ConsentManagementModule', () => {
 
       expect(updatedAnalyticsValidation.status).toBe('withdrawn');
       expect(updatedMarketingValidation.status).toBe('withdrawn');
-      expect(essentialValidation.isValid).toBe(true); // 基本功能同意仍然有效
+      expect(essentialValidation.isValid).toBe(true); // 基本功能Agree仍然有效
     });
 
     test('應該生成完整的用戶同意狀態報告', () => {
@@ -797,7 +797,7 @@ describe('ConsentManagementModule', () => {
         userAgent: 'Mozilla/5.0',
       };
 
-      // 為多個用戶收集同意
+      // 為MultipleUser收集Agree
       consentModule.collectConsent('user_1', 'essential', 'explicit', evidence);
       consentModule.collectConsent(
         'user_1',
@@ -808,7 +808,7 @@ describe('ConsentManagementModule', () => {
       consentModule.collectConsent('user_2', 'essential', 'explicit', evidence);
       consentModule.collectConsent('user_2', 'analytics', 'explicit', evidence);
 
-      // 生成報告
+      // 生成Report
       const _report = consentModule.generateConsentReport();
 
       expect(report.summary.totalConsents).toBe(4);

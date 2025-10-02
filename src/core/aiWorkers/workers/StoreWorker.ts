@@ -116,7 +116,7 @@ export class StoreWorker {
   }
 
   /**
-   * 分析庫存狀況
+   * AnalysisLibrary存狀況
    */
   async analyzeInventory(storeId: string): Promise<StoreAnalysis> {
     try {
@@ -151,13 +151,13 @@ export class StoreWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('庫存分析失敗:', error);
-      throw new Error(`庫存分析失敗: ${error}`);
+      console.error('庫存分析Failed:', error);
+      throw new Error(`庫存分析Failed: ${error}`);
     }
   }
 
   /**
-   * 分析銷售表現
+   * Analysis銷售Table現
    */
   async analyzeSales(storeId: string): Promise<StoreAnalysis> {
     try {
@@ -192,13 +192,13 @@ export class StoreWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('銷售分析失敗:', error);
-      throw new Error(`銷售分析失敗: ${error}`);
+      console.error('銷售分析Failed:', error);
+      throw new Error(`銷售分析Failed: ${error}`);
     }
   }
 
   /**
-   * 分析商店性能
+   * Analysis商店性能
    */
   async analyzePerformance(storeId: string): Promise<StoreAnalysis> {
     try {
@@ -235,8 +235,8 @@ export class StoreWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('性能分析失敗:', error);
-      throw new Error(`性能分析失敗: ${error}`);
+      console.error('性能分析Failed:', error);
+      throw new Error(`性能分析Failed: ${error}`);
     }
   }
 
@@ -263,13 +263,13 @@ export class StoreWorker {
 
       return this.extractOptimizationRecommendations(response.content);
     } catch (error) {
-      console.error('優化計劃生成失敗:', error);
-      throw new Error(`優化計劃生成失敗: ${error}`);
+      console.error('優化計劃生成Failed:', error);
+      throw new Error(`優化計劃生成Failed: ${error}`);
     }
   }
 
   /**
-   * 檢查合規性
+   * Check合規性
    */
   async checkCompliance(storeId: string): Promise<StoreAnalysis> {
     try {
@@ -306,13 +306,13 @@ export class StoreWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('合規性檢查失敗:', error);
-      throw new Error(`合規性檢查失敗: ${error}`);
+      console.error('合規性CheckFailed:', error);
+      throw new Error(`合規性CheckFailed: ${error}`);
     }
   }
 
   /**
-   * 監控商店健康度
+   * Monitor商店健康度
    */
   async monitorStoreHealth(storeId: string): Promise<{
     overallHealth: number;
@@ -343,13 +343,13 @@ export class StoreWorker {
         recommendations,
       };
     } catch (error) {
-      console.error('商店健康度監控失敗:', error);
-      throw new Error(`商店健康度監控失敗: ${error}`);
+      console.error('商店健康度監控Failed:', error);
+      throw new Error(`商店健康度監控Failed: ${error}`);
     }
   }
 
   /**
-   * 獲取分析歷史
+   * GetAnalysis歷史
    */
   getAnalysisHistory(storeId?: string, analysisType?: string): StoreAnalysis[] {
     let filtered = this.analysisHistory;
@@ -370,20 +370,20 @@ export class StoreWorker {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   updateConfig(newConfig: Partial<StoreWorkerConfig>): void {
     this.config = { ...this.config, ...newConfig };
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   getConfig(): StoreWorkerConfig {
     return { ...this.config };
   }
 
-  // 私有輔助方法
+  // Private輔助Method
   private generateId(): string {
     return `store_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
@@ -475,7 +475,7 @@ export class StoreWorker {
     return Math.ceil(wordCount / 100);
   }
 
-  // 銷售相關方法
+  // 銷售相OffMethod
   private calculateSalesScore(content: string): number {
     const _positiveIndicators = ['增長', '良好', '優秀', '提升'];
     const _negativeIndicators = ['下降', '不佳', '問題', '下滑'];
@@ -561,10 +561,10 @@ export class StoreWorker {
     return Math.ceil(wordCount / 90);
   }
 
-  // 性能相關方法
+  // 性能相OffMethod
   private calculatePerformanceScore(content: string): number {
     const _positiveIndicators = ['快速', '穩定', '良好', '優秀'];
-    const _negativeIndicators = ['慢', '不穩定', '問題', '錯誤'];
+    const _negativeIndicators = ['慢', '不穩定', '問題', 'Error'];
 
     let score = 75;
 
@@ -649,7 +649,7 @@ export class StoreWorker {
     return Math.ceil(wordCount / 85);
   }
 
-  // 合規性相關方法
+  // 合規性相OffMethod
   private calculateComplianceScore(content: string): number {
     const _positiveIndicators = ['合規', '符合', '滿足', '達標'];
     const _negativeIndicators = ['不合規', '違規', '不符合', '未達標'];

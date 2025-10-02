@@ -3,8 +3,8 @@ const redis = require('redis');
 const logger = require('../utils/logger');
 
 /**
- * 高級緩存服務
- * 提供智能緩存策略、預熱機制、失效策略等功能
+ * 高級CacheService
+ * 提供智能Cache策略、預熱機制、失效策略等功能
  */
 class AdvancedCacheService {
   constructor() {
@@ -18,48 +18,48 @@ class AdvancedCacheService {
       errors: 0,
     };
     this.cacheConfig = {
-      // 緩存策略配置
+      // Cache策略Configure
       strategies: {
-        // 卡片數據緩存策略
+        // 卡片DataCache策略
         cards: {
-          ttl: 300, // 5分鐘
+          ttl: 300, // 5Minute
           pattern: 'cache:cards:*',
           invalidation: 'onUpdate',
           preload: true,
           compression: true,
         },
-        // 市場數據緩存策略
+        // 市場DataCache策略
         marketData: {
-          ttl: 60, // 1分鐘
+          ttl: 60, // 1Minute
           pattern: 'cache:market:*',
           invalidation: 'timeBased',
           preload: false,
           compression: true,
         },
-        // 用戶數據緩存策略
+        // UserDataCache策略
         userData: {
-          ttl: 1800, // 30分鐘
+          ttl: 1800, // 30Minute
           pattern: 'cache:users:*',
           invalidation: 'onLogin',
           preload: true,
           compression: false,
         },
-        // API 響應緩存策略
+        // API ResponseCache策略
         apiResponse: {
-          ttl: 600, // 10分鐘
+          ttl: 600, // 10Minute
           pattern: 'cache:api:*',
           invalidation: 'timeBased',
           preload: false,
           compression: true,
         },
       },
-      // 記憶體緩存配置
+      // 記憶體CacheConfigure
       memoryCache: {
         maxSize: 1000, // 最大項目數
         maxMemory: 100 * 1024 * 1024, // 100MB
-        ttl: 300000, // 5分鐘
+        ttl: 300000, // 5Minute
       },
-      // 預熱配置
+      // 預熱Configure
       preload: {
         enabled: true,
         batchSize: 50,
@@ -72,7 +72,7 @@ class AdvancedCacheService {
   }
 
   /**
-   * 初始化 Redis 連接
+   * Initialize Redis Connect
    */
   async initRedis() {
     try {
@@ -85,23 +85,23 @@ class AdvancedCacheService {
       });
 
       this.redisClient.on('error', (err) => {
-        logger.error('Redis 連接錯誤:', err);
+        logger.error('Redis ConnectError:', err);
         this.cacheStats.errors++;
       });
 
       this.redisClient.on('connect', () => {
-        logger.info('Redis 連接成功');
+        logger.info('Redis ConnectSuccess');
       });
 
       await this.redisClient.connect();
     } catch (error) {
-      logger.warn('Redis 連接失敗，將使用記憶體緩存:', error.message);
+      logger.warn('Redis ConnectFailed，將使用記憶體緩存:', error.message);
       this.redisClient = null;
     }
   }
 
   /**
-   * 智能緩存獲取
+   * 智能CacheGet
    */
   async get(key, strategy = 'apiResponse') {
 // eslint-disable-next-line no-unused-vars
@@ -109,14 +109,14 @@ class AdvancedCacheService {
     const fullKey = `${config.pattern.replace('*', '')}${key}`;
 
     try {
-      // 先檢查記憶體緩存
+      // 先Check記憶體Cache
       const memoryResult = this.getFromMemory(fullKey);
       if (memoryResult) {
         this.cacheStats.hits++;
         return memoryResult;
       }
 
-      // 檢查 Redis 緩存
+      // Check Redis Cache
       if (this.redisClient) {
         const redisResult = await this.redisClient.get(fullKey);
         if (redisResult) {
@@ -124,7 +124,7 @@ class AdvancedCacheService {
             ? JSON.parse(redisResult)
             : redisResult;
 
-          // 存入記憶體緩存
+          // 存入記憶體Cache
           this.setToMemory(fullKey, parsed, config.ttl);
           this.cacheStats.hits++;
           return parsed;
@@ -134,14 +134,14 @@ class AdvancedCacheService {
       this.cacheStats.misses++;
       return null;
     } catch (error) {
-      logger.error('緩存獲取失敗:', error);
+      logger.error('緩存GetFailed:', error);
       this.cacheStats.errors++;
       return null;
     }
   }
 
   /**
-   * 智能緩存設置
+   * 智能CacheSettings
    */
   async set(key, value, strategy = 'apiResponse') {
 // eslint-disable-next-line no-unused-vars
@@ -149,10 +149,10 @@ class AdvancedCacheService {
     const fullKey = `${config.pattern.replace('*', '')}${key}`;
 
     try {
-      // 設置記憶體緩存
+      // Settings記憶體Cache
       this.setToMemory(fullKey, value, config.ttl);
 
-      // 設置 Redis 緩存
+      // Settings Redis Cache
       if (this.redisClient) {
         const serialized = config.compression ? JSON.stringify(value) : value;
 
@@ -162,14 +162,14 @@ class AdvancedCacheService {
       this.cacheStats.sets++;
       return true;
     } catch (error) {
-      logger.error('緩存設置失敗:', error);
+      logger.error('緩存SettingsFailed:', error);
       this.cacheStats.errors++;
       return false;
     }
   }
 
   /**
-   * 批量緩存操作
+   * BatchCacheOperation
    */
   async mget(keys, strategy = 'apiResponse') {
 // eslint-disable-next-line no-unused-vars
@@ -183,7 +183,7 @@ class AdvancedCacheService {
       const results = [];
 
       for (const fullKey of fullKeys) {
-        // 先檢查記憶體緩存
+        // 先Check記憶體Cache
         const memoryResult = this.getFromMemory(fullKey);
         if (memoryResult) {
           results.push(memoryResult);
@@ -194,7 +194,7 @@ class AdvancedCacheService {
         }
       }
 
-      // 批量從 Redis 獲取缺失的數據
+      // Batch從 Redis Get缺失的Data
       if (this.redisClient) {
         const missingKeys = fullKeys.filter(
           (_, index) => results[index] === null
@@ -223,14 +223,14 @@ class AdvancedCacheService {
 
       return results;
     } catch (error) {
-      logger.error('批量緩存獲取失敗:', error);
+      logger.error('批量緩存GetFailed:', error);
       this.cacheStats.errors++;
       return keys.map(() => null);
     }
   }
 
   /**
-   * 批量緩存設置
+   * BatchCacheSettings
    */
   async mset(keyValuePairs, strategy = 'apiResponse') {
 // eslint-disable-next-line no-unused-vars
@@ -245,14 +245,14 @@ class AdvancedCacheService {
       await Promise.all(promises);
       return true;
     } catch (error) {
-      logger.error('批量緩存設置失敗:', error);
+      logger.error('批量緩存SettingsFailed:', error);
       this.cacheStats.errors++;
       return false;
     }
   }
 
   /**
-   * 智能緩存失效
+   * 智能Cache失效
    */
   async invalidate(pattern, strategy = 'apiResponse') {
 // eslint-disable-next-line no-unused-vars
@@ -260,10 +260,10 @@ class AdvancedCacheService {
     const fullPattern = `${config.pattern.replace('*', '')}${pattern}`;
 
     try {
-      // 清理記憶體緩存
+      // 清理記憶體Cache
       this.clearMemoryCache(fullPattern);
 
-      // 清理 Redis 緩存
+      // 清理 Redis Cache
       if (this.redisClient) {
 // eslint-disable-next-line no-unused-vars
         const keys = await this.redisClient.keys(fullPattern);
@@ -275,14 +275,14 @@ class AdvancedCacheService {
       this.cacheStats.deletes++;
       return true;
     } catch (error) {
-      logger.error('緩存失效失敗:', error);
+      logger.error('緩存失效Failed:', error);
       this.cacheStats.errors++;
       return false;
     }
   }
 
   /**
-   * 緩存預熱
+   * Cache預熱
    */
   async preload(dataProvider, strategy = 'apiResponse') {
     if (!this.cacheConfig.preload.enabled) {
@@ -307,18 +307,18 @@ class AdvancedCacheService {
           batch.map((item) => this.set(item.key, item.value, strategy))
         );
 
-        // 控制並發
+        // ControlConcurrent
         await this.delay(100);
       }
 
       logger.info(`緩存預熱完成: ${strategy}, 共 ${data.length} 個項目`);
     } catch (error) {
-      logger.error('緩存預熱失敗:', error);
+      logger.error('緩存預熱Failed:', error);
     }
   }
 
   /**
-   * 獲取緩存統計
+   * GetCacheStatistics
    */
   getStats() {
     const hitRate =
@@ -339,27 +339,27 @@ class AdvancedCacheService {
   }
 
   /**
-   * 清理過期緩存
+   * 清理過期Cache
    */
   async cleanup() {
     try {
-      // 清理記憶體緩存
+      // 清理記憶體Cache
       this.cleanupMemoryCache();
 
-      // 清理 Redis 緩存（Redis 會自動清理過期鍵）
+      // 清理 Redis Cache（Redis 會Auto清理過期Key）
       if (this.redisClient) {
-        // 可以添加自定義清理邏輯
+        // 可以AddCustom清理邏輯
         logger.info('緩存清理完成');
       }
     } catch (error) {
-      logger.error('緩存清理失敗:', error);
+      logger.error('緩存清理Failed:', error);
     }
   }
 
-  // 私有方法
+  // PrivateMethod
 
   /**
-   * 從記憶體緩存獲取
+   * 從記憶體CacheGet
    */
   getFromMemory(key) {
     const item = this.memoryCache.get(key);
@@ -374,10 +374,10 @@ class AdvancedCacheService {
   }
 
   /**
-   * 設置記憶體緩存
+   * Settings記憶體Cache
    */
   setToMemory(key, value, ttl) {
-    // 檢查記憶體使用量
+    // Check記憶體使用量
     if (this.memoryCache.size >= this.cacheConfig.memoryCache.maxSize) {
       this.evictOldestFromMemory();
     }
@@ -389,7 +389,7 @@ class AdvancedCacheService {
   }
 
   /**
-   * 清理記憶體緩存
+   * 清理記憶體Cache
    */
   clearMemoryCache(pattern) {
 // eslint-disable-next-line no-unused-vars
@@ -401,7 +401,7 @@ class AdvancedCacheService {
   }
 
   /**
-   * 清理過期記憶體緩存
+   * 清理過期記憶體Cache
    */
   cleanupMemoryCache() {
 // eslint-disable-next-line no-unused-vars
@@ -414,7 +414,7 @@ class AdvancedCacheService {
   }
 
   /**
-   * 驅逐最舊的記憶體緩存項目
+   * 驅逐最舊的記憶體Cache項目
    */
   evictOldestFromMemory() {
     let oldestKey = null;
@@ -433,7 +433,7 @@ class AdvancedCacheService {
   }
 
   /**
-   * 數組分塊
+   * Array分塊
    */
   chunkArray(array, size) {
     const chunks = [];
@@ -444,30 +444,30 @@ class AdvancedCacheService {
   }
 
   /**
-   * 延遲函數
+   * 延遲Function
    */
   delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   /**
-   * 開始統計收集
+   * BeginStatistics收集
    */
   startStatsCollection() {
-    // 每分鐘收集一次統計
+    // 每Minute收集一次Statistics
     setInterval(() => {
       const stats = this.getStats();
       logger.info('緩存統計:', stats);
     }, 60000);
 
-    // 每小時清理一次過期緩存
+    // 每Hour清理一次過期Cache
     setInterval(() => {
       this.cleanup();
     }, 3600000);
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 const advancedCacheService = new AdvancedCacheService();
 
 module.exports = advancedCacheService;

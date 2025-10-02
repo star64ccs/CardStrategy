@@ -2,14 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * API文檔完善腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * APIDocumentation完善腳本
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
 console.log('🚀 開始完善API文檔...\n');
 
-// 1. 檢查API端點覆蓋
+// 1. CheckAPI端點覆蓋
 function checkAPIEndpointCoverage() {
   console.log('📋 檢查API端點覆蓋...');
 
@@ -157,7 +157,7 @@ function checkAPIEndpointCoverage() {
   return { apiEndpoints, totalEndpoints, documentedEndpoints, coveragePercentage };
 }
 
-// 2. 更新API參數文檔
+// 2. UpdateAPIParameterDocumentation
 function updateAPIParameterDocumentation() {
   console.log('📋 更新API參數文檔...');
 
@@ -182,7 +182,7 @@ function updateAPIParameterDocumentation() {
         },
         responses: {
           200: {
-            description: '登錄成功',
+            description: '登錄Success',
             schema: {
               success: 'boolean',
               data: {
@@ -193,7 +193,7 @@ function updateAPIParameterDocumentation() {
             }
           },
           401: {
-            description: '認證失敗',
+            description: '認證Failed',
             schema: {
               success: 'boolean',
               error: {
@@ -243,7 +243,7 @@ function updateAPIParameterDocumentation() {
         },
         responses: {
           200: {
-            description: '獲取用戶資料成功',
+            description: 'Get用戶資料Success',
             schema: {
               success: 'boolean',
               data: {
@@ -318,20 +318,20 @@ function updateAPIParameterDocumentation() {
   return parameterDocumentation;
 }
 
-// 3. 補充錯誤碼說明
+// 3. 補充Error碼Description
 function enhanceErrorCodeDocumentation() {
-  console.log('📋 補充錯誤碼說明...');
+  console.log('📋 補充Error碼說明...');
 
   const errorCodes = {
     authentication: {
       'AUTHENTICATION_ERROR': {
         code: 'AUTHENTICATION_ERROR',
         httpStatus: 401,
-        description: '認證失敗',
+        description: '認證Failed',
         causes: [
           '無效的訪問令牌',
           '令牌已過期',
-          '令牌格式錯誤'
+          '令牌格式Error'
         ],
         solutions: [
           '重新登錄獲取新的訪問令牌',
@@ -359,7 +359,7 @@ function enhanceErrorCodeDocumentation() {
         httpStatus: 401,
         description: '無效的憑證',
         causes: [
-          '電子郵件或密碼錯誤',
+          '電子郵件或密碼Error',
           '帳戶被鎖定',
           '帳戶不存在'
         ],
@@ -391,10 +391,10 @@ function enhanceErrorCodeDocumentation() {
       'VALIDATION_ERROR': {
         code: 'VALIDATION_ERROR',
         httpStatus: 400,
-        description: '數據驗證失敗',
+        description: '數據VerifyFailed',
         causes: [
           '必填字段缺失',
-          '數據格式錯誤',
+          '數據格式Error',
           '數據類型不匹配',
           '數據長度超出限制'
         ],
@@ -434,7 +434,7 @@ function enhanceErrorCodeDocumentation() {
         causes: [
           '請求的資源不存在',
           '資源已被刪除',
-          'URL路徑錯誤'
+          'URL路徑Error'
         ],
         solutions: [
           '檢查資源ID是否正確',
@@ -479,45 +479,45 @@ function enhanceErrorCodeDocumentation() {
       'INTERNAL_SERVER_ERROR': {
         code: 'INTERNAL_SERVER_ERROR',
         httpStatus: 500,
-        description: '服務器內部錯誤',
+        description: 'Server內部Error',
         causes: [
-          '服務器配置錯誤',
-          '數據庫連接失敗',
-          '第三方服務異常',
+          'ServerConfigureError',
+          '數據庫ConnectFailed',
+          '第三方Service異常',
           '未處理的異常'
         ],
         solutions: [
           '稍後重試',
-          '檢查服務器狀態',
+          'CheckServer狀態',
           '聯繫技術支持'
         ]
       },
       'SERVICE_UNAVAILABLE': {
         code: 'SERVICE_UNAVAILABLE',
         httpStatus: 503,
-        description: '服務不可用',
+        description: 'Service不可用',
         causes: [
-          '服務器維護中',
-          '服務器過載',
-          '依賴服務不可用'
+          'Server維護中',
+          'Server過載',
+          '依賴Service不可用'
         ],
         solutions: [
-          '等待服務恢復',
+          '等待Service恢復',
           '稍後重試',
-          '查看服務狀態頁面'
+          '查看Service狀態頁面'
         ]
       }
     }
   };
 
-  console.log('✅ 錯誤碼說明補充完成');
-  console.log(`  錯誤分類: ${Object.keys(errorCodes).length} 個`);
-  console.log(`  錯誤碼總數: ${Object.values(errorCodes).flatMap(cat => Object.keys(cat)).length} 個`);
+  console.log('✅ Error碼說明補充完成');
+  console.log(`  Error分類: ${Object.keys(errorCodes).length} 個`);
+  console.log(`  Error碼總數: ${Object.values(errorCodes).flatMap(cat => Object.keys(cat)).length} 個`);
 
   return errorCodes;
 }
 
-// 4. 添加使用示例
+// 4. Add使用示例
 function addUsageExamples() {
   console.log('📋 添加使用示例...');
 
@@ -546,7 +546,7 @@ const loginUser = async (email, password) => {
     const data = await response.json();
 
     if (data.success) {
-      // 保存令牌
+      // Save令牌
       localStorage.setItem('accessToken', data.data.accessToken);
       localStorage.setItem('refreshToken', data.data.refreshToken);
       return data.data;
@@ -583,7 +583,7 @@ const refreshToken = async () => {
     const data = await response.json();
 
     if (data.success) {
-      // 更新令牌
+      // Update令牌
       localStorage.setItem('accessToken', data.data.accessToken);
       return data.data;
     } else {
@@ -591,7 +591,7 @@ const refreshToken = async () => {
     }
   } catch (error) {
     console.error('Token refresh failed:', error);
-    // 清除本地令牌，要求重新登錄
+    // ClearLocal令牌，要求ReLogin
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     throw error;
@@ -736,7 +736,7 @@ fileInput.addEventListener('change', async (event) => {
   return usageExamples;
 }
 
-// 5. 驗證API文檔準確性
+// 5. VerifyAPIDocumentation準確性
 function validateAPIDocumentationAccuracy() {
   console.log('📋 驗證API文檔準確性...');
 
@@ -770,44 +770,44 @@ function validateAPIDocumentationAccuracy() {
   console.log('✅ API文檔準確性驗證完成');
   console.log(`  端點覆蓋率: ${validationResults.endpointCoverage.percentage}%`);
   console.log(`  參數文檔準確性: ${validationResults.parameterDocumentation.accuracy}`);
-  console.log(`  錯誤碼覆蓋率: ${validationResults.errorCodeCoverage.documentedErrors}/${validationResults.errorCodeCoverage.totalErrors}`);
+  console.log(`  Error碼覆蓋率: ${validationResults.errorCodeCoverage.documentedErrors}/${validationResults.errorCodeCoverage.totalErrors}`);
   console.log(`  使用示例數量: ${validationResults.usageExamples.examples} 個`);
 
   return validationResults;
 }
 
-// 6. 主函數
+// 6. 主Function
 function main() {
   try {
     console.log('🚀 開始API文檔完善流程...\n');
 
-    // 1. 檢查API端點覆蓋
+    // 1. CheckAPI端點覆蓋
     const coverageResults = checkAPIEndpointCoverage();
 
-    // 2. 更新API參數文檔
+    // 2. UpdateAPIParameterDocumentation
     const parameterDocs = updateAPIParameterDocumentation();
 
-    // 3. 補充錯誤碼說明
+    // 3. 補充Error碼Description
     const errorCodes = enhanceErrorCodeDocumentation();
 
-    // 4. 添加使用示例
+    // 4. Add使用示例
     const usageExamples = addUsageExamples();
 
-    // 5. 驗證API文檔準確性
+    // 5. VerifyAPIDocumentation準確性
     const validationResults = validateAPIDocumentationAccuracy();
 
     console.log('\n🎯 API文檔完善完成！');
     console.log('📋 完善內容：');
     console.log('  - API端點覆蓋檢查');
     console.log('  - API參數文檔更新');
-    console.log('  - 錯誤碼說明補充');
+    console.log('  - Error碼說明補充');
     console.log('  - 使用示例添加');
     console.log('  - 文檔準確性驗證');
 
     console.log('\n📊 完善結果：');
     console.log(`  端點覆蓋率: ${coverageResults.coveragePercentage}%`);
     console.log(`  參數文檔: ${Object.keys(parameterDocs).length} 個分類`);
-    console.log(`  錯誤碼: ${Object.values(errorCodes).flatMap(cat => Object.keys(cat)).length} 個`);
+    console.log(`  Error碼: ${Object.values(errorCodes).flatMap(cat => Object.keys(cat)).length} 個`);
     console.log(`  使用示例: ${usageExamples.length} 個分類`);
     console.log(`  總體準確性: ${validationResults.overallAccuracy}`);
 
@@ -818,12 +818,12 @@ function main() {
     console.log('  4. 建立文檔版本控制');
 
   } catch (error) {
-    console.error('❌ API文檔完善失敗:', error);
+    console.error('❌ API文檔完善Failed:', error);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   main();
 }

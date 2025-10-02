@@ -1,12 +1,12 @@
 import { useCallback, useRef, useEffect } from 'react';
 
 /**
- * 性能優化工具類
+ * 性能優化ToolClass
  * 提供各種性能優化輔助功能
  */
 export class PerformanceOptimizationUtils {
   /**
-   * 防抖函數
+   * 防抖Function
    */
   static debounce<T extends (...args: unknown[]) => any>(
     func: T,
@@ -33,7 +33,7 @@ export class PerformanceOptimizationUtils {
   }
 
   /**
-   * 節流函數
+   * 節流Function
    */
   static throttle<T extends (...args: unknown[]) => any>(
     func: T,
@@ -52,14 +52,14 @@ export class PerformanceOptimizationUtils {
   }
 
   /**
-   * 異步加載組件
+   * Async加載Component
    */
   static asyncLoadComponent(importFunc: () => Promise<any>) {
     return importFunc().then(module => module.default);
   }
 
   /**
-   * 內存使用監控
+   * Memory使用Monitor
    */
   static getMemoryUsage(): unknown {
     if (typeof performance !== 'undefined' && performance.memory) {
@@ -93,7 +93,7 @@ export class PerformanceOptimizationUtils {
   }
 
   /**
-   * 異步性能測量
+   * Async性能測量
    */
   static async measureAsyncPerformance<T>(
     name: string,
@@ -158,7 +158,7 @@ export function useThrottle<T extends (...args: unknown[]) => any>(
 }
 
 /**
- * React Hook: 異步加載
+ * React Hook: Async加載
  */
 export function useAsyncLoad<T>(
   loadFn: () => Promise<T>,
@@ -203,7 +203,7 @@ export function useAsyncLoad<T>(
 }
 
 /**
- * React Hook: 性能監控
+ * React Hook: 性能Monitor
  */
 export function usePerformanceMonitor(componentName: string) {
   const renderCountRef = useRef(0);

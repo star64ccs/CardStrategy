@@ -24,7 +24,7 @@ const SearchAnalyticsExample: React.FC = () => {
     alerts,
     reports,
 
-    // 計算屬性
+    // 計算Property
     statistics,
     popularSearches,
     trendingSearches,
@@ -37,7 +37,7 @@ const SearchAnalyticsExample: React.FC = () => {
     activeAlerts,
     isPerformanceGood,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     getAnalytics,
     generateAnalyticsReport,
@@ -68,14 +68,14 @@ const SearchAnalyticsExample: React.FC = () => {
     notificationChannels: ['email'],
   });
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     if (!isInitialized) {
       initialize();
     }
   }, [isInitialized, initialize]);
 
-  // 模擬搜索事件
+  // 模擬SearchEvent
   const _simulateSearchEvent = () => {
     trackSearchEvent({
       type: 'search_performed',
@@ -95,10 +95,10 @@ const SearchAnalyticsExample: React.FC = () => {
     });
   };
 
-  // 創建警報
+  // CreateAlert
   const _handleCreateAlert = async () => {
     if (!newAlert.name || !newAlert.description) {
-      Alert.alert('錯誤', '請填寫警報名稱和描述');
+      Alert.alert('Error', '請填寫警報名稱和描述');
       return;
     }
 
@@ -117,7 +117,7 @@ const SearchAnalyticsExample: React.FC = () => {
     });
 
     if (alertId) {
-      Alert.alert('成功', '警報創建成功');
+      Alert.alert('Success', '警報CreateSuccess');
       setShowCreateAlert(false);
       setNewAlert({
         name: '',
@@ -130,7 +130,7 @@ const SearchAnalyticsExample: React.FC = () => {
     }
   };
 
-  // 生成報告
+  // 生成Report
   const _handleGenerateReport = async () => {
     try {
       const _report = await generateAnalyticsReport(
@@ -143,17 +143,17 @@ const SearchAnalyticsExample: React.FC = () => {
       );
 
       if (report) {
-        Alert.alert('成功', '報告生成成功');
+        Alert.alert('Success', '報告生成Success');
       }
     } catch (error) {
-      Alert.alert('錯誤', '報告生成失敗');
+      Alert.alert('Error', '報告生成Failed');
     }
   };
 
-  // 導出數據
+  // ExportData
   const _handleExportData = async () => {
     if (!analytics) {
-      Alert.alert('錯誤', '沒有可導出的數據');
+      Alert.alert('Error', '沒有可導出的數據');
       return;
     }
 
@@ -166,12 +166,12 @@ const SearchAnalyticsExample: React.FC = () => {
     });
 
     if (data) {
-      Alert.alert('成功', '數據導出成功');
+      Alert.alert('Success', '數據導出Success');
       console.log('導出數據:', data);
     }
   };
 
-  // 渲染儀表板
+  // 渲染儀Table板
   const _renderDashboard = () => (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>搜索分析儀表板</Text>
@@ -199,7 +199,7 @@ const SearchAnalyticsExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 統計數據 */}
+      {/* 統Count據 */}
       {statistics && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>統計數據</Text>
@@ -232,7 +232,7 @@ const SearchAnalyticsExample: React.FC = () => {
         </View>
       )}
 
-      {/* 熱門搜索 */}
+      {/* 熱門Search */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>熱門搜索</Text>
         {popularSearches.map((search, index) => (
@@ -246,7 +246,7 @@ const SearchAnalyticsExample: React.FC = () => {
         ))}
       </View>
 
-      {/* 趨勢搜索 */}
+      {/* 趨勢Search */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>趨勢搜索</Text>
         {trendingSearches.map((search, index) => (
@@ -260,7 +260,7 @@ const SearchAnalyticsExample: React.FC = () => {
         ))}
       </View>
 
-      {/* 類別統計 */}
+      {/* Class別Statistics */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>類別統計</Text>
         {categoryStats.map((category, index) => (
@@ -279,7 +279,7 @@ const SearchAnalyticsExample: React.FC = () => {
         <Text style={styles.emptyText}>洞察和建議功能暫時不可用</Text>
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>操作</Text>
         <TouchableOpacity style={styles.button} onPress={simulateSearchEvent}>
@@ -295,7 +295,7 @@ const SearchAnalyticsExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 渲染警報管理
+  // 渲染AlertManage
   const _renderAlerts = () => (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>警報管理</Text>
@@ -334,7 +334,7 @@ const SearchAnalyticsExample: React.FC = () => {
         </View>
       ))}
 
-      {/* 創建警報模態框 */}
+      {/* CreateAlert模態框 */}
       {showCreateAlert && (
         <View style={styles.modal}>
           <View style={styles.modalContent}>
@@ -382,12 +382,12 @@ const SearchAnalyticsExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 渲染報告管理
+  // 渲染ReportManage
   const _renderReports = () => (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>報告管理</Text>
 
-      {/* 當前報告 */}
+      {/* 當前Report */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>當前報告</Text>
         <Text style={styles.emptyText}>當前報告功能暫時不可用</Text>
@@ -422,7 +422,7 @@ const SearchAnalyticsExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 渲染配置
+  // 渲染Configure
   const _renderConfig = () => (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>配置管理</Text>
@@ -477,7 +477,7 @@ const SearchAnalyticsExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 獲取洞察顏色
+  // Get洞察顏色
   const _getInsightColor = (type: string) => {
     switch (type) {
       case 'warning':
@@ -513,7 +513,7 @@ const SearchAnalyticsExample: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* 標籤欄 */}
+      {/* Tag欄 */}
       <View style={styles.tabBar}>
         <TouchableOpacity
           style={[styles.tab, selectedTab === 'dashboard' && styles.activeTab]}
@@ -569,7 +569,7 @@ const SearchAnalyticsExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 內容區域 */}
+      {/* ContentDistrict域 */}
       {selectedTab === 'dashboard' && renderDashboard()}
       {selectedTab === 'alerts' && renderAlerts()}
       {selectedTab === 'reports' && renderReports()}

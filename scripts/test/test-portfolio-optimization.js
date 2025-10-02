@@ -1,6 +1,6 @@
 const path = require('path');
 
-// 添加後端路徑到模組搜索路徑
+// Add後端Path到模組SearchPath
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -11,9 +11,9 @@ const PortfolioOptimizationService = require('../backend/src/services/portfolioO
 
 async function testPortfolioOptimization() {
   try {
-    // 初始化服務
+    // InitializeService
     await PortfolioOptimizationService.initialize();
-    // 生成測試數據
+    // 生成TestData
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const numAssets = 5;
@@ -21,7 +21,7 @@ async function testPortfolioOptimization() {
 // eslint-disable-next-line no-unused-vars
     const numPeriods = 100;
 
-    // 生成模擬價格數據
+    // 生成模擬價格Data
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const pricesMatrix = [];
@@ -118,11 +118,11 @@ async function testPortfolioOptimization() {
     console.log(
       `📊 CVaR 風險度量: ${(cvarResult.riskMeasure * 100).toFixed(0)}%`
     );
-    // 5. 壓力測試
+    // 5. 壓力Test
     const scenarios = [
       {
         name: '市場崩盤',
-        factors: [0.5, 0.3, 0.7, 0.4, 0.6], // 各資產的壓力因子
+        factors: [0.5, 0.3, 0.7, 0.4, 0.6], // 各Asset的壓力因子
       },
       {
         name: '經濟衰退',
@@ -161,7 +161,7 @@ async function testPortfolioOptimization() {
       `📊 最佳夏普比率投資組合: 夏普比率=${bestSharpe.sharpeRatio.toFixed(4)} (收益率: ${(bestSharpe.return * 100).toFixed(2)}%, 風險: ${(bestSharpe.risk * 100).toFixed(2)}%)`
     );
 
-    // 7. 性能測試
+    // 7. 性能Test
     const startTime = Date.now();
     PortfolioOptimizationService.calculateEfficientFrontier(returnsMatrix, 100);
     const endTime = Date.now();
@@ -170,7 +170,7 @@ async function testPortfolioOptimization() {
       `⚡ 性能測試: 計算 100 個投資組合耗時 ${endTime - startTime}ms`
     );
 
-    // 8. 比較不同方法
+    // 8. 比較不同Method
 // eslint-disable-next-line no-console
     console.log(
       `📊 馬科維茨方法: 收益率=${(markowitzResult.expectedReturn * 100).toFixed(2)}%, 風險=${(markowitzResult.risk * 100).toFixed(2)}%, 夏普比率=${markowitzResult.sharpeRatio.toFixed(4)}`
@@ -183,15 +183,15 @@ async function testPortfolioOptimization() {
     console.log(
       `📊 有效前沿最佳: 收益率=${(bestSharpe.return * 100).toFixed(2)}%, 風險=${(bestSharpe.risk * 100).toFixed(2)}%, 夏普比率=${bestSharpe.sharpeRatio.toFixed(4)}`
     );
-    // 清理資源
+    // 清理Resource
     PortfolioOptimizationService.dispose();
   } catch (error) {
 // eslint-disable-next-line no-console
-    console.error('❌ 投資組合優化服務測試失敗:', error.message);
+    console.error('❌ 投資組合優化Service測試Failed:', error.message);
 // eslint-disable-next-line no-console
-    console.error('詳細錯誤:', error);
+    console.error('詳細Error:', error);
   }
 }
 
-// 運行測試
+// 運RowTest
 testPortfolioOptimization();

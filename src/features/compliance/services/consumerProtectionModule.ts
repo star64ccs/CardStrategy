@@ -1,6 +1,6 @@
 /**
  * 消費者保護模組
- * 實現重構計劃任務 1.4: ConsumerProtectionModule
+ * 實現重構計劃Task 1.4: ConsumerProtectionModule
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -78,10 +78,10 @@ export class ConsumerProtectionModule {
       await this.initializeUnfairTerms();
 
       this.isInitialized = true;
-      logger.info('消費者保護模組初始化成功');
+      logger.info('消費者保護模組InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('消費者保護模組初始化失敗:', error);
+      logger.error('消費者保護模組InitializeFailed:', error);
       return false;
     }
   }
@@ -111,7 +111,7 @@ export class ConsumerProtectionModule {
 
       return detectedTerms;
     } catch (error) {
-      logger.error('不公平條款檢測失敗:', error);
+      logger.error('不公平條款檢測Failed:', error);
       throw error;
     }
   }
@@ -130,7 +130,7 @@ export class ConsumerProtectionModule {
 
       this.complaints.set(newComplaint.id, newComplaint);
 
-      logger.info('消費者投訴提交成功', {
+      logger.info('消費者投訴提交Success', {
         complaintId: newComplaint.id,
         consumerId: newComplaint.consumerId,
         category: newComplaint.category,
@@ -139,7 +139,7 @@ export class ConsumerProtectionModule {
 
       return newComplaint;
     } catch (error) {
-      logger.error('消費者投訴提交失敗:', error);
+      logger.error('消費者投訴提交Failed:', error);
       throw error;
     }
   }
@@ -161,14 +161,14 @@ export class ConsumerProtectionModule {
         complaint.resolvedAt = new Date();
       }
 
-      logger.info('投訴狀態更新成功', {
+      logger.info('投訴狀態UpdateSuccess', {
         complaintId,
         newStatus: status,
       });
 
       return true;
     } catch (error) {
-      logger.error('投訴狀態更新失敗:', error);
+      logger.error('投訴狀態UpdateFailed:', error);
       throw error;
     }
   }
@@ -187,7 +187,7 @@ export class ConsumerProtectionModule {
 
       return applicableRights;
     } catch (error) {
-      logger.error('獲取消費者權利失敗:', error);
+      logger.error('Get消費者權利Failed:', error);
       throw error;
     }
   }
@@ -220,21 +220,21 @@ export class ConsumerProtectionModule {
       {
         id: 'information_right',
         name: '知情權',
-        description: '消費者有權獲得有關商品和服務的完整、準確信息',
+        description: '消費者有權獲得有關商品和Service的完整、準確Information',
         category: 'information' as const,
         jurisdiction: 'global',
       },
       {
         id: 'choice_right',
         name: '選擇權',
-        description: '消費者有權自由選擇商品和服務',
+        description: '消費者有權自由選擇商品和Service',
         category: 'choice' as const,
         jurisdiction: 'global',
       },
       {
         id: 'safety_right',
         name: '安全權',
-        description: '消費者有權獲得安全的商品和服務',
+        description: '消費者有權獲得安全的商品和Service',
         category: 'safety' as const,
         jurisdiction: 'global',
       },

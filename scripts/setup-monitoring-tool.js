@@ -2,13 +2,13 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * CardStrategy 專案監控工具快速設置腳本
+ * CardStrategy 專案MonitorTool快速Settings腳本
  */
 
 // eslint-disable-next-line no-console
 console.log('🚀 開始設置 CardStrategy 專案監控工具...\n');
 
-// 項目配置
+// 項目Configure
 const config = {
   projectName: 'cardstrategy-monitoring',
   domain: process.env.DOMAIN || 'yourdomain.com',
@@ -16,7 +16,7 @@ const config = {
   backendPort: 3001
 };
 
-// 創建基本目錄結構
+// Create基本Directory結構
 function createDirectories() {
   // eslint-disable-next-line no-console
   console.log('📁 創建項目目錄...');
@@ -37,7 +37,7 @@ function createDirectories() {
   });
 }
 
-// 創建 Docker Compose 配置
+// Create Docker Compose Configure
 function createDockerCompose() {
   // eslint-disable-next-line no-console
   console.log('🐳 創建 Docker Compose 配置...');
@@ -96,7 +96,7 @@ volumes:
   console.log('   ✅ docker-compose.yml');
 }
 
-// 創建 README
+// Create README
 function createReadme() {
   // eslint-disable-next-line no-console
   console.log('📖 創建 README...');
@@ -126,7 +126,7 @@ function createReadme() {
   console.log('   ✅ README.md');
 }
 
-// 創建部署腳本
+// CreateDeploy腳本
 function createDeployScript() {
   // eslint-disable-next-line no-console
   console.log('🚀 創建部署腳本...');
@@ -142,7 +142,7 @@ echo "✅ 部署完成！訪問 http://localhost:${config.frontendPort}"
   console.log('   ✅ deploy.sh');
 }
 
-// 主函數
+// 主Function
 function main() {
   createDirectories();
   createDockerCompose();

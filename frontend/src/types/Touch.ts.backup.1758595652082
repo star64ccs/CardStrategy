@@ -1,0 +1,355 @@
+// 觸控優化相關類型定義
+
+// 觸控點接口
+export interface Touch {
+  identifier: number;
+  target: EventTarget;
+  clientX: number;
+  clientY: number;
+  pageX: number;
+  pageY: number;
+  radiusX?: number;
+  radiusY?: number;
+  rotationAngle?: number;
+  force?: number;
+}
+
+// 觸控手勢類型
+export type TouchGestureType =
+  | 'tap'
+  | 'doubleTap'
+  | 'longPress'
+  | 'swipe'
+  | 'pinch'
+  | 'rotate'
+  | 'pan';
+
+// 觸控手勢方向
+export type SwipeDirection = 'up' | 'down' | 'left' | 'right';
+
+// 觸控手勢配置
+export interface TouchGestureConfig {
+  type: TouchGestureType;
+  enabled?: boolean;
+  threshold?: number;
+  timeout?: number;
+  minDistance?: number;
+  maxDistance?: number;
+  minDuration?: number;
+  maxDuration?: number;
+  preventDefault?: boolean;
+  stopPropagation?: boolean;
+}
+
+// 觸控事件數據
+export interface TouchEventData {
+  type: TouchGestureType;
+  x: number;
+  y: number;
+  deltaX?: number;
+  deltaY?: number;
+  scale?: number;
+  rotation?: number;
+  duration: number;
+  timestamp: number;
+  touches: Touch[];
+  target: EventTarget | null;
+}
+
+// 觸控手勢組件屬性
+export interface TouchGestureProps {
+  children: React.ReactNode;
+  onTap?: (event: TouchEventData) => void;
+  onDoubleTap?: (event: TouchEventData) => void;
+  onLongPress?: (event: TouchEventData) => void;
+  onSwipe?: (direction: SwipeDirection, event: TouchEventData) => void;
+  onPinch?: (scale: number, event: TouchEventData) => void;
+  onRotate?: (rotation: number, event: TouchEventData) => void;
+  onPan?: (deltaX: number, deltaY: number, event: TouchEventData) => void;
+  config?: Partial<TouchGestureConfig>;
+  className?: string;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+}
+
+// 觸控反饋類型
+export type TouchFeedbackType =
+  | 'ripple'
+  | 'scale'
+  | 'opacity'
+  | 'color'
+  | 'custom';
+
+// 觸控反饋配置
+export interface TouchFeedbackConfig {
+  type: TouchFeedbackType;
+  duration?: number;
+  scale?: number;
+  opacity?: number;
+  color?: string;
+  rippleColor?: string;
+  rippleSize?: number;
+  customAnimation?: string;
+  disabled?: boolean;
+}
+
+// 觸控反饋組件屬性
+export interface TouchFeedbackProps {
+  children: React.ReactNode;
+  feedback?: TouchFeedbackConfig;
+  onPress?: () => void;
+  onPressIn?: () => void;
+  onPressOut?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
+  disabled?: boolean;
+}
+
+// 滾動優化配置
+export interface ScrollOptimizationConfig {
+  enabled?: boolean;
+  momentum?: boolean;
+  bounce?: boolean;
+  deceleration?: number;
+  snapToInterval?: number;
+  snapToAlignment?: 'start' | 'center' | 'end';
+  showsHorizontalScrollIndicator?: boolean;
+  showsVerticalScrollIndicator?: boolean;
+  contentInset?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+  scrollIndicatorInsets?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+}
+
+// 滾動組件屬性
+export interface OptimizedScrollViewProps {
+  children: React.ReactNode;
+  horizontal?: boolean;
+  vertical?: boolean;
+  optimization?: ScrollOptimizationConfig;
+  onScroll?: (event: any) => void;
+  onScrollBeginDrag?: () => void;
+  onScrollEndDrag?: () => void;
+  onMomentumScrollBegin?: () => void;
+  onMomentumScrollEnd?: () => void;
+  className?: string;
+  style?: React.CSSProperties;
+  contentContainerStyle?: React.CSSProperties;
+  showsScrollIndicator?: boolean;
+  scrollEnabled?: boolean;
+  bounces?: boolean;
+  alwaysBounceHorizontal?: boolean;
+  alwaysBounceVertical?: boolean;
+  automaticallyAdjustContentInsets?: boolean;
+  automaticallyAdjustKeyboardInsets?: boolean;
+  automaticallyAdjustScrollIndicatorInsets?: boolean;
+  contentInsetAdjustmentBehavior?:
+    | 'automatic'
+    | 'scrollableAxes'
+    | 'never'
+    | 'always';
+  directionalLockEnabled?: boolean;
+  indicatorStyle?: 'default' | 'black' | 'white';
+  keyboardDismissMode?: 'none' | 'on-drag' | 'interactive';
+  keyboardShouldPersistTaps?: 'always' | 'never' | 'handled';
+  maintainVisibleContentPosition?: {
+    minIndexForVisible?: number;
+    autoscrollToTopThreshold?: number;
+  };
+  maximumZoomScale?: number;
+  minimumZoomScale?: number;
+  nestedScrollEnabled?: boolean;
+  onContentSizeChange?: (width: number, height: number) => void;
+  onLayout?: (event: any) => void;
+  onScrollToTop?: () => void;
+  pagingEnabled?: boolean;
+  refreshControl?: React.ReactElement;
+  removeClippedSubviews?: boolean;
+  scrollEventThrottle?: number;
+  scrollIndicatorInsets?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+  scrollPerfTag?: string;
+  scrollToOverflowEnabled?: boolean;
+  scrollsToTop?: boolean;
+  sendMomentumEvents?: boolean;
+  snapToInterval?: number;
+  snapToOffsets?: number[];
+  snapToStart?: boolean;
+  snapToEnd?: boolean;
+  zoomScale?: number;
+}
+
+// 觸控測試配置
+export interface TouchTestConfig {
+  deviceType: 'mobile' | 'tablet' | 'desktop';
+  platform: 'ios' | 'android' | 'web';
+  gestures: TouchGestureType[];
+  feedbackTypes: TouchFeedbackType[];
+  scrollOptimization: boolean;
+  performance: boolean;
+  accessibility: boolean;
+}
+
+// 觸控測試結果
+export interface TouchTestResult {
+  deviceType: string;
+  platform: string;
+  gestures: {
+    [key in TouchGestureType]?: {
+      success: boolean;
+      latency: number;
+      accuracy: number;
+      error?: string;
+    };
+  };
+  feedback: {
+    [key in TouchFeedbackType]?: {
+      success: boolean;
+      duration: number;
+      visualQuality: number;
+      error?: string;
+    };
+  };
+  scroll: {
+    smoothness: number;
+    responsiveness: number;
+    momentum: boolean;
+    bounce: boolean;
+    error?: string;
+  };
+  performance: {
+    fps: number;
+    memoryUsage: number;
+    cpuUsage: number;
+    error?: string;
+  };
+  accessibility: {
+    keyboardSupport: boolean;
+    screenReaderSupport: boolean;
+    focusManagement: boolean;
+    error?: string;
+  };
+  overall: {
+    score: number;
+    recommendations: string[];
+  };
+}
+
+// 觸控服務配置
+export interface TouchServiceConfig {
+  enableGestures: boolean;
+  enableFeedback: boolean;
+  enableScrollOptimization: boolean;
+  enablePerformanceMonitoring: boolean;
+  enableAccessibilitySupport: boolean;
+  defaultConfig: {
+    gestures: Partial<TouchGestureConfig>;
+    feedback: Partial<TouchFeedbackConfig>;
+    scroll: Partial<ScrollOptimizationConfig>;
+  };
+}
+
+// 觸控服務事件
+export interface TouchServiceEvent {
+  type: 'gesture' | 'feedback' | 'scroll' | 'performance' | 'accessibility';
+  data: TouchEventData | TouchFeedbackConfig | ScrollOptimizationConfig | any;
+  timestamp: number;
+  source: string;
+}
+
+// 觸控服務接口
+export interface TouchService {
+  // 手勢管理
+  registerGesture(componentId: string, config: TouchGestureConfig): void;
+  unregisterGesture(componentId: string): void;
+  getGestureConfig(componentId: string): TouchGestureConfig | null;
+
+  // 反饋管理
+  registerFeedback(componentId: string, config: TouchFeedbackConfig): void;
+  unregisterFeedback(componentId: string): void;
+  getFeedbackConfig(componentId: string): TouchFeedbackConfig | null;
+
+  // 滾動優化
+  registerScroll(componentId: string, config: ScrollOptimizationConfig): void;
+  unregisterScroll(componentId: string): void;
+  getScrollConfig(componentId: string): ScrollOptimizationConfig | null;
+
+  // 測試功能
+  runTouchTest(config: TouchTestConfig): Promise<TouchTestResult>;
+  generateTestReport(results: TouchTestResult[]): string;
+
+  // 性能監控
+  trackPerformance(componentId: string, metrics: any): void;
+  getPerformanceReport(): unknown;
+
+  // 事件管理
+  onEvent(callback: (event: TouchServiceEvent) => void): void;
+  emitEvent(event: TouchServiceEvent): void;
+
+  // 配置管理
+  updateConfig(config: Partial<TouchServiceConfig>): void;
+  getConfig(): TouchServiceConfig;
+}
+
+// 觸控 Hook 返回值
+export interface UseTouchReturn {
+  // 手勢狀態
+  isPressed: boolean;
+  isHovered: boolean;
+  isFocused: boolean;
+
+  // 手勢數據
+  gestureData: TouchEventData | null;
+  lastGesture: TouchGestureType | null;
+
+  // 事件處理器
+  handlers: {
+    onTouchStart: (event: React.TouchEvent) => void;
+    onTouchMove: (event: React.TouchEvent) => void;
+    onTouchEnd: (event: React.TouchEvent) => void;
+    onMouseDown: (event: React.MouseEvent) => void;
+    onMouseMove: (event: React.MouseEvent) => void;
+    onMouseUp: (event: React.MouseEvent) => void;
+    onKeyDown: (event: React.KeyboardEvent) => void;
+    onKeyUp: (event: React.KeyboardEvent) => void;
+  };
+
+  // 工具函數
+  utils: {
+    isTouchDevice: () => boolean;
+    getTouchPoint: (event: React.TouchEvent | React.MouseEvent) => {
+      x: number;
+      y: number;
+    };
+    calculateDistance: (
+      point1: { x: number; y: number },
+      point2: { x: number; y: number }
+    ) => number;
+    calculateAngle: (
+      point1: { x: number; y: number },
+      point2: { x: number; y: number }
+    ) => number;
+  };
+}
+
+// 觸控測試工具屬性
+export interface TouchTestToolProps {
+  config?: Partial<TouchTestConfig>;
+  onTestComplete?: (results: TouchTestResult) => void;
+  onTestError?: (error: Error) => void;
+  className?: string;
+  style?: React.CSSProperties;
+  visible?: boolean;
+}

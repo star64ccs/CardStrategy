@@ -11,7 +11,7 @@ export const _fetchMarketData = createAsyncThunk(
       const _response = await marketService.getMarketData(cardId);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取市場數據失敗');
+      return rejectWithValue(error.message || 'Get市場數據Failed');
     }
   }
 );
@@ -29,7 +29,7 @@ export const _fetchPriceHistory = createAsyncThunk(
       const _response = await marketService.getPriceHistory(cardId, period);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取價格歷史失敗');
+      return rejectWithValue(error.message || 'Get價格歷史Failed');
     }
   }
 );
@@ -41,7 +41,7 @@ export const _fetchMarketTrends = createAsyncThunk(
       const _response = await marketService.getMarketTrends();
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取市場趨勢失敗');
+      return rejectWithValue(error.message || 'Get市場趨勢Failed');
     }
   }
 );
@@ -93,7 +93,7 @@ const _marketSlice = createSlice({
       })
       .addCase(fetchPriceHistory.fulfilled, (state, action) => {
         state.isLoading = false;
-        // 將單個 PriceHistory 對象轉換為數組
+        // 將Single PriceHistory ObjectConvert為Array
         state.priceHistory = [action.payload];
         state.error = null;
       })
@@ -110,7 +110,7 @@ const _marketSlice = createSlice({
       })
       .addCase(fetchMarketTrends.fulfilled, (state, action) => {
         state.isLoading = false;
-        // 將市場趨勢數據轉換為 MarketTrend 數組格式
+        // 將市場趨勢DataConvert為 MarketTrend Array格式
         const marketTrends: unknown[] = [];
         if (action.payload.trendingUp) {
           action.payload.trendingUp.forEach((cardId: string) => {

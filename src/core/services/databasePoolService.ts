@@ -45,7 +45,7 @@ export class DatabasePoolService {
   private static instance: DatabasePoolService;
   private isInitialized = false;
   private config: DatabaseConfig | null = null;
-  private pool: unknown = null; // 實際的連接池實例
+  private pool: unknown = null; // 實際的Connect池Instance
   private queryMetrics: QueryMetrics[] = [];
   private healthCheckInterval: NodeJS.Timeout | null = null;
   private readonly maxMetricsHistory = 1000;
@@ -66,11 +66,11 @@ export class DatabasePoolService {
     try {
       this.config = config;
 
-      // 這裡應該初始化實際的數據庫連接池
+      // 這裡應該Initialize實際的DatabaseConnect池
       // 目前使用模擬實現
       await this.createPool();
 
-      // 開始健康檢查
+      // Begin健康Check
       this.startHealthMonitoring();
 
       logger.info('DatabasePoolService initialized successfully', {
@@ -87,7 +87,7 @@ export class DatabasePoolService {
   }
 
   /**
-   * 獲取數據庫連接
+   * GetDatabaseConnect
    */
   public async getConnection(): Promise<any> {
     if (!this.isInitialized) {
@@ -95,7 +95,7 @@ export class DatabasePoolService {
     }
 
     try {
-      // 模擬獲取連接
+      // 模擬GetConnect
       const _connection = await this.acquireConnection();
       logger.debug('Database connection acquired', {
         connectionId: connection.id,
@@ -108,7 +108,7 @@ export class DatabasePoolService {
   }
 
   /**
-   * 釋放數據庫連接
+   * 釋放DatabaseConnect
    */
   public async releaseConnection(connection: unknown): Promise<void> {
     if (!this.isInitialized) {
@@ -127,7 +127,7 @@ export class DatabasePoolService {
   }
 
   /**
-   * 執行查詢
+   * 執RowQuery
    */
   public async executeQuery(sql: string, params: unknown[] = []): Promise<any> {
     const _queryId = this.generateQueryId();
@@ -136,7 +136,7 @@ export class DatabasePoolService {
     try {
       logger.debug('Executing database query', { queryId, sql });
 
-      // 模擬查詢執行
+      // 模擬Query執Row
       const _result = await this.executeQueryInternal(sql, params);
 
       const _executionTime = Date.now() - startTime;
@@ -178,14 +178,14 @@ export class DatabasePoolService {
   }
 
   /**
-   * 獲取連接池統計信息
+   * GetConnect池StatisticsInformation
    */
   public getConnectionStats(): ConnectionStats {
     if (!this.isInitialized) {
       throw new Error('DatabasePoolService not initialized');
     }
 
-    // 模擬統計數據
+    // 模擬統Count據
     const _totalConnections = this.config?.maxConnections || 10;
     const _activeConnections = Math.floor(Math.random() * totalConnections);
     const _idleConnections = totalConnections - activeConnections;
@@ -202,7 +202,7 @@ export class DatabasePoolService {
   }
 
   /**
-   * 獲取查詢性能指標
+   * GetQuery性能指標
    */
   public getQueryMetrics(limit = 100): QueryMetrics[] {
     return this.queryMetrics
@@ -211,7 +211,7 @@ export class DatabasePoolService {
   }
 
   /**
-   * 獲取連接池健康狀態
+   * GetConnect池健康Status
    */
   public getPoolHealth(): PoolHealth {
     if (!this.isInitialized) {
@@ -263,7 +263,7 @@ export class DatabasePoolService {
   }
 
   /**
-   * 優化連接池配置
+   * 優化Connect池Configure
    */
   public async optimizePool(): Promise<void> {
     if (!this.isInitialized) {
@@ -278,7 +278,7 @@ export class DatabasePoolService {
         recommendations,
       });
 
-      // 根據健康狀態調整配置
+      // Root據健康Status調整Configure
       if (health.status === 'UNHEALTHY') {
         await this.adjustPoolSize();
         await this.cleanupIdleConnections();
@@ -292,7 +292,7 @@ export class DatabasePoolService {
   }
 
   /**
-   * 清理連接池
+   * 清理Connect池
    */
   public async cleanup(): Promise<void> {
     if (this.healthCheckInterval) {
@@ -301,7 +301,7 @@ export class DatabasePoolService {
     }
 
     if (this.pool) {
-      // 清理連接池
+      // 清理Connect池
       await this.closePool();
       this.pool = null;
     }
@@ -311,7 +311,7 @@ export class DatabasePoolService {
   }
 
   /**
-   * 獲取服務狀態
+   * GetServiceStatus
    */
   public getStatus(): unknown {
     return {
@@ -328,16 +328,16 @@ export class DatabasePoolService {
     };
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private async createPool(): Promise<void> {
-    // 模擬創建連接池
+    // 模擬CreateConnect池
     this.pool = {
       id: `pool-${Date.now()}`,
       connections: [],
     };
 
-    // 預創建最小連接數
+    // 預Create最小Connect數
     for (let i = 0; i < (this.config?.minConnections || 2); i++) {
       this.pool.connections.push({
         id: `conn-${i}`,
@@ -348,7 +348,7 @@ export class DatabasePoolService {
   }
 
   private async acquireConnection(): Promise<any> {
-    // 模擬獲取連接
+    // 模擬GetConnect
     const _connection = this.pool.connections.find(
       (c: unknown) => c.status === 'idle'
     );
@@ -358,7 +358,7 @@ export class DatabasePoolService {
       return connection;
     }
 
-    // 如果沒有空閒連接，創建新連接
+    // 如果沒有Empty閒Connect，Create新Connect
     if (this.pool.connections.length < (this.config?.maxConnections || 10)) {
       const _newConnection = {
         id: `conn-${this.pool.connections.length}`,
@@ -374,7 +374,7 @@ export class DatabasePoolService {
   }
 
   private async releaseConnectionToPool(connection: unknown): Promise<void> {
-    // 模擬釋放連接
+    // 模擬釋放Connect
     const _poolConnection = this.pool.connections.find(
       (c: unknown) => c.id === connection.id
     );
@@ -388,10 +388,10 @@ export class DatabasePoolService {
     sql: string,
     params: unknown[]
   ): Promise<any> {
-    // 模擬查詢執行
+    // 模擬Query執Row
     await new Promise(resolve => setTimeout(resolve, Math.random() * 100 + 10));
 
-    // 模擬查詢結果
+    // 模擬Query結果
     if (sql.toLowerCase().includes('select')) {
       return [
         { id: 1, name: 'Test Data 1' },
@@ -405,7 +405,7 @@ export class DatabasePoolService {
   private recordQueryMetrics(metrics: QueryMetrics): void {
     this.queryMetrics.push(metrics);
 
-    // 限制歷史記錄數量
+    // Limit歷史Record數量
     if (this.queryMetrics.length > this.maxMetricsHistory) {
       this.queryMetrics = this.queryMetrics.slice(-this.maxMetricsHistory);
     }
@@ -423,38 +423,38 @@ export class DatabasePoolService {
     const recommendations: string[] = [];
 
     if (stats.connectionUtilization > 90) {
-      recommendations.push('考慮增加最大連接數');
+      recommendations.push('考慮增加最大Connect數');
     }
 
     if (stats.connectionUtilization < 20) {
-      recommendations.push('考慮減少最小連接數以節省資源');
+      recommendations.push('考慮減少最小Connect數以節省資源');
     }
 
     if (recentErrors > 10) {
-      recommendations.push('檢查數據庫連接穩定性');
+      recommendations.push('Check數據庫Connect穩定性');
     }
 
     if (averageResponseTime > 1000) {
-      recommendations.push('優化慢查詢或增加連接數');
+      recommendations.push('優化慢查詢或增加Connect數');
     }
 
     if (stats.waitingConnections > 0) {
-      recommendations.push('有連接等待，考慮增加連接池大小');
+      recommendations.push('有Connect等待，考慮增加Connect池大小');
     }
 
     if (recommendations.length === 0) {
-      recommendations.push('連接池運行正常');
+      recommendations.push('Connect池運行正常');
     }
 
     return recommendations;
   }
 
   private async adjustPoolSize(): Promise<void> {
-    // 根據使用情況調整連接池大小
+    // Root據使用情況調整Connect池大小
     const _stats = this.getConnectionStats();
 
     if (stats.connectionUtilization > 90) {
-      // 增加連接數
+      // 增加Connect數
       const _newMaxConnections = Math.min(
         (this.config?.maxConnections || 10) + 5,
         50
@@ -469,9 +469,9 @@ export class DatabasePoolService {
   }
 
   private async cleanupIdleConnections(): Promise<void> {
-    // 清理長時間空閒的連接
+    // 清理長TimeEmpty閒的Connect
     const _now = new Date();
-    const _maxIdleTime = this.config?.maxIdleTime || 300000; // 5分鐘
+    const _maxIdleTime = this.config?.maxIdleTime || 300000; // 5Minute
 
     this.pool.connections = this.pool.connections.filter((conn: unknown) => {
       if (conn.status === 'idle' && conn.lastUsed) {
@@ -498,17 +498,17 @@ export class DatabasePoolService {
       } catch (error) {
         logger.error('Health monitoring error', error);
       }
-    }, 30000); // 每30秒檢查一次
+    }, 30000); // 每30SecondCheck一次
   }
 
   private async closePool(): Promise<void> {
-    // 關閉所有連接
+    // Off閉所有Connect
     this.pool.connections = [];
     logger.info('Database pool closed');
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _databasePoolService = DatabasePoolService.getInstance();
 
 export default databasePoolService;

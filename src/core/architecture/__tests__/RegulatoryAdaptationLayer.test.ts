@@ -1,6 +1,6 @@
 /**
- * RegulatoryAdaptationLayer 測試文件
- * 測試法規適應層的核心功能和子服務
+ * RegulatoryAdaptationLayer TestFile
+ * Test法規適應層的核心功能和子Service
  */
 
 import type { Regulation } from '../RegulatoryAdaptationLayer';
@@ -23,7 +23,7 @@ describe('RegulatoryAdaptationLayer', () => {
   let complianceEngine: ComplianceEngine;
 
   beforeEach(async () => {
-    // 重置單例實例
+    // Reset單例Instance
     (RegulatoryAdaptationLayer as any).instance = undefined;
 
     adaptationLayer = RegulatoryAdaptationLayer.getInstance();
@@ -47,7 +47,7 @@ describe('RegulatoryAdaptationLayer', () => {
 
     it('應該正確初始化', async () => {
       expect(adaptationLayer).toBeDefined();
-      // 驗證初始化後有數據
+      // VerifyInitialize後有Data
       const _jurisdictions = adaptationLayer.getAllJurisdictions();
       const _regulations = adaptationLayer.getAllRegulations();
       expect(jurisdictions.length).toBeGreaterThan(0);
@@ -180,7 +180,7 @@ describe('RegulatoryAdaptationLayer', () => {
     });
 
     it('應該清除相關緩存', async () => {
-      // 先獲取映射以建立緩存
+      // 先GetMap以建立Cache
       await adaptationLayer.getRegulationMapping('US');
 
       const newRegulation: Regulation = {
@@ -196,7 +196,7 @@ describe('RegulatoryAdaptationLayer', () => {
       };
 
       await adaptationLayer.updateRegulation(newRegulation);
-      // 更新後應該重新創建映射
+      // Update後應該ReCreateMap
       const _mapping = await adaptationLayer.getRegulationMapping('US');
       expect(mapping.lastUpdated).toBeDefined();
     });
@@ -228,7 +228,7 @@ describe('RegulatoryAdaptationLayer', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     it('應該處理未初始化的調用', async () => {
       const _uninitializedLayer = RegulatoryAdaptationLayer.getInstance();
       (uninitializedLayer as any).isInitialized = false;
@@ -238,8 +238,8 @@ describe('RegulatoryAdaptationLayer', () => {
       ).rejects.toThrow('RegulatoryAdaptationLayer not initialized');
     });
 
-    it('應該處理初始化失敗', async () => {
-      // 創建一個新的實例來測試初始化失敗
+    it('應該HandleInitializeFailed', async () => {
+      // Create一個新的Instance來TestInitializeFailed
       const _mockLayer = new (RegulatoryAdaptationLayer as any)();
       jest
         .spyOn(mockLayer as any, 'loadJurisdictions')
@@ -439,18 +439,18 @@ describe('RegulatoryAdaptationLayer 整合測試', () => {
   });
 
   it('應該完成完整的合規工作流程', async () => {
-    // 1. 檢測用戶司法管轄區
+    // 1. 檢測User司法管轄District
     const _jurisdiction = await detector.detectUserJurisdiction({
       country: 'TW',
       language: 'zh-TW',
     });
     expect(jurisdiction.code).toBe('TW');
 
-    // 2. 獲取法規映射
+    // 2. Get法規Map
     const _mapping = await mapper.getRegulationMapping(jurisdiction.code);
     expect(mapping.jurisdiction.code).toBe('TW');
 
-    // 3. 檢查合規狀態
+    // 3. Check合規Status
     const _mockImplementation = {
       dataSubjectRights: true,
       consentManagement: false,
@@ -461,7 +461,7 @@ describe('RegulatoryAdaptationLayer 整合測試', () => {
     );
     expect(compliance.overall).toBeDefined();
 
-    // 4. 生成合規報告
+    // 4. 生成合規Report
     const _report = await engine.generateComplianceReport(
       jurisdiction.code,
       mockImplementation
@@ -484,7 +484,7 @@ describe('RegulatoryAdaptationLayer 整合測試', () => {
   });
 
   it('應該正確處理法規更新', async () => {
-    // 更新法規
+    // Update法規
     const updatedRegulation: Regulation = {
       id: 'GDPR',
       name: 'Updated GDPR',
@@ -509,7 +509,7 @@ describe('RegulatoryAdaptationLayer 整合測試', () => {
 
     await adaptationLayer.updateRegulation(updatedRegulation);
 
-    // 驗證更新
+    // VerifyUpdate
     const _mapping = await mapper.getRegulationMapping('EU');
     const _gdpr = mapping.applicableRegulations.find(r => r.id === 'GDPR');
     expect(gdpr?.name).toBe('Updated GDPR');

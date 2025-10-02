@@ -57,9 +57,9 @@ export class JWTService {
 
   async initialize(): Promise<ApiResponse> {
     try {
-      logger.info('初始化 JWT 服務');
+      logger.info('Initialize JWT Service');
 
-      // 驗證配置
+      // VerifyConfigure
       if (
         !this.config.secret ||
         this.config.secret === 'default-jwt-secret-key'
@@ -68,7 +68,7 @@ export class JWTService {
       }
 
       this.isInitialized = true;
-      logger.info('JWT 服務初始化完成');
+      logger.info('JWT ServiceInitialize完成');
 
       return {
         success: true,
@@ -78,14 +78,14 @@ export class JWTService {
           issuer: this.config.issuer,
           audience: this.config.audience,
         },
-        message: 'JWT 服務初始化成功',
+        message: 'JWT ServiceInitializeSuccess',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('JWT 服務初始化失敗:', error);
+      logger.error('JWT ServiceInitializeFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -98,7 +98,7 @@ export class JWTService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'JWT 服務未初始化',
+          error: 'JWT Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -117,7 +117,7 @@ export class JWTService {
         aud: this.config.audience,
       };
 
-      // 生成刷新令牌
+      // 生成Refresh令牌
       const refreshTokenPayload: JWTPayload = {
         userId: payload.userId,
         email: payload.email,
@@ -145,10 +145,10 @@ export class JWTService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('生成 JWT 令牌失敗:', error);
+      logger.error('生成 JWT 令牌Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -159,7 +159,7 @@ export class JWTService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'JWT 服務未初始化',
+          error: 'JWT Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -173,7 +173,7 @@ export class JWTService {
         };
       }
 
-      // 檢查令牌是否過期
+      // Check令牌YesNo過期
       const _now = Math.floor(Date.now() / 1000);
       if (payload.exp && payload.exp < now) {
         return {
@@ -183,7 +183,7 @@ export class JWTService {
         };
       }
 
-      // 檢查發行者
+      // Check發Row者
       if (payload.iss && payload.iss !== this.config.issuer) {
         return {
           success: false,
@@ -192,7 +192,7 @@ export class JWTService {
         };
       }
 
-      // 檢查受眾
+      // Check受眾
       if (payload.aud && payload.aud !== this.config.audience) {
         return {
           success: false,
@@ -201,7 +201,7 @@ export class JWTService {
         };
       }
 
-      logger.info(`驗證 JWT 令牌成功: ${payload.email}`);
+      logger.info(`Verify JWT 令牌Success: ${payload.email}`);
 
       return {
         success: true,
@@ -209,10 +209,10 @@ export class JWTService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('驗證 JWT 令牌失敗:', error);
+      logger.error('Verify JWT 令牌Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -223,12 +223,12 @@ export class JWTService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'JWT 服務未初始化',
+          error: 'JWT Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 驗證刷新令牌
+      // VerifyRefresh令牌
       const _verifyResult = this.verifyToken(refreshToken);
       if (!verifyResult.success || !verifyResult.data) {
         return {
@@ -252,7 +252,7 @@ export class JWTService {
       if (!newTokenResult.success || !newTokenResult.data) {
         return {
           success: false,
-          error: '生成新令牌失敗',
+          error: '生成新令牌Failed',
           timestamp: Date.now(),
         };
       }
@@ -265,10 +265,10 @@ export class JWTService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('刷新 JWT 令牌失敗:', error);
+      logger.error('刷新 JWT 令牌Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -279,12 +279,12 @@ export class JWTService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: 'JWT 服務未初始化',
+          error: 'JWT Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 驗證令牌
+      // Verify令牌
       const _verifyResult = this.verifyToken(token);
       if (!verifyResult.success || !verifyResult.data) {
         return {
@@ -294,8 +294,8 @@ export class JWTService {
         };
       }
 
-      // 在實際應用中，這裡應該將令牌加入黑名單
-      // 目前只是記錄撤銷操作
+      // 在實際Apply中，這裡應該將令牌加入黑名單
+      // 目前只YesRecord撤銷Operation
       logger.info(`撤銷用戶 ${verifyResult.data.email} 的 JWT 令牌`);
 
       return {
@@ -304,10 +304,10 @@ export class JWTService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('撤銷 JWT 令牌失敗:', error);
+      logger.error('撤銷 JWT 令牌Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -327,13 +327,13 @@ export class JWTService {
       case 'd':
         return value * 24 * 60 * 60;
       default:
-        return parseInt(expiresIn) || 900; // 默認 15 分鐘
+        return parseInt(expiresIn) || 900; // Default 15 Minute
     }
   }
 
   private encodeToken(payload: JWTPayload): string {
-    // 簡化的 JWT 編碼實現
-    // 在實際應用中，應該使用專業的 JWT 庫
+    // 簡化的 JWT Encode實現
+    // 在實際Apply中，應該使用專業的 JWT Library
     const _header = {
       alg: 'HS256',
       typ: 'JWT',
@@ -362,8 +362,8 @@ export class JWTService {
   }
 
   private generateSignature(header: string, payload: string): string {
-    // 簡化的簽名生成
-    // 在實際應用中，應該使用 HMAC-SHA256
+    // 簡化的Sign生成
+    // 在實際Apply中，應該使用 HMAC-SHA256
     const _data = `${header}.${payload}`;
     return this.base64UrlEncode(this.simpleHash(data + this.config.secret));
   }
@@ -385,13 +385,13 @@ export class JWTService {
   }
 
   private simpleHash(str: string): string {
-    // 簡化的哈希函數
-    // 在實際應用中，應該使用 crypto.createHmac
+    // 簡化的哈希Function
+    // 在實際Apply中，應該使用 crypto.createHmac
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const _char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // 轉換為 32 位整數
+      hash = hash & hash; // Convert為 32 位整數
     }
     return hash.toString(16);
   }

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // eslint-disable-next-line no-console
-console.log('🔍 CardStrategy 服務監控檢查...');
+console.log('🔍 CardStrategy Service監控Check...');
 
 async function checkServiceHealth() {
   const results = {
@@ -11,7 +11,7 @@ async function checkServiceHealth() {
     overall: 'healthy'
   };
 
-  // 檢查配置文件
+  // CheckConfigureFile
   const configFiles = [
     'src/config/ai-keys/mixpanel-config.json',
     'src/config/ai-keys/sendgrid-config.json',
@@ -40,14 +40,14 @@ async function checkServiceHealth() {
   return results;
 }
 
-// 執行健康檢查
+// 執Row健康Check
 checkServiceHealth().then(results => {
   // eslint-disable-next-line no-console
   console.log('📊 監控結果:');
   // eslint-disable-next-line no-console
   console.log(JSON.stringify(results, null, 2));
   
-  // 保存結果
+  // Save結果
   const reportPath = path.join(__dirname, '../monitoring/health-report.json');
   fs.writeFileSync(reportPath, JSON.stringify(results, null, 2));
   // eslint-disable-next-line no-console

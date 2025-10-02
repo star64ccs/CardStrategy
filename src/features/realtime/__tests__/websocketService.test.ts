@@ -1,6 +1,6 @@
 /**
- * WebSocket 服務測試
- * 測試 WebSocket 服務的所有主要功能
+ * WebSocket ServiceTest
+ * Test WebSocket Service的所有主要功能
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -69,8 +69,8 @@ describe('WebSocketService', () => {
       await websocketService.initialize();
 
       expect((websocketService as any).isInitialized).toBe(true);
-      expect(mockLogger.info).toHaveBeenCalledWith('初始化 WebSocket 服務');
-      expect(mockLogger.info).toHaveBeenCalledWith('WebSocket 服務初始化完成');
+      expect(mockLogger.info).toHaveBeenCalledWith('Initialize WebSocket Service');
+      expect(mockLogger.info).toHaveBeenCalledWith('WebSocket ServiceInitialize完成');
     });
 
     it('should not reinitialize if already initialized', async () => {
@@ -104,7 +104,7 @@ describe('WebSocketService', () => {
         'WebSocket URL 不能為空'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'WebSocket 服務初始化失敗:',
+        'WebSocket ServiceInitializeFailed:',
         expect.any(Error)
       );
     });
@@ -143,10 +143,10 @@ describe('WebSocketService', () => {
       await connectPromise;
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        '開始 WebSocket 連接:',
+        '開始 WebSocket Connect:',
         expect.any(Object)
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('WebSocket 連接已建立');
+      expect(mockLogger.info).toHaveBeenCalledWith('WebSocket Connect已建立');
     });
 
     it('should not connect if already connecting', async () => {
@@ -154,7 +154,7 @@ describe('WebSocketService', () => {
 
       await websocketService.connect();
 
-      expect(mockLogger.info).not.toHaveBeenCalledWith('開始 WebSocket 連接:');
+      expect(mockLogger.info).not.toHaveBeenCalledWith('開始 WebSocket Connect:');
     });
 
     it('should not connect if already connected', async () => {
@@ -162,7 +162,7 @@ describe('WebSocketService', () => {
 
       await websocketService.connect();
 
-      expect(mockLogger.info).not.toHaveBeenCalledWith('開始 WebSocket 連接:');
+      expect(mockLogger.info).not.toHaveBeenCalledWith('開始 WebSocket Connect:');
     });
   });
 
@@ -185,7 +185,7 @@ describe('WebSocketService', () => {
       websocketService.disconnect();
 
       expect(mockWebSocket.close).toHaveBeenCalledWith(1000, 'Normal closure');
-      expect(mockLogger.info).toHaveBeenCalledWith('斷開 WebSocket 連接');
+      expect(mockLogger.info).toHaveBeenCalledWith('斷開 WebSocket Connect');
       expect((websocketService as any).websocket).toBeNull();
     });
   });
@@ -218,7 +218,7 @@ describe('WebSocketService', () => {
         expect.stringContaining('test message')
       );
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        '消息發送成功:',
+        '消息發送Success:',
         expect.any(Object)
       );
     });
@@ -258,7 +258,7 @@ describe('WebSocketService', () => {
         'Send failed'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '發送消息失敗:',
+        '發送消息Failed:',
         expect.any(Error)
       );
     });
@@ -446,7 +446,7 @@ describe('WebSocketService', () => {
 
       await websocketService.reconnect();
 
-      expect(mockLogger.info).not.toHaveBeenCalledWith('開始重新連接');
+      expect(mockLogger.info).not.toHaveBeenCalledWith('開始重新Connect');
     });
   });
 

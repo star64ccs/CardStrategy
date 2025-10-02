@@ -1,41 +1,41 @@
-// 可訪問性基礎設施類型定義
-// 符合 WCAG 2.1 AA 標準和 Section 508 要求
+// 可訪問性基礎設施Class型定義
+// 符合 WCAG 2.1 AA Standard和 Section 508 要求
 
-// 基礎可訪問性屬性
+// 基礎可訪問性Property
 export interface AccessibilityProps {
-  /** 元素的 ARIA 標籤 */
+  /** Element的 ARIA Tag */
   'aria-label'?: string;
-  /** 元素的 ARIA 描述 */
+  /** Element的 ARIA Description */
   'aria-describedby'?: string;
-  /** 元素的 ARIA 標題 */
+  /** Element的 ARIA 標題 */
   'aria-labelledby'?: string;
-  /** 元素的 ARIA 角色 */
+  /** Element的 ARIA 角色 */
   'aria-role'?: string;
-  /** 元素是否隱藏 */
+  /** ElementYesNoHide */
   'aria-hidden'?: boolean;
-  /** 元素是否展開 */
+  /** ElementYesNo展On */
   'aria-expanded'?: boolean;
-  /** 元素是否選中 */
+  /** ElementYesNo選中 */
   'aria-selected'?: boolean;
-  /** 元素是否按下 */
+  /** ElementYesNo按下 */
   'aria-pressed'?: boolean;
-  /** 元素是否必填 */
+  /** ElementYesNo必填 */
   'aria-required'?: boolean;
-  /** 元素是否無效 */
+  /** ElementYesNo無效 */
   'aria-invalid'?: boolean;
-  /** 元素的當前值 */
+  /** Element的當前Value */
   'aria-valuenow'?: number;
-  /** 元素的最小值 */
+  /** Element的最小Value */
   'aria-valuemin'?: number;
-  /** 元素的最大值 */
+  /** Element的最大Value */
   'aria-valuemax'?: number;
-  /** 元素的當前值文本 */
+  /** Element的當前Value文本 */
   'aria-valuetext'?: string;
-  /** 元素的活躍描述 */
+  /** Element的活躍Description */
   'aria-live'?: 'off' | 'polite' | 'assertive';
-  /** 元素的原子性 */
+  /** Element的原子性 */
   'aria-atomic'?: boolean;
-  /** 元素的相關性 */
+  /** Element的相Off性 */
   'aria-relevant'?:
     | 'additions'
     | 'additions removals'
@@ -47,30 +47,30 @@ export interface AccessibilityProps {
     | 'text'
     | 'text additions'
     | 'text removals';
-  /** 元素的忙狀態 */
+  /** Element的忙Status */
   'aria-busy'?: boolean;
-  /** 元素的控件 */
+  /** Element的控件 */
   'aria-controls'?: string;
-  /** 元素的擁有者 */
+  /** Element的擁有者 */
   'aria-owns'?: string;
-  /** 元素的流程 */
+  /** Element的流程 */
   'aria-flowto'?: string;
-  /** 元素的目標 */
+  /** Element的目標 */
   'aria-target'?: string;
-  /** 元素的激活鍵 */
+  /** Element的ActivateKey */
   'aria-keyshortcuts'?: string;
-  /** 元素的激活鍵描述 */
+  /** Element的ActivateKeyDescription */
   'aria-keyshortcuts-description'?: string;
 }
 
-// ARIA 屬性擴展
+// ARIA PropertyExtension
 export interface ARIAProps {
-  // 標籤和描述
+  // Tag和Description
   label?: string;
   labelledBy?: string;
   describedBy?: string;
 
-  // 角色和狀態
+  // 角色和Status
   role?: string;
   hidden?: boolean;
   expanded?: boolean;
@@ -81,34 +81,34 @@ export interface ARIAProps {
   required?: boolean;
   invalid?: boolean;
 
-  // 實時區域
+  // 實Timezone域
   live?: 'off' | 'polite' | 'assertive';
   atomic?: boolean;
   relevant?: string;
   busy?: boolean;
 
-  // 導航和關係
+  // 導航和Off係
   current?: boolean | 'page' | 'step' | 'location' | 'date' | 'time';
   controls?: string;
   owns?: string;
 
-  // 列表和進度
+  // List和進度
   posinset?: number;
   setsize?: number;
   level?: number;
 
-  // 數值
+  // 數Value
   valuemin?: number;
   valuemax?: number;
   valuenow?: number;
   valuetext?: string;
 }
 
-// 焦點管理配置
+// 焦點ManageConfigure
 export interface FocusManagerConfig {
-  /** 焦點陷阱是否啟用 */
+  /** 焦點陷阱YesNoEnable */
   trapFocus?: boolean;
-  /** 焦點恢復元素 */
+  /** 焦點RestoreElement */
   restoreFocus?: boolean;
   /** 焦點順序 */
   focusOrder?: string[];
@@ -120,66 +120,66 @@ export interface FocusManagerConfig {
   focusIndicatorWidth?: string;
   /** 焦點指示器樣式 */
   focusIndicatorStyle?: 'solid' | 'dashed' | 'dotted';
-  /** 焦點指示器偏移 */
+  /** 焦點指示器Offset */
   focusIndicatorOffset?: string;
   /** 焦點指示器動畫 */
   focusIndicatorAnimation?: boolean;
-  /** 焦點指示器持續時間 */
+  /** 焦點指示器持續Time */
   focusIndicatorDuration?: number;
-  /** 焦點指示器緩動函數 */
+  /** 焦點指示器緩動Function */
   focusIndicatorEasing?: string;
 }
 
-// 焦點管理狀態
+// 焦點ManageStatus
 export interface FocusManagerState {
-  /** 當前焦點元素 */
+  /** 當前焦點Element */
   currentFocus: string | null;
   /** 焦點歷史 */
   focusHistory: string[];
-  /** 焦點陷阱狀態 */
+  /** 焦點陷阱Status */
   isTrapped: boolean;
-  /** 焦點指示器狀態 */
+  /** 焦點指示器Status */
   showIndicator: boolean;
   /** 焦點順序 */
   focusOrder: string[];
-  /** 焦點恢復元素 */
+  /** 焦點RestoreElement */
   restoreElement: string | null;
 }
 
-// 鍵盤導航配置
+// Key盤導航Configure
 export interface KeyboardNavigationConfig {
-  /** 是否啟用鍵盤導航 */
+  /** YesNoEnableKey盤導航 */
   enabled?: boolean;
   /** 導航模式 */
   mode?: 'linear' | 'grid' | 'tree' | 'custom';
-  /** 方向鍵支持 */
+  /** 方向KeySupport */
   arrowKeys?: boolean;
-  /** Tab 鍵支持 */
+  /** Tab KeySupport */
   tabKey?: boolean;
-  /** Enter 鍵支持 */
+  /** Enter KeySupport */
   enterKey?: boolean;
-  /** Escape 鍵支持 */
+  /** Escape KeySupport */
   escapeKey?: boolean;
-  /** 空格鍵支持 */
+  /** Empty格KeySupport */
   spaceKey?: boolean;
-  /** 自定義快捷鍵 */
+  /** Custom快捷Key */
   shortcuts?: Record<string, string>;
-  /** 鍵盤事件處理器 */
+  /** Key盤EventHandle器 */
   handlers?: Record<string, (event: KeyboardEvent) => void>;
 }
 
-// 屏幕閱讀器配置
+// 屏幕閱讀器Configure
 export interface ScreenReaderConfig {
-  /** 是否啟用屏幕閱讀器支持 */
+  /** YesNoEnable屏幕閱讀器Support */
   enabled?: boolean;
-  /** 語音設置 */
+  /** 語音Settings */
   voice?: {
     rate?: number;
     pitch?: number;
     volume?: number;
     language?: string;
   };
-  /** 朗讀設置 */
+  /** 朗讀Settings */
   reading?: {
     autoRead?: boolean;
     readOnFocus?: boolean;
@@ -198,25 +198,25 @@ export interface ScreenReaderConfig {
   };
 }
 
-// 可訪問性配置
+// 可訪問性Configure
 export interface AccessibilityConfig {
-  /** 焦點管理配置 */
+  /** 焦點ManageConfigure */
   focusManager?: FocusManagerConfig;
-  /** 鍵盤導航配置 */
+  /** Key盤導航Configure */
   keyboardNavigation?: KeyboardNavigationConfig;
-  /** 屏幕閱讀器配置 */
+  /** 屏幕閱讀器Configure */
   screenReader?: ScreenReaderConfig;
-  /** 高對比度支持 */
+  /** 高對比度Support */
   highContrast?: boolean;
-  /** 減少動畫支持 */
+  /** 減少動畫Support */
   reducedMotion?: boolean;
-  /** 大字體支持 */
+  /** 大字體Support */
   largeText?: boolean;
-  /** 語音控制支持 */
+  /** 語音ControlSupport */
   voiceControl?: boolean;
-  /** 開關控制支持 */
+  /** OnOffControlSupport */
   switchControl?: boolean;
-  /** 輔助技術支持 */
+  /** 輔助技術Support */
   assistiveTechnology?: {
     screenReader?: boolean;
     voiceControl?: boolean;
@@ -226,11 +226,11 @@ export interface AccessibilityConfig {
   };
 }
 
-// 可訪問性狀態
+// 可訪問性Status
 export interface AccessibilityState {
-  /** 配置 */
+  /** Configure */
   config: AccessibilityConfig;
-  /** 焦點管理狀態 */
+  /** 焦點ManageStatus */
   focusManager: FocusManagerState;
   /** 當前可訪問性模式 */
   mode: 'default' | 'highContrast' | 'reducedMotion' | 'largeText';
@@ -254,9 +254,9 @@ export interface AccessibilityState {
 export interface AccessibilityIssue {
   /** 問題 ID */
   id: string;
-  /** 問題類型 */
+  /** 問題Class型 */
   type: 'error' | 'warning' | 'info';
-  /** 問題描述 */
+  /** 問題Description */
   description: string;
   /** 問題位置 */
   location: string;
@@ -264,9 +264,9 @@ export interface AccessibilityIssue {
   severity: 'low' | 'medium' | 'high' | 'critical';
   /** 修復建議 */
   fix: string;
-  /** WCAG 標準 */
+  /** WCAG Standard */
   wcagCriteria: string[];
-  /** 是否已修復 */
+  /** YesNo已修復 */
   fixed: boolean;
 }
 
@@ -274,9 +274,9 @@ export interface AccessibilityIssue {
 export interface AccessibilitySuggestion {
   /** 建議 ID */
   id: string;
-  /** 建議類型 */
+  /** 建議Class型 */
   type: 'improvement' | 'enhancement' | 'optimization';
-  /** 建議描述 */
+  /** 建議Description */
   description: string;
   /** 建議位置 */
   location: string;
@@ -286,39 +286,39 @@ export interface AccessibilitySuggestion {
   implementation: string;
   /** 預期效果 */
   impact: string;
-  /** 是否已實施 */
+  /** YesNo已實施 */
   implemented: boolean;
 }
 
-// 可訪問性測試配置
+// 可訪問性TestConfigure
 export interface AccessibilityTestConfig {
-  /** 測試類型 */
+  /** TestClass型 */
   type: 'automated' | 'manual' | 'assistive';
-  /** 測試標準 */
+  /** TestStandard */
   standards: ('WCAG2.1AA' | 'WCAG2.1AAA' | 'Section508' | 'EN301549')[];
-  /** 測試工具 */
+  /** TestTool */
   tools: string[];
-  /** 測試環境 */
+  /** Test環境 */
   environment: {
     browser?: string;
     screenReader?: string;
     assistiveTechnology?: string;
   };
-  /** 測試範圍 */
+  /** Test範圍 */
   scope: 'component' | 'page' | 'application';
-  /** 測試深度 */
+  /** Test深度 */
   depth: 'basic' | 'comprehensive' | 'expert';
 }
 
-// 可訪問性測試結果
+// 可訪問性Test結果
 export interface AccessibilityTestResult {
-  /** 測試 ID */
+  /** Test ID */
   id: string;
-  /** 測試配置 */
+  /** TestConfigure */
   config: AccessibilityTestConfig;
-  /** 測試時間 */
+  /** TestTime */
   timestamp: Date;
-  /** 測試結果 */
+  /** Test結果 */
   result: {
     passed: number;
     failed: number;
@@ -331,15 +331,15 @@ export interface AccessibilityTestResult {
     suggestions: AccessibilitySuggestion[];
     score: number;
   };
-  /** 測試報告 */
+  /** TestReport */
   report: string;
-  /** 是否通過 */
+  /** YesNo通過 */
   passed: boolean;
 }
 
-// 可訪問性事件
+// 可訪問性Event
 export interface AccessibilityEvent {
-  /** 事件類型 */
+  /** EventClass型 */
   type:
     | 'focus'
     | 'blur'
@@ -349,29 +349,29 @@ export interface AccessibilityEvent {
     | 'complete'
     | 'issue'
     | 'suggestion';
-  /** 事件目標 */
+  /** Event目標 */
   target: string;
-  /** 事件數據 */
+  /** EventData */
   data: unknown;
-  /** 事件時間 */
+  /** EventTime */
   timestamp: Date;
-  /** 事件上下文 */
+  /** Event上下文 */
   context: Record<string, any>;
 }
 
-// 可訪問性服務配置
+// 可訪問性ServiceConfigure
 export interface AccessibilityServiceConfig {
-  /** 服務名稱 */
+  /** Service名稱 */
   name: string;
-  /** 服務版本 */
+  /** ServiceVersion */
   version: string;
-  /** 默認配置 */
+  /** DefaultConfigure */
   defaultConfig: AccessibilityConfig;
-  /** 測試配置 */
+  /** TestConfigure */
   testConfig: AccessibilityTestConfig;
-  /** 事件處理器 */
+  /** EventHandle器 */
   eventHandlers: Record<string, (event: AccessibilityEvent) => void>;
-  /** 日誌設置 */
+  /** LogSettings */
   logging: {
     enabled: boolean;
     level: 'debug' | 'info' | 'warn' | 'error';
@@ -379,50 +379,50 @@ export interface AccessibilityServiceConfig {
   };
 }
 
-// 可訪問性服務事件
+// 可訪問性ServiceEvent
 export interface AccessibilityServiceEvent {
-  /** 事件類型 */
+  /** EventClass型 */
   type: string;
-  /** 事件數據 */
+  /** EventData */
   data: unknown;
-  /** 事件時間 */
+  /** EventTime */
   timestamp: Date;
-  /** 事件來源 */
+  /** Event來源 */
   source: string;
 }
 
-// 可訪問性服務接口
+// 可訪問性ServiceInterface
 export interface AccessibilityService {
-  /** 初始化服務 */
+  /** InitializeService */
   init(config?: Partial<AccessibilityServiceConfig>): void;
-  /** 更新配置 */
+  /** UpdateConfigure */
   updateConfig(config: Partial<AccessibilityConfig>): void;
-  /** 獲取當前狀態 */
+  /** Get當前Status */
   getState(): AccessibilityState;
-  /** 運行可訪問性測試 */
+  /** 運Row可訪問性Test */
   runTest(
     config?: Partial<AccessibilityTestConfig>
   ): Promise<AccessibilityTestResult>;
-  /** 生成測試報告 */
+  /** 生成TestReport */
   generateReport(result: AccessibilityTestResult): string;
   /** 修復可訪問性問題 */
   fixIssues(issues: AccessibilityIssue[]): Promise<void>;
-  /** 監聽事件 */
+  /** 監聽Event */
   onEvent(
     type: string,
     handler: (event: AccessibilityServiceEvent) => void
   ): void;
-  /** 發送事件 */
+  /** SendEvent */
   emitEvent(event: AccessibilityServiceEvent): void;
-  /** 銷毀服務 */
+  /** 銷毀Service */
   destroy(): void;
 }
 
-// 可訪問性 Hook 返回值
+// 可訪問性 Hook ReturnValue
 export interface UseAccessibilityReturn {
-  /** 可訪問性狀態 */
+  /** 可訪問性Status */
   state: AccessibilityState;
-  /** 焦點管理 */
+  /** 焦點Manage */
   focusManager: {
     focus: (elementId: string) => void;
     blur: () => void;
@@ -433,7 +433,7 @@ export interface UseAccessibilityReturn {
     first: () => void;
     last: () => void;
   };
-  /** 鍵盤導航 */
+  /** Key盤導航 */
   keyboardNavigation: {
     enable: () => void;
     disable: () => void;
@@ -447,7 +447,7 @@ export interface UseAccessibilityReturn {
     read: (elementId: string) => void;
     stop: () => void;
   };
-  /** 可訪問性工具 */
+  /** 可訪問性Tool */
   tools: {
     runTest: (
       config?: Partial<AccessibilityTestConfig>
@@ -457,37 +457,37 @@ export interface UseAccessibilityReturn {
     getIssues: () => AccessibilityIssue[];
     getSuggestions: () => AccessibilitySuggestion[];
   };
-  /** 配置更新 */
+  /** ConfigureUpdate */
   updateConfig: (config: Partial<AccessibilityConfig>) => void;
-  /** 模式切換 */
+  /** 模式Switch */
   switchMode: (mode: AccessibilityState['mode']) => void;
 }
 
-// 可訪問性組件屬性
+// 可訪問性ComponentProperty
 export interface AccessibilityComponentProps {
-  /** 可訪問性配置 */
+  /** 可訪問性Configure */
   accessibility?: Partial<AccessibilityConfig>;
-  /** 焦點管理配置 */
+  /** 焦點ManageConfigure */
   focusManager?: Partial<FocusManagerConfig>;
-  /** 鍵盤導航配置 */
+  /** Key盤導航Configure */
   keyboardNavigation?: Partial<KeyboardNavigationConfig>;
-  /** 屏幕閱讀器配置 */
+  /** 屏幕閱讀器Configure */
   screenReader?: Partial<ScreenReaderConfig>;
-  /** 子組件 */
+  /** 子Component */
   children?: React.ReactNode;
-  /** 樣式類名 */
+  /** 樣式Class名 */
   className?: string;
   /** 內聯樣式 */
   style?: React.CSSProperties;
-  /** 測試 ID */
+  /** Test ID */
   testId?: string;
 }
 
-// 焦點管理組件屬性
+// 焦點ManageComponentProperty
 export interface FocusManagerProps extends AccessibilityComponentProps {
   /** 焦點陷阱 */
   trapFocus?: boolean;
-  /** 焦點恢復 */
+  /** 焦點Restore */
   restoreFocus?: boolean;
   /** 焦點順序 */
   focusOrder?: string[];
@@ -499,61 +499,61 @@ export interface FocusManagerProps extends AccessibilityComponentProps {
   focusIndicatorWidth?: string;
   /** 焦點指示器樣式 */
   focusIndicatorStyle?: FocusManagerConfig['focusIndicatorStyle'];
-  /** 焦點指示器偏移 */
+  /** 焦點指示器Offset */
   focusIndicatorOffset?: string;
   /** 焦點指示器動畫 */
   focusIndicatorAnimation?: boolean;
-  /** 焦點指示器持續時間 */
+  /** 焦點指示器持續Time */
   focusIndicatorDuration?: number;
-  /** 焦點指示器緩動函數 */
+  /** 焦點指示器緩動Function */
   focusIndicatorEasing?: string;
-  /** 焦點事件處理器 */
+  /** 焦點EventHandle器 */
   onFocus?: (elementId: string) => void;
-  /** 失焦事件處理器 */
+  /** 失焦EventHandle器 */
   onBlur?: (elementId: string) => void;
-  /** 焦點變化事件處理器 */
+  /** 焦點變化EventHandle器 */
   onFocusChange?: (from: string, to: string) => void;
 }
 
-// 屏幕閱讀器組件屬性
+// 屏幕閱讀器ComponentProperty
 export interface ScreenReaderProps extends AccessibilityComponentProps {
-  /** 自動朗讀 */
+  /** Auto朗讀 */
   autoRead?: boolean;
   /** 焦點朗讀 */
   readOnFocus?: boolean;
   /** 變化朗讀 */
   readOnChange?: boolean;
-  /** 錯誤朗讀 */
+  /** Error朗讀 */
   readOnError?: boolean;
-  /** 成功朗讀 */
+  /** Success朗讀 */
   readOnSuccess?: boolean;
-  /** 語音設置 */
+  /** 語音Settings */
   voice?: ScreenReaderConfig['voice'];
   /** 語音反饋 */
   feedback?: ScreenReaderConfig['feedback'];
-  /** 朗讀事件處理器 */
+  /** 朗讀EventHandle器 */
   onSpeak?: (text: string, priority: string) => void;
-  /** 停止朗讀事件處理器 */
+  /** Stop朗讀EventHandle器 */
   onStop?: () => void;
 }
 
-// 可訪問性測試工具屬性
+// 可訪問性TestToolProperty
 export interface AccessibilityTestToolProps
   extends AccessibilityComponentProps {
-  /** 測試配置 */
+  /** TestConfigure */
   testConfig?: Partial<AccessibilityTestConfig>;
-  /** 測試結果 */
+  /** Test結果 */
   testResult?: AccessibilityTestResult;
-  /** 是否顯示測試工具 */
+  /** YesNoShowTestTool */
   showTool?: boolean;
-  /** 測試工具位置 */
+  /** TestTool位置 */
   toolPosition?: 'top' | 'bottom' | 'left' | 'right';
-  /** 測試工具樣式 */
+  /** TestTool樣式 */
   toolStyle?: 'floating' | 'sidebar' | 'modal';
-  /** 測試事件處理器 */
+  /** TestEventHandle器 */
   onTestStart?: (config: AccessibilityTestConfig) => void;
-  /** 測試完成事件處理器 */
+  /** TestCompleteEventHandle器 */
   onTestComplete?: (result: AccessibilityTestResult) => void;
-  /** 測試錯誤事件處理器 */
+  /** TestErrorEventHandle器 */
   onTestError?: (error: Error) => void;
 }

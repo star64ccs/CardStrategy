@@ -2,7 +2,7 @@ import { communicationService } from '../shared/services/communication/communica
 
 describe('CommunicationService', () => {
   beforeEach(() => {
-    // 重置環境變量
+    // Reset環境Variable
     delete process.env.SENDGRID_API_KEY;
     delete process.env.TWILIO_ACCOUNT_SID;
     delete process.env.TWILIO_AUTH_TOKEN;
@@ -11,13 +11,13 @@ describe('CommunicationService', () => {
   });
 
   describe('初始化', () => {
-    test('應該正確初始化服務', () => {
+    test('應該正確InitializeService', () => {
       expect(communicationService).toBeDefined();
       expect(typeof communicationService.getAvailableChannels).toBe('function');
     });
   });
 
-  describe('服務可用性檢查', () => {
+  describe('Service可用性Check', () => {
     test('應該正確檢查可用渠道', () => {
       const _channels = communicationService.getAvailableChannels();
       expect(channels).toHaveProperty('email');
@@ -70,7 +70,7 @@ describe('CommunicationService', () => {
   });
 
   describe('發送通知', () => {
-    test('應該在用戶偏好不存在時返回錯誤', async () => {
+    test('應該在用戶偏好不存在時返回Error', async () => {
       const _notification = {
         userId: 'non-existent-user',
         type: 'welcome' as const,
@@ -87,7 +87,7 @@ describe('CommunicationService', () => {
     });
 
     test('應該返回正確的響應格式', async () => {
-      // 設置用戶偏好
+      // SettingsUserPreferences
       const _preferences = {
         userId: 'test-user-3',
         email: true,
@@ -116,7 +116,7 @@ describe('CommunicationService', () => {
   });
 
   describe('批量發送通知', () => {
-    test('空通知列表應該返回成功', async () => {
+    test('空通知列表應該返回Success', async () => {
       const _result = await communicationService.sendBulkNotifications([]);
 
       expect(result.success).toBe(true);
@@ -128,7 +128,7 @@ describe('CommunicationService', () => {
     });
 
     test('應該返回正確的響應格式', async () => {
-      // 設置用戶偏好
+      // SettingsUserPreferences
       const _preferences = {
         userId: 'test-user-4',
         email: true,
@@ -166,7 +166,7 @@ describe('CommunicationService', () => {
     });
   });
 
-  describe('獲取服務統計', () => {
+  describe('GetService統計', () => {
     test('應該返回正確的統計格式', async () => {
       const _result = await communicationService.getServiceStats();
 
@@ -207,7 +207,7 @@ describe('CommunicationService', () => {
         priority: 'high' as const,
       };
 
-      // 這個測試主要驗證方法調用不會拋出錯誤
+      // 這個Test主要VerifyMethod調用不會ThrowError
       expect(async () => {
         await communicationService.sendNotification(notification);
       }).not.toThrow();
@@ -232,7 +232,7 @@ describe('CommunicationService', () => {
         priority: 'high' as const,
       };
 
-      // 這個測試主要驗證方法調用不會拋出錯誤
+      // 這個Test主要VerifyMethod調用不會ThrowError
       expect(async () => {
         await communicationService.sendNotification(notification);
       }).not.toThrow();

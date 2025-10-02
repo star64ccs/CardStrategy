@@ -66,7 +66,7 @@ global.cancelAnimationFrame = jest.fn();
 describe('動畫系統測試', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // 重置 matchMedia mock
+    // Reset matchMedia mock
     mockMatchMedia.mockReturnValue({
       matches: false,
       addEventListener: jest.fn(),
@@ -78,7 +78,7 @@ describe('動畫系統測試', () => {
     let animationService: AnimationService;
 
     beforeEach(() => {
-      // 清除單例實例以確保測試隔離
+      // Clear單例Instance以確保Test隔離
       (AnimationService as any).instance = undefined;
       animationService = AnimationService.getInstance();
     });
@@ -152,20 +152,20 @@ describe('動畫系統測試', () => {
       const _callback = jest.fn();
       animationService.on('test-event', callback);
 
-      // 模擬事件觸發
+      // 模擬Event觸發
       const _event = {
         type: 'start' as const,
         timestamp: Date.now(),
         animation: { duration: 300, easing: 'ease-out' },
       };
 
-      // 這裡需要訪問私有方法來測試事件觸發
-      // 由於私有方法無法直接訪問，我們測試事件註冊是否成功
+      // 這裡需要訪問PrivateMethod來TestEvent觸發
+      // 由於PrivateMethod無法直接訪問，我們TestEventRegisterYesNoSuccess
       expect(callback).toBeDefined();
     });
 
     test('應該處理批量操作', async () => {
-      // 創建多個動畫
+      // CreateMultiple動畫
       const _config1 = { duration: 300, easing: 'ease-out' };
       const _config2 = { duration: 400, easing: 'ease-in' };
 
@@ -250,21 +250,21 @@ describe('動畫系統測試', () => {
       expect(initialState.presets).toBeDefined();
     });
 
-    test('應該處理錯誤設置', () => {
+    test('應該HandleErrorSettings', () => {
       const _initialState = animationReducer(undefined, { type: 'unknown' });
       const _stateWithError = animationReducer(initialState, {
         type: 'animation/setError',
-        payload: '測試錯誤',
+        payload: '測試Error',
       });
 
-      expect(stateWithError.error).toBe('測試錯誤');
+      expect(stateWithError.error).toBe('測試Error');
     });
 
-    test('應該清除錯誤', () => {
+    test('應該清除Error', () => {
       const _initialState = animationReducer(undefined, { type: 'unknown' });
       const _stateWithError = animationReducer(initialState, {
         type: 'animation/setError',
-        payload: '測試錯誤',
+        payload: '測試Error',
       });
       const _stateWithoutError = animationReducer(stateWithError, {
         type: 'animation/clearError',
@@ -320,7 +320,7 @@ describe('動畫系統測試', () => {
     test('應該應用偏好設置', () => {
       const _animationService = AnimationService.getInstance();
 
-      // 設置減少動畫偏好
+      // Settings減少動畫Preferences
       animationService.updatePreferences({
         reducedMotion: true,
         animationDuration: 'fast',
@@ -334,7 +334,7 @@ describe('動畫系統測試', () => {
     test('應該處理動畫強度設置', () => {
       const _animationService = AnimationService.getInstance();
 
-      // 測試不同強度設置
+      // Test不同強度Settings
       const _intensities = ['minimal', 'normal', 'intense'] as const;
 
       intensities.forEach(intensity => {
@@ -345,11 +345,11 @@ describe('動畫系統測試', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    test('應該處理動畫創建失敗', () => {
+  describe('ErrorHandle', () => {
+    test('應該Handle動畫CreateFailed', () => {
       const _animationService = AnimationService.getInstance();
 
-      // 測試無效配置
+      // Test無效Configure
       expect(() => {
         animationService.createAnimation({} as any);
       }).not.toThrow();

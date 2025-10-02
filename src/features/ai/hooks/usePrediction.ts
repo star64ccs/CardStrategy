@@ -34,13 +34,13 @@ import type {
 import { PredictionHistory } from '../types/prediction';
 
 /**
- * AI 預測系統自定義 Hook
- * 提供預測功能、歷史查詢、統計分析等
+ * AI 預測系統Custom Hook
+ * 提供預測功能、歷史Query、StatisticsAnalysis等
  */
 export const _usePrediction = () => {
   const _dispatch = useAppDispatch();
 
-  // 狀態選擇器
+  // StatusSelect器
   const _currentPrediction = useAppSelector(selectCurrentPrediction);
   const _predictionHistory = useAppSelector(selectPredictionHistory);
   const _predictionStats = useAppSelector(selectPredictionStats);
@@ -53,7 +53,7 @@ export const _usePrediction = () => {
   const _recentPredictions = useAppSelector(selectRecentPredictions);
   const _modelPerformance = useAppSelector(selectModelPerformance);
 
-  // 預測操作
+  // 預測Operation
   const _predict = useCallback(
     async (request: PredictionRequest) => {
       try {
@@ -67,7 +67,7 @@ export const _usePrediction = () => {
     [dispatch]
   );
 
-  // 獲取預測歷史
+  // Get預測歷史
   const _getHistory = useCallback(
     async (cardId: string) => {
       try {
@@ -81,7 +81,7 @@ export const _usePrediction = () => {
     [dispatch]
   );
 
-  // 獲取預測統計
+  // Get預測Statistics
   const _getStats = useCallback(async () => {
     try {
       const _stats = await dispatch(getPredictionStats()).unwrap();
@@ -92,7 +92,7 @@ export const _usePrediction = () => {
     }
   }, [dispatch]);
 
-  // 獲取預測選項
+  // Get預測Options
   const _getOptions = useCallback(async () => {
     try {
       const _options = await dispatch(getPredictionOptions()).unwrap();
@@ -103,7 +103,7 @@ export const _usePrediction = () => {
     }
   }, [dispatch]);
 
-  // 更新預測選項
+  // Update預測Options
   const _updateOptions = useCallback(
     (newOptions: Partial<PredictionOptions>) => {
       dispatch(setPredictionOptions(newOptions));
@@ -111,22 +111,22 @@ export const _usePrediction = () => {
     [dispatch]
   );
 
-  // 清除當前預測
+  // Clear當前預測
   const _clearPrediction = useCallback(() => {
     dispatch(clearCurrentPrediction());
   }, [dispatch]);
 
-  // 清除錯誤
+  // ClearError
   const _clearErrorState = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 重置預測狀態
+  // Reset預測Status
   const _resetState = useCallback(() => {
     dispatch(resetPredictionState());
   }, [dispatch]);
 
-  // 添加預測到歷史
+  // Add預測到歷史
   const _addToHistory = useCallback(
     (prediction: PredictionResult) => {
       dispatch(addPredictionToHistory(prediction));
@@ -134,7 +134,7 @@ export const _usePrediction = () => {
     [dispatch]
   );
 
-  // 實用函數
+  // 實用Function
   const _getHistoryByCardId = useCallback(
     (cardId: string) => {
       return predictionHistory.find(history => history.cardId === cardId);
@@ -333,7 +333,7 @@ export const _usePrediction = () => {
   }, [modelPerformance]);
 
   return {
-    // 狀態
+    // Status
     currentPrediction,
     predictionHistory,
     predictionStats,
@@ -346,7 +346,7 @@ export const _usePrediction = () => {
     recentPredictions,
     modelPerformance,
 
-    // 操作
+    // Operation
     predict,
     getHistory,
     getStats,
@@ -357,7 +357,7 @@ export const _usePrediction = () => {
     resetState,
     addToHistory,
 
-    // 實用函數
+    // 實用Function
     getHistoryByCardId,
     getLatestPrediction,
     getPredictionTrend,

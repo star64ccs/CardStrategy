@@ -1,4 +1,4 @@
-// 簡單的測試來驗證 Jest 配置是否正常工作
+// 簡單的Test來Verify Jest ConfigureYesNo正常工作
 describe('Jest 配置測試', () => {
   it('應該能夠運行基本測試', () => {
     expect(1 + 1).toBe(2);

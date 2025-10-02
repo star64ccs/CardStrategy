@@ -23,10 +23,10 @@ router.post('/send-message', protect, async (req, res) => {
       contentLength: content.length,
     });
 
-    // ?��?消息ID
+    // ?��?MessageID
     const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // ?�建?�戶消息
+    // ?�建?�戶Message
 // eslint-disable-next-line no-unused-vars
     const userMessage = await ChatMessage.create({
       messageId,'
@@ -71,7 +71,7 @@ router.post('/send-message', protect, async (req, res) => {
         aiResponse =''
           '?��??��??��?！�??�您?�AI?��?，可以幫?�您?�詢?��?信息?��??��??�趨?�、�?供�?資建議�??��??�訴?�您?�要�?麼幫?��?';
     }
-    // ?�建AI?��?消息
+    // ?�建AI?��?Message
     const aiMessageId = `ai_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const aiMessage = await ChatMessage.create({
       messageId: aiMessageId,'
@@ -320,7 +320,7 @@ router.post('/recognize-intent', protect, async (req, res) => {
     if (category) {
       whereClause.category = category;
     }
-    // 模擬?��?庫�?�?    const mockItems = ['
+    // 模擬?��?Library�?�?    const mockItems = ['
       {''
         itemId: 'kb_001',''
         category: 'card_info',''
@@ -377,7 +377,7 @@ router.post('/recognize-intent', protect, async (req, res) => {
     });'
   }
 });''
-// 添�??��?庫�???router.post('/knowledge/items', protect, async (req, res) => {
+// 添�??��?Library�???router.post('/knowledge/items', protect, async (req, res) => {
   try {'
     const { category, title, content, keywords, source, language } = req.body;''
     logger.info('?? 添�??��?庫�???, { title, category });
@@ -640,14 +640,14 @@ router.get('/analytics/users/:userId', protect, async (req, res) => {
     });
   }
 });'
-// 設置?�戶?�好''
+// Settings?�戶?�好''
 router.put('/users/:userId/preferences', protect, async (req, res) => {
   try {
     const { userId } = req.params;'
     const preferences = req.body;''
     logger.info('?? 設置?�戶?�好', { userId });
 
-    // ?�新?�創建用?��?�?    await UserPreference.upsert({
+    // ?�新?�Create用?��?�?    await UserPreference.upsert({
       userId,
       ...preferences,
       updatedAt: new Date(),'

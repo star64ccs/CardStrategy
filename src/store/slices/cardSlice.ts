@@ -9,7 +9,7 @@ import type {
 } from '../../core/types';
 import { cardService } from '../../shared/services/cardService';
 
-// 異步 thunk
+// Async thunk
 export const _recognizeCard = createAsyncThunk(
   'card/recognizeCard',
   async (imageUri: string) => {
@@ -66,7 +66,7 @@ export const _verifyAuthenticity = createAsyncThunk(
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: CardState = {
   cards: [],
   selectedCard: null,
@@ -172,7 +172,7 @@ const _cardSlice = createSlice({
         state.recognitionAlternatives = action.payload.data.alternatives || [];
         state.recognitionFeatures = action.payload.data.imageFeatures;
 
-        // 添加到識別歷史
+        // Add到識別歷史
         if (action.payload.data.recognizedCard) {
           state.recognitionHistory.unshift({
             card: action.payload.data.recognizedCard,
@@ -181,7 +181,7 @@ const _cardSlice = createSlice({
             processingTime: action.payload.data.processingTime,
           });
 
-          // 限制歷史記錄數量
+          // Limit歷史Record數量
           if (state.recognitionHistory.length > 50) {
             state.recognitionHistory = state.recognitionHistory.slice(0, 50);
           }
@@ -260,7 +260,7 @@ const _cardSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 分析卡牌條件
+    // Analysis卡牌Condition
     builder
       .addCase(analyzeCondition.pending, state => {
         state.isAnalyzing = true;
@@ -269,7 +269,7 @@ const _cardSlice = createSlice({
       .addCase(analyzeCondition.fulfilled, (state, action) => {
         state.isAnalyzing = false;
         if (state.selectedCard) {
-          // 將單個分析結果轉換為數組格式
+          // 將SingleAnalysis結果Convert為Array格式
           state.selectedCard.conditionAnalysis = [
             {
               category: 'condition',
@@ -290,7 +290,7 @@ const _cardSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 驗證真偽
+    // VerifyTrue偽
     builder
       .addCase(verifyAuthenticity.pending, state => {
         state.isVerifying = true;
@@ -299,7 +299,7 @@ const _cardSlice = createSlice({
       .addCase(verifyAuthenticity.fulfilled, (state, action) => {
         state.isVerifying = false;
         if (state.selectedCard) {
-          // 將單個驗證結果轉換為數組格式
+          // 將SingleVerify結果Convert為Array格式
           state.selectedCard.authenticityCheck = [
             {
               category: 'authenticity',
@@ -334,7 +334,7 @@ export const {
   removeCard,
 } = cardSlice.actions;
 
-// 選擇器
+// Select器
 export const _selectIsRecognizing = (state: { cards: CardState }) =>
   state.cards.isRecognizing;
 export const _selectRecognizedCard = (state: { cards: CardState }) =>

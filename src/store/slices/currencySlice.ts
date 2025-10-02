@@ -17,7 +17,7 @@ import {
   DEFAULT_CURRENCY_STATE,
 } from '../../features/currency/types/currency';
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 export const _initializeCurrency = createAsyncThunk(
   'currency/initialize',
   async (_, { rejectWithValue }) => {
@@ -29,7 +29,7 @@ export const _initializeCurrency = createAsyncThunk(
       };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '初始化失敗'
+        error instanceof Error ? error.message : 'InitializeFailed'
       );
     }
   }
@@ -46,7 +46,7 @@ export const _changeCurrency = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '更改貨幣失敗'
+        error instanceof Error ? error.message : '更改貨幣Failed'
       );
     }
   }
@@ -63,7 +63,7 @@ export const _convertCurrency = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '貨幣轉換失敗'
+        error instanceof Error ? error.message : '貨幣轉換Failed'
       );
     }
   }
@@ -80,7 +80,7 @@ export const _getExchangeRate = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取匯率失敗'
+        error instanceof Error ? error.message : 'Get匯率Failed'
       );
     }
   }
@@ -94,7 +94,7 @@ export const _updateExchangeRates = createAsyncThunk(
       return { success: true };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '更新匯率失敗'
+        error instanceof Error ? error.message : 'Update匯率Failed'
       );
     }
   }
@@ -108,13 +108,13 @@ export const _getCurrencyStats = createAsyncThunk(
       return stats;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取統計失敗'
+        error instanceof Error ? error.message : 'Get統計Failed'
       );
     }
   }
 );
 
-// 創建 Slice
+// Create Slice
 const _currencySlice = createSlice({
   name: 'currency',
   initialState: DEFAULT_CURRENCY_STATE,
@@ -156,7 +156,7 @@ const _currencySlice = createSlice({
       state.userPreferences = { ...state.userPreferences, ...action.payload };
     },
     addEvent: (state, action: PayloadAction<CurrencyEvent>) => {
-      // 可以選擇將事件存儲在狀態中
+      // 可以Select將EventStorage在Status中
       state.lastUpdated = action.payload.timestamp;
     },
     reset: state => {
@@ -263,7 +263,7 @@ const _currencySlice = createSlice({
       })
       .addCase(getCurrencyStats.fulfilled, state => {
         state.isLoading = false;
-        // 統計數據可以通過 selector 從 service 獲取，不需要存儲在狀態中
+        // 統Count據可以通過 selector 從 service Get，不需要Storage在Status中
       })
       .addCase(getCurrencyStats.rejected, (state, action) => {
         state.isLoading = false;
@@ -272,7 +272,7 @@ const _currencySlice = createSlice({
   },
 });
 
-// 導出 Actions
+// Export Actions
 export const {
   setCurrentCurrency,
   setAvailableCurrencies,
@@ -286,7 +286,7 @@ export const {
   reset,
 } = currencySlice.actions;
 
-// 導出 Selectors
+// Export Selectors
 export const _selectCurrentCurrency = (state: { currency: CurrencyState }) =>
   state.currency.currentCurrency;
 export const _selectAvailableCurrencies = (state: {
@@ -307,7 +307,7 @@ export const _selectConversionHistory = (state: { currency: CurrencyState }) =>
 export const _selectUserPreferences = (state: { currency: CurrencyState }) =>
   state.currency.userPreferences;
 
-// 計算選擇器
+// 計算Select器
 export const _selectCurrentCurrencyInfo = (state: {
   currency: CurrencyState;
 }) => {

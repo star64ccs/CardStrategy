@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-// Cloudflare 配置 (使用已記錄的配置)
+// Cloudflare Configure (使用已Record的Configure)
 const cloudflareConfig = {
   zoneId: 'ceadb25b709450bbd450ad7cbd03bb68',
   apiToken: '2HWoQayJYac26tQQVlvWiNIDhxSibuwPUZoJ4ynM',
@@ -10,9 +10,9 @@ const cloudflareConfig = {
   apiUrl: 'https://api.cloudflare.com/client/v4',
 };
 
-// 檢查配置
+// CheckConfigure
 function checkConfiguration() {
-  // logger.info('🔍 檢查 Cloudflare 配置...');
+  // logger.info('🔍 Check Cloudflare Configure...');
 
   if (!cloudflareConfig.apiToken) {
     throw new Error('❌ 未設置 API Token');
@@ -26,16 +26,16 @@ function checkConfiguration() {
     throw new Error('❌ 未設置 Droplet IP');
   }
 
-  // logger.info('✅ 配置檢查通過');
-  // logger.info(`🌐 域名: ${cloudflareConfig.domain}`);
+  // logger.info('✅ ConfigureCheck通過');
+  // logger.info(`🌐 Domain: ${cloudflareConfig.domain}`);
   // logger.info(`🏷️  Zone ID: ${cloudflareConfig.zoneId}`);
   // logger.info(`🔑 API Token: ${cloudflareConfig.apiToken.substring(0, 8)}...`);
   // logger.info(`🌍 Droplet IP: ${cloudflareConfig.dropletIp}`);
 }
 
-// 獲取 Zone ID (如果沒有設置)
+// Get Zone ID (如果沒有Settings)
 async function getZoneId() {
-  // logger.info('🔍 獲取域名 Zone ID...');
+  // logger.info('🔍 GetDomain Zone ID...');
 
   const response = await axios.get(
     `${cloudflareConfig.apiUrl}/zones?name=${cloudflareConfig.domain}`,
@@ -56,9 +56,9 @@ async function getZoneId() {
   }
 }
 
-// 配置 DNS 記錄
+// Configure DNS Record
 async function setupDNSRecords() {
-  // logger.info('🔧 配置 DNS 記錄...');
+  // logger.info('🔧 Configure DNS Record...');
 
   const dnsRecords = [
     {
@@ -106,26 +106,26 @@ async function setupDNSRecords() {
       );
 
       if (response.data.success) {
-        // logger.info(`✅ 成功創建 DNS 記錄: ${record.name}.${cloudflareConfig.domain}`);
+        // logger.info(`✅ SuccessCreate DNS Record: ${record.name}.${cloudflareConfig.domain}`);
       } else {
-        // logger.info(`⚠️  DNS 記錄可能已存在: ${record.name}.${cloudflareConfig.domain}`);
+        // logger.info(`⚠️  DNS Record可能已存在: ${record.name}.${cloudflareConfig.domain}`);
       }
     } catch (error) {
       if (error.response?.data?.errors?.[0]?.code === 81057) {
-        // logger.info(`ℹ️  DNS 記錄已存在: ${record.name}.${cloudflareConfig.domain}`);
+        // logger.info(`ℹ️  DNS Record已存在: ${record.name}.${cloudflareConfig.domain}`);
       } else {
-        // logger.info(`❌ 創建 DNS 記錄失敗: ${record.name}.${cloudflareConfig.domain}`, error.message);
+        // logger.info(`❌ Create DNS RecordFailed: ${record.name}.${cloudflareConfig.domain}`, error.message);
       }
     }
   }
 }
 
-// 配置 SSL/TLS 設置
+// Configure SSL/TLS Settings
 async function setupSSL() {
-  // logger.info('🔒 配置 SSL/TLS 設置...');
+  // logger.info('🔒 Configure SSL/TLS Settings...');
 
   try {
-    // 設置加密模式為 Full (strict)
+    // SettingsEncrypt模式為 Full (strict)
     const sslResponse = await axios.patch(
       `${cloudflareConfig.apiUrl}/zones/${cloudflareConfig.zoneId}/settings/ssl`,
       {
@@ -140,10 +140,10 @@ async function setupSSL() {
     );
 
     if (sslResponse.data.success) {
-      // logger.info('✅ SSL 加密模式設置為 Full (strict)');
+      // logger.info('✅ SSL Encrypt模式Settings為 Full (strict)');
     }
 
-    // 啟用 Always Use HTTPS
+    // Enable Always Use HTTPS
     const httpsResponse = await axios.patch(
       `${cloudflareConfig.apiUrl}/zones/${cloudflareConfig.zoneId}/settings/always_use_https`,
       {
@@ -158,10 +158,10 @@ async function setupSSL() {
     );
 
     if (httpsResponse.data.success) {
-      // logger.info('✅ 啟用 Always Use HTTPS');
+      // logger.info('✅ Enable Always Use HTTPS');
     }
 
-    // 設置最低 TLS 版本
+    // Settings最低 TLS Version
     const tlsResponse = await axios.patch(
       `${cloudflareConfig.apiUrl}/zones/${cloudflareConfig.zoneId}/settings/min_tls_version`,
       {
@@ -176,20 +176,20 @@ async function setupSSL() {
     );
 
     if (tlsResponse.data.success) {
-      // logger.info('✅ 設置最低 TLS 版本為 1.2');
+      // logger.info('✅ Settings最低 TLS Version為 1.2');
     }
   } catch (error) {
-    // logger.info('❌ SSL/TLS 配置失敗:', error.message);
+    // logger.info('❌ SSL/TLS ConfigureFailed:', error.message);
   }
 }
 
-// 配置頁面規則
+// Configure頁面規則
 async function setupPageRules() {
-  // logger.info('📋 配置頁面規則...');
+  // logger.info('📋 Configure頁面規則...');
 
   const pageRules = [
     {
-      // API 端點 - 不緩存
+      // API 端點 - 不Cache
       targets: [
         {
           target: 'url',
@@ -217,7 +217,7 @@ async function setupPageRules() {
       status: 'active',
     },
     {
-      // 靜態資源 - 緩存
+      // StaticResource - Cache
       targets: [
         {
           target: 'url',
@@ -262,20 +262,20 @@ async function setupPageRules() {
       );
 
       if (response.data.success) {
-        // logger.info(`✅ 成功創建頁面規則: ${rule.targets[0].constraint.value}`);
+        // logger.info(`✅ SuccessCreate頁面規則: ${rule.targets[0].constraint.value}`);
       }
     } catch (error) {
-      // logger.info(`❌ 創建頁面規則失敗: ${rule.targets[0].constraint.value}`, error.message);
+      // logger.info(`❌ Create頁面規則Failed: ${rule.targets[0].constraint.value}`, error.message);
     }
   }
 }
 
-// 配置安全設置
+// Configure安全Settings
 async function setupSecurity() {
-  // logger.info('🛡️ 配置安全設置...');
+  // logger.info('🛡️ Configure安全Settings...');
 
   try {
-    // 設置安全級別
+    // Settings安全級別
     const securityResponse = await axios.patch(
       `${cloudflareConfig.apiUrl}/zones/${cloudflareConfig.zoneId}/settings/security_level`,
       {
@@ -290,10 +290,10 @@ async function setupSecurity() {
     );
 
     if (securityResponse.data.success) {
-      // logger.info('✅ 設置安全級別為 Medium');
+      // logger.info('✅ Settings安全級別為 Medium');
     }
 
-    // 啟用 HSTS
+    // Enable HSTS
     const hstsResponse = await axios.patch(
       `${cloudflareConfig.apiUrl}/zones/${cloudflareConfig.zoneId}/settings/security_header`,
       {
@@ -315,16 +315,16 @@ async function setupSecurity() {
     );
 
     if (hstsResponse.data.success) {
-      // logger.info('✅ 啟用 HSTS');
+      // logger.info('✅ Enable HSTS');
     }
   } catch (error) {
-    // logger.info('❌ 安全設置配置失敗:', error.message);
+    // logger.info('❌ 安全SettingsConfigureFailed:', error.message);
   }
 }
 
-// 配置性能優化
+// Configure性能優化
 async function setupPerformance() {
-  // logger.info('⚡ 配置性能優化...');
+  // logger.info('⚡ Configure性能優化...');
 
   const performanceSettings = [
     { setting: 'minify', value: { css: 'on', html: 'on', js: 'on' } },
@@ -355,58 +355,58 @@ async function setupPerformance() {
       );
 
       if (response.data.success) {
-        // logger.info(`✅ 啟用 ${setting} 優化`);
+        // logger.info(`✅ Enable ${setting} 優化`);
       }
     } catch (error) {
-      // logger.info(`⚠️  ${setting} 設置可能已存在或不需要配置`);
+      // logger.info(`⚠️  ${setting} Settings可能已存在或不需要Configure`);
     }
   }
 }
 
-// 主配置函數
+// 主ConfigureFunction
 async function setupCloudflare() {
-  // logger.info('🚀 開始配置 Cloudflare...\n');
+  // logger.info('🚀 BeginConfigure Cloudflare...\n');
 
   try {
-    // 檢查配置
+    // CheckConfigure
     checkConfiguration();
 
-    // 配置各項設置
+    // Configure各項Settings
     await setupDNSRecords();
     await setupSSL();
     await setupPageRules();
     await setupSecurity();
     await setupPerformance();
 
-    // logger.info('\n🎉 Cloudflare 配置完成！');
-    // logger.info('\n📋 配置摘要:');
+    // logger.info('\n🎉 Cloudflare ConfigureComplete！');
+    // logger.info('\n📋 Configure摘要:');
     // logger.info('='.repeat(50));
-    // logger.info(`🌐 域名: ${cloudflareConfig.domain}`);
+    // logger.info(`🌐 Domain: ${cloudflareConfig.domain}`);
     // logger.info(`🔒 SSL: Full (strict) + Always HTTPS`);
     // logger.info(`🛡️ 安全: Medium 級別 + HSTS`);
-    // logger.info(`⚡ 性能: 所有優化已啟用`);
-    // logger.info(`📋 頁面規則: API 不緩存，靜態資源緩存`);
+    // logger.info(`⚡ 性能: 所有優化已Enable`);
+    // logger.info(`📋 頁面規則: API 不Cache，StaticResourceCache`);
     // logger.info('='.repeat(50));
 
-    // logger.info('\n🔗 您的域名現在可以通過以下地址訪問:');
+    // logger.info('\n🔗 您的Domain現在可以通過以下Address訪問:');
     // logger.info(`   🌐 主網站: https://${cloudflareConfig.domain}`);
     // logger.info(`   🔧 API: https://api.${cloudflareConfig.domain}`);
     // logger.info(`   📦 CDN: https://cdn.${cloudflareConfig.domain}`);
   } catch (error) {
-    // logger.info('❌ Cloudflare 配置失敗:', error.message);
+    // logger.info('❌ Cloudflare ConfigureFailed:', error.message);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   setupCloudflare()
     .then(() => {
-      // logger.info('\n✅ 腳本執行完成');
+      // logger.info('\n✅ 腳本執RowComplete');
       process.exit(0);
     })
     .catch((error) => {
-      // logger.info('❌ 腳本執行失敗:', error);
+      // logger.info('❌ 腳本執RowFailed:', error);
       process.exit(1);
     });
 }

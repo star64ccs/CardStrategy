@@ -1,7 +1,7 @@
 const { verifyToken, logSecurityEvent } = require('../utils/security-utils');
 const { logger } = require('../utils/unified-logger');
 
-// JWT 認證中間件
+// JWT Authenticate中間件
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -56,7 +56,7 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// 角色驗證中間件
+// 角色Verify中間件
 const requireRole = (roles) => {
   return (req, res, next) => {
     if (!req.user) {
@@ -90,13 +90,13 @@ const requireRole = (roles) => {
   };
 };
 
-// 管理員驗證中間件
+// Manage員Verify中間件
 const requireAdmin = requireRole('admin');
 
-// 用戶驗證中間件
+// UserVerify中間件
 const requireUser = requireRole(['user', 'admin']);
 
-// 可選認證中間件（不強制要求認證）
+// OptionalAuthenticate中間件（不Force要求Authenticate）
 const optionalAuth = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -108,7 +108,7 @@ const optionalAuth = (req, res, next) => {
         req.user = decoded;
       }
     } catch (error) {
-      // 靜默處理錯誤，不影響請求
+      // 靜默HandleError，不影響Request
       logger.debug('Optional auth failed:', error.message);
     }
   }

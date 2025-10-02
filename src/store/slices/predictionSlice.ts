@@ -14,7 +14,7 @@ import {
   PredictionHistory,
 } from '../../features/ai/types/prediction';
 
-// 初始狀態
+// 初始Status
 const initialState: PredictionState = {
   currentPrediction: null,
   predictionHistory: [],
@@ -31,7 +31,7 @@ const initialState: PredictionState = {
   },
 };
 
-// 異步 Action
+// Async Action
 export const _performPrediction = createAsyncThunk(
   'prediction/performPrediction',
   async (request: PredictionRequest, { rejectWithValue }) => {
@@ -41,7 +41,7 @@ export const _performPrediction = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'PREDICTION_FAILED',
-        message: error instanceof Error ? error.message : '預測失敗',
+        message: error instanceof Error ? error.message : '預測Failed',
         details: error,
         timestamp: new Date(),
       } as PredictionError);
@@ -58,7 +58,7 @@ export const _getPredictionHistory = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'HISTORY_FETCH_FAILED',
-        message: error instanceof Error ? error.message : '獲取預測歷史失敗',
+        message: error instanceof Error ? error.message : 'Get預測歷史Failed',
         details: error,
         timestamp: new Date(),
       } as PredictionError);
@@ -75,7 +75,7 @@ export const _getPredictionStats = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'STATS_FETCH_FAILED',
-        message: error instanceof Error ? error.message : '獲取預測統計失敗',
+        message: error instanceof Error ? error.message : 'Get預測統計Failed',
         details: error,
         timestamp: new Date(),
       } as PredictionError);
@@ -92,7 +92,7 @@ export const _getPredictionOptions = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'OPTIONS_FETCH_FAILED',
-        message: error instanceof Error ? error.message : '獲取預測選項失敗',
+        message: error instanceof Error ? error.message : 'Get預測選項Failed',
         details: error,
         timestamp: new Date(),
       } as PredictionError);

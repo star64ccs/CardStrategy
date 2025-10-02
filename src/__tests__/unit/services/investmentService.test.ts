@@ -32,11 +32,11 @@ describe('InvestmentService', () => {
       },
     ];
 
-    it('應該成功獲取用戶投資列表', async () => {
+    it('應該SuccessGet用戶投資列表', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockInvestments,
-        message: '投資列表獲取成功',
+        message: '投資列表GetSuccess',
       });
 
       const _result = await investmentService.getInvestments();
@@ -45,11 +45,11 @@ describe('InvestmentService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/investments');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('API Error'));
 
       await expect(investmentService.getInvestments()).rejects.toThrow(
-        'API 錯誤'
+        'API Error'
       );
     });
   });
@@ -71,11 +71,11 @@ describe('InvestmentService', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功獲取單個投資', async () => {
+    it('應該SuccessGet單個投資', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockInvestment,
-        message: '投資獲取成功',
+        message: '投資GetSuccess',
       });
 
       const _result = await investmentService.getInvestment(mockInvestmentId);
@@ -94,7 +94,7 @@ describe('InvestmentService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
+    it('應該Handle API Error', async () => {
       mockApiService.get.mockRejectedValue(new Error('投資不存在'));
 
       await expect(
@@ -123,11 +123,11 @@ describe('InvestmentService', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功添加投資', async () => {
+    it('應該Success添加投資', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockAddedInvestment,
-        message: '投資添加成功',
+        message: '投資添加Success',
       });
 
       const _result = await investmentService.addInvestment(mockInvestmentData);
@@ -171,12 +171,12 @@ describe('InvestmentService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('添加失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('添加Failed'));
 
       await expect(
         investmentService.addInvestment(mockInvestmentData)
-      ).rejects.toThrow('添加失敗');
+      ).rejects.toThrow('添加Failed');
     });
   });
 
@@ -202,11 +202,11 @@ describe('InvestmentService', () => {
       updatedAt: '2024-01-02T00:00:00Z',
     };
 
-    it('應該成功更新投資', async () => {
+    it('應該SuccessUpdate投資', async () => {
       mockApiService.put.mockResolvedValue({
         success: true,
         data: mockUpdatedInvestment,
-        message: '投資更新成功',
+        message: '投資UpdateSuccess',
       });
 
       const _result = await investmentService.updateInvestment(
@@ -229,22 +229,22 @@ describe('InvestmentService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.put.mockRejectedValue(new Error('更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.put.mockRejectedValue(new Error('UpdateFailed'));
 
       await expect(
         investmentService.updateInvestment(mockInvestmentId, mockUpdateData)
-      ).rejects.toThrow('更新失敗');
+      ).rejects.toThrow('UpdateFailed');
     });
   });
 
   describe('removeInvestment', () => {
     const _mockInvestmentId = '123e4567-e89b-12d3-a456-426614174000';
 
-    it('應該成功移除投資', async () => {
+    it('應該Success移除投資', async () => {
       mockApiService.delete.mockResolvedValue({
         success: true,
-        message: '投資移除成功',
+        message: '投資移除Success',
       });
 
       await investmentService.removeInvestment(mockInvestmentId);
@@ -262,12 +262,12 @@ describe('InvestmentService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.delete.mockRejectedValue(new Error('移除失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.delete.mockRejectedValue(new Error('移除Failed'));
 
       await expect(
         investmentService.removeInvestment(mockInvestmentId)
-      ).rejects.toThrow('移除失敗');
+      ).rejects.toThrow('移除Failed');
     });
   });
 
@@ -294,11 +294,11 @@ describe('InvestmentService', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功獲取投資組合', async () => {
+    it('應該SuccessGet投資組合', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockPortfolio,
-        message: '投資組合獲取成功',
+        message: '投資組合GetSuccess',
       });
 
       const _result = await investmentService.getPortfolio();
@@ -307,11 +307,11 @@ describe('InvestmentService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/investments/portfolio');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('投資組合獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('投資組合GetFailed'));
 
       await expect(investmentService.getPortfolio()).rejects.toThrow(
-        '投資組合獲取失敗'
+        '投資組合GetFailed'
       );
     });
   });
@@ -327,11 +327,11 @@ describe('InvestmentService', () => {
       riskLevel: 'medium' as const,
     };
 
-    it('應該成功獲取投資建議', async () => {
+    it('應該SuccessGet投資建議', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockAdvice,
-        message: '投資建議獲取成功',
+        message: '投資建議GetSuccess',
       });
 
       const _result = await investmentService.getInvestmentAdvice(mockCardId);
@@ -350,12 +350,12 @@ describe('InvestmentService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('建議獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('建議GetFailed'));
 
       await expect(
         investmentService.getInvestmentAdvice(mockCardId)
-      ).rejects.toThrow('建議獲取失敗');
+      ).rejects.toThrow('建議GetFailed');
     });
   });
 
@@ -386,11 +386,11 @@ describe('InvestmentService', () => {
       ],
     };
 
-    it('應該成功獲取投資統計', async () => {
+    it('應該SuccessGet投資統計', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockStatistics,
-        message: '統計獲取成功',
+        message: '統計GetSuccess',
       });
 
       const _result = await investmentService.getInvestmentStatistics();
@@ -401,11 +401,11 @@ describe('InvestmentService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('統計獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('統計GetFailed'));
 
       await expect(investmentService.getInvestmentStatistics()).rejects.toThrow(
-        '統計獲取失敗'
+        '統計GetFailed'
       );
     });
   });
@@ -423,11 +423,11 @@ describe('InvestmentService', () => {
       isActive: true,
     };
 
-    it('應該成功設置價格警報', async () => {
+    it('應該SuccessSettings價格警報', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockPriceAlert,
-        message: '價格警報設置成功',
+        message: '價格警報SettingsSuccess',
       });
 
       const _result = await investmentService.setPriceAlert(
@@ -479,12 +479,12 @@ describe('InvestmentService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('警報設置失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('警報SettingsFailed'));
 
       await expect(
         investmentService.setPriceAlert(mockCardId, mockTargetPrice, mockType)
-      ).rejects.toThrow('警報設置失敗');
+      ).rejects.toThrow('警報SettingsFailed');
     });
   });
 
@@ -508,11 +508,11 @@ describe('InvestmentService', () => {
       },
     ];
 
-    it('應該成功獲取價格警報', async () => {
+    it('應該SuccessGet價格警報', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockPriceAlerts,
-        message: '價格警報獲取成功',
+        message: '價格警報GetSuccess',
       });
 
       const _result = await investmentService.getPriceAlerts();
@@ -523,11 +523,11 @@ describe('InvestmentService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('警報獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('警報GetFailed'));
 
       await expect(investmentService.getPriceAlerts()).rejects.toThrow(
-        '警報獲取失敗'
+        '警報GetFailed'
       );
     });
   });
@@ -535,10 +535,10 @@ describe('InvestmentService', () => {
   describe('deletePriceAlert', () => {
     const _mockAlertId = '123e4567-e89b-12d3-a456-426614174000';
 
-    it('應該成功刪除價格警報', async () => {
+    it('應該SuccessDelete價格警報', async () => {
       mockApiService.delete.mockResolvedValue({
         success: true,
-        message: '價格警報刪除成功',
+        message: '價格警報DeleteSuccess',
       });
 
       await investmentService.deletePriceAlert(mockAlertId);
@@ -556,12 +556,12 @@ describe('InvestmentService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.delete.mockRejectedValue(new Error('警報刪除失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.delete.mockRejectedValue(new Error('警報DeleteFailed'));
 
       await expect(
         investmentService.deletePriceAlert(mockAlertId)
-      ).rejects.toThrow('警報刪除失敗');
+      ).rejects.toThrow('警報DeleteFailed');
     });
   });
 
@@ -597,11 +597,11 @@ describe('InvestmentService', () => {
       },
     };
 
-    it('應該成功獲取投資歷史', async () => {
+    it('應該SuccessGet投資歷史', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockHistory,
-        message: '投資歷史獲取成功',
+        message: '投資歷史GetSuccess',
       });
 
       const _result = await investmentService.getInvestmentHistory(mockFilters);
@@ -616,7 +616,7 @@ describe('InvestmentService', () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockHistory,
-        message: '投資歷史獲取成功',
+        message: '投資歷史GetSuccess',
       });
 
       const _result = await investmentService.getInvestmentHistory();
@@ -627,22 +627,22 @@ describe('InvestmentService', () => {
       });
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('歷史獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('歷史GetFailed'));
 
       await expect(
         investmentService.getInvestmentHistory(mockFilters)
-      ).rejects.toThrow('歷史獲取失敗');
+      ).rejects.toThrow('歷史GetFailed');
     });
   });
 
   describe('exportInvestmentReport', () => {
-    it('應該成功導出 PDF 報告', async () => {
+    it('應該Success導出 PDF 報告', async () => {
       const _mockPdfData = 'base64-encoded-pdf-data';
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockPdfData,
-        message: '報告導出成功',
+        message: '報告導出Success',
       });
 
       const _result = await investmentService.exportInvestmentReport('pdf');
@@ -653,13 +653,13 @@ describe('InvestmentService', () => {
       );
     });
 
-    it('應該成功導出 CSV 報告', async () => {
+    it('應該Success導出 CSV 報告', async () => {
       const _mockCsvData =
         'investment_id,card_id,type,amount\ninvestment-1,card-123,buy,1000';
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockCsvData,
-        message: '報告導出成功',
+        message: '報告導出Success',
       });
 
       const _result = await investmentService.exportInvestmentReport('csv');
@@ -670,12 +670,12 @@ describe('InvestmentService', () => {
       );
     });
 
-    it('應該成功導出 JSON 報告', async () => {
+    it('應該Success導出 JSON 報告', async () => {
       const _mockJsonData = '{"investments": []}';
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockJsonData,
-        message: '報告導出成功',
+        message: '報告導出Success',
       });
 
       const _result = await investmentService.exportInvestmentReport('json');
@@ -692,12 +692,12 @@ describe('InvestmentService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('導出失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('導出Failed'));
 
       await expect(
         investmentService.exportInvestmentReport('pdf')
-      ).rejects.toThrow('導出失敗');
+      ).rejects.toThrow('導出Failed');
     });
   });
 
@@ -708,11 +708,11 @@ describe('InvestmentService', () => {
       stable: ['card-101', 'card-102'],
     };
 
-    it('應該成功獲取市場趨勢', async () => {
+    it('應該SuccessGet市場趨勢', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockTrends,
-        message: '市場趨勢獲取成功',
+        message: '市場趨勢GetSuccess',
       });
 
       const _result = await investmentService.getMarketTrends();
@@ -723,11 +723,11 @@ describe('InvestmentService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('趨勢獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('趨勢GetFailed'));
 
       await expect(investmentService.getMarketTrends()).rejects.toThrow(
-        '趨勢獲取失敗'
+        '趨勢GetFailed'
       );
     });
   });
@@ -739,11 +739,11 @@ describe('InvestmentService', () => {
       recommendations: ['分散投資', '設置止損點'],
     };
 
-    it('應該成功獲取風險分析', async () => {
+    it('應該SuccessGet風險分析', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockRiskAnalysis,
-        message: '風險分析獲取成功',
+        message: '風險分析GetSuccess',
       });
 
       const _result = await investmentService.getRiskAnalysis();
@@ -754,11 +754,11 @@ describe('InvestmentService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('風險分析獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('風險分析GetFailed'));
 
       await expect(investmentService.getRiskAnalysis()).rejects.toThrow(
-        '風險分析獲取失敗'
+        '風險分析GetFailed'
       );
     });
   });

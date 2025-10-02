@@ -2,8 +2,8 @@ import { logger } from '@/utils/logger';
 
 export interface CacheConfig {
   maxSize: number;
-  ttl: number; // 毫秒
-  cleanupInterval: number; // 毫秒
+  ttl: number; // 毫Second
+  cleanupInterval: number; // 毫Second
   enableCompression: boolean;
   enablePersistence: boolean;
   persistencePath?: string;
@@ -114,7 +114,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 設置緩存
+   * SettingsCache
    */
   public async set<T>(
     key: string,
@@ -133,7 +133,7 @@ export class CacheStrategyService {
       const _policy = options?.policy
         ? this.cachePolicies.get(options.policy)
         : this.getBestPolicy(key, value);
-      const _ttl = options?.ttl || policy?.ttl || 300000; // 默認5分鐘
+      const _ttl = options?.ttl || policy?.ttl || 300000; // Default5Minute
       const _tags = options?.tags || policy?.tags || [];
 
       const item: CacheItem<T> = {
@@ -147,7 +147,7 @@ export class CacheStrategyService {
         tags,
       };
 
-      // 檢查緩存大小限制
+      // CheckCache大小Limit
       await this.ensureCapacity(item.size);
 
       this.memoryCache.set(key, item);
@@ -160,7 +160,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 獲取緩存
+   * GetCache
    */
   public async get<T>(key: string): Promise<T | null> {
     if (!this.isInitialized) {
@@ -177,7 +177,7 @@ export class CacheStrategyService {
         return null;
       }
 
-      // 檢查是否過期
+      // CheckYesNo過期
       if (this.isExpired(item)) {
         this.memoryCache.delete(key);
         this.stats.misses++;
@@ -186,7 +186,7 @@ export class CacheStrategyService {
         return null;
       }
 
-      // 更新訪問統計
+      // Update訪問Statistics
       item.accessCount++;
       item.lastAccessed = Date.now();
 
@@ -202,7 +202,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 刪除緩存
+   * DeleteCache
    */
   public async delete(key: string): Promise<boolean> {
     if (!this.isInitialized) {
@@ -222,7 +222,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 根據標籤刪除緩存
+   * Root據TagDeleteCache
    */
   public async deleteByTags(tags: string[]): Promise<number> {
     if (!this.isInitialized) {
@@ -248,7 +248,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 清空所有緩存
+   * 清Empty所有Cache
    */
   public async clear(): Promise<void> {
     if (!this.isInitialized) {
@@ -272,7 +272,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 獲取緩存統計信息
+   * GetCacheStatisticsInformation
    */
   public getStats(): CacheStats {
     if (!this.isInitialized) {
@@ -306,21 +306,21 @@ export class CacheStrategyService {
   }
 
   /**
-   * 獲取緩存策略
+   * GetCache策略
    */
   public getStrategies(): CacheStrategy[] {
     return this.strategies;
   }
 
   /**
-   * 獲取緩存層
+   * GetCache層
    */
   public getLayers(): CacheLayer[] {
     return this.cacheLayers;
   }
 
   /**
-   * 添加緩存策略
+   * AddCache策略
    */
   public addStrategy(strategy: CacheStrategy): void {
     if (!this.isInitialized) {
@@ -332,7 +332,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 優化緩存策略
+   * 優化Cache策略
    */
   public async optimizeStrategy(strategyName: string): Promise<void> {
     if (!this.isInitialized) {
@@ -347,7 +347,7 @@ export class CacheStrategyService {
 
       const _stats = this.getStats();
 
-      // 根據命中率調整策略
+      // Root據命中率調整策略
       if (stats.hitRate < 50) {
         await this.adjustTTL(strategy, 'increase');
         await this.adjustCacheSize(strategy, 'increase');
@@ -370,7 +370,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 預熱緩存
+   * 預熱Cache
    */
   public async warmupCache(
     keys: string[],
@@ -401,7 +401,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 獲取服務狀態
+   * GetServiceStatus
    */
   public getStatus(): unknown {
     return {
@@ -425,7 +425,7 @@ export class CacheStrategyService {
   }
 
   /**
-   * 清理服務
+   * 清理Service
    */
   public async cleanup(): Promise<void> {
     if (this.cleanupInterval) {
@@ -440,14 +440,14 @@ export class CacheStrategyService {
     logger.info('CacheStrategyService cleaned up');
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private setupDefaultPolicies(): void {
     // 高頻訪問策略
     this.cachePolicies.set('high_frequency', {
       name: 'High Frequency Access',
       description: '適用於高頻訪問的數據',
-      ttl: 600000, // 10分鐘
+      ttl: 600000, // 10Minute
       maxSize: 1000,
       priority: 'HIGH',
       tags: ['frequent'],
@@ -456,11 +456,11 @@ export class CacheStrategyService {
       },
     });
 
-    // 大數據策略
+    // 大Data策略
     this.cachePolicies.set('large_data', {
       name: 'Large Data',
       description: '適用於大型數據集',
-      ttl: 1800000, // 30分鐘
+      ttl: 1800000, // 30Minute
       maxSize: 100,
       priority: 'MEDIUM',
       tags: ['large'],
@@ -469,22 +469,22 @@ export class CacheStrategyService {
       },
     });
 
-    // 關鍵數據策略
+    // OffKeyData策略
     this.cachePolicies.set('critical_data', {
       name: 'Critical Data',
       description: '適用於關鍵業務數據',
-      ttl: 3600000, // 1小時
+      ttl: 3600000, // 1Hour
       maxSize: 500,
       priority: 'CRITICAL',
       tags: ['critical'],
       conditions: {},
     });
 
-    // 臨時數據策略
+    // 臨時Data策略
     this.cachePolicies.set('temporary', {
       name: 'Temporary Data',
       description: '適用於臨時數據',
-      ttl: 60000, // 1分鐘
+      ttl: 60000, // 1Minute
       maxSize: 2000,
       priority: 'LOW',
       tags: ['temporary'],
@@ -493,7 +493,7 @@ export class CacheStrategyService {
   }
 
   private setupDefaultLayers(): void {
-    // 內存層
+    // Memory層
     this.cacheLayers.push({
       name: 'Memory Layer',
       type: 'MEMORY',
@@ -538,12 +538,12 @@ export class CacheStrategyService {
         memoryUsage: 0,
         efficiency: 0,
       },
-      isActive: false, // 暫時禁用
+      isActive: false, // 暫時Disable
     });
   }
 
   private setupDefaultStrategies(): void {
-    // 分層緩存策略
+    // 分層Cache策略
     this.strategies.push({
       name: 'Layered Cache Strategy',
       description: '使用多層緩存提高性能',
@@ -557,7 +557,7 @@ export class CacheStrategyService {
       },
     });
 
-    // 智能緩存策略
+    // 智能Cache策略
     this.strategies.push({
       name: 'Intelligent Cache Strategy',
       description: '根據訪問模式自適應調整',
@@ -575,12 +575,12 @@ export class CacheStrategyService {
   private getBestPolicy(key: string, value: unknown): CachePolicy | null {
     const _size = this.estimateSize(value);
 
-    // 根據數據大小選擇策略
+    // Root據Data大小Select策略
     if (size > 1000000) {
       return this.cachePolicies.get('large_data') || null;
     }
 
-    // 根據鍵名模式選擇策略
+    // Root據Key名模式Select策略
     if (key.includes('temp') || key.includes('session')) {
       return this.cachePolicies.get('temporary') || null;
     }
@@ -597,7 +597,7 @@ export class CacheStrategyService {
       const _jsonString = JSON.stringify(value);
       return new Blob([jsonString]).size;
     } catch {
-      return 1000; // 默認大小
+      return 1000; // Default大小
     }
   }
 
@@ -618,7 +618,7 @@ export class CacheStrategyService {
   }
 
   private async evictItems(requiredSpace: number): Promise<void> {
-    // LRU 策略：移除最久未訪問的項目
+    // LRU 策略：Remove最久未訪問的項目
     const _items = Array.from(this.memoryCache.entries()).sort(
       ([, a], [, b]) => a.lastAccessed - b.lastAccessed
     );
@@ -670,7 +670,7 @@ export class CacheStrategyService {
         : 0;
     const _memoryUsage = this.calculateMemoryUsage();
 
-    // 效率 = 命中率 * (1 - 內存使用率)
+    // 效率 = 命中率 * (1 - Memory使用率)
     return Math.max(0, hitRate * (1 - memoryUsage / 100));
   }
 
@@ -680,9 +680,9 @@ export class CacheStrategyService {
   ): Promise<void> {
     for (const policy of strategy.policies) {
       if (action === 'increase') {
-        policy.ttl = Math.min(policy.ttl * 1.5, 3600000); // 最大1小時
+        policy.ttl = Math.min(policy.ttl * 1.5, 3600000); // 最大1Hour
       } else {
-        policy.ttl = Math.max(policy.ttl * 0.8, 60000); // 最小1分鐘
+        policy.ttl = Math.max(policy.ttl * 0.8, 60000); // 最小1Minute
       }
     }
   }
@@ -707,7 +707,7 @@ export class CacheStrategyService {
       } catch (error) {
         logger.error('Cache cleanup error', error);
       }
-    }, 60000); // 每分鐘清理一次
+    }, 60000); // 每Minute清理一次
   }
 
   private cleanupExpiredItems(): void {
@@ -727,7 +727,7 @@ export class CacheStrategyService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _cacheStrategyService = CacheStrategyService.getInstance();
 
 export default cacheStrategyService;

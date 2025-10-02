@@ -73,7 +73,7 @@ jest.mock('expo-file-system', () => mockExpoFileSystem, { virtual: true });
 describe('iOS 平台特定功能測試', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // 設置為 iOS 平台
+    // Settings為 iOS 平台
     platformTestEnv.setPlatform({
       platform: 'ios',
       version: '15.0',

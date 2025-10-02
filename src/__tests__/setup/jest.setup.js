@@ -47,7 +47,7 @@ jest.mock('../../utils/validationService', () => ({
   validateApiResponse: jest.fn(() => ({ isValid: true, errors: [] })),
   validateInput: jest.fn((schema, data, context) => ({
     isValid: true,
-    data, // 返回原始數據
+    data, // Return原始Data
     errors: [],
     errorMessage: undefined,
   })),
@@ -57,7 +57,7 @@ jest.mock('../../utils/validationService', () => ({
   },
 }));
 
-// 設置全局變數
+// SettingsGlobal變數
 global.TextEncoder = require('util').TextEncoder;
 global.TextDecoder = require('util').TextDecoder;
 

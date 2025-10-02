@@ -1,6 +1,6 @@
 /**
- * WebSocket 通信類型定義
- * 用於實時通信功能的類型定義
+ * WebSocket 通信Class型定義
+ * 用於實時通信功能的Class型定義
  */
 
 export type WebSocketStatus =

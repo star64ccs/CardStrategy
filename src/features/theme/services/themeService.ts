@@ -15,7 +15,7 @@ import type {
 } from '../types/theme';
 import { ThemeChangeRequest } from '../types/theme';
 
-// 預設主題定義
+// 預設Theme定義
 const defaultLightTheme: Theme = {
   id: 'light',
   name: '淺色主題',
@@ -166,7 +166,7 @@ const defaultAutoTheme: Theme = {
   id: 'auto',
   name: '自動主題',
   type: 'auto',
-  colors: defaultLightTheme.colors, // 將根據系統主題動態調整
+  colors: defaultLightTheme.colors, // 將Root據系統ThemeDynamic調整
   spacing: defaultLightTheme.spacing,
   typography: defaultLightTheme.typography,
   borderRadius: defaultLightTheme.borderRadius,
@@ -210,13 +210,13 @@ class ThemeService implements ThemeManager {
 
   async initialize(): Promise<void> {
     try {
-      // 載入保存的配置
+      // LoadSave的Configure
       await this.loadConfig();
 
-      // 檢測系統主題
+      // 檢測系統Theme
       await this.detectSystemTheme();
 
-      // 設置初始主題
+      // Settings初始Theme
       await this.setInitialTheme();
 
       this.emitEvent({
@@ -307,7 +307,7 @@ class ThemeService implements ThemeManager {
       throw new Error(`Theme not found: ${customization.themeId}`);
     }
 
-    // 創建自定義主題
+    // CreateCustomTheme
     const customTheme: Theme = {
       ...theme,
       id: `${theme.id}_custom`,
@@ -342,12 +342,12 @@ class ThemeService implements ThemeManager {
     try {
       const theme: Theme = JSON.parse(themeData);
 
-      // 驗證主題數據
+      // VerifyThemeData
       if (!theme.id || !theme.name || !theme.colors) {
         throw new Error('Invalid theme data');
       }
 
-      // 檢查是否已存在
+      // CheckYesNo已存在
       const _existingIndex = this.availableThemes.findIndex(
         t => t.id === theme.id
       );
@@ -367,7 +367,7 @@ class ThemeService implements ThemeManager {
     }
   }
 
-  // 事件監聽器管理
+  // Event監聽器Manage
   addEventListener(listener: (event: ThemeEvent) => void): void {
     this.eventListeners.push(listener);
   }
@@ -379,7 +379,7 @@ class ThemeService implements ThemeManager {
     }
   }
 
-  // 私有方法
+  // PrivateMethod
   private getEffectiveTheme(): Theme {
     if (this.isAutoTheme) {
       return this.systemTheme === 'dark' ? defaultDarkTheme : defaultLightTheme;
@@ -415,9 +415,9 @@ class ThemeService implements ThemeManager {
   }
 
   private async detectSystemTheme(): Promise<void> {
-    // 在 React Native 中，我們需要通過其他方式檢測系統主題
-    // 這裡使用一個簡單的實現，實際應用中可能需要使用原生模組
-    this.systemTheme = 'light'; // 默認值，實際應該從系統獲取
+    // 在 React Native 中，我們需要通過其他方式檢測系統Theme
+    // 這裡使用一個簡單的實現，實際Apply中可能需要使用原生模組
+    this.systemTheme = 'light'; // DefaultValue，實際應該從系統Get
   }
 
   private async setInitialTheme(): Promise<void> {
@@ -438,7 +438,7 @@ class ThemeService implements ThemeManager {
     });
   }
 
-  // 工具方法
+  // ToolMethod
   getThemeColors(): ThemeColors {
     return this.getCurrentTheme().colors;
   }

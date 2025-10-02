@@ -1,4 +1,4 @@
-// 協同過濾推薦系統 React Hook
+// 協同Filter推薦系統 React Hook
 import { useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -77,7 +77,7 @@ import { UserAction } from '../types/collaborativeFiltering';
 export const _useCollaborativeFiltering = () => {
   const _dispatch = useAppDispatch();
 
-  // 狀態選擇
+  // StatusSelect
   const _state = useSelector(selectCollaborativeFiltering);
   const _recommendations = useSelector(selectRecommendations);
   const _allRecommendations = useSelector(selectAllRecommendations);
@@ -99,7 +99,7 @@ export const _useCollaborativeFiltering = () => {
   const _isInitialized = useSelector(selectIsInitialized);
   const _isInitializing = useSelector(selectIsInitializing);
 
-  // 計算屬性
+  // 計算Property
   const _hasRecommendations = useSelector(selectHasRecommendations);
   const _recommendationCount = useSelector(selectRecommendationCount);
   const _hasSimilarUsers = useSelector(selectHasSimilarUsers);
@@ -116,14 +116,14 @@ export const _useCollaborativeFiltering = () => {
   const _canUpdateRating = useSelector(selectCanUpdateRating);
   const _canUpdateBehavior = useSelector(selectCanUpdateBehavior);
 
-  // 初始化
+  // Initialize
   const _initialize = useCallback(async () => {
     if (!isInitialized && !isInitializing) {
       await (dispatch(initializeCollaborativeFiltering()) as any).unwrap();
     }
   }, [dispatch, isInitialized, isInitializing]);
 
-  // 獲取推薦
+  // Get推薦
   const _fetchRecommendations = useCallback(
     async (request: GetRecommendationsRequest) => {
       if (canGetRecommendations) {
@@ -133,7 +133,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch, canGetRecommendations]
   );
 
-  // 獲取相似用戶
+  // Get相似User
   const _fetchSimilarUsers = useCallback(
     async (request: GetSimilarUsersRequest) => {
       if (canGetSimilarUsers) {
@@ -143,7 +143,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch, canGetSimilarUsers]
   );
 
-  // 獲取相似項目
+  // Get相似項目
   const _fetchSimilarItems = useCallback(
     async (request: GetSimilarItemsRequest) => {
       if (canGetSimilarItems) {
@@ -153,7 +153,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch, canGetSimilarItems]
   );
 
-  // 更新評分
+  // Update評分
   const _rateItem = useCallback(
     async (request: UpdateRatingRequest) => {
       if (canUpdateRating) {
@@ -163,7 +163,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch, canUpdateRating]
   );
 
-  // 更新用戶行為
+  // UpdateUserRow為
   const _trackBehavior = useCallback(
     async (request: UpdateUserBehaviorRequest) => {
       if (canUpdateBehavior) {
@@ -173,14 +173,14 @@ export const _useCollaborativeFiltering = () => {
     [dispatch, canUpdateBehavior]
   );
 
-  // 獲取模型性能
+  // Get模型性能
   const _fetchModelPerformance = useCallback(async () => {
     if (isInitialized) {
       await (dispatch(getModelPerformance()) as any).unwrap();
     }
   }, [dispatch, isInitialized]);
 
-  // 設置當前推薦
+  // Settings當前推薦
   const _setRecommendations = useCallback(
     (recommendations: unknown[]) => {
       dispatch(setCurrentRecommendations(recommendations));
@@ -188,7 +188,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 選擇推薦
+  // Select推薦
   const _selectRecommendation = useCallback(
     (itemId: string | null) => {
       dispatch(setSelectedRecommendationId(itemId));
@@ -196,7 +196,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 設置當前相似用戶
+  // Settings當前相似User
   const _setSimilarUsers = useCallback(
     (users: unknown[]) => {
       dispatch(setCurrentSimilarUsers(users));
@@ -204,7 +204,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 選擇相似用戶
+  // Select相似User
   const _selectSimilarUser = useCallback(
     (userId: string | null) => {
       dispatch(setSelectedSimilarUserId(userId));
@@ -212,7 +212,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 設置當前相似項目
+  // Settings當前相似項目
   const _setSimilarItems = useCallback(
     (items: unknown[]) => {
       dispatch(setCurrentSimilarItems(items));
@@ -220,7 +220,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 選擇相似項目
+  // Select相似項目
   const _selectSimilarItem = useCallback(
     (itemId: string | null) => {
       dispatch(setSelectedSimilarItemId(itemId));
@@ -228,7 +228,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 設置算法
+  // Settings算法
   const _setAlgorithm = useCallback(
     (algorithm: RecommendationAlgorithm) => {
       dispatch(setCurrentAlgorithm(algorithm));
@@ -236,7 +236,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 設置相似度方法
+  // Settings相似度Method
   const _setSimilarityMethod = useCallback(
     (method: SimilarityMethod) => {
       dispatch(setCurrentSimilarityMethod(method));
@@ -244,7 +244,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 設置過濾選項
+  // SettingsFilterOptions
   const _setFilters = useCallback(
     (options: Partial<typeof filterOptions>) => {
       dispatch(setFilterOptions(options));
@@ -252,7 +252,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 設置分頁
+  // SettingsPaginate
   const _setPaginationData = useCallback(
     (data: Partial<typeof pagination>) => {
       dispatch(setPagination(data));
@@ -260,7 +260,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 設置加載狀態
+  // Settings加載Status
   const _setLoadingState = useCallback(
     (key: keyof typeof loading, value: boolean) => {
       dispatch(setLoading({ key, value }));
@@ -268,7 +268,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 設置錯誤
+  // SettingsError
   const _setErrorState = useCallback(
     (key: keyof typeof error, value: string | null) => {
       dispatch(setError({ key, value }));
@@ -276,7 +276,7 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 清除錯誤
+  // ClearError
   const _clearErrorState = useCallback(
     (key: keyof typeof error) => {
       dispatch(clearError(key));
@@ -284,12 +284,12 @@ export const _useCollaborativeFiltering = () => {
     [dispatch]
   );
 
-  // 重置狀態
+  // ResetStatus
   const _reset = useCallback(() => {
     dispatch(resetState());
   }, [dispatch]);
 
-  // 快速操作方法
+  // 快速OperationMethod
   const _quickGetRecommendations = useCallback(
     async (userId: string, limit = 10) => {
       await fetchRecommendations({
@@ -367,55 +367,55 @@ export const _useCollaborativeFiltering = () => {
     [trackBehavior]
   );
 
-  // 計算屬性
+  // 計算Property
   const _memoizedState = useMemo(
     () => ({
-      // 基礎狀態
+      // 基礎Status
       isInitialized,
       isInitializing,
       isLoading,
       hasError,
 
-      // 推薦相關
+      // 推薦相Off
       recommendations,
       allRecommendations,
       selectedRecommendation,
       hasRecommendations,
       recommendationCount,
 
-      // 相似用戶相關
+      // 相似User相Off
       similarUsers,
       allSimilarUsers,
       selectedSimilarUser,
       hasSimilarUsers,
       similarUserCount,
 
-      // 相似項目相關
+      // 相似項目相Off
       similarItems,
       allSimilarItems,
       selectedSimilarItem,
       hasSimilarItems,
       similarItemCount,
 
-      // 性能相關
+      // 性能相Off
       performance,
       statistics,
       hasPerformance,
       hasStatistics,
 
-      // 配置相關
+      // Configure相Off
       currentAlgorithm,
       currentSimilarityMethod,
       filterOptions,
       pagination,
 
-      // 加載狀態
+      // 加載Status
       loading,
 
-      // 錯誤狀態
+      // ErrorStatus
       error,
 
-      // 能力檢查
+      // 能力Check
       canGetRecommendations,
       canGetSimilarUsers,
       canGetSimilarItems,
@@ -460,14 +460,14 @@ export const _useCollaborativeFiltering = () => {
     ]
   );
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (!isInitialized && !isInitializing) {
       initialize();
     }
   }, [isInitialized, isInitializing, initialize]);
 
-  // 定期更新性能指標
+  // 定期Update性能指標
   useEffect(() => {
     if (isInitialized && !hasPerformance) {
       fetchModelPerformance();
@@ -475,10 +475,10 @@ export const _useCollaborativeFiltering = () => {
   }, [isInitialized, hasPerformance, fetchModelPerformance]);
 
   return {
-    // 狀態
+    // Status
     ...memoizedState,
 
-    // 核心操作
+    // 核心Operation
     initialize,
     fetchRecommendations,
     fetchSimilarUsers,
@@ -487,7 +487,7 @@ export const _useCollaborativeFiltering = () => {
     trackBehavior,
     fetchModelPerformance,
 
-    // 狀態管理
+    // StatusManage
     setRecommendations,
     selectRecommendation,
     setSimilarUsers,
@@ -503,7 +503,7 @@ export const _useCollaborativeFiltering = () => {
     clearErrorState,
     reset,
 
-    // 快速操作
+    // 快速Operation
     quickGetRecommendations,
     quickGetSimilarUsers,
     quickGetSimilarItems,
@@ -512,11 +512,11 @@ export const _useCollaborativeFiltering = () => {
     quickTrackLike,
     quickTrackPurchase,
 
-    // 工具方法
+    // ToolMethod
     getRecommendationsByCategory: useCallback(
       (category: string) => {
         return (recommendations as any[]).filter((r: unknown) => {
-          // 這裡需要根據實際項目結構來過濾
+          // 這裡需要Root據實際項目結構來Filter
           return true; // 簡化實現
         });
       },

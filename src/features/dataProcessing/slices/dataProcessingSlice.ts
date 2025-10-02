@@ -1,6 +1,6 @@
 /**
- * 數據處理 Redux Slice
- * 管理處理狀態、任務隊列和性能指標
+ * DataHandle Redux Slice
+ * ManageHandleStatus、TaskQueue和性能指標
  */
 
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -21,13 +21,13 @@ import {
   ProcessingStrategy,
 } from '../types/processing';
 
-// 狀態接口
+// StatusInterface
 export interface DataProcessingState {
-  // 服務狀態
+  // ServiceStatus
   isInitialized: boolean;
   isProcessing: boolean;
 
-  // 任務管理
+  // TaskManage
   activeTasks: ProcessingTask<any>[];
   completedTasks: ProcessingTask<any>[];
   failedTasks: ProcessingTask<any>[];
@@ -36,10 +36,10 @@ export interface DataProcessingState {
   // 性能指標
   metrics: PerformanceMetrics;
 
-  // 配置
+  // Configure
   currentConfig: ProcessingConfig;
 
-  // 錯誤處理
+  // ErrorHandle
   error: string | null;
   lastError: {
     message: string;
@@ -47,10 +47,10 @@ export interface DataProcessingState {
     taskId?: string;
   } | null;
 
-  // 事件歷史
+  // Event歷史
   eventHistory: ProcessingEvent[];
 
-  // 緩存狀態
+  // CacheStatus
   cacheStats: {
     hitRate: number;
     size: number;
@@ -58,7 +58,7 @@ export interface DataProcessingState {
     items: number;
   };
 
-  // 隊列狀態
+  // QueueStatus
   queueStats: {
     activeTasks: number;
     pendingTasks: number;
@@ -69,7 +69,7 @@ export interface DataProcessingState {
   };
 }
 
-// 初始狀態
+// 初始Status
 const initialState: DataProcessingState = {
   isInitialized: false,
   isProcessing: false,
@@ -124,25 +124,25 @@ const initialState: DataProcessingState = {
   },
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 
 /**
- * 初始化數據處理服務
+ * InitializeDataHandleService
  */
 export const _initializeDataProcessing = createAsyncThunk(
   'dataProcessing/initialize',
   async (config?: Partial<ProcessingConfig>) => {
     const _service = DataProcessingService.getInstance();
 
-    // 添加事件監聽器
+    // AddEvent監聽器
     service.addEventListener((event: ProcessingEvent) => {
-      // 這裡可以通過 dispatch 來更新狀態
+      // 這裡可以通過 dispatch 來UpdateStatus
       console.log('Processing event:', event);
     });
 
     const _success = await service.initialize();
     if (!success) {
-      throw new Error('數據處理服務初始化失敗');
+      throw new Error('數據HandleServiceInitializeFailed');
     }
 
     return { success, config };
@@ -150,7 +150,7 @@ export const _initializeDataProcessing = createAsyncThunk(
 );
 
 /**
- * 處理單個數據
+ * HandleSingleData
  */
 export const _processData = createAsyncThunk<
   ProcessingResult<any>,
@@ -181,13 +181,13 @@ export const _processData = createAsyncThunk<
       );
       return result;
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : '處理失敗');
+      throw new Error(error instanceof Error ? error.message : 'HandleFailed');
     }
   }
 );
 
 /**
- * 批量處理數據
+ * BatchHandleData
  */
 export const _processBatch = createAsyncThunk(
   'dataProcessing/processBatch',
@@ -208,13 +208,13 @@ export const _processBatch = createAsyncThunk(
       );
       return results;
     } catch (error) {
-      throw new Error(error instanceof Error ? error.message : '批量處理失敗');
+      throw new Error(error instanceof Error ? error.message : '批量HandleFailed');
     }
   }
 );
 
 /**
- * 更新性能指標
+ * Update性能指標
  */
 export const _updateMetrics = createAsyncThunk(
   'dataProcessing/updateMetrics',
@@ -232,7 +232,7 @@ export const _updateMetrics = createAsyncThunk(
 );
 
 /**
- * 註冊處理器
+ * RegisterHandle器
  */
 export const _registerProcessor = createAsyncThunk(
   'dataProcessing/registerProcessor',
@@ -244,7 +244,7 @@ export const _registerProcessor = createAsyncThunk(
 );
 
 /**
- * 清理緩存
+ * 清理Cache
  */
 export const _clearCache = createAsyncThunk(
   'dataProcessing/clearCache',
@@ -256,7 +256,7 @@ export const _clearCache = createAsyncThunk(
 );
 
 /**
- * 重置服務
+ * ResetService
  */
 export const _resetService = createAsyncThunk(
   'dataProcessing/resetService',
@@ -273,10 +273,10 @@ const _dataProcessingSlice = createSlice({
   name: 'dataProcessing',
   initialState,
   reducers: {
-    // 同步 Actions
+    // Sync Actions
 
     /**
-     * 設置處理配置
+     * SettingsHandleConfigure
      */
     setProcessingConfig: (
       state,
@@ -286,7 +286,7 @@ const _dataProcessingSlice = createSlice({
     },
 
     /**
-     * 添加任務到隊列
+     * AddTask到Queue
      */
     addTaskToQueue: (state, action: PayloadAction<ProcessingTask<any>>) => {
       state.taskQueue.push(action.payload);
@@ -294,7 +294,7 @@ const _dataProcessingSlice = createSlice({
     },
 
     /**
-     * 更新任務狀態
+     * UpdateTaskStatus
      */
     updateTaskStatus: (
       state,
@@ -307,10 +307,10 @@ const _dataProcessingSlice = createSlice({
     ) => {
       const { taskId, status, result, error } = action.payload;
 
-      // 從隊列中移除任務
+      // 從Queue中RemoveTask
       state.taskQueue = state.taskQueue.filter(task => task.id !== taskId);
 
-      // 更新活動任務
+      // Update活動Task
       if (status === 'processing') {
         const _task = state.taskQueue.find(t => t.id === taskId);
         if (task) {
@@ -322,7 +322,7 @@ const _dataProcessingSlice = createSlice({
         );
       }
 
-      // 添加到完成或失敗任務列表
+      // Add到Complete或FailedTaskList
       if (status === 'completed' && result) {
         state.completedTasks.push({
           ...state.activeTasks.find(t => t.id === taskId)!,
@@ -337,25 +337,25 @@ const _dataProcessingSlice = createSlice({
         state.metrics.failedTasks++;
       }
 
-      // 更新錯誤率
+      // UpdateError率
       state.metrics.errorRate =
         state.metrics.failedTasks / state.metrics.totalTasks;
     },
 
     /**
-     * 添加事件到歷史
+     * AddEvent到歷史
      */
     addEventToHistory: (state, action: PayloadAction<ProcessingEvent>) => {
       state.eventHistory.push(action.payload);
 
-      // 限制歷史記錄數量
+      // Limit歷史Record數量
       if (state.eventHistory.length > 100) {
         state.eventHistory = state.eventHistory.slice(-100);
       }
     },
 
     /**
-     * 清除錯誤
+     * ClearError
      */
     clearError: state => {
       state.error = null;
@@ -363,7 +363,7 @@ const _dataProcessingSlice = createSlice({
     },
 
     /**
-     * 清除歷史記錄
+     * Clear歷史Record
      */
     clearHistory: state => {
       state.eventHistory = [];
@@ -372,7 +372,7 @@ const _dataProcessingSlice = createSlice({
     },
 
     /**
-     * 設置處理狀態
+     * SettingsHandleStatus
      */
     setProcessingStatus: (state, action: PayloadAction<boolean>) => {
       state.isProcessing = action.payload;
@@ -380,7 +380,7 @@ const _dataProcessingSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      // 初始化處理
+      // InitializeHandle
       .addCase(initializeDataProcessing.pending, state => {
         state.isInitialized = false;
         state.error = null;
@@ -396,25 +396,25 @@ const _dataProcessingSlice = createSlice({
       })
       .addCase(initializeDataProcessing.rejected, (state, action) => {
         state.isInitialized = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
         state.lastError = {
           message: state.error,
           timestamp: new Date(),
         };
       })
 
-      // 數據處理
+      // DataHandle
       .addCase(processData.pending, state => {
         state.isProcessing = true;
         state.error = null;
       })
       .addCase(processData.fulfilled, (state, action) => {
         state.isProcessing = false;
-        // 處理結果會通過事件監聽器更新
+        // Handle結果會通過Event監聽器Update
       })
       .addCase(processData.rejected, (state, action) => {
         state.isProcessing = false;
-        const _errorMessage = action.error?.message || '處理失敗';
+        const _errorMessage = action.error?.message || 'HandleFailed';
         state.error = errorMessage;
         state.lastError = {
           message: errorMessage,
@@ -422,18 +422,18 @@ const _dataProcessingSlice = createSlice({
         };
       })
 
-      // 批量處理
+      // BatchHandle
       .addCase(processBatch.pending, state => {
         state.isProcessing = true;
         state.error = null;
       })
       .addCase(processBatch.fulfilled, (state, action) => {
         state.isProcessing = false;
-        // 批量處理結果會通過事件監聽器更新
+        // BatchHandle結果會通過Event監聽器Update
       })
       .addCase(processBatch.rejected, (state, action) => {
         state.isProcessing = false;
-        const _errorMessage = action.error?.message || '批量處理失敗';
+        const _errorMessage = action.error?.message || '批量HandleFailed';
         state.error = errorMessage;
         state.lastError = {
           message: errorMessage,
@@ -441,20 +441,20 @@ const _dataProcessingSlice = createSlice({
         };
       })
 
-      // 更新指標
+      // Update指標
       .addCase(updateMetrics.fulfilled, (state, action) => {
         state.metrics = action.payload.metrics;
         state.cacheStats = action.payload.cacheStats;
         state.queueStats = action.payload.queueStats;
       })
 
-      // 註冊處理器
+      // RegisterHandle器
       .addCase(registerProcessor.fulfilled, (state, action) => {
-        // 處理器註冊成功，可以更新相關狀態
-        console.log(`處理器註冊成功: ${action.payload.name}`);
+        // Handle器RegisterSuccess，可以Update相OffStatus
+        console.log(`Handle器註冊Success: ${action.payload.name}`);
       })
 
-      // 清理緩存
+      // 清理Cache
       .addCase(clearCache.fulfilled, state => {
         state.cacheStats = {
           hitRate: 0,
@@ -464,7 +464,7 @@ const _dataProcessingSlice = createSlice({
         };
       })
 
-      // 重置服務
+      // ResetService
       .addCase(resetService.fulfilled, state => {
         state.isInitialized = true;
         state.error = null;
@@ -491,7 +491,7 @@ const _dataProcessingSlice = createSlice({
   },
 });
 
-// 導出 Actions
+// Export Actions
 export const {
   setProcessingConfig,
   addTaskToQueue,
@@ -502,7 +502,7 @@ export const {
   setProcessingStatus,
 } = dataProcessingSlice.actions;
 
-// 導出 Selectors
+// Export Selectors
 export const _selectDataProcessingState = (state: {
   dataProcessing: DataProcessingState;
 }) => state.dataProcessing;
@@ -545,5 +545,5 @@ export const _selectQueueStats = (state: {
   dataProcessing: DataProcessingState;
 }) => state.dataProcessing.queueStats;
 
-// 導出 Reducer
+// Export Reducer
 export default dataProcessingSlice.reducer;

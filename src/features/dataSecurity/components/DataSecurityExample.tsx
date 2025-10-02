@@ -20,7 +20,7 @@ import {
 } from '../types/security';
 
 /**
- * 數據安全功能示例組件
+ * Data安全功能示例Component
  */
 export const DataSecurityExample: React.FC = () => {
   const {
@@ -39,7 +39,7 @@ export const DataSecurityExample: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    // 初始化時刷新狀態
+    // Initialize時RefreshStatus
     refreshState();
     refreshMetrics();
   }, [refreshState, refreshMetrics]);
@@ -53,10 +53,10 @@ export const DataSecurityExample: React.FC = () => {
         owner: 'demo_user',
       });
       setKeyId(key.id);
-      Alert.alert('成功', `密鑰生成成功: ${key.id}`);
+      Alert.alert('Success', `密鑰生成Success: ${key.id}`);
     } catch (error) {
-      console.error('密鑰生成失敗:', error);
-      Alert.alert('錯誤', '密鑰生成失敗');
+      console.error('密鑰生成Failed:', error);
+      Alert.alert('Error', '密鑰生成Failed');
     } finally {
       setLoading(false);
     }
@@ -64,7 +64,7 @@ export const DataSecurityExample: React.FC = () => {
 
   const _handleEncrypt = async () => {
     if (!textToEncrypt.trim()) {
-      Alert.alert('錯誤', '請輸入要加密的文本');
+      Alert.alert('Error', '請輸入要加密的文本');
       return;
     }
 
@@ -81,13 +81,13 @@ export const DataSecurityExample: React.FC = () => {
       if (result.success) {
         setEncryptedData(result.encryptedData || '');
         setKeyId(result.keyId || '');
-        Alert.alert('成功', '數據加密成功');
+        Alert.alert('Success', '數據加密Success');
       } else {
-        Alert.alert('錯誤', result.error || '加密失敗');
+        Alert.alert('Error', result.error || '加密Failed');
       }
     } catch (error) {
-      console.error('加密失敗:', error);
-      Alert.alert('錯誤', '加密失敗');
+      console.error('加密Failed:', error);
+      Alert.alert('Error', '加密Failed');
     } finally {
       setLoading(false);
     }
@@ -95,7 +95,7 @@ export const DataSecurityExample: React.FC = () => {
 
   const _handleDecrypt = async () => {
     if (!encryptedData || !keyId) {
-      Alert.alert('錯誤', '沒有可解密的數據');
+      Alert.alert('Error', '沒有可解密的數據');
       return;
     }
 
@@ -106,13 +106,13 @@ export const DataSecurityExample: React.FC = () => {
       });
 
       if (result.success) {
-        Alert.alert('解密結果', result.decryptedData || '解密成功');
+        Alert.alert('解密結果', result.decryptedData || '解密Success');
       } else {
-        Alert.alert('錯誤', result.error || '解密失敗');
+        Alert.alert('Error', result.error || '解密Failed');
       }
     } catch (error) {
-      console.error('解密失敗:', error);
-      Alert.alert('錯誤', '解密失敗');
+      console.error('解密Failed:', error);
+      Alert.alert('Error', '解密Failed');
     } finally {
       setLoading(false);
     }
@@ -152,10 +152,10 @@ export const DataSecurityExample: React.FC = () => {
       };
 
       const _task = await createBackup(backupConfig);
-      Alert.alert('成功', `備份任務已創建: ${task.id}`);
+      Alert.alert('Success', `BackupTask已Create: ${task.id}`);
     } catch (error) {
-      console.error('創建備份失敗:', error);
-      Alert.alert('錯誤', '創建備份失敗');
+      console.error('CreateBackupFailed:', error);
+      Alert.alert('Error', 'CreateBackupFailed');
     } finally {
       setLoading(false);
     }
@@ -166,19 +166,19 @@ export const DataSecurityExample: React.FC = () => {
     try {
       await refreshState();
       const _stateInfo = [
-        `初始化狀態: ${state.isInitialized ? '已初始化' : '未初始化'}`,
-        `加密狀態: ${state.isEncryptionEnabled ? '已啟用' : '已禁用'}`,
-        `備份狀態: ${state.isBackupEnabled ? '已啟用' : '已禁用'}`,
+        `InitializeStatus: ${state.isInitialized ? '已Initialize' : '未Initialize'}`,
+        `EncryptStatus: ${state.isEncryptionEnabled ? '已Enable' : '已Disable'}`,
+        `BackupStatus: ${state.isBackupEnabled ? '已Enable' : '已Disable'}`,
         `活躍密鑰: ${state.activeKeys.length}`,
-        `總加密次數: ${state.statistics.totalEncryptions}`,
-        `總解密次數: ${state.statistics.totalDecryptions}`,
-        `總備份次數: ${state.statistics.totalBackups}`,
+        `總Encrypt次數: ${state.statistics.totalEncryptions}`,
+        `總Decrypt次數: ${state.statistics.totalDecryptions}`,
+        `總Backup次數: ${state.statistics.totalBackups}`,
       ].join('\n');
 
-      Alert.alert('安全狀態', stateInfo);
+      Alert.alert('安全Status', stateInfo);
     } catch (error) {
-      console.error('獲取安全狀態失敗:', error);
-      Alert.alert('錯誤', '獲取安全狀態失敗');
+      console.error('Get安全StatusFailed:', error);
+      Alert.alert('Error', 'Get安全StatusFailed');
     } finally {
       setLoading(false);
     }
@@ -189,17 +189,17 @@ export const DataSecurityExample: React.FC = () => {
     try {
       await refreshMetrics();
       const _metricsInfo = [
-        `加密性能: ${state.metrics?.encryptionPerformance?.averageEncryptionTime?.toFixed(2) || '0'}ms`,
-        `解密性能: ${state.metrics?.encryptionPerformance?.averageDecryptionTime?.toFixed(2) || '0'}ms`,
-        `備份成功率: ${((state.metrics?.backupPerformance?.successRate || 0) * 100).toFixed(1)}%`,
-        `系統健康狀態: ${state.metrics?.security?.complianceScore?.toFixed(1) || '0'}`,
+        `Encrypt性能: ${state.metrics?.encryptionPerformance?.averageEncryptionTime?.toFixed(2) || '0'}ms`,
+        `Decrypt性能: ${state.metrics?.encryptionPerformance?.averageDecryptionTime?.toFixed(2) || '0'}ms`,
+        `BackupSuccess率: ${((state.metrics?.backupPerformance?.successRate || 0) * 100).toFixed(1)}%`,
+        `系統健康Status: ${state.metrics?.security?.complianceScore?.toFixed(1) || '0'}`,
         `密鑰輪換合規性: ${state.metrics?.keyManagement?.keyRotationCompliance || 0}%`,
       ].join('\n');
 
       Alert.alert('安全指標', metricsInfo);
     } catch (error) {
-      console.error('獲取安全指標失敗:', error);
-      Alert.alert('錯誤', '獲取安全指標失敗');
+      console.error('Get安全指標Failed:', error);
+      Alert.alert('Error', 'Get安全指標Failed');
     } finally {
       setLoading(false);
     }
@@ -207,9 +207,9 @@ export const DataSecurityExample: React.FC = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>數據安全功能示例</Text>
+      <Text style={styles.title}>Data安全功能示例</Text>
 
-      {/* 狀態信息 */}
+      {/* StatusInformation */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>狀態信息</Text>
         <Text style={styles.statusText}>
@@ -226,7 +226,7 @@ export const DataSecurityExample: React.FC = () => {
         </Text>
       </View>
 
-      {/* 密鑰管理 */}
+      {/* 密鑰Manage */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>密鑰管理</Text>
         <TouchableOpacity
@@ -241,7 +241,7 @@ export const DataSecurityExample: React.FC = () => {
         ) : null}
       </View>
 
-      {/* 數據加密 */}
+      {/* DataEncrypt */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>數據加密</Text>
         <TextInput
@@ -275,7 +275,7 @@ export const DataSecurityExample: React.FC = () => {
         ) : null}
       </View>
 
-      {/* 備份功能 */}
+      {/* Backup功能 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>備份功能</Text>
         <TouchableOpacity
@@ -287,7 +287,7 @@ export const DataSecurityExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 安全監控 */}
+      {/* 安全Monitor */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>安全監控</Text>
         <TouchableOpacity
@@ -306,7 +306,7 @@ export const DataSecurityExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 統計信息 */}
+      {/* StatisticsInformation */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>統計信息</Text>
         <Text style={styles.statusText}>

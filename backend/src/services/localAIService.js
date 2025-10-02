@@ -32,7 +32,7 @@ class LocalAIService {
   }
 
   async initializeProviders() {
-    // 檢查Ollama可用性
+    // CheckOllama可用性
     try {
 // eslint-disable-next-line no-unused-vars
       const response = await axios.get(
@@ -42,18 +42,18 @@ class LocalAIService {
         }
       );
       this.providers.ollama.isAvailable = true;
-      logger.info('Ollama服務可用');
+      logger.info('OllamaService可用');
     } catch (error) {
-      logger.warn('Ollama服務不可用:', error.message);
+      logger.warn('OllamaService不可用:', error.message);
     }
 
-    // 檢查Hugging Face可用性
+    // CheckHugging Face可用性
     if (this.providers.huggingface.apiKey) {
       this.providers.huggingface.isAvailable = true;
-      logger.info('Hugging Face服務可用');
+      logger.info('Hugging FaceService可用');
     }
 
-    // 檢查OpenAI兼容服務可用性
+    // CheckOpenAI兼容Service可用性
     try {
 // eslint-disable-next-line no-unused-vars
       const response = await axios.get(
@@ -63,28 +63,28 @@ class LocalAIService {
         }
       );
       this.providers.openaiCompatible.isAvailable = true;
-      logger.info('OpenAI兼容服務可用');
+      logger.info('OpenAI兼容Service可用');
     } catch (error) {
-      logger.warn('OpenAI兼容服務不可用:', error.message);
+      logger.warn('OpenAI兼容Service不可用:', error.message);
     }
   }
 
-  // 獲取可用的AI提供商
+  // Get可用的AI提供商
   getAvailableProviders() {
     return Object.entries(this.providers)
       .filter(([name, provider]) => provider.isAvailable)
       .map(([name, provider]) => ({ name, ...provider }));
   }
 
-  // 智能選擇最佳提供商
+  // 智能Select最佳提供商
   selectBestProvider(taskType = 'general') {
     const available = this.getAvailableProviders();
 
     if (available.length === 0) {
-      throw new Error('沒有可用的AI服務');
+      throw new Error('沒有可用的AIService');
     }
 
-    // 根據任務類型選擇最佳提供商
+    // Root據TaskClass型Select最佳提供商
     switch (taskType) {
       case 'image_recognition':
         return available.find((p) => p.name === 'huggingface') || available[0];
@@ -99,7 +99,7 @@ class LocalAIService {
     }
   }
 
-  // 使用Ollama進行文本生成
+  // 使用Ollama進Row文本生成
   async generateWithOllama(prompt, model = 'llama2', options = {}) {
     try {
 // eslint-disable-next-line no-unused-vars
@@ -130,12 +130,12 @@ class LocalAIService {
         },
       };
     } catch (error) {
-      logger.error('Ollama生成錯誤:', error);
-      throw new Error(`Ollama生成失敗: ${error.message}`);
+      logger.error('Ollama生成Error:', error);
+      throw new Error(`Ollama生成Failed: ${error.message}`);
     }
   }
 
-  // 使用Hugging Face進行文本生成
+  // 使用Hugging Face進Row文本生成
   async generateWithHuggingFace(
     prompt,
     model = 'microsoft/DialoGPT-medium',
@@ -173,12 +173,12 @@ class LocalAIService {
         },
       };
     } catch (error) {
-      logger.error('Hugging Face生成錯誤:', error);
-      throw new Error(`Hugging Face生成失敗: ${error.message}`);
+      logger.error('Hugging Face生成Error:', error);
+      throw new Error(`Hugging Face生成Failed: ${error.message}`);
     }
   }
 
-  // 使用OpenAI兼容服務
+  // 使用OpenAI兼容Service
   async generateWithOpenAICompatible(prompt, model = 'llama2', options = {}) {
     try {
 // eslint-disable-next-line no-unused-vars
@@ -206,12 +206,12 @@ class LocalAIService {
         usage: response.data.usage,
       };
     } catch (error) {
-      logger.error('OpenAI兼容服務錯誤:', error);
-      throw new Error(`OpenAI兼容服務失敗: ${error.message}`);
+      logger.error('OpenAI兼容ServiceError:', error);
+      throw new Error(`OpenAI兼容ServiceFailed: ${error.message}`);
     }
   }
 
-  // 通用AI生成接口
+  // GenericAI生成Interface
   async generateText(prompt, taskType = 'general', options = {}) {
     const provider = this.selectBestProvider(taskType);
 
@@ -239,7 +239,7 @@ class LocalAIService {
           throw new Error(`不支持的提供商: ${provider.name}`);
       }
     } catch (error) {
-      // 如果首選提供商失敗，嘗試其他提供商
+      // 如果首選提供商Failed，嘗試其他提供商
       const available = this.getAvailableProviders().filter(
         (p) => p.name !== provider.name
       );
@@ -267,16 +267,16 @@ class LocalAIService {
               );
           }
         } catch (altError) {
-          logger.warn(`${altProvider.name}備用服務也失敗:`, altError.message);
+          logger.warn(`${altProvider.name}備用Service也Failed:`, altError.message);
           continue;
         }
       }
 
-      throw new Error('所有AI服務都不可用');
+      throw new Error('所有AIService都不可用');
     }
   }
 
-  // 卡片分析
+  // 卡片Analysis
   async analyzeCard(cardData, analysisType = 'investment') {
     const prompt = this.buildCardAnalysisPrompt(cardData, analysisType);
 
@@ -296,7 +296,7 @@ class LocalAIService {
     });
   }
 
-  // 市場分析
+  // 市場Analysis
   async analyzeMarket(marketData) {
     const prompt = this.buildMarketAnalysisPrompt(marketData);
 
@@ -306,7 +306,7 @@ class LocalAIService {
     });
   }
 
-  // 構建卡片分析提示
+  // Build卡片Analysis提示
   buildCardAnalysisPrompt(cardData, analysisType) {
     const basePrompt = `請分析以下卡片信息：
 
@@ -327,7 +327,7 @@ class LocalAIService {
     return basePrompt;
   }
 
-  // 構建價格預測提示
+  // Build價格預測提示
   buildPricePredictionPrompt(cardData, timeframe) {
     return `基於以下卡片信息預測${timeframe}後的價格：
 
@@ -339,7 +339,7 @@ class LocalAIService {
 請預測${timeframe}後的價格範圍和置信度，並說明預測依據。`;
   }
 
-  // 構建市場分析提示
+  // Build市場Analysis提示
   buildMarketAnalysisPrompt(marketData) {
     return `請分析當前卡片市場狀況：
 
@@ -354,7 +354,7 @@ class LocalAIService {
 4. 建議策略`;
   }
 
-  // 健康檢查
+  // 健康Check
   async healthCheck() {
 // eslint-disable-next-line no-unused-vars
     const status = {
@@ -369,8 +369,8 @@ class LocalAIService {
       status,
       message:
         status.availableProviders > 0
-          ? `有 ${status.availableProviders} 個AI服務可用`
-          : '沒有可用的AI服務',
+          ? `有 ${status.availableProviders} 個AIService可用`
+          : '沒有可用的AIService',
     };
   }
 }

@@ -3,7 +3,7 @@ import React, { forwardRef, useMemo } from 'react';
 import { useResponsive } from '../../hooks/useResponsive';
 import type { ContainerProps } from '../../types/layout';
 
-// Container 組件
+// Container Component
 export const _Container = forwardRef<HTMLDivElement, ContainerProps>(
   (
     {
@@ -84,7 +84,7 @@ export const _Container = forwardRef<HTMLDivElement, ContainerProps>(
       style,
     ]);
 
-    // 生成 CSS 類名
+    // 生成 CSS Class名
     const _containerClassName = useMemo(() => {
       const _classes = ['layout-container'];
 

@@ -1,4 +1,4 @@
-// 反饋服務單元測試
+// 反饋Service單元Test
 import { FeedbackService } from '../services/feedbackService';
 import type { FeedbackFormData } from '../types/feedback';
 import {
@@ -48,11 +48,11 @@ describe('FeedbackService', () => {
   let service: FeedbackService;
 
   beforeEach(() => {
-    // 清除現有實例
+    // Clear現有Instance
     (FeedbackService as any).instance = null;
     service = FeedbackService.getInstance();
 
-    // 清除 mock
+    // Clear mock
     jest.clearAllMocks();
     localStorageMock.getItem.mockReturnValue(null);
   });
@@ -62,7 +62,7 @@ describe('FeedbackService', () => {
   });
 
   describe('初始化', () => {
-    test('應該正確初始化服務', async () => {
+    test('應該正確InitializeService', async () => {
       await service.initialize();
 
       const _status = service.getStatus();
@@ -107,7 +107,7 @@ describe('FeedbackService', () => {
       await service.initialize();
     });
 
-    test('應該成功提交反饋', async () => {
+    test('應該Success提交反饋', async () => {
       const feedbackData: FeedbackFormData = {
         type: FeedbackType.FEATURE_REQUEST,
         category: FeedbackCategory.FUNCTIONALITY,
@@ -139,8 +139,8 @@ describe('FeedbackService', () => {
         type: FeedbackType.GENERAL_FEEDBACK,
         category: FeedbackCategory.OTHER,
         priority: FeedbackPriority.MEDIUM,
-        title: '', // 空標題
-        description: '', // 空描述
+        title: '', // Empty標題
+        description: '', // EmptyDescription
         attachments: [],
         tags: [],
       };
@@ -157,7 +157,7 @@ describe('FeedbackService', () => {
         priority: FeedbackPriority.MEDIUM,
         title: '測試標題',
         description: '測試描述',
-        userEmail: 'invalid-email', // 無效郵箱
+        userEmail: 'invalid-email', // 無效Email
         attachments: [],
         tags: [],
       };
@@ -174,7 +174,7 @@ describe('FeedbackService', () => {
     beforeEach(async () => {
       await service.initialize();
 
-      // 創建一個測試反饋
+      // Create一個Test反饋
       const feedbackData: FeedbackFormData = {
         type: FeedbackType.GENERAL_FEEDBACK,
         category: FeedbackCategory.OTHER,
@@ -189,7 +189,7 @@ describe('FeedbackService', () => {
       feedbackId = feedback.id;
     });
 
-    test('應該成功更新反饋', async () => {
+    test('應該SuccessUpdate反饋', async () => {
       const _updateData = {
         title: '更新後的標題',
         status: FeedbackStatus.IN_PROGRESS,
@@ -201,7 +201,7 @@ describe('FeedbackService', () => {
       expect(result.status).toBe(FeedbackStatus.IN_PROGRESS);
     });
 
-    test('應該在更新不存在的反饋時拋出錯誤', async () => {
+    test('應該在Update不存在的反饋時拋出Error', async () => {
       await expect(
         service.updateFeedback('non-existent-id', { title: '新標題' })
       ).rejects.toThrow('反饋 non-existent-id 不存在');
@@ -228,14 +228,14 @@ describe('FeedbackService', () => {
       feedbackId = feedback.id;
     });
 
-    test('應該成功刪除反饋', async () => {
+    test('應該SuccessDelete反饋', async () => {
       await service.deleteFeedback(feedbackId);
 
       const _status = service.getStatus();
       expect(status.feedbackCount).toBe(0);
     });
 
-    test('應該在刪除不存在的反饋時拋出錯誤', async () => {
+    test('應該在Delete不存在的反饋時拋出Error', async () => {
       await expect(service.deleteFeedback('non-existent-id')).rejects.toThrow(
         '反饋 non-existent-id 不存在'
       );
@@ -246,7 +246,7 @@ describe('FeedbackService', () => {
     beforeEach(async () => {
       await service.initialize();
 
-      // 創建多個測試反饋
+      // CreateMultipleTest反饋
       const _feedbacks = [
         {
           type: FeedbackType.FEATURE_REQUEST,
@@ -261,8 +261,8 @@ describe('FeedbackService', () => {
           type: FeedbackType.BUG_REPORT,
           category: FeedbackCategory.PERFORMANCE,
           priority: FeedbackPriority.LOW,
-          title: '低優先級錯誤報告',
-          description: '這是一個低優先級的錯誤報告',
+          title: '低優先級Error報告',
+          description: '這是一個低優先級的Error報告',
           attachments: [],
           tags: ['低優先級'],
         },
@@ -347,7 +347,7 @@ describe('FeedbackService', () => {
     beforeEach(async () => {
       await service.initialize();
 
-      // 創建測試數據
+      // CreateTestData
       const _feedbacks = [
         {
           type: FeedbackType.FEATURE_REQUEST,
@@ -363,7 +363,7 @@ describe('FeedbackService', () => {
           type: FeedbackType.BUG_REPORT,
           category: FeedbackCategory.PERFORMANCE,
           priority: FeedbackPriority.MEDIUM,
-          title: '錯誤報告1',
+          title: 'Error報告1',
           description: '描述2',
           satisfactionRating: SatisfactionRating.DISSATISFIED,
           attachments: [],
@@ -453,7 +453,7 @@ describe('FeedbackService', () => {
 
       await service.markNotificationRead(notificationId);
 
-      // 由於我們沒有實際的 notification 對象，這裡只是測試方法不會拋出錯誤
+      // 由於我們沒有實際的 notification Object，這裡只YesTestMethod不會ThrowError
       expect(true).toBe(true);
     });
   });
@@ -487,17 +487,17 @@ describe('FeedbackService', () => {
       service.on('feedbackSubmitted', mockListener);
       service.off('feedbackSubmitted', mockListener);
 
-      // 由於我們沒有觸發事件，這裡只是測試方法不會拋出錯誤
+      // 由於我們沒有觸發Event，這裡只YesTestMethod不會ThrowError
       expect(true).toBe(true);
     });
   });
 
-  describe('服務狀態', () => {
+  describe('Service狀態', () => {
     beforeEach(async () => {
       await service.initialize();
     });
 
-    test('應該返回正確的服務狀態', () => {
+    test('應該返回正確的Service狀態', () => {
       const _status = service.getStatus();
 
       expect(status).toHaveProperty('isInitialized');
@@ -508,7 +508,7 @@ describe('FeedbackService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       await service.initialize();
     });

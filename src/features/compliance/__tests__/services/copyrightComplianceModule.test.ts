@@ -29,7 +29,7 @@ describe('CopyrightComplianceModule', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化模組', async () => {
+    it('應該SuccessInitialize模組', async () => {
       const _result = await copyrightComplianceModule.initialize();
       expect(result).toBe(true);
     });
@@ -408,7 +408,7 @@ describe('CopyrightComplianceModule', () => {
 
       copyrightComplianceModule.updateConfig(newConfig);
 
-      // 驗證配置已更新（通過檢查行為變化）
+      // VerifyConfigure已Update（通過CheckRow為變化）
       const content: UserContent = {
         id: 'test_content',
         userId: 'test_user',
@@ -421,14 +421,14 @@ describe('CopyrightComplianceModule', () => {
 
       const _result =
         copyrightComplianceModule.filterCopyrightedContent(content);
-      // 當內容過濾被禁用時，應該不會被過濾
+      // 當ContentFilter被Disable時，應該不會被Filter
       expect(result.isFiltered).toBe(false);
     });
   });
 
   describe('重置功能', () => {
     it('應該重置模組狀態', async () => {
-      // 先添加一些數據
+      // 先Add一些Data
       const content: UserContent = {
         id: 'test_content',
         userId: 'test_user',
@@ -458,10 +458,10 @@ describe('CopyrightComplianceModule', () => {
       copyrightComplianceModule.filterCopyrightedContent(content);
       copyrightComplianceModule.processDMCARequest(dmcaRequest);
 
-      // 重置
+      // Reset
       await copyrightComplianceModule.reset();
 
-      // 驗證重置後的狀態（通過檢查模組是否正常工作）
+      // VerifyReset後的Status（通過Check模組YesNo正常工作）
       const newContent: UserContent = {
         id: 'new_content',
         userId: 'new_user',
@@ -524,7 +524,7 @@ describe('CopyrightComplianceModule', () => {
         id: 'long_content',
         userId: 'user123',
         contentType: 'text',
-        content: 'A'.repeat(10000), // 極長內容
+        content: 'A'.repeat(10000), // 極長Content
         metadata: {},
         uploadDate: new Date(),
         isPublic: true,
@@ -561,7 +561,7 @@ describe('CopyrightComplianceModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     it('應該快速處理大量違規檢測', () => {
@@ -584,13 +584,13 @@ describe('CopyrightComplianceModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 
   describe('功能場景測試', () => {
     it('應該處理完整的版權合規流程', () => {
-      // 1. 創建用戶內容
+      // 1. CreateUserContent
       const content: UserContent = {
         id: 'scenario_content',
         userId: 'scenario_user',
@@ -601,7 +601,7 @@ describe('CopyrightComplianceModule', () => {
         isPublic: true,
       };
 
-      // 2. 過濾內容
+      // 2. FilterContent
       const _filterResult =
         copyrightComplianceModule.filterCopyrightedContent(content);
 
@@ -609,7 +609,7 @@ describe('CopyrightComplianceModule', () => {
       const _detectionResult =
         copyrightComplianceModule.detectCopyrightViolations(content);
 
-      // 4. 處理DMCA請求
+      // 4. HandleDMCARequest
       const dmcaRequest: DMCARequest = {
         id: 'scenario_dmca',
         rightsHolder: '版權所有者',
@@ -646,7 +646,7 @@ describe('CopyrightComplianceModule', () => {
       const _protectionResult =
         copyrightComplianceModule.protectRightsHolder(rightsHolder);
 
-      // 驗證結果
+      // Verify結果
       expect(filterResult.contentId).toBe('scenario_content');
       expect(detectionResult.contentId).toBe('scenario_content');
       expect(dmcaResult.requestId).toBe('scenario_dmca');
@@ -655,7 +655,7 @@ describe('CopyrightComplianceModule', () => {
     });
 
     it('應該處理反通知流程', () => {
-      // 1. 創建DMCA請求
+      // 1. CreateDMCARequest
       const dmcaRequest: DMCARequest = {
         id: 'counter_dmca',
         rightsHolder: '權利人',
@@ -674,7 +674,7 @@ describe('CopyrightComplianceModule', () => {
 
       copyrightComplianceModule.processDMCARequest(dmcaRequest);
 
-      // 2. 處理反通知
+      // 2. Handle反Notification
       const counterNotice: CounterNotice = {
         id: 'counter_notice',
         dmcaRequestId: 'counter_dmca',

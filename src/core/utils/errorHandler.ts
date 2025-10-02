@@ -1,6 +1,6 @@
 import { logger } from './logger';
 
-// 錯誤類型枚舉
+// ErrorClass型枚舉
 export enum ErrorType {
   NETWORK = 'network',
   VALIDATION = 'validation',
@@ -12,7 +12,7 @@ export enum ErrorType {
   UNKNOWN = 'unknown',
 }
 
-// 錯誤嚴重程度枚舉
+// Error嚴重程度枚舉
 export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
@@ -20,7 +20,7 @@ export enum ErrorSeverity {
   CRITICAL = 'critical',
 }
 
-// 自定義應用錯誤類
+// CustomApplyErrorClass
 export class AppError extends Error {
   public readonly type: ErrorType;
   public readonly severity: ErrorSeverity;
@@ -50,7 +50,7 @@ export class AppError extends Error {
   }
 }
 
-// 特定錯誤類型
+// SpecificErrorClass型
 export class ValidationError extends AppError {
   constructor(message: string, details?: unknown) {
     super(
@@ -130,8 +130,8 @@ export class ExternalServiceError extends AppError {
 }
 
 /**
- * 增強錯誤處理器
- * 提供統一的錯誤處理和恢復機制
+ * 增強ErrorHandle器
+ * 提供統一的ErrorHandle和Restore機制
  */
 export class ErrorHandler {
   private static instance: ErrorHandler;
@@ -139,7 +139,7 @@ export class ErrorHandler {
   private readonly errorStats: Map<ErrorType, number> = new Map();
   private recentErrors: AppError[] = [];
   private readonly maxRetries = 3;
-  private readonly retryDelay = 1000; // 1秒
+  private readonly retryDelay = 1000; // 1Second
   private readonly maxRecentErrors = 100;
 
   static getInstance(): ErrorHandler {
@@ -152,11 +152,11 @@ export class ErrorHandler {
   handleError(error: Error | AppError, context?: string): AppError {
     let appError: AppError;
 
-    // 如果已經是 AppError，直接使用
+    // 如果已經Yes AppError，直接使用
     if (error instanceof AppError) {
       appError = error;
     } else {
-      // 將標準 Error 轉換為 AppError
+      // 將Standard Error Convert為 AppError
       appError = new AppError(
         error.message,
         this.detectErrorType(error),
@@ -166,10 +166,10 @@ export class ErrorHandler {
       );
     }
 
-    // 記錄錯誤統計
+    // RecordErrorStatistics
     this.recordError(appError);
 
-    // 記錄錯誤日誌
+    // RecordErrorLog
     this.logError(appError, context);
 
     return appError;
@@ -190,7 +190,7 @@ export class ErrorHandler {
       retryCount: currentCount,
     });
 
-    // 如果還有重試機會且提供了重試函數
+    // 如果還有Retry機會且提供了RetryFunction
     if (currentCount < this.maxRetries && retryFn) {
       this.errorCount.set(errorKey, currentCount + 1);
 
@@ -206,7 +206,7 @@ export class ErrorHandler {
       try {
         return await retryFn();
       } catch (retryError) {
-        // 如果重試也失敗，遞歸調用自身
+        // 如果Retry也Failed，遞歸調用自身
         if (currentCount + 1 < this.maxRetries) {
           return this.handleErrorWithRetry(
             retryError as Error,
@@ -214,17 +214,17 @@ export class ErrorHandler {
             retryFn
           );
         } else {
-          // 重置錯誤計數
+          // ResetErrorCount
           this.errorCount.delete(errorKey);
           throw retryError;
         }
       }
     }
 
-    // 重置錯誤計數
+    // ResetErrorCount
     this.errorCount.delete(errorKey);
 
-    // 根據錯誤類型提供恢復建議
+    // Root據ErrorClass型提供Restore建議
     const _recoverySuggestion = this.getRecoverySuggestion(error, context);
     logger.warn('Recovery suggestion:', { suggestion: recoverySuggestion });
 
@@ -239,7 +239,7 @@ export class ErrorHandler {
       message.includes('network') ||
       message.includes('fetch') ||
       name.includes('network') ||
-      message.includes('連接')
+      message.includes('Connect')
     ) {
       return ErrorType.NETWORK;
     }
@@ -302,7 +302,7 @@ export class ErrorHandler {
     if (
       message.includes('high') ||
       name.includes('high') ||
-      message.includes('連接') ||
+      message.includes('Connect') ||
       message.includes('network')
     ) {
       return ErrorSeverity.HIGH;
@@ -314,11 +314,11 @@ export class ErrorHandler {
   }
 
   private recordError(error: AppError): void {
-    // 更新錯誤統計
+    // UpdateErrorStatistics
     const _currentCount = this.errorStats.get(error.type) || 0;
     this.errorStats.set(error.type, currentCount + 1);
 
-    // 添加到最近錯誤列表
+    // Add到最近ErrorList
     this.recentErrors.push(error);
     if (this.recentErrors.length > this.maxRecentErrors) {
       this.recentErrors.shift();
@@ -353,10 +353,10 @@ export class ErrorHandler {
 
   private getRecoverySuggestion(error: Error, context: string): string {
     if (error.message.includes('network')) {
-      return '檢查網絡連接並重試';
+      return 'Check網絡Connect並重試';
     }
     if (error.message.includes('timeout')) {
-      return '增加超時時間或檢查服務器狀態';
+      return '增加超時時間或CheckServer狀態';
     }
     if (error.message.includes('permission')) {
       return '檢查權限設置';
@@ -365,7 +365,7 @@ export class ErrorHandler {
       return '檢查輸入數據格式';
     }
     if (error.message.includes('database')) {
-      return '檢查數據庫連接和查詢語句';
+      return 'Check數據庫Connect和查詢語句';
     }
     if (error.message.includes('auth')) {
       return '檢查認證憑證是否有效';
@@ -377,7 +377,7 @@ export class ErrorHandler {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  // 公共方法
+  // PublicMethod
   getErrorStats(): Map<ErrorType, number> {
     return new Map(this.errorStats);
   }
@@ -397,7 +397,7 @@ export class ErrorHandler {
   }
 }
 
-// 錯誤處理裝飾器
+// ErrorHandle裝飾器
 export function withErrorHandling<T extends any[], R>(
   target: (...args: T) => Promise<R>,
   context?: string
@@ -416,7 +416,7 @@ export function withErrorHandling<T extends any[], R>(
   };
 }
 
-// 方法裝飾器
+// Method裝飾器
 export function handleErrors(
   target: unknown,
   propertyKey: string,
@@ -440,6 +440,6 @@ export function handleErrors(
   return descriptor;
 }
 
-// 導出單例實例
-// 導出單例實例
+// Export單例Instance
+// Export單例Instance
 export const _errorHandler = ErrorHandler.getInstance();

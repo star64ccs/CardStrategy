@@ -148,7 +148,7 @@ export class MediaWorker {
   }
 
   /**
-   * 內容分析
+   * ContentAnalysis
    */
   async analyzeContent(mediaId: string): Promise<MediaAnalysis> {
     try {
@@ -183,8 +183,8 @@ export class MediaWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('內容分析失敗:', error);
-      throw new Error(`內容分析失敗: ${error}`);
+      console.error('內容分析Failed:', error);
+      throw new Error(`內容分析Failed: ${error}`);
     }
   }
 
@@ -224,13 +224,13 @@ export class MediaWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('質量評估失敗:', error);
-      throw new Error(`質量評估失敗: ${error}`);
+      console.error('質量評估Failed:', error);
+      throw new Error(`質量評估Failed: ${error}`);
     }
   }
 
   /**
-   * 優化分析
+   * 優化Analysis
    */
   async analyzeOptimization(mediaId: string): Promise<MediaAnalysis> {
     try {
@@ -267,13 +267,13 @@ export class MediaWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('優化分析失敗:', error);
-      throw new Error(`優化分析失敗: ${error}`);
+      console.error('優化分析Failed:', error);
+      throw new Error(`優化分析Failed: ${error}`);
     }
   }
 
   /**
-   * 生成媒體內容
+   * 生成媒體Content
    */
   async generateContent(
     request: ContentGenerationRequest
@@ -339,13 +339,13 @@ export class MediaWorker {
       this.generationResults.push(result);
       return result;
     } catch (error) {
-      console.error('內容生成失敗:', error);
-      throw new Error(`內容生成失敗: ${error}`);
+      console.error('內容生成Failed:', error);
+      throw new Error(`內容生成Failed: ${error}`);
     }
   }
 
   /**
-   * 管理分析
+   * ManageAnalysis
    */
   async analyzeManagement(mediaId: string): Promise<MediaAnalysis> {
     try {
@@ -382,8 +382,8 @@ export class MediaWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('管理分析失敗:', error);
-      throw new Error(`管理分析失敗: ${error}`);
+      console.error('管理分析Failed:', error);
+      throw new Error(`管理分析Failed: ${error}`);
     }
   }
 
@@ -410,13 +410,13 @@ export class MediaWorker {
 
       return this.extractMediaRecommendations(response.content);
     } catch (error) {
-      console.error('媒體建議生成失敗:', error);
-      throw new Error(`媒體建議生成失敗: ${error}`);
+      console.error('媒體建議生成Failed:', error);
+      throw new Error(`媒體建議生成Failed: ${error}`);
     }
   }
 
   /**
-   * 監控媒體狀態
+   * Monitor媒體Status
    */
   async monitorMediaStatus(mediaId: string): Promise<{
     overallQuality: number;
@@ -470,27 +470,27 @@ export class MediaWorker {
         recommendations,
       };
     } catch (error) {
-      console.error('媒體狀態監控失敗:', error);
-      throw new Error(`媒體狀態監控失敗: ${error}`);
+      console.error('媒體狀態監控Failed:', error);
+      throw new Error(`媒體狀態監控Failed: ${error}`);
     }
   }
 
   /**
-   * 獲取媒體內容
+   * Get媒體Content
    */
   getMediaContent(mediaId: string): MediaContent | undefined {
     return this.mediaContent.get(mediaId);
   }
 
   /**
-   * 設置媒體內容
+   * Settings媒體Content
    */
   setMediaContent(mediaId: string, content: MediaContent): void {
     this.mediaContent.set(mediaId, content);
   }
 
   /**
-   * 獲取生成結果
+   * Get生成結果
    */
   getGenerationResults(mediaId?: string): ContentGenerationResult[] {
     let filtered = this.generationResults;
@@ -503,7 +503,7 @@ export class MediaWorker {
   }
 
   /**
-   * 獲取分析歷史
+   * GetAnalysis歷史
    */
   getAnalysisHistory(mediaId?: string, analysisType?: string): MediaAnalysis[] {
     let filtered = this.analysisHistory;
@@ -524,25 +524,25 @@ export class MediaWorker {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   updateConfig(newConfig: Partial<MediaWorkerConfig>): void {
     this.config = { ...this.config, ...newConfig };
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   getConfig(): MediaWorkerConfig {
     return { ...this.config };
   }
 
-  // 私有輔助方法
+  // Private輔助Method
   private generateId(): string {
     return `media_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // 內容相關方法
+  // Content相OffMethod
   private calculateContentScore(content: string): number {
     const _positiveIndicators = ['高質量', '相關', '完整', '適宜'];
     const _negativeIndicators = ['低質量', '不相關', '不完整', '不適宜'];
@@ -630,7 +630,7 @@ export class MediaWorker {
     return Math.ceil(wordCount / 100);
   }
 
-  // 質量相關方法
+  // 質量相OffMethod
   private calculateQualityScore(content: string): number {
     const _positiveIndicators = ['高質量', '清晰', '優質', '良好'];
     const _negativeIndicators = ['低質量', '模糊', '劣質', '差'];
@@ -719,7 +719,7 @@ export class MediaWorker {
     return Math.ceil(wordCount / 90);
   }
 
-  // 優化相關方法
+  // 優化相OffMethod
   private calculateOptimizationScore(content: string): number {
     const _positiveIndicators = ['優化', '改進', '提升', '效率'];
     const _negativeIndicators = ['未優化', '低效', '浪費', '問題'];
@@ -810,7 +810,7 @@ export class MediaWorker {
     return Math.ceil(wordCount / 85);
   }
 
-  // 管理相關方法
+  // Manage相OffMethod
   private calculateManagementScore(content: string): number {
     const _positiveIndicators = ['良好', '完整', '有序', '規範'];
     const _negativeIndicators = ['混亂', '不完整', '無序', '不規範'];

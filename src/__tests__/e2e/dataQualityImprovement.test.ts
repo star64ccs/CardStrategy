@@ -89,7 +89,7 @@ describe('數據質量改進端到端測試', () => {
         .mockResolvedValueOnce(qualityMetrics)
         .mockResolvedValueOnce(recommendations);
 
-      // 模擬用戶訪問儀表板
+      // 模擬User訪問儀Table板
       const _result = await dataQualityService.getDashboardData();
       const _metricsResult = await dataQualityService.getQualityMetrics({
         array: true,
@@ -98,13 +98,13 @@ describe('數據質量改進端到端測試', () => {
         { single: true }
       );
 
-      // 驗證儀表板數據
+      // Verify儀Table板Data
       expect(result.overview.qualityScore).toBe(78.5);
       expect(result.alerts).toHaveLength(1);
       expect(metricsResult).toHaveLength(2);
       expect(recommendationsResult.recommendations).toHaveLength(1);
 
-      // 驗證服務調用成功
+      // VerifyService調用Success
       expect(result.success).toBe(true);
       expect(metricsResult).toHaveLength(2);
       expect(recommendationsResult.success).toBe(true);
@@ -165,7 +165,7 @@ describe('數據質量改進端到端測試', () => {
         .mockResolvedValueOnce(submissionResult)
         .mockResolvedValueOnce(reviewResult);
 
-      // 執行完整流程
+      // 執Row完整流程
       const _annotatorsResult = await dataQualityService.getAnnotatorDetails();
       const _assignmentResult2 = await dataQualityService.assignAnnotationTasks({
         annotatorId: 1,
@@ -182,13 +182,13 @@ describe('數據質量改進端到端測試', () => {
         'Good quality'
       );
 
-      // 驗證結果
+      // Verify結果
       expect(annotatorsResult.annotators).toHaveLength(2);
       expect(assignmentResult2.tasks).toHaveLength(2);
       expect(submissionResult2.status).toBe('submitted');
       expect(reviewResult2.reviewStatus).toBe('approved');
 
-      // 驗證 API 調用
+      // Verify API 調用
       expect(mockApi.get).toHaveBeenCalledWith(
         '/data-quality/annotate/annotators?'
       );
@@ -262,20 +262,20 @@ describe('數據質量改進端到端測試', () => {
         .mockResolvedValueOnce(cleaningResult)
         .mockResolvedValueOnce(improvementResult);
 
-      // 執行流程
+      // 執Row流程
       const _initialResult2 = await dataQualityService.getCollectionStats();
       const _cleaningResult2 = await dataQualityService.performDataCleaning();
       const _improvementResult2 =
         await dataQualityService.performQualityImprovement();
       const _finalResult2 = await dataQualityService.getCollectionStats();
 
-      // 驗證改進效果
+      // Verify改進效果
       expect(initialResult2.qualityScore).toBe(75.0);
       expect(cleaningResult2.status).toBe('completed');
       expect(improvementResult2.status).toBe('completed');
       expect(finalResult2.qualityScore).toBe(82.5);
 
-      // 驗證 API 調用
+      // Verify API 調用
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/collect/stats?');
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/clean');
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/improve');
@@ -322,7 +322,7 @@ describe('數據質量改進端到端測試', () => {
         .mockResolvedValueOnce(realTimeStats)
         .mockResolvedValueOnce(realTimeAlerts);
 
-      // 執行流程
+      // 執Row流程
       const _configResult2 = await dataQualityService.setCollectionAlerts({
         qualityThreshold: 80,
         enableNotifications: true,
@@ -331,13 +331,13 @@ describe('數據質量改進端到端測試', () => {
       const _realTimeStatsResult = await dataQualityService.getRealTimeStats();
       const _realTimeAlertsResult = await dataQualityService.getRealTimeAlerts();
 
-      // 驗證監控功能
+      // VerifyMonitor功能
       expect(configResult2.status).toBe('configured');
       expect(realTimeStatsResult.systemStatus).toBe('warning');
       expect(realTimeAlertsResult).toHaveLength(1);
       expect(realTimeAlertsResult[0].type).toBe('quality_threshold_exceeded');
 
-      // 驗證 API 調用
+      // Verify API 調用
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/alerts', {
         qualityThreshold: 80,
         enableNotifications: true,
@@ -383,7 +383,7 @@ describe('數據質量改進端到端測試', () => {
         .mockResolvedValueOnce(breakdownResult)
         .mockResolvedValueOnce({ data: exportResult });
 
-      // 執行流程
+      // 執Row流程
       const _reportResult2 = await dataQualityService.getQualityReport(
         '2024-01-01',
         '2024-01-31'
@@ -396,12 +396,12 @@ describe('數據質量改進端到端測試', () => {
         format: 'pdf',
       });
 
-      // 驗證報告功能
+      // VerifyReport功能
       expect(reportResult2.overallScore).toBe(82.5);
       expect(breakdownResult2.sources).toHaveLength(2);
       expect(exportResult2).toBeInstanceOf(Blob);
 
-      // 驗證 API 調用
+      // Verify API 調用
       expect(mockApi.get).toHaveBeenCalledWith(
         '/data-quality/quality-report?startDate=2024-01-01&endDate=2024-01-31'
       );
@@ -417,9 +417,9 @@ describe('數據質量改進端到端測試', () => {
     });
   });
 
-  describe('錯誤處理和恢復流程', () => {
-    it('應該處理錯誤並提供恢復機制', async () => {
-      // 模擬第一次調用失敗，第二次成功
+  describe('ErrorHandle和恢復流程', () => {
+    it('應該HandleError並提供恢復機制', async () => {
+      // 模擬第一次調用Failed，第二次Success
       const _error = new Error('Network Error');
       const _successResponse = {
         data: {
@@ -431,17 +431,17 @@ describe('數據質量改進端到端測試', () => {
       mockApi.get.mockRejectedValueOnce(error);
       mockApi.get.mockResolvedValueOnce(successResponse);
 
-      // 第一次調用應該失敗
+      // 第一次調用應該Failed
       await expect(
         dataQualityService.getCollectionStats({ error: true })
       ).rejects.toThrow('Network Error');
 
-      // 第二次調用應該成功（模擬重試）
+      // 第二次調用應該Success（模擬Retry）
       const _result = await dataQualityService.getCollectionStats();
       expect(result.qualityScore).toBe(85.5);
     });
 
-    it('應該處理部分失敗的批量操作', async () => {
+    it('應該Handle部分Failed的批量操作', async () => {
       const _reviews = [
         { annotationId: 1, reviewStatus: 'approved' },
         { annotationId: 2, reviewStatus: 'rejected' },
@@ -463,7 +463,7 @@ describe('數據質量改進端到端測試', () => {
       expect(result.processed).toBe(1);
       expect(result.errors).toHaveLength(1);
 
-      // 驗證 API 調用
+      // Verify API 調用
       expect(mockApi.post).toHaveBeenCalledWith(
         '/data-quality/annotate/batch-review',
         {
@@ -493,7 +493,7 @@ describe('數據質量改進端到端測試', () => {
       const _duration = endTime - startTime;
 
       expect(result.totalRecords).toBe(100000);
-      expect(duration).toBeLessThan(5000); // 應該在5秒內完成
+      expect(duration).toBeLessThan(5000); // 應該在5Second內Complete
     });
 
     it('應該並行處理多個請求', async () => {
@@ -506,7 +506,7 @@ describe('數據質量改進端到端測試', () => {
       mockApi.get.mockResolvedValue(mockResponse);
       mockApi.post.mockResolvedValue(mockResponse);
 
-      // 並行執行多個請求
+      // Parallel執RowMultipleRequest
       const _promises = [
         dataQualityService.getCollectionStats(),
         dataQualityService.getQualityMetrics(),
@@ -568,20 +568,20 @@ describe('數據質量改進端到端測試', () => {
         .mockResolvedValueOnce(recommendationsResult);
       mockApi.post.mockResolvedValueOnce(improvementResult);
 
-      // 模擬用戶操作流程
+      // 模擬UserOperation流程
       const _dashboardResult2 = await dataQualityService.getDashboardData();
       const _recommendationsResult2 =
         await dataQualityService.getRecommendations();
       const _improvementResult2 =
         await dataQualityService.performQualityImprovement();
 
-      // 驗證用戶操作結果
+      // VerifyUserOperation結果
       expect(dashboardResult2.overview.qualityScore).toBe(78.5);
       expect(dashboardResult2.alerts).toHaveLength(1);
       expect(recommendationsResult2.recommendations).toHaveLength(1);
       expect(improvementResult2.status).toBe('completed');
 
-      // 驗證 API 調用
+      // Verify API 調用
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/dashboard?');
       expect(mockApi.get).toHaveBeenCalledWith('/data-quality/recommendations');
       expect(mockApi.post).toHaveBeenCalledWith('/data-quality/improve');

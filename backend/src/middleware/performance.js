@@ -14,36 +14,36 @@ class PerformanceMiddleware {
       });
 
       await this.redisClient.connect();
-      logger.info('Redis 連接成功');
+      logger.info('Redis ConnectSuccess');
     } catch (error) {
-      logger.warn('Redis 連接失敗，將使用內存緩存:', error.message);
+      logger.warn('Redis ConnectFailed，將使用內存緩存:', error.message);
       this.redisClient = null;
     }
   }
 
-  // 響應時間監控中間件
+  // ResponseTimeMonitor中間件
   responseTimeMonitor() {
     return (req, res, next) => {
       const start = Date.now();
 
-      // 在響應結束時記錄時間
+      // 在ResponseEnd時RecordTime
       res.on('finish', () => {
         const duration = Date.now() - start;
         const { method, originalUrl, statusCode } = req;
 
-        // 記錄響應時間
+        // RecordResponseTime
         logger.info(
           `API ${method} ${originalUrl} - ${statusCode} - ${duration}ms`
         );
 
-        // 如果響應時間超過閾值，記錄警告
+        // 如果ResponseTime超過閾Value，RecordWarning
         if (duration > 1000) {
           logger.warn(
             `慢響應警告: ${method} ${originalUrl} 耗時 ${duration}ms`
           );
         }
 
-        // 發送到監控系統
+        // Send到Monitor系統
         this.sendMetrics({
           type: 'api_response_time',
           method,
@@ -58,7 +58,7 @@ class PerformanceMiddleware {
     };
   }
 
-  // 緩存中間件
+  // Cache中間件
   cache(ttl = 300) {
     return async (req, res, next) => {
       if (!this.redisClient || req.method !== 'GET') {
@@ -81,42 +81,42 @@ class PerformanceMiddleware {
           });
         }
 
-        // 重寫 res.json 方法以緩存響應
+        // 重寫 res.json Method以CacheResponse
         const originalJson = res.json;
         res.json = function (data) {
           if (data.success && data.data) {
             this.redisClient
               .setEx(cacheKey, ttl, JSON.stringify(data.data))
-              .catch((err) => logger.error('緩存設置失敗:', err));
+              .catch((err) => logger.error('緩存SettingsFailed:', err));
           }
           return originalJson.call(this, data);
         }.bind(this);
 
         next();
       } catch (error) {
-        logger.error('緩存中間件錯誤:', error);
+        logger.error('緩存中間件Error:', error);
         next();
       }
     };
   }
 
-  // 數據庫查詢優化中間件
+  // DatabaseQuery優化中間件
   queryOptimizer() {
     return (req, res, next) => {
       const originalQuery = req.query;
 
-      // 限制查詢結果數量
+      // LimitQuery結果數量
       if (!originalQuery.limit || parseInt(originalQuery.limit) > 100) {
         req.query.limit = Math.min(parseInt(originalQuery.limit) || 20, 100);
       }
 
-      // 添加默認排序
+      // AddDefaultSort
       if (!originalQuery.sort) {
         req.query.sort = 'createdAt';
         req.query.order = 'desc';
       }
 
-      // 優化分頁參數
+      // 優化PaginateParameter
       if (originalQuery.page) {
         const page = Math.max(1, parseInt(originalQuery.page));
         const limit = parseInt(req.query.limit);
@@ -127,7 +127,7 @@ class PerformanceMiddleware {
     };
   }
 
-  // 內存使用監控
+  // Memory使用Monitor
   memoryMonitor() {
     return (req, res, next) => {
       const startMemory = process.memoryUsage();
@@ -141,7 +141,7 @@ class PerformanceMiddleware {
           external: endMemory.external - startMemory.external,
         };
 
-        // 如果內存使用增加過多，記錄警告
+        // 如果Memory使用增加過多，RecordWarning
         if (memoryDiff.heapUsed > 50 * 1024 * 1024) {
           // 50MB
           logger.warn(
@@ -162,7 +162,7 @@ class PerformanceMiddleware {
     };
   }
 
-  // 錯誤處理優化
+  // ErrorHandle優化
   errorHandler() {
     return (err, req, res, next) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
       const errorInfo = {
@@ -175,20 +175,20 @@ class PerformanceMiddleware {
         ip: req.ip,
       };
 
-      logger.error('API 錯誤:', errorInfo);
+      logger.error('API Error:', errorInfo);
 
-      // 發送錯誤指標
+      // SendError指標
       this.sendMetrics({
         type: 'api_error',
         error: errorInfo,
         timestamp: new Date().toISOString(),
       });
 
-      // 根據錯誤類型返回適當的響應
+      // Root據ErrorClass型Return適當的Response
       if (err.name === 'ValidationError') {
         return res.status(400).json({
           success: false,
-          message: '數據驗證失敗',
+          message: '數據VerifyFailed',
           errors: err.errors,
         });
       }
@@ -196,7 +196,7 @@ class PerformanceMiddleware {
       if (err.name === 'SequelizeConnectionError') {
         return res.status(503).json({
           success: false,
-          message: '數據庫連接錯誤',
+          message: '數據庫ConnectError',
           code: 'DATABASE_ERROR',
         });
       }
@@ -209,19 +209,19 @@ class PerformanceMiddleware {
         });
       }
 
-      // 默認錯誤響應
+      // DefaultErrorResponse
       res.status(err.status || 500).json({
         success: false,
         message:
           process.env.NODE_ENV === 'production'
-            ? '內部服務器錯誤'
+            ? '內部ServerError'
             : err.message,
         code: err.code || 'INTERNAL_ERROR',
       });
     };
   }
 
-  // 請求限流中間件
+  // Request限流中間件
   rateLimiter(limit = 100, windowMs = 15 * 60 * 1000) {
     const requests = new Map();
 
@@ -230,7 +230,7 @@ class PerformanceMiddleware {
       const now = Date.now();
       const windowStart = now - windowMs;
 
-      // 清理過期的請求記錄
+      // 清理過期的RequestRecord
       if (requests.has(key)) {
         requests.set(
           key,
@@ -258,7 +258,7 @@ class PerformanceMiddleware {
     };
   }
 
-  // 數據庫連接池監控
+  // DatabaseConnect池Monitor
   dbPoolMonitor() {
     return (req, res, next) => {
       const sequelize = req.app.get('sequelize');
@@ -274,11 +274,11 @@ class PerformanceMiddleware {
             borrowed: pool.borrowed,
           };
 
-          // 如果連接池使用率過高，記錄警告
+          // 如果Connect池使用率過高，RecordWarning
           const usageRate = poolStats.borrowed / poolStats.size;
           if (usageRate > 0.8) {
             logger.warn(
-              `數據庫連接池使用率過高: ${Math.round(usageRate * 100)}%`
+              `數據庫Connect池使用率過高: ${Math.round(usageRate * 100)}%`
             );
           }
 
@@ -294,9 +294,9 @@ class PerformanceMiddleware {
     };
   }
 
-  // 發送指標到監控系統
+  // Send指標到Monitor系統
   sendMetrics(metrics) {
-    // 這裡可以集成到 Prometheus、DataDog 等監控系統
+    // 這裡可以集成到 Prometheus、DataDog 等Monitor系統
     if (process.env.METRICS_ENDPOINT) {
       fetch(process.env.METRICS_ENDPOINT, {
         method: 'POST',
@@ -305,11 +305,11 @@ class PerformanceMiddleware {
           Authorization: `Bearer ${process.env.METRICS_API_KEY}`,
         },
         body: JSON.stringify(metrics),
-      }).catch((err) => logger.error('指標發送失敗:', err));
+      }).catch((err) => logger.error('指標發送Failed:', err));
     }
   }
 
-  // 清理緩存
+  // 清理Cache
   async clearCache(pattern = '*') {
     if (!this.redisClient) return;
 
@@ -320,11 +320,11 @@ class PerformanceMiddleware {
         logger.info(`清理緩存: ${keys.length} 個鍵`);
       }
     } catch (error) {
-      logger.error('清理緩存失敗:', error);
+      logger.error('清理緩存Failed:', error);
     }
   }
 
-  // 獲取性能統計
+  // Get性能Statistics
   async getPerformanceStats() {
     const stats = {
       memory: process.memoryUsage(),
@@ -338,14 +338,14 @@ class PerformanceMiddleware {
         const info = await this.redisClient.info();
         stats.redis = info;
       } catch (error) {
-        logger.error('獲取 Redis 信息失敗:', error);
+        logger.error('Get Redis 信息Failed:', error);
       }
     }
 
     return stats;
   }
 
-  // 健康檢查
+  // 健康Check
   async healthCheck() {
     const health = {
       status: 'healthy',
@@ -353,7 +353,7 @@ class PerformanceMiddleware {
       services: {},
     };
 
-    // 檢查 Redis 連接
+    // Check Redis Connect
     if (this.redisClient) {
       try {
         await this.redisClient.ping();
@@ -364,7 +364,7 @@ class PerformanceMiddleware {
       }
     }
 
-    // 檢查數據庫連接
+    // CheckDatabaseConnect
     try {
       const { sequelize } = require('../config/database');
       await sequelize.authenticate();
@@ -374,7 +374,7 @@ class PerformanceMiddleware {
       health.status = 'unhealthy';
     }
 
-    // 檢查內存使用
+    // CheckMemory使用
     const memoryUsage = process.memoryUsage();
     const memoryUsagePercent =
       (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
@@ -390,7 +390,7 @@ class PerformanceMiddleware {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 const performanceMiddleware = new PerformanceMiddleware();
 
 module.exports = performanceMiddleware;

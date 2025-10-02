@@ -61,7 +61,7 @@ class Logger {
 
   private shouldLog(level: string): boolean {
     if (!this.isInitialized) {
-      return true; // 允許未初始化時的日誌
+      return true; // Allow未Initialize時的Log
     }
 
     const _levels = ['debug', 'info', 'warn', 'error'];
@@ -114,8 +114,8 @@ class Logger {
   }
 
   private writeToFile(logEntry: unknown): void {
-    // 在 React Native 中，文件寫入需要額外的庫支持
-    // 這裡可以集成 react-native-fs 或其他文件系統庫
+    // 在 React Native 中，FileWrite需要額外的LibrarySupport
+    // 這裡可以集成 react-native-fs 或其他File系統Library
     if (__DEV__) {
       console.log('File logging not implemented yet');
     }
@@ -130,17 +130,17 @@ class Logger {
   }
 
   public clear(): void {
-    // 清理日誌緩存或文件
+    // 清理LogCache或File
     if (__DEV__) {
       console.log('Logger cleared');
     }
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _logger = new Logger();
 
-// 自動初始化
+// AutoInitialize
 if (__DEV__) {
   logger.initialize({ level: 'debug' });
 } else {

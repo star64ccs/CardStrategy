@@ -5,8 +5,8 @@ export interface RateLimitRule {
   name: string;
   endpoint: string;
   method: string;
-  windowMs: number; // 時間窗口（毫秒）
-  maxRequests: number; // 最大請求數
+  windowMs: number; // Time窗口（毫Second）
+  maxRequests: number; // 最大Request數
   skipSuccessfulRequests?: boolean;
   skipFailedRequests?: boolean;
   keyGenerator?: (req: unknown) => string;
@@ -64,14 +64,14 @@ export class RateLimitService {
 
   constructor() {
     this.config = {
-      defaultWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 分鐘
+      defaultWindowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 Minute
       defaultMaxRequests: parseInt(
         process.env.RATE_LIMIT_MAX_REQUESTS || '100'
       ),
       enableGlobalLimit: process.env.RATE_LIMIT_ENABLE_GLOBAL === 'true',
       globalWindowMs: parseInt(
         process.env.RATE_LIMIT_GLOBAL_WINDOW_MS || '900000'
-      ), // 15 分鐘
+      ), // 15 Minute
       globalMaxRequests: parseInt(
         process.env.RATE_LIMIT_GLOBAL_MAX_REQUESTS || '1000'
       ),
@@ -87,16 +87,16 @@ export class RateLimitService {
 
   async initialize(): Promise<ApiResponse> {
     try {
-      logger.info('初始化速率限制服務');
+      logger.info('Initialize速率限制Service');
 
-      // 創建默認規則
+      // CreateDefault規則
       await this.createDefaultRules();
 
-      // 啟動清理定時器
+      // Start清理定時器
       this.startCleanupTimer();
 
       this.isInitialized = true;
-      logger.info('速率限制服務初始化完成');
+      logger.info('速率限制ServiceInitialize完成');
 
       return {
         success: true,
@@ -106,20 +106,20 @@ export class RateLimitService {
           enableGlobalLimit: this.config.enableGlobalLimit,
           totalRules: this.rules.size,
         },
-        message: '速率限制服務初始化成功',
+        message: '速率限制ServiceInitializeSuccess',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('速率限制服務初始化失敗:', error);
+      logger.error('速率限制ServiceInitializeFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 規則管理
+  // 規則Manage
   async createRule(
     rule: Omit<RateLimitRule, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<ApiResponse<RateLimitRule>> {
@@ -127,7 +127,7 @@ export class RateLimitService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '速率限制服務未初始化',
+          error: '速率限制Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -150,10 +150,10 @@ export class RateLimitService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('創建速率限制規則失敗:', error);
+      logger.error('Create速率限制規則Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -167,7 +167,7 @@ export class RateLimitService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '速率限制服務未初始化',
+          error: '速率限制Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -196,10 +196,10 @@ export class RateLimitService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('更新速率限制規則失敗:', error);
+      logger.error('Update速率限制規則Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -210,7 +210,7 @@ export class RateLimitService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '速率限制服務未初始化',
+          error: '速率限制Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -225,7 +225,7 @@ export class RateLimitService {
       }
 
       this.rules.delete(id);
-      // 清理相關的計數器
+      // 清理相Off的Count器
       this.requestCounts.delete(id);
       logger.info(`刪除速率限制規則: ${rule.name}`);
 
@@ -235,16 +235,16 @@ export class RateLimitService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('刪除速率限制規則失敗:', error);
+      logger.error('Delete速率限制規則Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 速率限制檢查
+  // 速率LimitCheck
   async checkLimit(request: {
     endpoint: string;
     method: string;
@@ -256,14 +256,14 @@ export class RateLimitService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '速率限制服務未初始化',
+          error: '速率限制Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
       const { endpoint, method, clientId, ip, userId } = request;
 
-      // 檢查全局限制
+      // CheckGlobalLimit
       if (this.config.enableGlobalLimit) {
         const _globalResult = this.checkGlobalLimit(clientId);
         if (!globalResult.allowed) {
@@ -275,10 +275,10 @@ export class RateLimitService {
         }
       }
 
-      // 查找匹配的規則
+      // Find匹配的規則
       const _matchingRule = this.findMatchingRule(endpoint, method);
       if (!matchingRule?.enabled) {
-        // 沒有匹配的規則，使用默認限制
+        // 沒有匹配的規則，使用DefaultLimit
         const _defaultResult = this.checkDefaultLimit(clientId);
         return {
           success: true,
@@ -287,7 +287,7 @@ export class RateLimitService {
         };
       }
 
-      // 檢查特定規則限制
+      // CheckSpecific規則Limit
       const _ruleResult = this.checkRuleLimit(
         matchingRule,
         clientId,
@@ -295,7 +295,7 @@ export class RateLimitService {
         userId
       );
 
-      // 記錄限制檢查
+      // RecordLimitCheck
       if (!ruleResult.allowed) {
         logger.warn(`速率限制觸發: ${clientId} - ${endpoint} ${method}`);
         if (matchingRule.onLimitReached) {
@@ -315,16 +315,16 @@ export class RateLimitService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('速率限制檢查失敗:', error);
+      logger.error('速率限制CheckFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 記錄請求
+  // RecordRequest
   async recordRequest(request: {
     endpoint: string;
     method: string;
@@ -337,22 +337,22 @@ export class RateLimitService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '速率限制服務未初始化',
+          error: '速率限制Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
       const { endpoint, method, clientId, success } = request;
 
-      // 記錄全局請求
+      // RecordGlobalRequest
       if (this.config.enableGlobalLimit) {
         this.recordGlobalRequest(clientId);
       }
 
-      // 查找匹配的規則
+      // Find匹配的規則
       const _matchingRule = this.findMatchingRule(endpoint, method);
       if (matchingRule && matchingRule.enabled) {
-        // 檢查是否應該跳過此請求
+        // CheckYesNo應該Skip此Request
         if (success && matchingRule.skipSuccessfulRequests) {
           return { success: true, timestamp: Date.now() };
         }
@@ -362,7 +362,7 @@ export class RateLimitService {
 
         this.recordRuleRequest(matchingRule, clientId);
       } else {
-        // 記錄默認請求
+        // RecordDefaultRequest
         this.recordDefaultRequest(clientId);
       }
 
@@ -371,16 +371,16 @@ export class RateLimitService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('記錄請求失敗:', error);
+      logger.error('記錄請求Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 獲取限制狀態
+  // GetLimitStatus
   async getLimitStatus(
     clientId: string,
     endpoint?: string,
@@ -390,20 +390,20 @@ export class RateLimitService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '速率限制服務未初始化',
+          error: '速率限制Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
       const statuses: RateLimitStatus[] = [];
 
-      // 全局限制狀態
+      // GlobalLimitStatus
       if (this.config.enableGlobalLimit) {
         const _globalStatus = this.getGlobalStatus(clientId);
         statuses.push(globalStatus);
       }
 
-      // 特定規則狀態
+      // Specific規則Status
       if (endpoint && method) {
         const _matchingRule = this.findMatchingRule(endpoint, method);
         if (matchingRule) {
@@ -418,34 +418,34 @@ export class RateLimitService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('獲取限制狀態失敗:', error);
+      logger.error('Get限制狀態Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 重置限制
+  // ResetLimit
   async resetLimit(clientId: string, ruleId?: string): Promise<ApiResponse> {
     try {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '速率限制服務未初始化',
+          error: '速率限制Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
       if (ruleId) {
-        // 重置特定規則的限制
+        // ResetSpecific規則的Limit
         const _ruleCounts = this.requestCounts.get(ruleId);
         if (ruleCounts) {
           ruleCounts.delete(clientId);
         }
       } else {
-        // 重置所有限制
+        // Reset所有Limit
         this.globalCounts.delete(clientId);
         for (const ruleCounts of this.requestCounts.values()) {
           ruleCounts.delete(clientId);
@@ -462,10 +462,10 @@ export class RateLimitService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('重置限制失敗:', error);
+      logger.error('重置限制Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -475,14 +475,14 @@ export class RateLimitService {
     return Array.from(this.rules.values());
   }
 
-  // 私有方法
+  // PrivateMethod
   private async createDefaultRules(): Promise<void> {
     const _defaultRules = [
       {
         name: 'API 登錄限制',
         endpoint: '/api/auth/login',
         method: 'POST',
-        windowMs: 900000, // 15 分鐘
+        windowMs: 900000, // 15 Minute
         maxRequests: 5,
         enabled: true,
       },
@@ -490,7 +490,7 @@ export class RateLimitService {
         name: 'API 註冊限制',
         endpoint: '/api/auth/register',
         method: 'POST',
-        windowMs: 3600000, // 1 小時
+        windowMs: 3600000, // 1 Hour
         maxRequests: 3,
         enabled: true,
       },
@@ -498,7 +498,7 @@ export class RateLimitService {
         name: 'API 密碼重置限制',
         endpoint: '/api/auth/reset-password',
         method: 'POST',
-        windowMs: 3600000, // 1 小時
+        windowMs: 3600000, // 1 Hour
         maxRequests: 3,
         enabled: true,
       },
@@ -506,7 +506,7 @@ export class RateLimitService {
         name: '一般 API 限制',
         endpoint: '/api/*',
         method: '*',
-        windowMs: 900000, // 15 分鐘
+        windowMs: 900000, // 15 Minute
         maxRequests: 100,
         enabled: true,
       },
@@ -534,7 +534,7 @@ export class RateLimitService {
     endpoint: string,
     method: string
   ): boolean {
-    // 檢查方法匹配
+    // CheckMethod匹配
     if (
       rule.method !== '*' &&
       rule.method.toLowerCase() !== method.toLowerCase()
@@ -542,7 +542,7 @@ export class RateLimitService {
       return false;
     }
 
-    // 檢查端點匹配
+    // Check端點匹配
     if (rule.endpoint === '*') {
       return true;
     }
@@ -589,7 +589,7 @@ export class RateLimitService {
   }
 
   private checkDefaultLimit(clientId: string): RateLimitResult {
-    // 使用默認限制規則
+    // 使用DefaultLimit規則
     const _now = Date.now();
     const _ruleId = 'default';
 
@@ -776,23 +776,23 @@ export class RateLimitService {
   }
 
   private startCleanupTimer(): void {
-    // 每小時清理過期的計數器
+    // 每Hour清理過期的Count器
     setInterval(() => {
       this.cleanupExpiredCounts();
-    }, 3600000); // 1 小時
+    }, 3600000); // 1 Hour
   }
 
   private cleanupExpiredCounts(): void {
     const _now = Date.now();
 
-    // 清理全局計數器
+    // 清理GlobalCount器
     for (const [clientId, data] of this.globalCounts.entries()) {
       if (data.resetTime <= now) {
         this.globalCounts.delete(clientId);
       }
     }
 
-    // 清理規則計數器
+    // 清理規則Count器
     for (const [ruleId, ruleCounts] of this.requestCounts.entries()) {
       for (const [clientId, data] of ruleCounts.entries()) {
         if (data.resetTime <= now) {
@@ -800,7 +800,7 @@ export class RateLimitService {
         }
       }
 
-      // 如果規則計數器為空，刪除整個規則
+      // 如果規則Count器為Empty，Delete整個規則
       if (ruleCounts.size === 0) {
         this.requestCounts.delete(ruleId);
       }

@@ -127,7 +127,7 @@ function getModelPersistenceModel(sequelize) {
     }
   );
 
-  // 添加實例方法
+  // AddInstanceMethod
   ModelPersistenceModel.prototype.getMetadata = function () {
     try {
       return JSON.parse(this.metadata);
@@ -160,7 +160,7 @@ function getModelPersistenceModel(sequelize) {
     }
   };
 
-  // 添加類方法
+  // AddClassMethod
   ModelPersistenceModel.findByTypeAndVersion = function (modelType, version) {
     return this.findOne({
       where: { modelType, version, status: 'active' },

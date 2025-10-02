@@ -2,16 +2,16 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 錯誤處理改進腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * ErrorHandle改進腳本
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
-console.log('🔧 開始改進錯誤處理邏輯...\n');
+console.log('🔧 開始改進ErrorHandle邏輯...\n');
 
-// 1. 檢查錯誤處理覆蓋率
+// 1. CheckErrorHandle覆蓋率
 function checkErrorHandlingCoverage() {
-  console.log('📋 檢查錯誤處理覆蓋率...');
+  console.log('📋 CheckErrorHandle覆蓋率...');
 
   const srcPath = path.join(__dirname, '..', 'src');
   const serviceFiles = [];
@@ -38,15 +38,15 @@ function checkErrorHandlingCoverage() {
   findFiles(srcPath, serviceFiles, /services/);
   findFiles(srcPath, componentFiles, /components/);
 
-  console.log(`📊 找到 ${serviceFiles.length} 個服務文件`);
+  console.log(`📊 找到 ${serviceFiles.length} 個Service文件`);
   console.log(`📊 找到 ${componentFiles.length} 個組件文件`);
 
   return { serviceFiles, componentFiles };
 }
 
-// 2. 分析錯誤處理模式
+// 2. AnalysisErrorHandle模式
 function analyzeErrorHandlingPatterns(files) {
-  console.log('📋 分析錯誤處理模式...');
+  console.log('📋 分析ErrorHandle模式...');
 
   const patterns = {
     tryCatch: 0,
@@ -81,7 +81,7 @@ function analyzeErrorHandlingPatterns(files) {
     }
   });
 
-  console.log('📈 錯誤處理模式分析:');
+  console.log('📈 ErrorHandle模式分析:');
   Object.entries(patterns).forEach(([pattern, count]) => {
     console.log(`  ${pattern}: ${count} 個文件`);
   });
@@ -89,17 +89,17 @@ function analyzeErrorHandlingPatterns(files) {
   return patterns;
 }
 
-// 3. 創建錯誤處理模板
+// 3. CreateErrorHandle模板
 function createErrorHandlingTemplates() {
-  console.log('📋 創建錯誤處理模板...');
+  console.log('📋 CreateErrorHandle模板...');
 
   const templates = {
     serviceTemplate: `import { errorHandler, withErrorHandling, handleErrors } from '@/core/utils/errorHandler';
 
 /**
- * 服務錯誤處理模板
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * ServiceErrorHandle模板
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 export class ServiceErrorHandler {
 
@@ -166,9 +166,9 @@ export class ServiceErrorHandler {
 import { errorHandler } from '@/core/utils/errorHandler';
 
 /**
- * 組件錯誤處理模板
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * ComponentErrorHandle模板
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -193,10 +193,10 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    // 記錄錯誤
+    // RecordError
     errorHandler.handleError(error, 'ErrorBoundary');
 
-    // 調用自定義錯誤處理
+    // 調用CustomErrorHandle
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
@@ -228,7 +228,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 }
 
-// Hook 錯誤處理
+// Hook ErrorHandle
 export function useErrorHandler() {
   const handleError = (error: Error, context: string) => {
     return errorHandler.handleError(error, context);
@@ -251,9 +251,9 @@ export function useErrorHandler() {
     apiTemplate: `import { errorHandler, withErrorHandling } from '@/core/utils/errorHandler';
 
 /**
- * API 錯誤處理模板
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * API ErrorHandle模板
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 export class APIErrorHandler {
 
@@ -328,25 +328,25 @@ export class APIErrorHandler {
 }`,
   };
 
-  // 創建模板目錄
+  // Create模板Directory
   const templatesDir = path.join(__dirname, '..', 'src', 'templates', 'error-handling');
   if (!fs.existsSync(templatesDir)) {
     fs.mkdirSync(templatesDir, { recursive: true });
   }
 
-  // 寫入模板文件
+  // Write模板File
   Object.entries(templates).forEach(([name, content]) => {
     const filePath = path.join(templatesDir, `${name}.ts`);
     fs.writeFileSync(filePath, content);
     console.log(`✅ 創建模板: ${name}.ts`);
   });
 
-  console.log('✅ 錯誤處理模板已創建');
+  console.log('✅ ErrorHandle模板已Create');
 }
 
-// 4. 創建錯誤處理指南
+// 4. CreateErrorHandle指南
 function createErrorHandlingGuide() {
-  console.log('📋 創建錯誤處理指南...');
+  console.log('📋 CreateErrorHandle指南...');
 
   const guideContent = `# 錯誤處理指南
 
@@ -382,12 +382,12 @@ function createErrorHandlingGuide() {
 \`\`\`typescript
 import { withErrorHandling, handleErrors } from '@/core/utils/errorHandler';
 
-// 函數裝飾器
+// Function裝飾器
 const safeFunction = withErrorHandling(async () => {
   // 你的代碼
 }, 'context-name');
 
-// 方法裝飾器
+// Method裝飾器
 class MyService {
   @handleErrors
   async myMethod() {
@@ -418,7 +418,7 @@ function MyComponent() {
 
   const handleClick = async () => {
     await handleAsyncError(async () => {
-      // 你的異步操作
+      // 你的AsyncOperation
     }, 'button-click');
   };
 }
@@ -479,7 +479,7 @@ const result = await handleWithTimeout(
 
 ### 1. 單元測試
 \`\`\`typescript
-it('應該處理網絡錯誤', async () => {
+it('應該Handle網絡Error', async () => {
   const mockApi = jest.fn().mockRejectedValue(new Error('Network error'));
 
   await expect(
@@ -490,8 +490,8 @@ it('應該處理網絡錯誤', async () => {
 
 ### 2. 集成測試
 \`\`\`typescript
-it('應該在 API 失敗時使用降級服務', async () => {
-  // 測試降級邏輯
+it('應該在 API Failed時使用降級Service', async () => {
+  // TestDowngrade邏輯
 });
 \`\`\`
 
@@ -520,36 +520,36 @@ A: 使用 mock 和 spy 來模擬錯誤情況，確保錯誤處理邏輯正確執
 
   const guidePath = path.join(__dirname, '..', 'docs', 'ERROR_HANDLING_GUIDE.md');
 
-  // 確保目錄存在
+  // 確保Directory存在
   const docsDir = path.dirname(guidePath);
   if (!fs.existsSync(docsDir)) {
     fs.mkdirSync(docsDir, { recursive: true });
   }
 
   fs.writeFileSync(guidePath, guideContent);
-  console.log('✅ 錯誤處理指南已創建');
+  console.log('✅ ErrorHandle指南已Create');
 }
 
-// 5. 創建錯誤處理測試
+// 5. CreateErrorHandleTest
 function createErrorHandlingTests() {
-  console.log('📋 創建錯誤處理測試...');
+  console.log('📋 CreateErrorHandle測試...');
 
   const testContent = `import { errorHandler, withErrorHandling, handleErrors } from '@/core/utils/errorHandler';
 import { ErrorType, ErrorSeverity, AppError } from '@/core/utils/errorHandler';
 
 /**
- * 錯誤處理測試
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * ErrorHandleTest
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
-describe('錯誤處理邏輯測試', () => {
+describe('ErrorHandle邏輯測試', () => {
 
   beforeEach(() => {
     errorHandler.clearErrorStats();
   });
 
-  describe('錯誤類型檢測', () => {
-    it('應該正確檢測網絡錯誤', () => {
+  describe('Error類型檢測', () => {
+    it('應該正確檢測網絡Error', () => {
       const error = new Error('Network connection failed');
       const result = errorHandler.handleError(error, 'test');
 
@@ -557,7 +557,7 @@ describe('錯誤處理邏輯測試', () => {
       expect(result.severity).toBe(ErrorSeverity.HIGH);
     });
 
-    it('應該正確檢測驗證錯誤', () => {
+    it('應該正確檢測VerifyError', () => {
       const error = new Error('Validation failed');
       const result = errorHandler.handleError(error, 'test');
 
@@ -565,7 +565,7 @@ describe('錯誤處理邏輯測試', () => {
       expect(result.severity).toBe(ErrorSeverity.MEDIUM);
     });
 
-    it('應該正確檢測認證錯誤', () => {
+    it('應該正確檢測認證Error', () => {
       const error = new Error('Authentication failed');
       const result = errorHandler.handleError(error, 'test');
 
@@ -574,15 +574,15 @@ describe('錯誤處理邏輯測試', () => {
     });
   });
 
-  describe('錯誤恢復建議', () => {
-    it('應該為網絡錯誤提供恢復建議', () => {
+  describe('Error恢復建議', () => {
+    it('應該為網絡Error提供恢復建議', () => {
       const error = new Error('Network timeout');
       const result = errorHandler.handleError(error, 'test');
 
-      expect(result.message).toContain('檢查網絡連接');
+      expect(result.message).toContain('Check網絡Connect');
     });
 
-    it('應該為驗證錯誤提供恢復建議', () => {
+    it('應該為VerifyError提供恢復建議', () => {
       const error = new Error('Invalid input');
       const result = errorHandler.handleError(error, 'test');
 
@@ -590,8 +590,8 @@ describe('錯誤處理邏輯測試', () => {
     });
   });
 
-  describe('錯誤統計', () => {
-    it('應該正確統計錯誤數量', () => {
+  describe('Error統計', () => {
+    it('應該正確統計Error數量', () => {
       const error1 = new Error('Network error');
       const error2 = new Error('Validation error');
 
@@ -603,7 +603,7 @@ describe('錯誤處理邏輯測試', () => {
       expect(stats.get(ErrorType.VALIDATION)).toBe(1);
     });
 
-    it('應該限制最近錯誤數量', () => {
+    it('應該限制最近Error數量', () => {
       for (let i = 0; i < 15; i++) {
         errorHandler.handleError(new Error(\`Error \${i}\`), 'test');
       }
@@ -635,8 +635,8 @@ describe('錯誤處理邏輯測試', () => {
     });
   });
 
-  describe('錯誤重試機制', () => {
-    it('應該在重試成功後返回結果', async () => {
+  describe('Error重試機制', () => {
+    it('應該在重試Success後返回結果', async () => {
       let callCount = 0;
       const testFunction = jest.fn().mockImplementation(() => {
         callCount++;
@@ -656,7 +656,7 @@ describe('錯誤處理邏輯測試', () => {
       expect(callCount).toBe(3);
     });
 
-    it('應該在重試失敗後拋出錯誤', async () => {
+    it('應該在重試Failed後拋出Error', async () => {
       const testFunction = jest.fn().mockRejectedValue(new Error('Persistent error'));
 
       await expect(
@@ -669,8 +669,8 @@ describe('錯誤處理邏輯測試', () => {
     });
   });
 
-  describe('錯誤邊界測試', () => {
-    it('應該捕獲子組件錯誤', () => {
+  describe('Error邊界測試', () => {
+    it('應該捕獲子組件Error', () => {
       const ErrorComponent = () => {
         throw new Error('Component error');
       };
@@ -681,10 +681,10 @@ describe('錯誤處理邏輯測試', () => {
         </ErrorBoundary>
       );
 
-      expect(getByText('發生錯誤')).toBeInTheDocument();
+      expect(getByText('發生Error')).toBeInTheDocument();
     });
 
-    it('應該顯示自定義錯誤界面', () => {
+    it('應該顯示自定義Error界面', () => {
       const CustomFallback = () => <div>Custom error</div>;
 
       const { getByText } = render(
@@ -701,10 +701,10 @@ describe('錯誤處理邏輯測試', () => {
 
   const testPath = path.join(__dirname, '..', 'src', '__tests__', 'unit', 'error-handling-comprehensive.test.ts');
   fs.writeFileSync(testPath, testContent);
-  console.log('✅ 錯誤處理測試已創建');
+  console.log('✅ ErrorHandle測試已Create');
 }
 
-// 6. 主函數
+// 6. 主Function
 function main() {
   try {
     const { serviceFiles, componentFiles } = checkErrorHandlingCoverage();
@@ -713,36 +713,36 @@ function main() {
     createErrorHandlingGuide();
     createErrorHandlingTests();
 
-    console.log('\n🎯 錯誤處理改進完成！');
+    console.log('\n🎯 ErrorHandle改進完成！');
     console.log('📋 改進內容：');
-    console.log('  - 錯誤處理覆蓋率分析');
-    console.log('  - 錯誤處理模式分析');
-    console.log('  - 錯誤處理模板創建');
-    console.log('  - 錯誤處理指南編寫');
-    console.log('  - 錯誤處理測試創建');
+    console.log('  - ErrorHandle覆蓋率分析');
+    console.log('  - ErrorHandle模式分析');
+    console.log('  - ErrorHandle模板Create');
+    console.log('  - ErrorHandle指南編寫');
+    console.log('  - ErrorHandle測試Create');
 
     console.log('\n📊 分析結果：');
-    console.log(`  服務文件: ${serviceFiles.length} 個`);
+    console.log(`  Service文件: ${serviceFiles.length} 個`);
     console.log(`  組件文件: ${componentFiles.length} 個`);
     console.log(`  使用 try-catch: ${patterns.tryCatch} 個`);
     console.log(`  使用 errorHandler: ${patterns.errorHandler} 個`);
     console.log(`  使用 withErrorHandling: ${patterns.withErrorHandling} 個`);
     console.log(`  使用 @handleErrors: ${patterns.handleErrors} 個`);
-    console.log(`  無錯誤處理: ${patterns.noErrorHandling} 個`);
+    console.log(`  無ErrorHandle: ${patterns.noErrorHandling} 個`);
 
     console.log('\n🚀 下一步行動：');
-    console.log('  1. 檢查無錯誤處理的文件');
-    console.log('  2. 應用錯誤處理模板');
-    console.log('  3. 運行錯誤處理測試');
+    console.log('  1. Check無ErrorHandle的文件');
+    console.log('  2. 應用ErrorHandle模板');
+    console.log('  3. 運行ErrorHandle測試');
     console.log('  4. 更新文檔');
 
   } catch (error) {
-    console.error('❌ 錯誤處理改進失敗:', error);
+    console.error('❌ ErrorHandle改進Failed:', error);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   main();
 }

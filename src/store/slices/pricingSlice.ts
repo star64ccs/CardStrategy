@@ -17,7 +17,7 @@ import {
   PriceAlertType,
 } from '../../features/market/types/pricing';
 
-// 狀態接口
+// StatusInterface
 interface PricingState {
   currentPrice: MarketPrice | null;
   priceHistory: PriceHistory | null;
@@ -37,7 +37,7 @@ interface PricingState {
   };
 }
 
-// 初始狀態
+// 初始Status
 const initialState: PricingState = {
   currentPrice: null,
   priceHistory: null,
@@ -57,7 +57,7 @@ const initialState: PricingState = {
   },
 };
 
-// 異步 Action Creators
+// Async Action Creators
 export const _initializePricingService = createAsyncThunk(
   'pricing/initialize',
   async (config?: unknown) => {
@@ -184,7 +184,7 @@ const _pricingSlice = createSlice({
       })
       .addCase(initializePricingService.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
     // fetchCurrentPrice
@@ -211,12 +211,12 @@ const _pricingSlice = createSlice({
             state.userAlerts = action.payload.alerts;
           }
         } else {
-          state.error = action.payload.error || '獲取價格失敗';
+          state.error = action.payload.error || 'Get價格Failed';
         }
       })
       .addCase(fetchCurrentPrice.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取價格失敗';
+        state.error = action.error.message || 'Get價格Failed';
       });
 
     // fetchPriceHistory
@@ -231,7 +231,7 @@ const _pricingSlice = createSlice({
       })
       .addCase(fetchPriceHistory.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取歷史數據失敗';
+        state.error = action.error.message || 'Get歷史數據Failed';
       });
 
     // createPriceAlert
@@ -247,7 +247,7 @@ const _pricingSlice = createSlice({
       })
       .addCase(createPriceAlert.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '創建警報失敗';
+        state.error = action.error.message || 'Create警報Failed';
       });
 
     // fetchUserAlerts
@@ -262,7 +262,7 @@ const _pricingSlice = createSlice({
       })
       .addCase(fetchUserAlerts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取警報失敗';
+        state.error = action.error.message || 'Get警報Failed';
       });
 
     // updateAlertStatus
@@ -282,7 +282,7 @@ const _pricingSlice = createSlice({
       })
       .addCase(updateAlertStatus.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '更新警報狀態失敗';
+        state.error = action.error.message || 'Update警報狀態Failed';
       });
 
     // deletePriceAlert
@@ -299,7 +299,7 @@ const _pricingSlice = createSlice({
       })
       .addCase(deletePriceAlert.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '刪除警報失敗';
+        state.error = action.error.message || 'Delete警報Failed';
       });
 
     // fetchMarketStats
@@ -314,7 +314,7 @@ const _pricingSlice = createSlice({
       })
       .addCase(fetchMarketStats.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取市場統計失敗';
+        state.error = action.error.message || 'Get市場統計Failed';
       });
 
     // generateMarketAnalysis
@@ -329,7 +329,7 @@ const _pricingSlice = createSlice({
       })
       .addCase(generateMarketAnalysis.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '生成市場分析失敗';
+        state.error = action.error.message || '生成市場分析Failed';
       });
   },
 });

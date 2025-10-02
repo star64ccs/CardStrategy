@@ -8,7 +8,7 @@ import type {
 import { multiDeviceSyncService } from '../services/multiDeviceSyncService';
 
 /**
- * 多設備同步 Hook 選項
+ * 多設備Sync Hook Options
  */
 export interface UseMultiDeviceSyncOptions {
   userId: string;
@@ -26,10 +26,10 @@ export interface UseMultiDeviceSyncOptions {
 }
 
 /**
- * 多設備同步 Hook 返回值
+ * 多設備Sync Hook ReturnValue
  */
 export interface UseMultiDeviceSyncReturn {
-  // 狀態
+  // Status
   syncState: MultiDeviceSyncState;
   currentDevice: DeviceInfo | null;
   connectedDevices: DeviceInfo[];
@@ -38,7 +38,7 @@ export interface UseMultiDeviceSyncReturn {
   error: string | null;
   stats: unknown;
 
-  // 方法
+  // Method
   initialize: (
     userId: string,
     deviceInfo: Partial<DeviceInfo>
@@ -57,8 +57,8 @@ export interface UseMultiDeviceSyncReturn {
 }
 
 /**
- * 多設備同步 Hook
- * 提供跨設備的數據同步和設備發現功能
+ * 多設備Sync Hook
+ * 提供跨設備的DataSync和設備發現功能
  */
 export const _useMultiDeviceSync = (
   options: UseMultiDeviceSyncOptions
@@ -83,13 +83,13 @@ export const _useMultiDeviceSync = (
   const _isInitialized = useRef(false);
   const _eventListeners = useRef<Map<string, () => void>>(new Map());
 
-  // 更新同步狀態
+  // UpdateSyncStatus
   const _updateSyncState = useCallback(() => {
     const _state = multiDeviceSyncService.getSyncState();
     setSyncState(state);
   }, []);
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(
     async (userId: string, deviceInfo: Partial<DeviceInfo>) => {
       if (isInitialized.current) {
@@ -101,14 +101,14 @@ export const _useMultiDeviceSync = (
         isInitialized.current = true;
         updateSyncState();
       } catch (error) {
-        console.error('多設備同步初始化失敗:', error);
+        console.error('多設備同步InitializeFailed:', error);
         throw error;
       }
     },
     [updateSyncState]
   );
 
-  // 配置同步設置
+  // ConfigureSyncSettings
   const _configure = useCallback((config: Partial<MultiDeviceSyncConfig>) => {
     multiDeviceSyncService.configure(config);
   }, []);
@@ -116,48 +116,48 @@ export const _useMultiDeviceSync = (
   // 發現設備
   const _discoverDevices = useCallback(async () => {
     try {
-      // 暫時註釋掉，等待實現
+      // 暫時Comment掉，Await實現
       // const _devices = await multiDeviceSyncService.discoverDevices();
       const devices: unknown[] = [];
       return devices;
     } catch (error) {
-      console.error('發現設備失敗:', error);
+      console.error('發現設備Failed:', error);
       return [];
     } finally {
       // setIsDiscovering(false); // This line was removed from the new_code, so it's removed here.
     }
   }, []);
 
-  // 獲取設備列表
+  // Get設備List
   const _getDevices = useCallback(() => {
     return multiDeviceSyncService.getDevices();
   }, []);
 
-  // 獲取連接的設備
+  // GetConnect的設備
   const _getConnectedDevices = useCallback(() => {
     return multiDeviceSyncService.getConnectedDevices();
   }, []);
 
-  // 移除設備
+  // Remove設備
   const _removeDevice = useCallback(async (deviceId: string) => {
     try {
-      // 暫時註釋掉，等待實現
+      // 暫時Comment掉，Await實現
       // await multiDeviceSyncService.removeDevice(deviceId);
       console.log('移除設備:', deviceId);
     } catch (error) {
-      console.error('移除設備失敗:', error);
+      console.error('移除設備Failed:', error);
     }
   }, []);
 
-  // 更新設備狀態
+  // Update設備Status
   const _updateDeviceStatus = useCallback(
     async (deviceId: string, status: Partial<DeviceInfo>) => {
       try {
-        // 暫時註釋掉，等待實現
+        // 暫時Comment掉，Await實現
         // await multiDeviceSyncService.updateDeviceStatus(deviceId, status);
         console.log('更新設備狀態:', deviceId, status);
       } catch (error) {
-        console.error('更新設備狀態失敗:', error);
+        console.error('Update設備狀態Failed:', error);
       }
     },
     []
@@ -166,21 +166,21 @@ export const _useMultiDeviceSync = (
   // 清理離線設備
   const _cleanupOfflineDevices = useCallback(async () => {
     try {
-      // 暫時註釋掉，等待實現
+      // 暫時Comment掉，Await實現
       // await multiDeviceSyncService.cleanupOfflineDevices();
       console.log('清理離線設備');
     } catch (error) {
-      console.error('清理離線設備失敗:', error);
+      console.error('清理離線設備Failed:', error);
     }
   }, []);
 
-  // 銷毀服務
+  // 銷毀Service
   const _destroy = useCallback(async () => {
     await multiDeviceSyncService.destroy();
     isInitialized.current = false;
   }, []);
 
-  // 設置事件監聽器
+  // SettingsEvent監聽器
   useEffect(() => {
     const _listeners = [
       { event: 'syncStarted', handler: options.onSyncStarted },
@@ -196,7 +196,7 @@ export const _useMultiDeviceSync = (
     listeners.forEach(({ event, handler }) => {
       if (handler) {
         const _wrappedHandler = (...args: unknown[]) => {
-          // 調用事件處理器
+          // 調用EventHandle器
           if (handler) {
             handler(args as any);
           }
@@ -215,25 +215,25 @@ export const _useMultiDeviceSync = (
     };
   }, [options, updateSyncState]);
 
-  // 定期更新狀態
+  // 定期UpdateStatus
   useEffect(() => {
     const _interval = setInterval(() => {
       if (isInitialized.current) {
         updateSyncState();
       }
-    }, 2000); // 每2秒更新一次
+    }, 2000); // 每2SecondUpdate一次
 
     return () => clearInterval(interval);
   }, [updateSyncState]);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (options.autoInitialize && options.userId && !isInitialized.current) {
       initialize(options.userId, options.deviceInfo);
     }
   }, [options.autoInitialize, options.userId, options.deviceInfo, initialize]);
 
-  // 組件卸載時清理
+  // ComponentUninstall時清理
   useEffect(() => {
     return () => {
       if (isInitialized.current) {
@@ -243,7 +243,7 @@ export const _useMultiDeviceSync = (
   }, [destroy]);
 
   return {
-    // 狀態
+    // Status
     syncState,
     currentDevice: syncState.currentDevice,
     connectedDevices: syncState.connectedDevices,
@@ -252,7 +252,7 @@ export const _useMultiDeviceSync = (
     error: syncState.error,
     stats: syncState.stats,
 
-    // 方法
+    // Method
     initialize,
     configure,
     discoverDevices,
@@ -266,7 +266,7 @@ export const _useMultiDeviceSync = (
 };
 
 /**
- * 簡化的多設備同步 Hook
+ * 簡化的多設備Sync Hook
  */
 export const _useSimpleMultiDeviceSync = (
   userId: string,
@@ -291,7 +291,7 @@ export const _useSimpleMultiDeviceSync = (
 };
 
 /**
- * 設備管理 Hook
+ * 設備Manage Hook
  */
 export const _useDeviceManagement = (
   userId: string,
@@ -338,7 +338,7 @@ export const _useDeviceManagement = (
 };
 
 /**
- * 跨平台同步 Hook
+ * 跨平台Sync Hook
  */
 export const _useCrossPlatformSync = (
   userId: string,

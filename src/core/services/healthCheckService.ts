@@ -4,7 +4,7 @@ export interface HealthStatus {
   service: string;
   status: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' | 'UNKNOWN';
   timestamp: Date;
-  responseTime: number; // 毫秒
+  responseTime: number; // 毫Second
   error?: string;
   details?: Record<string, any>;
 }
@@ -12,9 +12,9 @@ export interface HealthStatus {
 export interface ServiceHealthCheck {
   name: string;
   check: () => Promise<HealthStatus>;
-  timeout?: number; // 毫秒
+  timeout?: number; // 毫Second
   retries?: number;
-  critical?: boolean; // 是否為關鍵服務
+  critical?: boolean; // YesNo為OffKeyService
 }
 
 export interface HealthReport {
@@ -52,7 +52,7 @@ export class HealthCheckService {
     }
 
     try {
-      // 註冊默認的健康檢查
+      // RegisterDefault的健康Check
       await this.registerDefaultHealthChecks();
 
       logger.info('HealthCheckService initialized successfully');
@@ -64,7 +64,7 @@ export class HealthCheckService {
   }
 
   /**
-   * 註冊健康檢查
+   * Register健康Check
    */
   public registerHealthCheck(healthCheck: ServiceHealthCheck): void {
     this.healthChecks.set(healthCheck.name, healthCheck);
@@ -72,7 +72,7 @@ export class HealthCheckService {
   }
 
   /**
-   * 移除健康檢查
+   * Remove健康Check
    */
   public unregisterHealthCheck(name: string): boolean {
     const _removed = this.healthChecks.delete(name);
@@ -83,7 +83,7 @@ export class HealthCheckService {
   }
 
   /**
-   * 執行單個服務的健康檢查
+   * 執RowSingleService的健康Check
    */
   public async checkServiceHealth(name: string): Promise<HealthStatus> {
     const _healthCheck = this.healthChecks.get(name);
@@ -98,7 +98,7 @@ export class HealthCheckService {
     }
 
     const _startTime = Date.now();
-    const _timeout = healthCheck.timeout || 5000; // 默認5秒超時
+    const _timeout = healthCheck.timeout || 5000; // Default5Second超時
     const _retries = healthCheck.retries || 1;
 
     try {
@@ -122,7 +122,7 @@ export class HealthCheckService {
         } catch (error) {
           lastError = error as Error;
           if (attempt < retries) {
-            await new Promise(resolve => setTimeout(resolve, 1000)); // 重試前等待1秒
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Retry前Await1Second
           }
         }
       }
@@ -148,20 +148,20 @@ export class HealthCheckService {
   }
 
   /**
-   * 執行所有服務的健康檢查
+   * 執Row所有Service的健康Check
    */
   public async checkAllServices(): Promise<HealthReport> {
     const _startTime = Date.now();
     const _serviceChecks = Array.from(this.healthChecks.keys());
     const results: HealthStatus[] = [];
 
-    // 並發執行所有健康檢查
+    // Concurrent執Row所有健康Check
     const _healthCheckPromises = serviceChecks.map(name =>
       this.checkServiceHealth(name)
     );
     const _healthResults = await Promise.allSettled(healthCheckPromises);
 
-    // 處理結果
+    // Handle結果
     healthResults.forEach((result, index) => {
       if (result.status === 'fulfilled') {
         results.push(result.value);
@@ -176,7 +176,7 @@ export class HealthCheckService {
       }
     });
 
-    // 生成健康報告
+    // 生成健康Report
     const _report = this.generateHealthReport(results);
     this.lastHealthReport = report;
 
@@ -191,7 +191,7 @@ export class HealthCheckService {
   }
 
   /**
-   * 開始定期健康檢查
+   * Begin定期健康Check
    */
   public async startMonitoring(intervalMs = 60000): Promise<void> {
     if (!this.isInitialized) {
@@ -214,7 +214,7 @@ export class HealthCheckService {
   }
 
   /**
-   * 停止定期健康檢查
+   * Stop定期健康Check
    */
   public stopMonitoring(): void {
     if (this.monitoringInterval) {
@@ -225,14 +225,14 @@ export class HealthCheckService {
   }
 
   /**
-   * 獲取最後的健康報告
+   * Get最後的健康Report
    */
   public getLastHealthReport(): HealthReport | null {
     return this.lastHealthReport;
   }
 
   /**
-   * 獲取監控狀態
+   * GetMonitorStatus
    */
   public getMonitoringStatus(): unknown {
     return {
@@ -250,7 +250,7 @@ export class HealthCheckService {
   }
 
   /**
-   * 生成健康報告
+   * 生成健康Report
    */
   private generateHealthReport(services: HealthStatus[]): HealthReport {
     const _summary = {
@@ -261,7 +261,7 @@ export class HealthCheckService {
       unknown: services.filter(s => s.status === 'UNKNOWN').length,
     };
 
-    // 確定整體狀態
+    // OK整體Status
     let overallStatus: 'HEALTHY' | 'DEGRADED' | 'UNHEALTHY' = 'HEALTHY';
 
     if (summary.unhealthy > 0) {
@@ -270,7 +270,7 @@ export class HealthCheckService {
       overallStatus = 'DEGRADED';
     }
 
-    // 識別關鍵服務
+    // 識別OffKeyService
     const _criticalServices = services.filter(service => {
       const _healthCheck = this.healthChecks.get(service.service);
       return healthCheck?.critical && service.status !== 'HEALTHY';
@@ -301,44 +301,44 @@ export class HealthCheckService {
     if (summary.unhealthy > 0) {
       const _unhealthyServices = services.filter(s => s.status === 'UNHEALTHY');
       recommendations.push(
-        `立即檢查 ${unhealthyServices.length} 個不健康的服務`
+        `立即Check ${unhealthyServices.length} 個不健康的Service`
       );
 
       unhealthyServices.forEach(service => {
         if (service.error) {
-          recommendations.push(`服務 ${service.service}: ${service.error}`);
+          recommendations.push(`Service ${service.service}: ${service.error}`);
         }
       });
     }
 
     if (summary.degraded > 0) {
-      recommendations.push(`監控 ${summary.degraded} 個性能下降的服務`);
+      recommendations.push(`監控 ${summary.degraded} 個性能下降的Service`);
     }
 
     if (summary.unknown > 0) {
-      recommendations.push(`調查 ${summary.unknown} 個狀態未知的服務`);
+      recommendations.push(`調查 ${summary.unknown} 個狀態未知的Service`);
     }
 
-    // 檢查響應時間
+    // CheckResponseTime
     const _slowServices = services.filter(s => s.responseTime > 2000);
     if (slowServices.length > 0) {
       recommendations.push(
-        `優化 ${slowServices.length} 個響應時間超過2秒的服務`
+        `優化 ${slowServices.length} 個響應時間超過2秒的Service`
       );
     }
 
     if (recommendations.length === 0) {
-      recommendations.push('所有服務運行正常');
+      recommendations.push('所有Service運行正常');
     }
 
     return recommendations;
   }
 
   /**
-   * 註冊默認的健康檢查
+   * RegisterDefault的健康Check
    */
   private async registerDefaultHealthChecks(): Promise<void> {
-    // 數據庫健康檢查
+    // Database健康Check
     this.registerHealthCheck({
       name: 'Database',
       critical: true,
@@ -346,8 +346,8 @@ export class HealthCheckService {
       retries: 2,
       check: async (): Promise<HealthStatus> => {
         try {
-          // 這裡應該實現實際的數據庫連接檢查
-          await new Promise(resolve => setTimeout(resolve, 100)); // 模擬檢查
+          // 這裡應該實現實際的DatabaseConnectCheck
+          await new Promise(resolve => setTimeout(resolve, 100)); // 模擬Check
 
           return {
             service: 'Database',
@@ -365,7 +365,7 @@ export class HealthCheckService {
       },
     });
 
-    // API 服務健康檢查
+    // API Service健康Check
     this.registerHealthCheck({
       name: 'API Service',
       critical: true,
@@ -373,8 +373,8 @@ export class HealthCheckService {
       retries: 1,
       check: async (): Promise<HealthStatus> => {
         try {
-          // 這裡應該實現實際的API端點檢查
-          await new Promise(resolve => setTimeout(resolve, 200)); // 模擬檢查
+          // 這裡應該實現實際的API端點Check
+          await new Promise(resolve => setTimeout(resolve, 200)); // 模擬Check
 
           return {
             service: 'API Service',
@@ -394,7 +394,7 @@ export class HealthCheckService {
       },
     });
 
-    // 認證服務健康檢查
+    // AuthenticateService健康Check
     this.registerHealthCheck({
       name: 'Authentication Service',
       critical: true,
@@ -402,8 +402,8 @@ export class HealthCheckService {
       retries: 2,
       check: async (): Promise<HealthStatus> => {
         try {
-          // 這裡應該實現實際的認證服務檢查
-          await new Promise(resolve => setTimeout(resolve, 150)); // 模擬檢查
+          // 這裡應該實現實際的AuthenticateServiceCheck
+          await new Promise(resolve => setTimeout(resolve, 150)); // 模擬Check
 
           return {
             service: 'Authentication Service',
@@ -423,7 +423,7 @@ export class HealthCheckService {
       },
     });
 
-    // 存儲服務健康檢查
+    // StorageService健康Check
     this.registerHealthCheck({
       name: 'Storage Service',
       critical: false,
@@ -431,8 +431,8 @@ export class HealthCheckService {
       retries: 1,
       check: async (): Promise<HealthStatus> => {
         try {
-          // 這裡應該實現實際的存儲服務檢查
-          await new Promise(resolve => setTimeout(resolve, 300)); // 模擬檢查
+          // 這裡應該實現實際的StorageServiceCheck
+          await new Promise(resolve => setTimeout(resolve, 300)); // 模擬Check
 
           return {
             service: 'Storage Service',
@@ -453,7 +453,7 @@ export class HealthCheckService {
       },
     });
 
-    // 外部API健康檢查
+    // ExternalAPI健康Check
     this.registerHealthCheck({
       name: 'External APIs',
       critical: false,
@@ -461,8 +461,8 @@ export class HealthCheckService {
       retries: 1,
       check: async (): Promise<HealthStatus> => {
         try {
-          // 這裡應該實現實際的外部API檢查
-          await new Promise(resolve => setTimeout(resolve, 500)); // 模擬檢查
+          // 這裡應該實現實際的ExternalAPICheck
+          await new Promise(resolve => setTimeout(resolve, 500)); // 模擬Check
 
           return {
             service: 'External APIs',
@@ -482,7 +482,7 @@ export class HealthCheckService {
       },
     });
 
-    // 緩存服務健康檢查
+    // CacheService健康Check
     this.registerHealthCheck({
       name: 'Cache Service',
       critical: false,
@@ -490,8 +490,8 @@ export class HealthCheckService {
       retries: 2,
       check: async (): Promise<HealthStatus> => {
         try {
-          // 這裡應該實現實際的緩存服務檢查
-          await new Promise(resolve => setTimeout(resolve, 50)); // 模擬檢查
+          // 這裡應該實現實際的CacheServiceCheck
+          await new Promise(resolve => setTimeout(resolve, 50)); // 模擬Check
 
           return {
             service: 'Cache Service',
@@ -514,7 +514,7 @@ export class HealthCheckService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _healthCheckService = HealthCheckService.getInstance();
 
 export default healthCheckService;

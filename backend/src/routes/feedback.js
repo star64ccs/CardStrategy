@@ -88,7 +88,7 @@ router.post('/', protect, validateFeedbackSubmission, async (req, res) => {
  * @swagger
  * /api/feedback:
  *   get:
- *     summary: ?��??��??�表
+ *     summary: ?��??��??�Table
  *     tags: [Feedback]
  *     security:
  *       - bearerAuth: []
@@ -123,7 +123,7 @@ router.post('/', protect, validateFeedbackSubmission, async (req, res) => {
  *           type: string
  *     responses:
  *       200:
- *         description: ?��??��??��??�表
+ *         description: ?��??��??��??�Table
  *       401:'
  *         description: ?��?�? */''
 router.get('/', protect, async (req, res) => {
@@ -182,7 +182,7 @@ router.get('/:id', protect, async (req, res) => {
     const feedback = await feedbackService.getFeedbackById(
       parseInt(req.params.id)
     );'
-    // 檢查權�?''
+    // Check權�?''
     if (req.user.role !== 'admin' && feedback.userId !== req.user.id) {
       return res.status(403).json({'
         success: false,''

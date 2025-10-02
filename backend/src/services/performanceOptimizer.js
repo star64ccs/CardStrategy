@@ -4,17 +4,17 @@ const redisConfig = require('../../config/redis');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 
-// 獲取 Redis 客戶端
+// Get Redis Client
 const getRedisClient = () => redisConfig.getClient();
 
 /**
- * 性能優化服務
- * 提供API響應優化、緩存策略、負載均衡等功能
+ * 性能優化Service
+ * 提供APIResponse優化、Cache策略、負載均衡等功能
  */
 class PerformanceOptimizer {
   constructor() {
     this.cacheConfig = {
-      defaultTTL: 300, // 5分鐘
+      defaultTTL: 300, // 5Minute
       maxSize: 100 * 1024 * 1024, // 100MB
       compression: true,
       versioning: true,
@@ -28,8 +28,8 @@ class PerformanceOptimizer {
     };
 
     this.rateLimitConfig = {
-      windowMs: 15 * 60 * 1000, // 15分鐘
-      max: 100, // 限制每個IP 15分鐘內最多100個請求
+      windowMs: 15 * 60 * 1000, // 15Minute
+      max: 100, // Limit每個IP 15Minute內最多100個Request
       message: '請求過於頻繁，請稍後再試',
       standardHeaders: true,
       legacyHeaders: false,
@@ -46,7 +46,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 創建壓縮中間件
+   * Create壓縮中間件
    */
   createCompressionMiddleware() {
     return compression({
@@ -62,7 +62,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 創建速率限制中間件
+   * Create速率Limit中間件
    */
   createRateLimitMiddleware(options = {}) {
 // eslint-disable-next-line no-unused-vars
@@ -89,7 +89,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 創建緩存中間件
+   * CreateCache中間件
    */
   createCacheMiddleware(
     ttl = this.cacheConfig.defaultTTL,
@@ -105,7 +105,7 @@ class PerformanceOptimizer {
         : this.generateCacheKey(req);
 
       try {
-        // 嘗試從緩存獲取
+        // 嘗試從CacheGet
         const redisClient = getRedisClient();
         const cached = await redisClient.get(cacheKey);
         if (cached) {
@@ -115,32 +115,32 @@ class PerformanceOptimizer {
           return res.json(data);
         }
 
-        // 緩存未命中，繼續處理請求
+        // Cache未命中，ContinueHandleRequest
         this.metrics.cacheMisses++;
 
-        // 重寫 res.json 方法以緩存響應
+        // 重寫 res.json Method以CacheResponse
         const originalJson = res.json;
         res.json = function (data) {
-          // 緩存響應
+          // CacheResponse
           const redisClient = getRedisClient();
           redisClient
             .setEx(cacheKey, ttl, JSON.stringify(data))
-            .catch((err) => logger.error('緩存設置失敗:', err));
+            .catch((err) => logger.error('緩存SettingsFailed:', err));
 
-          // 調用原始方法
+          // 調用原始Method
           return originalJson.call(this, data);
         };
 
         next();
       } catch (error) {
-        logger.error('緩存中間件錯誤:', error);
+        logger.error('緩存中間件Error:', error);
         next();
       }
     };
   }
 
   /**
-   * 生成緩存鍵
+   * 生成CacheKey
    */
   generateCacheKey(req) {
     const { method, originalUrl, query, params } = req;
@@ -150,20 +150,20 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 字符串哈希函數
+   * 字符串哈希Function
    */
   hashString(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // 轉換為32位整數
+      hash = hash & hash; // Convert為32位整數
     }
     return Math.abs(hash).toString(36);
   }
 
   /**
-   * 智能緩存策略
+   * 智能Cache策略
    */
   async smartCache(key, fetchFunction, options = {}) {
     const {
@@ -180,7 +180,7 @@ class PerformanceOptimizer {
         return data;
       }
 
-      // 嘗試獲取緩存
+      // 嘗試GetCache
       const redisClient = getRedisClient();
       const cached = await redisClient.get(key);
       if (cached) {
@@ -188,31 +188,31 @@ class PerformanceOptimizer {
         const data = JSON.parse(cached);
         this.metrics.cacheHits++;
 
-        // 檢查是否需要後台刷新
+        // CheckYesNo需要後台Refresh
         const ttlRemaining = await redisClient.ttl(key);
         if (ttlRemaining < staleWhileRevalidate) {
-          // 後台刷新緩存
+          // 後台RefreshCache
           this.backgroundRefresh(key, fetchFunction, ttl);
         }
 
         return data;
       }
 
-      // 緩存未命中
+      // Cache未命中
       this.metrics.cacheMisses++;
 // eslint-disable-next-line no-unused-vars
       const data = await fetchFunction();
       await this.setCache(key, data, ttl);
       return data;
     } catch (error) {
-      logger.error('智能緩存錯誤:', error);
-      // 降級到直接獲取
+      logger.error('智能緩存Error:', error);
+      // Downgrade到直接Get
       return await fetchFunction();
     }
   }
 
   /**
-   * 後台刷新緩存
+   * 後台RefreshCache
    */
   async backgroundRefresh(key, fetchFunction, ttl) {
     setImmediate(async () => {
@@ -220,15 +220,15 @@ class PerformanceOptimizer {
 // eslint-disable-next-line no-unused-vars
         const data = await fetchFunction();
         await this.setCache(key, data, ttl);
-        logger.info(`後台刷新緩存成功: ${key}`);
+        logger.info(`後台刷新緩存Success: ${key}`);
       } catch (error) {
-        logger.error(`後台刷新緩存失敗: ${key}`, error);
+        logger.error(`後台刷新緩存Failed: ${key}`, error);
       }
     });
   }
 
   /**
-   * 設置緩存
+   * SettingsCache
    */
   async setCache(key, data, ttl) {
     try {
@@ -238,14 +238,14 @@ class PerformanceOptimizer {
 
       const redisClient = getRedisClient();
       await redisClient.setEx(key, ttl, value);
-      logger.debug(`緩存設置成功: ${key}, TTL: ${ttl}s`);
+      logger.debug(`緩存SettingsSuccess: ${key}, TTL: ${ttl}s`);
     } catch (error) {
-      logger.error('設置緩存失敗:', error);
+      logger.error('Settings緩存Failed:', error);
     }
   }
 
   /**
-   * 壓縮數據
+   * 壓縮Data
    */
   compressData(data) {
     const zlib = require('zlib');
@@ -254,7 +254,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 解壓縮數據
+   * 解壓縮Data
    */
   decompressData(compressedData) {
     const zlib = require('zlib');
@@ -264,7 +264,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 批量緩存操作
+   * BatchCacheOperation
    */
   async batchCache(operations) {
     const redisClient = getRedisClient();
@@ -297,19 +297,19 @@ class PerformanceOptimizer {
       const responses = await pipeline.exec();
       return responses.map(([err, result]) => {
         if (err) {
-          logger.error('批量緩存操作錯誤:', err);
+          logger.error('批量緩存操作Error:', err);
           return null;
         }
         return result;
       });
     } catch (error) {
-      logger.error('批量緩存操作失敗:', error);
+      logger.error('批量緩存操作Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 緩存預熱
+   * Cache預熱
    */
   async warmupCache(endpoints) {
     logger.info(`開始緩存預熱，共 ${endpoints.length} 個端點`);
@@ -326,10 +326,10 @@ class PerformanceOptimizer {
         const cacheKey = this.generateCacheKey({ originalUrl: url });
         await this.setCache(cacheKey, data, ttl);
 
-        logger.info(`緩存預熱成功: ${url}`);
+        logger.info(`緩存預熱Success: ${url}`);
         return { url, status: 'success' };
       } catch (error) {
-        logger.error(`緩存預熱失敗: ${endpoint.url}`, error);
+        logger.error(`緩存預熱Failed: ${endpoint.url}`, error);
         return { url: endpoint.url, status: 'error', error: error.message };
       }
     });
@@ -348,7 +348,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 緩存清理
+   * Cache清理
    */
   async clearCache(pattern = '*') {
     try {
@@ -362,13 +362,13 @@ class PerformanceOptimizer {
       }
       return 0;
     } catch (error) {
-      logger.error('緩存清理失敗:', error);
+      logger.error('緩存清理Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 響應時間監控中間件
+   * ResponseTimeMonitor中間件
    */
   createResponseTimeMiddleware() {
     return (req, res, next) => {
@@ -390,7 +390,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 記錄響應時間
+   * RecordResponseTime
    */
   recordResponseTime(duration) {
     this.metrics.requests++;
@@ -400,13 +400,13 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 錯誤監控中間件
+   * ErrorMonitor中間件
    */
   createErrorMonitorMiddleware() {
     return (err, req, res, next) => { // eslint-disable-next-line no-unused-vars
       this.metrics.errors++;
 
-      logger.error('API錯誤:', {
+      logger.error('APIError:', {
         error: err.message,
         stack: err.stack,
         url: req.originalUrl,
@@ -420,7 +420,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 獲取性能指標
+   * Get性能指標
    */
   getMetrics() {
     const cacheHitRate =
@@ -442,7 +442,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 重置指標
+   * Reset指標
    */
   resetMetrics() {
     this.metrics = {
@@ -457,7 +457,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 健康檢查
+   * 健康Check
    */
   async healthCheck() {
     const health = {
@@ -467,7 +467,7 @@ class PerformanceOptimizer {
     };
 
     try {
-      // 檢查Redis連接
+      // CheckRedisConnect
       const redisClient = getRedisClient();
       await redisClient.ping();
       health.checks.redis = 'healthy';
@@ -477,7 +477,7 @@ class PerformanceOptimizer {
       health.redisError = error.message;
     }
 
-    // 檢查緩存命中率
+    // CheckCache命中率
     const metrics = this.getMetrics();
     if (metrics.cacheHitRate < 50) {
       health.checks.cache = 'warning';
@@ -486,7 +486,7 @@ class PerformanceOptimizer {
       health.checks.cache = 'healthy';
     }
 
-    // 檢查錯誤率
+    // CheckError率
     if (metrics.errorRate > 5) {
       health.checks.errors = 'warning';
       health.status = 'degraded';
@@ -498,7 +498,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   updateConfig(newConfig) {
     if (newConfig.cacheConfig) {
@@ -521,7 +521,7 @@ class PerformanceOptimizer {
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   getConfig() {
     return {
@@ -532,7 +532,7 @@ class PerformanceOptimizer {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 const performanceOptimizer = new PerformanceOptimizer();
 
 module.exports = performanceOptimizer;

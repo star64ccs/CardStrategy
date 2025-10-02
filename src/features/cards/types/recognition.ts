@@ -1,7 +1,7 @@
 import type { Card } from '../../../core/types/cards';
 import type { BaseEntity } from '../../../core/types/common';
 
-// 卡牌遊戲類型
+// 卡牌遊戲Class型
 export type CardGame =
   | 'pokemon'
   | 'yugioh'
@@ -16,7 +16,7 @@ export type CardGame =
   | 'force_of_will'
   | 'other';
 
-// 卡牌系列/版本信息
+// 卡牌系Column/VersionInformation
 export interface CardSet {
   id: string;
   name: string;
@@ -40,13 +40,13 @@ export type CardSetRarity =
   | 'limited'
   | 'collector';
 
-// 卡牌識別請求
+// 卡牌識別Request
 export interface CardRecognitionRequest {
   imageData: string; // Base64 encoded image
   imageFormat: 'jpg' | 'png' | 'webp';
-  game?: CardGame; // 可選的遊戲提示
-  language?: string; // 可選的語言提示
-  region?: string; // 可選的地區提示
+  game?: CardGame; // Optional的遊戲提示
+  language?: string; // Optional的Language提示
+  region?: string; // Optional的Locale提示
   cropData?: {
     x: number;
     y: number;
@@ -57,13 +57,13 @@ export interface CardRecognitionRequest {
 }
 
 export interface RecognitionOptions {
-  enableMultipleCards: boolean; // 是否識別多張卡片
-  enableTextExtraction: boolean; // 是否提取文字
-  enableFeatureDetection: boolean; // 是否檢測特殊特徵
-  confidenceThreshold: number; // 信心閾值 (0-1)
+  enableMultipleCards: boolean; // YesNo識別多張卡片
+  enableTextExtraction: boolean; // YesNo提取文字
+  enableFeatureDetection: boolean; // YesNo檢測Special特徵
+  confidenceThreshold: number; // 信心閾Value (0-1)
   maxResults: number; // 最大結果數量
-  timeout: number; // 超時時間（毫秒）
-  useCache: boolean; // 是否使用緩存
+  timeout: number; // 超時Time（毫Second）
+  useCache: boolean; // YesNo使用Cache
 }
 
 // 卡牌識別結果
@@ -77,11 +77,11 @@ export interface CardRecognitionResult {
   language: string;
   region: string;
   features: RecognitionFeatures;
-  processingTime: number; // 毫秒
+  processingTime: number; // 毫Second
   metadata: RecognitionMetadata;
 }
 
-// 卡牌變體信息
+// 卡牌變體Information
 export interface CardVariant {
   type: VariantType;
   description: string;
@@ -261,7 +261,7 @@ export interface BoundingBox {
   height: number;
 }
 
-// 識別元數據
+// 識別元Data
 export interface RecognitionMetadata {
   version: string;
   modelVersion: string;
@@ -306,7 +306,7 @@ export interface PerformanceMetrics {
   cpuUsage: number;
 }
 
-// 識別響應
+// 識別Response
 export interface CardRecognitionResponse {
   success: boolean;
   results: CardRecognitionResult[];
@@ -351,7 +351,7 @@ export interface UsageInfo {
   tier: 'free' | 'premium' | 'unlimited';
 }
 
-// 識別歷史記錄
+// 識別歷史Record
 export interface RecognitionHistory extends BaseEntity {
   userId: string;
   request: CardRecognitionRequest;
@@ -381,7 +381,7 @@ export interface UserFeedback {
   timestamp: Date;
 }
 
-// 識別統計
+// 識別Statistics
 export interface RecognitionStats {
   totalRecognitions: number;
   successfulRecognitions: number;
@@ -432,7 +432,7 @@ export interface SatisfactionStats {
   improvements: string[];
 }
 
-// 識別配置
+// 識別Configure
 export interface RecognitionConfig {
   enabledGames: CardGame[];
   defaultOptions: RecognitionOptions;
@@ -474,7 +474,7 @@ export interface RetrySettings {
   retryableErrors: string[];
 }
 
-// 批量識別
+// Batch識別
 export interface BatchRecognitionRequest {
   images: {
     id: string;
@@ -523,7 +523,7 @@ export interface TrackingInfo {
   age: number; // frames since first detection
 }
 
-// 識別狀態
+// 識別Status
 export interface RecognitionState {
   // 當前識別
   isRecognizing: boolean;
@@ -536,7 +536,7 @@ export interface RecognitionState {
   isLoadingHistory: boolean;
   historyError: string | null;
 
-  // 批量識別
+  // Batch識別
   batchJobs: BatchRecognitionResponse[];
   isBatchProcessing: boolean;
   batchError: string | null;
@@ -546,17 +546,17 @@ export interface RecognitionState {
   realtimeFrames: RealtimeRecognitionFrame[];
   realtimeError: string | null;
 
-  // 配置和設置
+  // Configure和Settings
   config: RecognitionConfig;
   isConfigLoading: boolean;
   configError: string | null;
 
-  // 統計和分析
+  // Statistics和Analysis
   stats: RecognitionStats | null;
   isStatsLoading: boolean;
   statsError: string | null;
 
-  // UI 狀態
+  // UI Status
   selectedAlternative: AlternativeResult | null;
   showAlternatives: boolean;
   cropMode: boolean;

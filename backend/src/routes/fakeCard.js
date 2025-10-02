@@ -4,7 +4,7 @@ const { authenticateToken } = require('../middleware/auth');
 const fakeCardService = require('../services/fakeCardService');
 const logger = require('../utils/logger');
 
-// 提交假卡報告
+// SubmitFalse卡Report
 router.post('/submit', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -17,7 +17,7 @@ router.post('/submit', authenticateToken, async (req, res) => {
       fakeIndicators,
     } = req.body;
 
-    // 驗證必填字段
+    // Verify必填Field
     if (!cardName || !cardType || !imageData || !description || !fakeIndicators) {
       return res.status(400).json({
         success: false,
@@ -26,7 +26,7 @@ router.post('/submit', authenticateToken, async (req, res) => {
       });
     }
 
-    // 驗證圖片數據
+    // VerifyGraph片Data
     if (!Array.isArray(imageData) || imageData.length === 0) {
       return res.status(400).json({
         success: false,
@@ -43,7 +43,7 @@ router.post('/submit', authenticateToken, async (req, res) => {
       });
     }
 
-    // 驗證假卡特徵
+    // VerifyFalse卡特徵
     if (!Array.isArray(fakeIndicators) || fakeIndicators.length === 0) {
       return res.status(400).json({
         success: false,
@@ -52,7 +52,7 @@ router.post('/submit', authenticateToken, async (req, res) => {
       });
     }
 
-    // 驗證描述長度
+    // VerifyDescription長度
     if (description.length < 10) {
       return res.status(400).json({
         success: false,
@@ -79,7 +79,7 @@ router.post('/submit', authenticateToken, async (req, res) => {
       fakeIndicators,
     });
 
-    logger.info('假卡報告提交成功', {
+    logger.info('假卡報告提交Success', {
       userId,
       cardName,
       fakeType: fakeType || 'counterfeit',
@@ -88,20 +88,20 @@ router.post('/submit', authenticateToken, async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: '假卡報告提交成功',
+      message: '假卡報告提交Success',
       data: result,
     });
   } catch (error) {
-    logger.error('提交假卡報告失敗:', error);
+    logger.error('提交假卡報告Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '提交假卡報告失敗',
+      message: error.message || '提交假卡報告Failed',
       code: 'SUBMIT_FAKE_CARD_ERROR',
     });
   }
 });
 
-// 獲取用戶提交的假卡列表
+// GetUserSubmit的False卡List
 router.get('/user-submissions', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -115,23 +115,23 @@ router.get('/user-submissions', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      message: '獲取用戶提交成功',
+      message: 'Get用戶提交Success',
       data: result,
     });
   } catch (error) {
-    logger.error('獲取用戶提交失敗:', error);
+    logger.error('Get用戶提交Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取用戶提交失敗',
+      message: error.message || 'Get用戶提交Failed',
       code: 'GET_USER_SUBMISSIONS_ERROR',
     });
   }
 });
 
-// 獲取假卡數據庫（僅供AI訓練，需要管理員權限）
+// GetFalse卡Database（僅供AI訓練，需要Manage員權限）
 router.get('/database', authenticateToken, async (req, res) => {
   try {
-    // 檢查用戶權限
+    // CheckUser權限
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
@@ -150,20 +150,20 @@ router.get('/database', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      message: '獲取假卡數據庫成功',
+      message: 'Get假卡數據庫Success',
       data: result,
     });
   } catch (error) {
-    logger.error('獲取假卡數據庫失敗:', error);
+    logger.error('Get假卡數據庫Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取假卡數據庫失敗',
+      message: error.message || 'Get假卡數據庫Failed',
       code: 'GET_FAKE_CARD_DATABASE_ERROR',
     });
   }
 });
 
-// 獲取獎勵積分
+// Get獎勵積分
 router.get('/rewards', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.id;
@@ -172,23 +172,23 @@ router.get('/rewards', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      message: '獲取獎勵積分成功',
+      message: 'Get獎勵積分Success',
       data: result,
     });
   } catch (error) {
-    logger.error('獲取獎勵積分失敗:', error);
+    logger.error('Get獎勵積分Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取獎勵積分失敗',
+      message: error.message || 'Get獎勵積分Failed',
       code: 'GET_REWARD_POINTS_ERROR',
     });
   }
 });
 
-// 審核假卡報告（管理員功能）
+// 審核False卡Report（Manage員功能）
 router.patch('/review/:id', authenticateToken, async (req, res) => {
   try {
-    // 檢查用戶權限
+    // CheckUser權限
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
@@ -223,23 +223,23 @@ router.patch('/review/:id', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      message: '假卡報告審核成功',
+      message: '假卡報告審核Success',
       data: result,
     });
   } catch (error) {
-    logger.error('審核假卡報告失敗:', error);
+    logger.error('審核假卡報告Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '審核假卡報告失敗',
+      message: error.message || '審核假卡報告Failed',
       code: 'REVIEW_FAKE_CARD_ERROR',
     });
   }
 });
 
-// 獲取假卡統計信息（管理員功能）
+// GetFalse卡StatisticsInformation（Manage員功能）
 router.get('/stats', authenticateToken, async (req, res) => {
   try {
-    // 檢查用戶權限
+    // CheckUser權限
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
@@ -252,14 +252,14 @@ router.get('/stats', authenticateToken, async (req, res) => {
 
     res.json({
       success: true,
-      message: '獲取假卡統計成功',
+      message: 'Get假卡統計Success',
       data: result,
     });
   } catch (error) {
-    logger.error('獲取假卡統計失敗:', error);
+    logger.error('Get假卡統計Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取假卡統計失敗',
+      message: error.message || 'Get假卡統計Failed',
       code: 'GET_FAKE_CARD_STATS_ERROR',
     });
   }

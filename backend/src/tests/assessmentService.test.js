@@ -13,7 +13,7 @@ describe('Assessment Service Tests', () => {
   beforeAll(async () => {
     await sequelize.sync({ force: true });
 
-    // 創建測試用戶
+    // CreateTestUser
     testUser = await User.create({
       username: 'testuser',
       email: 'test@example.com',
@@ -21,7 +21,7 @@ describe('Assessment Service Tests', () => {
       role: 'admin',
     });
 
-    // 獲取認證令牌
+    // GetAuthenticate令牌
     const loginResponse = await request(app).post('/api/auth/login').send({
       email: 'test@example.com',
       password: 'password123',
@@ -35,7 +35,7 @@ describe('Assessment Service Tests', () => {
   });
 
   beforeEach(async () => {
-    // 清理測試數據
+    // 清理TestData
     await AssessmentSchedule.destroy({ where: {} });
     await DataQualityAssessment.destroy({ where: {} });
   });
@@ -72,7 +72,7 @@ describe('Assessment Service Tests', () => {
     });
 
     test('should get assessment schedules', async () => {
-      // 創建測試計劃
+      // CreateTest計劃
       await AssessmentSchedule.create({
         name: 'Test Schedule',
         assessmentType: 'weekly',
@@ -192,7 +192,7 @@ describe('Assessment Service Tests', () => {
       expect(assessment.triggeredBy).toBe('manual');
       expect(assessment.results).toBeDefined();
 
-      // 檢查計劃統計是否更新
+      // Check計劃StatisticsYesNoUpdate
       await schedule.reload();
       expect(schedule.totalRuns).toBe(1);
       expect(schedule.successfulRuns).toBe(1);
@@ -202,7 +202,7 @@ describe('Assessment Service Tests', () => {
 
   describe('Assessment Data Retrieval', () => {
     test('should get assessments list', async () => {
-      // 創建測試評估記錄
+      // CreateTest評估Record
       await DataQualityAssessment.create({
         assessmentType: 'custom',
         assessmentDate: new Date(),
@@ -240,7 +240,7 @@ describe('Assessment Service Tests', () => {
     });
 
     test('should get assessment statistics', async () => {
-      // 創建測試評估記錄
+      // CreateTest評估Record
       await DataQualityAssessment.create({
         assessmentType: 'custom',
         assessmentDate: new Date(),

@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -46,7 +46,7 @@ class DocumentCleanup {
     this.backupDir = path.join(this.projectRoot, 'docs-backup');
   }
 
-  // 創建備份目錄
+  // CreateBackupDirectory
   createBackup() {
     if (!fs.existsSync(this.backupDir)) {
       fs.mkdirSync(this.backupDir, { recursive: true });
@@ -54,7 +54,7 @@ class DocumentCleanup {
     }
   }
 
-  // 識別重複文檔
+  // 識別DuplicateDocumentation
   identifyDuplicateDocs() {
     log.header('🔍 識別重複文檔');
 
@@ -98,7 +98,7 @@ class DocumentCleanup {
     return duplicateGroups;
   }
 
-  // 合併部署文檔
+  // MergeDeployDocumentation
   async mergeDeploymentDocs() {
     log.header('📚 合併部署文檔');
 
@@ -133,7 +133,7 @@ class DocumentCleanup {
           mergedContent += content;
           log.success(`已合併: ${file}`);
         } catch (error) {
-          log.error(`讀取文件失敗: ${file} - ${error.message}`);
+          log.error(`讀取文件Failed: ${file} - ${error.message}`);
         }
       }
     }
@@ -143,7 +143,7 @@ class DocumentCleanup {
     log.success(`部署指南已合併到: ${outputPath}`);
   }
 
-  // 合併設置文檔
+  // MergeSettingsDocumentation
   async mergeSetupDocs() {
     log.header('⚙️ 合併設置文檔');
 
@@ -178,7 +178,7 @@ class DocumentCleanup {
           mergedContent += content;
           log.success(`已合併: ${file}`);
         } catch (error) {
-          log.error(`讀取文件失敗: ${file} - ${error.message}`);
+          log.error(`讀取文件Failed: ${file} - ${error.message}`);
         }
       }
     }
@@ -188,7 +188,7 @@ class DocumentCleanup {
     log.success(`設置指南已合併到: ${outputPath}`);
   }
 
-  // 合併 API 文檔
+  // Merge API Documentation
   async mergeApiDocs() {
     log.header('🔌 合併 API 文檔');
 
@@ -227,7 +227,7 @@ Authorization: Bearer <your-jwt-token>
 \`\`\`json
 {
   "success": true,
-  "message": "操作成功",
+  "message": "操作Success",
   "data": {},
   "timestamp": "2024-01-01T00:00:00.000Z"
 }
@@ -248,7 +248,7 @@ Authorization: Bearer <your-jwt-token>
           mergedContent += content;
           log.success(`已合併: ${file}`);
         } catch (error) {
-          log.error(`讀取文件失敗: ${file} - ${error.message}`);
+          log.error(`讀取文件Failed: ${file} - ${error.message}`);
         }
       }
     }
@@ -258,7 +258,7 @@ Authorization: Bearer <your-jwt-token>
     log.success(`API 文檔已合併到: ${outputPath}`);
   }
 
-  // 移動重複文檔到備份目錄
+  // MoveDuplicateDocumentation到BackupDirectory
   async moveDuplicateDocs() {
     log.header('📦 移動重複文檔到備份目錄');
 
@@ -300,13 +300,13 @@ Authorization: Bearer <your-jwt-token>
           fs.renameSync(sourcePath, destPath);
           log.success(`已移動: ${file}`);
         } catch (error) {
-          log.error(`移動文件失敗: ${file} - ${error.message}`);
+          log.error(`移動文件Failed: ${file} - ${error.message}`);
         }
       }
     }
   }
 
-  // 更新 README.md
+  // Update README.md
   async updateReadme() {
     log.header('📝 更新 README.md');
 
@@ -317,7 +317,7 @@ Authorization: Bearer <your-jwt-token>
 // eslint-disable-next-line no-unused-vars
         let content = fs.readFileSync(readmePath, 'utf8');
 
-        // 更新文檔鏈接
+        // UpdateDocumentation鏈接
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
         const newDocsSection = `
@@ -347,7 +347,7 @@ npm run build
 \`\`\`
 `;
 
-        // 替換舊的文檔部分
+        // Replace舊的DocumentationPartial
         content = content.replace(
           /## 📚 文檔[\s\S]*?## 🔧 開發/s,
           newDocsSection
@@ -356,12 +356,12 @@ npm run build
         fs.writeFileSync(readmePath, content);
         log.success('README.md 已更新');
       } catch (error) {
-        log.error(`更新 README.md 失敗: ${error.message}`);
+        log.error(`Update README.md Failed: ${error.message}`);
       }
     }
   }
 
-  // 創建文檔索引
+  // CreateDocumentationIndex
   async createDocsIndex() {
     log.header('📋 創建文檔索引');
 
@@ -404,7 +404,7 @@ npm run build
     log.success('文檔索引已創建');
   }
 
-  // 執行清理
+  // 執Row清理
   async run() {
     log.header('🚀 開始文檔清理');
 
@@ -421,13 +421,13 @@ npm run build
       log.success('重複文檔已合併並移動到 docs-backup 目錄');
       log.success('新的文檔結構已創建在 docs 目錄');
     } catch (error) {
-      log.error(`文檔清理過程中發生錯誤: ${error.message}`);
+      log.error(`文檔清理過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行清理
+// 執Row清理
 if (require.main === module) {
   const cleanup = new DocumentCleanup();
   cleanup.run();

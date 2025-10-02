@@ -6,9 +6,9 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// logger.info('🚀 開始配置 CardStrategy 執行環境...\n');
+// logger.info('🚀 BeginConfigure CardStrategy 執Row環境...\n');
 
-// 檢查 Node.js 版本
+// Check Node.js Version
 function checkNodeVersion() {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -16,27 +16,27 @@ function checkNodeVersion() {
   const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0]);
 
   if (majorVersion < 18) {
-    // logger.info('❌ 錯誤：需要 Node.js 18.0.0 或更高版本');
-    // logger.info(`當前版本：${nodeVersion}`);
+    // logger.info('❌ Error：需要 Node.js 18.0.0 或更高Version');
+    // logger.info(`當前Version：${nodeVersion}`);
     process.exit(1);
   }
 
-  // logger.info(`✅ Node.js 版本檢查通過：${nodeVersion}`);
+  // logger.info(`✅ Node.js VersionCheck通過：${nodeVersion}`);
 }
 
-// 檢查 Docker
+// Check Docker
 function checkDocker() {
   try {
     execSync('docker --version', { stdio: 'pipe' });
     execSync('docker-compose --version', { stdio: 'pipe' });
-    // logger.info('✅ Docker 和 Docker Compose 已安裝');
+    // logger.info('✅ Docker 和 Docker Compose 已Install');
   } catch (error) {
-    // logger.info('⚠️  警告：Docker 未安裝或未在 PATH 中');
-    // logger.info('請安裝 Docker Desktop 或 Docker Engine');
+    // logger.info('⚠️  Warning：Docker 未Install或未在 PATH 中');
+    // logger.info('請Install Docker Desktop 或 Docker Engine');
   }
 }
 
-// 創建環境變數檔案
+// Create環境變數檔案
 function createEnvFile() {
   const envContent = `# 應用配置
 NODE_ENV=development
@@ -107,69 +107,69 @@ GRAFANA_PASSWORD=admin123
 
   if (!fs.existsSync(envPath)) {
     fs.writeFileSync(envPath, envContent);
-    // logger.info('✅ 已創建 .env 檔案');
+    // logger.info('✅ 已Create .env 檔案');
   } else {
     // logger.info('ℹ️  .env 檔案已存在');
   }
 }
 
-// 安裝依賴
+// Install依賴
 function installDependencies() {
-  // logger.info('\n📦 安裝前端依賴...');
+  // logger.info('\n📦 Install前端依賴...');
   try {
     execSync('npm install', { stdio: 'inherit' });
-    // logger.info('✅ 前端依賴安裝完成');
+    // logger.info('✅ 前端依賴InstallComplete');
   } catch (error) {
-    // logger.info('❌ 前端依賴安裝失敗');
+    // logger.info('❌ 前端依賴InstallFailed');
     process.exit(1);
   }
 
-  // logger.info('\n📦 安裝後端依賴...');
+  // logger.info('\n📦 Install後端依賴...');
   try {
     execSync('cd backend && npm install', { stdio: 'inherit' });
-    // logger.info('✅ 後端依賴安裝完成');
+    // logger.info('✅ 後端依賴InstallComplete');
   } catch (error) {
-    // logger.info('❌ 後端依賴安裝失敗');
+    // logger.info('❌ 後端依賴InstallFailed');
     process.exit(1);
   }
 }
 
-// 啟動 Docker 服務
+// Start Docker Service
 function startDockerServices() {
-  // logger.info('\n🐳 啟動 Docker 服務...');
+  // logger.info('\n🐳 Start Docker Service...');
   try {
     execSync('docker-compose up -d postgres redis', { stdio: 'inherit' });
-    // logger.info('✅ Docker 服務啟動完成');
+    // logger.info('✅ Docker ServiceStartComplete');
   } catch (error) {
-    // logger.info('❌ Docker 服務啟動失敗');
-    // logger.info('請確保 Docker 正在運行');
+    // logger.info('❌ Docker ServiceStartFailed');
+    // logger.info('請確保 Docker 正在運Row');
   }
 }
 
-// 初始化數據庫
+// InitializeDatabase
 function initDatabase() {
-  // logger.info('\n🗄️  初始化數據庫...');
+  // logger.info('\n🗄️  InitializeDatabase...');
   try {
-    // 等待數據庫啟動
-    // logger.info('等待數據庫啟動...');
+    // AwaitDatabaseStart
+    // logger.info('AwaitDatabaseStart...');
     execSync('sleep 10', { stdio: 'inherit' });
 
-    // 運行數據庫遷移
+    // 運RowDatabase遷移
     execSync('cd backend && npm run migrate', { stdio: 'inherit' });
-    // logger.info('✅ 數據庫遷移完成');
+    // logger.info('✅ Database遷移Complete');
 
-    // 運行數據庫種子
+    // 運RowDatabase種子
     execSync('cd backend && npm run seed', { stdio: 'inherit' });
-    // logger.info('✅ 數據庫種子數據完成');
+    // logger.info('✅ Database種子DataComplete');
   } catch (error) {
-    // logger.info('❌ 數據庫初始化失敗');
-    // logger.info('請檢查數據庫連接');
+    // logger.info('❌ DatabaseInitializeFailed');
+    // logger.info('請CheckDatabaseConnect');
   }
 }
 
-// 主函數
+// 主Function
 function main() {
-  // logger.info('🔧 CardStrategy 環境配置工具\n');
+  // logger.info('🔧 CardStrategy 環境ConfigureTool\n');
 
   checkNodeVersion();
   checkDocker();
@@ -178,13 +178,13 @@ function main() {
   startDockerServices();
   initDatabase();
 
-  // logger.info('\n🎉 環境配置完成！');
+  // logger.info('\n🎉 環境ConfigureComplete！');
   // logger.info('\n📋 下一步：');
-  // logger.info('1. 編輯 .env 檔案，配置您的 API 金鑰');
-  // logger.info('2. 運行 npm run start 啟動前端開發服務器');
-  // logger.info('3. 運行 cd backend && npm run dev 啟動後端服務器');
-  // logger.info('4. 訪問 http://localhost:3000 查看應用');
-  // logger.info('\n📚 更多資訊請查看 README.md 和文檔');
+  // logger.info('1. Edit .env 檔案，Configure您的 API 金鑰');
+  // logger.info('2. 運Row npm run start Start前端On發Server');
+  // logger.info('3. 運Row cd backend && npm run dev Start後端Server');
+  // logger.info('4. 訪問 http://localhost:3000 查看Apply');
+  // logger.info('\n📚 更多資訊請查看 README.md 和Documentation');
 }
 
 main();

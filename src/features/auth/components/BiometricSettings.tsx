@@ -103,7 +103,7 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
     useState<BiometricSettingsType>(settings);
 
   useEffect(() => {
-    // 初始化加載數據
+    // Initialize加載Data
     dispatch(getBiometricSettings());
     dispatch(getEnrollmentStatus());
     dispatch(getSecurityInfo());
@@ -111,12 +111,12 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    // 同步設置
+    // SyncSettings
     setLocalSettings(settings);
   }, [settings]);
 
   useEffect(() => {
-    // 處理設置錯誤
+    // HandleSettingsError
     if (settingsError) {
       onError?.(settingsError);
       dispatch(clearSettingsError());
@@ -124,7 +124,7 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
   }, [settingsError, onError, dispatch]);
 
   /**
-   * 更新設置
+   * UpdateSettings
    */
   const _handleUpdateSettings = async (
     newSettings: Partial<BiometricSettingsType>
@@ -138,18 +138,18 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
       ).unwrap();
       onSettingsChanged?.(result);
     } catch (error: unknown) {
-      Alert.alert('更新失敗', error.message || '更新生物識別設置失敗');
-      // 恢復原設置
+      Alert.alert('UpdateFailed', error.message || 'Update生物識別SettingsFailed');
+      // Restore原Settings
       setLocalSettings(settings);
     }
   };
 
   /**
-   * 切換生物識別開關
+   * Switch生物識別OnOff
    */
   const _handleToggleBiometric = async (enabled: boolean) => {
     if (enabled && !securityInfo?.keyGenerated) {
-      // 需要先創建密鑰
+      // 需要先Create密鑰
       Alert.alert(
         '創建安全密鑰',
         '首次啟用生物識別需要創建安全密鑰，是否繼續？',
@@ -162,14 +162,14 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
                 await dispatch(createBiometricKeys()).unwrap();
                 await handleUpdateSettings({ isEnabled: true });
               } catch (error: unknown) {
-                Alert.alert('創建密鑰失敗', error.message);
+                Alert.alert('Create密鑰Failed', error.message);
               }
             },
           },
         ]
       );
     } else if (!enabled) {
-      // 禁用生物識別
+      // Disable生物識別
       Alert.alert(
         '禁用生物識別',
         '禁用生物識別將刪除相關的安全密鑰，是否繼續？',
@@ -183,7 +183,7 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
                 await dispatch(deleteBiometricKeys()).unwrap();
                 await handleUpdateSettings({ isEnabled: false });
               } catch (error: unknown) {
-                Alert.alert('禁用失敗', error.message);
+                Alert.alert('禁用Failed', error.message);
               }
             },
           },
@@ -195,7 +195,7 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
   };
 
   /**
-   * 切換生物識別類型
+   * Switch生物識別Class型
    */
   const _handleToggleBiometricType = async (
     type: BiometricType,
@@ -209,7 +209,7 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
   };
 
   /**
-   * 渲染生物識別類型設置
+   * 渲染生物識別Class型Settings
    */
   const _renderBiometricTypes = () => {
     const _availableCapabilities = capabilities.filter(cap => cap.isAvailable);
@@ -261,7 +261,7 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
   };
 
   /**
-   * 渲染高級設置
+   * 渲染高級Settings
    */
   const _renderAdvancedSettings = () => {
     if (!showAdvancedSettings) return null;
@@ -336,7 +336,7 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
   };
 
   /**
-   * 渲染狀態信息
+   * 渲染StatusInformation
    */
   const _renderStatusInfo = () => {
     return (
@@ -392,7 +392,7 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
         <Text style={styles.subtitle}>配置您的生物識別認證選項</Text>
       </View>
 
-      {/* 主開關 */}
+      {/* 主OnOff */}
       <View style={styles.mainSwitchContainer}>
         <View style={styles.mainSwitchInfo}>
           <Text style={styles.mainSwitchTitle}>啟用生物識別</Text>
@@ -407,13 +407,13 @@ export const BiometricSettings: React.FC<BiometricSettingsProps> = ({
         />
       </View>
 
-      {/* 生物識別類型 */}
+      {/* 生物識別Class型 */}
       {localSettings.isEnabled && renderBiometricTypes()}
 
-      {/* 高級設置 */}
+      {/* 高級Settings */}
       {localSettings.isEnabled && renderAdvancedSettings()}
 
-      {/* 狀態信息 */}
+      {/* StatusInformation */}
       {renderStatusInfo()}
     </ScrollView>
   );

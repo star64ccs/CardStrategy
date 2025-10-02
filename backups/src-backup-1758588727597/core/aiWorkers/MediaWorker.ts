@@ -1,0 +1,585 @@
+import { AIServiceManager } from './AIServiceManager';
+
+export interface Article {
+  id: string;
+  title: string;
+  content: string;
+  summary: string;
+  tags: string[];
+  category: string;
+  publishDate?: Date;
+  status: 'draft' | 'published' | 'scheduled';
+  metadata: {
+    wordCount: number;
+    readingTime: number;
+    seoScore: number;
+    aiProvider: string;
+    cost: number;
+  };
+}
+
+export interface SocialPost {
+  id: string;
+  platform: 'facebook' | 'twitter' | 'instagram' | 'linkedin';
+  content: string;
+  hashtags: string[];
+  imageUrl?: string;
+  scheduledTime?: Date;
+  status: 'draft' | 'scheduled' | 'published';
+  metadata: {
+    characterCount: number;
+    engagementScore: number;
+    aiProvider: string;
+    cost: number;
+  };
+}
+
+export interface MediaWorkerConfig {
+  enabled: boolean;
+  schedule: string; // cron expression
+  contentGeneration: {
+    enableAutoGeneration: boolean;
+    maxArticlesPerDay: number;
+    maxSocialPostsPerDay: number;
+    preferredTopics: string[];
+    excludedTopics: string[];
+  };
+  publishing: {
+    enableAutoPublish: boolean;
+    publishTime: string; // HH:mm
+    platforms: string[];
+    approvalRequired: boolean;
+  };
+  costControl: {
+    maxDailyBudget: number;
+    preferredAIProvider: string;
+    enableCostOptimization: boolean;
+  };
+}
+
+export class MediaWorker {
+  private readonly aiService: AIServiceManager;
+  private config: MediaWorkerConfig;
+  private readonly isRunning = false;
+
+  constructor(config: MediaWorkerConfig) {
+    this.config = config;
+    this.aiService = AIServiceManager.getInstance();
+  }
+
+  /**
+   * 生成文章內容
+   */
+  public async generateArticle(
+    topic: string,
+    category = 'general'
+  ): Promise<Article> {
+    try {
+      // 檢查配置
+      if (!this.config.enabled) {
+        throw new Error('MediaWorker 已停用');
+      }
+
+      // 檢查成本限制
+      await this.checkCostLimits();
+
+      // 生成文章標題
+      const titlePrompt = `為以下主題生成一個吸引人的文章標題，要求：
+1. 標題要簡潔有力
+2. 包含關鍵詞
+3. 適合SEO優化
+4. 長度在50字以內
+
+主題：${topic}
+分類：${category}
+
+請只返回標題，不要其他內容。`;
+
+      const titleResponse = await this.aiService.callAI({
+        prompt: titlePrompt,
+        maxTokens: 100,
+        temperature: 0.7,
+        useCache: true,
+      });
+
+      const title = titleResponse.content.trim();
+
+      // 生成文章大綱
+      const outlinePrompt = `為以下標題生成詳細的文章大綱，要求：
+1. 包含3-5個主要章節
+2. 每個章節包含2-3個子要點
+3. 結構清晰，邏輯合理
+4. 適合讀者閱讀
+
+標題：${title}
+主題：${topic}
+分類：${category}
+
+請以JSON格式返回大綱結構。`;
+
+      const outlineResponse = await this.aiService.callAI({
+        prompt: outlinePrompt,
+        maxTokens: 500,
+        temperature: 0.6,
+        useCache: true,
+      });
+
+      // 生成文章內容
+      const contentPrompt = `根據以下大綱撰寫一篇完整的文章，要求：
+1. 內容豐富，有深度
+2. 語言流暢，易於理解
+3. 包含實用的信息和建議
+4. 字數在1500-2000字之間
+5. 適合SEO優化
+
+標題：${title}
+大綱：${outlineResponse.content}
+
+請直接返回文章內容，不要包含標題。`;
+
+      const contentResponse = await this.aiService.callAI({
+        prompt: contentPrompt,
+        maxTokens: 3000,
+        temperature: 0.7,
+        useCache: false,
+      });
+
+      // 生成文章摘要
+      const summaryPrompt = `為以下文章生成一個簡潔的摘要，要求：
+1. 概括文章主要內容
+2. 突出核心觀點
+3. 長度在200字以內
+4. 吸引讀者興趣
+
+文章內容：${contentResponse.content.substring(0, 1000)}...
+
+請直接返回摘要內容。`;
+
+      const summaryResponse = await this.aiService.callAI({
+        prompt: summaryPrompt,
+        maxTokens: 300,
+        temperature: 0.5,
+        useCache: true,
+      });
+
+      // 生成標籤
+      const tagsPrompt = `為以下文章生成5-8個相關標籤，要求：
+1. 標籤要相關且精準
+2. 包含主要關鍵詞
+3. 適合SEO優化
+4. 用逗號分隔
+
+文章標題：${title}
+文章摘要：${summaryResponse.content}
+
+請直接返回標籤，用逗號分隔。`;
+
+      const tagsResponse = await this.aiService.callAI({
+        prompt: tagsPrompt,
+        maxTokens: 200,
+        temperature: 0.3,
+        useCache: true,
+      });
+
+      const tags = tagsResponse.content
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0);
+
+      // 計算文章統計信息
+      const wordCount = contentResponse.content.split(/\s+/).length;
+      const readingTime = Math.ceil(wordCount / 200); // 假設每分鐘閱讀200字
+      const seoScore = this.calculateSEOScore(
+        title,
+        contentResponse.content,
+        tags
+      );
+
+      // 計算總成本
+      const totalCost =
+        titleResponse.cost +
+        outlineResponse.cost +
+        contentResponse.cost +
+        summaryResponse.cost +
+        tagsResponse.cost;
+
+      const article: Article = {
+        id: `article_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        title,
+        content: contentResponse.content,
+        summary: summaryResponse.content,
+        tags,
+        category,
+        status: 'draft',
+        metadata: {
+          wordCount,
+          readingTime,
+          seoScore,
+          aiProvider: titleResponse.provider,
+          cost: totalCost,
+        },
+      };
+
+      return article;
+    } catch (error) {
+      console.error('生成文章失敗:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 生成社群貼文
+   */
+  public async generateSocialPost(
+    article: Article,
+    platform: 'facebook' | 'twitter' | 'instagram' | 'linkedin'
+  ): Promise<SocialPost> {
+    try {
+      // 檢查配置
+      if (!this.config.enabled) {
+        throw new Error('MediaWorker 已停用');
+      }
+
+      // 檢查成本限制
+      await this.checkCostLimits();
+
+      // 根據平台生成適合的內容
+      const platformConfig = this.getPlatformConfig(platform);
+
+      const postPrompt = `為以下文章生成適合${platformConfig.name}的社群貼文，要求：
+1. 內容要吸引人，引發互動
+2. 符合${platformConfig.name}的風格和限制
+3. 包含相關標籤
+4. 長度在${platformConfig.maxLength}字以內
+5. 包含行動呼籲
+
+文章標題：${article.title}
+文章摘要：${article.summary}
+文章標籤：${article.tags.join(', ')}
+
+請直接返回貼文內容。`;
+
+      const postResponse = await this.aiService.callAI({
+        prompt: postPrompt,
+        maxTokens: platformConfig.maxLength * 2,
+        temperature: 0.8,
+        useCache: true,
+      });
+
+      // 生成標籤
+      const hashtagsPrompt = `為以下社群貼文生成5-8個相關標籤，要求：
+1. 標籤要相關且熱門
+2. 符合${platformConfig.name}的標籤風格
+3. 包含#符號
+4. 用空格分隔
+
+貼文內容：${postResponse.content}
+
+請直接返回標籤，用空格分隔。`;
+
+      const hashtagsResponse = await this.aiService.callAI({
+        prompt: hashtagsPrompt,
+        maxTokens: 200,
+        temperature: 0.3,
+        useCache: true,
+      });
+
+      const hashtags = hashtagsResponse.content
+        .split(/\s+/)
+        .filter(tag => tag.startsWith('#'));
+
+      // 計算統計信息
+      const characterCount = postResponse.content.length;
+      const engagementScore = this.calculateEngagementScore(
+        postResponse.content,
+        hashtags
+      );
+
+      const socialPost: SocialPost = {
+        id: `post_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        platform,
+        content: postResponse.content,
+        hashtags,
+        status: 'draft',
+        metadata: {
+          characterCount,
+          engagementScore,
+          aiProvider: postResponse.provider,
+          cost: postResponse.cost + hashtagsResponse.cost,
+        },
+      };
+
+      return socialPost;
+    } catch (error) {
+      console.error('生成社群貼文失敗:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 排程發佈文章
+   */
+  public async schedulePublish(
+    article: Article,
+    publishDate: Date
+  ): Promise<void> {
+    try {
+      // 檢查發佈配置
+      if (!this.config.publishing.enableAutoPublish) {
+        throw new Error('自動發佈功能已停用');
+      }
+
+      // 更新文章狀態
+      article.status = 'scheduled';
+      article.publishDate = publishDate;
+
+      // 這裡應該將文章保存到數據庫或任務隊列
+      console.log(`文章已排程發佈: ${article.title} - ${publishDate}`);
+
+      // 可以集成到現有的任務調度系統
+      // await this.taskScheduler.scheduleTask({
+      //   type: 'publish_article',
+      //   data: { articleId: article.id },
+      //   scheduledAt: publishDate
+      // });
+    } catch (error) {
+      console.error('排程發佈失敗:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 批量生成內容
+   */
+  public async generateBatchContent(
+    topics: string[],
+    count = 5
+  ): Promise<{ articles: Article[]; posts: SocialPost[] }> {
+    const articles: Article[] = [];
+    const posts: SocialPost[] = [];
+
+    try {
+      for (let i = 0; i < Math.min(count, topics.length); i++) {
+        const topic = topics[i];
+
+        // 生成文章
+        const article = await this.generateArticle(topic);
+        articles.push(article);
+
+        // 為每個平台生成社群貼文
+        const platforms: ('facebook' | 'twitter' | 'instagram' | 'linkedin')[] =
+          ['facebook', 'twitter', 'instagram', 'linkedin'];
+
+        for (const platform of platforms) {
+          const post = await this.generateSocialPost(article, platform);
+          posts.push(post);
+        }
+
+        // 避免API限制
+        await this.delay(1000);
+      }
+
+      return { articles, posts };
+    } catch (error) {
+      console.error('批量生成內容失敗:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 檢查成本限制
+   */
+  private async checkCostLimits(): Promise<void> {
+    const stats = this.aiService.getStats();
+    const today = new Date().toDateString();
+
+    // 這裡應該從數據庫獲取今日成本
+    const dailyCost = stats.totalCost; // 簡化實現
+
+    if (dailyCost >= this.config.costControl.maxDailyBudget) {
+      throw new Error(
+        `已達到每日成本限制: $${this.config.costControl.maxDailyBudget}`
+      );
+    }
+  }
+
+  /**
+   * 計算SEO分數
+   */
+  private calculateSEOScore(
+    title: string,
+    content: string,
+    tags: string[]
+  ): number {
+    let score = 0;
+
+    // 標題長度檢查
+    if (title.length >= 30 && title.length <= 60) score += 20;
+
+    // 內容長度檢查
+    if (content.length >= 1500) score += 20;
+
+    // 標籤數量檢查
+    if (tags.length >= 5) score += 15;
+
+    // 關鍵詞密度檢查（簡化實現）
+    const keywordDensity = this.calculateKeywordDensity(content, tags);
+    score += Math.min(keywordDensity * 10, 25);
+
+    // 可讀性檢查
+    const readability = this.calculateReadability(content);
+    score += Math.min(readability * 20, 20);
+
+    return Math.min(score, 100);
+  }
+
+  /**
+   * 計算關鍵詞密度
+   */
+  private calculateKeywordDensity(content: string, keywords: string[]): number {
+    const words = content.toLowerCase().split(/\s+/);
+    let keywordCount = 0;
+
+    keywords.forEach(keyword => {
+      const keywordWords = keyword.toLowerCase().split(/\s+/);
+      for (let i = 0; i <= words.length - keywordWords.length; i++) {
+        if (keywordWords.every((word, j) => words[i + j].includes(word))) {
+          keywordCount++;
+        }
+      }
+    });
+
+    return keywordCount / words.length;
+  }
+
+  /**
+   * 計算可讀性分數
+   */
+  private calculateReadability(content: string): number {
+    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const words = content.split(/\s+/).filter(w => w.length > 0);
+    const syllables = this.countSyllables(content);
+
+    if (sentences.length === 0 || words.length === 0) return 0;
+
+    // Flesch Reading Ease 公式
+    const fleschScore =
+      206.835 -
+      1.015 * (words.length / sentences.length) -
+      84.6 * (syllables / words.length);
+
+    // 轉換為0-1分數
+    return Math.max(0, Math.min(1, fleschScore / 100));
+  }
+
+  /**
+   * 計算音節數（簡化實現）
+   */
+  private countSyllables(text: string): number {
+    const words = text.toLowerCase().split(/\s+/);
+    let syllables = 0;
+
+    words.forEach(word => {
+      const vowels = word.match(/[aeiouy]+/g);
+      syllables += vowels ? vowels.length : 1;
+    });
+
+    return syllables;
+  }
+
+  /**
+   * 計算互動分數
+   */
+  private calculateEngagementScore(
+    content: string,
+    hashtags: string[]
+  ): number {
+    let score = 0;
+
+    // 內容長度檢查
+    if (content.length >= 50 && content.length <= 200) score += 20;
+
+    // 標籤數量檢查
+    if (hashtags.length >= 3 && hashtags.length <= 8) score += 20;
+
+    // 問題檢查
+    if (content.includes('?') || content.includes('？')) score += 15;
+
+    // 行動呼籲檢查
+    const callToAction = [
+      '點擊',
+      '分享',
+      '評論',
+      '關注',
+      '點讚',
+      'click',
+      'share',
+      'comment',
+      'follow',
+      'like',
+    ];
+    if (callToAction.some(cta => content.toLowerCase().includes(cta)))
+      score += 15;
+
+    // 表情符號檢查
+    const emojiCount = (
+      content.match(
+        /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu
+      ) || []
+    ).length;
+    score += Math.min(emojiCount * 5, 15);
+
+    // 熱門標籤檢查
+    const popularHashtags = [
+      '#trending',
+      '#viral',
+      '#popular',
+      '#hot',
+      '#trend',
+    ];
+    const popularCount = hashtags.filter(tag =>
+      popularHashtags.includes(tag.toLowerCase())
+    ).length;
+    score += popularCount * 5;
+
+    return Math.min(score, 100);
+  }
+
+  /**
+   * 獲取平台配置
+   */
+  private getPlatformConfig(platform: string) {
+    const configs = {
+      facebook: { name: 'Facebook', maxLength: 63206 },
+      twitter: { name: 'Twitter', maxLength: 280 },
+      instagram: { name: 'Instagram', maxLength: 2200 },
+      linkedin: { name: 'LinkedIn', maxLength: 3000 },
+    };
+
+    return configs[platform as keyof typeof configs] || configs.facebook;
+  }
+
+  /**
+   * 延遲函數
+   */
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * 獲取工作狀態
+   */
+  public getStatus(): { isRunning: boolean; config: MediaWorkerConfig } {
+    return {
+      isRunning: this.isRunning,
+      config: this.config,
+    };
+  }
+
+  /**
+   * 更新配置
+   */
+  public updateConfig(config: Partial<MediaWorkerConfig>): void {
+    this.config = { ...this.config, ...config };
+  }
+}

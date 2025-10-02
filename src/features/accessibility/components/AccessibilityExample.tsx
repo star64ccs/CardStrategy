@@ -37,7 +37,7 @@ const AccessibilityExample: React.FC = () => {
         setCurrentProfile(service.getCurrentProfile());
         setAvailableProfiles(service.getAvailableProfiles());
       } catch (error) {
-        Alert.alert('錯誤', '初始化無障礙服務失敗');
+        Alert.alert('Error', 'Initialize無障礙ServiceFailed');
       } finally {
         setIsLoading(false);
       }
@@ -51,7 +51,7 @@ const AccessibilityExample: React.FC = () => {
       await service.toggleFeature(feature);
       setConfig(service.getConfig());
     } catch (error) {
-      Alert.alert('錯誤', '切換功能失敗');
+      Alert.alert('Error', '切換功能Failed');
     }
   };
 
@@ -61,7 +61,7 @@ const AccessibilityExample: React.FC = () => {
       setConfig(service.getConfig());
       setCurrentProfile(service.getCurrentProfile());
     } catch (error) {
-      Alert.alert('錯誤', '切換配置文件失敗');
+      Alert.alert('Error', '切換Configure文件Failed');
     }
   };
 
@@ -70,9 +70,9 @@ const AccessibilityExample: React.FC = () => {
       await service.resetConfig();
       setConfig(service.getConfig());
       setCurrentProfile(service.getCurrentProfile());
-      Alert.alert('成功', '配置已重置');
+      Alert.alert('Success', '配置已重置');
     } catch (error) {
-      Alert.alert('錯誤', '重置配置失敗');
+      Alert.alert('Error', '重置ConfigureFailed');
     }
   };
 
@@ -80,7 +80,7 @@ const AccessibilityExample: React.FC = () => {
     try {
       await service.speak('這是一個無障礙功能測試');
     } catch (error) {
-      Alert.alert('錯誤', '語音播放失敗');
+      Alert.alert('Error', '語音播放Failed');
     }
   };
 
@@ -199,14 +199,14 @@ const AccessibilityExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>無障礙功能示例</Text>
 
-      {/* 當前配置文件 */}
+      {/* 當前ConfigureFile */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>當前配置文件</Text>
         <Text style={styles.infoText}>名稱: {currentProfile.name}</Text>
         <Text style={styles.infoText}>描述: {currentProfile.description}</Text>
       </View>
 
-      {/* 配置文件選擇 */}
+      {/* ConfigureFileSelect */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>配置文件</Text>
         {availableProfiles.map(profile => (
@@ -264,7 +264,7 @@ const AccessibilityExample: React.FC = () => {
         <Text style={styles.sectionTitle}>認知輔助</Text>
         {renderFeatureToggle('simplifiedInterface', '簡化界面')}
         {renderFeatureToggle('focusIndicators', '焦點指示器')}
-        {renderFeatureToggle('errorPrevention', '錯誤預防')}
+        {renderFeatureToggle('errorPrevention', 'Error預防')}
       </View>
 
       {/* 運動輔助 */}
@@ -277,7 +277,7 @@ const AccessibilityExample: React.FC = () => {
         </Text>
       </View>
 
-      {/* 無障礙工具 */}
+      {/* 無障礙Tool */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>無障礙工具</Text>
         <TouchableOpacity style={styles.actionButton} onPress={handleSpeak}>
@@ -294,7 +294,7 @@ const AccessibilityExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 重置配置 */}
+      {/* ResetConfigure */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>配置管理</Text>
         <TouchableOpacity

@@ -2,7 +2,7 @@
 // eslint-disable-next-line no-unused-vars
 const fs = require('fs');
 
-// 簡單的日誌函數
+// 簡單的LogFunction
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const log = (message, data = '') => {
@@ -12,7 +12,7 @@ const log = (message, data = '') => {
   }
 };
 
-// 主題映射
+// ThemeMap
 const themeMappings = {
   'theme.colors.background.light': 'theme.colors.backgroundLight',
   'theme.colors.background.dark': 'theme.colors.backgroundDark',
@@ -41,7 +41,7 @@ const themeMappings = {
   'theme.colors.status.info.500': 'theme.colors.info',
 };
 
-// 需要修復的文件
+// 需要修復的File
 const filesToFix = [
   'App.tsx',
   'src/components/cards/CardItem.tsx',
@@ -70,7 +70,7 @@ function fixThemeUsage(filePath) {
   let content = fs.readFileSync(filePath, 'utf8');
   let modified = false;
 
-  // 應用映射
+  // ApplyMap
   for (const [oldPattern, newPattern] of Object.entries(themeMappings)) {
     if (content.includes(oldPattern)) {
       content = content.replace(
@@ -88,7 +88,7 @@ function fixThemeUsage(filePath) {
   }
 }
 
-// 執行修復
+// 執Row修復
 log('Starting theme usage fixes...');
 filesToFix.forEach((file) => fixThemeUsage(file));
 log('Theme usage fixes completed!');

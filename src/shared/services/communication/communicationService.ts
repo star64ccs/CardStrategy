@@ -48,7 +48,7 @@ export class CommunicationService {
   }
 
   /**
-   * 檢查服務可用性
+   * CheckService可用性
    */
   getAvailableChannels(): CommunicationChannel {
     return {
@@ -59,7 +59,7 @@ export class CommunicationService {
   }
 
   /**
-   * 設置用戶通信偏好
+   * SettingsUser通信Preferences
    */
   setUserPreferences(preferences: CommunicationPreferences): void {
     this.userPreferences.set(preferences.userId, preferences);
@@ -70,14 +70,14 @@ export class CommunicationService {
   }
 
   /**
-   * 獲取用戶通信偏好
+   * GetUser通信Preferences
    */
   getUserPreferences(userId: string): CommunicationPreferences | null {
     return this.userPreferences.get(userId) || null;
   }
 
   /**
-   * 發送通知
+   * SendNotification
    */
   async sendNotification(notification: NotificationMessage): Promise<
     ApiResponse<{
@@ -111,10 +111,10 @@ export class CommunicationService {
       let successCount = 0;
       let failedCount = 0;
 
-      // 根據通知類型和用戶偏好決定發送渠道
+      // Root據NotificationClass型和UserPreferences決定Send渠道
       const _channels = this.determineChannels(notification, userPrefs);
 
-      // 發送郵件
+      // Send郵件
       if (channels.email && userPrefs.email && userPrefs.emailAddress) {
         const _emailResult = await this.sendEmailNotification(
           notification,
@@ -133,7 +133,7 @@ export class CommunicationService {
         else failedCount++;
       }
 
-      // 發送 SMS
+      // Send SMS
       if (channels.sms && userPrefs.sms && userPrefs.phoneNumber) {
         const _smsResult = await this.sendSMSNotification(
           notification,
@@ -150,7 +150,7 @@ export class CommunicationService {
         else failedCount++;
       }
 
-      // 撥打語音電話
+      // 撥打語音Phone
       if (channels.voice && userPrefs.voice && userPrefs.phoneNumber) {
         const _voiceResult = await this.sendVoiceNotification(
           notification,
@@ -187,7 +187,7 @@ export class CommunicationService {
   }
 
   /**
-   * 確定發送渠道
+   * OKSend渠道
    */
   private determineChannels(
     notification: NotificationMessage,
@@ -215,7 +215,7 @@ export class CommunicationService {
   }
 
   /**
-   * 發送郵件通知
+   * Send郵件Notification
    */
   private async sendEmailNotification(
     notification: NotificationMessage,
@@ -250,7 +250,7 @@ export class CommunicationService {
   }
 
   /**
-   * 通過 SendGrid 發送郵件
+   * 通過 SendGrid Send郵件
    */
   private async sendEmailViaSendGrid(
     notification: NotificationMessage,
@@ -295,7 +295,7 @@ export class CommunicationService {
   }
 
   /**
-   * 通過 Gmail 發送郵件
+   * 通過 Gmail Send郵件
    */
   private async sendEmailViaGmail(
     notification: NotificationMessage,
@@ -338,7 +338,7 @@ export class CommunicationService {
   }
 
   /**
-   * 發送 SMS 通知
+   * Send SMS Notification
    */
   private async sendSMSNotification(
     notification: NotificationMessage,
@@ -383,7 +383,7 @@ export class CommunicationService {
   }
 
   /**
-   * 發送語音通知
+   * Send語音Notification
    */
   private async sendVoiceNotification(
     notification: NotificationMessage,
@@ -397,7 +397,7 @@ export class CommunicationService {
             notification.data.code
           );
         default:
-          // 對於其他類型的通知，可以創建自定義的語音消息
+          // 對於其他Class型的Notification，可以CreateCustom的語音Message
           const _twiml = `
             <Response>
               <Say language="zh-TW">卡策通知</Say>
@@ -426,7 +426,7 @@ export class CommunicationService {
   }
 
   /**
-   * 批量發送通知
+   * BatchSendNotification
    */
   async sendBulkNotifications(notifications: NotificationMessage[]): Promise<
     ApiResponse<{
@@ -450,7 +450,7 @@ export class CommunicationService {
       let successCount = 0;
       let failedCount = 0;
 
-      // 並行發送通知
+      // ParallelSendNotification
       const _promises = notifications.map(async (notification, index) => {
         try {
           const _result = await this.sendNotification(notification);
@@ -495,7 +495,7 @@ export class CommunicationService {
   }
 
   /**
-   * 獲取服務統計信息
+   * GetServiceStatisticsInformation
    */
   async getServiceStats(): Promise<
     ApiResponse<{
@@ -539,5 +539,5 @@ export class CommunicationService {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _communicationService = CommunicationService.getInstance();

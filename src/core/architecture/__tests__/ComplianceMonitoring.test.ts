@@ -48,22 +48,22 @@ describe('ComplianceMonitoring', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化', async () => {
+    it('應該SuccessInitialize', async () => {
       const _result = await monitoring.initialize();
       expect(result).toBe(true);
       expect(monitoring.getInitializationStatus()).toBe(true);
     });
 
-    it('應該處理初始化失敗', async () => {
-      // 創建一個新的實例來測試初始化失敗
+    it('應該HandleInitializeFailed', async () => {
+      // Create一個新的Instance來TestInitializeFailed
       (ComplianceMonitoring as any).instance = undefined;
       const _newMonitoring = ComplianceMonitoring.getInstance();
 
-      // Mock ruleEngine 的方法
+      // Mock ruleEngine 的Method
       const _mockRuleEngine = newMonitoring as any;
       mockRuleEngine.ruleEngine = {
         addRule: jest.fn().mockImplementation(() => {
-          throw new Error('規則添加失敗');
+          throw new Error('規則添加Failed');
         }),
       };
 
@@ -98,7 +98,7 @@ describe('ComplianceMonitoring', () => {
       expect(() => monitoring.monitorEvent(event)).not.toThrow();
     });
 
-    it('應該在未初始化時拋出錯誤', () => {
+    it('應該在未Initialize時拋出Error', () => {
       (ComplianceMonitoring as any).instance = undefined;
       const _newMonitoring = ComplianceMonitoring.getInstance();
 
@@ -182,7 +182,7 @@ describe('ComplianceMonitoring', () => {
     });
 
     it('應該導出審計日誌為 CSV', () => {
-      // 先添加一個事件，然後再導出
+      // 先Add一個Event，然後再Export
       const event: ComplianceEvent = {
         id: 'csv_export_test',
         timestamp: new Date(),
@@ -242,7 +242,7 @@ describe('ComplianceMonitoring', () => {
     });
 
     it('應該刪除規則', () => {
-      // 先添加一個規則，然後再刪除
+      // 先Add一個規則，然後再Delete
       const rule: ComplianceRule = {
         id: 'test_rule_to_delete',
         name: '要刪除的測試規則',

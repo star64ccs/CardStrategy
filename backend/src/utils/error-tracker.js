@@ -14,17 +14,17 @@ class ErrorTracker {
     };
 
     this.maxErrors = 1000;
-    this.alertThreshold = 10; // 每小時錯誤閾值
+    this.alertThreshold = 10; // 每HourError閾Value
     this.alertCallbacks = [];
 
-    // 創建錯誤日誌目錄
+    // CreateErrorLogDirectory
     this.logDir = path.join(__dirname, '..', '..', 'logs', 'errors');
     if (!fs.existsSync(this.logDir)) {
       fs.mkdirSync(this.logDir, { recursive: true });
     }
   }
 
-  // 記錄錯誤
+  // RecordError
   trackError(error, req = null, additionalInfo = {}) {
 // eslint-disable-next-line no-unused-vars
     const errorRecord = {
@@ -41,58 +41,58 @@ class ErrorTracker {
       ...additionalInfo,
     };
 
-    // 添加到錯誤列表
+    // Add到ErrorList
     this.errors.push(errorRecord);
 
-    // 限制錯誤數量
+    // LimitError數量
     if (this.errors.length > this.maxErrors) {
       this.errors = this.errors.slice(-this.maxErrors);
     }
 
-    // 更新統計信息
+    // UpdateStatisticsInformation
     this.updateErrorStats(errorRecord);
 
-    // 寫入錯誤日誌
+    // WriteErrorLog
     this.writeErrorLog(errorRecord);
 
-    // 檢查是否需要發送警報
+    // CheckYesNo需要SendAlert
     this.checkAlertThreshold(errorRecord);
 
     return errorRecord;
   }
 
-  // 生成錯誤ID
+  // 生成ErrorID
   generateErrorId() {
     return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // 更新錯誤統計
+  // UpdateErrorStatistics
   updateErrorStats(errorRecord) {
     this.errorStats.total++;
 
-    // 按類型統計
+    // 按Class型Statistics
 // eslint-disable-next-line no-unused-vars
     const type = errorRecord.type;
     this.errorStats.byType[type] = (this.errorStats.byType[type] || 0) + 1;
 
-    // 按端點統計
+    // 按端點Statistics
 // eslint-disable-next-line no-unused-vars
     const endpoint = errorRecord.url;
     this.errorStats.byEndpoint[endpoint] =
       (this.errorStats.byEndpoint[endpoint] || 0) + 1;
 
-    // 按小時統計
+    // 按HourStatistics
     const hour = new Date(errorRecord.timestamp).getHours();
     this.errorStats.byHour[hour] = (this.errorStats.byHour[hour] || 0) + 1;
 
-    // 最近錯誤
+    // 最近Error
     this.errorStats.recent.push(errorRecord);
     if (this.errorStats.recent.length > 50) {
       this.errorStats.recent = this.errorStats.recent.slice(-50);
     }
   }
 
-  // 寫入錯誤日誌
+  // WriteErrorLog
   writeErrorLog(errorRecord) {
     const date = new Date().toISOString().split('T')[0];
 // eslint-disable-next-line no-unused-vars
@@ -117,11 +117,11 @@ class ErrorTracker {
       fs.appendFileSync(logFile, logLine);
     } catch (err) {
 // eslint-disable-next-line no-console
-      console.error('無法寫入錯誤日誌:', err.message);
+      console.error('無法寫入Error日誌:', err.message);
     }
   }
 
-  // 檢查警報閾值
+  // CheckAlert閾Value
   checkAlertThreshold(errorRecord) {
     const currentHour = new Date().getHours();
     const hourlyErrors = this.errorStats.byHour[currentHour] || 0;
@@ -129,7 +129,7 @@ class ErrorTracker {
     if (hourlyErrors >= this.alertThreshold) {
       this.sendAlert({
         type: 'ERROR_THRESHOLD_EXCEEDED',
-        message: `每小時錯誤數量超過閾值: ${hourlyErrors}/${this.alertThreshold}`,
+        message: `每小時Error數量超過閾值: ${hourlyErrors}/${this.alertThreshold}`,
         hour: currentHour,
         errorCount: hourlyErrors,
         recentErrors: this.errorStats.recent.slice(-10),
@@ -137,24 +137,24 @@ class ErrorTracker {
     }
   }
 
-  // 發送警報
+  // SendAlert
   sendAlert(alertData) {
     this.alertCallbacks.forEach((callback) => {
       try {
         callback(alertData);
       } catch (err) {
 // eslint-disable-next-line no-console
-        console.error('警報回調執行失敗:', err.message);
+        console.error('警報回調執行Failed:', err.message);
       }
     });
   }
 
-  // 註冊警報回調
+  // RegisterAlertCallback
   onAlert(callback) {
     this.alertCallbacks.push(callback);
   }
 
-  // 獲取錯誤統計
+  // GetErrorStatistics
   getErrorStats() {
     return {
       ...this.errorStats,
@@ -162,7 +162,7 @@ class ErrorTracker {
     };
   }
 
-  // 獲取特定時間範圍的錯誤
+  // GetSpecificTime範圍的Error
   getErrorsByTimeRange(startTime, endTime) {
     return this.errors.filter((error) => {
 // eslint-disable-next-line no-unused-vars
@@ -171,17 +171,17 @@ class ErrorTracker {
     });
   }
 
-  // 獲取特定類型的錯誤
+  // GetSpecificClass型的Error
   getErrorsByType(type) {
     return this.errors.filter((error) => error.type === type);
   }
 
-  // 獲取特定端點的錯誤
+  // GetSpecific端點的Error
   getErrorsByEndpoint(endpoint) {
     return this.errors.filter((error) => error.url === endpoint);
   }
 
-  // 獲取錯誤趨勢
+  // GetError趨勢
   getErrorTrends(hours = 24) {
     const trends = [];
 // eslint-disable-next-line no-unused-vars
@@ -198,7 +198,7 @@ class ErrorTracker {
     return trends;
   }
 
-  // 清理舊錯誤
+  // 清理舊Error
   cleanupOldErrors(daysToKeep = 7) {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysToKeep);
@@ -208,10 +208,10 @@ class ErrorTracker {
     );
 
 // eslint-disable-next-line no-console
-    console.log(`🧹 已清理 ${daysToKeep} 天前的錯誤記錄`);
+    console.log(`🧹 已清理 ${daysToKeep} 天前的Error記錄`);
   }
 
-  // 導出錯誤報告
+  // ExportErrorReport
   exportErrorReport() {
     const report = {
       summary: {
@@ -238,12 +238,12 @@ class ErrorTracker {
 
     fs.writeFileSync(filepath, JSON.stringify(report, null, 2));
 // eslint-disable-next-line no-console
-    console.log(`📊 錯誤報告已導出到: ${filepath}`);
+    console.log(`📊 Error報告已導出到: ${filepath}`);
 
     return filepath;
   }
 
-  // 重置錯誤追蹤器
+  // ResetErrorTrace器
   reset() {
     this.errors = [];
     this.errorStats = {
@@ -255,10 +255,10 @@ class ErrorTracker {
     };
 
 // eslint-disable-next-line no-console
-    console.log('🔄 錯誤追蹤器已重置');
+    console.log('🔄 Error追蹤器已重置');
   }
 
-  // 獲取健康狀態
+  // Get健康Status
   getHealthStatus() {
     const currentHour = new Date().getHours();
     const hourlyErrors = this.errorStats.byHour[currentHour] || 0;
@@ -266,11 +266,11 @@ class ErrorTracker {
     const issues = [];
 
     if (hourlyErrors > this.alertThreshold) {
-      issues.push(`當前小時錯誤數量過多: ${hourlyErrors}`);
+      issues.push(`當前小時Error數量過多: ${hourlyErrors}`);
     }
 
     if (this.errorStats.total > 1000) {
-      issues.push(`總錯誤數量過多: ${this.errorStats.total}`);
+      issues.push(`總Error數量過多: ${this.errorStats.total}`);
     }
 
     return {
@@ -281,7 +281,7 @@ class ErrorTracker {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 // eslint-disable-next-line no-unused-vars
 const errorTracker = new ErrorTracker();
 

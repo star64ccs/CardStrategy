@@ -33,7 +33,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功獲取投資組合', async () => {
+    it('應該SuccessGet投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.getPortfolio();
@@ -50,8 +50,8 @@ describe('PortfolioService', () => {
       expect(result).toEqual([]);
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       const _result = await portfolioService.getPortfolio();
 
@@ -68,7 +68,7 @@ describe('PortfolioService', () => {
       price: { current: 100, historical: [90, 95, 100] },
     };
 
-    it('應該成功添加新卡片到投資組合', async () => {
+    it('應該Success添加新卡片到投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue('[]');
       mockAsyncStorage.setItem.mockResolvedValue();
 
@@ -110,12 +110,12 @@ describe('PortfolioService', () => {
       );
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       await expect(
         portfolioService.addToPortfolio(mockCard, 1, 80)
-      ).rejects.toThrow('存儲錯誤');
+      ).rejects.toThrow('存儲Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -148,7 +148,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功從投資組合移除項目', async () => {
+    it('應該Success從投資組合移除項目', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
       mockAsyncStorage.setItem.mockResolvedValue();
 
@@ -172,12 +172,12 @@ describe('PortfolioService', () => {
       );
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       await expect(
         portfolioService.removeFromPortfolio('item-1')
-      ).rejects.toThrow('存儲錯誤');
+      ).rejects.toThrow('存儲Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -199,7 +199,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功更新投資組合項目', async () => {
+    it('應該SuccessUpdate投資組合項目', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
       mockAsyncStorage.setItem.mockResolvedValue();
 
@@ -227,12 +227,12 @@ describe('PortfolioService', () => {
       );
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       await expect(
         portfolioService.updatePortfolioItem('item-1', { quantity: 3 })
-      ).rejects.toThrow('存儲錯誤');
+      ).rejects.toThrow('存儲Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -265,7 +265,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功計算投資組合統計', async () => {
+    it('應該Success計算投資組合統計', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.getPortfolioStats();
@@ -295,8 +295,8 @@ describe('PortfolioService', () => {
       });
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       const _result = await portfolioService.getPortfolioStats();
 
@@ -313,7 +313,7 @@ describe('PortfolioService', () => {
   });
 
   describe('clearPortfolio', () => {
-    it('應該成功清空投資組合', async () => {
+    it('應該Success清空投資組合', async () => {
       mockAsyncStorage.removeItem.mockResolvedValue();
 
       await portfolioService.clearPortfolio();
@@ -323,11 +323,11 @@ describe('PortfolioService', () => {
       );
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.removeItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.removeItem.mockRejectedValue(new Error('存儲Error'));
 
       await expect(portfolioService.clearPortfolio()).rejects.toThrow(
-        '存儲錯誤'
+        '存儲Error'
       );
       expect(mockLogger.error).toHaveBeenCalled();
     });
@@ -349,7 +349,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功導出投資組合數據', async () => {
+    it('應該Success導出投資組合數據', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.exportPortfolio();
@@ -362,11 +362,11 @@ describe('PortfolioService', () => {
       expect(exportData.portfolio).toEqual(mockPortfolio);
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       await expect(portfolioService.exportPortfolio()).rejects.toThrow(
-        '存儲錯誤'
+        '存儲Error'
       );
       expect(mockLogger.error).toHaveBeenCalled();
     });
@@ -400,7 +400,7 @@ describe('PortfolioService', () => {
       version: '1.0.0',
     };
 
-    it('應該成功導入投資組合數據', async () => {
+    it('應該Success導入投資組合數據', async () => {
       mockAsyncStorage.setItem.mockResolvedValue();
 
       await portfolioService.importPortfolio(JSON.stringify(mockImportData));
@@ -420,19 +420,19 @@ describe('PortfolioService', () => {
       expect(mockLogger.error).toHaveBeenCalled();
     });
 
-    it('應該處理 JSON 解析錯誤', async () => {
+    it('應該Handle JSON 解析Error', async () => {
       await expect(
         portfolioService.importPortfolio('invalid json')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalled();
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.setItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.setItem.mockRejectedValue(new Error('存儲Error'));
 
       await expect(
         portfolioService.importPortfolio(JSON.stringify(mockImportData))
-      ).rejects.toThrow('存儲錯誤');
+      ).rejects.toThrow('存儲Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -467,7 +467,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功搜索卡片名稱', async () => {
+    it('應該Success搜索卡片名稱', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.searchPortfolio('火球術');
@@ -476,7 +476,7 @@ describe('PortfolioService', () => {
       expect(result[0].card.name).toBe('火球術');
     });
 
-    it('應該成功搜索系列名稱', async () => {
+    it('應該Success搜索系列名稱', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.searchPortfolio('基礎系列');
@@ -484,7 +484,7 @@ describe('PortfolioService', () => {
       expect(result).toHaveLength(2);
     });
 
-    it('應該成功搜索筆記', async () => {
+    it('應該Success搜索筆記', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.searchPortfolio('看好');
@@ -501,8 +501,8 @@ describe('PortfolioService', () => {
       expect(result).toHaveLength(1);
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       const _result = await portfolioService.searchPortfolio('test');
 
@@ -551,7 +551,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功按系列分組投資組合', async () => {
+    it('應該Success按系列分組投資組合', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.getPortfolioBySeries();
@@ -570,8 +570,8 @@ describe('PortfolioService', () => {
       expect(result).toEqual({});
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       const _result = await portfolioService.getPortfolioBySeries();
 
@@ -608,7 +608,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功獲取按日期排序的投資組合歷史', async () => {
+    it('應該SuccessGet按日期排序的投資組合歷史', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.getPortfolioHistory();
@@ -618,8 +618,8 @@ describe('PortfolioService', () => {
       expect(result[1].purchaseDate).toBe('2024-01-01T00:00:00Z');
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       const _result = await portfolioService.getPortfolioHistory();
 
@@ -668,7 +668,7 @@ describe('PortfolioService', () => {
       },
     ];
 
-    it('應該成功獲取投資組合分析', async () => {
+    it('應該SuccessGet投資組合分析', async () => {
       mockAsyncStorage.getItem.mockResolvedValue(JSON.stringify(mockPortfolio));
 
       const _result = await portfolioService.getPortfolioAnalysis();
@@ -693,8 +693,8 @@ describe('PortfolioService', () => {
       });
     });
 
-    it('應該處理存儲錯誤', async () => {
-      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲錯誤'));
+    it('應該Handle存儲Error', async () => {
+      mockAsyncStorage.getItem.mockRejectedValue(new Error('存儲Error'));
 
       const _result = await portfolioService.getPortfolioAnalysis();
 

@@ -1,4 +1,4 @@
-// 假卡檢測系統類型定義
+// False卡檢測系統Class型定義
 export enum DetectionMethod {
   IMAGE_ANALYSIS = 'image_analysis',
   TEXTURE_ANALYSIS = 'texture_analysis',
@@ -52,10 +52,10 @@ export interface DetectionResult {
   imageUrl: string;
   overallRisk: CounterfeitRisk;
   overallConfidence: number; // 0-1
-  authenticity: number; // 0-1, 1 表示真品
-  riskScore: number; // 0-100, 越高越可能是假卡
+  authenticity: number; // 0-1, 1 Table示True品
+  riskScore: number; // 0-100, 越高越可能YesFalse卡
   analysisDate: string;
-  processingTime: number; // 毫秒
+  processingTime: number; // 毫Second
   methods: DetectionMethod[];
   features: DetectionFeature[];
   summary: string;

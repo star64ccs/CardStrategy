@@ -8,7 +8,7 @@ import { openaiService } from './ai/openaiService';
 import { replicateService } from './ai/replicateService';
 
 /**
- * AI 分析選項接口
+ * AI AnalysisOptionsInterface
  */
 interface AnalysisOptions {
   provider?: 'openai' | 'gemini' | 'cohere' | 'auto';
@@ -19,7 +19,7 @@ interface AnalysisOptions {
 }
 
 /**
- * 卡牌分析結果接口
+ * 卡牌Analysis結果Interface
  */
 interface CardAnalysisResult extends AIAnalysis {
   provider: string;
@@ -28,8 +28,8 @@ interface CardAnalysisResult extends AIAnalysis {
 }
 
 /**
- * 統一 AI 服務
- * 整合多個 AI 提供商，提供統一的 AI 功能接口
+ * 統一 AI Service
+ * 整合Multiple AI 提供商，提供統一的 AI 功能Interface
  */
 export class AIService {
   private static instance: AIService;
@@ -45,7 +45,7 @@ export class AIService {
   }
 
   /**
-   * 初始化 AI 服務
+   * Initialize AI Service
    */
   async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -53,21 +53,21 @@ export class AIService {
     }
 
     try {
-      // 確保服務管理器已初始化
+      // 確保ServiceManage器已Initialize
       if (!serviceManager.isInitialized()) {
         await serviceManager.initializeAll();
       }
 
       this.isInitialized = true;
-      logger.info('AI 服務初始化成功');
+      logger.info('AI ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('AI 服務初始化失敗:', { error });
+      logger.error('AI ServiceInitializeFailed:', { error });
       throw error;
     }
   }
 
   /**
-   * 分析卡牌圖片
+   * Analysis卡牌Graph片
    */
   async analyzeCardImage(
     imageUrl: string,
@@ -89,7 +89,7 @@ export class AIService {
         provider === 'gemini' &&
         serviceManager.isServiceAvailable('gemini')
       ) {
-        // 使用 Gemini 進行圖片分析
+        // 使用 Gemini 進RowGraph片Analysis
         const _imageData = await this.fetchImageAsBase64(imageUrl);
         analysisResult = await geminiService.analyzeImage(
           imageData,
@@ -100,7 +100,7 @@ export class AIService {
         provider === 'openai' &&
         serviceManager.isServiceAvailable('openai')
       ) {
-        // 使用 OpenAI 進行圖片分析
+        // 使用 OpenAI 進RowGraph片Analysis
         analysisResult = await openaiService.analyzeCardImage(
           imageUrl,
           this.buildAnalysisPrompt(options)
@@ -109,7 +109,7 @@ export class AIService {
         provider === 'cohere' &&
         serviceManager.isServiceAvailable('cohere')
       ) {
-        // 使用 Cohere 進行文本分析（需要先將圖片轉換為文本描述）
+        // 使用 Cohere 進Row文本Analysis（需要先將Graph片Convert為文本Description）
         const _imageDescription = await this.getImageDescription(imageUrl);
         const _response = await cohereService.generateText(
           `${this.buildAnalysisPrompt(options)}\n\n圖片描述: ${imageDescription}`,
@@ -117,9 +117,9 @@ export class AIService {
           0.7
         );
         analysisResult =
-          response.success && response.data ? response.data : '分析失敗';
+          response.success && response.data ? response.data : '分析Failed';
       } else if (provider === 'replicate' && replicateService.isAvailable()) {
-        // 使用 Replicate 進行圖片分析
+        // 使用 Replicate 進RowGraph片Analysis
         const _response = await replicateService.createPrediction({
           version:
             'stability-ai/stable-diffusion:db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf',
@@ -130,25 +130,25 @@ export class AIService {
         });
 
         if (response.success && response.data) {
-          // 等待預測完成
+          // Await預測Complete
           const _finalResult = await replicateService.waitForPrediction(
             response.data.id
           );
           if (finalResult.success && finalResult.data) {
             analysisResult = `Replicate 分析結果: ${JSON.stringify(finalResult.data.output)}`;
           } else {
-            analysisResult = 'Replicate 分析失敗';
+            analysisResult = 'Replicate 分析Failed';
           }
         } else {
-          analysisResult = 'Replicate 分析失敗';
+          analysisResult = 'Replicate 分析Failed';
         }
       } else {
-        throw new Error('沒有可用的 AI 服務提供商');
+        throw new Error('沒有可用的 AI Service提供商');
       }
 
       const _processingTime = Date.now() - startTime;
 
-      // 解析分析結果
+      // ParseAnalysis結果
       const _parsedResult = this.parseAnalysisResult(analysisResult);
 
       const result: CardAnalysisResult = {
@@ -166,7 +166,7 @@ export class AIService {
 
       return result;
     } catch (error) {
-      logger.error('AI 卡牌圖片分析失敗:', { error, provider, imageUrl });
+      logger.error('AI 卡牌圖片分析Failed:', { error, provider, imageUrl });
       throw error;
     }
   }
@@ -233,10 +233,10 @@ export class AIService {
         }
         return '無法生成投資建議';
       } else {
-        throw new Error('沒有可用的 AI 服務提供商');
+        throw new Error('沒有可用的 AI Service提供商');
       }
     } catch (error) {
-      logger.error('生成投資建議失敗:', {
+      logger.error('生成投資建議Failed:', {
         error,
         provider,
         cardName: cardData.name,
@@ -325,16 +325,16 @@ export class AIService {
         }
         return '無法生成回應';
       } else {
-        throw new Error('沒有可用的 AI 服務提供商');
+        throw new Error('沒有可用的 AI Service提供商');
       }
     } catch (error) {
-      logger.error('AI 聊天對話失敗:', { error, provider });
+      logger.error('AI 聊天對話Failed:', { error, provider });
       throw error;
     }
   }
 
   /**
-   * 卡牌真偽鑑定
+   * 卡牌True偽鑑定
    */
   async authenticateCard(
     frontImageUrl: string,
@@ -354,7 +354,7 @@ export class AIService {
     try {
       logger.info('開始卡牌真偽鑑定:', { cardName });
 
-      // 優先使用 Gemini 進行圖片分析
+      // 優先使用 Gemini 進RowGraph片Analysis
       if (serviceManager.isServiceAvailable('gemini')) {
         const _frontImageData = await this.fetchImageAsBase64(frontImageUrl);
         const _backImageData = await this.fetchImageAsBase64(backImageUrl);
@@ -365,16 +365,16 @@ export class AIService {
           cardName
         );
       } else {
-        throw new Error('卡牌真偽鑑定需要 Gemini 服務支持');
+        throw new Error('卡牌真偽鑑定需要 Gemini Service支持');
       }
     } catch (error) {
-      logger.error('卡牌真偽鑑定失敗:', { error, cardName });
+      logger.error('卡牌真偽鑑定Failed:', { error, cardName });
       throw error;
     }
   }
 
   /**
-   * 選擇 AI 提供商
+   * Select AI 提供商
    */
   private async selectProvider(
     preferredProvider?: string
@@ -404,7 +404,7 @@ export class AIService {
       return 'replicate';
     }
 
-    // 自動選擇可用的提供商
+    // AutoSelect可用的提供商
     if (serviceManager.isServiceAvailable('gemini')) {
       return 'gemini';
     }
@@ -421,11 +421,11 @@ export class AIService {
       return 'replicate';
     }
 
-    throw new Error('沒有可用的 AI 服務提供商');
+    throw new Error('沒有可用的 AI Service提供商');
   }
 
   /**
-   * 構建分析提示詞
+   * BuildAnalysis提示詞
    */
   private buildAnalysisPrompt(options: AnalysisOptions): string {
     const _language = options.language || 'zh-TW';
@@ -460,7 +460,7 @@ export class AIService {
   }
 
   /**
-   * 構建投資建議提示詞
+   * Build投資建議提示詞
    */
   private buildInvestmentPrompt(cardData: {
     name: string;
@@ -491,7 +491,7 @@ export class AIService {
   }
 
   /**
-   * 構建聊天提示詞
+   * Build聊天提示詞
    */
   private buildChatPrompt(
     message: string,
@@ -527,11 +527,11 @@ export class AIService {
   }
 
   /**
-   * 解析分析結果
+   * ParseAnalysis結果
    */
   private parseAnalysisResult(analysisText: string): AIAnalysis {
-    // 這裡可以實現更複雜的解析邏輯
-    // 目前返回基本結構
+    // 這裡可以實現更複雜的Parse邏輯
+    // 目前Return基本結構
     return {
       id: `analysis_${Date.now()}`,
       cardId: 'unknown',
@@ -555,14 +555,14 @@ export class AIService {
    * 計算信心度
    */
   private calculateConfidence(analysisText: string): number {
-    // 基於分析文本的長度和關鍵詞來估算信心度
+    // 基於Analysis文本的長度和OffKey詞來估算信心度
     let confidence = 0.5; // 基礎信心度
 
     // 文本長度因子
     if (analysisText.length > 500) confidence += 0.2;
     if (analysisText.length > 1000) confidence += 0.1;
 
-    // 關鍵詞因子
+    // OffKey詞因子
     const _keywords = ['卡牌', '稀有', '價格', '狀況', '投資', '市場'];
     const _keywordCount = keywords.filter(keyword =>
       analysisText.includes(keyword)
@@ -574,7 +574,7 @@ export class AIService {
   }
 
   /**
-   * 獲取圖片的 Base64 數據
+   * GetGraph片的 Base64 Data
    */
   private async fetchImageAsBase64(imageUrl: string): Promise<string> {
     try {
@@ -591,17 +591,17 @@ export class AIService {
         reader.readAsDataURL(blob);
       });
     } catch (error) {
-      logger.error('獲取圖片 Base64 數據失敗:', { error, imageUrl });
+      logger.error('Get圖片 Base64 數據Failed:', { error, imageUrl });
       throw new Error('無法獲取圖片數據');
     }
   }
 
   /**
-   * 獲取圖片描述（用於 Cohere 服務）
+   * GetGraph片Description（用於 Cohere Service）
    */
   private async getImageDescription(imageUrl: string): Promise<string> {
     try {
-      // 優先使用 Gemini 進行圖片描述
+      // 優先使用 Gemini 進RowGraph片Description
       if (serviceManager.isServiceAvailable('gemini')) {
         const _imageData = await this.fetchImageAsBase64(imageUrl);
         return await geminiService.analyzeImage(
@@ -611,16 +611,16 @@ export class AIService {
         );
       }
 
-      // 如果 Gemini 不可用，返回基本描述
+      // 如果 Gemini 不可用，Return基本Description
       return '卡牌圖片，需要進一步分析';
     } catch (error) {
-      logger.error('獲取圖片描述失敗:', { error, imageUrl });
+      logger.error('Get圖片描述Failed:', { error, imageUrl });
       return '無法獲取圖片描述';
     }
   }
 
   /**
-   * 獲取可用的 AI 服務狀態
+   * Get可用的 AI ServiceStatus
    */
   getAvailableServices(): {
     openai: boolean;
@@ -637,7 +637,7 @@ export class AIService {
   }
 
   /**
-   * 獲取服務統計信息
+   * GetServiceStatisticsInformation
    */
   getServiceStatistics(): {
     totalServices: number;
@@ -661,7 +661,7 @@ export class AIService {
   }
 
   /**
-   * 分析卡牌（存根方法）
+   * Analysis卡牌（存RootMethod）
    */
   async analyzeCard(cardId: string): Promise<any> {
     logger.info('分析卡牌（存根方法）:', { cardId });
@@ -679,7 +679,7 @@ export class AIService {
   }
 
   /**
-   * 預測價格（存根方法）
+   * 預測價格（存RootMethod）
    */
   async predictPrice(cardId: string, timeframe: string): Promise<any> {
     logger.info('預測價格（存根方法）:', { cardId, timeframe });
@@ -698,7 +698,7 @@ export class AIService {
   }
 
   /**
-   * 發送聊天消息（存根方法）
+   * Send聊天Message（存RootMethod）
    */
   async sendMessage(message: string): Promise<any> {
     logger.info('發送聊天消息（存根方法）:', { message });
@@ -709,13 +709,13 @@ export class AIService {
         response: '聊天功能正在開發中',
         timestamp: new Date(),
       },
-      message: '消息發送成功',
+      message: '消息發送Success',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 獲取市場洞察（存根方法）
+   * Get市場洞察（存RootMethod）
    */
   async getMarketInsights(): Promise<any> {
     logger.info('獲取市場洞察（存根方法）');
@@ -725,13 +725,13 @@ export class AIService {
         insights: ['市場趨勢分析', '投資建議'],
         timestamp: new Date(),
       },
-      message: '市場洞察獲取成功',
+      message: '市場洞察GetSuccess',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 生成投資報告（存根方法）
+   * 生成投資Report（存RootMethod）
    */
   async generateInvestmentReport(cardIds: string[]): Promise<any> {
     logger.info('生成投資報告（存根方法）:', { cardIds });
@@ -742,14 +742,14 @@ export class AIService {
         report: '投資報告正在生成中',
         timestamp: new Date(),
       },
-      message: '投資報告生成成功',
+      message: '投資報告生成Success',
       timestamp: new Date(),
     };
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _aiService = AIService.getInstance();
 
-// 導出類型
+// ExportClass型
 export type { AnalysisOptions, CardAnalysisResult };

@@ -55,13 +55,13 @@ const IntelligentSearchExample: React.FC = () => {
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
-    // 初始化時獲取熱門搜索
+    // Initialize時Get熱門Search
     getPopularSearches();
   }, []);
 
   const _handleSearch = async () => {
     if (!query.trim()) {
-      Alert.alert('錯誤', '請輸入搜索查詢');
+      Alert.alert('Error', '請輸入搜索查詢');
       return;
     }
 
@@ -89,8 +89,8 @@ const IntelligentSearchExample: React.FC = () => {
       setShowSuggestions(false);
     } catch (error) {
       Alert.alert(
-        '搜索失敗',
-        error instanceof Error ? error.message : '未知錯誤'
+        '搜索Failed',
+        error instanceof Error ? error.message : '未知Error'
       );
     }
   };
@@ -114,7 +114,7 @@ const IntelligentSearchExample: React.FC = () => {
 
   const _handleAnalyzeQuery = async () => {
     if (!query.trim()) {
-      Alert.alert('錯誤', '請輸入要分析的查詢');
+      Alert.alert('Error', '請輸入要分析的查詢');
       return;
     }
 
@@ -134,8 +134,8 @@ const IntelligentSearchExample: React.FC = () => {
       );
     } catch (error) {
       Alert.alert(
-        '分析失敗',
-        error instanceof Error ? error.message : '未知錯誤'
+        '分析Failed',
+        error instanceof Error ? error.message : '未知Error'
       );
     }
   };
@@ -154,11 +154,11 @@ const IntelligentSearchExample: React.FC = () => {
 
     try {
       await updateUserPreferences(userId, preferences);
-      Alert.alert('成功', '用戶偏好已更新');
+      Alert.alert('Success', '用戶偏好已更新');
     } catch (error) {
       Alert.alert(
-        '更新失敗',
-        error instanceof Error ? error.message : '未知錯誤'
+        'UpdateFailed',
+        error instanceof Error ? error.message : '未知Error'
       );
     }
   };
@@ -166,11 +166,11 @@ const IntelligentSearchExample: React.FC = () => {
   const _handleClearHistory = async () => {
     try {
       await clearSearchHistory(userId);
-      Alert.alert('成功', '搜索歷史已清除');
+      Alert.alert('Success', '搜索歷史已清除');
     } catch (error) {
       Alert.alert(
-        '清除失敗',
-        error instanceof Error ? error.message : '未知錯誤'
+        '清除Failed',
+        error instanceof Error ? error.message : '未知Error'
       );
     }
   };
@@ -255,7 +255,7 @@ const IntelligentSearchExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>智能搜索示例</Text>
 
-      {/* 搜索輸入 */}
+      {/* SearchInput */}
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
@@ -269,7 +269,7 @@ const IntelligentSearchExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 搜索建議 */}
+      {/* Search建議 */}
       {showSuggestions && suggestions.length > 0 && (
         <View style={styles.suggestionsContainer}>
           <Text style={styles.sectionTitle}>搜索建議</Text>
@@ -282,7 +282,7 @@ const IntelligentSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 錯誤顯示 */}
+      {/* ErrorShow */}
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>錯誤: {error}</Text>
@@ -292,7 +292,7 @@ const IntelligentSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 搜索結果 */}
+      {/* Search結果 */}
       {results.length > 0 && (
         <View style={styles.resultsContainer}>
           <View style={styles.resultsHeader}>
@@ -308,7 +308,7 @@ const IntelligentSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 熱門搜索 */}
+      {/* 熱門Search */}
       {popularSearches.length > 0 && (
         <View style={styles.popularContainer}>
           <Text style={styles.sectionTitle}>熱門搜索</Text>
@@ -322,7 +322,7 @@ const IntelligentSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 相關搜索 */}
+      {/* 相OffSearch */}
       {relatedSearches.length > 0 && (
         <View style={styles.relatedContainer}>
           <Text style={styles.sectionTitle}>相關搜索</Text>
@@ -361,8 +361,8 @@ const IntelligentSearchExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 搜索統計 */}
-      {/* 統計功能暫時不可用 */}
+      {/* SearchStatistics */}
+      {/* Statistics功能暫時不可用 */}
 
       {/* 加載指示器 */}
       {isLoading && (

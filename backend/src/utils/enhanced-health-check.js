@@ -3,25 +3,25 @@ const { sequelize, testConnection } = require('../config/database-optimized');
 const { healthCheck: redisHealthCheck } = require('../config/redis-optimized');
 const { logger } = require('./unified-logger');
 
-// 增強版健康檢查
+// 增強版健康Check
 const enhancedHealthCheck = async (req, res) => {
   const startTime = Date.now();
 
   try {
-    // 檢查數據庫連接
+    // CheckDatabaseConnect
     const dbStatus = await testConnection();
 
-    // 檢查 Redis 連接
+    // Check Redis Connect
     const redisStatus = await redisHealthCheck();
 
-    // 獲取性能指標
+    // Get性能指標
     const metrics = performanceMonitor.getMetrics();
 
-    // 計算健康檢查響應時間
+    // 計算健康CheckResponseTime
 // eslint-disable-next-line no-unused-vars
     const responseTime = Date.now() - startTime;
 
-    // 確定整體健康狀態
+    // OK整體健康Status
     const isHealthy = dbStatus && redisStatus && responseTime < 1000;
 // eslint-disable-next-line no-unused-vars
     const statusCode = isHealthy ? 200 : 503;
@@ -65,7 +65,7 @@ const enhancedHealthCheck = async (req, res) => {
       },
     };
 
-    // 記錄健康檢查結果
+    // Record健康Check結果
     logger.info('Health Check', {
       status: healthData.status,
       responseTime,
@@ -91,7 +91,7 @@ const enhancedHealthCheck = async (req, res) => {
   }
 };
 
-// 格式化運行時間
+// Format運RowTime
 const formatUptime = (milliseconds) => {
   const seconds = Math.floor(milliseconds / 1000);
   const minutes = Math.floor(seconds / 60);

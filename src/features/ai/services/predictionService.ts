@@ -17,7 +17,7 @@ import {
 } from '../types/prediction';
 
 /**
- * AI 預測服務 - 單例模式
+ * AI 預測Service - 單例模式
  */
 class PredictionService {
   private static instance: PredictionService;
@@ -60,13 +60,13 @@ class PredictionService {
     try {
       logger.info(`Starting prediction for card: ${request.cardId}`);
 
-      // 驗證請求
+      // VerifyRequest
       this.validatePredictionRequest(request);
 
-      // 創建預測結果
+      // Create預測結果
       const _result = await this.createPredictionResult(request);
 
-      // 保存預測結果
+      // Save預測結果
       await this.savePredictionResult(result);
 
       logger.info(`Prediction completed for card: ${request.cardId}`);

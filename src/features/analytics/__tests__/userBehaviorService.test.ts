@@ -11,7 +11,7 @@ import {
   UserBehaviorAnalysisResponse,
 } from '../types/userBehavior';
 
-// Mock 數據轉換函數
+// Mock DataConvertFunction
 const _mockConvertToJSON = jest.fn(data => JSON.stringify(data));
 const _mockConvertToCSV = jest.fn(data => 'csv,data,format');
 const _mockConvertToExcel = jest.fn(data => 'excel,data,format');
@@ -28,11 +28,11 @@ describe('UserBehaviorService', () => {
   let service: UserBehaviorService;
 
   beforeEach(() => {
-    // 重置單例實例
+    // Reset單例Instance
     (UserBehaviorService as any).instance = undefined;
     service = UserBehaviorService.getInstance();
 
-    // 重置 mock
+    // Reset mock
     mockConvertToJSON.mockClear();
     mockConvertToCSV.mockClear();
     mockConvertToExcel.mockClear();
@@ -48,16 +48,16 @@ describe('UserBehaviorService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化服務', async () => {
+    it('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBe(true);
     });
 
-    it('應該在初始化失敗時返回 false', async () => {
-      // 模擬初始化失敗
+    it('應該在InitializeFailed時返回 false', async () => {
+      // 模擬InitializeFailed
       jest
         .spyOn(service as any, 'initializeAnalytics')
-        .mockRejectedValue(new Error('初始化失敗'));
+        .mockRejectedValue(new Error('InitializeFailed'));
 
       const _result = await service.initialize();
       expect(result).toBe(false);
@@ -81,7 +81,7 @@ describe('UserBehaviorService', () => {
 
       service.trackEvent(event);
 
-      // 驗證事件被添加
+      // VerifyEvent被Add
       const { events } = service as any;
       expect(events.length).toBeGreaterThan(0);
       expect(events[0].eventType).toBe('page_view');
@@ -135,12 +135,12 @@ describe('UserBehaviorService', () => {
       expect(analysis.stats).toBeDefined();
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
-      // 重置服務狀態
+    it('應該在未Initialize時拋出Error', async () => {
+      // ResetServiceStatus
       (service as any).isInitialized = false;
 
       await expect(service.getBehaviorAnalysis()).rejects.toThrow(
-        '服務未初始化'
+        'Service未Initialize'
       );
     });
   });
@@ -280,7 +280,7 @@ describe('UserBehaviorService', () => {
       );
     });
 
-    it('應該處理導出錯誤', async () => {
+    it('應該Handle導出Error', async () => {
       const _analysis = await service.getBehaviorAnalysis();
       const options: UserBehaviorExportOptions = {
         format: 'invalid' as any,
@@ -328,7 +328,7 @@ describe('UserBehaviorService', () => {
     });
 
     it('應該更新警報', async () => {
-      // 先創建一個警報
+      // 先Create一個Alert
       const _alert = await service.createAlert({
         name: '原始警報',
         description: '原始描述',
@@ -343,7 +343,7 @@ describe('UserBehaviorService', () => {
         cooldownPeriod: 3600000,
       });
 
-      // 更新警報
+      // UpdateAlert
       await service.updateAlert(alert.id, {
         name: '更新後的警報',
         severity: 'high',
@@ -355,7 +355,7 @@ describe('UserBehaviorService', () => {
     });
 
     it('應該刪除警報', async () => {
-      // 先創建一個警報
+      // 先Create一個Alert
       const _alert = await service.createAlert({
         name: '要刪除的警報',
         description: '這個警報將被刪除',
@@ -370,16 +370,16 @@ describe('UserBehaviorService', () => {
         cooldownPeriod: 3600000,
       });
 
-      // 刪除警報
+      // DeleteAlert
       await service.deleteAlert(alert.id);
 
-      // 驗證警報已被刪除
+      // VerifyAlert已被Delete
       const _deletedAlert = await service.getAlert(alert.id);
       expect(deletedAlert).toBeNull();
     });
 
     it('應該獲取所有警報', async () => {
-      // 創建多個警報
+      // CreateMultipleAlert
       await service.createAlert({
         name: '警報1',
         description: '第一個警報',
@@ -446,10 +446,10 @@ describe('UserBehaviorService', () => {
     it('應該添加和移除事件監聽器', () => {
       const _mockCallback = jest.fn();
 
-      // 添加監聽器
+      // Add監聽器
       service.addEventListener('event_tracked', mockCallback);
 
-      // 觸發事件
+      // 觸發Event
       service.trackEvent({
         id: 'test-event',
         userId: 'user123',
@@ -459,15 +459,15 @@ describe('UserBehaviorService', () => {
         metadata: { userAgent: 'test' },
       });
 
-      // 驗證回調被調用
+      // VerifyCallback被調用
       setTimeout(() => {
         expect(mockCallback).toHaveBeenCalled();
       }, 10);
 
-      // 移除監聽器
+      // Remove監聽器
       service.removeEventListener('event_tracked', mockCallback);
 
-      // 再次觸發事件
+      // 再次觸發Event
       service.trackEvent({
         id: 'test-event-2',
         userId: 'user123',
@@ -477,7 +477,7 @@ describe('UserBehaviorService', () => {
         metadata: { userAgent: 'test' },
       });
 
-      // 驗證回調沒有被再次調用
+      // VerifyCallback沒有被再次調用
       setTimeout(() => {
         expect(mockCallback).toHaveBeenCalledTimes(1);
       }, 10);
@@ -486,7 +486,7 @@ describe('UserBehaviorService', () => {
     it('應該處理不存在的監聽器移除', () => {
       const _mockCallback = jest.fn();
 
-      // 嘗試移除不存在的監聽器
+      // 嘗試Remove不存在的監聽器
       expect(() => {
         service.removeEventListener('event_tracked', mockCallback);
       }).not.toThrow();
@@ -531,7 +531,7 @@ describe('UserBehaviorService', () => {
     it('應該快速處理多個事件', () => {
       const _startTime = Date.now();
 
-      // 添加1000個事件
+      // Add1000個Event
       for (let i = 0; i < 1000; i++) {
         service.trackEvent({
           id: `event-${i}`,
@@ -546,7 +546,7 @@ describe('UserBehaviorService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 應該在1秒內完成
+      // 應該在1Second內Complete
       expect(duration).toBeLessThan(1000);
     });
 
@@ -558,7 +558,7 @@ describe('UserBehaviorService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 應該在100ms內完成
+      // 應該在100ms內Complete
       expect(duration).toBeLessThan(100);
       expect(analysis).toBeDefined();
     });
@@ -579,7 +579,7 @@ describe('UserBehaviorService', () => {
         metadata: { userAgent: 'test' },
       });
 
-      // 不應該拋出錯誤
+      // 不應該ThrowError
       expect(() => {
         service.trackEvent({
           id: 'empty-query-event-2',
@@ -604,7 +604,7 @@ describe('UserBehaviorService', () => {
         metadata: { userAgent: 'test' },
       });
 
-      // 不應該拋出錯誤
+      // 不應該ThrowError
       expect(() => {
         service.trackEvent({
           id: 'long-query-event-2',
@@ -630,7 +630,7 @@ describe('UserBehaviorService', () => {
         metadata: { userAgent: 'test' },
       });
 
-      // 不應該拋出錯誤
+      // 不應該ThrowError
       expect(() => {
         service.trackEvent({
           id: 'extreme-time-event-2',
@@ -650,13 +650,13 @@ describe('UserBehaviorService', () => {
       const _invalidFilter = {
         userIds: ['user123'],
         eventTypes: ['invalid_event_type'],
-        startTime: Date.now() + 24 * 60 * 60 * 1000, // 未來時間
-        endTime: Date.now() - 24 * 60 * 60 * 1000, // 過去時間
+        startTime: Date.now() + 24 * 60 * 60 * 1000, // 未來Time
+        endTime: Date.now() - 24 * 60 * 60 * 1000, // 過去Time
       } as UserBehaviorFilter;
 
       const _analysis = await service.getBehaviorAnalysis(invalidFilter);
 
-      // 應該返回空的分析結果而不是拋出錯誤
+      // 應該ReturnEmpty的Analysis結果而不YesThrowError
       expect(analysis).toBeDefined();
       expect(analysis.stats.totalEvents).toBe(0);
     });

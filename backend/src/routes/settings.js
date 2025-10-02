@@ -6,11 +6,11 @@ const logger = require('../utils/logger');
 const router = express.Router();
 
 // @route   GET /api/settings
-// @desc    獲取用戶設置
+// @desc    GetUserSettings
 // @access  Private
 router.get('/', protect, async (req, res) => {
   try {
-    // 模擬用戶設置數據
+    // 模擬UserSettingsData
     const settings = {
       notifications: {
         email: true,
@@ -46,21 +46,21 @@ router.get('/', protect, async (req, res) => {
 
     res.json({
       success: true,
-      message: '設置獲取成功',
+      message: 'SettingsGetSuccess',
       data: { settings },
     });
   } catch (error) {
-    logger.error('獲取用戶設置錯誤:', error);
+    logger.error('Get用戶SettingsError:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取設置失敗',
+      message: error.message || 'GetSettingsFailed',
       code: 'SETTINGS_FETCH_FAILED',
     });
   }
 });
 
 // @route   PUT /api/settings/notifications
-// @desc    更新通知設置
+// @desc    UpdateNotificationSettings
 // @access  Private
 router.put(
   '/notifications',
@@ -78,7 +78,7 @@ router.put(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -92,14 +92,14 @@ router.put(
 
       res.json({
         success: true,
-        message: '通知設置更新成功',
+        message: '通知SettingsUpdateSuccess',
         data: { type, enabled, types },
       });
     } catch (error) {
-      logger.error('更新通知設置錯誤:', error);
+      logger.error('Update通知SettingsError:', error);
       res.status(500).json({
         success: false,
-        message: '更新通知設置失敗',
+        message: 'Update通知SettingsFailed',
         code: 'UPDATE_NOTIFICATIONS_FAILED',
       });
     }
@@ -107,7 +107,7 @@ router.put(
 );
 
 // @route   POST /api/settings/security/two-factor
-// @desc    啟用/禁用雙因素認證
+// @desc    Enable/Disable雙因素Authenticate
 // @access  Private
 router.post(
   '/security/two-factor',
@@ -125,7 +125,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -134,7 +134,7 @@ router.post(
       const { enabled, method = 'app' } = req.body;
 
       if (enabled) {
-        // 模擬雙因素認證設置
+        // 模擬雙因素AuthenticateSettings
         const twoFactorSetup = {
           secret: 'JBSWY3DPEHPK3PXP',
           qrCode:
@@ -158,10 +158,10 @@ router.post(
         });
       }
     } catch (error) {
-      logger.error('雙因素認證設置錯誤:', error);
+      logger.error('雙因素認證SettingsError:', error);
       res.status(500).json({
         success: false,
-        message: '雙因素認證設置失敗',
+        message: '雙因素認證SettingsFailed',
         code: 'TWO_FACTOR_SETUP_FAILED',
       });
     }
@@ -169,7 +169,7 @@ router.post(
 );
 
 // @route   POST /api/settings/security/two-factor/verify
-// @desc    驗證雙因素認證
+// @desc    Verify雙因素Authenticate
 // @access  Private
 router.post(
   '/security/two-factor/verify',
@@ -186,7 +186,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -194,28 +194,28 @@ router.post(
 
       const { code } = req.body;
 
-      // 模擬驗證邏輯
+      // 模擬Verify邏輯
       if (code === '123456') {
-        logger.info(`雙因素認證驗證成功: ${req.user.username}`);
+        logger.info(`雙因素認證VerifySuccess: ${req.user.username}`);
 
         res.json({
           success: true,
-          message: '雙因素認證驗證成功',
+          message: '雙因素認證VerifySuccess',
         });
       } else {
-        logger.warn(`雙因素認證驗證失敗: ${req.user.username}, 代碼: ${code}`);
+        logger.warn(`雙因素認證VerifyFailed: ${req.user.username}, 代碼: ${code}`);
 
         res.status(400).json({
           success: false,
-          message: '驗證碼錯誤',
+          message: 'Verify碼Error',
           code: 'INVALID_2FA_CODE',
         });
       }
     } catch (error) {
-      logger.error('雙因素認證驗證錯誤:', error);
+      logger.error('雙因素認證VerifyError:', error);
       res.status(500).json({
         success: false,
-        message: '雙因素認證驗證失敗',
+        message: '雙因素認證VerifyFailed',
         code: 'VERIFY_2FA_FAILED',
       });
     }
@@ -223,7 +223,7 @@ router.post(
 );
 
 // @route   PUT /api/settings/privacy
-// @desc    更新隱私設置
+// @desc    Update隱私Settings
 // @access  Private
 router.put(
   '/privacy',
@@ -241,7 +241,7 @@ router.put(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -253,14 +253,14 @@ router.put(
 
       res.json({
         success: true,
-        message: '隱私設置更新成功',
+        message: '隱私SettingsUpdateSuccess',
         data: { profileVisibility, dataSharing, analyticsTracking },
       });
     } catch (error) {
-      logger.error('更新隱私設置錯誤:', error);
+      logger.error('Update隱私SettingsError:', error);
       res.status(500).json({
         success: false,
-        message: '更新隱私設置失敗',
+        message: 'Update隱私SettingsFailed',
         code: 'UPDATE_PRIVACY_FAILED',
       });
     }
@@ -268,7 +268,7 @@ router.put(
 );
 
 // @route   PUT /api/settings/preferences
-// @desc    更新偏好設置
+// @desc    UpdatePreferencesSettings
 // @access  Private
 router.put(
   '/preferences',
@@ -285,7 +285,7 @@ router.put(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -297,14 +297,14 @@ router.put(
 
       res.json({
         success: true,
-        message: '偏好設置更新成功',
+        message: '偏好SettingsUpdateSuccess',
         data: { language, currency, timezone, theme },
       });
     } catch (error) {
-      logger.error('更新偏好設置錯誤:', error);
+      logger.error('Update偏好SettingsError:', error);
       res.status(500).json({
         success: false,
-        message: '更新偏好設置失敗',
+        message: 'Update偏好SettingsFailed',
         code: 'UPDATE_PREFERENCES_FAILED',
       });
     }
@@ -312,7 +312,7 @@ router.put(
 );
 
 // @route   POST /api/settings/data-export
-// @desc    請求數據導出
+// @desc    RequestDataExport
 // @access  Private
 router.post(
   '/data-export',
@@ -327,7 +327,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -335,14 +335,14 @@ router.post(
 
       const { dataTypes, format } = req.body;
 
-      // 模擬數據導出
+      // 模擬DataExport
       const exportData = {
         id: 'export_' + Date.now(),
         status: 'processing',
         dataTypes,
         format,
         createdAt: new Date(),
-        estimatedCompletion: new Date(Date.now() + 5 * 60 * 1000), // 5分鐘後
+        estimatedCompletion: new Date(Date.now() + 5 * 60 * 1000), // 5Minute後
       };
 
       logger.info(`請求數據導出: ${req.user.username}, 格式: ${format}`);
@@ -353,10 +353,10 @@ router.post(
         data: { exportData },
       });
     } catch (error) {
-      logger.error('數據導出請求錯誤:', error);
+      logger.error('數據導出請求Error:', error);
       res.status(500).json({
         success: false,
-        message: '數據導出請求失敗',
+        message: '數據導出請求Failed',
         code: 'DATA_EXPORT_REQUEST_FAILED',
       });
     }
@@ -364,39 +364,39 @@ router.post(
 );
 
 // @route   GET /api/settings/data-export/:exportId
-// @desc    獲取數據導出狀態
+// @desc    GetDataExportStatus
 // @access  Private
 router.get('/data-export/:exportId', protect, async (req, res) => {
   try {
     const { exportId } = req.params;
 
-    // 模擬導出狀態
+    // 模擬ExportStatus
     const exportStatus = {
       id: exportId,
       status: 'completed',
       downloadUrl: `https://api.cardstrategy.com/exports/${exportId}.json`,
-      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24小時後過期
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24Hour後過期
     };
 
     logger.info(`獲取數據導出狀態: ${req.user.username}, 導出ID: ${exportId}`);
 
     res.json({
       success: true,
-      message: '導出狀態獲取成功',
+      message: '導出狀態GetSuccess',
       data: { exportStatus },
     });
   } catch (error) {
-    logger.error('獲取數據導出狀態錯誤:', error);
+    logger.error('Get數據導出狀態Error:', error);
     res.status(500).json({
       success: false,
-      message: '獲取導出狀態失敗',
+      message: 'Get導出狀態Failed',
       code: 'EXPORT_STATUS_FETCH_FAILED',
     });
   }
 });
 
 // @route   DELETE /api/settings/account
-// @desc    刪除賬戶
+// @desc    Delete賬戶
 // @access  Private
 router.delete(
   '/account',
@@ -411,7 +411,7 @@ router.delete(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -419,7 +419,7 @@ router.delete(
 
       const { confirmation, password } = req.body;
 
-      // 模擬賬戶刪除
+      // 模擬賬戶Delete
       logger.info(`刪除賬戶: ${req.user.username}`);
 
       res.json({
@@ -431,10 +431,10 @@ router.delete(
         },
       });
     } catch (error) {
-      logger.error('刪除賬戶錯誤:', error);
+      logger.error('Delete賬戶Error:', error);
       res.status(500).json({
         success: false,
-        message: '刪除賬戶失敗',
+        message: 'Delete賬戶Failed',
         code: 'ACCOUNT_DELETE_FAILED',
       });
     }

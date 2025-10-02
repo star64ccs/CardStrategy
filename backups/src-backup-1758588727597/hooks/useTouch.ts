@@ -1,0 +1,371 @@
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import { touchService } from '../services/touchService';
+import type {
+  ScrollOptimizationConfig,
+  TouchEventData,
+  TouchFeedbackConfig,
+  TouchGestureConfig,
+  TouchGestureType,
+  UseTouchReturn,
+} from '../types/touch';
+
+/**
+ * 觸控 Hook
+ * 提供觸控手勢、反饋和滾動優化的統一接口
+ */
+export const useTouch = (
+  gestureConfig?: Partial<TouchGestureConfig>,
+  feedbackConfig?: Partial<TouchFeedbackConfig>,
+  scrollConfig?: Partial<ScrollOptimizationConfig>
+): UseTouchReturn => {
+  const componentId = useRef(`use-touch-${Date.now()}-${Math.random()}`);
+
+  // 狀態管理
+  const [isPressed, setIsPressed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [gestureData, setGestureData] = useState<TouchEventData | null>(null);
+  const [lastGesture, setLastGesture] = useState<TouchGestureType | null>(null);
+
+  // 註冊組件到服務
+  useEffect(() => {
+    if (gestureConfig) {
+      touchService.registerGesture(componentId.current, gestureConfig as any);
+    }
+    if (feedbackConfig) {
+      touchService.registerFeedback(componentId.current, feedbackConfig as any);
+    }
+    if (scrollConfig) {
+      touchService.registerScroll(componentId.current, scrollConfig as any);
+    }
+
+    return () => {
+      touchService.unregisterGesture(componentId.current);
+      touchService.unregisterFeedback(componentId.current);
+      touchService.unregisterScroll(componentId.current);
+    };
+  }, [gestureConfig, feedbackConfig, scrollConfig]);
+
+  // 工具函數
+  const isTouchDevice = useCallback((): boolean => {
+    return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  }, []);
+
+  const getTouchPoint = useCallback(
+    (event: React.TouchEvent | React.MouseEvent): { x: number; y: number } => {
+      if ('touches' in event && event.touches.length > 0) {
+        const touch = event.touches[0];
+        return { x: touch.clientX, y: touch.clientY };
+      } else if ('clientX' in event) {
+        return { x: event.clientX, y: event.clientY };
+      }
+      return { x: 0, y: 0 };
+    },
+    []
+  );
+
+  const calculateDistance = useCallback(
+    (
+      point1: { x: number; y: number },
+      point2: { x: number; y: number }
+    ): number => {
+      const dx = point2.x - point1.x;
+      const dy = point2.y - point1.y;
+      return Math.sqrt(dx * dx + dy * dy);
+    },
+    []
+  );
+
+  const calculateAngle = useCallback(
+    (
+      point1: { x: number; y: number },
+      point2: { x: number; y: number }
+    ): number => {
+      return (
+        (Math.atan2(point2.y - point1.y, point2.x - point1.x) * 180) / Math.PI
+      );
+    },
+    []
+  );
+
+  // 事件處理器
+  const handleTouchStart = useCallback(
+    (event: React.TouchEvent) => {
+      setIsPressed(true);
+      setIsHovered(false);
+
+      const point = getTouchPoint(event);
+      const touches = Array.from(event.touches).map(touch => ({
+        identifier: touch.identifier,
+        target: touch.target,
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+        pageX: touch.pageX,
+        pageY: touch.pageY,
+        radiusX: (touch as any).radiusX,
+        radiusY: (touch as any).radiusY,
+        rotationAngle: (touch as any).rotationAngle,
+        force: (touch as any).force,
+      }));
+      const touchData: TouchEventData = {
+        type: 'tap',
+        x: point.x,
+        y: point.y,
+        duration: 0,
+        timestamp: Date.now(),
+        touches,
+        target: event.target,
+      };
+
+      setGestureData(touchData);
+      setLastGesture('tap');
+
+      // 性能追蹤
+      touchService.trackPerformance(componentId.current, {
+        gesture: 'touchStart',
+        point,
+        timestamp: Date.now(),
+      });
+    },
+    [getTouchPoint]
+  );
+
+  const handleTouchMove = useCallback(
+    (event: React.TouchEvent) => {
+      if (!isPressed) return;
+
+      const point = getTouchPoint(event);
+      const touches = Array.from(event.touches);
+
+      if (touches.length === 2) {
+        // 多點觸控手勢
+        const touch1 = touches[0];
+        const touch2 = touches[1];
+        const point1 = { x: touch1.clientX, y: touch1.clientY };
+        const point2 = { x: touch2.clientX, y: touch2.clientY };
+
+        const distance = calculateDistance(point1, point2);
+        const angle = calculateAngle(point1, point2);
+
+        const touchData: TouchEventData = {
+          type: 'pinch',
+          x: (point1.x + point2.x) / 2,
+          y: (point1.y + point2.y) / 2,
+          scale: distance / 100, // 簡化的縮放計算
+          rotation: angle,
+          duration: Date.now() - (gestureData?.timestamp || Date.now()),
+          timestamp: Date.now(),
+          touches,
+          target: event.target,
+        };
+
+        setGestureData(touchData);
+        setLastGesture('pinch');
+      } else {
+        // 單點觸控移動
+        const touchData: TouchEventData = {
+          type: 'pan',
+          x: point.x,
+          y: point.y,
+          deltaX: point.x - (gestureData?.x || point.x),
+          deltaY: point.y - (gestureData?.y || point.y),
+          duration: Date.now() - (gestureData?.timestamp || Date.now()),
+          timestamp: Date.now(),
+          touches,
+          target: event.target,
+        };
+
+        setGestureData(touchData);
+        setLastGesture('pan');
+      }
+    },
+    [isPressed, getTouchPoint, calculateDistance, calculateAngle, gestureData]
+  );
+
+  const handleTouchEnd = useCallback(
+    (event: React.TouchEvent) => {
+      setIsPressed(false);
+
+      const point = getTouchPoint(event);
+      const duration = Date.now() - (gestureData?.timestamp || Date.now());
+
+      // 判斷手勢類型
+      let gestureType: TouchGestureType = 'tap';
+      if (gestureData) {
+        const distance = calculateDistance(
+          { x: gestureData.x, y: gestureData.y },
+          { x: point.x, y: point.y }
+        );
+
+        if (distance > 50) {
+          gestureType = 'swipe';
+        } else if (duration > 500) {
+          gestureType = 'longPress';
+        }
+      }
+
+      const touchData: TouchEventData = {
+        type: gestureType,
+        x: point.x,
+        y: point.y,
+        duration,
+        timestamp: Date.now(),
+        touches: Array.from(event.changedTouches).map(touch => ({
+          identifier: touch.identifier,
+          target: touch.target,
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          pageX: touch.pageX,
+          pageY: touch.pageY,
+          radiusX: (touch as any).radiusX,
+          radiusY: (touch as any).radiusY,
+          rotationAngle: (touch as any).rotationAngle,
+          force: (touch as any).force,
+        })),
+        target: event.target,
+      };
+
+      setGestureData(touchData);
+      setLastGesture(gestureType);
+
+      // 性能追蹤
+      touchService.trackPerformance(componentId.current, {
+        gesture: gestureType,
+        duration,
+        timestamp: Date.now(),
+      });
+    },
+    [getTouchPoint, calculateDistance, gestureData]
+  );
+
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent) => {
+      setIsPressed(true);
+      setIsHovered(false);
+
+      const point = getTouchPoint(event);
+      const touchData: TouchEventData = {
+        type: 'tap',
+        x: point.x,
+        y: point.y,
+        duration: 0,
+        timestamp: Date.now(),
+        touches: [],
+        target: event.target,
+      };
+
+      setGestureData(touchData);
+      setLastGesture('tap');
+    },
+    [getTouchPoint]
+  );
+
+  const handleMouseMove = useCallback(
+    (event: React.MouseEvent) => {
+      if (!isPressed) {
+        setIsHovered(true);
+        return;
+      }
+
+      const point = getTouchPoint(event);
+      const touchData: TouchEventData = {
+        type: 'pan',
+        x: point.x,
+        y: point.y,
+        deltaX: point.x - (gestureData?.x || point.x),
+        deltaY: point.y - (gestureData?.y || point.y),
+        duration: Date.now() - (gestureData?.timestamp || Date.now()),
+        timestamp: Date.now(),
+        touches: [],
+        target: event.target,
+      };
+
+      setGestureData(touchData);
+      setLastGesture('pan');
+    },
+    [isPressed, getTouchPoint, gestureData]
+  );
+
+  const handleMouseUp = useCallback(
+    (event: React.MouseEvent) => {
+      setIsPressed(false);
+
+      const point = getTouchPoint(event);
+      const duration = Date.now() - (gestureData?.timestamp || Date.now());
+
+      const touchData: TouchEventData = {
+        type: 'tap',
+        x: point.x,
+        y: point.y,
+        duration,
+        timestamp: Date.now(),
+        touches: [],
+        target: event.target,
+      };
+
+      setGestureData(touchData);
+      setLastGesture('tap');
+    },
+    [getTouchPoint, gestureData]
+  );
+
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setIsPressed(true);
+      setIsFocused(true);
+
+      const touchData: TouchEventData = {
+        type: 'tap',
+        x: 0,
+        y: 0,
+        duration: 0,
+        timestamp: Date.now(),
+        touches: [],
+        target: event.target,
+      };
+
+      setGestureData(touchData);
+      setLastGesture('tap');
+    }
+  }, []);
+
+  const handleKeyUp = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      setIsPressed(false);
+      setIsFocused(false);
+    }
+  }, []);
+
+  return {
+    // 手勢狀態
+    isPressed,
+    isHovered,
+    isFocused,
+
+    // 手勢數據
+    gestureData,
+    lastGesture,
+
+    // 事件處理器
+    handlers: {
+      onTouchStart: handleTouchStart,
+      onTouchMove: handleTouchMove,
+      onTouchEnd: handleTouchEnd,
+      onMouseDown: handleMouseDown,
+      onMouseMove: handleMouseMove,
+      onMouseUp: handleMouseUp,
+      onKeyDown: handleKeyDown,
+      onKeyUp: handleKeyUp,
+    },
+
+    // 工具函數
+    utils: {
+      isTouchDevice,
+      getTouchPoint,
+      calculateDistance,
+      calculateAngle,
+    },
+  };
+};

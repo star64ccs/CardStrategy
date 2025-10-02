@@ -111,7 +111,7 @@ export const SocialAccountManager: React.FC<SocialAccountManagerProps> = ({
   }, []);
 
   useEffect(() => {
-    // 處理錯誤
+    // HandleError
     if (accountsError) {
       onError?.(accountsError);
       dispatch(clearAccountsError());
@@ -125,12 +125,12 @@ export const SocialAccountManager: React.FC<SocialAccountManagerProps> = ({
     try {
       await dispatch(getLinkedSocialAccounts()).unwrap();
     } catch (error: unknown) {
-      logger.error('加載已鏈接社交帳戶失敗:', { error });
+      logger.error('加載已鏈接社交帳戶Failed:', { error });
     }
   };
 
   /**
-   * 刷新數據
+   * RefreshData
    */
   const _handleRefresh = async () => {
     if (!refreshable) return;
@@ -161,16 +161,16 @@ export const SocialAccountManager: React.FC<SocialAccountManagerProps> = ({
           onPress: async () => {
             try {
               await dispatch(unlinkSocialAccount(account.provider)).unwrap();
-              logger.info('社交帳戶解除鏈接成功:', {
+              logger.info('社交帳戶解除鏈接Success:', {
                 provider: account.provider,
               });
               onAccountUnlinked?.(account.provider);
             } catch (error: unknown) {
-              logger.error('社交帳戶解除鏈接失敗:', {
+              logger.error('社交帳戶解除鏈接Failed:', {
                 error,
                 provider: account.provider,
               });
-              Alert.alert('錯誤', error.message || '解除鏈接失敗');
+              Alert.alert('Error', error.message || '解除鏈接Failed');
             }
           },
         },
@@ -227,7 +227,7 @@ export const SocialAccountManager: React.FC<SocialAccountManagerProps> = ({
   };
 
   /**
-   * 渲染空狀態
+   * 渲染EmptyStatus
    */
   const _renderEmptyState = () => (
     <View style={styles.emptyState}>
@@ -240,7 +240,7 @@ export const SocialAccountManager: React.FC<SocialAccountManagerProps> = ({
   );
 
   /**
-   * 渲染加載狀態
+   * 渲染加載Status
    */
   const _renderLoadingState = () => (
     <View style={styles.loadingState}>

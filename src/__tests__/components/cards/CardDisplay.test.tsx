@@ -157,9 +157,9 @@ describe('CardDisplay', () => {
       expect(screen.getByTestId('loading-indicator')).toBeTruthy();
     });
 
-    it('應該顯示錯誤狀態', () => {
+    it('應該顯示Error狀態', () => {
       const _store = createTestStore({
-        error: '載入卡片失敗',
+        error: '載入卡片Failed',
         isLoading: false,
       });
 
@@ -169,7 +169,7 @@ describe('CardDisplay', () => {
         </Provider>
       );
 
-      expect(screen.getByText('網絡連接失敗')).toBeTruthy();
+      expect(screen.getByText('網絡ConnectFailed')).toBeTruthy();
       expect(screen.getByText('重試')).toBeTruthy();
     });
 
@@ -268,7 +268,7 @@ describe('CardDisplay', () => {
       const _assessButton = screen.getByText('評估條件');
       fireEvent.press(assessButton);
 
-      // 驗證按鈕可以正常點擊
+      // Verify按鈕可以正常點擊
       expect(assessButton).toBeTruthy();
     });
   });
@@ -302,7 +302,7 @@ describe('CardDisplay', () => {
       const _favoriteButton = screen.getByTestId('favorite-button');
       fireEvent.press(favoriteButton);
 
-      // 驗證按鈕可以正常點擊
+      // Verify按鈕可以正常點擊
       expect(favoriteButton).toBeTruthy();
     });
 
@@ -318,12 +318,12 @@ describe('CardDisplay', () => {
       );
 
       const _favoriteButton = screen.getByTestId('favorite-button');
-      // 第一次點擊添加到收藏
+      // 第一次點擊Add到收藏
       fireEvent.press(favoriteButton);
-      // 第二次點擊從收藏移除
+      // 第二次點擊從收藏Remove
       fireEvent.press(favoriteButton);
 
-      // 驗證按鈕可以正常點擊
+      // Verify按鈕可以正常點擊
       expect(favoriteButton).toBeTruthy();
     });
   });
@@ -357,7 +357,7 @@ describe('CardDisplay', () => {
       const _shareButton = screen.getByTestId('share-button');
       fireEvent.press(shareButton);
 
-      // 驗證按鈕可以正常點擊
+      // Verify按鈕可以正常點擊
       expect(shareButton).toBeTruthy();
     });
   });
@@ -391,7 +391,7 @@ describe('CardDisplay', () => {
       const _monitorButton = screen.getByText('監控價格');
       fireEvent.press(monitorButton);
 
-      // 驗證按鈕可以正常點擊
+      // Verify按鈕可以正常點擊
       expect(monitorButton).toBeTruthy();
     });
   });
@@ -436,10 +436,10 @@ describe('CardDisplay', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     it('應該處理重試功能', async () => {
       const _store = createTestStore({
-        error: '載入卡片失敗',
+        error: '載入卡片Failed',
         isLoading: false,
       });
 
@@ -452,15 +452,15 @@ describe('CardDisplay', () => {
       const _retryButton = screen.getByText('重試');
       fireEvent.press(retryButton);
 
-      // 驗證重試邏輯被調用
+      // VerifyRetry邏輯被調用
       await waitFor(() => {
         expect(store.getState().cards.isLoading).toBe(false);
       });
     });
 
-    it('應該處理網絡錯誤', () => {
+    it('應該Handle網絡Error', () => {
       const _store = createTestStore({
-        error: '網絡連接失敗',
+        error: '網絡ConnectFailed',
         isLoading: false,
       });
 
@@ -470,8 +470,8 @@ describe('CardDisplay', () => {
         </Provider>
       );
 
-      expect(screen.getByText('網絡連接失敗')).toBeTruthy();
-      expect(screen.getByText('檢查網絡連接')).toBeTruthy();
+      expect(screen.getByText('網絡ConnectFailed')).toBeTruthy();
+      expect(screen.getByText('Check網絡Connect')).toBeTruthy();
     });
   });
 

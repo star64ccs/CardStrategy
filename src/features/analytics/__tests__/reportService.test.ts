@@ -151,7 +151,7 @@ describe('ReportService', () => {
       const _response = await reportService.createTemplate(templateRequest);
 
       expect(response.success).toBe(false);
-      expect(response.message).toContain('模板創建失敗');
+      expect(response.message).toContain('模板CreateFailed');
     });
   });
 

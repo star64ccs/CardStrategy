@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-// 臨時類型定義
+// 臨時Class型定義
 interface CacheInfo {
   name: string;
   size: number;
@@ -86,17 +86,17 @@ export interface ServiceWorkerActions {
   updateApp: () => Promise<void>;
   unregister: () => Promise<boolean>;
 
-  // 緩存管理
+  // CacheManage
   clearCache: (cacheName?: string) => Promise<void>;
   refreshCacheInfo: () => Promise<void>;
 
-  // 同步功能
+  // Sync功能
   addToSyncQueue: (data: SyncData) => void;
   clearSyncQueue: () => void;
   registerBackgroundSync: (tag: string, data?: unknown) => Promise<void>;
   refreshSyncQueue: () => void;
 
-  // 通知功能
+  // Notification功能
   sendNotification: (
     title: string,
     options?: NotificationOptions
@@ -106,10 +106,10 @@ export interface ServiceWorkerActions {
   prefetchResources: (config: PrefetchConfig) => Promise<void>;
   smartPrefetch: (currentUrl: string) => Promise<void>;
 
-  // 性能監控
+  // 性能Monitor
   refreshPerformanceMetrics: () => Promise<void>;
 
-  // 配置管理
+  // ConfigureManage
   updateConfig: (config: Partial<any>) => void;
   getSupportedFeatures: () => string[];
 }
@@ -138,14 +138,14 @@ export const _useServiceWorker = (): ServiceWorkerState &
     error: null,
   });
 
-  // 初始化 Service Worker
+  // Initialize Service Worker
   const _initialize = useCallback(async () => {
     try {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
 
       await swManager.init();
 
-      // 更新狀態
+      // UpdateStatus
       const _status = {
         ...swManager.getStatus(),
         online: navigator.onLine,
@@ -166,27 +166,27 @@ export const _useServiceWorker = (): ServiceWorkerState &
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '初始化失敗',
+        error: error instanceof Error ? error.message : 'InitializeFailed',
         isLoading: false,
       }));
     }
   }, []);
 
-  // 更新應用
+  // UpdateApply
   const _updateApp = useCallback(async () => {
     try {
       await swManager.updateApp();
-      // 重新初始化以獲取最新狀態
+      // ReInitialize以Get最新Status
       await initialize();
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '更新失敗',
+        error: error instanceof Error ? error.message : 'UpdateFailed',
       }));
     }
   }, [initialize]);
 
-  // 註銷 Service Worker
+  // Logout Service Worker
   const _unregister = useCallback(async () => {
     try {
       const _result = await swManager.unregister();
@@ -204,27 +204,27 @@ export const _useServiceWorker = (): ServiceWorkerState &
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '註銷失敗',
+        error: error instanceof Error ? error.message : '註銷Failed',
       }));
       return false;
     }
   }, []);
 
-  // 清理緩存
+  // 清理Cache
   const _clearCache = useCallback(async (cacheName?: string) => {
     try {
       await swManager.clearCache(cacheName);
-      // 重新獲取緩存信息
+      // ReGetCacheInformation
       await refreshCacheInfo();
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '清理緩存失敗',
+        error: error instanceof Error ? error.message : '清理緩存Failed',
       }));
     }
   }, []);
 
-  // 刷新緩存信息
+  // RefreshCacheInformation
   const _refreshCacheInfo = useCallback(async () => {
     try {
       const _cacheInfo = await swManager.getCacheInfo();
@@ -232,24 +232,24 @@ export const _useServiceWorker = (): ServiceWorkerState &
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '獲取緩存信息失敗',
+        error: error instanceof Error ? error.message : 'Get緩存信息Failed',
       }));
     }
   }, []);
 
-  // 添加到同步隊列
+  // Add到SyncQueue
   const _addToSyncQueue = useCallback((data: SyncData) => {
     swManager.addToSyncQueue(data);
     refreshSyncQueue();
   }, []);
 
-  // 清空同步隊列
+  // 清EmptySyncQueue
   const _clearSyncQueue = useCallback(() => {
     swManager.clearSyncQueue();
     refreshSyncQueue();
   }, []);
 
-  // 註冊背景同步
+  // Register背景Sync
   const _registerBackgroundSync = useCallback(
     async (tag: string, data?: unknown) => {
       try {
@@ -257,20 +257,20 @@ export const _useServiceWorker = (): ServiceWorkerState &
       } catch (error) {
         setState(prev => ({
           ...prev,
-          error: error instanceof Error ? error.message : '註冊背景同步失敗',
+          error: error instanceof Error ? error.message : '註冊背景同步Failed',
         }));
       }
     },
     []
   );
 
-  // 刷新同步隊列
+  // RefreshSyncQueue
   const _refreshSyncQueue = useCallback(() => {
     const _syncQueue = swManager.getSyncQueue();
     setState(prev => ({ ...prev, syncQueue }));
   }, []);
 
-  // 發送通知
+  // SendNotification
   const _sendNotification = useCallback(
     async (title: string, options?: NotificationOptions) => {
       try {
@@ -278,21 +278,21 @@ export const _useServiceWorker = (): ServiceWorkerState &
       } catch (error) {
         setState(prev => ({
           ...prev,
-          error: error instanceof Error ? error.message : '發送通知失敗',
+          error: error instanceof Error ? error.message : '發送通知Failed',
         }));
       }
     },
     []
   );
 
-  // 預取資源
+  // 預取Resource
   const _prefetchResources = useCallback(async (config: PrefetchConfig) => {
     try {
       await swManager.prefetchResources(config);
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '預取資源失敗',
+        error: error instanceof Error ? error.message : '預取資源Failed',
       }));
     }
   }, []);
@@ -304,12 +304,12 @@ export const _useServiceWorker = (): ServiceWorkerState &
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '智能預取失敗',
+        error: error instanceof Error ? error.message : '智能預取Failed',
       }));
     }
   }, []);
 
-  // 刷新性能指標
+  // Refresh性能指標
   const _refreshPerformanceMetrics = useCallback(async () => {
     try {
       const _performanceMetrics = await swManager.getPerformanceMetrics();
@@ -317,27 +317,27 @@ export const _useServiceWorker = (): ServiceWorkerState &
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '獲取性能指標失敗',
+        error: error instanceof Error ? error.message : 'Get性能指標Failed',
       }));
     }
   }, []);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback((config: Partial<any>) => {
     swManager.updateConfig(config);
   }, []);
 
-  // 獲取支持的功能
+  // GetSupport的功能
   const _getSupportedFeatures = useCallback(() => {
     return swManager.getSupportedFeatures();
   }, []);
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     initialize();
   }, [initialize]);
 
-  // 監聽網絡狀態變化
+  // 監聽NetworkStatus變化
   useEffect(() => {
     const _handleOnline = () => {
       setState(prev => ({
@@ -362,22 +362,22 @@ export const _useServiceWorker = (): ServiceWorkerState &
     };
   }, []);
 
-  // 定期刷新緩存信息和性能指標
+  // 定期RefreshCacheInformation和性能指標
   useEffect(() => {
     const _interval = setInterval(() => {
       refreshCacheInfo();
       refreshPerformanceMetrics();
       refreshSyncQueue();
-    }, 30000); // 每30秒刷新一次
+    }, 30000); // 每30SecondRefresh一次
 
     return () => clearInterval(interval);
   }, [refreshCacheInfo, refreshPerformanceMetrics, refreshSyncQueue]);
 
   return {
-    // 狀態
+    // Status
     ...state,
 
-    // 方法
+    // Method
     initialize,
     updateApp,
     unregister,
@@ -408,7 +408,7 @@ export const _useServiceWorkerBasic = () => {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // 檢查 Service Worker 狀態
+    // Check Service Worker Status
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.getRegistrations().then(registrations => {
         setIsRegistered(registrations.length > 0);
@@ -426,7 +426,7 @@ export const _useServiceWorkerBasic = () => {
       try {
         await swManager.sendNotification(title, options);
       } catch (error) {
-        // logger.info('發送通知失敗:', error);
+        // logger.info('SendNotificationFailed:', error);
       }
     },
     []

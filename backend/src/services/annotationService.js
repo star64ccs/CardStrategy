@@ -13,10 +13,10 @@ class AnnotationService {
     this.AnnotationData = null;
     this.DataQualityMetrics = null;
 
-    // 分配算法配置
+    // 分配算法Configure
     this.assignmentConfig = {
-      maxTasksPerAnnotator: 10, // 每個標註者最大同時任務數
-      qualityThreshold: 0.85, // 質量閾值
+      maxTasksPerAnnotator: 10, // 每個標註者最大同時Task數
+      qualityThreshold: 0.85, // 質量閾Value
       workloadWeight: 0.3, // 工作量權重
       expertiseWeight: 0.4, // 專業度權重
       qualityWeight: 0.3, // 質量權重
@@ -43,7 +43,7 @@ class AnnotationService {
     }
   }
 
-  // 優化的標註任務分配算法
+  // 優化的標註Task分配算法
   async assignAnnotationTasks(options = {}) {
     try {
       await this.initializeModels();
@@ -57,7 +57,7 @@ class AnnotationService {
         forceReassignment = false,
       } = options;
 
-      // 獲取待分配的訓練數據
+      // Get待分配的訓練Data
       const pendingData = await this.getPendingTrainingData({
         limit: batchSize,
         priorityFilter,
@@ -70,7 +70,7 @@ class AnnotationService {
         return [];
       }
 
-      // 獲取活躍標註者及其詳細信息
+      // Get活躍標註者及其詳細Information
       const activeAnnotators = await this.getActiveAnnotatorsWithDetails();
 
       if (activeAnnotators.length === 0) {
@@ -82,7 +82,7 @@ class AnnotationService {
       const annotatorWorkloads =
         await this.calculateAnnotatorWorkloads(activeAnnotators);
 
-      // 執行智能分配
+      // 執Row智能分配
       const assignments = await this.performSmartAssignment(
         pendingData,
         activeAnnotators,
@@ -90,21 +90,21 @@ class AnnotationService {
         forceReassignment
       );
 
-      // 批量創建標註任務
+      // BatchCreate標註Task
       const createdTasks = await this.batchCreateAnnotationTasks(assignments);
 
-      // 更新分配統計
+      // Update分配Statistics
       await this.updateAssignmentStatistics(assignments);
 
       logger.info(`智能分配完成: ${createdTasks.length} 個標註任務`);
       return createdTasks;
     } catch (error) {
-      logger.error('智能分配標註任務失敗:', error);
+      logger.error('智能分配標註任務Failed:', error);
       throw error;
     }
   }
 
-  // 獲取待分配的訓練數據
+  // Get待分配的訓練Data
   async getPendingTrainingData(filters) {
     const whereClause = {
       status: 'pending',
@@ -134,7 +134,7 @@ class AnnotationService {
     });
   }
 
-  // 獲取活躍標註者詳細信息
+  // Get活躍標註者詳細Information
   async getActiveAnnotatorsWithDetails() {
     const annotators = await this.Annotator.findAll({
       where: {
@@ -174,7 +174,7 @@ class AnnotationService {
       centering_analysis: 0.5,
     };
 
-    // 根據標註者等級調整基礎專業度
+    // Root據標註者等級調整基礎專業度
     const levelMultiplier = {
       expert: 1.2,
       senior: 1.0,
@@ -183,7 +183,7 @@ class AnnotationService {
 
     const multiplier = levelMultiplier[annotator.level] || 1.0;
 
-    // 根據歷史表現調整專業度
+    // Root據歷史Table現調整專業度
     if (annotator.metadata && annotator.metadata.expertiseAreas) {
       Object.keys(annotator.metadata.expertiseAreas).forEach((area) => {
         if (expertise[area] !== undefined) {
@@ -208,21 +208,21 @@ class AnnotationService {
     // 基礎可用性分數
     let availability = 1.0;
 
-    // 根據最後活躍時間調整
+    // Root據最後活躍Time調整
     if (daysSinceLastActive > 7) {
       availability *= 0.5;
     } else if (daysSinceLastActive > 3) {
       availability *= 0.8;
     }
 
-    // 根據當前工作負載調整
+    // Root據當前工作負載調整
     const currentTasks = annotator.completedAnnotations || 0;
     const maxTasks = this.assignmentConfig.maxTasksPerAnnotator;
 
     if (currentTasks >= maxTasks) {
       availability *= 0.1; // 幾乎不可用
     } else if (currentTasks >= maxTasks * 0.8) {
-      availability *= 0.5; // 部分可用
+      availability *= 0.5; // Partial可用
     }
 
     return Math.max(0, availability);
@@ -312,7 +312,7 @@ class AnnotationService {
     return workloads;
   }
 
-  // 執行智能分配
+  // 執Row智能分配
   async performSmartAssignment(
     pendingData,
     annotators,
@@ -322,7 +322,7 @@ class AnnotationService {
     const assignments = [];
     const assignedDataIds = new Set();
 
-    // 按優先級和難度排序待分配數據
+    // 按優先級和難度Sort待分配Data
     const sortedData = this.sortDataByPriority(pendingData);
 
 // eslint-disable-next-line no-unused-vars
@@ -336,7 +336,7 @@ class AnnotationService {
         workloads
       );
 
-      // 選擇最佳標註者
+      // Select最佳標註者
       const bestAnnotator = this.selectBestAnnotator(
         annotatorScores,
         workloads
@@ -358,7 +358,7 @@ class AnnotationService {
 
         assignedDataIds.add(data.id);
 
-        // 更新工作負載
+        // Update工作負載
         workloads[bestAnnotator.id].currentTasks++;
         workloads[bestAnnotator.id].workloadScore =
           workloads[bestAnnotator.id].currentTasks /
@@ -374,7 +374,7 @@ class AnnotationService {
     return assignments;
   }
 
-  // 按優先級排序數據
+  // 按優先級SortData
   sortDataByPriority(data) {
     return data.sort((a, b) => {
       // 優先級權重
@@ -391,7 +391,7 @@ class AnnotationService {
         return bPriority - aPriority;
       }
 
-      // 按創建時間排序
+      // 按CreateTimeSort
       return new Date(a.createdAt) - new Date(b.createdAt);
     });
   }
@@ -403,7 +403,7 @@ class AnnotationService {
     for (const annotator of annotators) {
       const workload = workloads[annotator.id];
 
-      // 檢查工作負載限制
+      // Check工作負載Limit
       if (workload.currentTasks >= this.assignmentConfig.maxTasksPerAnnotator) {
         continue;
       }
@@ -421,7 +421,7 @@ class AnnotationService {
           qualityScore * this.assignmentConfig.qualityWeight) *
         availabilityScore;
 
-      // 應用難度調整
+      // Apply難度調整
       const difficulty = this.assessDifficulty(data);
       const adjustedScore = this.applyDifficultyAdjustment(
         totalScore,
@@ -460,7 +460,7 @@ class AnnotationService {
     const baseScore = annotator.accuracy || 0.5;
     const { performanceHistory } = annotator;
 
-    // 根據性能歷史調整
+    // Root據性能歷史調整
     let adjustedScore = baseScore;
 
     if (performanceHistory.qualityTrend === 'improving') {
@@ -472,7 +472,7 @@ class AnnotationService {
     return Math.min(1.0, adjustedScore);
   }
 
-  // 應用難度調整
+  // Apply難度調整
   applyDifficultyAdjustment(score, difficulty, annotator) {
     const difficultyMultipliers = {
       easy: 1.0,
@@ -482,7 +482,7 @@ class AnnotationService {
 
     const baseMultiplier = difficultyMultipliers[difficulty] || 1.0;
 
-    // 根據標註者等級調整難度處理能力
+    // Root據標註者等級調整難度Handle能力
     const levelMultipliers = {
       expert: 1.0,
       senior: 0.95,
@@ -517,14 +517,14 @@ class AnnotationService {
     return reasons.join(', ');
   }
 
-  // 選擇最佳標註者
+  // Select最佳標註者
   selectBestAnnotator(scores, workloads) {
     if (scores.length === 0) return null;
 
-    // 選擇評分最高的標註者
+    // Select評分最高的標註者
     const bestAnnotator = scores[0];
 
-    // 檢查工作負載
+    // Check工作負載
     const workload = workloads[bestAnnotator.id];
     if (workload.currentTasks >= this.assignmentConfig.maxTasksPerAnnotator) {
       return null;
@@ -533,16 +533,16 @@ class AnnotationService {
     return bestAnnotator;
   }
 
-  // 確定最佳標註類型
+  // OK最佳標註Class型
   determineOptimalAnnotationType(data, annotator) {
     const suggestedType = this.determineAnnotationType(data);
 
-    // 檢查標註者是否在該類型上有高專業度
+    // Check標註者YesNo在該Class型上有高專業度
     if (annotator.expertise[suggestedType] > 0.8) {
       return suggestedType;
     }
 
-    // 尋找標註者最擅長的類型
+    // 尋找標註者最擅長的Class型
     const bestType = Object.keys(annotator.expertise).reduce((best, type) => {
       return annotator.expertise[type] > annotator.expertise[best]
         ? type
@@ -552,7 +552,7 @@ class AnnotationService {
     return bestType || suggestedType;
   }
 
-  // 批量創建標註任務
+  // BatchCreate標註Task
   async batchCreateAnnotationTasks(assignments) {
     const createdTasks = [];
 
@@ -591,14 +591,14 @@ class AnnotationService {
           assignmentReason: assignment.assignmentReason,
         });
       } catch (error) {
-        logger.error(`創建標註任務失敗: ${assignment.trainingDataId}`, error);
+        logger.error(`Create標註任務Failed: ${assignment.trainingDataId}`, error);
       }
     }
 
     return createdTasks;
   }
 
-  // 更新分配統計
+  // Update分配Statistics
   async updateAssignmentStatistics(assignments) {
     try {
       const stats = {
@@ -617,7 +617,7 @@ class AnnotationService {
         );
         stats.averageExpectedQuality = totalQuality / assignments.length;
 
-        // 按類型分佈
+        // 按Class型分佈
         assignments.forEach((a) => {
           stats.distributionByType[a.annotationType] =
             (stats.distributionByType[a.annotationType] || 0) + 1;
@@ -639,11 +639,11 @@ class AnnotationService {
       logger.info('分配統計已更新:', stats);
       return stats;
     } catch (error) {
-      logger.error('更新分配統計失敗:', error);
+      logger.error('Update分配統計Failed:', error);
     }
   }
 
-  // 學習機制：根據實際結果調整分配策略
+  // 學習機制：Root據實際結果調整分配策略
   async learnFromResults(annotationId, actualQuality, processingTime) {
     try {
       const annotation = await this.AnnotationData.findByPk(annotationId, {
@@ -667,14 +667,14 @@ class AnnotationService {
         qualityDifference
       );
 
-      // 調整分配算法參數
+      // 調整分配算法Parameter
       await this.adjustAssignmentParameters(qualityDifference, processingTime);
 
       logger.info(
         `學習機制已更新: 標註ID ${annotationId}, 質量差異: ${qualityDifference}`
       );
     } catch (error) {
-      logger.error('學習機制更新失敗:', error);
+      logger.error('學習機制UpdateFailed:', error);
     }
   }
 
@@ -691,7 +691,7 @@ class AnnotationService {
       const metadata = annotator.metadata || {};
       const expertiseAreas = metadata.expertiseAreas || {};
 
-      // 根據質量差異調整專業度
+      // Root據質量差異調整專業度
       const currentExpertise = expertiseAreas[annotationType] || 0.5;
       const adjustment = qualityDifference * this.assignmentConfig.learningRate;
 // eslint-disable-next-line no-unused-vars
@@ -710,13 +710,13 @@ class AnnotationService {
         },
       });
     } catch (error) {
-      logger.error('調整標註者專業度失敗:', error);
+      logger.error('調整標註者專業度Failed:', error);
     }
   }
 
-  // 調整分配參數
+  // 調整分配Parameter
   async adjustAssignmentParameters(qualityDifference, processingTime) {
-    // 根據實際表現調整權重
+    // Root據實際Table現調整權重
     if (qualityDifference > 0.1) {
       // 實際質量比預期好，增加質量權重
       this.assignmentConfig.qualityWeight = Math.min(
@@ -731,10 +731,10 @@ class AnnotationService {
       );
     }
 
-    // 根據處理時間調整工作量權重
-    const expectedTime = 24 * 60 * 60 * 1000; // 24小時
+    // Root據HandleTime調整工作量權重
+    const expectedTime = 24 * 60 * 60 * 1000; // 24Hour
     if (processingTime > expectedTime * 1.5) {
-      // 處理時間過長，增加工作量權重
+      // HandleTime過長，增加工作量權重
       this.assignmentConfig.workloadWeight = Math.min(
         0.5,
         this.assignmentConfig.workloadWeight + 0.01
@@ -742,9 +742,9 @@ class AnnotationService {
     }
   }
 
-  // 確定標註類型
+  // OK標註Class型
   determineAnnotationType(trainingData) {
-    // 根據數據來源和內容確定標註類型
+    // Root據Data來源和ContentOK標註Class型
     const { source } = trainingData;
     const metadata = trainingData.metadata || {};
 
@@ -771,7 +771,7 @@ class AnnotationService {
     return 'medium';
   }
 
-  // 提交標註結果
+  // Submit標註結果
   async submitAnnotation(annotationId, annotationResult, confidence) {
     try {
       await this.initializeModels();
@@ -781,7 +781,7 @@ class AnnotationService {
         throw new Error('標註任務不存在');
       }
 
-      // 更新標註結果
+      // Update標註結果
       await annotation.update({
         annotationResult,
         confidence,
@@ -797,18 +797,18 @@ class AnnotationService {
         },
       });
 
-      // 更新標註者統計
+      // Update標註者Statistics
       await this.updateAnnotatorStats(annotation.annotatorId);
 
       logger.info(`標註結果已提交: ID ${annotationId}`);
       return annotation;
     } catch (error) {
-      logger.error('提交標註結果失敗:', error);
+      logger.error('提交標註結果Failed:', error);
       throw error;
     }
   }
 
-  // 計算處理時間
+  // 計算HandleTime
   calculateProcessingTime(createdAt) {
 // eslint-disable-next-line no-unused-vars
     const now = new Date();
@@ -821,22 +821,22 @@ class AnnotationService {
     // 基於標註結果的完整性和置信度計算質量分數
     let score = confidence * 0.7; // 70% 基於置信度
 
-    // 檢查標註結果的完整性
+    // Check標註結果的完整性
 // eslint-disable-next-line no-unused-vars
     const resultKeys = Object.keys(annotationResult);
-    const completeness = resultKeys.length / 5; // 假設有5個必要字段
+    const completeness = resultKeys.length / 5; // False設有5個必要Field
     score += completeness * 0.3; // 30% 基於完整性
 
     return Math.min(1, score);
   }
 
-  // 更新標註者統計
+  // Update標註者Statistics
   async updateAnnotatorStats(annotatorId) {
     try {
       const annotator = await this.Annotator.findByPk(annotatorId);
       if (!annotator) return;
 
-      // 計算標註者的統計數據
+      // 計算標註者的統Count據
       const annotations = await this.AnnotationData.findAll({
         where: { annotatorId },
       });
@@ -871,7 +871,7 @@ class AnnotationService {
 
       logger.info(`標註者統計已更新: ID ${annotatorId}`);
     } catch (error) {
-      logger.error('更新標註者統計失敗:', error);
+      logger.error('Update標註者統計Failed:', error);
     }
   }
 
@@ -892,7 +892,7 @@ class AnnotationService {
         reviewedAt: new Date(),
       });
 
-      // 如果審核通過，更新訓練數據狀態
+      // 如果審核通過，Update訓練DataStatus
       if (reviewStatus === 'approved') {
         await this.TrainingData.update(
           { status: 'annotated' },
@@ -903,12 +903,12 @@ class AnnotationService {
       logger.info(`標註審核完成: ID ${annotationId}, 狀態: ${reviewStatus}`);
       return annotation;
     } catch (error) {
-      logger.error('審核標註結果失敗:', error);
+      logger.error('審核標註結果Failed:', error);
       throw error;
     }
   }
 
-  // 批量審核
+  // Batch審核
   async batchReviewAnnotations(reviews) {
     try {
       await this.initializeModels();
@@ -938,18 +938,18 @@ class AnnotationService {
         }
       }
 
-      // 更新數據質量指標
+      // UpdateData質量指標
       await this.updateAnnotationQualityMetrics();
 
       logger.info(`批量審核完成: ${results.length} 個標註`);
       return results;
     } catch (error) {
-      logger.error('批量審核失敗:', error);
+      logger.error('批量審核Failed:', error);
       throw error;
     }
   }
 
-  // 更新標註質量指標
+  // Update標註質量指標
   async updateAnnotationQualityMetrics() {
     try {
       await this.initializeModels();
@@ -984,7 +984,7 @@ class AnnotationService {
 
       logger.info('標註質量指標已更新');
     } catch (error) {
-      logger.error('更新標註質量指標失敗:', error);
+      logger.error('Update標註質量指標Failed:', error);
     }
   }
 
@@ -1023,14 +1023,14 @@ class AnnotationService {
       annotations.reduce((sum, a) => {
 // eslint-disable-next-line no-unused-vars
         const resultKeys = Object.keys(a.annotationResult || {});
-        return sum + resultKeys.length / 5; // 假設有5個必要字段
+        return sum + resultKeys.length / 5; // False設有5個必要Field
       }, 0) / totalAnnotations;
 
     // 計算一致性（基於標註者的一致性）
     const annotatorConsistency =
       this.calculateAnnotatorConsistency(annotations);
 
-    // 計算時效性（基於處理時間）
+    // 計算時效性（基於HandleTime）
     const timeliness = this.calculateAnnotationTimeliness(annotations);
 
     const overallScore =
@@ -1090,7 +1090,7 @@ class AnnotationService {
       const daysDiff = (now - created) / (1000 * 60 * 60 * 24);
 
       if (daysDiff <= 7) {
-        // 7天內完成算作時效
+        // 7天內Complete算作時效
         timelyAnnotations++;
       }
     });
@@ -1125,7 +1125,7 @@ class AnnotationService {
     return suggestions;
   }
 
-  // 獲取標註統計
+  // Get標註Statistics
   async getAnnotationStats() {
     try {
       await this.initializeModels();
@@ -1159,7 +1159,7 @@ class AnnotationService {
           totalAnnotations > 0 ? rejectedAnnotations / totalAnnotations : 0,
       };
     } catch (error) {
-      logger.error('獲取標註統計失敗:', error);
+      logger.error('Get標註統計Failed:', error);
       throw error;
     }
   }

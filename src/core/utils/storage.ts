@@ -3,9 +3,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from './constants';
 import { logger } from './logger';
 
-// 存儲工具類
+// StorageToolClass
 export class StorageManager {
-  // 設置值
+  // SettingsValue
   static async set(key: string, value: unknown): Promise<void> {
     try {
       const _jsonValue = JSON.stringify(value);
@@ -16,7 +16,7 @@ export class StorageManager {
     }
   }
 
-  // 獲取值
+  // GetValue
   static async get<T>(key: string, defaultValue?: T): Promise<T | null> {
     try {
       const _jsonValue = await AsyncStorage.getItem(key);
@@ -30,7 +30,7 @@ export class StorageManager {
     }
   }
 
-  // 移除值
+  // RemoveValue
   static async remove(key: string): Promise<void> {
     try {
       await AsyncStorage.removeItem(key);
@@ -40,7 +40,7 @@ export class StorageManager {
     }
   }
 
-  // 清除所有數據
+  // Clear所有Data
   static async clear(): Promise<void> {
     try {
       await AsyncStorage.clear();
@@ -50,7 +50,7 @@ export class StorageManager {
     }
   }
 
-  // 獲取所有鍵
+  // Get所有Key
   static async getAllKeys(): Promise<string[]> {
     try {
       const _keys = await AsyncStorage.getAllKeys();
@@ -61,7 +61,7 @@ export class StorageManager {
     }
   }
 
-  // 檢查鍵是否存在
+  // CheckKeyYesNo存在
   static async hasKey(key: string): Promise<boolean> {
     try {
       const _keys = await AsyncStorage.getAllKeys();
@@ -72,7 +72,7 @@ export class StorageManager {
     }
   }
 
-  // 獲取多個值
+  // GetMultipleValue
   static async multiGet(keys: string[]): Promise<[string, any][]> {
     try {
       const _pairs = await AsyncStorage.multiGet(keys);
@@ -86,7 +86,7 @@ export class StorageManager {
     }
   }
 
-  // 設置多個值
+  // SettingsMultipleValue
   static async multiSet(keyValuePairs: [string, any][]): Promise<void> {
     try {
       const pairs: [string, string][] = keyValuePairs.map(([key, value]) => [
@@ -100,7 +100,7 @@ export class StorageManager {
     }
   }
 
-  // 移除多個值
+  // RemoveMultipleValue
   static async multiRemove(keys: string[]): Promise<void> {
     try {
       await AsyncStorage.multiRemove(keys);
@@ -110,7 +110,7 @@ export class StorageManager {
     }
   }
 
-  // 獲取存儲大小
+  // GetStorage大小
   static async getSize(): Promise<number> {
     try {
       const _keys = await AsyncStorage.getAllKeys();
@@ -130,7 +130,7 @@ export class StorageManager {
     }
   }
 
-  // 清理過期數據
+  // 清理過期Data
   static async cleanup(): Promise<void> {
     try {
       const _keys = await AsyncStorage.getAllKeys();
@@ -153,39 +153,39 @@ export class StorageManager {
   }
 }
 
-// 認證存儲工具
+// AuthenticateStorageTool
 export class AuthStorage {
-  // 保存認證令牌
+  // SaveAuthenticate令牌
   static async setToken(token: string): Promise<void> {
     await StorageManager.set(STORAGE_KEYS.AUTH_TOKEN, token);
   }
 
-  // 獲取認證令牌
+  // GetAuthenticate令牌
   static async getToken(): Promise<string | null> {
     return StorageManager.get<string>(STORAGE_KEYS.AUTH_TOKEN);
   }
 
-  // 移除認證令牌
+  // RemoveAuthenticate令牌
   static async removeToken(): Promise<void> {
     await StorageManager.remove(STORAGE_KEYS.AUTH_TOKEN);
   }
 
-  // 保存刷新令牌
+  // SaveRefresh令牌
   static async setRefreshToken(token: string): Promise<void> {
     await StorageManager.set(STORAGE_KEYS.REFRESH_TOKEN, token);
   }
 
-  // 獲取刷新令牌
+  // GetRefresh令牌
   static async getRefreshToken(): Promise<string | null> {
     return StorageManager.get<string>(STORAGE_KEYS.REFRESH_TOKEN);
   }
 
-  // 移除刷新令牌
+  // RemoveRefresh令牌
   static async removeRefreshToken(): Promise<void> {
     await StorageManager.remove(STORAGE_KEYS.REFRESH_TOKEN);
   }
 
-  // 清除所有認證數據
+  // Clear所有AuthenticateData
   static async clearAuth(): Promise<void> {
     await StorageManager.multiRemove([
       STORAGE_KEYS.AUTH_TOKEN,
@@ -194,37 +194,37 @@ export class AuthStorage {
   }
 }
 
-// 用戶數據存儲工具
+// UserDataStorageTool
 export class UserStorage {
-  // 保存用戶數據
+  // SaveUserData
   static async setUserData(userData: unknown): Promise<void> {
     await StorageManager.set(STORAGE_KEYS.USER_DATA, userData);
   }
 
-  // 獲取用戶數據
+  // GetUserData
   static async getUserData(): Promise<any | null> {
     return StorageManager.get(STORAGE_KEYS.USER_DATA);
   }
 
-  // 移除用戶數據
+  // RemoveUserData
   static async removeUserData(): Promise<void> {
     await StorageManager.remove(STORAGE_KEYS.USER_DATA);
   }
 }
 
-// 設置存儲工具
+// SettingsStorageTool
 export class SettingsStorage {
-  // 保存應用設置
+  // SaveApplySettings
   static async setSettings(settings: unknown): Promise<void> {
     await StorageManager.set(STORAGE_KEYS.SETTINGS, settings);
   }
 
-  // 獲取應用設置
+  // GetApplySettings
   static async getSettings(): Promise<any | null> {
     return StorageManager.get(STORAGE_KEYS.SETTINGS);
   }
 
-  // 更新部分設置
+  // UpdatePartialSettings
   static async updateSettings(updates: unknown): Promise<void> {
     const _currentSettings = (await this.getSettings()) || {};
     const _newSettings = { ...currentSettings, ...updates };
@@ -232,9 +232,9 @@ export class SettingsStorage {
   }
 }
 
-// 緩存存儲工具
+// CacheStorageTool
 export class CacheStorage {
-  // 保存緩存數據
+  // SaveCacheData
   static async setCache(
     key: string,
     data: unknown,
@@ -248,7 +248,7 @@ export class CacheStorage {
     await StorageManager.set(`${STORAGE_KEYS.CACHE}_${key}`, cacheData);
   }
 
-  // 獲取緩存數據
+  // GetCacheData
   static async getCache<T>(key: string): Promise<T | null> {
     try {
       const _cacheData = await StorageManager.get(
@@ -259,7 +259,7 @@ export class CacheStorage {
         return null;
       }
 
-      // 檢查是否過期
+      // CheckYesNo過期
       if ((cacheData as any).expiry && Date.now() > (cacheData as any).expiry) {
         await this.removeCache(key);
         return null;
@@ -272,12 +272,12 @@ export class CacheStorage {
     }
   }
 
-  // 移除緩存數據
+  // RemoveCacheData
   static async removeCache(key: string): Promise<void> {
     await StorageManager.remove(`${STORAGE_KEYS.CACHE}_${key}`);
   }
 
-  // 清除所有緩存
+  // Clear所有Cache
   static async clearCache(): Promise<void> {
     const _keys = await StorageManager.getAllKeys();
     const _cacheKeys = keys.filter(key => key.startsWith(STORAGE_KEYS.CACHE));
@@ -285,24 +285,24 @@ export class CacheStorage {
   }
 }
 
-// 離線數據存儲工具
+// 離線DataStorageTool
 export class OfflineStorage {
-  // 保存離線數據
+  // Save離線Data
   static async setOfflineData(key: string, data: unknown): Promise<void> {
     await StorageManager.set(`${STORAGE_KEYS.OFFLINE_DATA}_${key}`, data);
   }
 
-  // 獲取離線數據
+  // Get離線Data
   static async getOfflineData<T>(key: string): Promise<T | null> {
     return StorageManager.get<T>(`${STORAGE_KEYS.OFFLINE_DATA}_${key}`);
   }
 
-  // 移除離線數據
+  // Remove離線Data
   static async removeOfflineData(key: string): Promise<void> {
     await StorageManager.remove(`${STORAGE_KEYS.OFFLINE_DATA}_${key}`);
   }
 
-  // 清除所有離線數據
+  // Clear所有離線Data
   static async clearOfflineData(): Promise<void> {
     const _keys = await StorageManager.getAllKeys();
     const _offlineKeys = keys.filter(key =>

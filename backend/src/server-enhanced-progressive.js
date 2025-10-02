@@ -8,14 +8,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 簡單的請求日誌中間件
+// 簡單的RequestLog中間件
 app.use((req, res, next) => {
   // eslint-disable-next-line no-console
   console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -38,7 +38,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// 基本健康檢查
+// 基本健康Check
 app.get('/health', (req, res) => {
   res.json({
     success: true,
@@ -56,7 +56,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API 版本端點
+// API Version端點
 app.get('/api/version', (req, res) => {
   res.json({
     success: true,
@@ -75,7 +75,7 @@ app.get('/api/version', (req, res) => {
   });
 });
 
-// 測試端點
+// Test端點
 app.get('/api/test', (req, res) => {
   res.json({
     success: true,
@@ -88,11 +88,11 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// 性能測試端點
+// 性能Test端點
 app.get('/api/test/performance', async (req, res) => {
   const start = Date.now();
 
-  // 模擬一些處理時間
+  // 模擬一些HandleTime
   await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
 
   const duration = Date.now() - start;
@@ -108,7 +108,7 @@ app.get('/api/test/performance', async (req, res) => {
   });
 });
 
-// 錯誤測試端點
+// ErrorTest端點
 app.get('/api/test/error', (req, res, next) => {
   const { type = 'generic' } = req.query;
 
@@ -141,7 +141,7 @@ app.get('/api/test/error', (req, res, next) => {
   }
 });
 
-// 404 處理
+// 404 Handle
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -150,7 +150,7 @@ app.use('*', (req, res) => {
   });
 });
 
-// 錯誤處理中間件
+// ErrorHandle中間件
 app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
   // eslint-disable-next-line no-console
   console.error('Error:', err);

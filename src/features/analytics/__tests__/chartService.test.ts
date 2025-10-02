@@ -1,4 +1,4 @@
-// 圖表服務測試
+// GraphTableServiceTest
 import ChartService from '../services/chartService';
 import type { ChartCreateRequest } from '../types/chart';
 import { ChartType, ChartConfig, ChartData } from '../types/chart';
@@ -20,11 +20,11 @@ describe('ChartService', () => {
   let chartService: ChartService;
 
   beforeEach(() => {
-    // 重置 singleton 實例
+    // Reset singleton Instance
     (ChartService as any).instance = undefined;
     chartService = ChartService.getInstance();
 
-    // 重置 mocks
+    // Reset mocks
     mockConvertToJSON.mockReset();
     mockConvertToCSV.mockReset();
     mockConvertToExcel.mockReset();
@@ -40,12 +40,12 @@ describe('ChartService', () => {
   });
 
   describe('initialize', () => {
-    test('應該成功初始化服務', async () => {
+    test('應該SuccessInitializeService', async () => {
       const _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       await expect(chartService.initialize()).resolves.not.toThrow();
 
-      expect(consoleSpy).toHaveBeenCalledWith('ChartService: 初始化圖表服務');
+      expect(consoleSpy).toHaveBeenCalledWith('ChartService: Initialize圖表Service');
       expect(consoleSpy).toHaveBeenCalledWith('ChartService: 加載模板完成');
       expect(consoleSpy).toHaveBeenCalledWith('ChartService: 加載插件完成');
       expect(consoleSpy).toHaveBeenCalledWith('ChartService: 加載緩存完成');
@@ -77,7 +77,7 @@ describe('ChartService', () => {
       },
     };
 
-    test('應該成功創建圖表', async () => {
+    test('應該SuccessCreate圖表', async () => {
       const _response = await chartService.createChart(mockRequest);
 
       expect(response.success).toBe(true);
@@ -85,7 +85,7 @@ describe('ChartService', () => {
       expect(response.chart?.config.type).toBe(ChartType.LINE);
       expect(response.chart?.config.title).toBe('測試圖表');
       expect(response.chart?.status).toBe('rendered');
-      expect(response.message).toBe('圖表創建成功');
+      expect(response.message).toBe('圖表CreateSuccess');
     });
 
     test('應該驗證圖表配置', async () => {
@@ -126,8 +126,8 @@ describe('ChartService', () => {
   });
 
   describe('getChart', () => {
-    test('應該成功獲取圖表', async () => {
-      // 先創建一個圖表
+    test('應該SuccessGet圖表', async () => {
+      // 先Create一個GraphTable
       const createRequest: ChartCreateRequest = {
         config: {
           type: ChartType.LINE,
@@ -151,7 +151,7 @@ describe('ChartService', () => {
       const _createResponse = await chartService.createChart(createRequest);
       expect(createResponse.success).toBe(true);
 
-      // 獲取圖表
+      // GetGraphTable
       const _getResponse = await chartService.getChart(createResponse.chart.id);
 
       expect(getResponse.success).toBe(true);
@@ -169,7 +169,7 @@ describe('ChartService', () => {
 
   describe('getCharts', () => {
     beforeEach(async () => {
-      // 創建一些測試圖表
+      // Create一些TestGraphTable
       const requests: ChartCreateRequest[] = [
         {
           config: { type: ChartType.LINE, title: '線圖1' },
@@ -236,8 +236,8 @@ describe('ChartService', () => {
   });
 
   describe('updateChart', () => {
-    test('應該成功更新圖表', async () => {
-      // 先創建一個圖表
+    test('應該SuccessUpdate圖表', async () => {
+      // 先Create一個GraphTable
       const createRequest: ChartCreateRequest = {
         config: {
           type: ChartType.LINE,
@@ -261,7 +261,7 @@ describe('ChartService', () => {
       const _createResponse = await chartService.createChart(createRequest);
       expect(createResponse.success).toBe(true);
 
-      // 更新圖表
+      // UpdateGraphTable
       const _updateResponse = await chartService.updateChart(
         createResponse.chart.id,
         {
@@ -271,7 +271,7 @@ describe('ChartService', () => {
 
       expect(updateResponse.success).toBe(true);
       expect(updateResponse.chart?.config.title).toBe('更新後的標題');
-      expect(updateResponse.message).toBe('圖表更新成功');
+      expect(updateResponse.message).toBe('圖表UpdateSuccess');
     });
 
     test('應該處理不存在的圖表', async () => {
@@ -285,8 +285,8 @@ describe('ChartService', () => {
   });
 
   describe('deleteChart', () => {
-    test('應該成功刪除圖表', async () => {
-      // 先創建一個圖表
+    test('應該SuccessDelete圖表', async () => {
+      // 先Create一個GraphTable
       const createRequest: ChartCreateRequest = {
         config: {
           type: ChartType.LINE,
@@ -310,15 +310,15 @@ describe('ChartService', () => {
       const _createResponse = await chartService.createChart(createRequest);
       expect(createResponse.success).toBe(true);
 
-      // 刪除圖表
+      // DeleteGraphTable
       const _deleteResponse = await chartService.deleteChart(
         createResponse.chart.id
       );
 
       expect(deleteResponse.success).toBe(true);
-      expect(deleteResponse.message).toBe('圖表刪除成功');
+      expect(deleteResponse.message).toBe('圖表DeleteSuccess');
 
-      // 驗證圖表已被刪除
+      // VerifyGraphTable已被Delete
       const _getResponse = await chartService.getChart(createResponse.chart.id);
       expect(getResponse.success).toBe(false);
     });
@@ -332,8 +332,8 @@ describe('ChartService', () => {
   });
 
   describe('exportChart', () => {
-    test('應該成功導出圖表', async () => {
-      // 先創建一個圖表
+    test('應該Success導出圖表', async () => {
+      // 先Create一個GraphTable
       const createRequest: ChartCreateRequest = {
         config: {
           type: ChartType.LINE,
@@ -362,18 +362,18 @@ describe('ChartService', () => {
       const _createResponse = await chartService.createChart(createRequest);
       expect(createResponse.success).toBe(true);
 
-      // 導出圖表
+      // ExportGraphTable
       const _exportResponse = await chartService.exportChart(
         createResponse.chart.id,
         'png'
       );
 
       expect(exportResponse.success).toBe(true);
-      expect(exportResponse.message).toContain('圖表導出成功');
+      expect(exportResponse.message).toContain('圖表導出Success');
     });
 
     test('應該處理未啟用導出的圖表', async () => {
-      // 創建一個未啟用導出的圖表
+      // Create一個未EnableExport的GraphTable
       const createRequest: ChartCreateRequest = {
         config: {
           type: ChartType.LINE,
@@ -402,7 +402,7 @@ describe('ChartService', () => {
       const _createResponse = await chartService.createChart(createRequest);
       expect(createResponse.success).toBe(true);
 
-      // 嘗試導出
+      // 嘗試Export
       const _exportResponse = await chartService.exportChart(
         createResponse.chart.id,
         'png'
@@ -413,7 +413,7 @@ describe('ChartService', () => {
     });
 
     test('應該處理不支持的格式', async () => {
-      // 先創建一個圖表
+      // 先Create一個GraphTable
       const createRequest: ChartCreateRequest = {
         config: {
           type: ChartType.LINE,
@@ -442,7 +442,7 @@ describe('ChartService', () => {
       const _createResponse = await chartService.createChart(createRequest);
       expect(createResponse.success).toBe(true);
 
-      // 嘗試導出不支持的格式
+      // 嘗試Export不Support的格式
       const _exportResponse = await chartService.exportChart(
         createResponse.chart.id,
         'pdf'
@@ -460,7 +460,7 @@ describe('ChartService', () => {
       expect(Array.isArray(templates)).toBe(true);
       expect(templates.length).toBeGreaterThan(0);
 
-      // 檢查模板結構
+      // Check模板結構
       const _template = templates[0];
       expect(template).toHaveProperty('id');
       expect(template).toHaveProperty('name');
@@ -472,7 +472,7 @@ describe('ChartService', () => {
 
   describe('getAnalytics', () => {
     test('應該返回分析數據', async () => {
-      // 先創建一個圖表
+      // 先Create一個GraphTable
       const createRequest: ChartCreateRequest = {
         config: {
           type: ChartType.LINE,
@@ -496,7 +496,7 @@ describe('ChartService', () => {
       const _createResponse = await chartService.createChart(createRequest);
       expect(createResponse.success).toBe(true);
 
-      // 獲取分析數據
+      // GetAnalysisData
       const _analytics = await chartService.getAnalytics(
         createResponse.chart.id
       );
@@ -573,17 +573,17 @@ describe('ChartService', () => {
       const _updatedConfig = chartService.getConfig();
 
       expect(updatedConfig.maxCharts).toBe(200);
-      expect(updatedConfig.cacheSize).toBe(originalConfig.cacheSize); // 其他配置保持不變
+      expect(updatedConfig.cacheSize).toBe(originalConfig.cacheSize); // 其他Configure保持不變
     });
   });
 
   describe('Error Handling', () => {
-    test('應該處理渲染錯誤', async () => {
-      // 創建一個會導致渲染錯誤的圖表
+    test('應該Handle渲染Error', async () => {
+      // Create一個會導致渲染Error的GraphTable
       const createRequest: ChartCreateRequest = {
         config: {
           type: ChartType.LINE,
-          title: '錯誤測試圖表',
+          title: 'Error測試圖表',
           responsive: true,
         },
         data: {
@@ -600,15 +600,15 @@ describe('ChartService', () => {
         },
       };
 
-      // 模擬渲染錯誤
+      // 模擬渲染Error
       jest
         .spyOn(chartService as any, 'renderChart')
-        .mockRejectedValueOnce(new Error('渲染失敗'));
+        .mockRejectedValueOnce(new Error('渲染Failed'));
 
       const _response = await chartService.createChart(createRequest);
 
       expect(response.success).toBe(false);
-      expect(response.error).toContain('渲染失敗');
+      expect(response.error).toContain('渲染Failed');
     });
   });
 });

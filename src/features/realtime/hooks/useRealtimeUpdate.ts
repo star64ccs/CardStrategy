@@ -1,6 +1,6 @@
 /**
- * 實時更新 Hook
- * 提供實時更新功能的 React Hook
+ * 實時Update Hook
+ * 提供實時Update功能的 React Hook
  */
 
 import { useEffect, useCallback, useRef, useState } from 'react';
@@ -24,12 +24,12 @@ export interface UseRealtimeUpdateOptions {
 }
 
 export interface UseRealtimeUpdateReturn {
-  // 狀態
+  // Status
   isConnected: boolean;
   isInitialized: boolean;
   stats: UpdateStats;
 
-  // 方法
+  // Method
   subscribe: (options?: UseRealtimeUpdateOptions) => void;
   unsubscribe: () => void;
   sendUpdate: (update: Partial<RealtimeUpdate>) => Promise<void>;
@@ -38,7 +38,7 @@ export interface UseRealtimeUpdateReturn {
     options?: unknown
   ) => Promise<void>;
 
-  // 卡片更新方法
+  // 卡片UpdateMethod
   handleCardUpdate: (
     cardId: string,
     action: 'create' | 'update' | 'delete',
@@ -53,7 +53,7 @@ export interface UseRealtimeUpdateReturn {
 }
 
 /**
- * 實時更新 Hook
+ * 實時Update Hook
  */
 export const _useRealtimeUpdate = (
   options: UseRealtimeUpdateOptions = {}
@@ -75,13 +75,13 @@ export const _useRealtimeUpdate = (
   const _handlerRef = useRef<UpdateHandler | null>(null);
   const _isSubscribed = useRef(false);
 
-  // 初始化實時更新服務
+  // Initialize實時UpdateService
   useEffect(() => {
     const _initializeService = async () => {
       try {
         await realtimeUpdateService.initialize();
       } catch (error) {
-        console.error('初始化實時更新服務失敗:', error);
+        console.error('Initialize實時UpdateServiceFailed:', error);
         options.onError?.(error as Error);
       }
     };
@@ -91,21 +91,21 @@ export const _useRealtimeUpdate = (
     }
   }, [isInitialized, options.onError]);
 
-  // 更新統計數據
+  // Update統Count據
   useEffect(() => {
     const _updateStats = () => {
       const _currentStats = realtimeUpdateService.getStats();
       setStats(currentStats);
     };
 
-    // 定期更新統計數據
+    // 定期Update統Count據
     const _interval = setInterval(updateStats, 5000);
-    updateStats(); // 立即更新一次
+    updateStats(); // 立即Update一次
 
     return () => clearInterval(interval);
   }, []);
 
-  // 自動訂閱
+  // Auto訂閱
   useEffect(() => {
     if (
       options.autoSubscribe !== false &&
@@ -126,7 +126,7 @@ export const _useRealtimeUpdate = (
   }, []);
 
   /**
-   * 訂閱實時更新
+   * 訂閱實時Update
    */
   const _subscribe = useCallback(
     (subscribeOptions: UseRealtimeUpdateOptions = {}) => {
@@ -136,13 +136,13 @@ export const _useRealtimeUpdate = (
 
       const _finalOptions = { ...options, ...subscribeOptions };
 
-      // 創建處理器
+      // CreateHandle器
       const handler: UpdateHandler = {
         id: `realtime_update_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type: '*', // 處理所有類型
+        type: '*', // Handle所有Class型
         priority: 1,
         handler: (update: RealtimeUpdate) => {
-          // 檢查過濾條件
+          // CheckFilterCondition
           if (finalOptions.types && !finalOptions.types.includes(update.type)) {
             return;
           }
@@ -161,13 +161,13 @@ export const _useRealtimeUpdate = (
             return;
           }
 
-          // 調用回調函數
+          // 調用CallbackFunction
           finalOptions.onUpdate?.(update);
           options.onUpdate?.(update);
         },
       };
 
-      // 註冊處理器
+      // RegisterHandle器
       realtimeUpdateService.registerHandler(handler);
       handlerRef.current = handler;
       isSubscribed.current = true;
@@ -176,7 +176,7 @@ export const _useRealtimeUpdate = (
   );
 
   /**
-   * 取消訂閱
+   * Cancel訂閱
    */
   const _unsubscribe = useCallback(() => {
     if (handlerRef.current) {
@@ -187,14 +187,14 @@ export const _useRealtimeUpdate = (
   }, []);
 
   /**
-   * 發送更新
+   * SendUpdate
    */
   const _sendUpdate = useCallback(
     async (update: Partial<RealtimeUpdate>): Promise<void> => {
       try {
         await realtimeUpdateService.sendUpdate(update);
       } catch (error) {
-        console.error('發送實時更新失敗:', error);
+        console.error('發送實時UpdateFailed:', error);
         options.onError?.(error as Error);
         throw error;
       }
@@ -203,7 +203,7 @@ export const _useRealtimeUpdate = (
   );
 
   /**
-   * 廣播更新
+   * 廣播Update
    */
   const _broadcastUpdate = useCallback(
     async (
@@ -213,7 +213,7 @@ export const _useRealtimeUpdate = (
       try {
         await realtimeUpdateService.broadcastUpdate(update, broadcastOptions);
       } catch (error) {
-        console.error('廣播實時更新失敗:', error);
+        console.error('廣播實時UpdateFailed:', error);
         options.onError?.(error as Error);
         throw error;
       }
@@ -222,7 +222,7 @@ export const _useRealtimeUpdate = (
   );
 
   /**
-   * 處理卡片更新
+   * Handle卡片Update
    */
   const _handleCardUpdate = useCallback(
     async (
@@ -233,7 +233,7 @@ export const _useRealtimeUpdate = (
       try {
         await realtimeUpdateService.handleCardUpdate(cardId, action, data);
       } catch (error) {
-        console.error('處理卡片更新失敗:', error);
+        console.error('Handle卡片UpdateFailed:', error);
         options.onError?.(error as Error);
         throw error;
       }
@@ -242,7 +242,7 @@ export const _useRealtimeUpdate = (
   );
 
   /**
-   * 處理用戶狀態更新
+   * HandleUserStatusUpdate
    */
   const _handleUserStatusUpdate = useCallback(
     async (
@@ -257,7 +257,7 @@ export const _useRealtimeUpdate = (
           data
         );
       } catch (error) {
-        console.error('處理用戶狀態更新失敗:', error);
+        console.error('Handle用戶狀態UpdateFailed:', error);
         options.onError?.(error as Error);
         throw error;
       }
@@ -266,14 +266,14 @@ export const _useRealtimeUpdate = (
   );
 
   /**
-   * 處理系統通知
+   * Handle系統Notification
    */
   const _handleSystemNotification = useCallback(
     async (notification: unknown): Promise<void> => {
       try {
         await realtimeUpdateService.handleSystemNotification(notification);
       } catch (error) {
-        console.error('處理系統通知失敗:', error);
+        console.error('Handle系統通知Failed:', error);
         options.onError?.(error as Error);
         throw error;
       }
@@ -282,18 +282,18 @@ export const _useRealtimeUpdate = (
   );
 
   return {
-    // 狀態
+    // Status
     isConnected: status === 'connected',
     isInitialized,
     stats,
 
-    // 方法
+    // Method
     subscribe,
     unsubscribe,
     sendUpdate,
     broadcastUpdate,
 
-    // 卡片更新方法
+    // 卡片UpdateMethod
     handleCardUpdate,
     handleUserStatusUpdate,
     handleSystemNotification,
@@ -301,7 +301,7 @@ export const _useRealtimeUpdate = (
 };
 
 /**
- * 簡化的實時更新 Hook
+ * 簡化的實時Update Hook
  */
 export const _useSimpleRealtimeUpdate = (
   onUpdate?: (update: RealtimeUpdate) => void
@@ -313,7 +313,7 @@ export const _useSimpleRealtimeUpdate = (
 };
 
 /**
- * 卡片實時更新 Hook
+ * 卡片實時Update Hook
  */
 export const _useCardRealtimeUpdate = (
   cardIds: string[],
@@ -328,7 +328,7 @@ export const _useCardRealtimeUpdate = (
 };
 
 /**
- * 用戶狀態實時更新 Hook
+ * UserStatus實時Update Hook
  */
 export const _useUserStatusRealtimeUpdate = (
   userIds: string[],

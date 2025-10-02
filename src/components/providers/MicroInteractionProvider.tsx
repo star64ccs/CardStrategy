@@ -1,4 +1,4 @@
-// 微交互 Provider 組件
+// 微交互 Provider Component
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -32,39 +32,39 @@ import type {
   MicroInteractionStats,
 } from '../../types/microInteractions';
 
-// Context 接口
+// Context Interface
 interface MicroInteractionContextType {
-  // 服務實例
+  // ServiceInstance
   service: MicroInteractionServiceInterface;
 
-  // 狀態
+  // Status
   initialized: boolean;
   loading: boolean;
   error: string | null;
   config: MicroInteractionManagerConfig;
   stats: MicroInteractionStats;
 
-  // 核心方法
+  // 核心Method
   register: (config: MicroInteractionConfig) => string;
   unregister: (id: string) => void;
   trigger: (id: string, data?: Record<string, any>) => Promise<void>;
   stop: (id: string) => void;
   reset: (id: string) => void;
 
-  // 批量操作
+  // BatchOperation
   triggerMultiple: (ids: string[], data?: Record<string, any>) => Promise<void>;
   stopAll: () => void;
   resetAll: () => void;
 
-  // 配置管理
+  // ConfigureManage
   updateConfig: (id: string, config: Partial<MicroInteractionConfig>) => void;
   enablePerformanceMonitoring: (enabled: boolean) => void;
 
-  // 統計更新
+  // StatisticsUpdate
   updateStats: () => void;
 }
 
-// 創建 Context
+// Create Context
 const _MicroInteractionContext =
   createContext<MicroInteractionContextType | null>(null);
 
@@ -77,7 +77,7 @@ interface MicroInteractionProviderProps {
   debugMode?: boolean;
 }
 
-// Provider 組件
+// Provider Component
 export const MicroInteractionProvider: React.FC<
   MicroInteractionProviderProps
 > = ({
@@ -98,7 +98,7 @@ export const MicroInteractionProvider: React.FC<
     microInteractionService
   );
 
-  // 初始化服務
+  // InitializeService
   useEffect(() => {
     if (autoInitialize && !initialized) {
       const _initConfig = {
@@ -118,11 +118,11 @@ export const MicroInteractionProvider: React.FC<
     dispatch,
   ]);
 
-  // 設置事件監聽器
+  // SettingsEvent監聽器
   useEffect(() => {
     if (!initialized) return;
 
-    // 註冊事件監聽器
+    // RegisterEvent監聽器
     const _eventListeners = [
       'registered',
       'unregistered',
@@ -151,7 +151,7 @@ export const MicroInteractionProvider: React.FC<
       });
     });
 
-    // 定期更新統計
+    // 定期UpdateStatistics
     const _statsInterval = setInterval(() => {
       dispatch(updateMicroInteractionStats());
     }, 5000);
@@ -164,14 +164,14 @@ export const MicroInteractionProvider: React.FC<
     };
   }, [initialized, service, dispatch]);
 
-  // 性能監控設置
+  // 性能MonitorSettings
   useEffect(() => {
     if (initialized && enablePerformanceMonitoring) {
-      // 性能監控已通過 config 啟用
+      // 性能Monitor已通過 config Enable
     }
   }, [initialized, enablePerformanceMonitoring]);
 
-  // Context 值
+  // Context Value
   const contextValue: MicroInteractionContextType = {
     service,
     initialized,
@@ -180,7 +180,7 @@ export const MicroInteractionProvider: React.FC<
     config: configState,
     stats,
 
-    // 核心方法
+    // 核心Method
     register: (config: MicroInteractionConfig) => {
       const _id = service.register(config);
       dispatch(registerMicroInteraction(config));
@@ -206,7 +206,7 @@ export const MicroInteractionProvider: React.FC<
       dispatch(resetMicroInteraction(id));
     },
 
-    // 批量操作
+    // BatchOperation
     triggerMultiple: async (ids: string[], data?: Record<string, any>) => {
       await dispatch(triggerMultipleMicroInteractions({ ids, data })).unwrap();
     },
@@ -221,7 +221,7 @@ export const MicroInteractionProvider: React.FC<
       dispatch(resetAllMicroInteractions());
     },
 
-    // 配置管理
+    // ConfigureManage
     updateConfig: (id: string, config: Partial<MicroInteractionConfig>) => {
       service.updateConfig(id, config);
       dispatch(updateMicroInteractionConfig({ id, config }));
@@ -229,16 +229,16 @@ export const MicroInteractionProvider: React.FC<
 
     enablePerformanceMonitoring: (enabled: boolean) => {
       service.enablePerformanceMonitoring(enabled);
-      // 性能監控設置已通過服務處理
+      // 性能MonitorSettings已通過ServiceHandle
     },
 
-    // 統計更新
+    // StatisticsUpdate
     updateStats: () => {
       dispatch(updateMicroInteractionStats());
     },
   };
 
-  // 渲染加載狀態
+  // 渲染加載Status
   if (loading) {
     return (
       <div
@@ -256,7 +256,7 @@ export const MicroInteractionProvider: React.FC<
     );
   }
 
-  // 渲染錯誤狀態
+  // 渲染ErrorStatus
   if (error) {
     return (
       <div
@@ -292,20 +292,20 @@ export const _useMicroInteraction = (): MicroInteractionContextType => {
   return context;
 };
 
-// Hook 使用微交互服務
+// Hook 使用微交互Service
 export const _useMicroInteractionService =
   (): MicroInteractionServiceInterface => {
     const { service } = useMicroInteraction();
     return service;
   };
 
-// Hook 使用微交互狀態
+// Hook 使用微交互Status
 export const _useMicroInteractionState = () => {
   const { initialized, loading, error, config, stats } = useMicroInteraction();
   return { initialized, loading, error, config, stats };
 };
 
-// Hook 使用微交互方法
+// Hook 使用微交互Method
 export const _useMicroInteractionActions = () => {
   const {
     register,
@@ -336,5 +336,5 @@ export const _useMicroInteractionActions = () => {
   };
 };
 
-// 默認導出
+// DefaultExport
 export default MicroInteractionProvider;

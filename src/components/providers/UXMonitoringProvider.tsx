@@ -1,4 +1,4 @@
-// 用戶體驗監控 Provider
+// User體驗Monitor Provider
 import type { ReactNode } from 'react';
 import React, {
   createContext,
@@ -101,13 +101,13 @@ export const UXMonitoringProvider: React.FC<UXMonitoringProviderProps> = ({
   children,
   autoInitialize = true,
   autoAnalytics = true,
-  analyticsInterval = 30000, // 30秒
+  analyticsInterval = 30000, // 30Second
 }) => {
   const _dispatch = useDispatch<AppDispatch>();
   const _state = useSelector(selectUXMonitoringState);
   const _service = UXMonitoringService.getInstance();
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (autoInitialize && !state.isInitialized) {
       dispatch(initializeUXMonitoring(config));
@@ -115,7 +115,7 @@ export const UXMonitoringProvider: React.FC<UXMonitoringProviderProps> = ({
     return undefined;
   }, [autoInitialize, state.isInitialized, config, dispatch]);
 
-  // 自動獲取分析數據
+  // AutoGetAnalysisData
   useEffect(() => {
     if (autoAnalytics && state.isInitialized) {
       const _interval = setInterval(() => {
@@ -127,36 +127,36 @@ export const UXMonitoringProvider: React.FC<UXMonitoringProviderProps> = ({
     return undefined;
   }, [autoAnalytics, state.isInitialized, analyticsInterval, dispatch]);
 
-  // 設置事件監聽器
+  // SettingsEvent監聽器
   useEffect(() => {
     if (!state.isInitialized) return;
 
     const _handleActionTracked = (action: UserAction) => {
-      // 可以添加額外的處理邏輯
+      // 可以Add額外的Handle邏輯
     };
 
     const _handlePerformanceTracked = (metric: PerformanceMetric) => {
-      // 可以添加額外的處理邏輯
+      // 可以Add額外的Handle邏輯
     };
 
     const _handleErrorTracked = (error: ErrorEvent) => {
-      // 可以添加額外的處理邏輯
+      // 可以Add額外的Handle邏輯
     };
 
     const _handleSatisfactionSubmitted = (survey: SatisfactionSurvey) => {
-      // 可以添加額外的處理邏輯
+      // 可以Add額外的Handle邏輯
     };
 
     const _handleABTestAssigned = (assignment: ABTestAssignment) => {
-      // 可以添加額外的處理邏輯
+      // 可以Add額外的Handle邏輯
     };
 
     const _handleConversionTracked = (data: unknown) => {
-      // 可以添加額外的處理邏輯
+      // 可以Add額外的Handle邏輯
     };
 
     const _handleBatchFlushed = (data: unknown) => {
-      // 可以添加額外的處理邏輯
+      // 可以Add額外的Handle邏輯
     };
 
     service.on('action-tracked', handleActionTracked);
@@ -178,7 +178,7 @@ export const UXMonitoringProvider: React.FC<UXMonitoringProviderProps> = ({
     };
   }, [state.isInitialized, service]);
 
-  // 方法
+  // Method
   const _handleTrackAction = useCallback(
     (action: Omit<UserAction, 'id' | 'timestamp' | 'sessionId'>) => {
       dispatch(trackAction(action));
@@ -274,7 +274,7 @@ export const UXMonitoringProvider: React.FC<UXMonitoringProviderProps> = ({
   );
 };
 
-// 自定義 Hooks
+// Custom Hooks
 export const _useUXMonitoring = (): UseUXMonitoringReturn => {
   const _context = useContext(UXMonitoringContext);
   if (!context) {
@@ -356,7 +356,7 @@ export const _usePerformanceMonitoring = (): UsePerformanceMonitoringReturn => {
     );
   }
 
-  const _metrics = context.analytics?.performanceAnalytics ? [] : []; // 簡化版本
+  const _metrics = context.analytics?.performanceAnalytics ? [] : []; // 簡化Version
 
   return {
     metrics,
@@ -364,10 +364,10 @@ export const _usePerformanceMonitoring = (): UsePerformanceMonitoringReturn => {
       (context.isEnabled && context.config?.performanceMonitoring?.enabled) ||
       false,
     startMonitoring: () => {
-      // 性能監控已經在服務中自動啟動
+      // 性能Monitor已經在Service中AutoStart
     },
     stopMonitoring: () => {
-      // 可以實現停止監控的邏輯
+      // 可以實現StopMonitor的邏輯
     },
     getMetrics: (type?: string) => {
       return metrics.filter((m: unknown) => !type || m.type === type);
@@ -386,7 +386,7 @@ export const _useErrorTracking = (): UseErrorTrackingReturn => {
     );
   }
 
-  const _errors = context.analytics?.errorAnalytics ? [] : []; // 簡化版本
+  const _errors = context.analytics?.errorAnalytics ? [] : []; // 簡化Version
   const _errorRate = context.analytics?.errorAnalytics?.errorRate || 0;
 
   return {
@@ -416,7 +416,7 @@ export const _useSatisfactionSurvey = (): UseSatisfactionSurveyReturn => {
     );
   }
 
-  const _surveys = context.analytics?.satisfactionAnalytics ? [] : []; // 簡化版本
+  const _surveys = context.analytics?.satisfactionAnalytics ? [] : []; // 簡化Version
   const _averageSatisfaction =
     context.analytics?.satisfactionAnalytics?.averageSatisfaction || 0;
 
@@ -425,7 +425,7 @@ export const _useSatisfactionSurvey = (): UseSatisfactionSurveyReturn => {
     averageSatisfaction,
     submitSurvey: context.submitSatisfaction,
     shouldShowSurvey: () => {
-      // 簡化的邏輯：每5次訪問顯示一次
+      // 簡化的邏輯：每5次訪問Show一次
       return context.status.actionCount % 5 === 0;
     },
     getSatisfactionAnalytics: () =>
@@ -446,8 +446,8 @@ export const _useABTesting = (): UseABTestingReturn => {
     throw new Error('useABTesting must be used within a UXMonitoringProvider');
   }
 
-  const _tests = context.analytics?.abTestAnalytics ? [] : []; // 簡化版本
-  const _assignments = context.analytics?.abTestAnalytics ? [] : []; // 簡化版本
+  const _tests = context.analytics?.abTestAnalytics ? [] : []; // 簡化Version
+  const _assignments = context.analytics?.abTestAnalytics ? [] : []; // 簡化Version
 
   return {
     tests,
@@ -455,11 +455,11 @@ export const _useABTesting = (): UseABTestingReturn => {
     getVariant: context.getABTestVariant,
     trackConversion: context.trackConversion,
     getTestResults: (testId: string) => {
-      // 簡化版本：返回 null
+      // 簡化Version：Return null
       return null;
     },
   };
 };
 
-// 導出 Context
+// Export Context
 export { UXMonitoringContext };

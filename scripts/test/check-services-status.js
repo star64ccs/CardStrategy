@@ -3,12 +3,12 @@ const Redis = require('ioredis');
 const axios = require('axios');
 
 /**
- * 服務狀態檢查模組
- * 按照重構計劃執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * ServiceStatusCheck模組
+ * 按照重構計劃執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
-// 服務配置
+// ServiceConfigure
 const services = {
   postgres: {
     host: process.env.DB_HOST || process.env.PRODUCTION_DB_HOST,
@@ -35,24 +35,24 @@ const services = {
 };
 
 /**
- * 檢查是否跳過本地服務檢查
- * @returns {boolean} 是否跳過本地服務檢查
+ * CheckYesNoSkipLocalServiceCheck
+ * @returns {boolean} YesNoSkipLocalServiceCheck
  */
 function shouldSkipLocalServices() {
   return process.env.SKIP_LOCAL_SERVICES === 'true' || process.env.NODE_ENV === 'production';
 }
 
 /**
- * 檢查 PostgreSQL 連接
- * @returns {Promise<Object>} 檢查結果
+ * Check PostgreSQL Connect
+ * @returns {Promise<Object>} Check結果
  */
 async function checkPostgreSQL() {
-  // 如果設置了跳過本地服務，則跳過檢查
+  // 如果Settings了SkipLocalService，則SkipCheck
   if (shouldSkipLocalServices()) {
     return { status: 'skipped', message: '設置了 SKIP_LOCAL_SERVICES' };
   }
 
-  // 如果沒有配置，跳過檢查
+  // 如果沒有Configure，SkipCheck
   if (!services.postgres.host || !services.postgres.user || !services.postgres.password) {
     return { status: 'skipped', message: '未配置本地環境變數' };
   }
@@ -62,11 +62,11 @@ async function checkPostgreSQL() {
   try {
     await client.connect();
 
-    // 檢查數據庫版本
+    // CheckDatabaseVersion
     const versionResult = await client.query('SELECT version()');
     const version = versionResult.rows[0].version.split(' ')[1];
 
-    // 檢查表是否存在
+    // CheckTableYesNo存在
     const tables = ['users', 'cards', 'collections', 'investments', 'market_data'];
     const tableChecks = [];
 
@@ -84,7 +84,7 @@ async function checkPostgreSQL() {
 
     return { 
       status: 'success', 
-      message: 'PostgreSQL 連接正常',
+      message: 'PostgreSQL Connect正常',
       version,
       tableChecks
     };
@@ -96,16 +96,16 @@ async function checkPostgreSQL() {
 }
 
 /**
- * 檢查 Redis 連接
- * @returns {Promise<Object>} 檢查結果
+ * Check Redis Connect
+ * @returns {Promise<Object>} Check結果
  */
 async function checkRedis() {
-  // 如果設置了跳過本地服務，則跳過檢查
+  // 如果Settings了SkipLocalService，則SkipCheck
   if (shouldSkipLocalServices()) {
     return { status: 'skipped', message: '設置了 SKIP_LOCAL_SERVICES' };
   }
 
-  // 如果沒有配置，跳過檢查
+  // 如果沒有Configure，SkipCheck
   if (!services.redis.host) {
     return { status: 'skipped', message: '未配置本地環境變數' };
   }
@@ -121,14 +121,14 @@ async function checkRedis() {
   try {
     await redis.ping();
 
-    // 檢查 Redis 信息
+    // Check Redis Information
     const info = await redis.info('server');
     const version = info
       .split('\n')
       .find((line) => line.startsWith('redis_version'))
       .split(':')[1];
 
-    // 測試讀寫操作
+    // Test讀寫Operation
     await redis.set('test:connection', 'success', 'EX', 60);
     const testResult = await redis.get('test:connection');
 
@@ -136,11 +136,11 @@ async function checkRedis() {
       await redis.del('test:connection');
       return { 
         status: 'success', 
-        message: 'Redis 連接正常',
+        message: 'Redis Connect正常',
         version
       };
     } else {
-      throw new Error('Redis 讀寫測試失敗');
+      throw new Error('Redis 讀寫測試Failed');
     }
   } catch (error) {
     return { status: 'error', message: error.message };
@@ -150,8 +150,8 @@ async function checkRedis() {
 }
 
 /**
- * 檢查 Render 服務
- * @returns {Promise<Object>} 檢查結果
+ * Check Render Service
+ * @returns {Promise<Object>} Check結果
  */
 async function checkRender() {
   try {
@@ -163,7 +163,7 @@ async function checkRender() {
     if (response.status === 200) {
       return { 
         status: 'success', 
-        message: 'Render 服務正常',
+        message: 'Render Service正常',
         responseTime: response.headers['x-response-time'] || 'N/A'
       };
     } else {
@@ -175,8 +175,8 @@ async function checkRender() {
 }
 
 /**
- * 檢查 DigitalOcean 服務
- * @returns {Promise<Object>} 檢查結果
+ * Check DigitalOcean Service
+ * @returns {Promise<Object>} Check結果
  */
 async function checkDigitalOcean() {
   try {
@@ -188,7 +188,7 @@ async function checkDigitalOcean() {
     if (response.status === 200) {
       return { 
         status: 'success', 
-        message: 'DigitalOcean 服務正常',
+        message: 'DigitalOcean Service正常',
         responseTime: response.headers['x-response-time'] || 'N/A'
       };
     } else {
@@ -200,19 +200,19 @@ async function checkDigitalOcean() {
 }
 
 /**
- * 檢查 GitHub Actions
- * @returns {Promise<Object>} 檢查結果
+ * Check GitHub Actions
+ * @returns {Promise<Object>} Check結果
  */
 async function checkGitHubActions() {
   try {
-    // 這裡可以添加 GitHub API 調用來檢查 Actions 狀態
+    // 這裡可以Add GitHub API 調用來Check Actions Status
     // 需要 GITHUB_TOKEN 環境變數
     const hasToken = process.env.GITHUB_TOKEN;
     if (hasToken) {
-      // 如果有 token，可以進行實際的 API 調用
+      // 如果有 token，可以進Row實際的 API 調用
       return { status: 'success', message: 'GitHub Actions 配置正常' };
     } else {
-      // 如果沒有 token，返回配置檢查結果
+      // 如果沒有 token，ReturnConfigureCheck結果
       return { status: 'success', message: 'GitHub Actions 配置正常（無 token）' };
     }
   } catch (error) {
@@ -221,8 +221,8 @@ async function checkGitHubActions() {
 }
 
 /**
- * 主檢查函數
- * @returns {Promise<Object>} 所有服務檢查結果
+ * 主CheckFunction
+ * @returns {Promise<Object>} 所有ServiceCheck結果
  */
 async function checkAllServices() {
   const results = {
@@ -249,7 +249,7 @@ async function checkAllServices() {
 
   const summary = {
     success: errorCount === 0,
-    message: errorCount === 0 ? '所有服務運行正常' : '部分服務存在問題',
+    message: errorCount === 0 ? '所有Service運行正常' : '部分Service存在問題',
     stats: {
       success: successCount,
       error: errorCount,
@@ -262,19 +262,19 @@ async function checkAllServices() {
   return summary;
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   checkAllServices()
     .then((summary) => {
       // eslint-disable-next-line no-console
-      console.log('服務狀態檢查完成:', summary.message);
+      console.log('Service狀態Check完成:', summary.message);
       // eslint-disable-next-line no-console
       console.log('統計:', summary.stats);
       process.exit(summary.success ? 0 : 1);
     })
     .catch((error) => {
       // eslint-disable-next-line no-console
-      console.error('檢查過程中發生錯誤:', error.message);
+      console.error('Check過程中發生Error:', error.message);
       process.exit(1);
     });
 }

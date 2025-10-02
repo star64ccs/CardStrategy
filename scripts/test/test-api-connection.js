@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-// 測試不同的 API 端點
+// Test不同的 API 端點
 const apiEndpoints = [
   {
     name: 'Render API (生產環境)',
@@ -19,7 +19,7 @@ const apiEndpoints = [
   },
 ];
 
-// 測試 API 連接
+// Test API Connect
 async function testApiConnection(endpoint) {
   try {
 // eslint-disable-next-line no-unused-vars
@@ -40,25 +40,25 @@ async function testApiConnection(endpoint) {
   } catch (error) {
     if (error.code === 'ECONNREFUSED') {
 // eslint-disable-next-line no-console
-      console.log(`❌ 連接被拒絕: ${endpoint.url}`);
+      console.log(`❌ Connect被拒絕: ${endpoint.url}`);
     } else if (error.code === 'ENOTFOUND') {
 // eslint-disable-next-line no-console
       console.log(`❌ 主機未找到: ${endpoint.url}`);
     } else if (error.code === 'ETIMEDOUT') {
 // eslint-disable-next-line no-console
-      console.log(`❌ 連接超時: ${endpoint.url}`);
+      console.log(`❌ Connect超時: ${endpoint.url}`);
     } else if (error.response) {
 // eslint-disable-next-line no-console
-      console.log(`❌ HTTP錯誤 ${error.response.status}: ${endpoint.url}`);
+      console.log(`❌ HTTPError ${error.response.status}: ${endpoint.url}`);
     } else {
 // eslint-disable-next-line no-console
-      console.log(`❌ 未知錯誤: ${error.message}`);
+      console.log(`❌ 未知Error: ${error.message}`);
     }
     return { status: 'error', error: error.message };
   }
 }
 
-// 測試前端配置
+// Test前端Configure
 function testFrontendConfig() {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -89,9 +89,9 @@ function testFrontendConfig() {
   configs.forEach((config) => { /* empty */ });
 }
 
-// 主測試函數
+// 主TestFunction
 async function runApiTests() {
-  // 測試前端配置
+  // Test前端Configure
   testFrontendConfig();
 
 // eslint-disable-next-line no-unused-vars
@@ -107,12 +107,12 @@ async function runApiTests() {
 // eslint-disable-next-line no-unused-vars
     const result = await testApiConnection(endpoint);
     results.push({ endpoint: endpoint.name, ...result });
-    // 空行分隔
+    // EmptyRow分隔
   }
 
   // 總結
 // eslint-disable-next-line no-console
-  console.log('📊 API 連接測試總結');
+  console.log('📊 API Connect測試總結');
 
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -140,13 +140,13 @@ async function runApiTests() {
   });
 
 // eslint-disable-next-line no-console
-  console.log('📊 API 連接測試總結');
+  console.log('📊 API Connect測試總結');
   // 建議
   if (successCount > 0) { /* empty */ }
 
   if (errorCount > 0) { /* empty */ }
 
-  // 檢查配置一致性
+  // CheckConfigure一致性
   const renderUrls = ['https://cardstrategy-api.onrender.com'];
   const digitalOceanUrls = ['https://api.cardstrategy.com'];
 
@@ -167,11 +167,11 @@ async function runApiTests() {
   ) { /* empty */ } else { /* empty */ }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   runApiTests().catch((error) => {
 // eslint-disable-next-line no-console
-    console.error('❌ 測試過程中發生錯誤:', error);
+    console.error('❌ 測試過程中發生Error:', error);
     process.exit(1);
   });
 }

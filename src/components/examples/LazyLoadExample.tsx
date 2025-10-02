@@ -1,4 +1,4 @@
-// 懶加載示例組件
+// 懶加載示例Component
 import React, { useState } from 'react';
 
 import {
@@ -9,7 +9,7 @@ import {
 import { LazyLoadPriority, LazyLoadStrategy } from '../../types/lazyLoading';
 import { LazyComponent, LazyData, LazyImage } from '../ui/LazyLoadComponent';
 
-// 示例組件
+// 示例Component
 const ExampleComponent: React.FC<{ title: string; content: string }> = ({
   title,
   content,
@@ -28,7 +28,7 @@ const ExampleComponent: React.FC<{ title: string; content: string }> = ({
   </div>
 );
 
-// 自定義加載組件
+// Custom加載Component
 const CustomLoadingComponent: React.FC = () => (
   <div
     style={{
@@ -65,7 +65,7 @@ const CustomLoadingComponent: React.FC = () => (
   </div>
 );
 
-// 自定義錯誤組件
+// CustomErrorComponent
 const CustomErrorComponent: React.FC<{ error: Error; retry: () => void }> = ({
   error,
   retry,
@@ -103,14 +103,14 @@ const CustomErrorComponent: React.FC<{ error: Error; retry: () => void }> = ({
   </div>
 );
 
-// 模擬數據加載函數
+// 模擬Data加載Function
 const _mockDataLoader = async (): Promise<any[]> => {
-  // 模擬網絡延遲
+  // 模擬Network延遲
   await new Promise(resolve => setTimeout(resolve, 2000));
 
-  // 模擬隨機錯誤
+  // 模擬隨機Error
   if (Math.random() < 0.3) {
-    throw new Error('模擬的網絡錯誤');
+    throw new Error('模擬的網絡Error');
   }
 
   return [
@@ -122,21 +122,21 @@ const _mockDataLoader = async (): Promise<any[]> => {
   ];
 };
 
-// 模擬組件加載函數
+// 模擬Component加載Function
 const _mockComponentLoader = async (): Promise<React.ComponentType<any>> => {
-  // 模擬網絡延遲
+  // 模擬Network延遲
   await new Promise(resolve => setTimeout(resolve, 1500));
 
-  // 模擬隨機錯誤
+  // 模擬隨機Error
   if (Math.random() < 0.2) {
-    throw new Error('模擬的組件加載錯誤');
+    throw new Error('模擬的組件加載Error');
   }
 
   return ExampleComponent;
 };
 
 /**
- * 懶加載示例組件
+ * 懶加載示例Component
  */
 export const LazyLoadExample: React.FC = () => {
   const [activeTab, setActiveTab] = useState<
@@ -173,7 +173,7 @@ export const LazyLoadExample: React.FC = () => {
         懶加載功能示例
       </h1>
 
-      {/* 性能監控切換 */}
+      {/* 性能MonitorSwitch */}
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <label style={{ marginRight: '10px' }}>
           <input
@@ -185,7 +185,7 @@ export const LazyLoadExample: React.FC = () => {
         </label>
       </div>
 
-      {/* 標籤頁 */}
+      {/* Tag頁 */}
       <div style={{ marginBottom: '20px' }}>
         {tabs.map(tab => (
           <button
@@ -206,14 +206,14 @@ export const LazyLoadExample: React.FC = () => {
         ))}
       </div>
 
-      {/* 內容區域 */}
+      {/* ContentDistrict域 */}
       <div style={{ minHeight: '400px' }}>
         {activeTab === 'component' && (
           <div>
             <h2>組件懶加載示例</h2>
             <p>以下組件會在滾動到可視區域時自動加載：</p>
 
-            {/* 使用組件方式 */}
+            {/* 使用Component方式 */}
             <div style={{ marginBottom: '30px' }}>
               <h3>使用 LazyComponent 組件</h3>
               <LazyComponent
@@ -229,8 +229,8 @@ export const LazyLoadExample: React.FC = () => {
                 priority='high'
                 preloadDistance={200}
                 onBeforeLoad={() => console.log('開始加載組件')}
-                onLoadSuccess={() => console.log('組件加載成功')}
-                onLoadError={error => console.log('組件加載失敗:', error)}
+                onLoadSuccess={() => console.log('組件加載Success')}
+                onLoadError={error => console.log('組件加載Failed:', error)}
                 onLoadComplete={() => console.log('組件加載完成')}
               />
             </div>
@@ -281,7 +281,7 @@ export const LazyLoadExample: React.FC = () => {
             <h2>圖片懶加載示例</h2>
             <p>以下圖片會在滾動到可視區域時自動加載：</p>
 
-            {/* 使用組件方式 */}
+            {/* 使用Component方式 */}
             <div style={{ marginBottom: '30px' }}>
               <h3>使用 LazyImage 組件</h3>
               <div
@@ -304,9 +304,9 @@ export const LazyLoadExample: React.FC = () => {
                     preloadDistance={100}
                     quality='medium'
                     onBeforeLoad={() => console.log(`開始加載圖片 ${i}`)}
-                    onLoadSuccess={() => console.log(`圖片 ${i} 加載成功`)}
+                    onLoadSuccess={() => console.log(`圖片 ${i} 加載Success`)}
                     onLoadError={error =>
-                      console.log(`圖片 ${i} 加載失敗:`, error)
+                      console.log(`圖片 ${i} 加載Failed:`, error)
                     }
                     onLoadComplete={() => console.log(`圖片 ${i} 加載完成`)}
                   />
@@ -361,7 +361,7 @@ export const LazyLoadExample: React.FC = () => {
             <h2>數據懶加載示例</h2>
             <p>以下數據會在點擊按鈕時加載：</p>
 
-            {/* 使用組件方式 */}
+            {/* 使用Component方式 */}
             <div style={{ marginBottom: '30px' }}>
               <h3>使用 LazyData 組件</h3>
               <LazyData
@@ -371,8 +371,8 @@ export const LazyLoadExample: React.FC = () => {
                 loadingComponent={CustomLoadingComponent}
                 errorComponent={CustomErrorComponent}
                 onBeforeLoad={() => console.log('開始加載數據')}
-                onLoadSuccess={data => console.log('數據加載成功:', data)}
-                onLoadError={error => console.log('數據加載失敗:', error)}
+                onLoadSuccess={data => console.log('數據加載Success:', data)}
+                onLoadError={error => console.log('數據加載Failed:', error)}
                 onLoadComplete={() => console.log('數據加載完成')}
               >
                 {(data, state) => (
@@ -462,7 +462,7 @@ export const LazyLoadExample: React.FC = () => {
             <p>展示如何使用各種懶加載 Hook：</p>
 
             <div style={{ display: 'grid', gap: '20px' }}>
-              {/* 組件 Hook */}
+              {/* Component Hook */}
               <div
                 style={{
                   border: '1px solid #ddd',
@@ -503,7 +503,7 @@ export const LazyLoadExample: React.FC = () => {
                 </div>
               </div>
 
-              {/* 圖片 Hook */}
+              {/* Graph片 Hook */}
               <div
                 style={{
                   border: '1px solid #ddd',
@@ -542,7 +542,7 @@ export const LazyLoadExample: React.FC = () => {
                 </div>
               </div>
 
-              {/* 數據 Hook */}
+              {/* Data Hook */}
               <div
                 style={{
                   border: '1px solid #ddd',
@@ -589,7 +589,7 @@ export const LazyLoadExample: React.FC = () => {
         )}
       </div>
 
-      {/* 性能監控 */}
+      {/* 性能Monitor */}
       {showPerformance && (
         <div
           style={{
@@ -641,7 +641,7 @@ export const LazyLoadExample: React.FC = () => {
         </div>
       )}
 
-      {/* 使用說明 */}
+      {/* 使用Description */}
       <div
         style={{
           marginTop: '30px',

@@ -1,4 +1,4 @@
-// 台灣電子商務法類型定義
+// 台灣電子商務法Class型定義
 // Taiwan E-commerce Law Type Definitions
 
 export interface TaiwanEcommercePlatform {

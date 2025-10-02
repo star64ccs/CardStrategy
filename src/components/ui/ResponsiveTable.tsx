@@ -1,4 +1,4 @@
-// 響應式表格組件
+// Response式Table格Component
 
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -47,11 +47,11 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
   };
 
   const _shouldShowColumn = (breakpoint: string, priority: number): boolean => {
-    const _currentBreakpoint = 'md'; // 默認值
+    const _currentBreakpoint = 'md'; // DefaultValue
     return breakpointPriority[currentBreakpoint] >= priority;
   };
 
-  // 響應式列過濾
+  // Response式ColumnFilter
   const _visibleColumns = useMemo(() => {
     const _currentBreakpoint = getResponsiveValue('md');
 
@@ -59,12 +59,12 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
       const _responsive = getResponsiveValue(column.responsive);
       const _priority = getResponsiveValue(column.priority);
 
-      // 如果明確設置為不響應式，則顯示
+      // 如果明確Settings為不Response式，則Show
       if (responsive === false) return true;
 
-      // 如果設置了響應式，檢查當前斷點是否支持
+      // 如果Settings了Response式，Check當前斷點YesNoSupport
       if (responsive === true) {
-        // 根據優先級決定是否顯示
+        // Root據優先級決定YesNoShow
         if (priority !== undefined) {
           return breakpointPriority[currentBreakpoint] >= priority;
         }
@@ -75,7 +75,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     });
   }, [columns, getResponsiveValue]);
 
-  // 搜索過濾
+  // SearchFilter
   const _filteredData = useMemo(() => {
     if (!searchTerm) return data;
 
@@ -88,7 +88,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     });
   }, [data, searchTerm, visibleColumns]);
 
-  // 排序
+  // Sort
   const _sortedData = useMemo(() => {
     if (!sortConfig) return filteredData;
 
@@ -106,7 +106,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     });
   }, [filteredData, sortConfig]);
 
-  // 分頁
+  // Paginate
   const _paginatedData = useMemo(() => {
     if (!pagination) return sortedData;
 
@@ -115,7 +115,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     return sortedData.slice(startIndex, endIndex);
   }, [sortedData, currentPage, pageSize, pagination]);
 
-  // 排序處理
+  // SortHandle
   const _handleSort = useCallback(
     (key: string) => {
       if (!sortable) return;
@@ -133,7 +133,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     [sortable]
   );
 
-  // 選擇處理
+  // SelectHandle
   const _handleSelectAll = useCallback(() => {
     if (selectedRows.size === paginatedData.length) {
       setSelectedRows(new Set());
@@ -154,7 +154,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     });
   }, []);
 
-  // 分頁處理
+  // PaginateHandle
   const _handlePageChange = useCallback(
     (page: number) => {
       setCurrentPage(page);
@@ -172,7 +172,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     [pagination]
   );
 
-  // 表格樣式
+  // Table格樣式
   const _tableStyle = useMemo(() => {
     const baseStyle: React.CSSProperties = {
       width: '100%',
@@ -185,7 +185,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
       ...style,
     };
 
-    // 響應式處理
+    // Response式Handle
     if (responsive?.scroll) {
       baseStyle.overflowX = 'auto';
       baseStyle.minWidth = '600px';
@@ -194,7 +194,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     return baseStyle;
   }, [currentTheme, responsive, style]);
 
-  // 渲染表頭
+  // 渲染Table頭
   const _renderHeader = () => (
     <thead>
       <tr>
@@ -248,7 +248,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     </thead>
   );
 
-  // 渲染表格行
+  // 渲染Table格Row
   const _renderRow = (row: unknown, rowIndex: number) => (
     <tr
       key={rowIndex}
@@ -294,7 +294,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
     </tr>
   );
 
-  // 渲染分頁
+  // 渲染Paginate
   const _renderPagination = () => {
     if (!pagination) return null;
 
@@ -381,7 +381,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
 
   return (
     <div className={`responsive-table ${className}`} data-testid={dataTestId}>
-      {/* 搜索欄 */}
+      {/* Search欄 */}
       {searchable && (
         <div
           style={{
@@ -400,7 +400,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
         </div>
       )}
 
-      {/* 表格 */}
+      {/* Table格 */}
       <div style={{ overflowX: 'auto' }}>
         <table style={tableStyle}>
           {renderHeader()}
@@ -410,7 +410,7 @@ export const ResponsiveTable: React.FC<ResponsiveTableProps> = ({
         </table>
       </div>
 
-      {/* 分頁 */}
+      {/* Paginate */}
       {renderPagination()}
     </div>
   );

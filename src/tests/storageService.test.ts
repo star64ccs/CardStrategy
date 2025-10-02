@@ -17,7 +17,7 @@ const _mockApi = {
   delete: jest.fn(),
 };
 
-// 模擬 S3 服務
+// 模擬 S3 Service
 class MockS3Service {
   isAvailable() {
     return true;
@@ -127,7 +127,7 @@ class MockS3Service {
   }
 }
 
-// 模擬 Cloudflare 存儲服務
+// 模擬 Cloudflare StorageService
 class MockCloudflareStorageService {
   isAvailable() {
     return true;
@@ -260,7 +260,7 @@ describe('Storage Services Tests', () => {
       expect(mockS3Service.isAvailable()).toBe(true);
     });
 
-    test('上傳文件應該成功', async () => {
+    test('上傳文件應該Success', async () => {
       const _result = await mockS3Service.uploadFile(
         'test-file.txt',
         Buffer.from('test')
@@ -270,45 +270,45 @@ describe('Storage Services Tests', () => {
       expect(result.data?.size).toBe(1024);
     });
 
-    test('下載文件應該成功', async () => {
+    test('下載文件應該Success', async () => {
       const _result = await mockS3Service.downloadFile('test-file.txt');
       expect(result.success).toBe(true);
       expect(result.data).toBeInstanceOf(Buffer);
       expect(result.data?.toString()).toBe('test content');
     });
 
-    test('刪除文件應該成功', async () => {
+    test('Delete文件應該Success', async () => {
       const _result = await mockS3Service.deleteFile('test-file.txt');
       expect(result.success).toBe(true);
       expect(result.message).toBe('File deleted successfully');
     });
 
-    test('列出文件應該成功', async () => {
+    test('列出文件應該Success', async () => {
       const _result = await mockS3Service.listFiles();
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(1);
       expect(result.data?.[0].key).toBe('test-file.txt');
     });
 
-    test('獲取文件URL應該成功', async () => {
+    test('Get文件URL應該Success', async () => {
       const _result = await mockS3Service.getFileUrl('test-file.txt');
       expect(result.success).toBe(true);
       expect(result.data).toContain('s3.amazonaws.com');
     });
 
-    test('複製文件應該成功', async () => {
+    test('複製文件應該Success', async () => {
       const _result = await mockS3Service.copyFile('source.txt', 'dest.txt');
       expect(result.success).toBe(true);
       expect(result.data?.key).toBe('copied-file.txt');
     });
 
-    test('獲取文件元數據應該成功', async () => {
+    test('Get文件元數據應該Success', async () => {
       const _result = await mockS3Service.getFileMetadata('test-file.txt');
       expect(result.success).toBe(true);
       expect(result.data?.key).toBe('test-file.txt');
     });
 
-    test('獲取服務統計應該成功', async () => {
+    test('GetService統計應該Success', async () => {
       const _result = await mockS3Service.getServiceStats();
       expect(result.success).toBe(true);
       expect(result.data?.service).toBe('AWS S3');
@@ -320,7 +320,7 @@ describe('Storage Services Tests', () => {
       expect(mockCloudflareService.isAvailable()).toBe(true);
     });
 
-    test('上傳文件應該成功', async () => {
+    test('上傳文件應該Success', async () => {
       const _result = await mockCloudflareService.uploadFile(
         'test-file.txt',
         Buffer.from('test')
@@ -330,33 +330,33 @@ describe('Storage Services Tests', () => {
       expect(result.data?.size).toBe(1024);
     });
 
-    test('下載文件應該成功', async () => {
+    test('下載文件應該Success', async () => {
       const _result = await mockCloudflareService.downloadFile('test-file.txt');
       expect(result.success).toBe(true);
       expect(result.data).toBeInstanceOf(Buffer);
       expect(result.data?.toString()).toBe('test content');
     });
 
-    test('刪除文件應該成功', async () => {
+    test('Delete文件應該Success', async () => {
       const _result = await mockCloudflareService.deleteFile('test-file.txt');
       expect(result.success).toBe(true);
       expect(result.message).toBe('File deleted successfully');
     });
 
-    test('列出文件應該成功', async () => {
+    test('列出文件應該Success', async () => {
       const _result = await mockCloudflareService.listFiles();
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(1);
       expect(result.data?.[0].key).toBe('test-file.txt');
     });
 
-    test('獲取文件URL應該成功', async () => {
+    test('Get文件URL應該Success', async () => {
       const _result = await mockCloudflareService.getFileUrl('test-file.txt');
       expect(result.success).toBe(true);
       expect(result.data).toContain('cloudflare.com');
     });
 
-    test('複製文件應該成功', async () => {
+    test('複製文件應該Success', async () => {
       const _result = await mockCloudflareService.copyFile(
         'source.txt',
         'dest.txt'
@@ -365,21 +365,21 @@ describe('Storage Services Tests', () => {
       expect(result.data?.key).toBe('copied-file.txt');
     });
 
-    test('獲取文件元數據應該成功', async () => {
+    test('Get文件元數據應該Success', async () => {
       const _result =
         await mockCloudflareService.getFileMetadata('test-file.txt');
       expect(result.success).toBe(true);
       expect(result.data?.key).toBe('test-file.txt');
     });
 
-    test('獲取服務統計應該成功', async () => {
+    test('GetService統計應該Success', async () => {
       const _result = await mockCloudflareService.getServiceStats();
       expect(result.success).toBe(true);
       expect(result.data?.service).toBe('Cloudflare Storage');
     });
   });
 
-  describe('統一存儲服務功能測試', () => {
+  describe('統一存儲Service功能測試', () => {
     test('批量上傳多個文件應該正確處理', async () => {
       const _files = [
         { key: 'file1.txt', file: Buffer.from('content1') },
@@ -387,7 +387,7 @@ describe('Storage Services Tests', () => {
         { key: 'file3.txt', file: Buffer.from('content3') },
       ];
 
-      // 模擬批量上傳
+      // 模擬BatchUpload
       const _uploadPromises = files.map(file =>
         mockS3Service.uploadFile(file.key, file.file)
       );
@@ -399,10 +399,10 @@ describe('Storage Services Tests', () => {
       });
     });
 
-    test('空文件列表應該返回成功', async () => {
+    test('空文件列表應該返回Success', async () => {
       const files: { key: string; file: Buffer }[] = [];
 
-      // 模擬空列表處理
+      // 模擬EmptyListHandle
       const _result = {
         success: true,
         data: [],
@@ -420,13 +420,13 @@ describe('Storage Services Tests', () => {
         Buffer.from('test')
       );
 
-      // 驗證結果包含時間戳
+      // Verify結果Package含Time戳
       expect(result.timestamp).toBeInstanceOf(Date);
       expect(result.success).toBe(true);
     });
 
-    test('錯誤處理應該正確', async () => {
-      // 模擬錯誤情況
+    test('ErrorHandle應該正確', async () => {
+      // 模擬Error情況
       const _errorResult = {
         success: false,
         message: 'Upload error: Network error',
@@ -438,16 +438,16 @@ describe('Storage Services Tests', () => {
     });
   });
 
-  describe('服務可用性測試', () => {
-    test('S3服務可用性檢查', () => {
+  describe('Service可用性測試', () => {
+    test('S3Service可用性Check', () => {
       expect(mockS3Service.isAvailable()).toBe(true);
     });
 
-    test('Cloudflare服務可用性檢查', () => {
+    test('CloudflareService可用性Check', () => {
       expect(mockCloudflareService.isAvailable()).toBe(true);
     });
 
-    test('環境變量清理應該成功', () => {
+    test('環境變量清理應該Success', () => {
       expect(process.env.AWS_S3_ACCESS_KEY).toBeUndefined();
       expect(process.env.CLOUDFLARE_API_TOKEN).toBeUndefined();
     });

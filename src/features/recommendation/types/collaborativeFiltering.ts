@@ -1,6 +1,6 @@
-// 協同過濾推薦系統類型定義
+// 協同Filter推薦系統Class型定義
 
-// 基礎類型
+// 基礎Class型
 export interface User {
   id: string;
   name: string;
@@ -102,13 +102,13 @@ export enum RecommendationAlgorithm {
   NEURAL_COLLABORATIVE = 'neural_collaborative',
 }
 
-// 用戶行為
+// UserRow為
 export interface UserBehavior {
   userId: string;
   itemId: string;
   action: UserAction;
   timestamp: Date;
-  duration?: number; // 停留時間（秒）
+  duration?: number; // 停留Time（Second）
   context?: BehaviorContext;
   metadata?: Record<string, any>;
 }
@@ -134,7 +134,7 @@ export interface BehaviorContext {
   location?: string;
 }
 
-// 模型配置
+// 模型Configure
 export interface CollaborativeFilteringConfig {
   algorithm: RecommendationAlgorithm;
   similarityMethod: SimilarityMethod;
@@ -155,14 +155,14 @@ export interface ModelPerformance {
   recall: number;
   f1Score: number;
   mae: number; // 平均絕對誤差
-  rmse: number; // 均方根誤差
+  rmse: number; // 均方Root誤差
   coverage: number;
   diversity: number;
   novelty: number;
   calculatedAt: Date;
 }
 
-// 數據統計
+// DataStatistics
 export interface DataStatistics {
   totalUsers: number;
   totalItems: number;
@@ -175,7 +175,7 @@ export interface DataStatistics {
   lastUpdated: Date;
 }
 
-// 事件類型
+// EventClass型
 export interface RecommendationEvent {
   type:
     | 'recommendation_generated'
@@ -190,7 +190,7 @@ export interface RecommendationEvent {
   timestamp: Date;
 }
 
-// API 響應類型
+// API ResponseClass型
 export interface CollaborativeFilteringResponse {
   success: boolean;
   data?: unknown;
@@ -240,7 +240,7 @@ export interface GetModelPerformanceResponse
   };
 }
 
-// 請求類型
+// RequestClass型
 export interface GetRecommendationsRequest {
   userId: string;
   limit?: number;
@@ -277,7 +277,7 @@ export interface UpdateUserBehaviorRequest {
   context?: BehaviorContext;
 }
 
-// 內部數據結構
+// InternalData結構
 export interface UserItemMatrix {
   [userId: string]: {
     [itemId: string]: number;
@@ -296,7 +296,7 @@ export interface UserUserMatrix {
   };
 }
 
-// 緩存類型
+// CacheClass型
 export interface RecommendationCache {
   userId: string;
   recommendations: Recommendation[];
@@ -309,7 +309,7 @@ export interface SimilarityCache {
   expiresAt: Date;
 }
 
-// 配置類型
+// ConfigureClass型
 export interface SystemConfig {
   collaborativeFiltering: CollaborativeFilteringConfig;
   database: {

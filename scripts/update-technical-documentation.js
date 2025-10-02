@@ -2,14 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 技術文檔更新腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * 技術DocumentationUpdate腳本
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
 console.log('🚀 開始更新技術文檔...\n');
 
-// 1. 更新架構文檔
+// 1. Update架構Documentation
 function updateArchitectureDocumentation() {
   console.log('📋 更新架構文檔...');
 
@@ -131,7 +131,7 @@ CardStrategy 是一個基於 React Native 和 Expo 的混合架構應用程序�
   return architecturePath;
 }
 
-// 2. 完善API文檔
+// 2. 完善APIDocumentation
 function updateAPIDocumentation() {
   console.log('📋 完善API文檔...');
 
@@ -279,15 +279,15 @@ Authorization: Bearer {access_token}
   return apiPath;
 }
 
-// 3. 主函數
+// 3. 主Function
 function main() {
   try {
     console.log('🚀 開始技術文檔更新流程...\n');
 
-    // 1. 更新架構文檔
+    // 1. Update架構Documentation
     const architecturePath = updateArchitectureDocumentation();
 
-    // 2. 完善API文檔
+    // 2. 完善APIDocumentation
     const apiPath = updateAPIDocumentation();
 
     console.log('\n🎯 技術文檔更新完成！');
@@ -305,12 +305,12 @@ function main() {
     console.log('  3. 驗證文檔準確性');
 
   } catch (error) {
-    console.error('❌ 技術文檔更新失敗:', error);
+    console.error('❌ 技術文檔UpdateFailed:', error);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   main();
 }

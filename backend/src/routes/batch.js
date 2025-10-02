@@ -198,7 +198,7 @@ router.get('/stats', [protect, authorize('admin')], async (req, res) => {'
 });
 
 /**
- * ?��??�戶作業?�表
+ * ?��??�戶作業?�Table
  * GET /api/batch/jobs
  */'
 router.get(''
@@ -250,8 +250,8 @@ router.get(''
         offset,
       });
 
-      // ?�裡?�要實?�獲?�用?��?業�?表�??�輯
-      // ?�於 Bull.js 沒�??�接?��??�用?�查詢�??�能�?      // ?�們�?要在作業?��?中�??�用?�信??      const jobs = await batchOperationService.getUserJobs(req.user.id, {
+      // ?�裡?�要實?�獲?�用?��?業�?Table�??�輯
+      // ?�於 Bull.js 沒�??�接?��??�用?�Query�??�能�?      // ?�們�?要在作業?��?中�??�用?�信??      const jobs = await batchOperationService.getUserJobs(req.user.id, {
         status,
         type,
         limit: parseInt(limit),
@@ -435,7 +435,7 @@ router.post('/examples', [protect], async (req, res) => {
 });
 
 /**
- * ?��??��??��?類�??�述
+ * ?��??��??��?Class�??�述
  */
 function getBatchTypeDescription(type) {'
   const descriptions = {''

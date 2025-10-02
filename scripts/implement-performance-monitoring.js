@@ -2,14 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 性能監控實施腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * 性能Monitor實施腳本
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
 console.log('🚀 開始實施性能監控系統...\n');
 
-// 1. 設計性能監控架構
+// 1. 設計性能Monitor架構
 function designPerformanceMonitoringArchitecture() {
   console.log('📋 設計性能監控架構...');
 
@@ -19,7 +19,7 @@ function designPerformanceMonitoringArchitecture() {
         description: '數據收集層',
         components: [
           'PerformanceMonitor - 基礎性能監控',
-          'PerformanceMonitoringService - 完整監控服務',
+          'PerformanceMonitoringService - 完整監控Service',
           'MetricsCollector - 指標收集器',
           'AlertManager - 警報管理器'
         ]
@@ -70,7 +70,7 @@ function designPerformanceMonitoringArchitecture() {
   return architecture;
 }
 
-// 2. 實現關鍵性能指標監控
+// 2. 實現OffKey性能指標Monitor
 function implementKeyPerformanceIndicators() {
   console.log('📋 實現關鍵性能指標監控...');
 
@@ -108,7 +108,7 @@ function implementKeyPerformanceIndicators() {
   return kpis;
 }
 
-// 3. 建立性能警報機制
+// 3. 建立性能Alert機制
 function establishPerformanceAlertMechanism() {
   console.log('📋 建立性能警報機制...');
 
@@ -161,18 +161,18 @@ function establishPerformanceAlertMechanism() {
   return alertMechanism;
 }
 
-// 4. 主函數
+// 4. 主Function
 function main() {
   try {
     console.log('🚀 開始性能監控系統實施流程...\n');
 
-    // 1. 設計性能監控架構
+    // 1. 設計性能Monitor架構
     const architecture = designPerformanceMonitoringArchitecture();
 
-    // 2. 實現關鍵性能指標監控
+    // 2. 實現OffKey性能指標Monitor
     const kpis = implementKeyPerformanceIndicators();
 
-    // 3. 建立性能警報機制
+    // 3. 建立性能Alert機制
     const alertMechanism = establishPerformanceAlertMechanism();
 
     console.log('\n🎯 性能監控系統實施完成！');
@@ -193,12 +193,12 @@ function main() {
     console.log('  4. 創建測試用例');
 
   } catch (error) {
-    console.error('❌ 性能監控系統實施失敗:', error);
+    console.error('❌ 性能監控系統實施Failed:', error);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   main();
 }

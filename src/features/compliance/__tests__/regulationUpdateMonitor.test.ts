@@ -21,7 +21,7 @@ describe('RegulationUpdateMonitor', () => {
   });
 
   describe('initialize', () => {
-    it('應該成功初始化監控器', async () => {
+    it('應該SuccessInitialize監控器', async () => {
       await monitor.initialize();
 
       const _status = monitor.getMonitoringStatus();
@@ -43,7 +43,7 @@ describe('RegulationUpdateMonitor', () => {
       await monitor.initialize();
     });
 
-    it('應該成功開始監控', async () => {
+    it('應該Success開始監控', async () => {
       await monitor.startMonitoring();
 
       const _status = monitor.getMonitoringStatus();
@@ -58,7 +58,7 @@ describe('RegulationUpdateMonitor', () => {
       expect(checkSpy).toHaveBeenCalled();
     });
 
-    it('應該處理監控啟動錯誤', async () => {
+    it('應該Handle監控啟動Error', async () => {
       jest
         .spyOn(monitor, 'checkForUpdates')
         .mockRejectedValue(new Error('Network error'));
@@ -73,7 +73,7 @@ describe('RegulationUpdateMonitor', () => {
       await monitor.startMonitoring();
     });
 
-    it('應該成功停止監控', () => {
+    it('應該Success停止監控', () => {
       monitor.stopMonitoring();
 
       const _status = monitor.getMonitoringStatus();
@@ -81,8 +81,8 @@ describe('RegulationUpdateMonitor', () => {
     });
 
     it('應該安全地停止未啟動的監控', () => {
-      monitor.stopMonitoring(); // 已經停止
-      monitor.stopMonitoring(); // 再次停止
+      monitor.stopMonitoring(); // 已經Stop
+      monitor.stopMonitoring(); // 再次Stop
 
       const _status = monitor.getMonitoringStatus();
       expect(status.isMonitoring).toBe(false);
@@ -101,10 +101,10 @@ describe('RegulationUpdateMonitor', () => {
       expect(updates.length).toBeGreaterThan(0);
     });
 
-    it('應該處理檢查錯誤', async () => {
-      await monitor.initialize(); // 確保已初始化
+    it('應該HandleCheckError', async () => {
+      await monitor.initialize(); // 確保已Initialize
 
-      // 模擬網絡錯誤
+      // 模擬NetworkError
       const _originalMethod = (monitor as any).checkSourceForUpdates;
       (monitor as any).checkSourceForUpdates = jest
         .fn()
@@ -113,7 +113,7 @@ describe('RegulationUpdateMonitor', () => {
       const _updates = await monitor.checkForUpdates();
       expect(updates).toEqual([]);
 
-      // 恢復原始方法
+      // Restore原始Method
       (monitor as any).checkSourceForUpdates = originalMethod;
     });
 
@@ -157,7 +157,7 @@ describe('RegulationUpdateMonitor', () => {
     });
 
     it('應該反映初始化狀態', async () => {
-      // 重置實例狀態
+      // ResetInstanceStatus
       (monitor as any).isInitialized = false;
 
       let status = monitor.getMonitoringStatus();
@@ -393,19 +393,19 @@ describe('RegulationUpdateMonitor', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       await monitor.initialize();
     });
 
-    it('應該處理初始化錯誤', async () => {
+    it('應該HandleInitializeError', async () => {
       const _originalSources = (monitor as any).updateSources;
       (monitor as any).updateSources = null;
       (monitor as any).isInitialized = false;
 
       try {
         await monitor.initialize();
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect(error).toBeDefined();
       }
@@ -413,10 +413,10 @@ describe('RegulationUpdateMonitor', () => {
       (monitor as any).updateSources = originalSources;
     });
 
-    it('應該處理監控源檢查錯誤', async () => {
-      await monitor.initialize(); // 確保已初始化
+    it('應該Handle監控源CheckError', async () => {
+      await monitor.initialize(); // 確保已Initialize
 
-      // 模擬 checkSourceForUpdates 拋出錯誤
+      // 模擬 checkSourceForUpdates ThrowError
       const _originalMethod = (monitor as any).checkSourceForUpdates;
       (monitor as any).checkSourceForUpdates = jest
         .fn()
@@ -425,14 +425,14 @@ describe('RegulationUpdateMonitor', () => {
       const _updates = await monitor.checkForUpdates();
       expect(updates).toEqual([]);
 
-      // 恢復原始方法
+      // Restore原始Method
       (monitor as any).checkSourceForUpdates = originalMethod;
     });
 
-    it('應該處理影響評估錯誤', async () => {
-      await monitor.initialize(); // 確保已初始化
+    it('應該Handle影響評估Error', async () => {
+      await monitor.initialize(); // 確保已Initialize
 
-      // 模擬 processUpdates 中的錯誤
+      // 模擬 processUpdates 中的Error
       const _originalMethod = (monitor as any).processUpdates;
       (monitor as any).processUpdates = jest
         .fn()
@@ -442,7 +442,7 @@ describe('RegulationUpdateMonitor', () => {
         'Assessment error'
       );
 
-      // 恢復原始方法
+      // Restore原始Method
       (monitor as any).processUpdates = originalMethod;
     });
   });
@@ -453,7 +453,7 @@ describe('RegulationUpdateMonitor', () => {
     });
 
     it('應該在合理時間內完成檢查', async () => {
-      await monitor.initialize(); // 確保已初始化
+      await monitor.initialize(); // 確保已Initialize
 
       const _startTime = Date.now();
 
@@ -462,11 +462,11 @@ describe('RegulationUpdateMonitor', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(5000); // 5秒內完成
+      expect(duration).toBeLessThan(5000); // 5Second內Complete
     });
 
     it('應該支持並發檢查', async () => {
-      await monitor.initialize(); // 確保已初始化
+      await monitor.initialize(); // 確保已Initialize
 
       const _promises = [
         monitor.checkForUpdates(),

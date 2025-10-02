@@ -1,6 +1,6 @@
 import { Platform } from 'react-native';
 
-// 平台特定測試配置
+// 平台SpecificTestConfigure
 export interface PlatformTestConfig {
   platform: 'ios' | 'android' | 'web';
   version: string;
@@ -14,7 +14,7 @@ export interface PlatformTestConfig {
   };
 }
 
-// 平台特定測試環境
+// 平台SpecificTest環境
 export class PlatformTestEnvironment {
   private static instance: PlatformTestEnvironment;
   private currentPlatform: PlatformTestConfig;
@@ -97,7 +97,7 @@ export class PlatformTestEnvironment {
     this.currentPlatform = config;
   }
 
-  // 平台特定測試輔助方法
+  // 平台SpecificTest輔助Method
   isIOS(): boolean {
     return this.currentPlatform.platform === 'ios';
   }
@@ -131,7 +131,7 @@ export class PlatformTestEnvironment {
   }
 }
 
-// 平台特定測試裝飾器
+// 平台SpecificTest裝飾器
 export function platformTest(platforms: ('ios' | 'android' | 'web')[]) {
   return function (
     target: unknown,
@@ -158,7 +158,7 @@ export function platformTest(platforms: ('ios' | 'android' | 'web')[]) {
   };
 }
 
-// 平台特定測試數據生成器
+// 平台SpecificTestData生成器
 export class PlatformTestDataGenerator {
   static generateBiometricTestData(platform: 'ios' | 'android' | 'web') {
     switch (platform) {
@@ -230,7 +230,7 @@ export class PlatformTestDataGenerator {
   }
 }
 
-// 平台特定測試驗證器
+// 平台SpecificTestVerify器
 export class PlatformTestValidator {
   static validateBiometricSupport(
     platform: 'ios' | 'android' | 'web'
@@ -262,5 +262,5 @@ export class PlatformTestValidator {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _platformTestEnv = PlatformTestEnvironment.getInstance();

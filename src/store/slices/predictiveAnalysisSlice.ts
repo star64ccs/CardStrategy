@@ -20,9 +20,9 @@ import {
   PredictionModelType,
 } from '../../features/analytics/types/predictiveAnalysis';
 
-// 狀態接口
+// StatusInterface
 interface PredictiveAnalysisState {
-  // 數據
+  // Data
   models: PredictionModel[];
   predictions: PredictionResult[];
   reports: PredictionReport[];
@@ -30,7 +30,7 @@ interface PredictiveAnalysisState {
   recommendations: PredictionRecommendation[];
   alerts: PredictionAlert[];
 
-  // 配置
+  // Configure
   config: PredictiveAnalysisConfig | null;
 
   // 實時指標
@@ -41,7 +41,7 @@ interface PredictiveAnalysisState {
     alertsCount: number;
   } | null;
 
-  // 加載狀態
+  // 加載Status
   loading: {
     initialize: boolean;
     getAnalysis: boolean;
@@ -61,7 +61,7 @@ interface PredictiveAnalysisState {
     getRealTimeMetrics: boolean;
   };
 
-  // 錯誤狀態
+  // ErrorStatus
   error: {
     initialize: string | null;
     getAnalysis: string | null;
@@ -81,11 +81,11 @@ interface PredictiveAnalysisState {
     getRealTimeMetrics: string | null;
   };
 
-  // 初始化狀態
+  // InitializeStatus
   isInitialized: boolean;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: PredictiveAnalysisState = {
   models: [],
   predictions: [],
@@ -134,10 +134,10 @@ const initialState: PredictiveAnalysisState = {
   isInitialized: false,
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 
 /**
- * 初始化預測分析服務
+ * Initialize預測AnalysisService
  */
 export const _initializePredictiveAnalysis = createAsyncThunk(
   'predictiveAnalysis/initialize',
@@ -152,7 +152,7 @@ export const _initializePredictiveAnalysis = createAsyncThunk(
 );
 
 /**
- * 獲取預測分析數據
+ * Get預測AnalysisData
  */
 export const _getPredictiveAnalysis = createAsyncThunk(
   'predictiveAnalysis/getAnalysis',
@@ -163,7 +163,7 @@ export const _getPredictiveAnalysis = createAsyncThunk(
 );
 
 /**
- * 創建預測模型
+ * Create預測模型
  */
 export const _createPredictionModel = createAsyncThunk(
   'predictiveAnalysis/createModel',
@@ -189,7 +189,7 @@ export const _generatePrediction = createAsyncThunk(
 );
 
 /**
- * 生成報告
+ * 生成Report
  */
 export const _generatePredictionReport = createAsyncThunk(
   'predictiveAnalysis/generateReport',
@@ -210,7 +210,7 @@ export const _generatePredictionReport = createAsyncThunk(
 );
 
 /**
- * 導出數據
+ * ExportData
  */
 export const _exportPredictiveAnalysisData = createAsyncThunk(
   'predictiveAnalysis/exportData',
@@ -221,7 +221,7 @@ export const _exportPredictiveAnalysisData = createAsyncThunk(
 );
 
 /**
- * 創建警報
+ * CreateAlert
  */
 export const _createPredictionAlert = createAsyncThunk(
   'predictiveAnalysis/createAlert',
@@ -248,7 +248,7 @@ export const _createPredictionAlert = createAsyncThunk(
 );
 
 /**
- * 更新警報
+ * UpdateAlert
  */
 export const _updatePredictionAlert = createAsyncThunk(
   'predictiveAnalysis/updateAlert',
@@ -259,7 +259,7 @@ export const _updatePredictionAlert = createAsyncThunk(
 );
 
 /**
- * 刪除警報
+ * DeleteAlert
  */
 export const _deletePredictionAlert = createAsyncThunk(
   'predictiveAnalysis/deleteAlert',
@@ -270,7 +270,7 @@ export const _deletePredictionAlert = createAsyncThunk(
 );
 
 /**
- * 獲取配置
+ * GetConfigure
  */
 export const _getPredictiveAnalysisConfig = createAsyncThunk(
   'predictiveAnalysis/getConfig',
@@ -281,7 +281,7 @@ export const _getPredictiveAnalysisConfig = createAsyncThunk(
 );
 
 /**
- * 更新配置
+ * UpdateConfigure
  */
 export const _updatePredictiveAnalysisConfig = createAsyncThunk(
   'predictiveAnalysis/updateConfig',
@@ -292,7 +292,7 @@ export const _updatePredictiveAnalysisConfig = createAsyncThunk(
 );
 
 /**
- * 獲取報告
+ * GetReport
  */
 export const _getPredictionReports = createAsyncThunk(
   'predictiveAnalysis/getReports',
@@ -303,7 +303,7 @@ export const _getPredictionReports = createAsyncThunk(
 );
 
 /**
- * 獲取洞察
+ * Get洞察
  */
 export const _getPredictionInsights = createAsyncThunk(
   'predictiveAnalysis/getInsights',
@@ -314,7 +314,7 @@ export const _getPredictionInsights = createAsyncThunk(
 );
 
 /**
- * 獲取建議
+ * Get建議
  */
 export const _getPredictionRecommendations = createAsyncThunk(
   'predictiveAnalysis/getRecommendations',
@@ -325,7 +325,7 @@ export const _getPredictionRecommendations = createAsyncThunk(
 );
 
 /**
- * 獲取警報
+ * GetAlert
  */
 export const _getPredictionAlerts = createAsyncThunk(
   'predictiveAnalysis/getAlerts',
@@ -336,7 +336,7 @@ export const _getPredictionAlerts = createAsyncThunk(
 );
 
 /**
- * 獲取實時指標
+ * Get實時指標
  */
 export const _getRealTimePredictionMetrics = createAsyncThunk(
   'predictiveAnalysis/getRealTimeMetrics',
@@ -351,7 +351,7 @@ const _predictiveAnalysisSlice = createSlice({
   name: 'predictiveAnalysis',
   initialState,
   reducers: {
-    // 清除錯誤
+    // ClearError
     clearError: (
       state,
       action: PayloadAction<keyof PredictiveAnalysisState['error']>
@@ -359,18 +359,18 @@ const _predictiveAnalysisSlice = createSlice({
       state.error[action.payload] = null;
     },
 
-    // 清除所有錯誤
+    // Clear所有Error
     clearAllErrors: state => {
       Object.keys(state.error).forEach(key => {
         state.error[key as keyof PredictiveAnalysisState['error']] = null;
       });
     },
 
-    // 重置狀態
+    // ResetStatus
     resetPredictiveAnalysis: () => initialState,
   },
   extraReducers: builder => {
-    // 初始化
+    // Initialize
     builder
       .addCase(initializePredictiveAnalysis.pending, state => {
         state.loading.initialize = true;
@@ -382,10 +382,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(initializePredictiveAnalysis.rejected, (state, action) => {
         state.loading.initialize = false;
-        state.error.initialize = action.error.message || '初始化失敗';
+        state.error.initialize = action.error.message || 'InitializeFailed';
       });
 
-    // 獲取分析數據
+    // GetAnalysisData
     builder
       .addCase(getPredictiveAnalysis.pending, state => {
         state.loading.getAnalysis = true;
@@ -397,15 +397,15 @@ const _predictiveAnalysisSlice = createSlice({
           state.models = action.payload.data.models;
           state.predictions = action.payload.data.predictions;
         } else {
-          state.error.getAnalysis = action.payload.error || '獲取分析數據失敗';
+          state.error.getAnalysis = action.payload.error || 'Get分析數據Failed';
         }
       })
       .addCase(getPredictiveAnalysis.rejected, (state, action) => {
         state.loading.getAnalysis = false;
-        state.error.getAnalysis = action.error.message || '獲取分析數據失敗';
+        state.error.getAnalysis = action.error.message || 'Get分析數據Failed';
       });
 
-    // 創建模型
+    // Create模型
     builder
       .addCase(createPredictionModel.pending, state => {
         state.loading.createModel = true;
@@ -417,7 +417,7 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(createPredictionModel.rejected, (state, action) => {
         state.loading.createModel = false;
-        state.error.createModel = action.error.message || '創建模型失敗';
+        state.error.createModel = action.error.message || 'Create模型Failed';
       });
 
     // 生成預測
@@ -432,10 +432,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(generatePrediction.rejected, (state, action) => {
         state.loading.generatePrediction = false;
-        state.error.generatePrediction = action.error.message || '生成預測失敗';
+        state.error.generatePrediction = action.error.message || '生成預測Failed';
       });
 
-    // 生成報告
+    // 生成Report
     builder
       .addCase(generatePredictionReport.pending, state => {
         state.loading.generateReport = true;
@@ -447,10 +447,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(generatePredictionReport.rejected, (state, action) => {
         state.loading.generateReport = false;
-        state.error.generateReport = action.error.message || '生成報告失敗';
+        state.error.generateReport = action.error.message || '生成報告Failed';
       });
 
-    // 導出數據
+    // ExportData
     builder
       .addCase(exportPredictiveAnalysisData.pending, state => {
         state.loading.exportData = true;
@@ -461,10 +461,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(exportPredictiveAnalysisData.rejected, (state, action) => {
         state.loading.exportData = false;
-        state.error.exportData = action.error.message || '導出數據失敗';
+        state.error.exportData = action.error.message || '導出數據Failed';
       });
 
-    // 創建警報
+    // CreateAlert
     builder
       .addCase(createPredictionAlert.pending, state => {
         state.loading.createAlert = true;
@@ -476,10 +476,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(createPredictionAlert.rejected, (state, action) => {
         state.loading.createAlert = false;
-        state.error.createAlert = action.error.message || '創建警報失敗';
+        state.error.createAlert = action.error.message || 'Create警報Failed';
       });
 
-    // 更新警報
+    // UpdateAlert
     builder
       .addCase(updatePredictionAlert.pending, state => {
         state.loading.updateAlert = true;
@@ -494,10 +494,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(updatePredictionAlert.rejected, (state, action) => {
         state.loading.updateAlert = false;
-        state.error.updateAlert = action.error.message || '更新警報失敗';
+        state.error.updateAlert = action.error.message || 'Update警報Failed';
       });
 
-    // 刪除警報
+    // DeleteAlert
     builder
       .addCase(deletePredictionAlert.pending, state => {
         state.loading.deleteAlert = true;
@@ -511,10 +511,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(deletePredictionAlert.rejected, (state, action) => {
         state.loading.deleteAlert = false;
-        state.error.deleteAlert = action.error.message || '刪除警報失敗';
+        state.error.deleteAlert = action.error.message || 'Delete警報Failed';
       });
 
-    // 獲取配置
+    // GetConfigure
     builder
       .addCase(getPredictiveAnalysisConfig.pending, state => {
         state.loading.getConfig = true;
@@ -526,10 +526,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(getPredictiveAnalysisConfig.rejected, (state, action) => {
         state.loading.getConfig = false;
-        state.error.getConfig = action.error.message || '獲取配置失敗';
+        state.error.getConfig = action.error.message || 'GetConfigureFailed';
       });
 
-    // 更新配置
+    // UpdateConfigure
     builder
       .addCase(updatePredictiveAnalysisConfig.pending, state => {
         state.loading.updateConfig = true;
@@ -541,10 +541,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(updatePredictiveAnalysisConfig.rejected, (state, action) => {
         state.loading.updateConfig = false;
-        state.error.updateConfig = action.error.message || '更新配置失敗';
+        state.error.updateConfig = action.error.message || 'UpdateConfigureFailed';
       });
 
-    // 獲取報告
+    // GetReport
     builder
       .addCase(getPredictionReports.pending, state => {
         state.loading.getReports = true;
@@ -556,10 +556,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(getPredictionReports.rejected, (state, action) => {
         state.loading.getReports = false;
-        state.error.getReports = action.error.message || '獲取報告失敗';
+        state.error.getReports = action.error.message || 'Get報告Failed';
       });
 
-    // 獲取洞察
+    // Get洞察
     builder
       .addCase(getPredictionInsights.pending, state => {
         state.loading.getInsights = true;
@@ -571,10 +571,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(getPredictionInsights.rejected, (state, action) => {
         state.loading.getInsights = false;
-        state.error.getInsights = action.error.message || '獲取洞察失敗';
+        state.error.getInsights = action.error.message || 'Get洞察Failed';
       });
 
-    // 獲取建議
+    // Get建議
     builder
       .addCase(getPredictionRecommendations.pending, state => {
         state.loading.getRecommendations = true;
@@ -586,10 +586,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(getPredictionRecommendations.rejected, (state, action) => {
         state.loading.getRecommendations = false;
-        state.error.getRecommendations = action.error.message || '獲取建議失敗';
+        state.error.getRecommendations = action.error.message || 'Get建議Failed';
       });
 
-    // 獲取警報
+    // GetAlert
     builder
       .addCase(getPredictionAlerts.pending, state => {
         state.loading.getAlerts = true;
@@ -601,10 +601,10 @@ const _predictiveAnalysisSlice = createSlice({
       })
       .addCase(getPredictionAlerts.rejected, (state, action) => {
         state.loading.getAlerts = false;
-        state.error.getAlerts = action.error.message || '獲取警報失敗';
+        state.error.getAlerts = action.error.message || 'Get警報Failed';
       });
 
-    // 獲取實時指標
+    // Get實時指標
     builder
       .addCase(getRealTimePredictionMetrics.pending, state => {
         state.loading.getRealTimeMetrics = true;
@@ -617,7 +617,7 @@ const _predictiveAnalysisSlice = createSlice({
       .addCase(getRealTimePredictionMetrics.rejected, (state, action) => {
         state.loading.getRealTimeMetrics = false;
         state.error.getRealTimeMetrics =
-          action.error.message || '獲取實時指標失敗';
+          action.error.message || 'Get實時指標Failed';
       });
   },
 });

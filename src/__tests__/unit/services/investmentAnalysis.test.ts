@@ -1,7 +1,7 @@
 import { investmentService } from '../../../services/investmentService';
 import { portfolioService } from '../../../services/portfolioService';
 
-// Mock 外部依賴
+// Mock External依賴
 jest.mock('../../../services/investmentService');
 jest.mock('../../../services/portfolioService');
 jest.mock('../../../utils/logger');

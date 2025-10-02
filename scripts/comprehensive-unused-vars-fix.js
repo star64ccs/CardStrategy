@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * 全面批量修復 no-unused-vars 警告
- * 根據重構計劃的執行原則，系統性地修復所有未使用變數警告
+ * 全面Batch修復 no-unused-vars Warning
+ * Root據重構計劃的執Row原則，系統性地修復所有未使用變數Warning
  */
 
 const fs = require('fs');
@@ -12,7 +12,7 @@ const path = require('path');
 console.log('🔧 開始全面批量修復 no-unused-vars 警告...\n');
 
 /**
- * 遞歸查找所有 JavaScript 文件
+ * 遞歸Find所有 JavaScript File
  */
 function findJsFiles(dir, files = []) {
   const items = fs.readdirSync(dir);
@@ -32,14 +32,14 @@ function findJsFiles(dir, files = []) {
 }
 
 /**
- * 修復文件中的 no-unused-vars 警告
+ * 修復File中的 no-unused-vars Warning
  */
 function fixUnusedVarsInFile(filePath) {
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     let modified = false;
     
-    // 修復 Sequelize 模型關聯方法
+    // 修復 Sequelize 模型Off聯Method
     if (content.includes('static associate(models)')) {
       content = content.replace(
         /static associate\(models\) {/g,
@@ -48,7 +48,7 @@ function fixUnusedVarsInFile(filePath) {
       modified = true;
     }
     
-    // 修復 Sequelize 遷移文件
+    // 修復 Sequelize 遷移File
     if (content.includes('async down(queryInterface, Sequelize)')) {
       content = content.replace(
         /async down\(queryInterface, Sequelize\) {/g,
@@ -73,7 +73,7 @@ function fixUnusedVarsInFile(filePath) {
       modified = true;
     }
     
-    // 修復中間件中的 next 參數
+    // 修復中間件中的 next Parameter
     if (content.includes('(err, req, res, next)')) {
       content = content.replace(
         /\(err, req, res, next\) => {/g,
@@ -99,7 +99,7 @@ function fixUnusedVarsInFile(filePath) {
       modified = true;
     }
     
-    // 修復解構賦值中的未使用變數
+    // 修復解構賦Value中的未使用變數
     if (content.includes('const { stdout, stderr }')) {
       content = content.replace(
         /const \{ stdout, stderr \} = /g,
@@ -108,7 +108,7 @@ function fixUnusedVarsInFile(filePath) {
       modified = true;
     }
     
-    // 修復 React 導入
+    // 修復 React Import
     if (content.includes("import React from 'react'")) {
       content = content.replace(
         /import React from "react"; // eslint-disable-next-line no-unused-vars/g,
@@ -117,7 +117,7 @@ function fixUnusedVarsInFile(filePath) {
       modified = true;
     }
     
-    // 修復未使用的導入變數
+    // 修復未使用的Import變數
     const importMatches = content.match(/import\s+\{([^}]+)\}\s+from\s+['"][^'"]+['"];?/g);
     if (importMatches) {
       importMatches.forEach(match => {
@@ -144,7 +144,7 @@ function fixUnusedVarsInFile(filePath) {
       });
     }
     
-    // 修復函數參數中的未使用變數
+    // 修復FunctionParameter中的未使用變數
     const functionMatches = content.match(/function\s+\w+\s*\([^)]*\)/g);
     if (functionMatches) {
       functionMatches.forEach(match => {
@@ -179,12 +179,12 @@ function fixUnusedVarsInFile(filePath) {
     
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`❌ 修復失敗: ${filePath}`, error.message);
+    console.error(`❌ 修復Failed: ${filePath}`, error.message);
   }
 }
 
 /**
- * 執行全面修復
+ * 執Row全面修復
  */
 function runComprehensiveFix() {
   try {
@@ -202,7 +202,7 @@ function runComprehensiveFix() {
         fixedCount++;
       } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(`❌ 處理文件失敗: ${file}`, error.message);
+        console.error(`❌ Handle文件Failed: ${file}`, error.message);
       }
     }
     
@@ -211,9 +211,9 @@ function runComprehensiveFix() {
     
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('❌ 全面修復過程中發生錯誤:', error.message);
+    console.error('❌ 全面修復過程中發生Error:', error.message);
   }
 }
 
-// 執行全面修復
+// 執Row全面修復
 runComprehensiveFix();

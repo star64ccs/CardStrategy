@@ -63,10 +63,10 @@ describe('CrossPlatformOptimizationService', () => {
       expect(componentLibraryStrategy?.platformSpecificCodePercentage).toBe(40);
     });
 
-    it('應該包含服務層共享策略', () => {
+    it('應該包含Service層共享策略', () => {
       const _strategies = crossPlatformOptimizationService.getStrategies();
       const _serviceLayerStrategy = strategies.find(
-        s => s.name === '服務層共享策略'
+        s => s.name === 'Service層共享策略'
       );
 
       expect(serviceLayerStrategy).toBeDefined();
@@ -418,7 +418,7 @@ describe('CrossPlatformOptimizationService', () => {
 
       expect(bestPractices).toContain('使用 TypeScript 確保類型安全');
       expect(bestPractices).toContain('實施依賴注入模式');
-      expect(bestPractices).toContain('創建統一的錯誤處理機制');
+      expect(bestPractices).toContain('Create統一的ErrorHandle機制');
       expect(bestPractices).toContain('使用工廠模式處理平台差異');
       expect(bestPractices).toContain('實施策略模式處理平台特定邏輯');
     });
@@ -432,7 +432,7 @@ describe('CrossPlatformOptimizationService', () => {
       expect(Array.isArray(suggestions)).toBe(true);
       expect(suggestions.length).toBeGreaterThan(0);
 
-      expect(suggestions).toContain('實施統一的錯誤處理機制');
+      expect(suggestions).toContain('實施統一的ErrorHandle機制');
       expect(suggestions).toContain('創建平台適配器模式');
       expect(suggestions).toContain('建立共享組件庫');
       expect(suggestions).toContain('實施統一的狀態管理');
@@ -460,8 +460,8 @@ describe('CrossPlatformOptimizationService', () => {
 
       expect(guide).toContain('業務邏輯共享最大化');
       expect(guide).toContain('UI 層保持平台特定');
-      expect(guide).toContain('服務層統一抽象');
-      expect(guide).toContain('錯誤處理標準化');
+      expect(guide).toContain('Service層統一抽象');
+      expect(guide).toContain('ErrorHandle標準化');
     });
 
     it('應該包含開發流程詳情', () => {

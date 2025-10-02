@@ -19,8 +19,8 @@ import {
 } from '../types/pricing';
 
 /**
- * 市場價格服務類
- * 負責實時價格追蹤、歷史價格分析、價格警報等功能
+ * 市場價格ServiceClass
+ * 負責實時價格Trace、歷史價格Analysis、價格Alert等功能
  */
 class PricingService {
   private static instance: PricingService;
@@ -36,7 +36,7 @@ class PricingService {
       timeout: 10000,
       retryAttempts: 3,
       cacheEnabled: true,
-      cacheExpiry: 300000, // 5分鐘
+      cacheExpiry: 300000, // 5Minute
     };
   }
 
@@ -48,7 +48,7 @@ class PricingService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(config?: Partial<PriceServiceConfig>): Promise<void> {
     try {
@@ -56,29 +56,29 @@ class PricingService {
         this.config = { ...this.config, ...config };
       }
 
-      logger.info('市場價格服務初始化開始');
+      logger.info('市場價格ServiceInitialize開始');
 
-      // 啟動實時更新
+      // Start實時Update
       this.startRealTimeUpdates();
 
-      // 啟動警報檢查
+      // StartAlertCheck
       this.startAlertChecking();
 
-      logger.info('市場價格服務初始化完成');
+      logger.info('市場價格ServiceInitialize完成');
     } catch (error) {
-      logger.error('市場價格服務初始化失敗:', error);
+      logger.error('市場價格ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取卡牌當前價格
+   * Get卡牌當前價格
    */
   public async getCurrentPrice(request: PriceRequest): Promise<PriceResponse> {
     try {
       const _cacheKey = `${request.cardId}_${request.condition || 'all'}`;
 
-      // 檢查緩存
+      // CheckCache
       if (this.config.cacheEnabled && this.priceCache.has(cacheKey)) {
         const _cached = this.priceCache.get(cacheKey)!;
         if (
@@ -96,7 +96,7 @@ class PricingService {
       const _priceData = await this.fetchPriceData(request);
       const _marketPrice = this.processPriceData(priceData);
 
-      // 更新緩存
+      // UpdateCache
       if (this.config.cacheEnabled) {
         this.priceCache.set(cacheKey, marketPrice);
       }
@@ -106,7 +106,7 @@ class PricingService {
         data: marketPrice,
       };
 
-      // 包含歷史數據
+      // Package含歷史Data
       if (request.includeHistory) {
         response.history = await this.getPriceHistory(
           request.cardId,
@@ -114,25 +114,25 @@ class PricingService {
         );
       }
 
-      // 包含分析數據
+      // Package含AnalysisData
       response.analysis = await this.generateMarketAnalysis(request.cardId);
 
-      // 包含警報數據
+      // Package含AlertData
       response.alerts = await this.getUserAlerts(request.cardId);
 
       return response;
     } catch (error) {
-      logger.error('獲取當前價格失敗:', error);
+      logger.error('Get當前價格Failed:', error);
       return {
         success: false,
         data: {} as MarketPrice,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
 
   /**
-   * 獲取價格歷史
+   * Get價格歷史
    */
   public async getPriceHistory(
     cardId: string,
@@ -141,7 +141,7 @@ class PricingService {
     try {
       logger.info(`獲取卡牌 ${cardId} 的價格歷史，期間: ${period}`);
 
-      // 模擬歷史數據
+      // 模擬歷史Data
       const _historyData = this.generateMockHistoryData(cardId, period);
 
       return {
@@ -152,13 +152,13 @@ class PricingService {
         statistics: this.calculateHistoryStatistics(historyData),
       };
     } catch (error) {
-      logger.error('獲取價格歷史失敗:', error);
+      logger.error('Get價格歷史Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建價格警報
+   * Create價格Alert
    */
   public async createPriceAlert(
     alert: Omit<PriceAlert, 'id' | 'createdAt'>
@@ -172,24 +172,24 @@ class PricingService {
 
       logger.info(`創建價格警報: ${newAlert.id}`);
 
-      // 存儲警報
+      // StorageAlert
       const _userAlerts = this.alertCache.get(alert.userId) || [];
       userAlerts.push(newAlert);
       this.alertCache.set(alert.userId, userAlerts);
 
       return newAlert;
     } catch (error) {
-      logger.error('創建價格警報失敗:', error);
+      logger.error('Create價格警報Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取用戶警報
+   * GetUserAlert
    */
   public async getUserAlerts(cardId?: string): Promise<PriceAlert[]> {
     try {
-      // 模擬用戶警報數據
+      // 模擬UserAlertData
       const mockAlerts: PriceAlert[] = [
         {
           id: 'alert_1',
@@ -224,13 +224,13 @@ class PricingService {
 
       return mockAlerts;
     } catch (error) {
-      logger.error('獲取用戶警報失敗:', error);
+      logger.error('Get用戶警報Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新警報狀態
+   * UpdateAlertStatus
    */
   public async updateAlertStatus(
     alertId: string,
@@ -239,7 +239,7 @@ class PricingService {
     try {
       logger.info(`更新警報狀態: ${alertId}, 狀態: ${isActive}`);
 
-      // 更新所有用戶的警報
+      // Update所有User的Alert
       for (const [userId, alerts] of this.alertCache.entries()) {
         const _alert = alerts.find(a => a.id === alertId);
         if (alert) {
@@ -249,37 +249,37 @@ class PricingService {
         }
       }
     } catch (error) {
-      logger.error('更新警報狀態失敗:', error);
+      logger.error('Update警報狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 刪除警報
+   * DeleteAlert
    */
   public async deleteAlert(alertId: string): Promise<void> {
     try {
       logger.info(`刪除警報: ${alertId}`);
 
-      // 從所有用戶的警報中刪除
+      // 從所有User的Alert中Delete
       for (const [userId, alerts] of this.alertCache.entries()) {
         const _filteredAlerts = alerts.filter(a => a.id !== alertId);
         this.alertCache.set(userId, filteredAlerts);
       }
     } catch (error) {
-      logger.error('刪除警報失敗:', error);
+      logger.error('Delete警報Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取市場統計
+   * Get市場Statistics
    */
   public async getMarketStats(): Promise<PriceStats> {
     try {
       logger.info('獲取市場統計數據');
 
-      // 模擬市場統計數據
+      // 模擬市場統Count據
       return {
         totalCards: 15000,
         activeMarkets: 8,
@@ -291,19 +291,19 @@ class PricingService {
         marketStatus: MarketStatus.ACTIVE,
       };
     } catch (error) {
-      logger.error('獲取市場統計失敗:', error);
+      logger.error('Get市場統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 生成市場分析
+   * 生成市場Analysis
    */
   public async generateMarketAnalysis(cardId: string): Promise<MarketAnalysis> {
     try {
       logger.info(`生成卡牌 ${cardId} 的市場分析`);
 
-      // 模擬市場分析數據
+      // 模擬市場AnalysisData
       return {
         id: `analysis_${cardId}_${Date.now()}`,
         cardId,
@@ -327,13 +327,13 @@ class PricingService {
         timeHorizon: 'medium',
       };
     } catch (error) {
-      logger.error('生成市場分析失敗:', error);
+      logger.error('生成市場分析Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 啟動實時更新
+   * Start實時Update
    */
   private startRealTimeUpdates(): void {
     if (this.updateInterval) {
@@ -342,13 +342,13 @@ class PricingService {
 
     this.updateInterval = setInterval(() => {
       this.updatePrices();
-    }, 30000); // 每30秒更新一次
+    }, 30000); // 每30SecondUpdate一次
 
     logger.info('實時價格更新已啟動');
   }
 
   /**
-   * 啟動警報檢查
+   * StartAlertCheck
    */
   private startAlertChecking(): void {
     if (this.alertCheckInterval) {
@@ -357,19 +357,19 @@ class PricingService {
 
     this.alertCheckInterval = setInterval(() => {
       this.checkPriceAlerts();
-    }, 60000); // 每分鐘檢查一次
+    }, 60000); // 每MinuteCheck一次
 
     logger.info('價格警報檢查已啟動');
   }
 
   /**
-   * 更新價格數據
+   * Update價格Data
    */
   private async updatePrices(): Promise<void> {
     try {
       logger.debug('開始更新價格數據');
 
-      // 模擬價格更新邏輯
+      // 模擬價格Update邏輯
       for (const [key, price] of this.priceCache.entries()) {
         const _priceChange = (Math.random() - 0.5) * 10; // 隨機價格變化
         price.currentPrice += priceChange;
@@ -378,7 +378,7 @@ class PricingService {
           (priceChange / (price.currentPrice - priceChange)) * 100;
         price.lastUpdated = new Date().toISOString();
 
-        // 更新趨勢
+        // Update趨勢
         if (priceChange > 2) {
           price.trend = PriceTrend.RISING;
         } else if (priceChange < -2) {
@@ -390,12 +390,12 @@ class PricingService {
 
       logger.debug('價格數據更新完成');
     } catch (error) {
-      logger.error('更新價格數據失敗:', error);
+      logger.error('Update價格數據Failed:', error);
     }
   }
 
   /**
-   * 檢查價格警報
+   * Check價格Alert
    */
   private async checkPriceAlerts(): Promise<void> {
     try {
@@ -429,19 +429,19 @@ class PricingService {
           if (shouldTrigger && !alert.triggeredAt) {
             alert.triggeredAt = new Date().toISOString();
             logger.info(`價格警報觸發: ${alert.id}`);
-            // 這裡可以發送通知
+            // 這裡可以SendNotification
           }
         }
       }
 
       logger.debug('價格警報檢查完成');
     } catch (error) {
-      logger.error('檢查價格警報失敗:', error);
+      logger.error('Check價格警報Failed:', error);
     }
   }
 
   /**
-   * 獲取價格數據
+   * Get價格Data
    */
   private async fetchPriceData(request: PriceRequest): Promise<PriceData[]> {
     // 模擬API調用
@@ -477,7 +477,7 @@ class PricingService {
   }
 
   /**
-   * 處理價格數據
+   * Handle價格Data
    */
   private processPriceData(priceData: PriceData[]): MarketPrice {
     if (priceData.length === 0) {
@@ -510,7 +510,7 @@ class PricingService {
   }
 
   /**
-   * 生成模擬歷史數據
+   * 生成模擬歷史Data
    */
   private generateMockHistoryData(
     cardId: string,
@@ -541,7 +541,7 @@ class PricingService {
   }
 
   /**
-   * 計算歷史統計數據
+   * 計算歷史統Count據
    */
   private calculateHistoryStatistics(
     data: PriceHistory['data']
@@ -571,7 +571,7 @@ class PricingService {
   }
 
   /**
-   * 清理資源
+   * 清理Resource
    */
   public destroy(): void {
     if (this.updateInterval) {
@@ -582,7 +582,7 @@ class PricingService {
     }
     this.priceCache.clear();
     this.alertCache.clear();
-    logger.info('市場價格服務已清理');
+    logger.info('市場價格Service已清理');
   }
 }
 

@@ -4,7 +4,7 @@ import { DataPriority, StorageLayer, StorageStrategy } from '../types/storage';
 
 import { MultiLayerStorageService } from './multiLayerStorageService';
 
-// 性能指標接口
+// 性能指標Interface
 interface PerformanceMetrics {
   readLatency: number;
   writeLatency: number;
@@ -16,7 +16,7 @@ interface PerformanceMetrics {
   memoryUsage?: number;
 }
 
-// 網絡狀況枚舉
+// Network狀況枚舉
 enum NetworkCondition {
   EXCELLENT = 'excellent', // 優秀
   GOOD = 'good', // 良好
@@ -32,7 +32,7 @@ enum DeviceCondition {
   LOW_STORAGE = 'low_storage',
 }
 
-// 自適應配置接口
+// 自適應ConfigureInterface
 interface AdaptiveConfig {
   autoOptimize: boolean;
   monitoringInterval: number;
@@ -41,7 +41,7 @@ interface AdaptiveConfig {
   constraints: ResourceConstraints;
 }
 
-// 性能目標接口
+// 性能目標Interface
 interface PerformanceTargets {
   maxReadLatency: number;
   maxWriteLatency: number;
@@ -49,7 +49,7 @@ interface PerformanceTargets {
   maxErrorRate: number;
 }
 
-// 資源限制接口
+// ResourceLimitInterface
 interface ResourceConstraints {
   maxMemoryUsage: number;
   maxStorageUsage: number;
@@ -58,8 +58,8 @@ interface ResourceConstraints {
 }
 
 /**
- * 存儲策略管理器
- * 負責動態選擇和調整存儲策略，根據設備狀況、網絡條件和性能指標自適應優化
+ * Storage策略Manage器
+ * 負責DynamicSelect和調整Storage策略，Root據設備狀況、NetworkCondition和性能指標自適應優化
  */
 export class StorageStrategyManager {
   private static instance: StorageStrategyManager;
@@ -77,7 +77,7 @@ export class StorageStrategyManager {
   }
 
   /**
-   * 獲取服務實例（單例模式）
+   * GetServiceInstance（單例模式）
    */
   public static getInstance(): StorageStrategyManager {
     if (!StorageStrategyManager.instance) {
@@ -87,7 +87,7 @@ export class StorageStrategyManager {
   }
 
   /**
-   * 初始化策略管理器
+   * Initialize策略Manage器
    */
   public async initialize(config?: Partial<AdaptiveConfig>): Promise<boolean> {
     try {
@@ -99,23 +99,23 @@ export class StorageStrategyManager {
       const _optimalStrategy = await this.evaluateOptimalStrategy();
       await this.setStrategy(optimalStrategy);
 
-      // 啟動監控
+      // StartMonitor
       if (this.adaptiveConfig.autoOptimize) {
         this.startPerformanceMonitoring();
       }
 
-      logger.info('StorageStrategyManager 初始化成功', {
+      logger.info('StorageStrategyManager InitializeSuccess', {
         strategy: this.currentStrategy,
       });
       return true;
     } catch (error) {
-      logger.error('StorageStrategyManager 初始化失敗:', error);
+      logger.error('StorageStrategyManager InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * 設置存儲策略
+   * SettingsStorage策略
    */
   public async setStrategy(strategy: StorageStrategy): Promise<boolean> {
     try {
@@ -134,20 +134,20 @@ export class StorageStrategyManager {
 
       return false;
     } catch (error) {
-      logger.error('設置存儲策略失敗:', { error, strategy });
+      logger.error('Settings存儲策略Failed:', { error, strategy });
       return false;
     }
   }
 
   /**
-   * 獲取當前策略
+   * Get當前策略
    */
   public getCurrentStrategy(): StorageStrategy {
     return this.currentStrategy;
   }
 
   /**
-   * 根據數據特徵推薦存儲選項
+   * Root據Data特徵推薦StorageOptions
    */
   public recommendStorageOptions(
     dataSize: number,
@@ -165,7 +165,7 @@ export class StorageStrategyManager {
       encrypt: false,
     };
 
-    // 根據數據大小調整
+    // Root據Data大小調整
     if (dataSize > 1024 * 1024) {
       // 1MB
       options.compress = true;
@@ -177,29 +177,29 @@ export class StorageStrategyManager {
       options.layer = StorageLayer.MEMORY;
     }
 
-    // 根據訪問頻率調整
+    // Root據訪問頻率調整
     if (accessFrequency > 0.8) {
       // 高頻訪問
       options.layer = StorageLayer.MEMORY;
-      options.ttl = 30 * 60 * 1000; // 30分鐘
+      options.ttl = 30 * 60 * 1000; // 30Minute
     } else if (accessFrequency > 0.4) {
       // 中頻訪問
       options.layer = StorageLayer.CACHE;
-      options.ttl = 2 * 60 * 60 * 1000; // 2小時
+      options.ttl = 2 * 60 * 60 * 1000; // 2Hour
     }
 
-    // 根據重要性調整
+    // Root據重要性調整
     if (importance === DataPriority.CRITICAL) {
       options.sync = true;
       options.encrypt = true;
-      // 關鍵數據使用多層存儲
+      // OffKeyData使用多層Storage
       delete options.layer;
     } else if (importance === DataPriority.LOW || isTemporary) {
       options.sync = false;
-      options.ttl = 10 * 60 * 1000; // 10分鐘
+      options.ttl = 10 * 60 * 1000; // 10Minute
     }
 
-    // 根據網絡狀況調整
+    // Root據Network狀況調整
     if (
       networkCondition === NetworkCondition.POOR ||
       networkCondition === NetworkCondition.OFFLINE
@@ -208,10 +208,10 @@ export class StorageStrategyManager {
       options.layer = StorageLayer.LOCAL;
     }
 
-    // 根據設備狀況調整
+    // Root據設備狀況調整
     if (deviceCondition === DeviceCondition.LOW_STORAGE) {
       options.compress = true;
-      options.ttl = 30 * 60 * 1000; // 30分鐘
+      options.ttl = 30 * 60 * 1000; // 30Minute
     } else if (deviceCondition === DeviceCondition.POWER_SAVING) {
       options.sync = false;
       options.layer = StorageLayer.LOCAL;
@@ -245,13 +245,13 @@ export class StorageStrategyManager {
 
       return true;
     } catch (error) {
-      logger.error('優化策略失敗:', error);
+      logger.error('優化策略Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取策略性能報告
+   * Get策略性能Report
    */
   public async getPerformanceReport(): Promise<{
     currentStrategy: StorageStrategy;
@@ -272,7 +272,7 @@ export class StorageStrategyManager {
   }
 
   /**
-   * 預測存儲需求
+   * 預測Storage需求
    */
   public predictStorageNeeds(
     timeHorizon: number = 7 * 24 * 60 * 60 * 1000 // 7天
@@ -282,7 +282,7 @@ export class StorageStrategyManager {
     recommendedStrategy: StorageStrategy;
     resourceRequirements: ResourceRequirements;
   } {
-    const _historicalData = this.performanceHistory.slice(-168); // 最近7天的小時數據
+    const _historicalData = this.performanceHistory.slice(-168); // 最近7天的HourData
 
     if (historicalData.length === 0) {
       return {
@@ -325,7 +325,7 @@ export class StorageStrategyManager {
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<boolean> {
     try {
@@ -334,17 +334,17 @@ export class StorageStrategyManager {
       logger.info('StorageStrategyManager 已銷毀');
       return true;
     } catch (error) {
-      logger.error('銷毀 StorageStrategyManager 失敗:', error);
+      logger.error('銷毀 StorageStrategyManager Failed:', error);
       return false;
     }
   }
 
-  // 私有方法實現
+  // PrivateMethod實現
 
   private getDefaultAdaptiveConfig(): AdaptiveConfig {
     return {
       autoOptimize: true,
-      monitoringInterval: 60 * 1000, // 1分鐘
+      monitoringInterval: 60 * 1000, // 1Minute
       strategyChangeThreshold: 0.2, // 20%性能變化觸發策略調整
       performanceTargets: {
         maxReadLatency: 100, // 100ms
@@ -366,13 +366,13 @@ export class StorageStrategyManager {
     const _deviceCondition = this.assessDeviceCondition();
     const _currentLoad = await this.assessCurrentLoad();
 
-    // 優先級：設備狀況 > 網絡狀況 > 負載情況
+    // 優先級：設備狀況 > Network狀況 > 負載情況
     if (deviceCondition === DeviceCondition.POWER_SAVING) {
       return StorageStrategy.OFFLINE_FIRST;
     }
 
     if (deviceCondition === DeviceCondition.LOW_STORAGE) {
-      return StorageStrategy.PERFORMANCE; // 使用內存減少存儲佔用
+      return StorageStrategy.PERFORMANCE; // 使用Memory減少Storage佔用
     }
 
     if (
@@ -546,14 +546,14 @@ export class StorageStrategyManager {
   }
 
   private assessNetworkCondition(): NetworkCondition {
-    // 模擬網絡狀況評估
+    // 模擬Network狀況評估
     const _navigator = globalThis.navigator as any;
 
     if (!navigator.onLine) {
       return NetworkCondition.OFFLINE;
     }
 
-    // 在實際實現中，這裡會檢測網絡速度和延遲
+    // 在實際實現中，這裡會檢測Network速度和延遲
     const _connection =
       navigator.connection ||
       navigator.mozConnection ||
@@ -571,7 +571,7 @@ export class StorageStrategyManager {
       }
     }
 
-    return NetworkCondition.GOOD; // 默認假設網絡良好
+    return NetworkCondition.GOOD; // DefaultFalse設Network良好
   }
 
   private assessDeviceCondition(): DeviceCondition {
@@ -631,18 +631,18 @@ export class StorageStrategyManager {
         const _metrics = await this.getCurrentPerformanceMetrics();
         this.performanceHistory.push(metrics);
 
-        // 保持歷史記錄在合理範圍內（最近24小時）
+        // 保持歷史Record在合理範圍內（最近24Hour）
         if (this.performanceHistory.length > 1440) {
-          // 24 * 60 分鐘
+          // 24 * 60 Minute
           this.performanceHistory = this.performanceHistory.slice(-1440);
         }
 
-        // 檢查是否需要優化策略
+        // CheckYesNo需要優化策略
         if (this.adaptiveConfig.autoOptimize) {
           await this.optimizeStrategy();
         }
       } catch (error) {
-        logger.error('性能監控失敗:', error);
+        logger.error('性能監控Failed:', error);
       }
     }, this.adaptiveConfig.monitoringInterval);
 
@@ -705,7 +705,7 @@ export class StorageStrategyManager {
     }
 
     if (metrics.errorRate > targets.maxErrorRate) {
-      recommendations.push('檢查網絡連接或增加重試機制');
+      recommendations.push('Check網絡Connect或增加重試機制');
     }
 
     if (metrics.storageUsage > 0.8) {
@@ -729,8 +729,8 @@ export class StorageStrategyManager {
       };
     }
 
-    const _recent = this.performanceHistory.slice(-10); // 最近10個數據點
-    const _earlier = this.performanceHistory.slice(-20, -10); // 更早的10個數據點
+    const _recent = this.performanceHistory.slice(-10); // 最近10個Data點
+    const _earlier = this.performanceHistory.slice(-20, -10); // 更早的10個Data點
 
     if (earlier.length === 0) {
       return {
@@ -799,10 +799,10 @@ export class StorageStrategyManager {
     try {
       const _navigator = globalThis.navigator as any;
       if (navigator.battery || navigator.getBattery) {
-        // 實際實現中會從電池API獲取
+        // 實際實現中會從電池APIGet
         return 0.8; // 模擬80%電量
       }
-      return 1; // 假設桌面設備
+      return 1; // False設桌面設備
     } catch {
       return 1;
     }
@@ -816,7 +816,7 @@ export class StorageStrategyManager {
           performance.memory.usedJSHeapSize / performance.memory.totalJSHeapSize
         );
       }
-      return 0.5; // 假設50%使用率
+      return 0.5; // False設50%使用率
     } catch {
       return 0.5;
     }
@@ -837,12 +837,12 @@ export class StorageStrategyManager {
   }
 
   private getCurrentStorageSize(): number {
-    // 模擬當前存儲大小
+    // 模擬當前Storage大小
     return 50 * 1024 * 1024; // 50MB
   }
 
   private getCurrentOperationsPerHour(): number {
-    // 模擬當前每小時操作數
+    // 模擬當前每HourOperation數
     return 1000;
   }
 
@@ -854,7 +854,7 @@ export class StorageStrategyManager {
       // 高負載
       return StorageStrategy.PERFORMANCE;
     } else if (size > 500 * 1024 * 1024) {
-      // 大存儲
+      // 大Storage
       return StorageStrategy.RELIABILITY;
     } else {
       return StorageStrategy.BALANCED;
@@ -866,9 +866,9 @@ export class StorageStrategyManager {
     operations: number
   ): ResourceRequirements {
     return {
-      memoryMB: Math.max(10, operations / 100), // 基於操作數計算內存需求
-      storageMB: Math.max(50, (size / (1024 * 1024)) * 1.2), // 存儲需求+20%緩衝
-      networkMBps: Math.max(1, operations / 1000), // 基於操作數計算網絡需求
+      memoryMB: Math.max(10, operations / 100), // 基於Operation數計算Memory需求
+      storageMB: Math.max(50, (size / (1024 * 1024)) * 1.2), // Storage需求+20%緩衝
+      networkMBps: Math.max(1, operations / 1000), // 基於Operation數計算Network需求
     };
   }
 
@@ -924,7 +924,7 @@ export class StorageStrategyManager {
   }
 }
 
-// 輔助接口
+// 輔助Interface
 interface TrendAnalysis {
   readLatencyTrend: 'improving' | 'degrading' | 'stable';
   writeLatencyTrend: 'improving' | 'degrading' | 'stable';

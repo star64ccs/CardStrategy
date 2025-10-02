@@ -44,13 +44,13 @@ import type {
 import { CounterfeitRisk, DetectionMethod } from '../types/detection';
 
 /**
- * 假卡檢測系統自定義 Hook
- * 提供假卡檢測、特徵分析、報告管理等功能
+ * False卡檢測系統Custom Hook
+ * 提供False卡檢測、特徵Analysis、ReportManage等功能
  */
 export const _useFakeCardDetection = () => {
   const _dispatch = useAppDispatch();
 
-  // 選擇器
+  // Select器
   const _currentDetection = useSelector((state: RootState) =>
     selectCurrentDetection(state)
   );
@@ -83,31 +83,31 @@ export const _useFakeCardDetection = () => {
     selectReportForm(state)
   );
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(
     async (config?: unknown) => {
       try {
         await (dispatch(initializeDetectionService(config)) as any).unwrap();
       } catch (error) {
-        console.error('初始化假卡檢測服務失敗:', error);
+        console.error('Initialize假卡檢測ServiceFailed:', error);
       }
     },
     [dispatch]
   );
 
-  // 執行假卡檢測
+  // 執RowFalse卡檢測
   const _detectCard = useCallback(
     async (request: DetectionRequest) => {
       try {
         await (dispatch(detectFakeCard(request)) as any).unwrap();
       } catch (error) {
-        console.error('假卡檢測失敗:', error);
+        console.error('假卡檢測Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 批量檢測
+  // Batch檢測
   const _batchDetect = useCallback(
     async (requests: DetectionRequest[]) => {
       try {
@@ -115,14 +115,14 @@ export const _useFakeCardDetection = () => {
         await (dispatch(batchDetectFakeCards(requests)) as any).unwrap();
         dispatch(completeBatchDetection());
       } catch (error) {
-        console.error('批量檢測失敗:', error);
+        console.error('批量檢測Failed:', error);
         dispatch(completeBatchDetection());
       }
     },
     [dispatch]
   );
 
-  // 獲取檢測歷史
+  // Get檢測歷史
   const _getHistory = useCallback(
     async (cardId?: string, userId?: string) => {
       try {
@@ -130,46 +130,46 @@ export const _useFakeCardDetection = () => {
           dispatch(fetchDetectionHistory({ cardId, userId })) as any
         ).unwrap();
       } catch (error) {
-        console.error('獲取檢測歷史失敗:', error);
+        console.error('Get檢測歷史Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 獲取檢測統計
+  // Get檢測Statistics
   const _getStats = useCallback(async () => {
     try {
       await (dispatch(fetchDetectionStats()) as any).unwrap();
     } catch (error) {
-      console.error('獲取檢測統計失敗:', error);
+      console.error('Get檢測統計Failed:', error);
     }
   }, [dispatch]);
 
-  // 獲取特徵模板
+  // Get特徵模板
   const _getTemplates = useCallback(
     async (cardType?: string) => {
       try {
         await (dispatch(fetchFeatureTemplates(cardType)) as any).unwrap();
       } catch (error) {
-        console.error('獲取特徵模板失敗:', error);
+        console.error('Get特徵模板Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 報告假卡
+  // ReportFalse卡
   const _reportCard = useCallback(
     async (report: ReportRequest) => {
       try {
         await (dispatch(reportFakeCard(report)) as any).unwrap();
       } catch (error) {
-        console.error('報告假卡失敗:', error);
+        console.error('報告假卡Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 設置選中的卡牌ID
+  // Settings選中的卡牌ID
   const _setCardId = useCallback(
     (cardId: string) => {
       dispatch(setSelectedCardId(cardId));
@@ -177,7 +177,7 @@ export const _useFakeCardDetection = () => {
     [dispatch]
   );
 
-  // 設置選中的檢測方法
+  // Settings選中的檢測Method
   const _setMethods = useCallback(
     (methods: DetectionMethod[]) => {
       dispatch(setSelectedMethods(methods));
@@ -185,7 +185,7 @@ export const _useFakeCardDetection = () => {
     [dispatch]
   );
 
-  // 更新報告表單
+  // UpdateReportTable單
   const _updateForm = useCallback(
     (formData: Partial<typeof reportForm>) => {
       dispatch(updateReportForm(formData));
@@ -193,27 +193,27 @@ export const _useFakeCardDetection = () => {
     [dispatch]
   );
 
-  // 重置報告表單
+  // ResetReportTable單
   const _resetForm = useCallback(() => {
     dispatch(resetReportForm());
   }, [dispatch]);
 
-  // 清除錯誤
+  // ClearError
   const _clearErrorState = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 清除當前檢測結果
+  // Clear當前檢測結果
   const _clearDetection = useCallback(() => {
     dispatch(clearCurrentDetection());
   }, [dispatch]);
 
-  // 清除檢測歷史
+  // Clear檢測歷史
   const _clearHistory = useCallback(() => {
     dispatch(clearDetectionHistory());
   }, [dispatch]);
 
-  // 添加證據圖片
+  // Add證據Graph片
   const _addEvidence = useCallback(
     (type: 'additional' | 'comparison', url: string) => {
       dispatch(addEvidenceImage({ type, url }));
@@ -221,7 +221,7 @@ export const _useFakeCardDetection = () => {
     [dispatch]
   );
 
-  // 移除證據圖片
+  // Remove證據Graph片
   const _removeEvidence = useCallback(
     (type: 'additional' | 'comparison', index: number) => {
       dispatch(removeEvidenceImage({ type, index }));
@@ -229,7 +229,7 @@ export const _useFakeCardDetection = () => {
     [dispatch]
   );
 
-  // 添加參考資料
+  // Add參考資料
   const _addRef = useCallback(
     (reference: string) => {
       dispatch(addReference(reference));
@@ -237,7 +237,7 @@ export const _useFakeCardDetection = () => {
     [dispatch]
   );
 
-  // 移除參考資料
+  // Remove參考資料
   const _removeRef = useCallback(
     (index: number) => {
       dispatch(removeReference(index));
@@ -245,7 +245,7 @@ export const _useFakeCardDetection = () => {
     [dispatch]
   );
 
-  // 獲取風險等級顏色
+  // Get風險等級顏色
   const _getRiskColor = useCallback((risk: CounterfeitRisk) => {
     switch (risk) {
       case CounterfeitRisk.AUTHENTIC:
@@ -261,7 +261,7 @@ export const _useFakeCardDetection = () => {
     }
   }, []);
 
-  // 獲取風險等級圖標
+  // Get風險等級Graph標
   const _getRiskIcon = useCallback((risk: CounterfeitRisk) => {
     switch (risk) {
       case CounterfeitRisk.AUTHENTIC:
@@ -277,7 +277,7 @@ export const _useFakeCardDetection = () => {
     }
   }, []);
 
-  // 獲取風險等級文字
+  // Get風險等級文字
   const _getRiskText = useCallback((risk: CounterfeitRisk) => {
     switch (risk) {
       case CounterfeitRisk.AUTHENTIC:
@@ -293,7 +293,7 @@ export const _useFakeCardDetection = () => {
     }
   }, []);
 
-  // 格式化檢測方法
+  // Format檢測Method
   const _formatMethod = useCallback((method: DetectionMethod) => {
     switch (method) {
       case DetectionMethod.IMAGE_ANALYSIS:
@@ -317,7 +317,7 @@ export const _useFakeCardDetection = () => {
     }
   }, []);
 
-  // 格式化處理時間
+  // FormatHandleTime
   const _formatProcessingTime = useCallback((timeMs: number) => {
     if (timeMs < 1000) {
       return `${timeMs.toFixed(0)}ms`;
@@ -341,19 +341,19 @@ export const _useFakeCardDetection = () => {
     return totalWeight > 0 ? weightedScore / totalWeight : 0;
   }, []);
 
-  // 獲取失敗的特徵
+  // GetFailed的特徵
   const _getFailedFeatures = useCallback((features: DetectionFeature[]) => {
     return features.filter(feature => !feature.detected);
   }, []);
 
-  // 獲取高風險特徵
+  // Get高風險特徵
   const _getHighRiskFeatures = useCallback((features: DetectionFeature[]) => {
     return features.filter(
       feature => !feature.detected && feature.importance > 0.8
     );
   }, []);
 
-  // 檢查是否需要人工復查
+  // CheckYesNo需要人工復查
   const _needsManualReview = useMemo(() => {
     if (!currentDetection) return false;
     return (
@@ -363,7 +363,7 @@ export const _useFakeCardDetection = () => {
     );
   }, [currentDetection]);
 
-  // 檢查是否有高風險特徵
+  // CheckYesNo有高風險特徵
   const _hasHighRiskFeatures = useMemo(() => {
     if (!currentDetection) return false;
     return (
@@ -372,13 +372,13 @@ export const _useFakeCardDetection = () => {
     );
   }, [currentDetection, getHighRiskFeatures]);
 
-  // 計算批量檢測進度百分比
+  // 計算Batch檢測進度百分比
   const _batchProgress = useMemo(() => {
     if (batchDetections.total === 0) return 0;
     return (batchDetections.progress / batchDetections.total) * 100;
   }, [batchDetections.progress, batchDetections.total]);
 
-  // 獲取檢測結果摘要
+  // Get檢測結果摘要
   const _getDetectionSummary = useCallback(() => {
     if (!currentDetection) return null;
 
@@ -402,9 +402,9 @@ export const _useFakeCardDetection = () => {
     needsManualReview,
   ]);
 
-  // 批量操作
+  // BatchOperation
   const _batchOperations = {
-    // 批量檢測多張卡片
+    // Batch檢測多張卡片
     detectMultiple: useCallback(
       async (cardIds: string[], imageUrls: string[]) => {
         const requests: DetectionRequest[] = cardIds.map((cardId, index) => ({
@@ -418,7 +418,7 @@ export const _useFakeCardDetection = () => {
       [batchDetect, selectedMethods]
     ),
 
-    // 導出檢測結果
+    // Export檢測結果
     exportResults: useCallback(() => {
       if (batchDetections.results.length === 0) return null;
 
@@ -453,7 +453,7 @@ export const _useFakeCardDetection = () => {
     ),
   };
 
-  // 實用工具函數
+  // 實用ToolFunction
   const _utils = {
     getRiskColor,
     getRiskIcon,
@@ -470,7 +470,7 @@ export const _useFakeCardDetection = () => {
   };
 
   return {
-    // 狀態
+    // Status
     currentDetection,
     detectionHistory,
     detectionStats,
@@ -483,7 +483,7 @@ export const _useFakeCardDetection = () => {
     batchDetections,
     reportForm,
 
-    // 操作
+    // Operation
     initialize,
     detectCard,
     batchDetect,
@@ -503,10 +503,10 @@ export const _useFakeCardDetection = () => {
     addRef,
     removeRef,
 
-    // 批量操作
+    // BatchOperation
     batchOperations,
 
-    // 工具函數
+    // ToolFunction
     utils,
   };
 };

@@ -1,12 +1,12 @@
 /**
- * 合規性引擎核心服務
- * 實現重構計劃任務 1.1: ComplianceEngine 核心服務
- * 負責法規檢測與應用、合規性檢查、審計追蹤等核心功能
+ * 合規性引擎核心Service
+ * 實現重構計劃Task 1.1: ComplianceEngine 核心Service
+ * 負責法規檢測與Apply、合規性Check、審計Trace等核心功能
  */
 
 import { logger } from '../../../core/utils/logger';
 
-// 基礎類型定義
+// 基礎Class型定義
 export interface Location {
   country: string;
   region?: string;
@@ -166,8 +166,8 @@ export interface ComplianceEngineConfig {
   enableAuditLogging: boolean;
   enableAutomaticReporting: boolean;
   auditRetentionDays: number;
-  complianceCheckInterval: number; // 分鐘
-  alertThreshold: number; // 合規分數閾值
+  complianceCheckInterval: number; // Minute
+  alertThreshold: number; // 合規分數閾Value
 }
 
 export class ComplianceEngine {
@@ -198,18 +198,18 @@ export class ComplianceEngine {
         this.config = { ...this.config, ...config };
       }
 
-      // 初始化管轄區數據
+      // Initialize管轄DistrictData
       await this.initializeJurisdictions();
 
-      // 初始化審計系統
+      // Initialize審計系統
       if (this.config.enableAuditLogging) {
         await this.initializeAuditSystem();
       }
 
       this.isInitialized = true;
-      logger.info('合規性引擎初始化成功');
+      logger.info('合規性引擎InitializeSuccess');
 
-      // 記錄初始化事件
+      // RecordInitializeEvent
       this.logAuditEvent({
         action: 'engine_initialized',
         resource: 'compliance_engine',
@@ -219,13 +219,13 @@ export class ComplianceEngine {
 
       return true;
     } catch (error) {
-      logger.error('合規性引擎初始化失敗:', error);
+      logger.error('合規性引擎InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * 檢測用戶管轄區
+   * 檢測User管轄District
    */
   public detectJurisdiction(userLocation: Location): Jurisdiction {
     try {
@@ -243,7 +243,7 @@ export class ComplianceEngine {
 
       return jurisdiction;
     } catch (error) {
-      logger.error('管轄區檢測失敗:', error);
+      logger.error('管轄區檢測Failed:', error);
 
       this.logAuditEvent({
         action: 'jurisdiction_detection_failed',
@@ -252,13 +252,13 @@ export class ComplianceEngine {
         details: { userLocation, error: error.message },
       });
 
-      // 返回默認管轄區
+      // ReturnDefault管轄District
       return this.getDefaultJurisdiction();
     }
   }
 
   /**
-   * 應用法規規則
+   * Apply法規規則
    */
   public applyRegulations(jurisdiction: Jurisdiction): ComplianceRules {
     try {
@@ -292,7 +292,7 @@ export class ComplianceEngine {
 
       return complianceRules;
     } catch (error) {
-      logger.error('法規應用失敗:', error);
+      logger.error('法規應用Failed:', error);
 
       this.logAuditEvent({
         action: 'regulations_application_failed',
@@ -306,7 +306,7 @@ export class ComplianceEngine {
   }
 
   /**
-   * 檢查合規性
+   * Check合規性
    */
   public checkCompliance(data: unknown, operation: string): ComplianceResult {
     try {
@@ -315,7 +315,7 @@ export class ComplianceEngine {
       const requiredActions: string[] = [];
       const auditTrail: AuditEvent[] = [];
 
-      // 檢查數據最小化
+      // CheckData最小化
       const _dataMinimizationCheck = this.checkDataMinimization(
         data,
         operation
@@ -325,14 +325,14 @@ export class ComplianceEngine {
         recommendations.push(...dataMinimizationCheck.recommendations);
       }
 
-      // 檢查同意要求
+      // CheckAgree要求
       const _consentCheck = this.checkConsentRequirements(data, operation);
       if (!consentCheck.isCompliant) {
         violations.push(...consentCheck.violations);
         recommendations.push(...consentCheck.recommendations);
       }
 
-      // 檢查年齡驗證
+      // CheckAgeVerify
       const _ageVerificationCheck = this.checkAgeVerification(data, operation);
       if (!ageVerificationCheck.isCompliant) {
         violations.push(...ageVerificationCheck.violations);
@@ -342,7 +342,7 @@ export class ComplianceEngine {
       // 計算合規分數
       const _score = this.calculateComplianceScore(violations);
 
-      // 生成所需行動
+      // 生成所需Row動
       requiredActions.push(...this.generateRequiredActions(violations));
 
       const result: ComplianceResult = {
@@ -367,7 +367,7 @@ export class ComplianceEngine {
 
       return result;
     } catch (error) {
-      logger.error('合規性檢查失敗:', error);
+      logger.error('合規性CheckFailed:', error);
 
       this.logAuditEvent({
         action: 'compliance_check_failed',
@@ -381,7 +381,7 @@ export class ComplianceEngine {
   }
 
   /**
-   * 驗證同意
+   * VerifyAgree
    */
   public validateConsent(consent: Consent): ConsentValidationResult {
     try {
@@ -389,23 +389,23 @@ export class ComplianceEngine {
       const warnings: string[] = [];
       const requiredActions: string[] = [];
 
-      // 檢查同意是否過期
+      // CheckAgreeYesNo過期
       if (consent.expiresAt && consent.expiresAt < new Date()) {
         errors.push('同意已過期');
         requiredActions.push('重新獲取用戶同意');
       }
 
-      // 檢查同意版本
+      // CheckAgreeVersion
       if (!consent.version) {
         warnings.push('同意版本信息缺失');
       }
 
-      // 檢查IP地址
+      // CheckIPAddress
       if (!consent.ipAddress) {
         warnings.push('IP地址信息缺失');
       }
 
-      // 檢查用戶代理
+      // CheckUser代理
       if (!consent.userAgent) {
         warnings.push('用戶代理信息缺失');
       }
@@ -430,32 +430,32 @@ export class ComplianceEngine {
         requiredActions,
       };
     } catch (error) {
-      logger.error('同意驗證失敗:', error);
+      logger.error('同意VerifyFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 記錄合規事件
+   * Record合規Event
    */
   public logComplianceEvent(event: AuditEvent): void {
     try {
       this.auditEvents.push(event);
 
-      // 如果啟用實時監控，立即處理事件
+      // 如果Enable實時Monitor，立即HandleEvent
       if (this.config.enableRealTimeMonitoring) {
         this.processRealTimeEvent(event);
       }
 
-      // 清理舊的審計事件
+      // 清理舊的審計Event
       this.cleanupOldAuditEvents();
     } catch (error) {
-      logger.error('合規事件記錄失敗:', error);
+      logger.error('合規事件記錄Failed:', error);
     }
   }
 
   /**
-   * 生成合規報告
+   * 生成合規Report
    */
   public generateComplianceReport(
     jurisdiction?: Jurisdiction
@@ -464,16 +464,16 @@ export class ComplianceEngine {
       const _targetJurisdiction = jurisdiction || this.getDefaultJurisdiction();
       const _period = this.getReportPeriod();
 
-      // 獲取期間內的審計事件
+      // Get期間內的審計Event
       const _periodEvents = this.auditEvents.filter(
         event =>
           event.timestamp >= period.start && event.timestamp <= period.end
       );
 
-      // 統計違規
+      // Statistics違規
       const _violations = this.extractViolationsFromEvents(periodEvents);
 
-      // 計算統計數據
+      // 計算統Count據
       const _totalChecks = periodEvents.filter(e =>
         e.action.includes('compliance_check')
       ).length;
@@ -514,13 +514,13 @@ export class ComplianceEngine {
 
       return report;
     } catch (error) {
-      logger.error('合規報告生成失敗:', error);
+      logger.error('合規報告生成Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public updateConfig(config: Partial<ComplianceEngineConfig>): void {
     this.config = { ...this.config, ...config };
@@ -534,7 +534,7 @@ export class ComplianceEngine {
   }
 
   /**
-   * 重置引擎
+   * Reset引擎
    */
   public async reset(): Promise<void> {
     this.auditEvents = [];
@@ -548,7 +548,7 @@ export class ComplianceEngine {
     });
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): ComplianceEngineConfig {
     return {
@@ -562,7 +562,7 @@ export class ComplianceEngine {
   }
 
   private async initializeJurisdictions(): Promise<void> {
-    // 初始化主要管轄區
+    // Initialize主要管轄District
     const _jurisdictions = [
       this.createTaiwanJurisdiction(),
       this.createMacauJurisdiction(),
@@ -577,12 +577,12 @@ export class ComplianceEngine {
   }
 
   private async initializeAuditSystem(): Promise<void> {
-    // 初始化審計系統
+    // Initialize審計系統
     logger.info('審計系統初始化完成');
   }
 
   private findJurisdictionByLocation(location: Location): Jurisdiction {
-    // 根據位置查找管轄區
+    // Root據位置Find管轄District
     const _country = location.country.toLowerCase();
 
     for (const jurisdiction of this.jurisdictions.values()) {
@@ -591,7 +591,7 @@ export class ComplianceEngine {
       }
     }
 
-    // 如果找不到，返回默認管轄區
+    // 如果找不到，ReturnDefault管轄District
     return this.getDefaultJurisdiction();
   }
 
@@ -661,7 +661,7 @@ export class ComplianceEngine {
     const violations: ComplianceViolation[] = [];
     const recommendations: string[] = [];
 
-    // 檢查是否收集了過多數據
+    // CheckYesNo收集了過多Data
     if (data && typeof data === 'object') {
       const _dataKeys = Object.keys(data);
       if (dataKeys.length > 10) {
@@ -696,7 +696,7 @@ export class ComplianceEngine {
     const violations: ComplianceViolation[] = [];
     const recommendations: string[] = [];
 
-    // 檢查是否需要同意
+    // CheckYesNo需要Agree
     if (this.requiresConsent(operation) && data && !data.consent) {
       violations.push({
         id: `cr_${Date.now()}`,
@@ -728,7 +728,7 @@ export class ComplianceEngine {
     const violations: ComplianceViolation[] = [];
     const recommendations: string[] = [];
 
-    // 檢查年齡驗證
+    // CheckAgeVerify
     if (
       this.requiresAgeVerification(operation) &&
       data &&
@@ -739,7 +739,7 @@ export class ComplianceEngine {
         regulationId: 'gaming',
         requirementId: 'age_verification',
         severity: 'critical',
-        description: '年齡驗證失敗或未驗證',
+        description: '年齡VerifyFailed或未Verify',
         detectedAt: new Date(),
         status: 'open',
         remediationSteps: ['實施年齡驗證機制', '阻止未成年人訪問'],
@@ -804,7 +804,7 @@ export class ComplianceEngine {
   }
 
   private processRealTimeEvent(event: AuditEvent): void {
-    // 實時處理事件邏輯
+    // 實時HandleEvent邏輯
     if (event.result === 'failure') {
       logger.warn('檢測到合規違規事件:', {
         id: event.id,
@@ -835,7 +835,7 @@ export class ComplianceEngine {
   private extractViolationsFromEvents(
     events: AuditEvent[]
   ): ComplianceViolation[] {
-    // 從審計事件中提取違規信息
+    // 從審計Event中提取違規Information
     const violations: ComplianceViolation[] = [];
 
     events.forEach(event => {
@@ -880,7 +880,7 @@ export class ComplianceEngine {
     this.auditEvents.push(auditEvent);
   }
 
-  // 創建管轄區實例
+  // Create管轄DistrictInstance
   private createTaiwanJurisdiction(): Jurisdiction {
     return {
       id: 'taiwan',

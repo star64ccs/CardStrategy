@@ -22,8 +22,8 @@ interface AccessibilityTestResult {
 }
 
 /**
- * 組件可訪問性測試工具
- * 用於測試所有組件的可訪問性功能
+ * Component可訪問性TestTool
+ * 用於Test所有Component的可訪問性功能
  */
 export const ComponentAccessibilityTestTool: React.FC<
   ComponentAccessibilityTestToolProps
@@ -34,7 +34,7 @@ export const ComponentAccessibilityTestTool: React.FC<
   const [isRunning, setIsRunning] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState<string>('all');
 
-  // 組件列表
+  // ComponentList
   const _components = useMemo(
     () => [
       { name: 'Button', type: 'button' },
@@ -48,13 +48,13 @@ export const ComponentAccessibilityTestTool: React.FC<
     []
   );
 
-  // 測試按鈕組件
+  // Test按鈕Component
   const _testButtonComponent = useCallback((): AccessibilityTestResult => {
     const issues: string[] = [];
     const suggestions: string[] = [];
     let score = 100;
 
-    // 檢查 ARIA 標籤
+    // Check ARIA Tag
     const _buttonElement = document.querySelector('button, a[role="button"]');
     if (buttonElement) {
       const _ariaLabel = buttonElement.getAttribute('aria-label');
@@ -73,7 +73,7 @@ export const ComponentAccessibilityTestTool: React.FC<
       score -= 30;
     }
 
-    // 檢查鍵盤導航
+    // CheckKey盤導航
     if (buttonElement) {
       const _tabIndex = buttonElement.getAttribute('tabindex');
       if (tabIndex === '-1') {
@@ -82,7 +82,7 @@ export const ComponentAccessibilityTestTool: React.FC<
       }
     }
 
-    // 檢查焦點指示器
+    // Check焦點指示器
     const _focusStyles = getComputedStyle(document.documentElement);
     const _hasFocusIndicator =
       focusStyles.getPropertyValue('--accessibility-focus-indicator') ||
@@ -97,17 +97,17 @@ export const ComponentAccessibilityTestTool: React.FC<
       ariaLabels: issues.length === 0,
       keyboardNavigation: (buttonElement as any).tabIndex !== '-1',
       focusIndicator: !!hasFocusIndicator,
-      highContrast: true, // 需要實際測試
-      screenReader: true, // 需要實際測試
-      voiceControl: true, // 需要實際測試
-      switchControl: true, // 需要實際測試
+      highContrast: true, // 需要實際Test
+      screenReader: true, // 需要實際Test
+      voiceControl: true, // 需要實際Test
+      switchControl: true, // 需要實際Test
       score: Math.max(0, score),
       issues,
       suggestions,
     };
   }, []);
 
-  // 測試輸入框組件
+  // TestInput框Component
   const _testInputComponent = useCallback((): AccessibilityTestResult => {
     const issues: string[] = [];
     const suggestions: string[] = [];
@@ -147,7 +147,7 @@ export const ComponentAccessibilityTestTool: React.FC<
     };
   }, []);
 
-  // 測試卡片組件
+  // Test卡片Component
   const _testCardComponent = useCallback((): AccessibilityTestResult => {
     const issues: string[] = [];
     const suggestions: string[] = [];
@@ -181,7 +181,7 @@ export const ComponentAccessibilityTestTool: React.FC<
     };
   }, []);
 
-  // 測試模態框組件
+  // Test模態框Component
   const _testModalComponent = useCallback((): AccessibilityTestResult => {
     const issues: string[] = [];
     const suggestions: string[] = [];
@@ -221,7 +221,7 @@ export const ComponentAccessibilityTestTool: React.FC<
     };
   }, []);
 
-  // 測試 Toast 組件
+  // Test Toast Component
   const _testToastComponent = useCallback((): AccessibilityTestResult => {
     const issues: string[] = [];
     const suggestions: string[] = [];
@@ -261,7 +261,7 @@ export const ComponentAccessibilityTestTool: React.FC<
     };
   }, []);
 
-  // 測試加載組件
+  // Test加載Component
   const _testLoadingComponent = useCallback((): AccessibilityTestResult => {
     const issues: string[] = [];
     const suggestions: string[] = [];
@@ -301,7 +301,7 @@ export const ComponentAccessibilityTestTool: React.FC<
     };
   }, []);
 
-  // 測試卡片顯示組件
+  // Test卡片ShowComponent
   const _testCardDisplayComponent = useCallback((): AccessibilityTestResult => {
     const issues: string[] = [];
     const suggestions: string[] = [];
@@ -337,12 +337,12 @@ export const ComponentAccessibilityTestTool: React.FC<
     };
   }, []);
 
-  // 運行測試
+  // 運RowTest
   const _runTest = useCallback(async () => {
     setIsRunning(true);
     const results: AccessibilityTestResult[] = [];
 
-    // 根據選擇的組件運行測試
+    // Root據Select的Component運RowTest
     if (selectedComponent === 'all') {
       results.push(testButtonComponent());
       results.push(testInputComponent());
@@ -377,7 +377,7 @@ export const ComponentAccessibilityTestTool: React.FC<
       }
     }
 
-    // 模擬異步測試
+    // 模擬AsyncTest
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     setTestResults(results);
@@ -393,7 +393,7 @@ export const ComponentAccessibilityTestTool: React.FC<
     testCardDisplayComponent,
   ]);
 
-  // 生成報告
+  // 生成Report
   const _generateReport = useCallback(() => {
     const _totalScore =
       testResults.reduce((sum, result) => sum + result.score, 0) /
@@ -442,7 +442,7 @@ ${result.suggestions.map(suggestion => `- ${suggestion}`).join('\n')}
 ${new Date().toLocaleString()}
     `;
 
-    // 下載報告
+    // DownloadReport
     const _blob = new Blob([report], { type: 'text/markdown' });
     const _url = URL.createObjectURL(blob);
     const _a = document.createElement('a');
@@ -709,8 +709,8 @@ ${new Date().toLocaleString()}
   );
 };
 
-// 設置顯示名稱
+// SettingsShow名稱
 ComponentAccessibilityTestTool.displayName = 'ComponentAccessibilityTestTool';
 
-// 導出組件
+// ExportComponent
 export default ComponentAccessibilityTestTool;

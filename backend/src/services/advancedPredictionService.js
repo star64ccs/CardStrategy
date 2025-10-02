@@ -4,7 +4,7 @@ const { getMarketDataModel } = require('../models/MarketData');
 const { getPredictionModel } = require('../models/PredictionModel');
 const { getCardModel } = require('../models/Card');
 
-// 注意：在實際部署中需要安裝以下依賴
+// 注意：在實際Deploy中需要Install以下依賴
 // npm install @tensorflow/tfjs-node
 // npm install brain.js
 // npm install ml-matrix
@@ -22,7 +22,7 @@ class AdvancedPredictionService {
       adaptiveEnsemble: this.adaptiveEnsemblePrediction,
     };
 
-    // 動態權重（基於歷史性能）
+    // Dynamic權重（基於歷史性能）
     this.weights = {
       deepLSTM: 0.25,
       attentionTransformer: 0.2,
@@ -78,7 +78,7 @@ class AdvancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('深度LSTM預測錯誤:', error);
+      logger.error('深度LSTM預測Error:', error);
       throw error;
     }
   }
@@ -91,7 +91,7 @@ class AdvancedPredictionService {
 // eslint-disable-next-line no-unused-vars
       const volumes = historicalData.map((d) => parseFloat(d.volume || 0));
 
-      // 序列編碼和特徵提取
+      // 序ColumnEncode和特徵提取
       const sequence = this.encodeAdvancedSequence(prices, volumes);
 
       // 多頭注意力機制預測
@@ -121,7 +121,7 @@ class AdvancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('注意力Transformer預測錯誤:', error);
+      logger.error('注意力Transformer預測Error:', error);
       throw error;
     }
   }
@@ -134,7 +134,7 @@ class AdvancedPredictionService {
 // eslint-disable-next-line no-unused-vars
       const volumes = historicalData.map((d) => parseFloat(d.volume || 0));
 
-      // 多個GRU模型集成
+      // MultipleGRU模型集成
       const gruModels = [
         this.createGRUModel(64, 32),
         this.createGRUModel(128, 64),
@@ -164,7 +164,7 @@ class AdvancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('集成GRU預測錯誤:', error);
+      logger.error('集成GRU預測Error:', error);
       throw error;
     }
   }
@@ -177,13 +177,13 @@ class AdvancedPredictionService {
 // eslint-disable-next-line no-unused-vars
       const volumes = historicalData.map((d) => parseFloat(d.volume || 0));
 
-      // 創建2D特徵矩陣
+      // Create2D特徵矩陣
       const featureMatrix = this.createFeatureMatrix(prices, volumes);
 
       // CNN特徵提取
       const cnnFeatures = await this.cnnFeatureExtraction(featureMatrix);
 
-      // 結合LSTM進行序列預測
+      // 結合LSTM進Row序Column預測
 // eslint-disable-next-line no-unused-vars
       const prediction = await this.hybridCNNLSTMPredict(
         cnnFeatures,
@@ -210,7 +210,7 @@ class AdvancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('混合CNN預測錯誤:', error);
+      logger.error('混合CNN預測Error:', error);
       throw error;
     }
   }
@@ -223,7 +223,7 @@ class AdvancedPredictionService {
 // eslint-disable-next-line no-unused-vars
       const volumes = historicalData.map((d) => parseFloat(d.volume || 0));
 
-      // 創建強化學習環境
+      // Create強化學習環境
       const environment = this.createTradingEnvironment(prices, volumes);
 
       // Q-Learning代理
@@ -250,12 +250,12 @@ class AdvancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('強化學習預測錯誤:', error);
+      logger.error('強化學習預測Error:', error);
       throw error;
     }
   }
 
-  // 貝葉斯優化預測
+  // 貝Leaf斯優化預測
   async bayesianOptimizationPrediction(historicalData, timeframe) {
     try {
 // eslint-disable-next-line no-unused-vars
@@ -263,17 +263,17 @@ class AdvancedPredictionService {
 // eslint-disable-next-line no-unused-vars
       const volumes = historicalData.map((d) => parseFloat(d.volume || 0));
 
-      // 貝葉斯優化器
+      // 貝Leaf斯優化器
       const optimizer = this.createBayesianOptimizer();
 
-      // 優化超參數
+      // 優化超Parameter
       const optimalParams = await this.optimizeHyperparameters(
         optimizer,
         prices,
         volumes
       );
 
-      // 使用最優參數進行預測
+      // 使用最優Parameter進Row預測
 // eslint-disable-next-line no-unused-vars
       const prediction = await this.bayesianPredict(
         optimalParams,
@@ -300,7 +300,7 @@ class AdvancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('貝葉斯優化預測錯誤:', error);
+      logger.error('貝葉斯優化預測Error:', error);
       throw error;
     }
   }
@@ -308,7 +308,7 @@ class AdvancedPredictionService {
   // 自適應集成預測
   async adaptiveEnsemblePrediction(historicalData, timeframe) {
     try {
-      // 獲取所有模型的預測
+      // Get所有模型的預測
 // eslint-disable-next-line no-unused-vars
       const predictions = {};
 // eslint-disable-next-line no-unused-vars
@@ -325,12 +325,12 @@ class AdvancedPredictionService {
             );
             predictions[modelName] = prediction;
           } catch (error) {
-            logger.warn(`模型 ${modelName} 預測失敗:`, error.message);
+            logger.warn(`模型 ${modelName} 預測Failed:`, error.message);
           }
         }
       }
 
-      // 動態調整權重
+      // Dynamic調整權重
       await this.updateDynamicWeights(predictions);
 
       // 加權集成預測
@@ -358,7 +358,7 @@ class AdvancedPredictionService {
         },
       };
     } catch (error) {
-      logger.error('自適應集成預測錯誤:', error);
+      logger.error('自適應集成預測Error:', error);
       throw error;
     }
   }
@@ -389,10 +389,10 @@ class AdvancedPredictionService {
     // 風險指標
     features.risk = await this.riskAssessor.assessRisk(prices, volumes);
 
-    // 統計特徵
+    // Statistics特徵
     features.statistics = this.calculateStatisticalFeatures(prices);
 
-    // 時間特徵
+    // Time特徵
     features.temporal = this.extractTemporalFeatures(historicalData);
 
     return features;
@@ -400,10 +400,10 @@ class AdvancedPredictionService {
 
   // 深度LSTM預測實現
   async deepLSTMPredict(features, timeframe) {
-    // 這裡實現真正的TensorFlow.js LSTM模型
+    // 這裡實現True正的TensorFlow.js LSTM模型
     const tf = require('@tensorflow/tfjs-node');
 
-    // 創建LSTM模型
+    // CreateLSTM模型
 // eslint-disable-next-line no-unused-vars
     const model = tf.sequential({
       layers: [
@@ -429,14 +429,14 @@ class AdvancedPredictionService {
       ],
     });
 
-    // 編譯模型
+    // Compile模型
     model.compile({
       optimizer: tf.train.adam(0.001),
       loss: 'meanSquaredError',
       metrics: ['mae'],
     });
 
-    // 準備數據
+    // 準備Data
     const inputData = this.prepareLSTMInput(features);
     const targetData = this.prepareLSTMTarget(features, timeframe);
 
@@ -454,7 +454,7 @@ class AdvancedPredictionService {
       },
     });
 
-    // 進行預測
+    // 進Row預測
 // eslint-disable-next-line no-unused-vars
     const prediction = model.predict(inputData.slice([-1]));
     return prediction.dataSync()[0];
@@ -464,31 +464,31 @@ class AdvancedPredictionService {
   async multiHeadAttentionPredict(sequence, timeframe) {
     const tf = require('@tensorflow/tfjs-node');
 
-    // 創建Transformer模型
+    // CreateTransformer模型
 // eslint-disable-next-line no-unused-vars
     const model = this.createTransformerModel(sequence.length, 8); // 8個注意力頭
 
-    // 準備數據
+    // 準備Data
     const inputData = tf.tensor3d(sequence, [
       1,
       sequence.length,
       sequence[0].length,
     ]);
 
-    // 進行預測
+    // 進Row預測
 // eslint-disable-next-line no-unused-vars
     const prediction = model.predict(inputData);
     return prediction.dataSync()[0];
   }
 
-  // 創建Transformer模型
+  // CreateTransformer模型
   createTransformerModel(sequenceLength, numHeads) {
     const tf = require('@tensorflow/tfjs-node');
 
 // eslint-disable-next-line no-unused-vars
     const model = tf.sequential();
 
-    // 位置編碼
+    // 位置Encode
     model.add(
       tf.layers.embedding({
         inputDim: sequenceLength,
@@ -505,7 +505,7 @@ class AdvancedPredictionService {
       })
     );
 
-    // 前饋網絡
+    // 前饋Network
     model.add(
       tf.layers.dense({
         units: 128,
@@ -528,7 +528,7 @@ class AdvancedPredictionService {
     return model;
   }
 
-  // 動態權重調整
+  // Dynamic權重調整
   async updateDynamicWeights(predictions) {
     // 基於模型歷史性能調整權重
 // eslint-disable-next-line no-unused-vars
@@ -603,7 +603,7 @@ class AdvancedPredictionService {
     return Math.min(1, confidence);
   }
 
-  // 計算統計特徵
+  // 計算Statistics特徵
   calculateStatisticalFeatures(prices) {
     const returns = [];
     for (let i = 1; i < prices.length; i++) {
@@ -619,7 +619,7 @@ class AdvancedPredictionService {
     };
   }
 
-  // 輔助計算方法
+  // 輔助計算Method
   calculateVariance(values) {
     const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
     return (
@@ -807,10 +807,10 @@ class AdvancedTechnicalIndicators {
   }
 }
 
-// 情緒分析器
+// 情緒Analysis器
 class SentimentAnalyzer {
   async analyzeSentiment(historicalData) {
-    // 模擬情緒分析
+    // 模擬情緒Analysis
     return {
       socialMediaSentiment: 0.6 + Math.random() * 0.3,
       newsSentiment: 0.5 + Math.random() * 0.4,

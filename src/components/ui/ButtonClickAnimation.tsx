@@ -1,4 +1,4 @@
-// 按鈕點擊動畫組件
+// 按鈕點擊動畫Component
 import type { ReactNode } from 'react';
 import React, { useCallback, useRef } from 'react';
 
@@ -9,7 +9,7 @@ import {
 } from '../../types/microInteractions';
 import { useMicroInteraction } from '../providers/MicroInteractionProvider';
 
-// 組件 Props
+// Component Props
 interface ButtonClickAnimationProps {
   children: ReactNode;
   config?: Partial<ButtonClickConfig>;
@@ -24,7 +24,7 @@ interface ButtonClickAnimationProps {
   id?: string;
 }
 
-// 默認配置
+// DefaultConfigure
 const DEFAULT_CONFIG: ButtonClickConfig = {
   id: '',
   type: MicroInteractionType.BUTTON_CLICK,
@@ -60,7 +60,7 @@ const DEFAULT_CONFIG: ButtonClickConfig = {
   },
 };
 
-// 按鈕點擊動畫組件
+// 按鈕點擊動畫Component
 export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
   children,
   config = {},
@@ -78,7 +78,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
   const _buttonRef = useRef<HTMLButtonElement>(null);
   const _interactionIdRef = useRef<string>('');
 
-  // 合併配置
+  // MergeConfigure
   const finalConfig: ButtonClickConfig = {
     ...DEFAULT_CONFIG,
     ...config,
@@ -87,7 +87,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
       `button-click-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
   };
 
-  // 註冊微交互
+  // Register微交互
   React.useEffect(() => {
     if (!disabled) {
       const _interactionId = register(finalConfig);
@@ -100,7 +100,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
     return undefined;
   }, [register, unregister, finalConfig, disabled]);
 
-  // 處理點擊事件
+  // Handle點擊Event
   const _handleClick = useCallback(
     async (event: React.MouseEvent) => {
       if (disabled || !interactionIdRef.current) return;
@@ -116,7 +116,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
           },
         });
       } catch (error) {
-        console.warn('按鈕點擊動畫失敗:', error);
+        console.warn('按鈕點擊動畫Failed:', error);
       }
 
       // 調用原始 onClick
@@ -125,7 +125,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
     [disabled, trigger, onClick]
   );
 
-  // 處理鼠標按下事件
+  // Handle鼠標按下Event
   const _handleMouseDown = useCallback(
     async (event: React.MouseEvent) => {
       if (disabled || !interactionIdRef.current) return;
@@ -141,7 +141,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
           },
         });
       } catch (error) {
-        console.warn('按鈕按下動畫失敗:', error);
+        console.warn('按鈕按下動畫Failed:', error);
       }
 
       // 調用原始 onMouseDown
@@ -150,7 +150,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
     [disabled, trigger, onMouseDown]
   );
 
-  // 處理鼠標釋放事件
+  // Handle鼠標釋放Event
   const _handleMouseUp = useCallback(
     async (event: React.MouseEvent) => {
       if (disabled || !interactionIdRef.current) return;
@@ -166,7 +166,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
           },
         });
       } catch (error) {
-        console.warn('按鈕釋放動畫失敗:', error);
+        console.warn('按鈕釋放動畫Failed:', error);
       }
 
       // 調用原始 onMouseUp
@@ -175,14 +175,14 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
     [disabled, trigger, onMouseUp]
   );
 
-  // 處理觸控開始事件
+  // Handle觸控BeginEvent
   const _handleTouchStart = useCallback(
     async (event: React.TouchEvent) => {
       if (disabled || !interactionIdRef.current) return;
 
       const _touch = event.touches[0];
       try {
-        // 觸發觸控開始動畫
+        // 觸發觸控Begin動畫
         await trigger(interactionIdRef.current, {
           element: buttonRef.current,
           event: 'touchstart',
@@ -192,7 +192,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
           },
         });
       } catch (error) {
-        console.warn('按鈕觸控開始動畫失敗:', error);
+        console.warn('按鈕觸控開始動畫Failed:', error);
       }
 
       // 調用原始 onTouchStart
@@ -201,14 +201,14 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
     [disabled, trigger, onTouchStart]
   );
 
-  // 處理觸控結束事件
+  // Handle觸控EndEvent
   const _handleTouchEnd = useCallback(
     async (event: React.TouchEvent) => {
       if (disabled || !interactionIdRef.current) return;
 
       const _touch = event.changedTouches[0];
       try {
-        // 觸發觸控結束動畫
+        // 觸發觸控End動畫
         await trigger(interactionIdRef.current, {
           element: buttonRef.current,
           event: 'touchend',
@@ -218,7 +218,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
           },
         });
       } catch (error) {
-        console.warn('按鈕觸控結束動畫失敗:', error);
+        console.warn('按鈕觸控結束動畫Failed:', error);
       }
 
       // 調用原始 onTouchEnd
@@ -239,7 +239,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
     ...style,
   };
 
-  // 添加性能優化樣式
+  // Add性能優化樣式
   if (finalConfig.performance?.useWillChange) {
     buttonStyle.willChange = 'transform, box-shadow';
   }
@@ -269,7 +269,7 @@ export const ButtonClickAnimation: React.FC<ButtonClickAnimationProps> = ({
   );
 };
 
-// 便捷組件：主要按鈕
+// 便捷Component：主要按鈕
 export const PrimaryButton: React.FC<
   Omit<ButtonClickAnimationProps, 'config'> & {
     variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -366,7 +366,7 @@ export const PrimaryButton: React.FC<
   );
 };
 
-// 便捷組件：圖標按鈕
+// 便捷Component：Graph標按鈕
 export const IconButton: React.FC<
   Omit<ButtonClickAnimationProps, 'config'> & {
     icon: ReactNode;
@@ -440,7 +440,7 @@ export const IconButton: React.FC<
   );
 };
 
-// 便捷組件：浮動操作按鈕
+// 便捷Component：浮動Operation按鈕
 export const FloatingActionButton: React.FC<
   Omit<ButtonClickAnimationProps, 'config'> & {
     icon: ReactNode;
@@ -520,5 +520,5 @@ export const FloatingActionButton: React.FC<
   );
 };
 
-// 默認導出
+// DefaultExport
 export default ButtonClickAnimation;

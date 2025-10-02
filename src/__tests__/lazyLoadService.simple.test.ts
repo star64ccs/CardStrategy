@@ -1,15 +1,15 @@
-// 簡化的懶加載服務測試
+// 簡化的懶加載ServiceTest
 import { LazyLoadServiceImpl } from '../services/lazyLoadService';
 import { LazyLoadPriority, LazyLoadStrategy } from '../types/lazyLoading';
 
-// 模擬 React 組件
+// 模擬 React Component
 const _MockComponent = () => React.createElement('div', null, 'Mock Component');
 
 describe('LazyLoadService - 簡化測試', () => {
   let service: LazyLoadServiceImpl;
 
   beforeEach(() => {
-    // 重置單例
+    // Reset單例
     (LazyLoadServiceImpl as any).instance = undefined;
     service = LazyLoadServiceImpl.getInstance();
   });
@@ -19,7 +19,7 @@ describe('LazyLoadService - 簡化測試', () => {
   });
 
   describe('基本功能', () => {
-    it('應該正確初始化服務', async () => {
+    it('應該正確InitializeService', async () => {
       await service.initialize();
       const _state = service.getState();
 
@@ -38,7 +38,7 @@ describe('LazyLoadService - 簡化測試', () => {
 
       service.registerComponent('test-component', config);
 
-      // 測試註冊是否成功
+      // TestRegisterYesNoSuccess
       expect(() => service.loadComponent('test-component')).not.toThrow();
     });
 
@@ -53,7 +53,7 @@ describe('LazyLoadService - 簡化測試', () => {
 
       service.registerImage('test-image', config);
 
-      // 測試註冊是否成功
+      // TestRegisterYesNoSuccess
       expect(() => service.loadImage('test-image')).not.toThrow();
     });
 
@@ -68,13 +68,13 @@ describe('LazyLoadService - 簡化測試', () => {
 
       service.registerData('test-data', config);
 
-      // 測試註冊是否成功
+      // TestRegisterYesNoSuccess
       expect(() => service.loadData('test-data')).not.toThrow();
     });
   });
 
   describe('狀態管理', () => {
-    it('應該正確暫停和恢復服務', async () => {
+    it('應該正確暫停和恢復Service', async () => {
       await service.initialize();
 
       service.pause();
@@ -96,7 +96,7 @@ describe('LazyLoadService - 簡化測試', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     it('應該處理未註冊的資源', async () => {
       await service.initialize();
 
@@ -117,7 +117,7 @@ describe('LazyLoadService - 簡化測試', () => {
       service.registerComponent('cancel-test', config);
       service.cancelLoad('cancel-test');
 
-      // 驗證取消操作不拋出錯誤
+      // VerifyCancelOperation不ThrowError
       expect(() => service.cancelLoad('cancel-test')).not.toThrow();
     });
   });
@@ -126,10 +126,10 @@ describe('LazyLoadService - 簡化測試', () => {
     it('應該清除緩存', async () => {
       await service.initialize();
 
-      // 測試清除所有緩存
+      // TestClear所有Cache
       expect(() => service.clearCache()).not.toThrow();
 
-      // 測試清除特定緩存
+      // TestClearSpecificCache
       expect(() => service.clearCache('test-id')).not.toThrow();
     });
   });
@@ -146,7 +146,7 @@ describe('LazyLoadService - 簡化測試', () => {
 
       service.registerComponent('preload-test', config);
 
-      // 測試預加載不拋出錯誤
+      // Test預加載不ThrowError
       expect(async () => {
         await service.preloadComponent('preload-test');
       }).not.toThrow();

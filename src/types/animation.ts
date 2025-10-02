@@ -1,57 +1,57 @@
-// 動畫系統類型定義
+// 動畫系統Class型定義
 export interface AnimationConfig {
-  // 基本動畫配置
-  duration: number; // 動畫持續時間（毫秒）
-  easing: EasingFunction; // 緩動函數
-  delay?: number; // 延遲時間（毫秒）
-  iterations?: number; // 重複次數，-1 表示無限循環
+  // 基本動畫Configure
+  duration: number; // 動畫持續Time（毫Second）
+  easing: EasingFunction; // 緩動Function
+  delay?: number; // 延遲Time（毫Second）
+  iterations?: number; // Duplicate次數，-1 Table示無限循環
   direction?: 'normal' | 'reverse' | 'alternate' | 'alternate-reverse'; // 動畫方向
   fillMode?: 'none' | 'forwards' | 'backwards' | 'both'; // 填充模式
 
   // 性能優化
-  willChange?: boolean; // 是否啟用 will-change
-  transform3d?: boolean; // 是否使用 3D 變換
-  backfaceVisibility?: boolean; // 是否隱藏背面
+  willChange?: boolean; // YesNoEnable will-change
+  transform3d?: boolean; // YesNo使用 3D 變換
+  backfaceVisibility?: boolean; // YesNoHide背面
 
-  // 偏好設置
-  respectMotionPreference?: boolean; // 是否尊重用戶的動畫偏好
-  reducedMotion?: boolean; // 是否啟用減少動畫模式
+  // PreferencesSettings
+  respectMotionPreference?: boolean; // YesNo尊重User的動畫Preferences
+  reducedMotion?: boolean; // YesNoEnable減少動畫模式
 }
 
 export interface TransitionConfig extends AnimationConfig {
-  // 過渡動畫特定配置
-  property: string | string[]; // 要過渡的屬性
-  from: unknown; // 起始值
-  to: unknown; // 結束值
+  // 過渡動畫SpecificConfigure
+  property: string | string[]; // 要過渡的Property
+  from: unknown; // 起始Value
+  to: unknown; // EndValue
 
-  // 觸發條件
+  // 觸發Condition
   trigger?: 'hover' | 'focus' | 'click' | 'scroll' | 'load' | 'custom';
-  threshold?: number; // 觸發閾值（用於滾動觸發）
+  threshold?: number; // 觸發閾Value（用於滾動觸發）
 
   // 過渡效果
-  stagger?: number; // 錯開時間（用於多元素）
-  cascade?: boolean; // 是否級聯觸發
+  stagger?: number; // 錯OnTime（用於多Element）
+  cascade?: boolean; // YesNo級聯觸發
 }
 
 export interface KeyframeConfig {
-  // 關鍵幀配置
-  keyframes: Keyframe[]; // 關鍵幀數組
+  // OffKey幀Configure
+  keyframes: Keyframe[]; // OffKey幀Array
   name?: string; // 動畫名稱
 
-  // 動畫配置
+  // 動畫Configure
   config: AnimationConfig;
 
-  // 自定義屬性
+  // CustomProperty
   customProperties?: Record<string, any>;
 }
 
 export interface Keyframe {
-  offset: number; // 關鍵幀位置 (0-1)
-  properties: Record<string, any>; // 屬性值
-  easing?: EasingFunction; // 該關鍵幀的緩動函數
+  offset: number; // OffKey幀位置 (0-1)
+  properties: Record<string, any>; // PropertyValue
+  easing?: EasingFunction; // 該OffKey幀的緩動Function
 }
 
-// 緩動函數類型
+// 緩動FunctionClass型
 export type EasingFunction =
   | 'linear'
   | 'ease'
@@ -62,9 +62,9 @@ export type EasingFunction =
   | 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
   | 'steps'
   | string
-  | ((t: number) => number); // 自定義緩動函數
+  | ((t: number) => number); // Custom緩動Function
 
-// 動畫性能監控
+// 動畫性能Monitor
 export interface PerformanceMonitoring {
   enabled: boolean;
   metrics: {
@@ -76,7 +76,7 @@ export interface PerformanceMonitoring {
   };
 }
 
-// 全局動畫配置
+// Global動畫Configure
 export interface GlobalAnimationConfig {
   defaultDuration: number;
   defaultEasing: EasingFunction;
@@ -86,9 +86,9 @@ export interface GlobalAnimationConfig {
   enablePrefersReducedMotion: boolean;
 }
 
-// 動畫狀態
+// 動畫Status
 export interface AnimationState {
-  // 動畫配置
+  // 動畫Configure
   animations: Record<string, SingleAnimationState>;
   preferences: AnimationPreferences;
   performanceMonitoring: PerformanceMonitoring;
@@ -98,7 +98,7 @@ export interface AnimationState {
   error: string | null;
 }
 
-// 單個動畫狀態
+// Single動畫Status
 export interface SingleAnimationState {
   isPlaying: boolean;
   isPaused: boolean;
@@ -107,7 +107,7 @@ export interface SingleAnimationState {
   direction: 'forward' | 'reverse' | 'alternate' | 'alternate-reverse';
 }
 
-// 動畫事件
+// 動畫Event
 export interface AnimationEvent {
   type: 'start' | 'end' | 'pause' | 'resume' | 'cancel' | 'iteration';
   timestamp: number;
@@ -115,7 +115,7 @@ export interface AnimationEvent {
   target?: HTMLElement;
 }
 
-// 動畫偏好設置
+// 動畫PreferencesSettings
 export interface AnimationPreferences {
   reducedMotion: boolean;
   prefersAnimation: boolean;
@@ -123,7 +123,7 @@ export interface AnimationPreferences {
   animationIntensity: 'minimal' | 'normal' | 'intense';
 }
 
-// 預設動畫配置
+// 預設動畫Configure
 export interface PresetAnimation {
   name: string;
   config: AnimationConfig;
@@ -140,7 +140,7 @@ export interface AnimationPerformance {
   cpuUsage: number;
 }
 
-// 動畫管理器配置
+// 動畫Manage器Configure
 export interface AnimationManagerConfig {
   maxConcurrentAnimations: number;
   performanceThreshold: number;
@@ -150,17 +150,17 @@ export interface AnimationManagerConfig {
   defaultDuration: number;
 }
 
-// 動畫組件 Props
+// 動畫Component Props
 export interface AnimationProps {
-  // 基本配置
+  // 基本Configure
   config?: Partial<AnimationConfig>;
   children: React.ReactNode;
 
-  // 觸發條件
+  // 觸發Condition
   trigger?: 'hover' | 'focus' | 'click' | 'scroll' | 'load' | 'custom';
   threshold?: number;
 
-  // 回調函數
+  // CallbackFunction
   onStart?: (event: AnimationEvent) => void;
   onEnd?: (event: AnimationEvent) => void;
   onPause?: (event: AnimationEvent) => void;
@@ -175,12 +175,12 @@ export interface AnimationProps {
   'aria-describedby'?: string;
 }
 
-// 過渡組件 Props
+// 過渡Component Props
 export interface TransitionProps extends AnimationProps {
-  // 過渡配置
+  // 過渡Configure
   transition: TransitionConfig;
 
-  // 狀態控制
+  // StatusControl
   in?: boolean;
   appear?: boolean;
   unmountOnExit?: boolean;
@@ -194,17 +194,17 @@ export interface TransitionProps extends AnimationProps {
   onExited?: (node: HTMLElement) => void;
 }
 
-// 關鍵幀組件 Props
+// OffKey幀Component Props
 export interface KeyframeProps extends AnimationProps {
-  // 關鍵幀配置
+  // OffKey幀Configure
   keyframes: KeyframeConfig;
 
-  // 播放控制
+  // 播放Control
   autoPlay?: boolean;
   loop?: boolean;
   reverse?: boolean;
 
-  // 時間控制
+  // TimeControl
   startTime?: number;
   endTime?: number;
 
@@ -213,26 +213,26 @@ export interface KeyframeProps extends AnimationProps {
   useTransform3d?: boolean;
 }
 
-// 動畫 Hook 返回值
+// 動畫 Hook ReturnValue
 export interface UseAnimationReturn {
-  // 狀態
+  // Status
   isPlaying: boolean;
   isPaused: boolean;
   progress: number;
   currentTime: number;
 
-  // 控制方法
+  // ControlMethod
   play: () => void;
   pause: () => void;
   stop: () => void;
   reverse: () => void;
   restart: () => void;
 
-  // 設置
+  // Settings
   setProgress: (progress: number) => void;
   setSpeed: (speed: number) => void;
 
-  // 事件
+  // Event
   onStart: (callback: (event: AnimationEvent) => void) => void;
   onEnd: (callback: (event: AnimationEvent) => void) => void;
   onPause: (callback: (event: AnimationEvent) => void) => void;
@@ -242,28 +242,28 @@ export interface UseAnimationReturn {
   performance: AnimationPerformance;
 }
 
-// 動畫服務接口
+// 動畫ServiceInterface
 export interface AnimationServiceInterface {
-  // 基本操作
+  // 基本Operation
   createAnimation(config: AnimationConfig): string;
   playAnimation(id: string): Promise<void>;
   pauseAnimation(id: string): void;
   stopAnimation(id: string): void;
 
-  // 批量操作
+  // BatchOperation
   playAll(): Promise<void>;
   pauseAll(): void;
   stopAll(): void;
 
-  // 配置管理
+  // ConfigureManage
   updateConfig(id: string, config: Partial<AnimationConfig>): void;
   getConfig(id: string): AnimationConfig | null;
 
-  // 性能監控
+  // 性能Monitor
   getPerformance(): AnimationPerformance;
   enablePerformanceMonitoring(enabled: boolean): void;
 
-  // 偏好設置
+  // PreferencesSettings
   updatePreferences(preferences: Partial<AnimationPreferences>): void;
   getPreferences(): AnimationPreferences;
 
@@ -272,7 +272,7 @@ export interface AnimationServiceInterface {
   getPreset(name: string): PresetAnimation | null;
   getAllPresets(): PresetAnimation[];
 
-  // 事件監聽
+  // Event監聽
   on(event: string, callback: (event: AnimationEvent) => void): void;
   off(event: string, callback: (event: AnimationEvent) => void): void;
 

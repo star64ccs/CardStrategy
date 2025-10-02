@@ -29,31 +29,31 @@ describe('AndroidBiometricService', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功創建單例實例', () => {
+    test('應該SuccessCreate單例實例', () => {
       const _instance1 = AndroidBiometricService.getInstance();
       const _instance2 = AndroidBiometricService.getInstance();
       expect(instance1).toBe(instance2);
     });
 
     test('應該在 Android 平台正確初始化', async () => {
-      // 等待初始化完成
+      // AwaitInitializeComplete
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(service.isServiceReady()).toBe(true);
       expect(Platform.OS).toBe('android');
     });
 
-    test('應該在非 Android 平台拋出錯誤', async () => {
-      // 臨時修改 Platform.OS
+    test('應該在非 Android 平台拋出Error', async () => {
+      // 臨時Modify Platform.OS
       (Platform as any).OS = 'ios';
 
-      // 創建新實例會觸發初始化錯誤
+      // Create新Instance會觸發InitializeError
       const _newService = new (AndroidBiometricService as any)();
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(newService.isServiceReady()).toBe(false);
 
-      // 恢復 Platform.OS
+      // Restore Platform.OS
       (Platform as any).OS = 'android';
     });
   });
@@ -65,7 +65,7 @@ describe('AndroidBiometricService', () => {
       expect(Array.isArray(capabilities)).toBe(true);
       expect(capabilities.length).toBeGreaterThan(0);
 
-      // 檢查能力結構
+      // Check能力結構
       capabilities.forEach(capability => {
         expect(capability).toHaveProperty('type');
         expect(capability).toHaveProperty('isAvailable');
@@ -90,7 +90,7 @@ describe('AndroidBiometricService', () => {
   });
 
   describe('生物識別認證測試', () => {
-    test('應該成功執行認證', async () => {
+    test('應該Success執行認證', async () => {
       const request: BiometricAuthRequest = {
         promptMessage: '請進行指紋認證',
         cancelButtonText: '取消',
@@ -112,9 +112,9 @@ describe('AndroidBiometricService', () => {
       }
     });
 
-    test('應該處理認證失敗情況', async () => {
-      // 模擬認證失敗
-      jest.spyOn(Math, 'random').mockReturnValue(0.1); // 低於 0.3 會失敗
+    test('應該Handle認證Failed情況', async () => {
+      // 模擬AuthenticateFailed
+      jest.spyOn(Math, 'random').mockReturnValue(0.1); // 低於 0.3 會Failed
 
       const _result = await service.authenticate();
 
@@ -124,7 +124,7 @@ describe('AndroidBiometricService', () => {
     });
 
     test('應該處理設備不支持的情況', async () => {
-      // 模擬設備不支持 - 需要模擬 isSensorAvailable 返回 null
+      // 模擬設備不Support - 需要模擬 isSensorAvailable Return null
       const _mockService = service as any;
       const _originalLoadLibrary = mockService.loadAndroidBiometricLibrary;
 
@@ -134,7 +134,7 @@ describe('AndroidBiometricService', () => {
         biometricKeysExist: async () => false,
       });
 
-      // 重新初始化服務
+      // ReInitializeService
       await mockService.initializeAndroidBiometricLibrary();
 
       const _result = await service.authenticate();
@@ -143,18 +143,18 @@ describe('AndroidBiometricService', () => {
       expect(result.errorCode).toBe('biometry_not_enrolled');
     });
 
-    test('應該處理服務未初始化的情況', async () => {
-      // 創建未初始化的服務
+    test('應該HandleService未Initialize的情況', async () => {
+      // Create未Initialize的Service
       const _uninitializedService = new (AndroidBiometricService as any)();
 
       await expect(uninitializedService.authenticate()).rejects.toThrow(
-        'Android 生物識別服務未初始化'
+        'Android 生物識別Service未Initialize'
       );
     });
   });
 
   describe('簽名創建測試', () => {
-    test('應該成功創建簽名', async () => {
+    test('應該SuccessCreate簽名', async () => {
       const _promptMessage = '請進行簽名認證';
       const _payload = 'test-payload-data';
 
@@ -172,8 +172,8 @@ describe('AndroidBiometricService', () => {
       }
     });
 
-    test('應該處理簽名創建失敗', async () => {
-      // 模擬簽名創建失敗
+    test('應該Handle簽名CreateFailed', async () => {
+      // 模擬SignCreateFailed
       jest.spyOn(Math, 'random').mockReturnValue(0.1);
 
       const _result = await service.createSignature('test', 'payload');
@@ -183,12 +183,12 @@ describe('AndroidBiometricService', () => {
       expect(result.error).toBe('Authentication failed');
     });
 
-    test('應該處理服務未初始化的情況', async () => {
+    test('應該HandleService未Initialize的情況', async () => {
       const _uninitializedService = new (AndroidBiometricService as any)();
 
       await expect(
         uninitializedService.createSignature('test', 'payload')
-      ).rejects.toThrow('Android 生物識別服務未初始化');
+      ).rejects.toThrow('Android 生物識別Service未Initialize');
     });
   });
 
@@ -209,7 +209,7 @@ describe('AndroidBiometricService', () => {
   });
 
   describe('密鑰管理測試', () => {
-    test('應該成功使密鑰失效', async () => {
+    test('應該Success使密鑰失效', async () => {
       const _result = await service.invalidateKeys();
 
       expect(typeof result).toBe('boolean');
@@ -222,26 +222,26 @@ describe('AndroidBiometricService', () => {
       }
     });
 
-    test('應該成功重新初始化密鑰', async () => {
+    test('應該Success重新Initialize密鑰', async () => {
       const _result = await service.reinitializeKeys();
 
       expect(typeof result).toBe('boolean');
     });
 
-    test('應該處理密鑰操作失敗', async () => {
+    test('應該Handle密鑰操作Failed', async () => {
       const _uninitializedService = new (AndroidBiometricService as any)();
 
       await expect(uninitializedService.invalidateKeys()).rejects.toThrow(
-        'Android 生物識別服務未初始化'
+        'Android 生物識別Service未Initialize'
       );
       await expect(uninitializedService.reinitializeKeys()).rejects.toThrow(
-        'Android 生物識別服務未初始化'
+        'Android 生物識別Service未Initialize'
       );
     });
   });
 
-  describe('服務狀態測試', () => {
-    test('應該正確報告服務狀態', () => {
+  describe('Service狀態測試', () => {
+    test('應該正確報告Service狀態', () => {
       expect(service.isServiceReady()).toBe(true);
 
       const _serviceInfo = service.getServiceInfo();
@@ -259,26 +259,26 @@ describe('AndroidBiometricService', () => {
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('應該處理初始化錯誤', async () => {
-      // 模擬初始化失敗
+  describe('ErrorHandle測試', () => {
+    test('應該HandleInitializeError', async () => {
+      // 模擬InitializeFailed
       const _mockService = new (AndroidBiometricService as any)();
 
-      // 模擬 Platform.OS 不是 android 來觸發錯誤
+      // 模擬 Platform.OS 不Yes android 來觸發Error
       const _originalOS = Platform.OS;
       (Platform as any).OS = 'ios';
 
-      // 強制觸發錯誤
+      // Force觸發Error
       await mockService.initializeAndroidBiometricLibrary();
 
       expect(mockService.isServiceReady()).toBe(false);
 
-      // 恢復 Platform.OS
+      // Restore Platform.OS
       (Platform as any).OS = originalOS;
     });
 
-    test('應該處理能力檢測錯誤', async () => {
-      // 這個測試主要確保錯誤不會導致服務崩潰
+    test('應該Handle能力檢測Error', async () => {
+      // 這個Test主要確保Error不會導致Service崩潰
       const _capabilities = await service.detectCapabilities();
       expect(Array.isArray(capabilities)).toBe(true);
     });
@@ -298,7 +298,7 @@ describe('AndroidBiometricService', () => {
     });
 
     test('應該正確映射 Android 生物識別類型', async () => {
-      // 測試不同類型的映射
+      // Test不同Class型的Map
       const _testCases = [
         { androidType: 'fingerprint', expected: 'fingerprint' },
         { androidType: 'face', expected: 'faceId' },
@@ -306,7 +306,7 @@ describe('AndroidBiometricService', () => {
         { androidType: undefined, expected: 'fingerprint' },
       ];
 
-      // 由於 mapAndroidBiometryType 是私有方法，我們通過認證結果來間接測試
+      // 由於 mapAndroidBiometryType YesPrivateMethod，我們通過Authenticate結果來間接Test
       const _result = await service.authenticate();
 
       if (result.success && result.biometricType) {
@@ -324,7 +324,7 @@ describe('AndroidBiometricService', () => {
 
       const _result = await service.authenticate(request);
 
-      // 確保認證過程完成（成功或失敗）
+      // 確保Authenticate過程Complete（Success或Failed）
       expect(result).toHaveProperty('success');
       expect(result).toHaveProperty('timestamp');
     });
@@ -339,7 +339,7 @@ describe('AndroidBiometricService', () => {
       const _endTime = Date.now();
       const _responseTime = endTime - startTime;
 
-      // 響應時間應該小於 1000ms（考慮模擬延遲）
+      // ResponseTime應該小於 1000ms（考慮模擬延遲）
       expect(responseTime).toBeLessThan(1000);
     });
 

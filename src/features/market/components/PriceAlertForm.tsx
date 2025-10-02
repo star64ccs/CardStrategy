@@ -40,7 +40,7 @@ export const PriceAlertForm: React.FC<PriceAlertFormProps> = ({
     const _thresholdValue = parseFloat(threshold);
 
     if (isNaN(thresholdValue) || thresholdValue <= 0) {
-      Alert.alert('錯誤', '請輸入有效的價格閾值');
+      Alert.alert('Error', '請輸入有效的價格閾值');
       return;
     }
 

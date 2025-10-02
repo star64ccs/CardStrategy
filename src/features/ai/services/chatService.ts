@@ -64,7 +64,7 @@ export class ChatService {
   }
 
   private initializeStats(): void {
-    // 初始化統計數據
+    // Initialize統Count據
     Object.values(ChatCategory).forEach(category => {
       this.stats.categoryDistribution[category] = 0;
     });
@@ -75,12 +75,12 @@ export class ChatService {
 
   public async initialize(): Promise<void> {
     try {
-      logger.info('ChatService: 初始化 AI 聊天助手服務');
-      // 模擬初始化過程
+      logger.info('ChatService: Initialize AI 聊天助手Service');
+      // 模擬Initialize過程
       await new Promise(resolve => setTimeout(resolve, 100));
       logger.info('ChatService: 初始化完成');
     } catch (error) {
-      logger.error('ChatService: 初始化失敗', error);
+      logger.error('ChatService: InitializeFailed', error);
       throw error;
     }
   }
@@ -119,7 +119,7 @@ export class ChatService {
       logger.info(`ChatService: 創建新會話 ${sessionId} 給用戶 ${userId}`);
       return session;
     } catch (error) {
-      logger.error('ChatService: 創建會話失敗', error);
+      logger.error('ChatService: Create會話Failed', error);
       throw error;
     }
   }
@@ -130,13 +130,13 @@ export class ChatService {
     try {
       logger.info(`ChatService: 處理消息請求，會話: ${request.sessionId}`);
 
-      // 驗證會話是否存在
+      // Verify會話YesNo存在
       const _session = this.sessions.get(request.sessionId);
       if (!session) {
         throw new Error(`會話 ${request.sessionId} 不存在`);
       }
 
-      // 創建用戶消息
+      // CreateUserMessage
       const userMessage: ChatMessage = {
         id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         sessionId: request.sessionId,
@@ -149,17 +149,17 @@ export class ChatService {
         userId: request.userId,
       };
 
-      // 保存用戶消息
+      // SaveUserMessage
       const _messages = this.messageHistory.get(request.sessionId) || [];
       messages.push(userMessage);
       this.messageHistory.set(request.sessionId, messages);
 
-      // 更新會話統計
+      // Update會話Statistics
       session.messageCount++;
       session.lastMessageAt = new Date().toISOString();
       session.updatedAt = new Date().toISOString();
 
-      // 分析用戶意圖
+      // AnalysisUser意Graph
       const _intent = request.intent || this.analyzeIntent(request.message);
       userMessage.intent = intent;
       this.stats.intentDistribution[intent]++;
@@ -171,7 +171,7 @@ export class ChatService {
         messages
       );
 
-      // 創建 AI 消息
+      // Create AI Message
       const aiMessage: ChatMessage = {
         id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         sessionId: request.sessionId,
@@ -186,16 +186,16 @@ export class ChatService {
         assistantId: 'ai-assistant-001',
       };
 
-      // 保存 AI 消息
+      // Save AI Message
       messages.push(aiMessage);
       this.messageHistory.set(request.sessionId, messages);
 
-      // 更新會話統計（AI 消息）
+      // Update會話Statistics（AI Message）
       session.messageCount++;
       session.lastMessageAt = new Date().toISOString();
       session.updatedAt = new Date().toISOString();
 
-      // 更新統計
+      // UpdateStatistics
       this.stats.totalMessages += 2;
       const _responseTime = Date.now() - startTime;
       this.updateResponseTimeStats(responseTime);
@@ -222,7 +222,7 @@ export class ChatService {
         },
       };
     } catch (error) {
-      logger.error('ChatService: 發送消息失敗', error);
+      logger.error('ChatService: 發送消息Failed', error);
       throw error;
     }
   }
@@ -230,7 +230,7 @@ export class ChatService {
   private analyzeIntent(message: string): UserIntent {
     const _lowerMessage = message.toLowerCase();
 
-    // 簡單的關鍵詞匹配來分析意圖
+    // 簡單的OffKey詞匹配來Analysis意Graph
     if (
       lowerMessage.includes('你好') ||
       lowerMessage.includes('hi') ||
@@ -307,7 +307,7 @@ export class ChatService {
     const _responses = {
       [UserIntent.GREETING]: {
         content:
-          '您好！我是 CardStrategy 的 AI 助手，很高興為您服務。我可以幫助您進行卡牌投資諮詢、市場分析、卡牌鑑定等服務。請問有什麼我可以幫助您的嗎？',
+          '您好！我是 CardStrategy 的 AI 助手，很高興為您Service。我可以幫助您進行卡牌投資諮詢、市場分析、卡牌鑑定等Service。請問有什麼我可以幫助您的嗎？',
         responseType: ResponseType.TEXT,
         confidence: 0.95,
         quickReplies: ['投資建議', '卡牌鑑定', '市場分析', '技術支援'],
@@ -326,7 +326,7 @@ export class ChatService {
       },
       [UserIntent.CARD_APPRAISAL]: {
         content:
-          '卡牌鑑定服務可以幫助您評估卡牌的價值和狀況。您可以上傳卡牌照片，我們的 AI 系統會分析卡牌的品相、稀有度和市場價值。建議您使用我們的專業鑑定系統獲得最準確的評估結果。',
+          '卡牌鑑定Service可以幫助您評估卡牌的價值和狀況。您可以上傳卡牌照片，我們的 AI 系統會分析卡牌的品相、稀有度和市場價值。建議您使用我們的專業鑑定系統獲得最準確的評估結果。',
         responseType: ResponseType.RICH_TEXT,
         confidence: 0.92,
         suggestedActions: ['開始卡牌鑑定', '查看鑑定標準', '了解評分系統'],
@@ -342,7 +342,7 @@ export class ChatService {
       },
       [UserIntent.TECHNICAL_HELP]: {
         content:
-          '技術支援服務可以幫助您解決使用平台時遇到的問題。請描述您遇到的具體問題，我會盡力為您提供解決方案。如果是複雜問題，我們會轉接給專業的技術支援團隊。',
+          '技術支援Service可以幫助您解決使用平台時遇到的問題。請描述您遇到的具體問題，我會盡力為您提供解決方案。如果是複雜問題，我們會轉接給專業的技術支援團隊。',
         responseType: ResponseType.TEXT,
         confidence: 0.85,
         suggestedActions: ['聯繫技術支援', '查看常見問題', '提交問題報告'],
@@ -350,7 +350,7 @@ export class ChatService {
       },
       [UserIntent.TRADING_GUIDANCE]: {
         content:
-          '交易指導服務可以幫助您了解卡牌交易的流程、注意事項和最佳實踐。我們提供安全的交易平台，支持買賣雙方進行公平交易。建議您先了解交易規則和安全措施。',
+          '交易指導Service可以幫助您了解卡牌交易的流程、注意事項和最佳實踐。我們提供安全的交易平台，支持買賣雙方進行公平交易。建議您先了解交易規則和安全措施。',
         responseType: ResponseType.RICH_TEXT,
         confidence: 0.87,
         suggestedActions: ['查看交易規則', '了解安全措施', '開始交易'],
@@ -382,7 +382,7 @@ export class ChatService {
       },
       [UserIntent.FEEDBACK]: {
         content:
-          '感謝您的反饋！您的意見對我們改進服務非常重要。請告訴我們您的建議或意見，我們會認真考慮並努力改進。',
+          '感謝您的反饋！您的意見對我們改進Service非常重要。請告訴我們您的建議或意見，我們會認真考慮並努力改進。',
         responseType: ResponseType.TEXT,
         confidence: 0.85,
         suggestedActions: ['提交反饋', '查看改進計劃', '參與用戶調查'],
@@ -399,7 +399,7 @@ export class ChatService {
 
     const _response = responses[intent] || responses[UserIntent.UNKNOWN];
 
-    // 模擬處理時間
+    // 模擬HandleTime
     await new Promise(resolve =>
       setTimeout(resolve, Math.random() * 1000 + 500)
     );
@@ -424,7 +424,7 @@ export class ChatService {
       this.stats.responseTimeDistribution.over5s++;
     }
 
-    // 更新平均響應時間
+    // Update平均ResponseTime
     this.stats.averageResponseTime =
       (this.stats.averageResponseTime * totalResponses + responseTime) /
       (totalResponses + 1);
@@ -452,7 +452,7 @@ export class ChatService {
 
     const _totalMessages = messages.length;
     const { averageResponseTime } = this.stats;
-    const _userSatisfaction = 4.2; // 模擬用戶滿意度
+    const _userSatisfaction = 4.2; // 模擬User滿意度
 
     return {
       sessionId,

@@ -1,6 +1,6 @@
-// 內容推薦系統類型定義
+// Content推薦系統Class型定義
 
-// 內容項目接口
+// Content項目Interface
 export interface ContentItem {
   id: string;
   title: string;
@@ -15,7 +15,7 @@ export interface ContentItem {
   updatedAt: Date;
 }
 
-// 內容類型枚舉
+// ContentClass型枚舉
 export enum ContentType {
   CARD = 'card',
   ARTICLE = 'article',
@@ -27,10 +27,10 @@ export enum ContentType {
   TUTORIAL = 'tutorial',
 }
 
-// 內容屬性
+// ContentProperty
 export interface ContentAttributes {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
-  duration: number; // 分鐘
+  duration: number; // Minute
   language: string;
   format: string;
   price: number;
@@ -42,7 +42,7 @@ export interface ContentAttributes {
   bookmarkCount: number;
 }
 
-// 內容元數據
+// Content元Data
 export interface ContentMetadata {
   author: string;
   publisher: string;
@@ -67,7 +67,7 @@ export interface PopularityMetrics {
   viralScore: number;
 }
 
-// 用戶偏好
+// UserPreferences
 export interface UserPreference {
   userId: string;
   contentTypes: ContentType[];
@@ -87,7 +87,7 @@ export interface UserPreference {
   lastUpdated: Date;
 }
 
-// 內容相似度
+// Content相似度
 export interface ContentSimilarity {
   sourceId: string;
   targetId: string;
@@ -98,7 +98,7 @@ export interface ContentSimilarity {
   attributeSimilarity: AttributeSimilarity;
 }
 
-// 相似度方法
+// 相似度Method
 export enum SimilarityMethod {
   COSINE = 'cosine',
   JACCARD = 'jaccard',
@@ -108,7 +108,7 @@ export enum SimilarityMethod {
   HYBRID = 'hybrid',
 }
 
-// 屬性相似度
+// Property相似度
 export interface AttributeSimilarity {
   tagSimilarity: number;
   categorySimilarity: number;
@@ -120,7 +120,7 @@ export interface AttributeSimilarity {
   ratingSimilarity: number;
 }
 
-// 內容推薦
+// Content推薦
 export interface ContentRecommendation {
   id: string;
   userId: string;
@@ -155,7 +155,7 @@ export interface RecommendationFactor {
   description: string;
 }
 
-// 內容推薦算法
+// Content推薦算法
 export enum ContentRecommendationAlgorithm {
   CONTENT_BASED = 'content_based',
   TAG_BASED = 'tag_based',
@@ -166,7 +166,7 @@ export enum ContentRecommendationAlgorithm {
   TRENDING_BASED = 'trending_based',
 }
 
-// 推薦元數據
+// 推薦元Data
 export interface RecommendationMetadata {
   userInteraction: UserInteraction;
   contentFeatures: ContentFeatures;
@@ -174,7 +174,7 @@ export interface RecommendationMetadata {
   performanceMetrics: PerformanceMetrics;
 }
 
-// 用戶互動
+// User互動
 export interface UserInteraction {
   viewCount: number;
   likeCount: number;
@@ -185,7 +185,7 @@ export interface UserInteraction {
   interactionHistory: InteractionEvent[];
 }
 
-// 互動事件
+// 互動Event
 export interface InteractionEvent {
   type: 'view' | 'like' | 'share' | 'bookmark' | 'rate' | 'comment';
   timestamp: Date;
@@ -194,7 +194,7 @@ export interface InteractionEvent {
   comment?: string;
 }
 
-// 內容特徵
+// Content特徵
 export interface ContentFeatures {
   tagFeatures: TagFeatures;
   categoryFeatures: CategoryFeatures;
@@ -202,7 +202,7 @@ export interface ContentFeatures {
   popularityFeatures: PopularityFeatures;
 }
 
-// 標籤特徵
+// Tag特徵
 export interface TagFeatures {
   tagVector: number[];
   tagWeights: Record<string, number>;
@@ -210,7 +210,7 @@ export interface TagFeatures {
   tagCooccurrence: Record<string, Record<string, number>>;
 }
 
-// 類別特徵
+// Class別特徵
 export interface CategoryFeatures {
   categoryVector: number[];
   categoryWeights: Record<string, number>;
@@ -218,7 +218,7 @@ export interface CategoryFeatures {
   categorySimilarity: Record<string, Record<string, number>>;
 }
 
-// 屬性特徵
+// Property特徵
 export interface AttributeFeatures {
   difficultyVector: number[];
   languageVector: number[];
@@ -237,7 +237,7 @@ export interface PopularityFeatures {
   freshnessScore: number;
 }
 
-// 算法參數
+// 算法Parameter
 export interface AlgorithmParameters {
   similarityThreshold: number;
   maxRecommendations: number;
@@ -263,7 +263,7 @@ export interface PerformanceMetrics {
   conversionRate: number;
 }
 
-// 內容推薦配置
+// Content推薦Configure
 export interface ContentRecommendationConfig {
   enabled: boolean;
   algorithms: ContentRecommendationAlgorithm[];
@@ -283,7 +283,7 @@ export interface ContentRecommendationConfig {
   performanceTracking: boolean;
 }
 
-// 內容推薦統計
+// Content推薦Statistics
 export interface ContentRecommendationStats {
   totalRecommendations: number;
   totalUsers: number;
@@ -295,7 +295,7 @@ export interface ContentRecommendationStats {
   lastUpdated: Date;
 }
 
-// API 請求類型
+// API RequestClass型
 export interface GetContentRecommendationsRequest {
   userId: string;
   limit?: number;
@@ -305,7 +305,7 @@ export interface GetContentRecommendationsRequest {
   options?: RecommendationOptions;
 }
 
-// 內容過濾器
+// ContentFilter器
 export interface ContentFilters {
   contentTypes?: ContentType[];
   categories?: string[];
@@ -327,7 +327,7 @@ export interface ContentFilters {
   };
 }
 
-// 推薦選項
+// 推薦Options
 export interface RecommendationOptions {
   includeSimilarContent?: boolean;
   includePopularContent?: boolean;
@@ -338,7 +338,7 @@ export interface RecommendationOptions {
   explainRecommendations?: boolean;
 }
 
-// API 響應類型
+// API ResponseClass型
 export interface GetContentRecommendationsResponse {
   recommendations: ContentRecommendation[];
   totalCount: number;
@@ -353,7 +353,7 @@ export interface GetContentRecommendationsResponse {
   };
 }
 
-// 內部數據結構
+// InternalData結構
 export interface ContentItemMatrix {
   [contentId: string]: {
     [targetContentId: string]: number;
@@ -382,7 +382,7 @@ export interface ContentSimilarityCache {
   };
 }
 
-// 系統配置
+// 系統Configure
 export interface ContentRecommendationSystemConfig {
   serviceName: string;
   version: string;

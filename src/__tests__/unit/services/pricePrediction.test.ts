@@ -1,7 +1,7 @@
 import { enhancedAIService } from '../../../services/enhancedAIService';
 import { predictionService } from '../../../services/predictionService';
 
-// Mock 外部依賴
+// Mock External依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../services/predictionService');
 jest.mock('../../../utils/logger');
@@ -70,7 +70,7 @@ describe('AI預測價格功能測試', () => {
       expect(result.data.modelPerformance.accuracy).toBeGreaterThan(0.8);
     });
 
-    it('應該處理預測失敗的情況', async () => {
+    it('應該Handle預測Failed的情況', async () => {
       const _mockCardId = 'card-456';
       const _mockTimeframes = ['7d'] as const;
       const _mockPredictionResult = {

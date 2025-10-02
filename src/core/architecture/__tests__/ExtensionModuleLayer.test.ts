@@ -11,7 +11,7 @@ import {
   RuleEngine,
 } from '../ExtensionModuleLayer';
 
-// 模擬插件實現
+// 模擬Plugin實現
 class MockPlugin implements Plugin {
   id: string;
   name: string;
@@ -52,7 +52,7 @@ describe('ExtensionModuleLayer', () => {
   });
 
   afterEach(() => {
-    // 重置單例實例
+    // Reset單例Instance
     (ExtensionModuleLayer as any).instance = undefined;
   });
 
@@ -65,7 +65,7 @@ describe('ExtensionModuleLayer', () => {
   });
 
   describe('初始化', () => {
-    it('應該正確初始化所有子服務', async () => {
+    it('應該正確Initialize所有子Service', async () => {
       const _consoleSpy = jest.spyOn(console, 'log').mockImplementation();
 
       await extensionLayer.initialize();
@@ -89,13 +89,13 @@ describe('ExtensionModuleLayer', () => {
       await extensionLayer.initialize();
       await extensionLayer.initialize(); // 第二次調用
 
-      expect(consoleSpy).toHaveBeenCalledTimes(4); // 只應該調用一次初始化
+      expect(consoleSpy).toHaveBeenCalledTimes(4); // 只應該調用一次Initialize
 
       consoleSpy.mockRestore();
     });
   });
 
-  describe('服務訪問器', () => {
+  describe('Service訪問器', () => {
     it('應該提供插件管理器訪問器', () => {
       expect(extensionLayer.pluginManager).toBeInstanceOf(PluginManager);
     });
@@ -121,7 +121,7 @@ describe('PluginManager', () => {
   });
 
   describe('插件註冊', () => {
-    it('應該成功註冊插件', async () => {
+    it('應該Success註冊插件', async () => {
       const _plugin = new MockPlugin('test-plugin', 'Test Plugin');
       const _result = await pluginManager.registerPlugin(plugin);
 
@@ -151,7 +151,7 @@ describe('PluginManager', () => {
   });
 
   describe('插件管理', () => {
-    it('應該成功啟用插件', async () => {
+    it('應該Success啟用插件', async () => {
       const _plugin = new MockPlugin('test-plugin', 'Test Plugin');
       await pluginManager.registerPlugin(plugin);
 
@@ -161,7 +161,7 @@ describe('PluginManager', () => {
       expect(plugin.enabled).toBe(true);
     });
 
-    it('應該成功禁用插件', async () => {
+    it('應該Success禁用插件', async () => {
       const _plugin = new MockPlugin('test-plugin', 'Test Plugin');
       plugin.enabled = true;
       await pluginManager.registerPlugin(plugin);
@@ -172,7 +172,7 @@ describe('PluginManager', () => {
       expect(plugin.enabled).toBe(false);
     });
 
-    it('應該成功卸載插件', async () => {
+    it('應該Success卸載插件', async () => {
       const _plugin = new MockPlugin('test-plugin', 'Test Plugin');
       await pluginManager.registerPlugin(plugin);
 
@@ -249,7 +249,7 @@ describe('ConfigurationManager', () => {
   });
 
   describe('配置加載', () => {
-    it('應該成功加載有效配置', async () => {
+    it('應該Success加載有效Configure', async () => {
       const config: Configuration = {
         id: 'test-config',
         name: 'Test Configuration',
@@ -280,12 +280,12 @@ describe('ConfigurationManager', () => {
       const _result = await configManager.loadConfiguration(invalidConfig);
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('驗證失敗');
+      expect(result.error).toContain('VerifyFailed');
     });
   });
 
   describe('配置更新', () => {
-    it('應該成功更新配置', async () => {
+    it('應該SuccessUpdateConfigure', async () => {
       const config: Configuration = {
         id: 'test-config',
         name: 'Test Configuration',
@@ -314,7 +314,7 @@ describe('ConfigurationManager', () => {
   });
 
   describe('配置備份和回滾', () => {
-    it('應該成功創建備份', async () => {
+    it('應該SuccessCreate備份', async () => {
       const config: Configuration = {
         id: 'test-config',
         name: 'Test Configuration',
@@ -334,7 +334,7 @@ describe('ConfigurationManager', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    it('應該成功同步配置', async () => {
+    it('應該Success同步Configure', async () => {
       const config: Configuration = {
         id: 'test-config',
         name: 'Test Configuration',
@@ -415,7 +415,7 @@ describe('RuleEngine', () => {
   });
 
   describe('規則執行', () => {
-    it('應該成功執行規則', async () => {
+    it('應該Success執行規則', async () => {
       const rule: Rule = {
         id: 'test-rule',
         name: 'Test Rule',
@@ -464,7 +464,7 @@ describe('RuleEngine', () => {
   });
 
   describe('規則管理', () => {
-    it('應該成功創建規則', async () => {
+    it('應該SuccessCreate規則', async () => {
       const rule: Rule = {
         id: 'new-rule',
         name: 'New Rule',
@@ -487,7 +487,7 @@ describe('RuleEngine', () => {
       expect(result.ruleId).toBe('new-rule');
     });
 
-    it('應該成功更新規則', async () => {
+    it('應該SuccessUpdate規則', async () => {
       const rule: Rule = {
         id: 'test-rule',
         name: 'Test Rule',
@@ -512,7 +512,7 @@ describe('RuleEngine', () => {
       expect(result.operation).toBe('update');
     });
 
-    it('應該成功啟用和禁用規則', async () => {
+    it('應該Success啟用和禁用規則', async () => {
       const rule: Rule = {
         id: 'test-rule',
         name: 'Test Rule',
@@ -561,7 +561,7 @@ describe('RuleEngine', () => {
         id: 'rule2',
         name: 'Rule 2',
         description: 'Second rule',
-        condition: 'data.value > 5', // 相同的條件
+        condition: 'data.value > 5', // 相同的Condition
         action: "data.status = 'processed'", // 相同的動作
         priority: 2,
         enabled: true,
@@ -582,8 +582,8 @@ describe('RuleEngine', () => {
         id: 'test-rule',
         name: 'Test Rule',
         description: 'A test rule',
-        condition: '  data.value > 5  ', // 有額外空格
-        action: "  data.status = 'processed'  ", // 有額外空格
+        condition: '  data.value > 5  ', // 有額外Empty格
+        action: "  data.status = 'processed'  ", // 有額外Empty格
         priority: 1,
         enabled: true,
         category: 'test',
@@ -712,13 +712,13 @@ describe('ExtensionModuleLayer 整合測試', () => {
   });
 
   it('應該提供完整的工作流程', async () => {
-    // 1. 註冊插件
+    // 1. RegisterPlugin
     const _plugin = new MockPlugin('test-plugin', 'Test Plugin');
     const _pluginResult =
       await extensionLayer.pluginManager.registerPlugin(plugin);
     expect(pluginResult.success).toBe(true);
 
-    // 2. 加載配置
+    // 2. 加載Configure
     const config: Configuration = {
       id: 'test-config',
       name: 'Test Configuration',
@@ -732,7 +732,7 @@ describe('ExtensionModuleLayer 整合測試', () => {
       await extensionLayer.configurationManager.loadConfiguration(config);
     expect(configResult.success).toBe(true);
 
-    // 3. 創建規則
+    // 3. Create規則
     const rule: Rule = {
       id: 'test-rule',
       name: 'Test Rule',
@@ -750,7 +750,7 @@ describe('ExtensionModuleLayer 整合測試', () => {
     });
     expect(ruleResult.success).toBe(true);
 
-    // 4. 執行規則
+    // 4. 執Row規則
     const context: RuleContext = {
       data: { value: 10, status: 'pending' },
       environment: 'test',
@@ -762,7 +762,7 @@ describe('ExtensionModuleLayer 整合測試', () => {
     );
     expect(executionResult.success).toBe(true);
 
-    // 5. 驗證所有服務都正常工作
+    // 5. Verify所有Service都正常工作
     expect(extensionLayer.pluginManager.getAllPlugins()).toHaveLength(1);
     expect(
       extensionLayer.configurationManager.getAllConfigurations()
@@ -770,8 +770,8 @@ describe('ExtensionModuleLayer 整合測試', () => {
     expect(extensionLayer.ruleEngine.getAllRules()).toHaveLength(1);
   });
 
-  it('應該處理錯誤情況', async () => {
-    // 測試未初始化的服務
+  it('應該HandleError情況', async () => {
+    // Test未Initialize的Service
     const _uninitializedLayer = new (ExtensionModuleLayer as any)();
 
     const _plugin = new MockPlugin('test-plugin', 'Test Plugin');

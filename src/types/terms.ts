@@ -1,6 +1,6 @@
-// 條款同意系統類型定義
+// 條款Agree系統Class型定義
 
-// 條款類型
+// 條款Class型
 export type TermsType =
   | 'purchase_refund_policy' // 購買及退款政策
   | 'disclaimer' // 免責聲明
@@ -8,13 +8,13 @@ export type TermsType =
   | 'terms_of_use' // 使用條款
   | 'ai_usage_policy'; // AI 使用政策
 
-// 條款狀態
+// 條款Status
 export type TermsStatus = 'active' | 'inactive' | 'draft' | 'archived';
 
-// 同意狀態
+// AgreeStatus
 export type ConsentStatus = 'pending' | 'accepted' | 'declined' | 'expired';
 
-// 條款版本
+// 條款Version
 export interface TermsVersion {
   id: string;
   type: TermsType;
@@ -29,7 +29,7 @@ export interface TermsVersion {
   updatedAt: Date;
 }
 
-// 用戶同意記錄
+// UserAgreeRecord
 export interface UserConsent {
   id: string;
   userId: string;
@@ -51,33 +51,33 @@ export interface UserConsent {
   updatedAt: Date;
 }
 
-// 條款配置
+// 條款Configure
 export interface TermsConfig {
-  // 強制同意設置
-  requireAllTerms: boolean; // 是否要求同意所有條款
-  allowPartialConsent: boolean; // 是否允許部分同意
-  consentExpiryDays: number; // 同意有效期（天）
+  // ForceAgreeSettings
+  requireAllTerms: boolean; // YesNo要求Agree所有條款
+  allowPartialConsent: boolean; // YesNoAllowPartialAgree
+  consentExpiryDays: number; // Agree有效期（天）
 
-  // 顯示設置
-  showOnFirstLaunch: boolean; // 首次啟動時顯示
-  showOnUpdate: boolean; // 更新時顯示
-  showOnLogin: boolean; // 登錄時顯示
+  // ShowSettings
+  showOnFirstLaunch: boolean; // 首次Start時Show
+  showOnUpdate: boolean; // Update時Show
+  showOnLogin: boolean; // Login時Show
 
-  // 通知設置
-  notifyOnExpiry: boolean; // 到期時通知
-  notifyOnUpdate: boolean; // 更新時通知
+  // NotificationSettings
+  notifyOnExpiry: boolean; // 到期時Notification
+  notifyOnUpdate: boolean; // Update時Notification
 
-  // 合規設置
-  requireExplicitConsent: boolean; // 要求明確同意
-  requireAgeVerification: boolean; // 要求年齡驗證
-  minimumAge: number; // 最小年齡要求
+  // 合規Settings
+  requireExplicitConsent: boolean; // 要求明確Agree
+  requireAgeVerification: boolean; // 要求AgeVerify
+  minimumAge: number; // 最小Age要求
 
-  // 多語言設置
-  defaultLanguage: string; // 默認語言
-  supportedLanguages: string[]; // 支持語言列表
+  // 多LanguageSettings
+  defaultLanguage: string; // DefaultLanguage
+  supportedLanguages: string[]; // SupportLanguageList
 }
 
-// 條款同意請求
+// 條款AgreeRequest
 export interface TermsConsentRequest {
   userId: string;
   termsType: TermsType;
@@ -93,7 +93,7 @@ export interface TermsConsentRequest {
   };
 }
 
-// 條款同意響應
+// 條款AgreeResponse
 export interface TermsConsentResponse {
   success: boolean;
   message: string;
@@ -105,7 +105,7 @@ export interface TermsConsentResponse {
   error?: string;
 }
 
-// 條款查詢參數
+// 條款QueryParameter
 export interface TermsQueryParams {
   type?: TermsType;
   language?: string;
@@ -114,7 +114,7 @@ export interface TermsQueryParams {
   includeContent?: boolean;
 }
 
-// 條款統計
+// 條款Statistics
 export interface TermsStatistics {
   totalUsers: number;
   acceptedUsers: number;
@@ -126,7 +126,7 @@ export interface TermsStatistics {
   lastUpdated: Date;
 }
 
-// 條款更新通知
+// 條款UpdateNotification
 export interface TermsUpdateNotification {
   id: string;
   type: TermsType;
@@ -138,7 +138,7 @@ export interface TermsUpdateNotification {
   createdAt: Date;
 }
 
-// 條款同意檢查結果
+// 條款AgreeCheck結果
 export interface TermsComplianceCheck {
   compliant: boolean;
   missingTerms: TermsType[];
@@ -149,7 +149,7 @@ export interface TermsComplianceCheck {
   recommendations: string[];
 }
 
-// 條款導出選項
+// 條款ExportOptions
 export interface TermsExportOptions {
   format: 'json' | 'csv' | 'pdf';
   includeContent: boolean;

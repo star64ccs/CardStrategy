@@ -115,30 +115,30 @@ const createUserModel = (sequelize) => {
     }
   );
 
-  // 實例方法：密碼驗證
+  // InstanceMethod：PasswordVerify
   User.prototype.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
   };
 
-  // 實例方法：更新最後登錄時間
+  // InstanceMethod：Update最後LoginTime
   User.prototype.updateLastLogin = async function () {
     this.lastLogin = new Date();
     return await this.save();
   };
 
-  // 實例方法：更新統計信息
+  // InstanceMethod：UpdateStatisticsInformation
   User.prototype.updateStatistics = async function (stats) {
     this.statistics = { ...this.statistics, ...stats };
     return await this.save();
   };
 
-  // 虛擬字段：會員狀態
+  // 虛擬Field：會員Status
   User.prototype.getIsMembershipActive = function () {
     if (!this.membership.endDate) return true;
     return new Date() < new Date(this.membership.endDate);
   };
 
-  // 虛擬字段：會員剩餘天數
+  // 虛擬Field：會員剩餘天數
   User.prototype.getMembershipDaysLeft = function () {
     if (!this.membership.endDate) return null;
     const now = new Date();
@@ -167,7 +167,7 @@ const getUserModel = () => {
       // eslint-disable-next-line no-console
       // logger.info('User model created successfully');
 
-      // 移除自動同步，讓遷移腳本處理
+      // RemoveAutoSync，讓遷移腳本Handle
     } catch (error) {
       // eslint-disable-next-line no-console
       // logger.info('Error creating User model:', error);

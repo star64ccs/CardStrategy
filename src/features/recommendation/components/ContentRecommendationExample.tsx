@@ -19,12 +19,12 @@ import {
 } from '../types/contentRecommendation';
 
 /**
- * 內容推薦示例組件
- * 展示內容推薦功能的使用方法
+ * Content推薦示例Component
+ * 展示Content推薦功能的使用Method
  */
 const ContentRecommendationExample: React.FC = () => {
   const {
-    // 狀態
+    // Status
     recommendations,
     similarContent,
     config,
@@ -39,7 +39,7 @@ const ContentRecommendationExample: React.FC = () => {
     recommendationCount,
     similarContentCount,
 
-    // 計算屬性
+    // 計算Property
     hasRecommendations,
     hasSimilarContent,
     averageScore,
@@ -62,7 +62,7 @@ const ContentRecommendationExample: React.FC = () => {
     totalUsers,
     totalContent,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     fetchRecommendations,
     fetchSimilarContent,
@@ -77,7 +77,7 @@ const ContentRecommendationExample: React.FC = () => {
     setPagination,
     clearError,
 
-    // 快速操作
+    // 快速Operation
     getRecommendationsForUser,
     getSimilarForContent,
     recordView,
@@ -92,7 +92,7 @@ const ContentRecommendationExample: React.FC = () => {
     refresh,
   } = useContentRecommendation();
 
-  // 本地狀態
+  // LocalStatus
   const [activeTab, setActiveTab] = useState<
     'recommendations' | 'similar' | 'config' | 'stats'
   >('recommendations');
@@ -106,31 +106,31 @@ const ContentRecommendationExample: React.FC = () => {
     SimilarityMethod.COSINE
   );
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     initialize();
   }, []);
 
-  // 處理錯誤
+  // HandleError
   useEffect(() => {
     if (hasError) {
-      Alert.alert('錯誤', '內容推薦系統發生錯誤，請檢查控制台');
+      Alert.alert('Error', '內容推薦系統發生Error，請Check控制台');
     }
   }, [hasError]);
 
-  // 獲取推薦
+  // Get推薦
   const _handleGetRecommendations = async () => {
     await getRecommendationsForUser(userId);
-    Alert.alert('成功', '已獲取推薦');
+    Alert.alert('Success', '已獲取推薦');
   };
 
-  // 獲取相似內容
+  // Get相似Content
   const _handleGetSimilarContent = async () => {
     await getSimilarForContent(contentId);
-    Alert.alert('成功', '已獲取相似內容');
+    Alert.alert('Success', '已獲取相似內容');
   };
 
-  // 記錄互動
+  // Record互動
   const _handleRecordInteraction = async (type: string) => {
     try {
       switch (type) {
@@ -152,13 +152,13 @@ const ContentRecommendationExample: React.FC = () => {
         default:
           return;
       }
-      Alert.alert('成功', `記錄${type}互動成功`);
+      Alert.alert('Success', `記錄${type}互動Success`);
     } catch (error) {
-      Alert.alert('失敗', `記錄${type}互動失敗`);
+      Alert.alert('Failed', `記錄${type}互動Failed`);
     }
   };
 
-  // 更新用戶偏好
+  // UpdateUserPreferences
   const _handleUpdatePreference = async () => {
     const preference: Partial<UserPreference> = {
       contentTypes: [ContentType.CARD, ContentType.ARTICLE],
@@ -173,13 +173,13 @@ const ContentRecommendationExample: React.FC = () => {
 
     try {
       await updateUserPreferences(userId, preference);
-      Alert.alert('成功', '更新用戶偏好成功');
+      Alert.alert('Success', 'Update用戶偏好Success');
     } catch (error) {
-      Alert.alert('失敗', '更新用戶偏好失敗');
+      Alert.alert('Failed', 'Update用戶偏好Failed');
     }
   };
 
-  // 渲染推薦列表
+  // 渲染推薦List
   const _renderRecommendations = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>推薦列表</Text>
@@ -205,7 +205,7 @@ const ContentRecommendationExample: React.FC = () => {
     </View>
   );
 
-  // 渲染相似內容列表
+  // 渲染相似ContentList
   const _renderSimilarContent = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>相似內容</Text>
@@ -234,7 +234,7 @@ const ContentRecommendationExample: React.FC = () => {
     </View>
   );
 
-  // 渲染配置信息
+  // 渲染ConfigureInformation
   const _renderConfig = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>配置信息</Text>
@@ -295,7 +295,7 @@ const ContentRecommendationExample: React.FC = () => {
     </View>
   );
 
-  // 渲染統計信息
+  // 渲染StatisticsInformation
   const _renderStats = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>統計信息</Text>
@@ -362,12 +362,12 @@ const ContentRecommendationExample: React.FC = () => {
     </View>
   );
 
-  // 渲染控制面板
+  // 渲染Control面板
   const _renderControlPanel = () => (
     <View style={styles.controlPanel}>
       <Text style={styles.controlTitle}>控制面板</Text>
 
-      {/* 用戶ID輸入 */}
+      {/* UserIDInput */}
       <View style={styles.inputGroup}>
         <Text style={styles.inputLabel}>用戶ID:</Text>
         <TextInput
@@ -378,7 +378,7 @@ const ContentRecommendationExample: React.FC = () => {
         />
       </View>
 
-      {/* 內容ID輸入 */}
+      {/* ContentIDInput */}
       <View style={styles.inputGroup}>
         <Text style={styles.inputLabel}>內容ID:</Text>
         <TextInput
@@ -389,7 +389,7 @@ const ContentRecommendationExample: React.FC = () => {
         />
       </View>
 
-      {/* 數量限制輸入 */}
+      {/* 數量LimitInput */}
       <View style={styles.inputGroup}>
         <Text style={styles.inputLabel}>數量限制:</Text>
         <TextInput
@@ -401,7 +401,7 @@ const ContentRecommendationExample: React.FC = () => {
         />
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.buttonGroup}>
         <TouchableOpacity
           style={styles.button}
@@ -486,7 +486,7 @@ const ContentRecommendationExample: React.FC = () => {
     <View style={styles.container}>
       <Text style={styles.title}>內容推薦系統示例</Text>
 
-      {/* 狀態信息 */}
+      {/* StatusInformation */}
       <View style={styles.statusBar}>
         <Text style={styles.statusText}>
           狀態: {isConfigured ? '已配置' : '未配置'} | 啟用:{' '}
@@ -507,7 +507,7 @@ const ContentRecommendationExample: React.FC = () => {
         )}
       </View>
 
-      {/* 標籤頁 */}
+      {/* Tag頁 */}
       <View style={styles.tabBar}>
         <TouchableOpacity
           style={[
@@ -566,14 +566,14 @@ const ContentRecommendationExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 內容區域 */}
+      {/* ContentDistrict域 */}
       <ScrollView style={styles.content}>
         {activeTab === 'recommendations' && renderRecommendations()}
         {activeTab === 'similar' && renderSimilarContent()}
         {activeTab === 'config' && renderConfig()}
         {activeTab === 'stats' && renderStats()}
 
-        {/* 控制面板 */}
+        {/* Control面板 */}
         {renderControlPanel()}
       </ScrollView>
 
@@ -585,7 +585,7 @@ const ContentRecommendationExample: React.FC = () => {
         </View>
       )}
 
-      {/* 錯誤提示 */}
+      {/* Error提示 */}
       {hasError && (
         <View style={styles.errorOverlay}>
           <Text style={styles.errorText}>發生錯誤，請檢查控制台</Text>

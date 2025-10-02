@@ -9,7 +9,7 @@ import React, {
 import { useResponsive } from '../../hooks/useResponsive';
 import type { StackProps } from '../../types/layout';
 
-// Stack 組件
+// Stack Component
 export const _Stack = forwardRef<HTMLDivElement, StackProps>(
   (
     {
@@ -39,7 +39,7 @@ export const _Stack = forwardRef<HTMLDivElement, StackProps>(
       const _responsiveJustify = getResponsiveValue(justify);
       const _responsiveWrap = getResponsiveValue(wrap);
 
-      // 對齊方式映射
+      // 對齊方式Map
       const _alignmentMap = {
         start: 'flex-start',
         center: 'center',
@@ -51,7 +51,7 @@ export const _Stack = forwardRef<HTMLDivElement, StackProps>(
         'space-evenly': 'space-evenly',
       };
 
-      // 方向映射
+      // 方向Map
       const _directionMap = {
         vertical: 'column',
         horizontal: 'row',
@@ -72,7 +72,7 @@ export const _Stack = forwardRef<HTMLDivElement, StackProps>(
       };
     }, [getResponsiveValue, direction, spacing, align, justify, wrap, style]);
 
-    // 生成 CSS 類名
+    // 生成 CSS Class名
     const _stackClassName = useMemo(() => {
       const _classes = ['layout-stack'];
 
@@ -108,7 +108,7 @@ export const _Stack = forwardRef<HTMLDivElement, StackProps>(
       getResponsiveValue,
     ]);
 
-    // 渲染帶分隔符的子元素
+    // 渲染帶分隔符的子Element
     const _renderChildrenWithDividers = useMemo(() => {
       if (!divider) {
         return children;

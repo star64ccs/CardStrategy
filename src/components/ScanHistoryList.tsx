@@ -103,7 +103,7 @@ const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
                 await dispatch(deleteScanRecord(record.id) as any);
               } catch (error) {
                 console.error('Failed to delete record:', error);
-                Alert.alert('錯誤', '刪除記錄失敗');
+                Alert.alert('Error', 'Delete記錄Failed');
               } finally {
                 setLoading(false);
               }
@@ -136,7 +136,7 @@ const ScanHistoryList: React.FC<ScanHistoryListProps> = ({
               setIsSelectionMode(false);
             } catch (error) {
               console.error('Failed to batch delete:', error);
-              Alert.alert('錯誤', '批量刪除失敗');
+              Alert.alert('Error', '批量DeleteFailed');
             } finally {
               setLoading(false);
             }

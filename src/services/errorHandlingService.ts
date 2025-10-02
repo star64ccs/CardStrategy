@@ -23,7 +23,7 @@ export interface ErrorMetrics {
   errorsBySeverity: Record<ErrorSeverity, number>;
   errorsByContext: Record<string, number>;
   recentErrors: ErrorReport[];
-  errorRate: number; // 每分鐘錯誤率
+  errorRate: number; // 每MinuteError率
 }
 
 class ErrorHandlingService {
@@ -31,7 +31,7 @@ class ErrorHandlingService {
   private readonly errorHandler: ErrorHandler;
   private errorReports: ErrorReport[] = [];
   private readonly maxReports = 1000;
-  private readonly errorRateWindow = 60000; // 1分鐘
+  private readonly errorRateWindow = 60000; // 1Minute
   private readonly errorCounts: Map<number, number> = new Map(); // timestamp -> count
 
   private constructor() {
@@ -46,7 +46,7 @@ class ErrorHandlingService {
   }
 
   /**
-   * 處理錯誤並生成報告
+   * HandleError並生成Report
    */
   async handleError(
     error: Error | AppError,
@@ -58,10 +58,10 @@ class ErrorHandlingService {
       environment?: string;
     } = {}
   ): Promise<ErrorReport> {
-    // 使用 ErrorHandler 處理錯誤
+    // 使用 ErrorHandler HandleError
     const _appError = this.errorHandler.handleError(error, context);
 
-    // 創建錯誤報告
+    // CreateErrorReport
     const report: ErrorReport = {
       id: this.generateReportId(),
       error: appError,
@@ -73,20 +73,20 @@ class ErrorHandlingService {
       environment: options.environment || 'production',
     };
 
-    // 記錄錯誤報告
+    // RecordErrorReport
     this.recordErrorReport(report);
 
-    // 記錄錯誤計數
+    // RecordErrorCount
     this.recordErrorCount();
 
-    // 根據錯誤嚴重程度決定是否需要額外處理
+    // Root據Error嚴重程度決定YesNo需要額外Handle
     await this.handleErrorBySeverity(appError, report);
 
     return report;
   }
 
   /**
-   * 根據錯誤嚴重程度進行特殊處理
+   * Root據Error嚴重程度進RowSpecialHandle
    */
   private async handleErrorBySeverity(
     error: AppError,
@@ -109,7 +109,7 @@ class ErrorHandlingService {
   }
 
   /**
-   * 處理嚴重錯誤
+   * Handle嚴重Error
    */
   private async handleCriticalError(
     error: AppError,
@@ -122,12 +122,12 @@ class ErrorHandlingService {
       timestamp: report.timestamp,
     });
 
-    // 可以添加緊急通知邏輯
+    // 可以Add緊急Notification邏輯
     // await this.sendEmergencyNotification(error, report);
   }
 
   /**
-   * 處理高嚴重程度錯誤
+   * Handle高嚴重程度Error
    */
   private async handleHighSeverityError(
     error: AppError,
@@ -140,12 +140,12 @@ class ErrorHandlingService {
       timestamp: report.timestamp,
     });
 
-    // 可以添加高優先級通知邏輯
+    // 可以Add高優先級Notification邏輯
     // await this.sendHighPriorityNotification(error, report);
   }
 
   /**
-   * 處理中等嚴重程度錯誤
+   * Handle中等嚴重程度Error
    */
   private async handleMediumSeverityError(
     error: AppError,
@@ -160,7 +160,7 @@ class ErrorHandlingService {
   }
 
   /**
-   * 處理低嚴重程度錯誤
+   * Handle低嚴重程度Error
    */
   private async handleLowSeverityError(
     error: AppError,
@@ -175,60 +175,60 @@ class ErrorHandlingService {
   }
 
   /**
-   * 記錄錯誤報告
+   * RecordErrorReport
    */
   private recordErrorReport(report: ErrorReport): void {
     this.errorReports.push(report);
 
-    // 限制報告數量
+    // LimitReport數量
     if (this.errorReports.length > this.maxReports) {
       this.errorReports.shift();
     }
   }
 
   /**
-   * 記錄錯誤計數
+   * RecordErrorCount
    */
   private recordErrorCount(): void {
     const _now = Date.now();
     const _windowStart = now - this.errorRateWindow;
 
-    // 清理過期的計數
+    // 清理過期的Count
     for (const [timestamp] of this.errorCounts) {
       if (timestamp < windowStart) {
         this.errorCounts.delete(timestamp);
       }
     }
 
-    // 增加當前時間窗口的計數
+    // 增加當前Time窗口的Count
     const _currentCount = this.errorCounts.get(now) || 0;
     this.errorCounts.set(now, currentCount + 1);
   }
 
   /**
-   * 生成報告 ID
+   * 生成Report ID
    */
   private generateReportId(): string {
     return `err_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   /**
-   * 獲取錯誤指標
+   * GetError指標
    */
   getErrorMetrics(): ErrorMetrics {
     const _now = Date.now();
     const _windowStart = now - this.errorRateWindow;
 
-    // 計算錯誤率
+    // 計算Error率
     let totalCount = 0;
     for (const [timestamp, count] of this.errorCounts) {
       if (timestamp >= windowStart) {
         totalCount += count;
       }
     }
-    const _errorRate = totalCount / (this.errorRateWindow / 60000); // 每分鐘錯誤率
+    const _errorRate = totalCount / (this.errorRateWindow / 60000); // 每MinuteError率
 
-    // 統計錯誤類型
+    // StatisticsErrorClass型
     const errorsByType: Record<ErrorType, number> = {
       [ErrorType.NETWORK]: 0,
       [ErrorType.VALIDATION]: 0,
@@ -240,7 +240,7 @@ class ErrorHandlingService {
       [ErrorType.UNKNOWN]: 0,
     };
 
-    // 統計錯誤嚴重程度
+    // StatisticsError嚴重程度
     const errorsBySeverity: Record<ErrorSeverity, number> = {
       [ErrorSeverity.LOW]: 0,
       [ErrorSeverity.MEDIUM]: 0,
@@ -248,10 +248,10 @@ class ErrorHandlingService {
       [ErrorSeverity.CRITICAL]: 0,
     };
 
-    // 統計錯誤上下文
+    // StatisticsError上下文
     const errorsByContext: Record<string, number> = {};
 
-    // 計算統計數據
+    // 計算統Count據
     for (const report of this.errorReports) {
       errorsByType[report.error.type]++;
       errorsBySeverity[report.error.severity]++;
@@ -264,20 +264,20 @@ class ErrorHandlingService {
       errorsByType,
       errorsBySeverity,
       errorsByContext,
-      recentErrors: this.errorReports.slice(-10), // 最近10個錯誤
+      recentErrors: this.errorReports.slice(-10), // 最近10個Error
       errorRate,
     };
   }
 
   /**
-   * 獲取特定類型的錯誤報告
+   * GetSpecificClass型的ErrorReport
    */
   getErrorReportsByType(type: ErrorType): ErrorReport[] {
     return this.errorReports.filter(report => report.error.type === type);
   }
 
   /**
-   * 獲取特定嚴重程度的錯誤報告
+   * GetSpecific嚴重程度的ErrorReport
    */
   getErrorReportsBySeverity(severity: ErrorSeverity): ErrorReport[] {
     return this.errorReports.filter(
@@ -286,17 +286,17 @@ class ErrorHandlingService {
   }
 
   /**
-   * 獲取特定上下文的錯誤報告
+   * GetSpecific上下文的ErrorReport
    */
   getErrorReportsByContext(context: string): ErrorReport[] {
     return this.errorReports.filter(report => report.context === context);
   }
 
   /**
-   * 清理舊的錯誤報告
+   * 清理舊的ErrorReport
    */
   cleanupOldReports(maxAge: number = 24 * 60 * 60 * 1000): number {
-    // 默認24小時
+    // Default24Hour
     const _cutoff = Date.now() - maxAge;
     const _initialCount = this.errorReports.length;
 
@@ -308,13 +308,13 @@ class ErrorHandlingService {
   }
 
   /**
-   * 導出錯誤報告
+   * ExportErrorReport
    */
   exportErrorReports(format: 'json' | 'csv' = 'json'): string {
     if (format === 'csv') {
       return this.exportToCSV();
     }
-    // 確保所有屬性都可序列化
+    // 確保所有Property都可序Column化
     const _serializableReports = this.errorReports.map(report => ({
       id: report.id,
       context: report.context,
@@ -338,7 +338,7 @@ class ErrorHandlingService {
   }
 
   /**
-   * 導出為 CSV 格式
+   * Export為 CSV 格式
    */
   private exportToCSV(): string {
     const _headers = [
@@ -366,7 +366,7 @@ class ErrorHandlingService {
   }
 
   /**
-   * 重置服務狀態
+   * ResetServiceStatus
    */
   reset(): void {
     this.errorReports = [];
@@ -375,5 +375,5 @@ class ErrorHandlingService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _errorHandlingService = ErrorHandlingService.getInstance();

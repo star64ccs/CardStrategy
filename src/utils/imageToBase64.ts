@@ -1,27 +1,27 @@
 /**
- * 圖片轉 Base64 工具函數
- * 用於測試的簡單實現
+ * Graph片轉 Base64 ToolFunction
+ * 用於Test的簡單實現
  */
 
 /**
- * 將圖片轉換為 base64 格式
- * @param imagePath 圖片路徑
+ * 將Graph片Convert為 base64 格式
+ * @param imagePath Graph片Path
  * @returns Promise<string> base64 字符串
  */
 export const _imageToBase64 = async (imagePath: string): Promise<string> => {
-  // 模擬轉換過程
+  // 模擬Convert過程
   return new Promise(resolve => {
     setTimeout(() => {
-      // 返回一個模擬的 base64 字符串
+      // Return一個模擬的 base64 字符串
       resolve('data:image/jpeg;base64,mock-base64-data-for-testing');
     }, 100);
   });
 };
 
 /**
- * 將多個圖片轉換為 base64 格式
- * @param imagePaths 圖片路徑數組
- * @returns Promise<string[]> base64 字符串數組
+ * 將MultipleGraph片Convert為 base64 格式
+ * @param imagePaths Graph片PathArray
+ * @returns Promise<string[]> base64 字符串Array
  */
 export const _imagesToBase64 = async (
   imagePaths: string[]

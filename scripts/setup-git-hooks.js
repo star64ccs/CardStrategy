@@ -3,15 +3,15 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 /**
- * Git Hooks設置腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
- * 確保提交前自動進行質量檢查
+ * Git HooksSettings腳本
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
+ * 確保Submit前Auto進Row質量Check
  */
 
 console.log('🚀 開始設置Git Hooks...\n');
 
-// 1. 設置pre-commit hook
+// 1. Settingspre-commit hook
 function setupPreCommitHook() {
   console.log('📋 設置pre-commit hook...');
 
@@ -26,7 +26,7 @@ echo "🚀 執行提交前檢查..."
 echo "📋 檢查代碼風格..."
 npm run lint
 if [ $? -ne 0 ]; then
-  echo "❌ 代碼風格檢查失敗，請修復後再提交"
+  echo "❌ 代碼風格CheckFailed，請修復後再提交"
   exit 1
 fi
 
@@ -34,7 +34,7 @@ fi
 echo "📋 檢查TypeScript類型..."
 npm run type-check
 if [ $? -ne 0 ]; then
-  echo "❌ TypeScript類型檢查失敗，請修復後再提交"
+  echo "❌ TypeScript類型CheckFailed，請修復後再提交"
   exit 1
 fi
 
@@ -42,7 +42,7 @@ fi
 echo "📋 運行單元測試..."
 npm run test:unit
 if [ $? -ne 0 ]; then
-  echo "❌ 單元測試失敗，請修復後再提交"
+  echo "❌ 單元測試Failed，請修復後再提交"
   exit 1
 fi
 
@@ -52,7 +52,7 @@ exit 0
 
   fs.writeFileSync(preCommitPath, preCommitContent);
 
-  // 設置執行權限
+  // Settings執Row權限
   try {
     execSync(`chmod +x "${preCommitPath}"`);
   } catch (error) {
@@ -65,7 +65,7 @@ exit 0
   return preCommitPath;
 }
 
-// 2. 設置pre-push hook
+// 2. Settingspre-push hook
 function setupPrePushHook() {
   console.log('📋 設置pre-push hook...');
 
@@ -80,7 +80,7 @@ echo "🚀 執行推送前檢查..."
 echo "📋 運行完整測試套件..."
 npm run test
 if [ $? -ne 0 ]; then
-  echo "❌ 測試失敗，請修復後再推送"
+  echo "❌ 測試Failed，請修復後再推送"
   exit 1
 fi
 
@@ -88,7 +88,7 @@ fi
 echo "📋 檢查構建..."
 npm run build
 if [ $? -ne 0 ]; then
-  echo "❌ 構建失敗，請修復後再推送"
+  echo "❌ 構建Failed，請修復後再推送"
   exit 1
 fi
 
@@ -98,7 +98,7 @@ exit 0
 
   fs.writeFileSync(prePushPath, prePushContent);
 
-  // 設置執行權限
+  // Settings執Row權限
   try {
     execSync(`chmod +x "${prePushPath}"`);
   } catch (error) {
@@ -111,7 +111,7 @@ exit 0
   return prePushPath;
 }
 
-// 3. 設置commit-msg hook
+// 3. Settingscommit-msg hook
 function setupCommitMsgHook() {
   console.log('📋 設置commit-msg hook...');
 
@@ -140,7 +140,7 @@ exit 0
 
   fs.writeFileSync(commitMsgPath, commitMsgContent);
 
-  // 設置執行權限
+  // Settings執Row權限
   try {
     execSync(`chmod +x "${commitMsgPath}"`);
   } catch (error) {
@@ -153,7 +153,7 @@ exit 0
   return commitMsgPath;
 }
 
-// 4. 創建Husky配置
+// 4. CreateHuskyConfigure
 function setupHuskyConfig() {
   console.log('📋 設置Husky配置...');
 
@@ -189,7 +189,7 @@ npm run build
 
   fs.writeFileSync(prePushHuskyPath, prePushHuskyContent);
 
-  // 設置執行權限
+  // Settings執Row權限
   try {
     execSync(`chmod +x "${preCommitHuskyPath}"`);
     execSync(`chmod +x "${prePushHuskyPath}"`);
@@ -203,14 +203,14 @@ npm run build
   return huskyDir;
 }
 
-// 5. 更新package.json腳本
+// 5. Updatepackage.json腳本
 function updatePackageScripts() {
   console.log('📋 更新package.json腳本...');
 
   const packagePath = path.join(__dirname, '..', 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 
-  // 添加新的腳本
+  // Add新的腳本
   const newScripts = {
     'prepare': 'husky install',
     'pre-commit': 'npm run lint && npm run type-check && npm run test:unit',
@@ -229,7 +229,7 @@ function updatePackageScripts() {
   return newScripts;
 }
 
-// 6. 生成設置報告
+// 6. 生成SettingsReport
 function generateSetupReport(results) {
   console.log('\n📊 Git Hooks設置報告');
   console.log('='.repeat(50));
@@ -262,25 +262,25 @@ function generateSetupReport(results) {
   };
 }
 
-// 主函數
+// 主Function
 function main() {
   try {
     console.log('🚀 開始設置Git Hooks...\n');
 
-    // 階段1：設置Git Hooks
+    // 階段1：SettingsGit Hooks
     const preCommitPath = setupPreCommitHook();
     const prePushPath = setupPrePushHook();
     const commitMsgPath = setupCommitMsgHook();
 
-    // 階段2：設置Husky配置
+    // 階段2：SettingsHuskyConfigure
     const huskyDir = setupHuskyConfig();
 
-    // 階段3：更新package.json腳本
+    // 階段3：Updatepackage.json腳本
     const newScripts = updatePackageScripts();
 
     console.log('\n' + '='.repeat(50));
 
-    // 階段4：生成報告
+    // 階段4：生成Report
     const report = generateSetupReport({
       hooks: { preCommitPath, prePushPath, commitMsgPath },
       husky: huskyDir,
@@ -307,7 +307,7 @@ function main() {
     console.log('  4. 監控Hook執行效果');
 
   } catch (error) {
-    console.error('❌ Git Hooks設置失敗:', error);
+    console.error('❌ Git HooksSettingsFailed:', error);
     process.exit(1);
   }
 }

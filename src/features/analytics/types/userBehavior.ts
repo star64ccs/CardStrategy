@@ -1,6 +1,6 @@
-// 用戶行為分析類型定義
+// UserRow為AnalysisClass型定義
 
-// 用戶行為事件類型
+// UserRow為EventClass型
 export type UserBehaviorEventType =
   | 'page_view'
   | 'card_view'
@@ -27,7 +27,7 @@ export type UserBehaviorEventType =
   | 'session_start'
   | 'session_end';
 
-// 用戶行為事件
+// UserRow為Event
 export interface UserBehaviorEvent {
   id: string;
   userId: string;
@@ -60,7 +60,7 @@ export interface UserBehaviorEvent {
   metadata?: Record<string, any>;
 }
 
-// 用戶行為模式
+// UserRow為模式
 export interface UserBehaviorPattern {
   id: string;
   userId: string;
@@ -79,7 +79,7 @@ export interface UserBehaviorPattern {
   confidence: number;
 }
 
-// 用戶畫像
+// User畫像
 export interface UserProfile {
   id: string;
   userId: string;
@@ -121,7 +121,7 @@ export interface UserProfile {
   };
 }
 
-// 用戶行為統計
+// UserRow為Statistics
 export interface UserBehaviorStats {
   totalUsers: number;
   activeUsers: number;
@@ -144,7 +144,7 @@ export interface UserBehaviorStats {
   };
 }
 
-// 用戶行為分析配置
+// UserRow為AnalysisConfigure
 export interface UserBehaviorConfig {
   enabled: boolean;
   trackingInterval: number;
@@ -161,7 +161,7 @@ export interface UserBehaviorConfig {
   customEvents: boolean;
 }
 
-// 用戶行為分析報告
+// UserRow為AnalysisReport
 export interface UserBehaviorReport {
   id: string;
   title: string;
@@ -181,7 +181,7 @@ export interface UserBehaviorReport {
   version: string;
 }
 
-// 用戶行為洞察
+// UserRow為洞察
 export interface UserBehaviorInsight {
   id: string;
   type: 'trend' | 'anomaly' | 'opportunity' | 'warning';
@@ -195,7 +195,7 @@ export interface UserBehaviorInsight {
   potentialValue: number;
 }
 
-// 用戶行為建議
+// UserRow為建議
 export interface UserBehaviorRecommendation {
   id: string;
   type:
@@ -216,7 +216,7 @@ export interface UserBehaviorRecommendation {
   successMetrics: string[];
 }
 
-// 用戶行為過濾器
+// UserRow為Filter器
 export interface UserBehaviorFilter {
   userIds?: string[];
   eventTypes?: UserBehaviorEventType[];
@@ -241,7 +241,7 @@ export interface UserBehaviorFilter {
   activityLevels?: 'inactive' | 'low' | 'medium' | 'high';
 }
 
-// 用戶行為導出選項
+// UserRow為ExportOptions
 export interface UserBehaviorExportOptions {
   format: 'json' | 'csv' | 'excel' | 'pdf';
   includeEvents: boolean;
@@ -253,7 +253,7 @@ export interface UserBehaviorExportOptions {
   anonymize: boolean;
 }
 
-// 用戶行為警報
+// UserRow為Alert
 export interface UserBehaviorAlert {
   id: string;
   name: string;
@@ -271,7 +271,7 @@ export interface UserBehaviorAlert {
   lastTriggered?: number;
 }
 
-// 用戶行為分析響應
+// UserRow為AnalysisResponse
 export interface UserBehaviorAnalysisResponse {
   events: UserBehaviorEvent[];
   patterns: UserBehaviorPattern[];
@@ -288,7 +288,7 @@ export interface UserBehaviorAnalysisResponse {
   };
 }
 
-// 用戶行為追蹤選項
+// UserRow為TraceOptions
 export interface UserBehaviorTrackingOptions {
   trackPageViews: boolean;
   trackClicks: boolean;
@@ -302,7 +302,7 @@ export interface UserBehaviorTrackingOptions {
   anonymizeData: boolean;
 }
 
-// 用戶行為分析指標
+// UserRow為Analysis指標
 export interface UserBehaviorMetrics {
   // 基礎指標
   totalEvents: number;
@@ -325,7 +325,7 @@ export interface UserBehaviorMetrics {
     step4: number;
   };
 
-  // 用戶價值指標
+  // User價Value指標
   averageUserValue: number;
   customerLifetimeValue: number;
   revenuePerUser: number;
@@ -338,7 +338,7 @@ export interface UserBehaviorMetrics {
     day90: number;
   };
 
-  // 行為指標
+  // Row為指標
   searchBehavior: {
     averageSearchesPerSession: number;
     popularSearchTerms: string[];

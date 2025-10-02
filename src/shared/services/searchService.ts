@@ -3,8 +3,8 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 搜索服務
- * 處理搜索相關功能
+ * SearchService
+ * HandleSearch相Off功能
  */
 export class SearchService {
   private static instance: SearchService;
@@ -19,7 +19,7 @@ export class SearchService {
   }
 
   /**
-   * 搜索卡牌
+   * Search卡牌
    */
   async searchCards(query: string): Promise<Card[]> {
     try {
@@ -30,14 +30,14 @@ export class SearchService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('搜索失敗');
+        throw new Error('搜索Failed');
       }
     } catch (error) {
-      logger.error('搜索失敗:', { error, query });
+      logger.error('搜索Failed:', { error, query });
       throw error;
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _searchService = SearchService.getInstance();

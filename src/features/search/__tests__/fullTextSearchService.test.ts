@@ -13,7 +13,7 @@ describe('FullTextSearchService', () => {
   let searchService: FullTextSearchService;
 
   beforeEach(() => {
-    // 重置單例實例
+    // Reset單例Instance
     (FullTextSearchService as any).instance = undefined;
     searchService = FullTextSearchService.getInstance();
   });
@@ -27,7 +27,7 @@ describe('FullTextSearchService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化搜索服務', async () => {
+    it('應該SuccessInitialize搜索Service', async () => {
       const _result = await searchService.initialize();
       expect(result).toBe(true);
       expect(searchService.getInitializationStatus()).toBe(true);
@@ -47,11 +47,11 @@ describe('FullTextSearchService', () => {
       consoleSpy.mockRestore();
     });
 
-    it('應該處理初始化失敗', async () => {
-      // 模擬初始化失敗
+    it('應該HandleInitializeFailed', async () => {
+      // 模擬InitializeFailed
       jest
         .spyOn(searchService as any, 'initializeSearchIndex')
-        .mockRejectedValue(new Error('索引初始化失敗'));
+        .mockRejectedValue(new Error('索引InitializeFailed'));
 
       const _result = await searchService.initialize();
       expect(result).toBe(false);
@@ -89,7 +89,7 @@ describe('FullTextSearchService', () => {
 
       try {
         await searchService.search(query);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error: unknown) {
         expect(error.message).toContain('搜索查詢不能為空');
       }
@@ -105,14 +105,14 @@ describe('FullTextSearchService', () => {
 
       try {
         await searchService.search(query);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error: unknown) {
         expect(error.message).toContain('搜索查詢長度不能超過 500 個字符');
       }
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
-      // 重置服務狀態
+    it('應該在未Initialize時拋出Error', async () => {
+      // ResetServiceStatus
       (searchService as any).isInitialized = false;
 
       const query: SearchQuery = {
@@ -123,9 +123,9 @@ describe('FullTextSearchService', () => {
 
       try {
         await searchService.search(query);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error: unknown) {
-        expect(error.message).toContain('搜索服務未初始化');
+        expect(error.message).toContain('搜索Service未Initialize');
       }
     });
 
@@ -187,7 +187,7 @@ describe('FullTextSearchService', () => {
 
       const _response = await searchService.search(query);
 
-      // 檢查價格是否按降序排列
+      // Check價格YesNo按降序排Column
       for (let i = 1; i < response.results.length; i++) {
         const _prevPrice = response.results[i - 1].price || 0;
         const _currentPrice = response.results[i].price || 0;
@@ -324,14 +324,14 @@ describe('FullTextSearchService', () => {
       expect(result).toBe(true);
     });
 
-    it.skip('應該處理索引更新失敗', async () => {
-      // 模擬更新失敗
+    it.skip('應該Handle索引UpdateFailed', async () => {
+      // 模擬UpdateFailed
       const _mockUpdateIndex = jest.spyOn(
         searchService as any,
         'updateSearchIndex'
       );
       mockUpdateIndex.mockImplementation(() =>
-        Promise.reject(new Error('更新失敗'))
+        Promise.reject(new Error('UpdateFailed'))
       );
 
       const _result = await searchService.updateSearchIndex('invalid_index');
@@ -372,7 +372,7 @@ describe('FullTextSearchService', () => {
       expect(updatedConfig.maxResults).toBe(500);
       expect(updatedConfig.defaultLimit).toBe(10);
       expect(updatedConfig.enableFuzzySearch).toBe(false);
-      expect(updatedConfig.maxQueryLength).toBe(500); // 未更新的配置保持原值
+      expect(updatedConfig.maxQueryLength).toBe(500); // 未Update的Configure保持原Value
     });
   });
 
@@ -388,17 +388,17 @@ describe('FullTextSearchService', () => {
         limit: 10,
       };
 
-      // 第一次搜索
+      // 第一次Search
       const _response1 = await searchService.search(query);
 
-      // 第二次搜索（應該從緩存返回）
+      // 第二次Search（應該從CacheReturn）
       const _response2 = await searchService.search(query);
 
       expect(response1).toEqual(response2);
     });
 
     it('應該清理過期緩存', async () => {
-      // 這個測試需要等待緩存過期，在實際環境中可能需要調整
+      // 這個Test需要AwaitCache過期，在實際環境中可能需要調整
       const query: SearchQuery = {
         query: 'test_expire',
         page: 1,
@@ -407,24 +407,24 @@ describe('FullTextSearchService', () => {
 
       await searchService.search(query);
 
-      // 模擬時間過去
-      jest.advanceTimersByTime(300000); // 5分鐘
+      // 模擬Time過去
+      jest.advanceTimersByTime(300000); // 5Minute
 
-      // 緩存應該被清理
-      // 注意：這個測試可能需要根據實際的緩存實現調整
+      // Cache應該被清理
+      // 注意：這個Test可能需要Root據實際的Cache實現調整
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該處理搜索錯誤', async () => {
+  describe('ErrorHandle', () => {
+    it('應該Handle搜索Error', async () => {
       await searchService.initialize();
 
-      // 模擬搜索過程中發生錯誤
+      // 模擬Search過程中發生Error
       const _mockExecuteSearch = jest.spyOn(
         searchService as any,
         'executeSearch'
       );
-      mockExecuteSearch.mockRejectedValue(new Error('搜索執行錯誤'));
+      mockExecuteSearch.mockRejectedValue(new Error('搜索執行Error'));
 
       const query: SearchQuery = {
         query: 'test_error',
@@ -434,22 +434,22 @@ describe('FullTextSearchService', () => {
 
       try {
         await searchService.search(query);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error: unknown) {
-        expect(error.message).toContain('搜索執行錯誤');
+        expect(error.message).toContain('搜索執行Error');
       }
 
       mockExecuteSearch.mockRestore();
     });
 
-    it('應該處理過濾器錯誤', async () => {
+    it('應該Handle過濾器Error', async () => {
       await searchService.initialize();
 
       const query: SearchQuery = {
         query: 'test',
         filters: {
           priceRange: {
-            min: 'invalid' as any, // 故意傳入錯誤類型
+            min: 'invalid' as any, // 故意傳入ErrorClass型
             max: 1000,
           },
         },
@@ -457,8 +457,8 @@ describe('FullTextSearchService', () => {
         limit: 10,
       };
 
-      // 這個測試可能會失敗，因為過濾器邏輯需要處理類型錯誤
-      // 在實際實現中應該添加類型檢查
+      // 這個Test可能會Failed，因為Filter器邏輯需要HandleClass型Error
+      // 在實際實現中應該AddClass型Check
     });
   });
 

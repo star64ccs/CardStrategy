@@ -1,26 +1,26 @@
-// 應用配置常量
+// ApplyConfigureConstant
 export const _APP_CONFIG = {
-  // 應用基本信息
+  // Apply基本Information
   NAME: 'CardStrategy',
   VERSION: '1.0.0',
   DESCRIPTION: '卡牌投資與收藏管理平台',
   AUTHOR: 'CardStrategy Team',
   WEBSITE: 'https://cardstrategy.app',
 
-  // 環境配置
+  // 環境Configure
   ENVIRONMENT: process.env.NODE_ENV || 'development',
   IS_PRODUCTION: process.env.NODE_ENV === 'production',
   IS_DEVELOPMENT: process.env.NODE_ENV === 'development',
   IS_TEST: process.env.NODE_ENV === 'test',
 
-  // 平台配置
+  // 平台Configure
   PLATFORM: {
     IOS: 'ios',
     ANDROID: 'android',
     WEB: 'web',
   },
 
-  // 功能開關
+  // 功能OnOff
   FEATURES: {
     AI_ANALYSIS: true,
     CARD_RECOGNITION: true,
@@ -33,38 +33,38 @@ export const _APP_CONFIG = {
     MULTI_LANGUAGE: true,
   },
 
-  // 性能配置
+  // 性能Configure
   PERFORMANCE: {
     IMAGE_QUALITY: 'medium', // 'low' | 'medium' | 'high'
     CACHE_ENABLED: true,
     CACHE_SIZE: 50 * 1024 * 1024, // 50MB
     MAX_IMAGE_SIZE: 10 * 1024 * 1024, // 10MB
-    REQUEST_TIMEOUT: 30000, // 30秒
+    REQUEST_TIMEOUT: 30000, // 30Second
     RETRY_ATTEMPTS: 3,
   },
 
-  // 安全配置
+  // 安全Configure
   SECURITY: {
-    SESSION_TIMEOUT: 24 * 60 * 60 * 1000, // 24小時
+    SESSION_TIMEOUT: 24 * 60 * 60 * 1000, // 24Hour
     PASSWORD_MIN_LENGTH: 8,
     PASSWORD_REQUIRE_UPPERCASE: true,
     PASSWORD_REQUIRE_LOWERCASE: true,
     PASSWORD_REQUIRE_NUMBERS: true,
     PASSWORD_REQUIRE_SPECIAL_CHARS: true,
     MAX_LOGIN_ATTEMPTS: 5,
-    LOCKOUT_DURATION: 15 * 60 * 1000, // 15分鐘
+    LOCKOUT_DURATION: 15 * 60 * 1000, // 15Minute
   },
 
-  // 用戶體驗配置
+  // User體驗Configure
   UX: {
-    ANIMATION_DURATION: 300, // 毫秒
-    DEBOUNCE_DELAY: 300, // 毫秒
-    TOAST_DURATION: 3000, // 毫秒
-    LOADING_TIMEOUT: 10000, // 10秒
+    ANIMATION_DURATION: 300, // 毫Second
+    DEBOUNCE_DELAY: 300, // 毫Second
+    TOAST_DURATION: 3000, // 毫Second
+    LOADING_TIMEOUT: 10000, // 10Second
     INFINITE_SCROLL_THRESHOLD: 100, // 像素
   },
 
-  // 分析配置
+  // AnalysisConfigure
   ANALYTICS: {
     ENABLED: true,
     TRACK_EVENTS: true,
@@ -73,7 +73,7 @@ export const _APP_CONFIG = {
     SAMPLE_RATE: 1.0, // 100%
   },
 
-  // 錯誤報告配置
+  // ErrorReportConfigure
   ERROR_REPORTING: {
     ENABLED: true,
     SEND_CRASH_REPORTS: true,
@@ -82,9 +82,9 @@ export const _APP_CONFIG = {
   },
 } as const;
 
-// 開發配置
+// On發Configure
 export const _DEV_CONFIG = {
-  // 開發工具
+  // On發Tool
   DEV_TOOLS: {
     ENABLED: !APP_CONFIG.IS_PRODUCTION,
     REDUX_DEVTOOLS: !APP_CONFIG.IS_PRODUCTION,
@@ -92,11 +92,11 @@ export const _DEV_CONFIG = {
     LOG_LEVEL: 'debug',
   },
 
-  // 模擬數據
+  // 模擬Data
   MOCK_DATA: {
     ENABLED: APP_CONFIG.IS_DEVELOPMENT,
-    DELAY: 1000, // 1秒延遲
-    ERROR_RATE: 0.1, // 10%錯誤率
+    DELAY: 1000, // 1Second延遲
+    ERROR_RATE: 0.1, // 10%Error率
   },
 
   // 熱重載
@@ -106,16 +106,16 @@ export const _DEV_CONFIG = {
   },
 } as const;
 
-// 測試配置
+// TestConfigure
 export const _TEST_CONFIG = {
-  // 測試環境
+  // Test環境
   ENVIRONMENT: {
-    TIMEOUT: 10000, // 10秒
+    TIMEOUT: 10000, // 10Second
     RETRY_ATTEMPTS: 3,
     SCREENSHOT_ON_FAILURE: true,
   },
 
-  // 模擬服務
+  // 模擬Service
   MOCK_SERVICES: {
     API: true,
     STORAGE: true,
@@ -124,7 +124,7 @@ export const _TEST_CONFIG = {
     NOTIFICATIONS: true,
   },
 
-  // 測試數據
+  // TestData
   TEST_DATA: {
     USERS: 10,
     CARDS: 100,
@@ -133,7 +133,7 @@ export const _TEST_CONFIG = {
   },
 } as const;
 
-// 生產配置
+// 生產Configure
 export const _PROD_CONFIG = {
   // 性能優化
   OPTIMIZATION: {
@@ -143,7 +143,7 @@ export const _PROD_CONFIG = {
     CACHE_STRATEGY: 'aggressive',
   },
 
-  // 監控
+  // Monitor
   MONITORING: {
     PERFORMANCE: true,
     ERRORS: true,
@@ -160,21 +160,21 @@ export const _PROD_CONFIG = {
   },
 } as const;
 
-// 本地化配置
+// Local化Configure
 export const _I18N_CONFIG = {
-  // 支持語言
+  // SupportLanguage
   SUPPORTED_LANGUAGES: ['zh-TW', 'en-US', 'ja-JP'],
   DEFAULT_LANGUAGE: 'zh-TW',
   FALLBACK_LANGUAGE: 'en-US',
 
-  // 日期格式
+  // Day格式
   DATE_FORMATS: {
     'zh-TW': 'YYYY/MM/DD',
     'en-US': 'MM/DD/YYYY',
     'ja-JP': 'YYYY/MM/DD',
   },
 
-  // 時間格式
+  // Time格式
   TIME_FORMATS: {
     'zh-TW': 'HH:mm',
     'en-US': 'h:mm A',
@@ -201,41 +201,41 @@ export const _I18N_CONFIG = {
   },
 } as const;
 
-// 存儲配置
+// StorageConfigure
 export const _STORAGE_CONFIG = {
-  // 本地存儲
+  // LocalStorage
   LOCAL: {
     PREFIX: 'cardstrategy_',
     VERSION: '1.0.0',
     MAX_SIZE: 50 * 1024 * 1024, // 50MB
   },
 
-  // 緩存存儲
+  // CacheStorage
   CACHE: {
     PREFIX: 'cache_',
-    DEFAULT_TTL: 30 * 60 * 1000, // 30分鐘
+    DEFAULT_TTL: 30 * 60 * 1000, // 30Minute
     MAX_ITEMS: 1000,
     MAX_SIZE: 100 * 1024 * 1024, // 100MB
   },
 
-  // 會話存儲
+  // 會話Storage
   SESSION: {
     PREFIX: 'session_',
-    TTL: 24 * 60 * 60 * 1000, // 24小時
+    TTL: 24 * 60 * 60 * 1000, // 24Hour
   },
 } as const;
 
-// 網絡配置
+// NetworkConfigure
 export const _NETWORK_CONFIG = {
-  // 連接配置
+  // ConnectConfigure
   CONNECTION: {
-    TIMEOUT: 30000, // 30秒
+    TIMEOUT: 30000, // 30Second
     RETRY_ATTEMPTS: 3,
-    RETRY_DELAY: 1000, // 1秒
+    RETRY_DELAY: 1000, // 1Second
     BACKOFF_MULTIPLIER: 2,
   },
 
-  // 離線配置
+  // 離線Configure
   OFFLINE: {
     ENABLED: true,
     SYNC_ON_RECONNECT: true,
@@ -243,15 +243,15 @@ export const _NETWORK_CONFIG = {
     MAX_RETRY_ATTEMPTS: 5,
   },
 
-  // 緩存配置
+  // CacheConfigure
   CACHE: {
     ENABLED: true,
     STRATEGY: 'network-first', // 'cache-first' | 'network-first' | 'stale-while-revalidate'
-    MAX_AGE: 5 * 60 * 1000, // 5分鐘
+    MAX_AGE: 5 * 60 * 1000, // 5Minute
   },
 } as const;
 
-// 導出所有配置
+// Export所有Configure
 export const _CONFIG = {
   APP: APP_CONFIG,
   DEV: DEV_CONFIG,

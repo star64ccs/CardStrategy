@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 環境配置切換腳本
- * 用於在開發和生產環境之間切換
+ * 環境ConfigureSwitch腳本
+ * 用於在On發和生產環境之間Switch
  */
 
 const environments = {
@@ -35,7 +35,7 @@ if (!fs.existsSync(sourceFile)) {
   process.exit(1);
 }
 
-// 複製環境文件
+// 複製環境File
 fs.copyFileSync(sourceFile, targetFile);
 // eslint-disable-next-line no-console
 console.log(`✅ 已切換到 ${targetEnv} 環境`);
@@ -44,7 +44,7 @@ console.log(`   來源: ${sourceFile}`);
 // eslint-disable-next-line no-console
 console.log(`   目標: ${targetFile}`);
 
-// 顯示當前環境信息
+// Show當前環境Information
 const envContent = fs.readFileSync(targetFile, 'utf8');
 const nodeEnv = envContent.match(/NODE_ENV=(.+)/)?.[1] || 'unknown';
 const debugMode = envContent.match(/DEBUG=(.+)/)?.[1] || 'unknown';

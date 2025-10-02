@@ -75,7 +75,7 @@ export class AIServiceManager {
   }
 
   private initializeProviders(): void {
-    // 初始化首選提供商
+    // Initialize首選提供商
     this.config.preferredProviders.forEach(providerKey => {
       const _provider = AI_PROVIDERS[providerKey];
       if (provider) {
@@ -83,7 +83,7 @@ export class AIServiceManager {
       }
     });
 
-    // 初始化備用提供商
+    // Initialize備用提供商
     this.config.fallbackProviders.forEach(providerKey => {
       const _provider = AI_PROVIDERS[providerKey];
       if (provider && !this.activeProviders.has(providerKey)) {
@@ -93,7 +93,7 @@ export class AIServiceManager {
   }
 
   /**
-   * 智能選擇AI提供商
+   * 智能SelectAI提供商
    */
   private selectProvider(request: AIRequest): string {
     // 如果指定了提供商，直接使用
@@ -101,10 +101,10 @@ export class AIServiceManager {
       return request.provider;
     }
 
-    // 根據優先級和成本選擇提供商
+    // Root據優先級和成本Select提供商
     const _availableProviders = Array.from(this.activeProviders.keys());
 
-    // 優先使用本地部署（免費）
+    // 優先使用LocalDeploy（免費）
     const _localProviders = availableProviders.filter(
       key => AI_PROVIDERS[key].type === 'local'
     );
@@ -112,7 +112,7 @@ export class AIServiceManager {
       return localProviders[0];
     }
 
-    // 根據成本和可靠性選擇雲端提供商
+    // Root據成本和可靠性Select雲端提供商
     const _cloudProviders = availableProviders.filter(
       key => AI_PROVIDERS[key].type === 'cloud'
     );
@@ -121,7 +121,7 @@ export class AIServiceManager {
       throw new Error('沒有可用的AI提供商');
     }
 
-    // 選擇成本最低且可靠性較高的提供商
+    // Select成本最低且可靠性較高的提供商
     return cloudProviders.reduce((best, current) => {
       const _bestProvider = AI_PROVIDERS[best];
       const _currentProvider = AI_PROVIDERS[current];
@@ -138,7 +138,7 @@ export class AIServiceManager {
   }
 
   /**
-   * 檢查緩存
+   * CheckCache
    */
   private checkCache(request: AIRequest): AIResponse | null {
     if (!request.useCache) return null;
@@ -148,46 +148,46 @@ export class AIServiceManager {
   }
 
   /**
-   * 生成緩存鍵
+   * 生成CacheKey
    */
   private generateCacheKey(request: AIRequest): string {
     return `${request.provider || 'auto'}_${request.model || 'default'}_${request.prompt.length}_${request.maxTokens || 1000}`;
   }
 
   /**
-   * 調用AI服務
+   * 調用AIService
    */
   public async callAI(request: AIRequest): Promise<AIResponse> {
     const _startTime = Date.now();
 
     try {
-      // 檢查緩存
+      // CheckCache
       const _cachedResponse = this.checkCache(request);
       if (cachedResponse) {
         return {
           ...cachedResponse,
           latency: Date.now() - startTime,
-          cost: 0, // 緩存響應不計費
+          cost: 0, // CacheResponse不計費
         };
       }
 
-      // 選擇提供商
+      // Select提供商
       const _providerKey = this.selectProvider(request);
       const _provider = AI_PROVIDERS[providerKey];
 
-      // 檢查使用限制
+      // Check使用Limit
       this.checkUsageLimits(request);
 
-      // 調用具體的AI服務
+      // 調用Concrete的AIService
       const _response = await this.callProvider(providerKey, request);
 
       // 計算成本
       const _cost = this.calculateCost(provider, response.tokens);
 
-      // 更新統計
+      // UpdateStatistics
       this.updateStats(providerKey, response, cost);
 
-      // 緩存響應
+      // CacheResponse
       if (request.useCache) {
         const _cacheKey = this.generateCacheKey(request);
         this.cache.set(cacheKey, {
@@ -203,7 +203,7 @@ export class AIServiceManager {
         latency: Date.now() - startTime,
       };
     } catch (error) {
-      // 如果首選提供商失敗，嘗試備用提供商
+      // 如果首選提供商Failed，嘗試備用提供商
       if (request.provider && this.config.fallbackProviders.length > 0) {
         return this.retryWithFallback(request);
       }
@@ -213,7 +213,7 @@ export class AIServiceManager {
   }
 
   /**
-   * 調用具體的AI提供商
+   * 調用Concrete的AI提供商
    */
   private async callProvider(
     providerKey: string,
@@ -240,7 +240,7 @@ export class AIServiceManager {
   }
 
   /**
-   * 調用Ollama（本地部署）
+   * 調用Ollama（LocalDeploy）
    */
   private async callOllama(
     request: AIRequest
@@ -261,7 +261,7 @@ export class AIServiceManager {
     });
 
     if (!response.ok) {
-      throw new Error(`Ollama API錯誤: ${response.statusText}`);
+      throw new Error(`Ollama APIError: ${response.statusText}`);
     }
 
     const _data = await response.json();
@@ -300,7 +300,7 @@ export class AIServiceManager {
     );
 
     if (!response.ok) {
-      throw new Error(`百度API錯誤: ${response.statusText}`);
+      throw new Error(`百度APIError: ${response.statusText}`);
     }
 
     const _data = await response.json();
@@ -348,7 +348,7 @@ export class AIServiceManager {
     });
 
     if (!response.ok) {
-      throw new Error(`阿里API錯誤: ${response.statusText}`);
+      throw new Error(`阿里APIError: ${response.statusText}`);
     }
 
     const _data = await response.json();
@@ -392,7 +392,7 @@ export class AIServiceManager {
     });
 
     if (!response.ok) {
-      throw new Error(`智譜API錯誤: ${response.statusText}`);
+      throw new Error(`智譜APIError: ${response.statusText}`);
     }
 
     const _data = await response.json();
@@ -440,7 +440,7 @@ export class AIServiceManager {
     );
 
     if (!response.ok) {
-      throw new Error(`Azure OpenAI API錯誤: ${response.statusText}`);
+      throw new Error(`Azure OpenAI APIError: ${response.statusText}`);
     }
 
     const _data = await response.json();
@@ -489,7 +489,7 @@ export class AIServiceManager {
     );
 
     if (!response.ok) {
-      throw new Error(`Google AI API錯誤: ${response.statusText}`);
+      throw new Error(`Google AI APIError: ${response.statusText}`);
     }
 
     const _data = await response.json();
@@ -506,7 +506,7 @@ export class AIServiceManager {
   }
 
   /**
-   * 獲取百度訪問令牌
+   * Get百度訪問令牌
    */
   private async getBaiduAccessToken(): Promise<string> {
     const _apiKey = process.env.BAIDU_API_KEY;
@@ -524,7 +524,7 @@ export class AIServiceManager {
     );
 
     if (!response.ok) {
-      throw new Error('獲取百度訪問令牌失敗');
+      throw new Error('Get百度訪問令牌Failed');
     }
 
     const _data = await response.json();
@@ -562,7 +562,7 @@ export class AIServiceManager {
   }
 
   /**
-   * 檢查使用限制
+   * Check使用Limit
    */
   private checkUsageLimits(request: AIRequest): void {
     const _today = new Date().toDateString();
@@ -582,11 +582,11 @@ export class AIServiceManager {
   }
 
   /**
-   * 獲取月度使用量
+   * Get月度使用量
    */
   private getMonthlyUsage(): { tokens: number; cost: number } {
-    // 這裡應該從數據庫或緩存中獲取實際的月度使用量
-    // 簡化實現，返回當前統計
+    // 這裡應該從Database或Cache中Get實際的月度使用量
+    // 簡化實現，Return當前Statistics
     return {
       tokens: this.stats.totalTokens,
       cost: this.stats.totalCost,
@@ -594,7 +594,7 @@ export class AIServiceManager {
   }
 
   /**
-   * 使用備用提供商重試
+   * 使用備用提供商Retry
    */
   private async retryWithFallback(request: AIRequest): Promise<AIResponse> {
     for (const fallbackProvider of this.config.fallbackProviders) {
@@ -602,16 +602,16 @@ export class AIServiceManager {
         const _fallbackRequest = { ...request, provider: fallbackProvider };
         return await this.callAI(fallbackRequest);
       } catch (error) {
-        console.warn(`備用提供商 ${fallbackProvider} 失敗:`, error);
+        console.warn(`備用提供商 ${fallbackProvider} Failed:`, error);
         continue;
       }
     }
 
-    throw new Error('所有AI提供商都失敗了');
+    throw new Error('所有AI提供商都Failed了');
   }
 
   /**
-   * 更新統計信息
+   * UpdateStatisticsInformation
    */
   private updateStats(
     providerKey: string,
@@ -645,21 +645,21 @@ export class AIServiceManager {
   }
 
   /**
-   * 獲取統計信息
+   * GetStatisticsInformation
    */
   public getStats(): AIServiceStats {
     return { ...this.stats };
   }
 
   /**
-   * 重置統計信息
+   * ResetStatisticsInformation
    */
   public resetStats(): void {
     this.stats = this.initializeStats();
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public updateConfig(config: Partial<AIWorkerCostConfig>): void {
     this.config = { ...this.config, ...config };
@@ -667,7 +667,7 @@ export class AIServiceManager {
   }
 
   /**
-   * 獲取當前配置
+   * Get當前Configure
    */
   public getConfig(): AIWorkerCostConfig {
     return { ...this.config };

@@ -76,14 +76,14 @@ describe('IntelligentSearchService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化服務', async () => {
+    it('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBe(true);
       expect(service.getInitializationStatus()).toBe(true);
     });
 
-    it('應該在初始化失敗時返回 false', async () => {
-      // 清除單例實例
+    it('應該在InitializeFailed時返回 false', async () => {
+      // Clear單例Instance
       (IntelligentSearchService as any).instance = undefined;
 
       const _mockInstance = {
@@ -109,7 +109,7 @@ describe('IntelligentSearchService', () => {
 
   describe('智能搜索', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -157,9 +157,9 @@ describe('IntelligentSearchService', () => {
       await expect(service.search(query)).rejects.toThrow('搜索查詢過長');
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
+    it('應該在未Initialize時拋出Error', async () => {
       const _newService = IntelligentSearchService.getInstance();
-      // 重置初始化狀態
+      // ResetInitializeStatus
       (newService as any).isInitialized = false;
 
       const query: IntelligentSearchQuery = {
@@ -168,14 +168,14 @@ describe('IntelligentSearchService', () => {
       };
 
       await expect(newService.search(query)).rejects.toThrow(
-        '智能搜索服務尚未初始化'
+        '智能搜索Service尚未Initialize'
       );
     });
   });
 
   describe('搜索建議', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -204,7 +204,7 @@ describe('IntelligentSearchService', () => {
 
   describe('搜索歷史', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -239,7 +239,7 @@ describe('IntelligentSearchService', () => {
 
   describe('熱門搜索', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -270,7 +270,7 @@ describe('IntelligentSearchService', () => {
 
   describe('相關搜索', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -292,7 +292,7 @@ describe('IntelligentSearchService', () => {
 
   describe('查詢分析', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -333,7 +333,7 @@ describe('IntelligentSearchService', () => {
 
   describe('用戶偏好', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -366,7 +366,7 @@ describe('IntelligentSearchService', () => {
 
   describe('搜索統計', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -391,7 +391,7 @@ describe('IntelligentSearchService', () => {
 
   describe('配置管理', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -435,7 +435,7 @@ describe('IntelligentSearchService', () => {
 
   describe('自動完成', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -465,21 +465,21 @@ describe('IntelligentSearchService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
     });
 
-    it('應該處理搜索錯誤', async () => {
+    it('應該Handle搜索Error', async () => {
       const _newService = IntelligentSearchService.getInstance();
       await newService.initialize();
 
       // Mock FullTextSearchService to throw error
       const _mockInstance = {
-        search: jest.fn().mockRejectedValue(new Error('搜索錯誤')),
+        search: jest.fn().mockRejectedValue(new Error('搜索Error')),
       };
       (newService as any).fullTextSearchService = mockInstance;
 
@@ -489,14 +489,14 @@ describe('IntelligentSearchService', () => {
       };
 
       await expect(newService.search(query)).rejects.toThrow(
-        '智能搜索失敗: 搜索錯誤'
+        '智能搜索Failed: 搜索Error'
       );
     });
   });
 
   describe('性能測試', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -515,21 +515,21 @@ describe('IntelligentSearchService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 搜索應該在 1 秒內完成
+      // Search應該在 1 Second內Complete
       expect(duration).toBeLessThan(1000);
     });
   });
 
   describe('邊界情況', () => {
     beforeEach(async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
     });
 
     it('應該處理空結果', async () => {
-      // 清除單例實例
+      // Clear單例Instance
       (IntelligentSearchService as any).instance = undefined;
 
       const _mockInstance = {
@@ -558,7 +558,7 @@ describe('IntelligentSearchService', () => {
     });
 
     it('應該處理特殊字符', async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }
@@ -573,7 +573,7 @@ describe('IntelligentSearchService', () => {
     });
 
     it('應該處理中文字符', async () => {
-      // 確保服務已初始化
+      // 確保Service已Initialize
       if (!(service as any).isInitialized) {
         await service.initialize();
       }

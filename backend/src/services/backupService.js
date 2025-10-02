@@ -20,19 +20,19 @@ class BackupService {
   }
 
   /**
-   * 初始化備份目錄
+   * InitializeBackupDirectory
    */
   async initializeBackupDirectory() {
     try {
       await fs.mkdir(this.backupDir, { recursive: true });
-      logger.info(`備份目錄初始化成功: ${this.backupDir}`);
+      logger.info(`備份目錄InitializeSuccess: ${this.backupDir}`);
     } catch (error) {
-      logger.error('初始化備份目錄失敗:', error);
+      logger.error('Initialize備份目錄Failed:', error);
     }
   }
 
   /**
-   * 創建數據庫備份
+   * CreateDatabaseBackup
    */
   async createDatabaseBackup() {
     try {
@@ -48,7 +48,7 @@ class BackupService {
         password: process.env.DB_PASSWORD || '',
       };
 
-      // 構建 pg_dump 命令
+      // Build pg_dump 命令
       const pgDumpCommand = `PGPASSWORD="${dbConfig.password}" pg_dump -h ${dbConfig.host} -p ${dbConfig.port} -U ${dbConfig.username} -d ${dbConfig.database} -f "${backupPath}"`;
 
       logger.info('開始創建數據庫備份...');
@@ -58,13 +58,13 @@ class BackupService {
         logger.warn('備份過程中的警告:', stderr);
       }
 
-      // 檢查備份文件是否存在
+      // CheckBackupFileYesNo存在
       const stats = await fs.stat(backupPath);
       const fileSize = (stats.size / 1024 / 1024).toFixed(2); // MB
 
-      logger.info(`數據庫備份創建成功: ${backupFileName} (${fileSize} MB)`);
+      logger.info(`數據庫備份CreateSuccess: ${backupFileName} (${fileSize} MB)`);
 
-      // 清理舊備份
+      // 清理舊Backup
       await this.cleanupOldBackups();
 
       return {
@@ -76,13 +76,13 @@ class BackupService {
         type: 'database',
       };
     } catch (error) {
-      logger.error('創建數據庫備份失敗:', error);
+      logger.error('Create數據庫備份Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建文件系統備份
+   * CreateFile系統Backup
    */
   async createFileSystemBackup() {
     try {
@@ -90,7 +90,7 @@ class BackupService {
       const backupFileName = `filesystem_backup_${timestamp}.tar.gz`;
       const backupPath = path.join(this.backupDir, backupFileName);
 
-      // 需要備份的目錄
+      // 需要Backup的Directory
       const directoriesToBackup = ['./uploads', './logs', './config'].filter(
         (dir) => {
           try {
@@ -109,7 +109,7 @@ class BackupService {
         };
       }
 
-      // 構建 tar 命令
+      // Build tar 命令
       const tarCommand = `tar -czf "${backupPath}" ${directoriesToBackup.join(' ')}`;
 
       logger.info('開始創建文件系統備份...');
@@ -119,11 +119,11 @@ class BackupService {
         logger.warn('備份過程中的警告:', stderr);
       }
 
-      // 檢查備份文件是否存在
+      // CheckBackupFileYesNo存在
       const stats = await fs.stat(backupPath);
       const fileSize = (stats.size / 1024 / 1024).toFixed(2); // MB
 
-      logger.info(`文件系統備份創建成功: ${backupFileName} (${fileSize} MB)`);
+      logger.info(`文件系統備份CreateSuccess: ${backupFileName} (${fileSize} MB)`);
 
       return {
         success: true,
@@ -135,13 +135,13 @@ class BackupService {
         directories: directoriesToBackup,
       };
     } catch (error) {
-      logger.error('創建文件系統備份失敗:', error);
+      logger.error('Create文件系統備份Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建完整備份
+   * Create完整Backup
    */
   async createFullBackup() {
     try {
@@ -154,7 +154,7 @@ class BackupService {
         timestamp: new Date(),
       };
 
-      // 並行創建數據庫和文件系統備份
+      // ParallelCreateDatabase和File系統Backup
       const [dbResult, fsResult] = await Promise.allSettled([
         this.createDatabaseBackup(),
         this.createFileSystemBackup(),
@@ -163,34 +163,34 @@ class BackupService {
       if (dbResult.status === 'fulfilled') {
         results.database = dbResult.value;
       } else {
-        logger.error('數據庫備份失敗:', dbResult.reason);
+        logger.error('數據庫備份Failed:', dbResult.reason);
       }
 
       if (fsResult.status === 'fulfilled') {
         results.filesystem = fsResult.value;
       } else {
-        logger.error('文件系統備份失敗:', fsResult.reason);
+        logger.error('文件系統備份Failed:', fsResult.reason);
       }
 
-      // 清理舊備份
+      // 清理舊Backup
       await this.cleanupOldBackups();
 
       logger.info('完整備份創建完成');
       return results;
     } catch (error) {
-      logger.error('創建完整備份失敗:', error);
+      logger.error('Create完整備份Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 恢復數據庫備份
+   * RestoreDatabaseBackup
    */
   async restoreDatabaseBackup(backupFileName) {
     try {
       const backupPath = path.join(this.backupDir, backupFileName);
 
-      // 檢查備份文件是否存在
+      // CheckBackupFileYesNo存在
       await fs.access(backupPath);
 
       const dbConfig = {
@@ -201,7 +201,7 @@ class BackupService {
         password: process.env.DB_PASSWORD || '',
       };
 
-      // 構建 psql 命令
+      // Build psql 命令
       const psqlCommand = `PGPASSWORD="${dbConfig.password}" psql -h ${dbConfig.host} -p ${dbConfig.port} -U ${dbConfig.username} -d ${dbConfig.database} -f "${backupPath}"`;
 
       logger.info(`開始恢復數據庫備份: ${backupFileName}`);
@@ -211,29 +211,29 @@ class BackupService {
         logger.warn('恢復過程中的警告:', stderr);
       }
 
-      logger.info(`數據庫備份恢復成功: ${backupFileName}`);
+      logger.info(`數據庫備份恢復Success: ${backupFileName}`);
       return {
         success: true,
         fileName: backupFileName,
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('恢復數據庫備份失敗:', error);
+      logger.error('恢復數據庫備份Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 恢復文件系統備份
+   * RestoreFile系統Backup
    */
   async restoreFileSystemBackup(backupFileName) {
     try {
       const backupPath = path.join(this.backupDir, backupFileName);
 
-      // 檢查備份文件是否存在
+      // CheckBackupFileYesNo存在
       await fs.access(backupPath);
 
-      // 構建 tar 解壓命令
+      // Build tar 解壓命令
       const tarCommand = `tar -xzf "${backupPath}" -C ./`;
 
       logger.info(`開始恢復文件系統備份: ${backupFileName}`);
@@ -243,20 +243,20 @@ class BackupService {
         logger.warn('恢復過程中的警告:', stderr);
       }
 
-      logger.info(`文件系統備份恢復成功: ${backupFileName}`);
+      logger.info(`文件系統備份恢復Success: ${backupFileName}`);
       return {
         success: true,
         fileName: backupFileName,
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('恢復文件系統備份失敗:', error);
+      logger.error('恢復文件系統備份Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取備份列表
+   * GetBackupList
    */
   async getBackupList() {
     try {
@@ -280,18 +280,18 @@ class BackupService {
         backups.push(backup);
       }
 
-      // 按創建時間排序
+      // 按CreateTimeSort
       backups.sort((a, b) => b.createdAt - a.createdAt);
 
       return backups;
     } catch (error) {
-      logger.error('獲取備份列表失敗:', error);
+      logger.error('Get備份列表Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取備份類型
+   * GetBackupClass型
    */
   getBackupType(fileName) {
     if (fileName.includes('database_backup')) {
@@ -303,7 +303,7 @@ class BackupService {
   }
 
   /**
-   * 刪除備份
+   * DeleteBackup
    */
   async deleteBackup(fileName) {
     try {
@@ -316,24 +316,24 @@ class BackupService {
         fileName,
       };
     } catch (error) {
-      logger.error('刪除備份失敗:', error);
+      logger.error('Delete備份Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 清理舊備份
+   * 清理舊Backup
    */
   async cleanupOldBackups() {
     try {
       const backups = await this.getBackupList();
 
-      // 按類型分組
+      // 按Class型Group
 // eslint-disable-next-line no-unused-vars
       const databaseBackups = backups.filter((b) => b.type === 'database');
       const filesystemBackups = backups.filter((b) => b.type === 'filesystem');
 
-      // 刪除超過保留天數的備份
+      // Delete超過保留天數的Backup
       const cutoffDate = moment()
         .subtract(this.backupRetentionDays, 'days')
         .toDate();
@@ -346,7 +346,7 @@ class BackupService {
         await this.deleteBackup(backup.fileName);
       }
 
-      // 如果備份數量超過最大限制，刪除最舊的
+      // 如果Backup數量超過最大Limit，Delete最舊的
       if (databaseBackups.length > this.maxBackups) {
         const toDelete = databaseBackups.slice(this.maxBackups);
         for (const backup of toDelete) {
@@ -364,13 +364,13 @@ class BackupService {
       logger.info(`清理完成，刪除了 ${oldBackups.length} 個舊備份`);
       return oldBackups.length;
     } catch (error) {
-      logger.error('清理舊備份失敗:', error);
+      logger.error('清理舊備份Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取備份統計
+   * GetBackupStatistics
    */
   async getBackupStats() {
     try {
@@ -396,25 +396,25 @@ class BackupService {
 
       return stats;
     } catch (error) {
-      logger.error('獲取備份統計失敗:', error);
+      logger.error('Get備份統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 驗證備份完整性
+   * VerifyBackup完整性
    */
   async validateBackup(fileName) {
     try {
       const backupPath = path.join(this.backupDir, fileName);
 
-      // 檢查文件是否存在
+      // CheckFileYesNo存在
       await fs.access(backupPath);
 
       const stats = await fs.stat(backupPath);
       const fileSize = stats.size;
 
-      // 檢查文件大小是否合理
+      // CheckFile大小YesNo合理
       if (fileSize === 0) {
         return {
           valid: false,
@@ -422,7 +422,7 @@ class BackupService {
         };
       }
 
-      // 對於 tar.gz 文件，嘗試解壓測試
+      // 對於 tar.gz File，嘗試解壓Test
       if (fileName.endsWith('.tar.gz')) {
         try {
 // eslint-disable-next-line no-unused-vars
@@ -442,7 +442,7 @@ class BackupService {
         lastModified: stats.mtime,
       };
     } catch (error) {
-      logger.error('驗證備份失敗:', error);
+      logger.error('Verify備份Failed:', error);
       return {
         valid: false,
         error: error.message,

@@ -129,7 +129,7 @@ const _appraisalSlice = createSlice({
       })
       .addCase(getAppraisalHistory.fulfilled, (state, action) => {
         state.loading = false;
-        // 更新或添加歷史記錄
+        // Update或Add歷史Record
         const _existingIndex = state.history.findIndex(
           h => h.cardId === action.payload.cardId
         );

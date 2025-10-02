@@ -1,4 +1,4 @@
-// 台灣特定合規模組類型定義
+// 台灣Specific合規模組Class型定義
 // Taiwan Specific Compliance Module Type Definitions
 
 // ==================== 個人資料保護法 (Personal Data Protection Act) ====================
@@ -25,49 +25,49 @@ export interface TaiwanPersonalDataProcessing {
 export enum TaiwanDataCategory {
   IDENTIFICATION = 'identification', // 識別個人者
   FINANCIAL = 'financial', // 商業上之秘密
-  MEDICAL = 'medical', // 病歷、醫療、基因、性生活、健康檢查
+  MEDICAL = 'medical', // 病歷、醫療、基因、性生活、健康Check
   CRIMINAL = 'criminal', // 犯罪前科
   CONTACT = 'contact', // 聯絡方式
   LOCATION = 'location', // 位置資訊
   BEHAVIOR = 'behavior', // 網路活動紀錄
-  PREFERENCE = 'preference', // 個人偏好
+  PREFERENCE = 'preference', // 個人Preferences
   OTHER = 'other', // 其他得以直接或間接方式識別該個人之資料
 }
 
 export enum TaiwanProcessingMethod {
   COLLECTION = 'collection', // 蒐集
-  PROCESSING = 'processing', // 處理
+  PROCESSING = 'processing', // Handle
   USE = 'use', // 利用
   INTERNATIONAL_TRANSFER = 'international_transfer', // 國際傳輸
-  THIRD_PARTY_SHARING = 'third_party_sharing', // 委託他人蒐集、處理或利用
+  THIRD_PARTY_SHARING = 'third_party_sharing', // 委託他人蒐集、Handle或利用
 }
 
 export enum TaiwanSecurityMeasure {
-  ENCRYPTION = 'encryption', // 加密
-  ACCESS_CONTROL = 'access_control', // 存取控制
-  AUDIT_LOGGING = 'audit_logging', // 稽核日誌
-  BACKUP = 'backup', // 備份
-  DISASTER_RECOVERY = 'disaster_recovery', // 災害復原
+  ENCRYPTION = 'encryption', // Encrypt
+  ACCESS_CONTROL = 'access_control', // 存取Control
+  AUDIT_LOGGING = 'audit_logging', // 稽核Log
+  BACKUP = 'backup', // Backup
+  DISASTER_RECOVERY = 'disaster_recovery', // 災害Undo
   PHYSICAL_SECURITY = 'physical_security', // 實體安全
   NETWORK_SECURITY = 'network_security', // 網路安全
   PERSONNEL_SECURITY = 'personnel_security', // 人員安全
 }
 
 export enum TaiwanConsentMethod {
-  EXPLICIT = 'explicit', // 明確同意
-  IMPLICIT = 'implicit', // 默示同意
-  ELECTRONIC = 'electronic', // 電子同意
-  WRITTEN = 'written', // 書面同意
-  VERBAL = 'verbal', // 口頭同意
+  EXPLICIT = 'explicit', // 明確Agree
+  IMPLICIT = 'implicit', // 默示Agree
+  ELECTRONIC = 'electronic', // 電子Agree
+  WRITTEN = 'written', // 書面Agree
+  VERBAL = 'verbal', // 口頭Agree
 }
 
 export enum TaiwanDataSubjectRight {
-  ACCESS = 'access', // 查詢或請求閱覽
-  COPY = 'copy', // 請求製給複製本
-  CORRECTION = 'correction', // 請求補充或更正
-  DELETION = 'deletion', // 請求停止蒐集、處理或利用
-  PORTABILITY = 'portability', // 請求刪除
-  WITHDRAWAL = 'withdrawal', // 撤回同意
+  ACCESS = 'access', // Query或Request閱覽
+  COPY = 'copy', // Request製給複製本
+  CORRECTION = 'correction', // Request補充或更正
+  DELETION = 'deletion', // RequestStop蒐集、Handle或利用
+  PORTABILITY = 'portability', // RequestDelete
+  WITHDRAWAL = 'withdrawal', // 撤回Agree
   COMPLAINT = 'complaint', // 申訴
 }
 
@@ -152,15 +152,15 @@ export interface TaiwanConsumerRights {
 export enum TaiwanConsumerRightType {
   SAFETY = 'safety', // 安全權
   INFORMATION = 'information', // 資訊權
-  CHOICE = 'choice', // 選擇權
-  REPRESENTATION = 'representation', // 表達權
+  CHOICE = 'choice', // Select權
+  REPRESENTATION = 'representation', // Table達權
   COMPENSATION = 'compensation', // 求償權
   EDUCATION = 'education', // 教育權
   HEALTHY_ENVIRONMENT = 'healthy_environment', // 健康環境權
 }
 
 export enum TaiwanEnforcementMechanism {
-  ADMINISTRATIVE = 'administrative', // 行政救濟
+  ADMINISTRATIVE = 'administrative', // Row政救濟
   JUDICIAL = 'judicial', // 司法救濟
   MEDIATION = 'mediation', // 調解
   ARBITRATION = 'arbitration', // 仲裁
@@ -217,7 +217,7 @@ export enum TaiwanProductType {
   ELECTRONICS = 'electronics', // 電子產品
   TOYS = 'toys', // 玩具
   CLOTHING = 'clothing', // 服飾
-  DIGITAL_CONTENT = 'digital_content', // 數位內容
+  DIGITAL_CONTENT = 'digital_content', // 數位Content
   FINANCIAL_PRODUCTS = 'financial_products', // 金融商品
   OTHER = 'other', // 其他
 }
@@ -276,7 +276,7 @@ export interface TaiwanConsumerDispute {
 
 export enum TaiwanDisputeType {
   PRODUCT_DEFECT = 'product_defect', // 商品瑕疵
-  SERVICE_DEFECT = 'service_defect', // 服務瑕疵
+  SERVICE_DEFECT = 'service_defect', // Service瑕疵
   FALSE_ADVERTISING = 'false_advertising', // 不實廣告
   UNFAIR_CONTRACT = 'unfair_contract', // 不公平契約
   PRICE_GOUGING = 'price_gouging', // 哄抬物價
@@ -403,7 +403,7 @@ export enum TaiwanDisputeStatus {
   FILED = 'filed', // 已申訴
   UNDER_REVIEW = 'under_review', // 審查中
   MEDIATION = 'mediation', // 調解中
-  RESOLVED = 'resolved', // 已解決
+  RESOLVED = 'resolved', // 已Resolve
   CLOSED = 'closed', // 已結案
   APPEALED = 'appealed', // 已上訴
 }
@@ -425,7 +425,7 @@ export interface TaiwanFairCompetition {
 export enum TaiwanCompetitionType {
   MONOPOLY = 'monopoly', // 獨占
   OLIGOPOLY = 'oligopoly', // 寡占
-  CARTEL = 'cartel', // 聯合行為
+  CARTEL = 'cartel', // 聯合Row為
   MERGER = 'merger', // 結合
   UNFAIR_COMPETITION = 'unfair_competition', // 不公平競爭
   ABUSE_OF_MARKET_POWER = 'abuse_of_market_power', // 濫用市場地位
@@ -461,7 +461,7 @@ export enum TaiwanCompetitiveBehaviorType {
   PRICE_FIXING = 'price_fixing', // 價格固定
   MARKET_ALLOCATION = 'market_allocation', // 市場分配
   BID_RIGGING = 'bid_rigging', // 圍標
-  OUTPUT_RESTRICTION = 'output_restriction', // 限制產出
+  OUTPUT_RESTRICTION = 'output_restriction', // Limit產出
   BOYCOTT = 'boycott', // 杯葛
   TYING = 'tying', // 搭售
   EXCLUSIVE_DEALING = 'exclusive_dealing', // 獨家交易
@@ -483,7 +483,7 @@ export enum TaiwanImpactType {
   PRICE_DECREASE = 'price_decrease', // 價格下跌
   QUALITY_DETERIORATION = 'quality_deterioration', // 品質惡化
   INNOVATION_REDUCTION = 'innovation_reduction', // 創新減少
-  CHOICE_REDUCTION = 'choice_reduction', // 選擇減少
+  CHOICE_REDUCTION = 'choice_reduction', // Select減少
   MARKET_ENTRY_BLOCKED = 'market_entry_blocked', // 市場進入受阻
   OTHER = 'other', // 其他
 }
@@ -514,7 +514,7 @@ export interface TaiwanCorrectiveAction {
 }
 
 export enum TaiwanCorrectiveActionType {
-  CEASE_AND_DESIST = 'cease_and_desist', // 停止行為
+  CEASE_AND_DESIST = 'cease_and_desist', // StopRow為
   DIVESTITURE = 'divestiture', // 分割
   REMEDIAL_MEASURES = 'remedial_measures', // 改正措施
   COMPENSATION = 'compensation', // 賠償
@@ -556,7 +556,7 @@ export enum TaiwanAdType {
   DIGITAL = 'digital', // 數位廣告
   OUTDOOR = 'outdoor', // 戶外廣告
   DIRECT_MAIL = 'direct_mail', // 直郵廣告
-  TELEMARKETING = 'telemarketing', // 電話行銷
+  TELEMARKETING = 'telemarketing', // PhoneRow銷
   EMAIL = 'email', // 電子郵件廣告
   SMS = 'sms', // 簡訊廣告
   SOCIAL_MEDIA = 'social_media', // 社群媒體廣告
@@ -570,7 +570,7 @@ export enum TaiwanMediaChannel {
   NEWSPAPER = 'newspaper', // 報紙
   MAGAZINE = 'magazine', // 雜誌
   INTERNET = 'internet', // 網路
-  MOBILE = 'mobile', // 行動裝置
+  MOBILE = 'mobile', // Row動裝置
   SOCIAL_MEDIA = 'social_media', // 社群媒體
   SEARCH_ENGINE = 'search_engine', // 搜尋引擎
   VIDEO_PLATFORM = 'video_platform', // 影音平台
@@ -594,7 +594,7 @@ export interface TaiwanAdComplianceArea {
 }
 
 export enum TaiwanComplianceArea {
-  TRUTHFULNESS = 'truthfulness', // 真實性
+  TRUTHFULNESS = 'truthfulness', // True實性
   ACCURACY = 'accuracy', // 正確性
   COMPLETENESS = 'completeness', // 完整性
   FAIRNESS = 'fairness', // 公平性
@@ -618,7 +618,7 @@ export interface TaiwanAdViolation {
 
 export enum TaiwanViolationType {
   FALSE_CLAIM = 'false_claim', // 虛偽不實
-  MISLEADING = 'misleading', // 引人錯誤
+  MISLEADING = 'misleading', // 引人Error
   EXAGGERATION = 'exaggeration', // 誇大
   OMISSION = 'omission', // 隱匿重要事實
   COMPARATIVE_VIOLATION = 'comparative_violation', // 比較廣告違規
@@ -645,10 +645,10 @@ export interface TaiwanPenalty {
 }
 
 export enum TaiwanPenaltyType {
-  ADMINISTRATIVE_FINE = 'administrative_fine', // 行政罰鍰
-  CEASE_AND_DESIST = 'cease_and_desist', // 停止行為
+  ADMINISTRATIVE_FINE = 'administrative_fine', // Row政罰鍰
+  CEASE_AND_DESIST = 'cease_and_desist', // StopRow為
   CORRECTIVE_MEASURES = 'corrective_measures', // 改正措施
-  PUBLIC_APOLOGY = 'public_apology', // 公開道歉
+  PUBLIC_APOLOGY = 'public_apology', // 公On道歉
   COMPENSATION = 'compensation', // 賠償
   CRIMINAL_PENALTY = 'criminal_penalty', // 刑事處罰
   OTHER = 'other', // 其他
@@ -669,10 +669,10 @@ export interface TaiwanECommerceContract {
 
 export enum TaiwanContractType {
   ONLINE_SALE = 'online_sale', // 網路買賣
-  DIGITAL_CONTENT = 'digital_content', // 數位內容
-  ONLINE_SERVICE = 'online_service', // 網路服務
-  SUBSCRIPTION = 'subscription', // 訂閱服務
-  MARKETPLACE = 'marketplace', // 平台服務
+  DIGITAL_CONTENT = 'digital_content', // 數位Content
+  ONLINE_SERVICE = 'online_service', // 網路Service
+  SUBSCRIPTION = 'subscription', // 訂閱Service
+  MARKETPLACE = 'marketplace', // 平台Service
   AUCTION = 'auction', // 拍賣
   CROWDFUNDING = 'crowdfunding', // 群眾募資
   OTHER = 'other', // 其他
@@ -689,7 +689,7 @@ export interface TaiwanContractParty {
 export enum TaiwanPartyType {
   INDIVIDUAL = 'individual', // 自然人
   BUSINESS = 'business', // 企業
-  GOVERNMENT = 'government', // 政府機關
+  GOVERNMENT = 'government', // 政府機Off
   NON_PROFIT = 'non_profit', // 非營利組織
 }
 
@@ -711,7 +711,7 @@ export interface TaiwanContractTerm {
 }
 
 export enum TaiwanTermType {
-  PRODUCT_DESCRIPTION = 'product_description', // 商品描述
+  PRODUCT_DESCRIPTION = 'product_description', // 商品Description
   PRICE = 'price', // 價格
   PAYMENT = 'payment', // 付款
   DELIVERY = 'delivery', // 交付
@@ -719,7 +719,7 @@ export enum TaiwanTermType {
   RETURN_POLICY = 'return_policy', // 退貨政策
   PRIVACY_POLICY = 'privacy_policy', // 隱私政策
   LIABILITY = 'liability', // 責任
-  DISPUTE_RESOLUTION = 'dispute_resolution', // 爭議解決
+  DISPUTE_RESOLUTION = 'dispute_resolution', // 爭議Resolve
   GOVERNING_LAW = 'governing_law', // 準據法
   OTHER = 'other', // 其他
 }
@@ -773,7 +773,7 @@ export enum TaiwanContractViolationType {
 export enum TaiwanContractStatus {
   DRAFT = 'draft', // 草稿
   ACTIVE = 'active', // 生效
-  SUSPENDED = 'suspended', // 暫停
+  SUSPENDED = 'suspended', // Pause
   TERMINATED = 'terminated', // 終止
   EXPIRED = 'expired', // 期滿
   DISPUTED = 'disputed', // 爭議中
@@ -794,7 +794,7 @@ export interface TaiwanPlatformLiability {
 export enum TaiwanPlatformType {
   E_COMMERCE = 'e_commerce', // 電子商務平台
   SOCIAL_MEDIA = 'social_media', // 社群媒體平台
-  CONTENT_SHARING = 'content_sharing', // 內容分享平台
+  CONTENT_SHARING = 'content_sharing', // Content分享平台
   PAYMENT = 'payment', // 支付平台
   LOGISTICS = 'logistics', // 物流平台
   FINANCIAL = 'financial', // 金融平台
@@ -805,7 +805,7 @@ export enum TaiwanLiabilityType {
   DIRECT_LIABILITY = 'direct_liability', // 直接責任
   VICARIOUS_LIABILITY = 'vicarious_liability', // 替代責任
   JOINT_LIABILITY = 'joint_liability', // 連帶責任
-  LIMITED_LIABILITY = 'limited_liability', // 限制責任
+  LIMITED_LIABILITY = 'limited_liability', // Limit責任
   NO_LIABILITY = 'no_liability', // 免責
 }
 
@@ -827,11 +827,11 @@ export enum TaiwanExemptionType {
   SAFE_HARBOR = 'safe_harbor', // 安全港
   GOOD_FAITH = 'good_faith', // 善意
   TECHNICAL_NEUTRALITY = 'technical_neutrality', // 技術中立
-  PASSIVE_CONDUCT = 'passive_conduct', // 被動行為
+  PASSIVE_CONDUCT = 'passive_conduct', // 被動Row為
   OTHER = 'other', // 其他
 }
 
-// ==================== 電子支付管理條例 (Electronic Payment Management Act) ====================
+// ==================== 電子支付Manage條例 (Electronic Payment Management Act) ====================
 
 export interface TaiwanPaymentInstitution {
   id: string;
@@ -848,8 +848,8 @@ export interface TaiwanPaymentInstitution {
 export enum TaiwanPaymentInstitutionType {
   ELECTRONIC_PAYMENT = 'electronic_payment', // 電子支付機構
   THIRD_PARTY_PAYMENT = 'third_party_payment', // 第三方支付
-  DIGITAL_WALLET = 'digital_wallet', // 數位錢包
-  MOBILE_PAYMENT = 'mobile_payment', // 行動支付
+  DIGITAL_WALLET = 'digital_wallet', // 數位錢Package
+  MOBILE_PAYMENT = 'mobile_payment', // Row動支付
   CRYPTOCURRENCY = 'cryptocurrency', // 虛擬通貨
   OTHER = 'other', // 其他
 }
@@ -873,7 +873,7 @@ export enum TaiwanLicenseType {
 
 export enum TaiwanLicenseStatus {
   ACTIVE = 'active', // 有效
-  SUSPENDED = 'suspended', // 暫停
+  SUSPENDED = 'suspended', // Pause
   REVOKED = 'revoked', // 撤銷
   EXPIRED = 'expired', // 期滿
   UNDER_REVIEW = 'under_review', // 審查中
@@ -887,10 +887,10 @@ export interface TaiwanBusinessScope {
 }
 
 export enum TaiwanBusinessScopeType {
-  PAYMENT_PROCESSING = 'payment_processing', // 支付處理
+  PAYMENT_PROCESSING = 'payment_processing', // 支付Handle
   MONEY_TRANSMISSION = 'money_transmission', // 匯兌
-  DIGITAL_WALLET = 'digital_wallet', // 數位錢包
-  PREPAID_CARD = 'prepaid_card', // 儲值卡
+  DIGITAL_WALLET = 'digital_wallet', // 數位錢Package
+  PREPAID_CARD = 'prepaid_card', // 儲Value卡
   CROSS_BORDER = 'cross_border', // 跨境支付
   OTHER = 'other', // 其他
 }
@@ -947,7 +947,7 @@ export enum TaiwanFindingSeverity {
   CRITICAL = 'critical', // 嚴重
 }
 
-// ==================== 通用類型 ====================
+// ==================== GenericClass型 ====================
 
 export interface TaiwanComplianceResult {
   success: boolean;
@@ -972,10 +972,10 @@ export interface TaiwanViolation {
 }
 
 export enum TaiwanViolationStatus {
-  OPEN = 'open', // 開啟
-  IN_PROGRESS = 'in_progress', // 處理中
-  RESOLVED = 'resolved', // 已解決
-  CLOSED = 'closed', // 已關閉
+  OPEN = 'open', // On啟
+  IN_PROGRESS = 'in_progress', // Handle中
+  RESOLVED = 'resolved', // 已Resolve
+  CLOSED = 'closed', // 已Off閉
   APPEALED = 'appealed', // 已上訴
 }
 
@@ -1002,8 +1002,8 @@ export enum TaiwanReportType {
   MONTHLY = 'monthly', // 月報
   QUARTERLY = 'quarterly', // 季報
   ANNUAL = 'annual', // 年報
-  INCIDENT = 'incident', // 事件報告
-  AUDIT = 'audit', // 審計報告
+  INCIDENT = 'incident', // EventReport
+  AUDIT = 'audit', // 審計Report
   OTHER = 'other', // 其他
 }
 

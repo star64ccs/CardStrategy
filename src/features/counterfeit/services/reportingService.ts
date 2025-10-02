@@ -25,8 +25,8 @@ import {
 } from '../types/reporting';
 
 /**
- * 假卡回報服務
- * 負責處理假卡舉報、社區警告、黑名單管理等功能
+ * False卡回報Service
+ * 負責HandleFalse卡舉報、社DistrictWarning、黑名單Manage等功能
  */
 export class FakeCardReportingService {
   private static instance: FakeCardReportingService;
@@ -44,7 +44,7 @@ export class FakeCardReportingService {
   }
 
   /**
-   * 獲取服務實例（單例模式）
+   * GetServiceInstance（單例模式）
    */
   public static getInstance(): FakeCardReportingService {
     if (!FakeCardReportingService.instance) {
@@ -54,7 +54,7 @@ export class FakeCardReportingService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(
     config?: Partial<ReportServiceConfig>
@@ -69,20 +69,20 @@ export class FakeCardReportingService {
         this.config = { ...this.config, ...config };
       }
 
-      // 初始化默認數據
+      // InitializeDefaultData
       await this.initializeDefaultData();
 
       this.isInitialized = true;
-      logger.info('FakeCardReportingService 初始化成功');
+      logger.info('FakeCardReportingService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('FakeCardReportingService 初始化失敗:', error);
+      logger.error('FakeCardReportingService InitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建假卡舉報
+   * CreateFalse卡舉報
    */
   public async createReport(
     reportData: Omit<ReportRequest, 'id' | 'timestamp'>
@@ -93,7 +93,7 @@ export class FakeCardReportingService {
     error?: string;
   }> {
     try {
-      // 驗證必填字段
+      // Verify必填Field
       if (
         !reportData.title ||
         !reportData.description ||
@@ -103,17 +103,17 @@ export class FakeCardReportingService {
         return { success: false, error: '缺少必填字段' };
       }
 
-      // 驗證報告類型
+      // VerifyReportClass型
       if (!Object.values(ReportType).includes(reportData.reportType)) {
         return { success: false, error: '無效的報告類型' };
       }
 
-      // 驗證嚴重程度
+      // Verify嚴重程度
       if (!Object.values(ReportSeverity).includes(reportData.severity)) {
         return { success: false, error: '無效的嚴重程度' };
       }
 
-      // 驗證郵箱格式
+      // VerifyEmail格式
       if (
         reportData.contactInfo &&
         !this.isValidEmail(reportData.contactInfo)
@@ -158,19 +158,19 @@ export class FakeCardReportingService {
         report
       );
 
-      // 檢查是否需要自動處理
+      // CheckYesNo需要AutoHandle
       await this.checkAutoModeration(record);
 
-      logger.info(`假卡舉報創建成功: ${reportId}`);
+      logger.info(`假卡舉報CreateSuccess: ${reportId}`);
       return { success: true, reportId, status: ReportStatus.PENDING };
     } catch (error) {
-      logger.error('創建假卡舉報失敗:', error);
-      return { success: false, error: '創建失敗' };
+      logger.error('Create假卡舉報Failed:', error);
+      return { success: false, error: 'CreateFailed' };
     }
   }
 
   /**
-   * 獲取舉報記錄
+   * Get舉報Record
    */
   public async getReport(reportId: string): Promise<ReportRecord | null> {
     try {
@@ -181,13 +181,13 @@ export class FakeCardReportingService {
       }
       return record;
     } catch (error) {
-      logger.error('獲取舉報記錄失敗:', error);
+      logger.error('Get舉報記錄Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新舉報狀態
+   * Update舉報Status
    */
   public async updateReportStatus(
     reportId: string,
@@ -226,7 +226,7 @@ export class FakeCardReportingService {
         status
       );
 
-      // 根據狀態變化執行相應操作
+      // Root據Status變化執Row相應Operation
       await this.handleStatusChange(
         record,
         oldStatus,
@@ -234,22 +234,22 @@ export class FakeCardReportingService {
         userId || 'system'
       );
 
-      logger.info(`舉報狀態更新成功: ${reportId} -> ${status}`);
+      logger.info(`舉報狀態UpdateSuccess: ${reportId} -> ${status}`);
       return { success: true };
     } catch (error) {
-      logger.error('更新舉報狀態失敗:', error);
-      return { success: false, error: '更新失敗' };
+      logger.error('Update舉報狀態Failed:', error);
+      return { success: false, error: 'UpdateFailed' };
     }
   }
 
   /**
-   * 創建警告
+   * CreateWarning
    */
   public async createWarning(
     warningData: Omit<Warning, 'id' | 'createdAt'>
   ): Promise<{ success: boolean; warningId?: string; error?: string }> {
     try {
-      // 驗證必填字段
+      // Verify必填Field
       if (
         !warningData.title ||
         !warningData.message ||
@@ -270,7 +270,7 @@ export class FakeCardReportingService {
 
       this.warnings.set(warningId, warning);
 
-      // 如果警告與舉報相關，添加到舉報記錄中
+      // 如果Warning與舉報相Off，Add到舉報Record中
       if (warningData.targetType === 'USER') {
         for (const record of this.reports.values()) {
           if (record.report.reportedUserId === warningData.targetId) {
@@ -289,22 +289,22 @@ export class FakeCardReportingService {
         data: { warningId, severity: warningData.severity },
       });
 
-      logger.info(`警告創建成功: ${warningId}`);
+      logger.info(`警告CreateSuccess: ${warningId}`);
       return { success: true, warningId };
     } catch (error) {
-      logger.error('創建警告失敗:', error);
-      return { success: false, error: '創建失敗' };
+      logger.error('Create警告Failed:', error);
+      return { success: false, error: 'CreateFailed' };
     }
   }
 
   /**
-   * 添加到黑名單
+   * Add到黑名單
    */
   public async addToBlacklist(
     blacklistData: Omit<BlacklistEntry, 'id' | 'createdAt'>
   ): Promise<{ success: boolean; blacklistId?: string; error?: string }> {
     try {
-      // 驗證必填字段
+      // Verify必填Field
       if (
         !blacklistData.targetId ||
         !blacklistData.reason ||
@@ -324,7 +324,7 @@ export class FakeCardReportingService {
 
       this.blacklist.set(blacklistId, blacklistEntry);
 
-      // 如果黑名單條目與舉報相關，添加到舉報記錄中
+      // 如果黑名單條目與舉報相Off，Add到舉報Record中
       if (blacklistData.type === BlacklistType.USER) {
         for (const record of this.reports.values()) {
           if (record.report.reportedUserId === blacklistData.targetId) {
@@ -347,16 +347,16 @@ export class FakeCardReportingService {
         },
       });
 
-      logger.info(`黑名單條目添加成功: ${blacklistId}`);
+      logger.info(`黑名單條目添加Success: ${blacklistId}`);
       return { success: true, blacklistId };
     } catch (error) {
-      logger.error('添加到黑名單失敗:', error);
-      return { success: false, error: '添加失敗' };
+      logger.error('添加到黑名單Failed:', error);
+      return { success: false, error: '添加Failed' };
     }
   }
 
   /**
-   * 創建社區警告
+   * Create社DistrictWarning
    */
   public async createCommunityWarning(
     warningData: Omit<
@@ -365,7 +365,7 @@ export class FakeCardReportingService {
     >
   ): Promise<{ success: boolean; warningId?: string; error?: string }> {
     try {
-      // 驗證必填字段
+      // Verify必填Field
       if (!warningData.title || !warningData.message || !warningData.severity) {
         return { success: false, error: '缺少必填字段' };
       }
@@ -383,16 +383,16 @@ export class FakeCardReportingService {
 
       this.communityWarnings.set(warningId, communityWarning);
 
-      logger.info(`社區警告創建成功: ${warningId}`);
+      logger.info(`社區警告CreateSuccess: ${warningId}`);
       return { success: true, warningId };
     } catch (error) {
-      logger.error('創建社區警告失敗:', error);
-      return { success: false, error: '創建失敗' };
+      logger.error('Create社區警告Failed:', error);
+      return { success: false, error: 'CreateFailed' };
     }
   }
 
   /**
-   * 獲取舉報統計
+   * Get舉報Statistics
    */
   public async getReportStats(): Promise<ReportStats> {
     try {
@@ -408,7 +408,7 @@ export class FakeCardReportingService {
         r => r.response.status === ReportStatus.REJECTED
       ).length;
 
-      // 計算平均解決時間
+      // 計算平均ResolveTime
       const _resolvedReportsWithTime = reports.filter(
         r => r.response.resolvedAt
       );
@@ -420,10 +420,10 @@ export class FakeCardReportingService {
               return sum + resolutionTime;
             }, 0) /
             resolvedReportsWithTime.length /
-            (1000 * 60 * 60) // 轉換為小時
+            (1000 * 60 * 60) // Convert為Hour
           : 0;
 
-      // 按類型統計
+      // 按Class型Statistics
       const reportsByType: Record<ReportType, number> = {
         [ReportType.FAKE_CARD]: 0,
         [ReportType.COUNTERFEIT]: 0,
@@ -438,7 +438,7 @@ export class FakeCardReportingService {
         reportsByType[r.report.reportType]++;
       });
 
-      // 按嚴重性統計
+      // 按嚴重性Statistics
       const reportsBySeverity: Record<ReportSeverity, number> = {
         [ReportSeverity.LOW]: 0,
         [ReportSeverity.MEDIUM]: 0,
@@ -450,7 +450,7 @@ export class FakeCardReportingService {
         reportsBySeverity[r.report.severity]++;
       });
 
-      // 按狀態統計
+      // 按StatusStatistics
       const reportsByStatus: Record<ReportStatus, number> = {
         [ReportStatus.PENDING]: 0,
         [ReportStatus.UNDER_REVIEW]: 0,
@@ -464,7 +464,7 @@ export class FakeCardReportingService {
         reportsByStatus[r.response.status]++;
       });
 
-      // 統計舉報者
+      // Statistics舉報者
       const _reporterStats = new Map<
         string,
         { count: number; valid: number }
@@ -495,7 +495,7 @@ export class FakeCardReportingService {
         .sort((a, b) => b.reportCount - a.reportCount)
         .slice(0, 10);
 
-      // 統計被舉報者
+      // Statistics被舉報者
       const _reportedStats = new Map<
         string,
         { count: number; resolved: number }
@@ -538,13 +538,13 @@ export class FakeCardReportingService {
         topReportedUsers,
       };
     } catch (error) {
-      logger.error('獲取舉報統計失敗:', error);
+      logger.error('Get舉報統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 查詢舉報記錄
+   * Query舉報Record
    */
   public async queryReports(params: ReportQueryParams): Promise<{
     success: boolean;
@@ -555,7 +555,7 @@ export class FakeCardReportingService {
     try {
       let reports = Array.from(this.reports.values());
 
-      // 應用過濾器
+      // ApplyFilter器
       if (params.status && params.status.length > 0) {
         reports = reports.filter(r =>
           params.status.includes(r.response.status)
@@ -594,7 +594,7 @@ export class FakeCardReportingService {
         reports = reports.filter(r => r.createdAt <= params.dateTo);
       }
 
-      // 排序
+      // Sort
       if (params.sortBy) {
         reports.sort((a, b) => {
           let aValue: unknown, bValue: unknown;
@@ -629,7 +629,7 @@ export class FakeCardReportingService {
         });
       }
 
-      // 分頁
+      // Paginate
       const _total = reports.length;
       const _offset = params.offset || 0;
       const _limit = params.limit || 50;
@@ -637,13 +637,13 @@ export class FakeCardReportingService {
 
       return { success: true, reports, total };
     } catch (error) {
-      logger.error('查詢舉報記錄失敗:', error);
-      return { success: false, reports: [], total: 0, error: '查詢失敗' };
+      logger.error('查詢舉報記錄Failed:', error);
+      return { success: false, reports: [], total: 0, error: '查詢Failed' };
     }
   }
 
   /**
-   * 獲取用戶的警告
+   * GetUser的Warning
    */
   public async getUserWarnings(userId: string): Promise<Warning[]> {
     try {
@@ -653,13 +653,13 @@ export class FakeCardReportingService {
 
       return userWarnings;
     } catch (error) {
-      logger.error('獲取用戶警告失敗:', error);
+      logger.error('Get用戶警告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 檢查用戶是否在黑名單中
+   * CheckUserYesNo在黑名單中
    */
   public async isUserBlacklisted(userId: string): Promise<boolean> {
     try {
@@ -669,13 +669,13 @@ export class FakeCardReportingService {
 
       return !!blacklistEntry;
     } catch (error) {
-      logger.error('檢查用戶黑名單狀態失敗:', error);
+      logger.error('Check用戶黑名單狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取活躍的社區警告
+   * Get活躍的社DistrictWarning
    */
   public async getActiveCommunityWarnings(): Promise<CommunityWarning[]> {
     try {
@@ -691,13 +691,13 @@ export class FakeCardReportingService {
 
       return activeWarnings;
     } catch (error) {
-      logger.error('獲取活躍社區警告失敗:', error);
+      logger.error('Get活躍社區警告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建通知
+   * CreateNotification
    */
   private async createNotification(
     notificationData: Omit<ReportNotification, 'id' | 'createdAt' | 'isRead'>
@@ -717,13 +717,13 @@ export class FakeCardReportingService {
 
       return notification;
     } catch (error) {
-      logger.error('創建通知失敗:', error);
+      logger.error('Create通知Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 添加審核日誌
+   * Add審核Log
    */
   private async addAuditLog(
     reportId: string,
@@ -753,12 +753,12 @@ export class FakeCardReportingService {
 
       this.auditLogs.set(logId, auditLog);
     } catch (error) {
-      logger.error('添加審核日誌失敗:', error);
+      logger.error('添加審核日誌Failed:', error);
     }
   }
 
   /**
-   * 檢查自動審核
+   * CheckAuto審核
    */
   private async checkAutoModeration(record: ReportRecord): Promise<void> {
     try {
@@ -766,7 +766,7 @@ export class FakeCardReportingService {
         return;
       }
 
-      // 檢查證據數量
+      // Check證據數量
       if (
         record.report.evidence.length >= this.config.config.autoApproveThreshold
       ) {
@@ -779,12 +779,12 @@ export class FakeCardReportingService {
         );
       }
     } catch (error) {
-      logger.error('自動審核檢查失敗:', error);
+      logger.error('自動審核CheckFailed:', error);
     }
   }
 
   /**
-   * 處理狀態變化
+   * HandleStatus變化
    */
   private async handleStatusChange(
     record: ReportRecord,
@@ -793,7 +793,7 @@ export class FakeCardReportingService {
     userId: string
   ): Promise<void> {
     try {
-      // 如果狀態變為已批准，檢查是否需要發出警告或加入黑名單
+      // 如果Status變為已批准，CheckYesNo需要發出Warning或加入黑名單
       if (
         newStatus === ReportStatus.APPROVED &&
         oldStatus !== ReportStatus.APPROVED
@@ -801,7 +801,7 @@ export class FakeCardReportingService {
         await this.handleApprovedReport(record, userId);
       }
 
-      // 如果狀態變為已解決，發送通知
+      // 如果Status變為已Resolve，SendNotification
       if (
         newStatus === ReportStatus.RESOLVED &&
         oldStatus !== ReportStatus.RESOLVED
@@ -815,12 +815,12 @@ export class FakeCardReportingService {
         });
       }
     } catch (error) {
-      logger.error('處理狀態變化失敗:', error);
+      logger.error('Handle狀態變化Failed:', error);
     }
   }
 
   /**
-   * 處理已批准的舉報
+   * Handle已批准的舉報
    */
   private async handleApprovedReport(
     record: ReportRecord,
@@ -831,7 +831,7 @@ export class FakeCardReportingService {
         return;
       }
 
-      // 檢查該用戶的舉報數量
+      // Check該User的舉報數量
       const _userReports = Array.from(this.reports.values()).filter(
         r =>
           r.report.reportedUserId === record.report.reportedUserId &&
@@ -839,7 +839,7 @@ export class FakeCardReportingService {
             r.response.status === ReportStatus.RESOLVED)
       );
 
-      // 如果達到警告閾值，發出警告
+      // 如果達到Warning閾Value，發出Warning
       if (userReports.length >= this.config.config.warningThreshold) {
         await this.createWarning({
           type: WarningType.SELLER_WARNING,
@@ -853,7 +853,7 @@ export class FakeCardReportingService {
         });
       }
 
-      // 如果達到黑名單閾值，加入黑名單
+      // 如果達到黑名單閾Value，加入黑名單
       if (userReports.length >= this.config.config.blacklistThreshold) {
         await this.addToBlacklist({
           type: BlacklistType.USER,
@@ -866,12 +866,12 @@ export class FakeCardReportingService {
         });
       }
     } catch (error) {
-      logger.error('處理已批准舉報失敗:', error);
+      logger.error('Handle已批准舉報Failed:', error);
     }
   }
 
   /**
-   * 獲取默認配置
+   * GetDefaultConfigure
    */
   private getDefaultConfig(): ReportServiceConfig {
     return {
@@ -911,11 +911,11 @@ export class FakeCardReportingService {
   }
 
   /**
-   * 初始化默認數據
+   * InitializeDefaultData
    */
   private async initializeDefaultData(): Promise<void> {
     try {
-      // 創建一些示例舉報
+      // Create一些示例舉報
       const _sampleReport = await this.createReport({
         reporterId: 'user_001',
         reportedUserId: 'user_002',
@@ -940,7 +940,7 @@ export class FakeCardReportingService {
         priority: 'HIGH',
       });
 
-      // 創建示例警告
+      // Create示例Warning
       await this.createWarning({
         type: WarningType.SELLER_WARNING,
         targetId: 'user_002',
@@ -952,7 +952,7 @@ export class FakeCardReportingService {
         createdBy: 'moderator_001',
       });
 
-      // 創建示例社區警告
+      // Create示例社DistrictWarning
       await this.createCommunityWarning({
         title: '假卡防範提醒',
         message: '請注意防範假卡，購買前務必仔細檢查',
@@ -965,19 +965,19 @@ export class FakeCardReportingService {
 
       logger.info('默認數據初始化完成');
     } catch (error) {
-      logger.error('初始化默認數據失敗:', error);
+      logger.error('Initialize默認數據Failed:', error);
     }
   }
 
   /**
-   * 生成唯一ID
+   * 生成UniqueID
    */
   private generateId(): string {
     return `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   /**
-   * 驗證郵箱格式
+   * VerifyEmail格式
    */
   private isValidEmail(email: string): boolean {
     const _emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -985,7 +985,7 @@ export class FakeCardReportingService {
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<boolean> {
     try {
@@ -999,7 +999,7 @@ export class FakeCardReportingService {
       logger.info('FakeCardReportingService 已銷毀');
       return true;
     } catch (error) {
-      logger.error('銷毀 FakeCardReportingService 失敗:', error);
+      logger.error('銷毀 FakeCardReportingService Failed:', error);
       return false;
     }
   }

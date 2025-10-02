@@ -1,4 +1,4 @@
-// 搜索相關類型定義
+// Search相OffClass型定義
 
 export interface SearchQuery {
   query: string;
@@ -184,7 +184,7 @@ export interface IndexSettings {
   maxResultWindow: number;
 }
 
-// 卡片相關類型
+// 卡片相OffClass型
 export type CardCondition =
   | 'mint'
   | 'near_mint'
@@ -194,7 +194,7 @@ export type CardCondition =
   | 'played'
   | 'poor';
 
-// 搜索歷史
+// Search歷史
 export interface SearchHistory {
   id: string;
   userId: string;
@@ -206,7 +206,7 @@ export interface SearchHistory {
   timestamp: Date;
 }
 
-// 搜索偏好
+// SearchPreferences
 export interface SearchPreferences {
   userId: string;
   defaultFilters?: SearchFilters;
@@ -244,7 +244,7 @@ export interface SearchAlert {
   createdAt: Date;
 }
 
-// 搜索性能指標
+// Search性能指標
 export interface SearchMetrics {
   queryTime: number;
   indexTime: number;
@@ -254,7 +254,7 @@ export interface SearchMetrics {
   facetsGenerated: number;
 }
 
-// 搜索錯誤
+// SearchError
 export interface SearchError {
   code: string;
   message: string;
@@ -262,7 +262,7 @@ export interface SearchError {
   timestamp: Date;
 }
 
-// 搜索配置
+// SearchConfigure
 export interface SearchConfig {
   maxResults: number;
   defaultLimit: number;

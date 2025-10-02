@@ -1,6 +1,6 @@
 import type { BaseEntity } from './common';
 
-// 卡牌相關類型
+// 卡牌相OffClass型
 export interface Card extends BaseEntity {
   name: string;
   setName: string;
@@ -11,9 +11,9 @@ export interface Card extends BaseEntity {
   marketData: MarketData;
   images: CardImages;
   metadata: CardMetadata;
-  conditionAnalysis?: AnalysisResult[]; // 添加條件分析
-  authenticityCheck?: AnalysisResult[]; // 添加真偽檢查
-  // 添加缺失的屬性
+  conditionAnalysis?: AnalysisResult[]; // AddConditionAnalysis
+  authenticityCheck?: AnalysisResult[]; // AddTrue偽Check
+  // Add缺失的Property
   price?: number;
   currentPrice?: number; // 當前價格
   priceChange?: number; // 價格變化百分比
@@ -98,14 +98,14 @@ export type CardCondition =
   | 'played'
   | 'poor';
 
-// 收藏相關類型
+// 收藏相OffClass型
 export interface Collection extends BaseEntity {
   userId: string;
   name: string;
   description?: string;
   isPublic: boolean;
   cards: CollectionCard[];
-  items: CollectionItem[]; // 添加 items 屬性
+  items: CollectionItem[]; // Add items Property
   statistics: CollectionStatistics;
   tags: string[];
 }
@@ -132,7 +132,7 @@ export interface CollectionStatistics {
   completionRate: number;
 }
 
-// 收藏項目類型
+// 收藏項目Class型
 export interface CollectionItem {
   cardId: string;
   quantity: number;
@@ -144,11 +144,11 @@ export interface CollectionItem {
   location?: string;
   isForSale: boolean;
   askingPrice?: number;
-  currentValue: number; // 添加當前價值
-  addedAt: Date; // 添加添加時間
+  currentValue: number; // Add當前價Value
+  addedAt: Date; // AddAddTime
 }
 
-// 卡牌過濾和排序類型
+// 卡牌Filter和SortClass型
 export interface CardFilters {
   rarity?: CardRarity[];
   type?: CardType[];
@@ -162,16 +162,16 @@ export interface CardFilters {
   isFoil?: boolean;
   isGraded?: boolean;
   inStock?: boolean;
-  set?: string[]; // 添加 set 屬性
+  set?: string[]; // Add set Property
 }
 
 export interface CardSortOptions {
   field: 'name' | 'price' | 'rarity' | 'set' | 'condition' | 'dateAdded';
   order: 'asc' | 'desc';
-  direction?: 'asc' | 'desc'; // 添加 direction 屬性
+  direction?: 'asc' | 'desc'; // Add direction Property
 }
 
-// 分頁類型
+// PaginateClass型
 export interface Pagination {
   page: number;
   limit: number;
@@ -181,7 +181,7 @@ export interface Pagination {
   hasPrev: boolean;
 }
 
-// Redux 卡片狀態類型
+// Redux 卡片StatusClass型
 export interface CardState {
   cards: Card[];
   selectedCard: Card | null;
@@ -230,7 +230,7 @@ export interface CollectionState {
   isDeleting: boolean;
 }
 
-// 組件 Props 類型
+// Component Props Class型
 export interface CardProps {
   card: Card;
   onPress?: () => void;
@@ -239,7 +239,7 @@ export interface CardProps {
   variant?: 'compact' | 'detailed' | 'grid';
 }
 
-// AI 分析相關類型
+// AI Analysis相OffClass型
 export interface AnalysisResult {
   category: string;
   score: number;
@@ -248,7 +248,7 @@ export interface AnalysisResult {
   evidence: string[];
 }
 
-// 常量類型
+// ConstantClass型
 export const CARD_RARITIES: CardRarity[] = [
   'common',
   'uncommon',

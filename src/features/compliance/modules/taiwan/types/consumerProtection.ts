@@ -1,4 +1,4 @@
-// 台灣消費者保護法類型定義
+// 台灣消費者保護法Class型定義
 // Taiwan Consumer Protection Act Type Definitions
 
 export interface TaiwanConsumerRights {
@@ -17,15 +17,15 @@ export interface TaiwanConsumerRights {
 export enum TaiwanConsumerRightType {
   SAFETY = 'safety', // 安全權
   INFORMATION = 'information', // 資訊權
-  CHOICE = 'choice', // 選擇權
-  REPRESENTATION = 'representation', // 表達權
+  CHOICE = 'choice', // Select權
+  REPRESENTATION = 'representation', // Table達權
   COMPENSATION = 'compensation', // 求償權
   EDUCATION = 'education', // 教育權
   HEALTHY_ENVIRONMENT = 'healthy_environment', // 健康環境權
 }
 
 export enum TaiwanEnforcementMechanism {
-  ADMINISTRATIVE = 'administrative', // 行政救濟
+  ADMINISTRATIVE = 'administrative', // Row政救濟
   JUDICIAL = 'judicial', // 司法救濟
   MEDIATION = 'mediation', // 調解
   ARBITRATION = 'arbitration', // 仲裁
@@ -82,7 +82,7 @@ export enum TaiwanProductType {
   ELECTRONICS = 'electronics', // 電子產品
   TOYS = 'toys', // 玩具
   CLOTHING = 'clothing', // 服飾
-  DIGITAL_CONTENT = 'digital_content', // 數位內容
+  DIGITAL_CONTENT = 'digital_content', // 數位Content
   FINANCIAL_PRODUCTS = 'financial_products', // 金融商品
   OTHER = 'other', // 其他
 }
@@ -141,7 +141,7 @@ export interface TaiwanConsumerDispute {
 
 export enum TaiwanDisputeType {
   PRODUCT_DEFECT = 'product_defect', // 商品瑕疵
-  SERVICE_DEFECT = 'service_defect', // 服務瑕疵
+  SERVICE_DEFECT = 'service_defect', // Service瑕疵
   FALSE_ADVERTISING = 'false_advertising', // 不實廣告
   UNFAIR_CONTRACT = 'unfair_contract', // 不公平契約
   PRICE_GOUGING = 'price_gouging', // 哄抬物價
@@ -268,7 +268,7 @@ export enum TaiwanDisputeStatus {
   FILED = 'filed', // 已申訴
   UNDER_REVIEW = 'under_review', // 審查中
   MEDIATION = 'mediation', // 調解中
-  RESOLVED = 'resolved', // 已解決
+  RESOLVED = 'resolved', // 已Resolve
   CLOSED = 'closed', // 已結案
   APPEALED = 'appealed', // 已上訴
 }
@@ -300,7 +300,7 @@ export enum TaiwanConsumerProtectionViolationType {
   FALSE_ADVERTISING = 'false_advertising', // 不實廣告
   UNFAIR_CONTRACT = 'unfair_contract', // 不公平契約
   PRICE_GOUGING = 'price_gouging', // 哄抬物價
-  SERVICE_DEFECT = 'service_defect', // 服務瑕疵
+  SERVICE_DEFECT = 'service_defect', // Service瑕疵
   CONSUMER_RIGHTS_VIOLATION = 'consumer_rights_violation', // 消費者權利違規
   LABELING_VIOLATION = 'labeling_violation', // 標示違規
   WARRANTY_VIOLATION = 'warranty_violation', // 保證違規
@@ -323,20 +323,20 @@ export interface TaiwanPenalty {
 }
 
 export enum TaiwanPenaltyType {
-  ADMINISTRATIVE_FINE = 'administrative_fine', // 行政罰鍰
-  CEASE_AND_DESIST = 'cease_and_desist', // 停止行為
+  ADMINISTRATIVE_FINE = 'administrative_fine', // Row政罰鍰
+  CEASE_AND_DESIST = 'cease_and_desist', // StopRow為
   CORRECTIVE_MEASURES = 'corrective_measures', // 改正措施
-  PUBLIC_APOLOGY = 'public_apology', // 公開道歉
+  PUBLIC_APOLOGY = 'public_apology', // 公On道歉
   COMPENSATION = 'compensation', // 賠償
   CRIMINAL_PENALTY = 'criminal_penalty', // 刑事處罰
   OTHER = 'other', // 其他
 }
 
 export enum TaiwanViolationStatus {
-  OPEN = 'open', // 開啟
-  IN_PROGRESS = 'in_progress', // 處理中
-  RESOLVED = 'resolved', // 已解決
-  CLOSED = 'closed', // 已關閉
+  OPEN = 'open', // On啟
+  IN_PROGRESS = 'in_progress', // Handle中
+  RESOLVED = 'resolved', // 已Resolve
+  CLOSED = 'closed', // 已Off閉
   APPEALED = 'appealed', // 已上訴
 }
 

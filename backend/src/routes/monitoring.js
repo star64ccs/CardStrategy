@@ -32,7 +32,7 @@ router.get('/metrics', [protect, authorize('admin')], async (req, res) => {'
 });
 
 /**
- * ?��??�康檢查?�?? * GET /api/monitoring/health'
+ * ?��??�康Check?�?? * GET /api/monitoring/health'
  */''
 router.get('/health', async (req, res) => {'
   try {''
@@ -135,7 +135,7 @@ router.get('/application', [protect, authorize('admin')], async (req, res) => {
 });
 
 /**
- * ?��??��?庫�??? * GET /api/monitoring/database'
+ * ?��??��?Library�??? * GET /api/monitoring/database'
  */''
 router.get('/database', [protect, authorize('admin')], async (req, res) => {'
   try {''
@@ -303,7 +303,7 @@ router.get('/report', [protect, authorize('admin')], async (req, res) => {'
 });
 
 /**
- * 設置警報?��? * PUT /api/monitoring/thresholds
+ * SettingsAlert?��? * PUT /api/monitoring/thresholds
  */'
 router.put(''
   '/thresholds',

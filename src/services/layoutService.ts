@@ -10,7 +10,7 @@ import type {
   ResponsiveValue,
 } from '../types/layout';
 
-// 默認斷點配置
+// Default斷點Configure
 const DEFAULT_BREAKPOINTS: BreakpointConfig = {
   xs: 575, // 0-575px
   sm: 767, // 576-767px
@@ -20,7 +20,7 @@ const DEFAULT_BREAKPOINTS: BreakpointConfig = {
   xxl: 1400, // 1400px+
 };
 
-// 默認佈局系統配置
+// Default佈局系統Configure
 const DEFAULT_LAYOUT_CONFIG: LayoutSystemConfig = {
   breakpoints: DEFAULT_BREAKPOINTS,
   defaultBreakpoint: 'md',
@@ -40,7 +40,7 @@ const DEFAULT_LAYOUT_CONFIG: LayoutSystemConfig = {
   defaultGap: '1rem',
 };
 
-// 佈局系統服務類
+// 佈局系統ServiceClass
 export class LayoutServiceClass implements LayoutService {
   private static instance: LayoutServiceClass;
   private config: LayoutSystemConfig;
@@ -67,34 +67,34 @@ export class LayoutServiceClass implements LayoutService {
     return LayoutServiceClass.instance;
   }
 
-  // 初始化服務
+  // InitializeService
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
     try {
-      // 初始化響應式狀態
+      // InitializeResponse式Status
       this.updateResponsiveState();
 
-      // 設置事件監聽器
+      // SettingsEvent監聽器
       this.setupEventListeners();
 
-      // 註冊默認組件
+      // RegisterDefaultComponent
       this.registerDefaultComponents();
 
       this.isInitialized = true;
-      console.log('佈局系統服務初始化完成');
+      console.log('佈局系統ServiceInitialize完成');
     } catch (error) {
-      console.error('佈局系統服務初始化失敗:', error);
+      console.error('佈局系統ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
-  // 獲取當前斷點
+  // Get當前斷點
   public getCurrentBreakpoint(): Breakpoint {
     return this.responsiveState.currentBreakpoint;
   }
 
-  // 獲取響應式值
+  // GetResponse式Value
   public getResponsiveValue<T>(value: ResponsiveValue<T>): T {
     if (typeof value !== 'object' || value === null) {
       return value;
@@ -104,7 +104,7 @@ export class LayoutServiceClass implements LayoutService {
     const breakpoints: Breakpoint[] = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
     const _currentIndex = breakpoints.indexOf(currentBreakpoint);
 
-    // 從當前斷點開始，向上查找匹配的值
+    // 從當前斷點Begin，向上Find匹配的Value
     for (let i = currentIndex; i >= 0; i--) {
       const _breakpoint = breakpoints[i];
       if (breakpoint in value) {
@@ -112,17 +112,17 @@ export class LayoutServiceClass implements LayoutService {
       }
     }
 
-    // 如果沒有找到響應式值，返回第一個可用的值
+    // 如果沒有找到Response式Value，Return第一個可用的Value
     const _firstValue = Object.values(value)[0];
     return firstValue !== undefined ? firstValue : (value as T);
   }
 
-  // 檢查是否為指定斷點
+  // CheckYesNo為指定斷點
   public isBreakpoint(breakpoint: Breakpoint): boolean {
     return this.getCurrentBreakpoint() === breakpoint;
   }
 
-  // 檢查是否高於指定斷點
+  // CheckYesNo高於指定斷點
   public isAboveBreakpoint(breakpoint: Breakpoint): boolean {
     const breakpoints: Breakpoint[] = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
     const _currentIndex = breakpoints.indexOf(this.getCurrentBreakpoint());
@@ -130,7 +130,7 @@ export class LayoutServiceClass implements LayoutService {
     return currentIndex > targetIndex;
   }
 
-  // 檢查是否低於指定斷點
+  // CheckYesNo低於指定斷點
   public isBelowBreakpoint(breakpoint: Breakpoint): boolean {
     const breakpoints: Breakpoint[] = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
     const _currentIndex = breakpoints.indexOf(this.getCurrentBreakpoint());
@@ -138,29 +138,29 @@ export class LayoutServiceClass implements LayoutService {
     return currentIndex < targetIndex;
   }
 
-  // 斷點變化事件監聽
+  // 斷點變化Event監聽
   public onBreakpointChange(
     callback: (event: ResponsiveEvent) => void
   ): () => void {
     return this.addEventListener('breakpointChange', callback);
   }
 
-  // 窗口大小變化事件監聽
+  // 窗口大小變化Event監聽
   public onResize(callback: (event: ResponsiveEvent) => void): () => void {
     return this.addEventListener('resize', callback);
   }
 
-  // 獲取斷點配置
+  // Get斷點Configure
   public getBreakpointConfig(): BreakpointConfig {
     return { ...this.config.breakpoints };
   }
 
-  // 獲取響應式狀態
+  // GetResponse式Status
   public getResponsiveState(): ResponsiveState {
     return { ...this.responsiveState };
   }
 
-  // 註冊佈局組件
+  // Register佈局Component
   public registerComponent(component: LayoutComponentRegistration): void {
     this.components.set(component.name, component);
     this.emitEvent({
@@ -170,17 +170,17 @@ export class LayoutServiceClass implements LayoutService {
     });
   }
 
-  // 獲取組件
+  // GetComponent
   public getComponent(name: string): LayoutComponentRegistration | undefined {
     return this.components.get(name);
   }
 
-  // 獲取所有組件
+  // Get所有Component
   public getAllComponents(): LayoutComponentRegistration[] {
     return Array.from(this.components.values());
   }
 
-  // 更新配置
+  // UpdateConfigure
   public updateConfig(updates: Partial<LayoutSystemConfig>): void {
     this.config = { ...this.config, ...updates };
     this.emitEvent({
@@ -190,12 +190,12 @@ export class LayoutServiceClass implements LayoutService {
     });
   }
 
-  // 獲取配置
+  // GetConfigure
   public getConfig(): LayoutSystemConfig {
     return { ...this.config };
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private createInitialResponsiveState(): ResponsiveState {
     const _windowWidth =
@@ -220,7 +220,7 @@ export class LayoutServiceClass implements LayoutService {
     const { breakpoints } = this.config;
 
     // 正確的斷點計算邏輯
-    // 根據斷點配置計算對應的斷點
+    // Root據斷點Configure計算對應的斷點
     if (width <= breakpoints.xs) return 'xs';
     if (width <= breakpoints.sm) return 'sm';
     if (width <= breakpoints.md) return 'md';
@@ -248,7 +248,7 @@ export class LayoutServiceClass implements LayoutService {
       windowHeight,
     };
 
-    // 如果斷點發生變化，發射事件
+    // 如果斷點發生變化，發射Event
     if (previousBreakpoint !== currentBreakpoint) {
       this.emitEvent({
         type: 'breakpointChange' as any,
@@ -349,7 +349,7 @@ export class LayoutServiceClass implements LayoutService {
 
     this.eventListeners.get(type).add(callback);
 
-    // 返回取消監聽的函數
+    // ReturnCancel監聽的Function
     return () => {
       this.eventListeners.get(type)?.delete(callback);
     };
@@ -362,13 +362,13 @@ export class LayoutServiceClass implements LayoutService {
         try {
           callback(event as ResponsiveEvent);
         } catch (error) {
-          console.error('事件監聽器執行錯誤:', error);
+          console.error('事件監聽器執行Error:', error);
         }
       });
     }
   }
 
-  // 銷毀服務
+  // 銷毀Service
   public destroy(): void {
     this.eventListeners.clear();
     this.components.clear();
@@ -376,5 +376,5 @@ export class LayoutServiceClass implements LayoutService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _layoutService = LayoutServiceClass.getInstance();

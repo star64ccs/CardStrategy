@@ -22,17 +22,17 @@ describe('SearchAnalyticsService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化服務', async () => {
+    it('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBe(true);
       expect(service.getInitializationStatus()).toBe(true);
     });
 
-    it('應該在初始化失敗時返回 false', async () => {
-      // 模擬初始化失敗
+    it('應該在InitializeFailed時返回 false', async () => {
+      // 模擬InitializeFailed
       jest
         .spyOn(service as any, 'loadAnalytics')
-        .mockRejectedValue(new Error('初始化失敗'));
+        .mockRejectedValue(new Error('InitializeFailed'));
 
       const _result = await service.initialize();
       expect(result).toBe(false);
@@ -110,12 +110,12 @@ describe('SearchAnalyticsService', () => {
       expect(analytics.userSatisfaction).toBeDefined();
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
+    it('應該在未Initialize時拋出Error', async () => {
       const _newService = SearchAnalyticsService.getInstance();
       (newService as any).isInitialized = false;
 
       await expect(newService.getAnalytics()).rejects.toThrow(
-        '搜索分析服務尚未初始化'
+        '搜索分析Service尚未Initialize'
       );
     });
 
@@ -336,13 +336,13 @@ describe('SearchAnalyticsService', () => {
       await expect(service.deleteAlert(alertId)).resolves.not.toThrow();
     });
 
-    it('應該在更新不存在的警報時拋出錯誤', async () => {
+    it('應該在Update不存在的警報時拋出Error', async () => {
       await expect(
         service.updateAlert('nonexistent', { enabled: false })
       ).rejects.toThrow('警報不存在: nonexistent');
     });
 
-    it('應該在刪除不存在的警報時拋出錯誤', async () => {
+    it('應該在Delete不存在的警報時拋出Error', async () => {
       await expect(service.deleteAlert('nonexistent')).rejects.toThrow(
         '警報不存在: nonexistent'
       );
@@ -414,7 +414,7 @@ describe('SearchAnalyticsService', () => {
 
       service.addEventListener(mockCallback);
 
-      // 觸發事件
+      // 觸發Event
       service.trackEvent({
         type: 'search_performed',
         userId: 'user123',
@@ -429,14 +429,14 @@ describe('SearchAnalyticsService', () => {
         platform: 'web',
       });
 
-      // 等待事件處理完成
+      // AwaitEventHandleComplete
       setTimeout(() => {
         expect(mockCallback).toHaveBeenCalled();
 
-        // 移除監聽器
+        // Remove監聽器
         service.removeEventListener(mockCallback);
 
-        // 再次觸發事件
+        // 再次觸發Event
         service.trackEvent({
           type: 'search_performed',
           userId: 'user123',
@@ -456,14 +456,14 @@ describe('SearchAnalyticsService', () => {
       }, 10);
     });
 
-    it('應該處理事件監聽器錯誤', () => {
+    it('應該Handle事件監聽器Error', () => {
       const _mockCallback = jest.fn().mockImplementation(() => {
-        throw new Error('監聽器錯誤');
+        throw new Error('監聽器Error');
       });
 
       service.addEventListener(mockCallback);
 
-      // 不應該拋出錯誤
+      // 不應該ThrowError
       expect(() => {
         service.trackEvent({
           type: 'search_performed',
@@ -509,7 +509,7 @@ describe('SearchAnalyticsService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 處理100個事件應該在1秒內完成
+      // Handle100個Event應該在1Second內Complete
       expect(duration).toBeLessThan(1000);
     });
 
@@ -521,7 +521,7 @@ describe('SearchAnalyticsService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 獲取分析數據應該在100ms內完成
+      // GetAnalysisData應該在100ms內Complete
       expect(duration).toBeLessThan(100);
     });
   });
@@ -600,12 +600,12 @@ describe('SearchAnalyticsService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       await service.initialize();
     });
 
-    it('應該處理導出錯誤', async () => {
+    it('應該Handle導出Error', async () => {
       const _analytics = await service.getAnalytics();
       const options: SearchAnalyticsExportOptions = {
         format: 'csv',
@@ -615,28 +615,28 @@ describe('SearchAnalyticsService', () => {
         compression: false,
       };
 
-      // 模擬導出錯誤
+      // 模擬ExportError
       jest.spyOn(service as any, 'convertToCSV').mockImplementation(() => {
-        throw new Error('導出失敗');
+        throw new Error('導出Failed');
       });
 
       await expect(service.exportData(analytics, options)).rejects.toThrow(
-        '導出失敗'
+        '導出Failed'
       );
     });
 
-    it('應該處理報告生成錯誤', async () => {
-      // 模擬報告生成錯誤
+    it('應該Handle報告生成Error', async () => {
+      // 模擬Report生成Error
       jest
         .spyOn(service as any, 'generateInsights')
-        .mockRejectedValue(new Error('洞察生成失敗'));
+        .mockRejectedValue(new Error('洞察生成Failed'));
 
       await expect(
         service.generateReport('測試報告', '這是一個測試報告', {
           start: Date.now() - 24 * 60 * 60 * 1000,
           end: Date.now(),
         })
-      ).rejects.toThrow('洞察生成失敗');
+      ).rejects.toThrow('洞察生成Failed');
     });
   });
 });

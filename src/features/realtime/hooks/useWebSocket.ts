@@ -1,6 +1,6 @@
 /**
- * WebSocket 自定義 Hook
- * 提供 WebSocket 連接管理和消息處理功能
+ * WebSocket Custom Hook
+ * 提供 WebSocket ConnectManage和MessageHandle功能
  */
 
 import { useCallback, useEffect, useRef } from 'react';
@@ -46,13 +46,13 @@ export const _useWebSocket = () => {
   // Debug logging
   console.log('useWebSocket hook called, websocketState:', websocketState);
 
-  // 初始化 WebSocket
+  // Initialize WebSocket
   const _initialize = useCallback(
     async (config?: Partial<WebSocketConfig>) => {
       try {
         await dispatch(initializeWebSocket(config)).unwrap();
 
-        // 設置事件處理器
+        // SettingsEventHandle器
         websocketService.setEventHandlers({
           onConnect: event => {
             eventHandlersRef.current.onConnect?.(event);
@@ -93,7 +93,7 @@ export const _useWebSocket = () => {
     [dispatch]
   );
 
-  // 連接 WebSocket
+  // Connect WebSocket
   const _connect = useCallback(async () => {
     try {
       await dispatch(connectWebSocket()).unwrap();
@@ -103,7 +103,7 @@ export const _useWebSocket = () => {
     }
   }, [dispatch]);
 
-  // 斷開 WebSocket 連接
+  // Disconnect WebSocket Connect
   const _disconnect = useCallback(async () => {
     try {
       await dispatch(disconnectWebSocket()).unwrap();
@@ -113,7 +113,7 @@ export const _useWebSocket = () => {
     }
   }, [dispatch]);
 
-  // 發送消息
+  // SendMessage
   const _sendMessage = useCallback(
     async (message: Partial<WebSocketMessage>) => {
       try {
@@ -126,7 +126,7 @@ export const _useWebSocket = () => {
     [dispatch]
   );
 
-  // 廣播消息
+  // 廣播Message
   const _broadcast = useCallback(
     async (message: Partial<WebSocketMessage>, options?: BroadcastOptions) => {
       try {
@@ -139,7 +139,7 @@ export const _useWebSocket = () => {
     [dispatch]
   );
 
-  // 重新連接
+  // ReConnect
   const _reconnect = useCallback(async () => {
     try {
       await dispatch(reconnectWebSocket()).unwrap();
@@ -162,7 +162,7 @@ export const _useWebSocket = () => {
     [dispatch]
   );
 
-  // 離開房間
+  // 離On房間
   const _leaveRoomHandler = useCallback(
     async (roomId: string) => {
       try {
@@ -175,12 +175,12 @@ export const _useWebSocket = () => {
     [dispatch]
   );
 
-  // 設置事件處理器
+  // SettingsEventHandle器
   const _setEventHandlers = useCallback((handlers: WebSocketEventHandlers) => {
     eventHandlersRef.current = { ...eventHandlersRef.current, ...handlers };
   }, []);
 
-  // 添加訂閱
+  // Add訂閱
   const _subscribe = useCallback(
     (subscriptionId: string, filter: SubscriptionFilter) => {
       dispatch(addSubscription({ id: subscriptionId, filter }));
@@ -188,7 +188,7 @@ export const _useWebSocket = () => {
     [dispatch]
   );
 
-  // 取消訂閱
+  // Cancel訂閱
   const _unsubscribe = useCallback(
     (subscriptionId: string) => {
       dispatch(removeSubscription(subscriptionId));
@@ -196,17 +196,17 @@ export const _useWebSocket = () => {
     [dispatch]
   );
 
-  // 清空消息
+  // 清EmptyMessage
   const _clearMessagesHandler = useCallback(() => {
     dispatch(clearMessages());
   }, [dispatch]);
 
-  // 清空通知
+  // 清EmptyNotification
   const _clearNotificationsHandler = useCallback(() => {
     dispatch(clearNotifications());
   }, [dispatch]);
 
-  // 設置可見性
+  // Settings可見性
   const _setVisibilityHandler = useCallback(
     (isVisible: boolean) => {
       dispatch(setVisibility(isVisible));
@@ -214,65 +214,65 @@ export const _useWebSocket = () => {
     [dispatch]
   );
 
-  // 清空錯誤
+  // 清EmptyError
   const _clearErrorHandler = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 獲取統計信息
+  // GetStatisticsInformation
   const _getStats = useCallback((): WebSocketStats | null => {
     return websocketService.getStats();
   }, []);
 
-  // 獲取連接狀態
+  // GetConnectStatus
   const _getConnectionState = useCallback((): ConnectionState => {
     return websocketService.getConnectionState();
   }, []);
 
-  // 獲取配置
+  // GetConfigure
   const _getConfig = useCallback((): WebSocketConfig => {
     return websocketService.getConfig();
   }, []);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback((updates: Partial<WebSocketConfig>) => {
     websocketService.updateConfig(updates);
   }, []);
 
-  // 檢查是否已連接
+  // CheckYesNo已Connect
   const _isConnected = websocketState.status === 'connected';
 
-  // 檢查是否正在連接
+  // CheckYesNo正在Connect
   const _isConnecting =
     websocketState.status === 'connecting' ||
     websocketState.status === 'reconnecting';
 
-  // 檢查是否有錯誤
+  // CheckYesNo有Error
   const _hasError = !!websocketState.error;
 
-  // 獲取最新消息
+  // Get最新Message
   const { lastMessage } = websocketState;
 
-  // 獲取未讀消息數量
+  // Get未讀Message數量
   const { unreadCount } = websocketState;
 
-  // 獲取通知
+  // GetNotification
   const { notifications } = websocketState;
 
-  // 獲取當前房間
+  // Get當前房間
   const { currentRooms } = websocketState;
 
-  // 獲取訂閱
+  // Get訂閱
   const { subscriptions } = websocketState;
 
-  // 獲取載入狀態
+  // GetLoadStatus
   const { loading } = websocketState;
 
-  // 獲取統計信息
+  // GetStatisticsInformation
   const { stats } = websocketState;
 
   return {
-    // 狀態
+    // Status
     isInitialized: websocketState.isInitialized,
     status: websocketState.status,
     connectionState: websocketState.connectionState,
@@ -283,7 +283,7 @@ export const _useWebSocket = () => {
     error: websocketState.error,
     lastError: websocketState.lastError,
 
-    // 消息
+    // Message
     messages: websocketState.messages,
     lastMessage,
     messageHistory: websocketState.messageHistory,
@@ -294,13 +294,13 @@ export const _useWebSocket = () => {
     currentRooms,
     subscriptions,
 
-    // 統計
+    // Statistics
     stats,
 
-    // 載入狀態
+    // LoadStatus
     loading,
 
-    // 方法
+    // Method
     initialize,
     connect,
     disconnect,
@@ -369,7 +369,7 @@ export const _useSimpleWebSocket = () => {
   };
 };
 
-// 專門用於消息訂閱的 Hook
+// 專門用於Message訂閱的 Hook
 export const _useWebSocketSubscription = (
   subscriptionId: string,
   filter: SubscriptionFilter,
@@ -381,10 +381,10 @@ export const _useWebSocketSubscription = (
   );
 
   useEffect(() => {
-    // 添加訂閱
+    // Add訂閱
     dispatch(addSubscription({ id: subscriptionId, filter }));
 
-    // 設置事件處理器
+    // SettingsEventHandle器
     if (onMessage) {
       websocketService.subscribe(subscriptionId, filter, onMessage);
     }
@@ -396,7 +396,7 @@ export const _useWebSocketSubscription = (
     };
   }, [dispatch, subscriptionId, filter, onMessage]);
 
-  // 過濾符合訂閱條件的消息
+  // Filter符合訂閱Condition的Message
   const _filteredMessages = messages.filter(message => {
     if (filter.userId && message.userId !== filter.userId) {
       return false;
@@ -420,7 +420,7 @@ export const _useWebSocketSubscription = (
   };
 };
 
-// 專門用於房間管理的 Hook
+// 專門用於房間Manage的 Hook
 export const _useWebSocketRoom = (roomId: string) => {
   const _dispatch = useDispatch<AppDispatch>();
   const { currentRooms, loading } = useSelector(

@@ -2,15 +2,15 @@ const tf = require('@tensorflow/tfjs');
 
 async function testTensorFlow() {
   try {
-    // 測試基本功能
+    // Test基本功能
     const tensor = tf.tensor2d([
       [1, 2],
       [3, 4],
     ]);
 // eslint-disable-next-line no-console
-    console.log('張量創建成功');
+    console.log('張量CreateSuccess');
 
-    // 測試數學運算
+    // Test數學運算
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -18,40 +18,40 @@ async function testTensorFlow() {
 // eslint-disable-next-line no-console
     console.log('數學運算測試完成');
 
-    // 測試模型創建
+    // Test模型Create
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const model = tf.sequential({
       layers: [tf.layers.dense({ units: 1, inputShape: [2] })],
     });
-    // 測試模型編譯
+    // Test模型Compile
     model.compile({
       optimizer: 'sgd',
       loss: 'meanSquaredError',
     });
-    // 測試預測
+    // Test預測
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const prediction = model.predict(tf.tensor2d([[1, 2]]));
 // eslint-disable-next-line no-console
     console.log('模型預測測試完成');
 
-    // 測試後端
+    // Test後端
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const backend = tf.getBackend();
-    // 清理資源
+    // 清理Resource
     tensor.dispose();
     result.dispose();
     prediction.dispose();
   } catch (error) {
 // eslint-disable-next-line no-console
-    console.error('❌ TensorFlow.js 測試失敗:', error.message);
+    console.error('❌ TensorFlow.js 測試Failed:', error.message);
 // eslint-disable-next-line no-console
-    console.error('詳細錯誤:', error);
+    console.error('詳細Error:', error);
   }
 }
 
-// 運行測試
+// 運RowTest
 testTensorFlow();

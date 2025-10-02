@@ -77,8 +77,8 @@ export const SessionManager: React.FC<SessionManagerProps> = ({
       ]);
       clearAllErrors();
     } catch (error: unknown) {
-      logger.error('加載會話數據失敗:', error);
-      onError?.(error.message || '加載會話數據失敗');
+      logger.error('加載會話數據Failed:', error);
+      onError?.(error.message || '加載會話數據Failed');
     } finally {
       setRefreshing(false);
     }
@@ -102,11 +102,11 @@ export const SessionManager: React.FC<SessionManagerProps> = ({
           try {
             await terminate({ sessionId, reason: '用戶手動終止' });
             onSessionTerminated?.(sessionId);
-            Alert.alert('成功', '會話已終止');
+            Alert.alert('Success', '會話已終止');
           } catch (error: unknown) {
-            logger.error('終止會話失敗:', error);
-            onError?.(error.message || '終止會話失敗');
-            Alert.alert('錯誤', error.message || '終止會話失敗');
+            logger.error('終止會話Failed:', error);
+            onError?.(error.message || '終止會話Failed');
+            Alert.alert('Error', error.message || '終止會話Failed');
           }
         },
       },

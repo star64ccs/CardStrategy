@@ -34,14 +34,14 @@ import storageReducer from './slices/storageSlice';
 import themeReducer from './slices/themeSlice';
 import websocketReducer from './slices/websocketSlice';
 
-// 持久化配置
+// 持久化Configure
 const _persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['auth', 'settings', 'theme', 'privacy'], // 只持久化認證、設置、主題和隱私狀態
+  whitelist: ['auth', 'settings', 'theme', 'privacy'], // 只持久化Authenticate、Settings、Theme和隱私Status
 };
 
-// 根 reducer
+// Root reducer
 const _rootReducer = {
   auth: authReducer,
   socialAuth: socialAuthReducer,
@@ -76,7 +76,7 @@ const _rootReducer = {
   hybridRecommendation: hybridRecommendationReducer,
 };
 
-// 創建 store
+// Create store
 export const _store = configureStore({
   reducer: rootReducer,
   middleware: getDefaultMiddleware =>
@@ -87,9 +87,9 @@ export const _store = configureStore({
     }),
 });
 
-// 創建持久化 store
+// Create持久化 store
 export const _persistor = persistStore(store);
 
-// 導出類型
+// ExportClass型
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

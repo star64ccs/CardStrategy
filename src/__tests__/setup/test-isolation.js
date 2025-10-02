@@ -1,13 +1,13 @@
 /* eslint-env jest */
 
 /**
- * 測試隔離設置
- * 確保每個測試在獨立的環境中運行
+ * Test隔離Settings
+ * 確保每個Test在獨立的環境中運Row
  */
 
-// 全局測試隔離設置
+// GlobalTest隔離Settings
 beforeAll(() => {
-  // 清理全局狀態
+  // 清理GlobalStatus
   global.console = {
     ...console,
     log: jest.fn(),
@@ -17,7 +17,7 @@ beforeAll(() => {
 });
 
 beforeEach(() => {
-  // 每個測試前清理
+  // 每個Test前清理
   jest.clearAllMocks();
   jest.resetAllMocks();
   jest.restoreAllMocks();
@@ -25,21 +25,21 @@ beforeEach(() => {
   // 清理計時器
   jest.clearAllTimers();
   
-  // 不重置模組緩存，避免破壞 mock
+  // 不Reset模組Cache，避免破壞 mock
   // jest.resetModules();
 });
 
 afterEach(() => {
-  // 每個測試後清理
+  // 每個Test後清理
   jest.clearAllMocks();
   jest.clearAllTimers();
 });
 
 afterAll(() => {
-  // 所有測試後清理
+  // 所有Test後清理
   jest.clearAllMocks();
   jest.clearAllTimers();
-  // 不重置模組緩存，避免破壞 mock
+  // 不Reset模組Cache，避免破壞 mock
   // jest.resetModules();
 });
 
@@ -52,7 +52,7 @@ function isolatedRequire(modulePath) {
   const cacheKey = modulePath;
   
   if (!moduleCache.has(cacheKey)) {
-    // 清除模組緩存
+    // Clear模組Cache
     delete require.cache[require.resolve(modulePath)];
     const module = originalRequire(modulePath);
     moduleCache.set(cacheKey, module);
@@ -61,7 +61,7 @@ function isolatedRequire(modulePath) {
   return moduleCache.get(cacheKey);
 }
 
-// 導出隔離設置
+// Export隔離Settings
 module.exports = {
   isolatedRequire,
   moduleCache,

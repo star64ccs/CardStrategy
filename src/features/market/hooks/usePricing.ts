@@ -37,13 +37,13 @@ import type { PriceAlert, PriceRequest } from '../types/pricing';
 import { PriceAlertType } from '../types/pricing';
 
 /**
- * 市場價格系統自定義 Hook
- * 提供價格查詢、歷史分析、警報管理等功能
+ * 市場價格系統Custom Hook
+ * 提供價格Query、歷史Analysis、AlertManage等功能
  */
 export const _usePricing = () => {
   const _dispatch = useAppDispatch();
 
-  // 選擇器
+  // Select器
   const _currentPrice = useSelector((state: RootState) =>
     selectCurrentPrice(state)
   );
@@ -74,67 +74,67 @@ export const _usePricing = () => {
   );
   const _alertForm = useSelector((state: RootState) => selectAlertForm(state));
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(
     async (config?: unknown) => {
       try {
         await (dispatch(initializePricingService(config)) as any).unwrap();
       } catch (error) {
-        console.error('初始化價格服務失敗:', error);
+        console.error('Initialize價格ServiceFailed:', error);
       }
     },
     [dispatch]
   );
 
-  // 獲取當前價格
+  // Get當前價格
   const _getCurrentPrice = useCallback(
     async (request: PriceRequest) => {
       try {
         await (dispatch(fetchCurrentPrice(request)) as any).unwrap();
       } catch (error) {
-        console.error('獲取當前價格失敗:', error);
+        console.error('Get當前價格Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 獲取價格歷史
+  // Get價格歷史
   const _getPriceHistory = useCallback(
     async (cardId: string, period = '30d') => {
       try {
         await (dispatch(fetchPriceHistory({ cardId, period })) as any).unwrap();
       } catch (error) {
-        console.error('獲取價格歷史失敗:', error);
+        console.error('Get價格歷史Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 創建價格警報
+  // Create價格Alert
   const _createAlert = useCallback(
     async (alert: Omit<PriceAlert, 'id' | 'createdAt'>) => {
       try {
         await (dispatch(createPriceAlert(alert)) as any).unwrap();
       } catch (error) {
-        console.error('創建價格警報失敗:', error);
+        console.error('Create價格警報Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 獲取用戶警報
+  // GetUserAlert
   const _getUserAlerts = useCallback(
     async (cardId?: string) => {
       try {
         await (dispatch(fetchUserAlerts(cardId)) as any).unwrap();
       } catch (error) {
-        console.error('獲取用戶警報失敗:', error);
+        console.error('Get用戶警報Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 更新警報狀態
+  // UpdateAlertStatus
   const _updateAlert = useCallback(
     async (alertId: string, isActive: boolean) => {
       try {
@@ -142,46 +142,46 @@ export const _usePricing = () => {
           dispatch(updateAlertStatus({ alertId, isActive })) as any
         ).unwrap();
       } catch (error) {
-        console.error('更新警報狀態失敗:', error);
+        console.error('Update警報狀態Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 刪除警報
+  // DeleteAlert
   const _deleteAlert = useCallback(
     async (alertId: string) => {
       try {
         await (dispatch(deletePriceAlert(alertId)) as any).unwrap();
       } catch (error) {
-        console.error('刪除警報失敗:', error);
+        console.error('Delete警報Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 獲取市場統計
+  // Get市場Statistics
   const _getMarketStats = useCallback(async () => {
     try {
       await (dispatch(fetchMarketStats()) as any).unwrap();
     } catch (error) {
-      console.error('獲取市場統計失敗:', error);
+      console.error('Get市場統計Failed:', error);
     }
   }, [dispatch]);
 
-  // 生成市場分析
+  // 生成市場Analysis
   const _generateAnalysis = useCallback(
     async (cardId: string) => {
       try {
         await (dispatch(generateMarketAnalysis(cardId)) as any).unwrap();
       } catch (error) {
-        console.error('生成市場分析失敗:', error);
+        console.error('生成市場分析Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 設置選中的卡牌ID
+  // Settings選中的卡牌ID
   const _setCardId = useCallback(
     (cardId: string) => {
       dispatch(setSelectedCardId(cardId));
@@ -189,7 +189,7 @@ export const _usePricing = () => {
     [dispatch]
   );
 
-  // 設置選中的期間
+  // Settings選中的期間
   const _setPeriod = useCallback(
     (period: string) => {
       dispatch(setSelectedPeriod(period));
@@ -197,7 +197,7 @@ export const _usePricing = () => {
     [dispatch]
   );
 
-  // 更新警報表單
+  // UpdateAlertTable單
   const _updateForm = useCallback(
     (formData: Partial<typeof alertForm>) => {
       dispatch(updateAlertForm(formData));
@@ -205,27 +205,27 @@ export const _usePricing = () => {
     [dispatch]
   );
 
-  // 重置警報表單
+  // ResetAlertTable單
   const _resetForm = useCallback(() => {
     dispatch(resetAlertForm());
   }, [dispatch]);
 
-  // 清除錯誤
+  // ClearError
   const _clearErrorState = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 清除當前價格
+  // Clear當前價格
   const _clearPrice = useCallback(() => {
     dispatch(clearCurrentPrice());
   }, [dispatch]);
 
-  // 清除價格歷史
+  // Clear價格歷史
   const _clearHistory = useCallback(() => {
     dispatch(clearPriceHistory());
   }, [dispatch]);
 
-  // 清除市場分析
+  // Clear市場Analysis
   const _clearAnalysis = useCallback(() => {
     dispatch(clearMarketAnalysis());
   }, [dispatch]);
@@ -237,7 +237,7 @@ export const _usePricing = () => {
     return '#9E9E9E'; // 灰色
   }, []);
 
-  // 格式化價格
+  // Format價格
   const _formatPrice = useCallback((price: number, currency = 'USD') => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -245,13 +245,13 @@ export const _usePricing = () => {
     }).format(price);
   }, []);
 
-  // 格式化百分比
+  // Format百分比
   const _formatPercentage = useCallback((percent: number) => {
     const _sign = percent >= 0 ? '+' : '';
     return `${sign}${percent.toFixed(2)}%`;
   }, []);
 
-  // 格式化日期
+  // FormatDay
   const _formatDate = useCallback((dateString: string) => {
     return new Date(dateString).toLocaleDateString('zh-TW', {
       year: 'numeric',
@@ -262,12 +262,12 @@ export const _usePricing = () => {
     });
   }, []);
 
-  // 檢查是否有活躍警報
+  // CheckYesNo有活躍Alert
   const _hasActiveAlerts = useMemo(() => {
     return userAlerts.some((alert: unknown) => alert.isActive);
   }, [userAlerts]);
 
-  // 獲取特定卡牌的警報
+  // GetSpecific卡牌的Alert
   const _getCardAlerts = useCallback(
     (cardId: string) => {
       return userAlerts.filter((alert: unknown) => alert.cardId === cardId);
@@ -275,7 +275,7 @@ export const _usePricing = () => {
     [userAlerts]
   );
 
-  // 檢查價格是否在警報範圍內
+  // Check價格YesNo在Alert範圍內
   const _checkPriceAlerts = useCallback(
     (cardId: string, currentPrice: number) => {
       const _cardAlerts = getCardAlerts(cardId);
@@ -295,7 +295,7 @@ export const _usePricing = () => {
     [getCardAlerts]
   );
 
-  // 獲取趨勢圖標
+  // Get趨勢Graph標
   const _getTrendIcon = useCallback((trend: string) => {
     switch (trend) {
       case 'rising':
@@ -311,7 +311,7 @@ export const _usePricing = () => {
     }
   }, []);
 
-  // 獲取市場狀態顏色
+  // Get市場Status顏色
   const _getMarketStatusColor = useCallback((status: string) => {
     switch (status) {
       case 'active':
@@ -327,7 +327,7 @@ export const _usePricing = () => {
     }
   }, []);
 
-  // 計算價格統計
+  // 計算價格Statistics
   const _calculatePriceStats = useCallback(() => {
     if (!priceHistory?.data) return null;
 
@@ -346,7 +346,7 @@ export const _usePricing = () => {
     };
   }, [priceHistory]);
 
-  // 獲取推薦操作
+  // Get推薦Operation
   const _getRecommendations = useCallback(() => {
     if (!marketAnalysis) return [];
 
@@ -357,7 +357,7 @@ export const _usePricing = () => {
     }));
   }, [marketAnalysis]);
 
-  // 檢查數據新鮮度
+  // CheckData新鮮度
   const _isDataFresh = useCallback(
     (maxAgeMinutes = 5) => {
       if (!lastUpdated) return false;
@@ -371,7 +371,7 @@ export const _usePricing = () => {
     [lastUpdated]
   );
 
-  // 自動刷新數據
+  // AutoRefreshData
   const _autoRefresh = useCallback(
     async (cardId: string, period = '30d') => {
       if (!isDataFresh()) {
@@ -381,49 +381,49 @@ export const _usePricing = () => {
     [isDataFresh, getCurrentPrice]
   );
 
-  // 批量操作
+  // BatchOperation
   const _batchOperations = {
-    // 批量創建警報
+    // BatchCreateAlert
     createMultipleAlerts: useCallback(
       async (alerts: Omit<PriceAlert, 'id' | 'createdAt'>[]) => {
         const _promises = alerts.map(alert => createAlert(alert));
         try {
           await Promise.all(promises);
         } catch (error) {
-          console.error('批量創建警報失敗:', error);
+          console.error('批量Create警報Failed:', error);
         }
       },
       [createAlert]
     ),
 
-    // 批量更新警報狀態
+    // BatchUpdateAlertStatus
     updateMultipleAlertStatus: useCallback(
       async (alertIds: string[], isActive: boolean) => {
         const _promises = alertIds.map(id => updateAlert(id, isActive));
         try {
           await Promise.all(promises);
         } catch (error) {
-          console.error('批量更新警報狀態失敗:', error);
+          console.error('批量Update警報狀態Failed:', error);
         }
       },
       [updateAlert]
     ),
 
-    // 批量刪除警報
+    // BatchDeleteAlert
     deleteMultipleAlerts: useCallback(
       async (alertIds: string[]) => {
         const _promises = alertIds.map(id => deleteAlert(id));
         try {
           await Promise.all(promises);
         } catch (error) {
-          console.error('批量刪除警報失敗:', error);
+          console.error('批量Delete警報Failed:', error);
         }
       },
       [deleteAlert]
     ),
   };
 
-  // 實用工具函數
+  // 實用ToolFunction
   const _utils = {
     getPriceChangeColor,
     formatPrice,
@@ -441,7 +441,7 @@ export const _usePricing = () => {
   };
 
   return {
-    // 狀態
+    // Status
     currentPrice,
     priceHistory,
     marketAnalysis,
@@ -454,7 +454,7 @@ export const _usePricing = () => {
     selectedPeriod,
     alertForm,
 
-    // 操作
+    // Operation
     initialize,
     getCurrentPrice,
     getPriceHistory,
@@ -473,10 +473,10 @@ export const _usePricing = () => {
     clearHistory,
     clearAnalysis,
 
-    // 批量操作
+    // BatchOperation
     batchOperations,
 
-    // 工具函數
+    // ToolFunction
     utils,
   };
 };

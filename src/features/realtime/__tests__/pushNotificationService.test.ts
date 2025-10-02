@@ -1,6 +1,6 @@
 /**
- * 推送通知服務測試
- * 測試推送通知服務的所有主要功能
+ * PushNotificationServiceTest
+ * TestPushNotificationService的所有主要功能
  */
 
 import * as Device from 'expo-device';
@@ -88,8 +88,8 @@ describe('PushNotificationService', () => {
       expect(mockNotifications.getPermissionsAsync).toHaveBeenCalled();
       expect(mockNotifications.getExpoPushTokenAsync).toHaveBeenCalled();
       expect(mockRealtimeUpdateService.registerHandler).toHaveBeenCalled();
-      expect(mockLogger.info).toHaveBeenCalledWith('初始化推送通知服務');
-      expect(mockLogger.info).toHaveBeenCalledWith('推送通知服務初始化完成');
+      expect(mockLogger.info).toHaveBeenCalledWith('Initialize推送通知Service');
+      expect(mockLogger.info).toHaveBeenCalledWith('推送通知ServiceInitialize完成');
     });
 
     it('should not reinitialize if already initialized', async () => {
@@ -110,18 +110,18 @@ describe('PushNotificationService', () => {
     });
 
     it('should handle initialization errors', async () => {
-      // 重置服務狀態
+      // ResetServiceStatus
       (pushNotificationService as any).isInitialized = false;
 
-      // 清除之前的 mock 調用
+      // Clear之前的 mock 調用
       jest.clearAllMocks();
 
-      // 讓setNotificationHandler拋出錯誤
+      // 讓setNotificationHandlerThrowError
       mockNotifications.setNotificationHandler.mockImplementation(() => {
         throw new Error('Notification handler error');
       });
 
-      // 確保其他方法不會拋出錯誤
+      // 確保其他Method不會ThrowError
       mockNotifications.getPermissionsAsync.mockResolvedValue({
         status: 'granted',
       });
@@ -136,7 +136,7 @@ describe('PushNotificationService', () => {
         'Notification handler error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '推送通知服務初始化失敗:',
+        '推送通知ServiceInitializeFailed:',
         expect.any(Error)
       );
     });
@@ -197,7 +197,7 @@ describe('PushNotificationService', () => {
     });
 
     it.skip('should handle non-device environment for permissions', async () => {
-      // 暫時跳過這個測試，因為 Device.isDevice mock 問題需要進一步調查
+      // 暫時Skip這個Test，因為 Device.isDevice mock 問題需要進一步調查
       // TODO: 修復 Device.isDevice mock 問題
     });
   });
@@ -229,13 +229,13 @@ describe('PushNotificationService', () => {
       expect(result).toBe('mock-token');
       expect((pushNotificationService as any).expoPushToken).toBe('mock-token');
       expect(mockLogger.info).toHaveBeenCalledWith(
-        '獲取 Expo 推送令牌成功:',
+        'Get Expo 推送令牌Success:',
         expect.any(Object)
       );
     });
 
     it.skip('should handle non-device environment for token', async () => {
-      // 暫時跳過這個測試，因為 Device.isDevice mock 問題需要進一步調查
+      // 暫時Skip這個Test，因為 Device.isDevice mock 問題需要進一步調查
       // TODO: 修復 Device.isDevice mock 問題
     });
   });
@@ -268,7 +268,7 @@ describe('PushNotificationService', () => {
         })
       );
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        '創建通知頻道成功:',
+        'Create通知頻道Success:',
         expect.any(Object)
       );
     });
@@ -291,7 +291,7 @@ describe('PushNotificationService', () => {
         mockNotifications.setNotificationChannelAsync
       ).not.toHaveBeenCalled();
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        '創建通知頻道成功:',
+        'Create通知頻道Success:',
         expect.any(Object)
       );
     });
@@ -299,7 +299,7 @@ describe('PushNotificationService', () => {
 
   describe('sendLocalNotification', () => {
     beforeEach(async () => {
-      // 確保mock正確設置
+      // 確保mock正確Settings
       mockNotifications.getPermissionsAsync.mockResolvedValue({
         status: 'granted',
       });
@@ -342,7 +342,7 @@ describe('PushNotificationService', () => {
         trigger: null,
       });
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        '本地通知發送成功:',
+        '本地通知發送Success:',
         expect.any(Object)
       );
     });
@@ -361,7 +361,7 @@ describe('PushNotificationService', () => {
         pushNotificationService.sendLocalNotification(config)
       ).rejects.toThrow('Send failed');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '發送本地通知失敗:',
+        '發送本地通知Failed:',
         expect.any(Error)
       );
     });
@@ -369,7 +369,7 @@ describe('PushNotificationService', () => {
 
   describe('scheduleNotification', () => {
     beforeEach(async () => {
-      // 確保mock正確設置
+      // 確保mock正確Settings
       mockNotifications.getPermissionsAsync.mockResolvedValue({
         status: 'granted',
       });
@@ -413,7 +413,7 @@ describe('PushNotificationService', () => {
         trigger: { seconds: 60 },
       });
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        '延遲通知安排成功:',
+        '延遲通知安排Success:',
         expect.any(Object)
       );
     });
@@ -426,7 +426,7 @@ describe('PushNotificationService', () => {
       expect(
         mockNotifications.cancelScheduledNotificationAsync
       ).toHaveBeenCalledWith('notification-id');
-      expect(mockLogger.debug).toHaveBeenCalledWith('取消通知成功:', {
+      expect(mockLogger.debug).toHaveBeenCalledWith('取消通知Success:', {
         notificationId: 'notification-id',
       });
     });
@@ -439,7 +439,7 @@ describe('PushNotificationService', () => {
       expect(
         mockNotifications.cancelAllScheduledNotificationsAsync
       ).toHaveBeenCalled();
-      expect(mockLogger.debug).toHaveBeenCalledWith('取消所有通知成功');
+      expect(mockLogger.debug).toHaveBeenCalledWith('取消所有通知Success');
     });
   });
 
@@ -448,7 +448,7 @@ describe('PushNotificationService', () => {
       await pushNotificationService.setBadgeCount(5);
 
       expect(mockNotifications.setBadgeCountAsync).toHaveBeenCalledWith(5);
-      expect(mockLogger.debug).toHaveBeenCalledWith('設置通知徽章數量成功:', {
+      expect(mockLogger.debug).toHaveBeenCalledWith('Settings通知徽章數量Success:', {
         count: 5,
       });
     });
@@ -513,7 +513,7 @@ describe('PushNotificationService', () => {
 
   describe('private methods', () => {
     beforeEach(async () => {
-      // 確保mock正確設置
+      // 確保mock正確Settings
       mockNotifications.getPermissionsAsync.mockResolvedValue({
         status: 'granted',
       });
@@ -527,10 +527,10 @@ describe('PushNotificationService', () => {
 
     describe('setupNotificationHandlers', () => {
       it('should setup notification handlers correctly', async () => {
-        // 重新初始化服務以觸發 setupNotificationHandlers
+        // ReInitializeService以觸發 setupNotificationHandlers
         (pushNotificationService as any).isInitialized = false;
 
-        // 確保所有必要的mock都設置正確
+        // 確保所有必要的mock都Settings正確
         mockNotifications.getPermissionsAsync.mockResolvedValue({
           status: 'granted',
         });
@@ -541,7 +541,7 @@ describe('PushNotificationService', () => {
           data: 'mock-token',
         });
 
-        // 清除之前的調用記錄
+        // Clear之前的調用Record
         mockNotifications.setNotificationHandler.mockClear();
         mockNotifications.addNotificationReceivedListener.mockClear();
         mockNotifications.addNotificationResponseReceivedListener.mockClear();
@@ -562,7 +562,7 @@ describe('PushNotificationService', () => {
 
     describe('createDefaultChannels', () => {
       it('should create default channels', async () => {
-        // 重新初始化服務以觸發 createDefaultChannels
+        // ReInitializeService以觸發 createDefaultChannels
         (pushNotificationService as any).isInitialized = false;
         Platform.OS = 'android';
         await pushNotificationService.initialize();
@@ -633,7 +633,7 @@ describe('PushNotificationService', () => {
 
     describe('handleNotificationAction', () => {
       it('should handle notification actions', () => {
-        // 清除之前的調用記錄
+        // Clear之前的調用Record
         mockLogger.debug.mockClear();
 
         const _actions = ['open_card', 'open_screen', 'dismiss', 'unknown'];
@@ -642,8 +642,8 @@ describe('PushNotificationService', () => {
           (pushNotificationService as any).handleNotificationAction(action, {});
         });
 
-        // 檢查是否調用了正確次數的debug日誌
-        // 每個動作會調用一次 "處理通知動作"，'unknown' 動作還會額外調用一次 "未知的通知動作"
+        // CheckYesNo調用了正確次數的debugLog
+        // 每個動作會調用一次 "HandleNotification動作"，'unknown' 動作還會額外調用一次 "未知的Notification動作"
         const _debugCalls = mockLogger.debug.mock.calls.filter(
           call =>
             call[0] &&

@@ -47,18 +47,18 @@ export const ReportForm: React.FC<ReportFormProps> = ({
 
   const _handleSubmit = async () => {
     if (!formData.title.trim()) {
-      Alert.alert('錯誤', '請輸入舉報標題');
+      Alert.alert('Error', '請輸入舉報標題');
       return;
     }
 
     if (!formData.description.trim()) {
-      Alert.alert('錯誤', '請輸入舉報描述');
+      Alert.alert('Error', '請輸入舉報描述');
       return;
     }
 
     try {
       const _result = await submitReport({
-        reporterId: 'current_user_id', // 應該從認證系統獲取
+        reporterId: 'current_user_id', // 應該從Authenticate系統Get
         reportedUserId: formData.reportedUserId || undefined,
         cardId: formData.cardId || undefined,
         reportType: formData.reportType,
@@ -72,13 +72,13 @@ export const ReportForm: React.FC<ReportFormProps> = ({
       });
 
       if (result.meta.requestStatus === 'fulfilled') {
-        Alert.alert('成功', '舉報已提交，我們會盡快處理');
+        Alert.alert('Success', '舉報已提交，我們會盡快處理');
         onSuccess?.(result.payload.id);
       } else {
-        Alert.alert('錯誤', '提交失敗，請重試');
+        Alert.alert('Error', '提交Failed，請重試');
       }
     } catch (error) {
-      Alert.alert('錯誤', '提交失敗，請重試');
+      Alert.alert('Error', '提交Failed，請重試');
     }
   };
 

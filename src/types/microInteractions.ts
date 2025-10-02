@@ -1,6 +1,6 @@
-// 微交互系統類型定義
+// 微交互系統Class型定義
 
-// 微交互類型枚舉
+// 微交互Class型枚舉
 export enum MicroInteractionType {
   BUTTON_CLICK = 'button_click',
   FORM_VALIDATION = 'form_validation',
@@ -18,7 +18,7 @@ export enum MicroInteractionType {
   ROTATE = 'rotate',
 }
 
-// 微交互觸發器類型
+// 微交互觸發器Class型
 export enum TriggerType {
   CLICK = 'click',
   HOVER = 'hover',
@@ -32,7 +32,7 @@ export enum TriggerType {
   CUSTOM = 'custom',
 }
 
-// 微交互狀態枚舉
+// 微交互Status枚舉
 export enum MicroInteractionStatus {
   IDLE = 'idle',
   TRIGGERED = 'triggered',
@@ -42,7 +42,7 @@ export enum MicroInteractionStatus {
   DISABLED = 'disabled',
 }
 
-// 微交互可訪問性配置
+// 微交互可訪問性Configure
 export interface MicroInteractionAccessibility {
   reducedMotion: boolean;
   screenReader: boolean;
@@ -52,7 +52,7 @@ export interface MicroInteractionAccessibility {
   voiceControl: boolean;
 }
 
-// 微交互狀態對象
+// 微交互StatusObject
 export interface MicroInteractionState {
   id: string;
   type: MicroInteractionType;
@@ -67,7 +67,7 @@ export interface MicroInteractionState {
   error?: string;
 }
 
-// 微交互配置
+// 微交互Configure
 export interface MicroInteractionConfig {
   id: string;
   type: MicroInteractionType;
@@ -93,7 +93,7 @@ export interface MicroInteractionConfig {
   custom?: Record<string, any>;
 }
 
-// 按鈕點擊動畫配置
+// 按鈕點擊動畫Configure
 export interface ButtonClickConfig extends MicroInteractionConfig {
   type: MicroInteractionType.BUTTON_CLICK;
   ripple?: {
@@ -114,7 +114,7 @@ export interface ButtonClickConfig extends MicroInteractionConfig {
   };
 }
 
-// 表單驗證動畫配置
+// Table單Verify動畫Configure
 export interface FormValidationConfig extends MicroInteractionConfig {
   type: MicroInteractionType.FORM_VALIDATION;
   success?: {
@@ -138,7 +138,7 @@ export interface FormValidationConfig extends MicroInteractionConfig {
   };
 }
 
-// 加載動畫配置
+// 加載動畫Configure
 export interface LoadingConfig extends MicroInteractionConfig {
   type: MicroInteractionType.LOADING;
   spinner?: {
@@ -161,7 +161,7 @@ export interface LoadingConfig extends MicroInteractionConfig {
   };
 }
 
-// 成功/錯誤動畫配置
+// Success/Error動畫Configure
 export interface FeedbackConfig extends MicroInteractionConfig {
   type: MicroInteractionType.SUCCESS | MicroInteractionType.ERROR;
   icon?: {
@@ -185,7 +185,7 @@ export interface FeedbackConfig extends MicroInteractionConfig {
   };
 }
 
-// 頁面切換動畫配置
+// 頁面Switch動畫Configure
 export interface PageTransitionConfig extends MicroInteractionConfig {
   type: MicroInteractionType.PAGE_TRANSITION;
   enter?: {
@@ -208,7 +208,7 @@ export interface PageTransitionConfig extends MicroInteractionConfig {
   };
 }
 
-// 列表動畫配置
+// List動畫Configure
 export interface ListAnimationConfig extends MicroInteractionConfig {
   type: MicroInteractionType.LIST_ANIMATION;
   stagger?: {
@@ -236,7 +236,7 @@ export interface ListAnimationConfig extends MicroInteractionConfig {
   };
 }
 
-// 微交互狀態
+// 微交互Status
 export interface MicroInteractionState {
   id: string;
   type: MicroInteractionType;
@@ -251,7 +251,7 @@ export interface MicroInteractionState {
   error?: string;
 }
 
-// 微交互事件
+// 微交互Event
 export interface MicroInteractionEvent {
   id: string;
   type: MicroInteractionType;
@@ -260,7 +260,7 @@ export interface MicroInteractionEvent {
   data?: Record<string, any>;
 }
 
-// 微交互管理器配置
+// 微交互Manage器Configure
 export interface MicroInteractionManagerConfig {
   enabled: boolean;
   performanceMode: boolean;
@@ -284,7 +284,7 @@ export interface MicroInteractionPerformance {
   cpuUsage?: number;
 }
 
-// 微交互統計
+// 微交互Statistics
 export interface MicroInteractionStats {
   totalInteractions: number;
   successfulInteractions: number;
@@ -295,7 +295,7 @@ export interface MicroInteractionStats {
   userSatisfactionScore: number;
 }
 
-// React 組件 Props
+// React Component Props
 export interface MicroInteractionProps {
   config: MicroInteractionConfig;
   children: React.ReactNode;
@@ -317,7 +317,7 @@ export interface ButtonMicroInteractionProps extends MicroInteractionProps {
   onTouchEnd?: (event: React.TouchEvent) => void;
 }
 
-// 表單微交互 Props
+// Table單微交互 Props
 export interface FormMicroInteractionProps extends MicroInteractionProps {
   config: FormValidationConfig;
   validationState: 'idle' | 'validating' | 'success' | 'error' | 'warning';
@@ -344,7 +344,7 @@ export interface FeedbackMicroInteractionProps extends MicroInteractionProps {
   autoCloseDelay?: number;
 }
 
-// 頁面切換微交互 Props
+// 頁面Switch微交互 Props
 export interface PageTransitionMicroInteractionProps
   extends MicroInteractionProps {
   config: PageTransitionConfig;
@@ -355,7 +355,7 @@ export interface PageTransitionMicroInteractionProps
   onExited?: () => void;
 }
 
-// 列表微交互 Props
+// List微交互 Props
 export interface ListMicroInteractionProps extends MicroInteractionProps {
   config: ListAnimationConfig;
   items: unknown[];
@@ -365,7 +365,7 @@ export interface ListMicroInteractionProps extends MicroInteractionProps {
   onItemExit?: (item: unknown, index: number) => void;
 }
 
-// Hook 返回值
+// Hook ReturnValue
 export interface UseMicroInteractionReturn {
   trigger: (data?: Record<string, any>) => void;
   stop: () => void;
@@ -378,9 +378,9 @@ export interface UseMicroInteractionReturn {
   performance: MicroInteractionPerformance | null;
 }
 
-// 微交互服務接口
+// 微交互ServiceInterface
 export interface MicroInteractionServiceInterface {
-  // 核心方法
+  // 核心Method
   initialize(config: MicroInteractionManagerConfig): Promise<void>;
   register(config: MicroInteractionConfig): string;
   unregister(id: string): void;
@@ -388,28 +388,28 @@ export interface MicroInteractionServiceInterface {
   stop(id: string): void;
   reset(id: string): void;
 
-  // 批量操作
+  // BatchOperation
   triggerMultiple(ids: string[], data?: Record<string, any>): Promise<void>;
   stopAll(): void;
   resetAll(): void;
 
-  // 狀態查詢
+  // StatusQuery
   getState(id: string): MicroInteractionState | null;
   getProgress(id: string): number;
   isPlaying(id: string): boolean;
   isCompleted(id: string): boolean;
   hasError(id: string): boolean;
 
-  // 性能監控
+  // 性能Monitor
   getPerformance(id: string): MicroInteractionPerformance | null;
   getStats(): MicroInteractionStats;
   enablePerformanceMonitoring(enabled: boolean): void;
 
-  // 配置管理
+  // ConfigureManage
   updateConfig(id: string, config: Partial<MicroInteractionConfig>): void;
   getConfig(id: string): MicroInteractionConfig | null;
 
-  // 事件監聽
+  // Event監聽
   on(event: string, callback: (data: unknown) => void): void;
   off(event: string, callback: (data: unknown) => void): void;
 

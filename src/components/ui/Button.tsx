@@ -1,4 +1,4 @@
-// Button 組件
+// Button Component
 import React, { forwardRef, useCallback, useMemo } from 'react';
 
 import { useDesignSystem } from '../../hooks/useDesignSystem';
@@ -10,7 +10,7 @@ import type {
 } from '../../types/components';
 import { enhanceComponent } from '../../utils/accessibilityEnhancer';
 
-// 按鈕組件
+// 按鈕Component
 export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
@@ -155,7 +155,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
         },
       };
 
-      // 狀態樣式
+      // Status樣式
       const stateStyles: Record<ComponentState, React.CSSProperties> = {
         default: {},
         hover: {
@@ -199,7 +199,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
       style,
     ]);
 
-    // 處理點擊事件
+    // Handle點擊Event
     const _handleClick = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
         if (disabled || loading) {
@@ -211,7 +211,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
       [disabled, loading, onClick]
     );
 
-    // 處理鍵盤事件
+    // HandleKey盤Event
     const _handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLButtonElement>) => {
         if (disabled || loading) {
@@ -219,7 +219,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
           return;
         }
 
-        // 支持空格鍵和回車鍵觸發點擊
+        // SupportEmpty格Key和回車Key觸發點擊
         if (event.key === ' ' || event.key === 'Enter') {
           event.preventDefault();
           onClick?.();
@@ -230,7 +230,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
       [disabled, loading, onClick, onKeyDown]
     );
 
-    // 處理焦點事件
+    // Handle焦點Event
     const _handleFocus = useCallback(
       (event: React.FocusEvent<HTMLButtonElement>) => {
         if (!disabled && !loading) {
@@ -240,7 +240,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
       [disabled, loading, onFocus]
     );
 
-    // 處理失焦事件
+    // Handle失焦Event
     const _handleBlur = useCallback(
       (event: React.FocusEvent<HTMLButtonElement>) => {
         if (!disabled && !loading) {
@@ -250,7 +250,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
       [disabled, loading, onBlur]
     );
 
-    // 渲染加載狀態
+    // 渲染加載Status
     const _renderLoadingSpinner = () => {
       if (!loading) return null;
 
@@ -269,7 +269,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
       );
     };
 
-    // 渲染圖標
+    // 渲染Graph標
     const _renderIcon = () => {
       if (!icon) return null;
 
@@ -286,7 +286,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
       );
     };
 
-    // 渲染內容
+    // 渲染Content
     const _renderContent = () => {
       const _content = (
         <>
@@ -304,7 +304,7 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
       return content;
     };
 
-    // 如果是鏈接按鈕
+    // 如果Yes鏈接按鈕
     if (href) {
       const _enhancedProps = enhanceComponent(
         {
@@ -421,8 +421,8 @@ export const _Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-// 設置顯示名稱
+// SettingsShow名稱
 Button.displayName = 'Button';
 
-// 導出組件
+// ExportComponent
 export default Button;

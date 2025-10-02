@@ -50,23 +50,23 @@ export const BlacklistManager: React.FC<BlacklistManagerProps> = ({
 
   const _handleAddEntry = async () => {
     if (!newEntry.targetId.trim()) {
-      Alert.alert('錯誤', '請輸入目標ID');
+      Alert.alert('Error', '請輸入目標ID');
       return;
     }
 
     if (!newEntry.reason.trim()) {
-      Alert.alert('錯誤', '請輸入加入黑名單的原因');
+      Alert.alert('Error', '請輸入加入黑名單的原因');
       return;
     }
 
     try {
       const _result = await blacklistUser({
         ...newEntry,
-        createdBy: 'current_user_id', // 應該從認證系統獲取
+        createdBy: 'current_user_id', // 應該從Authenticate系統Get
       });
 
       if (result.meta.requestStatus === 'fulfilled') {
-        Alert.alert('成功', '已添加到黑名單');
+        Alert.alert('Success', '已添加到黑名單');
         setShowAddModal(false);
         setNewEntry({
           type: BlacklistType.USER,
@@ -78,10 +78,10 @@ export const BlacklistManager: React.FC<BlacklistManagerProps> = ({
           expiresAt: undefined,
         });
       } else {
-        Alert.alert('錯誤', '添加失敗，請重試');
+        Alert.alert('Error', '添加Failed，請重試');
       }
     } catch (error) {
-      Alert.alert('錯誤', '添加失敗，請重試');
+      Alert.alert('Error', '添加Failed，請重試');
     }
   };
 
@@ -290,7 +290,7 @@ export const BlacklistManager: React.FC<BlacklistManagerProps> = ({
         )}
       </ScrollView>
 
-      {/* 添加黑名單模態框 */}
+      {/* Add黑名單模態框 */}
       <Modal
         visible={showAddModal}
         animationType='slide'

@@ -44,37 +44,37 @@ describe('AndroidPushNotificationService', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功創建單例實例', () => {
+    test('應該SuccessCreate單例實例', () => {
       const _instance1 = AndroidPushNotificationService.getInstance();
       const _instance2 = AndroidPushNotificationService.getInstance();
       expect(instance1).toBe(instance2);
     });
 
     test('應該在 Android 平台正確初始化', async () => {
-      // 等待初始化完成
+      // AwaitInitializeComplete
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(service.isServiceReady()).toBe(true);
       expect(Platform.OS).toBe('android');
     });
 
-    test('應該在非 Android 平台拋出錯誤', async () => {
-      // 臨時修改 Platform.OS
+    test('應該在非 Android 平台拋出Error', async () => {
+      // 臨時Modify Platform.OS
       (Platform as any).OS = 'ios';
 
-      // 創建新實例會觸發初始化錯誤
+      // Create新Instance會觸發InitializeError
       const _newService = new (AndroidPushNotificationService as any)();
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(newService.isServiceReady()).toBe(false);
 
-      // 恢復 Platform.OS
+      // Restore Platform.OS
       (Platform as any).OS = 'android';
     });
   });
 
   describe('配置測試', () => {
-    test('應該正確配置推送通知服務', () => {
+    test('應該正確Configure推送通知Service', () => {
       service.configure(mockConfig);
 
       const _serviceInfo = service.getServiceInfo();
@@ -88,15 +88,15 @@ describe('AndroidPushNotificationService', () => {
   });
 
   describe('權限管理測試', () => {
-    test('應該成功請求推送通知權限', async () => {
+    test('應該Success請求推送通知權限', async () => {
       const _result = await service.requestPermissions();
 
       expect(typeof result).toBe('boolean');
-      // 由於是模擬，結果可能是 true 或 false
+      // 由於Yes模擬，結果可能Yes true 或 false
     });
 
-    test('應該處理權限請求失敗', async () => {
-      // 模擬權限請求失敗
+    test('應該Handle權限請求Failed', async () => {
+      // 模擬權限RequestFailed
       const _mockService = service as any;
       const _originalRequestPermissions = mockService.pushLib.requestPermissions;
 
@@ -108,13 +108,13 @@ describe('AndroidPushNotificationService', () => {
 
       expect(result).toBe(false);
 
-      // 恢復原始方法
+      // Restore原始Method
       mockService.pushLib.requestPermissions = originalRequestPermissions;
     });
   });
 
   describe('設備令牌管理測試', () => {
-    test('應該成功獲取設備令牌', async () => {
+    test('應該SuccessGet設備令牌', async () => {
       const _token = await service.getDeviceToken();
 
       expect(token).toBeDefined();
@@ -122,46 +122,46 @@ describe('AndroidPushNotificationService', () => {
       expect(token).toContain('android-fcm-token');
     });
 
-    test('應該成功註冊遠程推送通知', async () => {
+    test('應該Success註冊遠程推送通知', async () => {
       const _result = await service.registerForRemoteNotifications();
 
       expect(result).toBe(true);
 
-      // 註冊後應該有設備令牌
+      // Register後應該有設備令牌
       const _token = await service.getDeviceToken();
       expect(token).toBeDefined();
     });
 
-    test('應該成功取消註冊遠程推送通知', async () => {
-      // 先註冊
+    test('應該Success取消註冊遠程推送通知', async () => {
+      // 先Register
       await service.registerForRemoteNotifications();
 
-      // 再取消註冊
+      // 再CancelRegister
       const _result = await service.unregisterForRemoteNotifications();
 
       expect(result).toBe(true);
     });
 
-    test('應該處理服務未初始化的情況', async () => {
+    test('應該HandleService未Initialize的情況', async () => {
       const _uninitializedService =
         new (AndroidPushNotificationService as any)();
 
-      // 等待初始化完成
+      // AwaitInitializeComplete
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // 檢查服務是否已初始化（由於單例模式，可能已經初始化）
+      // CheckServiceYesNo已Initialize（由於單例模式，可能已經Initialize）
       if (!uninitializedService.isServiceReady()) {
         await expect(uninitializedService.getDeviceToken()).rejects.toThrow(
-          'Android 推送通知服務未初始化'
+          'Android 推送通知Service未Initialize'
         );
         await expect(
           uninitializedService.registerForRemoteNotifications()
-        ).rejects.toThrow('Android 推送通知服務未初始化');
+        ).rejects.toThrow('Android 推送通知Service未Initialize');
         await expect(
           uninitializedService.unregisterForRemoteNotifications()
-        ).rejects.toThrow('Android 推送通知服務未初始化');
+        ).rejects.toThrow('Android 推送通知Service未Initialize');
       } else {
-        // 如果服務已經初始化，測試應該通過
+        // 如果Service已經Initialize，Test應該通過
         expect(uninitializedService.isServiceReady()).toBe(true);
       }
     });
@@ -189,7 +189,7 @@ describe('AndroidPushNotificationService', () => {
       };
     });
 
-    test('應該成功發送單個推送通知', async () => {
+    test('應該Success發送單個推送通知', async () => {
       const _deviceToken = 'test-device-token-123';
 
       const _result = await service.sendNotification(deviceToken, mockPayload);
@@ -206,7 +206,7 @@ describe('AndroidPushNotificationService', () => {
       }
     });
 
-    test('應該成功批量發送推送通知', async () => {
+    test('應該Success批量發送推送通知', async () => {
       const _deviceTokens = [
         'test-device-token-1',
         'test-device-token-2',
@@ -227,8 +227,8 @@ describe('AndroidPushNotificationService', () => {
       });
     });
 
-    test('應該處理推送通知發送失敗', async () => {
-      // 模擬發送失敗
+    test('應該Handle推送通知發送Failed', async () => {
+      // 模擬SendFailed
       const _mockService = service as any;
       const _originalSendNotification = mockService.pushLib.sendNotification;
 
@@ -245,7 +245,7 @@ describe('AndroidPushNotificationService', () => {
       expect(result.error).toBe('Network error');
       expect(result.errorCode).toBe('network_error');
 
-      // 恢復原始方法
+      // Restore原始Method
       mockService.pushLib.sendNotification = originalSendNotification;
     });
 
@@ -264,7 +264,7 @@ describe('AndroidPushNotificationService', () => {
   });
 
   describe('主題訂閱測試', () => {
-    test('應該成功訂閱主題', async () => {
+    test('應該Success訂閱主題', async () => {
       const _topic = 'test-topic';
 
       const _result = await service.subscribeToTopic(topic);
@@ -272,7 +272,7 @@ describe('AndroidPushNotificationService', () => {
       expect(typeof result).toBe('boolean');
     });
 
-    test('應該成功取消訂閱主題', async () => {
+    test('應該Success取消訂閱主題', async () => {
       const _topic = 'test-topic';
 
       const _result = await service.unsubscribeFromTopic(topic);
@@ -280,8 +280,8 @@ describe('AndroidPushNotificationService', () => {
       expect(typeof result).toBe('boolean');
     });
 
-    test('應該處理主題訂閱失敗', async () => {
-      // 模擬訂閱失敗
+    test('應該Handle主題訂閱Failed', async () => {
+      // 模擬訂閱Failed
       const _mockService = service as any;
       const _originalSubscribeToTopic = mockService.pushLib.subscribeToTopic;
 
@@ -291,13 +291,13 @@ describe('AndroidPushNotificationService', () => {
 
       expect(result).toBe(false);
 
-      // 恢復原始方法
+      // Restore原始Method
       mockService.pushLib.subscribeToTopic = originalSubscribeToTopic;
     });
   });
 
   describe('統計和監控測試', () => {
-    test('應該成功獲取推送統計信息', async () => {
+    test('應該SuccessGet推送統計信息', async () => {
       const _stats = await service.getDeliveryStats();
 
       expect(stats).toHaveProperty('totalSent');
@@ -314,7 +314,7 @@ describe('AndroidPushNotificationService', () => {
       expect(typeof stats.successRate).toBe('number');
     });
 
-    test('應該成功驗證設備令牌', async () => {
+    test('應該SuccessVerify設備令牌', async () => {
       const _validToken = 'android-fcm-token-1234567890-valid-token';
       const _invalidToken = 'invalid-token';
 
@@ -326,8 +326,8 @@ describe('AndroidPushNotificationService', () => {
     });
   });
 
-  describe('服務信息測試', () => {
-    test('應該正確報告服務信息', () => {
+  describe('ServiceInformation測試', () => {
+    test('應該正確報告ServiceInformation', () => {
       service.configure(mockConfig);
 
       const _serviceInfo = service.getServiceInfo();
@@ -344,28 +344,28 @@ describe('AndroidPushNotificationService', () => {
       expect(serviceInfo.stats).toBeDefined();
     });
 
-    test('應該正確報告服務狀態', () => {
+    test('應該正確報告Service狀態', () => {
       expect(service.isServiceReady()).toBe(true);
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('應該處理初始化錯誤', async () => {
-      // 模擬初始化失敗
+  describe('ErrorHandle測試', () => {
+    test('應該HandleInitializeError', async () => {
+      // 模擬InitializeFailed
       const _mockService = new (AndroidPushNotificationService as any)();
 
-      // 模擬 Platform.OS 不是 android 來觸發錯誤
+      // 模擬 Platform.OS 不Yes android 來觸發Error
       const _originalOS = Platform.OS;
       (Platform as any).OS = 'ios';
 
-      // 強制觸發錯誤
+      // Force觸發Error
       await mockService.initializeAndroidPushNotificationLibrary();
 
-      // 由於單例模式，服務可能已經初始化，所以檢查實際狀態
+      // 由於單例模式，Service可能已經Initialize，所以Check實際Status
       const _isReady = mockService.isServiceReady();
       expect(typeof isReady).toBe('boolean');
 
-      // 恢復 Platform.OS
+      // Restore Platform.OS
       (Platform as any).OS = originalOS;
     });
 
@@ -379,7 +379,7 @@ describe('AndroidPushNotificationService', () => {
         },
       };
 
-      // 模擬發送異常
+      // 模擬Send異常
       const _mockService = service as any;
       const _originalSendNotification = mockService.pushLib.sendNotification;
 
@@ -393,7 +393,7 @@ describe('AndroidPushNotificationService', () => {
       expect(result.error).toBe('Network timeout');
       expect(result.errorCode).toBe('unknown_error');
 
-      // 恢復原始方法
+      // Restore原始Method
       mockService.pushLib.sendNotification = originalSendNotification;
     });
   });
@@ -471,7 +471,7 @@ describe('AndroidPushNotificationService', () => {
       const _endTime = Date.now();
       const _responseTime = endTime - startTime;
 
-      // 響應時間應該小於 1000ms（考慮模擬延遲）
+      // ResponseTime應該小於 1000ms（考慮模擬延遲）
       expect(responseTime).toBeLessThan(1000);
     });
 
@@ -496,7 +496,7 @@ describe('AndroidPushNotificationService', () => {
       const _endTime = Date.now();
       const _responseTime = endTime - startTime;
 
-      // 批量發送應該小於 2000ms
+      // BatchSend應該小於 2000ms
       expect(responseTime).toBeLessThan(2000);
     });
   });

@@ -19,11 +19,11 @@ class DeepLearningService {
     }
 
     try {
-      // 初始化 TensorFlow.js
+      // Initialize TensorFlow.js
       await tf.ready();
-      logger.info('TensorFlow.js 初始化成功');
+      logger.info('TensorFlow.js InitializeSuccess');
 
-      // 初始化模型持久化服務
+      // Initialize模型持久化Service
       await this.modelPersistenceService.initialize();
       this.ModelPersistence = getModelPersistenceModel(
         require('../config/database').sequelize
@@ -33,9 +33,9 @@ class DeepLearningService {
       await this.loadExistingModels();
 
       this.isInitialized = true;
-      logger.info('深度學習服務初始化完成');
+      logger.info('深度學習ServiceInitialize完成');
     } catch (error) {
-      logger.error('深度學習服務初始化失敗:', error);
+      logger.error('深度學習ServiceInitializeFailed:', error);
       throw error;
     }
   }
@@ -67,13 +67,13 @@ class DeepLearningService {
         }
       }
     } catch (error) {
-      logger.warn('加載現有模型時出現錯誤:', error);
+      logger.warn('加載現有模型時出現Error:', error);
     }
   }
 
   async preprocessData(historicalData) {
     try {
-      // 數據標準化
+      // DataStandard化
 // eslint-disable-next-line no-unused-vars
       const prices = historicalData.map((d) => d.price);
       const minPrice = Math.min(...prices);
@@ -85,7 +85,7 @@ class DeepLearningService {
         normalizedPrice: (d.price - minPrice) / (maxPrice - minPrice),
       }));
 
-      // 創建序列數據
+      // Create序ColumnData
       const sequenceLength = 30;
       const sequences = [];
       const targets = [];
@@ -106,7 +106,7 @@ class DeepLearningService {
         sequenceLength,
       };
     } catch (error) {
-      logger.error('數據預處理失敗:', error);
+      logger.error('數據預HandleFailed:', error);
       throw error;
     }
   }
@@ -157,7 +157,7 @@ class DeepLearningService {
 
       return model;
     } catch (error) {
-      logger.error('創建 LSTM 模型失敗:', error);
+      logger.error('Create LSTM 模型Failed:', error);
       throw error;
     }
   }
@@ -208,7 +208,7 @@ class DeepLearningService {
 
       return model;
     } catch (error) {
-      logger.error('創建 GRU 模型失敗:', error);
+      logger.error('Create GRU 模型Failed:', error);
       throw error;
     }
   }
@@ -260,7 +260,7 @@ class DeepLearningService {
 
       return model;
     } catch (error) {
-      logger.error('創建 Transformer 模型失敗:', error);
+      logger.error('Create Transformer 模型Failed:', error);
       throw error;
     }
   }
@@ -317,7 +317,7 @@ class DeepLearningService {
 
       return model;
     } catch (error) {
-      logger.error('創建 CNN 模型失敗:', error);
+      logger.error('Create CNN 模型Failed:', error);
       throw error;
     }
   }
@@ -326,7 +326,7 @@ class DeepLearningService {
     try {
       const { sequences, targets } = trainingData;
 
-      // 重塑數據以適應模型輸入
+      // 重塑Data以適應模型Input
 // eslint-disable-next-line no-unused-vars
       const reshapedSequences = sequences.reshape([
         sequences.shape[0],
@@ -363,7 +363,7 @@ class DeepLearningService {
         trainingHistory: history.history,
       };
 
-      // 保存模型
+      // Save模型
 // eslint-disable-next-line no-unused-vars
       const modelId = await this.modelPersistenceService.saveModel(
         model,
@@ -372,7 +372,7 @@ class DeepLearningService {
         history.history
       );
 
-      // 更新內存中的模型
+      // UpdateMemory中的模型
       this.models[modelType] = {
         model,
         metadata: {
@@ -387,7 +387,7 @@ class DeepLearningService {
       logger.info(`${modelType} 模型訓練完成，模型ID: ${modelId}`);
       return { modelId, performanceMetrics };
     } catch (error) {
-      logger.error(`${modelType} 模型訓練失敗:`, error);
+      logger.error(`${modelType} 模型訓練Failed:`, error);
       throw error;
     }
   }
@@ -415,7 +415,7 @@ class DeepLearningService {
 
       return correctPredictions / targetArray.length;
     } catch (error) {
-      logger.error('計算準確率失敗:', error);
+      logger.error('計算準確率Failed:', error);
       return 0;
     }
   }
@@ -446,7 +446,7 @@ class DeepLearningService {
 // eslint-disable-next-line no-unused-vars
       const predictions = model.predict(reshapedSequences);
 
-      // 反標準化預測結果
+      // 反Standard化預測結果
       const denormalizedPredictions = predictions
         .mul(maxPrice - minPrice)
         .add(minPrice);
@@ -467,7 +467,7 @@ class DeepLearningService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('LSTM 預測失敗:', error);
+      logger.error('LSTM 預測Failed:', error);
       throw error;
     }
   }
@@ -517,7 +517,7 @@ class DeepLearningService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('GRU 預測失敗:', error);
+      logger.error('GRU 預測Failed:', error);
       throw error;
     }
   }
@@ -563,7 +563,7 @@ class DeepLearningService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Transformer 預測失敗:', error);
+      logger.error('Transformer 預測Failed:', error);
       throw error;
     }
   }
@@ -575,7 +575,7 @@ class DeepLearningService {
 // eslint-disable-next-line no-unused-vars
       const predictions = [];
 
-      // 獲取所有模型的預測
+      // Get所有模型的預測
       const lstmPrediction = await this.lstmPrediction(cardId, historicalData);
       const gruPrediction = await this.gruPrediction(cardId, historicalData);
       const transformerPrediction = await this.transformerPrediction(
@@ -613,7 +613,7 @@ class DeepLearningService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('集成預測失敗:', error);
+      logger.error('集成預測Failed:', error);
       throw error;
     }
   }
@@ -641,8 +641,8 @@ class DeepLearningService {
         Math.max(0.5, (volatilityFactor + trendFactor) / 2)
       );
     } catch (error) {
-      logger.error('計算置信度失敗:', error);
-      return 0.7; // 默認置信度
+      logger.error('計算置信度Failed:', error);
+      return 0.7; // Default置信度
     }
   }
 
@@ -666,7 +666,7 @@ class DeepLearningService {
       const trend = (recentAvg - earlyAvg) / earlyAvg;
       return Math.max(0, Math.min(1, 0.5 + trend * 2));
     } catch (error) {
-      logger.error('計算趨勢因子失敗:', error);
+      logger.error('計算趨勢因子Failed:', error);
       return 0.7;
     }
   }
@@ -675,7 +675,7 @@ class DeepLearningService {
     try {
       await this.initialize();
 
-      // 獲取卡牌歷史數據
+      // Get卡牌歷史Data
 // eslint-disable-next-line no-unused-vars
       const historicalData = await MarketData.findAll({
         where: { cardId },
@@ -718,7 +718,7 @@ class DeepLearningService {
         historicalDataPoints: historicalData.length,
       };
     } catch (error) {
-      logger.error(`卡牌 ${cardId} 價格預測失敗:`, error);
+      logger.error(`卡牌 ${cardId} 價格預測Failed:`, error);
       throw error;
     }
   }
@@ -728,7 +728,7 @@ class DeepLearningService {
       let score = 1.0;
       const issues = [];
 
-      // 檢查數據完整性
+      // CheckData完整性
       const expectedDays = 100;
       const actualDays = historicalData.length;
       const completeness = actualDays / expectedDays;
@@ -738,7 +738,7 @@ class DeepLearningService {
         issues.push(`數據完整性不足: ${(completeness * 100).toFixed(1)}%`);
       }
 
-      // 檢查價格異常值
+      // Check價格異常Value
 // eslint-disable-next-line no-unused-vars
       const prices = historicalData.map((d) => d.price);
       const meanPrice =
@@ -758,7 +758,7 @@ class DeepLearningService {
         issues.push(`價格異常值過多: ${(outlierRatio * 100).toFixed(1)}%`);
       }
 
-      // 檢查數據新鮮度
+      // CheckData新鮮度
       const latestDate = new Date(
         historicalData[historicalData.length - 1].date
       );
@@ -779,10 +779,10 @@ class DeepLearningService {
         freshness,
       };
     } catch (error) {
-      logger.error('評估數據質量失敗:', error);
+      logger.error('評估數據質量Failed:', error);
       return {
         score: 0.5,
-        issues: ['數據質量評估失敗'],
+        issues: ['數據質量評估Failed'],
         completeness: 0.5,
         outlierRatio: 0.1,
         freshness: 0.5,
@@ -811,14 +811,14 @@ class DeepLearningService {
 
       return status;
     } catch (error) {
-      logger.error('獲取模型狀態失敗:', error);
+      logger.error('Get模型狀態Failed:', error);
       throw error;
     }
   }
 
   async cleanup() {
     try {
-      // 清理 TensorFlow.js 內存
+      // 清理 TensorFlow.js Memory
 // eslint-disable-next-line no-unused-vars
       for (const modelInfo of Object.values(this.models)) {
         if (modelInfo.model) {
@@ -829,9 +829,9 @@ class DeepLearningService {
       this.models = {};
       this.isInitialized = false;
 
-      logger.info('深度學習服務清理完成');
+      logger.info('深度學習Service清理完成');
     } catch (error) {
-      logger.error('深度學習服務清理失敗:', error);
+      logger.error('深度學習Service清理Failed:', error);
     }
   }
 }

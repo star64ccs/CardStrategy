@@ -1,4 +1,4 @@
-// 用戶體驗監控 Redux slice
+// User體驗Monitor Redux slice
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
@@ -14,7 +14,7 @@ import type {
   UserSession,
 } from '../../types/uxMonitoring';
 
-// 異步 thunks
+// Async thunks
 export const _initializeUXMonitoring = createAsyncThunk(
   'uxMonitoring/initialize',
   async (config?: Partial<UXMonitoringConfig>) => {
@@ -122,7 +122,7 @@ export const _exportData = createAsyncThunk(
   }
 );
 
-// 初始狀態
+// 初始Status
 interface UXMonitoringState {
   isInitialized: boolean;
   isEnabled: boolean;
@@ -227,7 +227,7 @@ const _uxMonitoringSlice = createSlice({
       })
       .addCase(initializeUXMonitoring.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
     // trackAction
@@ -294,7 +294,7 @@ const _uxMonitoringSlice = createSlice({
       })
       .addCase(getAnalytics.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取分析數據失敗';
+        state.error = action.error.message || 'Get分析數據Failed';
       });
 
     // updateConfig
@@ -359,7 +359,7 @@ export const _selectLastUpdated = (state: {
   uxMonitoring: UXMonitoringState;
 }) => state.uxMonitoring.lastUpdated;
 
-// 複合選擇器
+// 複合Select器
 export const _selectSessionAnalytics = (state: {
   uxMonitoring: UXMonitoringState;
 }) => state.uxMonitoring.analytics?.sessionAnalytics;
@@ -408,7 +408,7 @@ export const _selectTotalABTests = (state: {
   uxMonitoring: UXMonitoringState;
 }) => state.uxMonitoring.status.abTestCount;
 
-// 計算選擇器
+// 計算Select器
 export const _selectAverageSessionDuration = (state: {
   uxMonitoring: UXMonitoringState;
 }) => {
@@ -465,7 +465,7 @@ export const _selectCompletedTests = (state: {
   return analytics ? analytics.completedTests : 0;
 };
 
-// 狀態檢查選擇器
+// StatusCheckSelect器
 export const _selectIsMonitoringActive = (state: {
   uxMonitoring: UXMonitoringState;
 }) => state.uxMonitoring.isInitialized && state.uxMonitoring.isEnabled;
@@ -485,7 +485,7 @@ export const _selectIsDataStale = (state: {
   const { lastUpdated } = state.uxMonitoring;
   if (!lastUpdated) return true;
 
-  const _staleThreshold = 5 * 60 * 1000; // 5分鐘
+  const _staleThreshold = 5 * 60 * 1000; // 5Minute
   return Date.now() - lastUpdated > staleThreshold;
 };
 

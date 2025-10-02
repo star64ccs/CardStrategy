@@ -1,6 +1,6 @@
 /**
  * WebSocket Redux Slice
- * 管理 WebSocket 連接狀態和消息
+ * Manage WebSocket ConnectStatus和Message
  */
 
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -17,7 +17,7 @@ import type {
   SubscriptionFilter,
 } from '../../features/realtime/types/websocket';
 
-// 異步操作
+// AsyncOperation
 export const _initializeWebSocket = createAsyncThunk(
   'websocket/initialize',
   async (config?: Partial<WebSocketConfig>) => {
@@ -88,27 +88,27 @@ export const _leaveRoom = createAsyncThunk(
   }
 );
 
-// 狀態介面
+// Status介面
 export interface WebSocketState {
-  // 基本狀態
+  // 基本Status
   isInitialized: boolean;
   status: WebSocketStatus;
   connectionState: ConnectionState | null;
   config: WebSocketConfig | null;
 
-  // 消息
+  // Message
   messages: WebSocketMessage[];
   lastMessage: WebSocketMessage | null;
   messageHistory: WebSocketMessage[];
 
-  // 統計
+  // Statistics
   stats: WebSocketStats | null;
 
   // 房間和訂閱
   currentRooms: string[];
   subscriptions: { id: string; filter: SubscriptionFilter }[];
 
-  // 載入狀態
+  // LoadStatus
   loading: {
     initializing: boolean;
     connecting: boolean;
@@ -120,11 +120,11 @@ export interface WebSocketState {
     leavingRoom: boolean;
   };
 
-  // 錯誤
+  // Error
   error: string | null;
   lastError: string | null;
 
-  // UI 狀態
+  // UI Status
   isVisible: boolean;
   unreadCount: number;
   notifications: WebSocketMessage[];
@@ -190,14 +190,14 @@ const _websocketSlice = createSlice({
   name: 'websocket',
   initialState,
   reducers: {
-    // 接收消息
+    // ReceiveMessage
     receiveMessage: (state, action: PayloadAction<WebSocketMessage>) => {
       const _message = action.payload;
       state.messages.push(message);
       state.lastMessage = message;
       state.messageHistory.push(message);
 
-      // 限制消息歷史長度
+      // LimitMessage歷史長度
       if (
         state.messageHistory.length > (state.config?.messageHistoryLimit || 100)
       ) {
@@ -206,12 +206,12 @@ const _websocketSlice = createSlice({
         );
       }
 
-      // 更新未讀計數
+      // Update未讀Count
       if (!state.isVisible) {
         state.unreadCount++;
       }
 
-      // 添加到通知（如果是重要消息）
+      // Add到Notification（如果Yes重要Message）
       if (message.priority === 'high' || message.priority === 'urgent') {
         state.notifications.push(message);
         if (
@@ -224,31 +224,31 @@ const _websocketSlice = createSlice({
       }
     },
 
-    // 更新連接狀態
+    // UpdateConnectStatus
     updateConnectionState: (state, action: PayloadAction<ConnectionState>) => {
       state.connectionState = action.payload;
       state.status = action.payload.status;
     },
 
-    // 更新統計信息
+    // UpdateStatisticsInformation
     updateStats: (state, action: PayloadAction<WebSocketStats>) => {
       state.stats = action.payload;
     },
 
-    // 清空消息
+    // 清EmptyMessage
     clearMessages: state => {
       state.messages = [];
       state.lastMessage = null;
       state.unreadCount = 0;
     },
 
-    // 清空通知
+    // 清EmptyNotification
     clearNotifications: state => {
       state.notifications = [];
       state.unreadCount = 0;
     },
 
-    // 設置可見性
+    // Settings可見性
     setVisibility: (state, action: PayloadAction<boolean>) => {
       state.isVisible = action.payload;
       if (action.payload) {
@@ -256,7 +256,7 @@ const _websocketSlice = createSlice({
       }
     },
 
-    // 添加訂閱
+    // Add訂閱
     addSubscription: (
       state,
       action: PayloadAction<{ id: string; filter: SubscriptionFilter }>
@@ -265,31 +265,31 @@ const _websocketSlice = createSlice({
       state.subscriptions.push({ id, filter });
     },
 
-    // 移除訂閱
+    // Remove訂閱
     removeSubscription: (state, action: PayloadAction<string>) => {
       state.subscriptions = state.subscriptions.filter(
         sub => sub.id !== action.payload
       );
     },
 
-    // 清空錯誤
+    // 清EmptyError
     clearError: state => {
       state.error = null;
     },
 
-    // 設置錯誤
+    // SettingsError
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.lastError = action.payload;
     },
 
-    // 重置狀態
+    // ResetStatus
     resetState: state => {
       Object.assign(state, initialState);
     },
   },
   extraReducers: builder => {
-    // 初始化
+    // Initialize
     builder
       .addCase(initializeWebSocket.pending, state => {
         state.loading.initializing = true;
@@ -302,10 +302,10 @@ const _websocketSlice = createSlice({
       })
       .addCase(initializeWebSocket.rejected, (state, action) => {
         state.loading.initializing = false;
-        state.error = action.error.message || 'WebSocket 初始化失敗';
+        state.error = action.error.message || 'WebSocket InitializeFailed';
       });
 
-    // 連接
+    // Connect
     builder
       .addCase(connectWebSocket.pending, state => {
         state.loading.connecting = true;
@@ -318,10 +318,10 @@ const _websocketSlice = createSlice({
       })
       .addCase(connectWebSocket.rejected, (state, action) => {
         state.loading.connecting = false;
-        state.error = action.error.message || 'WebSocket 連接失敗';
+        state.error = action.error.message || 'WebSocket ConnectFailed';
       });
 
-    // 斷開連接
+    // DisconnectConnect
     builder
       .addCase(disconnectWebSocket.pending, state => {
         state.loading.disconnecting = true;
@@ -333,10 +333,10 @@ const _websocketSlice = createSlice({
       })
       .addCase(disconnectWebSocket.rejected, (state, action) => {
         state.loading.disconnecting = false;
-        state.error = action.error.message || 'WebSocket 斷開連接失敗';
+        state.error = action.error.message || 'WebSocket DisconnectConnectFailed';
       });
 
-    // 發送消息
+    // SendMessage
     builder
       .addCase(sendWebSocketMessage.pending, state => {
         state.loading.sendingMessage = true;
@@ -347,10 +347,10 @@ const _websocketSlice = createSlice({
       })
       .addCase(sendWebSocketMessage.rejected, (state, action) => {
         state.loading.sendingMessage = false;
-        state.error = action.error.message || '發送消息失敗';
+        state.error = action.error.message || '發送消息Failed';
       });
 
-    // 廣播消息
+    // 廣播Message
     builder
       .addCase(broadcastMessage.pending, state => {
         state.loading.broadcasting = true;
@@ -361,10 +361,10 @@ const _websocketSlice = createSlice({
       })
       .addCase(broadcastMessage.rejected, (state, action) => {
         state.loading.broadcasting = false;
-        state.error = action.error.message || '廣播消息失敗';
+        state.error = action.error.message || '廣播消息Failed';
       });
 
-    // 重新連接
+    // ReConnect
     builder
       .addCase(reconnectWebSocket.pending, state => {
         state.loading.reconnecting = true;
@@ -377,7 +377,7 @@ const _websocketSlice = createSlice({
       })
       .addCase(reconnectWebSocket.rejected, (state, action) => {
         state.loading.reconnecting = false;
-        state.error = action.error.message || '重新連接失敗';
+        state.error = action.error.message || '重新ConnectFailed';
       });
 
     // 加入房間
@@ -395,10 +395,10 @@ const _websocketSlice = createSlice({
       })
       .addCase(joinRoom.rejected, (state, action) => {
         state.loading.joiningRoom = false;
-        state.error = action.error.message || '加入房間失敗';
+        state.error = action.error.message || '加入房間Failed';
       });
 
-    // 離開房間
+    // 離On房間
     builder
       .addCase(leaveRoom.pending, state => {
         state.loading.leavingRoom = true;
@@ -411,7 +411,7 @@ const _websocketSlice = createSlice({
       })
       .addCase(leaveRoom.rejected, (state, action) => {
         state.loading.leavingRoom = false;
-        state.error = action.error.message || '離開房間失敗';
+        state.error = action.error.message || '離開房間Failed';
       });
   },
 });

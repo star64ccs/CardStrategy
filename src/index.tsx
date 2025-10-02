@@ -12,21 +12,21 @@ const _swManager = {
   init: async () => {},
 };
 
-// 初始化 Service Worker
+// Initialize Service Worker
 const _initializeServiceWorker = async () => {
   try {
     await swManager.init();
-    // logger.info('Service Worker 初始化成功');
+    // logger.info('Service Worker InitializeSuccess');
   } catch (error) {
-    // logger.info('Service Worker 初始化失敗:', error);
+    // logger.info('Service Worker InitializeFailed:', error);
   }
 };
 
-// 在開發環境中禁用 Service Worker
+// 在On發環境中Disable Service Worker
 if (process.env.NODE_ENV === 'development') {
-  // logger.info('開發環境 - Service Worker 已禁用');
+  // logger.info('On發環境 - Service Worker 已Disable');
 } else {
-  // 生產環境中初始化 Service Worker
+  // 生產環境中Initialize Service Worker
   initializeServiceWorker();
 }
 

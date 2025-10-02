@@ -51,7 +51,7 @@ export const AuthenticityCheckScanner: React.FC<
       onCheckComplete?.(result);
     },
     onCheckError: error => {
-      Alert.alert('檢查失敗', error.message);
+      Alert.alert('CheckFailed', error.message);
       onError?.(error);
     },
   });
@@ -67,7 +67,7 @@ export const AuthenticityCheckScanner: React.FC<
     if (isChecking) return;
 
     logger.info('模擬拍照進行防偽檢查...');
-    // 模擬獲取圖片數據
+    // 模擬GetGraph片Data
     const _mockImageData = 'data:image/jpeg;base64,mock_image_data_base64';
     setCurrentImage(mockImageData);
 
@@ -95,7 +95,7 @@ export const AuthenticityCheckScanner: React.FC<
     try {
       await check(request);
     } catch (err) {
-      logger.error('拍照後檢查失敗:', err);
+      logger.error('拍照後CheckFailed:', err);
     }
   }, [isChecking, check, setCurrentImage]);
 
@@ -250,7 +250,7 @@ export const AuthenticityCheckScanner: React.FC<
 
       {/* 模擬攝像頭預覽 */}
       <View style={styles.cameraPreview}>
-        {/* 這裡應該是實際的攝像頭組件，例如 <RNCamera> 或 <VisionCamera> */}
+        {/* 這裡應該Yes實際的攝像頭Component，例如 <RNCamera> 或 <VisionCamera> */}
         <Text style={styles.cameraPlaceholder}>
           {Platform.OS === 'web'
             ? 'Webcam Placeholder'

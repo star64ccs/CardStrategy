@@ -31,7 +31,7 @@ const _authService = {
         user: { id: '1', email: credentials.email },
         token: 'mock-token',
       },
-      message: '登錄成功',
+      message: '登錄Success',
     };
   },
 };
@@ -48,7 +48,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
 
   const _handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert('錯誤', '請填寫所有必填欄位');
+      Alert.alert('Error', '請填寫所有必填欄位');
       return;
     }
 
@@ -60,10 +60,10 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
         dispatch(loginUser({ email, password }) as any);
         onNavigate('Dashboard');
       } else {
-        Alert.alert('登錄失敗', response.message || '請檢查您的帳號密碼');
+        Alert.alert('登錄Failed', response.message || '請檢查您的帳號密碼');
       }
     } catch (error: unknown) {
-      Alert.alert('錯誤', error.message || '登錄時發生錯誤');
+      Alert.alert('Error', error.message || '登錄時發生Error');
     } finally {
       setIsLoading(false);
     }
@@ -87,11 +87,11 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
           <Text style={styles.subtitle}>智選卡牌，策略致勝</Text>
         </View>
 
-        {/* 登錄表單 */}
+        {/* LoginTable單 */}
         <View style={styles.formContainer}>
           <Text style={styles.formTitle}>歡迎回來</Text>
 
-          {/* 電子郵件輸入 */}
+          {/* 電子郵件Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>電子郵件</Text>
             <TextInput
@@ -106,7 +106,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
             />
           </View>
 
-          {/* 密碼輸入 */}
+          {/* PasswordInput */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>密碼</Text>
             <TextInput
@@ -121,7 +121,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
             />
           </View>
 
-          {/* 登錄按鈕 */}
+          {/* Login按鈕 */}
           <TouchableOpacity
             style={[
               styles.loginButton,
@@ -135,7 +135,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigate }) => {
             </Text>
           </TouchableOpacity>
 
-          {/* 註冊連結 */}
+          {/* Register連結 */}
           <View style={styles.registerContainer}>
             <Text style={styles.registerText}>還沒有帳號？</Text>
             <TouchableOpacity onPress={() => onNavigate('Register')}>

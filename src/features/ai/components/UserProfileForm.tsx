@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-// 移除 Picker 依賴，使用自定義選擇器
+// Remove Picker 依賴，使用CustomSelect器
 import { useRecommendation } from '../hooks/useRecommendation';
 import type { UserProfile } from '../types/recommendation';
 import {
@@ -54,7 +54,7 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
   useEffect(() => {
     if (error) {
-      Alert.alert('錯誤', error.message);
+      Alert.alert('Error', error.message);
       clearError();
     }
   }, [error, clearError]);
@@ -108,9 +108,9 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({
 
   const _handleSubmit = async () => {
     try {
-      // 驗證必填欄位
+      // Verify必填欄位
       if (!formData.age || formData.age < 18 || formData.age > 100) {
-        Alert.alert('錯誤', '請輸入有效的年齡 (18-100)');
+        Alert.alert('Error', '請輸入有效的年齡 (18-100)');
         return;
       }
 
@@ -118,18 +118,18 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({
         formData.totalInvestment !== undefined &&
         formData.totalInvestment < 0
       ) {
-        Alert.alert('錯誤', '總投資金額不能為負數');
+        Alert.alert('Error', '總投資金額不能為負數');
         return;
       }
 
       if (formData.monthlyIncome !== undefined && formData.monthlyIncome < 0) {
-        Alert.alert('錯誤', '月收入不能為負數');
+        Alert.alert('Error', '月收入不能為負數');
         return;
       }
 
       const _profile = formData as UserProfile;
       await updateProfile(userId, profile);
-      Alert.alert('成功', '用戶配置已更新');
+      Alert.alert('Success', '用戶配置已更新');
       onProfileUpdate?.(profile);
     } catch (error) {
       console.error('Failed to update profile:', error);
@@ -190,7 +190,7 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({
       <Text style={styles.title}>用戶配置設定</Text>
 
       <View style={styles.form}>
-        {/* 基本信息 */}
+        {/* 基本Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>基本信息</Text>
 
@@ -289,7 +289,7 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({
           </View>
         </View>
 
-        {/* 財務信息 */}
+        {/* 財務Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>財務信息</Text>
 
@@ -320,7 +320,7 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({
           </View>
         </View>
 
-        {/* 偏好設定 */}
+        {/* Preferences設定 */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>偏好設定</Text>
 
@@ -377,7 +377,7 @@ export const UserProfileForm: React.FC<UserProfileFormProps> = ({
           </View>
         </View>
 
-        {/* 操作按鈕 */}
+        {/* Operation按鈕 */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.cancelButton]}

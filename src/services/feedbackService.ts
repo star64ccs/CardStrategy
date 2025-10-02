@@ -1,4 +1,4 @@
-// 反饋服務類
+// 反饋ServiceClass
 import type {
   FeedbackAnalytics,
   FeedbackCategory,
@@ -265,13 +265,13 @@ export class FeedbackService {
   }
 
   public async sync(): Promise<void> {
-    // 模擬同步操作
+    // 模擬SyncOperation
     await new Promise(resolve => setTimeout(resolve, 1000));
     this.emit('syncCompleted', { timestamp: Date.now() });
   }
 
   public async clearCache(): Promise<void> {
-    // 清除緩存邏輯
+    // ClearCache邏輯
     this.emit('cacheCleared', { timestamp: Date.now() });
   }
 

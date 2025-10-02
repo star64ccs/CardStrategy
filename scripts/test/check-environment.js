@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// logger.info('🔍 CardStrategy 環境檢查工具\n');
+// logger.info('🔍 CardStrategy 環境CheckTool\n');
 
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -22,7 +22,7 @@ const checks = {
   redis: false,
 };
 
-// 檢查 Node.js
+// Check Node.js
 try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -30,28 +30,28 @@ try {
   const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0]);
 
   if (majorVersion >= 18) {
-    // logger.info(`✅ Node.js 版本：${nodeVersion}`);
+    // logger.info(`✅ Node.js Version：${nodeVersion}`);
     checks.nodejs = true;
   } else {
-    // logger.info(`❌ Node.js 版本過低：${nodeVersion} (需要 18.0.0+)`);
+    // logger.info(`❌ Node.js Version過低：${nodeVersion} (需要 18.0.0+)`);
   }
 } catch (error) {
-  // logger.info('❌ Node.js 未安裝');
+  // logger.info('❌ Node.js 未Install');
 }
 
-// 檢查 npm
+// Check npm
 try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
   const npmVersion = execSync('npm --version', { encoding: 'utf8' }).trim();
-  // logger.info(`✅ npm 版本：${npmVersion}`);
+  // logger.info(`✅ npm Version：${npmVersion}`);
   checks.npm = true;
 } catch (error) {
-  // logger.info('❌ npm 未安裝');
+  // logger.info('❌ npm 未Install');
 }
 
-// 檢查 Docker
+// Check Docker
 try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -62,10 +62,10 @@ try {
   // logger.info(`✅ Docker：${dockerVersion}`);
   checks.docker = true;
 } catch (error) {
-  // logger.info('❌ Docker 未安裝');
+  // logger.info('❌ Docker 未Install');
 }
 
-// 檢查 Docker Compose
+// Check Docker Compose
 try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -76,10 +76,10 @@ try {
   // logger.info(`✅ Docker Compose：${composeVersion}`);
   checks.dockerCompose = true;
 } catch (error) {
-  // logger.info('❌ Docker Compose 未安裝');
+  // logger.info('❌ Docker Compose 未Install');
 }
 
-// 檢查環境變數檔案
+// Check環境變數檔案
 const envPath = path.join(process.cwd(), '.env');
 if (fs.existsSync(envPath)) {
   // logger.info('✅ .env 檔案存在');
@@ -88,7 +88,7 @@ if (fs.existsSync(envPath)) {
   // logger.info('❌ .env 檔案不存在');
 }
 
-// 檢查依賴
+// Check依賴
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const nodeModulesPath = path.join(process.cwd(), 'node_modules');
@@ -102,54 +102,54 @@ const backendNodeModulesPath = path.join(
 );
 
 if (fs.existsSync(nodeModulesPath) && fs.existsSync(backendNodeModulesPath)) {
-  // logger.info('✅ 依賴已安裝');
+  // logger.info('✅ 依賴已Install');
   checks.dependencies = true;
 } else {
-  // logger.info('❌ 依賴未安裝');
+  // logger.info('❌ 依賴未Install');
 }
 
-// 檢查數據庫連接
+// CheckDatabaseConnect
 async function checkDatabase() {
   try {
-    // 檢查 PostgreSQL 容器是否運行
+    // Check PostgreSQL 容器YesNo運Row
     const containers = execSync('docker ps --format "{{.Names}}"', {
       encoding: 'utf8',
     });
     if (containers.includes('cardstrategy_postgres')) {
-      // logger.info('✅ PostgreSQL 容器正在運行');
+      // logger.info('✅ PostgreSQL 容器正在運Row');
       checks.database = true;
     } else {
-      // logger.info('❌ PostgreSQL 容器未運行');
+      // logger.info('❌ PostgreSQL 容器未運Row');
     }
   } catch (error) {
-    // logger.info('❌ 無法檢查數據庫狀態（Docker 可能未運行）');
+    // logger.info('❌ 無法CheckDatabaseStatus（Docker 可能未運Row）');
   }
 }
 
-// 檢查 Redis 連接
+// Check Redis Connect
 async function checkRedis() {
   try {
     const containers = execSync('docker ps --format "{{.Names}}"', {
       encoding: 'utf8',
     });
     if (containers.includes('cardstrategy_redis')) {
-      // logger.info('✅ Redis 容器正在運行');
+      // logger.info('✅ Redis 容器正在運Row');
       checks.redis = true;
     } else {
-      // logger.info('❌ Redis 容器未運行');
+      // logger.info('❌ Redis 容器未運Row');
     }
   } catch (error) {
-    // logger.info('❌ 無法檢查 Redis 狀態（Docker 可能未運行）');
+    // logger.info('❌ 無法Check Redis Status（Docker 可能未運Row）');
   }
 }
 
-// 檢查端口使用情況
+// CheckPort使用情況
 function checkPorts() {
   const ports = [3000, 5432, 6379];
 
   ports.forEach((port) => {
     try {
-      // Windows 和 Linux 兼容的端口檢查
+      // Windows 和 Linux 兼容的PortCheck
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -166,23 +166,23 @@ function checkPorts() {
       }
 
       if (result.trim()) {
-        // logger.info(`⚠️  端口 ${port} 已被佔用`);
+        // logger.info(`⚠️  Port ${port} 已被佔用`);
       } else {
-        // logger.info(`✅ 端口 ${port} 可用`);
+        // logger.info(`✅ Port ${port} 可用`);
       }
     } catch (error) {
-      // logger.info(`✅ 端口 ${port} 可用`);
+      // logger.info(`✅ Port ${port} 可用`);
     }
   });
 }
 
-// 主函數
+// 主Function
 async function main() {
   await checkDatabase();
   await checkRedis();
   checkPorts();
 
-  // logger.info('\n📊 檢查結果摘要：');
+  // logger.info('\n📊 Check結果摘要：');
   // logger.info('==================');
 
   const totalChecks = Object.keys(checks).length;
@@ -196,35 +196,35 @@ async function main() {
     // logger.info(`${status} ${check}`);
   });
 
-  // logger.info(`\n總體狀態：${passedChecks}/${totalChecks} 項檢查通過`);
+  // logger.info(`\n總體Status：${passedChecks}/${totalChecks} 項Check通過`);
 
   if (passedChecks === totalChecks) {
-    // logger.info('\n🎉 環境配置完整！可以開始開發了。');
+    // logger.info('\n🎉 環境Configure完整！可以BeginOn發了。');
   } else {
-    // logger.info('\n⚠️  環境配置不完整，請參考 ENVIRONMENT_SETUP_GUIDE.md 進行配置。');
+    // logger.info('\n⚠️  環境Configure不完整，請參考 ENVIRONMENT_SETUP_GUIDE.md 進RowConfigure。');
 
     if (!checks.nodejs || !checks.npm) {
-      // logger.info('\n📋 建議操作：');
-      // logger.info('1. 安裝 Node.js 18.0.0 或更高版本');
-      // logger.info('2. 重新運行 npm install');
+      // logger.info('\n📋 建議Operation：');
+      // logger.info('1. Install Node.js 18.0.0 或更高Version');
+      // logger.info('2. Re運Row npm install');
     }
 
     if (!checks.docker || !checks.dockerCompose) {
-      // logger.info('\n📋 建議操作：');
-      // logger.info('1. 安裝 Docker Desktop');
-      // logger.info('2. 啟動 Docker 服務');
+      // logger.info('\n📋 建議Operation：');
+      // logger.info('1. Install Docker Desktop');
+      // logger.info('2. Start Docker Service');
     }
 
     if (!checks.envFile) {
-      // logger.info('\n📋 建議操作：');
+      // logger.info('\n📋 建議Operation：');
       // logger.info('1. 複製 env.example 為 .env');
-      // logger.info('2. 配置必要的環境變數');
+      // logger.info('2. Configure必要的環境變數');
     }
 
     if (!checks.dependencies) {
-      // logger.info('\n📋 建議操作：');
-      // logger.info('1. 運行 npm install');
-      // logger.info('2. 運行 cd backend && npm install');
+      // logger.info('\n📋 建議Operation：');
+      // logger.info('1. 運Row npm install');
+      // logger.info('2. 運Row cd backend && npm install');
     }
   }
 }

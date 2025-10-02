@@ -8,7 +8,7 @@ const _mockLogger = {
   debug: jest.fn(),
 };
 
-// 模擬 RBAC 服務
+// 模擬 RBAC Service
 class MockRBACService {
   private isInitialized = false;
   private roles = new Map();
@@ -18,7 +18,7 @@ class MockRBACService {
   async initialize() {
     this.isInitialized = true;
 
-    // 創建系統權限
+    // Create系統權限
     const _permissions = [
       { id: 'perm1', name: 'user:read', resource: 'user', action: 'read' },
       { id: 'perm2', name: 'user:write', resource: 'user', action: 'write' },
@@ -34,7 +34,7 @@ class MockRBACService {
 
     permissions.forEach(p => this.permissions.set(p.id, p));
 
-    // 創建系統角色
+    // Create系統角色
     const _roles = [
       { id: 'role1', name: 'guest', permissions: ['perm3'], isSystem: true },
       {
@@ -88,7 +88,7 @@ class MockRBACService {
 
   async deletePermission(id: string) {
     if (this.isInitialized && this.permissions.has(id)) {
-      // 檢查是否有角色使用此權限
+      // CheckYesNo有角色使用此權限
       const _rolesUsingPermission = Array.from(this.roles.values()).filter(
         (role: unknown) => role.permissions.includes(id)
       );
@@ -105,7 +105,7 @@ class MockRBACService {
 
   async createRole(role: unknown) {
     if (this.isInitialized) {
-      // 驗證權限是否存在
+      // Verify權限YesNo存在
       for (const permissionId of role.permissions) {
         if (!this.permissions.has(permissionId)) {
           return {
@@ -165,7 +165,7 @@ class MockRBACService {
         return { success: false, error: 'Cannot delete system role' };
       }
 
-      // 檢查是否有用戶使用此角色
+      // CheckYesNo有User使用此角色
       const _usersWithRole = Array.from(this.userRoles.entries()).filter(
         ([_, roles]: unknown) =>
           roles.some((ur: unknown) => ur.roleId === id && ur.isActive)
@@ -190,7 +190,7 @@ class MockRBACService {
     if (this.isInitialized && this.roles.has(roleId)) {
       const _userRoles = this.userRoles.get(userId) || [];
 
-      // 檢查用戶是否已有此角色
+      // CheckUserYesNo已有此角色
       const _existingRole = userRoles.find(
         (ur: unknown) => ur.roleId === roleId && ur.isActive
       );
@@ -198,7 +198,7 @@ class MockRBACService {
         return { success: false, error: 'User already has this role' };
       }
 
-      // 檢查角色數量限制（假設最大5個）
+      // Check角色數量Limit（False設最大5個）
       const _activeRoles = userRoles.filter((ur: unknown) => ur.isActive);
       if (activeRoles.length >= 5) {
         return { success: false, error: 'Maximum roles per user exceeded' };
@@ -234,7 +234,7 @@ class MockRBACService {
         return { success: false, error: 'User does not have this role' };
       }
 
-      // 檢查是否為默認角色
+      // CheckYesNo為Default角色
       if (roleId === 'role2') {
         // user role
         return { success: false, error: 'Cannot revoke default role' };
@@ -250,17 +250,17 @@ class MockRBACService {
     if (this.isInitialized) {
       const { userId, resource, action } = request;
 
-      // 獲取用戶角色
+      // GetUser角色
       const _userRoles = this.getUserActiveRoles(userId);
       const _roleNames = userRoles.map((ur: unknown) => {
         const _role = this.roles.get(ur.roleId);
         return role?.name || ur.roleId;
       });
 
-      // 獲取用戶權限
+      // GetUser權限
       const _userPermissions = this.getUserPermissions(userId);
 
-      // 檢查權限
+      // Check權限
       const _hasPermission = userPermissions.some((permission: unknown) => {
         return permission.resource === resource && permission.action === action;
       });
@@ -339,14 +339,14 @@ describe('RBAC Service Tests', () => {
   });
 
   describe('MockRBACService', () => {
-    test('初始化應該成功', async () => {
+    test('Initialize應該Success', async () => {
       const _result = await mockRBACService.initialize();
       expect(result.success).toBe(true);
       expect(result.data?.totalRoles).toBe(3);
       expect(result.data?.totalPermissions).toBe(5);
     });
 
-    test('創建權限應該成功', async () => {
+    test('Create權限應該Success', async () => {
       const _permission = {
         name: 'test:read',
         description: '測試讀取權限',
@@ -360,7 +360,7 @@ describe('RBAC Service Tests', () => {
       expect(result.data?.id).toBeDefined();
     });
 
-    test('更新權限應該成功', async () => {
+    test('Update權限應該Success', async () => {
       const _permission = {
         name: 'test:read',
         description: '測試讀取權限',
@@ -382,7 +382,7 @@ describe('RBAC Service Tests', () => {
       expect(updateResult.data?.description).toBe('更新的描述');
     });
 
-    test('刪除權限應該成功', async () => {
+    test('Delete權限應該Success', async () => {
       const _permission = {
         name: 'test:read',
         description: '測試讀取權限',
@@ -398,7 +398,7 @@ describe('RBAC Service Tests', () => {
       expect(deleteResult.message).toBe('Permission deleted');
     });
 
-    test('創建角色應該成功', async () => {
+    test('Create角色應該Success', async () => {
       const _role = {
         name: 'test-role',
         description: '測試角色',
@@ -412,7 +412,7 @@ describe('RBAC Service Tests', () => {
       expect(result.data?.permissions).toEqual(['perm1', 'perm2']);
     });
 
-    test('創建角色時權限不存在應該失敗', async () => {
+    test('Create角色時權限不存在應該Failed', async () => {
       const _role = {
         name: 'test-role',
         description: '測試角色',
@@ -427,7 +427,7 @@ describe('RBAC Service Tests', () => {
       );
     });
 
-    test('更新角色應該成功', async () => {
+    test('Update角色應該Success', async () => {
       const _role = {
         name: 'test-role',
         description: '測試角色',
@@ -446,7 +446,7 @@ describe('RBAC Service Tests', () => {
       expect(updateResult.data?.description).toBe('更新的角色描述');
     });
 
-    test('更新系統角色權限應該失敗', async () => {
+    test('Update系統角色權限應該Failed', async () => {
       const _updateResult = await mockRBACService.updateRole('role1', {
         permissions: ['perm1', 'perm2'],
       });
@@ -455,13 +455,13 @@ describe('RBAC Service Tests', () => {
       expect(updateResult.error).toBe('Cannot modify system role permissions');
     });
 
-    test('刪除系統角色應該失敗', async () => {
+    test('Delete系統角色應該Failed', async () => {
       const _deleteResult = await mockRBACService.deleteRole('role1');
       expect(deleteResult.success).toBe(false);
       expect(deleteResult.error).toBe('Cannot delete system role');
     });
 
-    test('分配角色應該成功', async () => {
+    test('分配角色應該Success', async () => {
       const _result = await mockRBACService.assignRole(
         'user1',
         'role2',
@@ -471,7 +471,7 @@ describe('RBAC Service Tests', () => {
       expect(result.message).toBe('Role assigned successfully');
     });
 
-    test('重複分配角色應該失敗', async () => {
+    test('重複分配角色應該Failed', async () => {
       await mockRBACService.assignRole('user1', 'role2', 'admin1');
       const _result = await mockRBACService.assignRole(
         'user1',
@@ -483,7 +483,7 @@ describe('RBAC Service Tests', () => {
       expect(result.error).toBe('User already has this role');
     });
 
-    test('撤銷角色應該成功', async () => {
+    test('撤銷角色應該Success', async () => {
       await mockRBACService.assignRole('user1', 'role3', 'admin1');
       const _result = await mockRBACService.revokeRole(
         'user1',
@@ -496,10 +496,10 @@ describe('RBAC Service Tests', () => {
     });
 
     test('權限檢查應該正確', async () => {
-      // 分配用戶角色
+      // 分配User角色
       await mockRBACService.assignRole('user1', 'role2', 'admin1');
 
-      // 檢查用戶權限
+      // CheckUser權限
       const _result = await mockRBACService.checkAccess({
         userId: 'user1',
         resource: 'user',
@@ -511,11 +511,11 @@ describe('RBAC Service Tests', () => {
       expect(result.data?.roles).toContain('user');
     });
 
-    test('權限檢查失敗應該正確', async () => {
+    test('權限CheckFailed應該正確', async () => {
       // 分配訪客角色
       await mockRBACService.assignRole('user1', 'role1', 'admin1');
 
-      // 檢查用戶沒有的權限
+      // CheckUser沒有的權限
       const _result = await mockRBACService.checkAccess({
         userId: 'user1',
         resource: 'system',
@@ -576,8 +576,8 @@ describe('RBAC Service Tests', () => {
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('未初始化服務應該返回錯誤', async () => {
+  describe('ErrorHandle測試', () => {
+    test('未InitializeService應該返回Error', async () => {
       const _uninitializedService = new MockRBACService();
       const _result = await uninitializedService.createPermission({
         name: 'test:read',
@@ -590,7 +590,7 @@ describe('RBAC Service Tests', () => {
       expect(result.error).toBe('Service not initialized');
     });
 
-    test('刪除被使用的權限應該失敗', async () => {
+    test('Delete被使用的權限應該Failed', async () => {
       // perm3 被 guest 角色使用
       const _result = await mockRBACService.deletePermission('perm3');
       expect(result.success).toBe(false);
@@ -598,10 +598,10 @@ describe('RBAC Service Tests', () => {
     });
 
     test('RBAC 基本功能測試', async () => {
-      // 測試基本的 RBAC 功能
+      // Test基本的 RBAC 功能
       expect(mockRBACService.isAvailable()).toBe(true);
 
-      // 測試角色分配
+      // Test角色分配
       const _assignResult = await mockRBACService.assignRole(
         'test-user',
         'role2',
@@ -609,7 +609,7 @@ describe('RBAC Service Tests', () => {
       );
       expect(assignResult.success).toBe(true);
 
-      // 測試權限檢查
+      // Test權限Check
       const _accessResult = await mockRBACService.checkAccess({
         userId: 'test-user',
         resource: 'user',
@@ -620,8 +620,8 @@ describe('RBAC Service Tests', () => {
     });
   });
 
-  describe('服務可用性測試', () => {
-    test('服務可用性檢查', () => {
+  describe('Service可用性測試', () => {
+    test('Service可用性Check', () => {
       expect(mockRBACService.isAvailable()).toBe(true);
     });
   });

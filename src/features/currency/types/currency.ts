@@ -1,14 +1,14 @@
-// 多幣種支持類型定義
+// 多幣種SupportClass型定義
 export interface CurrencyInfo {
   code: string; // 貨幣代碼 (USD, EUR, TWD, etc.)
   name: string; // 貨幣名稱
   symbol: string; // 貨幣符號 ($, €, NT$, etc.)
   decimalPlaces: number; // 小數位數
   position: 'before' | 'after'; // 符號位置
-  isDefault: boolean; // 是否為默認貨幣
-  isActive: boolean; // 是否啟用
-  locale?: string; // 地區設置
-  formatOptions?: Intl.NumberFormatOptions; // 格式化選項
+  isDefault: boolean; // YesNo為Default貨幣
+  isActive: boolean; // YesNoEnable
+  locale?: string; // LocaleSettings
+  formatOptions?: Intl.NumberFormatOptions; // FormatOptions
 }
 
 export interface ExchangeRate {
@@ -17,7 +17,7 @@ export interface ExchangeRate {
   rate: number;
   lastUpdated: Date;
   source: string; // 匯率來源
-  isRealtime: boolean; // 是否實時匯率
+  isRealtime: boolean; // YesNo實時匯率
   confidence: number; // 置信度 (0-1)
 }
 
@@ -28,23 +28,23 @@ export interface CurrencyConversion {
   convertedAmount: number;
   rate: number;
   timestamp: Date;
-  fees?: number; // 轉換手續費
+  fees?: number; // Convert手續費
   markup?: number; // 加價比例
 }
 
 export interface CurrencyConfig {
   defaultCurrency: string;
   supportedCurrencies: Record<string, CurrencyInfo>;
-  exchangeRateUpdateInterval: number; // 更新間隔 (毫秒)
-  autoUpdate: boolean; // 自動更新匯率
+  exchangeRateUpdateInterval: number; // Update間隔 (毫Second)
+  autoUpdate: boolean; // AutoUpdate匯率
   fallbackRates: Record<string, number>; // 備用匯率
   apiEndpoints: {
     exchangeRate: string;
     currencyList: string;
   };
-  cacheExpiry: number; // 緩存過期時間 (毫秒)
-  retryAttempts: number; // 重試次數
-  timeout: number; // 超時時間 (毫秒)
+  cacheExpiry: number; // Cache過期Time (毫Second)
+  retryAttempts: number; // Retry次數
+  timeout: number; // 超時Time (毫Second)
 }
 
 export interface CurrencyState {
@@ -110,9 +110,9 @@ export interface CurrencyStats {
   mostUsedCurrency: string;
   averageConversionAmount: number;
   lastConversionDate: Date | null;
-  conversionAccuracy: number; // 轉換準確率
-  apiResponseTime: number; // API 響應時間
-  cacheHitRate: number; // 緩存命中率
+  conversionAccuracy: number; // Convert準確率
+  apiResponseTime: number; // API ResponseTime
+  cacheHitRate: number; // Cache命中率
 }
 
 export interface CurrencyEvent {
@@ -130,7 +130,7 @@ export interface CurrencyEvent {
   timestamp: Date;
 }
 
-// 服務接口定義
+// ServiceInterface定義
 export interface CurrencyManager {
   initialize(config?: Partial<CurrencyConfig>): Promise<void>;
   getCurrentCurrency(): string;
@@ -186,7 +186,7 @@ export interface CurrencyTools {
   ): number;
 }
 
-// React 組件相關類型
+// React Component相OffClass型
 export interface CurrencyProps {
   amount: number;
   currency?: string;
@@ -222,7 +222,7 @@ export interface CurrencyContextValue {
   stats: CurrencyStats;
 }
 
-// 默認配置
+// DefaultConfigure
 export const DEFAULT_CURRENCY_CONFIG: CurrencyConfig = {
   defaultCurrency: 'TWD',
   supportedCurrencies: {
@@ -307,7 +307,7 @@ export const DEFAULT_CURRENCY_CONFIG: CurrencyConfig = {
       locale: 'en-SG',
     },
   },
-  exchangeRateUpdateInterval: 300000, // 5分鐘
+  exchangeRateUpdateInterval: 300000, // 5Minute
   autoUpdate: true,
   fallbackRates: {
     'USD/TWD': 31.5,
@@ -322,9 +322,9 @@ export const DEFAULT_CURRENCY_CONFIG: CurrencyConfig = {
     exchangeRate: 'https://api.exchangerate-api.com/v4/latest/',
     currencyList: 'https://api.exchangerate-api.com/v4/latest/TWD',
   },
-  cacheExpiry: 300000, // 5分鐘
+  cacheExpiry: 300000, // 5Minute
   retryAttempts: 3,
-  timeout: 10000, // 10秒
+  timeout: 10000, // 10Second
 };
 
 export const DEFAULT_CURRENCY_STATE: CurrencyState = {

@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -45,7 +45,7 @@ class Phase3Optimizer {
     this.backendDir = path.join(this.projectRoot, 'backend');
   }
 
-  // 1. 實現統一日誌系統
+  // 1. 實現統一Log系統
   async createUnifiedLoggingSystem() {
     log.header('📝 創建統一日誌系統');
 
@@ -57,7 +57,7 @@ const path = require('path');
 // eslint-disable-next-line no-unused-vars
 const fs = require('fs');
 
-// 創建日誌目錄
+// CreateLogDirectory
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logDir = path.join(__dirname, '..', 'logs');
@@ -65,7 +65,7 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
 
-// 日誌格式
+// Log格式
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logFormat = winston.format.combine(
@@ -76,7 +76,7 @@ const logFormat = winston.format.combine(
   winston.format.json()
 );
 
-// 控制台格式
+// Control台格式
 const consoleFormat = winston.format.combine(
   winston.format.colorize(),
   winston.format.timestamp({
@@ -87,7 +87,7 @@ const consoleFormat = winston.format.combine(
   })
 );
 
-// 創建 logger 實例
+// Create logger Instance
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logger = winston.createLogger({
@@ -95,14 +95,14 @@ const logger = winston.createLogger({
   format: logFormat,
   defaultMeta: { service: 'cardstrategy-api' },
   transports: [
-    // 錯誤日誌文件
+    // ErrorLogFile
     new winston.transports.File({
       filename: path.join(logDir, 'error.log'),
       level: 'error',
       maxsize: 5242880, // 5MB
       maxFiles: 5
     }),
-    // 所有日誌文件
+    // 所有LogFile
     new winston.transports.File({
       filename: path.join(logDir, 'combined.log'),
       maxsize: 5242880, // 5MB
@@ -111,18 +111,18 @@ const logger = winston.createLogger({
   ]
 });
 
-// 開發環境添加控制台輸出
+// On發環境AddControl台Output
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
     format: consoleFormat
   }));
 }
 
-// 日誌工具函數
+// LogToolFunction
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logUtils = {
-  // 請求日誌
+  // RequestLog
   logRequest: (req, res, next) => {
     const start = Date.now();
     res.on('finish', () => {
@@ -139,7 +139,7 @@ const logUtils = {
     next();
   },
 
-  // 錯誤日誌
+  // ErrorLog
   logError: (error, req, res, next) => {
     logger.error('Application Error', {
       error: error.message,
@@ -151,7 +151,7 @@ const logUtils = {
     next(error);
   },
 
-  // 性能日誌
+  // 性能Log
   logPerformance: (operation, duration, metadata = {}) => {
     logger.info('Performance Metric', {
       operation,
@@ -160,7 +160,7 @@ const logUtils = {
     });
   },
 
-  // 安全日誌
+  // 安全Log
   logSecurity: (event, details) => {
     logger.warn('Security Event', {
       event,
@@ -183,7 +183,7 @@ module.exports = {
     log.success('統一日誌系統已創建');
   }
 
-  // 2. 創建性能監控系統
+  // 2. Create性能Monitor系統
   async createPerformanceMonitoring() {
     log.header('📊 創建性能監控系統');
 
@@ -203,16 +203,16 @@ class PerformanceMonitor {
     this.interval = null;
   }
 
-  // 開始監控
+  // BeginMonitor
   start() {
     this.interval = setInterval(() => {
       this.collectMetrics();
-    }, 60000); // 每分鐘收集一次
+    }, 60000); // 每Minute收集一次
 
     logger.info('Performance monitoring started');
   }
 
-  // 停止監控
+  // StopMonitor
   stop() {
     if (this.interval) {
       clearInterval(this.interval);
@@ -240,7 +240,7 @@ class PerformanceMonitor {
       system: cpuUsage.system
     });
 
-    // 只保留最近100個數據點
+    // 只保留最近100個Data點
     if (this.metrics.memoryUsage.length > 100) {
       this.metrics.memoryUsage.shift();
     }
@@ -251,23 +251,23 @@ class PerformanceMonitor {
     this.logMetrics();
   }
 
-  // 記錄請求
+  // RecordRequest
   recordRequest(duration) {
     this.metrics.requests++;
     this.metrics.responseTimes.push(duration);
 
-    // 只保留最近1000個響應時間
+    // 只保留最近1000個ResponseTime
     if (this.metrics.responseTimes.length > 1000) {
       this.metrics.responseTimes.shift();
     }
   }
 
-  // 記錄錯誤
+  // RecordError
   recordError() {
     this.metrics.errors++;
   }
 
-  // 記錄指標
+  // Record指標
   logMetrics() {
     const avgResponseTime = this.metrics.responseTimes.length > 0
       ? this.metrics.responseTimes.reduce((a, b) => a + b, 0) / this.metrics.responseTimes.length
@@ -301,7 +301,7 @@ class PerformanceMonitor {
     });
   }
 
-  // 獲取指標
+  // Get指標
   getMetrics() {
     return {
       ...this.metrics,
@@ -309,7 +309,7 @@ class PerformanceMonitor {
     };
   }
 
-  // 重置指標
+  // Reset指標
   reset() {
     this.metrics = {
       requests: 0,
@@ -323,7 +323,7 @@ class PerformanceMonitor {
   }
 }
 
-// 創建全局監控實例
+// CreateGlobalMonitorInstance
 const performanceMonitor = new PerformanceMonitor();
 
 module.exports = {
@@ -340,7 +340,7 @@ module.exports = {
     log.success('性能監控系統已創建');
   }
 
-  // 3. 創建安全中間件
+  // 3. Create安全中間件
   async createSecurityMiddleware() {
     log.header('🔒 創建安全中間件');
 
@@ -353,7 +353,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { logger } = require('./unified-logger');
 
-// 速率限制
+// 速率Limit
 const createRateLimit = (windowMs = 15 * 60 * 1000, max = 100) => {
   return rateLimit({
     windowMs,
@@ -378,7 +378,7 @@ const createRateLimit = (windowMs = 15 * 60 * 1000, max = 100) => {
   });
 };
 
-// 安全中間件配置
+// 安全中間件Configure
 const securityConfig = {
   // 基本安全頭
   helmet: helmet({
@@ -402,7 +402,7 @@ const securityConfig = {
     }
   }),
 
-  // CORS 配置
+  // CORS Configure
   cors: cors({
     origin: process.env.CORS_ORIGIN || '*',
     credentials: true,
@@ -410,15 +410,15 @@ const securityConfig = {
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
   }),
 
-  // 速率限制
+  // 速率Limit
   rateLimit: {
-    general: createRateLimit(15 * 60 * 1000, 100), // 15分鐘100次請求
-    auth: createRateLimit(15 * 60 * 1000, 5),      // 認證端點更嚴格
+    general: createRateLimit(15 * 60 * 1000, 100), // 15Minute100次Request
+    auth: createRateLimit(15 * 60 * 1000, 5),      // Authenticate端點更嚴格
     api: createRateLimit(15 * 60 * 1000, 1000)     // API端點較寬鬆
   }
 };
 
-// 輸入驗證中間件
+// InputVerify中間件
 const inputValidation = (schema) => {
   return (req, res, next) => {
     try {
@@ -430,14 +430,14 @@ const inputValidation = (schema) => {
           ip: req.ip
         });
         return res.status(400).json({
-          error: '輸入驗證失敗',
+          error: '輸入VerifyFailed',
           details: error.details[0].message
         });
       }
       next();
     } catch (err) {
       logger.error('Input validation error', { error: err.message });
-      res.status(500).json({ error: '服務器錯誤' });
+      res.status(500).json({ error: 'ServerError' });
     }
   };
 };
@@ -461,7 +461,7 @@ const sqlInjectionProtection = (req, res, next) => {
     return false;
   };
 
-  // 檢查請求體
+  // CheckRequest體
   if (req.body && typeof req.body === 'object') {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -479,7 +479,7 @@ const sqlInjectionProtection = (req, res, next) => {
     checkObject(req.body);
   }
 
-  // 檢查查詢參數
+  // CheckQueryParameter
   if (req.query) {
     for (const [key, value] of Object.entries(req.query)) {
       if (checkValue(value)) {
@@ -502,7 +502,7 @@ const xssProtection = (req, res, next) => {
     return value;
   };
 
-  // 清理請求體
+  // 清理Request體
   if (req.body && typeof req.body === 'object') {
     const sanitizeObject = (obj) => {
       for (const [key, value] of Object.entries(obj)) {
@@ -535,16 +535,16 @@ module.exports = {
     log.success('安全中間件已創建');
   }
 
-  // 4. 創建錯誤處理系統
+  // 4. CreateErrorHandle系統
   async createErrorHandlingSystem() {
-    log.header('🚨 創建錯誤處理系統');
+    log.header('🚨 CreateErrorHandle系統');
 
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const errorHandlingSystem = `const { logger } = require('../utils/unified-logger');
 
-// 自定義錯誤類
+// CustomErrorClass
 class AppError extends Error {
   constructor(message, statusCode = 500, isOperational = true) {
     super(message);
@@ -556,7 +556,7 @@ class AppError extends Error {
   }
 }
 
-// 錯誤處理中間件
+// ErrorHandle中間件
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -567,7 +567,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
   let error = { ...err };
   error.message = err.message;
 
-  // 記錄錯誤
+  // RecordError
   logger.error('Error occurred', {
     error: err.message,
     stack: err.stack,
@@ -577,7 +577,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     userAgent: req.get('User-Agent')
   });
 
-  // Sequelize 錯誤處理
+  // Sequelize ErrorHandle
   if (err.name === 'SequelizeValidationError') {
     const message = Object.values(err.errors).map(val => val.message).join(', ');
     error = new AppError(message, 400);
@@ -589,11 +589,11 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
   }
 
   if (err.name === 'SequelizeConnectionError') {
-    const message = '數據庫連接錯誤';
+    const message = '數據庫ConnectError';
     error = new AppError(message, 503);
   }
 
-  // JWT 錯誤處理
+  // JWT ErrorHandle
   if (err.name === 'JsonWebTokenError') {
     const message = '無效的令牌';
     error = new AppError(message, 401);
@@ -604,15 +604,15 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     error = new AppError(message, 401);
   }
 
-  // 默認錯誤響應
+  // DefaultErrorResponse
   res.status(error.statusCode || 500).json({
     success: false,
-    error: error.message || '服務器內部錯誤',
+    error: error.message || 'Server內部Error',
     ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
   });
 };
 
-// 404 錯誤處理
+// 404 ErrorHandle
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const notFoundHandler = (req, res, next) => {
@@ -623,14 +623,14 @@ const notFoundHandler = (req, res, next) => {
   next(error);
 };
 
-// 異步錯誤包裝
+// AsyncErrorPackage裝
 const asyncHandler = (fn) => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
 
-// 進程錯誤處理
+// ProcessErrorHandle
 const setupProcessErrorHandling = () => {
   process.on('uncaughtException', (err) => {
     logger.error('Uncaught Exception', {
@@ -676,12 +676,12 @@ module.exports = {
       'src/middleware/error-handler.js'
     );
     fs.writeFileSync(errorPath, errorHandlingSystem);
-    log.success('錯誤處理系統已創建');
+    log.success('ErrorHandle系統已Create');
   }
 
-  // 5. 更新統一服務器以整合新功能
+  // 5. Update統一Server以整合新功能
   async updateUnifiedServer() {
-    log.header('🔄 更新統一服務器');
+    log.header('🔄 Update統一Server');
 
     const updatedServer = `require('dotenv').config();
 const express = require('express');
@@ -690,13 +690,13 @@ const { performanceMonitor } = require('./utils/performance-monitor');
 const { securityConfig, sqlInjectionProtection, xssProtection } = require('./middleware/security');
 const { errorHandler, notFoundHandler, setupProcessErrorHandling } = require('./middleware/error-handler');
 
-// 導入配置
+// ImportConfigure
 const { sequelize, testConnection } = require('./config/database-optimized');
 const { connectRedis, healthCheck: redisHealthCheck } = require('./config/redis-optimized');
 
 const app = express();
 
-// 設置進程錯誤處理
+// SettingsProcessErrorHandle
 setupProcessErrorHandling();
 
 // 安全中間件
@@ -705,22 +705,22 @@ app.use(securityConfig.cors);
 app.use(sqlInjectionProtection);
 app.use(xssProtection);
 
-// 性能監控
+// 性能Monitor
 performanceMonitor.start();
 
-// 請求日誌
+// RequestLog
 app.use(logUtils.logRequest);
 
 // 基本中間件
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 速率限制
+// 速率Limit
 app.use('/api/auth', securityConfig.rateLimit.auth);
 app.use('/api', securityConfig.rateLimit.api);
 app.use('/', securityConfig.rateLimit.general);
 
-// 健康檢查端點
+// 健康Check端點
 app.get('/api/health', async (req, res) => {
   try {
     const start = Date.now();
@@ -732,7 +732,7 @@ app.get('/api/health', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'CardStrategy API 服務正常運行',
+      message: 'CardStrategy API Service正常運行',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
       services: {
@@ -746,10 +746,10 @@ app.get('/api/health', async (req, res) => {
     });
   } catch (error) {
     performanceMonitor.recordError();
-    logger.error('健康檢查失敗:', error);
+    logger.error('健康CheckFailed:', error);
     res.status(503).json({
       success: false,
-      message: '服務健康檢查失敗',
+      message: 'Service健康CheckFailed',
       error: error.message
     });
   }
@@ -763,23 +763,23 @@ app.get('/api/metrics', (req, res) => {
   });
 });
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'CardStrategy API 服務器運行中',
+    message: 'CardStrategy API Server運行中',
     version: '1.0.0',
     environment: process.env.NODE_ENV || 'development',
     timestamp: new Date().toISOString()
   });
 });
 
-// 根據環境加載不同的路由
+// Root據環境加載不同的路由
 if (process.env.NODE_ENV === 'production') {
   // 生產環境：只加載核心功能
   logger.info('生產環境：加載核心功能');
 } else {
-  // 開發環境：加載所有功能
+  // On發環境：加載所有功能
   try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -793,48 +793,48 @@ if (process.env.NODE_ENV === 'production') {
     
     logger.info('開發環境：加載所有路由');
   } catch (error) {
-    logger.warn('部分路由加載失敗，使用簡化模式');
+    logger.warn('部分路由加載Failed，使用簡化模式');
   }
 }
 
-// 404 錯誤處理
+// 404 ErrorHandle
 app.use(notFoundHandler);
 
-// 錯誤處理中間件
+// ErrorHandle中間件
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    // 初始化服務
+    // InitializeService
     try {
       await connectRedis();
-      logger.info('Redis 連接初始化成功');
+      logger.info('Redis ConnectInitializeSuccess');
     } catch (error) {
-      logger.error('Redis 連接失敗:', error);
+      logger.error('Redis ConnectFailed:', error);
     }
 
     try {
       const dbConnected = await testConnection();
       if (dbConnected) {
-        logger.info('數據庫連接測試成功');
+        logger.info('數據庫Connect測試Success');
       } else {
-        logger.warn('數據庫連接測試失敗');
+        logger.warn('數據庫Connect測試Failed');
       }
     } catch (error) {
-      logger.error('數據庫連接測試失敗:', error);
+      logger.error('數據庫Connect測試Failed:', error);
     }
 
     const server = app.listen(PORT, () => {
-      logger.info(\`🚀 CardStrategy API 服務器運行在端口 \${PORT}\`);
+      logger.info(\`🚀 CardStrategy API Server運行在端口 \${PORT}\`);
       logger.info(\`🏥 健康檢查端點: http://localhost:\${PORT}/api/health\`);
       logger.info(\`📊 性能指標端點: http://localhost:\${PORT}/api/metrics\`);
     });
 
     return server;
   } catch (error) {
-    logger.error('服務器啟動失敗:', error);
+    logger.error('Server啟動Failed:', error);
     process.exit(1);
   }
 };
@@ -849,10 +849,10 @@ module.exports = app;
       'src/server-unified-enhanced.js'
     );
     fs.writeFileSync(serverPath, updatedServer);
-    log.success('增強版統一服務器已創建');
+    log.success('增強版統一Server已Create');
   }
 
-  // 6. 生成第三階段報告
+  // 6. 生成第三階段Report
   generateReport() {
     log.header('📊 第三階段優化報告');
 
@@ -1004,7 +1004,7 @@ tail -f logs/error.log
     log.success(`第三階段報告已生成: ${reportPath}`);
   }
 
-  // 執行所有優化
+  // 執Row所有優化
   async run() {
     log.header('🚀 開始第三階段功能增強');
 
@@ -1019,13 +1019,13 @@ tail -f logs/error.log
       log.header('🎉 第三階段優化完成！');
       log.success('請查看 PHASE3_OPTIMIZATION_REPORT.md 了解詳細結果');
     } catch (error) {
-      log.error(`優化過程中發生錯誤: ${error.message}`);
+      log.error(`優化過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行優化
+// 執Row優化
 if (require.main === module) {
   const optimizer = new Phase3Optimizer();
   optimizer.run();

@@ -46,7 +46,7 @@ describe('TechnicalDebtPreventionService', () => {
   });
 
   describe('初始化測試', () => {
-    it('應該正確初始化服務', async () => {
+    it('應該正確InitializeService', async () => {
       await technicalDebtPreventionService.initialize();
 
       expect(console.log).toHaveBeenCalledWith('初始化技術債務預防機制...');
@@ -172,7 +172,7 @@ describe('TechnicalDebtPreventionService', () => {
       expect(result.violations).toHaveLength(0);
       expect(result.blocking).toBe(false);
 
-      // 恢復配置
+      // RestoreConfigure
       technicalDebtPreventionService.updateConfig({ enabled: true });
     });
   });
@@ -362,7 +362,7 @@ describe('TechnicalDebtPreventionService', () => {
     });
 
     it('應該獲取審查報告', () => {
-      // 先創建一些審查報告
+      // 先Create一些審查Report
       technicalDebtPreventionService.scheduleCodeReview('測試員1', '模塊A');
       technicalDebtPreventionService.scheduleCodeReview('測試員2', '模塊B');
 
@@ -382,7 +382,7 @@ describe('TechnicalDebtPreventionService', () => {
     });
 
     it('應該獲取趨勢分析', () => {
-      // 先執行一次自動檢測以生成趨勢分析
+      // 先執Row一次Auto檢測以生成趨勢Analysis
       technicalDebtPreventionService.autoDetectTechnicalDebt();
 
       const _analyses = technicalDebtPreventionService.getTrendAnalyses();
@@ -540,10 +540,10 @@ describe('TechnicalDebtPreventionService', () => {
 
   describe('邊界條件測試', () => {
     it('應該處理空數據的情況', () => {
-      // 重置服務以獲得空數據
+      // ResetService以獲得EmptyData
       (technicalDebtPreventionService as any).instance = undefined;
 
-      // 創建新的實例
+      // Create新的Instance
       const _newService = (
         technicalDebtPreventionService as any
       ).constructor.getInstance();
@@ -553,15 +553,15 @@ describe('TechnicalDebtPreventionService', () => {
       const _reviewReports = newService.getReviewReports();
       const _trendAnalyses = newService.getTrendAnalyses();
 
-      // 新實例應該有空的數據（除了初始化時生成的歷史數據）
+      // 新Instance應該有Empty的Data（除了Initialize時生成的歷史Data）
       expect(metrics.length).toBeGreaterThanOrEqual(0);
       expect(detectionResults.length).toBeGreaterThanOrEqual(0);
-      expect(reviewReports.length).toBeGreaterThanOrEqual(0); // 新實例會初始化一些審查報告
-      expect(trendAnalyses.length).toBeGreaterThanOrEqual(0); // 新實例也會生成趨勢分析
+      expect(reviewReports.length).toBeGreaterThanOrEqual(0); // 新Instance會Initialize一些審查Report
+      expect(trendAnalyses.length).toBeGreaterThanOrEqual(0); // 新Instance也會生成趨勢Analysis
     });
 
     it('應該處理極端質量指標', () => {
-      // 確保阻擋規則正確設置
+      // 確保阻擋規則正確Settings
       technicalDebtPreventionService.updateConfig({
         blockingRules: {
           criticalIssues: true,
@@ -588,7 +588,7 @@ describe('TechnicalDebtPreventionService', () => {
 
       expect(result.passed).toBe(false);
       expect(result.violations.length).toBeGreaterThan(0);
-      // 極端指標應該觸發阻擋規則（測試覆蓋率為0會觸發阻擋）
+      // 極端指標應該觸發阻擋規則（Test覆蓋率為0會觸發阻擋）
       expect(result.blocking).toBe(true);
     });
 
@@ -627,8 +627,8 @@ describe('TechnicalDebtPreventionService', () => {
       const _endTime = Date.now();
       const _processingTime = endTime - startTime;
 
-      // 處理1000次檢測應該在合理時間內完成
-      expect(processingTime).toBeLessThan(5000); // 5秒內
+      // Handle1000次檢測應該在合理Time內Complete
+      expect(processingTime).toBeLessThan(5000); // 5Second內
     });
 
     it('應該高效生成報告', () => {
@@ -639,8 +639,8 @@ describe('TechnicalDebtPreventionService', () => {
       const _endTime = Date.now();
       const _processingTime = endTime - startTime;
 
-      // 報告生成應該在合理時間內完成
-      expect(processingTime).toBeLessThan(1000); // 1秒內
+      // Report生成應該在合理Time內Complete
+      expect(processingTime).toBeLessThan(1000); // 1Second內
       expect(report.length).toBeGreaterThan(0);
     });
   });

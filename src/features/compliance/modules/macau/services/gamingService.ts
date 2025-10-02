@@ -37,7 +37,7 @@ export class MacauGamingService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查執照有效期
+    // Check執照有效期
     const _now = new Date();
     if (license.validTo < now) {
       violations.push({
@@ -54,7 +54,7 @@ export class MacauGamingService {
       riskLevel = MacauRiskLevel.CRITICAL;
     }
 
-    // 檢查執照即將到期
+    // Check執照即將到期
     const _thirtyDaysFromNow = new Date(
       now.getTime() + 30 * 24 * 60 * 60 * 1000
     );
@@ -73,7 +73,7 @@ export class MacauGamingService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查執照持有人資訊
+    // Check執照持有人資訊
     if (!license.licenseeName || license.licenseeName.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_3`,
@@ -89,7 +89,7 @@ export class MacauGamingService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查營業地址
+    // Check營業Address
     if (!license.businessAddress || license.businessAddress.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_4`,
@@ -138,7 +138,7 @@ export class MacauGamingService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查容量限制
+    // Check容量Limit
     if (operation.currentCapacity > operation.maxCapacity) {
       violations.push({
         id: `violation_${Date.now()}_5`,
@@ -154,7 +154,7 @@ export class MacauGamingService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查安全措施
+    // Check安全措施
     if (!operation.securityMeasures || operation.securityMeasures.length < 3) {
       violations.push({
         id: `violation_${Date.now()}_6`,
@@ -170,7 +170,7 @@ export class MacauGamingService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查負責任博彩措施
+    // Check負責任博彩措施
     if (
       !operation.responsibleGamingMeasures ||
       operation.responsibleGamingMeasures.length < 2
@@ -222,7 +222,7 @@ export class MacauGamingService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查自我排除計劃
+    // Check自我排除計劃
     if (!responsibleGaming.selfExclusionProgram) {
       violations.push({
         id: `violation_${Date.now()}_8`,
@@ -238,7 +238,7 @@ export class MacauGamingService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查年齡驗證
+    // CheckAgeVerify
     if (!responsibleGaming.ageVerification) {
       violations.push({
         id: `violation_${Date.now()}_9`,
@@ -254,7 +254,7 @@ export class MacauGamingService {
       riskLevel = MacauRiskLevel.CRITICAL;
     }
 
-    // 檢查博彩限制
+    // Check博彩Limit
     if (
       responsibleGaming.gamingLimits.daily > 10000 ||
       responsibleGaming.gamingLimits.weekly > 50000 ||
@@ -307,7 +307,7 @@ export class MacauGamingService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查客戶盡職調查
+    // Check客戶盡職調查
     if (!aml.customerDueDiligence) {
       violations.push({
         id: `violation_${Date.now()}_11`,
@@ -323,7 +323,7 @@ export class MacauGamingService {
       riskLevel = MacauRiskLevel.CRITICAL;
     }
 
-    // 檢查可疑交易報告
+    // Check可疑交易Report
     if (!aml.suspiciousTransactionReporting) {
       violations.push({
         id: `violation_${Date.now()}_12`,
@@ -339,7 +339,7 @@ export class MacauGamingService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查記錄保存
+    // CheckRecordSave
     if (!aml.recordKeeping) {
       violations.push({
         id: `violation_${Date.now()}_13`,
@@ -487,7 +487,7 @@ export class MacauGamingService {
   }
 
   private calculateComplianceRate(violations: MacauViolation[]): number {
-    const _totalAssessments = violations.length + 10; // 假設有10個合規評估
+    const _totalAssessments = violations.length + 10; // False設有10個合規評估
     return ((totalAssessments - violations.length) / totalAssessments) * 100;
   }
 

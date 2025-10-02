@@ -1,4 +1,4 @@
-// 微交互測試工具組件
+// 微交互TestToolComponent
 import React, { useCallback, useState } from 'react';
 
 import type {
@@ -28,7 +28,7 @@ import {
   InlineLoading,
 } from './LoadingAnimation';
 
-// 測試工具組件
+// TestToolComponent
 export const MicroInteractionTestTool: React.FC = () => {
   const { register, trigger, unregister, stats, config } =
     useMicroInteraction();
@@ -58,7 +58,7 @@ export const MicroInteractionTestTool: React.FC = () => {
     button: false,
   });
 
-  // 測試按鈕點擊動畫
+  // Test按鈕點擊動畫
   const _testButtonClick = useCallback(async () => {
     const _testId = 'button-click-test';
     const config: ButtonClickConfig = {
@@ -111,7 +111,7 @@ export const MicroInteractionTestTool: React.FC = () => {
     }
   }, [register, trigger]);
 
-  // 測試表單驗證動畫
+  // TestTable單Verify動畫
   const _testFormValidation = useCallback(async () => {
     const _testId = 'form-validation-test';
     const config: FormValidationConfig = {
@@ -145,7 +145,7 @@ export const MicroInteractionTestTool: React.FC = () => {
       setActiveTests(prev => new Set(prev).add(testId));
       const _id = register(config);
 
-      // 模擬驗證過程
+      // 模擬Verify過程
       await trigger(id, { validationState: 'validating' });
       await new Promise(resolve => setTimeout(resolve, 1000));
       await trigger(id, { validationState: 'success' });
@@ -172,7 +172,7 @@ export const MicroInteractionTestTool: React.FC = () => {
     }
   }, [register, trigger]);
 
-  // 測試加載動畫
+  // Test加載動畫
   const _testLoadingAnimation = useCallback(async () => {
     const _testId = 'loading-animation-test';
     const config: LoadingConfig = {
@@ -228,7 +228,7 @@ export const MicroInteractionTestTool: React.FC = () => {
     }
   }, [register, trigger]);
 
-  // 處理表單驗證
+  // HandleTable單Verify
   const _handleValidationChange = useCallback(
     (field: string, state: string, message?: string) => {
       setValidationStates(prev => ({ ...prev, [field]: state }));
@@ -237,12 +237,12 @@ export const MicroInteractionTestTool: React.FC = () => {
     []
   );
 
-  // 處理表單數據變化
+  // HandleTable單Data變化
   const _handleFormChange = useCallback((field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   }, []);
 
-  // 運行所有測試
+  // 運Row所有Test
   const _runAllTests = useCallback(async () => {
     await Promise.all([
       testButtonClick(),
@@ -251,7 +251,7 @@ export const MicroInteractionTestTool: React.FC = () => {
     ]);
   }, [testButtonClick, testFormValidation, testLoadingAnimation]);
 
-  // 清除測試結果
+  // ClearTest結果
   const _clearTestResults = useCallback(() => {
     setTestResults({});
     setActiveTests(new Set());
@@ -261,7 +261,7 @@ export const MicroInteractionTestTool: React.FC = () => {
     <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
       <h1 style={{ marginBottom: '24px', color: '#333' }}>微交互測試工具</h1>
 
-      {/* 統計信息 */}
+      {/* StatisticsInformation */}
       <div
         style={{
           display: 'grid',
@@ -324,7 +324,7 @@ export const MicroInteractionTestTool: React.FC = () => {
         </div>
       </div>
 
-      {/* 測試控制 */}
+      {/* TestControl */}
       <div
         style={{
           display: 'flex',
@@ -359,7 +359,7 @@ export const MicroInteractionTestTool: React.FC = () => {
         </PrimaryButton>
       </div>
 
-      {/* 測試結果 */}
+      {/* Test結果 */}
       {Object.keys(testResults).length > 0 && (
         <div style={{ marginBottom: '32px' }}>
           <h2>測試結果</h2>
@@ -389,7 +389,7 @@ export const MicroInteractionTestTool: React.FC = () => {
                   {testId}
                 </h4>
                 <p style={{ margin: '0 0 4px 0' }}>
-                  狀態: {result.success ? '成功' : '失敗'}
+                  狀態: {result.success ? 'Success' : 'Failed'}
                 </p>
                 {result.error && (
                   <p style={{ margin: '0 0 4px 0', color: '#c62828' }}>
@@ -425,7 +425,7 @@ export const MicroInteractionTestTool: React.FC = () => {
         </div>
       </div>
 
-      {/* 表單驗證動畫演示 */}
+      {/* Table單Verify動畫演示 */}
       <div style={{ marginBottom: '32px' }}>
         <h2>表單驗證動畫演示</h2>
         <div
@@ -556,7 +556,7 @@ export const MicroInteractionTestTool: React.FC = () => {
         </div>
       </div>
 
-      {/* 配置信息 */}
+      {/* ConfigureInformation */}
       <div style={{ marginBottom: '32px' }}>
         <h2>系統配置</h2>
         <div
@@ -596,5 +596,5 @@ export const MicroInteractionTestTool: React.FC = () => {
   );
 };
 
-// 默認導出
+// DefaultExport
 export default MicroInteractionTestTool;

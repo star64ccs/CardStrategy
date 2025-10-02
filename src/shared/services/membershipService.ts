@@ -24,7 +24,7 @@ export interface MembershipTier {
 }
 
 /**
- * 用戶會員
+ * User會員
  */
 export interface UserMembership {
   id: string;
@@ -61,7 +61,7 @@ export interface MembershipBenefit {
 }
 
 /**
- * 升級會員請求
+ * Upgrade會員Request
  */
 export interface UpgradeMembershipRequest {
   tierId: string;
@@ -70,13 +70,13 @@ export interface UpgradeMembershipRequest {
 }
 
 /**
- * 會員服務
+ * 會員Service
  */
 export class MembershipService {
   private readonly baseUrl = '/api/membership';
 
   /**
-   * 獲取所有會員等級
+   * Get所有會員等級
    */
   async getMembershipTiers(): Promise<any> {
     try {
@@ -85,35 +85,35 @@ export class MembershipService {
       const _response = await api.get(`${this.baseUrl}/tiers`);
 
       if (response.success) {
-        logger.info('會員等級列表獲取成功:', {
+        logger.info('會員等級列表GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data || [],
-          message: '會員等級列表獲取成功',
+          message: '會員等級列表GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取會員等級列表失敗:', { message: response.message });
+        logger.error('Get會員等級列表Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取會員等級列表失敗',
+          message: response.message || 'Get會員等級列表Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取會員等級列表時發生錯誤:', error);
+      logger.error('Get會員等級列表時發生Error:', error);
       return {
         success: false,
-        message: '獲取會員等級列表時發生錯誤',
+        message: 'Get會員等級列表時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取會員等級詳情
+   * Get會員等級詳情
    */
   async getMembershipTier(tierId: string): Promise<any> {
     try {
@@ -122,35 +122,35 @@ export class MembershipService {
       const _response = await api.get(`${this.baseUrl}/tiers/${tierId}`);
 
       if (response.success) {
-        logger.info('會員等級詳情獲取成功:', {
+        logger.info('會員等級詳情GetSuccess:', {
           id: (response.data as any)?.id,
         });
         return {
           success: true,
           data: response.data,
-          message: '會員等級詳情獲取成功',
+          message: '會員等級詳情GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取會員等級詳情失敗:', { message: response.message });
+        logger.error('Get會員等級詳情Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取會員等級詳情失敗',
+          message: response.message || 'Get會員等級詳情Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取會員等級詳情時發生錯誤:', error);
+      logger.error('Get會員等級詳情時發生Error:', error);
       return {
         success: false,
-        message: '獲取會員等級詳情時發生錯誤',
+        message: 'Get會員等級詳情時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取用戶會員狀態
+   * GetUser會員Status
    */
   async getUserMembership(userId: string): Promise<any> {
     try {
@@ -159,33 +159,33 @@ export class MembershipService {
       const _response = await api.get(`${this.baseUrl}/user/${userId}`);
 
       if (response.success) {
-        logger.info('用戶會員狀態獲取成功:', { userId });
+        logger.info('用戶會員狀態GetSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '用戶會員狀態獲取成功',
+          message: '用戶會員狀態GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取用戶會員狀態失敗:', { message: response.message });
+        logger.error('Get用戶會員狀態Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取用戶會員狀態失敗',
+          message: response.message || 'Get用戶會員狀態Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取用戶會員狀態時發生錯誤:', error);
+      logger.error('Get用戶會員狀態時發生Error:', error);
       return {
         success: false,
-        message: '獲取用戶會員狀態時發生錯誤',
+        message: 'Get用戶會員狀態時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 升級會員
+   * Upgrade會員
    */
   async upgradeMembership(
     userId: string,
@@ -200,33 +200,33 @@ export class MembershipService {
       });
 
       if (response.success) {
-        logger.info('會員升級成功:', { userId, tierId: data.tierId });
+        logger.info('會員升級Success:', { userId, tierId: data.tierId });
         return {
           success: true,
           data: response.data,
-          message: '會員升級成功',
+          message: '會員升級Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('會員升級失敗:', { message: response.message });
+        logger.error('會員升級Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '會員升級失敗',
+          message: response.message || '會員升級Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('升級會員時發生錯誤:', error);
+      logger.error('升級會員時發生Error:', error);
       return {
         success: false,
-        message: '升級會員時發生錯誤',
+        message: '升級會員時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 取消會員
+   * Cancel會員
    */
   async cancelMembership(userId: string): Promise<any> {
     try {
@@ -235,32 +235,32 @@ export class MembershipService {
       const _response = await api.post(`${this.baseUrl}/cancel`, { userId });
 
       if (response.success) {
-        logger.info('會員取消成功:', { userId });
+        logger.info('會員取消Success:', { userId });
         return {
           success: true,
-          message: '會員取消成功',
+          message: '會員取消Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('取消會員失敗:', { message: response.message });
+        logger.error('取消會員Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '取消會員失敗',
+          message: response.message || '取消會員Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('取消會員時發生錯誤:', error);
+      logger.error('取消會員時發生Error:', error);
       return {
         success: false,
-        message: '取消會員時發生錯誤',
+        message: '取消會員時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 更新會員自動續費設置
+   * Update會員Auto續費Settings
    */
   async updateAutoRenew(userId: string, autoRenew: boolean): Promise<any> {
     try {
@@ -272,32 +272,32 @@ export class MembershipService {
       });
 
       if (response.success) {
-        logger.info('自動續費設置更新成功:', { userId, autoRenew });
+        logger.info('自動續費SettingsUpdateSuccess:', { userId, autoRenew });
         return {
           success: true,
-          message: '自動續費設置更新成功',
+          message: '自動續費SettingsUpdateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('更新自動續費設置失敗:', { message: response.message });
+        logger.error('Update自動續費SettingsFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '更新自動續費設置失敗',
+          message: response.message || 'Update自動續費SettingsFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('更新自動續費設置時發生錯誤:', error);
+      logger.error('Update自動續費Settings時發生Error:', error);
       return {
         success: false,
-        message: '更新自動續費設置時發生錯誤',
+        message: 'Update自動續費Settings時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取會員權益
+   * Get會員權益
    */
   async getMembershipBenefits(tierId: string): Promise<any> {
     try {
@@ -308,35 +308,35 @@ export class MembershipService {
       );
 
       if (response.success) {
-        logger.info('會員權益獲取成功:', {
+        logger.info('會員權益GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data || [],
-          message: '會員權益獲取成功',
+          message: '會員權益GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取會員權益失敗:', { message: response.message });
+        logger.error('Get會員權益Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取會員權益失敗',
+          message: response.message || 'Get會員權益Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取會員權益時發生錯誤:', error);
+      logger.error('Get會員權益時發生Error:', error);
       return {
         success: false,
-        message: '獲取會員權益時發生錯誤',
+        message: 'Get會員權益時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 檢查用戶權限
+   * CheckUser權限
    */
   async checkUserPermission(userId: string, feature: string): Promise<any> {
     try {
@@ -347,7 +347,7 @@ export class MembershipService {
       );
 
       if (response.success) {
-        logger.info('用戶權限檢查成功:', {
+        logger.info('用戶權限CheckSuccess:', {
           userId,
           feature,
           allowed: (response.data as any)?.allowed,
@@ -355,29 +355,29 @@ export class MembershipService {
         return {
           success: true,
           data: response.data,
-          message: '用戶權限檢查成功',
+          message: '用戶權限CheckSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('檢查用戶權限失敗:', { message: response.message });
+        logger.error('Check用戶權限Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '檢查用戶權限失敗',
+          message: response.message || 'Check用戶權限Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('檢查用戶權限時發生錯誤:', error);
+      logger.error('Check用戶權限時發生Error:', error);
       return {
         success: false,
-        message: '檢查用戶權限時發生錯誤',
+        message: 'Check用戶權限時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取用戶使用量
+   * GetUser使用量
    */
   async getUserUsage(userId: string): Promise<any> {
     try {
@@ -386,37 +386,37 @@ export class MembershipService {
       const _response = await api.get(`${this.baseUrl}/usage/${userId}`);
 
       if (response.success) {
-        logger.info('用戶使用量獲取成功:', { userId });
+        logger.info('用戶使用量GetSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '用戶使用量獲取成功',
+          message: '用戶使用量GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取用戶使用量失敗:', { message: response.message });
+        logger.error('Get用戶使用量Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取用戶使用量失敗',
+          message: response.message || 'Get用戶使用量Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取用戶使用量時發生錯誤:', error);
+      logger.error('Get用戶使用量時發生Error:', error);
       return {
         success: false,
-        message: '獲取用戶使用量時發生錯誤',
+        message: 'Get用戶使用量時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取服務狀態
+   * GetServiceStatus
    */
   async getServiceStats(): Promise<any> {
     try {
-      logger.info('獲取會員服務狀態');
+      logger.info('Get會員Service狀態');
 
       const _response = await api.get(`${this.baseUrl}/health`);
 
@@ -435,21 +435,21 @@ export class MembershipService {
             usage: `${this.baseUrl}/usage/:id`,
           },
         },
-        message: '會員服務狀態獲取成功',
+        message: '會員Service狀態GetSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('獲取會員服務狀態時發生錯誤:', error);
+      logger.error('Get會員Service狀態時發生Error:', error);
       return {
         success: false,
-        message: '獲取會員服務狀態時發生錯誤',
+        message: 'Get會員Service狀態時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取會員狀態
+   * Get會員Status
    */
   async getStatus(): Promise<any> {
     try {
@@ -458,33 +458,33 @@ export class MembershipService {
       const _response = await api.get(`${this.baseUrl}/status`);
 
       if (response.success) {
-        logger.info('會員狀態獲取成功');
+        logger.info('會員狀態GetSuccess');
         return {
           success: true,
           data: response.data,
-          message: '會員狀態獲取成功',
+          message: '會員狀態GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取會員狀態失敗:', { message: response.message });
+        logger.error('Get會員狀態Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取會員狀態失敗',
+          message: response.message || 'Get會員狀態Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取會員狀態時發生錯誤:', error);
+      logger.error('Get會員狀態時發生Error:', error);
       return {
         success: false,
-        message: '獲取會員狀態時發生錯誤',
+        message: 'Get會員狀態時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 升級會員
+   * Upgrade會員
    */
   async upgrade(tier: string): Promise<any> {
     try {
@@ -495,33 +495,33 @@ export class MembershipService {
       });
 
       if (response.success) {
-        logger.info('會員升級成功');
+        logger.info('會員升級Success');
         return {
           success: true,
           data: response.data,
-          message: '會員升級成功',
+          message: '會員升級Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('會員升級失敗:', { message: response.message });
+        logger.error('會員升級Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '會員升級失敗',
+          message: response.message || '會員升級Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('會員升級時發生錯誤:', error);
+      logger.error('會員升級時發生Error:', error);
       return {
         success: false,
-        message: '會員升級時發生錯誤',
+        message: '會員升級時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 開始試用
+   * Begin試用
    */
   async startTrial(): Promise<any> {
     try {
@@ -530,33 +530,33 @@ export class MembershipService {
       const _response = await api.post(`${this.baseUrl}/trial/start`);
 
       if (response.success) {
-        logger.info('試用開始成功');
+        logger.info('試用開始Success');
         return {
           success: true,
           data: response.data,
-          message: '試用開始成功',
+          message: '試用開始Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('開始試用失敗:', { message: response.message });
+        logger.error('開始試用Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '開始試用失敗',
+          message: response.message || '開始試用Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('開始試用時發生錯誤:', error);
+      logger.error('開始試用時發生Error:', error);
       return {
         success: false,
-        message: '開始試用時發生錯誤',
+        message: '開始試用時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 取消會員
+   * Cancel會員
    */
   async cancel(): Promise<any> {
     try {
@@ -565,33 +565,33 @@ export class MembershipService {
       const _response = await api.post(`${this.baseUrl}/cancel`);
 
       if (response.success) {
-        logger.info('會員取消成功');
+        logger.info('會員取消Success');
         return {
           success: true,
           data: response.data,
-          message: '會員取消成功',
+          message: '會員取消Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('取消會員失敗:', { message: response.message });
+        logger.error('取消會員Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '取消會員失敗',
+          message: response.message || '取消會員Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('取消會員時發生錯誤:', error);
+      logger.error('取消會員時發生Error:', error);
       return {
         success: false,
-        message: '取消會員時發生錯誤',
+        message: '取消會員時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 檢查功能使用情況
+   * Check功能使用情況
    */
   async checkFeatureUsage(feature: string): Promise<any> {
     try {
@@ -600,26 +600,26 @@ export class MembershipService {
       const _response = await api.get(`${this.baseUrl}/usage/${feature}`);
 
       if (response.success) {
-        logger.info('功能使用情況檢查成功');
+        logger.info('功能使用情況CheckSuccess');
         return {
           success: true,
           data: response.data,
-          message: '功能使用情況檢查成功',
+          message: '功能使用情況CheckSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('檢查功能使用情況失敗:', { message: response.message });
+        logger.error('Check功能使用情況Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '檢查功能使用情況失敗',
+          message: response.message || 'Check功能使用情況Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('檢查功能使用情況時發生錯誤:', error);
+      logger.error('Check功能使用情況時發生Error:', error);
       return {
         success: false,
-        message: '檢查功能使用情況時發生錯誤',
+        message: 'Check功能使用情況時發生Error',
         timestamp: new Date(),
       };
     }
@@ -635,26 +635,26 @@ export class MembershipService {
       const _response = await api.post(`${this.baseUrl}/usage/${feature}`);
 
       if (response.success) {
-        logger.info('功能使用成功');
+        logger.info('功能使用Success');
         return {
           success: true,
           data: response.data,
-          message: '功能使用成功',
+          message: '功能使用Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('使用功能失敗:', { message: response.message });
+        logger.error('使用功能Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '使用功能失敗',
+          message: response.message || '使用功能Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('使用功能時發生錯誤:', error);
+      logger.error('使用功能時發生Error:', error);
       return {
         success: false,
-        message: '使用功能時發生錯誤',
+        message: '使用功能時發生Error',
         timestamp: new Date(),
       };
     }

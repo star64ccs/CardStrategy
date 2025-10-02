@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { AIState, AIChatMessage } from '../../core/types';
 import { aiService } from '../../shared/services/aiService';
 
-// 異步 thunk
+// Async thunk
 export const _analyzeCard = createAsyncThunk(
   'ai/analyzeCard',
   async (cardId: string) => {
@@ -36,7 +36,7 @@ export const _getMarketInsights = createAsyncThunk(
       const _response = await aiService.getMarketInsights();
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取市場洞察失敗');
+      return rejectWithValue(error.message || 'Get市場洞察Failed');
     }
   }
 );
@@ -49,7 +49,7 @@ export const _generateInvestmentReport = createAsyncThunk(
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: AIState = {
   analyses: [],
   chatMessages: [],

@@ -14,7 +14,7 @@ const { authenticateToken } = require('../middleware/auth');'
 // eslint-disable-next-line no-unused-vars''
 const logger = require('../utils/logger');
 
-// 導入統�?路由?��???const {
+// Import統�?路由?��???const {
   createPostHandler,
   createGetHandler,
   createPutHandler,
@@ -24,7 +24,7 @@ const logger = require('../utils/logger');
   createBatchHandler,'
   createCustomError,''
 } = require('../middleware/routeHandler');''
-// 導入驗�?中�?�?const { body, query } = require('express-validator');'
+// Import驗�?中�?�?const { body, query } = require('express-validator');'
 // 驗�?中�?件�?�?const validateDataCollection = [''
   body('source').optional().isString().withMessage('?��?源�??�是字符�?),''
   body('quality')'
@@ -155,7 +155,7 @@ router.get(''
     async (req, res) => {
       const { startDate, endDate, source, quality, status } = req.query;
 
-      // 構建?�詢?��?
+      // Build?�詢?��?
 // eslint-disable-next-line no-unused-vars
       const options = {};
 
@@ -311,7 +311,7 @@ router.get(''
     },
     { auth: true });
 );'
-// 學�?機制：根?�實?��??�調?��??��???router.post(''
+// 學�?機制：Root?�實?��??�調?��??��???router.post(''
   '/annotate/learn',
   createPostHandler(
     async (req, res) => {
@@ -505,7 +505,7 @@ router.get('/quality-report', authenticateToken, async (req, res) => {
       );
       report.averageOverallScore = totalScore / metrics.length;
 
-      // 計�??��?類�??��?
+      // 計�??��?Class�??��?
       metrics.forEach((metric) => {
         report.dataTypeDistribution[metric.dataType] =
           (report.dataTypeDistribution[metric.dataType] || 0) + 1;
@@ -863,7 +863,7 @@ router.post('/feedback', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ?��??��??�表''
+// ?��??��??�Table''
 router.get('/feedback', authenticateToken, async (req, res) => {
   try {
     const {

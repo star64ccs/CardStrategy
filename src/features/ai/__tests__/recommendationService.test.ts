@@ -253,7 +253,7 @@ describe('RecommendationService', () => {
       expect(result.validUntil.getTime()).toBeCloseTo(
         expectedExpiry.getTime(),
         -1000
-      ); // 1秒誤差內
+      ); // 1Second誤差內
     });
 
     it('should validate request parameters', async () => {
@@ -500,7 +500,7 @@ describe('RecommendationService', () => {
         budget: 5000,
         timeHorizon: InvestmentTimeHorizon.MEDIUM_TERM,
         riskTolerance: RiskTolerance.MODERATE,
-        investmentGoals: [], // 空的投資目標
+        investmentGoals: [], // Empty的投資目標
       };
 
       const _result =
@@ -568,7 +568,7 @@ describe('RecommendationService', () => {
       expect(result).toBeDefined();
       expect(result.recommendations.length).toBeGreaterThan(0);
 
-      // 預算較小時，建議的卡牌價格應該都在預算範圍內
+      // 預算較Hour，建議的卡牌價格應該都在預算範圍內
       result.recommendations.forEach(rec => {
         expect(rec.currentPrice).toBeLessThanOrEqual(mockRequest.budget);
       });

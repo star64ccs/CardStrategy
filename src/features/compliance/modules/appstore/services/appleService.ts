@@ -30,13 +30,13 @@ export class AppleAppStoreService {
   }
 
   /**
-   * 驗證應用程式資訊
+   * VerifyApply程式資訊
    */
   public validateAppInfo(appInfo: AppleAppInfo): AppleComplianceResult {
     const violations: AppleViolation[] = [];
     let riskLevel = AppleRiskLevel.LOW;
 
-    // 檢查必要欄位
+    // Check必要欄位
     if (!appInfo.appName || appInfo.appName.trim().length === 0) {
       violations.push(
         this.createViolation(
@@ -87,7 +87,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查年齡分級
+    // CheckAge分級
     if (this.requiresHigherAgeRating(appInfo.category, appInfo.description)) {
       violations.push(
         this.createViolation(
@@ -98,7 +98,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查價格設定
+    // Check價格設定
     if (appInfo.isFree && appInfo.price > 0) {
       violations.push(
         this.createViolation(
@@ -109,7 +109,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查版本號格式
+    // CheckVersion號格式
     if (!this.isValidVersionFormat(appInfo.version)) {
       violations.push(
         this.createViolation(
@@ -155,7 +155,7 @@ export class AppleAppStoreService {
   }
 
   /**
-   * 驗證內購項目
+   * Verify內購項目
    */
   public validateInAppPurchase(
     purchase: AppleInAppPurchase
@@ -163,7 +163,7 @@ export class AppleAppStoreService {
     const violations: AppleViolation[] = [];
     let riskLevel = AppleRiskLevel.LOW;
 
-    // 檢查必要欄位
+    // Check必要欄位
     if (!purchase.productId || !this.isValidProductId(purchase.productId)) {
       violations.push(
         this.createViolation(
@@ -204,7 +204,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查價格合理性
+    // Check價格合理性
     if (purchase.price > 999.99) {
       violations.push(
         this.createViolation(
@@ -215,7 +215,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查產品類型一致性
+    // Check產品Class型一致性
     if (
       purchase.productType === AppleInAppPurchaseType.CONSUMABLE &&
       !this.isConsumableProduct(purchase.productName)
@@ -264,7 +264,7 @@ export class AppleAppStoreService {
   }
 
   /**
-   * 驗證訂閱項目
+   * Verify訂閱項目
    */
   public validateSubscription(
     subscription: AppleSubscription
@@ -272,7 +272,7 @@ export class AppleAppStoreService {
     const violations: AppleViolation[] = [];
     let riskLevel = AppleRiskLevel.LOW;
 
-    // 檢查必要欄位
+    // Check必要欄位
     if (
       !subscription.productId ||
       !this.isValidProductId(subscription.productId)
@@ -309,7 +309,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查試用期設定
+    // Check試用期設定
     if (subscription.trialPeriod && subscription.trialPeriod > 365) {
       violations.push(
         this.createViolation(
@@ -320,7 +320,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查自動續訂設定
+    // CheckAuto續訂設定
     if (
       subscription.autoRenewable &&
       !this.hasProperRenewalTerms(subscription)
@@ -334,7 +334,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查家庭共享設定
+    // Check家庭共享設定
     if (
       subscription.familySharing &&
       !this.isEligibleForFamilySharing(subscription)
@@ -383,7 +383,7 @@ export class AppleAppStoreService {
   }
 
   /**
-   * 驗證隱私政策
+   * Verify隱私政策
    */
   public validatePrivacyPolicy(
     policy: ApplePrivacyPolicy
@@ -391,7 +391,7 @@ export class AppleAppStoreService {
     const violations: AppleViolation[] = [];
     let riskLevel = AppleRiskLevel.LOW;
 
-    // 檢查政策URL
+    // Check政策URL
     if (!policy.policyUrl || !this.isValidUrl(policy.policyUrl)) {
       violations.push(
         this.createViolation(
@@ -402,7 +402,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查更新時間
+    // CheckUpdateTime
     const _daysSinceUpdate =
       (Date.now() - policy.lastUpdated.getTime()) / (1000 * 60 * 60 * 24);
     if (daysSinceUpdate > 365) {
@@ -415,7 +415,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查資料收集聲明
+    // Check資料收集聲明
     if (policy.dataCollection.personalData && !policy.dataUsage.analytics) {
       violations.push(
         this.createViolation(
@@ -426,7 +426,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查第三方資料共享
+    // Check第三方資料共享
     if (policy.dataSharing.thirdParties && !policy.contactInfo.email) {
       violations.push(
         this.createViolation(
@@ -437,7 +437,7 @@ export class AppleAppStoreService {
       );
     }
 
-    // 檢查用戶權利
+    // CheckUser權利
     if (policy.dataCollection.personalData && !policy.userRights.access) {
       violations.push(
         this.createViolation(
@@ -482,7 +482,7 @@ export class AppleAppStoreService {
   }
 
   /**
-   * 處理應用程式審核
+   * HandleApply程式審核
    */
   public processAppReview(
     appInfo: AppleAppInfo,
@@ -552,7 +552,7 @@ export class AppleAppStoreService {
   }
 
   /**
-   * 生成合規報告
+   * 生成合規Report
    */
   public generateComplianceReport(appId: string): AppleComplianceResult {
     const _appViolations = this.violations.filter(v => v.id.includes(appId));
@@ -576,7 +576,7 @@ export class AppleAppStoreService {
     };
   }
 
-  // 私有輔助方法
+  // Private輔助Method
   private createViolation(
     type: string,
     description: string,

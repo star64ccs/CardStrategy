@@ -13,42 +13,42 @@ class AlertService {
   }
 
   /**
-   * 初始化警報規則
+   * InitializeAlert規則
    */
   initializeAlertRules() {
-    // 價格變動警報規則
+    // 價格變動Alert規則
     this.alertRules.set('price_change', {
       name: '價格變動警報',
       description: '當卡片價格變動超過指定百分比時觸發',
       conditions: {
         priceChangePercent: 10, // 10% 變動
-        timeWindow: 24 * 60 * 60 * 1000, // 24小時
+        timeWindow: 24 * 60 * 60 * 1000, // 24Hour
       },
       severity: 'medium',
       enabled: true,
     });
 
-    // 系統性能警報規則
+    // 系統性能Alert規則
     this.alertRules.set('system_performance', {
       name: '系統性能警報',
       description: '當系統性能指標異常時觸發',
       conditions: {
         cpuUsage: 80, // CPU 使用率超過 80%
-        memoryUsage: 85, // 內存使用率超過 85%
-        responseTime: 5000, // 響應時間超過 5 秒
+        memoryUsage: 85, // Memory使用率超過 85%
+        responseTime: 5000, // ResponseTime超過 5 Second
       },
       severity: 'high',
       enabled: true,
     });
 
-    // 數據庫警報規則
+    // DatabaseAlert規則
     this.alertRules.set('database_health', {
       name: '數據庫健康警報',
-      description: '當數據庫連接或查詢出現問題時觸發',
+      description: '當數據庫Connect或查詢出現問題時觸發',
       conditions: {
-        connectionErrors: 5, // 連接錯誤次數
-        queryTimeout: 10000, // 查詢超時時間
-        slowQueries: 10, // 慢查詢數量
+        connectionErrors: 5, // ConnectError次數
+        queryTimeout: 10000, // Query超時Time
+        slowQueries: 10, // 慢Query數量
       },
       severity: 'critical',
       enabled: true,
@@ -56,7 +56,7 @@ class AlertService {
   }
 
   /**
-   * 創建警報
+   * CreateAlert
    */
   async createAlert(type, data, severity = 'medium') {
     try {
@@ -79,31 +79,31 @@ class AlertService {
       this.alerts.set(alert.id, alert);
       this.alertHistory.push(alert);
 
-      // 記錄警報
+      // RecordAlert
       logger.warn(`警報創建: ${alert.title} - ${alert.message}`, {
         alertId: alert.id,
         type: alert.type,
         severity: alert.severity,
       });
 
-      // 發送通知
+      // SendNotification
       await this.sendAlertNotification(alert);
 
       return alert;
     } catch (error) {
-      logger.error('創建警報失敗:', error);
+      logger.error('Create警報Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取警報列表
+   * GetAlertList
    */
   async getAlerts(filters = {}) {
     try {
       let alerts = Array.from(this.alerts.values());
 
-      // 應用過濾器
+      // ApplyFilter器
       if (filters.status) {
         alerts = alerts.filter((alert) => alert.status === filters.status);
       }
@@ -128,18 +128,18 @@ class AlertService {
         );
       }
 
-      // 排序
+      // Sort
       alerts.sort((a, b) => b.createdAt - a.createdAt);
 
       return alerts;
     } catch (error) {
-      logger.error('獲取警報列表失敗:', error);
+      logger.error('Get警報列表Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取警報詳情
+   * GetAlert詳情
    */
   async getAlertById(alertId) {
     try {
@@ -149,13 +149,13 @@ class AlertService {
       }
       return alert;
     } catch (error) {
-      logger.error('獲取警報詳情失敗:', error);
+      logger.error('Get警報詳情Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新警報狀態
+   * UpdateAlertStatus
    */
   async updateAlertStatus(alertId, status, userId = null) {
     try {
@@ -180,27 +180,27 @@ class AlertService {
       logger.info(`警報狀態更新: ${alertId} -> ${status}`);
       return alert;
     } catch (error) {
-      logger.error('更新警報狀態失敗:', error);
+      logger.error('Update警報狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 確認警報
+   * ConfirmAlert
    */
   async acknowledgeAlert(alertId, userId) {
     return await this.updateAlertStatus(alertId, 'acknowledged', userId);
   }
 
   /**
-   * 解決警報
+   * ResolveAlert
    */
   async resolveAlert(alertId, userId) {
     return await this.updateAlertStatus(alertId, 'resolved', userId);
   }
 
   /**
-   * 批量更新警報狀態
+   * BatchUpdateAlertStatus
    */
   async bulkUpdateAlertStatus(alertIds, status, userId = null) {
     try {
@@ -212,19 +212,19 @@ class AlertService {
           const result = await this.updateAlertStatus(alertId, status, userId);
           results.push(result);
         } catch (error) {
-          logger.error(`批量更新警報失敗 ${alertId}:`, error);
+          logger.error(`批量Update警報Failed ${alertId}:`, error);
           results.push({ error: error.message });
         }
       }
       return results;
     } catch (error) {
-      logger.error('批量更新警報狀態失敗:', error);
+      logger.error('批量Update警報狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 刪除警報
+   * DeleteAlert
    */
   async deleteAlert(alertId) {
     try {
@@ -237,13 +237,13 @@ class AlertService {
       logger.info(`警報已刪除: ${alertId}`);
       return { success: true };
     } catch (error) {
-      logger.error('刪除警報失敗:', error);
+      logger.error('Delete警報Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取警報統計
+   * GetAlertStatistics
    */
   async getAlertStats() {
     try {
@@ -262,7 +262,7 @@ class AlertService {
         byType: {},
       };
 
-      // 按類型統計
+      // 按Class型Statistics
       alerts.forEach((alert) => {
         if (!stats.byType[alert.type]) {
           stats.byType[alert.type] = 0;
@@ -272,43 +272,43 @@ class AlertService {
 
       return stats;
     } catch (error) {
-      logger.error('獲取警報統計失敗:', error);
+      logger.error('Get警報統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取活躍警報
+   * Get活躍Alert
    */
   async getActiveAlerts() {
     try {
       return await this.getAlerts({ status: 'active' });
     } catch (error) {
-      logger.error('獲取活躍警報失敗:', error);
+      logger.error('Get活躍警報Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 發送警報通知
+   * SendAlertNotification
    */
   async sendAlertNotification(alert) {
     try {
-      // 這裡可以集成通知服務
+      // 這裡可以集成NotificationService
       logger.info(`發送警報通知: ${alert.title}`, {
         alertId: alert.id,
         severity: alert.severity,
       });
 
-      // 可以發送郵件、推送通知等
+      // 可以Send郵件、PushNotification等
       // await notificationService.sendNotification(alert);
     } catch (error) {
-      logger.error('發送警報通知失敗:', error);
+      logger.error('發送警報通知Failed:', error);
     }
   }
 
   /**
-   * 檢查警報規則
+   * CheckAlert規則
    */
   async checkAlertRules(data) {
     try {
@@ -363,13 +363,13 @@ class AlertService {
 
       return triggeredAlerts;
     } catch (error) {
-      logger.error('檢查警報規則失敗:', error);
+      logger.error('Check警報規則Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 清理舊警報
+   * 清理舊Alert
    */
   async cleanupOldAlerts(daysToKeep = 30) {
     try {
@@ -389,7 +389,7 @@ class AlertService {
       logger.info(`清理了 ${alertsToDelete.length} 個舊警報`);
       return alertsToDelete.length;
     } catch (error) {
-      logger.error('清理舊警報失敗:', error);
+      logger.error('清理舊警報Failed:', error);
       throw error;
     }
   }

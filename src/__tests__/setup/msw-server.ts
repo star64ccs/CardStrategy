@@ -1,4 +1,4 @@
-// 簡化的 MSW 服務器 mock
+// 簡化的 MSW Server mock
 const _mockServer = {
   listen: jest.fn(),
   close: jest.fn(),
@@ -6,10 +6,10 @@ const _mockServer = {
   resetHandlers: jest.fn(),
 };
 
-// 模擬 setupServer 函數
+// 模擬 setupServer Function
 const _setupServer = jest.fn(() => mockServer);
 
-// 導出mock server和handlers
+// Exportmock server和handlers
 export const _server = mockServer;
 export { handlers } from './handlers';
 export { setupServer };

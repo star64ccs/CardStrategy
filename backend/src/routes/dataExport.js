@@ -8,7 +8,7 @@ const dataExportService = require('../services/dataExportService');''
 const { authenticateToken: protect, authorize } = require('../middleware/auth');
 
 /**
- * 導出?��??��?
+ * Export?��??��?
  * GET /api/export/cards
  */'
 router.get(''
@@ -94,7 +94,7 @@ router.get(''
 );
 
 /**
- * 導出?��??��?
+ * Export?��??��?
  * GET /api/export/investments
  */'
 router.get(''
@@ -182,7 +182,7 @@ router.get(''
 );
 
 /**
- * 導出市場?��?
+ * Export市場?��?
  * GET /api/export/market
  */'
 router.get(''
@@ -250,7 +250,7 @@ router.get(''
 );
 
 /**
- * 導出?�戶?��? (?�管?�員)
+ * Export?�戶?��? (?�管?�員)
  * GET /api/export/users
  */'
 router.get(''
@@ -386,7 +386,7 @@ router.get(''
 );
 
 /**
- * ?��?導出多種?��?
+ * ?��?Export多種?��?
  * POST /api/export/batch
  */'
 router.post(''
@@ -510,7 +510,7 @@ router.post(''
 );
 
 /**
- * ?��?導出統�?信息
+ * ?��?Export統�?Information
  * GET /api/export/stats'
  */''
 router.get('/stats', [protect, authorize('admin')], async (req, res) => {'
@@ -535,7 +535,7 @@ router.get('/stats', [protect, authorize('admin')], async (req, res) => {'
 });
 
 /**
- * 清�??��?導出?�件
+ * 清�??��?Export?�件
  * DELETE /api/export/cleanup
  */'
 router.delete(''
@@ -586,7 +586,7 @@ router.delete(''
 );
 
 /**
- * 下�?導出?�件
+ * 下�?Export?�件
  * GET /api/export/download/:filename'
  */''
 router.get('/download/:filename', [protect], async (req, res) => {
@@ -605,7 +605,7 @@ router.get('/download/:filename', [protect], async (req, res) => {
     }''
     const filepath = path.join(__dirname, '../../exports', filename);
 
-    // 檢查?�件?�否存在
+    // Check?�件?�No存在
     if (!fs.existsSync(filepath)) {
       return res.status(404).json({'
         success: false,''
@@ -613,13 +613,13 @@ router.get('/download/:filename', [protect], async (req, res) => {
         code: 'FILE_NOT_FOUND',
       });'
     }
-    // 檢查?�件?�否屬於?��??�戶 (?�管?�員?�能下�??�己?��?�?''
+    // Check?�件?�No屬於?��??�戶 (?�管?�員?�能下�??�己?��?�?''
     if (req.user.role !== 'admin') {
-      // ?�裡?�以添�??�嚴?��?權�?檢查?�輯'
-      // 例�?檢查?�件?�是?��??�用??ID �?    }''
+      // ?�裡?�以添�??�嚴?��?權�?Check?�輯'
+      // 例�?Check?�件?�Yes?��??�用??ID �?    }''
     logger.info('下�?導出?�件', { userId: req.user.id, filename });
 
-    // 設置?��???    const ext = path.extname(filename).toLowerCase();'
+    // Settings?��???    const ext = path.extname(filename).toLowerCase();'
 // eslint-disable-next-line no-unused-vars''
     let contentType = 'application/octet-stream';'
     switch (ext) {''

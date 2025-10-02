@@ -11,22 +11,22 @@ class AnomalyDetectionService {
   }
 
   /**
-   * 初始化異常檢測服務
+   * Initialize異常檢測Service
    */
   async initialize() {
     try {
-      logger.info('初始化異常檢測服務...');
+      logger.info('Initialize異常檢測Service...');
       this.isInitialized = true;
-      logger.info('異常檢測服務初始化完成');
+      logger.info('異常檢測ServiceInitialize完成');
       return true;
     } catch (error) {
-      logger.error('異常檢測服務初始化失敗:', error);
+      logger.error('異常檢測ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 統計異常檢測
+   * Statistics異常檢測
    */
   statisticalAnomalyDetection(data, threshold = 2) {
     try {
@@ -52,7 +52,7 @@ class AnomalyDetectionService {
         allData: anomalies,
       };
     } catch (error) {
-      logger.error('統計異常檢測失敗:', error);
+      logger.error('統計異常檢測Failed:', error);
       throw error;
     }
   }
@@ -90,7 +90,7 @@ class AnomalyDetectionService {
         threshold: this.getIsolationThreshold(contamination, scores),
       };
     } catch (error) {
-      logger.error('隔離森林異常檢測失敗:', error);
+      logger.error('隔離森林異常檢測Failed:', error);
       throw error;
     }
   }
@@ -110,10 +110,10 @@ class AnomalyDetectionService {
   }
 
   /**
-   * 獲取路徑長度
+   * GetPath長度
    */
   getPathLength(data, index) {
-    // 簡化的路徑長度計算
+    // 簡化的Path長度計算
     const value = data[index];
     let pathLength = 0;
 
@@ -128,7 +128,7 @@ class AnomalyDetectionService {
   }
 
   /**
-   * 獲取隔離閾值
+   * Get隔離閾Value
    */
   getIsolationThreshold(contamination, scores) {
     const sortedScores = [...scores].sort((a, b) => b - a);
@@ -137,7 +137,7 @@ class AnomalyDetectionService {
   }
 
   /**
-   * DBSCAN 聚類異常檢測
+   * DBSCAN 聚Class異常檢測
    */
   dbscanAnomalyDetection(data, eps = 0.5, minPts = 3) {
     try {
@@ -162,13 +162,13 @@ class AnomalyDetectionService {
         parameters: { eps, minPts },
       };
     } catch (error) {
-      logger.error('DBSCAN 異常檢測失敗:', error);
+      logger.error('DBSCAN 異常檢測Failed:', error);
       throw error;
     }
   }
 
   /**
-   * DBSCAN 聚類算法
+   * DBSCAN 聚Class算法
    */
   dbscan(data, eps, minPts) {
     const clusters = new Array(data.length).fill(-1);
@@ -200,7 +200,7 @@ class AnomalyDetectionService {
   }
 
   /**
-   * 獲取鄰居點
+   * Get鄰居點
    */
   getNeighbors(data, pointIndex, eps) {
 // eslint-disable-next-line no-unused-vars
@@ -220,7 +220,7 @@ class AnomalyDetectionService {
   }
 
   /**
-   * 擴展聚類
+   * Extension聚Class
    */
   expandCluster(data, clusters, pointIndex, neighbors, clusterId, eps, minPts) {
     clusters[pointIndex] = clusterId;
@@ -242,11 +242,11 @@ class AnomalyDetectionService {
   }
 
   /**
-   * 自編碼器異常檢測
+   * 自Encode器異常檢測
    */
   autoencoderAnomalyDetection(data, encodingDim = 2) {
     try {
-      // 簡化的自編碼器實現
+      // 簡化的自Encode器實現
       const encoded = this.encode(data, encodingDim);
       const decoded = this.decode(encoded, data.length);
 
@@ -274,31 +274,31 @@ class AnomalyDetectionService {
         decoded,
       };
     } catch (error) {
-      logger.error('自編碼器異常檢測失敗:', error);
+      logger.error('自編碼器異常檢測Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 編碼函數
+   * EncodeFunction
    */
   encode(data, encodingDim) {
-    // 簡化的編碼實現
+    // 簡化的Encode實現
     const mean = data.reduce((sum, val) => sum + val, 0) / data.length;
     return data.map((value) => (value - mean) / encodingDim);
   }
 
   /**
-   * 解碼函數
+   * DecodeFunction
    */
   decode(encoded, originalLength) {
-    // 簡化的解碼實現
+    // 簡化的Decode實現
     const mean = encoded.reduce((sum, val) => sum + val, 0) / encoded.length;
     return encoded.map((value) => value + mean);
   }
 
   /**
-   * 獲取自編碼器閾值
+   * Get自Encode器閾Value
    */
   getAutoencoderThreshold(original, reconstructed) {
 // eslint-disable-next-line no-unused-vars
@@ -312,7 +312,7 @@ class AnomalyDetectionService {
         errors.length
     );
 
-    return meanError + 2 * stdError; // 2個標準差
+    return meanError + 2 * stdError; // 2個Standard差
   }
 
   /**
@@ -344,7 +344,7 @@ class AnomalyDetectionService {
       // 綜合評分
       const anomalyScores = new Array(data.length).fill(0);
 
-      // 統計異常檢測評分
+      // Statistics異常檢測評分
       results.statistical.allData.forEach((item) => {
         if (item.isAnomaly) anomalyScores[item.index] += 1;
       });
@@ -359,7 +359,7 @@ class AnomalyDetectionService {
         anomalyScores[item.index] += 1;
       });
 
-      // 自編碼器評分
+      // 自Encode器評分
       results.autoencoder.anomalies.forEach((item) => {
         anomalyScores[item.index] += 1;
       });
@@ -382,13 +382,13 @@ class AnomalyDetectionService {
         },
       };
     } catch (error) {
-      logger.error('綜合異常檢測失敗:', error);
+      logger.error('綜合異常檢測Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 動態閾值調整
+   * Dynamic閾Value調整
    */
   adjustThreshold(data, currentThreshold, sensitivity = 0.1) {
     try {
@@ -409,23 +409,23 @@ class AnomalyDetectionService {
         newThreshold -= sensitivity;
       }
 
-      return Math.max(1, Math.min(5, newThreshold)); // 限制在 1-5 之間
+      return Math.max(1, Math.min(5, newThreshold)); // Limit在 1-5 之間
     } catch (error) {
-      logger.error('閾值調整失敗:', error);
+      logger.error('閾值調整Failed:', error);
       return currentThreshold;
     }
   }
 
   /**
-   * 清理資源
+   * 清理Resource
    */
   dispose() {
     try {
       this.models.clear();
       this.thresholds.clear();
-      logger.info('異常檢測服務資源已清理');
+      logger.info('異常檢測Service資源已清理');
     } catch (error) {
-      logger.error('資源清理失敗:', error);
+      logger.error('資源清理Failed:', error);
     }
   }
 }

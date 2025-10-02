@@ -56,7 +56,7 @@ describe('FeedbackService', () => {
   });
 
   describe('createFeedback', () => {
-    it('應該成功創建反饋', async () => {
+    it('應該SuccessCreate反饋', async () => {
       const _feedbackData = {
         type: 'bug_report' as const,
         title: '測試反饋',
@@ -85,7 +85,7 @@ describe('FeedbackService', () => {
       );
     });
 
-    it('應該處理創建反饋錯誤', async () => {
+    it('應該HandleCreate反饋Error', async () => {
       const _feedbackData = {
         type: 'bug_report' as const,
         title: '',
@@ -104,7 +104,7 @@ describe('FeedbackService', () => {
   });
 
   describe('getFeedbacks', () => {
-    it('應該成功獲取反饋列表', async () => {
+    it('應該SuccessGet反饋列表', async () => {
       const _mockFeedbacks = [
         {
           id: '1',
@@ -146,19 +146,19 @@ describe('FeedbackService', () => {
       });
     });
 
-    it('應該處理獲取反饋列表錯誤', async () => {
-      const _mockError = mockApiError('獲取反饋列表失敗');
+    it('應該HandleGet反饋列表Error', async () => {
+      const _mockError = mockApiError('Get反饋列表Failed');
 
       mockApiService.get.mockRejectedValue(mockError);
 
       await expect(feedbackService.getFeedbacks()).rejects.toThrow(
-        '獲取反饋列表失敗'
+        'Get反饋列表Failed'
       );
     });
   });
 
   describe('getFeedback', () => {
-    it('應該成功獲取單個反饋', async () => {
+    it('應該SuccessGet單個反饋', async () => {
       const _mockFeedback = {
         id: '1',
         type: 'bug_report' as const,
@@ -181,7 +181,7 @@ describe('FeedbackService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/feedback/1');
     });
 
-    it('應該處理獲取反饋錯誤', async () => {
+    it('應該HandleGet反饋Error', async () => {
       const _mockError = mockApiError('反饋不存在');
 
       mockApiService.get.mockRejectedValue(mockError);
@@ -193,7 +193,7 @@ describe('FeedbackService', () => {
   });
 
   describe('updateFeedback', () => {
-    it('應該成功更新反饋', async () => {
+    it('應該SuccessUpdate反饋', async () => {
       const _updateData = {
         title: '更新的標題',
         description: '更新的描述',
@@ -219,7 +219,7 @@ describe('FeedbackService', () => {
       );
     });
 
-    it('應該處理更新反饋錯誤', async () => {
+    it('應該HandleUpdate反饋Error', async () => {
       const _updateData = { title: '更新的標題' };
       const _mockError = mockApiError('無權限更新此反饋');
 
@@ -232,8 +232,8 @@ describe('FeedbackService', () => {
   });
 
   describe('deleteFeedback', () => {
-    it('應該成功刪除反饋', async () => {
-      const _mockResponse = mockApiResponse({ message: '反饋刪除成功' });
+    it('應該SuccessDelete反饋', async () => {
+      const _mockResponse = mockApiResponse({ message: '反饋DeleteSuccess' });
 
       mockApiService.delete.mockResolvedValue(mockResponse);
 
@@ -243,7 +243,7 @@ describe('FeedbackService', () => {
       expect(mockApiService.delete).toHaveBeenCalledWith('/feedback/1');
     });
 
-    it('應該處理刪除反饋錯誤', async () => {
+    it('應該HandleDelete反饋Error', async () => {
       const _mockError = mockApiError('無權限刪除此反饋');
 
       mockApiService.delete.mockRejectedValue(mockError);
@@ -255,7 +255,7 @@ describe('FeedbackService', () => {
   });
 
   describe('voteFeedback', () => {
-    it('應該成功投票反饋', async () => {
+    it('應該Success投票反饋', async () => {
       const _voteData = { vote: 1 as const };
       const _mockResponse = mockApiResponse({
         id: '1',
@@ -275,7 +275,7 @@ describe('FeedbackService', () => {
       );
     });
 
-    it('應該處理投票錯誤', async () => {
+    it('應該Handle投票Error', async () => {
       const _voteData = { vote: 1 as const };
       const _mockError = mockApiError('已經投票過此反饋');
 
@@ -288,7 +288,7 @@ describe('FeedbackService', () => {
   });
 
   describe('createResponse', () => {
-    it('應該成功創建回應', async () => {
+    it('應該SuccessCreate回應', async () => {
       const _responseData = {
         content: '這是一個官方回應',
         isOfficial: true,
@@ -313,7 +313,7 @@ describe('FeedbackService', () => {
       );
     });
 
-    it('應該處理創建回應錯誤', async () => {
+    it('應該HandleCreate回應Error', async () => {
       const _responseData = { content: '回應內容' };
       const _mockError = mockApiError('無權限創建回應');
 
@@ -326,7 +326,7 @@ describe('FeedbackService', () => {
   });
 
   describe('getFeedbackStats', () => {
-    it('應該成功獲取反饋統計', async () => {
+    it('應該SuccessGet反饋統計', async () => {
       const _mockStats = {
         total: 100,
         pending: 20,
@@ -358,19 +358,19 @@ describe('FeedbackService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/feedback/stats');
     });
 
-    it('應該處理獲取統計錯誤', async () => {
-      const _mockError = mockApiError('獲取統計失敗');
+    it('應該HandleGet統計Error', async () => {
+      const _mockError = mockApiError('Get統計Failed');
 
       mockApiService.get.mockRejectedValue(mockError);
 
       await expect(feedbackService.getFeedbackStats()).rejects.toThrow(
-        '獲取統計失敗'
+        'Get統計Failed'
       );
     });
   });
 
   describe('getFeedbackAnalysis', () => {
-    it('應該成功獲取反饋分析', async () => {
+    it('應該SuccessGet反饋分析', async () => {
       const _mockAnalysis = {
         trends: {
           daily: [{ date: '2024-01-01', count: 10 }],
@@ -400,7 +400,7 @@ describe('FeedbackService', () => {
   });
 
   describe('searchFeedbacks', () => {
-    it('應該成功搜索反饋', async () => {
+    it('應該Success搜索反饋', async () => {
       const _searchParams = {
         query: '登錄問題',
         type: 'bug_report' as const,
@@ -435,7 +435,7 @@ describe('FeedbackService', () => {
   });
 
   describe('uploadAttachment', () => {
-    it('應該成功上傳附件', async () => {
+    it('應該Success上傳附件', async () => {
       const _file = new File(['test content'], 'test.txt', {
         type: 'text/plain',
       });
@@ -459,7 +459,7 @@ describe('FeedbackService', () => {
       );
     });
 
-    it('應該處理上傳附件錯誤', async () => {
+    it('應該Handle上傳附件Error', async () => {
       const _file = new File(['test content'], 'test.txt', {
         type: 'text/plain',
       });
@@ -474,11 +474,11 @@ describe('FeedbackService', () => {
   });
 
   describe('getFeedbackTemplates', () => {
-    it('應該成功獲取反饋模板', async () => {
+    it('應該SuccessGet反饋模板', async () => {
       const _mockTemplates = [
         {
           id: 'template-1',
-          name: '錯誤報告模板',
+          name: 'Error報告模板',
           type: 'bug_report' as const,
           content: '請描述您遇到的問題...',
           isDefault: true,
@@ -497,7 +497,7 @@ describe('FeedbackService', () => {
   });
 
   describe('getFeedbackTags', () => {
-    it('應該成功獲取反饋標籤', async () => {
+    it('應該SuccessGet反饋標籤', async () => {
       const _mockTags = [
         { id: 'tag-1', name: 'UI問題', color: '#ff0000' },
         { id: 'tag-2', name: '性能問題', color: '#00ff00' },

@@ -1,22 +1,22 @@
-// 搜索分析類型定義
+// SearchAnalysisClass型定義
 export interface SearchAnalytics {
-  // 基礎統計
+  // 基礎Statistics
   totalSearches: number;
   uniqueUsers: number;
   averageSearchTime: number;
   searchSuccessRate: number;
 
-  // 時間統計
+  // TimeStatistics
   searchesByHour: HourlyStats[];
   searchesByDay: DailyStats[];
   searchesByMonth: MonthlyStats[];
 
-  // 用戶行為
+  // UserRow為
   userBehavior: UserBehaviorStats;
   searchPatterns: SearchPattern[];
   sessionAnalytics: SessionAnalytics;
 
-  // 熱門搜索
+  // 熱門Search
   popularSearches: PopularSearchStats[];
   trendingSearches: TrendingSearchStats[];
   searchCategories: CategoryStats[];
@@ -199,7 +199,7 @@ export interface UserSatisfactionStats {
   improvementSuggestions: string[];
 }
 
-// 搜索分析配置
+// SearchAnalysisConfigure
 export interface SearchAnalyticsConfig {
   enabled: boolean;
   trackingInterval: number;
@@ -211,7 +211,7 @@ export interface SearchAnalyticsConfig {
   batchProcessing: boolean;
 }
 
-// 搜索分析事件
+// SearchAnalysisEvent
 export interface SearchAnalyticsEvent {
   type:
     | 'search_performed'
@@ -237,7 +237,7 @@ export interface SearchAnalyticsEvent {
   location?: string;
 }
 
-// 搜索分析報告
+// SearchAnalysisReport
 export interface SearchAnalyticsReport {
   id: string;
   title: string;
@@ -277,7 +277,7 @@ export interface SearchRecommendation {
   timeline: string;
 }
 
-// 搜索分析過濾器
+// SearchAnalysisFilter器
 export interface SearchAnalyticsFilter {
   dateRange?: {
     start: number;
@@ -293,7 +293,7 @@ export interface SearchAnalyticsFilter {
   minUsers?: number;
 }
 
-// 搜索分析導出選項
+// SearchAnalysisExportOptions
 export interface SearchAnalyticsExportOptions {
   format: 'json' | 'csv' | 'excel' | 'pdf';
   includeCharts: boolean;
@@ -303,7 +303,7 @@ export interface SearchAnalyticsExportOptions {
   password?: string;
 }
 
-// 搜索分析警報
+// SearchAnalysisAlert
 export interface SearchAnalyticsAlert {
   id: string;
   name: string;

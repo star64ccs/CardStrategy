@@ -52,7 +52,7 @@ export const _useDashboard = () => {
   const _dispatch = useAppDispatch();
   const _state = useSelector(selectDashboardState);
 
-  // 初始化
+  // Initialize
   const _initialize = useCallback(async () => {
     try {
       await (dispatch as any)(initializeDashboard()).unwrap();
@@ -61,7 +61,7 @@ export const _useDashboard = () => {
     }
   }, [dispatch]);
 
-  // 獲取儀表板
+  // Get儀Table板
   const _fetchDashboard = useCallback(
     async (dashboardId: string) => {
       try {
@@ -77,7 +77,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 獲取儀表板列表
+  // Get儀Table板List
   const _fetchDashboards = useCallback(
     async (filter?: DashboardFilterOptions) => {
       try {
@@ -91,7 +91,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 創建儀表板
+  // Create儀Table板
   const _create = useCallback(
     async (request: DashboardCreateRequest) => {
       try {
@@ -107,7 +107,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 更新儀表板
+  // Update儀Table板
   const _update = useCallback(
     async (dashboardId: string, request: DashboardUpdateRequest) => {
       try {
@@ -123,7 +123,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 刪除儀表板
+  // Delete儀Table板
   const _remove = useCallback(
     async (dashboardId: string) => {
       try {
@@ -137,7 +137,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 獲取儀表板數據
+  // Get儀Table板Data
   const _fetchData = useCallback(
     async (dashboardId: string, widgetId?: string) => {
       try {
@@ -153,7 +153,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 刷新儀表板數據
+  // Refresh儀Table板Data
   const _refreshData = useCallback(
     async (dashboardId: string) => {
       try {
@@ -165,7 +165,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 導出儀表板
+  // Export儀Table板
   const _exportTo = useCallback(
     async (
       dashboardId: string,
@@ -184,7 +184,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 創建警報
+  // CreateAlert
   const _createAlertHandler = useCallback(
     async (
       dashboardId: string,
@@ -204,7 +204,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 更新警報
+  // UpdateAlert
   const _updateAlertHandler = useCallback(
     async (alertId: string, updates: Partial<DashboardAlert>) => {
       try {
@@ -220,7 +220,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 刪除警報
+  // DeleteAlert
   const _deleteAlertHandler = useCallback(
     async (alertId: string) => {
       try {
@@ -234,7 +234,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 獲取警報
+  // GetAlert
   const _fetchAlerts = useCallback(
     async (dashboardId?: string) => {
       try {
@@ -250,7 +250,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 獲取模板
+  // Get模板
   const _fetchTemplates = useCallback(
     async (category?: string) => {
       try {
@@ -266,7 +266,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 獲取分析
+  // GetAnalysis
   const _fetchAnalytics = useCallback(
     async (dashboardId: string) => {
       try {
@@ -282,7 +282,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 更新分析
+  // UpdateAnalysis
   const _updateAnalyticsHandler = useCallback(
     async (dashboardId: string, updates: Partial<DashboardAnalytics>) => {
       try {
@@ -298,7 +298,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 獲取性能指標
+  // Get性能指標
   const _fetchPerformanceMetrics = useCallback(
     async (dashboardId: string) => {
       try {
@@ -314,7 +314,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // 獲取配置
+  // GetConfigure
   const _fetchConfig = useCallback(async () => {
     try {
       const _config = await (dispatch as any)(getConfig()).unwrap();
@@ -325,7 +325,7 @@ export const _useDashboard = () => {
     }
   }, [dispatch]);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfigHandler = useCallback(
     async (config: unknown) => {
       try {
@@ -339,7 +339,7 @@ export const _useDashboard = () => {
     [dispatch]
   );
 
-  // UI 操作
+  // UI Operation
   const _setCurrent = useCallback(
     (dashboard: DashboardConfig | null) => {
       dispatch(setCurrentDashboard(dashboard));
@@ -411,14 +411,14 @@ export const _useDashboard = () => {
     dispatch(clearErrors());
   }, [dispatch]);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (!state.isInitialized) {
       initialize();
     }
   }, [state.isInitialized, initialize]);
 
-  // 定期刷新數據
+  // 定期RefreshData
   useEffect(() => {
     if (state.currentDashboard && state.isInitialized) {
       const _interval = setInterval(() => {
@@ -430,7 +430,7 @@ export const _useDashboard = () => {
     return undefined;
   }, [state.currentDashboard, state.isInitialized, refreshData]);
 
-  // 計算屬性
+  // 計算Property
   const _dashboardCount = useMemo(
     () => state.dashboards.length,
     [state.dashboards]
@@ -479,7 +479,7 @@ export const _useDashboard = () => {
   );
 
   return {
-    // 狀態
+    // Status
     ...state,
     dashboardCount,
     activeAlerts,
@@ -487,7 +487,7 @@ export const _useDashboard = () => {
     isLoading,
     hasError,
 
-    // 操作
+    // Operation
     initialize,
     fetchDashboard,
     fetchDashboards,
@@ -508,7 +508,7 @@ export const _useDashboard = () => {
     fetchConfig,
     updateConfig: updateConfigHandler,
 
-    // UI 操作
+    // UI Operation
     setCurrent,
     setSelected,
     setEditing,

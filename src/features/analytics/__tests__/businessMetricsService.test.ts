@@ -1,4 +1,4 @@
-// 業務指標分析服務測試
+// 業務指標AnalysisServiceTest
 import BusinessMetricsService from '../services/businessMetricsService';
 import type {
   BusinessMetricsFilter,
@@ -26,7 +26,7 @@ describe('BusinessMetricsService', () => {
     service = BusinessMetricsService.getInstance();
     jest.clearAllMocks();
 
-    // 重置 mock 函數的返回值
+    // Reset mock Function的ReturnValue
     mockConvertToJSON.mockReturnValue('json_data');
     mockConvertToCSV.mockReturnValue('csv_data');
     mockConvertToExcel.mockReturnValue('excel_data');
@@ -42,16 +42,16 @@ describe('BusinessMetricsService', () => {
   });
 
   describe('初始化', () => {
-    test('應該成功初始化服務', async () => {
+    test('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBe(true);
     });
 
-    test('應該在初始化失敗時返回 false', async () => {
-      // Mock 初始化失敗
+    test('應該在InitializeFailed時返回 false', async () => {
+      // Mock InitializeFailed
       jest
         .spyOn(service as any, 'initializeAnalytics')
-        .mockRejectedValue(new Error('初始化失敗'));
+        .mockRejectedValue(new Error('InitializeFailed'));
       const _result = await service.initialize();
       expect(result).toBe(false);
     });
@@ -90,13 +90,13 @@ describe('BusinessMetricsService', () => {
       expect(analysis.metrics).toBeDefined();
     });
 
-    test('應該在未初始化時拋出錯誤', async () => {
-      // 創建新的服務實例，不初始化
+    test('應該在未Initialize時拋出Error', async () => {
+      // Create新的ServiceInstance，不Initialize
       const _newService = BusinessMetricsService.getInstance();
       (newService as any).isInitialized = false;
 
       await expect(newService.getBusinessMetrics()).rejects.toThrow(
-        '服務未初始化'
+        'Service未Initialize'
       );
     });
   });
@@ -239,7 +239,7 @@ describe('BusinessMetricsService', () => {
         compress: false,
       };
 
-      // Mock 不支持的格式
+      // Mock 不Support的格式
       mockConvertToJSON.mockImplementation(() => {
         throw new Error('不支持的導出格式: invalid');
       });
@@ -249,7 +249,7 @@ describe('BusinessMetricsService', () => {
       );
     });
 
-    test('應該處理導出錯誤', async () => {
+    test('應該Handle導出Error', async () => {
       const _analysis = await service.getBusinessMetrics();
       const options: BusinessMetricsExportOptions = {
         format: 'csv',
@@ -264,13 +264,13 @@ describe('BusinessMetricsService', () => {
         compress: false,
       };
 
-      // Mock 導出錯誤
+      // Mock ExportError
       mockConvertToCSV.mockImplementation(() => {
-        throw new Error('導出失敗');
+        throw new Error('導出Failed');
       });
 
       await expect(service.exportData(analysis, options)).rejects.toThrow(
-        '導出失敗'
+        '導出Failed'
       );
     });
   });
@@ -418,7 +418,7 @@ describe('BusinessMetricsService', () => {
       service.addEventListener('metrics_updated', listener);
       service.removeEventListener('metrics_updated', listener);
 
-      // 測試移除不存在的監聽器
+      // TestRemove不存在的監聽器
       service.removeEventListener('metrics_updated', jest.fn());
     });
   });
@@ -469,7 +469,7 @@ describe('BusinessMetricsService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 

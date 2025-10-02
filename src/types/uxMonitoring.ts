@@ -1,4 +1,4 @@
-// 用戶體驗監控系統類型定義
+// User體驗Monitor系統Class型定義
 
 // 基礎枚舉
 export enum UserActionType {
@@ -67,7 +67,7 @@ export enum ABTestType {
   FLOW = 'flow',
 }
 
-// 用戶行為追蹤
+// UserRow為Trace
 export interface UserAction {
   id: string;
   type: UserActionType;
@@ -132,7 +132,7 @@ export interface GeoLocation {
   timezone: string;
 }
 
-// 性能監控
+// 性能Monitor
 export interface PerformanceMetric {
   id: string;
   type: PerformanceMetricType;
@@ -180,7 +180,7 @@ export interface ResourceLoadMetrics {
   statusText: string;
 }
 
-// 錯誤追蹤
+// ErrorTrace
 export interface ErrorEvent {
   id: string;
   type: ErrorType;
@@ -249,7 +249,7 @@ export interface SatisfactionSurvey {
   metadata?: Record<string, any>;
 }
 
-// A/B 測試
+// A/B Test
 export interface ABTest {
   id: string;
   name: string;
@@ -322,7 +322,7 @@ export interface ABTestAssignment {
   isNewUser: boolean;
 }
 
-// 監控配置
+// MonitorConfigure
 export interface UXMonitoringConfig {
   enabled: boolean;
   samplingRate: number; // 0-1
@@ -380,7 +380,7 @@ export interface SatisfactionSurveyConfig {
   triggerType: 'time' | 'action' | 'page' | 'manual';
   triggerValue: number | string;
   questions: SatisfactionQuestion[];
-  showFrequency: number; // 每N次訪問顯示一次
+  showFrequency: number; // 每N次訪問Show一次
   maxSurveysPerUser: number;
 }
 
@@ -412,7 +412,7 @@ export interface DataRetentionConfig {
   sessions: number;
 }
 
-// 監控數據
+// MonitorData
 export interface UXMonitoringData {
   sessions: UserSession[];
   performanceMetrics: PerformanceMetric[];
@@ -422,7 +422,7 @@ export interface UXMonitoringData {
   abTests: ABTest[];
 }
 
-// 分析結果
+// Analysis結果
 export interface UXAnalytics {
   sessionAnalytics: SessionAnalytics;
   performanceAnalytics: PerformanceAnalytics;
@@ -484,7 +484,7 @@ export interface UserJourneyAnalytics {
   userSegments: UserSegment[];
 }
 
-// 輔助類型
+// 輔助Class型
 export interface TimeSeriesData {
   timestamp: number;
   value: number;
@@ -588,7 +588,7 @@ export interface UserSegment {
   behaviorPatterns: Record<string, any>;
 }
 
-// React 組件 Props
+// React Component Props
 export interface UXMonitoringProviderProps {
   config: UXMonitoringConfig;
   children: React.ReactNode;
@@ -626,7 +626,7 @@ export interface UXMonitoringDashboardProps {
   onConfigChange?: (config: UXMonitoringConfig) => void;
 }
 
-// 自定義 Hook 返回類型
+// Custom Hook ReturnClass型
 export interface UseUXMonitoringReturn {
   trackAction: (
     action: Omit<UserAction, 'id' | 'timestamp' | 'sessionId'>

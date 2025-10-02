@@ -1,0 +1,312 @@
+/**
+ * 內容推薦服務
+ */
+
+import { logger } from '@/utils/logger';
+
+export interface ContentItem {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  category: string;
+  popularity: number;
+  createdAt: Date;
+}
+
+export interface UserPreference {
+  userId: string;
+  interests: string[];
+  preferences: Record<string, any>;
+}
+
+export interface ContentRecommendation {
+  item: ContentItem;
+  score: number;
+  reason: string;
+  confidence: number;
+}
+
+export interface GetContentRecommendationsRequest {
+  userId: string;
+  limit?: number;
+  algorithm?: string;
+  filters?: any;
+}
+
+export interface GetContentRecommendationsResponse {
+  recommendations: ContentRecommendation[];
+  totalCount: number;
+  algorithm: string;
+  similarityMethod: string;
+  performanceMetrics: any;
+}
+
+export class ContentRecommendationService {
+  private static instance: ContentRecommendationService;
+  private cache: any = {
+    recommendations: {},
+    similarities: {},
+  };
+  private config: any = {};
+  private stats: any = {};
+
+  private constructor() {
+    this.initialize();
+  }
+
+  public static getInstance(): ContentRecommendationService {
+    if (!ContentRecommendationService.instance) {
+      ContentRecommendationService.instance =
+        new ContentRecommendationService();
+    }
+    return ContentRecommendationService.instance;
+  }
+
+  private async initialize(): Promise<void> {
+    try {
+      await this.loadConfig();
+      await this.initializeStats();
+      logger.info('ContentRecommendationService initialized');
+    } catch (error) {
+      logger.error('Failed to initialize ContentRecommendationService:', error);
+    }
+  }
+
+  /**
+   * 獲取內容推薦
+   */
+  public async getRecommendations(
+    request: GetContentRecommendationsRequest
+  ): Promise<GetContentRecommendationsResponse> {
+    try {
+      const cacheKey = this.generateCacheKey(request);
+      const cached = this.getCachedRecommendations(cacheKey);
+
+      if (cached) {
+        return cached;
+      }
+
+      const userPreference = await this.getUserPreference(request.userId);
+      const contentItems = await this.getContentItems();
+
+      const recommendations = this.calculateRecommendations(
+        contentItems,
+        userPreference,
+        request.limit || 10
+      );
+
+      const response: GetContentRecommendationsResponse = {
+        recommendations,
+        totalCount: recommendations.length,
+        algorithm: request.algorithm || 'hybrid',
+        similarityMethod: 'cosine',
+        performanceMetrics: {
+          processingTime: 0,
+          memoryUsage: 0,
+        },
+      };
+
+      this.cacheRecommendations(cacheKey, response);
+      this.updateStats(response);
+
+      return response;
+    } catch (error) {
+      logger.error('Failed to get recommendations:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 記錄用戶交互
+   */
+  public async recordUserInteraction(
+    userId: string,
+    contentId: string,
+    interaction: any
+  ): Promise<void> {
+    try {
+      // 記錄用戶交互邏輯
+      logger.info('User interaction recorded:', {
+        userId,
+        contentId,
+        interaction,
+      });
+    } catch (error) {
+      logger.error('Error recording user interaction:', error);
+      throw error;
+    }
+  }
+
+  private calculateRecommendations(
+    items: ContentItem[],
+    userPreference: UserPreference,
+    limit: number
+  ): ContentRecommendation[] {
+    const scoredItems = items.map(item => ({
+      item,
+      score: this.calculateScore(item, userPreference),
+      reason: this.generateReason(item, userPreference),
+      confidence: this.calculateConfidence(item),
+    }));
+
+    return scoredItems.sort((a, b) => b.score - a.score).slice(0, limit);
+  }
+
+  private calculateScore(
+    item: ContentItem,
+    userPreference: UserPreference
+  ): number {
+    // 簡化的評分算法
+    let score = item.popularity * 0.3;
+
+    // 基於用戶興趣匹配
+    const interestMatch = userPreference.interests.filter(interest =>
+      item.tags.includes(interest)
+    ).length;
+    score += interestMatch * 0.7;
+
+    return Math.min(score, 1.0);
+  }
+
+  private generateReason(
+    item: ContentItem,
+    userPreference: UserPreference
+  ): string {
+    const matchedInterests = userPreference.interests.filter(interest =>
+      item.tags.includes(interest)
+    );
+
+    if (matchedInterests.length > 0) {
+      return `Based on your interests: ${matchedInterests.join(', ')}`;
+    }
+
+    return `Popular item with ${item.popularity} views`;
+  }
+
+  private calculateConfidence(item: ContentItem): number {
+    // 基於項目數據完整性計算置信度
+    const completeness =
+      (item.title ? 1 : 0) +
+      (item.description ? 1 : 0) +
+      (item.tags.length > 0 ? 1 : 0) +
+      (item.category ? 1 : 0);
+
+    return completeness / 4;
+  }
+
+  private generateCacheKey(request: GetContentRecommendationsRequest): string {
+    return `${request.userId}_${request.limit || 10}_${request.algorithm || 'default'}`;
+  }
+
+  private getCachedRecommendations(
+    cacheKey: string
+  ): GetContentRecommendationsResponse | null {
+    const cached = this.cache.recommendations[cacheKey];
+    if (cached && cached.expiresAt > new Date()) {
+      return cached.data;
+    }
+    return null;
+  }
+
+  private cacheRecommendations(
+    cacheKey: string,
+    response: GetContentRecommendationsResponse
+  ): void {
+    this.cache.recommendations[cacheKey] = {
+      data: response,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5分鐘過期
+    };
+  }
+
+  private async loadConfig(): Promise<void> {
+    this.config = {
+      cacheTimeout: 5 * 60 * 1000,
+      maxRecommendations: 50,
+      algorithms: ['hybrid', 'popularity', 'collaborative'],
+    };
+  }
+
+  private async initializeStats(): Promise<void> {
+    this.stats = {
+      totalRecommendations: 0,
+      averageScore: 0,
+      algorithmDistribution: {},
+      similarityMethodDistribution: {},
+      performanceMetrics: {},
+      lastUpdated: new Date(),
+    };
+  }
+
+  private async getUserPreference(userId: string): Promise<UserPreference> {
+    // 簡化的用戶偏好獲取
+    return {
+      userId,
+      interests: ['technology', 'gaming', 'entertainment'],
+      preferences: {
+        categories: ['tech', 'games'],
+        languages: ['en', 'zh'],
+      },
+    };
+  }
+
+  private async getContentItems(): Promise<ContentItem[]> {
+    // 簡化的內容項目獲取
+    return [
+      {
+        id: '1',
+        title: 'Sample Content 1',
+        description: 'This is a sample content item',
+        tags: ['technology', 'programming'],
+        category: 'tech',
+        popularity: 85,
+        createdAt: new Date(),
+      },
+      {
+        id: '2',
+        title: 'Sample Content 2',
+        description: 'Another sample content item',
+        tags: ['gaming', 'entertainment'],
+        category: 'games',
+        popularity: 92,
+        createdAt: new Date(),
+      },
+    ];
+  }
+
+  private updateStats(response: GetContentRecommendationsResponse): void {
+    this.stats.totalRecommendations += response.totalCount;
+    this.stats.averageScore =
+      (this.stats.averageScore +
+        response.recommendations.reduce((sum, rec) => sum + rec.score, 0) /
+          response.recommendations.length) /
+      2;
+    this.stats.algorithmDistribution[response.algorithm] =
+      (this.stats.algorithmDistribution[response.algorithm] || 0) + 1;
+    this.stats.similarityMethodDistribution[response.similarityMethod] =
+      (this.stats.similarityMethodDistribution[response.similarityMethod] ||
+        0) + 1;
+    this.stats.performanceMetrics = response.performanceMetrics;
+    this.stats.lastUpdated = new Date();
+  }
+
+  /**
+   * 獲取服務統計信息
+   */
+  public getStats(): any {
+    return this.stats;
+  }
+
+  /**
+   * 清除緩存
+   */
+  public clearCache(): void {
+    this.cache = {
+      recommendations: {},
+      similarities: {},
+    };
+  }
+}
+
+export const contentRecommendationService =
+  ContentRecommendationService.getInstance();

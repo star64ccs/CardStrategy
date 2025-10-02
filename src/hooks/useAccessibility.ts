@@ -1,6 +1,6 @@
 // 可訪問性 Hook
-// 提供可訪問性功能的統一接口
-// 符合 WCAG 2.1 AA 標準和 Section 508 要求
+// 提供可訪問性功能的統一Interface
+// 符合 WCAG 2.1 AA Standard和 Section 508 要求
 
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,15 +31,15 @@ import type {
   UseAccessibilityReturn,
 } from '../types/accessibility';
 
-// 可訪問性 Hook 配置
+// 可訪問性 Hook Configure
 interface UseAccessibilityConfig {
-  /** 是否自動初始化 */
+  /** YesNoAutoInitialize */
   autoInitialize?: boolean;
-  /** 初始配置 */
+  /** 初始Configure */
   initialConfig?: Partial<AccessibilityConfig>;
-  /** 事件處理器 */
+  /** EventHandle器 */
   onEvent?: (event: AccessibilityEvent) => void;
-  /** 錯誤處理器 */
+  /** ErrorHandle器 */
   onError?: (error: Error) => void;
 }
 
@@ -49,7 +49,7 @@ export const _useAccessibility = (
 ): UseAccessibilityReturn => {
   const _dispatch = useDispatch();
 
-  // 從 Redux 獲取狀態
+  // 從 Redux GetStatus
   const _state = useSelector(selectAccessibilityState);
   const _accessibilityConfig = useSelector(selectAccessibilityConfig);
   const _focusManager = useSelector(selectFocusManager);
@@ -69,7 +69,7 @@ export const _useAccessibility = (
 
   const _initializedRef = useRef(false);
 
-  // 焦點管理
+  // 焦點Manage
   const _focusManagerMethods = useMemo(
     () => ({
       focus: useCallback((elementId: string) => {
@@ -117,7 +117,7 @@ export const _useAccessibility = (
     [focusManager.restoreElement]
   );
 
-  // 鍵盤導航
+  // Key盤導航
   const _keyboardNavigationMethods = useMemo(
     () => ({
       enable: useCallback(() => {
@@ -166,7 +166,7 @@ export const _useAccessibility = (
       ),
 
       announce: useCallback((text: string) => {
-        // 創建 aria-live 區域進行公告
+        // Create aria-live District域進Row公告
         const _announcement = document.createElement('div');
         announcement.setAttribute('aria-live', 'assertive');
         announcement.setAttribute('aria-atomic', 'true');
@@ -205,7 +205,7 @@ export const _useAccessibility = (
     []
   );
 
-  // 可訪問性工具
+  // 可訪問性Tool
   const _tools = useMemo(
     () => ({
       runTest: useCallback(
@@ -250,7 +250,7 @@ export const _useAccessibility = (
     [accessibilityIssues, accessibilitySuggestions, config]
   );
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback(
     async (newConfig: Partial<AccessibilityConfig>) => {
       try {
@@ -264,7 +264,7 @@ export const _useAccessibility = (
     [config]
   );
 
-  // 模式切換
+  // 模式Switch
   const _switchModeMethod = useCallback(
     (mode: 'default' | 'highContrast' | 'reducedMotion' | 'largeText') => {
       console.log('Switch mode:', mode);
@@ -272,7 +272,7 @@ export const _useAccessibility = (
     []
   );
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (config?.autoInitialize && !initializedRef.current) {
       try {
@@ -286,7 +286,7 @@ export const _useAccessibility = (
     }
   }, [config]);
 
-  // 應用可訪問性樣式
+  // Apply可訪問性樣式
   useEffect(() => {
     const _styleElement = document.createElement('style');
 
@@ -364,7 +364,7 @@ export const _useAccessibility = (
     accessibilityConfig.focusManager,
   ]);
 
-  // 返回 Hook 接口
+  // Return Hook Interface
   return {
     state,
     focusManager: focusManagerMethods,
@@ -376,5 +376,5 @@ export const _useAccessibility = (
   };
 };
 
-// 導出 Hook
+// Export Hook
 export default useAccessibility;

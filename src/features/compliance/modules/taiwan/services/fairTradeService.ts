@@ -1,4 +1,4 @@
-// 台灣公平交易法服務實現
+// 台灣公平交易法Service實現
 // Taiwan Fair Trade Act Service Implementation
 
 import type {
@@ -63,7 +63,7 @@ export class TaiwanFairTradeService {
     const violations: TaiwanFairTradeViolation[] = [];
     const recommendations: string[] = [];
 
-    // 驗證基本要求
+    // Verify基本要求
     if (!practice.description || practice.description.trim().length === 0) {
       violations.push(
         this.createViolation(
@@ -106,7 +106,7 @@ export class TaiwanFairTradeService {
       recommendations.push('請列出具體的合規要求');
     }
 
-    // 根據行為類型進行特定驗證
+    // Root據Row為Class型進RowSpecificVerify
     switch (practice.practiceType) {
       case TaiwanFairTradePracticeType.MONOPOLY:
         if (practice.marketImpact === TaiwanMarketImpact.SEVERE) {
@@ -169,7 +169,7 @@ export class TaiwanFairTradeService {
         break;
     }
 
-    // 記錄審計追蹤
+    // Record審計Trace
     this.createAuditTrail(
       'validate_fair_trade_practice',
       'TaiwanFairTradePractice',
@@ -207,7 +207,7 @@ export class TaiwanFairTradeService {
     const violations: TaiwanFairTradeViolation[] = [];
     const recommendations: string[] = [];
 
-    // 驗證基本要求
+    // Verify基本要求
     if (!merger.parties || merger.parties.length < 2) {
       violations.push(
         this.createViolation(
@@ -247,7 +247,7 @@ export class TaiwanFairTradeService {
       recommendations.push('建議重新評估合併對市場競爭的影響');
     }
 
-    // 根據合併類型進行特定驗證
+    // Root據MergeClass型進RowSpecificVerify
     switch (merger.mergerType) {
       case TaiwanMergerType.HORIZONTAL:
         if (merger.marketShare > 30) {
@@ -278,7 +278,7 @@ export class TaiwanFairTradeService {
         break;
     }
 
-    // 記錄審計追蹤
+    // Record審計Trace
     this.createAuditTrail(
       'validate_merger_control',
       'TaiwanMergerControl',
@@ -316,7 +316,7 @@ export class TaiwanFairTradeService {
     const violations: TaiwanFairTradeViolation[] = [];
     const recommendations: string[] = [];
 
-    // 驗證基本要求
+    // Verify基本要求
     if (
       !competition.description ||
       competition.description.trim().length === 0
@@ -347,7 +347,7 @@ export class TaiwanFairTradeService {
       recommendations.push('請明確指定受影響的當事人');
     }
 
-    // 根據不公平競爭類型進行特定驗證
+    // Root據不公平競爭Class型進RowSpecificVerify
     switch (competition.competitionType) {
       case TaiwanUnfairCompetitionType.TRADE_SECRET_MISAPPROPRIATION:
         violations.push(
@@ -398,7 +398,7 @@ export class TaiwanFairTradeService {
         break;
     }
 
-    // 記錄審計追蹤
+    // Record審計Trace
     this.createAuditTrail(
       'validate_unfair_competition',
       'TaiwanUnfairCompetition',
@@ -436,7 +436,7 @@ export class TaiwanFairTradeService {
     data?: unknown;
   } {
     try {
-      // 檢查是否已存在相同合併申請
+      // CheckYesNo已存在相同Merge申請
       const _existingMerger = this.mergers.find(
         m =>
           m.parties.sort().join(',') === merger.parties.sort().join(',') &&
@@ -450,7 +450,7 @@ export class TaiwanFairTradeService {
         };
       }
 
-      // 進行合規性檢查
+      // 進Row合規性Check
       const _complianceResult = this.validateMergerControl(merger);
 
       if (
@@ -511,7 +511,7 @@ export class TaiwanFairTradeService {
 
       return {
         success: false,
-        message: '處理合併申請時發生錯誤',
+        message: 'Handle合併申請時發生Error',
       };
     }
   }
@@ -570,7 +570,7 @@ export class TaiwanFairTradeService {
 
       return {
         success: false,
-        message: '更新合併狀態時發生錯誤',
+        message: 'Update合併狀態時發生Error',
       };
     }
   }

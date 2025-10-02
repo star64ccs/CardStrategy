@@ -1,6 +1,6 @@
 /**
  * 前端性能優化器
- * 提供內存監控、任務延遲、批量處理等功能
+ * 提供MemoryMonitor、Task延遲、BatchHandle等功能
  */
 export class PerformanceOptimizer {
   private static instance: PerformanceOptimizer;
@@ -9,11 +9,11 @@ export class PerformanceOptimizer {
   private isProcessing = false;
 
   private constructor() {
-    // 私有構造函數，實現單例模式
+    // Private構造Function，實現單例模式
   }
 
   /**
-   * 獲取單例實例
+   * Get單例Instance
    */
   public static getInstance(): PerformanceOptimizer {
     if (!PerformanceOptimizer.instance) {
@@ -23,7 +23,7 @@ export class PerformanceOptimizer {
   }
 
   /**
-   * 獲取內存使用情況
+   * GetMemory使用情況
    */
   public static getMemoryUsage(): {
     used: number;
@@ -44,7 +44,7 @@ export class PerformanceOptimizer {
   }
 
   /**
-   * 延遲執行任務
+   * 延遲執RowTask
    */
   public static deferTask(task: () => void): void {
     const _optimizer = PerformanceOptimizer.getInstance();
@@ -56,7 +56,7 @@ export class PerformanceOptimizer {
   }
 
   /**
-   * 批量處理任務
+   * BatchHandleTask
    */
   public static batchTasks(tasks: (() => void)[]): void {
     const _optimizer = PerformanceOptimizer.getInstance();
@@ -68,7 +68,7 @@ export class PerformanceOptimizer {
   }
 
   /**
-   * 處理延遲任務
+   * Handle延遲Task
    */
   private async processDeferredTasks(): Promise<void> {
     this.isProcessing = true;
@@ -84,7 +84,7 @@ export class PerformanceOptimizer {
             }, 0);
           });
         } catch (error) {
-          console.error('延遲任務執行失敗:', error);
+          console.error('延遲任務執行Failed:', error);
         }
       }
     }
@@ -93,7 +93,7 @@ export class PerformanceOptimizer {
   }
 
   /**
-   * 處理批量任務
+   * HandleBatchTask
    */
   private async processBatchTasks(): Promise<void> {
     this.isProcessing = true;
@@ -101,7 +101,7 @@ export class PerformanceOptimizer {
     const _tasks = [...this.batchTasks];
     this.batchTasks = [];
 
-    // 並行執行所有任務
+    // Parallel執Row所有Task
     await Promise.all(
       tasks.map(async task => {
         try {
@@ -112,7 +112,7 @@ export class PerformanceOptimizer {
             }, 0);
           });
         } catch (error) {
-          console.error('批量任務執行失敗:', error);
+          console.error('批量任務執行Failed:', error);
         }
       })
     );
@@ -121,7 +121,7 @@ export class PerformanceOptimizer {
   }
 
   /**
-   * 測量函數執行時間
+   * 測量Function執RowTime
    */
   public static measureExecutionTime<T>(fn: () => T): {
     result: T;
@@ -138,7 +138,7 @@ export class PerformanceOptimizer {
   }
 
   /**
-   * 異步測量函數執行時間
+   * Async測量Function執RowTime
    */
   public static async measureAsyncExecutionTime<T>(
     fn: () => Promise<T>
@@ -154,7 +154,7 @@ export class PerformanceOptimizer {
   }
 
   /**
-   * 清理資源
+   * 清理Resource
    */
   public static cleanup(): void {
     const _optimizer = PerformanceOptimizer.getInstance();
@@ -164,7 +164,7 @@ export class PerformanceOptimizer {
   }
 }
 
-// 導出靜態方法作為全局函數
+// ExportStaticMethod作為GlobalFunction
 export const { getMemoryUsage } = PerformanceOptimizer;
 export const { deferTask } = PerformanceOptimizer;
 export const { batchTasks } = PerformanceOptimizer;

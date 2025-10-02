@@ -407,7 +407,7 @@ describe('PrivacyScreen', () => {
 
       renderPrivacyScreen();
 
-      expect(screen.getByText('載入失敗')).toBeTruthy();
+      expect(screen.getByText('載入Failed')).toBeTruthy();
     });
   });
 

@@ -31,7 +31,7 @@ describe('MarketService', () => {
   });
 
   describe('getMarketData', () => {
-    it('應該成功獲取市場數據', async () => {
+    it('應該SuccessGet市場數據', async () => {
       const _mockMarketData = {
         totalVolume: 1000000,
         totalTransactions: 5000,
@@ -74,7 +74,7 @@ describe('MarketService', () => {
       const _mockApiResponse = {
         success: true,
         data: mockMarketData,
-        message: '獲取成功',
+        message: 'GetSuccess',
       };
 
       mockApiService.get.mockResolvedValue(mockApiResponse);
@@ -94,21 +94,21 @@ describe('MarketService', () => {
       expect(mockLogger.error).not.toHaveBeenCalled();
     });
 
-    it('應該處理數據驗證失敗', async () => {
+    it('應該Handle數據VerifyFailed', async () => {
       const _mockApiResponse = {
         success: true,
         data: { invalid: 'data' },
-        message: '獲取成功',
+        message: 'GetSuccess',
       };
 
       mockApiService.get.mockResolvedValue(mockApiResponse);
       mockValidateApiResponse.mockReturnValue({
         isValid: false,
-        errorMessage: '市場數據格式錯誤',
+        errorMessage: '市場數據格式Error',
       });
 
       await expect(marketService.getMarketData()).rejects.toThrow(
-        '市場數據格式錯誤'
+        '市場數據格式Error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Get market data error:',
@@ -116,20 +116,20 @@ describe('MarketService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      const _error = new Error('API 錯誤');
+    it('應該Handle API Error', async () => {
+      const _error = new Error('API Error');
       mockApiService.get.mockRejectedValue(error);
 
-      await expect(marketService.getMarketData()).rejects.toThrow('API 錯誤');
+      await expect(marketService.getMarketData()).rejects.toThrow('API Error');
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Get market data error:',
-        { error: 'API 錯誤' }
+        { error: 'API Error' }
       );
     });
   });
 
   describe('getMarketTrends', () => {
-    it('應該成功獲取市場趨勢', async () => {
+    it('應該SuccessGet市場趨勢', async () => {
       const _mockTrends = [
         {
           period: '7d' as const,
@@ -143,7 +143,7 @@ describe('MarketService', () => {
       const _mockApiResponse = {
         success: true,
         data: mockTrends,
-        message: '獲取成功',
+        message: 'GetSuccess',
       };
 
       mockValidateInput.mockReturnValue({
@@ -171,7 +171,7 @@ describe('MarketService', () => {
       );
     });
 
-    it('應該處理輸入驗證失敗', async () => {
+    it('應該Handle輸入VerifyFailed', async () => {
       mockValidateInput.mockReturnValue({
         isValid: false,
         errorMessage: '無效的時間週期',
@@ -183,11 +183,11 @@ describe('MarketService', () => {
       expect(mockApiService.get).not.toHaveBeenCalled();
     });
 
-    it('應該處理響應驗證失敗', async () => {
+    it('應該Handle響應VerifyFailed', async () => {
       const _mockApiResponse = {
         success: true,
         data: [{ invalid: 'trend' }],
-        message: '獲取成功',
+        message: 'GetSuccess',
       };
 
       mockValidateInput.mockReturnValue({
@@ -197,11 +197,11 @@ describe('MarketService', () => {
       mockApiService.get.mockResolvedValue(mockApiResponse);
       mockValidateApiResponse.mockReturnValue({
         isValid: false,
-        errorMessage: '趨勢數據格式錯誤',
+        errorMessage: '趨勢數據格式Error',
       });
 
       await expect(marketService.getMarketTrends('7d')).rejects.toThrow(
-        '趨勢數據格式錯誤'
+        '趨勢數據格式Error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Get market trends error:',
@@ -209,8 +209,8 @@ describe('MarketService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      const _error = new Error('API 錯誤');
+    it('應該Handle API Error', async () => {
+      const _error = new Error('API Error');
       mockValidateInput.mockReturnValue({
         isValid: true,
         data: { period: '7d' },
@@ -218,11 +218,11 @@ describe('MarketService', () => {
       mockApiService.get.mockRejectedValue(error);
 
       await expect(marketService.getMarketTrends('7d')).rejects.toThrow(
-        'API 錯誤'
+        'API Error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Get market trends error:',
-        { error: 'API 錯誤' }
+        { error: 'API Error' }
       );
     });
 
@@ -239,7 +239,7 @@ describe('MarketService', () => {
       const _mockApiResponse = {
         success: true,
         data: mockTrends,
-        message: '獲取成功',
+        message: 'GetSuccess',
       };
 
       mockValidateInput.mockReturnValue({
@@ -261,7 +261,7 @@ describe('MarketService', () => {
   });
 
   describe('getMarketAnalysis', () => {
-    it('應該成功獲取市場分析', async () => {
+    it('應該SuccessGet市場分析', async () => {
       const _mockAnalysis = {
         sentiment: 'bullish' as const,
         confidence: 0.75,
@@ -277,7 +277,7 @@ describe('MarketService', () => {
       const _mockApiResponse = {
         success: true,
         data: mockAnalysis,
-        message: '獲取成功',
+        message: 'GetSuccess',
       };
 
       mockApiService.get.mockResolvedValue(mockApiResponse);
@@ -296,21 +296,21 @@ describe('MarketService', () => {
       );
     });
 
-    it('應該處理分析數據驗證失敗', async () => {
+    it('應該Handle分析數據VerifyFailed', async () => {
       const _mockApiResponse = {
         success: true,
         data: { invalid: 'analysis' },
-        message: '獲取成功',
+        message: 'GetSuccess',
       };
 
       mockApiService.get.mockResolvedValue(mockApiResponse);
       mockValidateApiResponse.mockReturnValue({
         isValid: false,
-        errorMessage: '分析數據格式錯誤',
+        errorMessage: '分析數據格式Error',
       });
 
       await expect(marketService.getMarketAnalysis()).rejects.toThrow(
-        '分析數據格式錯誤'
+        '分析數據格式Error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Get market analysis error:',
@@ -318,22 +318,22 @@ describe('MarketService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      const _error = new Error('API 錯誤');
+    it('應該Handle API Error', async () => {
+      const _error = new Error('API Error');
       mockApiService.get.mockRejectedValue(error);
 
       await expect(marketService.getMarketAnalysis()).rejects.toThrow(
-        'API 錯誤'
+        'API Error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Get market analysis error:',
-        { error: 'API 錯誤' }
+        { error: 'API Error' }
       );
     });
   });
 
   describe('getPricePredictions', () => {
-    it('應該成功獲取價格預測', async () => {
+    it('應該SuccessGet價格預測', async () => {
       const _cardIds = ['card-1', 'card-2'];
       const _mockPredictions = [
         {
@@ -359,7 +359,7 @@ describe('MarketService', () => {
       const _mockApiResponse = {
         success: true,
         data: mockPredictions,
-        message: '預測成功',
+        message: '預測Success',
       };
 
       mockValidateInput.mockReturnValue({
@@ -387,7 +387,7 @@ describe('MarketService', () => {
       );
     });
 
-    it('應該處理輸入驗證失敗 - 空數組', async () => {
+    it('應該Handle輸入VerifyFailed - 空數組', async () => {
       mockValidateInput.mockReturnValue({
         isValid: false,
         errorMessage: '至少需要一個卡牌 ID',
@@ -399,7 +399,7 @@ describe('MarketService', () => {
       expect(mockApiService.post).not.toHaveBeenCalled();
     });
 
-    it('應該處理輸入驗證失敗 - 無效 ID', async () => {
+    it('應該Handle輸入VerifyFailed - 無效 ID', async () => {
       mockValidateInput.mockReturnValue({
         isValid: false,
         errorMessage: '無效的卡牌 ID',
@@ -411,12 +411,12 @@ describe('MarketService', () => {
       expect(mockApiService.post).not.toHaveBeenCalled();
     });
 
-    it('應該處理響應驗證失敗', async () => {
+    it('應該Handle響應VerifyFailed', async () => {
       const _cardIds = ['card-1'];
       const _mockApiResponse = {
         success: true,
         data: [{ invalid: 'prediction' }],
-        message: '預測成功',
+        message: '預測Success',
       };
 
       mockValidateInput.mockReturnValue({
@@ -426,11 +426,11 @@ describe('MarketService', () => {
       mockApiService.post.mockResolvedValue(mockApiResponse);
       mockValidateApiResponse.mockReturnValue({
         isValid: false,
-        errorMessage: '預測數據格式錯誤',
+        errorMessage: '預測數據格式Error',
       });
 
       await expect(marketService.getPricePredictions(cardIds)).rejects.toThrow(
-        '預測數據格式錯誤'
+        '預測數據格式Error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Get price predictions error:',
@@ -438,9 +438,9 @@ describe('MarketService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
+    it('應該Handle API Error', async () => {
       const _cardIds = ['card-1'];
-      const _error = new Error('API 錯誤');
+      const _error = new Error('API Error');
 
       mockValidateInput.mockReturnValue({
         isValid: true,
@@ -449,11 +449,11 @@ describe('MarketService', () => {
       mockApiService.post.mockRejectedValue(error);
 
       await expect(marketService.getPricePredictions(cardIds)).rejects.toThrow(
-        'API 錯誤'
+        'API Error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
         '❌ Get price predictions error:',
-        { error: 'API 錯誤' }
+        { error: 'API Error' }
       );
     });
   });

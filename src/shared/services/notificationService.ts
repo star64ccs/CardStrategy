@@ -3,8 +3,8 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 通知服務
- * 處理通知相關功能
+ * NotificationService
+ * HandleNotification相Off功能
  */
 export class NotificationService {
   private static instance: NotificationService;
@@ -19,21 +19,21 @@ export class NotificationService {
   }
 
   /**
-   * 初始化通知服務
+   * InitializeNotificationService
    */
   async initialize(): Promise<void> {
     try {
-      logger.info('初始化通知服務');
-      // 這裡可以添加通知服務的初始化邏輯
-      // 例如：註冊推送通知、設置通知權限等
+      logger.info('Initialize通知Service');
+      // 這裡可以AddNotificationService的Initialize邏輯
+      // 例如：RegisterPushNotification、SettingsNotification權限等
     } catch (error) {
-      logger.error('初始化通知服務失敗:', { error });
+      logger.error('Initialize通知ServiceFailed:', { error });
       throw error;
     }
   }
 
   /**
-   * 獲取用戶通知
+   * GetUserNotification
    */
   async getUserNotifications(): Promise<Notification[]> {
     try {
@@ -42,14 +42,14 @@ export class NotificationService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('獲取通知失敗');
+        throw new Error('Get通知Failed');
       }
     } catch (error) {
-      logger.error('獲取通知失敗:', { error });
+      logger.error('Get通知Failed:', { error });
       throw error;
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _notificationService = NotificationService.getInstance();

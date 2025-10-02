@@ -1,0 +1,498 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+// 定義會話相關類型
+export interface UserSession {
+  id: string;
+  userId: string;
+  token: string;
+  refreshToken: string;
+  expiresAt: string;
+  createdAt: string;
+  lastActivity: string;
+  deviceInfo: {
+    userAgent: string;
+    platform: string;
+    language: string;
+  };
+  ipAddress: string;
+  isActive: boolean;
+}
+
+export interface SessionActivity {
+  id: string;
+  sessionId: string;
+  action: string;
+  timestamp: string;
+  details: Record<string, any>;
+  ipAddress: string;
+  userAgent: string;
+}
+
+export interface SessionSettings {
+  autoRefresh: boolean;
+  refreshInterval: number;
+  maxIdleTime: number;
+  requireReauth: boolean;
+  rememberMe: boolean;
+  securityLevel: 'low' | 'medium' | 'high';
+}
+
+export interface SessionStats {
+  totalSessions: number;
+  activeSessions: number;
+  averageDuration: number;
+  mostActiveHour: number;
+  deviceBreakdown: {
+    mobile: number;
+    desktop: number;
+    tablet: number;
+  };
+}
+
+// 會話狀態接口
+export interface SessionState {
+  currentSession: UserSession | null;
+  sessions: UserSession[];
+  activities: SessionActivity[];
+  settings: SessionSettings;
+  stats: SessionStats | null;
+  isLoading: boolean;
+  isRefreshing: boolean;
+  isCreating: boolean;
+  error: string | null;
+  lastActivity: string;
+  isOnline: boolean;
+  reconnectAttempts: number;
+}
+
+// 異步 Action Creators
+export const initializeSession = createAsyncThunk(
+  'session/initializeSession',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬初始化會話
+      const mockSession: UserSession = {
+        id: 'session-1',
+        userId: 'user-1',
+        token: 'mock-jwt-token',
+        refreshToken: 'mock-refresh-token',
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        createdAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        deviceInfo: {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          language: navigator.language,
+        },
+        ipAddress: '192.168.1.1',
+        isActive: true,
+      };
+
+      const mockSettings: SessionSettings = {
+        autoRefresh: true,
+        refreshInterval: 30 * 60 * 1000, // 30 minutes
+        maxIdleTime: 2 * 60 * 60 * 1000, // 2 hours
+        requireReauth: false,
+        rememberMe: true,
+        securityLevel: 'medium',
+      };
+
+      return { session: mockSession, settings: mockSettings };
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '初始化會話失敗');
+    }
+  }
+);
+
+export const createSession = createAsyncThunk(
+  'session/createSession',
+  async (
+    credentials: {
+      email: string;
+      password: string;
+      rememberMe?: boolean;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬創建會話
+      const newSession: UserSession = {
+        id: Date.now().toString(),
+        userId: 'user-1',
+        token: 'new-jwt-token',
+        refreshToken: 'new-refresh-token',
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        createdAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        deviceInfo: {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          language: navigator.language,
+        },
+        ipAddress: '192.168.1.1',
+        isActive: true,
+      };
+
+      return newSession;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '創建會話失敗');
+    }
+  }
+);
+
+export const refreshSession = createAsyncThunk(
+  'session/refreshSession',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬刷新會話
+      const refreshedSession: UserSession = {
+        id: 'session-1',
+        userId: 'user-1',
+        token: 'refreshed-jwt-token',
+        refreshToken: 'refreshed-refresh-token',
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        createdAt: new Date().toISOString(),
+        lastActivity: new Date().toISOString(),
+        deviceInfo: {
+          userAgent: navigator.userAgent,
+          platform: navigator.platform,
+          language: navigator.language,
+        },
+        ipAddress: '192.168.1.1',
+        isActive: true,
+      };
+
+      return refreshedSession;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '刷新會話失敗');
+    }
+  }
+);
+
+export const destroySession = createAsyncThunk(
+  'session/destroySession',
+  async (sessionId: string, { rejectWithValue }) => {
+    try {
+      // 模擬銷毀會話
+      return sessionId;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '銷毀會話失敗');
+    }
+  }
+);
+
+export const trackActivity = createAsyncThunk(
+  'session/trackActivity',
+  async (
+    activity: {
+      action: string;
+      details: Record<string, any>;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬追蹤活動
+      const newActivity: SessionActivity = {
+        id: Date.now().toString(),
+        sessionId: 'session-1',
+        action: activity.action,
+        timestamp: new Date().toISOString(),
+        details: activity.details,
+        ipAddress: '192.168.1.1',
+        userAgent: navigator.userAgent,
+      };
+
+      return newActivity;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '追蹤活動失敗');
+    }
+  }
+);
+
+export const fetchSessionStats = createAsyncThunk(
+  'session/fetchSessionStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬獲取會話統計
+      const stats: SessionStats = {
+        totalSessions: 150,
+        activeSessions: 5,
+        averageDuration: 45 * 60 * 1000, // 45 minutes
+        mostActiveHour: 14, // 2 PM
+        deviceBreakdown: {
+          mobile: 60,
+          desktop: 35,
+          tablet: 5,
+        },
+      };
+
+      return stats;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '獲取會話統計失敗');
+    }
+  }
+);
+
+export const updateSessionSettings = createAsyncThunk(
+  'session/updateSessionSettings',
+  async (settings: Partial<SessionSettings>, { rejectWithValue }) => {
+    try {
+      // 模擬更新會話設置
+      const updatedSettings: SessionSettings = {
+        autoRefresh: true,
+        refreshInterval: 30 * 60 * 1000,
+        maxIdleTime: 2 * 60 * 60 * 1000,
+        requireReauth: false,
+        rememberMe: true,
+        securityLevel: 'medium',
+        ...settings,
+      };
+
+      return updatedSettings;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '更新會話設置失敗');
+    }
+  }
+);
+
+export const validateSession = createAsyncThunk(
+  'session/validateSession',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬驗證會話
+      const isValid = true;
+      return { isValid, timestamp: new Date().toISOString() };
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '驗證會話失敗');
+    }
+  }
+);
+
+// 初始狀態
+const initialState: SessionState = {
+  currentSession: null,
+  sessions: [],
+  activities: [],
+  settings: {
+    autoRefresh: true,
+    refreshInterval: 30 * 60 * 1000,
+    maxIdleTime: 2 * 60 * 60 * 1000,
+    requireReauth: false,
+    rememberMe: true,
+    securityLevel: 'medium',
+  },
+  stats: null,
+  isLoading: false,
+  isRefreshing: false,
+  isCreating: false,
+  error: null,
+  lastActivity: new Date().toISOString(),
+  isOnline: navigator.onLine,
+  reconnectAttempts: 0,
+};
+
+// 創建 slice
+const sessionSlice = createSlice({
+  name: 'session',
+  initialState,
+  reducers: {
+    updateLastActivity: state => {
+      state.lastActivity = new Date().toISOString();
+      if (state.currentSession) {
+        state.currentSession.lastActivity = state.lastActivity;
+      }
+    },
+    setOnlineStatus: (state, action: PayloadAction<boolean>) => {
+      state.isOnline = action.payload;
+    },
+    incrementReconnectAttempts: state => {
+      state.reconnectAttempts += 1;
+    },
+    resetReconnectAttempts: state => {
+      state.reconnectAttempts = 0;
+    },
+    clearError: state => {
+      state.error = null;
+    },
+    clearActivities: state => {
+      state.activities = [];
+    },
+    setCurrentSession: (state, action: PayloadAction<UserSession | null>) => {
+      state.currentSession = action.payload;
+    },
+    addSession: (state, action: PayloadAction<UserSession>) => {
+      state.sessions.push(action.payload);
+    },
+    removeSession: (state, action: PayloadAction<string>) => {
+      state.sessions = state.sessions.filter(s => s.id !== action.payload);
+    },
+  },
+  extraReducers: builder => {
+    // Initialize Session
+    builder
+      .addCase(initializeSession.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(initializeSession.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.currentSession = action.payload.session;
+        state.settings = action.payload.settings;
+        state.error = null;
+      })
+      .addCase(initializeSession.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Create Session
+    builder
+      .addCase(createSession.pending, state => {
+        state.isCreating = true;
+        state.error = null;
+      })
+      .addCase(createSession.fulfilled, (state, action) => {
+        state.isCreating = false;
+        state.currentSession = action.payload;
+        state.sessions.push(action.payload);
+        state.error = null;
+      })
+      .addCase(createSession.rejected, (state, action) => {
+        state.isCreating = false;
+        state.error = action.payload as string;
+      });
+
+    // Refresh Session
+    builder
+      .addCase(refreshSession.pending, state => {
+        state.isRefreshing = true;
+        state.error = null;
+      })
+      .addCase(refreshSession.fulfilled, (state, action) => {
+        state.isRefreshing = false;
+        state.currentSession = action.payload;
+        const index = state.sessions.findIndex(s => s.id === action.payload.id);
+        if (index !== -1) {
+          state.sessions[index] = action.payload;
+        }
+        state.error = null;
+      })
+      .addCase(refreshSession.rejected, (state, action) => {
+        state.isRefreshing = false;
+        state.error = action.payload as string;
+      });
+
+    // Destroy Session
+    builder
+      .addCase(destroySession.fulfilled, (state, action) => {
+        if (state.currentSession?.id === action.payload) {
+          state.currentSession = null;
+        }
+        state.sessions = state.sessions.filter(s => s.id !== action.payload);
+      })
+      .addCase(destroySession.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Track Activity
+    builder
+      .addCase(trackActivity.fulfilled, (state, action) => {
+        state.activities.push(action.payload);
+        state.lastActivity = action.payload.timestamp;
+        if (state.currentSession) {
+          state.currentSession.lastActivity = action.payload.timestamp;
+        }
+      })
+      .addCase(trackActivity.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Fetch Session Stats
+    builder
+      .addCase(fetchSessionStats.fulfilled, (state, action) => {
+        state.stats = action.payload;
+      })
+      .addCase(fetchSessionStats.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Update Session Settings
+    builder
+      .addCase(updateSessionSettings.fulfilled, (state, action) => {
+        state.settings = action.payload;
+      })
+      .addCase(updateSessionSettings.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Validate Session
+    builder
+      .addCase(validateSession.fulfilled, (state, action) => {
+        if (action.payload.isValid) {
+          state.lastActivity = action.payload.timestamp;
+          if (state.currentSession) {
+            state.currentSession.lastActivity = action.payload.timestamp;
+          }
+        } else {
+          state.currentSession = null;
+        }
+      })
+      .addCase(validateSession.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+  },
+});
+
+// 導出 actions
+export const {
+  updateLastActivity,
+  setOnlineStatus,
+  incrementReconnectAttempts,
+  resetReconnectAttempts,
+  clearError,
+  clearActivities,
+  setCurrentSession,
+  addSession,
+  removeSession,
+} = sessionSlice.actions;
+
+// 導出 selectors
+export const selectCurrentSession = (state: { session: SessionState }) =>
+  state.session.currentSession;
+
+export const selectSessions = (state: { session: SessionState }) =>
+  state.session.sessions;
+
+export const selectSessionActivities = (state: { session: SessionState }) =>
+  state.session.activities;
+
+export const selectSessionSettings = (state: { session: SessionState }) =>
+  state.session.settings;
+
+export const selectSessionStats = (state: { session: SessionState }) =>
+  state.session.stats;
+
+export const selectLastActivity = (state: { session: SessionState }) =>
+  state.session.lastActivity;
+
+export const selectIsOnline = (state: { session: SessionState }) =>
+  state.session.isOnline;
+
+export const selectReconnectAttempts = (state: { session: SessionState }) =>
+  state.session.reconnectAttempts;
+
+export const selectIsSessionLoading = (state: { session: SessionState }) =>
+  state.session.isLoading;
+
+export const selectIsRefreshing = (state: { session: SessionState }) =>
+  state.session.isRefreshing;
+
+export const selectIsCreating = (state: { session: SessionState }) =>
+  state.session.isCreating;
+
+export const selectSessionError = (state: { session: SessionState }) =>
+  state.session.error;
+
+// 導出 reducer
+export default sessionSlice.reducer;

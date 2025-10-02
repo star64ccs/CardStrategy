@@ -32,7 +32,7 @@ export const _useI18n = (): I18nContextValue => {
   const _dispatch = useAppDispatch();
   const { t } = useTranslation();
 
-  // 從 Redux store 獲取狀態
+  // 從 Redux store GetStatus
   const _currentLanguage = useSelector(selectCurrentLanguage);
   const _availableLanguages = useSelector(selectAvailableLanguages);
   const _isInitialized = useSelector(selectIsInitialized);
@@ -43,19 +43,19 @@ export const _useI18n = (): I18nContextValue => {
   const _lastUpdated = useSelector(selectLastUpdated);
   const _currentLanguageInfo = useSelector(selectCurrentLanguageInfo);
 
-  // 初始化 i18n 服務
+  // Initialize i18n Service
   const _initialize = useCallback(
     async (config?: unknown) => {
       try {
         await (dispatch(initializeI18n(config)) as any).unwrap();
       } catch (error) {
-        console.error('初始化 i18n 失敗:', error);
+        console.error('Initialize i18n Failed:', error);
       }
     },
     [dispatch]
   );
 
-  // 切換語言
+  // SwitchLanguage
   const _changeLanguageHandler = useCallback(
     async (language: string): Promise<LanguageChangeResponse> => {
       try {
@@ -68,20 +68,20 @@ export const _useI18n = (): I18nContextValue => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('切換語言失敗:', error);
+        console.error('切換語言Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 檢測語言
+  // 檢測Language
   const _detectLanguageHandler = useCallback(async () => {
     try {
       const _result = await (dispatch(detectLanguage()) as any).unwrap();
       return result;
     } catch (error) {
-      console.error('檢測語言失敗:', error);
+      console.error('檢測語言Failed:', error);
       throw error;
     }
   }, [dispatch]);
@@ -95,26 +95,26 @@ export const _useI18n = (): I18nContextValue => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('翻譯文本失敗:', error);
+        console.error('翻譯文本Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取翻譯統計
+  // Get翻譯Statistics
   const _getTranslationStatsHandler =
     useCallback(async (): Promise<TranslationStats> => {
       try {
         const _result = await (dispatch(getTranslationStats()) as any).unwrap();
         return result;
       } catch (error) {
-        console.error('獲取翻譯統計失敗:', error);
+        console.error('Get翻譯統計Failed:', error);
         throw error;
       }
     }, [dispatch]);
 
-  // 格式化日期
+  // FormatDay
   const _formatDate = useCallback(
     (date: Date, options?: Intl.DateTimeFormatOptions) => {
       return new Intl.DateTimeFormat(currentLanguage, options).format(date);
@@ -122,7 +122,7 @@ export const _useI18n = (): I18nContextValue => {
     [currentLanguage]
   );
 
-  // 格式化數字
+  // Format數字
   const _formatNumber = useCallback(
     (number: number, options?: Intl.NumberFormatOptions) => {
       return new Intl.NumberFormat(currentLanguage, options).format(number);
@@ -130,7 +130,7 @@ export const _useI18n = (): I18nContextValue => {
     [currentLanguage]
   );
 
-  // 格式化貨幣
+  // Format貨幣
   const _formatCurrency = useCallback(
     (amount: number, currency?: string) => {
       const _currencyCode = currency || 'USD';
@@ -142,7 +142,7 @@ export const _useI18n = (): I18nContextValue => {
     [currentLanguage]
   );
 
-  // 格式化相對時間
+  // Format相對Time
   const _formatRelativeTime = useCallback(
     (date: Date) => {
       const _now = new Date();
@@ -166,7 +166,7 @@ export const _useI18n = (): I18nContextValue => {
     [t]
   );
 
-  // 翻譯函數
+  // 翻譯Function
   const _translate = useCallback(
     (key: string, options?: TranslationRequest['options']) => {
       return t(key, options);
@@ -174,7 +174,7 @@ export const _useI18n = (): I18nContextValue => {
     [t]
   );
 
-  // 工具函數
+  // ToolFunction
   const _isRTL = useCallback((): boolean => {
     return isRTLValue;
   }, [isRTLValue]);
@@ -194,7 +194,7 @@ export const _useI18n = (): I18nContextValue => {
     };
   }, [lastUpdated]);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (!isInitialized) {
       initialize();
@@ -202,14 +202,14 @@ export const _useI18n = (): I18nContextValue => {
   }, [isInitialized, initialize]);
 
   return {
-    // 狀態
+    // Status
     currentLanguage,
     availableLanguages,
     isInitialized,
     isLoading,
     error,
 
-    // 方法
+    // Method
     changeLanguage: changeLanguageHandler,
     translate,
     formatNumber,
@@ -217,14 +217,14 @@ export const _useI18n = (): I18nContextValue => {
     formatDate,
     formatRelativeTime,
 
-    // 工具
+    // Tool
     isRTL,
     getDirection,
     getStats,
   };
 };
 
-// 語言管理 Hook
+// LanguageManage Hook
 export const _useLanguage = () => {
   const _dispatch = useAppDispatch();
   const _currentLanguage = useSelector(selectCurrentLanguage);
@@ -244,7 +244,7 @@ export const _useLanguage = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('切換語言失敗:', error);
+        console.error('切換語言Failed:', error);
         throw error;
       }
     },
@@ -256,7 +256,7 @@ export const _useLanguage = () => {
       const _result = await (dispatch(detectLanguage()) as any).unwrap();
       return result;
     } catch (error) {
-      console.error('檢測語言失敗:', error);
+      console.error('檢測語言Failed:', error);
       throw error;
     }
   }, [dispatch]);
@@ -284,7 +284,7 @@ export const _useI18nTranslation = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('翻譯文本失敗:', error);
+        console.error('翻譯文本Failed:', error);
         throw error;
       }
     },
@@ -297,7 +297,7 @@ export const _useI18nTranslation = () => {
         const _result = await (dispatch(getTranslationStats()) as any).unwrap();
         return result;
       } catch (error) {
-        console.error('獲取翻譯統計失敗:', error);
+        console.error('Get翻譯統計Failed:', error);
         throw error;
       }
     }, [dispatch]);
@@ -309,7 +309,7 @@ export const _useI18nTranslation = () => {
   };
 };
 
-// 格式化 Hook
+// Format Hook
 export const _useFormatting = () => {
   const _currentLanguage = useSelector(selectCurrentLanguage);
 
@@ -364,7 +364,7 @@ export const _useFormatting = () => {
   };
 };
 
-// 統計 Hook
+// Statistics Hook
 export const _useI18nStats = () => {
   const _dispatch = useAppDispatch();
   const _languageCount = useSelector(selectLanguageCount);
@@ -376,7 +376,7 @@ export const _useI18nStats = () => {
         const _result = await (dispatch(getTranslationStats()) as any).unwrap();
         return result;
       } catch (error) {
-        console.error('獲取翻譯統計失敗:', error);
+        console.error('Get翻譯統計Failed:', error);
         throw error;
       }
     }, [dispatch]);
@@ -386,7 +386,7 @@ export const _useI18nStats = () => {
       const _stats = await (dispatch(getTranslationStats()) as any).unwrap();
       return stats?.missingKeys || 0;
     } catch (error) {
-      console.error('獲取缺失翻譯失敗:', error);
+      console.error('Get缺失翻譯Failed:', error);
       return 0;
     }
   }, [dispatch]);
@@ -399,7 +399,7 @@ export const _useI18nStats = () => {
   };
 };
 
-// 工具 Hook
+// Tool Hook
 export const _useI18nTools = () => {
   const _dispatch = useAppDispatch();
 
@@ -408,7 +408,7 @@ export const _useI18nTools = () => {
       try {
         await (dispatch(initializeI18n(config)) as any).unwrap();
       } catch (error) {
-        console.error('初始化 i18n 失敗:', error);
+        console.error('Initialize i18n Failed:', error);
       }
     },
     [dispatch]
@@ -419,7 +419,7 @@ export const _useI18nTools = () => {
   };
 };
 
-// 初始化 Hook
+// Initialize Hook
 export const _useI18nInitialization = () => {
   const _dispatch = useAppDispatch();
   const _isInitialized = useSelector(selectIsInitialized);
@@ -431,7 +431,7 @@ export const _useI18nInitialization = () => {
       try {
         await (dispatch(initializeI18n(config)) as any).unwrap();
       } catch (error) {
-        console.error('初始化 i18n 失敗:', error);
+        console.error('Initialize i18n Failed:', error);
       }
     },
     [dispatch]

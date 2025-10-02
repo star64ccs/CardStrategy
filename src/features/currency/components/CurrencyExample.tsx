@@ -61,7 +61,7 @@ const CurrencyExample: React.FC = () => {
     roundCurrency,
   } = useCurrencyTools();
 
-  // 本地狀態
+  // LocalStatus
   const [conversionAmount, setConversionAmount] = useState('100');
   const [fromCurrency, setFromCurrency] = useState('TWD');
   const [toCurrency, setToCurrency] = useState('USD');
@@ -74,7 +74,7 @@ const CurrencyExample: React.FC = () => {
   const [mostUsedCurrencies, setMostUsedCurrencies] = useState<any[]>([]);
   const [conversionTrend, setConversionTrend] = useState<any[]>([]);
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     loadStats();
   }, []);
@@ -93,16 +93,16 @@ const CurrencyExample: React.FC = () => {
       const _trend = getConversionTrend(7);
       setConversionTrend(trend);
     } catch (error) {
-      console.error('載入統計失敗:', error);
+      console.error('載入統計Failed:', error);
     }
   };
 
   const _handleCurrencyChange = async (currency: string) => {
     try {
       await changeCurrency(currency);
-      Alert.alert('成功', `貨幣已更改為 ${getCurrencyName(currency)}`);
+      Alert.alert('Success', `貨幣已更改為 ${getCurrencyName(currency)}`);
     } catch (error) {
-      Alert.alert('錯誤', `更改貨幣失敗: ${error}`);
+      Alert.alert('Error', `更改貨幣Failed: ${error}`);
     }
   };
 
@@ -110,7 +110,7 @@ const CurrencyExample: React.FC = () => {
     try {
       const _amount = parseFloat(conversionAmount);
       if (isNaN(amount) || amount <= 0) {
-        Alert.alert('錯誤', '請輸入有效的金額');
+        Alert.alert('Error', '請輸入有效的金額');
         return;
       }
 
@@ -126,14 +126,14 @@ const CurrencyExample: React.FC = () => {
       if (result.success && result.conversion) {
         const _conv = result.conversion;
         Alert.alert(
-          '轉換成功',
+          '轉換Success',
           `${conv.amount} ${conv.fromCurrency} = ${conv.convertedAmount} ${conv.toCurrency}\n匯率: ${conv.rate}\n手續費: ${conv.fees || 0}\n加價: ${conv.markup || 0}`
         );
       } else {
-        Alert.alert('錯誤', result.error || '轉換失敗');
+        Alert.alert('Error', result.error || '轉換Failed');
       }
     } catch (error) {
-      Alert.alert('錯誤', `轉換失敗: ${error}`);
+      Alert.alert('Error', `轉換Failed: ${error}`);
     }
   };
 
@@ -149,21 +149,21 @@ const CurrencyExample: React.FC = () => {
       if (result.success && result.conversion) {
         const _conv = result.conversion;
         Alert.alert(
-          '快速轉換成功',
+          '快速轉換Success',
           `${conv.amount} ${conv.fromCurrency} = ${conv.convertedAmount} ${conv.toCurrency}`
         );
       }
     } catch (error) {
-      Alert.alert('錯誤', `快速轉換失敗: ${error}`);
+      Alert.alert('Error', `快速轉換Failed: ${error}`);
     }
   };
 
   const _handleUpdateRates = async () => {
     try {
       await updateRates();
-      Alert.alert('成功', '匯率已更新');
+      Alert.alert('Success', '匯率已更新');
     } catch (error) {
-      Alert.alert('錯誤', `更新匯率失敗: ${error}`);
+      Alert.alert('Error', `Update匯率Failed: ${error}`);
     }
   };
 
@@ -177,7 +177,7 @@ const CurrencyExample: React.FC = () => {
         );
       }
     } catch (error) {
-      Alert.alert('錯誤', `獲取匯率失敗: ${error}`);
+      Alert.alert('Error', `Get匯率Failed: ${error}`);
     }
   };
 
@@ -194,7 +194,7 @@ const CurrencyExample: React.FC = () => {
         `原始金額: ${amount}\n格式化: ${formatted}\n解析: ${parsed}\n符號: ${symbol}\n名稱: ${name}`
       );
     } catch (error) {
-      Alert.alert('錯誤', `格式化測試失敗: ${error}`);
+      Alert.alert('Error', `格式化測試Failed: ${error}`);
     }
   };
 
@@ -219,7 +219,7 @@ const CurrencyExample: React.FC = () => {
         `${amount} ${fromCurrency} ≈ ${estimated} ${toCurrency}`
       );
     } catch (error) {
-      Alert.alert('錯誤', `估算失敗: ${error}`);
+      Alert.alert('Error', `估算Failed: ${error}`);
     }
   };
 
@@ -251,7 +251,7 @@ const CurrencyExample: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>💰 多幣種支持示例</Text>
 
-        {/* 當前貨幣信息 */}
+        {/* 當前貨幣Information */}
         <View style={styles.infoCard}>
           <Text style={styles.cardTitle}>當前貨幣</Text>
           <Text style={styles.infoText}>代碼: {currentCurrency}</Text>
@@ -266,7 +266,7 @@ const CurrencyExample: React.FC = () => {
           </Text>
         </View>
 
-        {/* 貨幣切換 */}
+        {/* 貨幣Switch */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>貨幣切換</Text>
           <View style={styles.currencyGrid}>
@@ -302,7 +302,7 @@ const CurrencyExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 貨幣轉換 */}
+        {/* 貨幣Convert */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>貨幣轉換</Text>
 
@@ -398,7 +398,7 @@ const CurrencyExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 匯率管理 */}
+        {/* 匯率Manage */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>匯率管理</Text>
           <View style={styles.buttonRow}>
@@ -411,7 +411,7 @@ const CurrencyExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 格式化測試 */}
+        {/* FormatTest */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>格式化測試</Text>
 
@@ -464,7 +464,7 @@ const CurrencyExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 統計信息 */}
+        {/* StatisticsInformation */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>統計信息</Text>
 
@@ -529,7 +529,7 @@ const CurrencyExample: React.FC = () => {
           </View>
         )}
 
-        {/* 轉換趨勢 */}
+        {/* Convert趨勢 */}
         {conversionTrend.length > 0 && (
           <View style={styles.card}>
             <Text style={styles.cardTitle}>轉換趨勢 (7天)</Text>
@@ -545,7 +545,7 @@ const CurrencyExample: React.FC = () => {
           </View>
         )}
 
-        {/* 最近轉換記錄 */}
+        {/* 最近ConvertRecord */}
         {recentConversions.length > 0 && (
           <View style={styles.card}>
             <Text style={styles.cardTitle}>最近轉換記錄</Text>

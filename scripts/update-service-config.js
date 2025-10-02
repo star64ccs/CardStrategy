@@ -2,28 +2,28 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 通用服務配置更新腳本
- * 支持更新所有免費服務的配置
+ * GenericServiceConfigureUpdate腳本
+ * SupportUpdate所有免費Service的Configure
  */
 
 // eslint-disable-next-line no-console
-console.log('🔧 服務配置更新工具...\n');
+console.log('🔧 ServiceConfigureUpdate工具...\n');
 
 const services = {
   mixpanel: {
     name: 'Mixpanel',
     required: ['projectToken', 'apiSecret'],
-    description: '用戶行為分析服務'
+    description: '用戶行為分析Service'
   },
   sendgrid: {
     name: 'SendGrid',
     required: ['apiKey'],
-    description: '郵件發送服務'
+    description: '郵件發送Service'
   },
   logrocket: {
     name: 'LogRocket',
     required: ['appId'],
-    description: '前端錯誤監控'
+    description: '前端Error監控'
   },
   slack: {
     name: 'Slack',
@@ -33,7 +33,7 @@ const services = {
   smtp: {
     name: 'SMTP',
     required: ['host', 'port', 'user', 'pass'],
-    description: '郵件發送服務'
+    description: '郵件發送Service'
   }
 };
 
@@ -48,21 +48,21 @@ function updateServiceConfig(serviceName, configData) {
   }
   
   try {
-    // 讀取現有配置
+    // Read現有Configure
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     
-    // 更新配置
+    // UpdateConfigure
     Object.assign(config, configData);
     config.status = 'active';
     config.lastUpdated = new Date().toISOString();
     config.notes.push(`${services[serviceName].name} 配置已更新`);
     
-    // 寫入更新後的配置
+    // WriteUpdate後的Configure
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
     // eslint-disable-next-line no-console
     console.log(`✅ ${services[serviceName].name} 配置文件已更新`);
     
-    // 更新備份
+    // UpdateBackup
     fs.copyFileSync(configPath, backupPath);
     // eslint-disable-next-line no-console
     console.log(`✅ ${services[serviceName].name} 備份文件已更新`);
@@ -70,7 +70,7 @@ function updateServiceConfig(serviceName, configData) {
     return true;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error(`❌ 更新 ${services[serviceName].name} 配置失敗:`, error.message);
+    console.error(`❌ Update ${services[serviceName].name} ConfigureFailed:`, error.message);
     return false;
   }
 }
@@ -83,7 +83,7 @@ function showUsage() {
   // eslint-disable-next-line no-console
   console.log('');
   // eslint-disable-next-line no-console
-  console.log('🔹 支持的服務:');
+  console.log('🔹 支持的Service:');
   Object.entries(services).forEach(([key, service]) => {
     // eslint-disable-next-line no-console
     console.log(`  ${key}: ${service.name} - ${service.description}`);
@@ -119,7 +119,7 @@ if (require.main === module) {
   
   if (!services[serviceName]) {
     // eslint-disable-next-line no-console
-    console.log(`❌ 不支持的服務: ${serviceName}`);
+    console.log(`❌ 不支持的Service: ${serviceName}`);
     showUsage();
     process.exit(1);
   }
@@ -127,7 +127,7 @@ if (require.main === module) {
   const service = services[serviceName];
   const configData = {};
   
-  // 解析參數
+  // ParseParameter
   for (let i = 1; i < args.length; i++) {
     const arg = args[i];
     const [key, value] = arg.split('=');
@@ -143,7 +143,7 @@ if (require.main === module) {
     configData[key] = value;
   }
   
-  // 檢查必需參數
+  // CheckRequiredParameter
   const missingParams = service.required.filter(param => !configData[param]);
   if (missingParams.length > 0) {
     // eslint-disable-next-line no-console
@@ -153,7 +153,7 @@ if (require.main === module) {
     process.exit(1);
   }
   
-  // 更新配置
+  // UpdateConfigure
   // eslint-disable-next-line no-console
   console.log(`🔄 更新 ${service.name} 配置...`);
   const success = updateServiceConfig(serviceName, configData);
@@ -164,7 +164,7 @@ if (require.main === module) {
     // eslint-disable-next-line no-console
     console.log('\n📋 下一步:');
     // eslint-disable-next-line no-console
-    console.log('1. 測試服務連接');
+    console.log('1. 測試ServiceConnect');
     // eslint-disable-next-line no-console
     console.log('2. 更新環境變量文件');
     // eslint-disable-next-line no-console

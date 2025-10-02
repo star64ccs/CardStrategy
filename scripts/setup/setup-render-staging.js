@@ -1,38 +1,38 @@
 const axios = require('axios');
 
-// Render 配置
+// Render Configure
 const renderConfig = {
   apiToken: process.env.RENDER_TOKEN,
   serviceId: process.env.RENDER_STAGING_SERVICE_ID,
   apiUrl: 'https://api.render.com/v1',
 };
 
-// logger.info('🧪 Render 測試環境設置工具');
+// logger.info('🧪 Render Test環境SettingsTool');
 // logger.info('='.repeat(50));
 
-// 檢查環境變數
+// Check環境變數
 function checkEnvironmentVariables() {
-  // logger.info('🔍 檢查環境變數...');
+  // logger.info('🔍 Check環境變數...');
 
   if (!renderConfig.apiToken) {
-    // logger.info('❌ 未設置 RENDER_TOKEN 環境變數');
-    // logger.info('請在 GitHub Secrets 中設置 RENDER_TOKEN');
+    // logger.info('❌ 未Settings RENDER_TOKEN 環境變數');
+    // logger.info('請在 GitHub Secrets 中Settings RENDER_TOKEN');
     return false;
   }
 
   if (!renderConfig.serviceId) {
-    // logger.info('❌ 未設置 RENDER_STAGING_SERVICE_ID 環境變數');
-    // logger.info('請在 GitHub Secrets 中設置 RENDER_STAGING_SERVICE_ID');
+    // logger.info('❌ 未Settings RENDER_STAGING_SERVICE_ID 環境變數');
+    // logger.info('請在 GitHub Secrets 中Settings RENDER_STAGING_SERVICE_ID');
     return false;
   }
 
-  // logger.info('✅ 環境變數檢查通過');
+  // logger.info('✅ 環境變數Check通過');
   return true;
 }
 
-// 獲取服務信息
+// GetServiceInformation
 async function getServiceInfo() {
-  // logger.info('\n🔍 獲取服務信息...');
+  // logger.info('\n🔍 GetServiceInformation...');
 
   try {
 // eslint-disable-next-line no-unused-vars
@@ -52,21 +52,21 @@ async function getServiceInfo() {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
       const service = response.data;
-      // logger.info(`✅ 服務名稱: ${service.service.name}`);
-      // logger.info(`📊 狀態: ${service.service.status}`);
+      // logger.info(`✅ Service名稱: ${service.service.name}`);
+      // logger.info(`📊 Status: ${service.service.status}`);
       // logger.info(`🌐 URL: ${service.service.serviceDetails?.url || 'N/A'}`);
-      // logger.info(`📅 創建時間: ${new Date(service.service.createdAt).toLocaleString()}`);
+      // logger.info(`📅 CreateTime: ${new Date(service.service.createdAt).toLocaleString()}`);
       return service;
     }
   } catch (error) {
-    // logger.info('❌ 獲取服務信息失敗:', error.message);
+    // logger.info('❌ GetServiceInformationFailed:', error.message);
     return null;
   }
 }
 
-// 觸發部署
+// 觸發Deploy
 async function triggerDeploy() {
-  // logger.info('\n🚀 觸發部署...');
+  // logger.info('\n🚀 觸發Deploy...');
 
   try {
 // eslint-disable-next-line no-unused-vars
@@ -84,21 +84,21 @@ async function triggerDeploy() {
 
     if (response.data) {
       const deploy = response.data;
-      // logger.info(`✅ 部署已觸發`);
-      // logger.info(`🆔 部署 ID: ${deploy.deploy.id}`);
-      // logger.info(`📊 狀態: ${deploy.deploy.status}`);
-      // logger.info(`📅 開始時間: ${new Date(deploy.deploy.createdAt).toLocaleString()}`);
+      // logger.info(`✅ Deploy已觸發`);
+      // logger.info(`🆔 Deploy ID: ${deploy.deploy.id}`);
+      // logger.info(`📊 Status: ${deploy.deploy.status}`);
+      // logger.info(`📅 BeginTime: ${new Date(deploy.deploy.createdAt).toLocaleString()}`);
       return deploy;
     }
   } catch (error) {
-    // logger.info('❌ 觸發部署失敗:', error.message);
+    // logger.info('❌ 觸發DeployFailed:', error.message);
     return null;
   }
 }
 
-// 檢查部署狀態
+// CheckDeployStatus
 async function checkDeployStatus(deployId) {
-  // logger.info('\n🔍 檢查部署狀態...');
+  // logger.info('\n🔍 CheckDeployStatus...');
 
   try {
 // eslint-disable-next-line no-unused-vars
@@ -115,24 +115,24 @@ async function checkDeployStatus(deployId) {
 
     if (response.data) {
       const deploy = response.data;
-      // logger.info(`📊 部署狀態: ${deploy.deploy.status}`);
-      // logger.info(`⏱️  開始時間: ${new Date(deploy.deploy.createdAt).toLocaleString()}`);
+      // logger.info(`📊 DeployStatus: ${deploy.deploy.status}`);
+      // logger.info(`⏱️  BeginTime: ${new Date(deploy.deploy.createdAt).toLocaleString()}`);
 
       if (deploy.deploy.finishedAt) {
-        // logger.info(`✅ 完成時間: ${new Date(deploy.deploy.finishedAt).toLocaleString()}`);
+        // logger.info(`✅ CompleteTime: ${new Date(deploy.deploy.finishedAt).toLocaleString()}`);
       }
 
       return deploy.deploy.status;
     }
   } catch (error) {
-    // logger.info('❌ 檢查部署狀態失敗:', error.message);
+    // logger.info('❌ CheckDeployStatusFailed:', error.message);
     return null;
   }
 }
 
-// 健康檢查
+// 健康Check
 async function healthCheck(serviceUrl) {
-  // logger.info('\n🏥 執行健康檢查...');
+  // logger.info('\n🏥 執Row健康Check...');
 
   try {
 // eslint-disable-next-line no-unused-vars
@@ -142,24 +142,24 @@ async function healthCheck(serviceUrl) {
     });
 
     if (response.data.success) {
-      // logger.info('✅ 健康檢查通過');
-      // logger.info(`📊 響應時間: ${response.headers['x-response-time'] || 'N/A'}`);
-      // logger.info(`📋 響應數據:`, response.data);
+      // logger.info('✅ 健康Check通過');
+      // logger.info(`📊 ResponseTime: ${response.headers['x-response-time'] || 'N/A'}`);
+      // logger.info(`📋 ResponseData:`, response.data);
       return true;
     } else {
-      // logger.info('⚠️ 健康檢查響應異常:', response.data);
+      // logger.info('⚠️ 健康CheckResponse異常:', response.data);
       return false;
     }
   } catch (error) {
-    // logger.info('❌ 健康檢查失敗:', error.message);
+    // logger.info('❌ 健康CheckFailed:', error.message);
     return false;
   }
 }
 
-// 等待部署完成
+// AwaitDeployComplete
 async function waitForDeploy(deployId, maxWaitTime = 300000) {
-  // 5 分鐘
-  // logger.info('\n⏳ 等待部署完成...');
+  // 5 Minute
+  // logger.info('\n⏳ AwaitDeployComplete...');
 
   const startTime = Date.now();
 // eslint-disable-next-line no-unused-vars
@@ -169,38 +169,38 @@ async function waitForDeploy(deployId, maxWaitTime = 300000) {
 
   while (status === 'pending' || status === 'building') {
     if (Date.now() - startTime > maxWaitTime) {
-      // logger.info('⏰ 部署超時');
+      // logger.info('⏰ Deploy超時');
       return false;
     }
 
     status = await checkDeployStatus(deployId);
 
     if (status === 'live') {
-      // logger.info('✅ 部署成功完成');
+      // logger.info('✅ DeploySuccessComplete');
       return true;
     } else if (status === 'failed') {
-      // logger.info('❌ 部署失敗');
+      // logger.info('❌ DeployFailed');
       return false;
     }
 
-    // 等待 10 秒後再次檢查
+    // Await 10 Second後再次Check
     await new Promise((resolve) => setTimeout(resolve, 10000));
   }
 
   return false;
 }
 
-// 主函數
+// 主Function
 async function setupRenderStaging() {
-  // logger.info('\n🚀 開始設置 Render 測試環境...\n');
+  // logger.info('\n🚀 BeginSettings Render Test環境...\n');
 
   try {
-    // 1. 檢查環境變數
+    // 1. Check環境變數
     if (!checkEnvironmentVariables()) {
       return;
     }
 
-    // 2. 獲取服務信息
+    // 2. GetServiceInformation
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -209,20 +209,20 @@ async function setupRenderStaging() {
       return;
     }
 
-    // 3. 觸發部署
+    // 3. 觸發Deploy
     const deploy = await triggerDeploy();
     if (!deploy) {
       return;
     }
 
-    // 4. 等待部署完成
+    // 4. AwaitDeployComplete
     const deploySuccess = await waitForDeploy(deploy.deploy.id);
     if (!deploySuccess) {
-      // logger.info('❌ 部署失敗或超時');
+      // logger.info('❌ DeployFailed或超時');
       return;
     }
 
-    // 5. 健康檢查
+    // 5. 健康Check
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -231,33 +231,33 @@ async function setupRenderStaging() {
       await healthCheck(serviceUrl);
     }
 
-    // logger.info('\n🎉 Render 測試環境設置完成！');
-    // logger.info('\n📋 測試環境信息:');
+    // logger.info('\n🎉 Render Test環境SettingsComplete！');
+    // logger.info('\n📋 Test環境Information:');
     // logger.info('='.repeat(50));
-    // logger.info(`🌐 服務 URL: ${serviceUrl || 'N/A'}`);
+    // logger.info(`🌐 Service URL: ${serviceUrl || 'N/A'}`);
     // logger.info(`🔧 API 端點: ${serviceUrl ? `${serviceUrl}/api` : 'N/A'}`);
-    // logger.info(`📊 健康檢查: ${serviceUrl ? `${serviceUrl}/api/health` : 'N/A'}`);
+    // logger.info(`📊 健康Check: ${serviceUrl ? `${serviceUrl}/api/health` : 'N/A'}`);
     // logger.info('='.repeat(50));
 
-    // logger.info('\n📋 下一步操作:');
-    // logger.info('1. 測試 API 端點');
-    // logger.info('2. 驗證數據庫連接');
-    // logger.info('3. 運行集成測試');
-    // logger.info('4. 檢查前端應用');
+    // logger.info('\n📋 下一步Operation:');
+    // logger.info('1. Test API 端點');
+    // logger.info('2. VerifyDatabaseConnect');
+    // logger.info('3. 運Row集成Test');
+    // logger.info('4. Check前端Apply');
   } catch (error) {
-    // logger.info('\n❌ 設置失敗:', error.message);
+    // logger.info('\n❌ SettingsFailed:', error.message);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   setupRenderStaging()
     .then(() => {
-      // logger.info('\n✅ 腳本執行完成');
+      // logger.info('\n✅ 腳本執RowComplete');
       process.exit(0);
     })
     .catch((error) => {
-      // logger.info('❌ 腳本執行失敗:', error);
+      // logger.info('❌ 腳本執RowFailed:', error);
       process.exit(1);
     });
 }

@@ -1,6 +1,6 @@
 /**
- * WebSocket Redux Slice 測試
- * 測試 WebSocket 相關的 Redux 狀態管理
+ * WebSocket Redux Slice Test
+ * Test WebSocket 相Off的 Redux StatusManage
  */
 
 import { configureStore } from '@reduxjs/toolkit';

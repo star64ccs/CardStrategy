@@ -292,7 +292,7 @@ export const RecommendationResult: React.FC<RecommendationResultProps> = ({
         </View>
       </View>
 
-      {/* 風險分析 */}
+      {/* 風險Analysis */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>風險分析</Text>
 
@@ -409,7 +409,7 @@ export const RecommendationResult: React.FC<RecommendationResultProps> = ({
         </View>
       )}
 
-      {/* 卡牌建議列表 */}
+      {/* 卡牌建議List */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
           詳細建議 ({recommendation.recommendations.length})
@@ -457,7 +457,7 @@ export const RecommendationResult: React.FC<RecommendationResultProps> = ({
         </View>
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={onNewRecommendation}>
           <Text style={styles.buttonText}>生成新建議</Text>

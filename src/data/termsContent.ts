@@ -1,7 +1,7 @@
-// 條款內容數據
+// 條款ContentData
 import type { TermsType, TermsVersion } from '../types/terms';
 
-// 條款內容配置
+// 條款ContentConfigure
 export const TERMS_CONTENT: Record<
   TermsType,
   Omit<TermsVersion, 'id' | 'createdAt' | 'updatedAt'>
@@ -701,14 +701,14 @@ Cookie 是存儲在您設備上的小型文本文件，幫助我們提供更好�
   },
 };
 
-// 獲取條款內容的輔助函數
+// Get條款Content的輔助Function
 export const _getTermsContent = (
   type: TermsType
 ): Omit<TermsVersion, 'id' | 'createdAt' | 'updatedAt'> => {
   return TERMS_CONTENT[type];
 };
 
-// 獲取所有條款內容
+// Get所有條款Content
 export const _getAllTermsContent = (): Omit<
   TermsVersion,
   'id' | 'createdAt' | 'updatedAt'
@@ -716,7 +716,7 @@ export const _getAllTermsContent = (): Omit<
   return Object.values(TERMS_CONTENT);
 };
 
-// 條款類型顯示名稱
+// 條款Class型Show名稱
 export const TERMS_TYPE_DISPLAY_NAMES: Record<TermsType, string> = {
   purchase_refund_policy: '購買及退款政策',
   disclaimer: '免責聲明',
@@ -730,9 +730,9 @@ export const TERMS_IMPORTANCE_LEVELS: Record<
   TermsType,
   'critical' | 'important' | 'standard'
 > = {
-  terms_of_use: 'critical', // 使用條款 - 必須同意
-  disclaimer: 'critical', // 免責聲明 - 必須同意
+  terms_of_use: 'critical', // 使用條款 - 必須Agree
+  disclaimer: 'critical', // 免責聲明 - 必須Agree
   purchase_refund_policy: 'important', // 購買政策 - 重要
-  cookie_policy: 'standard', // Cookie 政策 - 標準
-  ai_usage_policy: 'standard', // AI 政策 - 標準
+  cookie_policy: 'standard', // Cookie 政策 - Standard
+  ai_usage_policy: 'standard', // AI 政策 - Standard
 };

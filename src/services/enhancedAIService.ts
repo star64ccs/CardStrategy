@@ -2,7 +2,7 @@ import { logger } from '../core/utils/logger';
 
 import { apiService } from './apiService';
 
-// 增強版AI配置
+// 增強版AIConfigure
 export interface EnhancedAIConfig {
   recognition: {
     confidenceThreshold: number;
@@ -78,14 +78,14 @@ class EnhancedAIService {
 
       const _finalOptions = { ...this.config.recognition, ...options };
 
-      // 調用 API 進行識別
+      // 調用 API 進Row識別
       const _response = await apiService.post('/cards/enhanced-recognize', {
         imageData,
         options: finalOptions,
       });
 
       if (!response.success) {
-        throw new Error(response.error || '識別失敗');
+        throw new Error(response.error || '識別Failed');
       }
 
       logger.info('增強AI識別完成', {
@@ -93,7 +93,7 @@ class EnhancedAIService {
         processingTime: response.data?.processingTime,
       });
 
-      // 確保返回類型正確
+      // 確保ReturnClass型正確
       return {
         success: true,
         data: response.data,
@@ -104,28 +104,28 @@ class EnhancedAIService {
         metadata: response.data?.metadata || {},
       } as EnhancedRecognitionResult;
     } catch (error: unknown) {
-      logger.error('增強AI識別失敗', { error: error.message });
-      throw new Error(`增強AI識別失敗: ${error.message}`);
+      logger.error('增強AI識別Failed', { error: error.message });
+      throw new Error(`增強AI識別Failed: ${error.message}`);
     }
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   updateConfig(newConfig: Partial<EnhancedAIConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    logger.info('AI服務配置已更新', { config: this.config });
+    logger.info('AIServiceConfigure已Update', { config: this.config });
   }
 
   /**
-   * 獲取當前配置
+   * Get當前Configure
    */
   getConfig(): EnhancedAIConfig {
     return { ...this.config };
   }
 
   /**
-   * 驗證圖像質量
+   * VerifyGraph像質量
    */
   async validateImageQuality(imageData: string): Promise<{
     isValid: boolean;
@@ -139,17 +139,17 @@ class EnhancedAIService {
 
       return response.data;
     } catch (error: unknown) {
-      logger.error('圖像質量驗證失敗', { error: error.message });
+      logger.error('圖像質量VerifyFailed', { error: error.message });
       return {
         isValid: false,
         qualityScore: 0,
-        issues: ['圖像質量驗證失敗'],
+        issues: ['圖像質量VerifyFailed'],
       };
     }
   }
 
   /**
-   * 獲取識別歷史
+   * Get識別歷史
    */
   async getRecognitionHistory(limit = 10): Promise<any[]> {
     try {
@@ -159,13 +159,13 @@ class EnhancedAIService {
 
       return response.data.history || [];
     } catch (error: unknown) {
-      logger.error('獲取識別歷史失敗', { error: error.message });
+      logger.error('Get識別歷史Failed', { error: error.message });
       return [];
     }
   }
 
   /**
-   * 提交用戶反饋
+   * SubmitUser反饋
    */
   async submitFeedback(
     recognitionId: string,
@@ -183,11 +183,11 @@ class EnhancedAIService {
 
       return response.success;
     } catch (error: unknown) {
-      logger.error('提交反饋失敗', { error: error.message });
+      logger.error('提交反饋Failed', { error: error.message });
       return false;
     }
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _enhancedAIService = new EnhancedAIService();

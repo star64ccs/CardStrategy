@@ -1,5 +1,5 @@
 // 可訪問性 Redux Slice
-// 管理可訪問性狀態、配置和事件
+// Manage可訪問性Status、Configure和Event
 
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
@@ -14,7 +14,7 @@ import type {
   AccessibilityTestConfig,
 } from '../../types/accessibility';
 
-// 異步 Action Creators
+// Async Action Creators
 export const _initializeAccessibility = createAsyncThunk(
   'accessibility/initialize',
   async (config?: unknown) => {
@@ -47,7 +47,7 @@ export const _fixAccessibilityIssues = createAsyncThunk(
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: AccessibilityState = {
   config: {
     focusManager: {
@@ -93,8 +93,8 @@ const initialState: AccessibilityState = {
         onFocus: '已聚焦',
         onBlur: '已失焦',
         onChange: '已更改',
-        onError: '發生錯誤',
-        onSuccess: '操作成功',
+        onError: '發生Error',
+        onSuccess: '操作Success',
         onComplete: '操作完成',
       },
     },
@@ -137,12 +137,12 @@ const _accessibilitySlice = createSlice({
   name: 'accessibility',
   initialState,
   reducers: {
-    // 同步 Reducers
+    // Sync Reducers
     setCurrentFocus: (state, action: PayloadAction<string | null>) => {
       state.focusManager.currentFocus = action.payload;
       if (action.payload) {
         state.focusManager.focusHistory.push(action.payload);
-        // 限制歷史記錄長度
+        // Limit歷史Record長度
         if (state.focusManager.focusHistory.length > 50) {
           state.focusManager.focusHistory.shift();
         }
@@ -173,7 +173,7 @@ const _accessibilitySlice = createSlice({
     ) => {
       state.mode = action.payload;
 
-      // 根據模式更新配置
+      // Root據模式UpdateConfigure
       switch (action.payload) {
         case 'highContrast':
           state.config.highContrast = true;
@@ -215,7 +215,7 @@ const _accessibilitySlice = createSlice({
 
     addIssue: (state, action: PayloadAction<AccessibilityIssue>) => {
       state.issues.push(action.payload);
-      // 重新計算分數
+      // Re計算分數
       state.score = calculateScore(state.issues, state.suggestions);
     },
 
@@ -230,14 +230,14 @@ const _accessibilitySlice = createSlice({
       const _issueIndex = state.issues.findIndex(issue => issue.id === id);
       if (issueIndex !== -1) {
         state.issues[issueIndex] = { ...state.issues[issueIndex], ...updates };
-        // 重新計算分數
+        // Re計算分數
         state.score = calculateScore(state.issues, state.suggestions);
       }
     },
 
     removeIssue: (state, action: PayloadAction<string>) => {
       state.issues = state.issues.filter(issue => issue.id !== action.payload);
-      // 重新計算分數
+      // Re計算分數
       state.score = calculateScore(state.issues, state.suggestions);
     },
 
@@ -294,7 +294,7 @@ const _accessibilitySlice = createSlice({
       };
     },
 
-    // 焦點管理相關
+    // 焦點Manage相Off
     focusNext: state => {
       const { focusOrder, currentFocus } = state.focusManager;
       if (focusOrder.length === 0) return;
@@ -333,7 +333,7 @@ const _accessibilitySlice = createSlice({
       }
     },
 
-    // 鍵盤導航相關
+    // Key盤導航相Off
     enableKeyboardNavigation: state => {
       if (state.config.keyboardNavigation) {
         state.config.keyboardNavigation.enabled = true;
@@ -371,7 +371,7 @@ const _accessibilitySlice = createSlice({
       }
     },
 
-    // 屏幕閱讀器相關
+    // 屏幕閱讀器相Off
     enableScreenReader: state => {
       if (state.config.screenReader) {
         state.config.screenReader.enabled = true;
@@ -426,7 +426,7 @@ const _accessibilitySlice = createSlice({
       }
     },
 
-    // 焦點指示器相關
+    // 焦點指示器相Off
     updateFocusIndicator: (
       state,
       action: PayloadAction<
@@ -468,20 +468,20 @@ const _accessibilitySlice = createSlice({
       }
     },
 
-    // 事件處理
+    // EventHandle
     addAccessibilityEvent: (
       state,
       action: PayloadAction<AccessibilityEvent>
     ) => {
-      // 這裡可以添加事件日誌記錄邏輯
+      // 這裡可以AddEventLogRecord邏輯
       console.log('Accessibility event:', action.payload);
     },
   },
   extraReducers: builder => {
     builder
-      // 初始化可訪問性
+      // Initialize可訪問性
       .addCase(initializeAccessibility.pending, state => {
-        // 可以設置加載狀態
+        // 可以Settings加載Status
       })
       .addCase(initializeAccessibility.fulfilled, (state, action) => {
         return { ...state, ...action.payload };
@@ -490,9 +490,9 @@ const _accessibilitySlice = createSlice({
         console.error('Failed to initialize accessibility:', action.error);
       })
 
-      // 更新配置
+      // UpdateConfigure
       .addCase(updateAccessibilityConfig.pending, state => {
-        // 可以設置加載狀態
+        // 可以Settings加載Status
       })
       .addCase(updateAccessibilityConfig.fulfilled, (state, action) => {
         return { ...state, ...action.payload };
@@ -501,9 +501,9 @@ const _accessibilitySlice = createSlice({
         console.error('Failed to update accessibility config:', action.error);
       })
 
-      // 運行測試
+      // 運RowTest
       .addCase(runAccessibilityTest.pending, state => {
-        // 可以設置測試狀態
+        // 可以SettingsTestStatus
       })
       .addCase(runAccessibilityTest.fulfilled, (state, action) => {
         const _result = action.payload;
@@ -517,7 +517,7 @@ const _accessibilitySlice = createSlice({
 
       // 修復問題
       .addCase(fixAccessibilityIssues.pending, state => {
-        // 可以設置修復狀態
+        // 可以Settings修復Status
       })
       .addCase(fixAccessibilityIssues.fulfilled, (state, action) => {
         return { ...state, ...action.payload };
@@ -528,14 +528,14 @@ const _accessibilitySlice = createSlice({
   },
 });
 
-// 輔助函數
+// 輔助Function
 function calculateScore(
   issues: AccessibilityIssue[],
   suggestions: AccessibilitySuggestion[]
 ): number {
   let score = 100;
 
-  // 根據問題嚴重程度扣分
+  // Root據問題嚴重程度扣分
   issues.forEach(issue => {
     switch (issue.severity) {
       case 'critical':
@@ -556,7 +556,7 @@ function calculateScore(
   return Math.max(0, score);
 }
 
-// 導出 Actions
+// Export Actions
 export const {
   setCurrentFocus,
   setFocusTrapped,
@@ -597,7 +597,7 @@ export const {
   addAccessibilityEvent,
 } = accessibilitySlice.actions;
 
-// 導出 Selectors
+// Export Selectors
 export const _selectAccessibilityState = (state: {
   accessibility: AccessibilityState;
 }) => state.accessibility;
@@ -641,5 +641,5 @@ export const _selectLargeTextEnabled = (state: {
   accessibility: AccessibilityState;
 }) => state.accessibility.config.largeText;
 
-// 導出 Reducer
+// Export Reducer
 export default accessibilitySlice.reducer;

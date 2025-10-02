@@ -53,7 +53,7 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理登錄成功', () => {
+    it('應該Handle登錄Success', () => {
       const _user = {
         id: '1',
         email: 'test@example.com',
@@ -80,8 +80,8 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理登錄失敗', () => {
-      const _error = '登錄失敗';
+    it('應該Handle登錄Failed', () => {
+      const _error = '登錄Failed';
 
       store.dispatch(
         loginUser.rejected(
@@ -115,7 +115,7 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理註冊成功', () => {
+    it('應該Handle註冊Success', () => {
       const _user = {
         id: '2',
         email: 'new@example.com',
@@ -146,7 +146,7 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理註冊失敗', () => {
+    it('應該Handle註冊Failed', () => {
       const _error = '用戶已存在';
 
       store.dispatch(
@@ -179,8 +179,8 @@ describe('Auth Slice', () => {
       expect(state.isLoading).toBe(true);
     });
 
-    it('應該處理登出成功', () => {
-      // 先設置登錄狀態
+    it('應該Handle登出Success', () => {
+      // 先SettingsLoginStatus
       store.dispatch(
         loginUser.fulfilled(
           {
@@ -203,8 +203,8 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理登出失敗', () => {
-      const _error = '登出失敗';
+    it('應該Handle登出Failed', () => {
+      const _error = '登出Failed';
 
       store.dispatch(
         logoutUser.rejected(
@@ -230,7 +230,7 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理刷新令牌成功', () => {
+    it('應該Handle刷新令牌Success', () => {
       const _tokens = {
         accessToken: 'new-access-token',
         refreshToken: 'new-refresh-token',
@@ -253,8 +253,8 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理刷新令牌失敗', () => {
-      const _error = '令牌刷新失敗';
+    it('應該Handle刷新令牌Failed', () => {
+      const _error = '令牌刷新Failed';
 
       store.dispatch(
         getCurrentUser.rejected(
@@ -283,7 +283,7 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理獲取當前用戶成功', () => {
+    it('應該HandleGet當前用戶Success', () => {
       const _user = {
         id: '1',
         email: 'test@example.com',
@@ -300,8 +300,8 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理獲取當前用戶失敗', () => {
-      const _error = '獲取用戶信息失敗';
+    it('應該HandleGet當前用戶Failed', () => {
+      const _error = 'Get用戶信息Failed';
 
       store.dispatch(
         getCurrentUser.rejected(
@@ -334,7 +334,7 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理更新資料成功', () => {
+    it('應該HandleUpdate資料Success', () => {
       const _user = {
         id: '1',
         email: 'test@example.com',
@@ -350,8 +350,8 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該處理更新資料失敗', () => {
-      const _error = '更新資料失敗';
+    it('應該HandleUpdate資料Failed', () => {
+      const _error = 'Update資料Failed';
 
       store.dispatch(
         getCurrentUser.rejected(
@@ -369,18 +369,18 @@ describe('Auth Slice', () => {
   });
 
   describe('Clear Error Action', () => {
-    it('應該清除錯誤', () => {
-      // 先設置錯誤
+    it('應該清除Error', () => {
+      // 先SettingsError
       store.dispatch(
         loginUser.rejected(
-          new Error('登錄失敗'),
+          new Error('登錄Failed'),
           'test-request-id',
           { email: 'test@example.com', password: 'password123' },
-          '登錄失敗'
+          '登錄Failed'
         )
       );
 
-      // 然後清除錯誤
+      // 然後ClearError
       store.dispatch(clearError());
 
       const _state = store.getState().auth;
@@ -390,7 +390,7 @@ describe('Auth Slice', () => {
 
   describe('State Transitions', () => {
     it('應該正確處理完整的登錄流程', () => {
-      // 開始登錄
+      // BeginLogin
       store.dispatch(
         loginUser.pending('test-request-id', {
           email: 'test@example.com',
@@ -399,7 +399,7 @@ describe('Auth Slice', () => {
       );
       expect(store.getState().auth.isLoading).toBe(true);
 
-      // 登錄成功
+      // LoginSuccess
       const _user = { id: '1', email: 'test@example.com', name: 'Test User' };
       const _tokens = { accessToken: 'token', refreshToken: 'refresh' };
       store.dispatch(
@@ -418,8 +418,8 @@ describe('Auth Slice', () => {
       expect(state.error).toBe(null);
     });
 
-    it('應該正確處理登錄失敗後的狀態', () => {
-      // 開始登錄
+    it('應該正確Handle登錄Failed後的狀態', () => {
+      // BeginLogin
       store.dispatch(
         loginUser.pending('test-request-id', {
           email: 'test@example.com',
@@ -428,13 +428,13 @@ describe('Auth Slice', () => {
       );
       expect(store.getState().auth.isLoading).toBe(true);
 
-      // 登錄失敗
+      // LoginFailed
       store.dispatch(
         loginUser.rejected(
-          new Error('密碼錯誤'),
+          new Error('密碼Error'),
           'test-request-id',
           { email: 'test@example.com', password: 'wrong' },
-          '密碼錯誤'
+          '密碼Error'
         )
       );
 
@@ -443,11 +443,11 @@ describe('Auth Slice', () => {
       expect(state.token).toBe(null);
       expect(state.isAuthenticated).toBe(false);
       expect(state.isLoading).toBe(false);
-      expect(state.error).toBe('密碼錯誤');
+      expect(state.error).toBe('密碼Error');
     });
 
     it('應該正確處理登出後的狀態重置', () => {
-      // 先登錄
+      // 先Login
       store.dispatch(
         loginUser.fulfilled(
           {
@@ -496,16 +496,16 @@ describe('Auth Slice', () => {
       expect(store.getState().auth.isLoading).toBe(true);
     });
 
-    it('應該正確選擇錯誤狀態', () => {
+    it('應該正確選擇Error狀態', () => {
       store.dispatch(
         loginUser.rejected(
-          new Error('登錄失敗'),
+          new Error('登錄Failed'),
           'test-request-id',
           { email: 'test@example.com', password: 'password123' },
-          '登錄失敗'
+          '登錄Failed'
         )
       );
-      expect(store.getState().auth.error).toBe('登錄失敗');
+      expect(store.getState().auth.error).toBe('登錄Failed');
     });
   });
 });

@@ -40,7 +40,7 @@ const I18nExample: React.FC = () => {
   const [testKey, setTestKey] = useState('common.loading');
   const [testValue, setTestValue] = useState('1000.50');
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     const _initializeI18n = async () => {
       if (!isInitialized) {
@@ -50,39 +50,39 @@ const I18nExample: React.FC = () => {
     initializeI18n();
   }, [isInitialized]);
 
-  // 載入統計信息
+  // LoadStatisticsInformation
   const _loadStats = async () => {
     try {
       const _statsData = await getStats();
       setStats(statsData);
     } catch (error) {
-      Alert.alert('錯誤', '無法載入統計信息');
+      Alert.alert('Error', '無法載入統計信息');
     }
   };
 
-  // 載入缺失翻譯
+  // Load缺失翻譯
   const _loadMissingTranslations = async () => {
     const _missing = await getMissingTranslations();
     setMissingTranslations(missing);
   };
 
-  // 切換語言
+  // SwitchLanguage
   const _handleLanguageChange = async (language: string) => {
     try {
       await changeLanguage(language);
-      Alert.alert('成功', `語言已切換為 ${availableLanguages[language]?.name}`);
+      Alert.alert('Success', `語言已切換為 ${availableLanguages[language]?.name}`);
     } catch (error) {
-      Alert.alert('錯誤', '無法切換語言');
+      Alert.alert('Error', '無法切換語言');
     }
   };
 
-  // 測試翻譯
+  // Test翻譯
   const _testTranslation = () => {
     const _translated = translate(testKey);
     Alert.alert('翻譯結果', `${testKey}: ${translated}`);
   };
 
-  // 格式化測試
+  // FormatTest
   const _testFormatting = () => {
     const _number = parseFloat(testValue) || 1000.5;
     const _now = new Date();
@@ -123,7 +123,7 @@ const I18nExample: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🌍 多語言支持示例</Text>
 
-        {/* 當前語言信息 */}
+        {/* 當前LanguageInformation */}
         <View style={styles.infoCard}>
           <Text style={styles.cardTitle}>當前語言</Text>
           <Text style={styles.infoText}>
@@ -140,7 +140,7 @@ const I18nExample: React.FC = () => {
           </Text>
         </View>
 
-        {/* 語言切換 */}
+        {/* LanguageSwitch */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>語言切換</Text>
           <View style={styles.languageGrid}>
@@ -167,7 +167,7 @@ const I18nExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 翻譯測試 */}
+        {/* 翻譯Test */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>翻譯測試</Text>
           <TextInput
@@ -182,7 +182,7 @@ const I18nExample: React.FC = () => {
           <Text style={styles.resultText}>結果: {translate(testKey)}</Text>
         </View>
 
-        {/* 格式化測試 */}
+        {/* FormatTest */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>格式化測試</Text>
           <TextInput
@@ -197,7 +197,7 @@ const I18nExample: React.FC = () => {
           </TouchableOpacity>
         </View>
 
-        {/* 統計信息 */}
+        {/* StatisticsInformation */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>統計信息</Text>
           <TouchableOpacity style={styles.button} onPress={loadStats}>
@@ -266,7 +266,7 @@ const I18nExample: React.FC = () => {
           </Text>
         </View>
 
-        {/* 格式化示例 */}
+        {/* Format示例 */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>格式化示例</Text>
           <Text style={styles.exampleText}>

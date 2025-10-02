@@ -4,7 +4,7 @@ const axios = require('axios');
 
 const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:3000';
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -95,15 +95,15 @@ class SimpleServerTester {
   }
 
   async runTests() {
-    log.info('🚀 開始增強版服務器基本功能測試');
+    log.info('🚀 開始增強版Server基本功能測試');
 
-    // 基本端點測試
+    // 基本端點Test
     await this.testEndpoint('/');
     await this.testEndpoint('/health');
     await this.testEndpoint('/api/version');
     await this.testEndpoint('/api/test');
 
-    // 404 測試
+    // 404 Test
     await this.testEndpoint('/api/nonexistent', 'GET', null, 404);
 
     this.printResults();
@@ -118,11 +118,11 @@ class SimpleServerTester {
     log.info('\n📊 測試結果總結:');
     log.info(`總測試數: ${this.results.total}`);
     log.info(`通過: ${this.results.passed}`);
-    log.info(`失敗: ${this.results.failed}`);
-    log.info(`成功率: ${successRate}%`);
+    log.info(`Failed: ${this.results.failed}`);
+    log.info(`Success率: ${successRate}%`);
 
     if (this.results.failed > 0) {
-      log.warning('\n❌ 失敗的測試:');
+      log.warning('\n❌ Failed的測試:');
       this.results.tests
         .filter((test) => test.status !== 'PASS')
         .forEach((test) => {
@@ -131,20 +131,20 @@ class SimpleServerTester {
     }
 
     if (successRate >= 80) {
-      log.success('\n🎉 服務器基本功能測試通過！');
+      log.success('\n🎉 Server基本功能測試通過！');
     } else {
-      log.error('\n⚠️ 服務器測試發現問題，請檢查配置和依賴。');
+      log.error('\n⚠️ Server測試發現問題，請CheckConfigure和依賴。');
     }
   }
 }
 
-// 執行測試
+// 執RowTest
 if (require.main === module) {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
   const tester = new SimpleServerTester();
   tester.runTests().catch((error) => {
-    log.error('測試執行失敗:', error.message);
+    log.error('測試執行Failed:', error.message);
     process.exit(1);
   });
 }

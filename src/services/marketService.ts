@@ -43,8 +43,8 @@ class MarketService {
       const _response = await apiService.get('/market/data');
       return response;
     } catch (error) {
-      logger.error('獲取市場數據失敗:', error);
-      throw new Error('獲取市場數據失敗');
+      logger.error('Get市場數據Failed:', error);
+      throw new Error('Get市場數據Failed');
     }
   }
 
@@ -55,8 +55,8 @@ class MarketService {
       const _response = await apiService.get(`/market/price-history/${cardId}`);
       return response;
     } catch (error) {
-      logger.error('獲取卡片價格歷史失敗:', error);
-      throw new Error('獲取卡片價格歷史失敗');
+      logger.error('Get卡片價格歷史Failed:', error);
+      throw new Error('Get卡片價格歷史Failed');
     }
   }
 
@@ -65,8 +65,8 @@ class MarketService {
       const _response = await apiService.get('/market/trends');
       return response;
     } catch (error) {
-      logger.error('獲取市場趨勢失敗:', error);
-      throw new Error('獲取市場趨勢失敗');
+      logger.error('Get市場趨勢Failed:', error);
+      throw new Error('Get市場趨勢Failed');
     }
   }
 
@@ -75,8 +75,8 @@ class MarketService {
       const _response = await apiService.get('/market/trending');
       return response;
     } catch (error) {
-      logger.error('獲取熱門卡片失敗:', error);
-      throw new Error('獲取熱門卡片失敗');
+      logger.error('Get熱門卡片Failed:', error);
+      throw new Error('Get熱門卡片Failed');
     }
   }
 
@@ -85,8 +85,8 @@ class MarketService {
       const _response = await apiService.get('/market/stats');
       return response;
     } catch (error) {
-      logger.error('獲取市場統計失敗:', error);
-      throw new Error('獲取市場統計失敗');
+      logger.error('Get市場統計Failed:', error);
+      throw new Error('Get市場統計Failed');
     }
   }
 }

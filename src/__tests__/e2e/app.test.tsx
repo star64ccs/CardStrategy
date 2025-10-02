@@ -4,10 +4,10 @@ import {
   render,
   waitFor,
 } from '@/__tests__/setup/test-utils';
-// 暫時註釋掉有問題的組件導入，使用模擬組件
+// 暫時Comment掉有問題的ComponentImport，使用模擬Component
 // import { ScanHistoryScreen } from '@/screens/ScanHistoryScreen';
 
-// 創建模擬組件
+// Create模擬Component
 const _MockScanHistoryScreen = () => {
   return (
     <div data-testid='scan-history-screen'>
@@ -121,22 +121,22 @@ describe('End-to-End Tests', () => {
         { preloadedState: mockState }
       );
 
-      // 檢查標題
+      // Check標題
       expect(getByText('掃描歷史')).toBeTruthy();
 
-      // 檢查統計信息
+      // CheckStatisticsInformation
       expect(getByText('總掃描次數')).toBeTruthy();
       expect(getByText('100')).toBeTruthy();
-      expect(getByText('成功率')).toBeTruthy();
+      expect(getByText('Success率')).toBeTruthy();
       expect(getByText('95%')).toBeTruthy();
 
-      // 檢查搜索欄
+      // CheckSearch欄
       expect(getByTestId('search-input')).toBeTruthy();
 
-      // 檢查過濾按鈕
+      // CheckFilter按鈕
       expect(getByText('過濾')).toBeTruthy();
 
-      // 檢查歷史記錄
+      // Check歷史Record
       expect(getByText('Test Card')).toBeTruthy();
       expect(getByText('Test Card 2')).toBeTruthy();
       expect(getByText('Test Card 3')).toBeTruthy();
@@ -151,10 +151,10 @@ describe('End-to-End Tests', () => {
       const _searchInput = getByTestId('search-input');
       const _searchButton = getByText('搜索');
 
-      // 輸入搜索查詢
+      // InputSearchQuery
       fireEvent.changeText(searchInput, 'Test Card 2');
 
-      // 點擊搜索按鈕
+      // 點擊Search按鈕
       fireEvent.press(searchButton);
 
       await waitFor(() => {
@@ -194,7 +194,7 @@ describe('End-to-End Tests', () => {
 
       fireEvent.press(filterButton);
 
-      // 檢查過濾選項是否顯示
+      // CheckFilterOptionsYesNoShow
       await waitFor(() => {
         expect(getByText('掃描類型')).toBeTruthy();
         expect(getByText('識別')).toBeTruthy();
@@ -202,7 +202,7 @@ describe('End-to-End Tests', () => {
         expect(getByText('真偽驗證')).toBeTruthy();
       });
 
-      // 選擇過濾條件
+      // SelectFilterCondition
       const _recognitionFilter = getByText('識別');
       fireEvent.press(recognitionFilter);
 
@@ -243,7 +243,7 @@ describe('End-to-End Tests', () => {
       const _firstRecord = getByTestId('scan-history-item-1');
       fireEvent.press(firstRecord);
 
-      // 檢查詳情模態框是否顯示
+      // Check詳情模態框YesNoShow
       await waitFor(() => {
         expect(getByText('掃描詳情')).toBeTruthy();
         expect(getByText('Test Card')).toBeTruthy();
@@ -257,11 +257,11 @@ describe('End-to-End Tests', () => {
         { preloadedState: mockState }
       );
 
-      // 打開詳情
+      // 打On詳情
       const _firstRecord = getByTestId('scan-history-item-1');
       fireEvent.press(firstRecord);
 
-      // 關閉詳情
+      // Off閉詳情
       const _closeButton = getByTestId('close-button');
       fireEvent.press(closeButton);
 
@@ -280,18 +280,18 @@ describe('End-to-End Tests', () => {
 
       fireEvent.press(exportButton);
 
-      // 檢查導出選項
+      // CheckExportOptions
       await waitFor(() => {
         expect(getByText('導出為 CSV')).toBeTruthy();
         expect(getByText('導出為 JSON')).toBeTruthy();
         expect(getByText('導出為 PDF')).toBeTruthy();
       });
 
-      // 選擇導出格式
+      // SelectExport格式
       const _csvExport = getByText('導出為 CSV');
       fireEvent.press(csvExport);
 
-      // 這裡應該觸發導出邏輯
+      // 這裡應該觸發Export邏輯
     });
 
     it('應該處理批量操作', async () => {
@@ -300,7 +300,7 @@ describe('End-to-End Tests', () => {
         { preloadedState: mockState }
       );
 
-      // 長按進入選擇模式
+      // 長按進入Select模式
       const _firstRecord = getByTestId('scan-history-item-1');
       fireEvent(firstRecord, 'longPress');
 
@@ -310,7 +310,7 @@ describe('End-to-End Tests', () => {
         ).toHaveBeenCalled();
       });
 
-      // 檢查選擇模式UI
+      // CheckSelect模式UI
       expect(getByText('已選擇 0 項')).toBeTruthy();
     });
 
@@ -339,12 +339,12 @@ describe('End-to-End Tests', () => {
       });
     });
 
-    it('應該處理錯誤狀態', () => {
+    it('應該HandleError狀態', () => {
       const _errorState = {
         ...mockState,
         scanHistory: {
           ...mockState.scanHistory,
-          error: '獲取掃描歷史失敗',
+          error: 'Get掃描歷史Failed',
         },
       };
 
@@ -353,7 +353,7 @@ describe('End-to-End Tests', () => {
         { preloadedState: errorState }
       );
 
-      expect(getByText('獲取掃描歷史失敗')).toBeTruthy();
+      expect(getByText('Get掃描歷史Failed')).toBeTruthy();
       expect(getByText('重試')).toBeTruthy();
     });
 
@@ -398,15 +398,15 @@ describe('End-to-End Tests', () => {
         { preloadedState: mockState }
       );
 
-      // 檢查統計數據
+      // Check統Count據
       expect(getByText('總掃描次數')).toBeTruthy();
       expect(getByText('100')).toBeTruthy();
-      expect(getByText('成功率')).toBeTruthy();
+      expect(getByText('Success率')).toBeTruthy();
       expect(getByText('95%')).toBeTruthy();
       expect(getByText('平均處理時間')).toBeTruthy();
       expect(getByText('1.2s')).toBeTruthy();
 
-      // 檢查掃描類型統計
+      // Check掃描Class型Statistics
       expect(getByText('識別')).toBeTruthy();
       expect(getByText('60')).toBeTruthy();
       expect(getByText('條件分析')).toBeTruthy();
@@ -423,21 +423,21 @@ describe('End-to-End Tests', () => {
         { preloadedState: mockState }
       );
 
-      // 1. 用戶進入掃描歷史頁面
+      // 1. User進入掃描歷史頁面
       expect(getByText('掃描歷史')).toBeTruthy();
 
-      // 2. 查看統計信息
+      // 2. 查看StatisticsInformation
       expect(getByText('總掃描次數')).toBeTruthy();
       expect(getByText('100')).toBeTruthy();
 
-      // 3. 搜索特定記錄
+      // 3. SearchSpecificRecord
       const _searchInput = getByTestId('search-input');
       fireEvent.changeText(searchInput, 'Test Card 2');
 
       const _searchButton = getByText('搜索');
       fireEvent.press(searchButton);
 
-      // 4. 查看記錄詳情
+      // 4. 查看Record詳情
       const _record = getByTestId('scan-history-item-2');
       fireEvent.press(record);
 
@@ -446,11 +446,11 @@ describe('End-to-End Tests', () => {
         expect(getByText('Test Card 2')).toBeTruthy();
       });
 
-      // 5. 關閉詳情
+      // 5. Off閉詳情
       const _closeButton = getByTestId('close-button');
       fireEvent.press(closeButton);
 
-      // 6. 使用過濾功能
+      // 6. 使用Filter功能
       const _filterButton = getByText('過濾');
       fireEvent.press(filterButton);
 
@@ -458,11 +458,11 @@ describe('End-to-End Tests', () => {
         expect(getByText('掃描類型')).toBeTruthy();
       });
 
-      // 7. 清除過濾
+      // 7. ClearFilter
       const _clearFiltersButton = getByText('清除過濾');
       fireEvent.press(clearFiltersButton);
 
-      // 8. 刷新數據
+      // 8. RefreshData
       const _flatList = getByTestId('scan-history-flatlist');
       fireEvent.scroll(flatList, {
         nativeEvent: {

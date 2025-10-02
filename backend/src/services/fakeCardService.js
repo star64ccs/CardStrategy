@@ -23,7 +23,7 @@ class FakeCardService {
     }
   }
 
-  // 提交假卡報告
+  // SubmitFalse卡Report
   async submitFakeCard({
     userId,
     cardName,
@@ -36,7 +36,7 @@ class FakeCardService {
     try {
       await this.initializeModels();
 
-      // 上傳圖片到Cloudinary
+      // UploadGraph片到Cloudinary
       const imageUrls = [];
       for (const image of imageData) {
         try {
@@ -50,12 +50,12 @@ class FakeCardService {
           });
           imageUrls.push(result.secure_url);
         } catch (error) {
-          logger.error('上傳圖片失敗:', error);
-          throw new Error('圖片上傳失敗');
+          logger.error('上傳圖片Failed:', error);
+          throw new Error('圖片上傳Failed');
         }
       }
 
-      // 創建假卡記錄
+      // CreateFalse卡Record
       const fakeCard = await FakeCard.create({
         id: uuidv4(),
         userId,
@@ -74,7 +74,7 @@ class FakeCardService {
         },
       });
 
-      logger.info('假卡記錄創建成功', {
+      logger.info('假卡記錄CreateSuccess', {
         fakeCardId: fakeCard.id,
         userId,
         cardName,
@@ -91,12 +91,12 @@ class FakeCardService {
         imageCount: imageUrls.length,
       };
     } catch (error) {
-      logger.error('提交假卡報告失敗:', error);
+      logger.error('提交假卡報告Failed:', error);
       throw error;
     }
   }
 
-  // 獲取用戶提交的假卡列表
+  // GetUserSubmit的False卡List
   async getUserSubmissions(userId, { page = 1, limit = 10, status }) {
     try {
       await this.initializeModels();
@@ -135,12 +135,12 @@ class FakeCardService {
         },
       };
     } catch (error) {
-      logger.error('獲取用戶提交失敗:', error);
+      logger.error('Get用戶提交Failed:', error);
       throw error;
     }
   }
 
-  // 獲取假卡數據庫（僅供AI訓練）
+  // GetFalse卡Database（僅供AI訓練）
   async getFakeCardDatabase({ page = 1, limit = 50, status = 'approved' }) {
     try {
       await this.initializeModels();
@@ -172,12 +172,12 @@ class FakeCardService {
         },
       };
     } catch (error) {
-      logger.error('獲取假卡數據庫失敗:', error);
+      logger.error('Get假卡數據庫Failed:', error);
       throw error;
     }
   }
 
-  // 獲取獎勵積分
+  // Get獎勵積分
   async getRewardPoints(userId) {
     try {
       await this.initializeModels();
@@ -210,12 +210,12 @@ class FakeCardService {
         totalSubmissions: approvedSubmissions.length,
       };
     } catch (error) {
-      logger.error('獲取獎勵積分失敗:', error);
+      logger.error('Get獎勵積分Failed:', error);
       throw error;
     }
   }
 
-  // 審核假卡報告
+  // 審核False卡Report
   async reviewFakeCard(id, { status, reviewerNotes, rewardPoints, reviewerId }) {
     try {
       await this.initializeModels();
@@ -231,7 +231,7 @@ class FakeCardService {
         calculatedRewardPoints = this.rewardPoints[fakeCard.fakeType] || 0;
       }
 
-      // 更新假卡記錄
+      // UpdateFalse卡Record
       await fakeCard.update({
         status,
         reviewerNotes,
@@ -245,7 +245,7 @@ class FakeCardService {
         },
       });
 
-      // 如果審核通過，給用戶增加積分
+      // 如果審核通過，給User增加積分
       if (status === 'approved') {
         const user = await User.findByPk(fakeCard.userId);
         if (user) {
@@ -269,12 +269,12 @@ class FakeCardService {
         reviewDate: fakeCard.reviewDate,
       };
     } catch (error) {
-      logger.error('審核假卡報告失敗:', error);
+      logger.error('審核假卡報告Failed:', error);
       throw error;
     }
   }
 
-  // 獲取假卡統計信息
+  // GetFalse卡StatisticsInformation
   async getFakeCardStats() {
     try {
       await this.initializeModels();
@@ -328,7 +328,7 @@ class FakeCardService {
         })),
       };
     } catch (error) {
-      logger.error('獲取假卡統計失敗:', error);
+      logger.error('Get假卡統計Failed:', error);
       throw error;
     }
   }

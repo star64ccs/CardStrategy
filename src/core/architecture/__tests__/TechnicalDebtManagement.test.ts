@@ -41,23 +41,23 @@ describe('TechnicalDebtManagement', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化', async () => {
+    it('應該SuccessInitialize', async () => {
       const _result = await management.initialize();
       expect(result).toBe(true);
       expect(management.getInitializationStatus()).toBe(true);
     });
 
-    it('應該處理初始化失敗', async () => {
-      // 創建一個新的實例來測試初始化失敗
+    it('應該HandleInitializeFailed', async () => {
+      // Create一個新的Instance來TestInitializeFailed
       (TechnicalDebtManagement as any).instance = undefined;
       const _newManagement = TechnicalDebtManagement.getInstance();
 
-      // Mock identifier 的方法
+      // Mock identifier 的Method
       const _mockIdentifier = newManagement as any;
       mockIdentifier.identifier = {
         identifyCodeQualityIssues: jest
           .fn()
-          .mockRejectedValue(new Error('掃描失敗')),
+          .mockRejectedValue(new Error('掃描Failed')),
         identifyArchitectureIssues: jest.fn().mockResolvedValue([]),
         identifyPerformanceIssues: jest.fn().mockResolvedValue([]),
         identifySecurityIssues: jest.fn().mockResolvedValue([]),
@@ -76,7 +76,7 @@ describe('TechnicalDebtManagement', () => {
       expect(newIssues.length).toBeGreaterThan(0);
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
+    it('應該在未Initialize時拋出Error', async () => {
       await expect(management.scanForNewIssues()).rejects.toThrow(
         '技術債務管理尚未初始化'
       );

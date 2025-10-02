@@ -47,14 +47,14 @@ export class ReplicateService {
   }
 
   /**
-   * 檢查服務是否可用
+   * CheckServiceYesNo可用
    */
   isAvailable(): boolean {
     return !!this.apiToken;
   }
 
   /**
-   * 獲取可用的模型列表
+   * Get可用的模型List
    */
   async getModels(): Promise<ApiResponse<ReplicateModel[]>> {
     try {
@@ -101,7 +101,7 @@ export class ReplicateService {
   }
 
   /**
-   * 創建預測任務
+   * Create預測Task
    */
   async createPrediction(
     request: ReplicatePredictionRequest
@@ -150,7 +150,7 @@ export class ReplicateService {
   }
 
   /**
-   * 獲取預測結果
+   * Get預測結果
    */
   async getPrediction(
     predictionId: string
@@ -205,7 +205,7 @@ export class ReplicateService {
   }
 
   /**
-   * 取消預測任務
+   * Cancel預測Task
    */
   async cancelPrediction(predictionId: string): Promise<ApiResponse<boolean>> {
     try {
@@ -252,7 +252,7 @@ export class ReplicateService {
   }
 
   /**
-   * 批量處理預測任務
+   * BatchHandle預測Task
    */
   async batchPredict(
     requests: ReplicatePredictionRequest[]
@@ -279,7 +279,7 @@ export class ReplicateService {
       const predictions: ReplicatePrediction[] = [];
       const errors: string[] = [];
 
-      // 並行處理所有請求
+      // ParallelHandle所有Request
       const _promises = requests.map(async (request, index) => {
         try {
           const _result = await this.createPrediction(request);
@@ -316,7 +316,7 @@ export class ReplicateService {
   }
 
   /**
-   * 等待預測完成
+   * Await預測Complete
    */
   async waitForPrediction(
     predictionId: string,
@@ -364,7 +364,7 @@ export class ReplicateService {
           };
         }
 
-        // 等待 2 秒後再次檢查
+        // Await 2 Second後再次Check
         await new Promise(resolve => setTimeout(resolve, 2000));
       }
 
@@ -386,7 +386,7 @@ export class ReplicateService {
   }
 
   /**
-   * 獲取服務統計信息
+   * GetServiceStatisticsInformation
    */
   async getServiceStats(): Promise<
     ApiResponse<{
@@ -424,7 +424,7 @@ export class ReplicateService {
         data: {
           available: true,
           modelsCount,
-          activePredictions: 0, // 需要額外 API 調用來獲取
+          activePredictions: 0, // 需要額外 API 調用來Get
           lastUsed: new Date().toISOString(),
         },
         message: 'Service stats retrieved successfully',
@@ -442,5 +442,5 @@ export class ReplicateService {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _replicateService = new ReplicateService();

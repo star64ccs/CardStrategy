@@ -1,6 +1,6 @@
 /**
- * 數據處理優化服務測試
- * 測試 TD-006: 提升數據處理性能
+ * DataHandle優化ServiceTest
+ * Test TD-006: 提升DataHandle性能
  */
 
 import { DataProcessingOptimizationService } from '../../services/dataProcessingOptimizationService';
@@ -42,7 +42,7 @@ describe('DataProcessingOptimizationService', () => {
   });
 
   describe('初始化測試', () => {
-    it('應該正確初始化服務', async () => {
+    it('應該正確InitializeService', async () => {
       const _result = await dataProcessingOptimizationService.initialize();
       expect(result).toBe(true);
     });
@@ -150,14 +150,14 @@ describe('DataProcessingOptimizationService', () => {
       expect(result.throughput).toBeGreaterThan(0);
     });
 
-    it('應該處理錯誤情況', async () => {
+    it('應該HandleError情況', async () => {
       const _testData = Array.from({ length: 10 }, (_, i) => ({
         id: i,
         name: `Item ${i}`,
       }));
       const _processor = async (item: unknown) => {
         if (item.id % 3 === 0) {
-          throw new Error(`處理失敗: ${item.id}`);
+          throw new Error(`HandleFailed: ${item.id}`);
         }
         return { processed: item.id };
       };
@@ -275,7 +275,7 @@ describe('DataProcessingOptimizationService', () => {
     });
 
     it('應該獲取性能指標', async () => {
-      // 執行一些操作來生成指標
+      // 執Row一些Operation來生成指標
       await dataProcessingOptimizationService.optimizeDatabaseQuery(
         'SELECT * FROM test'
       );
@@ -354,18 +354,18 @@ describe('DataProcessingOptimizationService', () => {
   });
 
   describe('重置測試', () => {
-    it('應該重置服務狀態', async () => {
+    it('應該重置Service狀態', async () => {
       await dataProcessingOptimizationService.initialize();
 
-      // 執行一些操作
+      // 執Row一些Operation
       await dataProcessingOptimizationService.optimizeDatabaseQuery(
         'SELECT * FROM test'
       );
 
-      // 重置
+      // Reset
       await dataProcessingOptimizationService.reset();
 
-      // 檢查是否重置
+      // CheckYesNoReset
       const { isInitialized } = dataProcessingOptimizationService as any;
       expect(isInitialized).toBe(false);
     });
@@ -373,15 +373,15 @@ describe('DataProcessingOptimizationService', () => {
     it('應該重置性能指標', async () => {
       await dataProcessingOptimizationService.initialize();
 
-      // 執行一些操作來生成指標
+      // 執Row一些Operation來生成指標
       await dataProcessingOptimizationService.optimizeDatabaseQuery(
         'SELECT * FROM test'
       );
 
-      // 重置
+      // Reset
       await dataProcessingOptimizationService.reset();
 
-      // 檢查指標是否重置
+      // Check指標YesNoReset
       const _metrics = dataProcessingOptimizationService.getPerformanceMetrics();
       expect(metrics.queryPerformance.averageQueryTime).toBe(0);
       expect(metrics.cachePerformance.hitRatio).toBe(0);
@@ -450,7 +450,7 @@ describe('DataProcessingOptimizationService', () => {
 
       expect(result.totalItems).toBe(1000);
       expect(result.processedItems).toBe(1000);
-      expect(totalTime).toBeLessThan(5000); // 應該在5秒內完成
+      expect(totalTime).toBeLessThan(5000); // 應該在5Second內Complete
     });
 
     it('應該高效處理查詢優化', async () => {
@@ -464,7 +464,7 @@ describe('DataProcessingOptimizationService', () => {
 
       const _totalTime = Date.now() - startTime;
 
-      expect(totalTime).toBeLessThan(2000); // 應該在2秒內完成100次查詢優化
+      expect(totalTime).toBeLessThan(2000); // 應該在2Second內Complete100次Query優化
     });
   });
 });

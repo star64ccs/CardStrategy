@@ -1,0 +1,484 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+// 定義價格數據相關類型
+export interface PriceData {
+  id: string;
+  cardId: string;
+  source: string;
+  price: number;
+  currency: string;
+  condition: string;
+  grade?: string;
+  timestamp: string;
+  market: string;
+  url?: string;
+}
+
+export interface PriceHistory {
+  id: string;
+  cardId: string;
+  prices: {
+    timestamp: string;
+    price: number;
+    source: string;
+  }[];
+  averagePrice: number;
+  priceRange: {
+    min: number;
+    max: number;
+  };
+  trend: 'up' | 'down' | 'stable';
+}
+
+export interface MarketAnalysis {
+  id: string;
+  cardId: string;
+  marketCap: number;
+  volatility: number;
+  liquidity: number;
+  demandScore: number;
+  supplyScore: number;
+  pricePrediction: {
+    shortTerm: number;
+    mediumTerm: number;
+    longTerm: number;
+  };
+  confidence: number;
+  updatedAt: string;
+}
+
+export interface PriceAlert {
+  id: string;
+  userId: string;
+  cardId: string;
+  condition: 'above' | 'below' | 'equals';
+  targetPrice: number;
+  isActive: boolean;
+  triggeredAt?: string;
+  createdAt: string;
+}
+
+export interface PriceDataFilters {
+  cardId?: string;
+  source?: string;
+  market?: string;
+  condition?: string;
+  grade?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
+// 價格數據狀態接口
+export interface PriceDataState {
+  prices: PriceData[];
+  priceHistory: PriceHistory[];
+  marketAnalysis: MarketAnalysis[];
+  priceAlerts: PriceAlert[];
+  filters: PriceDataFilters;
+  isLoading: boolean;
+  isUpdating: boolean;
+  isAnalyzing: boolean;
+  error: string | null;
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+}
+
+// 異步 Action Creators
+export const fetchPriceData = createAsyncThunk(
+  'priceData/fetchPriceData',
+  async (filters: PriceDataFilters = {}, { rejectWithValue }) => {
+    try {
+      // 模擬獲取價格數據
+      const mockPrices: PriceData[] = [
+        {
+          id: '1',
+          cardId: 'card-1',
+          source: 'TCGPlayer',
+          price: 25.99,
+          currency: 'USD',
+          condition: 'Near Mint',
+          grade: 'PSA 10',
+          timestamp: new Date().toISOString(),
+          market: 'US',
+          url: 'https://tcgplayer.com/example',
+        },
+      ];
+
+      return {
+        prices: mockPrices,
+        pagination: {
+          page: 1,
+          limit: 20,
+          total: mockPrices.length,
+          totalPages: 1,
+        },
+      };
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取價格數據失敗');
+    }
+  }
+);
+
+export const fetchPriceHistory = createAsyncThunk(
+  'priceData/fetchPriceHistory',
+  async (cardId: string, { rejectWithValue }) => {
+    try {
+      // 模擬獲取價格歷史
+      const mockHistory: PriceHistory = {
+        id: 'history-1',
+        cardId,
+        prices: [
+          {
+            timestamp: new Date(
+              Date.now() - 7 * 24 * 60 * 60 * 1000
+            ).toISOString(),
+            price: 20.99,
+            source: 'TCGPlayer',
+          },
+          {
+            timestamp: new Date(
+              Date.now() - 3 * 24 * 60 * 60 * 1000
+            ).toISOString(),
+            price: 22.5,
+            source: 'TCGPlayer',
+          },
+          {
+            timestamp: new Date().toISOString(),
+            price: 25.99,
+            source: 'TCGPlayer',
+          },
+        ],
+        averagePrice: 23.16,
+        priceRange: {
+          min: 20.99,
+          max: 25.99,
+        },
+        trend: 'up',
+      };
+
+      return mockHistory;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取價格歷史失敗');
+    }
+  }
+);
+
+export const generateMarketAnalysis = createAsyncThunk(
+  'priceData/generateMarketAnalysis',
+  async (cardId: string, { rejectWithValue }) => {
+    try {
+      // 模擬生成市場分析
+      const analysis: MarketAnalysis = {
+        id: 'analysis-1',
+        cardId,
+        marketCap: 50000,
+        volatility: 0.15,
+        liquidity: 0.8,
+        demandScore: 0.7,
+        supplyScore: 0.6,
+        pricePrediction: {
+          shortTerm: 28.5,
+          mediumTerm: 32.0,
+          longTerm: 35.0,
+        },
+        confidence: 0.85,
+        updatedAt: new Date().toISOString(),
+      };
+
+      return analysis;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '生成市場分析失敗');
+    }
+  }
+);
+
+export const createPriceAlert = createAsyncThunk(
+  'priceData/createPriceAlert',
+  async (
+    alert: {
+      cardId: string;
+      condition: 'above' | 'below' | 'equals';
+      targetPrice: number;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬創建價格提醒
+      const newAlert: PriceAlert = {
+        id: Date.now().toString(),
+        userId: 'current_user',
+        cardId: alert.cardId,
+        condition: alert.condition,
+        targetPrice: alert.targetPrice,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      };
+
+      return newAlert;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '創建價格提醒失敗');
+    }
+  }
+);
+
+export const updatePriceAlert = createAsyncThunk(
+  'priceData/updatePriceAlert',
+  async (
+    { alertId, updates }: { alertId: string; updates: Partial<PriceAlert> },
+    { rejectWithValue }
+  ) => {
+    try {
+      // 模擬更新價格提醒
+      const updatedAlert: PriceAlert = {
+        id: alertId,
+        userId: 'current_user',
+        cardId: 'card-1',
+        condition: 'above',
+        targetPrice: 30.0,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+        ...updates,
+      };
+
+      return updatedAlert;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '更新價格提醒失敗');
+    }
+  }
+);
+
+export const deletePriceAlert = createAsyncThunk(
+  'priceData/deletePriceAlert',
+  async (alertId: string, { rejectWithValue }) => {
+    try {
+      // 模擬刪除價格提醒
+      return alertId;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '刪除價格提醒失敗');
+    }
+  }
+);
+
+export const fetchUserPriceAlerts = createAsyncThunk(
+  'priceData/fetchUserPriceAlerts',
+  async (_, { rejectWithValue }) => {
+    try {
+      // 模擬獲取用戶價格提醒
+      const alerts: PriceAlert[] = [
+        {
+          id: '1',
+          userId: 'current_user',
+          cardId: 'card-1',
+          condition: 'above',
+          targetPrice: 30.0,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        },
+      ];
+
+      return alerts;
+    } catch (error: any) {
+      return rejectWithValue((error as any).message || '獲取用戶價格提醒失敗');
+    }
+  }
+);
+
+// 初始狀態
+const initialState: PriceDataState = {
+  prices: [],
+  priceHistory: [],
+  marketAnalysis: [],
+  priceAlerts: [],
+  filters: {},
+  isLoading: false,
+  isUpdating: false,
+  isAnalyzing: false,
+  error: null,
+  pagination: {
+    page: 1,
+    limit: 20,
+    total: 0,
+    totalPages: 0,
+  },
+};
+
+// 創建 slice
+const priceDataSlice = createSlice({
+  name: 'priceData',
+  initialState,
+  reducers: {
+    setFilters: (state, action: PayloadAction<PriceDataFilters>) => {
+      state.filters = action.payload;
+    },
+    clearFilters: state => {
+      state.filters = {};
+    },
+    clearError: state => {
+      state.error = null;
+    },
+    updatePriceData: (state, action: PayloadAction<PriceData>) => {
+      const index = state.prices.findIndex(p => p.id === action.payload.id);
+      if (index !== -1) {
+        state.prices[index] = action.payload;
+      } else {
+        state.prices.push(action.payload);
+      }
+    },
+    removePriceData: (state, action: PayloadAction<string>) => {
+      state.prices = state.prices.filter(p => p.id !== action.payload);
+    },
+  },
+  extraReducers: builder => {
+    // Fetch Price Data
+    builder
+      .addCase(fetchPriceData.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchPriceData.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.prices = action.payload.prices;
+        state.pagination = action.payload.pagination;
+        state.error = null;
+      })
+      .addCase(fetchPriceData.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Fetch Price History
+    builder
+      .addCase(fetchPriceHistory.fulfilled, (state, action) => {
+        const existingIndex = state.priceHistory.findIndex(
+          h => h.cardId === action.payload.cardId
+        );
+        if (existingIndex !== -1) {
+          state.priceHistory[existingIndex] = action.payload;
+        } else {
+          state.priceHistory.push(action.payload);
+        }
+      })
+      .addCase(fetchPriceHistory.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Generate Market Analysis
+    builder
+      .addCase(generateMarketAnalysis.pending, state => {
+        state.isAnalyzing = true;
+        state.error = null;
+      })
+      .addCase(generateMarketAnalysis.fulfilled, (state, action) => {
+        state.isAnalyzing = false;
+        const existingIndex = state.marketAnalysis.findIndex(
+          a => a.cardId === action.payload.cardId
+        );
+        if (existingIndex !== -1) {
+          state.marketAnalysis[existingIndex] = action.payload;
+        } else {
+          state.marketAnalysis.push(action.payload);
+        }
+        state.error = null;
+      })
+      .addCase(generateMarketAnalysis.rejected, (state, action) => {
+        state.isAnalyzing = false;
+        state.error = action.payload as string;
+      });
+
+    // Create Price Alert
+    builder
+      .addCase(createPriceAlert.fulfilled, (state, action) => {
+        state.priceAlerts.push(action.payload);
+      })
+      .addCase(createPriceAlert.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Update Price Alert
+    builder
+      .addCase(updatePriceAlert.fulfilled, (state, action) => {
+        const index = state.priceAlerts.findIndex(
+          a => a.id === action.payload.id
+        );
+        if (index !== -1) {
+          state.priceAlerts[index] = action.payload;
+        }
+      })
+      .addCase(updatePriceAlert.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Delete Price Alert
+    builder
+      .addCase(deletePriceAlert.fulfilled, (state, action) => {
+        state.priceAlerts = state.priceAlerts.filter(
+          a => a.id !== action.payload
+        );
+      })
+      .addCase(deletePriceAlert.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Fetch User Price Alerts
+    builder
+      .addCase(fetchUserPriceAlerts.fulfilled, (state, action) => {
+        state.priceAlerts = action.payload;
+      })
+      .addCase(fetchUserPriceAlerts.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+  },
+});
+
+// 導出 actions
+export const {
+  setFilters,
+  clearFilters,
+  clearError,
+  updatePriceData,
+  removePriceData,
+} = priceDataSlice.actions;
+
+// 導出 selectors
+export const selectPriceData = (state: { priceData: PriceDataState }) =>
+  state.priceData.prices;
+
+export const selectPriceHistory = (state: { priceData: PriceDataState }) =>
+  state.priceData.priceHistory;
+
+export const selectMarketAnalysis = (state: { priceData: PriceDataState }) =>
+  state.priceData.marketAnalysis;
+
+export const selectPriceAlerts = (state: { priceData: PriceDataState }) =>
+  state.priceData.priceAlerts;
+
+export const selectPriceDataFilters = (state: { priceData: PriceDataState }) =>
+  state.priceData.filters;
+
+export const selectPriceDataPagination = (state: {
+  priceData: PriceDataState;
+}) => state.priceData.pagination;
+
+export const selectIsPriceDataLoading = (state: {
+  priceData: PriceDataState;
+}) => state.priceData.isLoading;
+
+export const selectIsPriceDataUpdating = (state: {
+  priceData: PriceDataState;
+}) => state.priceData.isUpdating;
+
+export const selectIsAnalyzing = (state: { priceData: PriceDataState }) =>
+  state.priceData.isAnalyzing;
+
+export const selectPriceDataError = (state: { priceData: PriceDataState }) =>
+  state.priceData.error;
+
+// 導出 reducer
+export default priceDataSlice.reducer;

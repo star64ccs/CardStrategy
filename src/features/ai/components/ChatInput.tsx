@@ -33,7 +33,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   const _handleTextChange = (text: string) => {
     setMessage(text);
 
-    // 通知父組件打字狀態
+    // Notification父Component打字Status
     if (onTyping) {
       const _typing = text.length > 0;
       if (typing !== isTyping) {
@@ -60,12 +60,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     setMessage('');
     setIsTyping(false);
 
-    // 通知父組件停止打字
+    // Notification父ComponentStop打字
     if (onTyping) {
       onTyping(false);
     }
 
-    // 重新聚焦輸入框
+    // Re聚焦Input框
     inputRef.current?.focus();
   };
 

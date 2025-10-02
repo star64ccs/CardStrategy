@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -45,7 +45,7 @@ class Phase3SecurityOptimizer {
     this.backendDir = path.join(this.projectRoot, 'backend');
   }
 
-  // 創建安全中間件系統
+  // Create安全中間件系統
   async createSecurityMiddlewareSystem() {
     log.header('🔒 創建安全中間件系統');
 
@@ -58,7 +58,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { logger } = require('./unified-logger');
 
-// 速率限制配置
+// 速率LimitConfigure
 const createRateLimit = (windowMs = 15 * 60 * 1000, max = 100, message = 'Too many requests') => {
   return rateLimit({
     windowMs,
@@ -85,7 +85,7 @@ const createRateLimit = (windowMs = 15 * 60 * 1000, max = 100, message = 'Too ma
   });
 };
 
-// 安全頭配置
+// 安全頭Configure
 const securityHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
@@ -109,7 +109,7 @@ const securityHeaders = helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 });
 
-// CORS 配置
+// CORS Configure
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const corsOptions = {
@@ -131,9 +131,9 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 };
 
-// 輸入驗證中間件
+// InputVerify中間件
 const inputValidation = (req, res, next) => {
-  // 檢查請求體大小
+  // CheckRequest體大小
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
   const contentLength = parseInt(req.get('Content-Length') || '0');
@@ -152,7 +152,7 @@ const inputValidation = (req, res, next) => {
     });
   }
 
-  // 檢查 SQL 注入
+  // Check SQL 注入
   const sqlInjectionPattern = /(\b(union|select|insert|update|delete|drop|create|alter|exec|execute|script)\b)/i;
   const body = JSON.stringify(req.body);
   const query = req.query ? JSON.stringify(req.query) : '';
@@ -172,7 +172,7 @@ const inputValidation = (req, res, next) => {
     });
   }
 
-  // 檢查 XSS 攻擊
+  // Check XSS 攻擊
   const xssPattern = /<script[^>]*>.*?</script>/gi;
   if (xssPattern.test(params)) {
     logger.warn('Potential XSS attack detected', {
@@ -191,7 +191,7 @@ const inputValidation = (req, res, next) => {
   next();
 };
 
-// 請求日誌中間件
+// RequestLog中間件
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const requestLogger = (req, res, next) => {
@@ -220,7 +220,7 @@ const requestLogger = (req, res, next) => {
   next();
 };
 
-// 錯誤處理中間件
+// ErrorHandle中間件
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -233,7 +233,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     ip: req.ip
   });
 
-  // 不要暴露內部錯誤信息給客戶端
+  // 不要暴露InternalErrorInformation給Client
   const isDevelopment = process.env.NODE_ENV === 'development';
   
   res.status(err.status || 500).json({
@@ -244,7 +244,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
   });
 };
 
-// 404 處理中間件
+// 404 Handle中間件
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const notFoundHandler = (req, res) => {
@@ -261,26 +261,26 @@ const notFoundHandler = (req, res) => {
   });
 };
 
-// 安全配置
+// 安全Configure
 const securityConfig = {
-  // 不同端點的速率限制
+  // 不同端點的速率Limit
   rateLimits: {
-    // 一般 API 請求
+    // 一般 API Request
     general: createRateLimit(15 * 60 * 1000, 100, 'Too many requests'),
     
-    // 認證相關請求
+    // Authenticate相OffRequest
     auth: createRateLimit(15 * 60 * 1000, 5, 'Too many authentication attempts'),
     
-    // 文件上傳
+    // FileUpload
     upload: createRateLimit(15 * 60 * 1000, 10, 'Too many upload attempts'),
     
-    // 管理員端點
+    // Manage員端點
     admin: createRateLimit(15 * 60 * 1000, 50, 'Too many admin requests')
   },
 
-  // 安全檢查
+  // 安全Check
   securityChecks: {
-    // 檢查請求來源
+    // CheckRequest來源
     checkOrigin: (req, res, next) => {
       const origin = req.get('Origin');
       const referer = req.get('Referer');
@@ -297,7 +297,7 @@ const securityConfig = {
       next();
     },
 
-    // 檢查用戶代理
+    // CheckUser代理
     checkUserAgent: (req, res, next) => {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -338,7 +338,7 @@ module.exports = {
     log.success('安全中間件系統已創建');
   }
 
-  // 創建安全工具函數
+  // Create安全ToolFunction
   async createSecurityUtils() {
     log.header('🛡️ 創建安全工具函數');
 
@@ -347,7 +347,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { logger } = require('../utils/unified-logger');
 
-// 密碼加密
+// PasswordEncrypt
 const hashPassword = async (password) => {
   try {
     const saltRounds = 12;
@@ -359,7 +359,7 @@ const hashPassword = async (password) => {
   }
 };
 
-// 密碼驗證
+// PasswordVerify
 const verifyPassword = async (password, hash) => {
   try {
     const isValid = await bcrypt.compare(password, hash);
@@ -389,7 +389,7 @@ const generateToken = (payload, expiresIn = '24h') => {
   }
 };
 
-// JWT Token 驗證
+// JWT Token Verify
 const verifyToken = (token) => {
   try {
 // eslint-disable-next-line no-unused-vars
@@ -421,7 +421,7 @@ const generateSecureRandom = (min = 100000, max = 999999) => {
   return min + (value % range);
 };
 
-// 數據加密
+// DataEncrypt
 const encryptData = (data, key = process.env.ENCRYPTION_KEY) => {
   try {
     if (!key) {
@@ -445,7 +445,7 @@ const encryptData = (data, key = process.env.ENCRYPTION_KEY) => {
   }
 };
 
-// 數據解密
+// DataDecrypt
 const decryptData = (encryptedData, iv, key = process.env.ENCRYPTION_KEY) => {
   try {
     if (!key) {
@@ -465,26 +465,26 @@ const decryptData = (encryptedData, iv, key = process.env.ENCRYPTION_KEY) => {
   }
 };
 
-// 輸入清理
+// Input清理
 const sanitizeInput = (input) => {
   if (typeof input !== 'string') {
     return input;
   }
   
   return input
-    .replace(/[<>]/g, '') // 移除 < 和 >
-    .replace(/javascript:/gi, '') // 移除 javascript: 協議
-    .replace(/on\\w+=/gi, '') // 移除事件處理器
+    .replace(/[<>]/g, '') // Remove < 和 >
+    .replace(/javascript:/gi, '') // Remove javascript: Protocol
+    .replace(/on\\w+=/gi, '') // RemoveEventHandle器
     .trim();
 };
 
-// 電子郵件驗證
+// 電子郵件Verify
 const validateEmail = (email) => {
   const emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
   return emailRegex.test(email);
 };
 
-// 密碼強度檢查
+// Password強度Check
 const validatePassword = (password) => {
   const minLength = 8;
   const hasUpperCase = /[A-Z]/.test(password);
@@ -519,7 +519,7 @@ const validatePassword = (password) => {
   };
 };
 
-// 安全日誌記錄
+// 安全LogRecord
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logSecurityEvent = (event, details) => {
@@ -552,7 +552,7 @@ module.exports = {
     log.success('安全工具函數已創建');
   }
 
-  // 創建認證中間件
+  // CreateAuthenticate中間件
   async createAuthMiddleware() {
     log.header('🔐 創建認證中間件');
 
@@ -561,7 +561,7 @@ module.exports = {
     const authMiddleware = `const { verifyToken, logSecurityEvent } = require('../utils/security-utils');
 const { logger } = require('../utils/unified-logger');
 
-// JWT 認證中間件
+// JWT Authenticate中間件
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const authenticateToken = (req, res, next) => {
@@ -620,7 +620,7 @@ const authenticateToken = (req, res, next) => {
   }
 };
 
-// 角色驗證中間件
+// 角色Verify中間件
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const requireRole = (roles) => {
@@ -659,17 +659,17 @@ const requireRole = (roles) => {
   };
 };
 
-// 管理員驗證中間件
+// Manage員Verify中間件
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const requireAdmin = requireRole('admin');
 
-// 用戶驗證中間件
+// UserVerify中間件
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const requireUser = requireRole(['user', 'admin']);
 
-// 可選認證中間件（不強制要求認證）
+// OptionalAuthenticate中間件（不Force要求Authenticate）
 const optionalAuth = (req, res, next) => {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -683,7 +683,7 @@ const optionalAuth = (req, res, next) => {
         req.user = decoded;
       }
     } catch (error) {
-      // 靜默處理錯誤，不影響請求
+      // 靜默HandleError，不影響Request
       logger.debug('Optional auth failed:', error.message);
     }
   }
@@ -707,7 +707,7 @@ module.exports = {
     log.success('認證中間件已創建');
   }
 
-  // 生成安全報告
+  // 生成安全Report
   generateReport() {
     log.header('🔒 安全中間件系統報告');
 
@@ -782,11 +782,11 @@ app.use(cors(corsOptions));
 app.use(inputValidation);
 app.use(requestLogger);
 
-// 認證中間件
+// Authenticate中間件
 app.use('/api/admin', authenticateToken, requireAdmin);
 app.use('/api/protected', authenticateToken);
 
-// 錯誤處理
+// ErrorHandle
 app.use(notFoundHandler);
 app.use(errorHandler);
 \`\`\`
@@ -795,13 +795,13 @@ app.use(errorHandler);
 \`\`\`javascript
 const { hashPassword, generateToken, validateEmail } = require('./utils/security-utils');
 
-// 密碼加密
+// PasswordEncrypt
 const hashedPassword = await hashPassword('userPassword');
 
 // 生成 Token
 const token = generateToken({ userId: 1, role: 'user' });
 
-// 驗證郵箱
+// VerifyEmail
 const isValidEmail = validateEmail('user@example.com');
 \`\`\`
 
@@ -852,7 +852,7 @@ const isValidEmail = validateEmail('user@example.com');
     log.success(`安全報告已生成: ${reportPath}`);
   }
 
-  // 執行所有優化
+  // 執Row所有優化
   async run() {
     log.header('🚀 開始第三階段安全中間件優化');
 
@@ -866,13 +866,13 @@ const isValidEmail = validateEmail('user@example.com');
       log.success('安全中間件系統已創建完成');
       log.success('請查看 SECURITY_MIDDLEWARE_REPORT.md 了解詳細信息');
     } catch (error) {
-      log.error(`優化過程中發生錯誤: ${error.message}`);
+      log.error(`優化過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行優化
+// 執Row優化
 if (require.main === module) {
   const optimizer = new Phase3SecurityOptimizer();
   optimizer.run();

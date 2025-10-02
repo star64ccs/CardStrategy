@@ -21,29 +21,29 @@ describe('GamificationService', () => {
   });
 
   describe('initialize', () => {
-    it('應該成功初始化遊戲化服務', async () => {
+    it('應該SuccessInitialize遊戲化Service', async () => {
       await gamificationService.initialize();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('初始化遊戲化服務...');
+      expect(mockLogger.info).toHaveBeenCalledWith('Initialize遊戲化Service...');
       expect(mockLogger.info).toHaveBeenCalledWith('遊戲化系統初始化完成');
       expect(mockLogger.info).toHaveBeenCalledWith('遊戲化配置已加載');
-      expect(mockLogger.info).toHaveBeenCalledWith('遊戲化服務初始化完成');
+      expect(mockLogger.info).toHaveBeenCalledWith('遊戲化ServiceInitialize完成');
     });
 
-    it('應該處理依賴服務未初始化的情況', async () => {
-      // 模擬依賴服務未初始化
+    it('應該Handle依賴Service未Initialize的情況', async () => {
+      // 模擬依賴Service未Initialize
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(gamificationService.initialize()).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '遊戲化服務初始化失敗:',
+        '遊戲化ServiceInitializeFailed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createAchievement', () => {
-    it('應該成功創建成就', async () => {
+    it('應該SuccessCreate成就', async () => {
       const _achievementData = {
         name: '測試成就',
         description: '這是一個測試成就',
@@ -88,12 +88,12 @@ describe('GamificationService', () => {
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.updatedAt).toBeInstanceOf(Date);
       expect(mockLogger.info).toHaveBeenCalledWith('創建成就:', '測試成就');
-      expect(mockLogger.info).toHaveBeenCalledWith('成就創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('成就CreateSuccess');
     });
 
     it('應該處理無效的成就數據', async () => {
       const _invalidAchievementData = {
-        name: '', // 無效：空名稱
+        name: '', // 無效：Empty名稱
         description: '這是一個測試成就',
         category: 'collection' as const,
         rarity: 'common' as const,
@@ -105,7 +105,7 @@ describe('GamificationService', () => {
         gamificationService.createAchievement(invalidAchievementData)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建成就失敗:',
+        'Create成就Failed:',
         expect.any(Error)
       );
     });
@@ -133,8 +133,8 @@ describe('GamificationService', () => {
   });
 
   describe('getAchievement', () => {
-    it('應該成功獲取成就', async () => {
-      // 先創建一個成就
+    it('應該SuccessGet成就', async () => {
+      // 先Create一個成就
       const _achievementData = {
         name: '測試成就',
         description: '這是一個測試成就',
@@ -163,8 +163,8 @@ describe('GamificationService', () => {
   });
 
   describe('getAllAchievements', () => {
-    it('應該成功獲取所有成就', async () => {
-      // 創建多個成就
+    it('應該SuccessGet所有成就', async () => {
+      // CreateMultiple成就
       const _achievement1 = await gamificationService.createAchievement({
         name: '成就1',
         description: '第一個成就',
@@ -185,36 +185,36 @@ describe('GamificationService', () => {
 
       const _result = await gamificationService.getAllAchievements();
 
-      expect(result).toHaveLength(5); // 3個默認成就 + 2個新創建的成就
+      expect(result).toHaveLength(5); // 3個Default成就 + 2個新Create的成就
       expect(result).toContainEqual(achievement1);
       expect(result).toContainEqual(achievement2);
     });
   });
 
   describe('getUserAchievements', () => {
-    it('應該成功獲取用戶成就', async () => {
+    it('應該SuccessGet用戶成就', async () => {
       const _result = await gamificationService.getUserAchievements('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶成就:', 'user-1');
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取用戶成就失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet用戶成就Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.getUserAchievements('user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取用戶成就失敗:',
+        'Get用戶成就Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('checkAchievementProgress', () => {
-    it('應該成功檢查成就進度', async () => {
+    it('應該SuccessCheck成就進度', async () => {
       await gamificationService.checkAchievementProgress(
         'user-1',
         'add_card',
@@ -229,44 +229,44 @@ describe('GamificationService', () => {
       );
     });
 
-    it('應該處理檢查成就進度失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleCheck成就進度Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.checkAchievementProgress('user-1', 'add_card')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '檢查成就進度失敗:',
+        'Check成就進度Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getUserPoints', () => {
-    it('應該成功獲取用戶積分', async () => {
+    it('應該SuccessGet用戶積分', async () => {
       const _result = await gamificationService.getUserPoints('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶積分:', 'user-1');
       expect(result).toBeNull();
     });
 
-    it('應該處理獲取用戶積分失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet用戶積分Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.getUserPoints('user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取用戶積分失敗:',
+        'Get用戶積分Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('addPoints', () => {
-    it('應該成功添加積分', async () => {
+    it('應該Success添加積分', async () => {
       await gamificationService.addPoints(
         'user-1',
         100,
@@ -281,18 +281,18 @@ describe('GamificationService', () => {
         'collection',
         '添加卡片'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('積分添加成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('積分添加Success');
     });
 
-    it('應該處理添加積分失敗', async () => {
-      // 模擬錯誤情況
+    it('應該Handle添加積分Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.addPoints('user-1', 100)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '添加積分失敗:',
+        '添加積分Failed:',
         expect.any(Error)
       );
     });
@@ -311,7 +311,7 @@ describe('GamificationService', () => {
   });
 
   describe('calculateUserLevel', () => {
-    it('應該成功計算用戶等級', async () => {
+    it('應該Success計算用戶等級', async () => {
       const _result = await gamificationService.calculateUserLevel('user-1');
 
       expect(result).toEqual({
@@ -322,22 +322,22 @@ describe('GamificationService', () => {
       expect(mockLogger.info).toHaveBeenCalledWith('計算用戶等級:', 'user-1');
     });
 
-    it('應該處理計算用戶等級失敗', async () => {
-      // 模擬錯誤情況
+    it('應該Handle計算用戶等級Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.calculateUserLevel('user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '計算用戶等級失敗:',
+        '計算用戶等級Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createLeaderboard', () => {
-    it('應該成功創建排行榜', async () => {
+    it('應該SuccessCreate排行榜', async () => {
       const _leaderboardData = {
         name: '測試排行榜',
         description: '這是一個測試排行榜',
@@ -365,23 +365,23 @@ describe('GamificationService', () => {
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.updatedAt).toBeInstanceOf(Date);
       expect(mockLogger.info).toHaveBeenCalledWith('創建排行榜:', '測試排行榜');
-      expect(mockLogger.info).toHaveBeenCalledWith('排行榜創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('排行榜CreateSuccess');
     });
 
-    it('應該處理創建排行榜失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleCreate排行榜Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(gamificationService.createLeaderboard({})).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建排行榜失敗:',
+        'Create排行榜Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getLeaderboard', () => {
-    it('應該成功獲取排行榜', async () => {
+    it('應該SuccessGet排行榜', async () => {
       const _result = await gamificationService.getLeaderboard('leaderboard-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -391,22 +391,22 @@ describe('GamificationService', () => {
       expect(result).toBeNull();
     });
 
-    it('應該處理獲取排行榜失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet排行榜Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.getLeaderboard('leaderboard-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取排行榜失敗:',
+        'Get排行榜Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getLeaderboardEntries', () => {
-    it('應該成功獲取排行榜條目', async () => {
+    it('應該SuccessGet排行榜條目', async () => {
       const _result = await gamificationService.getLeaderboardEntries(
         'leaderboard-1',
         1,
@@ -422,22 +422,22 @@ describe('GamificationService', () => {
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取排行榜條目失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet排行榜條目Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.getLeaderboardEntries('leaderboard-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取排行榜條目失敗:',
+        'Get排行榜條目Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('updateLeaderboardScore', () => {
-    it('應該成功更新排行榜分數', async () => {
+    it('應該SuccessUpdate排行榜分數', async () => {
       await gamificationService.updateLeaderboardScore(
         'leaderboard-1',
         'user-1',
@@ -450,11 +450,11 @@ describe('GamificationService', () => {
         'user-1',
         1000
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('排行榜分數更新成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('排行榜分數UpdateSuccess');
     });
 
-    it('應該處理更新排行榜分數失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleUpdate排行榜分數Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
@@ -465,14 +465,14 @@ describe('GamificationService', () => {
         )
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '更新排行榜分數失敗:',
+        'Update排行榜分數Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createChallenge', () => {
-    it('應該成功創建挑戰', async () => {
+    it('應該SuccessCreate挑戰', async () => {
       const _challengeData = {
         name: '測試挑戰',
         description: '這是一個測試挑戰',
@@ -520,12 +520,12 @@ describe('GamificationService', () => {
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.updatedAt).toBeInstanceOf(Date);
       expect(mockLogger.info).toHaveBeenCalledWith('創建挑戰:', '測試挑戰');
-      expect(mockLogger.info).toHaveBeenCalledWith('挑戰創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('挑戰CreateSuccess');
     });
 
     it('應該處理無效的挑戰數據', async () => {
       const _invalidChallengeData = {
-        name: '', // 無效：空名稱
+        name: '', // 無效：Empty名稱
         description: '這是一個測試挑戰',
         type: 'daily' as const,
         category: 'collection' as const,
@@ -539,15 +539,15 @@ describe('GamificationService', () => {
         gamificationService.createChallenge(invalidChallengeData)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建挑戰失敗:',
+        'Create挑戰Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getChallenge', () => {
-    it('應該成功獲取挑戰', async () => {
-      // 先創建一個挑戰
+    it('應該SuccessGet挑戰', async () => {
+      // 先Create一個挑戰
       const _challengeData = {
         name: '測試挑戰',
         description: '這是一個測試挑戰',
@@ -578,8 +578,8 @@ describe('GamificationService', () => {
   });
 
   describe('getAllChallenges', () => {
-    it('應該成功獲取所有挑戰', async () => {
-      // 創建多個挑戰
+    it('應該SuccessGet所有挑戰', async () => {
+      // CreateMultiple挑戰
       const _challenge1 = await gamificationService.createChallenge({
         name: '挑戰1',
         description: '第一個挑戰',
@@ -604,15 +604,15 @@ describe('GamificationService', () => {
 
       const _result = await gamificationService.getAllChallenges();
 
-      expect(result).toHaveLength(3); // 1個默認挑戰 + 2個新創建的挑戰
+      expect(result).toHaveLength(3); // 1個Default挑戰 + 2個新Create的挑戰
       expect(result).toContainEqual(challenge1);
       expect(result).toContainEqual(challenge2);
     });
   });
 
   describe('joinChallenge', () => {
-    it('應該成功參與挑戰', async () => {
-      // 先創建一個挑戰
+    it('應該Success參與挑戰', async () => {
+      // 先Create一個挑戰
       const _challenge = await gamificationService.createChallenge({
         name: '測試挑戰',
         description: '這是一個測試挑戰',
@@ -643,7 +643,7 @@ describe('GamificationService', () => {
         challenge.id,
         'user-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('挑戰參與成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('挑戰參與Success');
     });
 
     it('應該處理挑戰不存在的情況', async () => {
@@ -651,13 +651,13 @@ describe('GamificationService', () => {
         gamificationService.joinChallenge('nonexistent-challenge', 'user-1')
       ).rejects.toThrow('挑戰不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '參與挑戰失敗:',
+        '參與挑戰Failed:',
         expect.any(Error)
       );
     });
 
     it('應該處理挑戰未激活的情況', async () => {
-      // 創建一個未激活的挑戰
+      // Create一個未Activate的挑戰
       const _challenge = await gamificationService.createChallenge({
         name: '未激活挑戰',
         description: '這是一個未激活的挑戰',
@@ -669,43 +669,43 @@ describe('GamificationService', () => {
         difficulty: 'easy' as const,
       });
 
-      // 手動設置為未激活
+      // ManualSettings為未Activate
       (challenge as any).isActive = false;
 
       await expect(
         gamificationService.joinChallenge(challenge.id, 'user-1')
       ).rejects.toThrow('挑戰未激活');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '參與挑戰失敗:',
+        '參與挑戰Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getUserChallenges', () => {
-    it('應該成功獲取用戶挑戰', async () => {
+    it('應該SuccessGet用戶挑戰', async () => {
       const _result = await gamificationService.getUserChallenges('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶挑戰:', 'user-1');
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取用戶挑戰失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet用戶挑戰Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.getUserChallenges('user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取用戶挑戰失敗:',
+        'Get用戶挑戰Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getQuest', () => {
-    it('應該成功獲取任務', async () => {
+    it('應該SuccessGet任務', async () => {
       const _result = await gamificationService.getQuest('beginner-quest');
 
       expect(result).toMatchObject({
@@ -725,16 +725,16 @@ describe('GamificationService', () => {
   });
 
   describe('getAllQuests', () => {
-    it('應該成功獲取所有任務', async () => {
+    it('應該SuccessGet所有任務', async () => {
       const _result = await gamificationService.getAllQuests();
 
-      expect(result).toHaveLength(1); // 1個默認任務
+      expect(result).toHaveLength(1); // 1個DefaultTask
       expect(result[0].id).toBe('beginner-quest');
     });
   });
 
   describe('startQuest', () => {
-    it('應該成功開始任務', async () => {
+    it('應該Success開始任務', async () => {
       const _result = await gamificationService.startQuest(
         'beginner-quest',
         'user-1'
@@ -755,7 +755,7 @@ describe('GamificationService', () => {
         'beginner-quest',
         'user-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('任務開始成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('任務開始Success');
     });
 
     it('應該處理任務不存在的情況', async () => {
@@ -763,13 +763,13 @@ describe('GamificationService', () => {
         gamificationService.startQuest('nonexistent-quest', 'user-1')
       ).rejects.toThrow('任務不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '開始任務失敗:',
+        '開始任務Failed:',
         expect.any(Error)
       );
     });
 
     it('應該處理任務未激活的情況', async () => {
-      // 創建一個未激活的任務
+      // Create一個未Activate的Task
       const _quest = await gamificationService.getQuest('beginner-quest');
       if (quest) {
         (quest as any).isActive = false;
@@ -778,7 +778,7 @@ describe('GamificationService', () => {
           gamificationService.startQuest('beginner-quest', 'user-1')
         ).rejects.toThrow('任務未激活');
         expect(mockLogger.error).toHaveBeenCalledWith(
-          '開始任務失敗:',
+          '開始任務Failed:',
           expect.any(Error)
         );
       }
@@ -786,29 +786,29 @@ describe('GamificationService', () => {
   });
 
   describe('getUserQuests', () => {
-    it('應該成功獲取用戶任務', async () => {
+    it('應該SuccessGet用戶任務', async () => {
       const _result = await gamificationService.getUserQuests('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶任務:', 'user-1');
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取用戶任務失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet用戶任務Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.getUserQuests('user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取用戶任務失敗:',
+        'Get用戶任務Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getEvent', () => {
-    it('應該成功獲取事件', async () => {
+    it('應該SuccessGet事件', async () => {
       const _result = await gamificationService.getEvent('winter-collection');
 
       expect(result).toMatchObject({
@@ -827,16 +827,16 @@ describe('GamificationService', () => {
   });
 
   describe('getAllEvents', () => {
-    it('應該成功獲取所有事件', async () => {
+    it('應該SuccessGet所有事件', async () => {
       const _result = await gamificationService.getAllEvents();
 
-      expect(result).toHaveLength(1); // 1個默認事件
+      expect(result).toHaveLength(1); // 1個DefaultEvent
       expect(result[0].id).toBe('winter-collection');
     });
   });
 
   describe('joinEvent', () => {
-    it('應該成功參與事件', async () => {
+    it('應該Success參與事件', async () => {
       await gamificationService.joinEvent('winter-collection', 'user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -844,7 +844,7 @@ describe('GamificationService', () => {
         'winter-collection',
         'user-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('事件參與成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('事件參與Success');
     });
 
     it('應該處理事件不存在的情況', async () => {
@@ -852,13 +852,13 @@ describe('GamificationService', () => {
         gamificationService.joinEvent('nonexistent-event', 'user-1')
       ).rejects.toThrow('事件不存在');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '參與事件失敗:',
+        '參與事件Failed:',
         expect.any(Error)
       );
     });
 
     it('應該處理事件未激活的情況', async () => {
-      // 創建一個未激活的事件
+      // Create一個未Activate的Event
       const _event = await gamificationService.getEvent('winter-collection');
       if (event) {
         (event as any).isActive = false;
@@ -867,7 +867,7 @@ describe('GamificationService', () => {
           gamificationService.joinEvent('winter-collection', 'user-1')
         ).rejects.toThrow('事件未激活');
         expect(mockLogger.error).toHaveBeenCalledWith(
-          '參與事件失敗:',
+          '參與事件Failed:',
           expect.any(Error)
         );
       }
@@ -875,7 +875,7 @@ describe('GamificationService', () => {
   });
 
   describe('grantReward', () => {
-    it('應該成功發放獎勵', async () => {
+    it('應該Success發放獎勵', async () => {
       const _result = await gamificationService.grantReward(
         'user-1',
         'reward-1',
@@ -896,18 +896,18 @@ describe('GamificationService', () => {
         'reward-1',
         5
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('獎勵發放成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('獎勵發放Success');
     });
 
-    it('應該處理發放獎勵失敗', async () => {
-      // 模擬錯誤情況
+    it('應該Handle發放獎勵Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.grantReward('user-1', 'reward-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '發放獎勵失敗:',
+        '發放獎勵Failed:',
         expect.any(Error)
       );
     });
@@ -923,7 +923,7 @@ describe('GamificationService', () => {
   });
 
   describe('claimReward', () => {
-    it('應該成功領取獎勵', async () => {
+    it('應該Success領取獎勵', async () => {
       await gamificationService.claimReward('user-1', 'reward-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -931,47 +931,47 @@ describe('GamificationService', () => {
         'user-1',
         'reward-1'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('獎勵領取成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('獎勵領取Success');
     });
 
-    it('應該處理領取獎勵失敗', async () => {
-      // 模擬錯誤情況
+    it('應該Handle領取獎勵Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.claimReward('user-1', 'reward-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '領取獎勵失敗:',
+        '領取獎勵Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getUserRewards', () => {
-    it('應該成功獲取用戶獎勵', async () => {
+    it('應該SuccessGet用戶獎勵', async () => {
       const _result = await gamificationService.getUserRewards('user-1');
 
       expect(mockLogger.info).toHaveBeenCalledWith('獲取用戶獎勵:', 'user-1');
       expect(result).toEqual([]);
     });
 
-    it('應該處理獲取用戶獎勵失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleGet用戶獎勵Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         gamificationService.getUserRewards('user-1')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取用戶獎勵失敗:',
+        'Get用戶獎勵Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('配置管理', () => {
-    it('應該成功獲取配置', () => {
+    it('應該SuccessGetConfigure', () => {
       const _config = gamificationService.getConfig();
 
       expect(config).toMatchObject({
@@ -988,7 +988,7 @@ describe('GamificationService', () => {
       });
     });
 
-    it('應該成功更新配置', () => {
+    it('應該SuccessUpdateConfigure', () => {
       const _newConfig = {
         enableAchievements: false,
         enableCompetitions: false,
@@ -999,13 +999,13 @@ describe('GamificationService', () => {
       const _updatedConfig = gamificationService.getConfig();
       expect(updatedConfig.enableAchievements).toBe(false);
       expect(updatedConfig.enableCompetitions).toBe(false);
-      expect(mockLogger.info).toHaveBeenCalledWith('遊戲化服務配置已更新');
+      expect(mockLogger.info).toHaveBeenCalledWith('遊戲化ServiceConfigure已Update');
     });
 
-    it('應該檢查服務狀態', () => {
-      expect(gamificationService.isReady()).toBe(false); // 未初始化
+    it('應該CheckService狀態', () => {
+      expect(gamificationService.isReady()).toBe(false); // 未Initialize
 
-      // 初始化後應該返回 true
+      // Initialize後應該Return true
       gamificationService.initialize().then(() => {
         expect(gamificationService.isReady()).toBe(true);
       });

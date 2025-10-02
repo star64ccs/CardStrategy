@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
-// 導入配置
+// ImportConfigure
 const { config, validateConfig } = require('./config/unified');
 const { sequelize, testConnection } = require('./config/database-optimized');
 const {
@@ -10,13 +10,13 @@ const {
   healthCheck: redisHealthCheck,
 } = require('./config/redis-skip');
 
-// 導入日誌系統
+// ImportLog系統
 const { logger } = require('./utils/unified-logger');
 
-// 導入性能監控
+// Import性能Monitor
 const { performanceMiddleware } = require('./utils/performance-monitor');
 
-// 導入安全中間件
+// Import安全中間件
 const {
   securityHeaders,
   corsOptions,
@@ -26,33 +26,33 @@ const {
   notFoundHandler,
 } = require('./middleware/security');
 
-// 導入認證中間件
+// ImportAuthenticate中間件
 const {
   authenticateToken,
   requireAdmin,
   requireUser,
 } = require('./middleware/auth');
 
-// 導入錯誤處理
+// ImportErrorHandle
 const {
   setupProcessErrorHandling,
   setupGracefulShutdown,
 } = require('./utils/error-handler');
 
-// 導入錯誤監控
+// ImportErrorMonitor
 const { errorMonitoringMiddleware } = require('./utils/error-monitor');
 
-// 導入響應工具
+// ImportResponseTool
 const { successResponse } = require('./utils/response-utils');
 
-// 導入路由
+// Import路由
 const performanceRoutes = require('./routes/performance');
 const fakeCardRoutes = require('./routes/fakeCard');
 const fakeCardTrainingRoutes = require('./routes/fakeCardTraining');
 
 const app = express();
 
-// 驗證配置
+// VerifyConfigure
 try {
   validateConfig();
   logger.info('Configuration validated successfully');
@@ -61,7 +61,7 @@ try {
   process.exit(1);
 }
 
-// 設置進程錯誤處理
+// SettingsProcessErrorHandle
 setupProcessErrorHandling();
 
 // 安全中間件
@@ -70,17 +70,17 @@ app.use(cors(corsOptions));
 app.use(inputValidation);
 app.use(requestLogger);
 
-// 性能監控中間件
+// 性能Monitor中間件
 app.use(performanceMiddleware);
 
-// 錯誤監控中間件
+// ErrorMonitor中間件
 app.use(errorMonitoringMiddleware);
 
 // 基本中間件
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   successResponse(
     res,
@@ -102,7 +102,7 @@ app.get('/', (req, res) => {
   );
 });
 
-// 基本健康檢查
+// 基本健康Check
 app.get('/health', async (req, res) => {
   try {
     const dbStatus = await testConnection();
@@ -131,7 +131,7 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// API 版本端點
+// API Version端點
 app.get('/api/version', (req, res) => {
   successResponse(
     res,
@@ -153,11 +153,11 @@ app.get('/api/version', (req, res) => {
 // 性能指標路由
 app.use('/api/performance', performanceRoutes);
 
-// 假卡相關路由
+// False卡相Off路由
 app.use('/api/fake-card', fakeCardRoutes);
 app.use('/api/fake-card-training', fakeCardTrainingRoutes);
 
-// 管理員端點 (需要認證)
+// Manage員端點 (需要Authenticate)
 app.get('/api/admin/status', authenticateToken, requireAdmin, (req, res) => {
   successResponse(
     res,
@@ -175,7 +175,7 @@ app.get('/api/admin/status', authenticateToken, requireAdmin, (req, res) => {
   );
 });
 
-// 用戶端點 (需要認證)
+// User端點 (需要Authenticate)
 app.get('/api/user/profile', authenticateToken, requireUser, (req, res) => {
   successResponse(
     res,
@@ -191,7 +191,7 @@ app.get('/api/user/profile', authenticateToken, requireUser, (req, res) => {
   );
 });
 
-// 測試端點 (開發環境)
+// Test端點 (On發環境)
 if (process.env.NODE_ENV === 'development') {
   app.get('/api/test/error', (req, res, next) => {
     const { type = 'generic' } = req.query;
@@ -219,7 +219,7 @@ if (process.env.NODE_ENV === 'development') {
   });
 
   app.get('/api/test/performance', async (req, res) => {
-    // 模擬一些處理時間
+    // 模擬一些HandleTime
     await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
     successResponse(res, {
       message: 'Performance test completed',
@@ -228,10 +228,10 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-// 404 處理
+// 404 Handle
 app.use(notFoundHandler);
 
-// 統一錯誤處理
+// 統一ErrorHandle
 app.use(errorHandler);
 
 const PORT = config.app.port;
@@ -239,10 +239,10 @@ const HOST = config.app.host;
 
 const startServer = async () => {
   try {
-    // 初始化服務
+    // InitializeService
     logger.info('Starting CardStrategy Enhanced Server...');
 
-    // 連接 Redis
+    // Connect Redis
     try {
       await connectRedis();
       logger.info('Redis connection established');
@@ -250,7 +250,7 @@ const startServer = async () => {
       logger.error('Redis connection failed:', error);
     }
 
-    // 測試數據庫連接
+    // TestDatabaseConnect
     try {
       const dbConnected = await testConnection();
       if (dbConnected) {
@@ -262,7 +262,7 @@ const startServer = async () => {
       logger.error('Database connection test failed:', error);
     }
 
-    // 啟動服務器
+    // StartServer
     const server = app.listen(PORT, HOST, () => {
       logger.info(
         `🚀 CardStrategy Enhanced Server running on http://${HOST}:${PORT}`
@@ -274,7 +274,7 @@ const startServer = async () => {
       logger.info(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
     });
 
-    // 設置優雅關閉
+    // Settings優雅Off閉
     setupGracefulShutdown(server);
 
     return server;
@@ -284,7 +284,7 @@ const startServer = async () => {
   }
 };
 
-// 啟動服務器
+// StartServer
 if (require.main === module) {
   startServer();
 }

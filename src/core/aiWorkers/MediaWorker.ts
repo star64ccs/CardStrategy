@@ -68,19 +68,19 @@ export class MediaWorker {
   }
 
   /**
-   * 生成文章內容
+   * 生成文章Content
    */
   public async generateArticle(
     topic: string,
     category = 'general'
   ): Promise<Article> {
     try {
-      // 檢查配置
+      // CheckConfigure
       if (!this.config.enabled) {
         throw new Error('MediaWorker 已停用');
       }
 
-      // 檢查成本限制
+      // Check成本Limit
       await this.checkCostLimits();
 
       // 生成文章標題
@@ -124,7 +124,7 @@ export class MediaWorker {
         useCache: true,
       });
 
-      // 生成文章內容
+      // 生成文章Content
       const _contentPrompt = `根據以下大綱撰寫一篇完整的文章，要求：
 1. 內容豐富，有深度
 2. 語言流暢，易於理解
@@ -162,7 +162,7 @@ export class MediaWorker {
         useCache: true,
       });
 
-      // 生成標籤
+      // 生成Tag
       const _tagsPrompt = `為以下文章生成5-8個相關標籤，要求：
 1. 標籤要相關且精準
 2. 包含主要關鍵詞
@@ -186,9 +186,9 @@ export class MediaWorker {
         .map(tag => tag.trim())
         .filter(tag => tag.length > 0);
 
-      // 計算文章統計信息
+      // 計算文章StatisticsInformation
       const _wordCount = contentResponse.content.split(/\s+/).length;
-      const _readingTime = Math.ceil(wordCount / 200); // 假設每分鐘閱讀200字
+      const _readingTime = Math.ceil(wordCount / 200); // False設每Minute閱讀200字
       const _seoScore = this.calculateSEOScore(
         title,
         contentResponse.content,
@@ -222,7 +222,7 @@ export class MediaWorker {
 
       return article;
     } catch (error) {
-      console.error('生成文章失敗:', error);
+      console.error('生成文章Failed:', error);
       throw error;
     }
   }
@@ -235,15 +235,15 @@ export class MediaWorker {
     platform: 'facebook' | 'twitter' | 'instagram' | 'linkedin'
   ): Promise<SocialPost> {
     try {
-      // 檢查配置
+      // CheckConfigure
       if (!this.config.enabled) {
         throw new Error('MediaWorker 已停用');
       }
 
-      // 檢查成本限制
+      // Check成本Limit
       await this.checkCostLimits();
 
-      // 根據平台生成適合的內容
+      // Root據平台生成適合的Content
       const _platformConfig = this.getPlatformConfig(platform);
 
       const _postPrompt = `為以下文章生成適合${platformConfig.name}的社群貼文，要求：
@@ -266,7 +266,7 @@ export class MediaWorker {
         useCache: true,
       });
 
-      // 生成標籤
+      // 生成Tag
       const _hashtagsPrompt = `為以下社群貼文生成5-8個相關標籤，要求：
 1. 標籤要相關且熱門
 2. 符合${platformConfig.name}的標籤風格
@@ -288,7 +288,7 @@ export class MediaWorker {
         .split(/\s+/)
         .filter(tag => tag.startsWith('#'));
 
-      // 計算統計信息
+      // 計算StatisticsInformation
       const _characterCount = postResponse.content.length;
       const _engagementScore = this.calculateEngagementScore(
         postResponse.content,
@@ -311,7 +311,7 @@ export class MediaWorker {
 
       return socialPost;
     } catch (error) {
-      console.error('生成社群貼文失敗:', error);
+      console.error('生成社群貼文Failed:', error);
       throw error;
     }
   }
@@ -324,32 +324,32 @@ export class MediaWorker {
     publishDate: Date
   ): Promise<void> {
     try {
-      // 檢查發佈配置
+      // Check發佈Configure
       if (!this.config.publishing.enableAutoPublish) {
         throw new Error('自動發佈功能已停用');
       }
 
-      // 更新文章狀態
+      // Update文章Status
       article.status = 'scheduled';
       article.publishDate = publishDate;
 
-      // 這裡應該將文章保存到數據庫或任務隊列
+      // 這裡應該將文章Save到Database或TaskQueue
       console.log(`文章已排程發佈: ${article.title} - ${publishDate}`);
 
-      // 可以集成到現有的任務調度系統
+      // 可以集成到現有的TaskSchedule系統
       // await this.taskScheduler.scheduleTask({
       //   type: 'publish_article',
       //   data: { articleId: article.id },
       //   scheduledAt: publishDate
       // });
     } catch (error) {
-      console.error('排程發佈失敗:', error);
+      console.error('排程發佈Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 批量生成內容
+   * Batch生成Content
    */
   public async generateBatchContent(
     topics: string[],
@@ -375,25 +375,25 @@ export class MediaWorker {
           posts.push(post);
         }
 
-        // 避免API限制
+        // 避免APILimit
         await this.delay(1000);
       }
 
       return { articles, posts };
     } catch (error) {
-      console.error('批量生成內容失敗:', error);
+      console.error('批量生成內容Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 檢查成本限制
+   * Check成本Limit
    */
   private async checkCostLimits(): Promise<void> {
     const _stats = this.aiService.getStats();
     const _today = new Date().toDateString();
 
-    // 這裡應該從數據庫獲取今日成本
+    // 這裡應該從DatabaseGet今日成本
     const _dailyCost = stats.totalCost; // 簡化實現
 
     if (dailyCost >= this.config.costControl.maxDailyBudget) {
@@ -413,20 +413,20 @@ export class MediaWorker {
   ): number {
     let score = 0;
 
-    // 標題長度檢查
+    // 標題長度Check
     if (title.length >= 30 && title.length <= 60) score += 20;
 
-    // 內容長度檢查
+    // Content長度Check
     if (content.length >= 1500) score += 20;
 
-    // 標籤數量檢查
+    // Tag數量Check
     if (tags.length >= 5) score += 15;
 
-    // 關鍵詞密度檢查（簡化實現）
+    // OffKey詞密度Check（簡化實現）
     const _keywordDensity = this.calculateKeywordDensity(content, tags);
     score += Math.min(keywordDensity * 10, 25);
 
-    // 可讀性檢查
+    // 可讀性Check
     const _readability = this.calculateReadability(content);
     score += Math.min(readability * 20, 20);
 
@@ -434,7 +434,7 @@ export class MediaWorker {
   }
 
   /**
-   * 計算關鍵詞密度
+   * 計算OffKey詞密度
    */
   private calculateKeywordDensity(content: string, keywords: string[]): number {
     const _words = content.toLowerCase().split(/\s+/);
@@ -468,7 +468,7 @@ export class MediaWorker {
       1.015 * (words.length / sentences.length) -
       84.6 * (syllables / words.length);
 
-    // 轉換為0-1分數
+    // Convert為0-1分數
     return Math.max(0, Math.min(1, fleschScore / 100));
   }
 
@@ -496,16 +496,16 @@ export class MediaWorker {
   ): number {
     let score = 0;
 
-    // 內容長度檢查
+    // Content長度Check
     if (content.length >= 50 && content.length <= 200) score += 20;
 
-    // 標籤數量檢查
+    // Tag數量Check
     if (hashtags.length >= 3 && hashtags.length <= 8) score += 20;
 
-    // 問題檢查
+    // 問題Check
     if (content.includes('?') || content.includes('？')) score += 15;
 
-    // 行動呼籲檢查
+    // Row動呼籲Check
     const _callToAction = [
       '點擊',
       '分享',
@@ -521,7 +521,7 @@ export class MediaWorker {
     if (callToAction.some(cta => content.toLowerCase().includes(cta)))
       score += 15;
 
-    // 表情符號檢查
+    // Table情符號Check
     const _emojiCount = (
       content.match(
         /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu
@@ -529,7 +529,7 @@ export class MediaWorker {
     ).length;
     score += Math.min(emojiCount * 5, 15);
 
-    // 熱門標籤檢查
+    // 熱門TagCheck
     const _popularHashtags = [
       '#trending',
       '#viral',
@@ -546,7 +546,7 @@ export class MediaWorker {
   }
 
   /**
-   * 獲取平台配置
+   * Get平台Configure
    */
   private getPlatformConfig(platform: string) {
     const _configs = {
@@ -560,14 +560,14 @@ export class MediaWorker {
   }
 
   /**
-   * 延遲函數
+   * 延遲Function
    */
   private delay(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   /**
-   * 獲取工作狀態
+   * Get工作Status
    */
   public getStatus(): { isRunning: boolean; config: MediaWorkerConfig } {
     return {
@@ -577,7 +577,7 @@ export class MediaWorker {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public updateConfig(config: Partial<MediaWorkerConfig>): void {
     this.config = { ...this.config, ...config };

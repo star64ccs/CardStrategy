@@ -1,6 +1,6 @@
 /**
- * 消費者保護模組測試
- * 測試不公平條款檢測、投訴管理、消費者權利等核心功能
+ * 消費者保護模組Test
+ * Test不公平條款檢測、投訴Manage、消費者權利等核心功能
  */
 
 import { ConsumerProtectionModule } from '../../services/consumerProtectionModule';
@@ -22,7 +22,7 @@ describe('ConsumerProtectionModule', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功初始化模組', async () => {
+    test('應該SuccessInitialize模組', async () => {
       const _result = await consumerProtectionModule.initialize();
       expect(result).toBe(true);
     });
@@ -108,7 +108,7 @@ describe('ConsumerProtectionModule', () => {
       await consumerProtectionModule.initialize();
     });
 
-    test('應該成功提交投訴', () => {
+    test('應該Success提交投訴', () => {
       const _complaint = {
         consumerId: 'consumer_123',
         category: 'product' as const,
@@ -130,13 +130,13 @@ describe('ConsumerProtectionModule', () => {
       expect(submittedComplaint.updatedAt).toBeDefined();
     });
 
-    test('應該成功更新投訴狀態', () => {
+    test('應該SuccessUpdate投訴狀態', () => {
       const _complaint = {
         consumerId: 'consumer_456',
         category: 'service' as const,
         priority: 'medium' as const,
-        title: '服務延遲',
-        description: '服務響應時間過長',
+        title: 'Service延遲',
+        description: 'Service響應時間過長',
       };
 
       const _submittedComplaint =
@@ -149,13 +149,13 @@ describe('ConsumerProtectionModule', () => {
       expect(updateResult).toBe(true);
     });
 
-    test('應該成功解決投訴', () => {
+    test('應該Success解決投訴', () => {
       const _complaint = {
         consumerId: 'consumer_789',
         category: 'billing' as const,
         priority: 'low' as const,
-        title: '賬單錯誤',
-        description: '賬單金額計算錯誤',
+        title: '賬單Error',
+        description: '賬單金額計算Error',
       };
 
       const _submittedComplaint =
@@ -196,7 +196,7 @@ describe('ConsumerProtectionModule', () => {
       const _rights = consumerProtectionModule.getConsumerRights('taiwan');
 
       expect(rights.length).toBeGreaterThan(0);
-      // 應該包含全球權利
+      // 應該Package含全球權利
       expect(rights.some(right => right.jurisdiction === 'global')).toBe(true);
     });
 
@@ -205,7 +205,7 @@ describe('ConsumerProtectionModule', () => {
         consumerProtectionModule.getConsumerRights('nonexistent_region');
 
       expect(rights.length).toBeGreaterThan(0);
-      // 應該至少包含全球權利
+      // 應該至少Package含全球權利
       expect(rights.some(right => right.jurisdiction === 'global')).toBe(true);
     });
   });
@@ -219,7 +219,7 @@ describe('ConsumerProtectionModule', () => {
 
       consumerProtectionModule.updateConfig(newConfig);
 
-      // 配置更新應該成功（這裡只是測試方法調用）
+      // ConfigureUpdate應該Success（這裡只YesTestMethod調用）
       expect(true).toBe(true);
     });
   });
@@ -228,7 +228,7 @@ describe('ConsumerProtectionModule', () => {
     test('應該重置模組狀態', async () => {
       await consumerProtectionModule.initialize();
 
-      // 提交一些投訴
+      // Submit一些投訴
       const _complaint = {
         consumerId: 'consumer_123',
         category: 'product' as const,
@@ -239,10 +239,10 @@ describe('ConsumerProtectionModule', () => {
 
       consumerProtectionModule.submitComplaint(complaint);
 
-      // 重置
+      // Reset
       await consumerProtectionModule.reset();
 
-      // 驗證重置後可以重新初始化
+      // VerifyReset後可以ReInitialize
       const _initResult = await consumerProtectionModule.initialize();
       expect(initResult).toBe(true);
     });
@@ -309,7 +309,7 @@ describe('ConsumerProtectionModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     test('應該快速處理大量投訴', () => {
@@ -330,7 +330,7 @@ describe('ConsumerProtectionModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 
@@ -359,7 +359,7 @@ describe('ConsumerProtectionModule', () => {
         true
       );
 
-      // 提交投訴
+      // Submit投訴
       const _complaint = {
         consumerId: 'consumer_complex',
         category: 'contract' as const,
@@ -373,14 +373,14 @@ describe('ConsumerProtectionModule', () => {
       expect(submittedComplaint).toBeDefined();
       expect(submittedComplaint.priority).toBe('urgent');
 
-      // 更新投訴狀態
+      // Update投訴Status
       const _updateResult = consumerProtectionModule.updateComplaintStatus(
         submittedComplaint.id,
         'under_review'
       );
       expect(updateResult).toBe(true);
 
-      // 獲取消費者權利
+      // Get消費者權利
       const _rights = consumerProtectionModule.getConsumerRights('global');
       expect(rights.length).toBeGreaterThan(0);
     });

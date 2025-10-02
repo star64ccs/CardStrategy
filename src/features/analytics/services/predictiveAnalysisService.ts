@@ -19,7 +19,7 @@ import {
   convertToPDF,
 } from '../utils/dataConverters';
 
-// 事件類型
+// EventClass型
 export type PredictiveAnalysisEventType =
   | 'model_trained'
   | 'prediction_generated'
@@ -28,7 +28,7 @@ export type PredictiveAnalysisEventType =
   | 'insight_discovered'
   | 'recommendation_created';
 
-// 事件監聽器
+// Event監聽器
 export type PredictiveAnalysisEventListener = (event: {
   type: PredictiveAnalysisEventType;
   data: unknown;
@@ -36,8 +36,8 @@ export type PredictiveAnalysisEventListener = (event: {
 }) => void;
 
 /**
- * 預測分析服務
- * 負責管理預測模型、生成預測、分析結果等
+ * 預測AnalysisService
+ * 負責Manage預測模型、生成預測、Analysis結果等
  */
 export class PredictiveAnalysisService {
   private static instance: PredictiveAnalysisService;
@@ -61,7 +61,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 獲取服務實例
+   * GetServiceInstance
    */
   public static getInstance(): PredictiveAnalysisService {
     if (!PredictiveAnalysisService.instance) {
@@ -71,7 +71,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(
     config?: Partial<PredictiveAnalysisConfig>
@@ -81,7 +81,7 @@ export class PredictiveAnalysisService {
         this.config = { ...this.config, ...config };
       }
 
-      // 初始化默認模型
+      // InitializeDefault模型
       await this.initializeDefaultModels();
 
       this.isInitialized = true;
@@ -96,7 +96,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 獲取預測分析數據
+   * Get預測AnalysisData
    */
   public async getPredictiveAnalysis(
     filter?: PredictionFilter
@@ -145,7 +145,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 創建預測模型
+   * Create預測模型
    */
   public async createModel(
     name: string,
@@ -238,7 +238,7 @@ export class PredictiveAnalysisService {
 
     this.predictions.set(prediction.id, prediction);
 
-    // 創建預測數據記錄
+    // Create預測DataRecord
     const predictionData: PredictionData = {
       id: this.generateId(),
       modelId,
@@ -249,7 +249,7 @@ export class PredictiveAnalysisService {
 
     this.predictionData.set(predictionData.id, predictionData);
 
-    // 更新模型統計
+    // Update模型Statistics
     model.totalPredictions++;
     model.updatedAt = new Date();
 
@@ -259,7 +259,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 生成報告
+   * 生成Report
    */
   public async generateReport(
     modelId: string,
@@ -334,7 +334,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 導出數據
+   * ExportData
    */
   public async exportData(
     options: PredictiveAnalysisExportOptions
@@ -403,7 +403,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 創建警報
+   * CreateAlert
    */
   public async createAlert(
     modelId: string,
@@ -438,7 +438,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 更新警報
+   * UpdateAlert
    */
   public async updateAlert(
     alertId: string,
@@ -460,7 +460,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 刪除警報
+   * DeleteAlert
    */
   public async deleteAlert(alertId: string): Promise<boolean> {
     if (!this.isInitialized) {
@@ -471,7 +471,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 獲取警報
+   * GetAlert
    */
   public async getAlerts(modelId?: string): Promise<PredictionAlert[]> {
     if (!this.isInitialized) {
@@ -483,14 +483,14 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   public getConfig(): PredictiveAnalysisConfig {
     return { ...this.config };
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public async updateConfig(
     updates: Partial<PredictiveAnalysisConfig>
@@ -504,7 +504,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 添加事件監聽器
+   * AddEvent監聽器
    */
   public addEventListener(
     eventType: PredictiveAnalysisEventType,
@@ -517,7 +517,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 移除事件監聽器
+   * RemoveEvent監聽器
    */
   public removeEventListener(
     eventType: PredictiveAnalysisEventType,
@@ -533,7 +533,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 獲取報告
+   * GetReport
    */
   public async getReports(modelId?: string): Promise<PredictionReport[]> {
     if (!this.isInitialized) {
@@ -545,7 +545,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 獲取洞察
+   * Get洞察
    */
   public async getInsights(modelId?: string): Promise<PredictionInsight[]> {
     if (!this.isInitialized) {
@@ -557,7 +557,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 獲取建議
+   * Get建議
    */
   public async getRecommendations(
     modelId?: string
@@ -571,7 +571,7 @@ export class PredictiveAnalysisService {
   }
 
   /**
-   * 獲取實時指標
+   * Get實時指標
    */
   public async getRealTimeMetrics(): Promise<{
     activeModels: number;
@@ -602,7 +602,7 @@ export class PredictiveAnalysisService {
     };
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): PredictiveAnalysisConfig {
     return {
@@ -665,7 +665,7 @@ export class PredictiveAnalysisService {
     ];
 
     for (const modelData of defaultModels) {
-      // 直接創建模型，不調用 createModel 方法
+      // 直接Create模型，不調用 createModel Method
       const model: PredictionModel = {
         id: this.generateId(),
         name: modelData.name,

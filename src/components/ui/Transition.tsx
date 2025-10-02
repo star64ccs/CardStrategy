@@ -4,8 +4,8 @@ import type { TransitionConfig, TransitionProps } from '../../types/animation';
 import { useAnimation } from '../providers/AnimationProvider';
 
 /**
- * 過渡動畫組件
- * 提供元素進入和退出的過渡效果
+ * 過渡動畫Component
+ * 提供Element進入和Exit的過渡效果
  */
 export const Transition: React.FC<TransitionProps> = ({
   transition,
@@ -36,7 +36,7 @@ export const Transition: React.FC<TransitionProps> = ({
   const _elementRef = useRef<HTMLDivElement>(null);
   const _previousInProp = useRef(inProp);
 
-  // 創建進入動畫配置
+  // Create進入動畫Configure
   const _createEnterAnimation = useCallback((): TransitionConfig => {
     return {
       ...transition,
@@ -49,7 +49,7 @@ export const Transition: React.FC<TransitionProps> = ({
     };
   }, [transition]);
 
-  // 創建退出動畫配置
+  // CreateExit動畫Configure
   const _createExitAnimation = useCallback((): TransitionConfig => {
     return {
       ...transition,
@@ -62,16 +62,16 @@ export const Transition: React.FC<TransitionProps> = ({
     };
   }, [transition]);
 
-  // 處理進入動畫
+  // Handle進入動畫
   const _handleEnter = useCallback(async () => {
     if (!elementRef.current) return;
 
     const _element = elementRef.current;
 
-    // 調用 onEnter 回調
+    // 調用 onEnter Callback
     onEnter?.(element);
 
-    // 設置初始狀態
+    // Settings初始Status
     if (Array.isArray(transition.property)) {
       transition.property.forEach(prop => {
         if (transition.from && transition.from[prop] !== undefined) {
@@ -82,15 +82,15 @@ export const Transition: React.FC<TransitionProps> = ({
       Object.assign(element.style, transition.from);
     }
 
-    // 創建動畫
+    // Create動畫
     const _enterConfig = createEnterAnimation();
     const _id = createAnimation(enterConfig);
     setAnimationId(id);
 
-    // 設置動畫元素
+    // Settings動畫Element
     if (elementRef.current) {
-      // 這裡需要將元素設置到動畫服務中
-      // 由於動畫服務的實現限制，我們使用 CSS 動畫作為備選方案
+      // 這裡需要將ElementSettings到動畫Service中
+      // 由於動畫Service的實現Limit，我們使用 CSS 動畫作為備選方案
       const _keyframes = generateKeyframes(enterConfig);
       const _options = generateAnimationOptions(enterConfig);
 
@@ -98,19 +98,19 @@ export const Transition: React.FC<TransitionProps> = ({
 
       setIsAnimating(true);
 
-      // 調用 onEntering 回調
+      // 調用 onEntering Callback
       onEntering?.(element);
 
-      // 設置事件監聽
+      // SettingsEvent監聽
       animation.onfinish = () => {
         setIsAnimating(false);
         setAnimationId(null);
         setIsVisible(true);
 
-        // 調用 onEntered 回調
+        // 調用 onEntered Callback
         onEntered?.(element);
 
-        // 調用 onEnd 回調
+        // 調用 onEnd Callback
         onEnd?.({
           type: 'end',
           timestamp: Date.now(),
@@ -123,7 +123,7 @@ export const Transition: React.FC<TransitionProps> = ({
         setIsAnimating(false);
         setAnimationId(null);
 
-        // 調用 onEnd 回調
+        // 調用 onEnd Callback
         onEnd?.({
           type: 'cancel',
           timestamp: Date.now(),
@@ -132,7 +132,7 @@ export const Transition: React.FC<TransitionProps> = ({
         });
       };
 
-      // 調用 onStart 回調
+      // 調用 onStart Callback
       onStart?.({
         type: 'start',
         timestamp: Date.now(),
@@ -151,21 +151,21 @@ export const Transition: React.FC<TransitionProps> = ({
     onEnd,
   ]);
 
-  // 處理退出動畫
+  // HandleExit動畫
   const _handleExit = useCallback(async () => {
     if (!elementRef.current) return;
 
     const _element = elementRef.current;
 
-    // 調用 onExit 回調
+    // 調用 onExit Callback
     onExit?.(element);
 
-    // 創建動畫
+    // Create動畫
     const _exitConfig = createExitAnimation();
     const _id = createAnimation(exitConfig);
     setAnimationId(id);
 
-    // 設置動畫元素
+    // Settings動畫Element
     if (elementRef.current) {
       const _keyframes = generateKeyframes(exitConfig);
       const _options = generateAnimationOptions(exitConfig);
@@ -174,19 +174,19 @@ export const Transition: React.FC<TransitionProps> = ({
 
       setIsAnimating(true);
 
-      // 調用 onExiting 回調
+      // 調用 onExiting Callback
       onExiting?.(element);
 
-      // 設置事件監聽
+      // SettingsEvent監聽
       animation.onfinish = () => {
         setIsAnimating(false);
         setAnimationId(null);
         setIsVisible(false);
 
-        // 調用 onExited 回調
+        // 調用 onExited Callback
         onExited?.(element);
 
-        // 調用 onEnd 回調
+        // 調用 onEnd Callback
         onEnd?.({
           type: 'end',
           timestamp: Date.now(),
@@ -200,10 +200,10 @@ export const Transition: React.FC<TransitionProps> = ({
         setAnimationId(null);
         setIsVisible(false);
 
-        // 調用 onExited 回調
+        // 調用 onExited Callback
         onExited?.(element);
 
-        // 調用 onEnd 回調
+        // 調用 onEnd Callback
         onEnd?.({
           type: 'cancel',
           timestamp: Date.now(),
@@ -212,7 +212,7 @@ export const Transition: React.FC<TransitionProps> = ({
         });
       };
 
-      // 調用 onStart 回調
+      // 調用 onStart Callback
       onStart?.({
         type: 'start',
         timestamp: Date.now(),
@@ -231,25 +231,25 @@ export const Transition: React.FC<TransitionProps> = ({
     onEnd,
   ]);
 
-  // 監聽 in 屬性變化
+  // 監聽 in Property變化
   useEffect(() => {
     if (inProp !== previousInProp.current) {
       if (inProp) {
-        // 元素進入
+        // Element進入
         if (appear || previousInProp.current !== undefined) {
           handleEnter();
         } else {
           setIsVisible(true);
         }
       } else {
-        // 元素退出
+        // ElementExit
         handleExit();
       }
       previousInProp.current = inProp;
     }
   }, [inProp, appear, handleEnter, handleExit]);
 
-  // 組件卸載時清理動畫
+  // ComponentUninstall時清理動畫
   useEffect(() => {
     return () => {
       if (animationId) {
@@ -258,12 +258,12 @@ export const Transition: React.FC<TransitionProps> = ({
     };
   }, [animationId, stopAnimation]);
 
-  // 生成關鍵幀
+  // 生成OffKey幀
   const _generateKeyframes = (config: TransitionConfig): Keyframe[] => {
     const keyframes: Keyframe[] = [];
 
     if (Array.isArray(config.property)) {
-      // 多屬性動畫
+      // 多Property動畫
       config.property.forEach(prop => {
         if (
           config.from &&
@@ -278,7 +278,7 @@ export const Transition: React.FC<TransitionProps> = ({
         }
       });
     } else if (config.from && config.to) {
-      // 單屬性動畫
+      // 單Property動畫
       keyframes.push(
         { offset: 0, ...config.from },
         { offset: 1, ...config.to }
@@ -293,7 +293,7 @@ export const Transition: React.FC<TransitionProps> = ({
         ];
   };
 
-  // 生成動畫選項
+  // 生成動畫Options
   const _generateAnimationOptions = (
     config: TransitionConfig
   ): KeyframeAnimationOptions => {
@@ -307,12 +307,12 @@ export const Transition: React.FC<TransitionProps> = ({
     };
   };
 
-  // 如果元素不可見且設置了卸載，則不渲染
+  // 如果Element不可見且Settings了Uninstall，則不渲染
   if (!isVisible && unmountOnExit) {
     return null;
   }
 
-  // 計算顯示狀態
+  // 計算ShowStatus
   const _shouldShow = isVisible || isAnimating;
 
   return (
@@ -333,7 +333,7 @@ export const Transition: React.FC<TransitionProps> = ({
   );
 };
 
-// 預設過渡配置
+// 預設過渡Configure
 export const _defaultTransitions = {
   fade: {
     property: 'opacity',
@@ -365,7 +365,7 @@ export const _defaultTransitions = {
   },
 };
 
-// 便捷組件
+// 便捷Component
 export const FadeTransition: React.FC<
   Omit<TransitionProps, 'transition'>
 > = props => <Transition transition={defaultTransitions.fade} {...props} />;

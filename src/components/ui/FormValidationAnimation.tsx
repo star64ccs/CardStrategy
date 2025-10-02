@@ -1,4 +1,4 @@
-// 表單驗證動畫組件
+// Table單Verify動畫Component
 import type { ReactNode } from 'react';
 import React, { useCallback, useEffect, useRef } from 'react';
 
@@ -9,7 +9,7 @@ import {
 } from '../../types/microInteractions';
 import { useMicroInteraction } from '../providers/MicroInteractionProvider';
 
-// 組件 Props
+// Component Props
 interface FormValidationAnimationProps {
   children: ReactNode;
   config?: Partial<FormValidationConfig>;
@@ -22,7 +22,7 @@ interface FormValidationAnimationProps {
   id?: string;
 }
 
-// 默認配置
+// DefaultConfigure
 const DEFAULT_CONFIG: FormValidationConfig = {
   id: '',
   type: MicroInteractionType.FORM_VALIDATION,
@@ -61,7 +61,7 @@ const DEFAULT_CONFIG: FormValidationConfig = {
   },
 };
 
-// 表單驗證動畫組件
+// Table單Verify動畫Component
 export const FormValidationAnimation: React.FC<
   FormValidationAnimationProps
 > = ({
@@ -80,7 +80,7 @@ export const FormValidationAnimation: React.FC<
   const _interactionIdRef = useRef<string>('');
   const _prevValidationStateRef = useRef<string>(validationState);
 
-  // 合併配置
+  // MergeConfigure
   const finalConfig: FormValidationConfig = {
     ...DEFAULT_CONFIG,
     ...config,
@@ -89,7 +89,7 @@ export const FormValidationAnimation: React.FC<
       `form-validation-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
   };
 
-  // 註冊微交互
+  // Register微交互
   useEffect(() => {
     if (!disabled) {
       const _interactionId = register(finalConfig);
@@ -102,7 +102,7 @@ export const FormValidationAnimation: React.FC<
     return undefined;
   }, [register, unregister, finalConfig, disabled]);
 
-  // 監聽驗證狀態變化
+  // 監聽VerifyStatus變化
   useEffect(() => {
     if (
       disabled ||
@@ -121,7 +121,7 @@ export const FormValidationAnimation: React.FC<
           previousState: prevValidationStateRef.current,
         });
       } catch (error) {
-        console.warn('表單驗證動畫失敗:', error);
+        console.warn('表單Verify動畫Failed:', error);
       }
     };
 
@@ -129,7 +129,7 @@ export const FormValidationAnimation: React.FC<
     prevValidationStateRef.current = validationState;
   }, [validationState, message, disabled, trigger]);
 
-  // 處理驗證狀態變化
+  // HandleVerifyStatus變化
   const _handleValidationChange = useCallback(
     (newState: string, newMessage?: string) => {
       onValidationChange?.(newState, newMessage);
@@ -144,7 +144,7 @@ export const FormValidationAnimation: React.FC<
     ...style,
   };
 
-  // 根據驗證狀態添加樣式
+  // Root據VerifyStatusAdd樣式
   const _getValidationStyles = () => {
     switch (validationState) {
       case 'success':
@@ -172,7 +172,7 @@ export const FormValidationAnimation: React.FC<
     }
   };
 
-  // 添加性能優化樣式
+  // Add性能優化樣式
   if (finalConfig.performance?.useWillChange) {
     containerStyle.willChange = 'transform, opacity, box-shadow';
   }
@@ -235,7 +235,7 @@ export const FormValidationAnimation: React.FC<
   );
 };
 
-// 便捷組件：輸入框驗證
+// 便捷Component：Input框Verify
 export const ValidatedInput: React.FC<
   Omit<FormValidationAnimationProps, 'children'> & {
     value: string;
@@ -267,7 +267,7 @@ export const ValidatedInput: React.FC<
 }) => {
   const _inputRef = useRef<HTMLInputElement>(null);
 
-  // 驗證邏輯
+  // Verify邏輯
   const _validateInput = useCallback(
     (inputValue: string) => {
       if (required && !inputValue.trim()) {
@@ -301,13 +301,13 @@ export const ValidatedInput: React.FC<
     [required, pattern, minLength, maxLength]
   );
 
-  // 處理輸入變化
+  // HandleInput變化
   const _handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const _newValue = event.target.value;
       onChange(newValue);
 
-      // 延遲驗證，避免過於頻繁
+      // 延遲Verify，避免過於頻繁
       setTimeout(() => {
         const _validation = validateInput(newValue);
         onValidationChange?.(validation.state, validation.message);
@@ -359,7 +359,7 @@ export const ValidatedInput: React.FC<
   );
 };
 
-// 便捷組件：選擇框驗證
+// 便捷Component：Select框Verify
 export const ValidatedSelect: React.FC<
   Omit<FormValidationAnimationProps, 'children'> & {
     value: string;
@@ -383,7 +383,7 @@ export const ValidatedSelect: React.FC<
 }) => {
   const _selectRef = useRef<HTMLSelectElement>(null);
 
-  // 驗證邏輯
+  // Verify邏輯
   const _validateSelect = useCallback(
     (selectValue: string) => {
       if (required && !selectValue) {
@@ -399,7 +399,7 @@ export const ValidatedSelect: React.FC<
     [required]
   );
 
-  // 處理選擇變化
+  // HandleSelect變化
   const _handleChange = useCallback(
     (event: React.ChangeEvent<HTMLSelectElement>) => {
       const _newValue = event.target.value;
@@ -460,7 +460,7 @@ export const ValidatedSelect: React.FC<
   );
 };
 
-// 便捷組件：文本域驗證
+// 便捷Component：文本域Verify
 export const ValidatedTextarea: React.FC<
   Omit<FormValidationAnimationProps, 'children'> & {
     value: string;
@@ -488,7 +488,7 @@ export const ValidatedTextarea: React.FC<
 }) => {
   const _textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // 驗證邏輯
+  // Verify邏輯
   const _validateTextarea = useCallback(
     (textareaValue: string) => {
       if (required && !textareaValue.trim()) {
@@ -518,13 +518,13 @@ export const ValidatedTextarea: React.FC<
     [required, minLength, maxLength]
   );
 
-  // 處理輸入變化
+  // HandleInput變化
   const _handleChange = useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       const _newValue = event.target.value;
       onChange(newValue);
 
-      // 延遲驗證
+      // 延遲Verify
       setTimeout(() => {
         const _validation = validateTextarea(newValue);
         onValidationChange?.(validation.state, validation.message);
@@ -578,5 +578,5 @@ export const ValidatedTextarea: React.FC<
   );
 };
 
-// 默認導出
+// DefaultExport
 export default FormValidationAnimation;

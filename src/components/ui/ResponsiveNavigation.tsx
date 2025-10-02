@@ -1,4 +1,4 @@
-// 響應式導航組件
+// Response式導航Component
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -43,7 +43,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
   );
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
-  // 響應式處理
+  // Response式Handle
   const _responsiveMode = useMemo(
     () => getResponsiveValue(mode),
     [mode, getResponsiveValue]
@@ -64,20 +64,20 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
     [collapsedWidth, getResponsiveValue]
   );
 
-  // 響應式項目過濾
+  // Response式項目Filter
   const _visibleItems = useMemo(() => {
-    const _currentBreakpoint = 'md'; // 默認值
+    const _currentBreakpoint = 'md'; // DefaultValue
 
     return items.filter(item => {
       const _responsive = getResponsiveValue(item.responsive);
       const _priority = getResponsiveValue(item.priority);
 
-      // 如果明確設置為不響應式，則顯示
+      // 如果明確Settings為不Response式，則Show
       if (responsive === false) return true;
 
-      // 如果設置了響應式，檢查當前斷點是否支持
+      // 如果Settings了Response式，Check當前斷點YesNoSupport
       if (responsive === true) {
-        // 根據優先級決定是否顯示
+        // Root據優先級決定YesNoShow
         if (priority !== undefined) {
           const breakpointPriority: Record<string, number> = {
             xs: 1,
@@ -96,7 +96,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
     });
   }, [items, getResponsiveValue]);
 
-  // 同步外部狀態
+  // SyncExternalStatus
   useEffect(() => {
     if (selectedKeys.length > 0) {
       setInternalSelectedKeys(selectedKeys);
@@ -116,14 +116,14 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
     }
   }, [collapsed, getResponsiveValue]);
 
-  // 選擇處理
+  // SelectHandle
   const _handleSelect = useCallback(
     (key: string) => {
       const _newSelectedKeys = [key];
       setInternalSelectedKeys(newSelectedKeys);
       onSelect?.(newSelectedKeys);
 
-      // 移動端選擇後關閉菜單
+      // Move端Select後Off閉菜單
       if (responsiveMode === 'horizontal' && 'xs' === 'xs') {
         setMobileMenuOpen(false);
       }
@@ -131,7 +131,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
     [onSelect, responsiveMode]
   );
 
-  // 展開/收起處理
+  // 展On/收起Handle
   const _handleOpenChange = useCallback(
     (key: string) => {
       const _newOpenKeys = internalOpenKeys.includes(key)
@@ -144,14 +144,14 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
     [internalOpenKeys, onOpenChange]
   );
 
-  // 折疊處理
+  // 折疊Handle
   const _handleCollapse = useCallback(() => {
     const _newCollapsed = !internalCollapsed;
     setInternalCollapsed(newCollapsed);
     onCollapse?.(newCollapsed);
   }, [internalCollapsed, onCollapse]);
 
-  // 移動端菜單切換
+  // Move端菜單Switch
   const _handleMobileMenuToggle = useCallback(() => {
     setMobileMenuOpen(prev => !prev);
   }, []);
@@ -299,7 +299,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
     );
   };
 
-  // 渲染移動端菜單按鈕
+  // 渲染Move端菜單按鈕
   const _renderMobileMenuButton = () => {
     if (responsiveMode !== 'horizontal' || 'xs' !== 'xs') {
       return null;
@@ -356,7 +356,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
     );
   };
 
-  // 渲染移動端菜單
+  // 渲染Move端菜單
   const _renderMobileMenu = () => {
     if (responsiveMode !== 'horizontal' || 'xs' !== 'xs' || !mobileMenuOpen) {
       return null;
@@ -399,7 +399,7 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
           </div>
         )}
 
-        {/* 移動端菜單按鈕 */}
+        {/* Move端菜單按鈕 */}
         {renderMobileMenuButton()}
 
         {/* 垂直導航項目 */}
@@ -413,10 +413,10 @@ export const ResponsiveNavigation: React.FC<ResponsiveNavigationProps> = ({
         {renderCollapseTrigger()}
       </nav>
 
-      {/* 移動端菜單 */}
+      {/* Move端菜單 */}
       {renderMobileMenu()}
 
-      {/* 移動端遮罩 */}
+      {/* Move端遮罩 */}
       {mobileMenuOpen && responsiveMode === 'horizontal' && 'xs' === 'xs' && (
         <div
           style={{

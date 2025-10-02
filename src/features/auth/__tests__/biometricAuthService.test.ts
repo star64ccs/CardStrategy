@@ -33,14 +33,14 @@ describe('BiometricAuthService', () => {
   });
 
   describe('detectBiometricCapabilities', () => {
-    it('應該成功檢測生物識別能力', async () => {
+    it('應該Success檢測生物識別能力', async () => {
       const _capabilities =
         await biometricAuthService.detectBiometricCapabilities();
 
       expect(Array.isArray(capabilities)).toBe(true);
       expect(capabilities.length).toBeGreaterThan(0);
 
-      // 檢查能力對象結構
+      // Check能力Object結構
       capabilities.forEach(capability => {
         expect(capability).toHaveProperty('type');
         expect(capability).toHaveProperty('isAvailable');
@@ -56,7 +56,7 @@ describe('BiometricAuthService', () => {
         await biometricAuthService.detectBiometricCapabilities();
       const _types = capabilities.map(cap => cap.type);
 
-      // iOS 應該支持 faceId 或 touchId
+      // iOS 應該Support faceId 或 touchId
       const supportedTypes: BiometricType[] = [
         'faceId',
         'touchId',
@@ -72,7 +72,7 @@ describe('BiometricAuthService', () => {
   });
 
   describe('authenticate', () => {
-    it('應該成功執行生物識別認證', async () => {
+    it('應該Success執行生物識別認證', async () => {
       const request: BiometricAuthRequest = {
         promptMessage: '請進行生物識別認證',
         cancelButtonText: '取消',
@@ -94,8 +94,8 @@ describe('BiometricAuthService', () => {
       }
     });
 
-    it('應該處理認證失敗情況', async () => {
-      // 多次嘗試以增加失敗機會
+    it('應該Handle認證Failed情況', async () => {
+      // 多次嘗試以增加Failed機會
       const _results = [];
       for (let i = 0; i < 5; i++) {
         const _result = await biometricAuthService.authenticate();
@@ -118,7 +118,7 @@ describe('BiometricAuthService', () => {
   });
 
   describe('createBiometricKeys', () => {
-    it('應該成功創建生物識別密鑰', async () => {
+    it('應該SuccessCreate生物識別密鑰', async () => {
       const _result = await biometricAuthService.createBiometricKeys();
 
       expect(typeof result).toBe('boolean');
@@ -135,7 +135,7 @@ describe('BiometricAuthService', () => {
   });
 
   describe('deleteBiometricKeys', () => {
-    it('應該成功刪除生物識別密鑰', async () => {
+    it('應該SuccessDelete生物識別密鑰', async () => {
       const _result = await biometricAuthService.deleteBiometricKeys();
 
       expect(typeof result).toBe('boolean');
@@ -144,7 +144,7 @@ describe('BiometricAuthService', () => {
   });
 
   describe('createBiometricSignature', () => {
-    it('應該成功創建生物識別簽名', async () => {
+    it('應該SuccessCreate生物識別簽名', async () => {
       const _payload = 'test-payload';
       const _promptMessage = '請進行生物識別認證以創建簽名';
 
@@ -169,7 +169,7 @@ describe('BiometricAuthService', () => {
   });
 
   describe('getBiometricSettings', () => {
-    it('應該成功獲取生物識別設置', async () => {
+    it('應該SuccessGet生物識別Settings', async () => {
       const _settings = await biometricAuthService.getBiometricSettings();
 
       expect(settings).toHaveProperty('isEnabled');
@@ -191,7 +191,7 @@ describe('BiometricAuthService', () => {
   });
 
   describe('updateBiometricSettings', () => {
-    it('應該成功更新生物識別設置', async () => {
+    it('應該SuccessUpdate生物識別Settings', async () => {
       const _updates = {
         isEnabled: false,
         maxRetryAttempts: 5,
@@ -221,7 +221,7 @@ describe('BiometricAuthService', () => {
   });
 
   describe('getEnrollmentStatus', () => {
-    it('應該成功獲取註冊狀態', async () => {
+    it('應該SuccessGet註冊狀態', async () => {
       const _status = await biometricAuthService.getEnrollmentStatus();
 
       expect(status).toHaveProperty('hasEnrolledBiometrics');
@@ -243,7 +243,7 @@ describe('BiometricAuthService', () => {
   });
 
   describe('getSecurityInfo', () => {
-    it('應該成功獲取安全信息', async () => {
+    it('應該SuccessGet安全信息', async () => {
       const _securityInfo = await biometricAuthService.getSecurityInfo();
 
       expect(securityInfo).toHaveProperty('keyAlias');
@@ -272,24 +272,24 @@ describe('BiometricAuthService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該處理初始化失敗', async () => {
-      // 創建新實例來測試初始化失敗情況
+  describe('ErrorHandle', () => {
+    it('應該HandleInitializeFailed', async () => {
+      // Create新Instance來TestInitializeFailed情況
       const _service = new (BiometricAuthService as any)();
 
-      // 模擬初始化失敗
+      // 模擬InitializeFailed
       service.isInitialized = false;
       service.biometricLib = null;
 
       try {
         await service.authenticate();
-        // 如果沒有拋出錯誤，檢查結果
+        // 如果沒有ThrowError，Check結果
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
       }
     });
 
-    it('應該正確映射錯誤代碼', () => {
+    it('應該正確映射Error代碼', () => {
       const _service = biometricAuthService as any;
 
       expect(service.mapErrorToCode({ message: 'User canceled' })).toBe(
@@ -323,7 +323,7 @@ describe('BiometricAuthService', () => {
     it('應該正確檢查類型支持', () => {
       const _service = biometricAuthService as any;
 
-      // iOS 支持的類型
+      // iOS Support的Class型
       expect(service.isTypeSupported('faceId')).toBe(true);
       expect(service.isTypeSupported('touchId')).toBe(true);
       expect(service.isTypeSupported('voiceId')).toBe(false);
@@ -332,11 +332,11 @@ describe('BiometricAuthService', () => {
 
   describe('平台特定功能', () => {
     it('應該根據平台加載不同的生物識別庫', async () => {
-      // 測試已經在 iOS 平台上運行
+      // Test已經在 iOS 平台上運Row
       const _capabilities =
         await biometricAuthService.detectBiometricCapabilities();
 
-      // iOS 應該支持 faceId 或 touchId
+      // iOS 應該Support faceId 或 touchId
       const _iosTypes = capabilities.filter(
         cap => cap.type === 'faceId' || cap.type === 'touchId'
       );
@@ -352,28 +352,28 @@ describe('BiometricAuthService', () => {
         await biometricAuthService.detectBiometricCapabilities();
       expect(capabilities.length).toBeGreaterThan(0);
 
-      // 2. 創建密鑰
+      // 2. Create密鑰
       const _keyCreated = await biometricAuthService.createBiometricKeys();
       expect(keyCreated).toBe(true);
 
-      // 3. 檢查密鑰
+      // 3. Check密鑰
       const _keysExist = await biometricAuthService.biometricKeysExist();
       expect(typeof keysExist).toBe('boolean');
 
-      // 4. 獲取設置
+      // 4. GetSettings
       const _settings = await biometricAuthService.getBiometricSettings();
       expect(settings).toBeDefined();
 
-      // 5. 執行認證
+      // 5. 執RowAuthenticate
       const _authResult = await biometricAuthService.authenticate();
       expect(authResult).toBeDefined();
       expect(typeof authResult.success).toBe('boolean');
 
-      // 6. 獲取安全信息
+      // 6. Get安全Information
       const _securityInfo = await biometricAuthService.getSecurityInfo();
       expect(securityInfo).toBeDefined();
 
-      // 7. 刪除密鑰
+      // 7. Delete密鑰
       const _keyDeleted = await biometricAuthService.deleteBiometricKeys();
       expect(keyDeleted).toBe(true);
     });

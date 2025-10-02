@@ -16,7 +16,7 @@ import {
 import { logger } from '../../core/utils/logger';
 import { sessionService } from '../../features/auth/services/sessionService';
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 export const _initializeSession = createAsyncThunk(
   'session/initialize',
   async (_, { rejectWithValue }) => {
@@ -25,8 +25,8 @@ export const _initializeSession = createAsyncThunk(
       const _currentSession = sessionService.getCurrentSession();
       return { currentSession };
     } catch (error: unknown) {
-      logger.error('初始化會話失敗:', error);
-      return rejectWithValue(error.message || '初始化會話失敗');
+      logger.error('Initialize會話Failed:', error);
+      return rejectWithValue(error.message || 'Initialize會話Failed');
     }
   }
 );
@@ -56,8 +56,8 @@ export const _createSession = createAsyncThunk(
       );
       return session;
     } catch (error: unknown) {
-      logger.error('創建會話失敗:', error);
-      return rejectWithValue(error.message || '創建會話失敗');
+      logger.error('Create會話Failed:', error);
+      return rejectWithValue(error.message || 'Create會話Failed');
     }
   }
 );
@@ -70,11 +70,11 @@ export const _refreshSession = createAsyncThunk(
       if (response.success) {
         return response;
       } else {
-        return rejectWithValue(response.errorMessage || '刷新會話失敗');
+        return rejectWithValue(response.errorMessage || '刷新會話Failed');
       }
     } catch (error: unknown) {
-      logger.error('刷新會話失敗:', error);
-      return rejectWithValue(error.message || '刷新會話失敗');
+      logger.error('刷新會話Failed:', error);
+      return rejectWithValue(error.message || '刷新會話Failed');
     }
   }
 );
@@ -87,11 +87,11 @@ export const _terminateSession = createAsyncThunk(
       if (response.success) {
         return response;
       } else {
-        return rejectWithValue(response.errorMessage || '終止會話失敗');
+        return rejectWithValue(response.errorMessage || '終止會話Failed');
       }
     } catch (error: unknown) {
-      logger.error('終止會話失敗:', error);
-      return rejectWithValue(error.message || '終止會話失敗');
+      logger.error('終止會話Failed:', error);
+      return rejectWithValue(error.message || '終止會話Failed');
     }
   }
 );
@@ -103,8 +103,8 @@ export const _getSessions = createAsyncThunk(
       const _response = await sessionService.getSessions();
       return response;
     } catch (error: unknown) {
-      logger.error('獲取會話列表失敗:', error);
-      return rejectWithValue(error.message || '獲取會話列表失敗');
+      logger.error('Get會話列表Failed:', error);
+      return rejectWithValue(error.message || 'Get會話列表Failed');
     }
   }
 );
@@ -116,8 +116,8 @@ export const _getSessionConfig = createAsyncThunk(
       const _config = await sessionService.getSessionConfig();
       return config;
     } catch (error: unknown) {
-      logger.error('獲取會話配置失敗:', error);
-      return rejectWithValue(error.message || '獲取會話配置失敗');
+      logger.error('Get會話ConfigureFailed:', error);
+      return rejectWithValue(error.message || 'Get會話ConfigureFailed');
     }
   }
 );
@@ -129,8 +129,8 @@ export const _getSessionActivities = createAsyncThunk(
       const _activities = await sessionService.getSessionActivities(sessionId);
       return activities;
     } catch (error: unknown) {
-      logger.error('獲取會話活動失敗:', error);
-      return rejectWithValue(error.message || '獲取會話活動失敗');
+      logger.error('Get會話活動Failed:', error);
+      return rejectWithValue(error.message || 'Get會話活動Failed');
     }
   }
 );
@@ -142,8 +142,8 @@ export const _getSessionSecurityInfo = createAsyncThunk(
       const _securityInfo = await sessionService.getSessionSecurityInfo();
       return securityInfo;
     } catch (error: unknown) {
-      logger.error('獲取會話安全信息失敗:', error);
-      return rejectWithValue(error.message || '獲取會話安全信息失敗');
+      logger.error('Get會話安全信息Failed:', error);
+      return rejectWithValue(error.message || 'Get會話安全信息Failed');
     }
   }
 );
@@ -155,8 +155,8 @@ export const _getSessionAnalytics = createAsyncThunk(
       const _analytics = await sessionService.getSessionAnalytics();
       return analytics;
     } catch (error: unknown) {
-      logger.error('獲取會話分析失敗:', error);
-      return rejectWithValue(error.message || '獲取會話分析失敗');
+      logger.error('Get會話分析Failed:', error);
+      return rejectWithValue(error.message || 'Get會話分析Failed');
     }
   }
 );
@@ -169,25 +169,25 @@ export const _updateSessionActivity = createAsyncThunk(
       const _currentSession = sessionService.getCurrentSession();
       return currentSession;
     } catch (error: unknown) {
-      logger.error('更新會話活動失敗:', error);
-      return rejectWithValue(error.message || '更新會話活動失敗');
+      logger.error('Update會話活動Failed:', error);
+      return rejectWithValue(error.message || 'Update會話活動Failed');
     }
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: SessionState = {
   // 當前會話
   currentSession: null,
   isSessionLoading: false,
   sessionError: null,
 
-  // 會話列表
+  // 會話List
   sessions: [],
   isSessionsLoading: false,
   sessionsError: null,
 
-  // 會話配置
+  // 會話Configure
   config: {
     maxSessionsPerUser: 5,
     sessionTimeout: 30,
@@ -206,17 +206,17 @@ const initialState: SessionState = {
   isActivitiesLoading: false,
   activitiesError: null,
 
-  // 安全信息
+  // 安全Information
   securityInfo: null,
   isSecurityLoading: false,
   securityError: null,
 
-  // 會話分析
+  // 會話Analysis
   analytics: null,
   isAnalyticsLoading: false,
   analyticsError: null,
 
-  // 操作狀態
+  // OperationStatus
   isRefreshing: false,
   refreshError: null,
   isTerminating: false,
@@ -228,7 +228,7 @@ const _sessionSlice = createSlice({
   name: 'session',
   initialState,
   reducers: {
-    // 清除錯誤
+    // ClearError
     clearSessionError: state => {
       state.sessionError = null;
     },
@@ -254,7 +254,7 @@ const _sessionSlice = createSlice({
       state.terminationError = null;
     },
 
-    // 重置會話狀態
+    // Reset會話Status
     resetSession: state => {
       state.currentSession = null;
       state.sessions = [];
@@ -270,12 +270,12 @@ const _sessionSlice = createSlice({
       state.terminationError = null;
     },
 
-    // 更新當前會話
+    // Update當前會話
     updateCurrentSession: (state, action: PayloadAction<Session>) => {
       state.currentSession = action.payload;
     },
 
-    // 設置會話配置
+    // Settings會話Configure
     setSessionConfig: (state, action: PayloadAction<SessionConfig>) => {
       state.config = action.payload;
     },

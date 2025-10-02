@@ -53,7 +53,7 @@ router.get('/portfolio/:userId', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ?��??�戶行為?��?''
+// ?��??�戶Row為?��?''
 router.get('/user/:userId/behavior', authenticateToken, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -249,7 +249,7 @@ router.delete('/cache', authenticateToken, async (req, res) => {
     });
   }
 });'
-// ?�康檢查''
+// ?�康Check''
 router.get('/health', async (req, res) => {
   try {
     const health = await analyticsService.healthCheck();
@@ -460,12 +460,12 @@ router.get('/history', authenticateToken, async (req, res) => {
     });
   }
 });'
-// 導出?��??��?''
+// Export?��??��?''
 router.post('/export', authenticateToken, async (req, res) => {
   try {
     const { type, parameters, format } = req.body;
 
-    // ?�裡?�以實現?��?導出?�輯
+    // ?�裡?�以實現?��?Export?�輯
     const exportData = {
       type,'
       parameters,''

@@ -1,4 +1,4 @@
-// 混合推薦系統類型定義
+// 混合推薦系統Class型定義
 export interface HybridRecommendation {
   id: string;
   userId: string;
@@ -325,7 +325,7 @@ export interface HybridRecommendationEvent {
   timestamp: Date;
 }
 
-// 內部數據結構
+// InternalData結構
 export interface HybridRecommendationMatrix {
   [userId: string]: {
     [itemId: string]: HybridRecommendation;

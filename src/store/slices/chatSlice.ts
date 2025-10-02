@@ -51,7 +51,7 @@ export const _initializeChat = createAsyncThunk(
       return true;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '初始化失敗'
+        error instanceof Error ? error.message : 'InitializeFailed'
       );
     }
   }
@@ -69,7 +69,7 @@ export const _createSession = createAsyncThunk(
       return session;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '創建會話失敗'
+        error instanceof Error ? error.message : 'Create會話Failed'
       );
     }
   }
@@ -105,7 +105,7 @@ export const _sendMessage = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '發送消息失敗'
+        error instanceof Error ? error.message : '發送消息Failed'
       );
     }
   }
@@ -120,7 +120,7 @@ export const _getUserSessions = createAsyncThunk(
       return sessions;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取會話列表失敗'
+        error instanceof Error ? error.message : 'Get會話列表Failed'
       );
     }
   }
@@ -135,7 +135,7 @@ export const _getSessionHistory = createAsyncThunk(
       return history;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取會話歷史失敗'
+        error instanceof Error ? error.message : 'Get會話歷史Failed'
       );
     }
   }
@@ -150,7 +150,7 @@ export const _getChatStats = createAsyncThunk(
       return stats;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取統計數據失敗'
+        error instanceof Error ? error.message : 'Get統計數據Failed'
       );
     }
   }
@@ -165,7 +165,7 @@ export const _closeSession = createAsyncThunk(
       return sessionId;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '關閉會話失敗'
+        error instanceof Error ? error.message : '關閉會話Failed'
       );
     }
   }
@@ -180,7 +180,7 @@ export const _archiveSession = createAsyncThunk(
       return sessionId;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '歸檔會話失敗'
+        error instanceof Error ? error.message : '歸檔會話Failed'
       );
     }
   }
@@ -198,7 +198,7 @@ export const _updateSessionPriority = createAsyncThunk(
       return { sessionId, priority };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '更新優先級失敗'
+        error instanceof Error ? error.message : 'Update優先級Failed'
       );
     }
   }
@@ -216,7 +216,7 @@ export const _addSessionTag = createAsyncThunk(
       return { sessionId, tag };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '添加標籤失敗'
+        error instanceof Error ? error.message : '添加標籤Failed'
       );
     }
   }
@@ -234,7 +234,7 @@ export const _removeSessionTag = createAsyncThunk(
       return { sessionId, tag };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '移除標籤失敗'
+        error instanceof Error ? error.message : '移除標籤Failed'
       );
     }
   }
@@ -323,7 +323,7 @@ const _chatSlice = createSlice({
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.isTyping = false;
-        // 添加用戶消息
+        // AddUserMessage
         const userMessage: ChatMessage = {
           id: `user_${Date.now()}`,
           sessionId: action.payload.sessionId,
@@ -335,7 +335,7 @@ const _chatSlice = createSlice({
         };
         state.messages.push(userMessage);
 
-        // 添加 AI 回應
+        // Add AI 回應
         const aiMessage: ChatMessage = {
           id: action.payload.messageId,
           sessionId: action.payload.sessionId,
@@ -348,7 +348,7 @@ const _chatSlice = createSlice({
         };
         state.messages.push(aiMessage);
 
-        // 更新快速回覆和建議操作
+        // Update快速回覆和建議Operation
         if (action.payload.quickReplies) {
           state.quickReplies = action.payload.quickReplies;
         }
@@ -356,7 +356,7 @@ const _chatSlice = createSlice({
           state.suggestedActions = action.payload.suggestedActions;
         }
 
-        // 更新當前會話
+        // Update當前會話
         if (state.currentSession) {
           state.currentSession.messageCount += 2;
           state.currentSession.lastMessageAt = new Date().toISOString();

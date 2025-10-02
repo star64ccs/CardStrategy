@@ -3,7 +3,7 @@ import { errorHandler } from '../../../core/utils/errorHandler';
 import { logger } from '../../../core/utils/logger';
 
 /**
- * Gemini 服務配置接口
+ * Gemini ServiceConfigureInterface
  */
 interface GeminiConfig {
   apiKey: string;
@@ -12,7 +12,7 @@ interface GeminiConfig {
 }
 
 /**
- * Gemini 內容部分接口
+ * Gemini ContentPartialInterface
  */
 interface ContentPart {
   text?: string;
@@ -23,7 +23,7 @@ interface ContentPart {
 }
 
 /**
- * Gemini 內容接口
+ * Gemini ContentInterface
  */
 interface Content {
   role: 'user' | 'model';
@@ -31,7 +31,7 @@ interface Content {
 }
 
 /**
- * Gemini 生成配置接口
+ * Gemini 生成ConfigureInterface
  */
 interface GenerationConfig {
   temperature?: number;
@@ -42,7 +42,7 @@ interface GenerationConfig {
 }
 
 /**
- * Gemini 響應接口
+ * Gemini ResponseInterface
  */
 interface GeminiResponse {
   candidates: {
@@ -63,8 +63,8 @@ interface GeminiResponse {
 }
 
 /**
- * Google Gemini 服務類
- * 提供與 Google Gemini API 的集成功能
+ * Google Gemini ServiceClass
+ * 提供與 Google Gemini API 的集Success能
  */
 export class GeminiService {
   private static instance: GeminiService;
@@ -87,7 +87,7 @@ export class GeminiService {
   }
 
   /**
-   * 初始化 Gemini 服務
+   * Initialize Gemini Service
    */
   async initialize(): Promise<void> {
     try {
@@ -104,19 +104,19 @@ export class GeminiService {
         baseURL: 'https://generativelanguage.googleapis.com/v1beta',
       };
 
-      // 測試 API 連接
+      // Test API Connect
       await this.testConnection();
 
       this.isInitialized = true;
-      logger.info('Gemini 服務初始化成功');
+      logger.info('Gemini ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('Gemini 服務初始化失敗:', { error });
+      logger.error('Gemini ServiceInitializeFailed:', { error });
       throw error;
     }
   }
 
   /**
-   * 測試 API 連接
+   * Test API Connect
    */
   private async testConnection(): Promise<void> {
     try {
@@ -124,15 +124,15 @@ export class GeminiService {
       if (!response.models || !Array.isArray(response.models)) {
         throw new Error('API 響應格式無效');
       }
-      logger.info('Gemini API 連接測試成功');
+      logger.info('Gemini API Connect測試Success');
     } catch (error) {
-      logger.error('Gemini API 連接測試失敗:', { error });
-      throw new Error('無法連接到 Gemini API');
+      logger.error('Gemini API Connect測試Failed:', { error });
+      throw new Error('無法Connect到 Gemini API');
     }
   }
 
   /**
-   * 生成內容
+   * 生成Content
    */
   async generateContent(
     prompt: string,
@@ -179,7 +179,7 @@ export class GeminiService {
         throw new Error('Gemini API 未返回有效內容');
       }
 
-      logger.info('Gemini 內容生成成功:', {
+      logger.info('Gemini 內容生成Success:', {
         responseLength: generatedText.length,
         finishReason: response.candidates[0].finishReason,
       });
@@ -195,7 +195,7 @@ export class GeminiService {
   }
 
   /**
-   * 分析圖片內容
+   * AnalysisGraph片Content
    */
   async analyzeImage(
     imageData: string,
@@ -265,7 +265,7 @@ export class GeminiService {
         throw new Error('Gemini API 未返回圖片分析結果');
       }
 
-      logger.info('Gemini 圖片分析成功:', {
+      logger.info('Gemini 圖片分析Success:', {
         resultLength: analysisResult.length,
       });
 
@@ -297,7 +297,7 @@ export class GeminiService {
     try {
       const contents: Content[] = [];
 
-      // 添加系統提示（如果有）
+      // Add系統提示（如果有）
       if (systemPrompt) {
         contents.push({
           role: 'user',
@@ -305,7 +305,7 @@ export class GeminiService {
         });
       }
 
-      // 處理用戶消息
+      // HandleUserMessage
       for (const message of messages) {
         const parts: ContentPart[] = [];
 
@@ -367,7 +367,7 @@ export class GeminiService {
   }
 
   /**
-   * 卡牌真偽鑑定
+   * 卡牌True偽鑑定
    */
   async authenticateCard(
     frontImageData: string,
@@ -418,7 +418,7 @@ export class GeminiService {
 
       const _result = await this.multiModalChat(messages);
 
-      // 解析結果（這裡可以添加更複雜的解析邏輯）
+      // Parse結果（這裡可以Add更複雜的Parse邏輯）
       const _isAuthentic = result.includes('真品') || result.includes('正品');
       const _confidence = this.extractConfidence(result);
       const _reasons = this.extractReasons(result);
@@ -431,13 +431,13 @@ export class GeminiService {
         recommendation,
       };
     } catch (error) {
-      logger.error('卡牌真偽鑑定失敗:', { error, cardName });
+      logger.error('卡牌真偽鑑定Failed:', { error, cardName });
       throw error;
     }
   }
 
   /**
-   * 發送 HTTP 請求到 Gemini API
+   * Send HTTP Request到 Gemini API
    */
   private async makeRequest(
     endpoint: string,
@@ -465,7 +465,7 @@ export class GeminiService {
       if (!response.ok) {
         const _errorData = await response.json().catch(() => ({}));
         throw new Error(
-          `Gemini API 錯誤 ${response.status}: ${errorData.error?.message || response.statusText}`
+          `Gemini API Error ${response.status}: ${errorData.error?.message || response.statusText}`
         );
       }
 
@@ -474,7 +474,7 @@ export class GeminiService {
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('Gemini API 請求失敗');
+      throw new Error('Gemini API 請求Failed');
     }
   }
 
@@ -522,7 +522,7 @@ export class GeminiService {
   }
 
   /**
-   * 獲取可用模型列表
+   * Get可用模型List
    */
   async getAvailableModels(): Promise<string[]> {
     if (!this.isInitialized) {
@@ -535,13 +535,13 @@ export class GeminiService {
         model.name.split('/').pop()
       );
     } catch (error) {
-      logger.error('獲取 Gemini 模型列表失敗:', { error });
+      logger.error('Get Gemini 模型列表Failed:', { error });
       return [];
     }
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   async getServiceStatus(): Promise<{
     isAvailable: boolean;
@@ -565,8 +565,8 @@ export class GeminiService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _geminiService = GeminiService.getInstance();
 
-// 導出類型
+// ExportClass型
 export type { Content, ContentPart, GeminiResponse, GenerationConfig };

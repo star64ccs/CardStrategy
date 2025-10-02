@@ -52,10 +52,10 @@ export const FakeCardDetectionExample: React.FC = () => {
   );
 
   useEffect(() => {
-    // 初始化服務
+    // InitializeService
     initialize();
 
-    // 載入初始數據
+    // Load初始Data
     loadInitialData();
   }, []);
 
@@ -66,7 +66,7 @@ export const FakeCardDetectionExample: React.FC = () => {
 
   const _handleDetection = async () => {
     if (!cardIdInput.trim() || !imageUrlInput.trim()) {
-      Alert.alert('錯誤', '請輸入卡牌ID和圖片URL');
+      Alert.alert('Error', '請輸入卡牌ID和圖片URL');
       return;
     }
 
@@ -89,7 +89,7 @@ export const FakeCardDetectionExample: React.FC = () => {
       .map(id => id.trim())
       .filter(Boolean);
     if (cardIds.length === 0) {
-      Alert.alert('錯誤', '請輸入至少一個卡牌ID');
+      Alert.alert('Error', '請輸入至少一個卡牌ID');
       return;
     }
 
@@ -131,7 +131,7 @@ export const FakeCardDetectionExample: React.FC = () => {
 
     setShowReportModal(false);
     resetForm();
-    Alert.alert('成功', '假卡報告已提交');
+    Alert.alert('Success', '假卡報告已提交');
   };
 
   const _formatRiskText = (risk: CounterfeitRisk) => {
@@ -149,7 +149,7 @@ export const FakeCardDetectionExample: React.FC = () => {
         <Text style={styles.subtitle}>AI驅動的卡牌真偽檢測</Text>
       </View>
 
-      {/* 檢測輸入區域 */}
+      {/* 檢測InputDistrict域 */}
       <View style={styles.inputSection}>
         <Text style={styles.sectionTitle}>開始檢測</Text>
 
@@ -176,7 +176,7 @@ export const FakeCardDetectionExample: React.FC = () => {
           />
         </View>
 
-        {/* 檢測方法選擇 */}
+        {/* 檢測MethodSelect */}
         <View style={styles.methodsContainer}>
           <Text style={styles.inputLabel}>檢測方法</Text>
           <View style={styles.methodsList}>
@@ -234,7 +234,7 @@ export const FakeCardDetectionExample: React.FC = () => {
         showDetails={true}
       />
 
-      {/* 統計概覽 */}
+      {/* Statistics概覽 */}
       {detectionStats && (
         <View style={styles.statsSection}>
           <Text style={styles.sectionTitle}>系統統計</Text>
@@ -283,7 +283,7 @@ export const FakeCardDetectionExample: React.FC = () => {
         </View>
       )}
 
-      {/* 批量檢測結果 */}
+      {/* Batch檢測結果 */}
       {batchDetections.results.length > 0 && (
         <View style={styles.batchResultsSection}>
           <Text style={styles.sectionTitle}>批量檢測結果</Text>
@@ -338,7 +338,7 @@ export const FakeCardDetectionExample: React.FC = () => {
         </View>
       )}
 
-      {/* 錯誤顯示 */}
+      {/* ErrorShow */}
       {error && (
         <View style={styles.errorContainer}>
           <Ionicons name='alert-circle' size={24} color='#F44336' />
@@ -349,7 +349,7 @@ export const FakeCardDetectionExample: React.FC = () => {
         </View>
       )}
 
-      {/* 報告模態框 */}
+      {/* Report模態框 */}
       <Modal
         visible={showReportModal}
         animationType='slide'
@@ -424,7 +424,7 @@ export const FakeCardDetectionExample: React.FC = () => {
         </View>
       </Modal>
 
-      {/* 批量檢測模態框 */}
+      {/* Batch檢測模態框 */}
       <Modal
         visible={showBatchModal}
         animationType='slide'

@@ -1,8 +1,8 @@
 const { validationResult } = require('express-validator');
 
 /**
- * 驗證中間件
- * 檢查請求數據是否符合驗證規則
+ * Verify中間件
+ * CheckRequestDataYesNo符合Verify規則
  */
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -10,7 +10,7 @@ const validate = (req, res, next) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({
       success: false,
-      message: '驗證失敗',
+      message: 'VerifyFailed',
       errors: errors.array().map((error) => ({
         field: error.path,
         message: error.msg,
@@ -23,18 +23,18 @@ const validate = (req, res, next) => {
 };
 
 /**
- * 通用請求驗證中間件
- * @param {Object} schema - 驗證模式
+ * GenericRequestVerify中間件
+ * @param {Object} schema - Verify模式
  */
 const validateRequest = (schema) => {
   return (req, res, next) => {
     try {
-      // 驗證 body
+      // Verify body
       if (schema.body) {
         for (const [field, rules] of Object.entries(schema.body)) {
           const value = req.body[field];
 
-          // 檢查必填字段
+          // Check必填Field
           if (
             rules.required &&
             (value === undefined || value === null || value === '')
@@ -46,7 +46,7 @@ const validateRequest = (schema) => {
             });
           }
 
-          // 如果字段不是必填且為空，跳過其他驗證
+          // 如果Field不Yes必填且為Empty，Skip其他Verify
           if (
             !rules.required &&
             (value === undefined || value === null || value === '')
@@ -54,7 +54,7 @@ const validateRequest = (schema) => {
             continue;
           }
 
-          // 類型驗證
+          // Class型Verify
           if (rules.type) {
             const actualType = Array.isArray(value) ? 'array' : typeof value;
             if (actualType !== rules.type) {
@@ -66,7 +66,7 @@ const validateRequest = (schema) => {
             }
           }
 
-          // 枚舉驗證
+          // 枚舉Verify
           if (rules.enum && !rules.enum.includes(value)) {
             return res.status(400).json({
               success: false,
@@ -75,7 +75,7 @@ const validateRequest = (schema) => {
             });
           }
 
-          // 長度驗證
+          // 長度Verify
           if (rules.minLength && value.length < rules.minLength) {
             return res.status(400).json({
               success: false,
@@ -92,7 +92,7 @@ const validateRequest = (schema) => {
             });
           }
 
-          // 數值範圍驗證
+          // 數Value範圍Verify
           if (rules.min !== undefined && value < rules.min) {
             return res.status(400).json({
               success: false,
@@ -111,7 +111,7 @@ const validateRequest = (schema) => {
         }
       }
 
-      // 驗證 query
+      // Verify query
       if (schema.query) {
         for (const [field, rules] of Object.entries(schema.query)) {
           const value = req.query[field];
@@ -129,7 +129,7 @@ const validateRequest = (schema) => {
         }
       }
 
-      // 驗證 params
+      // Verify params
       if (schema.params) {
         for (const [field, rules] of Object.entries(schema.params)) {
           const value = req.params[field];
@@ -151,7 +151,7 @@ const validateRequest = (schema) => {
     } catch (error) {
       return res.status(500).json({
         success: false,
-        message: '驗證過程中發生錯誤',
+        message: 'Verify過程中發生Error',
         error: error.message,
       });
     }
@@ -159,32 +159,32 @@ const validateRequest = (schema) => {
 };
 
 /**
- * 自定義驗證規則
+ * CustomVerify規則
  */
 const customValidators = {
-  // 檢查是否為有效的 ObjectId
+  // CheckYesNo為有效的 ObjectId
   isValidObjectId: (value) => {
     return /^[0-9a-fA-F]{24}$/.test(value);
   },
 
-  // 檢查是否為有效的 UUID
+  // CheckYesNo為有效的 UUID
   isValidUUID: (value) => {
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
       value
     );
   },
 
-  // 檢查是否為有效的郵箱
+  // CheckYesNo為有效的Email
   isValidEmail: (value) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   },
 
-  // 檢查是否為有效的電話號碼
+  // CheckYesNo為有效的Phone號碼
   isValidPhone: (value) => {
     return /^\+?[\d\s\-\(\)]{10,}$/.test(value);
   },
 
-  // 檢查是否為有效的 URL
+  // CheckYesNo為有效的 URL
   isValidURL: (value) => {
     try {
       new URL(value);
@@ -194,13 +194,13 @@ const customValidators = {
     }
   },
 
-  // 檢查是否為有效的日期
+  // CheckYesNo為有效的Day
   isValidDate: (value) => {
     const date = new Date(value);
     return date instanceof Date && !isNaN(date);
   },
 
-  // 檢查是否為有效的 JSON
+  // CheckYesNo為有效的 JSON
   isValidJSON: (value) => {
     try {
       JSON.parse(value);
@@ -212,10 +212,10 @@ const customValidators = {
 };
 
 /**
- * 通用驗證規則
+ * GenericVerify規則
  */
 const commonValidations = {
-  // 用戶相關驗證
+  // User相OffVerify
   user: {
     email: {
       notEmpty: { errorMessage: '郵箱不能為空' },
@@ -239,7 +239,7 @@ const commonValidations = {
     },
   },
 
-  // 卡片相關驗證
+  // 卡片相OffVerify
   card: {
     name: {
       notEmpty: { errorMessage: '卡片名稱不能為空' },
@@ -272,7 +272,7 @@ const commonValidations = {
     },
   },
 
-  // 集合相關驗證
+  // Set相OffVerify
   collection: {
     name: {
       notEmpty: { errorMessage: '集合名稱不能為空' },
@@ -290,7 +290,7 @@ const commonValidations = {
     },
   },
 
-  // 投資相關驗證
+  // 投資相OffVerify
   investment: {
     amount: {
       isFloat: {

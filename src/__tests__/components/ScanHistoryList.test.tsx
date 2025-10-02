@@ -100,7 +100,7 @@ describe('ScanHistoryList', () => {
       }
     );
 
-    // 檢查卡片名稱
+    // Check卡片名稱
     expect(getByText('Test Card')).toBeTruthy();
     expect(getByText('Test Card 2')).toBeTruthy();
   });
@@ -113,7 +113,7 @@ describe('ScanHistoryList', () => {
       }
     );
 
-    // 檢查收藏按鈕
+    // Check收藏按鈕
     const _favoriteButton = getByTestId('favorite-button-2');
     expect(favoriteButton).toBeTruthy();
   });
@@ -145,7 +145,7 @@ describe('ScanHistoryList', () => {
     const _firstItem = getByTestId('scan-record-1');
     fireEvent(firstItem, 'longPress');
 
-    // 長按應該觸發選擇模式
+    // 長按應該觸發Select模式
     expect(firstItem).toBeTruthy();
   });
 
@@ -176,7 +176,7 @@ describe('ScanHistoryList', () => {
     const _deleteButtons = getAllByText('刪除');
     fireEvent.press(deleteButtons[0]);
 
-    // 刪除按鈕應該存在
+    // Delete按鈕應該存在
     expect(deleteButtons[0]).toBeTruthy();
   });
 
@@ -209,12 +209,12 @@ describe('ScanHistoryList', () => {
     expect(getByText('尚無掃描記錄')).toBeTruthy();
   });
 
-  it('應該顯示錯誤狀態', () => {
+  it('應該顯示Error狀態', () => {
     const _errorState = {
       ...mockState,
       scanHistory: {
         ...mockState.scanHistory,
-        error: '獲取掃描歷史失敗',
+        error: 'Get掃描歷史Failed',
       },
     };
 
@@ -328,11 +328,11 @@ describe('ScanHistoryList', () => {
       }
     );
 
-    // 檢查處理時間文本是否存在
+    // CheckHandleTime文本YesNo存在
     const _processingTimeElements = getAllByText(/處理時間：/);
     expect(processingTimeElements.length).toBeGreaterThan(0);
 
-    // 檢查 ms 單位是否存在
+    // Check ms 單位YesNo存在
     const _msElements = getAllByText(/ms/);
     expect(msElements.length).toBeGreaterThan(0);
   });
@@ -345,11 +345,11 @@ describe('ScanHistoryList', () => {
       }
     );
 
-    // 檢查掃描時間文本是否存在
+    // Check掃描Time文本YesNo存在
     const _scanTimeElements = getAllByText(/掃描時間：/);
     expect(scanTimeElements.length).toBeGreaterThan(0);
 
-    // 檢查日期格式（ISO 格式）
+    // CheckDay格式（ISO 格式）
     const _dateElements = getAllByText(
       /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
     );

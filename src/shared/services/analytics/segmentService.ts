@@ -62,14 +62,14 @@ export class SegmentService {
   }
 
   /**
-   * 檢查服務是否可用
+   * CheckServiceYesNo可用
    */
   isAvailable(): boolean {
     return this.isInitialized && !!this.writeKey;
   }
 
   /**
-   * 追蹤事件
+   * TraceEvent
    */
   async trackEvent(event: SegmentEvent): Promise<ApiResponse> {
     try {
@@ -116,7 +116,7 @@ export class SegmentService {
   }
 
   /**
-   * 識別用戶
+   * 識別User
    */
   async identifyUser(user: SegmentUser): Promise<ApiResponse> {
     try {
@@ -208,7 +208,7 @@ export class SegmentService {
   }
 
   /**
-   * 批量追蹤事件
+   * BatchTraceEvent
    */
   async batchTrackEvents(events: SegmentEvent[]): Promise<ApiResponse> {
     try {
@@ -268,7 +268,7 @@ export class SegmentService {
   }
 
   /**
-   * 追蹤頁面瀏覽
+   * Trace頁面瀏覽
    */
   async trackPageView(
     pageName: string,
@@ -284,7 +284,7 @@ export class SegmentService {
   }
 
   /**
-   * 追蹤用戶註冊
+   * TraceUserRegister
    */
   async trackUserSignUp(
     userId: string,
@@ -313,7 +313,7 @@ export class SegmentService {
   }
 
   /**
-   * 追蹤卡牌相關事件
+   * Trace卡牌相OffEvent
    */
   async trackCardEvent(
     eventType: string,
@@ -330,7 +330,7 @@ export class SegmentService {
   }
 
   /**
-   * 獲取服務統計
+   * GetServiceStatistics
    */
   async getServiceStats(): Promise<ApiResponse> {
     return {

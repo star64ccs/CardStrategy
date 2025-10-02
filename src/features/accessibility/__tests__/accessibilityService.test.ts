@@ -24,7 +24,7 @@ describe('AccessibilityService', () => {
   let accessibilityService: AccessibilityService;
 
   beforeEach(() => {
-    // 不需要重置實例，直接獲取
+    // 不需要ResetInstance，直接Get
     accessibilityService = AccessibilityService.getInstance();
   });
 
@@ -37,11 +37,11 @@ describe('AccessibilityService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化', async () => {
+    it('應該SuccessInitialize', async () => {
       await expect(accessibilityService.initialize()).resolves.not.toThrow();
     });
 
-    it('應該處理初始化錯誤', async () => {
+    it('應該HandleInitializeError', async () => {
       // Mock AsyncStorage to throw error
       const _AsyncStorage = require('@react-native-async-storage/async-storage');
       AsyncStorage.getItem.mockRejectedValue(new Error('Storage error'));
@@ -145,7 +145,7 @@ describe('AccessibilityService', () => {
       const _mockCallback = jest.fn();
       accessibilityService.addEventListener(mockCallback);
 
-      // 觸發事件
+      // 觸發Event
       await accessibilityService.updateConfig({ highContrast: true });
       expect(mockCallback).toHaveBeenCalled();
     });
@@ -155,14 +155,14 @@ describe('AccessibilityService', () => {
       accessibilityService.addEventListener(mockCallback);
       accessibilityService.removeEventListener(mockCallback);
 
-      // 觸發事件
+      // 觸發Event
       accessibilityService.updateConfig({ highContrast: true });
       expect(mockCallback).not.toHaveBeenCalled();
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該處理存儲錯誤', async () => {
+  describe('ErrorHandle', () => {
+    it('應該Handle存儲Error', async () => {
       const _AsyncStorage = require('@react-native-async-storage/async-storage');
       AsyncStorage.setItem.mockRejectedValue(new Error('Storage error'));
 
@@ -171,7 +171,7 @@ describe('AccessibilityService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理事件監聽器錯誤', () => {
+    it('應該Handle事件監聽器Error', () => {
       const _mockCallback = jest.fn().mockImplementation(() => {
         throw new Error('Callback error');
       });

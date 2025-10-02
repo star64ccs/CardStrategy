@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -55,22 +55,22 @@ class ProjectCleaner {
       // 1. 清理依賴
       await this.cleanupDependencies();
 
-      // 2. 整理腳本文件
+      // 2. 整理腳本File
       await this.organizeScripts();
 
-      // 3. 整理報告文件
+      // 3. 整理ReportFile
       await this.organizeReports();
 
 // eslint-disable-next-line no-console
       // 4. 清理 console.log 語句
       await this.cleanupConsoleLogs();
 
-      // 5. 生成清理報告
+      // 5. 生成清理Report
       await this.generateCleanupReport();
 
       log.success('🎉 專案清理完成！');
     } catch (error) {
-      log.error(`清理過程中發生錯誤: ${error.message}`);
+      log.error(`清理過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
@@ -79,22 +79,22 @@ class ProjectCleaner {
     log.info('📦 清理依賴包...');
 
     try {
-      // 檢查是否在 backend 目錄
+      // CheckYesNo在 backend Directory
       if (process.cwd() !== this.backendDir) {
         process.chdir(this.backendDir);
       }
 
-      // 移除重複和未使用的依賴
+      // RemoveDuplicate和未使用的依賴
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
       const dependenciesToRemove = [
-        'bcryptjs', // 重複，已有 bcrypt
+        'bcryptjs', // Duplicate，已有 bcrypt
         'express-mongo-sanitize', // 不需要 MongoDB
-        'express-brute', // 與 express-rate-limit 重複
-        'express-slow-down', // 與 express-rate-limit 重複
-        'rate-limiter-flexible', // 與 express-rate-limit 重複
-        'redis', // 重複，已有 ioredis
-        'ws', // 重複，已有 socket.io
+        'express-brute', // 與 express-rate-limit Duplicate
+        'express-slow-down', // 與 express-rate-limit Duplicate
+        'rate-limiter-flexible', // 與 express-rate-limit Duplicate
+        'redis', // Duplicate，已有 ioredis
+        'ws', // Duplicate，已有 socket.io
         'socket.io-redis', // 可能不需要
         'fluent-ffmpeg', // 可能未使用
       ];
@@ -108,11 +108,11 @@ class ProjectCleaner {
         }
       }
 
-      // 安裝依賴
+      // Install依賴
       execSync('npm install', { stdio: 'inherit' });
       log.success('依賴包清理完成');
     } catch (error) {
-      log.error(`依賴清理失敗: ${error.message}`);
+      log.error(`依賴清理Failed: ${error.message}`);
     }
   }
 
@@ -127,7 +127,7 @@ class ProjectCleaner {
       utils: ['cleanup', 'fix', 'update'],
     };
 
-    // 創建分類目錄
+    // Create分ClassDirectory
     for (const category of Object.keys(scriptCategories)) {
       const categoryDir = path.join(this.scriptsDir, category);
       if (!fs.existsSync(categoryDir)) {
@@ -135,7 +135,7 @@ class ProjectCleaner {
       }
     }
 
-    // 移動腳本文件到對應目錄
+    // Move腳本File到對應Directory
     const scriptFiles = fs
       .readdirSync(this.scriptsDir)
       .filter(
@@ -175,13 +175,13 @@ class ProjectCleaner {
   async organizeReports() {
     log.info('📄 整理報告文件...');
 
-    // 創建報告備份目錄
+    // CreateReportBackupDirectory
     const backupDir = path.join(this.reportsDir, 'backup');
     if (!fs.existsSync(backupDir)) {
       fs.mkdirSync(backupDir, { recursive: true });
     }
 
-    // 移動舊報告到備份目錄
+    // Move舊Report到BackupDirectory
     const reportFiles = fs
       .readdirSync(this.reportsDir)
       .filter((file) => file.endsWith('.md') && !file.includes('current'));
@@ -198,7 +198,7 @@ class ProjectCleaner {
       }
     }
 
-    // 創建當前報告
+    // Create當前Report
     const currentReport = path.join(
       this.reportsDir,
       'CURRENT_PROJECT_STATUS.md'
@@ -250,12 +250,12 @@ class ProjectCleaner {
           const originalContent = content;
 
 // eslint-disable-next-line no-console
-          // 移除 console.log, console.error, console.warn (保留 console.error 在 catch 塊中)
+          // Remove console.log, console.error, console.warn (保留 console.error 在 catch 塊中)
           content = content.replace(/console\.log\([^)]*\);?\s*/g, '');
           content = content.replace(/console\.warn\([^)]*\);?\s*/g, '');
 
 // eslint-disable-next-line no-console
-          // 保留錯誤處理中的 console.error
+          // 保留ErrorHandle中的 console.error
           // content = content.replace(/console\.error\([^)]*\);?\s*/g, '');
 
           if (content !== originalContent) {
@@ -348,11 +348,11 @@ ${timestamp}
   }
 }
 
-// 執行清理
+// 執Row清理
 if (require.main === module) {
   const cleaner = new ProjectCleaner();
   cleaner.cleanup().catch((error) => {
-    log.error(`清理失敗: ${error.message}`);
+    log.error(`清理Failed: ${error.message}`);
     process.exit(1);
   });
 }

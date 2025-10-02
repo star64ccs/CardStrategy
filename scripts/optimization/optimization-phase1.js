@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -52,7 +52,7 @@ class Phase1Optimizer {
     };
   }
 
-  // 1. 清理 TODO 註釋
+  // 1. 清理 TODO Comment
   async cleanTodos() {
     log.header('🔍 清理 TODO 註釋');
 
@@ -83,13 +83,13 @@ class Phase1Optimizer {
               todosFound++;
               log.info(`發現 TODO: ${file}:${index + 1} - ${line.trim()}`);
 
-              // 如果是簡單的 TODO，直接移除
+              // 如果Yes簡單的 TODO，直接Remove
               if (line.trim().match(/^\s*\/\/\s*TODO[:\s].*$/)) {
                 modified = true;
-                return ''; // 移除整行
+                return ''; // Remove整Row
               }
 
-              // 如果是複雜的 TODO，標記為需要手動處理
+              // 如果Yes複雜的 TODO，Mark為需要ManualHandle
               if (!line.includes('FIXME')) {
                 modified = true;
                 return line.replace(/TODO/gi, 'FIXME');
@@ -104,7 +104,7 @@ class Phase1Optimizer {
           log.success(`已處理: ${file}`);
         }
       } catch (error) {
-        log.error(`處理文件失敗: ${file} - ${error.message}`);
+        log.error(`Handle文件Failed: ${file} - ${error.message}`);
       }
     }
 
@@ -128,7 +128,7 @@ class Phase1Optimizer {
     let consoleStatementsFound = 0;
 
     for (const file of files) {
-      // 跳過測試文件，保留必要的 console 語句
+      // SkipTestFile，保留必要的 console 語句
       if (
         file.includes('test') ||
         file.includes('spec') ||
@@ -152,7 +152,7 @@ class Phase1Optimizer {
           const matches = newContent.match(pattern);
           if (matches) {
             consoleStatementsFound += matches.length;
-            // 替換為 logger 或移除
+            // Replace為 logger 或Remove
             newContent = newContent.replace(pattern, '// logger.info(');
             modified = true;
           }
@@ -163,7 +163,7 @@ class Phase1Optimizer {
           log.success(`已處理: ${file}`);
         }
       } catch (error) {
-        log.error(`處理文件失敗: ${file} - ${error.message}`);
+        log.error(`Handle文件Failed: ${file} - ${error.message}`);
       }
     }
 
@@ -171,7 +171,7 @@ class Phase1Optimizer {
     log.success(`找到並處理了 ${consoleStatementsFound} 個 console 語句`);
   }
 
-  // 3. 識別重複文檔
+  // 3. 識別DuplicateDocumentation
   async identifyDuplicateDocs() {
     log.header('📚 識別重複文檔');
 
@@ -192,12 +192,12 @@ class Phase1Optimizer {
     log.success(`發現 ${this.stats.duplicateDocsFound} 個重複文檔`);
   }
 
-  // 4. 檢查未使用的依賴
+  // 4. Check未使用的依賴
   async checkUnusedDependencies() {
     log.header('📦 檢查未使用的依賴');
 
     try {
-      // 使用 npm-check 檢查未使用的依賴
+      // 使用 npm-check Check未使用的依賴
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -214,7 +214,7 @@ class Phase1Optimizer {
     }
   }
 
-  // 5. 生成優化報告
+  // 5. 生成優化Report
   generateReport() {
     log.header('📊 第一階段優化報告');
 
@@ -246,7 +246,7 @@ class Phase1Optimizer {
     log.success(`優化報告已生成: ${reportPath}`);
   }
 
-  // 輔助方法
+  // 輔助Method
   getAllFiles(extensions) {
     const files = [];
 
@@ -297,14 +297,14 @@ class Phase1Optimizer {
           contentMap.set(normalizedContent, groupId++);
         }
       } catch (error) {
-        log.error(`讀取文件失敗: ${file}`);
+        log.error(`讀取文件Failed: ${file}`);
       }
     }
 
     return duplicateGroups;
   }
 
-  // 執行所有優化
+  // 執Row所有優化
   async run() {
     log.header('🚀 開始第一階段優化');
 
@@ -318,13 +318,13 @@ class Phase1Optimizer {
       log.header('🎉 第一階段優化完成！');
       log.success('請查看 PHASE1_OPTIMIZATION_REPORT.md 了解詳細結果');
     } catch (error) {
-      log.error(`優化過程中發生錯誤: ${error.message}`);
+      log.error(`優化過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行優化
+// 執Row優化
 if (require.main === module) {
   const optimizer = new Phase1Optimizer();
   optimizer.run();

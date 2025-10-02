@@ -1,4 +1,4 @@
-// 台灣公平交易法服務測試
+// 台灣公平交易法ServiceTest
 // Taiwan Fair Trade Act Service Tests
 
 import { TaiwanFairTradeService } from '../services/fairTradeService';

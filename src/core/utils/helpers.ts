@@ -1,6 +1,6 @@
 import { logger } from './logger';
 
-// 陣列操作工具
+// 陣ColumnOperationTool
 export const _chunk = <T>(array: T[], size: number): T[][] => {
   const chunks: T[][] = [];
   for (let i = 0; i < array.length; i += size) {
@@ -52,7 +52,7 @@ export const _filterBy = <T>(
   return array.filter(predicate);
 };
 
-// 物件操作工具
+// 物件OperationTool
 export const _pick = <T extends object, K extends keyof T>(
   obj: T,
   keys: K[]
@@ -120,7 +120,7 @@ export const _merge = <T extends object>(
   ) as T;
 };
 
-// 字符串操作工具
+// 字符串OperationTool
 export const _capitalize = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 };
@@ -156,7 +156,7 @@ export const _truncate = (
   return str.substring(0, length - suffix.length) + suffix;
 };
 
-// 數字操作工具
+// 數字OperationTool
 export const _formatNumber = (num: number, decimals = 2): string => {
   return num.toFixed(decimals);
 };
@@ -181,7 +181,7 @@ export const _round = (value: number, decimals = 0): number => {
   return Math.round(value * factor) / factor;
 };
 
-// 日期操作工具
+// DayOperationTool
 export const _formatDate = (date: Date, format = 'YYYY-MM-DD'): string => {
   const _year = date.getFullYear();
   const _month = String(date.getMonth() + 1).padStart(2, '0');
@@ -236,7 +236,7 @@ export const _addYears = (date: Date, years: number): Date => {
   return result;
 };
 
-// 異步操作工具
+// AsyncOperationTool
 export const _retry = async <T>(
   fn: () => Promise<T>,
   attempts = 3,
@@ -278,7 +278,7 @@ export const _safeExecute = async <T>(
   }
 };
 
-// 驗證工具
+// VerifyTool
 export const _isValidEmail = (email: string): boolean => {
   const _emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -303,7 +303,7 @@ export const _isValidDate = (date: unknown): boolean => {
   return d instanceof Date && !isNaN(d.getTime());
 };
 
-// 隨機工具
+// 隨機Tool
 export const _randomInt = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -325,7 +325,7 @@ export const _shuffle = <T>(array: T[]): T[] => {
   return shuffled;
 };
 
-// 性能工具
+// 性能Tool
 export const _debounce = <T extends (...args: unknown[]) => any>(
   func: T,
   wait: number
@@ -351,7 +351,7 @@ export const _throttle = <T extends (...args: unknown[]) => any>(
   };
 };
 
-// 類型檢查工具
+// Class型CheckTool
 export const _isObject = (value: unknown): value is object => {
   return value !== null && typeof value === 'object' && !Array.isArray(value);
 };

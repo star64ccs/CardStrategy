@@ -1,6 +1,6 @@
 /**
- * 數據處理示例組件
- * 展示數據處理服務的功能和性能監控
+ * DataHandle示例Component
+ * 展示DataHandleService的功能和性能Monitor
  */
 
 import React, { useEffect, useState } from 'react';
@@ -22,13 +22,13 @@ import {
 } from '../types/processing';
 
 /**
- * 示例數據處理器
+ * 示例DataHandle器
  */
 class ExampleProcessor {
   name = 'ExampleProcessor';
 
   async process(data: unknown, config: unknown) {
-    // 模擬處理延遲
+    // 模擬Handle延遲
     await new Promise(resolve =>
       setTimeout(resolve, Math.random() * 1000 + 500)
     );
@@ -54,7 +54,7 @@ class ExampleProcessor {
 }
 
 /**
- * 數據處理示例組件
+ * DataHandle示例Component
  */
 export const DataProcessingExample: React.FC = () => {
   const {
@@ -94,7 +94,7 @@ export const DataProcessingExample: React.FC = () => {
     useState<CacheStrategy>(CacheStrategy.HYBRID);
 
   useEffect(() => {
-    // 註冊示例處理器
+    // Register示例Handle器
     if (isInitialized) {
       registerProcessor('example-processor', new ExampleProcessor());
     }
@@ -112,7 +112,7 @@ export const DataProcessingExample: React.FC = () => {
 
   const _handleSingleProcess = async () => {
     if (!testData.length) {
-      Alert.alert('錯誤', '請先生成測試數據');
+      Alert.alert('Error', '請先生成測試數據');
       return;
     }
 
@@ -124,15 +124,15 @@ export const DataProcessingExample: React.FC = () => {
       });
 
       setResults([result]);
-      Alert.alert('成功', '單個數據處理完成');
+      Alert.alert('Success', '單個數據處理完成');
     } catch (error) {
-      Alert.alert('錯誤', `處理失敗: ${error}`);
+      Alert.alert('Error', `HandleFailed: ${error}`);
     }
   };
 
   const _handleBatchProcess = async () => {
     if (!testData.length) {
-      Alert.alert('錯誤', '請先生成測試數據');
+      Alert.alert('Error', '請先生成測試數據');
       return;
     }
 
@@ -144,27 +144,27 @@ export const DataProcessingExample: React.FC = () => {
       });
 
       setResults(results);
-      Alert.alert('成功', `批量處理完成: ${results.length} 個項目`);
+      Alert.alert('Success', `批量處理完成: ${results.length} 個項目`);
     } catch (error) {
-      Alert.alert('錯誤', `批量處理失敗: ${error}`);
+      Alert.alert('Error', `批量HandleFailed: ${error}`);
     }
   };
 
   const _handleClearCache = async () => {
     try {
       await clearCache();
-      Alert.alert('成功', '緩存已清理');
+      Alert.alert('Success', '緩存已清理');
     } catch (error) {
-      Alert.alert('錯誤', `清理緩存失敗: ${error}`);
+      Alert.alert('Error', `清理緩存Failed: ${error}`);
     }
   };
 
   const _handleResetService = async () => {
     try {
       await resetService();
-      Alert.alert('成功', '服務已重置');
+      Alert.alert('Success', 'Service已重置');
     } catch (error) {
-      Alert.alert('錯誤', `重置服務失敗: ${error}`);
+      Alert.alert('Error', `重置ServiceFailed: ${error}`);
     }
   };
 
@@ -194,7 +194,7 @@ export const DataProcessingExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>數據處理服務示例</Text>
 
-      {/* 狀態指示器 */}
+      {/* Status指示器 */}
       <View style={styles.statusContainer}>
         <View
           style={[
@@ -209,7 +209,7 @@ export const DataProcessingExample: React.FC = () => {
         </Text>
       </View>
 
-      {/* 錯誤顯示 */}
+      {/* ErrorShow */}
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>錯誤: {error}</Text>
@@ -246,7 +246,7 @@ export const DataProcessingExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 緩存統計 */}
+      {/* CacheStatistics */}
       <View style={styles.cacheContainer}>
         <Text style={styles.sectionTitle}>緩存統計</Text>
         <View style={styles.cacheStats}>
@@ -261,7 +261,7 @@ export const DataProcessingExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 隊列統計 */}
+      {/* QueueStatistics */}
       <View style={styles.queueContainer}>
         <Text style={styles.sectionTitle}>隊列統計</Text>
         <View style={styles.queueStats}>
@@ -280,11 +280,11 @@ export const DataProcessingExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 配置設置 */}
+      {/* ConfigureSettings */}
       <View style={styles.configContainer}>
         <Text style={styles.sectionTitle}>處理配置</Text>
 
-        {/* 策略選擇 */}
+        {/* 策略Select */}
         <View style={styles.configItem}>
           <Text style={styles.configLabel}>處理策略:</Text>
           <View style={styles.buttonGroup}>
@@ -314,7 +314,7 @@ export const DataProcessingExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 優先級選擇 */}
+        {/* 優先級Select */}
         <View style={styles.configItem}>
           <Text style={styles.configLabel}>優先級:</Text>
           <View style={styles.buttonGroup}>
@@ -344,7 +344,7 @@ export const DataProcessingExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 緩存策略選擇 */}
+        {/* Cache策略Select */}
         <View style={styles.configItem}>
           <Text style={styles.configLabel}>緩存策略:</Text>
           <View style={styles.buttonGroup}>
@@ -376,7 +376,7 @@ export const DataProcessingExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.actionsContainer}>
         <Text style={styles.sectionTitle}>操作</Text>
 
@@ -431,7 +431,7 @@ export const DataProcessingExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 結果顯示 */}
+      {/* 結果Show */}
       {results.length > 0 && (
         <View style={styles.resultsContainer}>
           <Text style={styles.sectionTitle}>處理結果</Text>

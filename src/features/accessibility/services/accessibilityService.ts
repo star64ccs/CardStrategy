@@ -9,7 +9,7 @@ import type {
   SpeechOptions,
 } from '../types/accessibility';
 
-// 默認無障礙配置
+// Default無障礙Configure
 const defaultAccessibilityConfig: AccessibilityConfig = {
   // 視覺輔助
   highContrast: false,
@@ -44,7 +44,7 @@ const defaultAccessibilityConfig: AccessibilityConfig = {
   homeClickSpeed: 'normal',
 };
 
-// 默認配置文件
+// DefaultConfigureFile
 const defaultProfiles: AccessibilityProfile[] = [
   {
     id: 'default',
@@ -138,7 +138,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
     }
   }
 
-  // 配置管理
+  // ConfigureManage
   getConfig(): AccessibilityConfig {
     return { ...this.config };
   }
@@ -146,7 +146,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
   async updateConfig(config: Partial<AccessibilityConfig>): Promise<void> {
     this.config = { ...this.config, ...config };
 
-    // 保存配置
+    // SaveConfigure
     await this.saveConfig();
 
     this.emitEvent({
@@ -166,7 +166,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
     });
   }
 
-  // 配置文件管理
+  // ConfigureFileManage
   getCurrentProfile(): AccessibilityProfile {
     const _profile = this.availableProfiles.find(
       p => p.id === this.currentProfile
@@ -237,7 +237,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
     });
   }
 
-  // 功能檢查
+  // 功能Check
   isFeatureEnabled(feature: keyof AccessibilityConfig): boolean {
     return this.config[feature] as boolean;
   }
@@ -256,8 +256,8 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
 
   // 系統集成
   async checkSystemAccessibility(): Promise<Partial<AccessibilityConfig>> {
-    // 在實際應用中，這裡應該檢查系統的無障礙設置
-    // 目前返回一個模擬的系統配置
+    // 在實際Apply中，這裡應該Check系統的無障礙Settings
+    // 目前Return一個模擬的系統Configure
     return {
       reduceMotion: false,
       reduceTransparency: false,
@@ -270,7 +270,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
     await this.updateConfig(systemConfig);
   }
 
-  // 事件管理
+  // EventManage
   addEventListener(listener: (event: AccessibilityEvent) => void): void {
     this.eventListeners.push(listener);
   }
@@ -282,7 +282,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
     }
   }
 
-  // 無障礙工具實現
+  // 無障礙Tool實現
   async speak(text: string, options?: SpeechOptions): Promise<void> {
     if (this.isSpeaking() && options?.interrupt) {
       this.stopSpeaking();
@@ -290,7 +290,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
 
     this._isSpeaking = true;
 
-    // 在實際應用中，這裡應該使用語音合成 API
+    // 在實際Apply中，這裡應該使用語音合成 API
     console.log(`Speaking: ${text}`, options);
 
     // 模擬語音播放
@@ -309,14 +309,14 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
   }
 
   vibrate(pattern?: number | number[]): void {
-    // 在實際應用中，這裡應該使用振動 API
+    // 在實際Apply中，這裡應該使用振動 API
     console.log('Vibrating:', pattern);
   }
 
   hapticFeedback(
     type: 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error'
   ): void {
-    // 在實際應用中，這裡應該使用觸覺反饋 API
+    // 在實際Apply中，這裡應該使用觸覺反饋 API
     console.log('Haptic feedback:', type);
   }
 
@@ -333,15 +333,15 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
   async moveFocus(
     direction: 'next' | 'previous' | 'up' | 'down' | 'left' | 'right'
   ): Promise<boolean> {
-    // 在實際應用中，這裡應該實現焦點導航邏輯
+    // 在實際Apply中，這裡應該實現焦點導航邏輯
     console.log('Moving focus:', direction);
     return true;
   }
 
   calculateContrastRatio(color1: string, color2: string): number {
     // 簡化的對比度計算
-    // 在實際應用中，這裡應該實現完整的 WCAG 對比度計算
-    return 4.5; // 模擬值
+    // 在實際Apply中，這裡應該實現完整的 WCAG 對比度計算
+    return 4.5; // 模擬Value
   }
 
   isHighContrast(color1: string, color2: string): boolean {
@@ -350,11 +350,11 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
   }
 
   suggestContrastColor(baseColor: string, targetRatio: number): string {
-    // 在實際應用中，這裡應該實現顏色建議算法
-    return '#000000'; // 模擬值
+    // 在實際Apply中，這裡應該實現顏色建議算法
+    return '#000000'; // 模擬Value
   }
 
-  // 私有方法
+  // PrivateMethod
   private async loadConfig(): Promise<void> {
     try {
       const _savedConfig = await AsyncStorage.getItem(this.storageKey);
@@ -366,7 +366,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
           this.availableProfiles = parsed.availableProfiles || defaultProfiles;
         } catch (parseError) {
           console.warn('Failed to parse accessibility config:', parseError);
-          // 如果JSON解析失敗，使用默認配置
+          // 如果JSONParseFailed，使用DefaultConfigure
           this.config = { ...defaultAccessibilityConfig };
           this.currentProfile = 'default';
           this.availableProfiles = [...defaultProfiles];
@@ -374,7 +374,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
       }
     } catch (error) {
       console.warn('Failed to load accessibility config:', error);
-      throw error; // 重新拋出錯誤以便測試捕獲
+      throw error; // ReThrowError以便TestCatch
     }
   }
 
@@ -388,7 +388,7 @@ class AccessibilityService implements AccessibilityManager, AccessibilityTools {
       await AsyncStorage.setItem(this.storageKey, JSON.stringify(configData));
     } catch (error) {
       console.warn('Failed to save accessibility config:', error);
-      throw error; // 重新拋出錯誤以便測試捕獲
+      throw error; // ReThrowError以便TestCatch
     }
   }
 

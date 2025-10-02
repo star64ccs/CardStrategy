@@ -45,14 +45,14 @@ export class SendGridService {
   }
 
   /**
-   * 檢查服務是否可用
+   * CheckServiceYesNo可用
    */
   isAvailable(): boolean {
     return !!this.apiKey;
   }
 
   /**
-   * 發送郵件
+   * Send郵件
    */
   async sendEmail(
     email: SendGridEmail
@@ -132,7 +132,7 @@ export class SendGridService {
   }
 
   /**
-   * 批量發送郵件
+   * BatchSend郵件
    */
   async sendBulkEmails(emails: SendGridEmail[]): Promise<
     ApiResponse<{
@@ -168,7 +168,7 @@ export class SendGridService {
       let successCount = 0;
       let failedCount = 0;
 
-      // 並行發送郵件
+      // ParallelSend郵件
       const _promises = emails.map(async (email, index) => {
         try {
           const _result = await this.sendEmail(email);
@@ -208,7 +208,7 @@ export class SendGridService {
   }
 
   /**
-   * 獲取模板列表
+   * Get模板List
    */
   async getTemplates(): Promise<ApiResponse<SendGridTemplate[]>> {
     try {
@@ -255,7 +255,7 @@ export class SendGridService {
   }
 
   /**
-   * 發送歡迎郵件
+   * Send歡迎郵件
    */
   async sendWelcomeEmail(
     userEmail: string,
@@ -303,7 +303,7 @@ export class SendGridService {
   }
 
   /**
-   * 發送密碼重置郵件
+   * SendPasswordReset郵件
    */
   async sendPasswordResetEmail(
     userEmail: string,
@@ -345,7 +345,7 @@ export class SendGridService {
   }
 
   /**
-   * 發送市場價格提醒郵件
+   * Send市場價格提醒郵件
    */
   async sendPriceAlertEmail(
     userEmail: string,
@@ -382,7 +382,7 @@ export class SendGridService {
   }
 
   /**
-   * 獲取服務統計信息
+   * GetServiceStatisticsInformation
    */
   async getServiceStats(): Promise<
     ApiResponse<{
@@ -435,5 +435,5 @@ export class SendGridService {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _sendgridService = new SendGridService();

@@ -13,7 +13,7 @@ import type {
 } from '../../../core/types';
 import { logger } from '../../../core/utils/logger';
 
-// Mock 生物識別庫接口
+// Mock 生物識別LibraryInterface
 interface BiometricLibrary {
   isSensorAvailable(): Promise<BiometricType | null>;
   createKeys(options?: unknown): Promise<boolean>;
@@ -24,8 +24,8 @@ interface BiometricLibrary {
 }
 
 /**
- * 生物識別認證服務
- * 處理指紋、Face ID 等生物識別認證功能
+ * 生物識別AuthenticateService
+ * Handle指紋、Face ID 等生物識別Authenticate功能
  */
 export class BiometricAuthService {
   private static instance: BiometricAuthService;
@@ -44,11 +44,11 @@ export class BiometricAuthService {
   }
 
   /**
-   * 初始化生物識別庫
+   * Initialize生物識別Library
    */
   private async initializeBiometricLibrary(): Promise<void> {
     try {
-      // 在實際應用中，這裡會導入真實的生物識別庫
+      // 在實際Apply中，這裡會ImportTrue實的生物識別Library
       // 例如：react-native-biometrics, react-native-touch-id 等
 
       if (Platform.OS === 'ios') {
@@ -63,18 +63,18 @@ export class BiometricAuthService {
       }
 
       this.isInitialized = true;
-      logger.info('生物識別庫初始化成功');
+      logger.info('生物識別庫InitializeSuccess');
     } catch (error) {
-      logger.error('生物識別庫初始化失敗:', error);
+      logger.error('生物識別庫InitializeFailed:', error);
       this.isInitialized = false;
     }
   }
 
   /**
-   * 加載 iOS 生物識別庫
+   * 加載 iOS 生物識別Library
    */
   private async loadIOSBiometricLib(): Promise<BiometricLibrary> {
-    // Mock iOS 生物識別庫
+    // Mock iOS 生物識別Library
     return {
       isSensorAvailable: async () => {
         // 模擬檢測 iOS 設備的生物識別能力
@@ -92,7 +92,7 @@ export class BiometricAuthService {
         return { signature: 'mock-signature', success: true };
       },
       simplePrompt: async (config: BiometricPromptConfig) => {
-        // 模擬用戶交互
+        // 模擬User交互
         const _success = Math.random() > 0.3;
         if (success) {
           return { success: true, biometryType: 'faceId' };
@@ -104,10 +104,10 @@ export class BiometricAuthService {
   }
 
   /**
-   * 加載 Android 生物識別庫
+   * 加載 Android 生物識別Library
    */
   private async loadAndroidBiometricLib(): Promise<BiometricLibrary> {
-    // Mock Android 生物識別庫
+    // Mock Android 生物識別Library
     return {
       isSensorAvailable: async () => {
         // 模擬檢測 Android 設備的生物識別能力
@@ -121,7 +121,7 @@ export class BiometricAuthService {
         return { signature: 'mock-signature', success: true };
       },
       simplePrompt: async (config: BiometricPromptConfig) => {
-        // 模擬用戶交互
+        // 模擬User交互
         const _success = Math.random() > 0.3;
         if (success) {
           return { success: true, biometryType: 'fingerprint' };
@@ -133,19 +133,19 @@ export class BiometricAuthService {
   }
 
   /**
-   * 加載 Web 生物識別庫
+   * 加載 Web 生物識別Library
    */
   private async loadWebBiometricLib(): Promise<BiometricLibrary> {
-    // Mock Web 生物識別庫 (WebAuthn)
+    // Mock Web 生物識別Library (WebAuthn)
     return {
       isSensorAvailable: async () => {
-        // 檢查 WebAuthn 支持
+        // Check WebAuthn Support
         if (
           typeof window !== 'undefined' &&
           window.navigator &&
           window.navigator.credentials
         ) {
-          return 'fingerprint'; // 假設支持指紋
+          return 'fingerprint'; // False設Support指紋
         }
         return null;
       },
@@ -156,7 +156,7 @@ export class BiometricAuthService {
         return { signature: 'mock-web-signature', success: true };
       },
       simplePrompt: async (config: BiometricPromptConfig) => {
-        // 模擬 WebAuthn 認證
+        // 模擬 WebAuthn Authenticate
         const _success = Math.random() > 0.4;
         if (success) {
           return { success: true, biometryType: 'fingerprint' };
@@ -195,7 +195,7 @@ export class BiometricAuthService {
           });
         }
 
-        // 檢測其他可能的生物識別類型
+        // 檢測其他可能的生物識別Class型
         const allTypes: BiometricType[] = [
           'fingerprint',
           'faceId',
@@ -222,13 +222,13 @@ export class BiometricAuthService {
       logger.info('生物識別能力檢測完成:', { capabilities });
       return capabilities;
     } catch (error) {
-      logger.error('檢測生物識別能力失敗:', error);
+      logger.error('檢測生物識別能力Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 執行生物識別認證
+   * 執Row生物識別Authenticate
    */
   async authenticate(
     request: BiometricAuthRequest = {}
@@ -258,16 +258,16 @@ export class BiometricAuthService {
         timestamp: new Date(),
       };
 
-      logger.info('生物識別認證成功:', { authResult });
+      logger.info('生物識別認證Success:', { authResult });
       return authResult;
     } catch (error: unknown) {
-      logger.error('生物識別認證失敗:', error);
+      logger.error('生物識別認證Failed:', error);
 
       const _errorCode = this.mapErrorToCode(error);
       const authResult: BiometricAuthResult = {
         success: false,
         errorCode,
-        errorMessage: error.message || '認證失敗',
+        errorMessage: error.message || '認證Failed',
         authenticationMethod: 'biometric',
         timestamp: new Date(),
       };
@@ -277,7 +277,7 @@ export class BiometricAuthService {
   }
 
   /**
-   * 創建生物識別密鑰
+   * Create生物識別密鑰
    */
   async createBiometricKeys(): Promise<boolean> {
     try {
@@ -288,16 +288,16 @@ export class BiometricAuthService {
       }
 
       const _result = await this.biometricLib.createKeys();
-      logger.info('生物識別密鑰創建成功');
+      logger.info('生物識別密鑰CreateSuccess');
       return result;
     } catch (error) {
-      logger.error('創建生物識別密鑰失敗:', error);
+      logger.error('Create生物識別密鑰Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 檢查生物識別密鑰是否存在
+   * Check生物識別密鑰YesNo存在
    */
   async biometricKeysExist(): Promise<boolean> {
     try {
@@ -309,13 +309,13 @@ export class BiometricAuthService {
       logger.info('生物識別密鑰檢查:', { exists });
       return exists;
     } catch (error) {
-      logger.error('檢查生物識別密鑰失敗:', error);
+      logger.error('Check生物識別密鑰Failed:', error);
       return false;
     }
   }
 
   /**
-   * 刪除生物識別密鑰
+   * Delete生物識別密鑰
    */
   async deleteBiometricKeys(): Promise<boolean> {
     try {
@@ -326,16 +326,16 @@ export class BiometricAuthService {
       }
 
       const _result = await this.biometricLib.deleteKeys();
-      logger.info('生物識別密鑰刪除成功');
+      logger.info('生物識別密鑰DeleteSuccess');
       return result;
     } catch (error) {
-      logger.error('刪除生物識別密鑰失敗:', error);
+      logger.error('Delete生物識別密鑰Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建生物識別簽名
+   * Create生物識別Sign
    */
   async createBiometricSignature(
     payload: string,
@@ -351,22 +351,22 @@ export class BiometricAuthService {
       const _message = promptMessage || '請進行生物識別認證以創建簽名';
       const _result = await this.biometricLib.createSignature(message, payload);
 
-      logger.info('生物識別簽名創建成功');
+      logger.info('生物識別簽名CreateSuccess');
       return result.signature;
     } catch (error) {
-      logger.error('創建生物識別簽名失敗:', error);
+      logger.error('Create生物識別簽名Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取生物識別設置
+   * Get生物識別Settings
    */
   async getBiometricSettings(): Promise<BiometricSettings> {
     try {
       logger.info('獲取生物識別設置');
 
-      // 從本地存儲或服務器獲取設置
+      // 從LocalStorage或ServerGetSettings
       const settings: BiometricSettings = {
         isEnabled: true,
         enabledTypes: ['fingerprint', 'faceId'],
@@ -377,16 +377,16 @@ export class BiometricAuthService {
         lockoutDuration: 30,
       };
 
-      logger.info('生物識別設置獲取成功:', { settings });
+      logger.info('生物識別SettingsGetSuccess:', { settings });
       return settings;
     } catch (error) {
-      logger.error('獲取生物識別設置失敗:', error);
+      logger.error('Get生物識別SettingsFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新生物識別設置
+   * Update生物識別Settings
    */
   async updateBiometricSettings(
     settings: Partial<BiometricSettings>
@@ -394,28 +394,28 @@ export class BiometricAuthService {
     try {
       logger.info('更新生物識別設置:', settings);
 
-      // 獲取當前設置
+      // Get當前Settings
       const _currentSettings = await this.getBiometricSettings();
 
-      // 合併設置
+      // MergeSettings
       const updatedSettings: BiometricSettings = {
         ...currentSettings,
         ...settings,
       };
 
-      // 保存到本地存儲或服務器
+      // Save到LocalStorage或Server
       // await this.saveBiometricSettings(updatedSettings);
 
-      logger.info('生物識別設置更新成功:', { updatedSettings });
+      logger.info('生物識別SettingsUpdateSuccess:', { updatedSettings });
       return updatedSettings;
     } catch (error) {
-      logger.error('更新生物識別設置失敗:', error);
+      logger.error('Update生物識別SettingsFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取註冊狀態
+   * GetRegisterStatus
    */
   async getEnrollmentStatus(): Promise<BiometricEnrollmentStatus> {
     try {
@@ -434,16 +434,16 @@ export class BiometricAuthService {
         lastUsedDate: undefined,
       };
 
-      logger.info('生物識別註冊狀態獲取成功:', { status });
+      logger.info('生物識別註冊狀態GetSuccess:', { status });
       return status;
     } catch (error) {
-      logger.error('獲取生物識別註冊狀態失敗:', error);
+      logger.error('Get生物識別註冊狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取安全信息
+   * Get安全Information
    */
   async getSecurityInfo(): Promise<BiometricSecurityInfo> {
     try {
@@ -460,29 +460,29 @@ export class BiometricAuthService {
         attestationSupported: Platform.OS === 'android',
       };
 
-      logger.info('生物識別安全信息獲取成功:', { securityInfo });
+      logger.info('生物識別安全信息GetSuccess:', { securityInfo });
       return securityInfo;
     } catch (error) {
-      logger.error('獲取生物識別安全信息失敗:', error);
+      logger.error('Get生物識別安全信息Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 檢查生物識別是否可用
+   * Check生物識別YesNo可用
    */
   async isBiometricAvailable(): Promise<boolean> {
     try {
       const _capabilities = await this.detectBiometricCapabilities();
       return capabilities.some(cap => cap.isAvailable && cap.isEnrolled);
     } catch (error) {
-      logger.error('檢查生物識別可用性失敗:', error);
+      logger.error('Check生物識別可用性Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取安全級別
+   * Get安全級別
    */
   private getSecurityLevel(
     biometricType: BiometricType
@@ -503,7 +503,7 @@ export class BiometricAuthService {
   }
 
   /**
-   * 檢查類型是否支持
+   * CheckClass型YesNoSupport
    */
   private isTypeSupported(biometricType: BiometricType): boolean {
     switch (Platform.OS) {
@@ -517,7 +517,7 @@ export class BiometricAuthService {
   }
 
   /**
-   * 映射錯誤到錯誤代碼
+   * MapError到Error代碼
    */
   private mapErrorToCode(error: unknown): BiometricErrorCode {
     const _message = error.message?.toLowerCase() || '';
@@ -545,5 +545,5 @@ export class BiometricAuthService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _biometricAuthService = BiometricAuthService.getInstance();

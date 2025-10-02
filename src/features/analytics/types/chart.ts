@@ -1,6 +1,6 @@
-// 圖表系統類型定義
+// GraphTable系統Class型定義
 
-// 圖表類型枚舉
+// GraphTableClass型枚舉
 export enum ChartType {
   LINE = 'line',
   BAR = 'bar',
@@ -23,7 +23,7 @@ export enum ChartType {
   POLAR_AREA = 'polar_area',
 }
 
-// 圖表數據點
+// GraphTableData點
 export interface ChartDataPoint {
   label: string;
   value: number;
@@ -31,7 +31,7 @@ export interface ChartDataPoint {
   metadata?: Record<string, any>;
 }
 
-// 圖表數據集
+// GraphTableData集
 export interface ChartDataset {
   label: string;
   data: ChartDataPoint[];
@@ -45,7 +45,7 @@ export interface ChartDataset {
   metadata?: Record<string, any>;
 }
 
-// 圖表配置
+// GraphTableConfigure
 export interface ChartConfig {
   type: ChartType;
   title?: string;
@@ -67,7 +67,7 @@ export interface ChartConfig {
   accessibility?: AccessibilityConfig;
 }
 
-// 圖表主題
+// GraphTableTheme
 export interface ChartTheme {
   name: string;
   colors: string[];
@@ -82,7 +82,7 @@ export interface ChartTheme {
   gradient: boolean;
 }
 
-// 圖例配置
+// Graph例Configure
 export interface LegendConfig {
   display: boolean;
   position: 'top' | 'bottom' | 'left' | 'right';
@@ -97,14 +97,14 @@ export interface LegendConfig {
   onClick?: (event: unknown, legendItem: unknown) => void;
 }
 
-// 軸配置
+// 軸Configure
 export interface AxesConfig {
   x?: AxisConfig;
   y?: AxisConfig;
-  r?: AxisConfig; // 用於雷達圖
+  r?: AxisConfig; // 用於雷達Graph
 }
 
-// 單軸配置
+// 單軸Configure
 export interface AxisConfig {
   display: boolean;
   type: 'linear' | 'logarithmic' | 'time' | 'category';
@@ -138,7 +138,7 @@ export interface AxisConfig {
   };
 }
 
-// 網格配置
+// 網格Configure
 export interface GridConfig {
   display: boolean;
   color: string;
@@ -150,7 +150,7 @@ export interface GridConfig {
   zeroLineWidth: number;
 }
 
-// 工具提示配置
+// Tool提示Configure
 export interface TooltipConfig {
   enabled: boolean;
   mode: 'index' | 'dataset' | 'point' | 'nearest' | 'x' | 'y';
@@ -175,7 +175,7 @@ export interface TooltipConfig {
   };
 }
 
-// 交互配置
+// 交互Configure
 export interface InteractionConfig {
   mode: 'index' | 'dataset' | 'point' | 'nearest' | 'x' | 'y';
   intersect: boolean;
@@ -185,7 +185,7 @@ export interface InteractionConfig {
   onClick?: (event: unknown, activeElements: unknown[]) => void;
 }
 
-// 導出配置
+// ExportConfigure
 export interface ExportConfig {
   enabled: boolean;
   formats: ('png' | 'jpg' | 'svg' | 'pdf')[];
@@ -196,7 +196,7 @@ export interface ExportConfig {
   filename?: string;
 }
 
-// 無障礙配置
+// 無障礙Configure
 export interface AccessibilityConfig {
   enabled: boolean;
   description?: string;
@@ -206,20 +206,20 @@ export interface AccessibilityConfig {
   keyboardNavigation: boolean;
 }
 
-// 圖表數據
+// GraphTableData
 export interface ChartData {
   labels: string[];
   datasets: ChartDataset[];
   metadata?: Record<string, any>;
 }
 
-// 圖表實例
+// GraphTableInstance
 export interface ChartInstance {
   id: string;
   config: ChartConfig;
   data: ChartData;
   element?: HTMLElement;
-  instance?: unknown; // 實際的圖表庫實例
+  instance?: unknown; // 實際的GraphTableLibraryInstance
   status: 'idle' | 'loading' | 'rendered' | 'error';
   error?: string;
   lastUpdate: Date;
@@ -235,7 +235,7 @@ export interface PerformanceMetrics {
   lastMeasured: Date;
 }
 
-// 圖表模板
+// GraphTable模板
 export interface ChartTemplate {
   id: string;
   name: string;
@@ -253,7 +253,7 @@ export interface ChartTemplate {
   isOfficial: boolean;
 }
 
-// 圖表響應
+// GraphTableResponse
 export interface ChartResponse {
   success: boolean;
   chart?: ChartInstance;
@@ -262,7 +262,7 @@ export interface ChartResponse {
   timestamp: Date;
 }
 
-// 圖表列表響應
+// GraphTableListResponse
 export interface ChartListResponse {
   success: boolean;
   charts: ChartInstance[];
@@ -274,7 +274,7 @@ export interface ChartListResponse {
   timestamp: Date;
 }
 
-// 圖表創建請求
+// GraphTableCreateRequest
 export interface ChartCreateRequest {
   config: ChartConfig;
   data: ChartData;
@@ -282,14 +282,14 @@ export interface ChartCreateRequest {
   metadata?: Record<string, any>;
 }
 
-// 圖表更新請求
+// GraphTableUpdateRequest
 export interface ChartUpdateRequest {
   config?: Partial<ChartConfig>;
   data?: ChartData;
   metadata?: Record<string, any>;
 }
 
-// 圖表過濾選項
+// GraphTableFilterOptions
 export interface ChartFilterOptions {
   type?: ChartType;
   category?: string;
@@ -306,7 +306,7 @@ export interface ChartFilterOptions {
   isOfficial?: boolean;
 }
 
-// 圖表分析
+// GraphTableAnalysis
 export interface ChartAnalytics {
   id: string;
   chartId: string;
@@ -321,7 +321,7 @@ export interface ChartAnalytics {
   createdAt: Date;
 }
 
-// 圖表事件
+// GraphTableEvent
 export interface ChartEvent {
   type:
     | 'created'
@@ -337,7 +337,7 @@ export interface ChartEvent {
   metadata?: Record<string, any>;
 }
 
-// 圖表插件
+// GraphTablePlugin
 export interface ChartPlugin {
   id: string;
   name: string;
@@ -351,7 +351,7 @@ export interface ChartPlugin {
   installDate: Date;
 }
 
-// 圖表緩存
+// GraphTableCache
 export interface ChartCache {
   key: string;
   data: ChartData;
@@ -361,7 +361,7 @@ export interface ChartCache {
   size: number;
 }
 
-// 圖表統計
+// GraphTableStatistics
 export interface ChartStatistics {
   totalCharts: number;
   chartsByType: Record<ChartType, number>;

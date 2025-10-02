@@ -17,33 +17,33 @@ import type {
   WarningType,
 } from '../../features/counterfeit/types/reporting';
 
-// 初始狀態
+// 初始Status
 interface FakeCardReportingState {
-  // 服務狀態
+  // ServiceStatus
   isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
 
-  // 舉報數據
+  // 舉報Data
   reports: ReportRecord[];
   currentReport: ReportRecord | null;
   reportStats: ReportStats | null;
 
-  // 警告數據
+  // WarningData
   warnings: Warning[];
   userWarnings: Warning[];
 
-  // 黑名單數據
+  // 黑名單Data
   blacklist: BlacklistEntry[];
   isUserBlacklisted: boolean;
 
-  // 社區警告
+  // 社DistrictWarning
   communityWarnings: CommunityWarning[];
 
-  // 查詢參數
+  // QueryParameter
   queryParams: ReportQueryParams;
 
-  // 分頁信息
+  // PaginateInformation
   pagination: {
     currentPage: number;
     totalPages: number;
@@ -78,10 +78,10 @@ const initialState: FakeCardReportingState = {
   },
 };
 
-// 異步 Action Creators
+// Async Action Creators
 
 /**
- * 初始化假卡回報服務
+ * InitializeFalse卡回報Service
  */
 export const _initializeReportingService = createAsyncThunk(
   'fakeCardReporting/initialize',
@@ -93,7 +93,7 @@ export const _initializeReportingService = createAsyncThunk(
 );
 
 /**
- * 創建假卡舉報
+ * CreateFalse卡舉報
  */
 export const _createReport = createAsyncThunk(
   'fakeCardReporting/createReport',
@@ -114,21 +114,21 @@ export const _createReport = createAsyncThunk(
     const _result = await service.createReport(reportData);
 
     if (!result.success) {
-      throw new Error(result.error || '創建舉報失敗');
+      throw new Error(result.error || 'Create舉報Failed');
     }
 
-    // 如果成功，獲取完整的舉報記錄
+    // 如果Success，Get完整的舉報Record
     if (result.reportId) {
       const _report = await service.getReport(result.reportId);
       return report;
     }
 
-    throw new Error('創建舉報成功但無法獲取記錄');
+    throw new Error('Create舉報Success但無法Get記錄');
   }
 );
 
 /**
- * 獲取舉報記錄
+ * Get舉報Record
  */
 export const _getReport = createAsyncThunk<ReportRecord, string>(
   'fakeCardReporting/getReport',
@@ -143,7 +143,7 @@ export const _getReport = createAsyncThunk<ReportRecord, string>(
 );
 
 /**
- * 更新舉報狀態
+ * Update舉報Status
  */
 export const _updateReportStatus = createAsyncThunk(
   'fakeCardReporting/updateReportStatus',
@@ -164,10 +164,10 @@ export const _updateReportStatus = createAsyncThunk(
     );
 
     if (!result.success) {
-      throw new Error(result.error || '更新舉報狀態失敗');
+      throw new Error(result.error || 'Update舉報狀態Failed');
     }
 
-    // 如果成功，獲取更新後的舉報記錄
+    // 如果Success，GetUpdate後的舉報Record
     const _report = await service.getReport(params.reportId);
     if (!report) {
       throw new Error('無法獲取更新後的舉報記錄');
@@ -177,7 +177,7 @@ export const _updateReportStatus = createAsyncThunk(
 );
 
 /**
- * 創建警告
+ * CreateWarning
  */
 export const _createWarning = createAsyncThunk(
   'fakeCardReporting/createWarning',
@@ -196,10 +196,10 @@ export const _createWarning = createAsyncThunk(
     const _result = await service.createWarning(warningData);
 
     if (!result.success) {
-      throw new Error(result.error || '創建警告失敗');
+      throw new Error(result.error || 'Create警告Failed');
     }
 
-    // 如果成功，創建一個警告對象返回
+    // 如果Success，Create一個WarningObjectReturn
     if (result.warningId) {
       const warning: Warning = {
         id: result.warningId,
@@ -217,12 +217,12 @@ export const _createWarning = createAsyncThunk(
       return warning;
     }
 
-    throw new Error('創建警告成功但無法獲取警告ID');
+    throw new Error('Create警告Success但無法Get警告ID');
   }
 );
 
 /**
- * 添加到黑名單
+ * Add到黑名單
  */
 export const _addToBlacklist = createAsyncThunk(
   'fakeCardReporting/addToBlacklist',
@@ -240,10 +240,10 @@ export const _addToBlacklist = createAsyncThunk(
     const _result = await service.addToBlacklist(blacklistData);
 
     if (!result.success) {
-      throw new Error(result.error || '添加到黑名單失敗');
+      throw new Error(result.error || '添加到黑名單Failed');
     }
 
-    // 如果成功，創建一個黑名單條目對象返回
+    // 如果Success，Create一個黑名單條目ObjectReturn
     if (result.blacklistId) {
       const blacklistEntry: BlacklistEntry = {
         id: result.blacklistId,
@@ -260,12 +260,12 @@ export const _addToBlacklist = createAsyncThunk(
       return blacklistEntry;
     }
 
-    throw new Error('添加到黑名單成功但無法獲取黑名單ID');
+    throw new Error('添加到黑名單Success但無法Get黑名單ID');
   }
 );
 
 /**
- * 創建社區警告
+ * Create社DistrictWarning
  */
 export const _createCommunityWarning = createAsyncThunk(
   'fakeCardReporting/createCommunityWarning',
@@ -284,10 +284,10 @@ export const _createCommunityWarning = createAsyncThunk(
     const _result = await service.createCommunityWarning(warningData);
 
     if (!result.success) {
-      throw new Error(result.error || '創建社區警告失敗');
+      throw new Error(result.error || 'Create社區警告Failed');
     }
 
-    // 如果成功，創建一個社區警告對象返回
+    // 如果Success，Create一個社DistrictWarningObjectReturn
     if (result.warningId) {
       const communityWarning: CommunityWarning = {
         id: result.warningId,
@@ -307,12 +307,12 @@ export const _createCommunityWarning = createAsyncThunk(
       return communityWarning;
     }
 
-    throw new Error('創建社區警告成功但無法獲取警告ID');
+    throw new Error('Create社區警告Success但無法Get警告ID');
   }
 );
 
 /**
- * 獲取舉報統計
+ * Get舉報Statistics
  */
 export const _getReportStats = createAsyncThunk(
   'fakeCardReporting/getReportStats',
@@ -324,7 +324,7 @@ export const _getReportStats = createAsyncThunk(
 );
 
 /**
- * 查詢舉報記錄
+ * Query舉報Record
  */
 export const _queryReports = createAsyncThunk(
   'fakeCardReporting/queryReports',
@@ -333,7 +333,7 @@ export const _queryReports = createAsyncThunk(
     const _result = await service.queryReports(params);
 
     if (!result.success) {
-      throw new Error(result.error || '查詢舉報失敗');
+      throw new Error(result.error || '查詢舉報Failed');
     }
 
     return result.reports || [];
@@ -341,7 +341,7 @@ export const _queryReports = createAsyncThunk(
 );
 
 /**
- * 獲取用戶警告
+ * GetUserWarning
  */
 export const _getUserWarnings = createAsyncThunk(
   'fakeCardReporting/getUserWarnings',
@@ -353,7 +353,7 @@ export const _getUserWarnings = createAsyncThunk(
 );
 
 /**
- * 檢查用戶黑名單狀態
+ * CheckUser黑名單Status
  */
 export const _checkUserBlacklistStatus = createAsyncThunk(
   'fakeCardReporting/checkUserBlacklistStatus',
@@ -365,7 +365,7 @@ export const _checkUserBlacklistStatus = createAsyncThunk(
 );
 
 /**
- * 獲取活躍社區警告
+ * Get活躍社DistrictWarning
  */
 export const _getActiveCommunityWarnings = createAsyncThunk(
   'fakeCardReporting/getActiveCommunityWarnings',
@@ -377,7 +377,7 @@ export const _getActiveCommunityWarnings = createAsyncThunk(
 );
 
 /**
- * 銷毀服務
+ * 銷毀Service
  */
 export const _destroyReportingService = createAsyncThunk(
   'fakeCardReporting/destroy',
@@ -393,7 +393,7 @@ const _fakeCardReportingSlice = createSlice({
   name: 'fakeCardReporting',
   initialState,
   reducers: {
-    // 重置狀態
+    // ResetStatus
     resetState: state => {
       state.isInitialized = false;
       state.isLoading = false;
@@ -408,12 +408,12 @@ const _fakeCardReportingSlice = createSlice({
       state.communityWarnings = [];
     },
 
-    // 設置當前舉報
+    // Settings當前舉報
     setCurrentReport: (state, action: PayloadAction<ReportRecord | null>) => {
       state.currentReport = action.payload;
     },
 
-    // 更新查詢參數
+    // UpdateQueryParameter
     updateQueryParams: (
       state,
       action: PayloadAction<Partial<ReportQueryParams>>
@@ -421,7 +421,7 @@ const _fakeCardReportingSlice = createSlice({
       state.queryParams = { ...state.queryParams, ...action.payload };
     },
 
-    // 設置分頁信息
+    // SettingsPaginateInformation
     setPagination: (
       state,
       action: PayloadAction<{
@@ -434,17 +434,17 @@ const _fakeCardReportingSlice = createSlice({
       state.pagination = action.payload;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
     },
 
-    // 添加舉報到列表
+    // Add舉報到List
     addReportToList: (state, action: PayloadAction<ReportRecord>) => {
       state.reports.unshift(action.payload);
     },
 
-    // 更新列表中的舉報
+    // UpdateList中的舉報
     updateReportInList: (state, action: PayloadAction<ReportRecord>) => {
       const _index = state.reports.findIndex(r => r.id === action.payload.id);
       if (index !== -1) {
@@ -452,17 +452,17 @@ const _fakeCardReportingSlice = createSlice({
       }
     },
 
-    // 從列表中移除舉報
+    // 從List中Remove舉報
     removeReportFromList: (state, action: PayloadAction<string>) => {
       state.reports = state.reports.filter(r => r.id !== action.payload);
     },
 
-    // 添加警告到列表
+    // AddWarning到List
     addWarningToList: (state, action: PayloadAction<Warning>) => {
       state.warnings.unshift(action.payload);
     },
 
-    // 更新列表中的警告
+    // UpdateList中的Warning
     updateWarningInList: (state, action: PayloadAction<Warning>) => {
       const _index = state.warnings.findIndex(w => w.id === action.payload.id);
       if (index !== -1) {
@@ -470,12 +470,12 @@ const _fakeCardReportingSlice = createSlice({
       }
     },
 
-    // 添加黑名單條目到列表
+    // Add黑名單條目到List
     addBlacklistEntryToList: (state, action: PayloadAction<BlacklistEntry>) => {
       state.blacklist.unshift(action.payload);
     },
 
-    // 更新列表中的黑名單條目
+    // UpdateList中的黑名單條目
     updateBlacklistEntryInList: (
       state,
       action: PayloadAction<BlacklistEntry>
@@ -486,7 +486,7 @@ const _fakeCardReportingSlice = createSlice({
       }
     },
 
-    // 添加社區警告到列表
+    // Add社DistrictWarning到List
     addCommunityWarningToList: (
       state,
       action: PayloadAction<CommunityWarning>
@@ -494,7 +494,7 @@ const _fakeCardReportingSlice = createSlice({
       state.communityWarnings.unshift(action.payload);
     },
 
-    // 更新列表中的社區警告
+    // UpdateList中的社DistrictWarning
     updateCommunityWarningInList: (
       state,
       action: PayloadAction<CommunityWarning>
@@ -509,7 +509,7 @@ const _fakeCardReportingSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      // 初始化服務
+      // InitializeService
       .addCase(initializeReportingService.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -520,10 +520,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(initializeReportingService.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       })
 
-      // 創建舉報
+      // Create舉報
       .addCase(createReport.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -537,10 +537,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(createReport.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '創建舉報失敗';
+        state.error = action.error.message || 'Create舉報Failed';
       })
 
-      // 獲取舉報
+      // Get舉報
       .addCase(getReport.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -553,10 +553,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(getReport.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取舉報失敗';
+        state.error = action.error.message || 'Get舉報Failed';
       })
 
-      // 更新舉報狀態
+      // Update舉報Status
       .addCase(updateReportStatus.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -565,7 +565,7 @@ const _fakeCardReportingSlice = createSlice({
         state.isLoading = false;
         if (action.payload) {
           state.currentReport = action.payload;
-          // 更新列表中的舉報
+          // UpdateList中的舉報
           const _index = state.reports.findIndex(
             r => r.id === action.payload.id
           );
@@ -576,10 +576,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(updateReportStatus.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '更新舉報狀態失敗';
+        state.error = action.error.message || 'Update舉報狀態Failed';
       })
 
-      // 創建警告
+      // CreateWarning
       .addCase(createWarning.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -590,10 +590,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(createWarning.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '創建警告失敗';
+        state.error = action.error.message || 'Create警告Failed';
       })
 
-      // 添加到黑名單
+      // Add到黑名單
       .addCase(addToBlacklist.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -604,10 +604,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(addToBlacklist.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '添加到黑名單失敗';
+        state.error = action.error.message || '添加到黑名單Failed';
       })
 
-      // 創建社區警告
+      // Create社DistrictWarning
       .addCase(createCommunityWarning.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -618,10 +618,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(createCommunityWarning.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '創建社區警告失敗';
+        state.error = action.error.message || 'Create社區警告Failed';
       })
 
-      // 獲取舉報統計
+      // Get舉報Statistics
       .addCase(getReportStats.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -632,10 +632,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(getReportStats.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取統計失敗';
+        state.error = action.error.message || 'Get統計Failed';
       })
 
-      // 查詢舉報記錄
+      // Query舉報Record
       .addCase(queryReports.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -646,10 +646,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(queryReports.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '查詢舉報失敗';
+        state.error = action.error.message || '查詢舉報Failed';
       })
 
-      // 獲取用戶警告
+      // GetUserWarning
       .addCase(getUserWarnings.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -660,10 +660,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(getUserWarnings.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取用戶警告失敗';
+        state.error = action.error.message || 'Get用戶警告Failed';
       })
 
-      // 檢查用戶黑名單狀態
+      // CheckUser黑名單Status
       .addCase(checkUserBlacklistStatus.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -674,10 +674,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(checkUserBlacklistStatus.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '檢查黑名單狀態失敗';
+        state.error = action.error.message || 'Check黑名單狀態Failed';
       })
 
-      // 獲取活躍社區警告
+      // Get活躍社DistrictWarning
       .addCase(getActiveCommunityWarnings.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -688,10 +688,10 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(getActiveCommunityWarnings.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取社區警告失敗';
+        state.error = action.error.message || 'Get社區警告Failed';
       })
 
-      // 銷毀服務
+      // 銷毀Service
       .addCase(destroyReportingService.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -710,12 +710,12 @@ const _fakeCardReportingSlice = createSlice({
       })
       .addCase(destroyReportingService.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '銷毀服務失敗';
+        state.error = action.error.message || '銷毀ServiceFailed';
       });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   resetState,
   setCurrentReport,
@@ -733,7 +733,7 @@ export const {
   updateCommunityWarningInList,
 } = fakeCardReportingSlice.actions;
 
-// 導出 selectors
+// Export selectors
 export const _selectFakeCardReporting = (state: {
   fakeCardReporting: FakeCardReportingState;
 }) => state.fakeCardReporting;
@@ -777,5 +777,5 @@ export const _selectPagination = (state: {
   fakeCardReporting: FakeCardReportingState;
 }) => state.fakeCardReporting.pagination;
 
-// 導出 reducer
+// Export reducer
 export default fakeCardReportingSlice.reducer;

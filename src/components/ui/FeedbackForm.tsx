@@ -1,4 +1,4 @@
-// 反饋表單組件
+// 反饋Table單Component
 import React, { useCallback, useState } from 'react';
 
 import type {
@@ -13,7 +13,7 @@ import {
 } from '../../types/feedback';
 import { useFeedback } from '../providers/FeedbackProvider';
 
-// 反饋表單組件
+// 反饋Table單Component
 export const FeedbackForm: React.FC<FeedbackFormProps> = ({
   config = {},
   onSubmit,
@@ -26,7 +26,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
 }) => {
   const { submitFeedback } = useFeedback();
 
-  // 表單狀態
+  // Table單Status
   const [formData, setFormData] = useState<FeedbackFormData>({
     type: FeedbackType.GENERAL_FEEDBACK,
     category: FeedbackCategory.OTHER,
@@ -42,16 +42,16 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
     ...initialData,
   });
 
-  // 驗證狀態
+  // VerifyStatus
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 處理輸入變化
+  // HandleInput變化
   const _handleInputChange = useCallback(
     (field: keyof FeedbackFormData, value: unknown) => {
       setFormData(prev => ({ ...prev, [field]: value }));
 
-      // 清除對應的錯誤
+      // Clear對應的Error
       if (errors[field]) {
         setErrors(prev => ({ ...prev, [field]: '' }));
       }
@@ -59,7 +59,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
     [errors]
   );
 
-  // 驗證表單
+  // VerifyTable單
   const _validateForm = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -94,7 +94,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
     return Object.keys(newErrors).length === 0;
   }, [formData]);
 
-  // 處理表單提交
+  // HandleTable單Submit
   const _handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
@@ -108,7 +108,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
       try {
         await submitFeedback(formData);
 
-        // 重置表單
+        // ResetTable單
         setFormData({
           type: FeedbackType.GENERAL_FEEDBACK,
           category: FeedbackCategory.OTHER,
@@ -125,13 +125,13 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
 
         setErrors({});
 
-        // 調用外部提交回調
+        // 調用ExternalSubmitCallback
         if (onSubmit) {
           onSubmit(formData);
         }
       } catch (error) {
-        console.error('提交反饋失敗:', error);
-        setErrors({ submit: '提交失敗，請稍後重試' });
+        console.error('提交反饋Failed:', error);
+        setErrors({ submit: '提交Failed，請稍後重試' });
       } finally {
         setIsSubmitting(false);
       }
@@ -139,14 +139,14 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
     [formData, validateForm, submitFeedback, onSubmit]
   );
 
-  // 處理取消
+  // HandleCancel
   const _handleCancel = useCallback(() => {
     if (onCancel) {
       onCancel();
     }
   }, [onCancel]);
 
-  // 處理文件上傳
+  // HandleFileUpload
   const _handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const _files = Array.from(e.target.files || []);
@@ -177,7 +177,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
     [config]
   );
 
-  // 處理標籤輸入
+  // HandleTagInput
   const _handleTagInput = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter' && e.currentTarget.value.trim()) {
@@ -195,7 +195,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
     [formData.tags]
   );
 
-  // 移除標籤
+  // RemoveTag
   const _removeTag = useCallback((tagToRemove: string) => {
     setFormData(prev => ({
       ...prev,
@@ -216,7 +216,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
         </div>
 
         <div className='feedback-form__content'>
-          {/* 反饋類型 */}
+          {/* 反饋Class型 */}
           <div className='feedback-form__field'>
             <label className='feedback-form__label'>
               反饋類型 <span className='feedback-form__required'>*</span>
@@ -241,7 +241,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
             )}
           </div>
 
-          {/* 反饋分類 */}
+          {/* 反饋分Class */}
           <div className='feedback-form__field'>
             <label className='feedback-form__label'>
               反饋分類 <span className='feedback-form__required'>*</span>
@@ -316,7 +316,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
             )}
           </div>
 
-          {/* 描述 */}
+          {/* Description */}
           <div className='feedback-form__field'>
             <label className='feedback-form__label'>
               詳細描述 <span className='feedback-form__required'>*</span>
@@ -338,7 +338,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
             )}
           </div>
 
-          {/* 用戶信息 */}
+          {/* UserInformation */}
           <div className='feedback-form__row'>
             <div className='feedback-form__field feedback-form__field--half'>
               <label className='feedback-form__label'>姓名</label>
@@ -398,7 +398,7 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
             </div>
           </div>
 
-          {/* 標籤 */}
+          {/* Tag */}
           <div className='feedback-form__field'>
             <label className='feedback-form__label'>標籤</label>
             <input
@@ -474,12 +474,12 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
           </div>
         </div>
 
-        {/* 錯誤信息 */}
+        {/* ErrorInformation */}
         {errors.submit && (
           <div className='feedback-form__submit-error'>{errors.submit}</div>
         )}
 
-        {/* 表單操作 */}
+        {/* Table單Operation */}
         <div className='feedback-form__actions'>
           <button
             type='button'
@@ -511,5 +511,5 @@ export const FeedbackForm: React.FC<FeedbackFormProps> = ({
   );
 };
 
-// 導出組件
+// ExportComponent
 export default FeedbackForm;

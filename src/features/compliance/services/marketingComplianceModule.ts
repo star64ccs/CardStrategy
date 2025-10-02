@@ -1,6 +1,6 @@
 /**
  * 營銷合規模組
- * 實現重構計劃任務 1.9: MarketingComplianceModule
+ * 實現重構計劃Task 1.9: MarketingComplianceModule
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -23,7 +23,7 @@ export interface OptOutResult {
   channel: string;
   action: 'opted_out' | 'opted_in' | 'pending' | 'failed';
   effectiveDate: Date;
-  processingTime: number; // 毫秒
+  processingTime: number; // 毫Second
   notes: string;
   timestamp: Date;
 }
@@ -206,10 +206,10 @@ export class MarketingComplianceModule {
       }
 
       this.isInitialized = true;
-      logger.info('營銷合規模組初始化成功');
+      logger.info('營銷合規模組InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('營銷合規模組初始化失敗:', error);
+      logger.error('營銷合規模組InitializeFailed:', error);
       return false;
     }
   }
@@ -241,7 +241,7 @@ export class MarketingComplianceModule {
         timestamp: new Date(),
       };
 
-      // 存儲同意記錄
+      // StorageAgreeRecord
       if (!this.userConsents.has(userId)) {
         this.userConsents.set(userId, new Map());
       }
@@ -256,7 +256,7 @@ export class MarketingComplianceModule {
 
       return validationResult;
     } catch (error) {
-      logger.error('營銷同意驗證失敗:', error);
+      logger.error('營銷同意VerifyFailed:', error);
       throw error;
     }
   }
@@ -277,7 +277,7 @@ export class MarketingComplianceModule {
         timestamp: new Date(),
       };
 
-      // 存儲退出記錄
+      // StorageExitRecord
       if (!this.optOuts.has(userId)) {
         this.optOuts.set(userId, []);
       }
@@ -292,7 +292,7 @@ export class MarketingComplianceModule {
 
       return optOutResult;
     } catch (error) {
-      logger.error('退出管理失敗:', error);
+      logger.error('退出管理Failed:', error);
       throw error;
     }
   }
@@ -325,7 +325,7 @@ export class MarketingComplianceModule {
 
       return validationResult;
     } catch (error) {
-      logger.error('電子郵件營銷驗證失敗:', error);
+      logger.error('電子郵件營銷VerifyFailed:', error);
       throw error;
     }
   }
@@ -356,7 +356,7 @@ export class MarketingComplianceModule {
 
       return complianceResult;
     } catch (error) {
-      logger.error('CAN-SPAM合規檢查失敗:', error);
+      logger.error('CAN-SPAM合規CheckFailed:', error);
       throw error;
     }
   }
@@ -391,7 +391,7 @@ export class MarketingComplianceModule {
 
       return transparencyReport;
     } catch (error) {
-      logger.error('廣告透明度追蹤失敗:', error);
+      logger.error('廣告透明度追蹤Failed:', error);
       throw error;
     }
   }
@@ -422,7 +422,7 @@ export class MarketingComplianceModule {
 
       return validationResult;
     } catch (error) {
-      logger.error('廣告內容驗證失敗:', error);
+      logger.error('廣告內容VerifyFailed:', error);
       throw error;
     }
   }
@@ -436,7 +436,7 @@ export class MarketingComplianceModule {
     logger.info('營銷合規模組已重置');
   }
 
-  // 私有方法
+  // PrivateMethod
   private getDefaultConfig(): MarketingComplianceConfig {
     return {
       enableConsentManagement: true,
@@ -471,7 +471,7 @@ export class MarketingComplianceModule {
     const _random = Math.random();
     if (random > 0.7) {
       const _date = new Date();
-      date.setDate(date.getDate() - Math.floor(Math.random() * 365)); // 隨機過去日期
+      date.setDate(date.getDate() - Math.floor(Math.random() * 365)); // 隨機過去Day
       return date;
     }
     return undefined;
@@ -507,7 +507,7 @@ export class MarketingComplianceModule {
   }
 
   private calculateProcessingTime(): number {
-    return Math.floor(Math.random() * 1000) + 100; // 100-1100毫秒
+    return Math.floor(Math.random() * 1000) + 100; // 100-1100毫Second
   }
 
   private generateOptOutNotes(
@@ -516,13 +516,13 @@ export class MarketingComplianceModule {
   ): string {
     switch (action) {
       case 'opted_out':
-        return `用戶已成功退出${channel}營銷`;
+        return `用戶已Success退出${channel}營銷`;
       case 'opted_in':
         return `用戶已重新同意接收${channel}營銷`;
       case 'pending':
         return `退出請求正在處理中`;
       case 'failed':
-        return `退出請求處理失敗，請重試`;
+        return `退出請求HandleFailed，請重試`;
       default:
         return `未知操作`;
     }
@@ -531,7 +531,7 @@ export class MarketingComplianceModule {
   private performEmailValidation(email: MarketingEmail): EmailViolation[] {
     const violations: EmailViolation[] = [];
 
-    // 檢查退訂鏈接
+    // Check退訂鏈接
     if (this.config.requireUnsubscribeLink && !email.hasUnsubscribeLink) {
       violations.push({
         id: `violation_${Date.now()}_1`,
@@ -543,7 +543,7 @@ export class MarketingComplianceModule {
       });
     }
 
-    // 檢查物理地址
+    // Check物理Address
     if (this.config.requirePhysicalAddress && !email.hasPhysicalAddress) {
       violations.push({
         id: `violation_${Date.now()}_2`,
@@ -555,7 +555,7 @@ export class MarketingComplianceModule {
       });
     }
 
-    // 檢查主題行
+    // CheckThemeRow
     if (!email.hasValidSubject) {
       violations.push({
         id: `violation_${Date.now()}_3`,
@@ -567,7 +567,7 @@ export class MarketingComplianceModule {
       });
     }
 
-    // 檢查垃圾內容
+    // Check垃圾Content
     if (this.containsSpamContent(email.content)) {
       violations.push({
         id: `violation_${Date.now()}_4`,
@@ -685,13 +685,13 @@ export class MarketingComplianceModule {
 
     // 目標受眾透明度
     if (ad.targetAudience.length > 0) score += 25;
-    else score -= 10; // 空目標受眾扣分
+    else score -= 10; // Empty目標受眾扣分
 
     // 預算透明度
     if (ad.budget > 0) score += 25;
     else score -= 15; // 零預算扣分
 
-    // 時間透明度
+    // Time透明度
     if (ad.startDate && ad.endDate) score += 20;
 
     return Math.max(0, Math.min(100, score)); // 確保分數不低於0
@@ -758,7 +758,7 @@ export class MarketingComplianceModule {
   private performContentValidation(ad: Advertisement): ContentViolation[] {
     const violations: ContentViolation[] = [];
 
-    // 檢查虛假聲明
+    // Check虛False聲明
     if (this.containsFalseClaims(ad.content)) {
       violations.push({
         id: `content_violation_${Date.now()}_1`,
@@ -770,7 +770,7 @@ export class MarketingComplianceModule {
       });
     }
 
-    // 檢查不當目標受眾
+    // Check不當目標受眾
     if (this.hasInappropriateTargeting(ad.targetAudience)) {
       violations.push({
         id: `content_violation_${Date.now()}_2`,
@@ -782,7 +782,7 @@ export class MarketingComplianceModule {
       });
     }
 
-    // 檢查缺少披露
+    // Check缺少披露
     if (ad.isSponsored && !ad.hasDisclosure) {
       violations.push({
         id: `content_violation_${Date.now()}_3`,

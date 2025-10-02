@@ -116,7 +116,7 @@ export class SecurityWorker {
   }
 
   /**
-   * 威脅檢測和分析
+   * 威脅檢測和Analysis
    */
   async detectThreats(targetId: string): Promise<SecurityAnalysis> {
     try {
@@ -151,13 +151,13 @@ export class SecurityWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('威脅檢測失敗:', error);
-      throw new Error(`威脅檢測失敗: ${error}`);
+      console.error('威脅檢測Failed:', error);
+      throw new Error(`威脅檢測Failed: ${error}`);
     }
   }
 
   /**
-   * 漏洞掃描和分析
+   * 漏洞掃描和Analysis
    */
   async scanVulnerabilities(targetId: string): Promise<SecurityAnalysis> {
     try {
@@ -194,13 +194,13 @@ export class SecurityWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('漏洞掃描失敗:', error);
-      throw new Error(`漏洞掃描失敗: ${error}`);
+      console.error('漏洞掃描Failed:', error);
+      throw new Error(`漏洞掃描Failed: ${error}`);
     }
   }
 
   /**
-   * 安全合規性檢查
+   * 安全合規性Check
    */
   async checkCompliance(targetId: string): Promise<SecurityAnalysis> {
     try {
@@ -237,13 +237,13 @@ export class SecurityWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('合規性檢查失敗:', error);
-      throw new Error(`合規性檢查失敗: ${error}`);
+      console.error('合規性CheckFailed:', error);
+      throw new Error(`合規性CheckFailed: ${error}`);
     }
   }
 
   /**
-   * 安全事件響應
+   * 安全EventResponse
    */
   async respondToIncident(
     incident: SecurityIncident
@@ -280,8 +280,8 @@ export class SecurityWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('事件響應失敗:', error);
-      throw new Error(`事件響應失敗: ${error}`);
+      console.error('事件響應Failed:', error);
+      throw new Error(`事件響應Failed: ${error}`);
     }
   }
 
@@ -321,8 +321,8 @@ export class SecurityWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('風險評估失敗:', error);
-      throw new Error(`風險評估失敗: ${error}`);
+      console.error('風險評估Failed:', error);
+      throw new Error(`風險評估Failed: ${error}`);
     }
   }
 
@@ -349,13 +349,13 @@ export class SecurityWorker {
 
       return this.extractSecurityRecommendations(response.content);
     } catch (error) {
-      console.error('安全建議生成失敗:', error);
-      throw new Error(`安全建議生成失敗: ${error}`);
+      console.error('安全建議生成Failed:', error);
+      throw new Error(`安全建議生成Failed: ${error}`);
     }
   }
 
   /**
-   * 監控安全狀態
+   * Monitor安全Status
    */
   async monitorSecurityStatus(targetId: string): Promise<{
     overallSecurity: number;
@@ -394,20 +394,20 @@ export class SecurityWorker {
         recommendations,
       };
     } catch (error) {
-      console.error('安全狀態監控失敗:', error);
-      throw new Error(`安全狀態監控失敗: ${error}`);
+      console.error('安全狀態監控Failed:', error);
+      throw new Error(`安全狀態監控Failed: ${error}`);
     }
   }
 
   /**
-   * 記錄安全事件
+   * Record安全Event
    */
   recordSecurityIncident(incident: SecurityIncident): void {
     this.securityIncidents.push(incident);
   }
 
   /**
-   * 獲取安全事件歷史
+   * Get安全Event歷史
    */
   getSecurityIncidents(
     targetId?: string,
@@ -431,7 +431,7 @@ export class SecurityWorker {
   }
 
   /**
-   * 獲取分析歷史
+   * GetAnalysis歷史
    */
   getAnalysisHistory(
     targetId?: string,
@@ -455,25 +455,25 @@ export class SecurityWorker {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   updateConfig(newConfig: Partial<SecurityWorkerConfig>): void {
     this.config = { ...this.config, ...newConfig };
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   getConfig(): SecurityWorkerConfig {
     return { ...this.config };
   }
 
-  // 私有輔助方法
+  // Private輔助Method
   private generateId(): string {
     return `security_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // 威脅相關方法
+  // 威脅相OffMethod
   private calculateThreatScore(content: string): number {
     const _positiveIndicators = ['安全', '無威脅', '正常', '良好'];
     const _negativeIndicators = ['威脅', '攻擊', '惡意', '異常'];
@@ -561,7 +561,7 @@ export class SecurityWorker {
     return Math.ceil(wordCount / 80);
   }
 
-  // 漏洞相關方法
+  // 漏洞相OffMethod
   private calculateVulnerabilityScore(content: string): number {
     const _positiveIndicators = ['無漏洞', '安全', '已修復', '良好'];
     const _negativeIndicators = ['漏洞', '弱點', '風險', '問題'];
@@ -649,7 +649,7 @@ export class SecurityWorker {
     return Math.ceil(wordCount / 85);
   }
 
-  // 合規性相關方法
+  // 合規性相OffMethod
   private calculateComplianceScore(content: string): number {
     const _positiveIndicators = ['合規', '符合', '滿足', '達標'];
     const _negativeIndicators = ['不合規', '違規', '不符合', '未達標'];
@@ -737,7 +737,7 @@ export class SecurityWorker {
     return Math.ceil(wordCount / 70);
   }
 
-  // 事件相關方法
+  // Event相OffMethod
   private calculateIncidentScore(content: string): number {
     const _positiveIndicators = ['已解決', '已修復', '已處理', '正常'];
     const _negativeIndicators = ['未解決', '未修復', '未處理', '問題'];
@@ -825,7 +825,7 @@ export class SecurityWorker {
     return Math.ceil(wordCount / 75);
   }
 
-  // 風險相關方法
+  // 風險相OffMethod
   private calculateRiskScore(content: string): number {
     const _positiveIndicators = ['低風險', '可控', '安全', '良好'];
     const _negativeIndicators = ['高風險', '不可控', '危險', '問題'];

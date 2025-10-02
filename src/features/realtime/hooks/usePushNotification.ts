@@ -1,6 +1,6 @@
 /**
- * 推送通知 Hook
- * 提供推送通知功能的 React Hook
+ * PushNotification Hook
+ * 提供PushNotification功能的 React Hook
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -21,13 +21,13 @@ export interface UsePushNotificationOptions {
 }
 
 export interface UsePushNotificationReturn {
-  // 狀態
+  // Status
   isInitialized: boolean;
   permission: NotificationPermission | null;
   expoPushToken: string | null;
   stats: NotificationStats;
 
-  // 方法
+  // Method
   initialize: () => Promise<void>;
   requestPermissions: () => Promise<NotificationPermission>;
   getPermissionStatus: () => Promise<NotificationPermission>;
@@ -51,7 +51,7 @@ export interface UsePushNotificationReturn {
 }
 
 /**
- * 推送通知 Hook
+ * PushNotification Hook
  */
 export const _usePushNotification = (
   options: UsePushNotificationOptions = {}
@@ -74,23 +74,23 @@ export const _usePushNotification = (
 
   const _listenerKeys = useRef<string[]>([]);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (options.autoInitialize !== false) {
       initialize();
     }
   }, [options.autoInitialize]);
 
-  // 更新統計數據
+  // Update統Count據
   useEffect(() => {
     const _updateStats = () => {
       const _currentStats = pushNotificationService.getStats();
       setStats(currentStats);
     };
 
-    // 定期更新統計數據
+    // 定期Update統Count據
     const _interval = setInterval(updateStats, 5000);
-    updateStats(); // 立即更新一次
+    updateStats(); // 立即Update一次
 
     return () => clearInterval(interval);
   }, []);
@@ -105,23 +105,23 @@ export const _usePushNotification = (
   }, []);
 
   /**
-   * 初始化推送通知服務
+   * InitializePushNotificationService
    */
   const _initialize = useCallback(async (): Promise<void> => {
     try {
       await pushNotificationService.initialize();
       setIsInitialized(true);
 
-      // 獲取權限狀態
+      // Get權限Status
       const _permissionStatus =
         await pushNotificationService.getPermissionStatus();
       setPermission(permissionStatus);
 
-      // 獲取推送令牌
+      // GetPush令牌
       const _token = await pushNotificationService.getExpoPushToken();
       setExpoPushToken(token);
 
-      // 設置通知監聽器
+      // SettingsNotification監聽器
       if (options.onNotificationReceived) {
         const _key = `received-${Date.now()}`;
         pushNotificationService.addNotificationListener(
@@ -140,12 +140,12 @@ export const _usePushNotification = (
         listenerKeys.current.push(key);
       }
     } catch (error) {
-      console.error('初始化推送通知服務失敗:', error);
+      console.error('Initialize推送通知ServiceFailed:', error);
     }
   }, [options.onNotificationReceived, options.onNotificationResponse]);
 
   /**
-   * 請求通知權限
+   * RequestNotification權限
    */
   const _requestPermissions =
     useCallback(async (): Promise<NotificationPermission> => {
@@ -156,13 +156,13 @@ export const _usePushNotification = (
         options.onPermissionChange?.(permissionStatus);
         return permissionStatus;
       } catch (error) {
-        console.error('請求通知權限失敗:', error);
+        console.error('請求通知權限Failed:', error);
         throw error;
       }
     }, [options.onPermissionChange]);
 
   /**
-   * 獲取通知權限狀態
+   * GetNotification權限Status
    */
   const _getPermissionStatus =
     useCallback(async (): Promise<NotificationPermission> => {
@@ -172,13 +172,13 @@ export const _usePushNotification = (
         setPermission(permissionStatus);
         return permissionStatus;
       } catch (error) {
-        console.error('獲取通知權限狀態失敗:', error);
+        console.error('Get通知權限狀態Failed:', error);
         throw error;
       }
     }, []);
 
   /**
-   * 獲取 Expo 推送令牌
+   * Get Expo Push令牌
    */
   const _getExpoPushToken = useCallback(async (): Promise<string | null> => {
     try {
@@ -186,20 +186,20 @@ export const _usePushNotification = (
       setExpoPushToken(token);
       return token;
     } catch (error) {
-      console.error('獲取 Expo 推送令牌失敗:', error);
+      console.error('Get Expo 推送令牌Failed:', error);
       throw error;
     }
   }, []);
 
   /**
-   * 創建通知頻道
+   * CreateNotification頻道
    */
   const _createNotificationChannel = useCallback(
     async (channel: NotificationChannel): Promise<void> => {
       try {
         await pushNotificationService.createNotificationChannel(channel);
       } catch (error) {
-        console.error('創建通知頻道失敗:', error);
+        console.error('Create通知頻道Failed:', error);
         throw error;
       }
     },
@@ -207,7 +207,7 @@ export const _usePushNotification = (
   );
 
   /**
-   * 發送本地通知
+   * SendLocalNotification
    */
   const _sendLocalNotification = useCallback(
     async (config: NotificationConfig): Promise<string> => {
@@ -216,7 +216,7 @@ export const _usePushNotification = (
           await pushNotificationService.sendLocalNotification(config);
         return notificationId;
       } catch (error) {
-        console.error('發送本地通知失敗:', error);
+        console.error('發送本地通知Failed:', error);
         throw error;
       }
     },
@@ -224,7 +224,7 @@ export const _usePushNotification = (
   );
 
   /**
-   * 安排延遲通知
+   * 安排延遲Notification
    */
   const _scheduleNotification = useCallback(
     async (config: NotificationConfig, trigger: unknown): Promise<string> => {
@@ -233,7 +233,7 @@ export const _usePushNotification = (
           await pushNotificationService.scheduleNotification(config, trigger);
         return notificationId;
       } catch (error) {
-        console.error('安排延遲通知失敗:', error);
+        console.error('安排延遲通知Failed:', error);
         throw error;
       }
     },
@@ -241,14 +241,14 @@ export const _usePushNotification = (
   );
 
   /**
-   * 取消通知
+   * CancelNotification
    */
   const _cancelNotification = useCallback(
     async (notificationId: string): Promise<void> => {
       try {
         await pushNotificationService.cancelNotification(notificationId);
       } catch (error) {
-        console.error('取消通知失敗:', error);
+        console.error('取消通知Failed:', error);
         throw error;
       }
     },
@@ -256,45 +256,45 @@ export const _usePushNotification = (
   );
 
   /**
-   * 取消所有通知
+   * Cancel所有Notification
    */
   const _cancelAllNotifications = useCallback(async (): Promise<void> => {
     try {
       await pushNotificationService.cancelAllNotifications();
     } catch (error) {
-      console.error('取消所有通知失敗:', error);
+      console.error('取消所有通知Failed:', error);
       throw error;
     }
   }, []);
 
   /**
-   * 設置通知徽章數量
+   * SettingsNotification徽章數量
    */
   const _setBadgeCount = useCallback(async (count: number): Promise<void> => {
     try {
       await pushNotificationService.setBadgeCount(count);
     } catch (error) {
-      console.error('設置通知徽章數量失敗:', error);
+      console.error('Settings通知徽章數量Failed:', error);
       throw error;
     }
   }, []);
 
   /**
-   * 獲取通知統計
+   * GetNotificationStatistics
    */
   const _getStats = useCallback((): NotificationStats => {
     return pushNotificationService.getStats();
   }, []);
 
   /**
-   * 清除通知統計
+   * ClearNotificationStatistics
    */
   const _clearStats = useCallback((): void => {
     pushNotificationService.clearStats();
   }, []);
 
   /**
-   * 添加通知監聽器
+   * AddNotification監聽器
    */
   const _addNotificationListener = useCallback(
     (
@@ -310,7 +310,7 @@ export const _usePushNotification = (
   );
 
   /**
-   * 移除通知監聽器
+   * RemoveNotification監聽器
    */
   const _removeNotificationListener = useCallback((key: string): void => {
     pushNotificationService.removeNotificationListener(key);
@@ -318,13 +318,13 @@ export const _usePushNotification = (
   }, []);
 
   return {
-    // 狀態
+    // Status
     isInitialized,
     permission,
     expoPushToken,
     stats,
 
-    // 方法
+    // Method
     initialize,
     requestPermissions,
     getPermissionStatus,
@@ -343,7 +343,7 @@ export const _usePushNotification = (
 };
 
 /**
- * 簡化的推送通知 Hook
+ * 簡化的PushNotification Hook
  */
 export const _useSimplePushNotification = (
   onNotificationReceived?: (notification: unknown) => void
@@ -355,7 +355,7 @@ export const _useSimplePushNotification = (
 };
 
 /**
- * 卡片通知 Hook
+ * 卡片Notification Hook
  */
 export const _useCardNotification = () => {
   const _notification = usePushNotification({
@@ -422,7 +422,7 @@ export const _useCardNotification = () => {
 };
 
 /**
- * 系統通知 Hook
+ * 系統Notification Hook
  */
 export const _useSystemNotification = () => {
   const _notification = usePushNotification({

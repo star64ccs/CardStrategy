@@ -4,8 +4,8 @@ import type { KeyframeProps } from '../../types/animation';
 import { useAnimation } from '../providers/AnimationProvider';
 
 /**
- * 關鍵幀動畫組件
- * 提供基於關鍵幀的複雜動畫效果
+ * OffKey幀動畫Component
+ * 提供基於OffKey幀的複雜動畫效果
  */
 export const Keyframe: React.FC<KeyframeProps> = ({
   keyframes,
@@ -40,7 +40,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
   // 計算動畫總時長
   const _totalDuration = endTime || keyframes.config.duration || 1000;
 
-  // 創建動畫配置
+  // Create動畫Configure
   const _createAnimationConfig = useCallback(() => {
     const _config = {
       ...keyframes.config,
@@ -66,11 +66,11 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     useTransform3d,
   ]);
 
-  // 生成關鍵幀
+  // 生成OffKey幀
   const _generateKeyframes = useCallback(() => {
     const frames: Keyframe[] = [];
 
-    // 按偏移量排序關鍵幀
+    // 按Offset量SortOffKey幀
     const _sortedKeyframes = [...keyframes.keyframes].sort(
       (a, b) => a.offset - b.offset
     );
@@ -81,7 +81,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
         properties: { ...keyframe.properties } as any,
       };
 
-      // 添加緩動函數
+      // Add緩動Function
       if (keyframe.easing) {
         frame.easing = keyframe.easing as any;
       }
@@ -89,7 +89,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
       frames.push(frame);
     });
 
-    // 如果沒有關鍵幀，提供默認的
+    // 如果沒有OffKey幀，提供Default的
     if (frames.length === 0) {
       frames.push(
         {
@@ -106,7 +106,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     return frames;
   }, [keyframes.keyframes]);
 
-  // 生成動畫選項
+  // 生成動畫Options
   const _generateAnimationOptions = useCallback(() => {
     const _config = createAnimationConfig();
 
@@ -128,11 +128,11 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     const _frames = generateKeyframes();
     const _options = generateAnimationOptions();
 
-    // 創建動畫
+    // Create動畫
     const _animation = element.animate(frames, options as any);
     animationRef.current = animation;
 
-    // 設置性能優化
+    // Settings性能優化
     if (optimizeForPerformance) {
       element.style.willChange = 'transform, opacity';
       if (useTransform3d) {
@@ -143,13 +143,13 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     setIsPlaying(true);
     setIsPaused(false);
 
-    // 設置事件監聽
+    // SettingsEvent監聽
     animation.onfinish = () => {
       setIsPlaying(false);
       setProgress(1);
       setCurrentTime(totalDuration);
 
-      // 調用 onEnd 回調
+      // 調用 onEnd Callback
       onEnd?.({
         type: 'end',
         timestamp: Date.now(),
@@ -162,7 +162,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
       setIsPlaying(false);
       setIsPaused(false);
 
-      // 調用 onEnd 回調
+      // 調用 onEnd Callback
       onEnd?.({
         type: 'cancel',
         timestamp: Date.now(),
@@ -171,7 +171,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
       });
     };
 
-    // 調用 onStart 回調
+    // 調用 onStart Callback
     onStart?.({
       type: 'start',
       timestamp: Date.now(),
@@ -179,7 +179,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
       target: element,
     });
 
-    // 監控動畫進度
+    // Monitor動畫進度
     const _updateProgress = () => {
       if (animation && !animation.finished) {
         const _currentTime = animation.currentTime || 0;
@@ -205,13 +205,13 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     createAnimationConfig,
   ]);
 
-  // 暫停動畫
+  // Pause動畫
   const _pause = useCallback(() => {
     if (animationRef.current && isPlaying) {
       animationRef.current.pause();
       setIsPaused(true);
 
-      // 調用 onPause 回調
+      // 調用 onPause Callback
       onPause?.({
         type: 'pause',
         timestamp: Date.now(),
@@ -221,13 +221,13 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     }
   }, [isPlaying, onPause, createAnimationConfig]);
 
-  // 恢復動畫
+  // Restore動畫
   const _resume = useCallback(() => {
     if (animationRef.current && isPaused) {
       animationRef.current.play();
       setIsPaused(false);
 
-      // 調用 onResume 回調
+      // 調用 onResume Callback
       onResume?.({
         type: 'resume',
         timestamp: Date.now(),
@@ -237,7 +237,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     }
   }, [isPaused, onResume, createAnimationConfig]);
 
-  // 停止動畫
+  // Stop動畫
   const _stop = useCallback(() => {
     if (animationRef.current) {
       animationRef.current.cancel();
@@ -260,7 +260,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     }
   }, [optimizeForPerformance]);
 
-  // 設置進度
+  // Settings進度
   const _setProgressValue = useCallback(
     (newProgress: number) => {
       if (animationRef.current) {
@@ -275,14 +275,14 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     [totalDuration]
   );
 
-  // 設置速度
+  // Settings速度
   const _setSpeed = useCallback((speed: number) => {
     if (animationRef.current) {
       animationRef.current.playbackRate = speed;
     }
   }, []);
 
-  // 自動播放
+  // Auto播放
   useEffect(() => {
     if (autoPlay) {
       play();
@@ -293,14 +293,14 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     };
   }, [autoPlay, play, stop]);
 
-  // 組件卸載時清理
+  // ComponentUninstall時清理
   useEffect(() => {
     return () => {
       stop();
     };
   }, [stop]);
 
-  // 應用自定義屬性
+  // ApplyCustomProperty
   useEffect(() => {
     if (elementRef.current && keyframes.customProperties) {
       Object.entries(keyframes.customProperties).forEach(
@@ -317,7 +317,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
       return {};
     }
 
-    // 找到當前進度對應的關鍵幀
+    // 找到當前進度對應的OffKey幀
     const _sortedKeyframes = [...keyframes.keyframes].sort(
       (a, b) => a.offset - b.offset
     );
@@ -328,7 +328,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
       const _next = sortedKeyframes[i + 1];
 
       if (progress >= current.offset && progress <= next.offset) {
-        // 計算插值
+        // 計算插Value
         const _localProgress =
           (progress - current.offset) / (next.offset - current.offset);
 
@@ -351,7 +351,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
     return currentStyle;
   }, [progress, keyframes.keyframes]);
 
-  // 合併樣式
+  // Merge樣式
   const _mergedStyle = {
     ...style,
     ...getCurrentStyle(),
@@ -371,7 +371,7 @@ export const Keyframe: React.FC<KeyframeProps> = ({
   );
 };
 
-// 預設關鍵幀配置
+// 預設OffKey幀Configure
 export const _defaultKeyframes = {
   bounce: {
     keyframes: [
@@ -467,7 +467,7 @@ export const _defaultKeyframes = {
   },
 };
 
-// 便捷組件
+// 便捷Component
 export const BounceKeyframe: React.FC<
   Omit<KeyframeProps, 'keyframes'>
 > = props => <Keyframe keyframes={defaultKeyframes.bounce} {...props} />;

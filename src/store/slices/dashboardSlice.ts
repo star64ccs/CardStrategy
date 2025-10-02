@@ -20,7 +20,7 @@ import type {
   PerformanceMetrics,
 } from '../../features/analytics/types/dashboard';
 
-// 異步 thunk actions
+// Async thunk actions
 export const _initializeDashboard = createAsyncThunk(
   'dashboard/initialize',
   async () => {
@@ -213,29 +213,29 @@ export const _updateConfig = createAsyncThunk(
   }
 );
 
-// 狀態接口
+// StatusInterface
 interface DashboardState {
-  // 初始化狀態
+  // InitializeStatus
   isInitialized: boolean;
   initializationError: string | null;
 
-  // 儀表板列表
+  // 儀Table板List
   dashboards: DashboardConfig[];
   currentDashboard: DashboardConfig | null;
   dashboardsLoading: boolean;
   dashboardsError: string | null;
 
-  // 儀表板數據
+  // 儀Table板Data
   dashboardData: Map<string, DashboardData[]>;
   dataLoading: boolean;
   dataError: string | null;
 
-  // 導出
+  // Export
   exports: DashboardExport[];
   exportLoading: boolean;
   exportError: string | null;
 
-  // 警報
+  // Alert
   alerts: DashboardAlert[];
   alertsLoading: boolean;
   alertsError: string | null;
@@ -245,7 +245,7 @@ interface DashboardState {
   templatesLoading: boolean;
   templatesError: string | null;
 
-  // 分析
+  // Analysis
   analytics: Map<string, DashboardAnalytics>;
   analyticsLoading: boolean;
   analyticsError: string | null;
@@ -255,19 +255,19 @@ interface DashboardState {
   performanceLoading: boolean;
   performanceError: string | null;
 
-  // 配置
+  // Configure
   config: unknown;
   configLoading: boolean;
   configError: string | null;
 
-  // UI 狀態
+  // UI Status
   selectedWidget: DashboardWidget | null;
   editingLayout: DashboardLayout | null;
   previewMode: boolean;
   fullscreenMode: boolean;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: DashboardState = {
   isInitialized: false,
   initializationError: null,
@@ -302,12 +302,12 @@ const initialState: DashboardState = {
   fullscreenMode: false,
 };
 
-// 創建 slice
+// Create slice
 const _dashboardSlice = createSlice({
   name: 'dashboard',
   initialState,
   reducers: {
-    // 同步 actions
+    // Sync actions
     setCurrentDashboard: (
       state,
       action: PayloadAction<DashboardConfig | null>
@@ -410,7 +410,7 @@ const _dashboardSlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      // 初始化
+      // Initialize
       .addCase(initializeDashboard.pending, state => {
         state.initializationError = null;
       })
@@ -418,10 +418,10 @@ const _dashboardSlice = createSlice({
         state.isInitialized = true;
       })
       .addCase(initializeDashboard.rejected, (state, action) => {
-        state.initializationError = action.error.message || '初始化失敗';
+        state.initializationError = action.error.message || 'InitializeFailed';
       })
 
-      // 獲取儀表板
+      // Get儀Table板
       .addCase(getDashboard.pending, state => {
         state.dashboardsLoading = true;
         state.dashboardsError = null;
@@ -441,10 +441,10 @@ const _dashboardSlice = createSlice({
       })
       .addCase(getDashboard.rejected, (state, action) => {
         state.dashboardsLoading = false;
-        state.dashboardsError = action.error.message || '獲取儀表板失敗';
+        state.dashboardsError = action.error.message || 'Get儀表板Failed';
       })
 
-      // 獲取儀表板列表
+      // Get儀Table板List
       .addCase(getDashboards.pending, state => {
         state.dashboardsLoading = true;
         state.dashboardsError = null;
@@ -457,15 +457,15 @@ const _dashboardSlice = createSlice({
       })
       .addCase(getDashboards.rejected, (state, action) => {
         state.dashboardsLoading = false;
-        state.dashboardsError = action.error.message || '獲取儀表板列表失敗';
+        state.dashboardsError = action.error.message || 'Get儀表板列表Failed';
       })
 
-      // 創建儀表板
+      // Create儀Table板
       .addCase(createDashboard.fulfilled, (state, action) => {
         state.dashboards.push(action.payload);
       })
 
-      // 更新儀表板
+      // Update儀Table板
       .addCase(updateDashboard.fulfilled, (state, action) => {
         const _index = state.dashboards.findIndex(
           d => d.id === action.payload.id
@@ -478,7 +478,7 @@ const _dashboardSlice = createSlice({
         }
       })
 
-      // 刪除儀表板
+      // Delete儀Table板
       .addCase(deleteDashboard.fulfilled, (state, action) => {
         state.dashboards = state.dashboards.filter(
           d => d.id !== action.payload
@@ -488,26 +488,26 @@ const _dashboardSlice = createSlice({
         }
       })
 
-      // 獲取儀表板數據
+      // Get儀Table板Data
       .addCase(getDashboardData.pending, state => {
         state.dataLoading = true;
         state.dataError = null;
       })
       .addCase(getDashboardData.fulfilled, (state, action) => {
         state.dataLoading = false;
-        // 這裡需要根據實際情況更新 dashboardData
+        // 這裡需要Root據實際情況Update dashboardData
       })
       .addCase(getDashboardData.rejected, (state, action) => {
         state.dataLoading = false;
-        state.dataError = action.error.message || '獲取數據失敗';
+        state.dataError = action.error.message || 'Get數據Failed';
       })
 
-      // 刷新數據
+      // RefreshData
       .addCase(refreshDashboardData.fulfilled, (state, action) => {
-        // 數據刷新完成
+        // DataRefreshComplete
       })
 
-      // 導出儀表板
+      // Export儀Table板
       .addCase(exportDashboard.pending, state => {
         state.exportLoading = true;
         state.exportError = null;
@@ -518,15 +518,15 @@ const _dashboardSlice = createSlice({
       })
       .addCase(exportDashboard.rejected, (state, action) => {
         state.exportLoading = false;
-        state.exportError = action.error.message || '導出失敗';
+        state.exportError = action.error.message || '導出Failed';
       })
 
-      // 創建警報
+      // CreateAlert
       .addCase(createAlert.fulfilled, (state, action) => {
         state.alerts.push(action.payload);
       })
 
-      // 更新警報
+      // UpdateAlert
       .addCase(updateAlert.fulfilled, (state, action) => {
         const _index = state.alerts.findIndex(a => a.id === action.payload.id);
         if (index >= 0) {
@@ -534,12 +534,12 @@ const _dashboardSlice = createSlice({
         }
       })
 
-      // 刪除警報
+      // DeleteAlert
       .addCase(deleteAlert.fulfilled, (state, action) => {
         state.alerts = state.alerts.filter(a => a.id !== action.payload);
       })
 
-      // 獲取警報
+      // GetAlert
       .addCase(getAlerts.pending, state => {
         state.alertsLoading = true;
         state.alertsError = null;
@@ -550,10 +550,10 @@ const _dashboardSlice = createSlice({
       })
       .addCase(getAlerts.rejected, (state, action) => {
         state.alertsLoading = false;
-        state.alertsError = action.error.message || '獲取警報失敗';
+        state.alertsError = action.error.message || 'Get警報Failed';
       })
 
-      // 獲取模板
+      // Get模板
       .addCase(getTemplates.pending, state => {
         state.templatesLoading = true;
         state.templatesError = null;
@@ -564,10 +564,10 @@ const _dashboardSlice = createSlice({
       })
       .addCase(getTemplates.rejected, (state, action) => {
         state.templatesLoading = false;
-        state.templatesError = action.error.message || '獲取模板失敗';
+        state.templatesError = action.error.message || 'Get模板Failed';
       })
 
-      // 獲取分析
+      // GetAnalysis
       .addCase(getAnalytics.pending, state => {
         state.analyticsLoading = true;
         state.analyticsError = null;
@@ -580,15 +580,15 @@ const _dashboardSlice = createSlice({
       })
       .addCase(getAnalytics.rejected, (state, action) => {
         state.analyticsLoading = false;
-        state.analyticsError = action.error.message || '獲取分析失敗';
+        state.analyticsError = action.error.message || 'Get分析Failed';
       })
 
-      // 更新分析
+      // UpdateAnalysis
       .addCase(updateAnalytics.fulfilled, (state, action) => {
         state.analytics.set(action.payload.dashboardId, action.payload);
       })
 
-      // 獲取性能指標
+      // Get性能指標
       .addCase(getPerformanceMetrics.pending, state => {
         state.performanceLoading = true;
         state.performanceError = null;
@@ -596,15 +596,15 @@ const _dashboardSlice = createSlice({
       .addCase(getPerformanceMetrics.fulfilled, (state, action) => {
         state.performanceLoading = false;
         if (action.payload) {
-          // 需要根據實際情況更新 performanceMetrics
+          // 需要Root據實際情況Update performanceMetrics
         }
       })
       .addCase(getPerformanceMetrics.rejected, (state, action) => {
         state.performanceLoading = false;
-        state.performanceError = action.error.message || '獲取性能指標失敗';
+        state.performanceError = action.error.message || 'Get性能指標Failed';
       })
 
-      // 獲取配置
+      // GetConfigure
       .addCase(getConfig.pending, state => {
         state.configLoading = true;
         state.configError = null;
@@ -615,17 +615,17 @@ const _dashboardSlice = createSlice({
       })
       .addCase(getConfig.rejected, (state, action) => {
         state.configLoading = false;
-        state.configError = action.error.message || '獲取配置失敗';
+        state.configError = action.error.message || 'GetConfigureFailed';
       })
 
-      // 更新配置
+      // UpdateConfigure
       .addCase(updateConfig.fulfilled, (state, action) => {
         state.config = { ...state.config, ...action.payload };
       });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   setCurrentDashboard,
   setSelectedWidget,
@@ -639,7 +639,7 @@ export const {
   clearErrors,
 } = dashboardSlice.actions;
 
-// 導出 selectors
+// Export selectors
 export const _selectDashboardState = (state: { dashboard: DashboardState }) =>
   state.dashboard;
 export const _selectIsInitialized = (state: { dashboard: DashboardState }) =>

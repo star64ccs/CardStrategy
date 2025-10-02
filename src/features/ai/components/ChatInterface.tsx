@@ -48,30 +48,30 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isInitialized, setIsInitialized] = useState(false);
   const _flatListRef = useRef<FlatList>(null);
 
-  // 初始化聊天
+  // Initialize聊天
   useEffect(() => {
     const _initChat = async () => {
       try {
         await initialize();
         setIsInitialized(true);
       } catch (error) {
-        console.error('初始化聊天失敗:', error);
-        Alert.alert('錯誤', '初始化聊天服務失敗');
+        console.error('Initialize聊天Failed:', error);
+        Alert.alert('Error', 'Initialize聊天ServiceFailed');
       }
     };
 
     initChat();
   }, [initialize]);
 
-  // 創建或載入會話
+  // Create或Load會話
   useEffect(() => {
     if (isInitialized && !hasCurrentSession) {
       const _createSession = async () => {
         try {
           await createNewSession(userId, initialCategory);
         } catch (error) {
-          console.error('創建會話失敗:', error);
-          Alert.alert('錯誤', '創建聊天會話失敗');
+          console.error('Create會話Failed:', error);
+          Alert.alert('Error', 'Create聊天會話Failed');
         }
       };
 
@@ -85,7 +85,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     initialCategory,
   ]);
 
-  // 自動滾動到底部
+  // Auto滾動到Bottom
   useEffect(() => {
     if (hasMessages && flatListRef.current) {
       setTimeout(() => {
@@ -94,10 +94,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     }
   }, [messages, hasMessages]);
 
-  // 處理發送消息
+  // HandleSendMessage
   const _handleSendMessage = async (message: string) => {
     if (!currentSession) {
-      Alert.alert('錯誤', '沒有活躍的聊天會話');
+      Alert.alert('Error', '沒有活躍的聊天會話');
       return;
     }
 
@@ -109,32 +109,32 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         currentSession.category
       );
     } catch (error) {
-      console.error('發送消息失敗:', error);
-      Alert.alert('錯誤', '發送消息失敗，請重試');
+      console.error('發送消息Failed:', error);
+      Alert.alert('Error', '發送消息Failed，請重試');
     }
   };
 
-  // 處理快速回覆
+  // Handle快速回覆
   const _handleQuickReplyPress = async (reply: string) => {
     try {
       await handleQuickReply(reply);
     } catch (error) {
-      console.error('快速回覆失敗:', error);
-      Alert.alert('錯誤', '快速回覆失敗');
+      console.error('快速回覆Failed:', error);
+      Alert.alert('Error', '快速回覆Failed');
     }
   };
 
-  // 處理建議操作
+  // Handle建議Operation
   const _handleSuggestedActionPress = async (action: string) => {
     try {
       await handleSuggestedAction(action);
     } catch (error) {
-      console.error('建議操作失敗:', error);
-      Alert.alert('錯誤', '建議操作失敗');
+      console.error('建議操作Failed:', error);
+      Alert.alert('Error', '建議操作Failed');
     }
   };
 
-  // 渲染消息項目
+  // 渲染Message項目
   const _renderMessage = ({ item }: { item: unknown }) => (
     <ChatMessage
       message={item}
@@ -143,7 +143,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     />
   );
 
-  // 渲染空狀態
+  // 渲染EmptyStatus
   const _renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Ionicons name='chatbubbles-outline' size={64} color='#8E8E93' />
@@ -155,7 +155,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     </View>
   );
 
-  // 渲染載入狀態
+  // 渲染LoadStatus
   const _renderLoadingState = () => (
     <View style={styles.loadingState}>
       <ActivityIndicator size='large' color='#007AFF' />
@@ -163,7 +163,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     </View>
   );
 
-  // 渲染錯誤狀態
+  // 渲染ErrorStatus
   const _renderErrorState = () => (
     <View style={styles.errorState}>
       <Ionicons name='alert-circle-outline' size={64} color='#FF3B30' />
@@ -224,7 +224,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* 消息列表 */}
+      {/* MessageList */}
       <FlatList
         ref={flatListRef}
         data={messages}
@@ -238,7 +238,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         onEndReachedThreshold={0.1}
       />
 
-      {/* 輸入框 */}
+      {/* Input框 */}
       <ChatInput
         onSendMessage={handleSendMessage}
         disabled={loading || !hasCurrentSession}

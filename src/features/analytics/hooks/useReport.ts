@@ -56,7 +56,7 @@ import { ExportFormat, ReportCategory, ReportStatus } from '../types/report';
 export const _useReport = () => {
   const _dispatch = useAppDispatch();
 
-  // 選擇器
+  // Select器
   const _templates = useSelector(selectTemplates);
   const _currentTemplate = useSelector(selectCurrentTemplate);
   const _selectedTemplateId = useSelector(selectSelectedTemplateId);
@@ -72,7 +72,7 @@ export const _useReport = () => {
   const _error = useSelector(selectError);
   const _status = useSelector(selectStatus);
 
-  // 計算選擇器
+  // 計算Select器
   const _activeTemplates = useSelector(selectActiveTemplates);
   const _completedReports = useSelector(selectCompletedReports);
   const _completedExports = useSelector(selectCompletedExports);
@@ -80,26 +80,26 @@ export const _useReport = () => {
   const _reportCount = useSelector(selectReportCount);
   const _exportCount = useSelector(selectExportCount);
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(
     async (config?: unknown) => {
       try {
         await dispatch(initializeReportService(config)).unwrap();
       } catch (error) {
-        console.error('初始化報告服務失敗:', error);
+        console.error('Initialize報告ServiceFailed:', error);
       }
     },
     [dispatch]
   );
 
-  // 模板管理
+  // 模板Manage
   const _createNewTemplate = useCallback(
     async (request: CreateTemplateRequest) => {
       try {
         const _template = await dispatch(createTemplate(request)).unwrap();
         return template;
       } catch (error) {
-        console.error('創建模板失敗:', error);
+        console.error('Create模板Failed:', error);
         throw error;
       }
     },
@@ -112,7 +112,7 @@ export const _useReport = () => {
         const _template = await dispatch(getTemplate(templateId)).unwrap();
         return template;
       } catch (error) {
-        console.error('獲取模板失敗:', error);
+        console.error('Get模板Failed:', error);
         throw error;
       }
     },
@@ -133,14 +133,14 @@ export const _useReport = () => {
     [dispatch]
   );
 
-  // 報告管理
+  // ReportManage
   const _createNewReport = useCallback(
     async (request: CreateReportRequest) => {
       try {
         const _report = await dispatch(createReport(request)).unwrap();
         return report;
       } catch (error) {
-        console.error('創建報告失敗:', error);
+        console.error('Create報告Failed:', error);
         throw error;
       }
     },
@@ -153,7 +153,7 @@ export const _useReport = () => {
         const _report = await dispatch(getReport(reportId)).unwrap();
         return report;
       } catch (error) {
-        console.error('獲取報告失敗:', error);
+        console.error('Get報告Failed:', error);
         throw error;
       }
     },
@@ -174,7 +174,7 @@ export const _useReport = () => {
     [dispatch]
   );
 
-  // 導出管理
+  // ExportManage
   const _exportReportById = useCallback(
     async (reportId: string, request: ExportReportRequest) => {
       try {
@@ -183,7 +183,7 @@ export const _useReport = () => {
         ).unwrap();
         return exportInstance;
       } catch (error) {
-        console.error('導出報告失敗:', error);
+        console.error('導出報告Failed:', error);
         throw error;
       }
     },
@@ -197,18 +197,18 @@ export const _useReport = () => {
     [dispatch]
   );
 
-  // 分析管理
+  // AnalysisManage
   const _fetchAnalytics = useCallback(async () => {
     try {
       const _analyticsData = await dispatch(getAnalytics()).unwrap();
       return analyticsData;
     } catch (error) {
-      console.error('獲取分析數據失敗:', error);
+      console.error('Get分析數據Failed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 過濾和分頁
+  // Filter和Paginate
   const _updateFilterOptions = useCallback(
     (options: unknown) => {
       dispatch(setFilterOptions(options));
@@ -223,7 +223,7 @@ export const _useReport = () => {
     [dispatch]
   );
 
-  // 狀態管理
+  // StatusManage
   const _setLoadingState = useCallback(
     (loading: boolean) => {
       dispatch(setLoading(loading));
@@ -246,16 +246,16 @@ export const _useReport = () => {
     dispatch(resetState());
   }, [dispatch]);
 
-  // 計算屬性
+  // 計算Property
   const _computedValues = useMemo(
     () => ({
-      // 模板相關
+      // 模板相Off
       hasTemplates: templates.length > 0,
       activeTemplateCount: activeTemplates.length,
       templateCategories: [...new Set(templates.map(t => t.category))],
       templateTypes: [...new Set(templates.map(t => t.type))],
 
-      // 報告相關
+      // Report相Off
       hasReports: reports.length > 0,
       completedReportCount: completedReports.length,
       pendingReportCount: reports.filter(r => r.status === ReportStatus.PENDING)
@@ -266,7 +266,7 @@ export const _useReport = () => {
       failedReportCount: reports.filter(r => r.status === ReportStatus.FAILED)
         .length,
 
-      // 導出相關
+      // Export相Off
       hasExports: exports.length > 0,
       completedExportCount: completedExports.length,
       pendingExportCount: exports.filter(e => e.status === 'pending').length,
@@ -274,7 +274,7 @@ export const _useReport = () => {
         .length,
       failedExportCount: exports.filter(e => e.status === 'failed').length,
 
-      // 分析相關
+      // Analysis相Off
       hasAnalytics: analytics !== null,
       analyticsSummary: analytics
         ? {
@@ -286,7 +286,7 @@ export const _useReport = () => {
           }
         : null,
 
-      // 狀態相關
+      // Status相Off
       isInitialized: status === 'succeeded',
       isInitializing: status === 'loading',
       hasError: error !== null,
@@ -307,7 +307,7 @@ export const _useReport = () => {
     ]
   );
 
-  // 實用方法
+  // 實用Method
   const _getTemplatesByCategory = useCallback(
     (category: ReportCategory) => {
       return templates.filter(t => t.category === category);
@@ -350,7 +350,7 @@ export const _useReport = () => {
     [exports]
   );
 
-  // 快速創建方法
+  // 快速CreateMethod
   const _quickCreateBusinessReport = useCallback(
     async (name: string) => {
       const _businessTemplates = getTemplatesByCategory(
@@ -405,19 +405,19 @@ export const _useReport = () => {
     [exportReportById]
   );
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (status === 'idle') {
       initialize();
     }
   }, [status, initialize]);
 
-  // 定期更新分析數據
+  // 定期UpdateAnalysisData
   useEffect(() => {
     if (status === 'succeeded') {
       const _interval = setInterval(() => {
         fetchAnalytics().catch(console.error);
-      }, 30000); // 每30秒更新一次
+      }, 30000); // 每30SecondUpdate一次
 
       return () => clearInterval(interval);
     }
@@ -425,7 +425,7 @@ export const _useReport = () => {
   }, [status, fetchAnalytics]);
 
   return {
-    // 狀態
+    // Status
     templates,
     currentTemplate,
     selectedTemplateId,
@@ -441,7 +441,7 @@ export const _useReport = () => {
     error,
     status,
 
-    // 計算選擇器
+    // 計算Select器
     activeTemplates,
     completedReports,
     completedExports,
@@ -449,10 +449,10 @@ export const _useReport = () => {
     reportCount,
     exportCount,
 
-    // 計算屬性
+    // 計算Property
     ...computedValues,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     createNewTemplate,
     getTemplateById,
@@ -472,7 +472,7 @@ export const _useReport = () => {
     clearErrorMessage,
     resetReportState,
 
-    // 實用方法
+    // 實用Method
     getTemplatesByCategory,
     getTemplatesByType,
     getReportsByStatus,
@@ -480,7 +480,7 @@ export const _useReport = () => {
     getExportsByFormat,
     getExportsByStatus,
 
-    // 快速創建方法
+    // 快速CreateMethod
     quickCreateBusinessReport,
     quickCreateFinancialReport,
     quickExportToPDF,

@@ -1,0 +1,555 @@
+import { logger } from './Logger';
+
+export interface PasswordValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
+export interface ValidationService {
+  validateEmail(email: string): boolean;
+  validatePassword(password: string): PasswordValidationResult;
+  validateUsername(username: string): boolean;
+  validatePhoneNumber(phone: string): boolean;
+  validateCardNumber(cardNumber: string): boolean;
+  validateCardName(cardName: string): boolean;
+  validatePrice(price: any): boolean;
+  validatePrivacyPreferences(preferences: any): {
+    isValid: boolean;
+    errors: string[];
+  };
+  validateFeedback(feedback: any): { isValid: boolean; errors: string[] };
+  validateDataRightsRequest(request: any): {
+    isValid: boolean;
+    errors: string[];
+  };
+  validateAgeVerification(data: any): {
+    isValid: boolean;
+    errors: string[];
+  };
+  validateConsentData(data: any): { isValid: boolean; errors: string[] };
+  validateImageFile(file: any): boolean;
+  validateUrl(url: string): boolean;
+  validateDate(date: string): boolean;
+  validateNumber(value: string): boolean;
+  validateRequired(value: any): boolean;
+  validateLength(value: string, min: number, max?: number): boolean;
+  validatePattern(value: string, pattern: RegExp): boolean;
+  validateRange(value: number, min: number, max: number): boolean;
+}
+
+class ValidationServiceImpl implements ValidationService {
+  private readonly emailRegex =
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
+  private readonly usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+  private readonly phoneRegex = /^[\+]?[\d\s\-\(\)]+$/;
+  private readonly cardNumberRegex = /^\d{13,19}$/;
+  private readonly urlRegex =
+    /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}(\/.*)?$/;
+
+  validateEmail(email: string): boolean {
+    try {
+      if (!email || typeof email !== 'string') {
+        return false;
+      }
+      const trimmedEmail = email.trim();
+
+      // 檢查連續點
+      if (trimmedEmail.includes('..')) {
+        return false;
+      }
+
+      // 檢查開頭或結尾是否為 @
+      if (trimmedEmail.startsWith('@') || trimmedEmail.endsWith('@')) {
+        return false;
+      }
+
+      // 檢查 @ 後面是否直接跟點
+      if (trimmedEmail.includes('@.')) {
+        return false;
+      }
+
+      return this.emailRegex.test(trimmedEmail);
+    } catch (error) {
+      logger.error('Email validation error:', error);
+      return false;
+    }
+  }
+
+  validatePassword(password: string): PasswordValidationResult {
+    const errors: string[] = [];
+
+    try {
+      if (!password || typeof password !== 'string') {
+        errors.push('Password is required');
+        return { isValid: false, errors };
+      }
+
+      if (password.length < 8) {
+        errors.push('Password must be at least 8 characters long');
+      }
+
+      if (!/[A-Z]/.test(password)) {
+        errors.push('Password must contain at least one uppercase letter');
+      }
+
+      if (!/[a-z]/.test(password)) {
+        errors.push('Password must contain at least one lowercase letter');
+      }
+
+      if (!/\d/.test(password)) {
+        errors.push('Password must contain at least one number');
+      }
+
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+        errors.push('Password must contain at least one special character');
+      }
+
+      return {
+        isValid: errors.length === 0,
+        errors,
+      };
+    } catch (error) {
+      logger.error('Password validation error:', error);
+      return {
+        isValid: false,
+        errors: ['Password validation failed'],
+      };
+    }
+  }
+
+  validateUsername(username: string): boolean {
+    try {
+      if (!username || typeof username !== 'string') {
+        return false;
+      }
+      return this.usernameRegex.test(username.trim());
+    } catch (error) {
+      logger.error('Username validation error:', error);
+      return false;
+    }
+  }
+
+  validatePhoneNumber(phone: string): boolean {
+    try {
+      if (!phone || typeof phone !== 'string') {
+        return false;
+      }
+      const trimmedPhone = phone.trim();
+      if (trimmedPhone === '') {
+        return false;
+      }
+
+      // 檢查是否包含字母
+      if (/[a-zA-Z]/.test(trimmedPhone)) {
+        return false;
+      }
+
+      // 計算數字字符的數量
+      const digitCount = (trimmedPhone.match(/\d/g) || []).length;
+
+      // 檢查數字字符數量（10-11 位）
+      if (digitCount < 10 || digitCount > 11) {
+        return false;
+      }
+
+      return this.phoneRegex.test(trimmedPhone);
+    } catch (error) {
+      logger.error('Phone number validation error:', error);
+      return false;
+    }
+  }
+
+  validateCardNumber(cardNumber: string): boolean {
+    try {
+      if (!cardNumber || typeof cardNumber !== 'string') {
+        return false;
+      }
+      const cleanNumber = cardNumber.replace(/\s/g, '');
+      return this.cardNumberRegex.test(cleanNumber);
+    } catch (error) {
+      logger.error('Card number validation error:', error);
+      return false;
+    }
+  }
+
+  validateUrl(url: string): boolean {
+    try {
+      if (!url || typeof url !== 'string') {
+        return false;
+      }
+      const trimmedUrl = url.trim();
+      if (trimmedUrl === '') {
+        return false;
+      }
+      return this.urlRegex.test(trimmedUrl);
+    } catch (error) {
+      logger.error('URL validation error:', error);
+      return false;
+    }
+  }
+
+  validateDate(date: string): boolean {
+    try {
+      if (!date || typeof date !== 'string') {
+        return false;
+      }
+
+      // 檢查日期格式
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return false;
+      }
+
+      const parsedDate = new Date(date);
+      if (isNaN(parsedDate.getTime())) {
+        return false;
+      }
+
+      // 檢查日期是否有效（例如：2024-02-30 是無效的）
+      const parts = date.split('-');
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parseInt(parts[2], 10);
+
+      // 檢查月份範圍
+      if (month < 1 || month > 12) {
+        return false;
+      }
+
+      // 檢查日期範圍
+      if (day < 1 || day > 31) {
+        return false;
+      }
+
+      // 使用原始輸入值創建日期並比較
+      const checkDate = new Date(year, month - 1, day);
+      return (
+        checkDate.getFullYear() === year &&
+        checkDate.getMonth() === month - 1 &&
+        checkDate.getDate() === day
+      );
+    } catch (error) {
+      logger.error('Date validation error:', error);
+      return false;
+    }
+  }
+
+  validateNumber(value: string): boolean {
+    try {
+      if (!value || typeof value !== 'string') {
+        return false;
+      }
+      return !isNaN(Number(value)) && isFinite(Number(value));
+    } catch (error) {
+      logger.error('Number validation error:', error);
+      return false;
+    }
+  }
+
+  validateRequired(value: any): boolean {
+    try {
+      if (value === null || value === undefined) {
+        return false;
+      }
+      if (typeof value === 'string') {
+        return value.trim().length > 0;
+      }
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      if (typeof value === 'object') {
+        return Object.keys(value).length > 0;
+      }
+      return true;
+    } catch (error) {
+      logger.error('Required validation error:', error);
+      return false;
+    }
+  }
+
+  validateLength(value: string, min: number, max?: number): boolean {
+    try {
+      if (value === null || value === undefined) {
+        return min === 0;
+      }
+      if (typeof value !== 'string') {
+        return false;
+      }
+      const { length } = value;
+      if (max !== undefined) {
+        return length >= min && length <= max;
+      }
+      return length >= min;
+    } catch (error) {
+      logger.error('Length validation error:', error);
+      return false;
+    }
+  }
+
+  validateCardName(cardName: string): boolean {
+    try {
+      if (!cardName || typeof cardName !== 'string') {
+        return false;
+      }
+      const trimmedName = cardName.trim();
+      if (trimmedName.length < 2 || trimmedName.length > 100) {
+        return false;
+      }
+      // 檢查是否包含無效字符
+      if (/[@#$%^&*()+=]/.test(trimmedName)) {
+        return false;
+      }
+      return true;
+    } catch (error) {
+      logger.error('Card name validation error:', error);
+      return false;
+    }
+  }
+
+  validatePrice(price: any): boolean {
+    try {
+      if (price === null || price === undefined) {
+        return false;
+      }
+      const numPrice = Number(price);
+      if (isNaN(numPrice)) {
+        return false;
+      }
+      // 檢查價格範圍（0-1000）
+      return numPrice >= 0 && numPrice <= 1000;
+    } catch (error) {
+      logger.error('Price validation error:', error);
+      return false;
+    }
+  }
+
+  validatePrivacyPreferences(preferences: any): {
+    isValid: boolean;
+    errors: string[];
+  } {
+    const errors: string[] = [];
+
+    try {
+      if (!preferences || typeof preferences !== 'object') {
+        errors.push('Invalid preferences object');
+        return { isValid: false, errors };
+      }
+
+      if (
+        preferences.region &&
+        !['US', 'EU', 'CA', 'AU', 'CN'].includes(preferences.region)
+      ) {
+        errors.push('Invalid region code');
+      }
+
+      if (preferences.termsAccepted === false) {
+        errors.push('Terms must be accepted');
+      }
+
+      if (preferences.privacyPolicyAccepted === false) {
+        errors.push('Privacy policy must be accepted');
+      }
+
+      if (
+        preferences.dataSharing !== undefined &&
+        typeof preferences.dataSharing !== 'boolean'
+      ) {
+        errors.push('Data sharing preference must be boolean');
+      }
+
+      return { isValid: errors.length === 0, errors };
+    } catch (error) {
+      logger.error('Privacy preferences validation error:', error);
+      return { isValid: false, errors: ['Validation failed'] };
+    }
+  }
+
+  validateFeedback(feedback: any): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+
+    try {
+      if (!feedback || typeof feedback !== 'object') {
+        errors.push('Invalid feedback object');
+        return { isValid: false, errors };
+      }
+
+      if (
+        !feedback.type ||
+        !['bug_report', 'feature_request', 'general'].includes(feedback.type)
+      ) {
+        errors.push('Invalid feedback type');
+      }
+
+      if (
+        !feedback.title ||
+        typeof feedback.title !== 'string' ||
+        feedback.title.trim().length === 0
+      ) {
+        errors.push('Title is required');
+      }
+
+      if (
+        !feedback.description ||
+        typeof feedback.description !== 'string' ||
+        feedback.description.trim().length < 10
+      ) {
+        errors.push('Description must be at least 10 characters long');
+      }
+
+      return { isValid: errors.length === 0, errors };
+    } catch (error) {
+      logger.error('Feedback validation error:', error);
+      return { isValid: false, errors: ['Validation failed'] };
+    }
+  }
+
+  validateDataRightsRequest(request: any): {
+    isValid: boolean;
+    errors: string[];
+  } {
+    const errors: string[] = [];
+
+    try {
+      if (!request || typeof request !== 'object') {
+        errors.push('Invalid request object');
+        return { isValid: false, errors };
+      }
+
+      if (
+        !request.type ||
+        !['access', 'deletion', 'portability'].includes(request.type)
+      ) {
+        errors.push('Invalid request type');
+      }
+
+      if (
+        !request.description ||
+        typeof request.description !== 'string' ||
+        request.description.trim().length === 0
+      ) {
+        errors.push('Description is required');
+      }
+
+      return { isValid: errors.length === 0, errors };
+    } catch (error) {
+      logger.error('Data rights request validation error:', error);
+      return { isValid: false, errors: ['Validation failed'] };
+    }
+  }
+
+  validateAgeVerification(data: any): {
+    isValid: boolean;
+    errors: string[];
+  } {
+    const errors: string[] = [];
+
+    try {
+      if (!data || typeof data !== 'object') {
+        errors.push('Invalid age verification data');
+        return { isValid: false, errors };
+      }
+
+      if (!data.birthDate || !this.validateDate(data.birthDate)) {
+        errors.push('Invalid birth date');
+      } else {
+        const birthDate = new Date(data.birthDate);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+
+        if (
+          monthDiff < 0 ||
+          (monthDiff === 0 && today.getDate() < birthDate.getDate())
+        ) {
+          age--;
+        }
+
+        if (age < 13) {
+          errors.push('User must be at least 13 years old');
+        }
+      }
+
+      return { isValid: errors.length === 0, errors };
+    } catch (error) {
+      logger.error('Age verification validation error:', error);
+      return { isValid: false, errors: ['Validation failed'] };
+    }
+  }
+
+  validateConsentData(data: any): { isValid: boolean; errors: string[] } {
+    const errors: string[] = [];
+
+    try {
+      if (!data || typeof data !== 'object') {
+        errors.push('Invalid consent data');
+        return { isValid: false, errors };
+      }
+
+      if (data.granted !== undefined && typeof data.granted !== 'boolean') {
+        errors.push('Granted must be boolean');
+      }
+
+      if (
+        data.type &&
+        !['marketing', 'analytics', 'functional'].includes(data.type)
+      ) {
+        errors.push('Invalid consent type');
+      }
+
+      return { isValid: errors.length === 0, errors };
+    } catch (error) {
+      logger.error('Consent data validation error:', error);
+      return { isValid: false, errors: ['Validation failed'] };
+    }
+  }
+
+  validateImageFile(file: any): boolean {
+    try {
+      if (!file || typeof file !== 'object') {
+        return false;
+      }
+
+      // 檢查文件類型
+      if (!file.type?.startsWith('image/')) {
+        return false;
+      }
+
+      // 檢查文件大小（最大 5MB，最小 1KB）
+      if (file.size !== undefined) {
+        if (file.size >= 10 * 1024 * 1024 || file.size < 1024) {
+          return false;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      logger.error('Image file validation error:', error);
+      return false;
+    }
+  }
+
+  validatePattern(value: string, pattern: RegExp): boolean {
+    try {
+      if (!value || typeof value !== 'string') {
+        return false;
+      }
+      return pattern.test(value);
+    } catch (error) {
+      logger.error('Pattern validation error:', error);
+      return false;
+    }
+  }
+
+  validateRange(value: number, min: number, max: number): boolean {
+    try {
+      if (typeof value !== 'number' || isNaN(value)) {
+        return false;
+      }
+      return value >= min && value <= max;
+    } catch (error) {
+      logger.error('Range validation error:', error);
+      return false;
+    }
+  }
+}
+
+export const validationService = new ValidationServiceImpl();

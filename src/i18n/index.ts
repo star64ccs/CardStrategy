@@ -5,12 +5,12 @@ import { initReactI18next } from 'react-i18next';
 
 import { logger } from '../core/utils/logger';
 
-// 語言資源
+// LanguageResource
 import enUS from './locales/en-US.json';
 import jaJP from './locales/ja-JP.json';
 import zhTW from './locales/zh-TW.json';
 
-// 支援的語言
+// 支援的Language
 export const _supportedLanguages = {
   'zh-TW': {
     name: '繁體中文',
@@ -31,7 +31,7 @@ export const _supportedLanguages = {
 
 export type SupportedLanguage = keyof typeof supportedLanguages;
 
-// 語言檢測
+// Language檢測
 const _getLanguageFromStorage = async (): Promise<SupportedLanguage> => {
   try {
     const _storedLanguage = await AsyncStorage.getItem('userLanguage');
@@ -42,12 +42,12 @@ const _getLanguageFromStorage = async (): Promise<SupportedLanguage> => {
     logger.warn('Failed to get language from storage:', { error });
   }
 
-  // 使用系統語言
+  // 使用系統Language
   const [systemLanguage] = Localization.getLocales();
   const _languageTag = systemLanguage?.languageTag || 'zh-TW';
   const [languageCode] = languageTag.split('-');
 
-  // 映射系統語言到支援的語言
+  // Map系統Language到支援的Language
   const languageMap: Record<string, SupportedLanguage> = {
     zh: 'zh-TW',
     en: 'en-US',
@@ -57,7 +57,7 @@ const _getLanguageFromStorage = async (): Promise<SupportedLanguage> => {
   return languageMap[languageCode] || 'en-US';
 };
 
-// 語言資源
+// LanguageResource
 const _resources = {
   'zh-TW': {
     translation: zhTW,
@@ -70,33 +70,33 @@ const _resources = {
   },
 };
 
-// i18n 配置
+// i18n Configure
 i18n.use(initReactI18next).init({
   resources,
-  lng: 'en-US', // 默認語言，會在初始化時更新
+  lng: 'en-US', // DefaultLanguage，會在Initialize時Update
   fallbackLng: 'en-US',
   debug: __DEV__,
 
   interpolation: {
-    escapeValue: false, // React 已經處理了 XSS
+    escapeValue: false, // React 已經Handle了 XSS
   },
 
   react: {
     useSuspense: false,
   },
 
-  // 命名空間
+  // 命名Empty間
   ns: ['translation'],
   defaultNS: 'translation',
 
-  // 檢測選項
+  // 檢測Options
   detection: {
     order: ['localStorage', 'navigator'],
     caches: ['localStorage'],
   },
 });
 
-// 初始化語言
+// InitializeLanguage
 const _initializeLanguage = async (): Promise<void> => {
   try {
     const _language = await getLanguageFromStorage();
@@ -106,7 +106,7 @@ const _initializeLanguage = async (): Promise<void> => {
   }
 };
 
-// 語言切換
+// LanguageSwitch
 export const _changeLanguage = async (
   language: SupportedLanguage
 ): Promise<void> => {
@@ -118,17 +118,17 @@ export const _changeLanguage = async (
   }
 };
 
-// 獲取當前語言
+// Get當前Language
 export const _getCurrentLanguage = (): SupportedLanguage => {
   return (i18n.language as SupportedLanguage) || 'en-US';
 };
 
-// 獲取語言信息
+// GetLanguageInformation
 export const _getLanguageInfo = (language: SupportedLanguage) => {
   return supportedLanguages[language];
 };
 
-// 格式化數字
+// Format數字
 export const _formatNumber = (
   value: number,
   options?: Intl.NumberFormatOptions
@@ -137,7 +137,7 @@ export const _formatNumber = (
   return new Intl.NumberFormat(language, options).format(value);
 };
 
-// 格式化貨幣
+// Format貨幣
 export const _formatCurrency = (value: number, currency = 'TWD'): string => {
   const _language = getCurrentLanguage();
   return new Intl.NumberFormat(language, {
@@ -146,7 +146,7 @@ export const _formatCurrency = (value: number, currency = 'TWD'): string => {
   }).format(value);
 };
 
-// 格式化日期
+// FormatDay
 export const _formatDate = (
   date: Date,
   options?: Intl.DateTimeFormatOptions
@@ -155,7 +155,7 @@ export const _formatDate = (
   return new Intl.DateTimeFormat(language, options).format(date);
 };
 
-// 格式化相對時間
+// Format相對Time
 export const _formatRelativeTime = (date: Date): string => {
   const _now = new Date();
   const _diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
@@ -177,21 +177,21 @@ export const _formatRelativeTime = (date: Date): string => {
   return rtf.format(-Math.floor(diffInSeconds / 31536000), 'year');
 };
 
-// 語言映射
+// LanguageMap
 const languageMap: Record<string, string> = {
   zh: 'zh-TW',
   en: 'en-US',
   ja: 'ja-JP',
 };
 
-// 獲取語言代碼
+// GetLanguage代碼
 export const _getLanguageCode = (): string => {
   const [locale] = Localization.getLocales();
   const _languageCode = locale?.languageTag?.split('-')[0] || 'en';
   return languageMap[languageCode] || 'en-US';
 };
 
-// 初始化
+// Initialize
 initializeLanguage();
 
 export default i18n;

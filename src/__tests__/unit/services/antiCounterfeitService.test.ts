@@ -84,7 +84,7 @@ describe('AntiCounterfeitService', () => {
             blockchainVerification: {
               isVerified: false,
               confidence: 0.9,
-              details: ['區塊鏈記錄驗證失敗'],
+              details: ['區塊鏈記錄VerifyFailed'],
             },
           },
         },
@@ -93,7 +93,7 @@ describe('AntiCounterfeitService', () => {
       },
     };
 
-    it('應該成功驗證真品卡片', async () => {
+    it('應該SuccessVerify真品卡片', async () => {
       mockApiService.post.mockResolvedValue(mockAuthenticResult);
 
       const _result = await antiCounterfeitService.verifyAuthenticity(
@@ -132,12 +132,12 @@ describe('AntiCounterfeitService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('API Error'));
 
       await expect(
         antiCounterfeitService.verifyAuthenticity(mockCardId, mockImageData)
-      ).rejects.toThrow('API 錯誤');
+      ).rejects.toThrow('API Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });

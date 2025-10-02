@@ -10,20 +10,20 @@ class UserStorage {
   private static readonly USER_SETTINGS_KEY = 'user_settings';
 
   /**
-   * 保存用戶數據
+   * SaveUserData
    */
   static async setUser(user: User): Promise<void> {
     try {
       await AsyncStorage.setItem(this.USER_KEY, JSON.stringify(user));
       logger.debug('用戶數據已保存');
     } catch (error: unknown) {
-      logger.error('保存用戶數據失敗:', error);
-      throw new Error(`保存用戶數據失敗: ${error.message}`);
+      logger.error('保存用戶數據Failed:', error);
+      throw new Error(`保存用戶數據Failed: ${error.message}`);
     }
   }
 
   /**
-   * 獲取用戶數據
+   * GetUserData
    */
   static async getUser(): Promise<User | null> {
     try {
@@ -34,7 +34,7 @@ class UserStorage {
 
       const _user = JSON.parse(userData);
 
-      // 轉換日期字符串為 Date 對象
+      // ConvertDay字符串為 Date Object
       if (user.statistics?.joinDate) {
         user.statistics.joinDate = new Date(user.statistics.joinDate);
       }
@@ -44,13 +44,13 @@ class UserStorage {
 
       return user;
     } catch (error: unknown) {
-      logger.error('獲取用戶數據失敗:', error);
+      logger.error('Get用戶數據Failed:', error);
       return null;
     }
   }
 
   /**
-   * 保存用戶偏好設置
+   * SaveUserPreferencesSettings
    */
   static async setUserPreferences(preferences: unknown): Promise<void> {
     try {
@@ -60,13 +60,13 @@ class UserStorage {
       );
       logger.debug('用戶偏好設置已保存');
     } catch (error: unknown) {
-      logger.error('保存用戶偏好設置失敗:', error);
-      throw new Error(`保存用戶偏好設置失敗: ${error.message}`);
+      logger.error('保存用戶偏好SettingsFailed:', error);
+      throw new Error(`保存用戶偏好SettingsFailed: ${error.message}`);
     }
   }
 
   /**
-   * 獲取用戶偏好設置
+   * GetUserPreferencesSettings
    */
   static async getUserPreferences(): Promise<any | null> {
     try {
@@ -78,13 +78,13 @@ class UserStorage {
       }
       return JSON.parse(preferencesData);
     } catch (error: unknown) {
-      logger.error('獲取用戶偏好設置失敗:', error);
+      logger.error('Get用戶偏好SettingsFailed:', error);
       return null;
     }
   }
 
   /**
-   * 保存用戶統計數據
+   * SaveUser統Count據
    */
   static async setUserStatistics(statistics: unknown): Promise<void> {
     try {
@@ -94,13 +94,13 @@ class UserStorage {
       );
       logger.debug('用戶統計數據已保存');
     } catch (error: unknown) {
-      logger.error('保存用戶統計數據失敗:', error);
-      throw new Error(`保存用戶統計數據失敗: ${error.message}`);
+      logger.error('保存用戶統計數據Failed:', error);
+      throw new Error(`保存用戶統計數據Failed: ${error.message}`);
     }
   }
 
   /**
-   * 獲取用戶統計數據
+   * GetUser統Count據
    */
   static async getUserStatistics(): Promise<any | null> {
     try {
@@ -113,7 +113,7 @@ class UserStorage {
 
       const _statistics = JSON.parse(statisticsData);
 
-      // 轉換日期字符串為 Date 對象
+      // ConvertDay字符串為 Date Object
       if (statistics.joinDate) {
         statistics.joinDate = new Date(statistics.joinDate);
       }
@@ -123,13 +123,13 @@ class UserStorage {
 
       return statistics;
     } catch (error: unknown) {
-      logger.error('獲取用戶統計數據失敗:', error);
+      logger.error('Get用戶統計數據Failed:', error);
       return null;
     }
   }
 
   /**
-   * 保存用戶設置
+   * SaveUserSettings
    */
   static async setUserSettings(settings: unknown): Promise<void> {
     try {
@@ -139,13 +139,13 @@ class UserStorage {
       );
       logger.debug('用戶設置已保存');
     } catch (error: unknown) {
-      logger.error('保存用戶設置失敗:', error);
-      throw new Error(`保存用戶設置失敗: ${error.message}`);
+      logger.error('保存用戶SettingsFailed:', error);
+      throw new Error(`保存用戶SettingsFailed: ${error.message}`);
     }
   }
 
   /**
-   * 獲取用戶設置
+   * GetUserSettings
    */
   static async getUserSettings(): Promise<any | null> {
     try {
@@ -155,13 +155,13 @@ class UserStorage {
       }
       return JSON.parse(settingsData);
     } catch (error: unknown) {
-      logger.error('獲取用戶設置失敗:', error);
+      logger.error('Get用戶SettingsFailed:', error);
       return null;
     }
   }
 
   /**
-   * 更新用戶數據的特定字段
+   * UpdateUserData的SpecificField
    */
   static async updateUser(updates: Partial<User>): Promise<void> {
     try {
@@ -174,13 +174,13 @@ class UserStorage {
       await this.setUser(updatedUser);
       logger.debug('用戶數據已更新');
     } catch (error: unknown) {
-      logger.error('更新用戶數據失敗:', error);
-      throw new Error(`更新用戶數據失敗: ${error.message}`);
+      logger.error('Update用戶數據Failed:', error);
+      throw new Error(`Update用戶數據Failed: ${error.message}`);
     }
   }
 
   /**
-   * 更新用戶偏好設置的特定字段
+   * UpdateUserPreferencesSettings的SpecificField
    */
   static async updateUserPreferences(updates: unknown): Promise<void> {
     try {
@@ -189,13 +189,13 @@ class UserStorage {
       await this.setUserPreferences(updatedPreferences);
       logger.debug('用戶偏好設置已更新');
     } catch (error: unknown) {
-      logger.error('更新用戶偏好設置失敗:', error);
-      throw new Error(`更新用戶偏好設置失敗: ${error.message}`);
+      logger.error('Update用戶偏好SettingsFailed:', error);
+      throw new Error(`Update用戶偏好SettingsFailed: ${error.message}`);
     }
   }
 
   /**
-   * 更新用戶統計數據的特定字段
+   * UpdateUser統Count據的SpecificField
    */
   static async updateUserStatistics(updates: unknown): Promise<void> {
     try {
@@ -204,13 +204,13 @@ class UserStorage {
       await this.setUserStatistics(updatedStatistics);
       logger.debug('用戶統計數據已更新');
     } catch (error: unknown) {
-      logger.error('更新用戶統計數據失敗:', error);
-      throw new Error(`更新用戶統計數據失敗: ${error.message}`);
+      logger.error('Update用戶統計數據Failed:', error);
+      throw new Error(`Update用戶統計數據Failed: ${error.message}`);
     }
   }
 
   /**
-   * 更新用戶設置的特定字段
+   * UpdateUserSettings的SpecificField
    */
   static async updateUserSettings(updates: unknown): Promise<void> {
     try {
@@ -219,13 +219,13 @@ class UserStorage {
       await this.setUserSettings(updatedSettings);
       logger.debug('用戶設置已更新');
     } catch (error: unknown) {
-      logger.error('更新用戶設置失敗:', error);
-      throw new Error(`更新用戶設置失敗: ${error.message}`);
+      logger.error('Update用戶SettingsFailed:', error);
+      throw new Error(`Update用戶SettingsFailed: ${error.message}`);
     }
   }
 
   /**
-   * 清除所有用戶相關數據
+   * Clear所有User相OffData
    */
   static async clearAll(): Promise<void> {
     try {
@@ -237,13 +237,13 @@ class UserStorage {
       ]);
       logger.debug('所有用戶數據已清除');
     } catch (error: unknown) {
-      logger.error('清除用戶數據失敗:', error);
-      throw new Error(`清除用戶數據失敗: ${error.message}`);
+      logger.error('清除用戶數據Failed:', error);
+      throw new Error(`清除用戶數據Failed: ${error.message}`);
     }
   }
 
   /**
-   * 檢查是否有存儲的用戶數據
+   * CheckYesNo有Storage的UserData
    */
   static async hasUserData(): Promise<boolean> {
     try {
@@ -256,13 +256,13 @@ class UserStorage {
 
       return !!(user || preferences || statistics || settings);
     } catch (error: unknown) {
-      logger.error('檢查用戶數據失敗:', error);
+      logger.error('Check用戶數據Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取所有用戶相關的鍵
+   * Get所有User相Off的Key
    */
   static getUserKeys(): string[] {
     return [
@@ -274,7 +274,7 @@ class UserStorage {
   }
 
   /**
-   * 備份用戶數據
+   * BackupUserData
    */
   static async backupUserData(): Promise<any> {
     try {
@@ -296,13 +296,13 @@ class UserStorage {
       logger.debug('用戶數據備份已創建');
       return backup;
     } catch (error: unknown) {
-      logger.error('創建用戶數據備份失敗:', error);
-      throw new Error(`創建用戶數據備份失敗: ${error.message}`);
+      logger.error('Create用戶數據備份Failed:', error);
+      throw new Error(`Create用戶數據備份Failed: ${error.message}`);
     }
   }
 
   /**
-   * 恢復用戶數據
+   * RestoreUserData
    */
   static async restoreUserData(backup: unknown): Promise<void> {
     try {
@@ -321,8 +321,8 @@ class UserStorage {
 
       logger.debug('用戶數據已恢復');
     } catch (error: unknown) {
-      logger.error('恢復用戶數據失敗:', error);
-      throw new Error(`恢復用戶數據失敗: ${error.message}`);
+      logger.error('恢復用戶數據Failed:', error);
+      throw new Error(`恢復用戶數據Failed: ${error.message}`);
     }
   }
 }

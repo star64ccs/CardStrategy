@@ -171,7 +171,7 @@ export const PredictionResult: React.FC<PredictionResultProps> = ({
     <ScrollView style={styles.container}>
       <Text style={styles.title}>預測結果</Text>
 
-      {/* 基本信息 */}
+      {/* 基本Information */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>基本信息</Text>
 
@@ -367,7 +367,7 @@ export const PredictionResult: React.FC<PredictionResultProps> = ({
         ))}
       </View>
 
-      {/* 模型信息 */}
+      {/* 模型Information */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>模型信息</Text>
 
@@ -389,7 +389,7 @@ export const PredictionResult: React.FC<PredictionResultProps> = ({
         </View>
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={onNewPrediction}>
           <Text style={styles.buttonText}>新預測</Text>

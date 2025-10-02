@@ -9,7 +9,7 @@ import type {
 } from '../../core/types/auth';
 import { authService } from '../../shared/services/authService';
 
-// 認證狀態接口
+// AuthenticateStatusInterface
 interface AuthState {
   user: User | null;
   token: string | null;
@@ -18,7 +18,7 @@ interface AuthState {
   error: string | null;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: AuthState = {
   user: null,
   token: null,
@@ -27,7 +27,7 @@ const initialState: AuthState = {
   error: null,
 };
 
-// 異步Action：用戶註冊
+// AsyncAction：UserRegister
 export const _registerUser = createAsyncThunk(
   'auth/register',
   async (userData: RegisterData, { rejectWithValue }) => {
@@ -36,13 +36,13 @@ export const _registerUser = createAsyncThunk(
       return response;
     } catch (error: unknown) {
       const _errorMessage =
-        error.response?.data?.message || error.message || '註冊失敗';
+        error.response?.data?.message || error.message || '註冊Failed';
       return rejectWithValue(errorMessage);
     }
   }
 );
 
-// 異步Action：用戶登錄
+// AsyncAction：UserLogin
 export const _loginUser = createAsyncThunk(
   'auth/login',
   async (credentials: LoginCredentials, { rejectWithValue }) => {
@@ -51,13 +51,13 @@ export const _loginUser = createAsyncThunk(
       return response;
     } catch (error: unknown) {
       const _errorMessage =
-        error.response?.data?.message || error.message || '登錄失敗';
+        error.response?.data?.message || error.message || '登錄Failed';
       return rejectWithValue(errorMessage);
     }
   }
 );
 
-// 異步Action：用戶登出
+// AsyncAction：User登出
 export const _logoutUser = createAsyncThunk(
   'auth/logout',
   async (_, { rejectWithValue }) => {
@@ -66,13 +66,13 @@ export const _logoutUser = createAsyncThunk(
       return null;
     } catch (error: unknown) {
       const _errorMessage =
-        error.response?.data?.message || error.message || '登出失敗';
+        error.response?.data?.message || error.message || '登出Failed';
       return rejectWithValue(errorMessage);
     }
   }
 );
 
-// 異步Action：獲取當前用戶
+// AsyncAction：Get當前User
 export const _getCurrentUser = createAsyncThunk(
   'auth/getCurrentUser',
   async (_, { rejectWithValue }) => {
@@ -81,13 +81,13 @@ export const _getCurrentUser = createAsyncThunk(
       return user;
     } catch (error: unknown) {
       const _errorMessage =
-        error.response?.data?.message || error.message || '獲取用戶信息失敗';
+        error.response?.data?.message || error.message || 'Get用戶信息Failed';
       return rejectWithValue(errorMessage);
     }
   }
 );
 
-// 異步Action：檢查認證狀態
+// AsyncAction：CheckAuthenticateStatus
 export const _checkAuthStatus = createAsyncThunk(
   'auth/checkStatus',
   async (_, { rejectWithValue }) => {
@@ -101,13 +101,13 @@ export const _checkAuthStatus = createAsyncThunk(
       return { user: null, token: null };
     } catch (error: unknown) {
       const _errorMessage =
-        error.response?.data?.message || error.message || '檢查認證狀態失敗';
+        error.response?.data?.message || error.message || 'Check認證狀態Failed';
       return rejectWithValue(errorMessage);
     }
   }
 );
 
-// 異步Action：更新用戶資料
+// AsyncAction：UpdateUser資料
 export const _updateUserProfile = createAsyncThunk(
   'auth/updateProfile',
   async (profileData: Partial<User>, { rejectWithValue }) => {
@@ -116,34 +116,34 @@ export const _updateUserProfile = createAsyncThunk(
       return user;
     } catch (error: unknown) {
       const _errorMessage =
-        error.response?.data?.message || error.message || '更新資料失敗';
+        error.response?.data?.message || error.message || 'Update資料Failed';
       return rejectWithValue(errorMessage);
     }
   }
 );
 
-// 認證Slice
+// AuthenticateSlice
 const _authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
     },
 
-    // 設置用戶
+    // SettingsUser
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
       state.isAuthenticated = true;
     },
 
-    // 設置令牌
+    // Settings令牌
     setToken: (state, action: PayloadAction<string>) => {
       state.token = action.payload;
     },
 
-    // 重置認證狀態
+    // ResetAuthenticateStatus
     resetAuth: state => {
       state.user = null;
       state.token = null;
@@ -152,7 +152,7 @@ const _authSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // 註冊用戶
+    // RegisterUser
     builder
       .addCase(registerUser.pending, state => {
         state.isLoading = true;
@@ -173,7 +173,7 @@ const _authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 登錄用戶
+    // LoginUser
     builder
       .addCase(loginUser.pending, state => {
         state.isLoading = true;
@@ -194,7 +194,7 @@ const _authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 登出用戶
+    // 登出User
     builder
       .addCase(logoutUser.pending, state => {
         state.isLoading = true;
@@ -211,7 +211,7 @@ const _authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 獲取當前用戶
+    // Get當前User
     builder
       .addCase(getCurrentUser.pending, state => {
         state.isLoading = true;
@@ -236,7 +236,7 @@ const _authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 檢查認證狀態
+    // CheckAuthenticateStatus
     builder
       .addCase(checkAuthStatus.pending, state => {
         state.isLoading = true;
@@ -260,7 +260,7 @@ const _authSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 更新用戶資料
+    // UpdateUser資料
     builder
       .addCase(updateUserProfile.pending, state => {
         state.isLoading = true;
@@ -281,10 +281,10 @@ const _authSlice = createSlice({
   },
 });
 
-// 導出actions
+// Exportactions
 export const { clearError, setUser, setToken, resetAuth } = authSlice.actions;
 
-// 導出selectors
+// Exportselectors
 export const _selectAuth = (state: { auth: AuthState }) => state.auth;
 export const _selectUser = (state: { auth: AuthState }) => state.auth.user;
 export const _selectToken = (state: { auth: AuthState }) => state.auth.token;
@@ -294,5 +294,5 @@ export const _selectIsLoading = (state: { auth: AuthState }) =>
   state.auth.isLoading;
 export const _selectError = (state: { auth: AuthState }) => state.auth.error;
 
-// 導出reducer
+// Exportreducer
 export default authSlice.reducer;

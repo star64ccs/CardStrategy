@@ -21,7 +21,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getCollectionStats', () => {
-    it('應該成功獲取數據收集統計', async () => {
+    it('應該SuccessGet數據收集統計', async () => {
       const _mockResponse = {
         data: {
           totalRecords: 1000,
@@ -53,7 +53,7 @@ describe('DataQualityService', () => {
   });
 
   describe('startDataCollection', () => {
-    it('應該成功啟動數據收集', async () => {
+    it('應該Success啟動數據收集', async () => {
       const _mockResponse = {
         data: {
           status: 'started',
@@ -72,7 +72,7 @@ describe('DataQualityService', () => {
   });
 
   describe('assignAnnotationTasks', () => {
-    it('應該成功分配註釋任務', async () => {
+    it('應該Success分配註釋任務', async () => {
       const _options = { annotatorId: 1, taskCount: 10 };
       const _mockResponse = {
         data: {
@@ -97,7 +97,7 @@ describe('DataQualityService', () => {
   });
 
   describe('learnFromResults', () => {
-    it('應該成功從結果中學習', async () => {
+    it('應該Success從結果中學習', async () => {
       const _request = {
         annotationId: 1,
         learningType: 'pattern_recognition',
@@ -124,7 +124,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getAssignmentConfig', () => {
-    it('應該成功獲取分配配置', async () => {
+    it('應該SuccessGet分配Configure', async () => {
       const _mockResponse = {
         data: {
           config: {
@@ -148,7 +148,7 @@ describe('DataQualityService', () => {
   });
 
   describe('updateAssignmentConfig', () => {
-    it('應該成功更新分配配置', async () => {
+    it('應該SuccessUpdate分配Configure', async () => {
       const _config = { maxTasksPerAnnotator: 75 };
       const _mockResponse = {
         data: {
@@ -170,7 +170,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getAnnotatorDetails', () => {
-    it('應該成功獲取註釋者詳情', async () => {
+    it('應該SuccessGet註釋者詳情', async () => {
       const _mockResponse = {
         data: {
           annotators: [
@@ -217,7 +217,7 @@ describe('DataQualityService', () => {
   });
 
   describe('submitAnnotation', () => {
-    it('應該成功提交註釋', async () => {
+    it('應該Success提交註釋', async () => {
       const _annotationId = 1;
       const _annotationResult = {
         label: 'card',
@@ -255,7 +255,7 @@ describe('DataQualityService', () => {
   });
 
   describe('reviewAnnotation', () => {
-    it('應該成功審查註釋', async () => {
+    it('應該Success審查註釋', async () => {
       const _annotationId = 1;
       const _reviewStatus = 'approved';
       const _reviewNotes = 'Good quality annotation';
@@ -291,7 +291,7 @@ describe('DataQualityService', () => {
   });
 
   describe('batchReviewAnnotations', () => {
-    it('應該成功批量審查註釋', async () => {
+    it('應該Success批量審查註釋', async () => {
       const _reviews = [
         { annotationId: 1, reviewStatus: 'approved', reviewNotes: 'Good' },
         {
@@ -325,7 +325,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getAnnotationStats', () => {
-    it('應該成功獲取註釋統計', async () => {
+    it('應該SuccessGet註釋統計', async () => {
       const _mockResponse = {
         data: {
           totalAnnotators: 10,
@@ -345,7 +345,7 @@ describe('DataQualityService', () => {
   });
 
   describe('performDataCleaning', () => {
-    it('應該成功執行數據清理', async () => {
+    it('應該Success執行數據清理', async () => {
       const _mockResponse = {
         data: {
           status: 'completed',
@@ -366,7 +366,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getQualityMetrics', () => {
-    it('應該成功獲取質量指標', async () => {
+    it('應該SuccessGet質量指標', async () => {
       const _mockResponse = {
         data: [
           {
@@ -410,7 +410,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getQualityReport', () => {
-    it('應該成功獲取質量報告', async () => {
+    it('應該SuccessGet質量報告', async () => {
       const _startDate = '2024-01-01';
       const _endDate = '2024-01-31';
       const _mockResponse = {
@@ -440,7 +440,7 @@ describe('DataQualityService', () => {
   });
 
   describe('performQualityImprovement', () => {
-    it('應該成功執行質量改進', async () => {
+    it('應該Success執行質量改進', async () => {
       const _mockResponse = {
         data: {
           status: 'completed',
@@ -462,7 +462,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getRecommendations', () => {
-    it('應該成功獲取改進建議', async () => {
+    it('應該SuccessGet改進建議', async () => {
       const _mockResponse = {
         data: {
           recommendations: [
@@ -488,7 +488,7 @@ describe('DataQualityService', () => {
   });
 
   describe('exportStatsReport', () => {
-    it('應該成功導出統計報告', async () => {
+    it('應該Success導出統計報告', async () => {
       const _options = { format: 'pdf', includeCharts: true };
       const _mockBlob = new Blob(['report data'], { type: 'application/pdf' });
       const _mockResponse = { data: mockBlob };
@@ -508,7 +508,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getRealTimeStats', () => {
-    it('應該成功獲取實時統計', async () => {
+    it('應該SuccessGet實時統計', async () => {
       const _mockResponse = {
         data: {
           currentProcessing: 15,
@@ -530,7 +530,7 @@ describe('DataQualityService', () => {
   });
 
   describe('setCollectionAlerts', () => {
-    it('應該成功設置收集警報', async () => {
+    it('應該SuccessSettings收集警報', async () => {
       const _alerts = {
         qualityThreshold: 80,
         enableNotifications: true,
@@ -555,7 +555,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getCollectionAlerts', () => {
-    it('應該成功獲取收集警報', async () => {
+    it('應該SuccessGet收集警報', async () => {
       const _mockResponse = {
         data: {
           alerts: [
@@ -579,7 +579,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getDashboardData', () => {
-    it('應該成功獲取儀表板數據', async () => {
+    it('應該SuccessGet儀表板數據', async () => {
       const _options = { timeRange: '7d', includeTrends: true };
       const _mockResponse = {
         data: {
@@ -605,7 +605,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getRealTimeAlerts', () => {
-    it('應該成功獲取實時警報', async () => {
+    it('應該SuccessGet實時警報', async () => {
       const _mockResponse = {
         data: [
           {
@@ -627,7 +627,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getOverallMetrics', () => {
-    it('應該成功獲取整體指標', async () => {
+    it('應該SuccessGet整體指標', async () => {
       const _options = { timeRange: '30d' };
       const _mockResponse = {
         data: {
@@ -651,7 +651,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getTrendData', () => {
-    it('應該成功獲取趨勢數據', async () => {
+    it('應該SuccessGet趨勢數據', async () => {
       const _options = { metric: 'quality_score', period: '7d' };
       const _mockResponse = {
         data: {
@@ -674,7 +674,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getSourceBreakdown', () => {
-    it('應該成功獲取來源分析', async () => {
+    it('應該SuccessGet來源分析', async () => {
       const _startDate = '2024-01-01';
       const _endDate = '2024-01-31';
       const _mockResponse = {
@@ -702,7 +702,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getQualityDistribution', () => {
-    it('應該成功獲取質量分佈', async () => {
+    it('應該SuccessGet質量分佈', async () => {
       const _startDate = '2024-01-01';
       const _endDate = '2024-01-31';
       const _mockResponse = {
@@ -731,7 +731,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getAnnotatorPerformance', () => {
-    it('應該成功獲取註釋者表現', async () => {
+    it('應該SuccessGet註釋者表現', async () => {
       const _startDate = '2024-01-01';
       const _endDate = '2024-01-31';
       const _mockResponse = {
@@ -770,7 +770,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getRecentIssues', () => {
-    it('應該成功獲取最近問題', async () => {
+    it('應該SuccessGet最近問題', async () => {
       const _startDate = '2024-01-01';
       const _endDate = '2024-01-31';
       const _mockResponse = {
@@ -802,7 +802,7 @@ describe('DataQualityService', () => {
   });
 
   describe('getImprovementSuggestions', () => {
-    it('應該成功獲取改進建議', async () => {
+    it('應該SuccessGet改進建議', async () => {
       const _mockResponse = {
         data: {
           suggestions: [
@@ -830,8 +830,8 @@ describe('DataQualityService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該處理API錯誤', async () => {
+  describe('ErrorHandle', () => {
+    it('應該HandleAPIError', async () => {
       const _error = new Error('API Error');
       mockApi.get.mockRejectedValue(error);
 
@@ -840,7 +840,7 @@ describe('DataQualityService', () => {
       );
     });
 
-    it('應該處理網絡錯誤', async () => {
+    it('應該Handle網絡Error', async () => {
       const _error = new Error('Network Error');
       mockApi.get.mockRejectedValue(error);
 
@@ -861,7 +861,7 @@ describe('DataQualityService', () => {
 
       mockApi.post.mockResolvedValue(mockResponse);
 
-      // 測試空參數
+      // TestEmptyParameter
       await dataQualityService.submitAnnotation(1, {}, 0.5);
       expect(mockApi.post).toHaveBeenCalledWith(
         '/data-quality/annotate/submit',

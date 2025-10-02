@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -53,7 +53,7 @@ class OptimizationTester {
     };
   }
 
-  // 1. 檢查配置文件
+  // 1. CheckConfigureFile
   async checkConfigFiles() {
     log.header('⚙️ 檢查配置文件');
 
@@ -83,9 +83,9 @@ class OptimizationTester {
     return allExist;
   }
 
-  // 2. 檢查服務器文件
+  // 2. CheckServerFile
   async checkServerFiles() {
-    log.header('🔧 檢查服務器文件');
+    log.header('🔧 CheckServer文件');
 
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -100,14 +100,14 @@ class OptimizationTester {
       if (fs.existsSync(filePath)) {
         log.success(`✅ ${file} 存在`);
 
-        // 檢查 package.json 是否已更新
+        // Check package.json YesNo已Update
         const packagePath = path.join(this.backendDir, 'package.json');
         if (fs.existsSync(packagePath)) {
           const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
           if (packageJson.scripts.start === 'node src/server-unified.js') {
-            log.success('✅ package.json 已更新為使用統一服務器');
+            log.success('✅ package.json 已Update為使用統一Server');
           } else {
-            log.warning('⚠️ package.json 未更新為使用統一服務器');
+            log.warning('⚠️ package.json 未Update為使用統一Server');
             allExist = false;
           }
         }
@@ -121,7 +121,7 @@ class OptimizationTester {
     return allExist;
   }
 
-  // 3. 檢查文檔結構
+  // 3. CheckDocumentation結構
   async checkDocumentation() {
     log.header('📚 檢查文檔結構');
 
@@ -145,7 +145,7 @@ class OptimizationTester {
       }
     }
 
-    // 檢查備份目錄
+    // CheckBackupDirectory
     const backupDir = path.join(this.projectRoot, 'docs-backup');
     if (fs.existsSync(backupDir)) {
       const backupFiles = fs.readdirSync(backupDir);
@@ -158,7 +158,7 @@ class OptimizationTester {
     return allExist;
   }
 
-  // 4. 檢查依賴
+  // 4. Check依賴
   async checkDependencies() {
     log.header('📦 檢查依賴');
 
@@ -166,7 +166,7 @@ class OptimizationTester {
     if (fs.existsSync(packagePath)) {
       const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 
-      // 檢查必要的依賴
+      // Check必要的依賴
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
       const requiredDeps = [
@@ -196,13 +196,13 @@ class OptimizationTester {
     }
   }
 
-  // 5. 檢查性能優化
+  // 5. Check性能優化
   async checkPerformanceOptimizations() {
     log.header('⚡ 檢查性能優化');
 
     const optimizations = [
       {
-        name: '數據庫連接池配置',
+        name: '數據庫Connect池Configure',
         file: 'src/config/database-optimized.js',
         check: (content) =>
           content.includes('pool:') && content.includes('max:'),
@@ -246,7 +246,7 @@ class OptimizationTester {
     return allOptimized;
   }
 
-  // 6. 生成測試報告
+  // 6. 生成TestReport
   generateReport() {
     log.header('📊 優化效果測試報告');
 
@@ -260,11 +260,11 @@ class OptimizationTester {
 # 優化效果測試報告
 
 ## 📈 測試結果
-- 配置文件檢查: ${this.results.configFiles ? '✅ 通過' : '❌ 失敗'}
-- 服務器文件檢查: ${this.results.serverFiles ? '✅ 通過' : '❌ 失敗'}
-- 文檔結構檢查: ${this.results.documentation ? '✅ 通過' : '❌ 失敗'}
-- 依賴檢查: ${this.results.dependencies ? '✅ 通過' : '❌ 失敗'}
-- 性能優化檢查: ${this.results.performance ? '✅ 通過' : '❌ 失敗'}
+- 配置文件檢查: ${this.results.configFiles ? '✅ 通過' : '❌ Failed'}
+- 服務器文件檢查: ${this.results.serverFiles ? '✅ 通過' : '❌ Failed'}
+- 文檔結構檢查: ${this.results.documentation ? '✅ 通過' : '❌ Failed'}
+- 依賴檢查: ${this.results.dependencies ? '✅ 通過' : '❌ Failed'}
+- 性能優化檢查: ${this.results.performance ? '✅ 通過' : '❌ Failed'}
 
 ## 📊 成功率
 - 總測試數: ${totalTests}
@@ -299,7 +299,7 @@ ${this.generateRecommendations()}
     }
 
     if (!this.results.serverFiles) {
-      recommendations.push('- 檢查並修復服務器文件創建問題');
+      recommendations.push('- Check並修復Server文件Create問題');
     }
 
     if (!this.results.documentation) {
@@ -321,7 +321,7 @@ ${this.generateRecommendations()}
     return recommendations.join('\n');
   }
 
-  // 執行所有測試
+  // 執Row所有Test
   async run() {
     log.header('🚀 開始優化效果測試');
 
@@ -336,13 +336,13 @@ ${this.generateRecommendations()}
       log.header('🎉 優化效果測試完成！');
       log.success('請查看 OPTIMIZATION_TEST_REPORT.md 了解詳細結果');
     } catch (error) {
-      log.error(`測試過程中發生錯誤: ${error.message}`);
+      log.error(`測試過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行測試
+// 執RowTest
 if (require.main === module) {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars

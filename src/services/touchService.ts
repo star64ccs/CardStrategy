@@ -11,16 +11,16 @@ import type {
 } from '../types/touch';
 
 /**
- * 觸控服務類 - 單例模式
- * 負責管理觸控手勢、反饋效果、滾動優化和性能監控
+ * 觸控ServiceClass - 單例模式
+ * 負責Manage觸控手勢、反饋效果、滾動優化和性能Monitor
  */
 class TouchServiceClass {
   private static instance: TouchServiceClass;
 
-  // 配置
+  // Configure
   private config: TouchServiceConfig;
 
-  // 註冊的組件
+  // Register的Component
   private readonly gestureComponents: Map<string, TouchGestureConfig> =
     new Map();
   private readonly feedbackComponents: Map<string, TouchFeedbackConfig> =
@@ -28,13 +28,13 @@ class TouchServiceClass {
   private readonly scrollComponents: Map<string, ScrollOptimizationConfig> =
     new Map();
 
-  // 事件監聽器
+  // Event監聽器
   private readonly eventListeners: ((event: TouchServiceEvent) => void)[] = [];
 
-  // 性能監控數據
+  // 性能MonitorData
   private readonly performanceData: Map<string, any> = new Map();
 
-  // 測試設備配置
+  // Test設備Configure
   private readonly testDevices = {
     mobile: {
       ios: { width: 375, height: 812, pixelRatio: 3 },
@@ -101,7 +101,7 @@ class TouchServiceClass {
     return TouchServiceClass.instance;
   }
 
-  // 手勢管理
+  // 手勢Manage
   public registerGesture(
     componentId: string,
     config: TouchGestureConfig
@@ -127,7 +127,7 @@ class TouchServiceClass {
     return this.gestureComponents.get(componentId) || null;
   }
 
-  // 反饋管理
+  // 反饋Manage
   public registerFeedback(
     componentId: string,
     config: TouchFeedbackConfig
@@ -179,7 +179,7 @@ class TouchServiceClass {
     return this.scrollComponents.get(componentId) || null;
   }
 
-  // 測試功能
+  // Test功能
   public async runTouchTest(config: TouchTestConfig): Promise<TouchTestResult> {
     const _startTime = Date.now();
     const result: TouchTestResult = {
@@ -210,12 +210,12 @@ class TouchServiceClass {
     };
 
     try {
-      // 測試手勢
+      // Test手勢
       for (const gesture of config.gestures) {
         result.gestures[gesture] = await this.testGesture(gesture, config);
       }
 
-      // 測試反饋
+      // Test反饋
       for (const feedbackType of config.feedbackTypes) {
         result.feedback[feedbackType] = await this.testFeedback(
           feedbackType,
@@ -223,17 +223,17 @@ class TouchServiceClass {
         );
       }
 
-      // 測試滾動優化
+      // Test滾動優化
       if (config.scrollOptimization) {
         result.scroll = await this.testScrollOptimization(config);
       }
 
-      // 測試性能
+      // Test性能
       if (config.performance) {
         result.performance = await this.testPerformance(config);
       }
 
-      // 測試可訪問性
+      // Test可訪問性
       if (config.accessibility) {
         result.accessibility = await this.testAccessibility(config);
       }
@@ -242,9 +242,9 @@ class TouchServiceClass {
       result.overall = this.calculateOverallScore(result);
     } catch (error) {
       console.error('Touch test failed:', error);
-      // 將錯誤信息添加到建議中
+      // 將ErrorInformationAdd到建議中
       result.overall.recommendations.push(
-        `測試失敗: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `測試Failed: ${error instanceof Error ? error.message : 'Unknown error'}`
       );
     }
 
@@ -259,7 +259,7 @@ class TouchServiceClass {
     report += `生成時間: ${new Date().toLocaleString()}\n`;
     report += `測試設備數量: ${results.length}\n\n`;
 
-    // 統計信息
+    // StatisticsInformation
     const _totalScore = results.reduce(
       (sum, result) => sum + result.overall.score,
       0
@@ -276,7 +276,7 @@ class TouchServiceClass {
       report += `## 設備 ${index + 1}: ${result.deviceType} (${result.platform})\n`;
       report += `- 總分: ${result.overall.score}/100\n\n`;
 
-      // 手勢測試結果
+      // 手勢Test結果
       if (Object.keys(result.gestures).length > 0) {
         report += `### 手勢測試\n`;
         Object.entries(result.gestures).forEach(([gesture, data]) => {
@@ -286,7 +286,7 @@ class TouchServiceClass {
         report += '\n';
       }
 
-      // 反饋測試結果
+      // 反饋Test結果
       if (Object.keys(result.feedback).length > 0) {
         report += `### 反饋測試\n`;
         Object.entries(result.feedback).forEach(([feedback, data]) => {
@@ -296,7 +296,7 @@ class TouchServiceClass {
         report += '\n';
       }
 
-      // 滾動測試結果
+      // 滾動Test結果
       if (result.scroll) {
         report += `### 滾動優化\n`;
         report += `- 流暢度: ${result.scroll.smoothness}/10\n`;
@@ -305,7 +305,7 @@ class TouchServiceClass {
         report += `- 彈跳效果: ${result.scroll.bounce ? '✅' : '❌'}\n\n`;
       }
 
-      // 性能測試結果
+      // 性能Test結果
       if (result.performance) {
         report += `### 性能測試\n`;
         report += `- FPS: ${result.performance.fps}\n`;
@@ -313,7 +313,7 @@ class TouchServiceClass {
         report += `- CPU使用: ${result.performance.cpuUsage}%\n\n`;
       }
 
-      // 可訪問性測試結果
+      // 可訪問性Test結果
       if (result.accessibility) {
         report += `### 可訪問性測試\n`;
         report += `- 鍵盤支持: ${result.accessibility.keyboardSupport ? '✅' : '❌'}\n`;
@@ -334,7 +334,7 @@ class TouchServiceClass {
     return report;
   }
 
-  // 性能監控
+  // 性能Monitor
   public trackPerformance(componentId: string, metrics: unknown): void {
     this.performanceData.set(componentId, {
       ...metrics,
@@ -377,7 +377,7 @@ class TouchServiceClass {
     return report;
   }
 
-  // 事件管理
+  // EventManage
   public onEvent(callback: (event: TouchServiceEvent) => void): void {
     this.eventListeners.push(callback);
   }
@@ -392,7 +392,7 @@ class TouchServiceClass {
     });
   }
 
-  // 配置管理
+  // ConfigureManage
   public updateConfig(config: Partial<TouchServiceConfig>): void {
     this.config = {
       ...this.config,
@@ -404,7 +404,7 @@ class TouchServiceClass {
     return { ...this.config };
   }
 
-  // 私有方法：測試手勢
+  // PrivateMethod：Test手勢
   private async testGesture(
     gesture: TouchGestureType,
     config: TouchTestConfig
@@ -412,7 +412,7 @@ class TouchServiceClass {
     const _startTime = Date.now();
 
     try {
-      // 模擬手勢測試
+      // 模擬手勢Test
       await new Promise(resolve => setTimeout(resolve, 100));
 
       const _latency = Date.now() - startTime;
@@ -433,7 +433,7 @@ class TouchServiceClass {
     }
   }
 
-  // 私有方法：測試反饋
+  // PrivateMethod：Test反饋
   private async testFeedback(
     feedbackType: TouchFeedbackType,
     config: TouchTestConfig
@@ -441,7 +441,7 @@ class TouchServiceClass {
     const _startTime = Date.now();
 
     try {
-      // 模擬反饋測試
+      // 模擬反饋Test
       await new Promise(resolve => setTimeout(resolve, 50));
 
       const _duration = Date.now() - startTime;
@@ -462,11 +462,11 @@ class TouchServiceClass {
     }
   }
 
-  // 私有方法：測試滾動優化
+  // PrivateMethod：Test滾動優化
   private async testScrollOptimization(config: TouchTestConfig): Promise<any> {
     try {
       const _smoothness = Math.random() * 3 + 7; // 7-10 流暢度
-      const _responsiveness = Math.random() * 3 + 7; // 7-10 響應性
+      const _responsiveness = Math.random() * 3 + 7; // 7-10 Response性
 
       return {
         smoothness: Math.round(smoothness),
@@ -485,7 +485,7 @@ class TouchServiceClass {
     }
   }
 
-  // 私有方法：測試性能
+  // PrivateMethod：Test性能
   private async testPerformance(config: TouchTestConfig): Promise<any> {
     try {
       const _fps = Math.random() * 20 + 50; // 50-70 FPS
@@ -507,7 +507,7 @@ class TouchServiceClass {
     }
   }
 
-  // 私有方法：測試可訪問性
+  // PrivateMethod：Test可訪問性
   private async testAccessibility(config: TouchTestConfig): Promise<any> {
     try {
       return {
@@ -525,7 +525,7 @@ class TouchServiceClass {
     }
   }
 
-  // 私有方法：計算總分
+  // PrivateMethod：計算總分
   private calculateOverallScore(result: TouchTestResult): {
     score: number;
     recommendations: string[];
@@ -534,7 +534,7 @@ class TouchServiceClass {
     const recommendations: string[] = [];
     let totalTests = 0;
 
-    // 手勢測試分數 (30%)
+    // 手勢Test分數 (30%)
     const _gestureTests = Object.values(result.gestures);
     if (gestureTests.length > 0) {
       const _gestureScore =
@@ -555,7 +555,7 @@ class TouchServiceClass {
       }
     }
 
-    // 反饋測試分數 (25%)
+    // 反饋Test分數 (25%)
     const _feedbackTests = Object.values(result.feedback);
     if (feedbackTests.length > 0) {
       const _feedbackScore =
@@ -576,7 +576,7 @@ class TouchServiceClass {
       }
     }
 
-    // 滾動測試分數 (20%)
+    // 滾動Test分數 (20%)
     if (result.scroll) {
       const _scrollScore =
         (result.scroll.smoothness + result.scroll.responsiveness) * 5;
@@ -588,7 +588,7 @@ class TouchServiceClass {
       }
     }
 
-    // 性能測試分數 (15%)
+    // 性能Test分數 (15%)
     if (result.performance) {
       const _fpsScore = Math.min(100, result.performance.fps * 1.4);
       const _memoryScore = Math.max(
@@ -606,7 +606,7 @@ class TouchServiceClass {
       }
     }
 
-    // 可訪問性測試分數 (10%)
+    // 可訪問性Test分數 (10%)
     if (result.accessibility) {
       const _accessibilityScore =
         [
@@ -623,7 +623,7 @@ class TouchServiceClass {
       }
     }
 
-    // 如果沒有測試，返回默認分數
+    // 如果沒有Test，ReturnDefault分數
     if (totalTests === 0) {
       score = 0;
       recommendations.push('需要執行觸控測試');
@@ -636,8 +636,8 @@ class TouchServiceClass {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _touchService = TouchServiceClass.getInstance();
 
-// 導出類型
+// ExportClass型
 export type { TouchService } from '../types/touch';

@@ -1,0 +1,220 @@
+/**
+ * 統一錯誤處理工具
+ */
+
+export interface AppError {
+  code: string;
+  message: string;
+  details?: any;
+  stack?: string;
+  timestamp: Date;
+  userId?: string;
+  context?: any;
+}
+
+export interface ValidationError {
+  field: string;
+  message: string;
+  code: string;
+}
+
+export class ErrorHandler {
+  /**
+   * 處理未知錯誤類型
+   */
+  static handleUnknownError(error: any, context?: string): AppError {
+    const timestamp = new Date();
+
+    if (error instanceof Error) {
+      return {
+        code: 'UNKNOWN_ERROR',
+        message: error.message,
+        details: { context, originalError: error },
+        stack: error.stack,
+        timestamp,
+      };
+    }
+
+    if (typeof error === 'string') {
+      return {
+        code: 'STRING_ERROR',
+        message: error,
+        details: { context },
+        timestamp,
+      };
+    }
+
+    return {
+      code: 'UNKNOWN_TYPE_ERROR',
+      message: 'An unknown error occurred',
+      details: { context, error },
+      timestamp,
+    };
+  }
+
+  /**
+   * 處理API錯誤
+   */
+  static handleApiError(error: any, context?: string): AppError {
+    const timestamp = new Date();
+
+    if (error?.response?.data) {
+      return {
+        code: error.response.data.code || 'API_ERROR',
+        message:
+          error.response.data.message ||
+          error.response.data.error ||
+          'API request failed',
+        details: {
+          context,
+          status: error.response.status,
+          url: error.config?.url,
+          method: error.config?.method,
+          data: error.response.data,
+        },
+        timestamp,
+      };
+    }
+
+    if (error?.message) {
+      return {
+        code: 'NETWORK_ERROR',
+        message: error.message,
+        details: { context, originalError: error },
+        timestamp,
+      };
+    }
+
+    return this.handleUnknownError(error, context);
+  }
+
+  /**
+   * 處理驗證錯誤
+   */
+  static handleValidationError(
+    error: any,
+    context?: string
+  ): ValidationError[] {
+    if (Array.isArray(error)) {
+      return error.map(err => ({
+        field: err.field || 'unknown',
+        message: err.message || 'Validation failed',
+        code: err.code || 'VALIDATION_ERROR',
+      }));
+    }
+
+    if (error?.details) {
+      return error.details.map((err: any) => ({
+        field: err.path?.join('.') || 'unknown',
+        message: err.message || 'Validation failed',
+        code: err.type || 'VALIDATION_ERROR',
+      }));
+    }
+
+    return [
+      {
+        field: 'unknown',
+        message: error?.message || 'Validation failed',
+        code: 'VALIDATION_ERROR',
+      },
+    ];
+  }
+
+  /**
+   * 檢查是否為特定錯誤類型
+   */
+  static isNetworkError(error: any): boolean {
+    return (
+      error?.code === 'NETWORK_ERROR' ||
+      error?.message?.includes('Network Error') ||
+      error?.message?.includes('timeout')
+    );
+  }
+
+  static isValidationError(error: any): boolean {
+    return (
+      error?.code === 'VALIDATION_ERROR' ||
+      Array.isArray(error) ||
+      error?.details
+    );
+  }
+
+  static isAuthError(error: any): boolean {
+    return (
+      error?.code === 'AUTH_ERROR' ||
+      error?.response?.status === 401 ||
+      error?.response?.status === 403
+    );
+  }
+
+  /**
+   * 獲取用戶友好的錯誤消息
+   */
+  static getUserFriendlyMessage(error: AppError): string {
+    const messages: Record<string, string> = {
+      NETWORK_ERROR: '網絡連接失敗，請檢查您的網絡連接',
+      AUTH_ERROR: '認證失敗，請重新登錄',
+      VALIDATION_ERROR: '輸入數據不正確，請檢查後重試',
+      API_ERROR: '服務暫時不可用，請稍後重試',
+      UNKNOWN_ERROR: '發生未知錯誤，請聯繫技術支持',
+    };
+
+    return messages[error.code] || error instanceof Error
+      ? error.message
+      : '發生未知錯誤';
+  }
+
+  /**
+   * 記錄錯誤
+   */
+  static logError(error: AppError, logger?: any): void {
+    if (logger) {
+      logger.error('Application Error:', {
+        code: error.code,
+        message: error.message,
+        details: error.details,
+        stack: error.stack,
+        timestamp: error.timestamp,
+        userId: error.userId,
+        context: error.context,
+      });
+    } else {
+      console.error('Application Error:', error);
+    }
+  }
+}
+
+/**
+ * 錯誤處理裝飾器
+ */
+export function withErrorHandling<T extends any[], R>(
+  fn: (...args: T) => Promise<R>,
+  context?: string
+) {
+  return async (...args: T): Promise<R> => {
+    try {
+      return await fn(...args);
+    } catch (error) {
+      const appError = ErrorHandler.handleApiError(error, context);
+      ErrorHandler.logError(appError);
+      throw appError;
+    }
+  };
+}
+
+/**
+ * 錯誤處理 Hook（用於 React）
+ */
+export function useErrorHandler() {
+  const handleError = (error: any, context?: string) => {
+    const appError = ErrorHandler.handleUnknownError(error, context);
+    const userMessage = ErrorHandler.getUserFriendlyMessage(appError);
+
+    // 這裡可以集成到狀態管理或通知系統
+    console.error('Error handled:', { appError, userMessage });
+
+    return { appError, userMessage };
+  };
+
+  return { handleError };
+}

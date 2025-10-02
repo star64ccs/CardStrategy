@@ -7,7 +7,7 @@ import type {
 import { incrementalSyncService } from '../services/incrementalSyncService';
 
 /**
- * 增量同步 Hook 選項
+ * 增量Sync Hook Options
  */
 export interface UseIncrementalSyncOptions {
   userId: string;
@@ -24,10 +24,10 @@ export interface UseIncrementalSyncOptions {
 }
 
 /**
- * 增量同步 Hook 返回值
+ * 增量Sync Hook ReturnValue
  */
 export interface UseIncrementalSyncReturn {
-  // 狀態
+  // Status
   syncState: IncrementalSyncState;
   isSyncing: boolean;
   syncMode: 'incremental' | 'full' | 'idle';
@@ -36,7 +36,7 @@ export interface UseIncrementalSyncReturn {
   stats: unknown;
   currentBatch: unknown;
 
-  // 方法
+  // Method
   initialize: (userId: string, deviceId: string) => Promise<void>;
   configure: (config: Partial<IncrementalSyncConfig>) => void;
   addSyncItem: (
@@ -64,8 +64,8 @@ export interface UseIncrementalSyncReturn {
 }
 
 /**
- * 增量同步 Hook
- * 提供高效的增量數據同步功能
+ * 增量Sync Hook
+ * 提供高效的增量DataSync功能
  */
 export const _useIncrementalSync = (
   options: UseIncrementalSyncOptions
@@ -90,13 +90,13 @@ export const _useIncrementalSync = (
   const _isInitialized = useRef(false);
   const _eventListeners = useRef<Map<string, () => void>>(new Map());
 
-  // 更新同步狀態
+  // UpdateSyncStatus
   const _updateSyncState = useCallback(() => {
     const _state = incrementalSyncService.getSyncState();
     setSyncState(state);
   }, []);
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(
     async (userId: string, deviceId: string) => {
       if (isInitialized.current) {
@@ -108,19 +108,19 @@ export const _useIncrementalSync = (
         isInitialized.current = true;
         updateSyncState();
       } catch (error) {
-        console.error('增量同步初始化失敗:', error);
+        console.error('增量同步InitializeFailed:', error);
         throw error;
       }
     },
     [updateSyncState]
   );
 
-  // 配置同步設置
+  // ConfigureSyncSettings
   const _configure = useCallback((config: Partial<IncrementalSyncConfig>) => {
     incrementalSyncService.configure(config);
   }, []);
 
-  // 添加同步項目
+  // AddSync項目
   const _addSyncItem = useCallback(
     async (
       key: string,
@@ -141,7 +141,7 @@ export const _useIncrementalSync = (
     [updateSyncState]
   );
 
-  // 批量添加同步項目
+  // BatchAddSync項目
   const _addBatchSyncItems = useCallback(
     async (
       items: {
@@ -158,31 +158,31 @@ export const _useIncrementalSync = (
     [updateSyncState]
   );
 
-  // 觸發同步
+  // 觸發Sync
   const _triggerSync = useCallback(async () => {
     await incrementalSyncService.triggerSync();
     updateSyncState();
   }, [updateSyncState]);
 
-  // 觸發全量同步
+  // 觸發全量Sync
   const _triggerFullSync = useCallback(async () => {
     await incrementalSyncService.triggerFullSync();
     updateSyncState();
   }, [updateSyncState]);
 
-  // 重試失敗的項目
+  // RetryFailed的項目
   const _retryFailedItems = useCallback(async () => {
     await incrementalSyncService.retryFailedItems();
     updateSyncState();
   }, [updateSyncState]);
 
-  // 清除同步錯誤
+  // ClearSyncError
   const _clearError = useCallback(() => {
     incrementalSyncService.clearError();
     updateSyncState();
   }, [updateSyncState]);
 
-  // 清理過期的同步項目
+  // 清理過期的Sync項目
   const _cleanupExpiredItems = useCallback(
     async (maxAge?: number) => {
       await incrementalSyncService.cleanupExpiredItems(maxAge);
@@ -191,13 +191,13 @@ export const _useIncrementalSync = (
     [updateSyncState]
   );
 
-  // 銷毀服務
+  // 銷毀Service
   const _destroy = useCallback(async () => {
     await incrementalSyncService.destroy();
     isInitialized.current = false;
   }, []);
 
-  // 設置事件監聽器
+  // SettingsEvent監聽器
   useEffect(() => {
     const _listeners = [
       { event: 'syncStarted', handler: options.onSyncStarted },
@@ -213,7 +213,7 @@ export const _useIncrementalSync = (
     listeners.forEach(({ event, handler }) => {
       if (handler) {
         const _wrappedHandler = (...args: unknown[]) => {
-          // 調用事件處理器
+          // 調用EventHandle器
           if (handler) {
             handler(args);
           }
@@ -232,7 +232,7 @@ export const _useIncrementalSync = (
     };
   }, [options, updateSyncState]);
 
-  // 定期更新狀態
+  // 定期UpdateStatus
   useEffect(() => {
     const _interval = setInterval(() => {
       if (isInitialized.current) {
@@ -243,7 +243,7 @@ export const _useIncrementalSync = (
     return () => clearInterval(interval);
   }, [updateSyncState]);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (
       options.autoInitialize &&
@@ -255,7 +255,7 @@ export const _useIncrementalSync = (
     }
   }, [options.autoInitialize, options.userId, options.deviceId, initialize]);
 
-  // 組件卸載時清理
+  // ComponentUninstall時清理
   useEffect(() => {
     return () => {
       if (isInitialized.current) {
@@ -265,7 +265,7 @@ export const _useIncrementalSync = (
   }, [destroy]);
 
   return {
-    // 狀態
+    // Status
     syncState,
     isSyncing: syncState.isSyncing,
     syncMode: syncState.syncMode,
@@ -274,7 +274,7 @@ export const _useIncrementalSync = (
     stats: syncState.stats,
     currentBatch: syncState.currentBatch,
 
-    // 方法
+    // Method
     initialize,
     configure,
     addSyncItem,
@@ -289,7 +289,7 @@ export const _useIncrementalSync = (
 };
 
 /**
- * 簡化的增量同步 Hook
+ * 簡化的增量Sync Hook
  */
 export const _useSimpleIncrementalSync = (userId: string, deviceId: string) => {
   const { syncState, addSyncItem, triggerSync, clearError } =
@@ -311,7 +311,7 @@ export const _useSimpleIncrementalSync = (userId: string, deviceId: string) => {
 };
 
 /**
- * 卡片數據增量同步 Hook
+ * 卡片Data增量Sync Hook
  */
 export const _useCardIncrementalSync = (userId: string, deviceId: string) => {
   const { syncState, addSyncItem, addBatchSyncItems, triggerSync, clearError } =
@@ -365,7 +365,7 @@ export const _useCardIncrementalSync = (userId: string, deviceId: string) => {
 };
 
 /**
- * 用戶設置增量同步 Hook
+ * UserSettings增量Sync Hook
  */
 export const _useUserSettingsIncrementalSync = (
   userId: string,
@@ -407,7 +407,7 @@ export const _useUserSettingsIncrementalSync = (
 };
 
 /**
- * 收藏數據增量同步 Hook
+ * 收藏Data增量Sync Hook
  */
 export const _useCollectionIncrementalSync = (
   userId: string,
@@ -470,7 +470,7 @@ export const _useCollectionIncrementalSync = (
 };
 
 /**
- * 註釋數據增量同步 Hook
+ * CommentData增量Sync Hook
  */
 export const _useAnnotationIncrementalSync = (
   userId: string,

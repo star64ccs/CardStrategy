@@ -5,12 +5,12 @@ const _isIOS = () => Platform.OS === 'ios';
 const _isAndroid = () => Platform.OS === 'android';
 const _getPlatformStyles = () => ({});
 
-// 平台特定導航配置
+// 平台Specific導航Configure
 export const _getPlatformNavigationConfig = () => {
   const _platformStyles = getPlatformStyles();
 
   return {
-    // 堆疊導航器配置
+    // 堆疊導航器Configure
     stackNavigator: {
       screenOptions: {
         headerStyle: {
@@ -35,7 +35,7 @@ export const _getPlatformNavigationConfig = () => {
       },
     },
 
-    // 標籤導航器配置
+    // Tag導航器Configure
     tabNavigator: {
       screenOptions: {
         tabBarStyle: {
@@ -64,7 +64,7 @@ export const _getPlatformNavigationConfig = () => {
       },
     },
 
-    // 抽屜導航器配置
+    // 抽屜導航器Configure
     drawerNavigator: {
       screenOptions: {
         headerStyle: {
@@ -94,10 +94,10 @@ export const _getPlatformNavigationConfig = () => {
   };
 };
 
-// 平台特定動畫配置
+// 平台Specific動畫Configure
 export const _getPlatformAnimationConfig = () => {
   return {
-    // iOS 動畫配置
+    // iOS 動畫Configure
     ios: {
       // 頁面轉場動畫
       cardStyleInterpolator: ({
@@ -118,7 +118,7 @@ export const _getPlatformAnimationConfig = () => {
           ],
         },
       }),
-      // 標籤切換動畫
+      // TagSwitch動畫
       tabBarStyle: {
         transform: [
           {
@@ -128,7 +128,7 @@ export const _getPlatformAnimationConfig = () => {
       },
     },
 
-    // Android 動畫配置
+    // Android 動畫Configure
     android: {
       // 頁面轉場動畫
       cardStyleInterpolator: ({
@@ -149,7 +149,7 @@ export const _getPlatformAnimationConfig = () => {
           ],
         },
       }),
-      // 標籤切換動畫
+      // TagSwitch動畫
       tabBarStyle: {
         transform: [
           {
@@ -161,12 +161,12 @@ export const _getPlatformAnimationConfig = () => {
   };
 };
 
-// 平台特定手勢配置
+// 平台Specific手勢Configure
 export const _getPlatformGestureConfig = () => {
   return {
-    // iOS 手勢配置
+    // iOS 手勢Configure
     ios: {
-      // 滑動返回手勢
+      // 滑動Return手勢
       gestureEnabled: true,
       gestureDirection: 'horizontal',
       gestureResponseDistance: {
@@ -178,9 +178,9 @@ export const _getPlatformGestureConfig = () => {
       hapticFeedback: true,
     },
 
-    // Android 手勢配置
+    // Android 手勢Configure
     android: {
-      // 滑動返回手勢
+      // 滑動Return手勢
       gestureEnabled: true,
       gestureDirection: 'horizontal',
       gestureResponseDistance: {
@@ -194,10 +194,10 @@ export const _getPlatformGestureConfig = () => {
   };
 };
 
-// 平台特定主題配置
+// 平台SpecificThemeConfigure
 export const _getPlatformThemeConfig = () => {
   return {
-    // iOS 主題配置
+    // iOS ThemeConfigure
     ios: {
       colors: {
         primary: '#1C2B3A',
@@ -242,7 +242,7 @@ export const _getPlatformThemeConfig = () => {
       },
     },
 
-    // Android 主題配置
+    // Android ThemeConfigure
     android: {
       colors: {
         primary: '#1C2B3A',
@@ -289,67 +289,67 @@ export const _getPlatformThemeConfig = () => {
   };
 };
 
-// 平台特定無障礙配置
+// 平台Specific無障礙Configure
 export const _getPlatformAccessibilityConfig = () => {
   return {
-    // iOS 無障礙配置
+    // iOS 無障礙Configure
     ios: {
-      // VoiceOver 支持
+      // VoiceOver Support
       accessibilityLabel: (label: string) => label,
       accessibilityHint: (hint: string) => hint,
       accessibilityRole: (role: string) => role,
       accessibilityState: (state: unknown) => state,
-      // 動態字體支持
+      // Dynamic字體Support
       allowFontScaling: true,
-      // 高對比度支持
+      // 高對比度Support
       accessibilityHighContrast: true,
-      // 減少動畫支持
+      // 減少動畫Support
       accessibilityReduceMotion: true,
     },
 
-    // Android 無障礙配置
+    // Android 無障礙Configure
     android: {
-      // TalkBack 支持
+      // TalkBack Support
       accessibilityLabel: (label: string) => label,
       accessibilityHint: (hint: string) => hint,
       accessibilityRole: (role: string) => role,
       accessibilityState: (state: unknown) => state,
-      // 動態字體支持
+      // Dynamic字體Support
       allowFontScaling: true,
-      // 高對比度支持
+      // 高對比度Support
       accessibilityHighContrast: true,
-      // 減少動畫支持
+      // 減少動畫Support
       accessibilityReduceMotion: true,
-      // 顏色反轉支持
+      // 顏色反轉Support
       accessibilityColorInversion: true,
     },
   };
 };
 
-// 平台特定性能配置
+// 平台Specific性能Configure
 export const _getPlatformPerformanceConfig = () => {
   return {
-    // iOS 性能配置
+    // iOS 性能Configure
     ios: {
-      // 內存優化
+      // Memory優化
       memoryOptimization: true,
       // 電池優化
       batteryOptimization: true,
-      // 後台處理限制
+      // 後台HandleLimit
       backgroundProcessingLimit: 30,
-      // 圖片緩存大小
+      // Graph片Cache大小
       imageCacheSize: 50 * 1024 * 1024, // 50MB
     },
 
-    // Android 性能配置
+    // Android 性能Configure
     android: {
-      // 內存優化
+      // Memory優化
       memoryOptimization: true,
       // 電池優化
       batteryOptimization: true,
-      // 後台處理限制
+      // 後台HandleLimit
       backgroundProcessingLimit: 60,
-      // 圖片緩存大小
+      // Graph片Cache大小
       imageCacheSize: 100 * 1024 * 1024, // 100MB
       // RAM 優化
       ramOptimization: true,
@@ -357,7 +357,7 @@ export const _getPlatformPerformanceConfig = () => {
   };
 };
 
-// 導出所有平台導航配置
+// Export所有平台導航Configure
 export default {
   getPlatformNavigationConfig,
   getPlatformAnimationConfig,

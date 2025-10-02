@@ -38,7 +38,7 @@ export class MacauConsumerProtectionService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查基本消費者權利
+    // Check基本消費者權利
     const _requiredRights = [
       MacauConsumerRight.SAFETY,
       MacauConsumerRight.INFORMATION,
@@ -65,7 +65,7 @@ export class MacauConsumerProtectionService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查安全權
+    // Check安全權
     if (!rights.includes(MacauConsumerRight.SAFETY)) {
       violations.push({
         id: `violation_${Date.now()}_2`,
@@ -114,7 +114,7 @@ export class MacauConsumerProtectionService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查產品名稱
+    // Check產品名稱
     if (!labeling.productName || labeling.productName.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_3`,
@@ -130,7 +130,7 @@ export class MacauConsumerProtectionService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查製造商資訊
+    // Check製造商資訊
     if (!labeling.manufacturer || labeling.manufacturer.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_4`,
@@ -146,7 +146,7 @@ export class MacauConsumerProtectionService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查安全警告
+    // Check安全Warning
     if (!labeling.safetyWarnings || labeling.safetyWarnings.length === 0) {
       violations.push({
         id: `violation_${Date.now()}_5`,
@@ -162,7 +162,7 @@ export class MacauConsumerProtectionService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.MEDIUM;
     }
 
-    // 檢查使用說明
+    // Check使用Description
     if (!labeling.usageInstructions) {
       violations.push({
         id: `violation_${Date.now()}_6`,
@@ -210,7 +210,7 @@ export class MacauConsumerProtectionService {
   ): MacauConsumerComplaint {
     const _processedComplaint = { ...complaint };
 
-    // 根據投訴類型處理
+    // Root據投訴Class型Handle
     switch (complaint.complaintType) {
       case MacauDisputeType.PRODUCT_DEFECT:
         processedComplaint.status = MacauDisputeStatus.UNDER_INVESTIGATION;
@@ -230,7 +230,7 @@ export class MacauConsumerProtectionService {
         break;
       case MacauDisputeType.SERVICE_QUALITY:
         processedComplaint.status = MacauDisputeStatus.UNDER_INVESTIGATION;
-        processedComplaint.resolution = '已安排服務品質評估';
+        processedComplaint.resolution = '已安排Service品質評估';
         break;
       case MacauDisputeType.REFUND_REFUSAL:
         processedComplaint.status = MacauDisputeStatus.UNDER_INVESTIGATION;
@@ -256,7 +256,7 @@ export class MacauConsumerProtectionService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查廣告內容真實性
+    // Check廣告ContentTrue實性
     if (!advertising.content || advertising.content.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_7`,
@@ -272,7 +272,7 @@ export class MacauConsumerProtectionService {
       riskLevel = MacauRiskLevel.MEDIUM;
     }
 
-    // 檢查虛假聲明
+    // Check虛False聲明
     if (advertising.claims && advertising.claims.length > 0) {
       const _falseClaims = advertising.claims.filter(
         claim =>
@@ -299,7 +299,7 @@ export class MacauConsumerProtectionService {
       }
     }
 
-    // 檢查目標受眾
+    // Check目標受眾
     if (!advertising.targetAudience) {
       violations.push({
         id: `violation_${Date.now()}_9`,
@@ -424,14 +424,14 @@ export class MacauConsumerProtectionService {
       recommendations.push('建立消費者投訴快速處理機制');
       recommendations.push('加強產品品質控制和安全監測');
       recommendations.push('定期進行廣告內容審查');
-      recommendations.push('提供消費者教育和資訊服務');
+      recommendations.push('提供消費者教育和資訊Service');
     }
 
     return recommendations;
   }
 
   private calculateComplianceRate(violations: MacauViolation[]): number {
-    const _totalAssessments = violations.length + 10; // 假設有10個合規評估
+    const _totalAssessments = violations.length + 10; // False設有10個合規評估
     return ((totalAssessments - violations.length) / totalAssessments) * 100;
   }
 

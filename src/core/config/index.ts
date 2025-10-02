@@ -1,12 +1,12 @@
-// 核心配置索引
-// 提供應用程序的核心配置管理
+// 核心ConfigureIndex
+// 提供Apply程序的核心ConfigureManage
 
-// 服務配置
+// ServiceConfigure
 export * from './services';
 export * from './serviceManager';
 export * from './appInitializer';
 
-// 導出主要實例
+// Export主要Instance
 export { serviceConfig } from './services';
 export { serviceManager } from './serviceManager';
 export { appInitializer } from './appInitializer';

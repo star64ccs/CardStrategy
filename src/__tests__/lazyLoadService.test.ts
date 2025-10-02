@@ -1,12 +1,12 @@
-// 懶加載服務單元測試
+// 懶加載Service單元Test
 import { LazyLoadServiceImpl } from '../services/lazyLoadService';
 import { LazyLoadPriority, LazyLoadStrategy } from '../types/lazyLoading';
 
-// 模擬 React 組件
+// 模擬 React Component
 const MockComponent: React.FC = () =>
   React.createElement('div', null, 'Mock Component');
 
-// 模擬動態導入
+// 模擬DynamicImport
 jest.mock('react', () => ({
   ...jest.requireActual('react'),
   lazy: jest.fn(importFunc => {
@@ -18,7 +18,7 @@ describe('LazyLoadService', () => {
   let service: LazyLoadServiceImpl;
 
   beforeEach(() => {
-    // 重置單例
+    // Reset單例
     (LazyLoadServiceImpl as any).instance = undefined;
     service = LazyLoadServiceImpl.getInstance();
   });
@@ -28,7 +28,7 @@ describe('LazyLoadService', () => {
   });
 
   describe('初始化', () => {
-    it('應該正確初始化服務', async () => {
+    it('應該正確InitializeService', async () => {
       await service.initialize();
       const _state = service.getState();
 
@@ -74,7 +74,7 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('test-component', config);
 
-      // 驗證組件已註冊（通過嘗試加載來驗證）
+      // VerifyComponent已Register（通過嘗試加載來Verify）
       expect(() => service.loadComponent('test-component')).not.toThrow();
     });
 
@@ -87,7 +87,7 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('test-component', config);
 
-      // 模擬動態導入返回組件
+      // 模擬DynamicImportReturnComponent
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
@@ -98,7 +98,7 @@ describe('LazyLoadService', () => {
       expect(component).toBeDefined();
     });
 
-    it('應該處理組件加載錯誤', async () => {
+    it('應該Handle組件加載Error', async () => {
       const _config = {
         path: './NonExistentComponent',
         strategy: LazyLoadStrategy.IMMEDIATE,
@@ -121,7 +121,7 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('cached-component', config);
 
-      // 模擬動態導入
+      // 模擬DynamicImport
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
@@ -130,7 +130,7 @@ describe('LazyLoadService', () => {
       // 第一次加載
       const _component1 = await service.loadComponent('cached-component');
 
-      // 第二次加載應該從緩存
+      // 第二次加載應該從Cache
       const _component2 = await service.loadComponent('cached-component');
 
       expect(component1).toBe(component2);
@@ -169,7 +169,7 @@ describe('LazyLoadService', () => {
       expect(image.src).toBe(config.src);
     });
 
-    it('應該處理圖片加載錯誤', async () => {
+    it('應該Handle圖片加載Error', async () => {
       const _config = {
         src: 'https://invalid-url.com/image.jpg',
         strategy: LazyLoadStrategy.IMMEDIATE,
@@ -196,7 +196,7 @@ describe('LazyLoadService', () => {
       // 第一次加載
       const _image1 = await service.loadImage('cached-image');
 
-      // 第二次加載應該從緩存
+      // 第二次加載應該從Cache
       const _image2 = await service.loadImage('cached-image');
 
       expect(image1).toBe(image2);
@@ -235,7 +235,7 @@ describe('LazyLoadService', () => {
       expect(data).toEqual(testData);
     });
 
-    it('應該處理數據加載錯誤', async () => {
+    it('應該Handle數據加載Error', async () => {
       const _config = {
         loader: async () => {
           throw new Error('Data loading failed');
@@ -266,7 +266,7 @@ describe('LazyLoadService', () => {
       // 第一次加載
       const _data1 = await service.loadData('cached-data');
 
-      // 第二次加載應該從緩存
+      // 第二次加載應該從Cache
       const _data2 = await service.loadData('cached-data');
 
       expect(data1).toBe(data2);
@@ -287,7 +287,7 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('preload-component', config);
 
-      // 模擬動態導入
+      // 模擬DynamicImport
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
@@ -295,7 +295,7 @@ describe('LazyLoadService', () => {
 
       await service.preloadComponent('preload-component');
 
-      // 驗證預加載成功
+      // Verify預加載Success
       const _component = await service.loadComponent('preload-component');
       expect(component).toBeDefined();
     });
@@ -311,7 +311,7 @@ describe('LazyLoadService', () => {
 
       await service.preloadImage('preload-image');
 
-      // 驗證預加載成功
+      // Verify預加載Success
       const _image = await service.loadImage('preload-image');
       expect(image).toBeInstanceOf(HTMLImageElement);
     });
@@ -328,7 +328,7 @@ describe('LazyLoadService', () => {
 
       await service.preloadData('preload-data');
 
-      // 驗證預加載成功
+      // Verify預加載Success
       const _data = await service.loadData('preload-data');
       expect(data).toEqual(testData);
     });
@@ -349,28 +349,28 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('cache-test', config);
 
-      // 模擬動態導入
+      // 模擬DynamicImport
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
       jest.doMock('./TestComponent', () => mockImport);
 
-      // 加載組件
+      // 加載Component
       await service.loadComponent('cache-test');
 
-      // 清除緩存
+      // ClearCache
       service.clearCache('cache-test');
 
-      // 再次加載應該重新執行
+      // 再次加載應該Re執Row
       await service.loadComponent('cache-test');
 
-      // 驗證加載次數
+      // Verify加載次數
       const _metrics = service.getPerformanceMetrics();
       expect(metrics.totalLoads).toBe(2);
     });
 
     it('應該清除所有緩存', async () => {
-      // 註冊多個資源
+      // RegisterMultipleResource
       const _componentConfig = {
         path: './TestComponent',
         strategy: LazyLoadStrategy.IMMEDIATE,
@@ -388,17 +388,17 @@ describe('LazyLoadService', () => {
       service.registerComponent('cache-test-1', componentConfig);
       service.registerImage('cache-test-2', imageConfig);
 
-      // 模擬動態導入
+      // 模擬DynamicImport
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
       jest.doMock('./TestComponent', () => mockImport);
 
-      // 加載資源
+      // 加載Resource
       await service.loadComponent('cache-test-1');
       await service.loadImage('cache-test-2');
 
-      // 清除所有緩存
+      // Clear所有Cache
       service.clearCache();
 
       const _state = service.getState();
@@ -420,7 +420,7 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('state-test', config);
 
-      // 模擬動態導入
+      // 模擬DynamicImport
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
@@ -429,23 +429,23 @@ describe('LazyLoadService', () => {
       const _initialState = service.getState();
       expect(initialState.activeLoads).toBe(0);
 
-      // 開始加載
+      // Begin加載
       const _loadPromise = service.loadComponent('state-test');
 
-      // 檢查加載中狀態
+      // Check加載中Status
       const _loadingState = service.getState();
       expect(loadingState.activeLoads).toBe(1);
 
-      // 等待加載完成
+      // Await加載Complete
       await loadPromise;
 
-      // 檢查完成狀態
+      // CheckCompleteStatus
       const _finalState = service.getState();
       expect(finalState.activeLoads).toBe(0);
       expect(finalState.performanceMetrics.successfulLoads).toBe(1);
     });
 
-    it('應該正確暫停和恢復服務', () => {
+    it('應該正確暫停和恢復Service', () => {
       service.pause();
       let state = service.getState();
       expect(state.isPaused).toBe(true);
@@ -461,7 +461,7 @@ describe('LazyLoadService', () => {
       await service.initialize();
     });
 
-    it('應該正確記錄成功加載', async () => {
+    it('應該正確記錄Success加載', async () => {
       const _config = {
         path: './TestComponent',
         strategy: LazyLoadStrategy.IMMEDIATE,
@@ -470,7 +470,7 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('metrics-test', config);
 
-      // 模擬動態導入
+      // 模擬DynamicImport
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
@@ -485,7 +485,7 @@ describe('LazyLoadService', () => {
       expect(metrics.averageLoadTime).toBeGreaterThan(0);
     });
 
-    it('應該正確記錄失敗加載', async () => {
+    it('應該正確記錄Failed加載', async () => {
       const _config = {
         path: './NonExistentComponent',
         strategy: LazyLoadStrategy.IMMEDIATE,
@@ -497,7 +497,7 @@ describe('LazyLoadService', () => {
       try {
         await service.loadComponent('error-metrics-test');
       } catch (error) {
-        // 預期錯誤
+        // 預期Error
       }
 
       const _metrics = service.getPerformanceMetrics();
@@ -516,7 +516,7 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('cache-metrics-test', config);
 
-      // 模擬動態導入
+      // 模擬DynamicImport
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
@@ -525,7 +525,7 @@ describe('LazyLoadService', () => {
       // 第一次加載
       await service.loadComponent('cache-metrics-test');
 
-      // 第二次加載（應該命中緩存）
+      // 第二次加載（應該命中Cache）
       await service.loadComponent('cache-metrics-test');
 
       const _metrics = service.getPerformanceMetrics();
@@ -534,7 +534,7 @@ describe('LazyLoadService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       await service.initialize();
     });
@@ -556,7 +556,7 @@ describe('LazyLoadService', () => {
         src: 'https://slow-loading-image.com/image.jpg',
         strategy: LazyLoadStrategy.IMMEDIATE,
         priority: LazyLoadPriority.NORMAL,
-        timeout: 100, // 很短的超時時間
+        timeout: 100, // 很短的超時Time
       };
 
       service.registerImage('timeout-test', config);
@@ -575,13 +575,13 @@ describe('LazyLoadService', () => {
 
       service.registerComponent('cancel-test', config);
 
-      // 開始加載
+      // Begin加載
       const _loadPromise = service.loadComponent('cancel-test');
 
-      // 立即取消
+      // 立即Cancel
       service.cancelLoad('cancel-test');
 
-      // 應該被拒絕
+      // 應該被Reject
       await expect(loadPromise).rejects.toThrow();
     });
   });
@@ -600,25 +600,25 @@ describe('LazyLoadService', () => {
         priority: LazyLoadPriority.NORMAL,
       };
 
-      // 註冊多個組件
+      // RegisterMultipleComponent
       for (let i = 0; i < 3; i++) {
         service.registerComponent(`concurrent-test-${i}`, config);
       }
 
-      // 模擬動態導入
+      // 模擬DynamicImport
       const _mockImport = jest
         .fn()
         .mockResolvedValue({ default: MockComponent });
       jest.doMock('./TestComponent', () => mockImport);
 
-      // 同時開始加載
+      // 同時Begin加載
       const _promises = [
         service.loadComponent('concurrent-test-0'),
         service.loadComponent('concurrent-test-1'),
         service.loadComponent('concurrent-test-2'),
       ];
 
-      // 等待所有加載完成
+      // Await所有加載Complete
       await Promise.all(promises);
 
       const _metrics = service.getPerformanceMetrics();

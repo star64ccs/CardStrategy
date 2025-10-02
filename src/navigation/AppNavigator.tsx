@@ -6,13 +6,13 @@ import React from 'react';
 import { View } from 'react-native';
 import { useSelector } from 'react-redux';
 
-// 臨時移除原始 screen 導入，使用包裝組件
+// 臨時Remove原始 screen Import，使用Package裝Component
 // import { LoginScreen } from '../screens/LoginScreen';
 // import { RegisterScreen } from '../screens/RegisterScreen';
 import { theme } from '../config/theme';
 import type { RootState } from '../store';
 
-// 臨時 screen 組件
+// 臨時 screen Component
 const HomeScreen: React.FC = () => <div>Home Screen</div>;
 const CardsScreen: React.FC = () => <div>Cards Screen</div>;
 const CollectionsScreen: React.FC = () => <div>Collections Screen</div>;
@@ -55,7 +55,7 @@ const FakeCardTrainingScreen: React.FC = () => (
   <div>Fake Card Training Screen</div>
 );
 
-// 臨時 Login/Register 組件包裝器，符合 React Navigation 類型要求
+// 臨時 Login/Register ComponentPackage裝器，符合 React Navigation Class型要求
 const LoginScreen: React.FC = () => <div>Login Screen</div>;
 const RegisterScreen: React.FC = () => <div>Register Screen</div>;
 
@@ -85,7 +85,7 @@ const _MainTabs = () => {
 
           const _icon = <Ionicons name={iconName} size={size} color={color} />;
 
-          // 為個人頁面添加通知徽章
+          // 為個人頁面AddNotification徽章
           if (route.name === 'Profile') {
             return (
               <View style={{ position: 'relative' }}>
@@ -241,7 +241,7 @@ const _AppStack = () => {
         component={DataQualityAssessmentScreen}
         options={{ title: '數據質量評估' }}
       />
-      {/* 假卡回報相關路由 */}
+      {/* False卡回報相Off路由 */}
       <Stack.Screen
         name='FakeCardReport'
         component={FakeCardReportScreen}

@@ -10,19 +10,19 @@ import type {
 } from '../../../core/types';
 import { logger } from '../../../core/utils/logger';
 
-// iOS 特定的生物識別接口
+// iOS Specific的生物識別Interface
 interface IOSBiometricLibrary {
   // 設備能力檢測
   isSensorAvailable(): Promise<BiometricType | null>;
   getBiometryType(): Promise<'FaceID' | 'TouchID' | null>;
   isDeviceSecure(): Promise<boolean>;
 
-  // 密鑰管理
+  // 密鑰Manage
   createKeys(options?: IOSKeyOptions): Promise<boolean>;
   biometricKeysExist(): Promise<boolean>;
   deleteKeys(): Promise<boolean>;
 
-  // 認證操作
+  // AuthenticateOperation
   createSignature(
     promptMessage: string,
     payload: string
@@ -68,7 +68,7 @@ interface IOSPromptConfig {
 }
 
 /**
- * iOS 專用生物識別服務
+ * iOS 專用生物識別Service
  * 深度集成 Face ID / Touch ID 功能
  */
 export class IOSBiometricService {
@@ -90,12 +90,12 @@ export class IOSBiometricService {
   }
 
   /**
-   * 初始化 iOS 生物識別庫
+   * Initialize iOS 生物識別Library
    */
   private async initializeIOSBiometricLibrary(): Promise<void> {
     try {
       if (Platform.OS !== 'ios') {
-        throw new Error('此服務僅支持 iOS 平台');
+        throw new Error('此Service僅支持 iOS 平台');
       }
 
       this.biometricLib = await this.loadIOSBiometricLibrary();
@@ -103,18 +103,18 @@ export class IOSBiometricService {
       await this.initializeSecurityInfo();
 
       this.isInitialized = true;
-      logger.info('iOS 生物識別服務初始化成功');
+      logger.info('iOS 生物識別ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('iOS 生物識別服務初始化失敗:', error);
+      logger.error('iOS 生物識別ServiceInitializeFailed:', error);
       this.isInitialized = false;
     }
   }
 
   /**
-   * 加載 iOS 生物識別庫
+   * 加載 iOS 生物識別Library
    */
   private async loadIOSBiometricLibrary(): Promise<IOSBiometricLibrary> {
-    // 在實際應用中，這裡會導入真實的 iOS 生物識別庫
+    // 在實際Apply中，這裡會ImportTrue實的 iOS 生物識別Library
     // 例如：react-native-biometrics, react-native-touch-id 等
 
     return {
@@ -129,18 +129,18 @@ export class IOSBiometricService {
       },
 
       getBiometryType: async () => {
-        // 模擬獲取具體的生物識別類型
+        // 模擬GetConcrete的生物識別Class型
         const _hasFace = Math.random() > 0.7;
         return hasFace ? 'FaceID' : 'TouchID';
       },
 
       isDeviceSecure: async () => {
-        // 模擬檢查設備是否安全
+        // 模擬Check設備YesNo安全
         return Math.random() > 0.1;
       },
 
       createKeys: async (options?: IOSKeyOptions) => {
-        // 模擬創建密鑰
+        // 模擬Create密鑰
         logger.info(
           '創建 iOS 生物識別密鑰',
           options as Record<string, unknown>
@@ -149,18 +149,18 @@ export class IOSBiometricService {
       },
 
       biometricKeysExist: async () => {
-        // 模擬檢查密鑰是否存在
+        // 模擬Check密鑰YesNo存在
         return Math.random() > 0.5;
       },
 
       deleteKeys: async () => {
-        // 模擬刪除密鑰
+        // 模擬Delete密鑰
         logger.info('刪除 iOS 生物識別密鑰');
         return true;
       },
 
       createSignature: async (promptMessage: string, payload: string) => {
-        // 模擬創建簽名
+        // 模擬CreateSign
         const _success = Math.random() > 0.3;
         if (success) {
           return {
@@ -201,7 +201,7 @@ export class IOSBiometricService {
       },
 
       getSecurityLevel: async () => {
-        // 模擬獲取安全級別
+        // 模擬Get安全級別
         const levels: ('weak' | 'strong' | 'class3')[] = [
           'weak',
           'strong',
@@ -211,7 +211,7 @@ export class IOSBiometricService {
       },
 
       isAttestationSupported: async () => {
-        // 模擬檢查是否支持認證
+        // 模擬CheckYesNoSupportAuthenticate
         return Math.random() > 0.5;
       },
     };
@@ -245,7 +245,7 @@ export class IOSBiometricService {
         });
       }
 
-      // 添加其他可能的生物識別類型
+      // Add其他可能的生物識別Class型
       const allTypes: BiometricType[] = [
         'faceId',
         'touchId',
@@ -274,12 +274,12 @@ export class IOSBiometricService {
         capabilities: this.deviceCapabilities,
       });
     } catch (error) {
-      logger.error('檢測 iOS 設備能力失敗:', error);
+      logger.error('檢測 iOS 設備能力Failed:', error);
     }
   }
 
   /**
-   * 初始化安全信息
+   * Initialize安全Information
    */
   private async initializeSecurityInfo(): Promise<void> {
     try {
@@ -304,7 +304,7 @@ export class IOSBiometricService {
         this.securityInfo as unknown as Record<string, unknown>
       );
     } catch (error) {
-      logger.error('初始化 iOS 安全信息失敗:', error);
+      logger.error('Initialize iOS 安全信息Failed:', error);
     }
   }
 
@@ -313,26 +313,26 @@ export class IOSBiometricService {
    */
   public async detectCapabilities(): Promise<BiometricCapability[]> {
     if (!this.isInitialized) {
-      throw new Error('iOS 生物識別服務未初始化');
+      throw new Error('iOS 生物識別Service未Initialize');
     }
 
     return this.deviceCapabilities;
   }
 
   /**
-   * 執行生物識別認證
+   * 執Row生物識別Authenticate
    */
   public async authenticate(
     request: BiometricAuthRequest = {}
   ): Promise<BiometricAuthResult> {
     try {
       if (!this.isInitialized || !this.biometricLib) {
-        throw new Error('iOS 生物識別服務未初始化');
+        throw new Error('iOS 生物識別Service未Initialize');
       }
 
       const _startTime = Date.now();
 
-      // 檢查設備能力
+      // Check設備能力
       const _capabilities = await this.detectCapabilities();
       const _availableCapability = capabilities.find(
         cap => cap.isAvailable && cap.isEnrolled
@@ -347,7 +347,7 @@ export class IOSBiometricService {
         };
       }
 
-      // 準備認證配置
+      // 準備AuthenticateConfigure
       const promptConfig: IOSPromptConfig = {
         title: request.promptMessage || '請進行生物識別認證',
         subtitle: '使用 Face ID 或 Touch ID 登錄',
@@ -358,12 +358,12 @@ export class IOSBiometricService {
         deviceCredentialAllowed: !request.disableDeviceFallback,
       };
 
-      // 執行認證
+      // 執RowAuthenticate
       const _result = await this.biometricLib.simplePrompt(promptConfig);
       const _processingTime = Date.now() - startTime;
 
       if (result.success) {
-        logger.info('iOS 生物識別認證成功', {
+        logger.info('iOS 生物識別認證Success', {
           biometryType: result.biometryType,
           processingTime,
         });
@@ -376,7 +376,7 @@ export class IOSBiometricService {
           timestamp: new Date(),
         };
       } else {
-        logger.warn('iOS 生物識別認證失敗', {
+        logger.warn('iOS 生物識別認證Failed', {
           error: result.error,
           errorCode: result.errorCode,
         });
@@ -384,7 +384,7 @@ export class IOSBiometricService {
         return {
           success: false,
           errorCode: this.mapIOSErrorCode(result.errorCode),
-          errorMessage: result.error || '認證失敗',
+          errorMessage: result.error || '認證Failed',
           timestamp: new Date(),
         };
       }
@@ -393,14 +393,14 @@ export class IOSBiometricService {
       return {
         success: false,
         errorCode: 'unknown_error',
-        errorMessage: error instanceof Error ? error.message : '未知錯誤',
+        errorMessage: error instanceof Error ? error.message : '未知Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 創建簽名認證
+   * CreateSignAuthenticate
    */
   public async createSignature(
     promptMessage: string,
@@ -408,7 +408,7 @@ export class IOSBiometricService {
   ): Promise<{ signature: string; success: boolean }> {
     try {
       if (!this.isInitialized || !this.biometricLib) {
-        throw new Error('iOS 生物識別服務未初始化');
+        throw new Error('iOS 生物識別Service未Initialize');
       }
 
       const _result = await this.biometricLib.createSignature(
@@ -417,9 +417,9 @@ export class IOSBiometricService {
       );
 
       if (result.success) {
-        logger.info('iOS 生物識別簽名創建成功');
+        logger.info('iOS 生物識別簽名CreateSuccess');
       } else {
-        logger.warn('iOS 生物識別簽名創建失敗', { error: result.error });
+        logger.warn('iOS 生物識別簽名CreateFailed', { error: result.error });
       }
 
       return result;
@@ -430,7 +430,7 @@ export class IOSBiometricService {
   }
 
   /**
-   * 獲取安全信息
+   * Get安全Information
    */
   public getSecurityInfo(): BiometricSecurityInfo | null {
     return this.securityInfo;
@@ -442,7 +442,7 @@ export class IOSBiometricService {
   public async invalidateKeys(): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.biometricLib) {
-        throw new Error('iOS 生物識別服務未初始化');
+        throw new Error('iOS 生物識別Service未Initialize');
       }
 
       const _result = await this.biometricLib.invalidateKeys();
@@ -453,40 +453,40 @@ export class IOSBiometricService {
       logger.info('iOS 生物識別密鑰已失效');
       return result;
     } catch (error) {
-      logger.error('使 iOS 生物識別密鑰失效失敗:', error);
+      logger.error('使 iOS 生物識別密鑰失效Failed:', error);
       return false;
     }
   }
 
   /**
-   * 重新初始化密鑰
+   * ReInitialize密鑰
    */
   public async reinitializeKeys(): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.biometricLib) {
-        throw new Error('iOS 生物識別服務未初始化');
+        throw new Error('iOS 生物識別Service未Initialize');
       }
 
-      // 刪除舊密鑰
+      // Delete舊密鑰
       await this.biometricLib.deleteKeys();
 
-      // 創建新密鑰
+      // Create新密鑰
       const _result = await this.biometricLib.createKeys();
 
       if (result) {
         await this.initializeSecurityInfo();
-        logger.info('iOS 生物識別密鑰重新初始化成功');
+        logger.info('iOS 生物識別密鑰重新InitializeSuccess');
       }
 
       return result;
     } catch (error) {
-      logger.error('重新初始化 iOS 生物識別密鑰失敗:', error);
+      logger.error('重新Initialize iOS 生物識別密鑰Failed:', error);
       return false;
     }
   }
 
   /**
-   * 映射 iOS 錯誤代碼
+   * Map iOS Error代碼
    */
   private mapIOSErrorCode(iosErrorCode?: string): BiometricErrorCode {
     switch (iosErrorCode) {
@@ -522,14 +522,14 @@ export class IOSBiometricService {
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   public isServiceReady(): boolean {
     return this.isInitialized && this.biometricLib !== null;
   }
 
   /**
-   * 獲取服務信息
+   * GetServiceInformation
    */
   public getServiceInfo() {
     return {

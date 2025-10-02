@@ -21,8 +21,8 @@ import {
 } from '../types/detection';
 
 /**
- * 假卡檢測服務類
- * 負責自動假卡檢測、特徵分析、數據庫比對等功能
+ * False卡檢測ServiceClass
+ * 負責AutoFalse卡檢測、特徵Analysis、Database比對等功能
  */
 class FakeCardDetectionService {
   private static instance: FakeCardDetectionService;
@@ -40,14 +40,14 @@ class FakeCardDetectionService {
       timeout: 30000,
       retryAttempts: 3,
       cacheEnabled: true,
-      cacheExpiry: 3600000, // 1小時
+      cacheExpiry: 3600000, // 1Hour
       maxConcurrentDetections: 5,
     };
 
-    // 初始化假卡數據庫
+    // InitializeFalse卡Database
     this.initializeFakeCardDatabase();
 
-    // 初始化特徵模板
+    // Initialize特徵模板
     this.initializeFeatureTemplates();
   }
 
@@ -59,7 +59,7 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(
     config?: Partial<DetectionServiceConfig>
@@ -69,20 +69,20 @@ class FakeCardDetectionService {
         this.config = { ...this.config, ...config };
       }
 
-      logger.info('假卡檢測服務初始化開始');
+      logger.info('假卡檢測ServiceInitialize開始');
 
-      // 載入配置和模型
+      // LoadConfigure和模型
       await this.loadDetectionConfig();
 
-      logger.info('假卡檢測服務初始化完成');
+      logger.info('假卡檢測ServiceInitialize完成');
     } catch (error) {
-      logger.error('假卡檢測服務初始化失敗:', error);
+      logger.error('假卡檢測ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 執行假卡檢測
+   * 執RowFalse卡檢測
    */
   public async detectFakeCard(
     request: DetectionRequest
@@ -90,7 +90,7 @@ class FakeCardDetectionService {
     try {
       const _startTime = Date.now();
 
-      // 驗證請求
+      // VerifyRequest
       const _validation = this.validateRequest(request);
       if (!validation.isValid) {
         return {
@@ -101,7 +101,7 @@ class FakeCardDetectionService {
         };
       }
 
-      // 檢查緩存
+      // CheckCache
       const _cacheKey = `${request.cardId}_${request.imageUrl}`;
       if (this.config.cacheEnabled && this.detectionCache.has(cacheKey)) {
         const _cached = this.detectionCache.get(cacheKey)!;
@@ -119,15 +119,15 @@ class FakeCardDetectionService {
 
       logger.info(`開始假卡檢測: ${request.cardId}`);
 
-      // 執行檢測
+      // 執Row檢測
       const _result = await this.performDetection(request);
 
-      // 更新緩存
+      // UpdateCache
       if (this.config.cacheEnabled) {
         this.detectionCache.set(cacheKey, result);
       }
 
-      // 保存到歷史記錄
+      // Save到歷史Record
       await this.saveDetectionHistory(request, result);
 
       const _processingTime = Date.now() - startTime;
@@ -142,18 +142,18 @@ class FakeCardDetectionService {
         processingTime,
       };
     } catch (error) {
-      logger.error('假卡檢測失敗:', error);
+      logger.error('假卡檢測Failed:', error);
       return {
         success: false,
         data: {} as DetectionResult,
         processingTime: Date.now() - Date.now(),
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
 
   /**
-   * 批量檢測
+   * Batch檢測
    */
   public async batchDetect(
     requests: DetectionRequest[]
@@ -176,20 +176,20 @@ class FakeCardDetectionService {
       logger.info(`批量檢測完成: ${results.length} 個結果`);
       return results;
     } catch (error) {
-      logger.error('批量檢測失敗:', error);
+      logger.error('批量檢測Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取檢測歷史
+   * Get檢測歷史
    */
   public async getDetectionHistory(
     cardId?: string,
     userId?: string
   ): Promise<DetectionHistory[]> {
     try {
-      // 模擬歷史數據
+      // 模擬歷史Data
       const mockHistory: DetectionHistory[] = [
         {
           id: 'history_1',
@@ -231,19 +231,19 @@ class FakeCardDetectionService {
 
       return filteredHistory;
     } catch (error) {
-      logger.error('獲取檢測歷史失敗:', error);
+      logger.error('Get檢測歷史Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取檢測統計
+   * Get檢測Statistics
    */
   public async getDetectionStats(): Promise<DetectionStats> {
     try {
       logger.info('獲取假卡檢測統計數據');
 
-      // 模擬統計數據
+      // 模擬統Count據
       return {
         totalDetections: 1250,
         authenticCards: 950,
@@ -274,13 +274,13 @@ class FakeCardDetectionService {
         },
       };
     } catch (error) {
-      logger.error('獲取檢測統計失敗:', error);
+      logger.error('Get檢測統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 報告假卡
+   * ReportFalse卡
    */
   public async reportFakeCard(
     report: ReportRequest
@@ -290,23 +290,23 @@ class FakeCardDetectionService {
 
       logger.info(`收到假卡報告: ${reportId}`);
 
-      // 更新假卡數據庫
+      // UpdateFalse卡Database
       await this.updateFakeCardDatabase(report);
 
-      // 觸發進一步分析
+      // 觸發進一步Analysis
       if (report.severity === 'high' || report.severity === 'critical') {
         await this.triggerUrgentAnalysis(report);
       }
 
       return { success: true, reportId };
     } catch (error) {
-      logger.error('處理假卡報告失敗:', error);
+      logger.error('Handle假卡報告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取特徵模板
+   * Get特徵模板
    */
   public async getFeatureTemplates(
     cardType?: string
@@ -320,26 +320,26 @@ class FakeCardDetectionService {
 
       return templates;
     } catch (error) {
-      logger.error('獲取特徵模板失敗:', error);
+      logger.error('Get特徵模板Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新檢測配置
+   * Update檢測Configure
    */
   public async updateConfig(config: Partial<DetectionConfig>): Promise<void> {
     try {
       logger.info('更新檢測配置');
-      // 這裡可以實現配置更新邏輯
+      // 這裡可以實現ConfigureUpdate邏輯
     } catch (error) {
-      logger.error('更新檢測配置失敗:', error);
+      logger.error('Update檢測ConfigureFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 執行檢測邏輯
+   * 執Row檢測邏輯
    */
   private async performDetection(
     request: DetectionRequest
@@ -387,7 +387,7 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 分析特徵
+   * Analysis特徵
    */
   private async analyzeFeatures(
     request: DetectionRequest
@@ -445,7 +445,7 @@ class FakeCardDetectionService {
       },
     ];
 
-    // 為每個特徵添加隨機值和偏差
+    // 為每個特徵Add隨機Value和偏差
     features.forEach(feature => {
       if (feature.category === '印刷品質') {
         feature.value = Math.round((0.8 + Math.random() * 0.2) * 100);
@@ -474,7 +474,7 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 確定整體風險等級
+   * OK整體風險等級
    */
   private determineOverallRisk(riskScore: number): CounterfeitRisk {
     if (riskScore < 20) return CounterfeitRisk.AUTHENTIC;
@@ -510,7 +510,7 @@ class FakeCardDetectionService {
       case CounterfeitRisk.SUSPICIOUS:
         return `檢測發現一些可疑特徵，建議進行人工復查。${failedFeatures} 項特徵未通過檢測。`;
       case CounterfeitRisk.LIKELY_FAKE:
-        return `多項重要特徵檢測失敗，此卡片很可能為假卡。建議詳細檢查。`;
+        return `多項重要特徵檢測Failed，此卡片很可能為假卡。建議詳細Check。`;
       case CounterfeitRisk.CONFIRMED_FAKE:
         return `嚴重警告：此卡片具有明顯的假卡特徵，強烈建議避免交易。`;
       default:
@@ -549,7 +549,7 @@ class FakeCardDetectionService {
         break;
     }
 
-    // 根據失敗的特徵添加具體建議
+    // Root據Failed的特徵AddConcrete建議
     const _failedFeatures = features.filter(f => !f.detected);
     failedFeatures.forEach(feature => {
       if (feature.name === '全息圖檢查') {
@@ -563,7 +563,7 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 驗證請求
+   * VerifyRequest
    */
   private validateRequest(request: DetectionRequest): ValidationResult {
     const errors: string[] = [];
@@ -594,7 +594,7 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 檢查圖片URL有效性
+   * CheckGraph片URL有效性
    */
   private isValidImageUrl(url: string): boolean {
     try {
@@ -606,15 +606,15 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 載入檢測配置
+   * Load檢測Configure
    */
   private async loadDetectionConfig(): Promise<void> {
-    // 模擬載入配置
+    // 模擬LoadConfigure
     logger.info('載入檢測配置和AI模型');
   }
 
   /**
-   * 保存檢測歷史
+   * Save檢測歷史
    */
   private async saveDetectionHistory(
     request: DetectionRequest,
@@ -623,7 +623,7 @@ class FakeCardDetectionService {
     const history: DetectionHistory = {
       id: `history_${Date.now()}`,
       cardId: request.cardId,
-      userId: 'current_user', // 實際應用中從請求上下文獲取
+      userId: 'current_user', // 實際Apply中從Request上下文Get
       detectionId: result.id,
       result,
       createdAt: new Date().toISOString(),
@@ -635,10 +635,10 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 初始化假卡數據庫
+   * InitializeFalse卡Database
    */
   private initializeFakeCardDatabase(): void {
-    // 模擬假卡數據庫初始化
+    // 模擬False卡DatabaseInitialize
     const sampleFakeCard: FakeCardDatabase = {
       id: 'fake_1',
       cardId: 'suspicious_card_1',
@@ -659,7 +659,7 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 初始化特徵模板
+   * Initialize特徵模板
    */
   private initializeFeatureTemplates(): void {
     const template: FeatureTemplate = {
@@ -687,19 +687,19 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 更新假卡數據庫
+   * UpdateFalse卡Database
    */
   private async updateFakeCardDatabase(report: ReportRequest): Promise<void> {
     logger.info(`更新假卡數據庫: ${report.cardId}`);
-    // 實現數據庫更新邏輯
+    // 實現DatabaseUpdate邏輯
   }
 
   /**
-   * 觸發緊急分析
+   * 觸發緊急Analysis
    */
   private async triggerUrgentAnalysis(report: ReportRequest): Promise<void> {
     logger.info(`觸發緊急分析: ${report.detectionId}`);
-    // 實現緊急分析邏輯
+    // 實現緊急Analysis邏輯
   }
 
   /**
@@ -714,7 +714,7 @@ class FakeCardDetectionService {
   }
 
   /**
-   * 清理資源
+   * 清理Resource
    */
   public destroy(): void {
     this.detectionCache.clear();
@@ -722,7 +722,7 @@ class FakeCardDetectionService {
     this.fakeCardDatabase.clear();
     this.featureTemplates.clear();
     this.detectionQueue = [];
-    logger.info('假卡檢測服務已清理');
+    logger.info('假卡檢測Service已清理');
   }
 }
 

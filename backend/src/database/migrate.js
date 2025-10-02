@@ -5,7 +5,7 @@ require('dotenv').config({
 const { connectDB, getSequelize } = require('../config/database');
 const logger = require('../utils/logger');
 
-// 導入所有模型
+// Import所有模型
 const getUserModel = require('../models/User');
 const getCardModel = require('../models/Card');
 const getCollectionModel = require('../models/Collection');
@@ -15,7 +15,7 @@ const getPriceAlertModel = require('../models/PriceAlert');
 const getMarketDataModel = require('../models/MarketData');
 const getAIAnalysisModel = require('../models/AIAnalysis');
 
-// 導入新的數據質量相關模型
+// Import新的Data質量相Off模型
 const {
   createTrainingDataModel,
   getTrainingDataModel,
@@ -33,14 +33,14 @@ const {
   getDataQualityMetricsModel,
 } = require('../models/DataQualityMetrics');
 
-// 導入反饋相關模型
+// Import反饋相Off模型
 const Feedback = require('../models/Feedback');
 const FeedbackResponse = require('../models/FeedbackResponse');
 const FeedbackAnalytics = require('../models/FeedbackAnalytics');
 const DataQualityAssessment = require('../models/DataQualityAssessment');
 const AssessmentSchedule = require('../models/AssessmentSchedule');
 
-// 建立模型關聯
+// 建立模型Off聯
 const setupAssociations = (sequelize) => {
   const User = getUserModel();
   const Card = getCardModel();
@@ -51,14 +51,14 @@ const setupAssociations = (sequelize) => {
   const MarketData = getMarketDataModel();
   const AIAnalysis = getAIAnalysisModel();
 
-  // 新增的數據質量相關模型
+  // 新增的Data質量相Off模型
   const TrainingData = getTrainingDataModel();
   const Annotator = getAnnotatorModel();
   const AnnotationData = getAnnotationDataModel();
   const DataQualityMetrics = getDataQualityMetricsModel();
 
-  // 反饋相關模型
-  // Feedback, FeedbackResponse, FeedbackAnalytics 已經通過 require 直接導入
+  // 反饋相Off模型
+  // Feedback, FeedbackResponse, FeedbackAnalytics 已經通過 require 直接Import
 
   if (
     !User ||
@@ -78,7 +78,7 @@ const setupAssociations = (sequelize) => {
   }
 
   try {
-    // User 關聯
+    // User Off聯
     User.hasMany(Collection, { foreignKey: 'userId', as: 'collections' });
     User.hasMany(Investment, { foreignKey: 'userId', as: 'investments' });
     User.hasMany(PriceAlert, { foreignKey: 'userId', as: 'priceAlerts' });
@@ -114,7 +114,7 @@ const setupAssociations = (sequelize) => {
       foreignKey: 'createdBy',
     });
 
-    // Card 關聯
+    // Card Off聯
     Card.hasMany(Investment, { foreignKey: 'cardId', as: 'investments' });
     Card.hasMany(PriceAlert, { foreignKey: 'cardId', as: 'priceAlerts' });
     Card.hasMany(MarketData, { foreignKey: 'cardId', as: 'marketDataRecords' });
@@ -133,7 +133,7 @@ const setupAssociations = (sequelize) => {
     AIAnalysis.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
     TrainingData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
-    // Collection 關聯
+    // Collection Off聯
     Collection.belongsToMany(Card, {
       through: CollectionCard,
       foreignKey: 'collectionId',
@@ -145,22 +145,22 @@ const setupAssociations = (sequelize) => {
       as: 'collectionCards',
     });
 
-    // CollectionCard 關聯
+    // CollectionCard Off聯
     CollectionCard.belongsTo(Collection, {
       foreignKey: 'collectionId',
       as: 'collection',
     });
     CollectionCard.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
-    // 數據質量相關關聯
-    // TrainingData 關聯
+    // Data質量相OffOff聯
+    // TrainingData Off聯
     TrainingData.hasMany(AnnotationData, {
       foreignKey: 'trainingDataId',
       as: 'annotations',
     });
     TrainingData.belongsTo(Card, { foreignKey: 'cardId', as: 'card' });
 
-    // Annotator 關聯
+    // Annotator Off聯
     Annotator.hasMany(AnnotationData, {
       foreignKey: 'annotatorId',
       as: 'annotations',
@@ -171,7 +171,7 @@ const setupAssociations = (sequelize) => {
     });
     Annotator.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-    // AnnotationData 關聯
+    // AnnotationData Off聯
     AnnotationData.belongsTo(TrainingData, {
       foreignKey: 'trainingDataId',
       as: 'trainingData',
@@ -185,7 +185,7 @@ const setupAssociations = (sequelize) => {
       as: 'reviewer',
     });
 
-    // 反饋相關關聯
+    // 反饋相OffOff聯
     Feedback.hasMany(FeedbackResponse, {
       foreignKey: 'feedbackId',
       as: 'responses',
@@ -200,7 +200,7 @@ const setupAssociations = (sequelize) => {
       as: 'feedback',
     });
 
-    // 數據質量評估關聯
+    // Data質量評估Off聯
     DataQualityAssessment.belongsTo(User, {
       as: 'TriggeredByUser',
       foreignKey: 'triggeredByUserId',
@@ -217,12 +217,12 @@ const setupAssociations = (sequelize) => {
   }
 };
 
-// 同步數據庫
+// SyncDatabase
 const syncDatabase = async () => {
   try {
     logger.info('開始數據庫遷移...');
 
-    // 連接數據庫
+    // ConnectDatabase
     await connectDB();
     const sequelize = getSequelize();
 
@@ -230,7 +230,7 @@ const syncDatabase = async () => {
       throw new Error('無法獲取 Sequelize 實例');
     }
 
-    // 初始化所有模型
+    // Initialize所有模型
     getUserModel();
     getCardModel();
     getCollectionModel();
@@ -240,18 +240,18 @@ const syncDatabase = async () => {
     getMarketDataModel();
     getAIAnalysisModel();
 
-    // 初始化新的數據質量相關模型
+    // Initialize新的Data質量相Off模型
     createTrainingDataModel(sequelize);
     createAnnotatorModel(sequelize);
     createAnnotationDataModel(sequelize);
     createDataQualityMetricsModel(sequelize);
 
-    // 反饋相關模型已經通過 require 直接導入，無需額外初始化
+    // 反饋相Off模型已經通過 require 直接Import，無需額外Initialize
 
-    // 設置關聯
+    // SettingsOff聯
     setupAssociations(sequelize);
 
-    // 同步數據庫表結構
+    // SyncDatabaseTable結構
     logger.info('正在同步數據庫表結構...');
     await sequelize.sync({ force: true });
 
@@ -275,7 +275,7 @@ const syncDatabase = async () => {
     logger.info('- data_quality_assessments (數據質量評估表)');
     logger.info('- assessment_schedules (評估計劃表)');
 
-    // 顯示表信息
+    // ShowTableInformation
     const tables = await sequelize.showAllSchemas();
     logger.info(
       '數據庫中的所有表：',
@@ -284,13 +284,13 @@ const syncDatabase = async () => {
 
     process.exit(0);
   } catch (error) {
-    logger.error('❌ 數據庫遷移失敗：', error.message);
-    logger.error('錯誤詳情：', error);
+    logger.error('❌ 數據庫遷移Failed：', error.message);
+    logger.error('Error詳情：', error);
     process.exit(1);
   }
 };
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   syncDatabase();
 }

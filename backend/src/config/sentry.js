@@ -2,11 +2,11 @@ const Sentry = require('@sentry/node');
 const Tracing = require('@sentry/tracing');
 
 /**
- * 初始化 Sentry 錯誤監控
- * @param {Object} app - Express 應用實例
+ * Initialize Sentry ErrorMonitor
+ * @param {Object} app - Express ApplyInstance
  */
 const initSentry = (app) => {
-  // 檢查是否配置了 Sentry DSN
+  // CheckYesNoConfigure了 Sentry DSN
   if (!process.env.SENTRY_DSN) {
     // logger.info('Sentry DSN not configured, error monitoring disabled');
     return;
@@ -19,41 +19,41 @@ const initSentry = (app) => {
       release: process.env.APP_VERSION || '1.0.0',
       debug: process.env.NODE_ENV === 'development',
 
-      // 集成配置
+      // 集成Configure
       integrations: [
-        // HTTP 請求追蹤
+        // HTTP RequestTrace
         new Sentry.Integrations.Http({ tracing: true }),
 
-        // Express 應用追蹤
+        // Express ApplyTrace
         new Tracing.Integrations.Express({ app }),
 
-        // PostgreSQL 查詢追蹤
+        // PostgreSQL QueryTrace
         new Tracing.Integrations.Postgres(),
 
-        // 控制台錯誤捕獲
+        // Control台ErrorCatch
         new Sentry.Integrations.Console(),
 
-        // 未處理的 Promise 拒絕
+        // 未Handle的 Promise Reject
         new Sentry.Integrations.OnUnhandledRejection(),
 
-        // 未捕獲的異常
+        // 未Catch的異常
         new Sentry.Integrations.OnUncaughtException(),
       ],
 
-      // 追蹤配置
+      // TraceConfigure
       tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
       profilesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
 
-      // 錯誤過濾
+      // ErrorFilter
       beforeSend(event, hint) {
-        // 過濾敏感信息
+        // Filter敏感Information
         if (event.request && event.request.headers) {
           delete event.request.headers.authorization;
           delete event.request.headers.cookie;
           delete event.request.headers['x-api-key'];
         }
 
-        // 過濾密碼字段
+        // FilterPasswordField
         if (event.request && event.request.data) {
           const sensitiveFields = ['password', 'token', 'secret', 'key'];
           sensitiveFields.forEach((field) => {
@@ -63,7 +63,7 @@ const initSentry = (app) => {
           });
         }
 
-        // 過濾查詢參數中的敏感信息
+        // FilterQueryParameter中的敏感Information
         if (event.request && event.request.query_string) {
           const sensitiveParams = ['password', 'token', 'secret', 'key'];
           sensitiveParams.forEach((param) => {
@@ -76,7 +76,7 @@ const initSentry = (app) => {
           });
         }
 
-        // 開發環境下記錄所有錯誤
+        // On發環境下Record所有Error
         if (process.env.NODE_ENV === 'development') {
           // logger.info('Sentry event:', JSON.stringify(event, null, 2));
         }
@@ -84,9 +84,9 @@ const initSentry = (app) => {
         return event;
       },
 
-      // 錯誤過濾規則
+      // ErrorFilter規則
       beforeBreadcrumb(breadcrumb, hint) {
-        // 過濾敏感的面包屑
+        // Filter敏感的面Package屑
         if (breadcrumb.category === 'http' && breadcrumb.data) {
           if (breadcrumb.data.url && breadcrumb.data.url.includes('password')) {
             return null;
@@ -96,11 +96,11 @@ const initSentry = (app) => {
         return breadcrumb;
       },
 
-      // 性能監控
+      // 性能Monitor
       attachStacktrace: true,
       includeLocalVariables: process.env.NODE_ENV === 'development',
 
-      // 標籤配置
+      // TagConfigure
       defaultTags: {
         service: 'cardstrategy-api',
         version: process.env.APP_VERSION || '1.0.0',
@@ -115,36 +115,36 @@ const initSentry = (app) => {
 };
 
 /**
- * 設置 Sentry 請求處理器
- * @param {Object} app - Express 應用實例
+ * Settings Sentry RequestHandle器
+ * @param {Object} app - Express ApplyInstance
  */
 const setupSentryHandlers = (app) => {
   if (!process.env.SENTRY_DSN) {
     return;
   }
 
-  // 請求處理器 - 必須在其他中間件之前
+  // RequestHandle器 - 必須在其他中間件之前
   app.use(Sentry.Handlers.requestHandler());
 
-  // 追蹤處理器 - 必須在路由之前
+  // TraceHandle器 - 必須在路由之前
   app.use(Sentry.Handlers.tracingHandler());
 };
 
 /**
- * 設置 Sentry 錯誤處理器
- * @param {Object} app - Express 應用實例
+ * Settings Sentry ErrorHandle器
+ * @param {Object} app - Express ApplyInstance
  */
 const setupSentryErrorHandlers = (app) => {
   if (!process.env.SENTRY_DSN) {
     return;
   }
 
-  // 錯誤處理器 - 必須在其他錯誤中間件之後
+  // ErrorHandle器 - 必須在其他Error中間件之後
   app.use(Sentry.Handlers.errorHandler());
 
-  // 可選的錯誤處理器，用於捕獲所有未處理的錯誤
+  // Optional的ErrorHandle器，用於Catch所有未Handle的Error
   app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
-    // 將錯誤發送到 Sentry
+    // 將ErrorSend到 Sentry
     Sentry.captureException(err, {
       extra: {
         requestId: req.headers['x-request-id'],
@@ -156,7 +156,7 @@ const setupSentryErrorHandlers = (app) => {
       },
     });
 
-    // 返回錯誤響應
+    // ReturnErrorResponse
     res.status(500).json({
       error: 'Internal Server Error',
       message:
@@ -169,9 +169,9 @@ const setupSentryErrorHandlers = (app) => {
 };
 
 /**
- * 手動捕獲錯誤
- * @param {Error} error - 錯誤對象
- * @param {Object} context - 上下文信息
+ * ManualCatchError
+ * @param {Error} error - ErrorObject
+ * @param {Object} context - 上下文Information
  */
 const captureException = (error, context = {}) => {
   if (!process.env.SENTRY_DSN) {
@@ -189,10 +189,10 @@ const captureException = (error, context = {}) => {
 };
 
 /**
- * 手動捕獲消息
- * @param {string} message - 消息內容
- * @param {string} level - 日誌級別
- * @param {Object} context - 上下文信息
+ * ManualCatchMessage
+ * @param {string} message - MessageContent
+ * @param {string} level - Log級別
+ * @param {Object} context - 上下文Information
  */
 const captureMessage = (message, level = 'info', context = {}) => {
   if (!process.env.SENTRY_DSN) {
@@ -211,8 +211,8 @@ const captureMessage = (message, level = 'info', context = {}) => {
 };
 
 /**
- * 設置用戶上下文
- * @param {Object} user - 用戶信息
+ * SettingsUser上下文
+ * @param {Object} user - UserInformation
  */
 const setUser = (user) => {
   if (!process.env.SENTRY_DSN) {
@@ -228,7 +228,7 @@ const setUser = (user) => {
 };
 
 /**
- * 清除用戶上下文
+ * ClearUser上下文
  */
 const clearUser = () => {
   if (!process.env.SENTRY_DSN) {
@@ -239,9 +239,9 @@ const clearUser = () => {
 };
 
 /**
- * 添加標籤
- * @param {string} key - 標籤鍵
- * @param {string} value - 標籤值
+ * AddTag
+ * @param {string} key - TagKey
+ * @param {string} value - TagValue
  */
 const addTag = (key, value) => {
   if (!process.env.SENTRY_DSN) {
@@ -252,9 +252,9 @@ const addTag = (key, value) => {
 };
 
 /**
- * 添加額外數據
- * @param {string} key - 數據鍵
- * @param {any} value - 數據值
+ * Add額外Data
+ * @param {string} key - DataKey
+ * @param {any} value - DataValue
  */
 const addExtra = (key, value) => {
   if (!process.env.SENTRY_DSN) {
@@ -265,9 +265,9 @@ const addExtra = (key, value) => {
 };
 
 /**
- * 設置上下文
+ * Settings上下文
  * @param {string} name - 上下文名稱
- * @param {Object} data - 上下文數據
+ * @param {Object} data - 上下文Data
  */
 const setContext = (name, data) => {
   if (!process.env.SENTRY_DSN) {
@@ -278,9 +278,9 @@ const setContext = (name, data) => {
 };
 
 /**
- * 創建性能追蹤
- * @param {string} name - 追蹤名稱
- * @param {string} operation - 操作名稱
+ * Create性能Trace
+ * @param {string} name - Trace名稱
+ * @param {string} operation - Operation名稱
  */
 const startTransaction = (name, operation) => {
   if (!process.env.SENTRY_DSN) {
@@ -294,7 +294,7 @@ const startTransaction = (name, operation) => {
 };
 
 /**
- * 健康檢查
+ * 健康Check
  */
 const healthCheck = () => {
   return {

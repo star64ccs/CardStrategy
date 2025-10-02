@@ -24,7 +24,7 @@ const {
  * @swagger
  * /api/alerts:
  *   get:
- *     summary: 獲取警報列表
+ *     summary: GetAlertList
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -51,9 +51,9 @@ const {
  *           enum: [critical, high, medium, low, info]
  *     responses:
  *       200:
- *         description: 警報列表獲取成功
+ *         description: AlertListGetSuccess
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  */
 router.get(
   '/',
@@ -61,7 +61,7 @@ router.get(
     async (filters, pagination, req, res) => {
       const { type, severity, startDate, endDate } = filters;
 
-      // 構建查詢條件
+      // BuildQueryCondition
       const query = {};
       if (type) query.type = type;
       if (severity) query.severity = severity;
@@ -71,7 +71,7 @@ router.get(
         if (endDate) query.timestamp.$lte = new Date(endDate);
       }
 
-      // 獲取警報數據
+      // GetAlertData
       const alerts = await alertService.getAlerts(query, pagination);
 
       return {
@@ -90,7 +90,7 @@ router.get(
  * @swagger
  * /api/alerts:
  *   post:
- *     summary: 創建警報
+ *     summary: CreateAlert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -122,11 +122,11 @@ router.get(
  *                 type: object
  *     responses:
  *       201:
- *         description: 警報創建成功
+ *         description: AlertCreateSuccess
  *       400:
- *         description: 請求參數錯誤
+ *         description: RequestParameterError
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  *       403:
  *         description: 權限不足
  */
@@ -134,19 +134,19 @@ router.post(
   '/',
   createPostHandler(
     async (req, res) => {
-      // 檢查權限
+      // Check權限
       if (req.user.role !== 'admin') {
         throw createPermissionError('只有管理員可以創建警報');
       }
 
-      // 構建警報數據
+      // BuildAlertData
       const alertData = {
         ...req.body,
         createdBy: req.user.id,
         timestamp: new Date(),
       };
 
-      // 創建警報
+      // CreateAlert
       const alert = await alertService.createAlert(alertData);
 
       return alert;
@@ -163,7 +163,7 @@ router.post(
  * @swagger
  * /api/alerts/{id}:
  *   get:
- *     summary: 獲取單個警報
+ *     summary: GetSingleAlert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -176,11 +176,11 @@ router.post(
  *           format: uuid
  *     responses:
  *       200:
- *         description: 警報獲取成功
+ *         description: AlertGetSuccess
  *       404:
- *         description: 警報不存在
+ *         description: Alert不存在
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  */
 router.get(
   '/:id',
@@ -206,7 +206,7 @@ router.get(
  * @swagger
  * /api/alerts/{id}:
  *   put:
- *     summary: 更新警報
+ *     summary: UpdateAlert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -233,11 +233,11 @@ router.get(
  *                 type: object
  *     responses:
  *       200:
- *         description: 警報更新成功
+ *         description: AlertUpdateSuccess
  *       404:
- *         description: 警報不存在
+ *         description: Alert不存在
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  *       403:
  *         description: 權限不足
  */
@@ -248,18 +248,18 @@ router.put(
       const { id } = req.params;
       const updateData = req.body;
 
-      // 檢查權限
+      // Check權限
       if (req.user.role !== 'admin') {
         throw createPermissionError('只有管理員可以更新警報');
       }
 
-      // 檢查警報是否存在
+      // CheckAlertYesNo存在
       const existingAlert = await alertService.getAlertById(id);
       if (!existingAlert) {
         throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
       }
 
-      // 更新警報
+      // UpdateAlert
       const updatedAlert = await alertService.updateAlert(id, {
         ...updateData,
         updatedBy: req.user.id,
@@ -280,7 +280,7 @@ router.put(
  * @swagger
  * /api/alerts/{id}:
  *   delete:
- *     summary: 刪除警報
+ *     summary: DeleteAlert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -293,11 +293,11 @@ router.put(
  *           format: uuid
  *     responses:
  *       200:
- *         description: 警報刪除成功
+ *         description: AlertDeleteSuccess
  *       404:
- *         description: 警報不存在
+ *         description: Alert不存在
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  *       403:
  *         description: 權限不足
  */
@@ -307,21 +307,21 @@ router.delete(
     async (req, res) => {
       const { id } = req.params;
 
-      // 檢查權限
+      // Check權限
       if (req.user.role !== 'admin') {
         throw createPermissionError('只有管理員可以刪除警報');
       }
 
-      // 檢查警報是否存在
+      // CheckAlertYesNo存在
       const existingAlert = await alertService.getAlertById(id);
       if (!existingAlert) {
         throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
       }
 
-      // 刪除警報
+      // DeleteAlert
       await alertService.deleteAlert(id);
 
-      return { message: '警報刪除成功' };
+      return { message: '警報DeleteSuccess' };
     },
     {
       auth: true,
@@ -334,7 +334,7 @@ router.delete(
  * @swagger
  * /api/alerts/batch:
  *   post:
- *     summary: 批量操作警報
+ *     summary: BatchOperationAlert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -358,11 +358,11 @@ router.delete(
  *                 enum: [resolve, dismiss, delete]
  *     responses:
  *       200:
- *         description: 批量操作成功
+ *         description: BatchOperationSuccess
  *       400:
- *         description: 請求參數錯誤
+ *         description: RequestParameterError
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  *       403:
  *         description: 權限不足
  */
@@ -372,18 +372,18 @@ router.post(
     async (alertId, params, req, res) => {
       const { action } = params;
 
-      // 檢查權限
+      // Check權限
       if (req.user.role !== 'admin') {
         throw createPermissionError('只有管理員可以批量操作警報');
       }
 
-      // 檢查警報是否存在
+      // CheckAlertYesNo存在
       const existingAlert = await alertService.getAlertById(alertId);
       if (!existingAlert) {
         throw createCustomError('警報不存在', 404, 'ALERT_NOT_FOUND');
       }
 
-      // 執行批量操作
+      // 執RowBatchOperation
       switch (action) {
         case 'resolve':
           return await alertService.resolveAlert(alertId, req.user.id);
@@ -411,7 +411,7 @@ router.post(
  * @swagger
  * /api/alerts/search:
  *   get:
- *     summary: 搜索警報
+ *     summary: SearchAlert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -430,9 +430,9 @@ router.post(
  *           type: string
  *     responses:
  *       200:
- *         description: 搜索成功
+ *         description: SearchSuccess
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  */
 router.get(
   '/search',
@@ -440,14 +440,14 @@ router.get(
     async (searchParams, req, res) => {
       const { query, filters, category } = searchParams;
 
-      // 構建搜索條件
+      // BuildSearchCondition
       const searchCriteria = {
         query: query || '',
         filters: filters || {},
         category: category || 'all',
       };
 
-      // 執行搜索
+      // 執RowSearch
 // eslint-disable-next-line no-unused-vars
       const results = await alertService.searchAlerts(searchCriteria);
 
@@ -469,15 +469,15 @@ router.get(
  * @swagger
  * /api/alerts/stats:
  *   get:
- *     summary: 獲取警報統計
+ *     summary: GetAlertStatistics
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: 統計獲取成功
+ *         description: StatisticsGetSuccess
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  */
 router.get(
   '/stats',
@@ -505,7 +505,7 @@ router.get(
  * @swagger
  * /api/alerts/history:
  *   get:
- *     summary: 獲取警報歷史
+ *     summary: GetAlert歷史
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -532,9 +532,9 @@ router.get(
  *           format: date
  *     responses:
  *       200:
- *         description: 歷史記錄獲取成功
+ *         description: 歷史RecordGetSuccess
  *       401:
- *         description: 未授權
+ *         description: 未Authorize
  */
 router.get(
   '/history',
@@ -542,7 +542,7 @@ router.get(
     async (filters, pagination, req, res) => {
       const { startDate, endDate, type, severity } = filters;
 
-      // 構建查詢條件
+      // BuildQueryCondition
       const query = {};
       if (type) query.type = type;
       if (severity) query.severity = severity;
@@ -552,7 +552,7 @@ router.get(
         if (endDate) query.timestamp.$lte = new Date(endDate);
       }
 
-      // 獲取歷史記錄
+      // Get歷史Record
 // eslint-disable-next-line no-unused-vars
       const history = await alertService.getAlertHistory(query, pagination);
 

@@ -1,4 +1,4 @@
-// 台灣個人資料保護法類型定義
+// 台灣個人資料保護法Class型定義
 // Taiwan Personal Data Protection Act Type Definitions
 
 export interface TaiwanPersonalDataProcessing {
@@ -23,49 +23,49 @@ export interface TaiwanPersonalDataProcessing {
 export enum TaiwanDataCategory {
   IDENTIFICATION = 'identification', // 識別個人者
   FINANCIAL = 'financial', // 商業上之秘密
-  MEDICAL = 'medical', // 病歷、醫療、基因、性生活、健康檢查
+  MEDICAL = 'medical', // 病歷、醫療、基因、性生活、健康Check
   CRIMINAL = 'criminal', // 犯罪前科
   CONTACT = 'contact', // 聯絡方式
   LOCATION = 'location', // 位置資訊
   BEHAVIOR = 'behavior', // 網路活動紀錄
-  PREFERENCE = 'preference', // 個人偏好
+  PREFERENCE = 'preference', // 個人Preferences
   OTHER = 'other', // 其他得以直接或間接方式識別該個人之資料
 }
 
 export enum TaiwanProcessingMethod {
   COLLECTION = 'collection', // 蒐集
-  PROCESSING = 'processing', // 處理
+  PROCESSING = 'processing', // Handle
   USE = 'use', // 利用
   INTERNATIONAL_TRANSFER = 'international_transfer', // 國際傳輸
-  THIRD_PARTY_SHARING = 'third_party_sharing', // 委託他人蒐集、處理或利用
+  THIRD_PARTY_SHARING = 'third_party_sharing', // 委託他人蒐集、Handle或利用
 }
 
 export enum TaiwanSecurityMeasure {
-  ENCRYPTION = 'encryption', // 加密
-  ACCESS_CONTROL = 'access_control', // 存取控制
-  AUDIT_LOGGING = 'audit_logging', // 稽核日誌
-  BACKUP = 'backup', // 備份
-  DISASTER_RECOVERY = 'disaster_recovery', // 災害復原
+  ENCRYPTION = 'encryption', // Encrypt
+  ACCESS_CONTROL = 'access_control', // 存取Control
+  AUDIT_LOGGING = 'audit_logging', // 稽核Log
+  BACKUP = 'backup', // Backup
+  DISASTER_RECOVERY = 'disaster_recovery', // 災害Undo
   PHYSICAL_SECURITY = 'physical_security', // 實體安全
   NETWORK_SECURITY = 'network_security', // 網路安全
   PERSONNEL_SECURITY = 'personnel_security', // 人員安全
 }
 
 export enum TaiwanConsentMethod {
-  EXPLICIT = 'explicit', // 明確同意
-  IMPLICIT = 'implicit', // 默示同意
-  ELECTRONIC = 'electronic', // 電子同意
-  WRITTEN = 'written', // 書面同意
-  VERBAL = 'verbal', // 口頭同意
+  EXPLICIT = 'explicit', // 明確Agree
+  IMPLICIT = 'implicit', // 默示Agree
+  ELECTRONIC = 'electronic', // 電子Agree
+  WRITTEN = 'written', // 書面Agree
+  VERBAL = 'verbal', // 口頭Agree
 }
 
 export enum TaiwanDataSubjectRight {
-  ACCESS = 'access', // 查詢或請求閱覽
-  COPY = 'copy', // 請求製給複製本
-  CORRECTION = 'correction', // 請求補充或更正
-  DELETION = 'deletion', // 請求停止蒐集、處理或利用
-  PORTABILITY = 'portability', // 請求刪除
-  WITHDRAWAL = 'withdrawal', // 撤回同意
+  ACCESS = 'access', // Query或Request閱覽
+  COPY = 'copy', // Request製給複製本
+  CORRECTION = 'correction', // Request補充或更正
+  DELETION = 'deletion', // RequestStop蒐集、Handle或利用
+  PORTABILITY = 'portability', // RequestDelete
+  WITHDRAWAL = 'withdrawal', // 撤回Agree
   COMPLAINT = 'complaint', // 申訴
 }
 
@@ -155,14 +155,14 @@ export interface TaiwanPersonalDataViolation {
 }
 
 export enum TaiwanPersonalDataViolationType {
-  UNAUTHORIZED_COLLECTION = 'unauthorized_collection', // 未經授權蒐集
-  UNAUTHORIZED_PROCESSING = 'unauthorized_processing', // 未經授權處理
-  UNAUTHORIZED_USE = 'unauthorized_use', // 未經授權利用
-  UNAUTHORIZED_TRANSFER = 'unauthorized_transfer', // 未經授權傳輸
+  UNAUTHORIZED_COLLECTION = 'unauthorized_collection', // 未經Authorize蒐集
+  UNAUTHORIZED_PROCESSING = 'unauthorized_processing', // 未經AuthorizeHandle
+  UNAUTHORIZED_USE = 'unauthorized_use', // 未經Authorize利用
+  UNAUTHORIZED_TRANSFER = 'unauthorized_transfer', // 未經Authorize傳輸
   INSUFFICIENT_SECURITY = 'insufficient_security', // 安全措施不足
-  LACK_OF_CONSENT = 'lack_of_consent', // 缺乏同意
+  LACK_OF_CONSENT = 'lack_of_consent', // 缺乏Agree
   VIOLATION_OF_RIGHTS = 'violation_of_rights', // 侵害當事人權利
-  BREACH_NOTIFICATION_FAILURE = 'breach_notification_failure', // 違規通知失敗
+  BREACH_NOTIFICATION_FAILURE = 'breach_notification_failure', // 違規NotificationFailed
   OTHER = 'other', // 其他
 }
 
@@ -182,20 +182,20 @@ export interface TaiwanPenalty {
 }
 
 export enum TaiwanPenaltyType {
-  ADMINISTRATIVE_FINE = 'administrative_fine', // 行政罰鍰
-  CEASE_AND_DESIST = 'cease_and_desist', // 停止行為
+  ADMINISTRATIVE_FINE = 'administrative_fine', // Row政罰鍰
+  CEASE_AND_DESIST = 'cease_and_desist', // StopRow為
   CORRECTIVE_MEASURES = 'corrective_measures', // 改正措施
-  PUBLIC_APOLOGY = 'public_apology', // 公開道歉
+  PUBLIC_APOLOGY = 'public_apology', // 公On道歉
   COMPENSATION = 'compensation', // 賠償
   CRIMINAL_PENALTY = 'criminal_penalty', // 刑事處罰
   OTHER = 'other', // 其他
 }
 
 export enum TaiwanViolationStatus {
-  OPEN = 'open', // 開啟
-  IN_PROGRESS = 'in_progress', // 處理中
-  RESOLVED = 'resolved', // 已解決
-  CLOSED = 'closed', // 已關閉
+  OPEN = 'open', // On啟
+  IN_PROGRESS = 'in_progress', // Handle中
+  RESOLVED = 'resolved', // 已Resolve
+  CLOSED = 'closed', // 已Off閉
   APPEALED = 'appealed', // 已上訴
 }
 

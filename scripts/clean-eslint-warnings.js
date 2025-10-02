@@ -3,14 +3,14 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 /**
- * ESLint警告清理腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * ESLintWarning清理腳本
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
 console.log('🧹 開始清理ESLint警告...\n');
 
-// 1. 分析ESLint問題
+// 1. AnalysisESLint問題
 function analyzeESLintIssues() {
   console.log('📋 分析ESLint問題...');
 
@@ -63,7 +63,7 @@ function analyzeESLintIssues() {
     });
 
     console.log('📊 ESLint問題分析:');
-    console.log(`  錯誤: ${errors} 個`);
+    console.log(`  Error: ${errors} 個`);
     console.log(`  警告: ${warnings} 個`);
     console.log(`  總計: ${errors + warnings} 個`);
 
@@ -76,7 +76,7 @@ function analyzeESLintIssues() {
   }
 }
 
-// 2. 修復可自動修復的問題
+// 2. 修復可Auto修復的問題
 function fixAutoFixableIssues() {
   console.log('🔧 修復可自動修復的問題...');
 
@@ -90,7 +90,7 @@ function fixAutoFixableIssues() {
   }
 }
 
-// 3. 處理未使用的變數
+// 3. Handle未使用的變數
 function fixUnusedVariables() {
   console.log('🔧 處理未使用的變數...');
 
@@ -102,7 +102,7 @@ function fixUnusedVariables() {
       let content = fs.readFileSync(filePath, 'utf8');
       let modified = false;
 
-      // 修復未使用的參數 (添加下劃線前綴)
+      // 修復未使用的Parameter (Add下劃線前綴)
       content = content.replace(
         /function\s+\w+\s*\(\s*([^)]+)\s*\)/g,
         (match, params) => {
@@ -117,7 +117,7 @@ function fixUnusedVariables() {
         }
       );
 
-      // 修復未使用的變數 (添加下劃線前綴)
+      // 修復未使用的變數 (Add下劃線前綴)
       content = content.replace(
         /const\s+(\w+)\s*=/g,
         (match, varName) => {
@@ -162,7 +162,7 @@ function fixUnusedVariables() {
   return fixedCount;
 }
 
-// 4. 處理any類型
+// 4. HandleanyClass型
 function fixAnyTypes() {
   console.log('🔧 處理any類型...');
 
@@ -174,9 +174,9 @@ function fixAnyTypes() {
       let content = fs.readFileSync(filePath, 'utf8');
       let modified = false;
 
-      // 替換常見的any類型為更具體的類型
+      // Replace常見的anyClass型為更Concrete的Class型
       const replacements = [
-        // 函數參數
+        // FunctionParameter
         { from: ': any', to: ': unknown' },
         { from: ': any[]', to: ': unknown[]' },
         { from: ': any,', to: ': unknown,' },
@@ -231,7 +231,7 @@ function fixAnyTypes() {
   return fixedCount;
 }
 
-// 5. 處理非空斷言
+// 5. Handle非Empty斷言
 function fixNonNullAssertions() {
   console.log('🔧 處理非空斷言...');
 
@@ -243,7 +243,7 @@ function fixNonNullAssertions() {
       let content = fs.readFileSync(filePath, 'utf8');
       let modified = false;
 
-      // 替換非空斷言為可選鏈操作符
+      // Replace非Empty斷言為Optional鏈Operation符
       content = content.replace(/(\w+)!/g, '$1');
 
       if (content !== fs.readFileSync(filePath, 'utf8')) {
@@ -280,7 +280,7 @@ function fixNonNullAssertions() {
   return fixedCount;
 }
 
-// 6. 生成修復報告
+// 6. 生成修復Report
 function generateFixReport(initialIssues, finalIssues) {
   console.log('📊 生成修復報告...');
 
@@ -289,11 +289,11 @@ function generateFixReport(initialIssues, finalIssues) {
   const totalReduction = initialIssues.total - finalIssues.total;
 
   console.log('\n🎯 修復結果:');
-  console.log(`  錯誤減少: ${errorReduction} 個`);
+  console.log(`  Error減少: ${errorReduction} 個`);
   console.log(`  警告減少: ${warningReduction} 個`);
   console.log(`  總計減少: ${totalReduction} 個`);
 
-  console.log(`  剩餘錯誤: ${finalIssues.errors} 個`);
+  console.log(`  剩餘Error: ${finalIssues.errors} 個`);
   console.log(`  剩餘警告: ${finalIssues.warnings} 個`);
   console.log(`  剩餘總計: ${finalIssues.total} 個`);
 
@@ -308,12 +308,12 @@ function generateFixReport(initialIssues, finalIssues) {
   };
 }
 
-// 7. 主函數
+// 7. 主Function
 function main() {
   try {
     console.log('🚀 開始ESLint警告清理流程...\n');
 
-    // 1. 分析初始問題
+    // 1. Analysis初始問題
     const initialIssues = analyzeESLintIssues();
 
     if (initialIssues.total === 0) {
@@ -323,24 +323,24 @@ function main() {
 
     console.log('\n' + '='.repeat(50));
 
-    // 2. 自動修復
+    // 2. Auto修復
     fixAutoFixableIssues();
 
-    // 3. 處理未使用變數
+    // 3. Handle未使用變數
     fixUnusedVariables();
 
-    // 4. 處理any類型
+    // 4. HandleanyClass型
     fixAnyTypes();
 
-    // 5. 處理非空斷言
+    // 5. Handle非Empty斷言
     fixNonNullAssertions();
 
     console.log('\n' + '='.repeat(50));
 
-    // 6. 分析修復後的問題
+    // 6. Analysis修復後的問題
     const finalIssues = analyzeESLintIssues();
 
-    // 7. 生成報告
+    // 7. 生成Report
     const report = generateFixReport(initialIssues, finalIssues);
 
     console.log('\n🎯 ESLint警告清理完成！');
@@ -356,7 +356,7 @@ function main() {
 
     if (finalIssues.total > 0) {
       console.log('\n⚠️ 剩餘問題：');
-      console.log(`  錯誤: ${finalIssues.errors} 個`);
+      console.log(`  Error: ${finalIssues.errors} 個`);
       console.log(`  警告: ${finalIssues.warnings} 個`);
       console.log('  建議手動處理剩餘問題');
     }
@@ -367,12 +367,12 @@ function main() {
     console.log('  3. 設置預提交檢查');
 
   } catch (error) {
-    console.error('❌ ESLint警告清理失敗:', error);
+    console.error('❌ ESLint警告清理Failed:', error);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   main();
 }

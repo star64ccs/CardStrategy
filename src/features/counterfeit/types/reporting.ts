@@ -1,6 +1,6 @@
-// 假卡回報系統類型定義
+// False卡回報系統Class型定義
 
-// 舉報類型枚舉
+// 舉報Class型枚舉
 export enum ReportType {
   FAKE_CARD = 'FAKE_CARD',
   COUNTERFEIT = 'COUNTERFEIT',
@@ -19,7 +19,7 @@ export enum ReportSeverity {
   CRITICAL = 'CRITICAL',
 }
 
-// 舉報狀態枚舉
+// 舉報Status枚舉
 export enum ReportStatus {
   PENDING = 'PENDING',
   UNDER_REVIEW = 'UNDER_REVIEW',
@@ -29,7 +29,7 @@ export enum ReportStatus {
   CLOSED = 'CLOSED',
 }
 
-// 警告類型枚舉
+// WarningClass型枚舉
 export enum WarningType {
   COMMUNITY_WARNING = 'COMMUNITY_WARNING',
   SELLER_WARNING = 'SELLER_WARNING',
@@ -38,7 +38,7 @@ export enum WarningType {
   ADMIN_WARNING = 'ADMIN_WARNING',
 }
 
-// 黑名單類型枚舉
+// 黑名單Class型枚舉
 export enum BlacklistType {
   USER = 'USER',
   SELLER = 'SELLER',
@@ -47,7 +47,7 @@ export enum BlacklistType {
   DEVICE = 'DEVICE',
 }
 
-// 舉報請求接口
+// 舉報RequestInterface
 export interface ReportRequest {
   id: string;
   reporterId: string;
@@ -65,7 +65,7 @@ export interface ReportRequest {
   priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
 }
 
-// 證據項目接口
+// 證據項目Interface
 export interface EvidenceItem {
   id: string;
   type: 'IMAGE' | 'VIDEO' | 'DOCUMENT' | 'LINK' | 'TEXT';
@@ -78,7 +78,7 @@ export interface EvidenceItem {
   timestamp: Date;
 }
 
-// 舉報響應接口
+// 舉報ResponseInterface
 export interface ReportResponse {
   id: string;
   reportId: string;
@@ -93,7 +93,7 @@ export interface ReportResponse {
   closedAt?: Date;
 }
 
-// 舉報記錄接口
+// 舉報RecordInterface
 export interface ReportRecord {
   id: string;
   report: ReportRequest;
@@ -104,11 +104,11 @@ export interface ReportRecord {
   updatedAt: Date;
 }
 
-// 警告接口
+// WarningInterface
 export interface Warning {
   id: string;
   type: WarningType;
-  targetId: string; // 用戶ID或實體ID
+  targetId: string; // UserID或實體ID
   targetType: 'USER' | 'SELLER' | 'BUYER' | 'CARD' | 'LISTING';
   title: string;
   message: string;
@@ -121,12 +121,12 @@ export interface Warning {
   acknowledgedBy?: string;
 }
 
-// 黑名單條目接口
+// 黑名單條目Interface
 export interface BlacklistEntry {
   id: string;
   type: BlacklistType;
   targetId: string;
-  targetValue: string; // 用戶ID、IP地址、設備ID等
+  targetValue: string; // UserID、IPAddress、設備ID等
   reason: string;
   severity: ReportSeverity;
   isActive: boolean;
@@ -138,7 +138,7 @@ export interface BlacklistEntry {
   removalReason?: string;
 }
 
-// 社區警告接口
+// 社DistrictWarningInterface
 export interface CommunityWarning {
   id: string;
   title: string;
@@ -155,13 +155,13 @@ export interface CommunityWarning {
   dismissedCount: number;
 }
 
-// 舉報統計接口
+// 舉報StatisticsInterface
 export interface ReportStats {
   totalReports: number;
   pendingReports: number;
   resolvedReports: number;
   rejectedReports: number;
-  averageResolutionTime: number; // 小時
+  averageResolutionTime: number; // Hour
   reportsByType: Record<ReportType, number>;
   reportsBySeverity: Record<ReportSeverity, number>;
   reportsByStatus: Record<ReportStatus, number>;
@@ -179,7 +179,7 @@ export interface ReportStats {
   }[];
 }
 
-// 舉報配置接口
+// 舉報ConfigureInterface
 export interface ReportConfig {
   autoApproveThreshold: number;
   manualReviewThreshold: number;
@@ -197,7 +197,7 @@ export interface ReportConfig {
   allowedEvidenceTypes: string[];
 }
 
-// 舉報服務配置接口
+// 舉報ServiceConfigureInterface
 export interface ReportServiceConfig {
   enabled: boolean;
   config: ReportConfig;
@@ -213,7 +213,7 @@ export interface ReportServiceConfig {
   backupEnabled: boolean;
 }
 
-// 舉報查詢參數接口
+// 舉報QueryParameterInterface
 export interface ReportQueryParams {
   status?: ReportStatus[];
   type?: ReportType[];
@@ -228,7 +228,7 @@ export interface ReportQueryParams {
   sortOrder?: 'ASC' | 'DESC';
 }
 
-// 舉報過濾器接口
+// 舉報Filter器Interface
 export interface ReportFilter {
   status: ReportStatus[];
   type: ReportType[];
@@ -242,7 +242,7 @@ export interface ReportFilter {
   isAnonymous: boolean;
 }
 
-// 舉報導出接口
+// 舉報ExportInterface
 export interface ReportExport {
   id: string;
   format: 'CSV' | 'JSON' | 'PDF' | 'EXCEL';
@@ -255,7 +255,7 @@ export interface ReportExport {
   recordCount?: number;
 }
 
-// 舉報通知接口
+// 舉報NotificationInterface
 export interface ReportNotification {
   id: string;
   type:
@@ -274,7 +274,7 @@ export interface ReportNotification {
   expiresAt?: Date;
 }
 
-// 舉報審核日誌接口
+// 舉報審核LogInterface
 export interface ReportAuditLog {
   id: string;
   reportId: string;

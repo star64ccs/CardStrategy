@@ -140,7 +140,7 @@ export class InsightWorker {
   }
 
   /**
-   * 趨勢分析
+   * 趨勢Analysis
    */
   async analyzeTrends(dataSourceId: string): Promise<InsightAnalysis> {
     try {
@@ -175,13 +175,13 @@ export class InsightWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('趨勢分析失敗:', error);
-      throw new Error(`趨勢分析失敗: ${error}`);
+      console.error('趨勢分析Failed:', error);
+      throw new Error(`趨勢分析Failed: ${error}`);
     }
   }
 
   /**
-   * 模式分析
+   * 模式Analysis
    */
   async analyzePatterns(dataSourceId: string): Promise<InsightAnalysis> {
     try {
@@ -216,8 +216,8 @@ export class InsightWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('模式分析失敗:', error);
-      throw new Error(`模式分析失敗: ${error}`);
+      console.error('模式分析Failed:', error);
+      throw new Error(`模式分析Failed: ${error}`);
     }
   }
 
@@ -257,13 +257,13 @@ export class InsightWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('異常檢測失敗:', error);
-      throw new Error(`異常檢測失敗: ${error}`);
+      console.error('異常檢測Failed:', error);
+      throw new Error(`異常檢測Failed: ${error}`);
     }
   }
 
   /**
-   * 預測分析
+   * 預測Analysis
    */
   async generatePredictions(dataSourceId: string): Promise<InsightAnalysis> {
     try {
@@ -300,13 +300,13 @@ export class InsightWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('預測分析失敗:', error);
-      throw new Error(`預測分析失敗: ${error}`);
+      console.error('預測分析Failed:', error);
+      throw new Error(`預測分析Failed: ${error}`);
     }
   }
 
   /**
-   * 相關性分析
+   * 相Off性Analysis
    */
   async analyzeCorrelations(dataSourceId: string): Promise<InsightAnalysis> {
     try {
@@ -343,8 +343,8 @@ export class InsightWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('相關性分析失敗:', error);
-      throw new Error(`相關性分析失敗: ${error}`);
+      console.error('相關性分析Failed:', error);
+      throw new Error(`相關性分析Failed: ${error}`);
     }
   }
 
@@ -371,13 +371,13 @@ export class InsightWorker {
 
       return this.extractInsightRecommendations(response.content);
     } catch (error) {
-      console.error('洞察建議生成失敗:', error);
-      throw new Error(`洞察建議生成失敗: ${error}`);
+      console.error('洞察建議生成Failed:', error);
+      throw new Error(`洞察建議生成Failed: ${error}`);
     }
   }
 
   /**
-   * 監控洞察狀態
+   * Monitor洞察Status
    */
   async monitorInsightStatus(dataSourceId: string): Promise<{
     overallInsight: number;
@@ -416,13 +416,13 @@ export class InsightWorker {
         recommendations,
       };
     } catch (error) {
-      console.error('洞察狀態監控失敗:', error);
-      throw new Error(`洞察狀態監控失敗: ${error}`);
+      console.error('洞察狀態監控Failed:', error);
+      throw new Error(`洞察狀態監控Failed: ${error}`);
     }
   }
 
   /**
-   * 獲取分析歷史
+   * GetAnalysis歷史
    */
   getAnalysisHistory(
     dataSourceId?: string,
@@ -448,25 +448,25 @@ export class InsightWorker {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   updateConfig(newConfig: Partial<InsightWorkerConfig>): void {
     this.config = { ...this.config, ...newConfig };
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   getConfig(): InsightWorkerConfig {
     return { ...this.config };
   }
 
-  // 私有輔助方法
+  // Private輔助Method
   private generateId(): string {
     return `insight_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // 趨勢相關方法
+  // 趨勢相OffMethod
   private calculateTrendScore(content: string): number {
     const _positiveIndicators = ['上升', '增長', '改善', '積極'];
     const _negativeIndicators = ['下降', '減少', '惡化', '消極'];
@@ -556,7 +556,7 @@ export class InsightWorker {
     return Math.ceil(wordCount / 100);
   }
 
-  // 模式相關方法
+  // 模式相OffMethod
   private calculatePatternScore(content: string): number {
     const _positiveIndicators = ['清晰', '穩定', '規律', '可預測'];
     const _negativeIndicators = ['混亂', '不穩定', '隨機', '不可預測'];
@@ -646,10 +646,10 @@ export class InsightWorker {
     return Math.ceil(wordCount / 90);
   }
 
-  // 異常相關方法
+  // 異常相OffMethod
   private calculateAnomalyScore(content: string): number {
     const _positiveIndicators = ['正常', '無異常', '穩定', '良好'];
-    const _negativeIndicators = ['異常', '問題', '偏差', '錯誤'];
+    const _negativeIndicators = ['異常', '問題', '偏差', 'Error'];
 
     let score = 80;
 
@@ -736,7 +736,7 @@ export class InsightWorker {
     return Math.ceil(wordCount / 80);
   }
 
-  // 預測相關方法
+  // 預測相OffMethod
   private calculatePredictionScore(content: string): number {
     const _positiveIndicators = ['準確', '可靠', '高置信度', '可信'];
     const _negativeIndicators = ['不準確', '不可靠', '低置信度', '不可信'];
@@ -826,7 +826,7 @@ export class InsightWorker {
     return Math.ceil(wordCount / 85);
   }
 
-  // 相關性相關方法
+  // 相Off性相OffMethod
   private calculateCorrelationScore(content: string): number {
     const _positiveIndicators = ['強相關', '顯著', '重要', '有意義'];
     const _negativeIndicators = ['弱相關', '不顯著', '無意義', '隨機'];

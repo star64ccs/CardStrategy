@@ -1,0 +1,20 @@
+/**
+ * 會員服務 - 處理會員等級、權限管理
+ */
+
+export class MembershipService {
+  private static instance: MembershipService;
+  
+  private constructor() {}
+  
+  public static getInstance(): MembershipService {
+    if (!MembershipService.instance) {
+      MembershipService.instance = new MembershipService();
+    }
+    return MembershipService.instance;
+  }
+  
+  // TODO: 實現具體方法
+}
+
+export const membershipService = MembershipService.getInstance();

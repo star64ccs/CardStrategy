@@ -1,6 +1,6 @@
 /**
- * 數據安全服務單元測試
- * 測試加密、解密、備份、密鑰管理等功能
+ * Data安全Service單元Test
+ * TestEncrypt、Decrypt、Backup、密鑰Manage等功能
  */
 
 import { CryptoBackupService } from '../services/backupService';
@@ -27,7 +27,7 @@ describe('DataSecurityService', () => {
   beforeEach(async () => {
     service = DataSecurityService.getInstance();
 
-    // 重置服務狀態
+    // ResetServiceStatus
     await service.destroy();
     await service.initialize();
   });
@@ -37,7 +37,7 @@ describe('DataSecurityService', () => {
   });
 
   describe('初始化', () => {
-    test('應該正確初始化服務', async () => {
+    test('應該正確InitializeService', async () => {
       expect(service).toBeDefined();
 
       const _state = await service.getSecurityState();
@@ -123,7 +123,7 @@ describe('DataSecurityService', () => {
       expect(result.keyId).toBe(key.id);
     });
 
-    test('應該處理加密失敗情況', async () => {
+    test('應該Handle加密Failed情況', async () => {
       const request: EncryptionRequest = {
         data: '',
         algorithm: EncryptionAlgorithm.AES_256_GCM,
@@ -139,7 +139,7 @@ describe('DataSecurityService', () => {
     test('應該能夠解密數據', async () => {
       const _testData = '要解密的測試數據';
 
-      // 先加密
+      // 先Encrypt
       const encryptRequest: EncryptionRequest = {
         data: testData,
         algorithm: EncryptionAlgorithm.AES_256_GCM,
@@ -147,7 +147,7 @@ describe('DataSecurityService', () => {
       const _encryptResult = await service.encryptData(encryptRequest);
       expect(encryptResult.success).toBe(true);
 
-      // 再解密
+      // 再Decrypt
       const decryptRequest: DecryptionRequest = {
         encryptedData: encryptResult.encryptedData,
         keyId: encryptResult.keyId,
@@ -162,7 +162,7 @@ describe('DataSecurityService', () => {
       expect(decryptResult.metadata?.verified).toBe(true);
     });
 
-    test('應該處理解密失敗情況', async () => {
+    test('應該Handle解密Failed情況', async () => {
       const request: DecryptionRequest = {
         encryptedData: 'invalid_encrypted_data',
         keyId: 'non_existent_key',
@@ -210,7 +210,7 @@ describe('DataSecurityService', () => {
 
   describe('備份功能', () => {
     test('應該能夠創建備份', async () => {
-      // 先生成加密密鑰
+      // 先生成Encrypt密鑰
       const _encryptionKey = await service.generateKey(
         EncryptionAlgorithm.AES_256_GCM,
         {
@@ -258,11 +258,11 @@ describe('DataSecurityService', () => {
       expect(task.metadata.compressionUsed).toBe(true);
     });
 
-    test('應該能夠恢復備份', async () => {
-      // 先創建備份
+    test('應該能夠RestoreBackup', async () => {
+      // 先CreateBackup
       const backupConfig: BackupConfig = {
         id: 'test_backup_002',
-        name: '恢復測試備份',
+        name: 'RestoreTestBackup',
         type: BackupType.FULL,
         schedule: '',
         retention: 7,
@@ -275,10 +275,10 @@ describe('DataSecurityService', () => {
 
       const _backupTask = await service.createBackup(backupConfig);
 
-      // 模擬備份完成
+      // 模擬BackupComplete
       backupTask.status = 'completed';
 
-      // 創建恢復請求
+      // CreateRestoreRequest
       const restoreRequest: RestoreRequest = {
         backupId: backupTask.id,
         destination: '/test/restore',
@@ -331,8 +331,8 @@ describe('DataSecurityService', () => {
       service.addEventListener(listener);
       service.removeEventListener(listener);
 
-      // 事件監聽器相關的測試
-      expect(true).toBe(true); // 簡化測試
+      // Event監聽器相Off的Test
+      expect(true).toBe(true); // 簡化Test
     });
   });
 
@@ -343,7 +343,7 @@ describe('DataSecurityService', () => {
         purpose: 'integration_test',
       });
 
-      // 2. 加密數據
+      // 2. EncryptData
       const _testData = '綜合測試數據 - 包含中文字符';
       const _encryptResult = await service.encryptData({
         data: testData,
@@ -357,7 +357,7 @@ describe('DataSecurityService', () => {
 
       expect(encryptResult.success).toBe(true);
 
-      // 3. 創建備份
+      // 3. CreateBackup
       const backupConfig: BackupConfig = {
         id: 'integration_test_backup',
         name: '綜合測試備份',
@@ -381,7 +381,7 @@ describe('DataSecurityService', () => {
       const _backupTask = await service.createBackup(backupConfig);
       expect(backupTask.id).toBeDefined();
 
-      // 4. 解密數據
+      // 4. DecryptData
       const _decryptResult = await service.decryptData({
         encryptedData: encryptResult.encryptedData,
         keyId: key.id,
@@ -393,7 +393,7 @@ describe('DataSecurityService', () => {
       expect(decryptResult.success).toBe(true);
       expect(decryptResult.decryptedData).toBe(testData);
 
-      // 5. 檢查安全狀態
+      // 5. Check安全Status
       const _state = await service.getSecurityState();
       expect(state.statistics.totalEncryptions).toBeGreaterThan(0);
       expect(state.statistics.totalDecryptions).toBeGreaterThan(0);
@@ -407,7 +407,7 @@ describe('DataSecurityService', () => {
         { data: '測試數據3', algorithm: EncryptionAlgorithm.CHACHA20_POLY1305 },
       ];
 
-      // 並發生成密鑰和加密
+      // Concurrent生成密鑰和Encrypt
       const _promises = testCases.map(async testCase => {
         const _key = await service.generateKey(testCase.algorithm);
         const _encryptResult = await service.encryptData({
@@ -421,13 +421,13 @@ describe('DataSecurityService', () => {
 
       const _results = await Promise.all(promises);
 
-      // 驗證所有加密都成功
+      // Verify所有Encrypt都Success
       results.forEach(result => {
         expect(result.encryptResult.success).toBe(true);
         expect(result.encryptResult.keyId).toBe(result.key.id);
       });
 
-      // 驗證解密
+      // VerifyDecrypt
       const _decryptPromises = results.map(result =>
         service.decryptData({
           encryptedData: result.encryptResult.encryptedData,
@@ -447,10 +447,10 @@ describe('DataSecurityService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    test('應該處理初始化失敗', async () => {
-      // 這個測試比較難模擬，因為我們的服務設計得很健壯
-      // 在真實環境中可能會有網絡問題、權限問題等
+  describe('ErrorHandle', () => {
+    test('應該HandleInitializeFailed', async () => {
+      // 這個Test比較難模擬，因為我們的Service設計得很健壯
+      // 在True實環境中可能會有Network問題、權限問題等
       expect(true).toBe(true);
     });
 
@@ -458,7 +458,7 @@ describe('DataSecurityService', () => {
       const _invalidBackupConfig = {
         id: '',
         name: '',
-        // 缺少必要字段
+        // 缺少必要Field
       } as BackupConfig;
 
       await expect(service.createBackup(invalidBackupConfig)).rejects.toThrow();
@@ -467,7 +467,7 @@ describe('DataSecurityService', () => {
 
   describe('性能測試', () => {
     test('大量數據加密性能', async () => {
-      const _largeData = 'x'.repeat(10000); // 10KB 數據
+      const _largeData = 'x'.repeat(10000); // 10KB Data
       const _startTime = Date.now();
 
       const _result = await service.encryptData({
@@ -479,7 +479,7 @@ describe('DataSecurityService', () => {
       const _processingTime = endTime - startTime;
 
       expect(result.success).toBe(true);
-      expect(processingTime).toBeLessThan(5000); // 應該在5秒內完成
+      expect(processingTime).toBeLessThan(5000); // 應該在5Second內Complete
     });
 
     test('批量密鑰生成性能', async () => {
@@ -502,12 +502,12 @@ describe('DataSecurityService', () => {
         expect(key.status).toBe('active');
       });
 
-      expect(processingTime).toBeLessThan(10000); // 應該在10秒內完成
+      expect(processingTime).toBeLessThan(10000); // 應該在10Second內Complete
     });
   });
 
-  describe('服務生命週期', () => {
-    test('應該正確銷毀服務', async () => {
+  describe('Service生命週期', () => {
+    test('應該正確銷毀Service', async () => {
       await service.destroy();
 
       const _state = await service.getSecurityState();

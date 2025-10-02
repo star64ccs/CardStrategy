@@ -16,7 +16,7 @@ const generateToken = (id) => {
   });
 };
 
-// 生成刷新令牌
+// 生成Refresh令牌
 const generateRefreshToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
     expiresIn: process.env.JWT_REFRESH_EXPIRE || '7d',
@@ -24,7 +24,7 @@ const generateRefreshToken = (id) => {
 };
 
 // @route   POST /api/auth/register
-// @desc    用戶註冊
+// @desc    UserRegister
 // @access  Public
 router.post(
   '/register',
@@ -46,13 +46,13 @@ router.post(
   ],
   async (req, res) => {
     try {
-      // 檢查驗證錯誤
+      // CheckVerifyError
       // eslint-disable-next-line no-unused-vars
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -64,12 +64,12 @@ router.post(
       if (!User) {
         return res.status(500).json({
           success: false,
-          message: '數據庫連接失敗',
+          message: '數據庫ConnectFailed',
           code: 'DATABASE_ERROR',
         });
       }
 
-      // 檢查用戶是否已存在
+      // CheckUserYesNo已存在
       const existingUser = await User.findOne({
         where: {
           [Op.or]: [{ email }, { username }],
@@ -85,7 +85,7 @@ router.post(
         });
       }
 
-      // 創建新用戶
+      // Create新User
       // eslint-disable-next-line no-unused-vars
       const user = await User.create({
         username,
@@ -98,14 +98,14 @@ router.post(
       const token = generateToken(user.id);
       const refreshToken = generateRefreshToken(user.id);
 
-      // 更新最後登錄時間
+      // Update最後LoginTime
       await user.updateLastLogin();
 
       logger.info(`新用戶註冊: ${user.username} (${user.email})`);
 
       res.status(201).json({
         success: true,
-        message: '註冊成功',
+        message: '註冊Success',
         data: {
           user: {
             id: user.id,
@@ -122,10 +122,10 @@ router.post(
         },
       });
     } catch (error) {
-      logger.error('註冊錯誤:', error);
+      logger.error('註冊Error:', error);
       res.status(500).json({
         success: false,
-        message: '註冊失敗',
+        message: '註冊Failed',
         code: 'REGISTRATION_FAILED',
       });
     }
@@ -133,7 +133,7 @@ router.post(
 );
 
 // @route   POST /api/auth/login
-// @desc    用戶登錄
+// @desc    UserLogin
 // @access  Public
 router.post(
   '/login',
@@ -148,7 +148,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -160,12 +160,12 @@ router.post(
       if (!User) {
         return res.status(500).json({
           success: false,
-          message: '數據庫連接失敗',
+          message: '數據庫ConnectFailed',
           code: 'DATABASE_ERROR',
         });
       }
 
-      // 查找用戶（支持用戶名或郵箱登錄）
+      // FindUser（SupportUser名或EmailLogin）
       // eslint-disable-next-line no-unused-vars
       const user = await User.findOne({
         where: {
@@ -176,12 +176,12 @@ router.post(
       if (!user) {
         return res.status(401).json({
           success: false,
-          message: '用戶名或密碼錯誤',
+          message: '用戶名或密碼Error',
           code: 'INVALID_CREDENTIALS',
         });
       }
 
-      // 檢查用戶是否被禁用
+      // CheckUserYesNo被Disable
       if (!user.isActive) {
         return res.status(401).json({
           success: false,
@@ -190,12 +190,12 @@ router.post(
         });
       }
 
-      // 驗證密碼
+      // VerifyPassword
       const isMatch = await user.matchPassword(password);
       if (!isMatch) {
         return res.status(401).json({
           success: false,
-          message: '用戶名或密碼錯誤',
+          message: '用戶名或密碼Error',
           code: 'INVALID_CREDENTIALS',
         });
       }
@@ -204,14 +204,14 @@ router.post(
       const token = generateToken(user.id);
       const refreshToken = generateRefreshToken(user.id);
 
-      // 更新最後登錄時間
+      // Update最後LoginTime
       await user.updateLastLogin();
 
       logger.info(`用戶登錄: ${user.username}`);
 
       res.json({
         success: true,
-        message: '登錄成功',
+        message: '登錄Success',
         data: {
           user: {
             id: user.id,
@@ -229,10 +229,10 @@ router.post(
         },
       });
     } catch (error) {
-      logger.error('登錄錯誤:', error);
+      logger.error('登錄Error:', error);
       res.status(500).json({
         success: false,
-        message: '登錄失敗',
+        message: '登錄Failed',
         code: 'LOGIN_FAILED',
       });
     }
@@ -240,7 +240,7 @@ router.post(
 );
 
 // @route   POST /api/auth/refresh
-// @desc    刷新訪問令牌
+// @desc    Refresh訪問令牌
 // @access  Public
 router.post(
   '/refresh',
@@ -252,7 +252,7 @@ router.post(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -264,15 +264,15 @@ router.post(
       if (!User) {
         return res.status(500).json({
           success: false,
-          message: '數據庫連接失敗',
+          message: '數據庫ConnectFailed',
           code: 'DATABASE_ERROR',
         });
       }
 
-      // 驗證刷新令牌
+      // VerifyRefresh令牌
       const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
 
-      // 查找用戶
+      // FindUser
       // eslint-disable-next-line no-unused-vars
       const user = await User.findByPk(decoded.id);
       if (!user) {
@@ -293,14 +293,14 @@ router.post(
 
       res.json({
         success: true,
-        message: '令牌刷新成功',
+        message: '令牌刷新Success',
         data: {
           token: newToken,
           refreshToken: newRefreshToken,
         },
       });
     } catch (error) {
-      logger.error('令牌刷新錯誤:', error);
+      logger.error('令牌刷新Error:', error);
       res.status(401).json({
         success: false,
         message: '無效的刷新令牌',
@@ -311,7 +311,7 @@ router.post(
 );
 
 // @route   GET /api/auth/me
-// @desc    獲取當前用戶信息
+// @desc    Get當前UserInformation
 // @access  Private
 router.get('/me', protect, async (req, res) => {
   try {
@@ -320,7 +320,7 @@ router.get('/me', protect, async (req, res) => {
     if (!User) {
       return res.status(500).json({
         success: false,
-        message: '數據庫連接失敗',
+        message: '數據庫ConnectFailed',
         code: 'DATABASE_ERROR',
       });
     }
@@ -348,17 +348,17 @@ router.get('/me', protect, async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('獲取用戶信息錯誤:', error);
+    logger.error('Get用戶信息Error:', error);
     res.status(500).json({
       success: false,
-      message: '獲取用戶信息失敗',
+      message: 'Get用戶信息Failed',
       code: 'GET_USER_FAILED',
     });
   }
 });
 
 // @route   PUT /api/auth/profile
-// @desc    更新用戶資料
+// @desc    UpdateUser資料
 // @access  Private
 router.put(
   '/profile',
@@ -384,7 +384,7 @@ router.put(
       if (!errors.isEmpty()) {
         return res.status(400).json({
           success: false,
-          message: '輸入驗證失敗',
+          message: '輸入VerifyFailed',
           code: 'VALIDATION_ERROR',
           errors: errors.array(),
         });
@@ -396,7 +396,7 @@ router.put(
       if (!User) {
         return res.status(500).json({
           success: false,
-          message: '數據庫連接失敗',
+          message: '數據庫ConnectFailed',
           code: 'DATABASE_ERROR',
         });
       }
@@ -419,7 +419,7 @@ router.put(
 
       res.json({
         success: true,
-        message: '資料更新成功',
+        message: '資料UpdateSuccess',
         data: {
           user: {
             id: updatedUser.id,
@@ -436,10 +436,10 @@ router.put(
         },
       });
     } catch (error) {
-      logger.error('更新用戶資料錯誤:', error);
+      logger.error('Update用戶資料Error:', error);
       res.status(500).json({
         success: false,
-        message: '更新資料失敗',
+        message: 'Update資料Failed',
         code: 'UPDATE_PROFILE_FAILED',
       });
     }
@@ -447,7 +447,7 @@ router.put(
 );
 
 // @route   POST /api/auth/logout
-// @desc    用戶登出
+// @desc    User登出
 // @access  Private
 router.post('/logout', protect, async (req, res) => {
   try {
@@ -455,13 +455,13 @@ router.post('/logout', protect, async (req, res) => {
 
     res.json({
       success: true,
-      message: '登出成功',
+      message: '登出Success',
     });
   } catch (error) {
-    logger.error('登出錯誤:', error);
+    logger.error('登出Error:', error);
     res.status(500).json({
       success: false,
-      message: '登出失敗',
+      message: '登出Failed',
       code: 'LOGOUT_FAILED',
     });
   }

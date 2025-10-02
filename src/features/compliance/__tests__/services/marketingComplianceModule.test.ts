@@ -26,7 +26,7 @@ describe('MarketingComplianceModule', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化模組', async () => {
+    it('應該SuccessInitialize模組', async () => {
       const _result = await marketingComplianceModule.initialize();
       expect(result).toBe(true);
     });
@@ -370,19 +370,19 @@ describe('MarketingComplianceModule', () => {
 
       marketingComplianceModule.updateConfig(newConfig);
 
-      // 驗證配置已更新（通過檢查行為變化）
+      // VerifyConfigure已Update（通過CheckRow為變化）
       const _result = marketingComplianceModule.validateMarketingConsent(
         'test_user',
         'email'
       );
-      // 當同意管理被禁用時，應該仍然正常工作但可能有不同的行為
+      // 當AgreeManage被Disable時，應該仍然正常工作但可能有不同的Row為
       expect(result.userId).toBe('test_user');
     });
   });
 
   describe('重置功能', () => {
     it('應該重置模組狀態', async () => {
-      // 先添加一些數據
+      // 先Add一些Data
       const email: MarketingEmail = {
         id: 'test_email',
         sender: 'test@company.com',
@@ -413,10 +413,10 @@ describe('MarketingComplianceModule', () => {
       marketingComplianceModule.validateEmailMarketing(email);
       marketingComplianceModule.trackAdTransparency(ad);
 
-      // 重置
+      // Reset
       await marketingComplianceModule.reset();
 
-      // 驗證重置後的狀態（通過檢查模組是否正常工作）
+      // VerifyReset後的Status（通過Check模組YesNo正常工作）
       const newEmail: MarketingEmail = {
         id: 'new_email',
         sender: 'new@company.com',
@@ -515,7 +515,7 @@ describe('MarketingComplianceModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     it('應該快速處理大量廣告透明度檢查', () => {
@@ -542,19 +542,19 @@ describe('MarketingComplianceModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 
   describe('功能場景測試', () => {
     it('應該處理完整的營銷合規流程', () => {
-      // 1. 驗證用戶同意
+      // 1. VerifyUserAgree
       const _consentResult = marketingComplianceModule.validateMarketingConsent(
         'scenario_user',
         'email'
       );
 
-      // 2. 創建營銷郵件
+      // 2. Create營銷郵件
       const email: MarketingEmail = {
         id: 'scenario_email',
         sender: 'scenario@company.com',
@@ -568,14 +568,14 @@ describe('MarketingComplianceModule', () => {
         sentAt: new Date(),
       };
 
-      // 3. 驗證郵件合規
+      // 3. Verify郵件合規
       const _emailResult =
         marketingComplianceModule.validateEmailMarketing(email);
 
-      // 4. 執行CAN-SPAM檢查
+      // 4. 執RowCAN-SPAMCheck
       const _canspamResult = marketingComplianceModule.enforceCANSPAM(email);
 
-      // 5. 創建廣告
+      // 5. Create廣告
       const ad: Advertisement = {
         id: 'scenario_ad',
         advertiser: '場景公司',
@@ -590,14 +590,14 @@ describe('MarketingComplianceModule', () => {
         hasDisclosure: true,
       };
 
-      // 6. 追蹤廣告透明度
+      // 6. Trace廣告透明度
       const _transparencyResult =
         marketingComplianceModule.trackAdTransparency(ad);
 
-      // 7. 驗證廣告內容
+      // 7. Verify廣告Content
       const _contentResult = marketingComplianceModule.validateAdContent(ad);
 
-      // 驗證結果
+      // Verify結果
       expect(consentResult.userId).toBe('scenario_user');
       expect(emailResult.emailId).toBe('scenario_email');
       expect(canspamResult.emailId).toBe('scenario_email');
@@ -606,19 +606,19 @@ describe('MarketingComplianceModule', () => {
     });
 
     it('應該處理用戶退出流程', () => {
-      // 1. 用戶同意接收營銷
+      // 1. UserAgreeReceive營銷
       const _consentResult = marketingComplianceModule.validateMarketingConsent(
         'optout_user',
         'email'
       );
 
-      // 2. 用戶選擇退出
+      // 2. UserSelectExit
       const _optoutResult = marketingComplianceModule.manageOptOut(
         'optout_user',
         'email'
       );
 
-      // 3. 再次驗證同意狀態
+      // 3. 再次VerifyAgreeStatus
       const _newConsentResult =
         marketingComplianceModule.validateMarketingConsent(
           'optout_user',

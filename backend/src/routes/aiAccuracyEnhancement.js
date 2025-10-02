@@ -4,7 +4,7 @@ const { authenticateToken: protect } = require('../middleware/auth');'
 // eslint-disable-next-line no-unused-vars''
 const logger = require('../utils/logger');''
 const { validateInput } = require('../middleware/validation');'
-// 導入?��??��?''
+// Import?��??��?''
 const AIAnalysis = require('../models/AIAnalysis').getAIAnalysisModel();
 // eslint-disable-next-line no-unused-vars'
 const DataQualityMetrics =''
@@ -100,7 +100,7 @@ router.get('/training-data/stats', protect, async (req, res) => {'
   try {''
     logger.info('?��?訓練?��?統�?');
 
-    // 從數?�庫?��?統�??��?'
+    // 從數?�Library?��?統�??��?'
     const stats = await DataQualityMetrics.findOne({''
       where: { dataType: 'training' },''
       order: [['assessmentDate', 'DESC']],
@@ -335,7 +335,7 @@ router.post('/feedback/collect', protect, async (req, res) => {
     const qualityScore = 0.8 + Math.random() * 0.15;
     const reward = qualityScore > 0.9 ? Math.floor(Math.random() * 10) + 5 : 0;
 
-    // 記�??��??�數?�庫
+    // 記�??��??�數?�Library
     await AIAnalysis.create({
       userId: req.user.id,'
       cardId: feedback.cardId,''
@@ -538,7 +538,7 @@ router.post('/feedback/:feedbackId/validate', protect, async (req, res) => {
     });'
   }
 });''
-// 設置準確?�目�?router.post('/target/set', protect, async (req, res) => {
+// Settings準確?�目�?router.post('/target/set', protect, async (req, res) => {
   try {'
     const { target, deadline, config } = req.body;''
     logger.info('設置準確?�目�?, { target, deadline });

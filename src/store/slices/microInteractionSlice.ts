@@ -13,31 +13,31 @@ import type {
 } from '../../types/microInteractions';
 import { MicroInteractionStatus } from '../../types/microInteractions';
 
-// 初始狀態
+// 初始Status
 interface MicroInteractionSliceState {
-  // 服務狀態
+  // ServiceStatus
   initialized: boolean;
   loading: boolean;
   error: string | null;
 
-  // 配置
+  // Configure
   config: MicroInteractionManagerConfig;
 
-  // 微交互管理
+  // 微交互Manage
   interactions: Record<string, MicroInteractionConfig>;
   states: Record<string, MicroInteractionState>;
   performances: Record<string, MicroInteractionPerformance>;
 
-  // 統計
+  // Statistics
   stats: MicroInteractionStats;
 
-  // 事件歷史
+  // Event歷史
   events: MicroInteractionEvent[];
 
-  // 性能監控
+  // 性能Monitor
   performanceMonitoring: boolean;
 
-  // 調試模式
+  // Debug模式
   debugMode: boolean;
 }
 
@@ -72,9 +72,9 @@ const initialState: MicroInteractionSliceState = {
   debugMode: false,
 };
 
-// 異步 Thunks
+// Async Thunks
 
-// 初始化微交互服務
+// Initialize微交互Service
 export const _initializeMicroInteractionService = createAsyncThunk(
   'microInteraction/initialize',
   async (config?: Partial<MicroInteractionManagerConfig>) => {
@@ -83,7 +83,7 @@ export const _initializeMicroInteractionService = createAsyncThunk(
   }
 );
 
-// 註冊微交互
+// Register微交互
 export const _registerMicroInteraction = createAsyncThunk(
   'microInteraction/register',
   async (config: MicroInteractionConfig) => {
@@ -92,7 +92,7 @@ export const _registerMicroInteraction = createAsyncThunk(
   }
 );
 
-// 註銷微交互
+// Logout微交互
 export const _unregisterMicroInteraction = createAsyncThunk(
   'microInteraction/unregister',
   async (id: string) => {
@@ -110,7 +110,7 @@ export const _triggerMicroInteraction = createAsyncThunk(
   }
 );
 
-// 停止微交互
+// Stop微交互
 export const _stopMicroInteraction = createAsyncThunk(
   'microInteraction/stop',
   async (id: string) => {
@@ -119,7 +119,7 @@ export const _stopMicroInteraction = createAsyncThunk(
   }
 );
 
-// 重置微交互
+// Reset微交互
 export const _resetMicroInteraction = createAsyncThunk(
   'microInteraction/reset',
   async (id: string) => {
@@ -128,7 +128,7 @@ export const _resetMicroInteraction = createAsyncThunk(
   }
 );
 
-// 批量觸發微交互
+// Batch觸發微交互
 export const _triggerMultipleMicroInteractions = createAsyncThunk(
   'microInteraction/triggerMultiple',
   async ({ ids, data }: { ids: string[]; data?: Record<string, any> }) => {
@@ -137,7 +137,7 @@ export const _triggerMultipleMicroInteractions = createAsyncThunk(
   }
 );
 
-// 停止所有微交互
+// Stop所有微交互
 export const _stopAllMicroInteractions = createAsyncThunk(
   'microInteraction/stopAll',
   async () => {
@@ -146,7 +146,7 @@ export const _stopAllMicroInteractions = createAsyncThunk(
   }
 );
 
-// 重置所有微交互
+// Reset所有微交互
 export const _resetAllMicroInteractions = createAsyncThunk(
   'microInteraction/resetAll',
   async () => {
@@ -155,7 +155,7 @@ export const _resetAllMicroInteractions = createAsyncThunk(
   }
 );
 
-// 更新配置
+// UpdateConfigure
 export const _updateMicroInteractionConfig = createAsyncThunk(
   'microInteraction/updateConfig',
   async ({
@@ -170,7 +170,7 @@ export const _updateMicroInteractionConfig = createAsyncThunk(
   }
 );
 
-// 啟用性能監控
+// Enable性能Monitor
 export const _enablePerformanceMonitoring = createAsyncThunk(
   'microInteraction/enablePerformanceMonitoring',
   async (enabled: boolean) => {
@@ -179,7 +179,7 @@ export const _enablePerformanceMonitoring = createAsyncThunk(
   }
 );
 
-// 更新統計
+// UpdateStatistics
 export const _updateMicroInteractionStats = createAsyncThunk(
   'microInteraction/updateStats',
   async () => {
@@ -188,27 +188,27 @@ export const _updateMicroInteractionStats = createAsyncThunk(
   }
 );
 
-// 創建 slice
+// Create slice
 const _microInteractionSlice = createSlice({
   name: 'microInteraction',
   initialState,
   reducers: {
-    // 設置加載狀態
+    // Settings加載Status
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
 
-    // 設置錯誤
+    // SettingsError
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
     },
 
-    // 更新微交互狀態
+    // Update微交互Status
     updateInteractionState: (
       state,
       action: PayloadAction<{ id: string; state: MicroInteractionState }>
@@ -217,7 +217,7 @@ const _microInteractionSlice = createSlice({
       state.states[id] = interactionState;
     },
 
-    // 更新性能指標
+    // Update性能指標
     updatePerformance: (
       state,
       action: PayloadAction<{
@@ -229,26 +229,26 @@ const _microInteractionSlice = createSlice({
       state.performances[id] = performance;
     },
 
-    // 添加事件
+    // AddEvent
     addEvent: (state, action: PayloadAction<MicroInteractionEvent>) => {
       state.events.push(action.payload);
-      // 限制事件歷史數量
+      // LimitEvent歷史數量
       if (state.events.length > 100) {
         state.events = state.events.slice(-100);
       }
     },
 
-    // 清除事件歷史
+    // ClearEvent歷史
     clearEvents: state => {
       state.events = [];
     },
 
-    // 設置調試模式
+    // SettingsDebug模式
     setDebugMode: (state, action: PayloadAction<boolean>) => {
       state.debugMode = action.payload;
     },
 
-    // 更新配置
+    // UpdateConfigure
     updateConfig: (
       state,
       action: PayloadAction<Partial<MicroInteractionManagerConfig>>
@@ -256,7 +256,7 @@ const _microInteractionSlice = createSlice({
       state.config = { ...state.config, ...action.payload };
     },
 
-    // 重置狀態
+    // ResetStatus
     resetState: state => {
       state.interactions = {};
       state.states = {};
@@ -274,7 +274,7 @@ const _microInteractionSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // 初始化
+    // Initialize
     builder
       .addCase(initializeMicroInteractionService.pending, state => {
         state.loading = true;
@@ -287,10 +287,10 @@ const _microInteractionSlice = createSlice({
       })
       .addCase(initializeMicroInteractionService.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
-    // 註冊
+    // Register
     builder.addCase(registerMicroInteraction.fulfilled, (state, action) => {
       const { id, config } = action.payload;
       state.interactions[id] = config;
@@ -302,7 +302,7 @@ const _microInteractionSlice = createSlice({
       } as any;
     });
 
-    // 註銷
+    // Logout
     builder.addCase(unregisterMicroInteraction.fulfilled, (state, action) => {
       const { id } = action.payload;
       delete state.interactions[id];
@@ -331,12 +331,12 @@ const _microInteractionSlice = createSlice({
         const { id } = action.meta.arg;
         if (state.states[id]) {
           state.states[id].status = MicroInteractionStatus.ERROR;
-          state.states[id].error = action.error.message || '觸發失敗';
+          state.states[id].error = action.error.message || '觸發Failed';
           state.states[id].endTime = Date.now();
         }
       });
 
-    // 停止
+    // Stop
     builder.addCase(stopMicroInteraction.fulfilled, (state, action) => {
       const { id } = action.payload;
       if (state.states[id]) {
@@ -345,7 +345,7 @@ const _microInteractionSlice = createSlice({
       }
     });
 
-    // 重置
+    // Reset
     builder.addCase(resetMicroInteraction.fulfilled, (state, action) => {
       const { id } = action.payload;
       if (state.states[id]) {
@@ -358,7 +358,7 @@ const _microInteractionSlice = createSlice({
       }
     });
 
-    // 批量操作
+    // BatchOperation
     builder
       .addCase(stopAllMicroInteractions.fulfilled, state => {
         Object.values(state.states).forEach(interactionState => {
@@ -377,7 +377,7 @@ const _microInteractionSlice = createSlice({
         });
       });
 
-    // 更新配置
+    // UpdateConfigure
     builder.addCase(updateMicroInteractionConfig.fulfilled, (state, action) => {
       const { id, config } = action.payload;
       if (state.interactions[id]) {
@@ -388,19 +388,19 @@ const _microInteractionSlice = createSlice({
       }
     });
 
-    // 性能監控
+    // 性能Monitor
     builder.addCase(enablePerformanceMonitoring.fulfilled, (state, action) => {
       state.performanceMonitoring = action.payload.enabled;
     });
 
-    // 更新統計
+    // UpdateStatistics
     builder.addCase(updateMicroInteractionStats.fulfilled, (state, action) => {
       state.stats = action.payload.stats;
     });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   setLoading,
   setError,
@@ -414,10 +414,10 @@ export const {
   resetState,
 } = microInteractionSlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default microInteractionSlice.reducer;
 
-// 選擇器
+// Select器
 export const _selectMicroInteractionState = (state: {
   microInteraction: MicroInteractionSliceState;
 }) => state.microInteraction;
@@ -466,7 +466,7 @@ export const _selectMicroInteractionDebugMode = (state: {
   microInteraction: MicroInteractionSliceState;
 }) => state.microInteraction.debugMode;
 
-// 特定選擇器
+// SpecificSelect器
 export const _selectMicroInteractionById =
   (id: string) => (state: { microInteraction: MicroInteractionSliceState }) =>
     state.microInteraction.interactions[id];

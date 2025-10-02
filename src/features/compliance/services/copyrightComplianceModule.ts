@@ -1,6 +1,6 @@
 /**
  * 版權合規模組
- * 實現重構計劃任務 1.8: CopyrightComplianceModule
+ * 實現重構計劃Task 1.8: CopyrightComplianceModule
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -73,7 +73,7 @@ export interface DMCAProcessingResult {
     | 'rejected'
     | 'pending_evidence';
   action: 'takedown' | 'modify' | 'block' | 'no_action';
-  responseTime: number; // 小時
+  responseTime: number; // Hour
   notes: string;
   processedAt: Date;
 }
@@ -97,7 +97,7 @@ export interface CounterNoticeResult {
   id: string;
   counterNoticeId: string;
   status: 'received' | 'reviewing' | 'accepted' | 'rejected';
-  responseTime: number; // 小時
+  responseTime: number; // Hour
   notes: string;
   processedAt: Date;
 }
@@ -150,7 +150,7 @@ export interface CopyrightComplianceConfig {
   enableContentFiltering: boolean;
   enableDMCAProcessing: boolean;
   enableRightsHolderProtection: boolean;
-  maxResponseTime: number; // 小時
+  maxResponseTime: number; // Hour
   autoFilterThreshold: number; // 0-100
   requireManualReview: boolean;
 }
@@ -190,10 +190,10 @@ export class CopyrightComplianceModule {
       }
 
       this.isInitialized = true;
-      logger.info('版權合規模組初始化成功');
+      logger.info('版權合規模組InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('版權合規模組初始化失敗:', error);
+      logger.error('版權合規模組InitializeFailed:', error);
       return false;
     }
   }
@@ -224,7 +224,7 @@ export class CopyrightComplianceModule {
 
       return filterResult;
     } catch (error) {
-      logger.error('版權內容過濾失敗:', error);
+      logger.error('版權內容過濾Failed:', error);
       throw error;
     }
   }
@@ -252,7 +252,7 @@ export class CopyrightComplianceModule {
 
       return detectionResult;
     } catch (error) {
-      logger.error('版權違規檢測失敗:', error);
+      logger.error('版權違規檢測Failed:', error);
       throw error;
     }
   }
@@ -284,7 +284,7 @@ export class CopyrightComplianceModule {
 
       return processingResult;
     } catch (error) {
-      logger.error('DMCA請求處理失敗:', error);
+      logger.error('DMCA請求HandleFailed:', error);
       throw error;
     }
   }
@@ -315,7 +315,7 @@ export class CopyrightComplianceModule {
 
       return counterNoticeResult;
     } catch (error) {
-      logger.error('反通知處理失敗:', error);
+      logger.error('反通知HandleFailed:', error);
       throw error;
     }
   }
@@ -344,7 +344,7 @@ export class CopyrightComplianceModule {
 
       return protectionResult;
     } catch (error) {
-      logger.error('權利人保護設置失敗:', error);
+      logger.error('權利人保護SettingsFailed:', error);
       throw error;
     }
   }
@@ -373,7 +373,7 @@ export class CopyrightComplianceModule {
 
       return managementResult;
     } catch (error) {
-      logger.error('授權管理失敗:', error);
+      logger.error('授權管理Failed:', error);
       throw error;
     }
   }
@@ -393,14 +393,14 @@ export class CopyrightComplianceModule {
     logger.info('版權合規模組已重置');
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): CopyrightComplianceConfig {
     return {
       enableContentFiltering: true,
       enableDMCAProcessing: true,
       enableRightsHolderProtection: true,
-      maxResponseTime: 48, // 48小時
+      maxResponseTime: 48, // 48Hour
       autoFilterThreshold: 80,
       requireManualReview: true,
     };
@@ -411,8 +411,8 @@ export class CopyrightComplianceModule {
       return false;
     }
 
-    // 模擬內容過濾邏輯
-    const _hasCopyrightedMaterial = Math.random() > 0.7; // 30%機率包含版權內容
+    // 模擬ContentFilter邏輯
+    const _hasCopyrightedMaterial = Math.random() > 0.7; // 30%機率Package含版權Content
     const _confidence = Math.random() * 100;
 
     return (
@@ -548,7 +548,7 @@ export class CopyrightComplianceModule {
   }
 
   private calculateCounterNoticeResponseTime(): number {
-    return Math.floor(Math.random() * 72) + 24; // 24-96小時
+    return Math.floor(Math.random() * 72) + 24; // 24-96Hour
   }
 
   private generateCounterNoticeNotes(

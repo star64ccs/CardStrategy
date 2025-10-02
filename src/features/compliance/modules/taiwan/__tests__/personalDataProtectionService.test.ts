@@ -1,4 +1,4 @@
-// 台灣個人資料保護法服務測試
+// 台灣個人資料保護法ServiceTest
 // Taiwan Personal Data Protection Act Service Tests
 
 import { TaiwanPersonalDataProtectionService } from '../services/personalDataProtectionService';
@@ -31,7 +31,7 @@ describe('TaiwanPersonalDataProtectionService', () => {
   });
 
   afterEach(() => {
-    // 清理測試資料
+    // 清理Test資料
     service.cleanup();
   });
 
@@ -47,7 +47,7 @@ describe('TaiwanPersonalDataProtectionService', () => {
     it('應該驗證合規的個人資料處理', () => {
       const processing: TaiwanPersonalDataProcessing = {
         id: 'test-processing-1',
-        purpose: '提供服務',
+        purpose: '提供Service',
         dataCategory: TaiwanDataCategory.CONTACT,
         processingMethod: TaiwanProcessingMethod.COLLECTION,
         retentionPeriod: 365,
@@ -113,7 +113,7 @@ describe('TaiwanPersonalDataProtectionService', () => {
     it('應該檢測缺少安全措施', () => {
       const processing: TaiwanPersonalDataProcessing = {
         id: 'test-processing-3',
-        purpose: '提供服務',
+        purpose: '提供Service',
         dataCategory: TaiwanDataCategory.CONTACT,
         processingMethod: TaiwanProcessingMethod.COLLECTION,
         retentionPeriod: 365,
@@ -147,7 +147,7 @@ describe('TaiwanPersonalDataProtectionService', () => {
     it('應該檢測需要同意但未指定同意方式', () => {
       const processing: TaiwanPersonalDataProcessing = {
         id: 'test-processing-4',
-        purpose: '提供服務',
+        purpose: '提供Service',
         dataCategory: TaiwanDataCategory.CONTACT,
         processingMethod: TaiwanProcessingMethod.COLLECTION,
         retentionPeriod: 365,
@@ -175,7 +175,7 @@ describe('TaiwanPersonalDataProtectionService', () => {
     it('應該檢測缺少當事人權利', () => {
       const processing: TaiwanPersonalDataProcessing = {
         id: 'test-processing-5',
-        purpose: '提供服務',
+        purpose: '提供Service',
         dataCategory: TaiwanDataCategory.CONTACT,
         processingMethod: TaiwanProcessingMethod.COLLECTION,
         retentionPeriod: 365,
@@ -360,7 +360,7 @@ describe('TaiwanPersonalDataProtectionService', () => {
       const _result = service.manageCrossBorderTransfer(transfer);
 
       expect(result.success).toBe(true);
-      expect(result.message).toContain('跨境傳輸管理成功');
+      expect(result.message).toContain('跨境傳輸管理Success');
       expect(result.data?.transferId).toBe(transfer.id);
     });
 
@@ -549,7 +549,7 @@ describe('TaiwanPersonalDataProtectionService', () => {
 
   describe('getAuditTrails', () => {
     it('應該返回審計追蹤', () => {
-      // 先執行一些操作來產生審計追蹤
+      // 先執Row一些Operation來產生審計Trace
       service.validatePersonalDataProcessing({
         id: 'test-audit',
         purpose: 'test',
@@ -580,7 +580,7 @@ describe('TaiwanPersonalDataProtectionService', () => {
 
   describe('getViolations', () => {
     it('應該返回違規記錄', () => {
-      // 先執行一些操作來產生違規記錄
+      // 先執Row一些Operation來產生違規Record
       service.validatePersonalDataProcessing({
         id: 'test-violation',
         purpose: '',
@@ -610,10 +610,10 @@ describe('TaiwanPersonalDataProtectionService', () => {
 
   describe('cleanup', () => {
     it('應該清理過期資料', () => {
-      // 執行清理操作
+      // 執Row清理Operation
       service.cleanup();
 
-      // 清理後應該仍然可以正常操作
+      // 清理後應該仍然可以正常Operation
       const _auditTrails = service.getAuditTrails();
       const _violations = service.getViolations();
 

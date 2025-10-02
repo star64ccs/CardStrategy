@@ -73,7 +73,7 @@ describe('CardRecognitionService', () => {
         'Config load failed'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'CardRecognitionService 初始化失敗:',
+        'CardRecognitionService InitializeFailed:',
         expect.any(Error)
       );
 
@@ -322,7 +322,7 @@ describe('CardRecognitionService', () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '實時識別幀處理失敗:',
+        '實時識別幀HandleFailed:',
         expect.any(Error)
       );
 
@@ -393,7 +393,7 @@ describe('CardRecognitionService', () => {
       ).rejects.toThrow('API error');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取識別歷史失敗:',
+        'Get識別歷史Failed:',
         expect.any(Error)
       );
 
@@ -421,7 +421,7 @@ describe('CardRecognitionService', () => {
         mockFeedback
       );
 
-      expect(mockLogger.info).toHaveBeenCalledWith('用戶反饋提交成功:', {
+      expect(mockLogger.info).toHaveBeenCalledWith('用戶反饋提交Success:', {
         historyId: 'history123',
         isCorrect: true,
       });
@@ -439,7 +439,7 @@ describe('CardRecognitionService', () => {
       ).rejects.toThrow('Submit error');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '提交用戶反饋失敗:',
+        '提交用戶反饋Failed:',
         expect.any(Error)
       );
 
@@ -481,7 +481,7 @@ describe('CardRecognitionService', () => {
       ).rejects.toThrow('Stats error');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取識別統計失敗:',
+        'Get識別統計Failed:',
         expect.any(Error)
       );
 
@@ -565,7 +565,7 @@ describe('CardRecognitionService', () => {
       ).rejects.toThrow('Save error');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '更新識別配置失敗:',
+        'Update識別ConfigureFailed:',
         expect.any(Error)
       );
 

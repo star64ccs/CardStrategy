@@ -10,7 +10,7 @@ import type {
   TranslationRequest,
 } from '../../features/i18n/types/i18n';
 
-// 初始狀態
+// 初始Status
 const initialState: I18nState = {
   currentLanguage: 'zh-TW',
   availableLanguages: {},
@@ -20,7 +20,7 @@ const initialState: I18nState = {
   lastUpdated: new Date(),
 };
 
-// 異步 thunk 動作
+// Async thunk 動作
 export const _initializeI18n = createAsyncThunk(
   'i18n/initialize',
   async (config: unknown = {}, { rejectWithValue }) => {
@@ -105,12 +105,12 @@ export const _translateText = createAsyncThunk(
   }
 );
 
-// 創建 slice
+// Create slice
 const _i18nSlice = createSlice({
   name: 'i18n',
   initialState,
   reducers: {
-    // 同步狀態更新
+    // SyncStatusUpdate
     setCurrentLanguage: (state, action: PayloadAction<string>) => {
       state.currentLanguage = action.payload;
       state.lastUpdated = new Date();
@@ -135,12 +135,12 @@ const _i18nSlice = createSlice({
       state.error = null;
     },
 
-    // 事件處理
+    // EventHandle
     addEvent: (state, action: PayloadAction<I18nEvent>) => {
-      // 可以選擇將事件存儲在狀態中或只是更新相關狀態
+      // 可以Select將EventStorage在Status中或只YesUpdate相OffStatus
       state.lastUpdated = action.payload.timestamp;
 
-      // 根據事件類型更新狀態
+      // Root據EventClass型UpdateStatus
       switch (action.payload.type) {
         case 'languageChanged':
           if (action.payload.data.language) {
@@ -158,13 +158,13 @@ const _i18nSlice = createSlice({
       }
     },
 
-    // 重置狀態
+    // ResetStatus
     reset: state => {
       Object.assign(state, initialState);
     },
   },
   extraReducers: builder => {
-    // 初始化
+    // Initialize
     builder
       .addCase(initializeI18n.pending, state => {
         state.isLoading = true;
@@ -182,7 +182,7 @@ const _i18nSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 切換語言
+    // SwitchLanguage
     builder
       .addCase(changeLanguage.pending, state => {
         state.isLoading = true;
@@ -198,14 +198,14 @@ const _i18nSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 檢測語言
+    // 檢測Language
     builder
       .addCase(detectLanguage.pending, state => {
         state.isLoading = true;
       })
       .addCase(detectLanguage.fulfilled, (state, action) => {
         state.isLoading = false;
-        // 可以選擇自動切換到檢測到的語言
+        // 可以SelectAutoSwitch到檢測到的Language
         // state.currentLanguage = action.payload.detectedLanguage;
       })
       .addCase(detectLanguage.rejected, (state, action) => {
@@ -213,21 +213,21 @@ const _i18nSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    // 獲取統計
+    // GetStatistics
     builder.addCase(getTranslationStats.fulfilled, (state, action) => {
-      // 統計信息可以存儲在狀態中或只是返回
+      // StatisticsInformation可以Storage在Status中或只YesReturn
       state.lastUpdated = action.payload.lastUpdated;
     });
 
     // 翻譯
     builder.addCase(translateText.fulfilled, (state, action) => {
-      // 翻譯結果通常不需要存儲在狀態中，因為它們是即時的
+      // 翻譯結果通常不需要Storage在Status中，因為它們Yes即時的
       state.lastUpdated = new Date();
     });
   },
 });
 
-// 導出動作
+// Export動作
 export const {
   setCurrentLanguage,
   setAvailableLanguages,
@@ -238,7 +238,7 @@ export const {
   reset,
 } = i18nSlice.actions;
 
-// 選擇器
+// Select器
 export const _selectCurrentLanguage = (state: { i18n: I18nState }) =>
   state.i18n.currentLanguage;
 export const _selectAvailableLanguages = (state: { i18n: I18nState }) =>
@@ -251,7 +251,7 @@ export const _selectError = (state: { i18n: I18nState }) => state.i18n.error;
 export const _selectLastUpdated = (state: { i18n: I18nState }) =>
   state.i18n.lastUpdated;
 
-// 計算選擇器
+// 計算Select器
 export const _selectCurrentLanguageInfo = (state: { i18n: I18nState }) => {
   const _currentLang = state.i18n.currentLanguage;
   return state.i18n.availableLanguages[currentLang];
@@ -267,5 +267,5 @@ export const _selectLanguageCount = (state: { i18n: I18nState }) => {
   return Object.keys(state.i18n.availableLanguages).length;
 };
 
-// 導出 reducer
+// Export reducer
 export default i18nSlice.reducer;

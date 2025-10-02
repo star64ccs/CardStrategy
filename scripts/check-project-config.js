@@ -4,7 +4,7 @@ const path = require('path');
 // eslint-disable-next-line no-console
 console.log('🔍 檢查專案配置狀態...\n');
 
-// 檢查配置狀態
+// CheckConfigureStatus
 const configStatus = {
   apiKeys: {
     status: 'unknown',
@@ -36,7 +36,7 @@ const configStatus = {
   }
 };
 
-// 1. 檢查 API Keys 配置
+// 1. Check API Keys Configure
 // eslint-disable-next-line no-console
 console.log('📋 檢查 API Keys 配置...');
 const apiKeysDir = path.join(__dirname, '../src/config/ai-keys');
@@ -50,11 +50,11 @@ if (fs.existsSync(apiKeysDir)) {
       const filePath = path.join(apiKeysDir, file);
       const content = JSON.parse(fs.readFileSync(filePath, 'utf8'));
       
-      // 檢查是否有真實的 API Key 或其他必要配置
+      // CheckYesNo有True實的 API Key 或其他必要Configure
       if (content.apiKey && !content.apiKey.includes('your-') && !content.apiKey.includes('placeholder')) {
         configStatus.apiKeys.details.push(`${file}: ✅ 真實 API Key`);
       } else if (content.zoneId && content.accountId && !content.zoneId.includes('your-')) {
-        // Cloudflare 使用 zoneId 和 accountId 而不是 apiKey
+        // Cloudflare 使用 zoneId 和 accountId 而不Yes apiKey
         configStatus.apiKeys.details.push(`${file}: ✅ 真實配置 (Cloudflare)`);
       } else {
         configStatus.apiKeys.details.push(`${file}: ❌ 佔位符或缺失`);
@@ -69,7 +69,7 @@ if (fs.existsSync(apiKeysDir)) {
   configStatus.apiKeys.status = 'missing';
 }
 
-// 2. 檢查環境變量文件
+// 2. Check環境VariableFile
 // eslint-disable-next-line no-console
 console.log('\n🔧 檢查環境變量配置...');
 const envFiles = [
@@ -93,14 +93,14 @@ envFiles.forEach(envFile => {
   }
 });
 
-// 3. 檢查數據庫配置
+// 3. CheckDatabaseConfigure
 // eslint-disable-next-line no-console
 console.log('\n🗄️ 檢查數據庫配置...');
 const dbConfigPath = path.join(__dirname, '../backend/src/config/database.js');
 if (fs.existsSync(dbConfigPath)) {
   const content = fs.readFileSync(dbConfigPath, 'utf8');
   
-  // 檢查是否有環境變量配置
+  // CheckYesNo有環境VariableConfigure
   const hasEnvVars = content.includes('process.env.DB_');
   const hasDefaultValues = content.includes('localhost') || content.includes('postgres');
   
@@ -127,7 +127,7 @@ if (fs.existsSync(dbConfigPath)) {
   configStatus.database.status = 'missing';
 }
 
-// 4. 檢查 Redis 配置
+// 4. Check Redis Configure
 // eslint-disable-next-line no-console
 console.log('\n🔴 檢查 Redis 配置...');
 const redisConfigPath = path.join(__dirname, '../backend/src/config/redis.js');
@@ -160,18 +160,18 @@ if (fs.existsSync(redisConfigPath)) {
   configStatus.redis.status = 'missing';
 }
 
-// 5. 檢查核心集成服務配置
+// 5. Check核心集成ServiceConfigure
 // eslint-disable-next-line no-console
-console.log('\n🔗 檢查核心集成服務配置...');
+console.log('\n🔗 Check核心集成ServiceConfigure...');
 const coreIntegrations = [
   { name: 'Mixpanel', env: 'MIXPANEL_API_KEY', desc: '用戶行為分析' },
   { name: 'AWS S3', env: 'S3_BUCKET', desc: '文件存儲' },
   { name: 'Firebase', env: 'FIREBASE_API_KEY', desc: '推送通知' },
   { name: 'SendGrid', env: 'SENDGRID_API_KEY', desc: '郵件發送' },
-  { name: 'Sentry', env: 'SENTRY_DSN', desc: '錯誤追蹤' },
+  { name: 'Sentry', env: 'SENTRY_DSN', desc: 'Error追蹤' },
   { name: 'LogRocket', env: 'LOGROCKET_APP_ID', desc: '會話重現' },
   { name: 'Slack', env: 'SLACK_WEBHOOK_URL', desc: '警報通知' },
-  { name: 'SMTP', env: 'SMTP_HOST', desc: '郵件服務器' }
+  { name: 'SMTP', env: 'SMTP_HOST', desc: '郵件Server' }
 ];
 
 coreIntegrations.forEach(integration => {
@@ -189,9 +189,9 @@ coreIntegrations.forEach(integration => {
 
 configStatus.coreIntegrations.status = configStatus.coreIntegrations.details.every(d => d.includes('✅')) ? 'configured' : 'partial';
 
-// 6. 檢查服務配置
+// 6. CheckServiceConfigure
 // eslint-disable-next-line no-console
-console.log('\n🌐 檢查服務配置...');
+console.log('\n🌐 CheckServiceConfigure...');
 const serviceConfigs = [
   { name: 'Cloudflare', file: 'cloudflare-config.env' },
   { name: 'Docker', file: 'docker-compose.yml' },
@@ -213,7 +213,7 @@ serviceConfigs.forEach(service => {
   }
 });
 
-// 7. 檢查 .gitignore 保護
+// 7. Check .gitignore 保護
 // eslint-disable-next-line no-console
 console.log('\n🛡️ 檢查安全保護...');
 const gitignorePath = path.join(__dirname, '../.gitignore');
@@ -263,7 +263,7 @@ futureExpansions.forEach(expansion => {
   configStatus.futureExpansions.details.push(`${expansion}: 後期擴充計劃`);
 });
 
-// 生成總結報告
+// 生成總結Report
 // eslint-disable-next-line no-console
 console.log('\n📊 專案配置狀態總結');
 // eslint-disable-next-line no-console
@@ -291,7 +291,7 @@ Object.entries(configStatus).forEach(([category, info]) => {
   console.log('');
 });
 
-// 計算整體配置狀態
+// 計算整體ConfigureStatus
 const statusCounts = {
   configured: 0,
   partial: 0,
@@ -308,10 +308,10 @@ Object.values(configStatus).forEach(info => {
 console.log('🎯 整體配置評估:');
 if (statusCounts.configured >= 4) {
   // eslint-disable-next-line no-console
-  console.log('  🟢 專案配置良好，核心服務已配置真實值');
+  console.log('  🟢 專案Configure良好，核心Service已Configure真實值');
 } else if (statusCounts.configured >= 2) {
   // eslint-disable-next-line no-console
-  console.log('  🟡 專案配置部分完成，需要進一步配置核心服務');
+  console.log('  🟡 專案Configure部分完成，需要進一步Configure核心Service');
 } else {
   // eslint-disable-next-line no-console
   console.log('  🔴 專案配置不完整，需要大量配置工作');
@@ -325,15 +325,15 @@ if (configStatus.apiKeys.status !== 'configured') {
 }
 if (configStatus.coreIntegrations.status !== 'configured') {
   // eslint-disable-next-line no-console
-  console.log('  - 配置核心集成服務 (Mixpanel, AWS S3, Firebase, SendGrid, Sentry)');
+  console.log('  - Configure核心集成Service (Mixpanel, AWS S3, Firebase, SendGrid, Sentry)');
 }
 if (configStatus.database.status === 'default') {
   // eslint-disable-next-line no-console
-  console.log('  - 配置生產環境數據庫連接');
+  console.log('  - Configure生產環境數據庫Connect');
 }
 if (configStatus.redis.status === 'default') {
   // eslint-disable-next-line no-console
-  console.log('  - 配置生產環境 Redis 連接');
+  console.log('  - Configure生產環境 Redis Connect');
 }
 if (configStatus.environment.details.some(d => d.includes('佔位符'))) {
   // eslint-disable-next-line no-console
@@ -343,11 +343,11 @@ if (configStatus.environment.details.some(d => d.includes('佔位符'))) {
 // eslint-disable-next-line no-console
 console.log('\n📅 後期擴充計劃:');
 // eslint-disable-next-line no-console
-console.log('  - 支付服務: Stripe, PayPal 等');
+console.log('  - 支付Service: Stripe, PayPal 等');
 // eslint-disable-next-line no-console
 console.log('  - 社交媒體: Twitter, Facebook, Instagram 等');
 // eslint-disable-next-line no-console
-console.log('  - 其他第三方服務根據業務需求添加');
+console.log('  - 其他第三方Service根據業務需求添加');
 
 // eslint-disable-next-line no-console
 console.log('\n🎉 配置檢查完成！');

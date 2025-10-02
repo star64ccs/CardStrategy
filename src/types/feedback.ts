@@ -1,6 +1,6 @@
-// 反饋系統類型定義
+// 反饋系統Class型定義
 
-// 反饋類型枚舉
+// 反饋Class型枚舉
 export enum FeedbackType {
   FEATURE_REQUEST = 'feature_request',
   BUG_REPORT = 'bug_report',
@@ -18,7 +18,7 @@ export enum FeedbackPriority {
   CRITICAL = 'critical',
 }
 
-// 反饋狀態枚舉
+// 反饋Status枚舉
 export enum FeedbackStatus {
   PENDING = 'pending',
   IN_REVIEW = 'in_review',
@@ -28,7 +28,7 @@ export enum FeedbackStatus {
   REJECTED = 'rejected',
 }
 
-// 反饋分類枚舉
+// 反饋分Class枚舉
 export enum FeedbackCategory {
   UI_UX = 'ui_ux',
   FUNCTIONALITY = 'functionality',
@@ -40,7 +40,7 @@ export enum FeedbackCategory {
   OTHER = 'other',
 }
 
-// 用戶滿意度評分
+// User滿意度評分
 export enum SatisfactionRating {
   VERY_DISSATISFIED = 1,
   DISSATISFIED = 2,
@@ -49,7 +49,7 @@ export enum SatisfactionRating {
   VERY_SATISFIED = 5,
 }
 
-// 反饋數據接口
+// 反饋DataInterface
 export interface FeedbackData {
   id: string;
   type: FeedbackType;
@@ -78,7 +78,7 @@ export interface FeedbackData {
   userFeedback?: string;
 }
 
-// 反饋附件接口
+// 反饋附件Interface
 export interface FeedbackAttachment {
   id: string;
   name: string;
@@ -88,7 +88,7 @@ export interface FeedbackAttachment {
   uploadedAt: number;
 }
 
-// 反饋配置接口
+// 反饋ConfigureInterface
 export interface FeedbackConfig {
   enabled: boolean;
   autoCollect: boolean;
@@ -108,7 +108,7 @@ export interface FeedbackConfig {
   privacySettings: FeedbackPrivacySettings;
 }
 
-// 反饋隱私設置
+// 反饋隱私Settings
 export interface FeedbackPrivacySettings {
   collectUserInfo: boolean;
   collectLocation: boolean;
@@ -120,7 +120,7 @@ export interface FeedbackPrivacySettings {
   gdprCompliant: boolean;
 }
 
-// 反饋表單接口
+// 反饋Table單Interface
 export interface FeedbackFormData {
   type: FeedbackType;
   category: FeedbackCategory;
@@ -135,7 +135,7 @@ export interface FeedbackFormData {
   tags?: string[];
 }
 
-// 反饋分析數據接口
+// 反饋AnalysisDataInterface
 export interface FeedbackAnalytics {
   totalFeedbacks: number;
   feedbacksByType: Record<FeedbackType, number>;
@@ -168,7 +168,7 @@ export interface FeedbackAnalytics {
   }[];
 }
 
-// 反饋過濾器接口
+// 反饋Filter器Interface
 export interface FeedbackFilter {
   types?: FeedbackType[];
   categories?: FeedbackCategory[];
@@ -186,13 +186,13 @@ export interface FeedbackFilter {
   version?: string;
 }
 
-// 反饋排序選項
+// 反饋SortOptions
 export interface FeedbackSort {
   field: 'timestamp' | 'priority' | 'status' | 'satisfactionRating' | 'title';
   direction: 'asc' | 'desc';
 }
 
-// 反饋分頁接口
+// 反饋PaginateInterface
 export interface FeedbackPagination {
   page: number;
   limit: number;
@@ -200,14 +200,14 @@ export interface FeedbackPagination {
   totalPages: number;
 }
 
-// 反饋查詢結果接口
+// 反饋Query結果Interface
 export interface FeedbackQueryResult {
   feedbacks: FeedbackData[];
   pagination: FeedbackPagination;
   analytics: FeedbackAnalytics;
 }
 
-// 反饋事件接口
+// 反饋EventInterface
 export interface FeedbackEvent {
   type:
     | 'created'
@@ -222,7 +222,7 @@ export interface FeedbackEvent {
   data: unknown;
 }
 
-// 反饋通知接口
+// 反饋NotificationInterface
 export interface FeedbackNotification {
   id: string;
   type:
@@ -240,7 +240,7 @@ export interface FeedbackNotification {
   actionUrl?: string;
 }
 
-// 反饋報告接口
+// 反饋ReportInterface
 export interface FeedbackReport {
   id: string;
   title: string;
@@ -258,7 +258,7 @@ export interface FeedbackReport {
   url?: string;
 }
 
-// 反饋服務配置接口
+// 反饋ServiceConfigureInterface
 export interface FeedbackServiceConfig {
   apiEndpoint: string;
   apiKey?: string;
@@ -271,9 +271,9 @@ export interface FeedbackServiceConfig {
   compressionEnabled: boolean;
 }
 
-// React 組件 Props 接口
+// React Component Props Interface
 
-// FeedbackForm 組件 Props
+// FeedbackForm Component Props
 export interface FeedbackFormProps {
   config?: Partial<FeedbackConfig>;
   onSubmit?: (data: FeedbackFormData) => void;
@@ -285,7 +285,7 @@ export interface FeedbackFormProps {
   style?: React.CSSProperties;
 }
 
-// FeedbackWidget 組件 Props
+// FeedbackWidget Component Props
 export interface FeedbackWidgetProps {
   config?: Partial<FeedbackConfig>;
   position?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
@@ -299,7 +299,7 @@ export interface FeedbackWidgetProps {
   style?: React.CSSProperties;
 }
 
-// FeedbackAnalytics 組件 Props
+// FeedbackAnalytics Component Props
 export interface FeedbackAnalyticsProps {
   dateRange?: {
     start: number;
@@ -315,7 +315,7 @@ export interface FeedbackAnalyticsProps {
   style?: React.CSSProperties;
 }
 
-// FeedbackList 組件 Props
+// FeedbackList Component Props
 export interface FeedbackListProps {
   feedbacks: FeedbackData[];
   loading?: boolean;
@@ -333,7 +333,7 @@ export interface FeedbackListProps {
   style?: React.CSSProperties;
 }
 
-// FeedbackDetail 組件 Props
+// FeedbackDetail Component Props
 export interface FeedbackDetailProps {
   feedback: FeedbackData;
   loading?: boolean;
@@ -347,17 +347,17 @@ export interface FeedbackDetailProps {
   style?: React.CSSProperties;
 }
 
-// 自定義 Hook 返回類型
+// Custom Hook ReturnClass型
 
-// useFeedback Hook 返回類型
+// useFeedback Hook ReturnClass型
 export interface UseFeedbackReturn {
-  // 狀態
+  // Status
   feedbacks: FeedbackData[];
   loading: boolean;
   error: string | null;
   analytics: FeedbackAnalytics | null;
 
-  // 操作
+  // Operation
   submitFeedback: (data: FeedbackFormData) => Promise<void>;
   updateFeedback: (id: string, data: Partial<FeedbackData>) => Promise<void>;
   deleteFeedback: (id: string) => Promise<void>;
@@ -369,7 +369,7 @@ export interface UseFeedbackReturn {
   ) => Promise<FeedbackQueryResult>;
   getAnalytics: (filters?: FeedbackFilter) => Promise<FeedbackAnalytics>;
 
-  // 工具方法
+  // ToolMethod
   exportReport: (format: string, filters?: FeedbackFilter) => Promise<string>;
   sendNotification: (
     notification: Omit<FeedbackNotification, 'id' | 'timestamp'>
@@ -377,24 +377,24 @@ export interface UseFeedbackReturn {
   markNotificationRead: (notificationId: string) => Promise<void>;
 }
 
-// useFeedbackService Hook 返回類型
+// useFeedbackService Hook ReturnClass型
 export interface UseFeedbackServiceReturn {
-  service: unknown; // FeedbackService 實例
+  service: unknown; // FeedbackService Instance
   config: FeedbackServiceConfig;
   isInitialized: boolean;
   isOnline: boolean;
   syncStatus: 'idle' | 'syncing' | 'error';
 
-  // 服務方法
+  // ServiceMethod
   initialize: () => Promise<void>;
   sync: () => Promise<void>;
   clearCache: () => Promise<void>;
   updateConfig: (config: Partial<FeedbackServiceConfig>) => void;
 }
 
-// useFeedbackState Hook 返回類型
+// useFeedbackState Hook ReturnClass型
 export interface UseFeedbackStateReturn {
-  // Redux 狀態
+  // Redux Status
   feedbacks: FeedbackData[];
   analytics: FeedbackAnalytics | null;
   notifications: FeedbackNotification[];
@@ -403,7 +403,7 @@ export interface UseFeedbackStateReturn {
   sort: FeedbackSort;
   pagination: FeedbackPagination;
 
-  // 狀態選擇器
+  // StatusSelect器
   getFeedbackById: (id: string) => FeedbackData | undefined;
   getFeedbacksByType: (type: FeedbackType) => FeedbackData[];
   getFeedbacksByCategory: (category: FeedbackCategory) => FeedbackData[];
@@ -412,7 +412,7 @@ export interface UseFeedbackStateReturn {
   getNotificationsByType: (type: string) => FeedbackNotification[];
 }
 
-// useFeedbackActions Hook 返回類型
+// useFeedbackActions Hook ReturnClass型
 export interface UseFeedbackActionsReturn {
   // Redux 動作
   submitFeedback: (data: FeedbackFormData) => any;

@@ -1,6 +1,6 @@
 /**
- * 電子商務合規模組測試
- * 測試重構計劃任務 1.5: ECommerceComplianceModule
+ * 電子商務合規模組Test
+ * Test重構計劃Task 1.5: ECommerceComplianceModule
  */
 
 import { ECommerceComplianceModule } from '../../services/eCommerceComplianceModule';
@@ -26,7 +26,7 @@ describe('ECommerceComplianceModule', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功初始化', async () => {
+    test('應該SuccessInitialize', async () => {
       const _result = await eCommerceComplianceModule.initialize();
       expect(result).toBe(true);
     });
@@ -286,7 +286,7 @@ describe('ECommerceComplianceModule', () => {
 
   describe('合規報告生成測試', () => {
     test('應該生成合規報告', () => {
-      // 先創建一些測試交易
+      // 先Create一些Test交易
       const _transaction1 = {
         transactionId: 'txn_201',
         buyerId: 'buyer_201',
@@ -344,7 +344,7 @@ describe('ECommerceComplianceModule', () => {
 
       eCommerceComplianceModule.updateConfig(newConfig);
 
-      // 驗證配置已更新（通過檢查行為變化）
+      // VerifyConfigure已Update（通過CheckRow為變化）
       const _transaction = {
         transactionId: 'txn_config',
         buyerId: 'buyer_config',
@@ -356,15 +356,15 @@ describe('ECommerceComplianceModule', () => {
       const _result =
         eCommerceComplianceModule.checkTransactionCompliance(transaction);
 
-      // 如果禁用了年齡驗證，應該只有3個檢查而不是4個
-      // 但由於我們在測試中總是啟用年齡驗證，這裡主要測試配置更新不會拋出錯誤
+      // 如果Disable了AgeVerify，應該只有3個Check而不Yes4個
+      // 但由於我們在Test中總YesEnableAgeVerify，這裡主要TestConfigureUpdate不會ThrowError
       expect(result.complianceChecks).toBeDefined();
     });
   });
 
   describe('重置測試', () => {
     test('應該重置模組', async () => {
-      // 先創建一些數據
+      // 先Create一些Data
       const _listing = {
         title: '測試產品',
         description: '測試描述',
@@ -376,10 +376,10 @@ describe('ECommerceComplianceModule', () => {
 
       eCommerceComplianceModule.checkProductListingCompliance(listing);
 
-      // 重置
+      // Reset
       await eCommerceComplianceModule.reset();
 
-      // 重新初始化
+      // ReInitialize
       const _result = await eCommerceComplianceModule.initialize();
       expect(result).toBe(true);
     });
@@ -462,7 +462,7 @@ describe('ECommerceComplianceModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     test('應該快速處理多個交易檢查', () => {
@@ -483,13 +483,13 @@ describe('ECommerceComplianceModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 
   describe('功能測試', () => {
     test('應該處理複雜的電子商務場景', () => {
-      // 創建多個產品列表
+      // CreateMultiple產品List
       const _listings = [
         {
           title: '高品質智能手機',
@@ -513,7 +513,7 @@ describe('ECommerceComplianceModule', () => {
         eCommerceComplianceModule.checkProductListingCompliance(listing)
       );
 
-      // 創建多個交易
+      // CreateMultiple交易
       const _transactions = [
         {
           transactionId: 'txn_complex_1',
@@ -535,28 +535,28 @@ describe('ECommerceComplianceModule', () => {
         eCommerceComplianceModule.checkTransactionCompliance(transaction)
       );
 
-      // 檢查消費者權利
+      // Check消費者權利
       const _rightsResult = eCommerceComplianceModule.checkConsumerRights(
         'user_complex',
         'tw'
       );
 
-      // 生成報告
+      // 生成Report
       const _report = eCommerceComplianceModule.generateComplianceReport();
 
-      // 驗證結果
+      // Verify結果
       expect(listingResults).toHaveLength(2);
       expect(transactionResults).toHaveLength(2);
       expect(rightsResult).toBeDefined();
       expect(report).toBeDefined();
 
-      // 驗證至少有一個產品列表是合規的
+      // Verify至少有一個產品ListYes合規的
       const _compliantListings = listingResults.filter(
         r => r.complianceStatus === 'compliant'
       );
       expect(compliantListings.length).toBeGreaterThan(0);
 
-      // 驗證交易檢查都包含必要的檢查項目
+      // Verify交易Check都Package含必要的Check項目
       transactionResults.forEach(result => {
         expect(result.complianceChecks).toHaveLength(4);
         expect(result.riskScore).toBeGreaterThanOrEqual(0);

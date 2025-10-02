@@ -1,18 +1,18 @@
-// 佈局組件統一導出
+// 佈局Component統一Export
 
-// 核心佈局組件
+// 核心佈局Component
 export { Container } from './Container';
 export { Grid, GridItem } from './Grid';
 export { Flex } from './Flex';
 export { Stack } from './Stack';
 
-// 響應式提供者
+// Response式提供者
 export {
   ResponsiveProvider,
   useResponsive,
 } from '../providers/ResponsiveProvider';
 
-// 類型導出
+// Class型Export
 export type {
   ContainerProps,
   GridProps,
@@ -32,7 +32,7 @@ export type {
   LayoutSystemEvent,
 } from '../../types/layout';
 
-// Hook 導出
+// Hook Export
 export {
   useResponsive as useResponsiveHook,
   useBreakpoint,

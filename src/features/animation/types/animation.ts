@@ -1,6 +1,6 @@
-// 動畫優化類型定義
+// 動畫優化Class型定義
 export interface AnimationConfig {
-  // 動畫類型
+  // 動畫Class型
   type:
     | 'fade'
     | 'slide'
@@ -11,20 +11,20 @@ export interface AnimationConfig {
     | 'timing'
     | 'decay';
 
-  // 動畫參數
-  duration: number; // 動畫持續時間 (毫秒)
-  delay: number; // 延遲時間 (毫秒)
-  easing: EasingType; // 緩動函數
+  // 動畫Parameter
+  duration: number; // 動畫持續Time (毫Second)
+  delay: number; // 延遲Time (毫Second)
+  easing: EasingType; // 緩動Function
 
-  // 動畫屬性
+  // 動畫Property
   from: AnimationValue;
   to: AnimationValue;
 
-  // 高級選項
-  useNativeDriver: boolean; // 是否使用原生驅動
-  isInteraction: boolean; // 是否為交互動畫
-  iterations: number; // 重複次數 (-1 為無限)
-  loop: boolean; // 是否循環
+  // 高級Options
+  useNativeDriver: boolean; // YesNo使用原生驅動
+  isInteraction: boolean; // YesNo為交互動畫
+  iterations: number; // Duplicate次數 (-1 為無限)
+  loop: boolean; // YesNo循環
 }
 
 export interface AnimationValue {
@@ -58,7 +58,7 @@ export type EasingType =
 export interface AnimationState {
   config: AnimationConfig;
   isEnabled: boolean;
-  isReduced: boolean; // 是否減少動畫
+  isReduced: boolean; // YesNo減少動畫
   performanceMode: 'high' | 'medium' | 'low';
   isLoading: boolean;
   error: string | null;
@@ -85,7 +85,7 @@ export interface AnimationEvent {
 }
 
 export interface AnimationManager {
-  // 動畫管理
+  // 動畫Manage
   createAnimation(config: AnimationConfig): string;
   startAnimation(animationId: string): Promise<void>;
   stopAnimation(animationId: string): void;
@@ -97,25 +97,25 @@ export interface AnimationManager {
   getPreset(presetId: string): AnimationPreset | null;
   createPreset(preset: Omit<AnimationPreset, 'id'>): string;
 
-  // 性能管理
+  // 性能Manage
   setPerformanceMode(mode: 'high' | 'medium' | 'low'): void;
   enableReducedMotion(enabled: boolean): void;
   isReducedMotionEnabled(): boolean;
 
-  // 事件管理
+  // EventManage
   addEventListener(listener: (event: AnimationEvent) => void): void;
   removeEventListener(listener: (event: AnimationEvent) => void): void;
 }
 
-// 動畫組件屬性
+// 動畫ComponentProperty
 export interface AnimationProps {
-  // 基本屬性
-  animation?: AnimationConfig | string; // 可以是配置對象或預設ID
+  // 基本Property
+  animation?: AnimationConfig | string; // 可以YesConfigureObject或預設ID
   delay?: number;
   duration?: number;
   easing?: EasingType;
 
-  // 觸發條件
+  // 觸發Condition
   trigger?:
     | 'mount'
     | 'unmount'
@@ -124,24 +124,24 @@ export interface AnimationProps {
     | 'press'
     | 'hover'
     | 'scroll';
-  threshold?: number; // 觸發閾值
+  threshold?: number; // 觸發閾Value
 
-  // 性能選項
+  // 性能Options
   useNativeDriver?: boolean;
   isInteraction?: boolean;
 
-  // 回調函數
+  // CallbackFunction
   onAnimationStart?: () => void;
   onAnimationEnd?: () => void;
   onAnimationCancel?: () => void;
 
-  // 子組件
+  // 子Component
   children: React.ReactNode;
 }
 
-// 動畫工具類型
+// 動畫ToolClass型
 export interface AnimationTools {
-  // 動畫創建工具
+  // 動畫CreateTool
   createFadeAnimation(
     from: number,
     to: number,
@@ -175,7 +175,7 @@ export interface AnimationTools {
     staggerDelay?: number
   ): AnimationConfig;
 
-  // 動畫插值
+  // 動畫插Value
   interpolate(
     value: number,
     inputRange: number[],
@@ -187,7 +187,7 @@ export interface AnimationTools {
     outputRange: string[]
   ): string;
 
-  // 性能監控
+  // 性能Monitor
   getAnimationStats(): AnimationStats;
   clearAnimationStats(): void;
 }
@@ -204,7 +204,7 @@ export interface SpringConfig {
   restSpeedThreshold?: number;
 }
 
-// 動畫統計
+// 動畫Statistics
 export interface AnimationStats {
   totalAnimations: number;
   activeAnimations: number;
@@ -215,7 +215,7 @@ export interface AnimationStats {
   lastUpdateTime: number;
 }
 
-// 預設動畫配置
+// 預設動畫Configure
 export const DEFAULT_ANIMATION_PRESETS: AnimationPreset[] = [
   {
     id: 'fade-in',

@@ -1,0 +1,618 @@
+import { EventEmitter } from 'events';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from '@react-native-community/netinfo';
+
+import { logger } from '../../../utils/logger';
+import type { SyncStats } from '../types/storage';
+import { ConflictResolution } from '../types/storage';
+
+/**
+ * 離線同步項目接口
+ */
+export interface OfflineSyncItem {
+  id: string;
+  key: string;
+  data: any;
+  operation: 'create' | 'update' | 'delete';
+  timestamp: number;
+  version: number;
+  deviceId: string;
+  userId: string;
+  retryCount: number;
+  maxRetries: number;
+  priority: 'high' | 'normal' | 'low';
+}
+
+/**
+ * 離線同步配置接口
+ */
+export interface OfflineSyncConfig {
+  maxRetries: number;
+  retryDelay: number;
+  batchSize: number;
+  syncInterval: number;
+  conflictResolution: ConflictResolution;
+  enableBackgroundSync: boolean;
+  enableAutoRetry: boolean;
+  enableConflictDetection: boolean;
+}
+
+/**
+ * 離線同步狀態接口
+ */
+export interface OfflineSyncState {
+  isOnline: boolean;
+  isSyncing: boolean;
+  lastSyncTime: number | null;
+  pendingItemsCount: number;
+  error: string | null;
+  stats: SyncStats;
+}
+
+/**
+ * 離線同步服務
+ * 負責管理離線數據存儲和網絡恢復時的自動同步
+ */
+export class OfflineSyncService extends EventEmitter {
+  private static instance: OfflineSyncService;
+  private syncQueue: OfflineSyncItem[] = [];
+  private config: OfflineSyncConfig;
+  private readonly state: OfflineSyncState;
+  private syncInterval: NodeJS.Timeout | null = null;
+  private readonly deviceId: string;
+  private userId: string;
+
+  private constructor() {
+    super();
+    this.config = {
+      maxRetries: 3,
+      retryDelay: 5000,
+      batchSize: 50,
+      syncInterval: 30000, // 30秒
+      conflictResolution: ConflictResolution.LAST_MODIFIED,
+      enableBackgroundSync: true,
+      enableAutoRetry: true,
+      enableConflictDetection: true,
+    };
+
+    this.state = {
+      isOnline: true,
+      isSyncing: false,
+      lastSyncTime: null,
+      pendingItemsCount: 0,
+      error: null,
+      stats: {
+        totalSynced: 0,
+        pendingSync: 0,
+        syncErrors: 0,
+        lastSyncTime: new Date(),
+        avgSyncTime: 0,
+      },
+    };
+
+    this.deviceId = this.generateDeviceId();
+    this.userId = '';
+  }
+
+  /**
+   * 獲取單例實例
+   */
+  public static getInstance(): OfflineSyncService {
+    if (!OfflineSyncService.instance) {
+      OfflineSyncService.instance = new OfflineSyncService();
+    }
+    return OfflineSyncService.instance;
+  }
+
+  /**
+   * 初始化服務
+   */
+  public async initialize(userId: string): Promise<void> {
+    try {
+      this.userId = userId;
+      await this.loadSyncQueue();
+      await this.setupNetworkListener();
+      await this.startPeriodicSync();
+
+      logger.info('離線同步服務初始化成功', {
+        userId,
+        deviceId: this.deviceId,
+        pendingItems: this.syncQueue.length,
+      });
+
+      this.emit('initialized', { userId, deviceId: this.deviceId });
+    } catch (error) {
+      logger.error('離線同步服務初始化失敗:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 配置同步設置
+   */
+  public configure(config: Partial<OfflineSyncConfig>): void {
+    this.config = { ...this.config, ...config };
+    logger.info('離線同步配置已更新:', this.config);
+  }
+
+  /**
+   * 添加同步項目到隊列
+   */
+  public async addToSyncQueue(
+    key: string,
+    data: any,
+    operation: 'create' | 'update' | 'delete',
+    priority: 'high' | 'normal' | 'low' = 'normal'
+  ): Promise<void> {
+    const syncItem: OfflineSyncItem = {
+      id: this.generateSyncId(),
+      key,
+      data,
+      operation,
+      timestamp: Date.now(),
+      version: Date.now(),
+      deviceId: this.deviceId,
+      userId: this.userId,
+      retryCount: 0,
+      maxRetries: this.config.maxRetries,
+      priority,
+    };
+
+    // 根據優先級插入隊列
+    if (priority === 'high') {
+      this.syncQueue.unshift(syncItem);
+    } else {
+      this.syncQueue.push(syncItem);
+    }
+
+    this.state.pendingItemsCount = this.syncQueue.length;
+    await this.saveSyncQueue();
+
+    this.emit('itemAdded', syncItem);
+    logger.debug('同步項目已添加到隊列:', { key, operation, priority });
+
+    // 如果網絡可用且啟用自動同步，立即嘗試同步
+    if (this.state.isOnline && this.config.enableBackgroundSync) {
+      this.triggerSync();
+    }
+  }
+
+  /**
+   * 觸發同步
+   */
+  public async triggerSync(): Promise<void> {
+    if (
+      this.state.isSyncing ||
+      !this.state.isOnline ||
+      this.syncQueue.length === 0
+    ) {
+      return;
+    }
+
+    try {
+      this.state.isSyncing = true;
+      this.state.error = null;
+      this.emit('syncStarted');
+
+      const startTime = Date.now();
+      const batch = this.syncQueue.slice(0, this.config.batchSize);
+
+      logger.info(`開始同步批次，包含 ${batch.length} 個項目`);
+
+      const results = await this.syncBatch(batch);
+
+      // 更新統計信息
+      const syncTime = Date.now() - startTime;
+      this.updateSyncStats(results, syncTime);
+
+      // 從隊列中移除已同步的項目
+      this.removeSyncedItems(batch.map(item => item.id));
+
+      this.state.lastSyncTime = Date.now();
+      this.emit('syncCompleted', results);
+
+      logger.info('同步完成:', results);
+    } catch (error) {
+      this.handleSyncError(error);
+    } finally {
+      this.state.isSyncing = false;
+    }
+  }
+
+  /**
+   * 獲取同步狀態
+   */
+  public getSyncState(): OfflineSyncState {
+    return { ...this.state };
+  }
+
+  /**
+   * 獲取待同步項目數量
+   */
+  public getPendingItemsCount(): number {
+    return this.syncQueue.length;
+  }
+
+  /**
+   * 清除同步錯誤
+   */
+  public clearError(): void {
+    this.state.error = null;
+    this.emit('errorCleared');
+  }
+
+  /**
+   * 手動重試失敗的項目
+   */
+  public async retryFailedItems(): Promise<void> {
+    const failedItems = this.syncQueue.filter(item => item.retryCount > 0);
+    if (failedItems.length === 0) {
+      logger.info('沒有失敗的項目需要重試');
+      return;
+    }
+
+    logger.info(`重試 ${failedItems.length} 個失敗的項目`);
+    await this.triggerSync();
+  }
+
+  /**
+   * 清理過期的同步項目
+   */
+  public async cleanupExpiredItems(
+    maxAge: number = 7 * 24 * 60 * 60 * 1000
+  ): Promise<void> {
+    const cutoffTime = Date.now() - maxAge;
+    const originalCount = this.syncQueue.length;
+
+    this.syncQueue = this.syncQueue.filter(item => item.timestamp > cutoffTime);
+
+    const removedCount = originalCount - this.syncQueue.length;
+    if (removedCount > 0) {
+      this.state.pendingItemsCount = this.syncQueue.length;
+      await this.saveSyncQueue();
+
+      logger.info(`清理了 ${removedCount} 個過期的同步項目`);
+      this.emit('itemsCleaned', { removedCount });
+    }
+  }
+
+  /**
+   * 銷毀服務
+   */
+  public async destroy(): Promise<void> {
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+      this.syncInterval = null;
+    }
+
+    this.removeAllListeners();
+    logger.info('離線同步服務已銷毀');
+  }
+
+  /**
+   * 設置網絡狀態監聽器
+   */
+  private async setupNetworkListener(): Promise<void> {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      const wasOnline = this.state.isOnline;
+      this.state.isOnline = state.isConnected ?? false;
+
+      if (!wasOnline && this.state.isOnline) {
+        // 網絡恢復
+        logger.info('網絡連接已恢復');
+        this.emit('networkRestored');
+
+        if (this.config.enableBackgroundSync && this.syncQueue.length > 0) {
+          this.triggerSync();
+        }
+      } else if (wasOnline && !this.state.isOnline) {
+        // 網絡斷開
+        logger.info('網絡連接已斷開');
+        this.emit('networkLost');
+      }
+    });
+
+    // 獲取初始網絡狀態
+    try {
+      const netInfo = await NetInfo.fetch();
+      this.state.isOnline = netInfo?.isConnected ?? false;
+    } catch (error) {
+      logger.warn('無法獲取網絡狀態，默認為離線:', error);
+      this.state.isOnline = false;
+    }
+  }
+
+  /**
+   * 開始定期同步
+   */
+  private async startPeriodicSync(): Promise<void> {
+    if (this.syncInterval) {
+      clearInterval(this.syncInterval);
+    }
+
+    this.syncInterval = setInterval(() => {
+      if (this.state.isOnline && this.syncQueue.length > 0) {
+        this.triggerSync();
+      }
+    }, this.config.syncInterval);
+  }
+
+  /**
+   * 同步批次
+   */
+  private async syncBatch(batch: OfflineSyncItem[]): Promise<{
+    success: number;
+    failed: number;
+    conflicts: number;
+    errors: string[];
+  }> {
+    const results = {
+      success: 0,
+      failed: 0,
+      conflicts: 0,
+      errors: [] as string[],
+    };
+
+    for (const item of batch) {
+      try {
+        const result = await this.syncItem(item);
+
+        if (result.success) {
+          results.success++;
+        } else if (result.conflict) {
+          results.conflicts++;
+          await this.handleConflict(item, result.serverData);
+        } else {
+          results.failed++;
+          results.errors.push(result.error || 'Unknown error');
+
+          if (
+            this.config.enableAutoRetry &&
+            item.retryCount < item.maxRetries
+          ) {
+            item.retryCount++;
+            // 將項目重新加入隊列末尾
+            this.syncQueue.push(item);
+          }
+        }
+      } catch (error) {
+        results.failed++;
+        results.errors.push(
+          error instanceof Error ? error.message : '未知錯誤'
+        );
+        logger.error('同步項目失敗:', { item, error });
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * 同步單個項目
+   */
+  private async syncItem(item: OfflineSyncItem): Promise<{
+    success: boolean;
+    conflict?: boolean;
+    serverData?: unknown;
+    error?: string;
+  }> {
+    try {
+      // 這裡應該調用實際的API
+      // 目前使用模擬實現
+      const response = await this.mockApiCall(item);
+
+      if (response.success) {
+        return { success: true };
+      } else if (response.conflict) {
+        return {
+          success: false,
+          conflict: true,
+          serverData: response.serverData,
+        };
+      } else {
+        return { success: false, error: response.error };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '同步失敗',
+      };
+    }
+  }
+
+  /**
+   * 處理衝突
+   */
+  private async handleConflict(
+    item: OfflineSyncItem,
+    serverData: any
+  ): Promise<void> {
+    switch (this.config.conflictResolution) {
+      case ConflictResolution.CLIENT_WINS:
+        // 客戶端獲勝，保持本地數據
+        logger.info('衝突解決：客戶端獲勝', { key: item.key });
+        break;
+
+      case ConflictResolution.SERVER_WINS:
+        // 服務器獲勝，更新本地數據
+        await this.updateLocalData(item.key, serverData);
+        logger.info('衝突解決：服務器獲勝', { key: item.key });
+        break;
+
+      case ConflictResolution.LAST_MODIFIED:
+        // 使用最後修改時間
+        if (item.timestamp > serverData.timestamp) {
+          logger.info('衝突解決：本地數據更新', { key: item.key });
+        } else {
+          await this.updateLocalData(item.key, serverData);
+          logger.info('衝突解決：服務器數據更新', { key: item.key });
+        }
+        break;
+
+      case ConflictResolution.MERGE:
+        // 合併數據
+        const mergedData = this.mergeData(item.data, serverData);
+        await this.updateLocalData(item.key, mergedData);
+        logger.info('衝突解決：數據已合併', { key: item.key });
+        break;
+
+      case ConflictResolution.MANUAL:
+        // 手動解決，發出事件
+        this.emit('conflictDetected', { item, serverData });
+        logger.info('衝突檢測：需要手動解決', { key: item.key });
+        break;
+    }
+  }
+
+  /**
+   * 更新本地數據
+   */
+  private async updateLocalData(key: string, data: any): Promise<void> {
+    try {
+      await AsyncStorage.setItem(key, JSON.stringify(data));
+      this.emit('localDataUpdated', { key, data });
+    } catch (error) {
+      logger.error('更新本地數據失敗:', { key, error });
+    }
+  }
+
+  /**
+   * 合併數據
+   */
+  private mergeData(localData: any, serverData: any): unknown {
+    // 簡單的深度合併實現
+    if (typeof localData !== 'object' || typeof serverData !== 'object') {
+      return serverData;
+    }
+
+    const merged = { ...localData };
+    for (const key in serverData) {
+      if (serverData.hasOwnProperty(key)) {
+        if (typeof serverData[key] === 'object' && serverData[key] !== null) {
+          merged[key] = this.mergeData(merged[key] || {}, serverData[key]);
+        } else {
+          merged[key] = serverData[key];
+        }
+      }
+    }
+
+    return merged;
+  }
+
+  /**
+   * 處理同步錯誤
+   */
+  private handleSyncError(error: any): void {
+    const errorMessage = error instanceof Error ? error.message : '同步失敗';
+    this.state.error = errorMessage;
+    this.state.stats.syncErrors++;
+
+    logger.error('同步錯誤:', error);
+    this.emit('syncError', error);
+  }
+
+  /**
+   * 更新同步統計
+   */
+  private updateSyncStats(results: any, syncTime: number): void {
+    const { success, failed, conflicts } = results;
+
+    this.state.stats.totalSynced += success;
+    this.state.stats.syncErrors += failed;
+    this.state.stats.lastSyncTime = new Date();
+
+    // 更新平均同步時間
+    const totalSyncs = this.state.stats.totalSynced;
+    this.state.stats.avgSyncTime =
+      (this.state.stats.avgSyncTime * (totalSyncs - 1) + syncTime) / totalSyncs;
+  }
+
+  /**
+   * 移除已同步的項目
+   */
+  private removeSyncedItems(itemIds: string[]): void {
+    this.syncQueue = this.syncQueue.filter(item => !itemIds.includes(item.id));
+    this.state.pendingItemsCount = this.syncQueue.length;
+    this.saveSyncQueue();
+  }
+
+  /**
+   * 保存同步隊列到本地存儲
+   */
+  private async saveSyncQueue(): Promise<void> {
+    try {
+      const key = `offline_sync_queue_${this.userId}`;
+      await AsyncStorage.setItem(key, JSON.stringify(this.syncQueue));
+    } catch (error) {
+      logger.error('保存同步隊列失敗:', error);
+    }
+  }
+
+  /**
+   * 從本地存儲加載同步隊列
+   */
+  private async loadSyncQueue(): Promise<void> {
+    try {
+      const key = `offline_sync_queue_${this.userId}`;
+      const data = await AsyncStorage.getItem(key);
+
+      if (data) {
+        this.syncQueue = JSON.parse(data);
+        this.state.pendingItemsCount = this.syncQueue.length;
+        logger.info(`加載了 ${this.syncQueue.length} 個待同步項目`);
+      }
+    } catch (error) {
+      logger.error('加載同步隊列失敗:', error);
+      this.syncQueue = [];
+    }
+  }
+
+  /**
+   * 生成設備ID
+   */
+  private generateDeviceId(): string {
+    return `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * 生成同步ID
+   */
+  private generateSyncId(): string {
+    return `sync_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  /**
+   * 模擬API調用
+   */
+  private async mockApiCall(item: OfflineSyncItem): Promise<{
+    success: boolean;
+    conflict?: boolean;
+    serverData?: unknown;
+    error?: string;
+  }> {
+    // 模擬網絡延遲
+    await new Promise(resolve =>
+      setTimeout(resolve, 100 + Math.random() * 200)
+    );
+
+    // 模擬隨機錯誤
+    if (Math.random() < 0.1) {
+      throw new Error('網絡錯誤');
+    }
+
+    // 模擬衝突
+    if (Math.random() < 0.05) {
+      return {
+        success: false,
+        conflict: true,
+        serverData: { ...item.data, timestamp: Date.now() - 1000 },
+      };
+    }
+
+    return { success: true };
+  }
+}
+
+// 導出單例實例
+export const offlineSyncService = OfflineSyncService.getInstance();

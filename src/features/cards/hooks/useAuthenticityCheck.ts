@@ -102,9 +102,9 @@ export const _useAuthenticityCheck = (
   const _initialize = useCallback(async () => {
     try {
       await dispatch(initializeAuthenticityCheck()).unwrap();
-      logger.info('防偽檢查系統初始化成功');
+      logger.info('防偽Check系統InitializeSuccess');
     } catch (error: unknown) {
-      logger.error('防偽檢查系統初始化失敗:', error);
+      logger.error('防偽Check系統InitializeFailed:', error);
       onCheckError?.(error);
     }
   }, [dispatch, onCheckError]);
@@ -116,7 +116,7 @@ export const _useAuthenticityCheck = (
         onCheckSuccess?.(result);
         return result;
       } catch (error: unknown) {
-        logger.error('防偽檢查失敗:', error);
+        logger.error('防偽CheckFailed:', error);
         onCheckError?.(error);
         return undefined;
       }
@@ -132,7 +132,7 @@ export const _useAuthenticityCheck = (
         ).unwrap();
         onHistoryLoaded?.(history);
       } catch (error: unknown) {
-        logger.error('獲取檢查歷史失敗:', error);
+        logger.error('GetCheck歷史Failed:', error);
       }
     },
     [dispatch, onHistoryLoaded]
@@ -144,7 +144,7 @@ export const _useAuthenticityCheck = (
         const _stats = await dispatch(getCheckStats(userId)).unwrap();
         onStatsLoaded?.(stats);
       } catch (error: unknown) {
-        logger.error('獲取檢查統計失敗:', error);
+        logger.error('GetCheck統計Failed:', error);
       }
     },
     [dispatch, onStatsLoaded]

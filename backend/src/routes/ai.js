@@ -229,7 +229,7 @@ router.get('/metrics', async (req, res) => {
 });
 
 /**
- * AI?��??�康檢查
+ * AI?��??�康Check
  */
 router.get('/health', async (req, res) => {
   try {
@@ -396,7 +396,7 @@ router.post('/batch', async (req, res) => {
 });
 
 /**
- * AI模�?信息
+ * AI模�?Information
  */
 router.get('/models', async (req, res) => {
   try {
@@ -440,7 +440,7 @@ router.get('/models', async (req, res) => {
 });
 
 /**
- * AI?�能?�表
+ * AI?�能?�Table
  */
 router.get('/features', async (req, res) => {
   try {

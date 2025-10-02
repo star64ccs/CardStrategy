@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { logger } from '../core/utils/logger';
 
 /**
- * API 方法裝飾器
- * 自動處理輸入驗證、API 調用、響應驗證和錯誤處理
+ * API Method裝飾器
+ * AutoHandleInputVerify、API 調用、ResponseVerify和ErrorHandle
  */
 export function ApiMethod<T, P = any>(
   endpoint: string,
@@ -25,19 +25,19 @@ export function ApiMethod<T, P = any>(
       const _startTime = Date.now();
 
       try {
-        // 輸入驗證
+        // InputVerify
         if (inputSchema && args.length > 0) {
           try {
             inputSchema.parse(args[0]);
           } catch (error) {
-            throw new Error(`${operation} 參數驗證失敗: ${error}`);
+            throw new Error(`${operation} 參數VerifyFailed: ${error}`);
           }
         }
 
-        // 調用原始方法
+        // 調用原始Method
         const _result = await originalMethod.apply(this, args);
 
-        // 響應驗證
+        // ResponseVerify
         if (responseSchema && result?.data) {
           try {
             const _validatedData = responseSchema.parse(result.data);
@@ -46,31 +46,31 @@ export function ApiMethod<T, P = any>(
               data: validatedData,
             };
 
-            // 記錄成功日誌
+            // RecordSuccessLog
             const _duration = Date.now() - startTime;
-            logger.info(`✅ ${operation} 成功`, {
+            logger.info(`✅ ${operation} Success`, {
               duration: `${duration}ms`,
               status: result.status,
             });
 
             return validatedResult;
           } catch (error) {
-            throw new Error(`${operation} 響應數據驗證失敗: ${error}`);
+            throw new Error(`${operation} 響應數據VerifyFailed: ${error}`);
           }
         }
 
-        // 記錄成功日誌
+        // RecordSuccessLog
         const _duration = Date.now() - startTime;
-        logger.info(`✅ ${operation} 成功`, {
+        logger.info(`✅ ${operation} Success`, {
           duration: `${duration}ms`,
           status: result?.status,
         });
 
         return result;
       } catch (error: unknown) {
-        // 記錄錯誤日誌
+        // RecordErrorLog
         const _duration = Date.now() - startTime;
-        logger.error(`❌ ${operation} 失敗`, {
+        logger.error(`❌ ${operation} Failed`, {
           error: error.message,
           duration: `${duration}ms`,
           stack: error.stack,
@@ -82,8 +82,8 @@ export function ApiMethod<T, P = any>(
 }
 
 /**
- * 驗證裝飾器
- * 只處理輸入驗證，不處理 API 調用
+ * Verify裝飾器
+ * 只HandleInputVerify，不Handle API 調用
  */
 export function ValidateInput<P = any>(schema: ZodSchema<P>) {
   return function (
@@ -98,7 +98,7 @@ export function ValidateInput<P = any>(schema: ZodSchema<P>) {
         try {
           schema.parse(args[0]);
         } catch (error) {
-          throw new Error(`${propertyName} 參數驗證失敗: ${error}`);
+          throw new Error(`${propertyName} 參數VerifyFailed: ${error}`);
         }
       }
 
@@ -108,8 +108,8 @@ export function ValidateInput<P = any>(schema: ZodSchema<P>) {
 }
 
 /**
- * 響應驗證裝飾器
- * 只處理響應驗證，不處理輸入驗證
+ * ResponseVerify裝飾器
+ * 只HandleResponseVerify，不HandleInputVerify
  */
 export function ValidateResponse<T>(schema: ZodSchema<T>) {
   return function (
@@ -130,7 +130,7 @@ export function ValidateResponse<T>(schema: ZodSchema<T>) {
             data: validatedData,
           };
         } catch (error) {
-          throw new Error(`${propertyName} 響應數據驗證失敗: ${error}`);
+          throw new Error(`${propertyName} 響應數據VerifyFailed: ${error}`);
         }
       }
 
@@ -140,8 +140,8 @@ export function ValidateResponse<T>(schema: ZodSchema<T>) {
 }
 
 /**
- * 重試裝飾器
- * 為方法添加重試功能
+ * Retry裝飾器
+ * 為MethodAddRetry功能
  */
 export function Retry(_maxRetries = 3, _retryDelay = 1000) {
   return function (
@@ -162,7 +162,7 @@ export function Retry(_maxRetries = 3, _retryDelay = 1000) {
 
           if (attempt === maxRetries) {
             logger.error(
-              `❌ ${propertyName} 重試失敗 (${attempt}/${maxRetries})`,
+              `❌ ${propertyName} 重試Failed (${attempt}/${maxRetries})`,
               {
                 error: error.message,
               }
@@ -171,7 +171,7 @@ export function Retry(_maxRetries = 3, _retryDelay = 1000) {
           }
 
           logger.warn(
-            `⚠️ ${propertyName} 失敗，${retryDelay}ms 後重試 (${attempt}/${maxRetries})`,
+            `⚠️ ${propertyName} Failed，${retryDelay}ms 後重試 (${attempt}/${maxRetries})`,
             {
               error: error.message,
             }
@@ -189,8 +189,8 @@ export function Retry(_maxRetries = 3, _retryDelay = 1000) {
 }
 
 /**
- * 性能監控裝飾器
- * 記錄方法執行時間
+ * 性能Monitor裝飾器
+ * RecordMethod執RowTime
  */
 export function PerformanceMonitor(operationName?: string) {
   return function (
@@ -213,7 +213,7 @@ export function PerformanceMonitor(operationName?: string) {
         return result;
       } catch (error: unknown) {
         const _duration = Date.now() - startTime;
-        logger.error(`❌ ${operation} 執行失敗 (${duration}ms)`, {
+        logger.error(`❌ ${operation} 執行Failed (${duration}ms)`, {
           error: error.message,
         });
         throw error;
@@ -223,8 +223,8 @@ export function PerformanceMonitor(operationName?: string) {
 }
 
 /**
- * 緩存裝飾器
- * 為方法添加緩存功能
+ * Cache裝飾器
+ * 為MethodAddCache功能
  */
 export function Cache(
   _ttl = 60000,
@@ -242,17 +242,17 @@ export function Cache(
       const _key = keyGenerator ? keyGenerator(...args) : JSON.stringify(args);
       const _now = Date.now();
 
-      // 檢查緩存
+      // CheckCache
       const _cached = cache.get(key);
       if (cached && now - cached.timestamp < ttl) {
         logger.debug(`📦 ${propertyName} 使用緩存數據`);
         return cached.data;
       }
 
-      // 執行方法
+      // 執RowMethod
       const _result = await originalMethod.apply(this, args);
 
-      // 更新緩存
+      // UpdateCache
       cache.set(key, { data: result, timestamp: now });
       logger.debug(`💾 ${propertyName} 數據已緩存`);
 
@@ -262,8 +262,8 @@ export function Cache(
 }
 
 /**
- * 批量處理裝飾器
- * 將單個操作轉換為批量操作
+ * BatchHandle裝飾器
+ * 將SingleOperationConvert為BatchOperation
  */
 export function BatchProcess(_batchSize = 10) {
   return function (
@@ -292,7 +292,7 @@ export function BatchProcess(_batchSize = 10) {
 
 /**
  * 事務裝飾器
- * 為方法添加事務支持
+ * 為MethodAdd事務Support
  */
 export function Transaction() {
   return function (
@@ -303,12 +303,12 @@ export function Transaction() {
     const _originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: unknown[]) {
-      // 這裡可以集成實際的事務管理
+      // 這裡可以集成實際的事務Manage
       logger.debug(`🔄 ${propertyName} 開始事務`);
 
       try {
         const _result = await originalMethod.apply(this, args);
-        logger.debug(`✅ ${propertyName} 事務提交成功`);
+        logger.debug(`✅ ${propertyName} 事務提交Success`);
         return result;
       } catch (error: unknown) {
         logger.error(`❌ ${propertyName} 事務回滾`, { error: error.message });
@@ -319,8 +319,8 @@ export function Transaction() {
 }
 
 /**
- * 權限檢查裝飾器
- * 為方法添加權限檢查
+ * 權限Check裝飾器
+ * 為MethodAdd權限Check
  */
 export function RequirePermission(permission: string) {
   return function (
@@ -331,7 +331,7 @@ export function RequirePermission(permission: string) {
     const _originalMethod = descriptor.value;
 
     descriptor.value = async function (...args: unknown[]) {
-      // 這裡可以集成實際的權限檢查邏輯
+      // 這裡可以集成實際的權限Check邏輯
       const _user = (this as any).getCurrentUser?.();
       if (!user?.permissions?.includes(permission)) {
         throw new Error(`權限不足: 需要 ${permission} 權限`);

@@ -1,0 +1,273 @@
+/**
+ * 前端專用類型定義
+ * 重新導出共享類型並添加前端特定類型
+ */
+
+// 重新導出共享類型
+export * from '@shared/types';
+
+// 前端特定類型
+export interface ComponentProps {
+  children?: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  testID?: string;
+}
+
+export interface NavigationProps {
+  navigation: any;
+  route: any;
+}
+
+export interface FormFieldProps {
+  label?: string;
+  placeholder?: string;
+  value?: string;
+  onChangeText?: (text: string) => void;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+}
+
+export interface LoadingState {
+  isLoading: boolean;
+  error?: string;
+}
+
+export interface AsyncState<T = any> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+  lastUpdated: Date | null;
+}
+
+// React Native 特定類型
+export interface TouchableProps {
+  onPress?: () => void;
+  onLongPress?: () => void;
+  disabled?: boolean;
+  activeOpacity?: number;
+}
+
+export interface ImageProps {
+  source: { uri: string } | number;
+  style?: any;
+  resizeMode?: 'cover' | 'contain' | 'stretch' | 'repeat' | 'center';
+}
+
+export interface TextInputProps {
+  value?: string;
+  onChangeText?: (text: string) => void;
+  placeholder?: string;
+  secureTextEntry?: boolean;
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad';
+  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  autoCorrect?: boolean;
+  multiline?: boolean;
+  numberOfLines?: number;
+}
+
+// 狀態管理類型
+export interface RootState {
+  auth: any;
+  cards: any;
+  market: any;
+  user: any;
+  // 添加其他 slice 狀態
+}
+
+// 主題類型
+export interface ThemeColors {
+  primary: string;
+  secondary: string;
+  background: string;
+  surface: string;
+  text: string;
+  textSecondary: string;
+  border: string;
+  error: string;
+  warning: string;
+  success: string;
+  info: string;
+}
+
+export interface Theme {
+  colors: ThemeColors;
+  typography: {
+    fontFamily: string;
+    fontSize: {
+      xs: number;
+      sm: number;
+      md: number;
+      lg: number;
+      xl: number;
+      xxl: number;
+    };
+    lineHeight: {
+      xs: number;
+      sm: number;
+      md: number;
+      lg: number;
+      xl: number;
+      xxl: number;
+    };
+  };
+  spacing: {
+    xs: number;
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+    xxl: number;
+  };
+  borderRadius: {
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+  };
+  shadows: {
+    sm: any;
+    md: any;
+    lg: any;
+    xl: any;
+  };
+}
+
+// 動畫類型
+export interface AnimationConfig {
+  duration: number;
+  easing?: string;
+  delay?: number;
+  iterations?: number;
+}
+
+export interface AnimationState {
+  isAnimating: boolean;
+  currentValue: number;
+  targetValue: number;
+}
+
+// 手勢類型
+export interface GestureState {
+  isPressed: boolean;
+  isHovered: boolean;
+  isFocused: boolean;
+  isDisabled: boolean;
+}
+
+// 可訪問性類型
+export interface AccessibilityProps {
+  accessible?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
+  accessibilityRole?: string;
+  accessibilityState?: {
+    disabled?: boolean;
+    selected?: boolean;
+    checked?: boolean | 'mixed';
+    busy?: boolean;
+    expanded?: boolean;
+  };
+}
+
+// 性能監控類型
+export interface PerformanceMetrics {
+  renderTime: number;
+  memoryUsage: number;
+  networkRequests: number;
+  errors: number;
+}
+
+// 國際化類型
+export interface TranslationFunction {
+  (key: string, options?: any): string;
+}
+
+export interface I18nContextType {
+  t: TranslationFunction;
+  language: string;
+  changeLanguage: (language: string) => void;
+  isReady: boolean;
+}
+
+// 導航類型
+export interface NavigationStack {
+  [key: string]: {
+    component: React.ComponentType<any>;
+    options?: any;
+  };
+}
+
+// 表單類型
+export interface FormState {
+  values: Record<string, any>;
+  errors: Record<string, string>;
+  touched: Record<string, boolean>;
+  isValid: boolean;
+  isSubmitting: boolean;
+}
+
+export interface FormField {
+  name: string;
+  type:
+    | 'text'
+    | 'email'
+    | 'password'
+    | 'number'
+    | 'select'
+    | 'checkbox'
+    | 'radio';
+  label: string;
+  placeholder?: string;
+  required?: boolean;
+  validation?: (value: any) => string | undefined;
+  options?: Array<{ label: string; value: any }>;
+}
+
+// 列表類型
+export interface ListItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  image?: string;
+  onPress?: () => void;
+  rightElement?: React.ReactNode;
+}
+
+export interface ListProps {
+  data: ListItem[];
+  onRefresh?: () => Promise<void>;
+  onLoadMore?: () => void;
+  refreshing?: boolean;
+  loading?: boolean;
+  emptyMessage?: string;
+}
+
+// 模態框類型
+export interface ModalProps {
+  visible: boolean;
+  onClose: () => void;
+  title?: string;
+  children: React.ReactNode;
+  showCloseButton?: boolean;
+  backdropClosable?: boolean;
+}
+
+// 工具提示類型
+export interface TooltipProps {
+  text: string;
+  position?: 'top' | 'bottom' | 'left' | 'right';
+  children: React.ReactNode;
+  delay?: number;
+}
+
+// 分頁類型
+export interface PaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  showFirstLast?: boolean;
+  showPrevNext?: boolean;
+  maxVisiblePages?: number;
+}

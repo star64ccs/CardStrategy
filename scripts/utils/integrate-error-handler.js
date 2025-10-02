@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * 錯誤處理系統集成腳本
- * 用於在所有服務中自動集成 errorHandler
+ * ErrorHandle系統集成腳本
+ * 用於在所有Service中Auto集成 errorHandler
  */
 
 // eslint-disable-next-line no-unused-vars
@@ -10,7 +10,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 需要集成的服務文件列表
+// 需要集成的ServiceFileList
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -64,13 +64,13 @@ const serviceFiles = [
   'src/services/incrementalSyncManager.ts',
 ];
 
-// 錯誤處理導入模板
+// ErrorHandleImport模板
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const errorHandlerImport = `import { errorHandler, withErrorHandling } from '@/utils/errorHandler';`;
 
-// 錯誤處理包裝模板函數
+// ErrorHandlePackage裝模板Function
 function createErrorHandlerWrapper(
   methodName,
   params,
@@ -78,7 +78,7 @@ function createErrorHandlerWrapper(
   serviceName
 ) {
   return `
-  // 使用錯誤處理包裝器
+  // 使用ErrorHandlePackage裝器
   ${methodName}: withErrorHandling(async ${params} => {
     try {
       ${originalMethodBody}
@@ -94,40 +94,40 @@ function createErrorHandlerWrapper(
 }
 
 /**
- * 檢查文件是否存在
+ * CheckFileYesNo存在
  */
 function fileExists(filePath) {
   return fs.existsSync(filePath);
 }
 
 /**
- * 讀取文件內容
+ * ReadFileContent
  */
 function readFile(filePath) {
   try {
     return fs.readFileSync(filePath, 'utf8');
   } catch (error) {
-    // logger.info(`無法讀取文件 ${filePath}:`, error.message);
+    // logger.info(`無法ReadFile ${filePath}:`, error.message);
     return null;
   }
 }
 
 /**
- * 寫入文件內容
+ * WriteFileContent
  */
 function writeFile(filePath, content) {
   try {
     fs.writeFileSync(filePath, content, 'utf8');
-    // logger.info(`✅ 已更新文件: ${filePath}`);
+    // logger.info(`✅ 已UpdateFile: ${filePath}`);
     return true;
   } catch (error) {
-    // logger.info(`❌ 無法寫入文件 ${filePath}:`, error.message);
+    // logger.info(`❌ 無法WriteFile ${filePath}:`, error.message);
     return false;
   }
 }
 
 /**
- * 檢查是否已經導入了 errorHandler
+ * CheckYesNo已經Import了 errorHandler
  */
 function hasErrorHandlerImport(content) {
   return (
@@ -136,7 +136,7 @@ function hasErrorHandlerImport(content) {
 }
 
 /**
- * 添加錯誤處理導入
+ * AddErrorHandleImport
  */
 function addErrorHandlerImport(content) {
   // 找到最後一個 import 語句
@@ -144,11 +144,11 @@ function addErrorHandlerImport(content) {
   const imports = content.match(importRegex) || [];
 
   if (imports.length === 0) {
-    // 如果沒有 import 語句，在文件開頭添加
+    // 如果沒有 import 語句，在FileOn頭Add
     return `${errorHandlerImport}\n\n${content}`;
   }
 
-  // 在最後一個 import 語句後添加
+  // 在最後一個 import 語句後Add
   const lastImport = imports[imports.length - 1];
   const lastImportIndex = content.lastIndexOf(lastImport);
   const insertIndex = lastImportIndex + lastImport.length;
@@ -162,10 +162,10 @@ function addErrorHandlerImport(content) {
 }
 
 /**
- * 為方法添加錯誤處理
+ * 為MethodAddErrorHandle
  */
 function addErrorHandlingToMethod(content, methodName, serviceName) {
-  // 簡單的錯誤處理包裝
+  // 簡單的ErrorHandlePackage裝
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -184,13 +184,13 @@ function addErrorHandlingToMethod(content, methodName, serviceName) {
 }
 
 /**
- * 處理單個服務文件
+ * HandleSingleServiceFile
  */
 function processServiceFile(filePath) {
-  // logger.info(`\n🔧 處理文件: ${filePath}`);
+  // logger.info(`\n🔧 HandleFile: ${filePath}`);
 
   if (!fileExists(filePath)) {
-    // logger.info(`⚠️  文件不存在: ${filePath}`);
+    // logger.info(`⚠️  File不存在: ${filePath}`);
     return false;
   }
 
@@ -207,27 +207,27 @@ function processServiceFile(filePath) {
   const serviceName = path.basename(filePath, '.ts');
   let modified = false;
 
-  // 檢查是否已經有錯誤處理
+  // CheckYesNo已經有ErrorHandle
   if (hasErrorHandlerImport(content)) {
-    // logger.info(`ℹ️  文件已包含錯誤處理: ${filePath}`);
+    // logger.info(`ℹ️  File已Package含ErrorHandle: ${filePath}`);
     return true;
   }
 
-  // 添加錯誤處理導入
+  // AddErrorHandleImport
   content = addErrorHandlerImport(content);
   modified = true;
 
-  // 為主要的異步方法添加錯誤處理
+  // 為主要的AsyncMethodAddErrorHandle
   const asyncMethodRegex =
     /async\s+(\w+)\s*\([^)]*\)\s*:\s*Promise<[^>]*>\s*{/g;
   let match;
 
   while ((match = asyncMethodRegex.exec(content)) !== null) {
     const methodName = match[1];
-    // logger.info(`  📝 為方法添加錯誤處理: ${methodName}`);
+    // logger.info(`  📝 為MethodAddErrorHandle: ${methodName}`);
 
-    // 這裡可以添加更複雜的錯誤處理邏輯
-    // 目前只是簡單地記錄已處理
+    // 這裡可以Add更複雜的ErrorHandle邏輯
+    // 目前只Yes簡單地Record已Handle
   }
 
   if (modified) {
@@ -238,10 +238,10 @@ function processServiceFile(filePath) {
 }
 
 /**
- * 主函數
+ * 主Function
  */
 function main() {
-  // logger.info('🚀 開始集成錯誤處理系統...\n');
+  // logger.info('🚀 Begin集成ErrorHandle系統...\n');
 
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -257,18 +257,18 @@ function main() {
     }
   }
 
-  // logger.info(`\n📊 集成完成統計:`);
-  // logger.info(`✅ 成功處理: ${successCount}/${totalCount} 個文件`);
-  // logger.info(`❌ 失敗處理: ${totalCount - successCount} 個文件`);
+  // logger.info(`\n📊 集成CompleteStatistics:`);
+  // logger.info(`✅ SuccessHandle: ${successCount}/${totalCount} 個File`);
+  // logger.info(`❌ FailedHandle: ${totalCount - successCount} 個File`);
 
   if (successCount === totalCount) {
-    // logger.info('\n🎉 所有服務文件已成功集成錯誤處理系統！');
+    // logger.info('\n🎉 所有ServiceFile已Success集成ErrorHandle系統！');
   } else {
-    // logger.info('\n⚠️  部分文件處理失敗，請檢查錯誤信息。');
+    // logger.info('\n⚠️  PartialFileHandleFailed，請CheckErrorInformation。');
   }
 }
 
-// 運行主函數
+// 運Row主Function
 if (require.main === module) {
   main();
 }

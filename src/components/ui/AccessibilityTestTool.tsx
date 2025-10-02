@@ -1,6 +1,6 @@
-// 可訪問性測試工具組件
-// 提供可訪問性測試功能
-// 符合 WCAG 2.1 AA 標準和 Section 508 要求
+// 可訪問性TestToolComponent
+// 提供可訪問性Test功能
+// 符合 WCAG 2.1 AA Standard和 Section 508 要求
 
 import React, { useCallback, useState } from 'react';
 
@@ -11,7 +11,7 @@ import type {
 } from '../../types/accessibility';
 import { useAccessibility } from '../providers/AccessibilityProvider';
 
-// 可訪問性測試工具組件
+// 可訪問性TestToolComponent
 export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
   testConfig,
   testResult,
@@ -41,7 +41,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     'issues' | 'suggestions' | 'report'
   >('issues');
 
-  // 運行測試
+  // 運RowTest
   const _runTest = useCallback(async () => {
     if (isRunning) return;
 
@@ -63,7 +63,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     async (issues: AccessibilityIssue[]) => {
       try {
         await tools.fixIssues(issues);
-        // 重新運行測試
+        // Re運RowTest
         await runTest();
       } catch (error) {
         console.error('Failed to fix issues:', error);
@@ -72,18 +72,18 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     [tools, runTest]
   );
 
-  // 生成報告
+  // 生成Report
   const _generateReport = useCallback(() => {
     if (!currentResult) return '';
     return tools.generateReport(currentResult);
   }, [currentResult, tools]);
 
-  // 切換工具可見性
+  // SwitchTool可見性
   const _toggleVisibility = useCallback(() => {
     setIsVisible(!isVisible);
   }, [isVisible]);
 
-  // 獲取問題統計
+  // Get問題Statistics
   const _getIssueStats = useCallback(() => {
     if (!currentResult) return { errors: 0, warnings: 0, info: 0 };
 
@@ -100,7 +100,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     return { errors, warnings, info };
   }, [currentResult]);
 
-  // 獲取建議統計
+  // Get建議Statistics
   const _getSuggestionStats = useCallback(() => {
     if (!currentResult) return { high: 0, medium: 0, low: 0 };
 
@@ -117,7 +117,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     return { high, medium, low };
   }, [currentResult]);
 
-  // 渲染問題列表
+  // 渲染問題List
   const _renderIssues = () => {
     if (!currentResult) return <div>無測試結果</div>;
 
@@ -163,7 +163,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     );
   };
 
-  // 渲染建議列表
+  // 渲染建議List
   const _renderSuggestions = () => {
     if (!currentResult) return <div>無測試結果</div>;
 
@@ -207,7 +207,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     );
   };
 
-  // 渲染報告
+  // 渲染Report
   const _renderReport = () => {
     if (!currentResult) return <div>無測試結果</div>;
 
@@ -227,7 +227,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
             <div className='status'>
               狀態:{' '}
               <span className={currentResult.passed ? 'passed' : 'failed'}>
-                {currentResult.passed ? '通過' : '失敗'}
+                {currentResult.passed ? '通過' : 'Failed'}
               </span>
             </div>
           </div>
@@ -274,7 +274,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     );
   };
 
-  // 渲染工具欄
+  // 渲染Tool欄
   const _renderToolbar = () => (
     <div className='accessibility-toolbar'>
       <button
@@ -299,7 +299,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     </div>
   );
 
-  // 渲染標籤頁
+  // 渲染Tag頁
   const _renderTabs = () => (
     <div className='accessibility-tabs'>
       <button
@@ -323,7 +323,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     </div>
   );
 
-  // 渲染內容
+  // 渲染Content
   const _renderContent = () => {
     switch (selectedTab) {
       case 'issues':
@@ -337,7 +337,7 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
     }
   };
 
-  // 獲取工具樣式
+  // GetTool樣式
   const _getToolStyle = () => {
     const baseStyle: React.CSSProperties = {
       position: 'fixed',
@@ -442,8 +442,8 @@ export const AccessibilityTestTool: React.FC<AccessibilityTestToolProps> = ({
   );
 };
 
-// 設置顯示名稱
+// SettingsShow名稱
 AccessibilityTestTool.displayName = 'AccessibilityTestTool';
 
-// 導出組件
+// ExportComponent
 export default AccessibilityTestTool;

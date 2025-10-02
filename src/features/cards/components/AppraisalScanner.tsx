@@ -48,16 +48,16 @@ export const AppraisalScanner: React.FC<AppraisalScannerProps> = ({
     try {
       setIsCapturing(true);
 
-      // 模擬相機捕獲
+      // 模擬相機Catch
       await new Promise(resolve => setTimeout(resolve, 1000));
 
-      // 模擬圖像 URL
+      // 模擬Graph像 URL
       const _imageUrl = `https://example.com/card-images/${cardId}_${Date.now()}.jpg`;
       setCapturedImage(imageUrl);
 
-      Alert.alert('成功', '圖像捕獲成功！');
+      Alert.alert('Success', '圖像捕獲Success！');
     } catch (error) {
-      Alert.alert('錯誤', '圖像捕獲失敗，請重試');
+      Alert.alert('Error', '圖像捕獲Failed，請重試');
     } finally {
       setIsCapturing(false);
     }
@@ -65,7 +65,7 @@ export const AppraisalScanner: React.FC<AppraisalScannerProps> = ({
 
   const _handleStartAppraisal = async () => {
     if (!capturedImage) {
-      Alert.alert('錯誤', '請先捕獲卡牌圖像');
+      Alert.alert('Error', '請先捕獲卡牌圖像');
       return;
     }
 
@@ -87,7 +87,7 @@ export const AppraisalScanner: React.FC<AppraisalScannerProps> = ({
 
       const _result = await startAppraisal(request).unwrap();
 
-      Alert.alert('成功', `鑑定完成！等級: ${result.overallGrade}`);
+      Alert.alert('Success', `鑑定完成！等級: ${result.overallGrade}`);
 
       if (onAppraisalComplete) {
         onAppraisalComplete(result);
@@ -98,7 +98,7 @@ export const AppraisalScanner: React.FC<AppraisalScannerProps> = ({
       if (onError) {
         onError(error);
       } else {
-        Alert.alert('錯誤', '鑑定失敗，請重試');
+        Alert.alert('Error', '鑑定Failed，請重試');
       }
     }
   };
@@ -189,7 +189,7 @@ export const AppraisalScanner: React.FC<AppraisalScannerProps> = ({
     <View style={styles.container}>
       <Text style={styles.title}>模擬鑑定掃描器</Text>
 
-      {/* 卡牌信息 */}
+      {/* 卡牌Information */}
       <View style={styles.cardInfo}>
         <Text style={styles.cardInfoText}>卡牌 ID: {cardId}</Text>
         <Text style={styles.cardInfoText}>類型: {cardType}</Text>
@@ -197,12 +197,12 @@ export const AppraisalScanner: React.FC<AppraisalScannerProps> = ({
         <Text style={styles.cardInfoText}>版本: {version}</Text>
       </View>
 
-      {/* 圖像捕獲區域 */}
+      {/* Graph像CatchDistrict域 */}
       <View style={styles.captureArea}>
         {capturedImage ? renderCapturedImage() : renderCameraView()}
       </View>
 
-      {/* 控制按鈕 */}
+      {/* Control按鈕 */}
       <View style={styles.buttonContainer}>
         {!capturedImage ? (
           <TouchableOpacity
@@ -237,7 +237,7 @@ export const AppraisalScanner: React.FC<AppraisalScannerProps> = ({
         )}
       </View>
 
-      {/* 狀態顯示 */}
+      {/* StatusShow */}
       {status !== 'pending' && (
         <View style={styles.statusContainer}>
           <Text style={styles.statusText}>
@@ -246,10 +246,10 @@ export const AppraisalScanner: React.FC<AppraisalScannerProps> = ({
         </View>
       )}
 
-      {/* 錯誤顯示 */}
+      {/* ErrorShow */}
       {renderError()}
 
-      {/* 結果顯示 */}
+      {/* 結果Show */}
       {renderAppraisalResult()}
     </View>
   );

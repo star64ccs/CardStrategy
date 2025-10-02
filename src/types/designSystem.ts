@@ -1,7 +1,7 @@
-// 設計系統類型定義
-// 支持 WCAG 2.1 AA 標準的可訪問性設計系統
+// 設計系統Class型定義
+// Support WCAG 2.1 AA Standard的可訪問性設計系統
 
-// 設計令牌類型
+// 設計令牌Class型
 export interface DesignToken {
   name: string;
   value: string | number;
@@ -65,7 +65,7 @@ export interface ColorPalette {
     focus: string;
   };
 
-  // 狀態顏色
+  // Status顏色
   status: {
     success: string;
     warning: string;
@@ -113,7 +113,7 @@ export interface Typography {
     black: string;
   };
 
-  // 行高
+  // Row高
   lineHeights: {
     none: number;
     tight: number;
@@ -181,14 +181,14 @@ export interface Shadow {
 
 // 動畫系統
 export interface Animation {
-  // 過渡時間
+  // 過渡Time
   duration: {
     fast: number;
     normal: number;
     slow: number;
   };
 
-  // 緩動函數
+  // 緩動Function
   easing: {
     linear: string;
     ease: string;
@@ -197,7 +197,7 @@ export interface Animation {
     easeInOut: string;
   };
 
-  // 動畫類型
+  // 動畫Class型
   types: {
     fadeIn: AnimationConfig;
     fadeOut: AnimationConfig;
@@ -211,7 +211,7 @@ export interface Animation {
   };
 }
 
-// 動畫配置
+// 動畫Configure
 export interface AnimationConfig {
   from: Record<string, any>;
   to: Record<string, any>;
@@ -220,7 +220,7 @@ export interface AnimationConfig {
   delay?: number;
 }
 
-// 響應式斷點
+// Response式斷點
 export interface Breakpoints {
   xs: number;
   sm: number;
@@ -230,10 +230,10 @@ export interface Breakpoints {
   '2xl': number;
 }
 
-// 主題類型
+// ThemeClass型
 export type ThemeType = 'light' | 'dark' | 'highContrast';
 
-// 主題配置
+// ThemeConfigure
 export interface Theme {
   type: ThemeType;
   colors: ColorPalette;
@@ -245,9 +245,9 @@ export interface Theme {
   breakpoints: Breakpoints;
 }
 
-// 組件庫類型
+// ComponentLibraryClass型
 export interface ComponentLibrary {
-  // 原子組件
+  // 原子Component
   atoms: {
     Button: ComponentConfig;
     Input: ComponentConfig;
@@ -256,7 +256,7 @@ export interface ComponentLibrary {
     Badge: ComponentConfig;
   };
 
-  // 分子組件
+  // 分子Component
   molecules: {
     Card: ComponentConfig;
     Modal: ComponentConfig;
@@ -265,7 +265,7 @@ export interface ComponentLibrary {
     Alert: ComponentConfig;
   };
 
-  // 有機體組件
+  // 有機體Component
   organisms: {
     Header: ComponentConfig;
     Footer: ComponentConfig;
@@ -274,7 +274,7 @@ export interface ComponentLibrary {
     Form: ComponentConfig;
   };
 
-  // 模板組件
+  // 模板Component
   templates: {
     Page: ComponentConfig;
     Layout: ComponentConfig;
@@ -282,7 +282,7 @@ export interface ComponentLibrary {
   };
 }
 
-// 組件配置
+// ComponentConfigure
 export interface ComponentConfig {
   name: string;
   variants: Record<string, ComponentVariant>;
@@ -290,14 +290,14 @@ export interface ComponentConfig {
   props: Record<string, PropConfig>;
 }
 
-// 組件變體
+// Component變體
 export interface ComponentVariant {
   name: string;
   styles: Record<string, any>;
   props?: Record<string, any>;
 }
 
-// 屬性配置
+// PropertyConfigure
 export interface PropConfig {
   type: 'string' | 'number' | 'boolean' | 'array' | 'object';
   required: boolean;
@@ -306,7 +306,7 @@ export interface PropConfig {
   options?: unknown[];
 }
 
-// 設計系統配置
+// 設計系統Configure
 export interface DesignSystemConfig {
   name: string;
   version: string;
@@ -316,7 +316,7 @@ export interface DesignSystemConfig {
   accessibility: AccessibilityConfig;
 }
 
-// 可訪問性配置
+// 可訪問性Configure
 export interface AccessibilityConfig {
   // 顏色對比度
   contrastRatios: {
@@ -332,13 +332,13 @@ export interface AccessibilityConfig {
     style: 'solid' | 'dashed' | 'dotted';
   };
 
-  // 動畫偏好
+  // 動畫Preferences
   animationPreferences: {
     reduceMotion: boolean;
     prefersReducedMotion: boolean;
   };
 
-  // 字體大小偏好
+  // 字體大小Preferences
   fontSizePreferences: {
     minimum: number;
     maximum: number;
@@ -346,7 +346,7 @@ export interface AccessibilityConfig {
   };
 }
 
-// 設計系統狀態
+// 設計系統Status
 export interface DesignSystemState {
   currentTheme: ThemeType;
   themes: Record<ThemeType, Theme>;
@@ -363,21 +363,21 @@ export interface DesignSystemAction {
   payload?: unknown;
 }
 
-// 主題切換事件
+// ThemeSwitchEvent
 export interface ThemeChangeEvent {
   from: ThemeType;
   to: ThemeType;
   timestamp: number;
 }
 
-// 組件註冊事件
+// ComponentRegisterEvent
 export interface ComponentRegisterEvent {
   componentName: string;
   config: ComponentConfig;
   timestamp: number;
 }
 
-// 設計令牌更新事件
+// 設計令牌UpdateEvent
 export interface TokenUpdateEvent {
   tokenName: string;
   oldValue: string | number;
@@ -385,7 +385,7 @@ export interface TokenUpdateEvent {
   timestamp: number;
 }
 
-// 可訪問性更新事件
+// 可訪問性UpdateEvent
 export interface AccessibilityUpdateEvent {
   setting: string;
   oldValue: unknown;
@@ -393,7 +393,7 @@ export interface AccessibilityUpdateEvent {
   timestamp: number;
 }
 
-// 設計系統事件
+// 設計系統Event
 export interface BaseDesignSystemEvent {
   type: string;
   timestamp: number;
@@ -405,27 +405,27 @@ export type DesignSystemEvent =
   | (TokenUpdateEvent & BaseDesignSystemEvent)
   | (AccessibilityUpdateEvent & BaseDesignSystemEvent);
 
-// 設計系統服務接口
+// 設計系統ServiceInterface
 export interface DesignSystemService {
-  // 主題管理
+  // ThemeManage
   getCurrentTheme(): ThemeType;
   setTheme(theme: ThemeType): void;
   getTheme(theme: ThemeType): Theme;
   getAllThemes(): Record<ThemeType, Theme>;
 
-  // 組件管理
+  // ComponentManage
   registerComponent(name: string, config: ComponentConfig): void;
   getComponent(name: string): ComponentConfig | null;
   getAllComponents(): ComponentLibrary;
   updateComponent(name: string, config: Partial<ComponentConfig>): void;
 
-  // 令牌管理
+  // 令牌Manage
   getToken(name: string): DesignToken | null;
   getAllTokens(): DesignToken[];
   updateToken(name: string, value: string | number): void;
   addToken(token: DesignToken): void;
 
-  // 可訪問性管理
+  // 可訪問性Manage
   getAccessibilityConfig(): AccessibilityConfig;
   updateAccessibilityConfig(config: Partial<AccessibilityConfig>): void;
   checkContrastRatio(color1: string, color2: string): number;
@@ -435,7 +435,7 @@ export interface DesignSystemService {
     size?: 'normal' | 'large'
   ): boolean;
 
-  // 事件管理
+  // EventManage
   subscribe(
     event: string,
     callback: (event: DesignSystemEvent) => void

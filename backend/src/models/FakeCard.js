@@ -121,7 +121,7 @@ const createFakeCardModel = (sequelize) => {
     }
   );
 
-  // 定義關聯關係
+  // 定義Off聯Off係
   FakeCard.associate = (models) => {
     FakeCard.belongsTo(models.User, {
       foreignKey: 'userId',

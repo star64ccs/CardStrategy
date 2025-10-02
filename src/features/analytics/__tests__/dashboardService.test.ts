@@ -37,11 +37,11 @@ describe('DashboardService', () => {
   });
 
   describe('初始化', () => {
-    test('應該成功初始化服務', async () => {
+    test('應該SuccessInitializeService', async () => {
       await expect(service.initialize()).resolves.not.toThrow();
     });
 
-    test('應該在未初始化時拋出錯誤', async () => {
+    test('應該在未Initialize時拋出Error', async () => {
       // Reset instance to ensure uninitialized state
       (DashboardService as any).instance = undefined;
       const _uninitializedService = DashboardService.getInstance();
@@ -51,7 +51,7 @@ describe('DashboardService', () => {
       );
     });
 
-    test('重複初始化應該不會拋出錯誤', async () => {
+    test('重複Initialize應該不會拋出Error', async () => {
       await service.initialize();
       await expect(service.initialize()).resolves.not.toThrow();
     });
@@ -358,7 +358,7 @@ describe('DashboardService', () => {
 
       await service.createDashboard({ name: '測試儀表板' });
 
-      // 由於事件是異步的，我們需要等待一下
+      // 由於EventYesAsync的，我們需要Await一下
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(mockCallback).toHaveBeenCalled();
@@ -377,7 +377,7 @@ describe('DashboardService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     test('應該處理不存在的儀表板', async () => {
       await service.initialize();
 

@@ -1,4 +1,4 @@
-// 響應式卡片組件
+// Response式卡片Component
 
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -43,7 +43,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  // 響應式值處理
+  // Response式ValueHandle
   const _responsiveLayout = useMemo(
     () => getResponsiveValue(layout),
     [layout, getResponsiveValue]
@@ -134,7 +134,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
     [showExpandButton, getResponsiveValue]
   );
 
-  // 展開/收起處理
+  // 展On/收起Handle
   const _handleToggleExpand = useCallback(() => {
     setIsExpanded(prev => !prev);
   }, []);
@@ -150,7 +150,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
       ...style,
     };
 
-    // 響應式尺寸
+    // Response式尺寸
     if (responsiveWidth) {
       baseStyle.width =
         typeof responsiveWidth === 'number'
@@ -179,7 +179,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
           : responsiveMaxWidth;
     }
 
-    // 響應式間距
+    // Response式間距
     if (responsivePadding) {
       baseStyle.padding =
         typeof responsivePadding === 'number'
@@ -224,7 +224,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
     style,
   ]);
 
-  // 內容容器樣式
+  // Content容器樣式
   const _contentContainerStyle = useMemo(() => {
     const baseStyle: React.CSSProperties = {
       display: 'flex',
@@ -237,7 +237,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
       height: '100%',
     };
 
-    // 水平佈局時調整圖片位置
+    // 水平佈局時調整Graph片位置
     if (responsiveLayout === 'horizontal') {
       if (responsiveImagePosition === 'left') {
         baseStyle.flexDirection = 'row';
@@ -249,7 +249,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
     return baseStyle;
   }, [responsiveLayout, responsiveImagePosition, responsiveGap]);
 
-  // 圖片容器樣式
+  // Graph片容器樣式
   const _imageContainerStyle = useMemo(() => {
     if (!responsiveShowImage) return { display: 'none' };
 
@@ -259,12 +259,12 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
       borderRadius: currentThemeData?.borderRadius?.sm,
     };
 
-    // 圖片比例
+    // Graph片比例
     if (responsiveImageRatio) {
       baseStyle.aspectRatio = responsiveImageRatio;
     }
 
-    // 水平佈局時的圖片寬度
+    // 水平佈局時的Graph片寬度
     if (responsiveLayout === 'horizontal') {
       baseStyle.width = '40%';
       baseStyle.minWidth = '120px';
@@ -278,7 +278,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
     currentThemeData,
   ]);
 
-  // 內容區域樣式
+  // ContentDistrict域樣式
   const _contentStyle = useMemo(() => {
     const baseStyle: React.CSSProperties = {
       flex: 1,
@@ -287,7 +287,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
       minWidth: 0,
     };
 
-    // 內容折疊
+    // Content折疊
     if (responsiveContentCollapse && !isExpanded) {
       baseStyle.overflow = 'hidden';
       if (responsiveContentMaxHeight) {
@@ -334,7 +334,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
     );
   };
 
-  // 渲染圖片
+  // 渲染Graph片
   const _renderImage = () => {
     if (!responsiveShowImage) return null;
 
@@ -359,13 +359,13 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
     );
   };
 
-  // 渲染內容
+  // 渲染Content
   const _renderContent = () => {
     return (
       <div style={contentStyle}>
         {children}
 
-        {/* 展開按鈕 */}
+        {/* 展On按鈕 */}
         {responsiveContentCollapse && responsiveShowExpandButton && (
           <div
             style={{
@@ -385,7 +385,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
     );
   };
 
-  // 渲染操作區域
+  // 渲染OperationDistrict域
   const _renderActions = () => {
     if (!responsiveShowActions) return null;
 
@@ -432,7 +432,7 @@ export const ResponsiveCard: React.FC<ResponsiveCardProps> = ({
     );
   };
 
-  // 加載狀態
+  // 加載Status
   if (loading) {
     return (
       <div

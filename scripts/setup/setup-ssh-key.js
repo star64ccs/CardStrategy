@@ -5,21 +5,21 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 
-// logger.info('🔑 SSH 密鑰設置工具 (Windows 版本)');
+// logger.info('🔑 SSH 密鑰SettingsTool (Windows Version)');
 // logger.info('='.repeat(50));
 
-// 檢查 SSH 目錄
+// Check SSH Directory
 function checkSshDirectory() {
-  // logger.info('\n📋 檢查 SSH 目錄...');
+  // logger.info('\n📋 Check SSH Directory...');
 
   const sshDir = path.join(os.homedir(), '.ssh');
 
   if (!fs.existsSync(sshDir)) {
-    // logger.info('創建 SSH 目錄...');
+    // logger.info('Create SSH Directory...');
     fs.mkdirSync(sshDir, { recursive: true });
   }
 
-  // logger.info('✅ SSH 目錄檢查完成');
+  // logger.info('✅ SSH DirectoryCheckComplete');
   return sshDir;
 }
 
@@ -45,16 +45,16 @@ function generateSshKey(sshDir) {
   const command = `ssh-keygen -t rsa -b 4096 -f "${keyPath}" -C "cardstrategy@digitalocean.com" -N ""`;
   execSync(command, { stdio: 'inherit' });
 
-  // logger.info('✅ SSH 密鑰生成完成');
+  // logger.info('✅ SSH 密鑰生成Complete');
   return keyPath;
 }
 
-// 顯示密鑰信息
+// Show密鑰Information
 function showKeyInfo(keyPath) {
-  // logger.info('\n📋 SSH 密鑰信息:');
+  // logger.info('\n📋 SSH 密鑰Information:');
   // logger.info('='.repeat(50));
-  // logger.info(`私鑰路徑: ${keyPath}`);
-  // logger.info(`公鑰路徑: ${keyPath}.pub`);
+  // logger.info(`私鑰Path: ${keyPath}`);
+  // logger.info(`公鑰Path: ${keyPath}.pub`);
   // logger.info('='.repeat(50));
 
   try {
@@ -67,61 +67,61 @@ function showKeyInfo(keyPath) {
 // eslint-disable-next-line no-unused-vars
     const privateKey = fs.readFileSync(keyPath, 'utf8');
 
-    // logger.info('\n📋 公鑰內容 (添加到 DigitalOcean):');
+    // logger.info('\n📋 公鑰Content (Add到 DigitalOcean):');
     // logger.info('='.repeat(50));
     // logger.info(publicKey.trim());
     // logger.info('='.repeat(50));
 
-    // logger.info('\n📋 私鑰內容 (添加到 GitHub Secrets):');
+    // logger.info('\n📋 私鑰Content (Add到 GitHub Secrets):');
     // logger.info('='.repeat(50));
     // logger.info(privateKey.trim());
     // logger.info('='.repeat(50));
   } catch (error) {
-    // logger.info('❌ 讀取密鑰文件失敗:', error.message);
+    // logger.info('❌ Read密鑰FileFailed:', error.message);
   }
 }
 
-// 顯示設置指南
+// ShowSettings指南
 function showSetupGuide() {
-  // logger.info('\n📋 設置指南:');
+  // logger.info('\n📋 Settings指南:');
   // logger.info('='.repeat(50));
-  // logger.info('1. 複製公鑰內容到 DigitalOcean:');
-  // logger.info('   - 在 DigitalOcean 控制台點擊 "Add SSH Key"');
-  // logger.info('   - 在 "SSH Key content" 欄位貼上公鑰內容');
-  // logger.info('   - 在 "Name" 欄位輸入: CardStrategy Production');
+  // logger.info('1. 複製公鑰Content到 DigitalOcean:');
+  // logger.info('   - 在 DigitalOcean Control台點擊 "Add SSH Key"');
+  // logger.info('   - 在 "SSH Key content" 欄位貼上公鑰Content');
+  // logger.info('   - 在 "Name" 欄位Input: CardStrategy Production');
   // logger.info('   - 點擊 "Add SSH Key"');
   // logger.info('');
-  // logger.info('2. 複製私鑰內容到 GitHub Secrets:');
-  // logger.info('   - 前往 GitHub 倉庫: https://github.com/star64ccs/CardStrategy');
+  // logger.info('2. 複製私鑰Content到 GitHub Secrets:');
+  // logger.info('   - 前往 GitHub 倉Library: https://github.com/star64ccs/CardStrategy');
   // logger.info('   - Settings → Secrets and variables → Actions');
   // logger.info('   - 點擊 "New repository secret"');
   // logger.info('   - Name: PRODUCTION_SSH_KEY');
-  // logger.info('   - Value: 貼上私鑰內容');
+  // logger.info('   - Value: 貼上私鑰Content');
   // logger.info('='.repeat(50));
 }
 
-// 測試 SSH 連接
+// Test SSH Connect
 function testSshConnection(keyPath) {
   const dropletIp = '159.223.84.189';
 
-  // logger.info('\n📋 測試 SSH 連接...');
+  // logger.info('\n📋 Test SSH Connect...');
 
   try {
-    const command = `ssh -i "${keyPath}" -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@${dropletIp} "echo 'SSH 連接成功!'"`;
+    const command = `ssh -i "${keyPath}" -o ConnectTimeout=10 -o StrictHostKeyChecking=no root@${dropletIp} "echo 'SSH ConnectSuccess!'"`;
     execSync(command, { stdio: 'inherit' });
-    // logger.info('✅ SSH 連接測試成功');
+    // logger.info('✅ SSH ConnectTestSuccess');
   } catch (error) {
-    // logger.info('⚠️  SSH 連接測試失敗，請檢查以下項目:');
-    // logger.info('1. 公鑰是否已添加到 DigitalOcean');
-    // logger.info('2. Droplet IP 是否正確');
-    // logger.info('3. 防火牆設置是否允許 SSH 連接');
+    // logger.info('⚠️  SSH ConnectTestFailed，請Check以下項目:');
+    // logger.info('1. 公鑰YesNo已Add到 DigitalOcean');
+    // logger.info('2. Droplet IP YesNo正確');
+    // logger.info('3. 防火牆SettingsYesNoAllow SSH Connect');
   }
 }
 
-// 主函數
+// 主Function
 function main() {
   try {
-    // 檢查 SSH 目錄
+    // Check SSH Directory
     const sshDir = checkSshDirectory();
 
     // 生成 SSH 密鑰
@@ -130,24 +130,24 @@ function main() {
 // eslint-disable-next-line no-unused-vars
     const keyPath = generateSshKey(sshDir);
 
-    // 顯示密鑰信息
+    // Show密鑰Information
     showKeyInfo(keyPath);
 
-    // 顯示設置指南
+    // ShowSettings指南
     showSetupGuide();
 
-    // 詢問是否測試連接
-    // logger.info('\n💡 完成上述設置後，您可以運行以下命令測試連接:');
+    // 詢問YesNoTestConnect
+    // logger.info('\n💡 Complete上述Settings後，您可以運Row以下命令TestConnect:');
     // logger.info(`ssh -i "${keyPath}" root@159.223.84.189`);
 
-    // logger.info('\n✅ SSH 密鑰設置完成！');
+    // logger.info('\n✅ SSH 密鑰SettingsComplete！');
   } catch (error) {
-    // logger.info('\n❌ 設置失敗:', error.message);
+    // logger.info('\n❌ SettingsFailed:', error.message);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   main();
 }

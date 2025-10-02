@@ -1,4 +1,4 @@
-// 用戶體驗監控服務
+// User體驗MonitorService
 import type {
   ABTestAnalytics,
   ABTestAssignment,
@@ -53,7 +53,7 @@ class UXMonitoringService {
     return UXMonitoringService.instance;
   }
 
-  // 初始化服務
+  // InitializeService
   public async initialize(config?: Partial<UXMonitoringConfig>): Promise<void> {
     if (this.isInitialized) {
       return;
@@ -63,7 +63,7 @@ class UXMonitoringService {
       this.config = { ...this.config, ...config };
     }
 
-    // 檢查隱私設置
+    // Check隱私Settings
     if (
       this.config.privacySettings.respectDoNotTrack &&
       this.isDoNotTrackEnabled()
@@ -79,7 +79,7 @@ class UXMonitoringService {
     this.emit('initialized', { config: this.config });
   }
 
-  // 用戶行為追蹤
+  // UserRow為Trace
   public trackAction(
     action: Omit<UserAction, 'id' | 'timestamp' | 'sessionId'>
   ): void {
@@ -98,7 +98,7 @@ class UXMonitoringService {
     this.emit('action-tracked', userAction);
   }
 
-  // 性能監控
+  // 性能Monitor
   public trackPerformance(
     metric: Omit<PerformanceMetric, 'id' | 'timestamp' | 'sessionId'>
   ): void {
@@ -117,7 +117,7 @@ class UXMonitoringService {
     this.emit('performance-tracked', performanceMetric);
   }
 
-  // 錯誤追蹤
+  // ErrorTrace
   public trackError(error: Error, context?: unknown): void {
     if (!this.isInitialized || !this.currentSession) {
       return;
@@ -166,7 +166,7 @@ class UXMonitoringService {
     this.emit('satisfaction-submitted', satisfactionSurvey);
   }
 
-  // A/B 測試
+  // A/B Test
   public getABTestVariant(testId: string): string | null {
     if (!this.isInitialized) {
       return null;
@@ -206,7 +206,7 @@ class UXMonitoringService {
     return null;
   }
 
-  // 轉換追蹤
+  // ConvertTrace
   public trackConversion(testId: string, goalId: string, value?: number): void {
     if (!this.isInitialized) {
       return;
@@ -227,7 +227,7 @@ class UXMonitoringService {
     }
   }
 
-  // 獲取分析數據
+  // GetAnalysisData
   public getAnalytics(): UXAnalytics {
     return {
       sessionAnalytics: this.calculateSessionAnalytics(),
@@ -239,18 +239,18 @@ class UXMonitoringService {
     };
   }
 
-  // 獲取配置
+  // GetConfigure
   public getConfig(): UXMonitoringConfig {
     return { ...this.config };
   }
 
-  // 更新配置
+  // UpdateConfigure
   public updateConfig(config: Partial<UXMonitoringConfig>): void {
     this.config = { ...this.config, ...config };
     this.emit('config-updated', this.config);
   }
 
-  // 獲取狀態
+  // GetStatus
   public getStatus(): {
     isInitialized: boolean;
     isEnabled: boolean;
@@ -278,7 +278,7 @@ class UXMonitoringService {
     };
   }
 
-  // 清理數據
+  // 清理Data
   public clearData(): void {
     this.data = {
       sessions: [],
@@ -291,12 +291,12 @@ class UXMonitoringService {
     this.emit('data-cleared');
   }
 
-  // 導出數據
+  // ExportData
   public exportData(): UXMonitoringData {
     return JSON.parse(JSON.stringify(this.data));
   }
 
-  // 事件監聽器
+  // Event監聽器
   public on(event: string, callback: Function): void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
@@ -314,7 +314,7 @@ class UXMonitoringService {
     }
   }
 
-  // 私有方法
+  // PrivateMethod
   private getDefaultConfig(): UXMonitoringConfig {
     return {
       enabled: true,

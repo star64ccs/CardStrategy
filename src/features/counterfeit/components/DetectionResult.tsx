@@ -127,7 +127,7 @@ export const DetectionResult: React.FC<DetectionResultProps> = ({
         </View>
       </View>
 
-      {/* 摘要信息 */}
+      {/* 摘要Information */}
       <View style={styles.summarySection}>
         <Text style={styles.sectionTitle}>檢測摘要</Text>
         <Text style={styles.summaryText}>{result.summary}</Text>
@@ -148,7 +148,7 @@ export const DetectionResult: React.FC<DetectionResultProps> = ({
         </View>
       </View>
 
-      {/* 警告標記 */}
+      {/* WarningMark */}
       {(result.flags.requiresManualReview ||
         result.flags.hasHighRiskFeatures) && (
         <View style={styles.warningSection}>
@@ -171,7 +171,7 @@ export const DetectionResult: React.FC<DetectionResultProps> = ({
         </View>
       )}
 
-      {/* 特徵分析 */}
+      {/* 特徵Analysis */}
       {showDetails && (
         <View style={styles.featuresSection}>
           <Text style={styles.sectionTitle}>特徵分析</Text>
@@ -192,7 +192,7 @@ export const DetectionResult: React.FC<DetectionResultProps> = ({
         ))}
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.actionButtons}>
         {onRetest && (
           <TouchableOpacity style={styles.retestButton} onPress={onRetest}>

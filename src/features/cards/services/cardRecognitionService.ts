@@ -41,19 +41,19 @@ class CardRecognitionService {
     logger.info('初始化 CardRecognitionService');
 
     try {
-      // 加載配置
+      // 加載Configure
       await this.loadConfig();
 
-      // 初始化模型
+      // Initialize模型
       await this.initializeModels();
 
-      // 檢查服務可用性
+      // CheckService可用性
       await this.checkServiceHealth();
 
       this.isInitialized = true;
       logger.info('CardRecognitionService 初始化完成');
     } catch (error: unknown) {
-      logger.error('CardRecognitionService 初始化失敗:', error);
+      logger.error('CardRecognitionService InitializeFailed:', error);
       throw error;
     }
   }
@@ -70,25 +70,25 @@ class CardRecognitionService {
         game: request.game,
       });
 
-      // 驗證請求
+      // VerifyRequest
       this.validateRecognitionRequest(request);
 
-      // 預處理圖像
+      // 預HandleGraph像
       const _preprocessedImage = await this.preprocessImage(request);
 
-      // 執行識別
+      // 執Row識別
       const _startTime = Date.now();
       const _recognitionResult =
         await this.performRecognition(preprocessedImage);
       const _processingTime = Date.now() - startTime;
 
-      // 後處理結果
+      // 後Handle結果
       const _finalResult = await this.postprocessResults(
         recognitionResult,
         processingTime
       );
 
-      // 保存識別歷史
+      // Save識別歷史
       await this.saveRecognitionHistory(request, finalResult);
 
       logger.info('卡牌識別完成:', {
@@ -99,13 +99,13 @@ class CardRecognitionService {
 
       return finalResult;
     } catch (error: unknown) {
-      logger.error('卡牌識別失敗:', error);
+      logger.error('卡牌識別Failed:', error);
       return this.createErrorResponse(error, request);
     }
   }
 
   /**
-   * 批量識別卡牌
+   * Batch識別卡牌
    */
   public async recognizeCardsBatch(
     request: BatchRecognitionRequest
@@ -129,18 +129,18 @@ class CardRecognitionService {
 
       this.batchJobs.set(batchId, batchResponse);
 
-      // 異步處理批量識別
+      // AsyncHandleBatch識別
       this.processBatchRecognition(request, batchResponse);
 
       return batchResponse;
     } catch (error: unknown) {
-      logger.error('批量識別初始化失敗:', error);
+      logger.error('批量識別InitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 開始實時識別
+   * Begin實時識別
    */
   public async startRealtimeRecognition(
     onFrameProcessed: (frame: RealtimeRecognitionFrame) => void,
@@ -160,17 +160,17 @@ class CardRecognitionService {
           const _frame = await this.captureAndProcessFrame(mergedOptions);
           onFrameProcessed(frame);
         } catch (error: unknown) {
-          logger.error('實時識別幀處理失敗:', error);
+          logger.error('實時識別幀HandleFailed:', error);
         }
       }, 1000 / 30); // 30 FPS
     } catch (error: unknown) {
-      logger.error('實時識別啟動失敗:', error);
+      logger.error('實時識別啟動Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 停止實時識別
+   * Stop實時識別
    */
   public stopRealtimeRecognition(): void {
     if (this.realtimeInterval) {
@@ -181,7 +181,7 @@ class CardRecognitionService {
   }
 
   /**
-   * 獲取識別歷史
+   * Get識別歷史
    */
   public async getRecognitionHistory(
     userId: string,
@@ -191,13 +191,13 @@ class CardRecognitionService {
       const _history = await this.callGetHistoryAPI(userId, limit);
       return history;
     } catch (error: unknown) {
-      logger.error('獲取識別歷史失敗:', error);
+      logger.error('Get識別歷史Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 提交用戶反饋
+   * SubmitUser反饋
    */
   public async submitUserFeedback(
     historyId: string,
@@ -205,45 +205,45 @@ class CardRecognitionService {
   ): Promise<void> {
     try {
       await this.callSubmitFeedbackAPI(historyId, feedback);
-      logger.info('用戶反饋提交成功:', {
+      logger.info('用戶反饋提交Success:', {
         historyId,
         isCorrect: feedback.isCorrect,
       });
     } catch (error: unknown) {
-      logger.error('提交用戶反饋失敗:', error);
+      logger.error('提交用戶反饋Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取識別統計
+   * Get識別Statistics
    */
   public async getRecognitionStats(): Promise<RecognitionStats> {
     try {
       const _stats = await this.callGetStatsAPI();
       return stats;
     } catch (error: unknown) {
-      logger.error('獲取識別統計失敗:', error);
+      logger.error('Get識別統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取支持的遊戲列表
+   * GetSupport的遊戲List
    */
   public getSupportedGames(): CardGame[] {
     return this.config.enabledGames;
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   public getConfig(): RecognitionConfig {
     return { ...this.config };
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public async updateConfig(
     updates: Partial<RecognitionConfig>
@@ -253,19 +253,19 @@ class CardRecognitionService {
       await this.saveConfig();
       logger.info('識別配置已更新');
     } catch (error: unknown) {
-      logger.error('更新識別配置失敗:', error);
+      logger.error('Update識別ConfigureFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取批量作業狀態
+   * GetBatch作業Status
    */
   public getBatchJobStatus(batchId: string): BatchRecognitionResponse | null {
     return this.batchJobs.get(batchId) || null;
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private validateRecognitionRequest(request: CardRecognitionRequest): void {
     if (!request.imageData) {
@@ -276,7 +276,7 @@ class CardRecognitionService {
       throw new Error('不支持的圖像格式');
     }
 
-    // 檢查圖像大小 (假設是base64編碼)
+    // CheckGraph像大小 (False設Yesbase64Encode)
     const _imageSizeKB = request.imageData.length / 1024; // 簡化計算，直接使用字符串長度
     if (imageSizeKB > 15000) {
       // ~15MB base64字符串
@@ -292,11 +292,11 @@ class CardRecognitionService {
   private async preprocessImage(
     request: CardRecognitionRequest
   ): Promise<CardRecognitionRequest> {
-    // 在實際實現中，這裡會執行圖像預處理
-    // 包括：調整大小、噪聲去除、對比度增強、邊緣檢測等
+    // 在實際實現中，這裡會執RowGraph像預Handle
+    // Package括：調整大小、噪聲去除、對比度增強、邊緣檢測等
     logger.debug('執行圖像預處理');
 
-    // 模擬預處理延遲
+    // 模擬預Handle延遲
     await new Promise(resolve => setTimeout(resolve, 100));
 
     return request;
@@ -387,7 +387,7 @@ class CardRecognitionService {
   ): Promise<void> {
     try {
       const history: Partial<RecognitionHistory> = {
-        userId: 'current_user', // 在實際實現中從上下文獲取
+        userId: 'current_user', // 在實際實現中從上下文Get
         request,
         response,
         success: response.success,
@@ -404,8 +404,8 @@ class CardRecognitionService {
       await this.callSaveHistoryAPI(history);
       logger.debug('識別歷史已保存');
     } catch (error: unknown) {
-      logger.error('保存識別歷史失敗:', error);
-      // 不拋出錯誤，避免影響主要流程
+      logger.error('保存識別歷史Failed:', error);
+      // 不ThrowError，避免影響主要流程
     }
   }
 
@@ -493,14 +493,14 @@ class CardRecognitionService {
       });
     } catch (error: unknown) {
       batchResponse.status = 'failed';
-      logger.error('批量識別失敗:', error);
+      logger.error('批量識別Failed:', error);
     }
   }
 
   private async captureAndProcessFrame(
     options: RecognitionOptions
   ): Promise<RealtimeRecognitionFrame> {
-    // 模擬實時幀處理
+    // 模擬實時幀Handle
     const frame: RealtimeRecognitionFrame = {
       frameId: `frame_${Date.now()}`,
       timestamp: new Date(),
@@ -553,11 +553,11 @@ class CardRecognitionService {
         confidence: 0.8,
         ensembleModels: true,
         fallbackModels: ['fallback_v1', 'fallback_v2'],
-        updateInterval: 24 * 60 * 60 * 1000, // 24小時
+        updateInterval: 24 * 60 * 60 * 1000, // 24Hour
       },
       cacheSettings: {
         enabled: true,
-        ttl: 3600, // 1小時
+        ttl: 3600, // 1Hour
         maxSize: 100, // 100MB
         strategy: 'lru',
       },
@@ -571,27 +571,27 @@ class CardRecognitionService {
   }
 
   private async loadConfig(): Promise<void> {
-    // 在實際實現中，從存儲或 API 加載配置
+    // 在實際實現中，從Storage或 API 加載Configure
     logger.debug('加載識別配置');
   }
 
   private async saveConfig(): Promise<void> {
-    // 在實際實現中，保存配置到存儲或 API
+    // 在實際實現中，SaveConfigure到Storage或 API
     logger.debug('保存識別配置');
   }
 
   private async initializeModels(): Promise<void> {
-    // 在實際實現中，初始化 AI 模型
+    // 在實際實現中，Initialize AI 模型
     logger.debug('初始化識別模型');
     await new Promise(resolve => setTimeout(resolve, 500));
   }
 
   private async checkServiceHealth(): Promise<void> {
-    // 在實際實現中，檢查服務健康狀態
-    logger.debug('檢查服務健康狀態');
+    // 在實際實現中，CheckService健康Status
+    logger.debug('CheckService健康狀態');
   }
 
-  // 模擬 API 調用方法
+  // 模擬 API 調用Method
   private createMockCard(): Card {
     return {
       id: `card_${Date.now()}`,

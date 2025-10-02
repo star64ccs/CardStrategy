@@ -1,6 +1,6 @@
 /**
- * 數據保護模組測試
- * 測試重構計劃任務 1.2: DataProtectionModule
+ * Data保護模組Test
+ * Test重構計劃Task 1.2: DataProtectionModule
  */
 
 import type { DataSubjectRequest } from '../../services/dataProtectionModule';
@@ -33,7 +33,7 @@ describe('DataProtectionModule', () => {
   });
 
   describe('初始化測試', () => {
-    it('應該成功初始化模組', async () => {
+    it('應該SuccessInitialize模組', async () => {
       const _result = await dataProtectionModule.initialize();
       expect(result).toBe(true);
     });
@@ -423,7 +423,7 @@ describe('DataProtectionModule', () => {
 
       dataProtectionModule.updateConfig(newConfig);
 
-      // 驗證配置已更新（通過檢查行為變化）
+      // VerifyConfigure已Update（通過CheckRow為變化）
       const _data = { name: 'Test' };
       const _classification = dataProtectionModule.classifyData(data);
       expect(classification).toBeDefined();
@@ -432,14 +432,14 @@ describe('DataProtectionModule', () => {
 
   describe('重置測試', () => {
     it('應該重置模組狀態', async () => {
-      // 先執行一些操作
+      // 先執Row一些Operation
       const _data = { name: 'Test' };
       dataProtectionModule.classifyData(data);
 
-      // 重置
+      // Reset
       await dataProtectionModule.reset();
 
-      // 驗證重置後可以重新初始化
+      // VerifyReset後可以ReInitialize
       const _initResult = await dataProtectionModule.initialize();
       expect(initResult).toBe(true);
     });
@@ -475,7 +475,7 @@ describe('DataProtectionModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成100次分類
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete100次分Class
     });
 
     it('應該快速處理大量最小化', () => {
@@ -493,13 +493,13 @@ describe('DataProtectionModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成50次最小化
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete50次最小化
     });
   });
 
   describe('功能測試', () => {
     it('應該處理複雜的數據場景', () => {
-      // 模擬複雜的用戶數據
+      // 模擬複雜的UserData
       const _complexData = {
         personal_info: {
           name: 'John Doe',
@@ -523,7 +523,7 @@ describe('DataProtectionModule', () => {
       };
 
       const _classification = dataProtectionModule.classifyData(complexData);
-      expect(classification.category).toBe('personal'); // 複雜對象結構會影響檢測
+      expect(classification.category).toBe('personal'); // 複雜Object結構會影響檢測
       expect(classification.sensitivity).toBe('medium');
 
       const _minimizedData = dataProtectionModule.minimizeData(

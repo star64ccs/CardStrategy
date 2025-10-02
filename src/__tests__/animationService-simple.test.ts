@@ -1,6 +1,6 @@
 import { AnimationService } from '../services/animationService';
 
-// 簡化的 mock 設置
+// 簡化的 mock Settings
 const _mockElement = {
   animate: jest.fn().mockReturnValue({
     onfinish: null,
@@ -61,12 +61,12 @@ Object.defineProperty(global, 'performance', {
 global.requestAnimationFrame = jest.fn().mockReturnValue(1);
 global.cancelAnimationFrame = jest.fn();
 
-describe('動畫服務簡化測試', () => {
+describe('動畫Service簡化測試', () => {
   let animationService: AnimationService;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // 清除單例實例以確保測試隔離
+    // Clear單例Instance以確保Test隔離
     (AnimationService as any).instance = undefined;
     animationService = AnimationService.getInstance();
   });
@@ -141,12 +141,12 @@ describe('動畫服務簡化測試', () => {
       const _callback = jest.fn();
       animationService.on('test-event', callback);
 
-      // 測試事件註冊是否成功
+      // TestEventRegisterYesNoSuccess
       expect(callback).toBeDefined();
     });
 
     test('應該處理批量操作', async () => {
-      // 創建多個動畫
+      // CreateMultiple動畫
       const _config1 = { duration: 300, easing: 'ease-out' };
       const _config2 = { duration: 400, easing: 'ease-in' };
 
@@ -179,7 +179,7 @@ describe('動畫服務簡化測試', () => {
     });
 
     test('應該應用偏好設置', () => {
-      // 設置減少動畫偏好
+      // Settings減少動畫Preferences
       animationService.updatePreferences({
         reducedMotion: true,
         animationDuration: 'fast',
@@ -191,7 +191,7 @@ describe('動畫服務簡化測試', () => {
     });
 
     test('應該處理動畫強度設置', () => {
-      // 測試不同強度設置
+      // Test不同強度Settings
       const _intensities = ['minimal', 'normal', 'intense'] as const;
 
       intensities.forEach(intensity => {
@@ -202,9 +202,9 @@ describe('動畫服務簡化測試', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    test('應該處理動畫創建失敗', () => {
-      // 測試無效配置
+  describe('ErrorHandle', () => {
+    test('應該Handle動畫CreateFailed', () => {
+      // Test無效Configure
       expect(() => {
         animationService.createAnimation({} as any);
       }).not.toThrow();

@@ -2,7 +2,7 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 隱私設置
+ * 隱私Settings
  */
 export interface PrivacySettings {
   id: string;
@@ -30,7 +30,7 @@ export interface PrivacySettings {
 }
 
 /**
- * 數據請求
+ * DataRequest
  */
 export interface DataRequest {
   id: string;
@@ -44,7 +44,7 @@ export interface DataRequest {
 }
 
 /**
- * 隱私政策同意
+ * 隱私政策Agree
  */
 export interface PrivacyConsent {
   id: string;
@@ -57,7 +57,7 @@ export interface PrivacyConsent {
 }
 
 /**
- * 更新隱私設置請求
+ * Update隱私SettingsRequest
  */
 export interface UpdatePrivacySettingsRequest {
   profileVisibility?: PrivacySettings['profileVisibility'];
@@ -67,7 +67,7 @@ export interface UpdatePrivacySettingsRequest {
 }
 
 /**
- * 創建數據請求
+ * CreateDataRequest
  */
 export interface CreateDataRequestRequest {
   type: DataRequest['type'];
@@ -75,13 +75,13 @@ export interface CreateDataRequestRequest {
 }
 
 /**
- * 隱私服務
+ * 隱私Service
  */
 export class PrivacyService {
   private readonly baseUrl = '/api/privacy';
 
   /**
-   * 獲取用戶隱私設置
+   * GetUser隱私Settings
    */
   async getPrivacySettings(userId: string): Promise<any> {
     try {
@@ -90,33 +90,33 @@ export class PrivacyService {
       const _response = await api.get(`${this.baseUrl}/settings/${userId}`);
 
       if (response.success) {
-        logger.info('用戶隱私設置獲取成功:', { userId });
+        logger.info('用戶隱私SettingsGetSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '用戶隱私設置獲取成功',
+          message: '用戶隱私SettingsGetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取用戶隱私設置失敗:', { message: response.message });
+        logger.error('Get用戶隱私SettingsFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取用戶隱私設置失敗',
+          message: response.message || 'Get用戶隱私SettingsFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取用戶隱私設置時發生錯誤:', error);
+      logger.error('Get用戶隱私Settings時發生Error:', error);
       return {
         success: false,
-        message: '獲取用戶隱私設置時發生錯誤',
+        message: 'Get用戶隱私Settings時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 更新隱私設置
+   * Update隱私Settings
    */
   async updatePrivacySettings(
     userId: string,
@@ -131,33 +131,33 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('隱私設置更新成功:', { userId });
+        logger.info('隱私SettingsUpdateSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '隱私設置更新成功',
+          message: '隱私SettingsUpdateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('更新隱私設置失敗:', { message: response.message });
+        logger.error('Update隱私SettingsFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '更新隱私設置失敗',
+          message: response.message || 'Update隱私SettingsFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('更新隱私設置時發生錯誤:', error);
+      logger.error('Update隱私Settings時發生Error:', error);
       return {
         success: false,
-        message: '更新隱私設置時發生錯誤',
+        message: 'Update隱私Settings時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 創建數據請求
+   * CreateDataRequest
    */
   async createDataRequest(
     userId: string,
@@ -172,33 +172,33 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('數據請求創建成功:', { id: (response.data as any)?.id });
+        logger.info('數據請求CreateSuccess:', { id: (response.data as any)?.id });
         return {
           success: true,
           data: response.data,
-          message: '數據請求創建成功',
+          message: '數據請求CreateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('創建數據請求失敗:', { message: response.message });
+        logger.error('Create數據請求Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '創建數據請求失敗',
+          message: response.message || 'Create數據請求Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('創建數據請求時發生錯誤:', error);
+      logger.error('Create數據請求時發生Error:', error);
       return {
         success: false,
-        message: '創建數據請求時發生錯誤',
+        message: 'Create數據請求時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取用戶數據請求列表
+   * GetUserDataRequestList
    */
   async getUserDataRequests(userId: string): Promise<any> {
     try {
@@ -209,37 +209,37 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('用戶數據請求列表獲取成功:', {
+        logger.info('用戶數據請求列表GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data || [],
-          message: '用戶數據請求列表獲取成功',
+          message: '用戶數據請求列表GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取用戶數據請求列表失敗:', {
+        logger.error('Get用戶數據請求列表Failed:', {
           message: response.message,
         });
         return {
           success: false,
-          message: response.message || '獲取用戶數據請求列表失敗',
+          message: response.message || 'Get用戶數據請求列表Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取用戶數據請求列表時發生錯誤:', error);
+      logger.error('Get用戶數據請求列表時發生Error:', error);
       return {
         success: false,
-        message: '獲取用戶數據請求列表時發生錯誤',
+        message: 'Get用戶數據請求列表時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取數據請求詳情
+   * GetDataRequest詳情
    */
   async getDataRequest(requestId: string): Promise<any> {
     try {
@@ -250,35 +250,35 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('數據請求詳情獲取成功:', {
+        logger.info('數據請求詳情GetSuccess:', {
           id: (response.data as any)?.id,
         });
         return {
           success: true,
           data: response.data,
-          message: '數據請求詳情獲取成功',
+          message: '數據請求詳情GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取數據請求詳情失敗:', { message: response.message });
+        logger.error('Get數據請求詳情Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取數據請求詳情失敗',
+          message: response.message || 'Get數據請求詳情Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取數據請求詳情時發生錯誤:', error);
+      logger.error('Get數據請求詳情時發生Error:', error);
       return {
         success: false,
-        message: '獲取數據請求詳情時發生錯誤',
+        message: 'Get數據請求詳情時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 取消數據請求
+   * CancelDataRequest
    */
   async cancelDataRequest(requestId: string): Promise<any> {
     try {
@@ -289,32 +289,32 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('數據請求取消成功:', { requestId });
+        logger.info('數據請求取消Success:', { requestId });
         return {
           success: true,
-          message: '數據請求取消成功',
+          message: '數據請求取消Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('取消數據請求失敗:', { message: response.message });
+        logger.error('取消數據請求Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '取消數據請求失敗',
+          message: response.message || '取消數據請求Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('取消數據請求時發生錯誤:', error);
+      logger.error('取消數據請求時發生Error:', error);
       return {
         success: false,
-        message: '取消數據請求時發生錯誤',
+        message: '取消數據請求時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 記錄隱私政策同意
+   * Record隱私政策Agree
    */
   async recordPrivacyConsent(
     userId: string,
@@ -331,35 +331,35 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('隱私政策同意記錄成功:', {
+        logger.info('隱私政策同意記錄Success:', {
           id: (response.data as any)?.id,
         });
         return {
           success: true,
           data: response.data,
-          message: '隱私政策同意記錄成功',
+          message: '隱私政策同意記錄Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('記錄隱私政策同意失敗:', { message: response.message });
+        logger.error('記錄隱私政策同意Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '記錄隱私政策同意失敗',
+          message: response.message || '記錄隱私政策同意Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('記錄隱私政策同意時發生錯誤:', error);
+      logger.error('記錄隱私政策同意時發生Error:', error);
       return {
         success: false,
-        message: '記錄隱私政策同意時發生錯誤',
+        message: '記錄隱私政策同意時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取用戶隱私政策同意記錄
+   * GetUser隱私政策AgreeRecord
    */
   async getUserPrivacyConsents(userId: string): Promise<any> {
     try {
@@ -368,37 +368,37 @@ export class PrivacyService {
       const _response = await api.get(`${this.baseUrl}/consent/user/${userId}`);
 
       if (response.success) {
-        logger.info('用戶隱私政策同意記錄獲取成功:', {
+        logger.info('用戶隱私政策同意記錄GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data || [],
-          message: '用戶隱私政策同意記錄獲取成功',
+          message: '用戶隱私政策同意記錄GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取用戶隱私政策同意記錄失敗:', {
+        logger.error('Get用戶隱私政策同意記錄Failed:', {
           message: response.message,
         });
         return {
           success: false,
-          message: response.message || '獲取用戶隱私政策同意記錄失敗',
+          message: response.message || 'Get用戶隱私政策同意記錄Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取用戶隱私政策同意記錄時發生錯誤:', error);
+      logger.error('Get用戶隱私政策同意記錄時發生Error:', error);
       return {
         success: false,
-        message: '獲取用戶隱私政策同意記錄時發生錯誤',
+        message: 'Get用戶隱私政策同意記錄時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 刪除用戶數據
+   * DeleteUserData
    */
   async deleteUserData(userId: string, dataTypes?: string[]): Promise<any> {
     try {
@@ -410,32 +410,32 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('用戶數據刪除成功:', { userId });
+        logger.info('用戶數據DeleteSuccess:', { userId });
         return {
           success: true,
-          message: '用戶數據刪除成功',
+          message: '用戶數據DeleteSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('刪除用戶數據失敗:', { message: response.message });
+        logger.error('Delete用戶數據Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '刪除用戶數據失敗',
+          message: response.message || 'Delete用戶數據Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('刪除用戶數據時發生錯誤:', error);
+      logger.error('Delete用戶數據時發生Error:', error);
       return {
         success: false,
-        message: '刪除用戶數據時發生錯誤',
+        message: 'Delete用戶數據時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取數據使用報告
+   * GetData使用Report
    */
   async getDataUsageReport(userId: string): Promise<any> {
     try {
@@ -444,37 +444,37 @@ export class PrivacyService {
       const _response = await api.get(`${this.baseUrl}/data-usage/${userId}`);
 
       if (response.success) {
-        logger.info('數據使用報告獲取成功:', { userId });
+        logger.info('數據使用報告GetSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '數據使用報告獲取成功',
+          message: '數據使用報告GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取數據使用報告失敗:', { message: response.message });
+        logger.error('Get數據使用報告Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取數據使用報告失敗',
+          message: response.message || 'Get數據使用報告Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取數據使用報告時發生錯誤:', error);
+      logger.error('Get數據使用報告時發生Error:', error);
       return {
         success: false,
-        message: '獲取數據使用報告時發生錯誤',
+        message: 'Get數據使用報告時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取服務狀態
+   * GetServiceStatus
    */
   async getServiceStats(): Promise<any> {
     try {
-      logger.info('獲取隱私服務狀態');
+      logger.info('Get隱私Service狀態');
 
       const _response = await api.get(`${this.baseUrl}/health`);
 
@@ -492,21 +492,21 @@ export class PrivacyService {
             dataUsage: `${this.baseUrl}/data-usage/:userId`,
           },
         },
-        message: '隱私服務狀態獲取成功',
+        message: '隱私Service狀態GetSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('獲取隱私服務狀態時發生錯誤:', error);
+      logger.error('Get隱私Service狀態時發生Error:', error);
       return {
         success: false,
-        message: '獲取隱私服務狀態時發生錯誤',
+        message: 'Get隱私Service狀態時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取隱私設置配置
+   * Get隱私SettingsConfigure
    */
   async getPrivacySettingsConfig(region: string): Promise<any> {
     try {
@@ -517,33 +517,33 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('隱私設置配置獲取成功:', { region });
+        logger.info('隱私SettingsConfigureGetSuccess:', { region });
         return {
           success: true,
           data: response.data,
-          message: '隱私設置配置獲取成功',
+          message: '隱私SettingsConfigureGetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取隱私設置配置失敗:', { message: response.message });
+        logger.error('Get隱私SettingsConfigureFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取隱私設置配置失敗',
+          message: response.message || 'Get隱私SettingsConfigureFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取隱私設置配置時發生錯誤:', error);
+      logger.error('Get隱私SettingsConfigure時發生Error:', error);
       return {
         success: false,
-        message: '獲取隱私設置配置時發生錯誤',
+        message: 'Get隱私SettingsConfigure時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 批量更新同意
+   * BatchUpdateAgree
    */
   async batchUpdateConsent(userId: string, consents: unknown[]): Promise<any> {
     try {
@@ -555,33 +555,33 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('批量更新同意成功:', { userId });
+        logger.info('批量Update同意Success:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '批量更新同意成功',
+          message: '批量Update同意Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('批量更新同意失敗:', { message: response.message });
+        logger.error('批量Update同意Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '批量更新同意失敗',
+          message: response.message || '批量Update同意Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('批量更新同意時發生錯誤:', error);
+      logger.error('批量Update同意時發生Error:', error);
       return {
         success: false,
-        message: '批量更新同意時發生錯誤',
+        message: '批量Update同意時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取隱私偏好
+   * Get隱私Preferences
    */
   async getPrivacyPreferences(userId: string): Promise<any> {
     try {
@@ -590,33 +590,33 @@ export class PrivacyService {
       const _response = await api.get(`${this.baseUrl}/preferences/${userId}`);
 
       if (response.success) {
-        logger.info('隱私偏好獲取成功:', { userId });
+        logger.info('隱私偏好GetSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '隱私偏好獲取成功',
+          message: '隱私偏好GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取隱私偏好失敗:', { message: response.message });
+        logger.error('Get隱私偏好Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取隱私偏好失敗',
+          message: response.message || 'Get隱私偏好Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取隱私偏好時發生錯誤:', error);
+      logger.error('Get隱私偏好時發生Error:', error);
       return {
         success: false,
-        message: '獲取隱私偏好時發生錯誤',
+        message: 'Get隱私偏好時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 更新隱私偏好
+   * Update隱私Preferences
    */
   async updatePrivacyPreferences(
     userId: string,
@@ -631,33 +631,33 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('隱私偏好更新成功:', { userId });
+        logger.info('隱私偏好UpdateSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '隱私偏好更新成功',
+          message: '隱私偏好UpdateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('更新隱私偏好失敗:', { message: response.message });
+        logger.error('Update隱私偏好Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '更新隱私偏好失敗',
+          message: response.message || 'Update隱私偏好Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('更新隱私偏好時發生錯誤:', error);
+      logger.error('Update隱私偏好時發生Error:', error);
       return {
         success: false,
-        message: '更新隱私偏好時發生錯誤',
+        message: 'Update隱私偏好時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 記錄同意
+   * RecordAgree
    */
   async recordConsent(userId: string, consentData: unknown): Promise<any> {
     try {
@@ -669,33 +669,33 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('同意記錄成功:', { userId });
+        logger.info('同意記錄Success:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '同意記錄成功',
+          message: '同意記錄Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('記錄同意失敗:', { message: response.message });
+        logger.error('記錄同意Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '記錄同意失敗',
+          message: response.message || '記錄同意Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('記錄同意時發生錯誤:', error);
+      logger.error('記錄同意時發生Error:', error);
       return {
         success: false,
-        message: '記錄同意時發生錯誤',
+        message: '記錄同意時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 撤回同意
+   * 撤回Agree
    */
   async withdrawConsent(userId: string, purpose: string): Promise<any> {
     try {
@@ -707,33 +707,33 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('同意撤回成功:', { userId });
+        logger.info('同意撤回Success:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '同意撤回成功',
+          message: '同意撤回Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('撤回同意失敗:', { message: response.message });
+        logger.error('撤回同意Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '撤回同意失敗',
+          message: response.message || '撤回同意Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('撤回同意時發生錯誤:', error);
+      logger.error('撤回同意時發生Error:', error);
       return {
         success: false,
-        message: '撤回同意時發生錯誤',
+        message: '撤回同意時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取同意歷史
+   * GetAgree歷史
    */
   async getConsentHistory(userId: string): Promise<any> {
     try {
@@ -744,33 +744,33 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('同意歷史獲取成功:', { userId });
+        logger.info('同意歷史GetSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '同意歷史獲取成功',
+          message: '同意歷史GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取同意歷史失敗:', { message: response.message });
+        logger.error('Get同意歷史Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取同意歷史失敗',
+          message: response.message || 'Get同意歷史Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取同意歷史時發生錯誤:', error);
+      logger.error('Get同意歷史時發生Error:', error);
       return {
         success: false,
-        message: '獲取同意歷史時發生錯誤',
+        message: 'Get同意歷史時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 提交數據權利請求
+   * SubmitData權利Request
    */
   async submitDataRightsRequest(
     userId: string,
@@ -785,33 +785,33 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('數據權利請求提交成功:', { userId });
+        logger.info('數據權利請求提交Success:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '數據權利請求提交成功',
+          message: '數據權利請求提交Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('提交數據權利請求失敗:', { message: response.message });
+        logger.error('提交數據權利請求Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '提交數據權利請求失敗',
+          message: response.message || '提交數據權利請求Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('提交數據權利請求時發生錯誤:', error);
+      logger.error('提交數據權利請求時發生Error:', error);
       return {
         success: false,
-        message: '提交數據權利請求時發生錯誤',
+        message: '提交數據權利請求時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取數據權利請求歷史
+   * GetData權利Request歷史
    */
   async getDataRightsRequestHistory(userId: string): Promise<any> {
     try {
@@ -822,35 +822,35 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('數據權利請求歷史獲取成功:', { userId });
+        logger.info('數據權利請求歷史GetSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '數據權利請求歷史獲取成功',
+          message: '數據權利請求歷史GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取數據權利請求歷史失敗:', {
+        logger.error('Get數據權利請求歷史Failed:', {
           message: response.message,
         });
         return {
           success: false,
-          message: response.message || '獲取數據權利請求歷史失敗',
+          message: response.message || 'Get數據權利請求歷史Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取數據權利請求歷史時發生錯誤:', error);
+      logger.error('Get數據權利請求歷史時發生Error:', error);
       return {
         success: false,
-        message: '獲取數據權利請求歷史時發生錯誤',
+        message: 'Get數據權利請求歷史時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取隱私法要求
+   * Get隱私法要求
    */
   async getPrivacyLawRequirements(region: string): Promise<any> {
     try {
@@ -859,33 +859,33 @@ export class PrivacyService {
       const _response = await api.get(`${this.baseUrl}/privacy-laws/${region}`);
 
       if (response.success) {
-        logger.info('隱私法要求獲取成功:', { region });
+        logger.info('隱私法要求GetSuccess:', { region });
         return {
           success: true,
           data: response.data,
-          message: '隱私法要求獲取成功',
+          message: '隱私法要求GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取隱私法要求失敗:', { message: response.message });
+        logger.error('Get隱私法要求Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取隱私法要求失敗',
+          message: response.message || 'Get隱私法要求Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取隱私法要求時發生錯誤:', error);
+      logger.error('Get隱私法要求時發生Error:', error);
       return {
         success: false,
-        message: '獲取隱私法要求時發生錯誤',
+        message: 'Get隱私法要求時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 驗證年齡
+   * VerifyAge
    */
   async verifyAge(userId: string, birthDate: string): Promise<any> {
     try {
@@ -897,33 +897,33 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('年齡驗證成功:', { userId });
+        logger.info('年齡VerifySuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '年齡驗證成功',
+          message: '年齡VerifySuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('年齡驗證失敗:', { message: response.message });
+        logger.error('年齡VerifyFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '年齡驗證失敗',
+          message: response.message || '年齡VerifyFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('年齡驗證時發生錯誤:', error);
+      logger.error('年齡Verify時發生Error:', error);
       return {
         success: false,
-        message: '年齡驗證時發生錯誤',
+        message: '年齡Verify時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 請求家長同意
+   * Request家長Agree
    */
   async requestParentalConsent(
     userId: string,
@@ -938,33 +938,33 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('家長同意請求成功:', { userId });
+        logger.info('家長同意請求Success:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '家長同意請求成功',
+          message: '家長同意請求Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('請求家長同意失敗:', { message: response.message });
+        logger.error('請求家長同意Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '請求家長同意失敗',
+          message: response.message || '請求家長同意Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('請求家長同意時發生錯誤:', error);
+      logger.error('請求家長同意時發生Error:', error);
       return {
         success: false,
-        message: '請求家長同意時發生錯誤',
+        message: '請求家長同意時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 導出用戶數據
+   * ExportUserData
    */
   async exportUserData(userId: string): Promise<any> {
     try {
@@ -973,33 +973,33 @@ export class PrivacyService {
       const _response = await api.get(`${this.baseUrl}/export/${userId}`);
 
       if (response.success) {
-        logger.info('用戶數據導出成功:', { userId });
+        logger.info('用戶數據導出Success:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '用戶數據導出成功',
+          message: '用戶數據導出Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('導出用戶數據失敗:', { message: response.message });
+        logger.error('導出用戶數據Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '導出用戶數據失敗',
+          message: response.message || '導出用戶數據Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('導出用戶數據時發生錯誤:', error);
+      logger.error('導出用戶數據時發生Error:', error);
       return {
         success: false,
-        message: '導出用戶數據時發生錯誤',
+        message: '導出用戶數據時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 檢查隱私合規性
+   * Check隱私合規性
    */
   async checkPrivacyCompliance(userId: string, region: string): Promise<any> {
     try {
@@ -1011,33 +1011,33 @@ export class PrivacyService {
       });
 
       if (response.success) {
-        logger.info('隱私合規性檢查成功:', { userId });
+        logger.info('隱私合規性CheckSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '隱私合規性檢查成功',
+          message: '隱私合規性CheckSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('檢查隱私合規性失敗:', { message: response.message });
+        logger.error('Check隱私合規性Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '檢查隱私合規性失敗',
+          message: response.message || 'Check隱私合規性Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('檢查隱私合規性時發生錯誤:', error);
+      logger.error('Check隱私合規性時發生Error:', error);
       return {
         success: false,
-        message: '檢查隱私合規性時發生錯誤',
+        message: 'Check隱私合規性時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取隱私儀表板
+   * Get隱私儀Table板
    */
   async getPrivacyDashboard(userId: string): Promise<any> {
     try {
@@ -1046,33 +1046,33 @@ export class PrivacyService {
       const _response = await api.get(`${this.baseUrl}/dashboard/${userId}`);
 
       if (response.success) {
-        logger.info('隱私儀表板獲取成功:', { userId });
+        logger.info('隱私儀表板GetSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '隱私儀表板獲取成功',
+          message: '隱私儀表板GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取隱私儀表板失敗:', { message: response.message });
+        logger.error('Get隱私儀表板Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取隱私儀表板失敗',
+          message: response.message || 'Get隱私儀表板Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取隱私儀表板時發生錯誤:', error);
+      logger.error('Get隱私儀表板時發生Error:', error);
       return {
         success: false,
-        message: '獲取隱私儀表板時發生錯誤',
+        message: 'Get隱私儀表板時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 檢查同意更新
+   * CheckAgreeUpdate
    */
   async checkConsentRenewal(userId: string): Promise<any> {
     try {
@@ -1083,26 +1083,26 @@ export class PrivacyService {
       );
 
       if (response.success) {
-        logger.info('同意更新檢查成功:', { userId });
+        logger.info('同意UpdateCheckSuccess:', { userId });
         return {
           success: true,
           data: response.data,
-          message: '同意更新檢查成功',
+          message: '同意UpdateCheckSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('檢查同意更新失敗:', { message: response.message });
+        logger.error('Check同意UpdateFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '檢查同意更新失敗',
+          message: response.message || 'Check同意UpdateFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('檢查同意更新時發生錯誤:', error);
+      logger.error('Check同意Update時發生Error:', error);
       return {
         success: false,
-        message: '檢查同意更新時發生錯誤',
+        message: 'Check同意Update時發生Error',
         timestamp: new Date(),
       };
     }

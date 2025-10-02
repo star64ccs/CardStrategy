@@ -12,11 +12,11 @@ describe('CacheStrategyService', () => {
   let cacheStrategyService: CacheStrategyService;
 
   beforeEach(() => {
-    // 重置單例狀態
+    // Reset單例Status
     (CacheStrategyService as any).instance = null;
     cacheStrategyService = CacheStrategyService.getInstance();
 
-    // 重置初始化狀態
+    // ResetInitializeStatus
     (cacheStrategyService as any).isInitialized = false;
     (cacheStrategyService as any).memoryCache = new Map();
     (cacheStrategyService as any).cachePolicies = new Map();
@@ -35,12 +35,12 @@ describe('CacheStrategyService', () => {
     try {
       await cacheStrategyService.cleanup();
     } catch (error) {
-      // 忽略清理錯誤
+      // Ignore清理Error
     }
   });
 
   describe('初始化', () => {
-    it('應該成功初始化服務', async () => {
+    it('應該SuccessInitializeService', async () => {
       await cacheStrategyService.initialize();
 
       expect(cacheStrategyService.getStatus().isInitialized).toBe(true);
@@ -55,8 +55,8 @@ describe('CacheStrategyService', () => {
       expect(cacheStrategyService.getStatus().isInitialized).toBe(true);
     });
 
-    it('應該處理初始化錯誤', async () => {
-      // 模擬初始化錯誤
+    it('應該HandleInitializeError', async () => {
+      // 模擬InitializeError
       jest
         .spyOn(cacheStrategyService as any, 'setupDefaultPolicies')
         .mockImplementation(() => {
@@ -65,7 +65,7 @@ describe('CacheStrategyService', () => {
 
       try {
         await cacheStrategyService.initialize();
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('Setup failed');
       }
@@ -77,7 +77,7 @@ describe('CacheStrategyService', () => {
       await cacheStrategyService.initialize();
     });
 
-    it('應該成功設置緩存', async () => {
+    it('應該SuccessSettings緩存', async () => {
       const _key = 'test-key';
       const _value = { data: 'test-data' };
 
@@ -87,7 +87,7 @@ describe('CacheStrategyService', () => {
       expect(cachedValue).toEqual(value);
     });
 
-    it('應該成功獲取緩存', async () => {
+    it('應該SuccessGet緩存', async () => {
       const _key = 'test-key';
       const _value = { data: 'test-data' };
 
@@ -102,7 +102,7 @@ describe('CacheStrategyService', () => {
       expect(result).toBeNull();
     });
 
-    it('應該成功刪除緩存', async () => {
+    it('應該SuccessDelete緩存', async () => {
       const _key = 'test-key';
       const _value = { data: 'test-data' };
 
@@ -115,12 +115,12 @@ describe('CacheStrategyService', () => {
       expect(result).toBeNull();
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
+    it('應該在未Initialize時拋出Error', async () => {
       (cacheStrategyService as any).isInitialized = false;
 
       try {
         await cacheStrategyService.set('key', 'value');
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
@@ -132,7 +132,7 @@ describe('CacheStrategyService', () => {
       await cacheStrategyService.initialize();
     });
 
-    it('應該成功設置帶標籤的緩存', async () => {
+    it('應該SuccessSettings帶標籤的緩存', async () => {
       const _key = 'test-key';
       const _value = { data: 'test-data' };
       const _tags = ['user', 'profile'];
@@ -143,8 +143,8 @@ describe('CacheStrategyService', () => {
       expect(cachedValue).toEqual(value);
     });
 
-    it('應該成功根據標籤刪除緩存', async () => {
-      // 設置多個帶標籤的緩存
+    it('應該Success根據標籤Delete緩存', async () => {
+      // SettingsMultiple帶Tag的Cache
       await cacheStrategyService.set('key1', 'value1', { tags: ['user'] });
       await cacheStrategyService.set('key2', 'value2', {
         tags: ['user', 'profile'],
@@ -166,7 +166,7 @@ describe('CacheStrategyService', () => {
       await cacheStrategyService.initialize();
     });
 
-    it('應該成功設置帶策略的緩存', async () => {
+    it('應該SuccessSettings帶策略的緩存', async () => {
       const _key = 'test-key';
       const _value = { data: 'test-data' };
 
@@ -205,12 +205,12 @@ describe('CacheStrategyService', () => {
       expect(stats.efficiency).toBe(0);
     });
 
-    it('應該在未初始化時拋出錯誤', () => {
+    it('應該在未Initialize時拋出Error', () => {
       (cacheStrategyService as any).isInitialized = false;
 
       try {
         cacheStrategyService.getStats();
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
@@ -269,7 +269,7 @@ describe('CacheStrategyService', () => {
       });
     });
 
-    it('應該成功添加緩存策略', () => {
+    it('應該Success添加緩存策略', () => {
       const newStrategy: CacheStrategy = {
         name: 'Custom Strategy',
         description: 'Custom cache strategy',
@@ -289,12 +289,12 @@ describe('CacheStrategyService', () => {
       expect(strategies.some(s => s.name === 'Custom Strategy')).toBe(true);
     });
 
-    it('應該在未初始化時拋出錯誤', () => {
+    it('應該在未Initialize時拋出Error', () => {
       (cacheStrategyService as any).isInitialized = false;
 
       try {
         cacheStrategyService.addStrategy({} as CacheStrategy);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
@@ -306,31 +306,31 @@ describe('CacheStrategyService', () => {
       await cacheStrategyService.initialize();
     });
 
-    it('應該成功優化緩存策略', async () => {
+    it('應該Success優化緩存策略', async () => {
       const _strategies = cacheStrategyService.getStrategies();
       const _strategyName = strategies[0].name;
 
       await cacheStrategyService.optimizeStrategy(strategyName);
 
-      // 驗證優化過程沒有拋出錯誤
+      // Verify優化過程沒有ThrowError
       expect(cacheStrategyService.getStatus().isInitialized).toBe(true);
     });
 
-    it('應該在策略不存在時拋出錯誤', async () => {
+    it('應該在策略不存在時拋出Error', async () => {
       try {
         await cacheStrategyService.optimizeStrategy('Non-existent Strategy');
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not found');
       }
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
+    it('應該在未Initialize時拋出Error', async () => {
       (cacheStrategyService as any).isInitialized = false;
 
       try {
         await cacheStrategyService.optimizeStrategy('test');
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
@@ -342,7 +342,7 @@ describe('CacheStrategyService', () => {
       await cacheStrategyService.initialize();
     });
 
-    it('應該成功預熱緩存', async () => {
+    it('應該Success預熱緩存', async () => {
       const _keys = ['key1', 'key2', 'key3'];
       const _dataProvider = jest.fn().mockImplementation((key: string) => {
         return Promise.resolve({ data: `value-for-${key}` });
@@ -352,14 +352,14 @@ describe('CacheStrategyService', () => {
 
       expect(dataProvider).toHaveBeenCalledTimes(3);
 
-      // 驗證緩存已預熱
+      // VerifyCache已預熱
       for (const key of keys) {
         const _value = await cacheStrategyService.get(key);
         expect(value).toEqual({ data: `value-for-${key}` });
       }
     });
 
-    it('應該處理預熱錯誤', async () => {
+    it('應該Handle預熱Error', async () => {
       const _keys = ['key1', 'key2'];
       const _dataProvider = jest.fn().mockImplementation((key: string) => {
         if (key === 'key1') {
@@ -371,21 +371,21 @@ describe('CacheStrategyService', () => {
 
       await cacheStrategyService.warmupCache(keys, dataProvider);
 
-      // 應該成功預熱key1，跳過key2
+      // 應該Success預熱key1，Skipkey2
       expect(await cacheStrategyService.get('key1')).toEqual({
         data: 'value1',
       });
       expect(await cacheStrategyService.get('key2')).toBeNull();
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
+    it('應該在未Initialize時拋出Error', async () => {
       (cacheStrategyService as any).isInitialized = false;
 
       try {
         await cacheStrategyService.warmupCache(['key'], () =>
           Promise.resolve('value')
         );
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
@@ -397,7 +397,7 @@ describe('CacheStrategyService', () => {
       await cacheStrategyService.initialize();
     });
 
-    it('應該成功清空緩存', async () => {
+    it('應該Success清空緩存', async () => {
       await cacheStrategyService.set('key1', 'value1');
       await cacheStrategyService.set('key2', 'value2');
 
@@ -410,20 +410,20 @@ describe('CacheStrategyService', () => {
       expect(stats.totalItems).toBe(0);
     });
 
-    it('應該在未初始化時拋出錯誤', async () => {
+    it('應該在未Initialize時拋出Error', async () => {
       (cacheStrategyService as any).isInitialized = false;
 
       try {
         await cacheStrategyService.clear();
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('not initialized');
       }
     });
   });
 
-  describe('服務狀態', () => {
-    it('應該返回服務狀態', () => {
+  describe('Service狀態', () => {
+    it('應該返回Service狀態', () => {
       const _status = cacheStrategyService.getStatus();
 
       expect(status.isInitialized).toBe(false);
@@ -448,7 +448,7 @@ describe('CacheStrategyService', () => {
       await cacheStrategyService.initialize();
     });
 
-    it('應該成功清理服務', async () => {
+    it('應該Success清理Service', async () => {
       await cacheStrategyService.cleanup();
 
       expect(cacheStrategyService.getStatus().isInitialized).toBe(false);
@@ -461,27 +461,27 @@ describe('CacheStrategyService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       await cacheStrategyService.initialize();
     });
 
-    it('應該處理設置緩存錯誤', async () => {
-      // 模擬設置緩存錯誤
+    it('應該HandleSettings緩存Error', async () => {
+      // 模擬SettingsCacheError
       jest
         .spyOn(cacheStrategyService as any, 'ensureCapacity')
         .mockRejectedValue(new Error('Capacity error'));
 
       try {
         await cacheStrategyService.set('key', 'value');
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('Capacity error');
       }
     });
 
-    it('應該處理獲取緩存錯誤', async () => {
-      // 模擬獲取緩存錯誤
+    it('應該HandleGet緩存Error', async () => {
+      // 模擬GetCacheError
       const _mockMap = new Map();
       mockMap.get = jest.fn().mockImplementation(() => {
         throw new Error('Get error');
@@ -490,7 +490,7 @@ describe('CacheStrategyService', () => {
 
       try {
         await cacheStrategyService.get('key');
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect((error as Error).message).toContain('Get error');
       }
@@ -509,7 +509,7 @@ describe('CacheStrategyService', () => {
       await cacheStrategyService.get('key');
 
       const _executionTime = Date.now() - startTime;
-      expect(executionTime).toBeLessThan(100); // 應該在100ms內完成
+      expect(executionTime).toBeLessThan(100); // 應該在100ms內Complete
     });
 
     it('應該支持並發緩存操作', async () => {
@@ -540,10 +540,10 @@ describe('CacheStrategyService', () => {
       const _key = 'expired-key';
       const _value = 'expired-value';
 
-      // 設置一個短TTL的緩存
+      // Settings一個短TTL的Cache
       await cacheStrategyService.set(key, value, { ttl: 1 }); // 1ms TTL
 
-      // 等待過期
+      // Await過期
       await new Promise(resolve => setTimeout(resolve, 10));
 
       const _result = await cacheStrategyService.get(key);
@@ -557,12 +557,12 @@ describe('CacheStrategyService', () => {
     });
 
     it('應該在內存不足時清理項目', async () => {
-      // 設置一個大的緩存項目
+      // Settings一個大的Cache項目
       const _largeValue = 'x'.repeat(1000000); // 1MB
 
       await cacheStrategyService.set('large-key', largeValue);
 
-      // 驗證項目被設置
+      // Verify項目被Settings
       const _result = await cacheStrategyService.get('large-key');
       expect(result).toBe(largeValue);
     });

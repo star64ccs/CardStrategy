@@ -1,13 +1,13 @@
-// 焦點管理組件
-// 提供焦點陷阱、焦點恢復、焦點指示器等功能
-// 符合 WCAG 2.1 AA 標準和 Section 508 要求
+// 焦點ManageComponent
+// 提供焦點陷阱、焦點Restore、焦點指示器等功能
+// 符合 WCAG 2.1 AA Standard和 Section 508 要求
 
 import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 
 import type { FocusManagerProps } from '../../types/accessibility';
 import { useAccessibility } from '../providers/AccessibilityProvider';
 
-// 焦點管理組件
+// 焦點ManageComponent
 export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
   (
     {
@@ -45,7 +45,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
 
     const { focusManager: accessibilityFocusManager } = useAccessibility();
 
-    // 獲取可聚焦元素
+    // Get可聚焦Element
     const _getFocusableElements = useCallback((): HTMLElement[] => {
       if (!containerRef.current) return [];
 
@@ -68,7 +68,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
         containerRef.current.querySelectorAll(selector)
       );
 
-      // 過濾掉隱藏的元素
+      // Filter掉Hide的Element
       return elements.filter(element => {
         const _style = window.getComputedStyle(element);
         return (
@@ -80,12 +80,12 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       }) as HTMLElement[];
     }, []);
 
-    // 更新焦點順序
+    // Update焦點順序
     const _updateFocusOrder = useCallback(() => {
       const _elements = getFocusableElements();
       focusableElementsRef.current = elements;
 
-      // 如果提供了自定義焦點順序，按順序排列
+      // 如果提供了Custom焦點順序，按順序排Column
       if (focusOrder.length > 0) {
         const orderedElements: HTMLElement[] = [];
         focusOrder.forEach(id => {
@@ -94,7 +94,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
             orderedElements.push(element);
           }
         });
-        // 添加未在順序中的元素
+        // Add未在順序中的Element
         elements.forEach(element => {
           if (!orderedElements.includes(element)) {
             orderedElements.push(element);
@@ -103,7 +103,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
         focusableElementsRef.current = orderedElements;
       }
 
-      // 更新可訪問性服務的焦點順序
+      // Update可訪問性Service的焦點順序
       const _elementIds = focusableElementsRef.current.map(
         el => el.id || el.getAttribute('data-testid') || ''
       );
@@ -118,7 +118,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       };
     }, [focusOrder, getFocusableElements, accessibilityFocusManager]);
 
-    // 焦點到下一個元素
+    // 焦點到下一個Element
     const _focusNext = useCallback(() => {
       const _elements = focusableElementsRef.current;
       if (elements.length === 0) return;
@@ -131,7 +131,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       elements[nextIndex].focus();
     }, []);
 
-    // 焦點到上一個元素
+    // 焦點到上一個Element
     const _focusPrevious = useCallback(() => {
       const _elements = focusableElementsRef.current;
       if (elements.length === 0) return;
@@ -144,7 +144,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       elements[prevIndex].focus();
     }, []);
 
-    // 焦點到第一個元素
+    // 焦點到第一個Element
     const _focusFirst = useCallback(() => {
       const _elements = focusableElementsRef.current;
       if (elements.length > 0) {
@@ -152,7 +152,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       }
     }, []);
 
-    // 焦點到最後一個元素
+    // 焦點到最後一個Element
     const _focusLast = useCallback(() => {
       const _elements = focusableElementsRef.current;
       if (elements.length > 0) {
@@ -160,12 +160,12 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       }
     }, []);
 
-    // 處理鍵盤事件
+    // HandleKey盤Event
     const _handleKeyDown = useCallback(
       (event: KeyboardEvent) => {
         const { key, shiftKey } = event;
 
-        // 處理 Tab 鍵導航
+        // Handle Tab Key導航
         if (key === 'Tab') {
           if (trapFocus) {
             event.preventDefault();
@@ -177,7 +177,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
           }
         }
 
-        // 處理方向鍵導航
+        // Handle方向Key導航
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
           event.preventDefault();
           switch (key) {
@@ -192,7 +192,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
           }
         }
 
-        // 處理 Home 和 End 鍵
+        // Handle Home 和 End Key
         if (key === 'Home') {
           event.preventDefault();
           focusFirst();
@@ -205,33 +205,33 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       [trapFocus, focusNext, focusPrevious, focusFirst, focusLast]
     );
 
-    // 處理焦點事件
+    // Handle焦點Event
     const _handleFocusIn = useCallback(
       (event: FocusEvent) => {
         const _target = event.target as HTMLElement;
         const _elementId =
           target.id || target.getAttribute('data-testid') || 'unknown';
 
-        // 記錄焦點歷史
+        // Record焦點歷史
         if (!focusHistoryRef.current.includes(elementId)) {
           focusHistoryRef.current.push(elementId);
-          // 限制歷史記錄長度
+          // Limit歷史Record長度
           if (focusHistoryRef.current.length > 50) {
             focusHistoryRef.current.shift();
           }
         }
 
-        // 調用回調函數
+        // 調用CallbackFunction
         onFocus?.(elementId);
         onFocusChange?.(previousFocusRef.current?.id || '', elementId);
 
-        // 更新可訪問性狀態
+        // Update可訪問性Status
         accessibilityFocusManager.focus(elementId);
       },
       [onFocus, onFocusChange, accessibilityFocusManager]
     );
 
-    // 處理失焦事件
+    // Handle失焦Event
     const _handleFocusOut = useCallback(
       (event: FocusEvent) => {
         const _target = event.target as HTMLElement;
@@ -240,13 +240,13 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
 
         previousFocusRef.current = target;
 
-        // 調用回調函數
+        // 調用CallbackFunction
         onBlur?.(elementId);
       },
       [onBlur]
     );
 
-    // 設置焦點指示器樣式
+    // Settings焦點指示器樣式
     const _setupFocusIndicator = useCallback(() => {
       const _styleId = 'focus-manager-styles';
       let styleElement = document.getElementById(styleId) as HTMLStyleElement;
@@ -278,7 +278,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       `;
       }
 
-      // 自定義焦點指示器
+      // Custom焦點指示器
       if (focusIndicator === 'custom') {
         css += `
         ${containerSelector} *:focus {
@@ -301,21 +301,21 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       focusIndicatorEasing,
     ]);
 
-    // 初始化
+    // Initialize
     useEffect(() => {
       if (!isInitializedRef.current) {
-        // 保存當前焦點
+        // Save當前焦點
         if (restoreFocus && document.activeElement instanceof HTMLElement) {
           previousFocusRef.current = document.activeElement;
         }
 
-        // 設置焦點指示器
+        // Settings焦點指示器
         setupFocusIndicator();
 
-        // 更新焦點順序
+        // Update焦點順序
         updateFocusOrder();
 
-        // 添加事件監聽器
+        // AddEvent監聽器
         const _container = containerRef.current;
         if (container) {
           container.addEventListener('focusin', handleFocusIn);
@@ -327,7 +327,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       }
 
       return () => {
-        // 清理事件監聽器
+        // 清理Event監聽器
         const _container = containerRef.current;
         if (container) {
           container.removeEventListener('focusin', handleFocusIn);
@@ -335,7 +335,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
           container.removeEventListener('keydown', handleKeyDown);
         }
 
-        // 恢復焦點
+        // Restore焦點
         if (restoreFocus && previousFocusRef.current) {
           previousFocusRef.current.focus();
         }
@@ -363,7 +363,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       }
     }, [trapFocus, accessibilityFocusManager]);
 
-    // 監聽焦點指示器配置變化
+    // 監聽焦點指示器Configure變化
     useEffect(() => {
       setupFocusIndicator();
     }, [
@@ -378,7 +378,7 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
       setupFocusIndicator,
     ]);
 
-    // 合併 ref
+    // Merge ref
     const _mergedRef = useCallback(
       (node: HTMLDivElement | null) => {
         containerRef.current = node;
@@ -408,8 +408,8 @@ export const _FocusManager = forwardRef<HTMLDivElement, FocusManagerProps>(
   }
 );
 
-// 設置顯示名稱
+// SettingsShow名稱
 FocusManager.displayName = 'FocusManager';
 
-// 導出組件
+// ExportComponent
 export default FocusManager;

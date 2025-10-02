@@ -75,12 +75,12 @@ interface UseSessionReturn {
   sessionError: string | null;
   isSessionValid: boolean;
 
-  // 會話列表
+  // 會話List
   sessions: Session[];
   isSessionsLoading: boolean;
   sessionsError: string | null;
 
-  // 會話配置
+  // 會話Configure
   config: SessionConfig;
   isConfigLoading: boolean;
   configError: string | null;
@@ -90,23 +90,23 @@ interface UseSessionReturn {
   isActivitiesLoading: boolean;
   activitiesError: string | null;
 
-  // 安全信息
+  // 安全Information
   securityInfo: SessionSecurityInfo | null;
   isSecurityLoading: boolean;
   securityError: string | null;
 
-  // 會話分析
+  // 會話Analysis
   analytics: SessionAnalytics | null;
   isAnalyticsLoading: boolean;
   analyticsError: string | null;
 
-  // 操作狀態
+  // OperationStatus
   isRefreshing: boolean;
   refreshError: string | null;
   isTerminating: boolean;
   terminationError: string | null;
 
-  // 操作方法
+  // OperationMethod
   initialize: () => Promise<void>;
   create: (
     userId: string,
@@ -123,7 +123,7 @@ interface UseSessionReturn {
   getAnalytics: () => Promise<void>;
   updateActivity: () => Promise<void>;
 
-  // 錯誤清除方法
+  // ErrorClearMethod
   clearSessionError: () => void;
   clearSessionsError: () => void;
   clearConfigError: () => void;
@@ -133,7 +133,7 @@ interface UseSessionReturn {
   clearRefreshError: () => void;
   clearTerminationError: () => void;
 
-  // 重置方法
+  // ResetMethod
   reset: () => void;
 }
 
@@ -182,14 +182,14 @@ export const _useSession = (
   const _isTerminating = useAppSelector(selectIsTerminating);
   const _terminationError = useAppSelector(selectTerminationError);
 
-  // 操作方法
+  // OperationMethod
   const _initialize = useCallback(async () => {
     try {
       await dispatch(initializeSession()).unwrap();
-      logger.info('會話初始化成功');
+      logger.info('會話InitializeSuccess');
     } catch (error: unknown) {
-      logger.error('會話初始化失敗:', error);
-      onSessionError?.(error.message || '會話初始化失敗');
+      logger.error('會話InitializeFailed:', error);
+      onSessionError?.(error.message || '會話InitializeFailed');
     }
   }, [dispatch, onSessionError]);
 
@@ -205,11 +205,11 @@ export const _useSession = (
           createSession({ userId, token, refreshToken, expiresIn })
         ).unwrap();
         onSessionCreated?.(session);
-        logger.info('會話創建成功:', { sessionId: session.id });
+        logger.info('會話CreateSuccess:', { sessionId: session.id });
         return session;
       } catch (error: unknown) {
-        logger.error('會話創建失敗:', error);
-        onSessionError?.(error.message || '會話創建失敗');
+        logger.error('會話CreateFailed:', error);
+        onSessionError?.(error.message || '會話CreateFailed');
         throw error;
       }
     },
@@ -223,10 +223,10 @@ export const _useSession = (
         if (currentSession) {
           onSessionRefreshed?.(currentSession);
         }
-        logger.info('會話刷新成功');
+        logger.info('會話刷新Success');
       } catch (error: unknown) {
-        logger.error('會話刷新失敗:', error);
-        onSessionError?.(error.message || '會話刷新失敗');
+        logger.error('會話刷新Failed:', error);
+        onSessionError?.(error.message || '會話刷新Failed');
       }
     },
     [dispatch, currentSession, onSessionRefreshed, onSessionError]
@@ -237,10 +237,10 @@ export const _useSession = (
       try {
         await dispatch(terminateSession(request || {})).unwrap();
         onSessionTerminated?.();
-        logger.info('會話終止成功');
+        logger.info('會話終止Success');
       } catch (error: unknown) {
-        logger.error('會話終止失敗:', error);
-        onSessionError?.(error.message || '會話終止失敗');
+        logger.error('會話終止Failed:', error);
+        onSessionError?.(error.message || '會話終止Failed');
       }
     },
     [dispatch, onSessionTerminated, onSessionError]
@@ -249,10 +249,10 @@ export const _useSession = (
   const _getSessionsList = useCallback(async () => {
     try {
       await dispatch(getSessions()).unwrap();
-      logger.info('獲取會話列表成功');
+      logger.info('Get會話列表Success');
     } catch (error: unknown) {
-      logger.error('獲取會話列表失敗:', error);
-      onSessionError?.(error.message || '獲取會話列表失敗');
+      logger.error('Get會話列表Failed:', error);
+      onSessionError?.(error.message || 'Get會話列表Failed');
     }
   }, [dispatch, onSessionError]);
 
@@ -260,10 +260,10 @@ export const _useSession = (
     try {
       const _newConfig = await dispatch(getSessionConfig()).unwrap();
       onConfigUpdated?.(newConfig);
-      logger.info('獲取會話配置成功');
+      logger.info('Get會話ConfigureSuccess');
     } catch (error: unknown) {
-      logger.error('獲取會話配置失敗:', error);
-      onSessionError?.(error.message || '獲取會話配置失敗');
+      logger.error('Get會話ConfigureFailed:', error);
+      onSessionError?.(error.message || 'Get會話ConfigureFailed');
     }
   }, [dispatch, onConfigUpdated, onSessionError]);
 
@@ -271,10 +271,10 @@ export const _useSession = (
     async (sessionId?: string) => {
       try {
         await dispatch(getSessionActivities(sessionId)).unwrap();
-        logger.info('獲取會話活動成功');
+        logger.info('Get會話活動Success');
       } catch (error: unknown) {
-        logger.error('獲取會話活動失敗:', error);
-        onSessionError?.(error.message || '獲取會話活動失敗');
+        logger.error('Get會話活動Failed:', error);
+        onSessionError?.(error.message || 'Get會話活動Failed');
       }
     },
     [dispatch, onSessionError]
@@ -283,33 +283,33 @@ export const _useSession = (
   const _getSecurity = useCallback(async () => {
     try {
       await dispatch(getSessionSecurityInfo()).unwrap();
-      logger.info('獲取會話安全信息成功');
+      logger.info('Get會話安全信息Success');
     } catch (error: unknown) {
-      logger.error('獲取會話安全信息失敗:', error);
-      onSessionError?.(error.message || '獲取會話安全信息失敗');
+      logger.error('Get會話安全信息Failed:', error);
+      onSessionError?.(error.message || 'Get會話安全信息Failed');
     }
   }, [dispatch, onSessionError]);
 
   const _getAnalytics = useCallback(async () => {
     try {
       await dispatch(getSessionAnalytics()).unwrap();
-      logger.info('獲取會話分析成功');
+      logger.info('Get會話分析Success');
     } catch (error: unknown) {
-      logger.error('獲取會話分析失敗:', error);
-      onSessionError?.(error.message || '獲取會話分析失敗');
+      logger.error('Get會話分析Failed:', error);
+      onSessionError?.(error.message || 'Get會話分析Failed');
     }
   }, [dispatch, onSessionError]);
 
   const _updateActivity = useCallback(async () => {
     try {
       await dispatch(updateSessionActivity()).unwrap();
-      logger.debug('會話活動更新成功');
+      logger.debug('會話活動UpdateSuccess');
     } catch (error: unknown) {
-      logger.error('會話活動更新失敗:', error);
+      logger.error('會話活動UpdateFailed:', error);
     }
   }, [dispatch]);
 
-  // 錯誤清除方法
+  // ErrorClearMethod
   const _clearSessionErrorAction = useCallback(
     () => dispatch(clearSessionError()),
     [dispatch]
@@ -343,20 +343,20 @@ export const _useSession = (
     [dispatch]
   );
 
-  // 重置方法
+  // ResetMethod
   const _reset = useCallback(() => {
     dispatch(resetSession());
     logger.info('會話狀態已重置');
   }, [dispatch]);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (autoInitialize) {
       initialize();
     }
   }, [autoInitialize, initialize]);
 
-  // 自動刷新
+  // AutoRefresh
   useEffect(() => {
     if (autoRefresh && currentSession && isSessionValid) {
       const _timeUntilRefresh =
@@ -384,7 +384,7 @@ export const _useSession = (
     refresh,
   ]);
 
-  // 定期更新活動
+  // 定期Update活動
   useEffect(() => {
     if (currentSession && isSessionValid) {
       const _interval = setInterval(
@@ -392,7 +392,7 @@ export const _useSession = (
           updateActivity();
         },
         5 * 60 * 1000
-      ); // 每5分鐘更新一次
+      ); // 每5MinuteUpdate一次
 
       return () => clearInterval(interval);
     }
@@ -400,7 +400,7 @@ export const _useSession = (
   }, [currentSession, isSessionValid, updateActivity]);
 
   return {
-    // 狀態
+    // Status
     currentSession,
     isSessionLoading,
     sessionError,
@@ -425,7 +425,7 @@ export const _useSession = (
     isTerminating,
     terminationError,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     create,
     refresh,
@@ -437,7 +437,7 @@ export const _useSession = (
     getAnalytics,
     updateActivity,
 
-    // 錯誤清除方法
+    // ErrorClearMethod
     clearSessionError: clearSessionErrorAction,
     clearSessionsError: clearSessionsErrorAction,
     clearConfigError: clearConfigErrorAction,
@@ -447,7 +447,7 @@ export const _useSession = (
     clearRefreshError: clearRefreshErrorAction,
     clearTerminationError: clearTerminationErrorAction,
 
-    // 重置方法
+    // ResetMethod
     reset,
   };
 };

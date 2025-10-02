@@ -8,7 +8,7 @@ require('dotenv').config();
 
 const logger = require('./utils/logger');
 
-// 路由導入
+// 路由Import
 const authRoutes = require('./routes/auth');
 const cardRoutes = require('./routes/cards');
 const collectionRoutes = require('./routes/collections');
@@ -33,7 +33,7 @@ app.use(
   })
 );
 
-// CORS 配置
+// CORS Configure
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
@@ -43,10 +43,10 @@ app.use(
   })
 );
 
-// 速率限制
+// 速率Limit
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15分鐘
-  max: 100, // 限制每個IP 15分鐘內最多100個請求
+  windowMs: 15 * 60 * 1000, // 15Minute
+  max: 100, // Limit每個IP 15Minute內最多100個Request
   message: {
     success: false,
     message: '請求過於頻繁，請稍後再試',
@@ -58,7 +58,7 @@ const limiter = rateLimit({
 
 app.use('/api/', limiter);
 
-// 日誌中間件
+// Log中間件
 app.use(
   morgan('combined', {
     stream: {
@@ -70,22 +70,22 @@ app.use(
 // 壓縮中間件
 app.use(compression());
 
-// 解析 JSON 和 URL 編碼的請求體
+// Parse JSON 和 URL Encode的Request體
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 健康檢查端點
+// 健康Check端點
 app.get('/health', (req, res) => {
   res.json({
     success: true,
-    message: 'CardStrategy API 服務正常運行',
+    message: 'CardStrategy API Service正常運行',
     timestamp: new Date().toISOString(),
     version: process.env.npm_package_version || '1.0.0',
     environment: process.env.NODE_ENV || 'development',
   });
 });
 
-// API 版本信息
+// API VersionInformation
 app.get('/api/version', (req, res) => {
   res.json({
     success: true,
@@ -119,7 +119,7 @@ app.use('/api/market', marketRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/deep-learning', deepLearningRoutes);
 
-// 404 處理
+// 404 Handle
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -129,21 +129,21 @@ app.use('*', (req, res) => {
   });
 });
 
-// 全局錯誤處理中間件
+// GlobalErrorHandle中間件
 app.use((error, req, res, next) => {
-  logger.error('全局錯誤:', error);
+  logger.error('全局Error:', error);
 
-  // 處理驗證錯誤
+  // HandleVerifyError
   if (error.name === 'ValidationError') {
     return res.status(400).json({
       success: false,
-      message: '數據驗證失敗',
+      message: '數據VerifyFailed',
       code: 'VALIDATION_ERROR',
       errors: error.errors,
     });
   }
 
-  // 處理 JWT 錯誤
+  // Handle JWT Error
   if (error.name === 'JsonWebTokenError') {
     return res.status(401).json({
       success: false,
@@ -152,7 +152,7 @@ app.use((error, req, res, next) => {
     });
   }
 
-  // 處理 Token 過期錯誤
+  // Handle Token 過期Error
   if (error.name === 'TokenExpiredError') {
     return res.status(401).json({
       success: false,
@@ -161,11 +161,11 @@ app.use((error, req, res, next) => {
     });
   }
 
-  // 處理 Sequelize 錯誤
+  // Handle Sequelize Error
   if (error.name === 'SequelizeValidationError') {
     return res.status(400).json({
       success: false,
-      message: '數據庫驗證失敗',
+      message: '數據庫VerifyFailed',
       code: 'DATABASE_VALIDATION_ERROR',
       errors: error.errors.map((e) => ({
         field: e.path,
@@ -183,16 +183,16 @@ app.use((error, req, res, next) => {
     });
   }
 
-  // 處理深度學習錯誤
+  // Handle深度學習Error
   if (error.message && error.message.includes('TensorFlow')) {
     return res.status(500).json({
       success: false,
-      message: '深度學習服務暫時不可用',
+      message: '深度學習Service暫時不可用',
       code: 'DEEP_LEARNING_SERVICE_ERROR',
     });
   }
 
-  // 處理內存不足錯誤
+  // HandleMemory不足Error
   if (error.code === 'ENOMEM') {
     return res.status(500).json({
       success: false,
@@ -201,23 +201,23 @@ app.use((error, req, res, next) => {
     });
   }
 
-  // 默認錯誤響應
+  // DefaultErrorResponse
   const statusCode = error.statusCode || 500;
-  const message = error.message || '內部服務器錯誤';
+  const message = error.message || '內部ServerError';
 
   res.status(statusCode).json({
     success: false,
-    message: process.env.NODE_ENV === 'production' ? '內部服務器錯誤' : message,
+    message: process.env.NODE_ENV === 'production' ? '內部ServerError' : message,
     code: error.code || 'INTERNAL_SERVER_ERROR',
     ...(process.env.NODE_ENV === 'development' && { stack: error.stack }),
   });
 });
 
-// 優雅關閉處理
+// 優雅Off閉Handle
 process.on('SIGTERM', () => {
   logger.info('收到 SIGTERM 信號，開始優雅關閉...');
 
-  // 清理深度學習資源
+  // 清理深度學習Resource
   if (require('./services/deepLearningService').cleanup) {
     require('./services/deepLearningService').cleanup();
   }
@@ -228,7 +228,7 @@ process.on('SIGTERM', () => {
 process.on('SIGINT', () => {
   logger.info('收到 SIGINT 信號，開始優雅關閉...');
 
-  // 清理深度學習資源
+  // 清理深度學習Resource
   if (require('./services/deepLearningService').cleanup) {
     require('./services/deepLearningService').cleanup();
   }

@@ -1,13 +1,13 @@
-// 屏幕閱讀器組件
-// 提供語音合成、ARIA 標籤、語音反饋等功能
-// 符合 WCAG 2.1 AA 標準和 Section 508 要求
+// 屏幕閱讀器Component
+// 提供語音合成、ARIA Tag、語音反饋等功能
+// 符合 WCAG 2.1 AA Standard和 Section 508 要求
 
 import React, { forwardRef, useCallback, useEffect, useRef } from 'react';
 
 import type { ScreenReaderProps } from '../../types/accessibility';
 import { useAccessibility } from '../providers/AccessibilityProvider';
 
-// 屏幕閱讀器組件
+// 屏幕閱讀器Component
 export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
   (
     {
@@ -45,11 +45,11 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
 
     const { screenReader: accessibilityScreenReader } = useAccessibility();
 
-    // 檢查語音合成支持
+    // Check語音合成Support
     const _isSpeechSynthesisSupported =
       typeof window !== 'undefined' && 'speechSynthesis' in window;
 
-    // 更新語音設置
+    // Update語音Settings
     const _updateVoiceSettings = useCallback(() => {
       if (voice) {
         voiceSettingsRef.current = {
@@ -59,7 +59,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       }
     }, [voice]);
 
-    // 創建語音合成實例
+    // Create語音合成Instance
     const _createUtterance = useCallback(
       (
         text: string,
@@ -76,7 +76,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
         utterance.pitch = voiceSettingsRef.current.pitch;
         utterance.volume = voiceSettingsRef.current.volume;
 
-        // 設置事件處理器
+        // SettingsEventHandle器
         utterance.onstart = () => {
           isSpeakingRef.current = true;
           onSpeak?.(text, priority);
@@ -84,7 +84,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
 
         utterance.onend = () => {
           isSpeakingRef.current = false;
-          // 處理隊列中的下一個語音
+          // HandleQueue中的下一個語音
           if (speechQueueRef.current.length > 0) {
             const _nextUtterance = speechQueueRef.current.shift();
             if (nextUtterance) {
@@ -119,7 +119,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
           speechQueueRef.current = [];
           speechSynthesis.speak(utterance);
         } else {
-          // 添加到隊列
+          // Add到Queue
           if (isSpeakingRef.current) {
             speechQueueRef.current.push(utterance);
           } else {
@@ -130,7 +130,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       [createUtterance]
     );
 
-    // 停止語音
+    // Stop語音
     const _stop = useCallback(() => {
       if (isSpeechSynthesisSupported) {
         speechSynthesis.cancel();
@@ -146,7 +146,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       (text: string, priority: 'polite' | 'assertive' = 'assertive') => {
         if (!containerRef.current) return;
 
-        // 創建 aria-live 區域
+        // Create aria-live District域
         const _announcement = document.createElement('div');
         announcement.setAttribute('aria-live', priority);
         announcement.setAttribute('aria-atomic', 'true');
@@ -165,7 +165,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
         // 語音合成
         speak(text, priority);
 
-        // 清理公告元素
+        // 清理公告Element
         setTimeout(() => {
           if (
             containerRef.current &&
@@ -178,15 +178,15 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       [speak]
     );
 
-    // 朗讀元素
+    // 朗讀Element
     const _readElement = useCallback(
       (element: HTMLElement) => {
         if (!element) return;
 
-        // 獲取元素的文本內容
+        // GetElement的文本Content
         let text = '';
 
-        // 優先使用 ARIA 標籤
+        // 優先使用 ARIA Tag
         const _ariaLabel = element.getAttribute('aria-label');
         const _ariaLabelledBy = element.getAttribute('aria-labelledby');
         const _ariaDescription = element.getAttribute('aria-describedby');
@@ -204,7 +204,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
             text = describedElement.textContent || '';
           }
         } else {
-          // 使用元素的文本內容
+          // 使用Element的文本Content
           text = element.textContent || element.title || '';
         }
 
@@ -218,7 +218,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       [speak]
     );
 
-    // 處理焦點事件
+    // Handle焦點Event
     const _handleFocusIn = useCallback(
       (event: FocusEvent) => {
         if (!readOnFocus) return;
@@ -231,7 +231,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       [readOnFocus, readElement]
     );
 
-    // 處理變化事件
+    // Handle變化Event
     const _handleChange = useCallback(
       (event: Event) => {
         if (!readOnChange) return;
@@ -245,39 +245,39 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       [readOnChange, feedback, announce]
     );
 
-    // 處理錯誤事件
+    // HandleErrorEvent
     const _handleError = useCallback(
       (event: Event) => {
         if (!readOnError) return;
 
         const _target = event.target as HTMLElement;
         if (target && containerRef.current?.contains(target)) {
-          const _text = feedback?.onError || '發生錯誤';
+          const _text = feedback?.onError || '發生Error';
           announce(text, 'assertive');
         }
       },
       [readOnError, feedback, announce]
     );
 
-    // 處理成功事件
+    // HandleSuccessEvent
     const _handleSuccess = useCallback(
       (event: Event) => {
         if (!readOnSuccess) return;
 
         const _target = event.target as HTMLElement;
         if (target && containerRef.current?.contains(target)) {
-          const _text = feedback?.onSuccess || '操作成功';
+          const _text = feedback?.onSuccess || '操作Success';
           announce(text);
         }
       },
       [readOnSuccess, feedback, announce]
     );
 
-    // 自動朗讀
+    // Auto朗讀
     const _handleAutoRead = useCallback(() => {
       if (!autoRead || !containerRef.current) return;
 
-      // 查找需要自動朗讀的元素
+      // Find需要Auto朗讀的Element
       const _elements =
         containerRef.current.querySelectorAll('[data-auto-read]');
       elements.forEach(element => {
@@ -288,23 +288,23 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       });
     }, [autoRead, speak]);
 
-    // 設置 ARIA 屬性
+    // Settings ARIA Property
     const _setupARIA = useCallback(() => {
       if (!containerRef.current) return;
 
-      // 為沒有 ARIA 標籤的交互元素添加標籤
+      // 為沒有 ARIA Tag的交互ElementAddTag
       const _interactiveElements = containerRef.current.querySelectorAll(
         'button, input, select, textarea, a'
       );
       interactiveElements.forEach((element, index) => {
         const _el = element as HTMLElement;
 
-        // 檢查是否已有 ARIA 標籤
+        // CheckYesNo已有 ARIA Tag
         if (
           !el.getAttribute('aria-label') &&
           !el.getAttribute('aria-labelledby')
         ) {
-          // 為按鈕添加標籤
+          // 為按鈕AddTag
           if (el.tagName === 'BUTTON') {
             const _buttonText = el.textContent?.trim();
             if (buttonText) {
@@ -314,7 +314,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
             }
           }
 
-          // 為輸入框添加標籤
+          // 為Input框AddTag
           if (el.tagName === 'INPUT') {
             const _placeholder = el.getAttribute('placeholder');
             const _type = el.getAttribute('type');
@@ -325,7 +325,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
             }
           }
 
-          // 為鏈接添加標籤
+          // 為鏈接AddTag
           if (el.tagName === 'A') {
             const _linkText = el.textContent?.trim();
             if (linkText) {
@@ -337,7 +337,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
         }
       });
 
-      // 為圖片添加 alt 屬性
+      // 為Graph片Add alt Property
       const _images = containerRef.current.querySelectorAll('img');
       images.forEach((img, index) => {
         if (!img.alt && !img.getAttribute('aria-label')) {
@@ -346,15 +346,15 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       });
     }, []);
 
-    // 初始化
+    // Initialize
     useEffect(() => {
-      // 更新語音設置
+      // Update語音Settings
       updateVoiceSettings();
 
-      // 設置 ARIA 屬性
+      // Settings ARIA Property
       setupARIA();
 
-      // 添加事件監聽器
+      // AddEvent監聽器
       const _container = containerRef.current;
       if (container) {
         container.addEventListener('focusin', handleFocusIn);
@@ -363,14 +363,14 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
         container.addEventListener('success', handleSuccess);
       }
 
-      // 自動朗讀
+      // Auto朗讀
       if (autoRead) {
-        // 延遲執行，確保 DOM 已完全加載
+        // 延遲執Row，確保 DOM 已完全加載
         setTimeout(handleAutoRead, 100);
       }
 
       return () => {
-        // 清理事件監聽器
+        // 清理Event監聽器
         const _container = containerRef.current;
         if (container) {
           container.removeEventListener('focusin', handleFocusIn);
@@ -379,7 +379,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
           container.removeEventListener('success', handleSuccess);
         }
 
-        // 停止語音
+        // Stop語音
         stop();
       };
     }, [
@@ -394,17 +394,17 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       stop,
     ]);
 
-    // 監聽語音設置變化
+    // 監聽語音Settings變化
     useEffect(() => {
       updateVoiceSettings();
     }, [voice, updateVoiceSettings]);
 
-    // 監聽反饋設置變化
+    // 監聽反饋Settings變化
     useEffect(() => {
-      // 反饋設置變化時不需要重新初始化
+      // 反饋Settings變化時不需要ReInitialize
     }, [feedback]);
 
-    // 合併 ref
+    // Merge ref
     const _mergedRef = useCallback(
       (node: HTMLDivElement | null) => {
         containerRef.current = node;
@@ -417,7 +417,7 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
       [ref]
     );
 
-    // 暴露方法給父組件
+    // 暴露Method給父Component
     React.useImperativeHandle(
       ref,
       () =>
@@ -447,8 +447,8 @@ export const _ScreenReader = forwardRef<HTMLDivElement, ScreenReaderProps>(
   }
 );
 
-// 設置顯示名稱
+// SettingsShow名稱
 ScreenReader.displayName = 'ScreenReader';
 
-// 導出組件
+// ExportComponent
 export default ScreenReader;

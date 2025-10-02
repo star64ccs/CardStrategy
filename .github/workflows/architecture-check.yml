@@ -1,0 +1,42 @@
+name: Architecture Compliance Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 2 * * 1'  # 每週一凌晨2點執行
+
+jobs:
+  architecture-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Run architecture compliance check
+      run: node scripts/verify-architecture-compliance.js
+      
+    - name: Run code duplication analysis
+      run: node scripts/fix-architecture-violations.js
+      
+    - name: Upload audit reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: architecture-audit-reports
+        path: |
+          ARCHITECTURE_COMPLIANCE_REPORT.json
+          ARCHITECTURE_FIX_REPORT.json
+          audit-reports/

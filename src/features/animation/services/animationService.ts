@@ -35,7 +35,7 @@ class AnimationService implements AnimationManager, AnimationTools {
     return AnimationService.instance;
   }
 
-  // 動畫管理
+  // 動畫Manage
   createAnimation(config: AnimationConfig): string {
     const _animationId = `animation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     this.animations.set(animationId, config);
@@ -50,7 +50,7 @@ class AnimationService implements AnimationManager, AnimationTools {
     }
 
     if (this.isReducedMotion) {
-      // 如果啟用減少動畫，直接跳過動畫
+      // 如果Enable減少動畫，直接Skip動畫
       this.emitEvent({
         type: 'animation_start',
         animationId,
@@ -76,7 +76,7 @@ class AnimationService implements AnimationManager, AnimationTools {
       timestamp: Date.now(),
     });
 
-    // 模擬動畫執行
+    // 模擬動畫執Row
     setTimeout(() => {
       this.stats.activeAnimations--;
       this.emitEvent({
@@ -101,12 +101,12 @@ class AnimationService implements AnimationManager, AnimationTools {
   }
 
   pauseAnimation(animationId: string): void {
-    // 在實際應用中，這裡應該暫停動畫
+    // 在實際Apply中，這裡應該Pause動畫
     console.log('Pausing animation:', animationId);
   }
 
   resumeAnimation(animationId: string): void {
-    // 在實際應用中，這裡應該恢復動畫
+    // 在實際Apply中，這裡應該Restore動畫
     console.log('Resuming animation:', animationId);
   }
 
@@ -128,11 +128,11 @@ class AnimationService implements AnimationManager, AnimationTools {
     return newPreset.id;
   }
 
-  // 性能管理
+  // 性能Manage
   setPerformanceMode(mode: 'high' | 'medium' | 'low'): void {
     this.performanceMode = mode;
 
-    // 根據性能模式調整動畫
+    // Root據性能模式調整動畫
     switch (mode) {
       case 'low':
         this.enableReducedMotion(true);
@@ -141,7 +141,7 @@ class AnimationService implements AnimationManager, AnimationTools {
         this.enableReducedMotion(false);
         break;
       default:
-        // medium 模式保持當前設置
+        // medium 模式保持當前Settings
         break;
     }
   }
@@ -154,7 +154,7 @@ class AnimationService implements AnimationManager, AnimationTools {
     return this.isReducedMotion;
   }
 
-  // 事件管理
+  // EventManage
   addEventListener(listener: (event: AnimationEvent) => void): void {
     this.eventListeners.push(listener);
   }
@@ -166,7 +166,7 @@ class AnimationService implements AnimationManager, AnimationTools {
     }
   }
 
-  // 動畫工具實現
+  // 動畫Tool實現
   createFadeAnimation(
     from: number,
     to: number,
@@ -299,12 +299,12 @@ class AnimationService implements AnimationManager, AnimationTools {
 
   // 動畫組合
   createSequence(animations: AnimationConfig[]): AnimationConfig {
-    // 簡化實現，實際應該創建序列動畫
+    // 簡化實現，實際應該Create序Column動畫
     return animations[0] || this.createFadeAnimation(0, 1);
   }
 
   createParallel(animations: AnimationConfig[]): AnimationConfig {
-    // 簡化實現，實際應該創建並行動畫
+    // 簡化實現，實際應該CreateParallel動畫
     return animations[0] || this.createFadeAnimation(0, 1);
   }
 
@@ -312,17 +312,17 @@ class AnimationService implements AnimationManager, AnimationTools {
     animations: AnimationConfig[],
     staggerDelay = 100
   ): AnimationConfig {
-    // 簡化實現，實際應該創建錯開動畫
+    // 簡化實現，實際應該Create錯On動畫
     return animations[0] || this.createFadeAnimation(0, 1);
   }
 
-  // 動畫插值
+  // 動畫插Value
   interpolate(
     value: number,
     inputRange: number[],
     outputRange: unknown[]
   ): unknown {
-    // 簡化的插值實現
+    // 簡化的插Value實現
     if (inputRange.length !== outputRange.length) {
       throw new Error('Input and output ranges must have the same length');
     }
@@ -354,11 +354,11 @@ class AnimationService implements AnimationManager, AnimationTools {
     inputRange: number[],
     outputRange: string[]
   ): string {
-    // 簡化的顏色插值實現
+    // 簡化的顏色插Value實現
     return this.interpolate(value, inputRange, outputRange);
   }
 
-  // 性能監控
+  // 性能Monitor
   getAnimationStats(): AnimationStats {
     this.stats.lastUpdateTime = Date.now();
     return { ...this.stats };
@@ -376,7 +376,7 @@ class AnimationService implements AnimationManager, AnimationTools {
     };
   }
 
-  // 私有方法
+  // PrivateMethod
   private emitEvent(event: AnimationEvent): void {
     this.eventListeners.forEach(listener => {
       try {

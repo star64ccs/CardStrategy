@@ -24,7 +24,7 @@ class DataCollectionService {
     }
   }
 
-  // 從多個來源收集數據
+  // 從Multiple來源收集Data
   async collectFromMultipleSources() {
     try {
       await this.initializeModels();
@@ -42,24 +42,24 @@ class DataCollectionService {
       const results = await Promise.allSettled(collectionTasks);
       const processedResults = this.processCollectionResults(results);
 
-      // 更新數據質量指標
+      // UpdateData質量指標
       await this.updateDataQualityMetrics(processedResults);
 
       logger.info(`數據收集完成: ${processedResults.totalCollected} 條記錄`);
       return processedResults;
     } catch (error) {
-      logger.error('數據收集失敗:', error);
+      logger.error('數據收集Failed:', error);
       throw error;
     }
   }
 
-  // 從用戶上傳收集數據
+  // 從UserUpload收集Data
   async collectFromUserUploads() {
     try {
       logger.info('收集用戶上傳的數據...');
 
-      // 這裡應該從用戶上傳的圖片中收集數據
-      // 實際實現中會從文件系統或雲存儲中讀取
+      // 這裡應該從UserUpload的Graph片中收集Data
+      // 實際實現中會從File系統或雲Storage中Read
 // eslint-disable-next-line no-unused-vars
       const userUploads = await this.TrainingData.findAll({
         where: {
@@ -77,17 +77,17 @@ class DataCollectionService {
         quality: 'medium',
       };
     } catch (error) {
-      logger.error('收集用戶上傳數據失敗:', error);
+      logger.error('收集用戶上傳數據Failed:', error);
       return { source: 'user_upload', count: 0, data: [], quality: 'low' };
     }
   }
 
-  // 從官方API收集數據
+  // 從官方API收集Data
   async collectFromOfficialAPIs() {
     try {
       logger.info('從官方API收集數據...');
 
-      // 模擬從官方API收集數據
+      // 模擬從官方API收集Data
       const officialData = [
         {
           cardId: 1,
@@ -108,7 +108,7 @@ class DataCollectionService {
         },
       ];
 
-      // 批量保存到數據庫
+      // BatchSave到Database
       const savedData = await this.TrainingData.bulkCreate(officialData);
 
       return {
@@ -118,17 +118,17 @@ class DataCollectionService {
         quality: 'high',
       };
     } catch (error) {
-      logger.error('從官方API收集數據失敗:', error);
+      logger.error('從官方API收集數據Failed:', error);
       return { source: 'official_api', count: 0, data: [], quality: 'low' };
     }
   }
 
-  // 從第三方平台收集數據
+  // 從第三方平台收集Data
   async collectFromThirdPartyPlatforms() {
     try {
       logger.info('從第三方平台收集數據...');
 
-      // 模擬從第三方平台收集數據
+      // 模擬從第三方平台收集Data
       const thirdPartyData = [
         {
           cardId: 2,
@@ -158,17 +158,17 @@ class DataCollectionService {
         quality: 'medium',
       };
     } catch (error) {
-      logger.error('從第三方平台收集數據失敗:', error);
+      logger.error('從第三方平台收集數據Failed:', error);
       return { source: 'third_party', count: 0, data: [], quality: 'low' };
     }
   }
 
-  // 從用戶糾正收集數據
+  // 從User糾正收集Data
   async collectFromUserCorrections() {
     try {
       logger.info('收集用戶糾正數據...');
 
-      // 從AI分析記錄中收集用戶糾正
+      // 從AIAnalysisRecord中收集User糾正
       const corrections = await this.TrainingData.findAll({
         where: {
           source: 'user_correction',
@@ -185,17 +185,17 @@ class DataCollectionService {
         quality: 'high',
       };
     } catch (error) {
-      logger.error('收集用戶糾正數據失敗:', error);
+      logger.error('收集用戶糾正數據Failed:', error);
       return { source: 'user_correction', count: 0, data: [], quality: 'low' };
     }
   }
 
-  // 從網頁爬蟲收集數據
+  // 從網頁爬蟲收集Data
   async collectFromWebScraping() {
     try {
       logger.info('從網頁爬蟲收集數據...');
 
-      // 模擬網頁爬蟲數據
+      // 模擬網頁爬蟲Data
       const scrapedData = [
         {
           cardId: 3,
@@ -225,12 +225,12 @@ class DataCollectionService {
         quality: 'medium',
       };
     } catch (error) {
-      logger.error('從網頁爬蟲收集數據失敗:', error);
+      logger.error('從網頁爬蟲收集數據Failed:', error);
       return { source: 'web_scraping', count: 0, data: [], quality: 'low' };
     }
   }
 
-  // 處理收集結果
+  // Handle收集結果
   processCollectionResults(results) {
     const processedResults = {
       totalCollected: 0,
@@ -266,7 +266,7 @@ class DataCollectionService {
     return processedResults;
   }
 
-  // 驗證數據質量
+  // VerifyData質量
   async validateDataQuality(data) {
     try {
       const qualityReport = {
@@ -286,7 +286,7 @@ class DataCollectionService {
 
       return qualityReport;
     } catch (error) {
-      logger.error('數據質量驗證失敗:', error);
+      logger.error('數據質量VerifyFailed:', error);
       throw error;
     }
   }
@@ -339,7 +339,7 @@ class DataCollectionService {
     const sourceCount = Object.keys(sources).length;
 
     // 計算多樣性分數
-    return Math.min(1, sourceCount / 5); // 假設有5個可能的來源
+    return Math.min(1, sourceCount / 5); // False設有5個可能的來源
   }
 
   // 計算時效性
@@ -366,7 +366,7 @@ class DataCollectionService {
     return data.length > 0 ? recentRecords / data.length : 0;
   }
 
-  // 存儲訓練數據
+  // Storage訓練Data
   async storeTrainingData(data) {
     try {
       await this.initializeModels();
@@ -382,12 +382,12 @@ class DataCollectionService {
       logger.info(`訓練數據已存儲: ID ${trainingData.id}`);
       return trainingData;
     } catch (error) {
-      logger.error('存儲訓練數據失敗:', error);
+      logger.error('存儲訓練數據Failed:', error);
       throw error;
     }
   }
 
-  // 更新數據質量指標
+  // UpdateData質量指標
   async updateDataQualityMetrics(collectionResults) {
     try {
       await this.initializeModels();
@@ -417,7 +417,7 @@ class DataCollectionService {
 
       logger.info('數據質量指標已更新');
     } catch (error) {
-      logger.error('更新數據質量指標失敗:', error);
+      logger.error('Update數據質量指標Failed:', error);
     }
   }
 
@@ -444,20 +444,20 @@ class DataCollectionService {
     return suggestions;
   }
 
-  // 獲取數據收集統計信息
+  // GetData收集StatisticsInformation
   async getCollectionStats(options = {}) {
     try {
       await this.initializeModels();
 
       const {
-        startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 默認30天
+        startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Default30天
         endDate = new Date(),
         source = null,
         quality = null,
         status = null,
       } = options;
 
-      // 構建查詢條件
+      // BuildQueryCondition
       const whereClause = {
         createdAt: {
           [Op.between]: [startDate, endDate],
@@ -469,12 +469,12 @@ class DataCollectionService {
       if (quality) whereClause.quality = quality;
       if (status) whereClause.status = status;
 
-      // 獲取基礎統計數據
+      // Get基礎統Count據
       const totalRecords = await this.TrainingData.count({
         where: whereClause,
       });
 
-      // 按來源統計
+      // 按來源Statistics
       const sourceStats = await this.TrainingData.findAll({
         attributes: [
           'source',
@@ -498,7 +498,7 @@ class DataCollectionService {
         raw: true,
       });
 
-      // 按質量統計
+      // 按質量Statistics
       const qualityStats = await this.TrainingData.findAll({
         attributes: [
           'quality',
@@ -515,7 +515,7 @@ class DataCollectionService {
         raw: true,
       });
 
-      // 按狀態統計
+      // 按StatusStatistics
 // eslint-disable-next-line no-unused-vars
       const statusStats = await this.TrainingData.findAll({
         attributes: [
@@ -533,7 +533,7 @@ class DataCollectionService {
         raw: true,
       });
 
-      // 按時間統計（每日）
+      // 按TimeStatistics（每日）
       const dailyStats = await this.TrainingData.findAll({
         attributes: [
           [
@@ -570,7 +570,7 @@ class DataCollectionService {
         raw: true,
       });
 
-      // 按小時統計（最近7天）
+      // 按HourStatistics（最近7天）
       const hourlyStats = await this.TrainingData.findAll({
         attributes: [
           [
@@ -615,14 +615,14 @@ class DataCollectionService {
         raw: true,
       });
 
-      // 獲取最新的數據質量指標
+      // Get最新的Data質量指標
       const latestQualityMetrics = await this.DataQualityMetrics.findOne({
         where: { dataType: 'training' },
         order: [['assessmentDate', 'DESC']],
         raw: true,
       });
 
-      // 計算處理時間統計
+      // 計算HandleTimeStatistics
       const processingTimeStats = await this.TrainingData.findAll({
         attributes: [
           [
@@ -651,7 +651,7 @@ class DataCollectionService {
         raw: true,
       });
 
-      // 計算圖片大小統計
+      // 計算Graph片大小Statistics
       const imageSizeStats = await this.TrainingData.findAll({
         attributes: [
           [
@@ -680,7 +680,7 @@ class DataCollectionService {
         raw: true,
       });
 
-      // 按圖片格式統計
+      // 按Graph片格式Statistics
       const formatStats = await this.TrainingData.findAll({
         attributes: [
           [
@@ -709,7 +709,7 @@ class DataCollectionService {
         endDate
       );
 
-      // 構建統計報告
+      // BuildStatisticsReport
       const stats = {
         summary: {
           totalRecords,
@@ -797,7 +797,7 @@ class DataCollectionService {
       logger.info(`數據收集統計生成完成: ${totalRecords} 條記錄`);
       return stats;
     } catch (error) {
-      logger.error('獲取數據收集統計失敗:', error);
+      logger.error('Get數據收集統計Failed:', error);
       throw error;
     }
   }
@@ -812,7 +812,7 @@ class DataCollectionService {
         startDate.getTime() + (endDate.getTime() - startDate.getTime()) / 2
       );
 
-      // 前半段統計
+      // 前半段Statistics
       const firstHalfCount = await this.TrainingData.count({
         where: {
           createdAt: {
@@ -822,7 +822,7 @@ class DataCollectionService {
         },
       });
 
-      // 後半段統計
+      // 後半段Statistics
       const secondHalfCount = await this.TrainingData.count({
         where: {
           createdAt: {
@@ -858,7 +858,7 @@ class DataCollectionService {
             : 0,
       };
     } catch (error) {
-      logger.error('計算增長趨勢失敗:', error);
+      logger.error('計算增長趨勢Failed:', error);
       return {
         firstHalfCount: 0,
         secondHalfCount: 0,
@@ -889,7 +889,7 @@ class DataCollectionService {
       const averageDailyCollection =
         periodDays > 0 ? (totalRecords / periodDays).toFixed(2) : 0;
 
-      // 計算高質量數據比例
+      // 計算高質量Data比例
       const highQualityCount = await this.TrainingData.count({
         where: {
           createdAt: {
@@ -905,7 +905,7 @@ class DataCollectionService {
           ? ((highQualityCount / totalRecords) * 100).toFixed(2)
           : 0;
 
-      // 計算處理成功率
+      // 計算HandleSuccess率
       const processedCount = await this.TrainingData.count({
         where: {
           createdAt: {
@@ -931,7 +931,7 @@ class DataCollectionService {
         ).toFixed(2),
       };
     } catch (error) {
-      logger.error('計算效率指標失敗:', error);
+      logger.error('計算效率指標Failed:', error);
       return {
         averageDailyCollection: 0,
         highQualityRatio: 0,
@@ -945,7 +945,7 @@ class DataCollectionService {
   generateCollectionInsights(data) {
     const insights = [];
 
-    // 分析來源分布
+    // Analysis來源分布
     const topSource = data.sourceStats.reduce(
       (max, stat) => (parseInt(stat.count) > parseInt(max.count) ? stat : max),
       { count: 0, source: 'none' }
@@ -957,7 +957,7 @@ class DataCollectionService {
       );
     }
 
-    // 分析質量分布
+    // Analysis質量分布
     const highQualityCount = data.qualityStats.find(
       (stat) => stat.quality === 'high'
     );
@@ -965,7 +965,7 @@ class DataCollectionService {
       insights.push('高質量數據比例偏低，建議加強數據質量控制');
     }
 
-    // 分析增長趨勢
+    // Analysis增長趨勢
     if (data.growthTrend.trend === 'increasing') {
       insights.push(
         `數據收集呈增長趨勢，增長率: ${data.growthTrend.growthRate}%`
@@ -974,14 +974,14 @@ class DataCollectionService {
       insights.push('數據收集呈下降趨勢，需要檢查收集流程');
     }
 
-    // 分析效率
+    // Analysis效率
     if (parseFloat(data.efficiencyMetrics.efficiencyScore) < 70) {
       insights.push('收集效率偏低，建議優化數據處理流程');
     }
 
-    // 分析時間分布
+    // AnalysisTime分布
     if (data.totalRecords > 0) {
-      const averageDaily = data.totalRecords / 30; // 假設30天
+      const averageDaily = data.totalRecords / 30; // False設30天
       if (averageDaily < 10) {
         insights.push('日均收集量偏低，建議增加數據來源');
       } else if (averageDaily > 100) {

@@ -1,10 +1,10 @@
 /**
- * 測試數據管理器
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * TestDataManage器
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
-// 測試數據工廠
+// TestData工廠
 export const createMockUser = (overrides = {}) => ({
   id: '1',
   username: 'testuser',
@@ -88,15 +88,15 @@ export const createMockConditionAnalysis = (overrides = {}) => ({
   ...overrides,
 });
 
-// 測試數據清理
+// TestData清理
 export const clearTestData = () => {
-  // 清理測試數據的邏輯
+  // 清理TestData的邏輯
   console.log('🧹 清理測試數據');
 };
 
-// 測試數據初始化
+// TestDataInitialize
 export const initializeTestData = () => {
-  // 初始化測試數據的邏輯
+  // InitializeTestData的邏輯
   console.log('📊 初始化測試數據');
 };
 

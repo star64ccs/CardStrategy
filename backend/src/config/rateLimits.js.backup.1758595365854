@@ -1,0 +1,141 @@
+// 速率限制配置
+const rateLimit = require('express-rate-limit');
+
+// 寬鬆的速率限制 - 適用於一般API端點
+const permissiveLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 分鐘
+  max: 500, // 每15分鐘500個請求（約每分鐘33個）
+  message: {
+    success: false,
+    message: '請求過於頻繁，請稍後再試',
+    code: 'RATE_LIMIT_EXCEEDED',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  // 添加自定義響應頭
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: '請求過於頻繁，請稍後再試',
+      code: 'RATE_LIMIT_EXCEEDED',
+      retryAfter: Math.round(15 * 60), // 15分鐘後重試
+    });
+  },
+});
+
+// 中等速率限制 - 適用於需要認證的端點
+const moderateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 分鐘
+  max: 200, // 每15分鐘200個請求（約每分鐘13個）
+  message: {
+    success: false,
+    message: '認證請求過於頻繁，請稍後再試',
+    code: 'RATE_LIMIT_EXCEEDED',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: '認證請求過於頻繁，請稍後再試',
+      code: 'RATE_LIMIT_EXCEEDED',
+      retryAfter: Math.round(15 * 60),
+    });
+  },
+});
+
+// 寬鬆的速率限制 - 適用於AI端點
+const aiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 分鐘
+  max: 100, // 每15分鐘100個請求（約每分鐘6-7個）
+  message: {
+    success: false,
+    message: 'AI服務請求過於頻繁，請稍後再試',
+    code: 'RATE_LIMIT_EXCEEDED',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: 'AI服務請求過於頻繁，請稍後再試',
+      code: 'RATE_LIMIT_EXCEEDED',
+      retryAfter: Math.round(15 * 60),
+    });
+  },
+});
+
+// 非常寬鬆的速率限制 - 適用於健康檢查等基礎端點
+const healthCheckLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 分鐘
+  max: 1000, // 每15分鐘1000個請求（約每分鐘66個）
+  message: {
+    success: false,
+    message: '健康檢查請求過於頻繁',
+    code: 'RATE_LIMIT_EXCEEDED',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: '健康檢查請求過於頻繁',
+      code: 'RATE_LIMIT_EXCEEDED',
+      retryAfter: Math.round(15 * 60),
+    });
+  },
+});
+
+// 數據收集端點 - 適中的限制
+const dataCollectionLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 分鐘
+  max: 50, // 每15分鐘50個請求（約每分鐘3-4個）
+  message: {
+    success: false,
+    message: '數據收集請求過於頻繁，請稍後再試',
+    code: 'RATE_LIMIT_EXCEEDED',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      success: false,
+      message: '數據收集請求過於頻繁，請稍後再試',
+      code: 'RATE_LIMIT_EXCEEDED',
+      retryAfter: Math.round(15 * 60),
+    });
+  },
+});
+
+// 白名單功能 - 允許某些IP或用戶不受限制
+const createWhitelistLimiter = (baseLimiter, whitelist = []) => {
+  return (req, res, next) => {
+    const clientIP = req.ip || req.connection.remoteAddress;
+
+    // 檢查是否在白名單中
+    if (whitelist.includes(clientIP)) {
+      return next(); // 跳過速率限制
+    }
+
+    // 檢查是否是本地請求
+    if (
+      clientIP === '127.0.0.1' ||
+      clientIP === '::1' ||
+      clientIP === '::ffff:127.0.0.1'
+    ) {
+      return next(); // 本地請求跳過限制
+    }
+
+    // 應用正常的速率限制
+    return baseLimiter(req, res, next);
+  };
+};
+
+module.exports = {
+  permissiveLimiter,
+  moderateLimiter,
+  aiLimiter,
+  healthCheckLimiter,
+  dataCollectionLimiter,
+  createWhitelistLimiter,
+};

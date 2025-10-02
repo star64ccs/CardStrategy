@@ -44,12 +44,12 @@ export const _useSearchAnalytics = () => {
   const _alerts = useSelector(selectAlerts);
   const _reports = useSelector(selectReports);
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(async () => {
     try {
       await dispatch(initializeSearchAnalytics()).unwrap();
 
-      // 設置事件監聽器
+      // SettingsEvent監聽器
       const _service = SearchAnalyticsService.getInstance();
       service.addEventListener((event: SearchAnalyticsEvent) => {
         dispatch(addEvent(event));
@@ -57,26 +57,26 @@ export const _useSearchAnalytics = () => {
 
       return true;
     } catch (error) {
-      console.error('搜索分析初始化失敗:', error);
+      console.error('搜索分析InitializeFailed:', error);
       return false;
     }
   }, [dispatch]);
 
-  // 獲取分析數據
+  // GetAnalysisData
   const _getAnalytics = useCallback(
     async (filter?: SearchAnalyticsFilter) => {
       try {
         await dispatch(fetchAnalytics(filter)).unwrap();
         return true;
       } catch (error) {
-        console.error('獲取分析數據失敗:', error);
+        console.error('Get分析數據Failed:', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 生成報告
+  // 生成Report
   const _generateAnalyticsReport = useCallback(
     async (
       title: string,
@@ -95,14 +95,14 @@ export const _useSearchAnalytics = () => {
         ).unwrap();
         return report;
       } catch (error) {
-        console.error('生成報告失敗:', error);
+        console.error('生成報告Failed:', error);
         return null;
       }
     },
     [dispatch]
   );
 
-  // 導出數據
+  // ExportData
   const _exportAnalyticsData = useCallback(
     async (analytics: unknown, options: SearchAnalyticsExportOptions) => {
       try {
@@ -111,56 +111,56 @@ export const _useSearchAnalytics = () => {
         ).unwrap();
         return data;
       } catch (error) {
-        console.error('導出數據失敗:', error);
+        console.error('導出數據Failed:', error);
         return null;
       }
     },
     [dispatch]
   );
 
-  // 創建警報
+  // CreateAlert
   const _createAnalyticsAlert = useCallback(
     async (alert: Omit<SearchAnalyticsAlert, 'id' | 'triggerCount'>) => {
       try {
         const _alertId = await dispatch(createAlert(alert)).unwrap();
         return alertId;
       } catch (error) {
-        console.error('創建警報失敗:', error);
+        console.error('Create警報Failed:', error);
         return null;
       }
     },
     [dispatch]
   );
 
-  // 更新警報
+  // UpdateAlert
   const _updateAnalyticsAlert = useCallback(
     async (alertId: string, updates: Partial<SearchAnalyticsAlert>) => {
       try {
         await dispatch(updateAlert({ alertId, updates })).unwrap();
         return true;
       } catch (error) {
-        console.error('更新警報失敗:', error);
+        console.error('Update警報Failed:', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 刪除警報
+  // DeleteAlert
   const _deleteAnalyticsAlert = useCallback(
     async (alertId: string) => {
       try {
         await dispatch(deleteAlert(alertId)).unwrap();
         return true;
       } catch (error) {
-        console.error('刪除警報失敗:', error);
+        console.error('Delete警報Failed:', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 設置過濾器
+  // SettingsFilter器
   const _setAnalyticsFilter = useCallback(
     (filter: SearchAnalyticsFilter) => {
       dispatch(setFilter(filter));
@@ -168,12 +168,12 @@ export const _useSearchAnalytics = () => {
     [dispatch]
   );
 
-  // 清除過濾器
+  // ClearFilter器
   const _clearAnalyticsFilter = useCallback(() => {
     dispatch(clearFilter());
   }, [dispatch]);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateAnalyticsConfig = useCallback(
     (newConfig: Partial<typeof config>) => {
       dispatch(updateConfig(newConfig));
@@ -181,12 +181,12 @@ export const _useSearchAnalytics = () => {
     [dispatch, config]
   );
 
-  // 清除錯誤
+  // ClearError
   const _clearAnalyticsError = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 設置當前報告
+  // Settings當前Report
   const _setCurrentAnalyticsReport = useCallback(
     (report: unknown) => {
       dispatch(setCurrentReport(report));
@@ -194,7 +194,7 @@ export const _useSearchAnalytics = () => {
     [dispatch]
   );
 
-  // 刪除報告
+  // DeleteReport
   const _deleteAnalyticsReport = useCallback(
     (reportId: string) => {
       dispatch(deleteReport(reportId));
@@ -202,7 +202,7 @@ export const _useSearchAnalytics = () => {
     [dispatch]
   );
 
-  // 追蹤搜索事件
+  // TraceSearchEvent
   const _trackSearchEvent = useCallback(
     (event: Omit<SearchAnalyticsEvent, 'timestamp'>) => {
       const _service = SearchAnalyticsService.getInstance();
@@ -211,7 +211,7 @@ export const _useSearchAnalytics = () => {
     []
   );
 
-  // 更新實時指標
+  // Update實時指標
   const _updateRealTimeAnalyticsMetrics = useCallback(
     (metrics: {
       currentSearches: number;
@@ -224,7 +224,7 @@ export const _useSearchAnalytics = () => {
     [dispatch]
   );
 
-  // 計算統計數據
+  // 計算統Count據
   const _statistics = useMemo(() => {
     if (!analytics) return null;
 
@@ -241,67 +241,67 @@ export const _useSearchAnalytics = () => {
     };
   }, [analytics]);
 
-  // 獲取熱門搜索
+  // Get熱門Search
   const _popularSearches = useMemo(() => {
     return analytics?.popularSearches || [];
   }, [analytics]);
 
-  // 獲取趨勢搜索
+  // Get趨勢Search
   const _trendingSearches = useMemo(() => {
     return analytics?.trendingSearches || [];
   }, [analytics]);
 
-  // 獲取類別統計
+  // GetClass別Statistics
   const _categoryStats = useMemo(() => {
     return analytics?.searchCategories || [];
   }, [analytics]);
 
-  // 獲取時間統計
+  // GetTimeStatistics
   const _hourlyStats = useMemo(() => {
     return analytics?.searchesByHour || [];
   }, [analytics]);
 
-  // 獲取性能指標
+  // Get性能指標
   const _performanceMetrics = useMemo(() => {
     return analytics?.performanceMetrics || null;
   }, [analytics]);
 
-  // 獲取用戶行為統計
+  // GetUserRow為Statistics
   const _userBehavior = useMemo(() => {
     return analytics?.userBehavior || null;
   }, [analytics]);
 
-  // 檢查是否有重要洞察
+  // CheckYesNo有重要洞察
   const _hasCriticalInsights = useMemo(() => {
     // 洞察功能暫時不可用
     return false;
   }, []);
 
-  // 檢查是否有高優先級建議
+  // CheckYesNo有高優先級建議
   const _hasHighPriorityRecommendations = useMemo(() => {
     // 建議功能暫時不可用
     return false;
   }, []);
 
-  // 檢查警報狀態
+  // CheckAlertStatus
   const _activeAlerts = useMemo(() => {
     return alerts.filter(alert => alert.enabled);
   }, [alerts]);
 
-  // 檢查實時性能
+  // Check實時性能
   const _isPerformanceGood = useMemo(() => {
     // 實時指標功能暫時不可用
     return true;
   }, []);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (!isInitialized && !isLoading) {
       initialize();
     }
   }, [isInitialized, isLoading, initialize]);
 
-  // 定期更新實時指標
+  // 定期Update實時指標
   useEffect(() => {
     if (!isInitialized) return;
 
@@ -314,13 +314,13 @@ export const _useSearchAnalytics = () => {
           throughput: analytics.performanceMetrics.throughput,
         });
       }
-    }, 30000); // 每30秒更新一次
+    }, 30000); // 每30SecondUpdate一次
 
     return () => clearInterval(interval);
   }, [isInitialized, analytics, updateRealTimeAnalyticsMetrics]);
 
   return {
-    // 狀態
+    // Status
     analytics,
     isInitialized,
     isLoading,
@@ -329,7 +329,7 @@ export const _useSearchAnalytics = () => {
     alerts,
     reports,
 
-    // 計算屬性
+    // 計算Property
     statistics,
     popularSearches,
     trendingSearches,
@@ -342,7 +342,7 @@ export const _useSearchAnalytics = () => {
     activeAlerts,
     isPerformanceGood,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     getAnalytics,
     generateAnalyticsReport,
@@ -361,7 +361,7 @@ export const _useSearchAnalytics = () => {
   };
 };
 
-// 簡化的 Hook 用於基本分析功能
+// 簡化的 Hook 用於基本Analysis功能
 export const _useBasicSearchAnalytics = () => {
   const {
     analytics,
@@ -394,7 +394,7 @@ export const _useBasicSearchAnalytics = () => {
   };
 };
 
-// 專門用於警報管理的 Hook
+// 專門用於AlertManage的 Hook
 export const _useSearchAnalyticsAlerts = () => {
   const {
     alerts,
@@ -413,7 +413,7 @@ export const _useSearchAnalyticsAlerts = () => {
   };
 };
 
-// 專門用於報告管理的 Hook
+// 專門用於ReportManage的 Hook
 export const _useSearchAnalyticsReports = () => {
   const {
     reports,
@@ -425,7 +425,7 @@ export const _useSearchAnalyticsReports = () => {
 
   return {
     reports,
-    currentReport: null, // 暫時設為 null，等待實現
+    currentReport: null, // 暫時設為 null，Await實現
     generateReport: generateAnalyticsReport,
     exportData: exportAnalyticsData,
     setCurrentReport: setCurrentAnalyticsReport,

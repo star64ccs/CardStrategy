@@ -1,6 +1,6 @@
-// 觸控優化相關類型定義
+// 觸控優化相OffClass型定義
 
-// 觸控點接口
+// 觸控點Interface
 export interface Touch {
   identifier: number;
   target: EventTarget;
@@ -14,7 +14,7 @@ export interface Touch {
   force?: number;
 }
 
-// 觸控手勢類型
+// 觸控手勢Class型
 export type TouchGestureType =
   | 'tap'
   | 'doubleTap'
@@ -27,7 +27,7 @@ export type TouchGestureType =
 // 觸控手勢方向
 export type SwipeDirection = 'up' | 'down' | 'left' | 'right';
 
-// 觸控手勢配置
+// 觸控手勢Configure
 export interface TouchGestureConfig {
   type: TouchGestureType;
   enabled?: boolean;
@@ -41,7 +41,7 @@ export interface TouchGestureConfig {
   stopPropagation?: boolean;
 }
 
-// 觸控事件數據
+// 觸控EventData
 export interface TouchEventData {
   type: TouchGestureType;
   x: number;
@@ -56,7 +56,7 @@ export interface TouchEventData {
   target: EventTarget | null;
 }
 
-// 觸控手勢組件屬性
+// 觸控手勢ComponentProperty
 export interface TouchGestureProps {
   children: React.ReactNode;
   onTap?: (event: TouchEventData) => void;
@@ -72,7 +72,7 @@ export interface TouchGestureProps {
   disabled?: boolean;
 }
 
-// 觸控反饋類型
+// 觸控反饋Class型
 export type TouchFeedbackType =
   | 'ripple'
   | 'scale'
@@ -80,7 +80,7 @@ export type TouchFeedbackType =
   | 'color'
   | 'custom';
 
-// 觸控反饋配置
+// 觸控反饋Configure
 export interface TouchFeedbackConfig {
   type: TouchFeedbackType;
   duration?: number;
@@ -93,7 +93,7 @@ export interface TouchFeedbackConfig {
   disabled?: boolean;
 }
 
-// 觸控反饋組件屬性
+// 觸控反饋ComponentProperty
 export interface TouchFeedbackProps {
   children: React.ReactNode;
   feedback?: TouchFeedbackConfig;
@@ -105,7 +105,7 @@ export interface TouchFeedbackProps {
   disabled?: boolean;
 }
 
-// 滾動優化配置
+// 滾動優化Configure
 export interface ScrollOptimizationConfig {
   enabled?: boolean;
   momentum?: boolean;
@@ -129,7 +129,7 @@ export interface ScrollOptimizationConfig {
   };
 }
 
-// 滾動組件屬性
+// 滾動ComponentProperty
 export interface OptimizedScrollViewProps {
   children: React.ReactNode;
   horizontal?: boolean;
@@ -191,7 +191,7 @@ export interface OptimizedScrollViewProps {
   zoomScale?: number;
 }
 
-// 觸控測試配置
+// 觸控TestConfigure
 export interface TouchTestConfig {
   deviceType: 'mobile' | 'tablet' | 'desktop';
   platform: 'ios' | 'android' | 'web';
@@ -202,7 +202,7 @@ export interface TouchTestConfig {
   accessibility: boolean;
 }
 
-// 觸控測試結果
+// 觸控Test結果
 export interface TouchTestResult {
   deviceType: string;
   platform: string;
@@ -247,7 +247,7 @@ export interface TouchTestResult {
   };
 }
 
-// 觸控服務配置
+// 觸控ServiceConfigure
 export interface TouchServiceConfig {
   enableGestures: boolean;
   enableFeedback: boolean;
@@ -261,7 +261,7 @@ export interface TouchServiceConfig {
   };
 }
 
-// 觸控服務事件
+// 觸控ServiceEvent
 export interface TouchServiceEvent {
   type: 'gesture' | 'feedback' | 'scroll' | 'performance' | 'accessibility';
   data: TouchEventData | TouchFeedbackConfig | ScrollOptimizationConfig | any;
@@ -269,14 +269,14 @@ export interface TouchServiceEvent {
   source: string;
 }
 
-// 觸控服務接口
+// 觸控ServiceInterface
 export interface TouchService {
-  // 手勢管理
+  // 手勢Manage
   registerGesture(componentId: string, config: TouchGestureConfig): void;
   unregisterGesture(componentId: string): void;
   getGestureConfig(componentId: string): TouchGestureConfig | null;
 
-  // 反饋管理
+  // 反饋Manage
   registerFeedback(componentId: string, config: TouchFeedbackConfig): void;
   unregisterFeedback(componentId: string): void;
   getFeedbackConfig(componentId: string): TouchFeedbackConfig | null;
@@ -286,35 +286,35 @@ export interface TouchService {
   unregisterScroll(componentId: string): void;
   getScrollConfig(componentId: string): ScrollOptimizationConfig | null;
 
-  // 測試功能
+  // Test功能
   runTouchTest(config: TouchTestConfig): Promise<TouchTestResult>;
   generateTestReport(results: TouchTestResult[]): string;
 
-  // 性能監控
+  // 性能Monitor
   trackPerformance(componentId: string, metrics: unknown): void;
   getPerformanceReport(): unknown;
 
-  // 事件管理
+  // EventManage
   onEvent(callback: (event: TouchServiceEvent) => void): void;
   emitEvent(event: TouchServiceEvent): void;
 
-  // 配置管理
+  // ConfigureManage
   updateConfig(config: Partial<TouchServiceConfig>): void;
   getConfig(): TouchServiceConfig;
 }
 
-// 觸控 Hook 返回值
+// 觸控 Hook ReturnValue
 export interface UseTouchReturn {
-  // 手勢狀態
+  // 手勢Status
   isPressed: boolean;
   isHovered: boolean;
   isFocused: boolean;
 
-  // 手勢數據
+  // 手勢Data
   gestureData: TouchEventData | null;
   lastGesture: TouchGestureType | null;
 
-  // 事件處理器
+  // EventHandle器
   handlers: {
     onTouchStart: (event: React.TouchEvent) => void;
     onTouchMove: (event: React.TouchEvent) => void;
@@ -326,7 +326,7 @@ export interface UseTouchReturn {
     onKeyUp: (event: React.KeyboardEvent) => void;
   };
 
-  // 工具函數
+  // ToolFunction
   utils: {
     isTouchDevice: () => boolean;
     getTouchPoint: (event: React.TouchEvent | React.MouseEvent) => {
@@ -344,7 +344,7 @@ export interface UseTouchReturn {
   };
 }
 
-// 觸控測試工具屬性
+// 觸控TestToolProperty
 export interface TouchTestToolProps {
   config?: Partial<TouchTestConfig>;
   onTestComplete?: (results: TouchTestResult) => void;

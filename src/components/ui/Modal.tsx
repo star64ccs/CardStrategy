@@ -1,4 +1,4 @@
-// Modal 組件
+// Modal Component
 import React, {
   forwardRef,
   useCallback,
@@ -12,7 +12,7 @@ import { useDesignSystem } from '../../hooks/useDesignSystem';
 import type { ModalProps } from '../../types/components';
 import { enhanceComponent } from '../../utils/accessibilityEnhancer';
 
-// 模態框組件
+// 模態框Component
 export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
   (
     {
@@ -56,7 +56,7 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
     const [isVisible, setIsVisible] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
 
-    // 處理滾動鎖定
+    // Handle滾動鎖定
     useEffect(() => {
       if (isOpen) {
         document.body.style.overflow = 'hidden';
@@ -67,7 +67,7 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
       return undefined;
     }, [isOpen]);
 
-    // 處理模態框顯示/隱藏
+    // Handle模態框Show/Hide
     useEffect(() => {
       if (isOpen) {
         setIsVisible(true);
@@ -93,7 +93,7 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
       }
     }, [isOpen, animationDuration, onOpen, onOpened, onClosed]);
 
-    // 處理ESC鍵關閉
+    // HandleESCKeyOff閉
     useEffect(() => {
       const _handleEscape = (event: KeyboardEvent) => {
         if (isOpen && closeOnEscape && event.key === 'Escape') {
@@ -160,7 +160,7 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
       style,
     ]);
 
-    // 計算內容樣式
+    // 計算Content樣式
     const _contentStyles = useMemo(() => {
       const _theme = currentThemeData;
       if (!theme) return {};
@@ -225,7 +225,7 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
       };
     }, [currentThemeData, isVisible, zIndex, animationDuration]);
 
-    // 處理遮罩點擊
+    // Handle遮罩點擊
     const _handleOverlayClick = useCallback(
       (event: React.MouseEvent<HTMLDivElement>) => {
         if (closeOnOverlayClick && event.target === event.currentTarget) {
@@ -235,12 +235,12 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
       [closeOnOverlayClick, onClose]
     );
 
-    // 處理關閉按鈕點擊
+    // HandleOff閉按鈕點擊
     const _handleCloseClick = useCallback(() => {
       onClose();
     }, [onClose]);
 
-    // 渲染關閉按鈕
+    // 渲染Off閉按鈕
     const _renderCloseButton = () => {
       if (!closeButton) return null;
 
@@ -318,7 +318,7 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
       );
     };
 
-    // 渲染內容
+    // 渲染Content
     const _renderContent = () => {
       if (body) return body;
       if (children) return children;
@@ -350,7 +350,7 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
       );
     };
 
-    // 如果模態框未打開，不渲染
+    // 如果模態框未打On，不渲染
     if (!isVisible && !isAnimating) {
       return null;
     }
@@ -416,8 +416,8 @@ export const _Modal = forwardRef<HTMLDivElement, ModalProps>(
   }
 );
 
-// 設置顯示名稱
+// SettingsShow名稱
 Modal.displayName = 'Modal';
 
-// 導出組件
+// ExportComponent
 export default Modal;

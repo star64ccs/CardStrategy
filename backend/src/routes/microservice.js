@@ -62,7 +62,7 @@ router.post('/register', protect, async (req, res) => {
     });
   }
 });'
-// ?��?註銷''
+// ?��?Logout''
 router.delete('/deregister/:serviceId', protect, async (req, res) => {
   try {'
     const { serviceId } = req.params;''
@@ -91,7 +91,7 @@ router.delete('/deregister/:serviceId', protect, async (req, res) => {
     });
   }
 });'
-// ?��??��??�表''
+// ?��??��??�Table''
 router.get('/services', protect, async (req, res) => {
   try {
 // eslint-disable-next-line no-unused-vars
@@ -142,7 +142,7 @@ router.get('/services', protect, async (req, res) => {
     });
   }
 });'
-// ?�康檢查''
+// ?�康Check''
 router.get('/health/:serviceId', protect, async (req, res) => {
   try {
     const { serviceId } = req.params;
@@ -242,7 +242,7 @@ router.get('/health/:serviceId', protect, async (req, res) => {
     });'
   }
 });''
-// 消息?��??�??router.get('/messagequeue/status', protect, async (req, res) => {
+// Message?��??�??router.get('/messagequeue/status', protect, async (req, res) => {
   try {'
     const queues = await MessageQueue.findAll({''
       order: [['createdAt', 'DESC']],
@@ -298,7 +298,7 @@ router.post('/messagequeue/send', protect, async (req, res) => {
     const { queueName, message, options } = req.body;''
     logger.info('?? ?�送�??�到?��?', { queueName, messageId: message.id });
 
-    // ?�找?�創建�???    let queue = await MessageQueue.findOne({
+    // ?�找?�Create�???    let queue = await MessageQueue.findOne({
       where: { queueName },
     });
 
@@ -335,7 +335,7 @@ router.post('/messagequeue/send', protect, async (req, res) => {
     });
   }
 });'
-// ?�建追蹤''
+// ?�建Trace''
 router.post('/tracing/create', protect, async (req, res) => {
   try {
     const { operationName, serviceName } = req.body;
@@ -374,7 +374,7 @@ router.post('/tracing/create', protect, async (req, res) => {
     });
   }
 });'
-// 添�?追蹤?��?''
+// 添�?Trace?��?''
 router.post('/tracing/log', protect, async (req, res) => {
   try {
     const { traceId, level, message, fields, timestamp } = req.body;
@@ -416,7 +416,7 @@ router.post('/tracing/log', protect, async (req, res) => {
     });
   }
 });'
-// 完�?追蹤''
+// 完�?Trace''
 router.post('/tracing/complete', protect, async (req, res) => {
   try {
     const { traceId, status, endTime } = req.body;
@@ -525,7 +525,7 @@ router.get('/metrics/:serviceId', protect, async (req, res) => {
     });
   }
 });'
-// 清�??��?追蹤''
+// 清�??��?Trace''
 router.delete('/tracing/cleanup', protect, async (req, res) => {
   try {
     const { days = 7 } = req.query;

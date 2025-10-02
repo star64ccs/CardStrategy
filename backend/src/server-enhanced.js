@@ -3,10 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const logger = require('./utils/logger');
 
-// 導入數據庫配置
+// ImportDatabaseConfigure
 const { sequelize, testConnection } = require('./config/database');
 
-// 導入 Redis 配置
+// Import Redis Configure
 const {
   connectRedis,
   healthCheck: redisHealthCheck,
@@ -18,7 +18,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 簡單的健康檢查端點
+// 簡單的健康Check端點
 app.get('/api/health', async (req, res) => {
   try {
     const dbStatus = await testConnection();
@@ -26,7 +26,7 @@ app.get('/api/health', async (req, res) => {
 
     res.json({
       success: true,
-      message: 'CardStrategy API 服務正常運行',
+      message: 'CardStrategy API Service正常運行',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
       services: {
@@ -35,74 +35,74 @@ app.get('/api/health', async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error('健康檢查失敗:', error);
+    logger.error('健康CheckFailed:', error);
     res.status(503).json({
       success: false,
-      message: '服務健康檢查失敗',
+      message: 'Service健康CheckFailed',
       error: error.message,
     });
   }
 });
 
-// 數據庫測試端點
+// DatabaseTest端點
 app.get('/api/test/db', async (req, res) => {
   try {
     const dbStatus = await testConnection();
     if (dbStatus) {
       res.json({
         success: true,
-        message: '數據庫連接正常',
+        message: '數據庫Connect正常',
         timestamp: new Date().toISOString(),
       });
     } else {
       res.status(503).json({
         success: false,
-        message: '數據庫連接失敗',
+        message: '數據庫ConnectFailed',
         timestamp: new Date().toISOString(),
       });
     }
   } catch (error) {
-    logger.error('數據庫測試失敗:', error);
+    logger.error('數據庫測試Failed:', error);
     res.status(500).json({
       success: false,
-      message: '數據庫測試失敗',
+      message: '數據庫測試Failed',
       error: error.message,
     });
   }
 });
 
-// Redis 測試端點
+// Redis Test端點
 app.get('/api/test/redis', async (req, res) => {
   try {
     const redisStatus = await redisHealthCheck();
     if (redisStatus) {
       res.json({
         success: true,
-        message: 'Redis 連接正常',
+        message: 'Redis Connect正常',
         timestamp: new Date().toISOString(),
       });
     } else {
       res.status(503).json({
         success: false,
-        message: 'Redis 連接失敗',
+        message: 'Redis ConnectFailed',
         timestamp: new Date().toISOString(),
       });
     }
   } catch (error) {
-    logger.error('Redis 測試失敗:', error);
+    logger.error('Redis 測試Failed:', error);
     res.status(500).json({
       success: false,
-      message: 'Redis 測試失敗',
+      message: 'Redis 測試Failed',
       error: error.message,
     });
   }
 });
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'CardStrategy API 服務器運行中',
+    message: 'CardStrategy API Server運行中',
     version: '1.0.0',
     endpoints: {
       health: '/api/health',
@@ -116,29 +116,29 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    // 初始化 Redis 連接
+    // Initialize Redis Connect
     try {
       await connectRedis();
-      logger.info('Redis 連接初始化成功');
+      logger.info('Redis ConnectInitializeSuccess');
     } catch (error) {
-      logger.error('Redis 連接失敗:', error);
-      // 不阻止服務器啟動，但記錄錯誤
+      logger.error('Redis ConnectFailed:', error);
+      // 不阻止ServerStart，但RecordError
     }
 
-    // 測試數據庫連接
+    // TestDatabaseConnect
     try {
       const dbConnected = await testConnection();
       if (dbConnected) {
-        logger.info('數據庫連接測試成功');
+        logger.info('數據庫Connect測試Success');
       } else {
-        logger.warn('數據庫連接測試失敗');
+        logger.warn('數據庫Connect測試Failed');
       }
     } catch (error) {
-      logger.error('數據庫連接測試失敗:', error);
+      logger.error('數據庫Connect測試Failed:', error);
     }
 
     const server = app.listen(PORT, () => {
-      logger.info(`🚀 CardStrategy API 服務器運行在端口 ${PORT}`);
+      logger.info(`🚀 CardStrategy API Server運行在端口 ${PORT}`);
       logger.info(`🏥 健康檢查端點: http://localhost:${PORT}/api/health`);
       logger.info(`🗄️ 數據庫測試端點: http://localhost:${PORT}/api/test/db`);
       logger.info(`📡 Redis 測試端點: http://localhost:${PORT}/api/test/redis`);
@@ -146,7 +146,7 @@ const startServer = async () => {
 
     return server;
   } catch (error) {
-    logger.error('服務器啟動失敗:', error);
+    logger.error('Server啟動Failed:', error);
     process.exit(1);
   }
 };

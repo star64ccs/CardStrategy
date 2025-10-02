@@ -38,7 +38,7 @@ export class MacauPersonalDataProtectionService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查法律基礎
+    // Check法律基礎
     if (!processing.legalBasis) {
       violations.push({
         id: `violation_${Date.now()}_1`,
@@ -54,7 +54,7 @@ export class MacauPersonalDataProtectionService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查敏感資料處理
+    // Check敏感資料Handle
     if (processing.dataCategories.includes(MacauDataCategory.SENSITIVE)) {
       if (
         !processing.consentRequired ||
@@ -77,7 +77,7 @@ export class MacauPersonalDataProtectionService {
       }
     }
 
-    // 檢查資料保留期限
+    // Check資料保留期限
     if (processing.dataRetentionPeriod > 2555) {
       // 7年
       violations.push({
@@ -94,7 +94,7 @@ export class MacauPersonalDataProtectionService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.MEDIUM;
     }
 
-    // 檢查安全措施
+    // Check安全措施
     if (processing.securityMeasures.length < 3) {
       violations.push({
         id: `violation_${Date.now()}_4`,
@@ -110,7 +110,7 @@ export class MacauPersonalDataProtectionService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查跨境傳輸
+    // Check跨境傳輸
     if (
       processing.crossBorderTransfer &&
       (!processing.recipientCountries ||
@@ -161,7 +161,7 @@ export class MacauPersonalDataProtectionService {
   ): MacauDataSubjectRequest {
     const _processedRequest = { ...request };
 
-    // 根據權利類型處理請求
+    // Root據權利Class型HandleRequest
     switch (request.rightType) {
       case MacauDataSubjectRight.ACCESS:
         processedRequest.response =
@@ -203,7 +203,7 @@ export class MacauPersonalDataProtectionService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查目的地國家
+    // Check目的地Country
     if (!transfer.destinationCountry) {
       violations.push({
         id: `violation_${Date.now()}_6`,
@@ -219,7 +219,7 @@ export class MacauPersonalDataProtectionService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查適當性決定
+    // Check適當性決定
     if (
       !transfer.adequacyDecision &&
       !transfer.standardContractualClauses &&
@@ -239,7 +239,7 @@ export class MacauPersonalDataProtectionService {
       riskLevel = MacauRiskLevel.CRITICAL;
     }
 
-    // 檢查風險評估
+    // Check風險評估
     if (
       transfer.riskAssessment === MacauRiskLevel.HIGH ||
       transfer.riskAssessment === MacauRiskLevel.CRITICAL
@@ -373,7 +373,7 @@ export class MacauPersonalDataProtectionService {
   }
 
   private calculateComplianceRate(violations: MacauViolation[]): number {
-    const _totalAssessments = violations.length + 10; // 假設有10個合規評估
+    const _totalAssessments = violations.length + 10; // False設有10個合規評估
     return ((totalAssessments - violations.length) / totalAssessments) * 100;
   }
 

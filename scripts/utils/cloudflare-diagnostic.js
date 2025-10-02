@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-// Cloudflare 配置
+// Cloudflare Configure
 const cloudflareConfig = {
   apiToken: '2HWoQayJYac26tQQVlvWiNIDhxSibuwPUZoJ4ynM',
   zoneId: 'ceadb25b709450bbd450ad7cbd03bb68',
@@ -8,16 +8,16 @@ const cloudflareConfig = {
   apiUrl: 'https://api.cloudflare.com/client/v4',
 };
 
-// logger.info('🔍 Cloudflare 診斷工具');
+// logger.info('🔍 Cloudflare 診斷Tool');
 // logger.info('='.repeat(50));
-// logger.info(`🌐 域名: ${cloudflareConfig.domain}`);
+// logger.info(`🌐 Domain: ${cloudflareConfig.domain}`);
 // logger.info(`🔑 API Token: ${cloudflareConfig.apiToken.substring(0, 8)}...`);
 // logger.info(`🏷️  Zone ID: ${cloudflareConfig.zoneId}`);
 // logger.info('='.repeat(50));
 
-// 測試基本 API 連接
+// Test基本 API Connect
 async function testBasicConnection() {
-  // logger.info('\n🔍 測試基本 API 連接...');
+  // logger.info('\n🔍 Test基本 API Connect...');
 
   try {
 // eslint-disable-next-line no-unused-vars
@@ -35,27 +35,27 @@ async function testBasicConnection() {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
       const user = response.data.result;
-      // logger.info(`✅ 基本 API 連接成功`);
-      // logger.info(`👤 用戶: ${user.email}`);
+      // logger.info(`✅ 基本 API ConnectSuccess`);
+      // logger.info(`👤 User: ${user.email}`);
       // logger.info(`🏢 組織: ${user.organizations?.[0]?.name || 'N/A'}`);
       return true;
     } else {
-      // logger.info('❌ API 響應失敗:', response.data);
+      // logger.info('❌ API ResponseFailed:', response.data);
       return false;
     }
   } catch (error) {
-    // logger.info('❌ 基本 API 連接失敗:', error.message);
+    // logger.info('❌ 基本 API ConnectFailed:', error.message);
     if (error.response) {
-      // logger.info('狀態碼:', error.response.status);
-      // logger.info('錯誤詳情:', error.response.data);
+      // logger.info('Status碼:', error.response.status);
+      // logger.info('Error詳情:', error.response.data);
     }
     return false;
   }
 }
 
-// 測試 Zone 訪問權限
+// Test Zone 訪問權限
 async function testZoneAccess() {
-  // logger.info('\n🔍 測試 Zone 訪問權限...');
+  // logger.info('\n🔍 Test Zone 訪問權限...');
 
   try {
 // eslint-disable-next-line no-unused-vars
@@ -73,29 +73,29 @@ async function testZoneAccess() {
 
     if (response.data.success) {
       const zone = response.data.result;
-      // logger.info(`✅ Zone 訪問成功`);
-      // logger.info(`📊 域名: ${zone.name}`);
-      // logger.info(`📊 狀態: ${zone.status}`);
+      // logger.info(`✅ Zone 訪問Success`);
+      // logger.info(`📊 Domain: ${zone.name}`);
+      // logger.info(`📊 Status: ${zone.status}`);
       // logger.info(`📊 計劃: ${zone.plan.name}`);
       // logger.info(`📊 Account ID: ${zone.account.id}`);
       return zone.account.id;
     } else {
-      // logger.info('❌ Zone 訪問失敗:', response.data);
+      // logger.info('❌ Zone 訪問Failed:', response.data);
       return null;
     }
   } catch (error) {
-    // logger.info('❌ Zone 訪問失敗:', error.message);
+    // logger.info('❌ Zone 訪問Failed:', error.message);
     if (error.response) {
-      // logger.info('狀態碼:', error.response.status);
-      // logger.info('錯誤詳情:', error.response.data);
+      // logger.info('Status碼:', error.response.status);
+      // logger.info('Error詳情:', error.response.data);
     }
     return null;
   }
 }
 
-// 測試 DNS 記錄訪問
+// Test DNS Record訪問
 async function testDNSAccess() {
-  // logger.info('\n🔍 測試 DNS 記錄訪問...');
+  // logger.info('\n🔍 Test DNS Record訪問...');
 
   try {
 // eslint-disable-next-line no-unused-vars
@@ -112,50 +112,50 @@ async function testDNSAccess() {
     );
 
     if (response.data.success) {
-      // logger.info(`✅ DNS 記錄訪問成功`);
-      // logger.info(`📊 現有記錄數量: ${response.data.result.length}`);
+      // logger.info(`✅ DNS Record訪問Success`);
+      // logger.info(`📊 現有Record數量: ${response.data.result.length}`);
 
       if (response.data.result.length > 0) {
-        // logger.info('📋 現有 DNS 記錄:');
+        // logger.info('📋 現有 DNS Record:');
         response.data.result.forEach((record, index) => {
           // logger.info(`  ${index + 1}. ${record.type} ${record.name} -> ${record.content}`);
         });
       }
       return true;
     } else {
-      // logger.info('❌ DNS 記錄訪問失敗:', response.data);
+      // logger.info('❌ DNS Record訪問Failed:', response.data);
       return false;
     }
   } catch (error) {
-    // logger.info('❌ DNS 記錄訪問失敗:', error.message);
+    // logger.info('❌ DNS Record訪問Failed:', error.message);
     if (error.response) {
-      // logger.info('狀態碼:', error.response.status);
-      // logger.info('錯誤詳情:', error.response.data);
+      // logger.info('Status碼:', error.response.status);
+      // logger.info('Error詳情:', error.response.data);
     }
     return false;
   }
 }
 
-// 檢查 Token 權限
+// Check Token 權限
 function checkTokenPermissions() {
-  // logger.info('\n🔍 檢查 Token 權限...');
-  // 基於錯誤信息推斷權限
+  // logger.info('\n🔍 Check Token 權限...');
+  // 基於ErrorInformation推斷權限
   // logger.info('📋 建議的 Token 權限:');
   // logger.info('  - Zone:Zone:Read');
   // logger.info('  - Zone:DNS:Edit');
   // logger.info('  - Zone:Zone Settings:Edit');
   // logger.info('  - Zone:Page Rules:Edit');
   // logger.info('  - User:User:Read');
-  // logger.info('\n📋 請在 Cloudflare 控制台中檢查:');
+  // logger.info('\n📋 請在 Cloudflare Control台中Check:');
   // logger.info('  1. 訪問 https://dash.cloudflare.com/profile/api-tokens');
   // logger.info('  2. 找到 "CardStrategy_Cloudflare_API_token"');
-  // logger.info('  3. 檢查權限設置');
-  // logger.info('  4. 確保包含上述權限');
+  // logger.info('  3. Check權限Settings');
+  // logger.info('  4. 確保Package含上述權限');
 }
 
-// 生成環境變數配置
+// 生成環境變數Configure
 function generateEnvConfig(accountId) {
-  // logger.info('\n📝 生成環境變數配置...');
+  // logger.info('\n📝 生成環境變數Configure...');
 
   const envConfig = `# Cloudflare 配置
 CLOUDFLARE_API_TOKEN=2HWoQayJYac26tQQVlvWiNIDhxSibuwPUZoJ4ynM
@@ -171,8 +171,8 @@ CDN_DOMAIN=cdn.cardstrategyapp.com
 DROPLET_IP=your-droplet-ip-here
 `;
 
-  // logger.info('✅ 環境變數配置已生成');
-  // logger.info('\n📋 請將以下配置添加到您的環境變數中:');
+  // logger.info('✅ 環境變數Configure已生成');
+  // logger.info('\n📋 請將以下ConfigureAdd到您的環境變數中:');
   // logger.info('='.repeat(50));
   // logger.info(envConfig);
   // logger.info('='.repeat(50));
@@ -180,50 +180,50 @@ DROPLET_IP=your-droplet-ip-here
   return envConfig;
 }
 
-// 主診斷函數
+// 主診斷Function
 async function runDiagnostic() {
-  // logger.info('\n🚀 開始診斷...\n');
+  // logger.info('\n🚀 Begin診斷...\n');
 
   let accountId = null;
 
-  // 1. 測試基本連接
+  // 1. Test基本Connect
   const basicConnection = await testBasicConnection();
 
   if (basicConnection) {
-    // 2. 測試 Zone 訪問
+    // 2. Test Zone 訪問
     accountId = await testZoneAccess();
 
-    // 3. 測試 DNS 訪問
+    // 3. Test DNS 訪問
     await testDNSAccess();
 
-    // 4. 生成配置
+    // 4. 生成Configure
     generateEnvConfig(accountId);
 
-    // logger.info('\n🎉 診斷完成！所有測試通過。');
-    // logger.info('\n📋 下一步操作:');
-    // logger.info('1. 設置 DROPLET_IP 環境變數');
-    // logger.info('2. 運行: npm run setup:cloudflare');
+    // logger.info('\n🎉 診斷Complete！所有Test通過。');
+    // logger.info('\n📋 下一步Operation:');
+    // logger.info('1. Settings DROPLET_IP 環境變數');
+    // logger.info('2. 運Row: npm run setup:cloudflare');
   } else {
-    // 5. 檢查權限
+    // 5. Check權限
     checkTokenPermissions();
 
-    // logger.info('\n❌ 診斷完成！發現問題。');
-    // logger.info('\n📋 需要解決的問題:');
-    // logger.info('1. 檢查 API Token 權限');
-    // logger.info('2. 確保 Token 包含必要的權限');
-    // logger.info('3. 重新運行診斷');
+    // logger.info('\n❌ 診斷Complete！發現問題。');
+    // logger.info('\n📋 需要Resolve的問題:');
+    // logger.info('1. Check API Token 權限');
+    // logger.info('2. 確保 Token Package含必要的權限');
+    // logger.info('3. Re運Row診斷');
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   runDiagnostic()
     .then(() => {
-      // logger.info('\n✅ 診斷腳本執行完成');
+      // logger.info('\n✅ 診斷腳本執RowComplete');
       process.exit(0);
     })
     .catch((error) => {
-      // logger.info('❌ 診斷腳本執行失敗:', error);
+      // logger.info('❌ 診斷腳本執RowFailed:', error);
       process.exit(1);
     });
 }

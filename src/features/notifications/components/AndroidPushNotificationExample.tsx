@@ -23,8 +23,8 @@ interface AndroidPushNotificationExampleProps {
 }
 
 /**
- * Android 推送通知示例組件
- * 展示完整的 FCM 推送通知功能
+ * Android PushNotification示例Component
+ * 展示完整的 FCM PushNotification功能
  */
 export const AndroidPushNotificationExample: React.FC<
   AndroidPushNotificationExampleProps
@@ -51,13 +51,13 @@ export const AndroidPushNotificationExample: React.FC<
   }, []);
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   const _initializeService = async () => {
     try {
       setIsLoading(true);
 
-      // 配置推送通知服務
+      // ConfigurePushNotificationService
       const config: AndroidPushNotificationConfig = {
         fcmServerKey: 'test-server-key',
         fcmProjectId: 'test-project-id',
@@ -72,16 +72,16 @@ export const AndroidPushNotificationExample: React.FC<
 
       pushService.configure(config);
 
-      // 獲取服務信息
+      // GetServiceInformation
       const _info = pushService.getServiceInfo();
       setServiceInfo(info);
 
-      // 獲取統計信息
+      // GetStatisticsInformation
       const _deliveryStats = await pushService.getDeliveryStats();
       setStats(deliveryStats);
     } catch (error) {
-      console.error('初始化 Android 推送通知服務失敗:', error);
-      Alert.alert('錯誤', '初始化推送通知服務失敗');
+      console.error('Initialize Android 推送通知ServiceFailed:', error);
+      Alert.alert('Error', 'Initialize推送通知ServiceFailed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -89,7 +89,7 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 請求推送通知權限
+   * RequestPushNotification權限
    */
   const _requestPermissions = async () => {
     try {
@@ -98,15 +98,15 @@ export const AndroidPushNotificationExample: React.FC<
       const _granted = await pushService.requestPermissions();
 
       if (granted) {
-        Alert.alert('成功', '推送通知權限已授予');
+        Alert.alert('Success', '推送通知權限已授予');
         onSuccess?.({ type: 'permissions_granted' });
       } else {
-        Alert.alert('失敗', '推送通知權限被拒絕');
+        Alert.alert('Failed', '推送通知權限被拒絕');
         onError?.({ type: 'permissions_denied' });
       }
     } catch (error) {
-      console.error('請求推送通知權限失敗:', error);
-      Alert.alert('錯誤', '請求權限失敗');
+      console.error('請求推送通知權限Failed:', error);
+      Alert.alert('Error', '請求權限Failed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -114,7 +114,7 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 註冊遠程推送通知
+   * Register遠程PushNotification
    */
   const _registerForRemoteNotifications = async () => {
     try {
@@ -127,15 +127,15 @@ export const AndroidPushNotificationExample: React.FC<
         setDeviceToken(token);
         setIsRegistered(true);
 
-        Alert.alert('成功', '遠程推送通知註冊成功');
+        Alert.alert('Success', '遠程推送通知註冊Success');
         onSuccess?.({ type: 'registration_success', token });
       } else {
-        Alert.alert('失敗', '遠程推送通知註冊失敗');
+        Alert.alert('Failed', '遠程推送通知註冊Failed');
         onError?.({ type: 'registration_failed' });
       }
     } catch (error) {
-      console.error('註冊遠程推送通知失敗:', error);
-      Alert.alert('錯誤', '註冊失敗');
+      console.error('註冊遠程推送通知Failed:', error);
+      Alert.alert('Error', '註冊Failed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -143,7 +143,7 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 取消註冊遠程推送通知
+   * CancelRegister遠程PushNotification
    */
   const _unregisterForRemoteNotifications = async () => {
     try {
@@ -155,15 +155,15 @@ export const AndroidPushNotificationExample: React.FC<
         setDeviceToken(null);
         setIsRegistered(false);
 
-        Alert.alert('成功', '遠程推送通知取消註冊成功');
+        Alert.alert('Success', '遠程推送通知取消註冊Success');
         onSuccess?.({ type: 'unregistration_success' });
       } else {
-        Alert.alert('失敗', '遠程推送通知取消註冊失敗');
+        Alert.alert('Failed', '遠程推送通知取消註冊Failed');
         onError?.({ type: 'unregistration_failed' });
       }
     } catch (error) {
-      console.error('取消註冊遠程推送通知失敗:', error);
-      Alert.alert('錯誤', '取消註冊失敗');
+      console.error('取消註冊遠程推送通知Failed:', error);
+      Alert.alert('Error', '取消註冊Failed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -171,14 +171,14 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 發送推送通知
+   * SendPushNotification
    */
   const _sendNotification = async () => {
     try {
       setIsLoading(true);
 
       if (!targetToken) {
-        Alert.alert('錯誤', '請輸入目標設備令牌');
+        Alert.alert('Error', '請輸入目標設備令牌');
         return;
       }
 
@@ -214,24 +214,24 @@ export const AndroidPushNotificationExample: React.FC<
 
       if (result.success) {
         Alert.alert(
-          '發送成功',
+          '發送Success',
           `消息ID: ${result.messageId}\n時間: ${result.timestamp.toLocaleString()}`
         );
         onSuccess?.(result);
       } else {
         Alert.alert(
-          '發送失敗',
-          `錯誤: ${result.error}\n錯誤代碼: ${result.errorCode}`
+          '發送Failed',
+          `Error: ${result.error}\nError代碼: ${result.errorCode}`
         );
         onError?.(result);
       }
 
-      // 更新統計信息
+      // UpdateStatisticsInformation
       const _updatedStats = await pushService.getDeliveryStats();
       setStats(updatedStats);
     } catch (error) {
-      console.error('發送推送通知失敗:', error);
-      Alert.alert('錯誤', '發送失敗');
+      console.error('發送推送通知Failed:', error);
+      Alert.alert('Error', '發送Failed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -239,7 +239,7 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 批量發送推送通知
+   * BatchSendPushNotification
    */
   const _sendBulkNotifications = async () => {
     try {
@@ -273,17 +273,17 @@ export const AndroidPushNotificationExample: React.FC<
 
       Alert.alert(
         '批量發送完成',
-        `成功: ${successCount}\n失敗: ${failureCount}\n總計: ${deviceTokens.length}`
+        `Success: ${successCount}\nFailed: ${failureCount}\n總計: ${deviceTokens.length}`
       );
 
       onSuccess?.({ type: 'bulk_send_complete', results });
 
-      // 更新統計信息
+      // UpdateStatisticsInformation
       const _updatedStats = await pushService.getDeliveryStats();
       setStats(updatedStats);
     } catch (error) {
-      console.error('批量發送推送通知失敗:', error);
-      Alert.alert('錯誤', '批量發送失敗');
+      console.error('批量發送推送通知Failed:', error);
+      Alert.alert('Error', '批量發送Failed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -291,7 +291,7 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 訂閱主題
+   * 訂閱Theme
    */
   const _subscribeToTopic = async () => {
     try {
@@ -300,19 +300,19 @@ export const AndroidPushNotificationExample: React.FC<
       const _success = await pushService.subscribeToTopic(topicName);
 
       if (success) {
-        Alert.alert('成功', `已訂閱主題: ${topicName}`);
+        Alert.alert('Success', `已訂閱主題: ${topicName}`);
         onSuccess?.({ type: 'topic_subscribed', topic: topicName });
       } else {
-        Alert.alert('失敗', `訂閱主題失敗: ${topicName}`);
+        Alert.alert('Failed', `訂閱主題Failed: ${topicName}`);
         onError?.({ type: 'topic_subscription_failed', topic: topicName });
       }
 
-      // 更新統計信息
+      // UpdateStatisticsInformation
       const _updatedStats = await pushService.getDeliveryStats();
       setStats(updatedStats);
     } catch (error) {
-      console.error('訂閱主題失敗:', error);
-      Alert.alert('錯誤', '訂閱主題失敗');
+      console.error('訂閱主題Failed:', error);
+      Alert.alert('Error', '訂閱主題Failed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -320,7 +320,7 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 取消訂閱主題
+   * Cancel訂閱Theme
    */
   const _unsubscribeFromTopic = async () => {
     try {
@@ -329,19 +329,19 @@ export const AndroidPushNotificationExample: React.FC<
       const _success = await pushService.unsubscribeFromTopic(topicName);
 
       if (success) {
-        Alert.alert('成功', `已取消訂閱主題: ${topicName}`);
+        Alert.alert('Success', `已取消訂閱主題: ${topicName}`);
         onSuccess?.({ type: 'topic_unsubscribed', topic: topicName });
       } else {
-        Alert.alert('失敗', `取消訂閱主題失敗: ${topicName}`);
+        Alert.alert('Failed', `取消訂閱主題Failed: ${topicName}`);
         onError?.({ type: 'topic_unsubscription_failed', topic: topicName });
       }
 
-      // 更新統計信息
+      // UpdateStatisticsInformation
       const _updatedStats = await pushService.getDeliveryStats();
       setStats(updatedStats);
     } catch (error) {
-      console.error('取消訂閱主題失敗:', error);
-      Alert.alert('錯誤', '取消訂閱主題失敗');
+      console.error('取消訂閱主題Failed:', error);
+      Alert.alert('Error', '取消訂閱主題Failed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -349,14 +349,14 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 驗證設備令牌
+   * Verify設備令牌
    */
   const _validateDeviceToken = async () => {
     try {
       setIsLoading(true);
 
       if (!targetToken) {
-        Alert.alert('錯誤', '請輸入要驗證的設備令牌');
+        Alert.alert('Error', '請輸入要驗證的設備令牌');
         return;
       }
 
@@ -370,8 +370,8 @@ export const AndroidPushNotificationExample: React.FC<
         onError?.({ type: 'token_invalid', token: targetToken });
       }
     } catch (error) {
-      console.error('驗證設備令牌失敗:', error);
-      Alert.alert('錯誤', '驗證失敗');
+      console.error('Verify設備令牌Failed:', error);
+      Alert.alert('Error', 'VerifyFailed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -379,7 +379,7 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 刷新統計信息
+   * RefreshStatisticsInformation
    */
   const _refreshStats = async () => {
     try {
@@ -388,17 +388,17 @@ export const AndroidPushNotificationExample: React.FC<
       const _updatedStats = await pushService.getDeliveryStats();
       setStats(updatedStats);
 
-      Alert.alert('成功', '統計信息已更新');
+      Alert.alert('Success', '統計信息已更新');
     } catch (error) {
-      console.error('刷新統計信息失敗:', error);
-      Alert.alert('錯誤', '刷新統計信息失敗');
+      console.error('刷新統計信息Failed:', error);
+      Alert.alert('Error', '刷新統計信息Failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   /**
-   * 渲染服務信息
+   * 渲染ServiceInformation
    */
   const _renderServiceInfo = () => {
     if (!serviceInfo) return null;
@@ -429,7 +429,7 @@ export const AndroidPushNotificationExample: React.FC<
   };
 
   /**
-   * 渲染統計信息
+   * 渲染StatisticsInformation
    */
   const _renderStats = () => {
     if (!stats) return null;
@@ -463,13 +463,13 @@ export const AndroidPushNotificationExample: React.FC<
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Android 推送通知示例</Text>
 
-      {/* 服務信息 */}
+      {/* ServiceInformation */}
       {renderServiceInfo()}
 
-      {/* 統計信息 */}
+      {/* StatisticsInformation */}
       {renderStats()}
 
-      {/* 權限和註冊 */}
+      {/* 權限和Register */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>權限和註冊</Text>
 
@@ -502,7 +502,7 @@ export const AndroidPushNotificationExample: React.FC<
         )}
       </View>
 
-      {/* 推送通知配置 */}
+      {/* PushNotificationConfigure */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>推送通知配置</Text>
 
@@ -549,7 +549,7 @@ export const AndroidPushNotificationExample: React.FC<
         </View>
       </View>
 
-      {/* 推送通知發送 */}
+      {/* PushNotificationSend */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>推送通知發送</Text>
 
@@ -582,7 +582,7 @@ export const AndroidPushNotificationExample: React.FC<
         </TouchableOpacity>
       </View>
 
-      {/* 主題訂閱 */}
+      {/* Theme訂閱 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>主題訂閱</Text>
 
@@ -608,7 +608,7 @@ export const AndroidPushNotificationExample: React.FC<
         </TouchableOpacity>
       </View>
 
-      {/* 其他操作 */}
+      {/* 其他Operation */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>其他操作</Text>
 

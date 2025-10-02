@@ -14,32 +14,32 @@ import type {
   AnimationPerformance,
 } from '../../types/animation';
 
-// 動畫上下文接口
+// 動畫上下文Interface
 interface AnimationContextType {
-  // 狀態
+  // Status
   isInitialized: boolean;
   error: string | null;
 
-  // 服務方法
+  // ServiceMethod
   createAnimation: (config: unknown) => string;
   playAnimation: (id: string) => Promise<void>;
   pauseAnimation: (id: string) => void;
   stopAnimation: (id: string) => void;
 
-  // 批量操作
+  // BatchOperation
   playAll: () => Promise<void>;
   pauseAll: () => void;
   stopAll: () => void;
 
-  // 配置管理
+  // ConfigureManage
   updateConfig: (id: string, config: unknown) => void;
   getConfig: (id: string) => any;
 
-  // 性能監控
+  // 性能Monitor
   getPerformance: () => AnimationPerformance;
   enablePerformanceMonitoring: (enabled: boolean) => void;
 
-  // 偏好設置
+  // PreferencesSettings
   updatePreferences: (preferences: unknown) => void;
   getPreferences: () => any;
 
@@ -48,12 +48,12 @@ interface AnimationContextType {
   getPreset: (name: string) => any;
   getAllPresets: () => any[];
 
-  // 事件監聽
+  // Event監聽
   on: (event: string, callback: (event: AnimationEvent) => void) => void;
   off: (event: string, callback: (event: AnimationEvent) => void) => void;
 }
 
-// 創建上下文
+// Create上下文
 const _AnimationContext = createContext<AnimationContextType | null>(null);
 
 // Provider Props
@@ -66,8 +66,8 @@ interface AnimationProviderProps {
 }
 
 /**
- * 動畫提供者組件
- * 提供動畫服務的上下文，管理動畫的生命週期
+ * 動畫提供者Component
+ * 提供動畫Service的上下文，Manage動畫的生命週期
  */
 export const AnimationProvider: React.FC<AnimationProviderProps> = ({
   children,
@@ -80,7 +80,7 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
   const { isInitialized, error } = useSelector(selectAnimationState);
   const _performanceIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 初始化動畫服務
+  // Initialize動畫Service
   useEffect(() => {
     if (autoInitialize && !isInitialized) {
       dispatch(initializeAnimationService());
@@ -88,17 +88,17 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
     return undefined;
   }, [autoInitialize, isInitialized, dispatch]);
 
-  // 設置性能監控
+  // Settings性能Monitor
   useEffect(() => {
     if (isInitialized && enablePerformanceMonitoring) {
-      // 啟用性能監控
+      // Enable性能Monitor
       animationService.enablePerformanceMonitoring(true);
 
-      // 定期更新性能指標
+      // 定期Update性能指標
       performanceIntervalRef.current = setInterval(() => {
         const _performance = animationService.getPerformance();
         dispatch(updatePerformanceMetrics(performance));
-      }, 1000); // 每秒更新一次
+      }, 1000); // 每SecondUpdate一次
 
       return () => {
         if (performanceIntervalRef.current) {
@@ -110,7 +110,7 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
     return undefined;
   }, [dispatch, isInitialized, enablePerformanceMonitoring]);
 
-  // 清理資源
+  // 清理Resource
   useEffect(() => {
     return () => {
       if (performanceIntervalRef.current) {
@@ -119,20 +119,20 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
     };
   }, []);
 
-  // 創建上下文值
+  // Create上下文Value
   const contextValue: AnimationContextType = {
-    // 狀態
+    // Status
     isInitialized,
     error,
 
-    // 服務方法
+    // ServiceMethod
     createAnimation: (config: unknown) =>
       animationService.createAnimation(config),
     playAnimation: async (id: string) => {
       try {
         await animationService.playAnimation(id);
       } catch (error) {
-        console.error('播放動畫失敗:', error);
+        console.error('播放動畫Failed:', error);
         throw error;
       }
     },
@@ -140,7 +140,7 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
       try {
         animationService.pauseAnimation(id);
       } catch (error) {
-        console.error('暫停動畫失敗:', error);
+        console.error('暫停動畫Failed:', error);
         throw error;
       }
     },
@@ -148,17 +148,17 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
       try {
         animationService.stopAnimation(id);
       } catch (error) {
-        console.error('停止動畫失敗:', error);
+        console.error('停止動畫Failed:', error);
         throw error;
       }
     },
 
-    // 批量操作
+    // BatchOperation
     playAll: async () => {
       try {
         await animationService.playAll();
       } catch (error) {
-        console.error('播放所有動畫失敗:', error);
+        console.error('播放所有動畫Failed:', error);
         throw error;
       }
     },
@@ -166,7 +166,7 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
       try {
         animationService.pauseAll();
       } catch (error) {
-        console.error('暫停所有動畫失敗:', error);
+        console.error('暫停所有動畫Failed:', error);
         throw error;
       }
     },
@@ -174,39 +174,39 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
       try {
         animationService.stopAll();
       } catch (error) {
-        console.error('停止所有動畫失敗:', error);
+        console.error('停止所有動畫Failed:', error);
         throw error;
       }
     },
 
-    // 配置管理
+    // ConfigureManage
     updateConfig: (id: string, config: unknown) => {
       try {
         animationService.updateConfig(id, config);
       } catch (error) {
-        console.error('更新動畫配置失敗:', error);
+        console.error('Update動畫ConfigureFailed:', error);
         throw error;
       }
     },
     getConfig: (id: string) => animationService.getConfig(id),
 
-    // 性能監控
+    // 性能Monitor
     getPerformance: () => animationService.getPerformance(),
     enablePerformanceMonitoring: (enabled: boolean) => {
       try {
         animationService.enablePerformanceMonitoring(enabled);
       } catch (error) {
-        console.error('啟用性能監控失敗:', error);
+        console.error('啟用性能監控Failed:', error);
         throw error;
       }
     },
 
-    // 偏好設置
+    // PreferencesSettings
     updatePreferences: (preferences: unknown) => {
       try {
         animationService.updatePreferences(preferences);
       } catch (error) {
-        console.error('更新偏好設置失敗:', error);
+        console.error('Update偏好SettingsFailed:', error);
         throw error;
       }
     },
@@ -217,14 +217,14 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
       try {
         animationService.registerPreset(preset);
       } catch (error) {
-        console.error('註冊預設動畫失敗:', error);
+        console.error('註冊預設動畫Failed:', error);
         throw error;
       }
     },
     getPreset: (name: string) => animationService.getPreset(name),
     getAllPresets: () => animationService.getAllPresets(),
 
-    // 事件監聽
+    // Event監聽
     on: (event: string, callback: (event: AnimationEvent) => void) => {
       animationService.on(event, callback);
     },
@@ -233,7 +233,7 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
     },
   };
 
-  // 如果未初始化且啟用了自動初始化，顯示加載狀態
+  // 如果未Initialize且Enable了AutoInitialize，Show加載Status
   if (autoInitialize && !isInitialized) {
     return (
       <div
@@ -251,7 +251,7 @@ export const AnimationProvider: React.FC<AnimationProviderProps> = ({
     );
   }
 
-  // 如果有錯誤，顯示錯誤信息
+  // 如果有Error，ShowErrorInformation
   if (error) {
     return (
       <div

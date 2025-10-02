@@ -19,7 +19,7 @@ describe('PricingService', () => {
   let service: PricingService;
 
   beforeEach(() => {
-    // 清理單例實例
+    // 清理單例Instance
     (PricingService as any).instance = undefined;
     service = PricingService.getInstance();
   });
@@ -53,7 +53,7 @@ describe('PricingService', () => {
     });
 
     it('should handle initialization errors', async () => {
-      // 模擬初始化錯誤
+      // 模擬InitializeError
       jest
         .spyOn(service as any, 'startRealTimeUpdates')
         .mockImplementation(() => {
@@ -99,7 +99,7 @@ describe('PricingService', () => {
       const _response1 = await service.getCurrentPrice(request);
       expect(response1.success).toBe(true);
 
-      // 第二次調用應該使用緩存
+      // 第二次調用應該使用Cache
       const _response2 = await service.getCurrentPrice(request);
       expect(response2.success).toBe(true);
       expect(response2.data.id).toBe(response1.data.id);
@@ -150,7 +150,7 @@ describe('PricingService', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      // 模擬處理價格數據時的錯誤
+      // 模擬Handle價格Data時的Error
       jest.spyOn(service as any, 'processPriceData').mockImplementation(() => {
         throw new Error('Processing failed');
       });
@@ -177,7 +177,7 @@ describe('PricingService', () => {
       expect(history.cardId).toBe('test_card_1');
       expect(history.period).toBe('7d');
       expect(history.data).toBeDefined();
-      expect(history.data.length).toBe(8); // 7天 + 今天
+      expect(history.data.length).toBe(8); // 7天 + Today
       expect(history.statistics).toBeDefined();
       expect(history.statistics.high).toBeGreaterThan(0);
       expect(history.statistics.low).toBeGreaterThan(0);
@@ -189,7 +189,7 @@ describe('PricingService', () => {
 
       expect(history.cardId).toBe('test_card_2');
       expect(history.period).toBe('30d');
-      expect(history.data.length).toBe(31); // 30天 + 今天
+      expect(history.data.length).toBe(31); // 30天 + Today
     });
 
     it('should return price history for 90 days', async () => {
@@ -197,7 +197,7 @@ describe('PricingService', () => {
 
       expect(history.cardId).toBe('test_card_3');
       expect(history.period).toBe('90d');
-      expect(history.data.length).toBe(91); // 90天 + 今天
+      expect(history.data.length).toBe(91); // 90天 + Today
     });
 
     it('should calculate statistics correctly', async () => {
@@ -218,7 +218,7 @@ describe('PricingService', () => {
     });
 
     it('should handle errors', async () => {
-      // 模擬生成歷史數據時的錯誤
+      // 模擬生成歷史Data時的Error
       jest
         .spyOn(service as any, 'generateMockHistoryData')
         .mockImplementation(() => {
@@ -278,7 +278,7 @@ describe('PricingService', () => {
     });
 
     it('should handle creation errors', async () => {
-      // 測試創建警報的基本功能
+      // TestCreateAlert的基本功能
       const _alertData = {
         userId: 'user_1',
         cardId: 'test_card_3',
@@ -304,7 +304,7 @@ describe('PricingService', () => {
       expect(Array.isArray(alerts)).toBe(true);
       expect(alerts.length).toBeGreaterThan(0);
 
-      // 檢查警報結構
+      // CheckAlert結構
       const _alert = alerts[0];
       expect(alert.id).toBeDefined();
       expect(alert.userId).toBeDefined();
@@ -339,7 +339,7 @@ describe('PricingService', () => {
     });
 
     it('should update alert status successfully', async () => {
-      // 先創建一個警報
+      // 先Create一個Alert
       const _alert = await service.createPriceAlert({
         userId: 'user_1',
         cardId: 'test_card_1',
@@ -348,13 +348,13 @@ describe('PricingService', () => {
         isActive: true,
       });
 
-      // 更新狀態
+      // UpdateStatus
       await expect(
         service.updateAlertStatus(alert.id, false)
       ).resolves.not.toThrow();
 
-      // 驗證更新 - 由於 getUserAlerts 返回模擬數據，我們需要檢查服務內部的狀態
-      // 這裡我們只驗證方法執行沒有拋出錯誤
+      // VerifyUpdate - 由於 getUserAlerts Return模擬Data，我們需要CheckServiceInternal的Status
+      // 這裡我們只VerifyMethod執Row沒有ThrowError
       expect(true).toBe(true);
     });
 
@@ -371,7 +371,7 @@ describe('PricingService', () => {
     });
 
     it('should delete alert successfully', async () => {
-      // 先創建一個警報
+      // 先Create一個Alert
       const _alert = await service.createPriceAlert({
         userId: 'user_1',
         cardId: 'test_card_1',
@@ -380,10 +380,10 @@ describe('PricingService', () => {
         isActive: true,
       });
 
-      // 刪除警報
+      // DeleteAlert
       await expect(service.deleteAlert(alert.id)).resolves.not.toThrow();
 
-      // 驗證刪除
+      // VerifyDelete
       const _alerts = await service.getUserAlerts();
       const _deletedAlert = alerts.find(a => a.id === alert.id);
       expect(deletedAlert).toBeUndefined();
@@ -445,7 +445,7 @@ describe('PricingService', () => {
     });
 
     it('should handle empty price data', async () => {
-      // 模擬空數據
+      // 模擬EmptyData
       jest.spyOn(service as any, 'fetchPriceData').mockResolvedValue([]);
 
       const _request = {
@@ -464,7 +464,7 @@ describe('PricingService', () => {
         'invalid_period'
       );
 
-      // 應該使用默認期間
+      // 應該使用Default期間
       expect(history.period).toBe('invalid_period');
       expect(history.data.length).toBeGreaterThan(0);
     });
@@ -475,9 +475,9 @@ describe('PricingService', () => {
 
     it('should handle multiple initializations', async () => {
       await service.initialize();
-      await service.initialize(); // 第二次初始化不應該出錯
+      await service.initialize(); // 第二次Initialize不應該出錯
 
-      expect(true).toBe(true); // 如果沒有拋出錯誤，測試通過
+      expect(true).toBe(true); // 如果沒有ThrowError，Test通過
     });
   });
 
@@ -494,13 +494,13 @@ describe('PricingService', () => {
       const _response1 = await service.getCurrentPrice(request);
       const _initialPrice = response1.data.currentPrice;
 
-      // 等待一段時間讓實時更新觸發
+      // Await一段Time讓實時Update觸發
       await new Promise(resolve => setTimeout(resolve, 100));
 
       const _response2 = await service.getCurrentPrice(request);
       const _updatedPrice = response2.data.currentPrice;
 
-      // 價格可能已經更新
+      // 價格可能已經Update
       expect(typeof updatedPrice).toBe('number');
       expect(updatedPrice).toBeGreaterThan(0);
     });
@@ -512,7 +512,7 @@ describe('PricingService', () => {
     });
 
     it('should check price alerts', async () => {
-      // 創建一個警報
+      // Create一個Alert
       const _alert = await service.createPriceAlert({
         userId: 'user_1',
         cardId: 'test_card_1',
@@ -521,13 +521,13 @@ describe('PricingService', () => {
         isActive: true,
       });
 
-      // 獲取價格數據以觸發警報檢查
+      // Get價格Data以觸發AlertCheck
       await service.getCurrentPrice({ cardId: 'test_card_1' });
 
-      // 等待警報檢查
+      // AwaitAlertCheck
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // 驗證警報檢查邏輯正常運行
+      // VerifyAlertCheck邏輯正常運Row
       expect(true).toBe(true);
     });
   });

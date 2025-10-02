@@ -3,8 +3,8 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 市場服務
- * 處理市場數據相關功能
+ * 市場Service
+ * Handle市場Data相Off功能
  */
 export class MarketService {
   private static instance: MarketService;
@@ -19,7 +19,7 @@ export class MarketService {
   }
 
   /**
-   * 獲取市場數據
+   * Get市場Data
    */
   async getMarketData(cardId: string): Promise<MarketDataEntity> {
     try {
@@ -28,16 +28,16 @@ export class MarketService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('獲取市場數據失敗');
+        throw new Error('Get市場數據Failed');
       }
     } catch (error) {
-      logger.error('獲取市場數據失敗:', { error, cardId });
+      logger.error('Get市場數據Failed:', { error, cardId });
       throw error;
     }
   }
 
   /**
-   * 獲取價格歷史
+   * Get價格歷史
    */
   async getPriceHistory(
     cardId: string,
@@ -51,33 +51,33 @@ export class MarketService {
       );
 
       if (response.success) {
-        logger.info('價格歷史獲取成功:', { cardId });
+        logger.info('價格歷史GetSuccess:', { cardId });
         return {
           success: true,
           data: response.data,
-          message: '價格歷史獲取成功',
+          message: '價格歷史GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取價格歷史失敗:', { message: response.message });
+        logger.error('Get價格歷史Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取價格歷史失敗',
+          message: response.message || 'Get價格歷史Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取價格歷史時發生錯誤:', error);
+      logger.error('Get價格歷史時發生Error:', error);
       return {
         success: false,
-        message: '獲取價格歷史時發生錯誤',
+        message: 'Get價格歷史時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取市場趨勢
+   * Get市場趨勢
    */
   async getMarketTrends(cardId?: string): Promise<any> {
     try {
@@ -89,31 +89,31 @@ export class MarketService {
       );
 
       if (response.success) {
-        logger.info('市場趨勢獲取成功:', { cardId });
+        logger.info('市場趨勢GetSuccess:', { cardId });
         return {
           success: true,
           data: response.data,
-          message: '市場趨勢獲取成功',
+          message: '市場趨勢GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取市場趨勢失敗:', { message: response.message });
+        logger.error('Get市場趨勢Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取市場趨勢失敗',
+          message: response.message || 'Get市場趨勢Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取市場趨勢時發生錯誤:', error);
+      logger.error('Get市場趨勢時發生Error:', error);
       return {
         success: false,
-        message: '獲取市場趨勢時發生錯誤',
+        message: 'Get市場趨勢時發生Error',
         timestamp: new Date(),
       };
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _marketService = MarketService.getInstance();

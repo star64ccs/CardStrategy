@@ -1,4 +1,4 @@
-// 協同過濾推薦系統 Redux Slice
+// 協同Filter推薦系統 Redux Slice
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
@@ -19,19 +19,19 @@ import {
   SimilarityMethod,
 } from '../../features/recommendation/types/collaborativeFiltering';
 
-// 狀態接口
+// StatusInterface
 export interface CollaborativeFilteringState {
-  // 推薦相關
+  // 推薦相Off
   recommendations: Recommendation[];
   currentRecommendations: Recommendation[];
   selectedRecommendationId: string | null;
 
-  // 相似用戶相關
+  // 相似User相Off
   similarUsers: SimilarityScore[];
   currentSimilarUsers: SimilarityScore[];
   selectedSimilarUserId: string | null;
 
-  // 相似項目相關
+  // 相似項目相Off
   similarItems: {
     itemId: string;
     similarityScore: number;
@@ -48,11 +48,11 @@ export interface CollaborativeFilteringState {
   performance: ModelPerformance | null;
   statistics: DataStatistics | null;
 
-  // 配置
+  // Configure
   currentAlgorithm: RecommendationAlgorithm;
   currentSimilarityMethod: SimilarityMethod;
 
-  // 過濾選項
+  // FilterOptions
   filterOptions: {
     categories: string[];
     minRating: number;
@@ -61,7 +61,7 @@ export interface CollaborativeFilteringState {
     maxSimilarity: number;
   };
 
-  // 分頁
+  // Paginate
   pagination: {
     currentPage: number;
     pageSize: number;
@@ -69,7 +69,7 @@ export interface CollaborativeFilteringState {
     hasMore: boolean;
   };
 
-  // 加載狀態
+  // 加載Status
   loading: {
     recommendations: boolean;
     similarUsers: boolean;
@@ -79,7 +79,7 @@ export interface CollaborativeFilteringState {
     behavior: boolean;
   };
 
-  // 錯誤狀態
+  // ErrorStatus
   error: {
     recommendations: string | null;
     similarUsers: string | null;
@@ -89,12 +89,12 @@ export interface CollaborativeFilteringState {
     behavior: string | null;
   };
 
-  // 初始化狀態
+  // InitializeStatus
   isInitialized: boolean;
   isInitializing: boolean;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: CollaborativeFilteringState = {
   recommendations: [],
   currentRecommendations: [],
@@ -151,9 +151,9 @@ const initialState: CollaborativeFilteringState = {
   isInitializing: false,
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 
-// 初始化協同過濾服務
+// Initialize協同FilterService
 export const _initializeCollaborativeFiltering = createAsyncThunk(
   'collaborativeFiltering/initialize',
   async (_, { rejectWithValue }) => {
@@ -163,13 +163,13 @@ export const _initializeCollaborativeFiltering = createAsyncThunk(
       return { success: true };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '初始化失敗'
+        error instanceof Error ? error.message : 'InitializeFailed'
       );
     }
   }
 );
 
-// 獲取推薦
+// Get推薦
 export const _getRecommendations = createAsyncThunk(
   'collaborativeFiltering/getRecommendations',
   async (request: GetRecommendationsRequest, { rejectWithValue }) => {
@@ -178,19 +178,19 @@ export const _getRecommendations = createAsyncThunk(
       const _response = await service.getRecommendations(request);
 
       if (!response.success) {
-        throw new Error(response.error || '獲取推薦失敗');
+        throw new Error(response.error || 'Get推薦Failed');
       }
 
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取推薦失敗'
+        error instanceof Error ? error.message : 'Get推薦Failed'
       );
     }
   }
 );
 
-// 獲取相似用戶
+// Get相似User
 export const _getSimilarUsers = createAsyncThunk(
   'collaborativeFiltering/getSimilarUsers',
   async (request: GetSimilarUsersRequest, { rejectWithValue }) => {
@@ -199,19 +199,19 @@ export const _getSimilarUsers = createAsyncThunk(
       const _response = await service.getSimilarUsers(request);
 
       if (!response.success) {
-        throw new Error(response.error || '獲取相似用戶失敗');
+        throw new Error(response.error || 'Get相似用戶Failed');
       }
 
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取相似用戶失敗'
+        error instanceof Error ? error.message : 'Get相似用戶Failed'
       );
     }
   }
 );
 
-// 獲取相似項目
+// Get相似項目
 export const _getSimilarItems = createAsyncThunk(
   'collaborativeFiltering/getSimilarItems',
   async (request: GetSimilarItemsRequest, { rejectWithValue }) => {
@@ -220,19 +220,19 @@ export const _getSimilarItems = createAsyncThunk(
       const _response = await service.getSimilarItems(request);
 
       if (!response.success) {
-        throw new Error(response.error || '獲取相似項目失敗');
+        throw new Error(response.error || 'Get相似項目Failed');
       }
 
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取相似項目失敗'
+        error instanceof Error ? error.message : 'Get相似項目Failed'
       );
     }
   }
 );
 
-// 更新評分
+// Update評分
 export const _updateRating = createAsyncThunk(
   'collaborativeFiltering/updateRating',
   async (request: UpdateRatingRequest, { rejectWithValue }) => {
@@ -242,13 +242,13 @@ export const _updateRating = createAsyncThunk(
       return { success: true };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '更新評分失敗'
+        error instanceof Error ? error.message : 'Update評分Failed'
       );
     }
   }
 );
 
-// 更新用戶行為
+// UpdateUserRow為
 export const _updateUserBehavior = createAsyncThunk(
   'collaborativeFiltering/updateUserBehavior',
   async (request: UpdateUserBehaviorRequest, { rejectWithValue }) => {
@@ -258,13 +258,13 @@ export const _updateUserBehavior = createAsyncThunk(
       return { success: true };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '更新用戶行為失敗'
+        error instanceof Error ? error.message : 'Update用戶行為Failed'
       );
     }
   }
 );
 
-// 獲取模型性能
+// Get模型性能
 export const _getModelPerformance = createAsyncThunk(
   'collaborativeFiltering/getModelPerformance',
   async (_, { rejectWithValue }) => {
@@ -273,13 +273,13 @@ export const _getModelPerformance = createAsyncThunk(
       const _response = await service.getModelPerformance();
 
       if (!response.success) {
-        throw new Error(response.error || '獲取模型性能失敗');
+        throw new Error(response.error || 'Get模型性能Failed');
       }
 
       return response.data;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取模型性能失敗'
+        error instanceof Error ? error.message : 'Get模型性能Failed'
       );
     }
   }
@@ -290,7 +290,7 @@ const _collaborativeFilteringSlice = createSlice({
   name: 'collaborativeFiltering',
   initialState,
   reducers: {
-    // 推薦相關
+    // 推薦相Off
     setCurrentRecommendations: (
       state,
       action: PayloadAction<Recommendation[]>
@@ -324,7 +324,7 @@ const _collaborativeFilteringSlice = createSlice({
       );
     },
 
-    // 相似用戶相關
+    // 相似User相Off
     setCurrentSimilarUsers: (
       state,
       action: PayloadAction<SimilarityScore[]>
@@ -355,7 +355,7 @@ const _collaborativeFilteringSlice = createSlice({
       );
     },
 
-    // 相似項目相關
+    // 相似項目相Off
     setCurrentSimilarItems: (
       state,
       action: PayloadAction<
@@ -406,7 +406,7 @@ const _collaborativeFilteringSlice = createSlice({
       );
     },
 
-    // 配置相關
+    // Configure相Off
     setCurrentAlgorithm: (
       state,
       action: PayloadAction<RecommendationAlgorithm>
@@ -421,7 +421,7 @@ const _collaborativeFilteringSlice = createSlice({
       state.currentSimilarityMethod = action.payload;
     },
 
-    // 過濾選項
+    // FilterOptions
     setFilterOptions: (
       state,
       action: PayloadAction<
@@ -431,7 +431,7 @@ const _collaborativeFilteringSlice = createSlice({
       state.filterOptions = { ...state.filterOptions, ...action.payload };
     },
 
-    // 分頁
+    // Paginate
     setPagination: (
       state,
       action: PayloadAction<Partial<CollaborativeFilteringState['pagination']>>
@@ -439,7 +439,7 @@ const _collaborativeFilteringSlice = createSlice({
       state.pagination = { ...state.pagination, ...action.payload };
     },
 
-    // 加載狀態
+    // 加載Status
     setLoading: (
       state,
       action: PayloadAction<{
@@ -450,7 +450,7 @@ const _collaborativeFilteringSlice = createSlice({
       state.loading[action.payload.key] = action.payload.value;
     },
 
-    // 錯誤狀態
+    // ErrorStatus
     setError: (
       state,
       action: PayloadAction<{
@@ -461,7 +461,7 @@ const _collaborativeFilteringSlice = createSlice({
       state.error[action.payload.key] = action.payload.value;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: (
       state,
       action: PayloadAction<keyof CollaborativeFilteringState['error']>
@@ -469,17 +469,17 @@ const _collaborativeFilteringSlice = createSlice({
       state.error[action.payload] = null;
     },
 
-    // 重置狀態
+    // ResetStatus
     resetState: state => {
       return { ...initialState };
     },
   },
   extraReducers: builder => {
     builder
-      // 初始化
+      // Initialize
       .addCase(initializeCollaborativeFiltering.pending, state => {
         state.isInitializing = true;
-        // state.error.isInitialized = null; // 暫時註釋掉，等待實現
+        // state.error.isInitialized = null; // 暫時Comment掉，Await實現
       })
       .addCase(initializeCollaborativeFiltering.fulfilled, state => {
         state.isInitialized = true;
@@ -488,10 +488,10 @@ const _collaborativeFilteringSlice = createSlice({
       .addCase(initializeCollaborativeFiltering.rejected, (state, action) => {
         state.isInitialized = false;
         state.isInitializing = false;
-        // state.error.isInitialized = action.payload as string; // 暫時註釋掉，等待實現
+        // state.error.isInitialized = action.payload as string; // 暫時Comment掉，Await實現
       })
 
-      // 獲取推薦
+      // Get推薦
       .addCase(getRecommendations.pending, state => {
         state.loading.recommendations = true;
         state.error.recommendations = null;
@@ -507,7 +507,7 @@ const _collaborativeFilteringSlice = createSlice({
         state.error.recommendations = action.payload as string;
       })
 
-      // 獲取相似用戶
+      // Get相似User
       .addCase(getSimilarUsers.pending, state => {
         state.loading.similarUsers = true;
         state.error.similarUsers = null;
@@ -521,7 +521,7 @@ const _collaborativeFilteringSlice = createSlice({
         state.error.similarUsers = action.payload as string;
       })
 
-      // 獲取相似項目
+      // Get相似項目
       .addCase(getSimilarItems.pending, state => {
         state.loading.similarItems = true;
         state.error.similarItems = null;
@@ -535,7 +535,7 @@ const _collaborativeFilteringSlice = createSlice({
         state.error.similarItems = action.payload as string;
       })
 
-      // 更新評分
+      // Update評分
       .addCase(updateRating.pending, state => {
         state.loading.rating = true;
         state.error.rating = null;
@@ -548,7 +548,7 @@ const _collaborativeFilteringSlice = createSlice({
         state.error.rating = action.payload as string;
       })
 
-      // 更新用戶行為
+      // UpdateUserRow為
       .addCase(updateUserBehavior.pending, state => {
         state.loading.behavior = true;
         state.error.behavior = null;
@@ -561,7 +561,7 @@ const _collaborativeFilteringSlice = createSlice({
         state.error.behavior = action.payload as string;
       })
 
-      // 獲取模型性能
+      // Get模型性能
       .addCase(getModelPerformance.pending, state => {
         state.loading.performance = true;
         state.error.performance = null;
@@ -693,7 +693,7 @@ export const _selectIsInitializing = (state: {
   collaborativeFiltering: CollaborativeFilteringState;
 }) => state.collaborativeFiltering.isInitializing;
 
-// 計算選擇器
+// 計算Select器
 export const _selectHasRecommendations = (state: {
   collaborativeFiltering: CollaborativeFilteringState;
 }) => state.collaborativeFiltering.currentRecommendations.length > 0;

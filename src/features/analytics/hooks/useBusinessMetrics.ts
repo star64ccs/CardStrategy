@@ -1,4 +1,4 @@
-// 業務指標分析 React Hook
+// 業務指標Analysis React Hook
 import { useCallback, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -53,7 +53,7 @@ import type {
 export const _useBusinessMetrics = () => {
   const _dispatch = useAppDispatch();
 
-  // 狀態選擇器
+  // StatusSelect器
   const _isInitialized = useSelector(selectIsInitialized);
   const _isLoading = useSelector(selectIsLoading);
   const _error = useSelector(selectError);
@@ -71,21 +71,21 @@ export const _useBusinessMetrics = () => {
   const _isExporting = useSelector(selectIsExporting);
   const _exportError = useSelector(selectExportError);
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(
     async (config?: Partial<BusinessMetricsConfig>) => {
       try {
         await (dispatch as any)(initializeBusinessMetrics(config)).unwrap();
         return true;
       } catch (error) {
-        console.error('業務指標分析服務初始化失敗:', error);
+        console.error('業務指標分析ServiceInitializeFailed:', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 獲取業務指標分析
+  // Get業務指標Analysis
   const _getAnalysis = useCallback(
     async (filter?: BusinessMetricsFilter) => {
       try {
@@ -94,14 +94,14 @@ export const _useBusinessMetrics = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('獲取業務指標分析失敗:', error);
+        console.error('Get業務指標分析Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 生成報告
+  // 生成Report
   const _generateReport = useCallback(
     async (filter?: BusinessMetricsFilter) => {
       try {
@@ -110,14 +110,14 @@ export const _useBusinessMetrics = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('生成業務指標報告失敗:', error);
+        console.error('生成業務指標報告Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 導出數據
+  // ExportData
   const _exportData = useCallback(
     async (
       analysis: BusinessMetricsAnalysisResponse,
@@ -129,14 +129,14 @@ export const _useBusinessMetrics = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('導出業務指標數據失敗:', error);
+        console.error('導出業務指標數據Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 創建警報
+  // CreateAlert
   const _createAlert = useCallback(
     async (alert: unknown) => {
       try {
@@ -145,14 +145,14 @@ export const _useBusinessMetrics = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('創建業務指標警報失敗:', error);
+        console.error('Create業務指標警報Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 更新警報
+  // UpdateAlert
   const _updateAlert = useCallback(
     async (alertId: string, updates: unknown) => {
       try {
@@ -161,28 +161,28 @@ export const _useBusinessMetrics = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('更新業務指標警報失敗:', error);
+        console.error('Update業務指標警報Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 刪除警報
+  // DeleteAlert
   const _deleteAlert = useCallback(
     async (alertId: string) => {
       try {
         await (dispatch as any)(deleteBusinessMetricsAlert(alertId)).unwrap();
         return true;
       } catch (error) {
-        console.error('刪除業務指標警報失敗:', error);
+        console.error('Delete業務指標警報Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取警報
+  // GetAlert
   const _getAlert = useCallback(
     async (alertId: string) => {
       try {
@@ -191,14 +191,14 @@ export const _useBusinessMetrics = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('獲取業務指標警報失敗:', error);
+        console.error('Get業務指標警報Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取配置
+  // GetConfigure
   const _getConfig = useCallback(async () => {
     try {
       const _result = await (dispatch as any)(
@@ -206,12 +206,12 @@ export const _useBusinessMetrics = () => {
       ).unwrap();
       return result;
     } catch (error) {
-      console.error('獲取業務指標配置失敗:', error);
+      console.error('Get業務指標ConfigureFailed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback(
     async (updates: Partial<BusinessMetricsConfig>) => {
       try {
@@ -220,14 +220,14 @@ export const _useBusinessMetrics = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('更新業務指標配置失敗:', error);
+        console.error('Update業務指標ConfigureFailed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取報告
+  // GetReport
   const _getReports = useCallback(async () => {
     try {
       const _result = await (dispatch as any)(
@@ -235,12 +235,12 @@ export const _useBusinessMetrics = () => {
       ).unwrap();
       return result;
     } catch (error) {
-      console.error('獲取業務指標報告失敗:', error);
+      console.error('Get業務指標報告Failed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 獲取洞察
+  // Get洞察
   const _getInsights = useCallback(async () => {
     try {
       const _result = await (dispatch as any)(
@@ -248,12 +248,12 @@ export const _useBusinessMetrics = () => {
       ).unwrap();
       return result;
     } catch (error) {
-      console.error('獲取業務指標洞察失敗:', error);
+      console.error('Get業務指標洞察Failed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 獲取建議
+  // Get建議
   const _getRecommendations = useCallback(async () => {
     try {
       const _result = await (dispatch as any)(
@@ -261,12 +261,12 @@ export const _useBusinessMetrics = () => {
       ).unwrap();
       return result;
     } catch (error) {
-      console.error('獲取業務指標建議失敗:', error);
+      console.error('Get業務指標建議Failed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 獲取警報
+  // GetAlert
   const _getAlerts = useCallback(async () => {
     try {
       const _result = await (dispatch as any)(
@@ -274,12 +274,12 @@ export const _useBusinessMetrics = () => {
       ).unwrap();
       return result;
     } catch (error) {
-      console.error('獲取業務指標警報失敗:', error);
+      console.error('Get業務指標警報Failed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 獲取實時指標
+  // Get實時指標
   const _getRealTimeMetrics = useCallback(async () => {
     try {
       const _result = await (dispatch as any)(
@@ -287,22 +287,22 @@ export const _useBusinessMetrics = () => {
       ).unwrap();
       return result;
     } catch (error) {
-      console.error('獲取實時業務指標失敗:', error);
+      console.error('Get實時業務指標Failed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 清除錯誤
+  // ClearError
   const _clearErrorHandler = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 清除導出錯誤
+  // ClearExportError
   const _clearExportErrorHandler = useCallback(() => {
     dispatch(clearExportError());
   }, [dispatch]);
 
-  // 設置過濾器
+  // SettingsFilter器
   const _setFilterHandler = useCallback(
     (filter: BusinessMetricsFilter) => {
       dispatch(setFilter(filter));
@@ -310,12 +310,12 @@ export const _useBusinessMetrics = () => {
     [dispatch]
   );
 
-  // 清除過濾器
+  // ClearFilter器
   const _clearFilterHandler = useCallback(() => {
     dispatch(clearFilter());
   }, [dispatch]);
 
-  // 更新實時指標
+  // Update實時指標
   const _updateRealTimeMetricsHandler = useCallback(
     (metrics: unknown) => {
       dispatch(updateRealTimeMetrics(metrics));
@@ -323,7 +323,7 @@ export const _useBusinessMetrics = () => {
     [dispatch]
   );
 
-  // 添加事件監聽器
+  // AddEvent監聽器
   const _addEventListenerHandler = useCallback(
     (eventType: string, listener: (data: unknown) => void) => {
       dispatch(addEventListener({ eventType, listener }));
@@ -331,7 +331,7 @@ export const _useBusinessMetrics = () => {
     [dispatch]
   );
 
-  // 移除事件監聽器
+  // RemoveEvent監聽器
   const _removeEventListenerHandler = useCallback(
     (eventType: string, listener: (data: unknown) => void) => {
       dispatch(removeEventListener({ eventType, listener }));
@@ -339,7 +339,7 @@ export const _useBusinessMetrics = () => {
     [dispatch]
   );
 
-  // 計算屬性
+  // 計算Property
   const _activeAlerts = useMemo(() => {
     return alerts.filter(alert => !alert.acknowledged);
   }, [alerts]);
@@ -366,14 +366,14 @@ export const _useBusinessMetrics = () => {
     return health === 'excellent' || health === 'good';
   }, [analysis]);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (!isInitialized) {
       initialize();
     }
   }, [isInitialized, initialize]);
 
-  // 定期更新實時指標
+  // 定期Update實時指標
   useEffect(() => {
     if (isInitialized && config?.realTimeUpdates) {
       const _interval = setInterval(() => {
@@ -386,7 +386,7 @@ export const _useBusinessMetrics = () => {
   }, [isInitialized, config, getRealTimeMetrics]);
 
   return {
-    // 狀態
+    // Status
     isInitialized,
     isLoading,
     error,
@@ -404,7 +404,7 @@ export const _useBusinessMetrics = () => {
     isExporting,
     exportError,
 
-    // 計算屬性
+    // 計算Property
     activeAlerts,
     criticalAlerts,
     positiveInsights,
@@ -412,7 +412,7 @@ export const _useBusinessMetrics = () => {
     highPriorityRecommendations,
     isHealthy,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     getAnalysis,
     generateReport,
@@ -429,7 +429,7 @@ export const _useBusinessMetrics = () => {
     getAlerts,
     getRealTimeMetrics,
 
-    // 工具方法
+    // ToolMethod
     clearError: clearErrorHandler,
     clearExportError: clearExportErrorHandler,
     setFilter: setFilterHandler,

@@ -108,7 +108,7 @@ export const BiometricAuthButton: React.FC<BiometricAuthButtonProps> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    // 處理能力檢測結果
+    // Handle能力檢測結果
     if (capabilities.length > 0) {
       const _available = capabilities
         .filter(cap => cap.isAvailable && cap.isEnrolled)
@@ -120,7 +120,7 @@ export const BiometricAuthButton: React.FC<BiometricAuthButtonProps> = ({
   }, [capabilities, onCapabilityDetected]);
 
   useEffect(() => {
-    // 處理認證成功
+    // HandleAuthenticateSuccess
     if (authResult && authResult.success) {
       onAuthSuccess?.(authResult);
       dispatch(clearAuthResult());
@@ -128,16 +128,16 @@ export const BiometricAuthButton: React.FC<BiometricAuthButtonProps> = ({
   }, [authResult, onAuthSuccess, dispatch]);
 
   useEffect(() => {
-    // 處理認證錯誤
+    // HandleAuthenticateError
     if (authError) {
       onAuthError?.(authError);
-      Alert.alert('認證失敗', authError);
+      Alert.alert('認證Failed', authError);
       dispatch(clearAuthError());
     }
   }, [authError, onAuthError, dispatch]);
 
   /**
-   * 執行生物識別認證
+   * 執Row生物識別Authenticate
    */
   const _handleAuthenticate = async () => {
     try {
@@ -157,12 +157,12 @@ export const BiometricAuthButton: React.FC<BiometricAuthButtonProps> = ({
 
       await dispatch(authenticateWithBiometric(authRequest)).unwrap();
     } catch (error: unknown) {
-      console.error('生物識別認證失敗:', error);
+      console.error('生物識別認證Failed:', error);
     }
   };
 
   /**
-   * 獲取主要生物識別類型
+   * Get主要生物識別Class型
    */
   const _getPrimaryBiometricType = (): BiometricType | null => {
     if (availableTypes.length === 0) return null;
@@ -187,7 +187,7 @@ export const BiometricAuthButton: React.FC<BiometricAuthButtonProps> = ({
   };
 
   /**
-   * 渲染能力信息
+   * 渲染能力Information
    */
   const _renderCapabilityInfo = () => {
     if (!showCapabilityInfo || isCapabilityLoading) return null;

@@ -1,4 +1,4 @@
-// AI 聊天助手類型定義
+// AI 聊天助手Class型定義
 
 export enum MessageType {
   USER = 'user',

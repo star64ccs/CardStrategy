@@ -1,4 +1,4 @@
-// 模擬鑑定系統類型定義
+// 模擬鑑定系統Class型定義
 
 export interface AppraisalRequest {
   cardId: string;
@@ -115,7 +115,7 @@ export interface AppraisalState {
   loading: boolean;
 }
 
-// 評分標準
+// 評分Standard
 export const _GRADE_STANDARDS = {
   MINT: { min: 9.5, max: 10.0, description: '完美狀態' },
   'NM-MT': { min: 9.0, max: 9.4, description: '近完美狀態' },

@@ -36,13 +36,13 @@ class AssessmentService {
 
       logger.info('AssessmentService 初始化完成');
     } catch (error) {
-      logger.error('AssessmentService 初始化失敗:', error);
+      logger.error('AssessmentService InitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建評估計劃
+   * Create評估計劃
    */
   async createAssessmentSchedule(scheduleData) {
     try {
@@ -61,20 +61,20 @@ class AssessmentService {
         metadata: scheduleData.metadata,
       });
 
-      // 計算下次運行時間
+      // 計算下次運RowTime
       schedule.nextRunDate = this.calculateNextRunDate(schedule);
       await schedule.save();
 
-      logger.info(`評估計劃創建成功: ${schedule.name}`);
+      logger.info(`評估計劃CreateSuccess: ${schedule.name}`);
       return schedule;
     } catch (error) {
-      logger.error('創建評估計劃失敗:', error);
+      logger.error('Create評估計劃Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 執行定期評估
+   * 執Row定期評估
    */
   async executeScheduledAssessment(
     scheduleId,
@@ -90,7 +90,7 @@ class AssessmentService {
         throw new Error('評估計劃不存在或已停用');
       }
 
-      // 創建評估記錄
+      // Create評估Record
 // eslint-disable-next-line no-unused-vars
       const assessment = await DataQualityAssessment.create({
         assessmentType: schedule.assessmentType,
@@ -102,27 +102,27 @@ class AssessmentService {
         triggeredByUserId,
       });
 
-      // 執行評估
+      // 執Row評估
 // eslint-disable-next-line no-unused-vars
       const results = await this.performAssessment(
         schedule.dataTypes,
         schedule.assessmentCriteria
       );
 
-      // 更新評估結果
+      // Update評估結果
       assessment.results = results;
       assessment.status = 'completed';
       assessment.executionTime = Date.now() - startTime;
       assessment.assessmentDate = new Date();
       await assessment.save();
 
-      // 更新計劃統計
+      // Update計劃Statistics
       schedule.totalRuns += 1;
       schedule.successfulRuns += 1;
       schedule.lastRunDate = new Date();
       schedule.nextRunDate = this.calculateNextRunDate(schedule);
 
-      // 更新平均執行時間
+      // Update平均執RowTime
       if (schedule.averageExecutionTime) {
         schedule.averageExecutionTime = Math.round(
           (schedule.averageExecutionTime + assessment.executionTime) / 2
@@ -133,17 +133,17 @@ class AssessmentService {
 
       await schedule.save();
 
-      // 發送通知
+      // SendNotification
       await this.sendAssessmentNotifications(schedule, assessment, 'success');
 
       logger.info(
-        `評估執行成功: ${schedule.name}, 執行時間: ${assessment.executionTime}ms`
+        `評估執行Success: ${schedule.name}, 執行時間: ${assessment.executionTime}ms`
       );
       return assessment;
     } catch (error) {
-      logger.error('評估執行失敗:', error);
+      logger.error('評估執行Failed:', error);
 
-      // 更新失敗狀態
+      // UpdateFailedStatus
       if (assessment) {
         assessment.status = 'failed';
         assessment.errorMessage = error.message;
@@ -151,7 +151,7 @@ class AssessmentService {
         await assessment.save();
       }
 
-      // 更新計劃失敗統計
+      // Update計劃FailedStatistics
       if (schedule) {
         schedule.totalRuns += 1;
         schedule.failedRuns += 1;
@@ -159,7 +159,7 @@ class AssessmentService {
         await schedule.save();
       }
 
-      // 發送失敗通知
+      // SendFailedNotification
       if (schedule) {
         await this.sendAssessmentNotifications(schedule, assessment, 'failure');
       }
@@ -169,7 +169,7 @@ class AssessmentService {
   }
 
   /**
-   * 執行手動評估
+   * 執RowManual評估
    */
   async executeManualAssessment(assessmentData) {
     const startTime = Date.now();
@@ -198,16 +198,16 @@ class AssessmentService {
       assessment.assessmentDate = new Date();
       await assessment.save();
 
-      logger.info(`手動評估執行成功, 執行時間: ${assessment.executionTime}ms`);
+      logger.info(`手動評估執行Success, 執行時間: ${assessment.executionTime}ms`);
       return assessment;
     } catch (error) {
-      logger.error('手動評估執行失敗:', error);
+      logger.error('手動評估執行Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 執行實際評估邏輯
+   * 執Row實際評估邏輯
    */
   async performAssessment(dataTypes, criteria) {
 // eslint-disable-next-line no-unused-vars
@@ -256,7 +256,7 @@ class AssessmentService {
 
         typeCount++;
       } catch (error) {
-        logger.error(`評估數據類型失敗: ${dataType}`, error);
+        logger.error(`評估數據類型Failed: ${dataType}`, error);
         results.issues.push({
           type: 'error',
           dataType,
@@ -292,7 +292,7 @@ class AssessmentService {
   }
 
   /**
-   * 評估特定數據類型
+   * 評估SpecificDataClass型
    */
   async assessDataType(dataType, criteria) {
 // eslint-disable-next-line no-unused-vars
@@ -446,7 +446,7 @@ class AssessmentService {
   }
 
   /**
-   * 獲取必要字段
+   * Get必要Field
    */
   getRequiredFields(dataType) {
     const fieldMaps = {
@@ -464,10 +464,10 @@ class AssessmentService {
   }
 
   /**
-   * 檢查數據準確性
+   * CheckData準確性
    */
   isDataAccurate(item, dataType) {
-    // 簡化的準確性檢查邏輯
+    // 簡化的準確性Check邏輯
     switch (dataType) {
       case 'training':
         return item.qualityScore >= 0.7;
@@ -481,10 +481,10 @@ class AssessmentService {
   }
 
   /**
-   * 檢查數據一致性
+   * CheckData一致性
    */
   isDataConsistent(item1, item2, dataType) {
-    // 簡化的一致性檢查邏輯
+    // 簡化的一致性Check邏輯
     switch (dataType) {
       case 'training':
         return Math.abs(item1.qualityScore - item2.qualityScore) < 0.3;
@@ -502,7 +502,7 @@ class AssessmentService {
   }
 
   /**
-   * 獲取最大可接受年齡
+   * Get最大可AcceptAge
    */
   getMaxAcceptableAge(dataType) {
     const ageMaps = {
@@ -520,7 +520,7 @@ class AssessmentService {
   identifyIssues(data, dataType, criteria) {
     const issues = [];
 
-    // 檢查完整性問題
+    // Check完整性問題
     const completeness = this.calculateCompleteness(data, dataType);
     if (completeness < criteria.completeness.threshold) {
       issues.push({
@@ -530,7 +530,7 @@ class AssessmentService {
       });
     }
 
-    // 檢查準確性問題
+    // Check準確性問題
     const accuracy = this.calculateAccuracy(data, dataType);
     if (accuracy < criteria.accuracy.threshold) {
       issues.push({
@@ -540,7 +540,7 @@ class AssessmentService {
       });
     }
 
-    // 檢查時效性問題
+    // Check時效性問題
     const timeliness = this.calculateTimeliness(data, dataType);
     if (timeliness < criteria.timeliness.threshold) {
       issues.push({
@@ -614,7 +614,7 @@ class AssessmentService {
   }
 
   /**
-   * 計算下次運行時間
+   * 計算下次運RowTime
    */
   calculateNextRunDate(schedule) {
 // eslint-disable-next-line no-unused-vars
@@ -651,7 +651,7 @@ class AssessmentService {
         return nextQuarter;
 
       default:
-        return new Date(now.getTime() + 24 * 60 * 60 * 1000); // 默認一天後
+        return new Date(now.getTime() + 24 * 60 * 60 * 1000); // Default一天後
     }
   }
 
@@ -671,7 +671,7 @@ class AssessmentService {
   }
 
   /**
-   * 發送評估通知
+   * Send評估Notification
    */
   async sendAssessmentNotifications(schedule, assessment, status) {
     const settings = schedule.notificationSettings;
@@ -680,13 +680,13 @@ class AssessmentService {
     if (status === 'failure' && !settings.onFailure) return;
     if (status === 'completion' && !settings.onCompletion) return;
 
-    // 這裡可以實現實際的通知邏輯
-    // 例如發送郵件、Slack消息等
+    // 這裡可以實現實際的Notification邏輯
+    // 例如Send郵件、SlackMessage等
     logger.info(`發送評估通知: ${schedule.name}, 狀態: ${status}`);
   }
 
   /**
-   * 獲取評估列表
+   * Get評估List
    */
   async getAssessments(options = {}) {
     try {
@@ -733,13 +733,13 @@ class AssessmentService {
         totalPages: Math.ceil(assessments.count / limit),
       };
     } catch (error) {
-      logger.error('獲取評估列表失敗:', error);
+      logger.error('Get評估列表Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取評估統計
+   * Get評估Statistics
    */
   async getAssessmentStats(options = {}) {
     try {
@@ -788,7 +788,7 @@ class AssessmentService {
             ) / completedAssessments.length;
         }
 
-        // 狀態分佈
+        // Status分佈
         assessments.forEach((a) => {
           stats.statusDistribution[a.status] =
             (stats.statusDistribution[a.status] || 0) + 1;
@@ -819,13 +819,13 @@ class AssessmentService {
 
       return stats;
     } catch (error) {
-      logger.error('獲取評估統計失敗:', error);
+      logger.error('Get評估統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取計劃列表
+   * Get計劃List
    */
   async getSchedules(options = {}) {
     try {
@@ -858,13 +858,13 @@ class AssessmentService {
         totalPages: Math.ceil(schedules.count / limit),
       };
     } catch (error) {
-      logger.error('獲取計劃列表失敗:', error);
+      logger.error('Get計劃列表Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新計劃狀態
+   * Update計劃Status
    */
   async updateScheduleStatus(scheduleId, isActive) {
     try {
@@ -882,13 +882,13 @@ class AssessmentService {
       );
       return schedule;
     } catch (error) {
-      logger.error('更新計劃狀態失敗:', error);
+      logger.error('Update計劃狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 刪除評估計劃
+   * Delete評估計劃
    */
   async deleteSchedule(scheduleId) {
     try {
@@ -899,10 +899,10 @@ class AssessmentService {
       }
 
       await schedule.destroy();
-      logger.info(`評估計劃刪除成功: ${schedule.name}`);
+      logger.info(`評估計劃DeleteSuccess: ${schedule.name}`);
       return true;
     } catch (error) {
-      logger.error('刪除評估計劃失敗:', error);
+      logger.error('Delete評估計劃Failed:', error);
       throw error;
     }
   }

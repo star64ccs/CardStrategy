@@ -1,7 +1,7 @@
 import { Card } from './cards';
 import type { BaseEntity, Address } from './common';
 
-// 交易相關類型
+// 交易相OffClass型
 export interface Transaction extends BaseEntity {
   userId: string;
   cardId: string;
@@ -43,7 +43,7 @@ export interface TransactionMetadata {
   trackingNumber?: string;
 }
 
-// 市場相關類型
+// 市場相OffClass型
 export interface MarketDataEntity extends BaseEntity {
   cardId: string;
   price: number;
@@ -57,7 +57,7 @@ export interface MarketDataEntity extends BaseEntity {
   lastUpdated: Date;
 }
 
-// 投資相關類型
+// 投資相OffClass型
 export interface Investment extends BaseEntity {
   userId: string;
   cardId: string;
@@ -66,7 +66,7 @@ export interface Investment extends BaseEntity {
   quantity: number;
   entryPrice: number;
   currentPrice: number;
-  entryValue: number; // 添加 entryValue
+  entryValue: number; // Add entryValue
   profitLoss: number;
   profitLossPercentage: number;
   status: InvestmentStatus;
@@ -76,7 +76,7 @@ export interface Investment extends BaseEntity {
 export type InvestmentType = 'buy' | 'sell' | 'hold';
 export type InvestmentStatus = 'active' | 'completed' | 'cancelled';
 
-// 投資建議類型
+// 投資建議Class型
 export interface InvestmentAdvice {
   cardId: string;
   recommendation: 'buy' | 'sell' | 'hold';
@@ -88,7 +88,7 @@ export interface InvestmentAdvice {
   factors: string[];
 }
 
-// 投資組合類型
+// 投資組合Class型
 export interface Portfolio {
   totalValue: number;
   totalProfitLoss: number;
@@ -115,7 +115,7 @@ export interface PortfolioPerformance {
   profitLossPercentage: number;
 }
 
-// 市場趨勢類型
+// 市場趨勢Class型
 export interface MarketTrend {
   cardId: string;
   trend: 'rising' | 'falling' | 'stable';
@@ -125,7 +125,7 @@ export interface MarketTrend {
   timeframe: string;
 }
 
-// 價格歷史類型
+// 價格歷史Class型
 export interface PriceHistory {
   cardId: string;
   dates: string[];
@@ -133,7 +133,7 @@ export interface PriceHistory {
   volumes: number[];
 }
 
-// Redux 投資狀態類型
+// Redux 投資StatusClass型
 export interface InvestmentState {
   investments: Investment[];
   portfolio: Portfolio;

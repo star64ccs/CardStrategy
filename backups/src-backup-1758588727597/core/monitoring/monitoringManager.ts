@@ -1,0 +1,626 @@
+/**
+ * 統一監控管理器
+ * 整合 APM、性能監控和告警管理功能
+ */
+
+import { logger } from '../../utils/logger';
+import AlertManager, { AlertConfig } from './alertManager';
+import APM, { APMConfig } from './apm';
+import PerformanceMonitor, { PerformanceConfig } from './performanceMonitor';
+
+export interface MonitoringConfig {
+  apm: APMConfig;
+  performance: PerformanceConfig;
+  alerts: AlertConfig;
+  enableIntegration: boolean;
+  enableDashboard: boolean;
+  enableReporting: boolean;
+  reportInterval: number;
+}
+
+export interface MonitoringStats {
+  apm: any;
+  performance: any;
+  alerts: any;
+  system: {
+    uptime: number;
+    memoryUsage: number;
+    cpuUsage: number;
+    diskUsage: number;
+  };
+  integration: {
+    totalMetrics: number;
+    activeAlerts: number;
+    performanceScore: number;
+    healthStatus: 'healthy' | 'warning' | 'critical';
+  };
+}
+
+export interface MonitoringReport {
+  timestamp: number;
+  summary: {
+    status: 'healthy' | 'warning' | 'critical';
+    performanceScore: number;
+    activeAlerts: number;
+    criticalIssues: number;
+  };
+  apm: {
+    stats: any;
+    topTransactions: any[];
+    errorRate: number;
+    averageResponseTime: number;
+  };
+  performance: {
+    stats: any;
+    webVitals: any[];
+    slowResources: any[];
+    memoryTrend: any;
+  };
+  alerts: {
+    stats: any;
+    activeAlerts: any[];
+    recentResolutions: any[];
+  };
+  recommendations: string[];
+}
+
+class MonitoringManager {
+  private static instance: MonitoringManager;
+  private config: MonitoringConfig;
+  private apm: APM;
+  private performanceMonitor: PerformanceMonitor;
+  private alertManager: AlertManager;
+  private stats: MonitoringStats;
+  private reports: MonitoringReport[] = [];
+  private isInitialized: boolean = false;
+  private startTime: number = Date.now();
+
+  private constructor(config: MonitoringConfig) {
+    this.config = {
+      enableIntegration: true,
+      enableDashboard: true,
+      enableReporting: true,
+      reportInterval: 300000, // 5分鐘
+      ...config,
+    };
+
+    this.stats = {
+      apm: {},
+      performance: {},
+      alerts: {},
+      system: {
+        uptime: 0,
+        memoryUsage: 0,
+        cpuUsage: 0,
+        diskUsage: 0,
+      },
+      integration: {
+        totalMetrics: 0,
+        activeAlerts: 0,
+        performanceScore: 0,
+        healthStatus: 'healthy',
+      },
+    };
+
+    this.initializeComponents();
+  }
+
+  public static getInstance(config?: MonitoringConfig): MonitoringManager {
+    if (!MonitoringManager.instance) {
+      if (!config) {
+        throw new Error(
+          'Monitoring manager configuration is required for first initialization'
+        );
+      }
+      MonitoringManager.instance = new MonitoringManager(config);
+    }
+    return MonitoringManager.instance;
+  }
+
+  /**
+   * 初始化監控管理器
+   */
+  public async initialize(): Promise<void> {
+    if (this.isInitialized) {
+      return;
+    }
+
+    try {
+      // 初始化各個組件
+      await this.apm.initialize();
+      await this.performanceMonitor.initialize();
+      await this.alertManager.initialize();
+
+      this.isInitialized = true;
+      logger.info('Monitoring manager initialized successfully', {
+        apm: this.config.apm.enabled,
+        performance: this.config.performance.enabled,
+        alerts: this.config.alerts.enabled,
+        integration: this.config.enableIntegration,
+      });
+
+      // 啟動定期任務
+      this.startPeriodicTasks();
+    } catch (error) {
+      logger.error('Failed to initialize monitoring manager', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 記錄自定義指標
+   */
+  public recordMetric(
+    name: string,
+    value: number,
+    unit: string = 'ms',
+    tags: Record<string, string> = {}
+  ): void {
+    try {
+      // 記錄到 APM
+      this.apm.recordMetric(name, value, unit, tags);
+
+      // 記錄到性能監控
+      this.performanceMonitor.recordCustomMetric(name, value);
+
+      logger.debug('Metric recorded to monitoring systems', {
+        name,
+        value,
+        unit,
+      });
+    } catch (error) {
+      logger.error('Failed to record metric', { name, value, error });
+    }
+  }
+
+  /**
+   * 開始事務追踪
+   */
+  public startTransaction(
+    name: string,
+    tags: Record<string, string> = {}
+  ): string {
+    try {
+      const transactionId = this.apm.startTransaction(name, tags);
+      logger.debug('Transaction started', { id: transactionId, name });
+      return transactionId;
+    } catch (error) {
+      logger.error('Failed to start transaction', { name, error });
+      return '';
+    }
+  }
+
+  /**
+   * 結束事務追踪
+   */
+  public endTransaction(
+    transactionId: string,
+    status: 'success' | 'error' | 'timeout' = 'success'
+  ): void {
+    try {
+      this.apm.endTransaction(transactionId, status);
+      logger.debug('Transaction ended', { id: transactionId, status });
+    } catch (error) {
+      logger.error('Failed to end transaction', { transactionId, error });
+    }
+  }
+
+  /**
+   * 創建告警
+   */
+  public async createAlert(
+    title: string,
+    message: string,
+    severity: 'low' | 'medium' | 'high' | 'critical',
+    category: string,
+    source: string,
+    metadata: Record<string, any> = {},
+    tags: Record<string, string> = {}
+  ): Promise<string> {
+    try {
+      const alertId = await this.alertManager.createAlert(
+        title,
+        message,
+        severity,
+        category,
+        source,
+        metadata,
+        tags
+      );
+
+      logger.info('Alert created through monitoring manager', {
+        alertId,
+        title,
+        severity,
+      });
+      return alertId;
+    } catch (error) {
+      logger.error('Failed to create alert', { title, severity, error });
+      return '';
+    }
+  }
+
+  /**
+   * 獲取綜合監控統計
+   */
+  public getStats(): MonitoringStats {
+    this.stats.apm = this.apm.getStats();
+    this.stats.performance = this.performanceMonitor.getStats();
+    this.stats.alerts = this.alertManager.getStats();
+
+    // 更新系統指標
+    this.updateSystemMetrics();
+
+    // 更新集成指標
+    this.updateIntegrationMetrics();
+
+    return { ...this.stats };
+  }
+
+  /**
+   * 獲取監控報告
+   */
+  public getReport(): MonitoringReport {
+    const apmStats = this.apm.getStats();
+    const performanceStats = this.performanceMonitor.getStats();
+    const alertStats = this.alertManager.getStats();
+
+    const report: MonitoringReport = {
+      timestamp: Date.now(),
+      summary: {
+        status: this.determineOverallStatus(
+          apmStats,
+          performanceStats,
+          alertStats
+        ),
+        performanceScore: performanceStats.performanceScore || 0,
+        activeAlerts: alertStats.activeAlerts,
+        criticalIssues: this.countCriticalIssues(apmStats, alertStats),
+      },
+      apm: {
+        stats: apmStats,
+        topTransactions: this.getTopTransactions(),
+        errorRate: apmStats.errorRate || 0,
+        averageResponseTime: apmStats.averageResponseTime || 0,
+      },
+      performance: {
+        stats: performanceStats,
+        webVitals: this.getLatestWebVitals(),
+        slowResources: performanceStats.slowResources || [],
+        memoryTrend: this.getMemoryTrend(),
+      },
+      alerts: {
+        stats: alertStats,
+        activeAlerts: this.getActiveAlerts(),
+        recentResolutions: this.getRecentResolutions(),
+      },
+      recommendations: this.generateRecommendations(
+        apmStats,
+        performanceStats,
+        alertStats
+      ),
+    };
+
+    return report;
+  }
+
+  /**
+   * 健康檢查
+   */
+  public async healthCheck(): Promise<{ healthy: boolean; details: any }> {
+    try {
+      const apmHealth = await this.apm.healthCheck();
+      const performanceHealth = await this.performanceMonitor.healthCheck();
+      const alertHealth = await this.alertManager.healthCheck();
+
+      const healthy =
+        apmHealth.healthy && performanceHealth.healthy && alertHealth.healthy;
+
+      return {
+        healthy,
+        details: {
+          initialized: this.isInitialized,
+          components: {
+            apm: apmHealth.healthy,
+            performance: performanceHealth.healthy,
+            alerts: alertHealth.healthy,
+          },
+          stats: this.getStats(),
+          lastReport:
+            this.reports.length > 0
+              ? this.reports[this.reports.length - 1]
+              : null,
+        },
+      };
+    } catch (error) {
+      logger.error('Monitoring manager health check failed', error);
+      return {
+        healthy: false,
+        details: {
+          initialized: this.isInitialized,
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
+      };
+    }
+  }
+
+  /**
+   * 導出監控數據
+   */
+  public exportData(
+    format: 'json' | 'csv' | 'pdf' = 'json',
+    timeRange?: { start: number; end: number }
+  ): any {
+    try {
+      const data = {
+        timestamp: Date.now(),
+        config: this.config,
+        stats: this.getStats(),
+        reports: timeRange
+          ? this.reports.filter(
+              r =>
+                r.timestamp >= timeRange.start && r.timestamp <= timeRange.end
+            )
+          : this.reports,
+      };
+
+      switch (format) {
+        case 'json':
+          return data;
+        case 'csv':
+          return this.convertToCSV(data);
+        case 'pdf':
+          return this.generatePDFReport(data);
+        default:
+          return data;
+      }
+    } catch (error) {
+      logger.error('Failed to export monitoring data', { format, error });
+      return null;
+    }
+  }
+
+  private initializeComponents(): void {
+    this.apm = APM.getInstance(this.config.apm);
+    this.performanceMonitor = PerformanceMonitor.getInstance(
+      this.config.performance
+    );
+    this.alertManager = AlertManager.getInstance(this.config.alerts);
+  }
+
+  private updateSystemMetrics(): void {
+    this.stats.system.uptime = Date.now() - this.startTime;
+
+    // 模擬系統指標收集
+    this.stats.system.memoryUsage = Math.random() * 0.8;
+    this.stats.system.cpuUsage = Math.random() * 0.7;
+    this.stats.system.diskUsage = Math.random() * 0.6;
+  }
+
+  private updateIntegrationMetrics(): void {
+    const apmStats = this.stats.apm;
+    const performanceStats = this.stats.performance;
+    const alertStats = this.stats.alerts;
+
+    this.stats.integration.totalMetrics =
+      (apmStats.totalMetrics || 0) + (performanceStats.totalReports || 0);
+
+    this.stats.integration.activeAlerts = alertStats.activeAlerts || 0;
+    this.stats.integration.performanceScore =
+      performanceStats.performanceScore || 0;
+    this.stats.integration.healthStatus = this.determineHealthStatus(
+      apmStats,
+      performanceStats,
+      alertStats
+    );
+  }
+
+  private determineOverallStatus(
+    apmStats: any,
+    performanceStats: any,
+    alertStats: any
+  ): 'healthy' | 'warning' | 'critical' {
+    const criticalAlerts = alertStats.alertsBySeverity?.critical || 0;
+    const errorRate = apmStats.errorRate || 0;
+    const performanceScore = performanceStats.performanceScore || 0;
+
+    if (criticalAlerts > 0 || errorRate > 0.1 || performanceScore < 50) {
+      return 'critical';
+    }
+
+    if (
+      alertStats.activeAlerts > 10 ||
+      errorRate > 0.05 ||
+      performanceScore < 70
+    ) {
+      return 'warning';
+    }
+
+    return 'healthy';
+  }
+
+  private determineHealthStatus(
+    apmStats: any,
+    performanceStats: any,
+    alertStats: any
+  ): 'healthy' | 'warning' | 'critical' {
+    return this.determineOverallStatus(apmStats, performanceStats, alertStats);
+  }
+
+  private countCriticalIssues(apmStats: any, alertStats: any): number {
+    return (
+      (alertStats.alertsBySeverity?.critical || 0) +
+      (apmStats.errorRate > 0.1 ? 1 : 0)
+    );
+  }
+
+  private getTopTransactions(): any[] {
+    // 模擬獲取頂級事務
+    return [];
+  }
+
+  private getLatestWebVitals(): any[] {
+    // 模擬獲取最新 Web Vitals
+    return [];
+  }
+
+  private getMemoryTrend(): any {
+    // 模擬獲取內存趨勢
+    return { trend: 'stable', value: 0.5 };
+  }
+
+  private getActiveAlerts(): any[] {
+    return this.alertManager.getAlerts({ status: ['active'], limit: 10 });
+  }
+
+  private getRecentResolutions(): any[] {
+    return this.alertManager.getAlerts({ status: ['resolved'], limit: 5 });
+  }
+
+  private generateRecommendations(
+    apmStats: any,
+    performanceStats: any,
+    alertStats: any
+  ): string[] {
+    const recommendations: string[] = [];
+
+    // 基於錯誤率的建議
+    if (apmStats.errorRate > 0.05) {
+      recommendations.push(
+        'High error rate detected. Consider investigating recent deployments.'
+      );
+    }
+
+    // 基於性能的建議
+    if (performanceStats.performanceScore < 70) {
+      recommendations.push(
+        'Performance score is low. Consider optimizing slow resources.'
+      );
+    }
+
+    // 基於告警的建議
+    if (alertStats.activeAlerts > 20) {
+      recommendations.push(
+        'High number of active alerts. Consider reviewing alert thresholds.'
+      );
+    }
+
+    // 基於內存的建議
+    const memoryTrend = this.getMemoryTrend();
+    if (memoryTrend.trend === 'increasing') {
+      recommendations.push(
+        'Memory usage is increasing. Monitor for potential memory leaks.'
+      );
+    }
+
+    return recommendations;
+  }
+
+  private convertToCSV(data: any): string {
+    // 簡單的 CSV 轉換
+    const headers = ['timestamp', 'metric', 'value'];
+    const rows = [headers.join(',')];
+
+    // 添加一些示例數據行
+    rows.push(`${data.timestamp},uptime,${data.stats.system.uptime}`);
+    rows.push(
+      `${data.timestamp},memory_usage,${data.stats.system.memoryUsage}`
+    );
+    rows.push(`${data.timestamp},cpu_usage,${data.stats.system.cpuUsage}`);
+
+    return rows.join('\n');
+  }
+
+  private generatePDFReport(data: any): any {
+    // 模擬 PDF 報告生成
+    return {
+      type: 'pdf',
+      content: 'PDF report would be generated here',
+      size: 1024,
+    };
+  }
+
+  private startPeriodicTasks(): void {
+    // 定期生成報告
+    if (this.config.enableReporting) {
+      setInterval(() => {
+        this.generatePeriodicReport();
+      }, this.config.reportInterval);
+    }
+
+    // 定期檢查系統健康
+    setInterval(() => {
+      this.performHealthCheck();
+    }, 60000); // 每分鐘檢查一次
+
+    // 定期清理舊數據
+    setInterval(
+      () => {
+        this.cleanupOldData();
+      },
+      24 * 60 * 60 * 1000
+    ); // 每天清理一次
+  }
+
+  private generatePeriodicReport(): void {
+    try {
+      const report = this.getReport();
+      this.reports.push(report);
+
+      // 限制報告數量
+      if (this.reports.length > 1000) {
+        this.reports = this.reports.slice(-500);
+      }
+
+      logger.debug('Periodic monitoring report generated', {
+        timestamp: report.timestamp,
+        status: report.summary.status,
+        activeAlerts: report.summary.activeAlerts,
+        performanceScore: report.summary.performanceScore,
+      });
+    } catch (error) {
+      logger.error('Failed to generate periodic report', error);
+    }
+  }
+
+  private performHealthCheck(): void {
+    this.healthCheck()
+      .then(result => {
+        if (!result.healthy) {
+          logger.warn('System health check failed', result.details);
+
+          // 創建健康檢查告警
+          this.createAlert(
+            'System Health Check Failed',
+            'One or more monitoring components are not healthy',
+            'high',
+            'system',
+            'monitoring-manager'
+          );
+        }
+      })
+      .catch(error => {
+        logger.error('Health check error', error);
+      });
+  }
+
+  private cleanupOldData(): void {
+    try {
+      const cutoffTime = Date.now() - 30 * 24 * 60 * 60 * 1000; // 30天前
+      const initialCount = this.reports.length;
+
+      this.reports = this.reports.filter(
+        report => report.timestamp > cutoffTime
+      );
+
+      const cleanedCount = initialCount - this.reports.length;
+      if (cleanedCount > 0) {
+        logger.debug('Old monitoring data cleaned up', { count: cleanedCount });
+      }
+    } catch (error) {
+      logger.error('Failed to cleanup old monitoring data', error);
+    }
+  }
+}
+
+export default MonitoringManager;

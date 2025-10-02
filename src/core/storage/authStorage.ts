@@ -10,20 +10,20 @@ class AuthStorage {
   private static readonly USER_KEY = 'auth_user';
 
   /**
-   * 保存會話到本地存儲
+   * Save會話到LocalStorage
    */
   static async setSession(session: Session): Promise<void> {
     try {
       await AsyncStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
       logger.debug('會話已保存到本地存儲');
     } catch (error: unknown) {
-      logger.error('保存會話失敗:', error);
-      throw new Error(`保存會話失敗: ${error.message}`);
+      logger.error('保存會話Failed:', error);
+      throw new Error(`保存會話Failed: ${error.message}`);
     }
   }
 
   /**
-   * 從本地存儲獲取會話
+   * 從LocalStorageGet會話
    */
   static async getSession(): Promise<Session | null> {
     try {
@@ -34,7 +34,7 @@ class AuthStorage {
 
       const _session = JSON.parse(sessionData);
 
-      // 轉換日期字符串為 Date 對象
+      // ConvertDay字符串為 Date Object
       if (session.createdAt) {
         session.createdAt = new Date(session.createdAt);
       }
@@ -47,89 +47,89 @@ class AuthStorage {
 
       return session;
     } catch (error: unknown) {
-      logger.error('獲取會話失敗:', error);
+      logger.error('Get會話Failed:', error);
       return null;
     }
   }
 
   /**
-   * 清除本地存儲的會話
+   * ClearLocalStorage的會話
    */
   static async clearSession(): Promise<void> {
     try {
       await AsyncStorage.removeItem(this.SESSION_KEY);
       logger.debug('會話已從本地存儲清除');
     } catch (error: unknown) {
-      logger.error('清除會話失敗:', error);
-      throw new Error(`清除會話失敗: ${error.message}`);
+      logger.error('清除會話Failed:', error);
+      throw new Error(`清除會話Failed: ${error.message}`);
     }
   }
 
   /**
-   * 保存訪問令牌
+   * Save訪問令牌
    */
   static async setToken(token: string): Promise<void> {
     try {
       await AsyncStorage.setItem(this.TOKEN_KEY, token);
       logger.debug('訪問令牌已保存');
     } catch (error: unknown) {
-      logger.error('保存訪問令牌失敗:', error);
-      throw new Error(`保存訪問令牌失敗: ${error.message}`);
+      logger.error('保存訪問令牌Failed:', error);
+      throw new Error(`保存訪問令牌Failed: ${error.message}`);
     }
   }
 
   /**
-   * 獲取訪問令牌
+   * Get訪問令牌
    */
   static async getToken(): Promise<string | null> {
     try {
       return await AsyncStorage.getItem(this.TOKEN_KEY);
     } catch (error: unknown) {
-      logger.error('獲取訪問令牌失敗:', error);
+      logger.error('Get訪問令牌Failed:', error);
       return null;
     }
   }
 
   /**
-   * 保存刷新令牌
+   * SaveRefresh令牌
    */
   static async setRefreshToken(refreshToken: string): Promise<void> {
     try {
       await AsyncStorage.setItem(this.REFRESH_TOKEN_KEY, refreshToken);
       logger.debug('刷新令牌已保存');
     } catch (error: unknown) {
-      logger.error('保存刷新令牌失敗:', error);
-      throw new Error(`保存刷新令牌失敗: ${error.message}`);
+      logger.error('保存刷新令牌Failed:', error);
+      throw new Error(`保存刷新令牌Failed: ${error.message}`);
     }
   }
 
   /**
-   * 獲取刷新令牌
+   * GetRefresh令牌
    */
   static async getRefreshToken(): Promise<string | null> {
     try {
       return await AsyncStorage.getItem(this.REFRESH_TOKEN_KEY);
     } catch (error: unknown) {
-      logger.error('獲取刷新令牌失敗:', error);
+      logger.error('Get刷新令牌Failed:', error);
       return null;
     }
   }
 
   /**
-   * 保存用戶信息
+   * SaveUserInformation
    */
   static async setUser(user: unknown): Promise<void> {
     try {
       await AsyncStorage.setItem(this.USER_KEY, JSON.stringify(user));
       logger.debug('用戶信息已保存');
     } catch (error: unknown) {
-      logger.error('保存用戶信息失敗:', error);
-      throw new Error(`保存用戶信息失敗: ${error.message}`);
+      logger.error('保存用戶信息Failed:', error);
+      throw new Error(`保存用戶信息Failed: ${error.message}`);
     }
   }
 
   /**
-   * 獲取用戶信息
+   * GetUserInformation
    */
   static async getUser(): Promise<any | null> {
     try {
@@ -139,13 +139,13 @@ class AuthStorage {
       }
       return JSON.parse(userData);
     } catch (error: unknown) {
-      logger.error('獲取用戶信息失敗:', error);
+      logger.error('Get用戶信息Failed:', error);
       return null;
     }
   }
 
   /**
-   * 清除所有認證相關數據
+   * Clear所有Authenticate相OffData
    */
   static async clearAll(): Promise<void> {
     try {
@@ -157,13 +157,13 @@ class AuthStorage {
       ]);
       logger.debug('所有認證數據已清除');
     } catch (error: unknown) {
-      logger.error('清除認證數據失敗:', error);
-      throw new Error(`清除認證數據失敗: ${error.message}`);
+      logger.error('清除認證數據Failed:', error);
+      throw new Error(`清除認證數據Failed: ${error.message}`);
     }
   }
 
   /**
-   * 檢查是否有存儲的認證數據
+   * CheckYesNo有Storage的AuthenticateData
    */
   static async hasAuthData(): Promise<boolean> {
     try {
@@ -176,13 +176,13 @@ class AuthStorage {
 
       return !!(session || token || refreshToken || user);
     } catch (error: unknown) {
-      logger.error('檢查認證數據失敗:', error);
+      logger.error('Check認證數據Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取所有認證相關的鍵
+   * Get所有Authenticate相Off的Key
    */
   static getAuthKeys(): string[] {
     return [

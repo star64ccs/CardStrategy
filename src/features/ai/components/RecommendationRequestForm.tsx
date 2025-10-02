@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-// 移除 Picker 依賴，使用自定義選擇器
+// Remove Picker 依賴，使用CustomSelect器
 import { useRecommendation } from '../hooks/useRecommendation';
 import type {
   InvestmentRecommendationRequest,
@@ -71,7 +71,7 @@ export const RecommendationRequestForm: React.FC<
 
   useEffect(() => {
     if (error) {
-      Alert.alert('錯誤', error.message);
+      Alert.alert('Error', error.message);
       clearError();
     }
   }, [error, clearError]);
@@ -131,13 +131,13 @@ export const RecommendationRequestForm: React.FC<
 
   const _handleSubmit = async () => {
     try {
-      // 驗證必填欄位
+      // Verify必填欄位
       if (
         !formData.budget ||
         formData.budget < RECOMMENDATION_CONSTANTS.MIN_BUDGET
       ) {
         Alert.alert(
-          '錯誤',
+          'Error',
           `預算不能少於 ${RECOMMENDATION_CONSTANTS.MIN_BUDGET}`
         );
         return;
@@ -145,25 +145,25 @@ export const RecommendationRequestForm: React.FC<
 
       if (formData.budget > RECOMMENDATION_CONSTANTS.MAX_BUDGET) {
         Alert.alert(
-          '錯誤',
+          'Error',
           `預算不能超過 ${RECOMMENDATION_CONSTANTS.MAX_BUDGET}`
         );
         return;
       }
 
       if (!formData.investmentGoals || formData.investmentGoals.length === 0) {
-        Alert.alert('錯誤', '請至少選擇一個投資目標');
+        Alert.alert('Error', '請至少選擇一個投資目標');
         return;
       }
 
       if (!formData.userProfile) {
-        Alert.alert('錯誤', '請先設定用戶配置');
+        Alert.alert('Error', '請先設定用戶配置');
         return;
       }
 
       const _request = formData as InvestmentRecommendationRequest;
       const _result = await generateInvestmentRecommendation(request);
-      Alert.alert('成功', '投資建議已生成');
+      Alert.alert('Success', '投資建議已生成');
       onRecommendationGenerated?.(result);
     } catch (error) {
       console.error('Failed to generate recommendation:', error);
@@ -226,7 +226,7 @@ export const RecommendationRequestForm: React.FC<
       <Text style={styles.title}>投資建議請求</Text>
 
       <View style={styles.form}>
-        {/* 基本參數 */}
+        {/* 基本Parameter */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>基本參數</Text>
 
@@ -329,7 +329,7 @@ export const RecommendationRequestForm: React.FC<
           ))}
         </View>
 
-        {/* 排除類別 */}
+        {/* 排除Class別 */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>排除類別（可選）</Text>
 
@@ -363,7 +363,7 @@ export const RecommendationRequestForm: React.FC<
           </View>
         </View>
 
-        {/* 用戶配置摘要 */}
+        {/* UserConfigure摘要 */}
         {formData.userProfile && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>用戶配置摘要</Text>
@@ -408,7 +408,7 @@ export const RecommendationRequestForm: React.FC<
           </View>
         )}
 
-        {/* 操作按鈕 */}
+        {/* Operation按鈕 */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.cancelButton]}

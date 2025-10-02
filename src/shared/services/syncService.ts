@@ -1,8 +1,8 @@
 import { logger } from '../../core/utils/logger';
 
 /**
- * 同步服務
- * 處理數據同步相關功能
+ * SyncService
+ * HandleDataSync相Off功能
  */
 export class SyncService {
   private static instance: SyncService;
@@ -17,18 +17,18 @@ export class SyncService {
   }
 
   /**
-   * 同步數據
+   * SyncData
    */
   async syncData(): Promise<void> {
     try {
       logger.info('開始數據同步');
-      // 實現數據同步邏輯
+      // 實現DataSync邏輯
     } catch (error) {
-      logger.error('數據同步失敗:', { error });
+      logger.error('數據同步Failed:', { error });
       throw error;
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _syncService = SyncService.getInstance();

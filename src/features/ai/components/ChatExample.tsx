@@ -80,15 +80,15 @@ export const ChatExample: React.FC = () => {
 
   const _handleBackFromChat = () => {
     setShowChat(false);
-    loadChatStats(); // 重新載入統計數據
+    loadChatStats(); // ReLoad統Count據
   };
 
   const _handleLoadStats = async () => {
     try {
       await loadChatStats();
-      Alert.alert('成功', '統計數據已更新');
+      Alert.alert('Success', '統計數據已更新');
     } catch (error) {
-      Alert.alert('錯誤', '載入統計數據失敗');
+      Alert.alert('Error', '載入統計數據Failed');
     }
   };
 
@@ -114,7 +114,7 @@ export const ChatExample: React.FC = () => {
           <Text style={styles.subtitle}>智能客服與投資諮詢系統</Text>
         </View>
 
-        {/* 統計概覽 */}
+        {/* Statistics概覽 */}
         {stats && (
           <View style={styles.statsContainer}>
             <Text style={styles.statsTitle}>系統統計</Text>
@@ -149,7 +149,7 @@ export const ChatExample: React.FC = () => {
           </View>
         )}
 
-        {/* 聊天類別選擇 */}
+        {/* 聊天Class別Select */}
         <View style={styles.categoriesContainer}>
           <Text style={styles.sectionTitle}>選擇聊天類別</Text>
           <View style={styles.categoriesGrid}>
@@ -177,7 +177,7 @@ export const ChatExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 功能說明 */}
+        {/* 功能Description */}
         <View style={styles.featuresContainer}>
           <Text style={styles.sectionTitle}>功能特色</Text>
 
@@ -226,7 +226,7 @@ export const ChatExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 使用說明 */}
+        {/* 使用Description */}
         <View style={styles.instructionsContainer}>
           <Text style={styles.sectionTitle}>使用說明</Text>
 
@@ -255,7 +255,7 @@ export const ChatExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 開始聊天按鈕 */}
+        {/* Begin聊天按鈕 */}
         <TouchableOpacity
           style={styles.startChatButton}
           onPress={() => handleCategorySelect(ChatCategory.GENERAL)}

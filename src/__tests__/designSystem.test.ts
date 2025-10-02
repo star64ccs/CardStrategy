@@ -1,4 +1,4 @@
-// 設計系統單元測試
+// 設計系統單元Test
 import { designSystemService } from '../services/designSystemService';
 import type {
   ComponentConfig,
@@ -15,7 +15,7 @@ const mockToken: DesignToken = {
   usage: ['Button', 'Link'],
 };
 
-// 模擬組件配置
+// 模擬ComponentConfigure
 const mockComponentConfig: ComponentConfig = {
   name: 'Button',
   category: 'atoms',
@@ -52,9 +52,9 @@ const mockComponentConfig: ComponentConfig = {
   },
 };
 
-describe('設計系統服務測試', () => {
+describe('設計系統Service測試', () => {
   beforeEach(() => {
-    // 重置服務狀態
+    // ResetServiceStatus
     designSystemService.setTheme('dark');
   });
 
@@ -226,7 +226,7 @@ describe('設計系統服務測試', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     test('應該處理不存在的組件', () => {
       const _component = designSystemService.getComponent(
         'NonExistentComponent'
@@ -262,7 +262,7 @@ describe('設計系統服務測試', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(100); // 應該在 100ms 內完成
+      expect(duration).toBeLessThan(100); // 應該在 100ms 內Complete
     });
 
     test('應該能夠快速處理大量令牌', () => {
@@ -280,7 +280,7 @@ describe('設計系統服務測試', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(100); // 應該在 100ms 內完成
+      expect(duration).toBeLessThan(100); // 應該在 100ms 內Complete
     });
   });
 });

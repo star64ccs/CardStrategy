@@ -1,4 +1,4 @@
-// 台灣公平交易法類型定義
+// 台灣公平交易法Class型定義
 // Taiwan Fair Trade Act Type Definitions
 
 export interface TaiwanFairTradePractice {

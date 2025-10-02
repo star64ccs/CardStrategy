@@ -7,15 +7,15 @@ const { enhancedHealthCheck } = require('../utils/enhanced-health-check');
 
 const router = express.Router();
 
-// ?��??�能?��?
+// ?��??�能?��?
 router.get('/metrics', getPerformanceMetrics);
 
-// ?�置?�能?��?
+// ?�置?�能?��?
 router.post('/metrics/reset', resetPerformanceMetrics);
 
-// 增強?�健康檢??router.get('/health', enhancedHealthCheck);
+// 增強?�健康檢??router.get('/health', enhancedHealthCheck);
 
-// 系統信息
+// 系統Information
 router.get('/system', (req, res) => {
   const os = require('os');
 

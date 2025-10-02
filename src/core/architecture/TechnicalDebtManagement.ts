@@ -1,6 +1,6 @@
 import { HybridArchitectureCore } from './HybridArchitectureCore';
 
-// 技術債務類型定義
+// 技術債務Class型定義
 export interface TechnicalDebtItem {
   id: string;
   title: string;
@@ -8,17 +8,17 @@ export interface TechnicalDebtItem {
   category: TechnicalDebtCategory;
   severity: TechnicalDebtSeverity;
   priority: TechnicalDebtPriority;
-  estimatedEffort: number; // 小時
-  actualEffort?: number; // 小時
+  estimatedEffort: number; // Hour
+  actualEffort?: number; // Hour
   impact: TechnicalDebtImpact;
-  location: string; // 文件路徑或模組名稱
+  location: string; // FilePath或模組名稱
   createdAt: Date;
   updatedAt: Date;
   dueDate?: Date;
   status: TechnicalDebtStatus;
   assignedTo?: string;
   tags: string[];
-  dependencies: string[]; // 相關的技術債務ID
+  dependencies: string[]; // 相Off的技術債務ID
   resolution?: TechnicalDebtResolution;
   metrics: TechnicalDebtMetrics;
 }
@@ -129,7 +129,7 @@ export class TechnicalDebtIdentifier {
     const _complexityIssues = await this.analyzeCodeComplexity();
     issues.push(...complexityIssues);
 
-    // 識別重複代碼
+    // 識別Duplicate代碼
     const _duplicationIssues = await this.analyzeCodeDuplication();
     issues.push(...duplicationIssues);
 
@@ -161,7 +161,7 @@ export class TechnicalDebtIdentifier {
     const _bottleneckIssues = await this.analyzePerformanceBottlenecks();
     issues.push(...bottleneckIssues);
 
-    // 識別內存洩漏
+    // 識別Memory洩漏
     const _memoryIssues = await this.analyzeMemoryLeaks();
     issues.push(...memoryIssues);
 
@@ -183,7 +183,7 @@ export class TechnicalDebtIdentifier {
   }
 
   private async analyzeCodeComplexity(): Promise<TechnicalDebtItem[]> {
-    // 模擬代碼複雜度分析
+    // 模擬代碼複雜度Analysis
     return [
       {
         id: `complexity_${Date.now()}`,
@@ -489,7 +489,7 @@ export class TechnicalDebtEvaluator {
       return sum + item.estimatedEffort * severityMultiplier;
     }, 0);
 
-    const _totalCode = 1000; // 假設總代碼量
+    const _totalCode = 1000; // False設總代碼量
     return (totalDebt / totalCode) * 100;
   }
 
@@ -498,7 +498,7 @@ export class TechnicalDebtEvaluator {
   ): TechnicalDebtRecommendation[] {
     const recommendations: TechnicalDebtRecommendation[] = [];
 
-    // 立即處理的建議
+    // 立即Handle的建議
     const _immediateItems = items.filter(
       item =>
         item.severity === TechnicalDebtSeverity.CRITICAL ||
@@ -519,7 +519,7 @@ export class TechnicalDebtEvaluator {
       });
     }
 
-    // 短期處理的建議
+    // 短期Handle的建議
     const _shortTermItems = items.filter(
       item =>
         item.severity === TechnicalDebtSeverity.HIGH &&
@@ -540,7 +540,7 @@ export class TechnicalDebtEvaluator {
       });
     }
 
-    // 長期處理的建議
+    // 長期Handle的建議
     const _longTermItems = items.filter(
       item =>
         item.severity === TechnicalDebtSeverity.LOW ||
@@ -650,7 +650,7 @@ export class TechnicalDebtEvaluator {
   }
 }
 
-// 技術債務追蹤器
+// 技術債務Trace器
 export class TechnicalDebtTracker {
   private readonly items: Map<string, TechnicalDebtItem> = new Map();
   private readonly evaluator: TechnicalDebtEvaluator;
@@ -826,7 +826,7 @@ export class TechnicalDebtTracker {
       return sum + resolutionTime;
     }, 0);
 
-    return totalTime / resolvedItems.length / (1000 * 60 * 60 * 24); // 轉換為天
+    return totalTime / resolvedItems.length / (1000 * 60 * 60 * 24); // Convert為天
   }
 
   private calculateDebtGrowthRate(items: TechnicalDebtItem[]): number {
@@ -844,7 +844,7 @@ export class TechnicalDebtTracker {
   }
 }
 
-// 技術債務管理主類
+// 技術債務Manage主Class
 export class TechnicalDebtManagement {
   private static instance: TechnicalDebtManagement;
   private readonly identifier: TechnicalDebtIdentifier;
@@ -867,18 +867,18 @@ export class TechnicalDebtManagement {
 
   async initialize(): Promise<boolean> {
     try {
-      // 初始化技術債務識別
+      // Initialize技術債務識別
       await this.performInitialScan();
       this.isInitialized = true;
       return true;
     } catch (error) {
-      console.error('技術債務管理初始化失敗:', error);
+      console.error('技術債務管理InitializeFailed:', error);
       return false;
     }
   }
 
   async performInitialScan(): Promise<void> {
-    // 執行初始掃描
+    // 執Row初始掃描
     const _codeQualityIssues =
       await this.identifier.identifyCodeQualityIssues();
     const _architectureIssues =
@@ -887,7 +887,7 @@ export class TechnicalDebtManagement {
       await this.identifier.identifyPerformanceIssues();
     const _securityIssues = await this.identifier.identifySecurityIssues();
 
-    // 評估並添加到追蹤器
+    // 評估並Add到Trace器
     const _allIssues = [
       ...codeQualityIssues,
       ...architectureIssues,
@@ -896,7 +896,7 @@ export class TechnicalDebtManagement {
     ];
 
     allIssues.forEach(item => {
-      // 重新評估嚴重性和優先級
+      // Re評估嚴重性和優先級
       item.severity = this.evaluator.evaluateSeverity(item);
       item.priority = this.evaluator.evaluatePriority(item);
       this.tracker.addItem(item);

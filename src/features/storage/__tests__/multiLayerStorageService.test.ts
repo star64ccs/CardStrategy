@@ -61,20 +61,20 @@ describe('MultiLayerStorageService', () => {
     });
 
     it('should handle initialization errors gracefully', async () => {
-      // 創建一個新的服務實例來測試錯誤情況
+      // Create一個新的ServiceInstance來TestError情況
       const _testService = MultiLayerStorageService.getInstance();
 
-      // 模擬無效配置
+      // 模擬無效Configure
       const _invalidConfig = {
-        layers: null, // 這會導致錯誤
+        layers: null, // 這會導致Error
       };
 
       try {
         const _result = await testService.initialize(invalidConfig as any);
-        // 如果沒有拋出錯誤，結果應該是 false
+        // 如果沒有ThrowError，結果應該Yes false
         expect(result).toBe(false);
       } catch (error) {
-        // 如果拋出錯誤也是可以的
+        // 如果ThrowError也Yes可以的
         expect(error).toBeDefined();
       }
     });
@@ -82,7 +82,7 @@ describe('MultiLayerStorageService', () => {
 
   describe('set and get operations', () => {
     beforeEach(async () => {
-      // 重置服務狀態並強制重新初始化
+      // ResetServiceStatus並ForceReInitialize
       await service.destroy();
       await service.initialize(undefined, true);
     });
@@ -91,7 +91,7 @@ describe('MultiLayerStorageService', () => {
       const _key = 'test-key';
       const _data = { name: 'Test Data', value: 123 };
 
-      // 直接測試內存層，避免 AsyncStorage 問題
+      // 直接TestMemory層，避免 AsyncStorage 問題
       const _options = { layer: 'memory' };
 
       const _setResult = await service.set(key, data, options);
@@ -179,11 +179,11 @@ describe('MultiLayerStorageService', () => {
       const _setResult = await service.set(key, data, options);
       expect(setResult.success).toBe(true);
 
-      // 立即獲取應該成功
+      // 立即Get應該Success
       const _immediateResult = await service.get(key, { layer: 'memory' });
       expect(immediateResult).toEqual(data);
 
-      // 等待過期後應該返回 null
+      // Await過期後應該Return null
       await new Promise(resolve => setTimeout(resolve, 100));
       const _expiredResult = await service.get(key, { layer: 'memory' });
       expect(expiredResult).toBeNull();
@@ -192,7 +192,7 @@ describe('MultiLayerStorageService', () => {
 
   describe('delete operations', () => {
     beforeEach(async () => {
-      // 重置服務狀態並強制重新初始化
+      // ResetServiceStatus並ForceReInitialize
       await service.destroy();
       await service.initialize(undefined, true);
     });
@@ -313,7 +313,7 @@ describe('MultiLayerStorageService', () => {
     });
 
     it('should return storage statistics', async () => {
-      // 添加一些數據
+      // Add一些Data
       await service.set('stats-test-1', { value: 1 });
       await service.set('stats-test-2', { value: 2 });
 
@@ -329,13 +329,13 @@ describe('MultiLayerStorageService', () => {
       const _key = 'hit-miss-test';
       const _data = { tracked: true };
 
-      // 儲存數據
+      // 儲存Data
       await service.set(key, data);
 
-      // 讀取存在的數據（hit）
+      // Read存在的Data（hit）
       await service.get(key);
 
-      // 讀取不存在的數據（miss）
+      // Read不存在的Data（miss）
       await service.get('non-existent');
 
       const _stats = await service.getStats();
@@ -350,7 +350,7 @@ describe('MultiLayerStorageService', () => {
     });
 
     it('should perform manual sync', async () => {
-      // 添加一些需要同步的數據
+      // Add一些需要Sync的Data
       await service.set('sync-test-1', { value: 1 }, { sync: true });
       await service.set('sync-test-2', { value: 2 }, { sync: true });
 
@@ -366,25 +366,25 @@ describe('MultiLayerStorageService', () => {
 
       const [result1, result2] = await Promise.all([sync1, sync2]);
 
-      // 第一個應該成功，第二個應該被拒絕或快速完成
+      // 第一個應該Success，第二個應該被Reject或快速Complete
       expect(result1.success || result2.success).toBe(true);
     });
   });
 
   describe('cleanup operations', () => {
     beforeEach(async () => {
-      // 重置服務狀態並強制重新初始化
+      // ResetServiceStatus並ForceReInitialize
       await service.destroy();
       await service.initialize(undefined, true);
     });
 
     it('should perform cleanup successfully', async () => {
-      // 添加一些數據，包括過期數據
+      // Add一些Data，Package括過期Data
       const _options = { layer: 'memory' };
       await service.set('cleanup-test-1', { value: 1 }, options);
       await service.set('cleanup-test-2', { value: 2 }, { ...options, ttl: 1 }); // 1ms TTL
 
-      // 等待過期
+      // Await過期
       await new Promise(resolve => setTimeout(resolve, 10));
 
       const _cleanupResult = await service.cleanup();
@@ -403,7 +403,7 @@ describe('MultiLayerStorageService', () => {
       const _cleanupResult = await service.cleanup();
       expect(cleanupResult.success).toBe(true);
 
-      // 關鍵數據應該仍然存在
+      // OffKeyData應該仍然存在
       const _retrievedData = await service.get('critical-data', {
         layer: 'memory',
       });
@@ -427,7 +427,7 @@ describe('MultiLayerStorageService', () => {
 
       service.setCallbacks(callbacks);
 
-      // 驗證回調已設置（無法直接測試私有屬性，但可以測試行為）
+      // VerifyCallback已Settings（無法直接TestPrivateProperty，但可以TestRow為）
       expect(() => service.setCallbacks(callbacks)).not.toThrow();
     });
   });
@@ -438,7 +438,7 @@ describe('MultiLayerStorageService', () => {
     });
 
     it('should handle storage errors gracefully', async () => {
-      // 測試無效的鍵值
+      // Test無效的KeyValue
       const _setResult = await service.set('', null);
       expect(setResult.success).toBe(false);
       expect(setResult.error).toBeDefined();
@@ -450,7 +450,7 @@ describe('MultiLayerStorageService', () => {
       };
 
       const _setResult = await service.set('large-data', largeData);
-      // 應該成功或失敗，但不應拋出異常
+      // 應該Success或Failed，但不應Throw異常
       expect(typeof setResult.success).toBe('boolean');
     });
 
@@ -461,14 +461,14 @@ describe('MultiLayerStorageService', () => {
       malformedData.circular.ref = malformedData;
 
       const _setResult = await service.set('malformed-data', malformedData);
-      // 應該處理循環引用錯誤
+      // 應該Handle循環引用Error
       expect(typeof setResult.success).toBe('boolean');
     });
   });
 
   describe('performance', () => {
     beforeEach(async () => {
-      // 重置服務狀態並強制重新初始化
+      // ResetServiceStatus並ForceReInitialize
       await service.destroy();
       await service.initialize(undefined, true);
     });
@@ -481,7 +481,7 @@ describe('MultiLayerStorageService', () => {
 
       const _results = await Promise.all(operations);
 
-      // 大部分操作應該成功
+      // 大PartialOperation應該Success
       const _successCount = results.filter(r => r.success).length;
       expect(successCount).toBeGreaterThan(40);
     });
@@ -490,7 +490,7 @@ describe('MultiLayerStorageService', () => {
       const _startTime = Date.now();
       const _options = { layer: 'memory' };
 
-      // 執行100個操作
+      // 執Row100個Operation
       for (let i = 0; i < 100; i++) {
         await service.set(`perf-test-${i}`, { iteration: i }, options);
       }
@@ -498,7 +498,7 @@ describe('MultiLayerStorageService', () => {
       const _endTime = Date.now();
       const _totalTime = endTime - startTime;
 
-      // 100個操作應該在合理時間內完成（比如5秒）
+      // 100個Operation應該在合理Time內Complete（比如5Second）
       expect(totalTime).toBeLessThan(5000);
     });
   });
@@ -509,7 +509,7 @@ describe('MultiLayerStorageService', () => {
     });
 
     it('should respect memory limits', async () => {
-      // 添加大量小數據項
+      // Add大量小Data項
       for (let i = 0; i < 2000; i++) {
         await service.set(`memory-test-${i}`, {
           value: i,
@@ -519,7 +519,7 @@ describe('MultiLayerStorageService', () => {
 
       const _stats = await service.getStats();
 
-      // 檢查是否觸發了清理機制
+      // CheckYesNo觸發了清理機制
       expect(stats.totalItems).toBeLessThan(2000);
     });
   });
@@ -528,13 +528,13 @@ describe('MultiLayerStorageService', () => {
     it('should destroy service instance', async () => {
       await service.initialize();
 
-      // 添加一些數據
+      // Add一些Data
       await service.set('destroy-test', { value: 1 });
 
       const _destroyResult = await service.destroy();
       expect(destroyResult).toBe(true);
 
-      // 銷毀後數據應該不存在
+      // 銷毀後Data應該不存在
       const _retrievedData = await service.get('destroy-test');
       expect(retrievedData).toBeNull();
     });

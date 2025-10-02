@@ -20,8 +20,8 @@ import { BiometricAuthButton } from './BiometricAuthButton';
 import { BiometricSettings } from './BiometricSettings';
 
 /**
- * 生物識別認證示例組件
- * 展示如何使用生物識別認證功能
+ * 生物識別Authenticate示例Component
+ * 展示如何使用生物識別Authenticate功能
  */
 export const BiometricAuthExample: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'auth' | 'settings'>('auth');
@@ -51,10 +51,10 @@ export const BiometricAuthExample: React.FC = () => {
   } = useBiometricAuth({
     onAuthSuccess: result => {
       setAuthResult(result);
-      Alert.alert('認證成功', `使用 ${result.biometricType} 認證成功！`);
+      Alert.alert('認證Success', `使用 ${result.biometricType} 認證Success！`);
     },
     onAuthError: error => {
-      Alert.alert('認證失敗', error);
+      Alert.alert('認證Failed', error);
     },
     onCapabilityDetected: caps => {
       setCapabilities(caps);
@@ -73,16 +73,16 @@ export const BiometricAuthExample: React.FC = () => {
       });
       console.log('手動認證結果:', result);
     } catch (error: unknown) {
-      Alert.alert('手動認證失敗', error.message);
+      Alert.alert('手動認證Failed', error.message);
     }
   };
 
   const _handleCreateKeys = async () => {
     try {
       const _success = await createKeys();
-      Alert.alert('創建密鑰', success ? '密鑰創建成功' : '密鑰創建失敗');
+      Alert.alert('創建密鑰', success ? '密鑰CreateSuccess' : '密鑰CreateFailed');
     } catch (error: unknown) {
-      Alert.alert('創建密鑰失敗', error.message);
+      Alert.alert('Create密鑰Failed', error.message);
     }
   };
 
@@ -95,9 +95,9 @@ export const BiometricAuthExample: React.FC = () => {
         onPress: async () => {
           try {
             const _success = await deleteKeys();
-            Alert.alert('刪除密鑰', success ? '密鑰刪除成功' : '密鑰刪除失敗');
+            Alert.alert('刪除密鑰', success ? '密鑰DeleteSuccess' : '密鑰DeleteFailed');
           } catch (error: unknown) {
-            Alert.alert('刪除密鑰失敗', error.message);
+            Alert.alert('Delete密鑰Failed', error.message);
           }
         },
       },
@@ -111,9 +111,9 @@ export const BiometricAuthExample: React.FC = () => {
         payload,
         '請進行生物識別認證以創建簽名'
       );
-      Alert.alert('簽名創建成功', `簽名: ${signature.substring(0, 20)}...`);
+      Alert.alert('簽名CreateSuccess', `簽名: ${signature.substring(0, 20)}...`);
     } catch (error: unknown) {
-      Alert.alert('創建簽名失敗', error.message);
+      Alert.alert('Create簽名Failed', error.message);
     }
   };
 
@@ -123,7 +123,7 @@ export const BiometricAuthExample: React.FC = () => {
       setCapabilities(caps);
       Alert.alert('刷新完成', `檢測到 ${caps.length} 種生物識別能力`);
     } catch (error: unknown) {
-      Alert.alert('刷新失敗', error.message);
+      Alert.alert('刷新Failed', error.message);
     }
   };
 
@@ -132,7 +132,7 @@ export const BiometricAuthExample: React.FC = () => {
       await loadSettings();
       Alert.alert('刷新完成', '設置已更新');
     } catch (error: unknown) {
-      Alert.alert('刷新失敗', error.message);
+      Alert.alert('刷新Failed', error.message);
     }
   };
 
@@ -150,7 +150,7 @@ export const BiometricAuthExample: React.FC = () => {
         <Text style={styles.subtitle}>展示生物識別認證功能的使用方法</Text>
       </View>
 
-      {/* 標籤切換 */}
+      {/* TagSwitch */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'auth' && styles.activeTab]}
@@ -183,7 +183,7 @@ export const BiometricAuthExample: React.FC = () => {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {activeTab === 'auth' ? (
           <View style={styles.authSection}>
-            {/* 狀態信息 */}
+            {/* StatusInformation */}
             <View style={styles.statusSection}>
               <Text style={styles.sectionTitle}>當前狀態</Text>
               <Text style={styles.statusText}>
@@ -209,7 +209,7 @@ export const BiometricAuthExample: React.FC = () => {
               )}
             </View>
 
-            {/* 認證結果 */}
+            {/* Authenticate結果 */}
             {authResult && (
               <View style={styles.resultSection}>
                 <Text style={styles.sectionTitle}>認證結果</Text>
@@ -237,19 +237,19 @@ export const BiometricAuthExample: React.FC = () => {
               </View>
             )}
 
-            {/* 生物識別認證按鈕 */}
+            {/* 生物識別Authenticate按鈕 */}
             <View style={styles.authButtonSection}>
               <Text style={styles.sectionTitle}>生物識別認證</Text>
               <BiometricAuthButton
                 onAuthSuccess={result => {
                   setAuthResult(result);
                   Alert.alert(
-                    '認證成功',
-                    `使用 ${result.biometricType} 認證成功！`
+                    '認證Success',
+                    `使用 ${result.biometricType} 認證Success！`
                   );
                 }}
                 onAuthError={error => {
-                  Alert.alert('認證失敗', error);
+                  Alert.alert('認證Failed', error);
                 }}
                 onCapabilityDetected={caps => {
                   setCapabilities(caps);
@@ -258,7 +258,7 @@ export const BiometricAuthExample: React.FC = () => {
               />
             </View>
 
-            {/* 手動操作 */}
+            {/* ManualOperation */}
             <View style={styles.manualSection}>
               <Text style={styles.sectionTitle}>手動操作</Text>
               <TouchableOpacity
@@ -305,7 +305,7 @@ export const BiometricAuthExample: React.FC = () => {
               </TouchableOpacity>
             </View>
 
-            {/* 能力信息 */}
+            {/* 能力Information */}
             {capabilities.length > 0 && (
               <View style={styles.capabilitiesSection}>
                 <Text style={styles.sectionTitle}>檢測到的能力</Text>
@@ -322,7 +322,7 @@ export const BiometricAuthExample: React.FC = () => {
               </View>
             )}
 
-            {/* 詳細信息 */}
+            {/* 詳細Information */}
             <View style={styles.detailsSection}>
               <Text style={styles.sectionTitle}>詳細信息</Text>
 
@@ -363,7 +363,7 @@ export const BiometricAuthExample: React.FC = () => {
                 Alert.alert('設置更新', '生物識別設置已更新');
               }}
               onError={error => {
-                Alert.alert('設置錯誤', error);
+                Alert.alert('SettingsError', error);
               }}
               showAdvancedSettings={true}
             />

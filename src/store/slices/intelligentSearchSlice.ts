@@ -17,20 +17,20 @@ import type {
   UserSearchPreferences,
 } from '../../features/search/types/intelligentSearch';
 
-// 智能搜索狀態接口
+// 智能SearchStatusInterface
 interface IntelligentSearchState {
-  // 服務狀態
+  // ServiceStatus
   isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
 
-  // 當前搜索狀態
+  // 當前SearchStatus
   currentQuery: string;
   currentContext?: SearchContext;
   currentPreferences?: UserSearchPreferences;
   currentFilters?: IntelligentSearchFilters;
 
-  // 搜索結果
+  // Search結果
   results: IntelligentSearchResult[];
   suggestions: AutoCompleteOption[];
   semanticMatches: unknown[];
@@ -39,63 +39,63 @@ interface IntelligentSearchState {
   popularSearches: PopularSearchItem[];
   relatedSearches: RelatedSearchItem[];
 
-  // 搜索統計和分析
+  // SearchStatistics和Analysis
   searchStats: IntelligentSearchStats;
   queryAnalysis: QueryAnalysis | null;
   personalizationScore: number;
 
-  // 響應信息
+  // ResponseInformation
   responseTime: number;
   cacheHit: boolean;
   totalResults: number;
 
-  // 配置
+  // Configure
   config: IntelligentSearchConfig;
 
-  // 用戶偏好
+  // UserPreferences
   userPreferences: Map<string, UserSearchPreferences>;
 
-  // 搜索歷史
+  // Search歷史
   searchHistoryMap: Map<string, SearchHistoryItem[]>;
 
-  // 最近搜索
+  // 最近Search
   recentSearches: string[];
 
-  // 熱門搜索
+  // 熱門Search
   popularSearchesList: PopularSearchItem[];
 
-  // 相關搜索
+  // 相OffSearch
   relatedSearchesList: RelatedSearchItem[];
 
-  // 自動完成
+  // AutoComplete
   autoCompleteOptions: AutoCompleteOption[];
 
   // 語義匹配
   semanticMatchesList: unknown[];
 
-  // 搜索建議
+  // Search建議
   searchSuggestions: AutoCompleteOption[];
 
-  // 搜索統計
+  // SearchStatistics
   searchStatistics: IntelligentSearchStats;
 
-  // 查詢分析
+  // QueryAnalysis
   queryAnalysisData: QueryAnalysis | null;
 
   // 個性化分數
   personalizationScores: Map<string, number>;
 
-  // 響應時間
+  // ResponseTime
   responseTimes: number[];
 
-  // 緩存命中
+  // Cache命中
   cacheHits: boolean[];
 
   // 總結果數
   totalResultsCount: number;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: IntelligentSearchState = {
   isInitialized: false,
   isLoading: false,
@@ -179,14 +179,14 @@ const initialState: IntelligentSearchState = {
   totalResultsCount: 0,
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 export const _initializeIntelligentSearchService = createAsyncThunk(
   'intelligentSearch/initialize',
   async () => {
     const _service = IntelligentSearchService.getInstance();
     const _success = await service.initialize();
     if (!success) {
-      throw new Error('智能搜索服務初始化失敗');
+      throw new Error('智能搜索ServiceInitializeFailed');
     }
     return service.getConfig();
   }
@@ -197,7 +197,7 @@ export const _performIntelligentSearch = createAsyncThunk(
   async (query: IntelligentSearchQuery) => {
     const _service = IntelligentSearchService.getInstance();
     if (!service.getInitializationStatus()) {
-      throw new Error('智能搜索服務尚未初始化');
+      throw new Error('智能搜索Service尚未Initialize');
     }
     return service.search(query);
   }
@@ -305,7 +305,7 @@ const _intelligentSearchSlice = createSlice({
   name: 'intelligentSearch',
   initialState,
   reducers: {
-    // 基本狀態管理
+    // 基本StatusManage
     setCurrentQuery: (state, action: PayloadAction<string>) => {
       state.currentQuery = action.payload;
     },
@@ -335,7 +335,7 @@ const _intelligentSearchSlice = createSlice({
       state.currentFilters = { ...state.currentFilters, ...action.payload };
     },
 
-    // 結果管理
+    // 結果Manage
     clearIntelligentSearchResults: state => {
       state.results = [];
       state.suggestions = [];
@@ -351,7 +351,7 @@ const _intelligentSearchSlice = createSlice({
       state.currentFilters = undefined;
     },
 
-    // 搜索歷史管理
+    // Search歷史Manage
     addIntelligentSearchHistory: (
       state,
       action: PayloadAction<SearchHistoryItem>
@@ -366,7 +366,7 @@ const _intelligentSearchSlice = createSlice({
       state.searchHistory = [];
     },
 
-    // 最近搜索管理
+    // 最近SearchManage
     addIntelligentRecentSearch: (state, action: PayloadAction<string>) => {
       const _query = action.payload;
       state.recentSearches = state.recentSearches.filter(q => q !== query);
@@ -380,7 +380,7 @@ const _intelligentSearchSlice = createSlice({
       state.recentSearches = [];
     },
 
-    // 熱門搜索管理
+    // 熱門SearchManage
     setIntelligentPopularSearches: (
       state,
       action: PayloadAction<PopularSearchItem[]>
@@ -388,7 +388,7 @@ const _intelligentSearchSlice = createSlice({
       state.popularSearches = action.payload;
     },
 
-    // 相關搜索管理
+    // 相OffSearchManage
     setIntelligentRelatedSearches: (
       state,
       action: PayloadAction<RelatedSearchItem[]>
@@ -396,7 +396,7 @@ const _intelligentSearchSlice = createSlice({
       state.relatedSearches = action.payload;
     },
 
-    // 自動完成管理
+    // AutoCompleteManage
     setIntelligentAutoComplete: (
       state,
       action: PayloadAction<AutoCompleteOption[]>
@@ -408,12 +408,12 @@ const _intelligentSearchSlice = createSlice({
       state.autoComplete = [];
     },
 
-    // 語義匹配管理
+    // 語義匹配Manage
     setIntelligentSemanticMatches: (state, action: PayloadAction<any[]>) => {
       state.semanticMatches = action.payload;
     },
 
-    // 搜索建議管理
+    // Search建議Manage
     setIntelligentSearchSuggestions: (
       state,
       action: PayloadAction<AutoCompleteOption[]>
@@ -425,7 +425,7 @@ const _intelligentSearchSlice = createSlice({
       state.suggestions = [];
     },
 
-    // 用戶偏好管理
+    // UserPreferencesManage
     updateIntelligentUserPreferences: (
       state,
       action: PayloadAction<{
@@ -437,7 +437,7 @@ const _intelligentSearchSlice = createSlice({
       state.userPreferences.set(userId, preferences);
     },
 
-    // 配置管理
+    // ConfigureManage
     updateIntelligentSearchConfig: (
       state,
       action: PayloadAction<Partial<IntelligentSearchConfig>>
@@ -445,7 +445,7 @@ const _intelligentSearchSlice = createSlice({
       state.config = { ...state.config, ...action.payload };
     },
 
-    // 錯誤管理
+    // ErrorManage
     setIntelligentSearchError: (
       state,
       action: PayloadAction<string | null>
@@ -457,7 +457,7 @@ const _intelligentSearchSlice = createSlice({
       state.error = null;
     },
 
-    // 重置狀態
+    // ResetStatus
     resetIntelligentSearchState: state => {
       return {
         ...initialState,
@@ -467,7 +467,7 @@ const _intelligentSearchSlice = createSlice({
       };
     },
 
-    // 個性化分數管理
+    // 個性化分數Manage
     setIntelligentPersonalizationScore: (
       state,
       action: PayloadAction<{ userId: string; score: number }>
@@ -476,7 +476,7 @@ const _intelligentSearchSlice = createSlice({
       state.personalizationScores.set(userId, score);
     },
 
-    // 響應時間管理
+    // ResponseTimeManage
     addIntelligentResponseTime: (state, action: PayloadAction<number>) => {
       state.responseTimes.push(action.payload);
       if (state.responseTimes.length > 100) {
@@ -484,7 +484,7 @@ const _intelligentSearchSlice = createSlice({
       }
     },
 
-    // 緩存命中管理
+    // Cache命中Manage
     addIntelligentCacheHit: (state, action: PayloadAction<boolean>) => {
       state.cacheHits.push(action.payload);
       if (state.cacheHits.length > 100) {
@@ -492,13 +492,13 @@ const _intelligentSearchSlice = createSlice({
       }
     },
 
-    // 總結果數管理
+    // 總結果數Manage
     setIntelligentTotalResults: (state, action: PayloadAction<number>) => {
       state.totalResults = action.payload;
     },
   },
   extraReducers: builder => {
-    // 初始化服務
+    // InitializeService
     builder
       .addCase(initializeIntelligentSearchService.pending, state => {
         state.isLoading = true;
@@ -514,10 +514,10 @@ const _intelligentSearchSlice = createSlice({
       )
       .addCase(initializeIntelligentSearchService.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
-    // 執行搜索
+    // 執RowSearch
     builder
       .addCase(performIntelligentSearch.pending, state => {
         state.isLoading = true;
@@ -548,10 +548,10 @@ const _intelligentSearchSlice = createSlice({
       })
       .addCase(performIntelligentSearch.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '搜索失敗';
+        state.error = action.error.message || '搜索Failed';
       });
 
-    // 獲取建議
+    // Get建議
     builder.addCase(
       getIntelligentSearchSuggestions.fulfilled,
       (state, action) => {
@@ -559,12 +559,12 @@ const _intelligentSearchSlice = createSlice({
       }
     );
 
-    // 獲取搜索歷史
+    // GetSearch歷史
     builder.addCase(getIntelligentSearchHistory.fulfilled, (state, action) => {
       state.searchHistory = action.payload;
     });
 
-    // 保存搜索歷史
+    // SaveSearch歷史
     builder.addCase(saveIntelligentSearchHistory.fulfilled, (state, action) => {
       const { userId, query, results } = action.payload;
       const historyItem: SearchHistoryItem = {
@@ -577,7 +577,7 @@ const _intelligentSearchSlice = createSlice({
       state.searchHistory.unshift(historyItem);
     });
 
-    // 獲取熱門搜索
+    // Get熱門Search
     builder.addCase(
       getIntelligentPopularSearches.fulfilled,
       (state, action) => {
@@ -585,7 +585,7 @@ const _intelligentSearchSlice = createSlice({
       }
     );
 
-    // 獲取相關搜索
+    // Get相OffSearch
     builder.addCase(
       getIntelligentRelatedSearches.fulfilled,
       (state, action) => {
@@ -593,12 +593,12 @@ const _intelligentSearchSlice = createSlice({
       }
     );
 
-    // 分析查詢
+    // AnalysisQuery
     builder.addCase(analyzeIntelligentQuery.fulfilled, (state, action) => {
       state.queryAnalysis = action.payload;
     });
 
-    // 更新用戶偏好
+    // UpdateUserPreferences
     builder.addCase(
       updateIntelligentUserPreferences.fulfilled,
       (state, action) => {
@@ -607,28 +607,28 @@ const _intelligentSearchSlice = createSlice({
       }
     );
 
-    // 獲取用戶偏好
+    // GetUserPreferences
     builder.addCase(
       getIntelligentUserPreferences.fulfilled,
       (state, action) => {
-        // 這裡需要知道是哪個用戶的偏好，暫時存儲在當前偏好中
+        // 這裡需要知道Yes哪個User的Preferences，暫時Storage在當前Preferences中
         state.currentPreferences = action.payload;
       }
     );
 
-    // 獲取搜索統計
+    // GetSearchStatistics
     builder.addCase(getIntelligentSearchStats.fulfilled, (state, action) => {
       state.searchStats = action.payload;
     });
 
-    // 清除搜索歷史
+    // ClearSearch歷史
     builder.addCase(clearIntelligentSearchHistory.fulfilled, state => {
       state.searchHistory = [];
     });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   setCurrentQuery,
   setCurrentContext,
@@ -657,5 +657,5 @@ export const {
   setIntelligentTotalResults,
 } = intelligentSearchSlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default intelligentSearchSlice.reducer;

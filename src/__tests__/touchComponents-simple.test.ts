@@ -9,7 +9,7 @@ import type {
 
 describe('Touch Components - Simple Tests', () => {
   beforeEach(() => {
-    // 重置服務狀態
+    // ResetServiceStatus
     const config: TouchServiceConfig = {
       enableGestures: true,
       enableFeedback: true,
@@ -344,7 +344,7 @@ describe('Touch Components - Simple Tests', () => {
       touchService.trackPerformance(componentId, metrics3);
 
       const _report = touchService.getPerformanceReport();
-      // 檢查是否包含我們的組件，而不是檢查總數（因為可能有其他測試的數據）
+      // CheckYesNoPackage含我們的Component，而不YesCheck總數（因為可能有其他Test的Data）
       const _ourComponent = report.components.find(([id]) => id === componentId);
       expect(ourComponent).toBeDefined();
       expect(ourComponent[0]).toBe(componentId);
@@ -363,7 +363,7 @@ describe('Touch Components - Simple Tests', () => {
       });
 
       const _report = touchService.getPerformanceReport();
-      // 檢查是否包含我們的組件，而不是檢查總數
+      // CheckYesNoPackage含我們的Component，而不YesCheck總數
       componentIds.forEach(id => {
         const _component = report.components.find(
           ([componentId]) => componentId === id

@@ -17,8 +17,8 @@ import { TouchFeedback } from './TouchFeedback';
 import { TouchGesture } from './TouchGesture';
 
 /**
- * 觸控測試工具組件
- * 提供觸控手勢、反饋效果和滾動優化的測試功能
+ * 觸控TestToolComponent
+ * 提供觸控手勢、反饋效果和滾動優化的Test功能
  */
 export const TouchTestTool: React.FC<TouchTestToolProps> = ({
   config = {},
@@ -31,14 +31,14 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
   const { currentThemeData } = useDesignSystem();
   const { isMobile, isTablet, isDesktop } = useResponsive();
 
-  // 狀態管理
+  // StatusManage
   const [isVisible, setIsVisible] = useState(visible);
   const [isRunning, setIsRunning] = useState(false);
   const [testResults, setTestResults] = useState<TouchTestResult[]>([]);
   const [currentTest, setCurrentTest] = useState<string>('');
   const [progress, setProgress] = useState(0);
 
-  // 默認測試配置
+  // DefaultTestConfigure
   const defaultConfig: TouchTestConfig = {
     deviceType: isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop',
     platform: 'web',
@@ -59,7 +59,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
 
   const _finalConfig = { ...defaultConfig, ...config };
 
-  // 測試設備配置
+  // Test設備Configure
   const _testDevices = [
     { deviceType: 'mobile', platform: 'ios' },
     { deviceType: 'mobile', platform: 'android' },
@@ -70,7 +70,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
     { deviceType: 'desktop', platform: 'web' },
   ];
 
-  // 運行測試
+  // 運RowTest
   const _runTests = useCallback(async () => {
     if (isRunning) return;
 
@@ -97,17 +97,17 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
 
         setProgress(((i + 1) / totalTests) * 100);
 
-        // 短暫延遲以顯示進度
+        // 短暫延遲以Show進度
         await new Promise(resolve => setTimeout(resolve, 500));
       }
 
       setTestResults(results);
 
       if (onTestComplete) {
-        onTestComplete(results[0]); // 返回第一個結果作為示例
+        onTestComplete(results[0]); // Return第一個結果作為示例
       }
 
-      // 生成測試報告
+      // 生成TestReport
       const _report = touchService.generateTestReport(results);
       console.log('Touch Test Report:', report);
     } catch (error) {
@@ -124,7 +124,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
     }
   }, [isRunning, finalConfig, onTestComplete, onTestError]);
 
-  // 手勢測試處理器
+  // 手勢TestHandle器
   const _handleGestureTest = useCallback((gesture: TouchGestureType) => {
     console.log(`Gesture test: ${gesture}`);
     touchService.trackPerformance('gesture-test', {
@@ -133,7 +133,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
     });
   }, []);
 
-  // 反饋測試處理器
+  // 反饋TestHandle器
   const _handleFeedbackTest = useCallback((feedback: TouchFeedbackType) => {
     console.log(`Feedback test: ${feedback}`);
     touchService.trackPerformance('feedback-test', {
@@ -176,7 +176,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
     overflow: 'auto',
   };
 
-  // 測試結果表格列定義
+  // Test結果Table格Column定義
   const _resultColumns = [
     {
       key: 'deviceType',
@@ -223,7 +223,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
     },
   ];
 
-  // 處理測試結果數據
+  // HandleTest結果Data
   const _getResultData = useCallback(() => {
     return testResults.map(result => ({
       deviceType: result.deviceType,
@@ -245,9 +245,9 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
         <span>{isVisible ? '−' : '+'}</span>
       </div>
 
-      {/* 內容區域 */}
+      {/* ContentDistrict域 */}
       <div style={contentStyle}>
-        {/* 控制按鈕 */}
+        {/* Control按鈕 */}
         <div style={{ marginBottom: '16px' }}>
           <TouchFeedback
             feedback={{ type: 'ripple' }}
@@ -272,7 +272,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
           </TouchFeedback>
         </div>
 
-        {/* 當前測試狀態 */}
+        {/* 當前TestStatus */}
         {isRunning && currentTest && (
           <div
             style={{
@@ -314,7 +314,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
           </div>
         )}
 
-        {/* 手勢測試區域 */}
+        {/* 手勢TestDistrict域 */}
         <div style={{ marginBottom: '16px' }}>
           <h4
             style={{
@@ -363,7 +363,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
           </div>
         </div>
 
-        {/* 反饋測試區域 */}
+        {/* 反饋TestDistrict域 */}
         <div style={{ marginBottom: '16px' }}>
           <h4
             style={{
@@ -407,7 +407,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
           </div>
         </div>
 
-        {/* 滾動測試區域 */}
+        {/* 滾動TestDistrict域 */}
         {finalConfig.scrollOptimization && (
           <div style={{ marginBottom: '16px' }}>
             <h4
@@ -438,7 +438,7 @@ export const TouchTestTool: React.FC<TouchTestToolProps> = ({
           </div>
         )}
 
-        {/* 測試結果 */}
+        {/* Test結果 */}
         {testResults.length > 0 && (
           <div>
             <h4

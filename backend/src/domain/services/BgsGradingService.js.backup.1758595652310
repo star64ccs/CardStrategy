@@ -1,0 +1,960 @@
+// BGS 模擬鑑定服務 - 基於真實 BGS 數據的模擬鑑定系統
+const { Pool } = require('pg');
+
+class BGSGradingService {
+  constructor() {
+    this.dbConfig = {
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5433,
+      database: process.env.DB_NAME || 'cardstrategy_test',
+      user: process.env.DB_USER || 'cardstrategy_test',
+      password: process.env.DB_PASSWORD || 'TestPassword123!',
+    };
+    this.pool = new Pool(this.dbConfig);
+
+    // BGS 鑑定標準配置
+    this.bgsStandards = this.initializeBGSStandards();
+
+    // 機器學習模型配置
+    this.mlModels = {
+      centering: null,
+      corners: null,
+      edges: null,
+      surface: null,
+      valuePrediction: null,
+    };
+  }
+
+  // 初始化 BGS 鑑定標準
+  initializeBGSStandards() {
+    return {
+      // 置中評估標準
+      centering: {
+        weight: 0.25,
+        criteria: {
+          10: { maxOffset: 2.5, description: '完美置中 (50/50)' },
+          9.5: { maxOffset: 5.0, description: '優秀置中 (52.5/47.5)' },
+          9: { maxOffset: 7.5, description: '良好置中 (55/45)' },
+          8.5: { maxOffset: 10.0, description: '可接受置中 (57.5/42.5)' },
+          8: { maxOffset: 12.5, description: '輕微偏差 (60/40)' },
+          7.5: { maxOffset: 15.0, description: '明顯偏差 (62.5/37.5)' },
+          7: { maxOffset: 17.5, description: '偏差較大 (65/35)' },
+          6.5: { maxOffset: 20.0, description: '偏差嚴重 (67.5/32.5)' },
+          6: { maxOffset: 25.0, description: '偏差極嚴重 (70/30)' },
+        },
+      },
+
+      // 邊角評估標準
+      corners: {
+        weight: 0.25,
+        criteria: {
+          10: { maxDamage: 0.1, description: '完美邊角，無任何磨損' },
+          9.5: { maxDamage: 0.3, description: '極輕微磨損' },
+          9: { maxDamage: 0.5, description: '輕微磨損' },
+          8.5: { maxDamage: 0.7, description: '可接受磨損' },
+          8: { maxDamage: 1.0, description: '明顯磨損' },
+          7.5: { maxDamage: 1.3, description: '較重磨損' },
+          7: { maxDamage: 1.6, description: '嚴重磨損' },
+          6.5: { maxDamage: 2.0, description: '極嚴重磨損' },
+          6: { maxDamage: 3.0, description: '邊角損壞' },
+        },
+      },
+
+      // 邊緣評估標準
+      edges: {
+        weight: 0.25,
+        criteria: {
+          10: { maxDamage: 0.2, description: '完美邊緣，無磨損' },
+          9.5: { maxDamage: 0.4, description: '極輕微邊緣磨損' },
+          9: { maxDamage: 0.6, description: '輕微邊緣磨損' },
+          8.5: { maxDamage: 0.8, description: '可接受邊緣磨損' },
+          8: { maxDamage: 1.0, description: '明顯邊緣磨損' },
+          7.5: { maxDamage: 1.2, description: '較重邊緣磨損' },
+          7: { maxDamage: 1.4, description: '嚴重邊緣磨損' },
+          6.5: { maxDamage: 1.6, description: '極嚴重邊緣磨損' },
+          6: { maxDamage: 2.0, description: '邊緣損壞' },
+        },
+      },
+
+      // 表面評估標準
+      surface: {
+        weight: 0.25,
+        criteria: {
+          10: { maxDamage: 0.5, description: '完美表面，無瑕疵' },
+          9.5: { maxDamage: 1.0, description: '極輕微表面瑕疵' },
+          9: { maxDamage: 1.5, description: '輕微表面瑕疵' },
+          8.5: { maxDamage: 2.0, description: '可接受表面瑕疵' },
+          8: { maxDamage: 2.5, description: '明顯表面瑕疵' },
+          7.5: { maxDamage: 3.0, description: '較重表面瑕疵' },
+          7: { maxDamage: 3.5, description: '嚴重表面瑕疵' },
+          6.5: { maxDamage: 4.0, description: '極嚴重表面瑕疵' },
+          6: { maxDamage: 5.0, description: '表面損壞' },
+        },
+      },
+    };
+  }
+
+  // 主要鑑定方法
+  async gradeCard(imageData, cardInfo) {
+    try {
+      console.log('🔍 開始 BGS 模擬鑑定...');
+
+      // 1. 照片質量驗證
+      const photoValidation = await this.validatePhotoQuality(imageData);
+      if (!photoValidation.isValid) {
+        return {
+          error: '照片質量不符合要求',
+          validation: photoValidation,
+          recommendations: await this.getPhotoCaptureGuidelines('bgs_grading'),
+        };
+      }
+
+      // 2. 圖像分析
+      const imageAnalysis = await this.analyzeImage(imageData);
+
+      // 3. 計算子分數
+      const subGrades = await this.calculateSubGrades(imageAnalysis);
+
+      // 4. 獲取 BGS 基準數據
+      const benchmarks = await this.getBGSBenchmarks(cardInfo);
+
+      // 5. 價值預測
+      const valuePrediction = await this.predictValue(
+        subGrades,
+        benchmarks,
+        cardInfo
+      );
+
+      // 6. 生成詳細報告
+      const gradingReport = await this.generateGradingReport(
+        subGrades,
+        valuePrediction,
+        benchmarks,
+        cardInfo
+      );
+
+      // 7. 保存鑑定記錄
+      await this.saveGradingRecord(gradingReport, cardInfo);
+
+      console.log('✅ BGS 模擬鑑定完成');
+      return gradingReport;
+    } catch (error) {
+      console.error('❌ BGS 鑑定失敗:', error.message);
+      throw error;
+    }
+  }
+
+  // 圖像分析
+  async analyzeImage(imageData) {
+    // 這裡應該集成實際的計算機視覺算法
+    // 目前使用模擬數據，但結構設計為支持真實的 CV 分析
+
+    const analysis = {
+      centering: await this.analyzeCentering(imageData),
+      corners: await this.analyzeCorners(imageData),
+      edges: await this.analyzeEdges(imageData),
+      surface: await this.analyzeSurface(imageData),
+      metadata: {
+        timestamp: new Date().toISOString(),
+        algorithm: 'BGS_Simulation_v1.0',
+        confidence: 0.85,
+      },
+    };
+
+    return analysis;
+  }
+
+  // 置中分析
+  async analyzeCentering(imageData) {
+    // 模擬置中分析 - 實際實現應使用計算機視覺
+    return {
+      horizontalOffset: Math.random() * 10 - 5, // -5% 到 +5%
+      verticalOffset: Math.random() * 8 - 4, // -4% 到 +4%
+      confidence: 0.85 + Math.random() * 0.15,
+      method: 'edge_detection_and_measurement',
+    };
+  }
+
+  // 邊角分析
+  async analyzeCorners(imageData) {
+    // 模擬邊角分析
+    return {
+      topLeft: Math.random() * 2,
+      topRight: Math.random() * 2,
+      bottomLeft: Math.random() * 2,
+      bottomRight: Math.random() * 2,
+      confidence: 0.8 + Math.random() * 0.2,
+      method: 'corner_detection_and_damage_assessment',
+    };
+  }
+
+  // 邊緣分析
+  async analyzeEdges(imageData) {
+    // 模擬邊緣分析
+    return {
+      topEdge: Math.random() * 1.5,
+      bottomEdge: Math.random() * 1.5,
+      leftEdge: Math.random() * 1.5,
+      rightEdge: Math.random() * 1.5,
+      confidence: 0.75 + Math.random() * 0.25,
+      method: 'edge_scanning_and_wear_detection',
+    };
+  }
+
+  // 表面分析
+  async analyzeSurface(imageData) {
+    // 模擬表面分析
+    return {
+      scratches: Math.random() * 3,
+      stains: Math.random() * 2,
+      creases: Math.random() * 1,
+      confidence: 0.7 + Math.random() * 0.3,
+      method: 'surface_texture_analysis',
+    };
+  }
+
+  // 計算子分數
+  async calculateSubGrades(imageAnalysis) {
+    const subGrades = {};
+
+    // 置中分數
+    subGrades.centering = this.calculateGradeFromAnalysis(
+      imageAnalysis.centering,
+      this.bgsStandards.centering
+    );
+
+    // 邊角分數
+    subGrades.corners = this.calculateGradeFromAnalysis(
+      imageAnalysis.corners,
+      this.bgsStandards.corners
+    );
+
+    // 邊緣分數
+    subGrades.edges = this.calculateGradeFromAnalysis(
+      imageAnalysis.edges,
+      this.bgsStandards.edges
+    );
+
+    // 表面分數
+    subGrades.surface = this.calculateGradeFromAnalysis(
+      imageAnalysis.surface,
+      this.bgsStandards.surface
+    );
+
+    // 計算總分
+    subGrades.totalGrade = this.calculateTotalGrade(subGrades);
+
+    // 確定標籤類型
+    subGrades.labelType = this.determineLabelType(subGrades);
+
+    // 計算置信度
+    subGrades.confidence = this.calculateOverallConfidence(imageAnalysis);
+
+    return subGrades;
+  }
+
+  // 根據分析結果計算分數
+  calculateGradeFromAnalysis(analysisData, standards) {
+    let damageScore = 0;
+
+    if (analysisData.horizontalOffset !== undefined) {
+      // 置中分析
+      const totalOffset = Math.sqrt(
+        analysisData.horizontalOffset ** 2 + analysisData.verticalOffset ** 2
+      );
+      damageScore = totalOffset;
+    } else if (analysisData.topLeft !== undefined) {
+      // 邊角分析
+      damageScore =
+        (analysisData.topLeft +
+          analysisData.topRight +
+          analysisData.bottomLeft +
+          analysisData.bottomRight) /
+        4;
+    } else if (analysisData.topEdge !== undefined) {
+      // 邊緣分析
+      damageScore =
+        (analysisData.topEdge +
+          analysisData.bottomEdge +
+          analysisData.leftEdge +
+          analysisData.rightEdge) /
+        4;
+    } else if (analysisData.scratches !== undefined) {
+      // 表面分析
+      damageScore =
+        analysisData.scratches + analysisData.stains + analysisData.creases;
+    }
+
+    // 根據標準確定分數
+    for (const [grade, criteria] of Object.entries(standards.criteria)) {
+      if (
+        damageScore <= criteria.maxOffset ||
+        damageScore <= criteria.maxDamage
+      ) {
+        return {
+          grade: parseFloat(grade),
+          description: criteria.description,
+          damageScore: damageScore,
+          confidence: analysisData.confidence,
+        };
+      }
+    }
+
+    return {
+      grade: 6.0,
+      description: '嚴重損壞',
+      damageScore: damageScore,
+      confidence: analysisData.confidence,
+    };
+  }
+
+  // 計算總分
+  calculateTotalGrade(subGrades) {
+    const weights = {
+      centering: 0.25,
+      corners: 0.25,
+      edges: 0.25,
+      surface: 0.25,
+    };
+    let totalScore = 0;
+
+    Object.entries(subGrades).forEach(([category, data]) => {
+      if (weights[category] && data.grade) {
+        totalScore += data.grade * weights[category];
+      }
+    });
+
+    return Math.round(totalScore * 2) / 2; // 四捨五入到 0.5
+  }
+
+  // 確定標籤類型
+  determineLabelType(subGrades) {
+    const scores = [
+      subGrades.centering.grade,
+      subGrades.corners.grade,
+      subGrades.edges.grade,
+      subGrades.surface.grade,
+    ];
+
+    if (scores.every(score => score === 10)) {
+      return {
+        type: 'Black Label',
+        chinese: '黑標',
+        description: 'BGS 最高等級，極其稀有',
+        valueMultiplier: 3.0,
+      };
+    } else if (scores.every(score => score >= 9.5)) {
+      return {
+        type: 'Gold Label',
+        chinese: '金標',
+        description: 'BGS 高級等級，非常稀有',
+        valueMultiplier: 2.0,
+      };
+    } else {
+      return {
+        type: 'Standard Label',
+        chinese: '標準標',
+        description: 'BGS 標準等級',
+        valueMultiplier: 1.0,
+      };
+    }
+  }
+
+  // 計算整體置信度
+  calculateOverallConfidence(imageAnalysis) {
+    const confidences = [
+      imageAnalysis.centering.confidence,
+      imageAnalysis.corners.confidence,
+      imageAnalysis.edges.confidence,
+      imageAnalysis.surface.confidence,
+    ];
+
+    return (
+      confidences.reduce((sum, conf) => sum + conf, 0) / confidences.length
+    );
+  }
+
+  // 獲取 BGS 基準數據
+  async getBGSBenchmarks(cardInfo) {
+    const client = await this.pool.connect();
+
+    try {
+      // 獲取同類卡牌的 BGS 數據
+      const result = await client.query(
+        `
+        SELECT 
+          AVG(grade) as avg_grade,
+          AVG(value) as avg_value,
+          AVG(population) as avg_population,
+          MIN(value) as min_value,
+          MAX(value) as max_value,
+          COUNT(*) as total_records,
+          PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY value) as median_value
+        FROM grading_data g
+        JOIN cards c ON g.card_id = c.id
+        WHERE g.grading_company = 'BGS'
+        AND c.category = $1
+        AND c.rarity = $2
+        AND g.is_active = true
+      `,
+        [cardInfo.category, cardInfo.rarity]
+      );
+
+      return result.rows[0];
+    } finally {
+      client.release();
+    }
+  }
+
+  // 價值預測
+  async predictValue(subGrades, benchmarks, cardInfo) {
+    const { totalGrade, labelType } = subGrades;
+    const { avg_value, median_value, avg_population } = benchmarks;
+
+    // 基礎價值（使用中位數更穩定）
+    let predictedValue = median_value || avg_value || 100;
+
+    // 分數調整
+    const gradeMultiplier = totalGrade / 9.5; // 以 9.5 為基準
+    predictedValue *= gradeMultiplier;
+
+    // 標籤類型調整
+    predictedValue *= labelType.valueMultiplier;
+
+    // 人口調整（人口越少價值越高）
+    const populationFactor = Math.max(0.5, 2 - avg_population / 100);
+    predictedValue *= populationFactor;
+
+    // 稀有度調整
+    const rarityMultiplier = this.getRarityMultiplier(cardInfo.rarity);
+    predictedValue *= rarityMultiplier;
+
+    return {
+      predictedValue: Math.round(predictedValue),
+      confidence: 0.75 + Math.random() * 0.25,
+      factors: {
+        baseValue: median_value || avg_value,
+        gradeMultiplier,
+        labelMultiplier: labelType.valueMultiplier,
+        populationFactor,
+        rarityMultiplier,
+      },
+      comparison: {
+        min: benchmarks.min_value,
+        max: benchmarks.max_value,
+        avg: benchmarks.avg_value,
+        median: median_value,
+      },
+    };
+  }
+
+  // 獲取稀有度倍數
+  getRarityMultiplier(rarity) {
+    const multipliers = {
+      Common: 0.5,
+      Uncommon: 0.7,
+      Rare: 1.0,
+      'Ultra Rare': 1.5,
+      'Secret Rare': 2.0,
+      Holographic: 1.2,
+      'Reverse Holo': 1.1,
+    };
+
+    return multipliers[rarity] || 1.0;
+  }
+
+  // 生成鑑定報告
+  async generateGradingReport(
+    subGrades,
+    valuePrediction,
+    benchmarks,
+    cardInfo
+  ) {
+    const report = {
+      cardInfo,
+      grading: {
+        company: 'BGS',
+        subGrades: {
+          centering: subGrades.centering,
+          corners: subGrades.corners,
+          edges: subGrades.edges,
+          surface: subGrades.surface,
+        },
+        totalGrade: subGrades.totalGrade,
+        labelType: subGrades.labelType,
+        confidence: subGrades.confidence,
+      },
+      valuePrediction,
+      benchmarks,
+      recommendations: await this.generateRecommendations(
+        subGrades,
+        valuePrediction
+      ),
+      riskAssessment: await this.assessRisk(subGrades, valuePrediction),
+      metadata: {
+        timestamp: new Date().toISOString(),
+        version: '1.0',
+        algorithm: 'BGS_Simulation_Service',
+      },
+    };
+
+    return report;
+  }
+
+  // 生成建議
+  async generateRecommendations(subGrades, valuePrediction) {
+    const recommendations = [];
+
+    // BGS 建議
+    if (subGrades.totalGrade >= 9.5) {
+      recommendations.push({
+        company: 'BGS',
+        priority: 'high',
+        reason: '高品質卡牌，BGS 子分數系統能更好展示優勢',
+        expectedGrade: subGrades.totalGrade,
+        expectedValue: valuePrediction.predictedValue,
+        confidence: subGrades.confidence,
+        estimatedCost: 25,
+        turnaroundTime: '2-3 週',
+        roi: this.calculateROI(valuePrediction.predictedValue, 25),
+      });
+    }
+
+    // PSA 建議
+    if (subGrades.totalGrade >= 9) {
+      recommendations.push({
+        company: 'PSA',
+        priority: 'medium',
+        reason: 'PSA 在市場認可度更高，適合投資',
+        expectedGrade: Math.round(subGrades.totalGrade),
+        expectedValue: Math.round(valuePrediction.predictedValue * 0.9),
+        confidence: subGrades.confidence * 0.9,
+        estimatedCost: 20,
+        turnaroundTime: '4-6 週',
+        roi: this.calculateROI(valuePrediction.predictedValue * 0.9, 20),
+      });
+    }
+
+    // CGC 建議
+    if (subGrades.totalGrade >= 8) {
+      recommendations.push({
+        company: 'CGC',
+        priority: 'low',
+        reason: '經濟實惠的選擇，適合預算有限的情況',
+        expectedGrade: Math.round(subGrades.totalGrade * 0.95),
+        expectedValue: Math.round(valuePrediction.predictedValue * 0.7),
+        confidence: subGrades.confidence * 0.8,
+        estimatedCost: 15,
+        turnaroundTime: '1-2 週',
+        roi: this.calculateROI(valuePrediction.predictedValue * 0.7, 15),
+      });
+    }
+
+    return recommendations.sort((a, b) => b.roi - a.roi);
+  }
+
+  // 計算投資回報率
+  calculateROI(expectedValue, cost) {
+    return ((expectedValue - cost) / cost) * 100;
+  }
+
+  // 風險評估
+  async assessRisk(subGrades, valuePrediction) {
+    const risks = [];
+    let overallRisk = 'low';
+    let riskScore = 0;
+
+    // 分數風險
+    if (subGrades.totalGrade < 8) {
+      risks.push('分數較低，可能影響投資價值');
+      riskScore += 3;
+    } else if (subGrades.totalGrade < 9) {
+      risks.push('分數中等，投資價值有限');
+      riskScore += 2;
+    }
+
+    // 置信度風險
+    if (subGrades.confidence < 0.7) {
+      risks.push('分析置信度較低，建議人工複檢');
+      riskScore += 2;
+    }
+
+    // 價值風險
+    if (valuePrediction.predictedValue < 100) {
+      risks.push('預期價值較低，鑑定成本可能超過收益');
+      riskScore += 2;
+    }
+
+    // 標籤風險
+    if (subGrades.labelType.type === 'Standard Label') {
+      risks.push('標準標籤，市場溢價有限');
+      riskScore += 1;
+    }
+
+    // 確定整體風險等級
+    if (riskScore >= 5) {
+      overallRisk = 'high';
+    } else if (riskScore >= 3) {
+      overallRisk = 'medium';
+    }
+
+    return {
+      overallRisk,
+      riskScore,
+      risks: risks.length > 0 ? risks : ['風險較低，適合鑑定'],
+      recommendation: this.getRiskRecommendation(overallRisk),
+      factors: {
+        gradeRisk:
+          subGrades.totalGrade < 8
+            ? 'high'
+            : subGrades.totalGrade < 9
+              ? 'medium'
+              : 'low',
+        confidenceRisk: subGrades.confidence < 0.7 ? 'high' : 'low',
+        valueRisk: valuePrediction.predictedValue < 100 ? 'high' : 'low',
+      },
+    };
+  }
+
+  // 獲取風險建議
+  getRiskRecommendation(riskLevel) {
+    switch (riskLevel) {
+      case 'low':
+        return '建議進行鑑定，投資風險較低';
+      case 'medium':
+        return '建議謹慎考慮，可等待更好的時機';
+      case 'high':
+        return '不建議鑑定，投資風險較高';
+      default:
+        return '需要更多信息進行評估';
+    }
+  }
+
+  // 保存鑑定記錄
+  async saveGradingRecord(report, cardInfo) {
+    const client = await this.pool.connect();
+
+    try {
+      await client.query(
+        `
+        INSERT INTO grading_data (
+          card_id, grading_company, grade, population, value, 
+          source, metadata, is_active
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        ON CONFLICT (card_id, grading_company) 
+        DO UPDATE SET
+          grade = EXCLUDED.grade,
+          value = EXCLUDED.value,
+          metadata = EXCLUDED.metadata,
+          updated_at = CURRENT_TIMESTAMP
+      `,
+        [
+          cardInfo.id,
+          'BGS',
+          report.grading.totalGrade,
+          Math.round(report.benchmarks.avg_population || 0),
+          report.valuePrediction.predictedValue,
+          'simulation_service',
+          JSON.stringify(report),
+          true,
+        ]
+      );
+
+      console.log('💾 鑑定記錄已保存');
+    } finally {
+      client.release();
+    }
+  }
+
+  // 獲取鑑定歷史
+  async getGradingHistory(cardId) {
+    const client = await this.pool.connect();
+
+    try {
+      const result = await client.query(
+        `
+        SELECT * FROM grading_data 
+        WHERE card_id = $1 AND is_active = true
+        ORDER BY created_at DESC
+      `,
+        [cardId]
+      );
+
+      return result.rows;
+    } finally {
+      client.release();
+    }
+  }
+
+  // 照片質量驗證
+  async validatePhotoQuality(imageData) {
+    const validation = {
+      isValid: true,
+      issues: [],
+      quality: {
+        resolution: 'unknown',
+        lighting: 'unknown',
+        focus: 'unknown',
+        angle: 'unknown',
+        coverage: 'unknown',
+      },
+      score: 0,
+    };
+
+    try {
+      // 模擬照片質量檢查
+      // 實際實現應該使用計算機視覺算法
+
+      // 檢查解析度
+      if (imageData.width && imageData.height) {
+        const megapixels = (imageData.width * imageData.height) / 1000000;
+        if (megapixels >= 8) {
+          validation.quality.resolution = 'excellent';
+          validation.score += 20;
+        } else if (megapixels >= 4) {
+          validation.quality.resolution = 'good';
+          validation.score += 15;
+        } else if (megapixels >= 2) {
+          validation.quality.resolution = 'acceptable';
+          validation.score += 10;
+        } else {
+          validation.quality.resolution = 'poor';
+          validation.issues.push('解析度過低，建議使用至少 2MP 的相機');
+        }
+      }
+
+      // 檢查光照條件
+      const lightingScore = Math.random() * 100;
+      if (lightingScore >= 80) {
+        validation.quality.lighting = 'excellent';
+        validation.score += 20;
+      } else if (lightingScore >= 60) {
+        validation.quality.lighting = 'good';
+        validation.score += 15;
+      } else if (lightingScore >= 40) {
+        validation.quality.lighting = 'acceptable';
+        validation.score += 10;
+      } else {
+        validation.quality.lighting = 'poor';
+        validation.issues.push('光照不足或過強，建議在自然光下拍攝');
+      }
+
+      // 檢查對焦
+      const focusScore = Math.random() * 100;
+      if (focusScore >= 85) {
+        validation.quality.focus = 'excellent';
+        validation.score += 20;
+      } else if (focusScore >= 70) {
+        validation.quality.focus = 'good';
+        validation.score += 15;
+      } else if (focusScore >= 50) {
+        validation.quality.focus = 'acceptable';
+        validation.score += 10;
+      } else {
+        validation.quality.focus = 'poor';
+        validation.issues.push('照片模糊，請確保對焦清晰');
+      }
+
+      // 檢查拍攝角度
+      const angleScore = Math.random() * 100;
+      if (angleScore >= 90) {
+        validation.quality.angle = 'excellent';
+        validation.score += 20;
+      } else if (angleScore >= 75) {
+        validation.quality.angle = 'good';
+        validation.score += 15;
+      } else if (angleScore >= 60) {
+        validation.quality.angle = 'acceptable';
+        validation.score += 10;
+      } else {
+        validation.quality.angle = 'poor';
+        validation.issues.push('拍攝角度不當，請保持卡片水平');
+      }
+
+      // 檢查覆蓋範圍
+      const coverageScore = Math.random() * 100;
+      if (coverageScore >= 85) {
+        validation.quality.coverage = 'excellent';
+        validation.score += 20;
+      } else if (coverageScore >= 70) {
+        validation.quality.coverage = 'good';
+        validation.score += 15;
+      } else if (coverageScore >= 50) {
+        validation.quality.coverage = 'acceptable';
+        validation.score += 10;
+      } else {
+        validation.quality.coverage = 'poor';
+        validation.issues.push('卡片未完全包含在照片中');
+      }
+
+      // 判斷是否合格
+      validation.isValid =
+        validation.score >= 60 && validation.issues.length <= 2;
+
+      return validation;
+    } catch (error) {
+      console.error('照片質量驗證失敗:', error);
+      return {
+        isValid: false,
+        issues: ['照片質量驗證失敗'],
+        quality: validation.quality,
+        score: 0,
+      };
+    }
+  }
+
+  // 獲取拍攝指引
+  async getPhotoCaptureGuidelines(featureType) {
+    const guidelines = {
+      bgs_grading: {
+        title: 'BGS 模擬鑑定拍攝指引',
+        description: '為了獲得準確的 BGS 模擬鑑定結果，請按照以下指引拍攝照片',
+        requirements: {
+          resolution: '至少 2MP (建議 8MP 以上)',
+          format: 'JPG 或 PNG',
+          lighting: '自然光或均勻的室內光',
+          background: '純色背景，避免複雜圖案',
+        },
+        steps: [
+          {
+            step: 1,
+            title: '準備環境',
+            description: '選擇光線充足、背景簡潔的環境',
+            tips: [
+              '避免強烈陽光直射',
+              '使用白色或淺色背景',
+              '確保環境安靜穩定',
+            ],
+          },
+          {
+            step: 2,
+            title: '卡片擺放',
+            description: '將卡片平放在背景上，確保完全平整',
+            tips: [
+              '卡片四角完全貼合背景',
+              '避免卡片彎曲或翹起',
+              '保持卡片清潔無污漬',
+            ],
+          },
+          {
+            step: 3,
+            title: '相機設置',
+            description: '調整相機參數以獲得最佳效果',
+            tips: [
+              '使用最高解析度設置',
+              '關閉閃光燈',
+              '啟用防抖功能',
+              '設置為自動對焦',
+            ],
+          },
+          {
+            step: 4,
+            title: '拍攝角度',
+            description: '保持相機垂直於卡片表面',
+            tips: [
+              '相機距離卡片 30-50cm',
+              '保持相機水平，避免傾斜',
+              '確保卡片完全在取景框內',
+              '留出適當的邊距',
+            ],
+          },
+          {
+            step: 5,
+            title: '多角度拍攝',
+            description: '拍攝多個角度以獲得完整信息',
+            tips: [
+              '正面照片：完整卡片圖像',
+              '邊角特寫：四個角落的詳細照片',
+              '邊緣特寫：四條邊的詳細照片',
+              '表面特寫：卡片表面的細節照片',
+            ],
+          },
+        ],
+        qualityCheck: [
+          '照片清晰度：文字和圖案清晰可見',
+          '光照均勻：無明顯陰影或反光',
+          '色彩準確：卡片顏色真實還原',
+          '完整覆蓋：卡片完全在照片中',
+          '無遮擋：卡片未被手指或其他物體遮擋',
+        ],
+        commonMistakes: [
+          '手抖導致照片模糊',
+          '光照不足或過強',
+          '拍攝角度傾斜',
+          '卡片未完全平整',
+          '背景過於複雜',
+          '卡片被遮擋或部分缺失',
+        ],
+      },
+      card_recognition: {
+        title: '卡牌辨識拍攝指引',
+        description: '為了準確識別卡牌，請按照以下指引拍攝',
+        requirements: {
+          resolution: '至少 1MP',
+          format: 'JPG 或 PNG',
+          lighting: '充足均勻的光線',
+          background: '對比度高的背景',
+        },
+        steps: [
+          {
+            step: 1,
+            title: '卡片準備',
+            description: '確保卡片清晰可見',
+            tips: ['移除保護套或卡套', '清潔卡片表面', '確保卡片平整'],
+          },
+          {
+            step: 2,
+            title: '拍攝設置',
+            description: '調整相機以獲得清晰圖像',
+            tips: ['使用自動對焦', '保持穩定', '確保充足光線'],
+          },
+        ],
+      },
+      centering_assessment: {
+        title: '置中評估拍攝指引',
+        description: '為了準確評估卡片置中，需要特別注意拍攝角度',
+        requirements: {
+          resolution: '至少 2MP',
+          format: 'JPG 或 PNG',
+          lighting: '均勻光照，避免陰影',
+          background: '純色背景',
+        },
+        steps: [
+          {
+            step: 1,
+            title: '精確對齊',
+            description: '確保相機完全垂直於卡片',
+            tips: ['使用水平儀檢查', '避免任何角度傾斜', '保持相機穩定'],
+          },
+        ],
+      },
+      authenticity_check: {
+        title: '防偽判斷拍攝指引',
+        description: '為了檢測防偽特徵，需要高解析度多角度照片',
+        requirements: {
+          resolution: '至少 4MP',
+          format: 'JPG 或 PNG',
+          lighting: '強光照射以顯示防偽特徵',
+          background: '深色背景以突出細節',
+        },
+        steps: [
+          {
+            step: 1,
+            title: '防偽特徵拍攝',
+            description: '重點拍攝防偽標記和特殊效果',
+            tips: ['使用強光照射', '拍攝全息效果', '捕捉特殊印刷細節'],
+          },
+        ],
+      },
+    };
+
+    return guidelines[featureType] || guidelines.bgs_grading;
+  }
+
+  // 關閉連接池
+  async close() {
+    await this.pool.end();
+  }
+}
+
+module.exports = BGSGradingService;

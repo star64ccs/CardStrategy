@@ -1,5 +1,5 @@
 /**
- * 通知設置類型定義
+ * NotificationSettingsClass型定義
  */
 export interface NotificationSettings {
   priceAlerts: boolean;
@@ -11,7 +11,7 @@ export interface NotificationSettings {
 }
 
 /**
- * 推送通知設置
+ * PushNotificationSettings
  */
 export interface PushNotificationSettings {
   enabled: boolean;
@@ -25,7 +25,7 @@ export interface PushNotificationSettings {
 }
 
 /**
- * 通知頻率設置
+ * Notification頻率Settings
  */
 export interface NotificationFrequency {
   priceAlerts: 'immediate' | 'hourly' | 'daily' | 'weekly';
@@ -35,7 +35,7 @@ export interface NotificationFrequency {
 }
 
 /**
- * 通知時間設置
+ * NotificationTimeSettings
  */
 export interface NotificationTimeSettings {
   quietHours: {
@@ -47,7 +47,7 @@ export interface NotificationTimeSettings {
 }
 
 /**
- * 完整的通知配置
+ * 完整的NotificationConfigure
  */
 export interface NotificationConfig {
   settings: NotificationSettings;

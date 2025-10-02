@@ -12,7 +12,7 @@ import type {
 } from '../../features/counterfeit/types/detection';
 import { DetectionMethod } from '../../features/counterfeit/types/detection';
 
-// 狀態接口
+// StatusInterface
 interface FakeCardDetectionState {
   currentDetection: DetectionResult | null;
   detectionHistory: DetectionHistory[];
@@ -42,7 +42,7 @@ interface FakeCardDetectionState {
   };
 }
 
-// 初始狀態
+// 初始Status
 const initialState: FakeCardDetectionState = {
   currentDetection: null,
   detectionHistory: [],
@@ -77,7 +77,7 @@ const initialState: FakeCardDetectionState = {
   },
 };
 
-// 異步 Action Creators
+// Async Action Creators
 export const _initializeDetectionService = createAsyncThunk(
   'fakeCardDetection/initialize',
   async (config?: unknown) => {
@@ -93,7 +93,7 @@ export const _detectFakeCard = createAsyncThunk(
     const _service = FakeCardDetectionService.getInstance();
     const _response = await service.detectFakeCard(request);
     if (!response.success) {
-      throw new Error(response.error || '檢測失敗');
+      throw new Error(response.error || '檢測Failed');
     }
     return response;
   }
@@ -105,7 +105,7 @@ export const _batchDetectFakeCards = createAsyncThunk(
     const _service = FakeCardDetectionService.getInstance();
     const _results = await service.batchDetect(requests);
 
-    // 更新進度
+    // Update進度
     dispatch(
       updateBatchProgress({ progress: requests.length, total: requests.length })
     );
@@ -239,7 +239,7 @@ const _fakeCardDetectionSlice = createSlice({
       })
       .addCase(initializeDetectionService.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
     // detectFakeCard
@@ -255,7 +255,7 @@ const _fakeCardDetectionSlice = createSlice({
       })
       .addCase(detectFakeCard.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '檢測失敗';
+        state.error = action.error.message || '檢測Failed';
       });
 
     // batchDetectFakeCards
@@ -275,7 +275,7 @@ const _fakeCardDetectionSlice = createSlice({
       .addCase(batchDetectFakeCards.rejected, (state, action) => {
         state.loading = false;
         state.batchDetections.isProcessing = false;
-        state.error = action.error.message || '批量檢測失敗';
+        state.error = action.error.message || '批量檢測Failed';
       });
 
     // fetchDetectionHistory
@@ -290,7 +290,7 @@ const _fakeCardDetectionSlice = createSlice({
       })
       .addCase(fetchDetectionHistory.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取檢測歷史失敗';
+        state.error = action.error.message || 'Get檢測歷史Failed';
       });
 
     // fetchDetectionStats
@@ -305,7 +305,7 @@ const _fakeCardDetectionSlice = createSlice({
       })
       .addCase(fetchDetectionStats.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取檢測統計失敗';
+        state.error = action.error.message || 'Get檢測統計Failed';
       });
 
     // fetchFeatureTemplates
@@ -320,7 +320,7 @@ const _fakeCardDetectionSlice = createSlice({
       })
       .addCase(fetchFeatureTemplates.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取特徵模板失敗';
+        state.error = action.error.message || 'Get特徵模板Failed';
       });
 
     // reportFakeCard
@@ -335,7 +335,7 @@ const _fakeCardDetectionSlice = createSlice({
       })
       .addCase(reportFakeCard.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '報告假卡失敗';
+        state.error = action.error.message || '報告假卡Failed';
       });
   },
 });

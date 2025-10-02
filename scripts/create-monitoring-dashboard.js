@@ -2,14 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 監控儀表板創建腳本
- * 為 CardStrategy 項目創建監控和分析儀表板
+ * Monitor儀Table板Create腳本
+ * 為 CardStrategy 項目CreateMonitor和Analysis儀Table板
  */
 
 // eslint-disable-next-line no-console
 console.log('📊 創建 CardStrategy 監控儀表板...\n');
 
-// 創建監控儀表板 HTML
+// CreateMonitor儀Table板 HTML
 const dashboardHTML = `<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
@@ -342,42 +342,42 @@ const dashboardHTML = `<!DOCTYPE html>
     </div>
 
     <script>
-        // 更新時間
+        // UpdateTime
         function updateTimestamp() {
             document.getElementById('last-update').textContent = 
                 '最後更新: ' + new Date().toLocaleTimeString('zh-TW');
         }
 
-        // 刷新數據
+        // RefreshData
         function refreshData() {
             updateTimestamp();
             alert('數據已刷新！');
         }
 
-        // 測試服務
+        // TestService
         function testServices() {
-            alert('正在測試所有服務...');
-            // 這裡可以調用實際的測試 API
+            alert('正在測試所有Service...');
+            // 這裡可以調用實際的Test API
         }
 
-        // 導出日誌
+        // ExportLog
         function exportLogs() {
             alert('日誌導出功能開發中...');
         }
 
-        // 健康檢查
+        // 健康Check
         function checkHealth() {
-            alert('所有服務健康狀態良好！');
+            alert('所有Service健康狀態良好！');
         }
 
-        // 初始化
+        // Initialize
         updateTimestamp();
-        setInterval(updateTimestamp, 60000); // 每分鐘更新一次時間
+        setInterval(updateTimestamp, 60000); // 每MinuteUpdate一次Time
     </script>
 </body>
 </html>`;
 
-// 創建監控配置文件
+// CreateMonitorConfigureFile
 const monitoringConfig = {
   name: 'monitoring-config.json',
   content: {
@@ -435,29 +435,29 @@ const monitoringConfig = {
 };
 
 try {
-  // 創建監控目錄
+  // CreateMonitorDirectory
   const monitoringDir = path.join(__dirname, '../monitoring');
   if (!fs.existsSync(monitoringDir)) {
     fs.mkdirSync(monitoringDir, { recursive: true });
   }
 
-  // 創建儀表板 HTML
+  // Create儀Table板 HTML
   const dashboardPath = path.join(monitoringDir, 'dashboard.html');
   fs.writeFileSync(dashboardPath, dashboardHTML);
   // eslint-disable-next-line no-console
   console.log('✅ 創建監控儀表板: monitoring/dashboard.html');
 
-  // 創建監控配置
+  // CreateMonitorConfigure
   const configPath = path.join(monitoringDir, monitoringConfig.name);
   fs.writeFileSync(configPath, JSON.stringify(monitoringConfig.content, null, 2));
   // eslint-disable-next-line no-console
   console.log('✅ 創建監控配置: monitoring/monitoring-config.json');
 
-  // 創建監控腳本
+  // CreateMonitor腳本
   const monitoringScript = `const fs = require('fs');
 const path = require('path');
 
-console.log('🔍 CardStrategy 服務監控檢查...');
+console.log('🔍 CardStrategy Service監控Check...');
 
 async function checkServiceHealth() {
   const results = {
@@ -466,7 +466,7 @@ async function checkServiceHealth() {
     overall: 'healthy'
   };
 
-  // 檢查配置文件
+  // CheckConfigureFile
   const configFiles = [
     'src/config/ai-keys/mixpanel-config.json',
     'src/config/ai-keys/sendgrid-config.json',
@@ -495,12 +495,12 @@ async function checkServiceHealth() {
   return results;
 }
 
-// 執行健康檢查
+// 執Row健康Check
 checkServiceHealth().then(results => {
   console.log('📊 監控結果:');
   console.log(JSON.stringify(results, null, 2));
   
-  // 保存結果
+  // Save結果
   const reportPath = path.join(__dirname, '../monitoring/health-report.json');
   fs.writeFileSync(reportPath, JSON.stringify(results, null, 2));
   console.log('✅ 健康報告已保存: monitoring/health-report.json');
@@ -520,7 +520,7 @@ checkServiceHealth().then(results => {
   // eslint-disable-next-line no-console
   console.log('   🔧 監控配置: monitoring/monitoring-config.json');
   // eslint-disable-next-line no-console
-  console.log('   🧪 服務監控: node scripts/monitor-services.js');
+  console.log('   🧪 Service監控: node scripts/monitor-services.js');
 
   // eslint-disable-next-line no-console
   console.log('\n🚀 使用方式:');
@@ -529,7 +529,7 @@ checkServiceHealth().then(results => {
   // eslint-disable-next-line no-console
   console.log('   2. 運行 node scripts/monitor-services.js 進行健康檢查');
   // eslint-disable-next-line no-console
-  console.log('   3. 查看各服務的實時狀態和統計');
+  console.log('   3. 查看各Service的實時狀態和統計');
 
   // eslint-disable-next-line no-console
   console.log('\n🔗 快速連結:');
@@ -544,6 +544,6 @@ checkServiceHealth().then(results => {
 
 } catch (error) {
   // eslint-disable-next-line no-console
-  console.error('❌ 創建監控儀表板失敗:', error.message);
+  console.error('❌ Create監控儀表板Failed:', error.message);
   process.exit(1);
 }

@@ -6,8 +6,8 @@
   },
   "common": {
     "loading": "載入中...",
-    "error": "錯誤",
-    "success": "成功",
+    "error": "Error",
+    "success": "Success",
     "cancel": "取消",
     "confirm": "確認",
     "save": "儲存",
@@ -31,9 +31,9 @@
     "ok": "確定",
     "noData": "暫無數據",
     "noResults": "沒有找到結果",
-    "networkError": "網路連線錯誤",
-    "serverError": "伺服器錯誤",
-    "unknownError": "未知錯誤"
+    "networkError": "網路連線Error",
+    "serverError": "伺服器Error",
+    "unknownError": "未知Error"
   },
   "navigation": {
     "home": "首頁",
@@ -159,7 +159,7 @@
     "about": "關於",
     "help": "幫助",
     "feedback": "意見回饋",
-    "termsOfService": "服務條款",
+    "termsOfService": "Service條款",
     "privacyPolicy": "隱私政策",
     "version": "版本"
   },
@@ -180,7 +180,7 @@
     "title": "用戶反饋",
     "loading": "載入中...",
     "error": {
-      "title": "反饋錯誤"
+      "title": "反饋Error"
     },
     "empty": {
       "title": "暫無反饋",
@@ -237,8 +237,8 @@
         "description_required": "請輸入詳細描述"
       },
       "success": {
-        "title": "提交成功",
-        "message": "您的反饋已成功提交，我們會盡快處理。"
+        "title": "提交Success",
+        "message": "您的反饋已Success提交，我們會盡快Handle。"
       },
       "cancel": {
         "title": "取消提交",
@@ -246,7 +246,7 @@
       }
     },
     "type": {
-      "bug_report": "錯誤報告",
+      "bug_report": "Error報告",
       "feature_request": "功能請求",
       "improvement": "改進建議",
       "general": "一般反饋",
@@ -294,7 +294,7 @@
       "title": "用戶反饋",
       "loading": "載入中...",
       "error": {
-        "title": "反饋錯誤"
+        "title": "反饋Error"
       },
       "empty": {
         "title": "暫無反饋",
@@ -351,8 +351,8 @@
           "description_required": "請輸入詳細描述"
         },
         "success": {
-          "title": "提交成功",
-          "message": "您的反饋已成功提交，我們會盡快處理。"
+          "title": "提交Success",
+          "message": "您的反饋已Success提交，我們會盡快Handle。"
         },
         "cancel": {
           "title": "取消提交",
@@ -360,7 +360,7 @@
         }
       },
       "type": {
-        "bug_report": "錯誤報告",
+        "bug_report": "Error報告",
         "feature_request": "功能請求",
         "improvement": "改進建議",
         "general": "一般反饋",
@@ -440,7 +440,7 @@
         "description": "管理您對數據處理的同意設置",
         "types": {
           "account_management": "賬戶管理",
-          "service_provision": "服務提供",
+          "service_provision": "Service提供",
           "payment_processing": "支付處理",
           "marketing": "營銷",
           "analytics": "分析",
@@ -505,7 +505,7 @@
           "description": "請描述您的權利請求",
           "submit": "提交請求",
           "success": "請求已提交",
-          "error": "提交失敗"
+          "error": "提交Failed"
         }
       },
       "settings": {
@@ -576,7 +576,7 @@
       },
       "processing_purposes": {
         "account_management": "賬戶管理",
-        "service_provision": "服務提供",
+        "service_provision": "Service提供",
         "payment_processing": "支付處理",
         "marketing": "營銷",
         "analytics": "分析",
@@ -594,16 +594,16 @@
         "in_person": "面對面"
       },
       "error": {
-        "title": "隱私錯誤",
-        "load_failed": "載入失敗",
-        "save_failed": "保存失敗",
-        "consent_failed": "同意操作失敗",
-        "rights_request_failed": "權利請求失敗",
-        "compliance_check_failed": "合規檢查失敗",
-        "age_verification_failed": "年齡驗證失敗",
-        "parental_consent_failed": "父母同意請求失敗",
-        "export_failed": "數據導出失敗",
-        "delete_failed": "數據刪除失敗"
+        "title": "隱私Error",
+        "load_failed": "載入Failed",
+        "save_failed": "保存Failed",
+        "consent_failed": "同意操作Failed",
+        "rights_request_failed": "權利請求Failed",
+        "compliance_check_failed": "合規CheckFailed",
+        "age_verification_failed": "年齡VerifyFailed",
+        "parental_consent_failed": "父母同意請求Failed",
+        "export_failed": "數據導出Failed",
+        "delete_failed": "數據DeleteFailed"
       },
       "success": {
         "preferences_saved": "偏好設置已保存",
@@ -653,8 +653,8 @@
       "delete": "刪除",
       "submit": "提交",
       "loading": "載入中...",
-      "error": "錯誤",
-      "success": "成功",
+      "error": "Error",
+      "success": "Success",
       "warning": "警告",
       "info": "信息"
     }

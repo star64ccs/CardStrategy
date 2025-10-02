@@ -3,7 +3,7 @@ import React, { forwardRef, useMemo } from 'react';
 import { useResponsive } from '../../hooks/useResponsive';
 import type { FlexProps } from '../../types/layout';
 
-// Flex 組件
+// Flex Component
 export const _Flex = forwardRef<HTMLDivElement, FlexProps>(
   (
     {
@@ -45,7 +45,7 @@ export const _Flex = forwardRef<HTMLDivElement, FlexProps>(
       const _responsiveOrder = getResponsiveValue(order);
       const _responsiveAlignSelf = getResponsiveValue(alignSelf);
 
-      // 對齊方式映射
+      // 對齊方式Map
       const _alignmentMap = {
         start: 'flex-start',
         center: 'center',
@@ -57,7 +57,7 @@ export const _Flex = forwardRef<HTMLDivElement, FlexProps>(
         'space-evenly': 'space-evenly',
       };
 
-      // Flex 屬性計算
+      // Flex Property計算
       let flexValue = undefined;
       if (responsiveFlex !== undefined) {
         flexValue = responsiveFlex;
@@ -112,7 +112,7 @@ export const _Flex = forwardRef<HTMLDivElement, FlexProps>(
       style,
     ]);
 
-    // 生成 CSS 類名
+    // 生成 CSS Class名
     const _flexClassName = useMemo(() => {
       const _classes = ['layout-flex'];
 

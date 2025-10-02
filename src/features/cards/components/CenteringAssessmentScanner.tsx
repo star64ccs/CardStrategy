@@ -36,13 +36,13 @@ export const CenteringAssessmentScanner: React.FC<
   } = useCenteringAssessment({
     onAssessmentSuccess: result => {
       Alert.alert(
-        '評估成功',
+        '評估Success',
         `整體評分: ${result.overallScore}/10 (置中: ${result.centeringScore}/10)`
       );
       onAssessmentComplete?.(result);
     },
     onAssessmentError: error => {
-      Alert.alert('評估失敗', error.message);
+      Alert.alert('評估Failed', error.message);
       onError?.(error);
     },
   });
@@ -58,7 +58,7 @@ export const CenteringAssessmentScanner: React.FC<
     if (isAssessing) return;
 
     logger.info('模擬拍照進行置中評估...');
-    // 模擬獲取圖片數據
+    // 模擬GetGraph片Data
     const _mockImageData = 'data:image/jpeg;base64,mock_image_data_base64';
     setCurrentImage(mockImageData);
 
@@ -79,7 +79,7 @@ export const CenteringAssessmentScanner: React.FC<
     try {
       await assess(request);
     } catch (err) {
-      logger.error('拍照後評估失敗:', err);
+      logger.error('拍照後評估Failed:', err);
     }
   }, [isAssessing, assess, setCurrentImage]);
 
@@ -150,7 +150,7 @@ export const CenteringAssessmentScanner: React.FC<
 
       {/* 模擬攝像頭預覽 */}
       <View style={styles.cameraPreview}>
-        {/* 這裡應該是實際的攝像頭組件，例如 <RNCamera> 或 <VisionCamera> */}
+        {/* 這裡應該Yes實際的攝像頭Component，例如 <RNCamera> 或 <VisionCamera> */}
         <Text style={styles.cameraPlaceholder}>
           {Platform.OS === 'web'
             ? 'Webcam Placeholder'

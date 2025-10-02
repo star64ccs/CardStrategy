@@ -1,0 +1,577 @@
+// 鑑定爬蟲服務 - 專門收集PSA、BGS、CGC鑑定資訊
+const axios = require('axios');
+const cheerio = require('cheerio');
+const logger = require('../utils/logger');
+const getCardModel = require('../models/Card');
+const getGradingDataModel = require('../models/GradingData');
+
+class GradingCrawlerService {
+  constructor() {
+    this.Card = null;
+    this.GradingData = null;
+    this.gradingConfigs = {
+      psa: {
+        baseUrl: 'https://www.psacard.com',
+        rateLimit: { requestsPerMinute: 5, requestsPerHour: 50 },
+        userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        allowedPaths: ['/pop/', '/cert/'],
+        delayBetweenRequests: 4000,
+      },
+      bgs: {
+        baseUrl: 'https://www.beckett.com',
+        rateLimit: { requestsPerMinute: 5, requestsPerHour: 50 },
+        userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        allowedPaths: ['/grading/', '/population/'],
+        delayBetweenRequests: 4000,
+      },
+      cgc: {
+        baseUrl: 'https://www.cgccards.com',
+        rateLimit: { requestsPerMinute: 5, requestsPerHour: 50 },
+        userAgent: 'CardStrategy-Bot/1.0 (+https://cardstrategy.com/bot)',
+        allowedPaths: ['/population/', '/cert/'],
+        delayBetweenRequests: 4000,
+      },
+    };
+  }
+
+  async initializeModels() {
+    if (!this.Card) this.Card = getCardModel();
+    if (!this.GradingData) this.GradingData = getGradingDataModel();
+
+    if (!this.Card || !this.GradingData) {
+      throw new Error('Failed to initialize grading crawler service models');
+    }
+  }
+
+  // 主要的鑑定數據收集方法
+  async collectAllGradingData() {
+    try {
+      await this.initializeModels();
+      logger.info('🔍 開始收集所有鑑定數據...');
+
+      const results = {
+        psa: await this.collectPSAData(),
+        bgs: await this.collectBGSData(),
+        cgc: await this.collectCGCData(),
+        timestamp: new Date().toISOString(),
+      };
+
+      const totalCollected =
+        results.psa.count + results.bgs.count + results.cgc.count;
+      logger.info(`✅ 鑑定數據收集完成！總共收集 ${totalCollected} 條記錄`);
+
+      return {
+        success: true,
+        totalCollected,
+        results,
+        message: `成功收集 ${totalCollected} 條鑑定數據`,
+      };
+    } catch (error) {
+      logger.error('❌ 鑑定數據收集失敗:', error);
+      throw error;
+    }
+  }
+
+  // 收集PSA鑑定數據
+  async collectPSAData() {
+    try {
+      logger.info('🔍 開始收集PSA鑑定數據...');
+
+      const config = this.gradingConfigs.psa;
+      let allGradingData = [];
+
+      // 獲取現有的卡牌數據，用於查找鑑定資訊
+      const cards = await this.Card.findAll({
+        where: { isActive: true },
+        limit: 100, // 限制數量避免過度請求
+      });
+
+      logger.info(`找到 ${cards.length} 張卡牌，開始查找PSA鑑定資訊`);
+
+      for (const card of cards) {
+        try {
+          const gradingData = await this.scrapePSACard(card, config);
+          if (gradingData) {
+            allGradingData.push(gradingData);
+          }
+
+          // 添加延遲避免被限制
+          await this.delay(config.delayBetweenRequests);
+        } catch (error) {
+          logger.error(`PSA數據收集失敗 - ${card.name}:`, error.message);
+        }
+      }
+
+      logger.info(`✅ PSA鑑定數據收集完成: ${allGradingData.length} 條`);
+      return {
+        type: 'psa',
+        count: allGradingData.length,
+        data: allGradingData,
+        status: 'completed',
+      };
+    } catch (error) {
+      logger.error('❌ PSA鑑定數據收集失敗:', error);
+      return {
+        type: 'psa',
+        count: 0,
+        data: [],
+        status: 'failed',
+        error: error.message,
+      };
+    }
+  }
+
+  // 爬取單張卡牌的PSA數據
+  async scrapePSACard(card, config) {
+    try {
+      // 構建PSA搜索URL
+      const searchUrl = `${config.baseUrl}/pop/`;
+      const searchParams = {
+        sport: '1', // 體育卡牌
+        card: card.name,
+        year: this.extractYearFromSet(card.set),
+      };
+
+      const response = await axios.get(searchUrl, {
+        params: searchParams,
+        headers: {
+          'User-Agent': config.userAgent,
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+        timeout: 30000,
+      });
+
+      const $ = cheerio.load(response.data);
+
+      // 解析PSA人口報告數據
+      const populationData = this.parsePSAPopulationReport($, card);
+
+      if (populationData) {
+        // 保存到數據庫
+        const gradingData = await this.GradingData.create({
+          cardId: card.id,
+          gradingCompany: 'PSA',
+          grade: populationData.grade,
+          population: populationData.population,
+          value: populationData.value,
+          lastUpdated: new Date().toISOString(),
+          source: 'psa_website',
+          metadata: JSON.stringify({
+            url: searchUrl,
+            searchParams: searchParams,
+            scrapedAt: new Date().toISOString(),
+            rawData: populationData,
+          }),
+          isActive: true,
+        });
+
+        return gradingData;
+      }
+
+      return null;
+    } catch (error) {
+      logger.error(`PSA爬取失敗 - ${card.name}:`, error.message);
+      return null;
+    }
+  }
+
+  // 解析PSA人口報告
+  parsePSAPopulationReport($, card) {
+    try {
+      // 查找人口報告表格
+      const populationTable = $('.population-report table');
+      if (populationTable.length === 0) {
+        return null;
+      }
+
+      const rows = populationTable.find('tr');
+      let bestGrade = null;
+      let maxPopulation = 0;
+
+      rows.each((index, row) => {
+        if (index === 0) return; // 跳過表頭
+
+        const cells = $(row).find('td');
+        if (cells.length >= 3) {
+          const grade = $(cells[0]).text().trim();
+          const population = parseInt($(cells[1]).text().trim()) || 0;
+          const value =
+            parseFloat($(cells[2]).text().replace('$', '').replace(',', '')) ||
+            0;
+
+          if (population > maxPopulation) {
+            maxPopulation = population;
+            bestGrade = {
+              grade: grade,
+              population: population,
+              value: value,
+            };
+          }
+        }
+      });
+
+      return bestGrade;
+    } catch (error) {
+      logger.error('解析PSA人口報告失敗:', error);
+      return null;
+    }
+  }
+
+  // 收集BGS鑑定數據
+  async collectBGSData() {
+    try {
+      logger.info('🔍 開始收集BGS鑑定數據...');
+
+      const config = this.gradingConfigs.bgs;
+      let allGradingData = [];
+
+      // 獲取現有的卡牌數據
+      const cards = await this.Card.findAll({
+        where: { isActive: true },
+        limit: 100,
+      });
+
+      logger.info(`找到 ${cards.length} 張卡牌，開始查找BGS鑑定資訊`);
+
+      for (const card of cards) {
+        try {
+          const gradingData = await this.scrapeBGSCard(card, config);
+          if (gradingData) {
+            allGradingData.push(gradingData);
+          }
+
+          await this.delay(config.delayBetweenRequests);
+        } catch (error) {
+          logger.error(`BGS數據收集失敗 - ${card.name}:`, error.message);
+        }
+      }
+
+      logger.info(`✅ BGS鑑定數據收集完成: ${allGradingData.length} 條`);
+      return {
+        type: 'bgs',
+        count: allGradingData.length,
+        data: allGradingData,
+        status: 'completed',
+      };
+    } catch (error) {
+      logger.error('❌ BGS鑑定數據收集失敗:', error);
+      return {
+        type: 'bgs',
+        count: 0,
+        data: [],
+        status: 'failed',
+        error: error.message,
+      };
+    }
+  }
+
+  // 爬取單張卡牌的BGS數據
+  async scrapeBGSCard(card, config) {
+    try {
+      // 構建BGS搜索URL
+      const searchUrl = `${config.baseUrl}/grading/`;
+      const searchParams = {
+        card: card.name,
+        year: this.extractYearFromSet(card.set),
+        sport: '1',
+      };
+
+      const response = await axios.get(searchUrl, {
+        params: searchParams,
+        headers: {
+          'User-Agent': config.userAgent,
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+        timeout: 30000,
+      });
+
+      const $ = cheerio.load(response.data);
+
+      // 解析BGS鑑定數據
+      const gradingData = this.parseBGSGradingReport($, card);
+
+      if (gradingData) {
+        const savedData = await this.GradingData.create({
+          cardId: card.id,
+          gradingCompany: 'BGS',
+          grade: gradingData.grade,
+          population: gradingData.population,
+          value: gradingData.value,
+          lastUpdated: new Date().toISOString(),
+          source: 'bgs_website',
+          metadata: JSON.stringify({
+            url: searchUrl,
+            searchParams: searchParams,
+            scrapedAt: new Date().toISOString(),
+            rawData: gradingData,
+          }),
+          isActive: true,
+        });
+
+        return savedData;
+      }
+
+      return null;
+    } catch (error) {
+      logger.error(`BGS爬取失敗 - ${card.name}:`, error.message);
+      return null;
+    }
+  }
+
+  // 解析BGS鑑定報告
+  parseBGSGradingReport($, card) {
+    try {
+      // 查找鑑定報告表格
+      const gradingTable = $('.grading-report table');
+      if (gradingTable.length === 0) {
+        return null;
+      }
+
+      const rows = gradingTable.find('tr');
+      let bestGrade = null;
+      let maxValue = 0;
+
+      rows.each((index, row) => {
+        if (index === 0) return; // 跳過表頭
+
+        const cells = $(row).find('td');
+        if (cells.length >= 4) {
+          const grade = $(cells[0]).text().trim();
+          const population = parseInt($(cells[1]).text().trim()) || 0;
+          const value =
+            parseFloat($(cells[2]).text().replace('$', '').replace(',', '')) ||
+            0;
+          const lastSale = $(cells[3]).text().trim();
+
+          if (value > maxValue) {
+            maxValue = value;
+            bestGrade = {
+              grade: grade,
+              population: population,
+              value: value,
+              lastSale: lastSale,
+            };
+          }
+        }
+      });
+
+      return bestGrade;
+    } catch (error) {
+      logger.error('解析BGS鑑定報告失敗:', error);
+      return null;
+    }
+  }
+
+  // 收集CGC鑑定數據
+  async collectCGCData() {
+    try {
+      logger.info('🔍 開始收集CGC鑑定數據...');
+
+      const config = this.gradingConfigs.cgc;
+      let allGradingData = [];
+
+      // 獲取現有的卡牌數據
+      const cards = await this.Card.findAll({
+        where: { isActive: true },
+        limit: 100,
+      });
+
+      logger.info(`找到 ${cards.length} 張卡牌，開始查找CGC鑑定資訊`);
+
+      for (const card of cards) {
+        try {
+          const gradingData = await this.scrapeCGCCard(card, config);
+          if (gradingData) {
+            allGradingData.push(gradingData);
+          }
+
+          await this.delay(config.delayBetweenRequests);
+        } catch (error) {
+          logger.error(`CGC數據收集失敗 - ${card.name}:`, error.message);
+        }
+      }
+
+      logger.info(`✅ CGC鑑定數據收集完成: ${allGradingData.length} 條`);
+      return {
+        type: 'cgc',
+        count: allGradingData.length,
+        data: allGradingData,
+        status: 'completed',
+      };
+    } catch (error) {
+      logger.error('❌ CGC鑑定數據收集失敗:', error);
+      return {
+        type: 'cgc',
+        count: 0,
+        data: [],
+        status: 'failed',
+        error: error.message,
+      };
+    }
+  }
+
+  // 爬取單張卡牌的CGC數據
+  async scrapeCGCCard(card, config) {
+    try {
+      // 構建CGC搜索URL
+      const searchUrl = `${config.baseUrl}/population/`;
+      const searchParams = {
+        card: card.name,
+        year: this.extractYearFromSet(card.set),
+      };
+
+      const response = await axios.get(searchUrl, {
+        params: searchParams,
+        headers: {
+          'User-Agent': config.userAgent,
+          Accept:
+            'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        },
+        timeout: 30000,
+      });
+
+      const $ = cheerio.load(response.data);
+
+      // 解析CGC人口數據
+      const populationData = this.parseCGCPopulationReport($, card);
+
+      if (populationData) {
+        const savedData = await this.GradingData.create({
+          cardId: card.id,
+          gradingCompany: 'CGC',
+          grade: populationData.grade,
+          population: populationData.population,
+          value: populationData.value,
+          lastUpdated: new Date().toISOString(),
+          source: 'cgc_website',
+          metadata: JSON.stringify({
+            url: searchUrl,
+            searchParams: searchParams,
+            scrapedAt: new Date().toISOString(),
+            rawData: populationData,
+          }),
+          isActive: true,
+        });
+
+        return savedData;
+      }
+
+      return null;
+    } catch (error) {
+      logger.error(`CGC爬取失敗 - ${card.name}:`, error.message);
+      return null;
+    }
+  }
+
+  // 解析CGC人口報告
+  parseCGCPopulationReport($, card) {
+    try {
+      // 查找人口報告表格
+      const populationTable = $('.population-report table');
+      if (populationTable.length === 0) {
+        return null;
+      }
+
+      const rows = populationTable.find('tr');
+      let bestGrade = null;
+      let maxPopulation = 0;
+
+      rows.each((index, row) => {
+        if (index === 0) return; // 跳過表頭
+
+        const cells = $(row).find('td');
+        if (cells.length >= 3) {
+          const grade = $(cells[0]).text().trim();
+          const population = parseInt($(cells[1]).text().trim()) || 0;
+          const value =
+            parseFloat($(cells[2]).text().replace('$', '').replace(',', '')) ||
+            0;
+
+          if (population > maxPopulation) {
+            maxPopulation = population;
+            bestGrade = {
+              grade: grade,
+              population: population,
+              value: value,
+            };
+          }
+        }
+      });
+
+      return bestGrade;
+    } catch (error) {
+      logger.error('解析CGC人口報告失敗:', error);
+      return null;
+    }
+  }
+
+  // 從套裝名稱提取年份
+  extractYearFromSet(setName) {
+    if (!setName) return null;
+
+    // 嘗試從套裝名稱中提取年份
+    const yearMatch = setName.match(/(\d{4})/);
+    if (yearMatch) {
+      return yearMatch[1];
+    }
+
+    // 如果沒有找到年份，返回null
+    return null;
+  }
+
+  // 延遲函數
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // 獲取鑑定統計
+  async getGradingStats() {
+    try {
+      await this.initializeModels();
+
+      const stats = await this.GradingData.findAll({
+        attributes: [
+          'gradingCompany',
+          [
+            this.GradingData.sequelize.fn(
+              'COUNT',
+              this.GradingData.sequelize.col('id')
+            ),
+            'count',
+          ],
+          [
+            this.GradingData.sequelize.fn(
+              'AVG',
+              this.GradingData.sequelize.col('grade')
+            ),
+            'avgGrade',
+          ],
+          [
+            this.GradingData.sequelize.fn(
+              'AVG',
+              this.GradingData.sequelize.col('value')
+            ),
+            'avgValue',
+          ],
+        ],
+        where: {
+          isActive: true,
+        },
+        group: ['gradingCompany'],
+      });
+
+      return {
+        success: true,
+        stats: stats,
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      logger.error('獲取鑑定統計失敗:', error);
+      throw error;
+    }
+  }
+}
+
+module.exports = new GradingCrawlerService();

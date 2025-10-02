@@ -1,7 +1,7 @@
-// 導出所有卡牌相關類型
+// Export所有卡牌相OffClass型
 export * from './recognition';
 
-// 重新導出核心卡牌類型
+// ReExport核心卡牌Class型
 export type {
   Card,
   CardRarity,

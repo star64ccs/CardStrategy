@@ -1,6 +1,6 @@
 /**
- * 加密服務
- * 負責數據的加密、解密、哈希等操作
+ * EncryptService
+ * 負責Data的Encrypt、Decrypt、哈希等Operation
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -20,7 +20,7 @@ import {
 import { CryptoKeyManager } from './keyManager';
 
 /**
- * 加密服務實現
+ * EncryptService實現
  */
 export class CryptoEncryptionService implements EncryptionService {
   private static instance: CryptoEncryptionService;
@@ -40,7 +40,7 @@ export class CryptoEncryptionService implements EncryptionService {
   }
 
   /**
-   * 獲取服務實例（單例模式）
+   * GetServiceInstance（單例模式）
    */
   public static getInstance(): CryptoEncryptionService {
     if (!CryptoEncryptionService.instance) {
@@ -50,7 +50,7 @@ export class CryptoEncryptionService implements EncryptionService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(): Promise<boolean> {
     if (this.isInitialized) {
@@ -59,26 +59,26 @@ export class CryptoEncryptionService implements EncryptionService {
     }
 
     try {
-      // 初始化密鑰管理器
+      // Initialize密鑰Manage器
       await this.keyManager.initialize();
 
       this.isInitialized = true;
-      logger.info('CryptoEncryptionService 初始化成功');
+      logger.info('CryptoEncryptionService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('CryptoEncryptionService 初始化失敗:', error);
+      logger.error('CryptoEncryptionService InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * 加密數據
+   * EncryptData
    */
   public async encrypt(request: EncryptionRequest): Promise<EncryptionResult> {
     try {
       const _startTime = Date.now();
 
-      // 驗證請求
+      // VerifyRequest
       if (
         !request.data ||
         (typeof request.data === 'string' && request.data.length === 0)
@@ -90,7 +90,7 @@ export class CryptoEncryptionService implements EncryptionService {
         };
       }
 
-      // 獲取或生成密鑰
+      // Get或生成密鑰
       let { keyId } = request;
       if (!keyId) {
         const _key = await this.keyManager.generateKey(request.algorithm, {
@@ -110,17 +110,17 @@ export class CryptoEncryptionService implements EncryptionService {
         };
       }
 
-      // 準備數據
+      // 準備Data
       const _dataToEncrypt =
         typeof request.data === 'string'
           ? new TextEncoder().encode(request.data)
           : new Uint8Array(request.data);
 
-      // 生成初始化向量 (IV)
+      // 生成Initialize向量 (IV)
       const _iv = await this.generateRandomBytes(16); // 128 bits
       const _ivArray = new Uint8Array(iv);
 
-      // 執行加密
+      // 執RowEncrypt
       const _encryptionResult = await this.performEncryption(
         dataToEncrypt,
         key.keyData,
@@ -141,7 +141,7 @@ export class CryptoEncryptionService implements EncryptionService {
 
       const _processingTime = Date.now() - startTime;
 
-      // 更新統計數據
+      // Update統Count據
       this.statistics.totalEncryptions++;
       this.statistics.totalEncryptionTime += processingTime;
       this.statistics.totalOperations++;
@@ -167,7 +167,7 @@ export class CryptoEncryptionService implements EncryptionService {
         },
       };
 
-      logger.debug(`數據加密成功`, {
+      logger.debug(`數據加密Success`, {
         keyId,
         algorithm: request.algorithm,
         dataSize: dataToEncrypt.length,
@@ -176,23 +176,23 @@ export class CryptoEncryptionService implements EncryptionService {
 
       return result;
     } catch (error) {
-      logger.error('數據加密失敗:', error);
+      logger.error('數據加密Failed:', error);
       return {
         success: false,
         algorithm: request.algorithm,
-        error: error instanceof Error ? error.message : '加密失敗',
+        error: error instanceof Error ? error.message : '加密Failed',
       };
     }
   }
 
   /**
-   * 解密數據
+   * DecryptData
    */
   public async decrypt(request: DecryptionRequest): Promise<DecryptionResult> {
     try {
       const _startTime = Date.now();
 
-      // 驗證請求
+      // VerifyRequest
       if (!request.encryptedData) {
         return {
           success: false,
@@ -200,7 +200,7 @@ export class CryptoEncryptionService implements EncryptionService {
         };
       }
 
-      // 獲取密鑰
+      // Get密鑰
       const { keyId } = request;
       if (!keyId) {
         return {
@@ -217,7 +217,7 @@ export class CryptoEncryptionService implements EncryptionService {
         };
       }
 
-      // 準備數據
+      // 準備Data
       const _encryptedData = this.base64ToArrayBuffer(request.encryptedData);
       const _iv = request.iv
         ? this.base64ToArrayBuffer(request.iv)
@@ -226,7 +226,7 @@ export class CryptoEncryptionService implements EncryptionService {
         ? this.base64ToArrayBuffer(request.authTag)
         : undefined;
 
-      // 執行解密
+      // 執RowDecrypt
       const _decryptedData = await this.performDecryption(
         encryptedData,
         key.keyData,
@@ -236,12 +236,12 @@ export class CryptoEncryptionService implements EncryptionService {
         request.additionalData
       );
 
-      // 驗證數據完整性
+      // VerifyData完整性
       const _checksum = await this.hash(decryptedData, HashAlgorithm.SHA256);
 
       const _processingTime = Date.now() - startTime;
 
-      // 更新統計數據
+      // Update統Count據
       this.statistics.totalDecryptions++;
       this.statistics.totalDecryptionTime += processingTime;
       this.statistics.totalOperations++;
@@ -257,7 +257,7 @@ export class CryptoEncryptionService implements EncryptionService {
         },
       };
 
-      logger.debug(`數據解密成功`, {
+      logger.debug(`數據解密Success`, {
         keyId,
         algorithm: request.algorithm,
         dataSize: decryptedData.byteLength,
@@ -266,16 +266,16 @@ export class CryptoEncryptionService implements EncryptionService {
 
       return result;
     } catch (error) {
-      logger.error('數據解密失敗:', error);
+      logger.error('數據解密Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '解密失敗',
+        error: error instanceof Error ? error.message : '解密Failed',
       };
     }
   }
 
   /**
-   * 計算哈希值
+   * 計算哈希Value
    */
   public async hash(
     data: string | ArrayBuffer,
@@ -290,13 +290,13 @@ export class CryptoEncryptionService implements EncryptionService {
       const _hashResult = await this.performHashing(dataToHash, algorithm);
       return this.arrayBufferToBase64(hashResult);
     } catch (error) {
-      logger.error('哈希計算失敗:', error);
+      logger.error('哈希計算Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 驗證哈希值
+   * Verify哈希Value
    */
   public async verify(
     data: string | ArrayBuffer,
@@ -307,7 +307,7 @@ export class CryptoEncryptionService implements EncryptionService {
       const _computedHash = await this.hash(data, algorithm);
       return computedHash === hash;
     } catch (error) {
-      logger.error('哈希驗證失敗:', error);
+      logger.error('哈希VerifyFailed:', error);
       return false;
     }
   }
@@ -319,7 +319,7 @@ export class CryptoEncryptionService implements EncryptionService {
     try {
       const _randomBytes = new Uint8Array(length);
 
-      // 在真實環境中，這裡會使用 Web Crypto API
+      // 在True實環境中，這裡會使用 Web Crypto API
       // crypto.getRandomValues(randomBytes);
 
       // 模擬隨機數生成
@@ -329,7 +329,7 @@ export class CryptoEncryptionService implements EncryptionService {
 
       return randomBytes.buffer;
     } catch (error) {
-      logger.error('隨機字節生成失敗:', error);
+      logger.error('隨機字節生成Failed:', error);
       throw error;
     }
   }
@@ -347,7 +347,7 @@ export class CryptoEncryptionService implements EncryptionService {
       const _passwordBytes = new TextEncoder().encode(password);
       const _saltBytes = new TextEncoder().encode(salt);
 
-      // 簡化的密鑰派生（在真實環境中使用 PBKDF2）
+      // 簡化的密鑰派生（在True實環境中使用 PBKDF2）
       const _derived = new Uint8Array(32); // 256 bits
 
       for (let i = 0; i < iterations; i++) {
@@ -371,13 +371,13 @@ export class CryptoEncryptionService implements EncryptionService {
 
       return this.arrayBufferToBase64(derived.buffer);
     } catch (error) {
-      logger.error('密鑰派生失敗:', error);
+      logger.error('密鑰派生Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取加密統計信息
+   * GetEncryptStatisticsInformation
    */
   public async getEncryptionStatistics(): Promise<{
     totalEncryptions: number;
@@ -400,24 +400,24 @@ export class CryptoEncryptionService implements EncryptionService {
           ? this.statistics.totalDecryptionTime /
             this.statistics.totalDecryptions
           : 0,
-      errorRate: 0, // 可以在錯誤處理中追蹤
+      errorRate: 0, // 可以在ErrorHandle中Trace
       algorithmUsage: { ...this.statistics.algorithmUsage },
     };
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<void> {
     try {
       this.isInitialized = false;
       logger.info('CryptoEncryptionService 已銷毀');
     } catch (error) {
-      logger.error('CryptoEncryptionService 銷毀失敗:', error);
+      logger.error('CryptoEncryptionService 銷毀Failed:', error);
     }
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private async performEncryption(
     data: Uint8Array,
@@ -426,20 +426,20 @@ export class CryptoEncryptionService implements EncryptionService {
     iv: Uint8Array,
     additionalData?: string
   ): Promise<{ encryptedData: ArrayBuffer; authTag?: ArrayBuffer }> {
-    // 模擬加密操作
-    // 在真實環境中，這裡會使用 Web Crypto API 或 Node.js crypto
+    // 模擬EncryptOperation
+    // 在True實環境中，這裡會使用 Web Crypto API 或 Node.js crypto
 
     const _key = this.base64ToArrayBuffer(keyData);
     const _keyArray = new Uint8Array(key);
 
-    // 簡化的 XOR 加密（僅用於演示）
+    // 簡化的 XOR Encrypt（僅用於演示）
     const _encrypted = new Uint8Array(data.length);
     for (let i = 0; i < data.length; i++) {
       encrypted[i] =
         data[i] ^ keyArray[i % keyArray.length] ^ iv[i % iv.length];
     }
 
-    // 模擬認證標籤
+    // 模擬AuthenticateTag
     let authTag: ArrayBuffer | undefined;
     if (
       algorithm === EncryptionAlgorithm.AES_256_GCM ||
@@ -462,14 +462,14 @@ export class CryptoEncryptionService implements EncryptionService {
     authTag?: Uint8Array,
     additionalData?: string
   ): Promise<ArrayBuffer> {
-    // 模擬解密操作
-    // 在真實環境中，這裡會使用 Web Crypto API 或 Node.js crypto
+    // 模擬DecryptOperation
+    // 在True實環境中，這裡會使用 Web Crypto API 或 Node.js crypto
 
     const _key = this.base64ToArrayBuffer(keyData);
     const _keyArray = new Uint8Array(key);
     const _encryptedArray = new Uint8Array(encryptedData);
 
-    // 簡化的 XOR 解密（與加密過程相反）
+    // 簡化的 XOR Decrypt（與Encrypt過程相反）
     const _decrypted = new Uint8Array(encryptedArray.length);
     for (let i = 0; i < encryptedArray.length; i++) {
       decrypted[i] =
@@ -484,7 +484,7 @@ export class CryptoEncryptionService implements EncryptionService {
     algorithm: HashAlgorithm
   ): Promise<ArrayBuffer> {
     // 模擬哈希計算
-    // 在真實環境中，這裡會使用 Web Crypto API 或 Node.js crypto
+    // 在True實環境中，這裡會使用 Web Crypto API 或 Node.js crypto
 
     const _hashSize = this.getHashSize(algorithm);
     const _hash = new Uint8Array(hashSize);

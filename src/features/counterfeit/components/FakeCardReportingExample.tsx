@@ -24,7 +24,7 @@ import { WarningDisplay } from './WarningDisplay';
 
 export const FakeCardReportingExample: React.FC = () => {
   const {
-    // 狀態
+    // Status
     isInitialized,
     isLoading,
     error,
@@ -35,22 +35,22 @@ export const FakeCardReportingExample: React.FC = () => {
     blacklist,
     isUserBlacklisted,
     communityWarnings,
-    // 服務管理
+    // ServiceManage
     initializeService,
-    // 舉報管理
+    // 舉報Manage
     submitReport,
     getStats,
     searchReports,
-    // 警告管理
+    // WarningManage
     issueWarning,
     fetchUserWarnings,
-    // 黑名單管理
+    // 黑名單Manage
     blacklistUser,
     checkBlacklistStatus,
-    // 社區警告管理
+    // 社DistrictWarningManage
     issueCommunityWarning,
     fetchCommunityWarnings,
-    // 統計函數
+    // StatisticsFunction
     getPendingReportsCount,
     getResolvedReportsCount,
     getActiveWarningsCount,
@@ -80,12 +80,12 @@ export const FakeCardReportingExample: React.FC = () => {
     try {
       const _result = await submitReport(reportData);
       if (result.meta.requestStatus === 'fulfilled') {
-        Alert.alert('成功', '舉報已提交，我們會盡快處理');
+        Alert.alert('Success', '舉報已提交，我們會盡快處理');
         setShowReportForm(false);
-        getStats(); // 刷新統計
+        getStats(); // RefreshStatistics
       }
     } catch (error) {
-      Alert.alert('錯誤', '提交失敗，請重試');
+      Alert.alert('Error', '提交Failed，請重試');
     }
   };
 
@@ -101,9 +101,9 @@ export const FakeCardReportingExample: React.FC = () => {
         isActive: true,
         createdBy: 'moderator_001',
       });
-      Alert.alert('成功', '警告已發出');
+      Alert.alert('Success', '警告已發出');
     } catch (error) {
-      Alert.alert('錯誤', '發出警告失敗');
+      Alert.alert('Error', '發出警告Failed');
     }
   };
 
@@ -118,9 +118,9 @@ export const FakeCardReportingExample: React.FC = () => {
         isActive: true,
         createdBy: 'moderator_001',
       });
-      Alert.alert('成功', '已添加到黑名單');
+      Alert.alert('Success', '已添加到黑名單');
     } catch (error) {
-      Alert.alert('錯誤', '添加到黑名單失敗');
+      Alert.alert('Error', '添加到黑名單Failed');
     }
   };
 
@@ -135,9 +135,9 @@ export const FakeCardReportingExample: React.FC = () => {
         displayFrom: new Date(),
         createdBy: 'admin_001',
       });
-      Alert.alert('成功', '社區警告已發出');
+      Alert.alert('Success', '社區警告已發出');
     } catch (error) {
-      Alert.alert('錯誤', '發出社區警告失敗');
+      Alert.alert('Error', '發出社區警告Failed');
     }
   };
 
@@ -191,7 +191,7 @@ export const FakeCardReportingExample: React.FC = () => {
         </View>
       )}
 
-      {/* 標籤欄 */}
+      {/* Tag欄 */}
       <View style={styles.tabContainer}>
         {[
           { key: 'overview', label: '概覽', icon: 'stats-chart' },
@@ -227,7 +227,7 @@ export const FakeCardReportingExample: React.FC = () => {
       <ScrollView style={styles.content}>
         {activeTab === 'overview' && (
           <View style={styles.overviewContainer}>
-            {/* 統計卡片 */}
+            {/* Statistics卡片 */}
             <View style={styles.statsGrid}>
               <View style={styles.statCard}>
                 <Ionicons name='flag' size={24} color='#007AFF' />
@@ -257,7 +257,7 @@ export const FakeCardReportingExample: React.FC = () => {
               </View>
             </View>
 
-            {/* 快速操作 */}
+            {/* 快速Operation */}
             <View style={styles.quickActions}>
               <Text style={styles.sectionTitle}>快速操作</Text>
               <View style={styles.actionButtons}>
@@ -324,7 +324,7 @@ export const FakeCardReportingExample: React.FC = () => {
               ))}
             </View>
 
-            {/* 活躍警告 */}
+            {/* 活躍Warning */}
             <View style={styles.activeWarnings}>
               <Text style={styles.sectionTitle}>活躍警告</Text>
               {warnings
@@ -445,7 +445,7 @@ export const FakeCardReportingExample: React.FC = () => {
         )}
       </ScrollView>
 
-      {/* 舉報表單模態框 */}
+      {/* 舉報Table單模態框 */}
       <Modal
         visible={showReportForm}
         animationType='slide'
@@ -457,7 +457,7 @@ export const FakeCardReportingExample: React.FC = () => {
         />
       </Modal>
 
-      {/* 黑名單管理模態框 */}
+      {/* 黑名單Manage模態框 */}
       <Modal
         visible={showBlacklistManager}
         animationType='slide'

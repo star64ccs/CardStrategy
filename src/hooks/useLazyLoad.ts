@@ -18,7 +18,7 @@ import {
 } from '../types/lazyLoading';
 
 /**
- * 組件懶加載 Hook
+ * Component懶加載 Hook
  */
 export function useLazyComponent(
   id: string,
@@ -137,7 +137,7 @@ export function useLazyComponent(
     lazyLoadService.clearCache(id);
   }, [id]);
 
-  // 自動加載邏輯
+  // Auto加載邏輯
   useEffect(() => {
     if (config.strategy === LazyLoadStrategy.IMMEDIATE) {
       load();
@@ -159,7 +159,7 @@ export function useLazyComponent(
 }
 
 /**
- * 圖片懶加載 Hook
+ * Graph片懶加載 Hook
  */
 export function useLazyImage(
   id: string,
@@ -280,7 +280,7 @@ export function useLazyImage(
     lazyLoadService.clearCache(id);
   }, [id]);
 
-  // 自動加載邏輯
+  // Auto加載邏輯
   useEffect(() => {
     if (config.strategy === LazyLoadStrategy.IMMEDIATE) {
       load();
@@ -302,7 +302,7 @@ export function useLazyImage(
 }
 
 /**
- * 數據懶加載 Hook
+ * Data懶加載 Hook
  */
 export function useLazyData<T>(
   id: string,
@@ -337,7 +337,7 @@ export function useLazyData<T>(
       return;
     }
 
-    // 檢查自定義加載條件
+    // CheckCustom加載Condition
     if (config.shouldLoad && !config.shouldLoad()) {
       return;
     }
@@ -426,7 +426,7 @@ export function useLazyData<T>(
     lazyLoadService.clearCache(id);
   }, [id]);
 
-  // 自動加載邏輯
+  // Auto加載邏輯
   useEffect(() => {
     if (config.strategy === LazyLoadStrategy.IMMEDIATE) {
       load();
@@ -448,7 +448,7 @@ export function useLazyData<T>(
 }
 
 /**
- * 通用懶加載 Hook
+ * Generic懶加載 Hook
  */
 export function useLazyLoad<T>(
   id: string,
@@ -474,7 +474,7 @@ export function useLazyLoad<T>(
 }
 
 /**
- * 簡化的組件懶加載 Hook
+ * 簡化的Component懶加載 Hook
  */
 export function useLazyComponentSimple(
   path: string,
@@ -492,7 +492,7 @@ export function useLazyComponentSimple(
 }
 
 /**
- * 簡化的圖片懶加載 Hook
+ * 簡化的Graph片懶加載 Hook
  */
 export function useLazyImageSimple(
   src: string,
@@ -510,7 +510,7 @@ export function useLazyImageSimple(
 }
 
 /**
- * 簡化的數據懶加載 Hook
+ * 簡化的Data懶加載 Hook
  */
 export function useLazyDataSimple<T>(
   loader: () => Promise<T>,

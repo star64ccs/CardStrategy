@@ -1,5 +1,5 @@
 /**
- * 數據安全自定義 Hook
+ * Data安全Custom Hook
  * 提供簡化的安全功能 API
  */
 
@@ -50,7 +50,7 @@ import {
   EncryptionAlgorithm,
 } from '../types/security';
 
-// 數據安全 Hook
+// Data安全 Hook
 export const _useDataSecurity = () => {
   const _dispatch = useAppDispatch();
   const _state = useSelector(selectDataSecurityState);
@@ -70,7 +70,7 @@ export const _useDataSecurity = () => {
   const _health = useSelector(selectSecurityHealth);
   const _operationStatus = useSelector(selectOperationStatus);
 
-  // 加密數據
+  // EncryptData
   const _encryptDataHandler = useCallback(
     async (
       data: string | ArrayBuffer,
@@ -88,14 +88,14 @@ export const _useDataSecurity = () => {
         const _result = await (dispatch(encryptData(request)) as any).unwrap();
         return result;
       } catch (error) {
-        console.error('加密數據失敗:', error);
+        console.error('加密數據Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 解密數據
+  // DecryptData
   const _decryptDataHandler = useCallback(
     async (
       encryptedData: string,
@@ -115,28 +115,28 @@ export const _useDataSecurity = () => {
         const _result = await (dispatch(decryptData(request)) as any).unwrap();
         return result;
       } catch (error) {
-        console.error('解密數據失敗:', error);
+        console.error('解密數據Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 創建備份
+  // CreateBackup
   const _createBackupHandler = useCallback(
     async (config: BackupConfig): Promise<any> => {
       try {
         const _result = await (dispatch(createBackup(config)) as any).unwrap();
         return result;
       } catch (error) {
-        console.error('創建備份失敗:', error);
+        console.error('Create備份Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 恢復備份
+  // RestoreBackup
   const _restoreBackupHandler = useCallback(
     async (request: RestoreRequest): Promise<any> => {
       try {
@@ -145,7 +145,7 @@ export const _useDataSecurity = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('恢復備份失敗:', error);
+        console.error('恢復備份Failed:', error);
         throw error;
       }
     },
@@ -164,7 +164,7 @@ export const _useDataSecurity = () => {
         ).unwrap();
         return result;
       } catch (error) {
-        console.error('生成密鑰失敗:', error);
+        console.error('生成密鑰Failed:', error);
         throw error;
       }
     },
@@ -178,14 +178,14 @@ export const _useDataSecurity = () => {
         const _result = await (dispatch(rotateKey(keyId)) as any).unwrap();
         return result;
       } catch (error) {
-        console.error('輪換密鑰失敗:', error);
+        console.error('輪換密鑰Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 快速加密
+  // 快速Encrypt
   const _quickEncrypt = useCallback(
     async (
       text: string,
@@ -197,40 +197,40 @@ export const _useDataSecurity = () => {
         });
 
         if (!result.success || !result.encryptedData) {
-          throw new Error(result.error || '快速加密失敗');
+          throw new Error(result.error || '快速加密Failed');
         }
 
         return result.encryptedData;
       } catch (error) {
-        console.error('快速加密失敗:', error);
+        console.error('快速加密Failed:', error);
         throw error;
       }
     },
     [encryptDataHandler]
   );
 
-  // 快速解密
+  // 快速Decrypt
   const _quickDecrypt = useCallback(
     async (encryptedText: string, keyId: string): Promise<string> => {
       try {
         const _result = await decryptDataHandler(encryptedText, keyId);
 
         if (!result.success || !result.decryptedData) {
-          throw new Error(result.error || '快速解密失敗');
+          throw new Error(result.error || '快速解密Failed');
         }
 
         return typeof result.decryptedData === 'string'
           ? result.decryptedData
           : new TextDecoder().decode(result.decryptedData as ArrayBuffer);
       } catch (error) {
-        console.error('快速解密失敗:', error);
+        console.error('快速解密Failed:', error);
         throw error;
       }
     },
     [decryptDataHandler]
   );
 
-  // 創建快速備份
+  // Create快速Backup
   const _createQuickBackup = useCallback(
     async (name: string) => {
       try {
@@ -266,14 +266,14 @@ export const _useDataSecurity = () => {
         const _result = await createBackupHandler(backupConfig);
         return result;
       } catch (error) {
-        console.error('創建快速備份失敗:', error);
+        console.error('Create快速BackupFailed:', error);
         throw error;
       }
     },
     [createBackupHandler]
   );
 
-  // 配置管理
+  // ConfigureManage
   const _updateConfig = useCallback(
     (config: Partial<SecurityConfig>) => {
       dispatch(setSecurityConfig(config));
@@ -297,12 +297,12 @@ export const _useDataSecurity = () => {
     dispatch(setBackupEnabled(false));
   }, [dispatch]);
 
-  // 監控和管理
+  // Monitor和Manage
   const _refreshMetrics = useCallback(async () => {
     try {
       await (dispatch(fetchSecurityMetrics()) as any).unwrap();
     } catch (error) {
-      console.error('刷新指標失敗:', error);
+      console.error('Refresh指標Failed:', error);
     }
   }, [dispatch]);
 
@@ -310,24 +310,24 @@ export const _useDataSecurity = () => {
     try {
       await (dispatch(fetchSecurityState()) as any).unwrap();
     } catch (error) {
-      console.error('刷新狀態失敗:', error);
+      console.error('RefreshStatusFailed:', error);
     }
   }, [dispatch]);
 
-  // 初始化
+  // Initialize
   const _initialize = useCallback(
     async (config?: Partial<SecurityConfig>) => {
       try {
         await (dispatch(initializeDataSecurity(config)) as any).unwrap();
       } catch (error) {
-        console.error('初始化數據安全服務失敗:', error);
+        console.error('InitializeData安全ServiceFailed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (!isInitialized) {
       initialize();
@@ -335,7 +335,7 @@ export const _useDataSecurity = () => {
   }, [isInitialized, initialize]);
 
   return {
-    // 狀態
+    // Status
     state,
     isInitialized,
     isEncryptionEnabled,
@@ -366,14 +366,14 @@ export const _useDataSecurity = () => {
     quickDecrypt,
     createQuickBackup,
 
-    // 配置管理
+    // ConfigureManage
     updateConfig,
     enableEncryption,
     disableEncryption,
     enableBackup,
     disableBackup,
 
-    // 監控和管理
+    // Monitor和Manage
     refreshMetrics,
     refreshState,
     initialize,
@@ -381,7 +381,7 @@ export const _useDataSecurity = () => {
 };
 
 /**
- * 簡化的加密 Hook（僅用於加密/解密操作）
+ * 簡化的Encrypt Hook（僅用於Encrypt/DecryptOperation）
  */
 export const _useEncryption = () => {
   const {
@@ -414,7 +414,7 @@ export const _useEncryption = () => {
 };
 
 /**
- * 備份管理 Hook
+ * BackupManage Hook
  */
 export const _useBackup = () => {
   const {
@@ -443,7 +443,7 @@ export const _useBackup = () => {
 };
 
 /**
- * 安全監控 Hook
+ * 安全Monitor Hook
  */
 export const _useSecurityMonitoring = () => {
   const { health, metrics, auditEvents, statistics, refreshMetrics } =

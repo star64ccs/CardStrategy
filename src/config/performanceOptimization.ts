@@ -1,6 +1,6 @@
-// 性能優化配置
+// 性能優化Configure
 export const PERFORMANCE_OPTIMIZATION_CONFIG = {
-  // 應用啟動優化
+  // ApplyStart優化
   appStartup: {
     enableLazyLoading: true,
     enableAsyncLoading: true,
@@ -8,7 +8,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     maxInitialLoadTime: 2000, // ms
   },
 
-  // 圖像處理優化
+  // Graph像Handle優化
   imageProcessing: {
     enableWebWorkers: true,
     enableMemoryPool: true,
@@ -17,7 +17,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     cacheSize: 50, // MB
   },
 
-  // 數據同步優化
+  // DataSync優化
   dataSync: {
     enableCaching: true,
     cacheExpiry: 5 * 60 * 1000, // 5 minutes
@@ -26,7 +26,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     maxRetries: 3,
   },
 
-  // 搜索功能優化
+  // Search功能優化
   search: {
     enableDebounce: true,
     debounceDelay: 300, // ms
@@ -35,7 +35,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     maxResults: 1000,
   },
 
-  // 數據庫優化
+  // Database優化
   database: {
     enableIndexing: true,
     enableQueryOptimization: true,
@@ -44,7 +44,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     queryTimeout: 5000, // ms
   },
 
-  // 網絡優化
+  // Network優化
   network: {
     enableRequestCaching: true,
     enableResponseCompression: true,
@@ -53,7 +53,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
     maxConcurrentRequests: 5,
   },
 
-  // 內存優化
+  // Memory優化
   memory: {
     enableGarbageCollection: true,
     enableMemoryMonitoring: true,
@@ -62,7 +62,7 @@ export const PERFORMANCE_OPTIMIZATION_CONFIG = {
   },
 };
 
-// 性能監控閾值
+// 性能Monitor閾Value
 export const PERFORMANCE_THRESHOLDS = {
   appStartup: {
     excellent: 1500, // ms

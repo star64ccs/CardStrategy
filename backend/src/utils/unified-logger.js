@@ -3,14 +3,14 @@ const path = require('path');
 // eslint-disable-next-line no-unused-vars
 const fs = require('fs');
 
-// 創建日誌目錄
+// CreateLogDirectory
 // eslint-disable-next-line no-unused-vars
 const logDir = path.join(__dirname, '..', 'logs');
 if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
 
-// 日誌格式
+// Log格式
 // eslint-disable-next-line no-unused-vars
 const logFormat = winston.format.combine(
   winston.format.timestamp({
@@ -20,7 +20,7 @@ const logFormat = winston.format.combine(
   winston.format.json()
 );
 
-// 控制台格式
+// Control台格式
 const consoleFormat = winston.format.combine(
   winston.format.colorize(),
   winston.format.timestamp({
@@ -31,21 +31,21 @@ const consoleFormat = winston.format.combine(
   })
 );
 
-// 創建 logger 實例
+// Create logger Instance
 // eslint-disable-next-line no-unused-vars
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
   format: logFormat,
   defaultMeta: { service: 'cardstrategy-api' },
   transports: [
-    // 錯誤日誌文件
+    // ErrorLogFile
     new winston.transports.File({
       filename: path.join(logDir, 'error.log'),
       level: 'error',
       maxsize: 5242880, // 5MB
       maxFiles: 5,
     }),
-    // 所有日誌文件
+    // 所有LogFile
     new winston.transports.File({
       filename: path.join(logDir, 'combined.log'),
       maxsize: 5242880, // 5MB
@@ -54,7 +54,7 @@ const logger = winston.createLogger({
   ],
 });
 
-// 開發環境添加控制台輸出
+// On發環境AddControl台Output
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
@@ -63,10 +63,10 @@ if (process.env.NODE_ENV !== 'production') {
   );
 }
 
-// 日誌工具函數
+// LogToolFunction
 // eslint-disable-next-line no-unused-vars
 const logUtils = {
-  // 請求日誌
+  // RequestLog
   logRequest: (req, res, next) => {
     const start = Date.now();
     res.on('finish', () => {
@@ -83,7 +83,7 @@ const logUtils = {
     next();
   },
 
-  // 錯誤日誌
+  // ErrorLog
   logError: (error, req, res, next) => {
     logger.error('Application Error', {
       error: error.message,
@@ -95,7 +95,7 @@ const logUtils = {
     next(error);
   },
 
-  // 性能日誌
+  // 性能Log
   logPerformance: (operation, duration, metadata = {}) => {
     logger.info('Performance Metric', {
       operation,
@@ -104,7 +104,7 @@ const logUtils = {
     });
   },
 
-  // 安全日誌
+  // 安全Log
   logSecurity: (event, details) => {
     logger.warn('Security Event', {
       event,

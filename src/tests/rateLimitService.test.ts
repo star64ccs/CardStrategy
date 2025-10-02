@@ -8,14 +8,14 @@ const _mockLogger = {
   debug: jest.fn(),
 };
 
-// 模擬速率限制服務
+// 模擬速率LimitService
 class MockRateLimitService {
   private isInitialized = false;
   private rules = new Map();
   private requestCounts = new Map();
   private globalCounts = new Map();
   private config = {
-    defaultWindowMs: 900000, // 15 分鐘
+    defaultWindowMs: 900000, // 15 Minute
     defaultMaxRequests: 100,
     enableGlobalLimit: true,
     globalWindowMs: 900000,
@@ -25,7 +25,7 @@ class MockRateLimitService {
   async initialize() {
     this.isInitialized = true;
 
-    // 創建默認規則
+    // CreateDefault規則
     const _defaultRules = [
       {
         id: 'rule1',
@@ -104,7 +104,7 @@ class MockRateLimitService {
     const { endpoint, method, clientId } = request;
     const _now = Date.now();
 
-    // 檢查全局限制
+    // CheckGlobalLimit
     if (this.config.enableGlobalLimit) {
       let globalData = this.globalCounts.get(clientId);
       if (!globalData || globalData.resetTime <= now) {
@@ -132,10 +132,10 @@ class MockRateLimitService {
       }
     }
 
-    // 查找匹配的規則
+    // Find匹配的規則
     const _matchingRule = this.findMatchingRule(endpoint, method);
     if (!matchingRule) {
-      // 使用默認限制
+      // 使用DefaultLimit
       return {
         success: true,
         data: {
@@ -149,7 +149,7 @@ class MockRateLimitService {
       };
     }
 
-    // 檢查規則限制
+    // Check規則Limit
     let ruleCounts = this.requestCounts.get(matchingRule.id);
     if (!ruleCounts) {
       ruleCounts = new Map();
@@ -194,7 +194,7 @@ class MockRateLimitService {
     const { endpoint, method, clientId, success } = request;
     const _now = Date.now();
 
-    // 記錄全局請求
+    // RecordGlobalRequest
     if (this.config.enableGlobalLimit) {
       let globalData = this.globalCounts.get(clientId);
       if (!globalData || globalData.resetTime <= now) {
@@ -208,7 +208,7 @@ class MockRateLimitService {
       this.globalCounts.set(clientId, globalData);
     }
 
-    // 記錄規則請求
+    // Record規則Request
     const _matchingRule = this.findMatchingRule(endpoint, method);
     if (matchingRule) {
       let ruleCounts = this.requestCounts.get(matchingRule.id);
@@ -240,7 +240,7 @@ class MockRateLimitService {
     const _statuses = [];
     const _now = Date.now();
 
-    // 全局狀態
+    // GlobalStatus
     if (this.config.enableGlobalLimit) {
       const _globalData = this.globalCounts.get(clientId);
       if (!globalData || globalData.resetTime <= now) {
@@ -261,7 +261,7 @@ class MockRateLimitService {
       }
     }
 
-    // 規則狀態
+    // 規則Status
     if (endpoint && method) {
       const _matchingRule = this.findMatchingRule(endpoint, method);
       if (matchingRule) {
@@ -321,7 +321,7 @@ class MockRateLimitService {
   }
 
   private matchesRule(rule: unknown, endpoint: string, method: string) {
-    // 檢查方法匹配
+    // CheckMethod匹配
     if (
       rule.method !== '*' &&
       rule.method.toLowerCase() !== method.toLowerCase()
@@ -329,7 +329,7 @@ class MockRateLimitService {
       return false;
     }
 
-    // 檢查端點匹配
+    // Check端點匹配
     if (rule.endpoint === '*') {
       return true;
     }
@@ -352,13 +352,13 @@ describe('Rate Limit Service Tests', () => {
   });
 
   describe('MockRateLimitService', () => {
-    test('初始化應該成功', async () => {
+    test('Initialize應該Success', async () => {
       const _result = await mockRateLimitService.initialize();
       expect(result.success).toBe(true);
       expect(result.data?.totalRules).toBe(2);
     });
 
-    test('創建規則應該成功', async () => {
+    test('Create規則應該Success', async () => {
       const _rule = {
         name: '測試規則',
         endpoint: '/api/test',
@@ -374,7 +374,7 @@ describe('Rate Limit Service Tests', () => {
       expect(result.data?.id).toBeDefined();
     });
 
-    test('更新規則應該成功', async () => {
+    test('Update規則應該Success', async () => {
       const _rule = {
         name: '測試規則',
         endpoint: '/api/test',
@@ -395,7 +395,7 @@ describe('Rate Limit Service Tests', () => {
       expect(updateResult.data?.maxRequests).toBe(20);
     });
 
-    test('刪除規則應該成功', async () => {
+    test('Delete規則應該Success', async () => {
       const _rule = {
         name: '測試規則',
         endpoint: '/api/test',
@@ -423,7 +423,7 @@ describe('Rate Limit Service Tests', () => {
       const _result = await mockRateLimitService.checkLimit(request);
       expect(result.success).toBe(true);
       expect(result.data?.allowed).toBe(true);
-      expect(result.data?.status.limit).toBe(5); // 登錄限制為5次
+      expect(result.data?.status.limit).toBe(5); // LoginLimit為5次
     });
 
     test('超過限制應該被拒絕', async () => {
@@ -433,7 +433,7 @@ describe('Rate Limit Service Tests', () => {
         clientId: 'test-client',
       };
 
-      // 記錄5次請求
+      // Record5次Request
       for (let i = 0; i < 5; i++) {
         await mockRateLimitService.recordRequest({
           ...request,
@@ -441,14 +441,14 @@ describe('Rate Limit Service Tests', () => {
         });
       }
 
-      // 第6次請求應該被拒絕
+      // 第6次Request應該被Reject
       const _result = await mockRateLimitService.checkLimit(request);
       expect(result.success).toBe(true);
       expect(result.data?.allowed).toBe(false);
       expect(result.data?.reason).toContain('速率限制');
     });
 
-    test('記錄請求應該成功', async () => {
+    test('記錄請求應該Success', async () => {
       const _request = {
         endpoint: '/api/test',
         method: 'GET',
@@ -471,13 +471,13 @@ describe('Rate Limit Service Tests', () => {
         method
       );
       expect(result.success).toBe(true);
-      expect(result.data).toHaveLength(2); // 全局 + 規則狀態
+      expect(result.data).toHaveLength(2); // Global + 規則Status
     });
 
-    test('重置限制應該成功', async () => {
+    test('重置限制應該Success', async () => {
       const _clientId = 'test-client';
 
-      // 先記錄一些請求
+      // 先Record一些Request
       await mockRateLimitService.recordRequest({
         endpoint: '/api/test',
         method: 'GET',
@@ -485,7 +485,7 @@ describe('Rate Limit Service Tests', () => {
         success: true,
       });
 
-      // 重置限制
+      // ResetLimit
       const _result = await mockRateLimitService.resetLimit(clientId);
       expect(result.success).toBe(true);
       expect(result.message).toBe('Limit reset');
@@ -499,7 +499,7 @@ describe('Rate Limit Service Tests', () => {
     });
 
     test('規則匹配應該正確', async () => {
-      // 測試精確匹配
+      // Test精確匹配
       let result = await mockRateLimitService.checkLimit({
         endpoint: '/api/auth/login',
         method: 'POST',
@@ -507,7 +507,7 @@ describe('Rate Limit Service Tests', () => {
       });
       expect(result.data?.rule?.name).toBe('API 登錄限制');
 
-      // 測試通配符匹配
+      // Test通配符匹配
       result = await mockRateLimitService.checkLimit({
         endpoint: '/api/users',
         method: 'GET',
@@ -519,7 +519,7 @@ describe('Rate Limit Service Tests', () => {
     test('全局限制應該生效', async () => {
       const _clientId = 'heavy-user';
 
-      // 模擬達到全局限制
+      // 模擬達到GlobalLimit
       (mockRateLimitService as any).globalCounts.set(clientId, {
         count: 1000,
         resetTime: Date.now() + 900000,
@@ -549,7 +549,7 @@ describe('Rate Limit Service Tests', () => {
         clientId: 'client2',
       };
 
-      // 客戶端1達到限制
+      // Client1達到Limit
       for (let i = 0; i < 5; i++) {
         await mockRateLimitService.recordRequest({
           ...request1,
@@ -557,18 +557,18 @@ describe('Rate Limit Service Tests', () => {
         });
       }
 
-      // 客戶端1應該被限制
+      // Client1應該被Limit
       const _result1 = await mockRateLimitService.checkLimit(request1);
       expect(result1.data?.allowed).toBe(false);
 
-      // 客戶端2應該仍然可以訪問
+      // Client2應該仍然可以訪問
       const _result2 = await mockRateLimitService.checkLimit(request2);
       expect(result2.data?.allowed).toBe(true);
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('未初始化服務應該返回錯誤', async () => {
+  describe('ErrorHandle測試', () => {
+    test('未InitializeService應該返回Error', async () => {
       const _uninitializedService = new MockRateLimitService();
       const _result = await uninitializedService.createRule({
         name: '測試規則',
@@ -583,7 +583,7 @@ describe('Rate Limit Service Tests', () => {
       expect(result.error).toBe('Service not initialized');
     });
 
-    test('更新不存在的規則應該失敗', async () => {
+    test('Update不存在的規則應該Failed', async () => {
       const _result = await mockRateLimitService.updateRule('nonexistent-rule', {
         maxRequests: 20,
       });
@@ -592,15 +592,15 @@ describe('Rate Limit Service Tests', () => {
       expect(result.error).toBe('Rule not found');
     });
 
-    test('刪除不存在的規則應該失敗', async () => {
+    test('Delete不存在的規則應該Failed', async () => {
       const _result = await mockRateLimitService.deleteRule('nonexistent-rule');
       expect(result.success).toBe(false);
       expect(result.error).toBe('Rule not found');
     });
   });
 
-  describe('服務可用性測試', () => {
-    test('服務可用性檢查', () => {
+  describe('Service可用性測試', () => {
+    test('Service可用性Check', () => {
       expect(mockRateLimitService.isAvailable()).toBe(true);
     });
   });

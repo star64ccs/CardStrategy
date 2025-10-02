@@ -71,7 +71,7 @@ export class IntelligentSearchService {
       timeDistribution: [],
     };
 
-    // 初始化熱門搜索數據
+    // Initialize熱門SearchData
     this.initializePopularSearches();
   }
 
@@ -84,26 +84,26 @@ export class IntelligentSearchService {
 
   async initialize(): Promise<boolean> {
     try {
-      // 初始化全文搜索服務
+      // Initialize全文SearchService
       await this.fullTextSearchService.initialize();
 
-      // 初始化搜索統計
+      // InitializeSearchStatistics
       await this.initializeSearchStats();
 
-      // 初始化緩存清理
+      // InitializeCache清理
       this.initializeCache();
 
       this.isInitialized = true;
       return true;
     } catch (error) {
       this.isInitialized = false;
-      console.error('智能搜索服務初始化失敗:', error);
+      console.error('智能搜索ServiceInitializeFailed:', error);
       return false;
     }
   }
 
   private async initializeSearchStats(): Promise<void> {
-    // 模擬加載搜索統計數據
+    // 模擬加載Search統Count據
     this.searchStats = {
       totalQueries: 15420,
       averageResponseTime: 85,
@@ -205,7 +205,7 @@ export class IntelligentSearchService {
   private initializeCache(): void {
     setInterval(() => {
       this.cleanExpiredCache();
-    }, 60000); // 每分鐘清理一次
+    }, 60000); // 每Minute清理一次
   }
 
   async search(
@@ -216,7 +216,7 @@ export class IntelligentSearchService {
     try {
       this.validateQuery(query);
 
-      // 檢查緩存
+      // CheckCache
       const _cacheKey = this.generateCacheKey(query);
       if (this.config.cacheEnabled && this.cache.has(cacheKey)) {
         const _cachedResponse = this.cache.get(cacheKey)!;
@@ -224,10 +224,10 @@ export class IntelligentSearchService {
         return { ...cachedResponse, cacheHit: true };
       }
 
-      // 分析查詢
+      // AnalysisQuery
       const _queryAnalysis = await this.analyzeQuery(query.query);
 
-      // 執行基礎搜索
+      // 執Row基礎Search
       const baseSearchQuery: SearchQuery = {
         query: query.query,
         filters: query.filters ? this.convertFilters(query.filters) : undefined,
@@ -241,7 +241,7 @@ export class IntelligentSearchService {
 
       // 確保 baseResponse.results 存在
       if (!baseResponse?.results) {
-        // 返回空結果而不是拋出錯誤
+        // ReturnEmpty結果而不YesThrowError
         const emptyResponse: IntelligentSearchResponse = {
           results: [],
           suggestions: (
@@ -270,14 +270,14 @@ export class IntelligentSearchService {
         return emptyResponse;
       }
 
-      // 應用智能功能
+      // Apply智能功能
       const _results = await this.applyIntelligentFeatures(
         baseResponse.results,
         query,
         queryAnalysis
       );
 
-      // 生成響應
+      // 生成Response
       const response: IntelligentSearchResponse = {
         results,
         suggestions: (
@@ -305,12 +305,12 @@ export class IntelligentSearchService {
         cacheHit: false,
       };
 
-      // 緩存結果
+      // Cache結果
       if (this.config.cacheEnabled) {
         this.cache.set(cacheKey, response);
       }
 
-      // 保存搜索歷史
+      // SaveSearch歷史
       if (query.userId && this.config.searchHistoryEnabled) {
         await this.saveSearchHistory(
           query.userId,
@@ -319,7 +319,7 @@ export class IntelligentSearchService {
         );
       }
 
-      // 更新統計
+      // UpdateStatistics
       this.updateSearchStats(false, response.responseTime);
 
       return response;
@@ -340,7 +340,7 @@ export class IntelligentSearchService {
       };
 
       throw new Error(
-        `智能搜索失敗: ${error instanceof Error ? error.message : '未知錯誤'}`
+        `智能搜索Failed: ${error instanceof Error ? error.message : '未知Error'}`
       );
     }
   }
@@ -355,7 +355,7 @@ export class IntelligentSearchService {
     }
 
     if (!this.isInitialized) {
-      throw new Error('智能搜索服務尚未初始化');
+      throw new Error('智能搜索Service尚未Initialize');
     }
   }
 
@@ -385,7 +385,7 @@ export class IntelligentSearchService {
         personalizationScore
       );
 
-      // 應用過濾器
+      // ApplyFilter器
       if (
         finalScore >=
         (query.filters?.relevanceThreshold || this.config.relevanceThreshold)
@@ -399,7 +399,7 @@ export class IntelligentSearchService {
           condition: result.condition || 'good',
           rarity: result.rarity || 'common',
           set: result.set || 'unknown',
-          artist: 'Unknown', // SearchResult 沒有 artist 屬性
+          artist: 'Unknown', // SearchResult 沒有 artist Property
           language: result.language || 'en',
           imageUrl: result.image,
           relevanceScore: result.score,
@@ -419,7 +419,7 @@ export class IntelligentSearchService {
       }
     }
 
-    // 按最終分數排序
+    // 按最終分數Sort
     return results.sort((a, b) => b.finalScore - a.finalScore);
   }
 
@@ -435,7 +435,7 @@ export class IntelligentSearchService {
       score += 0.6;
     }
 
-    // 描述匹配
+    // Description匹配
     if (descriptionLower.includes(queryLower)) {
       score += 0.3;
     }
@@ -475,7 +475,7 @@ export class IntelligentSearchService {
           }
           break;
         case 'artist':
-          // SearchResult 沒有 artist 屬性，跳過
+          // SearchResult 沒有 artist Property，Skip
           break;
         case 'set':
           if (
@@ -522,7 +522,7 @@ export class IntelligentSearchService {
 
     let score = 0;
 
-    // 基於用戶偏好的評分
+    // 基於UserPreferences的評分
     for (const result of results) {
       if (preferences.preferredCategories?.includes(result.category)) {
         score += 0.2;
@@ -560,7 +560,7 @@ export class IntelligentSearchService {
   ): Promise<AutoCompleteOption[]> {
     const suggestions: AutoCompleteOption[] = [];
 
-    // 基於熱門搜索的建議
+    // 基於熱門Search的建議
     const _popularMatches = this.popularSearches
       .filter(item => item.query.toLowerCase().includes(query.toLowerCase()))
       .slice(0, 3)
@@ -574,7 +574,7 @@ export class IntelligentSearchService {
 
     suggestions.push(...popularMatches);
 
-    // 基於搜索歷史的建議
+    // 基於Search歷史的建議
     if (context?.sessionId) {
       const _history = this.searchHistory.get(context.sessionId) || [];
       const _historyMatches = history
@@ -596,7 +596,7 @@ export class IntelligentSearchService {
       suggestions.push(...semanticSuggestions);
     }
 
-    // 排序並限制數量
+    // Sort並Limit數量
     return suggestions
       .sort((a, b) => b.relevance - a.relevance)
       .slice(0, this.config.maxSuggestions);
@@ -669,7 +669,7 @@ export class IntelligentSearchService {
 
     history.unshift(historyItem);
 
-    // 限制歷史記錄數量
+    // Limit歷史Record數量
     if (history.length > this.config.maxHistoryItems) {
       history.splice(this.config.maxHistoryItems);
     }
@@ -687,7 +687,7 @@ export class IntelligentSearchService {
   async getRelatedSearches(query: string): Promise<RelatedSearchItem[]> {
     const related: RelatedSearchItem[] = [];
 
-    // 基於查詢詞生成相關搜索
+    // 基於Query詞生成相OffSearch
     const _queryLower = query.toLowerCase();
 
     if (queryLower.includes('charizard')) {
@@ -759,7 +759,7 @@ export class IntelligentSearchService {
       }
     }
 
-    // 確定搜索意圖
+    // OKSearch意Graph
     const _intent = this.determineSearchIntent(query, entities);
 
     // 生成建議和糾正

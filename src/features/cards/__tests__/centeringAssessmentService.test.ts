@@ -87,7 +87,7 @@ describe('CenteringAssessmentService', () => {
         'Failed to load options'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'CenteringAssessmentService 初始化失敗:',
+        'CenteringAssessmentService InitializeFailed:',
         error
       );
     });
@@ -221,7 +221,7 @@ describe('CenteringAssessmentService', () => {
         centeringAssessmentService['callAssessmentAPI']
       ).toHaveBeenCalledWith(mockRequest.imageData, expect.any(Object));
       expect(result).toEqual(mockResult);
-      expect(mockLogger.info).toHaveBeenCalledWith('置中評估成功', {
+      expect(mockLogger.info).toHaveBeenCalledWith('置中評估Success', {
         cardId: mockResult.cardId,
         overallScore: mockResult.overallScore,
         centeringScore: mockResult.centeringScore,
@@ -258,7 +258,7 @@ describe('CenteringAssessmentService', () => {
         })
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '置中評估 API 返回失敗:',
+        '置中評估 API 返回Failed:',
         expect.objectContaining({
           code: mockError.code,
           message: mockError.message,
@@ -275,7 +275,7 @@ describe('CenteringAssessmentService', () => {
       await expect(
         centeringAssessmentService.assessCentering(mockRequest)
       ).rejects.toThrow('Image preprocessing failed');
-      expect(mockLogger.error).toHaveBeenCalledWith('置中評估失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('置中評估Failed:', error);
     });
   });
 
@@ -330,7 +330,7 @@ describe('CenteringAssessmentService', () => {
         centeringAssessmentService['callGetAssessmentHistoryAPI']
       ).toHaveBeenCalledWith(userId, limit);
       expect(result).toEqual(mockHistory);
-      expect(mockLogger.info).toHaveBeenCalledWith('成功獲取評估歷史', {
+      expect(mockLogger.info).toHaveBeenCalledWith('SuccessGet評估歷史', {
         count: mockHistory.length,
       });
     });
@@ -349,7 +349,7 @@ describe('CenteringAssessmentService', () => {
         centeringAssessmentService.getAssessmentHistory(userId)
       ).rejects.toThrow(errorMessage);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取評估歷史失敗:',
+        'Get評估歷史Failed:',
         expect.any(Error)
       );
     });
@@ -400,7 +400,7 @@ describe('CenteringAssessmentService', () => {
         centeringAssessmentService['callGetAssessmentStatsAPI']
       ).toHaveBeenCalledWith(userId);
       expect(result).toEqual(mockStats);
-      expect(mockLogger.info).toHaveBeenCalledWith('成功獲取評估統計', {
+      expect(mockLogger.info).toHaveBeenCalledWith('SuccessGet評估統計', {
         totalAssessments: mockStats.totalAssessments,
         averageScore: mockStats.averageScore,
       });
@@ -420,7 +420,7 @@ describe('CenteringAssessmentService', () => {
         centeringAssessmentService.getAssessmentStats(userId)
       ).rejects.toThrow(errorMessage);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取評估統計失敗:',
+        'Get評估統計Failed:',
         expect.any(Error)
       );
     });
@@ -446,7 +446,7 @@ describe('CenteringAssessmentService', () => {
         centeringAssessmentService['callGetAssessmentOptionsAPI']
       ).toHaveBeenCalled();
       expect(result).toEqual(mockOptions);
-      expect(mockLogger.info).toHaveBeenCalledWith('成功獲取評估選項', {
+      expect(mockLogger.info).toHaveBeenCalledWith('SuccessGet評估選項', {
         options: mockOptions,
       });
     });
@@ -460,7 +460,7 @@ describe('CenteringAssessmentService', () => {
       await expect(
         centeringAssessmentService.getAssessmentOptions()
       ).rejects.toThrow('Failed to fetch options');
-      expect(mockLogger.error).toHaveBeenCalledWith('獲取評估選項失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('Get評估選項Failed:', error);
     });
   });
 });

@@ -20,28 +20,28 @@ class EnhancedTensorFlowService {
   }
 
   /**
-   * 初始化 TensorFlow.js 服務
+   * Initialize TensorFlow.js Service
    */
   async initialize() {
     try {
-      logger.info('初始化 TensorFlow.js 服務...');
+      logger.info('Initialize TensorFlow.js Service...');
 
-      // 設置後端
+      // Settings後端
       await tf.setBackend('cpu');
       logger.info(`TensorFlow.js 後端設置為: ${tf.getBackend()}`);
 
       this.isInitialized = true;
-      logger.info('TensorFlow.js 服務初始化完成');
+      logger.info('TensorFlow.js ServiceInitialize完成');
 
       return true;
     } catch (error) {
-      logger.error('TensorFlow.js 服務初始化失敗:', error);
+      logger.error('TensorFlow.js ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建 LSTM 模型
+   * Create LSTM 模型
    */
   async createLSTMModel(inputShape = [10, 1]) {
     try {
@@ -71,7 +71,7 @@ class EnhancedTensorFlowService {
       // Dropout 層
       model.add(tf.layers.dropout({ rate: 0.2 }));
 
-      // 輸出層
+      // Output層
       model.add(
         tf.layers.dense({
           units: this.modelConfigs.dense.units,
@@ -79,23 +79,23 @@ class EnhancedTensorFlowService {
         })
       );
 
-      // 編譯模型
+      // Compile模型
       model.compile({
         optimizer: tf.train.adam(0.001),
         loss: 'meanSquaredError',
         metrics: ['mae'],
       });
 
-      logger.info('LSTM 模型創建成功');
+      logger.info('LSTM 模型CreateSuccess');
       return model;
     } catch (error) {
-      logger.error('LSTM 模型創建失敗:', error);
+      logger.error('LSTM 模型CreateFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 數據預處理
+   * Data預Handle
    */
   preprocessData(data, sequenceLength = 10) {
     try {
@@ -119,7 +119,7 @@ class EnhancedTensorFlowService {
         targets: tf.tensor2d(targets, [targets.length, 1]),
       };
     } catch (error) {
-      logger.error('數據預處理失敗:', error);
+      logger.error('數據預HandleFailed:', error);
       throw error;
     }
   }
@@ -157,21 +157,21 @@ class EnhancedTensorFlowService {
       logger.info('模型訓練完成');
       return history;
     } catch (error) {
-      logger.error('模型訓練失敗:', error);
+      logger.error('模型訓練Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 進行預測
+   * 進Row預測
    */
   async predict(model, inputData, sequenceLength = 10) {
     try {
-      // 準備輸入數據
+      // 準備InputData
       const inputSequence = inputData.slice(-sequenceLength);
       const inputTensor = tf.tensor3d([inputSequence], [1, sequenceLength, 1]);
 
-      // 進行預測
+      // 進Row預測
 // eslint-disable-next-line no-unused-vars
       const prediction = await model.predict(inputTensor);
 // eslint-disable-next-line no-unused-vars
@@ -183,13 +183,13 @@ class EnhancedTensorFlowService {
 
       return predictionValue[0];
     } catch (error) {
-      logger.error('預測失敗:', error);
+      logger.error('預測Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 保存模型
+   * Save模型
    */
   async saveModel(model, modelName) {
     try {
@@ -199,7 +199,7 @@ class EnhancedTensorFlowService {
       logger.info(`模型已保存到: ${savePath}`);
       return savePath;
     } catch (error) {
-      logger.error('模型保存失敗:', error);
+      logger.error('模型保存Failed:', error);
       throw error;
     }
   }
@@ -216,7 +216,7 @@ class EnhancedTensorFlowService {
       logger.info(`模型已從 ${modelPath} 加載`);
       return model;
     } catch (error) {
-      logger.error('模型加載失敗:', error);
+      logger.error('模型加載Failed:', error);
       throw error;
     }
   }
@@ -243,13 +243,13 @@ class EnhancedTensorFlowService {
         mae: mae[0],
       };
     } catch (error) {
-      logger.error('模型評估失敗:', error);
+      logger.error('模型評估Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取模型摘要
+   * Get模型摘要
    */
   getModelSummary(model) {
     try {
@@ -260,13 +260,13 @@ class EnhancedTensorFlowService {
       });
       return summary.join('\n');
     } catch (error) {
-      logger.error('獲取模型摘要失敗:', error);
+      logger.error('Get模型摘要Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 清理資源
+   * 清理Resource
    */
   dispose() {
     try {
@@ -278,12 +278,12 @@ class EnhancedTensorFlowService {
       });
       this.models.clear();
 
-      // 清理 TensorFlow.js 內存
+      // 清理 TensorFlow.js Memory
       tf.dispose();
 
       logger.info('TensorFlow.js 資源已清理');
     } catch (error) {
-      logger.error('資源清理失敗:', error);
+      logger.error('資源清理Failed:', error);
     }
   }
 }

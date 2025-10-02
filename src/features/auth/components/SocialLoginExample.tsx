@@ -17,8 +17,8 @@ import { SocialAccountManager } from './SocialAccountManager';
 import { SocialLoginButtons } from './SocialLoginButtons';
 
 /**
- * 社交登錄示例組件
- * 展示如何使用社交登錄功能
+ * 社交Login示例Component
+ * 展示如何使用社交Login功能
  */
 export const SocialLoginExample: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'login' | 'manage'>('login');
@@ -42,13 +42,13 @@ export const SocialLoginExample: React.FC = () => {
   } = useSocialAuth({
     onLoginSuccess: response => {
       setLoginResult(response);
-      Alert.alert('登錄成功', `歡迎 ${response.user.username}！`);
+      Alert.alert('登錄Success', `歡迎 ${response.user.username}！`);
     },
     onLoginError: error => {
-      Alert.alert('登錄失敗', error);
+      Alert.alert('登錄Failed', error);
     },
     onAccountLinked: account => {
-      Alert.alert('帳戶鏈接成功', `${account.name} 帳戶已成功鏈接`);
+      Alert.alert('帳戶鏈接Success', `${account.name} 帳戶已Success鏈接`);
     },
     onAccountUnlinked: provider => {
       Alert.alert('帳戶解除鏈接', `${provider} 帳戶已解除鏈接`);
@@ -57,7 +57,7 @@ export const SocialLoginExample: React.FC = () => {
 
   const _handleManualLogin = async () => {
     try {
-      // 示例：手動執行社交登錄
+      // 示例：Manual執Row社交Login
       const _credentials = {
         provider: 'google' as SocialProvider,
         accessToken: 'mock-access-token',
@@ -71,15 +71,15 @@ export const SocialLoginExample: React.FC = () => {
       };
 
       const _response = await login(credentials);
-      console.log('手動登錄成功:', response);
+      console.log('手動登錄Success:', response);
     } catch (error: unknown) {
-      Alert.alert('手動登錄失敗', error.message);
+      Alert.alert('手動登錄Failed', error.message);
     }
   };
 
   const _handleManualLink = async () => {
     try {
-      // 示例：手動鏈接社交帳戶
+      // 示例：Manual鏈接社交帳戶
       const _credentials = {
         provider: 'facebook' as SocialProvider,
         accessToken: 'mock-facebook-token',
@@ -91,18 +91,18 @@ export const SocialLoginExample: React.FC = () => {
       };
 
       const _account = await linkAccount(credentials);
-      console.log('手動鏈接成功:', account);
+      console.log('手動鏈接Success:', account);
     } catch (error: unknown) {
-      Alert.alert('手動鏈接失敗', error.message);
+      Alert.alert('手動鏈接Failed', error.message);
     }
   };
 
   const _handleRefreshAccounts = async () => {
     try {
       const _accounts = await loadLinkedAccounts();
-      console.log('刷新帳戶成功:', accounts);
+      console.log('刷新帳戶Success:', accounts);
     } catch (error: unknown) {
-      Alert.alert('刷新帳戶失敗', error.message);
+      Alert.alert('刷新帳戶Failed', error.message);
     }
   };
 
@@ -119,7 +119,7 @@ export const SocialLoginExample: React.FC = () => {
         <Text style={styles.subtitle}>展示多平台社交登錄功能的使用方法</Text>
       </View>
 
-      {/* 標籤切換 */}
+      {/* TagSwitch */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'login' && styles.activeTab]}
@@ -152,7 +152,7 @@ export const SocialLoginExample: React.FC = () => {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {activeTab === 'login' ? (
           <View style={styles.loginSection}>
-            {/* 狀態信息 */}
+            {/* StatusInformation */}
             <View style={styles.statusSection}>
               <Text style={styles.sectionTitle}>當前狀態</Text>
               <Text style={styles.statusText}>
@@ -169,7 +169,7 @@ export const SocialLoginExample: React.FC = () => {
               )}
             </View>
 
-            {/* 登錄結果 */}
+            {/* Login結果 */}
             {loginResult && (
               <View style={styles.resultSection}>
                 <Text style={styles.sectionTitle}>登錄結果</Text>
@@ -188,16 +188,16 @@ export const SocialLoginExample: React.FC = () => {
               </View>
             )}
 
-            {/* 社交登錄按鈕 */}
+            {/* 社交Login按鈕 */}
             <View style={styles.loginSection}>
               <Text style={styles.sectionTitle}>社交登錄</Text>
               <SocialLoginButtons
                 onLoginSuccess={response => {
                   setLoginResult(response);
-                  Alert.alert('登錄成功', `歡迎 ${response.user.username}！`);
+                  Alert.alert('登錄Success', `歡迎 ${response.user.username}！`);
                 }}
                 onLoginError={error => {
-                  Alert.alert('登錄失敗', error);
+                  Alert.alert('登錄Failed', error);
                 }}
                 onProviderNotConfigured={provider => {
                   Alert.alert('未配置', `${provider} 登錄尚未配置`);
@@ -205,7 +205,7 @@ export const SocialLoginExample: React.FC = () => {
               />
             </View>
 
-            {/* 手動操作按鈕 */}
+            {/* ManualOperation按鈕 */}
             <View style={styles.manualSection}>
               <Text style={styles.sectionTitle}>手動操作</Text>
               <TouchableOpacity
@@ -236,7 +236,7 @@ export const SocialLoginExample: React.FC = () => {
           </View>
         ) : (
           <View style={styles.manageSection}>
-            {/* 帳戶管理 */}
+            {/* 帳戶Manage */}
             <View style={styles.manageHeader}>
               <Text style={styles.sectionTitle}>帳戶管理</Text>
               <TouchableOpacity
@@ -252,13 +252,13 @@ export const SocialLoginExample: React.FC = () => {
 
             <SocialAccountManager
               onAccountLinked={account => {
-                Alert.alert('帳戶鏈接成功', `${account.name} 帳戶已成功鏈接`);
+                Alert.alert('帳戶鏈接Success', `${account.name} 帳戶已Success鏈接`);
               }}
               onAccountUnlinked={provider => {
                 Alert.alert('帳戶解除鏈接', `${provider} 帳戶已解除鏈接`);
               }}
               onError={error => {
-                Alert.alert('帳戶管理錯誤', error);
+                Alert.alert('帳戶管理Error', error);
               }}
               showHeader={false}
             />

@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { logger } = require('../utils/unified-logger');
 
-// 密碼加密
+// PasswordEncrypt
 const hashPassword = async (password) => {
   try {
     const saltRounds = 12;
@@ -15,7 +15,7 @@ const hashPassword = async (password) => {
   }
 };
 
-// 密碼驗證
+// PasswordVerify
 const verifyPassword = async (password, hash) => {
   try {
     const isValid = await bcrypt.compare(password, hash);
@@ -43,7 +43,7 @@ const generateToken = (payload, expiresIn = '24h') => {
   }
 };
 
-// JWT Token 驗證
+// JWT Token Verify
 const verifyToken = (token) => {
   try {
 // eslint-disable-next-line no-unused-vars
@@ -73,7 +73,7 @@ const generateSecureRandom = (min = 100000, max = 999999) => {
   return min + (value % range);
 };
 
-// 數據加密
+// DataEncrypt
 const encryptData = (data, key = process.env.ENCRYPTION_KEY) => {
   try {
     if (!key) {
@@ -97,7 +97,7 @@ const encryptData = (data, key = process.env.ENCRYPTION_KEY) => {
   }
 };
 
-// 數據解密
+// DataDecrypt
 const decryptData = (encryptedData, iv, key = process.env.ENCRYPTION_KEY) => {
   try {
     if (!key) {
@@ -117,26 +117,26 @@ const decryptData = (encryptedData, iv, key = process.env.ENCRYPTION_KEY) => {
   }
 };
 
-// 輸入清理
+// Input清理
 const sanitizeInput = (input) => {
   if (typeof input !== 'string') {
     return input;
   }
 
   return input
-    .replace(/[<>]/g, '') // 移除 < 和 >
-    .replace(/javascript:/gi, '') // 移除 javascript: 協議
-    .replace(/on\w+=/gi, '') // 移除事件處理器
+    .replace(/[<>]/g, '') // Remove < 和 >
+    .replace(/javascript:/gi, '') // Remove javascript: Protocol
+    .replace(/on\w+=/gi, '') // RemoveEventHandle器
     .trim();
 };
 
-// 電子郵件驗證
+// 電子郵件Verify
 const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-// 密碼強度檢查
+// Password強度Check
 const validatePassword = (password) => {
   const minLength = 8;
   const hasUpperCase = /[A-Z]/.test(password);
@@ -169,7 +169,7 @@ const validatePassword = (password) => {
   };
 };
 
-// 安全日誌記錄
+// 安全LogRecord
 // eslint-disable-next-line no-unused-vars
 const logSecurityEvent = (event, details) => {
   logger.warn('Security Event', {

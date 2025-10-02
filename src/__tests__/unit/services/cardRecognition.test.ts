@@ -2,7 +2,7 @@ import { cardService } from '../../../services/cardService';
 import { enhancedAIService } from '../../../services/enhancedAIService';
 import { imageProcessingService } from '../../../services/imageProcessingService';
 
-// Mock 外部依賴
+// Mock External依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../services/imageProcessingService');
 jest.mock('../../../core/utils/logger');
@@ -30,7 +30,7 @@ describe('卡牌識別功能測試', () => {
         },
       };
 
-      // Mock API 響應
+      // Mock API Response
       const _mockApiService = require('../../../services/apiService');
       mockApiService.apiService.post.mockResolvedValue(mockRecognitionResult);
 
@@ -60,7 +60,7 @@ describe('卡牌識別功能測試', () => {
 
       try {
         await enhancedAIService.enhancedRecognizeCard(mockImageData);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error: unknown) {
         expect(error.message).toContain('圖像質量過低');
       }
@@ -106,7 +106,7 @@ describe('卡牌識別功能測試', () => {
         attribute: '光',
       };
 
-      // 直接驗證 mock 數據，因為 parseCardInfo 方法可能不存在
+      // 直接Verify mock Data，因為 parseCardInfo Method可能不存在
       expect(mockCardData.name).toBe('青眼白龍');
       expect(mockCardData.attack).toBe(3000);
       expect(mockCardData.defense).toBe(2500);

@@ -1,8 +1,8 @@
 import { logger } from './logger';
 
 /**
- * 性能監控工具
- * 用於監控應用程序性能指標
+ * 性能MonitorTool
+ * 用於MonitorApply程序性能指標
  */
 export class PerformanceMonitor {
   private static instance: PerformanceMonitor;

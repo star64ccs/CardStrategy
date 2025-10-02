@@ -39,7 +39,7 @@ const ScanHistoryScreen: React.FC<ScanHistoryScreenProps> = ({
   }, [dispatch]);
 
   useEffect(() => {
-    // 在測試環境中不自動加載數據
+    // 在Test環境中不Auto加載Data
     if (process.env.NODE_ENV !== 'test') {
       loadScanHistory();
     }

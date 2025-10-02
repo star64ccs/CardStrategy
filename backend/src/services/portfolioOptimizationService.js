@@ -13,16 +13,16 @@ class PortfolioOptimizationService {
   }
 
   /**
-   * 初始化投資組合優化服務
+   * Initialize投資組合優化Service
    */
   async initialize() {
     try {
-      logger.info('初始化投資組合優化服務...');
+      logger.info('Initialize投資組合優化Service...');
       this.isInitialized = true;
-      logger.info('投資組合優化服務初始化完成');
+      logger.info('投資組合優化ServiceInitialize完成');
       return true;
     } catch (error) {
-      logger.error('投資組合優化服務初始化失敗:', error);
+      logger.error('投資組合優化ServiceInitializeFailed:', error);
       throw error;
     }
   }
@@ -39,7 +39,7 @@ class PortfolioOptimizationService {
       }
       return returns;
     } catch (error) {
-      logger.error('收益率計算失敗:', error);
+      logger.error('收益率計算Failed:', error);
       throw error;
     }
   }
@@ -66,7 +66,7 @@ class PortfolioOptimizationService {
 
       return covarianceMatrix;
     } catch (error) {
-      logger.error('協方差矩陣計算失敗:', error);
+      logger.error('協方差矩陣計算Failed:', error);
       throw error;
     }
   }
@@ -80,7 +80,7 @@ class PortfolioOptimizationService {
         (returns) => returns.reduce((sum, ret) => sum + ret, 0) / returns.length
       );
     } catch (error) {
-      logger.error('預期收益率計算失敗:', error);
+      logger.error('預期收益率計算Failed:', error);
       throw error;
     }
   }
@@ -126,13 +126,13 @@ class PortfolioOptimizationService {
         method: this.optimizationMethods.MARKOWITZ,
       };
     } catch (error) {
-      logger.error('馬科維茨優化失敗:', error);
+      logger.error('馬科維茨優化Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 解決馬科維茨優化問題
+   * Resolve馬科維茨優化問題
    */
   solveMarkowitzOptimization(
     expectedReturns,
@@ -165,7 +165,7 @@ class PortfolioOptimizationService {
       const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
       return weights.map((weight) => weight / totalWeight);
     } catch (error) {
-      logger.error('馬科維茨優化求解失敗:', error);
+      logger.error('馬科維茨優化求解Failed:', error);
       throw error;
     }
   }
@@ -181,7 +181,7 @@ class PortfolioOptimizationService {
       }
       return portfolioReturn;
     } catch (error) {
-      logger.error('投資組合收益率計算失敗:', error);
+      logger.error('投資組合收益率計算Failed:', error);
       throw error;
     }
   }
@@ -203,13 +203,13 @@ class PortfolioOptimizationService {
 
       return Math.sqrt(risk);
     } catch (error) {
-      logger.error('投資組合風險計算失敗:', error);
+      logger.error('投資組合風險計算Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 資本資產定價模型 (CAPM)
+   * 資本Asset定價模型 (CAPM)
    */
   capmOptimization(returnsMatrix, marketReturns) {
     try {
@@ -249,7 +249,7 @@ class PortfolioOptimizationService {
         method: this.optimizationMethods.CAPM,
       };
     } catch (error) {
-      logger.error('CAPM 優化失敗:', error);
+      logger.error('CAPM 優化Failed:', error);
       throw error;
     }
   }
@@ -275,7 +275,7 @@ class PortfolioOptimizationService {
 
       return betas;
     } catch (error) {
-      logger.error('Beta 係數計算失敗:', error);
+      logger.error('Beta 係數計算Failed:', error);
       throw error;
     }
   }
@@ -295,7 +295,7 @@ class PortfolioOptimizationService {
 
       return covariance / (x.length - 1);
     } catch (error) {
-      logger.error('協方差計算失敗:', error);
+      logger.error('協方差計算Failed:', error);
       throw error;
     }
   }
@@ -311,7 +311,7 @@ class PortfolioOptimizationService {
         (data.length - 1);
       return variance;
     } catch (error) {
-      logger.error('方差計算失敗:', error);
+      logger.error('方差計算Failed:', error);
       throw error;
     }
   }
@@ -337,13 +337,13 @@ class PortfolioOptimizationService {
       const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
       return weights.map((weight) => weight / totalWeight);
     } catch (error) {
-      logger.error('CAPM 權重分配失敗:', error);
+      logger.error('CAPM 權重分配Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 風險價值 (VaR) 計算
+   * 風險價Value (VaR) 計算
    */
   calculateVaR(returnsMatrix, weights, confidenceLevel = 0.95) {
     try {
@@ -360,7 +360,7 @@ class PortfolioOptimizationService {
         portfolioReturns,
       };
     } catch (error) {
-      logger.error('VaR 計算失敗:', error);
+      logger.error('VaR 計算Failed:', error);
       throw error;
     }
   }
@@ -384,13 +384,13 @@ class PortfolioOptimizationService {
 
       return portfolioReturns;
     } catch (error) {
-      logger.error('投資組合歷史收益率計算失敗:', error);
+      logger.error('投資組合歷史收益率計算Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 條件風險價值 (CVaR) 計算
+   * Condition風險價Value (CVaR) 計算
    */
   calculateCVaR(returnsMatrix, weights, confidenceLevel = 0.95) {
     try {
@@ -414,13 +414,13 @@ class PortfolioOptimizationService {
         confidenceLevel,
       };
     } catch (error) {
-      logger.error('CVaR 計算失敗:', error);
+      logger.error('CVaR 計算Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 壓力測試
+   * 壓力Test
    */
   stressTest(returnsMatrix, weights, scenarios) {
     try {
@@ -451,13 +451,13 @@ class PortfolioOptimizationService {
 
       return results;
     } catch (error) {
-      logger.error('壓力測試失敗:', error);
+      logger.error('壓力測試Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 應用壓力情景
+   * Apply壓力情景
    */
   applyStressScenario(returnsMatrix, scenario) {
     try {
@@ -468,7 +468,7 @@ class PortfolioOptimizationService {
 
       return stressedReturns;
     } catch (error) {
-      logger.error('壓力情景應用失敗:', error);
+      logger.error('壓力情景應用Failed:', error);
       throw error;
     }
   }
@@ -502,26 +502,26 @@ class PortfolioOptimizationService {
             weights: optimization.weights,
           });
         } catch (error) {
-          // 跳過無法優化的點
+          // Skip無法優化的點
           continue;
         }
       }
 
       return efficientFrontier;
     } catch (error) {
-      logger.error('有效前沿計算失敗:', error);
+      logger.error('有效前沿計算Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 清理資源
+   * 清理Resource
    */
   dispose() {
     try {
-      logger.info('投資組合優化服務資源已清理');
+      logger.info('投資組合優化Service資源已清理');
     } catch (error) {
-      logger.error('資源清理失敗:', error);
+      logger.error('資源清理Failed:', error);
     }
   }
 }

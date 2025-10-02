@@ -15,7 +15,7 @@ import type {
 } from '../../types/touch';
 
 /**
- * 優化滾動組件
+ * 優化滾動Component
  * 提供流暢的滾動體驗、動量滾動、彈跳效果等優化功能
  */
 export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
@@ -74,7 +74,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
     `optimized-scroll-${Date.now()}-${Math.random()}`
   );
 
-  // 狀態管理
+  // StatusManage
   const [scrollPosition, setScrollPosition] = useState({ x: 0, y: 0 });
   const [isScrolling, setIsScrolling] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -83,7 +83,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
   const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
   const [zoomLevel, setZoomLevel] = useState(zoomScale);
 
-  // 默認配置
+  // DefaultConfigure
   const defaultConfig: ScrollOptimizationConfig = {
     enabled: true,
     momentum: true,
@@ -97,7 +97,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
 
   const _finalConfig = { ...defaultConfig, ...optimization };
 
-  // 註冊組件到服務
+  // RegisterComponent到Service
   useEffect(() => {
     if (scrollEnabled) {
       touchService.registerScroll(componentId.current, finalConfig);
@@ -125,7 +125,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
     };
   }, []);
 
-  // 監聽內容大小變化
+  // 監聽Content大小變化
   useEffect(() => {
     const _updateContentSize = () => {
       if (contentRef.current) {
@@ -149,7 +149,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
     };
   }, [onContentSizeChange]);
 
-  // 工具函數
+  // ToolFunction
   const _getScrollPosition = useCallback(() => {
     if (containerRef.current) {
       return {
@@ -228,7 +228,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
     onMomentumScrollEnd,
   ]);
 
-  // 事件處理器
+  // EventHandle器
   const _handleScroll = useCallback(
     (event: React.UIEvent<HTMLDivElement>) => {
       if (!scrollEnabled) return;
@@ -246,7 +246,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
         onScroll(event);
       }
 
-      // 性能追蹤
+      // 性能Trace
       touchService.trackPerformance(componentId.current, {
         scroll: 'scroll',
         position: newPosition,
@@ -359,7 +359,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
       ...style,
     };
 
-    // 設置滾動方向
+    // Settings滾動方向
     if (horizontal && vertical) {
       baseStyle.overflow = 'auto';
     } else if (horizontal) {
@@ -398,13 +398,13 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
       ...contentContainerStyle,
     };
 
-    // 縮放支持
+    // 縮放Support
     if (zoomLevel !== 1) {
       baseStyle.transform = `scale(${zoomLevel})`;
       baseStyle.transformOrigin = 'top left';
     }
 
-    // 分頁滾動
+    // Paginate滾動
     if (pagingEnabled) {
       if (horizontal) {
         baseStyle.display = 'flex';
@@ -423,7 +423,7 @@ export const OptimizedScrollView: React.FC<OptimizedScrollViewProps> = ({
     contentContainerStyle,
   ]);
 
-  // 自定義滾動條樣式
+  // Custom滾動條樣式
   const _scrollbarStyle = useMemo(() => {
     if (!showsScrollIndicator) return '';
 

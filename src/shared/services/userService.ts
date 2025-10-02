@@ -3,8 +3,8 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 用戶服務
- * 處理用戶相關功能
+ * UserService
+ * HandleUser相Off功能
  */
 export class UserService {
   private static instance: UserService;
@@ -19,7 +19,7 @@ export class UserService {
   }
 
   /**
-   * 獲取用戶信息
+   * GetUserInformation
    */
   async getUserProfile(userId: string): Promise<User> {
     try {
@@ -28,16 +28,16 @@ export class UserService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('獲取用戶信息失敗');
+        throw new Error('Get用戶信息Failed');
       }
     } catch (error) {
-      logger.error('獲取用戶信息失敗:', { error, userId });
+      logger.error('Get用戶信息Failed:', { error, userId });
       throw error;
     }
   }
 
   /**
-   * 更新用戶偏好設置
+   * UpdateUserPreferencesSettings
    */
   async updatePreferences(
     preferences: Partial<UserPreferences>
@@ -51,14 +51,14 @@ export class UserService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('更新用戶偏好設置失敗');
+        throw new Error('Update用戶偏好SettingsFailed');
       }
     } catch (error) {
-      logger.error('更新用戶偏好設置失敗:', { error });
+      logger.error('Update用戶偏好SettingsFailed:', { error });
       throw error;
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _userService = UserService.getInstance();

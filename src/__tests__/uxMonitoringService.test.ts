@@ -1,4 +1,4 @@
-// 用戶體驗監控服務單元測試
+// User體驗MonitorService單元Test
 import UXMonitoringService from '../services/uxMonitoringService';
 import {
   ABTestStatus,
@@ -66,7 +66,7 @@ const _mockPerformanceObserver = jest.fn().mockImplementation(callback => ({
   disconnect: jest.fn(),
 }));
 
-// 設置全局 mock
+// SettingsGlobal mock
 Object.defineProperty(global, 'localStorage', {
   value: mockLocalStorage,
   writable: true,
@@ -113,15 +113,15 @@ describe('UXMonitoringService', () => {
     mockNavigator.userAgent =
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36';
 
-    // 獲取服務實例
+    // GetServiceInstance
     service = UXMonitoringService.getInstance();
 
-    // 清理服務狀態
+    // 清理ServiceStatus
     service.clearData();
   });
 
   afterEach(() => {
-    // 清理事件監聽器
+    // 清理Event監聽器
     service.clearData();
   });
 
@@ -134,7 +134,7 @@ describe('UXMonitoringService', () => {
   });
 
   describe('初始化', () => {
-    test('應該成功初始化服務', async () => {
+    test('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBeUndefined();
 
@@ -157,7 +157,7 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該檢查 Do Not Track 設置', async () => {
-      // 模擬 Do Not Track 啟用
+      // 模擬 Do Not Track Enable
       mockNavigator.doNotTrack = '1';
 
       await service.initialize();
@@ -290,13 +290,13 @@ describe('UXMonitoringService', () => {
     });
   });
 
-  describe('錯誤追蹤', () => {
+  describe('Error追蹤', () => {
     beforeEach(async () => {
       await service.initialize();
     });
 
-    test('應該追蹤 JavaScript 錯誤', () => {
-      const _error = new Error('測試 JavaScript 錯誤');
+    test('應該追蹤 JavaScript Error', () => {
+      const _error = new Error('測試 JavaScript Error');
       const _context = {
         tags: { source: 'test' },
         extra: { testData: 'value' },
@@ -308,8 +308,8 @@ describe('UXMonitoringService', () => {
       expect(status.errorCount).toBeGreaterThan(0);
     });
 
-    test('應該追蹤網絡錯誤', () => {
-      const _error = new Error('網絡請求失敗');
+    test('應該追蹤網絡Error', () => {
+      const _error = new Error('網絡請求Failed');
       const _context = {
         tags: { type: 'network' },
         extra: { url: 'https://api.example.com' },
@@ -321,8 +321,8 @@ describe('UXMonitoringService', () => {
       expect(status.errorCount).toBeGreaterThan(0);
     });
 
-    test('應該追蹤驗證錯誤', () => {
-      const _error = new Error('表單驗證失敗');
+    test('應該追蹤VerifyError', () => {
+      const _error = new Error('表單VerifyFailed');
       const _context = {
         tags: { type: 'validation' },
         extra: { field: 'email' },
@@ -382,7 +382,7 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該獲取 A/B 測試變體', () => {
-      // 模擬 A/B 測試數據
+      // 模擬 A/B TestData
       const _testData = service.exportData();
       testData.abTests = [
         {
@@ -417,9 +417,9 @@ describe('UXMonitoringService', () => {
         },
       ];
 
-      // 重新設置數據
+      // ReSettingsData
       service.clearData();
-      // 注意：這裡需要重新初始化服務來設置測試數據
+      // 注意：這裡需要ReInitializeService來SettingsTestData
 
       const _variant = service.getABTestVariant('test-button-color');
       expect(variant).toBeDefined();
@@ -428,7 +428,7 @@ describe('UXMonitoringService', () => {
     test('應該追蹤轉換', () => {
       service.trackConversion('test-button-color', 'click', 1);
 
-      // 轉換追蹤不會直接影響狀態計數，但應該不會拋出錯誤
+      // ConvertTrace不會直接影響StatusCount，但應該不會ThrowError
       const _status = service.getStatus();
       expect(status).toBeDefined();
     });
@@ -440,7 +440,7 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該生成會話分析', () => {
-      // 添加一些測試數據
+      // Add一些TestData
       service.trackAction({
         type: UserActionType.CLICK,
         pageUrl: 'https://example.com',
@@ -455,7 +455,7 @@ describe('UXMonitoringService', () => {
         pageUrl: 'https://example.com',
       });
 
-      service.trackError(new Error('測試錯誤'));
+      service.trackError(new Error('測試Error'));
 
       const _analytics = service.getAnalytics();
       expect(analytics).toBeDefined();
@@ -468,7 +468,7 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該計算正確的會話統計', () => {
-      // 添加多個操作來測試統計
+      // AddMultipleOperation來TestStatistics
       for (let i = 0; i < 5; i++) {
         service.trackAction({
           type: UserActionType.CLICK,
@@ -483,7 +483,7 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該計算正確的性能統計', () => {
-      // 添加多個性能指標
+      // AddMultiple性能指標
       for (let i = 0; i < 3; i++) {
         service.trackPerformance({
           type: PerformanceMetricType.PAGE_LOAD,
@@ -500,10 +500,10 @@ describe('UXMonitoringService', () => {
       ).toBeGreaterThan(0);
     });
 
-    test('應該計算正確的錯誤統計', () => {
-      // 添加多個錯誤
+    test('應該計算正確的Error統計', () => {
+      // AddMultipleError
       for (let i = 0; i < 3; i++) {
-        service.trackError(new Error(`測試錯誤 ${i}`));
+        service.trackError(new Error(`測試Error ${i}`));
       }
 
       const _analytics = service.getAnalytics();
@@ -512,7 +512,7 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該計算正確的滿意度統計', () => {
-      // 添加多個滿意度調查
+      // AddMultiple滿意度調查
       for (let i = 0; i < 3; i++) {
         service.submitSatisfaction({
           overallSatisfaction: SatisfactionLevel.SATISFIED,
@@ -618,16 +618,16 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該清理數據', () => {
-      // 添加一些數據
+      // Add一些Data
       service.trackAction({
         type: UserActionType.CLICK,
         pageUrl: 'https://example.com',
         pageTitle: 'Test Page',
       });
 
-      service.trackError(new Error('測試錯誤'));
+      service.trackError(new Error('測試Error'));
 
-      // 清理數據
+      // 清理Data
       service.clearData();
 
       const _status = service.getStatus();
@@ -640,7 +640,7 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該導出數據', () => {
-      // 添加一些數據
+      // Add一些Data
       service.trackAction({
         type: UserActionType.CLICK,
         pageUrl: 'https://example.com',
@@ -737,11 +737,11 @@ describe('UXMonitoringService', () => {
     });
 
     test('應該檢測移動設備', async () => {
-      // 模擬移動設備的 user agent
+      // 模擬Move設備的 user agent
       mockNavigator.userAgent =
         'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1';
 
-      // 重新初始化服務以使用新的 user agent
+      // ReInitializeService以使用新的 user agent
       service.clearData();
       await service.initialize();
 
@@ -751,8 +751,8 @@ describe('UXMonitoringService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    test('應該處理初始化錯誤', async () => {
+  describe('ErrorHandle', () => {
+    test('應該HandleInitializeError', async () => {
       // 模擬 PerformanceObserver 不可用的情況
       const _originalPerformanceObserver = global.PerformanceObserver;
       delete (global as any).PerformanceObserver;
@@ -766,17 +766,17 @@ describe('UXMonitoringService', () => {
       expect(mockConsoleWarn).toHaveBeenCalled();
       mockConsoleWarn.mockRestore();
 
-      // 恢復 PerformanceObserver
+      // Restore PerformanceObserver
       (global as any).PerformanceObserver = originalPerformanceObserver;
     });
 
-    test('應該處理事件監聽器錯誤', () => {
+    test('應該Handle事件監聽器Error', () => {
       const _mockConsoleError = jest
         .spyOn(console, 'error')
         .mockImplementation(() => {});
 
       const _errorCallback = () => {
-        throw new Error('測試錯誤');
+        throw new Error('測試Error');
       };
 
       service.on('action-tracked', errorCallback);
@@ -794,17 +794,17 @@ describe('UXMonitoringService', () => {
 
   describe('邊界情況', () => {
     test('應該處理未初始化狀態下的操作', () => {
-      // 清理服務狀態以模擬未初始化
+      // 清理ServiceStatus以模擬未Initialize
       service.clearData();
 
-      // 在未初始化狀態下調用方法
+      // 在未InitializeStatus下調用Method
       service.trackAction({
         type: UserActionType.CLICK,
         pageUrl: 'https://example.com',
         pageTitle: 'Test Page',
       });
 
-      // 應該不會拋出錯誤
+      // 應該不會ThrowError
       const _status = service.getStatus();
       expect(status.isInitialized).toBe(false);
     });

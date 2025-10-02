@@ -1,4 +1,4 @@
-// 協同過濾推薦服務單元測試
+// 協同Filter推薦Service單元Test
 import { CollaborativeFilteringService } from '../services/collaborativeFilteringService';
 import type { CollaborativeFilteringConfig } from '../types/collaborativeFiltering';
 import {
@@ -7,7 +7,7 @@ import {
   UserAction,
 } from '../types/collaborativeFiltering';
 
-// 模擬數據轉換器
+// 模擬DataConvert器
 jest.mock('../../analytics/utils/dataConverters', () => ({
   convertToJson: jest.fn(data => JSON.stringify(data)),
   convertToCsv: jest.fn(data => 'csv,data'),
@@ -19,7 +19,7 @@ describe('CollaborativeFilteringService', () => {
   let service: CollaborativeFilteringService;
 
   beforeEach(() => {
-    // 重置單例實例
+    // Reset單例Instance
     (CollaborativeFilteringService as any).instance = undefined;
     service = CollaborativeFilteringService.getInstance();
   });
@@ -37,7 +37,7 @@ describe('CollaborativeFilteringService', () => {
   });
 
   describe('initialize', () => {
-    test('應該成功初始化服務', async () => {
+    test('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBeUndefined();
     });
@@ -59,7 +59,7 @@ describe('CollaborativeFilteringService', () => {
     test('重複初始化應該不會出錯', async () => {
       await service.initialize();
       await service.initialize();
-      // 不應該拋出錯誤
+      // 不應該ThrowError
     });
   });
 
@@ -68,7 +68,7 @@ describe('CollaborativeFilteringService', () => {
       await service.initialize();
     });
 
-    test('應該成功獲取推薦', async () => {
+    test('應該SuccessGet推薦', async () => {
       const _request = {
         userId: 'user_1',
         limit: 5,
@@ -162,7 +162,7 @@ describe('CollaborativeFilteringService', () => {
       await service.initialize();
     });
 
-    test('應該成功獲取相似用戶', async () => {
+    test('應該SuccessGet相似用戶', async () => {
       const _request = {
         userId: 'user_1',
         limit: 5,
@@ -216,7 +216,7 @@ describe('CollaborativeFilteringService', () => {
       await service.initialize();
     });
 
-    test('應該成功獲取相似項目', async () => {
+    test('應該SuccessGet相似項目', async () => {
       const _request = {
         itemId: 'item_1',
         limit: 5,
@@ -270,7 +270,7 @@ describe('CollaborativeFilteringService', () => {
       await service.initialize();
     });
 
-    test('應該成功更新評分', async () => {
+    test('應該SuccessUpdate評分', async () => {
       const _request = {
         userId: 'user_1',
         itemId: 'item_1',
@@ -314,7 +314,7 @@ describe('CollaborativeFilteringService', () => {
       await service.initialize();
     });
 
-    test('應該成功更新用戶行為', async () => {
+    test('應該SuccessUpdate用戶行為', async () => {
       const _request = {
         userId: 'user_1',
         itemId: 'item_1',
@@ -371,7 +371,7 @@ describe('CollaborativeFilteringService', () => {
       await service.initialize();
     });
 
-    test('應該成功獲取模型性能', async () => {
+    test('應該SuccessGet模型性能', async () => {
       const _response = await service.getModelPerformance();
 
       expect(response.success).toBe(true);
@@ -432,13 +432,13 @@ describe('CollaborativeFilteringService', () => {
       const _listener = jest.fn();
       service.addEventListener('recommendation_generated', listener);
 
-      // 觸發事件
+      // 觸發Event
       await service.getRecommendations({
         userId: 'user_1',
         limit: 1,
       });
 
-      // 驗證監聽器被調用
+      // Verify監聽器被調用
       expect(listener).toHaveBeenCalled();
     });
 
@@ -447,24 +447,24 @@ describe('CollaborativeFilteringService', () => {
       service.addEventListener('recommendation_generated', listener);
       service.removeEventListener('recommendation_generated', listener);
 
-      // 觸發事件
+      // 觸發Event
       await service.getRecommendations({
         userId: 'user_1',
         limit: 1,
       });
 
-      // 驗證監聽器沒有被調用
+      // Verify監聽器沒有被調用
       expect(listener).not.toHaveBeenCalled();
     });
 
-    test('應該處理監聽器錯誤', async () => {
+    test('應該Handle監聽器Error', async () => {
       const _listener = jest.fn().mockImplementation(() => {
         throw new Error('Listener error');
       });
 
       service.addEventListener('recommendation_generated', listener);
 
-      // 不應該拋出錯誤
+      // 不應該ThrowError
       await expect(
         service.getRecommendations({
           userId: 'user_1',
@@ -523,7 +523,7 @@ describe('CollaborativeFilteringService', () => {
         limit: 5,
       });
 
-      expect(response.success).toBe(true); // 簡化實現返回成功
+      expect(response.success).toBe(true); // 簡化實現ReturnSuccess
     });
 
     test('應該處理無效項目ID', async () => {
@@ -534,10 +534,10 @@ describe('CollaborativeFilteringService', () => {
         limit: 5,
       });
 
-      expect(response.success).toBe(true); // 簡化實現返回成功
+      expect(response.success).toBe(true); // 簡化實現ReturnSuccess
     });
 
-    test('應該處理服務未初始化', async () => {
+    test('應該HandleService未Initialize', async () => {
       const _newService = CollaborativeFilteringService.getInstance();
       (newService as any).isInitialized = false;
 
@@ -546,7 +546,7 @@ describe('CollaborativeFilteringService', () => {
         limit: 5,
       });
 
-      expect(response.success).toBe(true); // 會自動初始化
+      expect(response.success).toBe(true); // 會AutoInitialize
     });
   });
 

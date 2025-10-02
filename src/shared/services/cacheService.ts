@@ -2,8 +2,8 @@ import { logger } from '../../core/utils/logger';
 import { CacheStorage } from '../../core/utils/storage';
 
 /**
- * 緩存服務
- * 處理數據緩存相關功能
+ * CacheService
+ * HandleDataCache相Off功能
  */
 export class CacheService {
   private static instance: CacheService;
@@ -18,28 +18,28 @@ export class CacheService {
   }
 
   /**
-   * 設置緩存
+   * SettingsCache
    */
   async set(key: string, data: unknown, expiry?: number): Promise<void> {
     try {
       await CacheStorage.setCache(key, data, expiry);
     } catch (error) {
-      logger.error('設置緩存失敗:', { error, key });
+      logger.error('Settings緩存Failed:', { error, key });
     }
   }
 
   /**
-   * 獲取緩存
+   * GetCache
    */
   async get<T>(key: string): Promise<T | null> {
     try {
       return await CacheStorage.getCache<T>(key);
     } catch (error) {
-      logger.error('獲取緩存失敗:', { error, key });
+      logger.error('Get緩存Failed:', { error, key });
       return null;
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _cacheService = CacheService.getInstance();

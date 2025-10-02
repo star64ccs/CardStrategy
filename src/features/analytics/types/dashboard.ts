@@ -1,4 +1,4 @@
-// 儀表板類型定義
+// 儀Table板Class型定義
 export interface DashboardWidget {
   id: string;
   type:
@@ -16,7 +16,7 @@ export interface DashboardWidget {
   config: WidgetConfig;
   position: WidgetPosition;
   size: WidgetSize;
-  refreshInterval?: number; // 秒
+  refreshInterval?: number; // Second
   lastUpdated?: Date;
   isVisible: boolean;
   isEditable: boolean;
@@ -234,8 +234,8 @@ export interface AlertCondition {
   metric: string;
   operator: 'gt' | 'gte' | 'lt' | 'lte' | 'eq' | 'ne';
   value: number;
-  timeWindow: number; // 分鐘
-  frequency: number; // 檢查頻率（分鐘）
+  timeWindow: number; // Minute
+  frequency: number; // Check頻率（Minute）
 }
 
 export interface AlertAction {

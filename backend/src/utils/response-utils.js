@@ -1,6 +1,6 @@
 const { logger } = require('./unified-logger');
 
-// 成功響應
+// SuccessResponse
 const successResponse = (
   res,
   data = null,
@@ -21,7 +21,7 @@ const successResponse = (
   return res.status(statusCode).json(response);
 };
 
-// 錯誤響應
+// ErrorResponse
 // eslint-disable-next-line no-unused-vars
 const errorResponse = (
   res,
@@ -40,7 +40,7 @@ const errorResponse = (
     response.errors = errors;
   }
 
-  // 記錄錯誤響應
+  // RecordErrorResponse
   logger.warn('Error Response', {
     message,
     statusCode,
@@ -51,12 +51,12 @@ const errorResponse = (
   return res.status(statusCode).json(response);
 };
 
-// 驗證錯誤響應
+// VerifyErrorResponse
 const validationErrorResponse = (res, errors) => {
   return errorResponse(res, 'Validation failed', 400, errors);
 };
 
-// 認證錯誤響應
+// AuthenticateErrorResponse
 // eslint-disable-next-line no-unused-vars
 const authenticationErrorResponse = (
   res,
@@ -65,7 +65,7 @@ const authenticationErrorResponse = (
   return errorResponse(res, message, 401);
 };
 
-// 授權錯誤響應
+// AuthorizeErrorResponse
 // eslint-disable-next-line no-unused-vars
 const authorizationErrorResponse = (
   res,
@@ -74,23 +74,23 @@ const authorizationErrorResponse = (
   return errorResponse(res, message, 403);
 };
 
-// 未找到錯誤響應
+// 未找到ErrorResponse
 // eslint-disable-next-line no-unused-vars
 const notFoundErrorResponse = (res, resource = 'Resource') => {
   return errorResponse(res, `${resource} not found`, 404);
 };
 
-// 衝突錯誤響應
+// 衝突ErrorResponse
 const conflictErrorResponse = (res, message = 'Resource conflict') => {
   return errorResponse(res, message, 409);
 };
 
-// 服務器錯誤響應
+// ServerErrorResponse
 const serverErrorResponse = (res, message = 'Internal server error') => {
   return errorResponse(res, message, 500);
 };
 
-// 分頁響應
+// PaginateResponse
 const paginatedResponse = (res, data, page, limit, total) => {
   const totalPages = Math.ceil(total / limit);
   const hasNextPage = page < totalPages;
@@ -109,7 +109,7 @@ const paginatedResponse = (res, data, page, limit, total) => {
   });
 };
 
-// 文件上傳響應
+// FileUploadResponse
 const fileUploadResponse = (res, fileInfo) => {
   return successResponse(
     res,
@@ -124,7 +124,7 @@ const fileUploadResponse = (res, fileInfo) => {
   );
 };
 
-// 批量操作響應
+// BatchOperationResponse
 const batchOperationResponse = (res, results) => {
 // eslint-disable-next-line no-unused-vars
   const successCount = results.filter((r) => r.success).length;

@@ -1,6 +1,6 @@
 /**
- * 推送通知服務
- * 處理推送通知功能，包括本地通知、遠程通知、通知權限管理等
+ * PushNotificationService
+ * HandlePushNotification功能，Package括LocalNotification、遠程Notification、Notification權限Manage等
  */
 
 import * as Device from 'expo-device';
@@ -88,43 +88,43 @@ class PushNotificationService {
   }
 
   /**
-   * 初始化推送通知服務
+   * InitializePushNotificationService
    */
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
     try {
-      logger.info('初始化推送通知服務');
+      logger.info('Initialize推送通知Service');
 
-      // 設置通知處理器
+      // SettingsNotificationHandle器
       await this.setupNotificationHandlers();
 
-      // 請求通知權限
+      // RequestNotification權限
       await this.requestPermissions();
 
-      // 獲取 Expo 推送令牌
+      // Get Expo Push令牌
       await this.getExpoPushToken();
 
-      // 創建默認通知頻道
+      // CreateDefaultNotification頻道
       await this.createDefaultChannels();
 
-      // 設置實時更新處理器
+      // Settings實時UpdateHandle器
       this.setupRealtimeUpdateHandler();
 
       this.isInitialized = true;
-      logger.info('推送通知服務初始化完成');
+      logger.info('推送通知ServiceInitialize完成');
     } catch (error: unknown) {
-      logger.error('推送通知服務初始化失敗:', error);
+      logger.error('推送通知ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 請求通知權限
+   * RequestNotification權限
    */
   public async requestPermissions(): Promise<NotificationPermission> {
     try {
-      // 檢查是否為實體設備
+      // CheckYesNo為實體設備
       const { isDevice } = Device;
       if (!isDevice) {
         logger.warn('推送通知僅在實體設備上可用');
@@ -154,13 +154,13 @@ class PushNotificationService {
         canAskAgain: finalStatus !== 'denied',
       };
     } catch (error: unknown) {
-      logger.error('請求通知權限失敗:', error);
+      logger.error('請求通知權限Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取通知權限狀態
+   * GetNotification權限Status
    */
   public async getPermissionStatus(): Promise<NotificationPermission> {
     try {
@@ -173,17 +173,17 @@ class PushNotificationService {
         canAskAgain: status !== 'denied',
       };
     } catch (error: unknown) {
-      logger.error('獲取通知權限狀態失敗:', error);
+      logger.error('Get通知權限狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取 Expo 推送令牌
+   * Get Expo Push令牌
    */
   public async getExpoPushToken(): Promise<string | null> {
     try {
-      // 檢查是否為實體設備
+      // CheckYesNo為實體設備
       const { isDevice } = Device;
       if (!isDevice) {
         logger.warn('推送令牌僅在實體設備上可用');
@@ -195,17 +195,17 @@ class PushNotificationService {
       });
 
       this.expoPushToken = token.data;
-      logger.info('獲取 Expo 推送令牌成功:', { token: this.expoPushToken });
+      logger.info('Get Expo 推送令牌Success:', { token: this.expoPushToken });
 
       return this.expoPushToken;
     } catch (error: unknown) {
-      logger.error('獲取 Expo 推送令牌失敗:', error);
+      logger.error('Get Expo 推送令牌Failed:', error);
       return null;
     }
   }
 
   /**
-   * 創建通知頻道（Android）
+   * CreateNotification頻道（Android）
    */
   public async createNotificationChannel(
     channel: NotificationChannel
@@ -227,18 +227,18 @@ class PushNotificationService {
       }
 
       this.notificationChannels.set(channel.id, channel);
-      logger.debug('創建通知頻道成功:', {
+      logger.debug('Create通知頻道Success:', {
         channelId: channel.id,
         name: channel.name,
       });
     } catch (error: unknown) {
-      logger.error('創建通知頻道失敗:', error);
+      logger.error('Create通知頻道Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 發送本地通知
+   * SendLocalNotification
    */
   public async sendLocalNotification(
     config: NotificationConfig
@@ -254,25 +254,25 @@ class PushNotificationService {
           badge: config.badge,
           categoryIdentifier: config.category,
         },
-        trigger: null, // 立即發送
+        trigger: null, // 立即Send
       });
 
       this.updateStats('sent', config.category || 'default');
-      logger.debug('本地通知發送成功:', {
+      logger.debug('本地通知發送Success:', {
         notificationId,
         title: config.title,
       });
 
       return notificationId;
     } catch (error: unknown) {
-      logger.error('發送本地通知失敗:', error);
+      logger.error('發送本地通知Failed:', error);
       this.updateStats('failed', config.category || 'default');
       throw error;
     }
   }
 
   /**
-   * 發送延遲通知
+   * Send延遲Notification
    */
   public async scheduleNotification(
     config: NotificationConfig,
@@ -293,67 +293,67 @@ class PushNotificationService {
       });
 
       this.updateStats('sent', config.category || 'default');
-      logger.debug('延遲通知安排成功:', {
+      logger.debug('延遲通知安排Success:', {
         notificationId,
         title: config.title,
       });
 
       return notificationId;
     } catch (error: unknown) {
-      logger.error('安排延遲通知失敗:', error);
+      logger.error('安排延遲通知Failed:', error);
       this.updateStats('failed', config.category || 'default');
       throw error;
     }
   }
 
   /**
-   * 取消通知
+   * CancelNotification
    */
   public async cancelNotification(notificationId: string): Promise<void> {
     try {
       await Notifications.cancelScheduledNotificationAsync(notificationId);
-      logger.debug('取消通知成功:', { notificationId });
+      logger.debug('取消通知Success:', { notificationId });
     } catch (error: unknown) {
-      logger.error('取消通知失敗:', error);
+      logger.error('取消通知Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 取消所有通知
+   * Cancel所有Notification
    */
   public async cancelAllNotifications(): Promise<void> {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
-      logger.debug('取消所有通知成功');
+      logger.debug('取消所有通知Success');
     } catch (error: unknown) {
-      logger.error('取消所有通知失敗:', error);
+      logger.error('取消所有通知Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 設置通知徽章數量
+   * SettingsNotification徽章數量
    */
   public async setBadgeCount(count: number): Promise<void> {
     try {
       await Notifications.setBadgeCountAsync(count);
-      logger.debug('設置通知徽章數量成功:', { count });
+      logger.debug('Settings通知徽章數量Success:', { count });
     } catch (error: unknown) {
-      logger.error('設置通知徽章數量失敗:', error);
+      logger.error('Settings通知徽章數量Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取通知統計
+   * GetNotificationStatistics
    */
   public getStats(): NotificationStats {
     return { ...this.stats };
   }
 
   /**
-   * 清除通知統計
+   * ClearNotificationStatistics
    */
   public clearStats(): void {
     this.stats = this.getDefaultStats();
@@ -361,7 +361,7 @@ class PushNotificationService {
   }
 
   /**
-   * 添加通知監聽器
+   * AddNotification監聽器
    */
   public addNotificationListener(
     type: 'received' | 'response',
@@ -380,24 +380,24 @@ class PushNotificationService {
   }
 
   /**
-   * 移除通知監聽器
+   * RemoveNotification監聽器
    */
   public removeNotificationListener(key: string): void {
     const _listener = this.notificationListeners.get(key);
     if (listener) {
-      // 注意：Expo Notifications 沒有提供移除特定監聽器的方法
-      // 這裡只是從我們的記錄中移除
+      // 注意：Expo Notifications 沒有提供RemoveSpecific監聽器的Method
+      // 這裡只Yes從我們的Record中Remove
       this.notificationListeners.delete(key);
       logger.debug('移除通知監聽器:', { key });
     }
   }
 
   /**
-   * 設置通知處理器
+   * SettingsNotificationHandle器
    */
   private async setupNotificationHandlers(): Promise<void> {
     try {
-      // 設置通知處理器
+      // SettingsNotificationHandle器
       Notifications.setNotificationHandler({
         handleNotification: async () => ({
           shouldShowAlert: true,
@@ -408,23 +408,23 @@ class PushNotificationService {
         }),
       });
 
-      // 監聽通知接收
+      // 監聽NotificationReceive
       Notifications.addNotificationReceivedListener(notification => {
         this.handleNotificationReceived(notification);
       });
 
-      // 監聽通知響應
+      // 監聽NotificationResponse
       Notifications.addNotificationResponseReceivedListener(response => {
         this.handleNotificationResponse(response);
       });
     } catch (error: unknown) {
-      logger.error('設置通知處理器失敗:', error);
+      logger.error('Settings通知Handle器Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 創建默認通知頻道
+   * CreateDefaultNotification頻道
    */
   private async createDefaultChannels(): Promise<void> {
     const defaultChannels: NotificationChannel[] = [
@@ -460,7 +460,7 @@ class PushNotificationService {
   }
 
   /**
-   * 設置實時更新處理器
+   * Settings實時UpdateHandle器
    */
   private setupRealtimeUpdateHandler(): void {
     realtimeUpdateService.registerHandler({
@@ -479,14 +479,14 @@ class PushNotificationService {
             priority: notification.priority || 'normal',
           });
         } catch (error: unknown) {
-          logger.error('處理實時通知更新失敗:', error);
+          logger.error('Handle實時通知UpdateFailed:', error);
         }
       },
     });
   }
 
   /**
-   * 處理通知接收
+   * HandleNotificationReceive
    */
   private handleNotificationReceived(notification: unknown): void {
     logger.debug('通知已接收:', {
@@ -501,7 +501,7 @@ class PushNotificationService {
   }
 
   /**
-   * 處理通知響應
+   * HandleNotificationResponse
    */
   private handleNotificationResponse(response: unknown): void {
     logger.debug('通知已響應:', {
@@ -514,7 +514,7 @@ class PushNotificationService {
       response.notification.request.content.categoryIdentifier || 'default'
     );
 
-    // 處理通知數據
+    // HandleNotificationData
     const { data } = response.notification.request.content;
     if (data?.action) {
       this.handleNotificationAction(data.action, data);
@@ -522,20 +522,20 @@ class PushNotificationService {
   }
 
   /**
-   * 處理通知動作
+   * HandleNotification動作
    */
   private handleNotificationAction(action: string, data: unknown): void {
     logger.debug('處理通知動作:', { action, data });
 
     switch (action) {
       case 'open_card':
-        // 處理打開卡片動作
+        // Handle打On卡片動作
         break;
       case 'open_screen':
-        // 處理打開屏幕動作
+        // Handle打On屏幕動作
         break;
       case 'dismiss':
-        // 處理忽略動作
+        // HandleIgnore動作
         break;
       default:
         logger.debug('未知的通知動作:', { action });
@@ -543,7 +543,7 @@ class PushNotificationService {
   }
 
   /**
-   * 更新統計數據
+   * Update統Count據
    */
   private updateStats(
     type: 'sent' | 'delivered' | 'failed' | 'opened',
@@ -571,7 +571,7 @@ class PushNotificationService {
   }
 
   /**
-   * 獲取默認統計數據
+   * GetDefault統Count據
    */
   private getDefaultStats(): NotificationStats {
     return {

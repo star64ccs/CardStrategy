@@ -11,8 +11,8 @@ import type {
 } from '../../types/touch';
 
 /**
- * 觸控手勢組件
- * 支持多種觸控手勢識別：點擊、雙擊、長按、滑動、縮放、旋轉
+ * 觸控手勢Component
+ * Support多種觸控手勢識別：點擊、雙擊、長按、滑動、縮放、旋轉
  */
 export const TouchGesture: React.FC<TouchGestureProps> = ({
   children,
@@ -32,7 +32,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
   const _containerRef = useRef<HTMLDivElement>(null);
   const _componentId = useRef(`touch-gesture-${Date.now()}-${Math.random()}`);
 
-  // 狀態管理
+  // StatusManage
   const [isPressed, setIsPressed] = useState(false);
   const [startPoint, setStartPoint] = useState<{ x: number; y: number } | null>(
     null
@@ -51,7 +51,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
   const [initialAngle, setInitialAngle] = useState(0);
   const [initialScale, setInitialScale] = useState(1);
 
-  // 默認配置
+  // DefaultConfigure
   const defaultConfig: TouchGestureConfig = {
     type: 'tap',
     enabled: true,
@@ -67,7 +67,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
 
   const _finalConfig = { ...defaultConfig, ...config };
 
-  // 註冊組件到服務
+  // RegisterComponent到Service
   useEffect(() => {
     if (!disabled) {
       touchService.registerGesture(componentId.current, finalConfig);
@@ -78,7 +78,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
     };
   }, [disabled, finalConfig]);
 
-  // 工具函數
+  // ToolFunction
   const _getTouchPoint = useCallback(
     (event: React.TouchEvent | React.MouseEvent): { x: number; y: number } => {
       if ('touches' in event && event.touches.length > 0) {
@@ -179,7 +179,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
     [getTouchPoint, startTime]
   );
 
-  // 事件處理器
+  // EventHandle器
   const _handleTouchStart = useCallback(
     (event: React.TouchEvent) => {
       if (disabled || finalConfig.preventDefault) {
@@ -198,7 +198,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
       setStartTime(Date.now());
       setTouchCount(points.length);
 
-      // 設置長按計時器
+      // Settings長按計時器
       if (onLongPress) {
         const _timer = setTimeout(() => {
           const _touchData = createTouchEventData('longPress', event);
@@ -211,7 +211,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
         setLongPressTimer(timer);
       }
 
-      // 多點觸控初始化
+      // 多點觸控Initialize
       if (points.length === 2) {
         const _distance = calculateDistance(points[0], points[1]);
         const _angle = calculateAngle(points[0], points[1]);
@@ -242,13 +242,13 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
 
       setCurrentPoint(point);
 
-      // 取消長按計時器
+      // Cancel長按計時器
       if (longPressTimer) {
         clearTimeout(longPressTimer);
         setLongPressTimer(null);
       }
 
-      // 處理多點觸控手勢
+      // Handle多點觸控手勢
       if (points.length === 2 && startPoint && initialDistance > 0) {
         const _currentDistance = calculateDistance(points[0], points[1]);
         const _currentAngle = calculateAngle(points[0], points[1]);
@@ -320,13 +320,13 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
       setIsPressed(false);
       setCurrentPoint(null);
 
-      // 取消長按計時器
+      // Cancel長按計時器
       if (longPressTimer) {
         clearTimeout(longPressTimer);
         setLongPressTimer(null);
       }
 
-      // 檢查是否為點擊
+      // CheckYesNo為點擊
       if (startPoint && point && duration < (finalConfig.maxDuration || 5000)) {
         const _distance = calculateDistance(startPoint, point);
 
@@ -371,7 +371,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
         }
       }
 
-      // 重置狀態
+      // ResetStatus
       setStartPoint(null);
       setTouchCount(0);
       setInitialDistance(0);
@@ -395,7 +395,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
     ]
   );
 
-  // 滑鼠事件處理（用於桌面端）
+  // 滑鼠EventHandle（用於桌面端）
   const _handleMouseDown = useCallback(
     (event: React.MouseEvent) => {
       if (disabled) return;
@@ -430,7 +430,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
       setIsPressed(false);
       setCurrentPoint(null);
 
-      // 處理點擊
+      // Handle點擊
       if (startPoint && point && onTap) {
         const _distance = calculateDistance(startPoint, point);
         if (distance < (finalConfig.threshold || 10)) {
@@ -459,7 +459,7 @@ export const TouchGesture: React.FC<TouchGestureProps> = ({
     ]
   );
 
-  // 鍵盤事件處理（可訪問性）
+  // Key盤EventHandle（可訪問性）
   const _handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
       if (disabled) return;

@@ -46,14 +46,14 @@ class AuthenticityCheckService {
     if (this.isInitialized) return;
     logger.info('初始化 AuthenticityCheckService');
     try {
-      // 模擬從後端獲取配置
+      // 模擬從後端GetConfigure
       this.defaultOptions = await this.callGetCheckOptionsAPI();
       this.isInitialized = true;
       logger.info('AuthenticityCheckService 初始化完成', {
         options: this.defaultOptions,
       });
     } catch (error: unknown) {
-      logger.error('AuthenticityCheckService 初始化失敗:', error);
+      logger.error('AuthenticityCheckService InitializeFailed:', error);
       throw error;
     }
   }
@@ -66,45 +66,45 @@ class AuthenticityCheckService {
       userId: request.userId,
     });
     try {
-      // 合併選項
+      // MergeOptions
       const _options = { ...this.defaultOptions, ...request.checkOptions };
 
-      // 模擬圖像預處理
+      // 模擬Graph像預Handle
       const _processedImage = await this.preprocessImage(
         request.imageData,
         options
       );
 
-      // 模擬調用後端檢查 API
+      // 模擬調用後端Check API
       const _apiResponse = await this.callCheckAPI(processedImage, options);
 
       if (!apiResponse.success || !apiResponse.data) {
         const error: AuthenticityCheckError = {
           code: 'CHECK_FAILED',
-          message: apiResponse.error?.message || '防偽檢查失敗',
+          message: apiResponse.error?.message || '防偽CheckFailed',
           isRetryable: true,
         };
         logger.error(
-          '防偽檢查 API 返回失敗:',
+          '防偽Check API 返回Failed:',
           error as unknown as Record<string, unknown>
         );
         throw error;
       }
 
       const result: AuthenticityCheckResult = apiResponse.data;
-      logger.info('防偽檢查成功', {
+      logger.info('防偽CheckSuccess', {
         cardId: result.cardId,
         isAuthentic: result.isAuthentic,
         confidence: result.confidence,
         riskLevel: result.riskLevel,
       });
 
-      // 記錄檢查歷史
+      // RecordCheck歷史
       await this.recordCheckHistory(request, result);
 
       return result;
     } catch (error: unknown) {
-      logger.error('防偽檢查失敗:', error);
+      logger.error('防偽CheckFailed:', error);
       throw error;
     }
   }
@@ -118,14 +118,14 @@ class AuthenticityCheckService {
       const _apiResponse = await this.callGetCheckHistoryAPI(userId, limit);
 
       if (!apiResponse.success || !apiResponse.data) {
-        throw new Error(apiResponse.error?.message || '獲取檢查歷史失敗');
+        throw new Error(apiResponse.error?.message || 'GetCheck歷史Failed');
       }
 
       this.checkHistory = apiResponse.data;
-      logger.info('成功獲取檢查歷史', { count: this.checkHistory.length });
+      logger.info('SuccessGetCheck歷史', { count: this.checkHistory.length });
       return this.checkHistory;
     } catch (error: unknown) {
-      logger.error('獲取檢查歷史失敗:', error);
+      logger.error('GetCheck歷史Failed:', error);
       throw error;
     }
   }
@@ -136,17 +136,17 @@ class AuthenticityCheckService {
       const _apiResponse = await this.callGetCheckStatsAPI(userId);
 
       if (!apiResponse.success || !apiResponse.data) {
-        throw new Error(apiResponse.error?.message || '獲取檢查統計失敗');
+        throw new Error(apiResponse.error?.message || 'GetCheck統計Failed');
       }
 
       this.checkStats = apiResponse.data;
-      logger.info('成功獲取檢查統計', {
+      logger.info('SuccessGetCheck統計', {
         totalChecks: this.checkStats.totalChecks,
         fakeDetectionRate: `${((this.checkStats.fakeCards / this.checkStats.totalChecks) * 100).toFixed(2)}%`,
       });
       return this.checkStats;
     } catch (error: unknown) {
-      logger.error('獲取檢查統計失敗:', error);
+      logger.error('GetCheck統計Failed:', error);
       throw error;
     }
   }
@@ -156,10 +156,10 @@ class AuthenticityCheckService {
     try {
       const _options = await this.callGetCheckOptionsAPI();
       this.defaultOptions = options;
-      logger.info('成功獲取檢查選項', { options });
+      logger.info('SuccessGetCheck選項', { options });
       return options;
     } catch (error: unknown) {
-      logger.error('獲取檢查選項失敗:', error);
+      logger.error('GetCheck選項Failed:', error);
       throw error;
     }
   }
@@ -168,9 +168,9 @@ class AuthenticityCheckService {
     imageData: string,
     options: AuthenticityCheckOptions
   ): Promise<string> {
-    // 模擬圖像處理，例如調整大小、增強對比度等
+    // 模擬Graph像Handle，例如調整大小、增強對比度等
     logger.debug('模擬圖像預處理', { options });
-    return new Promise(resolve => setTimeout(() => resolve(imageData), 400)); // 模擬處理時間
+    return new Promise(resolve => setTimeout(() => resolve(imageData), 400)); // 模擬HandleTime
   }
 
   private async callCheckAPI(
@@ -180,9 +180,9 @@ class AuthenticityCheckService {
     logger.debug('模擬調用防偽檢查 API');
     return new Promise(resolve => {
       setTimeout(() => {
-        const _isSuccess = Math.random() > 0.1; // 90% 成功率
+        const _isSuccess = Math.random() > 0.1; // 90% Success率
         if (isSuccess) {
-          const _isAuthentic = Math.random() > 0.3; // 70% 真卡率
+          const _isAuthentic = Math.random() > 0.3; // 70% True卡率
           const _confidence = isAuthentic
             ? 0.85 + Math.random() * 0.15
             : 0.6 + Math.random() * 0.3;
@@ -427,7 +427,7 @@ class AuthenticityCheckService {
     result: AuthenticityCheckResult
   ): Promise<void> {
     logger.debug('記錄檢查歷史');
-    // 模擬記錄到後端
+    // 模擬Record到後端
     return new Promise(resolve => setTimeout(resolve, 200));
   }
 }

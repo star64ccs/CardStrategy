@@ -10,13 +10,13 @@ import type {
 } from '../../core/types';
 import { socialAuthService } from '../../features/auth/services/socialAuthService';
 
-// 社交認證狀態接口
+// 社交AuthenticateStatusInterface
 export interface SocialAuthState {
-  // 登錄狀態
+  // LoginStatus
   isSocialLoggingIn: boolean;
   socialLoginError: string | null;
 
-  // 社交登錄響應
+  // 社交LoginResponse
   socialAuthResponse: SocialAuthResponse | null;
 
   // 已鏈接的社交帳戶
@@ -24,21 +24,21 @@ export interface SocialAuthState {
   isLoadingAccounts: boolean;
   accountsError: string | null;
 
-  // 社交登錄 URL
+  // 社交Login URL
   socialLoginUrls: Record<SocialProvider, string>;
   isLoadingUrls: boolean;
   urlsError: string | null;
 
-  // 社交用戶信息
+  // 社交UserInformation
   socialUserInfo: Record<SocialProvider, SocialUserInfo | null>;
 
-  // 配置狀態
+  // ConfigureStatus
   configuredProviders: SocialProvider[];
   isCheckingConfig: boolean;
   configError: string | null;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: SocialAuthState = {
   isSocialLoggingIn: false,
   socialLoginError: null,
@@ -55,10 +55,10 @@ const initialState: SocialAuthState = {
   configError: null,
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 
 /**
- * 社交登錄
+ * 社交Login
  */
 export const _socialLogin = createAsyncThunk(
   'socialAuth/socialLogin',
@@ -67,13 +67,13 @@ export const _socialLogin = createAsyncThunk(
       const _response = await socialAuthService.socialLogin(credentials);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '社交登錄失敗');
+      return rejectWithValue(error.message || '社交登錄Failed');
     }
   }
 );
 
 /**
- * 獲取社交登錄 URL
+ * Get社交Login URL
  */
 export const _getSocialLoginUrl = createAsyncThunk(
   'socialAuth/getSocialLoginUrl',
@@ -91,13 +91,13 @@ export const _getSocialLoginUrl = createAsyncThunk(
       );
       return { provider, url };
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取社交登錄 URL 失敗');
+      return rejectWithValue(error.message || 'Get社交登錄 URL Failed');
     }
   }
 );
 
 /**
- * 處理社交登錄回調
+ * Handle社交LoginCallback
  */
 export const _handleSocialCallback = createAsyncThunk(
   'socialAuth/handleSocialCallback',
@@ -117,7 +117,7 @@ export const _handleSocialCallback = createAsyncThunk(
       );
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '處理社交登錄回調失敗');
+      return rejectWithValue(error.message || 'Handle社交登錄回調Failed');
     }
   }
 );
@@ -132,7 +132,7 @@ export const _linkSocialAccount = createAsyncThunk(
       const _account = await socialAuthService.linkSocialAccount(credentials);
       return account;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '鏈接社交帳戶失敗');
+      return rejectWithValue(error.message || '鏈接社交帳戶Failed');
     }
   }
 );
@@ -147,13 +147,13 @@ export const _unlinkSocialAccount = createAsyncThunk(
       await socialAuthService.unlinkSocialAccount(provider);
       return provider;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '解除鏈接社交帳戶失敗');
+      return rejectWithValue(error.message || '解除鏈接社交帳戶Failed');
     }
   }
 );
 
 /**
- * 獲取已鏈接的社交帳戶
+ * Get已鏈接的社交帳戶
  */
 export const _getLinkedSocialAccounts = createAsyncThunk(
   'socialAuth/getLinkedSocialAccounts',
@@ -162,13 +162,13 @@ export const _getLinkedSocialAccounts = createAsyncThunk(
       const _accounts = await socialAuthService.getLinkedSocialAccounts();
       return accounts;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取已鏈接社交帳戶失敗');
+      return rejectWithValue(error.message || 'Get已鏈接社交帳戶Failed');
     }
   }
 );
 
 /**
- * 檢查社交帳戶是否已鏈接
+ * Check社交帳戶YesNo已鏈接
  */
 export const _checkSocialAccountLinked = createAsyncThunk(
   'socialAuth/checkSocialAccountLinked',
@@ -177,13 +177,13 @@ export const _checkSocialAccountLinked = createAsyncThunk(
       const _isLinked = await socialAuthService.isSocialAccountLinked(provider);
       return { provider, isLinked };
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '檢查社交帳戶鏈接狀態失敗');
+      return rejectWithValue(error.message || 'Check社交帳戶鏈接狀態Failed');
     }
   }
 );
 
 /**
- * 獲取社交用戶信息
+ * Get社交UserInformation
  */
 export const _getSocialUserInfo = createAsyncThunk(
   'socialAuth/getSocialUserInfo',
@@ -201,13 +201,13 @@ export const _getSocialUserInfo = createAsyncThunk(
       );
       return { provider, userInfo };
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取社交用戶信息失敗');
+      return rejectWithValue(error.message || 'Get社交用戶信息Failed');
     }
   }
 );
 
 /**
- * 檢查社交登錄配置
+ * Check社交LoginConfigure
  */
 export const _checkSocialLoginConfig = createAsyncThunk(
   'socialAuth/checkSocialLoginConfig',
@@ -216,7 +216,7 @@ export const _checkSocialLoginConfig = createAsyncThunk(
       const _config = socialAuthService.getConfig();
       const configuredProviders: SocialProvider[] = [];
 
-      // 檢查每個提供商是否已配置
+      // Check每個提供商YesNo已Configure
       (Object.keys(config) as SocialProvider[]).forEach(provider => {
         if (socialAuthService.isProviderConfigured(provider)) {
           configuredProviders.push(provider);
@@ -225,7 +225,7 @@ export const _checkSocialLoginConfig = createAsyncThunk(
 
       return configuredProviders;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '檢查社交登錄配置失敗');
+      return rejectWithValue(error.message || 'Check社交登錄ConfigureFailed');
     }
   }
 );
@@ -235,32 +235,32 @@ const _socialAuthSlice = createSlice({
   name: 'socialAuth',
   initialState,
   reducers: {
-    // 清除社交登錄錯誤
+    // Clear社交LoginError
     clearSocialLoginError: state => {
       state.socialLoginError = null;
     },
 
-    // 清除社交認證響應
+    // Clear社交AuthenticateResponse
     clearSocialAuthResponse: state => {
       state.socialAuthResponse = null;
     },
 
-    // 清除帳戶錯誤
+    // Clear帳戶Error
     clearAccountsError: state => {
       state.accountsError = null;
     },
 
-    // 清除 URL 錯誤
+    // Clear URL Error
     clearUrlsError: state => {
       state.urlsError = null;
     },
 
-    // 清除配置錯誤
+    // ClearConfigureError
     clearConfigError: state => {
       state.configError = null;
     },
 
-    // 設置社交用戶信息
+    // Settings社交UserInformation
     setSocialUserInfo: (
       state,
       action: PayloadAction<{
@@ -272,7 +272,7 @@ const _socialAuthSlice = createSlice({
       state.socialUserInfo[provider] = userInfo;
     },
 
-    // 重置社交認證狀態
+    // Reset社交AuthenticateStatus
     resetSocialAuth: state => {
       state.isSocialLoggingIn = false;
       state.socialLoginError = null;
@@ -344,7 +344,7 @@ const _socialAuthSlice = createSlice({
 
     // linkSocialAccount
     builder.addCase(linkSocialAccount.fulfilled, (state, action) => {
-      // 將新鏈接的帳戶添加到列表中
+      // 將新鏈接的帳戶Add到List中
       const _existingIndex = state.linkedAccounts.findIndex(
         account => account.provider === action.payload.provider
       );
@@ -357,7 +357,7 @@ const _socialAuthSlice = createSlice({
 
     // unlinkSocialAccount
     builder.addCase(unlinkSocialAccount.fulfilled, (state, action) => {
-      // 從列表中移除解除鏈接的帳戶
+      // 從List中Remove解除鏈接的帳戶
       state.linkedAccounts = state.linkedAccounts.filter(
         account => account.provider !== action.payload
       );
@@ -403,7 +403,7 @@ const _socialAuthSlice = createSlice({
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   clearSocialLoginError,
   clearSocialAuthResponse,
@@ -414,10 +414,10 @@ export const {
   resetSocialAuth,
 } = socialAuthSlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default socialAuthSlice.reducer;
 
-// 導出選擇器
+// ExportSelect器
 export const _selectSocialAuth = (state: { socialAuth: SocialAuthState }) =>
   state.socialAuth;
 export const _selectIsSocialLoggingIn = (state: {

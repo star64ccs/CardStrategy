@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 第一階段優化報告
+ * 第一階段優化Report
  * 卡牌辨識系統 + 置中評估系統優化
  */
 
@@ -172,7 +172,7 @@ const phase1Report = {
   }
 };
 
-// 保存報告
+// SaveReport
 const reportPath = path.join(__dirname, '../reports');
 if (!fs.existsSync(reportPath)) {
   fs.mkdirSync(reportPath, { recursive: true });

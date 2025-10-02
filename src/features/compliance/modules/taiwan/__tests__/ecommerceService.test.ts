@@ -1,4 +1,4 @@
-// 台灣電子商務法服務測試
+// 台灣電子商務法ServiceTest
 // Taiwan E-commerce Law Service Tests
 
 import { TaiwanEcommerceService } from '../services/ecommerceService';
@@ -801,7 +801,7 @@ describe('TaiwanEcommerceService', () => {
       const _result = service.processPlatformRegistration(platform);
 
       expect(result.success).toBe(true);
-      expect(result.message).toBe('平台註冊成功');
+      expect(result.message).toBe('平台註冊Success');
     });
 
     it('應該拒絕不合規的平台註冊', () => {
@@ -851,7 +851,7 @@ describe('TaiwanEcommerceService', () => {
       const _result = service.processPlatformRegistration(platform);
 
       expect(result.success).toBe(false);
-      expect(result.message).toBe('平台註冊失敗，存在合規問題');
+      expect(result.message).toBe('平台註冊Failed，存在合規問題');
     });
   });
 

@@ -55,7 +55,7 @@ const DashboardExample: React.FC = () => {
 
   const _handleCreateDashboard = async () => {
     if (!newDashboardName.trim()) {
-      Alert.alert('錯誤', '請輸入儀表板名稱');
+      Alert.alert('Error', '請輸入儀表板名稱');
       return;
     }
 
@@ -69,10 +69,10 @@ const DashboardExample: React.FC = () => {
         setShowCreateModal(false);
         setNewDashboardName('');
         setNewDashboardDescription('');
-        Alert.alert('成功', '儀表板創建成功');
+        Alert.alert('Success', '儀表板CreateSuccess');
       }
     } catch (error) {
-      Alert.alert('錯誤', '創建儀表板失敗');
+      Alert.alert('Error', 'Create儀表板Failed');
     }
   };
 
@@ -86,10 +86,10 @@ const DashboardExample: React.FC = () => {
           try {
             const _success = await remove(dashboardId);
             if (success) {
-              Alert.alert('成功', '儀表板已刪除');
+              Alert.alert('Success', '儀表板已刪除');
             }
           } catch (error) {
-            Alert.alert('錯誤', '刪除儀表板失敗');
+            Alert.alert('Error', 'Delete儀表板Failed');
           }
         },
       },
@@ -103,10 +103,10 @@ const DashboardExample: React.FC = () => {
     try {
       const _exportResult = await exportTo(dashboardId, format);
       if (exportResult) {
-        Alert.alert('成功', `儀表板已導出為 ${format.toUpperCase()} 格式`);
+        Alert.alert('Success', `儀表板已導出為 ${format.toUpperCase()} 格式`);
       }
     } catch (error) {
-      Alert.alert('錯誤', '導出儀表板失敗');
+      Alert.alert('Error', '導出儀表板Failed');
     }
   };
 

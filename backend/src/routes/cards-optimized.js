@@ -2,7 +2,7 @@ const express = require('express');'
 const router = express.Router();''
 const advancedCacheService = require('../services/advancedCacheService');
 
-// 模擬?��?庫優?�器
+// 模擬?��?Library優?�器
 // eslint-disable-next-line no-unused-vars
 const databaseOptimizer = {
   // ?�詢?��?
@@ -33,16 +33,16 @@ const databaseOptimizer = {
     // 模擬??���?    return Promise.resolve({ id: Date.now() });
   },
 };'
-// ?��??��??�表（優?��??��?''
+// ?��??��??�Table（優?��??��?''
 router.get('/list', async (req, res) => {
   try {
     const { page = 1, limit = 20, type, rarity, search } = req.query;'
     const offset = (page - 1) * limit;''
     // ?��?緩�???    const cacheKey = `cards:list:${page}:${limit}:${type || 'all'}:${rarity || 'all'}:${search || 'all'}`;''
-    // ?�試從緩存獲??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');'
+    // ?�試從Cache獲??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');'
     if (!cards) {''
-      // logger.info('?? 從數?�庫?��??��??�表...');'
-      // 構建?�詢條件''
+      // logger.info('?? 從數?�Library?��??��??�Table...');'
+      // Build?�詢Condition''
       let whereClause = 'WHERE 1=1';
       const params = [];'
       if (type) {''
@@ -63,7 +63,7 @@ router.get('/list', async (req, res) => {
         { limit, offset, orderBy: 'created_at', order: 'DESC' }
       );
 
-      // 模擬?��?庫查詢�???      cards = {
+      // 模擬?��?LibraryQuery�???      cards = {
         data: [
           {'
             id: 1,''
@@ -93,7 +93,7 @@ router.get('/list', async (req, res) => {
       },
     });'
   } catch (error) {''
-    // logger.info('???��??��??�表失�?:', error);
+    // logger.info('???��??��??�Table失�?:', error);
     res.status(500).json({'
       success: false,''
       error: '?��??��??�表失�?',
@@ -105,10 +105,10 @@ router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;'
     const cacheKey = `card:detail:${id}`;''
-    // ?�試從緩存獲??    let card = await advancedCacheService.get(cacheKey, 'apiResponse');
+    // ?�試從Cache獲??    let card = await advancedCacheService.get(cacheKey, 'apiResponse');
 
     if (!card) {
-      // logger.info(`?? 從數?�庫?��??��?詳�?: ${id}`);
+      // logger.info(`?? 從數?�Library?��??��?詳�?: ${id}`);
 
       // ?��??�詢 - 使用索�?
       const query = `
@@ -122,7 +122,7 @@ router.get('/:id', async (req, res) => {
         LIMIT 1
       `;
 
-      // 模擬?��?庫查詢�???      card = {'
+      // 模擬?��?LibraryQuery�???      card = {'
         id: parseInt(id),''
         name: '?��?測試?��?詳�?',''
         type: 'Monster',''
@@ -165,10 +165,10 @@ router.post('/batch', async (req, res) => {
     // ?�制?��??�詢?��?'
     const limitedIds = ids.slice(0, 50);''
     // ?��?緩�???    const cacheKey = `cards:batch:${limitedIds.sort().join(',')}`;''
-    // ?�試從緩存獲??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
+    // ?�試從Cache獲??    let cards = await advancedCacheService.get(cacheKey, 'apiResponse');
 
     if (!cards) {
-      // logger.info(`?? ?��?從數?�庫?��??��?: ${limitedIds.length} ?�`);
+      // logger.info(`?? ?��?從數?�Library?��??��?: ${limitedIds.length} ?�`);
 
       // ?��??��??�詢
       const placeholders = limitedIds'
@@ -180,7 +180,7 @@ router.post('/batch', async (req, res) => {
         ORDER BY id
       `;
 
-      // 模擬?��?庫查詢�???      cards = limitedIds.map((id) => ({
+      // 模擬?��?LibraryQuery�???      cards = limitedIds.map((id) => ({
         id: parseInt(id),'
         name: `?��??��? ${id}`,''
         type: 'Monster',''
@@ -215,7 +215,7 @@ router.get('/search/:query', async (req, res) => {
     const { limit = 20 } = req.query;
 
     const cacheKey = `cards:search:${query}:${limit}`;'
-    // ?�試從緩存獲??// eslint-disable-next-line no-unused-vars''
+    // ?�試從Cache獲??// eslint-disable-next-line no-unused-vars''
     let results = await advancedCacheService.get(cacheKey, 'apiResponse');
 
     if (!results) {

@@ -1,6 +1,6 @@
-// 懶加載系統類型定義
+// 懶加載系統Class型定義
 
-// 基礎懶加載狀態
+// 基礎懶加載Status
 export enum LazyLoadStatus {
   IDLE = 'idle',
   LOADING = 'loading',
@@ -26,9 +26,9 @@ export enum LazyLoadStrategy {
   DELAYED = 'delayed',
 }
 
-// 組件懶加載配置
+// Component懶加載Configure
 export interface ComponentLazyLoadConfig {
-  /** 組件路徑 */
+  /** ComponentPath */
   path: string;
   /** 加載策略 */
   strategy: LazyLoadStrategy;
@@ -36,57 +36,57 @@ export interface ComponentLazyLoadConfig {
   priority: LazyLoadPriority;
   /** 預加載距離 (px) */
   preloadDistance?: number;
-  /** 加載超時時間 (ms) */
+  /** 加載超時Time (ms) */
   timeout?: number;
-  /** 重試次數 */
+  /** Retry次數 */
   retryCount?: number;
-  /** 重試延遲 (ms) */
+  /** Retry延遲 (ms) */
   retryDelay?: number;
-  /** 是否啟用緩存 */
+  /** YesNoEnableCache */
   enableCache?: boolean;
-  /** 緩存時間 (ms) */
+  /** CacheTime (ms) */
   cacheTime?: number;
-  /** 錯誤回退組件 */
+  /** Error回退Component */
   fallback?: React.ComponentType<any>;
-  /** 加載指示器組件 */
+  /** 加載指示器Component */
   loadingComponent?: React.ComponentType<any>;
-  /** 自定義加載條件 */
+  /** Custom加載Condition */
   shouldLoad?: () => boolean;
-  /** 加載前回調 */
+  /** 加載前Callback */
   onBeforeLoad?: () => void;
-  /** 加載成功回調 */
+  /** 加載SuccessCallback */
   onLoadSuccess?: (component: React.ComponentType<any>) => void;
-  /** 加載失敗回調 */
+  /** 加載FailedCallback */
   onLoadError?: (error: Error) => void;
-  /** 加載完成回調 */
+  /** 加載CompleteCallback */
   onLoadComplete?: () => void;
 }
 
-// 組件懶加載狀態
+// Component懶加載Status
 export interface ComponentLazyLoadState {
-  /** 當前狀態 */
+  /** 當前Status */
   status: LazyLoadStatus;
-  /** 組件實例 */
+  /** ComponentInstance */
   component: React.ComponentType<any> | null;
-  /** 錯誤信息 */
+  /** ErrorInformation */
   error: Error | null;
-  /** 加載開始時間 */
+  /** 加載BeginTime */
   loadStartTime: number | null;
-  /** 加載完成時間 */
+  /** 加載CompleteTime */
   loadEndTime: number | null;
   /** 加載耗時 (ms) */
   loadDuration: number | null;
-  /** 重試次數 */
+  /** Retry次數 */
   retryAttempts: number;
-  /** 是否已取消 */
+  /** YesNo已Cancel */
   isCancelled: boolean;
-  /** 是否已預加載 */
+  /** YesNo已預加載 */
   isPreloaded: boolean;
 }
 
-// 圖片懶加載配置
+// Graph片懶加載Configure
 export interface ImageLazyLoadConfig {
-  /** 圖片URL */
+  /** Graph片URL */
   src: string;
   /** 加載策略 */
   strategy: LazyLoadStrategy;
@@ -94,66 +94,66 @@ export interface ImageLazyLoadConfig {
   priority: LazyLoadPriority;
   /** 預加載距離 (px) */
   preloadDistance?: number;
-  /** 加載超時時間 (ms) */
+  /** 加載超時Time (ms) */
   timeout?: number;
-  /** 重試次數 */
+  /** Retry次數 */
   retryCount?: number;
-  /** 重試延遲 (ms) */
+  /** Retry延遲 (ms) */
   retryDelay?: number;
-  /** 是否啟用緩存 */
+  /** YesNoEnableCache */
   enableCache?: boolean;
-  /** 緩存時間 (ms) */
+  /** CacheTime (ms) */
   cacheTime?: number;
-  /** 佔位符圖片 */
+  /** 佔位符Graph片 */
   placeholder?: string;
-  /** 錯誤回退圖片 */
+  /** Error回退Graph片 */
   fallback?: string;
-  /** 圖片質量 */
+  /** Graph片質量 */
   quality?: 'low' | 'medium' | 'high';
-  /** 圖片尺寸 */
+  /** Graph片尺寸 */
   size?: {
     width: number;
     height: number;
   };
-  /** 自定義加載條件 */
+  /** Custom加載Condition */
   shouldLoad?: () => boolean;
-  /** 加載前回調 */
+  /** 加載前Callback */
   onBeforeLoad?: () => void;
-  /** 加載成功回調 */
+  /** 加載SuccessCallback */
   onLoadSuccess?: (image: HTMLImageElement) => void;
-  /** 加載失敗回調 */
+  /** 加載FailedCallback */
   onLoadError?: (error: Error) => void;
-  /** 加載完成回調 */
+  /** 加載CompleteCallback */
   onLoadComplete?: () => void;
 }
 
-// 圖片懶加載狀態
+// Graph片懶加載Status
 export interface ImageLazyLoadState {
-  /** 當前狀態 */
+  /** 當前Status */
   status: LazyLoadStatus;
-  /** 圖片元素 */
+  /** Graph片Element */
   image: HTMLImageElement | null;
-  /** 錯誤信息 */
+  /** ErrorInformation */
   error: Error | null;
-  /** 加載開始時間 */
+  /** 加載BeginTime */
   loadStartTime: number | null;
-  /** 加載完成時間 */
+  /** 加載CompleteTime */
   loadEndTime: number | null;
   /** 加載耗時 (ms) */
   loadDuration: number | null;
-  /** 重試次數 */
+  /** Retry次數 */
   retryAttempts: number;
-  /** 是否已取消 */
+  /** YesNo已Cancel */
   isCancelled: boolean;
-  /** 是否已預加載 */
+  /** YesNo已預加載 */
   isPreloaded: boolean;
-  /** 當前顯示的圖片URL */
+  /** 當前Show的Graph片URL */
   currentSrc: string | null;
 }
 
-// 數據懶加載配置
+// Data懶加載Configure
 export interface DataLazyLoadConfig<T = any> {
-  /** 數據加載函數 */
+  /** Data加載Function */
   loader: () => Promise<T>;
   /** 加載策略 */
   strategy: LazyLoadStrategy;
@@ -161,49 +161,49 @@ export interface DataLazyLoadConfig<T = any> {
   priority: LazyLoadPriority;
   /** 預加載距離 (px) */
   preloadDistance?: number;
-  /** 加載超時時間 (ms) */
+  /** 加載超時Time (ms) */
   timeout?: number;
-  /** 重試次數 */
+  /** Retry次數 */
   retryCount?: number;
-  /** 重試延遲 (ms) */
+  /** Retry延遲 (ms) */
   retryDelay?: number;
-  /** 是否啟用緩存 */
+  /** YesNoEnableCache */
   enableCache?: boolean;
-  /** 緩存時間 (ms) */
+  /** CacheTime (ms) */
   cacheTime?: number;
-  /** 初始數據 */
+  /** 初始Data */
   initialData?: T;
-  /** 自定義加載條件 */
+  /** Custom加載Condition */
   shouldLoad?: () => boolean;
-  /** 加載前回調 */
+  /** 加載前Callback */
   onBeforeLoad?: () => void;
-  /** 加載成功回調 */
+  /** 加載SuccessCallback */
   onLoadSuccess?: (data: T) => void;
-  /** 加載失敗回調 */
+  /** 加載FailedCallback */
   onLoadError?: (error: Error) => void;
-  /** 加載完成回調 */
+  /** 加載CompleteCallback */
   onLoadComplete?: () => void;
 }
 
-// 數據懶加載狀態
+// Data懶加載Status
 export interface DataLazyLoadState<T = any> {
-  /** 當前狀態 */
+  /** 當前Status */
   status: LazyLoadStatus;
-  /** 數據 */
+  /** Data */
   data: T | null;
-  /** 錯誤信息 */
+  /** ErrorInformation */
   error: Error | null;
-  /** 加載開始時間 */
+  /** 加載BeginTime */
   loadStartTime: number | null;
-  /** 加載完成時間 */
+  /** 加載CompleteTime */
   loadEndTime: number | null;
   /** 加載耗時 (ms) */
   loadDuration: number | null;
-  /** 重試次數 */
+  /** Retry次數 */
   retryAttempts: number;
-  /** 是否已取消 */
+  /** YesNo已Cancel */
   isCancelled: boolean;
-  /** 是否已預加載 */
+  /** YesNo已預加載 */
   isPreloaded: boolean;
 }
 
@@ -211,33 +211,33 @@ export interface DataLazyLoadState<T = any> {
 export interface LazyLoadPerformanceMetrics {
   /** 總加載次數 */
   totalLoads: number;
-  /** 成功加載次數 */
+  /** Success加載次數 */
   successfulLoads: number;
-  /** 失敗加載次數 */
+  /** Failed加載次數 */
   failedLoads: number;
-  /** 平均加載時間 (ms) */
+  /** 平均加載Time (ms) */
   averageLoadTime: number;
-  /** 最快加載時間 (ms) */
+  /** 最快加載Time (ms) */
   fastestLoadTime: number;
-  /** 最慢加載時間 (ms) */
+  /** 最慢加載Time (ms) */
   slowestLoadTime: number;
-  /** 緩存命中次數 */
+  /** Cache命中次數 */
   cacheHits: number;
-  /** 緩存未命中次數 */
+  /** Cache未命中次數 */
   cacheMisses: number;
-  /** 緩存命中率 */
+  /** Cache命中率 */
   cacheHitRate: number;
   /** 預加載次數 */
   preloadCount: number;
-  /** 取消加載次數 */
+  /** Cancel加載次數 */
   cancelledLoads: number;
-  /** 重試次數 */
+  /** Retry次數 */
   retryCount: number;
 }
 
-// 懶加載事件
+// 懶加載Event
 export interface LazyLoadEvent {
-  /** 事件類型 */
+  /** EventClass型 */
   type:
     | 'load_start'
     | 'load_success'
@@ -245,15 +245,15 @@ export interface LazyLoadEvent {
     | 'load_complete'
     | 'preload'
     | 'cancel';
-  /** 資源類型 */
+  /** ResourceClass型 */
   resourceType: 'component' | 'image' | 'data';
-  /** 資源標識 */
+  /** Resource標識 */
   resourceId: string;
-  /** 時間戳 */
+  /** Time戳 */
   timestamp: number;
-  /** 事件數據 */
+  /** EventData */
   data?: unknown;
-  /** 錯誤信息 */
+  /** ErrorInformation */
   error?: Error;
   /** 性能指標 */
   performance?: {
@@ -263,31 +263,31 @@ export interface LazyLoadEvent {
   };
 }
 
-// 懶加載管理器配置
+// 懶加載Manage器Configure
 export interface LazyLoadManagerConfig {
-  /** 全局預加載距離 (px) */
+  /** Global預加載距離 (px) */
   globalPreloadDistance?: number;
-  /** 全局加載超時時間 (ms) */
+  /** Global加載超時Time (ms) */
   globalTimeout?: number;
-  /** 全局重試次數 */
+  /** GlobalRetry次數 */
   globalRetryCount?: number;
-  /** 全局重試延遲 (ms) */
+  /** GlobalRetry延遲 (ms) */
   globalRetryDelay?: number;
-  /** 是否啟用全局緩存 */
+  /** YesNoEnableGlobalCache */
   enableGlobalCache?: boolean;
-  /** 全局緩存時間 (ms) */
+  /** GlobalCacheTime (ms) */
   globalCacheTime?: number;
-  /** 最大並發加載數 */
+  /** 最大Concurrent加載數 */
   maxConcurrentLoads?: number;
-  /** 是否啟用性能監控 */
+  /** YesNoEnable性能Monitor */
   enablePerformanceMonitoring?: boolean;
-  /** 性能監控間隔 (ms) */
+  /** 性能Monitor間隔 (ms) */
   performanceMonitoringInterval?: number;
-  /** 是否啟用事件日誌 */
+  /** YesNoEnableEventLog */
   enableEventLogging?: boolean;
-  /** 事件日誌級別 */
+  /** EventLog級別 */
   eventLogLevel?: 'debug' | 'info' | 'warn' | 'error';
-  /** 自定義事件處理器 */
+  /** CustomEventHandle器 */
   eventHandlers?: {
     onLoadStart?: (event: LazyLoadEvent) => void;
     onLoadSuccess?: (event: LazyLoadEvent) => void;
@@ -298,189 +298,189 @@ export interface LazyLoadManagerConfig {
   };
 }
 
-// 懶加載管理器狀態
+// 懶加載Manage器Status
 export interface LazyLoadManagerState {
-  /** 當前加載中的資源數量 */
+  /** 當前加載中的Resource數量 */
   activeLoads: number;
-  /** 隊列中的資源數量 */
+  /** Queue中的Resource數量 */
   queuedLoads: number;
-  /** 緩存中的資源數量 */
+  /** Cache中的Resource數量 */
   cachedResources: number;
   /** 性能指標 */
   performanceMetrics: LazyLoadPerformanceMetrics;
-  /** 是否已初始化 */
+  /** YesNo已Initialize */
   isInitialized: boolean;
-  /** 是否已暫停 */
+  /** YesNo已Pause */
   isPaused: boolean;
-  /** 最後更新時間 */
+  /** 最後UpdateTime */
   lastUpdated: number;
 }
 
-// 懶加載組件Props
+// 懶加載ComponentProps
 export interface LazyLoadComponentProps {
-  /** 組件配置 */
+  /** ComponentConfigure */
   config: ComponentLazyLoadConfig;
-  /** 組件Props */
+  /** ComponentProps */
   componentProps?: Record<string, any>;
-  /** 自定義加載組件 */
+  /** Custom加載Component */
   loadingComponent?: React.ComponentType<any>;
-  /** 自定義錯誤組件 */
+  /** CustomErrorComponent */
   errorComponent?: React.ComponentType<{ error: Error; retry: () => void }>;
-  /** 自定義回退組件 */
+  /** Custom回退Component */
   fallbackComponent?: React.ComponentType<any>;
-  /** 加載前回調 */
+  /** 加載前Callback */
   onBeforeLoad?: () => void;
-  /** 加載成功回調 */
+  /** 加載SuccessCallback */
   onLoadSuccess?: (component: React.ComponentType<any>) => void;
-  /** 加載失敗回調 */
+  /** 加載FailedCallback */
   onLoadError?: (error: Error) => void;
-  /** 加載完成回調 */
+  /** 加載CompleteCallback */
   onLoadComplete?: () => void;
 }
 
-// 懶加載圖片Props
+// 懶加載Graph片Props
 export interface LazyLoadImageProps {
-  /** 圖片配置 */
+  /** Graph片Configure */
   config: ImageLazyLoadConfig;
-  /** 圖片樣式 */
+  /** Graph片樣式 */
   style?: React.CSSProperties;
-  /** 圖片類名 */
+  /** Graph片Class名 */
   className?: string;
-  /** 圖片屬性 */
+  /** Graph片Property */
   imgProps?: React.ImgHTMLAttributes<HTMLImageElement>;
-  /** 自定義加載組件 */
+  /** Custom加載Component */
   loadingComponent?: React.ComponentType<any>;
-  /** 自定義錯誤組件 */
+  /** CustomErrorComponent */
   errorComponent?: React.ComponentType<{ error: Error; retry: () => void }>;
-  /** 自定義佔位符組件 */
+  /** Custom佔位符Component */
   placeholderComponent?: React.ComponentType<any>;
-  /** 加載前回調 */
+  /** 加載前Callback */
   onBeforeLoad?: () => void;
-  /** 加載成功回調 */
+  /** 加載SuccessCallback */
   onLoadSuccess?: (image: HTMLImageElement) => void;
-  /** 加載失敗回調 */
+  /** 加載FailedCallback */
   onLoadError?: (error: Error) => void;
-  /** 加載完成回調 */
+  /** 加載CompleteCallback */
   onLoadComplete?: () => void;
 }
 
-// 懶加載數據Props
+// 懶加載DataProps
 export interface LazyLoadDataProps<T = any> {
-  /** 數據配置 */
+  /** DataConfigure */
   config: DataLazyLoadConfig<T>;
-  /** 渲染函數 */
+  /** 渲染Function */
   children: (data: T | null, state: DataLazyLoadState<T>) => React.ReactNode;
-  /** 自定義加載組件 */
+  /** Custom加載Component */
   loadingComponent?: React.ComponentType<any>;
-  /** 自定義錯誤組件 */
+  /** CustomErrorComponent */
   errorComponent?: React.ComponentType<{ error: Error; retry: () => void }>;
-  /** 加載前回調 */
+  /** 加載前Callback */
   onBeforeLoad?: () => void;
-  /** 加載成功回調 */
+  /** 加載SuccessCallback */
   onLoadSuccess?: (data: T) => void;
-  /** 加載失敗回調 */
+  /** 加載FailedCallback */
   onLoadError?: (error: Error) => void;
-  /** 加載完成回調 */
+  /** 加載CompleteCallback */
   onLoadComplete?: () => void;
 }
 
-// 懶加載Hook返回值
+// 懶加載HookReturnValue
 export interface UseLazyLoadReturn<T = any> {
-  /** 當前狀態 */
+  /** 當前Status */
   state: T extends React.ComponentType<any>
     ? ComponentLazyLoadState
     : T extends string
       ? ImageLazyLoadState
       : DataLazyLoadState<T>;
-  /** 開始加載 */
+  /** Begin加載 */
   load: () => Promise<void>;
-  /** 取消加載 */
+  /** Cancel加載 */
   cancel: () => void;
-  /** 重試加載 */
+  /** Retry加載 */
   retry: () => Promise<void>;
   /** 預加載 */
   preload: () => Promise<void>;
-  /** 清除緩存 */
+  /** ClearCache */
   clearCache: () => void;
-  /** 是否正在加載 */
+  /** YesNo正在加載 */
   isLoading: boolean;
-  /** 是否已加載 */
+  /** YesNo已加載 */
   isLoaded: boolean;
-  /** 是否有錯誤 */
+  /** YesNo有Error */
   hasError: boolean;
-  /** 是否已取消 */
+  /** YesNo已Cancel */
   isCancelled: boolean;
 }
 
-// 懶加載服務接口
+// 懶加載ServiceInterface
 export interface LazyLoadService {
-  /** 初始化服務 */
+  /** InitializeService */
   initialize(config?: LazyLoadManagerConfig): Promise<void>;
-  /** 註冊組件 */
+  /** RegisterComponent */
   registerComponent(id: string, config: ComponentLazyLoadConfig): void;
-  /** 註冊圖片 */
+  /** RegisterGraph片 */
   registerImage(id: string, config: ImageLazyLoadConfig): void;
-  /** 註冊數據 */
+  /** RegisterData */
   registerData<T>(id: string, config: DataLazyLoadConfig<T>): void;
-  /** 加載組件 */
+  /** 加載Component */
   loadComponent(id: string): Promise<React.ComponentType<any>>;
-  /** 加載圖片 */
+  /** 加載Graph片 */
   loadImage(id: string): Promise<HTMLImageElement>;
-  /** 加載數據 */
+  /** 加載Data */
   loadData<T>(id: string): Promise<T>;
-  /** 預加載組件 */
+  /** 預加載Component */
   preloadComponent(id: string): Promise<void>;
-  /** 預加載圖片 */
+  /** 預加載Graph片 */
   preloadImage(id: string): Promise<void>;
-  /** 預加載數據 */
+  /** 預加載Data */
   preloadData<T>(id: string): Promise<void>;
-  /** 取消加載 */
+  /** Cancel加載 */
   cancelLoad(id: string): void;
-  /** 清除緩存 */
+  /** ClearCache */
   clearCache(id?: string): void;
-  /** 獲取狀態 */
+  /** GetStatus */
   getState(): LazyLoadManagerState;
-  /** 獲取性能指標 */
+  /** Get性能指標 */
   getPerformanceMetrics(): LazyLoadPerformanceMetrics;
-  /** 暫停服務 */
+  /** PauseService */
   pause(): void;
-  /** 恢復服務 */
+  /** RestoreService */
   resume(): void;
-  /** 銷毀服務 */
+  /** 銷毀Service */
   destroy(): void;
 }
 
-// 懶加載工具函數類型
+// 懶加載ToolFunctionClass型
 export interface LazyLoadUtils {
-  /** 創建組件懶加載配置 */
+  /** CreateComponent懶加載Configure */
   createComponentConfig(
     path: string,
     options?: Partial<ComponentLazyLoadConfig>
   ): ComponentLazyLoadConfig;
-  /** 創建圖片懶加載配置 */
+  /** CreateGraph片懶加載Configure */
   createImageConfig(
     src: string,
     options?: Partial<ImageLazyLoadConfig>
   ): ImageLazyLoadConfig;
-  /** 創建數據懶加載配置 */
+  /** CreateData懶加載Configure */
   createDataConfig<T>(
     loader: () => Promise<T>,
     options?: Partial<DataLazyLoadConfig<T>>
   ): DataLazyLoadConfig<T>;
-  /** 檢查是否支持 Intersection Observer */
+  /** CheckYesNoSupport Intersection Observer */
   supportsIntersectionObserver(): boolean;
-  /** 檢查是否支持 Resize Observer */
+  /** CheckYesNoSupport Resize Observer */
   supportsResizeObserver(): boolean;
-  /** 檢查網絡連接狀態 */
+  /** CheckNetworkConnectStatus */
   getNetworkStatus(): 'online' | 'offline' | 'slow';
-  /** 獲取設備性能等級 */
+  /** Get設備性能等級 */
   getDevicePerformance(): 'low' | 'medium' | 'high';
   /** 計算最佳預加載距離 */
   calculateOptimalPreloadDistance(): number;
-  /** 生成唯一ID */
+  /** 生成UniqueID */
   generateId(): string;
-  /** 格式化時間 */
+  /** FormatTime */
   formatDuration(ms: number): string;
-  /** 格式化文件大小 */
+  /** FormatFile大小 */
   formatFileSize(bytes: number): string;
 }

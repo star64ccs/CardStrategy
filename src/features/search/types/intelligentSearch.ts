@@ -1,7 +1,7 @@
-// 智能搜索相關類型定義
+// 智能Search相OffClass型定義
 
-// 智能搜索查詢
-// 從基礎搜索類型導入
+// 智能SearchQuery
+// 從基礎SearchClass型Import
 import type {
   SearchFilters,
   PriceRange,
@@ -23,7 +23,7 @@ export interface IntelligentSearchQuery {
   includeSemantic?: boolean;
 }
 
-// 搜索上下文
+// Search上下文
 export interface SearchContext {
   category?: string;
   priceRange?: PriceRange;
@@ -37,7 +37,7 @@ export interface SearchContext {
   sessionId?: string;
 }
 
-// 用戶搜索偏好
+// UserSearchPreferences
 export interface UserSearchPreferences {
   preferredCategories?: string[];
   preferredPriceRange?: PriceRange;
@@ -52,7 +52,7 @@ export interface UserSearchPreferences {
   personalizationEnabled?: boolean;
 }
 
-// 智能搜索過濾器
+// 智能SearchFilter器
 export interface IntelligentSearchFilters {
   semanticThreshold?: number;
   relevanceThreshold?: number;
@@ -67,7 +67,7 @@ export interface IntelligentSearchFilters {
   excludeCheap?: boolean;
 }
 
-// 智能搜索響應
+// 智能SearchResponse
 export interface IntelligentSearchResponse {
   results: IntelligentSearchResult[];
   suggestions: SearchSuggestion[];
@@ -83,7 +83,7 @@ export interface IntelligentSearchResponse {
   cacheHit: boolean;
 }
 
-// 智能搜索結果
+// 智能Search結果
 export interface IntelligentSearchResult {
   id: string;
   title: string;
@@ -119,7 +119,7 @@ export interface SemanticMatch {
   suggestedFilters?: SearchFilters;
 }
 
-// 自動完成選項
+// AutoCompleteOptions
 export interface AutoCompleteOption {
   text: string;
   type: 'suggestion' | 'history' | 'popular' | 'semantic';
@@ -129,7 +129,7 @@ export interface AutoCompleteOption {
   metadata?: Record<string, any>;
 }
 
-// 搜索歷史項目
+// Search歷史項目
 export interface SearchHistoryItem {
   query: string;
   timestamp: number;
@@ -140,7 +140,7 @@ export interface SearchHistoryItem {
   success: boolean;
 }
 
-// 熱門搜索項目
+// 熱門Search項目
 export interface PopularSearchItem {
   query: string;
   count: number;
@@ -150,7 +150,7 @@ export interface PopularSearchItem {
   lastUpdated: number;
 }
 
-// 相關搜索項目
+// 相OffSearch項目
 export interface RelatedSearchItem {
   query: string;
   relevance: number;
@@ -159,7 +159,7 @@ export interface RelatedSearchItem {
   suggestedFilters?: SearchFilters;
 }
 
-// 智能搜索統計
+// 智能SearchStatistics
 export interface IntelligentSearchStats {
   totalQueries: number;
   averageResponseTime: number;
@@ -173,7 +173,7 @@ export interface IntelligentSearchStats {
   timeDistribution: TimeStats[];
 }
 
-// 查詢分析
+// QueryAnalysis
 export interface QueryAnalysis {
   originalQuery: string;
   normalizedQuery: string;
@@ -204,7 +204,7 @@ export interface Entity {
   normalizedValue?: string;
 }
 
-// 搜索意圖
+// Search意Graph
 export interface SearchIntent {
   primary:
     | 'find_card'
@@ -218,7 +218,7 @@ export interface SearchIntent {
   filters: Record<string, any>;
 }
 
-// 查詢糾正
+// Query糾正
 export interface QueryCorrection {
   original: string;
   corrected: string;
@@ -227,7 +227,7 @@ export interface QueryCorrection {
   suggestion: boolean;
 }
 
-// 類別統計
+// Class別Statistics
 export interface CategoryStats {
   category: string;
   count: number;
@@ -235,7 +235,7 @@ export interface CategoryStats {
   trend: 'up' | 'down' | 'stable';
 }
 
-// 時間統計
+// TimeStatistics
 export interface TimeStats {
   hour: number;
   count: number;
@@ -243,7 +243,7 @@ export interface TimeStats {
   peak: boolean;
 }
 
-// 智能搜索配置
+// 智能SearchConfigure
 export interface IntelligentSearchConfig {
   semanticSearchEnabled: boolean;
   personalizationEnabled: boolean;
@@ -263,7 +263,7 @@ export interface IntelligentSearchConfig {
   semanticWeight: number;
 }
 
-// 智能搜索服務接口
+// 智能SearchServiceInterface
 export interface IntelligentSearchService {
   initialize(): Promise<boolean>;
   search(query: IntelligentSearchQuery): Promise<IntelligentSearchResponse>;
@@ -291,7 +291,7 @@ export interface IntelligentSearchService {
   updateConfig(config: Partial<IntelligentSearchConfig>): void;
 }
 
-// 智能搜索錯誤
+// 智能SearchError
 export interface IntelligentSearchError {
   code: string;
   message: string;
@@ -301,7 +301,7 @@ export interface IntelligentSearchError {
   userId?: string;
 }
 
-// 智能搜索事件
+// 智能SearchEvent
 export interface IntelligentSearchEvent {
   type:
     | 'search'

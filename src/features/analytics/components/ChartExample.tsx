@@ -1,4 +1,4 @@
-// 圖表示例組件
+// GraphTable示例Component
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -16,7 +16,7 @@ import useChart from '../hooks/useChart';
 import type { ChartCreateRequest } from '../types/chart';
 import { ChartType, ChartConfig, ChartData } from '../types/chart';
 
-// 圖表示例組件
+// GraphTable示例Component
 const ChartExample: React.FC = () => {
   const {
     charts,
@@ -44,15 +44,15 @@ const ChartExample: React.FC = () => {
   const [newChartTitle, setNewChartTitle] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
 
-  // 自動獲取圖表列表
+  // AutoGetGraphTableList
   useEffect(() => {
     fetchCharts();
   }, [fetchCharts]);
 
-  // 創建新圖表
+  // Create新GraphTable
   const _handleCreateChart = async () => {
     if (!newChartTitle.trim()) {
-      Alert.alert('錯誤', '請輸入圖表標題');
+      Alert.alert('Error', '請輸入圖表標題');
       return;
     }
 
@@ -126,11 +126,11 @@ const ChartExample: React.FC = () => {
       setShowCreateModal(false);
       setNewChartTitle('');
       setSelectedTemplate('');
-      Alert.alert('成功', '圖表創建成功');
+      Alert.alert('Success', '圖表CreateSuccess');
     }
   };
 
-  // 刪除圖表
+  // DeleteGraphTable
   const _handleDeleteChart = async (chartId: string) => {
     Alert.alert('確認刪除', '確定要刪除這個圖表嗎？', [
       { text: '取消', style: 'cancel' },
@@ -140,30 +140,30 @@ const ChartExample: React.FC = () => {
         onPress: async () => {
           const _success = await removeChartById(chartId);
           if (success) {
-            Alert.alert('成功', '圖表刪除成功');
+            Alert.alert('Success', '圖表DeleteSuccess');
           }
         },
       },
     ]);
   };
 
-  // 導出圖表
+  // ExportGraphTable
   const _handleExportChart = async (
     chartId: string,
     format: 'png' | 'jpg' | 'svg' | 'pdf'
   ) => {
     const _success = await exportChartAs(chartId, format);
     if (success) {
-      Alert.alert('成功', `圖表已導出為 ${format.toUpperCase()} 格式`);
+      Alert.alert('Success', `圖表已導出為 ${format.toUpperCase()} 格式`);
     }
   };
 
-  // 選擇圖表
+  // SelectGraphTable
   const _handleSelectChart = (chartId: string) => {
     selectChart(chartId);
   };
 
-  // 渲染圖表列表
+  // 渲染GraphTableList
   const _renderChartsList = () => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
@@ -225,7 +225,7 @@ const ChartExample: React.FC = () => {
     </View>
   );
 
-  // 渲染當前圖表
+  // 渲染當前GraphTable
   const _renderCurrentChart = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>當前圖表</Text>
@@ -272,7 +272,7 @@ const ChartExample: React.FC = () => {
     </View>
   );
 
-  // 渲染模板列表
+  // 渲染模板List
   const _renderTemplatesList = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>圖表模板 ({templates.length})</Text>
@@ -320,7 +320,7 @@ const ChartExample: React.FC = () => {
     </View>
   );
 
-  // 渲染統計信息
+  // 渲染StatisticsInformation
   const _renderStatistics = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>統計信息</Text>
@@ -376,7 +376,7 @@ const ChartExample: React.FC = () => {
         )}
       </View>
 
-      {/* 錯誤提示 */}
+      {/* Error提示 */}
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
@@ -391,7 +391,7 @@ const ChartExample: React.FC = () => {
         </View>
       )}
 
-      {/* 標籤頁 */}
+      {/* Tag頁 */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'charts' && styles.activeTab]}
@@ -436,7 +436,7 @@ const ChartExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 內容區域 */}
+      {/* ContentDistrict域 */}
       <ScrollView style={styles.content}>
         {activeTab === 'charts' && (
           <>
@@ -449,7 +449,7 @@ const ChartExample: React.FC = () => {
         {activeTab === 'statistics' && renderStatistics()}
       </ScrollView>
 
-      {/* 創建圖表模態框 */}
+      {/* CreateGraphTable模態框 */}
       <Modal
         visible={showCreateModal}
         animationType='slide'

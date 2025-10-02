@@ -1,4 +1,4 @@
-// 微交互服務類
+// 微交互ServiceClass
 import type {
   ButtonClickConfig,
   FeedbackConfig,
@@ -19,7 +19,7 @@ import {
   MicroInteractionType,
 } from '../types/microInteractions';
 
-// 默認配置
+// DefaultConfigure
 const DEFAULT_CONFIG: MicroInteractionManagerConfig = {
   enabled: true,
   performanceMode: false,
@@ -67,7 +67,7 @@ export class MicroInteractionService
     return MicroInteractionService.instance;
   }
 
-  // 初始化服務
+  // InitializeService
   public async initialize(
     config: Partial<MicroInteractionManagerConfig> = {}
   ): Promise<void> {
@@ -81,7 +81,7 @@ export class MicroInteractionService
     this.emit('initialized', { config: this.config });
   }
 
-  // 註冊微交互
+  // Register微交互
   public register(config: MicroInteractionConfig): string {
     const _id = config.id || this.generateId();
     const _finalConfig = this.mergeWithDefaults(config);
@@ -98,7 +98,7 @@ export class MicroInteractionService
     return id;
   }
 
-  // 註銷微交互
+  // Logout微交互
   public unregister(id: string): void {
     this.stop(id);
     this.interactions.delete(id);
@@ -150,7 +150,7 @@ export class MicroInteractionService
       this.emit('completed', event);
     } catch (error) {
       state.status = MicroInteractionStatus.ERROR;
-      state.error = error instanceof Error ? error.message : '未知錯誤';
+      state.error = error instanceof Error ? error.message : '未知Error';
       state.endTime = performance.now();
 
       this.stats.failedInteractions++;
@@ -159,7 +159,7 @@ export class MicroInteractionService
     }
   }
 
-  // 停止微交互
+  // Stop微交互
   public stop(id: string): void {
     const _animation = this.activeAnimations.get(id);
     if (animation) {
@@ -176,7 +176,7 @@ export class MicroInteractionService
     this.emit('stopped', { id });
   }
 
-  // 重置微交互
+  // Reset微交互
   public reset(id: string): void {
     this.stop(id);
 
@@ -193,7 +193,7 @@ export class MicroInteractionService
     this.emit('reset', { id });
   }
 
-  // 批量操作
+  // BatchOperation
   public async triggerMultiple(
     ids: string[],
     data?: Record<string, any>
@@ -231,7 +231,7 @@ export class MicroInteractionService
     this.emit('resetAll', {});
   }
 
-  // 狀態查詢
+  // StatusQuery
   public getState(id: string): MicroInteractionState | null {
     return this.states.get(id) || null;
   }
@@ -256,7 +256,7 @@ export class MicroInteractionService
     return state ? state.status === MicroInteractionStatus.ERROR : false;
   }
 
-  // 性能監控
+  // 性能Monitor
   public getPerformance(id: string): MicroInteractionPerformance | null {
     return this.performances.get(id) || null;
   }
@@ -270,7 +270,7 @@ export class MicroInteractionService
     this.emit('performanceMonitoringChanged', { enabled });
   }
 
-  // 配置管理
+  // ConfigureManage
   public updateConfig(
     id: string,
     config: Partial<MicroInteractionConfig>
@@ -295,7 +295,7 @@ export class MicroInteractionService
     return this.interactions.get(id) || null;
   }
 
-  // 事件監聽
+  // Event監聽
   public on(event: string, callback: (data: unknown) => void): void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, []);
@@ -313,7 +313,7 @@ export class MicroInteractionService
     }
   }
 
-  // 銷毀服務
+  // 銷毀Service
   public destroy(): void {
     this.stopAll();
     this.interactions.clear();
@@ -325,7 +325,7 @@ export class MicroInteractionService
     MicroInteractionService.instance = null as any;
   }
 
-  // 私有方法
+  // PrivateMethod
   private detectUserPreferences(): void {
     if (typeof window !== 'undefined' && window.matchMedia) {
       try {
@@ -714,12 +714,12 @@ export class MicroInteractionService
         try {
           callback(data);
         } catch (error) {
-          console.error(`微交互事件監聽器錯誤: ${event}`, error);
+          console.error(`微交互事件監聽器Error: ${event}`, error);
         }
       });
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _microInteractionService = MicroInteractionService.getInstance();

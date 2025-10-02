@@ -1,7 +1,7 @@
 /* global jest, describe, it, expect, beforeEach, afterEach */
-// 數據質量改進測試
+// Data質量改進Test
 describe('數據質量改進功能測試', () => {
-  // Mock API 客戶端
+  // Mock API Client
   const _mockApi = {
     get: jest.fn(),
     post: jest.fn(),
@@ -14,7 +14,7 @@ describe('數據質量改進功能測試', () => {
   });
 
   describe('數據收集統計功能', () => {
-    it('應該成功獲取數據收集統計', async () => {
+    it('應該SuccessGet數據收集統計', async () => {
       const _mockResponse = {
         data: {
           totalRecords: 1000,
@@ -53,7 +53,7 @@ describe('數據質量改進功能測試', () => {
   });
 
   describe('數據清理功能', () => {
-    it('應該成功執行數據清理', async () => {
+    it('應該Success執行數據清理', async () => {
       const _mockResponse = {
         data: {
           status: 'completed',
@@ -73,7 +73,7 @@ describe('數據質量改進功能測試', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('應該處理清理過程中的錯誤', async () => {
+    it('應該Handle清理過程中的Error', async () => {
       const _error = new Error('Cleaning failed');
       mockApi.post.mockRejectedValue(error);
 
@@ -84,7 +84,7 @@ describe('數據質量改進功能測試', () => {
   });
 
   describe('質量改進功能', () => {
-    it('應該成功執行質量改進', async () => {
+    it('應該Success執行質量改進', async () => {
       const _mockResponse = {
         data: {
           status: 'completed',
@@ -126,7 +126,7 @@ describe('數據質量改進功能測試', () => {
   });
 
   describe('註釋任務管理', () => {
-    it('應該成功分配註釋任務', async () => {
+    it('應該Success分配註釋任務', async () => {
       const _options = { annotatorId: 1, taskCount: 10 };
       const _mockResponse = {
         data: {
@@ -152,7 +152,7 @@ describe('數據質量改進功能測試', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('應該成功提交註釋結果', async () => {
+    it('應該Success提交註釋結果', async () => {
       const _annotationData = {
         annotationId: 1,
         annotationResult: { label: 'card', confidence: 0.95 },
@@ -180,7 +180,7 @@ describe('數據質量改進功能測試', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('應該成功審查註釋', async () => {
+    it('應該Success審查註釋', async () => {
       const _reviewData = {
         annotationId: 1,
         reviewStatus: 'approved',
@@ -210,7 +210,7 @@ describe('數據質量改進功能測試', () => {
   });
 
   describe('質量指標監控', () => {
-    it('應該成功獲取質量指標', async () => {
+    it('應該SuccessGet質量指標', async () => {
       const _mockResponse = {
         data: [
           {
@@ -264,7 +264,7 @@ describe('數據質量改進功能測試', () => {
   });
 
   describe('儀表板功能', () => {
-    it('應該成功獲取儀表板數據', async () => {
+    it('應該SuccessGet儀表板數據', async () => {
       const _mockResponse = {
         data: {
           overview: {
@@ -316,8 +316,8 @@ describe('數據質量改進功能測試', () => {
     });
   });
 
-  describe('報告生成功能', () => {
-    it('應該成功生成質量報告', async () => {
+  describe('報告生Success能', () => {
+    it('應該Success生成質量報告', async () => {
       const _startDate = '2024-01-01';
       const _endDate = '2024-01-31';
       const _mockResponse = {
@@ -348,7 +348,7 @@ describe('數據質量改進功能測試', () => {
       expect(result.data.overallScore).toBe(82.5);
     });
 
-    it('應該成功導出報告', async () => {
+    it('應該Success導出報告', async () => {
       const _mockBlob = new Blob(['report data'], { type: 'application/pdf' });
       const _mockResponse = { data: mockBlob };
 
@@ -368,7 +368,7 @@ describe('數據質量改進功能測試', () => {
   });
 
   describe('改進建議功能', () => {
-    it('應該成功獲取改進建議', async () => {
+    it('應該SuccessGet改進建議', async () => {
       const _mockResponse = {
         data: {
           recommendations: [
@@ -401,8 +401,8 @@ describe('數據質量改進功能測試', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該處理API錯誤', async () => {
+  describe('ErrorHandle', () => {
+    it('應該HandleAPIError', async () => {
       const _error = new Error('API Error');
       mockApi.get.mockRejectedValue(error);
 
@@ -411,7 +411,7 @@ describe('數據質量改進功能測試', () => {
       ).rejects.toThrow('API Error');
     });
 
-    it('應該處理網絡錯誤', async () => {
+    it('應該Handle網絡Error', async () => {
       const _networkError = new Error('Network Error');
       mockApi.post.mockRejectedValue(networkError);
 
@@ -420,7 +420,7 @@ describe('數據質量改進功能測試', () => {
       ).rejects.toThrow('Network Error');
     });
 
-    it('應該處理部分失敗的批量操作', async () => {
+    it('應該Handle部分Failed的批量操作', async () => {
       const _mockResponse = {
         data: {
           reviewed: 1,
@@ -464,7 +464,7 @@ describe('數據質量改進功能測試', () => {
       const _duration = endTime - startTime;
 
       expect(result.data.totalRecords).toBe(100000);
-      expect(duration).toBeLessThan(5000); // 應該在5秒內完成
+      expect(duration).toBeLessThan(5000); // 應該在5Second內Complete
     });
 
     it('應該並行處理多個請求', async () => {
@@ -498,13 +498,13 @@ describe('數據質量改進功能測試', () => {
       const _duration = endTime - startTime;
 
       expect(results).toHaveLength(3);
-      expect(duration).toBeLessThan(3000); // 並行處理應該更快
+      expect(duration).toBeLessThan(3000); // ParallelHandle應該更快
     });
   });
 
   describe('數據質量改進流程', () => {
     it('應該執行完整的數據質量改進流程', async () => {
-      // 1. 獲取初始統計
+      // 1. Get初始Statistics
       const _initialStats = {
         data: {
           totalRecords: 1000,
@@ -513,7 +513,7 @@ describe('數據質量改進功能測試', () => {
         },
       };
 
-      // 2. 執行數據清理
+      // 2. 執RowData清理
       const _cleaningResult = {
         data: {
           status: 'completed',
@@ -523,7 +523,7 @@ describe('數據質量改進功能測試', () => {
         },
       };
 
-      // 3. 執行質量改進
+      // 3. 執Row質量改進
       const _improvementResult = {
         data: {
           status: 'completed',
@@ -532,7 +532,7 @@ describe('數據質量改進功能測試', () => {
         },
       };
 
-      // 4. 獲取改進後的統計
+      // 4. Get改進後的Statistics
       const _improvedStats = {
         data: {
           totalRecords: 1000,
@@ -548,7 +548,7 @@ describe('數據質量改進功能測試', () => {
         .mockResolvedValueOnce(cleaningResult)
         .mockResolvedValueOnce(improvementResult);
 
-      // 執行改進流程
+      // 執Row改進流程
       const _initialResult = await mockApi.get('/data-quality/collection-stats');
       const _cleaningResult2 = await mockApi.post(
         '/data-quality/cleaning/perform'
@@ -558,13 +558,13 @@ describe('數據質量改進功能測試', () => {
       );
       const _finalResult = await mockApi.get('/data-quality/collection-stats');
 
-      // 驗證改進效果
+      // Verify改進效果
       expect(initialResult.data.qualityScore).toBe(75.0);
       expect(cleaningResult2.data.status).toBe('completed');
       expect(improvementResult2.data.status).toBe('completed');
       expect(finalResult.data.qualityScore).toBe(82.5);
 
-      // 驗證質量分數有改善
+      // Verify質量分數有改善
       expect(finalResult.data.qualityScore).toBeGreaterThan(
         initialResult.data.qualityScore
       );

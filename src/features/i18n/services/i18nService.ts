@@ -5,7 +5,7 @@ import { initReactI18next } from 'react-i18next';
 
 import { logger } from '../../../core/utils/logger';
 
-// 語言資源
+// LanguageResource
 import enUS from '../../../i18n/locales/en-US.json';
 import jaJP from '../../../i18n/locales/ja-JP.json';
 import zhTW from '../../../i18n/locales/zh-TW.json';
@@ -70,18 +70,18 @@ class I18nService implements I18nManager, I18nTools {
     return I18nService.instance;
   }
 
-  // 初始化
+  // Initialize
   async initialize(config?: Partial<I18nConfig>): Promise<void> {
     try {
       this.state.isLoading = true;
       this.emitEvent('initialized', { language: this.state.currentLanguage });
 
-      // 合併配置
+      // MergeConfigure
       if (config) {
         this.config = { ...this.config, ...config };
       }
 
-      // 初始化 i18next
+      // Initialize i18next
       const _resources = {
         'zh-TW': { translation: zhTW },
         'en-US': { translation: enUS },
@@ -103,12 +103,12 @@ class I18nService implements I18nManager, I18nTools {
         defaultNS: 'translation',
       });
 
-      // 檢測語言
+      // 檢測Language
       if (this.config.autoDetect) {
         const _detectedLanguage = await this.detectLanguage();
         await this.changeLanguage(detectedLanguage);
       } else {
-        // 從存儲中讀取語言設置
+        // 從Storage中ReadLanguageSettings
         const _storedLanguage = await this.getStoredLanguage();
         if (storedLanguage && this.isLanguageSupported(storedLanguage)) {
           await this.changeLanguage(storedLanguage);
@@ -133,7 +133,7 @@ class I18nService implements I18nManager, I18nTools {
     }
   }
 
-  // 語言管理
+  // LanguageManage
   getCurrentLanguage(): string {
     return this.state.currentLanguage;
   }
@@ -150,17 +150,17 @@ class I18nService implements I18nManager, I18nTools {
 
       const _previousLanguage = this.state.currentLanguage;
 
-      // 切換語言
+      // SwitchLanguage
       await i18n.changeLanguage(language);
       this.state.currentLanguage = language;
       this.state.lastUpdated = new Date();
 
-      // 持久化語言設置
+      // 持久化LanguageSettings
       if (this.config.persistLanguage) {
         await AsyncStorage.setItem('userLanguage', language);
       }
 
-      // 清除格式化器緩存
+      // ClearFormat器Cache
       this.formatters.number.clear();
       this.formatters.date.clear();
       this.formatters.relativeTime.clear();
@@ -199,13 +199,13 @@ class I18nService implements I18nManager, I18nTools {
 
   async detectLanguage(): Promise<string> {
     try {
-      // 從存儲中讀取
+      // 從Storage中Read
       const _storedLanguage = await this.getStoredLanguage();
       if (storedLanguage && this.isLanguageSupported(storedLanguage)) {
         return storedLanguage;
       }
 
-      // 使用系統語言
+      // 使用系統Language
       const [systemLocale] = Localization.getLocales();
       const _languageCode = this.getLanguageFromLocale(
         systemLocale?.languageTag || 'en-US'
@@ -215,7 +215,7 @@ class I18nService implements I18nManager, I18nTools {
         return languageCode;
       }
 
-      // 回退到默認語言
+      // 回退到DefaultLanguage
       return this.config.defaultLanguage;
     } catch (error) {
       logger.warn('Failed to detect language, using default:', { error });
@@ -231,7 +231,7 @@ class I18nService implements I18nManager, I18nTools {
         defaultValue: options?.defaultValue || key,
       });
 
-      // 檢查是否為默認值（翻譯缺失）
+      // CheckYesNo為DefaultValue（翻譯缺失）
       if (result === key || result === options?.defaultValue) {
         this.recordMissingTranslation(key, 'translation');
         this.emitEvent('translationMissing', { key, namespace: 'translation' });
@@ -282,7 +282,7 @@ class I18nService implements I18nManager, I18nTools {
     }
   }
 
-  // 格式化功能
+  // Format功能
   formatNumber(value: number, options?: Intl.NumberFormatOptions): string {
     const _language = this.state.currentLanguage;
     const _cacheKey = `${language}-${JSON.stringify(options)}`;
@@ -363,7 +363,7 @@ class I18nService implements I18nManager, I18nTools {
     return rule === 'one' ? singular : plural;
   }
 
-  // 統計和監控
+  // Statistics和Monitor
   getStats(): TranslationStats {
     const _languages = Object.keys(this.state.availableLanguages);
     const stats: TranslationStats = {
@@ -379,7 +379,7 @@ class I18nService implements I18nManager, I18nTools {
       const _missingForLang = this.missingTranslations.filter(
         t => t.language === lang
       ).length;
-      const _totalForLang = 1000; // 估算總鍵數
+      const _totalForLang = 1000; // 估算總Key數
       const _translatedForLang = totalForLang - missingForLang;
 
       stats.languages[lang] = {
@@ -406,7 +406,7 @@ class I18nService implements I18nManager, I18nTools {
     return [...this.missingTranslations];
   }
 
-  // 事件管理
+  // EventManage
   on(event: I18nEvent['type'], callback: (event: I18nEvent) => void): void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
@@ -421,7 +421,7 @@ class I18nService implements I18nManager, I18nTools {
     }
   }
 
-  // 工具方法
+  // ToolMethod
   isRTL(): boolean {
     const _language = this.state.availableLanguages[this.state.currentLanguage];
     return language?.direction === 'rtl';
@@ -548,7 +548,7 @@ class I18nService implements I18nManager, I18nTools {
     return errors;
   }
 
-  // 私有方法
+  // PrivateMethod
   private async getStoredLanguage(): Promise<string | null> {
     try {
       return await AsyncStorage.getItem('userLanguage');
@@ -595,6 +595,6 @@ class I18nService implements I18nManager, I18nTools {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _i18nService = I18nService.getInstance();
 export default i18nService;

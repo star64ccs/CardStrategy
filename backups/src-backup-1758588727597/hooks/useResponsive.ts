@@ -1,0 +1,224 @@
+import { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { layoutService } from '../services/layoutService';
+import {
+  selectCurrentBreakpoint,
+  selectIsDesktop,
+  selectIsLargeScreen,
+  selectIsMobile,
+  selectIsTablet,
+  selectLayoutConfig,
+  selectLayoutError,
+  selectLayoutEvents,
+  selectLayoutLoading,
+  selectResponsiveState,
+  selectWindowSize,
+} from '../store/slices/layoutSlice';
+import type {
+  Breakpoint,
+  ResponsiveEvent,
+  ResponsiveState,
+  ResponsiveValue,
+} from '../types/layout';
+
+// 響應式 Hook 返回值類型
+export interface UseResponsiveReturn {
+  // 響應式狀態
+  responsive: ResponsiveState;
+  currentBreakpoint: Breakpoint;
+  isMobile: boolean;
+  isTablet: boolean;
+  isDesktop: boolean;
+  isLargeScreen: boolean;
+  windowWidth: number;
+  windowHeight: number;
+
+  // 響應式工具方法
+  getResponsiveValue: <T>(value: ResponsiveValue<T>) => T;
+  isBreakpoint: (breakpoint: Breakpoint) => boolean;
+  isAboveBreakpoint: (breakpoint: Breakpoint) => boolean;
+  isBelowBreakpoint: (breakpoint: Breakpoint) => boolean;
+
+  // 事件監聽
+  onBreakpointChange: (
+    callback: (event: ResponsiveEvent) => void
+  ) => () => void;
+  onResize: (callback: (event: ResponsiveEvent) => void) => () => void;
+
+  // 配置和狀態
+  config: unknown;
+  isLoading: boolean;
+  error: string | null;
+  events: ResponsiveEvent[];
+
+  // 工具方法
+  getBreakpointConfig: () => any;
+  getResponsiveState: () => ResponsiveState;
+}
+
+// 響應式 Hook
+export const useResponsive = (): UseResponsiveReturn => {
+  const dispatch = useDispatch();
+
+  // 從 Redux 獲取狀態
+  const responsive = useSelector(selectResponsiveState);
+  const currentBreakpoint = useSelector(selectCurrentBreakpoint);
+  const isMobile = useSelector(selectIsMobile);
+  const isTablet = useSelector(selectIsTablet);
+  const isDesktop = useSelector(selectIsDesktop);
+  const isLargeScreen = useSelector(selectIsLargeScreen);
+  const windowSize = useSelector(selectWindowSize);
+  const config = useSelector(selectLayoutConfig);
+  const isLoading = useSelector(selectLayoutLoading);
+  const error = useSelector(selectLayoutError);
+  const events = useSelector(selectLayoutEvents);
+
+  // 響應式值獲取
+  const getResponsiveValue = useCallback(<T>(value: ResponsiveValue<T>): T => {
+    return layoutService.getResponsiveValue(value);
+  }, []);
+
+  // 斷點檢查方法
+  const isBreakpoint = useCallback((breakpoint: Breakpoint): boolean => {
+    return layoutService.isBreakpoint(breakpoint);
+  }, []);
+
+  const isAboveBreakpoint = useCallback((breakpoint: Breakpoint): boolean => {
+    return layoutService.isAboveBreakpoint(breakpoint);
+  }, []);
+
+  const isBelowBreakpoint = useCallback((breakpoint: Breakpoint): boolean => {
+    return layoutService.isBelowBreakpoint(breakpoint);
+  }, []);
+
+  // 事件監聽方法
+  const onBreakpointChange = useCallback(
+    (callback: (event: ResponsiveEvent) => void) => {
+      return layoutService.onBreakpointChange(callback);
+    },
+    []
+  );
+
+  const onResize = useCallback(
+    (callback: (event: ResponsiveEvent) => void) => {
+      return layoutService.onResize(callback);
+    },
+    []
+  );
+
+  // 配置和狀態獲取
+  const getBreakpointConfig = useCallback(() => {
+    return layoutService.getBreakpointConfig();
+  }, []);
+
+  const getResponsiveState = useCallback(() => {
+    return layoutService.getResponsiveState();
+  }, []);
+
+  // 計算屬性
+  const windowWidth = useMemo(() => windowSize.width, [windowSize.width]);
+  const windowHeight = useMemo(() => windowSize.height, [windowSize.height]);
+
+  return {
+    // 響應式狀態
+    responsive,
+    currentBreakpoint,
+    isMobile,
+    isTablet,
+    isDesktop,
+    isLargeScreen,
+    windowWidth,
+    windowHeight,
+
+    // 響應式工具方法
+    getResponsiveValue,
+    isBreakpoint,
+    isAboveBreakpoint,
+    isBelowBreakpoint,
+
+    // 事件監聽
+    onBreakpointChange,
+    onResize,
+
+    // 配置和狀態
+    config,
+    isLoading,
+    error,
+    events: events as any,
+
+    // 工具方法
+    getBreakpointConfig,
+    getResponsiveState,
+  };
+};
+
+// 響應式斷點 Hook
+export const useBreakpoint = (breakpoint: Breakpoint) => {
+  const { isBreakpoint, isAboveBreakpoint, isBelowBreakpoint } =
+    useResponsive();
+
+  return useMemo(
+    () => ({
+      isCurrent: isBreakpoint(breakpoint),
+      isAbove: isAboveBreakpoint(breakpoint),
+      isBelow: isBelowBreakpoint(breakpoint),
+    }),
+    [breakpoint, isBreakpoint, isAboveBreakpoint, isBelowBreakpoint]
+  );
+};
+
+// 響應式值 Hook
+export const useResponsiveValue = <T>(value: ResponsiveValue<T>) => {
+  const { getResponsiveValue } = useResponsive();
+
+  return useMemo(() => getResponsiveValue(value), [value, getResponsiveValue]);
+};
+
+// 設備類型 Hook
+export const useDeviceType = () => {
+  const { isMobile, isTablet, isDesktop, isLargeScreen } = useResponsive();
+
+  return useMemo(() => {
+    if (isMobile) return 'mobile';
+    if (isTablet) return 'tablet';
+    if (isLargeScreen) return 'large-screen';
+    return 'desktop';
+  }, [isMobile, isTablet, isDesktop, isLargeScreen]);
+};
+
+// 響應式條件 Hook
+export const useResponsiveCondition = (
+  condition: ResponsiveValue<boolean>
+) => {
+  const { getResponsiveValue } = useResponsive();
+
+  return useMemo(
+    () => getResponsiveValue(condition),
+    [condition, getResponsiveValue]
+  );
+};
+
+// 響應式樣式 Hook
+export const useResponsiveStyle = (
+  styles: ResponsiveValue<React.CSSProperties>
+) => {
+  const { getResponsiveValue } = useResponsive();
+
+  return useMemo(
+    () => getResponsiveValue(styles),
+    [styles, getResponsiveValue]
+  );
+};
+
+// 響應式類名 Hook
+export const useResponsiveClassName = (
+  classNames: ResponsiveValue<string>
+) => {
+  const { getResponsiveValue } = useResponsive();
+
+  return useMemo(
+    () => getResponsiveValue(classNames),
+    [classNames, getResponsiveValue]
+  );
+};

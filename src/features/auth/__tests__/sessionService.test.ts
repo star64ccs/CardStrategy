@@ -89,11 +89,11 @@ describe('SessionService', () => {
 
       await sessionService.initialize();
 
-      // 檢查是否調用了正確的日誌
+      // CheckYesNo調用了正確的Log
       const _infoCalls = (mockLogger.info as jest.Mock).mock.calls;
       const _hasRestoreCall = infoCalls.some(
         call =>
-          call[0] === '會話恢復成功:' && call[1]?.sessionId === 'test-session'
+          call[0] === '會話恢復Success:' && call[1]?.sessionId === 'test-session'
       );
       expect(hasRestoreCall).toBe(true);
       expect((sessionService as any).currentSession).toEqual(mockSession);
@@ -135,7 +135,7 @@ describe('SessionService', () => {
         'Storage error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'SessionService 初始化失敗:',
+        'SessionService InitializeFailed:',
         expect.any(Error)
       );
     });
@@ -172,7 +172,7 @@ describe('SessionService', () => {
         platformVersion: '15.0',
       });
       expect(mockAuthStorage.setSession).toHaveBeenCalledWith(session);
-      expect(mockLogger.info).toHaveBeenCalledWith('會話創建成功:', {
+      expect(mockLogger.info).toHaveBeenCalledWith('會話CreateSuccess:', {
         sessionId: session.id,
         userId,
       });
@@ -183,7 +183,7 @@ describe('SessionService', () => {
 
       await expect(
         sessionService.createSession('user123', 'token', 'refresh-token', 3600)
-      ).rejects.toThrow('創建會話失敗: Storage error');
+      ).rejects.toThrow('Create會話Failed: Storage error');
     });
   });
 
@@ -307,7 +307,7 @@ describe('SessionService', () => {
       });
 
       await expect(sessionService.getSessions()).rejects.toThrow(
-        '獲取會話列表失敗: API error'
+        'Get會話列表Failed: API error'
       );
 
       // Restore original method
@@ -485,7 +485,7 @@ describe('SessionService', () => {
       ).resolves.toBeUndefined();
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '記錄會話活動失敗:',
+        '記錄會話活動Failed:',
         expect.any(Error)
       );
 
@@ -582,7 +582,7 @@ describe('SessionService', () => {
     });
 
     it('should do nothing when no session exists', async () => {
-      // 清除之前創建的會話
+      // Clear之前Create的會話
       (sessionService as any).currentSession = null;
       mockAuthStorage.setSession.mockClear();
 

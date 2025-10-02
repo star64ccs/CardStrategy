@@ -1,4 +1,4 @@
-// 主題類型定義
+// ThemeClass型定義
 export interface ThemeColors {
   // 基礎顏色
   primary: string;
@@ -22,13 +22,13 @@ export interface ThemeColors {
   border: string;
   divider: string;
 
-  // 狀態顏色
+  // Status顏色
   success: string;
   warning: string;
   error: string;
   info: string;
 
-  // 特殊顏色
+  // Special顏色
   overlay: string;
   shadow: string;
   highlight: string;

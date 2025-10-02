@@ -2,7 +2,7 @@ let newrelic;
 try {
   newrelic = require('newrelic');
 } catch (error) {
-  // New Relic 未安裝，使用空對象
+  // New Relic 未Install，使用EmptyObject
   newrelic = {
     addCustomAttribute: () => {},
     noticeError: () => {},
@@ -11,14 +11,14 @@ try {
 const logger = require('../utils/logger');
 
 /**
- * 性能監控中間件
- * 監控 API 請求的響應時間和性能指標
+ * 性能Monitor中間件
+ * Monitor API Request的ResponseTime和性能指標
  */
 const performanceMonitor = (req, res, next) => {
   const start = Date.now();
   const requestId = generateRequestId();
 
-  // 記錄請求開始
+  // RecordRequestBegin
   logger.info('Request started', {
     requestId,
     method: req.method,
@@ -28,10 +28,10 @@ const performanceMonitor = (req, res, next) => {
     timestamp: new Date().toISOString(),
   });
 
-  // 添加請求 ID 到響應頭
+  // AddRequest ID 到Response頭
   res.setHeader('X-Request-ID', requestId);
 
-  // 記錄到 New Relic
+  // Record到 New Relic
   if (newrelic) {
     newrelic.addCustomAttribute('request_id', requestId);
     newrelic.addCustomAttribute('request_path', req.path);
@@ -40,12 +40,12 @@ const performanceMonitor = (req, res, next) => {
     newrelic.addCustomAttribute('client_ip', req.ip);
   }
 
-  // 監控響應時間
+  // MonitorResponseTime
   res.on('finish', () => {
     const duration = Date.now() - start;
     const { statusCode } = res;
 
-    // 記錄響應完成
+    // RecordResponseComplete
     logger.info('Request completed', {
       requestId,
       method: req.method,
@@ -55,7 +55,7 @@ const performanceMonitor = (req, res, next) => {
       timestamp: new Date().toISOString(),
     });
 
-    // 記錄到 New Relic
+    // Record到 New Relic
     if (newrelic) {
       newrelic.addCustomAttribute('response_time', duration);
       newrelic.addCustomAttribute('status_code', statusCode);
@@ -65,7 +65,7 @@ const performanceMonitor = (req, res, next) => {
       );
     }
 
-    // 記錄慢查詢
+    // Record慢Query
     if (duration > 1000) {
       logger.warn('Slow request detected', {
         requestId,
@@ -84,7 +84,7 @@ const performanceMonitor = (req, res, next) => {
       }
     }
 
-    // 記錄錯誤請求
+    // RecordErrorRequest
     if (statusCode >= 400) {
       logger.error('Request error', {
         requestId,
@@ -96,7 +96,7 @@ const performanceMonitor = (req, res, next) => {
     }
   });
 
-  // 監控錯誤
+  // MonitorError
   res.on('error', (error) => {
     const duration = Date.now() - start;
 
@@ -118,14 +118,14 @@ const performanceMonitor = (req, res, next) => {
 };
 
 /**
- * 生成唯一的請求 ID
+ * 生成Unique的Request ID
  */
 function generateRequestId() {
   return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 /**
- * 數據庫查詢性能監控
+ * DatabaseQuery性能Monitor
  */
 const queryMonitor = (query, params = []) => {
   const start = Date.now();
@@ -149,7 +149,7 @@ const queryMonitor = (query, params = []) => {
 };
 
 /**
- * 結束查詢監控
+ * EndQueryMonitor
  */
 const endQueryMonitor = (queryInfo) => {
   queryInfo.end = Date.now();
@@ -161,7 +161,7 @@ const endQueryMonitor = (queryInfo) => {
     timestamp: new Date().toISOString(),
   });
 
-  // 記錄慢查詢
+  // Record慢Query
   if (queryInfo.duration > 100) {
     logger.warn('Slow query detected', {
       queryId: queryInfo.queryId,
@@ -182,14 +182,14 @@ const endQueryMonitor = (queryInfo) => {
 };
 
 /**
- * 生成唯一的查詢 ID
+ * 生成Unique的Query ID
  */
 function generateQueryId() {
   return `query_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 }
 
 /**
- * 內存使用監控
+ * Memory使用Monitor
  */
 const memoryMonitor = () => {
   const memUsage = process.memoryUsage();
@@ -202,10 +202,10 @@ const memoryMonitor = () => {
     timestamp: new Date().toISOString(),
   });
 
-  // 檢查內存使用是否過高
+  // CheckMemory使用YesNo過高
   const heapUsedMB = memUsage.heapUsed / 1024 / 1024;
   if (heapUsedMB > 500) {
-    // 500MB 閾值
+    // 500MB 閾Value
     logger.warn('High memory usage detected', {
       heapUsed: `${Math.round(heapUsedMB)}MB`,
       threshold: '500MB',
@@ -221,14 +221,14 @@ const memoryMonitor = () => {
 };
 
 /**
- * CPU 使用監控
+ * CPU 使用Monitor
  */
 const cpuMonitor = () => {
   const startUsage = process.cpuUsage();
 
   setTimeout(() => {
     const endUsage = process.cpuUsage(startUsage);
-    const cpuPercent = (endUsage.user + endUsage.system) / 1000000; // 轉換為秒
+    const cpuPercent = (endUsage.user + endUsage.system) / 1000000; // Convert為Second
 
     logger.debug('CPU usage', {
       user: `${Math.round(endUsage.user / 1000)}ms`,
@@ -237,9 +237,9 @@ const cpuMonitor = () => {
       timestamp: new Date().toISOString(),
     });
 
-    // 檢查 CPU 使用是否過高
+    // Check CPU 使用YesNo過高
     if (cpuPercent > 1) {
-      // 1秒閾值
+      // 1Second閾Value
       logger.warn('High CPU usage detected', {
         cpuTime: `${Math.round(cpuPercent * 100) / 100}s`,
         threshold: '1s',

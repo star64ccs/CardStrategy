@@ -1,6 +1,6 @@
-// 可訪問性服務類
-// 實現焦點管理、ARIA 標籤、鍵盤導航、屏幕閱讀器支持等功能
-// 符合 WCAG 2.1 AA 標準和 Section 508 要求
+// 可訪問性ServiceClass
+// 實現焦點Manage、ARIA Tag、Key盤導航、屏幕閱讀器Support等功能
+// 符合 WCAG 2.1 AA Standard和 Section 508 要求
 
 import type {
   AccessibilityConfig,
@@ -47,24 +47,24 @@ class AccessibilityServiceClass implements AccessibilityService {
       return;
     }
 
-    // 合併配置
+    // MergeConfigure
     if (config) {
       this.config = { ...this.config, ...config };
     }
 
-    // 初始化焦點管理
+    // Initialize焦點Manage
     this.initFocusManager();
 
-    // 初始化鍵盤導航
+    // InitializeKey盤導航
     this.initKeyboardNavigation();
 
-    // 初始化屏幕閱讀器
+    // Initialize屏幕閱讀器
     this.initScreenReader();
 
     // 檢測輔助技術
     this.detectAssistiveTechnology();
 
-    // 運行初始可訪問性檢查
+    // 運Row初始可訪問性Check
     this.runInitialAccessibilityCheck();
 
     this.isInitialized = true;
@@ -81,17 +81,17 @@ class AccessibilityServiceClass implements AccessibilityService {
   public updateConfig(config: Partial<AccessibilityConfig>): void {
     this.state.config = { ...this.state.config, ...config };
 
-    // 更新焦點管理配置
+    // Update焦點ManageConfigure
     if (config.focusManager) {
       this.updateFocusManagerConfig(config.focusManager);
     }
 
-    // 更新鍵盤導航配置
+    // UpdateKey盤導航Configure
     if (config.keyboardNavigation) {
       this.updateKeyboardNavigationConfig(config.keyboardNavigation);
     }
 
-    // 更新屏幕閱讀器配置
+    // Update屏幕閱讀器Configure
     if (config.screenReader) {
       this.updateScreenReaderConfig(config.screenReader);
     }
@@ -120,17 +120,17 @@ class AccessibilityServiceClass implements AccessibilityService {
     const _startTime = new Date();
 
     try {
-      // 運行自動化測試
+      // 運RowAuto化Test
       const _automatedResults = await this.runAutomatedTests(testConfig);
 
-      // 運行手動檢查
+      // 運RowManualCheck
       const _manualResults = await this.runManualChecks(testConfig);
 
-      // 運行輔助技術測試
+      // 運Row輔助技術Test
       const _assistiveResults =
         await this.runAssistiveTechnologyTests(testConfig);
 
-      // 合併結果
+      // Merge結果
       const _allIssues = [
         ...automatedResults.issues,
         ...manualResults.issues,
@@ -249,10 +249,10 @@ class AccessibilityServiceClass implements AccessibilityService {
     report += `## 測試結果摘要\n\n`;
     report += `- **總分**: ${details.score}/100\n`;
     report += `- **通過**: ${testResult.passed}\n`;
-    report += `- **失敗**: ${testResult.failed}\n`;
+    report += `- **Failed**: ${testResult.failed}\n`;
     report += `- **警告**: ${testResult.warnings}\n`;
     report += `- **總計**: ${testResult.total}\n`;
-    report += `- **狀態**: ${result.passed ? '✅ 通過' : '❌ 失敗'}\n\n`;
+    report += `- **狀態**: ${result.passed ? '✅ 通過' : '❌ Failed'}\n\n`;
 
     if (details.issues.length > 0) {
       report += `## 發現的問題\n\n`;
@@ -327,7 +327,7 @@ class AccessibilityServiceClass implements AccessibilityService {
     console.log('AccessibilityService destroyed');
   }
 
-  // 私有方法將在下一部分實現
+  // PrivateMethod將在下一Partial實現
   private getDefaultConfig(): AccessibilityServiceConfig {
     return {
       name: 'CardStrategy Accessibility Service',
@@ -376,8 +376,8 @@ class AccessibilityServiceClass implements AccessibilityService {
             onFocus: '已聚焦',
             onBlur: '已失焦',
             onChange: '已更改',
-            onError: '發生錯誤',
-            onSuccess: '操作成功',
+            onError: '發生Error',
+            onSuccess: '操作Success',
             onComplete: '操作完成',
           },
         },
@@ -440,7 +440,7 @@ class AccessibilityServiceClass implements AccessibilityService {
     };
   }
 
-  // 這些方法將在下一部分實現
+  // 這些Method將在下一Partial實現
   private initFocusManager(): void {}
   private initKeyboardNavigation(): void {}
   private initScreenReader(): void {}
@@ -480,5 +480,5 @@ class AccessibilityServiceClass implements AccessibilityService {
   private updateScreenReaderConfig(config: Partial<ScreenReaderConfig>): void {}
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _accessibilityService = AccessibilityServiceClass.getInstance();

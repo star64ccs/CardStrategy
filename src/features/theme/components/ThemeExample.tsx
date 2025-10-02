@@ -44,7 +44,7 @@ const ThemeExample: React.FC = () => {
     try {
       await changeTheme(themeId);
     } catch (error) {
-      Alert.alert('錯誤', '切換主題失敗');
+      Alert.alert('Error', '切換主題Failed');
     }
   };
 
@@ -52,7 +52,7 @@ const ThemeExample: React.FC = () => {
     try {
       await toggle();
     } catch (error) {
-      Alert.alert('錯誤', '切換主題失敗');
+      Alert.alert('Error', '切換主題Failed');
     }
   };
 
@@ -60,7 +60,7 @@ const ThemeExample: React.FC = () => {
     try {
       await setAuto(enabled);
     } catch (error) {
-      Alert.alert('錯誤', '設置自動主題失敗');
+      Alert.alert('Error', 'Settings自動主題Failed');
     }
   };
 
@@ -74,32 +74,32 @@ const ThemeExample: React.FC = () => {
         },
       };
       await customize(customization);
-      Alert.alert('成功', '主題自定義成功');
+      Alert.alert('Success', '主題自定義Success');
     } catch (error) {
-      Alert.alert('錯誤', '自定義主題失敗');
+      Alert.alert('Error', '自定義主題Failed');
     }
   };
 
   const _handleResetTheme = async () => {
     try {
       await reset();
-      Alert.alert('成功', '主題已重置');
+      Alert.alert('Success', '主題已重置');
     } catch (error) {
-      Alert.alert('錯誤', '重置主題失敗');
+      Alert.alert('Error', '重置主題Failed');
     }
   };
 
   const _handleExportTheme = async () => {
     try {
       const _themeData = await exportTheme(currentTheme.id);
-      Alert.alert('導出成功', `主題數據：${themeData.substring(0, 100)}...`);
+      Alert.alert('導出Success', `主題數據：${themeData.substring(0, 100)}...`);
     } catch (error) {
-      Alert.alert('錯誤', '導出主題失敗');
+      Alert.alert('Error', '導出主題Failed');
     }
   };
 
   const _handleImportTheme = async () => {
-    // 這裡應該有一個文件選擇器或輸入框
+    // 這裡應該有一個FileSelect器或Input框
     Alert.alert('提示', '請在實際應用中實現文件選擇功能');
   };
 
@@ -222,7 +222,7 @@ const ThemeExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>深色模式支持示例</Text>
 
-      {/* 當前主題信息 */}
+      {/* 當前ThemeInformation */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>當前主題</Text>
         <Text style={styles.infoText}>ID: {currentTheme.id}</Text>
@@ -237,7 +237,7 @@ const ThemeExample: React.FC = () => {
         <Text style={styles.infoText}>系統主題: {systemTheme}</Text>
       </View>
 
-      {/* 主題切換 */}
+      {/* ThemeSwitch */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>主題切換</Text>
         {availableThemes.map(theme => (
@@ -265,7 +265,7 @@ const ThemeExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 自動主題設置 */}
+      {/* AutoThemeSettings */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>自動主題設置</Text>
         <View style={styles.toggleContainer}>
@@ -285,7 +285,7 @@ const ThemeExample: React.FC = () => {
         </Text>
       </View>
 
-      {/* 主題自定義 */}
+      {/* ThemeCustom */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>主題自定義</Text>
 
@@ -336,7 +336,7 @@ const ThemeExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 主題管理 */}
+      {/* ThemeManage */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>主題管理</Text>
 
@@ -365,7 +365,7 @@ const ThemeExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 主題屬性展示 */}
+      {/* ThemeProperty展示 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>主題屬性</Text>
 
@@ -380,7 +380,7 @@ const ThemeExample: React.FC = () => {
         <Text style={styles.infoText}>圓角 (md): {borderRadius.md}px</Text>
       </View>
 
-      {/* 狀態信息 */}
+      {/* StatusInformation */}
       {isLoading && (
         <View style={styles.section}>
           <Text style={styles.loadingText}>載入中...</Text>

@@ -1,19 +1,19 @@
-// 核心工具函數索引
-// 提供應用程序的核心工具函數
+// 核心ToolFunctionIndex
+// 提供Apply程序的核心ToolFunction
 
-// 基礎工具
+// 基礎Tool
 export * from './logger';
 export * from './errorHandler';
 export * from './helpers';
 export * from './constants';
 
-// 安全工具
+// 安全Tool
 export * from './securityUtils';
 
-// 存儲工具
+// StorageTool
 export * from './storage';
 
-// 輔助工具
+// 輔助Tool
 export * from './performanceMonitor';
 export * from './api';
 export * from './types';

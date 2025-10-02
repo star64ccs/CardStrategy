@@ -1,4 +1,4 @@
-// AI 預測系統類型定義
+// AI 預測系統Class型定義
 export interface PredictionRequest {
   cardId: string;
   cardName: string;
@@ -217,7 +217,7 @@ export interface PredictionState {
   options: PredictionOptions;
 }
 
-// 枚舉類型
+// 枚舉Class型
 export enum PredictionType {
   PRICE = 'price',
   TREND = 'trend',
@@ -284,7 +284,7 @@ export enum UpdateFrequency {
   MONTHLY = 'monthly',
 }
 
-// 常量定義
+// Constant定義
 export const _PREDICTION_CONSTANTS = {
   DEFAULT_CONFIDENCE_LEVEL: 0.8,
   MIN_CONFIDENCE_LEVEL: 0.5,

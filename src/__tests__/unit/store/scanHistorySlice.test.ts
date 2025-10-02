@@ -88,7 +88,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('fetchScanHistory', () => {
-    it('應該成功獲取掃描歷史', async () => {
+    it('應該SuccessGet掃描歷史', async () => {
       const _mockHistory = [
         createMockScanHistory(),
         createMockScanHistory({ id: '2' }),
@@ -115,8 +115,8 @@ describe('ScanHistory Slice', () => {
       expect(state.error).toBeNull();
     });
 
-    it('應該處理獲取掃描歷史失敗', async () => {
-      const _errorMessage = '獲取掃描歷史失敗';
+    it('應該HandleGet掃描歷史Failed', async () => {
+      const _errorMessage = 'Get掃描歷史Failed';
       mockScanHistoryService.getScanHistory.mockRejectedValue(
         new Error(errorMessage)
       );
@@ -130,7 +130,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('fetchScanRecord', () => {
-    it('應該成功獲取單個掃描記錄', async () => {
+    it('應該SuccessGet單個掃描記錄', async () => {
       const _mockRecord = createMockScanHistory();
       mockScanHistoryService.getScanRecord.mockResolvedValue(mockRecord);
 
@@ -143,7 +143,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('createScanRecord', () => {
-    it('應該成功創建掃描記錄', async () => {
+    it('應該SuccessCreate掃描記錄', async () => {
       const _mockRecord = createMockScanHistory();
       const _newRecordData = {
         cardId: '1',
@@ -162,7 +162,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('updateScanRecord', () => {
-    it('應該成功更新掃描記錄', async () => {
+    it('應該SuccessUpdate掃描記錄', async () => {
       const _mockRecord = createMockScanHistory();
       const _updatedRecord = { ...mockRecord, notes: 'Updated note' };
 
@@ -178,10 +178,10 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('deleteScanRecord', () => {
-    it('應該成功刪除掃描記錄', async () => {
+    it('應該SuccessDelete掃描記錄', async () => {
       const _mockRecord = createMockScanHistory();
 
-      // 先添加記錄到狀態
+      // 先AddRecord到Status
       store.dispatch({
         type: 'scanHistory/fetchScanHistory/fulfilled',
         payload: {
@@ -203,7 +203,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('toggleFavorite', () => {
-    it('應該成功切換收藏狀態', async () => {
+    it('應該Success切換收藏狀態', async () => {
       const _mockRecord = createMockScanHistory({ isFavorite: false });
       const _updatedRecord = { ...mockRecord, isFavorite: true };
 
@@ -217,7 +217,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('addNote', () => {
-    it('應該成功添加筆記', async () => {
+    it('應該Success添加筆記', async () => {
       const _mockRecord = createMockScanHistory();
       const _updatedRecord = { ...mockRecord, notes: 'New note' };
 
@@ -231,7 +231,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('addTags', () => {
-    it('應該成功添加標籤', async () => {
+    it('應該Success添加標籤', async () => {
       const _mockRecord = createMockScanHistory();
       const _updatedRecord = { ...mockRecord, tags: ['new', 'tag'] };
 
@@ -245,7 +245,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('fetchScanStatistics', () => {
-    it('應該成功獲取統計數據', async () => {
+    it('應該SuccessGet統計數據', async () => {
       const _mockStatistics = {
         totalScans: 100,
         successfulScans: 95,
@@ -278,7 +278,7 @@ describe('ScanHistory Slice', () => {
   });
 
   describe('searchScanHistory', () => {
-    it('應該成功搜索掃描歷史', async () => {
+    it('應該Success搜索掃描歷史', async () => {
       const _mockHistory = [createMockScanHistory()];
       const _mockResponse = {
         history: mockHistory,
@@ -302,8 +302,8 @@ describe('ScanHistory Slice', () => {
 
   describe('Reducers', () => {
     describe('clearError', () => {
-      it('應該清除錯誤', () => {
-        // 先設置錯誤
+      it('應該清除Error', () => {
+        // 先SettingsError
         store.dispatch({
           type: 'scanHistory/fetchScanHistory/rejected',
           error: { message: 'Test error' },
@@ -329,7 +329,7 @@ describe('ScanHistory Slice', () => {
 
     describe('clearFilters', () => {
       it('應該清除過濾器', () => {
-        // 先設置過濾器
+        // 先SettingsFilter器
         store.dispatch(setFilters({ scanType: 'recognition' }));
 
         store.dispatch(clearFilters());
@@ -370,7 +370,7 @@ describe('ScanHistory Slice', () => {
           createMockScanHistory({ id: '2' }),
         ];
 
-        // 先添加記錄到狀態
+        // 先AddRecord到Status
         store.dispatch({
           type: 'scanHistory/fetchScanHistory/fulfilled',
           payload: {
@@ -391,7 +391,7 @@ describe('ScanHistory Slice', () => {
 
     describe('clearSelection', () => {
       it('應該清除選擇', () => {
-        // 先選擇一些記錄
+        // 先Select一些Record
         store.dispatch(toggleRecordSelection('1'));
         store.dispatch(toggleRecordSelection('2'));
 
@@ -405,13 +405,13 @@ describe('ScanHistory Slice', () => {
 
   describe('Loading States', () => {
     it('應該正確處理加載狀態', () => {
-      // 開始加載
+      // Begin加載
       store.dispatch({ type: 'scanHistory/fetchScanHistory/pending' });
 
       let state = store.getState().scanHistory;
       expect(state.isLoading).toBe(true);
 
-      // 完成加載
+      // Complete加載
       store.dispatch({
         type: 'scanHistory/fetchScanHistory/fulfilled',
         payload: { history: [], total: 0, page: 1, limit: 10, totalPages: 0 },
@@ -422,13 +422,13 @@ describe('ScanHistory Slice', () => {
     });
 
     it('應該正確處理刷新狀態', () => {
-      // 開始刷新
+      // BeginRefresh
       store.dispatch({ type: 'scanHistory/fetchScanHistory/pending' });
 
       let state = store.getState().scanHistory;
       expect(state.isRefreshing).toBe(true);
 
-      // 完成刷新
+      // CompleteRefresh
       store.dispatch({
         type: 'scanHistory/fetchScanHistory/fulfilled',
         payload: { history: [], total: 0, page: 1, limit: 10, totalPages: 0 },

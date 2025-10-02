@@ -39,7 +39,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證輸入數據
+   * VerifyInputData
    */
   public validateInput<T = any>(
     data: unknown,
@@ -77,7 +77,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證單個字段
+   * VerifySingleField
    */
   private validateField(
     value: unknown,
@@ -85,7 +85,7 @@ export class ValidationService {
   ): ValidationResult {
     const errors: string[] = [];
 
-    // 檢查必填字段
+    // Check必填Field
     if (
       rule.required &&
       (value === undefined || value === null || value === '')
@@ -94,7 +94,7 @@ export class ValidationService {
       return { isValid: false, errors };
     }
 
-    // 如果字段不是必填且為空，跳過其他驗證
+    // 如果Field不Yes必填且為Empty，Skip其他Verify
     if (
       !rule.required &&
       (value === undefined || value === null || value === '')
@@ -102,7 +102,7 @@ export class ValidationService {
       return { isValid: true, errors: [] };
     }
 
-    // 類型驗證
+    // Class型Verify
     if (rule.type) {
       const _typeError = this.validateType(value, rule.type);
       if (typeError) {
@@ -110,7 +110,7 @@ export class ValidationService {
       }
     }
 
-    // 長度驗證
+    // 長度Verify
     if (typeof value === 'string') {
       if (rule.minLength && value.length < rule.minLength) {
         errors.push(
@@ -126,7 +126,7 @@ export class ValidationService {
       }
     }
 
-    // 數值範圍驗證
+    // 數Value範圍Verify
     if (typeof value === 'number') {
       if (rule.min !== undefined && value < rule.min) {
         errors.push(
@@ -140,14 +140,14 @@ export class ValidationService {
       }
     }
 
-    // 正則表達式驗證
+    // 正則Table達式Verify
     if (rule.pattern && typeof value === 'string') {
       if (!rule.pattern.test(value)) {
         errors.push(rule.message || `${rule.field} format is invalid`);
       }
     }
 
-    // 自定義驗證
+    // CustomVerify
     if (rule.custom && !rule.custom(value)) {
       errors.push(rule.message || `${rule.field} validation failed`);
     }
@@ -159,7 +159,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證數據類型
+   * VerifyDataClass型
    */
   private validateType(value: unknown, type: string): string | null {
     switch (type) {
@@ -183,7 +183,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證郵箱格式
+   * VerifyEmail格式
    */
   private isValidEmail(email: string): boolean {
     const _emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -191,7 +191,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證URL格式
+   * VerifyURL格式
    */
   private isValidUrl(url: string): boolean {
     try {
@@ -203,7 +203,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證日期格式
+   * VerifyDay格式
    */
   private isValidDate(date: unknown): boolean {
     const _dateObj = new Date(date);
@@ -211,13 +211,13 @@ export class ValidationService {
   }
 
   /**
-   * 驗證API響應
+   * VerifyAPIResponse
    */
   public validateApiResponse<T = any>(
     response: unknown
   ): ValidationResult<ApiResponse<T>> {
     try {
-      // 檢查響應結構
+      // CheckResponse結構
       if (!response || typeof response !== 'object') {
         return {
           isValid: false,
@@ -226,7 +226,7 @@ export class ValidationService {
         };
       }
 
-      // 檢查必要字段
+      // Check必要Field
       if (typeof response.success !== 'boolean') {
         return {
           isValid: false,
@@ -235,7 +235,7 @@ export class ValidationService {
         };
       }
 
-      // 如果成功，檢查數據字段
+      // 如果Success，CheckDataField
       if (response.success && response.data === undefined) {
         return {
           isValid: false,
@@ -244,7 +244,7 @@ export class ValidationService {
         };
       }
 
-      // 如果失敗，檢查錯誤信息
+      // 如果Failed，CheckErrorInformation
       if (!response.success && !response.message && !response.errors) {
         return {
           isValid: false,
@@ -269,7 +269,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證用戶登錄數據
+   * VerifyUserLoginData
    */
   public validateLoginData(data: unknown): ValidationResult {
     const rules: ValidationRule[] = [
@@ -281,7 +281,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證用戶註冊數據
+   * VerifyUserRegisterData
    */
   public validateRegisterData(data: unknown): ValidationResult {
     const rules: ValidationRule[] = [
@@ -294,7 +294,7 @@ export class ValidationService {
   }
 
   /**
-   * 驗證卡片數據
+   * Verify卡片Data
    */
   public validateCardData(data: unknown): ValidationResult {
     const rules: ValidationRule[] = [
@@ -307,10 +307,10 @@ export class ValidationService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _validationService = ValidationService.getInstance();
 
-// 導出便捷函數
+// Export便捷Function
 export const _validateInput = (data: unknown, rules: ValidationRule[]) =>
   validationService.validateInput(data, rules);
 

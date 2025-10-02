@@ -1,12 +1,12 @@
 /**
- * 同意管理模組
- * 實現重構計劃任務 1.3: ConsentManagementModule
- * 負責同意收集、驗證、撤銷、更新等核心功能
+ * AgreeManage模組
+ * 實現重構計劃Task 1.3: ConsentManagementModule
+ * 負責Agree收集、Verify、撤銷、Update等核心功能
  */
 
 import { logger } from '../../../core/utils/logger';
 
-// 同意管理類型定義
+// AgreeManageClass型定義
 export interface ConsentPurpose {
   id: string;
   name: string;
@@ -174,20 +174,20 @@ export class ConsentManagementModule {
         this.config = { ...this.config, ...config };
       }
 
-      // 初始化同意目的
+      // InitializeAgree目的
       await this.initializePurposes();
 
       this.isInitialized = true;
-      logger.info('同意管理模組初始化成功');
+      logger.info('同意管理模組InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('同意管理模組初始化失敗:', error);
+      logger.error('同意管理模組InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * 收集同意
+   * 收集Agree
    */
   public collectConsent(
     userId: string,
@@ -209,7 +209,7 @@ export class ConsentManagementModule {
       );
       this.consentRecords.set(consentRecord.id, consentRecord);
 
-      // 記錄審計事件
+      // Record審計Event
       this.logAuditEvent({
         action: 'granted',
         userId,
@@ -219,7 +219,7 @@ export class ConsentManagementModule {
         userAgent: '',
       });
 
-      logger.info('同意收集成功', {
+      logger.info('同意收集Success', {
         userId,
         purposeId,
         consentType,
@@ -228,13 +228,13 @@ export class ConsentManagementModule {
 
       return consentRecord;
     } catch (error) {
-      logger.error('同意收集失敗:', error);
+      logger.error('同意收集Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 驗證同意
+   * VerifyAgree
    */
   public validateConsent(
     userId: string,
@@ -262,13 +262,13 @@ export class ConsentManagementModule {
 
       return validationResult;
     } catch (error) {
-      logger.error('同意驗證失敗:', error);
+      logger.error('同意VerifyFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 撤銷同意
+   * 撤銷Agree
    */
   public withdrawConsent(request: ConsentWithdrawalRequest): boolean {
     try {
@@ -280,7 +280,7 @@ export class ConsentManagementModule {
           consentRecord.status = 'withdrawn';
           consentRecord.withdrawnAt = new Date();
 
-          // 記錄審計事件
+          // Record審計Event
           this.logAuditEvent({
             action: 'withdrawn',
             userId: request.userId,
@@ -310,13 +310,13 @@ export class ConsentManagementModule {
 
       return success;
     } catch (error) {
-      logger.error('同意撤銷失敗:', error);
+      logger.error('同意撤銷Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新同意
+   * UpdateAgree
    */
   public updateConsent(request: ConsentUpdateRequest): ConsentRecord {
     try {
@@ -328,11 +328,11 @@ export class ConsentManagementModule {
         throw new Error('未找到要更新的同意記錄');
       }
 
-      // 撤銷舊同意
+      // 撤銷舊Agree
       previousConsent.status = 'withdrawn';
       previousConsent.withdrawnAt = new Date();
 
-      // 創建新同意
+      // Create新Agree
       const newEvidence: Omit<ConsentEvidence, 'timestamp'> = {
         method: 'update',
         location: 'web_form',
@@ -352,7 +352,7 @@ export class ConsentManagementModule {
 
       this.consentRecords.set(newConsent.id, newConsent);
 
-      // 記錄審計事件
+      // Record審計Event
       this.logAuditEvent({
         action: 'updated',
         userId: request.userId,
@@ -366,7 +366,7 @@ export class ConsentManagementModule {
         userAgent: '',
       });
 
-      logger.info('同意更新成功', {
+      logger.info('同意UpdateSuccess', {
         userId: request.userId,
         purposeId: request.purposeId,
         previousType: previousConsent.consentType,
@@ -375,13 +375,13 @@ export class ConsentManagementModule {
 
       return newConsent;
     } catch (error) {
-      logger.error('同意更新失敗:', error);
+      logger.error('同意UpdateFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取用戶同意狀態
+   * GetUserAgreeStatus
    */
   public getUserConsentStatus(
     userId: string
@@ -400,13 +400,13 @@ export class ConsentManagementModule {
 
       return status;
     } catch (error) {
-      logger.error('獲取用戶同意狀態失敗:', error);
+      logger.error('Get用戶同意狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 生成同意報告
+   * 生成AgreeReport
    */
   public generateConsentReport(period?: {
     start: Date;
@@ -438,13 +438,13 @@ export class ConsentManagementModule {
 
       return report;
     } catch (error) {
-      logger.error('生成同意報告失敗:', error);
+      logger.error('生成同意報告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 清理過期同意
+   * 清理過期Agree
    */
   public cleanupExpiredConsents(): number {
     try {
@@ -459,7 +459,7 @@ export class ConsentManagementModule {
         ) {
           consent.status = 'expired';
 
-          // 記錄審計事件
+          // Record審計Event
           this.logAuditEvent({
             action: 'expired',
             userId: consent.userId,
@@ -480,13 +480,13 @@ export class ConsentManagementModule {
 
       return cleanedCount;
     } catch (error) {
-      logger.error('清理過期同意失敗:', error);
+      logger.error('清理過期同意Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public updateConfig(config: Partial<ConsentManagementConfig>): void {
     this.config = { ...this.config, ...config };
@@ -495,7 +495,7 @@ export class ConsentManagementModule {
   }
 
   /**
-   * 重置模組
+   * Reset模組
    */
   public async reset(): Promise<void> {
     this.purposes.clear();
@@ -505,7 +505,7 @@ export class ConsentManagementModule {
     logger.info('同意管理模組已重置');
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): ConsentManagementConfig {
     return {
@@ -614,19 +614,19 @@ export class ConsentManagementModule {
     const warnings: string[] = [];
     const recommendations: string[] = [];
 
-    // 檢查同意是否過期
+    // CheckAgreeYesNo過期
     if (consent.expiresAt && consent.expiresAt < new Date()) {
       errors.push('同意已過期');
       return this.createValidationResult('expired', errors);
     }
 
-    // 檢查同意是否被撤銷
+    // CheckAgreeYesNo被撤銷
     if (consent.status === 'withdrawn') {
       errors.push('同意已被撤銷');
       return this.createValidationResult('withdrawn', errors);
     }
 
-    // 檢查同意類型
+    // CheckAgreeClass型
     if (
       this.config.requireExplicitConsent &&
       consent.consentType === 'implicit'
@@ -635,7 +635,7 @@ export class ConsentManagementModule {
       recommendations.push('考慮重新獲取明確同意');
     }
 
-    // 檢查同意版本
+    // CheckAgreeVersion
     if (consent.version !== '1.0') {
       warnings.push('同意版本可能需要更新');
       recommendations.push('檢查是否需要重新獲取同意');
@@ -817,14 +817,14 @@ export class ConsentManagementModule {
       ...event,
     };
 
-    // 這裡可以將審計事件存儲到數據庫或日誌系統
+    // 這裡可以將審計EventStorage到Database或Log系統
     logger.info(
       '同意審計事件',
       auditEvent as unknown as Record<string, unknown>
     );
   }
 
-  // 創建同意目的實例
+  // CreateAgree目的Instance
   private createEssentialPurpose(): ConsentPurpose {
     return {
       id: 'essential',
@@ -857,7 +857,7 @@ export class ConsentManagementModule {
     return {
       id: 'analytics',
       name: '分析統計',
-      description: '用於改進服務和用戶體驗的分析',
+      description: '用於改進Service和用戶體驗的分析',
       category: 'analytics',
       mandatory: false,
       defaultEnabled: false,
@@ -884,8 +884,8 @@ export class ConsentManagementModule {
   private createThirdPartyPurpose(): ConsentPurpose {
     return {
       id: 'third_party',
-      name: '第三方服務',
-      description: '與第三方服務提供商共享數據',
+      name: '第三方Service',
+      description: '與第三方Service提供商共享數據',
       category: 'third_party',
       mandatory: false,
       defaultEnabled: false,

@@ -1,0 +1,363 @@
+/**
+ * 服務初始化優化器
+ * 解決服務初始化順序和依賴問題
+ */
+
+import { logger } from '../../utils/logger';
+
+export interface ServiceDependency {
+  name: string;
+  dependencies: string[];
+  priority: number;
+  service: any;
+}
+
+export interface InitializationResult {
+  success: boolean;
+  initialized: string[];
+  failed: { service: string; error: string }[];
+  duration: number;
+  dependencyGraph: Map<string, string[]>;
+}
+
+class ServiceInitializationOptimizer {
+  private static instance: ServiceInitializationOptimizer;
+  private readonly services: Map<string, ServiceDependency> = new Map();
+  private isInitialized = false;
+
+  public static getInstance(): ServiceInitializationOptimizer {
+    if (!ServiceInitializationOptimizer.instance) {
+      ServiceInitializationOptimizer.instance =
+        new ServiceInitializationOptimizer();
+    }
+    return ServiceInitializationOptimizer.instance;
+  }
+
+  /**
+   * 註冊服務
+   */
+  public registerService(
+    name: string,
+    service: any,
+    dependencies: string[] = [],
+    priority = 0
+  ): void {
+    this.services.set(name, {
+      name,
+      dependencies,
+      priority,
+      service,
+    });
+
+    logger.info(`服務已註冊: ${name}`, { dependencies, priority });
+  }
+
+  /**
+   * 優化初始化順序
+   */
+  public optimizeInitializationOrder(): string[] {
+    const sortedServices: string[] = [];
+    const visited = new Set<string>();
+    const visiting = new Set<string>();
+
+    // 拓撲排序
+    const visit = (serviceName: string): void => {
+      if (visiting.has(serviceName)) {
+        throw new Error(`檢測到循環依賴: ${serviceName}`);
+      }
+
+      if (visited.has(serviceName)) {
+        return;
+      }
+
+      visiting.add(serviceName);
+      const service = this.services.get(serviceName);
+
+      if (service) {
+        // 先初始化依賴
+        for (const dependency of service.dependencies) {
+          if (!this.services.has(dependency)) {
+            throw new Error(
+              `服務 ${serviceName} 依賴的服務 ${dependency} 未註冊`
+            );
+          }
+          visit(dependency);
+        }
+      }
+
+      visiting.delete(serviceName);
+      visited.add(serviceName);
+      sortedServices.push(serviceName);
+    };
+
+    // 按優先級排序服務名稱
+    const serviceNames = Array.from(this.services.keys()).sort((a, b) => {
+      const serviceA = this.services.get(a)!;
+      const serviceB = this.services.get(b)!;
+      return serviceB.priority - serviceA.priority;
+    });
+
+    // 對每個服務執行拓撲排序
+    for (const serviceName of serviceNames) {
+      if (!visited.has(serviceName)) {
+        visit(serviceName);
+      }
+    }
+
+    logger.info('服務初始化順序已優化:', sortedServices);
+    return sortedServices;
+  }
+
+  /**
+   * 並行初始化服務
+   */
+  public async initializeServicesInParallel(
+    maxConcurrency = 3
+  ): Promise<InitializationResult> {
+    const startTime = Date.now();
+    const sortedServices = this.optimizeInitializationOrder();
+
+    const initialized: string[] = [];
+    const failed: { service: string; error: string }[] = [];
+    const dependencyGraph = new Map<string, string[]>();
+
+    // 構建依賴圖
+    for (const [name, service] of this.services) {
+      dependencyGraph.set(name, service.dependencies);
+    }
+
+    // 分組初始化
+    const groups = this.groupServicesByDependencies(
+      sortedServices,
+      maxConcurrency
+    );
+
+    for (const group of groups) {
+      logger.info(`初始化服務組: ${group.join(', ')}`);
+
+      const groupPromises = group.map(async serviceName => {
+        const service = this.services.get(serviceName);
+        if (!service) {
+          failed.push({ service: serviceName, error: '服務未找到' });
+          return;
+        }
+
+        try {
+          // 檢查服務是否已經初始化
+          if (service.service.isServiceAvailable?.()) {
+            logger.info(`服務 ${serviceName} 已經初始化`);
+            initialized.push(serviceName);
+            return;
+          }
+
+          // 初始化服務
+          if (typeof service.service.initialize === 'function') {
+            try {
+              const success = await service.service.initialize();
+              if (success === true) {
+                initialized.push(serviceName);
+                logger.info(`服務 ${serviceName} 初始化成功`);
+              } else {
+                failed.push({
+                  service: serviceName,
+                  error: '初始化返回 false',
+                });
+              }
+            } catch (error) {
+              const errorMessage =
+                error instanceof Error ? error.message : '未知錯誤';
+              failed.push({ service: serviceName, error: errorMessage });
+              logger.error(`服務 ${serviceName} 初始化失敗:`, error);
+            }
+          } else {
+            logger.warn(`服務 ${serviceName} 沒有 initialize 方法`);
+            initialized.push(serviceName);
+          }
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : '未知錯誤';
+          failed.push({ service: serviceName, error: errorMessage });
+          logger.error(`服務 ${serviceName} 初始化失敗:`, error);
+        }
+      });
+
+      // 等待當前組的所有服務初始化完成
+      await Promise.allSettled(groupPromises);
+    }
+
+    const duration = Date.now() - startTime;
+
+    const result: InitializationResult = {
+      success: failed.length === 0,
+      initialized,
+      failed,
+      duration,
+      dependencyGraph,
+    };
+
+    logger.info('服務初始化完成:', {
+      total: sortedServices.length,
+      initialized: initialized.length,
+      failed: failed.length,
+      duration: `${duration}ms`,
+    });
+
+    return result;
+  }
+
+  /**
+   * 按依賴關係分組服務
+   */
+  private groupServicesByDependencies(
+    sortedServices: string[],
+    maxConcurrency: number
+  ): string[][] {
+    const groups: string[][] = [];
+    let currentGroup: string[] = [];
+
+    for (const serviceName of sortedServices) {
+      const service = this.services.get(serviceName);
+      if (!service) continue;
+
+      // 檢查依賴是否已滿足
+      const dependenciesMet = service.dependencies.every(
+        dep =>
+          groups.some(group => group.includes(dep)) ||
+          currentGroup.includes(dep)
+      );
+
+      if (dependenciesMet) {
+        currentGroup.push(serviceName);
+
+        // 檢查當前組是否已滿
+        if (currentGroup.length >= maxConcurrency) {
+          groups.push([...currentGroup]);
+          currentGroup = [];
+        }
+      } else {
+        // 如果依賴未滿足，開始新組
+        if (currentGroup.length > 0) {
+          groups.push([...currentGroup]);
+          currentGroup = [serviceName];
+        } else {
+          currentGroup.push(serviceName);
+        }
+      }
+    }
+
+    if (currentGroup.length > 0) {
+      groups.push([...currentGroup]);
+    }
+
+    return groups;
+  }
+
+  /**
+   * 驗證依賴關係
+   */
+  public validateDependencies(): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    const visited = new Set<string>();
+    const visiting = new Set<string>();
+
+    const checkCycles = (serviceName: string, path: string[] = []): void => {
+      if (visiting.has(serviceName)) {
+        const cycle = [...path, serviceName].join(' -> ');
+        errors.push(`檢測到循環依賴: ${cycle}`);
+        return;
+      }
+
+      if (visited.has(serviceName)) {
+        return;
+      }
+
+      visiting.add(serviceName);
+      const service = this.services.get(serviceName);
+
+      if (service) {
+        for (const dependency of service.dependencies) {
+          if (!this.services.has(dependency)) {
+            errors.push(`服務 ${serviceName} 依賴的服務 ${dependency} 未註冊`);
+          } else {
+            checkCycles(dependency, [...path, serviceName]);
+          }
+        }
+      }
+
+      visiting.delete(serviceName);
+      visited.add(serviceName);
+    };
+
+    for (const serviceName of this.services.keys()) {
+      if (!visited.has(serviceName)) {
+        checkCycles(serviceName);
+      }
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
+  }
+
+  /**
+   * 獲取服務依賴圖
+   */
+  public getDependencyGraph(): Map<string, string[]> {
+    const graph = new Map<string, string[]>();
+
+    for (const [name, service] of this.services) {
+      graph.set(name, service.dependencies);
+    }
+
+    return graph;
+  }
+
+  /**
+   * 檢查服務狀態
+   */
+  public getServiceStatus(): Record<string, boolean> {
+    const status: Record<string, boolean> = {};
+
+    for (const [name, service] of this.services) {
+      if (service.service.isServiceAvailable) {
+        status[name] = service.service.isServiceAvailable();
+      } else {
+        status[name] = false;
+      }
+    }
+
+    return status;
+  }
+
+  /**
+   * 重置優化器
+   */
+  public reset(): void {
+    this.services.clear();
+    this.isInitialized = false;
+    logger.info('服務初始化優化器已重置');
+  }
+
+  /**
+   * 檢查優化器狀態
+   */
+  public isOptimizerAvailable(): boolean {
+    return this.services.size > 0;
+  }
+
+  /**
+   * 獲取優化器統計
+   */
+  public getStats(): unknown {
+    return {
+      totalServices: this.services.size,
+      isOptimizerAvailable: this.isOptimizerAvailable(),
+      serviceNames: Array.from(this.services.keys()),
+    };
+  }
+}
+
+// 導出單例實例
+export const serviceInitializationOptimizer =
+  ServiceInitializationOptimizer.getInstance();

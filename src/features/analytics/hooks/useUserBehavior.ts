@@ -51,8 +51,8 @@ import type {
 } from '../types/userBehavior';
 
 /**
- * 用戶行為分析 Hook
- * 提供完整的用戶行為分析功能
+ * UserRow為Analysis Hook
+ * 提供完整的UserRow為Analysis功能
  */
 export const _useUserBehavior = () => {
   const _dispatch = useAppDispatch();
@@ -70,12 +70,12 @@ export const _useUserBehavior = () => {
   const _currentReport = useSelector(selectCurrentReport);
   const _reports = useSelector(selectReports);
 
-  // 初始化
+  // Initialize
   const _initialize = useCallback(async () => {
     return dispatch(initializeUserBehavior()).unwrap();
   }, [dispatch]);
 
-  // 獲取行為分析
+  // GetRow為Analysis
   const _getAnalysis = useCallback(
     async (filter?: UserBehaviorFilter) => {
       return dispatch(getBehaviorAnalysis(filter)).unwrap();
@@ -83,7 +83,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 生成報告
+  // 生成Report
   const _generateReport = useCallback(
     async (
       title: string,
@@ -103,7 +103,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 導出數據
+  // ExportData
   const _exportData = useCallback(
     async (
       analysis: UserBehaviorAnalysisResponse,
@@ -114,7 +114,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 創建警報
+  // CreateAlert
   const _createAlert = useCallback(
     async (alert: Omit<UserBehaviorAlert, 'id' | 'triggerCount'>) => {
       return dispatch(createBehaviorAlert(alert)).unwrap();
@@ -122,7 +122,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 更新警報
+  // UpdateAlert
   const _updateAlert = useCallback(
     async (alertId: string, updates: Partial<UserBehaviorAlert>) => {
       return dispatch(updateBehaviorAlert({ alertId, updates })).unwrap();
@@ -130,7 +130,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 刪除警報
+  // DeleteAlert
   const _deleteAlert = useCallback(
     async (alertId: string) => {
       return dispatch(deleteBehaviorAlert(alertId)).unwrap();
@@ -138,7 +138,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 獲取用戶畫像
+  // GetUser畫像
   const _getUserProfileData = useCallback(
     async (userId: string) => {
       return dispatch(getUserProfile(userId)).unwrap();
@@ -146,7 +146,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 獲取用戶模式
+  // GetUser模式
   const _getUserPatternsData = useCallback(
     async (userId: string) => {
       return dispatch(getUserPatterns(userId)).unwrap();
@@ -154,7 +154,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 獲取用戶指標
+  // GetUser指標
   const _getUserMetricsData = useCallback(
     async (userId: string) => {
       return dispatch(getUserMetrics(userId)).unwrap();
@@ -162,7 +162,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 設置過濾器
+  // SettingsFilter器
   const _setFilterData = useCallback(
     (filter: UserBehaviorFilter) => {
       dispatch(setFilter(filter));
@@ -170,12 +170,12 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 清除過濾器
+  // ClearFilter器
   const _clearFilterData = useCallback(() => {
     dispatch(clearFilter());
   }, [dispatch]);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfigData = useCallback(
     (updates: Partial<UserBehaviorConfig>) => {
       dispatch(updateConfig(updates));
@@ -183,7 +183,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 添加事件
+  // AddEvent
   const _addEventData = useCallback(
     (event: UserBehaviorEvent) => {
       dispatch(addEvent(event));
@@ -191,7 +191,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 更新實時指標
+  // Update實時指標
   const _updateRealTimeMetricsData = useCallback(
     (metrics: {
       activeUsers: number;
@@ -204,7 +204,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 設置洞察
+  // Settings洞察
   const _setInsightsData = useCallback(
     (insights: unknown[]) => {
       dispatch(setInsights(insights));
@@ -212,7 +212,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 設置建議
+  // Settings建議
   const _setRecommendationsData = useCallback(
     (recommendations: unknown[]) => {
       dispatch(setRecommendations(recommendations));
@@ -220,12 +220,12 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 清除錯誤
+  // ClearError
   const _clearErrorData = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 設置當前報告
+  // Settings當前Report
   const _setCurrentReportData = useCallback(
     (report: unknown) => {
       dispatch(setCurrentReport(report));
@@ -233,7 +233,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 添加報告
+  // AddReport
   const _addReportData = useCallback(
     (report: unknown) => {
       dispatch(addReport(report));
@@ -241,7 +241,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 刪除報告
+  // DeleteReport
   const _deleteReportData = useCallback(
     (reportId: string) => {
       dispatch(deleteReport(reportId));
@@ -249,7 +249,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 設置用戶畫像
+  // SettingsUser畫像
   const _setUserProfileData = useCallback(
     (userId: string, profile: unknown) => {
       dispatch(setUserProfile({ userId, profile }));
@@ -257,7 +257,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 設置用戶模式
+  // SettingsUser模式
   const _setUserPatternsData = useCallback(
     (userId: string, patterns: unknown[]) => {
       dispatch(setUserPatterns({ userId, patterns }));
@@ -265,7 +265,7 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 設置用戶指標
+  // SettingsUser指標
   const _setUserMetricsData = useCallback(
     (userId: string, metrics: unknown) => {
       dispatch(setUserMetrics({ userId, metrics }));
@@ -273,39 +273,39 @@ export const _useUserBehavior = () => {
     [dispatch]
   );
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (!isInitialized && !isLoading) {
       initialize();
     }
   }, [isInitialized, isLoading, initialize]);
 
-  // 實時指標更新
+  // 實時指標Update
   useEffect(() => {
     if (isInitialized && analysis) {
       const _interval = setInterval(() => {
-        // 模擬實時數據更新
+        // 模擬實時DataUpdate
         updateRealTimeMetricsData({
           activeUsers: Math.floor(Math.random() * 1000) + 100,
           averageSessionDuration: Math.floor(Math.random() * 300) + 120,
           conversionRate: Math.random() * 0.1 + 0.02,
           engagementScore: Math.random() * 100,
         });
-      }, 30000); // 每30秒更新一次
+      }, 30000); // 每30SecondUpdate一次
 
       return () => clearInterval(interval);
     }
     return undefined;
   }, [isInitialized, analysis, updateRealTimeMetricsData]);
 
-  // 計算衍生數據
+  // 計算衍生Data
   const _derivedData = useMemo(() => {
     if (!analysis) return null;
 
     const _analysisData = analysis as any;
 
     return {
-      // 用戶活躍度
+      // User活躍度
       userActivity: {
         totalUsers: analysisData.stats?.totalUsers || 0,
         activeUsers: analysisData.stats?.activeUsers || 0,
@@ -314,7 +314,7 @@ export const _useUserBehavior = () => {
         churnRate: analysisData.stats?.churnRate || 0,
       },
 
-      // 行為模式
+      // Row為模式
       behaviorPatterns: {
         totalPatterns: analysisData.patterns?.length || 0,
         topPatterns: analysisData.patterns?.slice(0, 5) || [],
@@ -328,7 +328,7 @@ export const _useUserBehavior = () => {
           ) || {},
       },
 
-      // 事件統計
+      // EventStatistics
       eventStats: {
         totalEvents: analysisData.stats?.totalEvents || 0,
         eventsByType: analysisData.stats?.eventsByType || {},
@@ -338,14 +338,14 @@ export const _useUserBehavior = () => {
           .slice(0, 5),
       },
 
-      // 時間分析
+      // TimeAnalysis
       timeAnalysis: {
         peakHours: analysisData.stats?.peakHours || [],
         averageSessionDuration: analysisData.stats?.averageSessionDuration || 0,
         sessionFrequency: analysisData.stats?.sessionFrequency || 0,
       },
 
-      // 轉換分析
+      // ConvertAnalysis
       conversionAnalysis: {
         conversionRate: analysisData.stats?.conversionRate || 0,
         conversionFunnel: analysisData.stats?.conversionFunnel || [],
@@ -355,7 +355,7 @@ export const _useUserBehavior = () => {
   }, [analysis]);
 
   return {
-    // 狀態
+    // Status
     userBehavior,
     analysis,
     isInitialized,
@@ -370,7 +370,7 @@ export const _useUserBehavior = () => {
     currentReport,
     reports,
 
-    // 操作
+    // Operation
     initialize,
     getAnalysis,
     generateReport,
@@ -396,14 +396,14 @@ export const _useUserBehavior = () => {
     setUserPatterns: setUserPatternsData,
     setUserMetrics: setUserMetricsData,
 
-    // 衍生數據
+    // 衍生Data
     derivedData,
   };
 };
 
 /**
- * 基礎用戶行為分析 Hook
- * 提供基本的用戶行為分析功能
+ * 基礎UserRow為Analysis Hook
+ * 提供基本的UserRow為Analysis功能
  */
 export const _useBasicUserBehavior = () => {
   const { analysis, isInitialized, isLoading, error, getAnalysis, initialize } =
@@ -420,8 +420,8 @@ export const _useBasicUserBehavior = () => {
 };
 
 /**
- * 用戶行為警報 Hook
- * 專門用於管理用戶行為警報
+ * UserRow為Alert Hook
+ * 專門用於ManageUserRow為Alert
  */
 export const _useUserBehaviorAlerts = () => {
   const { alerts, isLoading, createAlert, updateAlert, deleteAlert } =
@@ -437,8 +437,8 @@ export const _useUserBehaviorAlerts = () => {
 };
 
 /**
- * 用戶行為報告 Hook
- * 專門用於管理用戶行為報告
+ * UserRow為Report Hook
+ * 專門用於ManageUserRow為Report
  */
 export const _useUserBehaviorReports = () => {
   const {
@@ -465,8 +465,8 @@ export const _useUserBehaviorReports = () => {
 };
 
 /**
- * 用戶畫像 Hook
- * 專門用於管理用戶畫像數據
+ * User畫像 Hook
+ * 專門用於ManageUser畫像Data
  */
 export const _useUserProfiles = () => {
   const {
@@ -514,8 +514,8 @@ export const _useUserProfiles = () => {
 };
 
 /**
- * 實時用戶行為 Hook
- * 專門用於實時用戶行為監控
+ * 實時UserRow為 Hook
+ * 專門用於實時UserRow為Monitor
  */
 export const _useRealTimeUserBehavior = () => {
   const { realTimeMetrics, recentEvents, updateRealTimeMetrics, addEvent } =

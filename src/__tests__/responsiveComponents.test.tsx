@@ -1,4 +1,4 @@
-// 響應式組件測試
+// Response式ComponentTest
 
 import { configureStore } from '@reduxjs/toolkit';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -20,7 +20,7 @@ import { responsiveComponentService } from '../services/responsiveComponentServi
 import { designSystemSlice } from '../store/slices/designSystemSlice';
 import { layoutSlice } from '../store/slices/layoutSlice';
 
-// 創建測試用的 Redux store
+// CreateTest用的 Redux store
 const _createTestStore = () => {
   return configureStore({
     reducer: {
@@ -30,7 +30,7 @@ const _createTestStore = () => {
   });
 };
 
-// 測試包裝器
+// TestPackage裝器
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const _store = createTestStore();
 
@@ -43,7 +43,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
-// 測試數據
+// TestData
 const _mockTableData = [
   { id: 1, name: '項目1', status: '活躍', date: '2024-01-01' },
   { id: 2, name: '項目2', status: '暫停', date: '2024-01-02' },
@@ -65,7 +65,7 @@ const _mockNavigationItems = [
 
 describe('響應式組件測試', () => {
   beforeEach(() => {
-    // 重置響應式組件服務
+    // ResetResponse式ComponentService
     jest.clearAllMocks();
   });
 
@@ -391,7 +391,7 @@ describe('響應式組件測試', () => {
       const _testTool = screen.getByTestId('responsive-test-tool');
       expect(testTool).toBeInTheDocument();
 
-      // 檢查設備選擇按鈕
+      // Check設備Select按鈕
       expect(screen.getByText('iPhone SE')).toBeInTheDocument();
       expect(screen.getByText('iPhone 12')).toBeInTheDocument();
       expect(screen.getByText('iPad')).toBeInTheDocument();
@@ -412,7 +412,7 @@ describe('響應式組件測試', () => {
       const _testTool = screen.getByTestId('responsive-test-tool');
       expect(testTool).toBeInTheDocument();
 
-      // 檢查方向選擇按鈕
+      // Check方向Select按鈕
       expect(screen.getByText('豎屏')).toBeInTheDocument();
       expect(screen.getByText('橫屏')).toBeInTheDocument();
     });
@@ -434,18 +434,18 @@ describe('響應式組件測試', () => {
       const _testTool = screen.getByTestId('responsive-test-tool');
       expect(testTool).toBeInTheDocument();
 
-      // 點擊運行測試按鈕
+      // 點擊運RowTest按鈕
       const _runTestButton = screen.getByText('運行測試');
       fireEvent.click(runTestButton);
 
-      // 等待測試完成
+      // AwaitTestComplete
       await waitFor(() => {
         expect(screen.getByText('測試結果')).toBeInTheDocument();
       });
     });
   });
 
-  describe('響應式組件服務', () => {
+  describe('響應式組件Service', () => {
     it('應該正確註冊組件', () => {
       const _component = {
         name: 'TestComponent',

@@ -1,9 +1,9 @@
 const path = require('path');
 
-// 環境配置
+// 環境Configure
 const env = process.env.NODE_ENV || 'development';
 
-// 基礎配置
+// 基礎Configure
 const baseConfig = {
   app: {
     name: 'CardStrategy',
@@ -66,7 +66,7 @@ const baseConfig = {
   },
 };
 
-// 環境特定配置
+// 環境SpecificConfigure
 const envConfigs = {
   development: {
     database: {
@@ -115,7 +115,7 @@ const envConfigs = {
   },
 };
 
-// 合併配置
+// MergeConfigure
 const config = {
   ...baseConfig,
   ...envConfigs[env],
@@ -125,7 +125,7 @@ const config = {
   },
 };
 
-// 配置驗證
+// ConfigureVerify
 const validateConfig = () => {
   const required = [
     'database.host',

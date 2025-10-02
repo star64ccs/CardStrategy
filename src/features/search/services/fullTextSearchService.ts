@@ -56,26 +56,26 @@ export class FullTextSearchService {
     try {
       console.log('FullTextSearchService 初始化開始...');
 
-      // 初始化搜索索引
+      // InitializeSearchIndex
       await this.initializeSearchIndex();
 
-      // 加載搜索配置
+      // 加載SearchConfigure
       await this.loadSearchConfig();
 
-      // 初始化緩存
+      // InitializeCache
       this.initializeCache();
 
       this.isInitialized = true;
       console.log('FullTextSearchService 初始化完成');
       return true;
     } catch (error) {
-      console.error('FullTextSearchService 初始化失敗:', error);
+      console.error('FullTextSearchService InitializeFailed:', error);
       return false;
     }
   }
 
   private async initializeSearchIndex(): Promise<void> {
-    // 模擬初始化搜索索引
+    // 模擬InitializeSearchIndex
     const mockData: SearchResult[] = [
       {
         id: '1',
@@ -150,15 +150,15 @@ export class FullTextSearchService {
   }
 
   private async loadSearchConfig(): Promise<void> {
-    // 模擬從配置文件或數據庫加載配置
+    // 模擬從ConfigureFile或Database加載Configure
     console.log('搜索配置載入完成');
   }
 
   private initializeCache(): void {
-    // 初始化緩存系統
+    // InitializeCache系統
     setInterval(() => {
       this.cleanExpiredCache();
-    }, 60000); // 每分鐘清理過期緩存
+    }, 60000); // 每Minute清理過期Cache
     console.log('緩存系統初始化完成');
   }
 
@@ -167,13 +167,13 @@ export class FullTextSearchService {
 
     try {
       if (!this.isInitialized) {
-        throw new Error('搜索服務未初始化');
+        throw new Error('搜索Service未Initialize');
       }
 
-      // 驗證查詢
+      // VerifyQuery
       this.validateQuery(query);
 
-      // 檢查緩存
+      // CheckCache
       const _cacheKey = this.generateCacheKey(query);
       if (this.config.cacheEnabled && this.cache.has(cacheKey)) {
         const _cachedResponse = this.cache.get(cacheKey)!;
@@ -181,16 +181,16 @@ export class FullTextSearchService {
         return cachedResponse;
       }
 
-      // 執行搜索
+      // 執RowSearch
       const _results = await this.executeSearch(query);
 
-      // 應用過濾器
+      // ApplyFilter器
       const _filteredResults = this.applyFilters(results, query.filters);
 
-      // 應用排序
+      // ApplySort
       const _sortedResults = this.applySorting(filteredResults, query.sortBy);
 
-      // 分頁
+      // Paginate
       const _paginatedResults = this.applyPagination(
         sortedResults,
         query.page,
@@ -230,19 +230,19 @@ export class FullTextSearchService {
         facets,
       };
 
-      // 緩存結果
+      // Cache結果
       if (this.config.cacheEnabled) {
         this.cache.set(cacheKey, response);
       }
 
-      // 記錄搜索歷史
+      // RecordSearch歷史
       this.recordSearchHistory(query, response);
 
       return response;
     } catch (error) {
       const searchError: SearchError = {
         code: 'SEARCH_ERROR',
-        message: error instanceof Error ? error.message : '搜索執行失敗',
+        message: error instanceof Error ? error.message : '搜索執行Failed',
         details: { query },
         timestamp: new Date(),
       };
@@ -266,7 +266,7 @@ export class FullTextSearchService {
     const _searchTerm = query.query.toLowerCase();
     const _allResults = this.searchIndex.get('cards') || [];
 
-    // 簡單的全文搜索實現
+    // 簡單的全文Search實現
     const _results = allResults.filter(result => {
       const _searchableText = [
         result.title,
@@ -284,7 +284,7 @@ export class FullTextSearchService {
       return searchableText.includes(searchTerm);
     });
 
-    // 計算相關性分數
+    // 計算相Off性分數
     return results.map(result => ({
       ...result,
       score: this.calculateRelevanceScore(result, searchTerm),
@@ -314,17 +314,17 @@ export class FullTextSearchService {
       score += 0.4;
     }
 
-    // 描述匹配
+    // Description匹配
     if (result.description.toLowerCase().includes(searchTerm)) {
       score += 0.2;
     }
 
-    // 標籤匹配
+    // Tag匹配
     if (result.tags?.some(tag => tag.toLowerCase().includes(searchTerm))) {
       score += 0.3;
     }
 
-    // 其他字段匹配
+    // 其他Field匹配
     if (searchableText.includes(searchTerm)) {
       score += 0.1;
     }
@@ -339,7 +339,7 @@ export class FullTextSearchService {
     if (!filters) return results;
 
     return results.filter(result => {
-      // 價格範圍過濾
+      // 價格範圍Filter
       if (filters.priceRange) {
         const _price = result.price || 0;
         if (filters.priceRange.min && price < filters.priceRange.min)
@@ -348,7 +348,7 @@ export class FullTextSearchService {
           return false;
       }
 
-      // 條件過濾
+      // ConditionFilter
       if (filters.condition && filters.condition.length > 0) {
         if (
           !result.condition ||
@@ -358,49 +358,49 @@ export class FullTextSearchService {
         }
       }
 
-      // 稀有度過濾
+      // 稀有度Filter
       if (filters.rarity && filters.rarity.length > 0) {
         if (!result.rarity || !filters.rarity.includes(result.rarity)) {
           return false;
         }
       }
 
-      // 系列過濾
+      // 系ColumnFilter
       if (filters.set && filters.set.length > 0) {
         if (!result.set || !filters.set.includes(result.set)) {
           return false;
         }
       }
 
-      // 年份過濾
+      // YearFilter
       if (filters.year && filters.year.length > 0) {
         if (!result.year || !filters.year.includes(result.year)) {
           return false;
         }
       }
 
-      // 語言過濾
+      // LanguageFilter
       if (filters.language && filters.language.length > 0) {
         if (!result.language || !filters.language.includes(result.language)) {
           return false;
         }
       }
 
-      // 位置過濾
+      // 位置Filter
       if (filters.location && filters.location.length > 0) {
         if (!result.location || !filters.location.includes(result.location)) {
           return false;
         }
       }
 
-      // 賣家過濾
+      // 賣家Filter
       if (filters.seller && filters.seller.length > 0) {
         if (!result.seller || !filters.seller.includes(result.seller)) {
           return false;
         }
       }
 
-      // 標籤過濾
+      // TagFilter
       if (filters.tags && filters.tags.length > 0) {
         if (
           !result.tags ||
@@ -410,13 +410,13 @@ export class FullTextSearchService {
         }
       }
 
-      // 真偽過濾
+      // True偽Filter
       if (filters.isAuthentic !== undefined) {
-        // 這裡需要根據實際數據結構調整
-        // 暫時跳過這個過濾
+        // 這裡需要Root據實際Data結構調整
+        // 暫時Skip這個Filter
       }
 
-      // 圖片過濾
+      // Graph片Filter
       if (filters.hasImage !== undefined) {
         if (filters.hasImage && !result.image) return false;
         if (!filters.hasImage && result.image) return false;
@@ -506,7 +506,7 @@ export class FullTextSearchService {
         if (titleHighlight) highlights.push(titleHighlight);
       }
 
-      // 描述高亮
+      // Description高亮
       if (result.description) {
         const _descHighlight = this.createHighlight(
           result.description,
@@ -680,7 +680,7 @@ export class FullTextSearchService {
       timestamp: new Date(),
     };
 
-    const _userId = 'anonymous'; // 實際應用中應該從認證系統獲取
+    const _userId = 'anonymous'; // 實際Apply中應該從Authenticate系統Get
     if (!this.searchHistory.has(userId)) {
       this.searchHistory.set(userId, []);
     }
@@ -688,7 +688,7 @@ export class FullTextSearchService {
     const _userHistory = this.searchHistory.get(userId)!;
     userHistory.push(historyEntry);
 
-    // 限制歷史記錄數量
+    // Limit歷史Record數量
     if (userHistory.length > 100) {
       userHistory.splice(0, userHistory.length - 100);
     }
@@ -697,7 +697,7 @@ export class FullTextSearchService {
   private cleanExpiredCache(): void {
     const _now = Date.now();
     for (const [key, value] of this.cache.entries()) {
-      // 簡單的緩存過期檢查
+      // 簡單的Cache過期Check
       if (now - value.searchTime > this.config.cacheTTL) {
         this.cache.delete(key);
       }
@@ -750,7 +750,7 @@ export class FullTextSearchService {
   }
 
   private getSearchTrends(): unknown[] {
-    // 模擬搜索趨勢數據
+    // 模擬Search趨勢Data
     return [
       { date: '2023-12-01', searches: 150, uniqueUsers: 120 },
       { date: '2023-12-02', searches: 180, uniqueUsers: 140 },
@@ -784,11 +784,11 @@ export class FullTextSearchService {
   async updateSearchIndex(indexName: string): Promise<boolean> {
     try {
       console.log(`更新搜索索引: ${indexName}`);
-      // 模擬索引更新
+      // 模擬IndexUpdate
       await new Promise(resolve => setTimeout(resolve, 1000));
       return true;
     } catch (error) {
-      console.error(`更新搜索索引失敗: ${indexName}`, error);
+      console.error(`Update搜索索引Failed: ${indexName}`, error);
       return false;
     }
   }

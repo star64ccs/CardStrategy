@@ -14,55 +14,55 @@ import type {
 } from '../../features/search/types/search';
 import { SearchError } from '../../features/search/types/search';
 
-// 搜索狀態接口
+// SearchStatusInterface
 interface SearchState {
-  // 搜索結果
+  // Search結果
   results: SearchResult[];
   total: number;
   page: number;
   limit: number;
   totalPages: number;
 
-  // 搜索查詢
+  // SearchQuery
   currentQuery: string;
   currentFilters: SearchFilters;
   currentSortBy: SortOption;
 
-  // 搜索響應時間
+  // SearchResponseTime
   searchTime: number;
 
-  // 搜索建議
+  // Search建議
   suggestions: string[];
 
-  // 搜索分面
+  // Search分面
   facets: unknown;
 
-  // 加載狀態
+  // 加載Status
   isLoading: boolean;
   isInitializing: boolean;
 
-  // 錯誤狀態
+  // ErrorStatus
   error: string | null;
 
-  // 搜索歷史
+  // Search歷史
   searchHistory: unknown[];
 
-  // 搜索統計
+  // SearchStatistics
   searchStats: SearchStats | null;
 
-  // 搜索索引
+  // SearchIndex
   searchIndexes: SearchIndex[];
 
-  // 搜索配置
+  // SearchConfigure
   searchConfig: SearchConfig | null;
 
-  // 最近搜索
+  // 最近Search
   recentSearches: string[];
 
-  // 熱門搜索
+  // 熱門Search
   popularSearches: unknown[];
 
-  // 搜索偏好
+  // SearchPreferences
   searchPreferences: {
     autoSuggest: boolean;
     searchHistory: boolean;
@@ -72,7 +72,7 @@ interface SearchState {
   };
 }
 
-// 初始狀態
+// 初始Status
 const initialState: SearchState = {
   results: [],
   total: 0,
@@ -103,7 +103,7 @@ const initialState: SearchState = {
   },
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 export const _initializeSearchService = createAsyncThunk(
   'search/initializeService',
   async (_, { rejectWithValue }) => {
@@ -112,7 +112,7 @@ export const _initializeSearchService = createAsyncThunk(
       const _result = await searchService.initialize();
 
       if (!result) {
-        throw new Error('搜索服務初始化失敗');
+        throw new Error('搜索ServiceInitializeFailed');
       }
 
       return {
@@ -121,7 +121,7 @@ export const _initializeSearchService = createAsyncThunk(
       };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '初始化失敗'
+        error instanceof Error ? error.message : 'InitializeFailed'
       );
     }
   }
@@ -134,14 +134,14 @@ export const _performSearch = createAsyncThunk(
       const _searchService = FullTextSearchService.getInstance();
 
       if (!searchService.getInitializationStatus()) {
-        throw new Error('搜索服務未初始化');
+        throw new Error('搜索Service未Initialize');
       }
 
       const _response = await searchService.search(query);
       return response;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '搜索失敗'
+        error instanceof Error ? error.message : '搜索Failed'
       );
     }
   }
@@ -156,7 +156,7 @@ export const _getSearchStats = createAsyncThunk(
       return stats;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取統計失敗'
+        error instanceof Error ? error.message : 'Get統計Failed'
       );
     }
   }
@@ -170,34 +170,34 @@ export const _updateSearchIndex = createAsyncThunk(
       const _result = await searchService.updateSearchIndex(indexName);
 
       if (!result) {
-        throw new Error('索引更新失敗');
+        throw new Error('索引UpdateFailed');
       }
 
       return { indexName, success: true };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '索引更新失敗'
+        error instanceof Error ? error.message : '索引UpdateFailed'
       );
     }
   }
 );
 
-// 搜索 Slice
+// Search Slice
 const _searchSlice = createSlice({
   name: 'search',
   initialState,
   reducers: {
-    // 設置搜索查詢
+    // SettingsSearchQuery
     setSearchQuery: (state, action: PayloadAction<string>) => {
       state.currentQuery = action.payload;
     },
 
-    // 設置搜索過濾器
+    // SettingsSearchFilter器
     setSearchFilters: (state, action: PayloadAction<SearchFilters>) => {
       state.currentFilters = action.payload;
     },
 
-    // 更新搜索過濾器
+    // UpdateSearchFilter器
     updateSearchFilters: (
       state,
       action: PayloadAction<Partial<SearchFilters>>
@@ -205,22 +205,22 @@ const _searchSlice = createSlice({
       state.currentFilters = { ...state.currentFilters, ...action.payload };
     },
 
-    // 設置排序選項
+    // SettingsSortOptions
     setSortBy: (state, action: PayloadAction<SortOption>) => {
       state.currentSortBy = action.payload;
     },
 
-    // 設置頁碼
+    // Settings頁碼
     setPage: (state, action: PayloadAction<number>) => {
       state.page = action.payload;
     },
 
-    // 設置每頁數量
+    // Settings每頁數量
     setLimit: (state, action: PayloadAction<number>) => {
       state.limit = action.payload;
     },
 
-    // 清除搜索結果
+    // ClearSearch結果
     clearSearchResults: state => {
       state.results = [];
       state.total = 0;
@@ -231,50 +231,50 @@ const _searchSlice = createSlice({
       state.facets = null;
     },
 
-    // 清除搜索查詢
+    // ClearSearchQuery
     clearSearchQuery: state => {
       state.currentQuery = '';
       state.currentFilters = {};
       state.currentSortBy = { field: 'score', direction: 'desc' };
     },
 
-    // 添加搜索歷史
+    // AddSearch歷史
     addSearchHistory: (state, action: PayloadAction<any>) => {
       state.searchHistory.unshift(action.payload);
-      // 限制歷史記錄數量
+      // Limit歷史Record數量
       if (state.searchHistory.length > 50) {
         state.searchHistory = state.searchHistory.slice(0, 50);
       }
     },
 
-    // 清除搜索歷史
+    // ClearSearch歷史
     clearSearchHistory: state => {
       state.searchHistory = [];
     },
 
-    // 添加最近搜索
+    // Add最近Search
     addRecentSearch: (state, action: PayloadAction<string>) => {
       const _query = action.payload.trim();
       if (query && !state.recentSearches.includes(query)) {
         state.recentSearches.unshift(query);
-        // 限制最近搜索數量
+        // Limit最近Search數量
         if (state.recentSearches.length > 10) {
           state.recentSearches = state.recentSearches.slice(0, 10);
         }
       }
     },
 
-    // 清除最近搜索
+    // Clear最近Search
     clearRecentSearches: state => {
       state.recentSearches = [];
     },
 
-    // 設置熱門搜索
+    // Settings熱門Search
     setPopularSearches: (state, action: PayloadAction<any[]>) => {
       state.popularSearches = action.payload;
     },
 
-    // 更新搜索偏好
+    // UpdateSearchPreferences
     updateSearchPreferences: (
       state,
       action: PayloadAction<Partial<SearchState['searchPreferences']>>
@@ -285,34 +285,34 @@ const _searchSlice = createSlice({
       };
     },
 
-    // 設置搜索建議
+    // SettingsSearch建議
     setSuggestions: (state, action: PayloadAction<string[]>) => {
       state.suggestions = action.payload;
     },
 
-    // 清除搜索建議
+    // ClearSearch建議
     clearSuggestions: state => {
       state.suggestions = [];
     },
 
-    // 設置錯誤
+    // SettingsError
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
     },
 
-    // 重置搜索狀態
+    // ResetSearchStatus
     resetSearchState: state => {
       return { ...initialState, searchPreferences: state.searchPreferences };
     },
   },
   extraReducers: builder => {
     builder
-      // 初始化搜索服務
+      // InitializeSearchService
       .addCase(initializeSearchService.pending, state => {
         state.isInitializing = true;
         state.error = null;
@@ -327,7 +327,7 @@ const _searchSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // 執行搜索
+      // 執RowSearch
       .addCase(performSearch.pending, state => {
         state.isLoading = true;
         state.error = null;
@@ -345,12 +345,12 @@ const _searchSlice = createSlice({
           state.suggestions = action.payload.suggestions || [];
           state.facets = action.payload.facets;
 
-          // 更新當前查詢和過濾器
+          // Update當前Query和Filter器
           state.currentQuery = action.payload.query;
           state.currentFilters = action.payload.filters;
           state.currentSortBy = action.payload.sortBy;
 
-          // 添加到最近搜索
+          // Add到最近Search
           if (action.payload.query.trim()) {
             state.recentSearches = state.recentSearches.filter(
               q => q !== action.payload.query
@@ -367,7 +367,7 @@ const _searchSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // 獲取搜索統計
+      // GetSearchStatistics
       .addCase(getSearchStats.pending, state => {
         state.error = null;
       })
@@ -382,12 +382,12 @@ const _searchSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // 更新搜索索引
+      // UpdateSearchIndex
       .addCase(updateSearchIndex.pending, state => {
         state.error = null;
       })
       .addCase(updateSearchIndex.fulfilled, (state, action) => {
-        // 更新索引狀態
+        // UpdateIndexStatus
         const { indexName } = action.payload;
         const _index = state.searchIndexes.find(idx => idx.id === indexName);
         if (index) {
@@ -400,7 +400,7 @@ const _searchSlice = createSlice({
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   setSearchQuery,
   setSearchFilters,
@@ -423,7 +423,7 @@ export const {
   resetSearchState,
 } = searchSlice.actions;
 
-// 導出 selectors
+// Export selectors
 export const _selectSearchResults = (state: { search: SearchState }) =>
   state.search.results;
 export const _selectSearchTotal = (state: { search: SearchState }) =>
@@ -467,5 +467,5 @@ export const _selectPopularSearches = (state: { search: SearchState }) =>
 export const _selectSearchPreferences = (state: { search: SearchState }) =>
   state.search.searchPreferences;
 
-// 導出 reducer
+// Export reducer
 export default searchSlice.reducer;

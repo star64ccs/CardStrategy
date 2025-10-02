@@ -3,8 +3,8 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 卡牌服務
- * 處理卡牌相關功能
+ * 卡牌Service
+ * Handle卡牌相Off功能
  */
 export class CardService {
   private static instance: CardService;
@@ -19,7 +19,7 @@ export class CardService {
   }
 
   /**
-   * 獲取卡牌列表
+   * Get卡牌List
    */
   async getCards(
     filters?: CardFilters,
@@ -32,16 +32,16 @@ export class CardService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('獲取卡牌列表失敗');
+        throw new Error('Get卡牌列表Failed');
       }
     } catch (error) {
-      logger.error('獲取卡牌列表失敗:', { error });
+      logger.error('Get卡牌列表Failed:', { error });
       throw error;
     }
   }
 
   /**
-   * 獲取卡牌詳情
+   * Get卡牌詳情
    */
   async getCardById(cardId: string): Promise<Card> {
     try {
@@ -50,16 +50,16 @@ export class CardService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('獲取卡牌詳情失敗');
+        throw new Error('Get卡牌詳情Failed');
       }
     } catch (error) {
-      logger.error('獲取卡牌詳情失敗:', { error, cardId });
+      logger.error('Get卡牌詳情Failed:', { error, cardId });
       throw error;
     }
   }
 
   /**
-   * 識別卡牌（存根方法）
+   * 識別卡牌（存RootMethod）
    */
   async recognizeCard(imageData: string): Promise<any> {
     logger.info('識別卡牌（存根方法）:', {
@@ -79,7 +79,7 @@ export class CardService {
   }
 
   /**
-   * 獲取單個卡牌（存根方法）
+   * GetSingle卡牌（存RootMethod）
    */
   async getCard(cardId: string): Promise<any> {
     logger.info('獲取單個卡牌（存根方法）:', { cardId });
@@ -92,13 +92,13 @@ export class CardService {
         rarity: 'Rare',
         price: 100,
       },
-      message: '卡牌獲取成功',
+      message: '卡牌GetSuccess',
       timestamp: new Date(),
     };
   }
 
   /**
-   * 搜索卡牌（存根方法）
+   * Search卡牌（存RootMethod）
    */
   async searchCards(query: string): Promise<any> {
     logger.info('搜索卡牌（存根方法）:', { query });
@@ -114,7 +114,7 @@ export class CardService {
   }
 
   /**
-   * 過濾卡牌（存根方法）
+   * Filter卡牌（存RootMethod）
    */
   async filterCards(filters: unknown): Promise<any> {
     logger.info('過濾卡牌（存根方法）:', { filters });
@@ -130,7 +130,7 @@ export class CardService {
   }
 
   /**
-   * 分析卡牌狀況（存根方法）
+   * Analysis卡牌狀況（存RootMethod）
    */
   async analyzeCondition(cardId: string): Promise<any> {
     logger.info('分析卡牌狀況（存根方法）:', { cardId });
@@ -148,7 +148,7 @@ export class CardService {
   }
 
   /**
-   * 驗證卡牌真偽（存根方法）
+   * Verify卡牌True偽（存RootMethod）
    */
   async verifyAuthenticity(cardId: string): Promise<any> {
     logger.info('驗證卡牌真偽（存根方法）:', { cardId });
@@ -166,5 +166,5 @@ export class CardService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _cardService = CardService.getInstance();

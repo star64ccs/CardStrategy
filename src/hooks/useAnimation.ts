@@ -10,10 +10,10 @@ import type {
 } from '../types/animation';
 
 /**
- * 動畫 Hook 配置
+ * 動畫 Hook Configure
  */
 interface UseAnimationConfig {
-  // 基本配置
+  // 基本Configure
   duration?: number;
   easing?: EasingFunction;
   delay?: number;
@@ -26,15 +26,15 @@ interface UseAnimationConfig {
   transform3d?: boolean;
   backfaceVisibility?: boolean;
 
-  // 偏好設置
+  // PreferencesSettings
   respectMotionPreference?: boolean;
   reducedMotion?: boolean;
 
-  // 自動播放
+  // Auto播放
   autoPlay?: boolean;
   loop?: boolean;
 
-  // 事件回調
+  // EventCallback
   onStart?: (event: AnimationEvent) => void;
   onEnd?: (event: AnimationEvent) => void;
   onPause?: (event: AnimationEvent) => void;
@@ -43,7 +43,7 @@ interface UseAnimationConfig {
 
 /**
  * 動畫 Hook
- * 提供動畫控制功能，包括播放、暫停、停止等
+ * 提供動畫Control功能，Package括播放、Pause、Stop等
  */
 export const _useAnimation = (
   config?: UseAnimationConfig
@@ -59,7 +59,7 @@ export const _useAnimation = (
   const _animationRef = useRef<Animation | null>(null);
   const _rafIdRef = useRef<number | null>(null);
 
-  // 默認配置
+  // DefaultConfigure
   const defaultConfig: Required<UseAnimationConfig> = {
     duration: 300,
     easing: 'ease-out',
@@ -82,7 +82,7 @@ export const _useAnimation = (
 
   const _finalConfig = { ...defaultConfig, ...config };
 
-  // 創建動畫配置
+  // Create動畫Configure
   const _createAnimationConfig = useCallback((): AnimationConfig => {
     return {
       duration: finalConfig.duration,
@@ -104,17 +104,17 @@ export const _useAnimation = (
     if (!elementRef.current || isPlaying) return;
 
     try {
-      // 創建動畫配置
+      // Create動畫Configure
       const _animationConfig = createAnimationConfig();
 
-      // 創建動畫
+      // Create動畫
       const _id = animationService.createAnimation(animationConfig);
       animationIdRef.current = id;
 
-      // 設置動畫元素
+      // Settings動畫Element
       const _element = elementRef.current;
 
-      // 設置性能優化
+      // Settings性能優化
       if (finalConfig.willChange) {
         element.style.willChange = 'transform, opacity';
       }
@@ -125,7 +125,7 @@ export const _useAnimation = (
         element.style.backfaceVisibility = 'hidden';
       }
 
-      // 創建 Web Animation
+      // Create Web Animation
       const _keyframes = [
         { offset: 0, opacity: 0, transform: 'translateY(20px)' },
         { offset: 1, opacity: 1, transform: 'translateY(0)' },
@@ -146,19 +146,19 @@ export const _useAnimation = (
       const _animation = element.animate(keyframes, options);
       animationRef.current = animation;
 
-      // 設置播放速度
+      // Settings播放速度
       animation.playbackRate = speed;
 
       setIsPlaying(true);
       setIsPaused(false);
 
-      // 設置事件監聽
+      // SettingsEvent監聽
       animation.onfinish = () => {
         setIsPlaying(false);
         setProgress(1);
         setCurrentTime(animationConfig.duration);
 
-        // 調用 onEnd 回調
+        // 調用 onEnd Callback
         finalConfig.onEnd({
           type: 'end',
           timestamp: Date.now(),
@@ -171,7 +171,7 @@ export const _useAnimation = (
         setIsPlaying(false);
         setIsPaused(false);
 
-        // 調用 onEnd 回調
+        // 調用 onEnd Callback
         finalConfig.onEnd({
           type: 'cancel',
           timestamp: Date.now(),
@@ -180,7 +180,7 @@ export const _useAnimation = (
         });
       };
 
-      // 調用 onStart 回調
+      // 調用 onStart Callback
       finalConfig.onStart({
         type: 'start',
         timestamp: Date.now(),
@@ -188,7 +188,7 @@ export const _useAnimation = (
         target: element,
       });
 
-      // 監控動畫進度
+      // Monitor動畫進度
       const _updateProgress = () => {
         if (animation && !animation.finished) {
           const _currentTime = (animation.currentTime as number) || 0;
@@ -203,18 +203,18 @@ export const _useAnimation = (
 
       rafIdRef.current = requestAnimationFrame(updateProgress);
     } catch (error) {
-      console.error('播放動畫失敗:', error);
+      console.error('播放動畫Failed:', error);
       throw error;
     }
   }, [isPlaying, createAnimationConfig, animationService, finalConfig, speed]);
 
-  // 暫停動畫
+  // Pause動畫
   const _pause = useCallback(() => {
     if (animationRef.current && isPlaying) {
       animationRef.current.pause();
       setIsPaused(true);
 
-      // 調用 onPause 回調
+      // 調用 onPause Callback
       finalConfig.onPause({
         type: 'pause',
         timestamp: Date.now(),
@@ -224,7 +224,7 @@ export const _useAnimation = (
     }
   }, [isPlaying, finalConfig, createAnimationConfig]);
 
-  // 停止動畫
+  // Stop動畫
   const _stop = useCallback(() => {
     if (animationRef.current) {
       animationRef.current.cancel();
@@ -256,13 +256,13 @@ export const _useAnimation = (
     }
   }, []);
 
-  // 重新開始
+  // ReBegin
   const _restart = useCallback(async () => {
     stop();
     await play();
   }, [stop, play]);
 
-  // 設置進度
+  // Settings進度
   const _setProgressValue = useCallback(
     (newProgress: number) => {
       if (animationRef.current) {
@@ -277,7 +277,7 @@ export const _useAnimation = (
     [finalConfig.duration]
   );
 
-  // 設置速度
+  // Settings速度
   const _setSpeed = useCallback((newSpeed: number) => {
     if (animationRef.current) {
       animationRef.current.playbackRate = newSpeed;
@@ -285,7 +285,7 @@ export const _useAnimation = (
     }
   }, []);
 
-  // 事件監聽器
+  // Event監聽器
   const _onStart = useCallback(
     (callback: (event: AnimationEvent) => void) => {
       finalConfig.onStart = callback;
@@ -314,10 +314,10 @@ export const _useAnimation = (
     [finalConfig]
   );
 
-  // 獲取性能指標
+  // Get性能指標
   const performance: AnimationPerformance = animationService.getPerformance();
 
-  // 自動播放
+  // Auto播放
   useEffect(() => {
     if (finalConfig.autoPlay) {
       play();
@@ -328,33 +328,33 @@ export const _useAnimation = (
     };
   }, [finalConfig.autoPlay, play, stop]);
 
-  // 組件卸載時清理
+  // ComponentUninstall時清理
   useEffect(() => {
     return () => {
       stop();
     };
   }, [stop]);
 
-  // 返回動畫控制接口
+  // Return動畫ControlInterface
   return {
-    // 狀態
+    // Status
     isPlaying,
     isPaused,
     progress,
     currentTime,
 
-    // 控制方法
+    // ControlMethod
     play,
     pause,
     stop,
     reverse,
     restart,
 
-    // 設置
+    // Settings
     setProgress: setProgressValue,
     setSpeed,
 
-    // 事件
+    // Event
     onStart,
     onEnd,
     onPause,

@@ -19,13 +19,13 @@ describe('FakeCardDetectionService', () => {
   let service: FakeCardDetectionService;
 
   beforeEach(() => {
-    // 清理單例實例
+    // 清理單例Instance
     (FakeCardDetectionService as any).instance = undefined;
     service = FakeCardDetectionService.getInstance();
   });
 
   afterEach(() => {
-    // 清理資源
+    // 清理Resource
     service.destroy();
     jest.clearAllMocks();
   });
@@ -54,7 +54,7 @@ describe('FakeCardDetectionService', () => {
     });
 
     it('should handle initialization errors', async () => {
-      // 模擬初始化錯誤
+      // 模擬InitializeError
       jest
         .spyOn(service as any, 'loadDetectionConfig')
         .mockImplementation(() => {
@@ -106,7 +106,7 @@ describe('FakeCardDetectionService', () => {
       const _response1 = await service.detectFakeCard(request);
       expect(response1.success).toBe(true);
 
-      // 第二次檢測應該使用緩存
+      // 第二次檢測應該使用Cache
       const _response2 = await service.detectFakeCard(request);
       expect(response2.success).toBe(true);
       expect(response2.data.id).toBe(response1.data.id);
@@ -219,7 +219,7 @@ describe('FakeCardDetectionService', () => {
     });
 
     it('should handle errors gracefully', async () => {
-      // 模擬檢測過程中的錯誤
+      // 模擬檢測過程中的Error
       jest.spyOn(service as any, 'performDetection').mockImplementation(() => {
         throw new Error('Detection process failed');
       });
@@ -281,7 +281,7 @@ describe('FakeCardDetectionService', () => {
       const _responses = await service.batchDetect(requests);
 
       expect(responses).toHaveLength(15);
-      // 所有檢測都應該完成
+      // 所有檢測都應該Complete
       responses.forEach(response => {
         expect(response.success).toBe(true);
       });
@@ -442,7 +442,7 @@ describe('FakeCardDetectionService', () => {
     });
 
     it('should handle errors in report submission', async () => {
-      // 模擬報告處理錯誤
+      // 模擬ReportHandleError
       jest
         .spyOn(service as any, 'updateFakeCardDatabase')
         .mockImplementation(() => {
@@ -567,9 +567,9 @@ describe('FakeCardDetectionService', () => {
 
     it('should handle multiple initializations', async () => {
       await service.initialize();
-      await service.initialize(); // 第二次初始化不應該出錯
+      await service.initialize(); // 第二次Initialize不應該出錯
 
-      expect(true).toBe(true); // 如果沒有拋出錯誤，測試通過
+      expect(true).toBe(true); // 如果沒有ThrowError，Test通過
     });
 
     it('should handle concurrent detections properly', async () => {
@@ -604,7 +604,7 @@ describe('FakeCardDetectionService', () => {
       expect(response.success).toBe(true);
 
       const _categories = new Set(response.data.features.map(f => f.category));
-      expect(categories.size).toBeGreaterThan(1); // 應該有多個類別
+      expect(categories.size).toBeGreaterThan(1); // 應該有MultipleClass別
     });
 
     it('should provide confidence scores for each feature', async () => {

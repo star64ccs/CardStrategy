@@ -37,14 +37,14 @@ export const _useCurrency = (): CurrencyContextValue => {
   const _error = useSelector(selectError);
   const _isInitialized = useSelector(selectIsInitialized);
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     if (!isInitialized) {
       (dispatch(initializeCurrency()) as any).unwrap();
     }
   }, [dispatch, isInitialized]);
 
-  // 貨幣轉換
+  // 貨幣Convert
   const _convertCurrencyHandler = useCallback(
     async (request: CurrencyConversionRequest): Promise<any> => {
       const _result = await (
@@ -55,7 +55,7 @@ export const _useCurrency = (): CurrencyContextValue => {
     [dispatch]
   );
 
-  // 格式化貨幣
+  // Format貨幣
   const _formatCurrency = useCallback(
     (amount: number, currency?: string) => {
       return currencyService.formatCurrency(
@@ -77,7 +77,7 @@ export const _useCurrency = (): CurrencyContextValue => {
     [dispatch]
   );
 
-  // 獲取統計
+  // GetStatistics
   const _stats = useMemo(() => {
     return currencyService.getStats();
   }, [currentCurrency, availableCurrencies]);
@@ -94,7 +94,7 @@ export const _useCurrency = (): CurrencyContextValue => {
   };
 };
 
-// 貨幣管理 Hook
+// 貨幣Manage Hook
 export const _useCurrencyManagement = () => {
   const _dispatch = useAppDispatch();
   const _currentCurrency = useSelector(selectCurrentCurrency);
@@ -115,12 +115,12 @@ export const _useCurrencyManagement = () => {
     [dispatch]
   );
 
-  // 更新匯率
+  // Update匯率
   const _updateRates = useCallback(async () => {
     await (dispatch(updateExchangeRates()) as any).unwrap();
   }, [dispatch]);
 
-  // 獲取匯率
+  // Get匯率
   const _getRate = useCallback(
     async (fromCurrency: string, toCurrency: string, forceUpdate?: boolean) => {
       const _result = await (
@@ -133,7 +133,7 @@ export const _useCurrencyManagement = () => {
     [dispatch]
   );
 
-  // 獲取統計
+  // GetStatistics
   const _getStats = useCallback(async () => {
     const _result = await (dispatch(getCurrencyStats()) as any).unwrap();
     return result;
@@ -153,7 +153,7 @@ export const _useCurrencyManagement = () => {
   };
 };
 
-// 貨幣轉換 Hook
+// 貨幣Convert Hook
 export const _useCurrencyConversion = () => {
   const _dispatch = useAppDispatch();
   const _isLoading = useSelector(selectIsLoading);
@@ -161,7 +161,7 @@ export const _useCurrencyConversion = () => {
   const _conversionHistory = useSelector(selectConversionHistory);
   const _recentConversions = useSelector(selectRecentConversions);
 
-  // 執行轉換
+  // 執RowConvert
   const _convert = useCallback(
     async (request: CurrencyConversionRequest) => {
       const _result = await (
@@ -172,7 +172,7 @@ export const _useCurrencyConversion = () => {
     [dispatch]
   );
 
-  // 快速轉換（使用當前貨幣）
+  // 快速Convert（使用當前貨幣）
   const _quickConvert = useCallback(
     async (
       amount: number,
@@ -190,7 +190,7 @@ export const _useCurrencyConversion = () => {
     [convert]
   );
 
-  // 估算轉換
+  // 估算Convert
   const _estimateConversion = useCallback(
     (amount: number, fromCurrency: string, toCurrency: string) => {
       return currencyService.estimateConversion(
@@ -213,12 +213,12 @@ export const _useCurrencyConversion = () => {
   };
 };
 
-// 貨幣格式化 Hook
+// 貨幣Format Hook
 export const _useCurrencyFormatting = () => {
   const _currentCurrency = useSelector(selectCurrentCurrency);
   const _availableCurrencies = useSelector(selectAvailableCurrencies);
 
-  // 格式化貨幣
+  // Format貨幣
   const _formatCurrency = useCallback(
     (amount: number, currency?: string, options?: Intl.NumberFormatOptions) => {
       return currencyService.formatCurrency(
@@ -230,7 +230,7 @@ export const _useCurrencyFormatting = () => {
     [currentCurrency]
   );
 
-  // 解析貨幣
+  // Parse貨幣
   const _parseCurrency = useCallback(
     (value: string, currency?: string) => {
       return currencyService.parseCurrency(value, currency || currentCurrency);
@@ -238,7 +238,7 @@ export const _useCurrencyFormatting = () => {
     [currentCurrency]
   );
 
-  // 獲取貨幣符號
+  // Get貨幣符號
   const _getCurrencySymbol = useCallback(
     (currency?: string) => {
       return currencyService.getCurrencySymbol(currency || currentCurrency);
@@ -246,7 +246,7 @@ export const _useCurrencyFormatting = () => {
     [currentCurrency]
   );
 
-  // 獲取貨幣名稱
+  // Get貨幣名稱
   const _getCurrencyName = useCallback(
     (currency?: string) => {
       return currencyService.getCurrencyName(currency || currentCurrency);
@@ -254,7 +254,7 @@ export const _useCurrencyFormatting = () => {
     [currentCurrency]
   );
 
-  // 創建格式化器
+  // CreateFormat器
   const _createFormatter = useCallback(
     (currency?: string, options?: Intl.NumberFormatOptions) => {
       return currencyService.createCurrencyFormatter(
@@ -276,24 +276,24 @@ export const _useCurrencyFormatting = () => {
   };
 };
 
-// 貨幣統計 Hook
+// 貨幣Statistics Hook
 export const _useCurrencyStats = () => {
   const _conversionHistory = useSelector(selectConversionHistory);
   const _conversionStats = useSelector(selectConversionStats);
   const _currencyCount = useSelector(selectCurrencyCount);
   const _activeCurrencyCount = useSelector(selectActiveCurrencyCount);
 
-  // 獲取服務統計
+  // GetServiceStatistics
   const _getServiceStats = useCallback(() => {
     return currencyService.getStats();
   }, []);
 
-  // 計算轉換統計
+  // 計算ConvertStatistics
   const _calculateConversionStats = useMemo(() => {
     return conversionStats;
   }, [conversionStats]);
 
-  // 獲取最常用的貨幣
+  // Get最常用的貨幣
   const _getMostUsedCurrencies = useCallback(() => {
     const _usage = new Map<string, number>();
 
@@ -307,7 +307,7 @@ export const _useCurrencyStats = () => {
       .map(([currency, count]) => ({ currency, count }));
   }, [conversionHistory]);
 
-  // 獲取轉換趨勢
+  // GetConvert趨勢
   const _getConversionTrend = useCallback(
     (days = 7) => {
       const _now = new Date();
@@ -351,24 +351,24 @@ export const _useCurrencyStats = () => {
   };
 };
 
-// 貨幣工具 Hook
+// 貨幣Tool Hook
 export const _useCurrencyTools = () => {
-  // 驗證貨幣代碼
+  // Verify貨幣代碼
   const _validateCurrencyCode = useCallback((code: string) => {
     return currencyService.validateCurrencyCode(code);
   }, []);
 
-  // 標準化貨幣代碼
+  // Standard化貨幣代碼
   const _normalizeCurrencyCode = useCallback((code: string) => {
     return currencyService.normalizeCurrencyCode(code);
   }, []);
 
-  // 檢查貨幣是否支持
+  // Check貨幣YesNoSupport
   const _isCurrencySupported = useCallback((currency: string) => {
     return currencyService.isCurrencySupported(currency);
   }, []);
 
-  // 計算轉換手續費
+  // 計算Convert手續費
   const _calculateConversionFee = useCallback(
     (amount: number, rate: number) => {
       return currencyService.calculateConversionFee(amount, rate);
@@ -376,7 +376,7 @@ export const _useCurrencyTools = () => {
     []
   );
 
-  // 應用加價
+  // Apply加價
   const _applyMarkup = useCallback((amount: number, markup: number) => {
     return currencyService.applyMarkup(amount, markup);
   }, []);
@@ -389,12 +389,12 @@ export const _useCurrencyTools = () => {
     []
   );
 
-  // 驗證金額
+  // Verify金額
   const _validateAmount = useCallback((amount: number) => {
     return currencyService.validateAmount(amount);
   }, []);
 
-  // 清理貨幣輸入
+  // 清理貨幣Input
   const _sanitizeCurrencyInput = useCallback((input: string) => {
     return currencyService.sanitizeCurrencyInput(input);
   }, []);
@@ -420,7 +420,7 @@ export const _useCurrencyTools = () => {
   };
 };
 
-// 貨幣事件 Hook
+// 貨幣Event Hook
 export const _useCurrencyEvents = () => {
   useEffect(() => {
     const _handleCurrencyChanged = (event: CurrencyEvent) => {
@@ -436,16 +436,16 @@ export const _useCurrencyEvents = () => {
     };
 
     const _handleErrorOccurred = (event: CurrencyEvent) => {
-      console.error('貨幣錯誤:', event.data.error);
+      console.error('貨幣Error:', event.data.error);
     };
 
-    // 註冊事件監聽器
+    // RegisterEvent監聽器
     currencyService.on('currency_changed', handleCurrencyChanged);
     currencyService.on('rate_updated', handleRateUpdated);
     currencyService.on('conversion_completed', handleConversionCompleted);
     currencyService.on('error_occurred', handleErrorOccurred);
 
-    // 清理事件監聽器
+    // 清理Event監聽器
     return () => {
       currencyService.off('currency_changed', handleCurrencyChanged);
       currencyService.off('rate_updated', handleRateUpdated);
@@ -454,7 +454,7 @@ export const _useCurrencyEvents = () => {
     };
   }, []);
 
-  // 手動觸發事件監聽器註冊
+  // Manual觸發Event監聽器Register
   const _addEventListener = useCallback(
     (
       event: CurrencyEvent['type'],
@@ -481,21 +481,21 @@ export const _useCurrencyEvents = () => {
   };
 };
 
-// 貨幣初始化 Hook
+// 貨幣Initialize Hook
 export const _useCurrencyInitialization = () => {
   const _dispatch = useAppDispatch();
   const _isInitialized = useSelector(selectIsInitialized);
   const _isLoading = useSelector(selectIsLoading);
   const _error = useSelector(selectError);
 
-  // 初始化
+  // Initialize
   const _initialize = useCallback(async () => {
     if (!isInitialized) {
       await (dispatch(initializeCurrency()) as any).unwrap();
     }
   }, [dispatch, isInitialized]);
 
-  // 重新初始化
+  // ReInitialize
   const _reinitialize = useCallback(async () => {
     await (dispatch(initializeCurrency()) as any).unwrap();
   }, [dispatch]);
@@ -509,5 +509,5 @@ export const _useCurrencyInitialization = () => {
   };
 };
 
-// 默認導出
+// DefaultExport
 export default useCurrency;

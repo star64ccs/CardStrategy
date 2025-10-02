@@ -1,6 +1,6 @@
 /**
- * 數據安全服務
- * 整合加密、備份、密鑰管理等安全功能
+ * Data安全Service
+ * 整合Encrypt、Backup、密鑰Manage等安全功能
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -32,7 +32,7 @@ import { CryptoEncryptionService } from './encryptionService';
 import { CryptoKeyManager } from './keyManager';
 
 /**
- * 數據安全服務實現
+ * Data安全Service實現
  */
 export class DataSecurityService {
   private static instance: DataSecurityService;
@@ -53,7 +53,7 @@ export class DataSecurityService {
   }
 
   /**
-   * 獲取服務實例（單例模式）
+   * GetServiceInstance（單例模式）
    */
   public static getInstance(): DataSecurityService {
     if (!DataSecurityService.instance) {
@@ -63,7 +63,7 @@ export class DataSecurityService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(config?: Partial<SecurityConfig>): Promise<boolean> {
     if (this.isInitialized) {
@@ -72,34 +72,34 @@ export class DataSecurityService {
     }
 
     try {
-      // 合併配置
+      // MergeConfigure
       if (config) {
         this.config = { ...this.config, ...config };
       }
 
-      // 初始化子服務
+      // Initialize子Service
       await this.keyManager.initialize();
       await this.encryptionService.initialize();
       await this.backupService.initialize();
 
-      // 啟動安全監控
+      // Start安全Monitor
       if (this.config.audit.enabled) {
         this.startSecurityMonitoring();
       }
 
-      // 設置自動備份
+      // SettingsAutoBackup
       if (this.config.backup.autoBackup) {
         await this.setupAutoBackup();
       }
 
-      // 設置密鑰輪換
+      // Settings密鑰輪換
       if (this.config.keyManagement.autoRotation) {
         await this.setupKeyRotation();
       }
 
       this.isInitialized = true;
 
-      // 記錄審計事件
+      // Record審計Event
       await this.logAuditEvent({
         type: 'encryption',
         severity: SecurityLevel.MEDIUM,
@@ -113,10 +113,10 @@ export class DataSecurityService {
         },
       });
 
-      logger.info('DataSecurityService 初始化成功');
+      logger.info('DataSecurityService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('DataSecurityService 初始化失敗:', error);
+      logger.error('DataSecurityService InitializeFailed:', error);
 
       await this.logAuditEvent({
         type: 'encryption',
@@ -126,7 +126,7 @@ export class DataSecurityService {
         result: 'failure',
         metadata: {
           details: {
-            error: error instanceof Error ? error.message : '未知錯誤',
+            error: error instanceof Error ? error.message : '未知Error',
           },
         },
       });
@@ -136,7 +136,7 @@ export class DataSecurityService {
   }
 
   /**
-   * 加密數據
+   * EncryptData
    */
   public async encryptData(
     request: EncryptionRequest
@@ -144,12 +144,12 @@ export class DataSecurityService {
     try {
       const _startTime = Date.now();
 
-      // 執行加密
+      // 執RowEncrypt
       const _result = await this.encryptionService.encrypt(request);
 
       const _processingTime = Date.now() - startTime;
 
-      // 記錄審計事件
+      // Record審計Event
       await this.logAuditEvent({
         type: 'encryption',
         severity: SecurityLevel.LOW,
@@ -169,7 +169,7 @@ export class DataSecurityService {
         },
       });
 
-      // 觸發事件
+      // 觸發Event
       this.emitEvent({
         type: 'data_encrypted',
         timestamp: new Date(),
@@ -182,7 +182,7 @@ export class DataSecurityService {
 
       return result;
     } catch (error) {
-      logger.error('數據加密失敗:', error);
+      logger.error('數據加密Failed:', error);
 
       await this.logAuditEvent({
         type: 'encryption',
@@ -192,7 +192,7 @@ export class DataSecurityService {
         result: 'failure',
         metadata: {
           details: {
-            error: error instanceof Error ? error.message : '未知錯誤',
+            error: error instanceof Error ? error.message : '未知Error',
           },
         },
       });
@@ -202,7 +202,7 @@ export class DataSecurityService {
   }
 
   /**
-   * 解密數據
+   * DecryptData
    */
   public async decryptData(
     request: DecryptionRequest
@@ -210,12 +210,12 @@ export class DataSecurityService {
     try {
       const _startTime = Date.now();
 
-      // 執行解密
+      // 執RowDecrypt
       const _result = await this.encryptionService.decrypt(request);
 
       const _processingTime = Date.now() - startTime;
 
-      // 記錄審計事件
+      // Record審計Event
       await this.logAuditEvent({
         type: 'decryption',
         severity: SecurityLevel.MEDIUM,
@@ -231,7 +231,7 @@ export class DataSecurityService {
         },
       });
 
-      // 觸發事件
+      // 觸發Event
       this.emitEvent({
         type: 'data_decrypted',
         timestamp: new Date(),
@@ -244,7 +244,7 @@ export class DataSecurityService {
 
       return result;
     } catch (error) {
-      logger.error('數據解密失敗:', error);
+      logger.error('數據解密Failed:', error);
 
       await this.logAuditEvent({
         type: 'decryption',
@@ -254,7 +254,7 @@ export class DataSecurityService {
         result: 'failure',
         metadata: {
           details: {
-            error: error instanceof Error ? error.message : '未知錯誤',
+            error: error instanceof Error ? error.message : '未知Error',
           },
         },
       });
@@ -264,14 +264,14 @@ export class DataSecurityService {
   }
 
   /**
-   * 創建備份
+   * CreateBackup
    */
   public async createBackup(config: BackupConfig): Promise<BackupTask> {
     try {
-      // 執行備份
+      // 執RowBackup
       const _task = await this.backupService.createBackup(config);
 
-      // 記錄審計事件
+      // Record審計Event
       await this.logAuditEvent({
         type: 'backup',
         severity: SecurityLevel.MEDIUM,
@@ -288,7 +288,7 @@ export class DataSecurityService {
         },
       });
 
-      // 觸發事件
+      // 觸發Event
       this.emitEvent({
         type: 'backup_started',
         timestamp: new Date(),
@@ -301,7 +301,7 @@ export class DataSecurityService {
 
       return task;
     } catch (error) {
-      logger.error('創建備份失敗:', error);
+      logger.error('Create備份Failed:', error);
 
       await this.logAuditEvent({
         type: 'backup',
@@ -311,7 +311,7 @@ export class DataSecurityService {
         result: 'failure',
         metadata: {
           details: {
-            error: error instanceof Error ? error.message : '未知錯誤',
+            error: error instanceof Error ? error.message : '未知Error',
           },
         },
       });
@@ -321,14 +321,14 @@ export class DataSecurityService {
   }
 
   /**
-   * 恢復備份
+   * RestoreBackup
    */
   public async restoreBackup(request: RestoreRequest): Promise<RestoreResult> {
     try {
-      // 執行恢復
+      // 執RowRestore
       const _result = await this.backupService.restoreBackup(request);
 
-      // 記錄審計事件
+      // Record審計Event
       await this.logAuditEvent({
         type: 'restore',
         severity: SecurityLevel.HIGH,
@@ -345,7 +345,7 @@ export class DataSecurityService {
         },
       });
 
-      // 觸發事件
+      // 觸發Event
       this.emitEvent({
         type: result.success ? 'restore_completed' : 'restore_failed',
         timestamp: new Date(),
@@ -358,7 +358,7 @@ export class DataSecurityService {
 
       return result;
     } catch (error) {
-      logger.error('恢復備份失敗:', error);
+      logger.error('恢復備份Failed:', error);
 
       await this.logAuditEvent({
         type: 'restore',
@@ -368,7 +368,7 @@ export class DataSecurityService {
         result: 'failure',
         metadata: {
           details: {
-            error: error instanceof Error ? error.message : '未知錯誤',
+            error: error instanceof Error ? error.message : '未知Error',
           },
         },
       });
@@ -388,7 +388,7 @@ export class DataSecurityService {
       // 生成密鑰
       const _key = await this.keyManager.generateKey(algorithm, metadata);
 
-      // 記錄審計事件
+      // Record審計Event
       await this.logAuditEvent({
         type: 'key_operation',
         severity: SecurityLevel.MEDIUM,
@@ -405,7 +405,7 @@ export class DataSecurityService {
         },
       });
 
-      // 觸發事件
+      // 觸發Event
       this.emitEvent({
         type: 'key_generated',
         timestamp: new Date(),
@@ -418,7 +418,7 @@ export class DataSecurityService {
 
       return key;
     } catch (error) {
-      logger.error('生成密鑰失敗:', error);
+      logger.error('生成密鑰Failed:', error);
 
       await this.logAuditEvent({
         type: 'key_operation',
@@ -428,7 +428,7 @@ export class DataSecurityService {
         result: 'failure',
         metadata: {
           details: {
-            error: error instanceof Error ? error.message : '未知錯誤',
+            error: error instanceof Error ? error.message : '未知Error',
           },
         },
       });
@@ -445,7 +445,7 @@ export class DataSecurityService {
       // 輪換密鑰
       const _newKey = await this.keyManager.rotateKey(keyId);
 
-      // 記錄審計事件
+      // Record審計Event
       await this.logAuditEvent({
         type: 'key_operation',
         severity: SecurityLevel.HIGH,
@@ -461,7 +461,7 @@ export class DataSecurityService {
         },
       });
 
-      // 觸發事件
+      // 觸發Event
       this.emitEvent({
         type: 'key_rotated',
         timestamp: new Date(),
@@ -474,7 +474,7 @@ export class DataSecurityService {
 
       return newKey;
     } catch (error) {
-      logger.error('輪換密鑰失敗:', error);
+      logger.error('輪換密鑰Failed:', error);
 
       await this.logAuditEvent({
         type: 'key_operation',
@@ -485,7 +485,7 @@ export class DataSecurityService {
         metadata: {
           details: {
             keyId,
-            error: error instanceof Error ? error.message : '未知錯誤',
+            error: error instanceof Error ? error.message : '未知Error',
           },
         },
       });
@@ -495,14 +495,14 @@ export class DataSecurityService {
   }
 
   /**
-   * 添加事件監聽器
+   * AddEvent監聽器
    */
   public addEventListener(listener: SecurityEventListener): void {
     this.eventListeners.push(listener);
   }
 
   /**
-   * 移除事件監聽器
+   * RemoveEvent監聽器
    */
   public removeEventListener(listener: SecurityEventListener): void {
     const _index = this.eventListeners.indexOf(listener);
@@ -512,7 +512,7 @@ export class DataSecurityService {
   }
 
   /**
-   * 獲取安全狀態
+   * Get安全Status
    */
   public async getSecurityState(): Promise<SecurityState> {
     try {
@@ -527,7 +527,7 @@ export class DataSecurityService {
         task => task.status === 'completed'
       );
 
-      // 獲取統計信息
+      // GetStatisticsInformation
       const _keyStats = await this.keyManager.getKeyStatistics();
       const _backupStats = await this.backupService.getBackupStatistics();
       const _encryptionStats =
@@ -552,19 +552,19 @@ export class DataSecurityService {
             e => e.type === 'violation'
           ).length,
         },
-        auditEvents: this.auditEvents.slice(-100), // 最近100個事件
+        auditEvents: this.auditEvents.slice(-100), // 最近100個Event
         config: this.config,
         error: null,
         lastError: null,
       };
     } catch (error) {
-      logger.error('獲取安全狀態失敗:', error);
+      logger.error('Get安全狀態Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取安全指標
+   * Get安全指標
    */
   public async getSecurityMetrics(): Promise<SecurityMetrics> {
     try {
@@ -583,12 +583,12 @@ export class DataSecurityService {
         encryptionPerformance: {
           averageEncryptionTime: encryptionStats.averageEncryptionTime,
           averageDecryptionTime: encryptionStats.averageDecryptionTime,
-          throughput: 0, // 可以根據實際統計計算
+          throughput: 0, // 可以Root據實際Statistics計算
           errorRate: encryptionStats.errorRate,
         },
         backupPerformance: {
           averageBackupTime: backupStats.averageBackupTime,
-          averageRestoreTime: 0, // 可以根據實際統計計算
+          averageRestoreTime: 0, // 可以Root據實際Statistics計算
           compressionRatio: backupStats.compressionRatio,
           successRate:
             backupStats.completedBackups / (backupStats.totalBackups || 1),
@@ -596,7 +596,7 @@ export class DataSecurityService {
         keyManagement: {
           activeKeys: keyStats.active,
           expiredKeys: keyStats.expired,
-          keyRotationCompliance: 85, // 可以根據實際輪換計劃計算
+          keyRotationCompliance: 85, // 可以Root據實際輪換計劃計算
         },
         security: {
           violationCount: this.auditEvents.filter(e => e.type === 'violation')
@@ -606,24 +606,24 @@ export class DataSecurityService {
         },
       };
     } catch (error) {
-      logger.error('獲取安全指標失敗:', error);
+      logger.error('Get安全指標Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<void> {
     try {
       this.isInitialized = false;
 
-      // 清除監控
+      // ClearMonitor
       if (this.monitoringInterval) {
         clearInterval(this.monitoringInterval);
       }
 
-      // 銷毀子服務
+      // 銷毀子Service
       await this.backupService.destroy();
       await this.encryptionService.destroy();
       await this.keyManager.destroy();
@@ -633,11 +633,11 @@ export class DataSecurityService {
 
       logger.info('DataSecurityService 已銷毀');
     } catch (error) {
-      logger.error('DataSecurityService 銷毀失敗:', error);
+      logger.error('DataSecurityService 銷毀Failed:', error);
     }
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): SecurityConfig {
     return {
@@ -684,7 +684,7 @@ export class DataSecurityService {
       try {
         listener(event);
       } catch (error) {
-        logger.error('安全事件監聽器執行失敗:', error);
+        logger.error('安全事件監聽器執行Failed:', error);
       }
     });
   }
@@ -703,8 +703,8 @@ export class DataSecurityService {
         action: eventData.action || 'unknown',
         result: eventData.result || 'success',
         metadata: {
-          ipAddress: '127.0.0.1', // 在真實環境中獲取實際IP
-          userAgent: 'DataSecurityService', // 在真實環境中獲取實際User-Agent
+          ipAddress: '127.0.0.1', // 在True實環境中Get實際IP
+          userAgent: 'DataSecurityService', // 在True實環境中Get實際User-Agent
           location: 'Local',
           details: eventData.metadata || {},
         },
@@ -713,15 +713,15 @@ export class DataSecurityService {
 
       this.auditEvents.push(event);
 
-      // 限制審計事件數量
+      // Limit審計Event數量
       if (this.auditEvents.length > 10000) {
         this.auditEvents = this.auditEvents.slice(-5000);
       }
 
-      // 持久化審計事件
+      // 持久化審計Event
       await this.persistAuditEvent(event);
 
-      // 實時警報
+      // 實時Alert
       if (
         this.config.audit.realTimeAlerts &&
         event.severity === SecurityLevel.CRITICAL
@@ -729,7 +729,7 @@ export class DataSecurityService {
         await this.sendSecurityAlert(event);
       }
     } catch (error) {
-      logger.error('記錄審計事件失敗:', error);
+      logger.error('記錄審計事件Failed:', error);
     }
   }
 
@@ -744,7 +744,7 @@ export class DataSecurityService {
   ): number {
     let score = 0;
 
-    // 基於事件類型評分
+    // 基於EventClass型評分
     switch (eventData.type) {
       case 'violation':
       case 'access':
@@ -791,20 +791,20 @@ export class DataSecurityService {
     // 基於各種因素計算風險評分
     let riskScore = 0;
 
-    // 審計事件風險
+    // 審計Event風險
     const _recentViolations = this.auditEvents.filter(
       e =>
         e.type === 'violation' &&
-        Date.now() - e.timestamp.getTime() < 24 * 60 * 60 * 1000 // 24小時內
+        Date.now() - e.timestamp.getTime() < 24 * 60 * 60 * 1000 // 24Hour內
     );
 
     riskScore += recentViolations.length * 10;
 
-    // 失敗事件風險
+    // FailedEvent風險
     const _recentFailures = this.auditEvents.filter(
       e =>
         e.result === 'failure' &&
-        Date.now() - e.timestamp.getTime() < 24 * 60 * 60 * 1000 // 24小時內
+        Date.now() - e.timestamp.getTime() < 24 * 60 * 60 * 1000 // 24Hour內
     );
 
     riskScore += recentFailures.length * 5;
@@ -813,15 +813,15 @@ export class DataSecurityService {
   }
 
   private calculateComplianceScore(): number {
-    // 基於配置和實際執行情況計算合規評分
+    // 基於Configure和實際執Row情況計算合規評分
     let score = 100;
 
-    // 加密合規性
+    // Encrypt合規性
     if (!this.config.encryption.forceEncryption) {
       score -= 20;
     }
 
-    // 備份合規性
+    // Backup合規性
     if (!this.config.backup.autoBackup) {
       score -= 15;
     }
@@ -831,7 +831,7 @@ export class DataSecurityService {
       score -= 25;
     }
 
-    // 密鑰管理合規性
+    // 密鑰Manage合規性
     if (!this.config.keyManagement.autoRotation) {
       score -= 10;
     }
@@ -844,19 +844,19 @@ export class DataSecurityService {
       try {
         await this.performSecurityCheck();
       } catch (error) {
-        logger.error('安全監控檢查失敗:', error);
+        logger.error('安全監控CheckFailed:', error);
       }
-    }, 60000); // 每分鐘檢查一次
+    }, 60000); // 每MinuteCheck一次
   }
 
   private async performSecurityCheck(): Promise<void> {
-    // 檢查密鑰過期
+    // Check密鑰過期
     await this.checkKeyExpiration();
 
-    // 檢查備份狀態
+    // CheckBackupStatus
     await this.checkBackupHealth();
 
-    // 檢查異常活動
+    // Check異常活動
     await this.checkAnomalousActivity();
   }
 
@@ -880,7 +880,7 @@ export class DataSecurityService {
         });
       }
     } catch (error) {
-      logger.error('密鑰過期檢查失敗:', error);
+      logger.error('密鑰過期CheckFailed:', error);
     }
   }
 
@@ -906,17 +906,17 @@ export class DataSecurityService {
         });
       }
     } catch (error) {
-      logger.error('備份健康檢查失敗:', error);
+      logger.error('備份健康CheckFailed:', error);
     }
   }
 
   private async checkAnomalousActivity(): Promise<void> {
     try {
       const _recentEvents = this.auditEvents.filter(
-        e => Date.now() - e.timestamp.getTime() < 60 * 60 * 1000 // 1小時內
+        e => Date.now() - e.timestamp.getTime() < 60 * 60 * 1000 // 1Hour內
       );
 
-      // 檢查高風險活動
+      // Check高風險活動
       const _highRiskEvents = recentEvents.filter(e => e.riskScore > 70);
 
       if (highRiskEvents.length > 5) {
@@ -932,7 +932,7 @@ export class DataSecurityService {
         });
       }
     } catch (error) {
-      logger.error('異常活動檢查失敗:', error);
+      logger.error('異常活動CheckFailed:', error);
     }
   }
 
@@ -970,35 +970,35 @@ export class DataSecurityService {
       await this.backupService.scheduleBackup(backupConfig);
       logger.info('自動備份已設置');
     } catch (error) {
-      logger.error('設置自動備份失敗:', error);
+      logger.error('Settings自動備份Failed:', error);
     }
   }
 
   private async setupKeyRotation(): Promise<void> {
     try {
-      // 在真實環境中，這裡會設置實際的密鑰輪換調度
+      // 在True實環境中，這裡會Settings實際的密鑰輪換Schedule
       logger.info('密鑰輪換調度已設置');
     } catch (error) {
-      logger.error('設置密鑰輪換失敗:', error);
+      logger.error('Settings密鑰輪換Failed:', error);
     }
   }
 
   private async persistAuditEvent(event: SecurityAuditEvent): Promise<void> {
     try {
-      // 在真實環境中，這裡會將審計事件持久化到安全存儲
+      // 在True實環境中，這裡會將審計Event持久化到安全Storage
       const _storage = localStorage || {};
       storage[`audit_${event.id}`] = JSON.stringify({
         ...event,
         timestamp: event.timestamp.toISOString(),
       });
     } catch (error) {
-      logger.error('持久化審計事件失敗:', error);
+      logger.error('持久化審計事件Failed:', error);
     }
   }
 
   private async sendSecurityAlert(event: SecurityAuditEvent): Promise<void> {
     try {
-      // 在真實環境中，這裡會發送實時安全警報
+      // 在True實環境中，這裡會Send實時安全Alert
       logger.warn('安全警報', {
         eventId: event.id,
         type: event.type,
@@ -1007,7 +1007,7 @@ export class DataSecurityService {
         action: event.action,
       });
     } catch (error) {
-      logger.error('發送安全警報失敗:', error);
+      logger.error('發送安全警報Failed:', error);
     }
   }
 }

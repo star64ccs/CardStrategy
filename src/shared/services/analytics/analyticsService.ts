@@ -44,7 +44,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 獲取單例實例
+   * Get單例Instance
    */
   static getInstance(): AnalyticsService {
     if (!AnalyticsService.instance) {
@@ -54,7 +54,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 獲取可用的分析平台
+   * Get可用的Analysis平台
    */
   getAvailablePlatforms(): Record<string, boolean> {
     return {
@@ -64,7 +64,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 追蹤事件
+   * TraceEvent
    */
   async trackEvent(event: AnalyticsEvent): Promise<ApiResponse> {
     try {
@@ -145,7 +145,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 識別用戶
+   * 識別User
    */
   async identifyUser(user: AnalyticsUser): Promise<ApiResponse> {
     try {
@@ -222,7 +222,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 追蹤頁面瀏覽
+   * Trace頁面瀏覽
    */
   async trackPageView(pageView: AnalyticsPageView): Promise<ApiResponse> {
     const _platforms = pageView.platforms || this.defaultPlatforms;
@@ -292,7 +292,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 批量追蹤事件
+   * BatchTraceEvent
    */
   async batchTrackEvents(events: AnalyticsEvent[]): Promise<ApiResponse> {
     try {
@@ -344,7 +344,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 追蹤用戶註冊
+   * TraceUserRegister
    */
   async trackUserSignUp(
     userId: string,
@@ -410,7 +410,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 追蹤卡牌相關事件
+   * Trace卡牌相OffEvent
    */
   async trackCardEvent(
     eventType: string,
@@ -478,7 +478,7 @@ export class AnalyticsService {
   }
 
   /**
-   * 獲取服務統計
+   * GetServiceStatistics
    */
   async getServiceStats(): Promise<ApiResponse> {
     const [segmentStats, mixelStats] = await Promise.all([

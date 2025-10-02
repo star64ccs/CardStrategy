@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
 /**
- * CI/CD 配置測試腳本
- * 驗證 GitHub Secrets 和工作流配置
+ * CI/CD Configuration Test Script
+ * Verify GitHub Secrets and workflow configuration
  */
 
 const fs = require('fs');
 const path = require('path');
 
-console.log('🧪 CI/CD 配置測試腳本');
+console.log('🧪 CI/CD Configuration Test Script');
 console.log('=======================\n');
 
-// 檢查工作流文件中的 Secrets 引用
+// Check Secrets references in workflow files
 function checkWorkflowSecrets() {
-  console.log('🔍 檢查工作流文件中的 Secrets...\n');
+  console.log('🔍 Checking Secrets in workflow files...\n');
 
   const workflowFiles = [
     '.github/workflows/ci-cd-simplified.yml',
@@ -31,17 +31,17 @@ function checkWorkflowSecrets() {
 
   workflowFiles.forEach(file => {
     if (fs.existsSync(file)) {
-      console.log(`📄 檢查文件: ${file}`);
+      console.log(`📄 Checking file: ${file}`);
       const content = fs.readFileSync(file, 'utf8');
 
-      // 查找所有 secrets 引用
+      // Find all secrets references
       const secretMatches = content.match(/\${{ secrets\.([^}]+) }}/g);
       if (secretMatches) {
         secretMatches.forEach(match => {
           const secretName = match.match(/secrets\.([^}]+)/)[1];
-          console.log(`  ✅ 找到 Secret: ${secretName}`);
+          console.log(`  ✅ Found Secret: ${secretName}`);
 
-          // 記錄到 requiredSecrets
+          // Record to requiredSecrets
           if (requiredSecrets[secretName]) {
             requiredSecrets[secretName].push(file);
           }
@@ -49,55 +49,55 @@ function checkWorkflowSecrets() {
       }
       console.log('');
     } else {
-      console.log(`❌ 文件不存在: ${file}\n`);
+      console.log(`❌ File does not exist: ${file}\n`);
     }
   });
 
   return requiredSecrets;
 }
 
-// 檢查必需的 Secrets
+// Check required Secrets
 function checkRequiredSecrets(requiredSecrets) {
-  console.log('📋 必需的 GitHub Secrets:\n');
+  console.log('📋 Required GitHub Secrets:\n');
 
   const secrets = [
     {
       name: 'DIGITOCEAN_CardStrategy_CI_CD_Token',
-      description: 'DigitalOcean API Token (您已設置)',
-      status: '✅ 已設置',
+      description: 'DigitalOcean API Token (You have set this)',
+      status: '✅ Set',
       files: requiredSecrets['DIGITOCEAN_CardStrategy_CI_CD_Token'],
     },
     {
       name: 'RENDER_TOKEN',
-      description: 'Render API Token (您已設置)',
-      status: '✅ 已設置',
+      description: 'Render API Token (You have set this)',
+      status: '✅ Set',
       files: requiredSecrets['RENDER_TOKEN'],
     },
     {
       name: 'SNYK_TOKEN',
-      description: 'Snyk 安全掃描 Token (可選)',
-      status: '⚠️ 可選',
+      description: 'Snyk Security Scan Token (Optional)',
+      status: '⚠️ Optional',
       files: requiredSecrets['SNYK_TOKEN'],
     },
     {
       name: 'SLACK_WEBHOOK_URL',
-      description: 'Slack 通知 Webhook (可選)',
-      status: '⚠️ 可選',
+      description: 'Slack Notification Webhook (Optional)',
+      status: '⚠️ Optional',
       files: requiredSecrets['SLACK_WEBHOOK_URL'],
     },
     {
       name: 'DIGITALOCEAN_APP_ID',
       description: 'DigitalOcean App Platform ID',
-      status: '❓ 需要檢查',
+      status: '❓ Needs check',
       files: requiredSecrets['DIGITALOCEAN_APP_ID'] || [],
     },
   ];
 
   secrets.forEach(secret => {
     console.log(`${secret.status} ${secret.name}`);
-    console.log(`   描述: ${secret.description}`);
+    console.log(`   Description: ${secret.description}`);
     if (secret.files.length > 0) {
-      console.log(`   使用於: ${secret.files.join(', ')}`);
+      console.log(`   Used in: ${secret.files.join(', ')}`);
     }
     console.log('');
   });
@@ -105,33 +105,33 @@ function checkRequiredSecrets(requiredSecrets) {
   return secrets;
 }
 
-// 生成測試建議
+// Generate test recommendations
 function generateTestRecommendations(secrets) {
-  console.log('🚀 測試建議:\n');
+  console.log('🚀 Test recommendations:\n');
 
-  console.log('1. 測試簡化工作流:');
+  console.log('1. Test simplified workflow:');
   console.log('   git checkout -b test-cicd');
   console.log('   git push origin test-cicd');
-  console.log('   # 檢查 GitHub Actions 運行狀態\n');
+  console.log('   # Check GitHub Actions run status\n');
 
-  console.log('2. 測試後端部署:');
+  console.log('2. Test backend deployment:');
   console.log('   git checkout develop');
   console.log('   git push origin develop');
-  console.log('   # 檢查 Render 自動部署\n');
+  console.log('   # Check Render auto deployment\n');
 
-  console.log('3. 測試生產部署:');
+  console.log('3. Test production deployment:');
   console.log('   git checkout main');
   console.log('   git push origin main');
-  console.log('   # 檢查 DigitalOcean 部署\n');
+  console.log('   # Check DigitalOcean deployment\n');
 
-  console.log('4. 檢查服務健康狀態:');
+  console.log('4. Check service health status:');
   console.log('   curl -f https://cardstrategy-api.onrender.com/api/health');
   console.log('   curl -f https://api.cardstrategy.com/api/health\n');
 
-  // 檢查是否需要額外的 Secrets
-  const missingSecrets = secrets.filter(s => s.status.includes('需要檢查'));
+  // Check if additional Secrets are needed
+  const missingSecrets = secrets.filter(s => s.status.includes('Needs check'));
   if (missingSecrets.length > 0) {
-    console.log('⚠️ 可能需要額外設置的 Secrets:');
+    console.log('⚠️ May need additional Secrets:');
     missingSecrets.forEach(secret => {
       console.log(`   - ${secret.name}: ${secret.description}`);
     });
@@ -139,9 +139,9 @@ function generateTestRecommendations(secrets) {
   }
 }
 
-// 檢查工作流語法
+// Check workflow syntax
 function checkWorkflowSyntax() {
-  console.log('🔧 檢查工作流語法...\n');
+  console.log('🔧 Checking workflow syntax...\n');
 
   const workflowFiles = [
     '.github/workflows/ci-cd-simplified.yml',
@@ -155,7 +155,7 @@ function checkWorkflowSyntax() {
       try {
         const content = fs.readFileSync(file, 'utf8');
 
-        // 基本 YAML 語法檢查
+        // Basic YAML syntax check
         const lines = content.split('\n');
         let indentLevel = 0;
         let hasErrors = false;
@@ -165,19 +165,19 @@ function checkWorkflowSyntax() {
           if (trimmed && !trimmed.startsWith('#')) {
             const currentIndent = line.length - line.trimStart().length;
 
-            // 檢查縮進是否正確
+            // Check if indentation is correct
             if (currentIndent % 2 !== 0 && currentIndent > 0) {
-              console.log(`⚠️ ${file}:${index + 1} 縮進可能不正確`);
+              console.log(`⚠️ ${file}:${index + 1} Indentation may be incorrect`);
               hasErrors = true;
             }
           }
         });
 
         if (!hasErrors) {
-          console.log(`✅ ${file} 語法檢查通過`);
+          console.log(`✅ ${file} Syntax check passed`);
         }
       } catch (error) {
-        console.log(`❌ ${file} 語法錯誤: ${error.message}`);
+        console.log(`❌ ${file} Syntax error: ${error.message}`);
       }
     }
   });
@@ -185,35 +185,35 @@ function checkWorkflowSyntax() {
   console.log('');
 }
 
-// 主函數
+// Main function
 function main() {
   try {
-    // 檢查工作流 Secrets
+    // Check workflow Secrets
     const requiredSecrets = checkWorkflowSecrets();
 
-    // 檢查必需的 Secrets
+    // Check required Secrets
     const secrets = checkRequiredSecrets(requiredSecrets);
 
-    // 檢查工作流語法
+    // Check workflow syntax
     checkWorkflowSyntax();
 
-    // 生成測試建議
+    // Generate test recommendations
     generateTestRecommendations(secrets);
 
-    console.log('🎉 配置檢查完成！');
-    console.log('您的 CI/CD 配置看起來已經準備就緒。\n');
+    console.log('🎉 Configuration check complete!');
+    console.log('Your CI/CD configuration looks ready.\n');
 
-    console.log('📞 如果遇到問題:');
-    console.log('1. 查看 GitHub Actions 日誌');
-    console.log('2. 運行: node scripts/fix-cicd.js');
-    console.log('3. 查看: CICD_TROUBLESHOOTING_GUIDE.md\n');
+    console.log('📞 If you encounter issues:');
+    console.log('1. Check GitHub Actions logs');
+    console.log('2. Run: node scripts/fix-cicd.js');
+    console.log('3. Check: CICD_TROUBLESHOOTING_GUIDE.md\n');
   } catch (error) {
-    console.error('❌ 配置檢查失敗:', error.message);
+    console.error('❌ Configuration check failed:', error.message);
     process.exit(1);
   }
 }
 
-// 執行主函數
+// Execute main function
 if (require.main === module) {
   main();
 }

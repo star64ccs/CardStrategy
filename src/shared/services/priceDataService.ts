@@ -2,7 +2,7 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 價格數據
+ * 價格Data
  */
 export interface PriceData {
   id: string;
@@ -38,7 +38,7 @@ export interface PriceHistory {
 }
 
 /**
- * 市場統計
+ * 市場Statistics
  */
 export interface MarketStats {
   cardId: string;
@@ -56,7 +56,7 @@ export interface MarketStats {
 }
 
 /**
- * 價格警報
+ * 價格Alert
  */
 export interface PriceAlert {
   id: string;
@@ -70,7 +70,7 @@ export interface PriceAlert {
 }
 
 /**
- * 創建價格警報請求
+ * Create價格AlertRequest
  */
 export interface CreatePriceAlertRequest {
   cardId: string;
@@ -79,13 +79,13 @@ export interface CreatePriceAlertRequest {
 }
 
 /**
- * 價格數據服務
+ * 價格DataService
  */
 export class PriceDataService {
   private readonly baseUrl = '/api/price-data';
 
   /**
-   * 獲取卡牌當前價格
+   * Get卡牌當前價格
    */
   async getCurrentPrice(
     cardId: string,
@@ -100,36 +100,36 @@ export class PriceDataService {
       );
 
       if (response.success) {
-        logger.info('卡牌當前價格獲取成功:', {
+        logger.info('卡牌當前價格GetSuccess:', {
           cardId,
           price: (response.data as any)?.price,
         });
         return {
           success: true,
           data: response.data,
-          message: '卡牌當前價格獲取成功',
+          message: '卡牌當前價格GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取卡牌當前價格失敗:', { message: response.message });
+        logger.error('Get卡牌當前價格Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取卡牌當前價格失敗',
+          message: response.message || 'Get卡牌當前價格Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取卡牌當前價格時發生錯誤:', error);
+      logger.error('Get卡牌當前價格時發生Error:', error);
       return {
         success: false,
-        message: '獲取卡牌當前價格時發生錯誤',
+        message: 'Get卡牌當前價格時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取卡牌價格歷史
+   * Get卡牌價格歷史
    */
   async getPriceHistory(
     cardId: string,
@@ -143,36 +143,36 @@ export class PriceDataService {
       );
 
       if (response.success) {
-        logger.info('卡牌價格歷史獲取成功:', {
+        logger.info('卡牌價格歷史GetSuccess:', {
           cardId,
           dataPoints: (response.data as any)?.prices?.length,
         });
         return {
           success: true,
           data: response.data,
-          message: '卡牌價格歷史獲取成功',
+          message: '卡牌價格歷史GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取卡牌價格歷史失敗:', { message: response.message });
+        logger.error('Get卡牌價格歷史Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取卡牌價格歷史失敗',
+          message: response.message || 'Get卡牌價格歷史Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取卡牌價格歷史時發生錯誤:', error);
+      logger.error('Get卡牌價格歷史時發生Error:', error);
       return {
         success: false,
-        message: '獲取卡牌價格歷史時發生錯誤',
+        message: 'Get卡牌價格歷史時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取市場統計
+   * Get市場Statistics
    */
   async getMarketStats(cardId: string): Promise<any> {
     try {
@@ -181,33 +181,33 @@ export class PriceDataService {
       const _response = await api.get(`${this.baseUrl}/stats/${cardId}`);
 
       if (response.success) {
-        logger.info('市場統計獲取成功:', { cardId });
+        logger.info('市場統計GetSuccess:', { cardId });
         return {
           success: true,
           data: response.data,
-          message: '市場統計獲取成功',
+          message: '市場統計GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取市場統計失敗:', { message: response.message });
+        logger.error('Get市場統計Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取市場統計失敗',
+          message: response.message || 'Get市場統計Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取市場統計時發生錯誤:', error);
+      logger.error('Get市場統計時發生Error:', error);
       return {
         success: false,
-        message: '獲取市場統計時發生錯誤',
+        message: 'Get市場統計時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 批量獲取價格
+   * BatchGet價格
    */
   async getBatchPrices(
     cardIds: string[],
@@ -223,35 +223,35 @@ export class PriceDataService {
       );
 
       if (response.success) {
-        logger.info('批量價格獲取成功:', {
+        logger.info('批量價格GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data || [],
-          message: '批量價格獲取成功',
+          message: '批量價格GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('批量獲取價格失敗:', { message: response.message });
+        logger.error('批量Get價格Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '批量獲取價格失敗',
+          message: response.message || '批量Get價格Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('批量獲取價格時發生錯誤:', error);
+      logger.error('批量Get價格時發生Error:', error);
       return {
         success: false,
-        message: '批量獲取價格時發生錯誤',
+        message: '批量Get價格時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 創建價格警報
+   * Create價格Alert
    */
   async createPriceAlert(
     userId: string,
@@ -270,33 +270,33 @@ export class PriceDataService {
       });
 
       if (response.success) {
-        logger.info('價格警報創建成功:', { id: (response.data as any)?.id });
+        logger.info('價格警報CreateSuccess:', { id: (response.data as any)?.id });
         return {
           success: true,
           data: response.data,
-          message: '價格警報創建成功',
+          message: '價格警報CreateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('創建價格警報失敗:', { message: response.message });
+        logger.error('Create價格警報Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '創建價格警報失敗',
+          message: response.message || 'Create價格警報Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('創建價格警報時發生錯誤:', error);
+      logger.error('Create價格警報時發生Error:', error);
       return {
         success: false,
-        message: '創建價格警報時發生錯誤',
+        message: 'Create價格警報時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取用戶價格警報
+   * GetUser價格Alert
    */
   async getUserPriceAlerts(userId: string): Promise<any> {
     try {
@@ -305,35 +305,35 @@ export class PriceDataService {
       const _response = await api.get(`${this.baseUrl}/alerts/user/${userId}`);
 
       if (response.success) {
-        logger.info('用戶價格警報獲取成功:', {
+        logger.info('用戶價格警報GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data || [],
-          message: '用戶價格警報獲取成功',
+          message: '用戶價格警報GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取用戶價格警報失敗:', { message: response.message });
+        logger.error('Get用戶價格警報Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取用戶價格警報失敗',
+          message: response.message || 'Get用戶價格警報Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取用戶價格警報時發生錯誤:', error);
+      logger.error('Get用戶價格警報時發生Error:', error);
       return {
         success: false,
-        message: '獲取用戶價格警報時發生錯誤',
+        message: 'Get用戶價格警報時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 更新價格警報
+   * Update價格Alert
    */
   async updatePriceAlert(
     alertId: string,
@@ -348,33 +348,33 @@ export class PriceDataService {
       );
 
       if (response.success) {
-        logger.info('價格警報更新成功:', { alertId });
+        logger.info('價格警報UpdateSuccess:', { alertId });
         return {
           success: true,
           data: response.data,
-          message: '價格警報更新成功',
+          message: '價格警報UpdateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('更新價格警報失敗:', { message: response.message });
+        logger.error('Update價格警報Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '更新價格警報失敗',
+          message: response.message || 'Update價格警報Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('更新價格警報時發生錯誤:', error);
+      logger.error('Update價格警報時發生Error:', error);
       return {
         success: false,
-        message: '更新價格警報時發生錯誤',
+        message: 'Update價格警報時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 刪除價格警報
+   * Delete價格Alert
    */
   async deletePriceAlert(alertId: string): Promise<any> {
     try {
@@ -383,32 +383,32 @@ export class PriceDataService {
       const _response = await api.delete(`${this.baseUrl}/alerts/${alertId}`);
 
       if (response.success) {
-        logger.info('價格警報刪除成功:', { alertId });
+        logger.info('價格警報DeleteSuccess:', { alertId });
         return {
           success: true,
-          message: '價格警報刪除成功',
+          message: '價格警報DeleteSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('刪除價格警報失敗:', { message: response.message });
+        logger.error('Delete價格警報Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '刪除價格警報失敗',
+          message: response.message || 'Delete價格警報Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('刪除價格警報時發生錯誤:', error);
+      logger.error('Delete價格警報時發生Error:', error);
       return {
         success: false,
-        message: '刪除價格警報時發生錯誤',
+        message: 'Delete價格警報時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取熱門卡牌
+   * Get熱門卡牌
    */
   async getTrendingCards(limit = 10): Promise<any> {
     try {
@@ -419,39 +419,39 @@ export class PriceDataService {
       );
 
       if (response.success) {
-        logger.info('熱門卡牌獲取成功:', {
+        logger.info('熱門卡牌GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data || [],
-          message: '熱門卡牌獲取成功',
+          message: '熱門卡牌GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取熱門卡牌失敗:', { message: response.message });
+        logger.error('Get熱門卡牌Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取熱門卡牌失敗',
+          message: response.message || 'Get熱門卡牌Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取熱門卡牌時發生錯誤:', error);
+      logger.error('Get熱門卡牌時發生Error:', error);
       return {
         success: false,
-        message: '獲取熱門卡牌時發生錯誤',
+        message: 'Get熱門卡牌時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取服務狀態
+   * GetServiceStatus
    */
   async getServiceStats(): Promise<any> {
     try {
-      logger.info('獲取價格數據服務狀態');
+      logger.info('Get價格數據Service狀態');
 
       const _response = await api.get(`${this.baseUrl}/health`);
 
@@ -470,21 +470,21 @@ export class PriceDataService {
             trending: `${this.baseUrl}/trending`,
           },
         },
-        message: '價格數據服務狀態獲取成功',
+        message: '價格數據Service狀態GetSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('獲取價格數據服務狀態時發生錯誤:', error);
+      logger.error('Get價格數據Service狀態時發生Error:', error);
       return {
         success: false,
-        message: '獲取價格數據服務狀態時發生錯誤',
+        message: 'Get價格數據Service狀態時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取歷史價格數據
+   * Get歷史價格Data
    */
   async getHistoricalPrices(
     cardId: string,
@@ -507,33 +507,33 @@ export class PriceDataService {
       );
 
       if (response.success) {
-        logger.info('歷史價格數據獲取成功:', { cardId });
+        logger.info('歷史價格數據GetSuccess:', { cardId });
         return {
           success: true,
           data: response.data,
-          message: '歷史價格數據獲取成功',
+          message: '歷史價格數據GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取歷史價格數據失敗:', { message: response.message });
+        logger.error('Get歷史價格數據Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取歷史價格數據失敗',
+          message: response.message || 'Get歷史價格數據Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取歷史價格數據時發生錯誤:', error);
+      logger.error('Get歷史價格數據時發生Error:', error);
       return {
         success: false,
-        message: '獲取歷史價格數據時發生錯誤',
+        message: 'Get歷史價格數據時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取評級機構數據
+   * Get評級機構Data
    */
   async getGradingAgencyData(
     cardId: string,
@@ -552,33 +552,33 @@ export class PriceDataService {
       );
 
       if (response.success) {
-        logger.info('評級機構數據獲取成功:', { cardId });
+        logger.info('評級機構數據GetSuccess:', { cardId });
         return {
           success: true,
           data: response.data,
-          message: '評級機構數據獲取成功',
+          message: '評級機構數據GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取評級機構數據失敗:', { message: response.message });
+        logger.error('Get評級機構數據Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取評級機構數據失敗',
+          message: response.message || 'Get評級機構數據Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取評級機構數據時發生錯誤:', error);
+      logger.error('Get評級機構數據時發生Error:', error);
       return {
         success: false,
-        message: '獲取評級機構數據時發生錯誤',
+        message: 'Get評級機構數據時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取推薦平台
+   * Get推薦平台
    */
   async getRecommendedPlatforms(): Promise<any> {
     try {
@@ -587,33 +587,33 @@ export class PriceDataService {
       const _response = await api.get(`${this.baseUrl}/platforms/recommended`);
 
       if (response.success) {
-        logger.info('推薦平台獲取成功');
+        logger.info('推薦平台GetSuccess');
         return {
           success: true,
           data: response.data,
-          message: '推薦平台獲取成功',
+          message: '推薦平台GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取推薦平台失敗:', { message: response.message });
+        logger.error('Get推薦平台Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取推薦平台失敗',
+          message: response.message || 'Get推薦平台Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取推薦平台時發生錯誤:', error);
+      logger.error('Get推薦平台時發生Error:', error);
       return {
         success: false,
-        message: '獲取推薦平台時發生錯誤',
+        message: 'Get推薦平台時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 檢查平台狀態
+   * Check平台Status
    */
   async checkPlatformStatus(platforms: unknown[]): Promise<any> {
     try {
@@ -624,26 +624,26 @@ export class PriceDataService {
       });
 
       if (response.success) {
-        logger.info('平台狀態檢查成功');
+        logger.info('平台狀態CheckSuccess');
         return {
           success: true,
           data: response.data,
-          message: '平台狀態檢查成功',
+          message: '平台狀態CheckSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('檢查平台狀態失敗:', { message: response.message });
+        logger.error('Check平台狀態Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '檢查平台狀態失敗',
+          message: response.message || 'Check平台狀態Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('檢查平台狀態時發生錯誤:', error);
+      logger.error('Check平台狀態時發生Error:', error);
       return {
         success: false,
-        message: '檢查平台狀態時發生錯誤',
+        message: 'Check平台狀態時發生Error',
         timestamp: new Date(),
       };
     }

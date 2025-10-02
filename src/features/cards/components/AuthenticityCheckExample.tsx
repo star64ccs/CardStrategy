@@ -29,12 +29,12 @@ export const AuthenticityCheckExample: React.FC = () => {
     clearErrors,
   } = useAuthenticityCheck({
     onCheckSuccess: result => {
-      logger.info('示例組件收到檢查成功:', {
+      logger.info('示例組件收到CheckSuccess:', {
         isAuthentic: result.isAuthentic,
       } as Record<string, unknown>);
     },
     onCheckError: error => {
-      logger.error('示例組件收到檢查失敗:', {
+      logger.error('示例組件收到CheckFailed:', {
         message: error.message,
       } as Record<string, unknown>);
     },

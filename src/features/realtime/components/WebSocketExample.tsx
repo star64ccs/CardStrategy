@@ -1,6 +1,6 @@
 /**
- * WebSocket 示例組件
- * 展示 WebSocket 功能的使用方法
+ * WebSocket 示例Component
+ * 展示 WebSocket 功能的使用Method
  */
 
 import React, { useEffect, useState } from 'react';
@@ -51,7 +51,7 @@ const WebSocketExample: React.FC = () => {
     clearError,
   } = useWebSocket();
 
-  // 訂閱特定類型的消息
+  // 訂閱SpecificClass型的Message
   const { messages: cardMessages } = useWebSocketSubscription(
     'card-updates',
     {
@@ -63,12 +63,12 @@ const WebSocketExample: React.FC = () => {
     }
   );
 
-  // 房間管理
+  // 房間Manage
   const { isInRoom, isJoining, isLeaving, join, leave } =
     useWebSocketRoom(roomId);
 
   useEffect(() => {
-    // 組件掛載時初始化 WebSocket
+    // Component掛載時Initialize WebSocket
     initialize({
       url: 'ws://localhost:8080/ws',
       reconnectInterval: 5000,
@@ -78,35 +78,35 @@ const WebSocketExample: React.FC = () => {
   }, [initialize]);
 
   useEffect(() => {
-    // 監聽連接狀態變化
+    // 監聽ConnectStatus變化
     if (isConnected) {
-      console.log('WebSocket 已連接');
+      console.log('WebSocket 已Connect');
     } else if (hasError) {
-      console.log('WebSocket 錯誤:', error);
+      console.log('WebSocket Error:', error);
     }
   }, [isConnected, hasError, error]);
 
   const _handleConnect = async () => {
     try {
       await connect();
-      Alert.alert('成功', 'WebSocket 連接成功');
+      Alert.alert('Success', 'WebSocket ConnectSuccess');
     } catch (error: unknown) {
-      Alert.alert('錯誤', `連接失敗: ${error.message}`);
+      Alert.alert('Error', `ConnectFailed: ${error.message}`);
     }
   };
 
   const _handleDisconnect = async () => {
     try {
       await disconnect();
-      Alert.alert('成功', 'WebSocket 已斷開連接');
+      Alert.alert('Success', 'WebSocket 已斷開Connect');
     } catch (error: unknown) {
-      Alert.alert('錯誤', `斷開連接失敗: ${error.message}`);
+      Alert.alert('Error', `DisconnectConnectFailed: ${error.message}`);
     }
   };
 
   const _handleSendMessage = async () => {
     if (!messageText.trim()) {
-      Alert.alert('錯誤', '請輸入消息內容');
+      Alert.alert('Error', '請輸入消息內容');
       return;
     }
 
@@ -124,15 +124,15 @@ const WebSocketExample: React.FC = () => {
 
       await sendMessage(message);
       setMessageText('');
-      Alert.alert('成功', '消息發送成功');
+      Alert.alert('Success', '消息發送Success');
     } catch (error: unknown) {
-      Alert.alert('錯誤', `發送消息失敗: ${error.message}`);
+      Alert.alert('Error', `發送消息Failed: ${error.message}`);
     }
   };
 
   const _handleBroadcast = async () => {
     if (!messageText.trim()) {
-      Alert.alert('錯誤', '請輸入廣播消息內容');
+      Alert.alert('Error', '請輸入廣播消息內容');
       return;
     }
 
@@ -154,9 +154,9 @@ const WebSocketExample: React.FC = () => {
       });
 
       setMessageText('');
-      Alert.alert('成功', '廣播消息發送成功');
+      Alert.alert('Success', '廣播消息發送Success');
     } catch (error: unknown) {
-      Alert.alert('錯誤', `廣播消息失敗: ${error.message}`);
+      Alert.alert('Error', `廣播消息Failed: ${error.message}`);
     }
   };
 
@@ -167,27 +167,27 @@ const WebSocketExample: React.FC = () => {
         status: 'online',
         device: 'mobile',
       });
-      Alert.alert('成功', `已加入房間: ${roomId}`);
+      Alert.alert('Success', `已加入房間: ${roomId}`);
     } catch (error: unknown) {
-      Alert.alert('錯誤', `加入房間失敗: ${error.message}`);
+      Alert.alert('Error', `加入房間Failed: ${error.message}`);
     }
   };
 
   const _handleLeaveRoom = async () => {
     try {
       await leave();
-      Alert.alert('成功', `已離開房間: ${roomId}`);
+      Alert.alert('Success', `已離開房間: ${roomId}`);
     } catch (error: unknown) {
-      Alert.alert('錯誤', `離開房間失敗: ${error.message}`);
+      Alert.alert('Error', `離開房間Failed: ${error.message}`);
     }
   };
 
   const _handleReconnect = async () => {
     try {
       await reconnect();
-      Alert.alert('成功', '重新連接成功');
+      Alert.alert('Success', '重新ConnectSuccess');
     } catch (error: unknown) {
-      Alert.alert('錯誤', `重新連接失敗: ${error.message}`);
+      Alert.alert('Error', `重新ConnectFailed: ${error.message}`);
     }
   };
 
@@ -208,11 +208,11 @@ const WebSocketExample: React.FC = () => {
   const _getStatusText = () => {
     switch (status) {
       case 'connected':
-        return '已連接';
+        return '已Connect';
       case 'connecting':
-        return '連接中...';
+        return 'Connect中...';
       case 'reconnecting':
-        return '重新連接中...';
+        return '重新Connect中...';
       case 'disconnected':
         return '已斷開';
       default:
@@ -235,7 +235,7 @@ const WebSocketExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 連接控制 */}
+      {/* ConnectControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>連接控制</Text>
         <View style={styles.buttonRow}>
@@ -277,7 +277,7 @@ const WebSocketExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 房間管理 */}
+      {/* 房間Manage */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>房間管理</Text>
         <TextInput
@@ -312,7 +312,7 @@ const WebSocketExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 消息發送 */}
+      {/* MessageSend */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>消息發送</Text>
         <TextInput
@@ -349,7 +349,7 @@ const WebSocketExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 統計信息 */}
+      {/* StatisticsInformation */}
       {stats && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>統計信息</Text>
@@ -376,7 +376,7 @@ const WebSocketExample: React.FC = () => {
         </View>
       )}
 
-      {/* 消息列表 */}
+      {/* MessageList */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>消息列表</Text>
@@ -410,7 +410,7 @@ const WebSocketExample: React.FC = () => {
         </ScrollView>
       </View>
 
-      {/* 通知列表 */}
+      {/* NotificationList */}
       {notifications.length > 0 && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -448,7 +448,7 @@ const WebSocketExample: React.FC = () => {
         </View>
       )}
 
-      {/* 錯誤信息 */}
+      {/* ErrorInformation */}
       {hasError && (
         <View style={styles.section}>
           <View style={styles.sectionHeader}>

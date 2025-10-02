@@ -46,13 +46,13 @@ class DashboardService {
     }
 
     try {
-      // 初始化默認儀表板
+      // InitializeDefault儀Table板
       await this.initializeDefaultDashboards();
 
-      // 初始化默認模板
+      // InitializeDefault模板
       await this.initializeDefaultTemplates();
 
-      // 初始化默認主題
+      // InitializeDefaultTheme
       await this.initializeDefaultThemes();
 
       this.isInitialized = true;
@@ -69,7 +69,7 @@ class DashboardService {
       description: '系統默認儀表板',
       layouts: [this.createDefaultLayout()],
       dataSources: this.createDefaultDataSources(),
-      refreshInterval: 300, // 5分鐘
+      refreshInterval: 300, // 5Minute
       autoSave: true,
       sharing: {
         isPublic: false,
@@ -311,7 +311,7 @@ class DashboardService {
   }
 
   private async initializeDefaultThemes(): Promise<void> {
-    // 可以添加更多預設主題
+    // 可以Add更多預設Theme
   }
 
   async getDashboard(dashboardId: string): Promise<DashboardConfig | null> {
@@ -493,7 +493,7 @@ class DashboardService {
     this.alerts.delete(dashboardId);
     this.analytics.delete(dashboardId);
 
-    // 清除刷新間隔
+    // ClearRefresh間隔
     const _refreshInterval = this.refreshIntervals.get(dashboardId);
     if (refreshInterval) {
       clearInterval(refreshInterval);
@@ -535,7 +535,7 @@ class DashboardService {
       throw new Error(`Dashboard not found: ${dashboardId}`);
     }
 
-    // 模擬數據刷新
+    // 模擬DataRefresh
     const newData: DashboardData[] = [];
 
     for (const layout of dashboard.layouts) {
@@ -616,7 +616,7 @@ class DashboardService {
 
     this.exports.set(exportId, dashboardExport);
 
-    // 模擬導出處理
+    // 模擬ExportHandle
     setTimeout(() => {
       const _updatedExport = this.exports.get(exportId);
       if (updatedExport) {
@@ -844,7 +844,7 @@ class DashboardService {
       throw new Error('DashboardService not initialized');
     }
 
-    // 更新配置邏輯
+    // UpdateConfigure邏輯
     this.emitEvent('configUpdated', { config });
   }
 }

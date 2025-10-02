@@ -2,8 +2,8 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 文件服務
- * 處理文件上傳下載相關功能
+ * FileService
+ * HandleFileUploadDownload相Off功能
  */
 export class FileService {
   private static instance: FileService;
@@ -18,7 +18,7 @@ export class FileService {
   }
 
   /**
-   * 上傳文件
+   * UploadFile
    */
   async uploadFile(file: File): Promise<string> {
     try {
@@ -34,14 +34,14 @@ export class FileService {
       if (response.success && response.data) {
         return response.data.url;
       } else {
-        throw new Error('文件上傳失敗');
+        throw new Error('文件上傳Failed');
       }
     } catch (error) {
-      logger.error('文件上傳失敗:', { error });
+      logger.error('文件上傳Failed:', { error });
       throw error;
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _fileService = FileService.getInstance();

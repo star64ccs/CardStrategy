@@ -3,7 +3,7 @@ import { http, HttpResponse } from 'msw';
 // API 基礎 URL
 const _API_BASE_URL = 'https://api.cardstrategy.com';
 
-// 基本的mock數據
+// 基本的mockData
 const _mockUser = {
   id: '1',
   username: 'testuser',
@@ -50,11 +50,11 @@ const _mockScanHistory = [
 ];
 
 export const _handlers = [
-  // 認證相關
+  // Authenticate相Off
   http.post(`${API_BASE_URL}/auth/login`, () => {
     return HttpResponse.json({
       success: true,
-      message: '登入成功',
+      message: '登入Success',
       data: {
         user: mockUser,
         token: 'mock-jwt-token',
@@ -66,7 +66,7 @@ export const _handlers = [
     return HttpResponse.json(
       {
         success: true,
-        message: '註冊成功',
+        message: '註冊Success',
         data: {
           user: mockUser,
           token: 'mock-jwt-token',
@@ -76,7 +76,7 @@ export const _handlers = [
     );
   }),
 
-  // 卡片相關
+  // 卡片相Off
   http.get(`${API_BASE_URL}/cards`, ({ request }) => {
     const _url = new URL(request.url);
     const _page = url.searchParams.get('page') || '1';
@@ -84,7 +84,7 @@ export const _handlers = [
 
     return HttpResponse.json({
       success: true,
-      message: '獲取卡片列表成功',
+      message: 'Get卡片列表Success',
       data: {
         cards: mockCards,
         pagination: {
@@ -113,12 +113,12 @@ export const _handlers = [
 
     return HttpResponse.json({
       success: true,
-      message: '獲取卡片詳情成功',
+      message: 'Get卡片詳情Success',
       data: card,
     });
   }),
 
-  // 掃描歷史相關
+  // 掃描歷史相Off
   http.get(`${API_BASE_URL}/scan-history`, ({ request }) => {
     const _url = new URL(request.url);
     const _page = url.searchParams.get('page') || '1';
@@ -126,7 +126,7 @@ export const _handlers = [
 
     return HttpResponse.json({
       success: true,
-      message: '獲取掃描歷史成功',
+      message: 'Get掃描歷史Success',
       data: {
         history: mockScanHistory,
         total: mockScanHistory.length,
@@ -153,21 +153,21 @@ export const _handlers = [
 
     return HttpResponse.json({
       success: true,
-      message: '獲取掃描記錄成功',
+      message: 'Get掃描記錄Success',
       data: record,
     });
   }),
 
-  // 用戶相關
+  // User相Off
   http.get(`${API_BASE_URL}/user/profile`, () => {
     return HttpResponse.json({
       success: true,
-      message: '獲取用戶資料成功',
+      message: 'Get用戶資料Success',
       data: mockUser,
     });
   }),
 
-  // 默認處理器 - 處理所有其他GET請求
+  // DefaultHandle器 - Handle所有其他GETRequest
   http.get('*', ({ request }) => {
     console.warn(`未處理的GET請求: ${request.url}`);
     return HttpResponse.json(
@@ -179,7 +179,7 @@ export const _handlers = [
     );
   }),
 
-  // 默認處理器 - 處理所有其他POST請求
+  // DefaultHandle器 - Handle所有其他POSTRequest
   http.post('*', ({ request }) => {
     console.warn(`未處理的POST請求: ${request.url}`);
     return HttpResponse.json(

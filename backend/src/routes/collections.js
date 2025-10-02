@@ -4,14 +4,14 @@ const { Op } = require('sequelize');''
 const { authenticateToken: protect, authorize } = require('../middleware/auth');'
 // eslint-disable-next-line no-unused-vars''
 const logger = require('../utils/logger');'
-// 導入模�?''
+// Import模�?''
 const getCollectionModel = require('../models/Collection');''
 const getCollectionCardModel = require('../models/CollectionCard');'
 // eslint-disable-next-line no-unused-vars''
 const getCardModel = require('../models/Card');''
 const getUserModel = require('../models/User');
 
-// 設置模�??�聯
+// Settings模�??�聯
 const setupAssociations = () => {
   const Collection = getCollectionModel();
   const CollectionCard = getCollectionCardModel();
@@ -56,7 +56,7 @@ router.get('/', protect, async (req, res) => {
     if (!Collection || !CollectionCard || !Card || !User) {''
       throw new Error('?��??��?模�?');
     }
-    // 設置?�聯'
+    // Settings?�聯'
     Collection.hasMany(CollectionCard, {''
       foreignKey: 'collectionId',''
       as: 'collectionCards','
@@ -75,7 +75,7 @@ router.get('/', protect, async (req, res) => {
     const { page = 1, limit = 10, search, isPublic } = req.query;
     const offset = (page - 1) * limit;
 
-    // 構建?�詢條件
+    // Build?�詢Condition
     const whereClause = {
       userId: req.user.id,
       isActive: true,
@@ -109,7 +109,7 @@ router.get('/', protect, async (req, res) => {
       ],
     });
 
-    // 計�?統�?信息
+    // 計�?統�?Information
     const collectionsWithStats = collections.map((collection) => {
       const totalCards = collection.collectionCards.reduce(
         (sum, cc) => sum + cc.quantity,
@@ -221,7 +221,7 @@ router.post(''
         tags = [],
       } = req.body;
 
-      // 檢查?��??�稱?�否已�???      const existingCollection = await Collection.findOne({
+      // Check?��??�稱?�No已�???      const existingCollection = await Collection.findOne({
         where: {
           userId: req.user.id,
           name,
@@ -272,7 +272,7 @@ router.post(''
 );
 
 // @route   GET /api/collections/public/list
-// @desc    ?��??��??��??�表'
+// @desc    ?��??��??��??�Table'
 // @access  Public''
 router.get('/public/list', async (req, res) => {
   try {
@@ -284,7 +284,7 @@ router.get('/public/list', async (req, res) => {
     if (!Collection || !CollectionCard || !Card || !User) {''
       throw new Error('?��??��?模�?');
     }
-    // 設置?�聯'
+    // Settings?�聯'
     Collection.hasMany(CollectionCard, {''
       foreignKey: 'collectionId',''
       as: 'collectionCards','
@@ -303,7 +303,7 @@ router.get('/public/list', async (req, res) => {
     const { page = 1, limit = 10, search } = req.query;
     const offset = (page - 1) * limit;
 
-    // 構建?�詢條件
+    // Build?�詢Condition
     const whereClause = {
       isPublic: true,
       isActive: true,
@@ -339,7 +339,7 @@ router.get('/public/list', async (req, res) => {
       ],
     });
 
-    // 計�?統�?信息
+    // 計�?統�?Information
     const collectionsWithStats = collections.map((collection) => {
       const totalCards = collection.collectionCards.reduce(
         (sum, cc) => sum + cc.quantity,
@@ -431,7 +431,7 @@ router.get('/:id', protect, async (req, res) => {
         code: 'COLLECTION_NOT_FOUND',
       });
     }
-    // 計�?統�?信息
+    // 計�?統�?Information
     const totalCards = collection.collectionCards.reduce(
       (sum, cc) => sum + cc.quantity,
       0
@@ -545,7 +545,7 @@ router.put(''
           code: 'COLLECTION_NOT_FOUND',
         });
       }
-      // 如�??�新?�稱，檢?�是?��??��??��??��?
+      // 如�??�新?�稱，檢?�Yes?��??��??��??��?
       if (name && name !== collection.name) {
         const existingCollection = await Collection.findOne({
           where: {
@@ -697,7 +697,7 @@ router.post(''
         grade = null,
       } = req.body;
 
-      // 檢查?��??�否存在
+      // Check?��??�No存在
       const collection = await Collection.findOne({
         where: {
           id,
@@ -713,7 +713,7 @@ router.post(''
           code: 'COLLECTION_NOT_FOUND',
         });
       }
-      // 檢查?��??�否存在
+      // Check?��??�No存在
       const card = await Card.findByPk(cardId);
       if (!card) {
         return res.status(404).json({'
@@ -722,7 +722,7 @@ router.post(''
           code: 'CARD_NOT_FOUND',
         });
       }
-      // 檢查?��??�否已�??�於?��?�?      const existingCollectionCard = await CollectionCard.findOne({
+      // Check?��??�No已�??�於?��?�?      const existingCollectionCard = await CollectionCard.findOne({
         where: {
           collectionId: id,
           cardId,
@@ -858,7 +858,7 @@ router.put(''
       const { quantity, condition, notes, isFoil, isSigned, isGraded, grade } =
         req.body;
 
-      // 檢查?��??�否存在
+      // Check?��??�No存在
       const collection = await Collection.findOne({
         where: {
           id,
@@ -874,7 +874,7 @@ router.put(''
           code: 'COLLECTION_NOT_FOUND',
         });
       }
-      // 檢查?��??�否?�收?�中
+      // Check?��??�No?�收?�中
       const collectionCard = await CollectionCard.findOne({
         where: {
           collectionId: id,
@@ -895,7 +895,7 @@ router.put(''
           code: 'CARD_NOT_IN_COLLECTION',
         });
       }
-      // ?�新?��?信息
+      // ?�新?��?Information
       const updateData = {};
       if (quantity !== undefined) updateData.quantity = quantity;
       if (condition !== undefined) updateData.condition = condition;
@@ -931,7 +931,7 @@ router.put(''
 );
 
 // @route   DELETE /api/collections/:id/cards/:cardId
-// @desc    從收?�中移除?��?'
+// @desc    從收?�中Remove?��?'
 // @access  Private''
 router.delete('/:id/cards/:cardId', protect, async (req, res) => {
   try {
@@ -944,7 +944,7 @@ router.delete('/:id/cards/:cardId', protect, async (req, res) => {
     }
     const { id, cardId } = req.params;
 
-    // 檢查?��??�否存在
+    // Check?��??�No存在
     const collection = await Collection.findOne({
       where: {
         id,
@@ -960,7 +960,7 @@ router.delete('/:id/cards/:cardId', protect, async (req, res) => {
         code: 'COLLECTION_NOT_FOUND',
       });
     }
-    // 檢查?��??�否?�收?�中
+    // Check?��??�No?�收?�中
     const collectionCard = await CollectionCard.findOne({
       where: {
         collectionId: id,

@@ -58,14 +58,14 @@ import type {
 import { ReportStatus } from '../types/reporting';
 
 /**
- * 假卡回報系統自定義 Hook
- * 提供完整的假卡回報功能，包括舉報、警告、黑名單管理
+ * False卡回報系統Custom Hook
+ * 提供完整的False卡回報功能，Package括舉報、Warning、黑名單Manage
  */
 export const _useFakeCardReporting = () => {
   const _dispatch = useAppDispatch();
   const _state = useSelector((state: RootState) => state.fakeCardReporting);
 
-  // 狀態選擇器
+  // StatusSelect器
   const _isInitialized = useSelector(selectIsInitialized);
   const _isLoading = useSelector(selectIsLoading);
   const _error = useSelector(selectError);
@@ -80,7 +80,7 @@ export const _useFakeCardReporting = () => {
   const _queryParams = useSelector(selectQueryParams);
   const _pagination = useSelector(selectPagination);
 
-  // 服務初始化
+  // ServiceInitialize
   const _initializeService = (config?: unknown) => {
     return (dispatch(initializeReportingService(config)) as any).unwrap();
   };
@@ -89,7 +89,7 @@ export const _useFakeCardReporting = () => {
     return (dispatch(destroyReportingService()) as any).unwrap();
   };
 
-  // 舉報管理
+  // 舉報Manage
   const _submitReport = (reportData: {
     reporterId: string;
     reportedUserId?: string;
@@ -128,7 +128,7 @@ export const _useFakeCardReporting = () => {
     return (dispatch(getReportStats()) as any).unwrap();
   };
 
-  // 警告管理
+  // WarningManage
   const _issueWarning = (warningData: {
     type: WarningType;
     targetId: string;
@@ -147,7 +147,7 @@ export const _useFakeCardReporting = () => {
     return (dispatch(getUserWarnings(userId)) as any).unwrap();
   };
 
-  // 黑名單管理
+  // 黑名單Manage
   const _blacklistUser = (blacklistData: {
     type: BlacklistType;
     targetId: string;
@@ -165,7 +165,7 @@ export const _useFakeCardReporting = () => {
     return (dispatch(checkUserBlacklistStatus(userId)) as any).unwrap();
   };
 
-  // 社區警告管理
+  // 社DistrictWarningManage
   const _issueCommunityWarning = (warningData: {
     title: string;
     message: string;
@@ -184,7 +184,7 @@ export const _useFakeCardReporting = () => {
     return (dispatch(getActiveCommunityWarnings()) as any).unwrap();
   };
 
-  // 狀態管理
+  // StatusManage
   const _setCurrentReportAction = (report: unknown) => {
     dispatch(setCurrentReport(report));
   };
@@ -210,7 +210,7 @@ export const _useFakeCardReporting = () => {
     dispatch(resetState());
   };
 
-  // 列表管理
+  // ListManage
   const _addReportToListAction = (report: unknown) => {
     dispatch(addReportToList(report));
   };
@@ -247,7 +247,7 @@ export const _useFakeCardReporting = () => {
     dispatch(updateCommunityWarningInList(warning));
   };
 
-  // 實用函數
+  // 實用Function
   const _getReportById = (reportId: string) => {
     return reports.find(report => report.id === reportId);
   };
@@ -406,7 +406,7 @@ export const _useFakeCardReporting = () => {
   };
 
   return {
-    // 狀態
+    // Status
     state,
     isInitialized,
     isLoading,
@@ -422,37 +422,37 @@ export const _useFakeCardReporting = () => {
     queryParams,
     pagination,
 
-    // 服務管理
+    // ServiceManage
     initializeService,
     destroyService,
 
-    // 舉報管理
+    // 舉報Manage
     submitReport,
     fetchReport,
     updateStatus,
     searchReports,
     getStats,
 
-    // 警告管理
+    // WarningManage
     issueWarning,
     fetchUserWarnings,
 
-    // 黑名單管理
+    // 黑名單Manage
     blacklistUser,
     checkBlacklistStatus,
 
-    // 社區警告管理
+    // 社DistrictWarningManage
     issueCommunityWarning,
     fetchCommunityWarnings,
 
-    // 狀態管理
+    // StatusManage
     setCurrentReport: setCurrentReportAction,
     updateQueryParams: updateQueryParamsAction,
     setPagination: setPaginationAction,
     clearError: clearErrorAction,
     resetState: resetStateAction,
 
-    // 列表管理
+    // ListManage
     addReportToList: addReportToListAction,
     updateReportInList: updateReportInListAction,
     removeReportFromList: removeReportFromListAction,
@@ -463,7 +463,7 @@ export const _useFakeCardReporting = () => {
     addCommunityWarningToList: addCommunityWarningToListAction,
     updateCommunityWarningInList: updateCommunityWarningInListAction,
 
-    // 查詢函數
+    // QueryFunction
     getReportById,
     getWarningById,
     getBlacklistEntryById,
@@ -478,7 +478,7 @@ export const _useFakeCardReporting = () => {
     getWarningsByUser,
     getBlacklistEntriesByUser,
 
-    // 統計函數
+    // StatisticsFunction
     getPendingReportsCount,
     getUnderReviewReportsCount,
     getResolvedReportsCount,
@@ -487,13 +487,13 @@ export const _useFakeCardReporting = () => {
     getActiveBlacklistEntriesCount,
     getActiveCommunityWarningsCount,
 
-    // 日期範圍查詢
+    // Day範圍Query
     getReportsByDateRange,
     getWarningsByDateRange,
     getBlacklistEntriesByDateRange,
     getCommunityWarningsByDateRange,
 
-    // 特殊查詢
+    // SpecialQuery
     getReportsWithEvidence,
     getAnonymousReports,
     getNonAnonymousReports,

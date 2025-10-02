@@ -25,11 +25,11 @@ import type {
   AccessibilityConfig,
 } from '../types/designSystem';
 
-// 設計系統 Hook 返回值類型
+// 設計系統 Hook ReturnValueClass型
 interface UseDesignSystemReturn {
-  // 狀態
+  // Status
   currentTheme: ThemeType;
-  theme: Theme | undefined; // 添加 theme 屬性作為 currentThemeData 的別名
+  theme: Theme | undefined; // Add theme Property作為 currentThemeData 的別名
   themes: Record<ThemeType, Theme>;
   currentThemeData: Theme | undefined;
   components: unknown;
@@ -38,7 +38,7 @@ interface UseDesignSystemReturn {
   isLoading: boolean;
   error: string | null;
 
-  // 方法
+  // Method
   setTheme: (theme: ThemeType) => void;
   getTheme: (theme: ThemeType) => Theme | undefined;
   getAllThemes: () => Record<ThemeType, Theme>;
@@ -65,7 +65,7 @@ interface UseDesignSystemReturn {
 export const _useDesignSystem = (): UseDesignSystemReturn => {
   const _dispatch = useDispatch();
 
-  // 從 Redux 獲取狀態
+  // 從 Redux GetStatus
   const _currentTheme = useSelector(selectCurrentTheme);
   const _themes = useSelector(selectThemes);
   const _currentThemeData = useSelector(selectCurrentThemeData);
@@ -75,7 +75,7 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
   const _isLoading = useSelector(selectIsLoading);
   const _error = useSelector(selectError);
 
-  // 設置主題
+  // SettingsTheme
   const _setTheme = useCallback(
     (theme: ThemeType) => {
       designSystemService.setTheme(theme);
@@ -84,17 +84,17 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
     [dispatch]
   );
 
-  // 獲取主題
+  // GetTheme
   const _getTheme = useCallback((theme: ThemeType) => {
     return designSystemService.getTheme(theme);
   }, []);
 
-  // 獲取所有主題
+  // Get所有Theme
   const _getAllThemes = useCallback(() => {
     return designSystemService.getAllThemes();
   }, []);
 
-  // 註冊組件
+  // RegisterComponent
   const _registerComponent = useCallback(
     (name: string, config: ComponentConfig) => {
       designSystemService.registerComponent(name, config);
@@ -103,17 +103,17 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
     [dispatch]
   );
 
-  // 獲取組件
+  // GetComponent
   const _getComponent = useCallback((name: string) => {
     return designSystemService.getComponent(name);
   }, []);
 
-  // 獲取所有組件
+  // Get所有Component
   const _getAllComponents = useCallback(() => {
     return designSystemService.getAllComponents();
   }, []);
 
-  // 添加令牌
+  // Add令牌
   const _addToken = useCallback(
     (token: DesignToken) => {
       designSystemService.addToken(token);
@@ -122,22 +122,22 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
     [dispatch]
   );
 
-  // 獲取令牌
+  // Get令牌
   const _getToken = useCallback((name: string) => {
     return designSystemService.getToken(name);
   }, []);
 
-  // 獲取所有令牌
+  // Get所有令牌
   const _getAllTokens = useCallback(() => {
     return designSystemService.getAllTokens();
   }, []);
 
-  // 更新令牌
+  // Update令牌
   const _updateToken = useCallback((name: string, value: string | number) => {
     designSystemService.updateToken(name, value);
   }, []);
 
-  // 更新可訪問性配置
+  // Update可訪問性Configure
   const _updateAccessibility = useCallback(
     (config: Partial<AccessibilityConfig>) => {
       designSystemService.updateAccessibilityConfig(config);
@@ -146,12 +146,12 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
     [dispatch]
   );
 
-  // 獲取可訪問性配置
+  // Get可訪問性Configure
   const _getAccessibilityConfig = useCallback(() => {
     return designSystemService.getAccessibilityConfig();
   }, []);
 
-  // 檢查對比度
+  // Check對比度
   const _checkContrastRatio = useCallback(
     (foreground: string, background: string) => {
       return designSystemService.checkContrastRatio(foreground, background);
@@ -159,7 +159,7 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
     []
   );
 
-  // 檢查是否可訪問
+  // CheckYesNo可訪問
   const _isAccessible = useCallback(
     (
       foreground: string,
@@ -171,7 +171,7 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
     []
   );
 
-  // 訂閱事件
+  // 訂閱Event
   const _subscribe = useCallback(
     (event: string, callback: (event: unknown) => void) => {
       designSystemService.subscribe(event, callback);
@@ -179,7 +179,7 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
     []
   );
 
-  // 取消訂閱
+  // Cancel訂閱
   const _unsubscribe = useCallback(
     (event: string, callback: (event: unknown) => void) => {
       designSystemService.unsubscribe(event, callback);
@@ -188,9 +188,9 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
   );
 
   return {
-    // 狀態
+    // Status
     currentTheme,
-    theme: currentThemeData, // 添加 theme 屬性
+    theme: currentThemeData, // Add theme Property
     themes,
     currentThemeData,
     components,
@@ -199,7 +199,7 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
     isLoading,
     error,
 
-    // 方法
+    // Method
     setTheme,
     getTheme,
     getAllThemes,
@@ -219,5 +219,5 @@ export const _useDesignSystem = (): UseDesignSystemReturn => {
   };
 };
 
-// 導出 Hook
+// Export Hook
 export default useDesignSystem;

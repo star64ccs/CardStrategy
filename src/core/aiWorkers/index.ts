@@ -17,7 +17,7 @@ export enum AIWorkerRole {
   Insight = 'InsightWorker',
 }
 
-// AI Worker 管理器
+// AI Worker Manage器
 export class AIWorkerManager {
   private static instance: AIWorkerManager;
   private readonly workers: Map<AIWorkerRole, any> = new Map();
@@ -36,30 +36,30 @@ export class AIWorkerManager {
   }
 
   /**
-   * 初始化所有 AI Worker
+   * Initialize所有 AI Worker
    */
   public async initialize(): Promise<boolean> {
     try {
       console.log('🚀 初始化 AI Worker 管理器...');
 
-      // 初始化 AI 服務管理器
+      // Initialize AI ServiceManage器
       await this.initializeAIService();
 
-      // 初始化各個 Worker
+      // Initialize各個 Worker
       await this.initializeWorkers();
 
       this.isInitialized = true;
       console.log('✅ AI Worker 管理器初始化完成');
       return true;
     } catch (error) {
-      console.error('❌ AI Worker 管理器初始化失敗:', error);
+      console.error('❌ AI Worker 管理器InitializeFailed:', error);
       this.isInitialized = false;
       return false;
     }
   }
 
   /**
-   * 獲取指定的 Worker
+   * Get指定的 Worker
    */
   public getWorker(role: AIWorkerRole): unknown {
     if (!this.isInitialized) {
@@ -75,7 +75,7 @@ export class AIWorkerManager {
   }
 
   /**
-   * 獲取所有 Worker 狀態
+   * Get所有 Worker Status
    */
   public getAllWorkerStatus(): Map<AIWorkerRole, any> {
     const _status = new Map<AIWorkerRole, any>();
@@ -88,7 +88,7 @@ export class AIWorkerManager {
   }
 
   /**
-   * 執行 Worker 任務
+   * 執Row Worker Task
    */
   public async executeWorkerTask(
     role: AIWorkerRole,
@@ -99,28 +99,28 @@ export class AIWorkerManager {
   }
 
   /**
-   * 獲取 AI 服務統計
+   * Get AI ServiceStatistics
    */
   public getAIServiceStats(): unknown {
     return this.aiService.getStats();
   }
 
   /**
-   * 更新 AI 服務配置
+   * Update AI ServiceConfigure
    */
   public updateAIServiceConfig(config: unknown): void {
     this.aiService.updateConfig(config);
   }
 
-  // 私有方法
+  // PrivateMethod
 
   /**
-   * 初始化 AI 服務
+   * Initialize AI Service
    */
   private async initializeAIService(): Promise<void> {
-    console.log('📊 初始化 AI 服務管理器...');
+    console.log('📊 Initialize AI Service管理器...');
 
-    // 這裡可以設置默認配置
+    // 這裡可以SettingsDefaultConfigure
     const _defaultConfig = {
       maxMonthlyBudget: 30,
       preferredProviders: ['ollama', 'alibaba', 'baidu'],
@@ -139,19 +139,19 @@ export class AIWorkerManager {
     };
 
     this.aiService.updateConfig(defaultConfig);
-    console.log('✅ AI 服務管理器初始化完成');
+    console.log('✅ AI Service管理器Initialize完成');
   }
 
   /**
-   * 初始化各個 Worker
+   * Initialize各個 Worker
    */
   private async initializeWorkers(): Promise<void> {
     console.log('🤖 初始化 AI Workers...');
 
-    // 初始化 MediaWorker
+    // Initialize MediaWorker
     const _mediaWorkerConfig = {
       enabled: true,
-      schedule: '0 9 * * *', // 每天上午9點執行
+      schedule: '0 9 * * *', // 每天上午9點執Row
       contentGeneration: {
         enableAutoGeneration: true,
         maxArticlesPerDay: 3,
@@ -175,15 +175,15 @@ export class AIWorkerManager {
     const _mediaWorker = new MediaWorker(mediaWorkerConfig);
     this.workers.set(AIWorkerRole.Media, mediaWorker);
 
-    // 初始化 RegulationWorker
+    // Initialize RegulationWorker
     const _regulationWorkerConfig = {
       enabled: true,
-      schedule: '0 */6 * * *', // 每6小時執行
+      schedule: '0 */6 * * *', // 每6Hour執Row
       monitoring: {
         jurisdictions: ['EU', 'US', 'China', 'Global'],
         categories: ['data-protection', 'ai-governance', 'privacy', 'security'],
         sources: ['official', 'news', 'legal'],
-        checkInterval: 360, // 6小時
+        checkInterval: 360, // 6Hour
       },
       compliance: {
         enableAutoCheck: true,
@@ -201,13 +201,13 @@ export class AIWorkerManager {
     const _regulationWorker = new RegulationWorker(regulationWorkerConfig);
     this.workers.set(AIWorkerRole.Regulation, regulationWorker);
 
-    // 初始化 AccuracyWorker
+    // Initialize AccuracyWorker
     const _accuracyWorkerConfig = {
       enabled: true,
-      schedule: '0 */4 * * *', // 每4小時執行
+      schedule: '0 */4 * * *', // 每4Hour執Row
       monitoring: {
         accuracyThreshold: 85,
-        checkInterval: 240, // 4小時
+        checkInterval: 240, // 4Hour
         enableRealTimeMonitoring: true,
         enableErrorTracking: true,
       },
@@ -234,14 +234,14 @@ export class AIWorkerManager {
     const _accuracyWorker = new AccuracyWorker(accuracyWorkerConfig);
     this.workers.set(AIWorkerRole.Accuracy, accuracyWorker);
 
-    // 初始化其他 Worker（待實現）
+    // Initialize其他 Worker（待實現）
     await this.initializePlaceholderWorkers();
 
     console.log(`✅ 已初始化 ${this.workers.size} 個 AI Workers`);
   }
 
   /**
-   * 初始化佔位 Worker（待實現的 Worker）
+   * Initialize佔位 Worker（待實現的 Worker）
    */
   private async initializePlaceholderWorkers(): Promise<void> {
     const _placeholderConfig = {
@@ -254,7 +254,7 @@ export class AIWorkerManager {
       },
     };
 
-    // 創建佔位 Worker
+    // Create佔位 Worker
     const _placeholderWorker = {
       role: 'placeholder',
       status: 'idle',
@@ -269,7 +269,7 @@ export class AIWorkerManager {
       }),
     };
 
-    // 設置佔位 Worker
+    // Settings佔位 Worker
     const _placeholderRoles = [
       AIWorkerRole.Cost,
       AIWorkerRole.Architecture,
@@ -286,7 +286,7 @@ export class AIWorkerManager {
   }
 }
 
-// 導出便捷函數
+// Export便捷Function
 export const _getAIWorkerManager = (): AIWorkerManager => {
   return AIWorkerManager.getInstance();
 };
@@ -303,7 +303,7 @@ export const _getAccuracyWorker = (): AccuracyWorker => {
   return getAIWorkerManager().getWorker(AIWorkerRole.Accuracy);
 };
 
-// 導出類型
+// ExportClass型
 export type { AIRequest, AIResponse, AIServiceStats } from './AIServiceManager';
 
 export type { Article, MediaWorkerConfig, SocialPost } from './MediaWorker';

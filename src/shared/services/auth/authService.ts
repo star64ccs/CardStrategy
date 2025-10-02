@@ -65,30 +65,30 @@ export class AuthService {
 
   async initialize(): Promise<ApiResponse> {
     try {
-      logger.info('初始化認證服務');
+      logger.info('Initialize認證Service');
 
-      // 初始化 OAuth 服務
+      // Initialize OAuth Service
       const _oauthResult = await oauthService.initialize();
       if (!oauthResult.success) {
         return {
           success: false,
-          error: `OAuth 服務初始化失敗: ${oauthResult.error}`,
+          error: `OAuth ServiceInitializeFailed: ${oauthResult.error}`,
           timestamp: Date.now(),
         };
       }
 
-      // 初始化 JWT 服務
+      // Initialize JWT Service
       const _jwtResult = await jwtService.initialize();
       if (!jwtResult.success) {
         return {
           success: false,
-          error: `JWT 服務初始化失敗: ${jwtResult.error}`,
+          error: `JWT ServiceInitializeFailed: ${jwtResult.error}`,
           timestamp: Date.now(),
         };
       }
 
       this.isInitialized = true;
-      logger.info('認證服務初始化完成');
+      logger.info('認證ServiceInitialize完成');
 
       return {
         success: true,
@@ -96,14 +96,14 @@ export class AuthService {
           oauth: oauthResult.data,
           jwt: jwtResult.data,
         },
-        message: '認證服務初始化成功',
+        message: '認證ServiceInitializeSuccess',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('認證服務初始化失敗:', error);
+      logger.error('認證ServiceInitializeFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -114,12 +114,12 @@ export class AuthService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '認證服務未初始化',
+          error: '認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 交換授權碼獲取訪問令牌
+      // 交換Authorize碼Get訪問令牌
       const _tokenResult = await oauthService.exchangeCodeForToken(
         provider,
         code
@@ -127,14 +127,14 @@ export class AuthService {
       if (!tokenResult.success || !tokenResult.data) {
         return {
           success: false,
-          error: `獲取 ${provider} 令牌失敗: ${tokenResult.error}`,
+          error: `Get ${provider} 令牌Failed: ${tokenResult.error}`,
           timestamp: Date.now(),
         };
       }
 
       const oauthToken: OAuthToken = tokenResult.data;
 
-      // 獲取用戶信息
+      // GetUserInformation
       const _userResult = await oauthService.getUserInfo(
         provider,
         oauthToken.access_token
@@ -142,14 +142,14 @@ export class AuthService {
       if (!userResult.success || !userResult.data) {
         return {
           success: false,
-          error: `獲取 ${provider} 用戶信息失敗: ${userResult.error}`,
+          error: `Get ${provider} 用戶信息Failed: ${userResult.error}`,
           timestamp: Date.now(),
         };
       }
 
       const oauthUser: OAuthUser = userResult.data;
 
-      // 創建或更新用戶
+      // Create或UpdateUser
       const _authUser = await this.createOrUpdateUser(oauthUser);
 
       // 生成 JWT 令牌
@@ -165,14 +165,14 @@ export class AuthService {
       if (!jwtResult.success || !jwtResult.data) {
         return {
           success: false,
-          error: `生成 JWT 令牌失敗: ${jwtResult.error}`,
+          error: `生成 JWT 令牌Failed: ${jwtResult.error}`,
           timestamp: Date.now(),
         };
       }
 
       const jwtToken: JWTToken = jwtResult.data;
 
-      // 創建會話
+      // Create會話
       const session: AuthSession = {
         user: authUser,
         tokens: jwtToken,
@@ -180,22 +180,22 @@ export class AuthService {
         expiresAt: new Date(Date.now() + jwtToken.expiresIn * 1000),
       };
 
-      // 存儲會話
+      // Storage會話
       this.activeSessions.set(authUser.id, session);
 
-      logger.info(`用戶 ${authUser.email} 通過 ${provider} 登錄成功`);
+      logger.info(`用戶 ${authUser.email} 通過 ${provider} 登錄Success`);
 
       return {
         success: true,
         session,
-        message: '登錄成功',
+        message: '登錄Success',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error(`OAuth 登錄失敗 (${provider}):`, error);
+      logger.error(`OAuth 登錄Failed (${provider}):`, error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -209,12 +209,12 @@ export class AuthService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '認證服務未初始化',
+          error: '認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 驗證用戶憑證（這裡應該連接到數據庫）
+      // VerifyUser憑證（這裡應該Connect到Database）
       const _authUser = await this.verifyCredentials(email, password);
       if (!authUser) {
         return {
@@ -237,14 +237,14 @@ export class AuthService {
       if (!jwtResult.success || !jwtResult.data) {
         return {
           success: false,
-          error: `生成 JWT 令牌失敗: ${jwtResult.error}`,
+          error: `生成 JWT 令牌Failed: ${jwtResult.error}`,
           timestamp: Date.now(),
         };
       }
 
       const jwtToken: JWTToken = jwtResult.data;
 
-      // 創建會話
+      // Create會話
       const session: AuthSession = {
         user: authUser,
         tokens: jwtToken,
@@ -252,22 +252,22 @@ export class AuthService {
         expiresAt: new Date(Date.now() + jwtToken.expiresIn * 1000),
       };
 
-      // 存儲會話
+      // Storage會話
       this.activeSessions.set(authUser.id, session);
 
-      logger.info(`用戶 ${authUser.email} 通過電子郵件登錄成功`);
+      logger.info(`用戶 ${authUser.email} 通過電子郵件登錄Success`);
 
       return {
         success: true,
         session,
-        message: '登錄成功',
+        message: '登錄Success',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('憑證登錄失敗:', error);
+      logger.error('憑證登錄Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -278,24 +278,24 @@ export class AuthService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '認證服務未初始化',
+          error: '認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 驗證 JWT 令牌
+      // Verify JWT 令牌
       const _jwtResult = jwtService.verifyToken(token);
       if (!jwtResult.success || !jwtResult.data) {
         return {
           success: false,
-          error: `JWT 令牌驗證失敗: ${jwtResult.error}`,
+          error: `JWT 令牌VerifyFailed: ${jwtResult.error}`,
           timestamp: Date.now(),
         };
       }
 
       const _payload = jwtResult.data;
 
-      // 檢查會話是否存在
+      // Check會話YesNo存在
       const _session = this.activeSessions.get(payload.userId);
       if (!session) {
         return {
@@ -305,7 +305,7 @@ export class AuthService {
         };
       }
 
-      // 檢查會話是否過期
+      // Check會話YesNo過期
       if (session.expiresAt < new Date()) {
         this.activeSessions.delete(payload.userId);
         return {
@@ -315,7 +315,7 @@ export class AuthService {
         };
       }
 
-      logger.info(`驗證令牌成功: ${payload.email}`);
+      logger.info(`Verify令牌Success: ${payload.email}`);
 
       return {
         success: true,
@@ -323,10 +323,10 @@ export class AuthService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('令牌驗證失敗:', error);
+      logger.error('令牌VerifyFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -339,24 +339,24 @@ export class AuthService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '認證服務未初始化',
+          error: '認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 刷新 JWT 令牌
+      // Refresh JWT 令牌
       const _jwtResult = jwtService.refreshToken(refreshToken);
       if (!jwtResult.success || !jwtResult.data) {
         return {
           success: false,
-          error: `刷新 JWT 令牌失敗: ${jwtResult.error}`,
+          error: `刷新 JWT 令牌Failed: ${jwtResult.error}`,
           timestamp: Date.now(),
         };
       }
 
       const jwtToken: JWTToken = jwtResult.data;
 
-      // 驗證刷新令牌以獲取用戶信息
+      // VerifyRefresh令牌以GetUserInformation
       const _verifyResult = jwtService.verifyToken(refreshToken);
       if (!verifyResult.success || !verifyResult.data) {
         return {
@@ -368,7 +368,7 @@ export class AuthService {
 
       const _payload = verifyResult.data;
 
-      // 獲取用戶信息
+      // GetUserInformation
       const _user = await this.getUserById(payload.userId);
       if (!user) {
         return {
@@ -378,7 +378,7 @@ export class AuthService {
         };
       }
 
-      // 更新會話
+      // Update會話
       const session: AuthSession = {
         user,
         tokens: jwtToken,
@@ -388,7 +388,7 @@ export class AuthService {
 
       this.activeSessions.set(user.id, session);
 
-      logger.info(`為用戶 ${user.email} 刷新會話成功`);
+      logger.info(`為用戶 ${user.email} 刷新會話Success`);
 
       return {
         success: true,
@@ -396,10 +396,10 @@ export class AuthService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('刷新會話失敗:', error);
+      logger.error('刷新會話Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -410,7 +410,7 @@ export class AuthService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '認證服務未初始化',
+          error: '認證Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -420,22 +420,22 @@ export class AuthService {
         // 撤銷 JWT 令牌
         await jwtService.revokeToken(session.tokens.accessToken);
 
-        // 移除會話
+        // Remove會話
         this.activeSessions.delete(userId);
 
-        logger.info(`用戶 ${session.user.email} 登出成功`);
+        logger.info(`用戶 ${session.user.email} 登出Success`);
       }
 
       return {
         success: true,
-        message: '登出成功',
+        message: '登出Success',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('登出失敗:', error);
+      logger.error('登出Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -450,8 +450,8 @@ export class AuthService {
   }
 
   private async createOrUpdateUser(oauthUser: OAuthUser): Promise<AuthUser> {
-    // 這裡應該連接到數據庫來創建或更新用戶
-    // 目前返回模擬用戶數據
+    // 這裡應該Connect到Database來Create或UpdateUser
+    // 目前Return模擬UserData
     const authUser: AuthUser = {
       id: oauthUser.id,
       email: oauthUser.email,
@@ -472,14 +472,14 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<AuthUser | null> {
-    // 這裡應該連接到數據庫來驗證用戶憑證
-    // 目前返回 null（模擬驗證失敗）
+    // 這裡應該Connect到Database來VerifyUser憑證
+    // 目前Return null（模擬VerifyFailed）
     return null;
   }
 
   private async getUserById(userId: string): Promise<AuthUser | null> {
-    // 這裡應該連接到數據庫來獲取用戶信息
-    // 目前從活動會話中獲取
+    // 這裡應該Connect到Database來GetUserInformation
+    // 目前從活動會話中Get
     const _session = this.activeSessions.get(userId);
     return session ? session.user : null;
   }

@@ -29,25 +29,25 @@ class SimulatedGradingService {
   }
 
   /**
-   * 創建模擬鑑定報告
+   * Create模擬鑑定Report
    */
   async createGradingReport(userId, cardId, gradingResult, imageData) {
     try {
       await this.initializeModels();
 
-      // 獲取卡牌信息
+      // Get卡牌Information
       const card = await this.Card.findByPk(cardId);
       if (!card) {
         throw new Error('卡牌不存在');
       }
 
-      // 從鑑定結果中獲取機構信息
+      // 從鑑定結果中Get機構Information
       const { agency } = gradingResult;
 
       // 生成鑑定編號
       const gradingNumber = generateGradingNumber(agency);
 
-      // 準備卡牌信息
+      // 準備卡牌Information
       const cardInfo = {
         name: card.name,
         setName: card.setName,
@@ -56,7 +56,7 @@ class SimulatedGradingService {
         imageUrl: card.imageUrl || '',
       };
 
-      // 創建鑑定記錄
+      // Create鑑定Record
       const grading = await this.SimulatedGrading.create({
         cardId,
         userId,
@@ -70,7 +70,7 @@ class SimulatedGradingService {
         },
       });
 
-      logger.info('模擬鑑定報告創建成功', {
+      logger.info('模擬鑑定報告CreateSuccess', {
         userId,
         cardId,
         agency,
@@ -93,19 +93,19 @@ class SimulatedGradingService {
         updatedAt: grading.updatedAt,
       };
     } catch (error) {
-      logger.error('創建模擬鑑定報告失敗:', error);
+      logger.error('Create模擬鑑定報告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 查詢鑑定報告
+   * Query鑑定Report
    */
   async getGradingReport(gradingNumber) {
     try {
       await this.initializeModels();
 
-      // 查找鑑定記錄
+      // Find鑑定Record
       const grading = await this.SimulatedGrading.findOne({
         where: {
           gradingNumber,
@@ -136,17 +136,17 @@ class SimulatedGradingService {
         throw new Error('鑑定報告不存在或已失效');
       }
 
-      // 檢查是否過期
+      // CheckYesNo過期
       const isExpired = new Date() > grading.expiresAt;
       const isValid = !isExpired && grading.isActive;
 
-      // 更新查看次數和最後查看時間
+      // Update查看次數和最後查看Time
       await grading.update({
         viewCount: grading.viewCount + 1,
         lastViewedAt: new Date(),
       });
 
-      logger.info('鑑定報告查詢成功', {
+      logger.info('鑑定報告查詢Success', {
         gradingNumber,
         viewCount: grading.viewCount + 1,
         isExpired,
@@ -174,13 +174,13 @@ class SimulatedGradingService {
         isValid,
       };
     } catch (error) {
-      logger.error('查詢鑑定報告失敗:', error);
+      logger.error('查詢鑑定報告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取用戶的鑑定報告列表
+   * GetUser的鑑定ReportList
    */
   async getUserGradingReports(userId, options = {}) {
     try {
@@ -253,13 +253,13 @@ class SimulatedGradingService {
         },
       };
     } catch (error) {
-      logger.error('獲取用戶鑑定報告失敗:', error);
+      logger.error('Get用戶鑑定報告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 搜索鑑定報告
+   * Search鑑定Report
    */
   async searchGradingReports(query, options = {}) {
     try {
@@ -281,7 +281,7 @@ class SimulatedGradingService {
         where.agency = agency;
       }
 
-      // 支持按鑑定編號、卡牌名稱搜索
+      // Support按鑑定編號、卡牌名稱Search
       if (query) {
         where[Op.or] = [
           { gradingNumber: { [Op.like]: `%${query}%` } },
@@ -346,13 +346,13 @@ class SimulatedGradingService {
         },
       };
     } catch (error) {
-      logger.error('搜索鑑定報告失敗:', error);
+      logger.error('搜索鑑定報告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取鑑定統計數據
+   * Get鑑定統Count據
    */
   async getGradingStats(userId = null) {
     try {
@@ -400,13 +400,13 @@ class SimulatedGradingService {
         topViewedReports: await this.getTopViewedReports(userId),
       };
     } catch (error) {
-      logger.error('獲取鑑定統計失敗:', error);
+      logger.error('Get鑑定統計Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取最受歡迎的鑑定報告
+   * Get最受歡迎的鑑定Report
    */
   async getTopViewedReports(userId = null, limit = 10) {
     try {
@@ -441,7 +441,7 @@ class SimulatedGradingService {
         card: grading.card,
       }));
     } catch (error) {
-      logger.error('獲取最受歡迎鑑定報告失敗:', error);
+      logger.error('Get最受歡迎鑑定報告Failed:', error);
       throw error;
     }
   }

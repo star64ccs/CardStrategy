@@ -3,7 +3,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const { logger } = require('../utils/unified-logger');
 
-// 速率限制配置
+// 速率LimitConfigure
 const createRateLimit = (
   windowMs = 15 * 60 * 1000,
   max = 100,
@@ -34,7 +34,7 @@ const createRateLimit = (
   });
 };
 
-// 安全頭配置
+// 安全頭Configure
 const securityHeaders = helmet({
   contentSecurityPolicy: {
     directives: {
@@ -58,7 +58,7 @@ const securityHeaders = helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
 });
 
-// CORS 配置
+// CORS Configure
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = process.env.CORS_ORIGIN
@@ -78,9 +78,9 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 };
 
-// 輸入驗證中間件
+// InputVerify中間件
 const inputValidation = (req, res, next) => {
-  // 檢查請求體大小
+  // CheckRequest體大小
   const contentLength = parseInt(req.get('Content-Length') || '0');
   const maxSize = 10 * 1024 * 1024; // 10MB
 
@@ -97,7 +97,7 @@ const inputValidation = (req, res, next) => {
     });
   }
 
-  // 檢查 SQL 注入
+  // Check SQL 注入
   const sqlInjectionPattern =
     /((union|select|insert|update|delete|drop|create|alter|exec|execute|script))/i;
   const body = JSON.stringify(req.body);
@@ -118,7 +118,7 @@ const inputValidation = (req, res, next) => {
     });
   }
 
-  // 檢查 XSS 攻擊
+  // Check XSS 攻擊
   const xssPattern = /<script[^>]*>.*?<\/script>/gi;
   if (xssPattern.test(params)) {
     logger.warn('Potential XSS attack detected', {
@@ -137,7 +137,7 @@ const inputValidation = (req, res, next) => {
   next();
 };
 
-// 請求日誌中間件
+// RequestLog中間件
 const requestLogger = (req, res, next) => {
   const start = Date.now();
 
@@ -162,7 +162,7 @@ const requestLogger = (req, res, next) => {
   next();
 };
 
-// 錯誤處理中間件
+// ErrorHandle中間件
 const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars
   logger.error('Unhandled error', {
     error: err.message,
@@ -172,7 +172,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     ip: req.ip,
   });
 
-  // 不要暴露內部錯誤信息給客戶端
+  // 不要暴露InternalErrorInformation給Client
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   res.status(err.status || 500).json({
@@ -183,7 +183,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
   });
 };
 
-// 404 處理中間件
+// 404 Handle中間件
 const notFoundHandler = (req, res) => {
   logger.warn('Route not found', {
     method: req.method,
@@ -198,30 +198,30 @@ const notFoundHandler = (req, res) => {
   });
 };
 
-// 安全配置
+// 安全Configure
 const securityConfig = {
-  // 不同端點的速率限制
+  // 不同端點的速率Limit
   rateLimits: {
-    // 一般 API 請求
+    // 一般 API Request
     general: createRateLimit(15 * 60 * 1000, 100, 'Too many requests'),
 
-    // 認證相關請求
+    // Authenticate相OffRequest
     auth: createRateLimit(
       15 * 60 * 1000,
       5,
       'Too many authentication attempts'
     ),
 
-    // 文件上傳
+    // FileUpload
     upload: createRateLimit(15 * 60 * 1000, 10, 'Too many upload attempts'),
 
-    // 管理員端點
+    // Manage員端點
     admin: createRateLimit(15 * 60 * 1000, 50, 'Too many admin requests'),
   },
 
-  // 安全檢查
+  // 安全Check
   securityChecks: {
-    // 檢查請求來源
+    // CheckRequest來源
     checkOrigin: (req, res, next) => {
       const origin = req.get('Origin');
       const referer = req.get('Referer');
@@ -238,7 +238,7 @@ const securityConfig = {
       next();
     },
 
-    // 檢查用戶代理
+    // CheckUser代理
     checkUserAgent: (req, res, next) => {
       const userAgent = req.get('User-Agent');
 

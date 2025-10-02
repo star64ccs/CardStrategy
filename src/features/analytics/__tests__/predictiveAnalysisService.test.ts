@@ -22,12 +22,12 @@ describe('PredictiveAnalysisService', () => {
   let service: PredictiveAnalysisService;
 
   beforeEach(() => {
-    // 重置單例實例
+    // Reset單例Instance
     (PredictiveAnalysisService as any).instance = undefined;
     service = PredictiveAnalysisService.getInstance();
     jest.clearAllMocks();
 
-    // 重置 mock 函數的返回值
+    // Reset mock Function的ReturnValue
     mockConvertToJSON.mockReturnValue('json_data');
     mockConvertToCSV.mockReturnValue('csv_data');
     mockConvertToExcel.mockReturnValue('excel_data');
@@ -43,16 +43,16 @@ describe('PredictiveAnalysisService', () => {
   });
 
   describe('初始化', () => {
-    test('應該成功初始化服務', async () => {
+    test('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBe(true);
     });
 
-    test('應該在初始化失敗時返回 false', async () => {
-      // 模擬初始化失敗
+    test('應該在InitializeFailed時返回 false', async () => {
+      // 模擬InitializeFailed
       jest
         .spyOn(service as any, 'initializeDefaultModels')
-        .mockRejectedValue(new Error('初始化失敗'));
+        .mockRejectedValue(new Error('InitializeFailed'));
       const _result = await service.initialize();
       expect(result).toBe(false);
     });
@@ -85,8 +85,8 @@ describe('PredictiveAnalysisService', () => {
       expect(result.data).toBeDefined();
     });
 
-    test('應該在未初始化時拋出錯誤', async () => {
-      // 重置單例實例以創建未初始化的服務
+    test('應該在未Initialize時拋出Error', async () => {
+      // Reset單例Instance以Create未Initialize的Service
       (PredictiveAnalysisService as any).instance = undefined;
       const _newService = PredictiveAnalysisService.getInstance();
       await expect(newService.getPredictiveAnalysis()).rejects.toThrow(
@@ -147,7 +147,7 @@ describe('PredictiveAnalysisService', () => {
       );
       modelId = model.id;
 
-      // 等待模型訓練完成
+      // Await模型訓練Complete
       await new Promise(resolve => setTimeout(resolve, 2500));
     });
 
@@ -169,7 +169,7 @@ describe('PredictiveAnalysisService', () => {
       expect(prediction.accuracy).toBeGreaterThanOrEqual(0);
     });
 
-    test('應該在模型不存在時拋出錯誤', async () => {
+    test('應該在模型不存在時拋出Error', async () => {
       const _inputFeatures = { feature1: 100 };
       await expect(
         service.generatePrediction('不存在的模型ID', inputFeatures)
@@ -199,7 +199,7 @@ describe('PredictiveAnalysisService', () => {
       );
       modelId = model.id;
 
-      // 等待模型訓練完成
+      // Await模型訓練Complete
       await new Promise(resolve => setTimeout(resolve, 2500));
     });
 
@@ -316,9 +316,9 @@ describe('PredictiveAnalysisService', () => {
       );
     });
 
-    test('應該處理導出錯誤', async () => {
+    test('應該Handle導出Error', async () => {
       mockConvertToJSON.mockImplementation(() => {
-        throw new Error('轉換失敗');
+        throw new Error('轉換Failed');
       });
 
       const _options = {
@@ -329,7 +329,7 @@ describe('PredictiveAnalysisService', () => {
       };
 
       await expect(service.exportData(options)).rejects.toThrow(
-        'Export failed: 轉換失敗'
+        'Export failed: 轉換Failed'
       );
     });
   });
@@ -490,7 +490,7 @@ describe('PredictiveAnalysisService', () => {
       service.addEventListener('model_trained', listener);
       service.removeEventListener('model_trained', listener);
 
-      // 驗證監聽器已被移除
+      // Verify監聽器已被Remove
       expect(listener).not.toHaveBeenCalled();
     });
   });
@@ -538,7 +538,7 @@ describe('PredictiveAnalysisService', () => {
       await service.getPredictiveAnalysis();
       const _endTime = Date.now();
 
-      expect(endTime - startTime).toBeLessThan(1000); // 應該在1秒內完成
+      expect(endTime - startTime).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 

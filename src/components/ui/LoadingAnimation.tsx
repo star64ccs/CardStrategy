@@ -1,4 +1,4 @@
-// 加載動畫組件
+// 加載動畫Component
 import type { ReactNode } from 'react';
 import React, { useEffect, useRef } from 'react';
 
@@ -9,7 +9,7 @@ import {
 } from '../../types/microInteractions';
 import { useMicroInteraction } from '../providers/MicroInteractionProvider';
 
-// 組件 Props
+// Component Props
 interface LoadingAnimationProps {
   children?: ReactNode;
   config?: Partial<LoadingConfig>;
@@ -23,7 +23,7 @@ interface LoadingAnimationProps {
   id?: string;
 }
 
-// 默認配置
+// DefaultConfigure
 const DEFAULT_CONFIG: LoadingConfig = {
   id: '',
   type: MicroInteractionType.LOADING,
@@ -61,7 +61,7 @@ const DEFAULT_CONFIG: LoadingConfig = {
   },
 };
 
-// 加載動畫組件
+// 加載動畫Component
 export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
   children,
   config = {},
@@ -79,7 +79,7 @@ export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
   const _interactionIdRef = useRef<string>('');
   const _prevLoadingRef = useRef<boolean>(loading);
 
-  // 合併配置
+  // MergeConfigure
   const finalConfig: LoadingConfig = {
     ...DEFAULT_CONFIG,
     ...config,
@@ -87,7 +87,7 @@ export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
       id || `loading-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
   };
 
-  // 註冊微交互
+  // Register微交互
   useEffect(() => {
     if (!disabled) {
       const _interactionId = register(finalConfig);
@@ -100,7 +100,7 @@ export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
     return undefined;
   }, [register, unregister, finalConfig, disabled]);
 
-  // 監聽加載狀態變化
+  // 監聽加載Status變化
   useEffect(() => {
     if (disabled || !interactionIdRef.current) return undefined;
 
@@ -114,7 +114,7 @@ export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
             message,
           });
         } catch (error) {
-          console.warn('加載動畫失敗:', error);
+          console.warn('加載動畫Failed:', error);
         }
       };
 
@@ -137,14 +137,14 @@ export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
           message,
         });
       } catch (error) {
-        console.warn('進度更新動畫失敗:', error);
+        console.warn('進度Update動畫Failed:', error);
       }
     };
 
     triggerProgressUpdate();
   }, [progress, loading, message, disabled, trigger]);
 
-  // 處理完成回調
+  // HandleCompleteCallback
   useEffect(() => {
     if (!loading && prevLoadingRef.current && onComplete) {
       onComplete();
@@ -158,7 +158,7 @@ export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
     ...style,
   };
 
-  // 添加性能優化樣式
+  // Add性能優化樣式
   if (finalConfig.performance?.useWillChange) {
     containerStyle.willChange = 'transform, opacity';
   }
@@ -256,7 +256,7 @@ export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
             </div>
           )}
 
-          {/* 消息 */}
+          {/* Message */}
           {message && (
             <div
               className='loading-message'
@@ -283,7 +283,7 @@ export const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
         </div>
       )}
 
-      {/* 內容 */}
+      {/* Content */}
       <div
         className='loading-content'
         style={{
@@ -462,7 +462,7 @@ const Skeleton: React.FC<{
   </div>
 );
 
-// 便捷組件：全屏加載
+// 便捷Component：全屏加載
 export const FullScreenLoading: React.FC<
   Omit<LoadingAnimationProps, 'children'> & {
     overlay?: boolean;
@@ -500,7 +500,7 @@ export const FullScreenLoading: React.FC<
   );
 };
 
-// 便捷組件：內聯加載
+// 便捷Component：內聯加載
 export const InlineLoading: React.FC<
   Omit<LoadingAnimationProps, 'children'> & {
     size?: 'small' | 'medium' | 'large';
@@ -521,7 +521,7 @@ export const InlineLoading: React.FC<
   );
 };
 
-// 便捷組件：按鈕加載
+// 便捷Component：按鈕加載
 export const ButtonLoading: React.FC<
   Omit<LoadingAnimationProps, 'children'> & {
     variant?: 'primary' | 'secondary' | 'outline';
@@ -572,7 +572,7 @@ export const ButtonLoading: React.FC<
   );
 };
 
-// 添加 CSS 動畫
+// Add CSS 動畫
 const _style = document.createElement('style');
 style.textContent = `
   @keyframes spin {
@@ -602,5 +602,5 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// 默認導出
+// DefaultExport
 export default LoadingAnimation;

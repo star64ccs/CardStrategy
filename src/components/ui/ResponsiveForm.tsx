@@ -1,4 +1,4 @@
-// 響應式表單組件
+// Response式Table單Component
 
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -10,7 +10,7 @@ import type {
   ResponsiveFormRule,
 } from '../../types/responsive';
 
-// 表單上下文
+// Table單上下文
 interface FormContextType {
   layout: 'horizontal' | 'vertical' | 'inline';
   labelCol: { span: number; offset?: number };
@@ -29,7 +29,7 @@ interface FormContextType {
 
 const _FormContext = React.createContext<FormContextType | null>(null);
 
-// 響應式表單組件
+// Response式Table單Component
 export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
   layout = 'horizontal',
   labelCol,
@@ -53,7 +53,7 @@ export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
   const [values, setValues] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // 響應式佈局處理
+  // Response式佈局Handle
   const _responsiveLayout = useMemo(
     () => getResponsiveValue(layout),
     [layout, getResponsiveValue]
@@ -74,7 +74,7 @@ export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
     [labelAlign, getResponsiveValue]
   );
 
-  // 設置表單值
+  // SettingsTable單Value
   const _setValue = useCallback(
     (name: string, value: unknown) => {
       setValues(prev => {
@@ -86,27 +86,27 @@ export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
     [onValuesChange]
   );
 
-  // 設置錯誤
+  // SettingsError
   const _setError = useCallback((name: string, error: string) => {
     setErrors(prev => ({ ...prev, [name]: error }));
   }, []);
 
-  // 驗證字段
+  // VerifyField
   const _validateField = useCallback(
     (name: string) => {
-      // 這裡可以實現具體的驗證邏輯
-      // 暫時返回空字符串表示驗證通過
+      // 這裡可以實現Concrete的Verify邏輯
+      // 暫時ReturnEmpty字符串Table示Verify通過
       setError(name, '');
     },
     [setError]
   );
 
-  // 表單提交
+  // Table單Submit
   const _handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
 
-      // 驗證所有字段
+      // Verify所有Field
       const _fieldNames = Object.keys(values);
       let hasErrors = false;
 
@@ -120,7 +120,7 @@ export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
       if (!hasErrors) {
         onSubmit?.(values);
       } else if (scrollToFirstError) {
-        // 滾動到第一個錯誤字段
+        // 滾動到第一個ErrorField
         const _firstErrorField = document.querySelector('.form-item-error');
         firstErrorField?.scrollIntoView({
           behavior: 'smooth',
@@ -131,7 +131,7 @@ export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
     [values, errors, onSubmit, validateField, scrollToFirstError]
   );
 
-  // 表單樣式
+  // Table單樣式
   const _formStyle = useMemo(() => {
     const baseStyle: React.CSSProperties = {
       backgroundColor:
@@ -142,7 +142,7 @@ export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
       ...style,
     };
 
-    // 響應式佈局樣式
+    // Response式佈局樣式
     if (responsiveLayout === 'inline') {
       baseStyle.display = 'flex';
       baseStyle.flexWrap = 'wrap';
@@ -153,7 +153,7 @@ export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
     return baseStyle;
   }, [responsiveLayout, currentTheme, style]);
 
-  // 上下文值
+  // 上下文Value
   const _contextValue = useMemo<FormContextType>(
     () => ({
       layout: responsiveLayout,
@@ -201,7 +201,7 @@ export const ResponsiveForm: React.FC<ResponsiveFormProps> = ({
   );
 };
 
-// 表單項目組件
+// Table單項目Component
 export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
   label,
   name,
@@ -240,7 +240,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
     validateField,
   } = context;
 
-  // 響應式處理
+  // Response式Handle
   const _responsiveHidden = useMemo(
     () => getResponsiveValue(hidden),
     [hidden, getResponsiveValue]
@@ -256,12 +256,12 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
     [offset, getResponsiveValue]
   );
 
-  // 如果隱藏，不渲染
+  // 如果Hide，不渲染
   if (responsiveHidden) {
     return null;
   }
 
-  // 處理子組件
+  // Handle子Component
   const _enhancedChildren = React.useMemo(() => {
     if (!name) return children;
 
@@ -281,7 +281,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
     });
   }, [children, name, values, setValue, validateField, context]);
 
-  // 驗證狀態
+  // VerifyStatus
   const _currentError = errors[name as keyof typeof errors] || '';
   const _currentValidateStatus =
     validateStatus || (currentError ? 'error' : undefined);
@@ -293,7 +293,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
       ...style,
     };
 
-    // 響應式佈局
+    // Response式佈局
     if (layout === 'horizontal') {
       baseStyle.display = 'flex';
       baseStyle.alignItems = 'flex-start';
@@ -309,7 +309,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
       baseStyle.marginBottom = '0';
     }
 
-    // 響應式寬度
+    // Response式寬度
     if (responsiveSpan) {
       baseStyle.flex = `0 0 ${(responsiveSpan / 24) * 100}%`;
     }
@@ -321,7 +321,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
     return baseStyle;
   }, [layout, responsiveSpan, responsiveOffset, style]);
 
-  // 標籤樣式
+  // Tag樣式
   const _labelStyle = useMemo(() => {
     const baseStyle: React.CSSProperties = {
       color: currentThemeData?.colors?.text?.primary || '#000000',
@@ -342,7 +342,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
     return baseStyle;
   }, [layout, labelCol, labelAlign, currentTheme]);
 
-  // 內容區域樣式
+  // ContentDistrict域樣式
   const _contentStyle = useMemo(() => {
     const baseStyle: React.CSSProperties = {
       flex: 1,
@@ -359,7 +359,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
     return baseStyle;
   }, [layout, wrapperCol]);
 
-  // 渲染標籤
+  // 渲染Tag
   const _renderLabel = () => {
     if (!label) return null;
 
@@ -379,7 +379,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
     );
   };
 
-  // 渲染幫助文本
+  // 渲染Help文本
   const _renderHelp = () => {
     if (!help && !currentError) return null;
 
@@ -403,7 +403,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
     );
   };
 
-  // 渲染額外內容
+  // 渲染額外Content
   const _renderExtra = () => {
     if (!extra) return null;
 
@@ -438,7 +438,7 @@ export const ResponsiveFormItem: React.FC<ResponsiveFormItemProps> = ({
   );
 };
 
-// 導出類型
+// ExportClass型
 export type {
   ResponsiveFormItemProps,
   ResponsiveFormProps,

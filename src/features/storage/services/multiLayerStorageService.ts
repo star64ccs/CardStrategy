@@ -24,8 +24,8 @@ import {
 } from '../types/storage';
 
 /**
- * 多層存儲服務
- * 實現多層存儲策略、緩存管理、數據同步等功能
+ * 多層StorageService
+ * 實現多層Storage策略、CacheManage、DataSync等功能
  */
 export class MultiLayerStorageService {
   private static instance: MultiLayerStorageService;
@@ -34,14 +34,14 @@ export class MultiLayerStorageService {
   private callbacks: StorageCallbacks = {};
   private stats: StorageStats;
 
-  // 存儲層實例
+  // Storage層Instance
   private readonly memoryStorage = new Map<string, StorageItem>();
 
-  // 同步隊列
+  // SyncQueue
   private syncQueue: StorageItem[] = [];
   private isSyncing = false;
 
-  // 統計追蹤
+  // StatisticsTrace
   private readonly operationStats = {
     reads: 0,
     writes: 0,
@@ -56,7 +56,7 @@ export class MultiLayerStorageService {
   }
 
   /**
-   * 獲取服務實例（單例模式）
+   * GetServiceInstance（單例模式）
    */
   public static getInstance(): MultiLayerStorageService {
     if (!MultiLayerStorageService.instance) {
@@ -66,7 +66,7 @@ export class MultiLayerStorageService {
   }
 
   /**
-   * 初始化存儲服務
+   * InitializeStorageService
    */
   public async initialize(
     config?: Partial<StorageConfig>,
@@ -82,23 +82,23 @@ export class MultiLayerStorageService {
         this.config = { ...this.config, ...config };
       }
 
-      // 初始化各存儲層
+      // Initialize各Storage層
       await this.initializeLayers();
 
-      // 啟動後台任務
+      // Start後台Task
       this.startBackgroundTasks();
 
       this.isInitialized = true;
-      logger.info('MultiLayerStorageService 初始化成功');
+      logger.info('MultiLayerStorageService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('MultiLayerStorageService 初始化失敗:', error);
+      logger.error('MultiLayerStorageService InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * 設置數據到存儲
+   * SettingsData到Storage
    */
   public async set<T>(
     key: string,
@@ -109,15 +109,15 @@ export class MultiLayerStorageService {
       const _startTime = Date.now();
       this.operationStats.writes++;
 
-      // 驗證輸入
+      // VerifyInput
       if (!key || key.trim() === '') {
         return { success: false, error: '鍵名不能為空' };
       }
 
-      // 創建存儲項目
+      // CreateStorage項目
       const _item = await this.createStorageItem(key, data, options);
 
-      // 檢查內存限制
+      // CheckMemoryLimit
       if (await this.shouldRejectDueToMemoryLimit(item)) {
         logger.warn('內存限制檢查觸發緊急清理:', {
           key,
@@ -126,15 +126,15 @@ export class MultiLayerStorageService {
         await this.performEmergencyCleanup();
       }
 
-      // 根據策略選擇存儲層
+      // Root據策略SelectStorage層
       const _layers = this.selectStorageLayers(item.priority, options.layer);
 
-      // 寫入到選定的層
+      // Write到選定的層
       const _results = await Promise.allSettled(
         layers.map(layer => this.writeToLayer(layer, item))
       );
 
-      // 檢查寫入結果
+      // CheckWrite結果
       const _successfulLayers = results.filter(
         result => result.status === 'fulfilled'
       );
@@ -143,7 +143,7 @@ export class MultiLayerStorageService {
       );
 
       if (failedLayers.length > 0) {
-        logger.warn('部分存儲層寫入失敗:', {
+        logger.warn('部分存儲層寫入Failed:', {
           key,
           failedLayers: failedLayers.map(r => r.reason),
           successfulLayers: successfulLayers.length,
@@ -151,14 +151,14 @@ export class MultiLayerStorageService {
       }
 
       if (successfulLayers.length === 0) {
-        throw new Error('所有存儲層寫入失敗');
+        throw new Error('所有存儲層寫入Failed');
       }
 
-      // 更新統計
+      // UpdateStatistics
       const _latency = Date.now() - startTime;
       this.updateWriteStats(latency);
 
-      // 觸發事件
+      // 觸發Event
       this.emitEvent({
         type: StorageEventType.ITEM_CREATED,
         key,
@@ -168,16 +168,16 @@ export class MultiLayerStorageService {
         source: layers[0],
       });
 
-      // 添加到同步隊列
+      // Add到SyncQueue
       if (options.sync !== false && this.config.sync.enabled) {
         this.addToSyncQueue(item);
       }
 
-      logger.debug(`數據寫入成功: ${key}`, { layers: layers.length, latency });
+      logger.debug(`數據寫入Success: ${key}`, { layers: layers.length, latency });
       return { success: true };
     } catch (error) {
       this.operationStats.errors++;
-      logger.error('數據寫入失敗:', {
+      logger.error('數據寫入Failed:', {
         error,
         key,
         errorMessage: (error as Error).message,
@@ -188,7 +188,7 @@ export class MultiLayerStorageService {
   }
 
   /**
-   * 從存儲獲取數據
+   * 從StorageGetData
    */
   public async get<T>(
     key: string,
@@ -198,29 +198,29 @@ export class MultiLayerStorageService {
       const _startTime = Date.now();
       this.operationStats.reads++;
 
-      // 確定搜索層的順序
+      // OKSearch層的順序
       const _searchLayers = this.getSearchLayers(options.layer);
 
       for (const layer of searchLayers) {
         try {
           const _item = await this.readFromLayer<T>(layer, key);
           if (item) {
-            // 檢查是否過期
+            // CheckYesNo過期
             if (item.expiresAt && new Date() > item.expiresAt) {
-              // 數據已過期，刪除並繼續搜索
+              // Data已過期，Delete並ContinueSearch
               await this.deleteFromLayer(layer, key);
               continue;
             }
 
-            // 更新訪問時間
+            // Update訪問Time
             await this.updateAccessTime(key, layer);
 
-            // 更新統計
+            // UpdateStatistics
             this.operationStats.hits++;
             const _latency = Date.now() - startTime;
             this.updateReadStats(latency);
 
-            // 觸發事件
+            // 觸發Event
             this.emitEvent({
               type: StorageEventType.ITEM_ACCESSED,
               key,
@@ -229,7 +229,7 @@ export class MultiLayerStorageService {
               source: layer,
             });
 
-            // 緩存提升：將數據複製到更快的層
+            // Cache提升：將Data複製到更快的層
             if (
               layer !== StorageLayer.MEMORY &&
               this.shouldPromoteToCache(item)
@@ -237,40 +237,40 @@ export class MultiLayerStorageService {
               await this.promoteToFasterLayer(key, item, layer);
             }
 
-            logger.debug(`數據讀取成功: ${key}`, { layer, latency });
+            logger.debug(`數據讀取Success: ${key}`, { layer, latency });
             return item.data;
           }
         } catch (error) {
-          logger.warn(`從層 ${layer} 讀取失敗:`, { error, key });
+          logger.warn(`從層 ${layer} 讀取Failed:`, { error, key });
           continue;
         }
       }
 
-      // 未找到數據
+      // 未找到Data
       this.operationStats.misses++;
       logger.debug(`數據未找到: ${key}`);
       return null;
     } catch (error) {
       this.operationStats.errors++;
-      logger.error('數據讀取失敗:', { error, key });
+      logger.error('數據讀取Failed:', { error, key });
       return null;
     }
   }
 
   /**
-   * 刪除數據
+   * DeleteData
    */
   public async delete(
     key: string
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      // 從所有層刪除
+      // 從所有層Delete
       const _layers = Object.values(StorageLayer);
       const _results = await Promise.allSettled(
         layers.map(layer => this.deleteFromLayer(layer, key))
       );
 
-      // 觸發事件
+      // 觸發Event
       this.emitEvent({
         type: StorageEventType.ITEM_DELETED,
         key,
@@ -278,23 +278,23 @@ export class MultiLayerStorageService {
         source: StorageLayer.LOCAL,
       });
 
-      logger.debug(`數據刪除成功: ${key}`);
+      logger.debug(`數據DeleteSuccess: ${key}`);
       return { success: true };
     } catch (error) {
       this.operationStats.errors++;
-      logger.error('數據刪除失敗:', { error, key });
+      logger.error('數據DeleteFailed:', { error, key });
       return { success: false, error: (error as Error).message };
     }
   }
 
   /**
-   * 查詢數據
+   * QueryData
    */
   public async query(query: StorageQuery): Promise<StorageItem[]> {
     try {
       const results: StorageItem[] = [];
 
-      // 從本地存儲查詢
+      // 從LocalStorageQuery
       const _keys = await StorageManager.getAllKeys();
 
       for (const key of keys) {
@@ -306,30 +306,30 @@ export class MultiLayerStorageService {
         }
       }
 
-      // 應用排序和分頁
+      // ApplySort和Paginate
       return this.applySortingAndPagination(results, query);
     } catch (error) {
-      logger.error('查詢失敗:', { error, query });
+      logger.error('查詢Failed:', { error, query });
       return [];
     }
   }
 
   /**
-   * 獲取存儲統計
+   * GetStorageStatistics
    */
   public async getStats(): Promise<StorageStats> {
     try {
-      // 更新統計數據
+      // Update統Count據
       await this.updateStats();
       return { ...this.stats };
     } catch (error) {
-      logger.error('獲取統計失敗:', error);
+      logger.error('Get統計Failed:', error);
       return this.stats;
     }
   }
 
   /**
-   * 手動同步
+   * ManualSync
    */
   public async sync(): Promise<{
     success: boolean;
@@ -352,14 +352,14 @@ export class MultiLayerStorageService {
       let syncedItems = 0;
       let errors = 0;
 
-      // 處理同步隊列
+      // HandleSyncQueue
       while (this.syncQueue.length > 0) {
         const _item = this.syncQueue.shift()!;
         try {
           await this.syncItemToCloud(item);
           syncedItems++;
         } catch (error) {
-          logger.error('同步項目失敗:', { error, key: item.key });
+          logger.error('同步項目Failed:', { error, key: item.key });
           errors++;
         }
       }
@@ -371,10 +371,10 @@ export class MultiLayerStorageService {
         source: StorageLayer.CLOUD,
       });
 
-      logger.info(`同步完成: ${syncedItems} 項目成功, ${errors} 錯誤`);
+      logger.info(`同步完成: ${syncedItems} 項目Success, ${errors} Error`);
       return { success: true, syncedItems, errors };
     } catch (error) {
-      logger.error('同步失敗:', error);
+      logger.error('同步Failed:', error);
       this.emitEvent({
         type: StorageEventType.SYNC_FAILED,
         key: '',
@@ -388,7 +388,7 @@ export class MultiLayerStorageService {
   }
 
   /**
-   * 清理存儲
+   * 清理Storage
    */
   public async cleanup(): Promise<{ success: boolean; itemsRemoved: number }> {
     try {
@@ -404,7 +404,7 @@ export class MultiLayerStorageService {
       // 清理過期項目
       itemsRemoved += await this.cleanupExpiredItems();
 
-      // 根據策略清理
+      // Root據策略清理
       if (this.config.cleanup.strategy === CleanupStrategy.LRU) {
         itemsRemoved += await this.cleanupLRU();
       } else if (this.config.cleanup.strategy === CleanupStrategy.SIZE_BASED) {
@@ -421,20 +421,20 @@ export class MultiLayerStorageService {
       logger.info(`清理完成: ${itemsRemoved} 項目移除`);
       return { success: true, itemsRemoved };
     } catch (error) {
-      logger.error('清理失敗:', error);
+      logger.error('清理Failed:', error);
       return { success: false, itemsRemoved: 0 };
     }
   }
 
   /**
-   * 設置回調函數
+   * SettingsCallbackFunction
    */
   public setCallbacks(callbacks: StorageCallbacks): void {
     this.callbacks = { ...this.callbacks, ...callbacks };
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<boolean> {
     try {
@@ -442,18 +442,18 @@ export class MultiLayerStorageService {
       this.memoryStorage.clear();
       this.syncQueue = [];
       this.callbacks = {};
-      // 重置配置為默認值
+      // ResetConfigure為DefaultValue
       this.config = this.getDefaultConfig();
       this.stats = this.initializeStats();
       logger.info('MultiLayerStorageService 已銷毀');
       return true;
     } catch (error) {
-      logger.error('銷毀 MultiLayerStorageService 失敗:', error);
+      logger.error('銷毀 MultiLayerStorageService Failed:', error);
       return false;
     }
   }
 
-  // 私有方法實現
+  // PrivateMethod實現
 
   private getDefaultConfig(): StorageConfig {
     return {
@@ -465,7 +465,7 @@ export class MultiLayerStorageService {
           priority: 1,
           maxSize: 10 * 1024 * 1024, // 10MB
           maxItems: 1000,
-          ttl: 5 * 60 * 1000, // 5分鐘
+          ttl: 5 * 60 * 1000, // 5Minute
         },
         {
           layer: StorageLayer.CACHE,
@@ -473,7 +473,7 @@ export class MultiLayerStorageService {
           priority: 2,
           maxSize: 50 * 1024 * 1024, // 50MB
           maxItems: 5000,
-          ttl: 30 * 60 * 1000, // 30分鐘
+          ttl: 30 * 60 * 1000, // 30Minute
         },
         {
           layer: StorageLayer.LOCAL,
@@ -493,7 +493,7 @@ export class MultiLayerStorageService {
       },
       sync: {
         enabled: true,
-        interval: 5 * 60 * 1000, // 5分鐘
+        interval: 5 * 60 * 1000, // 5Minute
         batchSize: 100,
         maxRetries: 3,
         conflictResolution: ConflictResolution.LAST_MODIFIED,
@@ -503,7 +503,7 @@ export class MultiLayerStorageService {
       },
       cleanup: {
         enabled: true,
-        interval: 60 * 60 * 1000, // 1小時
+        interval: 60 * 60 * 1000, // 1Hour
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7天
         maxSize: 100 * 1024 * 1024, // 100MB
         strategy: CleanupStrategy.LRU,
@@ -519,14 +519,14 @@ export class MultiLayerStorageService {
           maxErrorRate: 0.05,
           maxStorageUsage: 0.9,
         },
-        reportingInterval: 60 * 1000, // 1分鐘
+        reportingInterval: 60 * 1000, // 1Minute
       },
       security: {
         encryption: {
           enabled: false,
           algorithm: 'aes-256' as any,
           keyRotation: false,
-          keyRotationInterval: 24 * 60 * 60 * 1000, // 24小時
+          keyRotationInterval: 24 * 60 * 60 * 1000, // 24Hour
         },
         access: {
           enabled: false,
@@ -568,10 +568,10 @@ export class MultiLayerStorageService {
   }
 
   private async initializeLayers(): Promise<void> {
-    // 初始化內存層
+    // InitializeMemory層
     this.memoryStorage.clear();
 
-    // 清理過期的緩存
+    // 清理過期的Cache
     if (this.config.cleanup.enabled) {
       await this.cleanup();
     }
@@ -580,11 +580,11 @@ export class MultiLayerStorageService {
   }
 
   private startBackgroundTasks(): void {
-    // 定期同步
+    // 定期Sync
     if (this.config.sync.enabled && this.config.sync.backgroundSync) {
       setInterval(() => {
         this.sync().catch(error => {
-          logger.error('後台同步失敗:', error);
+          logger.error('後台同步Failed:', error);
         });
       }, this.config.sync.interval);
     }
@@ -593,7 +593,7 @@ export class MultiLayerStorageService {
     if (this.config.cleanup.enabled) {
       setInterval(() => {
         this.cleanup().catch(error => {
-          logger.error('後台清理失敗:', error);
+          logger.error('後台清理Failed:', error);
         });
       }, this.config.cleanup.interval);
     }
@@ -619,7 +619,7 @@ export class MultiLayerStorageService {
           size = new Blob([serializedData]).size;
         }
       } catch (error) {
-        // 如果都失敗，使用字符串長度作為估計
+        // 如果都Failed，使用字符串長度作為估計
         size = serializedData.length;
       }
 
@@ -652,10 +652,10 @@ export class MultiLayerStorageService {
           : undefined,
       };
 
-      logger.debug('創建存儲項目成功:', { key, size, priority: item.priority });
+      logger.debug('Create存儲項目Success:', { key, size, priority: item.priority });
       return item;
     } catch (error) {
-      logger.error('創建存儲項目失敗:', {
+      logger.error('Create存儲項目Failed:', {
         error,
         key,
         errorMessage: (error as Error).message,
@@ -675,7 +675,7 @@ export class MultiLayerStorageService {
       return layers;
     }
 
-    // 根據優先級和策略選擇層
+    // Root據優先級和策略Select層
     switch (this.config.strategy) {
       case StorageStrategy.PERFORMANCE:
         layers.push(StorageLayer.MEMORY, StorageLayer.CACHE);
@@ -703,10 +703,10 @@ export class MultiLayerStorageService {
       return [preferredLayer];
     }
 
-    // 按性能順序搜索，但優先搜索啟用的層
+    // 按性能順序Search，但優先SearchEnable的層
     const enabledLayers: StorageLayer[] = [];
 
-    // 根據配置策略確定搜索順序
+    // Root據Configure策略OKSearch順序
     switch (this.config.strategy) {
       case StorageStrategy.PERFORMANCE:
         enabledLayers.push(
@@ -771,19 +771,19 @@ export class MultiLayerStorageService {
           await StorageManager.set(item.key, item);
           break;
         case StorageLayer.CLOUD:
-          // 雲端存儲實現（模擬）
+          // 雲端Storage實現（模擬）
           await this.simulateCloudWrite(item.key, item);
           break;
       }
 
-      // 只有在成功寫入後才添加層到 item.layers
+      // 只有在SuccessWrite後才Add層到 item.layers
       if (!item.layers.includes(layer)) {
         item.layers.push(layer);
       }
 
-      logger.debug(`成功寫入到 ${layer} 層:`, { key: item.key, layer });
+      logger.debug(`Success寫入到 ${layer} 層:`, { key: item.key, layer });
     } catch (error) {
-      logger.error(`寫入到 ${layer} 層失敗:`, {
+      logger.error(`寫入到 ${layer} 層Failed:`, {
         error,
         key: item.key,
         layer,
@@ -807,7 +807,7 @@ export class MultiLayerStorageService {
       case StorageLayer.LOCAL:
         return StorageManager.get<StorageItem<T>>(storageKey);
       case StorageLayer.CLOUD:
-        // 雲端存儲實現（模擬）
+        // 雲端Storage實現（模擬）
         return this.simulateCloudRead<T>(storageKey);
       default:
         return null;
@@ -831,7 +831,7 @@ export class MultiLayerStorageService {
         await StorageManager.remove(storageKey);
         break;
       case StorageLayer.CLOUD:
-        // 雲端存儲實現（模擬）
+        // 雲端Storage實現（模擬）
         await this.simulateCloudDelete(storageKey);
         break;
     }
@@ -849,12 +849,12 @@ export class MultiLayerStorageService {
         await this.writeToLayer(layer, item);
       }
     } catch (error) {
-      logger.warn('更新訪問時間失敗:', { error, key, layer });
+      logger.warn('Update訪問時間Failed:', { error, key, layer });
     }
   }
 
   private shouldPromoteToCache(item: StorageItem): boolean {
-    // 根據訪問頻率和優先級決定是否提升到更快的層
+    // Root據訪問頻率和優先級決定YesNo提升到更快的層
     return (
       item.metadata.readCount > 5 || item.priority === DataPriority.CRITICAL
     );
@@ -872,7 +872,7 @@ export class MultiLayerStorageService {
         await this.writeToLayer(StorageLayer.MEMORY, item);
       }
     } catch (error) {
-      logger.warn('緩存提升失敗:', { error, key });
+      logger.warn('緩存提升Failed:', { error, key });
     }
   }
 
@@ -883,7 +883,7 @@ export class MultiLayerStorageService {
   }
 
   private async syncItemToCloud(item: StorageItem): Promise<void> {
-    // 模擬雲端同步
+    // 模擬雲端Sync
     await new Promise(resolve => setTimeout(resolve, 100));
     item.syncStatus = SyncStatus.SYNCED;
     logger.debug(`項目已同步到雲端: ${item.key}`);
@@ -893,20 +893,20 @@ export class MultiLayerStorageService {
     key: string,
     item: StorageItem<T>
   ): Promise<void> {
-    // 模擬雲端寫入延遲
+    // 模擬雲端Write延遲
     await new Promise(resolve => setTimeout(resolve, 200));
   }
 
   private async simulateCloudRead<T>(
     key: string
   ): Promise<StorageItem<T> | null> {
-    // 模擬雲端讀取延遲
+    // 模擬雲端Read延遲
     await new Promise(resolve => setTimeout(resolve, 150));
-    return null; // 模擬雲端暫無數據
+    return null; // 模擬雲端暫無Data
   }
 
   private async simulateCloudDelete(key: string): Promise<void> {
-    // 模擬雲端刪除延遲
+    // 模擬雲端Delete延遲
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
@@ -943,7 +943,7 @@ export class MultiLayerStorageService {
     items: StorageItem[],
     query: StorageQuery
   ): StorageItem[] {
-    // 排序
+    // Sort
     if (query.sortBy) {
       items.sort((a, b) => {
         let aValue: unknown, bValue: unknown;
@@ -977,7 +977,7 @@ export class MultiLayerStorageService {
       });
     }
 
-    // 分頁
+    // Paginate
     const _offset = query.offset || 0;
     const _limit = query.limit || items.length;
     return items.slice(offset, offset + limit);
@@ -999,13 +999,13 @@ export class MultiLayerStorageService {
   }
 
   private updateReadStats(latency: number): void {
-    // 簡單的移動平均
+    // 簡單的Move平均
     this.stats.averageReadLatency =
       this.stats.averageReadLatency * 0.9 + latency * 0.1;
   }
 
   private updateWriteStats(latency: number): void {
-    // 簡單的移動平均
+    // 簡單的Move平均
     this.stats.averageWriteLatency =
       this.stats.averageWriteLatency * 0.9 + latency * 0.1;
   }
@@ -1014,7 +1014,7 @@ export class MultiLayerStorageService {
     let itemsRemoved = 0;
     const _now = new Date();
 
-    // 清理內存中的過期項目
+    // 清理Memory中的過期項目
     for (const [key, item] of this.memoryStorage.entries()) {
       if (item.expiresAt && item.expiresAt < now) {
         this.memoryStorage.delete(key);
@@ -1028,12 +1028,12 @@ export class MultiLayerStorageService {
   private async cleanupLRU(): Promise<number> {
     let itemsRemoved = 0;
 
-    // 獲取所有項目並按訪問時間排序
+    // Get所有項目並按訪問TimeSort
     const _items = Array.from(this.memoryStorage.entries()).sort(
       ([, a], [, b]) => a.accessedAt.getTime() - b.accessedAt.getTime()
     );
 
-    // 移除最久未使用的項目
+    // Remove最久未使用的項目
     const _maxItems =
       this.config.layers.find(layer => layer.layer === StorageLayer.MEMORY)
         ?.maxItems || 1000;
@@ -1058,7 +1058,7 @@ export class MultiLayerStorageService {
       0
     );
 
-    // 按大小排序，移除最大的項目
+    // 按大小Sort，Remove最大的項目
     const _items = Array.from(this.memoryStorage.entries()).sort(
       ([, a], [, b]) => b.metadata.size - a.metadata.size
     );
@@ -1079,7 +1079,7 @@ export class MultiLayerStorageService {
   }
 
   private emitEvent(event: StorageEvent): void {
-    // 觸發相應的回調
+    // 觸發相應的Callback
     switch (event.type) {
       case StorageEventType.ITEM_CREATED:
         this.callbacks.onItemCreated?.(event);
@@ -1094,7 +1094,7 @@ export class MultiLayerStorageService {
         this.callbacks.onSyncCompleted?.(this.stats.syncStats);
         break;
       case StorageEventType.ERROR_OCCURRED:
-        // 創建錯誤對象並觸發回調
+        // CreateErrorObject並觸發Callback
         if (this.callbacks.onError) {
           const error: StorageError = {
             code: StorageErrorCode.UNKNOWN,
@@ -1117,7 +1117,7 @@ export class MultiLayerStorageService {
     for (let i = 0; i < data.length; i++) {
       const _char = data.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // 轉換為32位整數
+      hash = hash & hash; // Convert為32位整數
     }
     return hash.toString(16);
   }
@@ -1142,7 +1142,7 @@ export class MultiLayerStorageService {
       this.config.layers.find(layer => layer.layer === StorageLayer.MEMORY)
         ?.maxItems || 1000;
 
-    // 如果超過最大項目數，執行 LRU 清理
+    // 如果超過最大項目數，執Row LRU 清理
     if (this.memoryStorage.size >= maxItems) {
       await this.cleanupLRU();
     }

@@ -1,6 +1,6 @@
 /**
- * 通知服務
- * 提供統一的通知管理功能
+ * NotificationService
+ * 提供統一的NotificationManage功能
  */
 
 import * as Device from 'expo-device';
@@ -45,7 +45,7 @@ class NotificationService {
   }
 
   /**
-   * 初始化通知服務
+   * InitializeNotificationService
    */
   public async initialize(
     config?: Partial<NotificationConfig>
@@ -61,31 +61,31 @@ class NotificationService {
       }
 
       if (!this.config.enabled) {
-        logger.info('通知服務已禁用');
+        logger.info('通知Service已禁用');
         this.isInitialized = true;
         return true;
       }
 
-      // 設置通知處理器
+      // SettingsNotificationHandle器
       await this.setupNotificationHandler();
 
-      // 請求權限
+      // Request權限
       await this.requestPermissions();
 
-      // 創建通知渠道
+      // CreateNotification渠道
       await this.createNotificationChannels();
 
       this.isInitialized = true;
-      logger.info('NotificationService 初始化成功');
+      logger.info('NotificationService InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('NotificationService 初始化失敗:', error);
+      logger.error('NotificationService InitializeFailed:', error);
       return false;
     }
   }
 
   /**
-   * 設置通知處理器
+   * SettingsNotificationHandle器
    */
   private async setupNotificationHandler(): Promise<void> {
     Notifications.setNotificationHandler({
@@ -100,7 +100,7 @@ class NotificationService {
   }
 
   /**
-   * 請求通知權限
+   * RequestNotification權限
    */
   private async requestPermissions(): Promise<void> {
     if (!Device.isDevice) {
@@ -123,7 +123,7 @@ class NotificationService {
   }
 
   /**
-   * 創建通知渠道
+   * CreateNotification渠道
    */
   private async createNotificationChannels(): Promise<void> {
     if (Platform.OS === 'android') {
@@ -160,13 +160,13 @@ class NotificationService {
   }
 
   /**
-   * 發送本地通知
+   * SendLocalNotification
    */
   public async sendLocalNotification(
     data: NotificationData
   ): Promise<string | null> {
     if (!this.isInitialized || !this.config.enabled) {
-      logger.warn('通知服務未初始化或已禁用');
+      logger.warn('通知Service未Initialize或已禁用');
       return null;
     }
 
@@ -177,29 +177,29 @@ class NotificationService {
           body: data.body,
           data: data.data || {},
         },
-        trigger: null, // 立即發送
+        trigger: null, // 立即Send
       });
 
-      logger.info('本地通知發送成功:', {
+      logger.info('本地通知發送Success:', {
         id: notificationId,
         title: data.title,
       });
       return notificationId;
     } catch (error) {
-      logger.error('發送本地通知失敗:', error);
+      logger.error('發送本地通知Failed:', error);
       return null;
     }
   }
 
   /**
-   * 發送延遲通知
+   * Send延遲Notification
    */
   public async scheduleNotification(
     data: NotificationData,
     trigger: Notifications.NotificationTriggerInput
   ): Promise<string | null> {
     if (!this.isInitialized || !this.config.enabled) {
-      logger.warn('通知服務未初始化或已禁用');
+      logger.warn('通知Service未Initialize或已禁用');
       return null;
     }
 
@@ -213,60 +213,60 @@ class NotificationService {
         trigger,
       });
 
-      logger.info('延遲通知設置成功:', {
+      logger.info('延遲通知SettingsSuccess:', {
         id: notificationId,
         title: data.title,
       });
       return notificationId;
     } catch (error) {
-      logger.error('設置延遲通知失敗:', error);
+      logger.error('Settings延遲通知Failed:', error);
       return null;
     }
   }
 
   /**
-   * 取消通知
+   * CancelNotification
    */
   public async cancelNotification(notificationId: string): Promise<boolean> {
     try {
       await Notifications.cancelScheduledNotificationAsync(notificationId);
-      logger.info('通知取消成功:', { id: notificationId });
+      logger.info('通知取消Success:', { id: notificationId });
       return true;
     } catch (error) {
-      logger.error('取消通知失敗:', error);
+      logger.error('取消通知Failed:', error);
       return false;
     }
   }
 
   /**
-   * 取消所有通知
+   * Cancel所有Notification
    */
   public async cancelAllNotifications(): Promise<boolean> {
     try {
       await Notifications.cancelAllScheduledNotificationsAsync();
-      logger.info('所有通知取消成功');
+      logger.info('所有通知取消Success');
       return true;
     } catch (error) {
-      logger.error('取消所有通知失敗:', error);
+      logger.error('取消所有通知Failed:', error);
       return false;
     }
   }
 
   /**
-   * 設置徽章數量
+   * Settings徽章數量
    */
   public async setBadgeCount(count: number): Promise<boolean> {
     try {
       await Notifications.setBadgeCountAsync(count);
       return true;
     } catch (error) {
-      logger.error('設置徽章數量失敗:', error);
+      logger.error('Settings徽章數量Failed:', error);
       return false;
     }
   }
 
   /**
-   * 添加通知接收監聽器
+   * AddNotificationReceive監聽器
    */
   public addNotificationReceivedListener(
     listener: (notification: Notifications.Notification) => void
@@ -275,7 +275,7 @@ class NotificationService {
   }
 
   /**
-   * 添加通知響應監聽器
+   * AddNotificationResponse監聽器
    */
   public addNotificationResponseReceivedListener(
     listener: (response: Notifications.NotificationResponse) => void
@@ -284,14 +284,14 @@ class NotificationService {
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   public isServiceAvailable(): boolean {
     return this.isInitialized && this.config.enabled;
   }
 
   /**
-   * 獲取服務統計
+   * GetServiceStatistics
    */
   public getStats(): unknown {
     return {
@@ -302,5 +302,5 @@ class NotificationService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _notificationService = NotificationService.getInstance();

@@ -1,4 +1,4 @@
-// 台灣消費者保護法服務實現
+// 台灣消費者保護法Service實現
 // Taiwan Consumer Protection Act Service Implementation
 
 import type {
@@ -60,7 +60,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 驗證消費者權利合規性
+   * Verify消費者權利合規性
    */
   public validateConsumerRights(
     rights: TaiwanConsumerRights
@@ -68,7 +68,7 @@ export class TaiwanConsumerProtectionService {
     const violations: TaiwanConsumerProtectionViolation[] = [];
     const recommendations: string[] = [];
 
-    // 檢查權利類型
+    // Check權利Class型
     if (!rights.rightType) {
       violations.push(
         this.createViolation(
@@ -80,7 +80,7 @@ export class TaiwanConsumerProtectionService {
       recommendations.push('應明確指定消費者權利類型');
     }
 
-    // 檢查描述
+    // CheckDescription
     if (!rights.description) {
       violations.push(
         this.createViolation(
@@ -92,7 +92,7 @@ export class TaiwanConsumerProtectionService {
       recommendations.push('應提供詳細的權利描述');
     }
 
-    // 檢查適用產品/服務
+    // Check適用產品/Service
     if (
       rights.applicableProducts.length === 0 &&
       rights.applicableServices.length === 0
@@ -100,14 +100,14 @@ export class TaiwanConsumerProtectionService {
       violations.push(
         this.createViolation(
           TaiwanConsumerProtectionViolationType.CONSUMER_RIGHTS_VIOLATION,
-          '未指定適用產品或服務',
+          '未指定適用產品或Service',
           TaiwanViolationSeverity.MODERATE
         )
       );
-      recommendations.push('應明確指定適用的產品或服務範圍');
+      recommendations.push('應明確指定適用的產品或Service範圍');
     }
 
-    // 檢查執行機制
+    // Check執Row機制
     if (!rights.enforcementMechanism) {
       violations.push(
         this.createViolation(
@@ -119,7 +119,7 @@ export class TaiwanConsumerProtectionService {
       recommendations.push('應建立明確的權利執行機制');
     }
 
-    // 檢查申訴流程
+    // Check申訴流程
     if (!rights.complaintProcess) {
       violations.push(
         this.createViolation(
@@ -131,7 +131,7 @@ export class TaiwanConsumerProtectionService {
       recommendations.push('應建立完整的申訴處理流程');
     }
 
-    // 記錄審計追蹤
+    // Record審計Trace
     this.logAuditTrail('validate_consumer_rights', {
       rightsId: rights.id,
       rightType: rights.rightType,
@@ -139,7 +139,7 @@ export class TaiwanConsumerProtectionService {
       recommendationsCount: recommendations.length,
     });
 
-    // 儲存違規記錄
+    // 儲存違規Record
     this.violations.push(...violations);
 
     return {
@@ -154,7 +154,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 驗證商品標示合規性
+   * Verify商品標示合規性
    */
   public validateProductLabeling(
     labeling: TaiwanProductLabeling
@@ -162,7 +162,7 @@ export class TaiwanConsumerProtectionService {
     const violations: TaiwanConsumerProtectionViolation[] = [];
     const recommendations: string[] = [];
 
-    // 檢查商品類型
+    // Check商品Class型
     if (!labeling.productType) {
       violations.push(
         this.createViolation(
@@ -174,7 +174,7 @@ export class TaiwanConsumerProtectionService {
       recommendations.push('應明確指定商品類型');
     }
 
-    // 檢查必要標示
+    // Check必要標示
     if (labeling.requiredLabels.length === 0) {
       violations.push(
         this.createViolation(
@@ -186,7 +186,7 @@ export class TaiwanConsumerProtectionService {
       recommendations.push('應提供所有必要的商品標示');
     }
 
-    // 檢查標示標準
+    // Check標示Standard
     if (labeling.labelingStandards.length === 0) {
       violations.push(
         this.createViolation(
@@ -198,7 +198,7 @@ export class TaiwanConsumerProtectionService {
       recommendations.push('應遵循相關標示標準');
     }
 
-    // 檢查檢查日期
+    // CheckCheckDay
     if (!labeling.inspectionDate) {
       violations.push(
         this.createViolation(
@@ -210,7 +210,7 @@ export class TaiwanConsumerProtectionService {
       recommendations.push('應記錄標示檢查日期');
     }
 
-    // 記錄審計追蹤
+    // Record審計Trace
     this.logAuditTrail('validate_product_labeling', {
       labelingId: labeling.id,
       productType: labeling.productType,
@@ -218,7 +218,7 @@ export class TaiwanConsumerProtectionService {
       recommendationsCount: recommendations.length,
     });
 
-    // 儲存違規記錄
+    // 儲存違規Record
     this.violations.push(...violations);
 
     return {
@@ -233,7 +233,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 處理消費者爭議
+   * Handle消費者爭議
    */
   public handleConsumerDispute(dispute: TaiwanConsumerDispute): {
     success: boolean;
@@ -241,7 +241,7 @@ export class TaiwanConsumerProtectionService {
     data?: unknown;
   } {
     try {
-      // 驗證爭議資訊
+      // Verify爭議資訊
       if (!dispute.disputeType) {
         return { success: false, message: '爭議類型未指定' };
       }
@@ -258,15 +258,15 @@ export class TaiwanConsumerProtectionService {
         return { success: false, message: '爭議詳情未提供' };
       }
 
-      // 設定初始狀態
+      // 設定初始Status
       dispute.status = TaiwanDisputeStatus.FILED;
       dispute.createdAt = new Date();
       dispute.updatedAt = new Date();
 
-      // 儲存爭議記錄
+      // 儲存爭議Record
       this.disputes.push(dispute);
 
-      // 記錄審計追蹤
+      // Record審計Trace
       this.logAuditTrail('consumer_dispute_filed', {
         disputeId: dispute.id,
         disputeType: dispute.disputeType,
@@ -276,7 +276,7 @@ export class TaiwanConsumerProtectionService {
 
       return {
         success: true,
-        message: '消費者爭議已成功提交',
+        message: '消費者爭議已Success提交',
         data: { disputeId: dispute.id, status: dispute.status },
       };
     } catch (error) {
@@ -284,12 +284,12 @@ export class TaiwanConsumerProtectionService {
         disputeId: dispute.id,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
-      return { success: false, message: '處理消費者爭議時發生錯誤' };
+      return { success: false, message: 'Handle消費者爭議時發生Error' };
     }
   }
 
   /**
-   * 更新爭議狀態
+   * Update爭議Status
    */
   public updateDisputeStatus(
     disputeId: string,
@@ -302,16 +302,16 @@ export class TaiwanConsumerProtectionService {
         return { success: false, message: '找不到指定的爭議記錄' };
       }
 
-      // 更新狀態
+      // UpdateStatus
       dispute.status = newStatus;
       dispute.updatedAt = new Date();
 
-      // 如果有解決方案，更新解決方案
+      // 如果有Resolve方案，UpdateResolve方案
       if (resolution) {
         dispute.resolution = resolution;
       }
 
-      // 記錄審計追蹤
+      // Record審計Trace
       this.logAuditTrail('dispute_status_update', {
         disputeId,
         oldStatus: dispute.status,
@@ -329,12 +329,12 @@ export class TaiwanConsumerProtectionService {
         disputeId,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
-      return { success: false, message: '更新爭議狀態時發生錯誤' };
+      return { success: false, message: 'Update爭議狀態時發生Error' };
     }
   }
 
   /**
-   * 處理消費者權利請求
+   * Handle消費者權利Request
    */
   public processConsumerRightsRequest(
     rightType: TaiwanConsumerRightType,
@@ -369,12 +369,12 @@ export class TaiwanConsumerProtectionService {
         consumerId: consumerInfo.idNumber,
         error: error instanceof Error ? error.message : 'Unknown error',
       });
-      return { success: false, message: '處理消費者權利請求時發生錯誤' };
+      return { success: false, message: 'Handle消費者權利請求時發生Error' };
     }
   }
 
   /**
-   * 處理安全權請求
+   * Handle安全權Request
    */
   private handleSafetyRequest(
     consumerInfo: TaiwanConsumerInfo,
@@ -392,7 +392,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 處理資訊權請求
+   * Handle資訊權Request
    */
   private handleInformationRequest(
     consumerInfo: TaiwanConsumerInfo,
@@ -410,7 +410,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 處理選擇權請求
+   * HandleSelect權Request
    */
   private handleChoiceRequest(
     consumerInfo: TaiwanConsumerInfo,
@@ -428,7 +428,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 處理表達權請求
+   * HandleTable達權Request
    */
   private handleRepresentationRequest(
     consumerInfo: TaiwanConsumerInfo,
@@ -446,7 +446,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 處理求償權請求
+   * Handle求償權Request
    */
   private handleCompensationRequest(
     consumerInfo: TaiwanConsumerInfo,
@@ -464,7 +464,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 處理教育權請求
+   * Handle教育權Request
    */
   private handleEducationRequest(
     consumerInfo: TaiwanConsumerInfo,
@@ -482,7 +482,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 處理健康環境權請求
+   * Handle健康環境權Request
    */
   private handleHealthyEnvironmentRequest(
     consumerInfo: TaiwanConsumerInfo,
@@ -503,7 +503,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 生成合規報告
+   * 生成合規Report
    */
   public generateComplianceReport(
     startDate: Date,
@@ -541,7 +541,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 創建違規記錄
+   * Create違規Record
    */
   private createViolation(
     type: TaiwanConsumerProtectionViolationType,
@@ -612,7 +612,7 @@ export class TaiwanConsumerProtectionService {
       [TaiwanConsumerProtectionViolationType.PRICE_GOUGING]:
         '立即調整不合理價格',
       [TaiwanConsumerProtectionViolationType.SERVICE_DEFECT]:
-        '立即改善服務品質',
+        '立即改善Service品質',
       [TaiwanConsumerProtectionViolationType.CONSUMER_RIGHTS_VIOLATION]:
         '立即建立消費者權利保護機制',
       [TaiwanConsumerProtectionViolationType.LABELING_VIOLATION]:
@@ -652,7 +652,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 決定合規狀態
+   * 決定合規Status
    */
   private determineComplianceStatus(
     violations: TaiwanConsumerProtectionViolation[]
@@ -755,7 +755,7 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 記錄審計追蹤
+   * Record審計Trace
    */
   private logAuditTrail(action: string, details: Record<string, any>): void {
     const auditTrail: TaiwanAuditTrail = {
@@ -771,21 +771,21 @@ export class TaiwanConsumerProtectionService {
   }
 
   /**
-   * 取得審計追蹤
+   * 取得審計Trace
    */
   public getAuditTrails(): TaiwanAuditTrail[] {
     return [...this.auditTrails];
   }
 
   /**
-   * 取得違規記錄
+   * 取得違規Record
    */
   public getViolations(): TaiwanConsumerProtectionViolation[] {
     return [...this.violations];
   }
 
   /**
-   * 取得爭議記錄
+   * 取得爭議Record
    */
   public getDisputes(): TaiwanConsumerDispute[] {
     return [...this.disputes];

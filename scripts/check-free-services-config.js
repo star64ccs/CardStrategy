@@ -2,12 +2,12 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 免費服務配置檢查腳本
- * 檢查所有免費服務的配置狀態
+ * 免費ServiceConfigureCheck腳本
+ * Check所有免費Service的ConfigureStatus
  */
 
 // eslint-disable-next-line no-console
-console.log('🔍 檢查免費服務配置狀態...\n');
+console.log('🔍 Check免費ServiceConfigure狀態...\n');
 
 class FreeServicesChecker {
   constructor() {
@@ -52,11 +52,11 @@ class FreeServicesChecker {
 
   checkAllServices() {
     // eslint-disable-next-line no-console
-    console.log('📋 檢查所有免費服務配置...\n');
+    console.log('📋 Check所有免費ServiceConfigure...\n');
 
     const results = this.services.map(service => this.checkConfigFile(service));
     
-    // 顯示結果
+    // Show結果
     results.forEach(result => {
       const statusIcon = result.status === 'active' ? '✅' : 
                         result.status === 'pending' ? '⏳' : 
@@ -95,7 +95,7 @@ class FreeServicesChecker {
     const withEnvTemplate = results.filter(r => r.envTemplateExists).length;
 
     // eslint-disable-next-line no-console
-    console.log(`總服務數: ${total}`);
+    console.log(`總Service數: ${total}`);
     // eslint-disable-next-line no-console
     console.log(`已配置: ${configured}/${total}`);
     // eslint-disable-next-line no-console
@@ -109,7 +109,7 @@ class FreeServicesChecker {
     const pendingServices = results.filter(r => r.status === 'pending');
     if (pendingServices.length > 0) {
       // eslint-disable-next-line no-console
-      console.log('\n⏳ 需要配置的服務:');
+      console.log('\n⏳ 需要Configure的Service:');
       pendingServices.forEach(service => {
         // eslint-disable-next-line no-console
         console.log(`  - ${service.service.toUpperCase()}`);
@@ -119,7 +119,7 @@ class FreeServicesChecker {
     const missingConfigs = results.filter(r => !r.configExists);
     if (missingConfigs.length > 0) {
       // eslint-disable-next-line no-console
-      console.log('\n❌ 缺少配置文件的服務:');
+      console.log('\n❌ 缺少Configure文件的Service:');
       missingConfigs.forEach(service => {
         // eslint-disable-next-line no-console
         console.log(`  - ${service.service.toUpperCase()}`);
@@ -160,7 +160,7 @@ class FreeServicesChecker {
 
   showServiceDetails() {
     // eslint-disable-next-line no-console
-    console.log('\n📋 各服務詳細信息:');
+    console.log('\n📋 各Service詳細Information:');
     // eslint-disable-next-line no-console
     console.log('='.repeat(50));
 
@@ -174,14 +174,14 @@ class FreeServicesChecker {
       },
       sendgrid: {
         name: 'SendGrid',
-        purpose: '郵件發送服務',
+        purpose: '郵件發送Service',
         freeLimit: '100 郵件/天',
         keyInfo: 'API Key, 域名驗證',
         website: 'https://sendgrid.com'
       },
       logrocket: {
         name: 'LogRocket',
-        purpose: '前端錯誤監控',
+        purpose: '前端Error監控',
         freeLimit: '1,000 會話/月',
         keyInfo: 'App ID',
         website: 'https://logrocket.com'
@@ -197,7 +197,7 @@ class FreeServicesChecker {
         name: 'SMTP',
         purpose: '郵件發送',
         freeLimit: 'Gmail: 500/天, Outlook: 300/天',
-        keyInfo: 'SMTP 服務器, 應用密碼',
+        keyInfo: 'SMTP Server, 應用密碼',
         website: '多種選擇'
       }
     };
@@ -218,9 +218,9 @@ class FreeServicesChecker {
 
   run() {
     // eslint-disable-next-line no-console
-    console.log('🚀 開始檢查免費服務配置...\n');
+    console.log('🚀 開始Check免費ServiceConfigure...\n');
 
-    // 檢查目錄
+    // CheckDirectory
     if (!fs.existsSync(this.configDir)) {
       // eslint-disable-next-line no-console
       console.log(`❌ 配置目錄不存在: ${this.configDir}`);
@@ -237,13 +237,13 @@ class FreeServicesChecker {
       return;
     }
 
-    // 檢查所有服務
+    // Check所有Service
     const results = this.checkAllServices();
     
     // 生成總結
     const summary = this.generateSummary(results);
     
-    // 顯示詳細信息
+    // Show詳細Information
     this.showServiceDetails();
 
     // eslint-disable-next-line no-console
@@ -251,13 +251,13 @@ class FreeServicesChecker {
     // eslint-disable-next-line no-console
     console.log('\n💡 建議:');
     // eslint-disable-next-line no-console
-    console.log('1. 按照配置指南逐一設置各服務');
+    console.log('1. 按照Configure指南逐一Settings各Service');
     // eslint-disable-next-line no-console
     console.log('2. 獲取必要的 API Key 和 Token');
     // eslint-disable-next-line no-console
     console.log('3. 更新環境變量文件');
     // eslint-disable-next-line no-console
-    console.log('4. 測試各服務功能');
+    console.log('4. 測試各Service功能');
     // eslint-disable-next-line no-console
     console.log('5. 監控使用量避免超出免費限制');
 
@@ -265,7 +265,7 @@ class FreeServicesChecker {
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   const checker = new FreeServicesChecker();
   checker.run();

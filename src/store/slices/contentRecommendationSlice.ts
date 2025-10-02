@@ -15,28 +15,28 @@ import type {
   PerformanceMetrics,
 } from '../../features/recommendation/types/contentRecommendation';
 
-// 狀態接口
+// StatusInterface
 export interface ContentRecommendationState {
-  // 推薦數據
+  // 推薦Data
   recommendations: ContentRecommendation[];
   similarContent: ContentSimilarity[];
 
-  // 配置和統計
+  // Configure和Statistics
   config: ContentRecommendationConfig | null;
   stats: ContentRecommendationStats | null;
 
-  // 過濾器和選項
+  // Filter器和Options
   filters: ContentFilters;
   options: RecommendationOptions;
 
-  // 分頁
+  // Paginate
   pagination: {
     currentPage: number;
     pageSize: number;
     totalCount: number;
   };
 
-  // 加載狀態
+  // 加載Status
   loading: {
     recommendations: boolean;
     similarContent: boolean;
@@ -44,7 +44,7 @@ export interface ContentRecommendationState {
     stats: boolean;
   };
 
-  // 錯誤狀態
+  // ErrorStatus
   error: {
     recommendations: string | null;
     similarContent: string | null;
@@ -55,11 +55,11 @@ export interface ContentRecommendationState {
   // 性能指標
   performanceMetrics: PerformanceMetrics | null;
 
-  // 最後更新時間
+  // 最後UpdateTime
   lastUpdated: Date | null;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: ContentRecommendationState = {
   recommendations: [],
   similarContent: [],
@@ -88,7 +88,7 @@ const initialState: ContentRecommendationState = {
   lastUpdated: null,
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 export const _initializeContentRecommendation = createAsyncThunk(
   'contentRecommendation/initialize',
   async (_, { rejectWithValue }) => {
@@ -98,7 +98,7 @@ export const _initializeContentRecommendation = createAsyncThunk(
       return { success: true };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '初始化失敗'
+        error instanceof Error ? error.message : 'InitializeFailed'
       );
     }
   }
@@ -113,7 +113,7 @@ export const _getContentRecommendations = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取推薦失敗'
+        error instanceof Error ? error.message : 'Get推薦Failed'
       );
     }
   }
@@ -143,7 +143,7 @@ export const _getSimilarContent = createAsyncThunk(
       return similarities;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取相似內容失敗'
+        error instanceof Error ? error.message : 'Get相似內容Failed'
       );
     }
   }
@@ -167,7 +167,7 @@ export const _updateUserPreference = createAsyncThunk(
       return { userId, preference };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '更新用戶偏好失敗'
+        error instanceof Error ? error.message : 'Update用戶偏好Failed'
       );
     }
   }
@@ -193,7 +193,7 @@ export const _recordUserInteraction = createAsyncThunk(
       return { userId, contentId, interaction };
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '記錄用戶互動失敗'
+        error instanceof Error ? error.message : '記錄用戶互動Failed'
       );
     }
   }
@@ -208,7 +208,7 @@ export const _getContentRecommendationConfig = createAsyncThunk(
       return config;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取配置失敗'
+        error instanceof Error ? error.message : 'GetConfigureFailed'
       );
     }
   }
@@ -223,7 +223,7 @@ export const _updateContentRecommendationConfig = createAsyncThunk(
       return config;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '更新配置失敗'
+        error instanceof Error ? error.message : 'UpdateConfigureFailed'
       );
     }
   }
@@ -238,7 +238,7 @@ export const _getContentRecommendationStats = createAsyncThunk(
       return stats;
     } catch (error) {
       return rejectWithValue(
-        error instanceof Error ? error.message : '獲取統計失敗'
+        error instanceof Error ? error.message : 'Get統計Failed'
       );
     }
   }
@@ -249,7 +249,7 @@ const _contentRecommendationSlice = createSlice({
   name: 'contentRecommendation',
   initialState,
   reducers: {
-    // 重置狀態
+    // ResetStatus
     resetContentRecommendation: state => {
       state.recommendations = [];
       state.similarContent = [];
@@ -262,17 +262,17 @@ const _contentRecommendationSlice = createSlice({
       state.lastUpdated = null;
     },
 
-    // 設置過濾器
+    // SettingsFilter器
     setFilters: (state, action: PayloadAction<ContentFilters>) => {
       state.filters = action.payload;
     },
 
-    // 設置選項
+    // SettingsOptions
     setOptions: (state, action: PayloadAction<RecommendationOptions>) => {
       state.options = action.payload;
     },
 
-    // 設置分頁
+    // SettingsPaginate
     setPagination: (
       state,
       action: PayloadAction<{
@@ -284,7 +284,7 @@ const _contentRecommendationSlice = createSlice({
       state.pagination = action.payload;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: (
       state,
       action: PayloadAction<keyof ContentRecommendationState['error']>
@@ -292,7 +292,7 @@ const _contentRecommendationSlice = createSlice({
       state.error[action.payload] = null;
     },
 
-    // 添加事件監聽器
+    // AddEvent監聽器
     addEventListener: (
       state,
       action: PayloadAction<{ event: string; listener: Function }>
@@ -301,7 +301,7 @@ const _contentRecommendationSlice = createSlice({
       service.addEventListener(action.payload.event, action.payload.listener);
     },
 
-    // 移除事件監聽器
+    // RemoveEvent監聽器
     removeEventListener: (
       state,
       action: PayloadAction<{ event: string; listener: Function }>
@@ -314,7 +314,7 @@ const _contentRecommendationSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // 初始化
+    // Initialize
     builder
       .addCase(initializeContentRecommendation.pending, state => {
         state.loading.config = true;
@@ -329,7 +329,7 @@ const _contentRecommendationSlice = createSlice({
         state.error.config = action.payload as string;
       });
 
-    // 獲取推薦
+    // Get推薦
     builder
       .addCase(getContentRecommendations.pending, state => {
         state.loading.recommendations = true;
@@ -350,7 +350,7 @@ const _contentRecommendationSlice = createSlice({
         state.error.recommendations = action.payload as string;
       });
 
-    // 獲取相似內容
+    // Get相似Content
     builder
       .addCase(getSimilarContent.pending, state => {
         state.loading.similarContent = true;
@@ -369,7 +369,7 @@ const _contentRecommendationSlice = createSlice({
         state.error.similarContent = action.payload as string;
       });
 
-    // 更新用戶偏好
+    // UpdateUserPreferences
     builder
       .addCase(updateUserPreference.fulfilled, state => {
         state.lastUpdated = new Date();
@@ -378,7 +378,7 @@ const _contentRecommendationSlice = createSlice({
         state.error.recommendations = action.payload as string;
       });
 
-    // 記錄用戶互動
+    // RecordUser互動
     builder
       .addCase(recordUserInteraction.fulfilled, state => {
         state.lastUpdated = new Date();
@@ -387,7 +387,7 @@ const _contentRecommendationSlice = createSlice({
         state.error.recommendations = action.payload as string;
       });
 
-    // 獲取配置
+    // GetConfigure
     builder
       .addCase(getContentRecommendationConfig.pending, state => {
         state.loading.config = true;
@@ -406,7 +406,7 @@ const _contentRecommendationSlice = createSlice({
         state.error.config = action.payload as string;
       });
 
-    // 更新配置
+    // UpdateConfigure
     builder
       .addCase(
         updateContentRecommendationConfig.fulfilled,
@@ -424,7 +424,7 @@ const _contentRecommendationSlice = createSlice({
         state.error.config = action.payload as string;
       });
 
-    // 獲取統計
+    // GetStatistics
     builder
       .addCase(getContentRecommendationStats.pending, state => {
         state.loading.stats = true;
@@ -501,7 +501,7 @@ export const _selectContentRecommendationLastUpdated = (state: {
   contentRecommendation: ContentRecommendationState;
 }) => state.contentRecommendation.lastUpdated;
 
-// 計算選擇器
+// 計算Select器
 export const _selectContentRecommendationIsLoading = (state: {
   contentRecommendation: ContentRecommendationState;
 }) =>

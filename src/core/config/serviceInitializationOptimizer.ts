@@ -1,6 +1,6 @@
 /**
- * 服務初始化優化器
- * 解決服務初始化順序和依賴問題
+ * ServiceInitialize優化器
+ * ResolveServiceInitialize順序和依賴問題
  */
 
 import { logger } from '../../utils/logger';
@@ -34,7 +34,7 @@ class ServiceInitializationOptimizer {
   }
 
   /**
-   * 註冊服務
+   * RegisterService
    */
   public registerService(
     name: string,
@@ -49,18 +49,18 @@ class ServiceInitializationOptimizer {
       service,
     });
 
-    logger.info(`服務已註冊: ${name}`, { dependencies, priority });
+    logger.info(`Service已註冊: ${name}`, { dependencies, priority });
   }
 
   /**
-   * 優化初始化順序
+   * 優化Initialize順序
    */
   public optimizeInitializationOrder(): string[] {
     const sortedServices: string[] = [];
     const _visited = new Set<string>();
     const _visiting = new Set<string>();
 
-    // 拓撲排序
+    // 拓撲Sort
     const _visit = (serviceName: string): void => {
       if (visiting.has(serviceName)) {
         throw new Error(`檢測到循環依賴: ${serviceName}`);
@@ -74,11 +74,11 @@ class ServiceInitializationOptimizer {
       const _service = this.services.get(serviceName);
 
       if (service) {
-        // 先初始化依賴
+        // 先Initialize依賴
         for (const dependency of service.dependencies) {
           if (!this.services.has(dependency)) {
             throw new Error(
-              `服務 ${serviceName} 依賴的服務 ${dependency} 未註冊`
+              `Service ${serviceName} 依賴的Service ${dependency} 未註冊`
             );
           }
           visit(dependency);
@@ -90,26 +90,26 @@ class ServiceInitializationOptimizer {
       sortedServices.push(serviceName);
     };
 
-    // 按優先級排序服務名稱
+    // 按優先級SortService名稱
     const _serviceNames = Array.from(this.services.keys()).sort((a, b) => {
       const _serviceA = this.services.get(a)!;
       const _serviceB = this.services.get(b)!;
       return serviceB.priority - serviceA.priority;
     });
 
-    // 對每個服務執行拓撲排序
+    // 對每個Service執Row拓撲Sort
     for (const serviceName of serviceNames) {
       if (!visited.has(serviceName)) {
         visit(serviceName);
       }
     }
 
-    logger.info('服務初始化順序已優化:', sortedServices);
+    logger.info('ServiceInitialize順序已優化:', sortedServices);
     return sortedServices;
   }
 
   /**
-   * 並行初始化服務
+   * ParallelInitializeService
    */
   public async initializeServicesInParallel(
     maxConcurrency = 3
@@ -121,42 +121,42 @@ class ServiceInitializationOptimizer {
     const failed: { service: string; error: string }[] = [];
     const _dependencyGraph = new Map<string, string[]>();
 
-    // 構建依賴圖
+    // Build依賴Graph
     for (const [name, service] of this.services) {
       dependencyGraph.set(name, service.dependencies);
     }
 
-    // 分組初始化
+    // GroupInitialize
     const _groups = this.groupServicesByDependencies(
       sortedServices,
       maxConcurrency
     );
 
     for (const group of groups) {
-      logger.info(`初始化服務組: ${group.join(', ')}`);
+      logger.info(`InitializeService組: ${group.join(', ')}`);
 
       const _groupPromises = group.map(async serviceName => {
         const _service = this.services.get(serviceName);
         if (!service) {
-          failed.push({ service: serviceName, error: '服務未找到' });
+          failed.push({ service: serviceName, error: 'Service未找到' });
           return;
         }
 
         try {
-          // 檢查服務是否已經初始化
+          // CheckServiceYesNo已經Initialize
           if (service.service.isServiceAvailable?.()) {
-            logger.info(`服務 ${serviceName} 已經初始化`);
+            logger.info(`Service ${serviceName} 已經Initialize`);
             initialized.push(serviceName);
             return;
           }
 
-          // 初始化服務
+          // InitializeService
           if (typeof service.service.initialize === 'function') {
             try {
               const _success = await service.service.initialize();
               if (success === true) {
                 initialized.push(serviceName);
-                logger.info(`服務 ${serviceName} 初始化成功`);
+                logger.info(`Service ${serviceName} InitializeSuccess`);
               } else {
                 failed.push({
                   service: serviceName,
@@ -165,23 +165,23 @@ class ServiceInitializationOptimizer {
               }
             } catch (error) {
               const _errorMessage =
-                error instanceof Error ? error.message : '未知錯誤';
+                error instanceof Error ? error.message : '未知Error';
               failed.push({ service: serviceName, error: errorMessage });
-              logger.error(`服務 ${serviceName} 初始化失敗:`, error);
+              logger.error(`Service ${serviceName} InitializeFailed:`, error);
             }
           } else {
-            logger.warn(`服務 ${serviceName} 沒有 initialize 方法`);
+            logger.warn(`Service ${serviceName} 沒有 initialize 方法`);
             initialized.push(serviceName);
           }
         } catch (error) {
           const _errorMessage =
-            error instanceof Error ? error.message : '未知錯誤';
+            error instanceof Error ? error.message : '未知Error';
           failed.push({ service: serviceName, error: errorMessage });
-          logger.error(`服務 ${serviceName} 初始化失敗:`, error);
+          logger.error(`Service ${serviceName} InitializeFailed:`, error);
         }
       });
 
-      // 等待當前組的所有服務初始化完成
+      // Await當前組的所有ServiceInitializeComplete
       await Promise.allSettled(groupPromises);
     }
 
@@ -195,7 +195,7 @@ class ServiceInitializationOptimizer {
       dependencyGraph,
     };
 
-    logger.info('服務初始化完成:', {
+    logger.info('ServiceInitialize完成:', {
       total: sortedServices.length,
       initialized: initialized.length,
       failed: failed.length,
@@ -206,7 +206,7 @@ class ServiceInitializationOptimizer {
   }
 
   /**
-   * 按依賴關係分組服務
+   * 按依賴Off係GroupService
    */
   private groupServicesByDependencies(
     sortedServices: string[],
@@ -219,7 +219,7 @@ class ServiceInitializationOptimizer {
       const _service = this.services.get(serviceName);
       if (!service) continue;
 
-      // 檢查依賴是否已滿足
+      // Check依賴YesNo已滿足
       const _dependenciesMet = service.dependencies.every(
         dep =>
           groups.some(group => group.includes(dep)) ||
@@ -229,13 +229,13 @@ class ServiceInitializationOptimizer {
       if (dependenciesMet) {
         currentGroup.push(serviceName);
 
-        // 檢查當前組是否已滿
+        // Check當前組YesNo已滿
         if (currentGroup.length >= maxConcurrency) {
           groups.push([...currentGroup]);
           currentGroup = [];
         }
       } else {
-        // 如果依賴未滿足，開始新組
+        // 如果依賴未滿足，Begin新組
         if (currentGroup.length > 0) {
           groups.push([...currentGroup]);
           currentGroup = [serviceName];
@@ -253,7 +253,7 @@ class ServiceInitializationOptimizer {
   }
 
   /**
-   * 驗證依賴關係
+   * Verify依賴Off係
    */
   public validateDependencies(): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
@@ -277,7 +277,7 @@ class ServiceInitializationOptimizer {
       if (service) {
         for (const dependency of service.dependencies) {
           if (!this.services.has(dependency)) {
-            errors.push(`服務 ${serviceName} 依賴的服務 ${dependency} 未註冊`);
+            errors.push(`Service ${serviceName} 依賴的Service ${dependency} 未註冊`);
           } else {
             checkCycles(dependency, [...path, serviceName]);
           }
@@ -301,7 +301,7 @@ class ServiceInitializationOptimizer {
   }
 
   /**
-   * 獲取服務依賴圖
+   * GetService依賴Graph
    */
   public getDependencyGraph(): Map<string, string[]> {
     const _graph = new Map<string, string[]>();
@@ -314,7 +314,7 @@ class ServiceInitializationOptimizer {
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   public getServiceStatus(): Record<string, boolean> {
     const status: Record<string, boolean> = {};
@@ -331,23 +331,23 @@ class ServiceInitializationOptimizer {
   }
 
   /**
-   * 重置優化器
+   * Reset優化器
    */
   public reset(): void {
     this.services.clear();
     this.isInitialized = false;
-    logger.info('服務初始化優化器已重置');
+    logger.info('ServiceInitialize優化器已重置');
   }
 
   /**
-   * 檢查優化器狀態
+   * Check優化器Status
    */
   public isOptimizerAvailable(): boolean {
     return this.services.size > 0;
   }
 
   /**
-   * 獲取優化器統計
+   * Get優化器Statistics
    */
   public getStats(): unknown {
     return {
@@ -358,6 +358,6 @@ class ServiceInitializationOptimizer {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _serviceInitializationOptimizer =
   ServiceInitializationOptimizer.getInstance();

@@ -3,7 +3,7 @@ import { errorHandler } from '../../../core/utils/errorHandler';
 import { logger } from '../../../core/utils/logger';
 
 /**
- * Cloudinary 服務配置接口
+ * Cloudinary ServiceConfigureInterface
  */
 interface CloudinaryConfig {
   cloudName: string;
@@ -13,7 +13,7 @@ interface CloudinaryConfig {
 }
 
 /**
- * 上傳選項接口
+ * UploadOptionsInterface
  */
 interface UploadOptions {
   folder?: string;
@@ -29,7 +29,7 @@ interface UploadOptions {
 }
 
 /**
- * 上傳結果接口
+ * Upload結果Interface
  */
 interface UploadResult {
   public_id: string;
@@ -52,7 +52,7 @@ interface UploadResult {
 }
 
 /**
- * 轉換選項接口
+ * ConvertOptionsInterface
  */
 interface TransformationOptions {
   width?: number;
@@ -69,8 +69,8 @@ interface TransformationOptions {
 }
 
 /**
- * Cloudinary 服務類
- * 提供圖片和視頻存儲、處理功能
+ * Cloudinary ServiceClass
+ * 提供Graph片和視頻Storage、Handle功能
  */
 export class CloudinaryService {
   private static instance: CloudinaryService;
@@ -94,7 +94,7 @@ export class CloudinaryService {
   }
 
   /**
-   * 初始化 Cloudinary 服務
+   * Initialize Cloudinary Service
    */
   async initialize(): Promise<void> {
     try {
@@ -115,19 +115,19 @@ export class CloudinaryService {
         baseURL: 'https://api.cloudinary.com/v1_1',
       };
 
-      // 測試 API 連接
+      // Test API Connect
       await this.testConnection();
 
       this.isInitialized = true;
-      logger.info('Cloudinary 服務初始化成功');
+      logger.info('Cloudinary ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('Cloudinary 服務初始化失敗:', { error });
+      logger.error('Cloudinary ServiceInitializeFailed:', { error });
       throw error;
     }
   }
 
   /**
-   * 測試 API 連接
+   * Test API Connect
    */
   private async testConnection(): Promise<void> {
     try {
@@ -144,15 +144,15 @@ export class CloudinaryService {
         throw new Error('API 響應格式無效');
       }
 
-      logger.info('Cloudinary API 連接測試成功');
+      logger.info('Cloudinary API Connect測試Success');
     } catch (error) {
-      logger.error('Cloudinary API 連接測試失敗:', { error });
-      throw new Error('無法連接到 Cloudinary API');
+      logger.error('Cloudinary API Connect測試Failed:', { error });
+      throw new Error('無法Connect到 Cloudinary API');
     }
   }
 
   /**
-   * 上傳圖片
+   * UploadGraph片
    */
   async uploadImage(
     file: File | string,
@@ -165,14 +165,14 @@ export class CloudinaryService {
     try {
       const _formData = new FormData();
 
-      // 添加文件
+      // AddFile
       if (typeof file === 'string') {
         formData.append('file', file); // URL 或 base64
       } else {
         formData.append('file', file);
       }
 
-      // 添加上傳參數
+      // AddUploadParameter
       if (options.folder) {
         formData.append('folder', options.folder);
       }
@@ -186,12 +186,12 @@ export class CloudinaryService {
         formData.append('context', this.formatContext(options.context));
       }
 
-      // 添加轉換參數
+      // AddConvertParameter
       if (options.transformation) {
         formData.append('transformation', options.transformation);
       }
 
-      // 生成簽名
+      // 生成Sign
       const _timestamp = Math.round(new Date().getTime() / 1000);
       formData.append('timestamp', timestamp.toString());
       formData.append('api_key', this.config.apiKey);
@@ -207,7 +207,7 @@ export class CloudinaryService {
 
       const _response = await this.makeUploadRequest('/image/upload', formData);
 
-      logger.info('Cloudinary 圖片上傳成功:', {
+      logger.info('Cloudinary 圖片上傳Success:', {
         publicId: response.public_id,
         url: response.secure_url,
         bytes: response.bytes,
@@ -224,7 +224,7 @@ export class CloudinaryService {
   }
 
   /**
-   * 上傳卡牌圖片
+   * Upload卡牌Graph片
    */
   async uploadCardImage(
     file: File,
@@ -248,7 +248,7 @@ export class CloudinaryService {
   }
 
   /**
-   * 生成圖片 URL
+   * 生成Graph片 URL
    */
   generateImageUrl(
     publicId: string,
@@ -281,7 +281,7 @@ export class CloudinaryService {
   }
 
   /**
-   * 生成卡牌縮略圖 URL
+   * 生成卡牌縮略Graph URL
    */
   generateCardThumbnail(
     publicId: string,
@@ -305,7 +305,7 @@ export class CloudinaryService {
   }
 
   /**
-   * 生成響應式圖片 URL
+   * 生成Response式Graph片 URL
    */
   generateResponsiveUrls(publicId: string): {
     thumbnail: string;
@@ -348,7 +348,7 @@ export class CloudinaryService {
   }
 
   /**
-   * 刪除圖片
+   * DeleteGraph片
    */
   async deleteImage(publicId: string): Promise<boolean> {
     if (!this.isInitialized) {
@@ -371,20 +371,20 @@ export class CloudinaryService {
         formData
       );
 
-      logger.info('Cloudinary 圖片刪除成功:', {
+      logger.info('Cloudinary 圖片DeleteSuccess:', {
         publicId,
         result: response.result,
       });
 
       return response.result === 'ok';
     } catch (error) {
-      logger.error('Cloudinary 圖片刪除失敗:', { error, publicId });
+      logger.error('Cloudinary 圖片DeleteFailed:', { error, publicId });
       return false;
     }
   }
 
   /**
-   * 獲取圖片信息
+   * GetGraph片Information
    */
   async getImageInfo(publicId: string): Promise<any> {
     if (!this.isInitialized) {
@@ -397,17 +397,17 @@ export class CloudinaryService {
         'GET'
       );
 
-      logger.info('獲取 Cloudinary 圖片信息成功:', { publicId });
+      logger.info('Get Cloudinary 圖片信息Success:', { publicId });
 
       return response;
     } catch (error) {
-      logger.error('獲取 Cloudinary 圖片信息失敗:', { error, publicId });
+      logger.error('Get Cloudinary 圖片信息Failed:', { error, publicId });
       throw error;
     }
   }
 
   /**
-   * 搜索圖片
+   * SearchGraph片
    */
   async searchImages(
     query: string,
@@ -446,7 +446,7 @@ export class CloudinaryService {
         params
       );
 
-      logger.info('Cloudinary 圖片搜索成功:', {
+      logger.info('Cloudinary 圖片搜索Success:', {
         query,
         resultCount: response.resources.length,
         totalCount: response.total_count,
@@ -458,19 +458,19 @@ export class CloudinaryService {
         totalCount: response.total_count,
       };
     } catch (error) {
-      logger.error('Cloudinary 圖片搜索失敗:', { error, query });
+      logger.error('Cloudinary 圖片搜索Failed:', { error, query });
       throw error;
     }
   }
 
   /**
-   * 生成簽名
+   * 生成Sign
    */
   private async generateSignature(
     formData: FormData,
     timestamp: number
   ): Promise<string> {
-    // 收集需要簽名的參數
+    // 收集需要Sign的Parameter
     const params: Record<string, string> = {};
 
     for (const [key, value] of formData.entries()) {
@@ -479,13 +479,13 @@ export class CloudinaryService {
       }
     }
 
-    // 按字母順序排序參數
+    // 按字母順序SortParameter
     const _sortedParams = Object.keys(params)
       .sort()
       .map(key => `${key}=${params[key]}`)
       .join('&');
 
-    // 添加 API Secret
+    // Add API Secret
     const _stringToSign = `${sortedParams}${this.config.apiSecret}`;
 
     // 生成 SHA1 哈希
@@ -501,7 +501,7 @@ export class CloudinaryService {
   }
 
   /**
-   * 格式化上下文參數
+   * Format上下文Parameter
    */
   private formatContext(context: Record<string, string>): string {
     return Object.entries(context)
@@ -510,7 +510,7 @@ export class CloudinaryService {
   }
 
   /**
-   * 發送上傳請求
+   * SendUploadRequest
    */
   private async makeUploadRequest(
     endpoint: string,
@@ -527,7 +527,7 @@ export class CloudinaryService {
       if (!response.ok) {
         const _errorData = await response.json().catch(() => ({}));
         throw new Error(
-          `Cloudinary API 錯誤 ${response.status}: ${errorData.error?.message || response.statusText}`
+          `Cloudinary API Error ${response.status}: ${errorData.error?.message || response.statusText}`
         );
       }
 
@@ -536,12 +536,12 @@ export class CloudinaryService {
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('Cloudinary API 請求失敗');
+      throw new Error('Cloudinary API 請求Failed');
     }
   }
 
   /**
-   * 發送 HTTP 請求
+   * Send HTTP Request
    */
   private async makeRequest(
     endpoint: string,
@@ -551,7 +551,7 @@ export class CloudinaryService {
   ): Promise<any> {
     let url = `${this.config.baseURL}/${this.config.cloudName}${endpoint}`;
 
-    // 添加查詢參數
+    // AddQueryParameter
     if (params) {
       const _searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
@@ -583,7 +583,7 @@ export class CloudinaryService {
       if (!response.ok) {
         const _errorData = await response.json().catch(() => ({}));
         throw new Error(
-          `Cloudinary API 錯誤 ${response.status}: ${errorData.error?.message || response.statusText}`
+          `Cloudinary API Error ${response.status}: ${errorData.error?.message || response.statusText}`
         );
       }
 
@@ -592,12 +592,12 @@ export class CloudinaryService {
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('Cloudinary API 請求失敗');
+      throw new Error('Cloudinary API 請求Failed');
     }
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   async getServiceStatus(): Promise<{
     isAvailable: boolean;
@@ -621,8 +621,8 @@ export class CloudinaryService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _cloudinaryService = CloudinaryService.getInstance();
 
-// 導出類型
+// ExportClass型
 export type { TransformationOptions, UploadOptions, UploadResult };

@@ -1,0 +1,673 @@
+import { Platform } from 'react-native';
+
+/**
+ * PWA 服務配置接口
+ */
+export interface PWAServiceConfig {
+  appName: string;
+  appShortName: string;
+  appDescription: string;
+  appVersion: string;
+  appThemeColor: string;
+  appBackgroundColor: string;
+  appDisplay: 'standalone' | 'fullscreen' | 'minimal-ui' | 'browser';
+  appOrientation:
+    | 'any'
+    | 'natural'
+    | 'landscape'
+    | 'landscape-primary'
+    | 'landscape-secondary'
+    | 'portrait'
+    | 'portrait-primary'
+    | 'portrait-secondary';
+  appScope: string;
+  appStartUrl: string;
+  appIcons: PWAIcon[];
+  appScreenshots: PWAScreenshot[];
+  appCategories: string[];
+  appLang: string;
+  appDir: 'ltr' | 'rtl' | 'auto';
+  appPreferRelatedApplications: boolean;
+  appRelatedApplications: PWARelatedApplication[];
+  appShortcuts: PWAShortcut[];
+  appProtocolHandlers: PWAProtocolHandler[];
+  appFileHandlers: PWAFileHandler[];
+  appShareTarget: PWAShareTarget;
+  appCaptureLinks: 'new-client' | 'existing-client-navigate';
+  appHandleLinks: 'preferred' | 'not-preferred' | 'auto';
+  appLaunchHandler: PWALaunchHandler;
+  appDisplayOverride: (
+    | 'window-controls-overlay'
+    | 'minimal-ui'
+    | 'standalone'
+    | 'fullscreen'
+    | 'browser'
+  )[];
+  appEdgeSidePanel: PWAEdgeSidePanel;
+  appNoteTaking: PWANoteTaking;
+  appWindowControlsOverlay: PWAWindowControlsOverlay;
+  appTabStrip: PWATabStrip;
+  appIsla: PWAIsla;
+  appLaunchQueue: PWALaunchQueue;
+}
+
+/**
+ * PWA 圖標接口
+ */
+export interface PWAIcon {
+  src: string;
+  sizes: string;
+  type: string;
+  purpose?: 'maskable' | 'any' | 'any maskable';
+  platform?: string;
+}
+
+/**
+ * PWA 截圖接口
+ */
+export interface PWAScreenshot {
+  src: string;
+  sizes: string;
+  type: string;
+  form_factor?: 'wide' | 'narrow';
+  label?: string;
+}
+
+/**
+ * PWA 相關應用接口
+ */
+export interface PWARelatedApplication {
+  platform: string;
+  url?: string;
+  id?: string;
+}
+
+/**
+ * PWA 快捷方式接口
+ */
+export interface PWAShortcut {
+  name: string;
+  short_name?: string;
+  description?: string;
+  url: string;
+  icons?: PWAIcon[];
+}
+
+/**
+ * PWA 協議處理器接口
+ */
+export interface PWAProtocolHandler {
+  protocol: string;
+  url: string;
+}
+
+/**
+ * PWA 文件處理器接口
+ */
+export interface PWAFileHandler {
+  action: string;
+  accept: Record<string, string[]>;
+}
+
+/**
+ * PWA 分享目標接口
+ */
+export interface PWAShareTarget {
+  action: string;
+  method: 'GET' | 'POST';
+  enctype?: 'application/x-www-form-urlencoded' | 'multipart/form-data';
+  params: {
+    title?: string;
+    text?: string;
+    url?: string;
+    files?: string;
+  };
+}
+
+/**
+ * PWA 啟動處理器接口
+ */
+export interface PWALaunchHandler {
+  client_mode: 'navigate-existing' | 'auto' | 'focus-existing';
+}
+
+/**
+ * PWA 邊欄面板接口
+ */
+export interface PWAEdgeSidePanel {
+  preferred_width: number;
+}
+
+/**
+ * PWA 筆記功能接口
+ */
+export interface PWANoteTaking {
+  new_note_url: string;
+}
+
+/**
+ * PWA 窗口控制覆蓋接口
+ */
+export interface PWAWindowControlsOverlay {
+  enabled: boolean;
+}
+
+/**
+ * PWA 標籤條接口
+ */
+export interface PWATabStrip {
+  home_tab: {
+    name: string;
+    icons: PWAIcon[];
+  };
+  new_tab_button: {
+    enabled: boolean;
+  };
+}
+
+/**
+ * PWA ISLA 接口
+ */
+export interface PWAIsla {
+  enabled: boolean;
+}
+
+/**
+ * PWA 啟動隊列接口
+ */
+export interface PWALaunchQueue {
+  enabled: boolean;
+}
+
+/**
+ * PWA 安裝狀態
+ */
+export interface PWAInstallStatus {
+  isInstalled: boolean;
+  canInstall: boolean;
+  installPrompt?: unknown;
+  deferredPrompt?: unknown;
+}
+
+/**
+ * PWA 服務狀態
+ */
+export interface PWAServiceStatus {
+  isServiceWorkerRegistered: boolean;
+  isOffline: boolean;
+  isOnline: boolean;
+  networkType: string;
+  effectiveType: string;
+  downlink: number;
+  rtt: number;
+  saveData: boolean;
+}
+
+/**
+ * PWA 服務結果
+ */
+export interface PWAServiceResult<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  errorCode?: string;
+}
+
+/**
+ * PWA 服務統計
+ */
+export interface PWAServiceStats {
+  totalInstallations: number;
+  totalUninstallations: number;
+  totalUpdates: number;
+  averageInstallTime: number;
+  averageUpdateTime: number;
+  offlineUsageTime: number;
+  onlineUsageTime: number;
+  cacheHitRate: number;
+  serviceWorkerUpdates: number;
+}
+
+/**
+ * PWA 服務類
+ */
+export class PWAService {
+  private static instance: PWAService;
+  private isInitialized = false;
+  private config: PWAServiceConfig | null = null;
+  private readonly installStatus: PWAInstallStatus = {
+    isInstalled: false,
+    canInstall: false,
+  };
+  private readonly serviceStatus: PWAServiceStatus = {
+    isServiceWorkerRegistered: false,
+    isOffline: false,
+    isOnline: true,
+    networkType: 'unknown',
+    effectiveType: 'unknown',
+    downlink: 0,
+    rtt: 0,
+    saveData: false,
+  };
+  private readonly stats: PWAServiceStats = {
+    totalInstallations: 0,
+    totalUninstallations: 0,
+    totalUpdates: 0,
+    averageInstallTime: 0,
+    averageUpdateTime: 0,
+    offlineUsageTime: 0,
+    onlineUsageTime: 0,
+    cacheHitRate: 0,
+    serviceWorkerUpdates: 0,
+  };
+
+  private constructor() {
+    // 私有構造函數，實現單例模式
+  }
+
+  /**
+   * 獲取 PWA 服務實例
+   */
+  public static getInstance(): PWAService {
+    if (!PWAService.instance) {
+      PWAService.instance = new PWAService();
+    }
+    return PWAService.instance;
+  }
+
+  /**
+   * 初始化 PWA 服務
+   */
+  public async initialize(config: PWAServiceConfig): Promise<PWAServiceResult> {
+    if (this.isInitialized) {
+      return { success: true, data: 'PWA 服務已初始化' };
+    }
+
+    if (Platform.OS !== 'web') {
+      return {
+        success: false,
+        error: 'PWA 服務僅支持 Web 平台',
+        errorCode: 'PLATFORM_NOT_SUPPORTED',
+      };
+    }
+
+    try {
+      this.config = config;
+      await this.initializeServiceWorker();
+      await this.initializeNetworkMonitoring();
+      await this.initializeInstallationHandling();
+      await this.generateManifest();
+      await this.registerServiceWorker();
+
+      this.isInitialized = true;
+
+      return { success: true, data: 'PWA 服務初始化成功' };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'PWA 服務初始化失敗',
+        errorCode: 'INITIALIZATION_FAILED',
+      };
+    }
+  }
+
+  /**
+   * 初始化 Service Worker
+   */
+  private async initializeServiceWorker(): Promise<void> {
+    if (!('serviceWorker' in navigator)) {
+      throw new Error('Service Worker 不支持');
+    }
+  }
+
+  /**
+   * 初始化網絡監控
+   */
+  private async initializeNetworkMonitoring(): Promise<void> {
+    if ('connection' in navigator) {
+      const { connection } = navigator as any;
+      this.updateNetworkInfo(connection);
+
+      connection.addEventListener('change', () => {
+        this.updateNetworkInfo(connection);
+      });
+    }
+
+    window.addEventListener('online', () => {
+      this.serviceStatus.isOnline = true;
+      this.serviceStatus.isOffline = false;
+    });
+
+    window.addEventListener('offline', () => {
+      this.serviceStatus.isOnline = false;
+      this.serviceStatus.isOffline = true;
+    });
+  }
+
+  /**
+   * 更新網絡信息
+   */
+  private updateNetworkInfo(connection: unknown): void {
+    this.serviceStatus.networkType = connection.effectiveType || 'unknown';
+    this.serviceStatus.effectiveType = connection.effectiveType || 'unknown';
+    this.serviceStatus.downlink = connection.downlink || 0;
+    this.serviceStatus.rtt = connection.rtt || 0;
+    this.serviceStatus.saveData = connection.saveData || false;
+  }
+
+  /**
+   * 初始化安裝處理
+   */
+  private async initializeInstallationHandling(): Promise<void> {
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      this.installStatus.deferredPrompt = e;
+      this.installStatus.canInstall = true;
+    });
+
+    window.addEventListener('appinstalled', () => {
+      this.installStatus.isInstalled = true;
+      this.installStatus.canInstall = false;
+      this.installStatus.deferredPrompt = null;
+      this.stats.totalInstallations++;
+    });
+  }
+
+  /**
+   * 生成 Web App Manifest
+   */
+  private async generateManifest(): Promise<void> {
+    if (!this.config) {
+      throw new Error('PWA 配置未設置');
+    }
+
+    const manifest = {
+      name: this.config.appName,
+      short_name: this.config.appShortName,
+      description: this.config.appDescription,
+      version: this.config.appVersion,
+      theme_color: this.config.appThemeColor,
+      background_color: this.config.appBackgroundColor,
+      display: this.config.appDisplay,
+      orientation: this.config.appOrientation,
+      scope: this.config.appScope,
+      start_url: this.config.appStartUrl,
+      icons: this.config.appIcons,
+      screenshots: this.config.appScreenshots,
+      categories: this.config.appCategories,
+      lang: this.config.appLang,
+      dir: this.config.appDir,
+      prefer_related_applications: this.config.appPreferRelatedApplications,
+      related_applications: this.config.appRelatedApplications,
+      shortcuts: this.config.appShortcuts,
+      protocol_handlers: this.config.appProtocolHandlers,
+      file_handlers: this.config.appFileHandlers,
+      share_target: this.config.appShareTarget,
+      capture_links: this.config.appCaptureLinks,
+      handle_links: this.config.appHandleLinks,
+      launch_handler: this.config.appLaunchHandler,
+      display_override: this.config.appDisplayOverride,
+      edge_side_panel: this.config.appEdgeSidePanel,
+      note_taking: this.config.appNoteTaking,
+      window_controls_overlay: this.config.appWindowControlsOverlay,
+      tab_strip: this.config.appTabStrip,
+      isla: this.config.appIsla,
+      launch_queue: this.config.appLaunchQueue,
+    };
+
+    const manifestBlob = new Blob([JSON.stringify(manifest, null, 2)], {
+      type: 'application/json',
+    });
+
+    const manifestUrl = URL.createObjectURL(manifestBlob);
+
+    // 創建或更新 manifest link
+    let manifestLink = document.querySelector(
+      'link[rel="manifest"]'
+    ) as HTMLLinkElement;
+    if (!manifestLink) {
+      manifestLink = document.createElement('link');
+      manifestLink.rel = 'manifest';
+      document.head.appendChild(manifestLink);
+    }
+    manifestLink.href = manifestUrl;
+  }
+
+  /**
+   * 註冊 Service Worker
+   */
+  private async registerServiceWorker(): Promise<void> {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js');
+      this.serviceStatus.isServiceWorkerRegistered = true;
+      this.stats.serviceWorkerUpdates++;
+
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        if (newWorker) {
+          newWorker.addEventListener('statechange', () => {
+            if (
+              newWorker.state === 'installed' &&
+              navigator.serviceWorker.controller
+            ) {
+              // 有新版本可用
+              this.stats.serviceWorkerUpdates++;
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.warn('Service Worker 註冊失敗:', error);
+    }
+  }
+
+  /**
+   * 安裝 PWA
+   */
+  public async installPWA(): Promise<PWAServiceResult> {
+    if (!this.isInitialized) {
+      return {
+        success: false,
+        error: 'PWA 服務未初始化',
+        errorCode: 'SERVICE_NOT_INITIALIZED',
+      };
+    }
+
+    if (!this.installStatus.canInstall || !this.installStatus.deferredPrompt) {
+      return {
+        success: false,
+        error: '無法安裝 PWA',
+        errorCode: 'CANNOT_INSTALL',
+      };
+    }
+
+    try {
+      const startTime = Date.now();
+
+      this.installStatus.deferredPrompt.prompt();
+      const { outcome } = await this.installStatus.deferredPrompt.userChoice;
+
+      const installTime = Date.now() - startTime;
+      this.stats.averageInstallTime =
+        (this.stats.averageInstallTime + installTime) / 2;
+
+      if (outcome === 'accepted') {
+        this.installStatus.canInstall = false;
+        this.installStatus.deferredPrompt = null;
+        return { success: true, data: 'PWA 安裝成功' };
+      } else {
+        return {
+          success: false,
+          error: '用戶取消安裝',
+          errorCode: 'USER_CANCELLED',
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'PWA 安裝失敗',
+        errorCode: 'INSTALLATION_FAILED',
+      };
+    }
+  }
+
+  /**
+   * 檢查安裝狀態
+   */
+  public getInstallStatus(): PWAInstallStatus {
+    return { ...this.installStatus };
+  }
+
+  /**
+   * 獲取服務狀態
+   */
+  public getServiceStatus(): PWAServiceStatus {
+    return { ...this.serviceStatus };
+  }
+
+  /**
+   * 獲取服務統計
+   */
+  public getServiceStats(): PWAServiceStats {
+    return { ...this.stats };
+  }
+
+  /**
+   * 更新 PWA
+   */
+  public async updatePWA(): Promise<PWAServiceResult> {
+    if (!this.isInitialized) {
+      return {
+        success: false,
+        error: 'PWA 服務未初始化',
+        errorCode: 'SERVICE_NOT_INITIALIZED',
+      };
+    }
+
+    try {
+      const startTime = Date.now();
+
+      if (navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({
+          type: 'SKIP_WAITING',
+        });
+      }
+
+      const updateTime = Date.now() - startTime;
+      this.stats.averageUpdateTime =
+        (this.stats.averageUpdateTime + updateTime) / 2;
+      this.stats.totalUpdates++;
+
+      return { success: true, data: 'PWA 更新成功' };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'PWA 更新失敗',
+        errorCode: 'UPDATE_FAILED',
+      };
+    }
+  }
+
+  /**
+   * 清除緩存
+   */
+  public async clearCache(): Promise<PWAServiceResult> {
+    if (!this.isInitialized) {
+      return {
+        success: false,
+        error: 'PWA 服務未初始化',
+        errorCode: 'SERVICE_NOT_INITIALIZED',
+      };
+    }
+
+    try {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+
+      return { success: true, data: '緩存清除成功' };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '緩存清除失敗',
+        errorCode: 'CACHE_CLEAR_FAILED',
+      };
+    }
+  }
+
+  /**
+   * 獲取緩存信息
+   */
+  public async getCacheInfo(): Promise<
+    PWAServiceResult<{ cacheNames: string[]; totalSize: number }>
+  > {
+    if (!this.isInitialized) {
+      return {
+        success: false,
+        error: 'PWA 服務未初始化',
+        errorCode: 'SERVICE_NOT_INITIALIZED',
+      };
+    }
+
+    try {
+      const cacheNames = await caches.keys();
+      let totalSize = 0;
+
+      for (const cacheName of cacheNames) {
+        const cache = await caches.open(cacheName);
+        const keys = await cache.keys();
+
+        for (const request of keys) {
+          const response = await cache.match(request);
+          if (response) {
+            const blob = await response.blob();
+            totalSize += blob.size;
+          }
+        }
+      }
+
+      return {
+        success: true,
+        data: { cacheNames, totalSize },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : '獲取緩存信息失敗',
+        errorCode: 'CACHE_INFO_FAILED',
+      };
+    }
+  }
+
+  /**
+   * 檢查服務是否就緒
+   */
+  public isServiceReady(): boolean {
+    return this.isInitialized && Platform.OS === 'web';
+  }
+
+  /**
+   * 獲取服務信息
+   */
+  public getServiceInfo(): PWAServiceResult<{
+    isInitialized: boolean;
+    platform: string;
+    config: PWAServiceConfig | null;
+    installStatus: PWAInstallStatus;
+    serviceStatus: PWAServiceStatus;
+    stats: PWAServiceStats;
+  }> {
+    return {
+      success: true,
+      data: {
+        isInitialized: this.isInitialized,
+        platform: Platform.OS,
+        config: this.config,
+        installStatus: this.installStatus,
+        serviceStatus: this.serviceStatus,
+        stats: this.stats,
+      },
+    };
+  }
+}
+
+export default PWAService;

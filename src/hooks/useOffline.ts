@@ -22,7 +22,7 @@ export const _useOffline = () => {
       setIsOnline(state.isConnected ?? false);
     });
 
-    // 定期檢查待處理操作數量
+    // 定期Check待HandleOperation數量
     const _interval = setInterval(() => {
       setPendingActionsCount(OfflineService.getPendingActionsCount());
     }, 5000);

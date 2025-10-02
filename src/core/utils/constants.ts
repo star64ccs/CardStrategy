@@ -1,25 +1,25 @@
-// API 相關常數
+// API 相Off常數
 export const _API_BASE_URL =
   (process.env as any)['API_BASE_URL'] ||
   'https://cardstrategy-api.onrender.com/api';
-export const _API_TIMEOUT = 30000; // 30 秒
+export const _API_TIMEOUT = 30000; // 30 Second
 export const _API_RETRY_ATTEMPTS = 3;
-export const _API_RETRY_DELAY = 1000; // 1 秒
+export const _API_RETRY_DELAY = 1000; // 1 Second
 
-// 分頁常數
+// Paginate常數
 export const _DEFAULT_PAGE_SIZE = 20;
 export const _MAX_PAGE_SIZE = 100;
 export const _MIN_PAGE_SIZE = 1;
 
 // 快取常數
 export const _CACHE_EXPIRY = {
-  SHORT: 5 * 60 * 1000, // 5 分鐘
-  MEDIUM: 30 * 60 * 1000, // 30 分鐘
-  LONG: 24 * 60 * 60 * 1000, // 24 小時
+  SHORT: 5 * 60 * 1000, // 5 Minute
+  MEDIUM: 30 * 60 * 1000, // 30 Minute
+  LONG: 24 * 60 * 60 * 1000, // 24 Hour
   VERY_LONG: 7 * 24 * 60 * 60 * 1000, // 7 天
 };
 
-// 檔案上傳常數
+// 檔案Upload常數
 export const _MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 export const _ALLOWED_IMAGE_TYPES = [
   'image/jpeg',
@@ -30,7 +30,7 @@ export const _ALLOWED_IMAGE_TYPES = [
 export const _MAX_IMAGE_DIMENSION = 2048; // 2048px
 export const _IMAGE_QUALITY = 0.8; // 80%
 
-// 驗證常數
+// Verify常數
 export const _PASSWORD_MIN_LENGTH = 8;
 export const _PASSWORD_MAX_LENGTH = 128;
 export const _USERNAME_MIN_LENGTH = 3;
@@ -38,7 +38,7 @@ export const _USERNAME_MAX_LENGTH = 20;
 export const _EMAIL_MAX_LENGTH = 254;
 export const _PHONE_MAX_LENGTH = 20;
 
-// 卡牌相關常數
+// 卡牌相Off常數
 export const _CARD_NAME_MAX_LENGTH = 100;
 export const _CARD_DESCRIPTION_MAX_LENGTH = 500;
 export const _CARD_NUMBER_MAX_LENGTH = 20;
@@ -47,7 +47,7 @@ export const _ARTIST_NAME_MAX_LENGTH = 100;
 export const _MAX_CARDS_PER_COLLECTION = 10000;
 export const _MAX_COLLECTIONS_PER_USER = 100;
 
-// 價格相關常數
+// 價格相Off常數
 export const _MIN_PRICE = 0;
 export const _MAX_PRICE = 1000000; // 100 萬
 export const _PRICE_DECIMAL_PLACES = 2;
@@ -71,29 +71,29 @@ export const _VIP_TIER_LIMITS = {
   AI_CHAT: 1000,
 };
 
-// 通知常數
+// Notification常數
 export const _NOTIFICATION_EXPIRY_DAYS = 30;
 export const _MAX_NOTIFICATIONS = 100;
-export const _PUSH_NOTIFICATION_TTL = 24 * 60 * 60; // 24 小時
+export const _PUSH_NOTIFICATION_TTL = 24 * 60 * 60; // 24 Hour
 
-// 搜索常數
+// Search常數
 export const _SEARCH_MIN_LENGTH = 2;
 export const _SEARCH_MAX_LENGTH = 100;
 export const _SEARCH_DELAY_MS = 300; // 防抖延遲
 export const _MAX_SEARCH_RESULTS = 100;
 
-// 分析常數
+// Analysis常數
 export const _ANALYSIS_CONFIDENCE_THRESHOLD = 0.7;
 export const _MAX_ANALYSIS_ATTEMPTS = 3;
-export const _ANALYSIS_TIMEOUT_MS = 60000; // 60 秒
+export const _ANALYSIS_TIMEOUT_MS = 60000; // 60 Second
 
 // 安全常數
-export const _SESSION_TIMEOUT_MS = 24 * 60 * 60 * 1000; // 24 小時
+export const _SESSION_TIMEOUT_MS = 24 * 60 * 60 * 1000; // 24 Hour
 export const _REFRESH_TOKEN_EXPIRY_DAYS = 30;
 export const _MAX_LOGIN_ATTEMPTS = 5;
-export const _LOGIN_LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 分鐘
+export const _LOGIN_LOCKOUT_DURATION_MS = 15 * 60 * 1000; // 15 Minute
 
-// 本地化常數
+// Local化常數
 export const _DEFAULT_LANGUAGE = 'zh-TW';
 export const _SUPPORTED_LANGUAGES = ['zh-TW', 'en-US', 'ja-JP'] as const;
 export const _FALLBACK_LANGUAGE = 'en-US';
@@ -104,7 +104,7 @@ export const _THROTTLE_DELAY = 100;
 export const _ANIMATION_DURATION = 300;
 export const _TRANSITION_DURATION = 200;
 
-// 存儲常數
+// Storage常數
 export const _STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
   REFRESH_TOKEN: 'refresh_token',
@@ -114,7 +114,7 @@ export const _STORAGE_KEYS = {
   OFFLINE_DATA: 'offline_data',
 } as const;
 
-// 錯誤代碼
+// Error代碼
 export const _ERROR_CODES = {
   NETWORK_ERROR: 'NETWORK_ERROR',
   AUTH_ERROR: 'AUTH_ERROR',
@@ -124,7 +124,7 @@ export const _ERROR_CODES = {
   PERMISSION_ERROR: 'PERMISSION_ERROR',
 } as const;
 
-// 狀態常數
+// Status常數
 export const _LOADING_STATES = {
   IDLE: 'idle',
   LOADING: 'loading',
@@ -132,7 +132,7 @@ export const _LOADING_STATES = {
   ERROR: 'error',
 } as const;
 
-// 主題常數
+// Theme常數
 export const _THEME_MODES = {
   LIGHT: 'light',
   DARK: 'dark',
@@ -146,7 +146,7 @@ export const _PLATFORMS = {
   WEB: 'web',
 } as const;
 
-// 文件類型常數
+// FileClass型常數
 export const _FILE_TYPES = {
   IMAGE: 'image',
   VIDEO: 'video',

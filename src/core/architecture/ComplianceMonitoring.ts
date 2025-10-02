@@ -1,7 +1,7 @@
 import { HybridArchitectureCore } from './HybridArchitectureCore';
 import { TechnicalDebtManagement } from './TechnicalDebtManagement';
 
-// 合規監控類型定義
+// 合規MonitorClass型定義
 export interface ComplianceEvent {
   id: string;
   timestamp: Date;
@@ -285,7 +285,7 @@ export class ComplianceRuleEngine {
     event: ComplianceEvent,
     rule: ComplianceRule
   ): ComplianceSeverity {
-    // 基於規則優先級和原始事件嚴重性確定嚴重性
+    // 基於規則優先級和原始Event嚴重性OK嚴重性
     const _baseSeverity = event.severity;
     const _rulePriority = rule.priority;
 
@@ -304,7 +304,7 @@ export class ComplianceRuleEngine {
   }
 }
 
-// 合規事件追蹤器
+// 合規EventTrace器
 export class ComplianceEventTracker {
   private readonly events: Map<string, ComplianceEvent> = new Map();
   private readonly alerts: Map<string, ComplianceAlert> = new Map();
@@ -317,7 +317,7 @@ export class ComplianceEventTracker {
   addEvent(event: ComplianceEvent): void {
     this.events.set(event.id, event);
 
-    // 評估規則並創建觸發的事件
+    // 評估規則並Create觸發的Event
     const _triggeredEvents = this.ruleEngine.evaluateEvent(event);
     triggeredEvents.forEach(triggeredEvent => {
       this.events.set(triggeredEvent.id, triggeredEvent);
@@ -417,7 +417,7 @@ export class ComplianceEventTracker {
   }
 }
 
-// 合規審計追蹤器
+// 合規審計Trace器
 export class ComplianceAuditTrail {
   private auditLog: ComplianceEvent[] = [];
   private readonly maxLogSize = 10000;
@@ -425,7 +425,7 @@ export class ComplianceAuditTrail {
   addAuditEvent(event: ComplianceEvent): void {
     this.auditLog.push(event);
 
-    // 如果日誌超過最大大小，移除最舊的記錄
+    // 如果Log超過最大大小，Remove最舊的Record
     if (this.auditLog.length > this.maxLogSize) {
       this.auditLog = this.auditLog.slice(-this.maxLogSize);
     }
@@ -490,7 +490,7 @@ export class ComplianceAuditTrail {
   }
 }
 
-// 合規監控主類
+// 合規Monitor主Class
 export class ComplianceMonitoring {
   private static instance: ComplianceMonitoring;
   private readonly eventTracker: ComplianceEventTracker;
@@ -515,12 +515,12 @@ export class ComplianceMonitoring {
 
   async initialize(): Promise<boolean> {
     try {
-      // 初始化預設合規規則
+      // Initialize預設合規規則
       await this.initializeDefaultRules();
       this.isInitialized = true;
       return true;
     } catch (error) {
-      console.error('合規監控初始化失敗:', error);
+      console.error('合規監控InitializeFailed:', error);
       return false;
     }
   }
@@ -593,13 +593,13 @@ export class ComplianceMonitoring {
       throw new Error('合規監控尚未初始化');
     }
 
-    // 添加到事件追蹤器
+    // Add到EventTrace器
     this.eventTracker.addEvent(event);
 
-    // 添加到審計追蹤
+    // Add到審計Trace
     this.auditTrail.addAuditEvent(event);
 
-    // 檢查是否需要創建技術債務
+    // CheckYesNo需要Create技術債務
     if (
       event.severity === ComplianceSeverity.HIGH ||
       event.severity === ComplianceSeverity.CRITICAL
@@ -634,7 +634,7 @@ export class ComplianceMonitoring {
       },
     };
 
-    // 注意：這裡需要根據實際的 TechnicalDebtManagement 接口進行調整
+    // 注意：這裡需要Root據實際的 TechnicalDebtManagement Interface進Row調整
     // this.technicalDebtManagement.addItem(technicalDebtItem);
   }
 
@@ -770,7 +770,7 @@ export class ComplianceMonitoring {
       return sum + resolutionTime;
     }, 0);
 
-    return totalTime / resolvedEvents.length / (1000 * 60 * 60 * 24); // 轉換為天
+    return totalTime / resolvedEvents.length / (1000 * 60 * 60 * 24); // Convert為天
   }
 
   private calculateViolationRate(events: ComplianceEvent[]): number {
@@ -788,7 +788,7 @@ export class ComplianceMonitoring {
   ): ComplianceRecommendation[] {
     const recommendations: ComplianceRecommendation[] = [];
 
-    // 檢查高嚴重性違規
+    // Check高嚴重性違規
     const _criticalViolations = events.filter(
       event =>
         event.severity === ComplianceSeverity.CRITICAL &&
@@ -813,7 +813,7 @@ export class ComplianceMonitoring {
       });
     }
 
-    // 檢查隱私違規
+    // Check隱私違規
     const _privacyViolations = events.filter(
       event => event.eventType === ComplianceEventType.PRIVACY_VIOLATION
     );
@@ -857,7 +857,7 @@ export class ComplianceMonitoring {
       return sum + severityWeights[violation.severity];
     }, 0);
 
-    const _maxPossibleWeight = events.length * 4; // 假設所有事件都是嚴重違規
+    const _maxPossibleWeight = events.length * 4; // False設所有Event都Yes嚴重違規
     const _complianceScore = Math.max(
       0,
       100 - (totalWeight / maxPossibleWeight) * 100

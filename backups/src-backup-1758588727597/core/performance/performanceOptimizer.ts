@@ -1,0 +1,489 @@
+/**
+ * 性能優化管理器 - 第三階段性能優化
+ * 整合所有性能優化功能的主控制器
+ */
+
+import { logger } from '../utils/logger';
+import CodeSplitter from './codeSplitter';
+import LazyLoadManager from './lazyLoadManager';
+import MemoryManager from './memoryManager';
+
+export interface PerformanceConfig {
+  enableLazyLoading: boolean;
+  enableCodeSplitting: boolean;
+  enableMemoryManagement: boolean;
+  enablePreloading: boolean;
+  enableCaching: boolean;
+  optimizationLevel: 'aggressive' | 'balanced' | 'conservative';
+  targetFPS: number;
+  maxBundleSize: number; // KB
+  memoryThreshold: number; // MB
+}
+
+export interface PerformanceMetrics {
+  fps: number;
+  memoryUsage: number;
+  bundleSize: number;
+  loadTime: number;
+  renderTime: number;
+  cacheHitRate: number;
+  optimizationScore: number;
+  lastOptimization: Date;
+}
+
+export interface OptimizationResult {
+  success: boolean;
+  improvements: {
+    bundleSize?: number;
+    memoryUsage?: number;
+    loadTime?: number;
+    fps?: number;
+  };
+  errors: string[];
+  timestamp: Date;
+}
+
+/**
+ * 性能優化管理器
+ */
+export class PerformanceOptimizer {
+  private static instance: PerformanceOptimizer;
+  private config: PerformanceConfig;
+  private metrics: PerformanceMetrics;
+  private lazyLoadManager: LazyLoadManager;
+  private codeSplitter: CodeSplitter;
+  private memoryManager: MemoryManager;
+  private isInitialized = false;
+  private optimizationHistory: OptimizationResult[] = [];
+
+  private constructor() {
+    this.config = this.getDefaultConfig();
+    this.metrics = this.getInitialMetrics();
+    this.lazyLoadManager = LazyLoadManager.getInstance();
+    this.codeSplitter = CodeSplitter.getInstance();
+    this.memoryManager = MemoryManager.getInstance();
+  }
+
+  public static getInstance(): PerformanceOptimizer {
+    if (!PerformanceOptimizer.instance) {
+      PerformanceOptimizer.instance = new PerformanceOptimizer();
+    }
+    return PerformanceOptimizer.instance;
+  }
+
+  /**
+   * 初始化性能優化器
+   */
+  public async initialize(): Promise<void> {
+    if (this.isInitialized) return;
+
+    logger.info('初始化性能優化器...');
+
+    try {
+      // 初始化各個管理器
+      const initPromises = [];
+
+      if (this.config.enableLazyLoading) {
+        initPromises.push(this.lazyLoadManager.initialize());
+      }
+
+      if (this.config.enableCodeSplitting) {
+        initPromises.push(this.codeSplitter.initialize());
+      }
+
+      if (this.config.enableMemoryManagement) {
+        initPromises.push(this.memoryManager.initialize());
+      }
+
+      await Promise.all(initPromises);
+
+      // 設置性能監控
+      this.setupPerformanceMonitoring();
+
+      // 執行初始優化
+      await this.performInitialOptimization();
+
+      this.isInitialized = true;
+      logger.info('性能優化器初始化完成');
+    } catch (error) {
+      logger.error('性能優化器初始化失敗:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 執行性能優化
+   */
+  public async optimize(): Promise<OptimizationResult> {
+    logger.info('開始性能優化...');
+
+    const startTime = Date.now();
+    const result: OptimizationResult = {
+      success: true,
+      improvements: {},
+      errors: [],
+      timestamp: new Date(),
+    };
+
+    try {
+      // 1. Bundle優化
+      if (this.config.enableCodeSplitting) {
+        const bundleResult = await this.codeSplitter.optimizeBundle();
+        result.improvements.bundleSize = bundleResult.savings;
+        logger.debug('Bundle優化完成', bundleResult);
+      }
+
+      // 2. 內存優化
+      if (this.config.enableMemoryManagement) {
+        const memoryBefore = this.memoryManager.getMemoryMetrics().usedMemory;
+        this.memoryManager.forceGarbageCollection();
+        const memoryAfter = this.memoryManager.getMemoryMetrics().usedMemory;
+        result.improvements.memoryUsage = memoryBefore - memoryAfter;
+        logger.debug('內存優化完成', {
+          before: memoryBefore,
+          after: memoryAfter,
+        });
+      }
+
+      // 3. 懶加載優化
+      if (this.config.enableLazyLoading) {
+        await this.lazyLoadManager.cleanup();
+        logger.debug('懶加載優化完成');
+      }
+
+      // 4. 緩存優化
+      if (this.config.enableCaching) {
+        await this.optimizeCaching();
+        logger.debug('緩存優化完成');
+      }
+
+      // 5. 預加載優化
+      if (this.config.enablePreloading) {
+        await this.optimizePreloading();
+        logger.debug('預加載優化完成');
+      }
+
+      // 更新指標
+      await this.updateMetrics();
+
+      const optimizationTime = Date.now() - startTime;
+      logger.info('性能優化完成', {
+        optimizationTime,
+        improvements: result.improvements,
+      });
+    } catch (error) {
+      result.success = false;
+      result.errors.push(error.message);
+      logger.error('性能優化失敗:', error);
+    }
+
+    // 記錄優化歷史
+    this.optimizationHistory.push(result);
+    this.metrics.lastOptimization = new Date();
+
+    return result;
+  }
+
+  /**
+   * 獲取性能指標
+   */
+  public getMetrics(): PerformanceMetrics {
+    return { ...this.metrics };
+  }
+
+  /**
+   * 獲取優化歷史
+   */
+  public getOptimizationHistory(): OptimizationResult[] {
+    return [...this.optimizationHistory];
+  }
+
+  /**
+   * 更新配置
+   */
+  public updateConfig(newConfig: Partial<PerformanceConfig>): void {
+    this.config = { ...this.config, ...newConfig };
+    logger.info('性能優化器配置已更新', this.config);
+  }
+
+  /**
+   * 執行實時優化
+   */
+  public async performRealTimeOptimization(): Promise<void> {
+    const currentMetrics = this.getMetrics();
+
+    // 檢查是否需要優化
+    if (this.needsOptimization(currentMetrics)) {
+      logger.debug('檢測到性能問題，執行實時優化');
+      await this.optimize();
+    }
+  }
+
+  /**
+   * 預加載關鍵資源
+   */
+  public async preloadCriticalResources(): Promise<void> {
+    logger.info('預加載關鍵資源...');
+
+    try {
+      const criticalRoutes = ['/', '/cards', '/scan'];
+
+      if (this.config.enableLazyLoading) {
+        await this.lazyLoadManager.preloadComponents(criticalRoutes);
+      }
+
+      if (this.config.enableCodeSplitting) {
+        await Promise.all(
+          criticalRoutes.map(route => this.codeSplitter.preloadRoute(route))
+        );
+      }
+
+      logger.info('關鍵資源預加載完成');
+    } catch (error) {
+      logger.error('關鍵資源預加載失敗:', error);
+    }
+  }
+
+  /**
+   * 清理優化器資源
+   */
+  public cleanup(): void {
+    logger.info('清理性能優化器資源');
+
+    if (this.config.enableLazyLoading) {
+      this.lazyLoadManager.cleanup();
+    }
+
+    if (this.config.enableMemoryManagement) {
+      this.memoryManager.cleanup();
+    }
+
+    // 清理歷史記錄
+    this.optimizationHistory.length = 0;
+  }
+
+  // 私有方法
+
+  private async performInitialOptimization(): Promise<void> {
+    logger.debug('執行初始優化...');
+
+    // 根據優化級別執行不同的優化策略
+    switch (this.config.optimizationLevel) {
+      case 'aggressive':
+        await this.aggressiveOptimization();
+        break;
+      case 'balanced':
+        await this.balancedOptimization();
+        break;
+      case 'conservative':
+        await this.conservativeOptimization();
+        break;
+    }
+  }
+
+  private async aggressiveOptimization(): Promise<void> {
+    logger.debug('執行激進優化策略');
+
+    // 激進的優化策略
+    await Promise.all([
+      this.codeSplitter.optimizeBundle(),
+      this.memoryManager.forceGarbageCollection(),
+      this.preloadCriticalResources(),
+    ]);
+  }
+
+  private async balancedOptimization(): Promise<void> {
+    logger.debug('執行平衡優化策略');
+
+    // 平衡的優化策略
+    await this.codeSplitter.optimizeBundle();
+    await this.preloadCriticalResources();
+  }
+
+  private async conservativeOptimization(): Promise<void> {
+    logger.debug('執行保守優化策略');
+
+    // 保守的優化策略
+    await this.preloadCriticalResources();
+  }
+
+  private setupPerformanceMonitoring(): void {
+    // 設置FPS監控
+    this.setupFPSMonitoring();
+
+    // 設置內存監控
+    this.setupMemoryMonitoring();
+
+    // 設置渲染時間監控
+    this.setupRenderTimeMonitoring();
+
+    // 設置定期優化
+    this.setupPeriodicOptimization();
+  }
+
+  private setupFPSMonitoring(): void {
+    let lastTime = performance.now();
+    let frameCount = 0;
+    let fps = 0;
+
+    const measureFPS = () => {
+      frameCount++;
+      const currentTime = performance.now();
+
+      if (currentTime - lastTime >= 1000) {
+        fps = Math.round((frameCount * 1000) / (currentTime - lastTime));
+        this.metrics.fps = fps;
+
+        frameCount = 0;
+        lastTime = currentTime;
+      }
+
+      requestAnimationFrame(measureFPS);
+    };
+
+    requestAnimationFrame(measureFPS);
+  }
+
+  private setupMemoryMonitoring(): void {
+    setInterval(() => {
+      const memoryMetrics = this.memoryManager.getMemoryMetrics();
+      this.metrics.memoryUsage = memoryMetrics.memoryUsage;
+
+      // 檢查內存使用
+      if (memoryMetrics.memoryUsage > this.config.memoryThreshold / 100) {
+        this.performRealTimeOptimization();
+      }
+    }, 10000); // 每10秒檢查一次
+  }
+
+  private setupRenderTimeMonitoring(): void {
+    let renderStartTime = 0;
+
+    // 監控渲染開始
+    const originalRequestAnimationFrame = window.requestAnimationFrame;
+    window.requestAnimationFrame = callback => {
+      renderStartTime = performance.now();
+      return originalRequestAnimationFrame(time => {
+        const renderTime = performance.now() - renderStartTime;
+        this.metrics.renderTime = renderTime;
+        callback(time);
+      });
+    };
+  }
+
+  private setupPeriodicOptimization(): void {
+    // 每5分鐘執行一次優化
+    setInterval(
+      () => {
+        this.performRealTimeOptimization();
+      },
+      5 * 60 * 1000
+    );
+  }
+
+  private async updateMetrics(): Promise<void> {
+    // 更新所有指標
+    if (this.config.enableLazyLoading) {
+      const lazyMetrics = this.lazyLoadManager.getMetrics();
+      this.metrics.cacheHitRate = lazyMetrics.cacheHitRate;
+    }
+
+    if (this.config.enableCodeSplitting) {
+      const splitMetrics = this.codeSplitter.getSplitMetrics();
+      this.metrics.bundleSize = splitMetrics.totalSize;
+    }
+
+    if (this.config.enableMemoryManagement) {
+      const memoryMetrics = this.memoryManager.getMemoryMetrics();
+      this.metrics.memoryUsage = memoryMetrics.memoryUsage;
+    }
+
+    // 計算優化分數
+    this.metrics.optimizationScore = this.calculateOptimizationScore();
+  }
+
+  private calculateOptimizationScore(): number {
+    let score = 0;
+
+    // FPS分數 (0-30分)
+    const fpsScore = Math.min(30, (this.metrics.fps / 60) * 30);
+    score += fpsScore;
+
+    // 內存使用分數 (0-25分)
+    const memoryScore = Math.max(0, 25 * (1 - this.metrics.memoryUsage));
+    score += memoryScore;
+
+    // Bundle大小分數 (0-20分)
+    const bundleScore = Math.max(
+      0,
+      20 * (1 - this.metrics.bundleSize / this.config.maxBundleSize)
+    );
+    score += bundleScore;
+
+    // 緩存命中率分數 (0-15分)
+    const cacheScore = this.metrics.cacheHitRate * 15;
+    score += cacheScore;
+
+    // 渲染時間分數 (0-10分)
+    const renderScore = Math.max(0, 10 * (1 - this.metrics.renderTime / 16.67)); // 60fps = 16.67ms
+    score += renderScore;
+
+    return Math.round(score);
+  }
+
+  private needsOptimization(metrics: PerformanceMetrics): boolean {
+    return (
+      metrics.fps < this.config.targetFPS ||
+      metrics.memoryUsage > this.config.memoryThreshold / 100 ||
+      metrics.renderTime > 16.67 || // 低於60fps
+      metrics.optimizationScore < 70 // 優化分數低於70
+    );
+  }
+
+  private async optimizeCaching(): Promise<void> {
+    // 實現緩存優化邏輯
+    logger.debug('執行緩存優化');
+
+    // 清理過期緩存
+    // 調整緩存策略
+    // 預熱常用緩存
+  }
+
+  private async optimizePreloading(): Promise<void> {
+    // 實現預加載優化邏輯
+    logger.debug('執行預加載優化');
+
+    // 分析用戶行為
+    // 預測下一步操作
+    // 智能預加載資源
+  }
+
+  private getDefaultConfig(): PerformanceConfig {
+    return {
+      enableLazyLoading: true,
+      enableCodeSplitting: true,
+      enableMemoryManagement: true,
+      enablePreloading: true,
+      enableCaching: true,
+      optimizationLevel: 'balanced',
+      targetFPS: 60,
+      maxBundleSize: 2000, // 2MB
+      memoryThreshold: 100, // 100MB
+    };
+  }
+
+  private getInitialMetrics(): PerformanceMetrics {
+    return {
+      fps: 0,
+      memoryUsage: 0,
+      bundleSize: 0,
+      loadTime: 0,
+      renderTime: 0,
+      cacheHitRate: 0,
+      optimizationScore: 0,
+      lastOptimization: new Date(),
+    };
+  }
+}
+
+export default PerformanceOptimizer;

@@ -45,7 +45,7 @@ export const RecommendationExample: React.FC = () => {
 
   useEffect(() => {
     getStats();
-    // 設置模擬用戶配置
+    // Settings模擬UserConfigure
     setUserProfile({
       age: 35,
       experience: ExperienceLevel.INTERMEDIATE,
@@ -86,14 +86,14 @@ export const RecommendationExample: React.FC = () => {
   const _handleProfileUpdate = (profile: UserProfile) => {
     setUserProfile(profile);
     setShowProfileForm(false);
-    Alert.alert('成功', '用戶配置已更新，現在可以生成投資建議了');
+    Alert.alert('Success', '用戶配置已更新，現在可以生成投資建議了');
   };
 
   const _handleRecommendationGenerated = (
     result: InvestmentRecommendationResult
   ) => {
     setShowRequestForm(false);
-    Alert.alert('成功', `已生成 ${result.recommendations.length} 個投資建議`);
+    Alert.alert('Success', `已生成 ${result.recommendations.length} 個投資建議`);
   };
 
   const _handleCancel = () => {
@@ -156,7 +156,7 @@ export const RecommendationExample: React.FC = () => {
 
         {recommendationStats ? (
           <View style={styles.statsContainer}>
-            {/* 總體統計 */}
+            {/* 總體Statistics */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>總體統計</Text>
 
@@ -203,7 +203,7 @@ export const RecommendationExample: React.FC = () => {
               </View>
             </View>
 
-            {/* 最佳表現 */}
+            {/* 最佳Table現 */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>最佳表現卡牌</Text>
 
@@ -231,7 +231,7 @@ export const RecommendationExample: React.FC = () => {
               </View>
             </View>
 
-            {/* 操作按鈕 */}
+            {/* Operation按鈕 */}
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.button}
@@ -300,7 +300,7 @@ export const RecommendationExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 用戶配置狀態 */}
+        {/* UserConfigureStatus */}
         <View style={styles.statusSection}>
           <Text style={styles.sectionTitle}>配置狀態</Text>
 
@@ -345,7 +345,7 @@ export const RecommendationExample: React.FC = () => {
           )}
         </View>
 
-        {/* 統計概覽 */}
+        {/* Statistics概覽 */}
         {recommendationStats && (
           <View style={styles.statsOverview}>
             <Text style={styles.sectionTitle}>統計概覽</Text>
@@ -382,7 +382,7 @@ export const RecommendationExample: React.FC = () => {
           </View>
         )}
 
-        {/* 操作按鈕 */}
+        {/* Operation按鈕 */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.primaryButton]}
@@ -424,7 +424,7 @@ export const RecommendationExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 顯示當前建議結果 */}
+      {/* Show當前建議結果 */}
       {currentRecommendation &&
         !showProfileForm &&
         !showRequestForm &&

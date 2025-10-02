@@ -1,69 +1,69 @@
-// 性能配置
+// 性能Configure
 module.exports = {
-  // 監控配置
+  // MonitorConfigure
   monitoring: {
-    // 響應時間監控
+    // ResponseTimeMonitor
     responseTime: {
       enabled: true,
-      threshold: 1000, // 1秒
-      alertThreshold: 3000, // 3秒
+      threshold: 1000, // 1Second
+      alertThreshold: 3000, // 3Second
       sampleRate: 0.1, // 10% 採樣率
     },
 
-    // 內存監控
+    // MemoryMonitor
     memory: {
       enabled: true,
       warningThreshold: 0.8, // 80%
       criticalThreshold: 0.9, // 90%
-      checkInterval: 30000, // 30秒
+      checkInterval: 30000, // 30Second
     },
 
-    // 數據庫連接池監控
+    // DatabaseConnect池Monitor
     database: {
       enabled: true,
       maxConnections: 20,
       minConnections: 5,
       acquireTimeout: 60000,
       idleTimeout: 300000,
-      checkInterval: 60000, // 1分鐘
+      checkInterval: 60000, // 1Minute
     },
 
-    // 查詢性能監控
+    // Query性能Monitor
     query: {
       enabled: true,
-      slowQueryThreshold: 1000, // 1秒
+      slowQueryThreshold: 1000, // 1Second
       logSlowQueries: true,
-      maxQueryTime: 30000, // 30秒
+      maxQueryTime: 30000, // 30Second
     },
   },
 
-  // 緩存配置
+  // CacheConfigure
   cache: {
-    // Redis 緩存
+    // Redis Cache
     redis: {
       enabled: true,
       ttl: {
-        default: 300, // 5分鐘
-        cards: 1800, // 30分鐘
-        marketData: 300, // 5分鐘
-        userData: 600, // 10分鐘
-        aiResults: 3600, // 1小時
+        default: 300, // 5Minute
+        cards: 1800, // 30Minute
+        marketData: 300, // 5Minute
+        userData: 600, // 10Minute
+        aiResults: 3600, // 1Hour
       },
       maxMemory: '256mb',
       evictionPolicy: 'allkeys-lru',
     },
 
-    // 內存緩存
+    // MemoryCache
     memory: {
       enabled: true,
       maxSize: 1000,
-      ttl: 300, // 5分鐘
+      ttl: 300, // 5Minute
     },
   },
 
-  // 優化配置
+  // 優化Configure
   optimization: {
-    // 查詢優化
+    // Query優化
     query: {
       enableIndexing: true,
       batchSize: 100,
@@ -73,7 +73,7 @@ module.exports = {
       maxPageSize: 100,
     },
 
-    // 圖片優化
+    // Graph片優化
     image: {
       compression: {
         quality: 85,
@@ -88,44 +88,44 @@ module.exports = {
       },
     },
 
-    // API 響應優化
+    // API Response優化
     api: {
       enableCompression: true,
       enableCaching: true,
       enableRateLimiting: true,
       maxResponseSize: '10mb',
-      timeout: 30000, // 30秒
+      timeout: 30000, // 30Second
     },
   },
 
-  // 負載均衡配置
+  // 負載均衡Configure
   loadBalancing: {
     enabled: true,
     strategy: 'round-robin', // round-robin, least-connections, ip-hash
     healthCheck: {
       enabled: true,
-      interval: 30000, // 30秒
-      timeout: 5000, // 5秒
+      interval: 30000, // 30Second
+      timeout: 5000, // 5Second
       unhealthyThreshold: 3,
       healthyThreshold: 2,
     },
   },
 
-  // 錯誤處理配置
+  // ErrorHandleConfigure
   errorHandling: {
     enableDetailedErrors: process.env.NODE_ENV === 'development',
     logErrors: true,
     notifyOnError: true,
-    errorThreshold: 10, // 每分鐘錯誤數
-    recoveryTime: 300000, // 5分鐘
+    errorThreshold: 10, // 每MinuteError數
+    recoveryTime: 300000, // 5Minute
   },
 
-  // 性能指標配置
+  // 性能指標Configure
   metrics: {
     enabled: true,
-    collectionInterval: 60000, // 1分鐘
+    collectionInterval: 60000, // 1Minute
     retention: {
-      raw: 86400000, // 24小時
+      raw: 86400000, // 24Hour
       aggregated: 2592000000, // 30天
     },
     thresholds: {
@@ -136,9 +136,9 @@ module.exports = {
     },
   },
 
-  // 數據庫優化配置
+  // Database優化Configure
   database: {
-    // 連接池配置
+    // Connect池Configure
     pool: {
       max: 20,
       min: 5,
@@ -147,7 +147,7 @@ module.exports = {
       evict: 60000,
     },
 
-    // 查詢優化
+    // Query優化
     query: {
       timeout: 30000,
       retryAttempts: 3,
@@ -155,15 +155,15 @@ module.exports = {
       enableLogging: process.env.NODE_ENV === 'development',
     },
 
-    // 索引建議
+    // Index建議
     indexing: {
       enabled: true,
       autoAnalyze: true,
-      analyzeInterval: 3600000, // 1小時
+      analyzeInterval: 3600000, // 1Hour
     },
   },
 
-  // 文件上傳配置
+  // FileUploadConfigure
   fileUpload: {
     maxFileSize: '10mb',
     allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
@@ -172,13 +172,13 @@ module.exports = {
       path: './uploads',
       cleanup: {
         enabled: true,
-        interval: 86400000, // 24小時
+        interval: 86400000, // 24Hour
         maxAge: 604800000, // 7天
       },
     },
   },
 
-  // WebSocket 配置
+  // WebSocket Configure
   websocket: {
     enabled: true,
     pingInterval: 25000,
@@ -187,7 +187,7 @@ module.exports = {
     perMessageDeflate: true,
   },
 
-  // 任務隊列配置
+  // TaskQueueConfigure
   queue: {
     enabled: true,
     concurrency: 5,

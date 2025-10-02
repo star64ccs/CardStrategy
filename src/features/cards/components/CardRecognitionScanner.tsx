@@ -71,7 +71,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
   } = useCardRecognition({
     onRecognitionComplete,
     onRecognitionError: error => {
-      Alert.alert('識別錯誤', error);
+      Alert.alert('識別Error', error);
     },
   });
 
@@ -89,7 +89,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
   const _cameraRef = useRef<any>(null);
   const _supportedGames = getSupportedGames();
 
-  // 請求相機權限
+  // Request相機權限
   useEffect(() => {
     (async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
@@ -102,7 +102,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
     try {
       if (!cameraRef.current) return;
 
-      // 使用 Camera 實例的 takePictureAsync 方法
+      // 使用 Camera Instance的 takePictureAsync Method
       const _photo = await cameraRef.current.takePictureAsync({
         quality: 0.8,
         base64: true,
@@ -116,12 +116,12 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
         await performRecognition(processedImage);
       }
     } catch (error: unknown) {
-      logger.error('拍照失敗:', error);
-      Alert.alert('錯誤', '拍照失敗，請重試');
+      logger.error('拍照Failed:', error);
+      Alert.alert('Error', '拍照Failed，請重試');
     }
   }, []);
 
-  // 從相簿選擇圖片
+  // 從相簿SelectGraph片
   const _pickImage = useCallback(async () => {
     try {
       const _permissionResult =
@@ -149,36 +149,36 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
         }
       }
     } catch (error: unknown) {
-      logger.error('選擇圖片失敗:', error);
-      Alert.alert('錯誤', '選擇圖片失敗，請重試');
+      logger.error('選擇圖片Failed:', error);
+      Alert.alert('Error', '選擇圖片Failed，請重試');
     }
   }, []);
 
-  // 處理圖片
+  // HandleGraph片
   const _processImage = useCallback(
     async (uri: string, base64: string): Promise<string> => {
       try {
-        // 簡化圖片處理，直接返回 base64 數據
-        // 如果需要圖片處理，可以後續添加相應的庫
+        // 簡化Graph片Handle，直接Return base64 Data
+        // 如果需要Graph片Handle，可以後續Add相應的Library
         return base64;
       } catch (error: unknown) {
-        logger.error('圖片處理失敗:', error);
+        logger.error('圖片HandleFailed:', error);
         return base64;
       }
     },
     [maxImageSize]
   );
 
-  // 執行識別
+  // 執Row識別
   const _performRecognition = useCallback(
     async (imageData: string) => {
       try {
         clearRecognitionError();
 
-        // 驗證圖片
+        // VerifyGraph片
         const _validation = validateImage(imageData);
         if (!validation.valid) {
-          Alert.alert('圖片驗證失敗', validation.error || '無效的圖片');
+          Alert.alert('圖片VerifyFailed', validation.error || '無效的圖片');
           return;
         }
 
@@ -203,36 +203,36 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
         await recognize(request);
         setShowResultModal(true);
       } catch (error: unknown) {
-        logger.error('執行識別失敗:', error);
-        Alert.alert('識別失敗', error.message || '識別過程中發生錯誤');
+        logger.error('執行識別Failed:', error);
+        Alert.alert('識別Failed', error.message || '識別過程中發生Error');
       }
     },
     [selectedGame, cropData, recognize, validateImage, clearRecognitionError]
   );
 
-  // 重新識別
+  // Re識別
   const _retryRecognition = useCallback(() => {
     if (capturedImage) {
       performRecognition(capturedImage);
     }
   }, [capturedImage, performRecognition]);
 
-  // 切換相機
+  // Switch相機
   const _toggleCamera = useCallback(() => {
     setCameraType(current => (current === 'back' ? 'front' : 'back'));
   }, []);
 
-  // 切換閃光燈
+  // Switch閃光燈
   const _toggleFlash = useCallback(() => {
     setFlashEnabled(current => !current);
   }, []);
 
-  // 開始實時識別
+  // Begin實時識別
   const _handleStartRealtime = useCallback(async () => {
     try {
       await startRealtime({
         onFrame: frame => {
-          // 處理實時幀
+          // Handle實時幀
           logger.debug('實時幀:', { frameId: frame.frameId } as Record<
             string,
             unknown
@@ -241,11 +241,11 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
         frameRate: 10, // 降低幀率以提高性能
       });
     } catch (error: unknown) {
-      Alert.alert('錯誤', '啟動實時識別失敗');
+      Alert.alert('Error', '啟動實時識別Failed');
     }
   }, [startRealtime]);
 
-  // 渲染相機視圖
+  // 渲染相機視Graph
   const _renderCameraView = () => {
     if (hasPermission === null) {
       return (
@@ -283,7 +283,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
           {/* 相機覆蓋層 */}
           {/* 相機覆蓋層 */}
           <View style={styles.cameraOverlay}>
-            {/* 頂部工具欄 */}
+            {/* TopTool欄 */}
             <View style={styles.topToolbar}>
               <TouchableOpacity
                 style={styles.toolbarButton}
@@ -319,7 +319,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
               <View style={styles.cornerBR} />
             </View>
 
-            {/* 底部工具欄 */}
+            {/* BottomTool欄 */}
             <View style={styles.bottomToolbar}>
               <TouchableOpacity
                 style={styles.galleryButton}
@@ -366,7 +366,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
     );
   };
 
-  // 渲染遊戲選擇器
+  // 渲染遊戲Select器
   const _renderGameSelector = () => (
     <Modal
       visible={showGameSelector}
@@ -451,7 +451,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
               </View>
             ) : currentResult ? (
               <View style={styles.resultContainer}>
-                {/* 卡片信息 */}
+                {/* 卡片Information */}
                 <View style={styles.cardInfo}>
                   <Image
                     source={{ uri: currentResult.card.images.front }}
@@ -485,7 +485,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
                       </View>
                     </View>
 
-                    {/* 處理時間 */}
+                    {/* HandleTime */}
                     <Text style={styles.processingTime}>
                       處理時間：
                       {formatProcessingTime(currentResult.processingTime)}
@@ -493,7 +493,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
                   </View>
                 </View>
 
-                {/* 操作按鈕 */}
+                {/* Operation按鈕 */}
                 <View style={styles.actionButtons}>
                   <TouchableOpacity
                     style={styles.primaryButton}
@@ -542,7 +542,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
         </TouchableOpacity>
       </View>
 
-      {/* 主要內容 */}
+      {/* 主要Content */}
       <View style={styles.content}>
         {capturedImage ? (
           <View style={styles.imageContainer}>
@@ -581,7 +581,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
         )}
       </View>
 
-      {/* 底部按鈕 */}
+      {/* Bottom按鈕 */}
       <View style={styles.bottomActions}>
         <TouchableOpacity
           style={styles.bottomButton}
@@ -599,7 +599,7 @@ export const CardRecognitionScanner: React.FC<CardRecognitionScannerProps> = ({
     </View>
   );
 
-  // 獲取遊戲顯示名稱
+  // Get遊戲Show名稱
   const _getGameDisplayName = (game: CardGame): string => {
     const gameNames: Record<CardGame, string> = {
       pokemon: '寶可夢',

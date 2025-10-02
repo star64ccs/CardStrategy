@@ -2,12 +2,12 @@ import { replicateService } from '../shared/services/ai/replicateService';
 
 describe('ReplicateService', () => {
   beforeEach(() => {
-    // 重置環境變量
+    // Reset環境Variable
     delete process.env.REPLICATE_API_TOKEN;
   });
 
   describe('初始化', () => {
-    test('應該正確初始化服務', () => {
+    test('應該正確InitializeService', () => {
       expect(replicateService).toBeDefined();
       expect(typeof replicateService.isAvailable).toBe('function');
     });
@@ -24,15 +24,15 @@ describe('ReplicateService', () => {
     });
   });
 
-  describe('服務可用性檢查', () => {
-    test('應該正確檢查服務可用性', () => {
+  describe('Service可用性Check', () => {
+    test('應該正確CheckService可用性', () => {
       const _result = replicateService.isAvailable();
       expect(typeof result).toBe('boolean');
     });
   });
 
   describe('獲取模型列表', () => {
-    test('沒有 API token 時應該返回錯誤', async () => {
+    test('沒有 API token 時應該返回Error', async () => {
       const _result = await replicateService.getModels();
 
       expect(result.success).toBe(false);
@@ -53,7 +53,7 @@ describe('ReplicateService', () => {
   });
 
   describe('創建預測', () => {
-    test('沒有 API token 時應該返回錯誤', async () => {
+    test('沒有 API token 時應該返回Error', async () => {
       const _request = {
         version: 'test-version',
         input: { prompt: 'test' },
@@ -84,7 +84,7 @@ describe('ReplicateService', () => {
   });
 
   describe('獲取預測結果', () => {
-    test('沒有 API token 時應該返回錯誤', async () => {
+    test('沒有 API token 時應該返回Error', async () => {
       const _result = await replicateService.getPrediction('test-id');
 
       expect(result.success).toBe(false);
@@ -105,7 +105,7 @@ describe('ReplicateService', () => {
   });
 
   describe('取消預測', () => {
-    test('沒有 API token 時應該返回錯誤', async () => {
+    test('沒有 API token 時應該返回Error', async () => {
       const _result = await replicateService.cancelPrediction('test-id');
 
       expect(result.success).toBe(false);
@@ -127,7 +127,7 @@ describe('ReplicateService', () => {
   });
 
   describe('批量預測', () => {
-    test('空請求列表應該返回成功', async () => {
+    test('空請求列表應該返回Success', async () => {
       const _result = await replicateService.batchPredict([]);
 
       expect(result.success).toBe(true);
@@ -136,7 +136,7 @@ describe('ReplicateService', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    test('沒有 API token 時應該返回錯誤', async () => {
+    test('沒有 API token 時應該返回Error', async () => {
       const _requests = [
         { version: 'test-version', input: { prompt: 'test1' } },
         { version: 'test-version', input: { prompt: 'test2' } },
@@ -168,7 +168,7 @@ describe('ReplicateService', () => {
   });
 
   describe('等待預測完成', () => {
-    test('沒有 API token 時應該返回錯誤', async () => {
+    test('沒有 API token 時應該返回Error', async () => {
       const _result = await replicateService.waitForPrediction('test-id', 1000);
 
       expect(result.success).toBe(false);
@@ -188,7 +188,7 @@ describe('ReplicateService', () => {
     });
   });
 
-  describe('獲取服務統計', () => {
+  describe('GetService統計', () => {
     test('應該返回正確的統計格式', async () => {
       const _result = await replicateService.getServiceStats();
 

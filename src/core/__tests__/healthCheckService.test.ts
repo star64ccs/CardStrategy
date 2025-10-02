@@ -22,7 +22,7 @@ describe('HealthCheckService', () => {
   });
 
   describe('initialize', () => {
-    it('應該成功初始化健康檢查服務', async () => {
+    it('應該SuccessInitialize健康CheckService', async () => {
       await healthCheckService.initialize();
 
       const _status = healthCheckService.getMonitoringStatus();
@@ -44,7 +44,7 @@ describe('HealthCheckService', () => {
       await healthCheckService.initialize();
     });
 
-    it('應該成功註冊健康檢查', () => {
+    it('應該Success註冊健康Check', () => {
       const mockHealthCheck: ServiceHealthCheck = {
         name: 'TestService',
         check: jest.fn().mockResolvedValue({
@@ -97,7 +97,7 @@ describe('HealthCheckService', () => {
       await healthCheckService.initialize();
     });
 
-    it('應該成功移除健康檢查', () => {
+    it('應該Success移除健康Check', () => {
       const mockHealthCheck: ServiceHealthCheck = {
         name: 'TestService',
         check: jest.fn().mockResolvedValue({
@@ -129,7 +129,7 @@ describe('HealthCheckService', () => {
       await healthCheckService.initialize();
     });
 
-    it('應該成功檢查服務健康狀態', async () => {
+    it('應該SuccessCheckService健康狀態', async () => {
       const mockHealthCheck: ServiceHealthCheck = {
         name: 'TestService',
         check: jest.fn().mockResolvedValue({
@@ -151,7 +151,7 @@ describe('HealthCheckService', () => {
       expect(result.details).toEqual({ test: 'data' });
     });
 
-    it('應該處理檢查失敗', async () => {
+    it('應該HandleCheckFailed', async () => {
       const mockHealthCheck: ServiceHealthCheck = {
         name: 'FailingService',
         check: jest.fn().mockRejectedValue(new Error('Service unavailable')),
@@ -216,7 +216,7 @@ describe('HealthCheckService', () => {
       expect(attemptCount).toBe(3);
     });
 
-    it('應該返回未知狀態對於不存在的服務', async () => {
+    it('應該返回未知狀態對於不存在的Service', async () => {
       const _result =
         await healthCheckService.checkServiceHealth('NonExistentService');
 
@@ -231,7 +231,7 @@ describe('HealthCheckService', () => {
       await healthCheckService.initialize();
     });
 
-    it('應該檢查所有註冊的服務', async () => {
+    it('應該Check所有註冊的Service', async () => {
       const _report = await healthCheckService.checkAllServices();
 
       expect(report.overallStatus).toBeDefined();
@@ -251,12 +251,12 @@ describe('HealthCheckService', () => {
         report.summary.degraded +
         report.summary.unhealthy +
         report.summary.unknown;
-      // 檢查摘要統計是否合理
+      // Check摘要StatisticsYesNo合理
       expect(calculatedTotal).toBeGreaterThan(0);
       expect(report.summary.total).toBeGreaterThan(0);
     });
 
-    it('應該識別關鍵服務問題', async () => {
+    it('應該識別關鍵Service問題', async () => {
       const mockCriticalHealthCheck: ServiceHealthCheck = {
         name: 'CriticalService',
         critical: true,
@@ -286,7 +286,7 @@ describe('HealthCheckService', () => {
       await healthCheckService.initialize();
     });
 
-    it('應該成功開始監控', async () => {
+    it('應該Success開始監控', async () => {
       await healthCheckService.startMonitoring(1000);
 
       const _status = healthCheckService.getMonitoringStatus();
@@ -300,7 +300,7 @@ describe('HealthCheckService', () => {
 
       await healthCheckService.startMonitoring(1000);
 
-      // 等待一小段時間確保檢查被執行
+      // Await一小段Time確保Check被執Row
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       expect(checkSpy).toHaveBeenCalled();
@@ -324,7 +324,7 @@ describe('HealthCheckService', () => {
       await healthCheckService.initialize();
     });
 
-    it('應該成功停止監控', async () => {
+    it('應該Success停止監控', async () => {
       await healthCheckService.startMonitoring(1000);
       healthCheckService.stopMonitoring();
 
@@ -353,7 +353,7 @@ describe('HealthCheckService', () => {
     });
 
     it('應該在沒有檢查時返回null', () => {
-      // 重置實例狀態
+      // ResetInstanceStatus
       (healthCheckService as any).lastHealthReport = null;
 
       const _lastReport = healthCheckService.getLastHealthReport();
@@ -372,7 +372,7 @@ describe('HealthCheckService', () => {
     });
 
     it('應該反映初始化狀態', async () => {
-      // 重置實例狀態
+      // ResetInstanceStatus
       (healthCheckService as any).isInitialized = false;
 
       let status = healthCheckService.getMonitoringStatus();
@@ -398,7 +398,7 @@ describe('HealthCheckService', () => {
       expect(result.details).toBeDefined();
     });
 
-    it('應該註冊API服務健康檢查', async () => {
+    it('應該註冊APIService健康Check', async () => {
       const _result = await healthCheckService.checkServiceHealth('API Service');
 
       expect(result.service).toBe('API Service');
@@ -406,7 +406,7 @@ describe('HealthCheckService', () => {
       expect(result.details).toBeDefined();
     });
 
-    it('應該註冊認證服務健康檢查', async () => {
+    it('應該註冊認證Service健康Check', async () => {
       const _result = await healthCheckService.checkServiceHealth(
         'Authentication Service'
       );
@@ -416,7 +416,7 @@ describe('HealthCheckService', () => {
       expect(result.details).toBeDefined();
     });
 
-    it('應該註冊存儲服務健康檢查', async () => {
+    it('應該註冊存儲Service健康Check', async () => {
       const _result =
         await healthCheckService.checkServiceHealth('Storage Service');
 
@@ -434,7 +434,7 @@ describe('HealthCheckService', () => {
       expect(result.details).toBeDefined();
     });
 
-    it('應該註冊緩存服務健康檢查', async () => {
+    it('應該註冊緩存Service健康Check', async () => {
       const _result =
         await healthCheckService.checkServiceHealth('Cache Service');
 
@@ -457,7 +457,7 @@ describe('HealthCheckService', () => {
       );
     });
 
-    it('應該在有關鍵服務失敗時標記為不健康', async () => {
+    it('應該在有關鍵ServiceFailed時標記為不健康', async () => {
       const mockCriticalHealthCheck: ServiceHealthCheck = {
         name: 'CriticalService',
         critical: true,
@@ -472,7 +472,7 @@ describe('HealthCheckService', () => {
       expect(report.criticalServices.length).toBeGreaterThan(0);
     });
 
-    it('應該在非關鍵服務失敗時標記為性能下降', async () => {
+    it('應該在非關鍵ServiceFailed時標記為性能下降', async () => {
       const mockNonCriticalHealthCheck: ServiceHealthCheck = {
         name: 'NonCriticalService',
         critical: false,
@@ -483,7 +483,7 @@ describe('HealthCheckService', () => {
 
       const _report = await healthCheckService.checkAllServices();
 
-      // 由於有關鍵服務，整體狀態可能是 HEALTHY、DEGRADED 或 UNHEALTHY
+      // 由於有OffKeyService，整體Status可能Yes HEALTHY、DEGRADED 或 UNHEALTHY
       expect(['HEALTHY', 'DEGRADED', 'UNHEALTHY']).toContain(
         report.overallStatus
       );
@@ -503,7 +503,7 @@ describe('HealthCheckService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(10000); // 10秒內完成
+      expect(duration).toBeLessThan(10000); // 10Second內Complete
     });
 
     it('應該支持並發健康檢查', async () => {
@@ -524,12 +524,12 @@ describe('HealthCheckService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       await healthCheckService.initialize();
     });
 
-    it('應該處理檢查函數拋出的錯誤', async () => {
+    it('應該HandleCheck函數拋出的Error', async () => {
       const mockHealthCheck: ServiceHealthCheck = {
         name: 'ErrorService',
         check: jest.fn().mockImplementation(() => {
@@ -546,7 +546,7 @@ describe('HealthCheckService', () => {
       expect(result.error).toBe('Unexpected error');
     });
 
-    it('應該處理異步檢查函數的錯誤', async () => {
+    it('應該Handle異步Check函數的Error', async () => {
       const mockHealthCheck: ServiceHealthCheck = {
         name: 'AsyncErrorService',
         check: jest.fn().mockRejectedValue(new Error('Async error')),
@@ -561,14 +561,14 @@ describe('HealthCheckService', () => {
       expect(result.error).toBe('Async error');
     });
 
-    it('應該處理監控啟動錯誤', async () => {
+    it('應該Handle監控啟動Error', async () => {
       jest
         .spyOn(healthCheckService, 'checkAllServices')
         .mockRejectedValue(new Error('Monitoring error'));
 
       try {
         await healthCheckService.startMonitoring(1000);
-        fail('應該拋出錯誤');
+        fail('應該拋出Error');
       } catch (error) {
         expect(error).toBeDefined();
       }

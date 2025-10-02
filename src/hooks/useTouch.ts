@@ -12,7 +12,7 @@ import type {
 
 /**
  * 觸控 Hook
- * 提供觸控手勢、反饋和滾動優化的統一接口
+ * 提供觸控手勢、反饋和滾動優化的統一Interface
  */
 export const _useTouch = (
   gestureConfig?: Partial<TouchGestureConfig>,
@@ -21,14 +21,14 @@ export const _useTouch = (
 ): UseTouchReturn => {
   const _componentId = useRef(`use-touch-${Date.now()}-${Math.random()}`);
 
-  // 狀態管理
+  // StatusManage
   const [isPressed, setIsPressed] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [gestureData, setGestureData] = useState<TouchEventData | null>(null);
   const [lastGesture, setLastGesture] = useState<TouchGestureType | null>(null);
 
-  // 註冊組件到服務
+  // RegisterComponent到Service
   useEffect(() => {
     if (gestureConfig) {
       touchService.registerGesture(componentId.current, gestureConfig as any);
@@ -47,7 +47,7 @@ export const _useTouch = (
     };
   }, [gestureConfig, feedbackConfig, scrollConfig]);
 
-  // 工具函數
+  // ToolFunction
   const _isTouchDevice = useCallback((): boolean => {
     return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   }, []);
@@ -89,7 +89,7 @@ export const _useTouch = (
     []
   );
 
-  // 事件處理器
+  // EventHandle器
   const _handleTouchStart = useCallback(
     (event: React.TouchEvent) => {
       setIsPressed(true);
@@ -121,7 +121,7 @@ export const _useTouch = (
       setGestureData(touchData);
       setLastGesture('tap');
 
-      // 性能追蹤
+      // 性能Trace
       touchService.trackPerformance(componentId.current, {
         gesture: 'touchStart',
         point,
@@ -163,7 +163,7 @@ export const _useTouch = (
         setGestureData(touchData);
         setLastGesture('pinch');
       } else {
-        // 單點觸控移動
+        // 單點觸控Move
         const touchData: TouchEventData = {
           type: 'pan',
           x: point.x,
@@ -190,7 +190,7 @@ export const _useTouch = (
       const _point = getTouchPoint(event);
       const _duration = Date.now() - (gestureData?.timestamp || Date.now());
 
-      // 判斷手勢類型
+      // 判斷手勢Class型
       let gestureType: TouchGestureType = 'tap';
       if (gestureData) {
         const _distance = calculateDistance(
@@ -229,7 +229,7 @@ export const _useTouch = (
       setGestureData(touchData);
       setLastGesture(gestureType);
 
-      // 性能追蹤
+      // 性能Trace
       touchService.trackPerformance(componentId.current, {
         gesture: gestureType,
         duration,
@@ -339,16 +339,16 @@ export const _useTouch = (
   }, []);
 
   return {
-    // 手勢狀態
+    // 手勢Status
     isPressed,
     isHovered,
     isFocused,
 
-    // 手勢數據
+    // 手勢Data
     gestureData,
     lastGesture,
 
-    // 事件處理器
+    // EventHandle器
     handlers: {
       onTouchStart: handleTouchStart,
       onTouchMove: handleTouchMove,
@@ -360,7 +360,7 @@ export const _useTouch = (
       onKeyUp: handleKeyUp,
     },
 
-    // 工具函數
+    // ToolFunction
     utils: {
       isTouchDevice,
       getTouchPoint,

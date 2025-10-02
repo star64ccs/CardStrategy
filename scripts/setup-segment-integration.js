@@ -2,14 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Segment 集成設置腳本
- * 用於配置 Segment 與 Mixpanel 的集成
+ * Segment 集成Settings腳本
+ * 用於Configure Segment 與 Mixpanel 的集成
  */
 
 // eslint-disable-next-line no-console
 console.log('🔗 設置 Segment 與 Mixpanel 集成...\n');
 
-// Segment 配置模板
+// Segment Configure模板
 const segmentConfig = {
   name: 'segment-config.json',
   content: {
@@ -79,7 +79,7 @@ const segmentConfig = {
   }
 };
 
-// 創建配置文件
+// CreateConfigureFile
 const configDir = path.join(__dirname, '../src/config/ai-keys');
 if (!fs.existsSync(configDir)) {
   fs.mkdirSync(configDir, { recursive: true });
@@ -90,32 +90,32 @@ fs.writeFileSync(configPath, JSON.stringify(segmentConfig.content, null, 2));
 // eslint-disable-next-line no-console
 console.log(`✅ 創建 Segment 配置文件: ${segmentConfig.name}`);
 
-// 創建 JavaScript 集成代碼模板
+// Create JavaScript 集成代碼模板
 const jsIntegrationCode = `// Segment 與 Mixpanel 集成代碼
-// 請將此代碼添加到您的前端應用中
+// 請將此代碼Add到您的前端Apply中
 
-// 1. 安裝 Segment JavaScript 庫
+// 1. Install Segment JavaScript Library
 // npm install @segment/analytics-next
 // 或使用 CDN: https://cdn.segment.com/analytics.js/v1/analytics.min.js
 
-// 2. 初始化 Segment
+// 2. Initialize Segment
 import Analytics from '@segment/analytics-next';
 
 const analytics = Analytics({
   writeKey: 'YOUR_SEGMENT_WRITE_KEY'
 });
 
-// 3. 用戶識別
+// 3. User識別
 export const identifyUser = (userId, traits = {}) => {
   analytics.identify(userId, traits);
 };
 
-// 4. 追蹤事件
+// 4. TraceEvent
 export const trackEvent = (eventName, properties = {}) => {
   analytics.track(eventName, properties);
 };
 
-// 5. 卡片查看事件
+// 5. 卡片查看Event
 export const trackCardViewed = (cardData) => {
   trackEvent('Card Viewed', {
     card_id: cardData.id,
@@ -128,7 +128,7 @@ export const trackCardViewed = (cardData) => {
   });
 };
 
-// 6. 卡片購買事件
+// 6. 卡片購買Event
 export const trackCardPurchased = (purchaseData) => {
   trackEvent('Card Purchased', {
     card_id: purchaseData.cardId,
@@ -140,7 +140,7 @@ export const trackCardPurchased = (purchaseData) => {
   });
 };
 
-// 7. 搜索事件
+// 7. SearchEvent
 export const trackSearch = (searchData) => {
   trackEvent('Search Performed', {
     search_query: searchData.query,
@@ -152,7 +152,7 @@ export const trackSearch = (searchData) => {
   });
 };
 
-// 8. 願望清單事件
+// 8. 願望清單Event
 export const trackWishlistAdded = (wishlistData) => {
   trackEvent('Wishlist Added', {
     card_id: wishlistData.cardId,
@@ -164,7 +164,7 @@ export const trackWishlistAdded = (wishlistData) => {
   });
 };
 
-// 9. 頁面瀏覽事件
+// 9. 頁面瀏覽Event
 export const trackPageView = (pageData) => {
   trackEvent('Page View', {
     page_name: pageData.name,
@@ -174,7 +174,7 @@ export const trackPageView = (pageData) => {
   });
 };
 
-// 10. 用戶註冊事件
+// 10. UserRegisterEvent
 export const trackSignUp = (userData) => {
   trackEvent('Sign Up', {
     signup_method: userData.method,
@@ -193,7 +193,7 @@ fs.writeFileSync(jsPath, jsIntegrationCode);
 // eslint-disable-next-line no-console
 console.log('✅ 創建 Segment 集成代碼模板');
 
-// 創建設置指南
+// CreateSettings指南
 const setupGuide = `# Segment 與 Mixpanel 集成指南
 
 ## 概述
@@ -234,13 +234,13 @@ const analytics = Analytics({
 
 ### 用戶識別
 \`\`\`javascript
-// 用戶註冊
+// UserRegister
 analytics.identify('user123', {
   name: 'John Doe',
   email: 'john@example.com'
 });
 
-// 用戶登錄
+// UserLogin
 analytics.identify('user123');
 \`\`\`
 

@@ -9,7 +9,7 @@ import type {
   ResponsiveState,
 } from '../../types/layout';
 
-// 初始狀態
+// 初始Status
 const _initialState = {
   responsive: {
     currentBreakpoint: 'md' as Breakpoint,
@@ -59,17 +59,17 @@ const _initialState = {
   events: [] as LayoutSystemEvent[],
 };
 
-// 創建 slice
+// Create slice
 const _layoutSlice = createSlice({
   name: 'layout',
   initialState,
   reducers: {
-    // 設置響應式狀態
+    // SettingsResponse式Status
     setResponsiveState: (state, action: PayloadAction<ResponsiveState>) => {
       state.responsive = action.payload;
     },
 
-    // 設置當前斷點
+    // Settings當前斷點
     setCurrentBreakpoint: (state, action: PayloadAction<Breakpoint>) => {
       state.responsive.currentBreakpoint = action.payload;
       state.responsive.isMobile =
@@ -80,7 +80,7 @@ const _layoutSlice = createSlice({
       state.responsive.isLargeScreen = action.payload === 'xxl';
     },
 
-    // 設置窗口尺寸
+    // Settings窗口尺寸
     setWindowSize: (
       state,
       action: PayloadAction<{ width: number; height: number }>
@@ -89,7 +89,7 @@ const _layoutSlice = createSlice({
       state.responsive.windowHeight = action.payload.height;
     },
 
-    // 註冊佈局組件
+    // Register佈局Component
     registerLayoutComponent: (
       state,
       action: PayloadAction<LayoutComponentRegistration>
@@ -97,7 +97,7 @@ const _layoutSlice = createSlice({
       state.components[action.payload.name] = action.payload;
     },
 
-    // 更新組件
+    // UpdateComponent
     updateLayoutComponent: (
       state,
       action: PayloadAction<{
@@ -111,12 +111,12 @@ const _layoutSlice = createSlice({
       }
     },
 
-    // 移除組件
+    // RemoveComponent
     removeLayoutComponent: (state, action: PayloadAction<string>) => {
       delete state.components[action.payload];
     },
 
-    // 設置所有組件
+    // Settings所有Component
     setLayoutComponents: (
       state,
       action: PayloadAction<Record<string, LayoutComponentRegistration>>
@@ -124,7 +124,7 @@ const _layoutSlice = createSlice({
       state.components = action.payload;
     },
 
-    // 更新佈局系統配置
+    // Update佈局系統Configure
     updateLayoutConfig: (
       state,
       action: PayloadAction<Partial<LayoutSystemConfig>>
@@ -132,43 +132,43 @@ const _layoutSlice = createSlice({
       state.config = { ...state.config, ...action.payload };
     },
 
-    // 設置佈局系統配置
+    // Settings佈局系統Configure
     setLayoutConfig: (state, action: PayloadAction<LayoutSystemConfig>) => {
       state.config = action.payload;
     },
 
-    // 設置加載狀態
+    // Settings加載Status
     setLayoutLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
 
-    // 設置錯誤
+    // SettingsError
     setLayoutError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
 
-    // 添加事件
+    // AddEvent
     addLayoutEvent: (state, action: PayloadAction<LayoutSystemEvent>) => {
       state.events.push(action.payload);
-      // 保持最多 100 個事件
+      // 保持最多 100 個Event
       if (state.events.length > 100) {
         state.events = state.events.slice(-100);
       }
     },
 
-    // 清除事件
+    // ClearEvent
     clearLayoutEvents: state => {
       state.events = [];
     },
 
-    // 重置狀態
+    // ResetStatus
     resetLayoutState: state => {
       return initialState;
     },
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   setResponsiveState,
   setCurrentBreakpoint,
@@ -186,10 +186,10 @@ export const {
   resetLayoutState,
 } = layoutSlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default layoutSlice.reducer;
 
-// 選擇器
+// Select器
 export const _selectResponsiveState = (state: {
   layout: typeof initialState;
 }) => state.layout.responsive;
@@ -225,7 +225,7 @@ export const _selectLayoutError = (state: { layout: typeof initialState }) =>
 export const _selectLayoutEvents = (state: { layout: typeof initialState }) =>
   state.layout.events;
 
-// 複合選擇器
+// 複合Select器
 export const _selectLayoutComponentsByCategory = (category: string) =>
   createSelector([selectLayoutComponents], components =>
     Object.values(components).filter(

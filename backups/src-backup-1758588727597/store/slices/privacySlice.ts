@@ -1,0 +1,545 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+// 定義隱私相關類型
+export interface PrivacySettings {
+  dataCollection: {
+    enabled: boolean;
+    purpose: string;
+    retentionPeriod: number;
+  };
+  dataSharing: {
+    enabled: boolean;
+    thirdParties: string[];
+    consentRequired: boolean;
+  };
+  userRights: {
+    dataAccess: boolean;
+    dataPortability: boolean;
+    dataErasure: boolean;
+    dataRectification: boolean;
+  };
+  cookieSettings: {
+    essential: boolean;
+    analytics: boolean;
+    marketing: boolean;
+  };
+  gdprCompliance: boolean;
+  ccpaCompliance: boolean;
+  lastUpdated: string;
+}
+
+export interface DataConsent {
+  userId: string;
+  dataTypes: string[];
+  purposes: string[];
+  thirdPartySharing: boolean;
+  marketingCommunications: boolean;
+  dataRetention: number;
+  consentGiven: boolean;
+  consentDate: string;
+  lastUpdated: string;
+}
+
+export interface PrivacyAuditLog {
+  id: string;
+  userId: string;
+  action: string;
+  dataType: string;
+  timestamp: string;
+  ipAddress: string;
+  userAgent: string;
+  success: boolean;
+  details: string;
+}
+
+export interface PrivacyViolation {
+  id: string;
+  type: string;
+  description: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  affectedData: string[];
+  reportedBy: string;
+  reportedAt: string;
+  status: string;
+  resolution: string | null;
+  resolvedAt: string | null;
+}
+
+export interface PrivacyComplianceReport {
+  id: string;
+  type: 'gdpr' | 'ccpa' | 'general';
+  generatedAt: string;
+  generatedBy: string;
+  period: {
+    from: string;
+    to: string;
+  };
+  complianceScore: number;
+  violations: number;
+  dataRequests: number;
+  dataBreaches: number;
+  recommendations: string[];
+  status: string;
+}
+
+export interface DataSubjectRequest {
+  id: string;
+  userId: string;
+  type: 'access' | 'portability' | 'erasure' | 'rectification';
+  description: string;
+  dataTypes: string[];
+  status: string;
+  submittedAt: string;
+  processedAt: string | null;
+  response: string | null;
+  estimatedCompletion: string;
+}
+
+// 隱私狀態接口
+export interface PrivacyState {
+  settings: PrivacySettings | null;
+  consent: DataConsent | null;
+  auditLogs: PrivacyAuditLog[];
+  violations: PrivacyViolation[];
+  complianceReport: PrivacyComplianceReport | null;
+  dataSubjectRequests: DataSubjectRequest[];
+  isLoading: boolean;
+  isUpdating: boolean;
+  isGeneratingReport: boolean;
+  error: string | null;
+}
+
+// 異步 Action Creators
+export const initializePrivacy = createAsyncThunk(
+  'privacy/initializePrivacy',
+  async (_, { rejectWithValue }) => {
+    try {
+      const settings: PrivacySettings = {
+        dataCollection: {
+          enabled: true,
+          purpose: 'service_improvement',
+          retentionPeriod: 365,
+        },
+        dataSharing: {
+          enabled: false,
+          thirdParties: [],
+          consentRequired: true,
+        },
+        userRights: {
+          dataAccess: true,
+          dataPortability: true,
+          dataErasure: true,
+          dataRectification: true,
+        },
+        cookieSettings: {
+          essential: true,
+          analytics: false,
+          marketing: false,
+        },
+        gdprCompliance: true,
+        ccpaCompliance: true,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      const consent: DataConsent = {
+        userId: 'current_user',
+        dataTypes: ['profile', 'usage', 'analytics'],
+        purposes: ['service_improvement', 'personalization'],
+        thirdPartySharing: false,
+        marketingCommunications: false,
+        dataRetention: 365,
+        consentGiven: true,
+        consentDate: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+      };
+
+      return { settings, consent };
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '初始化隱私設置失敗');
+    }
+  }
+);
+
+export const updatePrivacySettings = createAsyncThunk(
+  'privacy/updatePrivacySettings',
+  async (settings: Partial<PrivacySettings>, { rejectWithValue }) => {
+    try {
+      const updatedSettings: PrivacySettings = {
+        dataCollection: {
+          enabled: true,
+          purpose: 'service_improvement',
+          retentionPeriod: 365,
+        },
+        dataSharing: {
+          enabled: false,
+          thirdParties: [],
+          consentRequired: true,
+        },
+        userRights: {
+          dataAccess: true,
+          dataPortability: true,
+          dataErasure: true,
+          dataRectification: true,
+        },
+        cookieSettings: {
+          essential: true,
+          analytics: false,
+          marketing: false,
+        },
+        gdprCompliance: true,
+        ccpaCompliance: true,
+        lastUpdated: new Date().toISOString(),
+        ...settings,
+      };
+
+      return updatedSettings;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '更新隱私設置失敗');
+    }
+  }
+);
+
+export const updateDataConsent = createAsyncThunk(
+  'privacy/updateDataConsent',
+  async (consent: Partial<DataConsent>, { rejectWithValue }) => {
+    try {
+      const updatedConsent: DataConsent = {
+        userId: 'current_user',
+        dataTypes: ['profile', 'usage', 'analytics'],
+        purposes: ['service_improvement', 'personalization'],
+        thirdPartySharing: false,
+        marketingCommunications: false,
+        dataRetention: 365,
+        consentGiven: true,
+        consentDate: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+        ...consent,
+      };
+
+      return updatedConsent;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '更新數據同意失敗');
+    }
+  }
+);
+
+export const fetchPrivacyAuditLogs = createAsyncThunk(
+  'privacy/fetchPrivacyAuditLogs',
+  async (
+    filters: { dateFrom?: string; dateTo?: string } = {},
+    { rejectWithValue }
+  ) => {
+    try {
+      const auditLogs: PrivacyAuditLog[] = [
+        {
+          id: '1',
+          userId: 'current_user',
+          action: 'data_access',
+          dataType: 'profile',
+          timestamp: new Date().toISOString(),
+          ipAddress: '192.168.1.1',
+          userAgent: 'Mozilla/5.0...',
+          success: true,
+          details: 'User accessed profile data',
+        },
+      ];
+
+      return auditLogs;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '獲取隱私審計日誌失敗');
+    }
+  }
+);
+
+export const reportPrivacyViolation = createAsyncThunk(
+  'privacy/reportPrivacyViolation',
+  async (
+    violation: {
+      type: string;
+      description: string;
+      severity: 'low' | 'medium' | 'high' | 'critical';
+      affectedData: string[];
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const newViolation: PrivacyViolation = {
+        id: Date.now().toString(),
+        type: violation.type,
+        description: violation.description,
+        severity: violation.severity,
+        affectedData: violation.affectedData,
+        reportedBy: 'current_user',
+        reportedAt: new Date().toISOString(),
+        status: 'reported',
+        resolution: null,
+        resolvedAt: null,
+      };
+
+      return newViolation;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '報告隱私違規失敗');
+    }
+  }
+);
+
+export const generateComplianceReport = createAsyncThunk(
+  'privacy/generateComplianceReport',
+  async (reportType: 'gdpr' | 'ccpa' | 'general', { rejectWithValue }) => {
+    try {
+      const report: PrivacyComplianceReport = {
+        id: Date.now().toString(),
+        type: reportType,
+        generatedAt: new Date().toISOString(),
+        generatedBy: 'current_user',
+        period: {
+          from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+          to: new Date().toISOString(),
+        },
+        complianceScore: 95,
+        violations: 0,
+        dataRequests: 0,
+        dataBreaches: 0,
+        recommendations: [
+          'Regular privacy policy updates',
+          'Enhanced data encryption',
+          'Staff privacy training',
+        ],
+        status: 'completed',
+      };
+
+      return report;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '生成合規報告失敗');
+    }
+  }
+);
+
+export const submitDataSubjectRequest = createAsyncThunk(
+  'privacy/submitDataSubjectRequest',
+  async (
+    request: {
+      type: 'access' | 'portability' | 'erasure' | 'rectification';
+      description: string;
+      dataTypes: string[];
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const newRequest: DataSubjectRequest = {
+        id: Date.now().toString(),
+        userId: 'current_user',
+        type: request.type,
+        description: request.description,
+        dataTypes: request.dataTypes,
+        status: 'pending',
+        submittedAt: new Date().toISOString(),
+        processedAt: null,
+        response: null,
+        estimatedCompletion: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+      };
+
+      return newRequest;
+    } catch (error: unknown) {
+      return rejectWithValue((error as any).message || '提交數據主體請求失敗');
+    }
+  }
+);
+
+// 初始狀態
+const initialState: PrivacyState = {
+  settings: null,
+  consent: null,
+  auditLogs: [],
+  violations: [],
+  complianceReport: null,
+  dataSubjectRequests: [],
+  isLoading: false,
+  isUpdating: false,
+  isGeneratingReport: false,
+  error: null,
+};
+
+// 創建 slice
+const privacySlice = createSlice({
+  name: 'privacy',
+  initialState,
+  reducers: {
+    clearError: state => {
+      state.error = null;
+    },
+    clearViolations: state => {
+      state.violations = [];
+    },
+    updateViolationStatus: (
+      state,
+      action: PayloadAction<{ id: string; status: string; resolution?: string }>
+    ) => {
+      const violation = state.violations.find(v => v.id === action.payload.id);
+      if (violation) {
+        violation.status = action.payload.status;
+        if (action.payload.resolution) {
+          violation.resolution = action.payload.resolution;
+          violation.resolvedAt = new Date().toISOString();
+        }
+      }
+    },
+    updateRequestStatus: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        status: string;
+        response?: string;
+      }>
+    ) => {
+      const request = state.dataSubjectRequests.find(
+        r => r.id === action.payload.id
+      );
+      if (request) {
+        request.status = action.payload.status;
+        if (action.payload.response) {
+          request.response = action.payload.response;
+          request.processedAt = new Date().toISOString();
+        }
+      }
+    },
+  },
+  extraReducers: builder => {
+    // Initialize Privacy
+    builder
+      .addCase(initializePrivacy.pending, state => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(initializePrivacy.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.settings = action.payload.settings;
+        state.consent = action.payload.consent;
+        state.error = null;
+      })
+      .addCase(initializePrivacy.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+
+    // Update Privacy Settings
+    builder
+      .addCase(updatePrivacySettings.pending, state => {
+        state.isUpdating = true;
+        state.error = null;
+      })
+      .addCase(updatePrivacySettings.fulfilled, (state, action) => {
+        state.isUpdating = false;
+        state.settings = action.payload;
+        state.error = null;
+      })
+      .addCase(updatePrivacySettings.rejected, (state, action) => {
+        state.isUpdating = false;
+        state.error = action.payload as string;
+      });
+
+    // Update Data Consent
+    builder
+      .addCase(updateDataConsent.pending, state => {
+        state.isUpdating = true;
+        state.error = null;
+      })
+      .addCase(updateDataConsent.fulfilled, (state, action) => {
+        state.isUpdating = false;
+        state.consent = action.payload;
+        state.error = null;
+      })
+      .addCase(updateDataConsent.rejected, (state, action) => {
+        state.isUpdating = false;
+        state.error = action.payload as string;
+      });
+
+    // Fetch Privacy Audit Logs
+    builder
+      .addCase(fetchPrivacyAuditLogs.fulfilled, (state, action) => {
+        state.auditLogs = action.payload;
+      })
+      .addCase(fetchPrivacyAuditLogs.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Report Privacy Violation
+    builder
+      .addCase(reportPrivacyViolation.fulfilled, (state, action) => {
+        state.violations.unshift(action.payload);
+      })
+      .addCase(reportPrivacyViolation.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+
+    // Generate Compliance Report
+    builder
+      .addCase(generateComplianceReport.pending, state => {
+        state.isGeneratingReport = true;
+        state.error = null;
+      })
+      .addCase(generateComplianceReport.fulfilled, (state, action) => {
+        state.isGeneratingReport = false;
+        state.complianceReport = action.payload;
+        state.error = null;
+      })
+      .addCase(generateComplianceReport.rejected, (state, action) => {
+        state.isGeneratingReport = false;
+        state.error = action.payload as string;
+      });
+
+    // Submit Data Subject Request
+    builder
+      .addCase(submitDataSubjectRequest.fulfilled, (state, action) => {
+        state.dataSubjectRequests.unshift(action.payload);
+      })
+      .addCase(submitDataSubjectRequest.rejected, (state, action) => {
+        state.error = action.payload as string;
+      });
+  },
+});
+
+// 導出 actions
+export const {
+  clearError,
+  clearViolations,
+  updateViolationStatus,
+  updateRequestStatus,
+} = privacySlice.actions;
+
+// 導出 selectors
+export const selectPrivacySettings = (state: { privacy: PrivacyState }) =>
+  state.privacy.settings;
+
+export const selectDataConsent = (state: { privacy: PrivacyState }) =>
+  state.privacy.consent;
+
+export const selectPrivacyAuditLogs = (state: { privacy: PrivacyState }) =>
+  state.privacy.auditLogs;
+
+export const selectPrivacyViolations = (state: { privacy: PrivacyState }) =>
+  state.privacy.violations;
+
+export const selectComplianceReport = (state: { privacy: PrivacyState }) =>
+  state.privacy.complianceReport;
+
+export const selectDataSubjectRequests = (state: { privacy: PrivacyState }) =>
+  state.privacy.dataSubjectRequests;
+
+export const selectIsPrivacyLoading = (state: { privacy: PrivacyState }) =>
+  state.privacy.isLoading;
+
+export const selectIsPrivacyUpdating = (state: { privacy: PrivacyState }) =>
+  state.privacy.isUpdating;
+
+export const selectIsGeneratingReport = (state: { privacy: PrivacyState }) =>
+  state.privacy.isGeneratingReport;
+
+export const selectPrivacyError = (state: { privacy: PrivacyState }) =>
+  state.privacy.error;
+
+// 導出 reducer
+export default privacySlice.reducer;

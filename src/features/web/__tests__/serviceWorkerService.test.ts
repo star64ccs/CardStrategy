@@ -176,11 +176,11 @@ describe('ServiceWorkerService', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功初始化 Service Worker 服務', async () => {
+    test('應該SuccessInitialize Service Worker Service', async () => {
       const _result = await service.initialize(mockConfig);
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('Service Worker 服務初始化成功');
+      expect(result.data).toBe('Service Worker ServiceInitializeSuccess');
       expect(service.isServiceReady()).toBe(true);
     });
 
@@ -189,7 +189,7 @@ describe('ServiceWorkerService', () => {
       const _result = await service.initialize(mockConfig);
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('Service Worker 服務已初始化');
+      expect(result.data).toBe('Service Worker Service已Initialize');
     });
 
     test('應該處理非 Web 平台', async () => {
@@ -199,7 +199,7 @@ describe('ServiceWorkerService', () => {
       const _result = await iosService.initialize(mockConfig);
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('Service Worker 服務僅支持 Web 平台');
+      expect(result.error).toBe('Service Worker Service僅支持 Web 平台');
       expect(result.errorCode).toBe('PLATFORM_NOT_SUPPORTED');
 
       // Reset Platform.OS
@@ -231,7 +231,7 @@ describe('ServiceWorkerService', () => {
       });
     });
 
-    test('應該處理註冊失敗', async () => {
+    test('應該Handle註冊Failed', async () => {
       (mockNavigator.serviceWorker.register as jest.Mock).mockRejectedValue(
         new Error('Registration failed')
       );
@@ -265,7 +265,7 @@ describe('ServiceWorkerService', () => {
       });
     });
 
-    test('應該獲取服務統計', () => {
+    test('應該GetService統計', () => {
       const _stats = service.getServiceStats();
 
       expect(stats).toEqual({
@@ -281,7 +281,7 @@ describe('ServiceWorkerService', () => {
       });
     });
 
-    test('應該檢查服務就緒狀態', () => {
+    test('應該CheckService就緒狀態', () => {
       expect(service.isServiceReady()).toBe(true);
     });
   });
@@ -295,11 +295,11 @@ describe('ServiceWorkerService', () => {
       const _result = await service.updateServiceWorker();
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('Service Worker 更新成功');
+      expect(result.data).toBe('Service Worker UpdateSuccess');
       expect(mockRegistration.update).toHaveBeenCalled();
     });
 
-    test('應該處理更新失敗', async () => {
+    test('應該HandleUpdateFailed', async () => {
       (mockRegistration.update as jest.Mock).mockRejectedValue(
         new Error('Update failed')
       );
@@ -318,7 +318,7 @@ describe('ServiceWorkerService', () => {
       const _result = await service.skipWaiting();
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('跳過等待成功');
+      expect(result.data).toBe('跳過等待Success');
       expect(mockServiceWorker.postMessage).toHaveBeenCalledWith({
         type: 'SKIP_WAITING',
       });
@@ -349,7 +349,7 @@ describe('ServiceWorkerService', () => {
       expect(result.cacheName).toBe('cardstrategy-cache-v1.0.0');
     });
 
-    test('應該處理緩存失敗', async () => {
+    test('應該Handle緩存Failed', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: false,
         clone: () => ({ ok: false }),
@@ -380,7 +380,7 @@ describe('ServiceWorkerService', () => {
       const _result = await service.clearCache();
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('緩存清除成功');
+      expect(result.data).toBe('緩存清除Success');
       expect(mockCaches.keys).toHaveBeenCalled();
       expect(mockCaches.delete).toHaveBeenCalledWith(
         'cardstrategy-cache-v1.0.0'
@@ -397,7 +397,7 @@ describe('ServiceWorkerService', () => {
       });
     });
 
-    test('應該處理緩存清除失敗', async () => {
+    test('應該Handle緩存清除Failed', async () => {
       (mockCaches.keys as jest.Mock).mockRejectedValue(
         new Error('Cache error')
       );
@@ -409,7 +409,7 @@ describe('ServiceWorkerService', () => {
       expect(result.errorCode).toBe('CACHE_CLEAR_FAILED');
     });
 
-    test('應該處理獲取緩存信息失敗', async () => {
+    test('應該HandleGet緩存信息Failed', async () => {
       (mockCaches.keys as jest.Mock).mockRejectedValue(
         new Error('Cache info error')
       );
@@ -422,12 +422,12 @@ describe('ServiceWorkerService', () => {
     });
   });
 
-  describe('服務信息測試', () => {
+  describe('ServiceInformation測試', () => {
     beforeEach(async () => {
       await service.initialize(mockConfig);
     });
 
-    test('應該獲取服務信息', () => {
+    test('應該GetServiceInformation', () => {
       const _info = service.getServiceInfo();
 
       expect(info.success).toBe(true);
@@ -461,46 +461,46 @@ describe('ServiceWorkerService', () => {
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('應該處理服務未初始化的情況', async () => {
+  describe('ErrorHandle測試', () => {
+    test('應該HandleService未Initialize的情況', async () => {
       const _uninitializedService = new (ServiceWorkerService as any)();
 
       await expect(uninitializedService.updateServiceWorker()).resolves.toEqual(
         {
           success: false,
-          error: 'Service Worker 服務未初始化',
+          error: 'Service Worker Service未Initialize',
           errorCode: 'SERVICE_NOT_INITIALIZED',
         }
       );
 
       await expect(uninitializedService.skipWaiting()).resolves.toEqual({
         success: false,
-        error: 'Service Worker 服務未初始化',
+        error: 'Service Worker Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       });
 
       await expect(uninitializedService.clearCache()).resolves.toEqual({
         success: false,
-        error: 'Service Worker 服務未初始化',
+        error: 'Service Worker Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       });
 
       await expect(uninitializedService.getCacheInfo()).resolves.toEqual({
         success: false,
-        error: 'Service Worker 服務未初始化',
+        error: 'Service Worker Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       });
     });
 
-    test('應該處理緩存 URL 時服務未初始化', async () => {
+    test('應該Handle緩存 URL 時Service未Initialize', async () => {
       const _uninitializedService = new (ServiceWorkerService as any)();
 
       await expect(
         uninitializedService.cacheUrl('https://example.com')
-      ).rejects.toThrow('Service Worker 服務未初始化');
+      ).rejects.toThrow('Service Worker Service未Initialize');
       await expect(
         uninitializedService.cacheUrls(['https://example.com'])
-      ).rejects.toThrow('Service Worker 服務未初始化');
+      ).rejects.toThrow('Service Worker Service未Initialize');
     });
   });
 
@@ -574,7 +574,7 @@ describe('ServiceWorkerService', () => {
       expect(status.isControlling).toBe(true);
     });
 
-    test('應該處理 Service Worker 錯誤', () => {
+    test('應該Handle Service Worker Error', () => {
       const _errorHandler =
         mockNavigator.serviceWorker.addEventListener.mock.calls.find(
           call => call[0] === 'error'
@@ -595,7 +595,7 @@ describe('ServiceWorkerService', () => {
     });
 
     test('應該初始化緩存策略', async () => {
-      // 測試預緩存資源
+      // Test預CacheResource
       expect(mockCache.add).toHaveBeenCalledWith('/offline.html');
     });
 

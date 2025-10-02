@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 const { config } = require('./unified');
 
-// 創建 Sequelize 實例
+// Create Sequelize Instance
 const sequelize = new Sequelize(
   config.database.name,
   config.database.user,
@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
     logging: config.database.logging,
     pool: config.database.pool,
 
-    // 連接池配置
+    // Connect池Configure
     pool: {
       max: config.database.pool.max,
       min: config.database.pool.min,
@@ -21,42 +21,42 @@ const sequelize = new Sequelize(
       idle: config.database.pool.idle,
     },
 
-    // 查詢優化
+    // Query優化
     define: {
       timestamps: true,
       underscored: true,
       freezeTableName: true,
     },
 
-    // 時區設置
+    // TimezoneSettings
     timezone: '+08:00',
 
-    // 查詢超時
+    // Query超時
     query: {
       timeout: 30000,
     },
   }
 );
 
-// 測試連接
+// TestConnect
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
     return true;
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('數據庫連接失敗:', error);
+    console.error('數據庫ConnectFailed:', error);
     return false;
   }
 };
 
-// 初始化數據庫
+// InitializeDatabase
 const initDatabase = async () => {
   try {
     await sequelize.sync({ alter: true });
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('數據庫同步失敗:', error);
+    console.error('數據庫同步Failed:', error);
     throw error;
   }
 };

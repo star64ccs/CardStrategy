@@ -2,14 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * CardStrategy 核心功能開發計劃
+ * CardStrategy 核心功能On發計劃
  * 詳細規劃卡牌辨識、防偽判斷、模擬鑑定、AI預測價格、置中評估等核心功能
  */
 
 // eslint-disable-next-line no-console
 console.log('🎯 生成 CardStrategy 核心功能開發計劃...\n');
 
-// 核心功能開發計劃
+// 核心功能On發計劃
 const coreFeaturesPlan = {
   projectName: 'CardStrategy',
   planDate: new Date().toISOString(),
@@ -255,7 +255,7 @@ const coreFeaturesPlan = {
     successMetrics: ['測量準確率 > 90%', '處理時間 < 3秒', '視覺化清晰度 > 95%']
   },
   
-  // 開發時間線
+  // On發Time線
   timeline: {
     phase1: {
       name: '基礎架構 (2-3 個月)',
@@ -317,7 +317,7 @@ const coreFeaturesPlan = {
     }
   },
   
-  // 資源需求
+  // Resource需求
   resources: {
     development: {
       frontend: '1-2 開發者',
@@ -337,7 +337,7 @@ const coreFeaturesPlan = {
     }
   },
   
-  // 風險管理
+  // 風險Manage
   risks: {
     technical: [
       'AI 模型準確率不達標',
@@ -359,7 +359,7 @@ const coreFeaturesPlan = {
     ]
   },
   
-  // 成功指標
+  // Success指標
   successMetrics: {
     technical: {
       accuracy: '核心功能準確率 > 85%',
@@ -376,7 +376,7 @@ const coreFeaturesPlan = {
   }
 };
 
-// 生成開發計劃
+// 生成On發計劃
 const generateDevelopmentPlan = () => {
   const plan = {
     projectName: 'CardStrategy',
@@ -390,7 +390,7 @@ const generateDevelopmentPlan = () => {
 // 生成計劃
 const plan = generateDevelopmentPlan();
 
-// 保存計劃
+// Save計劃
 const planPath = path.join(__dirname, '../reports');
 if (!fs.existsSync(planPath)) {
   fs.mkdirSync(planPath, { recursive: true });
@@ -788,6 +788,6 @@ console.log('   • 開始卡牌辨識系統開發');
 // eslint-disable-next-line no-console
 console.log('   • 建立防偽判斷算法');
 // eslint-disable-next-line no-console
-console.log('   • 配置圖像處理服務');
+console.log('   • Configure圖像HandleService');
 // eslint-disable-next-line no-console
 console.log('   • 建立開發環境');

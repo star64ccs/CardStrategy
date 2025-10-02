@@ -135,7 +135,7 @@ router.post(''
         metadata = {},
       } = req.body;
 
-      // 檢查?��??�否已�???      const existingCard = await Card.findOne({
+      // Check?��??�No已�???      const existingCard = await Card.findOne({
         where: {
           setName,
           cardNumber,
@@ -175,7 +175,7 @@ router.post(''
 );
 
 // @route   GET /api/cards
-// @desc    ?��??��??�表（支?��?索、�?濾、�?序、�??��?
+// @desc    ?��??��??�Table（支?��?索、�?濾、�?序、�??��?
 // @access  Public'
 router.get(''
   '/',
@@ -201,7 +201,7 @@ router.get(''
       const { page = 1, limit = 20 } = pagination;
       const offset = (page - 1) * limit;
 
-      // 構建?�詢條件
+      // Build?�詢Condition
       const whereClause = {
         isActive: isActive !== undefined ? isActive : true,
       };
@@ -287,7 +287,7 @@ router.get(''
 );
 
 // @route   PUT /api/cards/:id
-// @desc    ?�新?��?信息
+// @desc    ?�新?��?Information
 // @access  Private (Admin only)'
 router.put(''
   '/:id',
@@ -385,7 +385,7 @@ router.post(''
         try {
           const cardData = cards[i];
 
-          // 檢查?��??�否已�???          const existingCard = await Card.findOne({
+          // Check?��??�No已�???          const existingCard = await Card.findOne({
             where: {
               setName: cardData.setName,
               cardNumber: cardData.cardNumber,

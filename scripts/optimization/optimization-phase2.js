@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -47,9 +47,9 @@ class Phase2Optimizer {
     this.srcDir = path.join(this.projectRoot, 'src');
   }
 
-  // 1. 整合服務器文件
+  // 1. 整合ServerFile
   async consolidateServerFiles() {
-    log.header('🔧 整合服務器文件');
+    log.header('🔧 整合Server文件');
 
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -63,7 +63,7 @@ class Phase2Optimizer {
       'server-minimal.js',
     ];
 
-    // 創建統一的服務器配置
+    // Create統一的ServerConfigure
     const unifiedServer = `require('dotenv').config();
 const express = require('express');
 // eslint-disable-next-line no-unused-vars
@@ -73,7 +73,7 @@ const cors = require('cors');
 // eslint-disable-next-line no-unused-vars
 const logger = require('./utils/logger');
 
-// 導入配置
+// ImportConfigure
 const { sequelize, testConnection } = require('./config/database');
 const { connectRedis, healthCheck: redisHealthCheck } = require('./config/redis');
 
@@ -83,7 +83,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 健康檢查端點
+// 健康Check端點
 app.get('/api/health', async (req, res) => {
   try {
     const dbStatus = await testConnection();
@@ -91,7 +91,7 @@ app.get('/api/health', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'CardStrategy API 服務正常運行',
+      message: 'CardStrategy API Service正常運行',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
       services: {
@@ -100,31 +100,31 @@ app.get('/api/health', async (req, res) => {
       }
     });
   } catch (error) {
-    logger.error('健康檢查失敗:', error);
+    logger.error('健康CheckFailed:', error);
     res.status(503).json({
       success: false,
-      message: '服務健康檢查失敗',
+      message: 'Service健康CheckFailed',
       error: error.message
     });
   }
 });
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   res.json({
     success: true,
-    message: 'CardStrategy API 服務器運行中',
+    message: 'CardStrategy API Server運行中',
     version: '1.0.0',
     environment: process.env.NODE_ENV || 'development'
   });
 });
 
-// 根據環境加載不同的路由
+// Root據環境加載不同的路由
 if (process.env.NODE_ENV === 'production') {
   // 生產環境：只加載核心功能
   log.info('生產環境：加載核心功能');
 } else {
-  // 開發環境：加載所有功能
+  // On發環境：加載所有功能
   try {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -138,7 +138,7 @@ if (process.env.NODE_ENV === 'production') {
     
     log.info('開發環境：加載所有路由');
   } catch (error) {
-    log.warning('部分路由加載失敗，使用簡化模式');
+    log.warning('部分路由加載Failed，使用簡化模式');
   }
 }
 
@@ -146,33 +146,33 @@ const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
-    // 初始化服務
+    // InitializeService
     try {
       await connectRedis();
-      log.info('Redis 連接初始化成功');
+      log.info('Redis ConnectInitializeSuccess');
     } catch (error) {
-      log.error('Redis 連接失敗:', error);
+      log.error('Redis ConnectFailed:', error);
     }
 
     try {
       const dbConnected = await testConnection();
       if (dbConnected) {
-        log.info('數據庫連接測試成功');
+        log.info('數據庫Connect測試Success');
       } else {
-        log.warn('數據庫連接測試失敗');
+        log.warn('數據庫Connect測試Failed');
       }
     } catch (error) {
-      log.error('數據庫連接測試失敗:', error);
+      log.error('數據庫Connect測試Failed:', error);
     }
 
     const server = app.listen(PORT, () => {
-      log.info(\`🚀 CardStrategy API 服務器運行在端口 \${PORT}\`);
+      log.info(\`🚀 CardStrategy API Server運行在端口 \${PORT}\`);
       log.info(\`🏥 健康檢查端點: http://localhost:\${PORT}/api/health\`);
     });
 
     return server;
   } catch (error) {
-    log.error('服務器啟動失敗:', error);
+    log.error('Server啟動Failed:', error);
     process.exit(1);
   }
 };
@@ -184,9 +184,9 @@ module.exports = app;
 
     const serverPath = path.join(this.backendDir, 'src/server-unified.js');
     fs.writeFileSync(serverPath, unifiedServer);
-    log.success('統一服務器文件已創建');
+    log.success('統一Server文件已Create');
 
-    // 更新 package.json
+    // Update package.json
     const packagePath = path.join(this.backendDir, 'package.json');
     const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
     packageJson.scripts.start = 'node src/server-unified.js';
@@ -194,7 +194,7 @@ module.exports = app;
     log.success('package.json 已更新');
   }
 
-  // 2. 創建統一配置系統
+  // 2. Create統一Configure系統
   async createUnifiedConfig() {
     log.header('⚙️ 創建統一配置系統');
 
@@ -203,10 +203,10 @@ module.exports = app;
 // eslint-disable-next-line no-unused-vars
     const configContent = `const path = require('path');
 
-// 環境配置
+// 環境Configure
 const env = process.env.NODE_ENV || 'development';
 
-// 基礎配置
+// 基礎Configure
 const baseConfig = {
   app: {
     name: 'CardStrategy',
@@ -269,7 +269,7 @@ const baseConfig = {
   }
 };
 
-// 環境特定配置
+// 環境SpecificConfigure
 const envConfigs = {
   development: {
     database: {
@@ -312,7 +312,7 @@ const envConfigs = {
   }
 };
 
-// 合併配置
+// MergeConfigure
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -321,7 +321,7 @@ const config = {
   ...envConfigs[env]
 };
 
-// 配置驗證
+// ConfigureVerify
 const validateConfig = () => {
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -366,14 +366,14 @@ module.exports = {
     log.success('統一配置系統已創建');
   }
 
-  // 3. 優化數據庫配置
+  // 3. 優化DatabaseConfigure
   async optimizeDatabaseConfig() {
     log.header('🗄️ 優化數據庫配置');
 
     const dbConfigContent = `const { Sequelize } = require('sequelize');
 const { config } = require('./unified');
 
-// 創建 Sequelize 實例
+// Create Sequelize Instance
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const sequelize = new Sequelize(
@@ -386,7 +386,7 @@ const sequelize = new Sequelize(
     logging: config.database.logging,
     pool: config.database.pool,
     
-    // 連接池配置
+    // Connect池Configure
     pool: {
       max: config.database.pool.max,
       min: config.database.pool.min,
@@ -394,24 +394,24 @@ const sequelize = new Sequelize(
       idle: config.database.pool.idle
     },
     
-    // 查詢優化
+    // Query優化
     define: {
       timestamps: true,
       underscored: true,
       freezeTableName: true
     },
     
-    // 時區設置
+    // TimezoneSettings
     timezone: '+08:00',
     
-    // 查詢超時
+    // Query超時
     query: {
       timeout: 30000
     }
   }
 );
 
-// 測試連接
+// TestConnect
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const testConnection = async () => {
@@ -420,18 +420,18 @@ const testConnection = async () => {
     return true;
   } catch (error) {
 // eslint-disable-next-line no-console
-    console.error('數據庫連接失敗:', error);
+    console.error('數據庫ConnectFailed:', error);
     return false;
   }
 };
 
-// 初始化數據庫
+// InitializeDatabase
 const initDatabase = async () => {
   try {
     await sequelize.sync({ alter: true });
     } catch (error) {
 // eslint-disable-next-line no-console
-    console.error('數據庫同步失敗:', error);
+    console.error('數據庫同步Failed:', error);
     throw error;
   }
 };
@@ -451,14 +451,14 @@ module.exports = {
     log.success('優化數據庫配置已創建');
   }
 
-  // 4. 優化 Redis 配置
+  // 4. 優化 Redis Configure
   async optimizeRedisConfig() {
     log.header('📡 優化 Redis 配置');
 
     const redisConfigContent = `const Redis = require('ioredis');
 const { config } = require('./unified');
 
-// Redis 客戶端配置
+// Redis ClientConfigure
 const redisConfig = {
   host: config.redis.host,
   port: config.redis.port,
@@ -466,24 +466,24 @@ const redisConfig = {
   db: config.redis.db,
   keyPrefix: config.redis.keyPrefix,
   
-  // 連接配置
+  // ConnectConfigure
   retryDelayOnFailover: config.redis.retryDelayOnFailover,
   maxRetriesPerRequest: config.redis.maxRetriesPerRequest,
   
-  // 超時配置
+  // 超時Configure
   connectTimeout: 10000,
   commandTimeout: 5000,
   
-  // 重連配置
+  // 重連Configure
   lazyConnect: true,
   keepAlive: 30000,
   
-  // 集群配置（如果使用）
+  // 集群Configure（如果使用）
   enableReadyCheck: true,
   maxLoadingTimeout: 10000
 };
 
-// 創建 Redis 客戶端
+// Create Redis Client
 let redisClient = null;
 
 const createRedisClient = () => {
@@ -495,7 +495,7 @@ const createRedisClient = () => {
     
     redisClient.on('error', (error) => {
 // eslint-disable-next-line no-console
-      console.error('Redis 連接錯誤:', error);
+      console.error('Redis ConnectError:', error);
     });
     
     redisClient.on('close', () => {
@@ -508,7 +508,7 @@ const createRedisClient = () => {
   return redisClient;
 };
 
-// 連接 Redis
+// Connect Redis
 const connectRedis = async () => {
   try {
     const client = createRedisClient();
@@ -516,12 +516,12 @@ const connectRedis = async () => {
     return client;
   } catch (error) {
 // eslint-disable-next-line no-console
-    console.error('Redis 連接失敗:', error);
+    console.error('Redis ConnectFailed:', error);
     throw error;
   }
 };
 
-// 健康檢查
+// 健康Check
 const healthCheck = async () => {
   try {
     const client = createRedisClient();
@@ -529,14 +529,14 @@ const healthCheck = async () => {
     return true;
   } catch (error) {
 // eslint-disable-next-line no-console
-    console.error('Redis 健康檢查失敗:', error);
+    console.error('Redis 健康CheckFailed:', error);
     return false;
   }
 };
 
-// 緩存工具函數
+// CacheToolFunction
 const cacheUtils = {
-  // 設置緩存
+  // SettingsCache
   async set(key, value, ttl = 3600) {
     try {
       const client = createRedisClient();
@@ -544,12 +544,12 @@ const cacheUtils = {
       return true;
     } catch (error) {
 // eslint-disable-next-line no-console
-      console.error('設置緩存失敗:', error);
+      console.error('Settings緩存Failed:', error);
       return false;
     }
   },
   
-  // 獲取緩存
+  // GetCache
   async get(key) {
     try {
       const client = createRedisClient();
@@ -557,12 +557,12 @@ const cacheUtils = {
       return value ? JSON.parse(value) : null;
     } catch (error) {
 // eslint-disable-next-line no-console
-      console.error('獲取緩存失敗:', error);
+      console.error('Get緩存Failed:', error);
       return null;
     }
   },
   
-  // 刪除緩存
+  // DeleteCache
   async del(key) {
     try {
       const client = createRedisClient();
@@ -570,12 +570,12 @@ const cacheUtils = {
       return true;
     } catch (error) {
 // eslint-disable-next-line no-console
-      console.error('刪除緩存失敗:', error);
+      console.error('Delete緩存Failed:', error);
       return false;
     }
   },
   
-  // 清空所有緩存
+  // 清Empty所有Cache
   async flush() {
     try {
       const client = createRedisClient();
@@ -583,7 +583,7 @@ const cacheUtils = {
       return true;
     } catch (error) {
 // eslint-disable-next-line no-console
-      console.error('清空緩存失敗:', error);
+      console.error('清空緩存Failed:', error);
       return false;
     }
   }
@@ -605,7 +605,7 @@ module.exports = {
     log.success('優化 Redis 配置已創建');
   }
 
-  // 5. 生成優化報告
+  // 5. 生成優化Report
   generateReport() {
     log.header('📊 第二階段優化報告');
 
@@ -694,7 +694,7 @@ module.exports = {
     log.success(`優化報告已生成: ${reportPath}`);
   }
 
-  // 執行所有優化
+  // 執Row所有優化
   async run() {
     log.header('🚀 開始第二階段架構優化');
 
@@ -708,13 +708,13 @@ module.exports = {
       log.header('🎉 第二階段優化完成！');
       log.success('請查看 PHASE2_OPTIMIZATION_REPORT.md 了解詳細結果');
     } catch (error) {
-      log.error(`優化過程中發生錯誤: ${error.message}`);
+      log.error(`優化過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行優化
+// 執Row優化
 if (require.main === module) {
   const optimizer = new Phase2Optimizer();
   optimizer.run();

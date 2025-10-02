@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import type { AppDispatch, RootState } from '../../../store';
 import {
-  // 異步操作
+  // AsyncOperation
   initializeStorageService,
   setStorageData,
   getStorageData,
@@ -19,7 +19,7 @@ import {
   predictStorageNeeds,
   destroyStorageService,
 
-  // 同步操作
+  // SyncOperation
   resetStorageState,
   setStorageError,
   clearStorageError,
@@ -29,7 +29,7 @@ import {
   addRecommendation,
   clearRecommendations,
 
-  // 選擇器
+  // Select器
   selectStorageState,
   selectIsStorageInitialized,
   selectStorageLoading,
@@ -52,13 +52,13 @@ import type {
 import { DataPriority, StorageLayer } from '../types/storage';
 
 /**
- * 存儲管理 Hook
- * 提供完整的多層存儲功能和策略管理
+ * StorageManage Hook
+ * 提供完整的多層Storage功能和策略Manage
  */
 export const _useStorage = () => {
   const _dispatch = useDispatch<AppDispatch>();
 
-  // 狀態選擇器
+  // StatusSelect器
   const _storageState = useSelector((state: RootState) =>
     selectStorageState(state)
   );
@@ -95,7 +95,7 @@ export const _useStorage = () => {
     selectAutoOptimize(state)
   );
 
-  // 服務管理
+  // ServiceManage
   const _initializeService = useCallback(
     async (config?: unknown) => {
       return dispatch(initializeStorageService(config));
@@ -107,7 +107,7 @@ export const _useStorage = () => {
     return dispatch(destroyStorageService());
   }, [dispatch]);
 
-  // 數據操作
+  // DataOperation
   const _setData = useCallback(
     async <T>(key: string, data: T, options?: StorageOptions) => {
       return dispatch(setStorageData({ key, data, options }));
@@ -137,7 +137,7 @@ export const _useStorage = () => {
     [dispatch]
   );
 
-  // 統計和監控
+  // Statistics和Monitor
   const _refreshStats = useCallback(async () => {
     return dispatch(getStorageStats());
   }, [dispatch]);
@@ -150,7 +150,7 @@ export const _useStorage = () => {
     return dispatch(cleanupStorage());
   }, [dispatch]);
 
-  // 策略管理
+  // 策略Manage
   const _setStrategy = useCallback(
     async (strategy: StorageStrategy) => {
       return dispatch(setStorageStrategy(strategy));
@@ -185,7 +185,7 @@ export const _useStorage = () => {
     [dispatch]
   );
 
-  // 狀態管理
+  // StatusManage
   const _resetState = useCallback(() => {
     dispatch(resetStorageState());
   }, [dispatch]);
@@ -230,10 +230,10 @@ export const _useStorage = () => {
     dispatch(clearRecommendations());
   }, [dispatch]);
 
-  // 便捷方法
+  // 便捷Method
 
   /**
-   * 智能存儲 - 根據數據特徵自動選擇最佳存儲選項
+   * 智能Storage - Root據Data特徵AutoSelect最佳StorageOptions
    */
   const _smartStore = useCallback(
     async <T>(
@@ -252,7 +252,7 @@ export const _useStorage = () => {
       const _importance = metadata?.importance || DataPriority.MEDIUM;
       const _isTemporary = metadata?.isTemporary || false;
 
-      // 獲取推薦的存儲選項
+      // Get推薦的StorageOptions
       const _recResult = await getRecommendations({
         dataSize,
         accessFrequency,
@@ -264,11 +264,11 @@ export const _useStorage = () => {
         priority: importance,
         tags: metadata?.tags,
         namespace: metadata?.namespace,
-        // 可以從推薦結果中提取更多選項
+        // 可以從推薦結果中提取更多Options
       };
 
       if (isTemporary) {
-        options.ttl = 10 * 60 * 1000; // 10分鐘
+        options.ttl = 10 * 60 * 1000; // 10Minute
       }
 
       return setData(key, data, options);
@@ -277,7 +277,7 @@ export const _useStorage = () => {
   );
 
   /**
-   * 批量操作
+   * BatchOperation
    */
   const _batchStore = useCallback(
     async <T>(
@@ -339,13 +339,13 @@ export const _useStorage = () => {
   );
 
   /**
-   * 緩存管理
+   * CacheManage
    */
   const _cacheData = useCallback(
     async <T>(key: string, data: T, ttl?: number) => {
       const options: StorageOptions = {
         layer: StorageLayer.CACHE,
-        ttl: ttl || 30 * 60 * 1000, // 默認30分鐘
+        ttl: ttl || 30 * 60 * 1000, // Default30Minute
         sync: false,
       };
 
@@ -366,7 +366,7 @@ export const _useStorage = () => {
   );
 
   /**
-   * 持久化存儲
+   * 持久化Storage
    */
   const _persistData = useCallback(
     async <T>(key: string, data: T, options?: Omit<StorageOptions, 'sync'>) => {
@@ -383,13 +383,13 @@ export const _useStorage = () => {
   );
 
   /**
-   * 臨時存儲
+   * 臨時Storage
    */
   const _tempStore = useCallback(
     async <T>(key: string, data: T, ttl?: number) => {
       const options: StorageOptions = {
         layer: StorageLayer.MEMORY,
-        ttl: ttl || 5 * 60 * 1000, // 默認5分鐘
+        ttl: ttl || 5 * 60 * 1000, // Default5Minute
         sync: false,
         priority: DataPriority.LOW,
       };
@@ -400,7 +400,7 @@ export const _useStorage = () => {
   );
 
   /**
-   * 搜索功能
+   * Search功能
    */
   const _searchByNamespace = useCallback(
     async (namespace: string, limit?: number) => {
@@ -445,7 +445,7 @@ export const _useStorage = () => {
   );
 
   /**
-   * 統計輔助函數
+   * Statistics輔助Function
    */
   const _getHitRate = useCallback(() => {
     return stats?.hitRate || 0;
@@ -456,7 +456,7 @@ export const _useStorage = () => {
       ? {
           totalSize: stats.totalSize,
           totalItems: stats.totalItems,
-          usagePercentage: stats.totalSize / (200 * 1024 * 1024), // 假設200MB限制
+          usagePercentage: stats.totalSize / (200 * 1024 * 1024), // False設200MBLimit
         }
       : null;
   }, [stats]);
@@ -473,24 +473,24 @@ export const _useStorage = () => {
   }, [stats]);
 
   /**
-   * 健康檢查
+   * 健康Check
    */
   const _healthCheck = useCallback(async () => {
     try {
-      // 執行基本操作測試
+      // 執Row基本OperationTest
       const _testKey = `health_check_${Date.now()}`;
       const _testData = { test: true, timestamp: new Date() };
 
-      // 測試寫入
+      // TestWrite
       await setData(testKey, testData);
 
-      // 測試讀取
+      // TestRead
       const _retrieved = await getData(testKey);
 
-      // 測試刪除
+      // TestDelete
       await deleteData(testKey);
 
-      // 獲取統計
+      // GetStatistics
       await refreshStats();
 
       const _isHealthy =
@@ -513,7 +513,7 @@ export const _useStorage = () => {
   }, [setData, getData, deleteData, refreshStats, getPerformanceMetrics]);
 
   return {
-    // 狀態
+    // Status
     isInitialized,
     isLoading,
     error,
@@ -527,29 +527,29 @@ export const _useStorage = () => {
     predictedNeeds,
     autoOptimize,
 
-    // 服務管理
+    // ServiceManage
     initializeService,
     destroyService,
 
-    // 基本操作
+    // 基本Operation
     setData,
     getData,
     deleteData,
     queryData,
 
-    // 統計和監控
+    // Statistics和Monitor
     refreshStats,
     sync,
     cleanup,
 
-    // 策略管理
+    // 策略Manage
     setStrategy,
     optimizeStrategy,
     getReport,
     getRecommendations,
     predictNeeds,
 
-    // 狀態管理
+    // StatusManage
     resetState,
     setError,
     clearError,
@@ -559,7 +559,7 @@ export const _useStorage = () => {
     addRec,
     clearRecs,
 
-    // 便捷方法
+    // 便捷Method
     smartStore,
     batchStore,
     batchRetrieve,
@@ -569,17 +569,17 @@ export const _useStorage = () => {
     persistData,
     tempStore,
 
-    // 搜索功能
+    // Search功能
     searchByNamespace,
     searchByTags,
     searchByPriority,
 
-    // 統計輔助
+    // Statistics輔助
     getHitRate,
     getStorageUsage,
     getPerformanceMetrics,
 
-    // 健康檢查
+    // 健康Check
     healthCheck,
   };
 };

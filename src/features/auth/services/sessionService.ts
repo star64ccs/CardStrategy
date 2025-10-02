@@ -48,7 +48,7 @@ class SessionService {
       this.isInitialized = true;
       logger.info('SessionService 初始化完成');
     } catch (error: unknown) {
-      logger.error('SessionService 初始化失敗:', error);
+      logger.error('SessionService InitializeFailed:', error);
       throw error;
     }
   }
@@ -78,15 +78,15 @@ class SessionService {
       };
 
       await AuthStorage.setSession(session);
-      await this.recordActivity(session.id, userId, 'login', '用戶登錄成功');
+      await this.recordActivity(session.id, userId, 'login', '用戶登錄Success');
 
       this.currentSession = session;
-      logger.info('會話創建成功:', { sessionId: session.id, userId });
+      logger.info('會話CreateSuccess:', { sessionId: session.id, userId });
 
       return session;
     } catch (error: unknown) {
-      logger.error('創建會話失敗:', error);
-      throw new Error(`創建會話失敗: ${error.message}`);
+      logger.error('Create會話Failed:', error);
+      throw new Error(`Create會話Failed: ${error.message}`);
     }
   }
 
@@ -146,10 +146,10 @@ class SessionService {
           this.currentSession.id,
           this.currentSession.userId,
           'refresh_token',
-          '會話令牌刷新成功'
+          '會話令牌刷新Success'
         );
 
-        logger.info('會話刷新成功:', { sessionId: this.currentSession.id });
+        logger.info('會話刷新Success:', { sessionId: this.currentSession.id });
 
         return {
           success: true,
@@ -161,15 +161,15 @@ class SessionService {
         return {
           success: false,
           errorCode: response.errorCode || 'unknown_error',
-          errorMessage: response.errorMessage || '刷新令牌失敗',
+          errorMessage: response.errorMessage || '刷新令牌Failed',
         };
       }
     } catch (error: unknown) {
-      logger.error('刷新會話失敗:', error);
+      logger.error('刷新會話Failed:', error);
       return {
         success: false,
         errorCode: 'server_error',
-        errorMessage: `服務器錯誤: ${error.message}`,
+        errorMessage: `ServerError: ${error.message}`,
       };
     }
   }
@@ -225,23 +225,23 @@ class SessionService {
       );
 
       if (response.success) {
-        logger.info('會話終止成功:', { sessionId: targetSessionId, reason });
+        logger.info('會話終止Success:', { sessionId: targetSessionId, reason });
         return response;
       } else {
         return {
           success: false,
           terminatedSessions: [],
           errorCode: response.errorCode || 'unknown_error',
-          errorMessage: response.errorMessage || '終止會話失敗',
+          errorMessage: response.errorMessage || '終止會話Failed',
         };
       }
     } catch (error: unknown) {
-      logger.error('終止會話失敗:', error);
+      logger.error('終止會話Failed:', error);
       return {
         success: false,
         terminatedSessions: [],
         errorCode: 'server_error',
-        errorMessage: `服務器錯誤: ${error.message}`,
+        errorMessage: `ServerError: ${error.message}`,
       };
     }
   }
@@ -251,18 +251,18 @@ class SessionService {
       const _response = await this.callGetSessionsAPI();
 
       if (response.success) {
-        logger.info('獲取會話列表成功:', { count: response.sessions.length });
+        logger.info('Get會話列表Success:', { count: response.sessions.length });
         return {
           sessions: response.sessions,
           totalCount: response.sessions.length,
           activeCount: response.sessions.filter(s => s.isActive).length,
         };
       } else {
-        throw new Error(response.errorMessage || '獲取會話列表失敗');
+        throw new Error(response.errorMessage || 'Get會話列表Failed');
       }
     } catch (error: unknown) {
-      logger.error('獲取會話列表失敗:', error);
-      throw new Error(`獲取會話列表失敗: ${error.message}`);
+      logger.error('Get會話列表Failed:', error);
+      throw new Error(`Get會話列表Failed: ${error.message}`);
     }
   }
 
@@ -271,13 +271,13 @@ class SessionService {
       const _response = await this.callGetSessionConfigAPI();
 
       if (response.success) {
-        logger.info('獲取會話配置成功');
+        logger.info('Get會話ConfigureSuccess');
         return response.config;
       } else {
-        throw new Error(response.errorMessage || '獲取會話配置失敗');
+        throw new Error(response.errorMessage || 'Get會話ConfigureFailed');
       }
     } catch (error: unknown) {
-      logger.error('獲取會話配置失敗:', error);
+      logger.error('Get會話ConfigureFailed:', error);
       return {
         maxSessionsPerUser: 5,
         sessionTimeout: 30,
@@ -304,14 +304,14 @@ class SessionService {
       const _response = await this.callGetSessionActivitiesAPI(targetSessionId);
 
       if (response.success) {
-        logger.info('獲取會話活動成功:', { count: response.activities.length });
+        logger.info('Get會話活動Success:', { count: response.activities.length });
         return response.activities;
       } else {
-        throw new Error(response.errorMessage || '獲取會話活動失敗');
+        throw new Error(response.errorMessage || 'Get會話活動Failed');
       }
     } catch (error: unknown) {
-      logger.error('獲取會話活動失敗:', error);
-      throw new Error(`獲取會話活動失敗: ${error.message}`);
+      logger.error('Get會話活動Failed:', error);
+      throw new Error(`Get會話活動Failed: ${error.message}`);
     }
   }
 
@@ -326,14 +326,14 @@ class SessionService {
       );
 
       if (response.success) {
-        logger.info('獲取會話安全信息成功');
+        logger.info('Get會話安全信息Success');
         return response.securityInfo;
       } else {
-        throw new Error(response.errorMessage || '獲取會話安全信息失敗');
+        throw new Error(response.errorMessage || 'Get會話安全信息Failed');
       }
     } catch (error: unknown) {
-      logger.error('獲取會話安全信息失敗:', error);
-      throw new Error(`獲取會話安全信息失敗: ${error.message}`);
+      logger.error('Get會話安全信息Failed:', error);
+      throw new Error(`Get會話安全信息Failed: ${error.message}`);
     }
   }
 
@@ -342,14 +342,14 @@ class SessionService {
       const _response = await this.callGetSessionAnalyticsAPI();
 
       if (response.success) {
-        logger.info('獲取會話分析成功');
+        logger.info('Get會話分析Success');
         return response.analytics;
       } else {
-        throw new Error(response.errorMessage || '獲取會話分析失敗');
+        throw new Error(response.errorMessage || 'Get會話分析Failed');
       }
     } catch (error: unknown) {
-      logger.error('獲取會話分析失敗:', error);
-      throw new Error(`獲取會話分析失敗: ${error.message}`);
+      logger.error('Get會話分析Failed:', error);
+      throw new Error(`Get會話分析Failed: ${error.message}`);
     }
   }
 
@@ -376,7 +376,7 @@ class SessionService {
       await this.callRecordActivityAPI(activity);
       logger.debug('會話活動已記錄:', { activityType, description });
     } catch (error: unknown) {
-      logger.error('記錄會話活動失敗:', error);
+      logger.error('記錄會話活動Failed:', error);
     }
   }
 
@@ -400,33 +400,33 @@ class SessionService {
     }
   }
 
-  // 私有方法
+  // PrivateMethod
   private async restoreCurrentSession(): Promise<void> {
     try {
       const _session = await AuthStorage.getSession();
       if (session) {
-        // 檢查會話是否有效
+        // Check會話YesNo有效
         const _now = new Date();
         const _isValid = session.isActive && session.expiresAt > now;
 
         if (isValid) {
           this.currentSession = session;
-          logger.info('會話恢復成功:', { sessionId: session.id });
+          logger.info('會話恢復Success:', { sessionId: session.id });
         } else {
           await AuthStorage.clearSession();
           logger.info('過期會話已清除');
         }
       }
     } catch (error: unknown) {
-      logger.error('恢復會話失敗:', error);
-      throw error; // 重新拋出錯誤
+      logger.error('恢復會話Failed:', error);
+      throw error; // ReThrowError
     }
   }
 
   private setupAutoRefresh(): void {
     if (!this.currentSession) return;
 
-    const _refreshThreshold = 5 * 60 * 1000; // 5分鐘
+    const _refreshThreshold = 5 * 60 * 1000; // 5Minute
     const _timeUntilRefresh =
       this.currentSession.expiresAt.getTime() - Date.now() - refreshThreshold;
 
@@ -449,12 +449,12 @@ class SessionService {
       if (response.success) {
         this.setupAutoRefresh();
       } else {
-        logger.warn('自動刷新會話失敗:', {
+        logger.warn('自動刷新會話Failed:', {
           errorMessage: response.errorMessage,
         });
       }
     } catch (error: unknown) {
-      logger.error('自動刷新會話失敗:', error);
+      logger.error('自動刷新會話Failed:', error);
     }
   }
 
@@ -516,7 +516,7 @@ class SessionService {
         return 'tablet';
       }
     } catch (error) {
-      // 如果無法檢測設備類型，默認為 mobile
+      // 如果無法檢測設備Class型，Default為 mobile
     }
 
     return 'mobile';
@@ -529,7 +529,7 @@ class SessionService {
         timezone: 'Asia/Taipei',
       };
     } catch (error) {
-      logger.warn('獲取位置信息失敗:', error);
+      logger.warn('Get位置信息Failed:', error);
       return undefined;
     }
   }
@@ -538,7 +538,7 @@ class SessionService {
     try {
       return undefined;
     } catch (error) {
-      logger.warn('獲取 IP 地址失敗:', error);
+      logger.warn('Get IP 地址Failed:', error);
       return undefined;
     }
   }
@@ -559,7 +559,7 @@ class SessionService {
     return `activity_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // API 調用方法（模擬實現）
+  // API 調用Method（模擬實現）
   private async callRefreshTokenAPI(
     refreshToken: string
   ): Promise<SessionRefreshResponse> {

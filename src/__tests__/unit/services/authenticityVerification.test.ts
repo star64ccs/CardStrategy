@@ -1,6 +1,6 @@
-// Mock 外部依賴
+// Mock External依賴
 
-// Mock 外部依賴
+// Mock External依賴
 jest.mock('../../../config/api', () => ({
   api: {
     post: jest.fn(),
@@ -46,7 +46,7 @@ describe('防偽判斷功能測試', () => {
       const _mockApi = require('../../../config/api').api;
       mockApi.post.mockResolvedValue({ data: mockVerificationResult });
 
-      // 由於 enhancedAIService 不存在，我們直接測試 API 調用
+      // 由於 enhancedAIService 不存在，我們直接Test API 調用
       const _result = await mockApi.post('/ai/enhanced-verify', {
         imageData: mockImageData,
         options: {
@@ -84,7 +84,7 @@ describe('防偽判斷功能測試', () => {
       const _mockApi = require('../../../config/api').api;
       mockApi.post.mockResolvedValue({ data: mockVerificationResult });
 
-      // 由於 enhancedAIService 不存在，我們直接測試 API 調用
+      // 由於 enhancedAIService 不存在，我們直接Test API 調用
       const _result = await mockApi.post('/ai/enhanced-verify', {
         imageData: mockImageData,
       });
@@ -111,7 +111,7 @@ describe('防偽判斷功能測試', () => {
       const _mockApi = require('../../../config/api').api;
       mockApi.post.mockResolvedValue({ data: mockHologramResult });
 
-      // 直接測試 API 調用
+      // 直接Test API 調用
       const _result = await mockApi.post('/anti-counterfeit/hologram', {
         imageData: mockImageData,
       });
@@ -138,7 +138,7 @@ describe('防偽判斷功能測試', () => {
       const _mockApi = require('../../../config/api').api;
       mockApi.post.mockResolvedValue({ data: mockPrintingResult });
 
-      // 直接測試 API 調用
+      // 直接Test API 調用
       const _result = await mockApi.post('/anti-counterfeit/print-quality', {
         imageData: mockImageData,
       });
@@ -165,7 +165,7 @@ describe('防偽判斷功能測試', () => {
       const _mockApi = require('../../../config/api').api;
       mockApi.post.mockResolvedValue({ data: mockMaterialResult });
 
-      // 直接測試 API 調用
+      // 直接Test API 調用
       const _result = await mockApi.post('/anti-counterfeit/material', {
         imageData: mockImageData,
       });

@@ -1,0 +1,22 @@
+stages:
+  - architecture-check
+
+architecture-check:
+  stage: architecture-check
+  image: node:18
+  script:
+    - npm install
+    - node scripts/verify-architecture-compliance.js
+    - node scripts/fix-architecture-violations.js
+  artifacts:
+    reports:
+      junit: architecture-audit-reports/*.xml
+    paths:
+      - ARCHITECTURE_COMPLIANCE_REPORT.json
+      - ARCHITECTURE_FIX_REPORT.json
+      - audit-reports/
+    expire_in: 1 week
+  only:
+    - main
+    - develop
+    - merge_requests

@@ -21,7 +21,7 @@ const AutomationRule =''
 
     // ?��?決�?ID
     const decisionId = `decision_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;'
-    // ?��?觸發類�??��?決�?''
+    // ?��?觸發Class�??��?決�?''
     let action = '';''
     let reason = '';
     let confidence = 0.8;'
@@ -38,7 +38,7 @@ const AutomationRule =''
         break;''
       case 'error_spike':''
         action = 'restart_service';''
-        reason = '檢測?�錯誤�?增�??��??��?';
+        reason = '檢測?�Error�?增�??��??��?';
         confidence = 0.75;'
         break;''
       case 'resource_exhaustion':''
@@ -793,7 +793,7 @@ router.get('/ops/stats', protect, async (req, res) => {
     });'
   }
 });''
-// 設置?��??��???router.post('/automation/rules', protect, async (req, res) => {
+// Settings?��??��???router.post('/automation/rules', protect, async (req, res) => {
   try {'
     const { name, description, trigger, action, enabled } = req.body;''
     logger.info('?? 設置?��??��???, { name });
@@ -841,7 +841,7 @@ router.get('/ops/stats', protect, async (req, res) => {
     });'
   }
 });''
-// ?�用/禁用?��??��???router.put('/automation/rules/:ruleId/toggle', protect, async (req, res) => {
+// ?�用/Disable?��??��???router.put('/automation/rules/:ruleId/toggle', protect, async (req, res) => {
   try {
     const { ruleId } = req.params;
     const { enabled } = req.body;

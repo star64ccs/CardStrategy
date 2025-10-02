@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-// 臨時類型定義，等待 backgroundSyncManager 實現
+// 臨時Class型定義，Await backgroundSyncManager 實現
 interface SyncTask {
   id: string;
   type: string;
@@ -111,7 +111,7 @@ export interface BackgroundSyncState {
 }
 
 export interface BackgroundSyncActions {
-  // 任務管理
+  // TaskManage
   addTask: (task: Omit<SyncTask, 'id' | 'retryCount' | 'createdAt'>) => string;
   addTasks: (
     tasks: Omit<SyncTask, 'id' | 'retryCount' | 'createdAt'>[]
@@ -120,14 +120,14 @@ export interface BackgroundSyncActions {
   clearTasks: () => void;
   getTask: (id: string) => SyncTask | undefined;
 
-  // 同步控制
+  // SyncControl
   startSync: () => Promise<void>;
   stopAutoSync: () => void;
 
-  // 配置管理
+  // ConfigureManage
   updateConfig: (config: Partial<SyncConfig>) => void;
 
-  // 清理和統計
+  // 清理和Statistics
   cleanupExpiredTasks: (maxAge?: number) => number;
   getTaskStats: () => {
     byType: Record<string, number>;
@@ -135,7 +135,7 @@ export interface BackgroundSyncActions {
     byStatus: Record<string, number>;
   };
 
-  // 便捷方法
+  // 便捷Method
   addApiTask: (
     url: string,
     method: string,
@@ -158,7 +158,7 @@ export interface BackgroundSyncActions {
     priority?: 'high' | 'medium' | 'low'
   ) => string;
 
-  // 衝突解決功能
+  // 衝突Resolve功能
   setConflictResolutionStrategy: (
     taskId: string,
     strategy: ConflictResolutionStrategy
@@ -191,7 +191,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
       backgroundSyncManager.getConflictResolutionConfig(),
   });
 
-  // 更新狀態
+  // UpdateStatus
   const _updateState = useCallback(() => {
     setState(prev => ({
       ...prev,
@@ -204,7 +204,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     }));
   }, []);
 
-  // 添加任務
+  // AddTask
   const _addTask = useCallback(
     (task: Omit<SyncTask, 'id' | 'retryCount' | 'createdAt'>): string => {
       try {
@@ -214,7 +214,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
       } catch (error) {
         setState(prev => ({
           ...prev,
-          error: error instanceof Error ? error.message : '添加任務失敗',
+          error: error instanceof Error ? error.message : '添加任務Failed',
         }));
         throw error;
       }
@@ -222,7 +222,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [updateState]
   );
 
-  // 批量添加任務
+  // BatchAddTask
   const _addTasks = useCallback(
     (tasks: Omit<SyncTask, 'id' | 'retryCount' | 'createdAt'>[]): string[] => {
       try {
@@ -232,7 +232,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
       } catch (error) {
         setState(prev => ({
           ...prev,
-          error: error instanceof Error ? error.message : '批量添加任務失敗',
+          error: error instanceof Error ? error.message : '批量添加任務Failed',
         }));
         throw error;
       }
@@ -240,7 +240,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [updateState]
   );
 
-  // 移除任務
+  // RemoveTask
   const _removeTask = useCallback(
     (id: string): boolean => {
       try {
@@ -250,7 +250,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
       } catch (error) {
         setState(prev => ({
           ...prev,
-          error: error instanceof Error ? error.message : '移除任務失敗',
+          error: error instanceof Error ? error.message : '移除任務Failed',
         }));
         return false;
       }
@@ -258,7 +258,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [updateState]
   );
 
-  // 清空所有任務
+  // 清Empty所有Task
   const _clearTasks = useCallback(() => {
     try {
       backgroundSyncManager.clearTasks();
@@ -266,17 +266,17 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '清空任務失敗',
+        error: error instanceof Error ? error.message : '清空任務Failed',
       }));
     }
   }, [updateState]);
 
-  // 獲取任務
+  // GetTask
   const _getTask = useCallback((id: string): SyncTask | undefined => {
     return backgroundSyncManager.getTask(id);
   }, []);
 
-  // 開始同步
+  // BeginSync
   const _startSync = useCallback(async () => {
     try {
       setState(prev => ({ ...prev, isLoading: true, error: null }));
@@ -285,7 +285,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '同步失敗',
+        error: error instanceof Error ? error.message : '同步Failed',
         isLoading: false,
       }));
     } finally {
@@ -293,7 +293,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     }
   }, [updateState]);
 
-  // 停止自動同步
+  // StopAutoSync
   const _stopAutoSync = useCallback(() => {
     try {
       backgroundSyncManager.stopAutoSync();
@@ -301,12 +301,12 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : '停止自動同步失敗',
+        error: error instanceof Error ? error.message : '停止自動同步Failed',
       }));
     }
   }, [updateState]);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback(
     (config: Partial<SyncConfig>) => {
       try {
@@ -315,14 +315,14 @@ export const _useBackgroundSync = (): BackgroundSyncState &
       } catch (error) {
         setState(prev => ({
           ...prev,
-          error: error instanceof Error ? error.message : '更新配置失敗',
+          error: error instanceof Error ? error.message : 'UpdateConfigureFailed',
         }));
       }
     },
     [updateState]
   );
 
-  // 清理過期任務
+  // 清理過期Task
   const _cleanupExpiredTasks = useCallback(
     (maxAge?: number): number => {
       try {
@@ -332,7 +332,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
       } catch (error) {
         setState(prev => ({
           ...prev,
-          error: error instanceof Error ? error.message : '清理過期任務失敗',
+          error: error instanceof Error ? error.message : '清理過期任務Failed',
         }));
         return 0;
       }
@@ -340,12 +340,12 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [updateState]
   );
 
-  // 獲取任務統計
+  // GetTaskStatistics
   const _getTaskStats = useCallback(() => {
     return backgroundSyncManager.getTaskStats();
   }, []);
 
-  // 便捷方法：添加 API 任務
+  // 便捷Method：Add API Task
   const _addApiTask = useCallback(
     (
       url: string,
@@ -370,7 +370,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [addTask]
   );
 
-  // 便捷方法：添加數據任務
+  // 便捷Method：AddDataTask
   const _addDataTask = useCallback(
     (
       url: string,
@@ -394,7 +394,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [addTask]
   );
 
-  // 便捷方法：添加文件任務
+  // 便捷Method：AddFileTask
   const _addFileTask = useCallback(
     (
       url: string,
@@ -418,7 +418,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [addTask]
   );
 
-  // 便捷方法：添加通知任務
+  // 便捷Method：AddNotificationTask
   const _addNotificationTask = useCallback(
     (
       url: string,
@@ -442,7 +442,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [addTask]
   );
 
-  // 衝突解決功能
+  // 衝突Resolve功能
   const _setConflictResolutionStrategy = useCallback(
     (taskId: string, strategy: ConflictResolutionStrategy) => {
       try {
@@ -456,7 +456,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
         setState(prev => ({
           ...prev,
           error:
-            error instanceof Error ? error.message : '設置衝突解決策略失敗',
+            error instanceof Error ? error.message : 'Settings衝突解決策略Failed',
         }));
         return false;
       }
@@ -473,7 +473,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
         setState(prev => ({
           ...prev,
           error:
-            error instanceof Error ? error.message : '添加自定義解析器失敗',
+            error instanceof Error ? error.message : '添加自定義解析器Failed',
         }));
       }
     },
@@ -490,7 +490,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
         setState(prev => ({
           ...prev,
           error:
-            error instanceof Error ? error.message : '移除自定義解析器失敗',
+            error instanceof Error ? error.message : '移除自定義解析器Failed',
         }));
         return false;
       }
@@ -507,7 +507,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
         setState(prev => ({
           ...prev,
           error:
-            error instanceof Error ? error.message : '更新衝突解決配置失敗',
+            error instanceof Error ? error.message : 'Update衝突解決ConfigureFailed',
         }));
       }
     },
@@ -530,7 +530,7 @@ export const _useBackgroundSync = (): BackgroundSyncState &
       } catch (error) {
         setState(prev => ({
           ...prev,
-          error: error instanceof Error ? error.message : '測試衝突解決失敗',
+          error: error instanceof Error ? error.message : '測試衝突解決Failed',
         }));
         throw error;
       }
@@ -538,26 +538,26 @@ export const _useBackgroundSync = (): BackgroundSyncState &
     [updateState]
   );
 
-  // 定期更新狀態
+  // 定期UpdateStatus
   useEffect(() => {
     const _interval = setInterval(() => {
       updateState();
-    }, 5000); // 每5秒更新一次
+    }, 5000); // 每5SecondUpdate一次
 
     return () => clearInterval(interval);
   }, [updateState]);
 
-  // 網絡狀態監聽
+  // NetworkStatus監聽
   useEffect(() => {
     const _handleOnline = () => {
-      // 網絡恢復時自動開始同步
+      // NetworkRestore時AutoBeginSync
       if (state.status.pendingTasks > 0) {
         startSync();
       }
     };
 
     const _handleOffline = () => {
-      // 網絡斷開時停止自動同步
+      // NetworkDisconnect時StopAutoSync
       stopAutoSync();
     };
 
@@ -571,10 +571,10 @@ export const _useBackgroundSync = (): BackgroundSyncState &
   }, [state.status.pendingTasks, startSync, stopAutoSync]);
 
   return {
-    // 狀態
+    // Status
     ...state,
 
-    // 方法
+    // Method
     addTask,
     addTasks,
     removeTask,

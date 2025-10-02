@@ -3,68 +3,68 @@ const { logger } = require('../utils/logger');
 const redisConfig = require('../../config/redis');
 
 /**
- * 數據庫查詢優化服務
- * 提供查詢優化、索引建議、批量操作等功能
+ * DatabaseQuery優化Service
+ * 提供Query優化、Index建議、BatchOperation等功能
  */
 class DatabaseOptimizer {
   constructor() {
     this.queryStats = new Map();
-    this.slowQueryThreshold = 1000; // 1秒
-    this.maxQueryTime = 30000; // 30秒
+    this.slowQueryThreshold = 1000; // 1Second
+    this.maxQueryTime = 30000; // 30Second
     this.cacheEnabled = true;
     this.batchSize = 100;
   }
 
   /**
-   * 優化查詢參數
+   * 優化QueryParameter
    */
   optimizeQuery(queryOptions) {
     const optimized = { ...queryOptions };
 
-    // 限制結果數量
+    // Limit結果數量
     if (!optimized.limit || optimized.limit > 1000) {
       optimized.limit = Math.min(optimized.limit || 50, 1000);
     }
 
-    // 優化 include 關聯
+    // 優化 include Off聯
     if (optimized.include) {
       optimized.include = this.optimizeIncludes(optimized.include);
     }
 
-    // 添加查詢超時
+    // AddQuery超時
     if (!optimized.timeout) {
       optimized.timeout = this.maxQueryTime;
     }
 
-    // 優化排序
+    // 優化Sort
     if (optimized.order) {
       optimized.order = this.optimizeOrder(optimized.order);
     }
 
-    // 添加查詢統計
+    // AddQueryStatistics
     optimized.benchmark = true;
 
     return optimized;
   }
 
   /**
-   * 優化關聯查詢
+   * 優化Off聯Query
    */
   optimizeIncludes(includes) {
     return includes.map((include) => {
       const optimized = { ...include };
 
-      // 限制關聯查詢的結果數量
+      // LimitOff聯Query的結果數量
       if (!optimized.limit) {
         optimized.limit = 100;
       }
 
-      // 優化嵌套關聯
+      // 優化嵌套Off聯
       if (optimized.include) {
         optimized.include = this.optimizeIncludes(optimized.include);
       }
 
-      // 只選擇必要的字段
+      // 只Select必要的Field
       if (!optimized.attributes) {
         optimized.attributes = { exclude: ['createdAt', 'updatedAt'] };
       }
@@ -74,7 +74,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 優化排序
+   * 優化Sort
    */
   optimizeOrder(order) {
     if (Array.isArray(order)) {
@@ -89,7 +89,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 批量查詢優化
+   * BatchQuery優化
    */
   async batchQuery(model, ids, options = {}) {
     const { batchSize = this.batchSize, include, where = {} } = options;
@@ -120,7 +120,7 @@ class DatabaseOptimizer {
           `批次 ${i + 1}/${batches.length} 完成，獲取 ${batchResults.length} 條記錄`
         );
       } catch (error) {
-        logger.error(`批次 ${i + 1} 查詢失敗:`, error);
+        logger.error(`批次 ${i + 1} 查詢Failed:`, error);
         throw error;
       }
     }
@@ -129,7 +129,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 優化分頁查詢
+   * 優化PaginateQuery
    */
   async paginatedQuery(model, page = 1, limit = 20, options = {}) {
     const offset = (page - 1) * limit;
@@ -154,13 +154,13 @@ class DatabaseOptimizer {
         },
       };
     } catch (error) {
-      logger.error('分頁查詢失敗:', error);
+      logger.error('分頁查詢Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 緩存查詢結果
+   * CacheQuery結果
    */
   async cachedQuery(model, cacheKey, queryOptions, ttl = 300) {
     if (!this.cacheEnabled) {
@@ -168,7 +168,7 @@ class DatabaseOptimizer {
     }
 
     try {
-      // 嘗試從緩存獲取
+      // 嘗試從CacheGet
       const redisClient = redisConfig.getClient();
       const cached = await redisClient.get(cacheKey);
       if (cached) {
@@ -176,24 +176,24 @@ class DatabaseOptimizer {
         return JSON.parse(cached);
       }
 
-      // 執行查詢
+      // 執RowQuery
 // eslint-disable-next-line no-unused-vars
       const results = await model.findAll(queryOptions);
 
-      // 緩存結果
+      // Cache結果
       await redisClient.setEx(cacheKey, ttl, JSON.stringify(results));
       logger.info(`查詢結果已緩存: ${cacheKey}`);
 
       return results;
     } catch (error) {
-      logger.error('緩存查詢失敗:', error);
-      // 降級到直接查詢
+      logger.error('緩存查詢Failed:', error);
+      // Downgrade到直接Query
       return await model.findAll(queryOptions);
     }
   }
 
   /**
-   * 批量插入優化
+   * BatchInsert優化
    */
   async batchInsert(model, records, options = {}) {
     const { batchSize = this.batchSize, ignoreDuplicates = false } = options;
@@ -226,7 +226,7 @@ class DatabaseOptimizer {
           `批次 ${i + 1}/${batches.length} 插入完成，插入 ${batchResults.length} 條記錄`
         );
       } catch (error) {
-        logger.error(`批次 ${i + 1} 插入失敗:`, error);
+        logger.error(`批次 ${i + 1} 插入Failed:`, error);
         throw error;
       }
     }
@@ -235,7 +235,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 批量更新優化
+   * BatchUpdate優化
    */
   async batchUpdate(model, updates, options = {}) {
     const { batchSize = this.batchSize, whereField = 'id' } = options;
@@ -253,7 +253,7 @@ class DatabaseOptimizer {
         });
         results.push(result);
       } catch (error) {
-        logger.error('更新記錄失敗:', error);
+        logger.error('Update記錄Failed:', error);
         throw error;
       }
     }
@@ -262,13 +262,13 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 查詢性能分析
+   * Query性能Analysis
    */
   async analyzeQuery(model, queryOptions) {
     const startTime = Date.now();
 
     try {
-      // 執行查詢並獲取執行計劃
+      // 執RowQuery並Get執Row計劃
       const explainQuery = await model.sequelize.query(
         `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${model.sequelize
           .getQueryInterface()
@@ -292,7 +292,7 @@ class DatabaseOptimizer {
         ),
       };
     } catch (error) {
-      logger.error('查詢分析失敗:', error);
+      logger.error('查詢分析Failed:', error);
       throw error;
     }
   }
@@ -320,7 +320,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 索引建議
+   * Index建議
    */
   async suggestIndexes(model, queryPatterns) {
     const suggestions = [];
@@ -329,7 +329,7 @@ class DatabaseOptimizer {
     for (const pattern of queryPatterns) {
       const { where, order, include } = pattern;
 
-      // 分析 where 條件
+      // Analysis where Condition
       if (where) {
         const whereFields = this.extractFields(where);
         if (whereFields.length > 0) {
@@ -341,7 +341,7 @@ class DatabaseOptimizer {
         }
       }
 
-      // 分析排序字段
+      // AnalysisSortField
       if (order) {
         const orderFields = this.extractOrderFields(order);
         if (orderFields.length > 0) {
@@ -358,7 +358,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 提取查詢字段
+   * 提取QueryField
    */
   extractFields(where) {
     const fields = [];
@@ -378,7 +378,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 提取排序字段
+   * 提取SortField
    */
   extractOrderFields(order) {
     if (Array.isArray(order)) {
@@ -393,7 +393,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 數組分塊
+   * Array分塊
    */
   chunkArray(array, size) {
     const chunks = [];
@@ -404,7 +404,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 獲取查詢統計
+   * GetQueryStatistics
    */
   getQueryStats() {
     const stats = {};
@@ -421,7 +421,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 記錄查詢統計
+   * RecordQueryStatistics
    */
   recordQueryStats(query, executionTime) {
     if (!this.queryStats.has(query)) {
@@ -446,7 +446,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 清理查詢統計
+   * 清理QueryStatistics
    */
   clearQueryStats() {
     this.queryStats.clear();
@@ -454,7 +454,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 設置配置
+   * SettingsConfigure
    */
   setConfig(config) {
     Object.assign(this, config);
@@ -462,7 +462,7 @@ class DatabaseOptimizer {
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   getConfig() {
     return {
@@ -474,7 +474,7 @@ class DatabaseOptimizer {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 // eslint-disable-next-line no-unused-vars
 const databaseOptimizer = new DatabaseOptimizer();
 

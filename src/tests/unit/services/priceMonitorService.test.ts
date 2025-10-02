@@ -33,7 +33,7 @@ describe('PriceMonitorService', () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
 
-    // 設置默認 mock 值
+    // SettingsDefault mock Value
     mockNetworkMonitor.isOnline.mockReturnValue(true);
     mockNetworkMonitor.addListener.mockImplementation(() => {});
     mockNetworkMonitor.removeListener.mockImplementation(() => {});
@@ -45,7 +45,7 @@ describe('PriceMonitorService', () => {
   });
 
   describe('initialize', () => {
-    it('應該成功初始化價格監控服務', async () => {
+    it('應該SuccessInitialize價格監控Service', async () => {
       const _mockAlerts = {
         data: [
           {
@@ -67,26 +67,26 @@ describe('PriceMonitorService', () => {
 
       await priceMonitorService.initialize();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('初始化價格監控服務');
+      expect(mockLogger.info).toHaveBeenCalledWith('Initialize價格監控Service');
       expect(mockInvestmentService.getPriceAlerts).toHaveBeenCalled();
       expect(mockNetworkMonitor.addListener).toHaveBeenCalled();
-      expect(mockLogger.info).toHaveBeenCalledWith('價格監控服務初始化完成');
+      expect(mockLogger.info).toHaveBeenCalledWith('價格監控ServiceInitialize完成');
     });
 
-    it('應該處理初始化失敗', async () => {
-      const _error = new Error('初始化失敗');
+    it('應該HandleInitializeFailed', async () => {
+      const _error = new Error('InitializeFailed');
       mockInvestmentService.getPriceAlerts.mockRejectedValue(error);
 
       await priceMonitorService.initialize();
 
-      expect(mockLogger.error).toHaveBeenCalledWith('價格監控服務初始化失敗:', {
+      expect(mockLogger.error).toHaveBeenCalledWith('價格監控ServiceInitializeFailed:', {
         error,
       });
     });
   });
 
   describe('startMonitoring', () => {
-    it('應該成功開始監控', () => {
+    it('應該Success開始監控', () => {
       priceMonitorService.startMonitoring();
 
       expect(mockLogger.info).toHaveBeenCalledWith('價格監控已開始', {
@@ -103,7 +103,7 @@ describe('PriceMonitorService', () => {
   });
 
   describe('stopMonitoring', () => {
-    it('應該成功停止監控', () => {
+    it('應該Success停止監控', () => {
       priceMonitorService.startMonitoring();
       priceMonitorService.stopMonitoring();
 
@@ -118,7 +118,7 @@ describe('PriceMonitorService', () => {
   });
 
   describe('addPriceAlert', () => {
-    it('應該成功添加價格提醒', async () => {
+    it('應該Success添加價格提醒', async () => {
       const _mockAlert = {
         id: 'alert-1',
         cardId: 'card-1',
@@ -157,14 +157,14 @@ describe('PriceMonitorService', () => {
       });
     });
 
-    it('應該處理添加提醒失敗', async () => {
-      const _error = new Error('添加失敗');
+    it('應該Handle添加提醒Failed', async () => {
+      const _error = new Error('添加Failed');
       mockInvestmentService.setPriceAlert.mockRejectedValue(error);
 
       await expect(
         priceMonitorService.addPriceAlert('card-1', 100, 'above')
-      ).rejects.toThrow('添加失敗');
-      expect(mockLogger.error).toHaveBeenCalledWith('添加價格提醒失敗:', {
+      ).rejects.toThrow('添加Failed');
+      expect(mockLogger.error).toHaveBeenCalledWith('添加價格提醒Failed:', {
         cardId: 'card-1',
         targetPrice: 100,
         type: 'above',
@@ -204,7 +204,7 @@ describe('PriceMonitorService', () => {
   });
 
   describe('updateConfig', () => {
-    it('應該成功更新配置', () => {
+    it('應該SuccessUpdateConfigure', () => {
       const _newConfig = {
         checkInterval: 10 * 60 * 1000,
         priceChangeThreshold: 10,
@@ -266,7 +266,7 @@ describe('PriceMonitorService', () => {
       priceMonitorService.cleanup();
 
       expect(mockNetworkMonitor.removeListener).toHaveBeenCalled();
-      expect(mockLogger.info).toHaveBeenCalledWith('價格監控服務資源清理完成');
+      expect(mockLogger.info).toHaveBeenCalledWith('價格監控Service資源清理完成');
     });
   });
 
@@ -296,49 +296,49 @@ describe('PriceMonitorService', () => {
     it('應該在網絡離線時跳過價格檢查', async () => {
       mockNetworkMonitor.isOnline.mockReturnValue(false);
 
-      // 觸發價格檢查
+      // 觸發價格Check
       jest.advanceTimersByTime(5 * 60 * 1000);
 
       expect(mockLogger.debug).toHaveBeenCalledWith('網絡離線，跳過價格檢查');
     });
 
     it('應該在沒有活躍提醒時跳過檢查', async () => {
-      // 清空活躍提醒
+      // 清Empty活躍提醒
       priceMonitorService.getActiveAlerts().forEach(() => {
-        // 這裡需要訪問私有方法來清空提醒，但我們可以通過其他方式測試
+        // 這裡需要訪問PrivateMethod來清Empty提醒，但我們可以通過其他方式Test
       });
 
-      // 觸發價格檢查
+      // 觸發價格Check
       jest.advanceTimersByTime(5 * 60 * 1000);
 
-      // 應該不會調用價格獲取相關的方法
+      // 應該不會調用價格Get相Off的Method
       expect(mockMarketService.getMarketData).not.toHaveBeenCalled();
     });
 
-    it('應該處理價格獲取失敗', async () => {
+    it('應該Handle價格GetFailed', async () => {
       mockCacheManager.getCachedMarketData.mockResolvedValue(null);
       mockMarketService.getMarketData.mockRejectedValue(
-        new Error('價格獲取失敗')
+        new Error('價格GetFailed')
       );
 
-      // 觸發價格檢查
+      // 觸發價格Check
       jest.advanceTimersByTime(5 * 60 * 1000);
 
-      expect(mockLogger.error).toHaveBeenCalledWith('獲取價格失敗:', {
+      expect(mockLogger.error).toHaveBeenCalledWith('Get價格Failed:', {
         cardId: 'card-1',
-        error: new Error('價格獲取失敗'),
+        error: new Error('價格GetFailed'),
       });
     });
 
     it('應該從緩存獲取價格數據', async () => {
       const _mockCachedData = {
         data: { currentPrice: 95 },
-        timestamp: Date.now() - 2 * 60 * 1000, // 2分鐘前
+        timestamp: Date.now() - 2 * 60 * 1000, // 2Minute前
       };
 
       mockCacheManager.getCachedMarketData.mockResolvedValue(mockCachedData);
 
-      // 觸發價格檢查
+      // 觸發價格Check
       jest.advanceTimersByTime(5 * 60 * 1000);
 
       expect(mockCacheManager.getCachedMarketData).toHaveBeenCalledWith(
@@ -350,7 +350,7 @@ describe('PriceMonitorService', () => {
     it('應該在緩存過期時從API獲取價格', async () => {
       const _mockCachedData = {
         data: { currentPrice: 95 },
-        timestamp: Date.now() - 10 * 60 * 1000, // 10分鐘前，已過期
+        timestamp: Date.now() - 10 * 60 * 1000, // 10Minute前，已過期
       };
 
       const _mockMarketData = {
@@ -364,7 +364,7 @@ describe('PriceMonitorService', () => {
       mockCacheManager.getCachedMarketData.mockResolvedValue(mockCachedData);
       mockMarketService.getMarketData.mockResolvedValue(mockMarketData);
 
-      // 觸發價格檢查
+      // 觸發價格Check
       jest.advanceTimersByTime(5 * 60 * 1000);
 
       expect(mockMarketService.getMarketData).toHaveBeenCalledWith('card-1');
@@ -413,7 +413,7 @@ describe('PriceMonitorService', () => {
 
       mockMarketService.getMarketAnalysis.mockResolvedValue(mockMarketAnalysis);
 
-      // 觸發價格檢查
+      // 觸發價格Check
       jest.advanceTimersByTime(5 * 60 * 1000);
 
       expect(mockMarketService.getMarketAnalysis).toHaveBeenCalled();
@@ -424,23 +424,23 @@ describe('PriceMonitorService', () => {
       );
     });
 
-    it('應該處理市場分析失敗', async () => {
+    it('應該Handle市場分析Failed', async () => {
       mockMarketService.getMarketAnalysis.mockRejectedValue(
-        new Error('分析失敗')
+        new Error('分析Failed')
       );
 
-      // 觸發價格檢查
+      // 觸發價格Check
       jest.advanceTimersByTime(5 * 60 * 1000);
 
-      expect(mockLogger.error).toHaveBeenCalledWith('檢查市場趨勢提醒失敗:', {
-        error: new Error('分析失敗'),
+      expect(mockLogger.error).toHaveBeenCalledWith('Check市場趨勢提醒Failed:', {
+        error: new Error('分析Failed'),
       });
     });
   });
 
   describe('網絡狀態處理', () => {
     it('應該在網絡恢復時重新開始監控', () => {
-      // 模擬網絡變化
+      // 模擬Network變化
       const _networkChangeHandler =
         mockNetworkMonitor.addListener.mock.calls[0][0];
       networkChangeHandler(true);
@@ -453,7 +453,7 @@ describe('PriceMonitorService', () => {
     it('應該在網絡斷開時停止監控', () => {
       priceMonitorService.startMonitoring();
 
-      // 模擬網絡變化
+      // 模擬Network變化
       const _networkChangeHandler =
         mockNetworkMonitor.addListener.mock.calls[0][0];
       networkChangeHandler(false);

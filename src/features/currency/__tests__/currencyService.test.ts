@@ -1,4 +1,4 @@
-// 多幣種服務測試
+// 多幣種ServiceTest
 import { currencyService } from '../services/currencyService';
 import type {
   CurrencyConversionRequest,
@@ -34,7 +34,7 @@ global.fetch = jest.fn();
 describe('CurrencyService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // 重置 singleton 實例
+    // Reset singleton Instance
     (currencyService as any).instance = null;
   });
 
@@ -47,7 +47,7 @@ describe('CurrencyService', () => {
   });
 
   describe('初始化', () => {
-    it('應該成功初始化服務', async () => {
+    it('應該SuccessInitializeService', async () => {
       const _mockFetch = fetch as jest.MockedFunction<typeof fetch>;
       mockFetch.mockResolvedValueOnce({
         ok: true,
@@ -77,10 +77,10 @@ describe('CurrencyService', () => {
         },
       };
 
-      // 重置實例以測試自定義配置
+      // ResetInstance以TestCustomConfigure
       (currencyService as any).instance = null;
       await currencyService.initialize(customConfig);
-      // 由於 singleton 模式，我們需要檢查配置是否正確應用
+      // 由於 singleton 模式，我們需要CheckConfigureYesNo正確Apply
       expect(currencyService.getAvailableCurrencies()).toHaveProperty('USD');
     });
   });
@@ -101,7 +101,7 @@ describe('CurrencyService', () => {
       expect(currencies).toHaveProperty('EUR');
     });
 
-    it('應該成功更改貨幣', async () => {
+    it('應該Success更改貨幣', async () => {
       const _result = await currencyService.changeCurrency('USD');
       expect(result.success).toBe(true);
       expect(result.currency?.code).toBe('USD');
@@ -120,7 +120,7 @@ describe('CurrencyService', () => {
       await currencyService.initialize();
     });
 
-    it('應該成功轉換相同貨幣', async () => {
+    it('應該Success轉換相同貨幣', async () => {
       const request: CurrencyConversionRequest = {
         fromCurrency: 'TWD',
         toCurrency: 'TWD',
@@ -174,7 +174,7 @@ describe('CurrencyService', () => {
       expect(result.rate?.rate).toBe(1);
     });
 
-    it('應該使用備用匯率當 API 失敗', async () => {
+    it('應該使用備用匯率當 API Failed', async () => {
       const _mockFetch = fetch as jest.MockedFunction<typeof fetch>;
       mockFetch.mockRejectedValueOnce(new Error('API Error'));
 
@@ -196,7 +196,7 @@ describe('CurrencyService', () => {
 
     it('應該正確格式化貨幣', () => {
       const _formatted = currencyService.formatCurrency(1234.56, 'TWD');
-      // 檢查格式化結果是字符串且包含數字
+      // CheckFormat結果Yes字符串且Package含數字
       expect(typeof formatted).toBe('string');
       expect(formatted).toMatch(/\d/);
     });
@@ -322,12 +322,12 @@ describe('CurrencyService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     beforeEach(async () => {
       await currencyService.initialize();
     });
 
-    it('應該處理 API 錯誤', async () => {
+    it('應該Handle API Error', async () => {
       const _mockFetch = fetch as jest.MockedFunction<typeof fetch>;
       mockFetch.mockRejectedValueOnce(new Error('Network Error'));
 
@@ -370,7 +370,7 @@ describe('CurrencyService', () => {
       }
 
       const _endTime = Date.now();
-      expect(endTime - startTime).toBeLessThan(100); // 應該在 100ms 內完成
+      expect(endTime - startTime).toBeLessThan(100); // 應該在 100ms 內Complete
     });
 
     it('應該快速驗證貨幣代碼', () => {
@@ -381,7 +381,7 @@ describe('CurrencyService', () => {
       }
 
       const _endTime = Date.now();
-      expect(endTime - startTime).toBeLessThan(50); // 應該在 50ms 內完成
+      expect(endTime - startTime).toBeLessThan(50); // 應該在 50ms 內Complete
     });
   });
 

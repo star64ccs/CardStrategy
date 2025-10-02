@@ -35,7 +35,7 @@ describe('CardSlice', () => {
   };
 
   beforeEach(() => {
-    // 重置狀態
+    // ResetStatus
     jest.clearAllMocks();
   });
 
@@ -155,8 +155,8 @@ describe('CardSlice', () => {
   });
 
   describe('setError', () => {
-    it('應該正確設置錯誤信息', () => {
-      const _errorMessage = '載入失敗';
+    it('應該正確SettingsError信息', () => {
+      const _errorMessage = '載入Failed';
       const _action = setError(errorMessage);
       const _state = cardSlice(initialState, action);
 
@@ -166,8 +166,8 @@ describe('CardSlice', () => {
   });
 
   describe('clearError', () => {
-    it('應該正確清除錯誤信息', () => {
-      const _stateWithError = { ...initialState, error: '錯誤信息' };
+    it('應該正確清除Error信息', () => {
+      const _stateWithError = { ...initialState, error: 'Error信息' };
       const _action = clearError();
       const _state = cardSlice(stateWithError, action);
 
@@ -311,11 +311,11 @@ describe('CardSlice', () => {
         collections: { collection1: ['card1'] },
       };
 
-      // 模擬重置操作
+      // 模擬ResetOperation
       const _resetAction = { type: 'RESET_STATE' };
       const _state = cardSlice(stateWithData, resetAction);
 
-      // 如果沒有重置reducer，狀態應該保持不變
+      // 如果沒有Resetreducer，Status應該保持不變
       expect(state).toEqual(stateWithData);
     });
   });

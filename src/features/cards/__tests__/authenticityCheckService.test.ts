@@ -94,7 +94,7 @@ describe('AuthenticityCheckService', () => {
         'Failed to load options'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'AuthenticityCheckService 初始化失敗:',
+        'AuthenticityCheckService InitializeFailed:',
         error
       );
     });
@@ -182,7 +182,7 @@ describe('AuthenticityCheckService', () => {
         expect.any(Object)
       );
       expect(result).toEqual(mockResult);
-      expect(mockLogger.info).toHaveBeenCalledWith('防偽檢查成功', {
+      expect(mockLogger.info).toHaveBeenCalledWith('防偽CheckSuccess', {
         cardId: mockResult.cardId,
         isAuthentic: mockResult.isAuthentic,
         confidence: mockResult.confidence,
@@ -287,7 +287,7 @@ describe('AuthenticityCheckService', () => {
         })
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '防偽檢查 API 返回失敗:',
+        '防偽Check API 返回Failed:',
         expect.objectContaining({
           code: mockError.code,
           message: mockError.message,
@@ -304,7 +304,7 @@ describe('AuthenticityCheckService', () => {
       await expect(
         authenticityCheckService.checkAuthenticity(mockRequest)
       ).rejects.toThrow('Image preprocessing failed');
-      expect(mockLogger.error).toHaveBeenCalledWith('防偽檢查失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('防偽CheckFailed:', error);
     });
   });
 
@@ -362,7 +362,7 @@ describe('AuthenticityCheckService', () => {
         authenticityCheckService['callGetCheckHistoryAPI']
       ).toHaveBeenCalledWith(userId, limit);
       expect(result).toEqual(mockHistory);
-      expect(mockLogger.info).toHaveBeenCalledWith('成功獲取檢查歷史', {
+      expect(mockLogger.info).toHaveBeenCalledWith('SuccessGetCheck歷史', {
         count: mockHistory.length,
       });
     });
@@ -381,7 +381,7 @@ describe('AuthenticityCheckService', () => {
         authenticityCheckService.getCheckHistory(userId)
       ).rejects.toThrow(errorMessage);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取檢查歷史失敗:',
+        'GetCheck歷史Failed:',
         expect.any(Error)
       );
     });
@@ -433,7 +433,7 @@ describe('AuthenticityCheckService', () => {
         authenticityCheckService['callGetCheckStatsAPI']
       ).toHaveBeenCalledWith(userId);
       expect(result).toEqual(mockStats);
-      expect(mockLogger.info).toHaveBeenCalledWith('成功獲取檢查統計', {
+      expect(mockLogger.info).toHaveBeenCalledWith('SuccessGetCheck統計', {
         totalChecks: mockStats.totalChecks,
         fakeDetectionRate: '6.67%',
       });
@@ -453,7 +453,7 @@ describe('AuthenticityCheckService', () => {
         authenticityCheckService.getCheckStats(userId)
       ).rejects.toThrow(errorMessage);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '獲取檢查統計失敗:',
+        'GetCheck統計Failed:',
         expect.any(Error)
       );
     });
@@ -486,7 +486,7 @@ describe('AuthenticityCheckService', () => {
         authenticityCheckService['callGetCheckOptionsAPI']
       ).toHaveBeenCalled();
       expect(result).toEqual(mockOptions);
-      expect(mockLogger.info).toHaveBeenCalledWith('成功獲取檢查選項', {
+      expect(mockLogger.info).toHaveBeenCalledWith('SuccessGetCheck選項', {
         options: mockOptions,
       });
     });
@@ -500,7 +500,7 @@ describe('AuthenticityCheckService', () => {
       await expect(authenticityCheckService.getCheckOptions()).rejects.toThrow(
         'Failed to fetch options'
       );
-      expect(mockLogger.error).toHaveBeenCalledWith('獲取檢查選項失敗:', error);
+      expect(mockLogger.error).toHaveBeenCalledWith('GetCheck選項Failed:', error);
     });
   });
 });

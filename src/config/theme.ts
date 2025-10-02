@@ -76,7 +76,7 @@ export const _colors = {
   backgroundPaper: '#FFFFFF',
   backgroundPaperDark: '#1E1E1E',
 
-  // 狀態色系
+  // Status色系
   success: '#4CAF50',
   success50: '#E8F5E8',
   success100: '#C8E6C9',
@@ -126,7 +126,7 @@ export const _colors = {
   shadowMedium: 'rgba(0, 0, 0, 0.15)',
   shadowDark: 'rgba(0, 0, 0, 0.25)',
 
-  // 簡化的顏色屬性 - 用於組件
+  // 簡化的顏色Property - 用於Component
   white: '#FFFFFF',
   black: '#000000',
   backgroundSecondary: '#F3F4F6',
@@ -199,7 +199,7 @@ export const _borderRadius = {
   full: 9999,
 };
 
-// 陰影系統 (React Native 版本)
+// 陰影系統 (React Native Version)
 export const _shadows = {
   sm: {
     shadowColor: colors.shadowLight,
@@ -262,7 +262,7 @@ export const _animation = {
   },
 };
 
-// 尺寸系統 (React Native 版本)
+// 尺寸系統 (React Native Version)
 export const _dimensions = {
   screen: {
     width,
@@ -296,7 +296,7 @@ export const _dimensions = {
   },
 };
 
-// 主題配置
+// ThemeConfigure
 export const _theme = {
   colors,
   typography,
@@ -308,7 +308,7 @@ export const _theme = {
   dimensions,
 };
 
-// 深色主題覆蓋
+// 深色Theme覆蓋
 export const _darkTheme = {
   ...theme,
   colors: {
@@ -332,14 +332,14 @@ export const _darkTheme = {
   },
 };
 
-// 主題類型
+// ThemeClass型
 export type Theme = typeof theme;
 export type DarkTheme = typeof darkTheme;
 
-// 主題模式
+// Theme模式
 export type ThemeMode = 'light' | 'dark' | 'auto';
 
-// 主題上下文類型
+// Theme上下文Class型
 export interface ThemeContextType {
   theme: Theme;
   isDark: boolean;
@@ -348,7 +348,7 @@ export interface ThemeContextType {
   setThemeMode: (mode: ThemeMode) => void;
 }
 
-// 組件主題類型
+// ComponentThemeClass型
 export interface ComponentTheme {
   colors: typeof colors;
   typography: typeof typography;
@@ -359,5 +359,5 @@ export interface ComponentTheme {
   dimensions: typeof dimensions;
 }
 
-// 導出默認主題
+// ExportDefaultTheme
 export default theme;

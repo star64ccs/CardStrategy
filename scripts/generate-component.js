@@ -15,18 +15,18 @@ if (!componentName) {
 const pascalCase = componentName.charAt(0).toUpperCase() + componentName.slice(1);
 const kebabCase = componentName.replace(/([a-z0-9]|(?=[A-Z]))([A-Z])/g, '$1-$2').toLowerCase();
 
-// 創建組件目錄
+// CreateComponentDirectory
 const componentDir = path.join(__dirname, '..', 'src', 'components', kebabCase);
 if (!fs.existsSync(componentDir)) {
   fs.mkdirSync(componentDir, { recursive: true });
 }
 
-// 生成組件模板
+// 生成Component模板
 const generateFunctionalComponent = () => `import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 interface ${pascalCase}Props {
-  // 添加你的 props 類型
+  // Add你的 props Class型
 }
 
 export const ${pascalCase}: React.FC<${pascalCase}Props> = (props) => {
@@ -39,7 +39,7 @@ export const ${pascalCase}: React.FC<${pascalCase}Props> = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    // 添加你的樣式
+    // Add你的樣式
   },
 });
 `;
@@ -48,18 +48,18 @@ const generateClassComponent = () => `import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 interface ${pascalCase}Props {
-  // 添加你的 props 類型
+  // Add你的 props Class型
 }
 
 interface ${pascalCase}State {
-  // 添加你的 state 類型
+  // Add你的 state Class型
 }
 
 export class ${pascalCase} extends Component<${pascalCase}Props, ${pascalCase}State> {
   constructor(props: ${pascalCase}Props) {
     super(props);
     this.state = {
-      // 初始化 state
+      // Initialize state
     };
   }
 
@@ -74,12 +74,12 @@ export class ${pascalCase} extends Component<${pascalCase}Props, ${pascalCase}St
 
 const styles = StyleSheet.create({
   container: {
-    // 添加你的樣式
+    // Add你的樣式
   },
 });
 `;
 
-// 生成測試文件模板
+// 生成TestFile模板
 const generateTestFile = () => `import React from 'react';
 import { render } from '@testing-library/react-native';
 import { ${pascalCase} } from './${pascalCase}';
@@ -90,22 +90,22 @@ describe('${pascalCase}', () => {
     expect(getByText('${pascalCase} Component')).toBeTruthy();
   });
 
-  // 添加更多測試
+  // Add更多Test
 });
 `;
 
-// 生成索引文件模板
+// 生成IndexFile模板
 const generateIndexFile = () => `export { ${pascalCase} } from './${pascalCase}';
 `;
 
-// 生成組件文件
+// 生成ComponentFile
 const componentContent = componentType === 'class' ? generateClassComponent() : generateFunctionalComponent();
 fs.writeFileSync(path.join(componentDir, `${pascalCase}.tsx`), componentContent);
 
-// 生成測試文件
+// 生成TestFile
 fs.writeFileSync(path.join(componentDir, `${pascalCase}.test.tsx`), generateTestFile());
 
-// 生成索引文件
+// 生成IndexFile
 fs.writeFileSync(path.join(componentDir, 'index.ts'), generateIndexFile());
 
 console.log(`✅ 組件 ${pascalCase} 已生成在 ${componentDir}`);

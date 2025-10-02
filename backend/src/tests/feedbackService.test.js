@@ -13,17 +13,17 @@ describe('Feedback Service Tests', () => {
   let authToken;
 
   beforeAll(async () => {
-    // 設置測試數據庫
+    // SettingsTestDatabase
     await sequelize.sync({ force: true });
 
-    // 創建測試用戶
+    // CreateTestUser
     testUser = await User.create({
       username: 'testuser',
       email: 'test@example.com',
       password: 'password123',
     });
 
-    // 獲取認證令牌
+    // GetAuthenticate令牌
     const loginResponse = await request(require('../app'))
       .post('/api/auth/login')
       .send({
@@ -39,7 +39,7 @@ describe('Feedback Service Tests', () => {
   });
 
   beforeEach(async () => {
-    // 清理測試數據
+    // 清理TestData
     await FeedbackResponse.destroy({ where: {} });
     await Feedback.destroy({ where: {} });
     await FeedbackAnalytics.destroy({ where: {} });
@@ -94,7 +94,7 @@ describe('Feedback Service Tests', () => {
 
       const feedback = await feedbackService.submitFeedback(feedbackData);
 
-      // 檢查是否生成了自動回應
+      // CheckYesNo生成了Auto回應
       const responses = await FeedbackResponse.findAll({
         where: { feedbackId: feedback.id },
       });
@@ -107,7 +107,7 @@ describe('Feedback Service Tests', () => {
 
   describe('getFeedbacks', () => {
     beforeEach(async () => {
-      // 創建測試反饋
+      // CreateTest反饋
       testFeedback = await Feedback.create({
         userId: testUser.id,
         feedbackType: 'data_quality',
@@ -300,7 +300,7 @@ describe('Feedback Service Tests', () => {
 
   describe('getFeedbackStats', () => {
     beforeEach(async () => {
-      // 創建測試反饋和分析數據
+      // CreateTest反饋和AnalysisData
       await Feedback.create({
         userId: testUser.id,
         feedbackType: 'data_quality',
@@ -323,7 +323,7 @@ describe('Feedback Service Tests', () => {
         priority: 'normal',
       });
 
-      // 創建分析數據
+      // CreateAnalysisData
       const today = new Date().toISOString().split('T')[0];
       await FeedbackAnalytics.create({
         date: today,
@@ -361,7 +361,7 @@ describe('Feedback Service Tests', () => {
 
   describe('generateImprovementSuggestions', () => {
     beforeEach(async () => {
-      // 創建測試分析數據
+      // CreateTestAnalysisData
       const today = new Date().toISOString().split('T')[0];
       await FeedbackAnalytics.create({
         date: today,

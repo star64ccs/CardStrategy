@@ -54,9 +54,9 @@ const GlobalCoreArchitectureExample: React.FC = () => {
         },
       });
 
-      addTestResult('✅ 架構初始化成功', 'success');
+      addTestResult('✅ 架構InitializeSuccess', 'success');
     } catch (error) {
-      addTestResult(`❌ 架構初始化失敗: ${error}`, 'error');
+      addTestResult(`❌ 架構InitializeFailed: ${error}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -98,9 +98,9 @@ const GlobalCoreArchitectureExample: React.FC = () => {
       };
 
       const _result = await service.processBusinessLogic(operation);
-      addTestResult(`✅ 業務邏輯處理成功: ${result.success}`, 'success');
+      addTestResult(`✅ 業務邏輯HandleSuccess: ${result.success}`, 'success');
     } catch (error) {
-      addTestResult(`❌ 業務邏輯處理失敗: ${error}`, 'error');
+      addTestResult(`❌ 業務邏輯HandleFailed: ${error}`, 'error');
     }
   };
 
@@ -122,11 +122,11 @@ const GlobalCoreArchitectureExample: React.FC = () => {
 
       const _result = await framework.detectThreats(threats);
       addTestResult(
-        `✅ 威脅檢測成功: 檢測到 ${result.detected.length} 個威脅`,
+        `✅ 威脅檢測Success: 檢測到 ${result.detected.length} 個威脅`,
         'success'
       );
     } catch (error) {
-      addTestResult(`❌ 威脅檢測失敗: ${error}`, 'error');
+      addTestResult(`❌ 威脅檢測Failed: ${error}`, 'error');
     }
   };
 
@@ -167,9 +167,9 @@ const GlobalCoreArchitectureExample: React.FC = () => {
       };
 
       const _result = await dataModels.defineDataModel(model);
-      addTestResult(`✅ 數據模型定義成功: ${result.modelId}`, 'success');
+      addTestResult(`✅ 數據模型定義Success: ${result.modelId}`, 'success');
     } catch (error) {
-      addTestResult(`❌ 數據模型定義失敗: ${error}`, 'error');
+      addTestResult(`❌ 數據模型定義Failed: ${error}`, 'error');
     }
   };
 
@@ -186,7 +186,7 @@ const GlobalCoreArchitectureExample: React.FC = () => {
             path: '/api/test',
             method: 'GET' as const,
             parameters: [],
-            responses: [{ code: 200, description: '成功', schema: {} }],
+            responses: [{ code: 200, description: 'Success', schema: {} }],
             security: {
               authentication: true,
               authorization: true,
@@ -208,9 +208,9 @@ const GlobalCoreArchitectureExample: React.FC = () => {
       };
 
       const _result = await apiDesign.designAPI(api);
-      addTestResult(`✅ API設計成功: ${result.apiId}`, 'success');
+      addTestResult(`✅ API設計Success: ${result.apiId}`, 'success');
     } catch (error) {
-      addTestResult(`❌ API設計失敗: ${error}`, 'error');
+      addTestResult(`❌ API設計Failed: ${error}`, 'error');
     }
   };
 
@@ -234,7 +234,7 @@ const GlobalCoreArchitectureExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>🏗️ 全局核心架構示例</Text>
 
-      {/* 架構狀態 */}
+      {/* 架構Status */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>📊 架構狀態</Text>
         <View style={styles.statusContainer}>
@@ -300,7 +300,7 @@ const GlobalCoreArchitectureExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🎮 操作測試</Text>
         <View style={styles.buttonContainer}>
@@ -357,7 +357,7 @@ const GlobalCoreArchitectureExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 測試結果 */}
+      {/* Test結果 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>📋 測試結果</Text>
         {testResults.length === 0 ? (

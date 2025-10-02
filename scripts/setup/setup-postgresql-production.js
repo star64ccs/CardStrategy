@@ -4,7 +4,7 @@ const { Client } = require('pg');
 const fs = require('fs');
 const path = require('path');
 
-// 生產環境 PostgreSQL 配置
+// 生產環境 PostgreSQL Configure
 const productionConfig = {
   host: process.env.PRODUCTION_DB_HOST,
   port: process.env.PRODUCTION_DB_PORT || 5432,
@@ -17,22 +17,22 @@ const productionConfig = {
 };
 
 async function setupProductionDatabase() {
-  // logger.info('🚀 開始設置生產環境 PostgreSQL 數據庫...');
+  // logger.info('🚀 BeginSettings生產環境 PostgreSQL Database...');
 
   const client = new Client(productionConfig);
 
   try {
     await client.connect();
-    // logger.info('✅ 成功連接到生產環境 PostgreSQL');
+    // logger.info('✅ SuccessConnect到生產環境 PostgreSQL');
 
-    // 讀取並執行初始化 SQL
+    // Read並執RowInitialize SQL
     const initSqlPath = path.join(__dirname, '../backend/scripts/init-db.sql');
     const initSql = fs.readFileSync(initSqlPath, 'utf8');
 
     await client.query(initSql);
-    // logger.info('✅ 數據庫結構初始化完成');
+    // logger.info('✅ Database結構InitializeComplete');
 
-    // 檢查必要的表是否存在
+    // Check必要的TableYesNo存在
     const tables = [
       'users',
       'cards',
@@ -56,27 +56,27 @@ async function setupProductionDatabase() {
       );
 
       if (result.rows[0].exists) {
-        // logger.info(`✅ 表 ${table} 存在`);
+        // logger.info(`✅ Table ${table} 存在`);
       } else {
-        // logger.info(`❌ 表 ${table} 不存在`);
+        // logger.info(`❌ Table ${table} 不存在`);
       }
     }
 
-    // logger.info('🎉 生產環境數據庫設置完成！');
+    // logger.info('🎉 生產環境DatabaseSettingsComplete！');
       } finally {
     await client.end();
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   setupProductionDatabase()
     .then(() => {
-      // logger.info('✅ 腳本執行完成');
+      // logger.info('✅ 腳本執RowComplete');
       process.exit(0);
     })
     .catch((error) => {
-      // logger.info('❌ 腳本執行失敗:', error);
+      // logger.info('❌ 腳本執RowFailed:', error);
       process.exit(1);
     });
 }

@@ -29,7 +29,7 @@ export const _useHybridRecommendation = () => {
     error,
   } = useSelector((state: RootState) => state.hybridRecommendation);
 
-  // 本地狀態
+  // LocalStatus
   const [loading, setLoading] = useState({
     recommendations: false,
     config: false,
@@ -44,18 +44,18 @@ export const _useHybridRecommendation = () => {
   });
   const [performance, setPerformance] = useState<any>(null);
 
-  // 初始化
+  // Initialize
   const _initialize = useCallback(async () => {
     try {
       await (dispatch(initializeHybridRecommendation()) as any).unwrap();
       return true;
     } catch (error) {
-      console.error('混合推薦初始化失敗:', error);
+      console.error('混合推薦InitializeFailed:', error);
       return false;
     }
   }, [dispatch]);
 
-  // 獲取推薦
+  // Get推薦
   const _getRecommendations = useCallback(
     async (request: GetHybridRecommendationsRequest) => {
       try {
@@ -63,7 +63,7 @@ export const _useHybridRecommendation = () => {
         await (dispatch(getHybridRecommendations(request)) as any).unwrap();
         return true;
       } catch (error) {
-        console.error('獲取混合推薦失敗:', error);
+        console.error('Get混合推薦Failed:', error);
         return false;
       } finally {
         setLoading(prev => ({ ...prev, recommendations: false }));
@@ -72,7 +72,7 @@ export const _useHybridRecommendation = () => {
     [dispatch]
   );
 
-  // 記錄點擊
+  // Record點擊
   const _recordClick = useCallback(
     async (userId: string, recommendation: HybridRecommendation) => {
       try {
@@ -81,14 +81,14 @@ export const _useHybridRecommendation = () => {
         ).unwrap();
         return true;
       } catch (error) {
-        console.error('記錄推薦點擊失敗:', error);
+        console.error('記錄推薦點擊Failed:', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 記錄評分
+  // Record評分
   const _recordRating = useCallback(
     async (
       userId: string,
@@ -103,28 +103,28 @@ export const _useHybridRecommendation = () => {
         ).unwrap();
         return true;
       } catch (error) {
-        console.error('記錄推薦評分失敗:', error);
+        console.error('記錄推薦評分Failed:', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 獲取配置
+  // GetConfigure
   const _fetchConfig = useCallback(async () => {
     try {
       setLoading(prev => ({ ...prev, config: true }));
       await (dispatch(getHybridRecommendationConfig()) as any).unwrap();
       return true;
     } catch (error) {
-      console.error('獲取混合推薦配置失敗:', error);
+      console.error('Get混合推薦ConfigureFailed:', error);
       return false;
     } finally {
       setLoading(prev => ({ ...prev, config: false }));
     }
   }, [dispatch]);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback(
     async (config: Partial<HybridRecommendationConfig>) => {
       try {
@@ -133,43 +133,43 @@ export const _useHybridRecommendation = () => {
         ).unwrap();
         return true;
       } catch (error) {
-        console.error('更新混合推薦配置失敗:', error);
+        console.error('Update混合推薦ConfigureFailed:', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 獲取統計
+  // GetStatistics
   const _fetchStats = useCallback(async () => {
     try {
       setLoading(prev => ({ ...prev, stats: true }));
       await (dispatch(getHybridRecommendationStats()) as any).unwrap();
       return true;
     } catch (error) {
-      console.error('獲取混合推薦統計失敗:', error);
+      console.error('Get混合推薦統計Failed:', error);
       return false;
     } finally {
       setLoading(prev => ({ ...prev, stats: false }));
     }
   }, [dispatch]);
 
-  // 設置過濾器
+  // SettingsFilter器
   const _setFilters = useCallback((newFilters: unknown) => {
     setFiltersState(newFilters);
   }, []);
 
-  // 設置選項
+  // SettingsOptions
   const _setOptions = useCallback((newOptions: unknown) => {
     setOptionsState(newOptions);
   }, []);
 
-  // 清除錯誤
+  // ClearError
   const _clearError = useCallback(() => {
-    // 暫時註釋掉，等待實現
+    // 暫時Comment掉，Await實現
   }, []);
 
-  // 獲取用戶推薦
+  // GetUser推薦
   const _getRecommendationsForUser = useCallback(
     (userId: string, limit?: number) => {
       return getRecommendations({ userId, limit: limit || 10 });
@@ -193,7 +193,7 @@ export const _useHybridRecommendation = () => {
     [recordRating]
   );
 
-  // 設置算法
+  // Settings算法
   const _setAlgorithm = useCallback(
     (algorithm: HybridAlgorithm) => {
       return updateConfig({ algorithm });
@@ -201,7 +201,7 @@ export const _useHybridRecommendation = () => {
     [updateConfig]
   );
 
-  // 設置權重
+  // Settings權重
   const _setWeights = useCallback(
     (weights: HybridWeights) => {
       return updateConfig({ weights });
@@ -209,12 +209,12 @@ export const _useHybridRecommendation = () => {
     [updateConfig]
   );
 
-  // 按類別過濾
+  // 按Class別Filter
   const _filterByCategory = useCallback((category: string) => {
     setFiltersState((prev: unknown) => ({ ...prev, category }));
   }, []);
 
-  // 按分數排序
+  // 按分數Sort
   const _sortByScore = useCallback((ascending = false) => {
     setOptionsState((prev: unknown) => ({
       ...prev,
@@ -223,12 +223,12 @@ export const _useHybridRecommendation = () => {
     }));
   }, []);
 
-  // 啟用多樣性
+  // Enable多樣性
   const _enableDiversity = useCallback((enabled = true) => {
     setOptionsState((prev: unknown) => ({ ...prev, diversity: enabled }));
   }, []);
 
-  // 啟用新穎性
+  // Enable新穎性
   const _enableNovelty = useCallback((enabled = true) => {
     setOptionsState((prev: unknown) => ({ ...prev, novelty: enabled }));
   }, []);
@@ -243,23 +243,23 @@ export const _useHybridRecommendation = () => {
     setPaginationState(prev => ({ ...prev, page: Math.max(1, prev.page - 1) }));
   }, []);
 
-  // 刷新
+  // Refresh
   const _refresh = useCallback(() => {
     fetchConfig();
     fetchStats();
   }, [fetchConfig, fetchStats]);
 
-  // 清除過濾器
+  // ClearFilter器
   const _clearFilters = useCallback(() => {
     setFiltersState({});
   }, []);
 
-  // 清除選項
+  // ClearOptions
   const _clearOptions = useCallback(() => {
     setOptionsState({});
   }, []);
 
-  // 重置
+  // Reset
   const _reset = useCallback(() => {
     setFiltersState({});
     setOptionsState({});
@@ -267,12 +267,12 @@ export const _useHybridRecommendation = () => {
     setPerformance(null);
   }, []);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     initialize();
   }, [initialize]);
 
-  // 計算屬性
+  // 計算Property
   const _computedProps = useMemo(
     () => ({
       hasRecommendations: recommendations.length > 0,

@@ -42,7 +42,7 @@ const _mockWindow = {
   })),
 };
 
-// 模擬全局對象
+// 模擬GlobalObject
 global.document = mockDocument as any;
 global.window = mockWindow as any;
 global.getComputedStyle = jest.fn(() => ({
@@ -157,12 +157,12 @@ describe('組件可訪問性優化測試', () => {
         reducedMotionMode: true,
       };
 
-      // 重置 mock 調用次數
+      // Reset mock 調用次數
       mockDocument.body.classList.toggle.mockClear();
 
       accessibilityEnhancer.updateAccessibilitySettings(newSettings);
 
-      // 驗證 body 類名更新被調用
+      // Verify body Class名Update被調用
       expect(mockDocument.body.classList.toggle).toHaveBeenCalledWith(
         'accessibility-high-contrast',
         true
@@ -176,7 +176,7 @@ describe('組件可訪問性優化測試', () => {
 
   describe('可訪問性測試工具功能測試', () => {
     test('應該正確測試按鈕組件的 ARIA 標籤', () => {
-      // 模擬按鈕元素
+      // 模擬按鈕Element
       mockElement.getAttribute.mockImplementation((attr: string) => {
         switch (attr) {
           case 'aria-label':
@@ -190,7 +190,7 @@ describe('組件可訪問性優化測試', () => {
         }
       });
 
-      // 確保 querySelector 返回模擬元素
+      // 確保 querySelector Return模擬Element
       mockDocument.querySelector.mockReturnValue(mockElement);
 
       const _buttonElement = mockDocument.querySelector(
@@ -206,7 +206,7 @@ describe('組件可訪問性優化測試', () => {
     });
 
     test('應該正確測試輸入框組件的 ARIA 標籤', () => {
-      // 模擬輸入框元素
+      // 模擬Input框Element
       mockElement.getAttribute.mockImplementation((attr: string) => {
         switch (attr) {
           case 'aria-label':
@@ -218,7 +218,7 @@ describe('組件可訪問性優化測試', () => {
         }
       });
 
-      // 確保 querySelector 返回模擬元素
+      // 確保 querySelector Return模擬Element
       mockDocument.querySelector.mockReturnValue(mockElement);
 
       const _inputElement = mockDocument.querySelector('input');
@@ -232,7 +232,7 @@ describe('組件可訪問性優化測試', () => {
     });
 
     test('應該正確測試模態框組件的 ARIA 屬性', () => {
-      // 模擬模態框元素
+      // 模擬模態框Element
       mockElement.getAttribute.mockImplementation((attr: string) => {
         switch (attr) {
           case 'aria-label':
@@ -244,7 +244,7 @@ describe('組件可訪問性優化測試', () => {
         }
       });
 
-      // 確保 querySelector 返回模擬元素
+      // 確保 querySelector Return模擬Element
       mockDocument.querySelector.mockReturnValue(mockElement);
 
       const _modalElement = mockDocument.querySelector(
@@ -260,7 +260,7 @@ describe('組件可訪問性優化測試', () => {
     });
 
     test('應該正確處理找不到組件的情況', () => {
-      // 模擬找不到元素
+      // 模擬找不到Element
       mockDocument.querySelector.mockReturnValue(null);
 
       const _buttonElement = mockDocument.querySelector(
@@ -342,26 +342,26 @@ describe('組件可訪問性優化測試', () => {
     });
 
     test('應該正確注入焦點指示器樣式', () => {
-      // 重置 mock 調用次數
+      // Reset mock 調用次數
       mockDocument.createElement.mockClear();
       mockDocument.head.appendChild.mockClear();
 
-      // 重新創建實例以觸發樣式注入
+      // ReCreateInstance以觸發樣式注入
       const _newInstance = accessibilityEnhancer;
 
-      // 驗證樣式注入被調用
+      // Verify樣式注入被調用
       expect(mockDocument.createElement).toHaveBeenCalledWith('style');
       expect(mockDocument.head.appendChild).toHaveBeenCalled();
     });
 
     test('應該正確檢測用戶偏好設置', () => {
-      // 重置 mock 調用次數
+      // Reset mock 調用次數
       mockWindow.matchMedia.mockClear();
 
-      // 重新創建實例以觸發偏好設置檢測
+      // ReCreateInstance以觸發PreferencesSettings檢測
       const _newInstance = accessibilityEnhancer;
 
-      // 驗證 matchMedia 被調用
+      // Verify matchMedia 被調用
       expect(mockWindow.matchMedia).toHaveBeenCalledWith(
         '(prefers-contrast: high)'
       );

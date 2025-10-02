@@ -1,4 +1,4 @@
-// 顏色常量定義
+// 顏色Constant定義
 export const _COLORS = {
   // 主色調
   PRIMARY: {
@@ -28,56 +28,56 @@ export const _COLORS = {
     900: '#4A148C',
   },
 
-  // 成功色
+  // Success色
   SUCCESS: {
     50: '#E8F5E8',
     100: '#C8E6C9',
     200: '#A5D6A7',
     300: '#81C784',
     400: '#66BB6A',
-    500: '#4CAF50', // 成功色
+    500: '#4CAF50', // Success色
     600: '#43A047',
     700: '#388E3C',
     800: '#2E7D32',
     900: '#1B5E20',
   },
 
-  // 警告色
+  // Warning色
   WARNING: {
     50: '#FFF8E1',
     100: '#FFECB3',
     200: '#FFE082',
     300: '#FFD54F',
     400: '#FFCA28',
-    500: '#FFC107', // 警告色
+    500: '#FFC107', // Warning色
     600: '#FFB300',
     700: '#FFA000',
     800: '#FF8F00',
     900: '#FF6F00',
   },
 
-  // 錯誤色
+  // Error色
   ERROR: {
     50: '#FFEBEE',
     100: '#FFCDD2',
     200: '#EF9A9A',
     300: '#E57373',
     400: '#EF5350',
-    500: '#F44336', // 錯誤色
+    500: '#F44336', // Error色
     600: '#E53935',
     700: '#D32F2F',
     800: '#C62828',
     900: '#B71C1C',
   },
 
-  // 信息色
+  // Information色
   INFO: {
     50: '#E1F5FE',
     100: '#B3E5FC',
     200: '#81D4FA',
     300: '#4FC3F7',
     400: '#29B6F6',
-    500: '#03A9F4', // 信息色
+    500: '#03A9F4', // Information色
     600: '#039BE5',
     700: '#0288D1',
     800: '#0277BD',
@@ -164,7 +164,7 @@ export const _COLORS = {
     PROMO: '#F44336',
   },
 
-  // 卡片條件顏色
+  // 卡片Condition顏色
   CONDITION: {
     MINT: '#4CAF50',
     NEAR_MINT: '#8BC34A',
@@ -182,7 +182,7 @@ export const _COLORS = {
     STABLE: '#9E9E9E',
   },
 
-  // 投資狀態顏色
+  // 投資Status顏色
   INVESTMENT: {
     PROFIT: '#4CAF50',
     LOSS: '#F44336',
@@ -190,7 +190,7 @@ export const _COLORS = {
   },
 } as const;
 
-// 主題顏色
+// Theme顏色
 export const _THEME_COLORS = {
   LIGHT: {
     PRIMARY: COLORS.PRIMARY[500],

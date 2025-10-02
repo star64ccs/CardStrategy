@@ -1,4 +1,4 @@
-// 懶加載服務實現
+// 懶加載Service實現
 import type {
   ComponentLazyLoadConfig,
   DataLazyLoadConfig,
@@ -11,14 +11,14 @@ import type {
 } from '../types/lazyLoading';
 import { LazyLoadPriority, LazyLoadStrategy } from '../types/lazyLoading';
 
-// 緩存項接口
+// Cache項Interface
 interface CacheItem<T = any> {
   data: T;
   timestamp: number;
   expiresAt: number;
 }
 
-// 加載隊列項接口
+// 加載Queue項Interface
 interface LoadQueueItem {
   id: string;
   type: 'component' | 'image' | 'data';
@@ -30,7 +30,7 @@ interface LoadQueueItem {
 }
 
 /**
- * 懶加載服務實現
+ * 懶加載Service實現
  */
 export class LazyLoadServiceImpl implements LazyLoadService {
   private static instance: LazyLoadServiceImpl;
@@ -62,7 +62,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 獲取單例實例
+   * Get單例Instance
    */
   public static getInstance(): LazyLoadServiceImpl {
     if (!LazyLoadServiceImpl.instance) {
@@ -72,7 +72,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(config?: LazyLoadManagerConfig): Promise<void> {
     if (this.isInitialized) {
@@ -97,7 +97,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 註冊組件
+   * RegisterComponent
    */
   public registerComponent(id: string, config: ComponentLazyLoadConfig): void {
     this.componentRegistry.set(id, {
@@ -107,7 +107,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 註冊圖片
+   * RegisterGraph片
    */
   public registerImage(id: string, config: ImageLazyLoadConfig): void {
     this.imageRegistry.set(id, {
@@ -117,7 +117,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 註冊數據
+   * RegisterData
    */
   public registerData<T>(id: string, config: DataLazyLoadConfig<T>): void {
     this.dataRegistry.set(id, {
@@ -127,7 +127,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 加載組件
+   * 加載Component
    */
   public async loadComponent(id: string): Promise<React.ComponentType<any>> {
     const _config = this.componentRegistry.get(id);
@@ -135,7 +135,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
       throw new Error(`Component with id '${id}' not found`);
     }
 
-    // 檢查緩存
+    // CheckCache
     if (config.enableCache) {
       const _cached = this.getCachedComponent(id);
       if (cached) {
@@ -159,7 +159,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
 
         const _startTime = Date.now();
         try {
-          // 動態導入組件
+          // DynamicImportComponent
           const _module = await import(
             /* webpackChunkName: "[request]" */ config.path
           ).catch(() => {
@@ -172,7 +172,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
           const _endTime = Date.now();
           const _duration = endTime - startTime;
 
-          // 緩存組件
+          // CacheComponent
           if (config.enableCache) {
             this.cacheComponent(id, component, config.cacheTime);
           }
@@ -212,7 +212,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 加載圖片
+   * 加載Graph片
    */
   public async loadImage(id: string): Promise<HTMLImageElement> {
     const _config = this.imageRegistry.get(id);
@@ -220,7 +220,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
       throw new Error(`Image with id '${id}' not found`);
     }
 
-    // 檢查緩存
+    // CheckCache
     if (config.enableCache) {
       const _cached = this.getCachedImage(id);
       if (cached) {
@@ -249,7 +249,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
           const _endTime = Date.now();
           const _duration = endTime - startTime;
 
-          // 緩存圖片
+          // CacheGraph片
           if (config.enableCache) {
             this.cacheImage(id, image, config.cacheTime);
           }
@@ -289,7 +289,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 加載數據
+   * 加載Data
    */
   public async loadData<T>(id: string): Promise<T> {
     const _config = this.dataRegistry.get(id);
@@ -297,7 +297,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
       throw new Error(`Data with id '${id}' not found`);
     }
 
-    // 檢查緩存
+    // CheckCache
     if (config.enableCache) {
       const _cached = this.getCachedData<T>(id);
       if (cached) {
@@ -326,7 +326,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
           const _endTime = Date.now();
           const _duration = endTime - startTime;
 
-          // 緩存數據
+          // CacheData
           if (config.enableCache) {
             this.cacheData<T>(id, data, config.cacheTime);
           }
@@ -366,7 +366,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 預加載組件
+   * 預加載Component
    */
   public async preloadComponent(id: string): Promise<void> {
     const _config = this.componentRegistry.get(id);
@@ -374,7 +374,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
       throw new Error(`Component with id '${id}' not found`);
     }
 
-    // 檢查是否已經加載
+    // CheckYesNo已經加載
     if (config.enableCache && this.getCachedComponent(id)) {
       return;
     }
@@ -389,13 +389,13 @@ export class LazyLoadServiceImpl implements LazyLoadService {
         timestamp: Date.now(),
       });
     } catch (error) {
-      // 預加載失敗不拋出錯誤
+      // 預加載Failed不ThrowError
       console.warn(`Failed to preload component '${id}':`, error);
     }
   }
 
   /**
-   * 預加載圖片
+   * 預加載Graph片
    */
   public async preloadImage(id: string): Promise<void> {
     const _config = this.imageRegistry.get(id);
@@ -403,7 +403,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
       throw new Error(`Image with id '${id}' not found`);
     }
 
-    // 檢查是否已經加載
+    // CheckYesNo已經加載
     if (config.enableCache && this.getCachedImage(id)) {
       return;
     }
@@ -418,13 +418,13 @@ export class LazyLoadServiceImpl implements LazyLoadService {
         timestamp: Date.now(),
       });
     } catch (error) {
-      // 預加載失敗不拋出錯誤
+      // 預加載Failed不ThrowError
       console.warn(`Failed to preload image '${id}':`, error);
     }
   }
 
   /**
-   * 預加載數據
+   * 預加載Data
    */
   public async preloadData<T>(id: string): Promise<void> {
     const _config = this.dataRegistry.get(id);
@@ -432,7 +432,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
       throw new Error(`Data with id '${id}' not found`);
     }
 
-    // 檢查是否已經加載
+    // CheckYesNo已經加載
     if (config.enableCache && this.getCachedData<T>(id)) {
       return;
     }
@@ -447,13 +447,13 @@ export class LazyLoadServiceImpl implements LazyLoadService {
         timestamp: Date.now(),
       });
     } catch (error) {
-      // 預加載失敗不拋出錯誤
+      // 預加載Failed不ThrowError
       console.warn(`Failed to preload data '${id}':`, error);
     }
   }
 
   /**
-   * 取消加載
+   * Cancel加載
    */
   public cancelLoad(id: string): void {
     this.activeLoads.delete(id);
@@ -468,7 +468,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 清除緩存
+   * ClearCache
    */
   public clearCache(id?: string): void {
     if (id) {
@@ -484,21 +484,21 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 獲取狀態
+   * GetStatus
    */
   public getState(): LazyLoadManagerState {
     return { ...this.state };
   }
 
   /**
-   * 獲取性能指標
+   * Get性能指標
    */
   public getPerformanceMetrics(): LazyLoadPerformanceMetrics {
     return { ...this.performanceMetrics };
   }
 
   /**
-   * 暫停服務
+   * PauseService
    */
   public pause(): void {
     this.isPaused = true;
@@ -507,7 +507,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 恢復服務
+   * RestoreService
    */
   public resume(): void {
     this.isPaused = false;
@@ -517,7 +517,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public destroy(): void {
     this.isInitialized = false;
@@ -527,7 +527,7 @@ export class LazyLoadServiceImpl implements LazyLoadService {
     this.eventListeners.clear();
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): LazyLoadManagerConfig {
     return {
@@ -536,10 +536,10 @@ export class LazyLoadServiceImpl implements LazyLoadService {
       globalRetryCount: 3,
       globalRetryDelay: 1000,
       enableGlobalCache: true,
-      globalCacheTime: 300000, // 5分鐘
+      globalCacheTime: 300000, // 5Minute
       maxConcurrentLoads: 6,
       enablePerformanceMonitoring: true,
-      performanceMonitoringInterval: 60000, // 1分鐘
+      performanceMonitoringInterval: 60000, // 1Minute
       enableEventLogging: true,
       eventLogLevel: 'info',
     };
@@ -824,5 +824,5 @@ export class LazyLoadServiceImpl implements LazyLoadService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _lazyLoadService = LazyLoadServiceImpl.getInstance();

@@ -1,4 +1,4 @@
-// 擴充模組層核心接口定義
+// 擴充模組層核心Interface定義
 export interface Plugin {
   id: string;
   name: string;
@@ -173,7 +173,7 @@ export interface OptimizationResult {
   error?: string;
 }
 
-// 插件管理器實現
+// PluginManage器實現
 export class PluginManager {
   private readonly plugins: Map<string, Plugin>;
   private readonly dependencies: Map<string, PluginDependency[]>;
@@ -230,7 +230,7 @@ export class PluginManager {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -267,7 +267,7 @@ export class PluginManager {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -300,7 +300,7 @@ export class PluginManager {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -333,7 +333,7 @@ export class PluginManager {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -375,7 +375,7 @@ export class PluginManager {
       return {
         success: false,
         resolved: [],
-        conflicts: [error instanceof Error ? error.message : '未知錯誤'],
+        conflicts: [error instanceof Error ? error.message : '未知Error'],
         missing: [],
       };
     }
@@ -407,7 +407,7 @@ export class PluginManager {
       return {
         success: false,
         currentVersion: '',
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -463,7 +463,7 @@ export class PluginManager {
   }
 }
 
-// 配置管理器實現
+// ConfigureManage器實現
 export class ConfigurationManager {
   private readonly configurations: Map<string, Configuration>;
   private readonly backups: Map<string, Configuration[]>;
@@ -494,7 +494,7 @@ export class ConfigurationManager {
       if (!validation.valid) {
         return {
           success: false,
-          error: `配置驗證失敗: ${validation.errors.join(', ')}`,
+          error: `ConfigureVerifyFailed: ${validation.errors.join(', ')}`,
         };
       }
 
@@ -507,7 +507,7 @@ export class ConfigurationManager {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -543,7 +543,7 @@ export class ConfigurationManager {
       return {
         success: false,
         updatedPaths: [],
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -618,7 +618,7 @@ export class ConfigurationManager {
         success: false,
         previousVersion: '',
         currentVersion: '',
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -639,13 +639,13 @@ export class ConfigurationManager {
           );
 
           for (const config of configs) {
-            // 這裡可以實現具體的同步邏輯
+            // 這裡可以實現Concrete的Sync邏輯
           }
 
           syncedEnvironments.push(environment);
         } catch (error) {
           errors[environment] =
-            error instanceof Error ? error.message : '未知錯誤';
+            error instanceof Error ? error.message : '未知Error';
         }
       }
 
@@ -658,7 +658,7 @@ export class ConfigurationManager {
       return {
         success: false,
         syncedEnvironments: [],
-        errors: { global: error instanceof Error ? error.message : '未知錯誤' },
+        errors: { global: error instanceof Error ? error.message : '未知Error' },
       };
     }
   }
@@ -690,7 +690,7 @@ export class ConfigurationManager {
         success: false,
         backupId: '',
         timestamp: new Date(),
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -788,7 +788,7 @@ export class RuleEngine {
             results[rule.id] = result;
           }
         } catch (error) {
-          errors[rule.id] = error instanceof Error ? error.message : '未知錯誤';
+          errors[rule.id] = error instanceof Error ? error.message : '未知Error';
         }
       }
 
@@ -803,7 +803,7 @@ export class RuleEngine {
         success: false,
         executedRules: [],
         results: {},
-        errors: { global: error instanceof Error ? error.message : '未知錯誤' },
+        errors: { global: error instanceof Error ? error.message : '未知Error' },
       };
     }
   }
@@ -873,7 +873,7 @@ export class RuleEngine {
         success: false,
         operation: operation.type,
         ruleId: operation.rule.id,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -947,7 +947,7 @@ export class RuleEngine {
         success: false,
         optimizedRules: [],
         performanceImprovement: 0,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -976,7 +976,7 @@ export class RuleEngine {
       return {
         success: false,
         currentVersion: '',
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       };
     }
   }
@@ -1009,7 +1009,7 @@ export class RuleEngine {
 
       return false;
     } catch (error) {
-      console.error('條件評估錯誤:', error);
+      console.error('條件評估Error:', error);
       return false;
     }
   }
@@ -1033,7 +1033,7 @@ export class RuleEngine {
 
       return { action: 'executed', result: 'unknown' };
     } catch (error) {
-      console.error('動作執行錯誤:', error);
+      console.error('動作執行Error:', error);
       throw error;
     }
   }
@@ -1177,7 +1177,7 @@ export class RuleEngine {
   }
 }
 
-// 擴充模組層核心類
+// 擴充模組層核心Class
 export class ExtensionModuleLayer {
   private static instance: ExtensionModuleLayer;
   private readonly _pluginManager: PluginManager;

@@ -10,15 +10,15 @@ import { api } from '../../../core/utils/api';
 import { logger } from '../../../core/utils/logger';
 
 /**
- * 社交登錄服務
- * 處理多平台社交登錄功能
+ * 社交LoginService
+ * Handle多平台社交Login功能
  */
 export class SocialAuthService {
   private static instance: SocialAuthService;
   private readonly config: SocialLoginConfig;
 
   private constructor() {
-    // 初始化社交登錄配置
+    // Initialize社交LoginConfigure
     this.config = this.loadSocialLoginConfig();
   }
 
@@ -30,7 +30,7 @@ export class SocialAuthService {
   }
 
   /**
-   * 社交登錄
+   * 社交Login
    */
   async socialLogin(
     credentials: SocialLoginCredentials
@@ -41,27 +41,27 @@ export class SocialAuthService {
         email: credentials.userInfo?.email,
       });
 
-      // 驗證社交登錄憑證
+      // Verify社交Login憑證
       this.validateSocialCredentials(credentials);
 
-      // 發送社交登錄請求
+      // Send社交LoginRequest
       const _response = await api.post<SocialAuthResponse>(
         '/auth/social/login',
         credentials
       );
 
       if (response.success && response.data) {
-        logger.info('社交登錄成功:', {
+        logger.info('社交登錄Success:', {
           provider: credentials.provider,
           userId: response.data.user.id,
           isNewUser: response.data.isNewUser,
         });
         return response.data;
       } else {
-        throw new Error('社交登錄失敗');
+        throw new Error('社交登錄Failed');
       }
     } catch (error) {
-      logger.error('社交登錄失敗:', {
+      logger.error('社交登錄Failed:', {
         error,
         provider: credentials.provider,
         email: credentials.userInfo?.email,
@@ -71,7 +71,7 @@ export class SocialAuthService {
   }
 
   /**
-   * 獲取社交登錄 URL
+   * Get社交Login URL
    */
   async getSocialLoginUrl(
     provider: SocialProvider,
@@ -88,19 +88,19 @@ export class SocialAuthService {
       );
 
       if (response.success && response.data) {
-        logger.info('社交登錄 URL 獲取成功:', { provider });
+        logger.info('社交登錄 URL GetSuccess:', { provider });
         return response.data.url;
       } else {
-        throw new Error('獲取社交登錄 URL 失敗');
+        throw new Error('Get社交登錄 URL Failed');
       }
     } catch (error) {
-      logger.error('獲取社交登錄 URL 失敗:', { error, provider });
+      logger.error('Get社交登錄 URL Failed:', { error, provider });
       throw error;
     }
   }
 
   /**
-   * 處理社交登錄回調
+   * Handle社交LoginCallback
    */
   async handleSocialCallback(
     provider: SocialProvider,
@@ -120,16 +120,16 @@ export class SocialAuthService {
       );
 
       if (response.success && response.data) {
-        logger.info('社交登錄回調處理成功:', {
+        logger.info('社交登錄回調HandleSuccess:', {
           provider,
           userId: response.data.user.id,
         });
         return response.data;
       } else {
-        throw new Error('社交登錄回調處理失敗');
+        throw new Error('社交登錄回調HandleFailed');
       }
     } catch (error) {
-      logger.error('社交登錄回調處理失敗:', { error, provider });
+      logger.error('社交登錄回調HandleFailed:', { error, provider });
       throw error;
     }
   }
@@ -152,16 +152,16 @@ export class SocialAuthService {
       );
 
       if (response.success && response.data) {
-        logger.info('社交帳戶鏈接成功:', {
+        logger.info('社交帳戶鏈接Success:', {
           provider: credentials.provider,
           accountId: response.data.id,
         });
         return response.data;
       } else {
-        throw new Error('社交帳戶鏈接失敗');
+        throw new Error('社交帳戶鏈接Failed');
       }
     } catch (error) {
-      logger.error('社交帳戶鏈接失敗:', {
+      logger.error('社交帳戶鏈接Failed:', {
         error,
         provider: credentials.provider,
       });
@@ -179,18 +179,18 @@ export class SocialAuthService {
       const _response = await api.delete(`/auth/social/unlink/${provider}`);
 
       if (response.success) {
-        logger.info('社交帳戶解除鏈接成功:', { provider });
+        logger.info('社交帳戶解除鏈接Success:', { provider });
       } else {
-        throw new Error('社交帳戶解除鏈接失敗');
+        throw new Error('社交帳戶解除鏈接Failed');
       }
     } catch (error) {
-      logger.error('社交帳戶解除鏈接失敗:', { error, provider });
+      logger.error('社交帳戶解除鏈接Failed:', { error, provider });
       throw error;
     }
   }
 
   /**
-   * 獲取已鏈接的社交帳戶
+   * Get已鏈接的社交帳戶
    */
   async getLinkedSocialAccounts(): Promise<SocialAccountLink[]> {
     try {
@@ -201,34 +201,34 @@ export class SocialAuthService {
       );
 
       if (response.success && response.data) {
-        logger.info('已鏈接社交帳戶獲取成功:', {
+        logger.info('已鏈接社交帳戶GetSuccess:', {
           count: response.data.length,
         });
         return response.data;
       } else {
-        throw new Error('獲取已鏈接社交帳戶失敗');
+        throw new Error('Get已鏈接社交帳戶Failed');
       }
     } catch (error) {
-      logger.error('獲取已鏈接社交帳戶失敗:', { error });
+      logger.error('Get已鏈接社交帳戶Failed:', { error });
       throw error;
     }
   }
 
   /**
-   * 檢查社交帳戶是否已鏈接
+   * Check社交帳戶YesNo已鏈接
    */
   async isSocialAccountLinked(provider: SocialProvider): Promise<boolean> {
     try {
       const _accounts = await this.getLinkedSocialAccounts();
       return accounts.some(account => account.provider === provider);
     } catch (error) {
-      logger.error('檢查社交帳戶鏈接狀態失敗:', { error, provider });
+      logger.error('Check社交帳戶鏈接狀態Failed:', { error, provider });
       return false;
     }
   }
 
   /**
-   * 獲取社交用戶信息
+   * Get社交UserInformation
    */
   async getSocialUserInfo(
     provider: SocialProvider,
@@ -247,22 +247,22 @@ export class SocialAuthService {
       );
 
       if (response.success && response.data) {
-        logger.info('社交用戶信息獲取成功:', {
+        logger.info('社交用戶信息GetSuccess:', {
           provider,
           email: response.data.email,
         });
         return response.data;
       } else {
-        throw new Error('獲取社交用戶信息失敗');
+        throw new Error('Get社交用戶信息Failed');
       }
     } catch (error) {
-      logger.error('獲取社交用戶信息失敗:', { error, provider });
+      logger.error('Get社交用戶信息Failed:', { error, provider });
       throw error;
     }
   }
 
   /**
-   * 驗證社交登錄憑證
+   * Verify社交Login憑證
    */
   private validateSocialCredentials(credentials: SocialLoginCredentials): void {
     if (!credentials.provider) {
@@ -279,7 +279,7 @@ export class SocialAuthService {
   }
 
   /**
-   * 檢查是否為有效的社交登錄提供商
+   * CheckYesNo為有效的社交Login提供商
    */
   private isValidProvider(provider: string): provider is SocialProvider {
     const validProviders: SocialProvider[] = [
@@ -296,10 +296,10 @@ export class SocialAuthService {
   }
 
   /**
-   * 加載社交登錄配置
+   * 加載社交LoginConfigure
    */
   private loadSocialLoginConfig(): SocialLoginConfig {
-    // 從環境變量或配置文件加載
+    // 從環境Variable或ConfigureFile加載
     return {
       google: {
         clientId: process.env.GOOGLE_CLIENT_ID || '',
@@ -347,20 +347,20 @@ export class SocialAuthService {
   }
 
   /**
-   * 獲取社交登錄配置
+   * Get社交LoginConfigure
    */
   getConfig(): SocialLoginConfig {
     return this.config;
   }
 
   /**
-   * 檢查社交登錄提供商是否已配置
+   * Check社交Login提供商YesNo已Configure
    */
   isProviderConfigured(provider: SocialProvider): boolean {
     const _providerConfig = this.config[provider];
     if (!providerConfig) return false;
 
-    // 檢查必要的配置項
+    // Check必要的Configure項
     switch (provider) {
       case 'google': {
         const _config = providerConfig as typeof this.config.google;
@@ -405,5 +405,5 @@ export class SocialAuthService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _socialAuthService = SocialAuthService.getInstance();

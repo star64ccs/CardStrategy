@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -45,7 +45,7 @@ class Phase3MonitoringOptimizer {
     this.backendDir = path.join(this.projectRoot, 'backend');
   }
 
-  // 創建性能監控系統
+  // Create性能Monitor系統
   async createPerformanceMonitoringSystem() {
     log.header('📊 創建性能監控系統');
 
@@ -79,26 +79,26 @@ class PerformanceMonitor {
     };
 
     this.responseTimes = [];
-    this.maxResponseTimes = 100; // 保留最近100個響應時間
+    this.maxResponseTimes = 100; // 保留最近100個ResponseTime
 
-    // 定期更新系統指標
+    // 定期Update系統指標
     this.startPeriodicUpdate();
   }
 
-  // 開始定期更新
+  // Begin定期Update
   startPeriodicUpdate() {
     setInterval(() => {
       this.updateSystemMetrics();
-    }, 5000); // 每5秒更新一次
+    }, 5000); // 每5SecondUpdate一次
 
     setInterval(() => {
       this.updateUptime();
-    }, 1000); // 每秒更新運行時間
+    }, 1000); // 每SecondUpdate運RowTime
   }
 
-  // 更新系統指標
+  // Update系統指標
   updateSystemMetrics() {
-    // 內存使用情況
+    // Memory使用情況
     const memUsage = process.memoryUsage();
     this.metrics.memory.used = Math.round(memUsage.heapUsed / 1024 / 1024);
     this.metrics.memory.total = Math.round(memUsage.heapTotal / 1024 / 1024);
@@ -125,19 +125,19 @@ class PerformanceMonitor {
     // 系統負載
     this.metrics.cpu.loadAverage = os.loadavg();
 
-    // 記錄系統指標
+    // Record系統指標
     logger.info('System Metrics Updated', {
       memory: this.metrics.memory,
       cpu: this.metrics.cpu
     });
   }
 
-  // 更新運行時間
+  // Update運RowTime
   updateUptime() {
     this.metrics.uptime.current = Date.now() - this.metrics.uptime.startTime;
   }
 
-  // 記錄請求
+  // RecordRequest
   recordRequest(success = true, responseTime = 0) {
     this.metrics.requests.total++;
     
@@ -147,23 +147,23 @@ class PerformanceMonitor {
       this.metrics.requests.error++;
     }
 
-    // 記錄響應時間
+    // RecordResponseTime
     if (responseTime > 0) {
       this.responseTimes.push(responseTime);
       
-      // 保持響應時間數組大小
+      // 保持ResponseTimeArray大小
       if (this.responseTimes.length > this.maxResponseTimes) {
         this.responseTimes.shift();
       }
 
-      // 計算平均響應時間
+      // 計算平均ResponseTime
       this.metrics.requests.avgResponseTime = Math.round(
         this.responseTimes.reduce((a, b) => a + b, 0) / this.responseTimes.length
       );
     }
   }
 
-  // 獲取性能指標
+  // Get性能指標
   getMetrics() {
     return {
       ...this.metrics,
@@ -190,7 +190,7 @@ class PerformanceMonitor {
     return sorted[index] || 0;
   }
 
-  // 重置指標
+  // Reset指標
   resetMetrics() {
     this.metrics.requests = {
       total: 0,
@@ -203,21 +203,21 @@ class PerformanceMonitor {
   }
 }
 
-// 創建全局監控實例
+// CreateGlobalMonitorInstance
 const performanceMonitor = new PerformanceMonitor();
 
-// 性能監控中間件
+// 性能Monitor中間件
 const performanceMiddleware = (req, res, next) => {
   const start = performance.now();
   
-  // 記錄響應完成
+  // RecordResponseComplete
   res.on('finish', () => {
     const duration = performance.now() - start;
     const success = res.statusCode < 400;
     
     performanceMonitor.recordRequest(success, duration);
     
-    // 記錄慢請求
+    // Record慢Request
     if (duration > 1000) {
       logger.warn('Slow Request Detected', {
         method: req.method,
@@ -252,7 +252,7 @@ const getPerformanceMetrics = (req, res) => {
   }
 };
 
-// 重置性能指標 API 路由
+// Reset性能指標 API 路由
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const resetPerformanceMetrics = (req, res) => {
@@ -290,7 +290,7 @@ module.exports = {
     log.success('性能監控系統已創建');
   }
 
-  // 創建系統健康檢查增強版
+  // Create系統健康Check增強版
   async createEnhancedHealthCheck() {
     log.header('🏥 創建增強版健康檢查');
 
@@ -299,26 +299,26 @@ const { sequelize, testConnection } = require('../config/database-optimized');
 const { healthCheck: redisHealthCheck } = require('../config/redis-optimized');
 const { logger } = require('./unified-logger');
 
-// 增強版健康檢查
+// 增強版健康Check
 const enhancedHealthCheck = async (req, res) => {
   const startTime = Date.now();
   
   try {
-    // 檢查數據庫連接
+    // CheckDatabaseConnect
     const dbStatus = await testConnection();
     
-    // 檢查 Redis 連接
+    // Check Redis Connect
     const redisStatus = await redisHealthCheck();
     
-    // 獲取性能指標
+    // Get性能指標
     const metrics = performanceMonitor.getMetrics();
     
-    // 計算健康檢查響應時間
+    // 計算健康CheckResponseTime
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const responseTime = Date.now() - startTime;
     
-    // 確定整體健康狀態
+    // OK整體健康Status
     const isHealthy = dbStatus && redisStatus && responseTime < 1000;
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -361,7 +361,7 @@ const enhancedHealthCheck = async (req, res) => {
       }
     };
 
-    // 記錄健康檢查結果
+    // Record健康Check結果
     logger.info('Health Check', {
       status: healthData.status,
       responseTime,
@@ -386,7 +386,7 @@ const enhancedHealthCheck = async (req, res) => {
   }
 };
 
-// 格式化運行時間
+// Format運RowTime
 const formatUptime = (milliseconds) => {
   const seconds = Math.floor(milliseconds / 1000);
   const minutes = Math.floor(seconds / 60);
@@ -417,7 +417,7 @@ module.exports = {
     log.success('增強版健康檢查已創建');
   }
 
-  // 創建性能指標 API 路由
+  // Create性能指標 API 路由
   async createPerformanceRoutes() {
     log.header('🔌 創建性能指標 API 路由');
 
@@ -427,16 +427,16 @@ const { enhancedHealthCheck } = require('../utils/enhanced-health-check');
 
 const router = express.Router();
 
-// 獲取性能指標
+// Get性能指標
 router.get('/metrics', getPerformanceMetrics);
 
-// 重置性能指標
+// Reset性能指標
 router.post('/metrics/reset', resetPerformanceMetrics);
 
-// 增強版健康檢查
+// 增強版健康Check
 router.get('/health', enhancedHealthCheck);
 
-// 系統信息
+// 系統Information
 router.get('/system', (req, res) => {
   const os = require('os');
   
@@ -473,7 +473,7 @@ module.exports = router;
     log.success('性能指標 API 路由已創建');
   }
 
-  // 生成監控報告
+  // 生成MonitorReport
   generateReport() {
     log.header('📊 性能監控系統報告');
 
@@ -534,10 +534,10 @@ module.exports = router;
 const { performanceMiddleware } = require('./utils/performance-monitor');
 const performanceRoutes = require('./routes/performance');
 
-// 添加性能監控中間件
+// Add性能Monitor中間件
 app.use(performanceMiddleware);
 
-// 添加性能指標路由
+// Add性能指標路由
 app.use('/api/performance', performanceRoutes);
 \`\`\`
 
@@ -599,7 +599,7 @@ curl http://localhost:3000/api/performance/system
     log.success(`監控報告已生成: ${reportPath}`);
   }
 
-  // 執行所有優化
+  // 執Row所有優化
   async run() {
     log.header('🚀 開始第三階段性能監控優化');
 
@@ -613,13 +613,13 @@ curl http://localhost:3000/api/performance/system
       log.success('性能監控系統已創建完成');
       log.success('請查看 PERFORMANCE_MONITORING_REPORT.md 了解詳細信息');
     } catch (error) {
-      log.error(`優化過程中發生錯誤: ${error.message}`);
+      log.error(`優化過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行優化
+// 執Row優化
 if (require.main === module) {
   const optimizer = new Phase3MonitoringOptimizer();
   optimizer.run();

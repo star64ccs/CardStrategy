@@ -6,7 +6,7 @@ const advancedPredictionService = require('../services/advancedPredictionService
 
 const router = express.Router();
 
-// 計算目標日期
+// 計算目標Day
 function calculateTargetDate(timeframe) {
   const now = new Date();'
   const timeframes = {''
@@ -22,7 +22,7 @@ function calculateTargetDate(timeframe) {
   return new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
 }
 // @route   POST /api/advanced-predictions/predict
-// @desc    執行高級預測
+// @desc    執Row高級預測
 // @access  Private'
 router.post(''
   '/predict',
@@ -55,7 +55,7 @@ router.post(''
       if (!errors.isEmpty()) {
         return res.status(400).json({'
           success: false,''
-          message: '驗證錯誤',
+          message: 'VerifyError',
           errors: errors.array(),
         });
       }
@@ -65,7 +65,7 @@ router.post(''
       const PredictionModel =''
         require('../models/PredictionModel').getPredictionModel();
 
-      // 獲取歷史數據
+      // Get歷史Data
       const historicalData = await MarketData.findAll({
         where: {
           cardId,
@@ -81,14 +81,14 @@ router.post(''
           message: '歷史數據不足，至少需要30個數據點',
         });
       }
-      // 執行高級預測
+      // 執Row高級預測
       const prediction =
         await advancedPredictionService.adaptiveEnsemblePrediction(
           historicalData,
           timeframe
         );
 
-      // 保存預測結果
+      // Save預測結果
       const savedPrediction = await PredictionModel.create({
         cardId,
         modelType: prediction.modelParameters.modelType,
@@ -112,17 +112,17 @@ router.post(''
         },
       });'
     } catch (error) {''
-      logger.error('高級預測失敗:', error);
+      logger.error('高級預測Failed:', error);
       res.status(500).json({'
         success: false,''
-        message: '預測失敗',
+        message: '預測Failed',
         error: error.message,
       });
     }
   }
 );
 
-// 批量高級預測'
+// Batch高級預測'
 router.post(''
   '/batch-predict',
   protect,'
@@ -139,7 +139,7 @@ router.post(''
       if (!errors.isEmpty()) {
         return res.status(400).json({'
           success: false,''
-          message: '驗證錯誤',
+          message: 'VerifyError',
           errors: errors.array(),
         });
       }
@@ -154,7 +154,7 @@ router.post(''
 
       for (const cardId of cardIds) {
         try {
-          // 獲取歷史數據
+          // Get歷史Data
           const historicalData = await MarketData.findAll({
             where: {
               cardId,
@@ -171,14 +171,14 @@ router.post(''
             });
             continue;
           }
-          // 執行高級預測
+          // 執Row高級預測
           const prediction =
             await advancedPredictionService.adaptiveEnsemblePrediction(
               historicalData,
               timeframe
             );
 
-          // 保存預測結果
+          // Save預測結果
           const savedPrediction = await PredictionModel.create({
             cardId,
             modelType: prediction.modelParameters.modelType,
@@ -219,16 +219,16 @@ router.post(''
         },
       });'
     } catch (error) {''
-      logger.error('批量高級預測失敗:', error);
+      logger.error('批量高級預測Failed:', error);
       res.status(500).json({'
         success: false,''
-        message: '批量預測失敗',
+        message: '批量預測Failed',
         error: error.message,
       });
     }
   }
 );'
-// 獲取預測模型列表''
+// Get預測模型List''
 router.get('/models', protect, async (req, res) => {
   try {
     const models = ['
@@ -283,26 +283,26 @@ router.get('/models', protect, async (req, res) => {
 
     res.json({'
       success: true,''
-      message: '模型列表獲取成功',
+      message: '模型列表GetSuccess',
       data: { models },
     });'
   } catch (error) {''
-    logger.error('獲取預測模型列表錯誤:', error);
+    logger.error('Get預測模型列表Error:', error);
     res.status(500).json({'
       success: false,''
-      message: '獲取模型列表失敗',
+      message: 'Get模型列表Failed',
       error: error.message,
     });
   }
 });'
-// 獲取預測統計信息''
+// Get預測StatisticsInformation''
 router.get('/statistics', protect, async (req, res) => {'
   try {''
     const { timeframe = '30d' } = req.query;'
     const PredictionModel =''
       require('../models/PredictionModel').getPredictionModel();
 
-    // 計算時間範圍
+    // 計算Time範圍
     const startDate = new Date();'
     const timeframes = {''
       '7d': 7,''
@@ -315,7 +315,7 @@ router.get('/statistics', protect, async (req, res) => {'
     const days = timeframes[timeframe] || 30;
     startDate.setDate(startDate.getDate() - days);
 
-    // 獲取統計數據
+    // Get統Count據
     const totalPredictions = await PredictionModel.count({
       where: {
         userId: req.user.id,
@@ -379,7 +379,7 @@ router.get('/statistics', protect, async (req, res) => {'
 
     res.json({'
       success: true,''
-      message: '統計信息獲取成功',
+      message: '統計信息GetSuccess',
       data: {
         timeframe,
         totalPredictions,
@@ -391,15 +391,15 @@ router.get('/statistics', protect, async (req, res) => {'
       },
     });'
   } catch (error) {''
-    logger.error('獲取預測統計錯誤:', error);
+    logger.error('Get預測統計Error:', error);
     res.status(500).json({'
       success: false,''
-      message: '獲取統計信息失敗',
+      message: 'Get統計信息Failed',
       error: error.message,
     });
   }
 });'
-// 獲取預測歷史''
+// Get預測歷史''
 router.get('/history/:cardId', protect, async (req, res) => {
   try {
     const { cardId } = req.params;
@@ -426,7 +426,7 @@ router.get('/history/:cardId', protect, async (req, res) => {
 
     res.json({'
       success: true,''
-      message: '預測歷史獲取成功',
+      message: '預測歷史GetSuccess',
       data: {
         predictions,
         total: predictions.length,
@@ -434,15 +434,15 @@ router.get('/history/:cardId', protect, async (req, res) => {
       },
     });'
   } catch (error) {''
-    logger.error('獲取預測歷史錯誤:', error);
+    logger.error('Get預測歷史Error:', error);
     res.status(500).json({'
       success: false,''
-      message: '獲取預測歷史失敗',
+      message: 'Get預測歷史Failed',
       error: error.message,
     });
   }
 });'
-// 刪除預測記錄''
+// Delete預測Record''
 router.delete('/:predictionId', protect, async (req, res) => {
   try {
     const { predictionId } = req.params;'
@@ -464,20 +464,20 @@ router.delete('/:predictionId', protect, async (req, res) => {
         code: 'PREDICTION_NOT_FOUND',
       });
     }
-    // 軟刪除
+    // 軟Delete
     await prediction.update({ isActive: false });
 
     logger.info(`刪除預測記錄: 用戶 ${req.user.username}, 預測ID ${predictionId}`);
 
     res.json({'
       success: true,''
-      message: '預測記錄刪除成功',
+      message: '預測記錄DeleteSuccess',
     });'
   } catch (error) {''
-    logger.error('刪除預測記錄錯誤:', error);
+    logger.error('Delete預測記錄Error:', error);
     res.status(500).json({'
       success: false,''
-      message: '刪除預測記錄失敗',
+      message: 'Delete預測記錄Failed',
       error: error.message,
     });
   }

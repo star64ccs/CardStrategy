@@ -112,7 +112,7 @@ describe('PredictionService', () => {
       expect(result).toBeDefined();
       expect(result.predictionType).toBe(PredictionType.VOLATILITY);
       expect(result.predictedValue).toBeGreaterThan(0);
-      // 注意：當前實現中波動性預測值可能不在 0-1 範圍內
+      // 注意：當前實現中波動性預測Value可能不在 0-1 範圍內
     });
 
     it('should perform volume prediction successfully', async () => {
@@ -246,7 +246,7 @@ describe('PredictionService', () => {
         predictionType: 'unsupported' as PredictionType,
       };
 
-      // 當前實現會接受任何預測類型並返回結果
+      // 當前實現會Accept任何預測Class型並Return結果
       const _result = await predictionService.performPrediction(invalidRequest);
       expect(result).toBeDefined();
       expect(result.predictionType).toBe('unsupported');
@@ -368,7 +368,7 @@ describe('PredictionService', () => {
     });
 
     it('should throw error for non-existent card history', async () => {
-      // 當前實現中沒有 analyzeTrend 方法，所以會拋出 TypeError
+      // 當前實現中沒有 analyzeTrend Method，所以會Throw TypeError
       expect(() => predictionService.analyzeTrend('non-existent')).toThrow(
         TypeError
       );
@@ -387,7 +387,7 @@ describe('PredictionService', () => {
       };
 
       await predictionService.performPrediction(request);
-      // 當前實現中沒有 analyzeTrend 方法
+      // 當前實現中沒有 analyzeTrend Method
       expect(() => predictionService.analyzeTrend('test-card-3')).toThrow(
         TypeError
       );

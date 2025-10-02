@@ -11,12 +11,12 @@ describe('智能標註任務分配算法測試', () => {
   let testTrainingData = [];
 
   beforeAll(async () => {
-    // 初始化模型
+    // Initialize模型
     TrainingData = getTrainingDataModel();
     Annotator = getAnnotatorModel();
     AnnotationData = getAnnotationDataModel();
 
-    // 創建測試標註者
+    // CreateTest標註者
     testAnnotators = await Promise.all([
       Annotator.create({
         userId: 1,
@@ -24,7 +24,7 @@ describe('智能標註任務分配算法測試', () => {
         accuracy: 0.95,
         totalAnnotations: 100,
         completedAnnotations: 95,
-        averageProcessingTime: 3600000, // 1小時
+        averageProcessingTime: 3600000, // 1Hour
         lastActiveDate: new Date(),
         isActive: true,
         metadata: {
@@ -42,7 +42,7 @@ describe('智能標註任務分配算法測試', () => {
         accuracy: 0.88,
         totalAnnotations: 80,
         completedAnnotations: 70,
-        averageProcessingTime: 4800000, // 1.33小時
+        averageProcessingTime: 4800000, // 1.33Hour
         lastActiveDate: new Date(),
         isActive: true,
         metadata: {
@@ -60,7 +60,7 @@ describe('智能標註任務分配算法測試', () => {
         accuracy: 0.75,
         totalAnnotations: 50,
         completedAnnotations: 35,
-        averageProcessingTime: 7200000, // 2小時
+        averageProcessingTime: 7200000, // 2Hour
         lastActiveDate: new Date(),
         isActive: true,
         metadata: {
@@ -74,7 +74,7 @@ describe('智能標註任務分配算法測試', () => {
       }),
     ]);
 
-    // 創建測試訓練數據
+    // CreateTest訓練Data
     testTrainingData = await Promise.all([
       TrainingData.create({
         cardId: 1,
@@ -122,7 +122,7 @@ describe('智能標註任務分配算法測試', () => {
   });
 
   afterAll(async () => {
-    // 清理測試數據
+    // 清理TestData
     await Promise.all([
       ...testAnnotators.map((annotator) => annotator.destroy()),
       ...testTrainingData.map((data) => data.destroy()),
@@ -214,7 +214,7 @@ describe('智能標註任務分配算法測試', () => {
   });
 
   describe('智能分配API端點', () => {
-    test('應該成功執行智能分配', async () => {
+    test('應該Success執行智能分配', async () => {
       const response = await request(app)
         .post('/api/data-quality/annotate/assign')
         .send({
@@ -304,7 +304,7 @@ describe('智能標註任務分配算法測試', () => {
       });
 
       const actualQuality = 0.92;
-      const processingTime = 3000000; // 50分鐘
+      const processingTime = 3000000; // 50Minute
 
       await annotationService.learnFromResults(
         annotation.id,
@@ -312,7 +312,7 @@ describe('智能標註任務分配算法測試', () => {
         processingTime
       );
 
-      // 驗證標註者專業度已更新
+      // Verify標註者專業度已Update
       const updatedAnnotator = await Annotator.findByPk(testAnnotators[0].id);
       const { expertiseAreas } = updatedAnnotator.metadata;
 
@@ -328,12 +328,12 @@ describe('智能標註任務分配算法測試', () => {
       // 模擬高質量結果
       await annotationService.adjustAssignmentParameters(0.15, 1800000);
 
-      // 驗證權重已調整
+      // Verify權重已調整
       expect(annotationService.assignmentConfig.qualityWeight).toBeGreaterThan(
         originalQualityWeight
       );
 
-      // 恢復原始值
+      // Restore原始Value
       annotationService.assignmentConfig.qualityWeight = originalQualityWeight;
     });
   });
@@ -362,9 +362,9 @@ describe('智能標註任務分配算法測試', () => {
     });
   });
 
-  describe('錯誤處理', () => {
+  describe('ErrorHandle', () => {
     test('應該處理無可用標註者的情況', async () => {
-      // 暫時停用所有標註者
+      // 暫時Deactivate所有標註者
       await Promise.all(
         testAnnotators.map((a) => a.update({ isActive: false }))
       );
@@ -376,14 +376,14 @@ describe('智能標註任務分配算法測試', () => {
 
       expect(response.body.data.totalAssigned).toBe(0);
 
-      // 恢復標註者狀態
+      // Restore標註者Status
       await Promise.all(
         testAnnotators.map((a) => a.update({ isActive: true }))
       );
     });
 
     test('應該處理無待分配數據的情況', async () => {
-      // 暫時將所有數據標記為已分配
+      // 暫時將所有DataMark為已分配
       await Promise.all(
         testTrainingData.map((d) => d.update({ status: 'annotated' }))
       );
@@ -395,7 +395,7 @@ describe('智能標註任務分配算法測試', () => {
 
       expect(response.body.data.totalAssigned).toBe(0);
 
-      // 恢復數據狀態
+      // RestoreDataStatus
       await Promise.all(
         testTrainingData.map((d) => d.update({ status: 'pending' }))
       );

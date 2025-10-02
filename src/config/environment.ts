@@ -1,4 +1,4 @@
-// 環境配置
+// 環境Configure
 export interface Environment {
   apiBaseUrl: string;
   apiTimeout: number;
@@ -11,9 +11,9 @@ export interface Environment {
   maxImageSize: number;
 }
 
-// 開發環境配置
+// On發環境Configure
 const development: Environment = {
-  apiBaseUrl: 'https://cardstrategy-api.onrender.com/api', // 使用 Render API 進行開發
+  apiBaseUrl: 'https://cardstrategy-api.onrender.com/api', // 使用 Render API 進RowOn發
   apiTimeout: 10000,
   enableLogging: true,
   enableAnalytics: false,
@@ -24,7 +24,7 @@ const development: Environment = {
   maxImageSize: 5 * 1024 * 1024, // 5MB
 };
 
-// 測試環境配置
+// Test環境Configure
 const staging: Environment = {
   apiBaseUrl: 'https://cardstrategy-api.onrender.com/api',
   apiTimeout: 15000,
@@ -37,7 +37,7 @@ const staging: Environment = {
   maxImageSize: 5 * 1024 * 1024, // 5MB
 };
 
-// 生產環境配置
+// 生產環境Configure
 const production: Environment = {
   apiBaseUrl: 'https://cardstrategy-api.onrender.com/api',
   apiTimeout: 20000,
@@ -50,7 +50,7 @@ const production: Environment = {
   maxImageSize: 10 * 1024 * 1024, // 10MB
 };
 
-// 根據環境變量選擇配置
+// Root據環境VariableSelectConfigure
 const _getEnvironment = (): Environment => {
   const _env = (process.env as any)['NODE_ENV'] || 'development';
 
@@ -65,17 +65,17 @@ const _getEnvironment = (): Environment => {
   }
 };
 
-// 導出當前環境配置
+// Export當前環境Configure
 export const _environment = getEnvironment();
 
-// 導出環境檢查函數
+// Export環境CheckFunction
 export const _isDevelopment = () =>
   (process.env as any)['NODE_ENV'] === 'development';
 export const _isStaging = () => (process.env as any)['NODE_ENV'] === 'staging';
 export const _isProduction = () =>
   (process.env as any)['NODE_ENV'] === 'production';
 
-// 導出便捷方法
+// Export便捷Method
 export const _getApiUrl = (endpoint: string): string => {
   return `${environment.apiBaseUrl}${endpoint}`;
 };

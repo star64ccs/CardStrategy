@@ -3,21 +3,21 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 基於現有系統的網頁監控儀表板創建腳本
- * 零成本，使用現有的API和數據
+ * 基於現有系統的網頁Monitor儀Table板Create腳本
+ * 零成本，使用現有的API和Data
  */
 
 // eslint-disable-next-line no-console
 console.log('🚀 創建基於現有系統的網頁監控儀表板...\n');
 
-// 項目配置
+// 項目Configure
 const config = {
   projectName: 'cardstrategy-web-monitoring',
   port: 3000,
-  apiBaseUrl: 'http://localhost:3001/api' // 假設後端API端口
+  apiBaseUrl: 'http://localhost:3001/api' // False設後端APIPort
 };
 
-// 創建項目目錄
+// Create項目Directory
 function createProjectStructure() {
   // eslint-disable-next-line no-console
   console.log('📁 創建項目結構...');
@@ -41,7 +41,7 @@ function createProjectStructure() {
   });
 }
 
-// 創建 package.json
+// Create package.json
 function createPackageJson() {
   // eslint-disable-next-line no-console
   console.log('📦 創建 package.json...');
@@ -90,7 +90,7 @@ function createPackageJson() {
   console.log('   ✅ package.json');
 }
 
-// 創建主要組件
+// Create主要Component
 function createMainComponents() {
   // eslint-disable-next-line no-console
   console.log('🔧 創建主要組件...');
@@ -158,7 +158,7 @@ const Dashboard = () => {
       const dashboardData = await monitoringService.getDashboardData();
       setData(dashboardData);
     } catch (err) {
-      setError('加載數據失敗: ' + err.message);
+      setError('加載數據Failed: ' + err.message);
     } finally {
       setLoading(false);
     }
@@ -174,14 +174,14 @@ const Dashboard = () => {
   }
 
   if (error) {
-    return <Alert message="錯誤" description={error} type="error" showIcon />;
+    return <Alert message="Error" description={error} type="error" showIcon />;
   }
 
   return (
     <div>
       <h1><DashboardOutlined /> CardStrategy 監控儀表板</h1>
       
-      {/* 關鍵指標 */}
+      {/* OffKey指標 */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={6}>
           <Card>
@@ -208,7 +208,7 @@ const Dashboard = () => {
         <Col span={6}>
           <Card>
             <Statistic
-              title="API 成功率"
+              title="API Success率"
               value={data?.apiSuccessRate || 0}
               suffix="%"
               valueStyle={{ color: '#3f8600' }}
@@ -228,7 +228,7 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-      {/* 圖表 */}
+      {/* GraphTable */}
       <Row gutter={16}>
         <Col span={12}>
           <Card title="成本趨勢">
@@ -334,10 +334,10 @@ export default Navigation;
   console.log('   ✅ 主要組件');
 }
 
-// 創建服務層
+// CreateService層
 function createServices() {
   // eslint-disable-next-line no-console
-  console.log('🔌 創建服務層...');
+  console.log('🔌 CreateService層...');
   
   // monitoringService.js
   const monitoringService = `import axios from 'axios';
@@ -347,7 +347,7 @@ const API_BASE_URL = '${config.apiBaseUrl}';
 class MonitoringService {
   async getDashboardData() {
     try {
-      // 調用現有的API接口
+      // 調用現有的APIInterface
       const [aiEcosystem, performance, cost] = await Promise.all([
         this.getAIEcosystemData(),
         this.getPerformanceData(),
@@ -363,7 +363,7 @@ class MonitoringService {
         systemMetrics: performance.metrics
       };
     } catch (error) {
-      console.error('獲取儀表板數據失敗:', error);
+      console.error('Get儀表板數據Failed:', error);
       throw error;
     }
   }
@@ -373,7 +373,7 @@ class MonitoringService {
       const response = await axios.get(\`\${API_BASE_URL}/ai-ecosystem/stats\`);
       return response.data;
     } catch (error) {
-      console.error('獲取AI生態系統數據失敗:', error);
+      console.error('GetAI生態系統數據Failed:', error);
       return {
         successRate: 0,
         totalRequests: 0,
@@ -387,7 +387,7 @@ class MonitoringService {
       const response = await axios.get(\`\${API_BASE_URL}/performance/metrics\`);
       return response.data;
     } catch (error) {
-      console.error('獲取性能數據失敗:', error);
+      console.error('Get性能數據Failed:', error);
       return {
         activeUsers: 0,
         metrics: {
@@ -405,7 +405,7 @@ class MonitoringService {
       const response = await axios.get(\`\${API_BASE_URL}/cost/analysis\`);
       return response.data;
     } catch (error) {
-      console.error('獲取成本數據失敗:', error);
+      console.error('Get成本數據Failed:', error);
       return {
         monthlyCost: 0,
         trend: {
@@ -428,10 +428,10 @@ export const monitoringService = new MonitoringService();
   
   fs.writeFileSync('web-monitoring/src/services/monitoringService.js', monitoringService);
   // eslint-disable-next-line no-console
-  console.log('   ✅ 服務層');
+  console.log('   ✅ Service層');
 }
 
-// 創建樣式文件
+// Create樣式File
 function createStyles() {
   // eslint-disable-next-line no-console
   console.log('🎨 創建樣式文件...');
@@ -464,7 +464,7 @@ code {
   console.log('   ✅ 樣式文件');
 }
 
-// 創建 README
+// Create README
 function createReadme() {
   // eslint-disable-next-line no-console
   console.log('📖 創建 README...');
@@ -539,7 +539,7 @@ web-monitoring/
   console.log('   ✅ README.md');
 }
 
-// 主函數
+// 主Function
 function main() {
   createProjectStructure();
   createPackageJson();

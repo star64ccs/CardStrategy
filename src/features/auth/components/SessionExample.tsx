@@ -32,16 +32,16 @@ export const SessionExample: React.FC = () => {
     clearTerminationError,
   } = useSession({
     onSessionCreated: session => {
-      Alert.alert('成功', `會話創建成功: ${session.id}`);
+      Alert.alert('Success', `會話CreateSuccess: ${session.id}`);
     },
     onSessionRefreshed: session => {
-      Alert.alert('成功', `會話刷新成功: ${session.id}`);
+      Alert.alert('Success', `會話刷新Success: ${session.id}`);
     },
     onSessionTerminated: () => {
-      Alert.alert('成功', '會話已終止');
+      Alert.alert('Success', '會話已終止');
     },
     onSessionError: error => {
-      Alert.alert('錯誤', error);
+      Alert.alert('Error', error);
     },
   });
 
@@ -53,16 +53,16 @@ export const SessionExample: React.FC = () => {
         'user123',
         `access_token_${Date.now()}`,
         `refresh_token_${Date.now()}`,
-        3600 // 1小時
+        3600 // 1Hour
       );
     } catch (error: unknown) {
-      logger.error('創建會話失敗:', error);
+      logger.error('Create會話Failed:', error);
     }
   };
 
   const _handleRefreshSession = async () => {
     if (!currentSession) {
-      Alert.alert('錯誤', '沒有當前會話');
+      Alert.alert('Error', '沒有當前會話');
       return;
     }
 
@@ -72,13 +72,13 @@ export const SessionExample: React.FC = () => {
         deviceId: currentSession.deviceInfo.deviceId,
       });
     } catch (error: unknown) {
-      logger.error('刷新會話失敗:', error);
+      logger.error('刷新會話Failed:', error);
     }
   };
 
   const _handleTerminateSession = async () => {
     if (!currentSession) {
-      Alert.alert('錯誤', '沒有當前會話');
+      Alert.alert('Error', '沒有當前會話');
       return;
     }
 
@@ -91,7 +91,7 @@ export const SessionExample: React.FC = () => {
           try {
             await terminate({ reason: '用戶手動終止' });
           } catch (error: unknown) {
-            logger.error('終止會話失敗:', error);
+            logger.error('終止會話Failed:', error);
           }
         },
       },
@@ -108,7 +108,7 @@ export const SessionExample: React.FC = () => {
           try {
             await terminate({ reason: '終止所有會話', forceTerminate: true });
           } catch (error: unknown) {
-            logger.error('終止所有會話失敗:', error);
+            logger.error('終止所有會話Failed:', error);
           }
         },
       },
@@ -315,7 +315,7 @@ export const SessionExample: React.FC = () => {
                 Alert.alert('會話終止', `會話 ${sessionId} 已終止`);
               }}
               onError={error => {
-                Alert.alert('錯誤', error);
+                Alert.alert('Error', error);
               }}
             />
           </View>

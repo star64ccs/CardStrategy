@@ -1,6 +1,6 @@
 /**
- * 高性能任務隊列
- * 實現優先級隊列、並發控制、超時處理等功能
+ * 高性能TaskQueue
+ * 實現優先級Queue、ConcurrentControl、超時Handle等功能
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -13,7 +13,7 @@ import type {
 import { ProcessingStatus, DataPriority } from '../types/processing';
 
 /**
- * 優先級隊列節點
+ * 優先級QueueNode
  */
 interface PriorityQueueNode<T> {
   task: ProcessingTask<T>;
@@ -22,7 +22,7 @@ interface PriorityQueueNode<T> {
 }
 
 /**
- * 高性能任務隊列實現
+ * 高性能TaskQueue實現
  */
 export class HighPerformanceTaskQueue implements TaskQueue {
   private priorityQueue: PriorityQueueNode<any>[] = [];
@@ -38,7 +38,7 @@ export class HighPerformanceTaskQueue implements TaskQueue {
   constructor(
     maxSize = 1000,
     concurrency = 4,
-    timeout = 30000 // 30秒
+    timeout = 30000 // 30Second
   ) {
     this.maxSize = maxSize;
     this.concurrency = concurrency;
@@ -48,16 +48,16 @@ export class HighPerformanceTaskQueue implements TaskQueue {
   }
 
   /**
-   * 入隊任務
+   * 入隊Task
    */
   async enqueue<T>(task: ProcessingTask<T>): Promise<void> {
     try {
-      // 檢查隊列大小限制
+      // CheckQueue大小Limit
       if (this.priorityQueue.length >= this.maxSize) {
         throw new Error('任務隊列已滿');
       }
 
-      // 設置任務狀態
+      // SettingsTaskStatus
       task.status = ProcessingStatus.PENDING;
       task.createdAt = new Date();
       task.progress = 0;
@@ -65,26 +65,26 @@ export class HighPerformanceTaskQueue implements TaskQueue {
       // 計算優先級分數
       const _priorityScore = this.calculatePriorityScore(task);
 
-      // 創建隊列節點
+      // CreateQueueNode
       const node: PriorityQueueNode<T> = {
         task,
         priority: priorityScore,
         timestamp: Date.now(),
       };
 
-      // 插入到優先級隊列
+      // Insert到優先級Queue
       this.insertIntoPriorityQueue(node);
       this.taskMap.set(task.id, task);
 
-      logger.debug(`任務入隊成功: ${task.id}`, { priority: priorityScore });
+      logger.debug(`任務入隊Success: ${task.id}`, { priority: priorityScore });
     } catch (error) {
-      logger.error('任務入隊失敗:', { error, taskId: task.id });
+      logger.error('任務入隊Failed:', { error, taskId: task.id });
       throw error;
     }
   }
 
   /**
-   * 出隊任務
+   * 出隊Task
    */
   async dequeue(): Promise<ProcessingTask | null> {
     try {
@@ -92,16 +92,16 @@ export class HighPerformanceTaskQueue implements TaskQueue {
         return null;
       }
 
-      // 檢查並發限制
+      // CheckConcurrentLimit
       if (this.activeTasks.size >= this.concurrency) {
         return null;
       }
 
-      // 取出最高優先級任務
+      // 取出最高優先級Task
       const _node = this.priorityQueue.shift()!;
       const { task } = node;
 
-      // 更新任務狀態
+      // UpdateTaskStatus
       task.status = ProcessingStatus.PROCESSING;
       task.startedAt = new Date();
       this.activeTasks.add(task.id);
@@ -109,13 +109,13 @@ export class HighPerformanceTaskQueue implements TaskQueue {
       logger.debug(`任務出隊: ${task.id}`);
       return task;
     } catch (error) {
-      logger.error('任務出隊失敗:', error);
+      logger.error('任務出隊Failed:', error);
       return null;
     }
   }
 
   /**
-   * 查看隊列頭部任務
+   * 查看Queue頭部Task
    */
   async peek(): Promise<ProcessingTask | null> {
     if (this.priorityQueue.length === 0) {
@@ -125,14 +125,14 @@ export class HighPerformanceTaskQueue implements TaskQueue {
   }
 
   /**
-   * 獲取隊列大小
+   * GetQueue大小
    */
   async size(): Promise<number> {
     return this.priorityQueue.length;
   }
 
   /**
-   * 清空隊列
+   * 清EmptyQueue
    */
   async clear(): Promise<void> {
     try {
@@ -142,23 +142,23 @@ export class HighPerformanceTaskQueue implements TaskQueue {
       this.metrics = this.initializeMetrics();
       logger.info('任務隊列已清空');
     } catch (error) {
-      logger.error('清空任務隊列失敗:', error);
+      logger.error('清空任務隊列Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 移除指定任務
+   * Remove指定Task
    */
   async remove(id: string): Promise<boolean> {
     try {
-      // 從優先級隊列中移除
+      // 從優先級Queue中Remove
       const _index = this.priorityQueue.findIndex(node => node.task.id === id);
       if (index !== -1) {
         this.priorityQueue.splice(index, 1);
       }
 
-      // 從任務映射中移除
+      // 從TaskMap中Remove
       const _removed = this.taskMap.delete(id);
       this.activeTasks.delete(id);
 
@@ -168,20 +168,20 @@ export class HighPerformanceTaskQueue implements TaskQueue {
 
       return removed;
     } catch (error) {
-      logger.error('移除任務失敗:', { error, taskId: id });
+      logger.error('移除任務Failed:', { error, taskId: id });
       return false;
     }
   }
 
   /**
-   * 獲取指定任務
+   * Get指定Task
    */
   async get(id: string): Promise<ProcessingTask | null> {
     return this.taskMap.get(id) || null;
   }
 
   /**
-   * 完成任務
+   * CompleteTask
    */
   async completeTask(taskId: string, result: ProcessingResult): Promise<void> {
     try {
@@ -190,29 +190,29 @@ export class HighPerformanceTaskQueue implements TaskQueue {
         throw new Error(`任務不存在: ${taskId}`);
       }
 
-      // 更新任務狀態
+      // UpdateTaskStatus
       task.status = ProcessingStatus.COMPLETED;
       task.completedAt = new Date();
       task.progress = 100;
       task.result = result;
 
-      // 從活動任務中移除
+      // 從活動Task中Remove
       this.activeTasks.delete(taskId);
 
-      // 更新指標
+      // Update指標
       this.updateMetrics('completed', result.processingTime);
 
       logger.debug(`任務完成: ${taskId}`, {
         processingTime: result.processingTime,
       });
     } catch (error) {
-      logger.error('完成任務失敗:', { error, taskId });
+      logger.error('完成任務Failed:', { error, taskId });
       throw error;
     }
   }
 
   /**
-   * 失敗任務
+   * FailedTask
    */
   async failTask(taskId: string, error: string): Promise<void> {
     try {
@@ -221,26 +221,26 @@ export class HighPerformanceTaskQueue implements TaskQueue {
         throw new Error(`任務不存在: ${taskId}`);
       }
 
-      // 更新任務狀態
+      // UpdateTaskStatus
       task.status = ProcessingStatus.FAILED;
       task.completedAt = new Date();
       task.error = error;
 
-      // 從活動任務中移除
+      // 從活動Task中Remove
       this.activeTasks.delete(taskId);
 
-      // 更新指標
+      // Update指標
       this.updateMetrics('failed', 0);
 
-      logger.debug(`任務失敗: ${taskId}`, { error });
+      logger.debug(`任務Failed: ${taskId}`, { error });
     } catch (error) {
-      logger.error('標記任務失敗失敗:', { error, taskId });
+      logger.error('標記任務FailedFailed:', { error, taskId });
       throw error;
     }
   }
 
   /**
-   * 獲取隊列統計信息
+   * GetQueueStatisticsInformation
    */
   async getStats(): Promise<{
     queueSize: number;
@@ -261,7 +261,7 @@ export class HighPerformanceTaskQueue implements TaskQueue {
   }
 
   /**
-   * 銷毀隊列
+   * 銷毀Queue
    */
   async destroy(): Promise<void> {
     try {
@@ -271,12 +271,12 @@ export class HighPerformanceTaskQueue implements TaskQueue {
       await this.clear();
       logger.info('任務隊列已銷毀');
     } catch (error) {
-      logger.error('銷毀任務隊列失敗:', error);
+      logger.error('銷毀任務隊列Failed:', error);
       throw error;
     }
   }
 
-  // 私有方法實現
+  // PrivateMethod實現
 
   private initializeMetrics(): PerformanceMetrics {
     return {
@@ -316,11 +316,11 @@ export class HighPerformanceTaskQueue implements TaskQueue {
         break;
     }
 
-    // 時間權重（越早創建的任務優先級越高）
+    // Time權重（越早Create的Task優先級越高）
     const _age = Date.now() - task.createdAt.getTime();
-    score += Math.max(0, 1000 - age / 1000); // 每秒減少1分
+    score += Math.max(0, 1000 - age / 1000); // 每Second減少1分
 
-    // 任務類型權重
+    // TaskClass型權重
     switch (task.type) {
       case 'critical':
         score += 500;
@@ -340,7 +340,7 @@ export class HighPerformanceTaskQueue implements TaskQueue {
   }
 
   private insertIntoPriorityQueue<T>(node: PriorityQueueNode<T>): void {
-    // 二分查找插入位置
+    // 二分FindInsert位置
     let left = 0;
     let right = this.priorityQueue.length - 1;
 
@@ -353,7 +353,7 @@ export class HighPerformanceTaskQueue implements TaskQueue {
       } else if (node.priority < midNode.priority) {
         left = mid + 1;
       } else {
-        // 優先級相同，按時間戳排序
+        // 優先級相同，按Time戳Sort
         if (node.timestamp < midNode.timestamp) {
           right = mid - 1;
         } else {
@@ -374,7 +374,7 @@ export class HighPerformanceTaskQueue implements TaskQueue {
     if (type === 'completed') {
       this.metrics.completedTasks++;
 
-      // 更新平均處理時間
+      // Update平均HandleTime
       const _totalTime =
         this.metrics.averageProcessingTime * (this.metrics.completedTasks - 1) +
         processingTime;
@@ -384,7 +384,7 @@ export class HighPerformanceTaskQueue implements TaskQueue {
       this.metrics.failedTasks++;
     }
 
-    // 更新吞吐量（每秒處理的任務數）
+    // Update吞吐量（每SecondHandle的Task數）
     const _uptime = (Date.now() - this.metrics.uptime) / 1000;
     this.metrics.throughput =
       uptime > 0 ? this.metrics.completedTasks / uptime : 0;
@@ -397,12 +397,12 @@ export class HighPerformanceTaskQueue implements TaskQueue {
 
     this.processingInterval = setInterval(() => {
       this.processNextTask();
-    }, 100); // 每100ms檢查一次
+    }, 100); // 每100msCheck一次
   }
 
   private async processNextTask(): Promise<void> {
     try {
-      // 檢查是否有可執行的任務
+      // CheckYesNo有可執Row的Task
       if (this.activeTasks.size >= this.concurrency) {
         return;
       }
@@ -412,15 +412,15 @@ export class HighPerformanceTaskQueue implements TaskQueue {
         return;
       }
 
-      // 設置超時處理
+      // Settings超時Handle
       const _timeoutId = setTimeout(() => {
         this.handleTaskTimeout(task.id);
       }, this.timeout);
 
-      // 模擬任務處理
+      // 模擬TaskHandle
       this.simulateTaskProcessing(task, timeoutId);
     } catch (error) {
-      logger.error('處理任務失敗:', error);
+      logger.error('Handle任務Failed:', error);
     }
   }
 
@@ -429,21 +429,21 @@ export class HighPerformanceTaskQueue implements TaskQueue {
     timeoutId: NodeJS.Timeout
   ): Promise<void> {
     try {
-      // 模擬處理時間
-      const _processingTime = Math.random() * 5000 + 1000; // 1-6秒
+      // 模擬HandleTime
+      const _processingTime = Math.random() * 5000 + 1000; // 1-6Second
 
       await new Promise(resolve => setTimeout(resolve, processingTime));
 
-      // 清除超時
+      // Clear超時
       clearTimeout(timeoutId);
 
-      // 模擬處理結果
+      // 模擬Handle結果
       const result: ProcessingResult = {
-        success: Math.random() > 0.1, // 90%成功率
+        success: Math.random() > 0.1, // 90%Success率
         data: { processed: true, taskId: task.id },
         processingTime,
         memoryUsage: Math.random() * 100 + 10, // 10-110MB
-        cacheHit: Math.random() > 0.5, // 50%緩存命中率
+        cacheHit: Math.random() > 0.5, // 50%Cache命中率
         compressionRatio: Math.random() * 0.5 + 0.5, // 0.5-1.0
         metadata: { strategy: task.config.strategy },
       };
@@ -451,13 +451,13 @@ export class HighPerformanceTaskQueue implements TaskQueue {
       if (result.success) {
         await this.completeTask(task.id, result);
       } else {
-        await this.failTask(task.id, '模擬處理失敗');
+        await this.failTask(task.id, '模擬HandleFailed');
       }
     } catch (error) {
       clearTimeout(timeoutId);
       await this.failTask(
         task.id,
-        error instanceof Error ? error.message : '未知錯誤'
+        error instanceof Error ? error.message : '未知Error'
       );
     }
   }
@@ -470,7 +470,7 @@ export class HighPerformanceTaskQueue implements TaskQueue {
         logger.warn(`任務處理超時: ${taskId}`);
       }
     } catch (error) {
-      logger.error('處理任務超時失敗:', { error, taskId });
+      logger.error('Handle任務超時Failed:', { error, taskId });
     }
   }
 }

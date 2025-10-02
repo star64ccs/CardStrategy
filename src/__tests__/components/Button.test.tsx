@@ -202,16 +202,16 @@ describe('Button Component', () => {
       });
     });
 
-    it('應該處理 onPress 回調中的錯誤', () => {
+    it('應該Handle onPress 回調中的Error', () => {
       const _errorOnPress = jest.fn().mockImplementation(() => {
-        throw new Error('測試錯誤');
+        throw new Error('測試Error');
       });
       const { getByText } = render(
         <Button {...defaultProps} onPress={errorOnPress} />
       );
 
       const _button = getByText('測試按鈕');
-      expect(() => fireEvent.press(button)).toThrow('測試錯誤');
+      expect(() => fireEvent.press(button)).toThrow('測試Error');
     });
   });
 

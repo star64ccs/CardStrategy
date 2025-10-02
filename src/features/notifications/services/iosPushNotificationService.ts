@@ -2,22 +2,22 @@ import { Platform } from 'react-native';
 
 import { logger } from '../../../core/utils/logger';
 
-// iOS 推送通知相關類型
+// iOS PushNotification相OffClass型
 export interface IOSPushNotificationConfig {
-  // APNs 配置
+  // APNs Configure
   apnsKeyId: string;
   apnsTeamId: string;
   apnsBundleId: string;
   apnsEnvironment: 'development' | 'production';
 
-  // 推送設置
+  // PushSettings
   enableBadge: boolean;
   enableSound: boolean;
   enableAlert: boolean;
 
-  // 高級設置
+  // 高級Settings
   priority: 'normal' | 'high';
-  expiration: number; // 秒
+  expiration: number; // Second
   collapseId?: string;
   threadId?: string;
 }
@@ -64,36 +64,36 @@ export interface IOSPushNotificationStats {
   lastSentAt?: Date;
 }
 
-// iOS 推送通知庫接口
+// iOS PushNotificationLibraryInterface
 interface IOSPushNotificationLibrary {
-  // 設備令牌管理
+  // 設備令牌Manage
   requestPermissions(): Promise<boolean>;
   getDeviceToken(): Promise<string | null>;
   registerForRemoteNotifications(): Promise<boolean>;
   unregisterForRemoteNotifications(): Promise<boolean>;
 
-  // 推送發送
+  // PushSend
   sendNotification(
     deviceToken: string,
     payload: IOSPushNotificationPayload,
     config: IOSPushNotificationConfig
   ): Promise<IOSPushNotificationResult>;
 
-  // 批量發送
+  // BatchSend
   sendBulkNotifications(
     deviceTokens: string[],
     payload: IOSPushNotificationPayload,
     config: IOSPushNotificationConfig
   ): Promise<IOSPushNotificationResult[]>;
 
-  // 統計和監控
+  // Statistics和Monitor
   getDeliveryStats(): Promise<IOSPushNotificationStats>;
   validateDeviceToken(token: string): Promise<boolean>;
 }
 
 /**
- * iOS 專用推送通知服務
- * 處理 APNs 推送通知功能
+ * iOS 專用PushNotificationService
+ * Handle APNs PushNotification功能
  */
 export class IOSPushNotificationService {
   private static instance: IOSPushNotificationService;
@@ -121,54 +121,54 @@ export class IOSPushNotificationService {
   }
 
   /**
-   * 初始化 iOS 推送通知庫
+   * Initialize iOS PushNotificationLibrary
    */
   private async initializeIOSPushNotificationLibrary(): Promise<void> {
     try {
       if (Platform.OS !== 'ios') {
-        throw new Error('此服務僅支持 iOS 平台');
+        throw new Error('此Service僅支持 iOS 平台');
       }
 
       this.pushLib = await this.loadIOSPushNotificationLibrary();
       this.isInitialized = true;
-      logger.info('iOS 推送通知服務初始化成功');
+      logger.info('iOS 推送通知ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('iOS 推送通知服務初始化失敗:', error);
+      logger.error('iOS 推送通知ServiceInitializeFailed:', error);
       this.isInitialized = false;
     }
   }
 
   /**
-   * 加載 iOS 推送通知庫
+   * 加載 iOS PushNotificationLibrary
    */
   private async loadIOSPushNotificationLibrary(): Promise<IOSPushNotificationLibrary> {
-    // 在實際應用中，這裡會導入真實的 iOS 推送通知庫
+    // 在實際Apply中，這裡會ImportTrue實的 iOS PushNotificationLibrary
     // 例如：react-native-push-notification, expo-notifications 等
 
     return {
       requestPermissions: async () => {
-        // 模擬請求推送權限
+        // 模擬RequestPush權限
         const _granted = Math.random() > 0.2;
         logger.info('請求推送權限', { granted });
         return granted;
       },
 
       getDeviceToken: async () => {
-        // 模擬獲取設備令牌
+        // 模擬Get設備令牌
         const _token = `ios_device_token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         logger.info('獲取設備令牌', { token });
         return token;
       },
 
       registerForRemoteNotifications: async () => {
-        // 模擬註冊遠程推送
+        // 模擬Register遠程Push
         const _success = Math.random() > 0.1;
         logger.info('註冊遠程推送', { success });
         return success;
       },
 
       unregisterForRemoteNotifications: async () => {
-        // 模擬取消註冊遠程推送
+        // 模擬CancelRegister遠程Push
         logger.info('取消註冊遠程推送');
         return true;
       },
@@ -178,13 +178,13 @@ export class IOSPushNotificationService {
         payload: IOSPushNotificationPayload,
         config: IOSPushNotificationConfig
       ) => {
-        // 模擬發送推送通知
+        // 模擬SendPushNotification
         const _startTime = Date.now();
         const _success = Math.random() > 0.15;
         const _deliveryTime = Date.now() - startTime;
 
         if (success) {
-          logger.info('推送通知發送成功', {
+          logger.info('推送通知發送Success', {
             deviceToken: `${deviceToken.substring(0, 20)}...`,
             payload,
             deliveryTime,
@@ -196,7 +196,7 @@ export class IOSPushNotificationService {
             timestamp: new Date(),
           };
         } else {
-          logger.warn('推送通知發送失敗', {
+          logger.warn('推送通知發送Failed', {
             deviceToken: `${deviceToken.substring(0, 20)}...`,
             error: 'Delivery failed',
           });
@@ -215,7 +215,7 @@ export class IOSPushNotificationService {
         payload: IOSPushNotificationPayload,
         config: IOSPushNotificationConfig
       ) => {
-        // 模擬批量發送推送通知
+        // 模擬BatchSendPushNotification
         const results: IOSPushNotificationResult[] = [];
 
         for (const token of deviceTokens) {
@@ -237,7 +237,7 @@ export class IOSPushNotificationService {
       },
 
       getDeliveryStats: async () => {
-        // 模擬獲取投遞統計
+        // 模擬Get投遞Statistics
         return {
           totalSent: this.stats.totalSent,
           totalDelivered: this.stats.totalDelivered,
@@ -249,7 +249,7 @@ export class IOSPushNotificationService {
       },
 
       validateDeviceToken: async (token: string) => {
-        // 模擬驗證設備令牌
+        // 模擬Verify設備令牌
         const _isValid =
           token.length > 20 && token.startsWith('ios_device_token_');
         logger.info('驗證設備令牌', {
@@ -262,51 +262,51 @@ export class IOSPushNotificationService {
   }
 
   /**
-   * 配置推送通知服務
+   * ConfigurePushNotificationService
    */
   public configure(config: IOSPushNotificationConfig): void {
     this.config = config;
-    logger.info('iOS 推送通知服務配置完成', { config });
+    logger.info('iOS 推送通知ServiceConfigure完成', { config });
   }
 
   /**
-   * 請求推送權限
+   * RequestPush權限
    */
   public async requestPermissions(): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        logger.error('iOS 推送通知服務未初始化');
+        logger.error('iOS 推送通知Service未Initialize');
         return false;
       }
 
       const _granted = await this.pushLib.requestPermissions();
 
       if (granted) {
-        // 權限獲取成功後，註冊遠程推送
+        // 權限GetSuccess後，Register遠程Push
         await this.registerForRemoteNotifications();
       }
 
       return granted;
     } catch (error) {
-      logger.error('請求推送權限失敗:', error);
+      logger.error('請求推送權限Failed:', error);
       return false;
     }
   }
 
   /**
-   * 註冊遠程推送
+   * Register遠程Push
    */
   public async registerForRemoteNotifications(): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        logger.error('iOS 推送通知服務未初始化');
+        logger.error('iOS 推送通知Service未Initialize');
         return false;
       }
 
       const _success = await this.pushLib.registerForRemoteNotifications();
 
       if (success) {
-        // 註冊成功後，獲取設備令牌
+        // RegisterSuccess後，Get設備令牌
         const _token = await this.pushLib.getDeviceToken();
         if (token) {
           this.deviceToken = {
@@ -320,18 +320,18 @@ export class IOSPushNotificationService {
 
       return success;
     } catch (error) {
-      logger.error('註冊遠程推送失敗:', error);
+      logger.error('註冊遠程推送Failed:', error);
       return false;
     }
   }
 
   /**
-   * 取消註冊遠程推送
+   * CancelRegister遠程Push
    */
   public async unregisterForRemoteNotifications(): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        logger.error('iOS 推送通知服務未初始化');
+        logger.error('iOS 推送通知Service未Initialize');
         return false;
       }
 
@@ -343,13 +343,13 @@ export class IOSPushNotificationService {
 
       return success;
     } catch (error) {
-      logger.error('取消註冊遠程推送失敗:', error);
+      logger.error('取消註冊遠程推送Failed:', error);
       return false;
     }
   }
 
   /**
-   * 發送推送通知
+   * SendPushNotification
    */
   public async sendNotification(
     deviceToken: string,
@@ -357,12 +357,12 @@ export class IOSPushNotificationService {
   ): Promise<IOSPushNotificationResult> {
     try {
       if (!this.isInitialized || !this.pushLib || !this.config) {
-        throw new Error('iOS 推送通知服務未初始化或未配置');
+        throw new Error('iOS 推送通知Service未Initialize或未Configure');
       }
 
       const _startTime = Date.now();
 
-      // 驗證設備令牌
+      // Verify設備令牌
       const _isValid = await this.pushLib.validateDeviceToken(deviceToken);
       if (!isValid) {
         return {
@@ -373,7 +373,7 @@ export class IOSPushNotificationService {
         };
       }
 
-      // 發送推送通知
+      // SendPushNotification
       const _result = await this.pushLib.sendNotification(
         deviceToken,
         payload,
@@ -381,12 +381,12 @@ export class IOSPushNotificationService {
       );
       const _deliveryTime = Date.now() - startTime;
 
-      // 更新統計
+      // UpdateStatistics
       this.updateStats(result.success, deliveryTime);
 
       return result;
     } catch (error) {
-      logger.error('發送推送通知失敗:', error);
+      logger.error('發送推送通知Failed:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -397,7 +397,7 @@ export class IOSPushNotificationService {
   }
 
   /**
-   * 批量發送推送通知
+   * BatchSendPushNotification
    */
   public async sendBulkNotifications(
     deviceTokens: string[],
@@ -405,10 +405,10 @@ export class IOSPushNotificationService {
   ): Promise<IOSPushNotificationResult[]> {
     try {
       if (!this.isInitialized || !this.pushLib || !this.config) {
-        logger.error('iOS 推送通知服務未初始化或未配置');
+        logger.error('iOS 推送通知Service未Initialize或未Configure');
         return deviceTokens.map(() => ({
           success: false,
-          error: 'iOS 推送通知服務未初始化或未配置',
+          error: 'iOS 推送通知Service未Initialize或未Configure',
           errorCode: 'bulk_send_failed',
           timestamp: new Date(),
         }));
@@ -420,14 +420,14 @@ export class IOSPushNotificationService {
         this.config
       );
 
-      // 更新統計
+      // UpdateStatistics
       results.forEach(result => {
-        this.updateStats(result.success, 0); // 批量發送不計算單個投遞時間
+        this.updateStats(result.success, 0); // BatchSend不計算Single投遞Time
       });
 
       return results;
     } catch (error) {
-      logger.error('批量發送推送通知失敗:', error);
+      logger.error('批量發送推送通知Failed:', error);
       return deviceTokens.map(() => ({
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -438,7 +438,7 @@ export class IOSPushNotificationService {
   }
 
   /**
-   * 發送本地推送通知
+   * SendLocalPushNotification
    */
   public async sendLocalNotification(
     title: string,
@@ -451,60 +451,60 @@ export class IOSPushNotificationService {
     }
   ): Promise<boolean> {
     try {
-      // 模擬發送本地推送通知
+      // 模擬SendLocalPushNotification
       logger.info('發送本地推送通知', { title, body, options });
 
-      // 在實際應用中，這裡會使用本地推送通知 API
+      // 在實際Apply中，這裡會使用LocalPushNotification API
       // 例如：PushNotification.localNotification()
 
       return true;
     } catch (error) {
-      logger.error('發送本地推送通知失敗:', error);
+      logger.error('發送本地推送通知Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取設備令牌
+   * Get設備令牌
    */
   public getDeviceToken(): IOSDeviceToken | null {
     return this.deviceToken;
   }
 
   /**
-   * 獲取投遞統計
+   * Get投遞Statistics
    */
   public async getDeliveryStats(): Promise<IOSPushNotificationStats> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('iOS 推送通知服務未初始化');
+        throw new Error('iOS 推送通知Service未Initialize');
       }
 
       return await this.pushLib.getDeliveryStats();
     } catch (error) {
-      logger.error('獲取投遞統計失敗:', error);
+      logger.error('Get投遞統計Failed:', error);
       return this.stats;
     }
   }
 
   /**
-   * 驗證設備令牌
+   * Verify設備令牌
    */
   public async validateDeviceToken(token: string): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('iOS 推送通知服務未初始化');
+        throw new Error('iOS 推送通知Service未Initialize');
       }
 
       return await this.pushLib.validateDeviceToken(token);
     } catch (error) {
-      logger.error('驗證設備令牌失敗:', error);
+      logger.error('Verify設備令牌Failed:', error);
       return false;
     }
   }
 
   /**
-   * 更新統計信息
+   * UpdateStatisticsInformation
    */
   private updateStats(success: boolean, deliveryTime: number): void {
     this.stats.totalSent++;
@@ -528,14 +528,14 @@ export class IOSPushNotificationService {
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   public isServiceReady(): boolean {
     return this.isInitialized && this.pushLib !== null && this.config !== null;
   }
 
   /**
-   * 獲取服務信息
+   * GetServiceInformation
    */
   public getServiceInfo() {
     return {
@@ -557,7 +557,7 @@ export class IOSPushNotificationService {
   }
 
   /**
-   * 重置統計信息
+   * ResetStatisticsInformation
    */
   public resetStats(): void {
     this.stats = {

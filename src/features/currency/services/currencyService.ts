@@ -53,20 +53,20 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
 
   async initialize(config?: Partial<CurrencyConfig>): Promise<void> {
     try {
-      logger.info('初始化多幣種服務');
+      logger.info('Initialize多幣種Service');
 
-      // 合併配置
+      // MergeConfigure
       if (config) {
         this.config = { ...this.config, ...config };
       }
 
-      // 從存儲中恢復狀態
+      // 從Storage中RestoreStatus
       await this.loadState();
 
-      // 初始化匯率
+      // Initialize匯率
       await this.updateExchangeRates();
 
-      // 設置自動更新
+      // SettingsAutoUpdate
       if (this.config.autoUpdate) {
         this.startAutoUpdate();
       }
@@ -76,9 +76,9 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         currency: this.state.currentCurrency,
       });
 
-      logger.info('多幣種服務初始化完成');
+      logger.info('多幣種ServiceInitialize完成');
     } catch (error) {
-      logger.error('多幣種服務初始化失敗:', error);
+      logger.error('多幣種ServiceInitializeFailed:', error);
       throw error;
     }
   }
@@ -104,10 +104,10 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
       const _oldCurrency = this.state.currentCurrency;
       this.state.currentCurrency = currency;
 
-      // 保存到存儲
+      // Save到Storage
       await this.saveState();
 
-      // 發送事件
+      // SendEvent
       this.emitEvent('currency_changed', { currency });
 
       logger.info(`貨幣已更改: ${oldCurrency} -> ${currency}`);
@@ -118,10 +118,10 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('更改貨幣失敗:', error);
+      logger.error('更改貨幣Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: new Date(),
       };
     }
@@ -133,7 +133,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
     try {
       const _startTime = Date.now();
 
-      // 驗證請求
+      // VerifyRequest
       if (!this.validateAmount(request.amount)) {
         return {
           success: false,
@@ -153,7 +153,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         };
       }
 
-      // 獲取匯率
+      // Get匯率
       const _rateResponse = await this.getExchangeRate({
         fromCurrency: request.fromCurrency,
         toCurrency: request.toCurrency,
@@ -177,7 +177,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         convertedAmount += fees;
       }
 
-      // 應用加價
+      // Apply加價
       let markup = 0;
       if (request.applyMarkup) {
         markup = this.applyMarkup(convertedAmount, 0.02); // 2% 加價
@@ -204,17 +204,17 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         markup,
       };
 
-      // 添加到歷史記錄
+      // Add到歷史Record
       this.state.conversionHistory.push(conversion);
       if (this.state.conversionHistory.length > 100) {
         this.state.conversionHistory = this.state.conversionHistory.slice(-100);
       }
 
-      // 更新統計
+      // UpdateStatistics
       this.apiCallCount++;
       this.totalApiResponseTime += Date.now() - startTime;
 
-      // 發送事件
+      // SendEvent
       this.emitEvent('conversion_completed', { conversion });
 
       logger.info(
@@ -227,10 +227,10 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('貨幣轉換失敗:', error);
+      logger.error('貨幣轉換Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: new Date(),
       };
     }
@@ -242,7 +242,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
     try {
       const _cacheKey = `${request.fromCurrency}_${request.toCurrency}`;
 
-      // 檢查緩存
+      // CheckCache
       const _cached = this.cache.get(cacheKey);
       if (
         cached &&
@@ -259,7 +259,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
 
       this.cacheMisses++;
 
-      // 檢查是否為相同貨幣
+      // CheckYesNo為相同貨幣
       if (request.fromCurrency === request.toCurrency) {
         const rate: ExchangeRate = {
           fromCurrency: request.fromCurrency,
@@ -279,7 +279,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         };
       }
 
-      // 嘗試從 API 獲取匯率
+      // 嘗試從 API Get匯率
       let rate: ExchangeRate | undefined;
 
       try {
@@ -288,7 +288,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
           request.toCurrency
         );
       } catch (apiError) {
-        logger.warn('API 獲取匯率失敗，使用備用匯率:', apiError);
+        logger.warn('API Get匯率Failed，使用備用匯率:', apiError);
 
         // 使用備用匯率
         const _fallbackKey = `${request.fromCurrency}/${request.toCurrency}`;
@@ -315,10 +315,10 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         };
       }
 
-      // 緩存匯率
+      // Cache匯率
       this.cache.set(cacheKey, { data: rate, timestamp: Date.now() });
 
-      // 更新狀態
+      // UpdateStatus
       this.state.exchangeRates[cacheKey] = rate;
       this.state.lastUpdated = new Date();
 
@@ -328,10 +328,10 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('獲取匯率失敗:', error);
+      logger.error('Get匯率Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: new Date(),
       };
     }
@@ -363,9 +363,9 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
 
       this.emitEvent('rate_updated', {});
     } catch (error) {
-      logger.error('更新匯率失敗:', error);
+      logger.error('Update匯率Failed:', error);
       this.emitEvent('error_occurred', {
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
       });
     }
   }
@@ -442,14 +442,14 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
       return parseFloat(value) || 0;
     }
 
-    // 移除貨幣符號和空格
+    // Remove貨幣符號和Empty格
     const _cleanedValue = this.sanitizeCurrencyInput(value);
 
-    // 根據地區解析數字
+    // Root據LocaleParse數字
     const _locale = this.getCurrencyLocale(targetCurrency);
     const _formatter = new Intl.NumberFormat(locale);
 
-    // 簡單的數字解析（實際應用中可能需要更複雜的邏輯）
+    // 簡單的數字Parse（實際Apply中可能需要更複雜的邏輯）
     return parseFloat(cleanedValue) || 0;
   }
 
@@ -555,10 +555,10 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
       return this.roundCurrency(amount * fallbackRate, toCurrency);
     }
 
-    return amount; // 如果沒有匯率，返回原金額
+    return amount; // 如果沒有匯率，Return原金額
   }
 
-  // 私有方法
+  // PrivateMethod
   private async loadState(): Promise<void> {
     try {
       const _stored = await AsyncStorage.getItem('currency_state');
@@ -566,7 +566,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         const _parsed = JSON.parse(stored);
         this.state = { ...this.state, ...parsed };
 
-        // 恢復日期對象
+        // RestoreDayObject
         if (this.state.lastUpdated) {
           this.state.lastUpdated = new Date(this.state.lastUpdated);
         }
@@ -657,7 +657,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
         try {
           callback(event);
         } catch (error) {
-          logger.error('事件回調執行失敗:', error);
+          logger.error('事件回調執行Failed:', error);
         }
       });
     }
@@ -694,7 +694,7 @@ class CurrencyService implements CurrencyManager, CurrencyTools {
   }
 
   private calculateConversionAccuracy(): number {
-    // 簡單的準確率計算，基於 API 響應成功率
+    // 簡單的準確率計算，基於 API ResponseSuccess率
     const _totalRequests = this.apiCallCount;
     const _successfulRequests = this.state.conversionHistory.length;
 

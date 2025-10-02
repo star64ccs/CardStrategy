@@ -25,29 +25,29 @@ describe('ReportGenerationService', () => {
   });
 
   describe('initialize', () => {
-    it('應該成功初始化報告生成服務', async () => {
+    it('應該SuccessInitialize報告生成Service', async () => {
       await reportGenerationService.initialize();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('初始化報告生成服務...');
+      expect(mockLogger.info).toHaveBeenCalledWith('Initialize報告生成Service...');
       expect(mockLogger.info).toHaveBeenCalledWith('報告模板初始化完成');
       expect(mockLogger.info).toHaveBeenCalledWith('報告生成配置已加載');
-      expect(mockLogger.info).toHaveBeenCalledWith('報告生成服務初始化完成');
+      expect(mockLogger.info).toHaveBeenCalledWith('報告生成ServiceInitialize完成');
     });
 
-    it('應該處理依賴服務未初始化的情況', async () => {
-      // 模擬依賴服務未初始化
+    it('應該Handle依賴Service未Initialize的情況', async () => {
+      // 模擬依賴Service未Initialize
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(reportGenerationService.initialize()).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '報告生成服務初始化失敗:',
+        '報告生成ServiceInitializeFailed:',
         expect.any(Error)
       );
     });
   });
 
   describe('generateReport', () => {
-    it('應該成功生成報告', async () => {
+    it('應該Success生成報告', async () => {
       const _params = {
         templateId: 'analytics-default',
         dataParams: {
@@ -93,7 +93,7 @@ describe('ReportGenerationService', () => {
         reportGenerationService.generateReport(invalidParams)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '報告生成失敗:',
+        '報告生成Failed:',
         expect.any(Error)
       );
     });
@@ -111,14 +111,14 @@ describe('ReportGenerationService', () => {
         reportGenerationService.generateReport(params)
       ).rejects.toThrow('報告模板不存在: nonexistent-template');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '報告生成失敗:',
+        '報告生成Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('generateAnalyticsReport', () => {
-    it('應該成功生成分析報告', async () => {
+    it('應該Success生成分析報告', async () => {
       const _params = {
         reportType: 'trend' as const,
         dataSource: 'cards',
@@ -143,7 +143,7 @@ describe('ReportGenerationService', () => {
 
     it('應該處理無效的分析報告參數', async () => {
       const _invalidParams = {
-        reportType: 'invalid' as any, // 無效報告類型
+        reportType: 'invalid' as any, // 無效ReportClass型
         dataSource: 'cards',
         timeRange: '30d',
         metrics: ['revenue'],
@@ -156,7 +156,7 @@ describe('ReportGenerationService', () => {
         reportGenerationService.generateAnalyticsReport(invalidParams)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '分析報告生成失敗:',
+        '分析報告生成Failed:',
         expect.any(Error)
       );
     });
@@ -191,7 +191,7 @@ describe('ReportGenerationService', () => {
   });
 
   describe('generatePerformanceReport', () => {
-    it('應該成功生成性能報告', async () => {
+    it('應該Success生成性能報告', async () => {
       const _params = {
         reportType: 'system' as const,
         timeRange: '30d',
@@ -213,8 +213,8 @@ describe('ReportGenerationService', () => {
       expect(mockLogger.info).toHaveBeenCalledWith('開始生成性能報告:', params);
     });
 
-    it('應該處理性能報告生成失敗', async () => {
-      // 模擬錯誤情況
+    it('應該Handle性能報告生成Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       const _params = {
@@ -230,14 +230,14 @@ describe('ReportGenerationService', () => {
         reportGenerationService.generatePerformanceReport(params)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '性能報告生成失敗:',
+        '性能報告生成Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('generateQualityReport', () => {
-    it('應該成功生成質量報告', async () => {
+    it('應該Success生成質量報告', async () => {
       const _params = {
         reportType: 'data' as const,
         dataSource: 'cards',
@@ -260,8 +260,8 @@ describe('ReportGenerationService', () => {
       expect(mockLogger.info).toHaveBeenCalledWith('開始生成質量報告:', params);
     });
 
-    it('應該處理質量報告生成失敗', async () => {
-      // 模擬錯誤情況
+    it('應該Handle質量報告生成Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       const _params = {
@@ -278,14 +278,14 @@ describe('ReportGenerationService', () => {
         reportGenerationService.generateQualityReport(params)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '質量報告生成失敗:',
+        '質量報告生成Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('generateFinancialReport', () => {
-    it('應該成功生成財務報告', async () => {
+    it('應該Success生成財務報告', async () => {
       const _params = {
         reportType: 'revenue' as const,
         timeRange: '30d',
@@ -307,8 +307,8 @@ describe('ReportGenerationService', () => {
       expect(mockLogger.info).toHaveBeenCalledWith('開始生成財務報告:', params);
     });
 
-    it('應該處理財務報告生成失敗', async () => {
-      // 模擬錯誤情況
+    it('應該Handle財務報告生成Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       const _params = {
@@ -324,14 +324,14 @@ describe('ReportGenerationService', () => {
         reportGenerationService.generateFinancialReport(params)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '財務報告生成失敗:',
+        '財務報告生成Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('createCustomTemplate', () => {
-    it('應該成功創建自定義報告模板', async () => {
+    it('應該SuccessCreate自定義報告模板', async () => {
       const _template = {
         name: '自定義模板',
         description: '這是一個自定義報告模板',
@@ -387,11 +387,11 @@ describe('ReportGenerationService', () => {
         '創建自定義報告模板:',
         '自定義模板'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('自定義報告模板創建成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('自定義報告模板CreateSuccess');
     });
 
-    it('應該處理創建自定義模板失敗', async () => {
-      // 模擬錯誤情況
+    it('應該HandleCreate自定義模板Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       const _template = {
@@ -424,15 +424,15 @@ describe('ReportGenerationService', () => {
         reportGenerationService.createCustomTemplate(template)
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '創建自定義報告模板失敗:',
+        'Create自定義報告模板Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('updateTemplate', () => {
-    it('應該成功更新報告模板', async () => {
-      // 先創建一個模板
+    it('應該SuccessUpdate報告模板', async () => {
+      // 先Create一個模板
       const _template = {
         name: '測試模板',
         description: '測試模板',
@@ -462,7 +462,7 @@ describe('ReportGenerationService', () => {
       const _createdTemplate =
         await reportGenerationService.createCustomTemplate(template);
 
-      // 更新模板
+      // Update模板
       const _updates = {
         name: '更新後的模板',
         description: '更新後的描述',
@@ -482,7 +482,7 @@ describe('ReportGenerationService', () => {
         '更新報告模板:',
         createdTemplate.id
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('報告模板更新成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('報告模板UpdateSuccess');
     });
 
     it('應該處理模板不存在的情況', async () => {
@@ -492,15 +492,15 @@ describe('ReportGenerationService', () => {
         reportGenerationService.updateTemplate('nonexistent-template', updates)
       ).rejects.toThrow('報告模板不存在: nonexistent-template');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '更新報告模板失敗:',
+        'Update報告模板Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('deleteTemplate', () => {
-    it('應該成功刪除報告模板', async () => {
-      // 先創建一個模板
+    it('應該SuccessDelete報告模板', async () => {
+      // 先Create一個模板
       const _template = {
         name: '測試模板',
         description: '測試模板',
@@ -530,14 +530,14 @@ describe('ReportGenerationService', () => {
       const _createdTemplate =
         await reportGenerationService.createCustomTemplate(template);
 
-      // 刪除模板
+      // Delete模板
       await reportGenerationService.deleteTemplate(createdTemplate.id);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         '刪除報告模板:',
         createdTemplate.id
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('報告模板刪除成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('報告模板DeleteSuccess');
     });
 
     it('應該處理模板不存在的情況', async () => {
@@ -545,24 +545,24 @@ describe('ReportGenerationService', () => {
         reportGenerationService.deleteTemplate('nonexistent-template')
       ).rejects.toThrow('報告模板不存在: nonexistent-template');
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '刪除報告模板失敗:',
+        'Delete報告模板Failed:',
         expect.any(Error)
       );
     });
   });
 
   describe('getAllTemplates', () => {
-    it('應該成功獲取所有報告模板', async () => {
+    it('應該SuccessGet所有報告模板', async () => {
       const _result = await reportGenerationService.getAllTemplates();
 
-      expect(result).toHaveLength(2); // 2個默認模板
+      expect(result).toHaveLength(2); // 2個Default模板
       expect(result.map(t => t.id)).toContain('analytics-default');
       expect(result.map(t => t.id)).toContain('performance-default');
     });
   });
 
   describe('getTemplate', () => {
-    it('應該成功獲取報告模板', async () => {
+    it('應該SuccessGet報告模板', async () => {
       const _result =
         await reportGenerationService.getTemplate('analytics-default');
 
@@ -584,15 +584,15 @@ describe('ReportGenerationService', () => {
   });
 
   describe('getReportStatus', () => {
-    it('應該成功獲取報告狀態', async () => {
+    it('應該SuccessGet報告狀態', async () => {
       const _result = await reportGenerationService.getReportStatus('report-1');
 
-      expect(result).toBeNull(); // 目前實現返回 null
+      expect(result).toBeNull(); // 目前實現Return null
     });
   });
 
   describe('downloadReport', () => {
-    it('應該成功下載報告', async () => {
+    it('應該Success下載報告', async () => {
       const _result = await reportGenerationService.downloadReport(
         'report-1',
         'pdf'
@@ -604,18 +604,18 @@ describe('ReportGenerationService', () => {
         'report-1',
         'pdf'
       );
-      expect(mockLogger.info).toHaveBeenCalledWith('報告下載URL生成成功');
+      expect(mockLogger.info).toHaveBeenCalledWith('報告下載URL生成Success');
     });
 
-    it('應該處理下載報告失敗', async () => {
-      // 模擬錯誤情況
+    it('應該Handle下載報告Failed', async () => {
+      // 模擬Error情況
       jest.spyOn(console, 'error').mockImplementation(() => {});
 
       await expect(
         reportGenerationService.downloadReport('report-1', 'pdf')
       ).rejects.toThrow();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '下載報告失敗:',
+        '下載報告Failed:',
         expect.any(Error)
       );
     });
@@ -634,7 +634,7 @@ describe('ReportGenerationService', () => {
   });
 
   describe('配置管理', () => {
-    it('應該成功獲取配置', () => {
+    it('應該SuccessGetConfigure', () => {
       const _config = reportGenerationService.getConfig();
 
       expect(config).toMatchObject({
@@ -651,7 +651,7 @@ describe('ReportGenerationService', () => {
       });
     });
 
-    it('應該成功更新配置', () => {
+    it('應該SuccessUpdateConfigure', () => {
       const _newConfig = {
         enableAutoGeneration: false,
         enableAIInsights: false,
@@ -662,13 +662,13 @@ describe('ReportGenerationService', () => {
       const _updatedConfig = reportGenerationService.getConfig();
       expect(updatedConfig.enableAutoGeneration).toBe(false);
       expect(updatedConfig.enableAIInsights).toBe(false);
-      expect(mockLogger.info).toHaveBeenCalledWith('報告生成服務配置已更新');
+      expect(mockLogger.info).toHaveBeenCalledWith('報告生成ServiceConfigure已Update');
     });
 
-    it('應該檢查服務狀態', () => {
-      expect(reportGenerationService.isReady()).toBe(false); // 未初始化
+    it('應該CheckService狀態', () => {
+      expect(reportGenerationService.isReady()).toBe(false); // 未Initialize
 
-      // 初始化後應該返回 true
+      // Initialize後應該Return true
       reportGenerationService.initialize().then(() => {
         expect(reportGenerationService.isReady()).toBe(true);
       });

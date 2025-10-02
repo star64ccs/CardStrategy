@@ -1,8 +1,8 @@
-// 響應式組件類型定義
+// Response式ComponentClass型定義
 
 import type { Breakpoint, ResponsiveValue } from './layout';
 
-// 響應式圖片組件屬性
+// Response式Graph片ComponentProperty
 export interface ResponsiveImageProps {
   src: string;
   alt: string;
@@ -25,7 +25,7 @@ export interface ResponsiveImageProps {
   'data-testid'?: string;
 }
 
-// 響應式表格組件屬性
+// Response式Table格ComponentProperty
 export interface ResponsiveTableProps {
   data: unknown[];
   columns: ResponsiveTableColumn[];
@@ -70,7 +70,7 @@ export interface ResponsiveTableResponsive {
   transform?: (data: unknown[]) => any[];
 }
 
-// 響應式表單組件屬性
+// Response式Table單ComponentProperty
 export interface ResponsiveFormProps {
   layout?: ResponsiveValue<'horizontal' | 'vertical' | 'inline'>;
   labelCol?: ResponsiveValue<{ span: number; offset?: number }>;
@@ -130,7 +130,7 @@ export interface ResponsiveFormRule {
   validator?: (rule: unknown, value: unknown) => Promise<void> | void;
 }
 
-// 響應式導航組件屬性
+// Response式導航ComponentProperty
 export interface ResponsiveNavigationProps {
   mode?: ResponsiveValue<'horizontal' | 'vertical' | 'inline'>;
   theme?: ResponsiveValue<'light' | 'dark'>;
@@ -160,42 +160,42 @@ export interface ResponsiveNavigationItem {
   priority?: ResponsiveValue<number>;
 }
 
-// 響應式卡片組件屬性（擴展現有Card組件）
+// Response式卡片ComponentProperty（Extension現有CardComponent）
 export interface ResponsiveCardProps {
-  // 基礎屬性
+  // 基礎Property
   title?: React.ReactNode;
   extra?: React.ReactNode;
   children: React.ReactNode;
 
-  // 響應式佈局
+  // Response式佈局
   layout?: ResponsiveValue<'vertical' | 'horizontal'>;
   imagePosition?: ResponsiveValue<'top' | 'bottom' | 'left' | 'right'>;
   imageRatio?: ResponsiveValue<string>;
 
-  // 響應式尺寸
+  // Response式尺寸
   size?: ResponsiveValue<'small' | 'default' | 'large'>;
   width?: ResponsiveValue<string | number>;
   height?: ResponsiveValue<string | number>;
   minWidth?: ResponsiveValue<string | number>;
   maxWidth?: ResponsiveValue<string | number>;
 
-  // 響應式間距
+  // Response式間距
   padding?: ResponsiveValue<string | number>;
   margin?: ResponsiveValue<string | number>;
   gap?: ResponsiveValue<string | number>;
 
-  // 響應式顯示
+  // Response式Show
   showHeader?: ResponsiveValue<boolean>;
   showImage?: ResponsiveValue<boolean>;
   showActions?: ResponsiveValue<boolean>;
   showFooter?: ResponsiveValue<boolean>;
 
-  // 響應式內容
+  // Response式Content
   contentCollapse?: ResponsiveValue<boolean>;
   contentMaxHeight?: ResponsiveValue<string | number>;
   showExpandButton?: ResponsiveValue<boolean>;
 
-  // 其他屬性
+  // 其他Property
   hoverable?: boolean;
   bordered?: boolean;
   loading?: boolean;
@@ -204,7 +204,7 @@ export interface ResponsiveCardProps {
   'data-testid'?: string;
 }
 
-// 響應式測試工具類型
+// Response式TestToolClass型
 export interface ResponsiveTestConfig {
   breakpoints: Record<Breakpoint, number>;
   devices: ResponsiveTestDevice[];
@@ -236,7 +236,7 @@ export interface ResponsiveTestResult {
   };
 }
 
-// 響應式組件註冊
+// Response式ComponentRegister
 export interface ResponsiveComponentRegistration {
   name: string;
   category: 'image' | 'table' | 'form' | 'navigation' | 'card' | 'other';
@@ -253,7 +253,7 @@ export interface ResponsiveComponentRegistration {
   };
 }
 
-// 響應式組件事件
+// Response式ComponentEvent
 export interface ResponsiveComponentEvent {
   type:
     | 'componentRender'
@@ -267,21 +267,21 @@ export interface ResponsiveComponentEvent {
   data?: unknown;
 }
 
-// 響應式組件服務接口
+// Response式ComponentServiceInterface
 export interface ResponsiveComponentService {
-  // 組件管理
+  // ComponentManage
   registerComponent(component: ResponsiveComponentRegistration): void;
   getComponent(name: string): ResponsiveComponentRegistration | null;
   getAllComponents(): ResponsiveComponentRegistration[];
 
-  // 響應式測試
+  // Response式Test
   testComponent(
     componentName: string,
     config: ResponsiveTestConfig
   ): Promise<ResponsiveTestResult[]>;
   generateTestReport(results: ResponsiveTestResult[]): string;
 
-  // 性能監控
+  // 性能Monitor
   trackPerformance(
     componentName: string,
     breakpoint: Breakpoint,
@@ -289,7 +289,7 @@ export interface ResponsiveComponentService {
   ): void;
   getPerformanceReport(componentName?: string): unknown;
 
-  // 事件管理
+  // EventManage
   onComponentEvent(
     callback: (event: ResponsiveComponentEvent) => void
   ): () => void;

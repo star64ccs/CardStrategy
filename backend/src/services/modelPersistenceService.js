@@ -12,25 +12,25 @@ class ModelPersistenceService {
     this.ensureDirectories();
   }
 
-  // 確保目錄存在
+  // 確保Directory存在
   async ensureDirectories() {
     try {
       await fs.mkdir(this.modelsDirectory, { recursive: true });
       await fs.mkdir(this.metadataDirectory, { recursive: true });
-      logger.info('模型持久化目錄創建成功');
+      logger.info('模型持久化目錄CreateSuccess');
     } catch (error) {
-      logger.error('創建模型目錄失敗:', error);
+      logger.error('Create模型目錄Failed:', error);
     }
   }
 
-  // 生成模型文件名
+  // 生成模型File名
   generateModelFileName(modelType, version, timestamp) {
     const sanitizedModelType = modelType.replace(/[^a-zA-Z0-9]/g, '_');
     const dateStr = new Date(timestamp).toISOString().split('T')[0];
     return `${sanitizedModelType}_v${version}_${dateStr}.json`;
   }
 
-  // 生成模型元數據
+  // 生成模型元Data
   generateModelMetadata(model, modelType, trainingMetrics, performanceMetrics) {
     return {
       modelType,
@@ -59,20 +59,20 @@ class ModelPersistenceService {
         optimizer: model.optimizer.getConfig(),
         loss: model.loss,
       },
-      fileSize: 0, // 將在保存後更新
-      checksum: '', // 將在保存後計算
+      fileSize: 0, // 將在Save後Update
+      checksum: '', // 將在Save後計算
       status: 'active',
     };
   }
 
-  // 生成版本號
+  // 生成Version號
   generateVersion() {
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000);
     return `${timestamp}_${random}`;
   }
 
-  // 計算文件校驗和
+  // 計算File校驗和
   async calculateChecksum(filePath) {
     try {
       const crypto = require('crypto');
@@ -81,12 +81,12 @@ class ModelPersistenceService {
       hashSum.update(fileBuffer);
       return hashSum.digest('hex');
     } catch (error) {
-      logger.error('計算校驗和失敗:', error);
+      logger.error('計算校驗和Failed:', error);
       return '';
     }
   }
 
-  // 保存模型
+  // Save模型
   async saveModel(model, modelType, trainingMetrics, performanceMetrics = {}) {
     try {
       const timestamp = new Date().toISOString();
@@ -104,7 +104,7 @@ class ModelPersistenceService {
         `${fileName}.meta.json`
       );
 
-      // 生成元數據
+      // 生成元Data
       const metadata = this.generateModelMetadata(
         model,
         modelType,
@@ -112,7 +112,7 @@ class ModelPersistenceService {
         performanceMetrics
       );
 
-      // 保存模型權重和架構
+      // Save模型權重和架構
 // eslint-disable-next-line no-unused-vars
       const modelData = {
         modelTopology: model.toJSON(),
@@ -120,18 +120,18 @@ class ModelPersistenceService {
         weightData: model.getWeights().map((w) => Array.from(w.dataSync())),
       };
 
-      // 寫入模型文件
+      // Write模型File
       await fs.writeFile(filePath, JSON.stringify(modelData, null, 2));
 
-      // 更新元數據中的文件大小和校驗和
+      // Update元Data中的File大小和校驗和
       const stats = await fs.stat(filePath);
       metadata.fileSize = stats.size;
       metadata.checksum = await this.calculateChecksum(filePath);
 
-      // 保存元數據
+      // Save元Data
       await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
 
-      // 保存到數據庫
+      // Save到Database
       const ModelPersistence = getModelPersistenceModel();
       await ModelPersistence.create({
         modelType,
@@ -145,7 +145,7 @@ class ModelPersistenceService {
         updatedAt: new Date(),
       });
 
-      logger.info(`模型保存成功: ${fileName}`);
+      logger.info(`模型保存Success: ${fileName}`);
 
       return {
         success: true,
@@ -156,8 +156,8 @@ class ModelPersistenceService {
         metadataPath,
       };
     } catch (error) {
-      logger.error('模型保存失敗:', error);
-      throw new Error(`模型保存失敗: ${error.message}`);
+      logger.error('模型保存Failed:', error);
+      throw new Error(`模型保存Failed: ${error.message}`);
     }
   }
 
@@ -166,7 +166,7 @@ class ModelPersistenceService {
     try {
       const ModelPersistence = getModelPersistenceModel();
 
-      // 查找模型記錄
+      // Find模型Record
       const whereClause = { modelType, status: 'active' };
       if (version) {
         whereClause.version = version;
@@ -184,7 +184,7 @@ class ModelPersistenceService {
         );
       }
 
-      // 讀取模型文件
+      // Read模型File
 // eslint-disable-next-line no-unused-vars
       const modelData = JSON.parse(
         await fs.readFile(modelRecord.filePath, 'utf8')
@@ -193,7 +193,7 @@ class ModelPersistenceService {
         await fs.readFile(modelRecord.metadataPath, 'utf8')
       );
 
-      // 驗證校驗和
+      // Verify校驗和
       const currentChecksum = await this.calculateChecksum(
         modelRecord.filePath
       );
@@ -213,7 +213,7 @@ class ModelPersistenceService {
 
       model.setWeights(weights);
 
-      logger.info(`模型加載成功: ${modelRecord.fileName}`);
+      logger.info(`模型加載Success: ${modelRecord.fileName}`);
 
       return {
         success: true,
@@ -222,12 +222,12 @@ class ModelPersistenceService {
         modelRecord,
       };
     } catch (error) {
-      logger.error('模型加載失敗:', error);
-      throw new Error(`模型加載失敗: ${error.message}`);
+      logger.error('模型加載Failed:', error);
+      throw new Error(`模型加載Failed: ${error.message}`);
     }
   }
 
-  // 獲取模型列表
+  // Get模型List
   async getModelList(modelType = null) {
     try {
       const ModelPersistence = getModelPersistenceModel();
@@ -261,7 +261,7 @@ class ModelPersistenceService {
               updatedAt: model.updatedAt,
             };
           } catch (error) {
-            logger.warn(`讀取模型元數據失敗: ${model.fileName}`, error);
+            logger.warn(`讀取模型元數據Failed: ${model.fileName}`, error);
             return null;
           }
         })
@@ -272,12 +272,12 @@ class ModelPersistenceService {
         models: modelList.filter((m) => m !== null),
       };
     } catch (error) {
-      logger.error('獲取模型列表失敗:', error);
-      throw new Error(`獲取模型列表失敗: ${error.message}`);
+      logger.error('Get模型列表Failed:', error);
+      throw new Error(`Get模型列表Failed: ${error.message}`);
     }
   }
 
-  // 刪除模型
+  // Delete模型
   async deleteModel(modelType, version) {
     try {
       const ModelPersistence = getModelPersistenceModel();
@@ -291,35 +291,35 @@ class ModelPersistenceService {
         throw new Error(`未找到模型: ${modelType} v${version}`);
       }
 
-      // 刪除文件
+      // DeleteFile
       try {
         await fs.unlink(modelRecord.filePath);
         await fs.unlink(modelRecord.metadataPath);
       } catch (fileError) {
-        logger.warn('刪除模型文件失敗:', fileError);
+        logger.warn('Delete模型文件Failed:', fileError);
       }
 
-      // 更新數據庫記錄
+      // UpdateDatabaseRecord
       await modelRecord.update({ status: 'deleted' });
 
-      logger.info(`模型刪除成功: ${modelRecord.fileName}`);
+      logger.info(`模型DeleteSuccess: ${modelRecord.fileName}`);
 
       return {
         success: true,
         message: `模型 ${modelType} v${version} 已刪除`,
       };
     } catch (error) {
-      logger.error('模型刪除失敗:', error);
-      throw new Error(`模型刪除失敗: ${error.message}`);
+      logger.error('模型DeleteFailed:', error);
+      throw new Error(`模型DeleteFailed: ${error.message}`);
     }
   }
 
-  // 模型版本管理
+  // 模型VersionManage
   async manageModelVersions(modelType, maxVersions = 5) {
     try {
       const ModelPersistence = getModelPersistenceModel();
 
-      // 獲取指定類型的所有活躍模型
+      // Get指定Class型的所有活躍模型
 // eslint-disable-next-line no-unused-vars
       const models = await ModelPersistence.findAll({
         where: { modelType, status: 'active' },
@@ -333,7 +333,7 @@ class ModelPersistenceService {
         };
       }
 
-      // 刪除舊版本
+      // Delete舊Version
 // eslint-disable-next-line no-unused-vars
       const modelsToDelete = models.slice(maxVersions);
       const deletePromises = modelsToDelete.map(async (model) => {
@@ -343,7 +343,7 @@ class ModelPersistenceService {
           await model.update({ status: 'deleted' });
           logger.info(`舊版本模型已刪除: ${model.fileName}`);
         } catch (error) {
-          logger.warn(`刪除舊版本模型失敗: ${model.fileName}`, error);
+          logger.warn(`Delete舊版本模型Failed: ${model.fileName}`, error);
         }
       });
 
@@ -355,8 +355,8 @@ class ModelPersistenceService {
         deletedModels: modelsToDelete.map((m) => m.fileName),
       };
     } catch (error) {
-      logger.error('模型版本管理失敗:', error);
-      throw new Error(`模型版本管理失敗: ${error.message}`);
+      logger.error('模型版本管理Failed:', error);
+      throw new Error(`模型版本管理Failed: ${error.message}`);
     }
   }
 
@@ -366,13 +366,13 @@ class ModelPersistenceService {
       const { model } = await this.loadModel(modelType, version);
       const tf = require('@tensorflow/tfjs-node');
 
-      // 準備測試數據
+      // 準備TestData
 // eslint-disable-next-line no-unused-vars
       const testSequences = tf.tensor3d(testData.sequences);
 // eslint-disable-next-line no-unused-vars
       const testTargets = tf.tensor2d(testData.targets);
 
-      // 進行預測
+      // 進Row預測
 // eslint-disable-next-line no-unused-vars
       const predictions = await model.predict(testSequences).array();
       const actualValues = await testTargets.array();
@@ -390,7 +390,7 @@ class ModelPersistenceService {
         timestamp: new Date().toISOString(),
       };
 
-      // 更新模型元數據
+      // Update模型元Data
       await this.updateModelPerformance(modelType, version, performanceMetrics);
 
       return {
@@ -398,8 +398,8 @@ class ModelPersistenceService {
         performanceMetrics,
       };
     } catch (error) {
-      logger.error('模型性能評估失敗:', error);
-      throw new Error(`模型性能評估失敗: ${error.message}`);
+      logger.error('模型性能評估Failed:', error);
+      throw new Error(`模型性能評估Failed: ${error.message}`);
     }
   }
 
@@ -435,7 +435,7 @@ class ModelPersistenceService {
     return correct / predictions.length;
   }
 
-  // 更新模型性能
+  // Update模型性能
   async updateModelPerformance(modelType, version, performanceMetrics) {
     try {
       const ModelPersistence = getModelPersistenceModel();
@@ -449,7 +449,7 @@ class ModelPersistenceService {
         throw new Error(`未找到模型: ${modelType} v${version}`);
       }
 
-      // 讀取並更新元數據
+      // Read並Update元Data
       const metadata = JSON.parse(
         await fs.readFile(modelRecord.metadataPath, 'utf8')
       );
@@ -458,13 +458,13 @@ class ModelPersistenceService {
         ...performanceMetrics,
       };
 
-      // 保存更新後的元數據
+      // SaveUpdate後的元Data
       await fs.writeFile(
         modelRecord.metadataPath,
         JSON.stringify(metadata, null, 2)
       );
 
-      // 更新數據庫記錄
+      // UpdateDatabaseRecord
       await modelRecord.update({
         metadata: JSON.stringify(metadata),
         updatedAt: new Date(),
@@ -472,12 +472,12 @@ class ModelPersistenceService {
 
       logger.info(`模型性能已更新: ${modelRecord.fileName}`);
     } catch (error) {
-      logger.error('更新模型性能失敗:', error);
+      logger.error('Update模型性能Failed:', error);
       throw error;
     }
   }
 
-  // 模型備份
+  // 模型Backup
   async backupModel(modelType, version, backupPath = null) {
     try {
       const ModelPersistence = getModelPersistenceModel();
@@ -502,11 +502,11 @@ class ModelPersistenceService {
         `${backupFileName}.meta.json`
       );
 
-      // 複製模型文件
+      // 複製模型File
       await fs.copyFile(modelRecord.filePath, backupFilePath);
       await fs.copyFile(modelRecord.metadataPath, backupMetadataPath);
 
-      logger.info(`模型備份成功: ${backupFileName}`);
+      logger.info(`模型備份Success: ${backupFileName}`);
 
       return {
         success: true,
@@ -514,17 +514,17 @@ class ModelPersistenceService {
         backupMetadataPath,
       };
     } catch (error) {
-      logger.error('模型備份失敗:', error);
-      throw new Error(`模型備份失敗: ${error.message}`);
+      logger.error('模型備份Failed:', error);
+      throw new Error(`模型備份Failed: ${error.message}`);
     }
   }
 
-  // 模型恢復
+  // 模型Restore
   async restoreModel(backupPath, modelType, version) {
     try {
       const backupMetadataPath = `${backupPath}.meta.json`;
 
-      // 檢查備份文件是否存在
+      // CheckBackupFileYesNo存在
       await fs.access(backupPath);
       await fs.access(backupMetadataPath);
 
@@ -540,20 +540,20 @@ class ModelPersistenceService {
         `${fileName}.meta.json`
       );
 
-      // 複製備份文件
+      // 複製BackupFile
       await fs.copyFile(backupPath, filePath);
       await fs.copyFile(backupMetadataPath, metadataPath);
 
-      // 讀取並更新元數據
+      // Read並Update元Data
       const metadata = JSON.parse(await fs.readFile(metadataPath, 'utf8'));
       metadata.version = version;
       metadata.timestamp = new Date().toISOString();
       metadata.status = 'active';
 
-      // 保存更新後的元數據
+      // SaveUpdate後的元Data
       await fs.writeFile(metadataPath, JSON.stringify(metadata, null, 2));
 
-      // 保存到數據庫
+      // Save到Database
       const ModelPersistence = getModelPersistenceModel();
       await ModelPersistence.create({
         modelType,
@@ -567,7 +567,7 @@ class ModelPersistenceService {
         updatedAt: new Date(),
       });
 
-      logger.info(`模型恢復成功: ${fileName}`);
+      logger.info(`模型恢復Success: ${fileName}`);
 
       return {
         success: true,
@@ -576,8 +576,8 @@ class ModelPersistenceService {
         metadata,
       };
     } catch (error) {
-      logger.error('模型恢復失敗:', error);
-      throw new Error(`模型恢復失敗: ${error.message}`);
+      logger.error('模型恢復Failed:', error);
+      throw new Error(`模型恢復Failed: ${error.message}`);
     }
   }
 
@@ -599,16 +599,16 @@ class ModelPersistenceService {
 
       const cleanupPromises = expiredModels.map(async (model) => {
         try {
-          // 刪除文件
+          // DeleteFile
           await fs.unlink(model.filePath);
           await fs.unlink(model.metadataPath);
 
-          // 刪除數據庫記錄
+          // DeleteDatabaseRecord
           await model.destroy();
 
           logger.info(`過期模型已清理: ${model.fileName}`);
         } catch (error) {
-          logger.warn(`清理過期模型失敗: ${model.fileName}`, error);
+          logger.warn(`清理過期模型Failed: ${model.fileName}`, error);
         }
       });
 
@@ -619,8 +619,8 @@ class ModelPersistenceService {
         message: `已清理 ${expiredModels.length} 個過期模型`,
       };
     } catch (error) {
-      logger.error('清理過期模型失敗:', error);
-      throw new Error(`清理過期模型失敗: ${error.message}`);
+      logger.error('清理過期模型Failed:', error);
+      throw new Error(`清理過期模型Failed: ${error.message}`);
     }
   }
 }

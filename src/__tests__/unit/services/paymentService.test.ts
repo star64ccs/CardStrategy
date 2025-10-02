@@ -18,7 +18,7 @@ describe('PaymentService', () => {
   });
 
   describe('getPaymentMethods', () => {
-    it('應該成功獲取支付方式列表', async () => {
+    it('應該SuccessGet支付方式列表', async () => {
       const _mockPaymentMethods = [
         {
           id: '1',
@@ -43,7 +43,7 @@ describe('PaymentService', () => {
       expect(result).toEqual(mockPaymentMethods);
     });
 
-    it('應該處理獲取支付方式失敗的情況', async () => {
+    it('應該HandleGet支付方式Failed的情況', async () => {
       mockApiResponse('get', null, new Error('Network error'));
 
       await expect(paymentService.getPaymentMethods()).rejects.toThrow(
@@ -53,7 +53,7 @@ describe('PaymentService', () => {
   });
 
   describe('addPaymentMethod', () => {
-    it('應該成功添加信用卡支付方式', async () => {
+    it('應該Success添加信用卡支付方式', async () => {
       const _paymentData = {
         type: 'credit_card',
         cardNumber: '4111111111111111',
@@ -78,7 +78,7 @@ describe('PaymentService', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('應該成功添加銀行帳戶支付方式', async () => {
+    it('應該Success添加銀行帳戶支付方式', async () => {
       const _paymentData = {
         type: 'bank_account',
         accountNumber: '1234567890',
@@ -101,7 +101,7 @@ describe('PaymentService', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('應該處理添加支付方式失敗的情況', async () => {
+    it('應該Handle添加支付方式Failed的情況', async () => {
       const _paymentData = {
         type: 'credit_card',
         cardNumber: 'invalid',
@@ -120,7 +120,7 @@ describe('PaymentService', () => {
   });
 
   describe('updatePaymentMethod', () => {
-    it('應該成功更新支付方式', async () => {
+    it('應該SuccessUpdate支付方式', async () => {
       const _paymentMethodId = 'payment_method_id';
       const _updateData = {
         isDefault: true,
@@ -146,7 +146,7 @@ describe('PaymentService', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('應該處理更新支付方式失敗的情況', async () => {
+    it('應該HandleUpdate支付方式Failed的情況', async () => {
       const _paymentMethodId = 'invalid_id';
       const _updateData = { isDefault: true };
 
@@ -159,7 +159,7 @@ describe('PaymentService', () => {
   });
 
   describe('deletePaymentMethod', () => {
-    it('應該成功刪除支付方式', async () => {
+    it('應該SuccessDelete支付方式', async () => {
       const _paymentMethodId = 'payment_method_id';
 
       mockApiResponse('delete', { success: true });
@@ -169,7 +169,7 @@ describe('PaymentService', () => {
       expect(result).toEqual({ success: true });
     });
 
-    it('應該處理刪除支付方式失敗的情況', async () => {
+    it('應該HandleDelete支付方式Failed的情況', async () => {
       const _paymentMethodId = 'invalid_id';
 
       mockApiResponse(
@@ -185,7 +185,7 @@ describe('PaymentService', () => {
   });
 
   describe('processPayment', () => {
-    it('應該成功處理信用卡支付', async () => {
+    it('應該SuccessHandle信用卡支付', async () => {
       const _paymentData = {
         amount: 1000,
         currency: 'TWD',
@@ -208,7 +208,7 @@ describe('PaymentService', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('應該處理支付失敗的情況', async () => {
+    it('應該Handle支付Failed的情況', async () => {
       const _paymentData = {
         amount: 1000,
         currency: 'TWD',
@@ -225,7 +225,7 @@ describe('PaymentService', () => {
   });
 
   describe('getPaymentHistory', () => {
-    it('應該成功獲取支付歷史', async () => {
+    it('應該SuccessGet支付歷史', async () => {
       const _mockHistory = [
         {
           id: '1',
@@ -260,7 +260,7 @@ describe('PaymentService', () => {
 
       await paymentService.getPaymentHistory(page, limit);
 
-      // 驗證API調用包含分頁參數
+      // VerifyAPI調用Package含PaginateParameter
       expect(
         require('../../../services/apiService').apiService.get
       ).toHaveBeenCalledWith(
@@ -273,7 +273,7 @@ describe('PaymentService', () => {
   });
 
   describe('getSubscriptionPlans', () => {
-    it('應該成功獲取訂閱計劃列表', async () => {
+    it('應該SuccessGet訂閱計劃列表', async () => {
       const _mockPlans = [
         {
           id: 'basic',
@@ -302,7 +302,7 @@ describe('PaymentService', () => {
   });
 
   describe('createSubscription', () => {
-    it('應該成功創建訂閱', async () => {
+    it('應該SuccessCreate訂閱', async () => {
       const _subscriptionData = {
         planId: 'premium',
         paymentMethodId: 'payment_method_id',
@@ -326,7 +326,7 @@ describe('PaymentService', () => {
   });
 
   describe('cancelSubscription', () => {
-    it('應該成功取消訂閱', async () => {
+    it('應該Success取消訂閱', async () => {
       const _subscriptionId = 'sub_123456';
 
       mockApiResponse('post', { success: true });
@@ -338,7 +338,7 @@ describe('PaymentService', () => {
   });
 
   describe('getInvoiceHistory', () => {
-    it('應該成功獲取發票歷史', async () => {
+    it('應該SuccessGet發票歷史', async () => {
       const _mockInvoices = [
         {
           id: 'inv_123456',
@@ -401,9 +401,9 @@ describe('PaymentService', () => {
 
   describe('getPaymentStatus', () => {
     it('應該返回正確的支付狀態', () => {
-      expect(paymentService.getPaymentStatus('succeeded')).toBe('成功');
+      expect(paymentService.getPaymentStatus('succeeded')).toBe('Success');
       expect(paymentService.getPaymentStatus('pending')).toBe('處理中');
-      expect(paymentService.getPaymentStatus('failed')).toBe('失敗');
+      expect(paymentService.getPaymentStatus('failed')).toBe('Failed');
       expect(paymentService.getPaymentStatus('cancelled')).toBe('已取消');
       expect(paymentService.getPaymentStatus('unknown')).toBe('未知');
     });

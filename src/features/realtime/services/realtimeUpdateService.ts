@@ -1,6 +1,6 @@
 /**
- * 實時更新服務
- * 處理實時數據更新，包括卡片更新、用戶狀態更新、系統通知等
+ * 實時UpdateService
+ * Handle實時DataUpdate，Package括卡片Update、UserStatusUpdate、系統Notification等
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -55,15 +55,15 @@ class RealtimeUpdateService {
   }
 
   /**
-   * 初始化實時更新服務
+   * Initialize實時UpdateService
    */
   public async initialize(): Promise<void> {
     if (this.isInitialized) return;
 
     try {
-      logger.info('初始化實時更新服務');
+      logger.info('Initialize實時UpdateService');
 
-      // 設置 WebSocket 消息處理器
+      // Settings WebSocket MessageHandle器
       websocketService.setEventHandlers({
         onMessage: this.handleWebSocketMessage.bind(this),
         onConnect: this.handleWebSocketConnect.bind(this),
@@ -71,15 +71,15 @@ class RealtimeUpdateService {
       });
 
       this.isInitialized = true;
-      logger.info('實時更新服務初始化完成');
+      logger.info('實時UpdateServiceInitialize完成');
     } catch (error: unknown) {
-      logger.error('實時更新服務初始化失敗:', error);
+      logger.error('實時UpdateServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 註冊更新處理器
+   * RegisterUpdateHandle器
    */
   public registerHandler(handler: UpdateHandler): void {
     this.updateHandlers.set(handler.id, handler);
@@ -90,7 +90,7 @@ class RealtimeUpdateService {
   }
 
   /**
-   * 取消註冊更新處理器
+   * CancelRegisterUpdateHandle器
    */
   public unregisterHandler(handlerId: string): void {
     this.updateHandlers.delete(handlerId);
@@ -98,7 +98,7 @@ class RealtimeUpdateService {
   }
 
   /**
-   * 發送實時更新
+   * Send實時Update
    */
   public async sendUpdate(update: Partial<RealtimeUpdate>): Promise<void> {
     const fullUpdate: RealtimeUpdate = {
@@ -122,18 +122,18 @@ class RealtimeUpdateService {
 
       await websocketService.sendMessage(message);
       this.updateStats(fullUpdate);
-      logger.debug('實時更新發送成功:', {
+      logger.debug('實時Update發送Success:', {
         updateId: fullUpdate.id,
         type: fullUpdate.type,
       });
     } catch (error: unknown) {
-      logger.error('發送實時更新失敗:', error);
+      logger.error('發送實時UpdateFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 廣播實時更新
+   * 廣播實時Update
    */
   public async broadcastUpdate(
     update: Partial<RealtimeUpdate>,
@@ -164,18 +164,18 @@ class RealtimeUpdateService {
 
       await websocketService.broadcast(message, options);
       this.updateStats(fullUpdate);
-      logger.debug('實時更新廣播成功:', {
+      logger.debug('實時Update廣播Success:', {
         updateId: fullUpdate.id,
         type: fullUpdate.type,
       });
     } catch (error: unknown) {
-      logger.error('廣播實時更新失敗:', error);
+      logger.error('廣播實時UpdateFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 處理卡片更新
+   * Handle卡片Update
    */
   public async handleCardUpdate(
     cardId: string,
@@ -197,7 +197,7 @@ class RealtimeUpdateService {
   }
 
   /**
-   * 處理用戶狀態更新
+   * HandleUserStatusUpdate
    */
   public async handleUserStatusUpdate(
     userId: string,
@@ -223,7 +223,7 @@ class RealtimeUpdateService {
   }
 
   /**
-   * 處理系統通知
+   * Handle系統Notification
    */
   public async handleSystemNotification(notification: unknown): Promise<void> {
     const update: Partial<RealtimeUpdate> = {
@@ -241,14 +241,14 @@ class RealtimeUpdateService {
   }
 
   /**
-   * 獲取更新統計
+   * GetUpdateStatistics
    */
   public getStats(): UpdateStats {
     return { ...this.stats };
   }
 
   /**
-   * 清除統計數據
+   * Clear統Count據
    */
   public clearStats(): void {
     this.stats = this.getDefaultStats();
@@ -256,7 +256,7 @@ class RealtimeUpdateService {
   }
 
   /**
-   * 處理 WebSocket 消息
+   * Handle WebSocket Message
    */
   private handleWebSocketMessage(message: WebSocketMessage): void {
     try {
@@ -265,33 +265,33 @@ class RealtimeUpdateService {
         this.processUpdate(update);
       }
     } catch (error: unknown) {
-      logger.error('處理 WebSocket 消息失敗:', error);
+      logger.error('Handle WebSocket 消息Failed:', error);
     }
   }
 
   /**
-   * 處理 WebSocket 連接
+   * Handle WebSocket Connect
    */
   private handleWebSocketConnect(): void {
-    logger.info('WebSocket 連接建立，實時更新服務已就緒');
+    logger.info('WebSocket Connect建立，實時UpdateService已就緒');
   }
 
   /**
-   * 處理 WebSocket 斷開
+   * Handle WebSocket Disconnect
    */
   private handleWebSocketDisconnect(): void {
-    logger.warn('WebSocket 連接斷開，實時更新服務暫停');
+    logger.warn('WebSocket ConnectDisconnect，實時UpdateService暫停');
   }
 
   /**
-   * 處理實時更新
+   * Handle實時Update
    */
   private processUpdate(update: RealtimeUpdate): void {
     try {
-      // 添加到隊列
+      // Add到Queue
       this.updateQueue.push(update);
 
-      // 如果沒有在處理隊列，開始處理
+      // 如果沒有在HandleQueue，BeginHandle
       if (!this.processingQueue) {
         this.processQueue();
       }
@@ -301,12 +301,12 @@ class RealtimeUpdateService {
         type: update.type,
       });
     } catch (error: unknown) {
-      logger.error('處理實時更新失敗:', error);
+      logger.error('Handle實時UpdateFailed:', error);
     }
   }
 
   /**
-   * 處理更新隊列
+   * HandleUpdateQueue
    */
   private async processQueue(): Promise<void> {
     if (this.processingQueue || this.updateQueue.length === 0) {
@@ -321,18 +321,18 @@ class RealtimeUpdateService {
         await this.executeUpdate(update);
       }
     } catch (error: unknown) {
-      logger.error('處理更新隊列失敗:', error);
+      logger.error('HandleUpdate隊列Failed:', error);
     } finally {
       this.processingQueue = false;
     }
   }
 
   /**
-   * 執行更新
+   * 執RowUpdate
    */
   private async executeUpdate(update: RealtimeUpdate): Promise<void> {
     try {
-      // 找到匹配的處理器
+      // 找到匹配的Handle器
       const _handlers = Array.from(this.updateHandlers.values())
         .filter(
           handler =>
@@ -342,17 +342,17 @@ class RealtimeUpdateService {
         )
         .sort((a, b) => b.priority - a.priority);
 
-      // 執行處理器
+      // 執RowHandle器
       for (const handler of handlers) {
         try {
           handler.handler(update);
-          logger.debug('更新處理器執行成功:', {
+          logger.debug('UpdateHandle器執行Success:', {
             handlerId: handler.id,
             updateId: update.id,
             type: update.type,
           });
         } catch (error: unknown) {
-          logger.error('更新處理器執行失敗:', {
+          logger.error('UpdateHandle器執行Failed:', {
             handlerId: handler.id,
             error: error.message,
           });
@@ -361,36 +361,36 @@ class RealtimeUpdateService {
 
       this.updateStats(update);
     } catch (error: unknown) {
-      logger.error('執行更新失敗:', error);
+      logger.error('執行UpdateFailed:', error);
       this.stats.errorCount++;
     }
   }
 
   /**
-   * 更新統計數據
+   * Update統Count據
    */
   private updateStats(update: RealtimeUpdate): void {
     this.stats.totalUpdates++;
     this.stats.lastUpdate = new Date();
 
-    // 按類型統計
+    // 按Class型Statistics
     this.stats.updatesByType[update.type] =
       (this.stats.updatesByType[update.type] || 0) + 1;
 
-    // 按動作統計
+    // 按動作Statistics
     this.stats.updatesByAction[update.action] =
       (this.stats.updatesByAction[update.action] || 0) + 1;
   }
 
   /**
-   * 生成更新 ID
+   * 生成Update ID
    */
   private generateUpdateId(): string {
     return `update_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   /**
-   * 獲取默認統計數據
+   * GetDefault統Count據
    */
   private getDefaultStats(): UpdateStats {
     return {
@@ -406,5 +406,5 @@ class RealtimeUpdateService {
 
 export const _realtimeUpdateService = RealtimeUpdateService.getInstance();
 
-// 重新導出類型
+// ReExportClass型
 export type { RealtimeUpdate } from '../types/websocket';

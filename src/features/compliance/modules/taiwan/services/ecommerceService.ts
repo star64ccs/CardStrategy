@@ -1,4 +1,4 @@
-// 台灣電子商務法服務實現
+// 台灣電子商務法Service實現
 // Taiwan E-commerce Law Service Implementation
 
 import type {
@@ -84,7 +84,7 @@ export class TaiwanEcommerceService {
     const violations: TaiwanEcommerceViolation[] = [];
     const recommendations: string[] = [];
 
-    // 驗證基本要求
+    // Verify基本要求
     if (!platform.platformName || platform.platformName.trim().length === 0) {
       violations.push(
         this.createViolation(
@@ -124,7 +124,7 @@ export class TaiwanEcommerceService {
       recommendations.push('請確保營業執照有效且未過期');
     }
 
-    // 根據平台類型進行特定驗證
+    // Root據平台Class型進RowSpecificVerify
     switch (platform.platformType) {
       case TaiwanPlatformType.B2C:
         if (platform.userBase < 1000) {
@@ -172,7 +172,7 @@ export class TaiwanEcommerceService {
         break;
     }
 
-    // 記錄審計追蹤
+    // Record審計Trace
     this.createAuditTrail(
       'validate_ecommerce_platform',
       'TaiwanEcommercePlatform',
@@ -210,7 +210,7 @@ export class TaiwanEcommerceService {
     const violations: TaiwanEcommerceViolation[] = [];
     const recommendations: string[] = [];
 
-    // 驗證基本要求
+    // Verify基本要求
     if (!transaction.seller?.businessName) {
       violations.push(
         this.createViolation(
@@ -271,7 +271,7 @@ export class TaiwanEcommerceService {
       recommendations.push('請提供配送方式資訊');
     }
 
-    // 根據交易類型進行特定驗證
+    // Root據交易Class型進RowSpecificVerify
     switch (transaction.transactionType) {
       case TaiwanTransactionType.GOODS:
         if (
@@ -296,7 +296,7 @@ export class TaiwanEcommerceService {
             this.createViolation(
               transaction.id,
               TaiwanEcommerceViolationType.DISPUTE_RESOLUTION_VIOLATION,
-              '服務交易缺少爭議解決機制',
+              'Service交易缺少爭議解決機制',
               TaiwanViolationSeverity.MODERATE
             )
           );
@@ -322,7 +322,7 @@ export class TaiwanEcommerceService {
         break;
     }
 
-    // 記錄審計追蹤
+    // Record審計Trace
     this.createAuditTrail(
       'validate_online_transaction',
       'TaiwanOnlineTransaction',
@@ -357,7 +357,7 @@ export class TaiwanEcommerceService {
     const violations: TaiwanEcommerceViolation[] = [];
     const recommendations: string[] = [];
 
-    // 驗證基本要求
+    // Verify基本要求
     if (!seller.businessName || seller.businessName.trim().length === 0) {
       violations.push(
         this.createViolation(
@@ -412,7 +412,7 @@ export class TaiwanEcommerceService {
       recommendations.push('請提供完整的聯絡資訊');
     }
 
-    // 根據賣家類型進行特定驗證
+    // Root據賣家Class型進RowSpecificVerify
     switch (seller.sellerType) {
       case TaiwanSellerType.BUSINESS:
         if (
@@ -446,7 +446,7 @@ export class TaiwanEcommerceService {
         break;
     }
 
-    // 記錄審計追蹤
+    // Record審計Trace
     this.createAuditTrail('validate_seller', 'TaiwanSeller', seller.id, {
       sellerType: seller.sellerType,
       violationsCount: violations.length,
@@ -478,7 +478,7 @@ export class TaiwanEcommerceService {
     data?: unknown;
   } {
     try {
-      // 檢查是否已存在相同平台
+      // CheckYesNo已存在相同平台
       const _existingPlatform = this.platforms.find(
         p =>
           p.platformName === platform.platformName ||
@@ -493,7 +493,7 @@ export class TaiwanEcommerceService {
         };
       }
 
-      // 進行合規性檢查
+      // 進Row合規性Check
       const _complianceResult = this.validateEcommercePlatform(platform);
 
       if (
@@ -514,7 +514,7 @@ export class TaiwanEcommerceService {
 
         return {
           success: true,
-          message: '平台註冊成功',
+          message: '平台註冊Success',
           data: {
             platformId: platform.id,
             complianceStatus: platform.complianceStatus,
@@ -536,7 +536,7 @@ export class TaiwanEcommerceService {
 
         return {
           success: false,
-          message: '平台註冊失敗，存在合規問題',
+          message: '平台註冊Failed，存在合規問題',
           data: {
             violations: complianceResult.violations,
           },
@@ -554,7 +554,7 @@ export class TaiwanEcommerceService {
 
       return {
         success: false,
-        message: '處理平台註冊時發生錯誤',
+        message: 'Handle平台註冊時發生Error',
       };
     }
   }
@@ -606,7 +606,7 @@ export class TaiwanEcommerceService {
 
       return {
         success: false,
-        message: '更新平台狀態時發生錯誤',
+        message: 'Update平台狀態時發生Error',
       };
     }
   }

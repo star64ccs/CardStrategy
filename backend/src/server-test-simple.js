@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// 基本健康檢查
+// 基本健康Check
 app.get('/health', (req, res) => {
   res.json({
     success: true,
@@ -46,7 +46,7 @@ app.get('/health', (req, res) => {
   });
 });
 
-// API 版本端點
+// API Version端點
 app.get('/api/version', (req, res) => {
   res.json({
     success: true,
@@ -65,7 +65,7 @@ app.get('/api/version', (req, res) => {
   });
 });
 
-// 測試端點
+// Test端點
 app.get('/api/test', (req, res) => {
   res.json({
     success: true,
@@ -77,7 +77,7 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// 404 處理
+// 404 Handle
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,

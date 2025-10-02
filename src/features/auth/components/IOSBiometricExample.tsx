@@ -16,7 +16,7 @@ import type {
 import { IOSBiometricService } from '../services/iosBiometricService';
 
 /**
- * iOS 生物識別功能示例組件
+ * iOS 生物識別功能示例Component
  */
 export const IOSBiometricExample: React.FC = () => {
   const [service] = useState(() => IOSBiometricService.getInstance());
@@ -31,7 +31,7 @@ export const IOSBiometricExample: React.FC = () => {
   const _initializeService = async () => {
     setLoading(true);
     try {
-      // 獲取服務信息
+      // GetServiceInformation
       const _info = service.getServiceInfo();
       setServiceInfo(info);
 
@@ -39,13 +39,13 @@ export const IOSBiometricExample: React.FC = () => {
       const _deviceCapabilities = await service.detectCapabilities();
       setCapabilities(deviceCapabilities);
 
-      console.log('iOS 生物識別服務初始化完成', {
+      console.log('iOS 生物識別ServiceInitialize完成', {
         serviceInfo: info,
         capabilities: deviceCapabilities,
       });
     } catch (error) {
-      console.error('初始化 iOS 生物識別服務失敗:', error);
-      Alert.alert('錯誤', '初始化服務失敗');
+      console.error('Initialize iOS 生物識別ServiceFailed:', error);
+      Alert.alert('Error', 'InitializeServiceFailed');
     } finally {
       setLoading(false);
     }
@@ -65,15 +65,15 @@ export const IOSBiometricExample: React.FC = () => {
 
       if (result.success) {
         Alert.alert(
-          '認證成功',
-          `使用 ${result.biometricType === 'faceId' ? 'Face ID' : 'Touch ID'} 認證成功！`
+          '認證Success',
+          `使用 ${result.biometricType === 'faceId' ? 'Face ID' : 'Touch ID'} 認證Success！`
         );
       } else {
-        Alert.alert('認證失敗', result.errorMessage || '認證失敗，請重試');
+        Alert.alert('認證Failed', result.errorMessage || '認證Failed，請重試');
       }
     } catch (error) {
-      console.error('iOS 生物識別認證失敗:', error);
-      Alert.alert('錯誤', '認證過程出現異常');
+      console.error('iOS 生物識別認證Failed:', error);
+      Alert.alert('Error', '認證過程出現異常');
     } finally {
       setLoading(false);
     }
@@ -89,15 +89,15 @@ export const IOSBiometricExample: React.FC = () => {
 
       if (result.success) {
         Alert.alert(
-          '簽名創建成功',
+          '簽名CreateSuccess',
           `簽名: ${result.signature.substring(0, 20)}...`
         );
       } else {
-        Alert.alert('簽名創建失敗', '無法創建簽名，請重試');
+        Alert.alert('簽名CreateFailed', '無法創建簽名，請重試');
       }
     } catch (error) {
-      console.error('創建簽名失敗:', error);
-      Alert.alert('錯誤', '創建簽名過程出現異常');
+      console.error('Create簽名Failed:', error);
+      Alert.alert('Error', '創建簽名過程出現異常');
     } finally {
       setLoading(false);
     }
@@ -109,13 +109,13 @@ export const IOSBiometricExample: React.FC = () => {
       const _result = await service.invalidateKeys();
 
       if (result) {
-        Alert.alert('成功', '生物識別密鑰已失效');
+        Alert.alert('Success', '生物識別密鑰已失效');
       } else {
-        Alert.alert('失敗', '無法使密鑰失效');
+        Alert.alert('Failed', '無法使密鑰失效');
       }
     } catch (error) {
-      console.error('使密鑰失效失敗:', error);
-      Alert.alert('錯誤', '使密鑰失效過程出現異常');
+      console.error('使密鑰失效Failed:', error);
+      Alert.alert('Error', '使密鑰失效過程出現異常');
     } finally {
       setLoading(false);
     }
@@ -127,15 +127,15 @@ export const IOSBiometricExample: React.FC = () => {
       const _result = await service.reinitializeKeys();
 
       if (result) {
-        Alert.alert('成功', '生物識別密鑰已重新初始化');
-        // 重新獲取服務信息
+        Alert.alert('Success', '生物識別密鑰已重新初始化');
+        // ReGetServiceInformation
         setServiceInfo(service.getServiceInfo());
       } else {
-        Alert.alert('失敗', '無法重新初始化密鑰');
+        Alert.alert('Failed', '無法重新初始化密鑰');
       }
     } catch (error) {
-      console.error('重新初始化密鑰失敗:', error);
-      Alert.alert('錯誤', '重新初始化密鑰過程出現異常');
+      console.error('重新Initialize密鑰Failed:', error);
+      Alert.alert('Error', '重新初始化密鑰過程出現異常');
     } finally {
       setLoading(false);
     }
@@ -146,10 +146,10 @@ export const IOSBiometricExample: React.FC = () => {
     try {
       const _deviceCapabilities = await service.detectCapabilities();
       setCapabilities(deviceCapabilities);
-      Alert.alert('成功', '設備能力已刷新');
+      Alert.alert('Success', '設備能力已刷新');
     } catch (error) {
-      console.error('刷新設備能力失敗:', error);
-      Alert.alert('錯誤', '刷新設備能力失敗');
+      console.error('刷新設備能力Failed:', error);
+      Alert.alert('Error', '刷新設備能力Failed');
     } finally {
       setLoading(false);
     }
@@ -191,7 +191,7 @@ export const IOSBiometricExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>iOS 生物識別功能示例</Text>
 
-      {/* 服務狀態 */}
+      {/* ServiceStatus */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>服務狀態</Text>
         {serviceInfo ? (
@@ -263,7 +263,7 @@ export const IOSBiometricExample: React.FC = () => {
         )}
       </View>
 
-      {/* 認證功能 */}
+      {/* Authenticate功能 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>認證功能</Text>
         <TouchableOpacity
@@ -283,7 +283,7 @@ export const IOSBiometricExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 密鑰管理 */}
+      {/* 密鑰Manage */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>密鑰管理</Text>
         <TouchableOpacity
@@ -303,7 +303,7 @@ export const IOSBiometricExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 工具功能 */}
+      {/* Tool功能 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>工具功能</Text>
         <TouchableOpacity
@@ -315,7 +315,7 @@ export const IOSBiometricExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* iOS 特定信息 */}
+      {/* iOS SpecificInformation */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>iOS 特定信息</Text>
         <Text style={styles.infoText}>• 此組件專門為 iOS 平台設計</Text>

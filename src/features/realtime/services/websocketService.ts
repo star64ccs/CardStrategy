@@ -1,6 +1,6 @@
 /**
- * WebSocket 通信服務
- * 提供實時通信功能，包括連接管理、消息傳輸、重連機制等
+ * WebSocket 通信Service
+ * 提供實時通信功能，Package括ConnectManage、Message傳輸、重連機制等
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -49,34 +49,34 @@ class WebSocketService {
   }
 
   /**
-   * 初始化 WebSocket 服務
+   * Initialize WebSocket Service
    */
   public async initialize(config?: Partial<WebSocketConfig>): Promise<void> {
     if (this.isInitialized) return;
 
     try {
-      logger.info('初始化 WebSocket 服務');
+      logger.info('Initialize WebSocket Service');
 
       if (config) {
         this.config = { ...this.config, ...config };
       }
 
-      // 驗證配置
+      // VerifyConfigure
       this.validateConfig();
 
-      // 初始化統計
+      // InitializeStatistics
       this.initializeStats();
 
       this.isInitialized = true;
-      logger.info('WebSocket 服務初始化完成');
+      logger.info('WebSocket ServiceInitialize完成');
     } catch (error: unknown) {
-      logger.error('WebSocket 服務初始化失敗:', error);
+      logger.error('WebSocket ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 連接到 WebSocket 服務器
+   * Connect到 WebSocket Server
    */
   public async connect(): Promise<void> {
     if (
@@ -87,27 +87,27 @@ class WebSocketService {
     }
 
     try {
-      logger.info('開始 WebSocket 連接:', { url: this.config.url });
+      logger.info('開始 WebSocket Connect:', { url: this.config.url });
 
       this.setConnectionStatus('connecting');
 
-      // 創建 WebSocket 連接
+      // Create WebSocket Connect
       this.websocket = new WebSocket(this.config.url, this.config.protocols);
       if (this.config.binaryType) {
         this.websocket.binaryType = this.config.binaryType;
       }
 
-      // 設置事件處理器
+      // SettingsEventHandle器
       this.setupWebSocketEventHandlers();
 
-      // 設置連接超時
+      // SettingsConnect超時
       const _connectTimeout = setTimeout(() => {
         if (this.connectionState.status === 'connecting') {
-          this.handleConnectionError(new Error('連接超時'));
+          this.handleConnectionError(new Error('Connect超時'));
         }
-      }, 10000); // 10秒超時
+      }, 10000); // 10Second超時
 
-      // 等待連接建立
+      // AwaitConnect建立
       await new Promise((resolve, reject) => {
         const _originalOnConnect = this.eventHandlers.onConnect;
         const _originalOnError = this.eventHandlers.onError;
@@ -125,23 +125,23 @@ class WebSocketService {
         };
       });
     } catch (error: unknown) {
-      logger.error('WebSocket 連接失敗:', error);
+      logger.error('WebSocket ConnectFailed:', error);
       this.handleConnectionError(error);
       throw error;
     }
   }
 
   /**
-   * 斷開 WebSocket 連接
+   * Disconnect WebSocket Connect
    */
   public disconnect(): void {
     try {
-      logger.info('斷開 WebSocket 連接');
+      logger.info('斷開 WebSocket Connect');
 
       // 清理定時器
       this.clearIntervals();
 
-      // 關閉 WebSocket 連接
+      // Off閉 WebSocket Connect
       if (this.websocket) {
         this.websocket.close(1000, 'Normal closure');
         this.websocket = null;
@@ -150,12 +150,12 @@ class WebSocketService {
       this.setConnectionStatus('disconnected');
       this.connectionState.disconnectedAt = new Date();
     } catch (error: unknown) {
-      logger.error('斷開 WebSocket 連接失敗:', error);
+      logger.error('Disconnect WebSocket ConnectFailed:', error);
     }
   }
 
   /**
-   * 發送消息
+   * SendMessage
    */
   public async sendMessage(message: Partial<WebSocketMessage>): Promise<void> {
     const fullMessage: WebSocketMessage = {
@@ -172,7 +172,7 @@ class WebSocketService {
 
     try {
       if (this.connectionState.status !== 'connected') {
-        // 添加到隊列等待發送
+        // Add到QueueAwaitSend
         this.messageQueue.pending.push(fullMessage);
         logger.debug('消息添加到待發送隊列:', { messageId: fullMessage.id });
         return;
@@ -186,20 +186,20 @@ class WebSocketService {
         this.connectionState.messagesSent++;
         this.connectionState.bytesSent += messageString.length;
 
-        logger.debug('消息發送成功:', {
+        logger.debug('消息發送Success:', {
           messageId: fullMessage.id,
           type: fullMessage.type,
         });
       }
     } catch (error: unknown) {
-      logger.error('發送消息失敗:', error);
+      logger.error('發送消息Failed:', error);
       this.messageQueue.failed.push(fullMessage);
       throw error;
     }
   }
 
   /**
-   * 廣播消息
+   * 廣播Message
    */
   public async broadcast(
     message: Partial<WebSocketMessage>,
@@ -213,7 +213,7 @@ class WebSocketService {
       priority: options.priority || 'normal',
     } as WebSocketMessage;
 
-    // 模擬廣播邏輯（在實際實現中會通過服務器處理）
+    // 模擬廣播邏輯（在實際實現中會通過ServerHandle）
     logger.info('廣播消息:', {
       messageId: broadcastMessage.id,
       type: broadcastMessage.type,
@@ -226,7 +226,7 @@ class WebSocketService {
   }
 
   /**
-   * 訂閱消息
+   * 訂閱Message
    */
   public subscribe(
     subscriptionId: string,
@@ -241,7 +241,7 @@ class WebSocketService {
       userId: filter.userId,
     });
 
-    // 存儲回調函數（簡化實現）
+    // StorageCallbackFunction（簡化實現）
     const _originalOnMessage = this.eventHandlers.onMessage;
     this.eventHandlers.onMessage = (message: WebSocketMessage) => {
       if (this.matchesFilter(message, filter)) {
@@ -254,7 +254,7 @@ class WebSocketService {
   }
 
   /**
-   * 取消訂閱
+   * Cancel訂閱
    */
   public unsubscribe(subscriptionId: string): void {
     this.subscriptions.delete(subscriptionId);
@@ -282,7 +282,7 @@ class WebSocketService {
   }
 
   /**
-   * 離開房間
+   * 離On房間
    */
   public async leaveRoom(roomId: string): Promise<void> {
     const message: Partial<WebSocketMessage> = {
@@ -298,14 +298,14 @@ class WebSocketService {
   }
 
   /**
-   * 獲取連接狀態
+   * GetConnectStatus
    */
   public getConnectionState(): ConnectionState {
     return { ...this.connectionState };
   }
 
   /**
-   * 獲取統計信息
+   * GetStatisticsInformation
    */
   public getStats(): WebSocketStats {
     this.updateStats();
@@ -313,21 +313,21 @@ class WebSocketService {
   }
 
   /**
-   * 獲取指標
+   * Get指標
    */
   public getMetrics(): WebSocketMetrics {
     return { ...this.metrics };
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   public getConfig(): WebSocketConfig {
     return { ...this.config };
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public updateConfig(updates: Partial<WebSocketConfig>): void {
     this.config = { ...this.config, ...updates };
@@ -335,14 +335,14 @@ class WebSocketService {
   }
 
   /**
-   * 設置事件處理器
+   * SettingsEventHandle器
    */
   public setEventHandlers(handlers: Partial<WebSocketEventHandlers>): void {
     this.eventHandlers = { ...this.eventHandlers, ...handlers };
   }
 
   /**
-   * 重新連接
+   * ReConnect
    */
   public async reconnect(): Promise<void> {
     if (
@@ -353,43 +353,43 @@ class WebSocketService {
     }
 
     try {
-      logger.info('開始重新連接');
+      logger.info('開始重新Connect');
       this.setConnectionStatus('reconnecting');
 
-      // 斷開現有連接
+      // Disconnect現有Connect
       this.disconnect();
 
-      // 等待一段時間後重新連接
+      // Await一段Time後ReConnect
       await new Promise(resolve =>
         setTimeout(resolve, this.config.reconnectInterval)
       );
 
-      // 嘗試重新連接
+      // 嘗試ReConnect
       await this.connect();
 
-      // 重新發送待發送的消息
+      // ReSend待Send的Message
       await this.processPendingMessages();
     } catch (error: unknown) {
-      logger.error('重新連接失敗:', error);
+      logger.error('重新ConnectFailed:', error);
       this.scheduleReconnect();
     }
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private setupWebSocketEventHandlers(): void {
     if (!this.websocket) return;
 
     this.websocket.onopen = event => {
-      logger.info('WebSocket 連接已建立');
+      logger.info('WebSocket Connect已建立');
       this.setConnectionStatus('connected');
       this.connectionState.connectedAt = new Date();
       this.connectionState.reconnectAttempts = 0;
 
-      // 開始心跳
+      // Begin心跳
       this.startHeartbeat();
 
-      // 處理待發送消息
+      // Handle待SendMessage
       this.processPendingMessages();
 
       if (this.eventHandlers.onConnect) {
@@ -398,7 +398,7 @@ class WebSocketService {
     };
 
     this.websocket.onclose = event => {
-      logger.info('WebSocket 連接已關閉:', {
+      logger.info('WebSocket Connect已關閉:', {
         code: event.code,
         reason: event.reason,
       });
@@ -413,7 +413,7 @@ class WebSocketService {
         this.eventHandlers.onDisconnect(event);
       }
 
-      // 自動重連（如果不是正常關閉）
+      // Auto重連（如果不Yes正常Off閉）
       if (event.code !== 1000) {
         this.scheduleReconnect();
       }
@@ -424,15 +424,15 @@ class WebSocketService {
         const message: WebSocketMessage = JSON.parse(event.data);
         this.handleMessage(message);
       } catch (error: unknown) {
-        logger.error('解析消息失敗:', error);
+        logger.error('解析消息Failed:', error);
       }
     };
 
     this.websocket.onerror = event => {
-      logger.error('WebSocket 錯誤:', event as any);
+      logger.error('WebSocket Error:', event as any);
       const error: WebSocketError = {
         code: 'WEBSOCKET_ERROR',
-        message: 'WebSocket 連接錯誤',
+        message: 'WebSocket ConnectError',
         timestamp: new Date(),
         reconnect: true,
         fatal: false,
@@ -446,13 +446,13 @@ class WebSocketService {
     this.connectionState.messagesReceived++;
     this.connectionState.bytesReceived += JSON.stringify(message).length;
 
-    // 處理心跳消息
+    // Handle心跳Message
     if (message.type === 'heartbeat') {
       this.handleHeartbeat(message);
       return;
     }
 
-    // 處理確認消息
+    // HandleConfirmMessage
     if (message.type === 'acknowledgment') {
       this.handleAcknowledgment(message);
       return;
@@ -533,7 +533,7 @@ class WebSocketService {
 
       await this.sendMessage(heartbeatMessage);
     } catch (error: unknown) {
-      logger.error('發送心跳失敗:', error);
+      logger.error('發送心跳Failed:', error);
     }
   }
 
@@ -545,7 +545,7 @@ class WebSocketService {
       try {
         await this.sendMessage(message);
       } catch (error: unknown) {
-        logger.error('處理待發送消息失敗:', error);
+        logger.error('Handle待發送消息Failed:', error);
         this.messageQueue.failed.push(message);
       }
     }
@@ -564,7 +564,7 @@ class WebSocketService {
       this.config.reconnectInterval *
       2 ** (this.connectionState.reconnectAttempts - 1);
 
-    logger.info('計劃重新連接:', {
+    logger.info('計劃重新Connect:', {
       attempt: this.connectionState.reconnectAttempts,
       delay,
     });
@@ -574,7 +574,7 @@ class WebSocketService {
         this.reconnect();
       },
       Math.min(delay, 30000)
-    ); // 最大延遲30秒
+    ); // 最大延遲30Second
   }
 
   private clearIntervals(): void {
@@ -671,7 +671,7 @@ class WebSocketService {
       const _latencies = this.metrics.heartbeatLatency.slice(-100); // 最近100次
       this.stats.averageLatency =
         latencies.reduce((a, b) => a + b, 0) / latencies.length;
-      // 移除不存在的屬性
+      // Remove不存在的Property
     }
 
     this.stats.errorRate =
@@ -752,14 +752,14 @@ class WebSocketService {
   }
 
   /**
-   * 獲取批量作業狀態
+   * GetBatch作業Status
    */
   public getBatchJobStatus(batchId: string): unknown {
     return this.batchJobs?.get(batchId) || null;
   }
 
   /**
-   * 批量作業映射
+   * Batch作業Map
    */
   private readonly batchJobs: Map<string, any> = new Map();
 }

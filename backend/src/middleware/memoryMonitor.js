@@ -64,18 +64,18 @@ class MemoryMonitor {
     this.memoryHistory.push(metrics);
     this.stats.totalChecks++;
 
-    // 限制歷史記錄大小
+    // Limit歷史Record大小
     if (this.memoryHistory.length > this.maxHistorySize) {
       this.memoryHistory.shift();
     }
 
-    // 檢測內存洩漏
+    // 檢測Memory洩漏
     this.detectMemoryLeak();
 
-    // 更新統計信息
+    // UpdateStatisticsInformation
     this.updateStats(metrics);
 
-    // 記錄內存使用情況
+    // RecordMemory使用情況
     logger.debug('後端內存使用情況', {
       rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`,
       heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
@@ -119,12 +119,12 @@ class MemoryMonitor {
       threshold: `${Math.round(this.leakThreshold / 1024 / 1024)}MB`,
     });
 
-    // 通知所有監聽器
+    // Notification所有監聽器
     this.leakCallbacks.forEach((callback) => {
       try {
         callback(report);
       } catch (error) {
-        logger.error('內存洩漏回調執行失敗', { error: error.message });
+        logger.error('內存洩漏回調執行Failed', { error: error.message });
       }
     });
   }
@@ -209,7 +209,7 @@ class MemoryMonitor {
     });
   }
 
-  // 強制垃圾回收
+  // Force垃圾回收
   forceGarbageCollection() {
     if (global.gc) {
       try {
@@ -217,7 +217,7 @@ class MemoryMonitor {
         logger.debug('後端強制垃圾回收已執行');
         return true;
       } catch (error) {
-        logger.warn('後端強制垃圾回收失敗', { error: error.message });
+        logger.warn('後端強制垃圾回收Failed', { error: error.message });
         return false;
       }
     } else {
@@ -226,7 +226,7 @@ class MemoryMonitor {
     }
   }
 
-  // 清理資源
+  // 清理Resource
   cleanup() {
     this.stopMonitoring();
     this.memoryHistory = [];
@@ -237,20 +237,20 @@ class MemoryMonitor {
       averageMemory: 0,
       peakMemory: 0,
     };
-    logger.info('後端內存監控服務已清理');
+    logger.info('後端內存監控Service已清理');
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 const memoryMonitor = new MemoryMonitor();
 
-// 中間件函數
+// 中間件Function
 const memoryMonitorMiddleware = (req, res, next) => {
-  // 在請求開始時記錄內存使用
+  // 在RequestBegin時RecordMemory使用
   const startMemory = memoryMonitor.getCurrentMemoryUsage();
   req.memoryStart = startMemory;
 
-  // 在響應結束時檢查內存變化
+  // 在ResponseEnd時CheckMemory變化
   res.on('finish', () => {
     const endMemory = memoryMonitor.getCurrentMemoryUsage();
     const memoryDiff =

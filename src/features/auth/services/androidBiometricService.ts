@@ -10,19 +10,19 @@ import type {
 } from '../../../core/types';
 import { logger } from '../../../core/utils/logger';
 
-// Android 特定的生物識別接口
+// Android Specific的生物識別Interface
 interface AndroidBiometricLibrary {
   // 設備能力檢測
   isSensorAvailable(): Promise<BiometricType | null>;
   getBiometryType(): Promise<'fingerprint' | 'face' | 'iris' | null>;
   isDeviceSecure(): Promise<boolean>;
 
-  // 密鑰管理
+  // 密鑰Manage
   createKeys(options?: AndroidKeyOptions): Promise<boolean>;
   biometricKeysExist(): Promise<boolean>;
   deleteKeys(): Promise<boolean>;
 
-  // 認證操作
+  // AuthenticateOperation
   createSignature(
     promptMessage: string,
     payload: string
@@ -70,7 +70,7 @@ interface AndroidPromptConfig {
 }
 
 /**
- * Android 專用生物識別服務
+ * Android 專用生物識別Service
  * 深度集成指紋/面部識別功能
  */
 export class AndroidBiometricService {
@@ -92,12 +92,12 @@ export class AndroidBiometricService {
   }
 
   /**
-   * 初始化 Android 生物識別庫
+   * Initialize Android 生物識別Library
    */
   private async initializeAndroidBiometricLibrary(): Promise<void> {
     try {
       if (Platform.OS !== 'android') {
-        throw new Error('此服務僅支持 Android 平台');
+        throw new Error('此Service僅支持 Android 平台');
       }
 
       this.biometricLib = await this.loadAndroidBiometricLibrary();
@@ -105,18 +105,18 @@ export class AndroidBiometricService {
       await this.initializeSecurityInfo();
 
       this.isInitialized = true;
-      logger.info('Android 生物識別服務初始化成功');
+      logger.info('Android 生物識別ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('Android 生物識別服務初始化失敗:', error);
+      logger.error('Android 生物識別ServiceInitializeFailed:', error);
       this.isInitialized = false;
     }
   }
 
   /**
-   * 加載 Android 生物識別庫
+   * 加載 Android 生物識別Library
    */
   private async loadAndroidBiometricLibrary(): Promise<AndroidBiometricLibrary> {
-    // 在實際應用中，這裡會導入真實的 Android 生物識別庫
+    // 在實際Apply中，這裡會ImportTrue實的 Android 生物識別Library
     // 例如：react-native-biometrics, react-native-fingerprint-scanner 等
 
     return {
@@ -133,7 +133,7 @@ export class AndroidBiometricService {
       },
 
       getBiometryType: async () => {
-        // 模擬獲取具體的生物識別類型
+        // 模擬GetConcrete的生物識別Class型
         const _hasFace = Math.random() > 0.6;
         const _hasIris = Math.random() > 0.8;
 
@@ -143,12 +143,12 @@ export class AndroidBiometricService {
       },
 
       isDeviceSecure: async () => {
-        // 模擬檢查設備是否安全
+        // 模擬Check設備YesNo安全
         return Math.random() > 0.1;
       },
 
       createKeys: async (options?: AndroidKeyOptions) => {
-        // 模擬創建密鑰
+        // 模擬Create密鑰
         logger.info(
           '創建 Android 生物識別密鑰',
           options as Record<string, unknown>
@@ -157,18 +157,18 @@ export class AndroidBiometricService {
       },
 
       biometricKeysExist: async () => {
-        // 模擬檢查密鑰是否存在
+        // 模擬Check密鑰YesNo存在
         return Math.random() > 0.5;
       },
 
       deleteKeys: async () => {
-        // 模擬刪除密鑰
+        // 模擬Delete密鑰
         logger.info('刪除 Android 生物識別密鑰');
         return true;
       },
 
       createSignature: async (promptMessage: string, payload: string) => {
-        // 模擬創建簽名
+        // 模擬CreateSign
         const _success = Math.random() > 0.3;
         if (success) {
           return {
@@ -214,7 +214,7 @@ export class AndroidBiometricService {
       },
 
       getSecurityLevel: async () => {
-        // 模擬獲取安全級別
+        // 模擬Get安全級別
         const levels: ('weak' | 'strong' | 'class3')[] = [
           'weak',
           'strong',
@@ -224,7 +224,7 @@ export class AndroidBiometricService {
       },
 
       isAttestationSupported: async () => {
-        // 模擬檢查是否支持認證
+        // 模擬CheckYesNoSupportAuthenticate
         return Math.random() > 0.5;
       },
     };
@@ -258,7 +258,7 @@ export class AndroidBiometricService {
         });
       }
 
-      // 添加其他可能的生物識別類型
+      // Add其他可能的生物識別Class型
       const allTypes: BiometricType[] = [
         'faceId',
         'touchId',
@@ -287,12 +287,12 @@ export class AndroidBiometricService {
         capabilities: this.deviceCapabilities,
       });
     } catch (error) {
-      logger.error('檢測 Android 設備能力失敗:', error);
+      logger.error('檢測 Android 設備能力Failed:', error);
     }
   }
 
   /**
-   * 初始化安全信息
+   * Initialize安全Information
    */
   private async initializeSecurityInfo(): Promise<void> {
     try {
@@ -317,7 +317,7 @@ export class AndroidBiometricService {
         this.securityInfo as unknown as Record<string, unknown>
       );
     } catch (error) {
-      logger.error('初始化 Android 安全信息失敗:', error);
+      logger.error('Initialize Android 安全信息Failed:', error);
     }
   }
 
@@ -326,26 +326,26 @@ export class AndroidBiometricService {
    */
   public async detectCapabilities(): Promise<BiometricCapability[]> {
     if (!this.isInitialized) {
-      throw new Error('Android 生物識別服務未初始化');
+      throw new Error('Android 生物識別Service未Initialize');
     }
 
     return this.deviceCapabilities;
   }
 
   /**
-   * 執行生物識別認證
+   * 執Row生物識別Authenticate
    */
   public async authenticate(
     request: BiometricAuthRequest = {}
   ): Promise<BiometricAuthResult> {
     if (!this.isInitialized || !this.biometricLib) {
-      throw new Error('Android 生物識別服務未初始化');
+      throw new Error('Android 生物識別Service未Initialize');
     }
 
     try {
       const _startTime = Date.now();
 
-      // 檢查設備能力
+      // Check設備能力
       const _capabilities = await this.detectCapabilities();
       const _availableCapability = capabilities.find(
         cap => cap.isAvailable && cap.isEnrolled
@@ -360,7 +360,7 @@ export class AndroidBiometricService {
         };
       }
 
-      // 準備認證配置
+      // 準備AuthenticateConfigure
       const promptConfig: AndroidPromptConfig = {
         title: request.promptMessage || '請進行生物識別認證',
         subtitle: '使用指紋、面部或虹膜識別登錄',
@@ -371,12 +371,12 @@ export class AndroidBiometricService {
         allowedAuthenticators: [1, 2, 4], // BIOMETRIC_STRONG, BIOMETRIC_WEAK, DEVICE_CREDENTIAL
       };
 
-      // 執行認證
+      // 執RowAuthenticate
       const _result = await this.biometricLib.simplePrompt(promptConfig);
       const _processingTime = Date.now() - startTime;
 
       if (result.success) {
-        logger.info('Android 生物識別認證成功', {
+        logger.info('Android 生物識別認證Success', {
           biometryType: result.biometryType,
           processingTime,
         });
@@ -388,7 +388,7 @@ export class AndroidBiometricService {
           timestamp: new Date(),
         };
       } else {
-        logger.warn('Android 生物識別認證失敗', {
+        logger.warn('Android 生物識別認證Failed', {
           error: result.error,
           errorCode: result.errorCode,
         });
@@ -396,7 +396,7 @@ export class AndroidBiometricService {
         return {
           success: false,
           errorCode: this.mapAndroidErrorCode(result.errorCode),
-          errorMessage: result.error || '認證失敗',
+          errorMessage: result.error || '認證Failed',
           timestamp: new Date(),
         };
       }
@@ -405,21 +405,21 @@ export class AndroidBiometricService {
       return {
         success: false,
         errorCode: 'unknown_error',
-        errorMessage: error instanceof Error ? error.message : '未知錯誤',
+        errorMessage: error instanceof Error ? error.message : '未知Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 創建簽名認證
+   * CreateSignAuthenticate
    */
   public async createSignature(
     promptMessage: string,
     payload: string
   ): Promise<{ signature: string; success: boolean }> {
     if (!this.isInitialized || !this.biometricLib) {
-      throw new Error('Android 生物識別服務未初始化');
+      throw new Error('Android 生物識別Service未Initialize');
     }
 
     try {
@@ -429,9 +429,9 @@ export class AndroidBiometricService {
       );
 
       if (result.success) {
-        logger.info('Android 生物識別簽名創建成功');
+        logger.info('Android 生物識別簽名CreateSuccess');
       } else {
-        logger.warn('Android 生物識別簽名創建失敗', { error: result.error });
+        logger.warn('Android 生物識別簽名CreateFailed', { error: result.error });
       }
 
       return result;
@@ -442,7 +442,7 @@ export class AndroidBiometricService {
   }
 
   /**
-   * 獲取安全信息
+   * Get安全Information
    */
   public getSecurityInfo(): BiometricSecurityInfo | null {
     return this.securityInfo;
@@ -453,7 +453,7 @@ export class AndroidBiometricService {
    */
   public async invalidateKeys(): Promise<boolean> {
     if (!this.isInitialized || !this.biometricLib) {
-      throw new Error('Android 生物識別服務未初始化');
+      throw new Error('Android 生物識別Service未Initialize');
     }
 
     try {
@@ -465,40 +465,40 @@ export class AndroidBiometricService {
       logger.info('Android 生物識別密鑰已失效');
       return result;
     } catch (error) {
-      logger.error('使 Android 生物識別密鑰失效失敗:', error);
+      logger.error('使 Android 生物識別密鑰失效Failed:', error);
       return false;
     }
   }
 
   /**
-   * 重新初始化密鑰
+   * ReInitialize密鑰
    */
   public async reinitializeKeys(): Promise<boolean> {
     if (!this.isInitialized || !this.biometricLib) {
-      throw new Error('Android 生物識別服務未初始化');
+      throw new Error('Android 生物識別Service未Initialize');
     }
 
     try {
-      // 刪除舊密鑰
+      // Delete舊密鑰
       await this.biometricLib.deleteKeys();
 
-      // 創建新密鑰
+      // Create新密鑰
       const _result = await this.biometricLib.createKeys();
 
       if (result) {
         await this.initializeSecurityInfo();
-        logger.info('Android 生物識別密鑰重新初始化成功');
+        logger.info('Android 生物識別密鑰重新InitializeSuccess');
       }
 
       return result;
     } catch (error) {
-      logger.error('重新初始化 Android 生物識別密鑰失敗:', error);
+      logger.error('重新Initialize Android 生物識別密鑰Failed:', error);
       return false;
     }
   }
 
   /**
-   * 映射 Android 生物識別類型
+   * Map Android 生物識別Class型
    */
   private mapAndroidBiometryType(androidType?: string): BiometricType {
     switch (androidType) {
@@ -514,7 +514,7 @@ export class AndroidBiometricService {
   }
 
   /**
-   * 映射 Android 錯誤代碼
+   * Map Android Error代碼
    */
   private mapAndroidErrorCode(androidErrorCode?: string): BiometricErrorCode {
     switch (androidErrorCode) {
@@ -550,14 +550,14 @@ export class AndroidBiometricService {
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   public isServiceReady(): boolean {
     return this.isInitialized && this.biometricLib !== null;
   }
 
   /**
-   * 獲取服務信息
+   * GetServiceInformation
    */
   public getServiceInfo() {
     return {

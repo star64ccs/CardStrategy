@@ -1,4 +1,4 @@
-// Input 組件
+// Input Component
 import React, { forwardRef, useCallback, useMemo, useState } from 'react';
 
 import { useDesignSystem } from '../../hooks/useDesignSystem';
@@ -10,7 +10,7 @@ import type {
 } from '../../types/components';
 import { enhanceComponent } from '../../utils/accessibilityEnhancer';
 
-// 輸入框組件
+// Input框Component
 export const _Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
@@ -66,10 +66,10 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
     const [isFocused, setIsFocused] = useState(false);
     const [internalValue, setInternalValue] = useState(defaultValue || '');
 
-    // 當前值
+    // 當前Value
     const _currentValue = value !== undefined ? value : internalValue;
 
-    // 計算輸入框樣式
+    // 計算Input框樣式
     const _inputStyles = useMemo(() => {
       const _theme = currentThemeData;
       if (!theme) return {};
@@ -158,7 +158,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
         },
       };
 
-      // 狀態樣式
+      // Status樣式
       const stateStyles: Record<ComponentState, React.CSSProperties> = {
         default: {},
         hover: {
@@ -182,7 +182,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
         },
       };
 
-      // 錯誤狀態
+      // ErrorStatus
       const _errorStyles = error
         ? {
             borderColor: theme.colors?.brand?.error || '#DC3545',
@@ -200,7 +200,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       };
     }, [currentThemeData, variant, size, state, error, isFocused, style]);
 
-    // 計算內部輸入框樣式
+    // 計算InternalInput框樣式
     const _innerInputStyles = useMemo(() => {
       const _theme = currentThemeData;
       if (!theme) return {};
@@ -226,7 +226,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       };
     }, [currentThemeData]);
 
-    // 處理值變化
+    // HandleValue變化
     const _handleChange = useCallback(
       (event: React.ChangeEvent<HTMLInputElement>) => {
         const _newValue = event.target.value;
@@ -240,7 +240,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       [value, onChange]
     );
 
-    // 處理焦點事件
+    // Handle焦點Event
     const _handleFocus = useCallback(
       (event: React.FocusEvent<HTMLInputElement>) => {
         if (!disabled) {
@@ -251,7 +251,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       [disabled, onFocus]
     );
 
-    // 處理失焦事件
+    // Handle失焦Event
     const _handleBlur = useCallback(
       (event: React.FocusEvent<HTMLInputElement>) => {
         if (!disabled) {
@@ -262,7 +262,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       [disabled, onBlur]
     );
 
-    // 處理鍵盤事件
+    // HandleKey盤Event
     const _handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (!disabled) {
@@ -290,7 +290,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       [disabled, onKeyPress]
     );
 
-    // 生成唯一ID
+    // 生成UniqueID
     const _inputId = useMemo(
       () => id || `input-${Math.random().toString(36).substr(2, 9)}`,
       [id]
@@ -341,7 +341,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       );
     };
 
-    // 渲染標籤
+    // 渲染Tag
     const _renderLabel = () => {
       if (!label) return null;
 
@@ -373,7 +373,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       );
     };
 
-    // 渲染錯誤信息
+    // 渲染ErrorInformation
     const _renderError = () => {
       if (!error) return null;
 
@@ -392,7 +392,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
       );
     };
 
-    // 渲染幫助文本
+    // 渲染Help文本
     const _renderHelperText = () => {
       if (!helperText) return null;
 
@@ -477,7 +477,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
                 },
                 keyboard: {
                   onEscape: () => {
-                    // 清除輸入內容
+                    // ClearInputContent
                     if (onChange) {
                       onChange('', {} as React.ChangeEvent<HTMLInputElement>);
                     }
@@ -488,7 +488,7 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
                   autoFocus,
                 },
                 screenReader: {
-                  announcement: error ? `錯誤：${error}` : undefined,
+                  announcement: error ? `Error：${error}` : undefined,
                   live: error ? 'assertive' : undefined,
                 },
                 voiceControl: {
@@ -511,8 +511,8 @@ export const _Input = forwardRef<HTMLInputElement, InputProps>(
   }
 );
 
-// 設置顯示名稱
+// SettingsShow名稱
 Input.displayName = 'Input';
 
-// 導出組件
+// ExportComponent
 export default Input;

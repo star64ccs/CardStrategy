@@ -7,22 +7,22 @@ const initDatabase = async () => {
     port: 5432,
     user: 'postgres',
     password: 'sweetcorn831',
-    database: 'postgres', // 連接到默認數據庫
+    database: 'postgres', // Connect到DefaultDatabase
   });
 
   try {
     await client.connect();
-    logger.info('已連接到 PostgreSQL 服務器');
+    logger.info('已Connect到 PostgreSQL Server');
 
-    // 檢查數據庫是否存在
+    // CheckDatabaseYesNo存在
     const dbCheckResult = await client.query(
       "SELECT 1 FROM pg_database WHERE datname = 'cardstrategy'"
     );
 
     if (dbCheckResult.rows.length === 0) {
-      // 創建數據庫
+      // CreateDatabase
       await client.query('CREATE DATABASE cardstrategy');
-      logger.info('✅ 數據庫 cardstrategy 創建成功');
+      logger.info('✅ 數據庫 cardstrategy CreateSuccess');
     } else {
       logger.info('數據庫 cardstrategy 已存在');
     }
@@ -30,12 +30,12 @@ const initDatabase = async () => {
     await client.end();
     logger.info('數據庫初始化完成');
   } catch (error) {
-    logger.error('❌ 數據庫初始化失敗：', error.message);
+    logger.error('❌ 數據庫InitializeFailed：', error.message);
     throw error;
   }
 };
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   initDatabase()
     .then(() => {
@@ -43,7 +43,7 @@ if (require.main === module) {
       process.exit(0);
     })
     .catch((error) => {
-      logger.error('數據庫初始化失敗：', error);
+      logger.error('數據庫InitializeFailed：', error);
       process.exit(1);
     });
 }

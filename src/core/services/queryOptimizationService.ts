@@ -73,7 +73,7 @@ export class QueryOptimizationService {
   }
 
   /**
-   * 分析查詢性能
+   * AnalysisQuery性能
    */
   public analyzeQuery(queryMetrics: QueryMetrics): QueryAnalysis {
     if (!this.isInitialized) {
@@ -82,7 +82,7 @@ export class QueryOptimizationService {
 
     const { sql, executionTime } = queryMetrics;
 
-    // 分析查詢複雜度
+    // AnalysisQuery複雜度
     const _complexity = this.analyzeComplexity(sql);
 
     // 計算優化分數
@@ -121,7 +121,7 @@ export class QueryOptimizationService {
   }
 
   /**
-   * 優化查詢
+   * 優化Query
    */
   public optimizeQuery(sql: string): OptimizationResult {
     if (!this.isInitialized) {
@@ -133,7 +133,7 @@ export class QueryOptimizationService {
     const changes: string[] = [];
     let estimatedImprovement = 0;
 
-    // 應用優化規則
+    // Apply優化規則
     for (const [ruleName, ruleFunction] of this.optimizationRules) {
       try {
         const _result = ruleFunction(optimizedQuery);
@@ -168,19 +168,19 @@ export class QueryOptimizationService {
   }
 
   /**
-   * 記錄查詢指標
+   * RecordQuery指標
    */
   public recordQueryMetrics(metrics: QueryMetrics): void {
     this.queryHistory.push(metrics);
 
-    // 限制歷史記錄大小
+    // Limit歷史Record大小
     if (this.queryHistory.length > this.maxHistorySize) {
       this.queryHistory = this.queryHistory.slice(-this.maxHistorySize);
     }
   }
 
   /**
-   * 生成性能報告
+   * 生成性能Report
    */
   public generatePerformanceReport(): PerformanceReport {
     if (!this.isInitialized) {
@@ -212,18 +212,18 @@ export class QueryOptimizationService {
       q => q.executionTime > 5000
     ).length;
 
-    // 分析所有查詢
+    // Analysis所有Query
     const _queryAnalyses = this.queryHistory.map(q => this.analyzeQuery(q));
     const _optimizationOpportunities = queryAnalyses.filter(
       q => q.optimizationScore > 50
     ).length;
 
-    // 獲取最慢的查詢
+    // Get最慢的Query
     const _topSlowQueries = queryAnalyses
       .sort((a, b) => b.executionTime - a.executionTime)
       .slice(0, 10);
 
-    // 分析查詢模式
+    // AnalysisQuery模式
     const _queryPatterns = this.analyzeQueryPatterns();
 
     // 生成整體建議
@@ -253,7 +253,7 @@ export class QueryOptimizationService {
   }
 
   /**
-   * 批量優化查詢
+   * Batch優化Query
    */
   public batchOptimizeQueries(queries: string[]): OptimizationResult[] {
     if (!this.isInitialized) {
@@ -264,14 +264,14 @@ export class QueryOptimizationService {
   }
 
   /**
-   * 獲取查詢模式分析
+   * GetQuery模式Analysis
    */
   public getQueryPatterns(): QueryPattern[] {
     return this.analyzeQueryPatterns();
   }
 
   /**
-   * 清理歷史數據
+   * 清理歷史Data
    */
   public clearHistory(): void {
     this.queryHistory = [];
@@ -279,7 +279,7 @@ export class QueryOptimizationService {
   }
 
   /**
-   * 獲取服務狀態
+   * GetServiceStatus
    */
   public getStatus(): unknown {
     return {
@@ -290,10 +290,10 @@ export class QueryOptimizationService {
     };
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private setupOptimizationRules(): void {
-    // 規則1: 移除不必要的 DISTINCT
+    // 規則1: Remove不必要的 DISTINCT
     this.optimizationRules.set('removeUnnecessaryDistinct', (sql: string) => {
       const _pattern =
         /SELECT\s+DISTINCT\s+(\w+)\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s*=\s*(\w+)/gi;
@@ -326,7 +326,7 @@ export class QueryOptimizationService {
       return { optimized: false };
     });
 
-    // 規則3: 簡化子查詢
+    // 規則3: 簡化子Query
     this.optimizationRules.set('simplifySubquery', (sql: string) => {
       const _pattern =
         /SELECT\s+\*\s+FROM\s+(\w+)\s+WHERE\s+(\w+)\s+IN\s*\(\s*SELECT\s+(\w+)\s+FROM\s+(\w+)\s*\)/gi;
@@ -344,7 +344,7 @@ export class QueryOptimizationService {
       return { optimized: false };
     });
 
-    // 規則4: 移除不必要的 ORDER BY
+    // 規則4: Remove不必要的 ORDER BY
     this.optimizationRules.set('removeUnnecessaryOrderBy', (sql: string) => {
       const _pattern =
         /SELECT\s+COUNT\s*\(\s*\*\s*\)\s+FROM\s+(\w+)\s+ORDER\s+BY\s+(\w+)/gi;
@@ -405,17 +405,17 @@ export class QueryOptimizationService {
   ): number {
     let score = 0;
 
-    // 基於執行時間
+    // 基於執RowTime
     if (executionTime > 5000) score += 40;
     else if (executionTime > 1000) score += 25;
     else if (executionTime > 500) score += 15;
 
-    // 基於查詢複雜度
+    // 基於Query複雜度
     const _complexity = this.analyzeComplexity(sql);
     if (complexity === 'HIGH') score += 30;
     else if (complexity === 'MEDIUM') score += 20;
 
-    // 基於查詢模式
+    // 基於Query模式
     if (sql.includes('SELECT *')) score += 10;
     if (sql.includes('DISTINCT')) score += 5;
     if (sql.includes('ORDER BY') && sql.includes('LIMIT')) score += 5;
@@ -538,7 +538,7 @@ export class QueryOptimizationService {
         patternData.totalExecutionTime / patternData.frequency;
     }
 
-    // 分析每個模式的優化機會
+    // Analysis每個模式的優化機會
     for (const [pattern, data] of patterns) {
       data.optimizationOpportunities = this.generateRecommendations(
         pattern,
@@ -553,11 +553,11 @@ export class QueryOptimizationService {
   }
 
   private extractQueryPattern(sql: string): string {
-    // 簡化查詢以識別模式
+    // 簡化Query以識別模式
     return sql
       .replace(/\d+/g, 'N') // 數字
       .replace(/'[^']*'/g, "'STRING'") // 字符串
-      .replace(/\s+/g, ' ') // 多個空格
+      .replace(/\s+/g, ' ') // MultipleEmpty格
       .trim();
   }
 
@@ -611,12 +611,12 @@ export class QueryOptimizationService {
   ): number {
     let score = 100;
 
-    // 基於平均執行時間
+    // 基於平均執RowTime
     if (averageExecutionTime > 1000) score -= 30;
     else if (averageExecutionTime > 500) score -= 20;
     else if (averageExecutionTime > 200) score -= 10;
 
-    // 基於慢查詢比例
+    // 基於慢Query比例
     const _slowQueryRatio = slowQueries / analyses.length;
     if (slowQueryRatio > 0.1) score -= 25;
     else if (slowQueryRatio > 0.05) score -= 15;
@@ -663,7 +663,7 @@ export class QueryOptimizationService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _queryOptimizationService = QueryOptimizationService.getInstance();
 
 export default queryOptimizationService;

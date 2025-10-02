@@ -15,10 +15,10 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// 速率限制
+// 速率Limit
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 分鐘
-  max: 100, // 限制每個 IP 100 個請求
+  windowMs: 15 * 60 * 1000, // 15 Minute
+  max: 100, // Limit每個 IP 100 個Request
   message: {
     success: false,
     message: '請求過於頻繁，請稍後再試',
@@ -28,7 +28,7 @@ const limiter = rateLimit({
 
 app.use('/api', limiter);
 
-// 健康檢查端點
+// 健康Check端點
 app.get('/api/health', (req, res) => {
   res.json({
     success: true,
@@ -39,7 +39,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 測試端點
+// Test端點
 app.get('/api/test', (req, res) => {
   res.json({
     success: true,
@@ -51,7 +51,7 @@ app.get('/api/test', (req, res) => {
   });
 });
 
-// 卡片相關端點（模擬數據）
+// 卡片相Off端點（模擬Data）
 app.get('/api/cards', (req, res) => {
   const mockCards = [
     {
@@ -88,20 +88,20 @@ app.get('/api/cards', (req, res) => {
 
   res.json({
     success: true,
-    message: '卡片列表獲取成功',
+    message: '卡片列表GetSuccess',
     data: mockCards,
   });
 });
 
-// 用戶認證端點（模擬）
+// UserAuthenticate端點（模擬）
 app.post('/api/auth/login', (req, res) => {
   const { email, password } = req.body;
 
-  // 模擬驗證
+  // 模擬Verify
   if (email === 'test@cardstrategy.com' && password === 'password123') {
     res.json({
       success: true,
-      message: '登錄成功',
+      message: '登錄Success',
       data: {
         user: {
           id: 1,
@@ -115,7 +115,7 @@ app.post('/api/auth/login', (req, res) => {
   } else {
     res.status(401).json({
       success: false,
-      message: '郵箱或密碼錯誤',
+      message: '郵箱或密碼Error',
       code: 'INVALID_CREDENTIALS',
     });
   }
@@ -143,7 +143,7 @@ app.post('/api/cards/scan', (req, res) => {
   });
 });
 
-// 市場數據端點（模擬）
+// 市場Data端點（模擬）
 app.get('/api/market/trends', (req, res) => {
   const mockTrends = {
     topGainers: [
@@ -164,7 +164,7 @@ app.get('/api/market/trends', (req, res) => {
 
   res.json({
     success: true,
-    message: '市場趨勢獲取成功',
+    message: '市場趨勢GetSuccess',
     data: mockTrends,
   });
 });
@@ -201,12 +201,12 @@ app.get('/api/investments/portfolio', (req, res) => {
 
   res.json({
     success: true,
-    message: '投資組合獲取成功',
+    message: '投資組合GetSuccess',
     data: mockPortfolio,
   });
 });
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -232,17 +232,17 @@ app.get('/', (req, res) => {
   });
 });
 
-// 錯誤處理中間件
+// ErrorHandle中間件
 app.use((err, req, res, next) => { // eslint-disable-next-line no-unused-vars
-  // logger.info('服務器錯誤:', err);
+  // logger.info('ServerError:', err);
   res.status(500).json({
     success: false,
-    message: '內部服務器錯誤',
+    message: '內部ServerError',
     error: process.env.NODE_ENV === 'development' ? err.message : '請稍後再試',
   });
 });
 
-// 404 處理
+// 404 Handle
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -260,24 +260,24 @@ app.use('*', (req, res) => {
   });
 });
 
-// 啟動服務器
+// StartServer
 app.listen(PORT, () => {
-  // logger.info('🚀 CardStrategy Backend 服務器已啟動');
-  // logger.info(`📍 端口: ${PORT}`);
-  // logger.info(`🌐 地址: http://localhost:${PORT}`);
-  // logger.info(`🔗 健康檢查: http://localhost:${PORT}/api/health`);
-  // logger.info(`📅 啟動時間: ${new Date().toISOString()}`);
-  // logger.info('✨ 功能: 卡片管理、市場分析、投資組合追蹤');
-  // logger.info('🔧 模式: 簡化版本（無 AI 依賴）');
+  // logger.info('🚀 CardStrategy Backend Server已Start');
+  // logger.info(`📍 Port: ${PORT}`);
+  // logger.info(`🌐 Address: http://localhost:${PORT}`);
+  // logger.info(`🔗 健康Check: http://localhost:${PORT}/api/health`);
+  // logger.info(`📅 StartTime: ${new Date().toISOString()}`);
+  // logger.info('✨ 功能: 卡片Manage、市場Analysis、投資組合Trace');
+  // logger.info('🔧 模式: 簡化Version（無 AI 依賴）');
 });
 
-// 優雅關閉
+// 優雅Off閉
 process.on('SIGINT', () => {
-  // logger.info('\n🛑 正在關閉服務器...');
+  // logger.info('\n🛑 正在Off閉Server...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  // logger.info('\n🛑 正在關閉服務器...');
+  // logger.info('\n🛑 正在Off閉Server...');
   process.exit(0);
 });

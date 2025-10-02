@@ -16,7 +16,7 @@ import { SearchFilters, SortOption } from '../types/search';
 
 const FullTextSearchExample: React.FC = () => {
   const {
-    // 狀態
+    // Status
     results,
     total,
     page,
@@ -40,7 +40,7 @@ const FullTextSearchExample: React.FC = () => {
     searchPreferences,
     isInitialized,
 
-    // 計算屬性
+    // 計算Property
     paginationInfo,
     searchSummary,
     hasActiveFilters,
@@ -48,7 +48,7 @@ const FullTextSearchExample: React.FC = () => {
     isSearching,
     resultsStats,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     search,
     simpleSearch,
@@ -81,15 +81,15 @@ const FullTextSearchExample: React.FC = () => {
   const _initializeSearch = async () => {
     try {
       await initialize();
-      Alert.alert('成功', '搜索服務初始化成功');
+      Alert.alert('Success', '搜索ServiceInitializeSuccess');
     } catch (error) {
-      Alert.alert('錯誤', `初始化失敗: ${error}`);
+      Alert.alert('Error', `InitializeFailed: ${error}`);
     }
   };
 
   const _handleSearch = async () => {
     if (!queryInput.trim()) {
-      Alert.alert('錯誤', '請輸入搜索查詢');
+      Alert.alert('Error', '請輸入搜索查詢');
       return;
     }
 
@@ -100,7 +100,7 @@ const FullTextSearchExample: React.FC = () => {
         ...prev,
         {
           test: '基本搜索',
-          result: '成功',
+          result: 'Success',
           details: `搜索 "${queryInput}" 找到 ${total} 個結果，耗時 ${searchTime}ms`,
         },
       ]);
@@ -109,8 +109,8 @@ const FullTextSearchExample: React.FC = () => {
         ...prev,
         {
           test: '基本搜索',
-          result: '錯誤',
-          details: `搜索失敗: ${error}`,
+          result: 'Error',
+          details: `搜索Failed: ${error}`,
         },
       ]);
     }
@@ -135,7 +135,7 @@ const FullTextSearchExample: React.FC = () => {
         ...prev,
         {
           test: '高級搜索',
-          result: '成功',
+          result: 'Success',
           details: `高級搜索找到 ${total} 個結果，應用價格、條件、稀有度過濾器`,
         },
       ]);
@@ -144,8 +144,8 @@ const FullTextSearchExample: React.FC = () => {
         ...prev,
         {
           test: '高級搜索',
-          result: '錯誤',
-          details: `高級搜索失敗: ${error}`,
+          result: 'Error',
+          details: `高級搜索Failed: ${error}`,
         },
       ]);
     }
@@ -158,7 +158,7 @@ const FullTextSearchExample: React.FC = () => {
         ...prev,
         {
           test: '搜索統計',
-          result: '成功',
+          result: 'Success',
           details: `總搜索次數: ${stats.totalSearches}, 平均響應時間: ${stats.averageResponseTime.toFixed(2)}ms`,
         },
       ]);
@@ -167,8 +167,8 @@ const FullTextSearchExample: React.FC = () => {
         ...prev,
         {
           test: '搜索統計',
-          result: '錯誤',
-          details: `獲取統計失敗: ${error}`,
+          result: 'Error',
+          details: `Get統計Failed: ${error}`,
         },
       ]);
     }
@@ -181,8 +181,8 @@ const FullTextSearchExample: React.FC = () => {
         ...prev,
         {
           test: '索引更新',
-          result: result ? '成功' : '失敗',
-          details: `索引更新${result ? '成功' : '失敗'}`,
+          result: result ? 'Success' : 'Failed',
+          details: `索引Update${result ? 'Success' : 'Failed'}`,
         },
       ]);
     } catch (error) {
@@ -190,8 +190,8 @@ const FullTextSearchExample: React.FC = () => {
         ...prev,
         {
           test: '索引更新',
-          result: '錯誤',
-          details: `索引更新失敗: ${error}`,
+          result: 'Error',
+          details: `索引UpdateFailed: ${error}`,
         },
       ]);
     }
@@ -238,9 +238,9 @@ const FullTextSearchExample: React.FC = () => {
             styles.testStatus,
             {
               color:
-                result.result === '成功'
+                result.result === 'Success'
                   ? '#4CAF50'
-                  : result.result === '錯誤'
+                  : result.result === 'Error'
                     ? '#F44336'
                     : '#FF9800',
             },
@@ -329,7 +329,7 @@ const FullTextSearchExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>🔍 全文搜索示例</Text>
 
-      {/* 初始化控制 */}
+      {/* InitializeControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🚀 初始化控制</Text>
         <View style={styles.controlRow}>
@@ -351,7 +351,7 @@ const FullTextSearchExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 搜索控制 */}
+      {/* SearchControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🔍 搜索控制</Text>
         <View style={styles.searchContainer}>
@@ -422,13 +422,13 @@ const FullTextSearchExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 搜索摘要 */}
+      {/* Search摘要 */}
       {renderSearchSummary()}
 
-      {/* 搜索分面 */}
+      {/* Search分面 */}
       {renderFacets()}
 
-      {/* 搜索結果 */}
+      {/* Search結果 */}
       {hasResults && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
@@ -438,7 +438,7 @@ const FullTextSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 測試結果 */}
+      {/* Test結果 */}
       {testResults.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>🧪 測試結果</Text>
@@ -446,7 +446,7 @@ const FullTextSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 搜索統計 */}
+      {/* SearchStatistics */}
       {searchStats && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📈 搜索統計</Text>
@@ -477,7 +477,7 @@ const FullTextSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 最近搜索 */}
+      {/* 最近Search */}
       {recentSearches.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>🕒 最近搜索</Text>
@@ -500,7 +500,7 @@ const FullTextSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 熱門搜索 */}
+      {/* 熱門Search */}
       {popularSearches.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>🔥 熱門搜索</Text>
@@ -524,7 +524,7 @@ const FullTextSearchExample: React.FC = () => {
         </View>
       )}
 
-      {/* 錯誤顯示 */}
+      {/* ErrorShow */}
       {error && (
         <View style={styles.errorSection}>
           <Text style={styles.errorTitle}>❌ 錯誤</Text>

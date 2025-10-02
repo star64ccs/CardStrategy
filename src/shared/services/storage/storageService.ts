@@ -111,7 +111,7 @@ export class StorageService {
     const _availableProviders = this.getAvailableProviders();
 
     if (preferredProvider === 'auto') {
-      // 優先選擇 S3，如果不可用則選擇 Cloudflare
+      // 優先Select S3，如果不可用則Select Cloudflare
       if (availableProviders.s3) return 's3';
       if (availableProviders.cloudflare) return 'cloudflare';
       return null;

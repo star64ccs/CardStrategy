@@ -203,11 +203,11 @@ describe('PWAService', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功初始化 PWA 服務', async () => {
+    test('應該SuccessInitialize PWA Service', async () => {
       const _result = await service.initialize(mockConfig);
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('PWA 服務初始化成功');
+      expect(result.data).toBe('PWA ServiceInitializeSuccess');
       expect(service.isServiceReady()).toBe(true);
     });
 
@@ -216,7 +216,7 @@ describe('PWAService', () => {
       const _result = await service.initialize(mockConfig);
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('PWA 服務已初始化');
+      expect(result.data).toBe('PWA Service已Initialize');
     });
 
     test('應該處理非 Web 平台', async () => {
@@ -226,7 +226,7 @@ describe('PWAService', () => {
       const _result = await iosService.initialize(mockConfig);
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('PWA 服務僅支持 Web 平台');
+      expect(result.error).toBe('PWA Service僅支持 Web 平台');
       expect(result.errorCode).toBe('PLATFORM_NOT_SUPPORTED');
 
       // Reset Platform.OS
@@ -293,7 +293,7 @@ describe('PWAService', () => {
       const _result = await service.installPWA();
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('PWA 安裝成功');
+      expect(result.data).toBe('PWA 安裝Success');
     });
 
     test('應該處理無法安裝的情況', async () => {
@@ -327,12 +327,12 @@ describe('PWAService', () => {
     });
   });
 
-  describe('服務狀態測試', () => {
+  describe('Service狀態測試', () => {
     beforeEach(async () => {
       await service.initialize(mockConfig);
     });
 
-    test('應該獲取服務狀態', () => {
+    test('應該GetService狀態', () => {
       const _status = service.getServiceStatus();
 
       expect(status).toEqual({
@@ -347,7 +347,7 @@ describe('PWAService', () => {
       });
     });
 
-    test('應該獲取服務統計', () => {
+    test('應該GetService統計', () => {
       const _stats = service.getServiceStats();
 
       expect(stats).toEqual({
@@ -363,7 +363,7 @@ describe('PWAService', () => {
       });
     });
 
-    test('應該檢查服務就緒狀態', () => {
+    test('應該CheckService就緒狀態', () => {
       expect(service.isServiceReady()).toBe(true);
     });
   });
@@ -377,10 +377,10 @@ describe('PWAService', () => {
       const _result = await service.updatePWA();
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('PWA 更新成功');
+      expect(result.data).toBe('PWA UpdateSuccess');
     });
 
-    test('應該處理更新失敗', async () => {
+    test('應該HandleUpdateFailed', async () => {
       // Mock navigator.serviceWorker.controller to throw error
       Object.defineProperty(mockNavigator.serviceWorker, 'controller', {
         get: () => ({
@@ -407,7 +407,7 @@ describe('PWAService', () => {
       const _result = await service.clearCache();
 
       expect(result.success).toBe(true);
-      expect(result.data).toBe('緩存清除成功');
+      expect(result.data).toBe('緩存清除Success');
       expect(mockCaches.keys).toHaveBeenCalled();
       expect(mockCaches.delete).toHaveBeenCalledWith('cache-1');
       expect(mockCaches.delete).toHaveBeenCalledWith('cache-2');
@@ -423,7 +423,7 @@ describe('PWAService', () => {
       });
     });
 
-    test('應該處理緩存清除失敗', async () => {
+    test('應該Handle緩存清除Failed', async () => {
       (mockCaches.keys as jest.Mock).mockRejectedValue(
         new Error('Cache error')
       );
@@ -435,7 +435,7 @@ describe('PWAService', () => {
       expect(result.errorCode).toBe('CACHE_CLEAR_FAILED');
     });
 
-    test('應該處理獲取緩存信息失敗', async () => {
+    test('應該HandleGet緩存信息Failed', async () => {
       (mockCaches.keys as jest.Mock).mockRejectedValue(
         new Error('Cache info error')
       );
@@ -448,12 +448,12 @@ describe('PWAService', () => {
     });
   });
 
-  describe('服務信息測試', () => {
+  describe('ServiceInformation測試', () => {
     beforeEach(async () => {
       await service.initialize(mockConfig);
     });
 
-    test('應該獲取服務信息', () => {
+    test('應該GetServiceInformation', () => {
       const _info = service.getServiceInfo();
 
       expect(info.success).toBe(true);
@@ -490,36 +490,36 @@ describe('PWAService', () => {
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('應該處理服務未初始化的情況', async () => {
+  describe('ErrorHandle測試', () => {
+    test('應該HandleService未Initialize的情況', async () => {
       const _uninitializedService = new (PWAService as any)();
 
       await expect(uninitializedService.installPWA()).resolves.toEqual({
         success: false,
-        error: 'PWA 服務未初始化',
+        error: 'PWA Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       });
 
       await expect(uninitializedService.updatePWA()).resolves.toEqual({
         success: false,
-        error: 'PWA 服務未初始化',
+        error: 'PWA Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       });
 
       await expect(uninitializedService.clearCache()).resolves.toEqual({
         success: false,
-        error: 'PWA 服務未初始化',
+        error: 'PWA Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       });
 
       await expect(uninitializedService.getCacheInfo()).resolves.toEqual({
         success: false,
-        error: 'PWA 服務未初始化',
+        error: 'PWA Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       });
     });
 
-    test('應該處理初始化錯誤', async () => {
+    test('應該HandleInitializeError', async () => {
       (mockNavigator.serviceWorker.register as jest.Mock).mockRejectedValue(
         new Error('Registration failed')
       );
@@ -601,7 +601,7 @@ describe('PWAService', () => {
       );
     });
 
-    test('應該處理 Service Worker 註冊失敗', async () => {
+    test('應該Handle Service Worker 註冊Failed', async () => {
       (mockNavigator.serviceWorker.register as jest.Mock).mockRejectedValue(
         new Error('SW registration failed')
       );

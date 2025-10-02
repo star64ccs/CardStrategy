@@ -23,7 +23,7 @@ describe('IOSBiometricService', () => {
   let iosBiometricService: IOSBiometricService;
 
   beforeEach(() => {
-    // 重置單例
+    // Reset單例
     (IOSBiometricService as any).instance = null;
     iosBiometricService = IOSBiometricService.getInstance();
     jest.clearAllMocks();
@@ -37,13 +37,13 @@ describe('IOSBiometricService', () => {
     });
   });
 
-  describe('服務初始化', () => {
+  describe('ServiceInitialize', () => {
     it('應該在 iOS 平台上正確初始化', () => {
       expect(Platform.OS).toBe('ios');
       expect(iosBiometricService.isServiceReady()).toBe(true);
     });
 
-    it('應該提供服務信息', () => {
+    it('應該提供ServiceInformation', () => {
       const _serviceInfo = iosBiometricService.getServiceInfo();
 
       expect(serviceInfo).toHaveProperty('isInitialized');
@@ -59,13 +59,13 @@ describe('IOSBiometricService', () => {
   });
 
   describe('detectCapabilities', () => {
-    it('應該成功檢測 iOS 設備能力', async () => {
+    it('應該Success檢測 iOS 設備能力', async () => {
       const _capabilities = await iosBiometricService.detectCapabilities();
 
       expect(Array.isArray(capabilities)).toBe(true);
       expect(capabilities.length).toBeGreaterThan(0);
 
-      // 檢查能力對象結構
+      // Check能力Object結構
       capabilities.forEach(capability => {
         expect(capability).toHaveProperty('type');
         expect(capability).toHaveProperty('isAvailable');
@@ -80,24 +80,24 @@ describe('IOSBiometricService', () => {
       const _capabilities = await iosBiometricService.detectCapabilities();
       const _types = capabilities.map(cap => cap.type);
 
-      // iOS 應該支持 faceId 或 touchId
+      // iOS 應該Support faceId 或 touchId
       const iosSupportedTypes: BiometricType[] = ['faceId', 'touchId'];
       const _hasIOSSupport = types.some(type =>
         iosSupportedTypes.includes(type)
       );
 
-      // 至少應該有一種 iOS 支持的類型
+      // 至少應該有一種 iOS Support的Class型
       expect(hasIOSSupport).toBe(true);
     });
 
     it('應該正確標記可用的生物識別類型', async () => {
       const _capabilities = await iosBiometricService.detectCapabilities();
 
-      // 檢查是否有可用的生物識別類型
+      // CheckYesNo有可用的生物識別Class型
       const _availableCapabilities = capabilities.filter(cap => cap.isAvailable);
       expect(availableCapabilities.length).toBeGreaterThanOrEqual(0);
 
-      // 如果有的話，應該有正確的屬性
+      // 如果有的話，應該有正確的Property
       availableCapabilities.forEach(cap => {
         expect(cap.isAvailable).toBe(true);
         expect(cap.hardwareDetected).toBe(true);
@@ -107,7 +107,7 @@ describe('IOSBiometricService', () => {
   });
 
   describe('authenticate', () => {
-    it('應該成功執行 iOS 生物識別認證', async () => {
+    it('應該Success執行 iOS 生物識別認證', async () => {
       const request: BiometricAuthRequest = {
         promptMessage: '請使用 Face ID 或 Touch ID 登錄',
         cancelButtonText: '取消',
@@ -125,7 +125,7 @@ describe('IOSBiometricService', () => {
         expect(result).toHaveProperty('authenticationMethod');
         expect(result.authenticationMethod).toBe('biometric');
 
-        // iOS 應該返回 faceId 或 touchId
+        // iOS 應該Return faceId 或 touchId
         expect(['faceId', 'touchId']).toContain(result.biometricType);
       } else {
         expect(result).toHaveProperty('errorCode');
@@ -133,8 +133,8 @@ describe('IOSBiometricService', () => {
       }
     });
 
-    it('應該處理認證失敗情況', async () => {
-      // 多次嘗試以增加失敗機會
+    it('應該Handle認證Failed情況', async () => {
+      // 多次嘗試以增加Failed機會
       const _results = [];
       for (let i = 0; i < 5; i++) {
         const _result = await iosBiometricService.authenticate();
@@ -150,13 +150,13 @@ describe('IOSBiometricService', () => {
     });
 
     it('應該處理未設置生物識別的情況', async () => {
-      // 這個測試主要檢查錯誤處理邏輯
+      // 這個Test主要CheckErrorHandle邏輯
       const _result = await iosBiometricService.authenticate();
 
       expect(result).toHaveProperty('success');
       expect(result).toHaveProperty('timestamp');
 
-      // 如果失敗，應該有適當的錯誤信息
+      // 如果Failed，應該有適當的ErrorInformation
       if (!result.success) {
         expect(result).toHaveProperty('errorCode');
         expect(result).toHaveProperty('errorMessage');
@@ -165,7 +165,7 @@ describe('IOSBiometricService', () => {
   });
 
   describe('createSignature', () => {
-    it('應該成功創建 iOS 生物識別簽名', async () => {
+    it('應該SuccessCreate iOS 生物識別簽名', async () => {
       const _promptMessage = '請進行生物識別認證以創建簽名';
       const _payload = 'test-payload-data';
 
@@ -184,8 +184,8 @@ describe('IOSBiometricService', () => {
       }
     });
 
-    it('應該處理簽名創建失敗的情況', async () => {
-      // 多次嘗試以增加失敗機會
+    it('應該Handle簽名CreateFailed的情況', async () => {
+      // 多次嘗試以增加Failed機會
       const _results = [];
       for (let i = 0; i < 5; i++) {
         const _result = await iosBiometricService.createSignature(
@@ -231,7 +231,7 @@ describe('IOSBiometricService', () => {
       const _result = await iosBiometricService.invalidateKeys();
 
       expect(typeof result).toBe('boolean');
-      // 即使失敗也應該返回布爾值
+      // 即使Failed也應該Return布爾Value
       expect([true, false]).toContain(result);
     });
 
@@ -239,28 +239,28 @@ describe('IOSBiometricService', () => {
       const _result = await iosBiometricService.reinitializeKeys();
 
       expect(typeof result).toBe('boolean');
-      // 即使失敗也應該返回布爾值
+      // 即使Failed也應該Return布爾Value
       expect([true, false]).toContain(result);
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該正確處理服務未初始化的情況', async () => {
-      // 創建一個新的實例來測試錯誤處理
+  describe('ErrorHandle', () => {
+    it('應該正確HandleService未Initialize的情況', async () => {
+      // Create一個新的Instance來TestErrorHandle
       const _newService = new (IOSBiometricService as any)();
 
-      // 模擬未初始化狀態
+      // 模擬未InitializeStatus
       (newService as any).isInitialized = false;
       (newService as any).biometricLib = null;
 
       await expect(newService.detectCapabilities()).rejects.toThrow(
-        'iOS 生物識別服務未初始化'
+        'iOS 生物識別Service未Initialize'
       );
 
-      // authenticate 和 createSignature 方法會返回錯誤結果而不是拋出異常
+      // authenticate 和 createSignature Method會ReturnError結果而不YesThrow異常
       const _authResult = await newService.authenticate();
       expect(authResult.success).toBe(false);
-      expect(authResult.errorMessage).toBe('iOS 生物識別服務未初始化');
+      expect(authResult.errorMessage).toBe('iOS 生物識別Service未Initialize');
 
       const _signatureResult = await newService.createSignature(
         'test',
@@ -272,7 +272,7 @@ describe('IOSBiometricService', () => {
     it('應該正確處理認證異常', async () => {
       const _result = await iosBiometricService.authenticate();
 
-      // 即使出現異常，也應該返回有效的結果對象
+      // 即使出現異常，也應該Return有效的結果Object
       expect(result).toHaveProperty('success');
       expect(result).toHaveProperty('timestamp');
       expect(result.timestamp).toBeInstanceOf(Date);
@@ -286,7 +286,7 @@ describe('IOSBiometricService', () => {
         cap => cap.type === 'faceId' || cap.type === 'touchId'
       );
 
-      // 應該至少有一種 iOS 生物識別類型
+      // 應該至少有一種 iOS 生物識別Class型
       expect(iosTypes.length).toBeGreaterThan(0);
 
       iosTypes.forEach(cap => {
@@ -308,7 +308,7 @@ describe('IOSBiometricService', () => {
       expect(result).toHaveProperty('timestamp');
 
       if (result.success) {
-        // iOS 認證成功時應該有正確的類型
+        // iOS AuthenticateSuccess時應該有正確的Class型
         expect(['faceId', 'touchId']).toContain(result.biometricType);
         expect(result.authenticationMethod).toBe('biometric');
       }
@@ -324,7 +324,7 @@ describe('IOSBiometricService', () => {
       const _endTime = Date.now();
       const _processingTime = endTime - startTime;
 
-      // 應該在合理時間內完成
+      // 應該在合理Time內Complete
       expect(processingTime).toBeLessThan(1000);
     });
 
@@ -336,19 +336,19 @@ describe('IOSBiometricService', () => {
       const _endTime = Date.now();
       const _processingTime = endTime - startTime;
 
-      // 應該在合理時間內完成
+      // 應該在合理Time內Complete
       expect(processingTime).toBeLessThan(2000);
     });
   });
 
-  describe('服務狀態', () => {
-    it('應該正確報告服務就緒狀態', () => {
+  describe('Service狀態', () => {
+    it('應該正確報告Service就緒狀態', () => {
       const _isReady = iosBiometricService.isServiceReady();
       expect(typeof isReady).toBe('boolean');
       expect([true, false]).toContain(isReady);
     });
 
-    it('應該提供完整的服務信息', () => {
+    it('應該提供完整的ServiceInformation', () => {
       const _serviceInfo = iosBiometricService.getServiceInfo();
 
       expect(serviceInfo).toHaveProperty('isInitialized');

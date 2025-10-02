@@ -4,7 +4,7 @@ import {
   HybridRecommendationReason,
 } from '../types/hybridRecommendation';
 
-// Mock 協同過濾和內容推薦服務
+// Mock 協同Filter和Content推薦Service
 jest.mock('../services/collaborativeFilteringService', () => ({
   CollaborativeFilteringService: {
     getInstance: jest.fn(() => ({
@@ -38,10 +38,10 @@ describe('HybridRecommendationService', () => {
   let service: HybridRecommendationService;
 
   beforeEach(() => {
-    // 重置單例實例
+    // Reset單例Instance
     (HybridRecommendationService as any).instance = undefined;
 
-    // 重置 mock
+    // Reset mock
     jest.clearAllMocks();
 
     service = HybridRecommendationService.getInstance();
@@ -56,14 +56,14 @@ describe('HybridRecommendationService', () => {
   });
 
   describe('initialize', () => {
-    it('應該成功初始化服務', async () => {
+    it('應該SuccessInitializeService', async () => {
       await expect(service.initialize()).resolves.not.toThrow();
     });
 
     it('應該只初始化一次', async () => {
       await service.initialize();
-      await service.initialize(); // 第二次調用應該不會重新初始化
-      expect(true).toBe(true); // 如果沒有拋出錯誤就通過
+      await service.initialize(); // 第二次調用應該不會ReInitialize
+      expect(true).toBe(true); // 如果沒有ThrowError就通過
     });
   });
 
@@ -72,7 +72,7 @@ describe('HybridRecommendationService', () => {
       await service.initialize();
     });
 
-    it('應該成功獲取混合推薦', async () => {
+    it('應該SuccessGet混合推薦', async () => {
       const _request = {
         userId: 'user123',
         limit: 10,
@@ -236,7 +236,7 @@ describe('HybridRecommendationService', () => {
       await service.initialize();
     });
 
-    it('應該成功記錄推薦點擊', async () => {
+    it('應該Success記錄推薦點擊', async () => {
       const _recommendation = {
         id: 'rec1',
         userId: 'user123',
@@ -261,7 +261,7 @@ describe('HybridRecommendationService', () => {
       await service.initialize();
     });
 
-    it('應該成功記錄推薦評分', async () => {
+    it('應該Success記錄推薦評分', async () => {
       const _recommendation = {
         id: 'rec1',
         userId: 'user123',
@@ -333,14 +333,14 @@ describe('HybridRecommendationService', () => {
     it('應該支持添加事件監聽器', () => {
       const _listener = jest.fn();
       service.addEventListener('recommendation_generated', listener);
-      expect(true).toBe(true); // 如果沒有拋出錯誤就通過
+      expect(true).toBe(true); // 如果沒有ThrowError就通過
     });
 
     it('應該支持移除事件監聽器', () => {
       const _listener = jest.fn();
       service.addEventListener('recommendation_generated', listener);
       service.removeEventListener('recommendation_generated');
-      expect(true).toBe(true); // 如果沒有拋出錯誤就通過
+      expect(true).toBe(true); // 如果沒有ThrowError就通過
     });
 
     it('應該發送事件', async () => {
@@ -354,17 +354,17 @@ describe('HybridRecommendationService', () => {
 
       await service.getHybridRecommendations(request);
 
-      // 由於事件是異步發送的，我們需要等待一下
+      // 由於EventYesAsyncSend的，我們需要Await一下
       await new Promise(resolve => setTimeout(resolve, 100));
 
-      // 檢查監聽器是否被調用（由於是模擬實現，可能不會實際調用）
+      // Check監聽器YesNo被調用（由於Yes模擬實現，可能不會實際調用）
       expect(true).toBe(true);
     });
   });
 
   describe('Error Handling', () => {
-    it('應該處理初始化錯誤', async () => {
-      // 模擬初始化失敗
+    it('應該HandleInitializeError', async () => {
+      // 模擬InitializeFailed
       jest
         .spyOn(service as any, 'loadConfig')
         .mockRejectedValue(new Error('Config load failed'));
@@ -372,10 +372,10 @@ describe('HybridRecommendationService', () => {
       await expect(service.initialize()).rejects.toThrow('Config load failed');
     });
 
-    it('應該處理推薦生成錯誤', async () => {
+    it('應該Handle推薦生成Error', async () => {
       await service.initialize();
 
-      // 模擬推薦生成失敗
+      // 模擬推薦生成Failed
       jest
         .spyOn(service as any, 'generateHybridRecommendations')
         .mockRejectedValue(new Error('Generation failed'));
@@ -404,7 +404,7 @@ describe('HybridRecommendationService', () => {
 
       const _result = await service.getHybridRecommendations(request);
 
-      // 驗證推薦項目結構
+      // Verify推薦項目結構
       if (result.recommendations.length > 0) {
         const _recommendation = result.recommendations[0];
         expect(recommendation.id).toBeDefined();
@@ -473,7 +473,7 @@ describe('HybridRecommendationService', () => {
       const _endTime = Date.now();
       const _responseTime = endTime - startTime;
 
-      // 響應時間應該小於1秒
+      // ResponseTime應該小於1Second
       expect(responseTime).toBeLessThan(1000);
     });
 

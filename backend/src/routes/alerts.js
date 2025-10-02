@@ -12,7 +12,7 @@ const {
  * @swagger
  * /api/alerts:
  *   post:
- *     summary: ?�建警報
+ *     summary: ?�建Alert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -44,7 +44,7 @@ const {
  *                 type: object
  *     responses:
  *       201:
- *         description: 警報?�建?��?
+ *         description: Alert?�建?��?
  *       400:
  *         description: 請�??�數?�誤
  *       401:'
@@ -83,7 +83,7 @@ router.post('/', protect, validateAlertCreation, async (req, res) => {'
  * @swagger
  * /api/alerts:
  *   get:
- *     summary: ?��?警報?�表
+ *     summary: ?��?Alert?�Table
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -124,7 +124,7 @@ router.post('/', protect, validateAlertCreation, async (req, res) => {'
  *           format: date
  *     responses:
  *       200:
- *         description: ?��??��?警報?�表
+ *         description: ?��??��?Alert?�Table
  *       401:'
  *         description: ?��?�? */''
 router.get('/', protect, async (req, res) => {
@@ -161,7 +161,7 @@ router.get('/', protect, async (req, res) => {
  * @swagger
  * /api/alerts/{id}:
  *   get:
- *     summary: ?��?警報詳�?
+ *     summary: ?��?Alert詳�?
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -173,9 +173,9 @@ router.get('/', protect, async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: ?��??��?警報詳�?
+ *         description: ?��??��?Alert詳�?
  *       404:
- *         description: 警報不�??? *       401:'
+ *         description: Alert不�??? *       401:'
  *         description: ?��?�? */''
 router.get('/:id', protect, async (req, res) => {
   try {
@@ -199,7 +199,7 @@ router.get('/:id', protect, async (req, res) => {
  * @swagger
  * /api/alerts/{id}/status:
  *   put:
- *     summary: ?�新警報?�?? *     tags: [Alerts]
+ *     summary: ?�新Alert?�?? *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -259,7 +259,7 @@ router.put('/:id/status', protect, validateAlertUpdate, async (req, res) => {
  * @swagger
  * /api/alerts/{id}/acknowledge:
  *   post:
- *     summary: 確�?警報
+ *     summary: 確�?Alert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -271,7 +271,7 @@ router.put('/:id/status', protect, validateAlertUpdate, async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: 警報確�??��?
+ *         description: Alert確�??��?
  *       400:
  *         description: 請�??�數?�誤
  *       401:'
@@ -301,7 +301,7 @@ router.post('/:id/acknowledge', protect, async (req, res) => {
  * @swagger
  * /api/alerts/bulk/status:
  *   put:
- *     summary: ?��??�新警報?�?? *     tags: [Alerts]
+ *     summary: ?��??�新Alert?�?? *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -367,7 +367,7 @@ router.put('/bulk/status', protect, async (req, res) => {'
  * @swagger
  * /api/alerts/stats:
  *   get:
- *     summary: ?��?警報統�?
+ *     summary: ?��?Alert統�?
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -426,13 +426,13 @@ router.get('/stats', protect, async (req, res) => {'
  * @swagger
  * /api/alerts/active:
  *   get:
- *     summary: ?��?活�?警報
+ *     summary: ?��?活�?Alert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: ?��??��?活�?警報
+ *         description: ?��??��?活�?Alert
  *       401:'
  *         description: ?��?�? */''
 router.get('/active', protect, async (req, res) => {
@@ -457,7 +457,7 @@ router.get('/active', protect, async (req, res) => {
  * @swagger
  * /api/alerts/{id}:
  *   delete:
- *     summary: ?�除警報
+ *     summary: ?�除Alert
  *     tags: [Alerts]
  *     security:
  *       - bearerAuth: []
@@ -469,7 +469,7 @@ router.get('/active', protect, async (req, res) => {
  *           type: integer
  *     responses:
  *       200:
- *         description: 警報?�除?��?
+ *         description: Alert?�除?��?
  *       400:
  *         description: 請�??�數?�誤
  *       401:'

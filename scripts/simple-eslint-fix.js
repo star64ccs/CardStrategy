@@ -3,14 +3,14 @@ const path = require('path');
 
 /**
  * 簡化ESLint修復腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  * 專注於最常見的問題
  */
 
 console.log('🚀 開始簡化ESLint修復流程...\n');
 
-// 1. 修復Redux slice文件的基本問題
+// 1. 修復Redux sliceFile的基本問題
 function fixReduxSlices() {
   console.log('📋 修復Redux slice文件...');
 
@@ -30,7 +30,7 @@ function fixReduxSlices() {
       let content = fs.readFileSync(filePath, 'utf8');
       let modified = false;
 
-      // 添加必要的導入
+      // Add必要的Import
       if (!content.includes('createSlice') && content.includes('Slice')) {
         content = "import { createSlice, PayloadAction } from '@reduxjs/toolkit';\n" + content;
         modified = true;
@@ -51,7 +51,7 @@ function fixReduxSlices() {
         totalFixes++;
       }
     } catch (error) {
-      console.log(`⚠️ 修復文件失敗: ${file}`);
+      console.log(`⚠️ 修復文件Failed: ${file}`);
     }
   });
 
@@ -62,7 +62,7 @@ function fixReduxSlices() {
   return { fixedFiles, totalFixes };
 }
 
-// 2. 修復TypeScript類型問題
+// 2. 修復TypeScriptClass型問題
 function fixTypeScriptIssues() {
   console.log('📋 修復TypeScript類型問題...');
 
@@ -77,11 +77,11 @@ function fixTypeScriptIssues() {
       let content = fs.readFileSync(file, 'utf8');
       let modified = false;
 
-      // 修復常見的any類型問題
+      // 修復常見的anyClass型問題
       content = content.replace(/: any\b/g, ': unknown');
       content = content.replace(/: any\[\]/g, ': unknown[]');
 
-      // 修復非空斷言問題
+      // 修復非Empty斷言問題
       content = content.replace(/!\./g, '.');
       content = content.replace(/!\s*\)/g, ')');
 
@@ -100,7 +100,7 @@ function fixTypeScriptIssues() {
         fixedFiles++;
       }
     } catch (error) {
-      console.log(`⚠️ 修復TypeScript問題失敗: ${file}`);
+      console.log(`⚠️ 修復TypeScript問題Failed: ${file}`);
     }
   });
 
@@ -111,7 +111,7 @@ function fixTypeScriptIssues() {
   return { fixedFiles, totalFixes };
 }
 
-// 3. 修復React組件問題
+// 3. 修復ReactComponent問題
 function fixReactComponents() {
   console.log('📋 修復React組件問題...');
 
@@ -126,13 +126,13 @@ function fixReactComponents() {
       let content = fs.readFileSync(file, 'utf8');
       let modified = false;
 
-      // 添加React導入
+      // AddReactImport
       if (!content.includes('import React') && (content.includes('React.FC') || content.includes('JSX'))) {
         content = "import React from 'react';\n" + content;
         modified = true;
       }
 
-      // 修復useState和useEffect導入
+      // 修復useState和useEffectImport
       if ((content.includes('useState') || content.includes('useEffect')) && !content.includes('useState') && !content.includes('useEffect')) {
         content = content.replace(/import React from 'react';/, "import React, { useState, useEffect } from 'react';");
         modified = true;
@@ -144,7 +144,7 @@ function fixReactComponents() {
         totalFixes++;
       }
     } catch (error) {
-      console.log(`⚠️ 修復React組件失敗: ${file}`);
+      console.log(`⚠️ 修復React組件Failed: ${file}`);
     }
   });
 
@@ -155,7 +155,7 @@ function fixReactComponents() {
   return { fixedFiles, totalFixes };
 }
 
-// 4. 修復工具函數問題
+// 4. 修復ToolFunction問題
 function fixUtilityFunctions() {
   console.log('📋 修復工具函數問題...');
 
@@ -185,7 +185,7 @@ function fixUtilityFunctions() {
         totalFixes++;
       }
     } catch (error) {
-      console.log(`⚠️ 修復工具函數失敗: ${file}`);
+      console.log(`⚠️ 修復工具函數Failed: ${file}`);
     }
   });
 
@@ -196,7 +196,7 @@ function fixUtilityFunctions() {
   return { fixedFiles, totalFixes };
 }
 
-// 5. 生成修復報告
+// 5. 生成修復Report
 function generateFixReport(fixes) {
   console.log('\n📊 修復報告');
   console.log('='.repeat(50));
@@ -219,7 +219,7 @@ function generateFixReport(fixes) {
   };
 }
 
-// 輔助函數：獲取所有TypeScript文件
+// 輔助Function：Get所有TypeScriptFile
 function getAllTypeScriptFiles(dir) {
   const files = [];
 
@@ -244,7 +244,7 @@ function getAllTypeScriptFiles(dir) {
   return files;
 }
 
-// 主函數
+// 主Function
 function main() {
   try {
     console.log('🚀 開始簡化ESLint修復流程...\n');
@@ -252,18 +252,18 @@ function main() {
     // 階段1：修復Redux slices
     const reduxFixes = fixReduxSlices();
 
-    // 階段2：修復TypeScript類型問題
+    // 階段2：修復TypeScriptClass型問題
     const typescriptFixes = fixTypeScriptIssues();
 
-    // 階段3：修復React組件
+    // 階段3：修復ReactComponent
     const reactFixes = fixReactComponents();
 
-    // 階段4：修復工具函數
+    // 階段4：修復ToolFunction
     const utilsFixes = fixUtilityFunctions();
 
     console.log('\n' + '='.repeat(50));
 
-    // 階段5：生成報告
+    // 階段5：生成Report
     const report = generateFixReport({
       redux: reduxFixes,
       typescript: typescriptFixes,
@@ -288,7 +288,7 @@ function main() {
     console.log('  3. 處理剩餘問題');
 
   } catch (error) {
-    console.error('❌ 簡化ESLint修復失敗:', error);
+    console.error('❌ 簡化ESLint修復Failed:', error);
     process.exit(1);
   }
 }

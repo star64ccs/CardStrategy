@@ -8,7 +8,7 @@ import type {
 } from '../../types/touch';
 
 /**
- * 觸控反饋組件
+ * 觸控反饋Component
  * 提供多種視覺反饋效果：波紋、縮放、透明度、顏色變化
  */
 export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
@@ -25,7 +25,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
   const _containerRef = useRef<HTMLDivElement>(null);
   const _componentId = useRef(`touch-feedback-${Date.now()}-${Math.random()}`);
 
-  // 狀態管理
+  // StatusManage
   const [isPressed, setIsPressed] = useState(false);
   const [ripples, setRipples] = useState<
     {
@@ -38,7 +38,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
     }[]
   >([]);
 
-  // 默認配置
+  // DefaultConfigure
   const defaultConfig: TouchFeedbackConfig = {
     type: 'ripple',
     duration: 300,
@@ -52,7 +52,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
 
   const _finalConfig = { ...defaultConfig, ...feedback };
 
-  // 註冊組件到服務
+  // RegisterComponent到Service
   useEffect(() => {
     if (!disabled) {
       touchService.registerFeedback(componentId.current, finalConfig);
@@ -78,7 +78,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
     return () => clearInterval(interval);
   }, [finalConfig.duration]);
 
-  // 工具函數
+  // ToolFunction
   const _getTouchPoint = useCallback(
     (event: React.TouchEvent | React.MouseEvent): { x: number; y: number } => {
       if (containerRef.current) {
@@ -116,7 +116,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
 
       setRipples(prev => [...prev, newRipple]);
 
-      // 自動移除波紋
+      // AutoRemove波紋
       setTimeout(() => {
         setRipples(prev => prev.filter(r => r.id !== rippleId));
       }, finalConfig.duration || 300);
@@ -124,7 +124,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
     [finalConfig.rippleSize, finalConfig.duration]
   );
 
-  // 事件處理器
+  // EventHandle器
   const _handleTouchStart = useCallback(
     (event: React.TouchEvent) => {
       if (disabled || finalConfig.disabled) return;
@@ -136,13 +136,13 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
         onPressIn();
       }
 
-      // 創建波紋效果
+      // Create波紋效果
       if (finalConfig.type === 'ripple') {
         const _point = getTouchPoint(event);
         createRipple(point.x, point.y);
       }
 
-      // 性能追蹤
+      // 性能Trace
       touchService.trackPerformance(componentId.current, {
         feedback: finalConfig.type,
         action: 'pressIn',
@@ -166,7 +166,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
         onPress();
       }
 
-      // 性能追蹤
+      // 性能Trace
       touchService.trackPerformance(componentId.current, {
         feedback: finalConfig.type,
         action: 'pressOut',
@@ -186,7 +186,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
         onPressIn();
       }
 
-      // 創建波紋效果
+      // Create波紋效果
       if (finalConfig.type === 'ripple') {
         const _point = getTouchPoint(event);
         createRipple(point.x, point.y);
@@ -259,7 +259,7 @@ export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
       ...style,
     };
 
-    // 根據反饋類型添加樣式
+    // Root據反饋Class型Add樣式
     switch (finalConfig.type) {
       case 'scale':
         baseStyle.transform = isPressed

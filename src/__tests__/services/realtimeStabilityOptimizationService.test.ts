@@ -1,6 +1,6 @@
 /**
- * 實時功能穩定性優化服務測試
- * 測試 TD-008: 加強實時功能穩定性
+ * 實時功能穩定性優化ServiceTest
+ * Test TD-008: 加強實時功能穩定性
  */
 
 import { RealtimeStabilityOptimizationService } from '../../services/realtimeStabilityOptimizationService';
@@ -42,7 +42,7 @@ describe('RealtimeStabilityOptimizationService', () => {
   });
 
   describe('初始化測試', () => {
-    it('應該正確初始化服務', async () => {
+    it('應該正確InitializeService', async () => {
       const _result = await realtimeStabilityOptimizationService.initialize();
       expect(result).toBe(true);
     });
@@ -59,7 +59,7 @@ describe('RealtimeStabilityOptimizationService', () => {
       await realtimeStabilityOptimizationService.initialize();
     });
 
-    it('應該優化WebSocket連接穩定性', async () => {
+    it('應該優化WebSocketConnect穩定性', async () => {
       const _result =
         await realtimeStabilityOptimizationService.optimizeWebSocketStability();
 
@@ -211,7 +211,7 @@ describe('RealtimeStabilityOptimizationService', () => {
     });
 
     it('應該獲取穩定性指標', async () => {
-      // 執行一些優化操作來生成指標
+      // 執Row一些優化Operation來生成指標
       await realtimeStabilityOptimizationService.optimizeWebSocketStability();
       await realtimeStabilityOptimizationService.optimizePushNotificationReliability();
       await realtimeStabilityOptimizationService.optimizeOfflineSync();
@@ -289,16 +289,16 @@ describe('RealtimeStabilityOptimizationService', () => {
   });
 
   describe('重置測試', () => {
-    it('應該重置服務狀態', async () => {
+    it('應該重置Service狀態', async () => {
       await realtimeStabilityOptimizationService.initialize();
 
-      // 執行一些操作
+      // 執Row一些Operation
       await realtimeStabilityOptimizationService.optimizeWebSocketStability();
 
-      // 重置
+      // Reset
       await realtimeStabilityOptimizationService.reset();
 
-      // 檢查是否重置
+      // CheckYesNoReset
       const { isInitialized } = realtimeStabilityOptimizationService as any;
       expect(isInitialized).toBe(false);
     });
@@ -306,13 +306,13 @@ describe('RealtimeStabilityOptimizationService', () => {
     it('應該重置穩定性指標', async () => {
       await realtimeStabilityOptimizationService.initialize();
 
-      // 執行一些操作來生成指標
+      // 執Row一些Operation來生成指標
       await realtimeStabilityOptimizationService.optimizeWebSocketStability();
 
-      // 重置
+      // Reset
       await realtimeStabilityOptimizationService.reset();
 
-      // 檢查指標是否重置
+      // Check指標YesNoReset
       const _metrics =
         realtimeStabilityOptimizationService.getStabilityMetrics();
       expect(metrics.websocket.uptime).toBe(0);
@@ -325,8 +325,8 @@ describe('RealtimeStabilityOptimizationService', () => {
       await realtimeStabilityOptimizationService.initialize();
     });
 
-    it('應該處理連接失敗情況', async () => {
-      // 模擬連接失敗的情況
+    it('應該HandleConnectFailed情況', async () => {
+      // 模擬ConnectFailed的情況
       const _result =
         await realtimeStabilityOptimizationService.optimizeWebSocketStability();
 
@@ -334,8 +334,8 @@ describe('RealtimeStabilityOptimizationService', () => {
       expect(result.stabilityScore).toBeGreaterThanOrEqual(0);
     });
 
-    it('應該處理同步失敗情況', async () => {
-      // 模擬同步失敗的情況
+    it('應該Handle同步Failed情況', async () => {
+      // 模擬SyncFailed的情況
       const _result =
         await realtimeStabilityOptimizationService.optimizeOfflineSync();
 
@@ -343,8 +343,8 @@ describe('RealtimeStabilityOptimizationService', () => {
       expect(result.reliabilityScore).toBeGreaterThanOrEqual(0);
     });
 
-    it('應該處理設備發現失敗情況', async () => {
-      // 模擬設備發現失敗的情況
+    it('應該Handle設備發現Failed情況', async () => {
+      // 模擬設備發現Failed的情況
       const _result =
         await realtimeStabilityOptimizationService.optimizeMultiDeviceSync();
 
@@ -368,7 +368,7 @@ describe('RealtimeStabilityOptimizationService', () => {
 
       const _totalTime = Date.now() - startTime;
 
-      expect(totalTime).toBeLessThan(1000); // 應該在1秒內完成所有優化
+      expect(totalTime).toBeLessThan(1000); // 應該在1Second內Complete所有優化
     });
 
     it('應該高效處理並發優化', async () => {
@@ -385,7 +385,7 @@ describe('RealtimeStabilityOptimizationService', () => {
 
       const _totalTime = Date.now() - startTime;
 
-      expect(totalTime).toBeLessThan(500); // 應該在500ms內完成並發優化
+      expect(totalTime).toBeLessThan(500); // 應該在500ms內CompleteConcurrent優化
     });
   });
 
@@ -409,13 +409,13 @@ describe('RealtimeStabilityOptimizationService', () => {
 
       const _totalTime = Date.now() - startTime;
 
-      expect(totalTime).toBeLessThan(2000); // 應該在2秒內完成10次優化
+      expect(totalTime).toBeLessThan(2000); // 應該在2Second內Complete10次優化
     });
 
     it('應該處理長時間運行', async () => {
       const _startTime = Date.now();
 
-      // 模擬長時間運行
+      // 模擬長Time運Row
       for (let i = 0; i < 5; i++) {
         await realtimeStabilityOptimizationService.optimizeWebSocketStability();
         await new Promise(resolve => setTimeout(resolve, 50)); // 模擬間隔
@@ -423,7 +423,7 @@ describe('RealtimeStabilityOptimizationService', () => {
 
       const _totalTime = Date.now() - startTime;
 
-      expect(totalTime).toBeLessThan(1000); // 應該在1秒內完成5次優化
+      expect(totalTime).toBeLessThan(1000); // 應該在1Second內Complete5次優化
     });
   });
 });

@@ -1,6 +1,6 @@
 /**
- * Cohere 服務測試
- * 驗證文本嵌入、語義搜索、文本生成等功能
+ * Cohere ServiceTest
+ * Verify文本嵌入、語義Search、文本生成等功能
  */
 
 import { serviceConfig } from '../core/config/services';
@@ -8,21 +8,21 @@ import { cohereService } from '../shared/services/ai/cohereService';
 
 describe('CohereService', () => {
   beforeAll(async () => {
-    // 初始化服務配置
+    // InitializeServiceConfigure
     await serviceConfig.initialize();
   });
 
   describe('初始化測試', () => {
-    test('應該能夠初始化服務', async () => {
+    test('應該能夠InitializeService', async () => {
       await expect(cohereService.initialize()).resolves.not.toThrow();
     });
 
-    test('應該檢查服務可用性', () => {
+    test('應該CheckService可用性', () => {
       const _isAvailable = cohereService.isAvailable();
       expect(typeof isAvailable).toBe('boolean');
     });
 
-    test('應該獲取服務統計信息', () => {
+    test('應該GetService統計Information', () => {
       const _stats = cohereService.getServiceStats();
       expect(stats).toHaveProperty('service', 'cohere');
       expect(stats).toHaveProperty('isAvailable');
@@ -100,7 +100,7 @@ describe('CohereService', () => {
           expect(searchResult.score).toBeLessThanOrEqual(1);
         });
 
-        // 檢查結果是否按相似度排序
+        // Check結果YesNo按相似度Sort
         for (let i = 1; i < result.data.length; i++) {
           expect(result.data[i - 1].score).toBeGreaterThanOrEqual(
             result.data[i].score
@@ -238,26 +238,26 @@ describe('CohereService', () => {
     });
   });
 
-  describe('錯誤處理測試', () => {
+  describe('ErrorHandle測試', () => {
     test('應該處理無效的 API 密鑰', async () => {
-      // 暫時修改 API 密鑰來測試錯誤處理
+      // 暫時Modify API 密鑰來TestErrorHandle
       const _originalKey = serviceConfig.get('COHERE_API_KEY');
       serviceConfig.set('COHERE_API_KEY', 'invalid_key');
 
       const _result = await cohereService.embedTexts(['測試文本']);
 
-      // 恢復原始密鑰
+      // Restore原始密鑰
       if (originalKey) {
         serviceConfig.set('COHERE_API_KEY', originalKey);
       }
 
-      // 在開發環境中，應該返回模擬結果
+      // 在On發環境中，應該Return模擬結果
       expect(result.success).toBe(true);
     });
 
-    test('應該處理網絡錯誤', async () => {
-      // 這個測試在實際環境中可能無法完全模擬
-      // 但可以確保錯誤處理邏輯存在
+    test('應該Handle網絡Error', async () => {
+      // 這個Test在實際環境中可能無法完全模擬
+      // 但可以確保ErrorHandle邏輯存在
       expect(cohereService.isAvailable()).toBeDefined();
     });
   });
@@ -272,7 +272,7 @@ describe('CohereService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 在正常網絡條件下，應該在 10 秒內完成
+      // 在正常NetworkCondition下，應該在 10 Second內Complete
       expect(duration).toBeLessThan(10000);
     });
 
@@ -284,7 +284,7 @@ describe('CohereService', () => {
       const _endTime = Date.now();
 
       expect(result.success).toBe(true);
-      expect(endTime - startTime).toBeLessThan(30000); // 30 秒內完成
+      expect(endTime - startTime).toBeLessThan(30000); // 30 Second內Complete
     });
   });
 });

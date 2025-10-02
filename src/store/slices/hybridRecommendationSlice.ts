@@ -15,48 +15,48 @@ import type {
   RecommendationContext,
 } from '../../features/recommendation/types/hybridRecommendation';
 
-// 狀態接口
+// StatusInterface
 export interface HybridRecommendationState {
-  // 推薦數據
+  // 推薦Data
   recommendations: HybridRecommendation[];
   total: number;
 
-  // 配置
+  // Configure
   config: HybridRecommendationConfig | null;
 
-  // 統計信息
+  // StatisticsInformation
   stats: HybridRecommendationStats | null;
 
-  // 過濾器和選項
+  // Filter器和Options
   filters: HybridFilters | null;
   options: HybridOptions | null;
 
-  // 分頁
+  // Paginate
   pagination: {
     page: number;
     limit: number;
     total: number;
   };
 
-  // 加載狀態
+  // 加載Status
   loading: {
     recommendations: boolean;
     config: boolean;
     stats: boolean;
   };
 
-  // 錯誤狀態
+  // ErrorStatus
   error: {
     recommendations: string | null;
     config: string | null;
     stats: string | null;
   };
 
-  // 事件監聽器
+  // Event監聽器
   eventListeners: Map<string, (event: HybridRecommendationEvent) => void>;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: HybridRecommendationState = {
   recommendations: [],
   total: 0,
@@ -82,10 +82,10 @@ const initialState: HybridRecommendationState = {
   eventListeners: new Map(),
 };
 
-// 異步 Thunks
+// Async Thunks
 
 /**
- * 初始化混合推薦系統
+ * Initialize混合推薦系統
  */
 export const _initializeHybridRecommendation = createAsyncThunk(
   'hybridRecommendation/initialize',
@@ -109,7 +109,7 @@ export const _initializeHybridRecommendation = createAsyncThunk(
 );
 
 /**
- * 獲取混合推薦
+ * Get混合推薦
  */
 export const _getHybridRecommendations = createAsyncThunk(
   'hybridRecommendation/getRecommendations',
@@ -129,7 +129,7 @@ export const _getHybridRecommendations = createAsyncThunk(
 );
 
 /**
- * 記錄推薦點擊
+ * Record推薦點擊
  */
 export const _recordRecommendationClick = createAsyncThunk(
   'hybridRecommendation/recordClick',
@@ -155,7 +155,7 @@ export const _recordRecommendationClick = createAsyncThunk(
 );
 
 /**
- * 記錄推薦評分
+ * Record推薦評分
  */
 export const _recordRecommendationRating = createAsyncThunk(
   'hybridRecommendation/recordRating',
@@ -182,7 +182,7 @@ export const _recordRecommendationRating = createAsyncThunk(
 );
 
 /**
- * 獲取配置
+ * GetConfigure
  */
 export const _getHybridRecommendationConfig = createAsyncThunk(
   'hybridRecommendation/getConfig',
@@ -200,7 +200,7 @@ export const _getHybridRecommendationConfig = createAsyncThunk(
 );
 
 /**
- * 更新配置
+ * UpdateConfigure
  */
 export const _updateHybridRecommendationConfig = createAsyncThunk(
   'hybridRecommendation/updateConfig',
@@ -218,7 +218,7 @@ export const _updateHybridRecommendationConfig = createAsyncThunk(
 );
 
 /**
- * 獲取統計信息
+ * GetStatisticsInformation
  */
 export const _getHybridRecommendationStats = createAsyncThunk(
   'hybridRecommendation/getStats',
@@ -240,7 +240,7 @@ const _hybridRecommendationSlice = createSlice({
   name: 'hybridRecommendation',
   initialState,
   reducers: {
-    // 重置狀態
+    // ResetStatus
     resetHybridRecommendation: state => {
       state.recommendations = [];
       state.total = 0;
@@ -265,18 +265,18 @@ const _hybridRecommendationSlice = createSlice({
       };
     },
 
-    // 設置過濾器
+    // SettingsFilter器
     setFilters: (state, action: PayloadAction<HybridFilters>) => {
       state.filters = action.payload;
-      state.pagination.page = 1; // 重置到第一頁
+      state.pagination.page = 1; // Reset到第一頁
     },
 
-    // 設置選項
+    // SettingsOptions
     setOptions: (state, action: PayloadAction<HybridOptions>) => {
       state.options = action.payload;
     },
 
-    // 設置分頁
+    // SettingsPaginate
     setPagination: (
       state,
       action: PayloadAction<{ page: number; limit: number }>
@@ -285,7 +285,7 @@ const _hybridRecommendationSlice = createSlice({
       state.pagination.limit = action.payload.limit;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: (
       state,
       action: PayloadAction<'recommendations' | 'config' | 'stats'>
@@ -293,7 +293,7 @@ const _hybridRecommendationSlice = createSlice({
       state.error[action.payload] = null;
     },
 
-    // 添加事件監聽器
+    // AddEvent監聽器
     addEventListener: (
       state,
       action: PayloadAction<{
@@ -301,41 +301,41 @@ const _hybridRecommendationSlice = createSlice({
         listener: (event: HybridRecommendationEvent) => void;
       }>
     ) => {
-      // 事件監聽器功能暫時不可用
+      // Event監聽器功能暫時不可用
       state.eventListeners.set(
         action.payload.eventType,
         action.payload.listener
       );
     },
 
-    // 移除事件監聽器
+    // RemoveEvent監聽器
     removeEventListener: (state, action: PayloadAction<string>) => {
-      // 事件監聽器功能暫時不可用
+      // Event監聽器功能暫時不可用
       state.eventListeners.delete(action.payload);
     },
 
-    // 更新推薦算法
+    // Update推薦算法
     updateAlgorithm: (state, action: PayloadAction<HybridAlgorithm>) => {
       if (state.config) {
         state.config.algorithm = action.payload;
       }
     },
 
-    // 更新權重
+    // Update權重
     updateWeights: (state, action: PayloadAction<Partial<HybridWeights>>) => {
       if (state.config) {
         state.config.weights = { ...state.config.weights, ...action.payload };
       }
     },
 
-    // 更新上下文
+    // Update上下文
     updateContext: (state, action: PayloadAction<RecommendationContext>) => {
-      // 可以存儲當前上下文用於後續請求
+      // 可以Storage當前上下文用於後續Request
     },
   },
   extraReducers: builder => {
     builder
-      // 初始化
+      // Initialize
       .addCase(initializeHybridRecommendation.pending, state => {
         state.loading.config = true;
         state.loading.stats = true;
@@ -355,7 +355,7 @@ const _hybridRecommendationSlice = createSlice({
         state.error.stats = action.payload as string;
       })
 
-      // 獲取推薦
+      // Get推薦
       .addCase(getHybridRecommendations.pending, state => {
         state.loading.recommendations = true;
         state.error.recommendations = null;
@@ -366,7 +366,7 @@ const _hybridRecommendationSlice = createSlice({
         state.total = action.payload.total;
         state.pagination.total = action.payload.total;
 
-        // 更新統計信息
+        // UpdateStatisticsInformation
         if (action.payload.performance) {
           if (state.stats) {
             state.stats.performanceMetrics = action.payload.performance;
@@ -378,18 +378,18 @@ const _hybridRecommendationSlice = createSlice({
         state.error.recommendations = action.payload as string;
       })
 
-      // 記錄點擊
+      // Record點擊
       .addCase(recordRecommendationClick.fulfilled, (state, action) => {
-        // 可以更新統計信息或推薦狀態
+        // 可以UpdateStatisticsInformation或推薦Status
         if (state.stats) {
           state.stats.userEngagement.clickThroughRate =
             (state.stats.userEngagement.clickThroughRate + 1) / 2;
         }
       })
 
-      // 記錄評分
+      // Record評分
       .addCase(recordRecommendationRating.fulfilled, (state, action) => {
-        // 可以更新統計信息或推薦狀態
+        // 可以UpdateStatisticsInformation或推薦Status
         if (state.stats) {
           state.stats.userEngagement.satisfactionScore =
             (state.stats.userEngagement.satisfactionScore +
@@ -398,7 +398,7 @@ const _hybridRecommendationSlice = createSlice({
         }
       })
 
-      // 獲取配置
+      // GetConfigure
       .addCase(getHybridRecommendationConfig.pending, state => {
         state.loading.config = true;
         state.error.config = null;
@@ -412,7 +412,7 @@ const _hybridRecommendationSlice = createSlice({
         state.error.config = action.payload as string;
       })
 
-      // 更新配置
+      // UpdateConfigure
       .addCase(updateHybridRecommendationConfig.pending, state => {
         state.loading.config = true;
         state.error.config = null;
@@ -426,7 +426,7 @@ const _hybridRecommendationSlice = createSlice({
         state.error.config = action.payload as string;
       })
 
-      // 獲取統計
+      // GetStatistics
       .addCase(getHybridRecommendationStats.pending, state => {
         state.loading.stats = true;
         state.error.stats = null;
@@ -442,7 +442,7 @@ const _hybridRecommendationSlice = createSlice({
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   resetHybridRecommendation,
   setFilters,
@@ -456,7 +456,7 @@ export const {
   updateContext,
 } = hybridRecommendationSlice.actions;
 
-// 選擇器
+// Select器
 export const _selectHybridRecommendations = (state: {
   hybridRecommendation: HybridRecommendationState;
 }) => state.hybridRecommendation.recommendations;
@@ -493,7 +493,7 @@ export const _selectHybridRecommendationError = (state: {
   hybridRecommendation: HybridRecommendationState;
 }) => state.hybridRecommendation.error;
 
-// 計算選擇器
+// 計算Select器
 export const _selectHybridRecommendationIsLoading = (state: {
   hybridRecommendation: HybridRecommendationState;
 }) =>
@@ -534,5 +534,5 @@ export const _selectHybridRecommendationReasonDistribution = (state: {
   hybridRecommendation: HybridRecommendationState;
 }) => state.hybridRecommendation.stats?.reasonDistribution;
 
-// 導出 reducer
+// Export reducer
 export default hybridRecommendationSlice.reducer;

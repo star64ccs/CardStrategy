@@ -7,7 +7,7 @@ import type { SyncStats } from '../types/storage';
 import { ConflictResolution } from '../types/storage';
 
 /**
- * 增量同步項目接口
+ * 增量Sync項目Interface
  */
 export interface IncrementalSyncItem {
   id: string;
@@ -31,7 +31,7 @@ export interface IncrementalSyncItem {
 }
 
 /**
- * 增量同步批次接口
+ * 增量Sync批次Interface
  */
 export interface IncrementalSyncBatch {
   id: string;
@@ -48,7 +48,7 @@ export interface IncrementalSyncBatch {
 }
 
 /**
- * 增量同步配置接口
+ * 增量SyncConfigureInterface
  */
 export interface IncrementalSyncConfig {
   maxBatchSize: number;
@@ -65,7 +65,7 @@ export interface IncrementalSyncConfig {
 }
 
 /**
- * 增量同步狀態接口
+ * 增量SyncStatusInterface
  */
 export interface IncrementalSyncState {
   isSyncing: boolean;
@@ -79,8 +79,8 @@ export interface IncrementalSyncState {
 }
 
 /**
- * 增量同步服務
- * 負責高效的增量數據同步
+ * 增量SyncService
+ * 負責高效的增量DataSync
  */
 export class IncrementalSyncService extends EventEmitter {
   private static instance: IncrementalSyncService;
@@ -96,7 +96,7 @@ export class IncrementalSyncService extends EventEmitter {
     super();
     this.config = {
       maxBatchSize: 100,
-      syncInterval: 30000, // 30秒
+      syncInterval: 30000, // 30Second
       retryDelay: 5000,
       maxRetries: 3,
       conflictResolution: ConflictResolution.LAST_MODIFIED,
@@ -130,7 +130,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 獲取單例實例
+   * Get單例Instance
    */
   public static getInstance(): IncrementalSyncService {
     if (!IncrementalSyncService.instance) {
@@ -140,7 +140,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(userId: string, deviceId: string): Promise<void> {
     try {
@@ -151,7 +151,7 @@ export class IncrementalSyncService extends EventEmitter {
       await this.loadLastServerVersion();
       await this.startPeriodicSync();
 
-      logger.info('增量同步服務初始化成功', {
+      logger.info('增量同步ServiceInitializeSuccess', {
         userId,
         deviceId,
         pendingItems: this.syncQueue.length,
@@ -159,13 +159,13 @@ export class IncrementalSyncService extends EventEmitter {
 
       this.emit('initialized', { userId, deviceId });
     } catch (error) {
-      logger.error('增量同步服務初始化失敗:', error);
+      logger.error('增量同步ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 配置同步設置
+   * ConfigureSyncSettings
    */
   public configure(config: Partial<IncrementalSyncConfig>): void {
     this.config = { ...this.config, ...config };
@@ -173,7 +173,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 添加同步項目
+   * AddSync項目
    */
   public async addSyncItem(
     key: string,
@@ -203,7 +203,7 @@ export class IncrementalSyncService extends EventEmitter {
       },
     };
 
-    // 去重處理
+    // 去重Handle
     if (this.config.enableDeduplication) {
       const _existingIndex = this.syncQueue.findIndex(
         item => item.key === key && item.operation === operation
@@ -217,7 +217,7 @@ export class IncrementalSyncService extends EventEmitter {
       this.syncQueue.push(syncItem);
     }
 
-    // 根據優先級排序
+    // Root據優先級Sort
     this.syncQueue.sort((a, b) => {
       const _priorityOrder = { high: 0, normal: 1, low: 2 };
       return priorityOrder[a.priority] - priorityOrder[b.priority];
@@ -229,14 +229,14 @@ export class IncrementalSyncService extends EventEmitter {
     this.emit('itemAdded', syncItem);
     logger.debug('同步項目已添加:', { key, operation, priority });
 
-    // 如果啟用自動同步，立即嘗試同步
+    // 如果EnableAutoSync，立即嘗試Sync
     if (this.config.enableIncrementalSync) {
       this.triggerSync();
     }
   }
 
   /**
-   * 批量添加同步項目
+   * BatchAddSync項目
    */
   public async addBatchSyncItems(
     items: {
@@ -281,7 +281,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 觸發同步
+   * 觸發Sync
    */
   public async triggerSync(): Promise<void> {
     if (this.state.isSyncing || this.syncQueue.length === 0) {
@@ -301,11 +301,11 @@ export class IncrementalSyncService extends EventEmitter {
 
       const _results = await this.syncBatch(batch);
 
-      // 更新統計信息
+      // UpdateStatisticsInformation
       const _syncTime = Date.now() - startTime;
       this.updateSyncStats(results, syncTime);
 
-      // 從隊列中移除已同步的項目
+      // 從Queue中Remove已Sync的項目
       this.removeSyncedItems(batch.items.map(item => item.id));
 
       this.state.lastSyncTime = Date.now();
@@ -321,7 +321,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 觸發全量同步
+   * 觸發全量Sync
    */
   public async triggerFullSync(): Promise<void> {
     if (this.state.isSyncing) {
@@ -356,21 +356,21 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 獲取同步狀態
+   * GetSyncStatus
    */
   public getSyncState(): IncrementalSyncState {
     return { ...this.state };
   }
 
   /**
-   * 獲取待同步項目數量
+   * Get待Sync項目數量
    */
   public getPendingItemsCount(): number {
     return this.syncQueue.length;
   }
 
   /**
-   * 清除同步錯誤
+   * ClearSyncError
    */
   public clearError(): void {
     this.state.error = null;
@@ -378,21 +378,21 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 重試失敗的項目
+   * RetryFailed的項目
    */
   public async retryFailedItems(): Promise<void> {
     const _failedItems = this.syncQueue.filter(item => item.retryCount > 0);
     if (failedItems.length === 0) {
-      logger.info('沒有失敗的項目需要重試');
+      logger.info('沒有Failed的項目需要重試');
       return;
     }
 
-    logger.info(`重試 ${failedItems.length} 個失敗的項目`);
+    logger.info(`重試 ${failedItems.length} 個Failed的項目`);
     await this.triggerSync();
   }
 
   /**
-   * 清理過期的同步項目
+   * 清理過期的Sync項目
    */
   public async cleanupExpiredItems(
     maxAge: number = 7 * 24 * 60 * 60 * 1000
@@ -413,7 +413,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<void> {
     if (this.syncInterval) {
@@ -422,11 +422,11 @@ export class IncrementalSyncService extends EventEmitter {
     }
 
     this.removeAllListeners();
-    logger.info('增量同步服務已銷毀');
+    logger.info('增量同步Service已銷毀');
   }
 
   /**
-   * 開始定期同步
+   * Begin定期Sync
    */
   private async startPeriodicSync(): Promise<void> {
     this.syncInterval = setInterval(() => {
@@ -437,7 +437,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 創建同步批次
+   * CreateSync批次
    */
   private createSyncBatch(): IncrementalSyncBatch {
     const _items = this.syncQueue.slice(0, this.config.maxBatchSize);
@@ -461,7 +461,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 同步批次
+   * Sync批次
    */
   private async syncBatch(batch: IncrementalSyncBatch): Promise<{
     success: number;
@@ -486,19 +486,19 @@ export class IncrementalSyncService extends EventEmitter {
         await this.saveLastServerVersion();
       } else {
         results.failed = batch.items.length;
-        results.errors.push(response.error || '批次同步失敗');
+        results.errors.push(response.error || '批次同步Failed');
       }
     } catch (error) {
       results.failed = batch.items.length;
-      results.errors.push(error instanceof Error ? error.message : '同步失敗');
-      logger.error('批次同步失敗:', error);
+      results.errors.push(error instanceof Error ? error.message : '同步Failed');
+      logger.error('批次同步Failed:', error);
     }
 
     return results;
   }
 
   /**
-   * 執行全量同步
+   * 執Row全量Sync
    */
   private async performFullSync(): Promise<{
     success: number;
@@ -514,7 +514,7 @@ export class IncrementalSyncService extends EventEmitter {
     };
 
     try {
-      // 這裡應該調用實際的全量同步API
+      // 這裡應該調用實際的全量SyncAPI
       const _response = await this.mockFullSync();
 
       if (response.success) {
@@ -523,33 +523,33 @@ export class IncrementalSyncService extends EventEmitter {
         await this.saveLastServerVersion();
       } else {
         results.failed = 1;
-        results.errors.push(response.error || '全量同步失敗');
+        results.errors.push(response.error || '全量同步Failed');
       }
     } catch (error) {
       results.failed = 1;
       results.errors.push(
-        error instanceof Error ? error.message : '全量同步失敗'
+        error instanceof Error ? error.message : '全量同步Failed'
       );
-      logger.error('全量同步失敗:', error);
+      logger.error('全量同步Failed:', error);
     }
 
     return results;
   }
 
   /**
-   * 處理同步錯誤
+   * HandleSyncError
    */
   private handleSyncError(error: unknown): void {
-    const _errorMessage = error instanceof Error ? error.message : '同步失敗';
+    const _errorMessage = error instanceof Error ? error.message : '同步Failed';
     this.state.error = errorMessage;
     this.state.stats.syncErrors++;
 
-    logger.error('增量同步錯誤:', error);
+    logger.error('增量同步Error:', error);
     this.emit('syncError', error);
   }
 
   /**
-   * 更新同步統計
+   * UpdateSyncStatistics
    */
   private updateSyncStats(results: unknown, syncTime: number): void {
     const { success, failed } = results;
@@ -564,7 +564,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 移除已同步的項目
+   * Remove已Sync的項目
    */
   private removeSyncedItems(itemIds: string[]): void {
     this.syncQueue = this.syncQueue.filter(item => !itemIds.includes(item.id));
@@ -573,7 +573,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 獲取批次優先級
+   * Get批次優先級
    */
   private getBatchPriority(
     items: IncrementalSyncItem[]
@@ -593,7 +593,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 生成同步ID
+   * 生成SyncID
    */
   private generateSyncId(): string {
     return `sync_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -629,19 +629,19 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 保存同步隊列
+   * SaveSyncQueue
    */
   private async saveSyncQueue(): Promise<void> {
     try {
       const _key = `incremental_sync_queue_${this.userId}`;
       await AsyncStorage.setItem(key, JSON.stringify(this.syncQueue));
     } catch (error) {
-      logger.error('保存同步隊列失敗:', error);
+      logger.error('保存同步隊列Failed:', error);
     }
   }
 
   /**
-   * 加載同步隊列
+   * 加載SyncQueue
    */
   private async loadSyncQueue(): Promise<void> {
     try {
@@ -654,25 +654,25 @@ export class IncrementalSyncService extends EventEmitter {
         logger.info(`加載了 ${this.syncQueue.length} 個待同步項目`);
       }
     } catch (error) {
-      logger.error('加載同步隊列失敗:', error);
+      logger.error('加載同步隊列Failed:', error);
       this.syncQueue = [];
     }
   }
 
   /**
-   * 保存最後服務器版本
+   * Save最後ServerVersion
    */
   private async saveLastServerVersion(): Promise<void> {
     try {
       const _key = `last_server_version_${this.userId}`;
       await AsyncStorage.setItem(key, this.lastServerVersion.toString());
     } catch (error) {
-      logger.error('保存最後服務器版本失敗:', error);
+      logger.error('保存最後Server版本Failed:', error);
     }
   }
 
   /**
-   * 加載最後服務器版本
+   * 加載最後ServerVersion
    */
   private async loadLastServerVersion(): Promise<void> {
     try {
@@ -681,30 +681,30 @@ export class IncrementalSyncService extends EventEmitter {
 
       if (data) {
         this.lastServerVersion = parseInt(data, 10);
-        logger.info(`加載最後服務器版本: ${this.lastServerVersion}`);
+        logger.info(`加載最後Server版本: ${this.lastServerVersion}`);
       }
     } catch (error) {
-      logger.error('加載最後服務器版本失敗:', error);
+      logger.error('加載最後Server版本Failed:', error);
       this.lastServerVersion = 0;
     }
   }
 
   /**
-   * 模擬批次同步
+   * 模擬批次Sync
    */
   private async mockBatchSync(batch: IncrementalSyncBatch): Promise<{
     success: boolean;
     serverVersion?: number;
     error?: string;
   }> {
-    // 模擬網絡延遲
+    // 模擬Network延遲
     await new Promise(resolve =>
       setTimeout(resolve, 500 + Math.random() * 1000)
     );
 
-    // 模擬隨機錯誤
+    // 模擬隨機Error
     if (Math.random() < 0.1) {
-      throw new Error('網絡錯誤');
+      throw new Error('網絡Error');
     }
 
     return {
@@ -714,7 +714,7 @@ export class IncrementalSyncService extends EventEmitter {
   }
 
   /**
-   * 模擬全量同步
+   * 模擬全量Sync
    */
   private async mockFullSync(): Promise<{
     success: boolean;
@@ -722,14 +722,14 @@ export class IncrementalSyncService extends EventEmitter {
     serverVersion?: number;
     error?: string;
   }> {
-    // 模擬網絡延遲
+    // 模擬Network延遲
     await new Promise(resolve =>
       setTimeout(resolve, 2000 + Math.random() * 3000)
     );
 
-    // 模擬隨機錯誤
+    // 模擬隨機Error
     if (Math.random() < 0.05) {
-      throw new Error('全量同步失敗');
+      throw new Error('全量同步Failed');
     }
 
     return {
@@ -740,5 +740,5 @@ export class IncrementalSyncService extends EventEmitter {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _incrementalSyncService = IncrementalSyncService.getInstance();

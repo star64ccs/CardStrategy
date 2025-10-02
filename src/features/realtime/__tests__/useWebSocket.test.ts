@@ -1,6 +1,6 @@
 /**
- * WebSocket Hooks 測試
- * 測試 WebSocket 相關的自定義 React Hooks
+ * WebSocket Hooks Test
+ * Test WebSocket 相Off的Custom React Hooks
  */
 
 import { configureStore } from '@reduxjs/toolkit';

@@ -3,7 +3,7 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 投資組合項目類型
+ * 投資組合項目Class型
  */
 export interface PortfolioItem {
   id: string;
@@ -20,7 +20,7 @@ export interface PortfolioItem {
 }
 
 /**
- * 投資組合統計類型
+ * 投資組合StatisticsClass型
  */
 export interface PortfolioStats {
   totalItems: number;
@@ -32,8 +32,8 @@ export interface PortfolioStats {
 }
 
 /**
- * 投資組合服務
- * 處理投資組合相關功能
+ * 投資組合Service
+ * Handle投資組合相Off功能
  */
 export class PortfolioService {
   private static instance: PortfolioService;
@@ -48,7 +48,7 @@ export class PortfolioService {
   }
 
   /**
-   * 獲取用戶投資組合
+   * GetUser投資組合
    */
   async getPortfolio(): Promise<PortfolioItem[]> {
     try {
@@ -57,16 +57,16 @@ export class PortfolioService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('獲取投資組合失敗');
+        throw new Error('Get投資組合Failed');
       }
     } catch (error) {
-      logger.error('獲取投資組合失敗:', { error });
+      logger.error('Get投資組合Failed:', { error });
       throw error;
     }
   }
 
   /**
-   * 添加投資組合項目
+   * Add投資組合項目
    */
   async addPortfolioItem(
     item: Omit<PortfolioItem, 'id' | 'lastUpdated'>
@@ -77,16 +77,16 @@ export class PortfolioService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('添加投資組合項目失敗');
+        throw new Error('添加投資組合項目Failed');
       }
     } catch (error) {
-      logger.error('添加投資組合項目失敗:', { error, item });
+      logger.error('添加投資組合項目Failed:', { error, item });
       throw error;
     }
   }
 
   /**
-   * 更新投資組合項目
+   * Update投資組合項目
    */
   async updatePortfolioItem(
     id: string,
@@ -101,32 +101,32 @@ export class PortfolioService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('更新投資組合項目失敗');
+        throw new Error('Update投資組合項目Failed');
       }
     } catch (error) {
-      logger.error('更新投資組合項目失敗:', { error, id, updates });
+      logger.error('Update投資組合項目Failed:', { error, id, updates });
       throw error;
     }
   }
 
   /**
-   * 刪除投資組合項目
+   * Delete投資組合項目
    */
   async removePortfolioItem(id: string): Promise<void> {
     try {
       const _response = await api.delete(`/portfolio/${id}`);
 
       if (!response.success) {
-        throw new Error('刪除投資組合項目失敗');
+        throw new Error('Delete投資組合項目Failed');
       }
     } catch (error) {
-      logger.error('刪除投資組合項目失敗:', { error, id });
+      logger.error('Delete投資組合項目Failed:', { error, id });
       throw error;
     }
   }
 
   /**
-   * 獲取投資組合統計
+   * Get投資組合Statistics
    */
   async getPortfolioStats(): Promise<PortfolioStats> {
     try {
@@ -135,14 +135,14 @@ export class PortfolioService {
       if (response.success && response.data) {
         return response.data;
       } else {
-        throw new Error('獲取投資組合統計失敗');
+        throw new Error('Get投資組合統計Failed');
       }
     } catch (error) {
-      logger.error('獲取投資組合統計失敗:', { error });
+      logger.error('Get投資組合統計Failed:', { error });
       throw error;
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _portfolioService = PortfolioService.getInstance();

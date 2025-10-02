@@ -11,7 +11,7 @@ import type {
   ThemeType,
 } from '../../types/designSystem';
 
-// 初始狀態
+// 初始Status
 const initialState: DesignSystemState = {
   currentTheme: 'dark',
   themes: {} as Record<ThemeType, Theme>,
@@ -52,17 +52,17 @@ const _designSystemSlice = createSlice({
   name: 'designSystem',
   initialState,
   reducers: {
-    // 設置當前主題
+    // Settings當前Theme
     setCurrentTheme: (state, action: PayloadAction<ThemeType>) => {
       state.currentTheme = action.payload;
     },
 
-    // 設置所有主題
+    // Settings所有Theme
     setThemes: (state, action: PayloadAction<Record<ThemeType, Theme>>) => {
       state.themes = action.payload;
     },
 
-    // 添加主題
+    // AddTheme
     addTheme: (
       state,
       action: PayloadAction<{ type: ThemeType; theme: Theme }>
@@ -70,7 +70,7 @@ const _designSystemSlice = createSlice({
       state.themes[action.payload.type] = action.payload.theme;
     },
 
-    // 更新主題
+    // UpdateTheme
     updateTheme: (
       state,
       action: PayloadAction<{ type: ThemeType; theme: Partial<Theme> }>
@@ -83,7 +83,7 @@ const _designSystemSlice = createSlice({
       }
     },
 
-    // 註冊組件
+    // RegisterComponent
     registerComponent: (
       state,
       action: PayloadAction<{ name: string; config: ComponentConfig }>
@@ -95,7 +95,7 @@ const _designSystemSlice = createSlice({
       }
     },
 
-    // 更新組件
+    // UpdateComponent
     updateComponent: (
       state,
       action: PayloadAction<{ name: string; config: Partial<ComponentConfig> }>
@@ -113,7 +113,7 @@ const _designSystemSlice = createSlice({
       }
     },
 
-    // 設置所有組件
+    // Settings所有Component
     setComponents: (
       state,
       action: PayloadAction<DesignSystemState['components']>
@@ -121,12 +121,12 @@ const _designSystemSlice = createSlice({
       state.components = action.payload;
     },
 
-    // 添加設計令牌
+    // Add設計令牌
     addToken: (state, action: PayloadAction<DesignToken>) => {
       state.tokens.push(action.payload);
     },
 
-    // 更新設計令牌
+    // Update設計令牌
     updateToken: (
       state,
       action: PayloadAction<{ name: string; value: string | number }>
@@ -138,12 +138,12 @@ const _designSystemSlice = createSlice({
       }
     },
 
-    // 設置所有令牌
+    // Settings所有令牌
     setTokens: (state, action: PayloadAction<DesignToken[]>) => {
       state.tokens = action.payload;
     },
 
-    // 更新可訪問性配置
+    // Update可訪問性Configure
     updateAccessibilityConfig: (
       state,
       action: PayloadAction<Partial<AccessibilityConfig>>
@@ -154,7 +154,7 @@ const _designSystemSlice = createSlice({
       };
     },
 
-    // 設置可訪問性配置
+    // Settings可訪問性Configure
     setAccessibilityConfig: (
       state,
       action: PayloadAction<AccessibilityConfig>
@@ -162,29 +162,29 @@ const _designSystemSlice = createSlice({
       state.accessibility = action.payload;
     },
 
-    // 設置加載狀態
+    // Settings加載Status
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
 
-    // 設置錯誤
+    // SettingsError
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
     },
 
-    // 重置狀態
+    // ResetStatus
     reset: state => {
       return initialState;
     },
   },
 });
 
-// 輔助函數
+// 輔助Function
 function determineComponentCategory(
   name: string
 ): keyof DesignSystemState['components'] | null {
@@ -219,7 +219,7 @@ function getComponentFromState(
   return null;
 }
 
-// 導出 actions
+// Export actions
 export const {
   setCurrentTheme,
   setThemes,
@@ -239,10 +239,10 @@ export const {
   reset,
 } = designSystemSlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default designSystemSlice.reducer;
 
-// 選擇器
+// Select器
 export const _selectCurrentTheme = (state: {
   designSystem: DesignSystemState;
 }) => state.designSystem.currentTheme;
@@ -270,19 +270,19 @@ export const _selectIsLoading = (state: { designSystem: DesignSystemState }) =>
 export const _selectError = (state: { designSystem: DesignSystemState }) =>
   state.designSystem.error;
 
-// 特定組件選擇器
+// SpecificComponentSelect器
 export const _selectComponent =
   (name: string) => (state: { designSystem: DesignSystemState }) => {
     return getComponentFromState(state.designSystem, name);
   };
 
-// 特定令牌選擇器
+// Specific令牌Select器
 export const _selectToken =
   (name: string) => (state: { designSystem: DesignSystemState }) => {
     return state.designSystem.tokens.find(token => token.name === name) || null;
   };
 
-// 按類別選擇令牌
+// 按Class別Select令牌
 export const _selectTokensByCategory =
   (category: string) => (state: { designSystem: DesignSystemState }) => {
     return state.designSystem.tokens.filter(

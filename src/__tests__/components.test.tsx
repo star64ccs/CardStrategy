@@ -1,4 +1,4 @@
-// 組件庫單元測試
+// ComponentLibrary單元Test
 import { configureStore } from '@reduxjs/toolkit';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
@@ -8,7 +8,7 @@ import { DesignSystemProvider } from '../components/providers/DesignSystemProvid
 import { Button, Card, Input, Loading, Modal, Toast } from '../components/ui';
 import designSystemReducer from '../store/slices/designSystemSlice';
 
-// 創建測試用的 Redux store
+// CreateTest用的 Redux store
 const _createTestStore = () => {
   return configureStore({
     reducer: {
@@ -17,7 +17,7 @@ const _createTestStore = () => {
   });
 };
 
-// 測試包裝器
+// TestPackage裝器
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const _store = createTestStore();
 
@@ -28,7 +28,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   );
 };
 
-// 測試工具函數
+// TestToolFunction
 const _renderWithProvider = (component: React.ReactElement) => {
   return render(component, { wrapper: TestWrapper });
 };
@@ -102,9 +102,9 @@ describe('UI 組件庫測試', () => {
       expect(screen.getByLabelText('用戶名')).toBeInTheDocument();
     });
 
-    test('應該支持錯誤狀態', () => {
-      renderWithProvider(<Input error='輸入錯誤' />);
-      expect(screen.getByRole('alert')).toHaveTextContent('輸入錯誤');
+    test('應該支持Error狀態', () => {
+      renderWithProvider(<Input error='輸入Error' />);
+      expect(screen.getByRole('alert')).toHaveTextContent('輸入Error');
     });
 
     test('應該支持幫助文本', () => {
@@ -261,12 +261,12 @@ describe('UI 組件庫測試', () => {
 
     test('應該支持不同類型', () => {
       const { rerender } = renderWithProvider(
-        <Toast type='success' message='成功消息' />
+        <Toast type='success' message='Success消息' />
       );
-      expect(screen.getByText('成功消息')).toBeInTheDocument();
+      expect(screen.getByText('Success消息')).toBeInTheDocument();
 
-      rerender(<Toast type='error' message='錯誤消息' />);
-      expect(screen.getByText('錯誤消息')).toBeInTheDocument();
+      rerender(<Toast type='error' message='Error消息' />);
+      expect(screen.getByText('Error消息')).toBeInTheDocument();
     });
 
     test('應該支持標題和消息', () => {
@@ -366,15 +366,15 @@ describe('UI 組件庫測試', () => {
       renderWithProvider(<Button>主題按鈕</Button>);
       const _button = screen.getByRole('button');
 
-      // 檢查按鈕是否有主題相關的樣式類
+      // Check按鈕YesNo有Theme相Off的樣式Class
       expect(button).toHaveClass('button--primary');
     });
 
     test('組件應該響應主題變化', () => {
       const { rerender } = renderWithProvider(<Button>主題按鈕</Button>);
 
-      // 這裡可以測試主題切換後組件的樣式變化
-      // 由於我們使用的是內聯樣式，實際的主題變化會在運行時生效
+      // 這裡可以TestThemeSwitch後Component的樣式變化
+      // 由於我們使用的Yes內聯樣式，實際的Theme變化會在運Row時生效
       expect(screen.getByRole('button')).toBeInTheDocument();
     });
   });

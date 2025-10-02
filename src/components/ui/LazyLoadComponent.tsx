@@ -1,4 +1,4 @@
-// 懶加載組件
+// 懶加載Component
 import React, { useEffect, useRef } from 'react';
 
 import {
@@ -16,7 +16,7 @@ import type {
 } from '../../types/lazyLoading';
 import { LazyLoadPriority, LazyLoadStrategy } from '../../types/lazyLoading';
 
-// 默認加載組件
+// Default加載Component
 const DefaultLoadingComponent: React.FC = () => (
   <div
     style={{
@@ -48,7 +48,7 @@ const DefaultLoadingComponent: React.FC = () => (
   </div>
 );
 
-// 默認錯誤組件
+// DefaultErrorComponent
 const DefaultErrorComponent: React.FC<{ error: Error; retry: () => void }> = ({
   error,
   retry,
@@ -90,7 +90,7 @@ const DefaultErrorComponent: React.FC<{ error: Error; retry: () => void }> = ({
   </div>
 );
 
-// 默認佔位符組件
+// Default佔位符Component
 const DefaultPlaceholderComponent: React.FC = () => (
   <div
     style={{
@@ -110,7 +110,7 @@ const DefaultPlaceholderComponent: React.FC = () => (
 );
 
 /**
- * 組件懶加載組件
+ * Component懶加載Component
  */
 export const LazyLoadComponent: React.FC<LazyLoadComponentProps> = ({
   config,
@@ -129,7 +129,7 @@ export const LazyLoadComponent: React.FC<LazyLoadComponentProps> = ({
   const { state, load, retry, isLoading, isLoaded, hasError } =
     useLazyComponent(id, config);
 
-  // 設置 Intersection Observer
+  // Settings Intersection Observer
   useEffect(() => {
     if (
       config.strategy === LazyLoadStrategy.INTERSECTION_OBSERVER &&
@@ -167,7 +167,7 @@ export const LazyLoadComponent: React.FC<LazyLoadComponentProps> = ({
     onBeforeLoad,
   ]);
 
-  // 回調處理
+  // CallbackHandle
   useEffect(() => {
     if (state.status === 'loaded' && 'component' in state && state.component) {
       onLoadSuccess?.(state.component);
@@ -221,7 +221,7 @@ export const LazyLoadComponent: React.FC<LazyLoadComponentProps> = ({
 };
 
 /**
- * 圖片懶加載組件
+ * Graph片懶加載Component
  */
 export const LazyLoadImage: React.FC<LazyLoadImageProps> = ({
   config,
@@ -244,7 +244,7 @@ export const LazyLoadImage: React.FC<LazyLoadImageProps> = ({
     config
   );
 
-  // 設置 Intersection Observer
+  // Settings Intersection Observer
   useEffect(() => {
     if (
       config.strategy === LazyLoadStrategy.INTERSECTION_OBSERVER &&
@@ -282,7 +282,7 @@ export const LazyLoadImage: React.FC<LazyLoadImageProps> = ({
     onBeforeLoad,
   ]);
 
-  // 回調處理
+  // CallbackHandle
   useEffect(() => {
     if (state.status === 'loaded' && state.image) {
       onLoadSuccess?.(state.image);
@@ -343,7 +343,7 @@ export const LazyLoadImage: React.FC<LazyLoadImageProps> = ({
 };
 
 /**
- * 數據懶加載組件
+ * Data懶加載Component
  */
 export const LazyLoadData: React.FC<LazyLoadDataProps> = ({
   config,
@@ -363,7 +363,7 @@ export const LazyLoadData: React.FC<LazyLoadDataProps> = ({
     config
   );
 
-  // 設置 Intersection Observer
+  // Settings Intersection Observer
   useEffect(() => {
     if (
       config.strategy === LazyLoadStrategy.INTERSECTION_OBSERVER &&
@@ -401,7 +401,7 @@ export const LazyLoadData: React.FC<LazyLoadDataProps> = ({
     onBeforeLoad,
   ]);
 
-  // 回調處理
+  // CallbackHandle
   useEffect(() => {
     if (state.status === 'loaded' && 'data' in state && state.data) {
       onLoadSuccess?.(state.data);
@@ -437,7 +437,7 @@ export const LazyLoadData: React.FC<LazyLoadDataProps> = ({
 };
 
 /**
- * 簡化的組件懶加載組件
+ * 簡化的Component懶加載Component
  */
 export const LazyComponent: React.FC<{
   path: string;
@@ -472,7 +472,7 @@ export const LazyComponent: React.FC<{
     priority: priority as LazyLoadPriority,
     preloadDistance,
     enableCache: true,
-    cacheTime: 300000, // 5分鐘
+    cacheTime: 300000, // 5Minute
   };
 
   return (
@@ -491,7 +491,7 @@ export const LazyComponent: React.FC<{
 };
 
 /**
- * 簡化的圖片懶加載組件
+ * 簡化的Graph片懶加載Component
  */
 export const LazyImage: React.FC<{
   src: string;
@@ -535,7 +535,7 @@ export const LazyImage: React.FC<{
     preloadDistance,
     quality,
     enableCache: true,
-    cacheTime: 300000, // 5分鐘
+    cacheTime: 300000, // 5Minute
   };
 
   return (
@@ -556,7 +556,7 @@ export const LazyImage: React.FC<{
 };
 
 /**
- * 簡化的數據懶加載組件
+ * 簡化的Data懶加載Component
  */
 export const LazyData: React.FC<{
   loader: () => Promise<any>;
@@ -592,7 +592,7 @@ export const LazyData: React.FC<{
     priority: priority as LazyLoadPriority,
     preloadDistance,
     enableCache: true,
-    cacheTime: 300000, // 5分鐘
+    cacheTime: 300000, // 5Minute
   };
 
   return (

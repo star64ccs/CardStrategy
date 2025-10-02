@@ -33,7 +33,7 @@ describe('ContentRecommendationService', () => {
   });
 
   describe('initialize', () => {
-    it('應該成功初始化服務', async () => {
+    it('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBeUndefined();
     });
@@ -226,7 +226,7 @@ describe('ContentRecommendationService', () => {
       await service.initialize();
     });
 
-    it('應該成功更新用戶偏好', async () => {
+    it('應該SuccessUpdate用戶偏好', async () => {
       const _userId = 'user_123';
       const preference: Partial<UserPreference> = {
         contentTypes: [ContentType.CARD, ContentType.ARTICLE],
@@ -260,7 +260,7 @@ describe('ContentRecommendationService', () => {
       await service.initialize();
     });
 
-    it('應該成功記錄用戶互動', async () => {
+    it('應該Success記錄用戶互動', async () => {
       const _userId = 'user_123';
       const _contentId = 'content_1';
       const _interaction = {
@@ -337,7 +337,7 @@ describe('ContentRecommendationService', () => {
       expect(updatedConfig.maxRecommendations).toBe(30);
       expect(updatedConfig.similarityThreshold).toBe(0.5);
       expect(updatedConfig.cacheEnabled).toBe(false);
-      expect(updatedConfig.enabled).toBe(originalConfig.enabled); // 未更新的值保持不變
+      expect(updatedConfig.enabled).toBe(originalConfig.enabled); // 未Update的Value保持不變
     });
   });
 
@@ -357,7 +357,7 @@ describe('ContentRecommendationService', () => {
 
       await service.getContentRecommendations(request);
 
-      // 等待事件觸發
+      // AwaitEvent觸發
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(listener).toHaveBeenCalled();
@@ -375,7 +375,7 @@ describe('ContentRecommendationService', () => {
 
       await service.getContentRecommendations(request);
 
-      // 等待事件觸發
+      // AwaitEvent觸發
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(listener).not.toHaveBeenCalled();
@@ -395,7 +395,7 @@ describe('ContentRecommendationService', () => {
 
       await service.getContentRecommendations(request);
 
-      // 等待事件觸發
+      // AwaitEvent觸發
       await new Promise(resolve => setTimeout(resolve, 100));
 
       expect(listener1).toHaveBeenCalled();
@@ -533,7 +533,7 @@ describe('ContentRecommendationService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 應該在1秒內完成
+      // 應該在1Second內Complete
       expect(duration).toBeLessThan(1000);
     });
 
@@ -554,7 +554,7 @@ describe('ContentRecommendationService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      // 並發請求應該比順序請求快
+      // ConcurrentRequest應該比順序Request快
       expect(duration).toBeLessThan(2000);
     });
   });

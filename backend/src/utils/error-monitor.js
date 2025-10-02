@@ -1,6 +1,6 @@
 const { logger } = require('./unified-logger');
 
-// 錯誤統計
+// ErrorStatistics
 class ErrorMonitor {
   constructor() {
     this.errors = {
@@ -13,22 +13,22 @@ class ErrorMonitor {
     this.startTime = Date.now();
   }
 
-  // 記錄錯誤
+  // RecordError
   recordError(error, req = null) {
     this.errors.total++;
 
-    // 按類型統計
+    // 按Class型Statistics
 // eslint-disable-next-line no-unused-vars
     const errorType = error.name || 'Unknown';
     this.errors.byType[errorType] = (this.errors.byType[errorType] || 0) + 1;
 
-    // 按狀態碼統計
+    // 按Status碼Statistics
 // eslint-disable-next-line no-unused-vars
     const statusCode = error.statusCode || 500;
     this.errors.byStatusCode[statusCode] =
       (this.errors.byStatusCode[statusCode] || 0) + 1;
 
-    // 記錄最近錯誤
+    // Record最近Error
 // eslint-disable-next-line no-unused-vars
     const errorRecord = {
       type: errorType,
@@ -42,17 +42,17 @@ class ErrorMonitor {
 
     this.errors.recent.unshift(errorRecord);
 
-    // 保持最近錯誤數量限制
+    // 保持最近Error數量Limit
     if (this.errors.recent.length > this.maxRecentErrors) {
       this.errors.recent.pop();
     }
   }
 
-  // 獲取錯誤統計
+  // GetErrorStatistics
   getErrorStats() {
     const uptime = Date.now() - this.startTime;
 // eslint-disable-next-line no-unused-vars
-    const errorRate = this.errors.total / (uptime / 1000 / 60); // 每分鐘錯誤率
+    const errorRate = this.errors.total / (uptime / 1000 / 60); // 每MinuteError率
 
     return {
       total: this.errors.total,
@@ -60,11 +60,11 @@ class ErrorMonitor {
       uptime: Math.floor(uptime / 1000),
       byType: this.errors.byType,
       byStatusCode: this.errors.byStatusCode,
-      recent: this.errors.recent.slice(0, 10), // 最近10個錯誤
+      recent: this.errors.recent.slice(0, 10), // 最近10個Error
     };
   }
 
-  // 重置統計
+  // ResetStatistics
   resetStats() {
     this.errors = {
       total: 0,
@@ -76,11 +76,11 @@ class ErrorMonitor {
     logger.info('Error statistics reset');
   }
 
-  // 檢查錯誤閾值
+  // CheckError閾Value
   checkErrorThreshold(threshold = 10) {
 // eslint-disable-next-line no-unused-vars
     const recentErrors = this.errors.recent.filter(
-      (error) => Date.now() - new Date(error.timestamp).getTime() < 60000 // 最近1分鐘
+      (error) => Date.now() - new Date(error.timestamp).getTime() < 60000 // 最近1Minute
     );
 
     if (recentErrors.length > threshold) {
@@ -96,33 +96,33 @@ class ErrorMonitor {
   }
 }
 
-// 創建全局錯誤監控實例
+// CreateGlobalErrorMonitorInstance
 // eslint-disable-next-line no-unused-vars
 const errorMonitor = new ErrorMonitor();
 
-// 錯誤監控中間件
+// ErrorMonitor中間件
 // eslint-disable-next-line no-unused-vars
 const errorMonitoringMiddleware = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars
   errorMonitor.recordError(err, req);
   next(err);
 };
 
-// 錯誤警報系統
+// ErrorAlert系統
 class ErrorAlertSystem {
   constructor() {
     this.alerts = [];
     this.alertThresholds = {
-      errorRate: 5, // 每分鐘5個錯誤
-      consecutiveErrors: 3, // 連續3個錯誤
-      criticalErrors: 1, // 1個嚴重錯誤
+      errorRate: 5, // 每Minute5個Error
+      consecutiveErrors: 3, // 連續3個Error
+      criticalErrors: 1, // 1個嚴重Error
     };
   }
 
-  // 檢查是否需要發送警報
+  // CheckYesNo需要SendAlert
   checkAlerts(errorStats) {
     const alerts = [];
 
-    // 檢查錯誤率
+    // CheckError率
     if (errorStats.errorRate > this.alertThresholds.errorRate) {
       alerts.push({
         type: 'HIGH_ERROR_RATE',
@@ -132,7 +132,7 @@ class ErrorAlertSystem {
       });
     }
 
-    // 檢查連續錯誤
+    // Check連續Error
 // eslint-disable-next-line no-unused-vars
     const recentErrors = errorStats.recent.slice(
       0,
@@ -152,7 +152,7 @@ class ErrorAlertSystem {
       }
     }
 
-    // 檢查嚴重錯誤
+    // Check嚴重Error
     const criticalErrors = recentErrors.filter(
       (error) => error.statusCode >= 500
     );
@@ -165,7 +165,7 @@ class ErrorAlertSystem {
       });
     }
 
-    // 記錄警報
+    // RecordAlert
     alerts.forEach((alert) => {
       logger.warn('Error Alert', alert);
       this.alerts.push(alert);
@@ -174,12 +174,12 @@ class ErrorAlertSystem {
     return alerts;
   }
 
-  // 獲取警報歷史
+  // GetAlert歷史
   getAlertHistory() {
-    return this.alerts.slice(-50); // 最近50個警報
+    return this.alerts.slice(-50); // 最近50個Alert
   }
 
-  // 清除舊警報
+  // Clear舊Alert
   clearOldAlerts() {
     const oneHourAgo = Date.now() - 60 * 60 * 1000;
     this.alerts = this.alerts.filter(
@@ -188,7 +188,7 @@ class ErrorAlertSystem {
   }
 }
 
-// 創建全局警報系統實例
+// CreateGlobalAlert系統Instance
 // eslint-disable-next-line no-unused-vars
 const errorAlertSystem = new ErrorAlertSystem();
 

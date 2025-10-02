@@ -1,9 +1,9 @@
-// 基礎組件類型定義
+// 基礎ComponentClass型定義
 import type { CSSProperties, ReactNode } from 'react';
 
 import type { ThemeType } from './designSystem';
 
-// 基礎組件屬性
+// 基礎ComponentProperty
 export interface BaseComponentProps {
   className?: string;
   style?: CSSProperties;
@@ -20,10 +20,10 @@ export interface BaseComponentProps {
   onBlur?: (event: React.FocusEvent) => void;
 }
 
-// 組件尺寸
+// Component尺寸
 export type ComponentSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'small';
 
-// 組件變體
+// Component變體
 export type ComponentVariant =
   | 'primary'
   | 'secondary'
@@ -35,7 +35,7 @@ export type ComponentVariant =
   | 'outline'
   | 'ghost';
 
-// 組件狀態
+// ComponentStatus
 export type ComponentState =
   | 'default'
   | 'hover'
@@ -44,7 +44,7 @@ export type ComponentState =
   | 'disabled'
   | 'loading';
 
-// Button 組件
+// Button Component
 export interface ButtonProps extends BaseComponentProps {
   variant?: ComponentVariant;
   size?: ComponentSize;
@@ -63,7 +63,7 @@ export interface ButtonProps extends BaseComponentProps {
   value?: string;
 }
 
-// Input 組件
+// Input Component
 export interface InputProps
   extends Omit<BaseComponentProps, 'onKeyDown' | 'onFocus' | 'onBlur'> {
   type?:
@@ -136,7 +136,7 @@ export interface InputProps
   onIconClick?: () => void;
 }
 
-// Card 組件
+// Card Component
 export interface CardProps extends BaseComponentProps {
   variant?: ComponentVariant;
   size?: ComponentSize;
@@ -155,7 +155,7 @@ export interface CardProps extends BaseComponentProps {
   onCardClick?: () => void;
 }
 
-// Modal 組件
+// Modal Component
 export interface ModalProps extends BaseComponentProps {
   isOpen: boolean;
   onClose: () => void;
@@ -181,7 +181,7 @@ export interface ModalProps extends BaseComponentProps {
   onClosed?: () => void;
 }
 
-// Navigation 組件
+// Navigation Component
 export interface NavigationProps extends BaseComponentProps {
   variant?: 'horizontal' | 'vertical' | 'tabs' | 'breadcrumb' | 'pagination';
   size?: ComponentSize;
@@ -208,7 +208,7 @@ export interface NavigationItem {
   onClick?: () => void;
 }
 
-// Loading 組件
+// Loading Component
 export interface LoadingProps extends BaseComponentProps {
   variant?: 'spinner' | 'dots' | 'bars' | 'pulse' | 'skeleton';
   size?: ComponentSize;
@@ -223,7 +223,7 @@ export interface LoadingProps extends BaseComponentProps {
   loop?: boolean;
 }
 
-// Toast 組件
+// Toast Component
 export interface ToastProps extends BaseComponentProps {
   type?: 'success' | 'error' | 'warning' | 'info';
   title?: string;
@@ -243,7 +243,7 @@ export interface ToastProps extends BaseComponentProps {
   onAction?: () => void;
 }
 
-// Toast 管理器
+// Toast Manage器
 export interface ToastManagerProps {
   toasts: ToastProps[];
   position?: ToastProps['position'];
@@ -251,7 +251,7 @@ export interface ToastManagerProps {
   onRemove?: (id: string) => void;
 }
 
-// 組件主題配置
+// ComponentThemeConfigure
 export interface ComponentThemeConfig {
   theme: ThemeType;
   variant: ComponentVariant;
@@ -259,7 +259,7 @@ export interface ComponentThemeConfig {
   state: ComponentState;
 }
 
-// 組件樣式配置
+// Component樣式Configure
 export interface ComponentStyleConfig {
   base: CSSProperties;
   variants: Record<ComponentVariant, CSSProperties>;
@@ -267,7 +267,7 @@ export interface ComponentStyleConfig {
   states: Record<ComponentState, CSSProperties>;
 }
 
-// 組件事件
+// ComponentEvent
 export interface ComponentEvent {
   type: string;
   component: string;
@@ -276,7 +276,7 @@ export interface ComponentEvent {
   timestamp: number;
 }
 
-// 組件註冊配置
+// ComponentRegisterConfigure
 export interface ComponentRegistration {
   name: string;
   component: React.ComponentType<any>;
@@ -291,7 +291,7 @@ export interface ComponentRegistration {
   };
 }
 
-// 組件庫配置
+// ComponentLibraryConfigure
 export interface ComponentLibraryConfig {
   components: Record<string, ComponentRegistration>;
   themes: Record<ThemeType, Record<string, ComponentStyleConfig>>;

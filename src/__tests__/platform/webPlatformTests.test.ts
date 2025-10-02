@@ -81,7 +81,7 @@ Object.defineProperty(global, 'URL', {
 describe('Web 平台特定功能測試', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // 設置為 Web 平台
+    // Settings為 Web 平台
     platformTestEnv.setPlatform({
       platform: 'web',
       version: 'latest',
@@ -348,7 +348,7 @@ describe('Web 平台特定功能測試', () => {
 
     it('應該處理不支持的瀏覽器功能', () => {
       const _fallbackFeatures = {
-        biometrics: false, // Web 不支持生物識別
+        biometrics: false, // Web 不Support生物識別
         pushNotifications: true,
         camera: true,
         location: true,

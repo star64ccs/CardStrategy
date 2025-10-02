@@ -10,16 +10,16 @@ describe('ErrorHandlingService', () => {
     errorHandlingService.reset();
   });
 
-  describe('錯誤處理', () => {
-    it('應該處理標準錯誤', async () => {
-      const _error = new Error('測試錯誤');
+  describe('ErrorHandle', () => {
+    it('應該Handle標準Error', async () => {
+      const _error = new Error('測試Error');
       const _report = await errorHandlingService.handleError(
         error,
         'test-context'
       );
 
       expect(report.id).toMatch(/^err_\d+_[a-z0-9]+$/);
-      expect(report.error.message).toBe('測試錯誤');
+      expect(report.error.message).toBe('測試Error');
       expect(report.context).toBe('test-context');
       expect(report.timestamp).toBeInstanceOf(Date);
       expect(report.environment).toBe('production');
@@ -27,7 +27,7 @@ describe('ErrorHandlingService', () => {
 
     it('應該處理 AppError', async () => {
       const _appError = new AppError(
-        '應用錯誤',
+        '應用Error',
         ErrorType.VALIDATION,
         ErrorSeverity.MEDIUM,
         'TEST_ERROR'
@@ -42,8 +42,8 @@ describe('ErrorHandlingService', () => {
       expect(report.error.severity).toBe(ErrorSeverity.MEDIUM);
     });
 
-    it('應該處理帶選項的錯誤', async () => {
-      const _error = new Error('用戶錯誤');
+    it('應該Handle帶選項的Error', async () => {
+      const _error = new Error('用戶Error');
       const _report = await errorHandlingService.handleError(
         error,
         'user-context',
@@ -62,12 +62,12 @@ describe('ErrorHandlingService', () => {
     });
   });
 
-  describe('錯誤指標', () => {
-    it('應該獲取錯誤指標', async () => {
-      // 創建多個錯誤
-      await errorHandlingService.handleError(new Error('錯誤1'), 'context1');
-      await errorHandlingService.handleError(new Error('錯誤2'), 'context2');
-      await errorHandlingService.handleError(new Error('錯誤3'), 'context1');
+  describe('Error指標', () => {
+    it('應該GetError指標', async () => {
+      // CreateMultipleError
+      await errorHandlingService.handleError(new Error('Error1'), 'context1');
+      await errorHandlingService.handleError(new Error('Error2'), 'context2');
+      await errorHandlingService.handleError(new Error('Error3'), 'context1');
 
       const _metrics = errorHandlingService.getErrorMetrics();
 
@@ -78,16 +78,16 @@ describe('ErrorHandlingService', () => {
       expect(metrics.errorRate).toBeGreaterThanOrEqual(0);
     });
 
-    it('應該統計錯誤類型', async () => {
+    it('應該統計Error類型', async () => {
       await errorHandlingService.handleError(
-        new Error('網絡連接失敗'),
+        new Error('網絡ConnectFailed'),
         'network'
       );
       await errorHandlingService.handleError(
-        new Error('驗證失敗'),
+        new Error('VerifyFailed'),
         'validation'
       );
-      await errorHandlingService.handleError(new Error('認證失敗'), 'auth');
+      await errorHandlingService.handleError(new Error('認證Failed'), 'auth');
 
       const _metrics = errorHandlingService.getErrorMetrics();
 
@@ -96,9 +96,9 @@ describe('ErrorHandlingService', () => {
       expect(metrics.errorsByType[ErrorType.AUTHENTICATION]).toBe(1);
     });
 
-    it('應該統計錯誤嚴重程度', async () => {
-      await errorHandlingService.handleError(new Error('網絡連接失敗'), 'high');
-      await errorHandlingService.handleError(new Error('驗證失敗'), 'medium');
+    it('應該統計Error嚴重程度', async () => {
+      await errorHandlingService.handleError(new Error('網絡ConnectFailed'), 'high');
+      await errorHandlingService.handleError(new Error('VerifyFailed'), 'medium');
       await errorHandlingService.handleError(
         new Error('Low severity error'),
         'low'
@@ -118,24 +118,24 @@ describe('ErrorHandlingService', () => {
     });
   });
 
-  describe('錯誤報告查詢', () => {
+  describe('Error報告查詢', () => {
     beforeEach(async () => {
-      // 創建測試數據
+      // CreateTestData
       await errorHandlingService.handleError(
-        new AppError('網絡錯誤', ErrorType.NETWORK, ErrorSeverity.HIGH),
+        new AppError('網絡Error', ErrorType.NETWORK, ErrorSeverity.HIGH),
         'network-context'
       );
       await errorHandlingService.handleError(
-        new AppError('驗證錯誤', ErrorType.VALIDATION, ErrorSeverity.MEDIUM),
+        new AppError('VerifyError', ErrorType.VALIDATION, ErrorSeverity.MEDIUM),
         'validation-context'
       );
       await errorHandlingService.handleError(
-        new AppError('認證錯誤', ErrorType.AUTHENTICATION, ErrorSeverity.HIGH),
+        new AppError('認證Error', ErrorType.AUTHENTICATION, ErrorSeverity.HIGH),
         'auth-context'
       );
     });
 
-    it('應該按類型查詢錯誤報告', () => {
+    it('應該按類型查詢Error報告', () => {
       const _networkReports = errorHandlingService.getErrorReportsByType(
         ErrorType.NETWORK
       );
@@ -149,7 +149,7 @@ describe('ErrorHandlingService', () => {
       expect(validationReports[0].error.type).toBe(ErrorType.VALIDATION);
     });
 
-    it('應該按嚴重程度查詢錯誤報告', () => {
+    it('應該按嚴重程度查詢Error報告', () => {
       const _highSeverityReports =
         errorHandlingService.getErrorReportsBySeverity(ErrorSeverity.HIGH);
       const _mediumSeverityReports =
@@ -159,7 +159,7 @@ describe('ErrorHandlingService', () => {
       expect(mediumSeverityReports.length).toBe(1);
     });
 
-    it('應該按上下文查詢錯誤報告', () => {
+    it('應該按上下文查詢Error報告', () => {
       const _networkContextReports =
         errorHandlingService.getErrorReportsByContext('network-context');
       const _validationContextReports =
@@ -172,16 +172,16 @@ describe('ErrorHandlingService', () => {
     });
   });
 
-  describe('錯誤報告清理', () => {
-    it('應該清理舊的錯誤報告', async () => {
-      // 創建一些錯誤報告
-      await errorHandlingService.handleError(new Error('錯誤1'), 'context1');
-      await errorHandlingService.handleError(new Error('錯誤2'), 'context2');
+  describe('Error報告清理', () => {
+    it('應該清理舊的Error報告', async () => {
+      // Create一些ErrorReport
+      await errorHandlingService.handleError(new Error('Error1'), 'context1');
+      await errorHandlingService.handleError(new Error('Error2'), 'context2');
 
       const _initialCount = errorHandlingService.getErrorMetrics().totalErrors;
       expect(initialCount).toBe(2);
 
-      // 清理所有報告（設置最大年齡為0）
+      // 清理所有Report（Settings最大Age為0）
       const _cleanedCount = errorHandlingService.cleanupOldReports(0);
 
       expect(cleanedCount).toBe(2);
@@ -189,45 +189,45 @@ describe('ErrorHandlingService', () => {
     });
   });
 
-  describe('錯誤報告導出', () => {
+  describe('Error報告導出', () => {
     beforeEach(async () => {
       await errorHandlingService.handleError(
-        new Error('測試錯誤'),
+        new Error('測試Error'),
         'test-context'
       );
     });
 
-    it('應該導出 JSON 格式的錯誤報告', () => {
+    it('應該導出 JSON 格式的Error報告', () => {
       const _jsonExport = errorHandlingService.exportErrorReports('json');
       const _parsed = JSON.parse(jsonExport);
 
       expect(Array.isArray(parsed)).toBe(true);
       expect(parsed.length).toBe(1);
-      expect(parsed[0].error.message).toBe('測試錯誤');
+      expect(parsed[0].error.message).toBe('測試Error');
     });
 
-    it('應該導出 CSV 格式的錯誤報告', () => {
+    it('應該導出 CSV 格式的Error報告', () => {
       const _csvExport = errorHandlingService.exportErrorReports('csv');
       const _lines = csvExport.split('\n');
 
-      expect(lines.length).toBe(2); // 標題行 + 數據行
+      expect(lines.length).toBe(2); // 標題Row + DataRow
       expect(lines[0]).toContain(
         '"ID","Timestamp","Type","Severity","Message","Context","Environment"'
       );
-      expect(lines[1]).toContain('測試錯誤');
+      expect(lines[1]).toContain('測試Error');
       expect(lines[1]).toContain('test-context');
     });
   });
 
-  describe('服務重置', () => {
-    it('應該重置服務狀態', async () => {
-      // 創建一些錯誤
-      await errorHandlingService.handleError(new Error('錯誤1'), 'context1');
-      await errorHandlingService.handleError(new Error('錯誤2'), 'context2');
+  describe('Service重置', () => {
+    it('應該重置Service狀態', async () => {
+      // Create一些Error
+      await errorHandlingService.handleError(new Error('Error1'), 'context1');
+      await errorHandlingService.handleError(new Error('Error2'), 'context2');
 
       expect(errorHandlingService.getErrorMetrics().totalErrors).toBe(2);
 
-      // 重置服務
+      // ResetService
       errorHandlingService.reset();
 
       expect(errorHandlingService.getErrorMetrics().totalErrors).toBe(0);

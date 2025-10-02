@@ -151,7 +151,7 @@ export class CostWorker {
         };
       });
 
-      // 計算預算狀態
+      // 計算預算Status
       const _budgetStatus = this.calculateBudgetStatus(totalCost);
 
       // 生成成本趨勢
@@ -178,12 +178,12 @@ export class CostWorker {
 
       this.lastCheck = now;
 
-      // 檢查是否需要警報
+      // CheckYesNo需要Alert
       await this.checkAlerts(report);
 
       return report;
     } catch (error) {
-      console.error('掃描使用量失敗:', error);
+      console.error('掃描使用量Failed:', error);
       throw error;
     }
   }
@@ -196,44 +196,44 @@ export class CostWorker {
       const _stats = this.aiService.getStats();
       const alerts: Alert[] = [];
 
-      // 檢查成本異常
+      // Check成本異常
       const _costAlerts = this.detectCostAnomalies(stats);
       alerts.push(...costAlerts);
 
-      // 檢查使用量異常
+      // Check使用量異常
       const _usageAlerts = this.detectUsageAnomalies(stats);
       alerts.push(...usageAlerts);
 
-      // 檢查預算超支
+      // Check預算超支
       const _budgetAlerts = this.detectBudgetOverruns(stats);
       alerts.push(...budgetAlerts);
 
-      // 檢查提供商異常
+      // Check提供商異常
       const _providerAlerts = this.detectProviderAnomalies(stats);
       alerts.push(...providerAlerts);
 
-      // 保存警報
+      // SaveAlert
       this.alerts.push(...alerts);
 
       return alerts;
     } catch (error) {
-      console.error('檢測過度使用失敗:', error);
+      console.error('檢測過度使用Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 生成預算報告
+   * 生成預算Report
    */
   public async generateBudgetReport(): Promise<BudgetSummary> {
     try {
       const _stats = this.aiService.getStats();
       const _now = new Date();
 
-      // 計算預算狀態
+      // 計算預算Status
       const _budgetStatus = this.calculateBudgetStatus(stats.totalCost);
 
-      // 獲取活躍警報
+      // Get活躍Alert
       const _activeAlerts = this.alerts.filter(alert => !alert.resolved);
 
       const summary: BudgetSummary = {
@@ -255,7 +255,7 @@ export class CostWorker {
 
       return summary;
     } catch (error) {
-      console.error('生成預算報告失敗:', error);
+      console.error('生成預算報告Failed:', error);
       throw error;
     }
   }
@@ -268,37 +268,37 @@ export class CostWorker {
       const _stats = this.aiService.getStats();
       const suggestions: CostOptimization[] = [];
 
-      // 分析提供商成本
+      // Analysis提供商成本
       const _providerOptimizations = this.analyzeProviderOptimizations(stats);
       suggestions.push(...providerOptimizations);
 
-      // 分析模型優化
+      // Analysis模型優化
       const _modelOptimizations = this.analyzeModelOptimizations(stats);
       suggestions.push(...modelOptimizations);
 
-      // 分析緩存優化
+      // AnalysisCache優化
       const _cacheOptimizations = this.analyzeCacheOptimizations(stats);
       suggestions.push(...cacheOptimizations);
 
-      // 分析批量處理優化
+      // AnalysisBatchHandle優化
       const _batchOptimizations = this.analyzeBatchOptimizations(stats);
       suggestions.push(...batchOptimizations);
 
-      // 按ROI排序
+      // 按ROISort
       suggestions.sort((a, b) => b.roi - a.roi);
 
-      // 保存優化建議
+      // Save優化建議
       this.optimizations.push(...suggestions);
 
       return suggestions;
     } catch (error) {
-      console.error('生成優化建議失敗:', error);
+      console.error('生成優化建議Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 應用成本優化
+   * Apply成本優化
    */
   public async applyOptimization(optimizationId: string): Promise<boolean> {
     try {
@@ -309,7 +309,7 @@ export class CostWorker {
         throw new Error('優化建議不存在');
       }
 
-      // 根據優化類型執行相應操作
+      // Root據優化Class型執Row相應Operation
       switch (optimization.type) {
         case 'provider_switch':
           await this.switchToLowerCostProvider();
@@ -327,18 +327,18 @@ export class CostWorker {
           throw new Error('不支持的優化類型');
       }
 
-      // 更新優化狀態
+      // Update優化Status
       optimization.status = 'implemented';
 
       return true;
     } catch (error) {
-      console.error('應用優化失敗:', error);
+      console.error('應用優化Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取成本預測
+   * Get成本預測
    */
   public async getCostForecast(
     period: 'daily' | 'weekly' | 'monthly' = 'monthly'
@@ -380,8 +380,8 @@ export class CostWorker {
           factors: forecast.factors || [],
         };
       } catch (error) {
-        // 如果解析失敗，使用簡單預測
-        const _avgDailyCost = stats.totalCost / 30; // 假設30天數據
+        // 如果ParseFailed，使用簡單預測
+        const _avgDailyCost = stats.totalCost / 30; // False設30天Data
         const _forecast =
           avgDailyCost *
           (period === 'daily' ? 1 : period === 'weekly' ? 7 : 30);
@@ -393,13 +393,13 @@ export class CostWorker {
         };
       }
     } catch (error) {
-      console.error('獲取成本預測失敗:', error);
+      console.error('Get成本預測Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取工作狀態
+   * Get工作Status
    */
   public getStatus(): {
     isRunning: boolean;
@@ -414,16 +414,16 @@ export class CostWorker {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   public updateConfig(config: Partial<CostWorkerConfig>): void {
     this.config = { ...this.config, ...config };
   }
 
-  // 私有方法
+  // PrivateMethod
 
   /**
-   * 計算預算狀態
+   * 計算預算Status
    */
   private calculateBudgetStatus(totalCost: number): {
     used: number;
@@ -454,8 +454,8 @@ export class CostWorker {
     weekly: number[];
     monthly: number[];
   }> {
-    // 這裡應該從數據庫獲取歷史數據
-    // 簡化實現，返回模擬數據
+    // 這裡應該從DatabaseGet歷史Data
+    // 簡化實現，Return模擬Data
     return {
       daily: [10, 12, 8, 15, 11, 9, 13],
       weekly: [80, 95, 70, 110, 85, 90, 100],
@@ -471,7 +471,7 @@ export class CostWorker {
   ): Promise<string[]> {
     const recommendations: string[] = [];
 
-    // 分析提供商使用情況
+    // Analysis提供商使用情況
     const _providers = Object.entries(stats.providerUsage);
     const _expensiveProviders = providers.filter(
       ([_, usage]: [string, any]) => usage.cost > stats.totalCost * 0.3
@@ -485,12 +485,12 @@ export class CostWorker {
       );
     }
 
-    // 分析緩存使用情況
+    // AnalysisCache使用情況
     if (stats.totalRequests > 1000) {
       recommendations.push('啟用智能緩存以減少重複API調用');
     }
 
-    // 分析批量處理
+    // AnalysisBatchHandle
     if (stats.totalRequests > 500) {
       recommendations.push('考慮實施批量處理以減少API調用次數');
     }
@@ -499,12 +499,12 @@ export class CostWorker {
   }
 
   /**
-   * 檢查警報
+   * CheckAlert
    */
   private async checkAlerts(report: CostReport): Promise<void> {
     const alerts: Alert[] = [];
 
-    // 檢查預算警報
+    // Check預算Alert
     if (report.budgetStatus.percentage >= 80) {
       alerts.push({
         id: `alert_${Date.now()}_1`,
@@ -518,7 +518,7 @@ export class CostWorker {
       });
     }
 
-    // 檢查成本異常
+    // Check成本異常
     const _avgDailyCost = report.totalCost / 1; // 簡化計算
     if (avgDailyCost > this.config.monitoring.alertThresholds.dailyBudget) {
       alerts.push({
@@ -533,10 +533,10 @@ export class CostWorker {
       });
     }
 
-    // 保存警報
+    // SaveAlert
     this.alerts.push(...alerts);
 
-    // 發送警報通知
+    // SendAlertNotification
     for (const alert of alerts) {
       await this.sendAlert(alert);
     }
@@ -548,10 +548,10 @@ export class CostWorker {
   private detectCostAnomalies(stats: unknown): Alert[] {
     const alerts: Alert[] = [];
 
-    // 檢查是否有異常高的成本
+    // CheckYesNo有異常高的成本
     const _avgCostPerRequest = stats.totalCost / stats.totalRequests;
     if (avgCostPerRequest > 0.01) {
-      // 假設正常成本每請求不超過$0.01
+      // False設正常成本每Request不超過$0.01
       alerts.push({
         id: `cost_anomaly_${Date.now()}`,
         type: 'cost',
@@ -573,9 +573,9 @@ export class CostWorker {
   private detectUsageAnomalies(stats: unknown): Alert[] {
     const alerts: Alert[] = [];
 
-    // 檢查請求量異常
+    // CheckRequest量異常
     if (stats.totalRequests > 1000) {
-      // 假設正常日請求量不超過1000
+      // False設正常日Request量不超過1000
       alerts.push({
         id: `usage_anomaly_${Date.now()}`,
         type: 'usage',
@@ -622,7 +622,7 @@ export class CostWorker {
   private detectProviderAnomalies(stats: unknown): Alert[] {
     const alerts: Alert[] = [];
 
-    // 檢查是否有提供商使用率異常
+    // CheckYesNo有提供商使用率異常
     Object.entries(stats.providerUsage).forEach(
       ([provider, usage]: [string, any]) => {
         const _percentage = (usage.cost / stats.totalCost) * 100;
@@ -646,7 +646,7 @@ export class CostWorker {
   }
 
   /**
-   * 分析提供商優化
+   * Analysis提供商優化
    */
   private analyzeProviderOptimizations(stats: unknown): CostOptimization[] {
     const optimizations: CostOptimization[] = [];
@@ -665,7 +665,7 @@ export class CostWorker {
         id: `provider_switch_${Date.now()}`,
         type: 'provider_switch',
         description: `切換${expensiveProvider[0]}到成本更低的提供商`,
-        potentialSavings: expensiveProviderCost * 0.3, // 假設可節省30%
+        potentialSavings: expensiveProviderCost * 0.3, // False設可節Province30%
         implementationCost: 0,
         roi: 0.3,
         priority: 'high',
@@ -678,18 +678,18 @@ export class CostWorker {
   }
 
   /**
-   * 分析模型優化
+   * Analysis模型優化
    */
   private analyzeModelOptimizations(stats: unknown): CostOptimization[] {
     const optimizations: CostOptimization[] = [];
 
-    // 檢查是否可以使用更便宜的模型
+    // CheckYesNo可以使用更便宜的模型
     if (stats.totalTokens > 10000) {
       optimizations.push({
         id: `model_optimization_${Date.now()}`,
         type: 'model_optimization',
         description: '使用更便宜的模型進行非關鍵任務',
-        potentialSavings: stats.totalCost * 0.2, // 假設可節省20%
+        potentialSavings: stats.totalCost * 0.2, // False設可節Province20%
         implementationCost: 0,
         roi: 0.2,
         priority: 'medium',
@@ -702,18 +702,18 @@ export class CostWorker {
   }
 
   /**
-   * 分析緩存優化
+   * AnalysisCache優化
    */
   private analyzeCacheOptimizations(stats: unknown): CostOptimization[] {
     const optimizations: CostOptimization[] = [];
 
-    // 檢查緩存使用情況
+    // CheckCache使用情況
     if (stats.totalRequests > 500) {
       optimizations.push({
         id: `cache_improvement_${Date.now()}`,
         type: 'cache_improvement',
         description: '改進緩存策略以減少重複請求',
-        potentialSavings: stats.totalCost * 0.15, // 假設可節省15%
+        potentialSavings: stats.totalCost * 0.15, // False設可節Province15%
         implementationCost: 0,
         roi: 0.15,
         priority: 'medium',
@@ -726,18 +726,18 @@ export class CostWorker {
   }
 
   /**
-   * 分析批量處理優化
+   * AnalysisBatchHandle優化
    */
   private analyzeBatchOptimizations(stats: unknown): CostOptimization[] {
     const optimizations: CostOptimization[] = [];
 
-    // 檢查是否適合批量處理
+    // CheckYesNo適合BatchHandle
     if (stats.totalRequests > 200) {
       optimizations.push({
         id: `batch_processing_${Date.now()}`,
         type: 'batch_processing',
         description: '實施批量處理以減少API調用次數',
-        potentialSavings: stats.totalCost * 0.1, // 假設可節省10%
+        potentialSavings: stats.totalCost * 0.1, // False設可節Province10%
         implementationCost: 0,
         roi: 0.1,
         priority: 'low',
@@ -750,10 +750,10 @@ export class CostWorker {
   }
 
   /**
-   * 切換到成本更低的提供商
+   * Switch到成本更低的提供商
    */
   private async switchToLowerCostProvider(): Promise<void> {
-    // 這裡應該實現提供商切換邏輯
+    // 這裡應該實現提供商Switch邏輯
     console.log('切換到成本更低的提供商');
   }
 
@@ -766,28 +766,28 @@ export class CostWorker {
   }
 
   /**
-   * 改進緩存策略
+   * 改進Cache策略
    */
   private async improveCacheStrategy(): Promise<void> {
-    // 這裡應該實現緩存改進邏輯
+    // 這裡應該實現Cache改進邏輯
     console.log('改進緩存策略');
   }
 
   /**
-   * 啟用批量處理
+   * EnableBatchHandle
    */
   private async enableBatchProcessing(): Promise<void> {
-    // 這裡應該實現批量處理邏輯
+    // 這裡應該實現BatchHandle邏輯
     console.log('啟用批量處理');
   }
 
   /**
-   * 發送警報
+   * SendAlert
    */
   private async sendAlert(alert: Alert): Promise<void> {
     console.log(`🚨 成本警報: ${alert.message}`);
 
-    // 這裡應該發送實際的警報通知
+    // 這裡應該Send實際的AlertNotification
     // 例如：郵件、Slack、釘釘等
   }
 }

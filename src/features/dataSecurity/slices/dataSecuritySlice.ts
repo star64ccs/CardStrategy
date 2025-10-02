@@ -1,6 +1,6 @@
 /**
- * 數據安全 Redux Slice
- * 管理安全狀態、加密、備份等功能
+ * Data安全 Redux Slice
+ * Manage安全Status、Encrypt、Backup等功能
  */
 
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -23,16 +23,16 @@ import type {
 } from '../types/security';
 import { EncryptionAlgorithm } from '../types/security';
 
-// Redux 狀態接口（擴展原有的 SecurityState）
+// Redux StatusInterface（Extension原有的 SecurityState）
 export interface DataSecurityReduxState extends SecurityState {
-  // 操作狀態
+  // OperationStatus
   isEncrypting: boolean;
   isDecrypting: boolean;
   isBackingUp: boolean;
   isRestoring: boolean;
   isGeneratingKey: boolean;
 
-  // 當前操作
+  // 當前Operation
   currentOperation: string | null;
   operationProgress: number;
 
@@ -46,9 +46,9 @@ export interface DataSecurityReduxState extends SecurityState {
   metrics: SecurityMetrics | null;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: DataSecurityReduxState = {
-  // 繼承 SecurityState 的字段
+  // 繼承 SecurityState 的Field
   isInitialized: false,
   isEncryptionEnabled: false,
   isBackupEnabled: false,
@@ -102,7 +102,7 @@ const initialState: DataSecurityReduxState = {
   error: null,
   lastError: null,
 
-  // Redux 特有字段
+  // Redux 特有Field
   isEncrypting: false,
   isDecrypting: false,
   isBackingUp: false,
@@ -117,10 +117,10 @@ const initialState: DataSecurityReduxState = {
   metrics: null,
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 
 /**
- * 初始化數據安全服務
+ * InitializeData安全Service
  */
 export const _initializeDataSecurity = createAsyncThunk(
   'dataSecurity/initialize',
@@ -129,7 +129,7 @@ export const _initializeDataSecurity = createAsyncThunk(
     const _success = await service.initialize(config);
 
     if (!success) {
-      throw new Error('數據安全服務初始化失敗');
+      throw new Error('數據安全ServiceInitializeFailed');
     }
 
     const _state = await service.getSecurityState();
@@ -138,7 +138,7 @@ export const _initializeDataSecurity = createAsyncThunk(
 );
 
 /**
- * 加密數據
+ * EncryptData
  */
 export const _encryptData = createAsyncThunk(
   'dataSecurity/encryptData',
@@ -149,7 +149,7 @@ export const _encryptData = createAsyncThunk(
       return result;
     } catch (error) {
       return rejectWithValue({
-        message: error instanceof Error ? error.message : '加密失敗',
+        message: error instanceof Error ? error.message : '加密Failed',
         timestamp: new Date(),
       });
     }
@@ -157,7 +157,7 @@ export const _encryptData = createAsyncThunk(
 );
 
 /**
- * 解密數據
+ * DecryptData
  */
 export const _decryptData = createAsyncThunk(
   'dataSecurity/decryptData',
@@ -168,7 +168,7 @@ export const _decryptData = createAsyncThunk(
       return result;
     } catch (error) {
       return rejectWithValue({
-        message: error instanceof Error ? error.message : '解密失敗',
+        message: error instanceof Error ? error.message : '解密Failed',
         timestamp: new Date(),
       });
     }
@@ -176,7 +176,7 @@ export const _decryptData = createAsyncThunk(
 );
 
 /**
- * 創建備份
+ * CreateBackup
  */
 export const _createBackup = createAsyncThunk(
   'dataSecurity/createBackup',
@@ -187,7 +187,7 @@ export const _createBackup = createAsyncThunk(
       return task;
     } catch (error) {
       return rejectWithValue({
-        message: error instanceof Error ? error.message : '創建備份失敗',
+        message: error instanceof Error ? error.message : 'Create備份Failed',
         timestamp: new Date(),
       });
     }
@@ -195,7 +195,7 @@ export const _createBackup = createAsyncThunk(
 );
 
 /**
- * 恢復備份
+ * RestoreBackup
  */
 export const _restoreBackup = createAsyncThunk(
   'dataSecurity/restoreBackup',
@@ -206,7 +206,7 @@ export const _restoreBackup = createAsyncThunk(
       return result;
     } catch (error) {
       return rejectWithValue({
-        message: error instanceof Error ? error.message : '恢復備份失敗',
+        message: error instanceof Error ? error.message : '恢復備份Failed',
         timestamp: new Date(),
       });
     }
@@ -231,7 +231,7 @@ export const _generateKey = createAsyncThunk(
       return key;
     } catch (error) {
       return rejectWithValue({
-        message: error instanceof Error ? error.message : '生成密鑰失敗',
+        message: error instanceof Error ? error.message : '生成密鑰Failed',
         timestamp: new Date(),
       });
     }
@@ -250,7 +250,7 @@ export const _rotateKey = createAsyncThunk(
       return { oldKeyId: keyId, newKey };
     } catch (error) {
       return rejectWithValue({
-        message: error instanceof Error ? error.message : '輪換密鑰失敗',
+        message: error instanceof Error ? error.message : '輪換密鑰Failed',
         timestamp: new Date(),
       });
     }
@@ -258,7 +258,7 @@ export const _rotateKey = createAsyncThunk(
 );
 
 /**
- * 獲取安全指標
+ * Get安全指標
  */
 export const _fetchSecurityMetrics = createAsyncThunk(
   'dataSecurity/fetchMetrics',
@@ -270,7 +270,7 @@ export const _fetchSecurityMetrics = createAsyncThunk(
 );
 
 /**
- * 獲取安全狀態
+ * Get安全Status
  */
 export const _fetchSecurityState = createAsyncThunk(
   'dataSecurity/fetchState',
@@ -286,10 +286,10 @@ const _dataSecuritySlice = createSlice({
   name: 'dataSecurity',
   initialState,
   reducers: {
-    // 同步 Actions
+    // Sync Actions
 
     /**
-     * 設置安全配置
+     * Settings安全Configure
      */
     setSecurityConfig: (
       state,
@@ -299,7 +299,7 @@ const _dataSecuritySlice = createSlice({
     },
 
     /**
-     * 更新操作進度
+     * UpdateOperation進度
      */
     updateOperationProgress: (
       state,
@@ -313,19 +313,19 @@ const _dataSecuritySlice = createSlice({
     },
 
     /**
-     * 添加審計事件
+     * Add審計Event
      */
     addAuditEvent: (state, action: PayloadAction<SecurityAuditEvent>) => {
       state.auditEvents.push(action.payload);
 
-      // 限制審計事件數量
+      // Limit審計Event數量
       if (state.auditEvents.length > 1000) {
         state.auditEvents = state.auditEvents.slice(-500);
       }
     },
 
     /**
-     * 更新統計信息
+     * UpdateStatisticsInformation
      */
     updateStatistics: (
       state,
@@ -335,7 +335,7 @@ const _dataSecuritySlice = createSlice({
     },
 
     /**
-     * 清除錯誤
+     * ClearError
      */
     clearError: state => {
       state.error = null;
@@ -343,28 +343,28 @@ const _dataSecuritySlice = createSlice({
     },
 
     /**
-     * 清除審計事件
+     * Clear審計Event
      */
     clearAuditEvents: state => {
       state.auditEvents = [];
     },
 
     /**
-     * 設置加密狀態
+     * SettingsEncryptStatus
      */
     setEncryptionEnabled: (state, action: PayloadAction<boolean>) => {
       state.isEncryptionEnabled = action.payload;
     },
 
     /**
-     * 設置備份狀態
+     * SettingsBackupStatus
      */
     setBackupEnabled: (state, action: PayloadAction<boolean>) => {
       state.isBackupEnabled = action.payload;
     },
 
     /**
-     * 重置操作狀態
+     * ResetOperationStatus
      */
     resetOperationState: state => {
       state.isEncrypting = false;
@@ -378,7 +378,7 @@ const _dataSecuritySlice = createSlice({
   },
   extraReducers: builder => {
     builder
-      // 初始化處理
+      // InitializeHandle
       .addCase(initializeDataSecurity.pending, state => {
         state.currentOperation = 'initializing';
         state.operationProgress = 0;
@@ -389,7 +389,7 @@ const _dataSecuritySlice = createSlice({
         state.currentOperation = null;
         state.operationProgress = 100;
 
-        // 更新狀態
+        // UpdateStatus
         const _securityState = action.payload.state;
         Object.assign(state, securityState);
       })
@@ -397,14 +397,14 @@ const _dataSecuritySlice = createSlice({
         state.isInitialized = false;
         state.currentOperation = null;
         state.operationProgress = 0;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
         state.lastError = {
           message: state.error,
           timestamp: new Date(),
         };
       })
 
-      // 加密處理
+      // EncryptHandle
       .addCase(encryptData.pending, state => {
         state.isEncrypting = true;
         state.currentOperation = 'encrypting';
@@ -433,7 +433,7 @@ const _dataSecuritySlice = createSlice({
         };
       })
 
-      // 解密處理
+      // DecryptHandle
       .addCase(decryptData.pending, state => {
         state.isDecrypting = true;
         state.currentOperation = 'decrypting';
@@ -462,7 +462,7 @@ const _dataSecuritySlice = createSlice({
         };
       })
 
-      // 備份處理
+      // BackupHandle
       .addCase(createBackup.pending, state => {
         state.isBackingUp = true;
         state.currentOperation = 'backing_up';
@@ -492,7 +492,7 @@ const _dataSecuritySlice = createSlice({
         };
       })
 
-      // 恢復處理
+      // RestoreHandle
       .addCase(restoreBackup.pending, state => {
         state.isRestoring = true;
         state.currentOperation = 'restoring';
@@ -521,7 +521,7 @@ const _dataSecuritySlice = createSlice({
         };
       })
 
-      // 密鑰生成處理
+      // 密鑰生成Handle
       .addCase(generateKey.pending, state => {
         state.isGeneratingKey = true;
         state.currentOperation = 'generating_key';
@@ -549,11 +549,11 @@ const _dataSecuritySlice = createSlice({
         };
       })
 
-      // 密鑰輪換處理
+      // 密鑰輪換Handle
       .addCase(rotateKey.fulfilled, (state, action) => {
         const { oldKeyId, newKey } = action.payload;
 
-        // 更新舊密鑰狀態
+        // Update舊密鑰Status
         const _oldKeyIndex = state.activeKeys.findIndex(
           key => key.id === oldKeyId
         );
@@ -561,24 +561,24 @@ const _dataSecuritySlice = createSlice({
           state.activeKeys[oldKeyIndex].status = 'inactive' as any;
         }
 
-        // 添加新密鑰
+        // Add新密鑰
         state.activeKeys.push(newKey);
         state.statistics.keyRotations++;
       })
 
-      // 獲取指標
+      // Get指標
       .addCase(fetchSecurityMetrics.fulfilled, (state, action) => {
         state.metrics = action.payload;
       })
 
-      // 獲取狀態
+      // GetStatus
       .addCase(fetchSecurityState.fulfilled, (state, action) => {
         Object.assign(state, action.payload);
       });
   },
 });
 
-// 導出 Actions
+// Export Actions
 export const {
   setSecurityConfig,
   updateOperationProgress,
@@ -591,7 +591,7 @@ export const {
   resetOperationState,
 } = dataSecuritySlice.actions;
 
-// 導出 Selectors
+// Export Selectors
 export const _selectDataSecurityState = (state: {
   dataSecurity: DataSecurityReduxState;
 }) => state.dataSecurity;
@@ -645,7 +645,7 @@ export const _selectSecurityConfig = (state: {
   dataSecurity: DataSecurityReduxState;
 }) => state.dataSecurity.config;
 
-// 計算屬性 Selectors
+// 計算Property Selectors
 export const _selectSecurityHealth = (state: {
   dataSecurity: DataSecurityReduxState;
 }) => {
@@ -698,5 +698,5 @@ export const _selectOperationStatus = (state: {
   };
 };
 
-// 導出 Reducer
+// Export Reducer
 export default dataSecuritySlice.reducer;

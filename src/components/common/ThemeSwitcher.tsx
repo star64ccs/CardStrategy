@@ -1,10 +1,10 @@
-// 主題切換器組件
+// ThemeSwitch器Component
 import React, { useState } from 'react';
 
 import type { ThemeType } from '../../types/designSystem';
 import { useDesignSystem } from '../providers/DesignSystemProvider';
 
-// 主題切換器屬性
+// ThemeSwitch器Property
 interface ThemeSwitcherProps {
   className?: string;
   showLabels?: boolean;
@@ -12,14 +12,14 @@ interface ThemeSwitcherProps {
   variant?: 'button' | 'dropdown' | 'toggle';
 }
 
-// 主題選項
+// ThemeOptions
 const themeOptions: { value: ThemeType; label: string; icon: string }[] = [
   { value: 'light', label: '淺色主題', icon: '☀️' },
   { value: 'dark', label: '深色主題', icon: '🌙' },
   { value: 'highContrast', label: '高對比度', icon: '🔍' },
 ];
 
-// 主題切換器組件
+// ThemeSwitch器Component
 export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   className = '',
   showLabels = true,
@@ -29,19 +29,19 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   const { currentTheme, setTheme, themes } = useDesignSystem();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-  // 獲取當前主題的樣式
+  // Get當前Theme的樣式
   const _currentThemeData = themes[currentTheme];
   const _currentOption = themeOptions.find(
     option => option.value === currentTheme
   );
 
-  // 處理主題切換
+  // HandleThemeSwitch
   const _handleThemeChange = (theme: ThemeType) => {
     setTheme(theme);
     setIsDropdownOpen(false);
   };
 
-  // 切換下拉選單
+  // Switch下拉選單
   const _toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
@@ -193,7 +193,7 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
     );
   }
 
-  // 切換變體
+  // Switch變體
   if (variant === 'toggle') {
     const _nextTheme = currentTheme === 'light' ? 'dark' : 'light';
     const _nextOption = themeOptions.find(option => option.value === nextTheme);
@@ -232,5 +232,5 @@ export const ThemeSwitcher: React.FC<ThemeSwitcherProps> = ({
   return null;
 };
 
-// 導出組件
+// ExportComponent
 export default ThemeSwitcher;

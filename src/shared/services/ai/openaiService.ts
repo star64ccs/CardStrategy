@@ -3,7 +3,7 @@ import { errorHandler } from '../../../core/utils/errorHandler';
 import { logger } from '../../../core/utils/logger';
 
 /**
- * OpenAI 服務配置接口
+ * OpenAI ServiceConfigureInterface
  */
 interface OpenAIConfig {
   apiKey: string;
@@ -14,7 +14,7 @@ interface OpenAIConfig {
 }
 
 /**
- * OpenAI 聊天消息接口
+ * OpenAI 聊天MessageInterface
  */
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -22,7 +22,7 @@ interface ChatMessage {
 }
 
 /**
- * OpenAI 聊天完成響應接口
+ * OpenAI 聊天CompleteResponseInterface
  */
 interface ChatCompletionResponse {
   id: string;
@@ -42,7 +42,7 @@ interface ChatCompletionResponse {
 }
 
 /**
- * OpenAI 嵌入響應接口
+ * OpenAI 嵌入ResponseInterface
  */
 interface EmbeddingResponse {
   object: string;
@@ -59,8 +59,8 @@ interface EmbeddingResponse {
 }
 
 /**
- * OpenAI 服務類
- * 提供與 OpenAI API 的集成功能
+ * OpenAI ServiceClass
+ * 提供與 OpenAI API 的集Success能
  */
 export class OpenAIService {
   private static instance: OpenAIService;
@@ -85,7 +85,7 @@ export class OpenAIService {
   }
 
   /**
-   * 初始化 OpenAI 服務
+   * Initialize OpenAI Service
    */
   async initialize(): Promise<void> {
     try {
@@ -104,19 +104,19 @@ export class OpenAIService {
         baseURL: 'https://api.openai.com/v1',
       };
 
-      // 測試 API 連接
+      // Test API Connect
       await this.testConnection();
 
       this.isInitialized = true;
-      logger.info('OpenAI 服務初始化成功');
+      logger.info('OpenAI ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('OpenAI 服務初始化失敗:', { error });
+      logger.error('OpenAI ServiceInitializeFailed:', { error });
       throw error;
     }
   }
 
   /**
-   * 測試 API 連接
+   * Test API Connect
    */
   private async testConnection(): Promise<void> {
     try {
@@ -124,15 +124,15 @@ export class OpenAIService {
       if (!response.data || !Array.isArray(response.data)) {
         throw new Error('API 響應格式無效');
       }
-      logger.info('OpenAI API 連接測試成功');
+      logger.info('OpenAI API Connect測試Success');
     } catch (error) {
-      logger.error('OpenAI API 連接測試失敗:', { error });
-      throw new Error('無法連接到 OpenAI API');
+      logger.error('OpenAI API Connect測試Failed:', { error });
+      throw new Error('無法Connect到 OpenAI API');
     }
   }
 
   /**
-   * 發送聊天完成請求
+   * Send聊天CompleteRequest
    */
   async chatCompletion(
     messages: ChatMessage[],
@@ -230,7 +230,7 @@ export class OpenAIService {
   }
 
   /**
-   * 分析卡牌圖片
+   * Analysis卡牌Graph片
    */
   async analyzeCardImage(imageUrl: string, prompt?: string): Promise<string> {
     const _defaultPrompt = `
@@ -267,7 +267,7 @@ export class OpenAIService {
 
       return response.choices[0]?.message?.content || '無法分析圖片';
     } catch (error) {
-      logger.error('卡牌圖片分析失敗:', { error, imageUrl });
+      logger.error('卡牌圖片分析Failed:', { error, imageUrl });
       throw error;
     }
   }
@@ -319,7 +319,7 @@ export class OpenAIService {
 
       return response.choices[0]?.message?.content || '無法生成投資建議';
     } catch (error) {
-      logger.error('投資建議生成失敗:', { error, cardName: cardData.name });
+      logger.error('投資建議生成Failed:', { error, cardName: cardData.name });
       throw error;
     }
   }
@@ -367,13 +367,13 @@ export class OpenAIService {
         response.choices[0]?.message?.content || '抱歉，我無法理解您的問題。'
       );
     } catch (error) {
-      logger.error('AI 聊天失敗:', { error, userMessage });
+      logger.error('AI 聊天Failed:', { error, userMessage });
       throw error;
     }
   }
 
   /**
-   * 發送 HTTP 請求到 OpenAI API
+   * Send HTTP Request到 OpenAI API
    */
   private async makeRequest(
     endpoint: string,
@@ -402,7 +402,7 @@ export class OpenAIService {
       if (!response.ok) {
         const _errorData = await response.json().catch(() => ({}));
         throw new Error(
-          `OpenAI API 錯誤 ${response.status}: ${errorData.error?.message || response.statusText}`
+          `OpenAI API Error ${response.status}: ${errorData.error?.message || response.statusText}`
         );
       }
 
@@ -411,12 +411,12 @@ export class OpenAIService {
       if (error instanceof Error) {
         throw error;
       }
-      throw new Error('OpenAI API 請求失敗');
+      throw new Error('OpenAI API 請求Failed');
     }
   }
 
   /**
-   * 獲取可用模型列表
+   * Get可用模型List
    */
   async getAvailableModels(): Promise<string[]> {
     if (!this.isInitialized) {
@@ -427,13 +427,13 @@ export class OpenAIService {
       const _response = await this.makeRequest('/models', 'GET');
       return response.data.map((model: unknown) => model.id);
     } catch (error) {
-      logger.error('獲取 OpenAI 模型列表失敗:', { error });
+      logger.error('Get OpenAI 模型列表Failed:', { error });
       return [];
     }
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   async getServiceStatus(): Promise<{
     isAvailable: boolean;
@@ -457,8 +457,8 @@ export class OpenAIService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _openaiService = OpenAIService.getInstance();
 
-// 導出類型
+// ExportClass型
 export type { ChatCompletionResponse, ChatMessage, EmbeddingResponse };

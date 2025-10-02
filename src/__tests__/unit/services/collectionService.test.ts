@@ -28,11 +28,11 @@ describe('CollectionService', () => {
       },
     ];
 
-    it('應該成功獲取用戶收藏列表', async () => {
+    it('應該SuccessGet用戶收藏列表', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockCollections,
-        message: '收藏列表獲取成功',
+        message: '收藏列表GetSuccess',
       });
 
       const _result = await collectionService.getCollections();
@@ -41,11 +41,11 @@ describe('CollectionService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith('/collections');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('API Error'));
 
       await expect(collectionService.getCollections()).rejects.toThrow(
-        'API 錯誤'
+        'API Error'
       );
     });
   });
@@ -63,11 +63,11 @@ describe('CollectionService', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功獲取單個收藏', async () => {
+    it('應該SuccessGet單個收藏', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockCollection,
-        message: '收藏獲取成功',
+        message: '收藏GetSuccess',
       });
 
       const _result = await collectionService.getCollection(mockCollectionId);
@@ -86,7 +86,7 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
+    it('應該Handle API Error', async () => {
       mockApiService.get.mockRejectedValue(new Error('收藏不存在'));
 
       await expect(
@@ -111,11 +111,11 @@ describe('CollectionService', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功創建收藏', async () => {
+    it('應該SuccessCreate收藏', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockCreatedCollection,
-        message: '收藏創建成功',
+        message: '收藏CreateSuccess',
       });
 
       const _result =
@@ -144,12 +144,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('創建失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('CreateFailed'));
 
       await expect(
         collectionService.createCollection(mockCollectionData)
-      ).rejects.toThrow('創建失敗');
+      ).rejects.toThrow('CreateFailed');
     });
   });
 
@@ -170,11 +170,11 @@ describe('CollectionService', () => {
       updatedAt: '2024-01-02T00:00:00Z',
     };
 
-    it('應該成功更新收藏', async () => {
+    it('應該SuccessUpdate收藏', async () => {
       mockApiService.put.mockResolvedValue({
         success: true,
         data: mockUpdatedCollection,
-        message: '收藏更新成功',
+        message: '收藏UpdateSuccess',
       });
 
       const _result = await collectionService.updateCollection(
@@ -197,22 +197,22 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.put.mockRejectedValue(new Error('更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.put.mockRejectedValue(new Error('UpdateFailed'));
 
       await expect(
         collectionService.updateCollection(mockCollectionId, mockUpdateData)
-      ).rejects.toThrow('更新失敗');
+      ).rejects.toThrow('UpdateFailed');
     });
   });
 
   describe('deleteCollection', () => {
     const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
 
-    it('應該成功刪除收藏', async () => {
+    it('應該SuccessDelete收藏', async () => {
       mockApiService.delete.mockResolvedValue({
         success: true,
-        message: '收藏刪除成功',
+        message: '收藏DeleteSuccess',
       });
 
       await collectionService.deleteCollection(mockCollectionId);
@@ -230,12 +230,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.delete.mockRejectedValue(new Error('刪除失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.delete.mockRejectedValue(new Error('DeleteFailed'));
 
       await expect(
         collectionService.deleteCollection(mockCollectionId)
-      ).rejects.toThrow('刪除失敗');
+      ).rejects.toThrow('DeleteFailed');
     });
   });
 
@@ -257,11 +257,11 @@ describe('CollectionService', () => {
       addedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功添加卡牌到收藏', async () => {
+    it('應該Success添加卡牌到收藏', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockAddedCard,
-        message: '卡牌添加成功',
+        message: '卡牌添加Success',
       });
 
       const _result = await collectionService.addCardToCollection(
@@ -300,12 +300,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('添加失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('添加Failed'));
 
       await expect(
         collectionService.addCardToCollection(mockCollectionId, mockCardData)
-      ).rejects.toThrow('添加失敗');
+      ).rejects.toThrow('添加Failed');
     });
   });
 
@@ -313,10 +313,10 @@ describe('CollectionService', () => {
     const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
     const _mockCardId = 'card-123';
 
-    it('應該成功從收藏移除卡牌', async () => {
+    it('應該Success從收藏移除卡牌', async () => {
       mockApiService.delete.mockResolvedValue({
         success: true,
-        message: '卡牌移除成功',
+        message: '卡牌移除Success',
       });
 
       await collectionService.removeCardFromCollection(
@@ -351,12 +351,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.delete.mockRejectedValue(new Error('移除失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.delete.mockRejectedValue(new Error('移除Failed'));
 
       await expect(
         collectionService.removeCardFromCollection(mockCollectionId, mockCardId)
-      ).rejects.toThrow('移除失敗');
+      ).rejects.toThrow('移除Failed');
     });
   });
 
@@ -381,11 +381,11 @@ describe('CollectionService', () => {
       addedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功更新收藏中的卡牌', async () => {
+    it('應該SuccessUpdate收藏中的卡牌', async () => {
       mockApiService.put.mockResolvedValue({
         success: true,
         data: mockUpdatedCard,
-        message: '卡牌更新成功',
+        message: '卡牌UpdateSuccess',
       });
 
       const _result = await collectionService.updateCardInCollection(
@@ -414,8 +414,8 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.put.mockRejectedValue(new Error('更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.put.mockRejectedValue(new Error('UpdateFailed'));
 
       await expect(
         collectionService.updateCardInCollection(
@@ -423,7 +423,7 @@ describe('CollectionService', () => {
           mockCardId,
           mockUpdateData
         )
-      ).rejects.toThrow('更新失敗');
+      ).rejects.toThrow('UpdateFailed');
     });
   });
 
@@ -437,11 +437,11 @@ describe('CollectionService', () => {
       recentAdditions: 5,
     };
 
-    it('應該成功獲取收藏統計', async () => {
+    it('應該SuccessGet收藏統計', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockStatistics,
-        message: '統計獲取成功',
+        message: '統計GetSuccess',
       });
 
       const _result =
@@ -461,12 +461,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('統計獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('統計GetFailed'));
 
       await expect(
         collectionService.getCollectionStatistics(mockCollectionId)
-      ).rejects.toThrow('統計獲取失敗');
+      ).rejects.toThrow('統計GetFailed');
     });
   });
 
@@ -501,11 +501,11 @@ describe('CollectionService', () => {
       },
     };
 
-    it('應該成功搜索收藏中的卡牌', async () => {
+    it('應該Success搜索收藏中的卡牌', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockSearchResult,
-        message: '搜索成功',
+        message: '搜索Success',
       });
 
       const _result = await collectionService.searchCardsInCollection(
@@ -539,12 +539,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('搜索失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('搜索Failed'));
 
       await expect(
         collectionService.searchCardsInCollection(mockCollectionId, mockQuery)
-      ).rejects.toThrow('搜索失敗');
+      ).rejects.toThrow('搜索Failed');
     });
   });
 
@@ -573,11 +573,11 @@ describe('CollectionService', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功導入收藏', async () => {
+    it('應該Success導入收藏', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockImportedCollection,
-        message: '收藏導入成功',
+        message: '收藏導入Success',
       });
 
       const _result = await collectionService.importCollection(mockImportData);
@@ -597,12 +597,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('導入失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('導入Failed'));
 
       await expect(
         collectionService.importCollection(mockImportData)
-      ).rejects.toThrow('導入失敗');
+      ).rejects.toThrow('導入Failed');
     });
   });
 
@@ -610,11 +610,11 @@ describe('CollectionService', () => {
     const _mockCollectionId = '123e4567-e89b-12d3-a456-426614174000';
     const _mockExportData = '{"collection": "exported data"}';
 
-    it('應該成功導出收藏為 JSON', async () => {
+    it('應該Success導出收藏為 JSON', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockExportData,
-        message: '導出成功',
+        message: '導出Success',
       });
 
       const _result = await collectionService.exportCollection(
@@ -628,12 +628,12 @@ describe('CollectionService', () => {
       );
     });
 
-    it('應該成功導出收藏為 CSV', async () => {
+    it('應該Success導出收藏為 CSV', async () => {
       const _csvData = 'card_id,name,quantity,condition\ncard-123,火球術,2,mint';
       mockApiService.get.mockResolvedValue({
         success: true,
         data: csvData,
-        message: '導出成功',
+        message: '導出Success',
       });
 
       const _result = await collectionService.exportCollection(
@@ -661,12 +661,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('導出失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('導出Failed'));
 
       await expect(
         collectionService.exportCollection(mockCollectionId)
-      ).rejects.toThrow('導出失敗');
+      ).rejects.toThrow('導出Failed');
     });
   });
 
@@ -682,11 +682,11 @@ describe('CollectionService', () => {
       shareUrl: 'https://example.com/collections/shared-123',
     };
 
-    it('應該成功分享收藏', async () => {
+    it('應該Success分享收藏', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockShareResult,
-        message: '分享成功',
+        message: '分享Success',
       });
 
       const _result = await collectionService.shareCollection(
@@ -709,12 +709,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('分享失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('分享Failed'));
 
       await expect(
         collectionService.shareCollection(mockCollectionId, mockShareSettings)
-      ).rejects.toThrow('分享失敗');
+      ).rejects.toThrow('分享Failed');
     });
   });
 
@@ -749,11 +749,11 @@ describe('CollectionService', () => {
       },
     };
 
-    it('應該成功獲取公開收藏', async () => {
+    it('應該SuccessGet公開收藏', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockPublicCollections,
-        message: '公開收藏獲取成功',
+        message: '公開收藏GetSuccess',
       });
 
       const _result = await collectionService.getPublicCollections(mockFilters);
@@ -768,7 +768,7 @@ describe('CollectionService', () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockPublicCollections,
-        message: '公開收藏獲取成功',
+        message: '公開收藏GetSuccess',
       });
 
       const _result = await collectionService.getPublicCollections();
@@ -779,12 +779,12 @@ describe('CollectionService', () => {
       });
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('GetFailed'));
 
       await expect(
         collectionService.getPublicCollections(mockFilters)
-      ).rejects.toThrow('獲取失敗');
+      ).rejects.toThrow('GetFailed');
     });
   });
 
@@ -803,11 +803,11 @@ describe('CollectionService', () => {
       updatedAt: '2024-01-01T00:00:00Z',
     };
 
-    it('應該成功複製收藏', async () => {
+    it('應該Success複製收藏', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockDuplicatedCollection,
-        message: '收藏複製成功',
+        message: '收藏複製Success',
       });
 
       const _result = await collectionService.duplicateCollection(
@@ -848,12 +848,12 @@ describe('CollectionService', () => {
       ).rejects.toThrow();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('複製失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('複製Failed'));
 
       await expect(
         collectionService.duplicateCollection(mockCollectionId, mockNewName)
-      ).rejects.toThrow('複製失敗');
+      ).rejects.toThrow('複製Failed');
     });
   });
 });

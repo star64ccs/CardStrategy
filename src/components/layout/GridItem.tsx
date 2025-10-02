@@ -3,7 +3,7 @@ import React, { forwardRef, useMemo } from 'react';
 import { useResponsive } from '../../hooks/useResponsive';
 import type { GridItemProps } from '../../types/layout';
 
-// GridItem 組件
+// GridItem Component
 export const _GridItem = forwardRef<HTMLDivElement, GridItemProps>(
   (
     {
@@ -37,7 +37,7 @@ export const _GridItem = forwardRef<HTMLDivElement, GridItemProps>(
       const _responsiveJustifySelf = getResponsiveValue(justifySelf);
       const _responsiveOrder = getResponsiveValue(order);
 
-      // 對齊方式映射
+      // 對齊方式Map
       const _alignmentMap = {
         start: 'flex-start',
         center: 'center',
@@ -107,7 +107,7 @@ export const _GridItem = forwardRef<HTMLDivElement, GridItemProps>(
       style,
     ]);
 
-    // 生成 CSS 類名
+    // 生成 CSS Class名
     const _gridItemClassName = useMemo(() => {
       const _classes = ['layout-grid-item'];
 

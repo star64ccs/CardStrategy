@@ -7,7 +7,7 @@ import type {
 import { offlineSyncService } from '../services/offlineSyncService';
 
 /**
- * 離線同步 Hook 選項
+ * 離線Sync Hook Options
  */
 export interface UseOfflineSyncOptions {
   userId: string;
@@ -22,10 +22,10 @@ export interface UseOfflineSyncOptions {
 }
 
 /**
- * 離線同步 Hook 返回值
+ * 離線Sync Hook ReturnValue
  */
 export interface UseOfflineSyncReturn {
-  // 狀態
+  // Status
   syncState: OfflineSyncState;
   isOnline: boolean;
   isSyncing: boolean;
@@ -33,7 +33,7 @@ export interface UseOfflineSyncReturn {
   error: string | null;
   stats: unknown;
 
-  // 方法
+  // Method
   initialize: (userId: string) => Promise<void>;
   configure: (config: Partial<OfflineSyncConfig>) => void;
   addToSyncQueue: (
@@ -50,8 +50,8 @@ export interface UseOfflineSyncReturn {
 }
 
 /**
- * 離線同步 Hook
- * 提供離線數據存儲和網絡恢復時的自動同步功能
+ * 離線Sync Hook
+ * 提供離線DataStorage和NetworkRestore時的AutoSync功能
  */
 export const _useOfflineSync = (
   options: UseOfflineSyncOptions
@@ -74,13 +74,13 @@ export const _useOfflineSync = (
   const _isInitialized = useRef(false);
   const _eventListeners = useRef<Map<string, () => void>>(new Map());
 
-  // 更新同步狀態
+  // UpdateSyncStatus
   const _updateSyncState = useCallback(() => {
     const _state = offlineSyncService.getSyncState();
     setSyncState(state);
   }, []);
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(
     async (userId: string) => {
       if (isInitialized.current) {
@@ -92,19 +92,19 @@ export const _useOfflineSync = (
         isInitialized.current = true;
         updateSyncState();
       } catch (error) {
-        console.error('離線同步初始化失敗:', error);
+        console.error('離線同步InitializeFailed:', error);
         throw error;
       }
     },
     [updateSyncState]
   );
 
-  // 配置同步設置
+  // ConfigureSyncSettings
   const _configure = useCallback((config: Partial<OfflineSyncConfig>) => {
     offlineSyncService.configure(config);
   }, []);
 
-  // 添加同步項目到隊列
+  // AddSync項目到Queue
   const _addToSyncQueue = useCallback(
     async (
       key: string,
@@ -118,25 +118,25 @@ export const _useOfflineSync = (
     [updateSyncState]
   );
 
-  // 觸發同步
+  // 觸發Sync
   const _triggerSync = useCallback(async () => {
     await offlineSyncService.triggerSync();
     updateSyncState();
   }, [updateSyncState]);
 
-  // 重試失敗的項目
+  // RetryFailed的項目
   const _retryFailedItems = useCallback(async () => {
     await offlineSyncService.retryFailedItems();
     updateSyncState();
   }, [updateSyncState]);
 
-  // 清除同步錯誤
+  // ClearSyncError
   const _clearError = useCallback(() => {
     offlineSyncService.clearError();
     updateSyncState();
   }, [updateSyncState]);
 
-  // 清理過期的同步項目
+  // 清理過期的Sync項目
   const _cleanupExpiredItems = useCallback(
     async (maxAge?: number) => {
       await offlineSyncService.cleanupExpiredItems(maxAge);
@@ -145,13 +145,13 @@ export const _useOfflineSync = (
     [updateSyncState]
   );
 
-  // 銷毀服務
+  // 銷毀Service
   const _destroy = useCallback(async () => {
     await offlineSyncService.destroy();
     isInitialized.current = false;
   }, []);
 
-  // 設置事件監聽器
+  // SettingsEvent監聽器
   useEffect(() => {
     const _listeners = [
       { event: 'syncStarted', handler: options.onSyncStarted },
@@ -182,7 +182,7 @@ export const _useOfflineSync = (
     };
   }, [options, updateSyncState]);
 
-  // 定期更新狀態
+  // 定期UpdateStatus
   useEffect(() => {
     const _interval = setInterval(() => {
       if (isInitialized.current) {
@@ -193,14 +193,14 @@ export const _useOfflineSync = (
     return () => clearInterval(interval);
   }, [updateSyncState]);
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (options.autoInitialize && options.userId && !isInitialized.current) {
       initialize(options.userId);
     }
   }, [options.autoInitialize, options.userId, initialize]);
 
-  // 組件卸載時清理
+  // ComponentUninstall時清理
   useEffect(() => {
     return () => {
       if (isInitialized.current) {
@@ -210,7 +210,7 @@ export const _useOfflineSync = (
   }, [destroy]);
 
   return {
-    // 狀態
+    // Status
     syncState,
     isOnline: syncState.isOnline,
     isSyncing: syncState.isSyncing,
@@ -218,7 +218,7 @@ export const _useOfflineSync = (
     error: syncState.error,
     stats: syncState.stats,
 
-    // 方法
+    // Method
     initialize,
     configure,
     addToSyncQueue,
@@ -231,7 +231,7 @@ export const _useOfflineSync = (
 };
 
 /**
- * 簡化的離線同步 Hook
+ * 簡化的離線Sync Hook
  */
 export const _useSimpleOfflineSync = (userId: string) => {
   const { syncState, addToSyncQueue, triggerSync, clearError } = useOfflineSync(
@@ -253,7 +253,7 @@ export const _useSimpleOfflineSync = (userId: string) => {
 };
 
 /**
- * 卡片數據離線同步 Hook
+ * 卡片Data離線Sync Hook
  */
 export const _useCardOfflineSync = (userId: string) => {
   const { syncState, addToSyncQueue, triggerSync, clearError } = useOfflineSync(
@@ -302,7 +302,7 @@ export const _useCardOfflineSync = (userId: string) => {
 };
 
 /**
- * 用戶設置離線同步 Hook
+ * UserSettings離線Sync Hook
  */
 export const _useUserSettingsOfflineSync = (userId: string) => {
   const { syncState, addToSyncQueue, triggerSync, clearError } = useOfflineSync(

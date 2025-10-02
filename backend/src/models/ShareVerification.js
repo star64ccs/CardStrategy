@@ -101,12 +101,12 @@ const createShareVerificationModel = (sequelize) => {
       ],
       hooks: {
         beforeCreate: (instance) => {
-          // 生成隨機驗證碼
+          // 生成隨機Verify碼
           if (!instance.verificationCode) {
             instance.verificationCode = generateVerificationCode();
           }
 
-          // 設置過期時間（默認 30 天）
+          // Settings過期Time（Default 30 天）
           if (!instance.expiresAt) {
             const expiresAt = new Date();
             expiresAt.setDate(expiresAt.getDate() + 30);
@@ -125,7 +125,7 @@ const createShareVerificationModel = (sequelize) => {
   return ShareVerification;
 };
 
-// 生成隨機驗證碼
+// 生成隨機Verify碼
 function generateVerificationCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';

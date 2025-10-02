@@ -4,7 +4,7 @@ import { performanceMonitor } from '../utils/performanceMonitor';
 import { serviceManager } from './serviceManager';
 
 /**
- * 應用初始化結果接口
+ * ApplyInitialize結果Interface
  */
 interface AppInitializationResult {
   success: boolean;
@@ -21,8 +21,8 @@ interface AppInitializationResult {
 }
 
 /**
- * 應用初始化器
- * 負責應用啟動時的所有初始化工作
+ * ApplyInitialize器
+ * 負責ApplyStart時的所有Initialize工作
  */
 export class AppInitializer {
   private static instance: AppInitializer;
@@ -39,7 +39,7 @@ export class AppInitializer {
   }
 
   /**
-   * 初始化應用
+   * InitializeApply
    */
   async initializeApp(): Promise<AppInitializationResult> {
     if (this.isInitialized && this.initializationResult) {
@@ -55,33 +55,33 @@ export class AppInitializer {
     const warnings: string[] = [];
 
     try {
-      // 1. 初始化第三方服務
-      logger.info('正在初始化第三方服務...');
+      // 1. Initialize第三方Service
+      logger.info('正在Initialize第三方Service...');
       const _serviceResult = await serviceManager.initializeAll();
 
       if (!serviceResult.success) {
         warnings.push(
-          `部分服務初始化失敗: ${serviceResult.failed.length} 個服務`
+          `部分ServiceInitializeFailed: ${serviceResult.failed.length} 個Service`
         );
         serviceResult.failed.forEach(failure => {
-          warnings.push(`服務 ${failure.service}: ${failure.error}`);
+          warnings.push(`Service ${failure.service}: ${failure.error}`);
         });
       }
 
-      // 2. 執行健康檢查
-      logger.info('正在執行服務健康檢查...');
+      // 2. 執Row健康Check
+      logger.info('正在執行Service健康Check...');
       const _healthResults = await serviceManager.performHealthCheck();
       const _unhealthyServices = Array.from(healthResults.entries())
         .filter(([, isHealthy]) => !isHealthy)
         .map(([service]) => service);
 
       if (unhealthyServices.length > 0) {
-        warnings.push(`健康檢查失敗的服務: ${unhealthyServices.join(', ')}`);
+        warnings.push(`健康CheckFailed的Service: ${unhealthyServices.join(', ')}`);
       }
 
-      // 3. 生成服務報告
+      // 3. 生成ServiceReport
       const _serviceReport = serviceManager.generateServiceReport();
-      logger.info('服務初始化報告:', serviceReport);
+      logger.info('ServiceInitialize報告:', serviceReport);
 
       const _endTime = new Date();
       const _duration = performanceMonitor.endTimer('app_initialization');
@@ -112,8 +112,8 @@ export class AppInitializer {
 
       return this.initializationResult;
     } catch (error) {
-      const _errorMessage = error instanceof Error ? error.message : '未知錯誤';
-      errors.push(`應用初始化失敗: ${errorMessage}`);
+      const _errorMessage = error instanceof Error ? error.message : '未知Error';
+      errors.push(`應用InitializeFailed: ${errorMessage}`);
 
       const _endTime = new Date();
       const _duration = performanceMonitor.endTimer('app_initialization');
@@ -132,7 +132,7 @@ export class AppInitializer {
         warnings,
       };
 
-      logger.error('應用初始化失敗:', {
+      logger.error('應用InitializeFailed:', {
         error: errorMessage,
         duration: this.initializationResult.duration,
       });
@@ -142,21 +142,21 @@ export class AppInitializer {
   }
 
   /**
-   * 檢查應用是否已初始化
+   * CheckApplyYesNo已Initialize
    */
   isAppInitialized(): boolean {
     return this.isInitialized;
   }
 
   /**
-   * 獲取初始化結果
+   * GetInitialize結果
    */
   getInitializationResult(): AppInitializationResult | null {
     return this.initializationResult;
   }
 
   /**
-   * 重新初始化應用
+   * ReInitializeApply
    */
   async reinitializeApp(): Promise<AppInitializationResult> {
     logger.info('開始重新初始化應用');
@@ -168,7 +168,7 @@ export class AppInitializer {
   }
 
   /**
-   * 獲取應用狀態
+   * GetApplyStatus
    */
   getAppStatus(): {
     isInitialized: boolean;
@@ -190,12 +190,12 @@ export class AppInitializer {
         available: serviceStats.available,
         failed: serviceStats.failed,
       },
-      lastHealthCheck: new Date(), // 可以從服務管理器獲取實際時間
+      lastHealthCheck: new Date(), // 可以從ServiceManage器Get實際Time
     };
   }
 
   /**
-   * 執行應用健康檢查
+   * 執RowApply健康Check
    */
   async performAppHealthCheck(): Promise<{
     isHealthy: boolean;
@@ -207,19 +207,19 @@ export class AppInitializer {
     const issues: string[] = [];
 
     try {
-      // 檢查應用是否已初始化
+      // CheckApplyYesNo已Initialize
       if (!this.isInitialized) {
         issues.push('應用尚未初始化');
       }
 
-      // 檢查服務健康狀態
+      // CheckService健康Status
       const _serviceHealthResults = await serviceManager.performHealthCheck();
       const _unhealthyServices = Array.from(serviceHealthResults.entries())
         .filter(([, isHealthy]) => !isHealthy)
         .map(([service]) => service);
 
       if (unhealthyServices.length > 0) {
-        issues.push(`不健康的服務: ${unhealthyServices.join(', ')}`);
+        issues.push(`不健康的Service: ${unhealthyServices.join(', ')}`);
       }
 
       const _isHealthy = issues.length === 0;
@@ -239,10 +239,10 @@ export class AppInitializer {
         issues,
       };
     } catch (error) {
-      const _errorMessage = error instanceof Error ? error.message : '未知錯誤';
-      issues.push(`健康檢查執行失敗: ${errorMessage}`);
+      const _errorMessage = error instanceof Error ? error.message : '未知Error';
+      issues.push(`健康Check執行Failed: ${errorMessage}`);
 
-      logger.error('應用健康檢查失敗:', { error: errorMessage });
+      logger.error('應用健康CheckFailed:', { error: errorMessage });
 
       return {
         isHealthy: false,
@@ -253,7 +253,7 @@ export class AppInitializer {
   }
 
   /**
-   * 生成應用診斷報告
+   * 生成Apply診斷Report
    */
   async generateDiagnosticReport(): Promise<{
     timestamp: Date;
@@ -273,12 +273,12 @@ export class AppInitializer {
     const _healthCheck = await this.performAppHealthCheck();
     const _serviceReport = serviceManager.generateServiceReport();
 
-    // 獲取性能信息
+    // Get性能Information
     const performance: unknown = {
       initializationTime: this.initializationResult?.duration,
     };
 
-    // 如果在 Node.js 環境中，獲取內存使用情況
+    // 如果在 Node.js 環境中，GetMemory使用情況
     if (typeof process !== 'undefined' && process.memoryUsage) {
       performance.memoryUsage = process.memoryUsage();
     }
@@ -298,8 +298,8 @@ export class AppInitializer {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _appInitializer = AppInitializer.getInstance();
 
-// 導出類型
+// ExportClass型
 export type { AppInitializationResult };

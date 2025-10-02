@@ -4,7 +4,7 @@ const { authenticateToken, requireAdmin } = require('../middleware/auth');
 const fakeCardTrainingService = require('../services/fakeCardTrainingService');
 const logger = require('../utils/logger');
 
-// 獲取假卡訓練數據
+// GetFalse卡訓練Data
 router.get('/training-data', authenticateToken, async (req, res) => {
   try {
     const filters = {
@@ -18,16 +18,16 @@ router.get('/training-data', authenticateToken, async (req, res) => {
 
     res.status(200).json(result);
   } catch (error) {
-    logger.error('獲取假卡訓練數據失敗:', error);
+    logger.error('Get假卡訓練數據Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取假卡訓練數據失敗',
+      message: error.message || 'Get假卡訓練數據Failed',
       code: 'FAKE_CARD_TRAINING_DATA_ERROR',
     });
   }
 });
 
-// 開始模型訓練
+// Begin模型訓練
 router.post('/training/start', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { config, dataFilters } = req.body;
@@ -44,16 +44,16 @@ router.post('/training/start', authenticateToken, requireAdmin, async (req, res)
 
     res.status(201).json(result);
   } catch (error) {
-    logger.error('開始模型訓練失敗:', error);
+    logger.error('開始模型訓練Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '開始模型訓練失敗',
+      message: error.message || '開始模型訓練Failed',
       code: 'TRAINING_START_ERROR',
     });
   }
 });
 
-// 獲取訓練進度
+// Get訓練進度
 router.get('/training/progress/:trainingId', authenticateToken, async (req, res) => {
   try {
     const { trainingId } = req.params;
@@ -70,10 +70,10 @@ router.get('/training/progress/:trainingId', authenticateToken, async (req, res)
 
     res.status(200).json(result);
   } catch (error) {
-    logger.error('獲取訓練進度失敗:', error);
+    logger.error('Get訓練進度Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取訓練進度失敗',
+      message: error.message || 'Get訓練進度Failed',
       code: 'TRAINING_PROGRESS_ERROR',
     });
   }
@@ -96,16 +96,16 @@ router.post('/evaluation/evaluate', authenticateToken, requireAdmin, async (req,
 
     res.status(200).json(result);
   } catch (error) {
-    logger.error('模型評估失敗:', error);
+    logger.error('模型評估Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '模型評估失敗',
+      message: error.message || '模型評估Failed',
       code: 'MODEL_EVALUATION_ERROR',
     });
   }
 });
 
-// 部署模型
+// Deploy模型
 router.post('/deployment/deploy', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { modelId, deploymentConfig } = req.body;
@@ -122,16 +122,16 @@ router.post('/deployment/deploy', authenticateToken, requireAdmin, async (req, r
 
     res.status(201).json(result);
   } catch (error) {
-    logger.error('模型部署失敗:', error);
+    logger.error('模型部署Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '模型部署失敗',
+      message: error.message || '模型部署Failed',
       code: 'MODEL_DEPLOYMENT_ERROR',
     });
   }
 });
 
-// 獲取模型列表
+// Get模型List
 router.get('/training/models', authenticateToken, async (req, res) => {
   try {
     const filters = {
@@ -144,32 +144,32 @@ router.get('/training/models', authenticateToken, async (req, res) => {
 
     res.status(200).json(result);
   } catch (error) {
-    logger.error('獲取模型列表失敗:', error);
+    logger.error('Get模型列表Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取模型列表失敗',
+      message: error.message || 'Get模型列表Failed',
       code: 'MODELS_LIST_ERROR',
     });
   }
 });
 
-// 獲取訓練統計
+// Get訓練Statistics
 router.get('/training/stats', authenticateToken, async (req, res) => {
   try {
     const result = await fakeCardTrainingService.getTrainingStats();
 
     res.status(200).json(result);
   } catch (error) {
-    logger.error('獲取訓練統計失敗:', error);
+    logger.error('Get訓練統計Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取訓練統計失敗',
+      message: error.message || 'Get訓練統計Failed',
       code: 'TRAINING_STATS_ERROR',
     });
   }
 });
 
-// 更新假卡數據的訓練特徵
+// UpdateFalse卡Data的訓練特徵
 router.patch('/training-features/:fakeCardId', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { fakeCardId } = req.params;
@@ -195,16 +195,16 @@ router.patch('/training-features/:fakeCardId', authenticateToken, requireAdmin, 
 
     res.status(200).json(result);
   } catch (error) {
-    logger.error('更新假卡訓練特徵失敗:', error);
+    logger.error('Update假卡訓練特徵Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '更新假卡訓練特徵失敗',
+      message: error.message || 'Update假卡訓練特徵Failed',
       code: 'TRAINING_FEATURES_UPDATE_ERROR',
     });
   }
 });
 
-// 批量更新訓練數據
+// BatchUpdate訓練Data
 router.patch('/batch-update', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { updates } = req.body;
@@ -221,16 +221,16 @@ router.patch('/batch-update', authenticateToken, requireAdmin, async (req, res) 
 
     res.status(200).json(result);
   } catch (error) {
-    logger.error('批量更新訓練數據失敗:', error);
+    logger.error('批量Update訓練數據Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '批量更新訓練數據失敗',
+      message: error.message || '批量Update訓練數據Failed',
       code: 'BATCH_UPDATE_ERROR',
     });
   }
 });
 
-// 獲取模型預測端點
+// Get模型預測端點
 router.post('/models/:modelId/predict', authenticateToken, async (req, res) => {
   try {
     const { modelId } = req.params;
@@ -256,7 +256,7 @@ router.post('/models/:modelId/predict', authenticateToken, async (req, res) => {
     const predictionResult = {
       modelId,
       prediction: {
-        isFake: Math.random() > 0.7, // 70% 機率為真品
+        isFake: Math.random() > 0.7, // 70% 機率為True品
         confidence: 0.85 + Math.random() * 0.1, // 85-95% 信心度
         fakeType: Math.random() > 0.7 ? 'counterfeit' : 'authentic',
         riskFactors: [
@@ -287,16 +287,16 @@ router.post('/models/:modelId/predict', authenticateToken, async (req, res) => {
       message: '預測完成',
     });
   } catch (error) {
-    logger.error('模型預測失敗:', error);
+    logger.error('模型預測Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '模型預測失敗',
+      message: error.message || '模型預測Failed',
       code: 'MODEL_PREDICTION_ERROR',
     });
   }
 });
 
-// 獲取模型健康狀態
+// Get模型健康Status
 router.get('/models/:modelId/health', authenticateToken, async (req, res) => {
   try {
     const { modelId } = req.params;
@@ -309,7 +309,7 @@ router.get('/models/:modelId/health', authenticateToken, async (req, res) => {
       });
     }
 
-    // 模擬健康檢查結果
+    // 模擬健康Check結果
     const healthStatus = {
       modelId,
       status: 'healthy',
@@ -330,10 +330,10 @@ router.get('/models/:modelId/health', authenticateToken, async (req, res) => {
       message: '模型健康狀態正常',
     });
   } catch (error) {
-    logger.error('獲取模型健康狀態失敗:', error);
+    logger.error('Get模型健康狀態Failed:', error);
     res.status(500).json({
       success: false,
-      message: error.message || '獲取模型健康狀態失敗',
+      message: error.message || 'Get模型健康狀態Failed',
       code: 'MODEL_HEALTH_ERROR',
     });
   }

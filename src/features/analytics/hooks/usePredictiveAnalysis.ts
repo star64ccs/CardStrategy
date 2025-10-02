@@ -42,13 +42,13 @@ import type {
 } from '../types/predictiveAnalysis';
 
 /**
- * 預測分析 Hook
- * 提供預測分析功能的 React 集成
+ * 預測Analysis Hook
+ * 提供預測Analysis功能的 React 集成
  */
 export const _usePredictiveAnalysis = () => {
   const _dispatch = useAppDispatch();
 
-  // 狀態選擇器
+  // StatusSelect器
   const _models = useSelector(selectModels);
   const _predictions = useSelector(selectPredictions);
   const _reports = useSelector(selectReports);
@@ -61,7 +61,7 @@ export const _usePredictiveAnalysis = () => {
   const _error = useSelector(selectError);
   const _isInitialized = useSelector(selectIsInitialized);
 
-  // 初始化
+  // Initialize
   const _initialize = useCallback(
     async (config?: Partial<PredictiveAnalysisConfig>) => {
       return dispatch(initializePredictiveAnalysis(config)).unwrap();
@@ -69,7 +69,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 獲取分析數據
+  // GetAnalysisData
   const _getAnalysis = useCallback(
     async (filter?: PredictionFilter) => {
       return dispatch(getPredictiveAnalysis(filter)).unwrap();
@@ -77,7 +77,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 創建模型
+  // Create模型
   const _createModel = useCallback(
     async (
       name: string,
@@ -99,7 +99,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 生成報告
+  // 生成Report
   const _generateReport = useCallback(
     async (
       modelId: string,
@@ -119,7 +119,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 導出數據
+  // ExportData
   const _exportData = useCallback(
     async (options: PredictiveAnalysisExportOptions) => {
       return dispatch(exportPredictiveAnalysisData(options)).unwrap();
@@ -127,7 +127,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 創建警報
+  // CreateAlert
   const _createAlert = useCallback(
     async (
       modelId: string,
@@ -153,7 +153,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 更新警報
+  // UpdateAlert
   const _updateAlert = useCallback(
     async (alertId: string, updates: Partial<PredictionAlert>) => {
       return dispatch(updatePredictionAlert({ alertId, updates })).unwrap();
@@ -161,7 +161,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 刪除警報
+  // DeleteAlert
   const _deleteAlert = useCallback(
     async (alertId: string) => {
       return dispatch(deletePredictionAlert(alertId)).unwrap();
@@ -169,12 +169,12 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 獲取配置
+  // GetConfigure
   const _getConfig = useCallback(async () => {
     return dispatch(updatePredictiveAnalysisConfig({})).unwrap();
   }, [dispatch]);
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback(
     async (updates: Partial<PredictiveAnalysisConfig>) => {
       return dispatch(updatePredictiveAnalysisConfig(updates)).unwrap();
@@ -182,7 +182,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 獲取報告
+  // GetReport
   const _getReports = useCallback(
     async (modelId?: string) => {
       return dispatch(getPredictionReports(modelId)).unwrap();
@@ -190,7 +190,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 獲取洞察
+  // Get洞察
   const _getInsights = useCallback(
     async (modelId?: string) => {
       return dispatch(getPredictionInsights(modelId)).unwrap();
@@ -198,7 +198,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 獲取建議
+  // Get建議
   const _getRecommendations = useCallback(
     async (modelId?: string) => {
       return dispatch(getPredictionRecommendations(modelId)).unwrap();
@@ -206,7 +206,7 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 獲取警報
+  // GetAlert
   const _getAlerts = useCallback(
     async (modelId?: string) => {
       return dispatch(getPredictionAlerts(modelId)).unwrap();
@@ -214,12 +214,12 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 獲取實時指標
+  // Get實時指標
   const _getRealTimeMetrics = useCallback(async () => {
     return dispatch(getRealTimePredictionMetrics()).unwrap();
   }, [dispatch]);
 
-  // 清除錯誤
+  // ClearError
   const _clearErrorAction = useCallback(
     (errorKey: keyof typeof error) => {
       dispatch(clearError(errorKey));
@@ -227,17 +227,17 @@ export const _usePredictiveAnalysis = () => {
     [dispatch]
   );
 
-  // 清除所有錯誤
+  // Clear所有Error
   const _clearAllErrorsAction = useCallback(() => {
     dispatch(clearAllErrors());
   }, [dispatch]);
 
-  // 重置狀態
+  // ResetStatus
   const _reset = useCallback(() => {
     dispatch(resetPredictiveAnalysis());
   }, [dispatch]);
 
-  // 計算屬性
+  // 計算Property
   const _activeModels = useMemo(
     () => (models as any[]).filter((model: unknown) => model.isActive),
     [models]
@@ -288,19 +288,19 @@ export const _usePredictiveAnalysis = () => {
     [alerts]
   );
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (!isInitialized && !loading.initialize) {
       initialize();
     }
   }, [isInitialized, loading.initialize, initialize]);
 
-  // 定期更新實時指標
+  // 定期Update實時指標
   useEffect(() => {
     if (isInitialized) {
       const _interval = setInterval(() => {
         getRealTimeMetrics();
-      }, 30000); // 每30秒更新一次
+      }, 30000); // 每30SecondUpdate一次
 
       return () => clearInterval(interval);
     }
@@ -308,7 +308,7 @@ export const _usePredictiveAnalysis = () => {
   }, [isInitialized, getRealTimeMetrics]);
 
   return {
-    // 狀態
+    // Status
     models,
     predictions,
     reports,
@@ -321,7 +321,7 @@ export const _usePredictiveAnalysis = () => {
     error,
     isInitialized,
 
-    // 計算屬性
+    // 計算Property
     activeModels,
     readyModels,
     trainingModels,
@@ -332,7 +332,7 @@ export const _usePredictiveAnalysis = () => {
     criticalAlerts,
     warningAlerts,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     getAnalysis,
     createModel,

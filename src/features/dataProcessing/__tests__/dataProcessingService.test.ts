@@ -1,6 +1,6 @@
 /**
- * 數據處理服務單元測試
- * 測試核心功能和性能優化
+ * DataHandleService單元Test
+ * Test核心功能和性能優化
  */
 
 import { HighPerformanceCacheManager } from '../services/cacheManager';
@@ -18,7 +18,7 @@ import {
   CompressionAlgorithm,
 } from '../types/processing';
 
-// 模擬處理器
+// 模擬Handle器
 class MockProcessor implements DataProcessor<any, any> {
   constructor(
     private delay = 100,
@@ -37,7 +37,7 @@ class MockProcessor implements DataProcessor<any, any> {
         data: null,
         processingTime: this.delay,
         memoryUsage: 10,
-        error: '模擬處理失敗',
+        error: '模擬HandleFailed',
       };
     }
 
@@ -66,7 +66,7 @@ describe('DataProcessingService', () => {
   });
 
   describe('初始化', () => {
-    test('應該正確初始化服務', async () => {
+    test('應該正確InitializeService', async () => {
       expect(service).toBeDefined();
       const _stats = await service.getStats();
       expect(stats.processors).toBe(0);
@@ -91,7 +91,7 @@ describe('DataProcessingService', () => {
         },
         cacheConfig: {
           maxSize: 50 * 1024 * 1024, // 50MB
-          ttl: 30 * 60 * 1000, // 30分鐘
+          ttl: 30 * 60 * 1000, // 30Minute
           strategy: CacheStrategy.MEMORY,
         },
         queueConfig: {
@@ -101,7 +101,7 @@ describe('DataProcessingService', () => {
         },
         monitoringConfig: {
           enabled: false,
-          interval: 120000, // 2分鐘
+          interval: 120000, // 2Minute
           thresholds: {
             memoryUsage: 70,
             cpuUsage: 80,
@@ -196,7 +196,7 @@ describe('DataProcessingService', () => {
       const _endTime = Date.now();
 
       expect(result.success).toBe(true);
-      // 並行處理應該比順序處理快
+      // ParallelHandle應該比順序Handle快
       expect(endTime - startTime).toBeLessThan(200);
     });
 
@@ -224,7 +224,7 @@ describe('DataProcessingService', () => {
         cacheStrategy: CacheStrategy.HYBRID,
       };
 
-      // 第一次處理
+      // 第一次Handle
       const _result1 = await service.processData(
         testData,
         'test-processor',
@@ -232,7 +232,7 @@ describe('DataProcessingService', () => {
       );
       expect(result1.success).toBe(true);
 
-      // 第二次處理應該使用緩存
+      // 第二次Handle應該使用Cache
       const _result2 = await service.processData(
         testData,
         'test-processor',
@@ -242,7 +242,7 @@ describe('DataProcessingService', () => {
       expect(result2.data.processed).toEqual(testData);
     });
 
-    test('應該處理失敗的處理器', async () => {
+    test('應該HandleFailed的Handle器', async () => {
       const _failingProcessor = new MockProcessor(50, true);
       service.registerProcessor('failing-processor', failingProcessor);
 
@@ -258,7 +258,7 @@ describe('DataProcessingService', () => {
       );
 
       expect(result.success).toBe(false);
-      expect(result.error).toBe('模擬處理失敗');
+      expect(result.error).toBe('模擬HandleFailed');
     });
 
     test('應該處理不存在的處理器', async () => {
@@ -281,7 +281,7 @@ describe('DataProcessingService', () => {
         cacheStrategy: CacheStrategy.HYBRID,
       };
 
-      // 第一次處理
+      // 第一次Handle
       const _startTime1 = Date.now();
       const _result1 = await service.processData(
         testData,
@@ -290,7 +290,7 @@ describe('DataProcessingService', () => {
       );
       const _time1 = Date.now() - startTime1;
 
-      // 第二次處理（應該使用緩存）
+      // 第二次Handle（應該使用Cache）
       const _startTime2 = Date.now();
       const _result2 = await service.processData(
         testData,
@@ -302,14 +302,14 @@ describe('DataProcessingService', () => {
       expect(result1.success).toBe(true);
       expect(result2.success).toBe(true);
       expect(result1.data.processed).toEqual(result2.data.processed);
-      // 緩存處理應該更快
+      // CacheHandle應該更快
       expect(time2).toBeLessThan(time1);
     });
 
     test('應該支持不同的緩存策略', async () => {
       const _testData = { name: 'test', value: 123 };
 
-      // 測試內存緩存
+      // TestMemoryCache
       const memoryConfig: Partial<ProcessingConfig> = {
         cacheStrategy: CacheStrategy.MEMORY,
       };
@@ -320,7 +320,7 @@ describe('DataProcessingService', () => {
       );
       expect(memoryResult.success).toBe(true);
 
-      // 測試磁盤緩存
+      // TestDiskCache
       const diskConfig: Partial<ProcessingConfig> = {
         cacheStrategy: CacheStrategy.DISK,
       };
@@ -331,7 +331,7 @@ describe('DataProcessingService', () => {
       );
       expect(diskResult.success).toBe(true);
 
-      // 測試混合緩存
+      // Test混合Cache
       const hybridConfig: Partial<ProcessingConfig> = {
         cacheStrategy: CacheStrategy.HYBRID,
       };
@@ -390,11 +390,11 @@ describe('DataProcessingService', () => {
       expect(metrics.completedTasks).toBeGreaterThan(0);
       expect(metrics.averageProcessingTime).toBeGreaterThan(0);
       expect(metrics.uptime).toBeGreaterThan(0);
-      // 吞吐量可能為0，因為時間太短
+      // 吞吐量可能為0，因為Time太短
       expect(metrics.throughput).toBeGreaterThanOrEqual(0);
     });
 
-    test('應該能夠獲取服務統計信息', async () => {
+    test('應該能夠GetService統計Information', async () => {
       const _testData = { name: 'test', value: 123 };
       await service.processData(testData, 'test-processor');
 
@@ -406,19 +406,19 @@ describe('DataProcessingService', () => {
       expect(stats.queue).toBeDefined();
     });
 
-    test('應該正確計算錯誤率', async () => {
+    test('應該正確計算Error率', async () => {
       const _failingProcessor = new MockProcessor(50, true);
       service.registerProcessor('failing-processor', failingProcessor);
 
       const _testData = { name: 'test', value: 123 };
 
-      // 重置指標
+      // Reset指標
       service['metrics'] = service['initializeMetrics']();
 
-      // 成功處理
+      // SuccessHandle
       await service.processData(testData, 'test-processor');
 
-      // 失敗處理
+      // FailedHandle
       await service.processData(testData, 'failing-processor');
 
       const _metrics = await service.getMetrics();
@@ -441,7 +441,7 @@ describe('DataProcessingService', () => {
         value: `test${i}`,
       }));
 
-      // 並行處理
+      // ParallelHandle
       const _parallelStartTime = Date.now();
       const _parallelResults = await service.processBatch(
         testDataArray,
@@ -450,7 +450,7 @@ describe('DataProcessingService', () => {
       );
       const _parallelTime = Date.now() - parallelStartTime;
 
-      // 順序處理
+      // 順序Handle
       const _sequentialStartTime = Date.now();
       const _sequentialResults = await service.processBatch(
         testDataArray,
@@ -461,7 +461,7 @@ describe('DataProcessingService', () => {
 
       expect(parallelResults).toHaveLength(10);
       expect(sequentialResults).toHaveLength(10);
-      // 並行處理應該更快（考慮到模擬的50ms延遲）
+      // ParallelHandle應該更快（考慮到模擬的50ms延遲）
       expect(parallelTime).toBeLessThan(sequentialTime);
     });
 
@@ -480,7 +480,7 @@ describe('DataProcessingService', () => {
       const _totalTime = Date.now() - startTime;
 
       expect(results).toHaveLength(100);
-      expect(totalTime).toBeLessThan(10000); // 應該在10秒內完成
+      expect(totalTime).toBeLessThan(10000); // 應該在10Second內Complete
 
       results.forEach((result, index) => {
         expect(result.success).toBe(true);
@@ -489,14 +489,14 @@ describe('DataProcessingService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    test('應該處理初始化失敗', async () => {
-      // 確保服務未初始化
+  describe('ErrorHandle', () => {
+    test('應該HandleInitializeFailed', async () => {
+      // 確保Service未Initialize
       await service.destroy();
 
-      // 模擬初始化失敗
+      // 模擬InitializeFailed
       const _mockClear = jest.spyOn(service['cacheManager'], 'clear');
-      mockClear.mockRejectedValueOnce(new Error('初始化失敗'));
+      mockClear.mockRejectedValueOnce(new Error('InitializeFailed'));
 
       const _result = await service.initialize();
       expect(result).toBe(false);
@@ -504,10 +504,10 @@ describe('DataProcessingService', () => {
       mockClear.mockRestore();
     });
 
-    test('應該處理處理器執行錯誤', async () => {
+    test('應該HandleHandle器執行Error', async () => {
       const errorProcessor: DataProcessor<any, any> = {
         async process() {
-          throw new Error('處理器執行錯誤');
+          throw new Error('Handle器執行Error');
         },
       };
 
@@ -517,22 +517,22 @@ describe('DataProcessingService', () => {
 
       await expect(
         service.processData(testData, 'error-processor')
-      ).rejects.toThrow('處理器執行錯誤');
+      ).rejects.toThrow('Handle器執行Error');
     });
 
-    test('應該處理緩存錯誤', async () => {
+    test('應該Handle緩存Error', async () => {
       service.registerProcessor('test-processor', new MockProcessor(50));
 
-      // 模擬緩存錯誤
+      // 模擬CacheError
       const _mockGet = jest.spyOn(service['cacheManager'], 'get');
-      mockGet.mockRejectedValueOnce(new Error('緩存錯誤'));
+      mockGet.mockRejectedValueOnce(new Error('緩存Error'));
 
       const _testData = { name: 'test', value: 123 };
       const config: Partial<ProcessingConfig> = {
         cacheStrategy: CacheStrategy.HYBRID,
       };
 
-      // 應該仍然能夠處理數據，只是不使用緩存
+      // 應該仍然能夠HandleData，只Yes不使用Cache
       const _result = await service.processData(
         testData,
         'test-processor',
@@ -544,13 +544,13 @@ describe('DataProcessingService', () => {
     });
   });
 
-  describe('服務生命週期', () => {
-    test('應該正確銷毀服務', async () => {
+  describe('Service生命週期', () => {
+    test('應該正確銷毀Service', async () => {
       service.registerProcessor('test-processor', new MockProcessor(50));
 
       await service.destroy();
 
-      // 銷毀後應該無法處理數據
+      // 銷毀後應該無法HandleData
       const _testData = { name: 'test', value: 123 };
       await expect(
         service.processData(testData, 'test-processor')

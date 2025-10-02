@@ -1,9 +1,9 @@
-// API 端點配置
+// API 端點Configure
 export const _API_ENDPOINTS = {
   // 基礎端點
   BASE_URL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:3000/api',
 
-  // 認證相關
+  // Authenticate相Off
   AUTH: {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
@@ -16,7 +16,7 @@ export const _API_ENDPOINTS = {
     ME: '/auth/me',
   },
 
-  // 用戶相關
+  // User相Off
   USERS: {
     PROFILE: '/users/profile',
     UPDATE: '/users/profile',
@@ -25,7 +25,7 @@ export const _API_ENDPOINTS = {
     STATISTICS: '/users/statistics',
   },
 
-  // 卡牌相關
+  // 卡牌相Off
   CARDS: {
     LIST: '/cards',
     CREATE: '/cards',
@@ -44,7 +44,7 @@ export const _API_ENDPOINTS = {
     RECOGNIZE: '/cards/recognize',
   },
 
-  // 收藏相關
+  // 收藏相Off
   COLLECTIONS: {
     LIST: '/collections',
     CREATE: '/collections',
@@ -57,7 +57,7 @@ export const _API_ENDPOINTS = {
       `/collections/${id}/cards/${cardId}`,
   },
 
-  // 市場相關
+  // 市場相Off
   MARKET: {
     DATA: '/market-data',
     TRENDS: '/market-data/trends',
@@ -65,7 +65,7 @@ export const _API_ENDPOINTS = {
     PREDICTIONS: '/market-data/predictions',
   },
 
-  // 投資相關
+  // 投資相Off
   INVESTMENTS: {
     LIST: '/investments',
     CREATE: '/investments',
@@ -76,7 +76,7 @@ export const _API_ENDPOINTS = {
     ANALYTICS: '/investments/analytics',
   },
 
-  // AI相關
+  // AI相Off
   AI: {
     RECOGNITION: '/ai/recognition',
     BATCH_RECOGNITION: '/ai/recognition/batch',
@@ -98,7 +98,7 @@ export const _API_ENDPOINTS = {
     COMPREHENSIVE_ANALYSIS: '/ai/comprehensive-analysis',
   },
 
-  // 防偽判斷相關
+  // 防偽判斷相Off
   ANTI_COUNTERFEIT: {
     DETECT: '/anti-counterfeit/detect',
     PRINT_QUALITY: '/anti-counterfeit/print-quality',
@@ -111,7 +111,7 @@ export const _API_ENDPOINTS = {
     REPORT: '/anti-counterfeit/report',
   },
 
-  // 模擬鑑定相關
+  // 模擬鑑定相Off
   GRADING: {
     GRADE: '/grading/grade',
     CENTERING: '/grading/centering',
@@ -123,7 +123,7 @@ export const _API_ENDPOINTS = {
     SHARE: '/grading/share',
   },
 
-  // 會員相關
+  // 會員相Off
   MEMBERSHIP: {
     STATUS: '/membership/status',
     SUBSCRIBE: '/membership/subscribe',
@@ -133,7 +133,7 @@ export const _API_ENDPOINTS = {
     BILLING: '/membership/billing',
   },
 
-  // 設置相關
+  // Settings相Off
   SETTINGS: {
     GET: '/settings',
     UPDATE: '/settings',
@@ -143,7 +143,7 @@ export const _API_ENDPOINTS = {
     DELETE_ACCOUNT: '/settings/delete-account',
   },
 
-  // 掃描歷史相關
+  // 掃描歷史相Off
   SCAN_HISTORY: {
     LIST: '/scan-history',
     CREATE: '/scan-history',
@@ -160,7 +160,7 @@ export const _API_ENDPOINTS = {
     CLEANUP: '/scan-history/cleanup',
   },
 
-  // 價格數據相關
+  // 價格Data相Off
   PRICE_DATA: {
     GRADING_DATA: '/price-data/grading-data',
     RECOMMENDED_PLATFORMS: '/price-data/recommended-platforms',
@@ -171,7 +171,7 @@ export const _API_ENDPOINTS = {
     ANALYTICS: '/price-data/analytics',
   },
 
-  // 分享驗證相關
+  // 分享Verify相Off
   SHARE_VERIFICATION: {
     LOOKUP: '/share-verification/lookup',
     VALIDATE: '/share-verification/validate',
@@ -179,7 +179,7 @@ export const _API_ENDPOINTS = {
     DELETE: '/share-verification/delete',
   },
 
-  // 預測相關
+  // 預測相Off
   PREDICTIONS: {
     HISTORY: '/predictions/history',
     ACCURACY: '/predictions/accuracy',
@@ -189,7 +189,7 @@ export const _API_ENDPOINTS = {
     DELETE: '/predictions',
   },
 
-  // 增強預測相關
+  // 增強預測相Off
   ENHANCED_PREDICTIONS: {
     ENHANCED_BATCH: '/enhanced-predictions/enhanced-batch',
     MODEL_COMPARISON: '/enhanced-predictions/model-comparison',
@@ -199,7 +199,7 @@ export const _API_ENDPOINTS = {
     ENHANCED_MODELS: '/enhanced-predictions/enhanced-models',
   },
 
-  // 模擬鑑定相關
+  // 模擬鑑定相Off
   SIMULATED_GRADING: {
     GET: '/grading',
     USER_REPORTS: '/grading/user',
@@ -207,7 +207,7 @@ export const _API_ENDPOINTS = {
     SHARE: '/grading/share',
   },
 
-  // 假卡回報相關
+  // False卡回報相Off
   FAKE_CARD: {
     SUBMIT: '/fake-card/submit',
     USER_SUBMISSIONS: '/fake-card/user-submissions',
@@ -217,7 +217,7 @@ export const _API_ENDPOINTS = {
     STATS: '/fake-card/stats',
   },
 
-  // 社區合作相關
+  // 社District合作相Off
   COMMUNITY: {
     APPLY_PARTNERSHIP: '/community/apply',
     PARTNERS: '/community/partners',
@@ -228,7 +228,7 @@ export const _API_ENDPOINTS = {
     COLLABORATION_STATS: '/community/stats',
   },
 
-  // 公開數據集相關
+  // 公OnData集相Off
   DATASET: {
     LIST: '/dataset/list',
     INTEGRATE: (id: string) => `/dataset/integrate/${id}`,
@@ -237,7 +237,7 @@ export const _API_ENDPOINTS = {
     VALIDATE: (id: string) => `/dataset/validate/${id}`,
   },
 
-  // 合規相關
+  // 合規相Off
   COMPLIANCE: {
     STATUS: '/compliance/status',
     REPORT: '/compliance/report',
@@ -245,7 +245,7 @@ export const _API_ENDPOINTS = {
     UPDATE: '/compliance/update',
   },
 
-  // 分析相關
+  // Analysis相Off
   ANALYTICS: {
     USER_BEHAVIOR: '/analytics/user-behavior',
     BUSINESS_METRICS: '/analytics/business-metrics',
@@ -255,14 +255,14 @@ export const _API_ENDPOINTS = {
     INSIGHTS: '/analytics/insights',
   },
 
-  // 搜索相關
+  // Search相Off
   SEARCH: {
     FULL_TEXT: '/search/full-text',
     INTELLIGENT: '/search/intelligent',
     ANALYSIS: '/search/analysis',
   },
 
-  // 推薦相關
+  // 推薦相Off
   RECOMMENDATIONS: {
     COLLABORATIVE: '/recommendations/collaborative',
     CONTENT: '/recommendations/content',

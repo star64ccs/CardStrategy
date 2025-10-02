@@ -1,4 +1,4 @@
-// 統一日誌工具
+// 統一LogTool
 export enum LogLevel {
   DEBUG = 'debug',
   INFO = 'info',
@@ -32,13 +32,13 @@ class Logger {
       userId: this.getCurrentUserId(),
     };
 
-    // 保存到歷史記錄
+    // Save到歷史Record
     this.logHistory.push(entry);
     if (this.logHistory.length > this.maxHistorySize) {
       this.logHistory.shift();
     }
 
-    // 在開發環境中輸出到控制台
+    // 在On發環境中Output到Control台
     if (this.isDevelopment) {
       const _timestamp = entry.timestamp.toISOString();
       const _prefix = `[${timestamp}] [${level.toUpperCase()}]`;
@@ -63,21 +63,21 @@ class Logger {
       }
     }
 
-    // 在生產環境中發送到日誌服務
+    // 在生產環境中Send到LogService
     if (!this.isDevelopment && level === LogLevel.ERROR) {
-      // 發送錯誤到日誌服務
+      // SendError到LogService
       this.sendToLogService(entry);
     }
   }
 
   private getCurrentUserId(): string | undefined {
     try {
-      // 從 Redux store 獲取用戶 ID
+      // 從 Redux store GetUser ID
       const { store } = require('../../store');
       const _state = store.getState();
       return state.auth.user?.id;
     } catch (error) {
-      // 如果無法獲取 Redux store，嘗試從 AsyncStorage 獲取
+      // 如果無法Get Redux store，嘗試從 AsyncStorage Get
       try {
         const _AsyncStorage = require('@react-native-async-storage/async-storage');
         const _userData = AsyncStorage.getItem('user_data');
@@ -86,7 +86,7 @@ class Logger {
           return parsed.id;
         }
       } catch {
-        // 如果都失敗了，返回 undefined
+        // 如果都Failed了，Return undefined
       }
       return undefined;
     }
@@ -94,12 +94,12 @@ class Logger {
 
   private async sendToLogService(entry: LogEntry): Promise<void> {
     try {
-      // 使用新的日誌服務
+      // 使用新的LogService
       const { logService } = require('../../shared/services/logService');
       await logService.sendLog(entry.level, entry.message, entry.context);
     } catch (error) {
-      // 如果日誌服務失敗，至少記錄到控制台
-      console.error('日誌服務發送失敗:', error);
+      // 如果LogServiceFailed，至少Record到Control台
+      console.error('日誌Service發送Failed:', error);
     }
   }
 
@@ -119,17 +119,17 @@ class Logger {
     this.log(LogLevel.ERROR, message, context);
   }
 
-  // 獲取日誌歷史
+  // GetLog歷史
   getHistory(): LogEntry[] {
     return [...this.logHistory];
   }
 
-  // 清除日誌歷史
+  // ClearLog歷史
   clearHistory() {
     this.logHistory = [];
   }
 
-  // 導出日誌
+  // ExportLog
   exportLogs(): string {
     return JSON.stringify(this.logHistory, null, 2);
   }

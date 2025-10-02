@@ -1,6 +1,6 @@
 /**
  * 電子商務合規模組
- * 實現重構計劃任務 1.5: ECommerceComplianceModule
+ * 實現重構計劃Task 1.5: ECommerceComplianceModule
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -148,10 +148,10 @@ export class ECommerceComplianceModule {
       await this.initializeRegulations();
 
       this.isInitialized = true;
-      logger.info('電子商務合規模組初始化成功');
+      logger.info('電子商務合規模組InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('電子商務合規模組初始化失敗:', error);
+      logger.error('電子商務合規模組InitializeFailed:', error);
       return false;
     }
   }
@@ -165,7 +165,7 @@ export class ECommerceComplianceModule {
     try {
       const violations: ComplianceViolation[] = [];
 
-      // 檢查標題和描述
+      // Check標題和Description
       if (!listing.title || listing.title.length < 3) {
         violations.push(
           this.createViolation(
@@ -188,7 +188,7 @@ export class ECommerceComplianceModule {
         );
       }
 
-      // 檢查價格
+      // Check價格
       if (listing.price <= 0) {
         violations.push(
           this.createViolation(
@@ -221,7 +221,7 @@ export class ECommerceComplianceModule {
 
       return productListing;
     } catch (error) {
-      logger.error('產品列表合規檢查失敗:', error);
+      logger.error('產品列表合規CheckFailed:', error);
       throw error;
     }
   }
@@ -236,14 +236,14 @@ export class ECommerceComplianceModule {
       const complianceChecks: ComplianceCheck[] = [];
       let riskScore = 0;
 
-      // 年齡驗證
+      // AgeVerify
       if (this.config.requireAgeVerification) {
         const _ageCheck = this.performAgeVerification(transaction.buyerId);
         complianceChecks.push(ageCheck);
         if (ageCheck.result === 'fail') riskScore += 30;
       }
 
-      // 位置驗證
+      // 位置Verify
       if (this.config.requireLocationVerification) {
         const _locationCheck = this.performLocationVerification(
           transaction.buyerId
@@ -252,7 +252,7 @@ export class ECommerceComplianceModule {
         if (locationCheck.result === 'fail') riskScore += 20;
       }
 
-      // 支付驗證
+      // 支付Verify
       const _paymentCheck = this.performPaymentVerification(transaction);
       complianceChecks.push(paymentCheck);
       if (paymentCheck.result === 'fail') riskScore += 40;
@@ -284,7 +284,7 @@ export class ECommerceComplianceModule {
 
       return transactionCompliance;
     } catch (error) {
-      logger.error('交易合規檢查失敗:', error);
+      logger.error('交易合規CheckFailed:', error);
       throw error;
     }
   }
@@ -326,7 +326,7 @@ export class ECommerceComplianceModule {
 
       return consumerRightsCheck;
     } catch (error) {
-      logger.error('消費者權利檢查失敗:', error);
+      logger.error('消費者權利CheckFailed:', error);
       throw error;
     }
   }
@@ -356,7 +356,7 @@ export class ECommerceComplianceModule {
 
       return report;
     } catch (error) {
-      logger.error('生成電子商務合規報告失敗:', error);
+      logger.error('生成電子商務合規報告Failed:', error);
       throw error;
     }
   }
@@ -375,7 +375,7 @@ export class ECommerceComplianceModule {
     logger.info('電子商務合規模組已重置');
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private getDefaultConfig(): ECommerceComplianceConfig {
     return {
@@ -509,26 +509,26 @@ export class ECommerceComplianceModule {
     userId: string,
     jurisdiction: string
   ): boolean {
-    return Math.random() > 0.1; // 90%支持率
+    return Math.random() > 0.1; // 90%Support率
   }
 
   private checkRightToWithdraw(userId: string, jurisdiction: string): boolean {
-    return Math.random() > 0.05; // 95%支持率
+    return Math.random() > 0.05; // 95%Support率
   }
 
   private checkRightToRefund(userId: string, jurisdiction: string): boolean {
-    return Math.random() > 0.08; // 92%支持率
+    return Math.random() > 0.08; // 92%Support率
   }
 
   private checkRightToComplaint(userId: string, jurisdiction: string): boolean {
-    return Math.random() > 0.02; // 98%支持率
+    return Math.random() > 0.02; // 98%Support率
   }
 
   private checkRightToDataPortability(
     userId: string,
     jurisdiction: string
   ): boolean {
-    return Math.random() > 0.15; // 85%支持率
+    return Math.random() > 0.15; // 85%Support率
   }
 
   private getDefaultReportPeriod(): { start: Date; end: Date } {

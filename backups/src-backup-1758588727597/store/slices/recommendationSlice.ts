@@ -1,0 +1,430 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import { _recommendationService as recommendationService } from '../../features/ai/services/recommendationService';
+import type {
+  InvestmentRecommendationRequest,
+  RecommendationError,
+  RecommendationState,
+  UserProfile,
+} from '../../features/ai/types/recommendation';
+
+// 初始狀態
+const initialState: RecommendationState = {
+  currentRecommendation: null,
+  recommendationHistory: null,
+  recommendationStats: null,
+  loading: false,
+  error: null,
+  userProfile: null,
+};
+
+// 異步 Action
+export const generateRecommendation = createAsyncThunk(
+  'recommendation/generateRecommendation',
+  async (request: InvestmentRecommendationRequest, { rejectWithValue }) => {
+    try {
+      const result =
+        await recommendationService.generateRecommendation(request);
+      return result;
+    } catch (error) {
+      return rejectWithValue({
+        code: 'RECOMMENDATION_FAILED',
+        message: error instanceof Error ? error.message : '生成投資建議失敗',
+        details: error,
+        timestamp: new Date(),
+      } as RecommendationError);
+    }
+  }
+);
+
+export const getRecommendationHistory = createAsyncThunk(
+  'recommendation/getRecommendationHistory',
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const history =
+        await recommendationService.getRecommendationHistory(userId);
+      return history;
+    } catch (error) {
+      return rejectWithValue({
+        code: 'HISTORY_FETCH_FAILED',
+        message: error instanceof Error ? error.message : '獲取建議歷史失敗',
+        details: error,
+        timestamp: new Date(),
+      } as RecommendationError);
+    }
+  }
+);
+
+export const getRecommendationStats = createAsyncThunk(
+  'recommendation/getRecommendationStats',
+  async (_, { rejectWithValue }) => {
+    try {
+      const stats = await recommendationService.getRecommendationStats();
+      return stats;
+    } catch (error) {
+      return rejectWithValue({
+        code: 'STATS_FETCH_FAILED',
+        message: error instanceof Error ? error.message : '獲取建議統計失敗',
+        details: error,
+        timestamp: new Date(),
+      } as RecommendationError);
+    }
+  }
+);
+
+export const updateUserProfile = createAsyncThunk(
+  'recommendation/updateUserProfile',
+  async (
+    { userId, profile }: { userId: string; profile: UserProfile },
+    { rejectWithValue }
+  ) => {
+    try {
+      await recommendationService.updateUserProfile(userId, profile);
+      return profile;
+    } catch (error) {
+      return rejectWithValue({
+        code: 'PROFILE_UPDATE_FAILED',
+        message: error instanceof Error ? error.message : '更新用戶配置失敗',
+        details: error,
+        timestamp: new Date(),
+      } as RecommendationError);
+    }
+  }
+);
+
+export const getUserProfile = createAsyncThunk(
+  'recommendation/getUserProfile',
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const profile = await recommendationService.getUserProfile(userId);
+      return profile;
+    } catch (error) {
+      return rejectWithValue({
+        code: 'PROFILE_FETCH_FAILED',
+        message: error instanceof Error ? error.message : '獲取用戶配置失敗',
+        details: error,
+        timestamp: new Date(),
+      } as RecommendationError);
+    }
+  }
+);
+
+export const analyzePortfolio = createAsyncThunk(
+  'recommendation/analyzePortfolio',
+  async (
+    { userId, portfolio }: { userId: string; portfolio: unknown[] },
+    { rejectWithValue }
+  ) => {
+    try {
+      const analysis = await recommendationService.analyzePortfolio(
+        userId,
+        portfolio
+      );
+      return analysis;
+    } catch (error) {
+      return rejectWithValue({
+        code: 'PORTFOLIO_ANALYSIS_FAILED',
+        message: error instanceof Error ? error.message : '投資組合分析失敗',
+        details: error,
+        timestamp: new Date(),
+      } as RecommendationError);
+    }
+  }
+);
+
+// Slice
+const recommendationSlice = createSlice({
+  name: 'recommendation',
+  initialState,
+  reducers: {
+    clearCurrentRecommendation: state => {
+      state.currentRecommendation = null;
+    },
+    clearError: state => {
+      state.error = null;
+    },
+    resetRecommendationState: state => {
+      state.currentRecommendation = null;
+      state.recommendationHistory = null;
+      state.recommendationStats = null;
+      state.error = null;
+    },
+    setUserProfile: (state, action: PayloadAction<UserProfile>) => {
+      state.userProfile = action.payload;
+    },
+    updateRecommendationFeedback: (
+      state,
+      action: PayloadAction<{
+        recommendationId: string;
+        rating: number;
+        helpful: boolean;
+        comment?: string;
+        actionTaken: boolean;
+      }>
+    ) => {
+      if (state.recommendationHistory) {
+        const recommendation = state.recommendationHistory.recommendations.find(
+          rec => rec.id === action.payload.recommendationId
+        );
+        if (recommendation) {
+          // 這裡可以添加反饋處理邏輯
+          console.log('Feedback updated for recommendation:', action.payload);
+        }
+      }
+    },
+  },
+  extraReducers: builder => {
+    // generateRecommendation
+    builder
+      .addCase(generateRecommendation.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(generateRecommendation.fulfilled, (state, action) => {
+        state.loading = false;
+        state.currentRecommendation = action.payload;
+        state.error = null;
+      })
+      .addCase(generateRecommendation.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as RecommendationError;
+      });
+
+    // getRecommendationHistory
+    builder
+      .addCase(getRecommendationHistory.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getRecommendationHistory.fulfilled, (state, action) => {
+        state.loading = false;
+        state.recommendationHistory = action.payload as any;
+        state.error = null;
+      })
+      .addCase(getRecommendationHistory.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as RecommendationError;
+      });
+
+    // getRecommendationStats
+    builder
+      .addCase(getRecommendationStats.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getRecommendationStats.fulfilled, (state, action) => {
+        state.loading = false;
+        state.recommendationStats = action.payload;
+        state.error = null;
+      })
+      .addCase(getRecommendationStats.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as RecommendationError;
+      });
+
+    // updateUserProfile
+    builder
+      .addCase(updateUserProfile.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userProfile = action.payload;
+        state.error = null;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as RecommendationError;
+      });
+
+    // getUserProfile
+    builder
+      .addCase(getUserProfile.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.userProfile = action.payload;
+        state.error = null;
+      })
+      .addCase(getUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as RecommendationError;
+      });
+
+    // analyzePortfolio
+    builder
+      .addCase(analyzePortfolio.pending, state => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(analyzePortfolio.fulfilled, (state, action) => {
+        state.loading = false;
+        // 可以將投資組合分析結果存儲在狀態中
+        state.error = null;
+      })
+      .addCase(analyzePortfolio.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as RecommendationError;
+      });
+  },
+});
+
+// Actions
+export const {
+  clearCurrentRecommendation,
+  clearError,
+  resetRecommendationState,
+  setUserProfile,
+  updateRecommendationFeedback,
+} = recommendationSlice.actions;
+
+// Selectors
+export const selectCurrentRecommendation = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.currentRecommendation;
+
+export const selectRecommendationHistory = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.recommendationHistory;
+
+export const selectRecommendationStats = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.recommendationStats;
+
+export const selectRecommendationLoading = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.loading;
+
+export const selectRecommendationError = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.error;
+
+export const selectUserProfile = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.userProfile;
+
+export const selectRecommendationsByAction = (
+  state: { recommendation: RecommendationState },
+  action: string
+) => {
+  const current = state.recommendation.currentRecommendation;
+  if (!current) return [];
+
+  return current.recommendations.filter(
+    rec => rec.recommendedAction === action
+  );
+};
+
+export const selectHighPriorityRecommendations = (state: {
+  recommendation: RecommendationState;
+}) => {
+  const current = state.recommendation.currentRecommendation;
+  if (!current) return [];
+
+  return current.recommendations.filter(
+    rec => rec.priority === 'very_high' || rec.priority === 'high'
+  );
+};
+
+export const selectRecommendationsByRisk = (
+  state: { recommendation: RecommendationState },
+  riskLevel: string
+) => {
+  const current = state.recommendation.currentRecommendation;
+  if (!current) return [];
+
+  return current.recommendations.filter(rec => rec.riskLevel === riskLevel);
+};
+
+export const selectPortfolioSuggestion = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.currentRecommendation?.portfolioSuggestion;
+
+export const selectRiskAnalysis = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.currentRecommendation?.riskAnalysis;
+
+export const selectExpectedReturn = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.currentRecommendation?.expectedReturn;
+
+export const selectRecommendationReasoning = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.currentRecommendation?.reasoning;
+
+export const selectRecommendationConfidence = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.currentRecommendation?.confidence || 0;
+
+export const selectRecommendationValidUntil = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.currentRecommendation?.validUntil;
+
+export const selectIsRecommendationValid = (state: {
+  recommendation: RecommendationState;
+}) => {
+  const validUntil = state.recommendation.currentRecommendation?.validUntil;
+  if (!validUntil) return false;
+  return new Date(validUntil) > new Date();
+};
+
+export const selectRecommendationMetadata = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.currentRecommendation?.metadata;
+
+export const selectUserExperience = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.userProfile?.experience;
+
+export const selectUserRiskTolerance = (state: {
+  recommendation: RecommendationState;
+}) => {
+  // 根據用戶配置推斷風險承受度
+  const profile = state.recommendation.userProfile;
+  if (!profile) return 'moderate';
+
+  if (profile.age < 30 && profile.experience === 'advanced')
+    return 'aggressive';
+  if (profile.age > 50) return 'conservative';
+  return 'moderate';
+};
+
+export const selectUserInvestmentCapacity = (state: {
+  recommendation: RecommendationState;
+}) => {
+  const profile = state.recommendation.userProfile;
+  if (!profile) return 0;
+
+  return profile.totalInvestment + (profile.monthlyIncome || 0) * 12 * 0.2;
+};
+
+export const selectUserPreferredGenres = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.userProfile?.preferredGenres || [];
+
+export const selectUserBlacklistedCards = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.userProfile?.blacklistedCards || [];
+
+export const selectSuccessRate = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.recommendationStats?.successRate || 0;
+
+export const selectAverageReturn = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.recommendationStats?.averageReturn || 0;
+
+export const selectUserSatisfaction = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.recommendationStats?.userSatisfaction || 0;
+
+export const selectConversionRate = (state: {
+  recommendation: RecommendationState;
+}) => state.recommendation.recommendationStats?.conversionRate || 0;
+
+// Reducer
+export default recommendationSlice.reducer;

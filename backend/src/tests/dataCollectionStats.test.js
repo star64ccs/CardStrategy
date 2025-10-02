@@ -9,11 +9,11 @@ describe('Data Collection Statistics API', () => {
   let DataQualityMetrics;
 
   beforeAll(async () => {
-    // 初始化模型
+    // Initialize模型
     TrainingData = getTrainingDataModel();
     DataQualityMetrics = getDataQualityMetricsModel();
 
-    // 創建測試數據
+    // CreateTestData
     await TrainingData.bulkCreate([
       {
         cardId: 1,
@@ -56,7 +56,7 @@ describe('Data Collection Statistics API', () => {
       },
     ]);
 
-    // 創建測試質量指標
+    // CreateTest質量指標
     await DataQualityMetrics.create({
       dataType: 'training',
       completeness: 0.95,
@@ -73,12 +73,12 @@ describe('Data Collection Statistics API', () => {
       },
     });
 
-    // 獲取認證token (這裡需要實現實際的認證邏輯)
+    // GetAuthenticatetoken (這裡需要實現實際的Authenticate邏輯)
     authToken = 'test_token';
   });
 
   afterAll(async () => {
-    // 清理測試數據
+    // 清理TestData
     await TrainingData.destroy({ where: {} });
     await DataQualityMetrics.destroy({ where: {} });
   });
@@ -102,11 +102,11 @@ describe('Data Collection Statistics API', () => {
       expect(response.body.data).toHaveProperty('efficiency');
       expect(response.body.data).toHaveProperty('insights');
 
-      // 驗證摘要數據
+      // Verify摘要Data
       expect(response.body.data.summary.totalRecords).toBe(3);
       expect(response.body.data.summary.collectionPeriod).toBeGreaterThan(0);
 
-      // 驗證來源分佈
+      // Verify來源分佈
       expect(response.body.data.sourceDistribution).toHaveLength(3);
       expect(
         response.body.data.sourceDistribution.find(
@@ -124,7 +124,7 @@ describe('Data Collection Statistics API', () => {
         )
       ).toBeDefined();
 
-      // 驗證質量分佈
+      // Verify質量分佈
       expect(response.body.data.qualityDistribution).toHaveLength(2);
       expect(
         response.body.data.qualityDistribution.find((q) => q.quality === 'high')
@@ -135,7 +135,7 @@ describe('Data Collection Statistics API', () => {
         )
       ).toBeDefined();
 
-      // 驗證狀態分佈
+      // VerifyStatus分佈
       expect(response.body.data.statusDistribution).toHaveLength(3);
       expect(
         response.body.data.statusDistribution.find(
@@ -216,7 +216,7 @@ describe('Data Collection Statistics API', () => {
         .expect(200);
 
       expect(response.body.success).toBe(true);
-      // 應該返回所有數據，因為無效日期被忽略
+      // 應該Return所有Data，因為無效Day被Ignore
       expect(response.body.data.summary.totalRecords).toBe(3);
     });
 

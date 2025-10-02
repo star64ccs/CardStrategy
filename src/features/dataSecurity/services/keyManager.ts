@@ -1,6 +1,6 @@
 /**
- * 密鑰管理服務
- * 負責密鑰的生成、存儲、輪換、撤銷等操作
+ * 密鑰ManageService
+ * 負責密鑰的生成、Storage、輪換、撤銷等Operation
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -8,7 +8,7 @@ import type { EncryptionKey, KeyManager } from '../types/security';
 import { EncryptionAlgorithm, KeyStatus, KeyType } from '../types/security';
 
 /**
- * 密鑰管理服務實現
+ * 密鑰ManageService實現
  */
 export class CryptoKeyManager implements KeyManager {
   private static instance: CryptoKeyManager;
@@ -18,7 +18,7 @@ export class CryptoKeyManager implements KeyManager {
   private constructor() {}
 
   /**
-   * 獲取服務實例（單例模式）
+   * GetServiceInstance（單例模式）
    */
   public static getInstance(): CryptoKeyManager {
     if (!CryptoKeyManager.instance) {
@@ -28,7 +28,7 @@ export class CryptoKeyManager implements KeyManager {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(): Promise<boolean> {
     if (this.isInitialized) {
@@ -40,14 +40,14 @@ export class CryptoKeyManager implements KeyManager {
       // 加載現有密鑰
       await this.loadExistingKeys();
 
-      // 創建默認密鑰
+      // CreateDefault密鑰
       await this.createDefaultKeys();
 
       this.isInitialized = true;
-      logger.info('CryptoKeyManager 初始化成功');
+      logger.info('CryptoKeyManager InitializeSuccess');
       return true;
     } catch (error) {
-      logger.error('CryptoKeyManager 初始化失敗:', error);
+      logger.error('CryptoKeyManager InitializeFailed:', error);
       return false;
     }
   }
@@ -81,34 +81,34 @@ export class CryptoKeyManager implements KeyManager {
 
       await this.storeKey(key);
 
-      logger.info(`密鑰生成成功: ${keyId}`, { algorithm, type: key.type });
+      logger.info(`密鑰生成Success: ${keyId}`, { algorithm, type: key.type });
       return key;
     } catch (error) {
-      logger.error('密鑰生成失敗:', error);
+      logger.error('密鑰生成Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 存儲密鑰
+   * Storage密鑰
    */
   public async storeKey(key: EncryptionKey): Promise<boolean> {
     try {
-      // 驗證密鑰
+      // Verify密鑰
       if (!this.validateKey(key)) {
         throw new Error('無效的密鑰格式');
       }
 
-      // 存儲到內存
+      // Storage到Memory
       this.keys.set(key.id, key);
 
-      // 持久化存儲
+      // 持久化Storage
       await this.persistKey(key);
 
-      logger.debug(`密鑰存儲成功: ${key.id}`);
+      logger.debug(`密鑰存儲Success: ${key.id}`);
       return true;
     } catch (error) {
-      logger.error('密鑰存儲失敗:', error);
+      logger.error('密鑰存儲Failed:', error);
       return false;
     }
   }
@@ -125,13 +125,13 @@ export class CryptoKeyManager implements KeyManager {
         return null;
       }
 
-      // 檢查密鑰狀態
+      // Check密鑰Status
       if (key.status !== KeyStatus.ACTIVE) {
         logger.warn(`密鑰不可用: ${keyId}, 狀態: ${key.status}`);
         return null;
       }
 
-      // 檢查過期時間
+      // Check過期Time
       if (key.expiresAt && key.expiresAt < new Date()) {
         logger.warn(`密鑰已過期: ${keyId}`);
         await this.markKeyExpired(keyId);
@@ -140,7 +140,7 @@ export class CryptoKeyManager implements KeyManager {
 
       return key;
     } catch (error) {
-      logger.error('密鑰檢索失敗:', error);
+      logger.error('密鑰檢索Failed:', error);
       return null;
     }
   }
@@ -157,7 +157,7 @@ export class CryptoKeyManager implements KeyManager {
         return false;
       }
 
-      // 更新密鑰狀態
+      // Update密鑰Status
       key.status = KeyStatus.REVOKED;
       key.metadata = {
         ...key.metadata,
@@ -167,13 +167,13 @@ export class CryptoKeyManager implements KeyManager {
         rotationSchedule: key.metadata.rotationSchedule,
       };
 
-      // 持久化更新
+      // 持久化Update
       await this.persistKey(key);
 
       logger.info(`密鑰已撤銷: ${keyId}`, { reason });
       return true;
     } catch (error) {
-      logger.error('密鑰撤銷失敗:', error);
+      logger.error('密鑰撤銷Failed:', error);
       return false;
     }
   }
@@ -196,7 +196,7 @@ export class CryptoKeyManager implements KeyManager {
         previousKeyId: keyId,
       });
 
-      // 標記舊密鑰為非活動狀態
+      // Mark舊密鑰為非活動Status
       oldKey.status = KeyStatus.INACTIVE;
       oldKey.metadata = {
         ...oldKey.metadata,
@@ -208,16 +208,16 @@ export class CryptoKeyManager implements KeyManager {
 
       await this.persistKey(oldKey);
 
-      logger.info(`密鑰輪換成功: ${keyId} -> ${newKey.id}`);
+      logger.info(`密鑰輪換Success: ${keyId} -> ${newKey.id}`);
       return newKey;
     } catch (error) {
-      logger.error('密鑰輪換失敗:', error);
+      logger.error('密鑰輪換Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 列出密鑰
+   * Column出密鑰
    */
   public async listKeys(
     filter?: Partial<EncryptionKey>
@@ -225,7 +225,7 @@ export class CryptoKeyManager implements KeyManager {
     try {
       let keys = Array.from(this.keys.values());
 
-      // 應用過濾器
+      // ApplyFilter器
       if (filter) {
         keys = keys.filter(key => {
           return Object.entries(filter).every(([field, value]) => {
@@ -235,18 +235,18 @@ export class CryptoKeyManager implements KeyManager {
         });
       }
 
-      // 排序（按創建時間降序）
+      // Sort（按CreateTime降序）
       keys.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
       return keys;
     } catch (error) {
-      logger.error('密鑰列表獲取失敗:', error);
+      logger.error('密鑰列表GetFailed:', error);
       return [];
     }
   }
 
   /**
-   * 導出密鑰
+   * Export密鑰
    */
   public async exportKey(
     keyId: string,
@@ -270,13 +270,13 @@ export class CryptoKeyManager implements KeyManager {
           throw new Error(`不支持的格式: ${format}`);
       }
     } catch (error) {
-      logger.error('密鑰導出失敗:', error);
+      logger.error('密鑰導出Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導入密鑰
+   * Import密鑰
    */
   public async importKey(
     keyData: string,
@@ -284,7 +284,7 @@ export class CryptoKeyManager implements KeyManager {
     metadata?: unknown
   ): Promise<EncryptionKey> {
     try {
-      // 解析密鑰數據
+      // Parse密鑰Data
       const _parsedKey = this.parseKeyData(keyData, format);
 
       const _keyId = this.generateKeyId();
@@ -306,16 +306,16 @@ export class CryptoKeyManager implements KeyManager {
 
       await this.storeKey(key);
 
-      logger.info(`密鑰導入成功: ${keyId}`);
+      logger.info(`密鑰導入Success: ${keyId}`);
       return key;
     } catch (error) {
-      logger.error('密鑰導入失敗:', error);
+      logger.error('密鑰導入Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取密鑰統計信息
+   * Get密鑰StatisticsInformation
    */
   public async getKeyStatistics(): Promise<{
     total: number;
@@ -336,7 +336,7 @@ export class CryptoKeyManager implements KeyManager {
       byType: {} as { [type: string]: number },
     };
 
-    // 按算法統計
+    // 按算法Statistics
     keys.forEach(key => {
       stats.byAlgorithm[key.algorithm] =
         (stats.byAlgorithm[key.algorithm] || 0) + 1;
@@ -347,7 +347,7 @@ export class CryptoKeyManager implements KeyManager {
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<void> {
     try {
@@ -355,11 +355,11 @@ export class CryptoKeyManager implements KeyManager {
       this.isInitialized = false;
       logger.info('CryptoKeyManager 已銷毀');
     } catch (error) {
-      logger.error('CryptoKeyManager 銷毀失敗:', error);
+      logger.error('CryptoKeyManager 銷毀Failed:', error);
     }
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private generateKeyId(): string {
     const _timestamp = Date.now().toString(36);
@@ -374,12 +374,12 @@ export class CryptoKeyManager implements KeyManager {
     const _keySize = this.getKeySize(algorithm);
     const _randomBytes = new Uint8Array(keySize);
 
-    // 在真實環境中，這裡會使用 Web Crypto API 或 Node.js crypto
+    // 在True實環境中，這裡會使用 Web Crypto API 或 Node.js crypto
     for (let i = 0; i < keySize; i++) {
       randomBytes[i] = Math.floor(Math.random() * 256);
     }
 
-    // 轉換為 base64
+    // Convert為 base64
     return btoa(String.fromCharCode(...randomBytes));
   }
 
@@ -447,24 +447,24 @@ export class CryptoKeyManager implements KeyManager {
 
   private async persistKey(key: EncryptionKey): Promise<void> {
     try {
-      // 在真實環境中，這裡會將密鑰持久化到安全存儲
-      // 例如：硬件安全模塊 (HSM)、密鑰管理服務 (KMS)、或加密數據庫
+      // 在True實環境中，這裡會將密鑰持久化到安全Storage
+      // 例如：硬件安全Module (HSM)、密鑰ManageService (KMS)、或EncryptDatabase
       const _keyStorage = localStorage || {};
       keyStorage[`key_${key.id}`] = JSON.stringify({
         ...key,
-        keyData: `[ENCRYPTED]${key.keyData}`, // 模擬加密存儲
+        keyData: `[ENCRYPTED]${key.keyData}`, // 模擬EncryptStorage
       });
 
       logger.debug(`密鑰已持久化: ${key.id}`);
     } catch (error) {
-      logger.error('密鑰持久化失敗:', error);
+      logger.error('密鑰持久化Failed:', error);
       throw error;
     }
   }
 
   private async loadExistingKeys(): Promise<void> {
     try {
-      // 從持久化存儲加載現有密鑰
+      // 從持久化Storage加載現有密鑰
       const _keyStorage = localStorage || {};
 
       Object.keys(keyStorage).forEach(storageKey => {
@@ -472,12 +472,12 @@ export class CryptoKeyManager implements KeyManager {
           try {
             const _keyData = JSON.parse(keyStorage[storageKey]);
 
-            // 解密密鑰數據
+            // Decrypt密鑰Data
             if (keyData.keyData?.startsWith('[ENCRYPTED]')) {
-              keyData.keyData = keyData.keyData.substring(11); // 移除加密前綴
+              keyData.keyData = keyData.keyData.substring(11); // RemoveEncrypt前綴
             }
 
-            // 重建日期對象
+            // 重建DayObject
             keyData.createdAt = new Date(keyData.createdAt);
             if (keyData.expiresAt) {
               keyData.expiresAt = new Date(keyData.expiresAt);
@@ -485,26 +485,26 @@ export class CryptoKeyManager implements KeyManager {
 
             this.keys.set(keyData.id, keyData);
           } catch (error) {
-            logger.warn(`載入密鑰失敗: ${storageKey}`, error);
+            logger.warn(`載入密鑰Failed: ${storageKey}`, error);
           }
         }
       });
 
       logger.info(`載入 ${this.keys.size} 個現有密鑰`);
     } catch (error) {
-      logger.error('載入現有密鑰失敗:', error);
+      logger.error('載入現有密鑰Failed:', error);
     }
   }
 
   private async createDefaultKeys(): Promise<void> {
     try {
-      // 如果沒有活動密鑰，創建默認密鑰
+      // 如果沒有活動密鑰，CreateDefault密鑰
       const _activeKeys = Array.from(this.keys.values()).filter(
         key => key.status === KeyStatus.ACTIVE
       );
 
       if (activeKeys.length === 0) {
-        // 創建默認 AES 密鑰
+        // CreateDefault AES 密鑰
         await this.generateKey(EncryptionAlgorithm.AES_256_GCM, {
           purpose: 'default_aes',
           owner: 'system',
@@ -514,7 +514,7 @@ export class CryptoKeyManager implements KeyManager {
         logger.info('創建默認密鑰');
       }
     } catch (error) {
-      logger.error('創建默認密鑰失敗:', error);
+      logger.error('Create默認密鑰Failed:', error);
     }
   }
 
@@ -527,7 +527,7 @@ export class CryptoKeyManager implements KeyManager {
   }
 
   private convertToPem(key: EncryptionKey): string {
-    // 模擬 PEM 格式轉換
+    // 模擬 PEM 格式Convert
     const _header = `-----BEGIN ${key.type.toUpperCase()} KEY-----`;
     const _footer = `-----END ${key.type.toUpperCase()} KEY-----`;
     const _keyData = key.keyData.match(/.{1,64}/g)?.join('\n') || key.keyData;
@@ -536,7 +536,7 @@ export class CryptoKeyManager implements KeyManager {
   }
 
   private convertToJwk(key: EncryptionKey): string {
-    // 模擬 JWK 格式轉換
+    // 模擬 JWK 格式Convert
     const _jwk = {
       kty: key.type === KeyType.SYMMETRIC ? 'oct' : 'RSA',
       alg: this.algorithmToJwkAlg(key.algorithm),
@@ -590,7 +590,7 @@ export class CryptoKeyManager implements KeyManager {
     algorithm: EncryptionAlgorithm;
     keyData: string;
   } {
-    // 簡化的 PEM 解析
+    // 簡化的 PEM Parse
     const _lines = pemData.split('\n');
     const _keyData = lines.slice(1, -2).join('');
 

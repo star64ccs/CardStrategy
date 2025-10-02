@@ -1,0 +1,488 @@
+import type { PayloadAction } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
+import { animationService } from '../../services/animationService';
+import type {
+  AnimationConfig,
+  AnimationEvent,
+  AnimationManagerConfig,
+  AnimationPerformance,
+  AnimationPreferences,
+  AnimationState,
+  PresetAnimation,
+} from '../../types/animation';
+
+// 初始狀態
+const initialState: AnimationState = {
+  animations: {},
+  preferences: {
+    reducedMotion: false,
+    prefersAnimation: true,
+    animationDuration: 'normal',
+    animationIntensity: 'normal',
+  },
+  performanceMonitoring: {
+    enabled: false,
+    metrics: {
+      fps: 60,
+      frameTime: 16.67,
+      droppedFrames: 0,
+      memoryUsage: 0,
+      cpuUsage: 0,
+    },
+  },
+  presets: {},
+  globalConfig: {
+    maxConcurrentAnimations: 10,
+    performanceThreshold: 30,
+    enablePerformanceMonitoring: true,
+    enablePrefersReducedMotion: true,
+    defaultEasing: 'ease-out',
+    defaultDuration: 300,
+  },
+  isInitialized: false,
+  error: null,
+  isPlaying: false,
+  isPaused: false,
+  currentTime: 0,
+  progress: 0,
+  direction: 'normal',
+} as any;
+
+// 異步 Action Creators
+export const initializeAnimationService = createAsyncThunk(
+  'animation/initialize',
+  async (_, { dispatch }) => {
+    try {
+      // 初始化動畫服務
+      const preferences = animationService.getPreferences();
+      const presets = animationService.getAllPresets();
+      const performance = animationService.getPerformance();
+
+      // 設置事件監聽
+      animationService.on('animationStarted', event => {
+        dispatch(animationStarted(event));
+      });
+
+      animationService.on('animationEnded', event => {
+        dispatch(animationEnded(event));
+      });
+
+      animationService.on('animationPaused', event => {
+        dispatch(animationPaused(event));
+      });
+
+      animationService.on('animationStopped', event => {
+        dispatch(animationStopped(event));
+      });
+
+      animationService.on('preferencesChanged', event => {
+        dispatch(preferencesChanged(event));
+      });
+
+      return {
+        preferences,
+        presets: presets.reduce(
+          (acc, preset) => {
+            acc[preset.name] = preset;
+            return acc;
+          },
+          {} as Record<string, PresetAnimation>
+        ),
+        performance,
+      };
+    } catch (error) {
+      throw new Error(`初始化動畫服務失敗: ${error}`);
+    }
+  }
+);
+
+export const createAnimation = createAsyncThunk(
+  'animation/create',
+  async (config: AnimationConfig, { dispatch }) => {
+    try {
+      const id = animationService.createAnimation(config);
+      return { id, config };
+    } catch (error) {
+      throw new Error(`創建動畫失敗: ${error}`);
+    }
+  }
+);
+
+export const playAnimation = createAsyncThunk(
+  'animation/play',
+  async (id: string, { dispatch }) => {
+    try {
+      await animationService.playAnimation(id);
+      return id;
+    } catch (error) {
+      throw new Error(`播放動畫失敗: ${error}`);
+    }
+  }
+);
+
+export const pauseAnimation = createAsyncThunk(
+  'animation/pause',
+  async (id: string, { dispatch }) => {
+    try {
+      animationService.pauseAnimation(id);
+      return id;
+    } catch (error) {
+      throw new Error(`暫停動畫失敗: ${error}`);
+    }
+  }
+);
+
+export const stopAnimation = createAsyncThunk(
+  'animation/stop',
+  async (id: string, { dispatch }) => {
+    try {
+      animationService.stopAnimation(id);
+      return id;
+    } catch (error) {
+      throw new Error(`停止動畫失敗: ${error}`);
+    }
+  }
+);
+
+export const updateAnimationConfig = createAsyncThunk(
+  'animation/updateConfig',
+  async (
+    { id, config }: { id: string; config: Partial<AnimationConfig> },
+    { dispatch }
+  ) => {
+    try {
+      animationService.updateConfig(id, config);
+      return { id, config };
+    } catch (error) {
+      throw new Error(`更新動畫配置失敗: ${error}`);
+    }
+  }
+);
+
+export const updatePreferences = createAsyncThunk(
+  'animation/updatePreferences',
+  async (preferences: Partial<AnimationPreferences>, { dispatch }) => {
+    try {
+      animationService.updatePreferences(preferences);
+      return preferences;
+    } catch (error) {
+      throw new Error(`更新偏好設置失敗: ${error}`);
+    }
+  }
+);
+
+export const enablePerformanceMonitoring = createAsyncThunk(
+  'animation/enablePerformanceMonitoring',
+  async (enabled: boolean, { dispatch }) => {
+    try {
+      animationService.enablePerformanceMonitoring(enabled);
+      return enabled;
+    } catch (error) {
+      throw new Error(`啟用性能監控失敗: ${error}`);
+    }
+  }
+);
+
+export const registerPreset = createAsyncThunk(
+  'animation/registerPreset',
+  async (preset: PresetAnimation, { dispatch }) => {
+    try {
+      animationService.registerPreset(preset);
+      return preset;
+    } catch (error) {
+      throw new Error(`註冊預設動畫失敗: ${error}`);
+    }
+  }
+);
+
+// 動畫事件 Action Creators
+export const animationStarted = createAsyncThunk(
+  'animation/started',
+  async (event: AnimationEvent) => {
+    return event;
+  }
+);
+
+export const animationEnded = createAsyncThunk(
+  'animation/ended',
+  async (event: AnimationEvent) => {
+    return event;
+  }
+);
+
+export const animationPaused = createAsyncThunk(
+  'animation/paused',
+  async (event: AnimationEvent) => {
+    return event;
+  }
+);
+
+export const animationStopped = createAsyncThunk(
+  'animation/stopped',
+  async (event: AnimationEvent) => {
+    return event;
+  }
+);
+
+export const preferencesChanged = createAsyncThunk(
+  'animation/preferencesChanged',
+  async (event: AnimationEvent) => {
+    return event;
+  }
+);
+
+// 創建 Slice
+const animationSlice = createSlice({
+  name: 'animation',
+  initialState,
+  reducers: {
+    // 同步 Reducers
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
+
+    clearError: state => {
+      state.error = null;
+    },
+
+    updatePerformanceMetrics: (
+      state,
+      action: PayloadAction<AnimationPerformance>
+    ) => {
+      state.performanceMonitoring.metrics = action.payload;
+    },
+
+    setGlobalConfig: (
+      state,
+      action: PayloadAction<Partial<AnimationManagerConfig>>
+    ) => {
+      state.globalConfig = { ...state.globalConfig, ...action.payload };
+    },
+
+    // 動畫狀態管理
+    setAnimationState: (
+      state,
+      action: PayloadAction<{ id: string; state: unknown }>
+    ) => {
+      const { id, state: animationState } = action.payload;
+      if (state.animations[id]) {
+        state.animations[id] = {
+          ...state.animations[id],
+          state: animationState,
+        } as any;
+      }
+    },
+
+    removeAnimation: (state, action: PayloadAction<string>) => {
+      const id = action.payload;
+      delete state.animations[id];
+    },
+
+    // 批量操作
+    playAllAnimations: state => {
+      Object.keys(state.animations).forEach(id => {
+        if (state.animations[id]) {
+          (state.animations[id] as any).state.isPlaying = true;
+          (state.animations[id] as any).state.isPaused = false;
+        }
+      });
+    },
+
+    pauseAllAnimations: state => {
+      Object.keys(state.animations).forEach(id => {
+        if (state.animations[id]) {
+          (state.animations[id] as any).state.isPlaying = false;
+          (state.animations[id] as any).state.isPaused = true;
+        }
+      });
+    },
+
+    stopAllAnimations: state => {
+      Object.keys(state.animations).forEach(id => {
+        if (state.animations[id]) {
+          (state.animations[id] as any).state.isPlaying = false;
+          (state.animations[id] as any).state.isPaused = false;
+          (state.animations[id] as any).state.progress = 0;
+        }
+      });
+    },
+  },
+  extraReducers: builder => {
+    builder
+      // 初始化動畫服務
+      .addCase(initializeAnimationService.pending, state => {
+        state.isInitialized = false;
+        state.error = null;
+      })
+      .addCase(initializeAnimationService.fulfilled, (state, action) => {
+        state.isInitialized = true;
+        state.preferences = action.payload.preferences;
+        state.presets = action.payload.presets as any;
+        state.performanceMonitoring.metrics = action.payload.performance;
+        state.error = null;
+      })
+      .addCase(initializeAnimationService.rejected, (state, action) => {
+        state.isInitialized = false;
+        state.error = action.error.message || '初始化失敗';
+      })
+
+      // 創建動畫
+      .addCase(createAnimation.fulfilled, (state, action) => {
+        const { id, config } = action.payload;
+        state.animations[id] = {
+          config: action.payload.config,
+          state: {
+            isPlaying: false,
+            isPaused: false,
+            currentTime: 0,
+            progress: 0,
+            direction: 'normal',
+          },
+          performance: {
+            fps: 60,
+            frameTime: 16.67,
+            droppedFrames: 0,
+            memoryUsage: 0,
+            cpuUsage: 0,
+          },
+        } as any;
+      })
+      .addCase(createAnimation.rejected, (state, action) => {
+        state.error = action.error.message || '創建動畫失敗';
+      })
+
+      // 播放動畫
+      .addCase(playAnimation.fulfilled, (state, action) => {
+        const id = action.payload;
+        if (state.animations[id]) {
+          (state.animations[id] as any).state.isPlaying = true;
+          (state.animations[id] as any).state.isPaused = false;
+        }
+      })
+      .addCase(playAnimation.rejected, (state, action) => {
+        state.error = action.error.message || '播放動畫失敗';
+      })
+
+      // 暫停動畫
+      .addCase(pauseAnimation.fulfilled, (state, action) => {
+        const id = action.payload;
+        if (state.animations[id]) {
+          (state.animations[id] as any).state.isPlaying = false;
+          (state.animations[id] as any).state.isPaused = true;
+        }
+      })
+      .addCase(pauseAnimation.rejected, (state, action) => {
+        state.error = action.error.message || '暫停動畫失敗';
+      })
+
+      // 停止動畫
+      .addCase(stopAnimation.fulfilled, (state, action) => {
+        const id = action.payload;
+        if (state.animations[id]) {
+          (state.animations[id] as any).state.isPlaying = false;
+          (state.animations[id] as any).state.isPaused = false;
+          (state.animations[id] as any).state.progress = 0;
+        }
+      })
+      .addCase(stopAnimation.rejected, (state, action) => {
+        state.error = action.error.message || '停止動畫失敗';
+      })
+
+      // 更新動畫配置
+      .addCase(updateAnimationConfig.fulfilled, (state, action) => {
+        const { id, config } = action.payload;
+        if (state.animations[id]) {
+          (state.animations[id] as any).config = {
+            ...(state.animations[id] as any).config,
+            ...action.payload.config,
+          };
+        }
+      })
+      .addCase(updateAnimationConfig.rejected, (state, action) => {
+        state.error = action.error.message || '更新動畫配置失敗';
+      })
+
+      // 更新偏好設置
+      .addCase(updatePreferences.fulfilled, (state, action) => {
+        state.preferences = { ...state.preferences, ...action.payload };
+      })
+      .addCase(updatePreferences.rejected, (state, action) => {
+        state.error = action.error.message || '更新偏好設置失敗';
+      })
+
+      // 啟用性能監控
+      .addCase(enablePerformanceMonitoring.fulfilled, (state, action) => {
+        state.performanceMonitoring.enabled = action.payload;
+      })
+      .addCase(enablePerformanceMonitoring.rejected, (state, action) => {
+        state.error = action.error.message || '啟用性能監控失敗';
+      })
+
+      // 註冊預設動畫
+      .addCase(registerPreset.fulfilled, (state, action) => {
+        const preset = action.payload;
+        state.presets[preset.name] = preset as any;
+      })
+      .addCase(registerPreset.rejected, (state, action) => {
+        state.error = action.error.message || '註冊預設動畫失敗';
+      })
+
+      // 動畫事件處理
+      .addCase(animationStarted.fulfilled, (state, action) => {
+        // 可以根據需要處理動畫開始事件
+        console.log('動畫開始:', action.payload);
+      })
+      .addCase(animationEnded.fulfilled, (state, action) => {
+        // 可以根據需要處理動畫結束事件
+        console.log('動畫結束:', action.payload);
+      })
+      .addCase(animationPaused.fulfilled, (state, action) => {
+        // 可以根據需要處理動畫暫停事件
+        console.log('動畫暫停:', action.payload);
+      })
+      .addCase(animationStopped.fulfilled, (state, action) => {
+        // 可以根據需要處理動畫停止事件
+        console.log('動畫停止:', action.payload);
+      })
+      .addCase(preferencesChanged.fulfilled, (state, action) => {
+        // 可以根據需要處理偏好設置變化事件
+        console.log('偏好設置變化:', action.payload);
+      });
+  },
+});
+
+// 導出 Actions
+export const {
+  setError,
+  clearError,
+  updatePerformanceMetrics,
+  setGlobalConfig,
+  setAnimationState,
+  removeAnimation,
+  playAllAnimations,
+  pauseAllAnimations,
+  stopAllAnimations,
+} = animationSlice.actions;
+
+// 導出 Selectors
+export const selectAnimationState = (state: { animation: AnimationState }) =>
+  state.animation;
+export const selectAnimations = (state: { animation: AnimationState }) =>
+  state.animation.animations;
+export const selectPreferences = (state: { animation: AnimationState }) =>
+  state.animation.preferences;
+export const selectPerformanceMetrics = (state: {
+  animation: AnimationState;
+}) => state.animation.performanceMonitoring.metrics;
+export const selectPresets = (state: { animation: AnimationState }) =>
+  state.animation.presets;
+export const selectGlobalConfig = (state: { animation: AnimationState }) =>
+  state.animation.globalConfig;
+export const selectIsInitialized = (state: { animation: AnimationState }) =>
+  state.animation.isInitialized;
+export const selectError = (state: { animation: AnimationState }) =>
+  state.animation.error;
+
+// 導出 Reducer
+export default animationSlice.reducer;

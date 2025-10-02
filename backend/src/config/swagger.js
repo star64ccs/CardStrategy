@@ -174,7 +174,7 @@ const options = {
           type: 'object',
           properties: {
             success: { type: 'boolean', example: false },
-            message: { type: 'string', example: '錯誤描述' },
+            message: { type: 'string', example: 'Error描述' },
             code: { type: 'string', example: 'ERROR_CODE' },
             errors: {
               type: 'array',
@@ -192,7 +192,7 @@ const options = {
           type: 'object',
           properties: {
             success: { type: 'boolean', example: true },
-            message: { type: 'string', example: '操作成功' },
+            message: { type: 'string', example: '操作Success' },
             data: { type: 'object' },
           },
         },

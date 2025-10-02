@@ -1,6 +1,6 @@
 /**
- * 智能搜索初始化優化服務測試
- * 測試 TD-010: 優化智能搜索初始化
+ * 智能SearchInitialize優化ServiceTest
+ * Test TD-010: 優化智能SearchInitialize
  */
 
 import type { IntelligentSearchInitializationOptimizationConfig } from '../../services/intelligentSearchInitializationOptimizationService';
@@ -38,7 +38,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功初始化服務', async () => {
+    test('應該SuccessInitializeService', async () => {
       const _result = await service.initialize();
       expect(result).toBe(true);
     });
@@ -72,7 +72,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
       await service.initialize();
     });
 
-    test('應該優化智能搜索服務初始化', async () => {
+    test('應該優化智能搜索ServiceInitialize', async () => {
       const _result = await service.optimizeInitialization();
 
       expect(result).toMatchObject({
@@ -100,9 +100,9 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
       expect(result.failedComponents.length).toBeGreaterThanOrEqual(0);
     });
 
-    test('應該處理初始化失敗情況', async () => {
-      // 模擬失敗情況
-      jest.spyOn(Math, 'random').mockReturnValue(0.9); // 增加失敗概率
+    test('應該HandleInitializeFailed情況', async () => {
+      // 模擬Failed情況
+      jest.spyOn(Math, 'random').mockReturnValue(0.9); // 增加Failed概率
 
       const _result = await service.optimizeInitialization();
 
@@ -315,7 +315,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
         };
 
       service.updateConfig(newConfig);
-      // 配置更新應該成功，沒有錯誤拋出
+      // ConfigureUpdate應該Success，沒有ErrorThrow
       expect(true).toBe(true);
     });
   });
@@ -325,10 +325,10 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
       await service.initialize();
     });
 
-    test('應該重置服務', async () => {
+    test('應該重置Service', async () => {
       await service.reset();
 
-      // 重置後應該能夠重新初始化
+      // Reset後應該能夠ReInitialize
       const _result = await service.initialize();
       expect(result).toBe(true);
     });
@@ -392,7 +392,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     test('應該在合理時間內完成相關性優化', async () => {
@@ -403,7 +403,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     test('應該在合理時間內完成算法配置優化', async () => {
@@ -414,7 +414,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     test('應該在合理時間內完成測試覆蓋優化', async () => {
@@ -425,7 +425,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 
@@ -435,25 +435,25 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
     });
 
     test('應該支持完整優化流程', async () => {
-      // 執行所有優化步驟
+      // 執Row所有優化步驟
       const _initializationResult = await service.optimizeInitialization();
       const _relevanceResult = await service.optimizeRelevance();
       const _algorithmResult = await service.optimizeAlgorithmConfiguration();
       const _testCoverageResult = await service.optimizeTestCoverage();
 
-      // 驗證所有結果
+      // Verify所有結果
       expect(initializationResult.initializationStatus).toBeDefined();
       expect(relevanceResult.overallRelevance).toBeGreaterThan(0);
       expect(algorithmResult.configurationScore).toBeGreaterThan(0);
       expect(testCoverageResult.coverageScore).toBeGreaterThan(0);
 
-      // 獲取最終指標
+      // Get最終指標
       const _metrics = service.getOptimizationMetrics();
       expect(metrics).toBeDefined();
     });
 
     test('應該處理連續優化操作', async () => {
-      // 連續執行多次優化
+      // 連續執Row多次優化
       const _results = [];
 
       for (let i = 0; i < 3; i++) {
@@ -469,7 +469,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
     });
 
     test('應該在優化後更新指標', async () => {
-      // 重置服務以確保初始狀態
+      // ResetService以確保初始Status
       await service.reset();
       await service.initialize();
 
@@ -480,7 +480,7 @@ describe('IntelligentSearchInitializationOptimizationService', () => {
 
       const _updatedMetrics = service.getOptimizationMetrics();
 
-      // 檢查特定指標是否有變化
+      // CheckSpecific指標YesNo有變化
       expect(updatedMetrics.initialization.initializationTime).toBeGreaterThan(
         0
       );

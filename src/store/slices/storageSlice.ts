@@ -15,26 +15,26 @@ import {
   StorageLayer,
 } from '../../features/storage/types/storage';
 
-// 狀態接口
+// StatusInterface
 interface StorageState {
-  // 服務狀態
+  // ServiceStatus
   isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
 
-  // 存儲配置
+  // StorageConfigure
   currentStrategy: StorageStrategy;
   autoOptimize: boolean;
 
-  // 統計數據
+  // 統Count據
   stats: StorageStats | null;
   performanceReport: unknown | null;
 
-  // 查詢結果
+  // Query結果
   queryResults: StorageItem[];
   queryLoading: boolean;
 
-  // 操作狀態
+  // OperationStatus
   lastOperation: {
     type: string;
     key: string;
@@ -42,12 +42,12 @@ interface StorageState {
     timestamp: Date;
   } | null;
 
-  // 推薦配置
+  // 推薦Configure
   recommendations: string[];
   predictedNeeds: unknown | null;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: StorageState = {
   isInitialized: false,
   isLoading: false,
@@ -63,10 +63,10 @@ const initialState: StorageState = {
   predictedNeeds: null,
 };
 
-// 異步操作
+// AsyncOperation
 
 /**
- * 初始化存儲服務
+ * InitializeStorageService
  */
 export const _initializeStorageService = createAsyncThunk(
   'storage/initializeService',
@@ -78,7 +78,7 @@ export const _initializeStorageService = createAsyncThunk(
     const _strategySuccess = await strategyManager.initialize(config?.adaptive);
 
     if (!storageSuccess || !strategySuccess) {
-      throw new Error('存儲服務初始化失敗');
+      throw new Error('存儲ServiceInitializeFailed');
     }
 
     return {
@@ -89,7 +89,7 @@ export const _initializeStorageService = createAsyncThunk(
 );
 
 /**
- * 設置數據
+ * SettingsData
  */
 export const _setStorageData = createAsyncThunk(
   'storage/setData',
@@ -106,7 +106,7 @@ export const _setStorageData = createAsyncThunk(
     const _result = await storageService.set(key, data, options);
 
     if (!result.success) {
-      throw new Error(result.error || '數據存儲失敗');
+      throw new Error(result.error || '數據存儲Failed');
     }
 
     return { key, success: true };
@@ -114,7 +114,7 @@ export const _setStorageData = createAsyncThunk(
 );
 
 /**
- * 獲取數據
+ * GetData
  */
 export const _getStorageData = createAsyncThunk(
   'storage/getData',
@@ -127,7 +127,7 @@ export const _getStorageData = createAsyncThunk(
 );
 
 /**
- * 刪除數據
+ * DeleteData
  */
 export const _deleteStorageData = createAsyncThunk(
   'storage/deleteData',
@@ -136,7 +136,7 @@ export const _deleteStorageData = createAsyncThunk(
     const _result = await storageService.delete(key);
 
     if (!result.success) {
-      throw new Error(result.error || '數據刪除失敗');
+      throw new Error(result.error || '數據DeleteFailed');
     }
 
     return { key, success: true };
@@ -144,7 +144,7 @@ export const _deleteStorageData = createAsyncThunk(
 );
 
 /**
- * 查詢數據
+ * QueryData
  */
 export const _queryStorageData = createAsyncThunk(
   'storage/queryData',
@@ -157,7 +157,7 @@ export const _queryStorageData = createAsyncThunk(
 );
 
 /**
- * 獲取存儲統計
+ * GetStorageStatistics
  */
 export const _getStorageStats = createAsyncThunk(
   'storage/getStats',
@@ -170,7 +170,7 @@ export const _getStorageStats = createAsyncThunk(
 );
 
 /**
- * 手動同步
+ * ManualSync
  */
 export const _syncStorageData = createAsyncThunk(
   'storage/syncData',
@@ -183,7 +183,7 @@ export const _syncStorageData = createAsyncThunk(
 );
 
 /**
- * 清理存儲
+ * 清理Storage
  */
 export const _cleanupStorage = createAsyncThunk('storage/cleanup', async () => {
   const _storageService = MultiLayerStorageService.getInstance();
@@ -193,7 +193,7 @@ export const _cleanupStorage = createAsyncThunk('storage/cleanup', async () => {
 });
 
 /**
- * 設置存儲策略
+ * SettingsStorage策略
  */
 export const _setStorageStrategy = createAsyncThunk(
   'storage/setStrategy',
@@ -202,7 +202,7 @@ export const _setStorageStrategy = createAsyncThunk(
     const _success = await strategyManager.setStrategy(strategy);
 
     if (!success) {
-      throw new Error('設置存儲策略失敗');
+      throw new Error('Settings存儲策略Failed');
     }
 
     return { strategy, success };
@@ -210,7 +210,7 @@ export const _setStorageStrategy = createAsyncThunk(
 );
 
 /**
- * 優化存儲策略
+ * 優化Storage策略
  */
 export const _optimizeStorageStrategy = createAsyncThunk(
   'storage/optimizeStrategy',
@@ -219,7 +219,7 @@ export const _optimizeStorageStrategy = createAsyncThunk(
     const _success = await strategyManager.optimizeStrategy();
 
     if (!success) {
-      throw new Error('優化存儲策略失敗');
+      throw new Error('優化存儲策略Failed');
     }
 
     const _currentStrategy = strategyManager.getCurrentStrategy();
@@ -228,7 +228,7 @@ export const _optimizeStorageStrategy = createAsyncThunk(
 );
 
 /**
- * 獲取性能報告
+ * Get性能Report
  */
 export const _getPerformanceReport = createAsyncThunk(
   'storage/getPerformanceReport',
@@ -241,7 +241,7 @@ export const _getPerformanceReport = createAsyncThunk(
 );
 
 /**
- * 獲取存儲建議
+ * GetStorage建議
  */
 export const _getStorageRecommendations = createAsyncThunk(
   'storage/getRecommendations',
@@ -264,12 +264,12 @@ export const _getStorageRecommendations = createAsyncThunk(
       isTemporary
     );
 
-    return { options, recommendations: [] }; // 可以添加更多建議邏輯
+    return { options, recommendations: [] }; // 可以Add更多建議邏輯
   }
 );
 
 /**
- * 預測存儲需求
+ * 預測Storage需求
  */
 export const _predictStorageNeeds = createAsyncThunk(
   'storage/predictNeeds',
@@ -282,7 +282,7 @@ export const _predictStorageNeeds = createAsyncThunk(
 );
 
 /**
- * 銷毀存儲服務
+ * 銷毀StorageService
  */
 export const _destroyStorageService = createAsyncThunk(
   'storage/destroyService',
@@ -297,33 +297,33 @@ export const _destroyStorageService = createAsyncThunk(
   }
 );
 
-// 創建 slice
+// Create slice
 const _storageSlice = createSlice({
   name: 'storage',
   initialState,
   reducers: {
-    // 重置狀態
+    // ResetStatus
     resetStorageState: state => {
       return { ...initialState };
     },
 
-    // 設置錯誤
+    // SettingsError
     setStorageError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
       state.isLoading = false;
     },
 
-    // 清除錯誤
+    // ClearError
     clearStorageError: state => {
       state.error = null;
     },
 
-    // 設置自動優化
+    // SettingsAuto優化
     setAutoOptimize: (state, action: PayloadAction<boolean>) => {
       state.autoOptimize = action.payload;
     },
 
-    // 更新最後操作
+    // Update最後Operation
     updateLastOperation: (
       state,
       action: PayloadAction<{
@@ -338,26 +338,26 @@ const _storageSlice = createSlice({
       };
     },
 
-    // 清除查詢結果
+    // ClearQuery結果
     clearQueryResults: state => {
       state.queryResults = [];
       state.queryLoading = false;
     },
 
-    // 添加推薦
+    // Add推薦
     addRecommendation: (state, action: PayloadAction<string>) => {
       if (!state.recommendations.includes(action.payload)) {
         state.recommendations.push(action.payload);
       }
     },
 
-    // 清除推薦
+    // Clear推薦
     clearRecommendations: state => {
       state.recommendations = [];
     },
   },
   extraReducers: builder => {
-    // 初始化存儲服務
+    // InitializeStorageService
     builder
       .addCase(initializeStorageService.pending, state => {
         state.isLoading = true;
@@ -370,10 +370,10 @@ const _storageSlice = createSlice({
       })
       .addCase(initializeStorageService.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
-    // 設置數據
+    // SettingsData
     builder
       .addCase(setStorageData.pending, state => {
         state.isLoading = true;
@@ -390,10 +390,10 @@ const _storageSlice = createSlice({
       })
       .addCase(setStorageData.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '數據存儲失敗';
+        state.error = action.error.message || '數據存儲Failed';
       });
 
-    // 獲取數據
+    // GetData
     builder
       .addCase(getStorageData.pending, state => {
         state.isLoading = true;
@@ -410,10 +410,10 @@ const _storageSlice = createSlice({
       })
       .addCase(getStorageData.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '數據獲取失敗';
+        state.error = action.error.message || '數據GetFailed';
       });
 
-    // 刪除數據
+    // DeleteData
     builder
       .addCase(deleteStorageData.pending, state => {
         state.isLoading = true;
@@ -430,10 +430,10 @@ const _storageSlice = createSlice({
       })
       .addCase(deleteStorageData.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '數據刪除失敗';
+        state.error = action.error.message || '數據DeleteFailed';
       });
 
-    // 查詢數據
+    // QueryData
     builder
       .addCase(queryStorageData.pending, state => {
         state.queryLoading = true;
@@ -445,19 +445,19 @@ const _storageSlice = createSlice({
       })
       .addCase(queryStorageData.rejected, (state, action) => {
         state.queryLoading = false;
-        state.error = action.error.message || '數據查詢失敗';
+        state.error = action.error.message || '數據查詢Failed';
       });
 
-    // 獲取統計
+    // GetStatistics
     builder
       .addCase(getStorageStats.fulfilled, (state, action) => {
         state.stats = action.payload;
       })
       .addCase(getStorageStats.rejected, (state, action) => {
-        state.error = action.error.message || '獲取統計失敗';
+        state.error = action.error.message || 'Get統計Failed';
       });
 
-    // 同步數據
+    // SyncData
     builder
       .addCase(syncStorageData.pending, state => {
         state.isLoading = true;
@@ -473,10 +473,10 @@ const _storageSlice = createSlice({
       })
       .addCase(syncStorageData.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '同步失敗';
+        state.error = action.error.message || '同步Failed';
       });
 
-    // 清理存儲
+    // 清理Storage
     builder
       .addCase(cleanupStorage.pending, state => {
         state.isLoading = true;
@@ -492,16 +492,16 @@ const _storageSlice = createSlice({
       })
       .addCase(cleanupStorage.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '清理失敗';
+        state.error = action.error.message || '清理Failed';
       });
 
-    // 設置策略
+    // Settings策略
     builder
       .addCase(setStorageStrategy.fulfilled, (state, action) => {
         state.currentStrategy = action.payload.strategy;
       })
       .addCase(setStorageStrategy.rejected, (state, action) => {
-        state.error = action.error.message || '設置策略失敗';
+        state.error = action.error.message || 'Settings策略Failed';
       });
 
     // 優化策略
@@ -510,26 +510,26 @@ const _storageSlice = createSlice({
         state.currentStrategy = action.payload.strategy;
       })
       .addCase(optimizeStorageStrategy.rejected, (state, action) => {
-        state.error = action.error.message || '優化策略失敗';
+        state.error = action.error.message || '優化策略Failed';
       });
 
-    // 性能報告
+    // 性能Report
     builder
       .addCase(getPerformanceReport.fulfilled, (state, action) => {
         state.performanceReport = action.payload;
         state.recommendations = action.payload.recommendations;
       })
       .addCase(getPerformanceReport.rejected, (state, action) => {
-        state.error = action.error.message || '獲取性能報告失敗';
+        state.error = action.error.message || 'Get性能報告Failed';
       });
 
-    // 存儲建議
+    // Storage建議
     builder
       .addCase(getStorageRecommendations.fulfilled, (state, action) => {
         state.recommendations = action.payload.recommendations;
       })
       .addCase(getStorageRecommendations.rejected, (state, action) => {
-        state.error = action.error.message || '獲取建議失敗';
+        state.error = action.error.message || 'Get建議Failed';
       });
 
     // 預測需求
@@ -538,21 +538,21 @@ const _storageSlice = createSlice({
         state.predictedNeeds = action.payload;
       })
       .addCase(predictStorageNeeds.rejected, (state, action) => {
-        state.error = action.error.message || '預測失敗';
+        state.error = action.error.message || '預測Failed';
       });
 
-    // 銷毀服務
+    // 銷毀Service
     builder
       .addCase(destroyStorageService.fulfilled, state => {
         return { ...initialState };
       })
       .addCase(destroyStorageService.rejected, (state, action) => {
-        state.error = action.error.message || '銷毀服務失敗';
+        state.error = action.error.message || '銷毀ServiceFailed';
       });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   resetStorageState,
   setStorageError,
@@ -564,7 +564,7 @@ export const {
   clearRecommendations,
 } = storageSlice.actions;
 
-// 選擇器
+// Select器
 export const _selectStorageState = (state: { storage: StorageState }) =>
   state.storage;
 export const _selectIsStorageInitialized = (state: { storage: StorageState }) =>
@@ -592,5 +592,5 @@ export const _selectPredictedNeeds = (state: { storage: StorageState }) =>
 export const _selectAutoOptimize = (state: { storage: StorageState }) =>
   state.storage.autoOptimize;
 
-// 導出 reducer
+// Export reducer
 export default storageSlice.reducer;

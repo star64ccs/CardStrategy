@@ -1,6 +1,6 @@
-// 預測分析類型定義
+// 預測AnalysisClass型定義
 
-// 預測模型類型
+// 預測模型Class型
 export type PredictionModelType =
   | 'linear_regression'
   | 'logistic_regression'
@@ -11,7 +11,7 @@ export type PredictionModelType =
   | 'clustering'
   | 'classification';
 
-// 預測目標類型
+// 預測目標Class型
 export type PredictionTarget =
   | 'price_movement'
   | 'demand_forecast'
@@ -22,7 +22,7 @@ export type PredictionTarget =
   | 'customer_churn'
   | 'inventory_optimization';
 
-// 預測模型配置
+// 預測模型Configure
 export interface PredictionModelConfig {
   modelType: PredictionModelType;
   target: PredictionTarget;
@@ -83,7 +83,7 @@ export interface PredictionModel {
   isActive: boolean;
 }
 
-// 預測數據
+// 預測Data
 export interface PredictionData {
   id: string;
   modelId: string;
@@ -94,7 +94,7 @@ export interface PredictionData {
   createdAt: Date;
 }
 
-// 預測過濾器
+// 預測Filter器
 export interface PredictionFilter {
   modelIds?: string[];
   targets?: PredictionTarget[];
@@ -107,7 +107,7 @@ export interface PredictionFilter {
   isActive?: boolean;
 }
 
-// 預測報告
+// 預測Report
 export interface PredictionReport {
   id: string;
   title: string;
@@ -168,7 +168,7 @@ export interface PredictionRecommendation {
   createdAt: Date;
 }
 
-// 預測警報
+// 預測Alert
 export interface PredictionAlert {
   id: string;
   modelId: string;
@@ -183,7 +183,7 @@ export interface PredictionAlert {
   resolvedAt?: Date;
 }
 
-// 預測分析響應
+// 預測AnalysisResponse
 export interface PredictiveAnalysisResponse {
   success: boolean;
   data: {
@@ -197,7 +197,7 @@ export interface PredictiveAnalysisResponse {
   error?: string;
 }
 
-// 預測分析配置
+// 預測AnalysisConfigure
 export interface PredictiveAnalysisConfig {
   autoRetrain: boolean;
   retrainThreshold: number;
@@ -215,7 +215,7 @@ export interface PredictiveAnalysisConfig {
   };
 }
 
-// 預測分析導出選項
+// 預測AnalysisExportOptions
 export interface PredictiveAnalysisExportOptions {
   format: 'json' | 'csv' | 'excel' | 'pdf';
   includePredictions: boolean;

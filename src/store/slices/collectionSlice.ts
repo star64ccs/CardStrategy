@@ -8,7 +8,7 @@ import type {
 } from '../../core/types';
 import { collectionService } from '../../shared/services/collectionService';
 
-// 異步 thunk
+// Async thunk
 export const _fetchCollections = createAsyncThunk(
   'collection/fetchCollections',
   async () => {
@@ -120,7 +120,7 @@ export const _getCollectionStatistics = createAsyncThunk(
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: CollectionState = {
   collections: [],
   selectedCollection: null,
@@ -211,7 +211,7 @@ const _collectionSlice = createSlice({
               ).cardId
             : '',
         recentAdditions: allCards.length,
-        completionRate: 0, // 需要根據實際邏輯計算
+        completionRate: 0, // 需要Root據實際邏輯計算
       };
     },
   },
@@ -307,12 +307,12 @@ const _collectionSlice = createSlice({
       })
       .addCase(addCardToCollection.fulfilled, (state, action) => {
         state.isLoading = false;
-        // 更新對應的收藏
+        // Update對應的收藏
         const _collection = state.collections.find(
           c => c.id === action.payload.collectionId
         );
         if (collection) {
-          // 將新的卡牌項目添加到 items 數組
+          // 將新的卡牌項目Add到 items Array
           const _newItem = {
             cardId: action.payload.cardId,
             quantity: action.payload.quantity,
@@ -331,7 +331,7 @@ const _collectionSlice = createSlice({
           state.selectedCollection &&
           state.selectedCollection.id === action.payload.collectionId
         ) {
-          // 同樣更新選中的收藏
+          // 同樣Update選中的收藏
           const _newItem = {
             cardId: action.payload.cardId,
             quantity: action.payload.quantity,
@@ -392,12 +392,12 @@ const _collectionSlice = createSlice({
       })
       .addCase(updateCardInCollection.fulfilled, (state, action) => {
         state.isLoading = false;
-        // 更新對應的收藏
+        // Update對應的收藏
         const _collection = state.collections.find(
           c => c.id === action.payload.collectionId
         );
         if (collection) {
-          // 更新 items 數組中的對應項目
+          // Update items Array中的對應項目
           const _itemIndex = collection.items.findIndex(
             item => item.cardId === action.payload.cardId
           );
@@ -406,7 +406,7 @@ const _collectionSlice = createSlice({
               ...collection.items[itemIndex],
               ...action.payload,
             };
-            // 確保 currentValue 有值
+            // 確保 currentValue 有Value
             if (updatedItem.currentValue === undefined) {
               updatedItem.currentValue =
                 collection.items[itemIndex].currentValue;
@@ -418,7 +418,7 @@ const _collectionSlice = createSlice({
           state.selectedCollection &&
           state.selectedCollection.id === action.payload.collectionId
         ) {
-          // 同樣更新選中的收藏
+          // 同樣Update選中的收藏
           const _itemIndex = state.selectedCollection.items.findIndex(
             item => item.cardId === action.payload.cardId
           );
@@ -427,7 +427,7 @@ const _collectionSlice = createSlice({
               ...state.selectedCollection.items[itemIndex],
               ...action.payload,
             };
-            // 確保 currentValue 有值
+            // 確保 currentValue 有Value
             if (updatedItem.currentValue === undefined) {
               updatedItem.currentValue =
                 state.selectedCollection.items[itemIndex].currentValue;

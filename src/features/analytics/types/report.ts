@@ -1,4 +1,4 @@
-// 報告系統類型定義
+// Report系統Class型定義
 export interface ReportTemplate {
   id: string;
   name: string;
@@ -352,7 +352,7 @@ export enum InsightType {
   RECOMMENDATION = 'recommendation',
 }
 
-// 輔助類型
+// 輔助Class型
 export interface DateRange {
   start: Date;
   end: Date;
@@ -456,7 +456,7 @@ export interface TableData {
   [key: string]: unknown;
 }
 
-// API 響應類型
+// API ResponseClass型
 export interface ReportResponse {
   success: boolean;
   data: ReportInstance;
@@ -501,7 +501,7 @@ export interface ReportAnalyticsResponse {
   timestamp: Date;
 }
 
-// 請求類型
+// RequestClass型
 export interface CreateReportRequest {
   templateId: string;
   name: string;

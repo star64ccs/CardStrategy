@@ -11,13 +11,13 @@ import type {
 } from '../types/animation';
 
 /**
- * 動畫服務類 - 單例模式
- * 負責管理所有動畫、性能優化、偏好設置等
+ * 動畫ServiceClass - 單例模式
+ * 負責Manage所有動畫、性能優化、PreferencesSettings等
  */
 export class AnimationService implements AnimationServiceInterface {
   private static instance: AnimationService;
 
-  // 動畫管理
+  // 動畫Manage
   private readonly animations: Map<
     string,
     {
@@ -28,13 +28,13 @@ export class AnimationService implements AnimationServiceInterface {
     }
   > = new Map();
 
-  // 事件監聽器
+  // Event監聽器
   private readonly eventListeners: Map<
     string,
     Set<(event: AnimationEvent) => void>
   > = new Map();
 
-  // 偏好設置
+  // PreferencesSettings
   private preferences: AnimationPreferences = {
     reducedMotion: false,
     prefersAnimation: true,
@@ -42,7 +42,7 @@ export class AnimationService implements AnimationServiceInterface {
     animationIntensity: 'normal',
   };
 
-  // 性能監控
+  // 性能Monitor
   private readonly performanceMonitoring = {
     enabled: false,
     metrics: {
@@ -57,17 +57,17 @@ export class AnimationService implements AnimationServiceInterface {
   // 預設動畫
   private readonly presets: Map<string, PresetAnimation> = new Map();
 
-  // 全局配置
+  // GlobalConfigure
   private readonly globalConfig: AnimationManagerConfig = {
     maxConcurrentAnimations: 10,
-    performanceThreshold: 30, // fps 閾值
+    performanceThreshold: 30, // fps 閾Value
     enablePerformanceMonitoring: true,
     enablePrefersReducedMotion: true,
     defaultEasing: 'ease-out',
     defaultDuration: 300,
   };
 
-  // 性能監控相關
+  // 性能Monitor相Off
   private readonly frameCount = 0;
   private lastFrameTime = 0;
   private readonly performanceObserver?: PerformanceObserver;
@@ -85,16 +85,16 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   private initializeService(): void {
-    // 檢測用戶偏好設置
+    // 檢測UserPreferencesSettings
     this.detectUserPreferences();
 
-    // 註冊預設動畫
+    // Register預設動畫
     this.registerDefaultPresets();
 
-    // 初始化性能監控
+    // Initialize性能Monitor
     if (this.globalConfig.enablePerformanceMonitoring) {
       this.enablePerformanceMonitoring(true);
     }
@@ -110,7 +110,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 檢測用戶偏好設置
+   * 檢測UserPreferencesSettings
    */
   private detectUserPreferences(): void {
     // 檢測 prefers-reduced-motion
@@ -152,7 +152,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 註冊預設動畫
+   * Register預設動畫
    */
   private registerDefaultPresets(): void {
     const defaultPresets: PresetAnimation[] = [
@@ -253,18 +253,18 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 創建動畫
+   * Create動畫
    */
   public createAnimation(config: AnimationConfig): string {
     const _id = `animation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // 檢查是否超過最大動畫數量
+    // CheckYesNo超過最大動畫數量
     if (this.animations.size >= this.globalConfig.maxConcurrentAnimations) {
       console.warn('達到最大動畫數量限制，將停止最舊的動畫');
       this.stopOldestAnimation();
     }
 
-    // 應用偏好設置
+    // ApplyPreferencesSettings
     const _finalConfig = this.applyPreferences(config);
 
     this.animations.set(id, {
@@ -297,7 +297,7 @@ export class AnimationService implements AnimationServiceInterface {
       throw new Error(`動畫 ${id} 不存在`);
     }
 
-    // 檢查是否應該播放動畫
+    // CheckYesNo應該播放動畫
     if (
       this.preferences.reducedMotion &&
       animation.config.respectMotionPreference
@@ -349,13 +349,13 @@ export class AnimationService implements AnimationServiceInterface {
         });
       }
     } catch (error) {
-      console.error('播放動畫失敗:', error);
+      console.error('播放動畫Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 暫停動畫
+   * Pause動畫
    */
   public pauseAnimation(id: string): void {
     const _animation = this.animations.get(id);
@@ -377,7 +377,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 停止動畫
+   * Stop動畫
    */
   public stopAnimation(id: string): void {
     const _animation = this.animations.get(id);
@@ -411,21 +411,21 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 暫停所有動畫
+   * Pause所有動畫
    */
   public pauseAll(): void {
     this.animations.forEach((_, id) => this.pauseAnimation(id));
   }
 
   /**
-   * 停止所有動畫
+   * Stop所有動畫
    */
   public stopAll(): void {
     this.animations.forEach((_, id) => this.stopAnimation(id));
   }
 
   /**
-   * 更新動畫配置
+   * Update動畫Configure
    */
   public updateConfig(id: string, config: Partial<AnimationConfig>): void {
     const _animation = this.animations.get(id);
@@ -436,7 +436,7 @@ export class AnimationService implements AnimationServiceInterface {
     const _updatedConfig = { ...animation.config, ...config };
     animation.config = this.applyPreferences(updatedConfig);
 
-    // 如果動畫正在播放，重新啟動
+    // 如果動畫正在播放，ReStart
     if ((animation.state as any).isPlaying) {
       this.stopAnimation(id);
       this.playAnimation(id);
@@ -444,7 +444,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 獲取動畫配置
+   * Get動畫Configure
    */
   public getConfig(id: string): AnimationConfig | null {
     const _animation = this.animations.get(id);
@@ -452,14 +452,14 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 獲取性能指標
+   * Get性能指標
    */
   public getPerformance(): AnimationPerformance {
     return this.performanceMonitoring.metrics;
   }
 
   /**
-   * 啟用性能監控
+   * Enable性能Monitor
    */
   public enablePerformanceMonitoring(enabled: boolean): void {
     this.performanceMonitoring.enabled = enabled;
@@ -472,12 +472,12 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 更新偏好設置
+   * UpdatePreferencesSettings
    */
   public updatePreferences(preferences: Partial<AnimationPreferences>): void {
     this.preferences = { ...this.preferences, ...preferences };
 
-    // 重新應用所有動畫的偏好設置
+    // ReApply所有動畫的PreferencesSettings
     this.animations.forEach((animation, id) => {
       animation.config = this.applyPreferences(animation.config);
     });
@@ -490,35 +490,35 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 獲取偏好設置
+   * GetPreferencesSettings
    */
   public getPreferences(): AnimationPreferences {
     return { ...this.preferences };
   }
 
   /**
-   * 註冊預設動畫
+   * Register預設動畫
    */
   public registerPreset(preset: PresetAnimation): void {
     this.presets.set(preset.name, preset);
   }
 
   /**
-   * 獲取預設動畫
+   * Get預設動畫
    */
   public getPreset(name: string): PresetAnimation | null {
     return this.presets.get(name) || null;
   }
 
   /**
-   * 獲取所有預設動畫
+   * Get所有預設動畫
    */
   public getAllPresets(): PresetAnimation[] {
     return Array.from(this.presets.values());
   }
 
   /**
-   * 事件監聽
+   * Event監聽
    */
   public on(event: string, callback: (event: AnimationEvent) => void): void {
     if (!this.eventListeners.has(event)) {
@@ -528,7 +528,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 移除事件監聽
+   * RemoveEvent監聽
    */
   public off(event: string, callback: (event: AnimationEvent) => void): void {
     const _listeners = this.eventListeners.get(event);
@@ -538,7 +538,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public destroy(): void {
     this.stopAll();
@@ -549,7 +549,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 應用偏好設置到動畫配置
+   * ApplyPreferencesSettings到動畫Configure
    */
   private applyPreferences(config: AnimationConfig): AnimationConfig {
     const _newConfig = { ...config };
@@ -559,7 +559,7 @@ export class AnimationService implements AnimationServiceInterface {
       newConfig.easing = 'linear';
     }
 
-    // 根據用戶偏好調整動畫強度
+    // Root據UserPreferences調整動畫強度
     switch (this.preferences.animationIntensity) {
       case 'minimal':
         newConfig.duration = Math.min(config.duration, 200);
@@ -573,11 +573,11 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 生成關鍵幀
+   * 生成OffKey幀
    */
   private generateKeyframes(config: AnimationConfig): Keyframe[] {
-    // 這裡可以根據配置生成具體的關鍵幀
-    // 簡化實現，返回基本的關鍵幀
+    // 這裡可以Root據Configure生成Concrete的OffKey幀
+    // 簡化實現，Return基本的OffKey幀
     return [
       { offset: 0, properties: { opacity: 0, transform: 'translateY(20px)' } },
       { offset: 1, properties: { opacity: 1, transform: 'translateY(0)' } },
@@ -585,7 +585,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 生成動畫選項
+   * 生成動畫Options
    */
   private generateAnimationOptions(
     config: AnimationConfig
@@ -601,7 +601,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 停止最舊的動畫
+   * Stop最舊的動畫
    */
   private stopOldestAnimation(): void {
     const _oldestId = this.animations.keys().next().value;
@@ -612,7 +612,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 開始性能監控
+   * Begin性能Monitor
    */
   private startPerformanceMonitoring(): void {
     this.lastFrameTime = performance.now();
@@ -622,7 +622,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 停止性能監控
+   * Stop性能Monitor
    */
   private stopPerformanceMonitoring(): void {
     if (this.animationFrameId) {
@@ -632,7 +632,7 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 監控性能
+   * Monitor性能
    */
   private monitorPerformance(currentTime: number): void {
     if (!this.performanceMonitoring.enabled) return;
@@ -654,25 +654,25 @@ export class AnimationService implements AnimationServiceInterface {
   }
 
   /**
-   * 處理頁面可見性變化
+   * Handle頁面可見性變化
    */
   private handleVisibilityChange(): void {
     if (document.hidden) {
       this.pauseAll();
     } else {
-      // 頁面重新可見時，可以選擇是否恢復動畫
+      // 頁面Re可見時，可以SelectYesNoRestore動畫
     }
   }
 
   /**
-   * 處理窗口大小變化
+   * Handle窗口大小變化
    */
   private handleResize(): void {
-    // 可以根據窗口大小調整動畫參數
+    // 可以Root據窗口大小調整動畫Parameter
   }
 
   /**
-   * 發送事件
+   * SendEvent
    */
   private emit(event: string, data: AnimationEvent): void {
     const _listeners = this.eventListeners.get(event);
@@ -681,12 +681,12 @@ export class AnimationService implements AnimationServiceInterface {
         try {
           callback(data);
         } catch (error) {
-          console.error('事件回調執行失敗:', error);
+          console.error('事件回調執行Failed:', error);
         }
       });
     }
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _animationService = AnimationService.getInstance();

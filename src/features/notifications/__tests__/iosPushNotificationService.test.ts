@@ -27,12 +27,12 @@ describe('IOSPushNotificationService', () => {
   let testConfig: IOSPushNotificationConfig;
 
   beforeEach(() => {
-    // 重置單例
+    // Reset單例
     (IOSPushNotificationService as any).instance = null;
     iosPushService = IOSPushNotificationService.getInstance();
     jest.clearAllMocks();
 
-    // 測試配置
+    // TestConfigure
     testConfig = {
       apnsKeyId: 'test_key_id',
       apnsTeamId: 'test_team_id',
@@ -54,13 +54,13 @@ describe('IOSPushNotificationService', () => {
     });
   });
 
-  describe('服務初始化', () => {
+  describe('ServiceInitialize', () => {
     it('應該在 iOS 平台上正確初始化', () => {
       expect(Platform.OS).toBe('ios');
-      expect(iosPushService.isServiceReady()).toBe(false); // 需要配置後才就緒
+      expect(iosPushService.isServiceReady()).toBe(false); // 需要Configure後才就緒
     });
 
-    it('應該提供服務信息', () => {
+    it('應該提供ServiceInformation', () => {
       const _serviceInfo = iosPushService.getServiceInfo();
 
       expect(serviceInfo).toHaveProperty('isInitialized');
@@ -79,7 +79,7 @@ describe('IOSPushNotificationService', () => {
   });
 
   describe('configure', () => {
-    it('應該正確配置推送通知服務', () => {
+    it('應該正確Configure推送通知Service', () => {
       iosPushService.configure(testConfig);
 
       const _serviceInfo = iosPushService.getServiceInfo();
@@ -90,7 +90,7 @@ describe('IOSPushNotificationService', () => {
   });
 
   describe('requestPermissions', () => {
-    it('應該成功請求推送權限', async () => {
+    it('應該Success請求推送權限', async () => {
       iosPushService.configure(testConfig);
 
       const _result = await iosPushService.requestPermissions();
@@ -99,8 +99,8 @@ describe('IOSPushNotificationService', () => {
       expect([true, false]).toContain(result);
     });
 
-    it('應該處理權限請求失敗', async () => {
-      // 創建一個新的未配置實例來測試錯誤處理
+    it('應該Handle權限請求Failed', async () => {
+      // Create一個新的未ConfigureInstance來TestErrorHandle
       const _newService = new (IOSPushNotificationService as any)();
       (newService as any).isInitialized = false;
       (newService as any).pushLib = null;
@@ -113,7 +113,7 @@ describe('IOSPushNotificationService', () => {
   });
 
   describe('registerForRemoteNotifications', () => {
-    it('應該成功註冊遠程推送', async () => {
+    it('應該Success註冊遠程推送', async () => {
       iosPushService.configure(testConfig);
 
       const _result = await iosPushService.registerForRemoteNotifications();
@@ -122,8 +122,8 @@ describe('IOSPushNotificationService', () => {
       expect([true, false]).toContain(result);
     });
 
-    it('應該處理註冊失敗', async () => {
-      // 創建一個新的未配置實例來測試錯誤處理
+    it('應該Handle註冊Failed', async () => {
+      // Create一個新的未ConfigureInstance來TestErrorHandle
       const _newService = new (IOSPushNotificationService as any)();
       (newService as any).isInitialized = false;
       (newService as any).pushLib = null;
@@ -136,7 +136,7 @@ describe('IOSPushNotificationService', () => {
   });
 
   describe('unregisterForRemoteNotifications', () => {
-    it('應該成功取消註冊遠程推送', async () => {
+    it('應該Success取消註冊遠程推送', async () => {
       iosPushService.configure(testConfig);
 
       const _result = await iosPushService.unregisterForRemoteNotifications();
@@ -151,7 +151,7 @@ describe('IOSPushNotificationService', () => {
       iosPushService.configure(testConfig);
     });
 
-    it('應該成功發送推送通知', async () => {
+    it('應該Success發送推送通知', async () => {
       const _deviceToken = 'ios_device_token_test_123456789';
       const payload: IOSPushNotificationPayload = {
         aps: {
@@ -205,8 +205,8 @@ describe('IOSPushNotificationService', () => {
       expect(result.errorCode).toBe('invalid_token');
     });
 
-    it('應該處理發送失敗', async () => {
-      // 多次嘗試以增加失敗機會
+    it('應該Handle發送Failed', async () => {
+      // 多次嘗試以增加Failed機會
       const _deviceToken = 'ios_device_token_test_123456789';
       const payload: IOSPushNotificationPayload = {
         aps: {
@@ -238,7 +238,7 @@ describe('IOSPushNotificationService', () => {
       iosPushService.configure(testConfig);
     });
 
-    it('應該成功批量發送推送通知', async () => {
+    it('應該Success批量發送推送通知', async () => {
       const _deviceTokens = [
         'ios_device_token_test_1',
         'ios_device_token_test_2',
@@ -268,8 +268,8 @@ describe('IOSPushNotificationService', () => {
       });
     });
 
-    it('應該處理批量發送失敗', async () => {
-      // 創建一個新的未配置實例來測試錯誤處理
+    it('應該Handle批量發送Failed', async () => {
+      // Create一個新的未ConfigureInstance來TestErrorHandle
       const _newService = new (IOSPushNotificationService as any)();
       (newService as any).isInitialized = false;
       (newService as any).pushLib = null;
@@ -300,7 +300,7 @@ describe('IOSPushNotificationService', () => {
   });
 
   describe('sendLocalNotification', () => {
-    it('應該成功發送本地推送通知', async () => {
+    it('應該Success發送本地推送通知', async () => {
       const _title = '本地通知標題';
       const _body = '本地通知內容';
       const _options = {
@@ -324,7 +324,7 @@ describe('IOSPushNotificationService', () => {
     it('應該返回設備令牌信息', () => {
       const _deviceToken = iosPushService.getDeviceToken();
 
-      // 初始狀態應該為 null
+      // 初始Status應該為 null
       expect(deviceToken).toBeNull();
     });
   });
@@ -377,12 +377,12 @@ describe('IOSPushNotificationService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該正確處理服務未初始化的情況', async () => {
-      // 創建一個新的實例來測試錯誤處理
+  describe('ErrorHandle', () => {
+    it('應該正確HandleService未Initialize的情況', async () => {
+      // Create一個新的Instance來TestErrorHandle
       const _newService = new (IOSPushNotificationService as any)();
 
-      // 等待初始化完成，然後強制設置為未初始化狀態
+      // AwaitInitializeComplete，然後ForceSettings為未InitializeStatus
       await new Promise(resolve => setTimeout(resolve, 100));
       (newService as any).isInitialized = false;
       (newService as any).pushLib = null;
@@ -434,7 +434,7 @@ describe('IOSPushNotificationService', () => {
     it('應該支持推送通知統計', async () => {
       iosPushService.configure(testConfig);
 
-      // 發送一些測試通知來生成統計
+      // Send一些TestNotification來生成Statistics
       const _deviceToken = 'ios_device_token_test_123456789';
       const payload: IOSPushNotificationPayload = {
         aps: {
@@ -471,7 +471,7 @@ describe('IOSPushNotificationService', () => {
       const _endTime = Date.now();
       const _processingTime = endTime - startTime;
 
-      // 應該在合理時間內完成
+      // 應該在合理Time內Complete
       expect(processingTime).toBeLessThan(2000);
     });
 
@@ -497,22 +497,22 @@ describe('IOSPushNotificationService', () => {
       const _endTime = Date.now();
       const _processingTime = endTime - startTime;
 
-      // 應該在合理時間內完成
+      // 應該在合理Time內Complete
       expect(processingTime).toBeLessThan(5000);
     });
   });
 
-  describe('服務狀態', () => {
-    it('應該正確報告服務就緒狀態', () => {
-      // 初始狀態
+  describe('Service狀態', () => {
+    it('應該正確報告Service就緒狀態', () => {
+      // 初始Status
       expect(iosPushService.isServiceReady()).toBe(false);
 
-      // 配置後
+      // Configure後
       iosPushService.configure(testConfig);
       expect(iosPushService.isServiceReady()).toBe(true);
     });
 
-    it('應該提供完整的服務信息', () => {
+    it('應該提供完整的ServiceInformation', () => {
       iosPushService.configure(testConfig);
 
       const _serviceInfo = iosPushService.getServiceInfo();

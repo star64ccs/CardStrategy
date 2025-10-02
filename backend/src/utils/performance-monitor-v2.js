@@ -36,10 +36,10 @@ class PerformanceMonitorV2 {
 
     this.startTime = Date.now();
     this.monitoringInterval = null;
-    this.maxResponseTimes = 1000; // 保留最近1000個響應時間
+    this.maxResponseTimes = 1000; // 保留最近1000個ResponseTime
   }
 
-  // 開始監控
+  // BeginMonitor
   startMonitoring(intervalMs = 30000) {
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
@@ -54,7 +54,7 @@ class PerformanceMonitorV2 {
     console.log(`🚀 性能監控已啟動 (間隔: ${intervalMs}ms)`);
   }
 
-  // 停止監控
+  // StopMonitor
   stopMonitoring() {
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
@@ -64,13 +64,13 @@ class PerformanceMonitorV2 {
     }
   }
 
-  // 記錄請求
+  // RecordRequest
   recordRequest(req, res, next) {
     const startTime = performance.now();
     const originalSend = res.send;
     const originalJson = res.json;
 
-    // 攔截響應
+    // 攔截Response
     res.send = function (data) {
       const endTime = performance.now();
       const duration = endTime - startTime;
@@ -84,7 +84,7 @@ class PerformanceMonitorV2 {
         this.metrics.requests.failed++;
       }
 
-      // 更新平均響應時間
+      // Update平均ResponseTime
       this.updateAverageResponseTime();
 
       return originalSend.call(this, data);
@@ -111,7 +111,7 @@ class PerformanceMonitorV2 {
     next();
   }
 
-  // 記錄錯誤
+  // RecordError
   recordError(error, req) {
     this.metrics.errors.total++;
 
@@ -129,27 +129,27 @@ class PerformanceMonitorV2 {
       method: req?.method,
     });
 
-    // 只保留最近100個錯誤
+    // 只保留最近100個Error
     if (this.metrics.errors.recent.length > 100) {
       this.metrics.errors.recent = this.metrics.errors.recent.slice(-100);
     }
   }
 
-  // 記錄數據庫查詢
+  // RecordDatabaseQuery
   recordDatabaseQuery(duration, isSlow = false) {
     this.metrics.database.queries++;
     if (isSlow) {
       this.metrics.database.slowQueries++;
     }
 
-    // 更新平均查詢時間
+    // Update平均QueryTime
     const currentAvg = this.metrics.database.avgQueryTime;
     const totalQueries = this.metrics.database.queries;
     this.metrics.database.avgQueryTime =
       (currentAvg * (totalQueries - 1) + duration) / totalQueries;
   }
 
-  // 記錄緩存操作
+  // RecordCacheOperation
   recordCacheOperation(isHit) {
     if (isHit) {
       this.metrics.cache.hits++;
@@ -162,7 +162,7 @@ class PerformanceMonitorV2 {
       total > 0 ? (this.metrics.cache.hits / total) * 100 : 0;
   }
 
-  // 更新系統指標
+  // Update系統指標
   updateSystemMetrics() {
     const cpus = os.cpus();
     const totalCPU = cpus.reduce((acc, cpu) => {
@@ -178,7 +178,7 @@ class PerformanceMonitorV2 {
     this.metrics.system.loadAverage = os.loadavg();
   }
 
-  // 更新平均響應時間
+  // Update平均ResponseTime
   updateAverageResponseTime() {
     const times = this.metrics.requests.responseTimes;
     if (times.length > 0) {
@@ -187,16 +187,16 @@ class PerformanceMonitorV2 {
     }
   }
 
-  // 清理舊數據
+  // 清理舊Data
   cleanupOldData() {
-    // 限制響應時間數組大小
+    // LimitResponseTimeArray大小
     if (this.metrics.requests.responseTimes.length > this.maxResponseTimes) {
       this.metrics.requests.responseTimes =
         this.metrics.requests.responseTimes.slice(-this.maxResponseTimes);
     }
   }
 
-  // 獲取性能指標
+  // Get性能指標
   getMetrics() {
     return {
       ...this.metrics,
@@ -205,7 +205,7 @@ class PerformanceMonitorV2 {
     };
   }
 
-  // 獲取健康狀態
+  // Get健康Status
   getHealthStatus() {
     const cpuThreshold = 80;
     const memoryThreshold = 85;
@@ -223,7 +223,7 @@ class PerformanceMonitorV2 {
     }
 
     if (this.metrics.errors.total > errorThreshold) {
-      issues.push(`錯誤數量過多: ${this.metrics.errors.total}`);
+      issues.push(`Error數量過多: ${this.metrics.errors.total}`);
     }
 
     return {
@@ -233,7 +233,7 @@ class PerformanceMonitorV2 {
     };
   }
 
-  // 重置指標
+  // Reset指標
   resetMetrics() {
     this.metrics = {
       requests: {
@@ -270,7 +270,7 @@ class PerformanceMonitorV2 {
     console.log('🔄 性能指標已重置');
   }
 
-  // 導出指標到文件
+  // Export指標到File
   exportMetrics() {
     const metrics = this.getMetrics();
 // eslint-disable-next-line no-unused-vars
@@ -293,7 +293,7 @@ class PerformanceMonitorV2 {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 const performanceMonitor = new PerformanceMonitorV2();
 
 module.exports = performanceMonitor;

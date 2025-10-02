@@ -1,4 +1,4 @@
-// 圖表 Hook
+// GraphTable Hook
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -49,9 +49,9 @@ import type {
   ChartUpdateRequest,
 } from '../types/chart';
 
-// 圖表 Hook 接口
+// GraphTable Hook Interface
 interface UseChartReturn {
-  // 狀態
+  // Status
   charts: ChartInstance[];
   currentChart: ChartInstance | null;
   selectedChartId: string | null;
@@ -64,14 +64,14 @@ interface UseChartReturn {
   exportLoading: boolean;
   exportError: string | null;
 
-  // 計算屬性
+  // 計算Property
   chartCount: number;
   currentAnalytics: ChartAnalytics | null;
   hasCharts: boolean;
   isLoading: boolean;
   hasError: boolean;
 
-  // 操作方法
+  // OperationMethod
   initialize: () => Promise<void>;
   createNewChart: (
     request: ChartCreateRequest
@@ -91,7 +91,7 @@ interface UseChartReturn {
   fetchAnalytics: (chartId: string) => Promise<ChartAnalytics | null>;
   fetchStatistics: () => Promise<any>;
 
-  // 狀態管理
+  // StatusManage
   selectChart: (chartId: string | null) => void;
   updateConfig: (chartId: string, config: Partial<ChartConfig>) => void;
   updateData: (chartId: string, data: ChartData) => void;
@@ -112,11 +112,11 @@ interface UseChartReturn {
   setStatisticsData: (statistics: unknown) => void;
 }
 
-// 圖表 Hook
+// GraphTable Hook
 export const _useChart = (): UseChartReturn => {
   const _dispatch = useDispatch();
 
-  // 從 Redux 獲取狀態
+  // 從 Redux GetStatus
   const _charts = useSelector(selectCharts);
   const _currentChart = useSelector(selectCurrentChart);
   const _selectedChartId = useSelector(selectSelectedChartId);
@@ -129,7 +129,7 @@ export const _useChart = (): UseChartReturn => {
   const _exportLoading = useSelector(selectExportLoading);
   const _exportError = useSelector(selectExportError);
 
-  // 計算屬性
+  // 計算Property
   const _chartCount = useMemo(() => charts.length, [charts]);
   const _currentAnalytics = useMemo(() => {
     if (!currentChart) return null;
@@ -145,56 +145,56 @@ export const _useChart = (): UseChartReturn => {
     [error, exportError]
   );
 
-  // 初始化服務
+  // InitializeService
   const _initialize = useCallback(async () => {
     try {
       await (dispatch as any)(initializeChartService()).unwrap();
     } catch (error) {
-      console.error('useChart: 初始化失敗', error);
+      console.error('useChart: InitializeFailed', error);
     }
   }, [dispatch]);
 
-  // 創建新圖表
+  // Create新GraphTable
   const _createNewChart = useCallback(
     async (request: ChartCreateRequest): Promise<ChartInstance | null> => {
       try {
         const _chart = await (dispatch as any)(createChart(request)).unwrap();
         return chart;
       } catch (error) {
-        console.error('useChart: 創建圖表失敗', error);
+        console.error('useChart: Create圖表Failed', error);
         return null;
       }
     },
     [dispatch]
   );
 
-  // 獲取圖表
+  // GetGraphTable
   const _fetchChart = useCallback(
     async (chartId: string): Promise<ChartInstance | null> => {
       try {
         const _chart = await (dispatch as any)(getChart(chartId)).unwrap();
         return chart;
       } catch (error) {
-        console.error('useChart: 獲取圖表失敗', error);
+        console.error('useChart: Get圖表Failed', error);
         return null;
       }
     },
     [dispatch]
   );
 
-  // 獲取圖表列表
+  // GetGraphTableList
   const _fetchCharts = useCallback(
     async (options?: ChartFilterOptions): Promise<void> => {
       try {
         await (dispatch as any)(getCharts(options || {})).unwrap();
       } catch (error) {
-        console.error('useChart: 獲取圖表列表失敗', error);
+        console.error('useChart: Get圖表列表Failed', error);
       }
     },
     [dispatch]
   );
 
-  // 更新圖表
+  // UpdateGraphTable
   const _updateChartDataAsync = useCallback(
     async (
       chartId: string,
@@ -206,28 +206,28 @@ export const _useChart = (): UseChartReturn => {
         ).unwrap();
         return chart;
       } catch (error) {
-        console.error('useChart: 更新圖表失敗', error);
+        console.error('useChart: Update圖表Failed', error);
         return null;
       }
     },
     [dispatch]
   );
 
-  // 刪除圖表
+  // DeleteGraphTable
   const _removeChartById = useCallback(
     async (chartId: string): Promise<boolean> => {
       try {
         await (dispatch as any)(deleteChart(chartId)).unwrap();
         return true;
       } catch (error) {
-        console.error('useChart: 刪除圖表失敗', error);
+        console.error('useChart: Delete圖表Failed', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 導出圖表
+  // ExportGraphTable
   const _exportChartAs = useCallback(
     async (
       chartId: string,
@@ -237,50 +237,50 @@ export const _useChart = (): UseChartReturn => {
         await (dispatch as any)(exportChart({ chartId, format })).unwrap();
         return true;
       } catch (error) {
-        console.error('useChart: 導出圖表失敗', error);
+        console.error('useChart: 導出圖表Failed', error);
         return false;
       }
     },
     [dispatch]
   );
 
-  // 獲取模板
+  // Get模板
   const _fetchTemplates = useCallback(async (): Promise<ChartTemplate[]> => {
     try {
       const _templates = await (dispatch as any)(getTemplates()).unwrap();
       return templates;
     } catch (error) {
-      console.error('useChart: 獲取模板失敗', error);
+      console.error('useChart: Get模板Failed', error);
       return [];
     }
   }, [dispatch]);
 
-  // 獲取分析數據
+  // GetAnalysisData
   const _fetchAnalytics = useCallback(
     async (chartId: string): Promise<ChartAnalytics | null> => {
       try {
         const _result = await (dispatch as any)(getAnalytics(chartId)).unwrap();
         return result.analytics;
       } catch (error) {
-        console.error('useChart: 獲取分析數據失敗', error);
+        console.error('useChart: Get分析數據Failed', error);
         return null;
       }
     },
     [dispatch]
   );
 
-  // 獲取統計數據
+  // Get統Count據
   const _fetchStatistics = useCallback(async (): Promise<any> => {
     try {
       const _statistics = await (dispatch as any)(getStatistics()).unwrap();
       return statistics;
     } catch (error) {
-      console.error('useChart: 獲取統計數據失敗', error);
+      console.error('useChart: Get統計數據Failed', error);
       return null;
     }
   }, [dispatch]);
 
-  // 選擇圖表
+  // SelectGraphTable
   const _selectChart = useCallback(
     (chartId: string | null) => {
       dispatch(setSelectedChartId(chartId));
@@ -288,7 +288,7 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 更新配置
+  // UpdateConfigure
   const _updateConfig = useCallback(
     (chartId: string, config: Partial<ChartConfig>) => {
       dispatch(updateChartConfig({ chartId, config }));
@@ -296,7 +296,7 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 更新數據
+  // UpdateData
   const _updateData = useCallback(
     (chartId: string, data: ChartData) => {
       dispatch(updateChartData({ chartId, data }));
@@ -304,7 +304,7 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 添加圖表到狀態
+  // AddGraphTable到Status
   const _addChartToState = useCallback(
     (chart: ChartInstance) => {
       dispatch(addChart(chart));
@@ -312,7 +312,7 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 從狀態移除圖表
+  // 從StatusRemoveGraphTable
   const _removeChartFromState = useCallback(
     (chartId: string) => {
       dispatch(removeChart(chartId));
@@ -320,7 +320,7 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 設置過濾器
+  // SettingsFilter器
   const _setFilters = useCallback(
     (options: ChartFilterOptions) => {
       dispatch(setFilterOptions(options));
@@ -328,12 +328,12 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 清除錯誤
+  // ClearError
   const _clearErrors = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 設置狀態
+  // SettingsStatus
   const _setStatus = useCallback(
     (
       chartId: string,
@@ -345,7 +345,7 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 更新分析數據
+  // UpdateAnalysisData
   const _updateAnalyticsDataHandler = useCallback(
     (chartId: string, analytics: ChartAnalytics) => {
       dispatch(updateAnalyticsData({ chartId, analytics }));
@@ -353,7 +353,7 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 設置模板數據
+  // Settings模板Data
   const _setTemplatesData = useCallback(
     (templates: ChartTemplate[]) => {
       dispatch(setTemplates(templates));
@@ -361,7 +361,7 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 設置統計數據
+  // Settings統Count據
   const _setStatisticsData = useCallback(
     (statistics: unknown) => {
       dispatch(setStatistics(statistics));
@@ -369,28 +369,28 @@ export const _useChart = (): UseChartReturn => {
     [dispatch]
   );
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     initialize();
   }, [initialize]);
 
-  // 自動獲取模板
+  // AutoGet模板
   useEffect(() => {
     if (templates.length === 0) {
       fetchTemplates();
     }
   }, [templates.length, fetchTemplates]);
 
-  // 自動獲取統計數據
+  // AutoGet統Count據
   useEffect(() => {
     if (!statistics) {
       fetchStatistics();
     }
   }, [statistics, fetchStatistics]);
 
-  // 返回 Hook 接口
+  // Return Hook Interface
   return {
-    // 狀態
+    // Status
     charts,
     currentChart,
     selectedChartId,
@@ -403,14 +403,14 @@ export const _useChart = (): UseChartReturn => {
     exportLoading,
     exportError,
 
-    // 計算屬性
+    // 計算Property
     chartCount,
     currentAnalytics,
     hasCharts,
     isLoading,
     hasError,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     createNewChart,
     fetchChart,
@@ -422,7 +422,7 @@ export const _useChart = (): UseChartReturn => {
     fetchAnalytics,
     fetchStatistics,
 
-    // 狀態管理
+    // StatusManage
     selectChart,
     updateConfig,
     updateData,

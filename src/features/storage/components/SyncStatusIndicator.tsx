@@ -12,7 +12,7 @@ import { useSimpleMultiDeviceSync } from '../hooks/useMultiDeviceSync';
 import { useSimpleOfflineSync } from '../hooks/useOfflineSync';
 
 /**
- * 同步狀態指示器屬性
+ * SyncStatus指示器Property
  */
 export interface SyncStatusIndicatorProps {
   userId: string;
@@ -29,8 +29,8 @@ export interface SyncStatusIndicatorProps {
 }
 
 /**
- * 同步狀態指示器組件
- * 顯示離線同步、多設備同步和增量同步的狀態
+ * SyncStatus指示器Component
+ * Show離線Sync、多設備Sync和增量Sync的Status
  */
 export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
   userId,
@@ -41,7 +41,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
   onManualSync,
   style,
 }) => {
-  // 離線同步狀態
+  // 離線SyncStatus
   const {
     isOnline,
     isSyncing: isOfflineSyncing,
@@ -51,7 +51,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     clearError: clearOfflineError,
   } = useSimpleOfflineSync(userId);
 
-  // 多設備同步狀態
+  // 多設備SyncStatus
   const {
     currentDevice,
     connectedDevices,
@@ -61,7 +61,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     discoverDevices,
   } = useSimpleMultiDeviceSync(userId, deviceInfo);
 
-  // 增量同步狀態
+  // 增量SyncStatus
   const {
     isSyncing: isIncrementalSyncing,
     syncMode,
@@ -71,14 +71,14 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     clearError: clearIncrementalError,
   } = useSimpleIncrementalSync(userId, deviceId);
 
-  // 計算總體狀態
+  // 計算總體Status
   const _isAnySyncing =
     isOfflineSyncing || isMultiDeviceSyncing || isIncrementalSyncing;
   const _totalPendingCount = offlinePendingCount + incrementalPendingCount;
   const _hasAnyError = offlineError || multiDeviceError || incrementalError;
   const _connectedDevicesCount = connectedDevices.length;
 
-  // 獲取狀態顏色
+  // GetStatus顏色
   const _getStatusColor = () => {
     if (hasAnyError) return '#FF6B6B';
     if (isAnySyncing) return '#4ECDC4';
@@ -87,16 +87,16 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     return '#2ECC71';
   };
 
-  // 獲取狀態文本
+  // GetStatus文本
   const _getStatusText = () => {
-    if (hasAnyError) return '同步錯誤';
+    if (hasAnyError) return '同步Error';
     if (isAnySyncing) return '同步中...';
     if (totalPendingCount > 0) return `${totalPendingCount} 項待同步`;
     if (!isOnline) return '離線模式';
     return '已同步';
   };
 
-  // 處理重試
+  // HandleRetry
   const _handleRetry = () => {
     if (offlineError) {
       clearOfflineError();
@@ -112,7 +112,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
     onRetry?.();
   };
 
-  // 處理手動同步
+  // HandleManualSync
   const _handleManualSync = () => {
     triggerOfflineSync();
     triggerIncrementalSync();
@@ -122,7 +122,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
 
   return (
     <View style={[styles.container, style]}>
-      {/* 主要狀態指示器 */}
+      {/* 主要Status指示器 */}
       <TouchableOpacity
         style={[styles.statusIndicator, { backgroundColor: getStatusColor() }]}
         onPress={handleManualSync}
@@ -136,10 +136,10 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
         <Text style={styles.statusText}>{getStatusText()}</Text>
       </TouchableOpacity>
 
-      {/* 詳細信息 */}
+      {/* 詳細Information */}
       {showDetails && (
         <View style={styles.detailsContainer}>
-          {/* 離線同步狀態 */}
+          {/* 離線SyncStatus */}
           <View style={styles.syncSection}>
             <Text style={styles.sectionTitle}>離線同步</Text>
             <View style={styles.syncItem}>
@@ -170,7 +170,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
             )}
           </View>
 
-          {/* 多設備同步狀態 */}
+          {/* 多設備SyncStatus */}
           <View style={styles.syncSection}>
             <Text style={styles.sectionTitle}>多設備同步</Text>
             <View style={styles.syncItem}>
@@ -207,7 +207,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
             )}
           </View>
 
-          {/* 增量同步狀態 */}
+          {/* 增量SyncStatus */}
           <View style={styles.syncSection}>
             <Text style={styles.sectionTitle}>增量同步</Text>
             <View style={styles.syncItem}>
@@ -237,7 +237,7 @@ export const SyncStatusIndicator: React.FC<SyncStatusIndicatorProps> = ({
             )}
           </View>
 
-          {/* 操作按鈕 */}
+          {/* Operation按鈕 */}
           <View style={styles.actionsContainer}>
             <TouchableOpacity
               style={[styles.actionButton, styles.primaryButton]}

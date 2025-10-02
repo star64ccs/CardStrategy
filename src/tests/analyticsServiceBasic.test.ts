@@ -1,4 +1,4 @@
-// 簡化的分析服務測試
+// 簡化的AnalysisServiceTest
 describe('Analytics Services Basic Tests', () => {
   beforeEach(() => {
     delete process.env.SEGMENT_WRITE_KEY;
@@ -6,7 +6,7 @@ describe('Analytics Services Basic Tests', () => {
     delete process.env.MIXEL_API_SECRET;
   });
 
-  test('環境變量清理應該成功', () => {
+  test('環境變量清理應該Success', () => {
     expect(process.env.SEGMENT_WRITE_KEY).toBeUndefined();
     expect(process.env.MIXEL_PROJECT_TOKEN).toBeUndefined();
     expect(process.env.MIXEL_API_SECRET).toBeUndefined();

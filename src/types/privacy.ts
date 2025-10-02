@@ -1,6 +1,6 @@
-// 隱私相關類型定義
+// 隱私相OffClass型定義
 
-// 地區代碼
+// Locale代碼
 export type RegionCode =
   | 'CN' // 中國
   | 'HK' // 香港
@@ -11,83 +11,83 @@ export type RegionCode =
   | 'US' // 美國
   | 'EU'; // 歐盟
 
-// 隱私法律類型
+// 隱私法律Class型
 export type PrivacyLaw =
-  | 'PIPL' // 中國個人信息保護法
+  | 'PIPL' // 中國個人Information保護法
   | 'PDPO' // 香港個人資料(私隱)條例
   | 'PDPA' // 澳門個人資料保護法
   | 'PDPA_TW' // 台灣個人資料保護法
-  | 'APPI' // 日本個人信息保護法
-  | 'PIPA' // 南韓個人信息保護法
+  | 'APPI' // 日本個人Information保護法
+  | 'PIPA' // 南韓個人Information保護法
   | 'CCPA' // 美國加州消費者隱私法案
   | 'CPRA' // 美國加州隱私權法案
-  | 'GDPR' // 歐盟通用數據保護條例
-  | 'LGPD'; // 巴西通用數據保護法
+  | 'GDPR' // 歐盟GenericData保護條例
+  | 'LGPD'; // 巴西GenericData保護法
 
-// 數據處理目的
+// DataHandle目的
 export type DataProcessingPurpose =
-  | 'account_management' // 賬戶管理
-  | 'service_provision' // 服務提供
-  | 'payment_processing' // 支付處理
+  | 'account_management' // 賬戶Manage
+  | 'service_provision' // Service提供
+  | 'payment_processing' // 支付Handle
   | 'marketing' // 營銷
-  | 'analytics' // 分析
+  | 'analytics' // Analysis
   | 'security' // 安全
   | 'legal_compliance' // 法律合規
-  | 'customer_support' // 客戶支持
+  | 'customer_support' // 客戶Support
   | 'research' // 研究
   | 'third_party_integration'; // 第三方集成
 
-// 數據類別
+// DataClass別
 export type DataCategory =
-  | 'personal_info' // 個人信息
-  | 'contact_info' // 聯繫信息
-  | 'financial_info' // 財務信息
-  | 'location_info' // 位置信息
-  | 'device_info' // 設備信息
-  | 'usage_data' // 使用數據
-  | 'biometric_data' // 生物識別數據
-  | 'sensitive_data' // 敏感數據
-  | 'children_data'; // 兒童數據
+  | 'personal_info' // 個人Information
+  | 'contact_info' // 聯繫Information
+  | 'financial_info' // 財務Information
+  | 'location_info' // 位置Information
+  | 'device_info' // 設備Information
+  | 'usage_data' // 使用Data
+  | 'biometric_data' // 生物識別Data
+  | 'sensitive_data' // 敏感Data
+  | 'children_data'; // 兒童Data
 
-// 同意類型
+// AgreeClass型
 export type ConsentType =
-  | 'explicit' // 明確同意
-  | 'implicit' // 隱含同意
-  | 'opt_in' // 選擇加入
-  | 'opt_out' // 選擇退出
-  | 'granular' // 細粒度同意
-  | 'withdrawal'; // 撤回同意
+  | 'explicit' // 明確Agree
+  | 'implicit' // 隱含Agree
+  | 'opt_in' // Select加入
+  | 'opt_out' // SelectExit
+  | 'granular' // 細粒度Agree
+  | 'withdrawal'; // 撤回Agree
 
-// 數據處理基礎
+// DataHandle基礎
 export type LegalBasis =
-  | 'consent' // 同意
+  | 'consent' // Agree
   | 'contract' // 合同
   | 'legal_obligation' // 法律義務
   | 'vital_interests' // 重要利益
-  | 'public_task' // 公共任務
+  | 'public_task' // PublicTask
   | 'legitimate_interests'; // 合法利益
 
-// 數據傳輸類型
+// Data傳輸Class型
 export type DataTransferType =
-  | 'internal' // 內部傳輸
+  | 'internal' // Internal傳輸
   | 'third_party' // 第三方傳輸
   | 'cross_border' // 跨境傳輸
   | 'international'; // 國際傳輸
 
-// 用戶隱私偏好
+// User隱私Preferences
 export interface PrivacyPreferences {
   id: string;
   userId: string;
   region: RegionCode;
   language: string;
 
-  // 基本同意
+  // 基本Agree
   termsAccepted: boolean;
   termsAcceptedAt: Date;
   privacyPolicyAccepted: boolean;
   privacyPolicyAcceptedAt: Date;
 
-  // 數據處理同意
+  // DataHandleAgree
   dataProcessingConsent: {
     [key in DataProcessingPurpose]: {
       consented: boolean;
@@ -97,7 +97,7 @@ export interface PrivacyPreferences {
     };
   };
 
-  // 營銷同意
+  // 營銷Agree
   marketingConsent: {
     email: boolean;
     sms: boolean;
@@ -108,7 +108,7 @@ export interface PrivacyPreferences {
     withdrawnAt?: Date;
   };
 
-  // 數據共享同意
+  // Data共享Agree
   dataSharingConsent: {
     analytics: boolean;
     thirdParty: boolean;
@@ -117,7 +117,7 @@ export interface PrivacyPreferences {
     withdrawnAt?: Date;
   };
 
-  // 兒童數據保護
+  // 兒童Data保護
   childrenDataProtection: {
     isParentalConsent: boolean;
     parentalConsentVerified: boolean;
@@ -125,7 +125,7 @@ export interface PrivacyPreferences {
     restrictedFeatures: boolean;
   };
 
-  // 數據權利
+  // Data權利
   dataRights: {
     access: boolean;
     rectification: boolean;
@@ -136,7 +136,7 @@ export interface PrivacyPreferences {
     automatedDecision: boolean;
   };
 
-  // 通知偏好
+  // NotificationPreferences
   notificationPreferences: {
     privacyUpdates: boolean;
     dataBreach: boolean;
@@ -178,7 +178,7 @@ export interface PrivacyLawRequirement {
   };
 }
 
-// 數據處理記錄
+// DataHandleRecord
 export interface DataProcessingRecord {
   id: string;
   userId: string;
@@ -199,7 +199,7 @@ export interface DataProcessingRecord {
   createdAt: Date;
 }
 
-// 數據權利請求
+// Data權利Request
 export interface DataRightsRequest {
   id: string;
   userId: string;
@@ -221,7 +221,7 @@ export interface DataRightsRequest {
   updatedAt: Date;
 }
 
-// 數據洩露事件
+// Data洩露Event
 export interface DataBreachEvent {
   id: string;
   title: string;
@@ -268,7 +268,7 @@ export interface PrivacyImpactAssessment {
   updatedAt: Date;
 }
 
-// 第三方數據處理者
+// 第三方DataHandle者
 export interface ThirdPartyProcessor {
   id: string;
   name: string;
@@ -289,7 +289,7 @@ export interface ThirdPartyProcessor {
   updatedAt: Date;
 }
 
-// 隱私政策版本
+// 隱私政策Version
 export interface PrivacyPolicyVersion {
   id: string;
   version: string;
@@ -310,7 +310,7 @@ export interface PrivacyPolicyVersion {
   createdAt: Date;
 }
 
-// 同意記錄
+// AgreeRecord
 export interface ConsentRecord {
   id: string;
   userId: string;
@@ -337,7 +337,7 @@ export interface ConsentRecord {
   updatedAt: Date;
 }
 
-// 隱私設置配置
+// 隱私SettingsConfigure
 export interface PrivacySettingsConfig {
   region: RegionCode;
   laws: PrivacyLaw[];
@@ -351,7 +351,7 @@ export interface PrivacySettingsConfig {
     [key in DataProcessingPurpose]: number;
   };
   notificationPeriods: {
-    dataBreach: number; // 小時
+    dataBreach: number; // Hour
     consentChanges: number; // 天
     policyUpdates: number; // 天
   };

@@ -25,7 +25,7 @@ class PredictionService {
         throw new Error('需要至少2個數據點進行線性回歸');
       }
 
-      // 計算線性回歸參數
+      // 計算線性回歸Parameter
       let sumX = 0,
         sumY = 0,
         sumXY = 0,
@@ -67,7 +67,7 @@ class PredictionService {
         },
       };
     } catch (error) {
-      logger.error('線性回歸預測錯誤:', error);
+      logger.error('線性回歸預測Error:', error);
       throw error;
     }
   }
@@ -116,7 +116,7 @@ class PredictionService {
         },
       };
     } catch (error) {
-      logger.error('多項式回歸預測錯誤:', error);
+      logger.error('多項式回歸預測Error:', error);
       throw error;
     }
   }
@@ -134,7 +134,7 @@ class PredictionService {
       const prices = historicalData.map((d) => parseFloat(d.closePrice));
       let smoothed = prices[0];
 
-      // 應用指數平滑
+      // Apply指數平滑
       for (let i = 1; i < n; i++) {
         smoothed = alpha * prices[i] + (1 - alpha) * smoothed;
       }
@@ -162,7 +162,7 @@ class PredictionService {
         },
       };
     } catch (error) {
-      logger.error('指數平滑預測錯誤:', error);
+      logger.error('指數平滑預測Error:', error);
       throw error;
     }
   }
@@ -185,7 +185,7 @@ class PredictionService {
         returns.push((prices[i] - prices[i - 1]) / prices[i - 1]);
       }
 
-      // 計算移動平均
+      // 計算Move平均
       const ma = this.calculateMovingAverage(returns, 3);
       const predictedReturn = ma[ma.length - 1] || 0;
 
@@ -218,7 +218,7 @@ class PredictionService {
         },
       };
     } catch (error) {
-      logger.error('ARIMA模型預測錯誤:', error);
+      logger.error('ARIMA模型預測Error:', error);
       throw error;
     }
   }
@@ -232,12 +232,12 @@ class PredictionService {
         throw new Error('LSTM模型需要至少20個數據點');
       }
 
-      // 簡化的LSTM實現，使用序列模式識別
+      // 簡化的LSTM實現，使用序Column模式識別
 // eslint-disable-next-line no-unused-vars
       const prices = historicalData.map((d) => parseFloat(d.closePrice));
-      const sequence = prices.slice(-10); // 使用最後10個數據點
+      const sequence = prices.slice(-10); // 使用最後10個Data點
 
-      // 計算序列趨勢和模式
+      // 計算序Column趨勢和模式
       const trend = this.calculateTrend(
         sequence.map((_, i) => ({ closePrice: sequence[i] }))
       );
@@ -270,7 +270,7 @@ class PredictionService {
         },
       };
     } catch (error) {
-      logger.error('LSTM模型預測錯誤:', error);
+      logger.error('LSTM模型預測Error:', error);
       throw error;
     }
   }
@@ -284,7 +284,7 @@ class PredictionService {
       const predictions = [];
       const weights = [0.3, 0.25, 0.25, 0.2]; // 模型權重
 
-      // 獲取各個模型的預測
+      // Get各個模型的預測
       for (let i = 0; i < models.length; i++) {
         try {
 // eslint-disable-next-line no-unused-vars
@@ -299,12 +299,12 @@ class PredictionService {
             weight: weights[i],
           });
         } catch (error) {
-          logger.warn(`模型 ${models[i]} 預測失敗:`, error.message);
+          logger.warn(`模型 ${models[i]} 預測Failed:`, error.message);
         }
       }
 
       if (predictions.length === 0) {
-        throw new Error('所有模型預測都失敗了');
+        throw new Error('所有模型預測都Failed了');
       }
 
       // 加權平均預測
@@ -334,12 +334,12 @@ class PredictionService {
         },
       };
     } catch (error) {
-      logger.error('集成模型預測錯誤:', error);
+      logger.error('集成模型預測Error:', error);
       throw error;
     }
   }
 
-  // 主要預測方法
+  // 主要預測Method
   async predictCardPrice(cardId, timeframe, modelType = 'ensemble') {
     try {
 // eslint-disable-next-line no-unused-vars
@@ -347,22 +347,22 @@ class PredictionService {
       const PredictionModel = getPredictionModel();
 
       if (!MarketData || !PredictionModel) {
-        throw new Error('數據模型初始化失敗');
+        throw new Error('數據模型InitializeFailed');
       }
 
-      // 獲取歷史市場數據
+      // Get歷史市場Data
 // eslint-disable-next-line no-unused-vars
       const historicalData = await MarketData.findAll({
         where: { cardId, isActive: true },
         order: [['date', 'ASC']],
-        limit: 100, // 限制數據量
+        limit: 100, // LimitData量
       });
 
       if (historicalData.length < 5) {
         throw new Error('歷史數據不足，無法進行預測');
       }
 
-      // 選擇預測模型
+      // Select預測模型
 // eslint-disable-next-line no-unused-vars
       const model = this.models[modelType] || this.models.ensemble;
 // eslint-disable-next-line no-unused-vars
@@ -374,7 +374,7 @@ class PredictionService {
         prediction.factors.volatility
       );
 
-      // 保存預測結果
+      // Save預測結果
       const targetDate = new Date();
       targetDate.setDate(
         targetDate.getDate() + this.getDaysFromTimeframe(timeframe)
@@ -419,18 +419,18 @@ class PredictionService {
         modelParameters: prediction.modelParameters,
       };
     } catch (error) {
-      logger.error('預測卡牌價格錯誤:', error);
+      logger.error('預測卡牌價格Error:', error);
       throw error;
     }
   }
 
-  // 獲取預測歷史
+  // Get預測歷史
   async getPredictionHistory(cardId, limit = 50) {
     try {
       const PredictionModel = getPredictionModel();
 
       if (!PredictionModel) {
-        throw new Error('預測模型初始化失敗');
+        throw new Error('預測模型InitializeFailed');
       }
 
 // eslint-disable-next-line no-unused-vars
@@ -442,7 +442,7 @@ class PredictionService {
 
       return predictions;
     } catch (error) {
-      logger.error('獲取預測歷史錯誤:', error);
+      logger.error('Get預測歷史Error:', error);
       throw error;
     }
   }
@@ -455,7 +455,7 @@ class PredictionService {
       const MarketData = getMarketDataModel();
 
       if (!PredictionModel || !MarketData) {
-        throw new Error('數據模型初始化失敗');
+        throw new Error('數據模型InitializeFailed');
       }
 
 // eslint-disable-next-line no-unused-vars
@@ -464,7 +464,7 @@ class PredictionService {
         throw new Error('預測記錄不存在');
       }
 
-      // 獲取實際價格
+      // Get實際價格
       const actualData = await MarketData.findOne({
         where: {
           cardId: prediction.cardId,
@@ -473,7 +473,7 @@ class PredictionService {
       });
 
       if (!actualData) {
-        return null; // 目標日期還沒有實際數據
+        return null; // 目標Day還沒有實際Data
       }
 
       const actualPrice = parseFloat(actualData.closePrice);
@@ -484,7 +484,7 @@ class PredictionService {
       const accuracy = 1 - Math.abs(actualPrice - predictedPrice) / actualPrice;
       const accuracyScore = Math.max(0, Math.min(1, accuracy));
 
-      // 更新預測記錄
+      // Update預測Record
       await prediction.update({ accuracy: accuracyScore });
 
       return {
@@ -495,12 +495,12 @@ class PredictionService {
         error: Math.abs(actualPrice - predictedPrice),
       };
     } catch (error) {
-      logger.error('計算預測準確性錯誤:', error);
+      logger.error('計算預測準確性Error:', error);
       throw error;
     }
   }
 
-  // 輔助方法
+  // 輔助Method
   getDaysFromTimeframe(timeframe) {
     const daysMap = {
       '1d': 1,
@@ -514,7 +514,7 @@ class PredictionService {
   }
 
   calculateConfidence(historicalData, modelParams, modelType) {
-    // 基於數據質量和模型穩定性計算置信度
+    // 基於Data質量和模型穩定性計算置信度
     const volatility = this.calculateVolatility(historicalData);
 // eslint-disable-next-line no-unused-vars
     const dataQuality = Math.min(1, historicalData.length / 50);

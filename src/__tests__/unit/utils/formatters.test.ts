@@ -111,7 +111,7 @@ describe('Formatters', () => {
     });
 
     it('應該處理無效貨幣代碼', () => {
-      expect(formatCurrency(100, 'INVALID')).toBe('$100.00'); // 默認使用 USD
+      expect(formatCurrency(100, 'INVALID')).toBe('$100.00'); // Default使用 USD
     });
   });
 
@@ -319,7 +319,7 @@ describe('Formatters', () => {
       }
 
       const _endTime = performance.now();
-      expect(endTime - startTime).toBeLessThan(100); // 應該在100ms內完成
+      expect(endTime - startTime).toBeLessThan(100); // 應該在100ms內Complete
     });
   });
 });

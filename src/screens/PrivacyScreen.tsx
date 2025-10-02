@@ -68,8 +68,8 @@ const PrivacyScreen: React.FC = () => {
 
   const _handleConsentUpdate = useCallback(
     (type: string, value: boolean) => {
-      // 這裡需要根據實際的用戶ID來調用
-      const _userId = 'current-user-id'; // 應該從認證狀態獲取
+      // 這裡需要Root據實際的UserID來調用
+      const _userId = 'current-user-id'; // 應該從AuthenticateStatusGet
       dispatch(
         updatePrivacyPreferences({
           userId,

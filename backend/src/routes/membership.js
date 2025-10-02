@@ -97,7 +97,7 @@ const membershipPlans = ['
 ];
 
 // @route   GET /api/membership/plans
-// @desc    ?��??�員計�??�表'
+// @desc    ?��??�員計�??�Table'
 // @access  Public''
 router.get('/plans', async (req, res) => {'
   try {''

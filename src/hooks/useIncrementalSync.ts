@@ -1,7 +1,7 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-// 臨時類型定義
+// 臨時Class型定義
 interface SyncItem {
   id: string;
   type: string;
@@ -52,14 +52,14 @@ export const _useIncrementalSync = () => {
   };
   const _intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 更新 Redux store 中的同步狀態
+  // Update Redux store 中的SyncStatus
   const _updateStoreState = useCallback(() => {
     const _state = incrementalSyncManager.getSyncState();
     dispatch(setLastSyncTime(state.lastSyncTime));
     dispatch(setPendingChangesCount(state.pendingChangesCount));
   }, [dispatch]);
 
-  // 添加變更到同步隊列
+  // Add變更到SyncQueue
   const _addChange = useCallback(
     (item: Omit<SyncItem, 'timestamp' | 'version'>) => {
       incrementalSyncManager.addChange(item);
@@ -68,7 +68,7 @@ export const _useIncrementalSync = () => {
     [updateStoreState]
   );
 
-  // 批量添加變更
+  // BatchAdd變更
   const _addBatchChanges = useCallback(
     (items: Omit<SyncItem, 'timestamp' | 'version'>[]) => {
       incrementalSyncManager.addBatchChanges(items);
@@ -77,7 +77,7 @@ export const _useIncrementalSync = () => {
     [updateStoreState]
   );
 
-  // 強制同步
+  // ForceSync
   const _forceSync = useCallback(async () => {
     try {
       dispatch(setSyncStatus('syncing'));
@@ -85,22 +85,22 @@ export const _useIncrementalSync = () => {
       updateStoreState();
     } catch (error) {
       dispatch(
-        setSyncError(error instanceof Error ? error.message : '同步失敗')
+        setSyncError(error instanceof Error ? error.message : '同步Failed')
       );
     }
   }, [dispatch, updateStoreState]);
 
-  // 清除同步錯誤
+  // ClearSyncError
   const _clearError = useCallback(() => {
     dispatch(setSyncError(null));
   }, [dispatch]);
 
-  // 設置網絡狀態監聽器
+  // SettingsNetworkStatus監聽器
   useEffect(() => {
     const _handleOnline = () => {
       dispatch(setOnlineStatus(true));
       dispatch(setSyncStatus('idle'));
-      // 網絡恢復時自動同步
+      // NetworkRestore時AutoSync
       if (incrementalSyncManager.getPendingChangesCount() > 0) {
         forceSync();
       }
@@ -120,11 +120,11 @@ export const _useIncrementalSync = () => {
     };
   }, [dispatch, forceSync]);
 
-  // 定期更新同步狀態
+  // 定期UpdateSyncStatus
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       updateStoreState();
-    }, 1000); // 每秒更新一次
+    }, 1000); // 每SecondUpdate一次
 
     return () => {
       if (intervalRef.current) {
@@ -133,7 +133,7 @@ export const _useIncrementalSync = () => {
     };
   }, [updateStoreState]);
 
-  // 組件卸載時清理
+  // ComponentUninstall時清理
   useEffect(() => {
     return () => {
       if (intervalRef.current) {
@@ -143,20 +143,20 @@ export const _useIncrementalSync = () => {
   }, []);
 
   return {
-    // 狀態
+    // Status
     syncStatus: syncState.status,
     lastSyncTime: syncState.lastSyncTime,
     pendingChangesCount: syncState.pendingChangesCount,
     error: syncState.error,
     isOnline: syncState.isOnline,
 
-    // 方法
+    // Method
     addChange,
     addBatchChanges,
     forceSync,
     clearError,
 
-    // 工具方法
+    // ToolMethod
     isSyncing: syncState.status === 'syncing',
     hasError: syncState.status === 'error',
     isOffline: syncState.status === 'offline',

@@ -59,11 +59,11 @@ describe('ScanHistoryService', () => {
       totalPages: 1,
     };
 
-    it('應該成功獲取掃描歷史記錄', async () => {
+    it('應該SuccessGet掃描歷史記錄', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockScanHistory,
-        message: '掃描歷史獲取成功',
+        message: '掃描歷史GetSuccess',
       });
 
       const _result = await scanHistoryService.getScanHistory(mockFilters);
@@ -80,7 +80,7 @@ describe('ScanHistoryService', () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockScanHistory,
-        message: '掃描歷史獲取成功',
+        message: '掃描歷史GetSuccess',
       });
 
       const _result = await scanHistoryService.getScanHistory();
@@ -89,12 +89,12 @@ describe('ScanHistoryService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith(expect.any(String), {});
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('API 錯誤'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('API Error'));
 
       await expect(
         scanHistoryService.getScanHistory(mockFilters)
-      ).rejects.toThrow('API 錯誤');
+      ).rejects.toThrow('API Error');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -126,11 +126,11 @@ describe('ScanHistoryService', () => {
       updatedAt: new Date('2024-01-01T00:00:00Z'),
     };
 
-    it('應該成功獲取單個掃描記錄', async () => {
+    it('應該SuccessGet單個掃描記錄', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockScanRecord,
-        message: '掃描記錄獲取成功',
+        message: '掃描記錄GetSuccess',
       });
 
       const _result = await scanHistoryService.getScanRecord(mockRecordId);
@@ -151,7 +151,7 @@ describe('ScanHistoryService', () => {
       ).rejects.toThrow('無效的記錄 ID');
     });
 
-    it('應該處理 API 錯誤', async () => {
+    it('應該Handle API Error', async () => {
       mockApiService.get.mockRejectedValue(new Error('記錄不存在'));
 
       await expect(
@@ -191,11 +191,11 @@ describe('ScanHistoryService', () => {
       updatedAt: new Date('2024-01-01T00:00:00Z'),
     };
 
-    it('應該成功創建掃描記錄', async () => {
+    it('應該SuccessCreate掃描記錄', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockCreatedRecord,
-        message: '掃描記錄創建成功',
+        message: '掃描記錄CreateSuccess',
       });
 
       const _result = await scanHistoryService.createScanRecord(mockScanData);
@@ -208,12 +208,12 @@ describe('ScanHistoryService', () => {
       expect(mockLogger.info).toHaveBeenCalled();
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('創建失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('CreateFailed'));
 
       await expect(
         scanHistoryService.createScanRecord(mockScanData)
-      ).rejects.toThrow('創建失敗');
+      ).rejects.toThrow('CreateFailed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -247,11 +247,11 @@ describe('ScanHistoryService', () => {
       updatedAt: new Date('2024-01-02T00:00:00Z'),
     };
 
-    it('應該成功更新掃描記錄', async () => {
+    it('應該SuccessUpdate掃描記錄', async () => {
       mockApiService.put.mockResolvedValue({
         success: true,
         data: mockUpdatedRecord,
-        message: '掃描記錄更新成功',
+        message: '掃描記錄UpdateSuccess',
       });
 
       const _result = await scanHistoryService.updateScanRecord(
@@ -273,12 +273,12 @@ describe('ScanHistoryService', () => {
       ).rejects.toThrow('無效的記錄 ID');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.put.mockRejectedValue(new Error('更新失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.put.mockRejectedValue(new Error('UpdateFailed'));
 
       await expect(
         scanHistoryService.updateScanRecord(mockRecordId, mockUpdates)
-      ).rejects.toThrow('更新失敗');
+      ).rejects.toThrow('UpdateFailed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -286,10 +286,10 @@ describe('ScanHistoryService', () => {
   describe('deleteScanRecord', () => {
     const _mockRecordId = '123e4567-e89b-12d3-a456-426614174000';
 
-    it('應該成功刪除掃描記錄', async () => {
+    it('應該SuccessDelete掃描記錄', async () => {
       mockApiService.delete.mockResolvedValue({
         success: true,
-        message: '掃描記錄刪除成功',
+        message: '掃描記錄DeleteSuccess',
       });
 
       await scanHistoryService.deleteScanRecord(mockRecordId);
@@ -304,12 +304,12 @@ describe('ScanHistoryService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.delete.mockRejectedValue(new Error('刪除失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.delete.mockRejectedValue(new Error('DeleteFailed'));
 
       await expect(
         scanHistoryService.deleteScanRecord(mockRecordId)
-      ).rejects.toThrow('刪除失敗');
+      ).rejects.toThrow('DeleteFailed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -317,10 +317,10 @@ describe('ScanHistoryService', () => {
   describe('deleteMultipleRecords', () => {
     const _mockRecordIds = ['scan-1', 'scan-2', 'scan-3'];
 
-    it('應該成功批量刪除掃描記錄', async () => {
+    it('應該Success批量Delete掃描記錄', async () => {
       mockApiService.post.mockResolvedValue({
         success: true,
-        message: '批量刪除成功',
+        message: '批量DeleteSuccess',
       });
 
       await scanHistoryService.deleteMultipleRecords(mockRecordIds);
@@ -343,12 +343,12 @@ describe('ScanHistoryService', () => {
       ).rejects.toThrow('無效的記錄 ID 列表');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('批量刪除失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('批量DeleteFailed'));
 
       await expect(
         scanHistoryService.deleteMultipleRecords(mockRecordIds)
-      ).rejects.toThrow('批量刪除失敗');
+      ).rejects.toThrow('批量DeleteFailed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -376,11 +376,11 @@ describe('ScanHistoryService', () => {
       updatedAt: new Date('2024-01-02T00:00:00Z'),
     };
 
-    it('應該成功切換收藏狀態', async () => {
+    it('應該Success切換收藏狀態', async () => {
       mockApiService.patch.mockResolvedValue({
         success: true,
         data: mockToggledRecord,
-        message: '收藏狀態切換成功',
+        message: '收藏狀態切換Success',
       });
 
       const _result = await scanHistoryService.toggleFavorite(mockRecordId);
@@ -396,12 +396,12 @@ describe('ScanHistoryService', () => {
       );
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.patch.mockRejectedValue(new Error('切換失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.patch.mockRejectedValue(new Error('切換Failed'));
 
       await expect(
         scanHistoryService.toggleFavorite(mockRecordId)
-      ).rejects.toThrow('切換失敗');
+      ).rejects.toThrow('切換Failed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -431,11 +431,11 @@ describe('ScanHistoryService', () => {
       updatedAt: new Date('2024-01-02T00:00:00Z'),
     };
 
-    it('應該成功添加筆記', async () => {
+    it('應該Success添加筆記', async () => {
       mockApiService.patch.mockResolvedValue({
         success: true,
         data: mockUpdatedRecord,
-        message: '筆記添加成功',
+        message: '筆記添加Success',
       });
 
       const _result = await scanHistoryService.addNote(mockRecordId, mockNote);
@@ -465,12 +465,12 @@ describe('ScanHistoryService', () => {
       ).rejects.toThrow('無效的筆記內容');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.patch.mockRejectedValue(new Error('添加筆記失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.patch.mockRejectedValue(new Error('添加筆記Failed'));
 
       await expect(
         scanHistoryService.addNote(mockRecordId, mockNote)
-      ).rejects.toThrow('添加筆記失敗');
+      ).rejects.toThrow('添加筆記Failed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -499,11 +499,11 @@ describe('ScanHistoryService', () => {
       updatedAt: new Date('2024-01-02T00:00:00Z'),
     };
 
-    it('應該成功添加標籤', async () => {
+    it('應該Success添加標籤', async () => {
       mockApiService.patch.mockResolvedValue({
         success: true,
         data: mockUpdatedRecord,
-        message: '標籤添加成功',
+        message: '標籤添加Success',
       });
 
       const _result = await scanHistoryService.addTags(mockRecordId, mockTags);
@@ -533,12 +533,12 @@ describe('ScanHistoryService', () => {
       ).rejects.toThrow('無效的標籤列表');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.patch.mockRejectedValue(new Error('添加標籤失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.patch.mockRejectedValue(new Error('添加標籤Failed'));
 
       await expect(
         scanHistoryService.addTags(mockRecordId, mockTags)
-      ).rejects.toThrow('添加標籤失敗');
+      ).rejects.toThrow('添加標籤Failed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -570,11 +570,11 @@ describe('ScanHistoryService', () => {
       ],
     };
 
-    it('應該成功獲取掃描統計', async () => {
+    it('應該SuccessGet掃描統計', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockStatistics,
-        message: '統計獲取成功',
+        message: '統計GetSuccess',
       });
 
       const _result = await scanHistoryService.getScanStatistics();
@@ -583,11 +583,11 @@ describe('ScanHistoryService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith(expect.any(String));
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('統計獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('統計GetFailed'));
 
       await expect(scanHistoryService.getScanStatistics()).rejects.toThrow(
-        '統計獲取失敗'
+        '統計GetFailed'
       );
       expect(mockLogger.error).toHaveBeenCalled();
     });
@@ -599,12 +599,12 @@ describe('ScanHistoryService', () => {
       successOnly: true,
     };
 
-    it('應該成功導出 CSV 格式', async () => {
+    it('應該Success導出 CSV 格式', async () => {
       const _mockDownloadUrl = 'https://example.com/export.csv';
       mockApiService.post.mockResolvedValue({
         success: true,
         data: { downloadUrl: mockDownloadUrl },
-        message: '導出成功',
+        message: '導出Success',
       });
 
       const _result = await scanHistoryService.exportScanHistory(
@@ -620,12 +620,12 @@ describe('ScanHistoryService', () => {
       expect(mockLogger.info).toHaveBeenCalled();
     });
 
-    it('應該成功導出 JSON 格式', async () => {
+    it('應該Success導出 JSON 格式', async () => {
       const _mockDownloadUrl = 'https://example.com/export.json';
       mockApiService.post.mockResolvedValue({
         success: true,
         data: { downloadUrl: mockDownloadUrl },
-        message: '導出成功',
+        message: '導出Success',
       });
 
       const _result = await scanHistoryService.exportScanHistory('json');
@@ -637,12 +637,12 @@ describe('ScanHistoryService', () => {
       });
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('導出失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('導出Failed'));
 
       await expect(
         scanHistoryService.exportScanHistory('csv', mockFilters)
-      ).rejects.toThrow('導出失敗');
+      ).rejects.toThrow('導出Failed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -684,11 +684,11 @@ describe('ScanHistoryService', () => {
       totalPages: 1,
     };
 
-    it('應該成功搜索掃描歷史', async () => {
+    it('應該Success搜索掃描歷史', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockSearchResult,
-        message: '搜索成功',
+        message: '搜索Success',
       });
 
       const _result = await scanHistoryService.searchScanHistory(
@@ -716,12 +716,12 @@ describe('ScanHistoryService', () => {
       ).rejects.toThrow('無效的搜索查詢');
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('搜索失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('搜索Failed'));
 
       await expect(
         scanHistoryService.searchScanHistory(mockQuery, mockFilters)
-      ).rejects.toThrow('搜索失敗');
+      ).rejects.toThrow('搜索Failed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
@@ -729,11 +729,11 @@ describe('ScanHistoryService', () => {
   describe('getRecommendedTags', () => {
     const _mockRecommendedTags = ['rare', 'foil', 'graded', 'mint', 'near-mint'];
 
-    it('應該成功獲取推薦標籤', async () => {
+    it('應該SuccessGet推薦標籤', async () => {
       mockApiService.get.mockResolvedValue({
         success: true,
         data: mockRecommendedTags,
-        message: '推薦標籤獲取成功',
+        message: '推薦標籤GetSuccess',
       });
 
       const _result = await scanHistoryService.getRecommendedTags();
@@ -742,23 +742,23 @@ describe('ScanHistoryService', () => {
       expect(mockApiService.get).toHaveBeenCalledWith(expect.any(String));
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.get.mockRejectedValue(new Error('推薦標籤獲取失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.get.mockRejectedValue(new Error('推薦標籤GetFailed'));
 
       await expect(scanHistoryService.getRecommendedTags()).rejects.toThrow(
-        '推薦標籤獲取失敗'
+        '推薦標籤GetFailed'
       );
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });
 
   describe('cleanupExpiredRecords', () => {
-    it('應該成功清理過期記錄', async () => {
+    it('應該Success清理過期記錄', async () => {
       const _mockCleanupResult = { deletedCount: 25 };
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockCleanupResult,
-        message: '清理成功',
+        message: '清理Success',
       });
 
       const _result = await scanHistoryService.cleanupExpiredRecords(30);
@@ -775,7 +775,7 @@ describe('ScanHistoryService', () => {
       mockApiService.post.mockResolvedValue({
         success: true,
         data: mockCleanupResult,
-        message: '清理成功',
+        message: '清理Success',
       });
 
       const _result = await scanHistoryService.cleanupExpiredRecords();
@@ -786,12 +786,12 @@ describe('ScanHistoryService', () => {
       });
     });
 
-    it('應該處理 API 錯誤', async () => {
-      mockApiService.post.mockRejectedValue(new Error('清理失敗'));
+    it('應該Handle API Error', async () => {
+      mockApiService.post.mockRejectedValue(new Error('清理Failed'));
 
       await expect(
         scanHistoryService.cleanupExpiredRecords(30)
-      ).rejects.toThrow('清理失敗');
+      ).rejects.toThrow('清理Failed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });

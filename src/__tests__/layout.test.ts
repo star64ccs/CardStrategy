@@ -4,9 +4,9 @@ import type {
   ResponsiveValue,
 } from '../types/layout';
 
-// 模擬 window 對象
+// 模擬 window Object
 const _mockWindow = {
-  innerWidth: 800, // 修改為 md 斷點對應的寬度 (768 <= 800 < 1024)
+  innerWidth: 800, // Modify為 md 斷點對應的寬度 (768 <= 800 < 1024)
   innerHeight: 768,
   addEventListener: jest.fn(),
   removeEventListener: jest.fn(),
@@ -20,9 +20,9 @@ Object.defineProperty(global, 'window', {
 describe('佈局系統測試', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // 重置服務實例
+    // ResetServiceInstance
     (layoutService as any).instance = null;
-    // 重置配置到默認值
+    // ResetConfigure到DefaultValue
     layoutService.updateConfig({
       breakpoints: {
         xs: 575,
@@ -36,7 +36,7 @@ describe('佈局系統測試', () => {
   });
 
   describe('LayoutService 測試', () => {
-    test('應該正確初始化服務', async () => {
+    test('應該正確InitializeService', async () => {
       await layoutService.initialize();
       expect(layoutService.getCurrentBreakpoint()).toBe('md');
     });
@@ -128,7 +128,7 @@ describe('佈局系統測試', () => {
 
       expect(typeof unsubscribe).toBe('function');
 
-      // 測試取消監聽
+      // TestCancel監聽
       unsubscribe();
     });
 
@@ -138,7 +138,7 @@ describe('佈局系統測試', () => {
 
       expect(typeof unsubscribe).toBe('function');
 
-      // 測試取消監聽
+      // TestCancel監聽
       unsubscribe();
     });
   });
@@ -176,13 +176,13 @@ describe('佈局系統測試', () => {
 
       (layoutService as any).responsiveState.currentBreakpoint = 'md';
       const _result = layoutService.getResponsiveValue(responsiveObject);
-      expect(result).toBe('extra-small'); // 應該返回第一個可用的值
+      expect(result).toBe('extra-small'); // 應該Return第一個可用的Value
     });
   });
 
   describe('斷點計算測試', () => {
     test('應該正確計算斷點', () => {
-      // 根據實際的斷點配置進行測試
+      // Root據實際的斷點Configure進RowTest
       const _testCases = [
         { width: 400, expected: 'xs' }, // 400 <= 575
         { width: 600, expected: 'sm' }, // 576 <= 600 <= 767
@@ -193,9 +193,9 @@ describe('佈局系統測試', () => {
       ];
 
       testCases.forEach(({ width, expected }) => {
-        // 直接調用私有方法進行測試
+        // 直接調用PrivateMethod進RowTest
         const _breakpoint = (layoutService as any).getBreakpointFromWidth(width);
-        // 直接調用私有方法進行測試
+        // 直接調用PrivateMethod進RowTest
         expect(breakpoint).toBe(expected);
       });
     });
@@ -268,32 +268,32 @@ describe('佈局系統測試', () => {
       expect(config.gridColumns).toBe(16);
       expect(config.defaultSpacing).toBe('2rem');
       expect(config.enableAnimations).toBe(false);
-      expect(config.enableResponsive).toBe(true); // 未更新的值應該保持不變
+      expect(config.enableResponsive).toBe(true); // 未Update的Value應該保持不變
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('應該正確處理初始化錯誤', async () => {
-      // 模擬初始化錯誤
+  describe('ErrorHandle測試', () => {
+    test('應該正確HandleInitializeError', async () => {
+      // 模擬InitializeError
       const _originalInitialize = (layoutService as any).initialize;
       (layoutService as any).initialize = jest
         .fn()
-        .mockRejectedValue(new Error('初始化失敗'));
+        .mockRejectedValue(new Error('InitializeFailed'));
 
-      await expect(layoutService.initialize()).rejects.toThrow('初始化失敗');
+      await expect(layoutService.initialize()).rejects.toThrow('InitializeFailed');
 
-      // 恢復原始方法
+      // Restore原始Method
       (layoutService as any).initialize = originalInitialize;
     });
 
-    test('應該正確處理事件監聽器錯誤', () => {
+    test('應該正確Handle事件監聽器Error', () => {
       const _mockCallback = jest.fn().mockImplementation(() => {
-        throw new Error('回調錯誤');
+        throw new Error('回調Error');
       });
 
       layoutService.onBreakpointChange(mockCallback);
 
-      // 應該不會拋出錯誤，而是記錄錯誤
+      // 應該不會ThrowError，而YesRecordError
       expect(mockCallback).not.toHaveBeenCalled();
     });
   });
@@ -318,7 +318,7 @@ describe('佈局系統測試', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(100); // 應該在 100ms 內完成
+      expect(duration).toBeLessThan(100); // 應該在 100ms 內Complete
     });
 
     test('組件註冊應該在合理時間內完成', () => {
@@ -342,7 +342,7 @@ describe('佈局系統測試', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(50); // 應該在 50ms 內完成
+      expect(duration).toBeLessThan(50); // 應該在 50ms 內Complete
     });
   });
 });

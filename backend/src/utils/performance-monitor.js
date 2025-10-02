@@ -28,26 +28,26 @@ class PerformanceMonitor {
     };
 
     this.responseTimes = [];
-    this.maxResponseTimes = 100; // 保留最近100個響應時間
+    this.maxResponseTimes = 100; // 保留最近100個ResponseTime
 
-    // 定期更新系統指標
+    // 定期Update系統指標
     this.startPeriodicUpdate();
   }
 
-  // 開始定期更新
+  // Begin定期Update
   startPeriodicUpdate() {
     setInterval(() => {
       this.updateSystemMetrics();
-    }, 5000); // 每5秒更新一次
+    }, 5000); // 每5SecondUpdate一次
 
     setInterval(() => {
       this.updateUptime();
-    }, 1000); // 每秒更新運行時間
+    }, 1000); // 每SecondUpdate運RowTime
   }
 
-  // 更新系統指標
+  // Update系統指標
   updateSystemMetrics() {
-    // 內存使用情況
+    // Memory使用情況
     const memUsage = process.memoryUsage();
     this.metrics.memory.used = Math.round(memUsage.heapUsed / 1024 / 1024);
     this.metrics.memory.total = Math.round(memUsage.heapTotal / 1024 / 1024);
@@ -75,19 +75,19 @@ class PerformanceMonitor {
     // 系統負載
     this.metrics.cpu.loadAverage = os.loadavg();
 
-    // 記錄系統指標
+    // Record系統指標
     logger.info('System Metrics Updated', {
       memory: this.metrics.memory,
       cpu: this.metrics.cpu,
     });
   }
 
-  // 更新運行時間
+  // Update運RowTime
   updateUptime() {
     this.metrics.uptime.current = Date.now() - this.metrics.uptime.startTime;
   }
 
-  // 記錄請求
+  // RecordRequest
   recordRequest(success = true, responseTime = 0) {
     this.metrics.requests.total++;
 
@@ -97,16 +97,16 @@ class PerformanceMonitor {
       this.metrics.requests.error++;
     }
 
-    // 記錄響應時間
+    // RecordResponseTime
     if (responseTime > 0) {
       this.responseTimes.push(responseTime);
 
-      // 保持響應時間數組大小
+      // 保持ResponseTimeArray大小
       if (this.responseTimes.length > this.maxResponseTimes) {
         this.responseTimes.shift();
       }
 
-      // 計算平均響應時間
+      // 計算平均ResponseTime
       this.metrics.requests.avgResponseTime = Math.round(
         this.responseTimes.reduce((a, b) => a + b, 0) /
           this.responseTimes.length
@@ -114,7 +114,7 @@ class PerformanceMonitor {
     }
   }
 
-  // 獲取性能指標
+  // Get性能指標
   getMetrics() {
     return {
       ...this.metrics,
@@ -141,7 +141,7 @@ class PerformanceMonitor {
     return sorted[index] || 0;
   }
 
-  // 重置指標
+  // Reset指標
   resetMetrics() {
     this.metrics.requests = {
       total: 0,
@@ -154,21 +154,21 @@ class PerformanceMonitor {
   }
 }
 
-// 創建全局監控實例
+// CreateGlobalMonitorInstance
 const performanceMonitor = new PerformanceMonitor();
 
-// 性能監控中間件
+// 性能Monitor中間件
 const performanceMiddleware = (req, res, next) => {
   const start = performance.now();
 
-  // 記錄響應完成
+  // RecordResponseComplete
   res.on('finish', () => {
     const duration = performance.now() - start;
     const success = res.statusCode < 400;
 
     performanceMonitor.recordRequest(success, duration);
 
-    // 記錄慢請求
+    // Record慢Request
     if (duration > 1000) {
       logger.warn('Slow Request Detected', {
         method: req.method,
@@ -203,7 +203,7 @@ const getPerformanceMetrics = (req, res) => {
   }
 };
 
-// 重置性能指標 API 路由
+// Reset性能指標 API 路由
 // eslint-disable-next-line no-unused-vars
 const resetPerformanceMetrics = (req, res) => {
   try {

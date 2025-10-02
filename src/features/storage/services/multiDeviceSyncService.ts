@@ -7,7 +7,7 @@ import type { SyncStats } from '../types/storage';
 import { SyncStatus, ConflictResolution } from '../types/storage';
 
 /**
- * 設備信息接口
+ * 設備InformationInterface
  */
 export interface DeviceInfo {
   id: string;
@@ -21,7 +21,7 @@ export interface DeviceInfo {
 }
 
 /**
- * 設備同步數據接口
+ * 設備SyncDataInterface
  */
 export interface DeviceSyncData {
   deviceId: string;
@@ -42,7 +42,7 @@ export interface DeviceSyncData {
 }
 
 /**
- * 多設備同步配置接口
+ * 多設備SyncConfigureInterface
  */
 export interface MultiDeviceSyncConfig {
   enableDeviceDiscovery: boolean;
@@ -57,7 +57,7 @@ export interface MultiDeviceSyncConfig {
 }
 
 /**
- * 多設備同步狀態接口
+ * 多設備SyncStatusInterface
  */
 export interface MultiDeviceSyncState {
   currentDevice: DeviceInfo | null;
@@ -71,8 +71,8 @@ export interface MultiDeviceSyncState {
 }
 
 /**
- * 多設備同步服務
- * 負責管理跨設備的數據同步和設備發現
+ * 多設備SyncService
+ * 負責Manage跨設備的DataSync和設備發現
  */
 export class MultiDeviceSyncService extends EventEmitter {
   private static instance: MultiDeviceSyncService;
@@ -89,8 +89,8 @@ export class MultiDeviceSyncService extends EventEmitter {
     this.config = {
       enableDeviceDiscovery: true,
       enableAutoSync: true,
-      syncInterval: 60000, // 1分鐘
-      deviceTimeout: 300000, // 5分鐘
+      syncInterval: 60000, // 1Minute
+      deviceTimeout: 300000, // 5Minute
       maxDevices: 10,
       conflictResolution: ConflictResolution.LAST_MODIFIED,
       enableConflictDetection: true,
@@ -119,7 +119,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 獲取單例實例
+   * Get單例Instance
    */
   public static getInstance(): MultiDeviceSyncService {
     if (!MultiDeviceSyncService.instance) {
@@ -129,7 +129,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   public async initialize(
     userId: string,
@@ -138,7 +138,7 @@ export class MultiDeviceSyncService extends EventEmitter {
     try {
       this.userId = userId;
 
-      // 創建當前設備信息
+      // Create當前設備Information
       this.state.currentDevice = {
         id: this.generateDeviceId(),
         name: deviceInfo.name || 'Unknown Device',
@@ -150,7 +150,7 @@ export class MultiDeviceSyncService extends EventEmitter {
         lastSyncTime: null,
       };
 
-      // 註冊當前設備
+      // Register當前設備
       this.deviceRegistry.set(
         this.state.currentDevice.id,
         this.state.currentDevice
@@ -161,7 +161,7 @@ export class MultiDeviceSyncService extends EventEmitter {
       await this.startDeviceDiscovery();
       await this.startPeriodicSync();
 
-      logger.info('多設備同步服務初始化成功', {
+      logger.info('多設備同步ServiceInitializeSuccess', {
         userId,
         deviceId: this.state.currentDevice.id,
         deviceName: this.state.currentDevice.name,
@@ -173,13 +173,13 @@ export class MultiDeviceSyncService extends EventEmitter {
         deviceName: this.state.currentDevice.name,
       });
     } catch (error) {
-      logger.error('多設備同步服務初始化失敗:', error);
+      logger.error('多設備同步ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 配置同步設置
+   * ConfigureSyncSettings
    */
   public configure(config: Partial<MultiDeviceSyncConfig>): void {
     this.config = { ...this.config, ...config };
@@ -187,21 +187,21 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 獲取同步狀態
+   * GetSyncStatus
    */
   public getSyncState(): MultiDeviceSyncState {
     return { ...this.state };
   }
 
   /**
-   * 獲取設備列表
+   * Get設備List
    */
   public getDevices(): DeviceInfo[] {
     return Array.from(this.deviceRegistry.values());
   }
 
   /**
-   * 獲取連接的設備
+   * GetConnect的設備
    */
   public getConnectedDevices(): DeviceInfo[] {
     return this.state.connectedDevices;
@@ -215,24 +215,24 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 開始設備發現
+   * Begin設備發現
    */
   private async startDeviceDiscovery(): Promise<void> {
     if (!this.config.enableDeviceDiscovery) {
       return;
     }
 
-    // 立即執行一次發現
+    // 立即執Row一次發現
     await this.discoverDevices();
 
-    // 設置定期發現
+    // Settings定期發現
     this.discoveryInterval = setInterval(() => {
       this.discoverDevices();
     }, this.config.syncInterval * 2);
   }
 
   /**
-   * 開始定期同步
+   * Begin定期Sync
    */
   private async startPeriodicSync(): Promise<void> {
     if (!this.config.enableAutoSync) {
@@ -261,7 +261,7 @@ export class MultiDeviceSyncService extends EventEmitter {
       // 模擬設備發現過程
       const _discoveredDevices = await this.mockDeviceDiscovery();
 
-      // 更新設備狀態
+      // Update設備Status
       for (const device of discoveredDevices) {
         if (!this.deviceRegistry.has(device.id)) {
           this.deviceRegistry.set(device.id, device);
@@ -284,7 +284,7 @@ export class MultiDeviceSyncService extends EventEmitter {
 
       return this.state.connectedDevices;
     } catch (error) {
-      logger.error('設備發現失敗:', error);
+      logger.error('設備發現Failed:', error);
       this.emit('discoveryError', error);
       throw error;
     } finally {
@@ -293,7 +293,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 觸發同步
+   * 觸發Sync
    */
   private async triggerSync(): Promise<void> {
     if (this.state.isSyncing || this.syncQueue.length === 0) {
@@ -306,17 +306,17 @@ export class MultiDeviceSyncService extends EventEmitter {
       this.emit('syncStarted');
 
       const _startTime = Date.now();
-      const _batch = this.syncQueue.slice(0, 10); // 每次同步10個項目
+      const _batch = this.syncQueue.slice(0, 10); // 每次Sync10個項目
 
       logger.info(`開始多設備同步，包含 ${batch.length} 個項目`);
 
       const _results = await this.syncBatch(batch);
 
-      // 更新統計信息
+      // UpdateStatisticsInformation
       const _syncTime = Date.now() - startTime;
       this.updateSyncStats(results, syncTime);
 
-      // 從隊列中移除已同步的項目
+      // 從Queue中Remove已Sync的項目
       this.removeSyncedItems(
         batch.map(item => `${item.deviceId}_${item.dataId}_${item.timestamp}`)
       );
@@ -333,7 +333,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 同步批次
+   * Sync批次
    */
   private async syncBatch(batch: DeviceSyncData[]): Promise<{
     success: number;
@@ -358,14 +358,14 @@ export class MultiDeviceSyncService extends EventEmitter {
           results.conflicts++;
         } else {
           results.failed++;
-          results.errors.push(result.error || '未知錯誤');
+          results.errors.push(result.error || '未知Error');
         }
       } catch (error) {
         results.failed++;
         results.errors.push(
-          error instanceof Error ? error.message : '未知錯誤'
+          error instanceof Error ? error.message : '未知Error'
         );
-        logger.error('同步項目失敗:', { item, error });
+        logger.error('同步項目Failed:', { item, error });
       }
     }
 
@@ -373,7 +373,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 同步單個項目
+   * SyncSingle項目
    */
   private async syncItem(item: DeviceSyncData): Promise<{
     success: boolean;
@@ -382,7 +382,7 @@ export class MultiDeviceSyncService extends EventEmitter {
     error?: string;
   }> {
     try {
-      // 這裡應該調用實際的API來同步到其他設備
+      // 這裡應該調用實際的API來Sync到其他設備
       // 目前使用模擬實現
       const _response = await this.mockDeviceSync(item);
 
@@ -400,25 +400,25 @@ export class MultiDeviceSyncService extends EventEmitter {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '同步失敗',
+        error: error instanceof Error ? error.message : '同步Failed',
       };
     }
   }
 
   /**
-   * 處理同步錯誤
+   * HandleSyncError
    */
   private handleSyncError(error: unknown): void {
-    const _errorMessage = error instanceof Error ? error.message : '同步失敗';
+    const _errorMessage = error instanceof Error ? error.message : '同步Failed';
     this.state.error = errorMessage;
     this.state.stats.syncErrors++;
 
-    logger.error('多設備同步錯誤:', error);
+    logger.error('多設備同步Error:', error);
     this.emit('syncError', error);
   }
 
   /**
-   * 更新同步統計
+   * UpdateSyncStatistics
    */
   private updateSyncStats(results: unknown, syncTime: number): void {
     const { success, failed } = results;
@@ -433,7 +433,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 移除已同步的項目
+   * Remove已Sync的項目
    */
   private removeSyncedItems(itemIds: string[]): void {
     this.syncQueue = this.syncQueue.filter(
@@ -445,7 +445,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 保存設備註冊表
+   * Save設備RegisterTable
    */
   private async saveDeviceRegistry(): Promise<void> {
     try {
@@ -453,12 +453,12 @@ export class MultiDeviceSyncService extends EventEmitter {
       const _registry = Array.from(this.deviceRegistry.entries());
       await AsyncStorage.setItem(key, JSON.stringify(registry));
     } catch (error) {
-      logger.error('保存設備註冊表失敗:', error);
+      logger.error('保存設備註冊表Failed:', error);
     }
   }
 
   /**
-   * 加載設備註冊表
+   * 加載設備RegisterTable
    */
   private async loadDeviceRegistry(): Promise<void> {
     try {
@@ -471,25 +471,25 @@ export class MultiDeviceSyncService extends EventEmitter {
         logger.info(`加載了 ${this.deviceRegistry.size} 個設備`);
       }
     } catch (error) {
-      logger.error('加載設備註冊表失敗:', error);
+      logger.error('加載設備註冊表Failed:', error);
       this.deviceRegistry = new Map();
     }
   }
 
   /**
-   * 保存同步隊列
+   * SaveSyncQueue
    */
   private async saveSyncQueue(): Promise<void> {
     try {
       const _key = `device_sync_queue_${this.userId}`;
       await AsyncStorage.setItem(key, JSON.stringify(this.syncQueue));
     } catch (error) {
-      logger.error('保存同步隊列失敗:', error);
+      logger.error('保存同步隊列Failed:', error);
     }
   }
 
   /**
-   * 加載同步隊列
+   * 加載SyncQueue
    */
   private async loadSyncQueue(): Promise<void> {
     try {
@@ -502,7 +502,7 @@ export class MultiDeviceSyncService extends EventEmitter {
         logger.info(`加載了 ${this.syncQueue.length} 個待同步項目`);
       }
     } catch (error) {
-      logger.error('加載同步隊列失敗:', error);
+      logger.error('加載同步隊列Failed:', error);
       this.syncQueue = [];
     }
   }
@@ -511,7 +511,7 @@ export class MultiDeviceSyncService extends EventEmitter {
    * 模擬設備發現
    */
   private async mockDeviceDiscovery(): Promise<DeviceInfo[]> {
-    // 模擬網絡延遲
+    // 模擬Network延遲
     await new Promise(resolve =>
       setTimeout(resolve, 500 + Math.random() * 1000)
     );
@@ -544,7 +544,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 模擬設備同步
+   * 模擬設備Sync
    */
   private async mockDeviceSync(item: DeviceSyncData): Promise<{
     success: boolean;
@@ -552,14 +552,14 @@ export class MultiDeviceSyncService extends EventEmitter {
     serverData?: unknown;
     error?: string;
   }> {
-    // 模擬網絡延遲
+    // 模擬Network延遲
     await new Promise(resolve =>
       setTimeout(resolve, 200 + Math.random() * 300)
     );
 
-    // 模擬隨機錯誤
+    // 模擬隨機Error
     if (Math.random() < 0.1) {
-      throw new Error('網絡錯誤');
+      throw new Error('網絡Error');
     }
 
     // 模擬衝突
@@ -575,7 +575,7 @@ export class MultiDeviceSyncService extends EventEmitter {
   }
 
   /**
-   * 銷毀服務
+   * 銷毀Service
    */
   public async destroy(): Promise<void> {
     if (this.syncInterval) {
@@ -589,9 +589,9 @@ export class MultiDeviceSyncService extends EventEmitter {
     }
 
     this.removeAllListeners();
-    logger.info('多設備同步服務已銷毀');
+    logger.info('多設備同步Service已銷毀');
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _multiDeviceSyncService = MultiDeviceSyncService.getInstance();

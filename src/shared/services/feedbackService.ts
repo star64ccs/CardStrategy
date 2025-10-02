@@ -2,7 +2,7 @@ import { api } from '../../core/utils/api';
 import { logger } from '../../core/utils/logger';
 
 /**
- * 反饋類型
+ * 反饋Class型
  */
 export interface Feedback {
   id: string;
@@ -19,7 +19,7 @@ export interface Feedback {
 }
 
 /**
- * 創建反饋請求
+ * Create反饋Request
  */
 export interface CreateFeedbackRequest {
   type: Feedback['type'];
@@ -31,7 +31,7 @@ export interface CreateFeedbackRequest {
 }
 
 /**
- * 更新反饋請求
+ * Update反饋Request
  */
 export interface UpdateFeedbackRequest {
   title?: string;
@@ -42,13 +42,13 @@ export interface UpdateFeedbackRequest {
 }
 
 /**
- * 反饋服務
+ * 反饋Service
  */
 export class FeedbackService {
   private readonly baseUrl = '/api/feedback';
 
   /**
-   * 創建反饋
+   * Create反饋
    */
   async createFeedback(data: CreateFeedbackRequest): Promise<any> {
     try {
@@ -57,33 +57,33 @@ export class FeedbackService {
       const _response = await api.post(this.baseUrl, data as any);
 
       if (response.success) {
-        logger.info('反饋創建成功:', { id: (response.data as any)?.id });
+        logger.info('反饋CreateSuccess:', { id: (response.data as any)?.id });
         return {
           success: true,
           data: response.data,
-          message: '反饋創建成功',
+          message: '反饋CreateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('反饋創建失敗:', { message: response.message });
+        logger.error('反饋CreateFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '反饋創建失敗',
+          message: response.message || '反饋CreateFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('創建反饋時發生錯誤:', error);
+      logger.error('Create反饋時發生Error:', error);
       return {
         success: false,
-        message: '創建反饋時發生錯誤',
+        message: 'Create反饋時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取用戶反饋列表
+   * GetUser反饋List
    */
   async getUserFeedbacks(
     userId: string,
@@ -100,35 +100,35 @@ export class FeedbackService {
       const _response = await api.get(`${this.baseUrl}/user`, { params });
 
       if (response.success) {
-        logger.info('用戶反饋列表獲取成功:', {
+        logger.info('用戶反饋列表GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data || [],
-          message: '反饋列表獲取成功',
+          message: '反饋列表GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取用戶反饋列表失敗:', { message: response.message });
+        logger.error('Get用戶反饋列表Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取反饋列表失敗',
+          message: response.message || 'Get反饋列表Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取用戶反饋列表時發生錯誤:', error);
+      logger.error('Get用戶反饋列表時發生Error:', error);
       return {
         success: false,
-        message: '獲取反饋列表時發生錯誤',
+        message: 'Get反饋列表時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取反饋詳情
+   * Get反饋詳情
    */
   async getFeedback(feedbackId: string): Promise<any> {
     try {
@@ -137,33 +137,33 @@ export class FeedbackService {
       const _response = await api.get(`${this.baseUrl}/${feedbackId}`);
 
       if (response.success) {
-        logger.info('反饋詳情獲取成功:', { id: (response.data as any)?.id });
+        logger.info('反饋詳情GetSuccess:', { id: (response.data as any)?.id });
         return {
           success: true,
           data: response.data,
-          message: '反饋詳情獲取成功',
+          message: '反饋詳情GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取反饋詳情失敗:', { message: response.message });
+        logger.error('Get反饋詳情Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取反饋詳情失敗',
+          message: response.message || 'Get反饋詳情Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取反饋詳情時發生錯誤:', error);
+      logger.error('Get反饋詳情時發生Error:', error);
       return {
         success: false,
-        message: '獲取反饋詳情時發生錯誤',
+        message: 'Get反饋詳情時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 更新反饋
+   * Update反饋
    */
   async updateFeedback(
     feedbackId: string,
@@ -175,33 +175,33 @@ export class FeedbackService {
       const _response = await api.put(`${this.baseUrl}/${feedbackId}`, data);
 
       if (response.success) {
-        logger.info('反饋更新成功:', { id: (response.data as any)?.id });
+        logger.info('反饋UpdateSuccess:', { id: (response.data as any)?.id });
         return {
           success: true,
           data: response.data,
-          message: '反饋更新成功',
+          message: '反饋UpdateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('更新反饋失敗:', { message: response.message });
+        logger.error('Update反饋Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '更新反饋失敗',
+          message: response.message || 'Update反饋Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('更新反饋時發生錯誤:', error);
+      logger.error('Update反饋時發生Error:', error);
       return {
         success: false,
-        message: '更新反饋時發生錯誤',
+        message: 'Update反饋時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 刪除反饋
+   * Delete反饋
    */
   async deleteFeedback(feedbackId: string): Promise<any> {
     try {
@@ -210,32 +210,32 @@ export class FeedbackService {
       const _response = await api.delete(`${this.baseUrl}/${feedbackId}`);
 
       if (response.success) {
-        logger.info('反饋刪除成功:', { feedbackId });
+        logger.info('反饋DeleteSuccess:', { feedbackId });
         return {
           success: true,
-          message: '反饋刪除成功',
+          message: '反饋DeleteSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('刪除反饋失敗:', { message: response.message });
+        logger.error('Delete反饋Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '刪除反饋失敗',
+          message: response.message || 'Delete反饋Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('刪除反饋時發生錯誤:', error);
+      logger.error('Delete反饋時發生Error:', error);
       return {
         success: false,
-        message: '刪除反饋時發生錯誤',
+        message: 'Delete反饋時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取反饋統計
+   * Get反饋Statistics
    */
   async getFeedbackStats(userId?: string): Promise<any> {
     try {
@@ -248,37 +248,37 @@ export class FeedbackService {
       const _response = await api.get(`${this.baseUrl}/stats`, { params });
 
       if (response.success) {
-        logger.info('反饋統計獲取成功');
+        logger.info('反饋統計GetSuccess');
         return {
           success: true,
           data: response.data,
-          message: '反饋統計獲取成功',
+          message: '反饋統計GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取反饋統計失敗:', { message: response.message });
+        logger.error('Get反饋統計Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取反饋統計失敗',
+          message: response.message || 'Get反饋統計Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取反饋統計時發生錯誤:', error);
+      logger.error('Get反饋統計時發生Error:', error);
       return {
         success: false,
-        message: '獲取反饋統計時發生錯誤',
+        message: 'Get反饋統計時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取服務狀態
+   * GetServiceStatus
    */
   async getServiceStats(): Promise<any> {
     try {
-      logger.info('獲取反饋服務狀態');
+      logger.info('Get反饋Service狀態');
 
       const _response = await api.get(`${this.baseUrl}/health`);
 
@@ -297,21 +297,21 @@ export class FeedbackService {
             stats: `${this.baseUrl}/stats`,
           },
         },
-        message: '反饋服務狀態獲取成功',
+        message: '反饋Service狀態GetSuccess',
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('獲取反饋服務狀態時發生錯誤:', error);
+      logger.error('Get反饋Service狀態時發生Error:', error);
       return {
         success: false,
-        message: '獲取反饋服務狀態時發生錯誤',
+        message: 'Get反饋Service狀態時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取反饋列表
+   * Get反饋List
    */
   async getFeedbacks(params?: unknown): Promise<any> {
     try {
@@ -320,28 +320,28 @@ export class FeedbackService {
       const _response = await api.get(this.baseUrl, { params });
 
       if (response.success) {
-        logger.info('反饋列表獲取成功:', {
+        logger.info('反饋列表GetSuccess:', {
           count: (response.data as any[])?.length,
         });
         return {
           success: true,
           data: response.data,
-          message: '反饋列表獲取成功',
+          message: '反饋列表GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取反饋列表失敗:', { message: response.message });
+        logger.error('Get反饋列表Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取反饋列表失敗',
+          message: response.message || 'Get反饋列表Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取反饋列表時發生錯誤:', error);
+      logger.error('Get反饋列表時發生Error:', error);
       return {
         success: false,
-        message: '獲取反饋列表時發生錯誤',
+        message: 'Get反饋列表時發生Error',
         timestamp: new Date(),
       };
     }
@@ -357,33 +357,33 @@ export class FeedbackService {
       const _response = await api.post(`${this.baseUrl}/${id}/vote`, { vote });
 
       if (response.success) {
-        logger.info('反饋投票成功');
+        logger.info('反饋投票Success');
         return {
           success: true,
           data: response.data,
-          message: '反饋投票成功',
+          message: '反饋投票Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('反饋投票失敗:', { message: response.message });
+        logger.error('反饋投票Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '反饋投票失敗',
+          message: response.message || '反饋投票Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('反饋投票時發生錯誤:', error);
+      logger.error('反饋投票時發生Error:', error);
       return {
         success: false,
-        message: '反饋投票時發生錯誤',
+        message: '反饋投票時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 創建反饋回應
+   * Create反饋回應
    */
   async createResponse(data: unknown): Promise<any> {
     try {
@@ -395,33 +395,33 @@ export class FeedbackService {
       );
 
       if (response.success) {
-        logger.info('反饋回應創建成功');
+        logger.info('反饋回應CreateSuccess');
         return {
           success: true,
           data: response.data,
-          message: '反饋回應創建成功',
+          message: '反饋回應CreateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('創建反饋回應失敗:', { message: response.message });
+        logger.error('Create反饋回應Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '創建反饋回應失敗',
+          message: response.message || 'Create反饋回應Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('創建反饋回應時發生錯誤:', error);
+      logger.error('Create反饋回應時發生Error:', error);
       return {
         success: false,
-        message: '創建反饋回應時發生錯誤',
+        message: 'Create反饋回應時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取反饋分析
+   * Get反饋Analysis
    */
   async getFeedbackAnalysis(period: string): Promise<any> {
     try {
@@ -432,33 +432,33 @@ export class FeedbackService {
       );
 
       if (response.success) {
-        logger.info('反饋分析獲取成功');
+        logger.info('反饋分析GetSuccess');
         return {
           success: true,
           data: response.data,
-          message: '反饋分析獲取成功',
+          message: '反饋分析GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取反饋分析失敗:', { message: response.message });
+        logger.error('Get反饋分析Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取反饋分析失敗',
+          message: response.message || 'Get反饋分析Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取反饋分析時發生錯誤:', error);
+      logger.error('Get反饋分析時發生Error:', error);
       return {
         success: false,
-        message: '獲取反饋分析時發生錯誤',
+        message: 'Get反饋分析時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取反饋模板
+   * Get反饋模板
    */
   async getFeedbackTemplates(): Promise<any> {
     try {
@@ -467,33 +467,33 @@ export class FeedbackService {
       const _response = await api.get(`${this.baseUrl}/templates`);
 
       if (response.success) {
-        logger.info('反饋模板獲取成功');
+        logger.info('反饋模板GetSuccess');
         return {
           success: true,
           data: response.data,
-          message: '反饋模板獲取成功',
+          message: '反饋模板GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取反饋模板失敗:', { message: response.message });
+        logger.error('Get反饋模板Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取反饋模板失敗',
+          message: response.message || 'Get反饋模板Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取反饋模板時發生錯誤:', error);
+      logger.error('Get反饋模板時發生Error:', error);
       return {
         success: false,
-        message: '獲取反饋模板時發生錯誤',
+        message: 'Get反饋模板時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取反饋標籤
+   * Get反饋Tag
    */
   async getFeedbackTags(): Promise<any> {
     try {
@@ -502,33 +502,33 @@ export class FeedbackService {
       const _response = await api.get(`${this.baseUrl}/tags`);
 
       if (response.success) {
-        logger.info('反饋標籤獲取成功');
+        logger.info('反饋標籤GetSuccess');
         return {
           success: true,
           data: response.data,
-          message: '反饋標籤獲取成功',
+          message: '反饋標籤GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取反饋標籤失敗:', { message: response.message });
+        logger.error('Get反饋標籤Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取反饋標籤失敗',
+          message: response.message || 'Get反饋標籤Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取反饋標籤時發生錯誤:', error);
+      logger.error('Get反饋標籤時發生Error:', error);
       return {
         success: false,
-        message: '獲取反饋標籤時發生錯誤',
+        message: 'Get反饋標籤時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取通知設置
+   * GetNotificationSettings
    */
   async getNotificationSettings(): Promise<any> {
     try {
@@ -537,33 +537,33 @@ export class FeedbackService {
       const _response = await api.get(`${this.baseUrl}/notification-settings`);
 
       if (response.success) {
-        logger.info('通知設置獲取成功');
+        logger.info('通知SettingsGetSuccess');
         return {
           success: true,
           data: response.data,
-          message: '通知設置獲取成功',
+          message: '通知SettingsGetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取通知設置失敗:', { message: response.message });
+        logger.error('Get通知SettingsFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取通知設置失敗',
+          message: response.message || 'Get通知SettingsFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取通知設置時發生錯誤:', error);
+      logger.error('Get通知Settings時發生Error:', error);
       return {
         success: false,
-        message: '獲取通知設置時發生錯誤',
+        message: 'Get通知Settings時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 更新通知設置
+   * UpdateNotificationSettings
    */
   async updateNotificationSettings(settings: unknown): Promise<any> {
     try {
@@ -575,33 +575,33 @@ export class FeedbackService {
       );
 
       if (response.success) {
-        logger.info('通知設置更新成功');
+        logger.info('通知SettingsUpdateSuccess');
         return {
           success: true,
           data: response.data,
-          message: '通知設置更新成功',
+          message: '通知SettingsUpdateSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('更新通知設置失敗:', { message: response.message });
+        logger.error('Update通知SettingsFailed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '更新通知設置失敗',
+          message: response.message || 'Update通知SettingsFailed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('更新通知設置時發生錯誤:', error);
+      logger.error('Update通知Settings時發生Error:', error);
       return {
         success: false,
-        message: '更新通知設置時發生錯誤',
+        message: 'Update通知Settings時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 搜索反饋
+   * Search反饋
    */
   async searchFeedbacks(query: string, params?: unknown): Promise<any> {
     try {
@@ -619,33 +619,33 @@ export class FeedbackService {
       const _response = await api.get(`${this.baseUrl}/search?${searchParams}`);
 
       if (response.success) {
-        logger.info('反饋搜索成功');
+        logger.info('反饋搜索Success');
         return {
           success: true,
           data: response.data,
-          message: '反饋搜索成功',
+          message: '反饋搜索Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('搜索反饋失敗:', { message: response.message });
+        logger.error('搜索反饋Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '搜索反饋失敗',
+          message: response.message || '搜索反饋Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('搜索反饋時發生錯誤:', error);
+      logger.error('搜索反饋時發生Error:', error);
       return {
         success: false,
-        message: '搜索反饋時發生錯誤',
+        message: '搜索反饋時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取用戶反饋歷史
+   * GetUser反饋歷史
    */
   async getUserFeedbackHistory(): Promise<any> {
     try {
@@ -654,33 +654,33 @@ export class FeedbackService {
       const _response = await api.get(`${this.baseUrl}/user/history`);
 
       if (response.success) {
-        logger.info('用戶反饋歷史獲取成功');
+        logger.info('用戶反饋歷史GetSuccess');
         return {
           success: true,
           data: response.data,
-          message: '用戶反饋歷史獲取成功',
+          message: '用戶反饋歷史GetSuccess',
           timestamp: new Date(),
         };
       } else {
-        logger.error('獲取用戶反饋歷史失敗:', { message: response.message });
+        logger.error('Get用戶反饋歷史Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '獲取用戶反饋歷史失敗',
+          message: response.message || 'Get用戶反饋歷史Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('獲取用戶反饋歷史時發生錯誤:', error);
+      logger.error('Get用戶反饋歷史時發生Error:', error);
       return {
         success: false,
-        message: '獲取用戶反饋歷史時發生錯誤',
+        message: 'Get用戶反饋歷史時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 標記反饋為已讀
+   * Mark反饋為已讀
    */
   async markFeedbackAsRead(id: string): Promise<any> {
     try {
@@ -689,33 +689,33 @@ export class FeedbackService {
       const _response = await api.put(`${this.baseUrl}/${id}/read`);
 
       if (response.success) {
-        logger.info('反饋標記為已讀成功');
+        logger.info('反饋標記為已讀Success');
         return {
           success: true,
           data: response.data,
-          message: '反饋標記為已讀成功',
+          message: '反饋標記為已讀Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('標記反饋為已讀失敗:', { message: response.message });
+        logger.error('標記反饋為已讀Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '標記反饋為已讀失敗',
+          message: response.message || '標記反饋為已讀Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('標記反饋為已讀時發生錯誤:', error);
+      logger.error('標記反饋為已讀時發生Error:', error);
       return {
         success: false,
-        message: '標記反饋為已讀時發生錯誤',
+        message: '標記反饋為已讀時發生Error',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 上傳附件
+   * Upload附件
    */
   async uploadAttachment(feedbackId: string, file: File): Promise<any> {
     try {
@@ -730,26 +730,26 @@ export class FeedbackService {
       );
 
       if (response.success) {
-        logger.info('反饋附件上傳成功');
+        logger.info('反饋附件上傳Success');
         return {
           success: true,
           data: response.data,
-          message: '反饋附件上傳成功',
+          message: '反饋附件上傳Success',
           timestamp: new Date(),
         };
       } else {
-        logger.error('上傳反饋附件失敗:', { message: response.message });
+        logger.error('上傳反饋附件Failed:', { message: response.message });
         return {
           success: false,
-          message: response.message || '上傳反饋附件失敗',
+          message: response.message || '上傳反饋附件Failed',
           timestamp: new Date(),
         };
       }
     } catch (error) {
-      logger.error('上傳反饋附件時發生錯誤:', error);
+      logger.error('上傳反饋附件時發生Error:', error);
       return {
         success: false,
-        message: '上傳反饋附件時發生錯誤',
+        message: '上傳反饋附件時發生Error',
         timestamp: new Date(),
       };
     }

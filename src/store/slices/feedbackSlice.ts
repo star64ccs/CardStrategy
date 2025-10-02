@@ -15,35 +15,35 @@ import type {
   FeedbackSort,
 } from '../../types/feedback';
 
-// 反饋狀態接口
+// 反饋StatusInterface
 interface FeedbackState {
-  // 數據
+  // Data
   feedbacks: FeedbackData[];
   analytics: FeedbackAnalytics | null;
   notifications: FeedbackNotification[];
   reports: FeedbackReport[];
 
-  // 查詢狀態
+  // QueryStatus
   filters: FeedbackFilter;
   sort: FeedbackSort;
   pagination: FeedbackPagination;
 
-  // 加載狀態
+  // 加載Status
   loading: boolean;
   submitting: boolean;
   syncing: boolean;
 
-  // 錯誤狀態
+  // ErrorStatus
   error: string | null;
 
-  // 服務狀態
+  // ServiceStatus
   serviceConfig: FeedbackServiceConfig;
   isInitialized: boolean;
   isOnline: boolean;
   syncStatus: 'idle' | 'syncing' | 'error';
 }
 
-// 初始狀態
+// 初始Status
 const initialState: FeedbackState = {
   feedbacks: [],
   analytics: null,
@@ -71,9 +71,9 @@ const initialState: FeedbackState = {
   syncStatus: 'idle',
 };
 
-// 異步 Thunk 動作
+// Async Thunk 動作
 
-// 初始化反饋服務
+// Initialize反饋Service
 export const _initializeFeedbackService = createAsyncThunk(
   'feedback/initializeService',
   async (config?: Partial<FeedbackServiceConfig>) => {
@@ -83,7 +83,7 @@ export const _initializeFeedbackService = createAsyncThunk(
   }
 );
 
-// 提交反饋
+// Submit反饋
 export const _submitFeedback = createAsyncThunk(
   'feedback/submitFeedback',
   async (formData: FeedbackFormData) => {
@@ -93,7 +93,7 @@ export const _submitFeedback = createAsyncThunk(
   }
 );
 
-// 更新反饋
+// Update反饋
 export const _updateFeedback = createAsyncThunk(
   'feedback/updateFeedback',
   async ({ id, data }: { id: string; data: Partial<FeedbackData> }) => {
@@ -103,7 +103,7 @@ export const _updateFeedback = createAsyncThunk(
   }
 );
 
-// 刪除反饋
+// Delete反饋
 export const _deleteFeedback = createAsyncThunk(
   'feedback/deleteFeedback',
   async (id: string) => {
@@ -113,7 +113,7 @@ export const _deleteFeedback = createAsyncThunk(
   }
 );
 
-// 獲取反饋
+// Get反饋
 export const _fetchFeedback = createAsyncThunk(
   'feedback/fetchFeedback',
   async (id: string) => {
@@ -123,7 +123,7 @@ export const _fetchFeedback = createAsyncThunk(
   }
 );
 
-// 獲取反饋列表
+// Get反饋List
 export const _fetchFeedbacks = createAsyncThunk(
   'feedback/fetchFeedbacks',
   async ({
@@ -141,7 +141,7 @@ export const _fetchFeedbacks = createAsyncThunk(
   }
 );
 
-// 獲取分析數據
+// GetAnalysisData
 export const _fetchAnalytics = createAsyncThunk(
   'feedback/fetchAnalytics',
   async (filters?: FeedbackFilter) => {
@@ -151,7 +151,7 @@ export const _fetchAnalytics = createAsyncThunk(
   }
 );
 
-// 創建報告
+// CreateReport
 export const _createReport = createAsyncThunk(
   'feedback/createReport',
   async (report: Omit<FeedbackReport, 'id' | 'generatedAt'>) => {
@@ -161,7 +161,7 @@ export const _createReport = createAsyncThunk(
   }
 );
 
-// 發送通知
+// SendNotification
 export const _sendNotification = createAsyncThunk(
   'feedback/sendNotification',
   async (notification: Omit<FeedbackNotification, 'id' | 'timestamp'>) => {
@@ -171,7 +171,7 @@ export const _sendNotification = createAsyncThunk(
   }
 );
 
-// 標記通知為已讀
+// MarkNotification為已讀
 export const _markNotificationRead = createAsyncThunk(
   'feedback/markNotificationRead',
   async (notificationId: string) => {
@@ -181,7 +181,7 @@ export const _markNotificationRead = createAsyncThunk(
   }
 );
 
-// 同步數據
+// SyncData
 export const _syncFeedbackData = createAsyncThunk(
   'feedback/syncData',
   async () => {
@@ -191,7 +191,7 @@ export const _syncFeedbackData = createAsyncThunk(
   }
 );
 
-// 清除緩存
+// ClearCache
 export const _clearFeedbackCache = createAsyncThunk(
   'feedback/clearCache',
   async () => {
@@ -205,7 +205,7 @@ const _feedbackSlice = createSlice({
   name: 'feedback',
   initialState,
   reducers: {
-    // 直接狀態更新
+    // 直接StatusUpdate
     setFeedbacks: (state, action: PayloadAction<FeedbackData[]>) => {
       state.feedbacks = action.payload;
     },
@@ -255,7 +255,7 @@ const _feedbackSlice = createSlice({
       state.reports.unshift(action.payload);
     },
 
-    // 查詢狀態更新
+    // QueryStatusUpdate
     updateFilters: (state, action: PayloadAction<Partial<FeedbackFilter>>) => {
       state.filters = { ...state.filters, ...action.payload };
     },
@@ -279,7 +279,7 @@ const _feedbackSlice = createSlice({
       state.pagination = action.payload;
     },
 
-    // 加載狀態更新
+    // 加載StatusUpdate
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
@@ -292,7 +292,7 @@ const _feedbackSlice = createSlice({
       state.syncing = action.payload;
     },
 
-    // 錯誤狀態更新
+    // ErrorStatusUpdate
     setError: (state, action: PayloadAction<string | null>) => {
       state.error = action.payload;
     },
@@ -301,7 +301,7 @@ const _feedbackSlice = createSlice({
       state.error = null;
     },
 
-    // 服務狀態更新
+    // ServiceStatusUpdate
     updateServiceConfig: (
       state,
       action: PayloadAction<Partial<FeedbackServiceConfig>>
@@ -322,7 +322,7 @@ const _feedbackSlice = createSlice({
       state.syncStatus = action.payload.syncStatus;
     },
 
-    // 重置狀態
+    // ResetStatus
     resetFeedbackState: state => {
       state.feedbacks = [];
       state.analytics = null;
@@ -337,7 +337,7 @@ const _feedbackSlice = createSlice({
       state.error = null;
     },
 
-    // 批量操作
+    // BatchOperation
     batchUpdateFeedbacks: (state, action: PayloadAction<FeedbackData[]>) => {
       action.payload.forEach(feedback => {
         const _index = state.feedbacks.findIndex(f => f.id === feedback.id);
@@ -356,9 +356,9 @@ const _feedbackSlice = createSlice({
     },
   },
 
-  // 處理異步 Thunk 動作
+  // HandleAsync Thunk 動作
   extraReducers: builder => {
-    // 初始化服務
+    // InitializeService
     builder
       .addCase(initializeFeedbackService.pending, state => {
         state.loading = true;
@@ -372,10 +372,10 @@ const _feedbackSlice = createSlice({
       })
       .addCase(initializeFeedbackService.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
-    // 提交反饋
+    // Submit反饋
     builder
       .addCase(submitFeedback.pending, state => {
         state.submitting = true;
@@ -387,10 +387,10 @@ const _feedbackSlice = createSlice({
       })
       .addCase(submitFeedback.rejected, (state, action) => {
         state.submitting = false;
-        state.error = action.error.message || '提交失敗';
+        state.error = action.error.message || '提交Failed';
       });
 
-    // 更新反饋
+    // Update反饋
     builder
       .addCase(updateFeedback.pending, state => {
         state.loading = true;
@@ -407,10 +407,10 @@ const _feedbackSlice = createSlice({
       })
       .addCase(updateFeedback.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '更新失敗';
+        state.error = action.error.message || 'UpdateFailed';
       });
 
-    // 刪除反饋
+    // Delete反饋
     builder
       .addCase(deleteFeedback.pending, state => {
         state.loading = true;
@@ -422,10 +422,10 @@ const _feedbackSlice = createSlice({
       })
       .addCase(deleteFeedback.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '刪除失敗';
+        state.error = action.error.message || 'DeleteFailed';
       });
 
-    // 獲取反饋列表
+    // Get反饋List
     builder
       .addCase(fetchFeedbacks.pending, state => {
         state.loading = true;
@@ -439,10 +439,10 @@ const _feedbackSlice = createSlice({
       })
       .addCase(fetchFeedbacks.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取失敗';
+        state.error = action.error.message || 'GetFailed';
       });
 
-    // 獲取分析數據
+    // GetAnalysisData
     builder
       .addCase(fetchAnalytics.pending, state => {
         state.loading = true;
@@ -454,10 +454,10 @@ const _feedbackSlice = createSlice({
       })
       .addCase(fetchAnalytics.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取分析數據失敗';
+        state.error = action.error.message || 'Get分析數據Failed';
       });
 
-    // 創建報告
+    // CreateReport
     builder
       .addCase(createReport.pending, state => {
         state.loading = true;
@@ -469,22 +469,22 @@ const _feedbackSlice = createSlice({
       })
       .addCase(createReport.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '創建報告失敗';
+        state.error = action.error.message || 'Create報告Failed';
       });
 
-    // 發送通知
+    // SendNotification
     builder
       .addCase(sendNotification.pending, state => {
         state.error = null;
       })
       .addCase(sendNotification.fulfilled, (state, action) => {
-        // 通知已發送，不需要更新狀態
+        // Notification已Send，不需要UpdateStatus
       })
       .addCase(sendNotification.rejected, (state, action) => {
-        state.error = action.error.message || '發送通知失敗';
+        state.error = action.error.message || '發送通知Failed';
       });
 
-    // 標記通知為已讀
+    // MarkNotification為已讀
     builder
       .addCase(markNotificationRead.pending, state => {
         state.error = null;
@@ -498,10 +498,10 @@ const _feedbackSlice = createSlice({
         }
       })
       .addCase(markNotificationRead.rejected, (state, action) => {
-        state.error = action.error.message || '標記通知失敗';
+        state.error = action.error.message || '標記通知Failed';
       });
 
-    // 同步數據
+    // SyncData
     builder
       .addCase(syncFeedbackData.pending, state => {
         state.syncing = true;
@@ -516,24 +516,24 @@ const _feedbackSlice = createSlice({
       .addCase(syncFeedbackData.rejected, (state, action) => {
         state.syncing = false;
         state.syncStatus = 'error';
-        state.error = action.error.message || '同步失敗';
+        state.error = action.error.message || '同步Failed';
       });
 
-    // 清除緩存
+    // ClearCache
     builder
       .addCase(clearFeedbackCache.pending, state => {
         state.error = null;
       })
       .addCase(clearFeedbackCache.fulfilled, state => {
-        // 緩存已清除
+        // Cache已Clear
       })
       .addCase(clearFeedbackCache.rejected, (state, action) => {
-        state.error = action.error.message || '清除緩存失敗';
+        state.error = action.error.message || '清除緩存Failed';
       });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   setFeedbacks,
   addFeedback,
@@ -561,10 +561,10 @@ export const {
   batchRemoveFeedbacks,
 } = feedbackSlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default feedbackSlice.reducer;
 
-// 選擇器
+// Select器
 export const _selectFeedbacks = (state: { feedback: FeedbackState }) =>
   state.feedback.feedbacks;
 export const _selectAnalytics = (state: { feedback: FeedbackState }) =>
@@ -596,7 +596,7 @@ export const _selectIsOnline = (state: { feedback: FeedbackState }) =>
 export const _selectSyncStatus = (state: { feedback: FeedbackState }) =>
   state.feedback.syncStatus;
 
-// 派生選擇器
+// 派生Select器
 export const _selectFeedbackById = (
   state: { feedback: FeedbackState },
   id: string

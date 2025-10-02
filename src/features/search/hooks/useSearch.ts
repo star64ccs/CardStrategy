@@ -50,7 +50,7 @@ import type { SearchFilters, SearchQuery, SortOption } from '../types/search';
 export const _useSearch = () => {
   const _dispatch = useDispatch<AppDispatch>();
 
-  // 從 Redux store 獲取狀態
+  // 從 Redux store GetStatus
   const _results = useSelector(selectSearchResults);
   const _total = useSelector(selectSearchTotal);
   const _page = useSelector(selectSearchPage);
@@ -73,29 +73,29 @@ export const _useSearch = () => {
   const _popularSearches = useSelector(selectPopularSearches);
   const _searchPreferences = useSelector(selectSearchPreferences);
 
-  // 本地狀態
+  // LocalStatus
   const [debouncedQuery, setDebouncedQuery] = useState(currentQuery);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // 初始化搜索服務
+  // InitializeSearchService
   const _initialize = useCallback(async () => {
     try {
       const _result = await dispatch(initializeSearchService()).unwrap();
       setIsInitialized(true);
       return result;
     } catch (error) {
-      console.error('搜索服務初始化失敗:', error);
+      console.error('搜索ServiceInitializeFailed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 執行搜索
+  // 執RowSearch
   const _search = useCallback(
     async (query: SearchQuery) => {
       try {
         const _response = await dispatch(performSearch(query)).unwrap();
 
-        // 記錄搜索歷史
+        // RecordSearch歷史
         dispatch(
           addSearchHistory({
             query: query.query,
@@ -108,14 +108,14 @@ export const _useSearch = () => {
 
         return response;
       } catch (error) {
-        console.error('搜索執行失敗:', error);
+        console.error('搜索執行Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 簡單搜索（只提供查詢字符串）
+  // 簡單Search（只提供Query字符串）
   const _simpleSearch = useCallback(
     async (
       queryString: string,
@@ -139,7 +139,7 @@ export const _useSearch = () => {
     [search, currentFilters, currentSortBy, limit]
   );
 
-  // 設置搜索查詢
+  // SettingsSearchQuery
   const _setQuery = useCallback(
     (query: string) => {
       dispatch(setSearchQuery(query));
@@ -148,7 +148,7 @@ export const _useSearch = () => {
     [dispatch]
   );
 
-  // 設置搜索過濾器
+  // SettingsSearchFilter器
   const _setFilters = useCallback(
     (filters: SearchFilters) => {
       dispatch(setSearchFilters(filters));
@@ -156,7 +156,7 @@ export const _useSearch = () => {
     [dispatch]
   );
 
-  // 更新搜索過濾器
+  // UpdateSearchFilter器
   const _updateFilters = useCallback(
     (filters: Partial<SearchFilters>) => {
       dispatch(updateSearchFilters(filters));
@@ -164,7 +164,7 @@ export const _useSearch = () => {
     [dispatch]
   );
 
-  // 設置排序選項
+  // SettingsSortOptions
   const _setSort = useCallback(
     (sortBy: SortOption) => {
       dispatch(setSortBy(sortBy));
@@ -172,7 +172,7 @@ export const _useSearch = () => {
     [dispatch]
   );
 
-  // 設置頁碼
+  // Settings頁碼
   const _setPageNumber = useCallback(
     (pageNumber: number) => {
       dispatch(setPage(pageNumber));
@@ -180,7 +180,7 @@ export const _useSearch = () => {
     [dispatch]
   );
 
-  // 設置每頁數量
+  // Settings每頁數量
   const _setLimitCount = useCallback(
     (limitCount: number) => {
       dispatch(setLimit(limitCount));
@@ -188,28 +188,28 @@ export const _useSearch = () => {
     [dispatch]
   );
 
-  // 清除搜索結果
+  // ClearSearch結果
   const _clearResults = useCallback(() => {
     dispatch(clearSearchResults());
   }, [dispatch]);
 
-  // 清除搜索查詢
+  // ClearSearchQuery
   const _clearQuery = useCallback(() => {
     dispatch(clearSearchQuery());
     setDebouncedQuery('');
   }, [dispatch]);
 
-  // 清除搜索歷史
+  // ClearSearch歷史
   const _clearHistory = useCallback(() => {
     dispatch(clearSearchHistory());
   }, [dispatch]);
 
-  // 清除最近搜索
+  // Clear最近Search
   const _clearRecent = useCallback(() => {
     dispatch(clearRecentSearches());
   }, [dispatch]);
 
-  // 設置搜索建議
+  // SettingsSearch建議
   const _setSearchSuggestions = useCallback(
     (suggestions: string[]) => {
       dispatch(setSuggestions(suggestions));
@@ -217,12 +217,12 @@ export const _useSearch = () => {
     [dispatch]
   );
 
-  // 清除搜索建議
+  // ClearSearch建議
   const _clearSearchSuggestions = useCallback(() => {
     dispatch(clearSuggestions());
   }, [dispatch]);
 
-  // 設置錯誤
+  // SettingsError
   const _setSearchError = useCallback(
     (errorMessage: string | null) => {
       dispatch(setError(errorMessage));
@@ -230,43 +230,43 @@ export const _useSearch = () => {
     [dispatch]
   );
 
-  // 清除錯誤
+  // ClearError
   const _clearSearchError = useCallback(() => {
     dispatch(clearError());
   }, [dispatch]);
 
-  // 重置搜索狀態
+  // ResetSearchStatus
   const _reset = useCallback(() => {
     dispatch(resetSearchState());
     setDebouncedQuery('');
   }, [dispatch]);
 
-  // 獲取搜索統計
+  // GetSearchStatistics
   const _getStats = useCallback(async () => {
     try {
       const _stats = await dispatch(getSearchStats()).unwrap();
       return stats;
     } catch (error) {
-      console.error('獲取搜索統計失敗:', error);
+      console.error('Get搜索統計Failed:', error);
       throw error;
     }
   }, [dispatch]);
 
-  // 更新搜索索引
+  // UpdateSearchIndex
   const _updateIndex = useCallback(
     async (indexName: string) => {
       try {
         const _result = await dispatch(updateSearchIndex(indexName)).unwrap();
         return result;
       } catch (error) {
-        console.error('更新搜索索引失敗:', error);
+        console.error('Update搜索索引Failed:', error);
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 自動搜索（基於防抖）
+  // AutoSearch（基於防抖）
   useEffect(() => {
     const _timer = setTimeout(() => {
       if (debouncedQuery.trim() && debouncedQuery !== currentQuery) {
@@ -277,7 +277,7 @@ export const _useSearch = () => {
     return () => clearTimeout(timer);
   }, [debouncedQuery, currentQuery, simpleSearch]);
 
-  // 計算分頁信息
+  // 計算PaginateInformation
   const _paginationInfo = useMemo(() => {
     const _startIndex = (page - 1) * limit + 1;
     const _endIndex = Math.min(page * limit, total);
@@ -294,7 +294,7 @@ export const _useSearch = () => {
     };
   }, [page, limit, total, totalPages]);
 
-  // 計算搜索摘要
+  // 計算Search摘要
   const _searchSummary = useMemo(() => {
     if (total === 0) return null;
 
@@ -315,22 +315,22 @@ export const _useSearch = () => {
     paginationInfo,
   ]);
 
-  // 檢查是否有活躍的過濾器
+  // CheckYesNo有活躍的Filter器
   const _hasActiveFilters = useMemo(() => {
     return Object.keys(currentFilters).length > 0;
   }, [currentFilters]);
 
-  // 檢查是否有搜索結果
+  // CheckYesNo有Search結果
   const _hasResults = useMemo(() => {
     return results.length > 0;
   }, [results]);
 
-  // 檢查是否正在加載
+  // CheckYesNo正在加載
   const _isSearching = useMemo(() => {
     return isLoading || isInitializing;
   }, [isLoading, isInitializing]);
 
-  // 獲取結果統計
+  // Get結果Statistics
   const _resultsStats = useMemo(() => {
     if (!hasResults) return null;
 
@@ -372,9 +372,9 @@ export const _useSearch = () => {
     };
   }, [results, hasResults]);
 
-  // 導出所有功能
+  // Export所有功能
   return {
-    // 狀態
+    // Status
     results,
     total,
     page,
@@ -398,7 +398,7 @@ export const _useSearch = () => {
     searchPreferences,
     isInitialized,
 
-    // 計算屬性
+    // 計算Property
     paginationInfo,
     searchSummary,
     hasActiveFilters,
@@ -406,7 +406,7 @@ export const _useSearch = () => {
     isSearching,
     resultsStats,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     search,
     simpleSearch,
@@ -430,7 +430,7 @@ export const _useSearch = () => {
   };
 };
 
-// 專門用於搜索建議的 Hook
+// 專門用於Search建議的 Hook
 export const _useSearchSuggestions = () => {
   const _dispatch = useDispatch();
   const _suggestions = useSelector(selectSearchSuggestions);
@@ -444,7 +444,7 @@ export const _useSearchSuggestions = () => {
         return [];
       }
 
-      // 基於最近搜索和熱門搜索生成建議
+      // 基於最近Search和熱門Search生成建議
       const _allSuggestions = [
         ...recentSearches.filter(q =>
           q.toLowerCase().includes(query.toLowerCase())
@@ -454,7 +454,7 @@ export const _useSearchSuggestions = () => {
           .filter(q => q.toLowerCase().includes(query.toLowerCase())),
       ];
 
-      // 去重並限制數量
+      // 去重並Limit數量
       const _uniqueSuggestions = [...new Set(allSuggestions)].slice(0, 5);
 
       dispatch(setSuggestions(uniqueSuggestions));
@@ -474,7 +474,7 @@ export const _useSearchSuggestions = () => {
   };
 };
 
-// 專門用於搜索過濾器的 Hook
+// 專門用於SearchFilter器的 Hook
 export const _useSearchFilters = () => {
   const _dispatch = useDispatch<AppDispatch>();
   const _currentFilters = useSelector(selectCurrentFilters);
@@ -525,7 +525,7 @@ export const _useSearchFilters = () => {
   };
 };
 
-// 專門用於搜索排序的 Hook
+// 專門用於SearchSort的 Hook
 export const _useSearchSorting = () => {
   const _dispatch = useDispatch<AppDispatch>();
   const _currentSortBy = useSelector(selectCurrentSortBy);

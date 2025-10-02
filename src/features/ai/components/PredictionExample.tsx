@@ -91,7 +91,7 @@ export const PredictionExample: React.FC = () => {
 
         {predictionStats ? (
           <View style={styles.statsContainer}>
-            {/* 總體統計 */}
+            {/* 總體Statistics */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>總體統計</Text>
 
@@ -110,7 +110,7 @@ export const PredictionExample: React.FC = () => {
               </View>
             </View>
 
-            {/* 按類型統計 */}
+            {/* 按Class型Statistics */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>按類型統計</Text>
 
@@ -126,7 +126,7 @@ export const PredictionExample: React.FC = () => {
               )}
             </View>
 
-            {/* 按時間範圍統計 */}
+            {/* 按Time範圍Statistics */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>按時間範圍統計</Text>
 
@@ -220,7 +220,7 @@ export const PredictionExample: React.FC = () => {
               </View>
             )}
 
-            {/* 操作按鈕 */}
+            {/* Operation按鈕 */}
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.button}
@@ -289,7 +289,7 @@ export const PredictionExample: React.FC = () => {
           </View>
         </View>
 
-        {/* 統計概覽 */}
+        {/* Statistics概覽 */}
         {predictionStats && (
           <View style={styles.statsOverview}>
             <Text style={styles.sectionTitle}>統計概覽</Text>
@@ -328,7 +328,7 @@ export const PredictionExample: React.FC = () => {
           </View>
         )}
 
-        {/* 操作按鈕 */}
+        {/* Operation按鈕 */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.primaryButton]}
@@ -367,7 +367,7 @@ export const PredictionExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 顯示當前預測結果 */}
+      {/* Show當前預測結果 */}
       {currentPrediction && !showForm && !showStats && (
         <View style={styles.resultContainer}>
           <PredictionResult

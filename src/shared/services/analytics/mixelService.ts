@@ -61,14 +61,14 @@ export class MixelService {
   }
 
   /**
-   * 檢查服務是否可用
+   * CheckServiceYesNo可用
    */
   isAvailable(): boolean {
     return this.isInitialized && !!this.projectToken && !!this.apiSecret;
   }
 
   /**
-   * 追蹤事件
+   * TraceEvent
    */
   async trackEvent(event: MixelEvent): Promise<ApiResponse> {
     try {
@@ -116,7 +116,7 @@ export class MixelService {
   }
 
   /**
-   * 識別用戶
+   * 識別User
    */
   async identifyUser(user: MixelUser): Promise<ApiResponse> {
     try {
@@ -163,7 +163,7 @@ export class MixelService {
   }
 
   /**
-   * 追蹤頁面瀏覽
+   * Trace頁面瀏覽
    */
   async trackPageView(pageView: MixelPageView): Promise<ApiResponse> {
     return this.trackEvent({
@@ -178,7 +178,7 @@ export class MixelService {
   }
 
   /**
-   * 追蹤轉換
+   * TraceConvert
    */
   async trackConversion(conversion: MixelConversion): Promise<ApiResponse> {
     return this.trackEvent({
@@ -193,7 +193,7 @@ export class MixelService {
   }
 
   /**
-   * 批量追蹤事件
+   * BatchTraceEvent
    */
   async batchTrackEvents(events: MixelEvent[]): Promise<ApiResponse> {
     try {
@@ -253,7 +253,7 @@ export class MixelService {
   }
 
   /**
-   * 獲取分析報告
+   * GetAnalysisReport
    */
   async getAnalyticsReport(
     dateRange: { start: Date; end: Date },
@@ -307,7 +307,7 @@ export class MixelService {
   }
 
   /**
-   * 追蹤用戶註冊
+   * TraceUserRegister
    */
   async trackUserSignUp(
     userId: string,
@@ -336,7 +336,7 @@ export class MixelService {
   }
 
   /**
-   * 追蹤卡牌相關事件
+   * Trace卡牌相OffEvent
    */
   async trackCardEvent(
     eventType: string,
@@ -353,7 +353,7 @@ export class MixelService {
   }
 
   /**
-   * 追蹤投資相關事件
+   * Trace投資相OffEvent
    */
   async trackInvestmentEvent(
     eventType: string,
@@ -371,7 +371,7 @@ export class MixelService {
   }
 
   /**
-   * 獲取服務統計
+   * GetServiceStatistics
    */
   async getServiceStats(): Promise<ApiResponse> {
     return {

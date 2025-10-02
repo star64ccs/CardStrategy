@@ -30,7 +30,7 @@ router.post('/incremental', authenticateToken, async (req, res) => {
       serverChanges: [],
     };
 
-    // ?��?客戶端�???    for (const item of batch.items) {
+    // ?��?Client�???    for (const item of batch.items) {
       try {
 // eslint-disable-next-line no-unused-vars
         const result = await processSyncItem(item, userId, lastSyncTime);
@@ -236,7 +236,7 @@ async function processUserSync(
     if (!existingUser) {''
       return { success: false, error: '?�戶不�??? };'
     }
-    // ?�更?��?許�?步�??�戶字段''
+    // ?�更?��?許�?步�??�戶Field''
     const allowedFields = ['preferences', 'settings', 'profile'];
     const updateData = {};
 
@@ -393,7 +393,7 @@ router.get('/status', authenticateToken, async (req, res) => {
 // eslint-disable-next-line no-unused-vars
     const lastSyncTime = user.lastSyncTime || 0;
 
-    // ?��?待�?步�??�數?��??�裡?�以實現?��??��??�輯�?    const pendingCount = 0; // ?��?設為0，可以根?�實?��?求實??
+    // ?��?待�?步�??�數?��??�裡?�以實現?��??��??�輯�?    const pendingCount = 0; // ?��?設為0，可以Root?�實?��?求實??
     res.json({
       success: true,
       lastSyncTime,

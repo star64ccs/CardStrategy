@@ -14,7 +14,7 @@ import type {
   SearchRecommendation,
 } from '../../features/search/types/searchAnalytics';
 
-// 異步 Thunk
+// Async Thunk
 export const _initializeSearchAnalytics = createAsyncThunk(
   'searchAnalytics/initialize',
   async () => {
@@ -89,38 +89,38 @@ export const _deleteAlert = createAsyncThunk(
   }
 );
 
-// 狀態接口
+// StatusInterface
 interface SearchAnalyticsState {
-  // 服務狀態
+  // ServiceStatus
   isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
 
-  // 分析數據
+  // AnalysisData
   analytics: SearchAnalytics | null;
   currentFilter: SearchAnalyticsFilter | null;
 
-  // 報告
+  // Report
   reports: SearchAnalyticsReport[];
   currentReport: SearchAnalyticsReport | null;
   reportGenerationLoading: boolean;
 
-  // 配置
+  // Configure
   config: SearchAnalyticsConfig;
 
-  // 警報
+  // Alert
   alerts: SearchAnalyticsAlert[];
   alertLoading: boolean;
 
-  // 事件
+  // Event
   recentEvents: SearchAnalyticsEvent[];
   eventCount: number;
 
-  // 導出
+  // Export
   exportLoading: boolean;
   exportData: string | null;
 
-  // 實時數據
+  // 實時Data
   realTimeMetrics: {
     currentSearches: number;
     averageResponseTime: number;
@@ -133,7 +133,7 @@ interface SearchAnalyticsState {
   recommendations: SearchRecommendation[];
 }
 
-// 初始狀態
+// 初始Status
 const initialState: SearchAnalyticsState = {
   isInitialized: false,
   isLoading: false,
@@ -174,24 +174,24 @@ const _searchAnalyticsSlice = createSlice({
   name: 'searchAnalytics',
   initialState,
   reducers: {
-    // 重置狀態
+    // ResetStatus
     resetState: state => {
       state.isInitialized = false;
       state.analytics = null;
       state.error = null;
     },
 
-    // 設置過濾器
+    // SettingsFilter器
     setFilter: (state, action: PayloadAction<SearchAnalyticsFilter>) => {
       state.currentFilter = action.payload;
     },
 
-    // 清除過濾器
+    // ClearFilter器
     clearFilter: state => {
       state.currentFilter = null;
     },
 
-    // 更新配置
+    // UpdateConfigure
     updateConfig: (
       state,
       action: PayloadAction<Partial<SearchAnalyticsConfig>>
@@ -199,18 +199,18 @@ const _searchAnalyticsSlice = createSlice({
       state.config = { ...state.config, ...action.payload };
     },
 
-    // 添加事件
+    // AddEvent
     addEvent: (state, action: PayloadAction<SearchAnalyticsEvent>) => {
       state.recentEvents.unshift(action.payload);
       state.eventCount++;
 
-      // 限制事件數量
+      // LimitEvent數量
       if (state.recentEvents.length > 100) {
         state.recentEvents = state.recentEvents.slice(0, 100);
       }
     },
 
-    // 更新實時指標
+    // Update實時指標
     updateRealTimeMetrics: (
       state,
       action: PayloadAction<{
@@ -223,12 +223,12 @@ const _searchAnalyticsSlice = createSlice({
       state.realTimeMetrics = action.payload;
     },
 
-    // 設置洞察
+    // Settings洞察
     setInsights: (state, action: PayloadAction<SearchInsight[]>) => {
       state.insights = action.payload;
     },
 
-    // 設置建議
+    // Settings建議
     setRecommendations: (
       state,
       action: PayloadAction<SearchRecommendation[]>
@@ -236,12 +236,12 @@ const _searchAnalyticsSlice = createSlice({
       state.recommendations = action.payload;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
     },
 
-    // 設置當前報告
+    // Settings當前Report
     setCurrentReport: (
       state,
       action: PayloadAction<SearchAnalyticsReport | null>
@@ -249,17 +249,17 @@ const _searchAnalyticsSlice = createSlice({
       state.currentReport = action.payload;
     },
 
-    // 添加報告
+    // AddReport
     addReport: (state, action: PayloadAction<SearchAnalyticsReport>) => {
       state.reports.unshift(action.payload);
 
-      // 限制報告數量
+      // LimitReport數量
       if (state.reports.length > 50) {
         state.reports = state.reports.slice(0, 50);
       }
     },
 
-    // 刪除報告
+    // DeleteReport
     deleteReport: (state, action: PayloadAction<string>) => {
       state.reports = state.reports.filter(
         report => report.id !== action.payload
@@ -270,7 +270,7 @@ const _searchAnalyticsSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // 初始化
+    // Initialize
     builder
       .addCase(initializeSearchAnalytics.pending, state => {
         state.isLoading = true;
@@ -282,10 +282,10 @@ const _searchAnalyticsSlice = createSlice({
       })
       .addCase(initializeSearchAnalytics.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
-    // 獲取分析數據
+    // GetAnalysisData
     builder
       .addCase(fetchAnalytics.pending, state => {
         state.isLoading = true;
@@ -297,10 +297,10 @@ const _searchAnalyticsSlice = createSlice({
       })
       .addCase(fetchAnalytics.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取分析數據失敗';
+        state.error = action.error.message || 'Get分析數據Failed';
       });
 
-    // 生成報告
+    // 生成Report
     builder
       .addCase(generateReport.pending, state => {
         state.reportGenerationLoading = true;
@@ -313,10 +313,10 @@ const _searchAnalyticsSlice = createSlice({
       })
       .addCase(generateReport.rejected, (state, action) => {
         state.reportGenerationLoading = false;
-        state.error = action.error.message || '生成報告失敗';
+        state.error = action.error.message || '生成報告Failed';
       });
 
-    // 導出數據
+    // ExportData
     builder
       .addCase(exportData.pending, state => {
         state.exportLoading = true;
@@ -328,10 +328,10 @@ const _searchAnalyticsSlice = createSlice({
       })
       .addCase(exportData.rejected, (state, action) => {
         state.exportLoading = false;
-        state.error = action.error.message || '導出數據失敗';
+        state.error = action.error.message || '導出數據Failed';
       });
 
-    // 創建警報
+    // CreateAlert
     builder
       .addCase(createAlert.pending, state => {
         state.alertLoading = true;
@@ -339,14 +339,14 @@ const _searchAnalyticsSlice = createSlice({
       })
       .addCase(createAlert.fulfilled, (state, action) => {
         state.alertLoading = false;
-        // 警報 ID 會在服務中生成，這裡需要重新獲取警報列表
+        // Alert ID 會在Service中生成，這裡需要ReGetAlertList
       })
       .addCase(createAlert.rejected, (state, action) => {
         state.alertLoading = false;
-        state.error = action.error.message || '創建警報失敗';
+        state.error = action.error.message || 'Create警報Failed';
       });
 
-    // 更新警報
+    // UpdateAlert
     builder
       .addCase(updateAlert.pending, state => {
         state.alertLoading = true;
@@ -362,10 +362,10 @@ const _searchAnalyticsSlice = createSlice({
       })
       .addCase(updateAlert.rejected, (state, action) => {
         state.alertLoading = false;
-        state.error = action.error.message || '更新警報失敗';
+        state.error = action.error.message || 'Update警報Failed';
       });
 
-    // 刪除警報
+    // DeleteAlert
     builder
       .addCase(deleteAlert.pending, state => {
         state.alertLoading = true;
@@ -379,12 +379,12 @@ const _searchAnalyticsSlice = createSlice({
       })
       .addCase(deleteAlert.rejected, (state, action) => {
         state.alertLoading = false;
-        state.error = action.error.message || '刪除警報失敗';
+        state.error = action.error.message || 'Delete警報Failed';
       });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   resetState,
   setFilter,
@@ -400,7 +400,7 @@ export const {
   deleteReport,
 } = searchAnalyticsSlice.actions;
 
-// 導出 selectors
+// Export selectors
 export const _selectSearchAnalytics = (state: {
   searchAnalytics: SearchAnalyticsState;
 }) => state.searchAnalytics;
@@ -453,5 +453,5 @@ export const _selectReports = (state: {
   searchAnalytics: SearchAnalyticsState;
 }) => state.searchAnalytics.reports;
 
-// 導出 reducer
+// Export reducer
 export default searchAnalyticsSlice.reducer;

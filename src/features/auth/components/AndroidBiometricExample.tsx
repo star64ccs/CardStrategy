@@ -22,7 +22,7 @@ interface AndroidBiometricExampleProps {
 }
 
 /**
- * Android 生物識別示例組件
+ * Android 生物識別示例Component
  * 展示完整的指紋/面部識別功能
  */
 export const AndroidBiometricExample: React.FC<
@@ -44,13 +44,13 @@ export const AndroidBiometricExample: React.FC<
   }, []);
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   const _initializeService = async () => {
     try {
       setIsLoading(true);
 
-      // 檢查服務狀態
+      // CheckServiceStatus
       const _info = biometricService.getServiceInfo();
       setServiceInfo(info);
 
@@ -58,18 +58,18 @@ export const AndroidBiometricExample: React.FC<
       const _deviceCapabilities = await biometricService.detectCapabilities();
       setCapabilities(deviceCapabilities);
 
-      // 獲取安全信息
+      // Get安全Information
       const _secInfo = biometricService.getSecurityInfo();
       setSecurityInfo(secInfo);
 
-      // 檢查是否有可用的生物識別
+      // CheckYesNo有可用的生物識別
       const _hasAvailableBiometric = deviceCapabilities.some(
         cap => cap.isAvailable && cap.isEnrolled
       );
       setIsEnabled(hasAvailableBiometric);
     } catch (error) {
-      console.error('初始化 Android 生物識別服務失敗:', error);
-      Alert.alert('錯誤', '初始化生物識別服務失敗');
+      console.error('Initialize Android 生物識別ServiceFailed:', error);
+      Alert.alert('Error', 'Initialize生物識別ServiceFailed');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -77,7 +77,7 @@ export const AndroidBiometricExample: React.FC<
   };
 
   /**
-   * 執行生物識別認證
+   * 執Row生物識別Authenticate
    */
   const _performAuthentication = async () => {
     try {
@@ -94,20 +94,20 @@ export const AndroidBiometricExample: React.FC<
 
       if (result.success) {
         Alert.alert(
-          '認證成功',
-          `使用 ${result.biometricType} 認證成功\n時間: ${result.timestamp.toLocaleString()}`
+          '認證Success',
+          `使用 ${result.biometricType} 認證Success\n時間: ${result.timestamp.toLocaleString()}`
         );
         onSuccess?.(result);
       } else {
         Alert.alert(
-          '認證失敗',
-          `錯誤代碼: ${result.errorCode}\n錯誤信息: ${result.errorMessage}`
+          '認證Failed',
+          `Error代碼: ${result.errorCode}\nError信息: ${result.errorMessage}`
         );
         onError?.(result);
       }
     } catch (error) {
-      console.error('生物識別認證失敗:', error);
-      Alert.alert('錯誤', '認證過程發生錯誤');
+      console.error('生物識別認證Failed:', error);
+      Alert.alert('Error', '認證過程發生Error');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -115,7 +115,7 @@ export const AndroidBiometricExample: React.FC<
   };
 
   /**
-   * 創建簽名認證
+   * CreateSignAuthenticate
    */
   const _createSignature = async () => {
     try {
@@ -129,17 +129,17 @@ export const AndroidBiometricExample: React.FC<
 
       if (result.success) {
         Alert.alert(
-          '簽名創建成功',
+          '簽名CreateSuccess',
           `簽名: ${result.signature.substring(0, 20)}...`
         );
         onSuccess?.(result);
       } else {
-        Alert.alert('簽名創建失敗', '無法創建生物識別簽名');
+        Alert.alert('簽名CreateFailed', '無法創建生物識別簽名');
         onError?.(result);
       }
     } catch (error) {
-      console.error('簽名創建失敗:', error);
-      Alert.alert('錯誤', '簽名創建過程發生錯誤');
+      console.error('簽名CreateFailed:', error);
+      Alert.alert('Error', '簽名Create過程發生Error');
       onError?.(error);
     } finally {
       setIsLoading(false);
@@ -156,23 +156,23 @@ export const AndroidBiometricExample: React.FC<
       const _result = await biometricService.invalidateKeys();
 
       if (result) {
-        Alert.alert('成功', '生物識別密鑰已失效');
-        // 重新獲取安全信息
+        Alert.alert('Success', '生物識別密鑰已失效');
+        // ReGet安全Information
         const _secInfo = biometricService.getSecurityInfo();
         setSecurityInfo(secInfo);
       } else {
-        Alert.alert('失敗', '無法使密鑰失效');
+        Alert.alert('Failed', '無法使密鑰失效');
       }
     } catch (error) {
-      console.error('使密鑰失效失敗:', error);
-      Alert.alert('錯誤', '使密鑰失效過程發生錯誤');
+      console.error('使密鑰失效Failed:', error);
+      Alert.alert('Error', '使密鑰失效過程發生Error');
     } finally {
       setIsLoading(false);
     }
   };
 
   /**
-   * 重新初始化密鑰
+   * ReInitialize密鑰
    */
   const _reinitializeKeys = async () => {
     try {
@@ -181,23 +181,23 @@ export const AndroidBiometricExample: React.FC<
       const _result = await biometricService.reinitializeKeys();
 
       if (result) {
-        Alert.alert('成功', '生物識別密鑰重新初始化成功');
-        // 重新獲取安全信息
+        Alert.alert('Success', '生物識別密鑰重新InitializeSuccess');
+        // ReGet安全Information
         const _secInfo = biometricService.getSecurityInfo();
         setSecurityInfo(secInfo);
       } else {
-        Alert.alert('失敗', '無法重新初始化密鑰');
+        Alert.alert('Failed', '無法重新初始化密鑰');
       }
     } catch (error) {
-      console.error('重新初始化密鑰失敗:', error);
-      Alert.alert('錯誤', '重新初始化密鑰過程發生錯誤');
+      console.error('重新Initialize密鑰Failed:', error);
+      Alert.alert('Error', '重新Initialize密鑰過程發生Error');
     } finally {
       setIsLoading(false);
     }
   };
 
   /**
-   * 刷新服務信息
+   * RefreshServiceInformation
    */
   const _refreshServiceInfo = () => {
     const _info = biometricService.getServiceInfo();
@@ -208,7 +208,7 @@ export const AndroidBiometricExample: React.FC<
   };
 
   /**
-   * 渲染設備能力信息
+   * 渲染設備能力Information
    */
   const _renderCapabilities = () => {
     return capabilities.map((capability, index) => (
@@ -230,7 +230,7 @@ export const AndroidBiometricExample: React.FC<
   };
 
   /**
-   * 渲染安全信息
+   * 渲染安全Information
    */
   const _renderSecurityInfo = () => {
     if (!securityInfo) return null;
@@ -251,7 +251,7 @@ export const AndroidBiometricExample: React.FC<
   };
 
   /**
-   * 渲染服務信息
+   * 渲染ServiceInformation
    */
   const _renderServiceInfo = () => {
     if (!serviceInfo) return null;
@@ -268,7 +268,7 @@ export const AndroidBiometricExample: React.FC<
   };
 
   /**
-   * 渲染最後認證結果
+   * 渲染最後Authenticate結果
    */
   const _renderLastAuthResult = () => {
     if (!lastAuthResult) return null;
@@ -306,10 +306,10 @@ export const AndroidBiometricExample: React.FC<
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Android 生物識別示例</Text>
 
-      {/* 服務信息 */}
+      {/* ServiceInformation */}
       {renderServiceInfo()}
 
-      {/* 安全信息 */}
+      {/* 安全Information */}
       {renderSecurityInfo()}
 
       {/* 設備能力 */}
@@ -318,7 +318,7 @@ export const AndroidBiometricExample: React.FC<
         {renderCapabilities()}
       </View>
 
-      {/* 配置選項 */}
+      {/* ConfigureOptions */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>配置選項</Text>
 
@@ -337,7 +337,7 @@ export const AndroidBiometricExample: React.FC<
         </View>
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>操作</Text>
 
@@ -379,7 +379,7 @@ export const AndroidBiometricExample: React.FC<
         </TouchableOpacity>
       </View>
 
-      {/* 最後認證結果 */}
+      {/* 最後Authenticate結果 */}
       {renderLastAuthResult()}
     </ScrollView>
   );

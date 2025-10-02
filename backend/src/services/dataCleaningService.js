@@ -24,7 +24,7 @@ class DataCleaningService {
     }
   }
 
-  // 執行數據清洗流程
+  // 執RowData清洗流程
   async performDataCleaning() {
     try {
       await this.initializeModels();
@@ -38,14 +38,14 @@ class DataCleaningService {
         qualityImprovements: {},
       };
 
-      // 獲取所有訓練數據
+      // Get所有訓練Data
       const allTrainingData = await this.TrainingData.findAll({
         where: { isActive: true },
       });
 
       cleaningResults.totalRecords = allTrainingData.length;
 
-      // 執行各種清洗步驟
+      // 執Row各種清洗步驟
       const cleaningSteps = [
         this.removeDuplicateData.bind(this),
         this.removeLowQualityData.bind(this),
@@ -71,7 +71,7 @@ class DataCleaningService {
         }
       }
 
-      // 更新數據質量指標
+      // UpdateData質量指標
       await this.updateCleaningQualityMetrics(cleaningResults);
 
       logger.info(
@@ -79,12 +79,12 @@ class DataCleaningService {
       );
       return cleaningResults;
     } catch (error) {
-      logger.error('數據清洗失敗:', error);
+      logger.error('數據清洗Failed:', error);
       throw error;
     }
   }
 
-  // 移除重複數據
+  // RemoveDuplicateData
   async removeDuplicateData(trainingData) {
     try {
       logger.info('檢查並移除重複數據...');
@@ -93,14 +93,14 @@ class DataCleaningService {
       let removedCount = 0;
 
       for (const duplicateGroup of duplicates) {
-        // 保留質量最高的記錄，移除其他重複記錄
+        // 保留質量最高的Record，Remove其他DuplicateRecord
         const sortedGroup = duplicateGroup.sort((a, b) => {
           const qualityA = this.calculateRecordQuality(a);
           const qualityB = this.calculateRecordQuality(b);
           return qualityB - qualityA;
         });
 
-        // 移除除第一個（最高質量）之外的所有記錄
+        // Remove除第一個（最高質量）之外的所有Record
         for (let i = 1; i < sortedGroup.length; i++) {
           await sortedGroup[i].update({ isActive: false });
           removedCount++;
@@ -115,12 +115,12 @@ class DataCleaningService {
         },
       };
     } catch (error) {
-      logger.error('移除重複數據失敗:', error);
+      logger.error('移除重複數據Failed:', error);
       throw error;
     }
   }
 
-  // 查找重複數據
+  // FindDuplicateData
   findDuplicates(trainingData) {
     const duplicates = [];
     const processed = new Set();
@@ -150,25 +150,25 @@ class DataCleaningService {
     return duplicates;
   }
 
-  // 判斷是否為重複數據
+  // 判斷YesNo為DuplicateData
   isDuplicate(record1, record2) {
-    // 檢查卡片ID是否相同
+    // Check卡片IDYesNo相同
     if (record1.cardId === record2.cardId) {
-      // 檢查圖片數據的相似性（簡化版本）
+      // CheckGraph片Data的相似性（簡化Version）
       const imageSimilarity = this.calculateImageSimilarity(
         record1.imageData,
         record2.imageData
       );
 
-      return imageSimilarity > 0.95; // 95% 相似度視為重複
+      return imageSimilarity > 0.95; // 95% 相似度視為Duplicate
     }
 
     return false;
   }
 
-  // 計算圖片相似性（簡化版本）
+  // 計算Graph片相似性（簡化Version）
   calculateImageSimilarity(imageData1, imageData2) {
-    // 實際實現中會使用更複雜的圖像相似性算法
+    // 實際實現中會使用更複雜的Graph像相似性算法
     // 這裡使用簡化的字符串相似性計算
     if (imageData1 === imageData2) return 1.0;
 
@@ -211,13 +211,13 @@ class DataCleaningService {
     return matrix[str2.length][str1.length];
   }
 
-  // 移除低質量數據
+  // Remove低質量Data
   async removeLowQualityData(trainingData) {
     try {
       logger.info('檢查並移除低質量數據...');
 
       let removedCount = 0;
-      const qualityThreshold = 0.3; // 質量閾值
+      const qualityThreshold = 0.3; // 質量閾Value
 
 // eslint-disable-next-line no-unused-vars
       for (const record of trainingData) {
@@ -237,12 +237,12 @@ class DataCleaningService {
         },
       };
     } catch (error) {
-      logger.error('移除低質量數據失敗:', error);
+      logger.error('移除低質量數據Failed:', error);
       throw error;
     }
   }
 
-  // 計算記錄質量
+  // 計算Record質量
   calculateRecordQuality(record) {
     let quality = 0;
     const metadata = record.metadata || {};
@@ -252,7 +252,7 @@ class DataCleaningService {
       quality += metadata.confidence * 0.4;
     }
 
-    // 基於圖片質量
+    // 基於Graph片質量
     if (metadata.imageQuality) {
       const imageQualityScore = this.getImageQualityScore(
         metadata.imageQuality
@@ -260,18 +260,18 @@ class DataCleaningService {
       quality += imageQualityScore * 0.3;
     }
 
-    // 基於數據來源
+    // 基於Data來源
     const sourceQualityScore = this.getSourceQualityScore(record.source);
     quality += sourceQualityScore * 0.2;
 
-    // 基於數據完整性
+    // 基於Data完整性
     const completenessScore = this.calculateCompletenessScore(record);
     quality += completenessScore * 0.1;
 
     return Math.min(1, quality);
   }
 
-  // 獲取圖片質量分數
+  // GetGraph片質量分數
   getImageQualityScore(imageQuality) {
     const qualityScores = {
       high: 1.0,
@@ -282,7 +282,7 @@ class DataCleaningService {
     return qualityScores[imageQuality] || 0.5;
   }
 
-  // 獲取來源質量分數
+  // Get來源質量分數
   getSourceQualityScore(source) {
     const sourceScores = {
       official_api: 1.0,
@@ -309,14 +309,14 @@ class DataCleaningService {
     let completeFields = 0;
     const totalFields = requiredFields.length + optionalFields.length;
 
-    // 檢查必要字段
+    // Check必要Field
     requiredFields.forEach((field) => {
       if (record[field] !== null && record[field] !== undefined) {
         completeFields++;
       }
     });
 
-    // 檢查可選字段
+    // CheckOptionalField
     optionalFields.forEach((field) => {
       if (metadata[field] !== null && metadata[field] !== undefined) {
         completeFields++;
@@ -326,7 +326,7 @@ class DataCleaningService {
     return completeFields / totalFields;
   }
 
-  // 標準化數據格式
+  // Standard化Data格式
   async standardizeDataFormat(trainingData) {
     try {
       logger.info('標準化數據格式...');
@@ -338,7 +338,7 @@ class DataCleaningService {
         const originalMetadata = { ...record.metadata };
         let hasChanges = false;
 
-        // 標準化圖片格式
+        // Standard化Graph片格式
         if (record.metadata && record.metadata.imageFormat) {
           const standardizedFormat = this.standardizeImageFormat(
             record.metadata.imageFormat
@@ -349,7 +349,7 @@ class DataCleaningService {
           }
         }
 
-        // 標準化圖片尺寸
+        // Standard化Graph片尺寸
         if (record.metadata && record.metadata.imageDimensions) {
           const standardizedDimensions = this.standardizeImageDimensions(
             record.metadata.imageDimensions
@@ -363,7 +363,7 @@ class DataCleaningService {
           }
         }
 
-        // 標準化光源條件
+        // Standard化光源Condition
         if (record.metadata && record.metadata.lightingConditions) {
           const standardizedLighting = this.standardizeLightingConditions(
             record.metadata.lightingConditions
@@ -388,12 +388,12 @@ class DataCleaningService {
         },
       };
     } catch (error) {
-      logger.error('標準化數據格式失敗:', error);
+      logger.error('標準化數據格式Failed:', error);
       throw error;
     }
   }
 
-  // 標準化圖片格式
+  // Standard化Graph片格式
   standardizeImageFormat(format) {
     const formatMap = {
       jpg: 'JPEG',
@@ -406,7 +406,7 @@ class DataCleaningService {
     return formatMap[format.toLowerCase()] || format.toUpperCase();
   }
 
-  // 標準化圖片尺寸
+  // Standard化Graph片尺寸
   standardizeImageDimensions(dimensions) {
     return {
       width: parseInt(dimensions.width) || 0,
@@ -414,7 +414,7 @@ class DataCleaningService {
     };
   }
 
-  // 標準化光源條件
+  // Standard化光源Condition
   standardizeLightingConditions(lighting) {
     const lightingMap = {
       good: 'good',
@@ -429,7 +429,7 @@ class DataCleaningService {
     return lightingMap[lighting.toLowerCase()] || 'medium';
   }
 
-  // 驗證數據完整性
+  // VerifyData完整性
   async validateDataIntegrity(trainingData) {
     try {
       logger.info('驗證數據完整性...');
@@ -457,24 +457,24 @@ class DataCleaningService {
         },
       };
     } catch (error) {
-      logger.error('驗證數據完整性失敗:', error);
+      logger.error('Verify數據完整性Failed:', error);
       throw error;
     }
   }
 
-  // 驗證記錄完整性
+  // VerifyRecord完整性
   async validateRecordIntegrity(record) {
-    // 檢查必要字段
+    // Check必要Field
     if (!record.imageData || !record.source || !record.quality) {
       return false;
     }
 
-    // 檢查圖片數據格式
+    // CheckGraph片Data格式
     if (!this.isValidImageData(record.imageData)) {
       return false;
     }
 
-    // 檢查元數據完整性
+    // Check元Data完整性
     const metadata = record.metadata || {};
     if (metadata.imageSize && metadata.imageSize <= 0) {
       return false;
@@ -490,28 +490,28 @@ class DataCleaningService {
     return true;
   }
 
-  // 驗證圖片數據
+  // VerifyGraph片Data
   isValidImageData(imageData) {
     if (!imageData || typeof imageData !== 'string') {
       return false;
     }
 
-    // 檢查是否為有效的base64格式
+    // CheckYesNo為有效的base64格式
     const base64Regex = /^data:image\/[a-zA-Z]+;base64,/;
     if (!base64Regex.test(imageData)) {
       return false;
     }
 
-    // 檢查數據長度
+    // CheckData長度
     if (imageData.length < 100) {
-      // 最小長度檢查
+      // 最小長度Check
       return false;
     }
 
     return true;
   }
 
-  // 豐富數據元數據
+  // 豐富Data元Data
   async enrichDataMetadata(trainingData) {
     try {
       logger.info('豐富數據元數據...');
@@ -523,7 +523,7 @@ class DataCleaningService {
         const originalMetadata = { ...record.metadata };
         let hasChanges = false;
 
-        // 添加數據年齡
+        // AddDataAge
         if (!record.metadata.dataAge) {
           const uploadDate = record.metadata.uploadDate || record.createdAt;
 // eslint-disable-next-line no-unused-vars
@@ -532,7 +532,7 @@ class DataCleaningService {
           hasChanges = true;
         }
 
-        // 添加數據新鮮度評分
+        // AddData新鮮度評分
         if (!record.metadata.freshnessScore) {
           const freshnessScore = this.calculateFreshnessScore(
             record.metadata.dataAge
@@ -541,7 +541,7 @@ class DataCleaningService {
           hasChanges = true;
         }
 
-        // 添加數據可靠性評分
+        // AddData可靠性評分
         if (!record.metadata.reliabilityScore) {
           const reliabilityScore = this.calculateReliabilityScore(record);
           record.metadata.reliabilityScore = reliabilityScore;
@@ -562,12 +562,12 @@ class DataCleaningService {
         },
       };
     } catch (error) {
-      logger.error('豐富數據元數據失敗:', error);
+      logger.error('豐富數據元數據Failed:', error);
       throw error;
     }
   }
 
-  // 計算數據年齡
+  // 計算DataAge
   calculateDataAge(uploadDate) {
 // eslint-disable-next-line no-unused-vars
     const now = new Date();
@@ -595,18 +595,18 @@ class DataCleaningService {
     const sourceReliability = this.getSourceReliability(record.source);
     score += sourceReliability * 0.4;
 
-    // 基於數據完整性
+    // 基於Data完整性
     const completenessScore = this.calculateCompletenessScore(record);
     score += completenessScore * 0.3;
 
-    // 基於數據一致性
+    // 基於Data一致性
     const consistencyScore = this.calculateConsistencyScore(record);
     score += consistencyScore * 0.3;
 
     return Math.min(1, score);
   }
 
-  // 獲取來源可靠性
+  // Get來源可靠性
   getSourceReliability(source) {
     const reliabilityScores = {
       official_api: 1.0,
@@ -622,11 +622,11 @@ class DataCleaningService {
   calculateConsistencyScore(record) {
     const metadata = record.metadata || {};
 
-    // 檢查格式一致性
+    // Check格式一致性
     let consistencyChecks = 0;
     let passedChecks = 0;
 
-    // 檢查圖片格式
+    // CheckGraph片格式
     if (metadata.imageFormat) {
       consistencyChecks++;
       const validFormats = ['JPEG', 'PNG', 'GIF', 'BMP', 'WEBP'];
@@ -635,7 +635,7 @@ class DataCleaningService {
       }
     }
 
-    // 檢查圖片尺寸
+    // CheckGraph片尺寸
     if (metadata.imageDimensions) {
       consistencyChecks++;
       const { width, height } = metadata.imageDimensions;
@@ -644,7 +644,7 @@ class DataCleaningService {
       }
     }
 
-    // 檢查光源條件
+    // Check光源Condition
     if (metadata.lightingConditions) {
       consistencyChecks++;
       const validLighting = ['good', 'medium', 'poor'];
@@ -656,7 +656,7 @@ class DataCleaningService {
     return consistencyChecks > 0 ? passedChecks / consistencyChecks : 1.0;
   }
 
-  // 更新清洗質量指標
+  // Update清洗質量指標
   async updateCleaningQualityMetrics(cleaningResults) {
     try {
       await this.initializeModels();
@@ -689,11 +689,11 @@ class DataCleaningService {
 
       logger.info('清洗質量指標已更新');
     } catch (error) {
-      logger.error('更新清洗質量指標失敗:', error);
+      logger.error('Update清洗質量指標Failed:', error);
     }
   }
 
-  // 驗證數據質量
+  // VerifyData質量
   async validateDataQuality(data) {
     try {
       const qualityReport = {
@@ -712,7 +712,7 @@ class DataCleaningService {
 
       return qualityReport;
     } catch (error) {
-      logger.error('數據質量驗證失敗:', error);
+      logger.error('數據質量VerifyFailed:', error);
       throw error;
     }
   }

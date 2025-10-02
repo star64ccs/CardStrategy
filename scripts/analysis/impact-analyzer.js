@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 const colors = {
   reset: '\x1b[0m',
@@ -48,16 +48,16 @@ class ImpactAnalyzer {
     log.header('📊 開始優化建議影響分析');
 
     try {
-      // 1. 分析核心功能影響
+      // 1. Analysis核心功能影響
       await this.analyzeCoreFunctionImpact();
 
-      // 2. 分析專案效能影響
+      // 2. Analysis專案效能影響
       await this.analyzePerformanceImpact();
 
-      // 3. 分析完成度影響
+      // 3. AnalysisComplete度影響
       await this.analyzeCompletionImpact();
 
-      // 4. 分析準確率影響
+      // 4. Analysis準確率影響
       await this.analyzeAccuracyImpact();
 
       // 5. 生成綜合評估
@@ -65,7 +65,7 @@ class ImpactAnalyzer {
 
       this.printResults();
     } catch (error) {
-      log.error(`影響分析失敗: ${error.message}`);
+      log.error(`影響分析Failed: ${error.message}`);
       process.exit(1);
     }
   }
@@ -224,10 +224,10 @@ class ImpactAnalyzer {
   printResults() {
     log.header('\n📊 優化建議影響分析結果');
 
-    // 1. 各維度影響分析
+    // 1. 各維度影響Analysis
     this.printDimensionAnalysis();
 
-    // 2. 時間階段分析
+    // 2. Time階段Analysis
     this.printTimePhaseAnalysis();
 
     // 3. 綜合評估
@@ -399,7 +399,7 @@ class ImpactAnalyzer {
     log.warning('3. 團隊需要適應新的開發流程');
     log.warning('4. 可能需要額外的培訓和學習時間');
 
-    log.info('\n🚀 成功關鍵因素:');
+    log.info('\n🚀 Success關鍵因素:');
     log.highlight('1. 分階段實施，避免大爆炸式變更');
     log.highlight('2. 建立完善的監控和回滾機制');
     log.highlight('3. 確保團隊充分理解和支持');
@@ -407,11 +407,11 @@ class ImpactAnalyzer {
   }
 }
 
-// 執行影響分析
+// 執Row影響Analysis
 if (require.main === module) {
   const analyzer = new ImpactAnalyzer();
   analyzer.analyzeImpact().catch((error) => {
-    log.error(`影響分析失敗: ${error.message}`);
+    log.error(`影響分析Failed: ${error.message}`);
     process.exit(1);
   });
 }

@@ -1,4 +1,4 @@
-// 設計系統提供者組件
+// 設計系統提供者Component
 import type { ReactNode } from 'react';
 import React, { createContext, useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,7 +20,7 @@ import type {
   ThemeType,
 } from '../../types/designSystem';
 
-// 設計系統上下文類型
+// 設計系統上下文Class型
 interface DesignSystemContextType {
   currentTheme: ThemeType;
   themes: Record<ThemeType, Theme>;
@@ -33,36 +33,36 @@ interface DesignSystemContextType {
   updateAccessibility: (config: Partial<AccessibilityConfig>) => void;
 }
 
-// 創建上下文
+// Create上下文
 const _DesignSystemContext = createContext<DesignSystemContextType | undefined>(
   undefined
 );
 
-// 設計系統提供者屬性
+// 設計系統提供者Property
 interface DesignSystemProviderProps {
   children: ReactNode;
   initialTheme?: ThemeType;
 }
 
-// 設計系統提供者組件
+// 設計系統提供者Component
 export const DesignSystemProvider: React.FC<DesignSystemProviderProps> = ({
   children,
   initialTheme = 'dark',
 }) => {
   const _dispatch = useDispatch();
 
-  // 從 Redux 獲取狀態
+  // 從 Redux GetStatus
   const _currentTheme = useSelector(selectCurrentTheme);
   const _themes = useSelector(selectThemes);
   const _components = useSelector(selectComponents);
   const _tokens = useSelector(selectTokens);
   const _accessibility = useSelector(selectAccessibilityConfig);
 
-  // 初始化設計系統
+  // Initialize設計系統
   useEffect(() => {
     const _initializeDesignSystem = async () => {
       try {
-        // 初始化設計系統
+        // Initialize設計系統
         const _allThemes = designSystemService.getAllThemes();
         dispatch(setCurrentTheme(initialTheme || 'default'));
         return true;
@@ -75,28 +75,28 @@ export const DesignSystemProvider: React.FC<DesignSystemProviderProps> = ({
     initializeDesignSystem();
   }, [dispatch, initialTheme]);
 
-  // 設置主題
+  // SettingsTheme
   const _setTheme = (theme: ThemeType) => {
     designSystemService.setTheme(theme);
     dispatch(setCurrentTheme(theme));
   };
 
-  // 註冊組件
+  // RegisterComponent
   const _registerComponent = (name: string, config: unknown) => {
     designSystemService.registerComponent(name, config);
   };
 
-  // 添加令牌
+  // Add令牌
   const _addToken = (token: DesignToken) => {
     designSystemService.addToken(token);
   };
 
-  // 更新可訪問性配置
+  // Update可訪問性Configure
   const _updateAccessibility = (config: Partial<AccessibilityConfig>) => {
     designSystemService.updateAccessibilityConfig(config);
   };
 
-  // 上下文值
+  // 上下文Value
   const contextValue: DesignSystemContextType = {
     currentTheme,
     themes,
@@ -125,6 +125,6 @@ export const _useDesignSystem = (): DesignSystemContextType => {
   return context;
 };
 
-// 導出上下文
+// Export上下文
 export { DesignSystemContext };
 export default DesignSystemProvider;

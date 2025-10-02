@@ -4,8 +4,8 @@ import { api } from '../../core/utils/api';
 import { logger, LogLevel } from '../../core/utils/logger';
 
 /**
- * 日誌服務
- * 提供統一的日誌記錄和發送功能
+ * LogService
+ * 提供統一的LogRecord和Send功能
  */
 export class LogService {
   private static instance: LogService;
@@ -17,7 +17,7 @@ export class LogService {
   }[] = [];
   private isProcessing = false;
   private readonly batchSize = 10;
-  private readonly flushInterval = 5000; // 5秒
+  private readonly flushInterval = 5000; // 5Second
 
   private constructor() {
     this.startPeriodicFlush();
@@ -31,7 +31,7 @@ export class LogService {
   }
 
   /**
-   * 記錄日誌
+   * RecordLog
    */
   async log(
     level: LogLevel,
@@ -45,17 +45,17 @@ export class LogService {
       timestamp: new Date(),
     };
 
-    // 添加到隊列
+    // Add到Queue
     this.logQueue.push(logEntry);
 
-    // 如果隊列達到批次大小，立即處理
+    // 如果Queue達到批次大小，立即Handle
     if (this.logQueue.length >= this.batchSize) {
       await this.processLogQueue();
     }
   }
 
   /**
-   * 記錄調試信息
+   * RecordDebugInformation
    */
   async debug(
     message: string,
@@ -65,7 +65,7 @@ export class LogService {
   }
 
   /**
-   * 記錄一般信息
+   * Record一般Information
    */
   async info(
     message: string,
@@ -75,7 +75,7 @@ export class LogService {
   }
 
   /**
-   * 記錄警告信息
+   * RecordWarningInformation
    */
   async warn(
     message: string,
@@ -85,7 +85,7 @@ export class LogService {
   }
 
   /**
-   * 記錄錯誤信息
+   * RecordErrorInformation
    */
   async error(
     message: string,
@@ -95,7 +95,7 @@ export class LogService {
   }
 
   /**
-   * 發送日誌到服務器
+   * SendLog到Server
    */
   async sendLog(
     level: LogLevel,
@@ -116,8 +116,8 @@ export class LogService {
 
       await api.post('/logs', logData, { withAuth: false });
     } catch (error) {
-      // 如果發送失敗，記錄到本地
-      logger.error('發送日誌到服務器失敗:', {
+      // 如果SendFailed，Record到Local
+      logger.error('發送日誌到ServerFailed:', {
         error,
         originalMessage: message,
       });
@@ -125,7 +125,7 @@ export class LogService {
   }
 
   /**
-   * 處理日誌隊列
+   * HandleLogQueue
    */
   private async processLogQueue(): Promise<void> {
     if (this.isProcessing || this.logQueue.length === 0) {
@@ -137,22 +137,22 @@ export class LogService {
     try {
       const _batch = this.logQueue.splice(0, this.batchSize);
 
-      // 發送批次到服務器
+      // Send批次到Server
       await this.sendLogBatch(batch);
 
-      // 記錄到本地
+      // Record到Local
       batch.forEach(entry => {
         logger[entry.level](entry.message, entry.context);
       });
     } catch (error) {
-      logger.error('處理日誌隊列失敗:', { error });
+      logger.error('Handle日誌隊列Failed:', { error });
     } finally {
       this.isProcessing = false;
     }
   }
 
   /**
-   * 發送日誌批次
+   * SendLog批次
    */
   private async sendLogBatch(
     logs: {
@@ -176,19 +176,19 @@ export class LogService {
 
       await api.post('/logs/batch', { logs: logData }, { withAuth: false });
     } catch (error) {
-      // 如果批次發送失敗，嘗試逐個發送
+      // 如果批次SendFailed，嘗試逐個Send
       for (const log of logs) {
         try {
           await this.sendLog(log.level, log.message, log.context);
         } catch (sendError) {
-          logger.error('發送單個日誌失敗:', { error: sendError, log });
+          logger.error('發送單個日誌Failed:', { error: sendError, log });
         }
       }
     }
   }
 
   /**
-   * 開始定期刷新
+   * Begin定期Refresh
    */
   private startPeriodicFlush(): void {
     setInterval(() => {
@@ -197,18 +197,18 @@ export class LogService {
   }
 
   /**
-   * 強制刷新日誌隊列
+   * ForceRefreshLogQueue
    */
   async flush(): Promise<void> {
     await this.processLogQueue();
   }
 
   /**
-   * 獲取當前用戶ID
+   * Get當前UserID
    */
   private getCurrentUserId(): string | undefined {
     try {
-      // 從 Redux store 獲取用戶 ID
+      // 從 Redux store GetUser ID
       const { store } = require('../../store');
       const _state = store.getState();
       return state.auth.user?.id;
@@ -218,11 +218,11 @@ export class LogService {
   }
 
   /**
-   * 獲取會話ID
+   * Get會話ID
    */
   private getSessionId(): string | undefined {
     try {
-      // 從存儲中獲取會話ID
+      // 從Storage中Get會話ID
       const { AuthStorage } = require('../../core/utils/storage');
       return AuthStorage.getToken();
     } catch {
@@ -231,7 +231,7 @@ export class LogService {
   }
 
   /**
-   * 獲取用戶代理
+   * GetUser代理
    */
   private getUserAgent(): string {
     if (typeof navigator !== 'undefined') {
@@ -241,7 +241,7 @@ export class LogService {
   }
 
   /**
-   * 獲取平台信息
+   * Get平台Information
    */
   private getPlatform(): string {
     if (typeof Platform !== 'undefined') {
@@ -251,7 +251,7 @@ export class LogService {
   }
 
   /**
-   * 獲取日誌統計
+   * GetLogStatistics
    */
   getLogStats(): {
     queueSize: number;
@@ -261,17 +261,17 @@ export class LogService {
     return {
       queueSize: this.logQueue.length,
       isProcessing: this.isProcessing,
-      totalProcessed: 0, // 可以添加計數器來追蹤
+      totalProcessed: 0, // 可以AddCount器來Trace
     };
   }
 
   /**
-   * 清理日誌隊列
+   * 清理LogQueue
    */
   clearQueue(): void {
     this.logQueue = [];
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _logService = LogService.getInstance();

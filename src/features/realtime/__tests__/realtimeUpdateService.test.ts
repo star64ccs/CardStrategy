@@ -1,6 +1,6 @@
 /**
- * 實時更新服務測試
- * 測試實時更新服務的所有主要功能
+ * 實時UpdateServiceTest
+ * Test實時UpdateService的所有主要功能
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -61,8 +61,8 @@ describe('RealtimeUpdateService', () => {
 
       expect((realtimeUpdateService as any).isInitialized).toBe(true);
       expect(mockWebsocketService.setEventHandlers).toHaveBeenCalled();
-      expect(mockLogger.info).toHaveBeenCalledWith('初始化實時更新服務');
-      expect(mockLogger.info).toHaveBeenCalledWith('實時更新服務初始化完成');
+      expect(mockLogger.info).toHaveBeenCalledWith('Initialize實時UpdateService');
+      expect(mockLogger.info).toHaveBeenCalledWith('實時UpdateServiceInitialize完成');
     });
 
     it('should not reinitialize if already initialized', async () => {
@@ -87,7 +87,7 @@ describe('RealtimeUpdateService', () => {
         'WebSocket service error'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '實時更新服務初始化失敗:',
+        '實時UpdateServiceInitializeFailed:',
         expect.any(Error)
       );
     });
@@ -164,7 +164,7 @@ describe('RealtimeUpdateService', () => {
         })
       );
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        '實時更新發送成功:',
+        '實時Update發送Success:',
         expect.any(Object)
       );
     });
@@ -185,7 +185,7 @@ describe('RealtimeUpdateService', () => {
         'Send failed'
       );
       expect(mockLogger.error).toHaveBeenCalledWith(
-        '發送實時更新失敗:',
+        '發送實時UpdateFailed:',
         expect.any(Error)
       );
     });
@@ -226,7 +226,7 @@ describe('RealtimeUpdateService', () => {
         options
       );
       expect(mockLogger.debug).toHaveBeenCalledWith(
-        '實時更新廣播成功:',
+        '實時Update廣播Success:',
         expect.any(Object)
       );
     });
@@ -471,7 +471,7 @@ describe('RealtimeUpdateService', () => {
 
         expect(mockHandler).toHaveBeenCalledWith(update);
         expect(mockLogger.debug).toHaveBeenCalledWith(
-          '更新處理器執行成功:',
+          'UpdateHandle器執行Success:',
           expect.any(Object)
         );
       });
@@ -529,7 +529,7 @@ describe('RealtimeUpdateService', () => {
         await (realtimeUpdateService as any).executeUpdate(update);
 
         expect(mockLogger.error).toHaveBeenCalledWith(
-          '更新處理器執行失敗:',
+          'UpdateHandle器執行Failed:',
           expect.any(Object)
         );
       });

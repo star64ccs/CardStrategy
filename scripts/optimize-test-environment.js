@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * 測試環境優化腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * Test環境優化腳本
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
 const fs = require('fs');
@@ -11,19 +11,19 @@ const path = require('path');
 
 console.log('🔧 開始優化測試環境配置...\n');
 
-// 1. 檢查並修復Jest配置
+// 1. Check並修復JestConfigure
 function optimizeJestConfig() {
   console.log('📋 檢查Jest配置...');
 
   const jestConfigPath = path.join(__dirname, '..', 'jest.config.js');
   const jestConfig = require(jestConfigPath);
 
-  // 優化配置
+  // 優化Configure
   const optimizedConfig = {
     ...jestConfig,
-    testTimeout: 15000, // 增加超時時間
-    maxWorkers: '50%', // 增加並行度
-    workerIdleMemoryLimit: '2GB', // 增加記憶體限制
+    testTimeout: 15000, // 增加超時Time
+    maxWorkers: '50%', // 增加Parallel度
+    workerIdleMemoryLimit: '2GB', // 增加記憶體Limit
     setupFilesAfterEnv: [
       '<rootDir>/jest.setup.minimal.js',
     ],
@@ -35,13 +35,13 @@ function optimizeJestConfig() {
       '/dist/',
       '/build/',
       '/coverage/',
-      '/src/__tests__/e2e/', // 暫時忽略E2E測試
+      '/src/__tests__/e2e/', // 暫時IgnoreE2ETest
     ],
-    collectCoverage: false, // 暫時關閉覆蓋率收集
-    verbose: false, // 減少輸出
+    collectCoverage: false, // 暫時Off閉覆蓋率收集
+    verbose: false, // 減少Output
   };
 
-  // 寫回配置文件
+  // 寫回ConfigureFile
   fs.writeFileSync(
     jestConfigPath,
     `module.exports = ${JSON.stringify(optimizedConfig, null, 2)};`
@@ -50,7 +50,7 @@ function optimizeJestConfig() {
   console.log('✅ Jest配置已優化');
 }
 
-// 2. 創建測試環境變量文件
+// 2. CreateTest環境VariableFile
 function createTestEnvFile() {
   console.log('📋 創建測試環境變量文件...');
 
@@ -118,23 +118,23 @@ ENABLE_PIPEDA_COMPLIANCE=false
   console.log('✅ 測試環境變量文件已創建');
 }
 
-// 3. 優化Jest設置文件
+// 3. 優化JestSettingsFile
 function optimizeJestSetup() {
   console.log('📋 優化Jest設置文件...');
 
   const setupPath = path.join(__dirname, '..', 'jest.setup.minimal.js');
   const setupContent = `/* eslint-env jest */
 
-// 最小化的 Jest 設置文件，只包含最基本的 mock
+// 最小化的 Jest SettingsFile，只Package含最基本的 mock
 
 // Import testing library matchers
 import '@testing-library/jest-dom';
 import '@testing-library/jest-native/extend-expect';
 
-// 設置 MSW 環境變量
+// Settings MSW 環境Variable
 process.env.NODE_ENV = 'test';
 
-// 添加 fetch 實現
+// Add fetch 實現
 if (typeof global.fetch === 'undefined') {
   global.fetch = require('node-fetch');
 }
@@ -389,18 +389,18 @@ console.log('✅ Jest設置文件已優化');
   console.log('✅ Jest設置文件已優化');
 }
 
-// 4. 創建測試數據管理文件
+// 4. CreateTestDataManageFile
 function createTestDataManager() {
   console.log('📋 創建測試數據管理文件...');
 
   const testDataPath = path.join(__dirname, '..', 'src', '__tests__', 'setup', 'test-data-manager.js');
   const testDataContent = `/**
- * 測試數據管理器
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * TestDataManage器
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
-// 測試數據工廠
+// TestData工廠
 export const createMockUser = (overrides = {}) => ({
   id: '1',
   username: 'testuser',
@@ -484,22 +484,22 @@ export const createMockConditionAnalysis = (overrides = {}) => ({
   ...overrides,
 });
 
-// 測試數據清理
+// TestData清理
 export const clearTestData = () => {
-  // 清理測試數據的邏輯
+  // 清理TestData的邏輯
   console.log('🧹 清理測試數據');
 };
 
-// 測試數據初始化
+// TestDataInitialize
 export const initializeTestData = () => {
-  // 初始化測試數據的邏輯
+  // InitializeTestData的邏輯
   console.log('📊 初始化測試數據');
 };
 
 console.log('✅ 測試數據管理文件已創建');
 `;
 
-  // 確保目錄存在
+  // 確保Directory存在
   const dir = path.dirname(testDataPath);
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
@@ -510,7 +510,7 @@ console.log('✅ 測試數據管理文件已創建');
   console.log('✅ 測試數據管理文件已創建');
 }
 
-// 5. 主函數
+// 5. 主Function
 function main() {
   try {
     optimizeJestConfig();
@@ -530,12 +530,12 @@ function main() {
     console.log('  npm test -- --passWithNoTests');
 
   } catch (error) {
-    console.error('❌ 測試環境優化失敗:', error);
+    console.error('❌ 測試環境優化Failed:', error);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   main();
 }

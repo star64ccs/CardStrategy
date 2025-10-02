@@ -1,4 +1,4 @@
-// 響應式組件服務
+// Response式ComponentService
 
 import { EventEmitter } from 'events';
 
@@ -14,7 +14,7 @@ import type {
 
 import { layoutService } from './layoutService';
 
-// 響應式組件服務類
+// Response式ComponentServiceClass
 class ResponsiveComponentServiceClass implements ResponsiveComponentService {
   private readonly components: Map<string, ResponsiveComponentRegistration> =
     new Map();
@@ -22,7 +22,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
   private readonly performanceData: Map<string, any[]> = new Map();
   private readonly testResults: Map<string, ResponsiveTestResult[]> = new Map();
 
-  // 默認測試設備配置
+  // DefaultTest設備Configure
   private readonly defaultDevices: ResponsiveTestDevice[] = [
     {
       name: 'iPhone SE',
@@ -66,7 +66,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
   }
 
   private initializeService(): void {
-    // 監聽佈局服務的斷點變化事件
+    // 監聽佈局Service的斷點變化Event
     layoutService.onBreakpointChange(event => {
       this.emitEvent({
         type: 'breakpointChange',
@@ -78,7 +78,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
     });
   }
 
-  // 組件管理
+  // ComponentManage
   registerComponent(component: ResponsiveComponentRegistration): void {
     this.components.set(component.name, component);
 
@@ -100,7 +100,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
     return Array.from(this.components.values());
   }
 
-  // 響應式測試
+  // Response式Test
   async testComponent(
     componentName: string,
     config?: ResponsiveTestConfig
@@ -137,7 +137,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
           },
         };
 
-        // 執行響應式測試
+        // 執RowResponse式Test
         const _testIssues = await this.runResponsiveTests(
           component,
           device,
@@ -164,10 +164,10 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
     report += `## 總覽\n`;
     report += `- 總測試數: ${totalTests}\n`;
     report += `- 通過測試: ${passedTests}\n`;
-    report += `- 失敗測試: ${failedTests}\n`;
+    report += `- Failed測試: ${failedTests}\n`;
     report += `- 通過率: ${passRate}%\n\n`;
 
-    // 按組件分組
+    // 按ComponentGroup
     const _componentGroups = this.groupResultsByComponent(results);
 
     for (const [componentName, componentResults] of componentGroups) {
@@ -182,10 +182,10 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
 
       report += `- 通過率: ${componentPassRate}% (${componentPassed}/${componentTotal})\n\n`;
 
-      // 失敗的測試
+      // Failed的Test
       const _failedResults = componentResults.filter(r => !r.passed);
       if (failedResults.length > 0) {
-        report += `### 失敗的測試\n`;
+        report += `### Failed的測試\n`;
         for (const result of failedResults) {
           report += `- ${result.device} (${result.breakpoint}, ${result.orientation})\n`;
           for (const issue of result.issues) {
@@ -195,7 +195,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
         report += `\n`;
       }
 
-      // 性能報告
+      // 性能Report
       const _avgRenderTime = this.calculateAveragePerformance(
         componentResults,
         'renderTime'
@@ -218,7 +218,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
     return report;
   }
 
-  // 性能監控
+  // 性能Monitor
   trackPerformance(
     componentName: string,
     breakpoint: Breakpoint,
@@ -268,7 +268,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
     return report;
   }
 
-  // 事件管理
+  // EventManage
   onComponentEvent(
     callback: (event: ResponsiveComponentEvent) => void
   ): () => void {
@@ -282,7 +282,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
     this.eventEmitter.emit('componentEvent', event);
   }
 
-  // 私有方法
+  // PrivateMethod
   private getDeviceType(width: number): 'mobile' | 'tablet' | 'desktop' {
     if (width <= 767) return 'mobile';
     if (width <= 1024) return 'tablet';
@@ -330,12 +330,12 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
   ): Promise<string[]> {
     const issues: string[] = [];
 
-    // 檢查組件是否支持當前斷點
+    // CheckComponentYesNoSupport當前斷點
     if (!component.breakpoints.includes(breakpoint)) {
       issues.push(`Component does not support breakpoint: ${breakpoint}`);
     }
 
-    // 檢查響應式屬性
+    // CheckResponse式Property
     if (component.responsive) {
       const _responsiveProps = Object.entries(component.props).filter(
         ([_, value]) =>
@@ -351,7 +351,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
       }
     }
 
-    // 檢查性能
+    // Check性能
     const _performance = this.getPerformanceReport(component.name);
     if (performance.summary[component.name]?.[breakpoint]) {
       const _metrics = performance.summary[component.name][breakpoint];
@@ -374,7 +374,7 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
     propValue: unknown,
     breakpoint: Breakpoint
   ): boolean {
-    // 簡單的響應式屬性驗證
+    // 簡單的Response式PropertyVerify
     if (typeof propValue === 'object' && propValue !== null) {
       return breakpoint in propValue || 'default' in propValue;
     }
@@ -428,6 +428,6 @@ class ResponsiveComponentServiceClass implements ResponsiveComponentService {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _responsiveComponentService =
   new ResponsiveComponentServiceClass();

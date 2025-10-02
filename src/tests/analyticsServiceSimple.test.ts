@@ -1,4 +1,4 @@
-// 簡化的分析服務測試 - 模擬依賴
+// 簡化的AnalysisServiceTest - 模擬依賴
 const _mockLogger = {
   info: jest.fn(),
   warn: jest.fn(),
@@ -10,7 +10,7 @@ const _mockApi = {
   get: jest.fn(),
 };
 
-// 模擬 Segment 服務
+// 模擬 Segment Service
 class MockSegmentService {
   private writeKey: string;
   private isInitialized = false;
@@ -81,7 +81,7 @@ class MockSegmentService {
   }
 }
 
-// 模擬 Mixel 服務
+// 模擬 Mixel Service
 class MockMixelService {
   private projectToken: string;
   private apiSecret: string;
@@ -175,7 +175,7 @@ describe('Analytics Services Simple Tests', () => {
       expect(segmentService.isAvailable()).toBe(false);
     });
 
-    test('空事件列表應該返回成功', async () => {
+    test('空事件列表應該返回Success', async () => {
       const _result = await segmentService.batchTrackEvents([]);
       expect(result.success).toBe(true);
       expect(result.data).toEqual([]);
@@ -193,7 +193,7 @@ describe('Analytics Services Simple Tests', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    test('獲取服務統計應該返回正確信息', async () => {
+    test('GetService統計應該返回正確Information', async () => {
       const _result = await segmentService.getServiceStats();
       expect(result.success).toBe(true);
       expect(result.data.service).toBe('segment');
@@ -208,7 +208,7 @@ describe('Analytics Services Simple Tests', () => {
       expect(mixelService.isAvailable()).toBe(false);
     });
 
-    test('空事件列表應該返回成功', async () => {
+    test('空事件列表應該返回Success', async () => {
       const _result = await mixelService.batchTrackEvents([]);
       expect(result.success).toBe(true);
       expect(result.data).toEqual([]);
@@ -226,7 +226,7 @@ describe('Analytics Services Simple Tests', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    test('獲取服務統計應該返回正確信息', async () => {
+    test('GetService統計應該返回正確Information', async () => {
       const _result = await mixelService.getServiceStats();
       expect(result.success).toBe(true);
       expect(result.data.service).toBe('mixel');
@@ -255,7 +255,7 @@ describe('Analytics Services Simple Tests', () => {
     });
 
     test('日誌記錄應該被調用', async () => {
-      // 設置環境變量以啟用服務
+      // Settings環境Variable以EnableService
       process.env.SEGMENT_WRITE_KEY = 'test-key';
       process.env.MIXEL_PROJECT_TOKEN = 'test-token';
       process.env.MIXEL_API_SECRET = 'test-secret';

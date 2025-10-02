@@ -1,4 +1,4 @@
-// 業務指標分析類型定義
+// 業務指標AnalysisClass型定義
 
 export interface BusinessMetrics {
   // 基礎指標

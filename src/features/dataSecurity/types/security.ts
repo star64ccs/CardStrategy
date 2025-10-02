@@ -1,9 +1,9 @@
 /**
- * 數據安全類型定義
- * 包含加密、解密、備份、恢復等安全功能的類型
+ * Data安全Class型定義
+ * Package含Encrypt、Decrypt、Backup、Restore等安全功能的Class型
  */
 
-// 加密算法枚舉
+// Encrypt算法枚舉
 export enum EncryptionAlgorithm {
   AES_256_GCM = 'AES-256-GCM',
   AES_256_CBC = 'AES-256-CBC',
@@ -19,7 +19,7 @@ export enum HashAlgorithm {
   ARGON2 = 'Argon2',
 }
 
-// 備份類型枚舉
+// BackupClass型枚舉
 export enum BackupType {
   FULL = 'full',
   INCREMENTAL = 'incremental',
@@ -27,7 +27,7 @@ export enum BackupType {
   SNAPSHOT = 'snapshot',
 }
 
-// 備份狀態枚舉
+// BackupStatus枚舉
 export enum BackupStatus {
   PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
@@ -44,7 +44,7 @@ export enum SecurityLevel {
   CRITICAL = 'critical',
 }
 
-// 密鑰類型枚舉
+// 密鑰Class型枚舉
 export enum KeyType {
   SYMMETRIC = 'symmetric',
   ASYMMETRIC_PUBLIC = 'asymmetric_public',
@@ -52,7 +52,7 @@ export enum KeyType {
   DERIVED = 'derived',
 }
 
-// 密鑰狀態枚舉
+// 密鑰Status枚舉
 export enum KeyStatus {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
@@ -61,7 +61,7 @@ export enum KeyStatus {
   COMPROMISED = 'compromised',
 }
 
-// 數據分類枚舉
+// Data分Class枚舉
 export enum DataClassification {
   PUBLIC = 'public',
   INTERNAL = 'internal',
@@ -70,7 +70,7 @@ export enum DataClassification {
   TOP_SECRET = 'top_secret',
 }
 
-// 加密密鑰接口
+// Encrypt密鑰Interface
 export interface EncryptionKey {
   id: string;
   type: KeyType;
@@ -87,7 +87,7 @@ export interface EncryptionKey {
   };
 }
 
-// 加密請求接口
+// EncryptRequestInterface
 export interface EncryptionRequest {
   data: string | ArrayBuffer;
   algorithm: EncryptionAlgorithm;
@@ -100,7 +100,7 @@ export interface EncryptionRequest {
   };
 }
 
-// 加密結果接口
+// Encrypt結果Interface
 export interface EncryptionResult {
   success: boolean;
   encryptedData?: string;
@@ -119,7 +119,7 @@ export interface EncryptionResult {
   error?: string;
 }
 
-// 解密請求接口
+// DecryptRequestInterface
 export interface DecryptionRequest {
   encryptedData: string;
   algorithm: EncryptionAlgorithm;
@@ -129,7 +129,7 @@ export interface DecryptionRequest {
   additionalData?: string;
 }
 
-// 解密結果接口
+// Decrypt結果Interface
 export interface DecryptionResult {
   success: boolean;
   decryptedData?: string | ArrayBuffer;
@@ -142,7 +142,7 @@ export interface DecryptionResult {
   error?: string;
 }
 
-// 備份配置接口
+// BackupConfigureInterface
 export interface BackupConfig {
   id: string;
   name: string;
@@ -178,7 +178,7 @@ export interface BackupConfig {
   };
 }
 
-// 備份任務接口
+// BackupTaskInterface
 export interface BackupTask {
   id: string;
   configId: string;
@@ -211,7 +211,7 @@ export interface BackupTask {
   }[];
 }
 
-// 恢復請求接口
+// RestoreRequestInterface
 export interface RestoreRequest {
   backupId: string;
   destination: string;
@@ -230,7 +230,7 @@ export interface RestoreRequest {
   };
 }
 
-// 恢復結果接口
+// Restore結果Interface
 export interface RestoreResult {
   success: boolean;
   taskId?: string;
@@ -246,7 +246,7 @@ export interface RestoreResult {
   error?: string;
 }
 
-// 安全審計事件接口
+// 安全審計EventInterface
 export interface SecurityAuditEvent {
   id: string;
   timestamp: Date;
@@ -272,7 +272,7 @@ export interface SecurityAuditEvent {
   riskScore: number; // 0-100
 }
 
-// 密鑰管理器接口
+// 密鑰Manage器Interface
 export interface KeyManager {
   generateKey(
     algorithm: EncryptionAlgorithm,
@@ -291,7 +291,7 @@ export interface KeyManager {
   ): Promise<EncryptionKey>;
 }
 
-// 加密服務接口
+// EncryptServiceInterface
 export interface EncryptionService {
   encrypt(request: EncryptionRequest): Promise<EncryptionResult>;
   decrypt(request: DecryptionRequest): Promise<DecryptionResult>;
@@ -309,7 +309,7 @@ export interface EncryptionService {
   ): Promise<string>;
 }
 
-// 備份服務接口
+// BackupServiceInterface
 export interface BackupService {
   createBackup(config: BackupConfig): Promise<BackupTask>;
   scheduleBackup(config: BackupConfig): Promise<boolean>;
@@ -323,7 +323,7 @@ export interface BackupService {
   ): Promise<{ valid: boolean; checksum: string; errors?: string[] }>;
 }
 
-// 安全配置接口
+// 安全ConfigureInterface
 export interface SecurityConfig {
   encryption: {
     defaultAlgorithm: EncryptionAlgorithm;
@@ -358,23 +358,23 @@ export interface SecurityConfig {
   };
 }
 
-// 安全狀態接口
+// 安全StatusInterface
 export interface SecurityState {
-  // 服務狀態
+  // ServiceStatus
   isInitialized: boolean;
   isEncryptionEnabled: boolean;
   isBackupEnabled: boolean;
 
-  // 密鑰管理
+  // 密鑰Manage
   activeKeys: EncryptionKey[];
   keyRotationSchedule: { [keyId: string]: Date };
 
-  // 備份狀態
+  // BackupStatus
   backupConfigs: BackupConfig[];
   activeTasks: BackupTask[];
   completedTasks: BackupTask[];
 
-  // 統計信息
+  // StatisticsInformation
   statistics: {
     totalEncryptions: number;
     totalDecryptions: number;
@@ -384,13 +384,13 @@ export interface SecurityState {
     securityViolations: number;
   };
 
-  // 審計日誌
+  // 審計Log
   auditEvents: SecurityAuditEvent[];
 
-  // 配置
+  // Configure
   config: SecurityConfig;
 
-  // 錯誤處理
+  // ErrorHandle
   error: string | null;
   lastError: {
     message: string;
@@ -399,7 +399,7 @@ export interface SecurityState {
   } | null;
 }
 
-// 安全事件類型
+// 安全EventClass型
 export type SecurityEventType =
   | 'key_generated'
   | 'key_rotated'
@@ -416,7 +416,7 @@ export type SecurityEventType =
   | 'unauthorized_access'
   | 'configuration_changed';
 
-// 安全事件接口
+// 安全EventInterface
 export interface SecurityEvent {
   type: SecurityEventType;
   timestamp: Date;
@@ -429,10 +429,10 @@ export interface SecurityEvent {
   };
 }
 
-// 事件監聽器類型
+// Event監聽器Class型
 export type SecurityEventListener = (event: SecurityEvent) => void;
 
-// 性能指標接口
+// 性能指標Interface
 export interface SecurityMetrics {
   encryptionPerformance: {
     averageEncryptionTime: number;

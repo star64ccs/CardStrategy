@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 
 /**
- * Service Worker 配置接口
+ * Service Worker ConfigureInterface
  */
 export interface ServiceWorkerConfig {
   swPath: string;
@@ -18,7 +18,7 @@ export interface ServiceWorkerConfig {
 }
 
 /**
- * 緩存策略接口
+ * Cache策略Interface
  */
 export interface CacheStrategy {
   name: string;
@@ -39,7 +39,7 @@ export interface CacheStrategy {
 }
 
 /**
- * 背景同步配置接口
+ * 背景SyncConfigureInterface
  */
 export interface BackgroundSyncConfig {
   enabled: boolean;
@@ -49,7 +49,7 @@ export interface BackgroundSyncConfig {
 }
 
 /**
- * 推送通知配置接口
+ * PushNotificationConfigureInterface
  */
 export interface PushNotificationConfig {
   enabled: boolean;
@@ -66,7 +66,7 @@ export interface PushNotificationConfig {
 }
 
 /**
- * 定期同步配置接口
+ * 定期SyncConfigureInterface
  */
 export interface PeriodicSyncConfig {
   enabled: boolean;
@@ -76,7 +76,7 @@ export interface PeriodicSyncConfig {
 }
 
 /**
- * 內容索引配置接口
+ * ContentIndexConfigureInterface
  */
 export interface ContentIndexConfig {
   enabled: boolean;
@@ -84,7 +84,7 @@ export interface ContentIndexConfig {
 }
 
 /**
- * 內容索引條目接口
+ * ContentIndex條目Interface
  */
 export interface ContentIndexEntry {
   id: string;
@@ -101,7 +101,7 @@ export interface ContentIndexEntry {
 }
 
 /**
- * Service Worker 狀態
+ * Service Worker Status
  */
 export interface ServiceWorkerStatus {
   isRegistered: boolean;
@@ -116,7 +116,7 @@ export interface ServiceWorkerStatus {
 }
 
 /**
- * Service Worker 統計
+ * Service Worker Statistics
  */
 export interface ServiceWorkerStats {
   totalRegistrations: number;
@@ -141,7 +141,7 @@ export interface ServiceWorkerResult<T = any> {
 }
 
 /**
- * 緩存操作結果
+ * CacheOperation結果
  */
 export interface CacheOperationResult {
   success: boolean;
@@ -152,7 +152,7 @@ export interface CacheOperationResult {
 }
 
 /**
- * Service Worker 服務類
+ * Service Worker ServiceClass
  */
 export class ServiceWorkerService {
   private static instance: ServiceWorkerService;
@@ -183,11 +183,11 @@ export class ServiceWorkerService {
   };
 
   private constructor() {
-    // 私有構造函數，實現單例模式
+    // Private構造Function，實現單例模式
   }
 
   /**
-   * 獲取 Service Worker 服務實例
+   * Get Service Worker ServiceInstance
    */
   public static getInstance(): ServiceWorkerService {
     if (!ServiceWorkerService.instance) {
@@ -197,19 +197,19 @@ export class ServiceWorkerService {
   }
 
   /**
-   * 初始化 Service Worker 服務
+   * Initialize Service Worker Service
    */
   public async initialize(
     config: ServiceWorkerConfig
   ): Promise<ServiceWorkerResult> {
     if (this.isInitialized) {
-      return { success: true, data: 'Service Worker 服務已初始化' };
+      return { success: true, data: 'Service Worker Service已Initialize' };
     }
 
     if (Platform.OS !== 'web') {
       return {
         success: false,
-        error: 'Service Worker 服務僅支持 Web 平台',
+        error: 'Service Worker Service僅支持 Web 平台',
         errorCode: 'PLATFORM_NOT_SUPPORTED',
       };
     }
@@ -230,21 +230,21 @@ export class ServiceWorkerService {
 
       this.isInitialized = true;
 
-      return { success: true, data: 'Service Worker 服務初始化成功' };
+      return { success: true, data: 'Service Worker ServiceInitializeSuccess' };
     } catch (error) {
       return {
         success: false,
         error:
           error instanceof Error
             ? error.message
-            : 'Service Worker 服務初始化失敗',
+            : 'Service Worker ServiceInitializeFailed',
         errorCode: 'INITIALIZATION_FAILED',
       };
     }
   }
 
   /**
-   * 註冊 Service Worker
+   * Register Service Worker
    */
   private async registerServiceWorker(): Promise<void> {
     if (!this.config) {
@@ -265,7 +265,7 @@ export class ServiceWorkerService {
       this.status.scope = this.registration.scope;
       this.stats.totalRegistrations++;
 
-      // 監聽 Service Worker 狀態變化
+      // 監聽 Service Worker Status變化
       this.registration.addEventListener('updatefound', () => {
         const _newWorker = this.registration.installing;
         if (newWorker) {
@@ -298,7 +298,7 @@ export class ServiceWorkerService {
         }
       });
 
-      // 檢查是否已有活躍的 Service Worker
+      // CheckYesNo已有活躍的 Service Worker
       if (this.registration.active) {
         this.status.isActive = true;
         this.status.isControlling = true;
@@ -316,32 +316,32 @@ export class ServiceWorkerService {
   }
 
   /**
-   * 設置事件監聽器
+   * SettingsEvent監聽器
    */
   private async setupEventListeners(): Promise<void> {
     if (!this.registration) {
       throw new Error('Service Worker 未註冊');
     }
 
-    // 監聽 Service Worker 消息
+    // 監聽 Service Worker Message
     navigator.serviceWorker.addEventListener('message', event => {
       this.handleServiceWorkerMessage(event);
     });
 
-    // 監聽控制器變化
+    // 監聽Control器變化
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       this.status.isControlling = true;
     });
 
-    // 監聽錯誤
+    // 監聽Error
     navigator.serviceWorker.addEventListener('error', event => {
       this.stats.totalErrors++;
-      console.error('Service Worker 錯誤:', event);
+      console.error('Service Worker Error:', event);
     });
   }
 
   /**
-   * 處理 Service Worker 消息
+   * Handle Service Worker Message
    */
   private handleServiceWorkerMessage(event: MessageEvent): void {
     const { type, data } = event.data;
@@ -367,7 +367,7 @@ export class ServiceWorkerService {
   }
 
   /**
-   * 初始化緩存
+   * InitializeCache
    */
   private async initializeCaches(): Promise<void> {
     if (!this.config) {
@@ -375,20 +375,20 @@ export class ServiceWorkerService {
     }
 
     try {
-      // 清理舊版本緩存
+      // 清理舊VersionCache
       await this.cleanupOldCaches();
 
-      // 預緩存重要資源
+      // 預Cache重要Resource
       if (this.config.cacheStrategies.length > 0) {
         await this.precacheResources();
       }
     } catch (error) {
-      console.warn('緩存初始化失敗:', error);
+      console.warn('緩存InitializeFailed:', error);
     }
   }
 
   /**
-   * 清理舊版本緩存
+   * 清理舊VersionCache
    */
   private async cleanupOldCaches(): Promise<void> {
     const _cacheNames = await caches.keys();
@@ -405,7 +405,7 @@ export class ServiceWorkerService {
   }
 
   /**
-   * 預緩存資源
+   * 預CacheResource
    */
   private async precacheResources(): Promise<void> {
     if (!this.config) {
@@ -415,12 +415,12 @@ export class ServiceWorkerService {
     const _cacheName = `${this.config.cacheName}-${this.config.cacheVersion}`;
     const _cache = await caches.open(cacheName);
 
-    // 預緩存離線頁面
+    // 預Cache離線頁面
     if (this.config.offlineFallback) {
       await cache.add(this.config.offlineFallback);
     }
 
-    // 預緩存策略中定義的資源
+    // 預Cache策略中定義的Resource
     for (const strategy of this.config.cacheStrategies) {
       if (
         strategy.strategy === 'cache-only' ||
@@ -431,20 +431,20 @@ export class ServiceWorkerService {
             await cache.add(strategy.pattern);
           }
         } catch (error) {
-          console.warn(`預緩存失敗: ${strategy.pattern}`, error);
+          console.warn(`預緩存Failed: ${strategy.pattern}`, error);
         }
       }
     }
   }
 
   /**
-   * 更新 Service Worker
+   * Update Service Worker
    */
   public async updateServiceWorker(): Promise<ServiceWorkerResult> {
     if (!this.isInitialized) {
       return {
         success: false,
-        error: 'Service Worker 服務未初始化',
+        error: 'Service Worker Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       };
     }
@@ -466,26 +466,26 @@ export class ServiceWorkerService {
       this.stats.averageUpdateTime =
         (this.stats.averageUpdateTime + updateTime) / 2;
 
-      return { success: true, data: 'Service Worker 更新成功' };
+      return { success: true, data: 'Service Worker UpdateSuccess' };
     } catch (error) {
       this.stats.totalErrors++;
       return {
         success: false,
         error:
-          error instanceof Error ? error.message : 'Service Worker 更新失敗',
+          error instanceof Error ? error.message : 'Service Worker UpdateFailed',
         errorCode: 'UPDATE_FAILED',
       };
     }
   }
 
   /**
-   * 跳過等待並激活新的 Service Worker
+   * SkipAwait並Activate新的 Service Worker
    */
   public async skipWaiting(): Promise<ServiceWorkerResult> {
     if (!this.isInitialized) {
       return {
         success: false,
-        error: 'Service Worker 服務未初始化',
+        error: 'Service Worker Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       };
     }
@@ -500,25 +500,25 @@ export class ServiceWorkerService {
 
     try {
       this.registration.waiting.postMessage({ type: 'SKIP_WAITING' });
-      return { success: true, data: '跳過等待成功' };
+      return { success: true, data: '跳過等待Success' };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '跳過等待失敗',
+        error: error instanceof Error ? error.message : '跳過等待Failed',
         errorCode: 'SKIP_WAITING_FAILED',
       };
     }
   }
 
   /**
-   * 緩存 URL
+   * Cache URL
    */
   public async cacheUrl(
     url: string,
     strategy?: string
   ): Promise<CacheOperationResult> {
     if (!this.isInitialized) {
-      throw new Error('Service Worker 服務未初始化');
+      throw new Error('Service Worker Service未Initialize');
     }
 
     if (!this.config) {
@@ -560,11 +560,11 @@ export class ServiceWorkerService {
   }
 
   /**
-   * 批量緩存 URL
+   * BatchCache URL
    */
   public async cacheUrls(urls: string[]): Promise<CacheOperationResult> {
     if (!this.isInitialized) {
-      throw new Error('Service Worker 服務未初始化');
+      throw new Error('Service Worker Service未Initialize');
     }
 
     const _results = await Promise.allSettled(
@@ -594,13 +594,13 @@ export class ServiceWorkerService {
   }
 
   /**
-   * 清除緩存
+   * ClearCache
    */
   public async clearCache(): Promise<ServiceWorkerResult> {
     if (!this.isInitialized) {
       return {
         success: false,
-        error: 'Service Worker 服務未初始化',
+        error: 'Service Worker Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       };
     }
@@ -613,18 +613,18 @@ export class ServiceWorkerService {
           .map(name => caches.delete(name))
       );
 
-      return { success: true, data: '緩存清除成功' };
+      return { success: true, data: '緩存清除Success' };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '緩存清除失敗',
+        error: error instanceof Error ? error.message : '緩存清除Failed',
         errorCode: 'CACHE_CLEAR_FAILED',
       };
     }
   }
 
   /**
-   * 獲取緩存信息
+   * GetCacheInformation
    */
   public async getCacheInfo(): Promise<
     ServiceWorkerResult<{ cacheNames: string[]; totalSize: number }>
@@ -632,7 +632,7 @@ export class ServiceWorkerService {
     if (!this.isInitialized) {
       return {
         success: false,
-        error: 'Service Worker 服務未初始化',
+        error: 'Service Worker Service未Initialize',
         errorCode: 'SERVICE_NOT_INITIALIZED',
       };
     }
@@ -663,35 +663,35 @@ export class ServiceWorkerService {
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : '獲取緩存信息失敗',
+        error: error instanceof Error ? error.message : 'Get緩存信息Failed',
         errorCode: 'CACHE_INFO_FAILED',
       };
     }
   }
 
   /**
-   * 獲取 Service Worker 狀態
+   * Get Service Worker Status
    */
   public getServiceWorkerStatus(): ServiceWorkerStatus {
     return { ...this.status };
   }
 
   /**
-   * 獲取服務統計
+   * GetServiceStatistics
    */
   public getServiceStats(): ServiceWorkerStats {
     return { ...this.stats };
   }
 
   /**
-   * 檢查服務是否就緒
+   * CheckServiceYesNo就緒
    */
   public isServiceReady(): boolean {
     return this.isInitialized && Platform.OS === 'web';
   }
 
   /**
-   * 獲取服務信息
+   * GetServiceInformation
    */
   public getServiceInfo(): ServiceWorkerResult<{
     isInitialized: boolean;

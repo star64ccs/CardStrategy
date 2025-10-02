@@ -18,7 +18,7 @@ class DataExportService {
   }
 
   /**
-   * 確保導出目錄存在
+   * 確保ExportDirectory存在
    */
   ensureExportDirectory() {
     if (!fs.existsSync(this.exportDirectory)) {
@@ -27,14 +27,14 @@ class DataExportService {
   }
 
   /**
-   * 導出卡片數據
+   * Export卡片Data
    */
   async exportCardsData(format = 'excel', filters = {}, options = {}) {
     try {
 // eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
 
-      // 構建查詢條件
+      // BuildQueryCondition
       const whereClause = {};
       if (filters.name) {
         whereClause.name = { [Op.iLike]: `%${filters.name}%` };
@@ -58,7 +58,7 @@ class DataExportService {
         };
       }
 
-      // 獲取數據
+      // GetData
       const cards = await Card.findAll({
         where: whereClause,
         order: [['name', 'ASC']],
@@ -81,7 +81,7 @@ class DataExportService {
         updatedAt: card.updatedAt,
       }));
 
-      // 根據格式導出
+      // Root據格式Export
       switch (format.toLowerCase()) {
         case 'excel':
           return await this.exportToExcel(data, 'cards', options);
@@ -95,13 +95,13 @@ class DataExportService {
           throw new Error(`不支持的導出格式: ${format}`);
       }
     } catch (error) {
-      logger.error('導出卡片數據失敗:', error);
+      logger.error('導出卡片數據Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出投資數據
+   * Export投資Data
    */
   async exportInvestmentsData(
     userId,
@@ -114,7 +114,7 @@ class DataExportService {
 // eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
 
-      // 構建查詢條件
+      // BuildQueryCondition
       const whereClause = { userId };
       if (filters.isActive !== undefined) {
         whereClause.isActive = filters.isActive;
@@ -129,7 +129,7 @@ class DataExportService {
         };
       }
 
-      // 獲取數據
+      // GetData
       const investments = await Investment.findAll({
         where: whereClause,
         include: [
@@ -169,7 +169,7 @@ class DataExportService {
         updatedAt: investment.updatedAt,
       }));
 
-      // 根據格式導出
+      // Root據格式Export
       switch (format.toLowerCase()) {
         case 'excel':
           return await this.exportToExcel(data, 'investments', options);
@@ -183,13 +183,13 @@ class DataExportService {
           throw new Error(`不支持的導出格式: ${format}`);
       }
     } catch (error) {
-      logger.error('導出投資數據失敗:', error);
+      logger.error('導出投資數據Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出市場數據
+   * Export市場Data
    */
   async exportMarketData(format = 'excel', filters = {}, options = {}) {
     try {
@@ -198,7 +198,7 @@ class DataExportService {
 // eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
 
-      // 構建查詢條件
+      // BuildQueryCondition
       const whereClause = {};
       if (filters.cardId) {
         whereClause.cardId = filters.cardId;
@@ -213,7 +213,7 @@ class DataExportService {
         };
       }
 
-      // 獲取數據
+      // GetData
       const marketData = await MarketData.findAll({
         where: whereClause,
         include: [
@@ -242,7 +242,7 @@ class DataExportService {
         createdAt: item.createdAt,
       }));
 
-      // 根據格式導出
+      // Root據格式Export
       switch (format.toLowerCase()) {
         case 'excel':
           return await this.exportToExcel(data, 'market_data', options);
@@ -256,19 +256,19 @@ class DataExportService {
           throw new Error(`不支持的導出格式: ${format}`);
       }
     } catch (error) {
-      logger.error('導出市場數據失敗:', error);
+      logger.error('導出市場數據Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出用戶數據
+   * ExportUserData
    */
   async exportUsersData(format = 'excel', filters = {}, options = {}) {
     try {
       const User = require('../models/User');
 
-      // 構建查詢條件
+      // BuildQueryCondition
       const whereClause = {};
       if (filters.role) {
         whereClause.role = filters.role;
@@ -286,7 +286,7 @@ class DataExportService {
         };
       }
 
-      // 獲取數據
+      // GetData
 // eslint-disable-next-line no-unused-vars
       const users = await User.findAll({
         where: whereClause,
@@ -307,7 +307,7 @@ class DataExportService {
         updatedAt: user.updatedAt,
       }));
 
-      // 根據格式導出
+      // Root據格式Export
       switch (format.toLowerCase()) {
         case 'excel':
           return await this.exportToExcel(data, 'users', options);
@@ -321,25 +321,25 @@ class DataExportService {
           throw new Error(`不支持的導出格式: ${format}`);
       }
     } catch (error) {
-      logger.error('導出用戶數據失敗:', error);
+      logger.error('導出用戶數據Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出到 Excel
+   * Export到 Excel
    */
   async exportToExcel(data, sheetName, options = {}) {
     try {
       const workbook = new ExcelJS.Workbook();
       const worksheet = workbook.addWorksheet(sheetName);
 
-      // 設置列標題
+      // SettingsColumn標題
       if (data.length > 0) {
         const headers = Object.keys(data[0]);
         worksheet.addRow(headers);
 
-        // 設置標題樣式
+        // Settings標題樣式
         const headerRow = worksheet.getRow(1);
         headerRow.font = { bold: true };
         headerRow.fill = {
@@ -349,7 +349,7 @@ class DataExportService {
         };
       }
 
-      // 添加數據行
+      // AddDataRow
       data.forEach((row) => {
         const values = Object.values(row).map((value) => {
           if (value instanceof Date) {
@@ -360,7 +360,7 @@ class DataExportService {
         worksheet.addRow(values);
       });
 
-      // 自動調整列寬
+      // Auto調整Column寬
       worksheet.columns.forEach((column) => {
         let maxLength = 0;
         column.eachCell({ includeEmpty: true }, (cell) => {
@@ -372,15 +372,15 @@ class DataExportService {
         column.width = Math.min(maxLength + 2, 50);
       });
 
-      // 生成文件名
+      // 生成File名
       const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss');
       const filename = `${sheetName}_${timestamp}.xlsx`;
       const filepath = path.join(this.exportDirectory, filename);
 
-      // 保存文件
+      // SaveFile
       await workbook.xlsx.writeFile(filepath);
 
-      logger.info(`Excel 文件導出成功: ${filepath}`);
+      logger.info(`Excel 文件導出Success: ${filepath}`);
       return {
         filename,
         filepath,
@@ -389,13 +389,13 @@ class DataExportService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('Excel 導出失敗:', error);
+      logger.error('Excel 導出Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出到 CSV
+   * Export到 CSV
    */
   async exportToCSV(data, filename, options = {}) {
     try {
@@ -413,13 +413,13 @@ class DataExportService {
         title: key,
       }));
 
-      // 創建 CSV Writer
+      // Create CSV Writer
       const csvWriter = createCsvWriter({
         path: filepath,
         header: headers,
       });
 
-      // 處理數據
+      // HandleData
       const processedData = data.map((row) => {
         const processedRow = {};
         Object.keys(row).forEach((key) => {
@@ -432,10 +432,10 @@ class DataExportService {
         return processedRow;
       });
 
-      // 寫入 CSV 文件
+      // Write CSV File
       await csvWriter.writeRecords(processedData);
 
-      logger.info(`CSV 文件導出成功: ${filepath}`);
+      logger.info(`CSV 文件導出Success: ${filepath}`);
       return {
         filename: csvFilename,
         filepath,
@@ -444,13 +444,13 @@ class DataExportService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('CSV 導出失敗:', error);
+      logger.error('CSV 導出Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出到 PDF
+   * Export到 PDF
    */
   async exportToPDF(data, filename, options = {}) {
     try {
@@ -458,17 +458,17 @@ class DataExportService {
       const pdfFilename = `${filename}_${timestamp}.pdf`;
       const filepath = path.join(this.exportDirectory, pdfFilename);
 
-      // 創建 PDF 文檔
+      // Create PDF Documentation
       const doc = new PDFDocument({
         size: 'A4',
         margin: 50,
       });
 
-      // 創建寫入流
+      // CreateWrite流
       const writeStream = fs.createWriteStream(filepath);
       doc.pipe(writeStream);
 
-      // 添加標題
+      // Add標題
       doc
         .fontSize(20)
         .font('Helvetica-Bold')
@@ -483,13 +483,13 @@ class DataExportService {
 
       doc.moveDown(2);
 
-      // 添加表格
+      // AddTable格
       if (data.length > 0) {
         const headers = Object.keys(data[0]);
         const pageWidth = 500;
         const colWidth = pageWidth / headers.length;
 
-        // 繪製表格標題
+        // 繪製Table格標題
         doc.fontSize(10).font('Helvetica-Bold');
         headers.forEach((header, index) => {
           doc.text(header, 50 + index * colWidth, doc.y, {
@@ -500,10 +500,10 @@ class DataExportService {
 
         doc.moveDown();
 
-        // 繪製數據行
+        // 繪製DataRow
         doc.fontSize(8).font('Helvetica');
         data.forEach((row, rowIndex) => {
-          // 檢查是否需要新頁面
+          // CheckYesNo需要新頁面
           if (doc.y > 700) {
             doc.addPage();
             doc.fontSize(10).font('Helvetica-Bold');
@@ -539,12 +539,12 @@ class DataExportService {
         });
       }
 
-      // 完成 PDF
+      // Complete PDF
       doc.end();
 
       return new Promise((resolve, reject) => {
         writeStream.on('finish', () => {
-          logger.info(`PDF 文件導出成功: ${filepath}`);
+          logger.info(`PDF 文件導出Success: ${filepath}`);
           resolve({
             filename: pdfFilename,
             filepath,
@@ -555,18 +555,18 @@ class DataExportService {
         });
 
         writeStream.on('error', (error) => {
-          logger.error('PDF 導出失敗:', error);
+          logger.error('PDF 導出Failed:', error);
           reject(error);
         });
       });
     } catch (error) {
-      logger.error('PDF 導出失敗:', error);
+      logger.error('PDF 導出Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出到 JSON
+   * Export到 JSON
    */
   async exportToJSON(data, filename, options = {}) {
     try {
@@ -574,7 +574,7 @@ class DataExportService {
       const jsonFilename = `${filename}_${timestamp}.json`;
       const filepath = path.join(this.exportDirectory, jsonFilename);
 
-      // 準備導出數據
+      // 準備ExportData
       const exportData = {
         metadata: {
           filename,
@@ -586,10 +586,10 @@ class DataExportService {
         data,
       };
 
-      // 寫入 JSON 文件
+      // Write JSON File
       fs.writeFileSync(filepath, JSON.stringify(exportData, null, 2), 'utf8');
 
-      logger.info(`JSON 文件導出成功: ${filepath}`);
+      logger.info(`JSON 文件導出Success: ${filepath}`);
       return {
         filename: jsonFilename,
         filepath,
@@ -598,13 +598,13 @@ class DataExportService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('JSON 導出失敗:', error);
+      logger.error('JSON 導出Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 生成投資組合報告
+   * 生成投資組合Report
    */
   async generatePortfolioReport(userId, format = 'pdf', options = {}) {
     try {
@@ -612,7 +612,7 @@ class DataExportService {
 // eslint-disable-next-line no-unused-vars
       const Card = require('../models/Card');
 
-      // 獲取用戶投資組合
+      // GetUser投資組合
       const investments = await Investment.findAll({
         where: { userId, isActive: true },
         include: [
@@ -631,7 +631,7 @@ class DataExportService {
         order: [['createdAt', 'DESC']],
       });
 
-      // 計算投資組合統計
+      // 計算投資組合Statistics
       const portfolioStats = {
         totalInvestments: investments.length,
         totalCost: 0,
@@ -675,20 +675,20 @@ class DataExportService {
           (portfolioStats.totalReturn / portfolioStats.totalCost) * 100;
       }
 
-      // 排序找出最佳和最差表現
+      // Sort找出最佳和最差Table現
       const sortedByReturn = [...investmentData].sort(
         (a, b) => b.returnPercentage - a.returnPercentage
       );
       portfolioStats.topPerformers = sortedByReturn.slice(0, 5);
       portfolioStats.worstPerformers = sortedByReturn.slice(-5).reverse();
 
-      // 合併數據
+      // MergeData
       const reportData = {
         portfolioStats,
         investments: investmentData,
       };
 
-      // 根據格式導出
+      // Root據格式Export
       switch (format.toLowerCase()) {
         case 'pdf':
           return await this.exportPortfolioToPDF(reportData, userId, options);
@@ -704,13 +704,13 @@ class DataExportService {
           throw new Error(`不支持的報告格式: ${format}`);
       }
     } catch (error) {
-      logger.error('生成投資組合報告失敗:', error);
+      logger.error('生成投資組合報告Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出投資組合到 PDF
+   * Export投資組合到 PDF
    */
   async exportPortfolioToPDF(data, userId, options = {}) {
     try {
@@ -741,7 +741,7 @@ class DataExportService {
 
       doc.moveDown(2);
 
-      // 投資組合統計
+      // 投資組合Statistics
       doc.fontSize(16).font('Helvetica-Bold').text('PORTFOLIO SUMMARY');
       doc.moveDown();
 
@@ -757,7 +757,7 @@ class DataExportService {
 
       doc.moveDown(2);
 
-      // 最佳表現者
+      // 最佳Table現者
       doc.fontSize(14).font('Helvetica-Bold').text('TOP PERFORMERS');
       doc.moveDown();
 
@@ -774,14 +774,14 @@ class DataExportService {
 
       doc.moveDown(2);
 
-      // 投資詳情表格
+      // 投資詳情Table格
       doc.fontSize(14).font('Helvetica-Bold').text('INVESTMENT DETAILS');
       doc.moveDown();
 
       const headers = ['Card', 'Set', 'Qty', 'Cost', 'Value', 'Return %'];
       const colWidths = [120, 100, 50, 80, 80, 70];
 
-      // 表格標題
+      // Table格標題
       doc.fontSize(8).font('Helvetica-Bold');
       headers.forEach((header, index) => {
         doc.text(
@@ -797,7 +797,7 @@ class DataExportService {
 
       doc.moveDown();
 
-      // 表格數據
+      // Table格Data
       doc.fontSize(8).font('Helvetica');
       data.investments.forEach((investment) => {
         if (doc.y > 700) {
@@ -833,7 +833,7 @@ class DataExportService {
 
       return new Promise((resolve, reject) => {
         writeStream.on('finish', () => {
-          logger.info(`投資組合 PDF 報告生成成功: ${filepath}`);
+          logger.info(`投資組合 PDF 報告生成Success: ${filepath}`);
           resolve({
             filename: pdfFilename,
             filepath,
@@ -846,19 +846,19 @@ class DataExportService {
         writeStream.on('error', reject);
       });
     } catch (error) {
-      logger.error('投資組合 PDF 導出失敗:', error);
+      logger.error('投資組合 PDF 導出Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 導出投資組合到 Excel
+   * Export投資組合到 Excel
    */
   async exportPortfolioToExcel(data, userId, options = {}) {
     try {
       const workbook = new ExcelJS.Workbook();
 
-      // 投資組合摘要工作表
+      // 投資組合摘要工作Table
 // eslint-disable-next-line no-unused-vars
       const summarySheet = workbook.addWorksheet('Portfolio Summary');
       const stats = data.portfolioStats;
@@ -876,7 +876,7 @@ class DataExportService {
         `${stats.totalReturnPercentage.toFixed(2)}%`,
       ]);
 
-      // 投資詳情工作表
+      // 投資詳情工作Table
       const detailsSheet = workbook.addWorksheet('Investment Details');
       const headers = [
         'Card Name',
@@ -909,7 +909,7 @@ class DataExportService {
         ]);
       });
 
-      // 最佳表現者工作表
+      // 最佳Table現者工作Table
       const topPerformersSheet = workbook.addWorksheet('Top Performers');
       topPerformersSheet.addRow([
         'Rank',
@@ -928,14 +928,14 @@ class DataExportService {
         ]);
       });
 
-      // 生成文件名
+      // 生成File名
       const timestamp = moment().format('YYYY-MM-DD_HH-mm-ss');
       const filename = `portfolio_${userId}_${timestamp}.xlsx`;
       const filepath = path.join(this.exportDirectory, filename);
 
       await workbook.xlsx.writeFile(filepath);
 
-      logger.info(`投資組合 Excel 報告生成成功: ${filepath}`);
+      logger.info(`投資組合 Excel 報告生成Success: ${filepath}`);
       return {
         filename,
         filepath,
@@ -944,13 +944,13 @@ class DataExportService {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      logger.error('投資組合 Excel 導出失敗:', error);
+      logger.error('投資組合 Excel 導出Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 清理過期文件
+   * 清理過期File
    */
   cleanupExpiredFiles(daysToKeep = 7) {
     try {
@@ -971,13 +971,13 @@ class DataExportService {
       logger.info(`清理過期導出文件完成: 刪除 ${deletedCount} 個文件`);
       return deletedCount;
     } catch (error) {
-      logger.error('清理過期文件失敗:', error);
+      logger.error('清理過期文件Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 獲取導出統計
+   * GetExportStatistics
    */
   getExportStats() {
     try {
@@ -1000,7 +1000,7 @@ class DataExportService {
 
       return stats;
     } catch (error) {
-      logger.error('獲取導出統計失敗:', error);
+      logger.error('Get導出統計Failed:', error);
       throw error;
     }
   }

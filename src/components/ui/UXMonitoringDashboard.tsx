@@ -1,4 +1,4 @@
-// 用戶體驗監控儀表板
+// User體驗Monitor儀Table板
 import React, { useEffect, useState } from 'react';
 
 import type {
@@ -50,7 +50,7 @@ export const UXMonitoringDashboard: React.FC<UXMonitoringDashboardProps> = ({
   >('overview');
   const [refreshInterval, setRefreshInterval] = useState(30000);
 
-  // 自動刷新
+  // AutoRefresh
   useEffect(() => {
     if (showRealTimeData && isInitialized) {
       const _interval = setInterval(() => {
@@ -62,24 +62,24 @@ export const UXMonitoringDashboard: React.FC<UXMonitoringDashboardProps> = ({
     return undefined;
   }, [showRealTimeData, isInitialized, refreshInterval, getAnalytics]);
 
-  // 手動刷新
+  // ManualRefresh
   const _handleRefresh = () => {
     getAnalytics();
   };
 
-  // 導出數據
+  // ExportData
   const _handleExportData = () => {
-    // 導出數據功能
+    // ExportData功能
     console.log('Export data functionality');
   };
 
-  // 清理數據
+  // 清理Data
   const _handleClearData = () => {
-    // 清除數據功能
+    // ClearData功能
     console.log('Clear data functionality');
   };
 
-  // 更新配置
+  // UpdateConfigure
   const _handleConfigUpdate = (key: string, subKey: string) => {
     const _newConfig = {
       ...config,
@@ -107,7 +107,7 @@ export const UXMonitoringDashboard: React.FC<UXMonitoringDashboardProps> = ({
 
   return (
     <div className='ux-monitoring-dashboard'>
-      {/* 儀表板頭部 */}
+      {/* 儀Table板頭部 */}
       <div className='dashboard-header'>
         <h2>用戶體驗監控儀表板</h2>
         <div className='header-controls'>
@@ -127,14 +127,14 @@ export const UXMonitoringDashboard: React.FC<UXMonitoringDashboardProps> = ({
         </div>
       </div>
 
-      {/* 錯誤提示 */}
+      {/* Error提示 */}
       {error && (
         <div className='error-banner'>
           <span>錯誤: {error}</span>
         </div>
       )}
 
-      {/* 標籤頁導航 */}
+      {/* Tag頁導航 */}
       <div className='dashboard-tabs'>
         <button
           className={activeTab === 'overview' ? 'active' : ''}
@@ -182,7 +182,7 @@ export const UXMonitoringDashboard: React.FC<UXMonitoringDashboardProps> = ({
         )}
       </div>
 
-      {/* 標籤頁內容 */}
+      {/* Tag頁Content */}
       <div className='dashboard-content'>
         {activeTab === 'overview' && (
           <OverviewTab
@@ -217,7 +217,7 @@ export const UXMonitoringDashboard: React.FC<UXMonitoringDashboardProps> = ({
         )}
       </div>
 
-      {/* 實時數據設置 */}
+      {/* 實時DataSettings */}
       {showRealTimeData && (
         <div className='real-time-settings'>
           <label>
@@ -238,7 +238,7 @@ export const UXMonitoringDashboard: React.FC<UXMonitoringDashboardProps> = ({
   );
 };
 
-// 概覽標籤頁
+// 概覽Tag頁
 const OverviewTab: React.FC<{
   status: unknown;
   analytics: unknown;
@@ -329,7 +329,7 @@ const OverviewTab: React.FC<{
   );
 };
 
-// 會話分析標籤頁
+// 會話AnalysisTag頁
 const SessionsTab: React.FC<{
   analytics: SessionAnalytics | undefined;
 }> = ({ analytics }) => {
@@ -375,7 +375,7 @@ const SessionsTab: React.FC<{
   );
 };
 
-// 性能監控標籤頁
+// 性能MonitorTag頁
 const PerformanceTab: React.FC<{
   analytics: PerformanceAnalytics | undefined;
 }> = ({ analytics }) => {
@@ -413,7 +413,7 @@ const PerformanceTab: React.FC<{
   );
 };
 
-// 錯誤追蹤標籤頁
+// ErrorTraceTag頁
 const ErrorsTab: React.FC<{
   analytics: ErrorAnalytics | undefined;
 }> = ({ analytics }) => {
@@ -451,7 +451,7 @@ const ErrorsTab: React.FC<{
   );
 };
 
-// 滿意度調查標籤頁
+// 滿意度調查Tag頁
 const SatisfactionTab: React.FC<{
   analytics: SatisfactionAnalytics | undefined;
 }> = ({ analytics }) => {
@@ -488,7 +488,7 @@ const SatisfactionTab: React.FC<{
   );
 };
 
-// A/B 測試標籤頁
+// A/B TestTag頁
 const ABTestsTab: React.FC<{
   analytics: ABTestAnalytics | undefined;
 }> = ({ analytics }) => {
@@ -527,7 +527,7 @@ const ABTestsTab: React.FC<{
   );
 };
 
-// 配置標籤頁
+// ConfigureTag頁
 const ConfigTab: React.FC<{
   config: UXMonitoringConfig | null;
   onConfigChange: (key: string, subKey: string) => void;

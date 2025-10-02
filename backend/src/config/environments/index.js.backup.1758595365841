@@ -1,0 +1,297 @@
+/**
+ * 統一配置管理
+ * 集中管理所有系統配置
+ */
+
+const path = require('path');
+
+// 數據庫配置
+const database = {
+  development: {
+    user: 'postgres',
+    host: 'localhost',
+    database: 'cardstrategy_test',
+    password: 'PostgresAdmin123!',
+    port: 5433,
+    max: 20,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+  },
+  production: {
+    user: process.env.DB_USER || 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    database: process.env.DB_NAME || 'cardstrategy_prod',
+    password: process.env.DB_PASSWORD || 'PostgresAdmin123!',
+    port: parseInt(process.env.DB_PORT) || 5433,
+    max: 50,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
+  },
+  testing: {
+    user: 'postgres',
+    host: 'localhost',
+    database: 'cardstrategy_test',
+    password: 'PostgresAdmin123!',
+    port: 5433,
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 2000,
+  },
+};
+
+// API服務配置
+const services = {
+  main: {
+    port: 3000,
+    host: 'localhost',
+    cors: {
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+      ],
+      credentials: true,
+    },
+  },
+  bgs: {
+    port: 3001,
+    host: 'localhost',
+    cors: {
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+      ],
+      credentials: true,
+    },
+  },
+  smartCard: {
+    port: 3000, // 與主API共享端口
+    host: 'localhost',
+    cors: {
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+      ],
+      credentials: true,
+    },
+  },
+};
+
+// Worker系統配置
+const workers = {
+  dataCollection: {
+    schedule: '0 */6 * * *', // 每6小時執行一次
+    batchSize: 100,
+    timeout: 300000, // 5分鐘
+    retries: 3,
+  },
+  priceUpdate: {
+    schedule: '0 */2 * * *', // 每2小時執行一次
+    batchSize: 50,
+    timeout: 180000, // 3分鐘
+    retries: 3,
+  },
+  imageProcessing: {
+    schedule: '0 */4 * * *', // 每4小時執行一次
+    batchSize: 20,
+    timeout: 600000, // 10分鐘
+    retries: 2,
+  },
+  feedbackProcessing: {
+    schedule: '0 */1 * * *', // 每小時執行一次
+    batchSize: 30,
+    timeout: 120000, // 2分鐘
+    retries: 3,
+  },
+  modelTraining: {
+    schedule: '0 2 * * *', // 每天凌晨2點執行
+    batchSize: 10,
+    timeout: 3600000, // 1小時
+    retries: 1,
+  },
+  qualityMonitoring: {
+    schedule: '0 */8 * * *', // 每8小時執行一次
+    batchSize: 100,
+    timeout: 300000, // 5分鐘
+    retries: 3,
+  },
+};
+
+// 爬蟲配置
+const crawlers = {
+  ebay: {
+    apiKey: process.env.EBAY_API_KEY || '',
+    clientId: process.env.EBAY_CLIENT_ID || '',
+    clientSecret: process.env.EBAY_CLIENT_SECRET || '',
+    sandbox: process.env.EBAY_SANDBOX === 'true',
+    rateLimit: {
+      requestsPerSecond: 5,
+      burstLimit: 10,
+    },
+    retries: 3,
+    timeout: 30000,
+  },
+  bgs: {
+    baseUrl: 'https://www.beckett.com',
+    rateLimit: {
+      requestsPerSecond: 2,
+      burstLimit: 5,
+    },
+    retries: 3,
+    timeout: 30000,
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+  },
+  pokemon: {
+    apiUrl: 'https://api.pokemontcg.io/v2',
+    rateLimit: {
+      requestsPerSecond: 10,
+      burstLimit: 20,
+    },
+    retries: 3,
+    timeout: 15000,
+  },
+  onepiece: {
+    apiUrl: 'https://api.onepiecetcg.io',
+    rateLimit: {
+      requestsPerSecond: 5,
+      burstLimit: 10,
+    },
+    retries: 3,
+    timeout: 20000,
+  },
+  mlp: {
+    baseUrl: 'https://mlpmerch.com',
+    rateLimit: {
+      requestsPerSecond: 3,
+      burstLimit: 6,
+    },
+    retries: 3,
+    timeout: 25000,
+  },
+};
+
+// 分析器配置
+const analyzers = {
+  antiCounterfeiting: {
+    imageSourceTrust: {
+      trusted: ['beckett.com', 'psacard.com', 'cgccard.com'],
+      moderate: ['tcgplayer.com', 'cardmarket.com', 'official websites'],
+      untrusted: ['ebay.com', 'shopee.com', 'yahoo.com', 'taobao.com'],
+    },
+    confidenceThreshold: 0.8,
+    maxImageSize: 5 * 1024 * 1024, // 5MB
+    supportedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+  },
+  dataQuality: {
+    thresholds: {
+      imageUrl: 0.8,
+      cardId: 0.95,
+      rarity: 0.9,
+      seriesName: 0.99,
+      description: 0.85,
+      artist: 0.75,
+    },
+    monitoringInterval: 24 * 60 * 60 * 1000, // 24小時
+  },
+  pricePrediction: {
+    modelPath: './models/price-prediction',
+    features: [
+      'historical_prices',
+      'rarity',
+      'series',
+      'condition',
+      'market_trends',
+    ],
+    predictionHorizon: 30, // 30天
+    confidenceThreshold: 0.7,
+  },
+};
+
+// 日誌配置
+const logging = {
+  level: process.env.LOG_LEVEL || 'info',
+  format: 'combined',
+  files: {
+    application: './logs/application/app.log',
+    errors: './logs/errors/error.log',
+    performance: './logs/performance/performance.log',
+  },
+  maxSize: '10m',
+  maxFiles: 5,
+  datePattern: 'YYYY-MM-DD',
+};
+
+// 安全配置
+const security = {
+  jwt: {
+    secret: process.env.JWT_SECRET || 'your-secret-key',
+    expiresIn: '24h',
+  },
+  cors: {
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true,
+  },
+  rateLimit: {
+    windowMs: 15 * 60 * 1000, // 15分鐘
+    max: 100, // 每15分鐘最多100個請求
+  },
+};
+
+// 監控配置
+const monitoring = {
+  healthCheck: {
+    interval: 30000, // 30秒
+    timeout: 5000, // 5秒
+  },
+  metrics: {
+    enabled: true,
+    port: 9090,
+    path: '/metrics',
+  },
+  alerts: {
+    email: process.env.ALERT_EMAIL || '',
+    slack: process.env.SLACK_WEBHOOK || '',
+  },
+};
+
+// 根據環境獲取配置
+const getConfig = () => {
+  const env = process.env.NODE_ENV || 'development';
+
+  return {
+    env,
+    database: database[env] || database.development,
+    services,
+    workers,
+    crawlers,
+    analyzers,
+    logging,
+    security,
+    monitoring,
+    paths: {
+      uploads: './uploads',
+      logs: './logs',
+      data: './data',
+      models: './models',
+      temp: './temp',
+    },
+  };
+};
+
+module.exports = {
+  getConfig,
+  database,
+  services,
+  workers,
+  crawlers,
+  analyzers,
+  logging,
+  security,
+  monitoring,
+};

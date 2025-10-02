@@ -6,10 +6,10 @@ router.get('/trends', async (req, res) => {
   try {'
     const { days = 7, card_id } = req.query;''
     const cacheKey = `market:trends:${days}:${card_id || 'all'}`;''
-    // ?�試從緩存獲??    let trends = await advancedCacheService.get(cacheKey, 'marketData');
+    // ?�試從Cache獲??    let trends = await advancedCacheService.get(cacheKey, 'marketData');
 
     if (!trends) {
-      // logger.info(`?? 從數?�庫?��?市場趨勢: ${days} 天`);
+      // logger.info(`?? 從數?�Library?��?市場趨勢: ${days} 天`);
 
       // ?��??�詢 - 使用索�??��??��???      const query = `
         SELECT 
@@ -77,11 +77,11 @@ router.get('/price-history/:cardId', async (req, res) => {
     const { cardId } = req.params;''
     const { period = '30d' } = req.query;
     const cacheKey = `market:price-history:${cardId}:${period}`;'
-    // ?�試從緩存獲??// eslint-disable-next-line no-unused-vars''
+    // ?�試從Cache獲??// eslint-disable-next-line no-unused-vars''
     let history = await advancedCacheService.get(cacheKey, 'marketData');
 
     if (!history) {'
-      // logger.info(`?? 從數?�庫?��??�格歷史: ?��? ${cardId}, ?��? ${period}`);''
+      // logger.info(`?? 從數?�Library?��??�格歷史: ?��? ${cardId}, ?��? ${period}`);''
       // ?��??�詢 - 使用索�??��??��???      const daysMap = { '7d': 7, '30d': 30, '90d': 90, '1y': 365 };
       const days = daysMap[period] || 30;
 
@@ -173,7 +173,7 @@ router.post('/batch-prices', async (req, res) => {
     // ?�制?��??�詢?��?'
     const limitedIds = card_ids.slice(0, 100);''
     const cacheKey = `market:batch-prices:${limitedIds.sort().join(',')}`;'
-    // ?�試從緩存獲??// eslint-disable-next-line no-unused-vars''
+    // ?�試從Cache獲??// eslint-disable-next-line no-unused-vars''
     let prices = await advancedCacheService.get(cacheKey, 'marketData');
 
     if (!prices) {
@@ -233,9 +233,9 @@ router.post('/batch-prices', async (req, res) => {
 router.get('/statistics', async (req, res) => {'
   try {''
     const cacheKey = 'market:statistics';''
-    // ?�試從緩存獲??    let statistics = await advancedCacheService.get(cacheKey, 'marketData');'
+    // ?�試從Cache獲??    let statistics = await advancedCacheService.get(cacheKey, 'marketData');'
     if (!statistics) {''
-      // logger.info('?? 從數?�庫?��?市場統�?');
+      // logger.info('?? 從數?�Library?��?市場統�?');
 
       // ?��?統�??�詢
       const query = `

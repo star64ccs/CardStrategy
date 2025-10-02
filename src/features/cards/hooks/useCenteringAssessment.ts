@@ -102,9 +102,9 @@ export const _useCenteringAssessment = (
   const _initialize = useCallback(async () => {
     try {
       await dispatch(initializeCenteringAssessment()).unwrap();
-      logger.info('置中評估系統初始化成功');
+      logger.info('置中評估系統InitializeSuccess');
     } catch (error: unknown) {
-      logger.error('置中評估系統初始化失敗:', error);
+      logger.error('置中評估系統InitializeFailed:', error);
       onAssessmentError?.(error);
     }
   }, [dispatch, onAssessmentError]);
@@ -116,7 +116,7 @@ export const _useCenteringAssessment = (
         onAssessmentSuccess?.(result);
         return result;
       } catch (error: unknown) {
-        logger.error('置中評估失敗:', error);
+        logger.error('置中評估Failed:', error);
         onAssessmentError?.(error);
         return undefined;
       }
@@ -132,7 +132,7 @@ export const _useCenteringAssessment = (
         ).unwrap();
         onHistoryLoaded?.(history);
       } catch (error: unknown) {
-        logger.error('獲取評估歷史失敗:', error);
+        logger.error('Get評估歷史Failed:', error);
       }
     },
     [dispatch, onHistoryLoaded]
@@ -144,7 +144,7 @@ export const _useCenteringAssessment = (
         const _stats = await dispatch(getAssessmentStats(userId)).unwrap();
         onStatsLoaded?.(stats);
       } catch (error: unknown) {
-        logger.error('獲取評估統計失敗:', error);
+        logger.error('Get評估統計Failed:', error);
       }
     },
     [dispatch, onStatsLoaded]

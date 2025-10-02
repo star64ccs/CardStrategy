@@ -1,4 +1,4 @@
-// 數據處理協議
+// DataHandleProtocol
 export const _DATA_PROCESSING_AGREEMENT = {
   type: 'data_processing_agreement',
   version: '1.0',
@@ -264,5 +264,5 @@ export const _DATA_PROCESSING_AGREEMENT = {
   effectiveDate: new Date('2024-08-22'),
 };
 
-// 導出協議內容
+// ExportProtocolContent
 export const _getDataProcessingAgreement = () => DATA_PROCESSING_AGREEMENT;

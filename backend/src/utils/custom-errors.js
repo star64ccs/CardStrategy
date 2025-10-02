@@ -1,6 +1,6 @@
 const { logger } = require('./unified-logger');
 
-// 基礎錯誤類
+// 基礎ErrorClass
 class AppError extends Error {
   constructor(message, statusCode = 500, isOperational = true) {
     super(message);
@@ -9,12 +9,12 @@ class AppError extends Error {
     this.timestamp = new Date().toISOString();
     this.name = this.constructor.name;
 
-    // 捕獲堆疊追蹤
+    // Catch堆疊Trace
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
-// 驗證錯誤
+// VerifyError
 class ValidationError extends AppError {
   constructor(message, errors = []) {
     super(message, 400);
@@ -23,7 +23,7 @@ class ValidationError extends AppError {
   }
 }
 
-// 認證錯誤
+// AuthenticateError
 class AuthenticationError extends AppError {
   constructor(message = 'Authentication failed') {
     super(message, 401);
@@ -31,7 +31,7 @@ class AuthenticationError extends AppError {
   }
 }
 
-// 授權錯誤
+// AuthorizeError
 class AuthorizationError extends AppError {
   constructor(message = 'Insufficient permissions') {
     super(message, 403);
@@ -39,7 +39,7 @@ class AuthorizationError extends AppError {
   }
 }
 
-// 資源未找到錯誤
+// Resource未找到Error
 class NotFoundError extends AppError {
   constructor(resource = 'Resource') {
     super(`${resource} not found`, 404);
@@ -48,7 +48,7 @@ class NotFoundError extends AppError {
   }
 }
 
-// 衝突錯誤
+// 衝突Error
 class ConflictError extends AppError {
   constructor(message = 'Resource conflict') {
     super(message, 409);
@@ -56,7 +56,7 @@ class ConflictError extends AppError {
   }
 }
 
-// 請求過大錯誤
+// Request過大Error
 class PayloadTooLargeError extends AppError {
   constructor(message = 'Request payload too large') {
     super(message, 413);
@@ -64,7 +64,7 @@ class PayloadTooLargeError extends AppError {
   }
 }
 
-// 速率限制錯誤
+// 速率LimitError
 class RateLimitError extends AppError {
   constructor(message = 'Rate limit exceeded') {
     super(message, 429);
@@ -72,7 +72,7 @@ class RateLimitError extends AppError {
   }
 }
 
-// 數據庫錯誤
+// DatabaseError
 class DatabaseError extends AppError {
   constructor(message = 'Database operation failed', originalError = null) {
     super(message, 500);
@@ -81,7 +81,7 @@ class DatabaseError extends AppError {
   }
 }
 
-// 外部服務錯誤
+// ExternalServiceError
 class ExternalServiceError extends AppError {
   constructor(service, message = 'External service error') {
     super(`${service}: ${message}`, 502);
@@ -90,7 +90,7 @@ class ExternalServiceError extends AppError {
   }
 }
 
-// 配置錯誤
+// ConfigureError
 class ConfigurationError extends AppError {
   constructor(message = 'Configuration error') {
     super(message, 500);

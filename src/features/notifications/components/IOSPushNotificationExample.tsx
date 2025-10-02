@@ -22,7 +22,7 @@ interface IOSPushNotificationExampleProps {
 
 export const IOSPushNotificationExample: React.FC<
   IOSPushNotificationExampleProps
-> = ({ title = 'iOS 推送通知服務示例' }) => {
+> = ({ title = 'iOS 推送通知Service示例' }) => {
   const [isConfigured, setIsConfigured] = useState(false);
   const [hasPermissions, setHasPermissions] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -63,7 +63,7 @@ export const IOSPushNotificationExample: React.FC<
 
     iosPushService.configure(config);
     setIsConfigured(true);
-    Alert.alert('配置成功', 'iOS 推送通知服務已配置');
+    Alert.alert('ConfigureSuccess', 'iOS 推送通知Service已Configure');
   };
 
   const _requestPermissions = async () => {
@@ -73,13 +73,13 @@ export const IOSPushNotificationExample: React.FC<
       setHasPermissions(granted);
 
       if (granted) {
-        Alert.alert('權限獲取成功', '推送通知權限已獲取');
+        Alert.alert('權限GetSuccess', '推送通知權限已獲取');
         checkServiceStatus();
       } else {
-        Alert.alert('權限獲取失敗', '無法獲取推送通知權限');
+        Alert.alert('權限GetFailed', '無法獲取推送通知權限');
       }
     } catch (error) {
-      Alert.alert('錯誤', `請求權限時發生錯誤: ${error}`);
+      Alert.alert('Error', `請求權限時發生Error: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -94,12 +94,12 @@ export const IOSPushNotificationExample: React.FC<
       if (success) {
         const _token = iosPushService.getDeviceToken();
         setDeviceToken(token?.token || '已獲取');
-        Alert.alert('註冊成功', '遠程推送通知已註冊');
+        Alert.alert('註冊Success', '遠程推送通知已註冊');
       } else {
-        Alert.alert('註冊失敗', '無法註冊遠程推送通知');
+        Alert.alert('註冊Failed', '無法註冊遠程推送通知');
       }
     } catch (error) {
-      Alert.alert('錯誤', `註冊時發生錯誤: ${error}`);
+      Alert.alert('Error', `註冊時發生Error: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -113,12 +113,12 @@ export const IOSPushNotificationExample: React.FC<
       if (success) {
         setIsRegistered(false);
         setDeviceToken(null);
-        Alert.alert('取消註冊成功', '遠程推送通知已取消註冊');
+        Alert.alert('取消註冊Success', '遠程推送通知已取消註冊');
       } else {
-        Alert.alert('取消註冊失敗', '無法取消註冊遠程推送通知');
+        Alert.alert('取消註冊Failed', '無法取消註冊遠程推送通知');
       }
     } catch (error) {
-      Alert.alert('錯誤', `取消註冊時發生錯誤: ${error}`);
+      Alert.alert('Error', `取消註冊時發生Error: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -126,7 +126,7 @@ export const IOSPushNotificationExample: React.FC<
 
   const _sendTestNotification = async () => {
     if (!deviceToken || deviceToken === '已獲取') {
-      Alert.alert('錯誤', '請先獲取設備令牌');
+      Alert.alert('Error', '請先獲取設備令牌');
       return;
     }
 
@@ -136,7 +136,7 @@ export const IOSPushNotificationExample: React.FC<
       try {
         customDataObj = JSON.parse(customData);
       } catch (e) {
-        // 使用默認數據
+        // 使用DefaultData
         customDataObj = { type: 'test', id: '123' };
       }
 
@@ -158,12 +158,12 @@ export const IOSPushNotificationExample: React.FC<
       );
 
       if (result.success) {
-        Alert.alert('發送成功', `推送通知已發送，消息ID: ${result.messageId}`);
+        Alert.alert('發送Success', `推送通知已發送，消息ID: ${result.messageId}`);
       } else {
-        Alert.alert('發送失敗', `錯誤: ${result.error}`);
+        Alert.alert('發送Failed', `Error: ${result.error}`);
       }
     } catch (error) {
-      Alert.alert('錯誤', `發送通知時發生錯誤: ${error}`);
+      Alert.alert('Error', `發送通知時發生Error: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -183,12 +183,12 @@ export const IOSPushNotificationExample: React.FC<
       );
 
       if (success) {
-        Alert.alert('發送成功', '本地推送通知已發送');
+        Alert.alert('發送Success', '本地推送通知已發送');
       } else {
-        Alert.alert('發送失敗', '無法發送本地推送通知');
+        Alert.alert('發送Failed', '無法發送本地推送通知');
       }
     } catch (error) {
-      Alert.alert('錯誤', `發送本地通知時發生錯誤: ${error}`);
+      Alert.alert('Error', `發送本地通知時發生Error: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -202,13 +202,13 @@ export const IOSPushNotificationExample: React.FC<
       Alert.alert(
         '統計信息',
         `總發送: ${deliveryStats.totalSent}\n` +
-          `成功投遞: ${deliveryStats.totalDelivered}\n` +
-          `失敗: ${deliveryStats.totalFailed}\n` +
-          `成功率: ${(deliveryStats.successRate * 100).toFixed(1)}%\n` +
+          `Success投遞: ${deliveryStats.totalDelivered}\n` +
+          `Failed: ${deliveryStats.totalFailed}\n` +
+          `Success率: ${(deliveryStats.successRate * 100).toFixed(1)}%\n` +
           `平均投遞時間: ${deliveryStats.averageDeliveryTime}ms`
       );
     } catch (error) {
-      Alert.alert('錯誤', `獲取統計信息時發生錯誤: ${error}`);
+      Alert.alert('Error', `Get統計信息時發生Error: ${error}`);
     } finally {
       setLoading(false);
     }
@@ -217,14 +217,14 @@ export const IOSPushNotificationExample: React.FC<
   const _resetStats = () => {
     iosPushService.resetStats();
     setStats(null);
-    Alert.alert('重置成功', '統計信息已重置');
+    Alert.alert('重置Success', '統計信息已重置');
   };
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{title}</Text>
 
-      {/* 服務狀態 */}
+      {/* ServiceStatus */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>服務狀態</Text>
         <View style={styles.statusRow}>
@@ -257,7 +257,7 @@ export const IOSPushNotificationExample: React.FC<
         </View>
       </View>
 
-      {/* 配置選項 */}
+      {/* ConfigureOptions */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>配置選項</Text>
         <View style={styles.switchRow}>
@@ -281,7 +281,7 @@ export const IOSPushNotificationExample: React.FC<
         </TouchableOpacity>
       </View>
 
-      {/* 權限和註冊 */}
+      {/* 權限和Register */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>權限和註冊</Text>
         <TouchableOpacity
@@ -321,7 +321,7 @@ export const IOSPushNotificationExample: React.FC<
         </TouchableOpacity>
       </View>
 
-      {/* 通知內容 */}
+      {/* NotificationContent */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>通知內容</Text>
         <TextInput
@@ -346,7 +346,7 @@ export const IOSPushNotificationExample: React.FC<
         />
       </View>
 
-      {/* 發送通知 */}
+      {/* SendNotification */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>發送通知</Text>
         <TouchableOpacity
@@ -373,7 +373,7 @@ export const IOSPushNotificationExample: React.FC<
         </TouchableOpacity>
       </View>
 
-      {/* 統計信息 */}
+      {/* StatisticsInformation */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>統計信息</Text>
         <TouchableOpacity
@@ -395,7 +395,7 @@ export const IOSPushNotificationExample: React.FC<
         </TouchableOpacity>
       </View>
 
-      {/* 服務信息 */}
+      {/* ServiceInformation */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>服務信息</Text>
         <TouchableOpacity
@@ -403,10 +403,10 @@ export const IOSPushNotificationExample: React.FC<
           onPress={() => {
             const _serviceInfo = iosPushService.getServiceInfo();
             Alert.alert(
-              '服務信息',
+              'ServiceInformation',
               `平台: ${serviceInfo.platform}\n` +
                 `初始化狀態: ${serviceInfo.isInitialized ? '是' : '否'}\n` +
-                `服務就緒: ${serviceInfo.isServiceReady ? '是' : '否'}\n` +
+                `Service就緒: ${serviceInfo.isServiceReady ? '是' : '否'}\n` +
                 `有設備令牌: ${serviceInfo.hasDeviceToken ? '是' : '否'}\n` +
                 `環境: ${serviceInfo.deviceTokenEnvironment || '未知'}`
             );

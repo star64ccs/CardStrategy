@@ -3,8 +3,8 @@ import type React from 'react';
 import type { ARIAProps } from '../types/accessibility';
 
 /**
- * 可訪問性增強器工具
- * 用於為組件添加 ARIA 標籤、鍵盤導航、焦點指示器等可訪問性功能
+ * 可訪問性增強器Tool
+ * 用於為ComponentAdd ARIA Tag、Key盤導航、焦點指示器等可訪問性功能
  */
 export class AccessibilityEnhancer {
   private static instance: AccessibilityEnhancer;
@@ -25,7 +25,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 初始化焦點指示器樣式
+   * Initialize焦點指示器樣式
    */
   private initFocusIndicator(): void {
     this.focusIndicatorStyle = `
@@ -63,7 +63,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 檢測用戶偏好設置
+   * 檢測UserPreferencesSettings
    */
   private detectUserPreferences(): void {
     if (typeof window !== 'undefined' && window.matchMedia) {
@@ -75,7 +75,7 @@ export class AccessibilityEnhancer {
         this.updateBodyClasses();
       });
 
-      // 檢測減少動畫偏好
+      // 檢測減少動畫Preferences
       const _reducedMotionQuery = window.matchMedia(
         '(prefers-reduced-motion: reduce)'
       );
@@ -90,7 +90,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 更新 body 類名
+   * Update body Class名
    */
   private updateBodyClasses(): void {
     if (typeof document !== 'undefined') {
@@ -107,7 +107,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 為組件添加 ARIA 標籤
+   * 為ComponentAdd ARIA Tag
    */
   public addARIALabels(
     props: unknown,
@@ -223,7 +223,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 為組件添加鍵盤導航支持
+   * 為ComponentAddKey盤導航Support
    */
   public addKeyboardNavigation(
     props: unknown,
@@ -319,7 +319,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 為組件添加焦點指示器
+   * 為ComponentAdd焦點指示器
    */
   public addFocusIndicator(
     props: unknown,
@@ -340,7 +340,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 為組件添加高對比度支持
+   * 為ComponentAdd高對比度Support
    */
   public addHighContrastSupport(
     props: unknown,
@@ -366,7 +366,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 為組件添加屏幕閱讀器支持
+   * 為ComponentAdd屏幕閱讀器Support
    */
   public addScreenReaderSupport(
     props: unknown,
@@ -391,7 +391,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 為組件添加語音控制支持
+   * 為ComponentAdd語音ControlSupport
    */
   public addVoiceControlSupport(
     props: unknown,
@@ -415,7 +415,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 為組件添加開關控制支持
+   * 為ComponentAddOnOffControlSupport
    */
   public addSwitchControlSupport(
     props: unknown,
@@ -481,7 +481,7 @@ export class AccessibilityEnhancer {
   ): React.HTMLAttributes<HTMLElement> {
     let enhancedProps = { ...props };
 
-    // 添加 ARIA 標籤
+    // Add ARIA Tag
     if (accessibilityConfig.aria) {
       enhancedProps = this.addARIALabels(
         enhancedProps,
@@ -489,7 +489,7 @@ export class AccessibilityEnhancer {
       );
     }
 
-    // 添加鍵盤導航
+    // AddKey盤導航
     if (accessibilityConfig.keyboard) {
       enhancedProps = this.addKeyboardNavigation(
         enhancedProps,
@@ -497,7 +497,7 @@ export class AccessibilityEnhancer {
       );
     }
 
-    // 添加焦點指示器
+    // Add焦點指示器
     if (accessibilityConfig.focus) {
       enhancedProps = this.addFocusIndicator(
         enhancedProps,
@@ -505,7 +505,7 @@ export class AccessibilityEnhancer {
       );
     }
 
-    // 添加高對比度支持
+    // Add高對比度Support
     if (accessibilityConfig.highContrast) {
       enhancedProps = this.addHighContrastSupport(
         enhancedProps,
@@ -513,7 +513,7 @@ export class AccessibilityEnhancer {
       );
     }
 
-    // 添加屏幕閱讀器支持
+    // Add屏幕閱讀器Support
     if (accessibilityConfig.screenReader) {
       enhancedProps = this.addScreenReaderSupport(
         enhancedProps,
@@ -521,7 +521,7 @@ export class AccessibilityEnhancer {
       );
     }
 
-    // 添加語音控制支持
+    // Add語音ControlSupport
     if (accessibilityConfig.voiceControl) {
       enhancedProps = this.addVoiceControlSupport(
         enhancedProps,
@@ -529,7 +529,7 @@ export class AccessibilityEnhancer {
       );
     }
 
-    // 添加開關控制支持
+    // AddOnOffControlSupport
     if (accessibilityConfig.switchControl) {
       enhancedProps = this.addSwitchControlSupport(
         enhancedProps,
@@ -541,7 +541,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 獲取當前可訪問性設置
+   * Get當前可訪問性Settings
    */
   public getAccessibilitySettings(): {
     highContrastMode: boolean;
@@ -554,7 +554,7 @@ export class AccessibilityEnhancer {
   }
 
   /**
-   * 更新可訪問性設置
+   * Update可訪問性Settings
    */
   public updateAccessibilitySettings(settings: {
     highContrastMode?: boolean;
@@ -572,10 +572,10 @@ export class AccessibilityEnhancer {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _accessibilityEnhancer = AccessibilityEnhancer.getInstance();
 
-// 導出便捷函數
+// Export便捷Function
 export const _enhanceComponent = (
   props: unknown,
   accessibilityConfig: Parameters<

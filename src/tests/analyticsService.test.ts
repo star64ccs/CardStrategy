@@ -14,7 +14,7 @@ describe('Analytics Services', () => {
       expect(segmentService.isAvailable()).toBe(false);
     });
 
-    test('空事件列表應該返回成功', async () => {
+    test('空事件列表應該返回Success', async () => {
       const _result = await segmentService.batchTrackEvents([]);
       expect(result.success).toBe(true);
       expect(result.data).toEqual([]);
@@ -51,7 +51,7 @@ describe('Analytics Services', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    test('獲取服務統計應該返回正確信息', async () => {
+    test('GetService統計應該返回正確Information', async () => {
       const _result = await segmentService.getServiceStats();
       expect(result.success).toBe(true);
       expect(result.data.service).toBe('segment');
@@ -66,7 +66,7 @@ describe('Analytics Services', () => {
       expect(mixelService.isAvailable()).toBe(false);
     });
 
-    test('空事件列表應該返回成功', async () => {
+    test('空事件列表應該返回Success', async () => {
       const _result = await mixelService.batchTrackEvents([]);
       expect(result.success).toBe(true);
       expect(result.data).toEqual([]);
@@ -118,7 +118,7 @@ describe('Analytics Services', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    test('獲取服務統計應該返回正確信息', async () => {
+    test('GetService統計應該返回正確Information', async () => {
       const _result = await mixelService.getServiceStats();
       expect(result.success).toBe(true);
       expect(result.data.service).toBe('mixel');
@@ -138,7 +138,7 @@ describe('Analytics Services', () => {
       expect(platforms.mixel).toBe(false);
     });
 
-    test('沒有可用平台時追蹤事件應該失敗', async () => {
+    test('沒有可用平台時追蹤事件應該Failed', async () => {
       const _result = await analyticsService.trackEvent({
         event: 'test_event',
         userId: 'test-user',
@@ -149,7 +149,7 @@ describe('Analytics Services', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    test('空事件列表應該返回成功', async () => {
+    test('空事件列表應該返回Success', async () => {
       const _result = await analyticsService.batchTrackEvents([]);
       expect(result.success).toBe(true);
       expect(result.data).toEqual([]);
@@ -198,7 +198,7 @@ describe('Analytics Services', () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    test('獲取服務統計應該返回正確信息', async () => {
+    test('GetService統計應該返回正確Information', async () => {
       const _result = await analyticsService.getServiceStats();
       expect(result.success).toBe(true);
       expect(result.data.service).toBe('analytics');

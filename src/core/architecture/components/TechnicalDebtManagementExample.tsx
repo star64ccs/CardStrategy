@@ -65,12 +65,12 @@ const TechnicalDebtManagementExample: React.FC = () => {
       setIsInitialized(result);
       if (result) {
         updateReport();
-        Alert.alert('成功', '技術債務管理初始化成功');
+        Alert.alert('Success', '技術債務管理InitializeSuccess');
       } else {
-        Alert.alert('錯誤', '技術債務管理初始化失敗');
+        Alert.alert('Error', '技術債務管理InitializeFailed');
       }
     } catch (error) {
-      Alert.alert('錯誤', `初始化過程中發生錯誤: ${error}`);
+      Alert.alert('Error', `Initialize過程中發生Error: ${error}`);
     } finally {
       setIsInitializing(false);
     }
@@ -84,8 +84,8 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '初始化測試',
-          result: result ? '成功' : '失敗',
-          details: result ? '技術債務管理成功初始化' : '初始化失敗',
+          result: result ? 'Success' : 'Failed',
+          details: result ? '技術債務管理SuccessInitialize' : 'InitializeFailed',
         },
       ]);
     } catch (error) {
@@ -93,8 +93,8 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '初始化測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -110,7 +110,7 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '掃描新問題測試',
-          result: '成功',
+          result: 'Success',
           details: `發現 ${newIssues.length} 個新問題`,
         },
       ]);
@@ -120,8 +120,8 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '掃描新問題測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -137,7 +137,7 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '報告生成測試',
-          result: '成功',
+          result: 'Success',
           details: `生成報告包含 ${currentReport.summary.totalItems} 個項目`,
         },
       ]);
@@ -146,8 +146,8 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '報告生成測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -162,16 +162,16 @@ const TechnicalDebtManagementExample: React.FC = () => {
       if (currentReport.items.length > 0) {
         const _itemId = currentReport.items[0].id;
 
-        // 測試更新狀態
+        // TestUpdateStatus
         const _statusResult = management.updateItemStatus(
           itemId,
           TechnicalDebtStatus.IN_PROGRESS
         );
 
-        // 測試分配項目
+        // Test分配項目
         const _assignResult = management.assignItem(itemId, 'developer1');
 
-        // 測試添加解決方案
+        // TestAddResolve方案
         const resolution: TechnicalDebtResolution = {
           approach: '重構代碼',
           steps: ['分析問題', '設計解決方案', '實施修復'],
@@ -187,7 +187,7 @@ const TechnicalDebtManagementExample: React.FC = () => {
           ...prev,
           {
             test: '項目管理測試',
-            result: '成功',
+            result: 'Success',
             details: `狀態更新: ${statusResult}, 分配: ${assignResult}, 解決方案: ${resolutionResult}`,
           },
         ]);
@@ -207,8 +207,8 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '項目管理測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -226,7 +226,7 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '建議和指標測試',
-          result: '成功',
+          result: 'Success',
           details: `獲取 ${recommendations.length} 個建議, 技術債務比率: ${ratio.toFixed(2)}%`,
         },
       ]);
@@ -235,8 +235,8 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '建議和指標測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -266,8 +266,8 @@ const TechnicalDebtManagementExample: React.FC = () => {
         ...prev,
         {
           test: '完整功能測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -299,9 +299,9 @@ const TechnicalDebtManagementExample: React.FC = () => {
             styles.testStatus,
             {
               color:
-                result.result === '成功'
+                result.result === 'Success'
                   ? '#4CAF50'
-                  : result.result === '錯誤'
+                  : result.result === 'Error'
                     ? '#F44336'
                     : '#FF9800',
             },
@@ -348,7 +348,7 @@ const TechnicalDebtManagementExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>🔧 技術債務管理示例</Text>
 
-      {/* 初始化控制 */}
+      {/* InitializeControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🚀 初始化控制</Text>
         <View style={styles.controlRow}>
@@ -370,10 +370,10 @@ const TechnicalDebtManagementExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 報告摘要 */}
+      {/* Report摘要 */}
       {renderReportSummary()}
 
-      {/* 測試控制 */}
+      {/* TestControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🧪 功能測試</Text>
         <View style={styles.buttonGrid}>
@@ -431,7 +431,7 @@ const TechnicalDebtManagementExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 測試結果 */}
+      {/* Test結果 */}
       {testResults.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📋 測試結果</Text>
@@ -439,7 +439,7 @@ const TechnicalDebtManagementExample: React.FC = () => {
         </View>
       )}
 
-      {/* 詳細報告 */}
+      {/* 詳細Report */}
       {report && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📈 詳細報告</Text>

@@ -18,15 +18,15 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 describe('CacheManager', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    // 清除快取管理器的內部狀態
+    // Clear快取Manage器的InternalStatus
     cacheManager.clearAll();
   });
 
   describe('基本快取操作', () => {
-    it('應該成功設置快取項目', async () => {
+    it('應該SuccessSettings快取項目', async () => {
       const _key = 'test_key';
       const _data = { test: 'data' };
-      const _ttl = 3600; // 1小時
+      const _ttl = 3600; // 1Hour
 
       await cacheManager.set(key, data, ttl);
 
@@ -36,7 +36,7 @@ describe('CacheManager', () => {
       );
     });
 
-    it('應該成功獲取快取項目', async () => {
+    it('應該SuccessGet快取項目', async () => {
       const _key = 'test_key';
       const _data = { test: 'data' };
       const _timestamp = Date.now();
@@ -68,7 +68,7 @@ describe('CacheManager', () => {
       expect(result).toBeNull();
     });
 
-    it('應該成功刪除快取項目', async () => {
+    it('應該SuccessDelete快取項目', async () => {
       const _key = 'test_key';
 
       await cacheManager.delete(key);
@@ -76,7 +76,7 @@ describe('CacheManager', () => {
       expect(AsyncStorage.removeItem).toHaveBeenCalledWith(`cache_${key}`);
     });
 
-    it('應該成功檢查快取項目是否存在', async () => {
+    it('應該SuccessCheck快取項目是否存在', async () => {
       const _key = 'test_key';
       const _data = { test: 'data' };
       const _timestamp = Date.now();
@@ -112,8 +112,8 @@ describe('CacheManager', () => {
     it('應該處理過期的快取項目', async () => {
       const _key = 'expired_key';
       const _data = { test: 'data' };
-      const _timestamp = Date.now() - 7200000; // 2小時前
-      const _ttl = 3600; // 1小時
+      const _timestamp = Date.now() - 7200000; // 2Hour前
+      const _ttl = 3600; // 1Hour
 
       const _cachedData = {
         data,
@@ -134,8 +134,8 @@ describe('CacheManager', () => {
     it('應該處理有效的快取項目', async () => {
       const _key = 'valid_key';
       const _data = { test: 'data' };
-      const _timestamp = Date.now() - 1800000; // 30分鐘前
-      const _ttl = 3600; // 1小時
+      const _timestamp = Date.now() - 1800000; // 30Minute前
+      const _ttl = 3600; // 1Hour
 
       const _cachedData = {
         data,
@@ -161,12 +161,12 @@ describe('CacheManager', () => {
       const _setCall = (AsyncStorage.setItem as jest.Mock).mock.calls[0];
       const _cachedData = JSON.parse(setCall[1]);
 
-      expect(cachedData.ttl).toBe(1800); // 默認30分鐘
+      expect(cachedData.ttl).toBe(1800); // Default30Minute
     });
   });
 
   describe('批量操作', () => {
-    it('應該成功設置多個快取項目', async () => {
+    it('應該SuccessSettings多個快取項目', async () => {
       const _items = [
         { key: 'key1', data: { test1: 'data1' }, ttl: 3600 },
         { key: 'key2', data: { test2: 'data2' }, ttl: 1800 },
@@ -182,7 +182,7 @@ describe('CacheManager', () => {
       );
     });
 
-    it('應該成功獲取多個快取項目', async () => {
+    it('應該SuccessGet多個快取項目', async () => {
       const _keys = ['key1', 'key2'];
       const _data1 = { test1: 'data1' };
       const _data2 = { test2: 'data2' };
@@ -228,7 +228,7 @@ describe('CacheManager', () => {
       });
     });
 
-    it('應該成功刪除多個快取項目', async () => {
+    it('應該SuccessDelete多個快取項目', async () => {
       const _keys = ['key1', 'key2'];
 
       await cacheManager.deleteMultiple(keys);
@@ -241,16 +241,16 @@ describe('CacheManager', () => {
   });
 
   describe('快取清理', () => {
-    it('應該成功清理所有快取', async () => {
+    it('應該Success清理所有快取', async () => {
       await cacheManager.clearAll();
 
       expect(AsyncStorage.clear).toHaveBeenCalled();
     });
 
-    it('應該成功清理過期的快取項目', async () => {
+    it('應該Success清理過期的快取項目', async () => {
       const _keys = ['cache_key1', 'cache_key2', 'cache_key3'];
-      const _timestamp = Date.now() - 7200000; // 2小時前
-      const _ttl = 3600; // 1小時
+      const _timestamp = Date.now() - 7200000; // 2Hour前
+      const _ttl = 3600; // 1Hour
 
       const _expiredData = { data: 'test', timestamp, ttl };
       const _validData = { data: 'test', timestamp: Date.now(), ttl };
@@ -270,7 +270,7 @@ describe('CacheManager', () => {
       ]);
     });
 
-    it('應該成功清理特定模式的快取項目', async () => {
+    it('應該Success清理特定模式的快取項目', async () => {
       const _keys = ['cache_user_1', 'cache_user_2', 'cache_card_1'];
 
       (AsyncStorage.getAllKeys as jest.Mock).mockResolvedValue(keys);
@@ -287,7 +287,7 @@ describe('CacheManager', () => {
   describe('快取統計', () => {
     it('應該返回正確的快取統計信息', async () => {
       const _keys = ['cache_key1', 'cache_key2', 'cache_key3'];
-      const _timestamp = Date.now() - 1800000; // 30分鐘前
+      const _timestamp = Date.now() - 1800000; // 30Minute前
       const _ttl = 3600;
 
       const _validData = { data: 'test', timestamp, ttl };
@@ -370,8 +370,8 @@ describe('CacheManager', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該處理AsyncStorage錯誤', async () => {
+  describe('ErrorHandle', () => {
+    it('應該HandleAsyncStorageError', async () => {
       const _key = 'test_key';
       const _error = new Error('Storage error');
 
@@ -392,7 +392,7 @@ describe('CacheManager', () => {
       expect(result).toBeNull();
     });
 
-    it('應該處理快取數據格式錯誤', async () => {
+    it('應該Handle快取數據格式Error', async () => {
       const _key = 'test_key';
       const _invalidData = { invalid: 'format' };
 

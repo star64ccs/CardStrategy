@@ -1,18 +1,18 @@
 /**
- * 存儲策略類型定義
- * 支持多層存儲、緩存策略、數據同步等功能
+ * Storage策略Class型定義
+ * Support多層Storage、Cache策略、DataSync等功能
  */
 
-// 存儲層級枚舉
+// Storage層級枚舉
 export enum StorageLayer {
-  MEMORY = 'memory', // 內存存儲（最快）
-  CACHE = 'cache', // 本地緩存
-  LOCAL = 'local', // 本地存儲
-  CLOUD = 'cloud', // 雲端存儲
-  BACKUP = 'backup', // 備份存儲
+  MEMORY = 'memory', // MemoryStorage（最快）
+  CACHE = 'cache', // LocalCache
+  LOCAL = 'local', // LocalStorage
+  CLOUD = 'cloud', // 雲端Storage
+  BACKUP = 'backup', // BackupStorage
 }
 
-// 存儲策略枚舉
+// Storage策略枚舉
 export enum StorageStrategy {
   PERFORMANCE = 'performance', // 性能優先
   RELIABILITY = 'reliability', // 可靠性優先
@@ -20,22 +20,22 @@ export enum StorageStrategy {
   OFFLINE_FIRST = 'offline_first', // 離線優先
 }
 
-// 數據優先級枚舉
+// Data優先級枚舉
 export enum DataPriority {
-  CRITICAL = 'critical', // 關鍵數據
+  CRITICAL = 'critical', // OffKeyData
   HIGH = 'high', // 高優先級
   MEDIUM = 'medium', // 中等優先級
   LOW = 'low', // 低優先級
-  CACHE_ONLY = 'cache_only', // 僅緩存
+  CACHE_ONLY = 'cache_only', // 僅Cache
 }
 
-// 同步狀態枚舉
+// SyncStatus枚舉
 export enum SyncStatus {
-  SYNCED = 'synced', // 已同步
-  PENDING = 'pending', // 待同步
-  SYNCING = 'syncing', // 同步中
+  SYNCED = 'synced', // 已Sync
+  PENDING = 'pending', // 待Sync
+  SYNCING = 'syncing', // Sync中
   CONFLICT = 'conflict', // 衝突
-  ERROR = 'error', // 錯誤
+  ERROR = 'error', // Error
   OFFLINE = 'offline', // 離線
 }
 
@@ -47,7 +47,7 @@ export enum CompressionType {
   BROTLI = 'brotli',
 }
 
-// 存儲項目接口
+// Storage項目Interface
 export interface StorageItem<T = any> {
   id: string;
   key: string;
@@ -62,7 +62,7 @@ export interface StorageItem<T = any> {
   expiresAt?: Date;
 }
 
-// 存儲元數據接口
+// Storage元DataInterface
 export interface StorageMetadata {
   size: number;
   compressed: boolean;
@@ -77,7 +77,7 @@ export interface StorageMetadata {
   schema?: string;
 }
 
-// 存儲配置接口
+// StorageConfigureInterface
 export interface StorageConfig {
   strategy: StorageStrategy;
   layers: StorageLayerConfig[];
@@ -88,7 +88,7 @@ export interface StorageConfig {
   security: SecurityConfig;
 }
 
-// 存儲層配置接口
+// Storage層ConfigureInterface
 export interface StorageLayerConfig {
   layer: StorageLayer;
   enabled: boolean;
@@ -100,7 +100,7 @@ export interface StorageLayerConfig {
   redundancy?: number;
 }
 
-// 壓縮配置接口
+// 壓縮ConfigureInterface
 export interface CompressionConfig {
   enabled: boolean;
   algorithm: CompressionType;
@@ -109,7 +109,7 @@ export interface CompressionConfig {
   autoCompress: boolean;
 }
 
-// 同步配置接口
+// SyncConfigureInterface
 export interface SyncConfig {
   enabled: boolean;
   interval: number;
@@ -121,7 +121,7 @@ export interface SyncConfig {
   syncOnNetworkChange: boolean;
 }
 
-// 衝突解決策略枚舉
+// 衝突Resolve策略枚舉
 export enum ConflictResolution {
   CLIENT_WINS = 'client_wins',
   SERVER_WINS = 'server_wins',
@@ -130,7 +130,7 @@ export enum ConflictResolution {
   MANUAL = 'manual',
 }
 
-// 清理配置接口
+// 清理ConfigureInterface
 export interface CleanupConfig {
   enabled: boolean;
   interval: number;
@@ -146,10 +146,10 @@ export enum CleanupStrategy {
   LFU = 'lfu', // Least Frequently Used
   FIFO = 'fifo', // First In First Out
   SIZE_BASED = 'size_based', // 基於大小
-  AGE_BASED = 'age_based', // 基於年齡
+  AGE_BASED = 'age_based', // 基於Age
 }
 
-// 監控配置接口
+// MonitorConfigureInterface
 export interface MonitoringConfig {
   enabled: boolean;
   metrics: MetricType[];
@@ -157,7 +157,7 @@ export interface MonitoringConfig {
   reportingInterval: number;
 }
 
-// 指標類型枚舉
+// 指標Class型枚舉
 export enum MetricType {
   READ_LATENCY = 'read_latency',
   WRITE_LATENCY = 'write_latency',
@@ -168,7 +168,7 @@ export enum MetricType {
   SYNC_STATUS = 'sync_status',
 }
 
-// 告警閾值接口
+// 告警閾ValueInterface
 export interface AlertThresholds {
   maxReadLatency: number;
   maxWriteLatency: number;
@@ -177,14 +177,14 @@ export interface AlertThresholds {
   maxStorageUsage: number;
 }
 
-// 安全配置接口
+// 安全ConfigureInterface
 export interface SecurityConfig {
   encryption: EncryptionConfig;
   access: AccessConfig;
   audit: AuditConfig;
 }
 
-// 加密配置接口
+// EncryptConfigureInterface
 export interface EncryptionConfig {
   enabled: boolean;
   algorithm: EncryptionAlgorithm;
@@ -192,7 +192,7 @@ export interface EncryptionConfig {
   keyRotationInterval: number;
 }
 
-// 加密算法枚舉
+// Encrypt算法枚舉
 export enum EncryptionAlgorithm {
   AES_256 = 'aes-256',
   AES_192 = 'aes-192',
@@ -200,7 +200,7 @@ export enum EncryptionAlgorithm {
   CHACHA20 = 'chacha20',
 }
 
-// 訪問控制配置接口
+// 訪問ControlConfigureInterface
 export interface AccessConfig {
   enabled: boolean;
   permissions: PermissionLevel;
@@ -215,7 +215,7 @@ export enum PermissionLevel {
   ADMIN = 'admin',
 }
 
-// 審計配置接口
+// 審計ConfigureInterface
 export interface AuditConfig {
   enabled: boolean;
   logLevel: AuditLogLevel;
@@ -223,7 +223,7 @@ export interface AuditConfig {
   includeData: boolean;
 }
 
-// 審計日誌級別枚舉
+// 審計Log級別枚舉
 export enum AuditLogLevel {
   ERROR = 'error',
   WARN = 'warn',
@@ -231,7 +231,7 @@ export enum AuditLogLevel {
   DEBUG = 'debug',
 }
 
-// 存儲操作接口
+// StorageOperationInterface
 export interface StorageOperation {
   operation: OperationType;
   key: string;
@@ -241,7 +241,7 @@ export interface StorageOperation {
   userId?: string;
 }
 
-// 操作類型枚舉
+// OperationClass型枚舉
 export enum OperationType {
   READ = 'read',
   WRITE = 'write',
@@ -251,7 +251,7 @@ export enum OperationType {
   CLEANUP = 'cleanup',
 }
 
-// 存儲選項接口
+// StorageOptionsInterface
 export interface StorageOptions {
   layer?: StorageLayer;
   priority?: DataPriority;
@@ -263,7 +263,7 @@ export interface StorageOptions {
   namespace?: string;
 }
 
-// 存儲統計接口
+// StorageStatisticsInterface
 export interface StorageStats {
   totalSize: number;
   totalItems: number;
@@ -276,7 +276,7 @@ export interface StorageStats {
   errorStats: ErrorStats;
 }
 
-// 層統計接口
+// 層StatisticsInterface
 export interface LayerStats {
   layer: StorageLayer;
   size: number;
@@ -287,7 +287,7 @@ export interface LayerStats {
   errorCount: number;
 }
 
-// 同步統計接口
+// SyncStatisticsInterface
 export interface SyncStats {
   totalSynced: number;
   pendingSync: number;
@@ -296,7 +296,7 @@ export interface SyncStats {
   avgSyncTime: number;
 }
 
-// 錯誤統計接口
+// ErrorStatisticsInterface
 export interface ErrorStats {
   totalErrors: number;
   errorsByType: Record<string, number>;
@@ -304,7 +304,7 @@ export interface ErrorStats {
   lastError?: StorageError;
 }
 
-// 存儲錯誤接口
+// StorageErrorInterface
 export interface StorageError {
   code: StorageErrorCode;
   message: string;
@@ -314,7 +314,7 @@ export interface StorageError {
   details?: unknown;
 }
 
-// 存儲錯誤代碼枚舉
+// StorageError代碼枚舉
 export enum StorageErrorCode {
   NOT_FOUND = 'not_found',
   ACCESS_DENIED = 'access_denied',
@@ -327,7 +327,7 @@ export enum StorageErrorCode {
   UNKNOWN = 'unknown',
 }
 
-// 查詢接口
+// QueryInterface
 export interface StorageQuery {
   namespace?: string;
   tags?: string[];
@@ -344,7 +344,7 @@ export interface StorageQuery {
   sortOrder?: SortOrder;
 }
 
-// 排序字段枚舉
+// SortField枚舉
 export enum SortField {
   CREATED_AT = 'created_at',
   UPDATED_AT = 'updated_at',
@@ -353,13 +353,13 @@ export enum SortField {
   PRIORITY = 'priority',
 }
 
-// 排序順序枚舉
+// Sort順序枚舉
 export enum SortOrder {
   ASC = 'asc',
   DESC = 'desc',
 }
 
-// 存儲事件接口
+// StorageEventInterface
 export interface StorageEvent {
   type: StorageEventType;
   key: string;
@@ -369,7 +369,7 @@ export interface StorageEvent {
   source: StorageLayer;
 }
 
-// 存儲事件類型枚舉
+// StorageEventClass型枚舉
 export enum StorageEventType {
   ITEM_CREATED = 'item_created',
   ITEM_UPDATED = 'item_updated',
@@ -383,7 +383,7 @@ export enum StorageEventType {
   ERROR_OCCURRED = 'error_occurred',
 }
 
-// 存儲回調接口
+// StorageCallbackInterface
 export interface StorageCallbacks {
   onItemCreated?: (event: StorageEvent) => void;
   onItemUpdated?: (event: StorageEvent) => void;
@@ -392,7 +392,7 @@ export interface StorageCallbacks {
   onError?: (error: StorageError) => void;
 }
 
-// 備份配置接口
+// BackupConfigureInterface
 export interface BackupConfig {
   enabled: boolean;
   interval: number;
@@ -403,7 +403,7 @@ export interface BackupConfig {
   backupLocation: string;
 }
 
-// 恢復選項接口
+// RestoreOptionsInterface
 export interface RestoreOptions {
   backupId: string;
   selective: boolean;

@@ -3,7 +3,7 @@
 const { execSync } = require('child_process');
 const path = require('path');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -47,24 +47,24 @@ class TestSuiteRunner {
     log.header('🧪 開始執行測試套件');
 
     try {
-      // 1. 單元測試
+      // 1. 單元Test
       await this.runUnitTests();
 
-      // 2. 集成測試
+      // 2. 集成Test
       await this.runIntegrationTests();
 
-      // 3. API 測試
+      // 3. API Test
       await this.runAPITests();
 
-      // 4. 性能測試
+      // 4. 性能Test
       await this.runPerformanceTests();
 
-      // 5. 安全測試
+      // 5. 安全Test
       await this.runSecurityTests();
 
       this.printResults();
     } catch (error) {
-      log.error(`測試執行失敗: ${error.message}`);
+      log.error(`測試執行Failed: ${error.message}`);
       process.exit(1);
     }
   }
@@ -81,7 +81,7 @@ class TestSuiteRunner {
       log.success('單元測試完成');
     } catch (error) {
       this.addSuiteResult('單元測試', 'FAIL', error.message);
-      log.error(`單元測試失敗: ${error.message}`);
+      log.error(`單元測試Failed: ${error.message}`);
     }
   }
 
@@ -100,7 +100,7 @@ class TestSuiteRunner {
       log.success('集成測試完成');
     } catch (error) {
       this.addSuiteResult('集成測試', 'FAIL', error.message);
-      log.error(`集成測試失敗: ${error.message}`);
+      log.error(`集成測試Failed: ${error.message}`);
     }
   }
 
@@ -116,7 +116,7 @@ class TestSuiteRunner {
       log.success('API 測試完成');
     } catch (error) {
       this.addSuiteResult('API 測試', 'FAIL', error.message);
-      log.error(`API 測試失敗: ${error.message}`);
+      log.error(`API 測試Failed: ${error.message}`);
     }
   }
 
@@ -135,7 +135,7 @@ class TestSuiteRunner {
       log.success('性能測試完成');
     } catch (error) {
       this.addSuiteResult('性能測試', 'FAIL', error.message);
-      log.error(`性能測試失敗: ${error.message}`);
+      log.error(`性能測試Failed: ${error.message}`);
     }
   }
 
@@ -151,7 +151,7 @@ class TestSuiteRunner {
       log.success('安全測試完成');
     } catch (error) {
       this.addSuiteResult('安全測試', 'FAIL', error.message);
-      log.error(`安全測試失敗: ${error.message}`);
+      log.error(`安全測試Failed: ${error.message}`);
     }
   }
 
@@ -182,7 +182,7 @@ class TestSuiteRunner {
     this.results.suites.push({
       name,
       status,
-      result: status === 'PASS' ? '成功' : result,
+      result: status === 'PASS' ? 'Success' : result,
     });
   }
 
@@ -195,8 +195,8 @@ class TestSuiteRunner {
     log.header('\n📊 測試套件執行結果');
     log.info(`總測試套件: ${this.results.total}`);
     log.info(`通過: ${this.results.passed}`);
-    log.info(`失敗: ${this.results.failed}`);
-    log.info(`成功率: ${successRate}%`);
+    log.info(`Failed: ${this.results.failed}`);
+    log.info(`Success率: ${successRate}%`);
 
     log.info('\n📋 詳細結果:');
     this.results.suites.forEach((suite) => {
@@ -208,23 +208,23 @@ class TestSuiteRunner {
     });
 
     if (this.results.failed > 0) {
-      log.warning('\n⚠️ 有測試套件失敗，請檢查錯誤信息');
+      log.warning('\n⚠️ 有測試套件Failed，請CheckError信息');
     }
 
     if (successRate >= 80) {
-      log.success('\n🎉 測試套件執行成功！');
+      log.success('\n🎉 測試套件執行Success！');
     } else {
-      log.error('\n❌ 測試套件執行失敗，請修復問題後重試');
+      log.error('\n❌ 測試套件執行Failed，請修復問題後重試');
       process.exit(1);
     }
   }
 }
 
-// 執行測試套件
+// 執RowTest套件
 if (require.main === module) {
   const runner = new TestSuiteRunner();
   runner.runAllTests().catch((error) => {
-    log.error(`測試套件執行失敗: ${error.message}`);
+    log.error(`測試套件執行Failed: ${error.message}`);
     process.exit(1);
   });
 }

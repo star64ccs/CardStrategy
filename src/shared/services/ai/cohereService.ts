@@ -1,6 +1,6 @@
 /**
- * Cohere API 服務
- * 提供文本嵌入、語義搜索、文本生成等功能
+ * Cohere API Service
+ * 提供文本嵌入、語義Search、文本生成等功能
  */
 
 import { serviceConfig } from '../../../core/config/services';
@@ -9,7 +9,7 @@ import { SearchParams, PaginationParams } from '../../../core/types';
 import { api } from '../../../core/utils/api';
 import { logger } from '../../../core/utils/logger';
 
-// Cohere API 響應類型
+// Cohere API ResponseClass型
 interface CohereEmbedResponse {
   id: string;
   embeddings: number[][];
@@ -62,7 +62,7 @@ interface CohereSummarizeResponse {
   };
 }
 
-// 搜索結果類型
+// Search結果Class型
 interface SearchResult {
   id: string;
   text: string;
@@ -70,7 +70,7 @@ interface SearchResult {
   metadata?: Record<string, any>;
 }
 
-// 嵌入向量類型
+// 嵌入向量Class型
 interface EmbeddingVector {
   id: string;
   vector: number[];
@@ -79,7 +79,7 @@ interface EmbeddingVector {
 }
 
 /**
- * Cohere 服務類
+ * Cohere ServiceClass
  */
 export class CohereService {
   private static instance: CohereService;
@@ -99,7 +99,7 @@ export class CohereService {
   }
 
   /**
-   * 初始化服務
+   * InitializeService
    */
   async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -110,7 +110,7 @@ export class CohereService {
       await serviceConfig.initialize();
       this.apiKey = serviceConfig.get('COHERE_API_KEY') || '';
 
-      // 在開發或測試環境中，即使沒有 API key 也允許初始化
+      // 在On發或Test環境中，即使沒有 API key 也AllowInitialize
       if (
         !this.apiKey &&
         process.env.NODE_ENV !== 'development' &&
@@ -120,18 +120,18 @@ export class CohereService {
       }
 
       this.isInitialized = true;
-      logger.info('Cohere 服務初始化成功');
+      logger.info('Cohere ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('Cohere 服務初始化失敗:', error);
+      logger.error('Cohere ServiceInitializeFailed:', error);
       throw error;
     }
   }
 
   /**
-   * 檢查服務是否可用
+   * CheckServiceYesNo可用
    */
   isAvailable(): boolean {
-    // 在開發環境中，即使沒有 API key 也返回 true，以便返回模擬結果
+    // 在On發環境中，即使沒有 API key 也Return true，以便Return模擬結果
     if (
       process.env.NODE_ENV === 'development' ||
       process.env.NODE_ENV === 'test' ||
@@ -150,7 +150,7 @@ export class CohereService {
     model = 'embed-multilingual-v2.0'
   ): Promise<ApiResponse<EmbeddingVector[]>> {
     try {
-      // 處理空數組
+      // HandleEmptyArray
       if (texts.length === 0) {
         return {
           success: true,
@@ -160,7 +160,7 @@ export class CohereService {
         };
       }
 
-      // 在開發環境中返回模擬結果
+      // 在On發環境中Return模擬結果
       if (
         process.env.NODE_ENV === 'development' ||
         process.env.NODE_ENV === 'test' ||
@@ -198,7 +198,7 @@ export class CohereService {
       );
 
       if (!response.success || !response.data) {
-        throw new Error('API 請求失敗');
+        throw new Error('API 請求Failed');
       }
 
       const embeddingVectors: EmbeddingVector[] = response.data.embeddings.map(
@@ -209,26 +209,26 @@ export class CohereService {
         })
       );
 
-      logger.info(`成功生成 ${embeddingVectors.length} 個文本嵌入向量`);
+      logger.info(`Success生成 ${embeddingVectors.length} 個文本嵌入向量`);
       return {
         success: true,
         data: embeddingVectors,
-        message: '文本嵌入生成成功',
+        message: '文本嵌入生成Success',
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('生成文本嵌入失敗:', error);
+      logger.error('生成文本嵌入Failed:', error);
       return {
         success: false,
         error: error as ApiError,
-        message: '文本嵌入生成失敗',
+        message: '文本嵌入生成Failed',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 語義搜索
+   * 語義Search
    */
   async semanticSearch(
     query: string,
@@ -237,7 +237,7 @@ export class CohereService {
     model = 'embed-multilingual-v2.0'
   ): Promise<ApiResponse<SearchResult[]>> {
     try {
-      // 處理空文檔數組
+      // HandleEmptyDocumentationArray
       if (documents.length === 0) {
         return {
           success: true,
@@ -247,7 +247,7 @@ export class CohereService {
         };
       }
 
-      // 在開發環境中返回模擬結果
+      // 在On發環境中Return模擬結果
       if (
         process.env.NODE_ENV === 'development' ||
         process.env.NODE_ENV === 'test' ||
@@ -270,21 +270,21 @@ export class CohereService {
         };
       }
 
-      // 首先生成查詢的嵌入向量
+      // 首先生成Query的嵌入向量
       const _queryEmbedResponse = await this.embedTexts([query], model);
       if (!queryEmbedResponse.success || !queryEmbedResponse.data) {
-        throw new Error('查詢嵌入生成失敗');
+        throw new Error('查詢嵌入生成Failed');
       }
 
       const _queryEmbedding = queryEmbedResponse.data[0].vector;
 
-      // 生成文檔的嵌入向量
+      // 生成Documentation的嵌入向量
       const _docEmbedResponse = await this.embedTexts(documents, model);
       if (!docEmbedResponse.success || !docEmbedResponse.data) {
-        throw new Error('文檔嵌入生成失敗');
+        throw new Error('文檔嵌入生成Failed');
       }
 
-      // 計算相似度並排序
+      // 計算相似度並Sort
       const searchResults: SearchResult[] = docEmbedResponse.data
         .map((docEmbed, index) => {
           const _similarity = this.calculateCosineSimilarity(
@@ -309,11 +309,11 @@ export class CohereService {
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('語義搜索失敗:', error);
+      logger.error('語義搜索Failed:', error);
       return {
         success: false,
         error: error as ApiError,
-        message: '語義搜索失敗',
+        message: '語義搜索Failed',
         timestamp: new Date(),
       };
     }
@@ -329,7 +329,7 @@ export class CohereService {
     model = 'command'
   ): Promise<ApiResponse<string>> {
     try {
-      // 在開發環境中返回模擬結果
+      // 在On發環境中Return模擬結果
       if (
         process.env.NODE_ENV === 'development' ||
         process.env.NODE_ENV === 'test' ||
@@ -365,31 +365,31 @@ export class CohereService {
       );
 
       if (!response.success || !response.data) {
-        throw new Error('API 請求失敗');
+        throw new Error('API 請求Failed');
       }
 
       const _generatedText = response.data.generations[0]?.text || '';
 
-      logger.info('文本生成成功');
+      logger.info('文本生成Success');
       return {
         success: true,
         data: generatedText,
-        message: '文本生成成功',
+        message: '文本生成Success',
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('文本生成失敗:', error);
+      logger.error('文本生成Failed:', error);
       return {
         success: false,
         error: error as ApiError,
-        message: '文本生成失敗',
+        message: '文本生成Failed',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 文本分類
+   * 文本分Class
    */
   async classifyText(
     text: string,
@@ -397,7 +397,7 @@ export class CohereService {
     model = 'large'
   ): Promise<ApiResponse<{ prediction: string; confidence: number }>> {
     try {
-      // 在開發環境中返回模擬結果
+      // 在On發環境中Return模擬結果
       if (
         process.env.NODE_ENV === 'development' ||
         process.env.NODE_ENV === 'test' ||
@@ -433,27 +433,27 @@ export class CohereService {
       );
 
       if (!response.success || !response.data) {
-        throw new Error('API 請求失敗');
+        throw new Error('API 請求Failed');
       }
 
       const _classification = response.data.classifications[0];
 
-      logger.info('文本分類成功');
+      logger.info('文本分類Success');
       return {
         success: true,
         data: {
           prediction: classification.prediction,
           confidence: classification.confidence,
         },
-        message: '文本分類成功',
+        message: '文本分類Success',
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('文本分類失敗:', error);
+      logger.error('文本分類Failed:', error);
       return {
         success: false,
         error: error as ApiError,
-        message: '文本分類失敗',
+        message: '文本分類Failed',
         timestamp: new Date(),
       };
     }
@@ -469,7 +469,7 @@ export class CohereService {
     model = 'summarize-xlarge'
   ): Promise<ApiResponse<string>> {
     try {
-      // 在開發環境中返回模擬結果
+      // 在On發環境中Return模擬結果
       if (
         process.env.NODE_ENV === 'development' ||
         process.env.NODE_ENV === 'test' ||
@@ -504,24 +504,24 @@ export class CohereService {
       );
 
       if (!response.success || !response.data) {
-        throw new Error('API 請求失敗');
+        throw new Error('API 請求Failed');
       }
 
       const { summary } = response.data;
 
-      logger.info('文本摘要生成成功');
+      logger.info('文本摘要生成Success');
       return {
         success: true,
         data: summary,
-        message: '文本摘要生成成功',
+        message: '文本摘要生成Success',
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('文本摘要生成失敗:', error);
+      logger.error('文本摘要生成Failed:', error);
       return {
         success: false,
         error: error as ApiError,
-        message: '文本摘要生成失敗',
+        message: '文本摘要生成Failed',
         timestamp: new Date(),
       };
     }
@@ -559,7 +559,7 @@ export class CohereService {
   }
 
   /**
-   * 批量處理文本
+   * BatchHandle文本
    */
   async batchProcess(
     texts: string[],
@@ -567,7 +567,7 @@ export class CohereService {
     options: unknown = {}
   ): Promise<ApiResponse<any[]>> {
     try {
-      // 在開發環境中返回模擬結果
+      // 在On發環境中Return模擬結果
       if (
         process.env.NODE_ENV === 'development' ||
         process.env.NODE_ENV === 'test' ||
@@ -603,7 +603,7 @@ export class CohereService {
       }
 
       const results: unknown[] = [];
-      const _batchSize = 10; // Cohere API 批量限制
+      const _batchSize = 10; // Cohere API BatchLimit
 
       for (let i = 0; i < texts.length; i += batchSize) {
         const _batch = texts.slice(i, i + batchSize);
@@ -651,10 +651,10 @@ export class CohereService {
         if (batchResult.success && batchResult.data) {
           results.push(...batchResult.data);
         } else {
-          logger.warn(`批量處理批次 ${i / batchSize + 1} 失敗`);
+          logger.warn(`批量Handle批次 ${i / batchSize + 1} Failed`);
         }
 
-        // 添加延遲以避免 API 限制
+        // Add延遲以避免 API Limit
         if (i + batchSize < texts.length) {
           await new Promise(resolve => setTimeout(resolve, 100));
         }
@@ -668,18 +668,18 @@ export class CohereService {
         timestamp: new Date(),
       };
     } catch (error) {
-      logger.error('批量處理失敗:', error);
+      logger.error('批量HandleFailed:', error);
       return {
         success: false,
         error: error as ApiError,
-        message: '批量處理失敗',
+        message: '批量HandleFailed',
         timestamp: new Date(),
       };
     }
   }
 
   /**
-   * 獲取服務統計信息
+   * GetServiceStatisticsInformation
    */
   getServiceStats(): Record<string, any> {
     return {
@@ -692,5 +692,5 @@ export class CohereService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _cohereService = CohereService.getInstance();

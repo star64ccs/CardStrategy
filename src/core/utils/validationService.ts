@@ -53,17 +53,17 @@ class ValidationServiceImpl implements ValidationService {
       }
       const _trimmedEmail = email.trim();
 
-      // 檢查連續點
+      // Check連續點
       if (trimmedEmail.includes('..')) {
         return false;
       }
 
-      // 檢查開頭或結尾是否為 @
+      // CheckOn頭或結尾YesNo為 @
       if (trimmedEmail.startsWith('@') || trimmedEmail.endsWith('@')) {
         return false;
       }
 
-      // 檢查 @ 後面是否直接跟點
+      // Check @ 後面YesNo直接跟點
       if (trimmedEmail.includes('@.')) {
         return false;
       }
@@ -139,7 +139,7 @@ class ValidationServiceImpl implements ValidationService {
         return false;
       }
 
-      // 檢查是否包含字母
+      // CheckYesNoPackage含字母
       if (/[a-zA-Z]/.test(trimmedPhone)) {
         return false;
       }
@@ -147,7 +147,7 @@ class ValidationServiceImpl implements ValidationService {
       // 計算數字字符的數量
       const _digitCount = (trimmedPhone.match(/\d/g) || []).length;
 
-      // 檢查數字字符數量（10-11 位）
+      // Check數字字符數量（10-11 位）
       if (digitCount < 10 || digitCount > 11) {
         return false;
       }
@@ -194,7 +194,7 @@ class ValidationServiceImpl implements ValidationService {
         return false;
       }
 
-      // 檢查日期格式
+      // CheckDay格式
       if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
         return false;
       }
@@ -204,23 +204,23 @@ class ValidationServiceImpl implements ValidationService {
         return false;
       }
 
-      // 檢查日期是否有效（例如：2024-02-30 是無效的）
+      // CheckDayYesNo有效（例如：2024-02-30 Yes無效的）
       const _parts = date.split('-');
       const _year = parseInt(parts[0], 10);
       const _month = parseInt(parts[1], 10);
       const _day = parseInt(parts[2], 10);
 
-      // 檢查月份範圍
+      // CheckMonth範圍
       if (month < 1 || month > 12) {
         return false;
       }
 
-      // 檢查日期範圍
+      // CheckDay範圍
       if (day < 1 || day > 31) {
         return false;
       }
 
-      // 使用原始輸入值創建日期並比較
+      // 使用原始InputValueCreateDay並比較
       const _checkDate = new Date(year, month - 1, day);
       return (
         checkDate.getFullYear() === year &&
@@ -294,7 +294,7 @@ class ValidationServiceImpl implements ValidationService {
       if (trimmedName.length < 2 || trimmedName.length > 100) {
         return false;
       }
-      // 檢查是否包含無效字符
+      // CheckYesNoPackage含無效字符
       if (/[@#$%^&*()+=]/.test(trimmedName)) {
         return false;
       }
@@ -314,7 +314,7 @@ class ValidationServiceImpl implements ValidationService {
       if (isNaN(numPrice)) {
         return false;
       }
-      // 檢查價格範圍（0-1000）
+      // Check價格範圍（0-1000）
       return numPrice >= 0 && numPrice <= 1000;
     } catch (error) {
       logger.error('Price validation error:', error);
@@ -508,12 +508,12 @@ class ValidationServiceImpl implements ValidationService {
         return false;
       }
 
-      // 檢查文件類型
+      // CheckFileClass型
       if (!file.type?.startsWith('image/')) {
         return false;
       }
 
-      // 檢查文件大小（最大 5MB，最小 1KB）
+      // CheckFile大小（最大 5MB，最小 1KB）
       if (file.size !== undefined) {
         if (file.size >= 10 * 1024 * 1024 || file.size < 1024) {
           return false;

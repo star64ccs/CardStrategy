@@ -64,14 +64,14 @@ export class TwilioService {
   }
 
   /**
-   * 檢查服務是否可用
+   * CheckServiceYesNo可用
    */
   isAvailable(): boolean {
     return !!(this.accountSid && this.authToken);
   }
 
   /**
-   * 發送 SMS
+   * Send SMS
    */
   async sendSMS(sms: TwilioSMS): Promise<ApiResponse<{ messageSid: string }>> {
     try {
@@ -132,7 +132,7 @@ export class TwilioService {
   }
 
   /**
-   * 批量發送 SMS
+   * BatchSend SMS
    */
   async sendBulkSMS(smsList: TwilioSMS[]): Promise<
     ApiResponse<{
@@ -168,7 +168,7 @@ export class TwilioService {
       let successCount = 0;
       let failedCount = 0;
 
-      // 並行發送 SMS
+      // ParallelSend SMS
       const _promises = smsList.map(async (sms, index) => {
         try {
           const _result = await this.sendSMS(sms);
@@ -208,7 +208,7 @@ export class TwilioService {
   }
 
   /**
-   * 撥打電話
+   * 撥打Phone
    */
   async makeCall(call: TwilioCall): Promise<ApiResponse<{ callSid: string }>> {
     try {
@@ -272,7 +272,7 @@ export class TwilioService {
   }
 
   /**
-   * 獲取消息列表
+   * GetMessageList
    */
   async getMessages(limit = 20): Promise<ApiResponse<TwilioMessage[]>> {
     try {
@@ -322,7 +322,7 @@ export class TwilioService {
   }
 
   /**
-   * 發送驗證碼 SMS
+   * SendVerify碼 SMS
    */
   async sendVerificationCode(
     phoneNumber: string,
@@ -338,7 +338,7 @@ export class TwilioService {
   }
 
   /**
-   * 發送價格提醒 SMS
+   * Send價格提醒 SMS
    */
   async sendPriceAlertSMS(
     phoneNumber: string,
@@ -356,7 +356,7 @@ export class TwilioService {
   }
 
   /**
-   * 發送安全警告 SMS
+   * Send安全Warning SMS
    */
   async sendSecurityAlertSMS(
     phoneNumber: string,
@@ -373,7 +373,7 @@ export class TwilioService {
   }
 
   /**
-   * 撥打語音驗證電話
+   * 撥打語音VerifyPhone
    */
   async makeVerificationCall(
     phoneNumber: string,
@@ -398,7 +398,7 @@ export class TwilioService {
   }
 
   /**
-   * 獲取服務統計信息
+   * GetServiceStatisticsInformation
    */
   async getServiceStats(): Promise<
     ApiResponse<{
@@ -451,5 +451,5 @@ export class TwilioService {
   }
 }
 
-// 創建單例實例
+// Create單例Instance
 export const _twilioService = new TwilioService();

@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 
 import { logger } from '../core/utils/logger';
 
-// 臨時類型定義
+// 臨時Class型定義
 interface MemoryLeakReport {
   growth: number;
   duration: number;
@@ -45,7 +45,7 @@ export const _useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
     ((report: MemoryLeakReport) => void) | null
   >(null);
 
-  // 記錄組件掛載時的內存使用
+  // RecordComponent掛載時的Memory使用
   useEffect(() => {
     const _currentMemory = memoryMonitorService.getCurrentMemoryUsage();
     if (currentMemory) {
@@ -55,7 +55,7 @@ export const _useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
       });
     }
 
-    // 設置內存洩漏檢測回調
+    // SettingsMemory洩漏檢測Callback
     if (enableLeakDetection && onMemoryLeak) {
       memoryLeakCallback.current = (report: MemoryLeakReport) => {
         logger.warn(`${componentName} 檢測到內存洩漏`, {
@@ -68,7 +68,7 @@ export const _useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
     }
 
     return () => {
-      // 組件卸載時檢查內存變化
+      // ComponentUninstall時CheckMemory變化
       const _currentMemory = memoryMonitorService.getCurrentMemoryUsage();
       if (currentMemory && memoryStart.current > 0) {
         const _memoryEnd = currentMemory.usedJSHeapSize;
@@ -83,7 +83,7 @@ export const _useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
           memoryEnd: `${Math.round(memoryEnd / 1024 / 1024)}MB`,
         });
 
-        // 檢查是否超過閾值
+        // CheckYesNo超過閾Value
         if (memoryDiffMB > memoryThreshold) {
           logger.warn(`${componentName} 可能存在內存洩漏`, {
             growth: `${Math.round(memoryDiffMB)}MB`,
@@ -93,7 +93,7 @@ export const _useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
         }
       }
 
-      // 清理內存洩漏回調
+      // 清理Memory洩漏Callback
       if (memoryLeakCallback.current) {
         memoryMonitorService.removeMemoryLeakCallback(
           memoryLeakCallback.current
@@ -103,17 +103,17 @@ export const _useMemoryMonitor = (options: UseMemoryMonitorOptions) => {
     };
   }, [componentName, enableLeakDetection, memoryThreshold, onMemoryLeak]);
 
-  // 獲取當前內存使用情況
+  // Get當前Memory使用情況
   const _getCurrentMemory = useCallback(() => {
     return memoryMonitorService.getCurrentMemoryUsage();
   }, []);
 
-  // 獲取內存統計信息
+  // GetMemoryStatisticsInformation
   const _getMemoryStats = useCallback(() => {
     return memoryMonitorService.getMemoryStats();
   }, []);
 
-  // 手動檢查內存洩漏
+  // ManualCheckMemory洩漏
   const _checkMemoryLeak = useCallback(() => {
     const _currentMemory = memoryMonitorService.getCurrentMemoryUsage();
     if (currentMemory && memoryStart.current > 0) {

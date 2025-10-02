@@ -11,7 +11,7 @@ import type {
   ThemeState,
 } from '../../features/theme/types/theme';
 
-// 初始狀態
+// 初始Status
 const initialState: ThemeState = {
   currentTheme: {
     id: 'light',
@@ -252,7 +252,7 @@ const _themeSlice = createSlice({
   name: 'theme',
   initialState,
   reducers: {
-    // 同步 reducers
+    // Sync reducers
     setCurrentTheme: (state, action: PayloadAction<Theme>) => {
       state.currentTheme = action.payload;
     },
@@ -277,16 +277,16 @@ const _themeSlice = createSlice({
       state.error = null;
     },
 
-    // 事件處理
+    // EventHandle
     handleThemeEvent: (state, action: PayloadAction<ThemeEvent>) => {
       const _event = action.payload;
 
       switch (event.type) {
         case 'theme_changed':
-          // 主題變更事件已在 async thunk 中處理
+          // Theme變更Event已在 async thunk 中Handle
           break;
         case 'theme_loaded':
-          // 主題載入完成
+          // ThemeLoadComplete
           break;
         case 'theme_error':
           state.error = event.data?.error || 'Theme error occurred';

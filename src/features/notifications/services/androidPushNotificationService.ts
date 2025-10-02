@@ -2,22 +2,22 @@ import { Platform } from 'react-native';
 
 import { logger } from '../../../core/utils/logger';
 
-// Android 推送通知相關類型
+// Android PushNotification相OffClass型
 export interface AndroidPushNotificationConfig {
-  // FCM 配置
+  // FCM Configure
   fcmServerKey: string;
   fcmProjectId: string;
   fcmEnvironment: 'development' | 'production';
 
-  // 推送設置
+  // PushSettings
   enableBadge: boolean;
   enableSound: boolean;
   enableAlert: boolean;
   enableVibration: boolean;
 
-  // 高級設置
+  // 高級Settings
   priority: 'normal' | 'high';
-  timeToLive: number; // 秒
+  timeToLive: number; // Second
   collapseKey?: string;
   data?: Record<string, string>;
 }
@@ -136,33 +136,33 @@ export interface AndroidPushNotificationStats {
   activeTokens: number;
 }
 
-// Android 推送通知庫接口
+// Android PushNotificationLibraryInterface
 interface AndroidPushNotificationLibrary {
-  // 設備令牌管理
+  // 設備令牌Manage
   requestPermissions(): Promise<boolean>;
   getDeviceToken(): Promise<string | null>;
   registerForRemoteNotifications(): Promise<boolean>;
   unregisterForRemoteNotifications(): Promise<boolean>;
 
-  // 推送發送
+  // PushSend
   sendNotification(
     deviceToken: string,
     payload: AndroidPushNotificationPayload,
     config: AndroidPushNotificationConfig
   ): Promise<AndroidPushNotificationResult>;
 
-  // 批量發送
+  // BatchSend
   sendBulkNotifications(
     deviceTokens: string[],
     payload: AndroidPushNotificationPayload,
     config: AndroidPushNotificationConfig
   ): Promise<AndroidPushNotificationResult[]>;
 
-  // 主題訂閱
+  // Theme訂閱
   subscribeToTopic(topic: string): Promise<boolean>;
   unsubscribeFromTopic(topic: string): Promise<boolean>;
 
-  // 統計和監控
+  // Statistics和Monitor
   getDeliveryStats(): Promise<AndroidPushNotificationStats>;
   validateDeviceToken(token: string): Promise<boolean>;
   getAppVersion(): Promise<string>;
@@ -170,8 +170,8 @@ interface AndroidPushNotificationLibrary {
 }
 
 /**
- * Android 專用推送通知服務
- * 處理 FCM 推送通知功能
+ * Android 專用PushNotificationService
+ * Handle FCM PushNotification功能
  */
 export class AndroidPushNotificationService {
   private static instance: AndroidPushNotificationService;
@@ -202,55 +202,55 @@ export class AndroidPushNotificationService {
   }
 
   /**
-   * 初始化 Android 推送通知庫
+   * Initialize Android PushNotificationLibrary
    */
   private async initializeAndroidPushNotificationLibrary(): Promise<void> {
     try {
       if (Platform.OS !== 'android') {
-        throw new Error('此服務僅支持 Android 平台');
+        throw new Error('此Service僅支持 Android 平台');
       }
 
       this.pushLib = await this.loadAndroidPushNotificationLibrary();
       this.isInitialized = true;
-      logger.info('Android 推送通知服務初始化成功');
+      logger.info('Android 推送通知ServiceInitializeSuccess');
     } catch (error) {
-      logger.error('Android 推送通知服務初始化失敗:', error);
+      logger.error('Android 推送通知ServiceInitializeFailed:', error);
       this.isInitialized = false;
     }
   }
 
   /**
-   * 加載 Android 推送通知庫
+   * 加載 Android PushNotificationLibrary
    */
   private async loadAndroidPushNotificationLibrary(): Promise<AndroidPushNotificationLibrary> {
-    // 在實際應用中，這裡會導入真實的 Android 推送通知庫
+    // 在實際Apply中，這裡會ImportTrue實的 Android PushNotificationLibrary
     // 例如：@react-native-firebase/messaging, react-native-fcm 等
 
     return {
       requestPermissions: async () => {
-        // 模擬請求權限
+        // 模擬Request權限
         const _granted = Math.random() > 0.1;
         logger.info('Android 推送通知權限請求結果:', { granted });
         return granted;
       },
 
       getDeviceToken: async () => {
-        // 模擬獲取設備令牌
+        // 模擬Get設備令牌
         const _token = `android-fcm-token-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         this.deviceToken = token;
-        logger.info('Android 設備令牌獲取成功:', { token });
+        logger.info('Android 設備令牌GetSuccess:', { token });
         return token;
       },
 
       registerForRemoteNotifications: async () => {
-        // 模擬註冊遠程推送
-        logger.info('Android 遠程推送註冊成功');
+        // 模擬Register遠程Push
+        logger.info('Android 遠程推送註冊Success');
         return true;
       },
 
       unregisterForRemoteNotifications: async () => {
-        // 模擬取消註冊遠程推送
-        logger.info('Android 遠程推送取消註冊成功');
+        // 模擬CancelRegister遠程Push
+        logger.info('Android 遠程推送取消註冊Success');
         return true;
       },
 
@@ -259,7 +259,7 @@ export class AndroidPushNotificationService {
         payload: AndroidPushNotificationPayload,
         config: AndroidPushNotificationConfig
       ) => {
-        // 模擬發送推送通知
+        // 模擬SendPushNotification
         const _success = Math.random() > 0.2;
         const _startTime = Date.now();
 
@@ -269,7 +269,7 @@ export class AndroidPushNotificationService {
           this.stats.totalDelivered++;
           this.stats.lastSentAt = new Date();
 
-          logger.info('Android 推送通知發送成功', {
+          logger.info('Android 推送通知發送Success', {
             messageId,
             deviceToken: `${deviceToken.substring(0, 20)}...`,
             payload,
@@ -284,7 +284,7 @@ export class AndroidPushNotificationService {
           this.stats.totalSent++;
           this.stats.totalFailed++;
 
-          logger.warn('Android 推送通知發送失敗', {
+          logger.warn('Android 推送通知發送Failed', {
             deviceToken: `${deviceToken.substring(0, 20)}...`,
             error: 'Network error',
           });
@@ -303,7 +303,7 @@ export class AndroidPushNotificationService {
         payload: AndroidPushNotificationPayload,
         config: AndroidPushNotificationConfig
       ) => {
-        // 模擬批量發送推送通知
+        // 模擬BatchSendPushNotification
         const results: AndroidPushNotificationResult[] = [];
         const _multicastId = `android-multicast-${Date.now()}`;
         let successCount = 0;
@@ -324,7 +324,7 @@ export class AndroidPushNotificationService {
           }
         }
 
-        // 更新統計信息
+        // UpdateStatisticsInformation
         this.stats.totalSent += deviceTokens.length;
         this.stats.totalDelivered += successCount;
         this.stats.totalFailed += failureCount;
@@ -340,21 +340,21 @@ export class AndroidPushNotificationService {
       },
 
       subscribeToTopic: async (topic: string) => {
-        // 模擬訂閱主題
+        // 模擬訂閱Theme
         const _success = Math.random() > 0.1;
         logger.info('Android 主題訂閱結果:', { topic, success });
         return success;
       },
 
       unsubscribeFromTopic: async (topic: string) => {
-        // 模擬取消訂閱主題
+        // 模擬Cancel訂閱Theme
         const _success = Math.random() > 0.1;
         logger.info('Android 主題取消訂閱結果:', { topic, success });
         return success;
       },
 
       getDeliveryStats: async () => {
-        // 計算成功率
+        // 計算Success率
         if (this.stats.totalSent > 0) {
           this.stats.successRate =
             (this.stats.totalDelivered / this.stats.totalSent) * 100;
@@ -364,7 +364,7 @@ export class AndroidPushNotificationService {
       },
 
       validateDeviceToken: async (token: string) => {
-        // 模擬驗證設備令牌
+        // 模擬Verify設備令牌
         const _isValid =
           token.length > 20 && token.includes('android-fcm-token');
         logger.info('Android 設備令牌驗證結果:', {
@@ -375,32 +375,32 @@ export class AndroidPushNotificationService {
       },
 
       getAppVersion: async () => {
-        // 模擬獲取應用版本
+        // 模擬GetApplyVersion
         return '1.0.0';
       },
 
       getSDKVersion: async () => {
-        // 模擬獲取 SDK 版本
+        // 模擬Get SDK Version
         return '2.0.0';
       },
     };
   }
 
   /**
-   * 配置推送通知服務
+   * ConfigurePushNotificationService
    */
   public configure(config: AndroidPushNotificationConfig): void {
     this.config = config;
-    logger.info('Android 推送通知服務配置完成', { config });
+    logger.info('Android 推送通知ServiceConfigure完成', { config });
   }
 
   /**
-   * 請求推送通知權限
+   * RequestPushNotification權限
    */
   public async requestPermissions(): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('Android 推送通知服務未初始化');
+        throw new Error('Android 推送通知Service未Initialize');
       }
 
       const _granted = await this.pushLib.requestPermissions();
@@ -413,17 +413,17 @@ export class AndroidPushNotificationService {
 
       return granted;
     } catch (error) {
-      logger.error('請求 Android 推送通知權限失敗:', error);
+      logger.error('請求 Android 推送通知權限Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取設備令牌
+   * Get設備令牌
    */
   public async getDeviceToken(): Promise<string | null> {
     if (!this.isInitialized || !this.pushLib) {
-      throw new Error('Android 推送通知服務未初始化');
+      throw new Error('Android 推送通知Service未Initialize');
     }
 
     try {
@@ -433,41 +433,41 @@ export class AndroidPushNotificationService {
 
       return this.deviceToken;
     } catch (error) {
-      logger.error('獲取 Android 設備令牌失敗:', error);
+      logger.error('Get Android 設備令牌Failed:', error);
       return null;
     }
   }
 
   /**
-   * 註冊遠程推送通知
+   * Register遠程PushNotification
    */
   public async registerForRemoteNotifications(): Promise<boolean> {
     if (!this.isInitialized || !this.pushLib) {
-      throw new Error('Android 推送通知服務未初始化');
+      throw new Error('Android 推送通知Service未Initialize');
     }
 
     try {
       const _success = await this.pushLib.registerForRemoteNotifications();
 
       if (success) {
-        // 獲取設備令牌
+        // Get設備令牌
         await this.getDeviceToken();
-        logger.info('Android 遠程推送通知註冊成功');
+        logger.info('Android 遠程推送通知註冊Success');
       }
 
       return success;
     } catch (error) {
-      logger.error('註冊 Android 遠程推送通知失敗:', error);
+      logger.error('註冊 Android 遠程推送通知Failed:', error);
       return false;
     }
   }
 
   /**
-   * 取消註冊遠程推送通知
+   * CancelRegister遠程PushNotification
    */
   public async unregisterForRemoteNotifications(): Promise<boolean> {
     if (!this.isInitialized || !this.pushLib) {
-      throw new Error('Android 推送通知服務未初始化');
+      throw new Error('Android 推送通知Service未Initialize');
     }
 
     try {
@@ -475,18 +475,18 @@ export class AndroidPushNotificationService {
 
       if (success) {
         this.deviceToken = null;
-        logger.info('Android 遠程推送通知取消註冊成功');
+        logger.info('Android 遠程推送通知取消註冊Success');
       }
 
       return success;
     } catch (error) {
-      logger.error('取消註冊 Android 遠程推送通知失敗:', error);
+      logger.error('取消註冊 Android 遠程推送通知Failed:', error);
       return false;
     }
   }
 
   /**
-   * 發送推送通知
+   * SendPushNotification
    */
   public async sendNotification(
     deviceToken: string,
@@ -495,7 +495,7 @@ export class AndroidPushNotificationService {
   ): Promise<AndroidPushNotificationResult> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('Android 推送通知服務未初始化');
+        throw new Error('Android 推送通知Service未Initialize');
       }
 
       const _finalConfig = config || this.config;
@@ -509,7 +509,7 @@ export class AndroidPushNotificationService {
         finalConfig
       );
 
-      // 更新統計信息
+      // UpdateStatisticsInformation
       if (result.success) {
         this.stats.totalDelivered++;
       } else {
@@ -518,10 +518,10 @@ export class AndroidPushNotificationService {
 
       return result;
     } catch (error) {
-      logger.error('發送 Android 推送通知失敗:', error);
+      logger.error('發送 Android 推送通知Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         errorCode: 'unknown_error',
         timestamp: new Date(),
       };
@@ -529,7 +529,7 @@ export class AndroidPushNotificationService {
   }
 
   /**
-   * 批量發送推送通知
+   * BatchSendPushNotification
    */
   public async sendBulkNotifications(
     deviceTokens: string[],
@@ -538,7 +538,7 @@ export class AndroidPushNotificationService {
   ): Promise<AndroidPushNotificationResult[]> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('Android 推送通知服務未初始化');
+        throw new Error('Android 推送通知Service未Initialize');
       }
 
       const _finalConfig = config || this.config;
@@ -560,10 +560,10 @@ export class AndroidPushNotificationService {
 
       return results;
     } catch (error) {
-      logger.error('批量發送 Android 推送通知失敗:', error);
+      logger.error('批量發送 Android 推送通知Failed:', error);
       return deviceTokens.map(() => ({
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         errorCode: 'unknown_error',
         timestamp: new Date(),
       }));
@@ -571,35 +571,35 @@ export class AndroidPushNotificationService {
   }
 
   /**
-   * 訂閱主題
+   * 訂閱Theme
    */
   public async subscribeToTopic(topic: string): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('Android 推送通知服務未初始化');
+        throw new Error('Android 推送通知Service未Initialize');
       }
 
       const _success = await this.pushLib.subscribeToTopic(topic);
 
       if (success) {
         this.stats.topicSubscriptions++;
-        logger.info('Android 主題訂閱成功:', { topic });
+        logger.info('Android 主題訂閱Success:', { topic });
       }
 
       return success;
     } catch (error) {
-      logger.error('Android 主題訂閱失敗:', error);
+      logger.error('Android 主題訂閱Failed:', error);
       return false;
     }
   }
 
   /**
-   * 取消訂閱主題
+   * Cancel訂閱Theme
    */
   public async unsubscribeFromTopic(topic: string): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('Android 推送通知服務未初始化');
+        throw new Error('Android 推送通知Service未Initialize');
       }
 
       const _success = await this.pushLib.unsubscribeFromTopic(topic);
@@ -609,51 +609,51 @@ export class AndroidPushNotificationService {
           0,
           this.stats.topicSubscriptions - 1
         );
-        logger.info('Android 主題取消訂閱成功:', { topic });
+        logger.info('Android 主題取消訂閱Success:', { topic });
       }
 
       return success;
     } catch (error) {
-      logger.error('Android 主題取消訂閱失敗:', error);
+      logger.error('Android 主題取消訂閱Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取推送統計信息
+   * GetPushStatisticsInformation
    */
   public async getDeliveryStats(): Promise<AndroidPushNotificationStats> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('Android 推送通知服務未初始化');
+        throw new Error('Android 推送通知Service未Initialize');
       }
 
       const _stats = await this.pushLib.getDeliveryStats();
       return stats;
     } catch (error) {
-      logger.error('獲取 Android 推送統計信息失敗:', error);
+      logger.error('Get Android 推送統計信息Failed:', error);
       return this.stats;
     }
   }
 
   /**
-   * 驗證設備令牌
+   * Verify設備令牌
    */
   public async validateDeviceToken(token: string): Promise<boolean> {
     try {
       if (!this.isInitialized || !this.pushLib) {
-        throw new Error('Android 推送通知服務未初始化');
+        throw new Error('Android 推送通知Service未Initialize');
       }
 
       return await this.pushLib.validateDeviceToken(token);
     } catch (error) {
-      logger.error('驗證 Android 設備令牌失敗:', error);
+      logger.error('Verify Android 設備令牌Failed:', error);
       return false;
     }
   }
 
   /**
-   * 獲取服務信息
+   * GetServiceInformation
    */
   public getServiceInfo() {
     return {
@@ -676,7 +676,7 @@ export class AndroidPushNotificationService {
   }
 
   /**
-   * 檢查服務狀態
+   * CheckServiceStatus
    */
   public isServiceReady(): boolean {
     return this.isInitialized && this.pushLib !== null;

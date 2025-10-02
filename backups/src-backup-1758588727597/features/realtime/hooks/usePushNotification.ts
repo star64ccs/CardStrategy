@@ -1,0 +1,472 @@
+/**
+ * 推送通知 Hook
+ * 提供推送通知功能的 React Hook
+ */
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import type {
+  NotificationChannel,
+  NotificationConfig,
+  NotificationPermission,
+  NotificationStats,
+} from '../services/pushNotificationService';
+import { pushNotificationService } from '../services/pushNotificationService';
+
+export interface UsePushNotificationOptions {
+  autoInitialize?: boolean;
+  onNotificationReceived?: (notification: unknown) => void;
+  onNotificationResponse?: (response: unknown) => void;
+  onPermissionChange?: (permission: NotificationPermission) => void;
+}
+
+export interface UsePushNotificationReturn {
+  // 狀態
+  isInitialized: boolean;
+  permission: NotificationPermission | null;
+  expoPushToken: string | null;
+  stats: NotificationStats;
+
+  // 方法
+  initialize: () => Promise<void>;
+  requestPermissions: () => Promise<NotificationPermission>;
+  getPermissionStatus: () => Promise<NotificationPermission>;
+  getExpoPushToken: () => Promise<string | null>;
+  createNotificationChannel: (channel: NotificationChannel) => Promise<void>;
+  sendLocalNotification: (config: NotificationConfig) => Promise<string>;
+  scheduleNotification: (
+    config: NotificationConfig,
+    trigger: unknown
+  ) => Promise<string>;
+  cancelNotification: (notificationId: string) => Promise<void>;
+  cancelAllNotifications: () => Promise<void>;
+  setBadgeCount: (count: number) => Promise<void>;
+  getStats: () => NotificationStats;
+  clearStats: () => void;
+  addNotificationListener: (
+    type: 'received' | 'response',
+    listener: (notification: unknown) => void
+  ) => void;
+  removeNotificationListener: (key: string) => void;
+}
+
+/**
+ * 推送通知 Hook
+ */
+export const usePushNotification = (
+  options: UsePushNotificationOptions = {}
+): UsePushNotificationReturn => {
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [permission, setPermission] = useState<NotificationPermission | null>(
+    null
+  );
+  const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
+  const [stats, setStats] = useState<NotificationStats>({
+    totalSent: 0,
+    totalDelivered: 0,
+    totalFailed: 0,
+    totalOpened: 0,
+    byType: {},
+    byChannel: {},
+    lastSent: null,
+    lastOpened: null,
+  });
+
+  const listenerKeys = useRef<string[]>([]);
+
+  // 自動初始化
+  useEffect(() => {
+    if (options.autoInitialize !== false) {
+      initialize();
+    }
+  }, [options.autoInitialize]);
+
+  // 更新統計數據
+  useEffect(() => {
+    const updateStats = () => {
+      const currentStats = pushNotificationService.getStats();
+      setStats(currentStats);
+    };
+
+    // 定期更新統計數據
+    const interval = setInterval(updateStats, 5000);
+    updateStats(); // 立即更新一次
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // 清理監聽器
+  useEffect(() => {
+    return () => {
+      listenerKeys.current.forEach(key => {
+        pushNotificationService.removeNotificationListener(key);
+      });
+    };
+  }, []);
+
+  /**
+   * 初始化推送通知服務
+   */
+  const initialize = useCallback(async (): Promise<void> => {
+    try {
+      await pushNotificationService.initialize();
+      setIsInitialized(true);
+
+      // 獲取權限狀態
+      const permissionStatus =
+        await pushNotificationService.getPermissionStatus();
+      setPermission(permissionStatus);
+
+      // 獲取推送令牌
+      const token = await pushNotificationService.getExpoPushToken();
+      setExpoPushToken(token);
+
+      // 設置通知監聽器
+      if (options.onNotificationReceived) {
+        const key = `received-${Date.now()}`;
+        pushNotificationService.addNotificationListener(
+          'received',
+          options.onNotificationReceived
+        );
+        listenerKeys.current.push(key);
+      }
+
+      if (options.onNotificationResponse) {
+        const key = `response-${Date.now()}`;
+        pushNotificationService.addNotificationListener(
+          'response',
+          options.onNotificationResponse
+        );
+        listenerKeys.current.push(key);
+      }
+    } catch (error) {
+      console.error('初始化推送通知服務失敗:', error);
+    }
+  }, [options.onNotificationReceived, options.onNotificationResponse]);
+
+  /**
+   * 請求通知權限
+   */
+  const requestPermissions =
+    useCallback(async (): Promise<NotificationPermission> => {
+      try {
+        const permissionStatus =
+          await pushNotificationService.requestPermissions();
+        setPermission(permissionStatus);
+        options.onPermissionChange?.(permissionStatus);
+        return permissionStatus;
+      } catch (error) {
+        console.error('請求通知權限失敗:', error);
+        throw error;
+      }
+    }, [options.onPermissionChange]);
+
+  /**
+   * 獲取通知權限狀態
+   */
+  const getPermissionStatus =
+    useCallback(async (): Promise<NotificationPermission> => {
+      try {
+        const permissionStatus =
+          await pushNotificationService.getPermissionStatus();
+        setPermission(permissionStatus);
+        return permissionStatus;
+      } catch (error) {
+        console.error('獲取通知權限狀態失敗:', error);
+        throw error;
+      }
+    }, []);
+
+  /**
+   * 獲取 Expo 推送令牌
+   */
+  const getExpoPushToken = useCallback(async (): Promise<string | null> => {
+    try {
+      const token = await pushNotificationService.getExpoPushToken();
+      setExpoPushToken(token);
+      return token;
+    } catch (error) {
+      console.error('獲取 Expo 推送令牌失敗:', error);
+      throw error;
+    }
+  }, []);
+
+  /**
+   * 創建通知頻道
+   */
+  const createNotificationChannel = useCallback(
+    async (channel: NotificationChannel): Promise<void> => {
+      try {
+        await pushNotificationService.createNotificationChannel(channel);
+      } catch (error) {
+        console.error('創建通知頻道失敗:', error);
+        throw error;
+      }
+    },
+    []
+  );
+
+  /**
+   * 發送本地通知
+   */
+  const sendLocalNotification = useCallback(
+    async (config: NotificationConfig): Promise<string> => {
+      try {
+        const notificationId =
+          await pushNotificationService.sendLocalNotification(config);
+        return notificationId;
+      } catch (error) {
+        console.error('發送本地通知失敗:', error);
+        throw error;
+      }
+    },
+    []
+  );
+
+  /**
+   * 安排延遲通知
+   */
+  const scheduleNotification = useCallback(
+    async (config: NotificationConfig, trigger: unknown): Promise<string> => {
+      try {
+        const notificationId =
+          await pushNotificationService.scheduleNotification(config, trigger);
+        return notificationId;
+      } catch (error) {
+        console.error('安排延遲通知失敗:', error);
+        throw error;
+      }
+    },
+    []
+  );
+
+  /**
+   * 取消通知
+   */
+  const cancelNotification = useCallback(
+    async (notificationId: string): Promise<void> => {
+      try {
+        await pushNotificationService.cancelNotification(notificationId);
+      } catch (error) {
+        console.error('取消通知失敗:', error);
+        throw error;
+      }
+    },
+    []
+  );
+
+  /**
+   * 取消所有通知
+   */
+  const cancelAllNotifications = useCallback(async (): Promise<void> => {
+    try {
+      await pushNotificationService.cancelAllNotifications();
+    } catch (error) {
+      console.error('取消所有通知失敗:', error);
+      throw error;
+    }
+  }, []);
+
+  /**
+   * 設置通知徽章數量
+   */
+  const setBadgeCount = useCallback(async (count: number): Promise<void> => {
+    try {
+      await pushNotificationService.setBadgeCount(count);
+    } catch (error) {
+      console.error('設置通知徽章數量失敗:', error);
+      throw error;
+    }
+  }, []);
+
+  /**
+   * 獲取通知統計
+   */
+  const getStats = useCallback((): NotificationStats => {
+    return pushNotificationService.getStats();
+  }, []);
+
+  /**
+   * 清除通知統計
+   */
+  const clearStats = useCallback((): void => {
+    pushNotificationService.clearStats();
+  }, []);
+
+  /**
+   * 添加通知監聽器
+   */
+  const addNotificationListener = useCallback(
+    (
+      type: 'received' | 'response',
+      listener: (notification: unknown) => void
+    ): string => {
+      const key = `${type}-${Date.now()}`;
+      pushNotificationService.addNotificationListener(type, listener);
+      listenerKeys.current.push(key);
+      return key;
+    },
+    []
+  );
+
+  /**
+   * 移除通知監聽器
+   */
+  const removeNotificationListener = useCallback((key: string): void => {
+    pushNotificationService.removeNotificationListener(key);
+    listenerKeys.current = listenerKeys.current.filter(k => k !== key);
+  }, []);
+
+  return {
+    // 狀態
+    isInitialized,
+    permission,
+    expoPushToken,
+    stats,
+
+    // 方法
+    initialize,
+    requestPermissions,
+    getPermissionStatus,
+    getExpoPushToken,
+    createNotificationChannel,
+    sendLocalNotification,
+    scheduleNotification,
+    cancelNotification,
+    cancelAllNotifications,
+    setBadgeCount,
+    getStats,
+    clearStats,
+    addNotificationListener,
+    removeNotificationListener,
+  };
+};
+
+/**
+ * 簡化的推送通知 Hook
+ */
+export const useSimplePushNotification = (
+  onNotificationReceived?: (notification: unknown) => void
+) => {
+  return usePushNotification({
+    autoInitialize: true,
+    onNotificationReceived,
+  });
+};
+
+/**
+ * 卡片通知 Hook
+ */
+export const useCardNotification = () => {
+  const notification = usePushNotification({
+    autoInitialize: true,
+  });
+
+  const sendCardUpdateNotification = useCallback(
+    async (
+      cardName: string,
+      action: 'created' | 'updated' | 'deleted' | 'price_changed'
+    ) => {
+      const actionText = {
+        created: '新增了',
+        updated: '更新了',
+        deleted: '刪除了',
+        price_changed: '價格變更了',
+      };
+
+      await notification.sendLocalNotification({
+        title: '卡片更新',
+        body: `${actionText[action]}卡片：${cardName}`,
+        category: 'card_updates',
+        data: {
+          action: 'open_card',
+          cardName,
+          updateAction: action,
+        },
+        sound: true,
+        priority: 'high',
+      });
+    },
+    [notification.sendLocalNotification]
+  );
+
+  const sendPriceAlertNotification = useCallback(
+    async (cardName: string, oldPrice: number, newPrice: number) => {
+      const change = newPrice - oldPrice;
+      const changeText = change > 0 ? '上漲' : '下跌';
+      const changePercent = Math.abs((change / oldPrice) * 100).toFixed(1);
+
+      await notification.sendLocalNotification({
+        title: '價格提醒',
+        body: `${cardName} 價格${changeText} ${changePercent}%`,
+        category: 'card_updates',
+        data: {
+          action: 'open_card',
+          cardName,
+          oldPrice,
+          newPrice,
+          change,
+        },
+        sound: true,
+        priority: 'high',
+      });
+    },
+    [notification.sendLocalNotification]
+  );
+
+  return {
+    ...notification,
+    sendCardUpdateNotification,
+    sendPriceAlertNotification,
+  };
+};
+
+/**
+ * 系統通知 Hook
+ */
+export const useSystemNotification = () => {
+  const notification = usePushNotification({
+    autoInitialize: true,
+  });
+
+  const sendSystemNotification = useCallback(
+    async (title: string, message: string, data?: unknown) => {
+      await notification.sendLocalNotification({
+        title,
+        body: message,
+        category: 'system',
+        data: {
+          action: 'open_screen',
+          ...data,
+        },
+        sound: false,
+        priority: 'normal',
+      });
+    },
+    [notification.sendLocalNotification]
+  );
+
+  const sendMaintenanceNotification = useCallback(
+    async (message: string, scheduledTime?: Date) => {
+      await notification.sendLocalNotification({
+        title: '系統維護',
+        body: message,
+        category: 'system',
+        data: {
+          action: 'open_screen',
+          screen: 'maintenance',
+          scheduledTime: scheduledTime?.toISOString(),
+        },
+        sound: true,
+        priority: 'high',
+      });
+    },
+    [notification.sendLocalNotification]
+  );
+
+  return {
+    ...notification,
+    sendSystemNotification,
+    sendMaintenanceNotification,
+  };
+};

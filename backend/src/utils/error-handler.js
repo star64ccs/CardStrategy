@@ -13,17 +13,17 @@ const {
   ConfigurationError,
 } = require('./custom-errors');
 
-// 錯誤處理中間件
+// ErrorHandle中間件
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
   let error = { ...err };
   error.message = err.message;
 
-  // 記錄錯誤
+  // RecordError
   logError(err, req);
 
-  // Sequelize 錯誤處理
+  // Sequelize ErrorHandle
   if (err.name === 'SequelizeValidationError') {
     const message = 'Validation Error';
 // eslint-disable-next-line no-unused-vars
@@ -35,7 +35,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     error = new ValidationError(message, errors);
   }
 
-  // Sequelize 唯一性約束錯誤
+  // Sequelize Unique性約束Error
   if (err.name === 'SequelizeUniqueConstraintError') {
     const message = 'Duplicate field value';
 // eslint-disable-next-line no-unused-vars
@@ -47,12 +47,12 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     error = new ConflictError(message);
   }
 
-  // Sequelize 外鍵約束錯誤
+  // Sequelize 外Key約束Error
   if (err.name === 'SequelizeForeignKeyConstraintError') {
     error = new ValidationError('Invalid foreign key reference');
   }
 
-  // JWT 錯誤
+  // JWT Error
   if (err.name === 'JsonWebTokenError') {
     error = new AuthenticationError('Invalid token');
   }
@@ -61,27 +61,27 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     error = new AuthenticationError('Token expired');
   }
 
-  // 請求體解析錯誤
+  // Request體ParseError
   if (err.type === 'entity.too.large') {
     error = new PayloadTooLargeError();
   }
 
-  // 速率限制錯誤
+  // 速率LimitError
   if (err.status === 429) {
     error = new RateLimitError();
   }
 
-  // 數據庫連接錯誤
+  // DatabaseConnectError
   if (err.code === 'ECONNREFUSED' && err.syscall === 'connect') {
     error = new DatabaseError('Database connection failed', err);
   }
 
-  // 外部 API 錯誤
+  // External API Error
   if (err.code === 'ENOTFOUND' || err.code === 'ECONNRESET') {
     error = new ExternalServiceError('External API', 'Service unavailable');
   }
 
-  // 默認錯誤響應
+  // DefaultErrorResponse
 // eslint-disable-next-line no-unused-vars
   const response = {
     success: false,
@@ -91,7 +91,7 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     method: req.method,
   };
 
-  // 開發環境添加額外信息
+  // On發環境Add額外Information
   if (process.env.NODE_ENV === 'development') {
     response.stack = error.stack;
     response.error = {
@@ -101,18 +101,18 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-next-line no-u
     };
   }
 
-  // 驗證錯誤包含詳細信息
+  // VerifyErrorPackage含詳細Information
   if (error instanceof ValidationError && error.errors) {
     response.errors = error.errors;
   }
 
-  // 設置狀態碼
+  // SettingsStatus碼
 // eslint-disable-next-line no-unused-vars
   const statusCode = error.statusCode || 500;
   res.status(statusCode).json(response);
 };
 
-// 錯誤日誌記錄
+// ErrorLogRecord
 // eslint-disable-next-line no-unused-vars
 const logError = (err, req) => {
 // eslint-disable-next-line no-unused-vars
@@ -129,7 +129,7 @@ const logError = (err, req) => {
     timestamp: new Date().toISOString(),
   };
 
-  // 根據錯誤類型選擇日誌級別
+  // Root據ErrorClass型SelectLog級別
   if (err.isOperational === false) {
     logger.error('Unhandled Error', errorInfo);
   } else if (err.statusCode >= 500) {
@@ -141,16 +141,16 @@ const logError = (err, req) => {
   }
 };
 
-// 異步錯誤處理包裝器
+// AsyncErrorHandlePackage裝器
 const asyncHandler = (fn) => {
   return (req, res, next) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 };
 
-// 進程錯誤處理
+// ProcessErrorHandle
 const setupProcessErrorHandling = () => {
-  // 未捕獲的異常
+  // 未Catch的異常
   process.on('uncaughtException', (err) => {
     logger.error('Uncaught Exception', {
       name: err.name,
@@ -159,11 +159,11 @@ const setupProcessErrorHandling = () => {
       timestamp: new Date().toISOString(),
     });
 
-    // 優雅關閉
+    // 優雅Off閉
     process.exit(1);
   });
 
-  // 未處理的 Promise 拒絕
+  // 未Handle的 Promise Reject
   process.on('unhandledRejection', (reason, promise) => {
     logger.error('Unhandled Rejection', {
       reason: reason?.message || reason,
@@ -172,11 +172,11 @@ const setupProcessErrorHandling = () => {
       timestamp: new Date().toISOString(),
     });
 
-    // 優雅關閉
+    // 優雅Off閉
     process.exit(1);
   });
 
-  // 警告
+  // Warning
   process.on('warning', (warning) => {
     logger.warn('Process Warning', {
       name: warning.name,
@@ -187,7 +187,7 @@ const setupProcessErrorHandling = () => {
   });
 };
 
-// 優雅關閉處理
+// 優雅Off閉Handle
 const setupGracefulShutdown = (server) => {
   const gracefulShutdown = (signal) => {
     logger.info(`Received ${signal}. Starting graceful shutdown...`);
@@ -202,7 +202,7 @@ const setupGracefulShutdown = (server) => {
       process.exit(0);
     });
 
-    // 強制關閉超時
+    // ForceOff閉超時
     setTimeout(() => {
       logger.error('Forced shutdown after timeout');
       process.exit(1);

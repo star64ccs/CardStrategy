@@ -115,7 +115,7 @@ export class ComplianceWorker {
   }
 
   /**
-   * GDPR合規性檢查
+   * GDPR合規性Check
    */
   async checkGDPRCompliance(targetId: string): Promise<ComplianceAnalysis> {
     try {
@@ -150,13 +150,13 @@ export class ComplianceWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('GDPR合規性檢查失敗:', error);
-      throw new Error(`GDPR合規性檢查失敗: ${error}`);
+      console.error('GDPR合規性CheckFailed:', error);
+      throw new Error(`GDPR合規性CheckFailed: ${error}`);
     }
   }
 
   /**
-   * CCPA合規性檢查
+   * CCPA合規性Check
    */
   async checkCCPACompliance(targetId: string): Promise<ComplianceAnalysis> {
     try {
@@ -191,13 +191,13 @@ export class ComplianceWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('CCPA合規性檢查失敗:', error);
-      throw new Error(`CCPA合規性檢查失敗: ${error}`);
+      console.error('CCPA合規性CheckFailed:', error);
+      throw new Error(`CCPA合規性CheckFailed: ${error}`);
     }
   }
 
   /**
-   * HIPAA合規性檢查
+   * HIPAA合規性Check
    */
   async checkHIPAACompliance(targetId: string): Promise<ComplianceAnalysis> {
     try {
@@ -232,13 +232,13 @@ export class ComplianceWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('HIPAA合規性檢查失敗:', error);
-      throw new Error(`HIPAA合規性檢查失敗: ${error}`);
+      console.error('HIPAA合規性CheckFailed:', error);
+      throw new Error(`HIPAA合規性CheckFailed: ${error}`);
     }
   }
 
   /**
-   * SOX合規性檢查
+   * SOX合規性Check
    */
   async checkSOXCompliance(targetId: string): Promise<ComplianceAnalysis> {
     try {
@@ -273,13 +273,13 @@ export class ComplianceWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('SOX合規性檢查失敗:', error);
-      throw new Error(`SOX合規性檢查失敗: ${error}`);
+      console.error('SOX合規性CheckFailed:', error);
+      throw new Error(`SOX合規性CheckFailed: ${error}`);
     }
   }
 
   /**
-   * PCI DSS合規性檢查
+   * PCI DSS合規性Check
    */
   async checkPCICompliance(targetId: string): Promise<ComplianceAnalysis> {
     try {
@@ -314,13 +314,13 @@ export class ComplianceWorker {
       this.analysisHistory.push(analysis);
       return analysis;
     } catch (error) {
-      console.error('PCI DSS合規性檢查失敗:', error);
-      throw new Error(`PCI DSS合規性檢查失敗: ${error}`);
+      console.error('PCI DSS合規性CheckFailed:', error);
+      throw new Error(`PCI DSS合規性CheckFailed: ${error}`);
     }
   }
 
   /**
-   * 生成綜合合規報告
+   * 生成綜合合規Report
    */
   async generateComplianceReport(targetId: string): Promise<ComplianceReport> {
     try {
@@ -363,13 +363,13 @@ export class ComplianceWorker {
       this.complianceReports.push(report);
       return report;
     } catch (error) {
-      console.error('合規報告生成失敗:', error);
-      throw new Error(`合規報告生成失敗: ${error}`);
+      console.error('合規報告生成Failed:', error);
+      throw new Error(`合規報告生成Failed: ${error}`);
     }
   }
 
   /**
-   * 監控合規狀態
+   * Monitor合規Status
    */
   async monitorComplianceStatus(targetId: string): Promise<{
     overallCompliance: number;
@@ -404,27 +404,27 @@ export class ComplianceWorker {
         recommendations,
       };
     } catch (error) {
-      console.error('合規狀態監控失敗:', error);
-      throw new Error(`合規狀態監控失敗: ${error}`);
+      console.error('合規狀態監控Failed:', error);
+      throw new Error(`合規狀態監控Failed: ${error}`);
     }
   }
 
   /**
-   * 獲取合規狀態
+   * Get合規Status
    */
   getComplianceStatus(targetId: string): ComplianceStatus | undefined {
     return this.complianceStatus.get(targetId);
   }
 
   /**
-   * 設置合規狀態
+   * Settings合規Status
    */
   setComplianceStatus(targetId: string, status: ComplianceStatus): void {
     this.complianceStatus.set(targetId, status);
   }
 
   /**
-   * 獲取合規報告
+   * Get合規Report
    */
   getComplianceReports(targetId?: string): ComplianceReport[] {
     let filtered = this.complianceReports;
@@ -439,7 +439,7 @@ export class ComplianceWorker {
   }
 
   /**
-   * 獲取分析歷史
+   * GetAnalysis歷史
    */
   getAnalysisHistory(
     targetId?: string,
@@ -463,25 +463,25 @@ export class ComplianceWorker {
   }
 
   /**
-   * 更新配置
+   * UpdateConfigure
    */
   updateConfig(newConfig: Partial<ComplianceWorkerConfig>): void {
     this.config = { ...this.config, ...newConfig };
   }
 
   /**
-   * 獲取配置
+   * GetConfigure
    */
   getConfig(): ComplianceWorkerConfig {
     return { ...this.config };
   }
 
-  // 私有輔助方法
+  // Private輔助Method
   private generateId(): string {
     return `compliance_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  // GDPR相關方法
+  // GDPR相OffMethod
   private calculateGDPRScore(content: string): number {
     const _positiveIndicators = ['合規', '符合', '滿足', '達標'];
     const _negativeIndicators = ['不合規', '違規', '不符合', '未達標'];
@@ -574,7 +574,7 @@ export class ComplianceWorker {
     return Math.ceil(wordCount / 70);
   }
 
-  // CCPA相關方法
+  // CCPA相OffMethod
   private calculateCCPAScore(content: string): number {
     const _positiveIndicators = ['合規', '符合', '滿足', '達標'];
     const _negativeIndicators = ['不合規', '違規', '不符合', '未達標'];
@@ -667,7 +667,7 @@ export class ComplianceWorker {
     return Math.ceil(wordCount / 70);
   }
 
-  // HIPAA相關方法
+  // HIPAA相OffMethod
   private calculateHIPAAScore(content: string): number {
     const _positiveIndicators = ['合規', '符合', '滿足', '達標'];
     const _negativeIndicators = ['不合規', '違規', '不符合', '未達標'];
@@ -760,7 +760,7 @@ export class ComplianceWorker {
     return Math.ceil(wordCount / 65);
   }
 
-  // SOX相關方法
+  // SOX相OffMethod
   private calculateSOXScore(content: string): number {
     const _positiveIndicators = ['合規', '符合', '滿足', '達標'];
     const _negativeIndicators = ['不合規', '違規', '不符合', '未達標'];
@@ -853,7 +853,7 @@ export class ComplianceWorker {
     return Math.ceil(wordCount / 70);
   }
 
-  // PCI相關方法
+  // PCI相OffMethod
   private calculatePCIScore(content: string): number {
     const _positiveIndicators = ['合規', '符合', '滿足', '達標'];
     const _negativeIndicators = ['不合規', '違規', '不符合', '未達標'];

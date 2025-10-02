@@ -14,19 +14,19 @@ import {
 } from '../../core/types';
 import { biometricAuthService } from '../../features/auth/services/biometricAuthService';
 
-// 初始狀態
+// 初始Status
 const initialState: BiometricAuthState = {
   // 能力檢測
   capabilities: [],
   isCapabilityLoading: false,
   capabilityError: null,
 
-  // 認證狀態
+  // AuthenticateStatus
   isAuthenticating: false,
   authResult: null,
   authError: null,
 
-  // 設置
+  // Settings
   settings: {
     isEnabled: false,
     enabledTypes: [],
@@ -39,18 +39,18 @@ const initialState: BiometricAuthState = {
   isSettingsLoading: false,
   settingsError: null,
 
-  // 註冊狀態
+  // RegisterStatus
   enrollmentStatus: null,
   isEnrollmentLoading: false,
   enrollmentError: null,
 
-  // 安全信息
+  // 安全Information
   securityInfo: null,
   isSecurityLoading: false,
   securityError: null,
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 
 /**
  * 檢測生物識別能力
@@ -63,13 +63,13 @@ export const _detectBiometricCapabilities = createAsyncThunk(
         await biometricAuthService.detectBiometricCapabilities();
       return capabilities;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '檢測生物識別能力失敗');
+      return rejectWithValue(error.message || '檢測生物識別能力Failed');
     }
   }
 );
 
 /**
- * 執行生物識別認證
+ * 執Row生物識別Authenticate
  */
 export const _authenticateWithBiometric = createAsyncThunk(
   'biometricAuth/authenticate',
@@ -78,13 +78,13 @@ export const _authenticateWithBiometric = createAsyncThunk(
       const _result = await biometricAuthService.authenticate(request);
       return result;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '生物識別認證失敗');
+      return rejectWithValue(error.message || '生物識別認證Failed');
     }
   }
 );
 
 /**
- * 創建生物識別密鑰
+ * Create生物識別密鑰
  */
 export const _createBiometricKeys = createAsyncThunk(
   'biometricAuth/createKeys',
@@ -93,13 +93,13 @@ export const _createBiometricKeys = createAsyncThunk(
       const _result = await biometricAuthService.createBiometricKeys();
       return result;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '創建生物識別密鑰失敗');
+      return rejectWithValue(error.message || 'Create生物識別密鑰Failed');
     }
   }
 );
 
 /**
- * 檢查生物識別密鑰是否存在
+ * Check生物識別密鑰YesNo存在
  */
 export const _checkBiometricKeys = createAsyncThunk(
   'biometricAuth/checkKeys',
@@ -108,13 +108,13 @@ export const _checkBiometricKeys = createAsyncThunk(
       const _exists = await biometricAuthService.biometricKeysExist();
       return exists;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '檢查生物識別密鑰失敗');
+      return rejectWithValue(error.message || 'Check生物識別密鑰Failed');
     }
   }
 );
 
 /**
- * 刪除生物識別密鑰
+ * Delete生物識別密鑰
  */
 export const _deleteBiometricKeys = createAsyncThunk(
   'biometricAuth/deleteKeys',
@@ -123,13 +123,13 @@ export const _deleteBiometricKeys = createAsyncThunk(
       const _result = await biometricAuthService.deleteBiometricKeys();
       return result;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '刪除生物識別密鑰失敗');
+      return rejectWithValue(error.message || 'Delete生物識別密鑰Failed');
     }
   }
 );
 
 /**
- * 創建生物識別簽名
+ * Create生物識別Sign
  */
 export const _createBiometricSignature = createAsyncThunk(
   'biometricAuth/createSignature',
@@ -144,13 +144,13 @@ export const _createBiometricSignature = createAsyncThunk(
       );
       return signature;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '創建生物識別簽名失敗');
+      return rejectWithValue(error.message || 'Create生物識別簽名Failed');
     }
   }
 );
 
 /**
- * 獲取生物識別設置
+ * Get生物識別Settings
  */
 export const _getBiometricSettings = createAsyncThunk(
   'biometricAuth/getSettings',
@@ -159,13 +159,13 @@ export const _getBiometricSettings = createAsyncThunk(
       const _settings = await biometricAuthService.getBiometricSettings();
       return settings;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取生物識別設置失敗');
+      return rejectWithValue(error.message || 'Get生物識別SettingsFailed');
     }
   }
 );
 
 /**
- * 更新生物識別設置
+ * Update生物識別Settings
  */
 export const _updateBiometricSettings = createAsyncThunk(
   'biometricAuth/updateSettings',
@@ -175,13 +175,13 @@ export const _updateBiometricSettings = createAsyncThunk(
         await biometricAuthService.updateBiometricSettings(settings);
       return updatedSettings;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '更新生物識別設置失敗');
+      return rejectWithValue(error.message || 'Update生物識別SettingsFailed');
     }
   }
 );
 
 /**
- * 獲取註冊狀態
+ * GetRegisterStatus
  */
 export const _getEnrollmentStatus = createAsyncThunk(
   'biometricAuth/getEnrollmentStatus',
@@ -190,13 +190,13 @@ export const _getEnrollmentStatus = createAsyncThunk(
       const _status = await biometricAuthService.getEnrollmentStatus();
       return status;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取註冊狀態失敗');
+      return rejectWithValue(error.message || 'Get註冊狀態Failed');
     }
   }
 );
 
 /**
- * 獲取安全信息
+ * Get安全Information
  */
 export const _getSecurityInfo = createAsyncThunk(
   'biometricAuth/getSecurityInfo',
@@ -205,13 +205,13 @@ export const _getSecurityInfo = createAsyncThunk(
       const _info = await biometricAuthService.getSecurityInfo();
       return info;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '獲取安全信息失敗');
+      return rejectWithValue(error.message || 'Get安全信息Failed');
     }
   }
 );
 
 /**
- * 檢查生物識別是否可用
+ * Check生物識別YesNo可用
  */
 export const _checkBiometricAvailability = createAsyncThunk(
   'biometricAuth/checkAvailability',
@@ -220,7 +220,7 @@ export const _checkBiometricAvailability = createAsyncThunk(
       const _available = await biometricAuthService.isBiometricAvailable();
       return available;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '檢查生物識別可用性失敗');
+      return rejectWithValue(error.message || 'Check生物識別可用性Failed');
     }
   }
 );
@@ -230,48 +230,48 @@ const _biometricAuthSlice = createSlice({
   name: 'biometricAuth',
   initialState,
   reducers: {
-    // 清除認證結果
+    // ClearAuthenticate結果
     clearAuthResult: state => {
       state.authResult = null;
       state.authError = null;
     },
 
-    // 清除認證錯誤
+    // ClearAuthenticateError
     clearAuthError: state => {
       state.authError = null;
     },
 
-    // 清除能力檢測錯誤
+    // Clear能力檢測Error
     clearCapabilityError: state => {
       state.capabilityError = null;
     },
 
-    // 清除設置錯誤
+    // ClearSettingsError
     clearSettingsError: state => {
       state.settingsError = null;
     },
 
-    // 清除註冊錯誤
+    // ClearRegisterError
     clearEnrollmentError: state => {
       state.enrollmentError = null;
     },
 
-    // 清除安全信息錯誤
+    // Clear安全InformationError
     clearSecurityError: state => {
       state.securityError = null;
     },
 
-    // 重置生物識別狀態
+    // Reset生物識別Status
     resetBiometricAuth: state => {
       return { ...initialState };
     },
 
-    // 設置認證狀態
+    // SettingsAuthenticateStatus
     setAuthenticating: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticating = action.payload;
     },
 
-    // 更新本地設置
+    // UpdateLocalSettings
     updateLocalSettings: (
       state,
       action: PayloadAction<Partial<BiometricSettings>>
@@ -321,7 +321,7 @@ const _biometricAuthSlice = createSlice({
       })
       .addCase(createBiometricKeys.fulfilled, (state, action) => {
         state.isSecurityLoading = false;
-        // 更新安全信息中的密鑰狀態
+        // Update安全Information中的密鑰Status
         if (state.securityInfo) {
           state.securityInfo.keyGenerated = action.payload;
         }
@@ -333,7 +333,7 @@ const _biometricAuthSlice = createSlice({
 
     // checkBiometricKeys
     builder.addCase(checkBiometricKeys.fulfilled, (state, action) => {
-      // 更新安全信息中的密鑰狀態
+      // Update安全Information中的密鑰Status
       if (state.securityInfo) {
         state.securityInfo.keyGenerated = action.payload;
       }
@@ -347,7 +347,7 @@ const _biometricAuthSlice = createSlice({
       })
       .addCase(deleteBiometricKeys.fulfilled, state => {
         state.isSecurityLoading = false;
-        // 更新安全信息中的密鑰狀態
+        // Update安全Information中的密鑰Status
         if (state.securityInfo) {
           state.securityInfo.keyGenerated = false;
         }
@@ -423,7 +423,7 @@ const _biometricAuthSlice = createSlice({
 
     // checkBiometricAvailability
     builder.addCase(checkBiometricAvailability.fulfilled, (state, action) => {
-      // 更新能力信息
+      // Update能力Information
       state.capabilities = state.capabilities.map(cap => ({
         ...cap,
         isAvailable: action.payload && cap.isEnrolled,
@@ -432,7 +432,7 @@ const _biometricAuthSlice = createSlice({
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   clearAuthResult,
   clearAuthError,
@@ -445,10 +445,10 @@ export const {
   updateLocalSettings,
 } = biometricAuthSlice.actions;
 
-// 導出 reducer
+// Export reducer
 export default biometricAuthSlice.reducer;
 
-// 導出選擇器
+// ExportSelect器
 export const _selectBiometricAuth = (state: {
   biometricAuth: BiometricAuthState;
 }) => state.biometricAuth;

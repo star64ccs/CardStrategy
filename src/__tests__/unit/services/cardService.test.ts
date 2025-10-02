@@ -30,7 +30,7 @@ jest.mock('@/utils/logger', () => ({
 jest.mock('@/utils/validationService', () => ({
   validateApiResponse: jest.fn(() => ({ isValid: true, errors: [] })),
   validateInput: jest.fn((schema, data, context) => {
-    // 對於空字符串或無效 UUID，返回驗證失敗
+    // 對於Empty字符串或無效 UUID，ReturnVerifyFailed
     if (data === '' || (typeof data === 'string' && data.length === 0)) {
       return {
         isValid: false,
@@ -57,7 +57,7 @@ jest.mock('@/utils/validationUtils', () => ({
   ValidationUtils: {
     validateUUID: jest.fn((id, fieldName = 'ID') => {
       if (id === '' || (typeof id === 'string' && id.length === 0)) {
-        throw new Error(`${fieldName} 驗證失敗: 無效的 UUID`);
+        throw new Error(`${fieldName} VerifyFailed: 無效的 UUID`);
       }
     }),
     validateEmail: jest.fn(),
@@ -98,7 +98,7 @@ describe('CardService', () => {
   });
 
   describe('getCards', () => {
-    it('應該成功獲取卡片列表', async () => {
+    it('應該SuccessGet卡片列表', async () => {
       const _mockCards = [
         createMockCard(),
         createMockCard({ id: '2', name: 'Test Card 2' }),
@@ -128,7 +128,7 @@ describe('CardService', () => {
   });
 
   describe('getCardById', () => {
-    it('應該成功獲取單張卡片', async () => {
+    it('應該SuccessGet單張卡片', async () => {
       const _mockCard = createMockCard();
       const _mockResponse = {
         data: mockApiResponse(mockCard),
@@ -144,24 +144,24 @@ describe('CardService', () => {
     });
 
     it('應該驗證卡片ID', async () => {
-      // 手動調用 validateUUID 使其拋出錯誤
+      // Manual調用 validateUUID 使其ThrowError
       const { ValidationUtils } = require('@/utils/validationUtils');
       ValidationUtils.validateUUID.mockImplementation(
         (id, fieldName = 'ID') => {
           if (id === '' || (typeof id === 'string' && id.length === 0)) {
-            throw new Error(`${fieldName} 驗證失敗: 無效的 UUID`);
+            throw new Error(`${fieldName} VerifyFailed: 無效的 UUID`);
           }
         }
       );
 
       await expect(cardService.getCardDetail('')).rejects.toThrow(
-        '卡片 ID 驗證失敗'
+        '卡片 ID VerifyFailed'
       );
     });
   });
 
   describe('searchCards', () => {
-    it('應該成功搜索卡片', async () => {
+    it('應該Success搜索卡片', async () => {
       const _mockCards = [createMockCard()];
       const _mockResponse = {
         data: mockApiResponse({
@@ -189,7 +189,7 @@ describe('CardService', () => {
   });
 
   describe('getCardRecommendations', () => {
-    it('應該成功獲取卡片推薦', async () => {
+    it('應該SuccessGet卡片推薦', async () => {
       const _mockCards = [createMockCard()];
       const _mockResponse = {
         data: mockApiResponse({
@@ -213,7 +213,7 @@ describe('CardService', () => {
   });
 
   describe('recognizeCard', () => {
-    it('應該成功識別卡片', async () => {
+    it('應該Success識別卡片', async () => {
       const _mockCard = createMockCard();
       const _mockResponse = {
         data: mockApiResponse({
@@ -236,7 +236,7 @@ describe('CardService', () => {
       });
     });
 
-    it('應該處理圖片轉換錯誤', async () => {
+    it('應該Handle圖片轉換Error', async () => {
       const _imageUri = 'invalid-uri';
 
       await expect(cardService.recognizeCard(imageUri)).rejects.toThrow();
@@ -244,7 +244,7 @@ describe('CardService', () => {
   });
 
   describe('verifyCard', () => {
-    it('應該成功驗證卡片', async () => {
+    it('應該SuccessVerify卡片', async () => {
       const _mockResponse = {
         data: mockApiResponse({
           isAuthentic: true,
@@ -272,7 +272,7 @@ describe('CardService', () => {
   });
 
   describe('analyzeCondition', () => {
-    it('應該成功分析卡片條件', async () => {
+    it('應該Success分析卡片條件', async () => {
       const _mockAnalysis = createMockConditionAnalysis();
       const _mockResponse = {
         data: mockApiResponse(mockAnalysis),
@@ -322,34 +322,34 @@ describe('CardService', () => {
     });
 
     it('應該驗證卡片ID', async () => {
-      // 手動調用 validateUUID 使其拋出錯誤
+      // Manual調用 validateUUID 使其ThrowError
       const { ValidationUtils } = require('@/utils/validationUtils');
       ValidationUtils.validateUUID.mockImplementation(
         (id, fieldName = 'ID') => {
           if (id === '' || (typeof id === 'string' && id.length === 0)) {
-            throw new Error(`${fieldName} 驗證失敗: 無效的 UUID`);
+            throw new Error(`${fieldName} VerifyFailed: 無效的 UUID`);
           }
         }
       );
 
       await expect(cardService.analyzeCardCondition('')).rejects.toThrow(
-        '卡片 ID 驗證失敗'
+        '卡片 ID VerifyFailed'
       );
     });
   });
 
   describe('error handling', () => {
-    it('應該處理API響應驗證失敗', async () => {
-      // 模擬 apiService.get 拋出錯誤而不是返回響應
-      const _validationError = new Error('服務器響應數據格式錯誤');
+    it('應該HandleAPI響應VerifyFailed', async () => {
+      // 模擬 apiService.get ThrowError而不YesReturnResponse
+      const _validationError = new Error('Server響應數據格式Error');
       mockApiService.get.mockRejectedValue(validationError);
 
       await expect(cardService.getCards()).rejects.toThrow(
-        '服務器響應數據格式錯誤'
+        'Server響應數據格式Error'
       );
     });
 
-    it('應該處理網絡錯誤', async () => {
+    it('應該Handle網絡Error', async () => {
       const _networkError = new Error('Network error');
       mockApiService.get.mockRejectedValue(networkError);
 
@@ -357,11 +357,11 @@ describe('CardService', () => {
       expect(mockLogger.error).toHaveBeenCalled();
     });
 
-    it('應該處理API錯誤', async () => {
-      const _apiError = new Error('獲取卡片失敗');
+    it('應該HandleAPIError', async () => {
+      const _apiError = new Error('Get卡片Failed');
       mockApiService.get.mockRejectedValue(apiError);
 
-      await expect(cardService.getCards()).rejects.toThrow('獲取卡片失敗');
+      await expect(cardService.getCards()).rejects.toThrow('Get卡片Failed');
       expect(mockLogger.error).toHaveBeenCalled();
     });
   });

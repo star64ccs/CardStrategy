@@ -3,12 +3,12 @@
 const fs = require('fs');
 const path = require('path');
 
-// logger.info('🔍 自動部署狀態檢查工具');
+// logger.info('🔍 AutoDeployStatusCheckTool');
 // logger.info('='.repeat(50));
 
-// 檢查 GitHub Actions 工作流程
+// Check GitHub Actions 工作流程
 function checkGitHubWorkflows() {
-  // logger.info('\n📋 檢查 GitHub Actions 工作流程...');
+  // logger.info('\n📋 Check GitHub Actions 工作流程...');
 
   const workflowsDir = '.github/workflows';
   const workflows = [
@@ -33,9 +33,9 @@ function checkGitHubWorkflows() {
   return foundWorkflows;
 }
 
-// 檢查部署腳本
+// CheckDeploy腳本
 function checkDeployScripts() {
-  // logger.info('\n📋 檢查部署腳本...');
+  // logger.info('\n📋 CheckDeploy腳本...');
 
   const scriptsDir = 'scripts';
   const deployScripts = [
@@ -50,30 +50,30 @@ function checkDeployScripts() {
     const scriptPath = path.join(scriptsDir, script);
     if (fs.existsSync(scriptPath)) {
       foundScripts.push(script);
-      // logger.info(`✅ 找到部署腳本: ${script}`);
+      // logger.info(`✅ 找到Deploy腳本: ${script}`);
 
-      // 檢查腳本權限
+      // Check腳本權限
       try {
         const stats = fs.statSync(scriptPath);
         if (stats.mode & 0o111) {
-          // logger.info(`  ✅ 腳本具有執行權限`);
+          // logger.info(`  ✅ 腳本具有執Row權限`);
         } else {
-          // logger.info(`  ⚠️  腳本缺少執行權限`);
+          // logger.info(`  ⚠️  腳本缺少執Row權限`);
         }
       } catch (error) {
-        // logger.info(`  ❌ 無法檢查腳本權限`);
+        // logger.info(`  ❌ 無法Check腳本權限`);
       }
     } else {
-      // logger.info(`❌ 缺少部署腳本: ${script}`);
+      // logger.info(`❌ 缺少Deploy腳本: ${script}`);
     }
   });
 
   return foundScripts;
 }
 
-// 檢查環境變數文件
+// Check環境變數File
 function checkEnvironmentFiles() {
-  // logger.info('\n📋 檢查環境變數文件...');
+  // logger.info('\n📋 Check環境變數File...');
 
   const envFiles = [
     '.env.production',
@@ -87,18 +87,18 @@ function checkEnvironmentFiles() {
   envFiles.forEach((envFile) => {
     if (fs.existsSync(envFile)) {
       foundEnvFiles.push(envFile);
-      // logger.info(`✅ 找到環境文件: ${envFile}`);
+      // logger.info(`✅ 找到環境File: ${envFile}`);
     } else {
-      // logger.info(`❌ 缺少環境文件: ${envFile}`);
+      // logger.info(`❌ 缺少環境File: ${envFile}`);
     }
   });
 
   return foundEnvFiles;
 }
 
-// 檢查 package.json 腳本
+// Check package.json 腳本
 function checkPackageScripts() {
-  // logger.info('\n📋 檢查 package.json 腳本...');
+  // logger.info('\n📋 Check package.json 腳本...');
 
   try {
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
@@ -125,14 +125,14 @@ function checkPackageScripts() {
 
     return foundScripts;
   } catch (error) {
-    // logger.info(`❌ 無法讀取 package.json: ${error.message}`);
+    // logger.info(`❌ 無法Read package.json: ${error.message}`);
     return [];
   }
 }
 
-// 檢查 Docker 配置
+// Check Docker Configure
 function checkDockerConfig() {
-  // logger.info('\n📋 檢查 Docker 配置...');
+  // logger.info('\n📋 Check Docker Configure...');
 
   const dockerFiles = [
     'Dockerfile',
@@ -145,18 +145,18 @@ function checkDockerConfig() {
   dockerFiles.forEach((file) => {
     if (fs.existsSync(file)) {
       foundFiles.push(file);
-      // logger.info(`✅ 找到 Docker 文件: ${file}`);
+      // logger.info(`✅ 找到 Docker File: ${file}`);
     } else {
-      // logger.info(`❌ 缺少 Docker 文件: ${file}`);
+      // logger.info(`❌ 缺少 Docker File: ${file}`);
     }
   });
 
   return foundFiles;
 }
 
-// 檢查 Render 配置
+// Check Render Configure
 function checkRenderConfig() {
-  // logger.info('\n📋 檢查 Render 配置...');
+  // logger.info('\n📋 Check Render Configure...');
 
   const renderFiles = ['render.yaml', 'render.yml'];
 
@@ -165,36 +165,36 @@ function checkRenderConfig() {
   renderFiles.forEach((file) => {
     if (fs.existsSync(file)) {
       foundFiles.push(file);
-      // logger.info(`✅ 找到 Render 配置: ${file}`);
+      // logger.info(`✅ 找到 Render Configure: ${file}`);
     } else {
-      // logger.info(`❌ 缺少 Render 配置: ${file}`);
+      // logger.info(`❌ 缺少 Render Configure: ${file}`);
     }
   });
 
   return foundFiles;
 }
 
-// 分析部署流程
+// AnalysisDeploy流程
 function analyzeDeployFlow() {
-  // logger.info('\n📋 分析部署流程...');
-  // logger.info('\n🔄 當前部署流程:');
-  // logger.info('1. 推送到 develop 分支');
+  // logger.info('\n📋 AnalysisDeploy流程...');
+  // logger.info('\n🔄 當前Deploy流程:');
+  // logger.info('1. Push到 develop Branch');
   // logger.info('   → 觸發 GitHub Actions');
-  // logger.info('   → 運行測試');
-  // logger.info('   → 部署到 Render (測試環境)');
-  // logger.info('\n2. 合併到 main 分支');
+  // logger.info('   → 運RowTest');
+  // logger.info('   → Deploy到 Render (Test環境)');
+  // logger.info('\n2. Merge到 main Branch');
   // logger.info('   → 觸發 GitHub Actions');
-  // logger.info('   → 運行測試');
-  // logger.info('   → 部署到 DigitalOcean (生產環境)');
-  // logger.info('\n📊 部署觸發條件:');
-  // logger.info('- develop 分支推送 → Render 測試環境');
-  // logger.info('- main 分支推送 → DigitalOcean 生產環境');
-  // logger.info('- Pull Request 到 main → 只運行測試');
+  // logger.info('   → 運RowTest');
+  // logger.info('   → Deploy到 DigitalOcean (生產環境)');
+  // logger.info('\n📊 Deploy觸發Condition:');
+  // logger.info('- develop BranchPush → Render Test環境');
+  // logger.info('- main BranchPush → DigitalOcean 生產環境');
+  // logger.info('- Pull Request 到 main → 只運RowTest');
 }
 
-// 檢查 GitHub Secrets 需求
+// Check GitHub Secrets 需求
 function checkRequiredSecrets() {
-  // logger.info('\n📋 檢查所需的 GitHub Secrets...');
+  // logger.info('\n📋 Check所需的 GitHub Secrets...');
 
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -209,24 +209,24 @@ function checkRequiredSecrets() {
     'SLACK_WEBHOOK_URL',
   ];
 
-  // logger.info('需要在 GitHub Secrets 中設置以下變數:');
+  // logger.info('需要在 GitHub Secrets 中Settings以下變數:');
   requiredSecrets.forEach((secret) => {
     // logger.info(`  - ${secret}`);
   });
 
-  // logger.info('\n💡 設置方法:');
-  // logger.info('1. 前往 GitHub 倉庫');
+  // logger.info('\n💡 SettingsMethod:');
+  // logger.info('1. 前往 GitHub 倉Library');
   // logger.info('2. Settings → Secrets and variables → Actions');
   // logger.info('3. 點擊 "New repository secret"');
-  // logger.info('4. 添加上述變數');
+  // logger.info('4. Add上述變數');
 }
 
-// 主函數
+// 主Function
 function checkAutoDeployStatus() {
-  // logger.info('\n🚀 開始檢查自動部署狀態...\n');
+  // logger.info('\n🚀 BeginCheckAutoDeployStatus...\n');
 
   try {
-    // 檢查各個組件
+    // Check各個Component
     const workflows = checkGitHubWorkflows();
     const deployScripts = checkDeployScripts();
     const envFiles = checkEnvironmentFiles();
@@ -234,25 +234,25 @@ function checkAutoDeployStatus() {
     const dockerFiles = checkDockerConfig();
     const renderFiles = checkRenderConfig();
 
-    // 分析部署流程
+    // AnalysisDeploy流程
     analyzeDeployFlow();
 
-    // 檢查 Secrets 需求
+    // Check Secrets 需求
     checkRequiredSecrets();
 
     // 總結
-    // logger.info('\n📊 檢查總結:');
+    // logger.info('\n📊 Check總結:');
     // logger.info('='.repeat(50));
     // logger.info(`✅ GitHub 工作流程: ${workflows.length}/4`);
-    // logger.info(`✅ 部署腳本: ${deployScripts.length}/3`);
-    // logger.info(`✅ 環境文件: ${envFiles.length}/4`);
+    // logger.info(`✅ Deploy腳本: ${deployScripts.length}/3`);
+    // logger.info(`✅ 環境File: ${envFiles.length}/4`);
     // logger.info(`✅ npm 腳本: ${packageScripts.length}/4`);
-    // logger.info(`✅ Docker 配置: ${dockerFiles.length}/3`);
-    // logger.info(`✅ Render 配置: ${renderFiles.length}/2`);
+    // logger.info(`✅ Docker Configure: ${dockerFiles.length}/3`);
+    // logger.info(`✅ Render Configure: ${renderFiles.length}/2`);
     // logger.info('='.repeat(50));
 
-    // 評估自動部署狀態
-    const totalComponents = 20; // 總組件數
+    // 評估AutoDeployStatus
+    const totalComponents = 20; // 總Component數
     const foundComponents =
       workflows.length +
       deployScripts.length +
@@ -263,33 +263,33 @@ function checkAutoDeployStatus() {
 
     const completionRate = (foundComponents / totalComponents) * 100;
 
-    // logger.info(`\n🎯 自動部署完成度: ${completionRate.toFixed(1)}%`);
+    // logger.info(`\n🎯 AutoDeployComplete度: ${completionRate.toFixed(1)}%`);
 
     if (completionRate >= 80) {
-      // logger.info('🎉 您的專案已具備完整的自動部署能力！');
+      // logger.info('🎉 您的專案已具備完整的AutoDeploy能力！');
       // logger.info('\n📋 下一步:');
-      // logger.info('1. 設置 GitHub Secrets');
-      // logger.info('2. 推送到 develop 分支測試');
-      // logger.info('3. 合併到 main 分支部署到生產環境');
+      // logger.info('1. Settings GitHub Secrets');
+      // logger.info('2. Push到 develop BranchTest');
+      // logger.info('3. Merge到 main BranchDeploy到生產環境');
     } else if (completionRate >= 60) {
-      // logger.info('⚠️  您的專案具備基本的自動部署能力，但需要完善一些配置。');
-      // logger.info('\n📋 需要完成:');
-      // logger.info('1. 補充缺少的配置文件');
-      // logger.info('2. 設置 GitHub Secrets');
-      // logger.info('3. 測試部署流程');
+      // logger.info('⚠️  您的專案具備基本的AutoDeploy能力，但需要完善一些Configure。');
+      // logger.info('\n📋 需要Complete:');
+      // logger.info('1. 補充缺少的ConfigureFile');
+      // logger.info('2. Settings GitHub Secrets');
+      // logger.info('3. TestDeploy流程');
     } else {
-      // logger.info('❌ 您的專案需要更多配置才能實現自動部署。');
+      // logger.info('❌ 您的專案需要更多Configure才能實現AutoDeploy。');
       // logger.info('\n📋 建議:');
-      // logger.info('1. 完善所有必要的配置文件');
-      // logger.info('2. 設置 GitHub Secrets');
-      // logger.info('3. 測試部署腳本');
+      // logger.info('1. 完善所有必要的ConfigureFile');
+      // logger.info('2. Settings GitHub Secrets');
+      // logger.info('3. TestDeploy腳本');
     }
   } catch (error) {
-    // logger.info('❌ 檢查過程中發生錯誤:', error.message);
+    // logger.info('❌ Check過程中發生Error:', error.message);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   checkAutoDeployStatus();
 }

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * 批量修復 no-unused-vars 警告
- * 根據重構計劃的執行原則，系統性地修復未使用變數警告
+ * Batch修復 no-unused-vars Warning
+ * Root據重構計劃的執Row原則，系統性地修復未使用變數Warning
  */
 
 const fs = require('fs');
@@ -13,7 +13,7 @@ const { execSync } = require('child_process');
 console.log('🔧 開始批量修復 no-unused-vars 警告...\n');
 
 /**
- * 修復 Sequelize 模型關聯方法中的 models 參數
+ * 修復 Sequelize 模型Off聯Method中的 models Parameter
  */
 function fixSequelizeModels() {
   const modelFiles = [
@@ -26,7 +26,7 @@ function fixSequelizeModels() {
     if (fs.existsSync(file)) {
       let content = fs.readFileSync(file, 'utf8');
       
-      // 修復 static associate(models) 方法
+      // 修復 static associate(models) Method
       content = content.replace(
         /static associate\(models\) {/g,
         'static associate(models) { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars'
@@ -40,7 +40,7 @@ function fixSequelizeModels() {
 }
 
 /**
- * 修復 Sequelize 遷移文件中的 Sequelize 參數
+ * 修復 Sequelize 遷移File中的 Sequelize Parameter
  */
 function fixSequelizeMigrations() {
   const migrationFiles = [
@@ -55,19 +55,19 @@ function fixSequelizeMigrations() {
     if (fs.existsSync(file)) {
       let content = fs.readFileSync(file, 'utf8');
       
-      // 修復 down 方法中的 Sequelize 參數
+      // 修復 down Method中的 Sequelize Parameter
       content = content.replace(
         /async down\(queryInterface, Sequelize\) {/g,
         'async down(queryInterface, Sequelize) { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars'
       );
       
-      // 修復 up 方法中的 Sequelize 參數
+      // 修復 up Method中的 Sequelize Parameter
       content = content.replace(
         /up: async \(queryInterface, Sequelize\) => {/g,
         'up: async (queryInterface, Sequelize) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars'
       );
       
-      // 修復 down 方法中的 Sequelize 參數
+      // 修復 down Method中的 Sequelize Parameter
       content = content.replace(
         /down: async \(queryInterface, Sequelize\) => {/g,
         'down: async (queryInterface, Sequelize) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars'
@@ -113,7 +113,7 @@ function fixScriptVariables() {
 }
 
 /**
- * 修復中間件中的 next 參數
+ * 修復中間件中的 next Parameter
  */
 function fixMiddlewareNext() {
   const middlewareFiles = [
@@ -127,7 +127,7 @@ function fixMiddlewareNext() {
     if (fs.existsSync(file)) {
       let content = fs.readFileSync(file, 'utf8');
       
-      // 修復錯誤處理中間件中的 next 參數
+      // 修復ErrorHandle中間件中的 next Parameter
       content = content.replace(
         /\(err, req, res, next\) => {/g,
         '(err, req, res, next) => { // eslint-disable-next-line no-unused-vars // eslint-disable-next-line no-unused-vars'
@@ -141,7 +141,7 @@ function fixMiddlewareNext() {
 }
 
 /**
- * 修復服務中的未使用變數
+ * 修復Service中的未使用變數
  */
 function fixServiceVariables() {
   const serviceFiles = [
@@ -154,7 +154,7 @@ function fixServiceVariables() {
     if (fs.existsSync(file)) {
       let content = fs.readFileSync(file, 'utf8');
       
-      // 修復解構賦值中的未使用變數
+      // 修復解構賦Value中的未使用變數
       content = content.replace(
         /const \{ stdout, stderr \} = /g,
         'const { stdout: _stdout, stderr } = // eslint-disable-next-line no-unused-vars'
@@ -168,7 +168,7 @@ function fixServiceVariables() {
 }
 
 /**
- * 修復 React 組件中的未使用導入
+ * 修復 React Component中的未使用Import
  */
 function fixReactImports() {
   const reactFiles = [
@@ -183,7 +183,7 @@ function fixReactImports() {
     if (fs.existsSync(file)) {
       let content = fs.readFileSync(file, 'utf8');
       
-      // 修復未使用的 React 導入
+      // 修復未使用的 React Import
       content = content.replace(
         /import React from "react"; // eslint-disable-next-line no-unused-vars/g,
         'import React from "react"; // eslint-disable-next-line no-unused-vars'
@@ -197,7 +197,7 @@ function fixReactImports() {
 }
 
 /**
- * 執行批量修復
+ * 執RowBatch修復
  */
 function runBulkFix() {
   try {
@@ -214,7 +214,7 @@ function runBulkFix() {
     // eslint-disable-next-line no-console
     console.log('\n✅ 批量修復完成！');
     
-    // 檢查修復結果
+    // Check修復結果
     // eslint-disable-next-line no-console
     console.log('\n📊 檢查修復結果...');
     const result = execSync('npm run lint -- --format=compact | findstr "no-unused-vars" | Measure-Object -Line', { encoding: 'utf8' });
@@ -223,9 +223,9 @@ function runBulkFix() {
     
   } catch (error) {
     // eslint-disable-next-line no-console
-    console.error('❌ 批量修復過程中發生錯誤:', error.message);
+    console.error('❌ 批量修復過程中發生Error:', error.message);
   }
 }
 
-// 執行批量修復
+// 執RowBatch修復
 runBulkFix();

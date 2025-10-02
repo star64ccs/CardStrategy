@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-// Cloudflare 配置 (使用已記錄的 Token 和 Zone ID)
+// Cloudflare Configure (使用已Record的 Token 和 Zone ID)
 const cloudflareConfig = {
   apiToken: '2HWoQayJYac26tQQVlvWiNIDhxSibuwPUZoJ4ynM',
   zoneId: 'ceadb25b709450bbd450ad7cbd03bb68',
@@ -8,15 +8,15 @@ const cloudflareConfig = {
   apiUrl: 'https://api.cloudflare.com/client/v4',
 };
 
-// logger.info('🚀 Cloudflare 快速配置工具');
+// logger.info('🚀 Cloudflare 快速ConfigureTool');
 // logger.info('='.repeat(50));
-// logger.info(`🌐 域名: ${cloudflareConfig.domain}`);
+// logger.info(`🌐 Domain: ${cloudflareConfig.domain}`);
 // logger.info(`🔑 API Token: ${cloudflareConfig.apiToken.substring(0, 8)}...`);
 // logger.info('='.repeat(50));
 
-// 獲取 Zone ID
+// Get Zone ID
 async function getZoneId() {
-  // logger.info('\n🔍 正在獲取 Zone ID...');
+  // logger.info('\n🔍 正在Get Zone ID...');
 
   try {
 // eslint-disable-next-line no-unused-vars
@@ -43,17 +43,17 @@ async function getZoneId() {
       throw new Error('找不到域名對應的 Zone ID');
     }
   } catch (error) {
-    // logger.info('❌ 獲取 Zone ID 失敗:', error.message);
+    // logger.info('❌ Get Zone ID Failed:', error.message);
     if (error.response?.data?.errors) {
-      // logger.info('詳細錯誤:', error.response.data.errors);
+      // logger.info('詳細Error:', error.response.data.errors);
     }
     throw error;
   }
 }
 
-// 測試 API 連接
+// Test API Connect
 async function testAPIConnection() {
-  // logger.info('\n🔍 測試 API 連接...');
+  // logger.info('\n🔍 Test API Connect...');
 
   const response = await axios.get(`${cloudflareConfig.apiUrl}/user`, {
     headers: {
@@ -64,18 +64,18 @@ async function testAPIConnection() {
 
   if (response.data.success) {
     const user = response.data.result;
-    // logger.info(`✅ API 連接成功`);
-    // logger.info(`👤 用戶: ${user.email}`);
+    // logger.info(`✅ API ConnectSuccess`);
+    // logger.info(`👤 User: ${user.email}`);
     // logger.info(`🏢 組織: ${user.organizations?.[0]?.name || 'N/A'}`);
     return true;
   } else {
-    throw new Error('API 響應失敗');
+    throw new Error('API 響應Failed');
   }
 }
 
-// 檢查域名狀態
+// CheckDomainStatus
 async function checkDomainStatus(zoneId) {
-  // logger.info('\n🔍 檢查域名狀態...');
+  // logger.info('\n🔍 CheckDomainStatus...');
 
   const response = await axios.get(
     `${cloudflareConfig.apiUrl}/zones/${zoneId}`,
@@ -89,18 +89,18 @@ async function checkDomainStatus(zoneId) {
 
   if (response.data.success) {
     const zone = response.data.result;
-    // logger.info(`✅ 域名狀態: ${zone.status}`);
+    // logger.info(`✅ DomainStatus: ${zone.status}`);
     // logger.info(`📊 計劃: ${zone.plan.name}`);
-    // logger.info(`🌍 名稱服務器: ${zone.name_servers.join(', ')}`);
+    // logger.info(`🌍 名稱Server: ${zone.name_servers.join(', ')}`);
     return zone;
   } else {
-    throw new Error('獲取域名信息失敗');
+    throw new Error('Get域名信息Failed');
   }
 }
 
-// 生成環境變數配置
+// 生成環境變數Configure
 function generateEnvConfig(zoneId, accountId) {
-  // logger.info('\n📝 生成環境變數配置...');
+  // logger.info('\n📝 生成環境變數Configure...');
 
   const envConfig = `# Cloudflare 配置
 CLOUDFLARE_API_TOKEN=2HWoQayJYac26tQQVlvWiNIDhxSibuwPUZoJ4ynM
@@ -116,8 +116,8 @@ CDN_DOMAIN=cdn.cardstrategyapp.com
 DROPLET_IP=your-droplet-ip-here
 `;
 
-  // logger.info('✅ 環境變數配置已生成');
-  // logger.info('\n📋 請將以下配置添加到您的環境變數中:');
+  // logger.info('✅ 環境變數Configure已生成');
+  // logger.info('\n📋 請將以下ConfigureAdd到您的環境變數中:');
   // logger.info('='.repeat(50));
   // logger.info(envConfig);
   // logger.info('='.repeat(50));
@@ -125,41 +125,41 @@ DROPLET_IP=your-droplet-ip-here
   return envConfig;
 }
 
-// 主函數
+// 主Function
 async function quickSetup() {
   try {
-    // 1. 測試 API 連接
+    // 1. Test API Connect
     await testAPIConnection();
 
-    // 2. 獲取 Zone ID 和 Account ID
+    // 2. Get Zone ID 和 Account ID
     const { zoneId, accountId } = await getZoneId();
 
-    // 3. 檢查域名狀態
+    // 3. CheckDomainStatus
     await checkDomainStatus(zoneId);
 
-    // 4. 生成環境變數配置
+    // 4. 生成環境變數Configure
     generateEnvConfig(zoneId, accountId);
 
-    // logger.info('\n🎉 快速配置完成！');
-    // logger.info('\n📋 下一步操作:');
-    // logger.info('1. 設置 DROPLET_IP 環境變數');
-    // logger.info('2. 運行: npm run setup:cloudflare');
-    // logger.info('3. 或者手動配置 DNS 記錄');
+    // logger.info('\n🎉 快速ConfigureComplete！');
+    // logger.info('\n📋 下一步Operation:');
+    // logger.info('1. Settings DROPLET_IP 環境變數');
+    // logger.info('2. 運Row: npm run setup:cloudflare');
+    // logger.info('3. 或者ManualConfigure DNS Record');
   } catch (error) {
-    // logger.info('\n❌ 配置失敗:', error.message);
+    // logger.info('\n❌ ConfigureFailed:', error.message);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   quickSetup()
     .then(() => {
-      // logger.info('\n✅ 腳本執行完成');
+      // logger.info('\n✅ 腳本執RowComplete');
       process.exit(0);
     })
     .catch((error) => {
-      // logger.info('❌ 腳本執行失敗:', error);
+      // logger.info('❌ 腳本執RowFailed:', error);
       process.exit(1);
     });
 }

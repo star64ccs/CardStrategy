@@ -1,4 +1,4 @@
-// 投資建議系統類型定義
+// 投資建議系統Class型定義
 
 export interface InvestmentRecommendationRequest {
   userId: string;
@@ -441,7 +441,7 @@ export interface RecommendationState {
   userProfile: UserProfile | null;
 }
 
-// 枚舉類型
+// 枚舉Class型
 export enum InvestmentTimeHorizon {
   SHORT_TERM = 'short_term', // 1-6 months
   MEDIUM_TERM = 'medium_term', // 6-18 months
@@ -568,7 +568,7 @@ export interface PriceRange {
   max: number;
 }
 
-// 常量定義
+// Constant定義
 export const _RECOMMENDATION_CONSTANTS = {
   DEFAULT_BUDGET: 1000,
   MIN_BUDGET: 100,

@@ -49,7 +49,7 @@ describe('SocialAuthService', () => {
       },
     };
 
-    it('應該成功執行社交登錄', async () => {
+    it('應該Success執行社交登錄', async () => {
       const _mockResponse = {
         success: true,
         data: {
@@ -75,10 +75,10 @@ describe('SocialAuthService', () => {
       expect(result).toEqual(mockResponse.data);
     });
 
-    it('應該處理登錄失敗', async () => {
+    it('應該Handle登錄Failed', async () => {
       const _mockResponse = {
         success: false,
-        message: '登錄失敗',
+        message: '登錄Failed',
       };
 
       const { api } = require('../../../core/utils/api');
@@ -86,7 +86,7 @@ describe('SocialAuthService', () => {
 
       await expect(
         socialAuthService.socialLogin(mockCredentials)
-      ).rejects.toThrow('社交登錄失敗');
+      ).rejects.toThrow('社交登錄Failed');
     });
 
     it('應該驗證必要的憑證', async () => {
@@ -102,7 +102,7 @@ describe('SocialAuthService', () => {
   });
 
   describe('getSocialLoginUrl', () => {
-    it('應該成功獲取社交登錄 URL', async () => {
+    it('應該SuccessGet社交登錄 URL', async () => {
       const _mockResponse = {
         success: true,
         data: { url: 'https://example.com/auth/google' },
@@ -122,10 +122,10 @@ describe('SocialAuthService', () => {
       expect(result).toBe('https://example.com/auth/google');
     });
 
-    it('應該處理獲取 URL 失敗', async () => {
+    it('應該HandleGet URL Failed', async () => {
       const _mockResponse = {
         success: false,
-        message: '獲取 URL 失敗',
+        message: 'Get URL Failed',
       };
 
       const { api } = require('../../../core/utils/api');
@@ -133,12 +133,12 @@ describe('SocialAuthService', () => {
 
       await expect(
         socialAuthService.getSocialLoginUrl('google')
-      ).rejects.toThrow('獲取社交登錄 URL 失敗');
+      ).rejects.toThrow('Get社交登錄 URL Failed');
     });
   });
 
   describe('handleSocialCallback', () => {
-    it('應該成功處理社交登錄回調', async () => {
+    it('應該SuccessHandle社交登錄回調', async () => {
       const _mockResponse = {
         success: true,
         data: {
@@ -181,7 +181,7 @@ describe('SocialAuthService', () => {
       },
     };
 
-    it('應該成功鏈接社交帳戶', async () => {
+    it('應該Success鏈接社交帳戶', async () => {
       const _mockResponse = {
         success: true,
         data: {
@@ -209,7 +209,7 @@ describe('SocialAuthService', () => {
   });
 
   describe('unlinkSocialAccount', () => {
-    it('應該成功解除鏈接社交帳戶', async () => {
+    it('應該Success解除鏈接社交帳戶', async () => {
       const _mockResponse = {
         success: true,
       };
@@ -224,7 +224,7 @@ describe('SocialAuthService', () => {
   });
 
   describe('getLinkedSocialAccounts', () => {
-    it('應該成功獲取已鏈接的社交帳戶', async () => {
+    it('應該SuccessGet已鏈接的社交帳戶', async () => {
       const _mockResponse = {
         success: true,
         data: [
@@ -251,7 +251,7 @@ describe('SocialAuthService', () => {
   });
 
   describe('getSocialUserInfo', () => {
-    it('應該成功獲取社交用戶信息', async () => {
+    it('應該SuccessGet社交用戶信息', async () => {
       const mockUserInfo: SocialUserInfo = {
         id: '123',
         email: 'test@example.com',
@@ -284,7 +284,7 @@ describe('SocialAuthService', () => {
 
   describe('isProviderConfigured', () => {
     it('應該正確檢查提供商配置狀態', () => {
-      // 由於我們使用環境變量，這裡只是測試方法調用不會出錯
+      // 由於我們使用環境Variable，這裡只YesTestMethod調用不會出錯
       expect(socialAuthService.isProviderConfigured('google')).toBeDefined();
       expect(socialAuthService.isProviderConfigured('facebook')).toBeDefined();
       expect(socialAuthService.isProviderConfigured('apple')).toBeDefined();
@@ -306,10 +306,10 @@ describe('SocialAuthService', () => {
     });
   });
 
-  describe('錯誤處理', () => {
-    it('應該處理 API 錯誤', async () => {
+  describe('ErrorHandle', () => {
+    it('應該Handle API Error', async () => {
       const { api } = require('../../../core/utils/api');
-      api.post.mockRejectedValue(new Error('網絡錯誤'));
+      api.post.mockRejectedValue(new Error('網絡Error'));
 
       const credentials: SocialLoginCredentials = {
         provider: 'google',
@@ -317,7 +317,7 @@ describe('SocialAuthService', () => {
       };
 
       await expect(socialAuthService.socialLogin(credentials)).rejects.toThrow(
-        '網絡錯誤'
+        '網絡Error'
       );
     });
 

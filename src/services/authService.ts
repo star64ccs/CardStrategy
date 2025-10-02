@@ -56,7 +56,7 @@ export class AuthService {
     }
 
     try {
-      // 檢查現有的認證狀態
+      // Check現有的AuthenticateStatus
       await this.checkAuthStatus();
       this.isInitialized = true;
       logger.info('AuthService initialized successfully');
@@ -67,11 +67,11 @@ export class AuthService {
   }
 
   /**
-   * 用戶登錄
+   * UserLogin
    */
   public async login(loginData: LoginData): Promise<AuthResult> {
     try {
-      // 驗證輸入數據
+      // VerifyInputData
       const _validation = validateLoginData(loginData);
       if (!validation.isValid) {
         return {
@@ -85,9 +85,9 @@ export class AuthService {
 
       const _response = await apiService.post('/auth/login', loginData);
 
-      // apiService 已經返回 { success: true, data: ... } 格式
+      // apiService 已經Return { success: true, data: ... } 格式
       if (response.success && response.data) {
-        // 保存認證信息
+        // SaveAuthenticateInformation
         await this.saveAuthData(response.data);
         logger.info('User login successful', {
           userId: response.data.user.id,
@@ -106,7 +106,7 @@ export class AuthService {
       }
     } catch (error) {
       logger.error('Login error', error);
-      // 如果是 API 錯誤，拋出異常
+      // 如果Yes API Error，Throw異常
       if (error instanceof Error) {
         throw error;
       }
@@ -119,11 +119,11 @@ export class AuthService {
   }
 
   /**
-   * 用戶註冊
+   * UserRegister
    */
   public async register(registerData: RegisterData): Promise<AuthResult> {
     try {
-      // 驗證輸入數據
+      // VerifyInputData
       const _validation = validateRegisterData(registerData);
       if (!validation.isValid) {
         return {
@@ -139,9 +139,9 @@ export class AuthService {
 
       const _response = await apiService.post('/auth/register', registerData);
 
-      // apiService 已經返回 { success: true, data: ... } 格式
+      // apiService 已經Return { success: true, data: ... } 格式
       if (response.success && response.data) {
-        // 保存認證信息
+        // SaveAuthenticateInformation
         await this.saveAuthData(response.data);
         logger.info('User registration successful', {
           userId: response.data.user.id,
@@ -169,7 +169,7 @@ export class AuthService {
   }
 
   /**
-   * 用戶登出
+   * User登出
    */
   public async logout(): Promise<AuthResult> {
     try {
@@ -177,7 +177,7 @@ export class AuthService {
 
       const _response = await apiService.post('/auth/logout');
 
-      // 清除本地認證信息
+      // ClearLocalAuthenticateInformation
       await this.clearAuthData();
 
       logger.info('User logout successful');
@@ -188,7 +188,7 @@ export class AuthService {
       };
     } catch (error) {
       logger.error('Logout error', error);
-      // 即使API調用失敗，也要清除本地數據
+      // 即使API調用Failed，也要ClearLocalData
       await this.clearAuthData();
 
       return {
@@ -200,7 +200,7 @@ export class AuthService {
   }
 
   /**
-   * 刷新令牌
+   * Refresh令牌
    */
   public async refreshToken(): Promise<AuthResult> {
     try {
@@ -219,7 +219,7 @@ export class AuthService {
         refreshToken,
       });
 
-      // 驗證API響應
+      // VerifyAPIResponse
       const _responseValidation = validateApiResponse(response.data);
       if (!responseValidation.isValid) {
         return {
@@ -230,7 +230,7 @@ export class AuthService {
       }
 
       if (response.data.success) {
-        // 更新認證信息
+        // UpdateAuthenticateInformation
         await this.saveAuthData(response.data.data);
         logger.info('Token refresh successful');
 
@@ -256,7 +256,7 @@ export class AuthService {
   }
 
   /**
-   * 檢查認證狀態
+   * CheckAuthenticateStatus
    */
   public async checkAuthStatus(): Promise<AuthResult> {
     try {
@@ -273,7 +273,7 @@ export class AuthService {
 
       const _response = await apiService.get('/auth/me');
 
-      // 驗證API響應
+      // VerifyAPIResponse
       const _responseValidation = validateApiResponse(response.data);
       if (!responseValidation.isValid) {
         return {
@@ -311,11 +311,11 @@ export class AuthService {
   }
 
   /**
-   * 保存認證數據
+   * SaveAuthenticateData
    */
   private async saveAuthData(authData: AuthResponse): Promise<void> {
     try {
-      // 在測試環境中使用 require，在運行時使用 import
+      // 在Test環境中使用 require，在運Row時使用 import
       let AsyncStorage;
       if (process.env.NODE_ENV === 'test') {
         AsyncStorage = require('@react-native-async-storage/async-storage');
@@ -338,11 +338,11 @@ export class AuthService {
   }
 
   /**
-   * 清除認證數據
+   * ClearAuthenticateData
    */
   private async clearAuthData(): Promise<void> {
     try {
-      // 在測試環境中使用 require，在運行時使用 import
+      // 在Test環境中使用 require，在運Row時使用 import
       let AsyncStorage;
       if (process.env.NODE_ENV === 'test') {
         AsyncStorage = require('@react-native-async-storage/async-storage');
@@ -365,11 +365,11 @@ export class AuthService {
   }
 
   /**
-   * 獲取訪問令牌
+   * Get訪問令牌
    */
   private async getAccessToken(): Promise<string | null> {
     try {
-      // 在測試環境中使用 require，在運行時使用 import
+      // 在Test環境中使用 require，在運Row時使用 import
       let AsyncStorage;
       if (process.env.NODE_ENV === 'test') {
         AsyncStorage = require('@react-native-async-storage/async-storage');
@@ -387,11 +387,11 @@ export class AuthService {
   }
 
   /**
-   * 獲取刷新令牌
+   * GetRefresh令牌
    */
   private async getRefreshToken(): Promise<string | null> {
     try {
-      // 在測試環境中使用 require，在運行時使用 import
+      // 在Test環境中使用 require，在運Row時使用 import
       let AsyncStorage;
       if (process.env.NODE_ENV === 'test') {
         AsyncStorage = require('@react-native-async-storage/async-storage');
@@ -409,11 +409,11 @@ export class AuthService {
   }
 
   /**
-   * 獲取當前用戶
+   * Get當前User
    */
   public async getCurrentUser(): Promise<User | null> {
     try {
-      // 在測試環境中使用 require，在運行時使用 import
+      // 在Test環境中使用 require，在運Row時使用 import
       let AsyncStorage;
       if (process.env.NODE_ENV === 'test') {
         AsyncStorage = require('@react-native-async-storage/async-storage');
@@ -432,7 +432,7 @@ export class AuthService {
   }
 
   /**
-   * 檢查是否已登錄
+   * CheckYesNo已Login
    */
   public async isLoggedIn(): Promise<boolean> {
     try {
@@ -445,7 +445,7 @@ export class AuthService {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _authService = AuthService.getInstance();
 
 export default authService;

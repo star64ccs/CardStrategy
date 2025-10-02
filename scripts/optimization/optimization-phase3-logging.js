@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -45,7 +45,7 @@ class Phase3LoggingOptimizer {
     this.backendDir = path.join(this.projectRoot, 'backend');
   }
 
-  // 創建統一日誌系統
+  // Create統一Log系統
   async createUnifiedLoggingSystem() {
     log.header('📝 創建統一日誌系統');
 
@@ -57,7 +57,7 @@ const path = require('path');
 // eslint-disable-next-line no-unused-vars
 const fs = require('fs');
 
-// 創建日誌目錄
+// CreateLogDirectory
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logDir = path.join(__dirname, '..', 'logs');
@@ -65,7 +65,7 @@ if (!fs.existsSync(logDir)) {
   fs.mkdirSync(logDir, { recursive: true });
 }
 
-// 日誌格式
+// Log格式
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logFormat = winston.format.combine(
@@ -76,7 +76,7 @@ const logFormat = winston.format.combine(
   winston.format.json()
 );
 
-// 控制台格式
+// Control台格式
 const consoleFormat = winston.format.combine(
   winston.format.colorize(),
   winston.format.timestamp({
@@ -87,7 +87,7 @@ const consoleFormat = winston.format.combine(
   })
 );
 
-// 創建 logger 實例
+// Create logger Instance
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logger = winston.createLogger({
@@ -95,14 +95,14 @@ const logger = winston.createLogger({
   format: logFormat,
   defaultMeta: { service: 'cardstrategy-api' },
   transports: [
-    // 錯誤日誌文件
+    // ErrorLogFile
     new winston.transports.File({
       filename: path.join(logDir, 'error.log'),
       level: 'error',
       maxsize: 5242880, // 5MB
       maxFiles: 5
     }),
-    // 所有日誌文件
+    // 所有LogFile
     new winston.transports.File({
       filename: path.join(logDir, 'combined.log'),
       maxsize: 5242880, // 5MB
@@ -111,18 +111,18 @@ const logger = winston.createLogger({
   ]
 });
 
-// 開發環境添加控制台輸出
+// On發環境AddControl台Output
 if (process.env.NODE_ENV !== 'production') {
   logger.add(new winston.transports.Console({
     format: consoleFormat
   }));
 }
 
-// 日誌工具函數
+// LogToolFunction
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 const logUtils = {
-  // 請求日誌
+  // RequestLog
   logRequest: (req, res, next) => {
     const start = Date.now();
     res.on('finish', () => {
@@ -139,7 +139,7 @@ const logUtils = {
     next();
   },
 
-  // 錯誤日誌
+  // ErrorLog
   logError: (error, req, res, next) => {
     logger.error('Application Error', {
       error: error.message,
@@ -151,7 +151,7 @@ const logUtils = {
     next(error);
   },
 
-  // 性能日誌
+  // 性能Log
   logPerformance: (operation, duration, metadata = {}) => {
     logger.info('Performance Metric', {
       operation,
@@ -160,7 +160,7 @@ const logUtils = {
     });
   },
 
-  // 安全日誌
+  // 安全Log
   logSecurity: (event, details) => {
     logger.warn('Security Event', {
       event,
@@ -183,7 +183,7 @@ module.exports = {
     log.success('統一日誌系統已創建');
   }
 
-  // 執行優化
+  // 執Row優化
   async run() {
     log.header('🚀 開始第三階段日誌系統優化');
 
@@ -193,13 +193,13 @@ module.exports = {
       log.header('🎉 第三階段日誌系統優化完成！');
       log.success('統一日誌系統已創建在 src/utils/unified-logger.js');
     } catch (error) {
-      log.error(`優化過程中發生錯誤: ${error.message}`);
+      log.error(`優化過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行優化
+// 執Row優化
 if (require.main === module) {
   const optimizer = new Phase3LoggingOptimizer();
   optimizer.run();

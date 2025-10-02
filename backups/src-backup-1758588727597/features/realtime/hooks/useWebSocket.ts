@@ -1,0 +1,494 @@
+/**
+ * WebSocket 自定義 Hook
+ * 提供 WebSocket 連接管理和消息處理功能
+ */
+
+import { useCallback, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import type { AppDispatch, RootState } from '../../../store';
+import {
+  addSubscription,
+  broadcastMessage,
+  clearError,
+  clearMessages,
+  clearNotifications,
+  connectWebSocket,
+  disconnectWebSocket,
+  initializeWebSocket,
+  joinRoom,
+  leaveRoom,
+  receiveMessage,
+  reconnectWebSocket,
+  removeSubscription,
+  sendWebSocketMessage,
+  setError,
+  setVisibility,
+  updateConnectionState,
+  updateStats,
+} from '../../../store/slices/websocketSlice';
+import { websocketService } from '../services/websocketService';
+import type {
+  BroadcastOptions,
+  ConnectionState,
+  SubscriptionFilter,
+  WebSocketConfig,
+  WebSocketEventHandlers,
+  WebSocketMessage,
+  WebSocketStats,
+} from '../types/websocket';
+
+export const useWebSocket = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const websocketState = useSelector((state: RootState) => state.websocket);
+  const eventHandlersRef = useRef<WebSocketEventHandlers>({});
+
+  // Debug logging removed for testing
+
+  // 防護性檢查 - 如果websocketState為undefined，使用默認值
+  const safeWebsocketState = websocketState || {
+    isInitialized: false,
+    status: 'disconnected',
+    connectionState: null,
+    config: null,
+    messages: [],
+    lastMessage: null,
+    messageHistory: [],
+    stats: null,
+    currentRooms: [],
+    subscriptions: [],
+    loading: {
+      initializing: false,
+      connecting: false,
+      disconnecting: false,
+      sendingMessage: false,
+      broadcasting: false,
+      reconnecting: false,
+      joiningRoom: false,
+      leavingRoom: false,
+    },
+    error: null,
+    lastError: null,
+    isVisible: true,
+    unreadCount: 0,
+    notifications: [],
+  };
+
+  // 初始化 WebSocket
+  const initialize = useCallback(
+    async (config?: Partial<WebSocketConfig>) => {
+      try {
+        await dispatch(initializeWebSocket(config));
+
+        // 設置事件處理器 - 添加防護性檢查
+        if (
+          websocketService &&
+          typeof websocketService.setEventHandlers === 'function'
+        ) {
+          websocketService.setEventHandlers({
+            onConnect: event => {
+              eventHandlersRef.current.onConnect?.(event);
+              dispatch(
+                updateConnectionState(websocketService.getConnectionState())
+              );
+            },
+            onDisconnect: event => {
+              eventHandlersRef.current.onDisconnect?.(event);
+              dispatch(
+                updateConnectionState(websocketService.getConnectionState())
+              );
+            },
+            onMessage: message => {
+              eventHandlersRef.current.onMessage?.(message);
+              dispatch(receiveMessage(message));
+            },
+            onError: error => {
+              eventHandlersRef.current.onError?.(error);
+              dispatch(setError(error.message));
+            },
+            onReconnect: attempt => {
+              eventHandlersRef.current.onReconnect?.(attempt);
+            },
+            onHeartbeat: latency => {
+              eventHandlersRef.current.onHeartbeat?.(latency);
+              dispatch(updateStats(websocketService.getStats()));
+            },
+            onStatusChange: status => {
+              eventHandlersRef.current.onStatusChange?.(status);
+            },
+          });
+        }
+      } catch (error: unknown) {
+        dispatch(setError(error.message));
+        throw error;
+      }
+    },
+    [dispatch]
+  );
+
+  // 連接 WebSocket
+  const connect = useCallback(async () => {
+    try {
+      await dispatch(connectWebSocket());
+    } catch (error: unknown) {
+      dispatch(setError((error as Error).message));
+      throw error;
+    }
+  }, [dispatch]);
+
+  // 斷開 WebSocket 連接
+  const disconnect = useCallback(async () => {
+    try {
+      await dispatch(disconnectWebSocket());
+    } catch (error: unknown) {
+      dispatch(setError((error as Error).message));
+      throw error;
+    }
+  }, [dispatch]);
+
+  // 發送消息
+  const sendMessage = useCallback(
+    async (message: Partial<WebSocketMessage>) => {
+      try {
+        await dispatch(sendWebSocketMessage(message));
+      } catch (error: unknown) {
+        dispatch(setError((error as Error).message));
+        throw error;
+      }
+    },
+    [dispatch]
+  );
+
+  // 廣播消息
+  const broadcast = useCallback(
+    async (message: Partial<WebSocketMessage>, options?: BroadcastOptions) => {
+      try {
+        await dispatch(broadcastMessage({ message, options }));
+      } catch (error: unknown) {
+        dispatch(setError((error as Error).message));
+        throw error;
+      }
+    },
+    [dispatch]
+  );
+
+  // 重新連接
+  const reconnect = useCallback(async () => {
+    try {
+      await dispatch(reconnectWebSocket());
+    } catch (error: unknown) {
+      dispatch(setError((error as Error).message));
+      throw error;
+    }
+  }, [dispatch]);
+
+  // 加入房間
+  const joinRoomHandler = useCallback(
+    async (roomId: string, userInfo: unknown) => {
+      try {
+        await dispatch(joinRoom({ roomId, userInfo })).unwrap();
+      } catch (error: unknown) {
+        dispatch(setError(error.message));
+        throw error;
+      }
+    },
+    [dispatch]
+  );
+
+  // 離開房間
+  const leaveRoomHandler = useCallback(
+    async (roomId: string) => {
+      try {
+        await dispatch(leaveRoom(roomId)).unwrap();
+      } catch (error: unknown) {
+        dispatch(setError(error.message));
+        throw error;
+      }
+    },
+    [dispatch]
+  );
+
+  // 設置事件處理器
+  const setEventHandlers = useCallback((handlers: WebSocketEventHandlers) => {
+    eventHandlersRef.current = { ...eventHandlersRef.current, ...handlers };
+  }, []);
+
+  // 添加訂閱
+  const subscribe = useCallback(
+    (subscriptionId: string, filter: SubscriptionFilter) => {
+      dispatch(addSubscription({ id: subscriptionId, filter }));
+    },
+    [dispatch]
+  );
+
+  // 取消訂閱
+  const unsubscribe = useCallback(
+    (subscriptionId: string) => {
+      dispatch(removeSubscription(subscriptionId));
+    },
+    [dispatch]
+  );
+
+  // 清空消息
+  const clearMessagesHandler = useCallback(() => {
+    dispatch(clearMessages());
+  }, [dispatch]);
+
+  // 清空通知
+  const clearNotificationsHandler = useCallback(() => {
+    dispatch(clearNotifications());
+  }, [dispatch]);
+
+  // 設置可見性
+  const setVisibilityHandler = useCallback(
+    (isVisible: boolean) => {
+      dispatch(setVisibility(isVisible));
+    },
+    [dispatch]
+  );
+
+  // 清空錯誤
+  const clearErrorHandler = useCallback(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  // 獲取統計信息
+  const getStats = useCallback((): WebSocketStats | null => {
+    return websocketService.getStats();
+  }, []);
+
+  // 獲取連接狀態
+  const getConnectionState = useCallback((): ConnectionState => {
+    return websocketService.getConnectionState();
+  }, []);
+
+  // 獲取配置
+  const getConfig = useCallback((): WebSocketConfig => {
+    return websocketService.getConfig();
+  }, []);
+
+  // 更新配置
+  const updateConfig = useCallback((updates: Partial<WebSocketConfig>) => {
+    websocketService.updateConfig(updates);
+  }, []);
+
+  // 檢查是否已連接
+  const isConnected = safeWebsocketState.status === 'connected';
+
+  // 檢查是否正在連接
+  const isConnecting =
+    safeWebsocketState.status === 'connecting' ||
+    safeWebsocketState.status === 'reconnecting';
+
+  // 檢查是否有錯誤
+  const hasError = !!safeWebsocketState.error;
+
+  // 獲取最新消息
+  const { lastMessage } = safeWebsocketState;
+
+  // 獲取未讀消息數量
+  const { unreadCount } = safeWebsocketState;
+
+  // 獲取通知
+  const { notifications } = safeWebsocketState;
+
+  // 獲取當前房間
+  const { currentRooms } = safeWebsocketState;
+
+  // 獲取訂閱
+  const { subscriptions } = safeWebsocketState;
+
+  // 獲取載入狀態
+  const { loading } = safeWebsocketState;
+
+  // 獲取統計信息
+  const { stats } = safeWebsocketState;
+
+  return {
+    // 狀態
+    isInitialized: safeWebsocketState.isInitialized,
+    status: safeWebsocketState.status,
+    connectionState: safeWebsocketState.connectionState,
+    config: safeWebsocketState.config,
+    isConnected,
+    isConnecting,
+    hasError,
+    error: safeWebsocketState.error,
+    lastError: safeWebsocketState.lastError,
+
+    // 消息
+    messages: safeWebsocketState.messages,
+    lastMessage,
+    messageHistory: safeWebsocketState.messageHistory,
+    unreadCount,
+    notifications,
+
+    // 房間和訂閱
+    currentRooms,
+    subscriptions,
+
+    // 統計
+    stats,
+
+    // 載入狀態
+    loading,
+
+    // 方法
+    initialize,
+    connect,
+    disconnect,
+    sendMessage,
+    broadcast,
+    reconnect,
+    joinRoom: joinRoomHandler,
+    leaveRoom: leaveRoomHandler,
+    setEventHandlers,
+    subscribe,
+    unsubscribe,
+    clearMessages: clearMessagesHandler,
+    clearNotifications: clearNotificationsHandler,
+    setVisibility: setVisibilityHandler,
+    clearError: clearErrorHandler,
+    getStats,
+    getConnectionState,
+    getConfig,
+    updateConfig,
+  };
+};
+
+// 簡化的 WebSocket Hook，專注於基本功能
+export const useSimpleWebSocket = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { status, error, lastMessage, isInitialized } = useSelector(
+    (state: RootState) => state.websocket
+  );
+
+  const connect = useCallback(async () => {
+    try {
+      await dispatch(connectWebSocket()).unwrap();
+    } catch (error: unknown) {
+      throw error;
+    }
+  }, [dispatch]);
+
+  const disconnect = useCallback(async () => {
+    try {
+      await dispatch(disconnectWebSocket()).unwrap();
+    } catch (error: unknown) {
+      throw error;
+    }
+  }, [dispatch]);
+
+  const sendMessage = useCallback(
+    async (message: Partial<WebSocketMessage>) => {
+      try {
+        await dispatch(sendWebSocketMessage(message)).unwrap();
+      } catch (error: unknown) {
+        throw error;
+      }
+    },
+    [dispatch]
+  );
+
+  return {
+    status,
+    error,
+    lastMessage,
+    isInitialized,
+    isConnected: status === 'connected',
+    connect,
+    disconnect,
+    sendMessage,
+  };
+};
+
+// 專門用於消息訂閱的 Hook
+export const useWebSocketSubscription = (
+  subscriptionId: string,
+  filter: SubscriptionFilter,
+  onMessage?: (message: WebSocketMessage) => void
+) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { messages, subscriptions } = useSelector(
+    (state: RootState) => state.websocket
+  );
+
+  useEffect(() => {
+    // 添加訂閱
+    dispatch(addSubscription({ id: subscriptionId, filter }));
+
+    // 設置事件處理器
+    if (onMessage) {
+      websocketService.subscribe(subscriptionId, filter, onMessage);
+    }
+
+    return () => {
+      // 清理訂閱
+      dispatch(removeSubscription(subscriptionId));
+      websocketService.unsubscribe(subscriptionId);
+    };
+  }, [dispatch, subscriptionId, filter, onMessage]);
+
+  // 過濾符合訂閱條件的消息
+  const filteredMessages = messages.filter(message => {
+    if (filter.userId && message.userId !== filter.userId) {
+      return false;
+    }
+    if (filter.messageTypes && !filter.messageTypes.includes(message.type)) {
+      return false;
+    }
+    if (
+      filter.priority &&
+      message.priority &&
+      !filter.priority.includes(message.priority)
+    ) {
+      return false;
+    }
+    return true;
+  });
+
+  return {
+    messages: filteredMessages,
+    subscription: subscriptions[subscriptionId as keyof typeof subscriptions],
+  };
+};
+
+// 專門用於房間管理的 Hook
+export const useWebSocketRoom = (roomId: string) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { currentRooms, loading } = useSelector(
+    (state: RootState) => state.websocket
+  );
+
+  const isInRoom = currentRooms.includes(roomId);
+  const isJoining = loading.joiningRoom;
+  const isLeaving = loading.leavingRoom;
+
+  const join = useCallback(
+    async (userInfo: unknown) => {
+      try {
+        await dispatch(joinRoom({ roomId, userInfo })).unwrap();
+      } catch (error: unknown) {
+        throw error;
+      }
+    },
+    [dispatch, roomId]
+  );
+
+  const leave = useCallback(async () => {
+    try {
+      await dispatch(leaveRoom(roomId)).unwrap();
+    } catch (error: unknown) {
+      throw error;
+    }
+  }, [dispatch, roomId]);
+
+  return {
+    roomId,
+    isInRoom,
+    isJoining,
+    isLeaving,
+    join,
+    leave,
+  };
+};

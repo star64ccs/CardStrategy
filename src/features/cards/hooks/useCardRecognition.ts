@@ -78,17 +78,17 @@ export interface UseCardRecognitionOptions {
 }
 
 export interface UseCardRecognitionReturn {
-  // 狀態
+  // Status
   isRecognizing: boolean;
   currentResult: CardRecognitionResult | null;
   recognitionError: string | null;
 
-  // 歷史記錄
+  // 歷史Record
   history: RecognitionHistory[];
   isLoadingHistory: boolean;
   historyError: string | null;
 
-  // 批量處理
+  // BatchHandle
   batchJobs: BatchRecognitionResponse[];
   isBatchProcessing: boolean;
   batchError: string | null;
@@ -98,23 +98,23 @@ export interface UseCardRecognitionReturn {
   realtimeFrames: RealtimeRecognitionFrame[];
   realtimeError: string | null;
 
-  // 配置
+  // Configure
   config: RecognitionConfig;
   isConfigLoading: boolean;
   configError: string | null;
 
-  // 統計
+  // Statistics
   stats: RecognitionStats | null;
   isStatsLoading: boolean;
   statsError: string | null;
 
-  // UI 狀態
+  // UI Status
   selectedAlternative: AlternativeResult | null;
   showAlternatives: boolean;
   cropMode: boolean;
   cropData: { x: number; y: number; width: number; height: number } | null;
 
-  // 操作方法
+  // OperationMethod
   initialize: () => Promise<void>;
   recognize: (request: CardRecognitionRequest) => Promise<void>;
   recognizeBatch: (request: BatchRecognitionRequest) => Promise<void>;
@@ -123,19 +123,19 @@ export interface UseCardRecognitionReturn {
   loadStats: () => Promise<void>;
   updateConfig: (updates: Partial<RecognitionConfig>) => Promise<void>;
 
-  // 實時識別控制
+  // 實時識別Control
   startRealtime: (options?: {
     onFrame?: (frame: RealtimeRecognitionFrame) => void;
     frameRate?: number;
   }) => Promise<void>;
   stopRealtime: () => void;
 
-  // 批量處理控制
+  // BatchHandleControl
   getBatchStatus: (batchId: string) => Promise<void>;
   cancelBatch: (batchId: string) => void;
   clearBatch: (batchId: string) => void;
 
-  // UI 控制
+  // UI Control
   selectAlternative: (alternative: AlternativeResult | null) => void;
   toggleAlternatives: () => void;
   enableCropMode: () => void;
@@ -144,7 +144,7 @@ export interface UseCardRecognitionReturn {
     data: { x: number; y: number; width: number; height: number } | null
   ) => void;
 
-  // 錯誤處理
+  // ErrorHandle
   clearErrors: () => void;
   clearRecognitionError: () => void;
   clearHistoryError: () => void;
@@ -153,10 +153,10 @@ export interface UseCardRecognitionReturn {
   clearConfigError: () => void;
   clearStatsError: () => void;
 
-  // 重置
+  // Reset
   reset: () => void;
 
-  // 工具方法
+  // ToolMethod
   getSupportedGames: () => CardGame[];
   isGameSupported: (game: CardGame) => boolean;
   getDefaultOptions: () => any;
@@ -213,14 +213,14 @@ export const _useCardRecognition = (
   const _cropMode = useAppSelector(selectCropMode);
   const _cropData = useAppSelector(selectCropData);
 
-  // 操作方法
+  // OperationMethod
   const _initialize = useCallback(async () => {
     try {
       await dispatch(initializeRecognition()).unwrap();
-      logger.info('卡牌識別初始化成功');
+      logger.info('卡牌識別InitializeSuccess');
     } catch (error: unknown) {
-      logger.error('卡牌識別初始化失敗:', error);
-      onRecognitionError?.(error.message || '初始化失敗');
+      logger.error('卡牌識別InitializeFailed:', error);
+      onRecognitionError?.(error.message || 'InitializeFailed');
     }
   }, [dispatch, onRecognitionError]);
 
@@ -231,12 +231,12 @@ export const _useCardRecognition = (
         if (result.response.success && result.response.results.length > 0) {
           onRecognitionComplete?.(result.response.results[0]);
         }
-        logger.info('卡牌識別成功:', {
+        logger.info('卡牌識別Success:', {
           confidence: result.response.results[0]?.confidence,
         });
       } catch (error: unknown) {
-        logger.error('卡牌識別失敗:', error);
-        onRecognitionError?.(error.message || '識別失敗');
+        logger.error('卡牌識別Failed:', error);
+        onRecognitionError?.(error.message || '識別Failed');
       }
     },
     [dispatch, onRecognitionComplete, onRecognitionError]
@@ -251,7 +251,7 @@ export const _useCardRecognition = (
           totalImages: batch.totalImages,
         });
 
-        // 輪詢批量作業狀態
+        // 輪詢Batch作業Status
         const _pollBatchStatus = async () => {
           try {
             const _status = await dispatch(
@@ -263,19 +263,19 @@ export const _useCardRecognition = (
               onBatchComplete?.(status);
               logger.info('批量識別完成:', { batchId: status.batchId });
             } else if (status.status === 'processing') {
-              // 繼續輪詢
+              // Continue輪詢
               setTimeout(pollBatchStatus, 2000);
             }
           } catch (error: unknown) {
-            logger.error('獲取批量狀態失敗:', error);
+            logger.error('Get批量狀態Failed:', error);
           }
         };
 
-        // 開始輪詢
+        // Begin輪詢
         setTimeout(pollBatchStatus, 1000);
       } catch (error: unknown) {
-        logger.error('批量識別啟動失敗:', error);
-        onRecognitionError?.(error.message || '批量識別失敗');
+        logger.error('批量識別啟動Failed:', error);
+        onRecognitionError?.(error.message || '批量識別Failed');
       }
     },
     [dispatch, onBatchComplete, onRecognitionError]
@@ -285,9 +285,9 @@ export const _useCardRecognition = (
     async (userId: string, limit?: number) => {
       try {
         await dispatch(getRecognitionHistory({ userId, limit })).unwrap();
-        logger.info('識別歷史加載成功');
+        logger.info('識別歷史加載Success');
       } catch (error: unknown) {
-        logger.error('加載識別歷史失敗:', error);
+        logger.error('加載識別歷史Failed:', error);
       }
     },
     [dispatch]
@@ -297,12 +297,12 @@ export const _useCardRecognition = (
     async (historyId: string, feedback: UserFeedback) => {
       try {
         await dispatch(submitUserFeedback({ historyId, feedback })).unwrap();
-        logger.info('用戶反饋提交成功:', {
+        logger.info('用戶反饋提交Success:', {
           historyId,
           isCorrect: feedback.isCorrect,
         });
       } catch (error: unknown) {
-        logger.error('提交用戶反饋失敗:', error);
+        logger.error('提交用戶反饋Failed:', error);
       }
     },
     [dispatch]
@@ -311,9 +311,9 @@ export const _useCardRecognition = (
   const _loadStats = useCallback(async () => {
     try {
       await dispatch(getRecognitionStats()).unwrap();
-      logger.info('識別統計加載成功');
+      logger.info('識別統計加載Success');
     } catch (error: unknown) {
-      logger.error('加載識別統計失敗:', error);
+      logger.error('加載識別統計Failed:', error);
     }
   }, [dispatch]);
 
@@ -321,15 +321,15 @@ export const _useCardRecognition = (
     async (updates: Partial<RecognitionConfig>) => {
       try {
         await dispatch(updateRecognitionConfig(updates)).unwrap();
-        logger.info('識別配置更新成功');
+        logger.info('識別ConfigureUpdateSuccess');
       } catch (error: unknown) {
-        logger.error('更新識別配置失敗:', error);
+        logger.error('Update識別ConfigureFailed:', error);
       }
     },
     [dispatch]
   );
 
-  // 實時識別控制
+  // 實時識別Control
   const _startRealtime = useCallback(
     async (
       options: {
@@ -352,8 +352,8 @@ export const _useCardRecognition = (
 
         logger.info('實時識別已啟動');
       } catch (error: unknown) {
-        logger.error('啟動實時識別失敗:', error);
-        dispatch(setRealtimeError(error.message || '啟動實時識別失敗'));
+        logger.error('啟動實時識別Failed:', error);
+        dispatch(setRealtimeError(error.message || '啟動實時識別Failed'));
       }
     },
     [dispatch, onRealtimeFrame]
@@ -365,20 +365,20 @@ export const _useCardRecognition = (
     logger.info('實時識別已停止');
   }, [dispatch]);
 
-  // 批量處理控制
+  // BatchHandleControl
   const _getBatchStatus = useCallback(
     async (batchId: string) => {
       try {
         await dispatch(getBatchJobStatus(batchId)).unwrap();
       } catch (error: unknown) {
-        logger.error('獲取批量狀態失敗:', error);
+        logger.error('Get批量狀態Failed:', error);
       }
     },
     [dispatch]
   );
 
   const _cancelBatch = useCallback((batchId: string) => {
-    // 在實際實現中，這裡會調用服務來取消批量作業
+    // 在實際實現中，這裡會調用Service來CancelBatch作業
     logger.info('取消批量作業:', { batchId });
   }, []);
 
@@ -389,7 +389,7 @@ export const _useCardRecognition = (
     [dispatch]
   );
 
-  // UI 控制
+  // UI Control
   const _selectAlternative = useCallback(
     (alternative: AlternativeResult | null) => {
       dispatch(setSelectedAlternative(alternative));
@@ -417,7 +417,7 @@ export const _useCardRecognition = (
     [dispatch]
   );
 
-  // 錯誤處理
+  // ErrorHandle
   const _clearErrors = useCallback(() => {
     dispatch(clearRecognitionError());
     dispatch(clearHistoryError());
@@ -451,13 +451,13 @@ export const _useCardRecognition = (
     dispatch(clearStatsError());
   }, [dispatch]);
 
-  // 重置
+  // Reset
   const _reset = useCallback(() => {
     dispatch(resetRecognitionState());
     stopRealtime();
   }, [dispatch, stopRealtime]);
 
-  // 工具方法
+  // ToolMethod
   const _getSupportedGames = useCallback((): CardGame[] => {
     return cardRecognitionService.getSupportedGames();
   }, []);
@@ -480,7 +480,7 @@ export const _useCardRecognition = (
           return { valid: false, error: '圖像數據不能為空' };
         }
 
-        // 檢查 Base64 格式
+        // Check Base64 格式
         if (
           !imageData.startsWith('data:image/') &&
           !imageData.match(/^[A-Za-z0-9+/]*={0,2}$/)
@@ -488,7 +488,7 @@ export const _useCardRecognition = (
           return { valid: false, error: '無效的圖像格式' };
         }
 
-        // 檢查圖像大小
+        // CheckGraph像大小
         const _imageSizeKB = (imageData.length * 3) / 4 / 1024;
         if (imageSizeKB > 10240) {
           return {
@@ -503,7 +503,7 @@ export const _useCardRecognition = (
 
         return { valid: true };
       } catch (error: unknown) {
-        return { valid: false, error: `圖像驗證失敗: ${error.message}` };
+        return { valid: false, error: `圖像VerifyFailed: ${error.message}` };
       }
     },
     []
@@ -531,21 +531,21 @@ export const _useCardRecognition = (
     []
   );
 
-  // 自動初始化
+  // AutoInitialize
   useEffect(() => {
     if (autoInitialize) {
       initialize();
     }
   }, [autoInitialize, initialize]);
 
-  // 自動加載歷史
+  // Auto加載歷史
   useEffect(() => {
     if (autoLoadHistory) {
-      loadHistory('current_user'); // 在實際實現中從認證狀態獲取用戶ID
+      loadHistory('current_user'); // 在實際實現中從AuthenticateStatusGetUserID
     }
   }, [autoLoadHistory, loadHistory]);
 
-  // 自動加載統計
+  // Auto加載Statistics
   useEffect(() => {
     if (autoLoadStats) {
       loadStats();
@@ -562,17 +562,17 @@ export const _useCardRecognition = (
   }, [isRealtimeActive, stopRealtime]);
 
   return {
-    // 狀態
+    // Status
     isRecognizing,
     currentResult,
     recognitionError,
 
-    // 歷史記錄
+    // 歷史Record
     history,
     isLoadingHistory,
     historyError,
 
-    // 批量處理
+    // BatchHandle
     batchJobs,
     isBatchProcessing,
     batchError,
@@ -582,23 +582,23 @@ export const _useCardRecognition = (
     realtimeFrames,
     realtimeError,
 
-    // 配置
+    // Configure
     config,
     isConfigLoading,
     configError,
 
-    // 統計
+    // Statistics
     stats,
     isStatsLoading,
     statsError,
 
-    // UI 狀態
+    // UI Status
     selectedAlternative,
     showAlternatives,
     cropMode,
     cropData,
 
-    // 操作方法
+    // OperationMethod
     initialize,
     recognize,
     recognizeBatch,
@@ -607,23 +607,23 @@ export const _useCardRecognition = (
     loadStats,
     updateConfig,
 
-    // 實時識別控制
+    // 實時識別Control
     startRealtime,
     stopRealtime,
 
-    // 批量處理控制
+    // BatchHandleControl
     getBatchStatus,
     cancelBatch,
     clearBatch,
 
-    // UI 控制
+    // UI Control
     selectAlternative,
     toggleAlternatives,
     enableCropMode,
     disableCropMode,
     updateCropData,
 
-    // 錯誤處理
+    // ErrorHandle
     clearErrors,
     clearRecognitionError: clearRecognitionErrorAction,
     clearHistoryError: clearHistoryErrorAction,
@@ -632,10 +632,10 @@ export const _useCardRecognition = (
     clearConfigError: clearConfigErrorAction,
     clearStatsError: clearStatsErrorAction,
 
-    // 重置
+    // Reset
     reset,
 
-    // 工具方法
+    // ToolMethod
     getSupportedGames,
     isGameSupported,
     getDefaultOptions,

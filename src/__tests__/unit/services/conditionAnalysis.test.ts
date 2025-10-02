@@ -1,7 +1,7 @@
 import { conditionService } from '../../../services/conditionService';
 import { enhancedAIService } from '../../../services/enhancedAIService';
 
-// Mock 外部依賴
+// Mock External依賴
 jest.mock('../../../services/apiService');
 jest.mock('../../../services/conditionService');
 jest.mock('../../../utils/logger');

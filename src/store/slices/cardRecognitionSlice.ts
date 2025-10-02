@@ -20,10 +20,10 @@ import {
   RecognitionStats,
 } from '../../features/cards/types/recognition';
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 
 /**
- * 初始化卡牌識別服務
+ * Initialize卡牌識別Service
  */
 export const _initializeRecognition = createAsyncThunk(
   'cardRecognition/initialize',
@@ -34,8 +34,8 @@ export const _initializeRecognition = createAsyncThunk(
       const _supportedGames = cardRecognitionService.getSupportedGames();
       return { config, supportedGames };
     } catch (error: unknown) {
-      logger.error('初始化卡牌識別失敗:', error);
-      return rejectWithValue(error.message || '初始化卡牌識別失敗');
+      logger.error('Initialize卡牌識別Failed:', error);
+      return rejectWithValue(error.message || 'Initialize卡牌識別Failed');
     }
   }
 );
@@ -50,14 +50,14 @@ export const _recognizeCard = createAsyncThunk(
       const _response = await cardRecognitionService.recognizeCard(request);
       return { request, response };
     } catch (error: unknown) {
-      logger.error('卡牌識別失敗:', error);
-      return rejectWithValue(error.message || '卡牌識別失敗');
+      logger.error('卡牌識別Failed:', error);
+      return rejectWithValue(error.message || '卡牌識別Failed');
     }
   }
 );
 
 /**
- * 批量識別卡牌
+ * Batch識別卡牌
  */
 export const _recognizeCardsBatch = createAsyncThunk(
   'cardRecognition/recognizeCardsBatch',
@@ -67,14 +67,14 @@ export const _recognizeCardsBatch = createAsyncThunk(
         await cardRecognitionService.recognizeCardsBatch(request);
       return response;
     } catch (error: unknown) {
-      logger.error('批量卡牌識別失敗:', error);
-      return rejectWithValue(error.message || '批量卡牌識別失敗');
+      logger.error('批量卡牌識別Failed:', error);
+      return rejectWithValue(error.message || '批量卡牌識別Failed');
     }
   }
 );
 
 /**
- * 獲取識別歷史
+ * Get識別歷史
  */
 export const _getRecognitionHistory = createAsyncThunk(
   'cardRecognition/getHistory',
@@ -86,14 +86,14 @@ export const _getRecognitionHistory = createAsyncThunk(
       );
       return history;
     } catch (error: unknown) {
-      logger.error('獲取識別歷史失敗:', error);
-      return rejectWithValue(error.message || '獲取識別歷史失敗');
+      logger.error('Get識別歷史Failed:', error);
+      return rejectWithValue(error.message || 'Get識別歷史Failed');
     }
   }
 );
 
 /**
- * 提交用戶反饋
+ * SubmitUser反饋
  */
 export const _submitUserFeedback = createAsyncThunk(
   'cardRecognition/submitFeedback',
@@ -108,14 +108,14 @@ export const _submitUserFeedback = createAsyncThunk(
       );
       return params;
     } catch (error: unknown) {
-      logger.error('提交用戶反饋失敗:', error);
-      return rejectWithValue(error.message || '提交用戶反饋失敗');
+      logger.error('提交用戶反饋Failed:', error);
+      return rejectWithValue(error.message || '提交用戶反饋Failed');
     }
   }
 );
 
 /**
- * 獲取識別統計
+ * Get識別Statistics
  */
 export const _getRecognitionStats = createAsyncThunk(
   'cardRecognition/getStats',
@@ -124,14 +124,14 @@ export const _getRecognitionStats = createAsyncThunk(
       const _stats = await cardRecognitionService.getRecognitionStats();
       return stats;
     } catch (error: unknown) {
-      logger.error('獲取識別統計失敗:', error);
-      return rejectWithValue(error.message || '獲取識別統計失敗');
+      logger.error('Get識別統計Failed:', error);
+      return rejectWithValue(error.message || 'Get識別統計Failed');
     }
   }
 );
 
 /**
- * 更新配置
+ * UpdateConfigure
  */
 export const _updateRecognitionConfig = createAsyncThunk(
   'cardRecognition/updateConfig',
@@ -141,14 +141,14 @@ export const _updateRecognitionConfig = createAsyncThunk(
       const _newConfig = cardRecognitionService.getConfig();
       return newConfig;
     } catch (error: unknown) {
-      logger.error('更新識別配置失敗:', error);
-      return rejectWithValue(error.message || '更新識別配置失敗');
+      logger.error('Update識別ConfigureFailed:', error);
+      return rejectWithValue(error.message || 'Update識別ConfigureFailed');
     }
   }
 );
 
 /**
- * 獲取批量作業狀態
+ * GetBatch作業Status
  */
 export const _getBatchJobStatus = createAsyncThunk(
   'cardRecognition/getBatchStatus',
@@ -160,13 +160,13 @@ export const _getBatchJobStatus = createAsyncThunk(
       }
       return status;
     } catch (error: unknown) {
-      logger.error('獲取批量作業狀態失敗:', error);
-      return rejectWithValue(error.message || '獲取批量作業狀態失敗');
+      logger.error('Get批量作業狀態Failed:', error);
+      return rejectWithValue(error.message || 'Get批量作業狀態Failed');
     }
   }
 );
 
-// 初始狀態
+// 初始Status
 const initialState: RecognitionState = {
   // 當前識別
   isRecognizing: false,
@@ -179,7 +179,7 @@ const initialState: RecognitionState = {
   isLoadingHistory: false,
   historyError: null,
 
-  // 批量識別
+  // Batch識別
   batchJobs: [],
   isBatchProcessing: false,
   batchError: null,
@@ -189,7 +189,7 @@ const initialState: RecognitionState = {
   realtimeFrames: [],
   realtimeError: null,
 
-  // 配置和設置
+  // Configure和Settings
   config: {
     enabledGames: ['pokemon', 'yugioh', 'magic'],
     defaultOptions: {
@@ -230,12 +230,12 @@ const initialState: RecognitionState = {
   isConfigLoading: false,
   configError: null,
 
-  // 統計和分析
+  // Statistics和Analysis
   stats: null,
   isStatsLoading: false,
   statsError: null,
 
-  // UI 狀態
+  // UI Status
   selectedAlternative: null,
   showAlternatives: false,
   cropMode: false,
@@ -247,7 +247,7 @@ const _cardRecognitionSlice = createSlice({
   name: 'cardRecognition',
   initialState,
   reducers: {
-    // 清除錯誤
+    // ClearError
     clearRecognitionError: state => {
       state.recognitionError = null;
     },
@@ -267,7 +267,7 @@ const _cardRecognitionSlice = createSlice({
       state.statsError = null;
     },
 
-    // 重置狀態
+    // ResetStatus
     resetRecognitionState: state => {
       state.isRecognizing = false;
       state.currentRequest = null;
@@ -277,7 +277,7 @@ const _cardRecognitionSlice = createSlice({
       state.showAlternatives = false;
     },
 
-    // UI 狀態管理
+    // UI StatusManage
     setSelectedAlternative: (
       state,
       action: PayloadAction<AlternativeResult | null>
@@ -302,7 +302,7 @@ const _cardRecognitionSlice = createSlice({
       state.cropData = action.payload;
     },
 
-    // 實時識別管理
+    // 實時識別Manage
     startRealtimeRecognition: state => {
       state.isRealtimeActive = true;
       state.realtimeError = null;
@@ -327,7 +327,7 @@ const _cardRecognitionSlice = createSlice({
       state.isRealtimeActive = false;
     },
 
-    // 批量作業管理
+    // Batch作業Manage
     updateBatchJob: (
       state,
       action: PayloadAction<BatchRecognitionResponse>
@@ -347,7 +347,7 @@ const _cardRecognitionSlice = createSlice({
       );
     },
 
-    // 配置管理
+    // ConfigureManage
     updateConfigLocal: (
       state,
       action: PayloadAction<Partial<RecognitionConfig>>
@@ -356,7 +356,7 @@ const _cardRecognitionSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // 初始化識別服務
+    // Initialize識別Service
     builder
       .addCase(initializeRecognition.pending, state => {
         state.isConfigLoading = true;
@@ -383,7 +383,7 @@ const _cardRecognitionSlice = createSlice({
         state.isRecognizing = false;
         state.currentResult = action.payload.response.results[0] || null;
 
-        // 如果識別成功，添加到歷史記錄
+        // 如果識別Success，Add到歷史Record
         if (
           action.payload.response.success &&
           action.payload.response.results.length > 0
@@ -407,7 +407,7 @@ const _cardRecognitionSlice = createSlice({
           };
           state.history.unshift(historyEntry);
 
-          // 保持歷史記錄最多 100 條
+          // 保持歷史Record最多 100 條
           if (state.history.length > 100) {
             state.history = state.history.slice(0, 100);
           }
@@ -419,7 +419,7 @@ const _cardRecognitionSlice = createSlice({
         state.currentResult = null;
       });
 
-    // 批量識別
+    // Batch識別
     builder
       .addCase(recognizeCardsBatch.pending, state => {
         state.isBatchProcessing = true;
@@ -434,7 +434,7 @@ const _cardRecognitionSlice = createSlice({
         state.batchError = action.payload as string;
       });
 
-    // 獲取識別歷史
+    // Get識別歷史
     builder
       .addCase(getRecognitionHistory.pending, state => {
         state.isLoadingHistory = true;
@@ -449,7 +449,7 @@ const _cardRecognitionSlice = createSlice({
         state.historyError = action.payload as string;
       });
 
-    // 提交用戶反饋
+    // SubmitUser反饋
     builder.addCase(submitUserFeedback.fulfilled, (state, action) => {
       const _historyIndex = state.history.findIndex(
         h => h.id === action.payload.historyId
@@ -459,7 +459,7 @@ const _cardRecognitionSlice = createSlice({
       }
     });
 
-    // 獲取識別統計
+    // Get識別Statistics
     builder
       .addCase(getRecognitionStats.pending, state => {
         state.isStatsLoading = true;
@@ -474,7 +474,7 @@ const _cardRecognitionSlice = createSlice({
         state.statsError = action.payload as string;
       });
 
-    // 更新配置
+    // UpdateConfigure
     builder
       .addCase(updateRecognitionConfig.pending, state => {
         state.isConfigLoading = true;
@@ -489,7 +489,7 @@ const _cardRecognitionSlice = createSlice({
         state.configError = action.payload as string;
       });
 
-    // 獲取批量作業狀態
+    // GetBatch作業Status
     builder.addCase(getBatchJobStatus.fulfilled, (state, action) => {
       const _index = state.batchJobs.findIndex(
         job => job.batchId === action.payload.batchId
@@ -501,7 +501,7 @@ const _cardRecognitionSlice = createSlice({
   },
 });
 
-// 導出 Actions
+// Export Actions
 export const {
   clearRecognitionError,
   clearHistoryError,

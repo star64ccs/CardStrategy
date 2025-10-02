@@ -1,7 +1,7 @@
 const redis = require('redis');
 const logger = require('../utils/logger');
 
-// Redis 配置
+// Redis Configure
 const redisConfig = {
   url: process.env.REDIS_URL || 'redis://localhost:6379',
   socket: {
@@ -10,16 +10,16 @@ const redisConfig = {
   },
 };
 
-// 創建 Redis 客戶端
+// Create Redis Client
 const redisClient = redis.createClient(redisConfig);
 
-// 錯誤處理
+// ErrorHandle
 redisClient.on('error', (err) => {
-  logger.error('Redis 錯誤:', err);
+  logger.error('Redis Error:', err);
 });
 
 redisClient.on('connect', () => {
-  logger.info('Redis 連接成功');
+  logger.info('Redis ConnectSuccess');
 });
 
 redisClient.on('ready', () => {
@@ -27,31 +27,31 @@ redisClient.on('ready', () => {
 });
 
 redisClient.on('reconnecting', () => {
-  logger.info('Redis 正在重新連接...');
+  logger.info('Redis 正在重新Connect...');
 });
 
 redisClient.on('end', () => {
-  logger.info('Redis 連接已關閉');
+  logger.info('Redis Connect已關閉');
 });
 
-// 連接到 Redis
+// Connect到 Redis
 const connectRedis = async () => {
   try {
     await redisClient.connect();
-    logger.info('Redis 連接初始化成功');
+    logger.info('Redis ConnectInitializeSuccess');
   } catch (error) {
-    logger.error('Redis 連接失敗:', error);
+    logger.error('Redis ConnectFailed:', error);
     throw error;
   }
 };
 
-// 健康檢查
+// 健康Check
 const healthCheck = async () => {
   try {
     await redisClient.ping();
     return true;
   } catch (error) {
-    logger.error('Redis 健康檢查失敗:', error);
+    logger.error('Redis 健康CheckFailed:', error);
     return false;
   }
 };

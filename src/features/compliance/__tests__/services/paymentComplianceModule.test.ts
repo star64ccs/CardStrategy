@@ -1,6 +1,6 @@
 /**
- * 支付合規模組測試
- * 測試重構計劃任務 1.6: PaymentComplianceModule
+ * 支付合規模組Test
+ * Test重構計劃Task 1.6: PaymentComplianceModule
  */
 
 import { PaymentComplianceModule } from '../../services/paymentComplianceModule';
@@ -23,7 +23,7 @@ describe('PaymentComplianceModule', () => {
   });
 
   describe('初始化測試', () => {
-    test('應該成功初始化', async () => {
+    test('應該SuccessInitialize', async () => {
       const _result = await paymentComplianceModule.initialize();
       expect(result).toBe(true);
     });
@@ -290,7 +290,7 @@ describe('PaymentComplianceModule', () => {
 
   describe('合規報告生成測試', () => {
     test('應該生成合規報告', () => {
-      // 先創建一些測試交易
+      // 先Create一些Test交易
       const _transaction1 = {
         transactionId: 'txn_report_1',
         amount: 100,
@@ -352,7 +352,7 @@ describe('PaymentComplianceModule', () => {
 
       paymentComplianceModule.updateConfig(newConfig);
 
-      // 驗證配置已更新（通過檢查行為變化）
+      // VerifyConfigure已Update（通過CheckRow為變化）
       const _transaction = {
         transactionId: 'txn_config',
         amount: 1000,
@@ -370,7 +370,7 @@ describe('PaymentComplianceModule', () => {
 
   describe('重置測試', () => {
     test('應該重置模組', async () => {
-      // 先創建一些數據
+      // 先Create一些Data
       const _paymentMethod = {
         type: 'credit_card' as const,
         provider: 'Test Provider',
@@ -379,10 +379,10 @@ describe('PaymentComplianceModule', () => {
 
       paymentComplianceModule.checkPaymentMethodCompliance(paymentMethod);
 
-      // 重置
+      // Reset
       await paymentComplianceModule.reset();
 
-      // 重新初始化
+      // ReInitialize
       const _result = await paymentComplianceModule.initialize();
       expect(result).toBe(true);
     });
@@ -441,7 +441,7 @@ describe('PaymentComplianceModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
 
     test('應該快速處理多個交易檢查', () => {
@@ -463,13 +463,13 @@ describe('PaymentComplianceModule', () => {
       const _endTime = Date.now();
       const _duration = endTime - startTime;
 
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 
   describe('功能測試', () => {
     test('應該處理複雜的支付合規場景', () => {
-      // 檢查多個支付方式
+      // CheckMultiple支付方式
       const _paymentMethods = [
         {
           type: 'credit_card' as const,
@@ -487,7 +487,7 @@ describe('PaymentComplianceModule', () => {
         paymentComplianceModule.checkPaymentMethodCompliance(method)
       );
 
-      // 檢查多個交易
+      // CheckMultiple交易
       const _transactions = [
         {
           transactionId: 'txn_complex_1',
@@ -511,45 +511,45 @@ describe('PaymentComplianceModule', () => {
         paymentComplianceModule.checkTransactionCompliance(transaction)
       );
 
-      // 執行AML篩查
+      // 執RowAML篩查
       const _amlResult = paymentComplianceModule.performAMLScreening(
         transactions[1]
       );
 
-      // 執行KYC驗證
+      // 執RowKYCVerify
       const _kycResult =
         paymentComplianceModule.performKYCVerification('customer_complex');
 
-      // 生成報告
+      // 生成Report
       const _report = paymentComplianceModule.generateComplianceReport();
 
-      // 驗證結果
+      // Verify結果
       expect(paymentMethodResults).toHaveLength(2);
       expect(transactionResults).toHaveLength(2);
       expect(amlResult).toBeDefined();
       expect(kycResult).toBeDefined();
       expect(report).toBeDefined();
 
-      // 驗證至少有一個支付方式是合規的
+      // Verify至少有一個支付方式Yes合規的
       const _compliantMethods = paymentMethodResults.filter(
         r => r.complianceStatus === 'compliant'
       );
       expect(compliantMethods.length).toBeGreaterThan(0);
 
-      // 驗證交易檢查都包含必要的檢查項目
+      // Verify交易Check都Package含必要的Check項目
       transactionResults.forEach(result => {
         expect(result.complianceChecks).toBeDefined();
         expect(result.riskScore).toBeGreaterThanOrEqual(0);
         expect(result.riskScore).toBeLessThanOrEqual(100);
       });
 
-      // 驗證AML篩查結果
+      // VerifyAML篩查結果
       expect(['low', 'medium', 'high']).toContain(amlResult.riskLevel);
       expect(['clear', 'suspicious', 'blocked']).toContain(
         amlResult.screeningResult
       );
 
-      // 驗證KYC驗證結果
+      // VerifyKYCVerify結果
       expect(['basic', 'enhanced', 'premium']).toContain(
         kycResult.verificationLevel
       );

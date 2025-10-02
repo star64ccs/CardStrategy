@@ -1,25 +1,25 @@
-// 統一導出所有類型定義
+// 統一Export所有Class型定義
 export * from './common';
 export * from './auth';
 export * from './cards';
-// export * from './cards/recognition'; // 文件不存在，已移除
-// export * from './cards/centering'; // 文件不存在，已移除
-// export * from './cards/authenticity'; // 文件不存在，已移除
-// export * from './cards/appraisal'; // 文件不存在，已移除
-// export * from './ai/prediction'; // 文件不存在，已移除
-// export * from './ai/recommendation'; // 文件不存在，已移除
-// export * from './ai/chat'; // 文件不存在，已移除
-// export * from './market/pricing'; // 文件不存在，已移除
-// export * from './counterfeit/detection'; // 文件不存在，已移除
-// export * from './counterfeit/reporting'; // 文件不存在，已移除
-// export * from '../features/storage/types/storage'; // 文件不存在，已移除
+// export * from './cards/recognition'; // File不存在，已Remove
+// export * from './cards/centering'; // File不存在，已Remove
+// export * from './cards/authenticity'; // File不存在，已Remove
+// export * from './cards/appraisal'; // File不存在，已Remove
+// export * from './ai/prediction'; // File不存在，已Remove
+// export * from './ai/recommendation'; // File不存在，已Remove
+// export * from './ai/chat'; // File不存在，已Remove
+// export * from './market/pricing'; // File不存在，已Remove
+// export * from './counterfeit/detection'; // File不存在，已Remove
+// export * from './counterfeit/reporting'; // File不存在，已Remove
+// export * from '../features/storage/types/storage'; // File不存在，已Remove
 export * from './api';
 
-// 重新導出常用類型
+// ReExport常用Class型
 export type { BaseEntity, ApiResponse, ApiError } from './common';
 export type { Card, AnalysisResult } from './cards';
 
-// 導航類型
+// 導航Class型
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
@@ -44,7 +44,7 @@ export type MainTabParamList = {
   Profile: undefined;
 };
 
-// 組件 Props 類型
+// Component Props Class型
 export interface BaseComponentProps {
   testID?: string;
   style?: unknown;
@@ -67,7 +67,7 @@ export interface ButtonProps extends BaseComponentProps {
   icon?: string;
 }
 
-// 設置類型
+// SettingsClass型
 export interface AppSettings {
   theme: ThemeSettings;
   language: LanguageSettings;
@@ -138,7 +138,7 @@ export interface SecuritySettings {
   encryptionLevel: 'low' | 'medium' | 'high';
 }
 
-// 會員制度類型
+// 會員制度Class型
 export type MembershipTier = 'free' | 'trial' | 'vip';
 
 export interface TrialStatus {
@@ -196,7 +196,7 @@ export interface FeatureUsage {
   aiChat: number;
 }
 
-// AI 聊天類型
+// AI 聊天Class型
 export interface AIChatMessage {
   id: string;
   type: 'user' | 'assistant';
@@ -209,7 +209,7 @@ export interface AIChatMessage {
   };
 }
 
-// AI 分析相關類型
+// AI Analysis相OffClass型
 export interface AIAnalysis {
   id: string;
   createdAt: Date;
@@ -245,7 +245,7 @@ export interface AnalysisMetadata {
   analysisDate: Date;
 }
 
-// Redux 狀態類型
+// Redux StatusClass型
 export interface SettingsState {
   settings: AppSettings;
   isLoading: boolean;
@@ -289,7 +289,7 @@ export interface AIState {
   marketInsights: unknown | null;
 }
 
-// 分享驗證相關類型
+// 分享Verify相OffClass型
 export interface ShareVerification {
   id: string;
   createdAt: Date;
@@ -359,6 +359,6 @@ export interface VerificationLookupResponse {
   isValid: boolean;
 }
 
-// 常量類型
+// ConstantClass型
 export const _SUPPORTED_LANGUAGES = ['zh-TW', 'en-US', 'ja-JP'] as const;
 export const _THEME_MODES = ['light', 'dark', 'auto'] as const;

@@ -17,7 +17,7 @@ export interface RegulationChange {
   description: string;
   impact: string;
   implementationRequired: boolean;
-  estimatedEffort: number; // 小時
+  estimatedEffort: number; // Hour
 }
 
 export interface ComplianceImpact {
@@ -49,7 +49,7 @@ export class RegulationUpdateMonitor {
     }
 
     try {
-      // 初始化監控源
+      // InitializeMonitor源
       this.updateSources = [
         'https://gdpr-info.eu/',
         'https://oag.ca.gov/privacy/ccpa',
@@ -72,7 +72,7 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 開始監控法規更新
+   * BeginMonitor法規Update
    */
   public async startMonitoring(): Promise<void> {
     if (!this.isInitialized) {
@@ -80,7 +80,7 @@ export class RegulationUpdateMonitor {
     }
 
     try {
-      // 設置定期檢查（每24小時檢查一次）
+      // Settings定期Check（每24HourCheck一次）
       this.monitoringInterval = setInterval(
         async () => {
           await this.checkForUpdates();
@@ -88,7 +88,7 @@ export class RegulationUpdateMonitor {
         24 * 60 * 60 * 1000
       );
 
-      // 立即執行一次檢查
+      // 立即執Row一次Check
       await this.checkForUpdates();
 
       logger.info('Regulation update monitoring started');
@@ -99,7 +99,7 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 停止監控
+   * StopMonitor
    */
   public stopMonitoring(): void {
     if (this.monitoringInterval) {
@@ -110,7 +110,7 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 檢查法規更新
+   * Check法規Update
    */
   public async checkForUpdates(): Promise<RegulationUpdate[]> {
     try {
@@ -118,7 +118,7 @@ export class RegulationUpdateMonitor {
 
       const updates: RegulationUpdate[] = [];
 
-      // 模擬從各個監控源檢查更新
+      // 模擬從各個Monitor源CheckUpdate
       for (const source of this.updateSources) {
         try {
           const _sourceUpdates = await this.checkSourceForUpdates(source);
@@ -127,7 +127,7 @@ export class RegulationUpdateMonitor {
           }
         } catch (error) {
           logger.error(`Failed to check source ${source} for updates`, error);
-          // 繼續檢查其他源，不中斷整個流程
+          // ContinueCheck其他源，不中斷整個流程
         }
       }
 
@@ -148,17 +148,17 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 檢查特定監控源的更新
+   * CheckSpecificMonitor源的Update
    */
   private async checkSourceForUpdates(
     source: string
   ): Promise<RegulationUpdate[]> {
     try {
       // 這裡應該實現實際的API調用或網頁爬蟲邏輯
-      // 目前使用模擬數據
+      // 目前使用模擬Data
       const updates: RegulationUpdate[] = [];
 
-      // 模擬GDPR更新
+      // 模擬GDPRUpdate
       if (source.includes('gdpr-info.eu')) {
         updates.push({
           id: `gdpr-${Date.now()}`,
@@ -181,7 +181,7 @@ export class RegulationUpdateMonitor {
         });
       }
 
-      // 模擬CCPA更新
+      // 模擬CCPAUpdate
       if (source.includes('oag.ca.gov')) {
         updates.push({
           id: `ccpa-${Date.now()}`,
@@ -213,7 +213,7 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 處理法規更新
+   * Handle法規Update
    */
   private async processUpdates(updates: RegulationUpdate[]): Promise<void> {
     try {
@@ -227,10 +227,10 @@ export class RegulationUpdateMonitor {
           impact
         );
 
-        // 發送通知
+        // SendNotification
         await this.sendNotification(update, impact, implementationPlan);
 
-        // 更新狀態
+        // UpdateStatus
         update.status = 'IN_REVIEW';
 
         logger.info(`Processed regulation update: ${update.id}`);
@@ -270,7 +270,7 @@ export class RegulationUpdateMonitor {
   private identifyAffectedModules(update: RegulationUpdate): string[] {
     const affectedModules: string[] = [];
 
-    // 根據法規類型和變更內容識別受影響的模組
+    // Root據法規Class型和變更Content識別受影響的模組
     switch (update.regulation) {
       case 'GDPR':
         affectedModules.push(
@@ -301,7 +301,7 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 生成所需行動
+   * 生成所需Row動
    */
   private generateRequiredActions(update: RegulationUpdate): string[] {
     const actions: string[] = [];
@@ -330,7 +330,7 @@ export class RegulationUpdateMonitor {
       totalEffort += change.estimatedEffort;
     }
 
-    // 假設每小時成本為100美元
+    // False設每Hour成本為100美元
     return totalEffort * 100;
   }
 
@@ -408,7 +408,7 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 發送通知
+   * SendNotification
    */
   private async sendNotification(
     update: RegulationUpdate,
@@ -416,7 +416,7 @@ export class RegulationUpdateMonitor {
     plan: unknown
   ): Promise<void> {
     try {
-      // 這裡應該實現實際的通知邏輯（郵件、Slack等）
+      // 這裡應該實現實際的Notification邏輯（郵件、Slack等）
       const _notification = {
         type: 'REGULATION_UPDATE',
         priority: update.priority,
@@ -443,7 +443,7 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 獲取監控狀態
+   * GetMonitorStatus
    */
   public getMonitoringStatus(): unknown {
     return {
@@ -456,14 +456,14 @@ export class RegulationUpdateMonitor {
   }
 
   /**
-   * 手動觸發更新檢查
+   * Manual觸發UpdateCheck
    */
   public async manualCheck(): Promise<RegulationUpdate[]> {
     return this.checkForUpdates();
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _regulationUpdateMonitor = RegulationUpdateMonitor.getInstance();
 
 export default regulationUpdateMonitor;

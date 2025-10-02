@@ -2,14 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 性能監控優化腳本
- * 按照執行原則建構
- * 嚴謹語法，無錯誤，高質量代碼
+ * 性能Monitor優化腳本
+ * 按照執Row原則建構
+ * 嚴謹語法，無Error，高質量代碼
  */
 
 console.log('🔧 開始優化性能監控系統...\n');
 
-// 1. 分析現有性能監控覆蓋率
+// 1. Analysis現有性能Monitor覆蓋率
 function analyzePerformanceMonitoringCoverage() {
   console.log('📋 分析性能監控覆蓋率...');
 
@@ -39,12 +39,12 @@ function analyzePerformanceMonitoringCoverage() {
   findFiles(srcPath, serviceFiles, /services/);
 
   console.log(`📊 找到 ${monitoringFiles.length} 個監控相關文件`);
-  console.log(`📊 找到 ${serviceFiles.length} 個服務文件`);
+  console.log(`📊 找到 ${serviceFiles.length} 個Service文件`);
 
   return { monitoringFiles, serviceFiles };
 }
 
-// 2. 分析性能監控模式
+// 2. Analysis性能Monitor模式
 function analyzePerformanceMonitoringPatterns(files) {
   console.log('📋 分析性能監控模式...');
 
@@ -97,7 +97,7 @@ function analyzePerformanceMonitoringPatterns(files) {
   return patterns;
 }
 
-// 3. 主函數
+// 3. 主Function
 function main() {
   try {
     const { monitoringFiles, serviceFiles } = analyzePerformanceMonitoringCoverage();
@@ -110,7 +110,7 @@ function main() {
 
     console.log('\n📊 分析結果：');
     console.log(`  監控文件: ${monitoringFiles.length} 個`);
-    console.log(`  服務文件: ${serviceFiles.length} 個`);
+    console.log(`  Service文件: ${serviceFiles.length} 個`);
     console.log(`  使用 performanceMonitor: ${patterns.performanceMonitor} 個`);
     console.log(`  使用 metrics: ${patterns.metrics} 個`);
     console.log(`  使用 timing: ${patterns.timing} 個`);
@@ -125,12 +125,12 @@ function main() {
     console.log('  3. 編寫性能監控指南');
 
   } catch (error) {
-    console.error('❌ 性能監控分析失敗:', error);
+    console.error('❌ 性能監控分析Failed:', error);
     process.exit(1);
   }
 }
 
-// 如果直接運行此腳本
+// 如果直接運Row此腳本
 if (require.main === module) {
   main();
 }

@@ -20,7 +20,7 @@ class NotificationService {
   }
 
   /**
-   * 初始化郵件傳輸器
+   * Initialize郵件傳輸器
    */
   async initializeEmailTransporter() {
     try {
@@ -37,20 +37,20 @@ class NotificationService {
         },
       });
 
-      // 驗證連接
+      // VerifyConnect
       await this.emailTransporter.verify();
-      logger.info('郵件傳輸器初始化成功');
+      logger.info('郵件傳輸器InitializeSuccess');
     } catch (error) {
-      logger.error('郵件傳輸器初始化失敗:', error);
+      logger.error('郵件傳輸器InitializeFailed:', error);
       this.emailTransporter = null;
     }
   }
 
   /**
-   * 設置通知模板
+   * SettingsNotification模板
    */
   setupNotificationTemplates() {
-    // 價格變動通知模板
+    // 價格變動Notification模板
     this.notificationTemplates.set('price_change', {
       title: '價格變動通知',
       email: {
@@ -80,7 +80,7 @@ class NotificationService {
       },
     });
 
-    // 投資建議通知模板
+    // 投資建議Notification模板
     this.notificationTemplates.set('investment_advice', {
       title: '投資建議通知',
       email: {
@@ -110,7 +110,7 @@ class NotificationService {
       },
     });
 
-    // 系統維護通知模板
+    // 系統維護Notification模板
     this.notificationTemplates.set('system_maintenance', {
       title: '系統維護通知',
       email: {
@@ -139,7 +139,7 @@ class NotificationService {
       },
     });
 
-    // 安全警報通知模板
+    // 安全AlertNotification模板
     this.notificationTemplates.set('security_alert', {
       title: '安全警報通知',
       email: {
@@ -169,7 +169,7 @@ class NotificationService {
       },
     });
 
-    // 新功能通知模板
+    // 新功能Notification模板
     this.notificationTemplates.set('new_feature', {
       title: '新功能通知',
       email: {
@@ -198,34 +198,34 @@ class NotificationService {
   }
 
   /**
-   * 設置定時任務
+   * Settings定時Task
    */
   setupScheduledTasks() {
-    // 每小時檢查價格變動
+    // 每HourCheck價格變動
     cron.schedule('0 * * * *', () => {
       this.checkPriceChanges();
     });
 
-    // 每天發送市場摘要
+    // 每天Send市場摘要
     cron.schedule('0 9 * * *', () => {
       this.sendDailyMarketSummary();
     });
 
-    // 每週發送投資報告
+    // 每週Send投資Report
     cron.schedule('0 10 * * 1', () => {
       this.sendWeeklyInvestmentReport();
     });
 
-    // 每月發送系統狀態報告
+    // 每月Send系統StatusReport
     cron.schedule('0 8 1 * *', () => {
       this.sendMonthlySystemReport();
     });
 
-    logger.info('通知服務定時任務設置完成');
+    logger.info('通知Service定時任務Settings完成');
   }
 
   /**
-   * 發送即時通知
+   * Send即時Notification
    */
   async sendInstantNotification(userId, type, data, channels = ['websocket']) {
     try {
@@ -249,27 +249,27 @@ class NotificationService {
         status: 'pending',
       };
 
-      // 添加到隊列
+      // Add到Queue
       this.notificationQueue.push(notification);
 
-      // 根據通道發送通知
+      // Root據通道SendNotification
       for (const channel of channels) {
         await this.sendNotificationByChannel(notification, channel);
       }
 
-      // 更新狀態
+      // UpdateStatus
       notification.status = 'sent';
 
-      logger.info(`即時通知發送成功: ${userId} - ${type}`);
+      logger.info(`即時通知發送Success: ${userId} - ${type}`);
       return notificationId;
     } catch (error) {
-      logger.error('發送即時通知失敗:', error);
+      logger.error('發送即時通知Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 根據通道發送通知
+   * Root據通道SendNotification
    */
   async sendNotificationByChannel(notification, channel) {
     try {
@@ -290,12 +290,12 @@ class NotificationService {
           logger.warn(`未知的通知通道: ${channel}`);
       }
     } catch (error) {
-      logger.error(`發送 ${channel} 通知失敗:`, error);
+      logger.error(`發送 ${channel} 通知Failed:`, error);
     }
   }
 
   /**
-   * 發送 WebSocket 通知
+   * Send WebSocket Notification
    */
   async sendWebSocketNotification(notification) {
     try {
@@ -320,15 +320,15 @@ class NotificationService {
         timestamp: notification.timestamp,
       });
 
-      logger.info(`WebSocket 通知發送成功: ${notification.userId}`);
+      logger.info(`WebSocket 通知發送Success: ${notification.userId}`);
     } catch (error) {
-      logger.error('WebSocket 通知發送失敗:', error);
+      logger.error('WebSocket 通知發送Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 發送郵件通知
+   * Send郵件Notification
    */
   async sendEmailNotification(notification) {
     try {
@@ -339,7 +339,7 @@ class NotificationService {
       const template = this.notificationTemplates.get(notification.type);
       const emailTemplate = template.email;
 
-      // 獲取用戶郵箱
+      // GetUserEmail
 // eslint-disable-next-line no-unused-vars
       const userEmail = await this.getUserEmail(notification.userId);
       if (!userEmail) {
@@ -355,61 +355,61 @@ class NotificationService {
 
       await this.emailTransporter.sendMail(mailOptions);
 
-      logger.info(`郵件通知發送成功: ${notification.userId}`);
+      logger.info(`郵件通知發送Success: ${notification.userId}`);
     } catch (error) {
-      logger.error('郵件通知發送失敗:', error);
+      logger.error('郵件通知發送Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 發送推送通知
+   * SendPushNotification
    */
   async sendPushNotification(notification) {
     try {
-      // 這裡可以集成 Firebase Cloud Messaging 或其他推送服務
+      // 這裡可以集成 Firebase Cloud Messaging 或其他PushService
       const template = this.notificationTemplates.get(notification.type);
 // eslint-disable-next-line no-unused-vars
       const pushData = template.push;
 
-      // 獲取用戶的推送令牌
+      // GetUser的Push令牌
       const pushToken = await this.getUserPushToken(notification.userId);
       if (!pushToken) {
         throw new Error('用戶推送令牌不存在');
       }
 
-      // 發送推送通知的邏輯
-      // 這裡需要集成具體的推送服務
-      logger.info(`推送通知發送成功: ${notification.userId}`);
+      // SendPushNotification的邏輯
+      // 這裡需要集成Concrete的PushService
+      logger.info(`推送通知發送Success: ${notification.userId}`);
     } catch (error) {
-      logger.error('推送通知發送失敗:', error);
+      logger.error('推送通知發送Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 發送短信通知
+   * Send短信Notification
    */
   async sendSMSNotification(notification) {
     try {
-      // 這裡可以集成 Twilio 或其他短信服務
+      // 這裡可以集成 Twilio 或其他短信Service
 // eslint-disable-next-line no-unused-vars
       const userPhone = await this.getUserPhone(notification.userId);
       if (!userPhone) {
         throw new Error('用戶手機號不存在');
       }
 
-      // 發送短信的邏輯
-      // 這裡需要集成具體的短信服務
-      logger.info(`短信通知發送成功: ${notification.userId}`);
+      // Send短信的邏輯
+      // 這裡需要集成Concrete的短信Service
+      logger.info(`短信通知發送Success: ${notification.userId}`);
     } catch (error) {
-      logger.error('短信通知發送失敗:', error);
+      logger.error('短信通知發送Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 發送批量通知
+   * SendBatchNotification
    */
   async sendBulkNotification(userIds, type, data, channels = ['websocket']) {
     try {
@@ -445,21 +445,21 @@ class NotificationService {
       const failureCount = results.length - successCount;
 
       logger.info(
-        `批量通知發送完成: 成功 ${successCount}, 失敗 ${failureCount}`
+        `批量通知發送完成: Success ${successCount}, Failed ${failureCount}`
       );
       return results;
     } catch (error) {
-      logger.error('批量通知發送失敗:', error);
+      logger.error('批量通知發送Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 發送廣播通知
+   * Send廣播Notification
    */
   async sendBroadcastNotification(type, data, channels = ['websocket']) {
     try {
-      // 獲取所有活躍用戶
+      // Get所有活躍User
       const activeUsers = websocketService.getConnectionStats().connectedUsers;
 
       if (activeUsers.length === 0) {
@@ -475,7 +475,7 @@ class NotificationService {
         channels
       );
 
-      // 同時發送 WebSocket 廣播
+      // 同時Send WebSocket 廣播
       if (channels.includes('websocket')) {
         const template = this.notificationTemplates.get(type);
 // eslint-disable-next-line no-unused-vars
@@ -493,13 +493,13 @@ class NotificationService {
       logger.info(`廣播通知發送完成: ${activeUsers.length} 個用戶`);
       return results;
     } catch (error) {
-      logger.error('廣播通知發送失敗:', error);
+      logger.error('廣播通知發送Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 調度延遲通知
+   * Schedule延遲Notification
    */
   scheduleNotification(
     userId,
@@ -522,7 +522,7 @@ class NotificationService {
           await this.sendInstantNotification(userId, type, data, channels);
           this.scheduledNotifications.delete(notificationId);
         } catch (error) {
-          logger.error('調度通知發送失敗:', error);
+          logger.error('調度通知發送Failed:', error);
         }
       }, delay);
 
@@ -535,16 +535,16 @@ class NotificationService {
         timeoutId,
       });
 
-      logger.info(`通知調度成功: ${notificationId}, 時間: ${scheduleTime}`);
+      logger.info(`通知調度Success: ${notificationId}, 時間: ${scheduleTime}`);
       return notificationId;
     } catch (error) {
-      logger.error('調度通知失敗:', error);
+      logger.error('調度通知Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 取消調度通知
+   * CancelScheduleNotification
    */
   cancelScheduledNotification(notificationId) {
     try {
@@ -560,101 +560,101 @@ class NotificationService {
       logger.info(`調度通知已取消: ${notificationId}`);
       return true;
     } catch (error) {
-      logger.error('取消調度通知失敗:', error);
+      logger.error('取消調度通知Failed:', error);
       throw error;
     }
   }
 
   /**
-   * 檢查價格變動
+   * Check價格變動
    */
   async checkPriceChanges() {
     try {
-      // 這裡實現價格變動檢查邏輯
-      // 獲取所有用戶的價格警報設置
-      // 檢查是否有價格變動超過閾值
-      // 發送相應的通知
+      // 這裡實現價格變動Check邏輯
+      // Get所有User的價格AlertSettings
+      // CheckYesNo有價格變動超過閾Value
+      // Send相應的Notification
 
       logger.info('價格變動檢查完成');
     } catch (error) {
-      logger.error('價格變動檢查失敗:', error);
+      logger.error('價格變動CheckFailed:', error);
     }
   }
 
   /**
-   * 發送每日市場摘要
+   * Send每日市場摘要
    */
   async sendDailyMarketSummary() {
     try {
       // 這裡實現每日市場摘要邏輯
-      // 生成市場摘要數據
-      // 發送給所有用戶
+      // 生成市場摘要Data
+      // Send給所有User
 
       logger.info('每日市場摘要發送完成');
     } catch (error) {
-      logger.error('每日市場摘要發送失敗:', error);
+      logger.error('每日市場摘要發送Failed:', error);
     }
   }
 
   /**
-   * 發送每週投資報告
+   * Send每週投資Report
    */
   async sendWeeklyInvestmentReport() {
     try {
-      // 這裡實現每週投資報告邏輯
-      // 生成投資報告數據
-      // 發送給相關用戶
+      // 這裡實現每週投資Report邏輯
+      // 生成投資ReportData
+      // Send給相OffUser
 
       logger.info('每週投資報告發送完成');
     } catch (error) {
-      logger.error('每週投資報告發送失敗:', error);
+      logger.error('每週投資報告發送Failed:', error);
     }
   }
 
   /**
-   * 發送每月系統報告
+   * Send每月系統Report
    */
   async sendMonthlySystemReport() {
     try {
-      // 這裡實現每月系統報告邏輯
-      // 生成系統狀態報告
-      // 發送給管理員
+      // 這裡實現每月系統Report邏輯
+      // 生成系統StatusReport
+      // Send給Manage員
 
       logger.info('每月系統報告發送完成');
     } catch (error) {
-      logger.error('每月系統報告發送失敗:', error);
+      logger.error('每月系統報告發送Failed:', error);
     }
   }
 
   /**
-   * 獲取用戶郵箱
+   * GetUserEmail
    */
   async getUserEmail(userId) {
-    // 這裡應該從數據庫獲取用戶郵箱
-    // 暫時返回模擬數據
+    // 這裡應該從DatabaseGetUserEmail
+    // 暫時Return模擬Data
     return 'user@example.com';
   }
 
   /**
-   * 獲取用戶推送令牌
+   * GetUserPush令牌
    */
   async getUserPushToken(userId) {
-    // 這裡應該從數據庫獲取用戶推送令牌
-    // 暫時返回模擬數據
+    // 這裡應該從DatabaseGetUserPush令牌
+    // 暫時Return模擬Data
     return 'mock_push_token';
   }
 
   /**
-   * 獲取用戶手機號
+   * GetUser手機號
    */
   async getUserPhone(userId) {
-    // 這裡應該從數據庫獲取用戶手機號
-    // 暫時返回模擬數據
+    // 這裡應該從DatabaseGetUser手機號
+    // 暫時Return模擬Data
     return '+1234567890';
   }
 
   /**
-   * 獲取通知統計
+   * GetNotificationStatistics
    */
   getNotificationStats() {
     return {
@@ -666,15 +666,15 @@ class NotificationService {
   }
 
   /**
-   * 清理過期通知
+   * 清理過期Notification
    */
   cleanupExpiredNotifications() {
     try {
 // eslint-disable-next-line no-unused-vars
       const now = new Date();
-      const expiredThreshold = 24 * 60 * 60 * 1000; // 24小時
+      const expiredThreshold = 24 * 60 * 60 * 1000; // 24Hour
 
-      // 清理隊列中的過期通知
+      // 清理Queue中的過期Notification
       this.notificationQueue = this.notificationQueue.filter((notification) => {
 // eslint-disable-next-line no-unused-vars
         const notificationTime = new Date(notification.timestamp).getTime();
@@ -683,7 +683,7 @@ class NotificationService {
 
       logger.info('過期通知清理完成');
     } catch (error) {
-      logger.error('清理過期通知失敗:', error);
+      logger.error('清理過期通知Failed:', error);
     }
   }
 }

@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 const colors = {
   reset: '\x1b[0m',
@@ -53,18 +53,18 @@ class SecurityScanner {
       // 2. 代碼安全掃描
       await this.scanCode();
 
-      // 3. 配置安全掃描
+      // 3. Configure安全掃描
       await this.scanConfiguration();
 
-      // 4. 環境變量安全掃描
+      // 4. 環境Variable安全掃描
       await this.scanEnvironmentVariables();
 
-      // 5. 文件權限掃描
+      // 5. File權限掃描
       await this.scanFilePermissions();
 
       this.printResults();
     } catch (error) {
-      log.error(`安全掃描失敗: ${error.message}`);
+      log.error(`安全掃描Failed: ${error.message}`);
       process.exit(1);
     }
   }
@@ -73,7 +73,7 @@ class SecurityScanner {
     log.info('📦 掃描依賴安全...');
 
     try {
-      // 檢查 npm audit
+      // Check npm audit
 // eslint-disable-next-line no-unused-vars
       const auditResult = this.runCommand(
         'npm audit --audit-level=moderate',
@@ -83,7 +83,7 @@ class SecurityScanner {
       log.success('依賴安全掃描完成');
     } catch (error) {
       this.addResult('依賴安全掃描', 'FAIL', error.message);
-      log.error(`依賴安全掃描失敗: ${error.message}`);
+      log.error(`依賴安全掃描Failed: ${error.message}`);
     }
   }
 
@@ -92,19 +92,19 @@ class SecurityScanner {
 
     const issues = [];
 
-    // 檢查硬編碼密鑰
+    // Check硬Encode密鑰
     const hardcodedSecrets = this.findHardcodedSecrets();
     if (hardcodedSecrets.length > 0) {
       issues.push(`發現 ${hardcodedSecrets.length} 個硬編碼密鑰`);
     }
 
-    // 檢查 SQL 注入風險
+    // Check SQL 注入風險
     const sqlInjectionRisks = this.findSQLInjectionRisks();
     if (sqlInjectionRisks.length > 0) {
       issues.push(`發現 ${sqlInjectionRisks.length} 個 SQL 注入風險`);
     }
 
-    // 檢查 XSS 風險
+    // Check XSS 風險
     const xssRisks = this.findXSSRisks();
     if (xssRisks.length > 0) {
       issues.push(`發現 ${xssRisks.length} 個 XSS 風險`);
@@ -124,17 +124,17 @@ class SecurityScanner {
 
     const issues = [];
 
-    // 檢查 CORS 配置
+    // Check CORS Configure
     if (!this.checkCORSConfiguration()) {
       issues.push('CORS 配置不安全');
     }
 
-    // 檢查 Helmet 配置
+    // Check Helmet Configure
     if (!this.checkHelmetConfiguration()) {
       issues.push('缺少安全頭配置');
     }
 
-    // 檢查速率限制
+    // Check速率Limit
     if (!this.checkRateLimiting()) {
       issues.push('缺少速率限制配置');
     }
@@ -153,13 +153,13 @@ class SecurityScanner {
 
     const issues = [];
 
-    // 檢查敏感環境變量
+    // Check敏感環境Variable
     const sensitiveVars = this.checkSensitiveEnvironmentVariables();
     if (sensitiveVars.length > 0) {
       issues.push(`發現 ${sensitiveVars.length} 個敏感環境變量`);
     }
 
-    // 檢查默認密鑰
+    // CheckDefault密鑰
     const defaultKeys = this.checkDefaultKeys();
     if (defaultKeys.length > 0) {
       issues.push(`發現 ${defaultKeys.length} 個默認密鑰`);
@@ -179,7 +179,7 @@ class SecurityScanner {
 
     const issues = [];
 
-    // 檢查敏感文件權限
+    // Check敏感File權限
     const sensitiveFiles = this.checkSensitiveFilePermissions();
     if (sensitiveFiles.length > 0) {
       issues.push(`發現 ${sensitiveFiles.length} 個權限不當的文件`);
@@ -394,7 +394,7 @@ class SecurityScanner {
         const stats = fs.statSync(filepath);
         const mode = stats.mode.toString(8);
 
-        // 檢查權限是否過於開放
+        // Check權限YesNo過於On放
         if (mode.endsWith('666') || mode.endsWith('777')) {
           issues.push({
             file: filename,
@@ -474,7 +474,7 @@ class SecurityScanner {
     log.header('\n📊 安全掃描結果');
     log.info(`總檢查項目: ${this.results.total}`);
     log.info(`通過: ${this.results.passed}`);
-    log.info(`失敗: ${this.results.failed}`);
+    log.info(`Failed: ${this.results.failed}`);
     log.info(`警告: ${this.results.warnings}`);
     log.info(`安全評分: ${successRate}%`);
 
@@ -496,17 +496,17 @@ class SecurityScanner {
     if (successRate >= 80) {
       log.success('\n🎉 安全掃描通過！');
     } else {
-      log.error('\n❌ 安全掃描失敗，請修復問題後重試');
+      log.error('\n❌ 安全掃描Failed，請修復問題後重試');
       process.exit(1);
     }
   }
 }
 
-// 執行安全掃描
+// 執Row安全掃描
 if (require.main === module) {
   const scanner = new SecurityScanner();
   scanner.runSecurityScan().catch((error) => {
-    log.error(`安全掃描失敗: ${error.message}`);
+    log.error(`安全掃描Failed: ${error.message}`);
     process.exit(1);
   });
 }

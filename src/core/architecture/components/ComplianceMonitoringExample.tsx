@@ -66,12 +66,12 @@ const ComplianceMonitoringExample: React.FC = () => {
       setIsInitialized(result);
       if (result) {
         updateReport();
-        Alert.alert('成功', '合規監控初始化成功');
+        Alert.alert('Success', '合規監控InitializeSuccess');
       } else {
-        Alert.alert('錯誤', '合規監控初始化失敗');
+        Alert.alert('Error', '合規監控InitializeFailed');
       }
     } catch (error) {
-      Alert.alert('錯誤', `初始化過程中發生錯誤: ${error}`);
+      Alert.alert('Error', `Initialize過程中發生Error: ${error}`);
     } finally {
       setIsInitializing(false);
     }
@@ -85,8 +85,8 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '初始化測試',
-          result: result ? '成功' : '失敗',
-          details: result ? '合規監控成功初始化' : '初始化失敗',
+          result: result ? 'Success' : 'Failed',
+          details: result ? '合規監控SuccessInitialize' : 'InitializeFailed',
         },
       ]);
     } catch (error) {
@@ -94,8 +94,8 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '初始化測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -127,7 +127,7 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '事件監控測試',
-          result: '成功',
+          result: 'Success',
           details: `監控事件: ${event.description}`,
         },
       ]);
@@ -137,8 +137,8 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '事件監控測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -154,7 +154,7 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '報告生成測試',
-          result: '成功',
+          result: 'Success',
           details: `生成報告包含 ${currentReport.summary.totalEvents} 個事件，合規分數: ${currentReport.complianceScore}`,
         },
       ]);
@@ -163,8 +163,8 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '報告生成測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -189,7 +189,7 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '警報管理測試',
-          result: '成功',
+          result: 'Success',
           details: `總警報: ${alerts.length}, 未確認: ${unacknowledgedAlerts.length}, 已確認: ${acknowledgedCount}`,
         },
       ]);
@@ -198,8 +198,8 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '警報管理測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -218,7 +218,7 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '審計日誌測試',
-          result: '成功',
+          result: 'Success',
           details: `審計日誌: ${auditLog.length} 條記錄, JSON: ${jsonExport.length} 字符, CSV: ${csvExport.length} 字符`,
         },
       ]);
@@ -227,8 +227,8 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '審計日誌測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -273,7 +273,7 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '規則管理測試',
-          result: '成功',
+          result: 'Success',
           details: `添加規則: ${rule.name}, 總規則: ${rules.length}, 刪除結果: ${result}`,
         },
       ]);
@@ -282,8 +282,8 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '規則管理測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -314,8 +314,8 @@ const ComplianceMonitoringExample: React.FC = () => {
         ...prev,
         {
           test: '完整功能測試',
-          result: '錯誤',
-          details: `發生錯誤: ${error}`,
+          result: 'Error',
+          details: `發生Error: ${error}`,
         },
       ]);
     } finally {
@@ -347,9 +347,9 @@ const ComplianceMonitoringExample: React.FC = () => {
             styles.testStatus,
             {
               color:
-                result.result === '成功'
+                result.result === 'Success'
                   ? '#4CAF50'
-                  : result.result === '錯誤'
+                  : result.result === 'Error'
                     ? '#F44336'
                     : '#FF9800',
             },
@@ -400,7 +400,7 @@ const ComplianceMonitoringExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>🛡️ 合規監控示例</Text>
 
-      {/* 初始化控制 */}
+      {/* InitializeControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🚀 初始化控制</Text>
         <View style={styles.controlRow}>
@@ -422,10 +422,10 @@ const ComplianceMonitoringExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 報告摘要 */}
+      {/* Report摘要 */}
       {renderReportSummary()}
 
-      {/* 測試控制 */}
+      {/* TestControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🧪 功能測試</Text>
         <View style={styles.buttonGrid}>
@@ -490,7 +490,7 @@ const ComplianceMonitoringExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 測試結果 */}
+      {/* Test結果 */}
       {testResults.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📋 測試結果</Text>
@@ -498,7 +498,7 @@ const ComplianceMonitoringExample: React.FC = () => {
         </View>
       )}
 
-      {/* 詳細報告 */}
+      {/* 詳細Report */}
       {report && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📈 詳細報告</Text>

@@ -1,4 +1,4 @@
-// API 相關類型定義
+// API 相OffClass型定義
 
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 

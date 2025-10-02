@@ -5,7 +5,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -45,9 +45,9 @@ class Phase3ServerEnhancementOptimizer {
     this.backendDir = path.join(this.projectRoot, 'backend');
   }
 
-  // 創建增強版服務器
+  // Create增強版Server
   async createEnhancedServer() {
-    log.header('🚀 創建增強版服務器');
+    log.header('🚀 Create增強版Server');
 
     const enhancedServer = `require('dotenv').config();
 const express = require('express');
@@ -55,18 +55,18 @@ const express = require('express');
 // eslint-disable-next-line no-unused-vars
 const cors = require('cors');
 
-// 導入配置
+// ImportConfigure
 const { config, validateConfig } = require('./config/unified');
 const { sequelize, testConnection } = require('./config/database-optimized');
 const { connectRedis, healthCheck: redisHealthCheck } = require('./config/redis-optimized');
 
-// 導入日誌系統
+// ImportLog系統
 const { logger } = require('./utils/unified-logger');
 
-// 導入性能監控
+// Import性能Monitor
 const { performanceMiddleware } = require('./utils/performance-monitor');
 
-// 導入安全中間件
+// Import安全中間件
 const { 
   securityHeaders, 
   corsOptions, 
@@ -76,27 +76,27 @@ const {
   notFoundHandler
 } = require('./middleware/security');
 
-// 導入認證中間件
+// ImportAuthenticate中間件
 const { authenticateToken, requireAdmin, requireUser } = require('./middleware/auth');
 
-// 導入錯誤處理
+// ImportErrorHandle
 const { 
   setupProcessErrorHandling, 
   setupGracefulShutdown 
 } = require('./utils/error-handler');
 
-// 導入錯誤監控
+// ImportErrorMonitor
 const { errorMonitoringMiddleware } = require('./utils/error-monitor');
 
-// 導入響應工具
+// ImportResponseTool
 const { successResponse } = require('./utils/response-utils');
 
-// 導入路由
+// Import路由
 const performanceRoutes = require('./routes/performance');
 
 const app = express();
 
-// 驗證配置
+// VerifyConfigure
 try {
   validateConfig();
   logger.info('Configuration validated successfully');
@@ -105,7 +105,7 @@ try {
   process.exit(1);
 }
 
-// 設置進程錯誤處理
+// SettingsProcessErrorHandle
 setupProcessErrorHandling();
 
 // 安全中間件
@@ -114,17 +114,17 @@ app.use(cors(corsOptions));
 app.use(inputValidation);
 app.use(requestLogger);
 
-// 性能監控中間件
+// 性能Monitor中間件
 app.use(performanceMiddleware);
 
-// 錯誤監控中間件
+// ErrorMonitor中間件
 app.use(errorMonitoringMiddleware);
 
 // 基本中間件
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// 根端點
+// Root端點
 app.get('/', (req, res) => {
   successResponse(res, {
     name: 'CardStrategy API',
@@ -142,7 +142,7 @@ app.get('/', (req, res) => {
   }, 'CardStrategy API Enhanced Server Running');
 });
 
-// 基本健康檢查
+// 基本健康Check
 app.get('/health', async (req, res) => {
   try {
     const dbStatus = await testConnection();
@@ -174,7 +174,7 @@ app.get('/health', async (req, res) => {
   }
 });
 
-// API 版本端點
+// API Version端點
 app.get('/api/version', (req, res) => {
   successResponse(res, {
     version: '2.0.0',
@@ -192,7 +192,7 @@ app.get('/api/version', (req, res) => {
 // 性能指標路由
 app.use('/api/performance', performanceRoutes);
 
-// 管理員端點 (需要認證)
+// Manage員端點 (需要Authenticate)
 app.get('/api/admin/status', authenticateToken, requireAdmin, (req, res) => {
   successResponse(res, {
     user: req.user,
@@ -206,7 +206,7 @@ app.get('/api/admin/status', authenticateToken, requireAdmin, (req, res) => {
   }, 'Admin status retrieved successfully');
 });
 
-// 用戶端點 (需要認證)
+// User端點 (需要Authenticate)
 app.get('/api/user/profile', authenticateToken, requireUser, (req, res) => {
   successResponse(res, {
     user: req.user,
@@ -215,7 +215,7 @@ app.get('/api/user/profile', authenticateToken, requireUser, (req, res) => {
   }, 'User profile retrieved successfully');
 });
 
-// 測試端點 (開發環境)
+// Test端點 (On發環境)
 if (process.env.NODE_ENV === 'development') {
   app.get('/api/test/error', (req, res, next) => {
     const { type = 'generic' } = req.query;
@@ -241,7 +241,7 @@ if (process.env.NODE_ENV === 'development') {
   });
 
   app.get('/api/test/performance', async (req, res) => {
-    // 模擬一些處理時間
+    // 模擬一些HandleTime
     await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
     successResponse(res, {
       message: 'Performance test completed',
@@ -250,10 +250,10 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-// 404 處理
+// 404 Handle
 app.use(notFoundHandler);
 
-// 統一錯誤處理
+// 統一ErrorHandle
 app.use(errorHandler);
 
 const PORT = config.app.port;
@@ -261,10 +261,10 @@ const HOST = config.app.host;
 
 const startServer = async () => {
   try {
-    // 初始化服務
+    // InitializeService
     logger.info('Starting CardStrategy Enhanced Server...');
 
-    // 連接 Redis
+    // Connect Redis
     try {
       await connectRedis();
       logger.info('Redis connection established');
@@ -272,7 +272,7 @@ const startServer = async () => {
       logger.error('Redis connection failed:', error);
     }
 
-    // 測試數據庫連接
+    // TestDatabaseConnect
     try {
       const dbConnected = await testConnection();
       if (dbConnected) {
@@ -284,7 +284,7 @@ const startServer = async () => {
       logger.error('Database connection test failed:', error);
     }
 
-    // 啟動服務器
+    // StartServer
     const server = app.listen(PORT, HOST, () => {
       logger.info(\`🚀 CardStrategy Enhanced Server running on http://\${HOST}:\${PORT}\`);
       logger.info(\`🏥 Health check: http://\${HOST}:\${PORT}/health\`);
@@ -292,7 +292,7 @@ const startServer = async () => {
       logger.info(\`🔧 Environment: \${process.env.NODE_ENV || 'development'}\`);
     });
 
-    // 設置優雅關閉
+    // Settings優雅Off閉
     setupGracefulShutdown(server);
 
     return server;
@@ -302,7 +302,7 @@ const startServer = async () => {
   }
 };
 
-// 啟動服務器
+// StartServer
 if (require.main === module) {
   startServer();
 }
@@ -312,22 +312,22 @@ module.exports = { app, startServer };
 
     const serverPath = path.join(this.backendDir, 'src/server-enhanced-v2.js');
     fs.writeFileSync(serverPath, enhancedServer);
-    log.success('增強版服務器已創建');
+    log.success('增強版Server已Create');
   }
 
-  // 更新 package.json
+  // Update package.json
   async updatePackageJson() {
     log.header('📦 更新 package.json');
 
     const packagePath = path.join(this.backendDir, 'package.json');
     const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 
-    // 更新啟動腳本
+    // UpdateStart腳本
     packageJson.scripts.start = 'node src/server-enhanced-v2.js';
     packageJson.scripts['start:enhanced'] = 'node src/server-enhanced-v2.js';
     packageJson.scripts['dev:enhanced'] = 'nodemon src/server-enhanced-v2.js';
 
-    // 添加必要的依賴
+    // Add必要的依賴
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
     const requiredDeps = {
@@ -341,7 +341,7 @@ module.exports = { app, startServer };
       pg: '^8.11.3',
     };
 
-    // 檢查並添加缺失的依賴
+    // Check並Add缺失的依賴
     for (const [dep, version] of Object.entries(requiredDeps)) {
       if (!packageJson.dependencies[dep]) {
         packageJson.dependencies[dep] = version;
@@ -353,24 +353,24 @@ module.exports = { app, startServer };
     log.success('package.json 已更新');
   }
 
-  // 執行所有優化
+  // 執Row所有優化
   async run() {
-    log.header('🚀 開始第三階段服務器增強優化');
+    log.header('🚀 開始第三階段Server增強優化');
 
     try {
       await this.createEnhancedServer();
       await this.updatePackageJson();
 
-      log.header('🎉 第三階段服務器增強優化完成！');
-      log.success('增強版服務器已創建完成');
+      log.header('🎉 第三階段Server增強優化完成！');
+      log.success('增強版Server已Create完成');
     } catch (error) {
-      log.error(`優化過程中發生錯誤: ${error.message}`);
+      log.error(`優化過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
 }
 
-// 執行優化
+// 執Row優化
 if (require.main === module) {
   const optimizer = new Phase3ServerEnhancementOptimizer();
   optimizer.run();

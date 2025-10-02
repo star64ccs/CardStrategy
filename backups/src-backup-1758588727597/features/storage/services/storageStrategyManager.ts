@@ -1,0 +1,939 @@
+import { logger } from '../../../core/utils/logger';
+import type { StorageConfig, StorageOptions } from '../types/storage';
+import { DataPriority, StorageLayer, StorageStrategy } from '../types/storage';
+
+import { MultiLayerStorageService } from './multiLayerStorageService';
+
+// 性能指標接口
+interface PerformanceMetrics {
+  readLatency: number;
+  writeLatency: number;
+  hitRate: number;
+  errorRate: number;
+  networkSpeed: number;
+  storageUsage: number;
+  batteryLevel?: number;
+  memoryUsage?: number;
+}
+
+// 網絡狀況枚舉
+enum NetworkCondition {
+  EXCELLENT = 'excellent', // 優秀
+  GOOD = 'good', // 良好
+  POOR = 'poor', // 差
+  OFFLINE = 'offline', // 離線
+}
+
+// 設備狀況枚舉
+enum DeviceCondition {
+  HIGH_PERFORMANCE = 'high_performance',
+  BALANCED = 'balanced',
+  POWER_SAVING = 'power_saving',
+  LOW_STORAGE = 'low_storage',
+}
+
+// 自適應配置接口
+interface AdaptiveConfig {
+  autoOptimize: boolean;
+  monitoringInterval: number;
+  strategyChangeThreshold: number;
+  performanceTargets: PerformanceTargets;
+  constraints: ResourceConstraints;
+}
+
+// 性能目標接口
+interface PerformanceTargets {
+  maxReadLatency: number;
+  maxWriteLatency: number;
+  minHitRate: number;
+  maxErrorRate: number;
+}
+
+// 資源限制接口
+interface ResourceConstraints {
+  maxMemoryUsage: number;
+  maxStorageUsage: number;
+  minBatteryLevel?: number;
+  networkBandwidthLimit?: number;
+}
+
+/**
+ * 存儲策略管理器
+ * 負責動態選擇和調整存儲策略，根據設備狀況、網絡條件和性能指標自適應優化
+ */
+export class StorageStrategyManager {
+  private static instance: StorageStrategyManager;
+  private readonly storageService: MultiLayerStorageService;
+  private currentStrategy: StorageStrategy;
+  private adaptiveConfig: AdaptiveConfig;
+  private performanceHistory: PerformanceMetrics[] = [];
+  private isMonitoring = false;
+  private monitoringInterval?: NodeJS.Timeout;
+
+  private constructor() {
+    this.storageService = MultiLayerStorageService.getInstance();
+    this.currentStrategy = StorageStrategy.BALANCED;
+    this.adaptiveConfig = this.getDefaultAdaptiveConfig();
+  }
+
+  /**
+   * 獲取服務實例（單例模式）
+   */
+  public static getInstance(): StorageStrategyManager {
+    if (!StorageStrategyManager.instance) {
+      StorageStrategyManager.instance = new StorageStrategyManager();
+    }
+    return StorageStrategyManager.instance;
+  }
+
+  /**
+   * 初始化策略管理器
+   */
+  public async initialize(config?: Partial<AdaptiveConfig>): Promise<boolean> {
+    try {
+      if (config) {
+        this.adaptiveConfig = { ...this.adaptiveConfig, ...config };
+      }
+
+      // 評估初始策略
+      const optimalStrategy = await this.evaluateOptimalStrategy();
+      await this.setStrategy(optimalStrategy);
+
+      // 啟動監控
+      if (this.adaptiveConfig.autoOptimize) {
+        this.startPerformanceMonitoring();
+      }
+
+      logger.info('StorageStrategyManager 初始化成功', {
+        strategy: this.currentStrategy,
+      });
+      return true;
+    } catch (error) {
+      logger.error('StorageStrategyManager 初始化失敗:', error);
+      return false;
+    }
+  }
+
+  /**
+   * 設置存儲策略
+   */
+  public async setStrategy(strategy: StorageStrategy): Promise<boolean> {
+    try {
+      if (this.currentStrategy === strategy) {
+        return true;
+      }
+
+      const config = this.generateConfigForStrategy(strategy);
+      const success = await this.storageService.initialize(config);
+
+      if (success) {
+        this.currentStrategy = strategy;
+        logger.info(`存儲策略已切換到: ${strategy}`);
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      logger.error('設置存儲策略失敗:', { error, strategy });
+      return false;
+    }
+  }
+
+  /**
+   * 獲取當前策略
+   */
+  public getCurrentStrategy(): StorageStrategy {
+    return this.currentStrategy;
+  }
+
+  /**
+   * 根據數據特徵推薦存儲選項
+   */
+  public recommendStorageOptions(
+    dataSize: number,
+    accessFrequency: number,
+    importance: DataPriority,
+    isTemporary = false
+  ): StorageOptions {
+    const networkCondition = this.assessNetworkCondition();
+    const deviceCondition = this.assessDeviceCondition();
+
+    const options: StorageOptions = {
+      priority: importance,
+      sync: true,
+      compress: false,
+      encrypt: false,
+    };
+
+    // 根據數據大小調整
+    if (dataSize > 1024 * 1024) {
+      // 1MB
+      options.compress = true;
+      options.layer = StorageLayer.LOCAL;
+    } else if (dataSize > 10 * 1024) {
+      // 10KB
+      options.layer = StorageLayer.CACHE;
+    } else {
+      options.layer = StorageLayer.MEMORY;
+    }
+
+    // 根據訪問頻率調整
+    if (accessFrequency > 0.8) {
+      // 高頻訪問
+      options.layer = StorageLayer.MEMORY;
+      options.ttl = 30 * 60 * 1000; // 30分鐘
+    } else if (accessFrequency > 0.4) {
+      // 中頻訪問
+      options.layer = StorageLayer.CACHE;
+      options.ttl = 2 * 60 * 60 * 1000; // 2小時
+    }
+
+    // 根據重要性調整
+    if (importance === DataPriority.CRITICAL) {
+      options.sync = true;
+      options.encrypt = true;
+      // 關鍵數據使用多層存儲
+      delete options.layer;
+    } else if (importance === DataPriority.LOW || isTemporary) {
+      options.sync = false;
+      options.ttl = 10 * 60 * 1000; // 10分鐘
+    }
+
+    // 根據網絡狀況調整
+    if (
+      networkCondition === NetworkCondition.POOR ||
+      networkCondition === NetworkCondition.OFFLINE
+    ) {
+      options.sync = false;
+      options.layer = StorageLayer.LOCAL;
+    }
+
+    // 根據設備狀況調整
+    if (deviceCondition === DeviceCondition.LOW_STORAGE) {
+      options.compress = true;
+      options.ttl = 30 * 60 * 1000; // 30分鐘
+    } else if (deviceCondition === DeviceCondition.POWER_SAVING) {
+      options.sync = false;
+      options.layer = StorageLayer.LOCAL;
+    }
+
+    return options;
+  }
+
+  /**
+   * 優化當前策略
+   */
+  public async optimizeStrategy(): Promise<boolean> {
+    try {
+      const currentMetrics = await this.getCurrentPerformanceMetrics();
+      const isPerformanceAcceptable =
+        this.isPerformanceAcceptable(currentMetrics);
+
+      if (!isPerformanceAcceptable) {
+        const optimalStrategy = await this.evaluateOptimalStrategy();
+
+        if (optimalStrategy !== this.currentStrategy) {
+          logger.info('性能不佳，切換存儲策略', {
+            from: this.currentStrategy,
+            to: optimalStrategy,
+            metrics: currentMetrics,
+          });
+
+          return await this.setStrategy(optimalStrategy);
+        }
+      }
+
+      return true;
+    } catch (error) {
+      logger.error('優化策略失敗:', error);
+      return false;
+    }
+  }
+
+  /**
+   * 獲取策略性能報告
+   */
+  public async getPerformanceReport(): Promise<{
+    currentStrategy: StorageStrategy;
+    metrics: PerformanceMetrics;
+    recommendations: string[];
+    trendAnalysis: TrendAnalysis;
+  }> {
+    const metrics = await this.getCurrentPerformanceMetrics();
+    const recommendations = this.generateRecommendations(metrics);
+    const trendAnalysis = this.analyzeTrends();
+
+    return {
+      currentStrategy: this.currentStrategy,
+      metrics,
+      recommendations,
+      trendAnalysis,
+    };
+  }
+
+  /**
+   * 預測存儲需求
+   */
+  public predictStorageNeeds(
+    timeHorizon: number = 7 * 24 * 60 * 60 * 1000 // 7天
+  ): {
+    predictedSize: number;
+    predictedOperations: number;
+    recommendedStrategy: StorageStrategy;
+    resourceRequirements: ResourceRequirements;
+  } {
+    const historicalData = this.performanceHistory.slice(-168); // 最近7天的小時數據
+
+    if (historicalData.length === 0) {
+      return {
+        predictedSize: 0,
+        predictedOperations: 0,
+        recommendedStrategy: StorageStrategy.BALANCED,
+        resourceRequirements: {
+          memoryMB: 10,
+          storageMB: 50,
+          networkMBps: 1,
+        },
+      };
+    }
+
+    // 簡單的線性趨勢預測
+    const avgGrowthRate = this.calculateAverageGrowthRate(historicalData);
+    const currentSize = this.getCurrentStorageSize();
+    const currentOps = this.getCurrentOperationsPerHour();
+
+    const predictedSize =
+      currentSize * (1 + avgGrowthRate * (timeHorizon / (24 * 60 * 60 * 1000)));
+    const predictedOperations =
+      currentOps * (1 + avgGrowthRate * (timeHorizon / (24 * 60 * 60 * 1000)));
+
+    const recommendedStrategy = this.recommendStrategyForLoad(
+      predictedSize,
+      predictedOperations
+    );
+    const resourceRequirements = this.calculateResourceRequirements(
+      predictedSize,
+      predictedOperations
+    );
+
+    return {
+      predictedSize,
+      predictedOperations,
+      recommendedStrategy,
+      resourceRequirements,
+    };
+  }
+
+  /**
+   * 銷毀服務
+   */
+  public async destroy(): Promise<boolean> {
+    try {
+      this.stopPerformanceMonitoring();
+      this.performanceHistory = [];
+      logger.info('StorageStrategyManager 已銷毀');
+      return true;
+    } catch (error) {
+      logger.error('銷毀 StorageStrategyManager 失敗:', error);
+      return false;
+    }
+  }
+
+  // 私有方法實現
+
+  private getDefaultAdaptiveConfig(): AdaptiveConfig {
+    return {
+      autoOptimize: true,
+      monitoringInterval: 60 * 1000, // 1分鐘
+      strategyChangeThreshold: 0.2, // 20%性能變化觸發策略調整
+      performanceTargets: {
+        maxReadLatency: 100, // 100ms
+        maxWriteLatency: 200, // 200ms
+        minHitRate: 0.8, // 80%
+        maxErrorRate: 0.05, // 5%
+      },
+      constraints: {
+        maxMemoryUsage: 50 * 1024 * 1024, // 50MB
+        maxStorageUsage: 200 * 1024 * 1024, // 200MB
+        minBatteryLevel: 0.2, // 20%
+        networkBandwidthLimit: 1024 * 1024, // 1MB/s
+      },
+    };
+  }
+
+  private async evaluateOptimalStrategy(): Promise<StorageStrategy> {
+    const networkCondition = this.assessNetworkCondition();
+    const deviceCondition = this.assessDeviceCondition();
+    const currentLoad = await this.assessCurrentLoad();
+
+    // 優先級：設備狀況 > 網絡狀況 > 負載情況
+    if (deviceCondition === DeviceCondition.POWER_SAVING) {
+      return StorageStrategy.OFFLINE_FIRST;
+    }
+
+    if (deviceCondition === DeviceCondition.LOW_STORAGE) {
+      return StorageStrategy.PERFORMANCE; // 使用內存減少存儲佔用
+    }
+
+    if (
+      networkCondition === NetworkCondition.OFFLINE ||
+      networkCondition === NetworkCondition.POOR
+    ) {
+      return StorageStrategy.OFFLINE_FIRST;
+    }
+
+    if (currentLoad.isHighLoad) {
+      return StorageStrategy.PERFORMANCE;
+    }
+
+    if (
+      networkCondition === NetworkCondition.EXCELLENT &&
+      deviceCondition === DeviceCondition.HIGH_PERFORMANCE
+    ) {
+      return StorageStrategy.RELIABILITY;
+    }
+
+    return StorageStrategy.BALANCED;
+  }
+
+  private generateConfigForStrategy(
+    strategy: StorageStrategy
+  ): Partial<StorageConfig> {
+    const baseConfig = {
+      strategy,
+      layers: [],
+      compression: {
+        enabled: false,
+        algorithm: 'gzip' as any,
+        minSize: 1024,
+        level: 6,
+        autoCompress: false,
+      },
+      sync: {
+        enabled: true,
+        interval: 300000,
+        batchSize: 100,
+        maxRetries: 3,
+        conflictResolution: 'last_modified' as any,
+        backgroundSync: true,
+        syncOnStartup: true,
+        syncOnNetworkChange: true,
+      },
+      cleanup: {
+        enabled: true,
+        interval: 3600000,
+        maxAge: 604800000,
+        maxSize: 104857600,
+        strategy: 'lru' as any,
+        preserveCritical: true,
+      },
+    };
+
+    switch (strategy) {
+      case StorageStrategy.PERFORMANCE:
+        return {
+          ...baseConfig,
+          layers: [
+            {
+              layer: StorageLayer.MEMORY,
+              enabled: true,
+              priority: 1,
+              maxSize: 20 * 1024 * 1024,
+              maxItems: 2000,
+              ttl: 10 * 60 * 1000,
+            },
+            {
+              layer: StorageLayer.CACHE,
+              enabled: true,
+              priority: 2,
+              maxSize: 100 * 1024 * 1024,
+              maxItems: 10000,
+              ttl: 60 * 60 * 1000,
+            },
+          ],
+          compression: { ...baseConfig.compression, enabled: false },
+          sync: { ...baseConfig.sync, enabled: false },
+        };
+
+      case StorageStrategy.RELIABILITY:
+        return {
+          ...baseConfig,
+          layers: [
+            {
+              layer: StorageLayer.LOCAL,
+              enabled: true,
+              priority: 1,
+              maxSize: 500 * 1024 * 1024,
+              maxItems: 50000,
+              ttl: 7 * 24 * 60 * 60 * 1000,
+            },
+            {
+              layer: StorageLayer.CLOUD,
+              enabled: true,
+              priority: 2,
+              maxSize: 1024 * 1024 * 1024,
+              maxItems: 100000,
+              ttl: 30 * 24 * 60 * 60 * 1000,
+            },
+          ],
+          compression: { ...baseConfig.compression, enabled: true },
+          sync: { ...baseConfig.sync, interval: 60000, backgroundSync: true },
+        };
+
+      case StorageStrategy.OFFLINE_FIRST:
+        return {
+          ...baseConfig,
+          layers: [
+            {
+              layer: StorageLayer.LOCAL,
+              enabled: true,
+              priority: 1,
+              maxSize: 300 * 1024 * 1024,
+              maxItems: 30000,
+              ttl: 14 * 24 * 60 * 60 * 1000,
+            },
+            {
+              layer: StorageLayer.CACHE,
+              enabled: true,
+              priority: 2,
+              maxSize: 100 * 1024 * 1024,
+              maxItems: 10000,
+              ttl: 2 * 60 * 60 * 1000,
+            },
+          ],
+          compression: { ...baseConfig.compression, enabled: true },
+          sync: { ...baseConfig.sync, enabled: false },
+        };
+
+      case StorageStrategy.BALANCED:
+      default:
+        return {
+          ...baseConfig,
+          layers: [
+            {
+              layer: StorageLayer.MEMORY,
+              enabled: true,
+              priority: 1,
+              maxSize: 10 * 1024 * 1024,
+              maxItems: 1000,
+              ttl: 5 * 60 * 1000,
+            },
+            {
+              layer: StorageLayer.CACHE,
+              enabled: true,
+              priority: 2,
+              maxSize: 50 * 1024 * 1024,
+              maxItems: 5000,
+              ttl: 30 * 60 * 1000,
+            },
+            {
+              layer: StorageLayer.LOCAL,
+              enabled: true,
+              priority: 3,
+              maxSize: 200 * 1024 * 1024,
+              maxItems: 20000,
+              ttl: 7 * 24 * 60 * 60 * 1000,
+            },
+          ],
+          compression: {
+            ...baseConfig.compression,
+            enabled: true,
+            autoCompress: true,
+          },
+          sync: { ...baseConfig.sync, interval: 300000 },
+        };
+    }
+  }
+
+  private assessNetworkCondition(): NetworkCondition {
+    // 模擬網絡狀況評估
+    const navigator = globalThis.navigator as any;
+
+    if (!navigator.onLine) {
+      return NetworkCondition.OFFLINE;
+    }
+
+    // 在實際實現中，這裡會檢測網絡速度和延遲
+    const connection =
+      navigator.connection ||
+      navigator.mozConnection ||
+      navigator.webkitConnection;
+
+    if (connection) {
+      const { downlink } = connection; // Mbps
+
+      if (downlink > 10) {
+        return NetworkCondition.EXCELLENT;
+      } else if (downlink > 1) {
+        return NetworkCondition.GOOD;
+      } else {
+        return NetworkCondition.POOR;
+      }
+    }
+
+    return NetworkCondition.GOOD; // 默認假設網絡良好
+  }
+
+  private assessDeviceCondition(): DeviceCondition {
+    // 模擬設備狀況評估
+    try {
+      const performance = globalThis.performance as any;
+      const { memory } = performance;
+
+      if (memory) {
+        const memoryUsageRatio =
+          memory.usedJSHeapSize / memory.totalJSHeapSize;
+
+        if (memoryUsageRatio > 0.9) {
+          return DeviceCondition.LOW_STORAGE;
+        } else if (memoryUsageRatio > 0.7) {
+          return DeviceCondition.POWER_SAVING;
+        } else if (memoryUsageRatio < 0.3) {
+          return DeviceCondition.HIGH_PERFORMANCE;
+        }
+      }
+
+      return DeviceCondition.BALANCED;
+    } catch (error) {
+      return DeviceCondition.BALANCED;
+    }
+  }
+
+  private async assessCurrentLoad(): Promise<{
+    isHighLoad: boolean;
+    metrics: unknown;
+  }> {
+    const stats = await this.storageService.getStats();
+
+    const isHighLoad =
+      stats.averageReadLatency > 50 ||
+      stats.averageWriteLatency > 100 ||
+      stats.hitRate < 0.7;
+
+    return {
+      isHighLoad,
+      metrics: {
+        readLatency: stats.averageReadLatency,
+        writeLatency: stats.averageWriteLatency,
+        hitRate: stats.hitRate,
+      },
+    };
+  }
+
+  private startPerformanceMonitoring(): void {
+    if (this.isMonitoring) {
+      return;
+    }
+
+    this.isMonitoring = true;
+    this.monitoringInterval = setInterval(async () => {
+      try {
+        const metrics = await this.getCurrentPerformanceMetrics();
+        this.performanceHistory.push(metrics);
+
+        // 保持歷史記錄在合理範圍內（最近24小時）
+        if (this.performanceHistory.length > 1440) {
+          // 24 * 60 分鐘
+          this.performanceHistory = this.performanceHistory.slice(-1440);
+        }
+
+        // 檢查是否需要優化策略
+        if (this.adaptiveConfig.autoOptimize) {
+          await this.optimizeStrategy();
+        }
+      } catch (error) {
+        logger.error('性能監控失敗:', error);
+      }
+    }, this.adaptiveConfig.monitoringInterval);
+
+    logger.info('性能監控已啟動');
+  }
+
+  private stopPerformanceMonitoring(): void {
+    if (this.monitoringInterval) {
+      clearInterval(this.monitoringInterval);
+      this.monitoringInterval = undefined;
+    }
+    this.isMonitoring = false;
+    logger.info('性能監控已停止');
+  }
+
+  private async getCurrentPerformanceMetrics(): Promise<PerformanceMetrics> {
+    const stats = await this.storageService.getStats();
+    const networkCondition = this.assessNetworkCondition();
+    const deviceCondition = this.assessDeviceCondition();
+
+    return {
+      readLatency: stats.averageReadLatency,
+      writeLatency: stats.averageWriteLatency,
+      hitRate: stats.hitRate,
+      errorRate: stats.errorStats.totalErrors / (stats.totalItems || 1),
+      networkSpeed: this.getNetworkSpeed(networkCondition),
+      storageUsage:
+        stats.totalSize /
+        (this.adaptiveConfig.constraints.maxStorageUsage || 1),
+      batteryLevel: this.getBatteryLevel(),
+      memoryUsage: this.getMemoryUsage(),
+    };
+  }
+
+  private isPerformanceAcceptable(metrics: PerformanceMetrics): boolean {
+    const targets = this.adaptiveConfig.performanceTargets;
+
+    return (
+      metrics.readLatency <= targets.maxReadLatency &&
+      metrics.writeLatency <= targets.maxWriteLatency &&
+      metrics.hitRate >= targets.minHitRate &&
+      metrics.errorRate <= targets.maxErrorRate
+    );
+  }
+
+  private generateRecommendations(metrics: PerformanceMetrics): string[] {
+    const recommendations: string[] = [];
+    const targets = this.adaptiveConfig.performanceTargets;
+
+    if (metrics.readLatency > targets.maxReadLatency) {
+      recommendations.push('考慮增加內存緩存大小以降低讀取延遲');
+    }
+
+    if (metrics.writeLatency > targets.maxWriteLatency) {
+      recommendations.push('考慮啟用壓縮或使用更快的存儲層');
+    }
+
+    if (metrics.hitRate < targets.minHitRate) {
+      recommendations.push('調整緩存策略或增加緩存容量');
+    }
+
+    if (metrics.errorRate > targets.maxErrorRate) {
+      recommendations.push('檢查網絡連接或增加重試機制');
+    }
+
+    if (metrics.storageUsage > 0.8) {
+      recommendations.push('執行清理操作或增加存儲容量');
+    }
+
+    if (recommendations.length === 0) {
+      recommendations.push('當前性能表現良好，建議保持現有配置');
+    }
+
+    return recommendations;
+  }
+
+  private analyzeTrends(): TrendAnalysis {
+    if (this.performanceHistory.length < 2) {
+      return {
+        readLatencyTrend: 'stable',
+        writeLatencyTrend: 'stable',
+        hitRateTrend: 'stable',
+        overallTrend: 'stable',
+      };
+    }
+
+    const recent = this.performanceHistory.slice(-10); // 最近10個數據點
+    const earlier = this.performanceHistory.slice(-20, -10); // 更早的10個數據點
+
+    if (earlier.length === 0) {
+      return {
+        readLatencyTrend: 'stable',
+        writeLatencyTrend: 'stable',
+        hitRateTrend: 'stable',
+        overallTrend: 'stable',
+      };
+    }
+
+    const recentAvg = this.calculateAverageMetrics(recent);
+    const earlierAvg = this.calculateAverageMetrics(earlier);
+
+    const readLatencyTrend = this.calculateTrend(
+      earlierAvg.readLatency,
+      recentAvg.readLatency
+    );
+    const writeLatencyTrend = this.calculateTrend(
+      earlierAvg.writeLatency,
+      recentAvg.writeLatency
+    );
+    const hitRateTrend = this.calculateTrend(
+      earlierAvg.hitRate,
+      recentAvg.hitRate,
+      true
+    );
+
+    // 計算總體趨勢
+    const trends = [readLatencyTrend, writeLatencyTrend, hitRateTrend];
+    const improvingCount = trends.filter(t => t === 'improving').length;
+    const degradingCount = trends.filter(t => t === 'degrading').length;
+
+    let overallTrend: 'improving' | 'degrading' | 'stable';
+    if (improvingCount > degradingCount) {
+      overallTrend = 'improving';
+    } else if (degradingCount > improvingCount) {
+      overallTrend = 'degrading';
+    } else {
+      overallTrend = 'stable';
+    }
+
+    return {
+      readLatencyTrend,
+      writeLatencyTrend,
+      hitRateTrend,
+      overallTrend,
+    };
+  }
+
+  private getNetworkSpeed(condition: NetworkCondition): number {
+    switch (condition) {
+      case NetworkCondition.EXCELLENT:
+        return 10; // 10 Mbps
+      case NetworkCondition.GOOD:
+        return 2; // 2 Mbps
+      case NetworkCondition.POOR:
+        return 0.5; // 0.5 Mbps
+      case NetworkCondition.OFFLINE:
+        return 0; // 0 Mbps
+      default:
+        return 1;
+    }
+  }
+
+  private getBatteryLevel(): number {
+    try {
+      const navigator = globalThis.navigator as any;
+      if (navigator.battery || navigator.getBattery) {
+        // 實際實現中會從電池API獲取
+        return 0.8; // 模擬80%電量
+      }
+      return 1; // 假設桌面設備
+    } catch {
+      return 1;
+    }
+  }
+
+  private getMemoryUsage(): number {
+    try {
+      const performance = globalThis.performance as any;
+      if (performance.memory) {
+        return (
+          performance.memory.usedJSHeapSize / performance.memory.totalJSHeapSize
+        );
+      }
+      return 0.5; // 假設50%使用率
+    } catch {
+      return 0.5;
+    }
+  }
+
+  private calculateAverageGrowthRate(data: PerformanceMetrics[]): number {
+    if (data.length < 2) return 0;
+
+    let totalGrowth = 0;
+    for (let i = 1; i < data.length; i++) {
+      const growth =
+        (data[i].storageUsage - data[i - 1].storageUsage) /
+        data[i - 1].storageUsage;
+      totalGrowth += growth;
+    }
+
+    return totalGrowth / (data.length - 1);
+  }
+
+  private getCurrentStorageSize(): number {
+    // 模擬當前存儲大小
+    return 50 * 1024 * 1024; // 50MB
+  }
+
+  private getCurrentOperationsPerHour(): number {
+    // 模擬當前每小時操作數
+    return 1000;
+  }
+
+  private recommendStrategyForLoad(
+    size: number,
+    operations: number
+  ): StorageStrategy {
+    if (operations > 10000) {
+      // 高負載
+      return StorageStrategy.PERFORMANCE;
+    } else if (size > 500 * 1024 * 1024) {
+      // 大存儲
+      return StorageStrategy.RELIABILITY;
+    } else {
+      return StorageStrategy.BALANCED;
+    }
+  }
+
+  private calculateResourceRequirements(
+    size: number,
+    operations: number
+  ): ResourceRequirements {
+    return {
+      memoryMB: Math.max(10, operations / 100), // 基於操作數計算內存需求
+      storageMB: Math.max(50, (size / (1024 * 1024)) * 1.2), // 存儲需求+20%緩衝
+      networkMBps: Math.max(1, operations / 1000), // 基於操作數計算網絡需求
+    };
+  }
+
+  private calculateAverageMetrics(
+    metrics: PerformanceMetrics[]
+  ): PerformanceMetrics {
+    if (metrics.length === 0) {
+      return {
+        readLatency: 0,
+        writeLatency: 0,
+        hitRate: 0,
+        errorRate: 0,
+        networkSpeed: 0,
+        storageUsage: 0,
+      };
+    }
+
+    const sum = metrics.reduce((acc, metric) => ({
+      readLatency: acc.readLatency + metric.readLatency,
+      writeLatency: acc.writeLatency + metric.writeLatency,
+      hitRate: acc.hitRate + metric.hitRate,
+      errorRate: acc.errorRate + metric.errorRate,
+      networkSpeed: acc.networkSpeed + metric.networkSpeed,
+      storageUsage: acc.storageUsage + metric.storageUsage,
+    }));
+
+    return {
+      readLatency: sum.readLatency / metrics.length,
+      writeLatency: sum.writeLatency / metrics.length,
+      hitRate: sum.hitRate / metrics.length,
+      errorRate: sum.errorRate / metrics.length,
+      networkSpeed: sum.networkSpeed / metrics.length,
+      storageUsage: sum.storageUsage / metrics.length,
+    };
+  }
+
+  private calculateTrend(
+    oldValue: number,
+    newValue: number,
+    higherIsBetter = false
+  ): 'improving' | 'degrading' | 'stable' {
+    const changeRatio = Math.abs(newValue - oldValue) / oldValue;
+
+    if (changeRatio < 0.05) {
+      // 5%以內視為穩定
+      return 'stable';
+    }
+
+    const isImproving = higherIsBetter
+      ? newValue > oldValue
+      : newValue < oldValue;
+    return isImproving ? 'improving' : 'degrading';
+  }
+}
+
+// 輔助接口
+interface TrendAnalysis {
+  readLatencyTrend: 'improving' | 'degrading' | 'stable';
+  writeLatencyTrend: 'improving' | 'degrading' | 'stable';
+  hitRateTrend: 'improving' | 'degrading' | 'stable';
+  overallTrend: 'improving' | 'degrading' | 'stable';
+}
+
+interface ResourceRequirements {
+  memoryMB: number;
+  storageMB: number;
+  networkMBps: number;
+}

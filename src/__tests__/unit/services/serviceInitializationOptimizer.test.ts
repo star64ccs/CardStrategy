@@ -1,10 +1,10 @@
 /**
- * 服務初始化優化器測試
+ * ServiceInitialize優化器Test
  */
 
 import { serviceInitializationOptimizer } from '../../../core/config/serviceInitializationOptimizer';
 
-// Mock 服務
+// Mock Service
 const _mockService1 = {
   initialize: jest.fn().mockResolvedValue(true),
   isServiceAvailable: jest.fn().mockReturnValue(false),
@@ -26,8 +26,8 @@ describe('ServiceInitializationOptimizer', () => {
     jest.clearAllMocks();
   });
 
-  describe('服務註冊', () => {
-    it('應該能夠註冊服務', () => {
+  describe('Service註冊', () => {
+    it('應該能夠註冊Service', () => {
       serviceInitializationOptimizer.registerService(
         'service1',
         mockService1,
@@ -47,7 +47,7 @@ describe('ServiceInitializationOptimizer', () => {
       expect(stats.serviceNames).toContain('service2');
     });
 
-    it('應該能夠設置服務依賴', () => {
+    it('應該能夠SettingsService依賴', () => {
       serviceInitializationOptimizer.registerService(
         'service1',
         mockService1,
@@ -124,7 +124,7 @@ describe('ServiceInitializationOptimizer', () => {
   });
 
   describe('初始化順序優化', () => {
-    it('應該按依賴關係排序服務', () => {
+    it('應該按依賴關係排序Service', () => {
       serviceInitializationOptimizer.registerService(
         'service1',
         mockService1,
@@ -149,7 +149,7 @@ describe('ServiceInitializationOptimizer', () => {
       expect(sortedOrder).toEqual(['service1', 'service2', 'service3']);
     });
 
-    it('應該按優先級排序相同依賴層級的服務', () => {
+    it('應該按優先級排序相同依賴層級的Service', () => {
       serviceInitializationOptimizer.registerService(
         'service1',
         mockService1,
@@ -178,8 +178,8 @@ describe('ServiceInitializationOptimizer', () => {
   });
 
   describe('並行初始化', () => {
-    it('應該並行初始化服務', async () => {
-      // 重新設置 mock 以確保返回 true
+    it('應該並行InitializeService', async () => {
+      // ReSettings mock 以確保Return true
       mockService1.initialize.mockResolvedValue(true);
       mockService2.initialize.mockResolvedValue(true);
       mockService3.initialize.mockResolvedValue(true);
@@ -214,13 +214,13 @@ describe('ServiceInitializationOptimizer', () => {
       expect(mockService3.initialize).toHaveBeenCalled();
     });
 
-    it('應該處理初始化失敗的服務', async () => {
+    it('應該HandleInitializeFailed的Service', async () => {
       const _failingService = {
-        initialize: jest.fn().mockRejectedValue(new Error('初始化失敗')),
+        initialize: jest.fn().mockRejectedValue(new Error('InitializeFailed')),
         isServiceAvailable: jest.fn().mockReturnValue(false),
       };
 
-      // 重新設置 mock 以確保返回 true
+      // ReSettings mock 以確保Return true
       mockService1.initialize.mockResolvedValue(true);
 
       serviceInitializationOptimizer.registerService(
@@ -243,11 +243,11 @@ describe('ServiceInitializationOptimizer', () => {
       expect(result.initialized).toContain('service1');
       expect(result.failed).toHaveLength(1);
       expect(result.failed[0].service).toBe('failingService');
-      expect(result.failed[0].error).toBe('初始化失敗');
+      expect(result.failed[0].error).toBe('InitializeFailed');
     });
 
     it('應該尊重依賴關係進行初始化', async () => {
-      // 重新設置 mock 以確保返回 true
+      // ReSettings mock 以確保Return true
       mockService1.initialize.mockResolvedValue(true);
       mockService2.initialize.mockResolvedValue(true);
 
@@ -273,8 +273,8 @@ describe('ServiceInitializationOptimizer', () => {
     });
   });
 
-  describe('服務狀態檢查', () => {
-    it('應該檢查服務可用性', () => {
+  describe('Service狀態Check', () => {
+    it('應該CheckService可用性', () => {
       const _availableService = {
         initialize: jest.fn().mockResolvedValue(true),
         isServiceAvailable: jest.fn().mockReturnValue(true),
@@ -308,7 +308,7 @@ describe('ServiceInitializationOptimizer', () => {
     it('應該在合理時間內完成初始化', async () => {
       const _startTime = Date.now();
 
-      // 註冊多個服務
+      // RegisterMultipleService
       for (let i = 0; i < 10; i++) {
         const _mockService = {
           initialize: jest.fn().mockResolvedValue(true),
@@ -329,7 +329,7 @@ describe('ServiceInitializationOptimizer', () => {
 
       expect(result.success).toBe(true);
       expect(result.initialized).toHaveLength(10);
-      expect(duration).toBeLessThan(1000); // 應該在1秒內完成
+      expect(duration).toBeLessThan(1000); // 應該在1Second內Complete
     });
   });
 });

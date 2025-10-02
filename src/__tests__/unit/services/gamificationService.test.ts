@@ -18,7 +18,7 @@ describe('GamificationService', () => {
   });
 
   describe('getUserProfile', () => {
-    it('應該成功獲取用戶遊戲化檔案', async () => {
+    it('應該SuccessGet用戶遊戲化檔案', async () => {
       const _mockProfile = {
         userId: 'user123',
         level: 5,
@@ -37,7 +37,7 @@ describe('GamificationService', () => {
       expect(result).toEqual(mockProfile);
     });
 
-    it('應該處理獲取用戶檔案失敗的情況', async () => {
+    it('應該HandleGet用戶檔案Failed的情況', async () => {
       mockApiResponse('get', null, new Error('User not found'));
 
       await expect(
@@ -47,7 +47,7 @@ describe('GamificationService', () => {
   });
 
   describe('addExperience', () => {
-    it('應該成功添加經驗值', async () => {
+    it('應該Success添加經驗值', async () => {
       const _experienceData = {
         userId: 'user123',
         amount: 100,
@@ -70,7 +70,7 @@ describe('GamificationService', () => {
       expect(result).toEqual(mockResponse);
     });
 
-    it('應該處理添加經驗值失敗的情況', async () => {
+    it('應該Handle添加經驗值Failed的情況', async () => {
       const _experienceData = {
         userId: 'invalid_user',
         amount: 100,
@@ -87,7 +87,7 @@ describe('GamificationService', () => {
   });
 
   describe('getAchievements', () => {
-    it('應該成功獲取成就列表', async () => {
+    it('應該SuccessGet成就列表', async () => {
       const _mockAchievements = [
         {
           id: 'first_scan',
@@ -126,7 +126,7 @@ describe('GamificationService', () => {
   });
 
   describe('unlockAchievement', () => {
-    it('應該成功解鎖成就', async () => {
+    it('應該Success解鎖成就', async () => {
       const _achievementData = {
         userId: 'user123',
         achievementId: 'streak_30',
@@ -149,7 +149,7 @@ describe('GamificationService', () => {
   });
 
   describe('getLeaderboard', () => {
-    it('應該成功獲取排行榜', async () => {
+    it('應該SuccessGet排行榜', async () => {
       const _mockLeaderboard = [
         {
           rank: 1,
@@ -195,7 +195,7 @@ describe('GamificationService', () => {
   });
 
   describe('getChallenges', () => {
-    it('應該成功獲取挑戰列表', async () => {
+    it('應該SuccessGet挑戰列表', async () => {
       const _mockChallenges = [
         {
           id: 'daily_scan',
@@ -230,7 +230,7 @@ describe('GamificationService', () => {
   });
 
   describe('updateChallengeProgress', () => {
-    it('應該成功更新挑戰進度', async () => {
+    it('應該SuccessUpdate挑戰進度', async () => {
       const _progressData = {
         userId: 'user123',
         challengeId: 'daily_scan',
@@ -277,7 +277,7 @@ describe('GamificationService', () => {
   });
 
   describe('getRewards', () => {
-    it('應該成功獲取獎勵列表', async () => {
+    it('應該SuccessGet獎勵列表', async () => {
       const _mockRewards = [
         {
           id: 'badge_bronze',
@@ -307,7 +307,7 @@ describe('GamificationService', () => {
   });
 
   describe('claimReward', () => {
-    it('應該成功領取獎勵', async () => {
+    it('應該Success領取獎勵', async () => {
       const _rewardData = {
         userId: 'user123',
         rewardId: 'points_100',
@@ -329,7 +329,7 @@ describe('GamificationService', () => {
   });
 
   describe('getStreak', () => {
-    it('應該成功獲取連續使用天數', async () => {
+    it('應該SuccessGet連續使用天數', async () => {
       const _mockStreak = {
         currentStreak: 7,
         longestStreak: 15,
@@ -346,7 +346,7 @@ describe('GamificationService', () => {
   });
 
   describe('updateStreak', () => {
-    it('應該成功更新連續使用天數', async () => {
+    it('應該SuccessUpdate連續使用天數', async () => {
       const _mockResponse = {
         newStreak: 8,
         streakReward: 100,

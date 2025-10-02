@@ -1,6 +1,6 @@
 /**
  * 反壟斷合規模組
- * 實現重構計劃任務 1.11: AntitrustComplianceModule
+ * 實現重構計劃Task 1.11: AntitrustComplianceModule
  */
 
 import { logger } from '../../../core/utils/logger';
@@ -231,7 +231,7 @@ export class AntitrustComplianceModule {
       logger.info('反壟斷合規模組初始化完成', { config: this.config });
       return true;
     } catch (error) {
-      logger.error('反壟斷合規模組初始化失敗:', error);
+      logger.error('反壟斷合規模組InitializeFailed:', error);
       return false;
     }
   }
@@ -277,7 +277,7 @@ export class AntitrustComplianceModule {
 
       return analysisResult;
     } catch (error) {
-      logger.error('市場地位分析失敗:', error);
+      logger.error('市場地位分析Failed:', error);
       throw error;
     }
   }
@@ -321,7 +321,7 @@ export class AntitrustComplianceModule {
 
       return detectionResult;
     } catch (error) {
-      logger.error('市場支配地位檢測失敗:', error);
+      logger.error('市場支配地位檢測Failed:', error);
       throw error;
     }
   }
@@ -359,7 +359,7 @@ export class AntitrustComplianceModule {
 
       return fairnessReport;
     } catch (error) {
-      logger.error('公平性監控失敗:', error);
+      logger.error('公平性監控Failed:', error);
       throw error;
     }
   }
@@ -402,7 +402,7 @@ export class AntitrustComplianceModule {
 
       return analysisResult;
     } catch (error) {
-      logger.error('反競爭行為檢測失敗:', error);
+      logger.error('反競爭行為檢測Failed:', error);
       throw error;
     }
   }
@@ -442,7 +442,7 @@ export class AntitrustComplianceModule {
 
       return sharingResult;
     } catch (error) {
-      logger.error('數據共享管理失敗:', error);
+      logger.error('數據共享管理Failed:', error);
       throw error;
     }
   }
@@ -482,7 +482,7 @@ export class AntitrustComplianceModule {
 
       return interoperabilityResult;
     } catch (error) {
-      logger.error('互操作性強制執行失敗:', error);
+      logger.error('互操作性強制執行Failed:', error);
       throw error;
     }
   }
@@ -503,7 +503,7 @@ export class AntitrustComplianceModule {
     logger.info('反壟斷合規模組已重置');
   }
 
-  // 私有方法
+  // PrivateMethod
   private getDefaultConfig(): AntitrustComplianceConfig {
     return {
       enableMarketAnalysis: true,

@@ -19,7 +19,7 @@ import {
   UserBehaviorStats,
 } from '../../features/analytics/types/userBehavior';
 
-// 異步 Thunk
+// Async Thunk
 export const _initializeUserBehavior = createAsyncThunk(
   'userBehavior/initialize',
   async () => {
@@ -115,43 +115,43 @@ export const _getUserMetrics = createAsyncThunk(
   }
 );
 
-// 狀態接口
+// StatusInterface
 interface UserBehaviorState {
-  // 服務狀態
+  // ServiceStatus
   isInitialized: boolean;
   isLoading: boolean;
   error: string | null;
 
-  // 分析數據
+  // AnalysisData
   analysis: UserBehaviorAnalysisResponse | null;
   currentFilter: UserBehaviorFilter | null;
 
-  // 報告
+  // Report
   reports: UserBehaviorReport[];
   currentReport: UserBehaviorReport | null;
   reportGenerationLoading: boolean;
 
-  // 配置
+  // Configure
   config: UserBehaviorConfig;
 
-  // 警報
+  // Alert
   alerts: UserBehaviorAlert[];
   alertLoading: boolean;
 
-  // 事件
+  // Event
   recentEvents: UserBehaviorEvent[];
   eventCount: number;
 
-  // 導出
+  // Export
   exportLoading: boolean;
   exportData: string | null;
 
-  // 用戶特定數據
+  // UserSpecificData
   userProfiles: Map<string, UserProfile>;
   userPatterns: Map<string, UserBehaviorPattern[]>;
   userMetrics: Map<string, UserBehaviorMetrics>;
 
-  // 實時數據
+  // 實時Data
   realTimeMetrics: {
     activeUsers: number;
     averageSessionDuration: number;
@@ -164,7 +164,7 @@ interface UserBehaviorState {
   recommendations: unknown[];
 }
 
-// 初始狀態
+// 初始Status
 const initialState: UserBehaviorState = {
   isInitialized: false,
   isLoading: false,
@@ -213,24 +213,24 @@ const _userBehaviorSlice = createSlice({
   name: 'userBehavior',
   initialState,
   reducers: {
-    // 重置狀態
+    // ResetStatus
     resetState: state => {
       state.isInitialized = false;
       state.analysis = null;
       state.error = null;
     },
 
-    // 設置過濾器
+    // SettingsFilter器
     setFilter: (state, action: PayloadAction<UserBehaviorFilter>) => {
       state.currentFilter = action.payload;
     },
 
-    // 清除過濾器
+    // ClearFilter器
     clearFilter: state => {
       state.currentFilter = null;
     },
 
-    // 更新配置
+    // UpdateConfigure
     updateConfig: (
       state,
       action: PayloadAction<Partial<UserBehaviorConfig>>
@@ -238,18 +238,18 @@ const _userBehaviorSlice = createSlice({
       state.config = { ...state.config, ...action.payload };
     },
 
-    // 添加事件
+    // AddEvent
     addEvent: (state, action: PayloadAction<UserBehaviorEvent>) => {
       state.recentEvents.unshift(action.payload);
       state.eventCount++;
 
-      // 限制事件數量
+      // LimitEvent數量
       if (state.recentEvents.length > 100) {
         state.recentEvents = state.recentEvents.slice(0, 100);
       }
     },
 
-    // 更新實時指標
+    // Update實時指標
     updateRealTimeMetrics: (
       state,
       action: PayloadAction<{
@@ -262,22 +262,22 @@ const _userBehaviorSlice = createSlice({
       state.realTimeMetrics = action.payload;
     },
 
-    // 設置洞察
+    // Settings洞察
     setInsights: (state, action: PayloadAction<any[]>) => {
       state.insights = action.payload;
     },
 
-    // 設置建議
+    // Settings建議
     setRecommendations: (state, action: PayloadAction<any[]>) => {
       state.recommendations = action.payload;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
     },
 
-    // 設置當前報告
+    // Settings當前Report
     setCurrentReport: (
       state,
       action: PayloadAction<UserBehaviorReport | null>
@@ -285,17 +285,17 @@ const _userBehaviorSlice = createSlice({
       state.currentReport = action.payload;
     },
 
-    // 添加報告
+    // AddReport
     addReport: (state, action: PayloadAction<UserBehaviorReport>) => {
       state.reports.unshift(action.payload);
 
-      // 限制報告數量
+      // LimitReport數量
       if (state.reports.length > 50) {
         state.reports = state.reports.slice(0, 50);
       }
     },
 
-    // 刪除報告
+    // DeleteReport
     deleteReport: (state, action: PayloadAction<string>) => {
       state.reports = state.reports.filter(
         report => report.id !== action.payload
@@ -305,7 +305,7 @@ const _userBehaviorSlice = createSlice({
       }
     },
 
-    // 設置用戶畫像
+    // SettingsUser畫像
     setUserProfile: (
       state,
       action: PayloadAction<{ userId: string; profile: UserProfile }>
@@ -313,7 +313,7 @@ const _userBehaviorSlice = createSlice({
       state.userProfiles.set(action.payload.userId, action.payload.profile);
     },
 
-    // 設置用戶模式
+    // SettingsUser模式
     setUserPatterns: (
       state,
       action: PayloadAction<{ userId: string; patterns: UserBehaviorPattern[] }>
@@ -321,7 +321,7 @@ const _userBehaviorSlice = createSlice({
       state.userPatterns.set(action.payload.userId, action.payload.patterns);
     },
 
-    // 設置用戶指標
+    // SettingsUser指標
     setUserMetrics: (
       state,
       action: PayloadAction<{ userId: string; metrics: UserBehaviorMetrics }>
@@ -330,7 +330,7 @@ const _userBehaviorSlice = createSlice({
     },
   },
   extraReducers: builder => {
-    // 初始化
+    // Initialize
     builder
       .addCase(initializeUserBehavior.pending, state => {
         state.isLoading = true;
@@ -342,10 +342,10 @@ const _userBehaviorSlice = createSlice({
       })
       .addCase(initializeUserBehavior.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       });
 
-    // 獲取行為分析
+    // GetRow為Analysis
     builder
       .addCase(getBehaviorAnalysis.pending, state => {
         state.isLoading = true;
@@ -357,10 +357,10 @@ const _userBehaviorSlice = createSlice({
       })
       .addCase(getBehaviorAnalysis.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message || '獲取行為分析失敗';
+        state.error = action.error.message || 'Get行為分析Failed';
       });
 
-    // 生成報告
+    // 生成Report
     builder
       .addCase(generateBehaviorReport.pending, state => {
         state.reportGenerationLoading = true;
@@ -373,10 +373,10 @@ const _userBehaviorSlice = createSlice({
       })
       .addCase(generateBehaviorReport.rejected, (state, action) => {
         state.reportGenerationLoading = false;
-        state.error = action.error.message || '生成報告失敗';
+        state.error = action.error.message || '生成報告Failed';
       });
 
-    // 導出數據
+    // ExportData
     builder
       .addCase(exportBehaviorData.pending, state => {
         state.exportLoading = true;
@@ -388,10 +388,10 @@ const _userBehaviorSlice = createSlice({
       })
       .addCase(exportBehaviorData.rejected, (state, action) => {
         state.exportLoading = false;
-        state.error = action.error.message || '導出數據失敗';
+        state.error = action.error.message || '導出數據Failed';
       });
 
-    // 創建警報
+    // CreateAlert
     builder
       .addCase(createBehaviorAlert.pending, state => {
         state.alertLoading = true;
@@ -402,10 +402,10 @@ const _userBehaviorSlice = createSlice({
       })
       .addCase(createBehaviorAlert.rejected, (state, action) => {
         state.alertLoading = false;
-        state.error = action.error.message || '創建警報失敗';
+        state.error = action.error.message || 'Create警報Failed';
       });
 
-    // 更新警報
+    // UpdateAlert
     builder
       .addCase(updateBehaviorAlert.pending, state => {
         state.alertLoading = true;
@@ -421,10 +421,10 @@ const _userBehaviorSlice = createSlice({
       })
       .addCase(updateBehaviorAlert.rejected, (state, action) => {
         state.alertLoading = false;
-        state.error = action.error.message || '更新警報失敗';
+        state.error = action.error.message || 'Update警報Failed';
       });
 
-    // 刪除警報
+    // DeleteAlert
     builder
       .addCase(deleteBehaviorAlert.pending, state => {
         state.alertLoading = true;
@@ -438,29 +438,29 @@ const _userBehaviorSlice = createSlice({
       })
       .addCase(deleteBehaviorAlert.rejected, (state, action) => {
         state.alertLoading = false;
-        state.error = action.error.message || '刪除警報失敗';
+        state.error = action.error.message || 'Delete警報Failed';
       });
 
-    // 獲取用戶畫像
+    // GetUser畫像
     builder.addCase(getUserProfile.fulfilled, (state, action) => {
       if (action.payload) {
         state.userProfiles.set(action.meta.arg, action.payload);
       }
     });
 
-    // 獲取用戶模式
+    // GetUser模式
     builder.addCase(getUserPatterns.fulfilled, (state, action) => {
       state.userPatterns.set(action.meta.arg, action.payload);
     });
 
-    // 獲取用戶指標
+    // GetUser指標
     builder.addCase(getUserMetrics.fulfilled, (state, action) => {
       state.userMetrics.set(action.meta.arg, action.payload);
     });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   resetState,
   setFilter,
@@ -479,7 +479,7 @@ export const {
   setUserMetrics,
 } = userBehaviorSlice.actions;
 
-// 導出 selectors
+// Export selectors
 export const _selectUserBehavior = (state: {
   userBehavior: UserBehaviorState;
 }) => state.userBehavior;
@@ -540,5 +540,5 @@ export const _selectUserMetrics = (
   userId: string
 ) => state.userBehavior.userMetrics.get(userId);
 
-// 導出 reducer
+// Export reducer
 export default userBehaviorSlice.reducer;

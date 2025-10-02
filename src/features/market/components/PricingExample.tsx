@@ -52,10 +52,10 @@ export const PricingExample: React.FC = () => {
   const [periodInput, setPeriodInput] = useState('30d');
 
   useEffect(() => {
-    // 初始化服務
+    // InitializeService
     initialize();
 
-    // 載入初始數據
+    // Load初始Data
     loadInitialData();
   }, []);
 
@@ -67,7 +67,7 @@ export const PricingExample: React.FC = () => {
 
   const _handleSearchPrice = async () => {
     if (!cardIdInput.trim()) {
-      Alert.alert('錯誤', '請輸入卡牌 ID');
+      Alert.alert('Error', '請輸入卡牌 ID');
       return;
     }
 
@@ -87,10 +87,10 @@ export const PricingExample: React.FC = () => {
   }) => {
     await createAlert({
       ...alertData,
-      userId: 'user_1', // 模擬用戶ID
+      userId: 'user_1', // 模擬UserID
     });
     setShowAlertForm(false);
-    Alert.alert('成功', '價格警報已創建');
+    Alert.alert('Success', '價格警報已創建');
   };
 
   const _handleToggleAlert = async (alertId: string, isActive: boolean) => {
@@ -105,7 +105,7 @@ export const PricingExample: React.FC = () => {
         style: 'destructive',
         onPress: async () => {
           await deleteAlert(alertId);
-          Alert.alert('成功', '警報已刪除');
+          Alert.alert('Success', '警報已刪除');
         },
       },
     ]);
@@ -126,7 +126,7 @@ export const PricingExample: React.FC = () => {
         <Text style={styles.subtitle}>實時價格追蹤與歷史分析</Text>
       </View>
 
-      {/* 搜索區域 */}
+      {/* SearchDistrict域 */}
       <View style={styles.searchSection}>
         <Text style={styles.sectionTitle}>價格查詢</Text>
         <View style={styles.searchContainer}>
@@ -170,7 +170,7 @@ export const PricingExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 當前價格顯示 */}
+      {/* 當前價格Show */}
       <View style={styles.priceSection}>
         <Text style={styles.sectionTitle}>當前價格</Text>
         <PriceDisplay
@@ -185,7 +185,7 @@ export const PricingExample: React.FC = () => {
         />
       </View>
 
-      {/* 市場統計 */}
+      {/* 市場Statistics */}
       {marketStats && (
         <View style={styles.statsSection}>
           <Text style={styles.sectionTitle}>市場概況</Text>
@@ -226,7 +226,7 @@ export const PricingExample: React.FC = () => {
         </View>
       )}
 
-      {/* 價格歷史統計 */}
+      {/* 價格歷史Statistics */}
       {priceHistory && (
         <View style={styles.historySection}>
           <Text style={styles.sectionTitle}>歷史統計</Text>
@@ -259,7 +259,7 @@ export const PricingExample: React.FC = () => {
         </View>
       )}
 
-      {/* 市場分析 */}
+      {/* 市場Analysis */}
       {marketAnalysis && (
         <View style={styles.analysisSection}>
           <Text style={styles.sectionTitle}>市場分析</Text>
@@ -342,7 +342,7 @@ export const PricingExample: React.FC = () => {
         </View>
       )}
 
-      {/* 價格警報 */}
+      {/* 價格Alert */}
       <View style={styles.alertsSection}>
         <View style={styles.alertsHeader}>
           <Text style={styles.sectionTitle}>價格警報</Text>
@@ -411,7 +411,7 @@ export const PricingExample: React.FC = () => {
         )}
       </View>
 
-      {/* 錯誤顯示 */}
+      {/* ErrorShow */}
       {error && (
         <View style={styles.errorContainer}>
           <Ionicons name='alert-circle' size={24} color='#F44336' />
@@ -422,7 +422,7 @@ export const PricingExample: React.FC = () => {
         </View>
       )}
 
-      {/* 警報創建表單 */}
+      {/* AlertCreateTable單 */}
       <Modal
         visible={showAlertForm}
         animationType='slide'

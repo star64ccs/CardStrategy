@@ -299,7 +299,7 @@ describe('FakeCardReportingService', () => {
     });
 
     it('should calculate correct statistics', async () => {
-      // 創建一些測試數據
+      // Create一些TestData
       await service.createReport({
         title: '統計測試1',
         description: '測試1',
@@ -419,7 +419,7 @@ describe('FakeCardReportingService', () => {
       await service.initialize();
       service.destroy();
 
-      // 重新初始化應該正常工作
+      // ReInitialize應該正常工作
       const _result = await service.initialize();
       expect(result).toBe(true);
     });
@@ -505,7 +505,7 @@ describe('FakeCardReportingService', () => {
 
     it('should validate report title length', async () => {
       const _reportData = {
-        title: '', // 空標題
+        title: '', // Empty標題
         description: '測試描述',
         reportType: ReportType.FAKE_CARD,
         severity: ReportSeverity.LOW,
@@ -518,7 +518,7 @@ describe('FakeCardReportingService', () => {
     it('should validate report description length', async () => {
       const _reportData = {
         title: '標題測試',
-        description: '', // 空描述
+        description: '', // EmptyDescription
         reportType: ReportType.FAKE_CARD,
         severity: ReportSeverity.LOW,
       };
@@ -533,7 +533,7 @@ describe('FakeCardReportingService', () => {
         description: '測試描述',
         reportType: ReportType.FAKE_CARD,
         severity: ReportSeverity.LOW,
-        contactInfo: 'invalid-email', // 無效郵箱
+        contactInfo: 'invalid-email', // 無效Email
       };
 
       const _result = await service.createReport(reportData);

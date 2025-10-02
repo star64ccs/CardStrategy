@@ -1,0 +1,8 @@
+{
+  "port": "${MAIN_API_PORT}",
+  "host": "${MAIN_API_HOST}",
+  "cors": {
+    "origin": "${CORS_ORIGIN}",
+    "credentials": true
+  }
+}

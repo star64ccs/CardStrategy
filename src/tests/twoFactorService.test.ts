@@ -8,7 +8,7 @@ const _mockLogger = {
   debug: jest.fn(),
 };
 
-// 模擬雙因素認證服務
+// 模擬雙因素AuthenticateService
 class MockTwoFactorService {
   private isInitialized = false;
   private userMethods = new Map();
@@ -214,7 +214,7 @@ describe('Two-Factor Authentication Service Tests', () => {
   });
 
   describe('MockTwoFactorService', () => {
-    test('初始化應該成功', async () => {
+    test('Initialize應該Success', async () => {
       const _result = await mockTwoFactorService.initialize();
       expect(result.success).toBe(true);
       expect(result.data?.totpDigits).toBe(6);
@@ -222,7 +222,7 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.data?.emailEnabled).toBe(true);
     });
 
-    test('設置 TOTP 應該成功', async () => {
+    test('Settings TOTP 應該Success', async () => {
       const _result = await mockTwoFactorService.setupTOTP(
         'test-user',
         'test@example.com'
@@ -233,7 +233,7 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.data?.backupCodes).toHaveLength(3);
     });
 
-    test('設置 SMS 應該成功', async () => {
+    test('Settings SMS 應該Success', async () => {
       const _result = await mockTwoFactorService.setupSMS(
         'test-user',
         '+1234567890'
@@ -243,7 +243,7 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.message).toBe('SMS verification code sent');
     });
 
-    test('設置郵件應該成功', async () => {
+    test('Settings郵件應該Success', async () => {
       const _result = await mockTwoFactorService.setupEmail(
         'test-user',
         'test@example.com'
@@ -253,11 +253,11 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.message).toBe('Email verification code sent');
     });
 
-    test('驗證 TOTP 代碼應該成功', async () => {
-      // 先設置 TOTP
+    test('Verify TOTP 代碼應該Success', async () => {
+      // 先Settings TOTP
       await mockTwoFactorService.setupTOTP('test-user', 'test@example.com');
 
-      // 驗證代碼
+      // Verify代碼
       const _result = await mockTwoFactorService.verifyCode({
         method: 'totp',
         code: '123456',
@@ -268,11 +268,11 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.message).toBe('TOTP verification successful');
     });
 
-    test('驗證 SMS 代碼應該成功', async () => {
-      // 先設置 SMS
+    test('Verify SMS 代碼應該Success', async () => {
+      // 先Settings SMS
       await mockTwoFactorService.setupSMS('test-user', '+1234567890');
 
-      // 驗證代碼
+      // Verify代碼
       const _result = await mockTwoFactorService.verifyCode({
         method: 'sms',
         code: '123456',
@@ -283,11 +283,11 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.message).toBe('SMS verification successful');
     });
 
-    test('驗證郵件代碼應該成功', async () => {
-      // 先設置郵件
+    test('Verify郵件代碼應該Success', async () => {
+      // 先Settings郵件
       await mockTwoFactorService.setupEmail('test-user', 'test@example.com');
 
-      // 驗證代碼
+      // Verify代碼
       const _result = await mockTwoFactorService.verifyCode({
         method: 'email',
         code: '123456',
@@ -298,11 +298,11 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.message).toBe('Email verification successful');
     });
 
-    test('驗證備用碼應該成功', async () => {
-      // 先設置 TOTP（會生成備用碼）
+    test('Verify備用碼應該Success', async () => {
+      // 先Settings TOTP（會生成備用碼）
       await mockTwoFactorService.setupTOTP('test-user', 'test@example.com');
 
-      // 驗證備用碼
+      // Verify備用碼
       const _result = await mockTwoFactorService.verifyCode({
         method: 'backup',
         code: '12345678',
@@ -313,8 +313,8 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.message).toBe('Backup code verification successful');
     });
 
-    test('啟用雙因素認證應該成功', async () => {
-      // 先設置並驗證 TOTP
+    test('啟用雙因素認證應該Success', async () => {
+      // 先Settings並Verify TOTP
       await mockTwoFactorService.setupTOTP('test-user', 'test@example.com');
       await mockTwoFactorService.verifyCode({
         method: 'totp',
@@ -322,33 +322,33 @@ describe('Two-Factor Authentication Service Tests', () => {
         userId: 'test-user',
       });
 
-      // 啟用 2FA
+      // Enable 2FA
       const _result = await mockTwoFactorService.enable2FA('test-user', 'totp');
       expect(result.success).toBe(true);
       expect(result.message).toBe('TOTP 2FA enabled');
     });
 
-    test('禁用雙因素認證應該成功', async () => {
-      // 先設置 TOTP
+    test('禁用雙因素認證應該Success', async () => {
+      // 先Settings TOTP
       await mockTwoFactorService.setupTOTP('test-user', 'test@example.com');
 
-      // 禁用 2FA
+      // Disable 2FA
       const _result = await mockTwoFactorService.disable2FA('test-user', 'totp');
       expect(result.success).toBe(true);
       expect(result.message).toBe('TOTP 2FA disabled');
     });
 
-    test('獲取備用碼應該成功', async () => {
-      // 先設置 TOTP
+    test('Get備用碼應該Success', async () => {
+      // 先Settings TOTP
       await mockTwoFactorService.setupTOTP('test-user', 'test@example.com');
 
-      // 獲取備用碼
+      // Get備用碼
       const _result = await mockTwoFactorService.getBackupCodes('test-user');
       expect(result.success).toBe(true);
       expect(result.data).toHaveLength(3);
     });
 
-    test('重新生成備用碼應該成功', async () => {
+    test('重新生成備用碼應該Success', async () => {
       const _result =
         await mockTwoFactorService.regenerateBackupCodes('test-user');
       expect(result.success).toBe(true);
@@ -357,7 +357,7 @@ describe('Two-Factor Authentication Service Tests', () => {
     });
 
     test('獲取用戶方法應該正確', () => {
-      // 先設置多個方法
+      // 先SettingsMultipleMethod
       mockTwoFactorService.setupTOTP('test-user', 'test@example.com');
       mockTwoFactorService.setupSMS('test-user', '+1234567890');
 
@@ -368,10 +368,10 @@ describe('Two-Factor Authentication Service Tests', () => {
     });
 
     test('檢查雙因素認證狀態應該正確', () => {
-      // 初始狀態應該是未啟用
+      // 初始Status應該Yes未Enable
       expect(mockTwoFactorService.is2FAEnabled('test-user')).toBe(false);
 
-      // 設置並啟用 TOTP
+      // Settings並Enable TOTP
       mockTwoFactorService.setupTOTP('test-user', 'test@example.com');
       mockTwoFactorService.verifyCode({
         method: 'totp',
@@ -380,13 +380,13 @@ describe('Two-Factor Authentication Service Tests', () => {
       });
       mockTwoFactorService.enable2FA('test-user', 'totp');
 
-      // 現在應該已啟用
+      // 現在應該已Enable
       expect(mockTwoFactorService.is2FAEnabled('test-user')).toBe(true);
     });
   });
 
-  describe('錯誤處理測試', () => {
-    test('未初始化服務應該返回錯誤', async () => {
+  describe('ErrorHandle測試', () => {
+    test('未InitializeService應該返回Error', async () => {
       const _uninitializedService = new MockTwoFactorService();
       const _result = await uninitializedService.setupTOTP(
         'test-user',
@@ -396,7 +396,7 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.error).toBe('Service not initialized');
     });
 
-    test('無效的驗證代碼應該返回錯誤', async () => {
+    test('無效的Verify代碼應該返回Error', async () => {
       await mockTwoFactorService.setupTOTP('test-user', 'test@example.com');
 
       const _result = await mockTwoFactorService.verifyCode({
@@ -409,7 +409,7 @@ describe('Two-Factor Authentication Service Tests', () => {
       expect(result.error).toBe('Invalid verification code');
     });
 
-    test('未設置的方法應該返回錯誤', async () => {
+    test('未Settings的方法應該返回Error', async () => {
       const _result = await mockTwoFactorService.verifyCode({
         method: 'totp',
         code: '123456',
@@ -421,8 +421,8 @@ describe('Two-Factor Authentication Service Tests', () => {
     });
   });
 
-  describe('服務可用性測試', () => {
-    test('服務可用性檢查', () => {
+  describe('Service可用性測試', () => {
+    test('Service可用性Check', () => {
       expect(mockTwoFactorService.isAvailable()).toBe(true);
     });
   });

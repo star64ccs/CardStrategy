@@ -58,7 +58,7 @@ const UserBehaviorExample: React.FC = () => {
     end: Date.now(),
   });
 
-  // 模擬用戶事件
+  // 模擬UserEvent
   const _simulateUserEvent = () => {
     const _eventTypes = [
       'page_view',
@@ -97,7 +97,7 @@ const UserBehaviorExample: React.FC = () => {
     } as any);
   };
 
-  // 生成報告
+  // 生成Report
   const _handleGenerateReport = async () => {
     try {
       await generateReport(
@@ -105,13 +105,13 @@ const UserBehaviorExample: React.FC = () => {
         '分析用戶在平台上的行為模式和趨勢',
         filterPeriod
       );
-      Alert.alert('成功', '報告生成成功！');
+      Alert.alert('Success', '報告生成Success！');
     } catch (error) {
-      Alert.alert('錯誤', '報告生成失敗');
+      Alert.alert('Error', '報告生成Failed');
     }
   };
 
-  // 創建警報
+  // CreateAlert
   const _handleCreateAlert = async () => {
     try {
       await createAlert({
@@ -127,13 +127,13 @@ const UserBehaviorExample: React.FC = () => {
         enabled: true,
         notificationChannels: ['admin@example.com'],
       });
-      Alert.alert('成功', '警報創建成功！');
+      Alert.alert('Success', '警報CreateSuccess！');
     } catch (error) {
-      Alert.alert('錯誤', '警報創建失敗');
+      Alert.alert('Error', '警報CreateFailed');
     }
   };
 
-  // 導出數據
+  // ExportData
   const _handleExportData = async () => {
     if (!analysis) return;
 
@@ -146,13 +146,13 @@ const UserBehaviorExample: React.FC = () => {
           compression: false,
         } as any
       );
-      Alert.alert('成功', '數據導出成功！');
+      Alert.alert('Success', '數據導出Success！');
     } catch (error) {
-      Alert.alert('錯誤', '數據導出失敗');
+      Alert.alert('Error', '數據導出Failed');
     }
   };
 
-  // 獲取用戶數據
+  // GetUserData
   const _handleGetUserData = async () => {
     try {
       await Promise.all([
@@ -160,20 +160,20 @@ const UserBehaviorExample: React.FC = () => {
         getUserPatterns(selectedUserId),
         getUserMetrics(selectedUserId),
       ]);
-      Alert.alert('成功', '用戶數據獲取成功！');
+      Alert.alert('Success', '用戶數據GetSuccess！');
     } catch (error) {
-      Alert.alert('錯誤', '用戶數據獲取失敗');
+      Alert.alert('Error', '用戶數據GetFailed');
     }
   };
 
-  // 渲染儀表板
+  // 渲染儀Table板
   const _renderDashboard = () => (
     <ScrollView style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
         用戶行為分析儀表板
       </Text>
 
-      {/* 狀態指示器 */}
+      {/* Status指示器 */}
       <View style={{ flexDirection: 'row', marginBottom: 16 }}>
         <View
           style={{
@@ -243,7 +243,7 @@ const UserBehaviorExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 分析數據 */}
+      {/* AnalysisData */}
       {Boolean(analysis) && typeof analysis === 'object' && (
         <View
           style={{
@@ -286,7 +286,7 @@ const UserBehaviorExample: React.FC = () => {
         </View>
       )}
 
-      {/* 衍生數據 */}
+      {/* 衍生Data */}
       {derivedData && typeof derivedData === 'object' && (
         <View
           style={{
@@ -312,7 +312,7 @@ const UserBehaviorExample: React.FC = () => {
         </View>
       )}
 
-      {/* 最近事件 */}
+      {/* 最近Event */}
       <View
         style={{
           backgroundColor: '#f5f5f5',
@@ -343,7 +343,7 @@ const UserBehaviorExample: React.FC = () => {
           ))}
       </View>
 
-      {/* 操作按鈕 */}
+      {/* Operation按鈕 */}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         <TouchableOpacity
           style={{ backgroundColor: '#2196F3', padding: 12, borderRadius: 4 }}
@@ -373,14 +373,14 @@ const UserBehaviorExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 渲染用戶畫像
+  // 渲染User畫像
   const _renderProfiles = () => (
     <ScrollView style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
         用戶畫像
       </Text>
 
-      {/* 用戶選擇 */}
+      {/* UserSelect */}
       <View style={{ marginBottom: 16 }}>
         <Text style={{ marginBottom: 8 }}>選擇用戶ID:</Text>
         <TextInput
@@ -396,7 +396,7 @@ const UserBehaviorExample: React.FC = () => {
         />
       </View>
 
-      {/* 用戶數據按鈕 */}
+      {/* UserData按鈕 */}
       <TouchableOpacity
         style={{
           backgroundColor: '#2196F3',
@@ -411,7 +411,7 @@ const UserBehaviorExample: React.FC = () => {
         </Text>
       </TouchableOpacity>
 
-      {/* 用戶畫像數據將在這裡顯示 */}
+      {/* User畫像Data將在這裡Show */}
       <View
         style={{ backgroundColor: '#f5f5f5', padding: 16, borderRadius: 8 }}
       >
@@ -424,14 +424,14 @@ const UserBehaviorExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 渲染警報
+  // 渲染Alert
   const _renderAlerts = () => (
     <ScrollView style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
         警報管理
       </Text>
 
-      {/* 創建警報按鈕 */}
+      {/* CreateAlert按鈕 */}
       <TouchableOpacity
         style={{
           backgroundColor: '#4CAF50',
@@ -444,7 +444,7 @@ const UserBehaviorExample: React.FC = () => {
         <Text style={{ color: 'white', textAlign: 'center' }}>創建新警報</Text>
       </TouchableOpacity>
 
-      {/* 警報列表 */}
+      {/* AlertList */}
       <View
         style={{ backgroundColor: '#f5f5f5', padding: 16, borderRadius: 8 }}
       >
@@ -476,14 +476,14 @@ const UserBehaviorExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 渲染報告
+  // 渲染Report
   const _renderReports = () => (
     <ScrollView style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
         報告管理
       </Text>
 
-      {/* 報告列表 */}
+      {/* ReportList */}
       <View
         style={{
           backgroundColor: '#f5f5f5',
@@ -519,7 +519,7 @@ const UserBehaviorExample: React.FC = () => {
         )}
       </View>
 
-      {/* 當前報告 */}
+      {/* 當前Report */}
       {Boolean(currentReport) && (
         <View
           style={{ backgroundColor: '#f5f5f5', padding: 16, borderRadius: 8 }}
@@ -541,14 +541,14 @@ const UserBehaviorExample: React.FC = () => {
     </ScrollView>
   );
 
-  // 渲染配置
+  // 渲染Configure
   const _renderConfig = () => (
     <ScrollView style={{ flex: 1, padding: 16 }}>
       <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>
         配置管理
       </Text>
 
-      {/* 配置選項 */}
+      {/* ConfigureOptions */}
       <View
         style={{
           backgroundColor: '#f5f5f5',
@@ -577,7 +577,7 @@ const UserBehaviorExample: React.FC = () => {
         <Text>自定義事件: {(config as any).customEvents ? '是' : '否'}</Text>
       </View>
 
-      {/* 配置更新按鈕 */}
+      {/* ConfigureUpdate按鈕 */}
       <TouchableOpacity
         style={{
           backgroundColor: '#FF9800',
@@ -612,7 +612,7 @@ const UserBehaviorExample: React.FC = () => {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* 標籤欄 */}
+      {/* Tag欄 */}
       <View style={{ flexDirection: 'row', backgroundColor: '#f0f0f0' }}>
         {(
           ['dashboard', 'profiles', 'alerts', 'reports', 'config'] as const
@@ -643,7 +643,7 @@ const UserBehaviorExample: React.FC = () => {
         ))}
       </View>
 
-      {/* 內容區域 */}
+      {/* ContentDistrict域 */}
       {selectedTab === 'dashboard' && renderDashboard()}
       {selectedTab === 'profiles' && renderProfiles()}
       {selectedTab === 'alerts' && renderAlerts()}

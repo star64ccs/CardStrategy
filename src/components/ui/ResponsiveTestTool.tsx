@@ -1,4 +1,4 @@
-// 響應式測試工具組件
+// Response式TestToolComponent
 
 import React, { useCallback, useMemo, useState } from 'react';
 
@@ -42,7 +42,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
   const [isTesting, setIsTesting] = useState<boolean>(false);
   const [showResults, setShowResults] = useState<boolean>(false);
 
-  // 默認測試配置
+  // DefaultTestConfigure
   const defaultConfig: ResponsiveTestConfig = useMemo(
     () => ({
       breakpoints: {
@@ -99,7 +99,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
 
   const _testConfig = config || defaultConfig;
 
-  // 當前設備配置
+  // 當前設備Configure
   const _currentDeviceConfig = useMemo(() => {
     return (
       testConfig.devices.find(device => device.name === currentDevice) ||
@@ -130,7 +130,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
     return 'xxl';
   }, [currentWindowSize, testConfig.breakpoints]);
 
-  // 運行測試
+  // 運RowTest
   const _runTest = useCallback(async () => {
     setIsTesting(true);
     const results: ResponsiveTestResult[] = [];
@@ -151,7 +151,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
           return 'xxl';
         })();
 
-        // 模擬測試結果
+        // 模擬Test結果
         const result: ResponsiveTestResult = {
           component: componentName,
           device: device.name,
@@ -168,7 +168,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
 
         results.push(result);
 
-        // 模擬測試延遲
+        // 模擬Test延遲
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
@@ -179,12 +179,12 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
     onTestComplete?.(results);
   }, [componentName, testConfig, onTestComplete]);
 
-  // 切換設備
+  // Switch設備
   const _handleDeviceChange = useCallback((deviceName: string) => {
     setCurrentDevice(deviceName);
   }, []);
 
-  // 切換方向
+  // Switch方向
   const _handleOrientationChange = useCallback(
     (orientation: 'portrait' | 'landscape') => {
       setCurrentOrientation(orientation);
@@ -192,7 +192,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
     []
   );
 
-  // 測試工具樣式
+  // TestTool樣式
   const _toolStyle = useMemo(() => {
     const baseStyle: React.CSSProperties = {
       backgroundColor:
@@ -218,7 +218,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
       transition: 'all 0.3s ease',
     };
 
-    // 設置視窗尺寸
+    // Settings視窗尺寸
     baseStyle.width = `${currentWindowSize.width}px`;
     baseStyle.height = `${currentWindowSize.height}px`;
     baseStyle.maxWidth = '100%';
@@ -227,7 +227,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
     return baseStyle;
   }, [currentWindowSize, currentTheme]);
 
-  // 渲染設備選擇器
+  // 渲染設備Select器
   const _renderDeviceSelector = () => (
     <div style={{ marginBottom: '16px' }}>
       <h4
@@ -253,7 +253,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
     </div>
   );
 
-  // 渲染方向選擇器
+  // 渲染方向Select器
   const _renderOrientationSelector = () => (
     <div style={{ marginBottom: '16px' }}>
       <h4
@@ -283,7 +283,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
     </div>
   );
 
-  // 渲染設備信息
+  // 渲染設備Information
   const _renderDeviceInfo = () => (
     <div style={{ marginBottom: '16px' }}>
       <h4
@@ -315,7 +315,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
     </div>
   );
 
-  // 渲染測試按鈕
+  // 渲染Test按鈕
   const _renderTestButton = () => (
     <div style={{ marginBottom: '16px' }}>
       <Button
@@ -334,7 +334,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
     </div>
   );
 
-  // 渲染測試結果
+  // 渲染Test結果
   const _renderTestResults = () => {
     if (!showResults || testResults.length === 0) return null;
 
@@ -384,7 +384,7 @@ export const ResponsiveTestTool: React.FC<ResponsiveTestToolProps> = ({
               dataIndex: 'passed',
               render: value => (
                 <span style={{ color: value ? 'green' : 'red' }}>
-                  {value ? '通過' : '失敗'}
+                  {value ? '通過' : 'Failed'}
                 </span>
               ),
             },

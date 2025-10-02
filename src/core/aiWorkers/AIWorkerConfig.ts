@@ -1,10 +1,10 @@
-// AI Worker 配置檔案
+// AI Worker Configure檔案
 export interface AIProvider {
   name: string;
   type: 'cloud' | 'local' | 'hybrid';
   cost: {
-    input: number; // 每1K tokens輸入成本
-    output: number; // 每1K tokens輸出成本
+    input: number; // 每1K tokensInput成本
+    output: number; // 每1K tokensOutput成本
     currency: string;
   };
   models: string[];
@@ -15,7 +15,7 @@ export interface AIProvider {
 }
 
 export const AI_PROVIDERS: Record<string, AIProvider> = {
-  // 國內服務
+  // 國內Service
   baidu: {
     name: '百度文心一言',
     type: 'cloud',
@@ -23,7 +23,7 @@ export const AI_PROVIDERS: Record<string, AIProvider> = {
     models: ['ernie-bot-turbo', 'ernie-bot', 'ernie-bot-4'],
     endpoint:
       'https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/completions',
-    features: ['中文優化', '企業級服務', '穩定可靠'],
+    features: ['中文優化', '企業級Service', '穩定可靠'],
     reliability: 0.95,
   },
 
@@ -48,7 +48,7 @@ export const AI_PROVIDERS: Record<string, AIProvider> = {
     reliability: 0.9,
   },
 
-  // 本地部署
+  // LocalDeploy
   ollama: {
     name: 'Ollama',
     type: 'local',
@@ -58,7 +58,7 @@ export const AI_PROVIDERS: Record<string, AIProvider> = {
     reliability: 0.85,
   },
 
-  // 雲端服務
+  // 雲端Service
   azure: {
     name: 'Azure OpenAI',
     type: 'cloud',
@@ -78,7 +78,7 @@ export const AI_PROVIDERS: Record<string, AIProvider> = {
   },
 };
 
-// AI Worker 成本優化配置
+// AI Worker 成本優化Configure
 export interface AIWorkerCostConfig {
   maxMonthlyBudget: number;
   preferredProviders: string[];

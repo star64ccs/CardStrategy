@@ -1,4 +1,4 @@
-// 圖表 Redux Slice
+// GraphTable Redux Slice
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
@@ -15,7 +15,7 @@ import type {
   ChartUpdateRequest,
 } from '../../features/analytics/types/chart';
 
-// 圖表狀態接口
+// GraphTableStatusInterface
 interface ChartState {
   charts: ChartInstance[];
   currentChart: ChartInstance | null;
@@ -30,7 +30,7 @@ interface ChartState {
   exportError: string | null;
 }
 
-// 初始狀態
+// 初始Status
 const initialState: ChartState = {
   charts: [],
   currentChart: null,
@@ -45,9 +45,9 @@ const initialState: ChartState = {
   exportError: null,
 };
 
-// 異步 Thunk Actions
+// Async Thunk Actions
 
-// 初始化圖表服務
+// InitializeGraphTableService
 export const _initializeChartService = createAsyncThunk(
   'chart/initializeService',
   async () => {
@@ -57,7 +57,7 @@ export const _initializeChartService = createAsyncThunk(
   }
 );
 
-// 創建圖表
+// CreateGraphTable
 export const _createChart = createAsyncThunk(
   'chart/createChart',
   async (request: ChartCreateRequest) => {
@@ -70,7 +70,7 @@ export const _createChart = createAsyncThunk(
   }
 );
 
-// 獲取圖表
+// GetGraphTable
 export const _getChart = createAsyncThunk(
   'chart/getChart',
   async (chartId: string) => {
@@ -83,7 +83,7 @@ export const _getChart = createAsyncThunk(
   }
 );
 
-// 獲取圖表列表
+// GetGraphTableList
 export const _getCharts = createAsyncThunk(
   'chart/getCharts',
   async (options: ChartFilterOptions = {}) => {
@@ -96,7 +96,7 @@ export const _getCharts = createAsyncThunk(
   }
 );
 
-// 更新圖表
+// UpdateGraphTable
 export const _updateChart = createAsyncThunk(
   'chart/updateChart',
   async ({
@@ -115,7 +115,7 @@ export const _updateChart = createAsyncThunk(
   }
 );
 
-// 刪除圖表
+// DeleteGraphTable
 export const _deleteChart = createAsyncThunk(
   'chart/deleteChart',
   async (chartId: string) => {
@@ -128,7 +128,7 @@ export const _deleteChart = createAsyncThunk(
   }
 );
 
-// 導出圖表
+// ExportGraphTable
 export const _exportChart = createAsyncThunk(
   'chart/exportChart',
   async ({
@@ -147,7 +147,7 @@ export const _exportChart = createAsyncThunk(
   }
 );
 
-// 獲取模板
+// Get模板
 export const _getTemplates = createAsyncThunk(
   'chart/getTemplates',
   async () => {
@@ -156,7 +156,7 @@ export const _getTemplates = createAsyncThunk(
   }
 );
 
-// 獲取分析數據
+// GetAnalysisData
 export const _getAnalytics = createAsyncThunk(
   'chart/getAnalytics',
   async (chartId: string) => {
@@ -166,7 +166,7 @@ export const _getAnalytics = createAsyncThunk(
   }
 );
 
-// 獲取統計數據
+// Get統Count據
 export const _getStatistics = createAsyncThunk(
   'chart/getStatistics',
   async () => {
@@ -175,18 +175,18 @@ export const _getStatistics = createAsyncThunk(
   }
 );
 
-// 圖表 Slice
+// GraphTable Slice
 const _chartSlice = createSlice({
   name: 'chart',
   initialState,
   reducers: {
-    // 設置當前圖表
+    // Settings當前GraphTable
     setCurrentChart: (state, action: PayloadAction<ChartInstance | null>) => {
       state.currentChart = action.payload as any;
       state.selectedChartId = action.payload?.id || null;
     },
 
-    // 設置選中的圖表ID
+    // Settings選中的GraphTableID
     setSelectedChartId: (state, action: PayloadAction<string | null>) => {
       state.selectedChartId = action.payload;
       if (action.payload) {
@@ -197,7 +197,7 @@ const _chartSlice = createSlice({
       }
     },
 
-    // 更新圖表配置
+    // UpdateGraphTableConfigure
     updateChartConfig: (
       state,
       action: PayloadAction<{ chartId: string; config: Partial<ChartConfig> }>
@@ -216,7 +216,7 @@ const _chartSlice = createSlice({
       }
     },
 
-    // 更新圖表數據
+    // UpdateGraphTableData
     updateChartData: (
       state,
       action: PayloadAction<{ chartId: string; data: ChartData }>
@@ -232,12 +232,12 @@ const _chartSlice = createSlice({
       }
     },
 
-    // 添加圖表
+    // AddGraphTable
     addChart: (state, action: PayloadAction<ChartInstance>) => {
       state.charts.push(action.payload as any);
     },
 
-    // 移除圖表
+    // RemoveGraphTable
     removeChart: (state, action: PayloadAction<string>) => {
       state.charts = state.charts.filter(chart => chart.id !== action.payload);
       if (state.currentChart?.id === action.payload) {
@@ -246,18 +246,18 @@ const _chartSlice = createSlice({
       }
     },
 
-    // 設置過濾選項
+    // SettingsFilterOptions
     setFilterOptions: (state, action: PayloadAction<ChartFilterOptions>) => {
       state.filterOptions = action.payload;
     },
 
-    // 清除錯誤
+    // ClearError
     clearError: state => {
       state.error = null;
       state.exportError = null;
     },
 
-    // 設置圖表狀態
+    // SettingsGraphTableStatus
     setChartStatus: (
       state,
       action: PayloadAction<{
@@ -279,7 +279,7 @@ const _chartSlice = createSlice({
       }
     },
 
-    // 更新分析數據
+    // UpdateAnalysisData
     updateAnalyticsData: (
       state,
       action: PayloadAction<{ chartId: string; analytics: ChartAnalytics }>
@@ -288,19 +288,19 @@ const _chartSlice = createSlice({
       state.analytics.set(chartId, analytics);
     },
 
-    // 設置模板
+    // Settings模板
     setTemplates: (state, action: PayloadAction<ChartTemplate[]>) => {
       state.templates = action.payload;
     },
 
-    // 設置統計數據
+    // Settings統Count據
     setStatistics: (state, action: PayloadAction<ChartStatistics>) => {
       state.statistics = action.payload;
     },
   },
   extraReducers: builder => {
     builder
-      // 初始化服務
+      // InitializeService
       .addCase(initializeChartService.pending, state => {
         state.loading = true;
         state.error = null;
@@ -310,10 +310,10 @@ const _chartSlice = createSlice({
       })
       .addCase(initializeChartService.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '初始化失敗';
+        state.error = action.error.message || 'InitializeFailed';
       })
 
-      // 創建圖表
+      // CreateGraphTable
       .addCase(createChart.pending, state => {
         state.loading = true;
         state.error = null;
@@ -326,10 +326,10 @@ const _chartSlice = createSlice({
       })
       .addCase(createChart.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '創建圖表失敗';
+        state.error = action.error.message || 'Create圖表Failed';
       })
 
-      // 獲取圖表
+      // GetGraphTable
       .addCase(getChart.pending, state => {
         state.loading = true;
         state.error = null;
@@ -339,7 +339,7 @@ const _chartSlice = createSlice({
         state.currentChart = action.payload as any;
         state.selectedChartId = action.payload.id;
 
-        // 更新或添加圖表到列表
+        // Update或AddGraphTable到List
         const _existingIndex = state.charts.findIndex(
           c => c.id === action.payload.id
         );
@@ -351,10 +351,10 @@ const _chartSlice = createSlice({
       })
       .addCase(getChart.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取圖表失敗';
+        state.error = action.error.message || 'Get圖表Failed';
       })
 
-      // 獲取圖表列表
+      // GetGraphTableList
       .addCase(getCharts.pending, state => {
         state.loading = true;
         state.error = null;
@@ -365,10 +365,10 @@ const _chartSlice = createSlice({
       })
       .addCase(getCharts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取圖表列表失敗';
+        state.error = action.error.message || 'Get圖表列表Failed';
       })
 
-      // 更新圖表
+      // UpdateGraphTable
       .addCase(updateChart.pending, state => {
         state.loading = true;
         state.error = null;
@@ -377,7 +377,7 @@ const _chartSlice = createSlice({
         state.loading = false;
         const _updatedChart = action.payload;
 
-        // 更新圖表列表
+        // UpdateGraphTableList
         const _existingIndex = state.charts.findIndex(
           c => c.id === updatedChart.id
         );
@@ -385,17 +385,17 @@ const _chartSlice = createSlice({
           state.charts[existingIndex] = updatedChart as any;
         }
 
-        // 更新當前圖表
+        // Update當前GraphTable
         if (state.currentChart?.id === updatedChart.id) {
           state.currentChart = updatedChart as any;
         }
       })
       .addCase(updateChart.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '更新圖表失敗';
+        state.error = action.error.message || 'Update圖表Failed';
       })
 
-      // 刪除圖表
+      // DeleteGraphTable
       .addCase(deleteChart.pending, state => {
         state.loading = true;
         state.error = null;
@@ -404,26 +404,26 @@ const _chartSlice = createSlice({
         state.loading = false;
         const _deletedChartId = action.payload;
 
-        // 從列表中移除
+        // 從List中Remove
         state.charts = state.charts.filter(
           chart => chart.id !== deletedChartId
         );
 
-        // 清除當前圖表
+        // Clear當前GraphTable
         if (state.currentChart?.id === deletedChartId) {
           state.currentChart = null;
           state.selectedChartId = null;
         }
 
-        // 清除分析數據
+        // ClearAnalysisData
         state.analytics.delete(deletedChartId);
       })
       .addCase(deleteChart.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '刪除圖表失敗';
+        state.error = action.error.message || 'Delete圖表Failed';
       })
 
-      // 導出圖表
+      // ExportGraphTable
       .addCase(exportChart.pending, state => {
         state.exportLoading = true;
         state.exportError = null;
@@ -433,10 +433,10 @@ const _chartSlice = createSlice({
       })
       .addCase(exportChart.rejected, (state, action) => {
         state.exportLoading = false;
-        state.exportError = action.error.message || '導出圖表失敗';
+        state.exportError = action.error.message || '導出圖表Failed';
       })
 
-      // 獲取模板
+      // Get模板
       .addCase(getTemplates.pending, state => {
         state.loading = true;
         state.error = null;
@@ -447,10 +447,10 @@ const _chartSlice = createSlice({
       })
       .addCase(getTemplates.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取模板失敗';
+        state.error = action.error.message || 'Get模板Failed';
       })
 
-      // 獲取分析數據
+      // GetAnalysisData
       .addCase(getAnalytics.pending, state => {
         state.loading = true;
         state.error = null;
@@ -464,10 +464,10 @@ const _chartSlice = createSlice({
       })
       .addCase(getAnalytics.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取分析數據失敗';
+        state.error = action.error.message || 'Get分析數據Failed';
       })
 
-      // 獲取統計數據
+      // Get統Count據
       .addCase(getStatistics.pending, state => {
         state.loading = true;
         state.error = null;
@@ -478,12 +478,12 @@ const _chartSlice = createSlice({
       })
       .addCase(getStatistics.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || '獲取統計數據失敗';
+        state.error = action.error.message || 'Get統計數據Failed';
       });
   },
 });
 
-// 導出 actions
+// Export actions
 export const {
   setCurrentChart,
   setSelectedChartId,
@@ -499,7 +499,7 @@ export const {
   setStatistics,
 } = chartSlice.actions;
 
-// 導出 selectors
+// Export selectors
 export const _selectCharts = (state: { chart: ChartState }) =>
   state.chart.charts;
 export const _selectCurrentChart = (state: { chart: ChartState }) =>
@@ -523,5 +523,5 @@ export const _selectExportLoading = (state: { chart: ChartState }) =>
 export const _selectExportError = (state: { chart: ChartState }) =>
   state.chart.exportError;
 
-// 導出 reducer
+// Export reducer
 export default chartSlice.reducer;

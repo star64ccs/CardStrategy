@@ -1,4 +1,4 @@
-// 設計系統服務類
+// 設計系統ServiceClass
 import type {
   AccessibilityConfig,
   ComponentConfig,
@@ -36,7 +36,7 @@ export class DesignSystemServiceClass implements DesignSystemService {
     this.loadThemePreference();
   }
 
-  // 主題管理
+  // ThemeManage
   getCurrentTheme(): ThemeType {
     return this.currentTheme;
   }
@@ -66,7 +66,7 @@ export class DesignSystemServiceClass implements DesignSystemService {
     return { ...this.themes };
   }
 
-  // 組件管理
+  // ComponentManage
   registerComponent(name: string, config: ComponentConfig): void {
     const _category = this.determineComponentCategory(name);
     if (category) {
@@ -98,7 +98,7 @@ export class DesignSystemServiceClass implements DesignSystemService {
     }
   }
 
-  // 令牌管理
+  // 令牌Manage
   getToken(name: string): DesignToken | null {
     return this.tokens.find(token => token.name === name) || null;
   }
@@ -126,7 +126,7 @@ export class DesignSystemServiceClass implements DesignSystemService {
     this.tokens.push(token);
   }
 
-  // 可訪問性管理
+  // 可訪問性Manage
   getAccessibilityConfig(): AccessibilityConfig {
     return { ...this.accessibility };
   }
@@ -167,7 +167,7 @@ export class DesignSystemServiceClass implements DesignSystemService {
     return ratio >= requiredRatio;
   }
 
-  // 事件管理
+  // EventManage
   subscribe(
     event: string,
     callback: (event: DesignSystemEvent) => void
@@ -200,7 +200,7 @@ export class DesignSystemServiceClass implements DesignSystemService {
     }
   }
 
-  // 私有方法
+  // PrivateMethod
   private initializeThemes(): void {
     this.themes = {
       light: this.createLightTheme(),

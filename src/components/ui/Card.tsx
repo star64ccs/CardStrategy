@@ -1,11 +1,11 @@
-// Card 組件
+// Card Component
 import React, { forwardRef, useCallback, useMemo } from 'react';
 
 import { useDesignSystem } from '../../hooks/useDesignSystem';
 import type { CardProps, ComponentSize } from '../../types/components';
 import { enhanceComponent } from '../../utils/accessibilityEnhancer';
 
-// 卡片組件
+// 卡片Component
 export const _Card = forwardRef<HTMLDivElement, CardProps>(
   (
     {
@@ -154,7 +154,7 @@ export const _Card = forwardRef<HTMLDivElement, CardProps>(
       style,
     ]);
 
-    // 處理點擊事件
+    // Handle點擊Event
     const _handleClick = useCallback(
       (event: React.MouseEvent<HTMLDivElement>) => {
         if (clickable && onCardClick) {
@@ -164,7 +164,7 @@ export const _Card = forwardRef<HTMLDivElement, CardProps>(
       [clickable, onCardClick]
     );
 
-    // 處理鍵盤事件
+    // HandleKey盤Event
     const _handleKeyDown = useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
         if (clickable && (event.key === ' ' || event.key === 'Enter')) {
@@ -175,7 +175,7 @@ export const _Card = forwardRef<HTMLDivElement, CardProps>(
       [clickable, onCardClick]
     );
 
-    // 渲染加載狀態
+    // 渲染加載Status
     const _renderLoadingState = () => {
       if (!loading) return null;
 
@@ -209,7 +209,7 @@ export const _Card = forwardRef<HTMLDivElement, CardProps>(
       );
     };
 
-    // 渲染媒體內容
+    // 渲染媒體Content
     const _renderMedia = () => {
       if (!media) return null;
 
@@ -248,7 +248,7 @@ export const _Card = forwardRef<HTMLDivElement, CardProps>(
       );
     };
 
-    // 渲染內容
+    // 渲染Content
     const _renderContent = () => {
       if (!children) return null;
 
@@ -264,7 +264,7 @@ export const _Card = forwardRef<HTMLDivElement, CardProps>(
       );
     };
 
-    // 渲染操作區域
+    // 渲染OperationDistrict域
     const _renderActions = () => {
       if (!actions) return null;
 
@@ -377,8 +377,8 @@ export const _Card = forwardRef<HTMLDivElement, CardProps>(
   }
 );
 
-// 設置顯示名稱
+// SettingsShow名稱
 Card.displayName = 'Card';
 
-// 導出組件
+// ExportComponent
 export default Card;

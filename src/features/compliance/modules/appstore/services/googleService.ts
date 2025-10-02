@@ -33,13 +33,13 @@ export class GooglePlayService {
   }
 
   /**
-   * 驗證應用程式資訊
+   * VerifyApply程式資訊
    */
   public validateAppInfo(appInfo: GoogleAppInfo): GoogleComplianceResult {
     const violations: GoogleViolation[] = [];
     let riskLevel = GoogleRiskLevel.LOW;
 
-    // 檢查必要欄位
+    // Check必要欄位
     if (!appInfo.appName || appInfo.appName.trim().length === 0) {
       violations.push(
         this.createViolation(
@@ -84,7 +84,7 @@ export class GooglePlayService {
       );
     }
 
-    // 檢查SDK版本
+    // CheckSDKVersion
     if (appInfo.targetSdkVersion < 30) {
       violations.push(
         this.createViolation(
@@ -141,7 +141,7 @@ export class GooglePlayService {
   }
 
   /**
-   * 驗證內購項目
+   * Verify內購項目
    */
   public validateInAppPurchase(
     purchase: GoogleInAppPurchase
@@ -149,7 +149,7 @@ export class GooglePlayService {
     const violations: GoogleViolation[] = [];
     let riskLevel = GoogleRiskLevel.LOW;
 
-    // 檢查必要欄位
+    // Check必要欄位
     if (!purchase.productId || !this.isValidProductId(purchase.productId)) {
       violations.push(
         this.createViolation(
@@ -183,7 +183,7 @@ export class GooglePlayService {
       );
     }
 
-    // 檢查價格合理性
+    // Check價格合理性
     if (purchase.price > 999.99) {
       violations.push(
         this.createViolation(
@@ -236,7 +236,7 @@ export class GooglePlayService {
   }
 
   /**
-   * 驗證訂閱項目
+   * Verify訂閱項目
    */
   public validateSubscription(
     subscription: GoogleSubscription
@@ -244,7 +244,7 @@ export class GooglePlayService {
     const violations: GoogleViolation[] = [];
     let riskLevel = GoogleRiskLevel.LOW;
 
-    // 檢查必要欄位
+    // Check必要欄位
     if (
       !subscription.productId ||
       !this.isValidProductId(subscription.productId)
@@ -284,7 +284,7 @@ export class GooglePlayService {
       );
     }
 
-    // 檢查試用期設定
+    // Check試用期設定
     if (subscription.trialPeriod && subscription.trialPeriod > 365) {
       violations.push(
         this.createViolation(
@@ -337,7 +337,7 @@ export class GooglePlayService {
   }
 
   /**
-   * 驗證隱私政策
+   * Verify隱私政策
    */
   public validatePrivacyPolicy(
     policy: GooglePrivacyPolicy
@@ -345,7 +345,7 @@ export class GooglePlayService {
     const violations: GoogleViolation[] = [];
     let riskLevel = GoogleRiskLevel.LOW;
 
-    // 檢查政策URL
+    // Check政策URL
     if (!policy.policyUrl || !this.isValidUrl(policy.policyUrl)) {
       violations.push(
         this.createViolation(
@@ -357,7 +357,7 @@ export class GooglePlayService {
       );
     }
 
-    // 檢查更新時間
+    // CheckUpdateTime
     const _daysSinceUpdate =
       (Date.now() - policy.lastUpdated.getTime()) / (1000 * 60 * 60 * 24);
     if (daysSinceUpdate > 365) {
@@ -371,7 +371,7 @@ export class GooglePlayService {
       );
     }
 
-    // 檢查資料收集聲明
+    // Check資料收集聲明
     if (
       policy.dataCollection.personalData &&
       !policy.dataUsage.analytics &&
@@ -427,7 +427,7 @@ export class GooglePlayService {
   }
 
   /**
-   * 處理應用程式審核
+   * HandleApply程式審核
    */
   public processAppReview(
     appInfo: GoogleAppInfo,
@@ -492,7 +492,7 @@ export class GooglePlayService {
     return review;
   }
 
-  // 私有輔助方法
+  // Private輔助Method
   private createViolation(
     type: string,
     description: string,

@@ -50,7 +50,7 @@ interface UseSocialAuthOptions {
 }
 
 interface UseSocialAuthReturn {
-  // 狀態
+  // Status
   isSocialLoggingIn: boolean;
   socialLoginError: string | null;
   socialAuthResponse: SocialAuthResponse | null;
@@ -64,7 +64,7 @@ interface UseSocialAuthReturn {
   isCheckingConfig: boolean;
   configError: string | null;
 
-  // 操作方法
+  // OperationMethod
   login: (credentials: SocialLoginCredentials) => Promise<SocialAuthResponse>;
   getLoginUrl: (
     provider: SocialProvider,
@@ -87,7 +87,7 @@ interface UseSocialAuthReturn {
   ) => Promise<SocialUserInfo>;
   checkConfig: () => Promise<SocialProvider[]>;
 
-  // 清除方法
+  // ClearMethod
   clearError: () => void;
   clearResponse: () => void;
   clearAccountsError: () => void;
@@ -95,7 +95,7 @@ interface UseSocialAuthReturn {
   clearConfigError: () => void;
   reset: () => void;
 
-  // 工具方法
+  // ToolMethod
   isProviderConfigured: (provider: SocialProvider) => boolean;
   isAccountLinked: (provider: SocialProvider) => boolean;
   getProviderName: (provider: SocialProvider) => string;
@@ -125,7 +125,7 @@ export const _useSocialAuth = (
     autoLoadAccounts = true,
   } = options;
 
-  // 從 Redux 獲取狀態
+  // 從 Redux GetStatus
   const _isSocialLoggingIn = useSelector(selectIsSocialLoggingIn);
   const _socialLoginError = useSelector(selectSocialLoginError);
   const _socialAuthResponse = useSelector(selectSocialAuthResponse);
@@ -139,10 +139,10 @@ export const _useSocialAuth = (
   const _isCheckingConfig = useSelector(selectIsCheckingConfig);
   const _configError = useSelector(selectConfigError);
 
-  // 本地狀態
+  // LocalStatus
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // 初始化
+  // Initialize
   useEffect(() => {
     if (!isInitialized) {
       if (autoCheckConfig) {
@@ -155,52 +155,52 @@ export const _useSocialAuth = (
     }
   }, [isInitialized, autoCheckConfig, autoLoadAccounts]);
 
-  // 處理登錄成功
+  // HandleLoginSuccess
   useEffect(() => {
     if (socialAuthResponse && onLoginSuccess) {
       onLoginSuccess(socialAuthResponse);
     }
   }, [socialAuthResponse, onLoginSuccess]);
 
-  // 處理登錄錯誤
+  // HandleLoginError
   useEffect(() => {
     if (socialLoginError && onLoginError) {
       onLoginError(socialLoginError);
     }
   }, [socialLoginError, onLoginError]);
 
-  // 處理帳戶錯誤
+  // Handle帳戶Error
   useEffect(() => {
     if (accountsError) {
-      logger.error('社交帳戶錯誤:', { error: accountsError });
+      logger.error('社交帳戶Error:', { error: accountsError });
     }
   }, [accountsError]);
 
-  // 處理 URL 錯誤
+  // Handle URL Error
   useEffect(() => {
     if (urlsError) {
-      logger.error('社交登錄 URL 錯誤:', { error: urlsError });
+      logger.error('社交登錄 URL Error:', { error: urlsError });
     }
   }, [urlsError]);
 
-  // 處理配置錯誤
+  // HandleConfigureError
   useEffect(() => {
     if (configError) {
-      logger.error('社交登錄配置錯誤:', { error: configError });
+      logger.error('社交登錄ConfigureError:', { error: configError });
     }
   }, [configError]);
 
-  // 社交登錄
+  // 社交Login
   const _login = useCallback(
     async (
       credentials: SocialLoginCredentials
     ): Promise<SocialAuthResponse> => {
       try {
         const _response = await dispatch(socialLogin(credentials)).unwrap();
-        logger.info('社交登錄成功:', { provider: credentials.provider });
+        logger.info('社交登錄Success:', { provider: credentials.provider });
         return response;
       } catch (error: unknown) {
-        logger.error('社交登錄失敗:', {
+        logger.error('社交登錄Failed:', {
           error,
           provider: credentials.provider,
         });
@@ -210,24 +210,24 @@ export const _useSocialAuth = (
     [dispatch]
   );
 
-  // 獲取登錄 URL
+  // GetLogin URL
   const _getLoginUrl = useCallback(
     async (provider: SocialProvider, redirectUri?: string): Promise<string> => {
       try {
         const { url } = await dispatch(
           getSocialLoginUrl({ provider, redirectUri })
         ).unwrap();
-        logger.info('獲取社交登錄 URL 成功:', { provider });
+        logger.info('Get社交登錄 URL Success:', { provider });
         return url;
       } catch (error: unknown) {
-        logger.error('獲取社交登錄 URL 失敗:', { error, provider });
+        logger.error('Get社交登錄 URL Failed:', { error, provider });
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 處理回調
+  // HandleCallback
   const _handleCallback = useCallback(
     async (
       provider: SocialProvider,
@@ -238,10 +238,10 @@ export const _useSocialAuth = (
         const _response = await dispatch(
           handleSocialCallback({ provider, code, state })
         ).unwrap();
-        logger.info('社交登錄回調處理成功:', { provider });
+        logger.info('社交登錄回調HandleSuccess:', { provider });
         return response;
       } catch (error: unknown) {
-        logger.error('社交登錄回調處理失敗:', { error, provider });
+        logger.error('社交登錄回調HandleFailed:', { error, provider });
         throw error;
       }
     },
@@ -255,11 +255,11 @@ export const _useSocialAuth = (
         const _account = await dispatch(
           linkSocialAccount(credentials)
         ).unwrap();
-        logger.info('社交帳戶鏈接成功:', { provider: credentials.provider });
+        logger.info('社交帳戶鏈接Success:', { provider: credentials.provider });
         onAccountLinked?.(account);
         return account;
       } catch (error: unknown) {
-        logger.error('社交帳戶鏈接失敗:', {
+        logger.error('社交帳戶鏈接Failed:', {
           error,
           provider: credentials.provider,
         });
@@ -274,10 +274,10 @@ export const _useSocialAuth = (
     async (provider: SocialProvider): Promise<void> => {
       try {
         await dispatch(unlinkSocialAccount(provider)).unwrap();
-        logger.info('社交帳戶解除鏈接成功:', { provider });
+        logger.info('社交帳戶解除鏈接Success:', { provider });
         onAccountUnlinked?.(provider);
       } catch (error: unknown) {
-        logger.error('社交帳戶解除鏈接失敗:', { error, provider });
+        logger.error('社交帳戶解除鏈接Failed:', { error, provider });
         throw error;
       }
     },
@@ -290,15 +290,15 @@ export const _useSocialAuth = (
   > => {
     try {
       const _accounts = await dispatch(getLinkedSocialAccounts()).unwrap();
-      logger.info('已鏈接社交帳戶加載成功:', { count: accounts.length });
+      logger.info('已鏈接社交帳戶加載Success:', { count: accounts.length });
       return accounts;
     } catch (error: unknown) {
-      logger.error('加載已鏈接社交帳戶失敗:', { error });
+      logger.error('加載已鏈接社交帳戶Failed:', { error });
       throw error;
     }
   }, [dispatch]);
 
-  // 檢查帳戶是否已鏈接
+  // Check帳戶YesNo已鏈接
   const _checkAccountLinked = useCallback(
     async (provider: SocialProvider): Promise<boolean> => {
       try {
@@ -308,14 +308,14 @@ export const _useSocialAuth = (
         logger.info('檢查社交帳戶鏈接狀態:', { provider, isLinked });
         return isLinked;
       } catch (error: unknown) {
-        logger.error('檢查社交帳戶鏈接狀態失敗:', { error, provider });
+        logger.error('Check社交帳戶鏈接狀態Failed:', { error, provider });
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 獲取用戶信息
+  // GetUserInformation
   const _getUserInfo = useCallback(
     async (
       provider: SocialProvider,
@@ -325,59 +325,59 @@ export const _useSocialAuth = (
         const { userInfo } = await dispatch(
           getSocialUserInfo({ provider, accessToken })
         ).unwrap();
-        logger.info('獲取社交用戶信息成功:', { provider });
+        logger.info('Get社交用戶信息Success:', { provider });
         return userInfo;
       } catch (error: unknown) {
-        logger.error('獲取社交用戶信息失敗:', { error, provider });
+        logger.error('Get社交用戶信息Failed:', { error, provider });
         throw error;
       }
     },
     [dispatch]
   );
 
-  // 檢查配置
+  // CheckConfigure
   const _checkConfig = useCallback(async (): Promise<SocialProvider[]> => {
     try {
       const _providers = await dispatch(checkSocialLoginConfig()).unwrap();
       logger.info('社交登錄配置檢查完成:', { configuredProviders: providers });
       return providers;
     } catch (error: unknown) {
-      logger.error('檢查社交登錄配置失敗:', { error });
+      logger.error('Check社交登錄ConfigureFailed:', { error });
       throw error;
     }
   }, [dispatch]);
 
-  // 清除錯誤
+  // ClearError
   const _clearError = useCallback(() => {
     dispatch(clearSocialLoginError());
   }, [dispatch]);
 
-  // 清除響應
+  // ClearResponse
   const _clearResponse = useCallback(() => {
     dispatch(clearSocialAuthResponse());
   }, [dispatch]);
 
-  // 清除帳戶錯誤
+  // Clear帳戶Error
   const _clearAccountsErrorInternal = useCallback(() => {
     dispatch(clearAccountsError());
   }, [dispatch]);
 
-  // 清除 URL 錯誤
+  // Clear URL Error
   const _clearUrlsErrorInternal = useCallback(() => {
     dispatch(clearUrlsError());
   }, [dispatch]);
 
-  // 清除配置錯誤
+  // ClearConfigureError
   const _clearConfigErrorInternal = useCallback(() => {
     dispatch(clearConfigError());
   }, [dispatch]);
 
-  // 重置
+  // Reset
   const _reset = useCallback(() => {
     dispatch(resetSocialAuth());
   }, [dispatch]);
 
-  // 檢查提供商是否已配置
+  // Check提供商YesNo已Configure
   const _isProviderConfigured = useCallback(
     (provider: SocialProvider): boolean => {
       return configuredProviders.includes(provider);
@@ -385,7 +385,7 @@ export const _useSocialAuth = (
     [configuredProviders]
   );
 
-  // 檢查帳戶是否已鏈接
+  // Check帳戶YesNo已鏈接
   const _isAccountLinked = useCallback(
     (provider: SocialProvider): boolean => {
       return linkedAccounts.some(account => account.provider === provider);
@@ -393,13 +393,13 @@ export const _useSocialAuth = (
     [linkedAccounts]
   );
 
-  // 獲取提供商名稱
+  // Get提供商名稱
   const _getProviderName = useCallback((provider: SocialProvider): string => {
     return PROVIDER_NAMES[provider] || provider;
   }, []);
 
   return {
-    // 狀態
+    // Status
     isSocialLoggingIn,
     socialLoginError,
     socialAuthResponse,
@@ -413,7 +413,7 @@ export const _useSocialAuth = (
     isCheckingConfig,
     configError,
 
-    // 操作方法
+    // OperationMethod
     login,
     getLoginUrl,
     handleCallback,
@@ -424,7 +424,7 @@ export const _useSocialAuth = (
     getUserInfo,
     checkConfig,
 
-    // 清除方法
+    // ClearMethod
     clearError,
     clearResponse,
     clearAccountsError: clearAccountsErrorInternal,
@@ -432,7 +432,7 @@ export const _useSocialAuth = (
     clearConfigError: clearConfigErrorInternal,
     reset,
 
-    // 工具方法
+    // ToolMethod
     isProviderConfigured,
     isAccountLinked,
     getProviderName,

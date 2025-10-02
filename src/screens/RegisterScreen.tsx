@@ -34,7 +34,7 @@ const _authService = {
         user: { id: '1', email: userData.email, username: userData.username },
         token: 'mock-token',
       },
-      message: '註冊成功',
+      message: '註冊Success',
     };
   },
 };
@@ -66,27 +66,27 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
       !formData.password ||
       !formData.confirmPassword
     ) {
-      Alert.alert('錯誤', '請填寫所有必填欄位');
+      Alert.alert('Error', '請填寫所有必填欄位');
       return false;
     }
 
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      Alert.alert('錯誤', '請輸入有效的電子郵件地址');
+      Alert.alert('Error', '請輸入有效的電子郵件地址');
       return false;
     }
 
     if (formData.username.length < 3) {
-      Alert.alert('錯誤', '用戶名至少需要 3 個字符');
+      Alert.alert('Error', '用戶名至少需要 3 個字符');
       return false;
     }
 
     if (formData.password.length < 6) {
-      Alert.alert('錯誤', '密碼至少需要 6 個字符');
+      Alert.alert('Error', '密碼至少需要 6 個字符');
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
-      Alert.alert('錯誤', '密碼確認不匹配');
+      Alert.alert('Error', '密碼確認不匹配');
       return false;
     }
 
@@ -114,14 +114,14 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             acceptTerms: true,
           }) as any
         );
-        Alert.alert('註冊成功', '歡迎加入卡策！', [
+        Alert.alert('註冊Success', '歡迎加入卡策！', [
           { text: '確定', onPress: () => onNavigate('Dashboard') },
         ]);
       } else {
-        Alert.alert('註冊失敗', response.message || '註冊時發生錯誤');
+        Alert.alert('註冊Failed', response.message || '註冊時發生Error');
       }
     } catch (error: unknown) {
-      Alert.alert('錯誤', error.message || '註冊時發生錯誤');
+      Alert.alert('Error', error.message || '註冊時發生Error');
     } finally {
       setIsLoading(false);
     }
@@ -145,11 +145,11 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
           <Text style={styles.subtitle}>開始您的卡牌投資之旅</Text>
         </View>
 
-        {/* 註冊表單 */}
+        {/* RegisterTable單 */}
         <View style={styles.formContainer}>
           <Text style={styles.formTitle}>創建帳號</Text>
 
-          {/* 用戶名輸入 */}
+          {/* User名Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>用戶名</Text>
             <TextInput
@@ -163,7 +163,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             />
           </View>
 
-          {/* 電子郵件輸入 */}
+          {/* 電子郵件Input */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>電子郵件</Text>
             <TextInput
@@ -178,7 +178,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             />
           </View>
 
-          {/* 密碼輸入 */}
+          {/* PasswordInput */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>密碼</Text>
             <TextInput
@@ -192,7 +192,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             />
           </View>
 
-          {/* 確認密碼輸入 */}
+          {/* ConfirmPasswordInput */}
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>確認密碼</Text>
             <TextInput
@@ -206,7 +206,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
             />
           </View>
 
-          {/* 註冊按鈕 */}
+          {/* Register按鈕 */}
           <TouchableOpacity
             style={[
               styles.registerButton,
@@ -221,7 +221,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* 登錄連結 */}
+        {/* Login連結 */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>已有帳號？</Text>
           <TouchableOpacity onPress={() => onNavigate('Login')}>
@@ -229,7 +229,7 @@ export const RegisterScreen: React.FC<RegisterScreenProps> = ({
           </TouchableOpacity>
         </View>
 
-        {/* 快速註冊選項 */}
+        {/* 快速RegisterOptions */}
         <View style={styles.quickRegisterContainer}>
           <Text style={styles.quickRegisterTitle}>快速註冊</Text>
           <View style={styles.quickRegisterButtons}>

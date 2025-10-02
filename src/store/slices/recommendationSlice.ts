@@ -17,7 +17,7 @@ import {
   InvestmentRiskAnalysis,
 } from '../../features/ai/types/recommendation';
 
-// 初始狀態
+// 初始Status
 const initialState: RecommendationState = {
   currentRecommendation: null,
   recommendationHistory: null,
@@ -27,7 +27,7 @@ const initialState: RecommendationState = {
   userProfile: null,
 };
 
-// 異步 Action
+// Async Action
 export const _generateRecommendation = createAsyncThunk(
   'recommendation/generateRecommendation',
   async (request: InvestmentRecommendationRequest, { rejectWithValue }) => {
@@ -38,7 +38,7 @@ export const _generateRecommendation = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'RECOMMENDATION_FAILED',
-        message: error instanceof Error ? error.message : '生成投資建議失敗',
+        message: error instanceof Error ? error.message : '生成投資建議Failed',
         details: error,
         timestamp: new Date(),
       } as RecommendationError);
@@ -56,7 +56,7 @@ export const _getRecommendationHistory = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'HISTORY_FETCH_FAILED',
-        message: error instanceof Error ? error.message : '獲取建議歷史失敗',
+        message: error instanceof Error ? error.message : 'Get建議歷史Failed',
         details: error,
         timestamp: new Date(),
       } as RecommendationError);
@@ -73,7 +73,7 @@ export const _getRecommendationStats = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'STATS_FETCH_FAILED',
-        message: error instanceof Error ? error.message : '獲取建議統計失敗',
+        message: error instanceof Error ? error.message : 'Get建議統計Failed',
         details: error,
         timestamp: new Date(),
       } as RecommendationError);
@@ -93,7 +93,7 @@ export const _updateUserProfile = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'PROFILE_UPDATE_FAILED',
-        message: error instanceof Error ? error.message : '更新用戶配置失敗',
+        message: error instanceof Error ? error.message : 'Update用戶ConfigureFailed',
         details: error,
         timestamp: new Date(),
       } as RecommendationError);
@@ -110,7 +110,7 @@ export const _getUserProfile = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'PROFILE_FETCH_FAILED',
-        message: error instanceof Error ? error.message : '獲取用戶配置失敗',
+        message: error instanceof Error ? error.message : 'Get用戶ConfigureFailed',
         details: error,
         timestamp: new Date(),
       } as RecommendationError);
@@ -133,7 +133,7 @@ export const _analyzePortfolio = createAsyncThunk(
     } catch (error) {
       return rejectWithValue({
         code: 'PORTFOLIO_ANALYSIS_FAILED',
-        message: error instanceof Error ? error.message : '投資組合分析失敗',
+        message: error instanceof Error ? error.message : '投資組合分析Failed',
         details: error,
         timestamp: new Date(),
       } as RecommendationError);
@@ -177,7 +177,7 @@ const _recommendationSlice = createSlice({
             rec => rec.id === action.payload.recommendationId
           );
         if (recommendation) {
-          // 這裡可以添加反饋處理邏輯
+          // 這裡可以Add反饋Handle邏輯
           console.log('Feedback updated for recommendation:', action.payload);
         }
       }
@@ -272,7 +272,7 @@ const _recommendationSlice = createSlice({
       })
       .addCase(analyzePortfolio.fulfilled, (state, action) => {
         state.loading = false;
-        // 可以將投資組合分析結果存儲在狀態中
+        // 可以將投資組合Analysis結果Storage在Status中
         state.error = null;
       })
       .addCase(analyzePortfolio.rejected, (state, action) => {
@@ -392,7 +392,7 @@ export const _selectUserExperience = (state: {
 export const _selectUserRiskTolerance = (state: {
   recommendation: RecommendationState;
 }) => {
-  // 根據用戶配置推斷風險承受度
+  // Root據UserConfigure推斷風險承受度
   const _profile = state.recommendation.userProfile;
   if (!profile) return 'moderate';
 

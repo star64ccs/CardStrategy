@@ -1,5 +1,5 @@
 // CardStrategy 設計系統
-// 基於深色背景配金色元素的現代化設計風格
+// 基於深色背景配金色Element的現代化設計風格
 
 export const _colors = {
   // 主色調 - 深色背景
@@ -24,16 +24,16 @@ export const _colors = {
     primary: '#FFFFFF', // 主要文字 - 白色
     secondary: '#E0E0E0', // 次要文字 - 淺灰
     tertiary: '#B0B0B0', // 第三級文字 - 中灰
-    disabled: '#666666', // 禁用文字 - 深灰
+    disabled: '#666666', // Disable文字 - 深灰
     gold: '#FFD700', // 金色文字
   },
 
-  // 狀態顏色
+  // Status顏色
   status: {
-    success: '#4CAF50', // 成功 - 綠色
-    warning: '#FF9800', // 警告 - 橙色
-    error: '#F44336', // 錯誤 - 紅色
-    info: '#2196F3', // 信息 - 藍色
+    success: '#4CAF50', // Success - 綠色
+    warning: '#FF9800', // Warning - 橙色
+    error: '#F44336', // Error - 紅色
+    info: '#2196F3', // Information - 藍色
   },
 
   // 卡片稀有度顏色
@@ -42,7 +42,7 @@ export const _colors = {
     uncommon: '#4CAF50', // 非普通 - 綠色
     rare: '#2196F3', // 稀有 - 藍色
     mythic: '#FF9800', // 神話 - 橙色
-    special: '#E91E63', // 特殊 - 粉紅色
+    special: '#E91E63', // Special - 粉紅色
     promo: '#9C27B0', // 宣傳 - 紫色
   },
 
@@ -86,7 +86,7 @@ export const _typography = {
     extrabold: '800',
   },
 
-  // 行高
+  // Row高
   lineHeights: {
     tight: 1.2,
     normal: 1.5,
@@ -149,14 +149,14 @@ export const _layout = {
 };
 
 export const _animations = {
-  // 過渡時間
+  // 過渡Time
   duration: {
     fast: 150,
     normal: 300,
     slow: 500,
   },
 
-  // 緩動函數
+  // 緩動Function
   easing: {
     ease: 'ease',
     easeIn: 'ease-in',
@@ -164,7 +164,7 @@ export const _animations = {
     easeInOut: 'ease-in-out',
   },
 
-  // 動畫類型
+  // 動畫Class型
   types: {
     fadeIn: {
       from: { opacity: 0 },
@@ -181,7 +181,7 @@ export const _animations = {
   },
 };
 
-// 組件樣式預設
+// Component樣式預設
 export const _componentStyles = {
   // 按鈕樣式
   button: {
@@ -213,7 +213,7 @@ export const _componentStyles = {
     shadow: colors.shadow.medium,
   },
 
-  // 輸入框樣式
+  // Input框樣式
   input: {
     backgroundColor: colors.background.secondary,
     borderColor: colors.border.primary,
@@ -231,7 +231,7 @@ export const _componentStyles = {
   },
 };
 
-// 主題配置
+// ThemeConfigure
 export const _theme = {
   colors,
   typography,

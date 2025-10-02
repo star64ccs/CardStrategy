@@ -7,10 +7,10 @@ import { logger } from '../core/utils/logger';
 import type { ThemeMode, ThemeContextType } from './theme';
 import { theme, darkTheme } from './theme';
 
-// 創建主題上下文
+// CreateTheme上下文
 const _ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// 主題提供者組件
+// Theme提供者Component
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
@@ -18,7 +18,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   const [mode, setMode] = useState<ThemeMode>('auto');
   const [isDark, setIsDark] = useState(false);
 
-  // 從存儲中加載主題模式
+  // 從Storage中加載Theme模式
   useEffect(() => {
     const _loadThemeMode = async () => {
       try {
@@ -34,7 +34,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     loadThemeMode();
   }, []);
 
-  // 根據模式和系統設置確定當前主題
+  // Root據模式和系統SettingsOK當前Theme
   useEffect(() => {
     const _determineTheme = () => {
       if (mode === 'auto') {
@@ -47,13 +47,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     determineTheme();
   }, [mode, systemColorScheme]);
 
-  // 切換主題
+  // SwitchTheme
   const _toggleTheme = () => {
     const _newMode = isDark ? 'light' : 'dark';
     setThemeMode(newMode);
   };
 
-  // 設置主題模式
+  // SettingsTheme模式
   const _setThemeMode = async (newMode: ThemeMode) => {
     try {
       await AsyncStorage.setItem('themeMode', newMode);
@@ -63,11 +63,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  // 當前主題
+  // 當前Theme
   const _currentTheme = isDark ? darkTheme : theme;
 
   const contextValue: ThemeContextType = {
-    theme: currentTheme as any, // 臨時類型轉換
+    theme: currentTheme as any, // 臨時Class型Convert
     isDark,
     mode,
     toggleTheme,
@@ -81,7 +81,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 };
 
-// 使用主題的 Hook
+// 使用Theme的 Hook
 export const _useTheme = (): ThemeContextType => {
   const _context = useContext(ThemeContext);
   if (context === undefined) {
@@ -90,5 +90,5 @@ export const _useTheme = (): ThemeContextType => {
   return context;
 };
 
-// 導出主題上下文
+// ExportTheme上下文
 export default ThemeContext;

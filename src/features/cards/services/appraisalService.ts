@@ -44,12 +44,12 @@ class AppraisalService {
     try {
       logger.info('Initializing AppraisalService...');
 
-      // 初始化評分標準
+      // Initialize評分Standard
       Object.keys(GRADE_STANDARDS).forEach(grade => {
         this.stats.gradeDistribution[grade] = 0;
       });
 
-      // 初始化方法使用統計
+      // InitializeMethod使用Statistics
       ['ai_vision', 'expert_system', 'hybrid', 'manual'].forEach(method => {
         this.stats.methodUsage[method] = 0;
       });
@@ -71,10 +71,10 @@ class AppraisalService {
       logger.info(`Starting appraisal for card: ${request.cardId}`);
       const _startTime = Date.now();
 
-      // 模擬圖像處理
+      // 模擬Graph像Handle
       await this.processImage(request.imageUrl);
 
-      // 執行鑑定分析
+      // 執Row鑑定Analysis
       const _details = await this.analyzeCardDetails(request);
 
       // 計算總分和等級
@@ -87,7 +87,7 @@ class AppraisalService {
         overallScore
       );
 
-      // 創建鑑定結果
+      // Create鑑定結果
       const result: AppraisalResult = {
         id: `appraisal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         cardId: request.cardId,
@@ -107,10 +107,10 @@ class AppraisalService {
         status: 'completed',
       };
 
-      // 更新統計數據
+      // Update統Count據
       this.updateStats(result);
 
-      // 保存到歷史記錄
+      // Save到歷史Record
       this.saveToHistory(result);
 
       logger.info(
@@ -121,8 +121,8 @@ class AppraisalService {
       logger.error('Appraisal failed:', error);
       const appraisalError: AppraisalError = {
         code: 'APPRAISAL_FAILED',
-        message: '鑑定過程失敗',
-        details: error instanceof Error ? error.message : '未知錯誤',
+        message: '鑑定過程Failed',
+        details: error instanceof Error ? error.message : '未知Error',
         isRetryable: true,
       };
       throw appraisalError;
@@ -190,13 +190,13 @@ class AppraisalService {
   }
 
   private async processImage(imageUrl: string): Promise<void> {
-    // 模擬圖像處理
+    // 模擬Graph像Handle
     await new Promise(resolve => setTimeout(resolve, 500));
     logger.info('Image processing completed');
   }
 
   private async analyzeCardDetails(request: AppraisalRequest) {
-    // 模擬詳細分析
+    // 模擬詳細Analysis
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     return {
@@ -264,7 +264,7 @@ class AppraisalService {
   }
 
   private assessImageQuality(imageUrl: string): 'low' | 'medium' | 'high' {
-    // 模擬圖像質量評估
+    // 模擬Graph像質量評估
     const _quality = Math.random();
     if (quality > 0.7) return 'high';
     if (quality > 0.4) return 'medium';
@@ -274,7 +274,7 @@ class AppraisalService {
   private assessLightingConditions(
     imageUrl: string
   ): 'poor' | 'fair' | 'good' | 'excellent' {
-    // 模擬光照條件評估
+    // 模擬光照Condition評估
     const _lighting = Math.random();
     if (lighting > 0.8) return 'excellent';
     if (lighting > 0.6) return 'good';
@@ -328,7 +328,7 @@ class AppraisalService {
     this.stats.methodUsage[result.metadata.appraisalMethod] =
       (this.stats.methodUsage[result.metadata.appraisalMethod] || 0) + 1;
 
-    // 更新平均處理時間
+    // Update平均HandleTime
     const _totalTime =
       this.stats.averageProcessingTime * (this.stats.totalAppraisals - 1) +
       result.metadata.processingTime;

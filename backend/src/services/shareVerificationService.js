@@ -30,7 +30,7 @@ class ShareVerificationService {
     }
   }
 
-  // 創建分享驗證
+  // Create分享Verify
   async createShareVerification(
     userId,
     cardId,
@@ -41,24 +41,24 @@ class ShareVerificationService {
     try {
       await this.initializeModels();
 
-      // 驗證卡牌是否存在
+      // Verify卡牌YesNo存在
       const card = await this.Card.findByPk(cardId);
       if (!card) {
         throw new Error('卡牌不存在');
       }
 
-      // 驗證用戶是否存在
+      // VerifyUserYesNo存在
 // eslint-disable-next-line no-unused-vars
       const user = await this.User.findByPk(userId);
       if (!user) {
         throw new Error('用戶不存在');
       }
 
-      // 設置過期時間
+      // Settings過期Time
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + expiresInDays);
 
-      // 創建分享驗證記錄
+      // Create分享VerifyRecord
       const shareVerification = await this.ShareVerification.create({
         userId,
         cardId,
@@ -72,7 +72,7 @@ class ShareVerificationService {
         },
       });
 
-      // 生成分享相關 URL 和鏈接
+      // 生成分享相Off URL 和鏈接
       const { shareUrl } = shareVerification;
       const qrCodeUrl = generateQRCodeUrl(shareUrl);
       const socialShareLinks = generateSocialShareLinks(shareUrl);
@@ -97,12 +97,12 @@ class ShareVerificationService {
     }
   }
 
-  // 查詢分享驗證
+  // Query分享Verify
   async lookupVerification(verificationCode) {
     try {
       await this.initializeModels();
 
-      // 查找驗證記錄
+      // FindVerifyRecord
       const verification = await this.ShareVerification.findOne({
         where: {
           verificationCode,
@@ -133,11 +133,11 @@ class ShareVerificationService {
         throw new Error('驗證碼不存在或已失效');
       }
 
-      // 檢查是否過期
+      // CheckYesNo過期
       const isExpired = new Date() > verification.expiresAt;
       const isValid = !isExpired && verification.isActive;
 
-      // 更新查看次數和最後查看時間
+      // Update查看次數和最後查看Time
       await verification.update({
         viewCount: verification.viewCount + 1,
         lastViewedAt: new Date(),
@@ -177,7 +177,7 @@ class ShareVerificationService {
     }
   }
 
-  // 驗證分享驗證
+  // Verify分享Verify
   async validateVerification(verificationCode) {
     try {
       await this.initializeModels();
@@ -198,14 +198,14 @@ class ShareVerificationService {
         return { isValid: false, reason: '驗證碼已過期' };
       }
 
-      return { isValid: true, reason: '驗證成功' };
+      return { isValid: true, reason: 'VerifySuccess' };
     } catch (error) {
       logger.error('Validate verification error:', error);
       throw error;
     }
   }
 
-  // 獲取用戶的分享驗證統計
+  // GetUser的分享VerifyStatistics
   async getUserShareStats(userId) {
     try {
       await this.initializeModels();
@@ -254,7 +254,7 @@ class ShareVerificationService {
     }
   }
 
-  // 刪除分享驗證
+  // Delete分享Verify
   async deleteShareVerification(userId, verificationCode) {
     try {
       await this.initializeModels();
@@ -284,7 +284,7 @@ class ShareVerificationService {
     }
   }
 
-  // 清理過期的分享驗證
+  // 清理過期的分享Verify
   async cleanupExpiredVerifications() {
     try {
       await this.initializeModels();
@@ -310,7 +310,7 @@ class ShareVerificationService {
     }
   }
 
-  // 獲取熱門分享驗證
+  // Get熱門分享Verify
   async getPopularVerifications(limit = 10) {
     try {
       await this.initializeModels();

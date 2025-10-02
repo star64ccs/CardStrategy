@@ -61,13 +61,13 @@ const HybridArchitectureCoreExample: React.FC = () => {
     try {
       const _result = await hybridCore.initialize();
       if (result) {
-        Alert.alert('成功', '混合架構核心初始化成功！');
+        Alert.alert('Success', '混合架構核心InitializeSuccess！');
         updateStatus();
       } else {
-        Alert.alert('錯誤', '混合架構核心初始化失敗！');
+        Alert.alert('Error', '混合架構核心InitializeFailed！');
       }
     } catch (error) {
-      Alert.alert('錯誤', `初始化過程中發生錯誤: ${error}`);
+      Alert.alert('Error', `Initialize過程中發生Error: ${error}`);
     } finally {
       setIsInitializing(false);
     }
@@ -76,16 +76,16 @@ const HybridArchitectureCoreExample: React.FC = () => {
   const _handleShutdown = async () => {
     try {
       await hybridCore.shutdown();
-      Alert.alert('成功', '混合架構核心已關閉！');
+      Alert.alert('Success', '混合架構核心已關閉！');
       updateStatus();
     } catch (error) {
-      Alert.alert('錯誤', `關閉過程中發生錯誤: ${error}`);
+      Alert.alert('Error', `關閉過程中發生Error: ${error}`);
     }
   };
 
   const _testBusinessOperation = async () => {
     if (!isInitialized) {
-      Alert.alert('錯誤', '請先初始化混合架構核心！');
+      Alert.alert('Error', '請先初始化混合架構核心！');
       return;
     }
 
@@ -93,7 +93,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
     const results: unknown[] = [];
 
     try {
-      // 測試業務操作
+      // Test業務Operation
       const _operation = {
         type: 'card_analysis',
         data: {
@@ -120,7 +120,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
         data: result,
       });
 
-      // 測試性能監控
+      // Test性能Monitor
       const _performanceResult =
         await hybridCore.monitoring.performance.monitorPerformance([
           {
@@ -138,7 +138,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
         data: performanceResult,
       });
 
-      // 測試合規監控
+      // Test合規Monitor
       const _complianceResult =
         await hybridCore.monitoring.compliance.monitorCompliance([
           {
@@ -157,7 +157,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
         data: complianceResult,
       });
 
-      // 測試安全監控
+      // Test安全Monitor
       const _securityResult =
         await hybridCore.monitoring.security.monitorSecurity([
           {
@@ -176,9 +176,9 @@ const HybridArchitectureCoreExample: React.FC = () => {
       });
 
       setTestResults(results);
-      Alert.alert('成功', '所有測試完成！');
+      Alert.alert('Success', '所有測試完成！');
     } catch (error) {
-      Alert.alert('錯誤', `測試過程中發生錯誤: ${error}`);
+      Alert.alert('Error', `測試過程中發生Error: ${error}`);
     } finally {
       setIsRunningTest(false);
     }
@@ -186,7 +186,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
 
   const _testIndividualComponents = async () => {
     if (!isInitialized) {
-      Alert.alert('錯誤', '請先初始化混合架構核心！');
+      Alert.alert('Error', '請先初始化混合架構核心！');
       return;
     }
 
@@ -194,7 +194,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
     const results: unknown[] = [];
 
     try {
-      // 測試核心層
+      // Test核心層
       const _coreTest =
         await hybridCore.core.businessLogic.processBusinessLogic({
           id: 'test-operation',
@@ -215,7 +215,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
         data: coreTest,
       });
 
-      // 測試適配層
+      // Test適配層
       const _adaptationTest = await hybridCore.adaptation.compliance('GLOBAL', {
         type: 'test',
         data: 'test',
@@ -226,7 +226,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
         data: adaptationTest,
       });
 
-      // 測試擴充層
+      // Test擴充層
       const testRule: Rule = {
         id: 'test-rule',
         name: 'Test Rule',
@@ -256,9 +256,9 @@ const HybridArchitectureCoreExample: React.FC = () => {
       });
 
       setTestResults(results);
-      Alert.alert('成功', '組件測試完成！');
+      Alert.alert('Success', '組件測試完成！');
     } catch (error) {
-      Alert.alert('錯誤', `組件測試過程中發生錯誤: ${error}`);
+      Alert.alert('Error', `組件測試過程中發生Error: ${error}`);
     } finally {
       setIsRunningTest(false);
     }
@@ -295,7 +295,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>🏗️ 混合架構核心示例</Text>
 
-      {/* 初始化控制 */}
+      {/* InitializeControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🚀 架構控制</Text>
         <View style={styles.buttonRow}>
@@ -321,7 +321,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
         </View>
       </View>
 
-      {/* 架構狀態 */}
+      {/* 架構Status */}
       {status && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📊 架構狀態</Text>
@@ -396,7 +396,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
         </View>
       )}
 
-      {/* 測試控制 */}
+      {/* TestControl */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🧪 功能測試</Text>
         <View style={styles.buttonRow}>
@@ -429,7 +429,7 @@ const HybridArchitectureCoreExample: React.FC = () => {
         </TouchableOpacity>
       </View>
 
-      {/* 測試結果 */}
+      {/* Test結果 */}
       {testResults.length > 0 && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>📋 測試結果</Text>

@@ -28,7 +28,7 @@ import {
 } from '../types/recommendation';
 
 /**
- * 投資建議服務 - 單例模式
+ * 投資建議Service - 單例模式
  * 提供個性化投資建議、風險評估、組合優化等功能
  */
 class RecommendationService {
@@ -48,7 +48,7 @@ class RecommendationService {
   }
 
   /**
-   * 初始化建議服務
+   * Initialize建議Service
    */
   public async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -59,7 +59,7 @@ class RecommendationService {
     try {
       logger.info('Initializing RecommendationService...');
 
-      // 模擬加載用戶配置和歷史數據
+      // 模擬加載UserConfigure和歷史Data
       await this.loadUserProfiles();
       await this.loadHistoricalData();
 
@@ -91,10 +91,10 @@ class RecommendationService {
         }
       );
 
-      // 驗證請求
+      // VerifyRequest
       this.validateRecommendationRequest(request);
 
-      // 分析用戶配置
+      // AnalysisUserConfigure
       const _userAnalysis = this.analyzeUserProfile(request.userProfile);
 
       // 生成卡牌建議
@@ -109,7 +109,7 @@ class RecommendationService {
         cardRecommendations
       );
 
-      // 進行風險分析
+      // 進Row風險Analysis
       const _riskAnalysis = await this.analyzeInvestmentRisk(
         request,
         cardRecommendations
@@ -128,7 +128,7 @@ class RecommendationService {
         riskAnalysis
       );
 
-      // 創建結果
+      // Create結果
       const _result = await this.createRecommendationResult(
         request,
         cardRecommendations,
@@ -138,7 +138,7 @@ class RecommendationService {
         reasoning
       );
 
-      // 保存建議結果
+      // Save建議結果
       await this.saveRecommendationResult(result);
 
       logger.info(
@@ -158,7 +158,7 @@ class RecommendationService {
   }
 
   /**
-   * 獲取用戶建議歷史
+   * GetUser建議歷史
    */
   public async getRecommendationHistory(
     userId: string
@@ -167,7 +167,7 @@ class RecommendationService {
   }
 
   /**
-   * 獲取建議統計數據
+   * Get建議統Count據
    */
   public async getRecommendationStats(): Promise<RecommendationStats> {
     const _histories = Array.from(this.recommendationHistory.values());
@@ -186,14 +186,14 @@ class RecommendationService {
       averageReturn,
       bestPerforming: this.getBestPerformingRecommendation(histories),
       worstPerforming: this.getWorstPerformingRecommendation(histories),
-      userSatisfaction: 0.85, // 模擬用戶滿意度
+      userSatisfaction: 0.85, // 模擬User滿意度
       conversionRate: 0.72, // 模擬轉化率
       portfolioImprovement: 0.23, // 模擬投資組合改善
     };
   }
 
   /**
-   * 更新用戶配置
+   * UpdateUserConfigure
    */
   public async updateUserProfile(
     userId: string,
@@ -204,14 +204,14 @@ class RecommendationService {
   }
 
   /**
-   * 獲取用戶配置
+   * GetUserConfigure
    */
   public async getUserProfile(userId: string): Promise<UserProfile | null> {
     return this.userProfiles.get(userId) || null;
   }
 
   /**
-   * 分析投資組合
+   * Analysis投資組合
    */
   public async analyzePortfolio(
     userId: string,
@@ -245,7 +245,7 @@ class RecommendationService {
     }
   }
 
-  // 私有方法
+  // PrivateMethod
 
   private validateRecommendationRequest(
     request: InvestmentRecommendationRequest
@@ -288,7 +288,7 @@ class RecommendationService {
     const { budget } = request;
     const _maxRecommendations = Math.min(
       RECOMMENDATION_CONSTANTS.MAX_RECOMMENDATIONS_PER_REQUEST,
-      Math.floor(budget / 100) // 假設最低卡牌價格為 100
+      Math.floor(budget / 100) // False設最低卡牌價格為 100
     );
 
     for (let i = 0; i < maxRecommendations; i++) {
@@ -302,7 +302,7 @@ class RecommendationService {
       recommendations.push(recommendation);
     }
 
-    // 根據優先級排序
+    // Root據優先級Sort
     return recommendations.sort(
       (a, b) =>
         this.getPriorityWeight(a.priority) - this.getPriorityWeight(b.priority)
@@ -316,8 +316,8 @@ class RecommendationService {
     index: number
   ): Promise<CardRecommendation> {
     // 確保價格在預算範圍內
-    const _maxPrice = Math.min(request.budget * 0.8, 1000); // 最多使用80%預算或1000，取較小值
-    const _minPrice = Math.min(100, request.budget * 0.1); // 最少10%預算或100，取較小值
+    const _maxPrice = Math.min(request.budget * 0.8, 1000); // 最多使用80%預算或1000，取較小Value
+    const _minPrice = Math.min(100, request.budget * 0.1); // 最少10%預算或100，取較小Value
     const _basePrice = minPrice + Math.random() * (maxPrice - minPrice);
     const _expectedReturn = this.calculateCardExpectedReturn(
       request.riskTolerance,
@@ -601,12 +601,12 @@ class RecommendationService {
     }
   }
 
-  // 實用方法
+  // 實用Method
 
   private calculateRiskScore(profile: UserProfile): number {
     let score = 50; // 基礎分數
 
-    // 根據經驗調整
+    // Root據經驗調整
     switch (profile.experience) {
       case 'beginner':
         score -= 20;
@@ -622,7 +622,7 @@ class RecommendationService {
         break;
     }
 
-    // 根據年齡調整
+    // Root據Age調整
     if (profile.age < 30) score += 10;
     else if (profile.age > 50) score -= 10;
 
@@ -651,7 +651,7 @@ class RecommendationService {
   ): number {
     let baseReturn = 0.08; // 8% 基礎回報
 
-    // 根據風險承受度調整
+    // Root據風險承受度調整
     switch (riskTolerance) {
       case RiskTolerance.VERY_CONSERVATIVE:
         baseReturn *= 0.5;
@@ -670,7 +670,7 @@ class RecommendationService {
         break;
     }
 
-    // 根據時間範圍調整
+    // Root據Time範圍調整
     switch (timeHorizon) {
       case InvestmentTimeHorizon.SHORT_TERM:
         baseReturn *= 0.6;
@@ -686,7 +686,7 @@ class RecommendationService {
         break;
     }
 
-    return baseReturn + (Math.random() - 0.5) * 0.1; // 添加隨機性
+    return baseReturn + (Math.random() - 0.5) * 0.1; // Add隨機性
   }
 
   private determineCardRiskLevel(
@@ -936,7 +936,7 @@ class RecommendationService {
     ];
   }
 
-  // 其他輔助方法
+  // 其他輔助Method
   private calculatePortfolioRisk(
     cardRecommendations: CardRecommendation[]
   ): RiskLevel {
@@ -960,15 +960,15 @@ class RecommendationService {
   }
 
   private assessMarketRisk(marketConditions: unknown): RiskLevel {
-    // 根據市場條件評估風險
-    return RiskLevel.MEDIUM; // 模擬值
+    // Root據市場Condition評估風險
+    return RiskLevel.MEDIUM; // 模擬Value
   }
 
   private assessLiquidityRisk(
     cardRecommendations: CardRecommendation[]
   ): RiskLevel {
-    // 根據卡牌流動性評估風險
-    return RiskLevel.LOW; // 模擬值
+    // Root據卡牌流動性評估風險
+    return RiskLevel.LOW; // 模擬Value
   }
 
   private calculateOverallRisk(risks: RiskLevel[]): RiskLevel {
@@ -1089,8 +1089,8 @@ class RecommendationService {
   private calculateOverallSuccessRate(
     histories: RecommendationHistory[]
   ): number {
-    // 模擬成功率計算
-    return 0.73; // 73% 成功率
+    // 模擬Success率計算
+    return 0.73; // 73% Success率
   }
 
   private calculateAverageReturn(histories: RecommendationHistory[]): number {
@@ -1101,7 +1101,7 @@ class RecommendationService {
   private getBestPerformingRecommendation(
     histories: RecommendationHistory[]
   ): CardRecommendation {
-    // 返回模擬的最佳表現建議
+    // Return模擬的最佳Table現建議
     return {
       cardId: 'best_card',
       cardName: '最佳表現卡牌',
@@ -1140,7 +1140,7 @@ class RecommendationService {
   private getWorstPerformingRecommendation(
     histories: RecommendationHistory[]
   ): CardRecommendation {
-    // 返回模擬的最差表現建議
+    // Return模擬的最差Table現建議
     return {
       cardId: 'worst_card',
       cardName: '最差表現卡牌',
@@ -1234,13 +1234,13 @@ class RecommendationService {
   }
 
   private async loadUserProfiles(): Promise<void> {
-    // 模擬加載用戶配置
+    // 模擬加載UserConfigure
     logger.info('Loading user profiles...');
     await new Promise(resolve => setTimeout(resolve, 100));
   }
 
   private async loadHistoricalData(): Promise<void> {
-    // 模擬加載歷史數據
+    // 模擬加載歷史Data
     logger.info('Loading historical recommendation data...');
     await new Promise(resolve => setTimeout(resolve, 100));
   }

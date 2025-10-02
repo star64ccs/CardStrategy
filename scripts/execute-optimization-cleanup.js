@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * 執行優化清理
- * 實際執行專案優化建議
+ * 執Row優化清理
+ * 實際執Row專案優化建議
  */
 
 // eslint-disable-next-line no-console
@@ -23,14 +23,14 @@ const cleanupResult = {
   }
 };
 
-// 1. 移除重複的配置文件
+// 1. RemoveDuplicate的ConfigureFile
 function removeDuplicateConfigs() {
   // eslint-disable-next-line no-console
   console.log('📁 移除重複配置文件...');
   
   const duplicateConfigs = [
     '.eslintrc.json', // 保留 .eslintrc.js
-    'babel.config.js', // 如果 metro.config.js 已包含
+    'babel.config.js', // 如果 metro.config.js 已Package含
   ];
   
   duplicateConfigs.forEach(config => {
@@ -42,14 +42,14 @@ function removeDuplicateConfigs() {
         console.log(`   ✅ 已移除: ${config}`);
       }
     } catch (error) {
-      cleanupResult.errors.push(`移除 ${config} 失敗: ${error.message}`);
+      cleanupResult.errors.push(`移除 ${config} Failed: ${error.message}`);
       // eslint-disable-next-line no-console
-      console.log(`   ❌ 移除失敗: ${config}`);
+      console.log(`   ❌ 移除Failed: ${config}`);
     }
   });
 }
 
-// 2. 合併環境變量文件
+// 2. Merge環境VariableFile
 function mergeEnvironmentFiles() {
   // eslint-disable-next-line no-console
   console.log('🔧 合併環境變量文件...');
@@ -76,20 +76,20 @@ function mergeEnvironmentFiles() {
         mergedContent.push(content);
         mergedContent.push('');
         
-        // 移除原始文件
+        // Remove原始File
         fs.unlinkSync(envFile);
         cleanupResult.removedFiles.push(envFile);
         // eslint-disable-next-line no-console
         console.log(`   ✅ 已合併並移除: ${envFile}`);
       }
     } catch (error) {
-      cleanupResult.errors.push(`處理 ${envFile} 失敗: ${error.message}`);
+      cleanupResult.errors.push(`Handle ${envFile} Failed: ${error.message}`);
       // eslint-disable-next-line no-console
-      console.log(`   ❌ 處理失敗: ${envFile}`);
+      console.log(`   ❌ HandleFailed: ${envFile}`);
     }
   });
   
-  // 創建合併後的文件
+  // CreateMerge後的File
   if (mergedContent.length > 0) {
     try {
       fs.writeFileSync('merged-env.config', mergedContent.join('\n'));
@@ -97,12 +97,12 @@ function mergeEnvironmentFiles() {
       // eslint-disable-next-line no-console
       console.log('   ✅ 已創建合併文件: merged-env.config');
     } catch (error) {
-      cleanupResult.errors.push(`創建合併文件失敗: ${error.message}`);
+      cleanupResult.errors.push(`Create合併文件Failed: ${error.message}`);
     }
   }
 }
 
-// 3. 刪除過時的文檔文件
+// 3. Delete過時的DocumentationFile
 function removeOutdatedDocs() {
   // eslint-disable-next-line no-console
   console.log('📚 刪除過時文檔...');
@@ -141,14 +141,14 @@ function removeOutdatedDocs() {
         console.log(`   ✅ 已移除: ${doc}`);
       }
     } catch (error) {
-      cleanupResult.errors.push(`移除 ${doc} 失敗: ${error.message}`);
+      cleanupResult.errors.push(`移除 ${doc} Failed: ${error.message}`);
       // eslint-disable-next-line no-console
-      console.log(`   ❌ 移除失敗: ${doc}`);
+      console.log(`   ❌ 移除Failed: ${doc}`);
     }
   });
 }
 
-// 4. 移除未使用的腳本文件
+// 4. Remove未使用的腳本File
 function removeUnusedScripts() {
   // eslint-disable-next-line no-console
   console.log('🔧 移除未使用腳本...');
@@ -191,14 +191,14 @@ function removeUnusedScripts() {
         console.log(`   ✅ 已移除: ${script}`);
       }
     } catch (error) {
-      cleanupResult.errors.push(`移除 ${script} 失敗: ${error.message}`);
+      cleanupResult.errors.push(`移除 ${script} Failed: ${error.message}`);
       // eslint-disable-next-line no-console
-      console.log(`   ❌ 移除失敗: ${script}`);
+      console.log(`   ❌ 移除Failed: ${script}`);
     }
   });
 }
 
-// 5. 移除重複的配置指南
+// 5. RemoveDuplicate的Configure指南
 function removeDuplicateGuides() {
   // eslint-disable-next-line no-console
   console.log('📖 移除重複配置指南...');
@@ -227,14 +227,14 @@ function removeDuplicateGuides() {
         console.log(`   ✅ 已移除: ${guide}`);
       }
     } catch (error) {
-      cleanupResult.errors.push(`移除 ${guide} 失敗: ${error.message}`);
+      cleanupResult.errors.push(`移除 ${guide} Failed: ${error.message}`);
       // eslint-disable-next-line no-console
-      console.log(`   ❌ 移除失敗: ${guide}`);
+      console.log(`   ❌ 移除Failed: ${guide}`);
     }
   });
 }
 
-// 6. 清理空目錄
+// 6. 清理EmptyDirectory
 function cleanupEmptyDirectories() {
   // eslint-disable-next-line no-console
   console.log('📁 清理空目錄...');
@@ -268,7 +268,7 @@ function cleanupEmptyDirectories() {
         }
       }
     } catch (error) {
-      cleanupResult.errors.push(`清理目錄 ${dir} 失敗: ${error.message}`);
+      cleanupResult.errors.push(`清理目錄 ${dir} Failed: ${error.message}`);
     }
   });
 }
@@ -281,7 +281,7 @@ function optimizePackageJson() {
   try {
     const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
     
-    // 移除可能未使用的依賴
+    // Remove可能未使用的依賴
     const potentiallyUnused = [
       '@testing-library/user-event',
       'react-native-html-to-pdf',
@@ -316,13 +316,13 @@ function optimizePackageJson() {
     }
     
   } catch (error) {
-    cleanupResult.errors.push(`優化 package.json 失敗: ${error.message}`);
+    cleanupResult.errors.push(`優化 package.json Failed: ${error.message}`);
     // eslint-disable-next-line no-console
-    console.log(`   ❌ 優化 package.json 失敗`);
+    console.log(`   ❌ 優化 package.json Failed`);
   }
 }
 
-// 8. 創建優化摘要
+// 8. Create優化摘要
 function createOptimizationSummary() {
   // eslint-disable-next-line no-console
   console.log('📋 創建優化摘要...');
@@ -333,7 +333,7 @@ function createOptimizationSummary() {
     filesMerged: cleanupResult.mergedFiles.length,
     filesOptimized: cleanupResult.optimizedFiles.length,
     errors: cleanupResult.errors.length,
-    estimatedSpaceSaved: cleanupResult.removedFiles.length * 5, // 估算每文件5KB
+    estimatedSpaceSaved: cleanupResult.removedFiles.length * 5, // 估算每File5KB
     recommendations: [
       '運行 npm install 更新依賴',
       '檢查 .gitignore 確保敏感文件不被提交',
@@ -379,11 +379,11 @@ ${summary.recommendations.map(rec => `- ${rec}`).join('\n')}
     console.log('   ✅ 已創建優化摘要: OPTIMIZATION_CLEANUP_SUMMARY.md');
     
   } catch (error) {
-    cleanupResult.errors.push(`創建摘要失敗: ${error.message}`);
+    cleanupResult.errors.push(`Create摘要Failed: ${error.message}`);
   }
 }
 
-// 主執行函數
+// 主執RowFunction
 function executeCleanup() {
   // eslint-disable-next-line no-console
   console.log('🚀 開始執行優化清理...\n');
@@ -400,9 +400,9 @@ function executeCleanup() {
   // 計算結果
   cleanupResult.summary.filesRemoved = cleanupResult.removedFiles.length;
   cleanupResult.summary.spaceSaved = cleanupResult.removedFiles.length * 5; // KB
-  cleanupResult.summary.timeSaved = cleanupResult.removedFiles.length * 0.1; // 分鐘
+  cleanupResult.summary.timeSaved = cleanupResult.removedFiles.length * 0.1; // Minute
   
-  // 保存詳細結果
+  // Save詳細結果
   const reportPath = path.join(__dirname, '../reports');
   if (!fs.existsSync(reportPath)) {
     fs.mkdirSync(reportPath, { recursive: true });
@@ -413,7 +413,7 @@ function executeCleanup() {
     JSON.stringify(cleanupResult, null, 2)
   );
   
-  // 輸出摘要
+  // Output摘要
   // eslint-disable-next-line no-console
   console.log('\n✅ 優化清理完成！');
   // eslint-disable-next-line no-console
@@ -425,7 +425,7 @@ function executeCleanup() {
   // eslint-disable-next-line no-console
   console.log(`   優化文件: ${cleanupResult.optimizedFiles.length}`);
   // eslint-disable-next-line no-console
-  console.log(`   錯誤數量: ${cleanupResult.errors.length}`);
+  console.log(`   Error數量: ${cleanupResult.errors.length}`);
   // eslint-disable-next-line no-console
   console.log(`   節省空間: ${cleanupResult.summary.spaceSaved}KB`);
   // eslint-disable-next-line no-console
@@ -433,7 +433,7 @@ function executeCleanup() {
   
   if (cleanupResult.errors.length > 0) {
     // eslint-disable-next-line no-console
-    console.log('\n⚠️ 清理錯誤:');
+    console.log('\n⚠️ 清理Error:');
     cleanupResult.errors.forEach(error => {
       // eslint-disable-next-line no-console
       console.log(`   - ${error}`);
@@ -457,5 +457,5 @@ function executeCleanup() {
   console.log('   4. 測試應用程序確保功能正常');
 }
 
-// 執行清理
+// 執Row清理
 executeCleanup();

@@ -75,16 +75,16 @@ export class EncryptionService {
 
   async initialize(): Promise<ApiResponse> {
     try {
-      logger.info('初始化加密服務');
+      logger.info('Initialize加密Service');
 
-      // 生成或載入主密鑰
+      // 生成或Load主密鑰
       this.masterKey = process.env.MASTER_KEY || this.generateMasterKey();
 
-      // 創建默認加密密鑰
+      // CreateDefaultEncrypt密鑰
       await this.createDefaultKeys();
 
       this.isInitialized = true;
-      logger.info('加密服務初始化完成');
+      logger.info('加密ServiceInitialize完成');
 
       return {
         success: true,
@@ -94,20 +94,20 @@ export class EncryptionService {
           totalKeys: this.keys.size,
           totalKeyPairs: this.keyPairs.size,
         },
-        message: '加密服務初始化成功',
+        message: '加密ServiceInitializeSuccess',
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('加密服務初始化失敗:', error);
+      logger.error('加密ServiceInitializeFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 對稱加密
+  // 對稱Encrypt
   async encrypt(
     data: string,
     keyId?: string
@@ -116,12 +116,12 @@ export class EncryptionService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 獲取加密密鑰
+      // GetEncrypt密鑰
       const _encryptionKey = keyId
         ? this.keys.get(keyId)
         : this.getDefaultKey();
@@ -140,7 +140,7 @@ export class EncryptionService {
       // 派生密鑰
       const _derivedKey = this.deriveKey(encryptionKey.key, salt);
 
-      // 加密數據
+      // EncryptData
       const _encryptedBuffer = this.encryptData(data, derivedKey, iv);
       const _encryptedData = this.bufferToBase64(encryptedBuffer);
 
@@ -153,7 +153,7 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
 
-      logger.info(`數據加密成功，使用密鑰: ${encryptionKey.id}`);
+      logger.info(`數據加密Success，使用密鑰: ${encryptionKey.id}`);
 
       return {
         success: true,
@@ -161,10 +161,10 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('數據加密失敗:', error);
+      logger.error('數據加密Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -175,12 +175,12 @@ export class EncryptionService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 獲取解密密鑰
+      // GetDecrypt密鑰
       const _decryptionKey = this.keys.get(encryptedData.keyId);
       if (!decryptionKey) {
         return {
@@ -190,7 +190,7 @@ export class EncryptionService {
         };
       }
 
-      // 解析加密數據
+      // ParseEncryptData
       const _iv = this.base64ToBuffer(encryptedData.iv);
       const _salt = this.base64ToBuffer(encryptedData.salt);
       const _data = this.base64ToBuffer(encryptedData.data);
@@ -198,10 +198,10 @@ export class EncryptionService {
       // 派生密鑰
       const _derivedKey = this.deriveKey(decryptionKey.key, salt);
 
-      // 解密數據
+      // DecryptData
       const _decryptedData = this.decryptData(data, derivedKey, iv);
 
-      logger.info(`數據解密成功，使用密鑰: ${decryptionKey.id}`);
+      logger.info(`數據解密Success，使用密鑰: ${decryptionKey.id}`);
 
       return {
         success: true,
@@ -209,29 +209,29 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('數據解密失敗:', error);
+      logger.error('數據解密Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '解密失敗',
+        error: error instanceof Error ? error.message : '解密Failed',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 非對稱加密
+  // 非對稱Encrypt
   async generateKeyPair(algorithm = 'rsa'): Promise<ApiResponse<KeyPair>> {
     try {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
       const _keyId = this.generateId();
 
-      // 簡化的密鑰對生成（實際應用中應使用 crypto 模塊）
+      // 簡化的密鑰對生成（實際Apply中應使用 crypto Module）
       const keyPair: KeyPair = {
         publicKey: this.generatePublicKey(keyId),
         privateKey: this.generatePrivateKey(keyId),
@@ -248,10 +248,10 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('生成密鑰對失敗:', error);
+      logger.error('生成密鑰對Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -265,15 +265,15 @@ export class EncryptionService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 簡化的公鑰加密實現
+      // 簡化的公鑰Encrypt實現
       const _encryptedData = this.simplePublicKeyEncrypt(data, publicKey);
 
-      logger.info('公鑰加密成功');
+      logger.info('公鑰加密Success');
 
       return {
         success: true,
@@ -281,10 +281,10 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('公鑰加密失敗:', error);
+      logger.error('公鑰加密Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -298,18 +298,18 @@ export class EncryptionService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 簡化的私鑰解密實現
+      // 簡化的私鑰Decrypt實現
       const _decryptedData = this.simplePrivateKeyDecrypt(
         encryptedData,
         privateKey
       );
 
-      logger.info('私鑰解密成功');
+      logger.info('私鑰解密Success');
 
       return {
         success: true,
@@ -317,16 +317,16 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('私鑰解密失敗:', error);
+      logger.error('私鑰解密Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '解密失敗',
+        error: error instanceof Error ? error.message : '解密Failed',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 數字簽名
+  // 數字Sign
   async sign(
     data: string,
     privateKey: string
@@ -335,12 +335,12 @@ export class EncryptionService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 查找私鑰對應的密鑰對
+      // Find私鑰對應的密鑰對
       const _keyPair = Array.from(this.keyPairs.values()).find(
         kp => kp.privateKey === privateKey
       );
@@ -353,7 +353,7 @@ export class EncryptionService {
         };
       }
 
-      // 簡化的數字簽名實現
+      // 簡化的數字Sign實現
       const _signature = this.simpleSign(data, privateKey);
 
       const result: SignatureResult = {
@@ -363,7 +363,7 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
 
-      logger.info(`數據簽名成功，使用密鑰: ${keyPair.keyId}`);
+      logger.info(`數據簽名Success，使用密鑰: ${keyPair.keyId}`);
 
       return {
         success: true,
@@ -371,10 +371,10 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('數據簽名失敗:', error);
+      logger.error('數據簽名Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -389,15 +389,15 @@ export class EncryptionService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
 
-      // 簡化的簽名驗證實現
+      // 簡化的SignVerify實現
       const _isValid = this.simpleVerify(data, signature, publicKey);
 
-      logger.info(`簽名驗證${isValid ? '成功' : '失敗'}`);
+      logger.info(`簽名Verify${isValid ? 'Success' : 'Failed'}`);
 
       return {
         success: true,
@@ -405,22 +405,22 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('簽名驗證失敗:', error);
+      logger.error('簽名VerifyFailed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 哈希函數
+  // 哈希Function
   async hash(data: string, algorithm?: string): Promise<ApiResponse<string>> {
     try {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -434,22 +434,22 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('哈希計算失敗:', error);
+      logger.error('哈希計算Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
   }
 
-  // 密鑰管理
+  // 密鑰Manage
   async createKey(expiresAt?: Date): Promise<ApiResponse<EncryptionKey>> {
     try {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -475,10 +475,10 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('創建密鑰失敗:', error);
+      logger.error('Create密鑰Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -489,7 +489,7 @@ export class EncryptionService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -503,15 +503,15 @@ export class EncryptionService {
         };
       }
 
-      // 停用舊密鑰
+      // Deactivate舊密鑰
       oldKey.isActive = false;
 
-      // 創建新密鑰
+      // Create新密鑰
       const _newKeyResult = await this.createKey(oldKey.expiresAt);
       if (!newKeyResult.success || !newKeyResult.data) {
         return {
           success: false,
-          error: '創建新密鑰失敗',
+          error: 'Create新密鑰Failed',
           timestamp: Date.now(),
         };
       }
@@ -524,10 +524,10 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('密鑰輪換失敗:', error);
+      logger.error('密鑰輪換Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -538,7 +538,7 @@ export class EncryptionService {
       if (!this.isInitialized) {
         return {
           success: false,
-          error: '加密服務未初始化',
+          error: '加密Service未Initialize',
           timestamp: Date.now(),
         };
       }
@@ -561,10 +561,10 @@ export class EncryptionService {
         timestamp: Date.now(),
       };
     } catch (error) {
-      logger.error('撤銷密鑰失敗:', error);
+      logger.error('撤銷密鑰Failed:', error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : '未知錯誤',
+        error: error instanceof Error ? error.message : '未知Error',
         timestamp: Date.now(),
       };
     }
@@ -578,9 +578,9 @@ export class EncryptionService {
     return Array.from(this.keyPairs.values());
   }
 
-  // 私有方法
+  // PrivateMethod
   private async createDefaultKeys(): Promise<void> {
-    // 創建默認加密密鑰
+    // CreateDefaultEncrypt密鑰
     await this.createKey();
   }
 
@@ -590,7 +590,7 @@ export class EncryptionService {
   }
 
   private generateKey(): string {
-    // 生成加密密鑰
+    // 生成Encrypt密鑰
     return this.generateRandomString(this.config.keyLength * 2);
   }
 
@@ -625,7 +625,7 @@ export class EncryptionService {
 
   private deriveKey(key: string, salt: Buffer): Buffer {
     // 簡化的密鑰派生實現
-    // 實際應用中應使用 PBKDF2、Argon2 等
+    // 實際Apply中應使用 PBKDF2、Argon2 等
     const _combined = key + salt.toString('hex');
     return Buffer.from(this.simpleHash(combined, 'sha256'), 'hex').slice(
       0,
@@ -634,8 +634,8 @@ export class EncryptionService {
   }
 
   private encryptData(data: string, key: Buffer, iv: Buffer): Buffer {
-    // 簡化的加密實現
-    // 實際應用中應使用 crypto 模塊的 AES-GCM
+    // 簡化的Encrypt實現
+    // 實際Apply中應使用 crypto Module的 AES-GCM
     const _dataBuffer = Buffer.from(data, 'utf8');
     const _encrypted = Buffer.alloc(dataBuffer.length);
 
@@ -647,7 +647,7 @@ export class EncryptionService {
   }
 
   private decryptData(encryptedData: Buffer, key: Buffer, iv: Buffer): string {
-    // 簡化的解密實現
+    // 簡化的Decrypt實現
     const _decrypted = Buffer.alloc(encryptedData.length);
 
     for (let i = 0; i < encryptedData.length; i++) {
@@ -658,7 +658,7 @@ export class EncryptionService {
   }
 
   private simplePublicKeyEncrypt(data: string, publicKey: string): string {
-    // 簡化的公鑰加密實現
+    // 簡化的公鑰Encrypt實現
     const _keyHash = this.simpleHash(publicKey, 'sha256');
     const _encrypted = this.simpleXOR(data, keyHash);
     return this.bufferToBase64(Buffer.from(encrypted));
@@ -668,14 +668,14 @@ export class EncryptionService {
     encryptedData: string,
     privateKey: string
   ): string {
-    // 簡化的私鑰解密實現
+    // 簡化的私鑰Decrypt實現
     const _keyHash = this.simpleHash(privateKey, 'sha256');
     const _dataBuffer = this.base64ToBuffer(encryptedData);
     return this.simpleXOR(dataBuffer.toString(), keyHash);
   }
 
   private simpleSign(data: string, privateKey: string): string {
-    // 簡化的數字簽名實現
+    // 簡化的數字Sign實現
     const _combined = data + privateKey;
     return this.simpleHash(combined, 'sha256');
   }
@@ -685,20 +685,20 @@ export class EncryptionService {
     signature: string,
     publicKey: string
   ): boolean {
-    // 簡化的簽名驗證實現
-    // 在實際應用中，需要使用對應的私鑰來驗證
+    // 簡化的SignVerify實現
+    // 在實際Apply中，需要使用對應的私鑰來Verify
     const _expectedSignature = this.simpleHash(data + publicKey, 'sha256');
     return signature === expectedSignature;
   }
 
   private simpleHash(data: string, algorithm: string): string {
     // 簡化的哈希實現
-    // 實際應用中應使用 crypto 模塊
+    // 實際Apply中應使用 crypto Module
     let hash = 0;
     for (let i = 0; i < data.length; i++) {
       const _char = data.charCodeAt(i);
       hash = (hash << 5) - hash + char;
-      hash = hash & hash; // 轉換為 32 位整數
+      hash = hash & hash; // Convert為 32 位整數
     }
     return Math.abs(hash).toString(16).padStart(64, '0');
   }

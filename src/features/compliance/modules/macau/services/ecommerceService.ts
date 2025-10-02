@@ -41,7 +41,7 @@ export class MacauEcommerceService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查平台名稱
+    // Check平台名稱
     if (!platform.platformName || platform.platformName.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_1`,
@@ -57,7 +57,7 @@ export class MacauEcommerceService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查商業登記
+    // Check商業登記
     if (
       !platform.businessRegistration ||
       platform.businessRegistration.trim() === ''
@@ -76,7 +76,7 @@ export class MacauEcommerceService {
       riskLevel = MacauRiskLevel.CRITICAL;
     }
 
-    // 檢查聯絡資訊
+    // Check聯絡資訊
     if (
       !platform.contactInformation.email ||
       !platform.contactInformation.phone ||
@@ -96,12 +96,12 @@ export class MacauEcommerceService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.MEDIUM;
     }
 
-    // 檢查服務條款
+    // CheckService條款
     if (!platform.termsOfService || platform.termsOfService.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_4`,
         type: 'MISSING_TERMS_OF_SERVICE',
-        description: '缺少服務條款',
+        description: '缺少Service條款',
         severity: MacauRiskLevel.HIGH,
         article: '第8條',
         penalty: '最高罰款澳門幣50萬元',
@@ -145,7 +145,7 @@ export class MacauEcommerceService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查賣家資訊
+    // Check賣家資訊
     if (!transaction.sellerId || transaction.sellerId.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_5`,
@@ -161,7 +161,7 @@ export class MacauEcommerceService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查商品資訊
+    // Check商品資訊
     if (!transaction.productName || transaction.productName.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_6`,
@@ -177,7 +177,7 @@ export class MacauEcommerceService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.MEDIUM;
     }
 
-    // 檢查價格資訊
+    // Check價格資訊
     if (transaction.unitPrice <= 0 || transaction.totalAmount <= 0) {
       violations.push({
         id: `violation_${Date.now()}_7`,
@@ -193,7 +193,7 @@ export class MacauEcommerceService {
       if (riskLevel === MacauRiskLevel.LOW) riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查付款方式
+    // Check付款方式
     if (!transaction.paymentMethod) {
       violations.push({
         id: `violation_${Date.now()}_8`,
@@ -240,7 +240,7 @@ export class MacauEcommerceService {
     const violations: MacauViolation[] = [];
     let riskLevel = MacauRiskLevel.LOW;
 
-    // 檢查賣家名稱
+    // Check賣家名稱
     if (!seller.sellerName || seller.sellerName.trim() === '') {
       violations.push({
         id: `violation_${Date.now()}_9`,
@@ -256,7 +256,7 @@ export class MacauEcommerceService {
       riskLevel = MacauRiskLevel.HIGH;
     }
 
-    // 檢查商業登記
+    // Check商業登記
     if (
       !seller.businessRegistration ||
       seller.businessRegistration.trim() === ''
@@ -275,7 +275,7 @@ export class MacauEcommerceService {
       riskLevel = MacauRiskLevel.CRITICAL;
     }
 
-    // 檢查聯絡資訊
+    // Check聯絡資訊
     if (!seller.contactInformation.email || !seller.contactInformation.phone) {
       violations.push({
         id: `violation_${Date.now()}_11`,
@@ -323,7 +323,7 @@ export class MacauEcommerceService {
   ): MacauEcommercePlatform {
     const _processedPlatform = { ...platform };
 
-    // 檢查平台類型並設置相應要求
+    // Check平台Class型並Settings相應要求
     switch (platform.platformType) {
       case MacauEcommercePlatformType.B2C:
         processedPlatform.complianceStatus = MacauComplianceStatus.COMPLIANT;
@@ -405,7 +405,7 @@ export class MacauEcommerceService {
           recommendations.push('完善聯絡資訊，包括電子郵件、電話和地址');
           break;
         case 'MISSING_TERMS_OF_SERVICE':
-          recommendations.push('制定並公佈服務條款');
+          recommendations.push('制定並公佈Service條款');
           break;
         case 'MISSING_SELLER_INFO':
           recommendations.push('要求賣家提供完整的身份資訊');
@@ -451,7 +451,7 @@ export class MacauEcommerceService {
   }
 
   private calculateComplianceRate(violations: MacauViolation[]): number {
-    const _totalAssessments = violations.length + 10; // 假設有10個合規評估
+    const _totalAssessments = violations.length + 10; // False設有10個合規評估
     return ((totalAssessments - violations.length) / totalAssessments) * 100;
   }
 

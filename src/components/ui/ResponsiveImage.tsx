@@ -1,4 +1,4 @@
-// 響應式圖片組件
+// Response式Graph片Component
 
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -33,7 +33,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   const [hasError, setHasError] = useState<boolean>(false);
   const [isInView, setIsInView] = useState<boolean>(!lazy);
 
-  // 響應式值處理
+  // Response式ValueHandle
   const _responsiveWidth = useMemo(
     () => getResponsiveValue(width),
     [width, getResponsiveValue]
@@ -96,7 +96,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     };
   }, [lazy, dataTestId]);
 
-  // 圖片加載處理
+  // Graph片加載Handle
   const _handleLoad = useCallback(() => {
     setIsLoading(false);
     setHasError(false);
@@ -115,7 +115,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     onError?.();
   }, [fallback, imageSrc, onError]);
 
-  // 動態樣式計算
+  // Dynamic樣式計算
   const _imageStyle = useMemo(() => {
     const baseStyle: React.CSSProperties = {
       objectFit: responsiveObjectFit,
@@ -194,7 +194,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     currentThemeData?.borderRadius?.md || '8px',
   ]);
 
-  // 佔位符內容
+  // 佔位符Content
   const _placeholderContent = useMemo(() => {
     if (isLoading) {
       return (
@@ -280,11 +280,11 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 
       {placeholderContent}
 
-      {/* 無障礙支持 */}
+      {/* 無障礙Support */}
       {hasError && (
         <div
           role='img'
-          aria-label={`${alt} - 圖片加載失敗`}
+          aria-label={`${alt} - 圖片加載Failed`}
           style={{ display: 'none' }}
         />
       )}
@@ -292,7 +292,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   );
 };
 
-// 添加 CSS 動畫
+// Add CSS 動畫
 const _style = document.createElement('style');
 style.textContent = `
   @keyframes spin {

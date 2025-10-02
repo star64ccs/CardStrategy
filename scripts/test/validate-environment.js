@@ -8,7 +8,7 @@ const {
   isTest,
 } = require('../../backend/src/config/environment');
 
-// 顏色輸出
+// 顏色Output
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
 // eslint-disable-next-line no-unused-vars
@@ -52,30 +52,30 @@ class EnvironmentValidator {
     log.header('🔧 環境變量驗證');
 
     try {
-      // 基本驗證
+      // 基本Verify
       this.testBasicValidation();
 
-      // 數據庫配置驗證
+      // DatabaseConfigureVerify
       this.testDatabaseConfig();
 
-      // Redis 配置驗證
+      // Redis ConfigureVerify
       this.testRedisConfig();
 
-      // JWT 配置驗證
+      // JWT ConfigureVerify
       this.testJWTConfig();
 
-      // AI API 配置驗證
+      // AI API ConfigureVerify
       this.testAIConfig();
 
-      // 安全配置驗證
+      // 安全ConfigureVerify
       this.testSecurityConfig();
 
-      // 環境特定驗證
+      // 環境SpecificVerify
       this.testEnvironmentSpecific();
 
       this.printResults();
     } catch (error) {
-      log.error(`驗證過程中發生錯誤: ${error.message}`);
+      log.error(`Verify過程中發生Error: ${error.message}`);
       process.exit(1);
     }
   }
@@ -106,7 +106,7 @@ class EnvironmentValidator {
         throw new Error(`缺少數據庫配置: ${missing.join(', ')}`);
       }
 
-      // 檢查端口是否為有效數字
+      // CheckPortYesNo為有效數字
       if (isNaN(this.config.DB_PORT) || this.config.DB_PORT <= 0) {
         throw new Error('數據庫端口必須是有效的正整數');
       }
@@ -117,7 +117,7 @@ class EnvironmentValidator {
 
   testRedisConfig() {
     this.addTest('Redis 配置驗證', () => {
-      // Redis 配置是可選的，但如果有配置就必須有效
+      // Redis ConfigureYesOptional的，但如果有Configure就必須有效
       if (this.config.REDIS_HOST && this.config.REDIS_HOST !== 'localhost') {
         if (isNaN(this.config.REDIS_PORT) || this.config.REDIS_PORT <= 0) {
           throw new Error('Redis 端口必須是有效的正整數');
@@ -140,7 +140,7 @@ class EnvironmentValidator {
           throw new Error(`生產環境缺少 JWT 配置: ${missing.join(', ')}`);
         }
 
-        // 檢查是否使用默認值
+        // CheckYesNo使用DefaultValue
         if (this.config.JWT_SECRET === 'your-super-secret-jwt-key-here') {
           throw new Error('生產環境不能使用默認的 JWT 密鑰');
         }
@@ -178,18 +178,18 @@ class EnvironmentValidator {
   testEnvironmentSpecific() {
     this.addTest('環境特定配置驗證', () => {
       if (isProduction()) {
-        // 生產環境特定檢查
+        // 生產環境SpecificCheck
         if (!this.config.REDIS_HOST || this.config.REDIS_HOST === 'localhost') {
-          this.addWarning('生產環境建議使用外部 Redis 服務');
+          this.addWarning('生產環境建議使用外部 Redis Service');
         }
 
         if (!this.config.SMTP_HOST) {
-          this.addWarning('生產環境建議配置 SMTP 服務');
+          this.addWarning('生產環境建議Configure SMTP Service');
         }
       }
 
       if (isDevelopment()) {
-        // 開發環境特定檢查
+        // On發環境SpecificCheck
         if (this.config.JWT_SECRET === 'your-super-secret-jwt-key-here') {
           this.addWarning('開發環境使用默認 JWT 密鑰，僅用於開發');
         }
@@ -231,12 +231,12 @@ class EnvironmentValidator {
     log.header('\n📊 環境變量驗證結果');
     log.info(`總測試數: ${this.results.total}`);
     log.info(`通過: ${this.results.passed}`);
-    log.info(`失敗: ${this.results.failed}`);
+    log.info(`Failed: ${this.results.failed}`);
     log.info(`警告: ${this.results.warnings}`);
-    log.info(`成功率: ${successRate}%`);
+    log.info(`Success率: ${successRate}%`);
 
     if (this.results.failed > 0) {
-      log.error('\n❌ 失敗的測試:');
+      log.error('\n❌ Failed的測試:');
       this.results.tests
         .filter((test) => test.status === 'FAIL')
         .forEach((test) => {
@@ -258,11 +258,11 @@ class EnvironmentValidator {
   }
 }
 
-// 執行驗證
+// 執RowVerify
 if (require.main === module) {
   const validator = new EnvironmentValidator();
   validator.validate().catch((error) => {
-    log.error(`驗證失敗: ${error.message}`);
+    log.error(`VerifyFailed: ${error.message}`);
     process.exit(1);
   });
 }

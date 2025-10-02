@@ -1,9 +1,9 @@
 const logger = require('../utils/logger');
 
 /**
- * 異步錯誤處理包裝器
- * @param {Function} fn 異步函數
- * @returns {Function} 包裝後的函數
+ * AsyncErrorHandlePackage裝器
+ * @param {Function} fn AsyncFunction
+ * @returns {Function} Package裝後的Function
  */
 const asyncHandler = (fn) => {
   return (req, res, next) => {
@@ -12,10 +12,10 @@ const asyncHandler = (fn) => {
 };
 
 /**
- * 創建統一路由處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} 路由處理器
+ * Create統一路由Handle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} 路由Handle器
  */
 const createRouteHandler = (handler, options = {}) => {
   const {
@@ -33,7 +33,7 @@ const createRouteHandler = (handler, options = {}) => {
     const operation = `${req.method} ${req.path}`;
 
     try {
-      // 記錄請求信息
+      // RecordRequestInformation
       if (logRequest) {
         logger.info(`📥 ${operation} 請求開始`, {
           userId: req.user?.id,
@@ -45,7 +45,7 @@ const createRouteHandler = (handler, options = {}) => {
         });
       }
 
-      // 權限檢查
+      // 權限Check
       if (
         auth &&
         (!req.user ||
@@ -57,11 +57,11 @@ const createRouteHandler = (handler, options = {}) => {
         throw error;
       }
 
-      // 驗證
+      // Verify
       if (validation) {
         const errors = validation(req);
         if (!errors.isEmpty()) {
-          const error = new Error('驗證失敗');
+          const error = new Error('VerifyFailed');
           error.status = 400;
           error.code = 'VALIDATION_ERROR';
           error.details = errors.array();
@@ -69,7 +69,7 @@ const createRouteHandler = (handler, options = {}) => {
         }
       }
 
-      // 記錄操作
+      // RecordOperation
       if (logOperation) {
         logger.info(`🔄 ${operation} 開始執行`, {
           userId: req.user?.id,
@@ -78,20 +78,20 @@ const createRouteHandler = (handler, options = {}) => {
         });
       }
 
-      // 設置超時
+      // Settings超時
       const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => {
           reject(new Error('請求超時'));
         }, timeout);
       });
 
-      // 執行處理器
+      // 執RowHandle器
       const result = await Promise.race([
         handler(req, res, next),
         timeoutPromise,
       ]);
 
-      // 記錄響應信息
+      // RecordResponseInformation
       if (logResponse) {
         const duration = Date.now() - startTime;
         logger.info(`📤 ${operation} 響應完成`, {
@@ -101,12 +101,12 @@ const createRouteHandler = (handler, options = {}) => {
         });
       }
 
-      // 標準化響應
+      // Standard化Response
       if (result !== undefined) {
         const duration = Date.now() - startTime;
 
-        // 記錄成功日誌
-        logger.info(`✅ ${operation} 成功`, {
+        // RecordSuccessLog
+        logger.info(`✅ ${operation} Success`, {
           duration: `${duration}ms`,
           status: res.statusCode || 200,
         });
@@ -120,8 +120,8 @@ const createRouteHandler = (handler, options = {}) => {
     } catch (error) {
       const duration = Date.now() - startTime;
 
-      // 記錄錯誤日誌
-      logger.error(`❌ ${operation} 失敗`, {
+      // RecordErrorLog
+      logger.error(`❌ ${operation} Failed`, {
         error: error.message,
         status: error.status || 500,
         code: error.code,
@@ -131,22 +131,22 @@ const createRouteHandler = (handler, options = {}) => {
         ip: req.ip,
       });
 
-      // 設置錯誤狀態碼
+      // SettingsErrorStatus碼
       const statusCode = error.status || 500;
       res.status(statusCode);
 
-      // 構建錯誤響應
+      // BuildErrorResponse
       const errorResponse = {
         success: false,
         error: {
-          message: error.message || '內部服務器錯誤',
+          message: error.message || '內部ServerError',
           code: error.code || 'INTERNAL_ERROR',
           status: statusCode,
         },
         timestamp: new Date().toISOString(),
       };
 
-      // 添加詳細錯誤信息（僅在開發環境）
+      // Add詳細ErrorInformation（僅在On發環境）
       if (process.env.NODE_ENV === 'development') {
         errorResponse.error.details = error.details;
         errorResponse.error.stack = error.stack;
@@ -158,10 +158,10 @@ const createRouteHandler = (handler, options = {}) => {
 };
 
 /**
- * 創建 GET 路由處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} GET 路由處理器
+ * Create GET 路由Handle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} GET 路由Handle器
  */
 const createGetHandler = (handler, options = {}) => {
   return createRouteHandler(handler, {
@@ -172,10 +172,10 @@ const createGetHandler = (handler, options = {}) => {
 };
 
 /**
- * 創建 POST 路由處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} POST 路由處理器
+ * Create POST 路由Handle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} POST 路由Handle器
  */
 const createPostHandler = (handler, options = {}) => {
   return createRouteHandler(handler, {
@@ -186,10 +186,10 @@ const createPostHandler = (handler, options = {}) => {
 };
 
 /**
- * 創建 PUT 路由處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} PUT 路由處理器
+ * Create PUT 路由Handle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} PUT 路由Handle器
  */
 const createPutHandler = (handler, options = {}) => {
   return createRouteHandler(handler, {
@@ -200,10 +200,10 @@ const createPutHandler = (handler, options = {}) => {
 };
 
 /**
- * 創建 DELETE 路由處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} DELETE 路由處理器
+ * Create DELETE 路由Handle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} DELETE 路由Handle器
  */
 const createDeleteHandler = (handler, options = {}) => {
   return createRouteHandler(handler, {
@@ -214,10 +214,10 @@ const createDeleteHandler = (handler, options = {}) => {
 };
 
 /**
- * 創建批量操作處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} 批量操作處理器
+ * CreateBatchOperationHandle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} BatchOperationHandle器
  */
 const createBatchHandler = (handler, options = {}) => {
   return createRouteHandler(async (req, res, next) => {
@@ -260,10 +260,10 @@ const createBatchHandler = (handler, options = {}) => {
 };
 
 /**
- * 創建分頁查詢處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} 分頁查詢處理器
+ * CreatePaginateQueryHandle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} PaginateQueryHandle器
  */
 const createPaginatedHandler = (handler, options = {}) => {
   return createRouteHandler(async (req, res, next) => {
@@ -277,7 +277,7 @@ const createPaginatedHandler = (handler, options = {}) => {
 
     const pagination = {
       page: parseInt(page),
-      limit: Math.min(parseInt(limit), 100), // 限制最大每頁數量
+      limit: Math.min(parseInt(limit), 100), // Limit最大每頁數量
       sortBy,
       sortOrder,
     };
@@ -300,10 +300,10 @@ const createPaginatedHandler = (handler, options = {}) => {
 };
 
 /**
- * 創建搜索處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} 搜索處理器
+ * CreateSearchHandle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} SearchHandle器
  */
 const createSearchHandler = (handler, options = {}) => {
   return createRouteHandler(async (req, res, next) => {
@@ -322,10 +322,10 @@ const createSearchHandler = (handler, options = {}) => {
 };
 
 /**
- * 創建文件上傳處理器
- * @param {Function} handler 業務邏輯處理函數
- * @param {Object} options 配置選項
- * @returns {Function} 文件上傳處理器
+ * CreateFileUploadHandle器
+ * @param {Function} handler 業務邏輯HandleFunction
+ * @param {Object} options ConfigureOptions
+ * @returns {Function} FileUploadHandle器
  */
 const createFileUploadHandler = (handler, options = {}) => {
   return createRouteHandler(
@@ -336,7 +336,7 @@ const createFileUploadHandler = (handler, options = {}) => {
 
       const files = req.files || [req.file];
 
-      // 驗證文件
+      // VerifyFile
       for (const file of files) {
         if (!file.mimetype.startsWith('image/')) {
           throw new Error('只支持圖片文件上傳');
@@ -359,9 +359,9 @@ const createFileUploadHandler = (handler, options = {}) => {
 };
 
 /**
- * 清理請求體中的敏感信息
- * @param {Object} body 請求體
- * @returns {Object} 清理後的請求體
+ * 清理Request體中的敏感Information
+ * @param {Object} body Request體
+ * @returns {Object} 清理後的Request體
  */
 const sanitizeRequestBody = (body) => {
   if (!body) return body;
@@ -385,14 +385,14 @@ const sanitizeRequestBody = (body) => {
 };
 
 /**
- * 清理響應體中的敏感信息
- * @param {Object} response 響應體
- * @returns {Object} 清理後的響應體
+ * 清理Response體中的敏感Information
+ * @param {Object} response Response體
+ * @returns {Object} 清理後的Response體
  */
 const sanitizeResponseBody = (response) => {
   if (!response) return response;
 
-  // 只返回基本信息，避免日誌過大
+  // 只Return基本Information，避免Log過大
   if (Array.isArray(response)) {
     return `Array(${response.length})`;
   }
@@ -406,11 +406,11 @@ const sanitizeResponseBody = (response) => {
 };
 
 /**
- * 創建自定義錯誤
- * @param {string} message 錯誤消息
- * @param {number} status 狀態碼
- * @param {string} code 錯誤代碼
- * @returns {Error} 自定義錯誤
+ * CreateCustomError
+ * @param {string} message ErrorMessage
+ * @param {number} status Status碼
+ * @param {string} code Error代碼
+ * @returns {Error} CustomError
  */
 const createCustomError = (message, status = 500, code = 'CUSTOM_ERROR') => {
   const error = new Error(message);
@@ -420,10 +420,10 @@ const createCustomError = (message, status = 500, code = 'CUSTOM_ERROR') => {
 };
 
 /**
- * 創建驗證錯誤
- * @param {string} message 錯誤消息
- * @param {Array} details 詳細錯誤信息
- * @returns {Error} 驗證錯誤
+ * CreateVerifyError
+ * @param {string} message ErrorMessage
+ * @param {Array} details 詳細ErrorInformation
+ * @returns {Error} VerifyError
  */
 const createValidationError = (message, details = []) => {
   const error = new Error(message);
@@ -434,11 +434,11 @@ const createValidationError = (message, details = []) => {
 };
 
 /**
- * 創建認證錯誤
- * @param {string} message 錯誤消息
- * @returns {Error} 認證錯誤
+ * CreateAuthenticateError
+ * @param {string} message ErrorMessage
+ * @returns {Error} AuthenticateError
  */
-const createAuthError = (message = '認證失敗') => {
+const createAuthError = (message = '認證Failed') => {
   const error = new Error(message);
   error.status = 401;
   error.code = 'AUTHENTICATION_ERROR';
@@ -446,9 +446,9 @@ const createAuthError = (message = '認證失敗') => {
 };
 
 /**
- * 創建權限錯誤
- * @param {string} message 錯誤消息
- * @returns {Error} 權限錯誤
+ * Create權限Error
+ * @param {string} message ErrorMessage
+ * @returns {Error} 權限Error
  */
 const createPermissionError = (message = '權限不足') => {
   const error = new Error(message);
@@ -458,9 +458,9 @@ const createPermissionError = (message = '權限不足') => {
 };
 
 /**
- * 創建資源不存在錯誤
- * @param {string} message 錯誤消息
- * @returns {Error} 資源不存在錯誤
+ * CreateResource不存在Error
+ * @param {string} message ErrorMessage
+ * @returns {Error} Resource不存在Error
  */
 const createNotFoundError = (message = '資源不存在') => {
   const error = new Error(message);
@@ -470,11 +470,11 @@ const createNotFoundError = (message = '資源不存在') => {
 };
 
 /**
- * 創建數據庫錯誤
- * @param {string} message 錯誤消息
- * @returns {Error} 數據庫錯誤
+ * CreateDatabaseError
+ * @param {string} message ErrorMessage
+ * @returns {Error} DatabaseError
  */
-const createDatabaseError = (message = '數據庫操作失敗') => {
+const createDatabaseError = (message = '數據庫操作Failed') => {
   const error = new Error(message);
   error.status = 500;
   error.code = 'DATABASE_ERROR';
@@ -482,11 +482,11 @@ const createDatabaseError = (message = '數據庫操作失敗') => {
 };
 
 /**
- * 創建網絡錯誤
- * @param {string} message 錯誤消息
- * @returns {Error} 網絡錯誤
+ * CreateNetworkError
+ * @param {string} message ErrorMessage
+ * @returns {Error} NetworkError
  */
-const createNetworkError = (message = '網絡連接失敗') => {
+const createNetworkError = (message = '網絡ConnectFailed') => {
   const error = new Error(message);
   error.status = 500;
   error.code = 'NETWORK_ERROR';

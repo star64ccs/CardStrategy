@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 const logger = require('../utils/logger');
 
-// 數據庫配置
+// DatabaseConfigure
 const config = {
   development: {
     username: process.env.DB_USER || 'postgres',
@@ -56,11 +56,11 @@ const config = {
   },
 };
 
-// 獲取當前環境配置
+// Get當前環境Configure
 const env = process.env.NODE_ENV || 'development';
 const dbConfig = config[env];
 
-// 創建 Sequelize 實例
+// Create Sequelize Instance
 const sequelize = new Sequelize(
   dbConfig.database,
   dbConfig.username,
@@ -80,21 +80,21 @@ const sequelize = new Sequelize(
   }
 );
 
-// 導入所有模型
+// Import所有模型
 const getCardModel = require('../models/Card');
 const getMarketDataModel = require('../models/MarketData');
 const getPredictionModel = require('../models/PredictionModel');
 const getModelPersistenceModel = require('../models/ModelPersistence');
 
-// 初始化模型
+// Initialize模型
 const Card = getCardModel();
 const MarketData = getMarketDataModel();
 const PredictionModel = getPredictionModel();
-// const ModelPersistence = getModelPersistenceModel(); // 暫時註釋
+// const ModelPersistence = getModelPersistenceModel(); // 暫時Comment
 
-// 定義模型關聯
+// 定義模型Off聯
 const defineAssociations = () => {
-  // Card 與 MarketData 的一對多關係
+  // Card 與 MarketData 的一對多Off係
   Card.hasMany(MarketData, {
     foreignKey: 'cardId',
     as: 'marketData',
@@ -105,7 +105,7 @@ const defineAssociations = () => {
     as: 'card',
   });
 
-  // Card 與 PredictionModel 的一對多關係
+  // Card 與 PredictionModel 的一對多Off係
   Card.hasMany(PredictionModel, {
     foreignKey: 'cardId',
     as: 'predictions',
@@ -116,30 +116,30 @@ const defineAssociations = () => {
     as: 'card',
   });
 
-  // ModelPersistence 沒有直接關聯，但可以通過 cardId 關聯到 Card
-  // 這裡可以添加間接關聯如果需要
+  // ModelPersistence 沒有直接Off聯，但可以通過 cardId Off聯到 Card
+  // 這裡可以Add間接Off聯如果需要
 };
 
-// 數據庫連接測試
+// DatabaseConnectTest
 const testConnection = async () => {
   try {
     await sequelize.authenticate();
-    logger.info('數據庫連接成功');
+    logger.info('數據庫ConnectSuccess');
     return true;
   } catch (error) {
-    logger.error('數據庫連接失敗:', error);
+    logger.error('數據庫ConnectFailed:', error);
     return false;
   }
 };
 
-// 同步數據庫（開發環境）
+// SyncDatabase（On發環境）
 const syncDatabase = async (force = false) => {
   try {
     if (env === 'development' || force) {
       await sequelize.sync({ force });
       logger.info('數據庫同步完成');
 
-      // 定義關聯
+      // 定義Off聯
       defineAssociations();
 
       return true;
@@ -147,18 +147,18 @@ const syncDatabase = async (force = false) => {
     logger.warn('生產環境不允許強制同步數據庫');
     return false;
   } catch (error) {
-    logger.error('數據庫同步失敗:', error);
+    logger.error('數據庫同步Failed:', error);
     return false;
   }
 };
 
-// 關閉數據庫連接
+// Off閉DatabaseConnect
 const closeConnection = async () => {
   try {
     await sequelize.close();
-    logger.info('數據庫連接已關閉');
+    logger.info('數據庫Connect已關閉');
   } catch (error) {
-    logger.error('關閉數據庫連接失敗:', error);
+    logger.error('關閉數據庫ConnectFailed:', error);
   }
 };
 

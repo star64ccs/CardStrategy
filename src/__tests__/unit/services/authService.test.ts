@@ -92,7 +92,7 @@ describe('AuthService', () => {
 
     jest.clearAllMocks();
 
-    // 設置 validateApiResponse 的 mock 實現
+    // Settings validateApiResponse 的 mock 實現
     mockValidationService.validateApiResponse.mockReturnValue({
       isValid: true,
       errors: [],
@@ -110,7 +110,7 @@ describe('AuthService', () => {
       },
     });
 
-    // 設置 validateLoginData 的 mock 實現
+    // Settings validateLoginData 的 mock 實現
     mockValidationService.validateLoginData.mockReturnValue({
       isValid: true,
       data: { email: 'test@example.com', password: 'password123' },
@@ -118,7 +118,7 @@ describe('AuthService', () => {
       errorMessage: null,
     });
 
-    // 設置 validateRegisterData 的 mock 實現
+    // Settings validateRegisterData 的 mock 實現
     mockValidationService.validateRegisterData.mockReturnValue({
       isValid: true,
       data: {
@@ -132,7 +132,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('應該成功登錄用戶', async () => {
+    it('應該Success登錄用戶', async () => {
       const _loginData = { email: 'test@example.com', password: 'password123' };
       const _mockResponse = {
         success: true,
@@ -163,12 +163,12 @@ describe('AuthService', () => {
       );
     });
 
-    it('應該處理登錄錯誤', async () => {
+    it('應該Handle登錄Error', async () => {
       const _loginData = {
         email: 'test@example.com',
         password: 'wrong-password',
       };
-      const _mockError = new Error('登錄失敗');
+      const _mockError = new Error('登錄Failed');
 
       mockApi.post.mockRejectedValue(mockError);
 
@@ -179,7 +179,7 @@ describe('AuthService', () => {
   });
 
   describe('register', () => {
-    it('應該成功註冊用戶', async () => {
+    it('應該Success註冊用戶', async () => {
       const _registerData = {
         email: 'new@example.com',
         password: 'password123',
@@ -213,8 +213,8 @@ describe('AuthService', () => {
   });
 
   describe('logout', () => {
-    it('應該成功登出用戶', async () => {
-      const _mockResponse = { success: true, data: { message: '登出成功' } };
+    it('應該Success登出用戶', async () => {
+      const _mockResponse = { success: true, data: { message: '登出Success' } };
 
       mockApi.post.mockResolvedValue({ data: mockResponse });
       mockAsyncStorage.removeItem.mockResolvedValue(undefined);
@@ -227,7 +227,7 @@ describe('AuthService', () => {
   });
 
   describe('getCurrentUser', () => {
-    it('應該成功獲取當前用戶信息', async () => {
+    it('應該SuccessGet當前用戶信息', async () => {
       const _mockUser = {
         id: '1',
         email: 'test@example.com',
@@ -240,7 +240,7 @@ describe('AuthService', () => {
         },
       };
 
-      // 設置 AsyncStorage mock 返回一個有效的 token
+      // Settings AsyncStorage mock Return一個有效的 token
       mockAsyncStorage.getItem.mockImplementation((key: string) => {
         if (key === 'accessToken') {
           return Promise.resolve('mock-token');

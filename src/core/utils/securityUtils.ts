@@ -1,6 +1,6 @@
 import { logger } from './logger';
 
-// 安全配置
+// 安全Configure
 export interface SecurityConfig {
   maxInputLength: number;
   allowedFileTypes: string[];
@@ -18,7 +18,7 @@ export interface SecurityConfig {
   };
 }
 
-// 默認安全配置
+// Default安全Configure
 const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
   maxInputLength: 1000,
   allowedFileTypes: ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf'],
@@ -26,7 +26,7 @@ const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
   enableXSSProtection: true,
   enableSQLInjectionProtection: true,
   enableCSRFProtection: true,
-  sessionTimeout: 24 * 60 * 60 * 1000, // 24小時
+  sessionTimeout: 24 * 60 * 60 * 1000, // 24Hour
   passwordMinLength: 8,
   passwordRequirements: {
     requireUppercase: true,
@@ -36,7 +36,7 @@ const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
   },
 };
 
-// 安全工具類
+// 安全ToolClass
 export class SecurityUtils {
   private static instance: SecurityUtils;
   private readonly config: SecurityConfig;
@@ -52,7 +52,7 @@ export class SecurityUtils {
     return SecurityUtils.instance;
   }
 
-  // 輸入驗證
+  // InputVerify
   public validateInput(
     input: string,
     type: 'text' | 'email' | 'url' | 'phone' | 'number'
@@ -61,7 +61,7 @@ export class SecurityUtils {
       return false;
     }
 
-    // 檢查長度
+    // Check長度
     if (input.length > this.config.maxInputLength) {
       logger.warn('輸入長度超過限制:', {
         length: input.length,
@@ -70,7 +70,7 @@ export class SecurityUtils {
       return false;
     }
 
-    // 根據類型驗證
+    // Root據Class型Verify
     switch (type) {
       case 'email':
         return this.isValidEmail(input);
@@ -86,13 +86,13 @@ export class SecurityUtils {
     }
   }
 
-  // 驗證電子郵件
+  // Verify電子郵件
   private isValidEmail(email: string): boolean {
     const _emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
 
-  // 驗證 URL
+  // Verify URL
   private isValidUrl(url: string): boolean {
     try {
       new URL(url);
@@ -102,20 +102,20 @@ export class SecurityUtils {
     }
   }
 
-  // 驗證電話號碼
+  // VerifyPhone號碼
   private isValidPhone(phone: string): boolean {
     const _phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
     return phoneRegex.test(phone.replace(/\s/g, ''));
   }
 
-  // 驗證數字
+  // Verify數字
   private isValidNumber(value: string): boolean {
     return !isNaN(Number(value)) && isFinite(Number(value));
   }
 
-  // 驗證文本
+  // Verify文本
   private isValidText(text: string): boolean {
-    // 檢查 XSS 攻擊
+    // Check XSS 攻擊
     if (this.config.enableXSSProtection) {
       const _xssPatterns = [
         /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
@@ -137,7 +137,7 @@ export class SecurityUtils {
     return true;
   }
 
-  // 密碼強度驗證
+  // Password強度Verify
   public validatePassword(password: string): {
     isValid: boolean;
     errors: string[];
@@ -146,14 +146,14 @@ export class SecurityUtils {
     const errors: string[] = [];
     let score = 0;
 
-    // 檢查長度
+    // Check長度
     if (password.length < this.config.passwordMinLength) {
       errors.push(`密碼長度至少需要 ${this.config.passwordMinLength} 個字符`);
     } else {
       score += 1;
     }
 
-    // 檢查大寫字母
+    // Check大寫字母
     if (
       this.config.passwordRequirements.requireUppercase &&
       !/[A-Z]/.test(password)
@@ -163,7 +163,7 @@ export class SecurityUtils {
       score += 1;
     }
 
-    // 檢查小寫字母
+    // Check小寫字母
     if (
       this.config.passwordRequirements.requireLowercase &&
       !/[a-z]/.test(password)
@@ -173,7 +173,7 @@ export class SecurityUtils {
       score += 1;
     }
 
-    // 檢查數字
+    // Check數字
     if (
       this.config.passwordRequirements.requireNumbers &&
       !/\d/.test(password)
@@ -183,7 +183,7 @@ export class SecurityUtils {
       score += 1;
     }
 
-    // 檢查特殊字符
+    // CheckSpecial字符
     if (
       this.config.passwordRequirements.requireSpecialChars &&
       !/[!@#$%^&*(),.?":{}|<>]/.test(password)
@@ -193,7 +193,7 @@ export class SecurityUtils {
       score += 1;
     }
 
-    // 檢查常見弱密碼
+    // Check常見弱Password
     const _commonPasswords = [
       'password',
       '123456',
@@ -229,21 +229,21 @@ export class SecurityUtils {
     };
   }
 
-  // 文件驗證
+  // FileVerify
   public validateFile(file: File): {
     isValid: boolean;
     errors: string[];
   } {
     const errors: string[] = [];
 
-    // 檢查文件大小
+    // CheckFile大小
     if (file.size > this.config.maxFileSize) {
       errors.push(
         `文件大小不能超過 ${this.config.maxFileSize / (1024 * 1024)}MB`
       );
     }
 
-    // 檢查文件類型
+    // CheckFileClass型
     const _fileExtension = `.${file.name.split('.').pop()?.toLowerCase()}`;
     if (!this.config.allowedFileTypes.includes(fileExtension)) {
       errors.push(`不支持的文件類型: ${fileExtension}`);
@@ -271,31 +271,31 @@ export class SecurityUtils {
     return this.generateToken(64);
   }
 
-  // 驗證 CSRF 令牌
+  // Verify CSRF 令牌
   public validateCSRFToken(token: string, storedToken: string): boolean {
     return token === storedToken && token.length === 64;
   }
 
-  // 數據加密（簡單實現，生產環境應使用更強的加密）
+  // DataEncrypt（簡單實現，生產環境應使用更強的Encrypt）
   public encrypt(data: string, key: string): string {
     try {
-      // 這裡應該使用更強的加密算法
+      // 這裡應該使用更強的Encrypt算法
       const _encoded = btoa(data + key);
       return encoded;
     } catch (error) {
-      logger.error('加密失敗:', { error });
-      throw new Error('加密失敗');
+      logger.error('加密Failed:', { error });
+      throw new Error('加密Failed');
     }
   }
 
-  // 數據解密
+  // DataDecrypt
   public decrypt(encryptedData: string, key: string): string {
     try {
       const _decoded = atob(encryptedData);
       return decoded.replace(key, '');
     } catch (error) {
-      logger.error('解密失敗:', { error });
-      throw new Error('解密失敗');
+      logger.error('解密Failed:', { error });
+      throw new Error('解密Failed');
     }
   }
 
@@ -309,12 +309,12 @@ export class SecurityUtils {
       const _hashArray = Array.from(new Uint8Array(hashBuffer));
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     } catch (error) {
-      logger.error('密碼哈希失敗:', { error });
-      throw new Error('密碼哈希失敗');
+      logger.error('密碼哈希Failed:', { error });
+      throw new Error('密碼哈希Failed');
     }
   }
 
-  // 驗證哈希
+  // Verify哈希
   public async verifyPassword(
     password: string,
     hash: string
@@ -323,12 +323,12 @@ export class SecurityUtils {
       const _newHash = await this.hashPassword(password);
       return newHash === hash;
     } catch (error) {
-      logger.error('密碼驗證失敗:', { error });
+      logger.error('密碼VerifyFailed:', { error });
       return false;
     }
   }
 
-  // 會話管理
+  // 會話Manage
   public createSession(userId: string): {
     sessionId: string;
     expiresAt: number;
@@ -342,7 +342,7 @@ export class SecurityUtils {
     };
   }
 
-  // 檢查會話是否有效
+  // Check會話YesNo有效
   public isSessionValid(expiresAt: number): boolean {
     return Date.now() < expiresAt;
   }
@@ -354,22 +354,22 @@ export class SecurityUtils {
     return sessions.filter(session => this.isSessionValid(session.expiresAt));
   }
 
-  // 安全日誌記錄
+  // 安全LogRecord
   public logSecurityEvent(event: string, details: unknown): void {
     logger.warn('安全事件:', {
       event,
       details,
       timestamp: new Date().toISOString(),
-      ip: 'unknown', // 在實際應用中應該從請求中獲取
+      ip: 'unknown', // 在實際Apply中應該從Request中Get
     });
   }
 
-  // 速率限制檢查
+  // 速率LimitCheck
   public checkRateLimit(
     identifier: string,
     attempts: Map<string, { count: number; resetTime: number }>,
     maxAttempts = 5,
-    windowMs: number = 15 * 60 * 1000 // 15分鐘
+    windowMs: number = 15 * 60 * 1000 // 15Minute
   ): boolean {
     const _now = Date.now();
     const _userAttempts = attempts.get(identifier);
@@ -387,7 +387,7 @@ export class SecurityUtils {
     return true;
   }
 
-  // 清理速率限制記錄
+  // 清理速率LimitRecord
   public cleanupRateLimit(
     attempts: Map<string, { count: number; resetTime: number }>
   ): void {
@@ -400,5 +400,5 @@ export class SecurityUtils {
   }
 }
 
-// 導出單例實例
+// Export單例Instance
 export const _securityUtils = SecurityUtils.getInstance();

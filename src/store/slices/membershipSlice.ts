@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { MembershipState } from '../../core/types';
 import { membershipService } from '../../shared/services/membershipService';
 
-// 異步 thunk
+// Async thunk
 export const _fetchMembershipStatus = createAsyncThunk(
   'membership/fetchStatus',
   async () => {
@@ -44,7 +44,7 @@ export const _checkFeatureUsage = createAsyncThunk(
       const _response = await membershipService.checkFeatureUsage(feature);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '檢查功能使用失敗');
+      return rejectWithValue(error.message || 'Check功能使用Failed');
     }
   }
 );
@@ -56,7 +56,7 @@ export const _useFeature = createAsyncThunk(
       const _response = await membershipService.useFeature(feature);
       return response;
     } catch (error: unknown) {
-      return rejectWithValue(error.message || '使用功能失敗');
+      return rejectWithValue(error.message || '使用功能Failed');
     }
   }
 );
@@ -240,7 +240,7 @@ const _membershipSlice = createSlice({
       })
       .addCase(checkFeatureUsage.fulfilled, (state, action) => {
         state.isLoading = false;
-        // 將 FeatureUsage 轉換為 MembershipUsage 格式
+        // 將 FeatureUsage Convert為 MembershipUsage 格式
         state.usage = {
           cardRecognition: {
             used: action.payload.usage.cardRecognition,
@@ -275,7 +275,7 @@ const _membershipSlice = createSlice({
       })
       .addCase(useFeature.fulfilled, (state, action) => {
         state.isLoading = false;
-        // 將 FeatureUsage 轉換為 MembershipUsage 格式
+        // 將 FeatureUsage Convert為 MembershipUsage 格式
         state.usage = {
           cardRecognition: {
             used: action.payload.usage.cardRecognition,

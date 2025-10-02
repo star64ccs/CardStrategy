@@ -1,4 +1,4 @@
-// 無障礙功能類型定義
+// 無障礙功能Class型定義
 export interface AccessibilityConfig {
   // 視覺輔助
   highContrast: boolean;
@@ -64,19 +64,19 @@ export interface AccessibilityEvent {
 }
 
 export interface AccessibilityManager {
-  // 配置管理
+  // ConfigureManage
   getConfig(): AccessibilityConfig;
   updateConfig(config: Partial<AccessibilityConfig>): Promise<void>;
   resetConfig(): Promise<void>;
 
-  // 配置文件管理
+  // ConfigureFileManage
   getCurrentProfile(): AccessibilityProfile;
   getAvailableProfiles(): AccessibilityProfile[];
   switchProfile(profileId: string): Promise<void>;
   createProfile(profile: Omit<AccessibilityProfile, 'id'>): Promise<void>;
   deleteProfile(profileId: string): Promise<void>;
 
-  // 功能檢查
+  // 功能Check
   isFeatureEnabled(feature: keyof AccessibilityConfig): boolean;
   toggleFeature(feature: keyof AccessibilityConfig): Promise<void>;
 
@@ -84,12 +84,12 @@ export interface AccessibilityManager {
   checkSystemAccessibility(): Promise<Partial<AccessibilityConfig>>;
   applySystemSettings(): Promise<void>;
 
-  // 事件管理
+  // EventManage
   addEventListener(listener: (event: AccessibilityEvent) => void): void;
   removeEventListener(listener: (event: AccessibilityEvent) => void): void;
 }
 
-// 無障礙功能工具類型
+// 無障礙功能ToolClass型
 export interface AccessibilityTools {
   // 語音合成
   speak(text: string, options?: SpeechOptions): Promise<void>;
@@ -102,7 +102,7 @@ export interface AccessibilityTools {
     type: 'light' | 'medium' | 'heavy' | 'success' | 'warning' | 'error'
   ): void;
 
-  // 焦點管理
+  // 焦點Manage
   setFocus(elementId: string): Promise<boolean>;
   getFocusedElement(): string | null;
   moveFocus(
@@ -119,13 +119,13 @@ export interface SpeechOptions {
   rate?: number; // 語音速度 (0.1 - 2.0)
   pitch?: number; // 音調 (0.5 - 2.0)
   volume?: number; // 音量 (0.0 - 1.0)
-  language?: string; // 語言代碼
+  language?: string; // Language代碼
   voice?: string; // 語音名稱
   priority?: 'high' | 'normal' | 'low';
-  interrupt?: boolean; // 是否中斷當前語音
+  interrupt?: boolean; // YesNo中斷當前語音
 }
 
-// 無障礙組件屬性
+// 無障礙ComponentProperty
 export interface AccessibilityProps {
   accessible?: boolean;
   accessibilityLabel?: string;
@@ -310,7 +310,7 @@ export type AccessibilityTrait =
   | 'tab'
   | 'tabpanel';
 
-// 無障礙檢查結果
+// 無障礙Check結果
 export interface AccessibilityCheckResult {
   elementId: string;
   elementType: string;
@@ -327,7 +327,7 @@ export interface AccessibilityIssue {
   severity: 'low' | 'medium' | 'high' | 'critical';
 }
 
-// 無障礙統計
+// 無障礙Statistics
 export interface AccessibilityStats {
   totalElements: number;
   accessibleElements: number;

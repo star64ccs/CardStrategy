@@ -1,11 +1,11 @@
-// 基礎類型定義
+// 基礎Class型定義
 export interface BaseEntity {
   id: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-// 用戶相關類型
+// User相OffClass型
 export interface User extends BaseEntity {
   email: string;
   username: string;
@@ -62,7 +62,7 @@ export interface UserStatistics {
   lastActive: Date;
 }
 
-// 卡牌相關類型
+// 卡牌相OffClass型
 export interface Card extends BaseEntity {
   name: string;
   setName: string;
@@ -73,9 +73,9 @@ export interface Card extends BaseEntity {
   marketData: MarketData;
   images: CardImages;
   metadata: CardMetadata;
-  conditionAnalysis?: AnalysisResult[]; // 添加條件分析
-  authenticityCheck?: AnalysisResult[]; // 添加真偽檢查
-  // 添加缺失的屬性
+  conditionAnalysis?: AnalysisResult[]; // AddConditionAnalysis
+  authenticityCheck?: AnalysisResult[]; // AddTrue偽Check
+  // Add缺失的Property
   price?: number;
   currentPrice?: number; // 當前價格
   priceChange?: number; // 價格變化百分比
@@ -159,14 +159,14 @@ export type CardCondition =
   | 'played'
   | 'poor';
 
-// 收藏相關類型
+// 收藏相OffClass型
 export interface Collection extends BaseEntity {
   userId: string;
   name: string;
   description?: string;
   isPublic: boolean;
   cards: CollectionCard[];
-  items: CollectionItem[]; // 添加 items 屬性
+  items: CollectionItem[]; // Add items Property
   statistics: CollectionStatistics;
   tags: string[];
 }
@@ -193,7 +193,7 @@ export interface CollectionStatistics {
   completionRate: number;
 }
 
-// 投資相關類型
+// 投資相OffClass型
 export interface Investment extends BaseEntity {
   userId: string;
   cardId: string;
@@ -202,7 +202,7 @@ export interface Investment extends BaseEntity {
   quantity: number;
   entryPrice: number;
   currentPrice: number;
-  entryValue: number; // 添加 entryValue
+  entryValue: number; // Add entryValue
   profitLoss: number;
   profitLossPercentage: number;
   status: InvestmentStatus;
@@ -212,7 +212,7 @@ export interface Investment extends BaseEntity {
 export type InvestmentType = 'buy' | 'sell' | 'hold';
 export type InvestmentStatus = 'active' | 'completed' | 'cancelled';
 
-// AI 分析相關類型
+// AI Analysis相OffClass型
 export interface AIAnalysis extends BaseEntity {
   cardId: string;
   analysisType: AnalysisType;
@@ -220,7 +220,7 @@ export interface AIAnalysis extends BaseEntity {
   results: AnalysisResult[];
   recommendations: Recommendation[];
   metadata: AnalysisMetadata;
-  processingTime: number; // 添加處理時間
+  processingTime: number; // AddHandleTime
 }
 
 export type AnalysisType =
@@ -253,7 +253,7 @@ export interface AnalysisMetadata {
   analysisDate: Date;
 }
 
-// 市場相關類型
+// 市場相OffClass型
 export interface MarketDataEntity extends BaseEntity {
   cardId: string;
   price: number;
@@ -267,7 +267,7 @@ export interface MarketDataEntity extends BaseEntity {
   lastUpdated: Date;
 }
 
-// 交易相關類型
+// 交易相OffClass型
 export interface Transaction extends BaseEntity {
   userId: string;
   cardId: string;
@@ -307,7 +307,7 @@ export interface TransactionMetadata {
   trackingNumber?: string;
 }
 
-// 地址類型
+// AddressClass型
 export interface Address {
   street: string;
   city: string;
@@ -316,7 +316,7 @@ export interface Address {
   country: string;
 }
 
-// API 響應類型
+// API ResponseClass型
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -331,7 +331,7 @@ export interface ApiError {
   details?: Record<string, unknown>;
 }
 
-// 分頁類型
+// PaginateClass型
 export interface PaginationParams {
   page: number;
   limit: number;
@@ -351,14 +351,14 @@ export interface PaginatedResponse<T> {
   };
 }
 
-// 搜索類型
+// SearchClass型
 export interface SearchParams {
   query: string;
   filters?: Record<string, unknown>;
   pagination: PaginationParams;
 }
 
-// 通知類型
+// NotificationClass型
 export interface Notification extends BaseEntity {
   userId: string;
   type: NotificationType;
@@ -377,7 +377,7 @@ export type NotificationType =
   | 'system'
   | 'social';
 
-// 設置類型
+// SettingsClass型
 export interface AppSettings {
   theme: ThemeSettings;
   language: LanguageSettings;
@@ -385,8 +385,8 @@ export interface AppSettings {
   privacy: PrivacySettings;
   accessibility: AccessibilitySettings;
   performance: PerformanceSettings;
-  display: DisplaySettings; // 添加顯示設置
-  security: SecuritySettings; // 添加安全設置
+  display: DisplaySettings; // AddShowSettings
+  security: SecuritySettings; // Add安全Settings
 }
 
 export interface ThemeSettings {
@@ -407,7 +407,7 @@ export interface PerformanceSettings {
   cacheEnabled: boolean;
   offlineMode: boolean;
   dataSync: boolean;
-  cacheSize: number; // 添加快取大小
+  cacheSize: number; // Add快取大小
 }
 
 export interface DisplaySettings {
@@ -424,7 +424,7 @@ export interface SecuritySettings {
   encryptionLevel: 'low' | 'medium' | 'high';
 }
 
-// 錯誤類型
+// ErrorClass型
 export interface AppError {
   code: string;
   message: string;
@@ -434,7 +434,7 @@ export interface AppError {
   context?: Record<string, unknown>;
 }
 
-// 日誌類型
+// LogClass型
 export interface LogEntry {
   level: 'debug' | 'info' | 'warn' | 'error';
   message: string;
@@ -444,7 +444,7 @@ export interface LogEntry {
   stack?: string;
 }
 
-// 導航類型
+// 導航Class型
 export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
@@ -469,7 +469,7 @@ export type MainTabParamList = {
   Profile: undefined;
 };
 
-// 組件 Props 類型
+// Component Props Class型
 export interface BaseComponentProps {
   testID?: string;
   style?: unknown;
@@ -500,7 +500,7 @@ export interface CardProps extends BaseComponentProps {
   variant?: 'compact' | 'detailed' | 'grid';
 }
 
-// 工具類型
+// ToolClass型
 export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
@@ -513,7 +513,7 @@ export type Nullable<T> = T | null;
 
 export type NonNullable<T> = T extends null | undefined ? never : T;
 
-// Redux 狀態類型
+// Redux StatusClass型
 export interface AuthState {
   user: User | null;
   token: string | null;
@@ -639,7 +639,7 @@ export interface SettingsState {
   isUpdating: boolean;
 }
 
-// 認證相關類型
+// Authenticate相OffClass型
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -663,7 +663,7 @@ export interface AuthResponse {
   expiresIn: number;
 }
 
-// 卡牌過濾和排序類型
+// 卡牌Filter和SortClass型
 export interface CardFilters {
   rarity?: CardRarity[];
   type?: CardType[];
@@ -677,16 +677,16 @@ export interface CardFilters {
   isFoil?: boolean;
   isGraded?: boolean;
   inStock?: boolean;
-  set?: string[]; // 添加 set 屬性
+  set?: string[]; // Add set Property
 }
 
 export interface CardSortOptions {
   field: 'name' | 'price' | 'rarity' | 'set' | 'condition' | 'dateAdded';
   order: 'asc' | 'desc';
-  direction?: 'asc' | 'desc'; // 添加 direction 屬性
+  direction?: 'asc' | 'desc'; // Add direction Property
 }
 
-// 分頁類型
+// PaginateClass型
 export interface Pagination {
   page: number;
   limit: number;
@@ -696,7 +696,7 @@ export interface Pagination {
   hasPrev: boolean;
 }
 
-// 會員制度類型
+// 會員制度Class型
 export type MembershipTier = 'free' | 'trial' | 'vip';
 
 export interface TrialStatus {
@@ -754,7 +754,7 @@ export interface FeatureUsage {
   aiChat: number;
 }
 
-// AI 聊天類型
+// AI 聊天Class型
 export interface AIChatMessage {
   id: string;
   type: 'user' | 'assistant';
@@ -767,7 +767,7 @@ export interface AIChatMessage {
   };
 }
 
-// 投資建議類型
+// 投資建議Class型
 export interface InvestmentAdvice {
   cardId: string;
   recommendation: 'buy' | 'sell' | 'hold';
@@ -779,7 +779,7 @@ export interface InvestmentAdvice {
   factors: string[];
 }
 
-// 投資組合類型
+// 投資組合Class型
 export interface Portfolio {
   totalValue: number;
   totalProfitLoss: number;
@@ -806,7 +806,7 @@ export interface PortfolioPerformance {
   profitLossPercentage: number;
 }
 
-// 市場趨勢類型
+// 市場趨勢Class型
 export interface MarketTrend {
   cardId: string;
   trend: 'rising' | 'falling' | 'stable';
@@ -816,7 +816,7 @@ export interface MarketTrend {
   timeframe: string;
 }
 
-// 價格歷史類型
+// 價格歷史Class型
 export interface PriceHistory {
   cardId: string;
   dates: string[];
@@ -824,7 +824,7 @@ export interface PriceHistory {
   volumes: number[];
 }
 
-// 收藏項目類型
+// 收藏項目Class型
 export interface CollectionItem {
   cardId: string;
   quantity: number;
@@ -836,11 +836,11 @@ export interface CollectionItem {
   location?: string;
   isForSale: boolean;
   askingPrice?: number;
-  currentValue: number; // 添加當前價值
-  addedAt: Date; // 添加添加時間
+  currentValue: number; // Add當前價Value
+  addedAt: Date; // AddAddTime
 }
 
-// 常量類型
+// ConstantClass型
 export const CARD_RARITIES: CardRarity[] = [
   'common',
   'uncommon',
@@ -871,7 +871,7 @@ export const CARD_CONDITIONS: CardCondition[] = [
 export const _SUPPORTED_LANGUAGES = ['zh-TW', 'en-US', 'ja-JP'] as const;
 export const _THEME_MODES = ['light', 'dark', 'auto'] as const;
 
-// 分享驗證相關類型
+// 分享Verify相OffClass型
 export interface ShareVerification extends BaseEntity {
   verificationCode: string;
   userId: string;

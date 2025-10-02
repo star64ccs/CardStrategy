@@ -1,9 +1,9 @@
 /**
  * RegulatoryAdaptationLayer - 法規適應層
- * 負責檢測用戶所在司法管轄區，映射適用法規，並提供動態適應功能
+ * 負責檢測User所在司法管轄District，Map適用法規，並提供Dynamic適應功能
  */
 
-// 法規類型定義
+// 法規Class型定義
 export interface Regulation {
   id: string;
   name: string;
@@ -41,7 +41,7 @@ export type RegulationCategory =
   | 'ANTITRUST_COMPETITION'
   | 'APP_STORE';
 
-// 司法管轄區定義
+// 司法管轄District定義
 export interface Jurisdiction {
   code: string;
   name: string;
@@ -54,7 +54,7 @@ export interface Jurisdiction {
   timezone: string;
 }
 
-// 法規映射結果
+// 法規Map結果
 export interface RegulationMapping {
   jurisdiction: Jurisdiction;
   applicableRegulations: Regulation[];
@@ -95,7 +95,7 @@ export interface RequiredAction {
   status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE';
 }
 
-// 法規適應層核心類
+// 法規適應層核心Class
 export class RegulatoryAdaptationLayer {
   private static instance: RegulatoryAdaptationLayer;
   private readonly jurisdictions: Map<string, Jurisdiction> = new Map();
@@ -113,7 +113,7 @@ export class RegulatoryAdaptationLayer {
   }
 
   /**
-   * 初始化法規適應層
+   * Initialize法規適應層
    */
   public async initialize(): Promise<void> {
     if (this.isInitialized) {
@@ -133,7 +133,7 @@ export class RegulatoryAdaptationLayer {
   }
 
   /**
-   * 檢測用戶司法管轄區
+   * 檢測User司法管轄District
    */
   public async detectJurisdiction(userLocation: {
     country?: string;
@@ -146,7 +146,7 @@ export class RegulatoryAdaptationLayer {
       throw new Error('RegulatoryAdaptationLayer not initialized');
     }
 
-    // 基於國家代碼檢測
+    // 基於Country代碼檢測
     if (userLocation.country) {
       const _jurisdiction = this.jurisdictions.get(
         userLocation.country.toUpperCase()
@@ -156,12 +156,12 @@ export class RegulatoryAdaptationLayer {
       }
     }
 
-    // 基於IP地址檢測（簡化實現）
+    // 基於IPAddress檢測（簡化實現）
     if (userLocation.ip) {
       return this.detectJurisdictionByIP(userLocation.ip);
     }
 
-    // 基於語言和時區檢測
+    // 基於Language和Timezone檢測
     if (userLocation.language || userLocation.timezone) {
       return this.detectJurisdictionByLocale(
         userLocation.language,
@@ -169,12 +169,12 @@ export class RegulatoryAdaptationLayer {
       );
     }
 
-    // 默認返回全球通用管轄區
+    // DefaultReturn全球Generic管轄District
     return this.jurisdictions.get('GLOBAL') || this.getDefaultJurisdiction();
   }
 
   /**
-   * 獲取適用法規映射
+   * Get適用法規Map
    */
   public async getRegulationMapping(
     jurisdictionCode: string
@@ -199,7 +199,7 @@ export class RegulatoryAdaptationLayer {
   }
 
   /**
-   * 檢查合規狀態
+   * Check合規Status
    */
   public async checkCompliance(
     jurisdictionCode: string,
@@ -210,7 +210,7 @@ export class RegulatoryAdaptationLayer {
   }
 
   /**
-   * 獲取合規建議
+   * Get合規建議
    */
   public async getComplianceRecommendations(
     jurisdictionCode: string,
@@ -224,12 +224,12 @@ export class RegulatoryAdaptationLayer {
   }
 
   /**
-   * 動態更新法規
+   * DynamicUpdate法規
    */
   public async updateRegulation(regulation: Regulation): Promise<void> {
     this.regulations.set(regulation.id, regulation);
 
-    // 清除相關緩存
+    // Clear相OffCache
     for (const [code, mapping] of this.mappings.entries()) {
       if (mapping.applicableRegulations.some(r => r.id === regulation.id)) {
         this.mappings.delete(code);
@@ -240,22 +240,22 @@ export class RegulatoryAdaptationLayer {
   }
 
   /**
-   * 獲取所有司法管轄區
+   * Get所有司法管轄District
    */
   public getAllJurisdictions(): Jurisdiction[] {
     return Array.from(this.jurisdictions.values());
   }
 
   /**
-   * 獲取所有法規
+   * Get所有法規
    */
   public getAllRegulations(): Regulation[] {
     return Array.from(this.regulations.values());
   }
 
-  // 私有方法
+  // PrivateMethod
   private async loadJurisdictions(): Promise<void> {
-    // 預定義司法管轄區
+    // 預定義司法管轄District
     const jurisdictions: Jurisdiction[] = [
       {
         code: 'GLOBAL',
@@ -381,7 +381,7 @@ export class RegulatoryAdaptationLayer {
   }
 
   private async initializeMappings(): Promise<void> {
-    // 初始化時創建基本映射
+    // Initialize時Create基本Map
     for (const jurisdiction of this.jurisdictions.values()) {
       await this.createRegulationMapping(jurisdiction);
     }
@@ -389,7 +389,7 @@ export class RegulatoryAdaptationLayer {
 
   private async detectJurisdictionByIP(ip: string): Promise<Jurisdiction> {
     // 簡化的IP檢測邏輯
-    // 實際實現中應該使用IP地理位置服務
+    // 實際實現中應該使用IP地理位置Service
     if (ip.startsWith('192.168.') || ip.startsWith('10.')) {
       return this.jurisdictions.get('US') || this.getDefaultJurisdiction();
     }
@@ -439,7 +439,7 @@ export class RegulatoryAdaptationLayer {
 
   private isMappingValid(mapping: RegulationMapping): boolean {
     const _now = new Date();
-    const _validityPeriod = 24 * 60 * 60 * 1000; // 24小時
+    const _validityPeriod = 24 * 60 * 60 * 1000; // 24Hour
     return now.getTime() - mapping.lastUpdated.getTime() < validityPeriod;
   }
 
@@ -528,9 +528,9 @@ export class RegulatoryAdaptationLayer {
     requirement: RegulationRequirement,
     currentImplementation: unknown
   ): boolean {
-    // 簡化的實現檢查邏輯
-    // 實際實現中應該檢查具體的功能實現
-    return Math.random() > 0.3; // 70% 機率通過檢查
+    // 簡化的實現Check邏輯
+    // 實際實現中應該CheckConcrete的功能實現
+    return Math.random() > 0.3; // 70% 機率通過Check
   }
 
   private generateRequiredActions(
@@ -566,7 +566,7 @@ export class RegulatoryAdaptationLayer {
   }
 }
 
-// 法規檢測服務
+// 法規檢測Service
 export class JurisdictionDetector {
   private readonly adaptationLayer: RegulatoryAdaptationLayer;
 
@@ -592,7 +592,7 @@ export class JurisdictionDetector {
   }
 }
 
-// 法規映射服務
+// 法規MapService
 export class RegulationMapper {
   private readonly adaptationLayer: RegulatoryAdaptationLayer;
 
