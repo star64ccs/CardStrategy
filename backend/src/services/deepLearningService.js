@@ -1,5 +1,6 @@
 const tf = require('@tensorflow/tfjs-node');
-const { MarketData, Card } = require('../models');
+const { getMarketDataModel } = require('../models/MarketData');
+const { getCardModel } = require('../models/Card');
 const { getModelPersistenceModel } = require('../models/ModelPersistence');
 const ModelPersistenceService = require('./modelPersistenceService');
 const logger = require('../utils/logger');
@@ -10,6 +11,9 @@ class DeepLearningService {
     this.models = {};
     this.modelPersistenceService = new ModelPersistenceService();
     this.ModelPersistence = null;
+    this.sequelize = null;
+    this.MarketData = null;
+    this.Card = null;
   }
 
   async initialize() {
@@ -22,9 +26,14 @@ class DeepLearningService {
       await tf.ready();
       logger.info('TensorFlow.js 初始化成功');
 
+      // 獲取 Sequelize 實例和模型
+      this.sequelize = require('../config/database').sequelize;
+      this.ModelPersistence = getModelPersistenceModel(this.sequelize);
+      this.MarketData = getMarketDataModel(this.sequelize);
+      this.Card = getCardModel(this.sequelize);
+
       // 初始化模型持久化服務
       await this.modelPersistenceService.initialize();
-      this.ModelPersistence = getModelPersistenceModel(require('../config/database').sequelize);
 
       // 嘗試加載現有模型
       await this.loadExistingModels();
@@ -556,7 +565,7 @@ class DeepLearningService {
       await this.initialize();
 
       // 獲取卡牌歷史數據
-      const historicalData = await MarketData.findAll({
+      const historicalData = await this.MarketData.findAll({
         where: { cardId },
         order: [['date', 'ASC']],
         limit: 100
