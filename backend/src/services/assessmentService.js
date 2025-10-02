@@ -578,17 +578,20 @@ class AssessmentService {
       case 'daily':
         return new Date(now.getTime() + frequency.interval * 24 * 60 * 60 * 1000);
 
-      case 'weekly':
+      case 'weekly': {
         const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
         return this.adjustToNextWeekday(nextWeek, frequency.daysOfWeek);
+      }
 
-      case 'monthly':
+      case 'monthly': {
         const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, frequency.dayOfMonth);
         return nextMonth;
+      }
 
-      case 'quarterly':
+      case 'quarterly': {
         const nextQuarter = new Date(now.getFullYear(), Math.floor(now.getMonth() / 3) * 3 + 3, 1);
         return nextQuarter;
+      }
 
       default:
         return new Date(now.getTime() + 24 * 60 * 60 * 1000); // 默認一天後

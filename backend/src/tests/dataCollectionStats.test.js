@@ -26,8 +26,8 @@ describe('Data Collection Statistics API', () => {
           confidence: 0.95,
           processingTime: 1500,
           imageSize: 2048576,
-          imageFormat: 'JPEG'
-        }
+          imageFormat: 'JPEG',
+        },
       },
       {
         cardId: 2,
@@ -36,11 +36,11 @@ describe('Data Collection Statistics API', () => {
         quality: 'high',
         status: 'annotated',
         metadata: {
-          confidence: 0.90,
+          confidence: 0.9,
           processingTime: 1200,
           imageSize: 1536000,
-          imageFormat: 'PNG'
-        }
+          imageFormat: 'PNG',
+        },
       },
       {
         cardId: 3,
@@ -52,26 +52,26 @@ describe('Data Collection Statistics API', () => {
           confidence: 0.85,
           processingTime: 2000,
           imageSize: 1024000,
-          imageFormat: 'JPEG'
-        }
-      }
+          imageFormat: 'JPEG',
+        },
+      },
     ]);
 
     // 創建測試質量指標
     await DataQualityMetrics.create({
       dataType: 'training',
       completeness: 0.95,
-      accuracy: 0.90,
+      accuracy: 0.9,
       consistency: 0.85,
-      timeliness: 0.80,
+      timeliness: 0.8,
       overallScore: 0.875,
       assessmentDate: new Date(),
       dataSource: 'test',
       sampleSize: 3,
       metadata: {
         assessmentMethod: 'test',
-        qualityThreshold: 0.8
-      }
+        qualityThreshold: 0.8,
+      },
     });
 
     // 獲取認證token (這裡需要實現實際的認證邏輯)
@@ -109,20 +109,34 @@ describe('Data Collection Statistics API', () => {
 
       // 驗證來源分佈
       expect(response.body.data.sourceDistribution).toHaveLength(3);
-      expect(response.body.data.sourceDistribution.find(s => s.source === 'user_upload')).toBeDefined();
-      expect(response.body.data.sourceDistribution.find(s => s.source === 'official_api')).toBeDefined();
-      expect(response.body.data.sourceDistribution.find(s => s.source === 'third_party')).toBeDefined();
+      expect(
+        response.body.data.sourceDistribution.find(s => s.source === 'user_upload')
+      ).toBeDefined();
+      expect(
+        response.body.data.sourceDistribution.find(s => s.source === 'official_api')
+      ).toBeDefined();
+      expect(
+        response.body.data.sourceDistribution.find(s => s.source === 'third_party')
+      ).toBeDefined();
 
       // 驗證質量分佈
       expect(response.body.data.qualityDistribution).toHaveLength(2);
       expect(response.body.data.qualityDistribution.find(q => q.quality === 'high')).toBeDefined();
-      expect(response.body.data.qualityDistribution.find(q => q.quality === 'medium')).toBeDefined();
+      expect(
+        response.body.data.qualityDistribution.find(q => q.quality === 'medium')
+      ).toBeDefined();
 
       // 驗證狀態分佈
       expect(response.body.data.statusDistribution).toHaveLength(3);
-      expect(response.body.data.statusDistribution.find(s => s.status === 'validated')).toBeDefined();
-      expect(response.body.data.statusDistribution.find(s => s.status === 'annotated')).toBeDefined();
-      expect(response.body.data.statusDistribution.find(s => s.status === 'processing')).toBeDefined();
+      expect(
+        response.body.data.statusDistribution.find(s => s.status === 'validated')
+      ).toBeDefined();
+      expect(
+        response.body.data.statusDistribution.find(s => s.status === 'annotated')
+      ).toBeDefined();
+      expect(
+        response.body.data.statusDistribution.find(s => s.status === 'processing')
+      ).toBeDefined();
     });
 
     it('should return filtered statistics by source', async () => {
@@ -251,9 +265,7 @@ describe('Data Collection Statistics API', () => {
     });
 
     it('should handle authentication errors', async () => {
-      const response = await request(app)
-        .get('/api/data-quality/collect/stats')
-        .expect(401);
+      const response = await request(app).get('/api/data-quality/collect/stats').expect(401);
 
       expect(response.body.success).toBe(false);
     });
@@ -295,20 +307,20 @@ describe('Data Collection Statistics API', () => {
         sourceStats: [
           { source: 'user_upload', count: 50, percentage: '50.00' },
           { source: 'official_api', count: 30, percentage: '30.00' },
-          { source: 'third_party', count: 20, percentage: '20.00' }
+          { source: 'third_party', count: 20, percentage: '20.00' },
         ],
         qualityStats: [
           { quality: 'high', count: 60, percentage: '60.00' },
           { quality: 'medium', count: 30, percentage: '30.00' },
-          { quality: 'low', count: 10, percentage: '10.00' }
+          { quality: 'low', count: 10, percentage: '10.00' },
         ],
         growthTrend: {
           trend: 'increasing',
-          growthRate: 15.5
+          growthRate: 15.5,
         },
         efficiencyMetrics: {
-          efficiencyScore: '75.00'
-        }
+          efficiencyScore: '75.00',
+        },
       };
 
       const insights = dataCollectionService.generateCollectionInsights(mockData);

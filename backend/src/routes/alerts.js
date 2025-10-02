@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const alertService = require('../services/alertService');
-const auth = require('../middleware/auth');
+const { protect: auth } = require('../middleware/auth');
 const logger = require('../utils/logger');
 
 /**
