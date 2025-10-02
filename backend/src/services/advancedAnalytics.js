@@ -130,9 +130,7 @@ class AdvancedAnalyticsService {
       // 使用 Investment 模型替代 Portfolio
       const investments = await Investment.findAll({
         where: { userId },
-        include: [
-          { model: Card, as: 'card' },
-        ],
+        include: [{ model: Card, as: 'card' }],
       });
 
       if (!investments || investments.length === 0) {
@@ -152,9 +150,7 @@ class AdvancedAnalyticsService {
           riskMetrics: this.calculateRiskMetrics(cards),
         },
         performance: includePerformance ? await this.calculatePerformance(userId, timeframe) : null,
-        investments: includeInvestments
-          ? await this.getInvestmentHistory(userId, timeframe)
-          : null,
+        investments: includeInvestments ? await this.getInvestmentHistory(userId, timeframe) : null,
         recommendations: await this.generateInvestmentRecommendations(investments),
         generatedAt: new Date(),
       };
@@ -190,9 +186,7 @@ class AdvancedAnalyticsService {
 
     try {
       const user = await User.findByPk(userId, {
-        include: [
-          { model: Investment, as: 'investments' },
-        ],
+        include: [{ model: Investment, as: 'investments' }],
       });
 
       if (!user) {
@@ -683,8 +677,10 @@ class AdvancedAnalyticsService {
   generateUserInsights(user) {
     const insights = [];
 
-    const totalSpent = user.investments?.filter(i => i.type === 'buy').reduce((sum, i) => sum + i.amount, 0) || 0;
-    const totalEarned = user.investments?.filter(i => i.type === 'sell').reduce((sum, i) => sum + i.amount, 0) || 0;
+    const totalSpent =
+      user.investments?.filter(i => i.type === 'buy').reduce((sum, i) => sum + i.amount, 0) || 0;
+    const totalEarned =
+      user.investments?.filter(i => i.type === 'sell').reduce((sum, i) => sum + i.amount, 0) || 0;
 
     if (totalSpent > 10000) {
       insights.push({

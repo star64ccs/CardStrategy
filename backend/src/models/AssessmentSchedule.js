@@ -130,4 +130,13 @@ const AssessmentSchedule = sequelize.define('AssessmentSchedule', {
   ]
 });
 
-module.exports = AssessmentSchedule;
+let AssessmentScheduleInstance = null;
+
+const getAssessmentScheduleModel = (sequelize) => {
+  if (!AssessmentScheduleInstance && sequelize) {
+    AssessmentScheduleInstance = AssessmentSchedule(sequelize);
+  }
+  return AssessmentScheduleInstance;
+};
+
+module.exports = { AssessmentSchedule, getAssessmentScheduleModel };

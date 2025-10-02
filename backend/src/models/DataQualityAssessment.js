@@ -108,4 +108,13 @@ const DataQualityAssessment = sequelize.define('DataQualityAssessment', {
   ]
 });
 
-module.exports = DataQualityAssessment;
+let DataQualityAssessmentInstance = null;
+
+const getDataQualityAssessmentModel = (sequelize) => {
+  if (!DataQualityAssessmentInstance && sequelize) {
+    DataQualityAssessmentInstance = DataQualityAssessment(sequelize);
+  }
+  return DataQualityAssessmentInstance;
+};
+
+module.exports = { DataQualityAssessment, getDataQualityAssessmentModel };
