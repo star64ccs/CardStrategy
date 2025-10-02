@@ -167,6 +167,7 @@ class BatchOperationService {
                 }
               });
               break;
+            }
 
             default:
               throw new Error(`未知的批量操作: ${operation}`);
