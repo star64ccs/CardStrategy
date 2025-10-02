@@ -249,36 +249,36 @@ jest.mock('moment-timezone', () => {
   return mockMoment;
 });
 
-// 模擬 OpenAI
+// 模擬 OpenAI（現已安裝依賴）
 jest.mock('openai', () => ({
   OpenAI: jest.fn().mockImplementation(() => ({
     chat: {
       completions: {
         create: jest.fn().mockResolvedValue({
           choices: [{ message: { content: 'Test AI response' } }],
-          usage: { total_tokens: 100 }
-        })
-      }
+          usage: { total_tokens: 100 },
+        }),
+      },
     },
     images: {
       generate: jest.fn().mockResolvedValue({
-        data: [{ url: 'https://example.com/generated-image.jpg' }]
-      })
-    }
+        data: [{ url: 'https://example.com/generated-image.jpg' }],
+      }),
+    },
   })),
   Configuration: jest.fn(),
   OpenAIApi: jest.fn().mockImplementation(() => ({
     createChatCompletion: jest.fn().mockResolvedValue({
       data: {
-        choices: [{ message: { content: 'Test response' } }]
-      }
+        choices: [{ message: { content: 'Test response' } }],
+      },
     }),
     createCompletion: jest.fn().mockResolvedValue({
       data: {
-        choices: [{ text: 'Test completion' }]
-      }
-    })
-  }))
+        choices: [{ text: 'Test completion' }],
+      },
+    }),
+  })),
 }));
 
 // 模擬 Lodash
