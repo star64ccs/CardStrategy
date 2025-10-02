@@ -118,5 +118,5 @@ const getCardModel = () => {
   return Card;
 };
 
-module.exports = getCardModel;
+module.exports = { createCardModel, getCardModel };
 

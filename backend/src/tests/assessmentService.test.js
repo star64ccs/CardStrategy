@@ -3,8 +3,14 @@ const app = require('../app');
 const { sequelize } = require('../config/database');
 const assessmentService = require('../services/assessmentService');
 const { createUserModel, getUserModel } = require('../models/User');
-const { createAssessmentScheduleModel, getAssessmentScheduleModel } = require('../models/AssessmentSchedule');
-const { createDataQualityAssessmentModel, getDataQualityAssessmentModel } = require('../models/DataQualityAssessment');
+const {
+  createAssessmentScheduleModel,
+  getAssessmentScheduleModel,
+} = require('../models/AssessmentSchedule');
+const {
+  createDataQualityAssessmentModel,
+  getDataQualityAssessmentModel,
+} = require('../models/DataQualityAssessment');
 
 describe('Assessment Service Tests', () => {
   let testUser;

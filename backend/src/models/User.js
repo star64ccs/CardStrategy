@@ -174,4 +174,4 @@ const getUserModel = () => {
   return User;
 };
 
-module.exports = getUserModel;
+module.exports = { createUserModel, getUserModel };

@@ -1,7 +1,7 @@
 const { Op } = require('sequelize');
 const getShareVerificationModel = require('../models/ShareVerification');
-const getCardModel = require('../models/Card');
-const getUserModel = require('../models/User');
+const { createCardModel, getCardModel } = require('../models/Card');
+const { createUserModel, getUserModel } = require('../models/User');
 const logger = require('../utils/logger');
 const {
   generateVerificationCode,

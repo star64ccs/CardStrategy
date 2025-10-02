@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const getTrainingDataModel = require('../models/TrainingData');
-const getCardModel = require('../models/Card');
+const { createCardModel, getCardModel } = require('../models/Card');
 const getDataQualityMetricsModel = require('../models/DataQualityMetrics');
 const logger = require('../utils/logger');
 
