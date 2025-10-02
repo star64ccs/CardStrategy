@@ -3,6 +3,7 @@ const router = express.Router();
 const feedbackService = require('../services/feedbackService');
 const auth = require('../middleware/auth');
 const { validateFeedbackSubmission, validateFeedbackUpdate } = require('../middleware/validation');
+const logger = require('../utils/logger');
 
 /**
  * @swagger

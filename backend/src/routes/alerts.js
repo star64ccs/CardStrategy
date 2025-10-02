@@ -3,6 +3,7 @@ const router = express.Router();
 const alertService = require('../services/alertService');
 const auth = require('../middleware/auth');
 const { validateAlertCreation, validateAlertUpdate } = require('../middleware/validation');
+const logger = require('../utils/logger');
 
 /**
  * @swagger

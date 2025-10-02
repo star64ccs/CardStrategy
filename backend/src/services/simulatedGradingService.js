@@ -2,6 +2,8 @@ const { getSimulatedGradingModel, generateGradingNumber } = require('../models/S
 const { getCardModel } = require('../models/Card');
 const { getUserModel } = require('../models/User');
 const logger = require('../utils/logger');
+const { Op } = require('sequelize');
+const sequelize = require('../config/database');
 
 class SimulatedGradingService {
   constructor() {

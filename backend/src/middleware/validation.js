@@ -167,7 +167,7 @@ const customValidators = {
 
   // 檢查是否為有效的電話號碼
   isValidPhone: (value) => {
-    return /^\+?[\d\s\-\(\)]{10,}$/.test(value);
+    return /^\+?[\d\s\-()]{10,}$/.test(value);
   },
 
   // 檢查是否為有效的 URL
