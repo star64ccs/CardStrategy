@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const alertService = require('../services/alertService');
 const auth = require('../middleware/auth');
-const { validateAlertCreation, validateAlertUpdate } = require('../middleware/validation');
 const logger = require('../utils/logger');
 
 /**
@@ -47,18 +46,18 @@ const logger = require('../utils/logger');
  *       401:
  *         description: 未授權
  */
-router.post('/', auth, validateAlertCreation, async (req, res) => {
+router.post('/', auth, async (req, res) => {
   try {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以創建警報'
+        message: '只有管理員可以創建警報',
       });
     }
 
     const alertData = {
       ...req.body,
-      createdBy: req.user.id
+      createdBy: req.user.id,
     };
 
     const alert = await alertService.createAlert(alertData);
@@ -66,14 +65,14 @@ router.post('/', auth, validateAlertCreation, async (req, res) => {
     res.status(201).json({
       success: true,
       message: '警報創建成功',
-      data: alert
+      data: alert,
     });
   } catch (error) {
     logger.error('創建警報失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '創建警報失敗',
-      code: 'ALERT_CREATION_ERROR'
+      code: 'ALERT_CREATION_ERROR',
     });
   }
 });
@@ -136,21 +135,21 @@ router.get('/', auth, async (req, res) => {
       severity: req.query.severity,
       type: req.query.type,
       startDate: req.query.startDate,
-      endDate: req.query.endDate
+      endDate: req.query.endDate,
     };
 
     const result = await alertService.getAlerts(options);
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
     logger.error('獲取警報列表失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '獲取警報列表失敗',
-      code: 'ALERT_LIST_ERROR'
+      code: 'ALERT_LIST_ERROR',
     });
   }
 });
@@ -183,14 +182,14 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: alert
+      data: alert,
     });
   } catch (error) {
     logger.error('獲取警報詳情失敗:', error);
     res.status(404).json({
       success: false,
       message: error.message || '警報不存在',
-      code: 'ALERT_NOT_FOUND'
+      code: 'ALERT_NOT_FOUND',
     });
   }
 });
@@ -231,29 +230,24 @@ router.get('/:id', auth, async (req, res) => {
  *       401:
  *         description: 未授權
  */
-router.put('/:id/status', auth, validateAlertUpdate, async (req, res) => {
+router.put('/:id/status', auth, async (req, res) => {
   try {
     const { status, resolution } = req.body;
     const alertId = parseInt(req.params.id);
 
-    const alert = await alertService.updateAlertStatus(
-      alertId,
-      status,
-      req.user.id,
-      resolution
-    );
+    const alert = await alertService.updateAlertStatus(alertId, status, req.user.id, resolution);
 
     res.json({
       success: true,
       message: '警報狀態更新成功',
-      data: alert
+      data: alert,
     });
   } catch (error) {
     logger.error('更新警報狀態失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '更新警報狀態失敗',
-      code: 'ALERT_STATUS_UPDATE_ERROR'
+      code: 'ALERT_STATUS_UPDATE_ERROR',
     });
   }
 });
@@ -289,14 +283,14 @@ router.post('/:id/acknowledge', auth, async (req, res) => {
     res.json({
       success: true,
       message: '警報確認成功',
-      data: alert
+      data: alert,
     });
   } catch (error) {
     logger.error('確認警報失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '確認警報失敗',
-      code: 'ALERT_ACKNOWLEDGE_ERROR'
+      code: 'ALERT_ACKNOWLEDGE_ERROR',
     });
   }
 });
@@ -341,7 +335,7 @@ router.put('/bulk/status', auth, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以批量更新警報'
+        message: '只有管理員可以批量更新警報',
       });
     }
 
@@ -357,14 +351,14 @@ router.put('/bulk/status', auth, async (req, res) => {
     res.json({
       success: true,
       message: `成功更新 ${result.updatedCount} 個警報`,
-      data: result
+      data: result,
     });
   } catch (error) {
     logger.error('批量更新警報狀態失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '批量更新警報狀態失敗',
-      code: 'ALERT_BULK_UPDATE_ERROR'
+      code: 'ALERT_BULK_UPDATE_ERROR',
     });
   }
 });
@@ -403,28 +397,28 @@ router.get('/stats', auth, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以查看統計數據'
+        message: '只有管理員可以查看統計數據',
       });
     }
 
     const options = {
       startDate: req.query.startDate,
       endDate: req.query.endDate,
-      type: req.query.type
+      type: req.query.type,
     };
 
     const stats = await alertService.getAlertStats(options);
 
     res.json({
       success: true,
-      data: stats
+      data: stats,
     });
   } catch (error) {
     logger.error('獲取警報統計失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '獲取警報統計失敗',
-      code: 'ALERT_STATS_ERROR'
+      code: 'ALERT_STATS_ERROR',
     });
   }
 });
@@ -449,14 +443,14 @@ router.get('/active', auth, async (req, res) => {
 
     res.json({
       success: true,
-      data: activeAlerts
+      data: activeAlerts,
     });
   } catch (error) {
     logger.error('獲取活躍警報失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '獲取活躍警報失敗',
-      code: 'ALERT_ACTIVE_ERROR'
+      code: 'ALERT_ACTIVE_ERROR',
     });
   }
 });
@@ -488,7 +482,7 @@ router.delete('/:id', auth, async (req, res) => {
     if (req.user.role !== 'admin') {
       return res.status(403).json({
         success: false,
-        message: '只有管理員可以刪除警報'
+        message: '只有管理員可以刪除警報',
       });
     }
 
@@ -498,14 +492,14 @@ router.delete('/:id', auth, async (req, res) => {
 
     res.json({
       success: true,
-      message: '警報刪除成功'
+      message: '警報刪除成功',
     });
   } catch (error) {
     logger.error('刪除警報失敗:', error);
     res.status(500).json({
       success: false,
       message: error.message || '刪除警報失敗',
-      code: 'ALERT_DELETE_ERROR'
+      code: 'ALERT_DELETE_ERROR',
     });
   }
 });
