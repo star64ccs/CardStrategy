@@ -84,7 +84,7 @@ const sequelize = new Sequelize(
 const getCardModel = require('../models/Card');
 const getMarketDataModel = require('../models/MarketData');
 const getPredictionModel = require('../models/PredictionModel');
-const getModelPersistenceModel = require('../models/ModelPersistence');
+const { getModelPersistenceModel } = require('../models/ModelPersistence');
 
 // 初始化模型
 const Card = getCardModel();
