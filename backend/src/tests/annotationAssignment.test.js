@@ -1,9 +1,10 @@
 const request = require('supertest');
-const app = require('../server');
+const app = require('../app');
+const { sequelize } = require('../config/database');
 const annotationService = require('../services/annotationService');
-const getTrainingDataModel = require('../models/TrainingData');
-const getAnnotatorModel = require('../models/Annotator');
-const getAnnotationDataModel = require('../models/AnnotationData');
+const { createTrainingDataModel, getTrainingDataModel } = require('../models/TrainingData');
+const { createAnnotatorModel, getAnnotatorModel } = require('../models/Annotator');
+const { createAnnotationDataModel, getAnnotationDataModel } = require('../models/AnnotationData');
 
 describe('智能標註任務分配算法測試', () => {
   let TrainingData, Annotator, AnnotationData;
@@ -12,6 +13,9 @@ describe('智能標註任務分配算法測試', () => {
 
   beforeAll(async () => {
     // 初始化模型
+    createTrainingDataModel(sequelize);
+    createAnnotatorModel(sequelize);
+    createAnnotationDataModel(sequelize);
     TrainingData = getTrainingDataModel();
     Annotator = getAnnotatorModel();
     AnnotationData = getAnnotationDataModel();

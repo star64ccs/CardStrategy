@@ -1,13 +1,31 @@
 const request = require('supertest');
-const app = require('../server');
-const { DataQualityMetrics, TrainingData, AnnotationData, Annotator, User } = require('../models');
+const app = require('../app');
+const { sequelize } = require('../config/database');
+const { createDataQualityMetricsModel, getDataQualityMetricsModel } = require('../models/DataQualityMetrics');
+const { createTrainingDataModel, getTrainingDataModel } = require('../models/TrainingData');
+const { createAnnotationDataModel, getAnnotationDataModel } = require('../models/AnnotationData');
+const { createAnnotatorModel, getAnnotatorModel } = require('../models/Annotator');
+const { getUserModel } = require('../models/User');
 const dataQualityMonitoringService = require('../services/dataQualityMonitoringService');
+
+let DataQualityMetrics, TrainingData, AnnotationData, Annotator, User;
 
 describe('Data Quality Dashboard API Tests', () => {
   let testUser;
   let testToken;
 
   beforeAll(async () => {
+    // 初始化模型
+    createDataQualityMetricsModel(sequelize);
+    createTrainingDataModel(sequelize);
+    createAnnotationDataModel(sequelize);
+    createAnnotatorModel(sequelize);
+    DataQualityMetrics = getDataQualityMetricsModel();
+    TrainingData = getTrainingDataModel();
+    AnnotationData = getAnnotationDataModel();
+    Annotator = getAnnotatorModel();
+    User = getUserModel(sequelize);
+
     // Create test user and get authentication token
     testUser = await User.create({
       username: 'dashboard_test_user',

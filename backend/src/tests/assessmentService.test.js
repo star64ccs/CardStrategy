@@ -1,16 +1,22 @@
 const request = require('supertest');
-const app = require('../server');
+const app = require('../app');
 const { sequelize } = require('../config/database');
 const assessmentService = require('../services/assessmentService');
-const User = require('../models/User');
-const AssessmentSchedule = require('../models/AssessmentSchedule');
-const DataQualityAssessment = require('../models/DataQualityAssessment');
+const { getUserModel } = require('../models/User');
+const { getAssessmentScheduleModel } = require('../models/AssessmentSchedule');
+const { getDataQualityAssessmentModel } = require('../models/DataQualityAssessment');
 
 describe('Assessment Service Tests', () => {
   let testUser;
   let authToken;
+  let User, AssessmentSchedule, DataQualityAssessment;
 
   beforeAll(async () => {
+    // 初始化模型
+    User = getUserModel(sequelize);
+    AssessmentSchedule = getAssessmentScheduleModel(sequelize);
+    DataQualityAssessment = getDataQualityAssessmentModel(sequelize);
+
     await sequelize.sync({ force: true });
 
     // 創建測試用戶

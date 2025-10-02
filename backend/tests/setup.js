@@ -236,7 +236,9 @@ jest.mock('uuid', () => ({
 // 模擬 Moment
 jest.mock('moment', () => {
   const moment = jest.requireActual('moment');
-  return jest.fn(date => moment(date || '2024-01-01'));
+  const mockMoment = jest.fn(date => moment(date || '2024-01-01'));
+  mockMoment.isMoment = jest.fn(obj => moment.isMoment(obj));
+  return mockMoment;
 });
 
 // 模擬 Moment-Timezone
@@ -246,7 +248,7 @@ jest.mock('moment-timezone', () => {
   mockMoment.tz = jest.fn((date, tz) => moment(date));
   mockMoment.tz.setDefault = jest.fn();
   mockMoment.tz.guess = jest.fn(() => 'UTC');
-  mockMoment.tz.zone = jest.fn(() => null);  // Sequelize 需要此方法
+  mockMoment.tz.zone = jest.fn(() => null); // Sequelize 需要此方法
   mockMoment.tz.names = jest.fn(() => ['UTC']);
   return mockMoment;
 });

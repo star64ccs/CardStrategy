@@ -2,7 +2,10 @@ const request = require('supertest');
 const app = require('../app');
 const { sequelize } = require('../config/database');
 const { createTrainingDataModel, getTrainingDataModel } = require('../models/TrainingData');
-const { createDataQualityMetricsModel, getDataQualityMetricsModel } = require('../models/DataQualityMetrics');
+const {
+  createDataQualityMetricsModel,
+  getDataQualityMetricsModel,
+} = require('../models/DataQualityMetrics');
 
 describe('Data Collection Statistics API', () => {
   let authToken;
