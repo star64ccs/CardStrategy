@@ -64,7 +64,7 @@ router.post('/enhanced-batch', protect, [
     logger.info(`開始批量增強預測: ${cardIds.length} 張卡牌, 模型 ${modelType}, 時間框架 ${timeframe}`);
 
     const results = [];
-    const errors = [];
+    const batchErrors = [];
 
     for (const cardId of cardIds) {
       try {
@@ -72,20 +72,20 @@ router.post('/enhanced-batch', protect, [
         results.push(prediction);
       } catch (error) {
         logger.warn(`卡牌 ${cardId} 預測失敗:`, error.message);
-        errors.push({ cardId, error: error.message });
+        batchErrors.push({ cardId, error: error.message });
       }
     }
 
     res.json({
       success: true,
-      message: `批量預測完成: ${results.length} 成功, ${errors.length} 失敗`,
+      message: `批量預測完成: ${results.length} 成功, ${batchErrors.length} 失敗`,
       data: {
         predictions: results,
-        errors,
+        errors: batchErrors,
         summary: {
           total: cardIds.length,
           successful: results.length,
-          failed: errors.length,
+          failed: batchErrors.length,
           successRate: `${(results.length / cardIds.length * 100).toFixed(2)  }%`
         }
       }

@@ -715,7 +715,7 @@ class AnnotationService {
         processingTime: this.calculateProcessingTime(annotation.createdAt),
         metadata: {
           ...annotation.metadata,
-          qualityScore: this.calculateQualityScore(annotationResult, confidence),
+          qualityScore: this.calculateAnnotationQuality(annotationResult, confidence),
           lastUpdated: new Date()
         }
       });
@@ -739,7 +739,7 @@ class AnnotationService {
   }
 
   // 計算質量分數
-  calculateQualityScore(annotationResult, confidence) {
+  calculateAnnotationQuality(annotationResult, confidence) {
     // 基於標註結果的完整性和置信度計算質量分數
     let score = confidence * 0.7; // 70% 基於置信度
 

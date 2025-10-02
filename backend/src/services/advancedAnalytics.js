@@ -1000,20 +1000,6 @@ class AdvancedAnalyticsService {
     return { direction: 'stable', change: 2.1, total: transactions.length };
   }
 
-  calculateOverallDirection(trends) {
-    // 實現整體方向計算
-    return 'up';
-  }
-
-  extractKeyMetrics(trends) {
-    // 實現關鍵指標提取
-    return { avgChange: 6.6, totalTransactions: 1000 };
-  }
-
-  generateRecommendations(trends) {
-    // 實現建議生成
-    return ['關注價格上漲趨勢', '增加交易量監控'];
-  }
 
   // 報告生成輔助方法
   async getTotalTransactions(dateRange) {

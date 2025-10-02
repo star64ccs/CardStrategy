@@ -67,15 +67,17 @@ class AssessmentService {
    */
   async executeScheduledAssessment(scheduleId, triggeredBy = 'system', triggeredByUserId = null) {
     const startTime = Date.now();
+    let assessment;
+    let schedule;
 
     try {
-      const schedule = await AssessmentSchedule.findByPk(scheduleId);
+      schedule = await AssessmentSchedule.findByPk(scheduleId);
       if (!schedule || !schedule.isActive) {
         throw new Error('評估計劃不存在或已停用');
       }
 
       // 創建評估記錄
-      const assessment = await DataQualityAssessment.create({
+      assessment = await DataQualityAssessment.create({
         assessmentType: schedule.assessmentType,
         scheduledDate: schedule.nextRunDate,
         dataTypes: schedule.dataTypes,

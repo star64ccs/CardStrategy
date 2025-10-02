@@ -139,14 +139,14 @@ router.post('/batch', protect, [
 
     // 批量預測
     const predictions = [];
-    const errors = [];
+    const batchErrors = [];
 
     for (const cardId of cardIds) {
       try {
         const prediction = await predictionService.predictCardPrice(cardId, timeframe, modelType);
         predictions.push(prediction);
       } catch (error) {
-        errors.push({
+        batchErrors.push({
           cardId,
           error: error.message
         });
@@ -161,11 +161,11 @@ router.post('/batch', protect, [
       message: '批量預測完成',
       data: {
         predictions,
-        errors,
+        errors: batchErrors,
         summary: {
           total: cardIds.length,
           successful: predictions.length,
-          failed: errors.length
+          failed: batchErrors.length
         }
       }
     });
