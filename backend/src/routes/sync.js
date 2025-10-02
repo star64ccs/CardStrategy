@@ -13,7 +13,6 @@ const Card = getCardModel(sequelize);
 const Collection = getCollectionModel(sequelize);
 const User = getUserModel(sequelize);
 const Annotation = getAnnotationDataModel(sequelize);
-const { Op } = Sequelize;
 
 /**
  * 增量同步 API

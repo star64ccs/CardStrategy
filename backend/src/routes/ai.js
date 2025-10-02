@@ -17,19 +17,19 @@ router.post('/recommend/cards', protect, async (req, res) => {
       categories,
       priceRange,
       rarity,
-      excludeOwned
+      excludeOwned,
     });
 
     res.json({
       success: true,
-      data: recommendations
+      data: recommendations,
     });
   } catch (error) {
     logger.error('卡片推薦失敗:', error);
     res.status(500).json({
       success: false,
       error: '卡片推薦失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -43,19 +43,19 @@ router.post('/predict/market', async (req, res) => {
 
     const predictions = await aiService.predictMarketTrends({
       timeframe,
-      categories
+      categories,
     });
 
     res.json({
       success: true,
-      data: predictions
+      data: predictions,
     });
   } catch (error) {
     logger.error('市場預測失敗:', error);
     res.status(500).json({
       success: false,
       error: '市場預測失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -71,19 +71,19 @@ router.post('/optimize/portfolio', protect, async (req, res) => {
     const recommendations = await aiService.optimizePortfolio(userId, {
       riskTolerance,
       investmentGoal,
-      timeHorizon
+      timeHorizon,
     });
 
     res.json({
       success: true,
-      data: recommendations
+      data: recommendations,
     });
   } catch (error) {
     logger.error('投資組合優化失敗:', error);
     res.status(500).json({
       success: false,
       error: '投資組合優化失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -98,19 +98,19 @@ router.post('/search/intelligent', async (req, res) => {
     const results = await aiService.intelligentSearch(query, {
       searchType,
       filters,
-      limit
+      limit,
     });
 
     res.json({
       success: true,
-      data: results
+      data: results,
     });
   } catch (error) {
     logger.error('智能搜索失敗:', error);
     res.status(500).json({
       success: false,
       error: '智能搜索失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -124,19 +124,19 @@ router.post('/nlp/process', async (req, res) => {
 
     const result = await aiService.processNaturalLanguage(text, {
       task,
-      language
+      language,
     });
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
     logger.error('自然語言處理失敗:', error);
     res.status(500).json({
       success: false,
       error: '自然語言處理失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -151,19 +151,19 @@ router.post('/notifications/smart', protect, async (req, res) => {
 
     const notifications = await aiService.generateSmartNotifications(userId, {
       notificationTypes,
-      maxNotifications
+      maxNotifications,
     });
 
     res.json({
       success: true,
-      data: notifications
+      data: notifications,
     });
   } catch (error) {
     logger.error('智能通知生成失敗:', error);
     res.status(500).json({
       success: false,
       error: '智能通知生成失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -178,19 +178,19 @@ router.post('/chat', async (req, res) => {
     const response = await aiService.chatBot(message, context, {
       model,
       maxTokens,
-      temperature
+      temperature,
     });
 
     res.json({
       success: true,
-      data: response
+      data: response,
     });
   } catch (error) {
     logger.error('聊天機器人失敗:', error);
     res.status(500).json({
       success: false,
       error: '聊天機器人失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -204,14 +204,14 @@ router.get('/metrics', async (req, res) => {
 
     res.json({
       success: true,
-      data: metrics
+      data: metrics,
     });
   } catch (error) {
     logger.error('獲取AI指標失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取AI指標失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -225,14 +225,14 @@ router.get('/health', async (req, res) => {
 
     res.json({
       success: true,
-      data: health
+      data: health,
     });
   } catch (error) {
     logger.error('AI健康檢查失敗:', error);
     res.status(500).json({
       success: false,
       error: 'AI健康檢查失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -247,22 +247,22 @@ router.put('/config', protect, async (req, res) => {
     aiService.updateConfig({
       openai,
       cache,
-      rateLimit
+      rateLimit,
     });
 
     res.json({
       success: true,
       data: {
         message: 'AI配置已更新',
-        config: aiService.getConfig()
-      }
+        config: aiService.getConfig(),
+      },
     });
   } catch (error) {
     logger.error('更新AI配置失敗:', error);
     res.status(500).json({
       success: false,
       error: '更新AI配置失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -276,14 +276,14 @@ router.get('/config', async (req, res) => {
 
     res.json({
       success: true,
-      data: config
+      data: config,
     });
   } catch (error) {
     logger.error('獲取AI配置失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取AI配置失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -298,7 +298,7 @@ router.post('/batch', async (req, res) => {
     if (!Array.isArray(operations)) {
       return res.status(400).json({
         success: false,
-        error: '操作必須是數組'
+        error: '操作必須是數組',
       });
     }
 
@@ -335,13 +335,13 @@ router.post('/batch', async (req, res) => {
         results.push({
           operation: type,
           status: 'success',
-          data: result
+          data: result,
         });
       } catch (error) {
         results.push({
           operation: operation.type,
           status: 'error',
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -353,16 +353,16 @@ router.post('/batch', async (req, res) => {
         summary: {
           total: operations.length,
           successful: results.filter(r => r.status === 'success').length,
-          failed: results.filter(r => r.status === 'error').length
-        }
-      }
+          failed: results.filter(r => r.status === 'error').length,
+        },
+      },
     });
   } catch (error) {
     logger.error('批量AI操作失敗:', error);
     res.status(500).json({
       success: false,
       error: '批量AI操作失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -378,34 +378,34 @@ router.get('/models', async (req, res) => {
         name: 'GPT-3.5 Turbo',
         description: '快速且經濟的對話模型',
         maxTokens: 4096,
-        capabilities: ['chat', 'completion', 'analysis']
+        capabilities: ['chat', 'completion', 'analysis'],
       },
       {
         id: 'gpt-4',
         name: 'GPT-4',
         description: '最先進的語言模型',
         maxTokens: 8192,
-        capabilities: ['chat', 'completion', 'analysis', 'reasoning']
+        capabilities: ['chat', 'completion', 'analysis', 'reasoning'],
       },
       {
         id: 'text-davinci-003',
         name: 'Text Davinci 003',
         description: '強大的文本生成模型',
         maxTokens: 4097,
-        capabilities: ['completion', 'analysis']
-      }
+        capabilities: ['completion', 'analysis'],
+      },
     ];
 
     res.json({
       success: true,
-      data: models
+      data: models,
     });
   } catch (error) {
     logger.error('獲取AI模型信息失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取AI模型信息失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -421,62 +421,62 @@ router.get('/features', async (req, res) => {
         name: '智能卡片推薦',
         description: '基於用戶偏好和市場數據推薦卡片',
         endpoint: '/api/ai/recommend/cards',
-        method: 'POST'
+        method: 'POST',
       },
       {
         id: 'marketPrediction',
         name: '市場趨勢預測',
         description: '預測卡片市場價格和趨勢',
         endpoint: '/api/ai/predict/market',
-        method: 'POST'
+        method: 'POST',
       },
       {
         id: 'portfolioOptimization',
         name: '投資組合優化',
         description: '提供投資組合優化建議',
         endpoint: '/api/ai/optimize/portfolio',
-        method: 'POST'
+        method: 'POST',
       },
       {
         id: 'intelligentSearch',
         name: '智能搜索',
         description: '理解用戶意圖的智能搜索',
         endpoint: '/api/ai/search/intelligent',
-        method: 'POST'
+        method: 'POST',
       },
       {
         id: 'naturalLanguageProcessing',
         name: '自然語言處理',
         description: '文本分析、總結、情感分析等',
         endpoint: '/api/ai/nlp/process',
-        method: 'POST'
+        method: 'POST',
       },
       {
         id: 'smartNotifications',
         name: '智能通知',
         description: '生成個性化的智能通知',
         endpoint: '/api/ai/notifications/smart',
-        method: 'POST'
+        method: 'POST',
       },
       {
         id: 'chatBot',
         name: '聊天機器人',
         description: '智能對話助手',
         endpoint: '/api/ai/chat',
-        method: 'POST'
-      }
+        method: 'POST',
+      },
     ];
 
     res.json({
       success: true,
-      data: features
+      data: features,
     });
   } catch (error) {
     logger.error('獲取AI功能列表失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取AI功能列表失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });

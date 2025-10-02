@@ -13,14 +13,14 @@ class PerformanceOptimizer {
       defaultTTL: 300, // 5分鐘
       maxSize: 100 * 1024 * 1024, // 100MB
       compression: true,
-      versioning: true
+      versioning: true,
     };
 
     this.responseConfig = {
       compression: true,
       gzipLevel: 6,
       minSize: 1024,
-      threshold: 0.1
+      threshold: 0.1,
     };
 
     this.rateLimitConfig = {
@@ -28,7 +28,7 @@ class PerformanceOptimizer {
       max: 100, // 限制每個IP 15分鐘內最多100個請求
       message: '請求過於頻繁，請稍後再試',
       standardHeaders: true,
-      legacyHeaders: false
+      legacyHeaders: false,
     };
 
     this.metrics = {
@@ -37,7 +37,7 @@ class PerformanceOptimizer {
       cacheMisses: 0,
       avgResponseTime: 0,
       totalResponseTime: 0,
-      errors: 0
+      errors: 0,
     };
   }
 
@@ -53,7 +53,7 @@ class PerformanceOptimizer {
           return false;
         }
         return compression.filter(req, res);
-      }
+      },
     });
   }
 
@@ -74,12 +74,12 @@ class PerformanceOptimizer {
         res.status(429).json({
           error: '請求過於頻繁',
           message: config.message,
-          retryAfter: Math.ceil(config.windowMs / 1000)
+          retryAfter: Math.ceil(config.windowMs / 1000),
         });
       },
-      keyGenerator: (req) => {
+      keyGenerator: req => {
         return req.ip || req.connection.remoteAddress;
-      }
+      },
     });
   }
 
@@ -108,9 +108,10 @@ class PerformanceOptimizer {
 
         // 重寫 res.json 方法以緩存響應
         const originalJson = res.json;
-        res.json = function(data) {
+        res.json = function (data) {
           // 緩存響應
-          redis.setex(cacheKey, ttl, JSON.stringify(data))
+          redis
+            .setex(cacheKey, ttl, JSON.stringify(data))
             .catch(err => logger.error('緩存設置失敗:', err));
 
           // 調用原始方法
@@ -141,7 +142,7 @@ class PerformanceOptimizer {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // 轉換為32位整數
     }
     return Math.abs(hash).toString(36);
@@ -154,7 +155,7 @@ class PerformanceOptimizer {
     const {
       ttl = this.cacheConfig.defaultTTL,
       staleWhileRevalidate = 60,
-      forceRefresh = false
+      forceRefresh = false,
     } = options;
 
     try {
@@ -212,8 +213,7 @@ class PerformanceOptimizer {
    */
   async setCache(key, data, ttl) {
     try {
-      const value = this.cacheConfig.compression ?
-        this.compressData(data) : JSON.stringify(data);
+      const value = this.cacheConfig.compression ? this.compressData(data) : JSON.stringify(data);
 
       await redis.setex(key, ttl, value);
       logger.debug(`緩存設置成功: ${key}, TTL: ${ttl}s`);
@@ -285,7 +285,7 @@ class PerformanceOptimizer {
   async warmupCache(endpoints) {
     logger.info(`開始緩存預熱，共 ${endpoints.length} 個端點`);
 
-    const promises = endpoints.map(async (endpoint) => {
+    const promises = endpoints.map(async endpoint => {
       try {
         const { url, ttl = this.cacheConfig.defaultTTL } = endpoint;
         const response = await fetch(url);
@@ -306,7 +306,7 @@ class PerformanceOptimizer {
     const summary = {
       total: endpoints.length,
       success: results.filter(r => r.status === 'fulfilled').length,
-      failed: results.filter(r => r.status === 'rejected').length
+      failed: results.filter(r => r.status === 'rejected').length,
     };
 
     logger.info('緩存預熱完成:', summary);
@@ -373,7 +373,7 @@ class PerformanceOptimizer {
         url: req.originalUrl,
         method: req.method,
         ip: req.ip,
-        userAgent: req.get('User-Agent')
+        userAgent: req.get('User-Agent'),
       });
 
       next(err);
@@ -384,15 +384,17 @@ class PerformanceOptimizer {
    * 獲取性能指標
    */
   getMetrics() {
-    const cacheHitRate = this.metrics.requests > 0 ?
-      (this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses)) * 100 : 0;
+    const cacheHitRate =
+      this.metrics.requests > 0
+        ? (this.metrics.cacheHits / (this.metrics.cacheHits + this.metrics.cacheMisses)) * 100
+        : 0;
 
     return {
       ...this.metrics,
       cacheHitRate: Math.round(cacheHitRate * 100) / 100,
-      errorRate: this.metrics.requests > 0 ?
-        (this.metrics.errors / this.metrics.requests) * 100 : 0,
-      timestamp: new Date().toISOString()
+      errorRate:
+        this.metrics.requests > 0 ? (this.metrics.errors / this.metrics.requests) * 100 : 0,
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -406,7 +408,7 @@ class PerformanceOptimizer {
       cacheMisses: 0,
       avgResponseTime: 0,
       totalResponseTime: 0,
-      errors: 0
+      errors: 0,
     };
     logger.info('性能指標已重置');
   }
@@ -418,7 +420,7 @@ class PerformanceOptimizer {
     const health = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      checks: {}
+      checks: {},
     };
 
     try {
@@ -475,7 +477,7 @@ class PerformanceOptimizer {
     return {
       cacheConfig: this.cacheConfig,
       responseConfig: this.responseConfig,
-      rateLimitConfig: this.rateLimitConfig
+      rateLimitConfig: this.rateLimitConfig,
     };
   }
 }

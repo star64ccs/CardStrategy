@@ -74,7 +74,7 @@ class AdvancedAnalyticsService {
         whereClause.category = { [Op.in]: categories };
       }
 
-      const transactions = await Transaction.findAll({
+      const transactions = await Investment.findAll({
         where: whereClause,
         include: [
           { model: Card, as: 'card' },
@@ -112,7 +112,7 @@ class AdvancedAnalyticsService {
   async getPortfolioAnalysis(userId, options = {}) {
     const {
       timeframe = '30d',
-      includeTransactions = true,
+      includeInvestments = true,
       includePerformance = true,
       useCache = true,
     } = options;
@@ -127,32 +127,35 @@ class AdvancedAnalyticsService {
     }
 
     try {
-      const portfolio = await Portfolio.findOne({
+      // 使用 Investment 模型替代 Portfolio
+      const investments = await Investment.findAll({
         where: { userId },
         include: [
-          { model: Card, as: 'cards' },
-          { model: Transaction, as: 'transactions' },
+          { model: Card, as: 'card' },
         ],
       });
 
-      if (!portfolio) {
-        throw new Error('投資組合不存在');
+      if (!investments || investments.length === 0) {
+        throw new Error('投資記錄不存在');
       }
+
+      const cards = investments.map(inv => inv.card).filter(Boolean);
+      const totalValue = investments.reduce((sum, inv) => sum + (inv.amount || 0), 0);
 
       const analysis = {
         portfolio: {
-          id: portfolio.id,
-          name: portfolio.name,
-          totalValue: 0,
-          totalCards: portfolio.cards.length,
-          diversification: this.calculateDiversification(portfolio.cards),
-          riskMetrics: this.calculateRiskMetrics(portfolio.cards),
+          id: userId,
+          name: `用戶 ${userId} 的投資組合`,
+          totalValue,
+          totalCards: cards.length,
+          diversification: this.calculateDiversification(cards),
+          riskMetrics: this.calculateRiskMetrics(cards),
         },
         performance: includePerformance ? await this.calculatePerformance(userId, timeframe) : null,
-        transactions: includeTransactions
-          ? await this.getTransactionHistory(userId, timeframe)
+        investments: includeInvestments
+          ? await this.getInvestmentHistory(userId, timeframe)
           : null,
-        recommendations: await this.generatePortfolioRecommendations(portfolio),
+        recommendations: await this.generateInvestmentRecommendations(investments),
         generatedAt: new Date(),
       };
 
@@ -188,9 +191,7 @@ class AdvancedAnalyticsService {
     try {
       const user = await User.findByPk(userId, {
         include: [
-          { model: Transaction, as: 'buyerTransactions' },
-          { model: Transaction, as: 'sellerTransactions' },
-          { model: Portfolio, as: 'portfolios' },
+          { model: Investment, as: 'investments' },
         ],
       });
 
@@ -203,7 +204,7 @@ class AdvancedAnalyticsService {
           id: user.id,
           username: user.username,
           joinDate: user.createdAt,
-          totalTransactions: user.buyerTransactions.length + user.sellerTransactions.length,
+          totalInvestments: user.investments?.length || 0,
         },
         patterns: includePatterns ? this.analyzeUserPatterns(user) : null,
         predictions: includePredictions ? await this.predictUserBehavior(userId) : null,
@@ -605,11 +606,11 @@ class AdvancedAnalyticsService {
     };
   }
 
-  // 獲取交易歷史
-  async getTransactionHistory(userId, timeframe) {
+  // 獲取投資歷史
+  async getInvestmentHistory(userId, timeframe) {
     const startDate = this.getStartDate(timeframe);
 
-    return await Transaction.findAll({
+    return await Investment.findAll({
       where: {
         [Op.or]: [{ buyerId: userId }, { sellerId: userId }],
         createdAt: {
@@ -622,11 +623,12 @@ class AdvancedAnalyticsService {
   }
 
   // 生成投資組合建議
-  async generatePortfolioRecommendations(portfolio) {
+  async generateInvestmentRecommendations(investments) {
     const recommendations = [];
+    const cards = investments.map(inv => inv.card).filter(Boolean);
 
     // 多樣化建議
-    if (portfolio.cards.length < 5) {
+    if (cards.length < 5) {
       recommendations.push({
         type: 'diversification',
         message: '建議增加卡片數量以提高多樣化',
@@ -636,8 +638,8 @@ class AdvancedAnalyticsService {
     }
 
     // 風險管理建議
-    const highValueCards = portfolio.cards.filter(card => card.currentPrice > 1000);
-    if (highValueCards.length > portfolio.cards.length * 0.3) {
+    const highValueCards = cards.filter(card => card.currentPrice > 1000);
+    if (highValueCards.length > cards.length * 0.3) {
       recommendations.push({
         type: 'risk_management',
         message: '高價值卡片佔比過高，建議分散風險',
@@ -681,8 +683,8 @@ class AdvancedAnalyticsService {
   generateUserInsights(user) {
     const insights = [];
 
-    const totalSpent = user.buyerTransactions.reduce((sum, t) => sum + t.amount, 0);
-    const totalEarned = user.sellerTransactions.reduce((sum, t) => sum + t.amount, 0);
+    const totalSpent = user.investments?.filter(i => i.type === 'buy').reduce((sum, i) => sum + i.amount, 0) || 0;
+    const totalEarned = user.investments?.filter(i => i.type === 'sell').reduce((sum, i) => sum + i.amount, 0) || 0;
 
     if (totalSpent > 10000) {
       insights.push({
@@ -698,7 +700,7 @@ class AdvancedAnalyticsService {
   // 生成執行摘要
   async generateExecutiveSummary(dateRange) {
     return {
-      totalTransactions: await this.getTotalTransactions(dateRange),
+      totalInvestments: await this.getTotalInvestments(dateRange),
       totalVolume: await this.getTotalVolume(dateRange),
       activeUsers: await this.getActiveUsers(dateRange),
       topPerformers: await this.getTopPerformers(dateRange),
@@ -841,7 +843,7 @@ class AdvancedAnalyticsService {
   // 檢查模型可用性
   async checkModelAvailability() {
     try {
-      const models = [Card, Transaction, User, Portfolio];
+      const models = [Card, Investment, User];
       for (const model of models) {
         await model.findOne();
       }
@@ -920,24 +922,24 @@ class AdvancedAnalyticsService {
     return {
       avgPriceChange: trends.price?.change || 0,
       avgVolumeChange: trends.volume?.change || 0,
-      totalTransactions: trends.volume?.total || 0,
+      totalInvestments: trends.volume?.total || 0,
     };
   }
 
   calculateTradingFrequency(user) {
-    const totalTransactions = user.buyerTransactions.length + user.sellerTransactions.length;
+    const totalInvestments = user.investments?.length || 0;
     const daysSinceJoin = (Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24);
 
-    return totalTransactions / daysSinceJoin;
+    return totalInvestments / daysSinceJoin;
   }
 
   identifyPreferredCategories(user) {
     const categories = {};
-    const allTransactions = [...user.buyerTransactions, ...user.sellerTransactions];
+    const allInvestments = user.investments || [];
 
-    for (const transaction of allTransactions) {
-      if (transaction.card && transaction.card.category) {
-        categories[transaction.card.category] = (categories[transaction.card.category] || 0) + 1;
+    for (const investment of allInvestments) {
+      if (investment.card && investment.card.category) {
+        categories[investment.card.category] = (categories[investment.card.category] || 0) + 1;
       }
     }
 
@@ -948,7 +950,7 @@ class AdvancedAnalyticsService {
   }
 
   analyzeTradingTimes(user) {
-    const tradingHours = user.buyerTransactions.map(t => t.createdAt.getHours());
+    const tradingHours = (user.investments || []).map(i => i.createdAt.getHours());
     const hourCounts = tradingHours.reduce((acc, hour) => {
       acc[hour] = (acc[hour] || 0) + 1;
       return acc;
@@ -964,7 +966,7 @@ class AdvancedAnalyticsService {
   }
 
   analyzePriceRange(user) {
-    const prices = user.buyerTransactions.map(t => t.amount);
+    const prices = (user.investments || []).filter(i => i.type === 'buy').map(i => i.amount);
     return {
       min: Math.min(...prices),
       max: Math.max(...prices),
@@ -996,8 +998,8 @@ class AdvancedAnalyticsService {
   }
 
   // 報告生成輔助方法
-  async getTotalTransactions(dateRange) {
-    return await Transaction.count({
+  async getTotalInvestments(dateRange) {
+    return await Investment.count({
       where: {
         createdAt: {
           [Op.between]: [dateRange.start, dateRange.end],
@@ -1007,7 +1009,7 @@ class AdvancedAnalyticsService {
   }
 
   async getTotalVolume(dateRange) {
-    const result = await Transaction.sum('amount', {
+    const result = await Investment.sum('amount', {
       where: {
         createdAt: {
           [Op.between]: [dateRange.start, dateRange.end],
@@ -1021,7 +1023,7 @@ class AdvancedAnalyticsService {
     return await User.count({
       include: [
         {
-          model: Transaction,
+          model: Investment,
           where: {
             createdAt: {
               [Op.between]: [dateRange.start, dateRange.end],

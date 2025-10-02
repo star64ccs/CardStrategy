@@ -13,7 +13,7 @@ router.get('/stats', async (req, res) => {
     const [dbStats, perfStats, redisInfo] = await Promise.all([
       databaseOptimizer.getQueryStats(),
       performanceOptimizer.getMetrics(),
-      redis.info()
+      redis.info(),
     ]);
 
     const systemStats = {
@@ -21,35 +21,35 @@ router.get('/stats', async (req, res) => {
       database: {
         queryStats: dbStats,
         slowQueries: Object.values(dbStats).reduce((sum, stat) => sum + stat.slowQueries, 0),
-        totalQueries: Object.values(dbStats).reduce((sum, stat) => sum + stat.count, 0)
+        totalQueries: Object.values(dbStats).reduce((sum, stat) => sum + stat.count, 0),
       },
       performance: {
         ...perfStats,
         cacheHitRate: perfStats.cacheHitRate || 0,
-        avgResponseTime: perfStats.avgResponseTime || 0
+        avgResponseTime: perfStats.avgResponseTime || 0,
       },
       redis: {
         connected: redis.status === 'ready',
         memory: redisInfo.match(/used_memory_human:([^\r\n]+)/)?.[1] || 'N/A',
-        keyspace: redisInfo.match(/db0:keys=(\d+)/)?.[1] || '0'
+        keyspace: redisInfo.match(/db0:keys=(\d+)/)?.[1] || '0',
       },
       system: {
         uptime: process.uptime(),
         memory: process.memoryUsage(),
-        cpu: process.cpuUsage()
-      }
+        cpu: process.cpuUsage(),
+      },
     };
 
     res.json({
       success: true,
-      data: systemStats
+      data: systemStats,
     });
   } catch (error) {
     logger.error('獲取性能統計失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取性能統計失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -62,7 +62,7 @@ router.get('/health', async (req, res) => {
     const health = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
-      checks: {}
+      checks: {},
     };
 
     // 檢查數據庫連接
@@ -111,14 +111,14 @@ router.get('/health', async (req, res) => {
 
     res.json({
       success: true,
-      data: health
+      data: health,
     });
   } catch (error) {
     logger.error('健康檢查失敗:', error);
     res.status(500).json({
       success: false,
       error: '健康檢查失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -139,16 +139,18 @@ router.get('/database/stats', async (req, res) => {
         summary: {
           totalQueries: Object.values(stats).reduce((sum, stat) => sum + stat.count, 0),
           slowQueries: Object.values(stats).reduce((sum, stat) => sum + stat.slowQueries, 0),
-          avgQueryTime: Object.values(stats).reduce((sum, stat) => sum + stat.avgTime, 0) / Object.keys(stats).length || 0
-        }
-      }
+          avgQueryTime:
+            Object.values(stats).reduce((sum, stat) => sum + stat.avgTime, 0) /
+              Object.keys(stats).length || 0,
+        },
+      },
     });
   } catch (error) {
     logger.error('獲取數據庫統計失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取數據庫統計失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -166,15 +168,15 @@ router.post('/cache/clear', async (req, res) => {
       data: {
         clearedCount,
         pattern,
-        message: `成功清理 ${clearedCount} 個緩存項`
-      }
+        message: `成功清理 ${clearedCount} 個緩存項`,
+      },
     });
   } catch (error) {
     logger.error('清理緩存失敗:', error);
     res.status(500).json({
       success: false,
       error: '清理緩存失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -189,14 +191,14 @@ router.get('/database/indexes', async (req, res) => {
     if (!model) {
       return res.status(400).json({
         success: false,
-        error: '缺少模型參數'
+        error: '缺少模型參數',
       });
     }
 
     // 這裡需要根據實際的模型和查詢模式來生成建議
     const queryPatterns = [
       { where: { status: 'active' }, order: [['createdAt', 'DESC']] },
-      { where: { userId: 1 }, include: [{ model: 'User', as: 'user' }] }
+      { where: { userId: 1 }, include: [{ model: 'User', as: 'user' }] },
     ];
 
     const suggestions = await databaseOptimizer.suggestIndexes(model, queryPatterns);
@@ -206,15 +208,15 @@ router.get('/database/indexes', async (req, res) => {
       data: {
         model,
         suggestions,
-        totalSuggestions: suggestions.length
-      }
+        totalSuggestions: suggestions.length,
+      },
     });
   } catch (error) {
     logger.error('獲取索引建議失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取索引建議失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -229,7 +231,7 @@ router.post('/database/analyze', async (req, res) => {
     if (!model || !queryOptions) {
       return res.status(400).json({
         success: false,
-        error: '缺少模型或查詢參數'
+        error: '缺少模型或查詢參數',
       });
     }
 
@@ -237,14 +239,14 @@ router.post('/database/analyze', async (req, res) => {
 
     res.json({
       success: true,
-      data: analysis
+      data: analysis,
     });
   } catch (error) {
     logger.error('查詢分析失敗:', error);
     res.status(500).json({
       success: false,
       error: '查詢分析失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -259,7 +261,7 @@ router.post('/benchmark', async (req, res) => {
     if (!Array.isArray(tests)) {
       return res.status(400).json({
         success: false,
-        error: '測試配置必須是數組'
+        error: '測試配置必須是數組',
       });
     }
 
@@ -282,14 +284,14 @@ router.post('/benchmark', async (req, res) => {
           iterations,
           totalTime: endTime - startTime,
           avgTime,
-          status: 'success'
+          status: 'success',
         });
       } catch (error) {
         results.push({
           name,
           iterations,
           status: 'error',
-          error: error.message
+          error: error.message,
         });
       }
     }
@@ -302,18 +304,18 @@ router.post('/benchmark', async (req, res) => {
           totalTests: results.length,
           successfulTests: results.filter(r => r.status === 'success').length,
           failedTests: results.filter(r => r.status === 'error').length,
-          avgTime: results
-            .filter(r => r.status === 'success')
-            .reduce((sum, r) => sum + r.avgTime, 0) / results.filter(r => r.status === 'success').length || 0
-        }
-      }
+          avgTime:
+            results.filter(r => r.status === 'success').reduce((sum, r) => sum + r.avgTime, 0) /
+              results.filter(r => r.status === 'success').length || 0,
+        },
+      },
     });
   } catch (error) {
     logger.error('基準測試失敗:', error);
     res.status(500).json({
       success: false,
       error: '基準測試失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -335,7 +337,7 @@ router.get('/optimization/suggestions', async (req, res) => {
         priority: 'high',
         title: '慢查詢優化',
         description: `檢測到 ${slowQueries} 個慢查詢，建議添加索引或優化查詢`,
-        action: 'review_slow_queries'
+        action: 'review_slow_queries',
       });
     }
 
@@ -347,7 +349,7 @@ router.get('/optimization/suggestions', async (req, res) => {
         priority: 'medium',
         title: '緩存命中率優化',
         description: `緩存命中率為 ${perfStats.cacheHitRate}%，建議調整緩存策略`,
-        action: 'optimize_cache_strategy'
+        action: 'optimize_cache_strategy',
       });
     }
 
@@ -358,7 +360,7 @@ router.get('/optimization/suggestions', async (req, res) => {
         priority: 'high',
         title: '響應時間優化',
         description: `平均響應時間為 ${perfStats.avgResponseTime}ms，建議優化查詢或添加緩存`,
-        action: 'optimize_response_time'
+        action: 'optimize_response_time',
       });
     }
 
@@ -372,7 +374,7 @@ router.get('/optimization/suggestions', async (req, res) => {
         priority: 'high',
         title: '內存使用優化',
         description: `內存使用率為 ${Math.round(memUsagePercent)}%，建議檢查內存洩漏`,
-        action: 'check_memory_leaks'
+        action: 'check_memory_leaks',
       });
     }
 
@@ -383,15 +385,15 @@ router.get('/optimization/suggestions', async (req, res) => {
         totalSuggestions: suggestions.length,
         highPriority: suggestions.filter(s => s.priority === 'high').length,
         mediumPriority: suggestions.filter(s => s.priority === 'medium').length,
-        lowPriority: suggestions.filter(s => s.priority === 'low').length
-      }
+        lowPriority: suggestions.filter(s => s.priority === 'low').length,
+      },
     });
   } catch (error) {
     logger.error('獲取優化建議失敗:', error);
     res.status(500).json({
       success: false,
       error: '獲取優化建議失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -407,15 +409,15 @@ router.post('/metrics/reset', async (req, res) => {
     res.json({
       success: true,
       data: {
-        message: '性能指標已重置'
-      }
+        message: '性能指標已重置',
+      },
     });
   } catch (error) {
     logger.error('重置性能指標失敗:', error);
     res.status(500).json({
       success: false,
       error: '重置性能指標失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -440,15 +442,15 @@ router.put('/config', async (req, res) => {
       data: {
         message: '配置已更新',
         database: databaseOptimizer.getConfig(),
-        performance: performanceOptimizer.getConfig()
-      }
+        performance: performanceOptimizer.getConfig(),
+      },
     });
   } catch (error) {
     logger.error('更新配置失敗:', error);
     res.status(500).json({
       success: false,
       error: '更新配置失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -463,7 +465,7 @@ router.post('/cache/warmup', async (req, res) => {
     if (!Array.isArray(endpoints)) {
       return res.status(400).json({
         success: false,
-        error: '端點配置必須是數組'
+        error: '端點配置必須是數組',
       });
     }
 
@@ -471,14 +473,14 @@ router.post('/cache/warmup', async (req, res) => {
 
     res.json({
       success: true,
-      data: result
+      data: result,
     });
   } catch (error) {
     logger.error('緩存預熱失敗:', error);
     res.status(500).json({
       success: false,
       error: '緩存預熱失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });
@@ -493,7 +495,7 @@ router.post('/cache/batch', async (req, res) => {
     if (!Array.isArray(operations)) {
       return res.status(400).json({
         success: false,
-        error: '操作配置必須是數組'
+        error: '操作配置必須是數組',
       });
     }
 
@@ -504,15 +506,15 @@ router.post('/cache/batch', async (req, res) => {
       data: {
         results,
         totalOperations: operations.length,
-        successfulOperations: results.filter(r => r !== null).length
-      }
+        successfulOperations: results.filter(r => r !== null).length,
+      },
     });
   } catch (error) {
     logger.error('批量緩存操作失敗:', error);
     res.status(500).json({
       success: false,
       error: '批量緩存操作失敗',
-      message: error.message
+      message: error.message,
     });
   }
 });

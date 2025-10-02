@@ -102,14 +102,14 @@ class DatabaseOptimizer {
       const batchIds = batches[i];
       const batchWhere = {
         ...where,
-        id: { [Op.in]: batchIds }
+        id: { [Op.in]: batchIds },
       };
 
       try {
         const batchResults = await model.findAll({
           where: batchWhere,
           include,
-          benchmark: true
+          benchmark: true,
         });
 
         results.push(...batchResults);
@@ -131,7 +131,7 @@ class DatabaseOptimizer {
     const optimizedOptions = this.optimizeQuery({
       ...options,
       limit,
-      offset
+      offset,
     });
 
     try {
@@ -145,8 +145,8 @@ class DatabaseOptimizer {
           total: count,
           totalPages: Math.ceil(count / limit),
           hasNext: page * limit < count,
-          hasPrev: page > 1
-        }
+          hasPrev: page > 1,
+        },
       };
     } catch (error) {
       logger.error('分頁查詢失敗:', error);
@@ -203,11 +203,11 @@ class DatabaseOptimizer {
         if (ignoreDuplicates) {
           batchResults = await model.bulkCreate(batch, {
             ignoreDuplicates: true,
-            returning: true
+            returning: true,
           });
         } else {
           batchResults = await model.bulkCreate(batch, {
-            returning: true
+            returning: true,
           });
         }
 
@@ -235,7 +235,7 @@ class DatabaseOptimizer {
       try {
         const result = await model.update(update.data, {
           where: { [whereField]: update[whereField] },
-          returning: true
+          returning: true,
         });
         results.push(result);
       } catch (error) {
@@ -256,11 +256,9 @@ class DatabaseOptimizer {
     try {
       // 執行查詢並獲取執行計劃
       const explainQuery = await model.sequelize.query(
-        `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${model.sequelize.getQueryInterface().queryGenerator.selectQuery(
-          model.getTableName(),
-          queryOptions,
-          model
-        )}`,
+        `EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON) ${model.sequelize
+          .getQueryInterface()
+          .queryGenerator.selectQuery(model.getTableName(), queryOptions, model)}`,
         { type: model.sequelize.QueryTypes.SELECT }
       );
 
@@ -270,7 +268,7 @@ class DatabaseOptimizer {
         executionTime,
         explainPlan: explainQuery[0],
         isSlow: executionTime > this.slowQueryThreshold,
-        recommendations: this.generateRecommendations(explainQuery[0], executionTime)
+        recommendations: this.generateRecommendations(explainQuery[0], executionTime),
       };
     } catch (error) {
       logger.error('查詢分析失敗:', error);
@@ -315,7 +313,7 @@ class DatabaseOptimizer {
           suggestions.push({
             type: 'WHERE',
             fields: whereFields,
-            priority: 'high'
+            priority: 'high',
           });
         }
       }
@@ -327,7 +325,7 @@ class DatabaseOptimizer {
           suggestions.push({
             type: 'ORDER',
             fields: orderFields,
-            priority: 'medium'
+            priority: 'medium',
           });
         }
       }
@@ -342,7 +340,7 @@ class DatabaseOptimizer {
   extractFields(where) {
     const fields = [];
 
-    const extract = (obj) => {
+    const extract = obj => {
       for (const [key, value] of Object.entries(obj)) {
         if (typeof value === 'object' && value !== null) {
           extract(value);
@@ -393,7 +391,7 @@ class DatabaseOptimizer {
         avgTime: data.totalTime / data.count,
         maxTime: data.maxTime,
         minTime: data.minTime,
-        slowQueries: data.slowQueries
+        slowQueries: data.slowQueries,
       };
     }
     return stats;
@@ -409,7 +407,7 @@ class DatabaseOptimizer {
         totalTime: 0,
         maxTime: 0,
         minTime: Infinity,
-        slowQueries: 0
+        slowQueries: 0,
       });
     }
 
@@ -448,7 +446,7 @@ class DatabaseOptimizer {
       slowQueryThreshold: this.slowQueryThreshold,
       maxQueryTime: this.maxQueryTime,
       cacheEnabled: this.cacheEnabled,
-      batchSize: this.batchSize
+      batchSize: this.batchSize,
     };
   }
 }
