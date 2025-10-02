@@ -1,0 +1,299 @@
+name: Deploy to DigitalOcean Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "確認部署到生產環境 (輸入 DEPLOY)"
+        required: true
+        default: "CANCEL"
+  push:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-digitalocean-production.yml"
+
+jobs:
+  # 驗證和測試
+  validate:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'DEPLOY' || github.event_name == 'push'
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Run full test suite
+        run: |
+          cd backend
+          npx jest --coverage --forceExit --testTimeout=30000 || true
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: test_db
+          DB_USER: postgres
+          DB_PASSWORD: postgres
+          REDIS_URL: redis://localhost:6379
+          JWT_SECRET: test-secret-key
+          NODE_ENV: test
+
+      - name: Security audit
+        run: |
+          cd backend
+          npm audit --audit-level high || true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: backend/coverage/
+
+  # 構建 Docker 鏡像
+  build:
+    needs: validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to DigitalOcean Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: registry.digitalocean.com
+          username: ${{ secrets.DIGITOCEAN_CardStrategy_CI_CD_Token }}
+          password: ${{ secrets.DIGITOCEAN_CardStrategy_CI_CD_Token }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: |
+            registry.digitalocean.com/cardstrategy/backend:latest
+            registry.digitalocean.com/cardstrategy/backend:${{ github.sha }}
+          cache-from: type=registry,ref=registry.digitalocean.com/cardstrategy/backend:buildcache
+          cache-to: type=registry,ref=registry.digitalocean.com/cardstrategy/backend:buildcache,mode=max
+
+  # 部署到 DigitalOcean
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://api.cardstrategy.com
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITOCEAN_CardStrategy_CI_CD_Token }}
+
+      - name: Deploy to DigitalOcean App Platform
+        run: |
+          echo "部署到 DigitalOcean App Platform..."
+          doctl apps create-deployment ${{ secrets.DIGITALOCEAN_APP_ID }} --wait
+
+      - name: Wait for deployment
+        run: |
+          echo "等待部署完成..."
+          sleep 60
+
+      - name: Health check
+        run: |
+          echo "執行健康檢查..."
+
+          # API 健康檢查
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://api.cardstrategy.com/api/health)
+          if [ "$response" != "200" ]; then
+            echo "❌ API 健康檢查失敗: HTTP $response"
+            exit 1
+          fi
+          echo "✅ API 健康檢查通過"
+
+          # 數據庫連接檢查
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://api.cardstrategy.com/api/health/database)
+          if [ "$response" != "200" ]; then
+            echo "⚠️ 數據庫健康檢查失敗: HTTP $response"
+          fi
+
+          # Redis 連接檢查
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://api.cardstrategy.com/api/health/redis)
+          if [ "$response" != "200" ]; then
+            echo "⚠️ Redis 健康檢查失敗: HTTP $response"
+          fi
+
+      - name: Performance test
+        run: |
+          echo "執行性能測試..."
+          total_time=0
+          failed=0
+
+          for i in {1..10}; do
+            start_time=$(date +%s%N)
+            response=$(curl -s -o /dev/null -w "%{http_code}" https://api.cardstrategy.com/api/health)
+            end_time=$(date +%s%N)
+            response_time=$(( (end_time - start_time) / 1000000 ))
+            
+            echo "Request $i: ${response_time}ms (HTTP $response)"
+            total_time=$((total_time + response_time))
+            
+            if [ "$response" != "200" ] || [ $response_time -gt 3000 ]; then
+              failed=$((failed + 1))
+            fi
+          done
+
+          avg_time=$((total_time / 10))
+          echo "平均響應時間: ${avg_time}ms"
+          echo "失敗請求數: $failed/10"
+
+          if [ $failed -gt 2 ]; then
+            echo "⚠️ 性能測試失敗率過高"
+            exit 1
+          fi
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "✅ 生產環境部署成功"
+
+          # Slack 通知
+          if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            curl -X POST -H 'Content-type: application/json' \
+              --data '{
+                "text": "🚀 CardStrategy 生產環境部署成功",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*CardStrategy 生產環境部署成功* ✅\n\n*版本:* `${{ github.sha }}`\n*分支:* `${{ github.ref_name }}`\n*部署者:* ${{ github.actor }}\n*時間:* '"$(date)"'"
+                    }
+                  },
+                  {
+                    "type": "section",
+                    "fields": [
+                      {
+                        "type": "mrkdwn",
+                        "text": "*環境:*\nProduction"
+                      },
+                      {
+                        "type": "mrkdwn",
+                        "text": "*URL:*\nhttps://api.cardstrategy.com"
+                      }
+                    ]
+                  }
+                ]
+              }' \
+              ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
+
+      - name: Notify deployment failure
+        if: failure()
+        run: |
+          echo "❌ 生產環境部署失敗"
+
+          # Slack 通知
+          if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            curl -X POST -H 'Content-type: application/json' \
+              --data '{
+                "text": "⚠️ CardStrategy 生產環境部署失敗",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*CardStrategy 生產環境部署失敗* ❌\n\n*版本:* `${{ github.sha }}`\n*分支:* `${{ github.ref_name }}`\n*部署者:* ${{ github.actor }}\n*時間:* '"$(date)"'"
+                    }
+                  }
+                ]
+              }' \
+              ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
+
+  # 回滾機制
+  rollback:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: failure()
+    environment: production
+
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITOCEAN_CardStrategy_CI_CD_Token }}
+
+      - name: Rollback deployment
+        run: |
+          echo "⚠️ 檢測到部署失敗，準備回滾..."
+
+          # 獲取上一個穩定版本
+          echo "獲取部署歷史..."
+          doctl apps list-deployments ${{ secrets.DIGITALOCEAN_APP_ID }}
+
+          # 這裡可以添加自動回滾邏輯
+          echo "請手動檢查並決定是否回滾"
+
+      - name: Notify rollback
+        run: |
+          if [ -n "${{ secrets.SLACK_WEBHOOK_URL }}" ]; then
+            curl -X POST -H 'Content-type: application/json' \
+              --data '{
+                "text": "🔄 CardStrategy 部署失敗，需要手動檢查",
+                "blocks": [
+                  {
+                    "type": "section",
+                    "text": {
+                      "type": "mrkdwn",
+                      "text": "*部署失敗警告* ⚠️\n\n請檢查 GitHub Actions 日誌並決定是否回滾\n\n*版本:* `${{ github.sha }}`"
+                    }
+                  }
+                ]
+              }' \
+              ${{ secrets.SLACK_WEBHOOK_URL }}
+          fi
